@@ -1,97 +1,115 @@
-Return-Path: <linux-kernel+bounces-258975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C41938F5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:50:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BF85938F60
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6B1C1C212A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:50:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDE8F1C20326
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED3F16D4E0;
-	Mon, 22 Jul 2024 12:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E732816D4EF;
+	Mon, 22 Jul 2024 12:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BIn44lyH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V+YGW+Kp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E43016A399;
-	Mon, 22 Jul 2024 12:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6801316CD35;
+	Mon, 22 Jul 2024 12:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721652642; cv=none; b=Xd1n/hfmlAOo/F8BjlPtUE+jePA6h99akQZpYQIu86xOvZeiGjC2CkDcF67eKvleP2tAN+YBtt/Wh6feJr4DJL2oK3E7zWDqCrrNpcX9go4yuZND/ftSsa6BeM68Mn9NjGn/h0PEfEMzscs8FVgUF8tIOOo2MXSg6o5Vw+y6QR4=
+	t=1721652663; cv=none; b=sXydc8ugbGt5BDrss5bt2noToTqZ9ymvgGEYCuxCLvAhuFWzQxc7xic33nlIfGW1gzlc5QGVgDzKMwFLBCrwCCcMuFFfgEDy36XgqSefIgekFN1DhlmAkzU5qR8TRllveECHmF8FL/nNvb1gJN8H2vR1AeN/HbCs9pWvAnS9Msw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721652642; c=relaxed/simple;
-	bh=W982RbKM0FhaZsBOiVBU/Ls1Lu4p3QpOAVhhr7poQCQ=;
+	s=arc-20240116; t=1721652663; c=relaxed/simple;
+	bh=qrd1dTlK6YWzInxUMiE9Br8NUoMuylWX1TV8a6/aSko=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DCcpviE2wkGL4u/kngiixcLNHFOPYP1FijmKByoA3y5oFOlCEPXMWv4SaCBFEaxYwqBQbZvXdwJSA1A45VbkL0BDjceiD143EEz3K2esDawea6vB8i/7tSkEBsR019tZAvq9LVbboVmj4GjdmdiFnyXAvCWv1tnVoTBpThJ4YqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BIn44lyH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D846C116B1;
-	Mon, 22 Jul 2024 12:50:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721652641;
-	bh=W982RbKM0FhaZsBOiVBU/Ls1Lu4p3QpOAVhhr7poQCQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BIn44lyHzVYq4T2bA3n0wKBGo41TxkJMXDtOXKDU1gnZztUMQ12ikGRkmMb14aQJ5
-	 KZ2nCgnEXNuprrAmzGvHINWs/9IVj0AFqjsbOluR2ij5vdYms6Yn+YBMZQXbDjZYTb
-	 ef94QN+aVXPTKpuyV16or+h9Fd/KzBVva3W9NKfHleoWCblQ0VsOwAxGVL7iEORd/Z
-	 1Wr2qsTZZ2T3l+BVgZ4QA3Wh1yupMuVZ2FK6L5bFLcu/zDmuoJ+9wnHhYMb1Iw8RrW
-	 TOPoWUMTZE7pA8JKY1YHHlhhvbN2FpsuTm3M4y+P6sGHB57Er6vcyfhd1woxJYgkux
-	 TdFPgDvpLRCHQ==
-Date: Mon, 22 Jul 2024 08:50:40 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Simon Trimmer <simont@opensource.cirrus.com>, perex@perex.cz,
-	tiwai@suse.com, rf@opensource.cirrus.com, broonie@kernel.org,
-	shenghao-ding@ti.com, sbinding@opensource.cirrus.com,
-	lukas.bulwahn@gmail.com, linux-sound@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 6.6 11/12] ALSA: hda: cs35l56: Select
- SERIAL_MULTI_INSTANTIATE
-Message-ID: <Zp5VoMzMjH6gHExm@sashalap>
-References: <20240701001342.2920907-1-sashal@kernel.org>
- <20240701001342.2920907-11-sashal@kernel.org>
- <87wmm5a8ka.wl-tiwai@suse.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=C8X2sIYw2B1fK9zLuhiQDfMBWtRt/LkDXoBCFDN7b35vR3LjIK9+UQYYBzlnlp+J3/T2DMfM7/0EDSNU76cb+j26SXygOhAVFDa7/2dHz72hpfUIg6xpj6QbuudlgwX5QfzfL8h59RI9N909GZEXifKSDoLpdCIceHC3R/r0TU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V+YGW+Kp; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721652661; x=1753188661;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qrd1dTlK6YWzInxUMiE9Br8NUoMuylWX1TV8a6/aSko=;
+  b=V+YGW+KpeEntNyB9i4sod+UVERmulJfX3rEm/u05FblsEkm0PKniVXhf
+   0nDjVhzIZ1OwRDgnIPBie+7XEpUcQo5/OB9Yvo3adLNMyJoMvmLFbn89F
+   vDc//H8QH45lCyzUOMne+AukW5EYgsY2aLFA4o0Y/DHZaXsd/57qBewZr
+   GUZJez9ZZWF9p+9MaeMp2mw6IHEhFXq0f4nuXGF3OdZYGk3IwvO0JGIk4
+   vt+4+zjpDDgx8YQviIhiwqk1TiDseMSisdFAkKlEZ3zbz4ziwVuSDFQSH
+   m1TGRSpBZ9X9LAH/cMGKjjuR41tIIRS8e92Xg1BMqZNptbaPXcCEH9Hab
+   Q==;
+X-CSE-ConnectionGUID: Hhvmr43YSsanHUL94s9dMQ==
+X-CSE-MsgGUID: LXope0PNToeLdTQMuPJ2SA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11140"; a="29803592"
+X-IronPort-AV: E=Sophos;i="6.09,228,1716274800"; 
+   d="scan'208";a="29803592"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 05:51:00 -0700
+X-CSE-ConnectionGUID: +FA+TTCUTFKjLe6Hqnq4zQ==
+X-CSE-MsgGUID: Ww7Q5HfVRQa2jUd3zgIxWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,228,1716274800"; 
+   d="scan'208";a="56438782"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO intel.com) ([10.245.246.206])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 05:50:54 -0700
+Date: Mon, 22 Jul 2024 14:50:51 +0200
+From: Andi Shyti <andi.shyti@linux.intel.com>
+To: Easwar Hariharan <eahariha@linux.microsoft.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Zhenyu Wang <zhenyuw@linux.intel.com>,
+	Zhi Wang <zhi.wang.linux@gmail.com>,
+	"open list:INTEL DRM DISPLAY FOR XE AND I915 DRIVERS" <intel-gfx@lists.freedesktop.org>,
+	"open list:INTEL DRM DISPLAY FOR XE AND I915 DRIVERS" <intel-xe@lists.freedesktop.org>,
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:INTEL GVT-g DRIVERS (Intel GPU Virtualization)" <intel-gvt-dev@lists.freedesktop.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	"open list:RADEON and AMDGPU DRM DRIVERS" <amd-gfx@lists.freedesktop.org>,
+	"open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
+	"open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>,
+	Zhi Wang <zhiwang@kernel.org>
+Subject: Re: [PATCH v4 3/6] drm/i915: Make I2C terminology more inclusive
+Message-ID: <Zp5Vq9JoYC_OrA2C@ashyti-mobl2.lan>
+References: <20240711052734.1273652-1-eahariha@linux.microsoft.com>
+ <20240711052734.1273652-4-eahariha@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87wmm5a8ka.wl-tiwai@suse.de>
+In-Reply-To: <20240711052734.1273652-4-eahariha@linux.microsoft.com>
 
-On Mon, Jul 01, 2024 at 09:13:41AM +0200, Takashi Iwai wrote:
->On Mon, 01 Jul 2024 02:13:30 +0200,
->Sasha Levin wrote:
->>
->> From: Simon Trimmer <simont@opensource.cirrus.com>
->>
->> [ Upstream commit 9b1effff19cdf2230d3ecb07ff4038a0da32e9cc ]
->>
->> The ACPI IDs used in the CS35L56 HDA drivers are all handled by the
->> serial multi-instantiate driver which starts multiple Linux device
->> instances from a single ACPI Device() node.
->>
->> As serial multi-instantiate is not an optional part of the system add it
->> as a dependency in Kconfig so that it is not overlooked.
->>
->> Signed-off-by: Simon Trimmer <simont@opensource.cirrus.com>
->> Link: https://lore.kernel.org/20240619161602.117452-1-simont@opensource.cirrus.com
->> Signed-off-by: Takashi Iwai <tiwai@suse.de>
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
->
->This change breaks random builds, so please pick up a follow-up fix
->17563b4a19d1844bdbccc7a82d2f31c28ca9cfae
->    ALSA: hda: Use imply for suggesting CONFIG_SERIAL_MULTI_INSTANTIATE
->too.
+Hi Easwar,
 
-Will do.
+merged to drm-intel-next. Thanks!
 
--- 
-Thanks,
-Sasha
+On Thu, Jul 11, 2024 at 05:27:31AM +0000, Easwar Hariharan wrote:
+> I2C v7, SMBus 3.2, and I3C 1.1.1 specifications have replaced "master/slave"
+> with more appropriate terms. Inspired by Wolfram's series to fix drivers/i2c/,
+> fix the terminology for users of I2C_ALGOBIT bitbanging interface, now that
+> the approved verbiage exists in the specification.
+> 
+> Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+
+I realized after pushing that this had the tag:
+
+Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+
+Not a big deal, but it's still a minor mistake.
+
+Andi
 
