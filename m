@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-258804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E894D938CDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:01:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7931938CD7
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:01:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93D241F2717C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:01:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59A7B1F27224
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB61317164B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C97171644;
 	Mon, 22 Jul 2024 09:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d+iLYUU/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xd4QrsRr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F7A16EBF2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D728816EBE8;
 	Mon, 22 Jul 2024 09:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721642120; cv=none; b=JUxGCIO+KnZU1GChuUQruUmHRbaVuyBSOoXIi4o1ezDggDH+cUWbP3IW4r+Hba4yPLsNCMeRP84ISrpwzAh9QXwYhnqdGu8yVPk4oi4BnD5JbKtQQbybuvHN8k/9YNsCQ6XuZwqgiJrn15FuajiGZIPqun9740Ki5FG55L5AhSs=
+	t=1721642120; cv=none; b=efD3qSr3X8ttKUwBc1Mkri5sTvbITf7dGjRx7n2ih60+uMereon1xvJYv+fo6UcFf0jXpcm90jL33jqXOW00rPRJaBfducNl4LQx7mwq7YkBmvBvlUqmIi3DamC4mJ2Ne4XeLASQzOAaMbg7Ef+mwA2HoICWH5opfASHTWw3sWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721642120; c=relaxed/simple;
-	bh=ikgyp8pmvlfMUClhFBZWrBkM+wgPyISauwYP7aiip94=;
+	bh=keFz8P8QGXAZ3tDXLpAqg74yLy8RutIEZLcgfXCjQxY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oGKM8mCN1h0g8nGVXEZGyWREZJLb32DcvCTNZRc/CoKx9ctlrgNyqQx+9qGO/m5URPwAnbnRAInyBkVYqMIte3HJxVL/2fsSHk2TVdv882HEbelMrx/+gBTtBxiZ4oyC2Pvt93LXmMPs5OAgsmRdTWV58YKVj2ToIdPtfVJd+ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d+iLYUU/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BFDBC4DDE1;
+	 MIME-Version; b=MqCJyyStgDhJZskjqyisMBARyweO2mcyNizGtPhrQpQyAuSA2eYpGlpXd+BaVG2NCK1g7Ewpb97wsFEI5RYKZpso1xAnQ6kwGJea5KajF1HfzpnnM6+JLDfblF5Z3Wag8VnCKw0rbE2q31LQby3/PvlfVv6hxBqQHg4vkn8u7eE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xd4QrsRr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70FAFC4DDE0;
 	Mon, 22 Jul 2024 09:55:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1721642120;
-	bh=ikgyp8pmvlfMUClhFBZWrBkM+wgPyISauwYP7aiip94=;
+	bh=keFz8P8QGXAZ3tDXLpAqg74yLy8RutIEZLcgfXCjQxY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=d+iLYUU/36LVPkvB0SD4+cHduzizASmGmI6Sp4RH7udC7EBXSepLyNV6M50gVmgot
-	 fnl+khKVFfyijr9rBanrojlmRQQJ2AjrJBrzgjheat/AtcxiF4vhGAW9+egv1gpGBU
-	 /mXkOJ3bcMSA7Eo8JQWxJ9lX8GvKZdXA9WEYA1YzKsoZjVzKxzkr3unScfEyvhIFYv
-	 sKP3GwNEh+B+OYlRndBUy8pEk5lJ0BdxXVpqWUNowvoaNMR6VwKVFFFrpkUn55mWEU
-	 liXf9XU7GgiDv9KXkI4kZn5veeiMQtHgjEqQEB5K+Kr1+DHICxW1NOgMNGhekAi9sb
-	 G2s2BV2p93ZWw==
+	b=Xd4QrsRr62Gj6luiQ2JzEBFibIlF6Kr7+ze4qK5IHLWUTJ4Q2KuegHJnR3jO5ZfO8
+	 c1cZ0118kPB+SURk+R7O6MfddDmzkIpz4himltrepfCjB+q7Mm2wDOKlM+l4rI+x8a
+	 FbRhByMivhFMtmHWjHC7nxi5rNV8Xv5iojZ/D7WYvyZebHw5RuBMnw5m/L5DTlEYlQ
+	 +ufB4k8FRDt+U1BY429n/vpYys3ybGdIyzX5F88Y8K1oeYr/9VA1DQbKS1zEOOlbBf
+	 KvAc6azruRwSqg2WQaJAElwciTk7F9jhUdggrFpJ4NqXo2N4nkgb/JgCtKymV7WIVq
+	 gPqBZORAWw2+g==
 Received: from johan by xi.lan with local (Exim 4.97.1)
 	(envelope-from <johan+linaro@kernel.org>)
-	id 1sVplH-0000000079a-2irj;
+	id 1sVplH-0000000079c-36JV;
 	Mon, 22 Jul 2024 11:55:19 +0200
 From: Johan Hovold <johan+linaro@kernel.org>
 To: Bjorn Andersson <andersson@kernel.org>,
@@ -59,9 +59,9 @@ Cc: Rob Herring <robh@kernel.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH 07/12] arm64: dts: qcom: x1e80100-vivobook-s15: disable PCIe6a perst pull down
-Date: Mon, 22 Jul 2024 11:54:54 +0200
-Message-ID: <20240722095459.27437-8-johan+linaro@kernel.org>
+Subject: [PATCH 08/12] arm64: dts: qcom: x1e80100-vivobook-s15: fix missing PCIe4 gpios
+Date: Mon, 22 Jul 2024 11:54:55 +0200
+Message-ID: <20240722095459.27437-9-johan+linaro@kernel.org>
 X-Mailer: git-send-email 2.44.2
 In-Reply-To: <20240722095459.27437-1-johan+linaro@kernel.org>
 References: <20240722095459.27437-1-johan+linaro@kernel.org>
@@ -73,26 +73,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Disable the PCIe6a perst pull-down resistor to save some power.
+Add the missing PCIe4 perst, wake and clkreq GPIOs and pin config.
 
+Fixes: d0e2f8f62dff ("arm64: dts: qcom: Add device tree for ASUS Vivobook S 15")
 Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../dts/qcom/x1e80100-asus-vivobook-s15.dts   | 29 +++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-index ff51dd98351c..1eb0abcbf650 100644
+index 1eb0abcbf650..9caa14dda585 100644
 --- a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
 +++ b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-@@ -536,7 +536,7 @@ perst-n-pins {
- 			pins = "gpio152";
- 			function = "gpio";
- 			drive-strength = <2>;
--			bias-pull-down;
-+			bias-disable;
- 		};
+@@ -430,6 +430,12 @@ &mdss_dp3_phy {
+ };
  
- 		wake-n-pins {
+ &pcie4 {
++	perst-gpios = <&tlmm 146 GPIO_ACTIVE_LOW>;
++	wake-gpios = <&tlmm 148 GPIO_ACTIVE_LOW>;
++
++	pinctrl-0 = <&pcie4_default>;
++	pinctrl-names = "default";
++
+ 	status = "okay";
+ };
+ 
+@@ -524,6 +530,29 @@ nvme_reg_en: nvme-reg-en-state {
+ 		bias-disable;
+ 	};
+ 
++	pcie4_default: pcie4-default-state {
++		clkreq-n-pins {
++			pins = "gpio147";
++			function = "pcie4_clk";
++			drive-strength = <2>;
++			bias-pull-up;
++		};
++
++		perst-n-pins {
++			pins = "gpio146";
++			function = "gpio";
++			drive-strength = <2>;
++			bias-disable;
++		};
++
++		wake-n-pins {
++			pins = "gpio148";
++			function = "gpio";
++			drive-strength = <2>;
++			bias-pull-up;
++		};
++	};
++
+ 	pcie6a_default: pcie6a-default-state {
+ 		clkreq-n-pins {
+ 			pins = "gpio153";
 -- 
 2.44.2
 
