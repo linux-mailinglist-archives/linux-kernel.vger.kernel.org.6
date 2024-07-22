@@ -1,72 +1,56 @@
-Return-Path: <linux-kernel+bounces-258861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF5B938D70
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:26:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F832938D81
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BFE91C20EE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:26:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B290286C43
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D1816C852;
-	Mon, 22 Jul 2024 10:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="NuPROmPI"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C6216C6BA;
+	Mon, 22 Jul 2024 10:30:01 +0000 (UTC)
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57F6149DF4;
-	Mon, 22 Jul 2024 10:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C890149DF4;
+	Mon, 22 Jul 2024 10:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721643974; cv=none; b=XBDNhfntS0nUhNWk/SSkZkAyyLfAfr0GkDzs9aKCibVgCOVTgYDt2pGApaH+o/pzW92fu1ziv035kk09NPq46D1E0q9gkVNxAx9/Q0yeUj51gwJdMBV6kBRdMLTVo9Epj87+dro2mgLs+Q2ppozg/n55xoxlp1l1lnLf6xDHAhU=
+	t=1721644200; cv=none; b=uvHQYtLajGEED4syPyMaZmKSvEanPaatOwudqUmy2q8krSEGqjagrVKGEA8oZEOh8yj6FQVd/PFMT9vxS/hdMlOpE9Vr03Nd0ahK8dj59Qo5Kh+j8qWtpZWPgX907DhgkgDc8lHfh8woPkfCbEBo+tf4k/PGGDrHFr65TQGC1qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721643974; c=relaxed/simple;
-	bh=6gdU2fmMO6+JPa+BiXzX0RbGUv4MbfaoUPguX4GuUbI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=unCaMDvoAUaQqFoNXwZcaYA5dM49MJWwp2cBcgK8azxvd3//rzXbBKXtUlrBgkhx/ochRHnKx1dnWdKKApXjpYS9jo3WhdVyHBZqmx3Ea8O3obw1WIb80bSezaJo8ZaII4AIxTf4EgeV3gZlYdXak78Gl78ThSzq0E/hC7U52QI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=NuPROmPI; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46M5A0s2002661;
-	Mon, 22 Jul 2024 05:26:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=zoiEcBfFoEgPlNbPS6G/rOEgVbzOOa72EhD7b8AV0HM=; b=
-	NuPROmPIzS5r/knNX2tOKztmTtBC3RCC8V0G/JxsiaYW6znhr84oXDc+mIjNzEp5
-	CqLg1sBTeB3jBxBQuOkQ5cfdTh/q6BWksulDxzBdJcZV/RqZV1cLhBSGdPA3tdlw
-	AnLiJEobbKdX4IrQIR1JU75MR0SEuRZtS3xJ3RxqZRN5p37CDEIN++ttR2EFPtCw
-	DqS5SISBafOJ7lExWTW6hft8dAT/7seDWVBMsUkKj7tBhDE9pWAXb7yNtisdGkwb
-	yGi/aahzBSo0TQwKR1ix/W+3/l85Dmk6xKunAwCBKvZpvj6uEwSL1lpPEpLhU4T4
-	uuKBSpVnyEyE8ZbSvIy2lQ==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 40g9nj1n5j-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jul 2024 05:26:02 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 22 Jul
- 2024 11:26:00 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Mon, 22 Jul 2024 11:26:00 +0100
-Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.18])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 752D182024B;
-	Mon, 22 Jul 2024 10:26:00 +0000 (UTC)
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-To: <stable@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-sound@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>, <patches@opensource.cirrus.com>
-Subject: [PATCH for-6.10 2/2] ASoC: cs35l56: Limit Speaker Volume to +12dB maximum
-Date: Mon, 22 Jul 2024 11:26:00 +0100
-Message-ID: <20240722102600.37931-3-rf@opensource.cirrus.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240722102600.37931-1-rf@opensource.cirrus.com>
-References: <20240722102600.37931-1-rf@opensource.cirrus.com>
+	s=arc-20240116; t=1721644200; c=relaxed/simple;
+	bh=1FRGGeU+wym2xELmubxiqoYTkV0hARifRn2Z6nZoCfU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GUGhY1KN1SResAO76ixKob2YBQero6T03U41tTMACCngoT60xh7yUIsufF2qNh9WCwKv6B3B6nHssDp2a4Oq3LnCSUVQwi8smyddi+fLfHu4iN1FTr84cS01U0W+pW2DmMYLraPXWC6zZxlOy1Eye67i/qC3jzhLxYisvvX8xwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+X-QQ-mid: bizesmtpsz1t1721643990twg6sco
+X-QQ-Originating-IP: ZQWrQ315tVoU0wN0faBAvkhf0b2ujopfRfQI60mXTkc=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Ò», 22 7ÔÂ 2024 18:26:28 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 6738067066252403474
+From: WangYuli <wangyuli@uniontech.com>
+To: zhaotianrui@loongson.cn,
+	maobibo@loongson.cn,
+	chenhuacai@kernel.org,
+	kernel@xen0n.name
+Cc: kvm@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	pbonzini@redhat.com,
+	chao.p.peng@linux.intel.com,
+	WangYuli <wangyuli@uniontech.com>,
+	Wentao Guan <guanwentao@uniontech.com>
+Subject: [PATCH] KVM: Loongarch: remove unnecessary definition of KVM_PRIVATE_MEM_SLOTS
+Date: Mon, 22 Jul 2024 18:26:24 +0800
+Message-ID: <09A6BAA84F3EF573+20240722102624.293359-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.43.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,50 +58,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: uGiP9Yo0JC-j2A6scPWUyaoS8f9o2EDb
-X-Proofpoint-ORIG-GUID: uGiP9Yo0JC-j2A6scPWUyaoS8f9o2EDb
-X-Proofpoint-Spam-Reason: safe
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-[ Upstream commit 244389bd42870640c4b5ef672a360da329b579ed ]
+"KVM_PRIVATE_MEM_SLOTS" is renamed as "KVM_INTERNAL_MEM_SLOTS".
 
-Change CS35L56_MAIN_RENDER_USER_VOLUME_MAX to 48, to limit the maximum
-value of the Speaker Volume control to +12dB. The minimum value is
-unchanged so that the default 0dB has the same integer control value.
+KVM_PRIVATE_MEM_SLOTS defaults to zero, so it is not necessary to
+define it in Loongarch's asm/kvm_host.h.
 
-The original maximum of 400 (+100dB) was the largest value that can be
-mathematically handled by the DSP. The actual maximum amplification is
-+12dB.
-
-Backport Note:
-Identical to upstream commit. This was originally thought to be only a
-cosmetic issue (the user can simply reduce the volume) but for some complex
-audio topologies with SOF Audio DSP + CS42L43 + multiple CS35L56 it has 
-turned out to be not obvious to the user what the problem actually is and
-what to do to fix it. As support for these topologies went into 6.10 we
-would like this commit to be backported into 6.10.
-
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-Link: https://patch.msgid.link/20240703095517.208077-3-rf@opensource.cirrus.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=bdd1c37a315bc50ab14066c4852bc8dcf070451e
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=b075450868dbc0950f0942617f222eeb989cad10
+Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
 ---
- include/sound/cs35l56.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/loongarch/include/asm/kvm_host.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/include/sound/cs35l56.h b/include/sound/cs35l56.h
-index 1a3c6f66f620..dc627ebf01df 100644
---- a/include/sound/cs35l56.h
-+++ b/include/sound/cs35l56.h
-@@ -209,7 +209,7 @@
+diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
+index fe38f98eeff8..ce3d36a890aa 100644
+--- a/arch/loongarch/include/asm/kvm_host.h
++++ b/arch/loongarch/include/asm/kvm_host.h
+@@ -26,8 +26,6 @@
  
- /* CS35L56_MAIN_RENDER_USER_VOLUME */
- #define CS35L56_MAIN_RENDER_USER_VOLUME_MIN		-400
--#define CS35L56_MAIN_RENDER_USER_VOLUME_MAX		400
-+#define CS35L56_MAIN_RENDER_USER_VOLUME_MAX		48
- #define CS35L56_MAIN_RENDER_USER_VOLUME_MASK		0x0000FFC0
- #define CS35L56_MAIN_RENDER_USER_VOLUME_SHIFT		6
- #define CS35L56_MAIN_RENDER_USER_VOLUME_SIGNBIT		9
+ #define KVM_MAX_VCPUS			256
+ #define KVM_MAX_CPUCFG_REGS		21
+-/* memory slots that does not exposed to userspace */
+-#define KVM_PRIVATE_MEM_SLOTS		0
+ 
+ #define KVM_HALT_POLL_NS_DEFAULT	500000
+ #define KVM_REQ_TLB_FLUSH_GPA		KVM_ARCH_REQ(0)
 -- 
-2.39.2
+2.43.4
 
 
