@@ -1,441 +1,228 @@
-Return-Path: <linux-kernel+bounces-258708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D23B2938BF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:23:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48A38938BF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:23:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BD3E1F21B34
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:23:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CC54B21338
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FEB116A37C;
-	Mon, 22 Jul 2024 09:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3472A16A94F;
+	Mon, 22 Jul 2024 09:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="F+0jZ2IQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Dwka9Wza"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SjN8aP1j"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF5D168A9
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721640184; cv=none; b=JctRlY8J60dpQjyuiDIjNBy/rBZJrkck7uB0PHjhjTKmNUN70FJSzD4EHW5LQ+KtUBkNic9BK7+2Dy6+JJ3P6sWvq4ny4WE9+u3Ve1BkQDj6YcFf+D21GqcbnPAYgfH2v2ih0T8LgKwY+ykEPR4dMNZDlQCwPzC6gqNpv7nW2I8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721640184; c=relaxed/simple;
-	bh=VJHp/FFicRu0g7JqU01qEGGop1Rcofyj2WydQ8zyNQ4=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=aGrFMb+ZptPNR7w+9pVNl3YdhlCneK0jMudELdBqyi2b0+ZnGqvLQYYKNOpnzDyG2eVGuZQbRvo8u6dm0woUk3V28AvDbiqT892QV8QlECy+X+eSvRTsyZkYkzgCafPO/ypqdlDojlZv4Qy4nRCCi24GwJOYomtJcZ0xxsi8Hz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=F+0jZ2IQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Dwka9Wza; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 125B1138029E;
-	Mon, 22 Jul 2024 05:23:00 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Mon, 22 Jul 2024 05:23:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1721640180;
-	 x=1721726580; bh=bR8ieAnqFBM1DJcNSSbbe1kCeFWemjbad8WKXACoKbg=; b=
-	F+0jZ2IQoERbzVEs3eBTL04GcWXCT11IMaqept87U5iIsW/DUgbGnjgRAEInLu5L
-	sXLMb6OozuRT/N7O+bTDaH/ipsnVSULPelx4QLFr3JrPSp1pTtL2RwPvFGl4cB8C
-	0Vs1qgarqbHyPOAmEwqWFC64oSNEEAXtQ2HtAu926FBu2rVZYTsYYBPzLjO7CBR6
-	1WhLqMFIp6iFg0KbdiAgGZ4LfF1lk6MNoqGlc1/ONtVyQC/DobGrKBBQqNhW4tfU
-	Ewo5qDyYnMwjGnDHm4yXBE4cHMpbGbqFG6dl9ZB+7YNwDE3pZVv9XtjpREzdg2Gr
-	wAobH1p5MOPkq/0Lh9hOVQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1721640180; x=
-	1721726580; bh=bR8ieAnqFBM1DJcNSSbbe1kCeFWemjbad8WKXACoKbg=; b=D
-	wka9WzakkcXvu42f42FLEPeur426IfkaYO+IJ1jy1FtfpT3DNAdpBrlxtRPu3uiS
-	Ps9QOSwmem9ScBUesnACtLwhv2j2s9UE+ygf6K7ph69pJ65tyx7BIbXI1x2GfXwE
-	/b+pl8ofX5dg4tX1kysArcd075eLxio3QaTyo1C2Coh2P6owfAKncS/KIIrnbgr6
-	oOIm8s8A133w9ClPlK/veA7hO2bMZA7euxCPWmyw9DHlr+vbuoMMqdYxJ+mVxvap
-	1GDVSrhrPHCrloQU3RXovjLdyKdYWRD++fN0pivoDfVjDYveDpteVl9hv7qkA2VW
-	0BlvI2sx+vfR1vg1eas8w==
-X-ME-Sender: <xms:8ySeZt9crmWIEu9ONjZkHYZDbCUCl6fdsTL4e4vxCFpa_ZCm8baKzg>
-    <xme:8ySeZhsBODq4gOSeas7MLtYDzAvtek8H9RGpSZkb1yqL05Y9vtGfKDKuYC25oVvbv
-    ZzcJaPcUtBUwXlVdCk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrheejgddugecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepgeefjeehvdelvdffieejieejiedvvdfhleeivdelveehjeelteegudektdfg
-    jeevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:8ySeZrASG4FxqJ99JJiL2DJNz_rptHWPljW3Y8bznzquIHBHjs6Jbw>
-    <xmx:8ySeZheBdGorKbtiDPZ4xd0oB2Ux6ew2PBfAPBO5DtSar3RHAlo8fQ>
-    <xmx:8ySeZiNlDS-gKlprGtADSaIhlUBwPkDb7f5oXpyhTkQ5Zh-6sJ7aTw>
-    <xmx:8ySeZjkevCjhspPgLdZSVAy8hNOtb60mohZvFWifwBaOusy3fbBppA>
-    <xmx:9CSeZp3Wzkd-4LwEnxqWx80Fm7FJ5jkdqFFKcFSfigTi0jpL21tCbdYj>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 85804B6008F; Mon, 22 Jul 2024 05:22:59 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6351607B4;
+	Mon, 22 Jul 2024 09:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721640209; cv=fail; b=SvgUZxIBxb6OPYTXK/wil67c1w3Hrqj3FxM+Cwj4kLSzNWEAZ/vtbjlVRbhYTgqQm3A2GOuoJ1xPQb+KyngGhlwLLP+NgQoMz2JIfNBydYNvihh5CqOLi6YIjdOohODSHDwm5Z8+Mi6IMSVS5bLo8DVsBCnyrrgKSjC93uKPsWc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721640209; c=relaxed/simple;
+	bh=BsbUWCIxPM3bJlbA7PBxw49YSvNI2NxDMz3JUM3kgHA=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UWXLCEM0PDS/plrOjEugGRmVnC8NASQY9vftHG3x/3jPOtmNZjrHwUm07ZVItVGO97CbYAIy9zSQ7/mRQxjHtk62Wx4fhO0X0Sy+WRpKy5aJO4E7KjPVoyJGBkqoeGfNa1mNLlHL4Na8ZEMOlGI4MGmEoC3yRxryxoolSNDfQvU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SjN8aP1j; arc=fail smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721640207; x=1753176207;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=BsbUWCIxPM3bJlbA7PBxw49YSvNI2NxDMz3JUM3kgHA=;
+  b=SjN8aP1jux4bl3Fh+dnbGc2NkqWIVCnV21h14iIAmuccfxl2msy7jigR
+   0fqWEZ/24MOJvxhhjEtwfiZDFoLbTWGCurFBXsic8vSyqtXyUA2cMl7bd
+   EvCBhbxOUA7r+FdvAbiv1UYrY9LvXiuMC4uoch2uuCj1SLwzDMMQMcnJe
+   z+oyFnNLf6SrcsWJopiIvXPEu/gQccnjyRZol2xHx6LauM+6rjEWI7QTg
+   VdjUnomx+yTScoS2Y4DWN5UoBBGOPe6rF/ooGIb69RHLxfF3TXazUmszS
+   d0pwpz4cOlaLqoNy0T+xeZ4Fv9epIcW+Q8+vn49lFaTU3KNAB9snoPXR2
+   g==;
+X-CSE-ConnectionGUID: slcszuSERxWBKICdBlpu8Q==
+X-CSE-MsgGUID: 857iPdn0SKWff7Q2dt+neg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11140"; a="19384125"
+X-IronPort-AV: E=Sophos;i="6.09,227,1716274800"; 
+   d="scan'208";a="19384125"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 02:23:26 -0700
+X-CSE-ConnectionGUID: u2IaAogTR06144e+VJpl8A==
+X-CSE-MsgGUID: 1dcNzkW9RrGzeQ6a3+hiqA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,227,1716274800"; 
+   d="scan'208";a="51835421"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 22 Jul 2024 02:23:26 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 22 Jul 2024 02:23:24 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 22 Jul 2024 02:23:24 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.168)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 22 Jul 2024 02:23:24 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cl6LRFnWFuRRer7WHmHapk/hXrjIf0SWo3JxSRhB20mfq7Rbzs41ZvBYHRG08jTr0XGnTBAyOPNUF95Rorvko1nTKQ4ph4fCtMTtoez4cOG3Q5NCHeLCEHib8/cJ6HN9EIeh/EZW7tPCHDymSM2LV4XfSeSDuNzqdpqUQIP9HF6kEnxRq28KI2UHP0LjSI7FAV/9zYlNHu+l6P3XaVusTtaSRAPjgMCi5816P44QSui+WEmQs5PHwXViH1K5uPhAal7xqG65Jwf/Aib1ikhKoXIr2Gm98t2tCgvQyhNDaoAtgO/ie8wwBXjvXjETBw09XVrGqrrhhSTq0nseSyIEUw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ILuqfVIBv43s3hZ+BMmeNgWXMugWAZuSuDftukT2wvA=;
+ b=wEU8lr4zbbSmMf7z6Nhgr9wCEQYu38UcW7iAPDzaK7rSblqUID7ZuKscRsF0xGxm6BAlOGY4ahY610a471SzrnO0EXhS8aYEti2uLmrZp5yDS3qr0TwdymbOXnEeFpvdMTuJiJnoX8RK7DB5xhw3GjY70wS9f9mCz+xuXsW+FMuRktP4+AmiYbMG0d1Ot4LRmwE4O7CgcNPNI2/sZ6HWpiG7xUIzEFhvo/004mAtoOI3GZp1PVjH35HHkcF4jlG/1WpvfQAmg6x8u77unS2GwLSFKR+VJ8UwmhC+AxF05UviwYO7JFgwl6nBisS74n29LOftXSC1ERF2VEJCnwkMdw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL1PR11MB5399.namprd11.prod.outlook.com (2603:10b6:208:318::12)
+ by SA1PR11MB6565.namprd11.prod.outlook.com (2603:10b6:806:250::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.27; Mon, 22 Jul
+ 2024 09:23:22 +0000
+Received: from BL1PR11MB5399.namprd11.prod.outlook.com
+ ([fe80::b8f1:4502:e77d:e2dc]) by BL1PR11MB5399.namprd11.prod.outlook.com
+ ([fe80::b8f1:4502:e77d:e2dc%7]) with mapi id 15.20.7784.016; Mon, 22 Jul 2024
+ 09:23:20 +0000
+Message-ID: <f1eb7226-0af7-4475-a57d-e3293dbc1071@intel.com>
+Date: Mon, 22 Jul 2024 11:23:15 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH iwl-next v2 3/6] ice: add Tx hang
+ devlink health reporter
+To: Jakub Kicinski <kuba@kernel.org>
+CC: <intel-wired-lan@lists.osuosl.org>, <apw@canonical.com>,
+	<joe@perches.com>, <dwaipayanray1@gmail.com>, <lukas.bulwahn@gmail.com>,
+	<akpm@linux-foundation.org>, <willemb@google.com>, <edumazet@google.com>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>, Przemek Kitszel
+	<przemyslaw.kitszel@intel.com>, Igor Bagnucki <igor.bagnucki@intel.com>,
+	Wojciech Drewek <wojciech.drewek@intel.com>
+References: <20240712093251.18683-1-mateusz.polchlopek@intel.com>
+ <20240712093251.18683-4-mateusz.polchlopek@intel.com>
+ <20240714072333.2fff045c@kernel.org>
+Content-Language: pl
+From: Mateusz Polchlopek <mateusz.polchlopek@intel.com>
+Organization: Intel
+In-Reply-To: <20240714072333.2fff045c@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR3P281CA0134.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:94::18) To BL1PR11MB5399.namprd11.prod.outlook.com
+ (2603:10b6:208:318::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <85bb8bbc-f48d-46fd-aebb-03b2f7d3980a@app.fastmail.com>
-In-Reply-To: 
- <CAMuHMdWMSpv1BbvCqf0Abfxf0sGp+5it-m1GtFR2nGuQ5-ZCAg@mail.gmail.com>
-References: <202407200330.Mgxnq2Dq-lkp@intel.com>
- <420e09ad-f43f-4734-bc06-fee7a54f2eda@suse.cz>
- <CAMuHMdWMSpv1BbvCqf0Abfxf0sGp+5it-m1GtFR2nGuQ5-ZCAg@mail.gmail.com>
-Date: Mon, 22 Jul 2024 11:22:38 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Vlastimil Babka" <vbabka@suse.cz>
-Cc: "kernel test robot" <lkp@intel.com>, "Kees Cook" <kees@kernel.org>,
- oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: include/linux/slab.h:663:78: error: subscripted value is neither array nor
- pointer nor vector
-Content-Type: text/plain;charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR11MB5399:EE_|SA1PR11MB6565:EE_
+X-MS-Office365-Filtering-Correlation-Id: ebde8ee9-bc0a-4dc8-8f53-08dcaa2fed86
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?RTdla2V0NE9lQ0gyOWlHN2c3T0RvQXgzNjFMNFY3T0pIU3g3T2hMdzJwb2tI?=
+ =?utf-8?B?NVErOGRZdXorVmhVUmdSeFk3MWkyNVdocy82dnYxL0dsdEF4ZStiT2VBSHlj?=
+ =?utf-8?B?UzE1cmtocVdJcE92N1VTa2xsaWduaEhsakRHcXhoTndnbmMwUE90MERaVWc2?=
+ =?utf-8?B?bnB6WHVrWnhCR01tRjFRWGEwaHlQaEh2ZFB0SklxcHZocDRvWGJacFlCck9s?=
+ =?utf-8?B?SWJKQ0puOGdDblBBOG9wdDRGYW16QVJvN3pXRHUzZnVrcWZycWtBR24rSS81?=
+ =?utf-8?B?VWxpa3p0dkRJZlNwbzZDclcweisydWgyTDlyakE4ZjdMMy9JeGYxL3lYYmdW?=
+ =?utf-8?B?Z0Roa2RSdk90WVlYRXJ1V0x4NC95YkkycWhNUmR0dmZIbFRDVFVIemZhcG1p?=
+ =?utf-8?B?Z1NSRWl6bXIwY3ZoVThlUTZSSVBzRy9CcFNQcUZNaW1leGVETDkraWtDb2Jj?=
+ =?utf-8?B?S1daZXJaN242VXovZVR1QTU1eUhWM2F3aEhUVGJMOXMrTjhnWlppSGtPaW5j?=
+ =?utf-8?B?b3E3WHFRaGpMdUgvZTJ3TFVkcUFEYXI1Q1ZVcTlYU2VGYkM0YmIxUElLdDVU?=
+ =?utf-8?B?Sk9PWDZrbEZDbjdHQytzTml0RTkzYUVWbDJpRGI2UGRMVE9pZlY4L3BqSW9y?=
+ =?utf-8?B?MUZGdnRpZ2lSNnd3OStQeWJ1OWNoREY0dzR2QW1YWGNtSU1EdTNEUWc3cy80?=
+ =?utf-8?B?aHoyQ3VEOWZGbFNyWmRlRURZQSswM2U2QVBIWGZ3TXAzUEhmNWZJMjVqZTUr?=
+ =?utf-8?B?aWhaZitTOXZxSGJGVThXUUp4VWdMbmFQdEJJd0hNcDBTb2dWdEl4Z1dDUktE?=
+ =?utf-8?B?dWNpdDFjKzRXNitSS09NTERIbHVXc2l3dTFHMmFFMzJEVStwM0F0UDgxcWho?=
+ =?utf-8?B?Ni9Jbk5saFhrV245TnQ2a2tEMFhsSGNYOFdhejRoNCtjejNqb2RiMk9ZcFY1?=
+ =?utf-8?B?VjQ2VjdQMjgxUi9NZVNmdHVndzJDZkx3ODlINHE5bDl6UWpOanBWY0ZPQ2Ev?=
+ =?utf-8?B?ZVc4UFNrYUVWTDVwUERmWkI0aWhwWTNOYnhyMGUrbDNBOGpnRFlnTzR0dkt3?=
+ =?utf-8?B?TjNtbk5sR0NTYjNSQWo0dlNXT0t6WGNGYWtRYzJkU0lvMWFqVTNqT01kcFlx?=
+ =?utf-8?B?a0N3YW1KTEJLYXdrbTNlUjVWaENkaFk0cUlJZXphV0xWNjZmVGkrV0hpQUhy?=
+ =?utf-8?B?N3g5SWFRNUljQXk3Y1d1QlJFdzJkV2IwVklFTTc2ck5Hak1DVml0MmRIaXV3?=
+ =?utf-8?B?REs1WDdKK0YyRGdwZS95UFpVSGxXMTFIL0FxVmU5MVZxQ2UvZEd6SGYySjBN?=
+ =?utf-8?B?VUN1cWR0TE9udU5FNWhOTmN3Z1g1RGVUZEV0WHoyYmYwT1hKMzNwVnlFUHIx?=
+ =?utf-8?B?YW1WVjB0bXdzSXkxdVVNZ0pITVFpR2NmRWYycjQzSDlKdEtxVzBMRVJGNXY1?=
+ =?utf-8?B?aFkzL3VjRkk3QmRXNGF2UnQ4UUxUU1g0Rnh5alE1VlhaeEY4VVVQT1ZmMHkx?=
+ =?utf-8?B?ejNPVHhFdHc1US9CRExERVBUb3ZaaHZHV09wM01SOW8rYm15ZUhnSCsybUFS?=
+ =?utf-8?B?QTlYYzB2YWF5K0UvNVZObUZlUzg4cmJMQzhyamFjQmpYUTU4OUg1b0ZxNG9G?=
+ =?utf-8?B?UmRoYnc4MDZEUDlMKzMvMTY3VkNqOTBkK3BpS1JVcnJVM0ZlcC9OejEvTUdl?=
+ =?utf-8?B?RHB4d2dPN05ZeWVBdkdHV21zZ2FHRVF1K3k2ZkpXZm02U0Fyb1dFQkh4MmIy?=
+ =?utf-8?B?RkdXbDBUMkE3ZlRzMytHM2YxV2NMdFVIdlRTRWZuamhXajQrbHZsaGJwSm1v?=
+ =?utf-8?B?aElhMGVaNnMzSWhwOTY5UT09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5399.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YmZENXNzczRFdEJXSXI3OUlvZDBEYTJsTTFLUFhsU3Mwek5ycXdUNHljQ0lW?=
+ =?utf-8?B?V1F4UU5Nb0RuU2ZPdHZnTGNZeUhRUTBJL2hCV09qeGRITVc4T2ZscURpam4z?=
+ =?utf-8?B?N1ZVRDFVby84MXZvdlE5eFkvdStJclNuOUlLRUtHdmtTQnVDQitIQXErZWlU?=
+ =?utf-8?B?ZXRRaGRReGhlb1FBaXJWWUF5QnhaSHYvWWZhd0IzOU1JbHFYL0dEZy82cFhY?=
+ =?utf-8?B?TDdkK01JMDRNS1JBaytTcXBOUnBldUxMSUxwRDU4ZE8zd2JZUExidHV1TWdl?=
+ =?utf-8?B?aExuS3k3aVhkNTdsM2pMS1hydnI5dGxjWWpZcXpIcjF5aFZiSVdndFNhRjJB?=
+ =?utf-8?B?Mm5NZFNNN3hLNWVleGN0RG4zRDdJN1gzTWRhZDZnN2YyYjl5K3JBV2QrUndX?=
+ =?utf-8?B?UlRxeVkyQjZmUTVaZ1JwRm9YVnhWVy9WNk9mdm8rS011VzNDUzNValZjVEZW?=
+ =?utf-8?B?WGt0TmtOM3ZPZzhHdlhXaEdteU9FVmFiSXhFQjFlTmdNQVlQN290TENSRFRI?=
+ =?utf-8?B?ZnB1NkNMNm1Hb0RyTXdhQXovM3BJUXVRS0x2aktoQThqYzY1WHZRYmEzTmYv?=
+ =?utf-8?B?L3ZiNkdHalBnc2FNUkdhdFl1ZWNUb2lMNk9Qd2pQb0JuTW5EWnA2Ri9LMjBS?=
+ =?utf-8?B?L3E2R3A5MWFGT25RU3paekwzdmxYcVlocHNUVWJ4bVBmRThZeTNnVVQ1bjJ5?=
+ =?utf-8?B?QUYybmphaVhGTm1EeUNYQUpxV1psNjRnWFBBYUlTWHVhcXVXUXZrUjhTOFVW?=
+ =?utf-8?B?UWFYaFBlY2gvaUNaZ3pCUU9DZmNHVlVzM2VWYmN1azlYUlZEbFpRSElGZHNk?=
+ =?utf-8?B?R2dCSXdFVmRseS9kbW5WZzVySStjRm9hdW9GY1V0ZDNReGFaV2J5TzNPYXRE?=
+ =?utf-8?B?aXZMT21lTHViSThnRDJnREt4L1FhYnB6a2FqR0tVbjRuYi9IeGV4Y0N2WVJV?=
+ =?utf-8?B?NjlaOUR2TmRjaVcrdmt4RzkwM0tzR0hVcFUzY2F0dnV0cm1tYy92WCtxWGo2?=
+ =?utf-8?B?bnB4R3NyTXA1N1JQMWRGMVluZG9kU1NqL1N6QmEySER1N2VRK25PQjZQR01R?=
+ =?utf-8?B?QStZTlVFNW9YOU1VSDEwQmM5OWxEWm5XK0kzbytNVTkwSlNFY2RYQVVFTk5R?=
+ =?utf-8?B?V1dXdHVvVFd1aUVMM3FOcG80cmhIajdqcXl2NVdVbWdQSEhsUEtLSFJUVEd1?=
+ =?utf-8?B?MkRpY2JTRnEyR1ZGRnhDTk1KTzQ0RFVua3Q2SUxjcGNjWUJYSmxyMFhkbnlr?=
+ =?utf-8?B?Qy9GS3NnS0RuR3ZuR2xIU2hHOFNpRldGODNhSVVBYTh5UXVOem91a0JkeGUv?=
+ =?utf-8?B?T1l0Q0Z5dmhCWmdFYUNON0RmL3pHM09WMDdncFIreUpCR0xjSk11NE5OM2JW?=
+ =?utf-8?B?dHlsTjRaRjk1RS85ZFZzSFBJd1hnamlUelM5QWx3bXVkdFNrYVFqelBGOWpk?=
+ =?utf-8?B?SWYvbFQ4aVpkQk9XOG1Bd3FyVUlEVDFCNzUzM2poazJXYy9UcGVWYzF1UExB?=
+ =?utf-8?B?SFRCNUhSc3NOZ2hKWERRNkNmM0JrMTMzbEZFUlpqL1BqV2wxaW13SGFyOG9L?=
+ =?utf-8?B?Tk5nTFUvNGVmM3VHOE5iQ1pITlBOVWJjOXJRUmVjazVhaitDVjE3eVFiOW5l?=
+ =?utf-8?B?eEUzbEh1Qk9hOVdaZjI2NHlLRTlQWmx2R2xmQ0tVUCtpa2VtZFhiNHBKb2sv?=
+ =?utf-8?B?YUFDdFI2WFRBb0NjdWxsNWlmd05lbnBrZ3RxTEZtZzBGMG5FcU81SWFBbFBz?=
+ =?utf-8?B?THI2bHl1SWgwUWlSZ3lhOE1GYVRVU0FCaW1mNTJTQ0hKQm9hWE5tWkljZGNC?=
+ =?utf-8?B?SFlJcUVXdmR1T2hDODBKdzVaWS9VclhtK2ttVVJwT2x1TVBVaVJCWG9yQ0w2?=
+ =?utf-8?B?SmZzc1cvc2RGOEw5Qm1GY0FPYU94UHNHT2xsVVhDZ21XT1hibm42QmQrYnQz?=
+ =?utf-8?B?L1BuYSszU1JjNkxnNUc0NHFUczRZYThVWWhPU29PazRKY1l1Tm0yaXhnYlFx?=
+ =?utf-8?B?MFcvdUIxWU5FbzRrY2RxT1J5K1BLRFRJbDdDV2NWeW9jV2dLaUxvOGtPeFhs?=
+ =?utf-8?B?S1lnTWxKcU82ZlBtdW9Xek5PM0pZYVR2WEF4NEdDcFRKSjh5YTdqcnNoYzZw?=
+ =?utf-8?B?VklnL3J2Zm54Z1BCOHNYdU1BQnREK3ZUMWQxd25lV1d6WHQwUFpzaXdDSkRs?=
+ =?utf-8?B?WXc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: ebde8ee9-bc0a-4dc8-8f53-08dcaa2fed86
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5399.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2024 09:23:20.7104
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6Hotm2J6PQ7TwTm74/DzFwC8dDE0N9ihDdkUR2pWseatK2mYUHR0j+kJRg1QZxTpM0Az54Enp1Nv/0ADh63N4i1MQFEvqzblrEZ6vzgMLD4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6565
+X-OriginatorOrg: intel.com
 
-On Mon, Jul 22, 2024, at 09:48, Geert Uytterhoeven wrote:
-> On Mon, Jul 22, 2024 at 9:15=E2=80=AFAM Vlastimil Babka <vbabka@suse.c=
-z> wrote:
->> On 7/19/24 10:02 PM, kernel test robot wrote:
->>
->> Hm the new error ettributed to slab seems just a consequence of the b=
-roken
->> PAGE_SHIFT? Although it's not listed here in the errors for some reas=
-on, I
->> assume without PAGE_SHIFT we don't have KMALLOC_SHIFT_HIGH thus we do=
-n't
->> have kmem_buckets typedef and thus kmalloc_caches is who knows what a=
-nd thus
->> doesn't look like an array? And the broken PAGE_SHIFT has to be cause=
- by
->> something else.
->>
->> >    arch/m68k/include/asm/page.h:10:25: error: 'CONFIG_PAGE_SHIFT' u=
-ndeclared here (not in a function); did you mean 'CONFIG_LOG_BUF_SHIFT'?
->> >       10 | #define PAGE_SHIFT      CONFIG_PAGE_SHIFT
->> >          |                         ^~~~~~~~~~~~~~~~~
->
-> It's a known issue since commit 5394f1e9b687bcf2 ("arch: define
-> CONFIG_PAGE_SIZE_*KB on all architectures"): m68k-alldefconfig does
-> not select any CPU types, hence no MMU type, and as a consequence no
-> page size is selected.
->
-> Arnd and I couldn't come up with a good solution to enforce a valid co=
-nfig,
-> so this is still broken...
 
-I've tried again as this keeps coming up. Not sure if this
-is a variant we have discussed before, but this way should
-fix the issue. There are still two unrelated build failures
-with 'alldefconfig' though:
 
-arch/m68k/kernel/setup_mm.c:54:2: error: #warning No CPU/platform type s=
-elected, your kernel will not work! [-Werror=3Dcpp]
-   54 | #warning No CPU/platform type selected, your kernel will not wor=
-k!
-arm-soc/kernel/irq/irqdesc.c:592:3: error: array index in initializer ex=
-ceeds array bounds
-  592 |  [0 ... NR_IRQS-1] =3D {
+On 7/14/2024 4:23 PM, Jakub Kicinski wrote:
+> On Fri, 12 Jul 2024 05:32:48 -0400 Mateusz Polchlopek wrote:
+>> +	err = devlink_health_report(reporter, msg, priv_ctx);
+>> +	if (err) {
+>> +		struct ice_pf *pf = devlink_health_reporter_priv(reporter);
+>> +
+>> +		dev_err(ice_pf_to_dev(pf),
+>> +			"failed to report %s via devlink health, err %d\n",
+>> +			msg, err);
+> 
+> My knee-jerk reaction is - why not put it in devlink_health_report()?
+> Also, I'd rate limit the message.
 
-       Arnd
-
-8<---
-From 4579e30445643f1def7b9a8ae2f8720ca963b973 Mon Sep 17 00:00:00 2001
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Mon, 22 Jul 2024 10:55:57 +0200
-Subject: [PATCH] m68k: move sun3 into a top-level platform option
-
-It is possible to select an m68k MMU build but not actually
-enable any of the three MMU options, which then results in a
-build failure:
-
- arch/m68k/include/asm/page.h:10:25: error: 'CONFIG_PAGE_SHIFT' undeclar=
-ed here (not in a function); did you mean 'CONFIG_LOG_BUF_SHIFT'?
-
-Change the Kconfig selection to ensure that exactly one of the
-three options is always enabled whenever an MMU-enabled kernel
-is built, but moving CONFIG_SUN3 into a top-level option next
-to M68KCLASSIC and COLDFIRE.
-
-All defconfig files should keep working without changes,
-but alldefconfig now builds support for the classic MMU.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-
-diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-index cc26df907bfe..7c4f7bcc89d7 100644
---- a/arch/m68k/Kconfig
-+++ b/arch/m68k/Kconfig
-@@ -84,24 +84,23 @@ config MMU
- 	  support by paged memory management. If unsure, say 'Y'.
-=20
- config MMU_MOTOROLA
--	bool
-+	def_bool MMU && M68KCLASSIC
- 	select HAVE_PAGE_SIZE_4KB
-=20
- config MMU_COLDFIRE
-+	def_bool MMU && COLDFIRE
- 	select HAVE_PAGE_SIZE_8KB
--	bool
-=20
- config MMU_SUN3
--	bool
-+	def_bool MMU && SUN3
- 	select HAVE_PAGE_SIZE_8KB
--	depends on MMU && !MMU_MOTOROLA && !MMU_COLDFIRE
-=20
- config ARCH_SUPPORTS_KEXEC
--	def_bool M68KCLASSIC && MMU
-+	def_bool (M68KCLASSIC || SUN3) && MMU
-=20
- config BOOTINFO_PROC
- 	bool "Export bootinfo in procfs"
--	depends on KEXEC && M68KCLASSIC
-+	depends on KEXEC && (M68KCLASSIC || SUN3)
- 	help
- 	  Say Y to export the bootinfo used to boot the kernel in a
- 	  "bootinfo" file in procfs.  This is useful with kexec.
-diff --git a/arch/m68k/Kconfig.cpu b/arch/m68k/Kconfig.cpu
-index c777a129768a..a1b9e5f09e18 100644
---- a/arch/m68k/Kconfig.cpu
-+++ b/arch/m68k/Kconfig.cpu
-@@ -32,13 +32,23 @@ config COLDFIRE
- 	select HAVE_LEGACY_CLK
- 	select HAVE_PAGE_SIZE_8KB if !MMU
-=20
--endchoice
-+config SUN3
-+	bool "Sun3 support"
-+	depends on MMU
-+	select HAVE_ARCH_PFN_VALID
-+	select LEGACY_TIMER_TICK
-+	select NO_DMA
-+	select M68020
-+	help
-+	  This option enables support for the Sun 3 series of workstations
-+	  (3/50, 3/60, 3/1xx, 3/2xx systems). These use a classic 68020 CPU
-+	  but the custom memory management unit makes them incompatible with
-+	  all other classic m68k machines, including Sun 3x.
-=20
--if M68KCLASSIC
-+endchoice
-=20
- config M68000
--	def_bool y
--	depends on !MMU
-+	def_bool M68KCLASSIC && !MMU
- 	select CPU_HAS_NO_BITFIELDS
- 	select CPU_HAS_NO_CAS
- 	select CPU_HAS_NO_MULDIV64
-@@ -56,7 +66,8 @@ config M68000
- 	  a paging MMU.
-=20
- config M68020
--	bool "68020 support"
-+	bool "68020 support" if M68KCLASSIC
-+	default !(M68030 || M68040 || M68060)
- 	depends on MMU
- 	select FPU
- 	select CPU_HAS_ADDRESS_SPACES
-@@ -66,9 +77,10 @@ config M68020
- 	  68851 MMU (Memory Management Unit) to run Linux/m68k, except on the
- 	  Sun 3, which provides its own version.
-=20
-+if M68KCLASSIC && MMU
-+
- config M68030
- 	bool "68030 support"
--	depends on MMU && !MMU_SUN3
- 	select FPU
- 	select CPU_HAS_ADDRESS_SPACES
- 	help
-@@ -78,7 +90,6 @@ config M68030
-=20
- config M68040
- 	bool "68040 support"
--	depends on MMU && !MMU_SUN3
- 	select FPU
- 	select CPU_HAS_ADDRESS_SPACES
- 	help
-@@ -89,13 +100,14 @@ config M68040
-=20
- config M68060
- 	bool "68060 support"
--	depends on MMU && !MMU_SUN3
- 	select FPU
- 	select CPU_HAS_ADDRESS_SPACES
- 	help
- 	  If you anticipate running this kernel on a computer with a MC68060
- 	  processor, say Y. Otherwise, say N.
-=20
-+endif # M68KCLASSIC
-+
- config M68328
- 	bool
- 	depends on !MMU
-@@ -117,8 +129,6 @@ config M68VZ328
- 	help
- 	  Motorola 68VZ328 processor support.
-=20
--endif # M68KCLASSIC
--
- if COLDFIRE
-=20
- choice
-diff --git a/arch/m68k/Kconfig.machine b/arch/m68k/Kconfig.machine
-index d06b1c5d9b0c..de39f23b180e 100644
---- a/arch/m68k/Kconfig.machine
-+++ b/arch/m68k/Kconfig.machine
-@@ -6,7 +6,6 @@ if M68KCLASSIC
- config AMIGA
- 	bool "Amiga support"
- 	depends on MMU
--	select MMU_MOTOROLA if MMU
- 	select LEGACY_TIMER_TICK
- 	help
- 	  This option enables support for the Amiga series of computers. If
-@@ -16,7 +15,6 @@ config AMIGA
- config ATARI
- 	bool "Atari support"
- 	depends on MMU
--	select MMU_MOTOROLA if MMU
- 	select HAVE_ARCH_NVRAM_OPS
- 	select LEGACY_TIMER_TICK
- 	help
-@@ -31,7 +29,6 @@ config ATARI_KBD_CORE
- config MAC
- 	bool "Macintosh support"
- 	depends on MMU
--	select MMU_MOTOROLA if MMU
- 	select HAVE_ARCH_NVRAM_OPS
- 	select HAVE_PATA_PLATFORM
- 	select LEGACY_TIMER_TICK
-@@ -44,7 +41,6 @@ config MAC
- config APOLLO
- 	bool "Apollo support"
- 	depends on MMU
--	select MMU_MOTOROLA if MMU
- 	select LEGACY_TIMER_TICK
- 	help
- 	  Say Y here if you want to run Linux on an MC680x0-based Apollo
-@@ -53,7 +49,6 @@ config APOLLO
- config VME
- 	bool "VME (Motorola and BVM) support"
- 	depends on MMU
--	select MMU_MOTOROLA if MMU
- 	help
- 	  Say Y here if you want to build a kernel for a 680x0 based VME
- 	  board.  Boards currently supported include Motorola boards MVME147,
-@@ -97,7 +92,6 @@ config BVME6000
- config HP300
- 	bool "HP9000/300 and HP9000/400 support"
- 	depends on MMU
--	select MMU_MOTOROLA if MMU
- 	select LEGACY_TIMER_TICK
- 	help
- 	  This option enables support for the HP9000/300 and HP9000/400 series
-@@ -110,7 +104,6 @@ config SUN3X
- 	bool "Sun3x support"
- 	depends on MMU
- 	select LEGACY_TIMER_TICK
--	select MMU_MOTOROLA if MMU
- 	select M68030
- 	help
- 	  This option enables support for the Sun 3x series of workstations.
-@@ -124,7 +117,6 @@ config SUN3X
- config Q40
- 	bool "Q40/Q60 support"
- 	depends on MMU
--	select MMU_MOTOROLA if MMU
- 	select LEGACY_TIMER_TICK
- 	help
- 	  The Q40 is a Motorola 68040-based successor to the Sinclair QL
-@@ -133,22 +125,6 @@ config Q40
- 	  Q60. Select your CPU below.  For 68LC060 don't forget to enable FPU
- 	  emulation.
-=20
--config SUN3
--	bool "Sun3 support"
--	depends on MMU
--	depends on !MMU_MOTOROLA
--	select MMU_SUN3 if MMU
--	select LEGACY_TIMER_TICK
--	select NO_DMA
--	select M68020
--	help
--	  This option enables support for the Sun 3 series of workstations
--	  (3/50, 3/60, 3/1xx, 3/2xx systems). Enabling this option requires
--	  that all other hardware types must be disabled, as Sun 3 kernels
--	  are incompatible with all other m68k targets (including Sun 3x!).
--
--	  If you don't want to compile a kernel exclusively for a Sun 3, say N.
--
- config VIRT
- 	bool "Virtual M68k Machine support"
- 	depends on MMU
-@@ -157,7 +133,6 @@ config VIRT
- 	select GOLDFISH_TIMER
- 	select GOLDFISH_TTY
- 	select M68040
--	select MMU_MOTOROLA if MMU
- 	select RTC_CLASS
- 	select RTC_DRV_GOLDFISH
- 	select TTY
-diff --git a/arch/m68k/kernel/Makefile b/arch/m68k/kernel/Makefile
-index f335bf3268a1..5d1af676b508 100644
---- a/arch/m68k/kernel/Makefile
-+++ b/arch/m68k/kernel/Makefile
-@@ -5,16 +5,8 @@
-=20
- extra-y			+=3D vmlinux.lds
-=20
--obj-$(CONFIG_AMIGA)	:=3D head.o
--obj-$(CONFIG_ATARI)	:=3D head.o
--obj-$(CONFIG_MAC)	:=3D head.o
--obj-$(CONFIG_APOLLO)	:=3D head.o
--obj-$(CONFIG_VME)	:=3D head.o
--obj-$(CONFIG_HP300)	:=3D head.o
--obj-$(CONFIG_Q40)	:=3D head.o
--obj-$(CONFIG_SUN3X)	:=3D head.o
--obj-$(CONFIG_VIRT)	:=3D head.o
--obj-$(CONFIG_SUN3)	:=3D sun3-head.o
-+obj-$(CONFIG_M68KCLASSIC)	:=3D head.o
-+obj-$(CONFIG_SUN3)		:=3D sun3-head.o
-=20
- obj-y	+=3D entry.o irq.o module.o process.o ptrace.o
- obj-y	+=3D setup.o signal.o sys_m68k.o syscalltable.o time.o traps.o
-diff --git a/arch/m68k/kernel/time.c b/arch/m68k/kernel/time.c
-index a97600b2af50..108debb87cfb 100644
---- a/arch/m68k/kernel/time.c
-+++ b/arch/m68k/kernel/time.c
-@@ -62,7 +62,7 @@ void timer_heartbeat(void)
- }
- #endif /* CONFIG_HEARTBEAT */
-=20
--#ifdef CONFIG_M68KCLASSIC
-+#if defined(CONFIG_M68KCLASSIC) || defined(CONFIG_SUN3)
- /* machine dependent timer functions */
- int (*mach_hwclk) (int, struct rtc_time*);
- EXPORT_SYMBOL(mach_hwclk);
-@@ -149,7 +149,7 @@ static int __init rtc_init(void)
-=20
- module_init(rtc_init);
- #endif /* CONFIG_RTC_DRV_GENERIC */
--#endif /* CONFIG M68KCLASSIC */
-+#endif /* CONFIG M68KCLASSIC || SUN3 */
-=20
- void __init time_init(void)
- {
+Hmmm... That's good point. I will talk to the author about that but
+seems to be good point Jakub.
 
