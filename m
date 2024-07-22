@@ -1,349 +1,119 @@
-Return-Path: <linux-kernel+bounces-259314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EA209393FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:04:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11D3B9393FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:08:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3C59B219C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:04:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A02F7281F2F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499FA17107A;
-	Mon, 22 Jul 2024 19:04:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C6C16F909;
+	Mon, 22 Jul 2024 19:08:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="aBI+0EK3"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="a5iY12aK"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63A018C08
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 19:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D111C695
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 19:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721675049; cv=none; b=KvEyjbiSDtJ/C4LOsg1O2vhC350NNuCUkRU9gyH2JEJcDjFLJyF3XHCcxdqq4OrYu7z1gwcnYjh2Od34vm4iHZaYmnRPx0vopf9C7C1cN1/Hh22BMbvmaX7XLB40MAH5qmBSrNaPG1zg5R+soO7b8uU5GdmTPX619TThyq2iWnY=
+	t=1721675307; cv=none; b=dhkpaNZ2Mmq75mCn/78qofrr7Zn+9jLBGg6OYbbQm1wMU6O5ty2cXgQxOwCCXpi65724YdxBgTSfbkZsgvCsopvJiYcl/iHHKNyRVtSe7+7oE35Mjt9i3qNV1Vw1Ib1ynoiGUgnX0TxjPyUBCAAvrz00hGcbF3vu4HDPrjEBPHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721675049; c=relaxed/simple;
-	bh=8sLTIyS8TZWjmlWYCZZ1+fuTzwlxAzROzLQ+A6GLbMY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ru3QLNOXq03ZU3ILPy7rIx2AnfCIoHk9t7ndoHhIr0KyfFxy0CTqh3E1UEQhKlISUub7S48CvxfMig+S0EqUhWqOq8p1QRbBzGJVSzzM4kLMMLG9KHQsbYYAWSln/NrWIvzR786LxDBE3aaXY4PIBHVtJlqhYaz4G0o9tb1f4IE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=aBI+0EK3; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
-X-Envelope-To: wens@kernel.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1721675044;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vCehHTNE0yJwghwUTXXSJntL5vplfQCDdSOUf961ASQ=;
-	b=aBI+0EK3wjLxJSZThjUWcQviQSjA/o39gjU7+8eXu4hFQE5Inwz0rQjd5C1uSkpT/+AIhk
-	SFgp7iseg3AzPFgPvvH9JiEy/lCdZ+nn1j4b3m5MasY+QZ8enEk/DarMP9w/KdeQqfX0L2
-	Icn5we5tV7++NxWd1JF+12mAaGgt1PMlVmOJfBSinCr0nGml260axTI+4n5Mt6ZC/q9ee6
-	LhT9ukw60icBwfjSEeM6sDll6GbuhWPFuzaG5mPZdf1IKo8G2l6vglSrcSUVBaClTMULWB
-	ZCJQsBm4vGwePZaujkbUHoex0pWxPXrYnqOuxY6qdUXBabGkND7vsqP3Bh33+g==
-X-Envelope-To: daniel@makrotopia.org
-X-Envelope-To: linux-rockchip@lists.infradead.org
-X-Envelope-To: linux-arm-kernel@lists.infradead.org
-X-Envelope-To: robh@kernel.org
-X-Envelope-To: conor+dt@kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: herbert@gondor.apana.org.au
-X-Envelope-To: martin@kaiser.cx
-X-Envelope-To: s.hauer@pengutronix.de
-X-Envelope-To: sebastian.reichel@collabora.com
-X-Envelope-To: ardb@kernel.org
-X-Envelope-To: ukleinek@debian.org
-X-Envelope-To: devicetree@vger.kernel.org
-X-Envelope-To: linux-crypto@vger.kernel.org
-X-Envelope-To: p.zabel@pengutronix.de
-X-Envelope-To: olivia@selenic.com
-X-Envelope-To: krzk+dt@kernel.org
-X-Envelope-To: dsimic@manjaro.org
-X-Envelope-To: aurelien@aurel32.net
-X-Envelope-To: heiko@sntech.de
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Diederik de Haas <didi.debian@cknow.org>
-To: Chen-Yu Tsai <wens@kernel.org>
-Cc: Daniel Golle <daniel@makrotopia.org>, linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- Herbert Xu <herbert@gondor.apana.org.au>, Martin Kaiser <martin@kaiser.cx>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Ard Biesheuvel <ardb@kernel.org>,
- Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <ukleinek@debian.org>,
- devicetree@vger.kernel.org, linux-crypto@vger.kernel.org,
- Philipp Zabel <p.zabel@pengutronix.de>, Olivia Mackall <olivia@selenic.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Dragan Simic <dsimic@manjaro.org>,
- Aurelien Jarno <aurelien@aurel32.net>, Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
-Date: Mon, 22 Jul 2024 21:03:52 +0200
-Message-ID: <4406786.zLnsZ2vfAB@bagend>
-Organization: Connecting Knowledge
-In-Reply-To:
- <CAGb2v64Dx7XaJOu0HHzFxYYY2ddUZao5Tar8-s1R_miVZqWcXA@mail.gmail.com>
-References:
- <cover.1720969799.git.daniel@makrotopia.org> <3190961.CRkYR5qTbq@bagend>
- <CAGb2v64Dx7XaJOu0HHzFxYYY2ddUZao5Tar8-s1R_miVZqWcXA@mail.gmail.com>
+	s=arc-20240116; t=1721675307; c=relaxed/simple;
+	bh=21T+7guqWFCcfmKQsaPQWLJG0mdfUYR6tiduUYWJzCU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=b/ZISWtijRTsMRuOIbqke5vIebfc+siGxwnaCMLNd3AxpTc7zUeNqAsSwFkp4mUPhGVe4Bb9ULOawsdYo1kN6ygL+4cyGEaiaiKubiKiDii8RiDbP6xo2UhJIaC7wHA/CLFcMO2dP9ehz/Dl7lXLxaS1NbIiS4XgdMSwZbQovDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=a5iY12aK; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fc658b6b2eso33442255ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 12:08:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1721675305; x=1722280105; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=njVaMbDcMaiQerRZ4wsTI9OpiF5HxfQBcNMiBdohBpc=;
+        b=a5iY12aKKrQLX1yN5xgNlzmOlBMkt0DeiNeHH21gVGOZkMm9vg4Xq/Pw+UIQlCFRUs
+         I0aJFmXwTR7+LVLtQ71bvj/oz0SisYDPBK+J4VkfpY17JaVob2MRlQzLY+YSc7D4OF7E
+         zsi2ZVQCaTRsVKLe98+4AelHMQjC7AfPIyC4w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721675305; x=1722280105;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=njVaMbDcMaiQerRZ4wsTI9OpiF5HxfQBcNMiBdohBpc=;
+        b=OQCiUjHMK8Va2JsMP+Ca5JYdvLsjkvNYQ3FfPc+0pWQMtEYAKPNsgVQWDJHXRTCyIV
+         w8iPdw0sfdFz2lHw8d7Xyvk23zmi+ERN/FRD74EFoIUt+JxnwYabCgzjyJDWE/yl3fnA
+         8pYkmIRbyLSfUrq2pxyrjNb+r6yUQ1M5uMcaqQd+M7/fKSqPBlvPR1MGULOvnZ6G1Gmg
+         yzHLh7AMd8M6K3Guvr2Q6oF5443m9v6vBz1w7kkZtj3/BWtlyHSTQJl3y8QU2SF056g5
+         0kQ1phFzDGfl888iW6e2zPYEzgy5hJYte5TFHO26e3zOPavzFmJ83hS35b47jfq8pT+0
+         zOCA==
+X-Gm-Message-State: AOJu0YzuPY+9rW8Hfha3TzKQbe+JScmmpF5Vspv2H4csLnmKYa4U7ucw
+	EdYJgaB1FQryIa1in3S0MQgIjppIfiV2tOSLne90w5kULQCnrmK7LiyCdYmYdnT7G0viVC8NMkS
+	QwU6/ooCSp7uXRbQfaX+N2WibMJGpGXNNWIvDIUohAzJ99iNejpHBj6eiZFOISLWPfpxDVA2ICN
+	+lzakQTDEemwkidJidh760eXUDQOysv36b0CAYndaMeZs=
+X-Google-Smtp-Source: AGHT+IEqkTQAT1FPq412tRLy/kyTwhtLiCNeKUuL42bstXUpr01mSeEs0TrxDjRg1iZSGF1MUfAxOw==
+X-Received: by 2002:a17:903:41cc:b0:1fb:7c7f:6447 with SMTP id d9443c01a7336-1fdb5f6b353mr6705625ad.25.1721675304659;
+        Mon, 22 Jul 2024 12:08:24 -0700 (PDT)
+Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f25a841sm58350335ad.32.2024.07.22.12.08.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 12:08:24 -0700 (PDT)
+From: Joe Damato <jdamato@fastly.com>
+To: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: Joe Damato <jdamato@fastly.com>,
+	Jiawen Wu <jiawenwu@trustnetic.com>,
+	Mengyuan Lou <mengyuanlou@net-swift.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Duanqiang Wen <duanqiangwen@net-swift.com>
+Subject: [PATCH net] net: wangxun: use net_prefetch to simplify logic
+Date: Mon, 22 Jul 2024 19:08:13 +0000
+Message-Id: <20240722190815.402355-1-jdamato@fastly.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2509603.0URhkfn4ud";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
---nextPart2509603.0URhkfn4ud
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"; protected-headers="v1"
-From: Diederik de Haas <didi.debian@cknow.org>
-To: Chen-Yu Tsai <wens@kernel.org>
-Date: Mon, 22 Jul 2024 21:03:52 +0200
-Message-ID: <4406786.zLnsZ2vfAB@bagend>
-Organization: Connecting Knowledge
-MIME-Version: 1.0
+Use net_prefetch to remove #ifdef and simplify prefetch logic. This
+follows the pattern introduced in a previous commit f468f21b7af0 ("net:
+Take common prefetch code structure into a function"), which replaced
+the same logic in all existing drivers at that time.
 
-On Monday, 22 July 2024 19:57:05 CEST Chen-Yu Tsai wrote:
-> On Wed, Jul 17, 2024 at 12:54=E2=80=AFAM Diederik de Haas <didi.debian@ck=
-now.org>=20
-wrote:
-> > On Tuesday, 16 July 2024 17:18:48 CEST Chen-Yu Tsai wrote:
-> > > On Jul 16, 2024 at 10:13=E2=80=AFPM Diederik de Haas <didi.debian@ckn=
-ow.org>=20
-wrote:
-> > > > On Tuesday, 16 July 2024 15:59:40 CEST Diederik de Haas wrote:
-> > > > > For shits and giggles, I tried it on my PineTab2 too (also rk3566=
-):
-> > > > >=20
-> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > > root@pinetab2:~# uname -a
-> > > > > Linux pinetab2 6.10+unreleased-arm64 #1 SMP Debian 6.10-1~cknow
-> > > > > (2024-04-24) aarch64 GNU/Linux
-> > > > >=20
-> > > > > root@pinetab2:~# dd if=3D/dev/hwrng bs=3D100000 count=3D1 > /dev/=
-null
-> > > > > 1+0 records in
-> > > > > 1+0 records out
-> > > > > 100000 bytes (100 kB, 98 KiB) copied, 5,69533 s, 17,6 kB/s
-> > > > >=20
-> > > > > root@plebian-pinetab2:~# cat /dev/hwrng | rngtest -c 1000
-> > > > > rngtest 5
-> > > > > ...
-> > > > > rngtest: starting FIPS tests...
-> > > > > rngtest: bits received from input: 20000032
-> > > > > rngtest: FIPS 140-2 successes: 730
-> > > > > rngtest: FIPS 140-2 failures: 270
-> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > >=20
-> > > > > That's looking quite a lot better ... and I have no idea why.
-> > > > >=20
-> > > > > The Q64-A is used as headless server and the PineTab2 is not,
-> > > > > but I connected to both over SSH and they were freshly booted
-> > > > > into, thus I haven't actually/normally used the PT2 since boot.
-> > > >=20
-> > > > I did freshly install rng-tools5 package before running the test, so
-> > > > I rebooted again to make sure that wasn't a factor:
-> > > >=20
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > root@pinetab2:~# cat /dev/hwrng | rngtest -c 1000
-> > > > rngtest 5
-> > > > ...
-> > > > rngtest: starting FIPS tests...
-> > > > rngtest: bits received from input: 20000032
-> > > > rngtest: FIPS 140-2 successes: 704
-> > > > rngtest: FIPS 140-2 failures: 296
-> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > >=20
-> > > > So that 704/296 vs 730/270 in the previous run on the PT2.
-> > > >=20
-> > > On my Rock 3A:
-> > >=20
-> > > wens@rock-3a:~$ sudo cat /dev/hwrng | rngtest -c 1000
-> > > rngtest 5
-> > > ...
-> > > rngtest: starting FIPS tests...
-> > > rngtest: bits received from input: 20000032
-> > > rngtest: FIPS 140-2 successes: 992
-> > > rngtest: FIPS 140-2 failures: 8
-> > >=20
-> > > wens@rock-3a:~$ uname -a
-> > > Linux rock-3a 6.10.0-rc7-next-20240712-12899-g7df602fe7c8b #9 SMP Mon
-> > > Jul 15 00:39:32 CST 2024 aarch64 GNU/Linux
-> >=20
-> > I wondered if ``dd if=3D/dev/hwrng bs=3D100000 count=3D1 > /dev/null`` =
-before
-> > the actual test run made a difference.
-> > Tried it on my Quartz64 Model A: no
-> >=20
-> > Then I tried it on my Quartz64 Model B:
-> >=20
-> > root@quartz64b:~# cat /dev/hwrng | rngtest -c 1000
-> > rngtest 5
-> > ...
-> > rngtest: starting FIPS tests...
-> > rngtest: bits received from input: 20000032
-> > rngtest: FIPS 140-2 successes: 120
-> > rngtest: FIPS 140-2 failures: 880
-> >=20
-> > root@quartz64b:~# dd if=3D/dev/hwrng bs=3D100000 count=3D1 > /dev/null
-> > 1+0 records in
-> > 1+0 records out
-> > 100000 bytes (100 kB, 98 KiB) copied, 5.71466 s, 17.5 kB/s
-> >=20
-> > root@quartz64b:~# cat /dev/hwrng | rngtest -c 1000
-> > rngtest 5
-> > ...
-> > rngtest: starting FIPS tests...
-> > rngtest: bits received from input: 20000032
-> > rngtest: FIPS 140-2 successes: 104
-> > rngtest: FIPS 140-2 failures: 896
-> >=20
-> > root@quartz64b:~# uname -a
-> > Linux quartz64b 6.10+unreleased-arm64 #1 SMP Debian 6.10-1~cknow
-> > (2024-04-24) aarch64 GNU/Linux>=20
-> > :-O
->=20
-> I pulled out my Quartz64 model B, and the results seem better than yours.
->=20
-> root@quartz64:~# sudo dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
-> rngtest 5
-> ...
-> rngtest: starting FIPS tests...
-> rngtest: bits received from input: 20000032
-> rngtest: FIPS 140-2 successes: 859
-> rngtest: FIPS 140-2 failures: 141
-> root@quartz64:~# sudo dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
-> rngtest 5
-> ...
-> rngtest: starting FIPS tests...
-> rngtest: bits received from input: 20000032
-> rngtest: FIPS 140-2 successes: 843
-> rngtest: FIPS 140-2 failures: 157
+Fixes: 3c47e8ae113a ("net: libwx: Support to receive packets in NAPI")
+Signed-off-by: Joe Damato <jdamato@fastly.com>
+---
+ drivers/net/ethernet/wangxun/libwx/wx_lib.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-I noticed you used ``dd`` instead of ``cat``, so I tried again ...
-
-Quartz64-A:
-root@quartz64a:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
-rngtest 5
-=2E..
-rngtest: starting FIPS tests...                                            =
-                  =20
-rngtest: bits received from input: 20000032                                =
-                  =20
-rngtest: FIPS 140-2 successes: 411                                         =
-                  =20
-rngtest: FIPS 140-2 failures: 589
-
-root@quartz64a:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
-=2E..
-rngtest: starting FIPS tests...          =20
-rngtest: bits received from input: 20000032
-rngtest: FIPS 140-2 successes: 391        =20
-rngtest: FIPS 140-2 failures: 609
-
-root@quartz64a:~# dd if=3D/dev/hwrng bs=3D100000 count=3D1 > /dev/null
-1+0 records in                            =20
-1+0 records out                  =20
-100000 bytes (100 kB, 98 KiB) copied, 5.66202 s, 17.7 kB/s
-
-root@quartz64a:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
-=2E..
-rngtest: FIPS 140-2 successes: 386                                         =
-                  =20
-rngtest: FIPS 140-2 failures: 614
-
-root@quartz64a:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
-=2E..
-rngtest: FIPS 140-2 successes: 356
-rngtest: FIPS 140-2 failures: 644
-
-Quartz64-B:
-root@quartz64b:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
-=2E..
-rngtest: FIPS 140-2 successes: 118
-rngtest: FIPS 140-2 failures: 882
-
-root@quartz64b:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
-=2E..
-rngtest: FIPS 140-2 successes: 133
-rngtest: FIPS 140-2 failures: 867
-
-root@quartz64b:~# dd if=3D/dev/hwrng bs=3D100000 count=3D1 > /dev/null
-
-root@quartz64b:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
-=2E..
-rngtest: FIPS 140-2 successes: 97
-rngtest: FIPS 140-2 failures: 903
-
-root@quartz64b:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
-=2E..
-rngtest: FIPS 140-2 successes: 130
-rngtest: FIPS 140-2 failures: 870
-
-And lastly on PineTab2:
-root@pinetab2:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
-=2E..
-rngtest: FIPS 140-2 successes: 705
-rngtest: FIPS 140-2 failures: 295
-
-root@pinetab2:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
-=2E..
-rngtest: FIPS 140-2 successes: 678
-rngtest: FIPS 140-2 failures: 322
-
-root@pinetab2:~# dd if=3D/dev/hwrng bs=3D100000 count=3D1 > /dev/null
-
-root@pinetab2:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
-=2E..
-rngtest: FIPS 140-2 successes: 681
-rngtest: FIPS 140-2 failures: 319
-
-root@pinetab2:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
-=2E..
-rngtest: FIPS 140-2 successes: 669
-rngtest: FIPS 140-2 failures: 331
-
-
-So my Q64-B tests are consistently MUCH worse then your Q64-B tests ...
-This seems BAD to me, now that we even have completely different results pe=
-r=20
-device of the EXACT same model?!? Hardware revision may be different (I hav=
-e a=20
-v1.4), but it seems rather pointless to go into that direction.
-
-It then also seems rather pointless to try it with different parameters if =
-the=20
-results on the same SBC model can vary this much.
-
-Thanks for your tests,
-  Diederik
-
---nextPart2509603.0URhkfn4ud
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZp6tGAAKCRDXblvOeH7b
-bnIPAP9eRr0EgWFfuf4HAEy2gbcjRS0YYCyCeha4MjfASco9EQD/XQXNEecekolM
-xPv/OQmXAzX1hHLrt8gX4KRIaxkJ8wc=
-=5Ged
------END PGP SIGNATURE-----
-
---nextPart2509603.0URhkfn4ud--
-
-
+diff --git a/drivers/net/ethernet/wangxun/libwx/wx_lib.c b/drivers/net/ethernet/wangxun/libwx/wx_lib.c
+index 1eecba984f3b..2b3d6586f44a 100644
+--- a/drivers/net/ethernet/wangxun/libwx/wx_lib.c
++++ b/drivers/net/ethernet/wangxun/libwx/wx_lib.c
+@@ -251,10 +251,7 @@ static struct sk_buff *wx_build_skb(struct wx_ring *rx_ring,
+ 				  rx_buffer->page_offset;
+ 
+ 		/* prefetch first cache line of first page */
+-		prefetch(page_addr);
+-#if L1_CACHE_BYTES < 128
+-		prefetch(page_addr + L1_CACHE_BYTES);
+-#endif
++		net_prefetch(page_addr);
+ 
+ 		/* allocate a skb to store the frags */
+ 		skb = napi_alloc_skb(&rx_ring->q_vector->napi, WX_RXBUFFER_256);
+-- 
+2.25.1
 
 
