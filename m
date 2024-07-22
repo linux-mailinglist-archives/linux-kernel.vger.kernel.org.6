@@ -1,64 +1,65 @@
-Return-Path: <linux-kernel+bounces-258754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26A66938C63
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:48:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A83D938C69
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5BB2282D3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:48:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E91B91F22D56
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60DF16C869;
-	Mon, 22 Jul 2024 09:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F2616F900;
+	Mon, 22 Jul 2024 09:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="PcnEOcQc"
-Received: from smtpout148.security-mail.net (smtpout148.security-mail.net [85.31.212.148])
+	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="TPgGPE93"
+Received: from smtpout149.security-mail.net (smtpout149.security-mail.net [85.31.212.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3FF16F0DC
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.31.212.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71CF16EC17
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.31.212.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721641435; cv=none; b=rr7oa44qBQ1BtVsgsupJFw+46K3qki1Ij0INQ2kodpwr7I+Yj82dj7pw79nnHTBt4QYaIgJmq8loA7C2C5VTDqaK+BvrOBkRfOQHB83uQbbe4BN85tbf5UEETPB2ttylcK6nBk1zr71xMp8lSorj3uUZMqj1y6GgXLppin1qYOI=
+	t=1721641438; cv=none; b=aw7q0vb4hGsLfOEgFeU43spsRiI+faLZg0NGwdRsujmWGLaKK39BmF1gtGHHVJfEH1XV6veAUpnSE7HjIGa48UHi6lEy6FRYMBI1gLAwdcMLb8+dc+2U7SREORuzuGqv9su5MyQHI/3NTutQqOnKifPvORrFZyU904sqWXIb79k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721641435; c=relaxed/simple;
-	bh=55eerdBP4o0/u9Txs6EDQqNf+WvNLBqBndnEG4NkhBI=;
+	s=arc-20240116; t=1721641438; c=relaxed/simple;
+	bh=JOk3YGDP57h8sheVze5lvJ8wPFvJCP6dakAjbTJPqGM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NSInVIErktUUgfl3TK8XWz0+bHtynyLpxuyk7TbLzEZVmTA14xZmiv24MmL/e50vPIOF+uVg0H++NwWkYkulKgVjqljUMf+VQG+4J3tUF8OR+bbhQOqVQWL8uuBkkvuaA1ADp4IuU1sj5K/hqmWZ9p2s9uHxR/AdxyYHjk8j2Vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=PcnEOcQc; arc=none smtp.client-ip=85.31.212.148
+	 MIME-Version:Content-Type; b=MVoNEnNXShMp077GIISIEm98n4Rx6aK28LcdatxHtu+04rUFUUWuCRM9WKQ8OqjmvfcdBARJUGet0/Zx27TplgJa8MSTL4ZTrX5gbLP9dt25k6zfvLqESt0rp1HLk2IRyQYeiz8ZscMlX87Fv3IVkb7K7CcBXuyDcRtbiLVXCCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=TPgGPE93; arc=none smtp.client-ip=85.31.212.149
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
-Received: from localhost (fx408.security-mail.net [127.0.0.1])
-	by fx408.security-mail.net (Postfix) with ESMTP id 37FFD322A9C
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:43:52 +0200 (CEST)
+Received: from localhost (fx409.security-mail.net [127.0.0.1])
+	by fx409.security-mail.net (Postfix) with ESMTP id 8B08E3498AB
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:43:53 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
-	s=sec-sig-email; t=1721641432;
-	bh=55eerdBP4o0/u9Txs6EDQqNf+WvNLBqBndnEG4NkhBI=;
+	s=sec-sig-email; t=1721641433;
+	bh=JOk3YGDP57h8sheVze5lvJ8wPFvJCP6dakAjbTJPqGM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=PcnEOcQc8VAQdfDX6dwOGYKMiJ9+7ANO20I++44QqOBRPv2TVeg/Te0UbMG/hEXLF
-	 LH5OxB5JQiMabkPMYYVpk2cad9lxkxiCdgdpf+awMBsKciAVksoZkBxh0VqDz3a4DU
-	 D8nd18hFQHalJFZRhyv+cL8V1Uxizf4nKBWc80yU=
-Received: from fx408 (fx408.security-mail.net [127.0.0.1]) by
- fx408.security-mail.net (Postfix) with ESMTP id 1076332211E; Mon, 22 Jul
- 2024 11:43:52 +0200 (CEST)
+	b=TPgGPE93gX6+OZhIkGruFxnj8uIiwHOpasr5x6WGdS+45shMMl5CIYcAkMJUHcwSb
+	 uGCKWpAsSiU1OlWZFuOTEKBOYYzbooOJJIXHmTPfB8gQO4Z1SE9DjJbLbtG9Mkx6yj
+	 XnIkQFxBA1nAHDOTZioBh9RaIRUECVclTx7NiGtk=
+Received: from fx409 (fx409.security-mail.net [127.0.0.1]) by
+ fx409.security-mail.net (Postfix) with ESMTP id 4DB2E34978B; Mon, 22 Jul
+ 2024 11:43:53 +0200 (CEST)
 Received: from srvsmtp.lin.mbt.kalray.eu (unknown [217.181.231.53]) by
- fx408.security-mail.net (Postfix) with ESMTPS id 92B893228EB; Mon, 22 Jul
- 2024 11:43:51 +0200 (CEST)
+ fx409.security-mail.net (Postfix) with ESMTPS id A51BA349658; Mon, 22 Jul
+ 2024 11:43:52 +0200 (CEST)
 Received: from junon.lan.kalrayinc.com (unknown [192.168.37.161]) by
- srvsmtp.lin.mbt.kalray.eu (Postfix) with ESMTPS id 5259E40317; Mon, 22 Jul
- 2024 11:43:51 +0200 (CEST)
-X-Secumail-id: <aba9.669e29d7.8442e.0>
+ srvsmtp.lin.mbt.kalray.eu (Postfix) with ESMTPS id 705FA40317; Mon, 22 Jul
+ 2024 11:43:52 +0200 (CEST)
+X-Secumail-id: <2c9b.669e29d8.a2756.0>
 From: ysionneau@kalrayinc.com
 To: linux-kernel@vger.kernel.org
 Cc: Jonathan Borne <jborne@kalrayinc.com>, Julian Vetter
  <jvetter@kalrayinc.com>, Yann Sionneau <ysionneau@kalrayinc.com>, Clement
- Leger <clement@clement-leger.fr>, Guillaume Thouvenin <thouveng@gmail.com>,
- Jules Maselbas <jmaselbas@zdiv.net>
-Subject: [RFC PATCH v3 33/37] kvx: Add support for cpuinfo
-Date: Mon, 22 Jul 2024 11:41:44 +0200
-Message-ID: <20240722094226.21602-34-ysionneau@kalrayinc.com>
+ Leger <clement@clement-leger.fr>, Louis Morhet <lmorhet@kalrayinc.com>,
+ Marius Gligor <mgligor@kalrayinc.com>, Jules Maselbas <jmaselbas@zdiv.net>,
+ bpf@vger.kernel.org
+Subject: [RFC PATCH v3 34/37] kvx: Add power controller driver
+Date: Mon, 22 Jul 2024 11:41:45 +0200
+Message-ID: <20240722094226.21602-35-ysionneau@kalrayinc.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240722094226.21602-1-ysionneau@kalrayinc.com>
 References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
@@ -74,144 +75,247 @@ X-ALTERMIMEV2_out: done
 
 From: Yann Sionneau <ysionneau@kalrayinc.com>
 
-Add support for cpuinfo on kvx arch.
+The Power Controller (pwr-ctrl) controls cores reset and wake-up
+procedure.
 
 Co-developed-by: Clement Leger <clement@clement-leger.fr>
 Signed-off-by: Clement Leger <clement@clement-leger.fr>
-Co-developed-by: Guillaume Thouvenin <thouveng@gmail.com>
-Signed-off-by: Guillaume Thouvenin <thouveng@gmail.com>
 Co-developed-by: Julian Vetter <jvetter@kalrayinc.com>
 Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
+Co-developed-by: Louis Morhet <lmorhet@kalrayinc.com>
+Signed-off-by: Louis Morhet <lmorhet@kalrayinc.com>
+Co-developed-by: Marius Gligor <mgligor@kalrayinc.com>
+Signed-off-by: Marius Gligor <mgligor@kalrayinc.com>
 Signed-off-by: Jules Maselbas <jmaselbas@zdiv.net>
 Signed-off-by: Yann Sionneau <ysionneau@kalrayinc.com>
 ---
 
 Notes:
-V1 -> V2: No changes
+V1 -> V2: new patch
 V2 -> V3:
-- add missing function declaration for setup_cpuinfo()
-- replace printk(KERN_WARNING... with pr_warn(...
+- Moved driver from arch/kvx/platform to drivers/soc/kvx/
+  see discussions there:
+  - https://lore.kernel.org/bpf/Y8qlOpYgDefMPqWH@zx2c4.com/T/#m722d8f7c7501615251e4f97705198f5485865ce2
+- indent
+- add missing static qualifier
+- driver now registers a cpu_method/smp_op via CPU_METHOD_OF_DECLARE
+  like arm and sh, it puts a struct into a __cpu_method_of_table ELF section.
+  the smp_ops is used by smpboot.c if its name matches the DT 'cpus' node
+  enable-method property.
 ---
- arch/kvx/include/asm/cpuinfo.h |  7 +++
- arch/kvx/kernel/cpuinfo.c      | 95 ++++++++++++++++++++++++++++++++++
- 2 files changed, 102 insertions(+)
- create mode 100644 arch/kvx/include/asm/cpuinfo.h
- create mode 100644 arch/kvx/kernel/cpuinfo.c
+ arch/kvx/include/asm/pwr_ctrl.h     | 57 ++++++++++++++++++++
+ drivers/soc/Kconfig                 |  1 +
+ drivers/soc/Makefile                |  1 +
+ drivers/soc/kvx/Kconfig             | 10 ++++
+ drivers/soc/kvx/Makefile            |  2 +
+ drivers/soc/kvx/coolidge_pwr_ctrl.c | 84 +++++++++++++++++++++++++++++
+ 6 files changed, 155 insertions(+)
+ create mode 100644 arch/kvx/include/asm/pwr_ctrl.h
+ create mode 100644 drivers/soc/kvx/Kconfig
+ create mode 100644 drivers/soc/kvx/Makefile
+ create mode 100644 drivers/soc/kvx/coolidge_pwr_ctrl.c
 
-diff --git a/arch/kvx/include/asm/cpuinfo.h b/arch/kvx/include/asm/cpuinfo.h
+diff --git a/arch/kvx/include/asm/pwr_ctrl.h b/arch/kvx/include/asm/pwr_ctrl.h
 new file mode 100644
-index 0000000000000..ace9b85fbafaf
+index 0000000000000..715eddd45a88c
 --- /dev/null
-+++ b/arch/kvx/include/asm/cpuinfo.h
-@@ -0,0 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+#ifndef __ASM_KVX_CPUINFO_H
-+#define __ASM_KVX_CPUINFO_H
-+
-+extern void setup_cpuinfo(void);
-+
-+#endif /* __ASM_KVX_CPUINFO_H */
-diff --git a/arch/kvx/kernel/cpuinfo.c b/arch/kvx/kernel/cpuinfo.c
-new file mode 100644
-index 0000000000000..6d46fd2a1bd93
---- /dev/null
-+++ b/arch/kvx/kernel/cpuinfo.c
-@@ -0,0 +1,95 @@
-+// SPDX-License-Identifier: GPL-2.0-only
++++ b/arch/kvx/include/asm/pwr_ctrl.h
+@@ -0,0 +1,57 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
 +/*
-+ * Copyright (C) 2017-2023 Kalray Inc.
++ * Copyright (C) 2017-2024 Kalray Inc.
 + * Author(s): Clement Leger
-+ *            Guillaume Thouvenin
++ *            Marius Gligor
++ *            Julian Vetter
++ *            Yann Sionneau
 + */
 +
-+#include <linux/seq_file.h>
-+#include <linux/delay.h>
-+#include <linux/clk.h>
-+#include <linux/cpu.h>
-+#include <linux/of.h>
++#ifndef _ASM_KVX_PWR_CTRL_H
++#define _ASM_KVX_PWR_CTRL_H
 +
-+unsigned long elf_hwcap __read_mostly;
++#ifndef __ASSEMBLY__
 +
-+static int show_cpuinfo(struct seq_file *m, void *v)
-+{
-+	int cpu_num = *(unsigned int *)v;
-+	struct cpuinfo_kvx *n = per_cpu_ptr(&cpu_info, cpu_num);
++static int kvx_pwr_ctrl_probe(void);
 +
-+	seq_printf(m, "processor\t: %d\nvendor_id\t: Kalray\n", cpu_num);
++int kvx_pwr_ctrl_cpu_poweron(unsigned int cpu);
 +
-+	seq_printf(m,
-+		   "copro enabled\t: %s\n"
-+		   "arch revision\t: %d\n"
-+		   "uarch revision\t: %d\n",
-+		   n->copro_enable ? "yes" : "no",
-+		   n->arch_rev,
-+		   n->uarch_rev);
++#endif
 +
-+	seq_printf(m,
-+		   "bogomips\t: %lu.%02lu\n"
-+		   "cpu MHz\t\t: %llu.%03llu\n\n",
-+		   (loops_per_jiffy * HZ) / 500000,
-+		   ((loops_per_jiffy * HZ) / 5000) % 100,
-+		   n->freq / 1000000, (n->freq / 10000) % 100);
++#define PWR_CTRL_ADDR                           0xA40000
 +
-+	return 0;
-+}
++/* Power controller vector register definitions */
++#define KVX_PWR_CTRL_VEC_OFFSET                 0x1000
++#define KVX_PWR_CTRL_VEC_WUP_SET_OFFSET         0x10
++#define KVX_PWR_CTRL_VEC_WUP_CLEAR_OFFSET       0x20
 +
-+static void *c_start(struct seq_file *m, loff_t *pos)
-+{
-+	if (*pos == 0)
-+		*pos = cpumask_first(cpu_online_mask);
-+	if (*pos >= num_online_cpus())
-+		return NULL;
++/* Power controller PE reset PC register definitions */
++#define KVX_PWR_CTRL_RESET_PC_OFFSET            0x2000
 +
-+	return pos;
-+}
++/* Power controller global register definitions */
++#define KVX_PWR_CTRL_GLOBAL_OFFSET              0x4040
 +
-+static void *c_next(struct seq_file *m, void *v, loff_t *pos)
-+{
-+	*pos = cpumask_next(*pos, cpu_online_mask);
++#define KVX_PWR_CTRL_GLOBAL_SET_OFFSET          0x10
++#define KVX_PWR_CTRL_GLOBAL_CLEAR_OFFSET        0x20
++#define KVX_PWR_CTRL_GLOBAL_SET_PE_EN_SHIFT     0x1
 +
-+	return c_start(m, pos);
-+}
++#define PWR_CTRL_WUP_SET_OFFSET  \
++		(KVX_PWR_CTRL_VEC_OFFSET + \
++		 KVX_PWR_CTRL_VEC_WUP_SET_OFFSET)
 +
-+static void c_stop(struct seq_file *m, void *v)
-+{
-+}
++#define PWR_CTRL_WUP_CLEAR_OFFSET  \
++		(KVX_PWR_CTRL_VEC_OFFSET + \
++		 KVX_PWR_CTRL_VEC_WUP_CLEAR_OFFSET)
 +
-+const struct seq_operations cpuinfo_op = {
-+	.start = c_start,
-+	.next = c_next,
-+	.stop = c_stop,
-+	.show = show_cpuinfo,
++#define PWR_CTRL_GLOBAL_CONFIG_SET_OFFSET \
++		(KVX_PWR_CTRL_GLOBAL_OFFSET + \
++		 KVX_PWR_CTRL_GLOBAL_SET_OFFSET)
++
++#define PWR_CTRL_GLOBAL_CONFIG_CLEAR_OFFSET \
++		(KVX_PWR_CTRL_GLOBAL_OFFSET + \
++		 KVX_PWR_CTRL_GLOBAL_CLEAR_OFFSET)
++
++#define PWR_CTRL_GLOBAL_CONFIG_PE_EN \
++	(1 << KVX_PWR_CTRL_GLOBAL_SET_PE_EN_SHIFT)
++
++#endif /* _ASM_KVX_PWR_CTRL_H */
+diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
+index 5d924e946507b..f28078620da14 100644
+--- a/drivers/soc/Kconfig
++++ b/drivers/soc/Kconfig
+@@ -12,6 +12,7 @@ source "drivers/soc/fujitsu/Kconfig"
+ source "drivers/soc/hisilicon/Kconfig"
+ source "drivers/soc/imx/Kconfig"
+ source "drivers/soc/ixp4xx/Kconfig"
++source "drivers/soc/kvx/Kconfig"
+ source "drivers/soc/litex/Kconfig"
+ source "drivers/soc/loongson/Kconfig"
+ source "drivers/soc/mediatek/Kconfig"
+diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
+index fb2bd31387d07..240e148eaaff8 100644
+--- a/drivers/soc/Makefile
++++ b/drivers/soc/Makefile
+@@ -16,6 +16,7 @@ obj-$(CONFIG_ARCH_GEMINI)	+= gemini/
+ obj-y				+= hisilicon/
+ obj-y				+= imx/
+ obj-y				+= ixp4xx/
++obj-$(CONFIG_KVX)		+= kvx/
+ obj-$(CONFIG_SOC_XWAY)		+= lantiq/
+ obj-$(CONFIG_LITEX_SOC_CONTROLLER) += litex/
+ obj-y				+= loongson/
+diff --git a/drivers/soc/kvx/Kconfig b/drivers/soc/kvx/Kconfig
+new file mode 100644
+index 0000000000000..96d05efe4bfb5
+--- /dev/null
++++ b/drivers/soc/kvx/Kconfig
+@@ -0,0 +1,10 @@
++# SPDX-License-Identifier: GPL-2.0
++
++config COOLIDGE_POWER_CONTROLLER
++	bool "Coolidge power controller"
++	default n
++	depends on KVX
++	help
++	  The Kalray Coolidge Power Controller is used to manage the power
++	  state of secondary CPU cores. Currently only powering up is
++	  supported.
+diff --git a/drivers/soc/kvx/Makefile b/drivers/soc/kvx/Makefile
+new file mode 100644
+index 0000000000000..c7b0b3e99eabc
+--- /dev/null
++++ b/drivers/soc/kvx/Makefile
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0
++obj-$(CONFIG_COOLIDGE_POWER_CONTROLLER)	+= coolidge_pwr_ctrl.o
+diff --git a/drivers/soc/kvx/coolidge_pwr_ctrl.c b/drivers/soc/kvx/coolidge_pwr_ctrl.c
+new file mode 100644
+index 0000000000000..67af3e446d0e7
+--- /dev/null
++++ b/drivers/soc/kvx/coolidge_pwr_ctrl.c
+@@ -0,0 +1,84 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2017-2024 Kalray Inc.
++ * Author(s): Clement Leger
++ *            Yann Sionneau
++ */
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/of_platform.h>
++#include <linux/slab.h>
++#include <linux/smp.h>
++#include <linux/types.h>
++
++#include <asm/pwr_ctrl.h>
++#include <asm/symbols.h>
++
++struct kvx_pwr_ctrl {
++	void __iomem *regs;
 +};
 +
-+static int __init setup_cpuinfo(void)
-+{
-+	int cpu;
-+	struct clk *clk;
-+	unsigned long cpu_freq = 1000000000;
-+	struct device_node *node = of_get_cpu_node(0, NULL);
++static struct kvx_pwr_ctrl kvx_pwr_controller;
 +
-+	clk = of_clk_get(node, 0);
-+	if (IS_ERR(clk)) {
-+		pr_warn("Device tree missing CPU 'clock' parameter. Assuming frequency is 1GHZ");
-+		goto setup_cpu_freq;
++static bool pwr_ctrl_not_initialized = true;
++
++/**
++ * kvx_pwr_ctrl_cpu_poweron() - Wakeup a cpu
++ * @cpu: cpu to wakeup
++ */
++int __init kvx_pwr_ctrl_cpu_poweron(unsigned int cpu)
++{
++	int ret = 0;
++
++	if (pwr_ctrl_not_initialized) {
++		pr_err("KVX power controller not initialized!\n");
++		return -ENODEV;
 +	}
 +
-+	cpu_freq = clk_get_rate(clk);
++	/* Set PE boot address */
++	writeq((unsigned long long)kvx_start,
++			kvx_pwr_controller.regs + KVX_PWR_CTRL_RESET_PC_OFFSET);
++	/* Wake up processor ! */
++	writeq(1ULL << cpu,
++	       kvx_pwr_controller.regs + PWR_CTRL_WUP_SET_OFFSET);
++	/* Then clear wakeup to allow processor to sleep */
++	writeq(1ULL << cpu,
++	       kvx_pwr_controller.regs + PWR_CTRL_WUP_CLEAR_OFFSET);
 +
-+	clk_put(clk);
++	return ret;
++}
 +
-+setup_cpu_freq:
-+	of_node_put(node);
++static const struct smp_operations coolidge_smp_ops __initconst = {
++	.smp_boot_secondary = kvx_pwr_ctrl_cpu_poweron,
++};
 +
-+	for_each_possible_cpu(cpu)
-+		per_cpu_ptr(&cpu_info, cpu)->freq = cpu_freq;
++static int __init kvx_pwr_ctrl_probe(void)
++{
++	struct device_node *ctrl;
++
++	ctrl = of_find_compatible_node(NULL, NULL, "kalray,coolidge-pwr-ctrl");
++	if (!ctrl) {
++		pr_err("Failed to get power controller node\n");
++		return -EINVAL;
++	}
++
++	kvx_pwr_controller.regs = of_iomap(ctrl, 0);
++	if (!kvx_pwr_controller.regs) {
++		pr_err("Failed ioremap\n");
++		return -EINVAL;
++	}
++
++	pwr_ctrl_not_initialized = false;
++	pr_info("KVX power controller probed\n");
 +
 +	return 0;
 +}
 +
-+late_initcall(setup_cpuinfo);
++CPU_METHOD_OF_DECLARE(coolidge_pwr_ctrl, "kalray,coolidge-pwr-ctrl",
++		      &coolidge_smp_ops);
++
++early_initcall(kvx_pwr_ctrl_probe);
 -- 
 2.45.2
 
