@@ -1,128 +1,136 @@
-Return-Path: <linux-kernel+bounces-259051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D319093907E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:20:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DEF5939081
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D5B2B2181E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:20:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 049051F221E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA99A16D4DF;
-	Mon, 22 Jul 2024 14:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB6A16DC32;
+	Mon, 22 Jul 2024 14:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YRqILlj0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="eEMlUdYS"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F58ABE5E;
-	Mon, 22 Jul 2024 14:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1E6BE5E;
+	Mon, 22 Jul 2024 14:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721658009; cv=none; b=u5+XKCBrSNDBF7P/esw3Ojd3Ut6iKGB+Gf26u7QrZWVtcIgcw1S0TYZUXqEQSqtXkVYjUTD0QDRe4bmlFC109ZbQDFxzV/re7XwRZ3Bpb383BFH1OJ5jJCnyp+UGOy/DwDPYdO+xfq04EpTp7Lp9+Lp9AodCNgEZOx9QOpCbVA0=
+	t=1721658014; cv=none; b=VCxjP/tv0BZCRPBwA+7xGCRRlUtpt67HUy2YPzKegNGTZwQ1PRy3b/El1fU2chdzJoO8Mn5uolE7OlZy8t6bbTCn9ubQAhLIiFok7CcLO7geTkHhWyOsf/sIOJijycM51+8pLd7JH1+SRcJvPuTjF2ogf/4SiDFkSIERX32Ly/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721658009; c=relaxed/simple;
-	bh=3ikSZtRWRbHPaYQO0owQju8+aleRJhnRFox3GfSIPmQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Zos8K21OhxnIeRQun1MlxKB+DAR0WemFmeFiyyeLoaZOBGtwdULVn2eCc68FYs9eA7VEAznkb47I0XfByjkkJFnleR9R4QreQ6foA5ObboSwKP61VHUJ7hhIotqT/VSpFn4hCanUqr4id6x5VQvqLKQRWeqz2R7QXjmdFOL0+a8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YRqILlj0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46MAtolV021658;
-	Mon, 22 Jul 2024 14:19:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wLDVRtZNpbHVEXaHjGX7U65bki1FOcvOCJ32Q2SKgN0=; b=YRqILlj0IfHW67RM
-	y6EDzM49FzugcYHz+a6iLnbVNNQvFasPmGy1X/dV5+k8k05xOTGaEuf019PgXGac
-	bZoKQPqVCt2FrRoH1DEaCKMOp6yiAs/pG/4q/lqPuWS9sib2VlqjlcVnjTngnfR5
-	VjUx2hO5wsoczZSM8hGII5pjKacAf4qWUs92G3o4k2REPsnxonCXj4UI4om9YJCY
-	XKjb9CXhTAP4z3srXhX6MMUM7LlZVMVC+EqEuBCR5tOThOTYfmcaAcBxUCaUw6Gf
-	7giTNvScNliPgT64A8axCmUHEPeGw5nWy6hJAblsSRhIVFeF+LR7lLwTkos36vKv
-	nV9vJg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g60juw4s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jul 2024 14:19:47 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46MEJkgI005838
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jul 2024 14:19:46 GMT
-Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 22 Jul
- 2024 07:19:46 -0700
-Message-ID: <7fa38eba-97ca-4bbc-b585-f646a26a2c29@quicinc.com>
-Date: Mon, 22 Jul 2024 07:19:45 -0700
+	s=arc-20240116; t=1721658014; c=relaxed/simple;
+	bh=eRJdj80qjmtv6NXMLmeBALq5OoinabB/jn9+kU6thPo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OvloKSfs0uFxpurGWL4kN95dSUwRCVoxOhzvRhEAhgybIN7v6m+e8NI8ISysjwaHlJ2Rfx8nXSu//cao3BzjvwOsz+BN5ecVDB+VmH5TBcjqsupE7V4svOWxl0gsHYAHu5MyIzXImiySf+2jzGQXs57tuxE9TlO4VPf89v4fKUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=eEMlUdYS; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4WSMql1yPDz9snH;
+	Mon, 22 Jul 2024 16:20:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1721658003;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eyz9qfBcUQtwZ0SLs3SHTA7dLaRuH46FDkD9b19ehTo=;
+	b=eEMlUdYSPSSF/Ao3vUtkpcaasKr88s+aL4YohAA3FH5CfJI0Pl/fmByEU9imWjr6ENyn7d
+	AeyTGGO7EdGNlXJgjchI0KNqjoVm5IY55IZY43nW+Q8jLjQcTGO/4LFkCSHbbdZsYprJPb
+	T23Kzt8uwRpu3yoYwUZrIu1LgcQBXvbnKPC9ePOdv9Hg9qFjaPMaoIOUPcVvaQpOpD96x5
+	7M7A7TP8SCF1Lo7KsFN18Bp7mIek8yFRUlf3hVHDKP3EIdP+x5LkylFKsYYolCUlXIv9ae
+	NPABlzqOWDPdebgv3VZ4c9pNVxqAeorAarKW0lUhcvxGNVDSEOWGd1+5cqw4CA==
+Date: Mon, 22 Jul 2024 14:19:57 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: david@fromorbit.com, chandan.babu@oracle.com, djwong@kernel.org,
+	brauner@kernel.org, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
+	linux-mm@kvack.org, john.g.garry@oracle.com,
+	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
+	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, ryan.roberts@arm.com, hch@lst.de,
+	Zi Yan <ziy@nvidia.com>
+Subject: Re: [PATCH v10 01/10] fs: Allow fine-grained control of folio sizes
+Message-ID: <20240722141957.yog434qio6okkdiq@quentin>
+References: <20240715094457.452836-1-kernel@pankajraghav.com>
+ <20240715094457.452836-2-kernel@pankajraghav.com>
+ <ZpaRElX0HyikQ1ER@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] lib/kfifo-test.c: add tests for the kfifo structure
-To: Diego Vieira <diego.daniel.professional@gmail.com>,
-        Andrew Morton
-	<akpm@linux-foundation.org>,
-        <linux-kernel@vger.kernel.org>,
-        Brendan Higgins
-	<brendan.higgins@linux.dev>,
-        David Gow <davidgow@google.com>, Rae Moar
-	<rmoar@google.com>,
-        <linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>
-CC: <n@nfraprado.net>, <andrealmeid@riseup.net>, <vinicius@nukelet.com>
-References: <20240722001804.8120-1-diego.daniel.professional@gmail.com>
- <20240722001804.8120-2-diego.daniel.professional@gmail.com>
-Content-Language: en-US
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240722001804.8120-2-diego.daniel.professional@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: n-u0Zv6yMeg-XsE9BkKBtBEv_D6DbPJo
-X-Proofpoint-GUID: n-u0Zv6yMeg-XsE9BkKBtBEv_D6DbPJo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-22_10,2024-07-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=681
- priorityscore=1501 bulkscore=0 impostorscore=0 lowpriorityscore=0
- mlxscore=0 suspectscore=0 phishscore=0 clxscore=1015 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407220107
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZpaRElX0HyikQ1ER@casper.infradead.org>
 
-On 7/21/24 17:18, Diego Vieira wrote:
-> Add KUnit tests for the kfifo data structure.
-> They test the vast majority of macros defined in the kfifo
-> header (include/linux/kfifo.h).
+@willy:
+
+I want to clarify before sending the next round of patches as I didn't
+get any reply in the previous email.
+
+IIUC your comments properly:
+
+- I will go back to silent clamping in mapping_set_folio_order_range as
+  before and remove VM_WARN_ONCE().
+
+- I will move the mapping_max_folio_size_supported() to patch 10, and FSs
+  can use them to check for the max block size that can be supported and
+  take the respective action.
+
+--
+Pankaj
+
+On Tue, Jul 16, 2024 at 04:26:10PM +0100, Matthew Wilcox wrote:
+> On Mon, Jul 15, 2024 at 11:44:48AM +0200, Pankaj Raghav (Samsung) wrote:
+> > +/*
+> > + * mapping_max_folio_size_supported() - Check the max folio size supported
+> > + *
+> > + * The filesystem should call this function at mount time if there is a
+> > + * requirement on the folio mapping size in the page cache.
+> > + */
+> > +static inline size_t mapping_max_folio_size_supported(void)
+> > +{
+> > +	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
+> > +		return 1U << (PAGE_SHIFT + MAX_PAGECACHE_ORDER);
+> > +	return PAGE_SIZE;
+> > +}
 > 
-> These are inspired by the existing tests for the 'list' doubly
-> linked in lib/list-test.c [1].
+> There's no need for this to be part of this patch.  I've removed stuff
+> from this patch before that's not needed, please stop adding unnecessary
+> functions.  This would logically be part of patch 10.
 > 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/lib/list-test.c
+> > +static inline void mapping_set_folio_order_range(struct address_space *mapping,
+> > +						 unsigned int min,
+> > +						 unsigned int max)
+> > +{
+> > +	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
+> > +		return;
+> > +
+> > +	if (min > MAX_PAGECACHE_ORDER) {
+> > +		VM_WARN_ONCE(1,
+> > +	"min order > MAX_PAGECACHE_ORDER. Setting min_order to MAX_PAGECACHE_ORDER");
+> > +		min = MAX_PAGECACHE_ORDER;
+> > +	}
 > 
-> Signed-off-by: Diego Vieira <diego.daniel.professional@gmail.com>
-> ---
->   lib/Kconfig.debug |  14 +++
->   lib/Makefile      |   1 +
->   lib/kfifo-test.c  | 222 ++++++++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 237 insertions(+)
->   create mode 100644 lib/kfifo-test.c
-...
-> +MODULE_LICENSE("GPL");
-
-Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the 
-description is missing") a module without a MODULE_DESCRIPTION() will 
-result in a warning with make W=1
-
-Multiple developers, including myself, have been fixing the existing 
-warnings for 6.11 so please don't introduce a new one :)
-
-/jeff
+> This is really too much.  It's something that will never happen.  Just
+> delete the message.
+> 
+> > +	if (max > MAX_PAGECACHE_ORDER) {
+> > +		VM_WARN_ONCE(1,
+> > +	"max order > MAX_PAGECACHE_ORDER. Setting max_order to MAX_PAGECACHE_ORDER");
+> > +		max = MAX_PAGECACHE_ORDER;
+> 
+> Absolutely not.  If the filesystem declares it can support a block size
+> of 4TB, then good for it.  We just silently clamp it.
+> 
 
