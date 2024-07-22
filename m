@@ -1,77 +1,177 @@
-Return-Path: <linux-kernel+bounces-258587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A0E6938A23
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:36:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F664938A26
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAEB01C20FD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:36:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8117B20CCA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FBE13D8B0;
-	Mon, 22 Jul 2024 07:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KuSvrH+U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91046125C0;
-	Mon, 22 Jul 2024 07:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3D014A4E2;
+	Mon, 22 Jul 2024 07:36:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD91514882E
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721633760; cv=none; b=aSQrJ9zZp2AJF2vyns9/v4WhUDaMV1kcsR0ezzER9UIQ4wDg/QVEKIEZ6egv5RDL3oxuUuSEG1af02gm3S1dfXEQf6g5QpXIKES0JDTwRzbBRCo1bMGOt9pIuCaK4rve4revYFwASj0gZ12d1AFBs6APJmzGD9p3Rl7/L4SnCqI=
+	t=1721633817; cv=none; b=mGGA8MSrxkBN1IMjE8tWHxXeusyWxwCg2VLtG5DsJiP/KR73qcomQLXTWFKLZKrkGZcKsMK1Mz+y8yeblYowzIVmd1M6yMBMgt6PQYMIh0GTHbmJd+9ZgaqgRYbQnGjttCDaHPiV/pMeO2sQKxa53U1uOvH5q0nre5DnuSPSxME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721633760; c=relaxed/simple;
-	bh=4PAlQ+yg7Xd6+NV1GiGtYKKrx8OPRd5Ylb6fHrM5rtg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sx3CTTxBiCstSrex/WK/krdN46YVsSJ3X8yQB38iNPPSR6NWIZL3Ehwgn77g/gE0+SUZ9SsXJFj5JFjEH0gU3ctu1Fjg8PVF0whF1FvGvWURZ+8+d6Q1Dnnq9cdUEBvRhK08u990i4lkgBNeEqbbVOliJVKiC1xyyTrOBBJMySc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KuSvrH+U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50368C116B1;
-	Mon, 22 Jul 2024 07:35:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721633760;
-	bh=4PAlQ+yg7Xd6+NV1GiGtYKKrx8OPRd5Ylb6fHrM5rtg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KuSvrH+UT0+Oji7/GcG4iWsS29iTEuq2ZxWZWdD9528PH8kkr7c+cZTMtkDo63oOJ
-	 0FZ9PxPlqWD9d1PD3p3rDj88Frz72EQ0XuWXWbC3XTD2sOlM4TCi11JJwZnWKBNjFL
-	 AmTjpoB5fKeXSdeMnlJXfA3LzsDkdqNoOwhCAr6Rv/Ciob3gN8jSUFzkaYdUFbaCZx
-	 G/rNzDs18MnRSVA1g8v8gUb4lNPufVgqKVs1zFw7ra7E8yv0K3OLHGfZJSW6yGdCEb
-	 Yc5zpQyJ9H4i35Ae9yh+MA1SKnJkhyFLFqnElNgrcZ/240b2Q090WOflYuS8z1GZxm
-	 MV5H4wvyv3GtA==
-Date: Mon, 22 Jul 2024 09:35:54 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, David Gow <davidgow@google.com>, 
-	SeongJae Park <sj@kernel.org>, Jan Kara <jack@suse.cz>, Eric Biederman <ebiederm@xmission.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] execve: Move KUnit tests to tests/ subdirectory
-Message-ID: <20240722-kuppe-pulver-17c740e4608c@brauner>
-References: <20240720170310.it.942-kees@kernel.org>
+	s=arc-20240116; t=1721633817; c=relaxed/simple;
+	bh=0ObnZ3Ifl2lPvy5gBjqpXbMsHbxMhXwD+sRFNAJkh/I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E4h4Ds7tUDyCX2/+7YQkaVW922HtCWr7a/zQ33S5bTHfMOc1dZwdkBXLqa8BgiAFG08SOnTwzKcb9MsfXfsgf5xqiVMjUBYWspgLTI1nVm15zcKbmjeGN/JH+2BWd5VLgUXlIoIDSh+aTZH132uGnggtKpW+s6bqKBLGhd8ApdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 64599FEC;
+	Mon, 22 Jul 2024 00:37:19 -0700 (PDT)
+Received: from [10.57.77.243] (unknown [10.57.77.243])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8ADB73F766;
+	Mon, 22 Jul 2024 00:36:52 -0700 (PDT)
+Message-ID: <2109a518-8c5e-41c8-8bd4-9c3499c29fd0@arm.com>
+Date: Mon, 22 Jul 2024 08:36:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240720170310.it.942-kees@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] mm: mTHP stats for pagecache folio allocations
+Content-Language: en-GB
+To: Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <ioworker0@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20240711072929.3590000-1-ryan.roberts@arm.com>
+ <20240711072929.3590000-3-ryan.roberts@arm.com>
+ <9e0d84e5-2319-4425-9760-2c6bb23fc390@linux.alibaba.com>
+ <29f0fc5a-c2b7-4925-9bdb-fd2abe5383ae@arm.com>
+ <b8d1dc3c-ee05-450e-961e-b13dded06a78@linux.alibaba.com>
+ <f21c97ea-426a-46e3-900a-42cc039acc6f@arm.com>
+ <26e84b0f-68ed-4e98-925e-5799a2ae1164@linux.alibaba.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <26e84b0f-68ed-4e98-925e-5799a2ae1164@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jul 20, 2024 at 10:03:14AM GMT, Kees Cook wrote:
-> Move the exec KUnit tests into a separate directory to avoid polluting
-> the local directory namespace. Additionally update MAINTAINERS for the
-> new files and mark myself as Maintainer.
+On 22/07/2024 04:52, Baolin Wang wrote:
 > 
-> Reviewed-by: David Gow <davidgow@google.com>
-> Reviewed-by: SeongJae Park <sj@kernel.org>
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
->  v1: https://lore.kernel.org/lkml/20240717212230.work.346-kees@kernel.org/
->  v2: file suffix changed to _kunit instead of _test
-> I'll toss this into -next and send it to Linus before -rc1 closes.
+> 
+> On 2024/7/14 17:05, Ryan Roberts wrote:
+>> On 13/07/2024 13:54, Baolin Wang wrote:
+>>>
+>>>
+>>> On 2024/7/13 19:00, Ryan Roberts wrote:
+>>>> [...]
+>>>>
+>>>>>> +static int thpsize_create(int order, struct kobject *parent)
+>>>>>>     {
+>>>>>>         unsigned long size = (PAGE_SIZE << order) / SZ_1K;
+>>>>>> +    struct thpsize_child *stats;
+>>>>>>         struct thpsize *thpsize;
+>>>>>>         int ret;
+>>>>>>     +    /*
+>>>>>> +     * Each child object (currently only "stats" directory) holds a
+>>>>>> +     * reference to the top-level thpsize object, so we can drop our ref to
+>>>>>> +     * the top-level once stats is setup. Then we just need to drop a
+>>>>>> +     * reference on any children to clean everything up. We can't just use
+>>>>>> +     * the attr group name for the stats subdirectory because there may be
+>>>>>> +     * multiple attribute groups to populate inside stats and overlaying
+>>>>>> +     * using the name property isn't supported in that way; each attr group
+>>>>>> +     * name, if provided, must be unique in the parent directory.
+>>>>>> +     */
+>>>>>> +
+>>>>>>         thpsize = kzalloc(sizeof(*thpsize), GFP_KERNEL);
+>>>>>> -    if (!thpsize)
+>>>>>> -        return ERR_PTR(-ENOMEM);
+>>>>>> +    if (!thpsize) {
+>>>>>> +        ret = -ENOMEM;
+>>>>>> +        goto err;
+>>>>>> +    }
+>>>>>> +    thpsize->order = order;
+>>>>>>           ret = kobject_init_and_add(&thpsize->kobj, &thpsize_ktype, parent,
+>>>>>>                        "hugepages-%lukB", size);
+>>>>>>         if (ret) {
+>>>>>>             kfree(thpsize);
+>>>>>> -        return ERR_PTR(ret);
+>>>>>> +        goto err;
+>>>>>>         }
+>>>>>>     -    ret = sysfs_create_group(&thpsize->kobj, &thpsize_attr_group);
+>>>>>> -    if (ret) {
+>>>>>> +    stats = kzalloc(sizeof(*stats), GFP_KERNEL);
+>>>>>> +    if (!stats) {
+>>>>>>             kobject_put(&thpsize->kobj);
+>>>>>> -        return ERR_PTR(ret);
+>>>>>> +        ret = -ENOMEM;
+>>>>>> +        goto err;
+>>>>>>         }
+>>>>>>     -    ret = sysfs_create_group(&thpsize->kobj, &stats_attr_group);
+>>>>>> +    ret = kobject_init_and_add(&stats->kobj, &thpsize_child_ktype,
+>>>>>> +                   &thpsize->kobj, "stats");
+>>>>>> +    kobject_put(&thpsize->kobj);
+>>>>>>         if (ret) {
+>>>>>> -        kobject_put(&thpsize->kobj);
+>>>>>> -        return ERR_PTR(ret);
+>>>>>> +        kfree(stats);
+>>>>>> +        goto err;
+>>>>>>         }
+>>>>>>     -    thpsize->order = order;
+>>>>>> -    return thpsize;
+>>>>>> +    if (BIT(order) & THP_ORDERS_ALL_ANON) {
+>>>>>> +        ret = sysfs_create_group(&thpsize->kobj, &thpsize_attr_group);
+>>>>>> +        if (ret)
+>>>>>> +            goto err_put;
+>>>>>> +
+>>>>>> +        ret = sysfs_create_group(&stats->kobj, &stats_attr_group);
+>>>>>> +        if (ret)
+>>>>>> +            goto err_put;
+>>>>>> +    }
+>>>>>> +
+>>>>>> +    if (BIT(order) & PAGECACHE_LARGE_ORDERS) {
+>>>>>> +        ret = sysfs_create_group(&stats->kobj, &file_stats_attr_group);
+>>>>>> +        if (ret)
+>>>>>> +            goto err_put;
+>>>>>> +    }
+>>>>>> +
+>>>>>> +    list_add(&stats->node, &thpsize_child_list);
+>>>>>> +    return 0;
+>>>>>> +err_put:
+>>>>>
+>>>>> IIUC, I think you should call 'sysfs_remove_group' to remove the group before
+>>>>> putting the kobject.
+>>>>
+>>>> Are you sure about that? As I understood it, sysfs_create_group() was
+>>>> conceptually modifying the state of the kobj, so when the kobj gets destroyed,
+>>>> all its state is tidied up. __kobject_del() (called on the last kobject_put())
+>>>> calls sysfs_remove_groups() and tidies up the sysfs state as far as I can see?
+>>>
+>>> IIUC, __kobject_del() only removes the ktype defaut groups by
+>>> 'sysfs_remove_groups(kobj, ktype->default_groups)', but your created groups are
+>>> not added into the ktype->default_groups. That means you should mannuly remove
+>>> them, or am I miss something?
+>>
+>> That was also putting doubt in my mind. But the sample at
+>> samples/kobject/kobject-example.c does not call sysfs_remove_group(). It just
+>> calls sysfs_create_group() in example_init() and calls kobject_put() in
+>> example_exit(). So I think that's the correct pattern.
+>>
+>> Looking at the code more closely, sysfs_create_group() just creates files for
+>> each of the attributes in the group. __kobject_del() calls sysfs_remove_dir(),
+>> who's comment states "we remove any files in the directory before we remove the
+>> directory" so I'm pretty sure sysfs_remove_group() is not required.
+> 
+> Thanks for the explanation, and I think you are right after checking the code
+> again. Sorry for the noise.
 
-Acked-by: Christian Brauner <brauner@kernel.org>
+No problem, thanks for raising anyway; TBH, I wasn't completely sure when I
+wrote it initially. So good to have clear resolution.
+
 
