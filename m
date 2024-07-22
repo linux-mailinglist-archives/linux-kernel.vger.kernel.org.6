@@ -1,103 +1,126 @@
-Return-Path: <linux-kernel+bounces-259064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 341509390BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:34:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E38479390BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:35:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B40128222E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:34:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A02BC2820BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C123D16DC32;
-	Mon, 22 Jul 2024 14:34:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966F716DC21;
-	Mon, 22 Jul 2024 14:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9ECB16D9D8;
+	Mon, 22 Jul 2024 14:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cD0Lh955"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A4ED515;
+	Mon, 22 Jul 2024 14:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721658850; cv=none; b=nCA6Ote5eoglEiDFvb5RW05PNXOE0ExtGVUAfF7PlE290kQgPFJapv3VDKoURQwLIXvV5kEkI5MUBNeA2smY17mFFPd8mGos5gm36xdutWxojaZqfz+oJjh9oNXmrH9fUJpu8Bh2+BaveIeeHc9sHTV5+oZD8dILhgANn1q/IEo=
+	t=1721658941; cv=none; b=Cu5RzjC0zbPPytmBWWViuz8I8tRw+xTR6MM2Bavu5YEsXR+WuK3D2lNCApPWZIVXg2SK80ojgqdJgQcwLcWyb+zTYKw84wKEw4cIVUWnm53JXJ7d1CRnaoaPbvtSHB+Pn0Nd7YvXJBg30CooMogIt0lsl14heSIuKEkQ/dI4N0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721658850; c=relaxed/simple;
-	bh=o5fpqj5qKoEFnMlTe9W5SnQC0WHnZeWkSLHywUGDlMs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=vGgLliU1WJnlJgO2kQ1GOLVwRRkJCz94F5Tf8yVVfbSoJb4D5+h/bWXYFmNWgTVXDBfwy4KnLHxB/pTWU+czayg8Wy6lUohe52eW5uaa+fYZa8EJKloODh0RGRkE5C/XFYcSTMFtSFPcKsED8G+nZR2raCcsvFKw8b4PiJq4dUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 537C8FEC;
-	Mon, 22 Jul 2024 07:34:33 -0700 (PDT)
-Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C29233F73F;
-	Mon, 22 Jul 2024 07:34:05 -0700 (PDT)
-Message-ID: <ed39010f-fcdd-4046-b081-2e3e0eb1a346@arm.com>
-Date: Mon, 22 Jul 2024 15:34:04 +0100
+	s=arc-20240116; t=1721658941; c=relaxed/simple;
+	bh=U8jN0W6WejJQMjHKa3nh4lgxmv2xEkd3nnTj+ctWbx0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gfmFGSCzmf1XGVw1LlaIQXuQ95Wzklbo+leHOPUwH3PHkylEn4t7ZS9auPvXYV7g809qZSB2XdFIhZyK3TQnWml9yukOSwwWcYSymFnc4v4ge76JD1sdgzzhc+bnv3z+rAIlI6PLlvy5dyL9CQ15gwq/haUR7GjvQxkZ72gaorc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=cD0Lh955; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E4A2B4CF;
+	Mon, 22 Jul 2024 16:34:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1721658897;
+	bh=U8jN0W6WejJQMjHKa3nh4lgxmv2xEkd3nnTj+ctWbx0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cD0Lh955V0wzfaAhqfks34kNJmZ74YMZAJBs1HqF6hB2BYqPMIDWunRIRVFcNu1Y2
+	 YFGSVujZtH16s+OQVRnYJVpqUYmIkPRTyshNnOtwjOMZgZM34no3NAsuI2tLfx0EZi
+	 8XGMr4uP6HvMicpz5BI9qERPfzCoBufuBjOSGfK8=
+Date: Mon, 22 Jul 2024 17:35:20 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	Mingjia Zhang <mingjia.zhang@mediatek.com>,
+	Jack Zhu <jack.zhu@starfivetech.com>,
+	Keith Zhao <keith.zhao@starfivetech.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v5 03/14] media: videodev2.h, v4l2-ioctl: Add StarFive
+ ISP meta buffer format
+Message-ID: <20240722143520.GI13497@pendragon.ideasonboard.com>
+References: <20240709083824.430473-1-changhuang.liang@starfivetech.com>
+ <20240709083824.430473-4-changhuang.liang@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/6] perf pmu: Directly use evsel's PMU pointer
-To: Adrian Hunter <adrian.hunter@intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- James Clark <james.clark@linaro.org>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, John Garry <john.g.garry@oracle.com>,
- Will Deacon <will@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240721202113.380750-1-leo.yan@arm.com>
- <20240721202113.380750-2-leo.yan@arm.com>
- <3c25ed2b-9538-4d10-9152-ed1e6106b41a@intel.com>
-Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <3c25ed2b-9538-4d10-9152-ed1e6106b41a@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240709083824.430473-4-changhuang.liang@starfivetech.com>
 
-Hi Adrian,
+Hello Changhuang,
 
-On 7/22/24 11:40, Adrian Hunter wrote:
+Thank you for the patch.
 
-[...]
-
-> On 21/07/24 23:21, Leo Yan wrote:
->> Rather than iterating the whole PMU list for finding the associated PMU
->> device for an evsel, this commit optimizes to directly use evsel's 'pmu'
->> pointer for accessing PMU device.
->>
->> Signed-off-by: Leo Yan <leo.yan@arm.com>
->> ---
->>   tools/perf/util/pmu.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
->> index 986166bc7c78..798cd5a2ebc4 100644
->> --- a/tools/perf/util/pmu.c
->> +++ b/tools/perf/util/pmu.c
->> @@ -1199,7 +1199,7 @@ void perf_pmu__warn_invalid_formats(struct perf_pmu *pmu)
->>
->>   bool evsel__is_aux_event(const struct evsel *evsel)
->>   {
->> -     struct perf_pmu *pmu = evsel__find_pmu(evsel);
->> +     struct perf_pmu *pmu = evsel->pmu;
+On Tue, Jul 09, 2024 at 01:38:13AM -0700, Changhuang Liang wrote:
+> Add the StarFive ISP specific metadata format
+> V4L2_META_FMT_STF_ISP_PARAMS & V4L2_META_FMT_STF_ISP_STAT_3A for 3A.
 > 
-> Assumes event parser has populated evsel->pmu for auxtrace events.
-> Could use a comment to that effect.
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
 
-Sure, will add a comment for this.
+This patch looks fine. Once the documentation issues are addressed in
+patch 01/14,
 
-Thanks,
-Leo
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
->>
->>        return pmu && pmu->auxtrace;
->>   }
+> ---
+>  drivers/media/v4l2-core/v4l2-ioctl.c | 2 ++
+>  include/uapi/linux/videodev2.h       | 4 ++++
+>  2 files changed, 6 insertions(+)
 > 
+> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+> index 4c76d17b4629..8770bfb31c5c 100644
+> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
+> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+> @@ -1456,6 +1456,8 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
+>  	case V4L2_META_FMT_VIVID:       descr = "Vivid Metadata"; break;
+>  	case V4L2_META_FMT_RK_ISP1_PARAMS:	descr = "Rockchip ISP1 3A Parameters"; break;
+>  	case V4L2_META_FMT_RK_ISP1_STAT_3A:	descr = "Rockchip ISP1 3A Statistics"; break;
+> +	case V4L2_META_FMT_STF_ISP_PARAMS:	descr = "StarFive ISP 3A Parameters"; break;
+> +	case V4L2_META_FMT_STF_ISP_STAT_3A:	descr = "StarFive ISP 3A Statistics"; break;
+>  	case V4L2_PIX_FMT_NV12_8L128:	descr = "NV12 (8x128 Linear)"; break;
+>  	case V4L2_PIX_FMT_NV12M_8L128:	descr = "NV12M (8x128 Linear)"; break;
+>  	case V4L2_PIX_FMT_NV12_10BE_8L128:	descr = "10-bit NV12 (8x128 Linear, BE)"; break;
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index fe6b67e83751..cfcbfe9bf973 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -841,6 +841,10 @@ struct v4l2_pix_format {
+>  #define V4L2_META_FMT_RK_ISP1_PARAMS	v4l2_fourcc('R', 'K', '1', 'P') /* Rockchip ISP1 3A Parameters */
+>  #define V4L2_META_FMT_RK_ISP1_STAT_3A	v4l2_fourcc('R', 'K', '1', 'S') /* Rockchip ISP1 3A Statistics */
+>  
+> +/* Vendor specific - used for StarFive JH7110 ISP camera sub-system */
+> +#define V4L2_META_FMT_STF_ISP_PARAMS	v4l2_fourcc('S', 'T', 'F', 'P') /* StarFive ISP 3A Parameters */
+> +#define V4L2_META_FMT_STF_ISP_STAT_3A	v4l2_fourcc('S', 'T', 'F', 'S') /* StarFive ISP 3A Statistics */
+> +
+>  #ifdef __KERNEL__
+>  /*
+>   * Line-based metadata formats. Remember to update v4l_fill_fmtdesc() when
+
+-- 
+Regards,
+
+Laurent Pinchart
 
