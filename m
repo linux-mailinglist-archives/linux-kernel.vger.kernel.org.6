@@ -1,205 +1,347 @@
-Return-Path: <linux-kernel+bounces-258857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 744C2938D60
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:17:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0192D938D6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E91A71F22E29
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:17:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A430D285FF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087FB1684B9;
-	Mon, 22 Jul 2024 10:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D3E1684B9;
+	Mon, 22 Jul 2024 10:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gXvFQhuZ"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FVv6U1Iz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C509014B95E;
-	Mon, 22 Jul 2024 10:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F4023DE;
+	Mon, 22 Jul 2024 10:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721643454; cv=none; b=sYrwToYH8FbJ/l+sAvs0VR4OiRgXR/hNx/Mfn83ntgOTBNO949q+5TiTyzTZtGFqV6WyN6edguC/f5H57ZomBj1SoVuFHhPYSBKB6+rkB1gVl0RGPBDbqzXVqwBeqMsR2mBfF38yIxefpso8w6Oq16stq6FW3mU9ZdNNHf7H3ME=
+	t=1721643851; cv=none; b=rE3eHEkiqN2jCLBaH69otmuMqjjM0IbfhyvrAFkkDD9WW4Nwof3A5YISF+ZRNAZEG27mtS7yAV1qAN4zcUUO2eu31ZrbI2t/sHoKq4UfPmb7JCGM3MsJXPqEEmHyEAaa8t83iWjuk1JpYxcb+Drg4ofmeOnOkWRmzI5m/2VfwI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721643454; c=relaxed/simple;
-	bh=n6M4WwTlYTgMRJXsb+W23WRcygwnxKzRq6IjSHZxoMg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QYavepeNbvMg5RtgDiZA0oORUjACZVmBml6PdDtpbFY0qvs4hZPI08rrR80voCuHSWoSy5c5suEEpnqc/+BtOaV4sZWfQEYn8IB5Kc6dupks12oRaefvF5167TOhyE36GCegAkGcXZGAzMD8GLo8360RPt8tEIgO8oTpe3YR9pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gXvFQhuZ; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D570DC0004;
-	Mon, 22 Jul 2024 10:17:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1721643444;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vZl9/xxJh8NRVF5Fs1hNSmhJmlfmZgzABt1M/4k1Gb8=;
-	b=gXvFQhuZlYPHYHR2jP1N8v3i7VJheLfZ2sdFIU4NR6xphhO9qqYgLc748zWIiyo1lPGf2u
-	foXdTBBuXjhczCVQBcmDbbFMkAAxf+1qBNElfuJlHaJTEyhMFewN7B926VhASTILQi0oRi
-	XgiylrBaxaQNlqAnuoKDiLRPo7aTYcDfYr/z6SD6Km62IHzVByYSYSVKx+RwmipUQg0EkG
-	mkJUkjiFl7dN0Bun5jvh5ya2xUH6QBi05nBoAfuqanYgacur95BV1NXHpsx/wEgXmVpRjC
-	cKpO0mUQ5kI/S/XI+aJZFSbjMM0upAX/J5/o8NLxpdyioAXC3cMjc2iFf1TInw==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, "paulburton@kernel.org"
- <paulburton@kernel.org>
-Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org, =?utf-8?Q?Th=C3=A9o?= Lebrun
- <theo.lebrun@bootlin.com>,
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, Tawfik Bayouk
- <tawfik.bayouk@mobileye.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH] MIPS: SMP-CPS: Fix address for GCR_ACCESS register for
- I6500
-In-Reply-To: <87jzhdkask.fsf@BLaptop.bootlin.com>
-References: <20240719-smp_i6500-v1-1-8738e67d4802@bootlin.com>
- <302ca8fb-0185-4872-9d82-d472854e5a43@app.fastmail.com>
- <6cbe8375-c11d-4fbf-8e4f-b15828ac3480@app.fastmail.com>
- <87jzhdkask.fsf@BLaptop.bootlin.com>
-Date: Mon, 22 Jul 2024 12:17:23 +0200
-Message-ID: <87h6chk9xo.fsf@BLaptop.bootlin.com>
+	s=arc-20240116; t=1721643851; c=relaxed/simple;
+	bh=5VaYzgbt0J7GPtaG6rRV1Br4DXdI291awdYYd3jN9pY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HvsThG2V9tHya1C0hfKU5r3hAZk3vh71pbRgBNcCg9yaRtscCGSS5xrYi08uqghXce4rbLE2H+B9Hco9dPGiUyRLqvIEPMxp18DC8Trb+LFVVAunwNlEu7tJVxWzHnJeGQ/2DxGX1jR61MxH4nV4RwJKBzRPIHaCr1BvOHy46zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FVv6U1Iz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CA33C116B1;
+	Mon, 22 Jul 2024 10:24:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721643851;
+	bh=5VaYzgbt0J7GPtaG6rRV1Br4DXdI291awdYYd3jN9pY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FVv6U1IzzroYWc7GcqZrDeF6KL7KWMV22lrAQCgFjtIvR5KPpaxvcNTC5JXOH2nEQ
+	 md1IqoeLr1HeuFoBp61k0ZQZenD0sHJgL8kihqcNm5JwhNp0s6MUY2VtG6b65VGZJr
+	 JqrCJRk0ulOB5nsXBCnqiAQTLFQbldADkQpO7xYRa1JpTSVTJHmAH03gafEo8pHuXR
+	 57ol9RJ69yDnVtBuhJYplttdCSPyOz7wHucR11XRlc8VfOUT9ZGz9GZWXrkiumTh5f
+	 yZhz6It3qnTd0YRy26HSQButI+1OoK0gkqajsyqsItmGpzj9Q9ZHgxmFBerzIBKJaL
+	 9rcewKbzYPdhw==
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52f024f468bso1416746e87.1;
+        Mon, 22 Jul 2024 03:24:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUtV1GViAw3bCp5joCbRqtxMjH1umqUPv22p2TeWalIwWVpjMERBDsXaT+a/ZSQpz8jXYKxrpR96XsAUylJatS2c8/ztv9J+ldCmdE6KgXjvErrx0DoKCptKkiTCCnOLbJVqEb12lRH/skDdmqrBVvjsVHtNpOsJ00bHK4zlKJ6F1PiZWUTnXJZpg==
+X-Gm-Message-State: AOJu0Yzh5q28kDfG8VSdf7MsS8EI4hqwnxfrEeUMP4E6zITtCYf6rXiN
+	0qhwoP6sCago+SvO8GHst4ZeOznZBjmVR+XYOY0Xdtoz5kjox15DwRwRac1orNPFUojknZvw8In
+	PuKk9EjaT1sml5Rx5vNBDNPymdlI=
+X-Google-Smtp-Source: AGHT+IHCMwyOvhOVoYwO9D5qsJ5G1COWoX6qwnneUOepPJ2Uv1CE50rCiUP9dKQHtXLpsMUr3CPTtr5uKFzieKPBTss=
+X-Received: by 2002:a05:6512:2209:b0:52e:f2a6:8e1a with SMTP id
+ 2adb3069b0e04-52efb7e8103mr4327063e87.29.1721643849719; Mon, 22 Jul 2024
+ 03:24:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20240722090622.16524-1-petr.pavlu@suse.com> <20240722090622.16524-2-petr.pavlu@suse.com>
+In-Reply-To: <20240722090622.16524-2-petr.pavlu@suse.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 22 Jul 2024 19:23:33 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATG-kYuxGgzC7e-BbTPMnSH+MCAEVOXoQkdGYH9xLincA@mail.gmail.com>
+Message-ID: <CAK7LNATG-kYuxGgzC7e-BbTPMnSH+MCAEVOXoQkdGYH9xLincA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] module: Split modules_install compression and
+ in-kernel decompression
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-modules@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: gregory.clement@bootlin.com
 
-Gregory CLEMENT <gregory.clement@bootlin.com> writes:
+On Mon, Jul 22, 2024 at 6:07=E2=80=AFPM Petr Pavlu <petr.pavlu@suse.com> wr=
+ote:
+>
+> The kernel configuration allows specifying a module compression mode. If
+> one is selected then each module gets compressed during
+> 'make modules_install' and additionally one can also enable support for
+> a respective direct in-kernel decompression support. This means that the
+> decompression support cannot be enabled without the automatic compression=
+.
+>
+> Some distributions, such as the (open)SUSE family, use a signer service f=
+or
+> modules. A build runs on a worker machine but signing is done by a separa=
+te
+> locked-down server that is in possession of the signing key. The build
+> invokes 'make modules_install' to create a modules tree, collects
+> information about the modules, asks the signer service for their signatur=
+e,
+> appends each signature to the respective module and compresses all module=
+s.
+>
+> When using this arrangment, the 'make modules_install' step produces
+> unsigned+uncompressed modules and the distribution's own build recipe tak=
+es
+> care of signing and compression later.
+>
+> The signing support can be currently enabled without automatically signin=
+g
+> modules during 'make modules_install'. However, the in-kernel decompressi=
+on
+> support can be selected only after first enabling automatic compression
+> during this step.
+>
+> To allow only enabling the in-kernel decompression support without the
+> automatic compression during 'make modules_install', separate the
+> compression options similarly to the signing options, as follows:
+>
+> > Enable loadable module support
+> [*] Module compression
+>       Module compression type (GZIP)  --->
+> [*]   Automatically compress all modules
+> [ ]   Support in-kernel module decompression
+>
+> * "Module compression" (MODULE_COMPRESS) is a new main switch for the
+>   compression/decompression support. It replaces MODULE_COMPRESS_NONE.
+> * "Module compression type" (MODULE_COMPRESS_<type>) chooses the
+>   compression type, one of GZ, XZ, ZSTD.
+> * "Automatically compress all modules" (MODULE_COMPRESS_ALL) is a new
+>   option to enable module compression during 'make modules_install'. It
+>   defaults to Y.
+> * "Support in-kernel module decompression" (MODULE_DECOMPRESS) enables
+>   in-kernel decompression.
+>
+> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+> ---
 
-> Hello Jiaxun,
->
->> =E5=9C=A82024=E5=B9=B47=E6=9C=8820=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8A=
-=E5=8D=8811:13=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
->>> =E5=9C=A82024=E5=B9=B47=E6=9C=8819=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=
-=E5=8D=8810:14=EF=BC=8CGregory CLEMENT=E5=86=99=E9=81=93=EF=BC=9A
->>>> Unlike most other MIPS CPUs, the I6500 CPUs have different address
->>>> offsets for the Global CSR Access Privilege register. In the "MIPS64
->>>> I6500 Multiprocessing System Programmer's Guide," it is stated that
->>>> "the Global CSR Access Privilege register is located at offset 0x0120"
->>>> in section 5.4.
->>>>
->>>> However, this is not the case for other MIPS64 CPUs such as the
->>>> P6600. In the "MIPS64=C2=AE P6600 Multiprocessing System Software User=
-'s
->>>> Guide," section 6.4.2.6 states that the GCR_ACCESS register has an
->>>> offset of 0x0020.
->>>
->>> Hi Gregory,
->>>
->>> I confirmed this is a CM3 feature rather than CPU core (Samruai) featur=
-e.
->>
->> Oh I=E2=80=99m not really sure if it=E2=80=99s CM 3.5 only.
->>
->> Let me check this Monday once I can checkout old design database for
->> I6400.
->
-> Ok, so I am waiting for your feedback :)
-> And I am also trying to see if I can find the datasheet for I6400.
->>
->> Hardware resets GCR_ACCESS to the most permissive value so I assume
->> it=E2=80=99s your bootloader doing wired hacks.
 
-I found an I6400 datasheet [1] and in the "5.4 CM Register Access
-Permissions" paragraph, it is written "the Global CSR Access Privilege
-register located at offset 0x0120". So it has the same offset as the
-I6500.
 
-Gregory
+My preference is to add
+ CONFIG_MODULE_DECOMPRESS_GZIP
+ CONFIG_MODULE_DECOMPRESS_XZ
+ CONFIG_MODULE_DECOMPRESS_ZSTD
+instead of
+ CONFIG_MODULE_COMPRESS_ALL.
 
-[1]: https://s3-eu-west-1.amazonaws.com/downloads-mips/documents/MIPS_Warri=
-or_I6400_ProgrammerGuide_MD01196_P_1.00.pdf
 
+
+
+For example,
+
+
+if MODULE_DECOMPRESS
+
+config MODULE_DECOMPRESS_GZIP
+       bool "Support in-kernel GZIP decompression for module"
+       default MODULE_COMPRESS_GZIP
+
+config MODULE_DECOMPRESS_XZ
+       bool "Support in-kernel XZ decompression for module"
+       default MODULE_COMPRESS_XZ
+
+config MODULE_DECOMPRESS_ZSTD
+       bool "Support in-kernel ZSTD decompression for module"
+       default MODULE_COMPRESS_ZSTD
+
+endif
+
+
+
+
+
+OR, maybe
+
+
+
+config MODULE_DECOMPRESS_GZIP
+       bool "Support in-kernel GZIP decompression for module"
+       select MODULE_DECOMPRESS
+
+config MODULE_DECOMPRESS_XZ
+       bool "Support in-kernel XZ decompression for module"
+       select MODULE_DECOMPRESS
+
+config MODULE_DECOMPRESS_ZSTD
+       bool "Support in-kernel ZSTD decompression for module"
+       select MODULE_DECOMPRESS
+
+config MODULE_DECOMPRESS
+       bool
+
+
+
+
+You can toggle MODULE_COMPRESS_GZIP and
+MODULE_DECOMPRESS_GZIP independently
+
+
+Of course, the current kernel/module/decompress.c does not
+work when multiple (or zero) CONFIG_MODULE_DECOMPRESS_* is
+enabled. It needs a little modification.
+
+
+I will wait for Lius's comment.
+
+
+
+
+
+
+
+>  kernel/module/Kconfig    | 61 ++++++++++++++++++++--------------------
+>  scripts/Makefile.modinst |  2 ++
+>  2 files changed, 33 insertions(+), 30 deletions(-)
 >
-> Indeed, other bootloaders seem to not modify it, so that's why I think
-> the issue was never detected until now. However, we want to be as
-> independent as possible from the bootloader, so we really need to fix
-> it.
+> diff --git a/kernel/module/Kconfig b/kernel/module/Kconfig
+> index 4047b6d48255..bb7f7930fef6 100644
+> --- a/kernel/module/Kconfig
+> +++ b/kernel/module/Kconfig
+> @@ -278,64 +278,65 @@ config MODULE_SIG_HASH
+>         default "sha3-384" if MODULE_SIG_SHA3_384
+>         default "sha3-512" if MODULE_SIG_SHA3_512
 >
-> Thanks for your review!
+> -choice
+> -       prompt "Module compression mode"
+> +config MODULE_COMPRESS
+> +       bool "Module compression"
+>         help
+> -         This option allows you to choose the algorithm which will be us=
+ed to
+> -         compress modules when 'make modules_install' is run. (or, you c=
+an
+> -         choose to not compress modules at all.)
+> -
+> -         External modules will also be compressed in the same way during=
+ the
+> -         installation.
+> -
+> -         For modules inside an initrd or initramfs, it's more efficient =
+to
+> -         compress the whole initrd or initramfs instead.
+> -
+> +         Enable module compression to reduce on-disk size of module bina=
+ries.
+>           This is fully compatible with signed modules.
 >
-> Gregory
+> -         Please note that the tool used to load modules needs to support=
+ the
+> -         corresponding algorithm. module-init-tools MAY support gzip, an=
+d kmod
+> -         MAY support gzip, xz and zstd.
+> +         The tool used to work with modules needs to support the selecte=
+d
+> +         compression type. kmod MAY support gzip, xz and zstd. Other too=
+ls
+> +         might have a limited selection of the supported types.
 >
->>
->> Thanks
->>
->>>
->>> Please use CM version to select register region.
->>> (And perhaps Cc stable for this patch?)
->>>
->>> Thanks
->>> - Jiaxun
->>>
->>>>
->>>> This fix allows to use the VP cores in SMP mode.
->>>>
->>>> Based on the work of Vladimir Kondratiev <vladimir.kondratiev@mobileye=
-.com>
->>>>
->>>> Fixes: 859aeb1b0dd1 ("MIPS: Probe the I6500 CPU")
->>>> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
->>>> ---
->>>>  arch/mips/include/asm/mips-cm.h | 4 ++++
->>>>  arch/mips/kernel/smp-cps.c      | 5 ++++-
->>>>  2 files changed, 8 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/arch/mips/include/asm/mips-cm.h b/arch/mips/include/asm/m=
-ips-cm.h
->>>> index 3d9efc802e36..41bf9b3a98fb 100644
->>>> --- a/arch/mips/include/asm/mips-cm.h
->>>> +++ b/arch/mips/include/asm/mips-cm.h
->>>> @@ -240,6 +240,10 @@ GCR_ACCESSOR_RO(32, 0x0d0, gic_status)
->>>>  GCR_ACCESSOR_RO(32, 0x0f0, cpc_status)
->>>>  #define CM_GCR_CPC_STATUS_EX			BIT(0)
->>>>=20
->>>> +/* GCR_ACCESS - Controls core/IOCU access to GCRs */
->>>> +GCR_ACCESSOR_RW(32, 0x120, access_i6500)
->>>> +#define CM_GCR_ACCESS_ACCESSEN			GENMASK(7, 0)
->>>> +
->>>>  /* GCR_L2_CONFIG - Indicates L2 cache configuration when Config5.L2C=
-=3D1=20
->>>> */
->>>>  GCR_ACCESSOR_RW(32, 0x130, l2_config)
->>>>  #define CM_GCR_L2_CONFIG_BYPASS			BIT(20)
->>>> diff --git a/arch/mips/kernel/smp-cps.c b/arch/mips/kernel/smp-cps.c
->>>> index e074138ffd7f..60590890b6da 100644
->>>> --- a/arch/mips/kernel/smp-cps.c
->>>> +++ b/arch/mips/kernel/smp-cps.c
->>>> @@ -325,7 +325,10 @@ static void boot_core(unsigned int core, unsigned=
-=20
->>>> int vpe_id)
->>>>  	write_gcr_co_reset_ext_base(CM_GCR_Cx_RESET_EXT_BASE_UEB);
->>>>=20
->>>>  	/* Ensure the core can access the GCRs */
->>>> -	set_gcr_access(1 << core);
->>>> +	if (current_cpu_type() !=3D CPU_I6500)
->>>> +		set_gcr_access(1 << core);
->>>> +	else
->>>> +		set_gcr_access_i6500(1 << core);
->>>>=20
->>>>  	if (mips_cpc_present()) {
->>>>  		/* Reset the core */
->>>>
->>>> ---
->>>> base-commit: 9298d51eb3af24f88b211087eb698399f9efa439
->>>> change-id: 20240719-smp_i6500-8cb233878c41
->>>>
->>>> Best regards,
->>>> --=20
->>>> Gregory CLEMENT <gregory.clement@bootlin.com>
->>>
->>> --=20
->>> - Jiaxun
->>
->> --=20
->> - Jiaxun
+> -         Your build system needs to provide the appropriate compression =
+tool
+> -         to compress the modules.
+> +         Note that for modules inside an initrd or initramfs, it's more
+> +         efficient to compress the whole ramdisk instead.
+>
+> -         If in doubt, select 'None'.
+> +         If unsure, say N.
+>
+> -config MODULE_COMPRESS_NONE
+> -       bool "None"
+> +choice
+> +       prompt "Module compression type"
+> +       depends on MODULE_COMPRESS
+>         help
+> -         Do not compress modules. The installed modules are suffixed
+> -         with .ko.
+> +         Choose the supported algorithm for module compression.
+>
+>  config MODULE_COMPRESS_GZIP
+>         bool "GZIP"
+>         help
+> -         Compress modules with GZIP. The installed modules are suffixed
+> -         with .ko.gz.
+> +         Support modules compressed with GZIP. The installed modules are
+> +         suffixed with .ko.gz.
+>
+>  config MODULE_COMPRESS_XZ
+>         bool "XZ"
+>         help
+> -         Compress modules with XZ. The installed modules are suffixed
+> -         with .ko.xz.
+> +         Support modules compressed with XZ. The installed modules are
+> +         suffixed with .ko.xz.
+>
+>  config MODULE_COMPRESS_ZSTD
+>         bool "ZSTD"
+>         help
+> -         Compress modules with ZSTD. The installed modules are suffixed
+> -         with .ko.zst.
+> +         Support modules compressed with ZSTD. The installed modules are
+> +         suffixed with .ko.zst.
+>
+>  endchoice
+>
+> +config MODULE_COMPRESS_ALL
+> +       bool "Automatically compress all modules"
+> +       default y
+> +       depends on MODULE_COMPRESS
+> +       help
+> +         Compress all modules during 'make modules_install'.
+> +
+> +         Your build system needs to provide the appropriate compression =
+tool
+> +         for the selected compression type. External modules will also b=
+e
+> +         compressed in the same way during the installation.
+> +
+>  config MODULE_DECOMPRESS
+>         bool "Support in-kernel module decompression"
+> -       depends on MODULE_COMPRESS_GZIP || MODULE_COMPRESS_XZ || MODULE_C=
+OMPRESS_ZSTD
+> +       depends on MODULE_COMPRESS
+>         select ZLIB_INFLATE if MODULE_COMPRESS_GZIP
+>         select XZ_DEC if MODULE_COMPRESS_XZ
+>         select ZSTD_DECOMPRESS if MODULE_COMPRESS_ZSTD
+>         help
+> -
+>           Support for decompressing kernel modules by the kernel itself
+>           instead of relying on userspace to perform this task. Useful wh=
+en
+>           load pinning security policy is enabled.
+> diff --git a/scripts/Makefile.modinst b/scripts/Makefile.modinst
+> index 0afd75472679..bce4a9adb893 100644
+> --- a/scripts/Makefile.modinst
+> +++ b/scripts/Makefile.modinst
+> @@ -51,9 +51,11 @@ $(foreach x, % :, $(if $(findstring $x, $(dst)), \
+>         $(error module installation path cannot contain '$x')))
+>
+>  suffix-y                               :=3D
+> +ifdef CONFIG_MODULE_COMPRESS_ALL
+>  suffix-$(CONFIG_MODULE_COMPRESS_GZIP)  :=3D .gz
+>  suffix-$(CONFIG_MODULE_COMPRESS_XZ)    :=3D .xz
+>  suffix-$(CONFIG_MODULE_COMPRESS_ZSTD)  :=3D .zst
+> +endif
+>
+>  modules :=3D $(patsubst $(extmod_prefix)%.o, $(dst)/%.ko$(suffix-y), $(m=
+odules))
+>  install-$(CONFIG_MODULES) +=3D $(modules)
+> --
+> 2.35.3
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
