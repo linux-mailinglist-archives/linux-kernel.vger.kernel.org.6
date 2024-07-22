@@ -1,262 +1,285 @@
-Return-Path: <linux-kernel+bounces-259213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E18559392B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:45:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A50B89392B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:46:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D519B217ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:45:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08632B21B72
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E33C916EBE2;
-	Mon, 22 Jul 2024 16:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f5SGAZIL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A97516EB58;
+	Mon, 22 Jul 2024 16:46:07 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2731FC2FD;
-	Mon, 22 Jul 2024 16:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFED216E89B
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 16:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721666740; cv=none; b=TWp+i89p1PrSf+D8SolxrGGNDENn6X2WLSHktk5Jm8uVDMxR2sl2DTrtDXN1KC/QH4HtykzOuG4nRmG5ld/NJb7s9Jruc/d50a/gOFkhLXX1hLULM75LjQnLf+50xWDQzzQf3EO65eDRoU/hPjnmsHbVRRenH3sDgboWNbXUIWk=
+	t=1721666766; cv=none; b=RNv5pNz56Vtk08Nv9275KLoG2J4+yxqnpUNRqY0MaBBU4b4AoMWWv9t4eEvN5lX67HvTnZbXjRzs3gzyiLjgINTZ93JucSF0E53Ra5dagVxysSrlQ0eTAINddLGHg7+5HjZv7E1jU2sexvhFUKRO9rrrP1y486fzVYlISEzAAF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721666740; c=relaxed/simple;
-	bh=ETYLw21kbSQSjFu61FymF6xrk6sFkW23q48JZFsEk40=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NNbnzZnynHK+SJlLUpprXmN8ZFGXvbLmiE9GvzLKgXDqJgRl9Vro7b0e4nSi365RGfu6UZct1UYxYNuagWXhecar44ulVlqQu5wQS9gQ/GITWN3QFyAg3FLwQ74PfcSI5qcMLge8NJT01WTXEmmArP6OlS2UB1+p6k1V7gHmHX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f5SGAZIL; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721666738; x=1753202738;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ETYLw21kbSQSjFu61FymF6xrk6sFkW23q48JZFsEk40=;
-  b=f5SGAZILbychz9EofFnuunSmJeUwOV8X8msvSAXSk6+dwDYexxhXKWxO
-   cWm4isIm3L2+sKVVakDihfBzj9YAkAPibLyTFiWamjMbibhq/2NQnHvWM
-   qF9VYpDM8CkHed8KcZFSw/44YQsDrK2e8TiDoBND2zNB1OouUI9dFNDmg
-   81cH3G0vvEuLuwcIYO1ikdgDpPTMWD+IBzGXkumnjYsmQh0Cqd16/oyKU
-   TFhnYWKFpCQPNB8zVxedjlMUIPXJEV7RPLX1tuQR3++YtK6TAlkmlZc4K
-   KpCD4vVh521ew8W1z4A3UAZlqBoMP51nUdgo0C6bcLfc0wnXHM2VKobLT
-   A==;
-X-CSE-ConnectionGUID: tu0ROH8WRcqSUBACDsV6fg==
-X-CSE-MsgGUID: hEEwcL5lTja5o5q/VvgcQA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11141"; a="29833277"
-X-IronPort-AV: E=Sophos;i="6.09,228,1716274800"; 
-   d="scan'208";a="29833277"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 09:45:37 -0700
-X-CSE-ConnectionGUID: q7kPepZ/SqWRJ/HnOznk3g==
-X-CSE-MsgGUID: RiVLx5vjTLqzhuYvchLAog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,228,1716274800"; 
-   d="scan'208";a="56790003"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 09:45:37 -0700
-Received: from [10.212.80.152] (kliang2-mobl1.ccr.corp.intel.com [10.212.80.152])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id F410520CFEE1;
-	Mon, 22 Jul 2024 09:45:33 -0700 (PDT)
-Message-ID: <aef9d7fd-ac33-45a3-91ed-2b4d3f0f70b5@linux.intel.com>
-Date: Mon, 22 Jul 2024 12:45:32 -0400
+	s=arc-20240116; t=1721666766; c=relaxed/simple;
+	bh=touT9+JVTcBY8uWgfeS51xiQ2FKdcQoKfsYYtN9ANng=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=KP4CqsignxYccjhG2EbvWiSe2Dj7QgrhegoDauSxZE5wiNb3qKg68RHHybaTe67bEOMP/RAWk4gx7ahTlDct0T1H7WxroUfrWeYfSMcSUL/Jy2GIBSRzBj/jlYjTLqC7gZAjRZrKVpWa6fi+q7AyyILrJJmGEKHfuZxV42NDpuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3987dace329so46685175ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:46:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721666764; x=1722271564;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ee4pEJtOfUylxwimgN34Ud09dnojGP9rODX4I3bNuBc=;
+        b=nn3bPnT9JCgu8vnBvycWoGI9dOAcUC7/tClzGhsWKg3mz6cfB02sYqVPECuXEYFji+
+         jooIF4S3ku75duNTK/V4g9REDM+r+Rv7nMTfbtBH1EEAjtGRB9pDnrMSAEC9Yowpt8Fh
+         6iBVuawItuR1F64ayBxpRW4KQGOSr/cou/+jlreVgM15SWTV1zLlNAKquzp1r//jEpMF
+         n/+4v+XKRj+KD/eUAA3JluAez1Mpw42NRjsHbeTOVcbsLY7iEyCyi60JXaUjJUsV53aB
+         GIsrACt2XKA1HJjYckH3l3v0BgqgGu60CtMid+jCgPzlGZWMXnYgoKePMMy0bIqlu4FA
+         o9OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzYehQj7mMnR3oskYMEz4Ag6yzpmYw8Bv5ZCk0aOkfVUcutISWOAgUNsLLub//6AeBTNKVg8A3y5b8DetyhDaLa3NOT+roKOzh9xxL
+X-Gm-Message-State: AOJu0YwhF1DCWJYcprICXL4IhFHz5Ndizw1mxouFyvHVd74AXnPNBgsK
+	51XcTWasV0AnbBtBl4euEttyFOD9Z2vycc0SRamyY24Stj53h39h99vDGgQ4XoSKrDQ54Iyrpi+
+	sypTxB4zz7xB8kfxuCcz7l2H1o+mmn4vQRJzI+RYzxn4A/TcyO4qMaSs=
+X-Google-Smtp-Source: AGHT+IGSHEno9cTAntG97SSwRtpT6V6atA9uleN5sqzZRr19LXNNWHZ7P3WnQIalHDq2zV9LLs+YWCB8O3dvEecV/K5yWHT6oM9w
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/6] perf pmu: Add support for event.cpus files in
- sysfs
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>,
- James Clark <james.clark@arm.com>, Ravi Bangoria <ravi.bangoria@amd.com>,
- Dominique Martinet <asmadeus@codewreck.org>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org,
- Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, ananth.narayan@amd.com,
- gautham.shenoy@amd.com, kprateek.nayak@amd.com, sandipan.das@amd.com
-References: <20240718003025.1486232-1-irogers@google.com>
- <20240718003025.1486232-4-irogers@google.com>
- <92ceb8b5-240a-4715-98db-c73e8e9d3e50@linux.intel.com>
- <CAP-5=fUfoMZ0HjCNoJe6hgEMi5ciY+LqFjBbLzfiZgO6dioshA@mail.gmail.com>
- <64030eab-6e95-494a-ab72-bc33792ef723@linux.intel.com>
- <CAP-5=fVMV4ZmGk4-XguqV=LAuif-MgAL+BK=mMAE1tC3f3tbhQ@mail.gmail.com>
- <e8872317-8e18-48aa-9f23-b98af9345bed@linux.intel.com>
- <CAP-5=fUjEYwdOdmfa5N7b8OOLWDitJKBdeOr8-+UOYWA5+ehkA@mail.gmail.com>
- <775d8f1d-437d-47a3-b4b2-da476e914cf5@linux.intel.com>
- <CAP-5=fUH+n+f_q1Tc-a3oV3vDV60VGOLANRFWUemDen197rYog@mail.gmail.com>
- <862f6bb1-ab67-4286-8c27-465b2f29de64@linux.intel.com>
- <CAP-5=fVdiFYVP8RsE+JuhOCoGSyybv0ZUn=Sixv1ZcEe8G7=2A@mail.gmail.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <CAP-5=fVdiFYVP8RsE+JuhOCoGSyybv0ZUn=Sixv1ZcEe8G7=2A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:c546:0:b0:381:a6b6:2dbd with SMTP id
+ e9e14a558f8ab-39a0c96e0d4mr118125ab.4.1721666763848; Mon, 22 Jul 2024
+ 09:46:03 -0700 (PDT)
+Date: Mon, 22 Jul 2024 09:46:03 -0700
+In-Reply-To: <20240722161240.4116-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e18bf9061dd8c79f@google.com>
+Subject: Re: [syzbot] [bpf?] [net?] general protection fault in __xsk_map_flush
+From: syzbot <syzbot+61a1cfc2b6632363d319@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: slab-out-of-bounds Read in bq_xmit_all
+
+==================================================================
+BUG: KASAN: slab-out-of-bounds in bq_xmit_all+0x134/0x11d0 kernel/bpf/devmap.c:385
+Read of size 8 at addr ffff88807a2f03a0 by task syz.0.305/6537
+
+CPU: 0 UID: 0 PID: 6537 Comm: syz.0.305 Not tainted 6.10.0-syzkaller-11840-g933069701c1b-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Call Trace:
+ <IRQ>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ bq_xmit_all+0x134/0x11d0 kernel/bpf/devmap.c:385
+ __dev_flush+0x81/0x160 kernel/bpf/devmap.c:425
+ xdp_do_check_flushed+0x129/0x240 net/core/filter.c:4300
+ __napi_poll+0xe4/0x490 net/core/dev.c:6774
+ napi_poll net/core/dev.c:6840 [inline]
+ net_rx_action+0x89b/0x1240 net/core/dev.c:6962
+ handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
+ __do_softirq kernel/softirq.c:588 [inline]
+ invoke_softirq kernel/softirq.c:428 [inline]
+ __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
+ common_interrupt+0xaa/0xd0 arch/x86/kernel/irq.c:278
+ </IRQ>
+ <TASK>
+ asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
+RIP: 0010:__sanitizer_cov_trace_switch+0x110/0x120 kernel/kcov.c:342
+Code: 43 28 4c 39 f8 77 a3 49 ff c4 4c 89 21 4c 89 44 0b 08 4c 89 74 0b 10 48 89 7c 0b 18 4c 89 4c 0b 20 eb 87 5b 41 5c 41 5e 41 5f <c3> cc cc cc cc 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90
+RSP: 0018:ffffc90002de6ec0 EFLAGS: 00000246
+RAX: 0000000000000000 RBX: 0000000000000002 RCX: ffff88801cb4da00
+RDX: 0000000000000003 RSI: ffffffff8e1a32f0 RDI: 0000000000000002
+RBP: ffffffff9033a231 R08: 0000000000000005 R09: ffffffff81411746
+R10: 0000000000000003 R11: ffff88801cb4da00 R12: ffffffff9033a230
+R13: dffffc0000000000 R14: ffffc90002de6ff0 R15: 1ffff920005bcdf4
+ unwind_next_frame+0xff6/0x2a00 arch/x86/kernel/unwind_orc.c:581
+ arch_stack_walk+0x151/0x1b0 arch/x86/kernel/stacktrace.c:25
+ stack_trace_save+0x118/0x1d0 kernel/stacktrace.c:122
+ save_stack+0xfb/0x1f0 mm/page_owner.c:156
+ __reset_page_owner+0x75/0x3f0 mm/page_owner.c:297
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1094 [inline]
+ free_unref_folios+0x103a/0x1b00 mm/page_alloc.c:2656
+ folios_put_refs+0x76e/0x860 mm/swap.c:1039
+ free_pages_and_swap_cache+0x5c8/0x690 mm/swap_state.c:335
+ __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
+ tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
+ tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
+ tlb_flush_mmu+0x3a3/0x680 mm/mmu_gather.c:373
+ tlb_finish_mmu+0xd4/0x200 mm/mmu_gather.c:465
+ exit_mmap+0x44f/0xc80 mm/mmap.c:3395
+ __mmput+0x115/0x390 kernel/fork.c:1345
+ exit_mm+0x220/0x310 kernel/exit.c:571
+ do_exit+0x9b2/0x27f0 kernel/exit.c:869
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1031
+ get_signal+0x16a1/0x1740 kernel/signal.c:2917
+ arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:310
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7faf1cf75bd9
+Code: Unable to access opcode bytes at 0x7faf1cf75baf.
+RSP: 002b:00007faf1dd780f8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 00007faf1d103f68 RCX: 00007faf1cf75bd9
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007faf1d103f68
+RBP: 00007faf1d103f60 R08: 00007faf1dd786c0 R09: 00007faf1dd786c0
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007faf1d103f6c
+R13: 000000000000000b R14: 00007fff7453a500 R15: 00007fff7453a5e8
+ </TASK>
+
+Allocated by task 5658:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:312 [inline]
+ __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3988 [inline]
+ slab_alloc_node mm/slub.c:4037 [inline]
+ kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4044
+ vm_area_dup+0x27/0x290 kernel/fork.c:486
+ dup_mmap kernel/fork.c:695 [inline]
+ dup_mm kernel/fork.c:1672 [inline]
+ copy_mm+0xc7b/0x1f30 kernel/fork.c:1721
+ copy_process+0x187a/0x3dc0 kernel/fork.c:2374
+ kernel_clone+0x226/0x8f0 kernel/fork.c:2781
+ __do_sys_clone kernel/fork.c:2924 [inline]
+ __se_sys_clone kernel/fork.c:2908 [inline]
+ __x64_sys_clone+0x258/0x2a0 kernel/fork.c:2908
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88807a2f02e8
+ which belongs to the cache vm_area_struct of size 184
+The buggy address is located 0 bytes to the right of
+ allocated 184-byte region [ffff88807a2f02e8, ffff88807a2f03a0)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x7a2f0
+memcg:ffff88802c3dca01
+anon flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xfdffffff(slab)
+raw: 00fff00000000000 ffff888015eefb40 ffffea0001e7a400 0000000000000009
+raw: 0000000000000000 0000000000100010 00000001fdffffff ffff88802c3dca01
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x152cc0(GFP_USER|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 5933, tgid 5933 (dhcpcd-run-hook), ts 112186336296, free_ts 112182429345
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
+ prep_new_page mm/page_alloc.c:1501 [inline]
+ get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3438
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4696
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x5f/0x120 mm/slub.c:2321
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2484
+ new_slab mm/slub.c:2537 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3723
+ __slab_alloc+0x58/0xa0 mm/slub.c:3813
+ __slab_alloc_node mm/slub.c:3866 [inline]
+ slab_alloc_node mm/slub.c:4025 [inline]
+ kmem_cache_alloc_noprof+0x1c1/0x2a0 mm/slub.c:4044
+ vm_area_dup+0x27/0x290 kernel/fork.c:486
+ dup_mmap kernel/fork.c:695 [inline]
+ dup_mm kernel/fork.c:1672 [inline]
+ copy_mm+0xc7b/0x1f30 kernel/fork.c:1721
+ copy_process+0x187a/0x3dc0 kernel/fork.c:2374
+ kernel_clone+0x226/0x8f0 kernel/fork.c:2781
+ __do_sys_clone kernel/fork.c:2924 [inline]
+ __se_sys_clone kernel/fork.c:2908 [inline]
+ __x64_sys_clone+0x258/0x2a0 kernel/fork.c:2908
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 5935 tgid 5935 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1094 [inline]
+ free_unref_folios+0x103a/0x1b00 mm/page_alloc.c:2656
+ folios_put_refs+0x76e/0x860 mm/swap.c:1039
+ free_pages_and_swap_cache+0x5c8/0x690 mm/swap_state.c:335
+ __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
+ tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
+ tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
+ tlb_flush_mmu+0x3a3/0x680 mm/mmu_gather.c:373
+ tlb_finish_mmu+0xd4/0x200 mm/mmu_gather.c:465
+ exit_mmap+0x44f/0xc80 mm/mmap.c:3395
+ __mmput+0x115/0x390 kernel/fork.c:1345
+ exit_mm+0x220/0x310 kernel/exit.c:571
+ do_exit+0x9b2/0x27f0 kernel/exit.c:869
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1031
+ __do_sys_exit_group kernel/exit.c:1042 [inline]
+ __se_sys_exit_group kernel/exit.c:1040 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1040
+ x64_sys_call+0x26c3/0x26d0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff88807a2f0280: 00 00 00 00 00 fc fc fc fc fc fc fc fc 00 00 00
+ ffff88807a2f0300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff88807a2f0380: 00 00 00 00 fc fc fc fc fc fc fc fc 00 00 00 00
+                               ^
+ ffff88807a2f0400: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff88807a2f0480: 00 00 00 fc fc fc fc fc fc fc fc fa fb fb fb fb
+==================================================================
+----------------
+Code disassembly (best guess):
+   0:	43 28 4c 39 f8       	sub    %cl,-0x8(%r9,%r15,1)
+   5:	77 a3                	ja     0xffffffaa
+   7:	49 ff c4             	inc    %r12
+   a:	4c 89 21             	mov    %r12,(%rcx)
+   d:	4c 89 44 0b 08       	mov    %r8,0x8(%rbx,%rcx,1)
+  12:	4c 89 74 0b 10       	mov    %r14,0x10(%rbx,%rcx,1)
+  17:	48 89 7c 0b 18       	mov    %rdi,0x18(%rbx,%rcx,1)
+  1c:	4c 89 4c 0b 20       	mov    %r9,0x20(%rbx,%rcx,1)
+  21:	eb 87                	jmp    0xffffffaa
+  23:	5b                   	pop    %rbx
+  24:	41 5c                	pop    %r12
+  26:	41 5e                	pop    %r14
+  28:	41 5f                	pop    %r15
+* 2a:	c3                   	ret <-- trapping instruction
+  2b:	cc                   	int3
+  2c:	cc                   	int3
+  2d:	cc                   	int3
+  2e:	cc                   	int3
+  2f:	66 2e 0f 1f 84 00 00 	cs nopw 0x0(%rax,%rax,1)
+  36:	00 00 00
+  39:	90                   	nop
+  3a:	90                   	nop
+  3b:	90                   	nop
+  3c:	90                   	nop
+  3d:	90                   	nop
+  3e:	90                   	nop
+  3f:	90                   	nop
 
 
+Tested on:
 
-On 2024-07-22 11:43 a.m., Ian Rogers wrote:
-> On Mon, Jul 22, 2024 at 6:57 AM Liang, Kan <kan.liang@linux.intel.com> wrote:
->>
->>
->>
->> On 2024-07-19 6:02 p.m., Ian Rogers wrote:
->>> On Fri, Jul 19, 2024 at 9:35 AM Liang, Kan <kan.liang@linux.intel.com> wrote:
->>>> On 2024-07-19 10:59 a.m., Ian Rogers wrote:
->>>>> Thanks Kan. I'm not wondering about a case of 2 CPUs, say on CPU0 and
->>>>> solely its perf event context, I want to know its core power and
->>>>> package power as a group so I never record one without the other. That
->>>>> grouping wouldn't be possible with 2 PMUs.
->>>>
->>>> For power, to be honest, I don't think it improves anything. It gives
->>>> users a false image that perf can group these counters.
->>>> But the truth is that perf cannot. The power counters are all
->>>> free-running counters. It's impossible to co-schedule them (which
->>>> requires a global mechanism to disable/enable all counters, e.g.,
->>>> GLOBAL_CTRL for core PMU). The kernel still has to read the counters one
->>>> by one while the counters keep running. There are no differences with or
->>>> without a group for the power events.
->>>
->>> Ok, so power should copy cstate with _core, _pkg, etc. I agree the
->>> difference is small and I like the idea of being consistent. Do we
->>> want to add "event.cpus" support to the tool anyway for potential
->>> future uses?
->>
->> The only thing I can imagine is that it may be used to disclose the
->> event constraint information, Or even more to update/override the event
->> constraint information (which requires kernel update.). But what I'm
->> worried about is that it may be abused. It's very easy to confuse an
->> event and a counter in a PMU.
-> 
-> So you mean if you have a dual socket machine and an uncore PMU with a
-> cpumask of "0,48" you worry that someone setting an event on CPU 47
-> may think they are getting a CPU on the second socket? Perhaps if the
-> user can express an intent to the tool, say "perf stat
-> -randomly-select-uncore-cpus ...", then this can be avoided. I'm not
-> sure I'm worried about this as specifying the CPU for an event to use
-> is already something of a more niche/advanced thing to be doing.
-> 
+commit:         93306970 Merge tag '6.11-rc-smb3-server-fixes' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12f902b1980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d04f9888ed34da73
+dashboard link: https://syzkaller.appspot.com/bug?extid=61a1cfc2b6632363d319
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11da7f49980000
 
-The perf tool can specify any CPU the users want, as long as the kernel
-can respond properly. I'm not worried about it. The "event.cpus" is
-exposed by the kernel. The main concern is also from the kernel side.
-Some drivers may use it to distinguish different scopes of counters. So
-they can combine various types of counters into a single PMU, which may
-break some rules they don't realize. An example is the above 'group' rule.
-
->>> This would at least avoid problems with newer kernels and
->>> older perf tools were we to find a good use for it.
->>>
->>>>> My understanding had been that for core PMUs a "perf stat -C" option
->>>>> would choose the particular CPU to count the event on, for an uncore
->>>>> PMU the -C option would override the cpumask's "default" value. We
->>>>> have code to validate this:
->>>>> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/evlist.c?h=perf-tools-next#n2522
->>>>> But it seems now that overriding an uncore PMU's default CPU is
->>>>> ignored.
->>>>
->>>> For the uncore driver, no matter what -C set, it writes the default CPU
->>>> back.
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/arch/x86/events/intel/uncore.c#n760
->>>>
->>>>> If you did:
->>>>> $ perf stat -C 1 -e data_read -a sleep 0.1
->>>>> Then the tool thinks data_read is on CPU1 and will set its thread
->>>>> affinity to CPU1 to avoid IPIs. It seems to fix this we need to just
->>>>> throw away the -C option.
->>>> The perf tool can still read the the counter from CPU1 and no IPIs
->>>> because of the PMU_EV_CAP_READ_ACTIVE_PKG().
->>>>
->>>> Not quite sure, but it seems only the open and close may be impacted and
->>>> silently changed to CPU0.
->>>
->>> There's also enable/disable. Andi did the work and there were some
->>> notable gains but likely more on core events. Ultimately it'd be nice
->>> to be opening, closing.. everything in parallel given the calls are
->>> slow and the work is embarrassingly parallel.
->>> It feels like the cpumasks for uncore could still do with some cleanup
->>> wrt -C I'm just unsure at the moment what this should be. Tbh, I'm
->>> tempted to rewrite evlist propagate maps as someone may look at it and
->>> think I believe in what it is doing. The parallel stuff we should grab
->>> Riccardo's past work.
->>
->> For core PMU, the parallel may not work, because the core PMU is usually
->> MSR based. Perf has to access the MSRs on the specific CPU. IPIs may be
->> triggered if the users try to operate them from the other CPUs.
-> 
-> Right, I think the idea would be to have as many threads as you have
-> CPUs then give each thread affinity to a different CPU. The work done
-> on the thread would match the CPU they have affinity with to avoid the
-> IPIs. Because of the use of RCU in the kernel perf code it is possible
-> to hit RCU synchronize where IPIs are sent after 200ms IIRC. If you
-> get an RCU synchronize needing an IPI then "200ms x num CPUs" can mean
-> seconds of delay in a serial implementation (500 CPUs would be 100
-> seconds). With parallel code a worst case slow down shouldn't increase
-> with the number of CPUs. On laptops, .. this doesn't matter much.
-> 
->> But the parallel is good for the counters in the MMIO space. The
->> counters can be accessed from any CPU. There are more and more counters
->> which are moved to the MMIO space, e.g., new uncore PMUs, IOMMU PMU,
->> TMPI (for power), etc.
-> 
-> Sounds good but I'm wondering how we can get the tool in the right
-> place for doing affinity games. For the MMIO case life's good and we
-> don't care. How can the tool know one case from another? Should the
-> tool always be just following the cpumask? What about on ARM where the
-> cpumasks are broken?
-
-The cpumask cannot tell such information. For example, the counters of
-the uncore PMUs can be located in three different places, MSRs, the PCI
-config space, and the MMIO space. But the scope of the uncore counters
-is the same. So the cpumask is the same for various uncore PMUs.
-To get the information, the kernel has to be updated, e.g., add a
-caps/counter_type in sysfs.
-
-Thanks,
-Kan
-> 
-> Thanks,
-> Ian
-> 
->> Thanks,
->> Kan
->>>
->>> Thanks,
->>> Ian
->>>
->>>
->>>> Thanks,
->>>> Kan
->>>>>
->>>>>>> 2) do the /sys/devices/<pmu>/events/event.(unit|scale|per-pkg|snapshot)
->>>>>>> files parse correctly and have a corresponding event.
->>>>>>> 3) keep adding opening events on the PMU to a group to make sure that
->>>>>>> when counters are exhausted the perf_event_open fails (I've seen this
->>>>>>> bug on AMD)
->>>>>>> 4) are the values in the type file unique
->>>>>>>
->>>>>>
->>>>>> The rest sounds good to me.
->>>>>
->>>>> Cool. Let me know if you can think of more.
->>>>>
->>>>> Thanks,
->>>>> Ian
->>>>>
->>>>>> Thanks,
->>>>>> Kan
->>>>>
->>>
-> 
 
