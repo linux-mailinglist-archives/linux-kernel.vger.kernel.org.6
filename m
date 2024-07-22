@@ -1,145 +1,77 @@
-Return-Path: <linux-kernel+bounces-258783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E6D938C9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:56:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7DED938C9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:56:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D50481F25882
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:56:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 686F02825CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABEBC16DC01;
-	Mon, 22 Jul 2024 09:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O1sfOHlf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1D716D9C3;
+	Mon, 22 Jul 2024 09:48:17 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E109D16C85D;
-	Mon, 22 Jul 2024 09:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7DB14F9E7
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721641661; cv=none; b=JdaA5By9E6aPLSNi1RB6gzzSsfgiUGytU86/KhYjHALXipEPgXd3KWuCowk46J/hOe5d2hqVHORO7kQwQIvn1mXPFZtRNVnzLQqY+sfYDUa2O/IuUzwD1hHIltLvpC4f3kDLQcEykJ4GO1f8D4uGyqouhlDHr9yr3rxyvYroHE8=
+	t=1721641697; cv=none; b=bq0NVrUA44RJeOmLq2D+h5KMwho0jL6Lnv2SkHrZqrRVVoTyugwPyEZORhLeKG3RyFc+NLFEHMbOUbDb6yo0Dogi4XyppE4r9zE0UgT3sJdj/uYKDLOxSO9DiCyX1JixC1DEzhVGm4axtJqimm9g60Jkw3zYqrrGFjfeVbCpVLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721641661; c=relaxed/simple;
-	bh=I2y2TqqnrK2D63KA4CkLHjw9bH1MgbFNe/Y7Io7sqq4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UuYHdKARkSnyJYtvz8JTm08QtcFnw50sNVU5O9hkYYE14DZtdCjSvvgl+8O2KqUK/fiE0Ludgeopm2pqc+piX5Y2c981Lo5eIeBuJ2QCtiostUklEcUfxGn+KywDLaiff49VzRx73qzbtnXiqrbTXvw8d+jTy1KBZjS66MUpdoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O1sfOHlf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 605B3C116B1;
-	Mon, 22 Jul 2024 09:47:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721641660;
-	bh=I2y2TqqnrK2D63KA4CkLHjw9bH1MgbFNe/Y7Io7sqq4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=O1sfOHlfdDh7zr+ncBzeQ6JidrT3n7iKMSYtn+DVlRAjaDS+A0F9GM6rsoSpkG1n1
-	 FkHISMlPG53uglJJJ9wj4Dx2xuB/+qQBp85dhSVowQQa3Y0tHOG7hyqUH2tdI3m8A9
-	 oLM4SSkCnN1qTf8BT1cuNmccizfk73OhMsQH2RwiCS8Fg0l9TI9louVr8VOXHniFA6
-	 bjj9uNyjmELhBxaPd+CWDi/VoYlIUFKfzR6QSKvpUjuogcp0tht/nkD/VnsDIC6jij
-	 qqAY0avhrNZ0ISq3tnWxU8K4cmzkDNAsgzxPnocOH6bEaRVg7fgHPcSOJWQeCY1/lj
-	 57EDPt8sLCiqw==
-Message-ID: <2f95cda2-c061-4b0e-9f7a-3dc48421281c@kernel.org>
-Date: Mon, 22 Jul 2024 11:47:34 +0200
+	s=arc-20240116; t=1721641697; c=relaxed/simple;
+	bh=2YwLNxddluGjrA4vtlMadoo1UAoVBHINyeJOH2vP+ng=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=FpDELbJv16JhIf4uHPRq/MHZhB1l7W1ZMdwGRNlIHftiKIPgPsnDTdzF88ppaN324PIypmhBfMSRAy9MrWg4YCLO28RRzOx45nh/6hCJnTmKUA+WjA/ezCciOrQlERgSgIT6AicuuXPzFOIA0OV3zlLN5GtuNoC24GoUtCYur/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-800e520a01dso681202239f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 02:48:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721641695; x=1722246495;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2YwLNxddluGjrA4vtlMadoo1UAoVBHINyeJOH2vP+ng=;
+        b=J4ifJrhhUbbLCyGcgKhlDJpVbHH5jPdKyiNfalKFAamyykwDolx9bwrLlQIb8flQ96
+         VuIZdgdgJtdSva/bhG4JJUXkfSlkDt449iUxQbUsq3+3/L78pnoIIt+idh2cV4Gky7n4
+         FLh/lr4Nzey7mQSi8zl0jmrXhME/MWnZ8B1UeVOnQ2zZINnWnbCCPHwo/s3/+a0bogEZ
+         jjN+XbLU/YdIP+n5sGJyLpZm7kLheO+yqV49MxCMivyXtZPYPGSuNFyRnd6nQT0cDMiY
+         arX5ua/xF74scE55/0jn3ypT4l65CEgiq/fk5AxZM6VTuy0VwQ3FvBQYSld2c+qEBB5a
+         bHeg==
+X-Gm-Message-State: AOJu0YxG9S5iKzvlVBLXzwEIk5DHcHJEH63aeozXT4t9Q+OGBS9nMb4+
+	DZI5596eiE7EUt1af9Fjh9ebmxqzheP/Vpwb2LczdyKQkS+qmF3u0ccRquCxKRrtbuGhv5zCIi2
+	i/rMno2d8oNKJONhnCC06aJm/I/E3uGaW1tiMVGgRDjbPYbh6ucT9Na8=
+X-Google-Smtp-Source: AGHT+IFDwrcp4FJs+sDtHNsjb3MU/aEwN7iW3niXw3LA6Tbhy/GcZviG/i6og95dUe6HOA5lSA1ph2P07krmA7SIl9zMoCrTwzH7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 02/37] dt-bindings: soc: kvx: Add binding for
- kalray,coolidge-pwr-ctrl
-To: ysionneau@kalrayinc.com, linux-kernel@vger.kernel.org,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonathan Borne <jborne@kalrayinc.com>,
- Julian Vetter <jvetter@kalrayinc.com>
-Cc: devicetree@vger.kernel.org
-References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
- <20240722094226.21602-3-ysionneau@kalrayinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240722094226.21602-3-ysionneau@kalrayinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:4129:b0:4c0:a8a5:81f5 with SMTP id
+ 8926c6da1cb9f-4c23ffe1588mr467929173.4.1721641695020; Mon, 22 Jul 2024
+ 02:48:15 -0700 (PDT)
+Date: Mon, 22 Jul 2024 02:48:15 -0700
+In-Reply-To: <000000000000943e1c061d92bdd6@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a99e4b061dd2f199@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [bpf?] [net?] KASAN: slab-use-after-free
+ Read in bq_xmit_all
+From: syzbot <syzbot+707d98c8649695eaf329@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 22/07/2024 11:41, ysionneau@kalrayinc.com wrote:
-> From: Yann Sionneau <ysionneau@kalrayinc.com>
-> 
-> Add binding for Kalray Coolidge SoC cluster power controller.
-> 
-> Signed-off-by: Yann Sionneau <ysionneau@kalrayinc.com>
-> ---
-> 
-> Notes:
-> 
-> V2 -> V3: New patch
-> ---
->  .../soc/kvx/kalray,coolidge-pwr-ctrl.yaml     | 37 +++++++++++++++++++
->  1 file changed, 37 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/kvx/kalray,coolidge-pwr-ctrl.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/kvx/kalray,coolidge-pwr-ctrl.yaml b/Documentation/devicetree/bindings/soc/kvx/kalray,coolidge-pwr-ctrl.yaml
-> new file mode 100644
-> index 0000000000000..e0363a080ac11
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/soc/kvx/kalray,coolidge-pwr-ctrl.yaml
-> @@ -0,0 +1,37 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/kalray/kalray,coolidge-pwr-ctrl.yaml#
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-It does not look like you tested the bindings, at least after quick
-look. Please run `make dt_binding_check` (see
-Documentation/devicetree/bindings/writing-schema.rst for instructions).
-Maybe you need to update your dtschema and yamllint.
+***
 
-Best regards,
-Krzysztof
+Subject: Re: [syzbot] [bpf?] [net?] KASAN: slab-use-after-free Read in bq_xmit_all
+Author: aha310510@gmail.com
 
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 605c96997d89c01c11bbddb4db820ede570581c7
 
