@@ -1,93 +1,77 @@
-Return-Path: <linux-kernel+bounces-258641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAD5E938AF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:16:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C21A938B5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37932B21424
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:16:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C8CA281642
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F0B166313;
-	Mon, 22 Jul 2024 08:15:22 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85161667CD;
+	Mon, 22 Jul 2024 08:38:43 +0000 (UTC)
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31EBE16B3B5;
-	Mon, 22 Jul 2024 08:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2151B969;
+	Mon, 22 Jul 2024 08:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721636121; cv=none; b=ax7yth24jHZSIHJlDoWbHJO2ksJe/4n3ow81mNIyqp4T19cRhLQAuR19KpQgpOGWzIr6pL8u9MINP7PiB16oiQJDCMA/y6HhKwOL7CQbdjfbBNieisGcA1CTtahpAqhFIiHQ2FSedtZdPE2WkSqCo8QUB8kH/81PXHNp1oE5DQk=
+	t=1721637523; cv=none; b=Osp73oOZcQY0MjOCtX/hyNwWihUeO6uIi/39XVIJy3+rx1GIt56mwoPyXlUV++ESWZlxYLTWVOyuesxkYOdiTEuuK9nXNZm3ee/jjRhkHfBO99GNem16gzo2xrbvZdlUM2kgoPL8zamZqAt5tgkZmTEGCXCCA6yMAN4CCCiGZRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721636121; c=relaxed/simple;
-	bh=ukiJjPLR/NrVfBw6h78irshZGt6fkuKfVSdr7iZ7tyc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=E36MOsKkmgEWYZG2WYEDJ/95gWXFtuGwPNld7fcRLEgPB1Ru+5Nn7tvBVYmknnlz7TgwJulhUqRRWct4uw8GdJGkkfiTYNR+aSQ6cPYxzWbMzX+FsuiKtL5Fdc3SYkSNBaKmZf9CrjE9PoTfjKpjcJIpbU3hlke3qFp7psR386I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D0CEA1A1976;
-	Mon, 22 Jul 2024 10:15:12 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7BB701A193F;
-	Mon, 22 Jul 2024 10:15:12 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id D1F7A180222B;
-	Mon, 22 Jul 2024 16:15:10 +0800 (+08)
-From: Richard Zhu <hongxing.zhu@nxp.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	l.stach@pengutronix.de
-Cc: hongxing.zhu@nxp.com,
-	devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de,
-	imx@lists.linux.dev
-Subject: [PATCH v1 4/4] dts: arm64: imx8mm: Add dbi2 and atu reg for i.MX8MM PCIe EP
-Date: Mon, 22 Jul 2024 15:56:19 +0800
-Message-Id: <1721634979-1726-5-git-send-email-hongxing.zhu@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1721634979-1726-1-git-send-email-hongxing.zhu@nxp.com>
-References: <1721634979-1726-1-git-send-email-hongxing.zhu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1721637523; c=relaxed/simple;
+	bh=uwJwktSn671leInxY7NeuFEZVaSQrbXVX6gObNF6aSI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rfYv6A9wqfmvDLuTYcFQJlZPdMpGCiO6h8N94dwCJycLrwxmS5PRBUyxvzWkWlUTIu8sWuasN8C1Es5LmU73ZVCH5Z3f1K7hkCHX/wdJN3Oab8gaOGKuxE+5pNhNVB0C7kEXuJsWtYii8H1KXlmbfwf1CDmPF5nIjaWIbhEvL+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: David Vernet <void@manifault.com>, asmadeus@codewreck.org
+Cc: linux-kernel@vger.kernel.org, ericvh@kernel.org, lucho@ionkov.net,
+ v9fs@lists.linux.dev, kernel-team@meta.com
+Subject:
+ Re: [PATCH] net/9p: Fix uaf / refcnt underflow for req object in virtio
+Date: Mon, 22 Jul 2024 10:03:11 +0200
+Message-ID: <2328041.KKODgcftPW@silver>
+In-Reply-To: <Zp4DSeHdOU0U1PZC@codewreck.org>
+References:
+ <20240709162904.226952-1-void@manifault.com> <Zp4DSeHdOU0U1PZC@codewreck.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Add dbi2 and iatu reg for i.MX8MM PCIe EP.
+On Monday, July 22, 2024 8:59:21 AM CEST asmadeus@codewreck.org wrote:
+[...]
+> If the request really was cancelled we'll get the flush reply before the
+> response and that'll drop the second ref in the cancelled callback,
+> which would also blow up, but afaik qemu doesn't implement this so this
+> code path so this was never tested.
 
-Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mm.dtsi | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+It is implemented in QEMU 9p server according to the 9p protocol specs:
+http://ericvh.github.io/9p-rfc/rfc9p2000.html#anchor28
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-index 9535dedcef59..78462b591d29 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-@@ -1375,9 +1375,11 @@ pcie0: pcie@33800000 {
- 
- 		pcie0_ep: pcie-ep@33800000 {
- 			compatible = "fsl,imx8mm-pcie-ep";
--			reg = <0x33800000 0x400000>,
-+			reg = <0x33800000 0x100000>,
-+			      <0x33900000 0x100000>,
-+			      <0x33b00000 0x100000>,
- 			      <0x18000000 0x8000000>;
--			reg-names = "dbi", "addr_space";
-+			reg-names = "dbi", "dbi2", "atu", "addr_space";
- 			num-lanes = <1>;
- 			interrupts = <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "dma";
--- 
-2.37.1
+So a Tflush request by client is immediately answered by a Rflush response and 
+in this case no answer is sent to the original request being flushed.
+
+There are also QEMU test cases guarding the expected Tflush behaviour:
+https://github.com/qemu/qemu/blob/a7ddb48b/tests/qtest/virtio-9p-test.c#L403
+and
+https://github.com/qemu/qemu/blob/a7ddb48b/tests/qtest/virtio-9p-test.c#L444
+
+The 2nd test case handles the behaviour when the Tflush request arrived too 
+late, after the original request already completed successfully that is. So in 
+this case client first receives a success response to the original request, 
+then followed by Rflush response.
+
+/Christian
+
 
 
