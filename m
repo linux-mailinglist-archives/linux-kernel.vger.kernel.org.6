@@ -1,106 +1,93 @@
-Return-Path: <linux-kernel+bounces-258595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBFAE938A46
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:40:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21DAB938A4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86EC11F218CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:40:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFF6528195D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102E514B945;
-	Mon, 22 Jul 2024 07:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C81614A611;
+	Mon, 22 Jul 2024 07:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mdxOoj9F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rFlIo849"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33883770E6;
-	Mon, 22 Jul 2024 07:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480AB12B63;
+	Mon, 22 Jul 2024 07:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721634012; cv=none; b=EZO8XB0HoSaxwIHv+CriAq6Sy4Rpgc6dkX0n96AV53y3kx3BYv1Tlv3rYIClMLdnMZe6/YxkLrcoMA83GVUMPU2KiebuY00XFfy9T9agNh3YJjnZvUlhhyzYybKodfixV+pa50LIQZDGfJ66UH8j58SoPFWUMxbOplrFPUqlQqc=
+	t=1721634033; cv=none; b=vBwsXy7U1nmtm1z5mD3tSm35rfSLgOIPxCukan/L5vyoiizzJorsQconcxEf54dUgDGjuZVDfS0k7GAvacHbH74sN4coO+j13zW74/S6yPmQnJmF5PUBCArBBc3Unh12GC9pv9WeCz9LXWbkpUlaiaGtCZ8RV5H9mh8HB15Nd20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721634012; c=relaxed/simple;
-	bh=Gds3YGJhwEOU78oLrFElHnVTEhE1tgxeRJe3NKZ8Gpo=;
+	s=arc-20240116; t=1721634033; c=relaxed/simple;
+	bh=6L+ZYap7/j/td1nj7iqlPmjPTQJPSDWxRAfAEpLqVbI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KM7/QrR4f3dVlF1Wcyk9+/3DBNHM+cRLvcKBQCUaYoNCwJ7bIjYLdK+646DYTLs8AkwzQ4N1yDwkbZUb3pcpNqVZpa1/4h1Y5zs7auxuF5PaoptUTJFnn8SynCoAW6HudNLRR2kJYE0iBYQbgzix2IR0+9gOgpoun2x3njRXsrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mdxOoj9F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B84BC116B1;
-	Mon, 22 Jul 2024 07:40:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721634011;
-	bh=Gds3YGJhwEOU78oLrFElHnVTEhE1tgxeRJe3NKZ8Gpo=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=XSXHvtQDOqDx3pUenY1MW+v2mb3uCOPkhGNKfZHexcwC46r0RHUqR+Ptq9WVctHgeMSKeSJvrSF8zZOMCo4rF82tBeKCD1iit3KG8t1B0P3o1fXx2iHxoSLMjc75m+bnTQOee2KyO8vwzunYLGXYmEDSNwuPND9A83VqUE3lMro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rFlIo849; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C06C2C116B1;
+	Mon, 22 Jul 2024 07:40:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721634032;
+	bh=6L+ZYap7/j/td1nj7iqlPmjPTQJPSDWxRAfAEpLqVbI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mdxOoj9FPY8C+BCuN42ENUA2/9pA0cg0lsa+aoLUeXx8AicRmp5ZZ27oDRIec6zJU
-	 KqMVc6ztS1/K4aJmnzriiAWzzh0jag02HX3PAEpmm3xEw6FzAAFBQT99HqirhlWaS8
-	 zkZWqwKJbB7Qqq27dwtbxg641Awi8YTSz+oeMhSM=
-Date: Mon, 22 Jul 2024 09:40:08 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	linux-hwmon@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-acpi@vger.kernel.org, netdev@vger.kernel.org,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	=?iso-8859-1?Q?G=FCnter_R=F6ck?= <linux@roeck-us.net>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jean Delvare <jdelvare@suse.com>,
-	Jonathan Cameron <jic23@kernel.org>, Lee Jones <lee@kernel.org>,
-	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
-	Paolo Abeni <pabeni@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>, Russell King <linux@armlinux.org.uk>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v2 1/6] device property: document
- device_for_each_child_node macro
-Message-ID: <2024072204-jester-exploit-d249@gregkh>
-References: <20240721-device_for_each_child_node-available-v2-1-f33748fd8b2d@gmail.com>
- <73b3e14a-c1c3-4f7b-aea8-2108912e21ca@web.de>
+	b=rFlIo849vD164UIKFxa8fP+rqf07j8ibynSJgvkCNzpndWo+twyu4m6lNXEwflq2K
+	 oMH2s/uymQqHbZAkar2EDY4lw5uR5864XFaKqYfMhSiK1CtnDFmeI++ryDozfuk6LN
+	 +sOuOzKDmt5jlmY3KGLWPcHntZhiatN5OE9m0O02YHNpu4rCre855ZwQn+WqXA3wQ2
+	 dt7AJhngwbEjmpyULeFmpswsU9R4gL1tQC4h4mSHXAPULPDytLRmqY/41Nz8zPsfqE
+	 zs1A/aXRq3ogyDHtk+HSiU3FPGJDFCVLnf5aCPLCKw7mRkSBXluSAkcMnS+xmQjzrV
+	 GFkfnshPirUYQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sVnep-000000001i5-25Ts;
+	Mon, 22 Jul 2024 09:40:31 +0200
+Date: Mon, 22 Jul 2024 09:40:31 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] arm64: dts: qcom: x1e80100: add PCIe5 nodes
+Message-ID: <Zp4M7_joSOkp70D-@hovoldconsulting.com>
+References: <20240719131722.8343-1-johan+linaro@kernel.org>
+ <20240719131722.8343-7-johan+linaro@kernel.org>
+ <b0e46b2f-7408-4e89-9496-323e1ab761c7@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <73b3e14a-c1c3-4f7b-aea8-2108912e21ca@web.de>
+In-Reply-To: <b0e46b2f-7408-4e89-9496-323e1ab761c7@linaro.org>
 
-On Mon, Jul 22, 2024 at 09:15:26AM +0200, Markus Elfring wrote:
-> …
-> > + * Unavailable nodes are skipped i.e. this macro is implicitly _available_.
-> …
+On Fri, Jul 19, 2024 at 08:39:05PM +0200, Konrad Dybcio wrote:
+> On 19.07.2024 3:17 PM, Johan Hovold wrote:
+> > Describe the fifth PCIe controller and its PHY.
+> > 
+> > Note that using the GIC ITS with PCIe5 does not work currently so the
+> > ITS mapping is left unspecified for now.
+> > 
+> > Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> > ---
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 > 
-> How good does presented information fit together in this comment line?
+> feel free to also add
+> 
+> required-opps = <&rpmhpd_opp_nom>;
 
+Sure, thanks for the reminder.
 
-Hi,
-
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
-
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
-
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
-
-thanks,
-
-greg k-h's patch email bot
+Johan
 
