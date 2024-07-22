@@ -1,227 +1,263 @@
-Return-Path: <linux-kernel+bounces-258447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C5E4938806
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:17:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C19ED938809
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53E191C20D41
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:17:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CC101F21749
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DC114AA9;
-	Mon, 22 Jul 2024 04:17:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4DF168B8;
+	Mon, 22 Jul 2024 04:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="DLWIGnu2"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2083.outbound.protection.outlook.com [40.107.220.83])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vHQbuFrt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A74A51370
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 04:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721621837; cv=fail; b=uj7b15T8XFQma5P6WjfC1ARNuaF38jpACMj7Kj2yAGdbgXJw9tNVR7cu7Jc4PTrBZs8EoquI9gPdpyYjQwpnv4YhYeFwAqGv8eOlibVOBAGUn7zG3VBBs6qjF9tqc/gDrNUdiyrqDVoIhxZFdPse/SGCJdsu/ybX33mkMQIwcdM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721621837; c=relaxed/simple;
-	bh=Bv202IhlEXhZ2U9dOVTlyIUuP8IiTJjsT5PYS4i0xeQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=AIewCeapblFdE28AsK0LSQ7lWFH3cOeUz885/ZKmXMg0ASCSm9O4ZtPw0BweAte3xbyVEk7zI13s3p1/4SsmbscvzZZpZCyhXZHY4vGMo5oePxirb/nZfsNW1lMCZKkB0qwdVWbov8Or9ZDrFB8GSDlgwP94bB/Ld3U+MMmL5BU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=DLWIGnu2; arc=fail smtp.client-ip=40.107.220.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=b3I39wF/0Fwl5UlU3lHPj5ngpfERBCVDwwxzBEW/QiKEhjlbwDhlSmq/vY8q7Qs0wLibxfRFiBai3du7SEOwmCPxSTM9b2tE0QBpfaFxn0WOYf2wlUxFjNHYBiKJ7esKP+DdSVw126sy6AyU/KCesLFuC/iLUGabyCOH+jwP0GnJU7uYcU1XrNIktWC0D4TP6hufFxm6HV9ahS4la8Wi8XkD3CPaR5uEFgiP1Gq3S1e8M6sy8OXHOXHyjccU4b98R91ylsX1gFM8hVkz/tlFSpr52Veiq74wnWxXNeiwyfqPLKdEbYpltY8k0+kUCVmlrQaMaWG7AI5gpmmZr0KM9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MofPqHVnJ+Wj0SUPDWoIra3Him8GwTrRXZ6U59+mHFI=;
- b=dCv80gexIPKZmU2k/ImgP3w7QbJR1KJTFtgKRh+aHslitiEZRv9jas7MGNrxen0xcOff1HpqABGmWfRYLml3eJbhwzwH2RchSCLoy8nYd5SMgJ3fuBdIAqEt9YgEIotoNv8gu5tWeiYSrd1X4flvPEprmsxxwgA7dk9ez2NRoiJwa68bEtFQcmgBYlBGpcb6C/INcojC3rP4Gq6JGp6fYgHCnyhAlNZ3pQeQ2sPUgRAHIwEqYXlsfxkHmFIiAXlbfho+J9ezGs3Fx+W/8eRTnv8stJyjePdo4WwZFLaZi6RTOF2D2215z04kukATcwXabWEUeOdLLF552EBK3tKKkg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MofPqHVnJ+Wj0SUPDWoIra3Him8GwTrRXZ6U59+mHFI=;
- b=DLWIGnu2VxH7WZ3B/28lGlaldsR9zuRhN+ZKIw6/CnkjtVtP7kYMpIaKCEBFqL+gd6ICqArPY9q3GWVEXy1PMxJb/eN0ukkF6mzRK2B3ktt3SzDaOxH3Ps4nufJOYeilIwtt8ZY5thitXX8nqADVN4cqbCTsnSOlHRd/S7V5JVw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from IA1PR12MB6434.namprd12.prod.outlook.com (2603:10b6:208:3ae::10)
- by CH0PR12MB8532.namprd12.prod.outlook.com (2603:10b6:610:191::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14; Mon, 22 Jul
- 2024 04:17:11 +0000
-Received: from IA1PR12MB6434.namprd12.prod.outlook.com
- ([fe80::dbf7:e40c:4ae9:8134]) by IA1PR12MB6434.namprd12.prod.outlook.com
- ([fe80::dbf7:e40c:4ae9:8134%3]) with mapi id 15.20.7784.017; Mon, 22 Jul 2024
- 04:17:10 +0000
-Message-ID: <deddb7b4-02f6-46aa-a075-cf9b7083ffd8@amd.com>
-Date: Mon, 22 Jul 2024 09:47:01 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: Hard and soft lockups with FIO and LTP runs on a large system
-To: Mateusz Guzik <mjguzik@gmail.com>, Yu Zhao <yuzhao@google.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, nikunj@amd.com,
- "Upadhyay, Neeraj" <Neeraj.Upadhyay@amd.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, willy@infradead.org, vbabka@suse.cz,
- kinseyho@google.com, Mel Gorman <mgorman@suse.de>
-References: <d2841226-e27b-4d3d-a578-63587a3aa4f3@amd.com>
- <CAOUHufawNerxqLm7L9Yywp3HJFiYVrYO26ePUb1jH-qxNGWzyA@mail.gmail.com>
- <1998d479-eb1a-4bc8-a11e-59f8dd71aadb@amd.com>
- <CAOUHufYA-ZAHni1_aDQjjwB5UC9EFYPL_YqVN52DoL3J7SFziQ@mail.gmail.com>
- <7a06a14e-44d5-450a-bd56-1c348c2951b6@amd.com>
- <CAOUHufa7OBtNHKMhfu8wOOE4f0w3b0_2KzzV7-hrc9rVL8e=iw@mail.gmail.com>
- <b68e43d4-91f2-4481-80a9-d166c0a43584@amd.com>
- <893a263a-0038-4b4b-9031-72567b966f73@amd.com>
- <CAOUHufbkhMZYz20aM_3rHZ3OcK4m2puji2FGpUpn_-DevGk3Kg@mail.gmail.com>
- <CAGudoHEd9FL+Mhk8GdFm+3gvBk35ho-BTX-f7jn=O5Lz2mij-Q@mail.gmail.com>
-Content-Language: en-US
-From: Bharata B Rao <bharata@amd.com>
-In-Reply-To: <CAGudoHEd9FL+Mhk8GdFm+3gvBk35ho-BTX-f7jn=O5Lz2mij-Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MAXPR01CA0109.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a00:5d::27) To IA1PR12MB6434.namprd12.prod.outlook.com
- (2603:10b6:208:3ae::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C782812B63;
+	Mon, 22 Jul 2024 04:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721621965; cv=none; b=VlxRGm6MaQNRT0ytwWVdSWUIHvbFJfJHnRqWmMbW43NYM+xDbsrs/R6PWIjv6+am35F0CyX5gLc+zkqCflm21yfVbQSeq9V+Mn4dxTQZd9Tj7RcBLqX+WxUoCWKk2z7sE9y6vG6OP8Bonf62y2+QFFxcW2O07Z80gk7s3wZg+qQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721621965; c=relaxed/simple;
+	bh=muonCMzrB0AixKWg4qxRoZ/sNzBc5ShBmZrCqfBeeWo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IWuLvagxl8UpwfqPk8HpFWBP/Jz0fPz6zZcFBcHbw5YDIw+fBZEF//rzYzs37htn9hoktLDCs5GuaZtn4aHJ2eBOeLzMzlUo0FGwfZOp/6YIz/btb8k0gpXLQdU4E+w0Sl0VunIMbf5UBReAXk1n5cU3wqmBhqXGmoUIjZZFju0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vHQbuFrt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47556C116B1;
+	Mon, 22 Jul 2024 04:19:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721621965;
+	bh=muonCMzrB0AixKWg4qxRoZ/sNzBc5ShBmZrCqfBeeWo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vHQbuFrtHDOtfSo8OWSdzaH2KfMT2a4KDbFHNt1oZNtITrxGTBKzg4HL99QjZBDUP
+	 3DZm8g9hsx8Y3RJ4f0WLgNR/12X+stk/AHEzebLPWILY26YkAogJBOYviqL+4XpYwT
+	 F0ZUYOr17ixUhSPQHLJPj/Nes57mC6fNrpzquQZLQO5HTqWaHm5AfPaH8QAD7JrUJH
+	 VwLcHhfvZThCJgQ2a4KNHkD45+laSoMSmyKDezo0lS4SpOMsgk0gAORTOw9JNzNi4C
+	 tflseL8a5FJ7Jr74OODXzedKr+/aCi/dkz0G+I1l5QWjRvrPssCoUZ61x2P0HjI7FW
+	 Ng0MJEgSBEwdA==
+Date: Sun, 21 Jul 2024 21:19:24 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: "Artem S. Tashkinov" <aros@gmx.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-ext4@vger.kernel.org, xcreativ@gmail.com, madeisbaer@arcor.de,
+	justinstitt@google.com, keescook@chromium.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: Linux 6.10 regression resulting in a crash when using an ext4
+ filesystem
+Message-ID: <20240722041924.GB103010@frogsfrogsfrogs>
+References: <500f38b2-ad30-4161-8065-a10e53bf1b02@gmx.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR12MB6434:EE_|CH0PR12MB8532:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4e5b8cfd-f4a3-494b-fb73-08dcaa052838
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TlZTcnByRzBZMDFhWHcvWWFYUVhVbG5QQmlDa1pobHlJR09hYzhEM3UyaGp2?=
- =?utf-8?B?RmdPV1N0Wm0vY2JMK01peUdZM2xiY3BScUlQNUhJTHRKdW92Q0pYNlQxVDVI?=
- =?utf-8?B?dmhtbXdKS1M5VHNpQVh1UklIMktreFVuUlVuVWppd3ViMHJmV29WdzJGb0hz?=
- =?utf-8?B?YXprdFQrVXNydWFIVVJnMmlhOGlyTkdPQ0xJQkRXT015OXlycW9YNWRvNzVo?=
- =?utf-8?B?ZDNZajhmdlRGbGNEOERteU5yVmI2bXRYMlVHM2NZTDNMbFFjMWY1Qzg3WFQ2?=
- =?utf-8?B?NzlqYlZ6d0MraGtWRDJBdWR1UFU2Y2k0Z3VybkFiWTlJL0RpblZvaDhDOTJi?=
- =?utf-8?B?WUZNTEpOMjZVemJSTUJwU3daVStKRXY2cG8wNDVLUGsvL0VXd2ROODdZTmlV?=
- =?utf-8?B?MFh3VXRkNnFNT3pibjdrQmQxQ3FVanhwUm0ydVdhVGNQNEhxQmtGSUd5K21o?=
- =?utf-8?B?YVVmamdXM1RHd0sya1hzRS92R0ZwRmZoZFdtczdPM1JzWmFkTG1uc1FlRSta?=
- =?utf-8?B?ZU93NkJlMEZjZlA2R0Jla0RTelpwb1lkQ21zMHlnbG5obkdHZys3YXh0SDZY?=
- =?utf-8?B?RjlUWHN5TUY2S2RGc2ZGK0lMTjNHa1VBaDhyQXhveGdac2oxQmNMYVQremNH?=
- =?utf-8?B?b1hsSXJhMmc3T2NnOHJJVVF6Q09xYVovSkJtKzhmUFpqUUVwNzdTZHpQUHB1?=
- =?utf-8?B?LzMvQ3BWeHVaMDI3Q0IvdjcyYjhoK29WQ1hPT213aDVBZzRiU0FLZCs5ZzBm?=
- =?utf-8?B?RjlqVDN4N2hKc2tWWEg2SnVoYVYvR0ZhOU5KakZ3bEdIME1OcUYrUFN6Mzc3?=
- =?utf-8?B?TkExemorZzFSUGg0RTV4OW5YdVVLbURtTGxTa2tRNGNHaFBjR3BOajN6M3pk?=
- =?utf-8?B?RHRVM2VaVkpHOFQyYmlhQ2c1a2JmbklXbUhRcDh0ZkpBbUdNYzlqZGg1Tkti?=
- =?utf-8?B?VWhPNlZaV01kT2ttbWM5bGpzWWJPUmNFS3hYRFJnVXpMaFFJZEdWRzJsL1ds?=
- =?utf-8?B?TE1LUmJoL0VMSFMva1lNQk0xbTVtQmRYbmpzZ2Y1YVMycXRoUzVHYWMwaDQw?=
- =?utf-8?B?Q0hDVGtIR0lJeXB1K0Nza2ZFMlNqQVZERHRicThRdE5yV2wvV20xNUY0bTJS?=
- =?utf-8?B?UXBsOUJyMWdzNjBJdjNTeGRXWlBHdHhWaXh2UmtzM0lyNGphZU9SemltTU1G?=
- =?utf-8?B?NDhsamRWdGQ2cmpwVGIvbUxrSVpTRnVjZ0RoUkV0VWl3L1ptN0lqUXVaeHhL?=
- =?utf-8?B?ZHJCMTNTMzBKekw4NGVsWkhkT1A4RG9kdSt0WmR6Qm05d1lxRy9Bd3NwVy9o?=
- =?utf-8?B?OXo3QTdpRVR1S2RSRllPUktKOXZtOERPUnpNNnUyUmozVXRhVWhvdzMxWlFo?=
- =?utf-8?B?ODh0VFBKaEVRNFBPamUwaTRFNFZ6anUxZU5vTlgwR0piN283TzhKMW1BQzVU?=
- =?utf-8?B?aEFwanFHUVJFbkpaeTlINjFSdGZlYjBHOFBsSjRIRGx5L2MxU1k5RVAxNmpT?=
- =?utf-8?B?dzRzcTdBWXVoTlJNR0NTTVB5eXVvR2ZKaDVsTFZlaUVJL0R2dUd0d3N6aU9O?=
- =?utf-8?B?MTF3aHlKSVlxQWhsMTFOMEI4dFNRVmVEUWlHb1BmaUtLQVowZkhTMW44UVFI?=
- =?utf-8?B?NWRybzdmTGZwNWtWcGpNTEFrVS9YN2NXUE1kb01YNkxHQ2Y5MGp5VFdyNmxy?=
- =?utf-8?B?em5ZeVYrcEJVOUEwdEhGN2NjNGJYcXpRR2kvWmx2TEVvNkpFQ1ZQekY1RHpY?=
- =?utf-8?B?NVhxdllaNnh3THJMemwyNFJJSEFxejhTYWladE5oL0NrdXlaM2hlVk9jR1ZJ?=
- =?utf-8?B?eWY1SkJOSExpZUIwV3kvQT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6434.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MkwrTmVSeVI1RDJUOEFkS0hFWExhajlWT3cwQ1JsNTdMMVJYaGhZNHdlcnBH?=
- =?utf-8?B?TkNFV20wMzlMazFEcm5FejM3WDl6dy9RMWR6Tnl4ZkNvQXdzcCtZRTV6SGkv?=
- =?utf-8?B?Z1k5UlhIYWtwVkZ3TU1ueWxIaUtDekhOYUJYRldsL3czMDh2cTJRUGUrUTJY?=
- =?utf-8?B?Rm5WTFBPWmJ6aTYxZW5RdEl3SXNabnlBUzFRTzYwUGhPUHBnMktFemhmRHBh?=
- =?utf-8?B?WW1yWDFSRXRkS09RbVlJNUpSamxmNEZ0eDgrbmVXRFZyUVlaS1FpbFNSaUlL?=
- =?utf-8?B?WkxkN3Y5dmJoR0ZTUnhxRy9qRllIM1U1bFphRGx0NkZMaXhvaTd5LzdlV2Zp?=
- =?utf-8?B?SXlmai91OTlNMUc0MTMyTHJwa0w2dE0zNlBqbWVvcFo1Rytkc20vQ2JYdTdO?=
- =?utf-8?B?Z1JoSFdsL3Z6cy9qc055RjRIc3oyWW41RDJlbldzbWtNWVVrNnp5NnlROXRG?=
- =?utf-8?B?bTNFVStPNnU4UzQ5T3VUOEUzMWp2UWE5OE1jME54c0tMMnc5ZHlEL052d0tu?=
- =?utf-8?B?djNiRVhLVDFhWVlSQkpQelE0STQyV2krQ2s5Z0xod3JsVzdNWTJqWGdFK2ly?=
- =?utf-8?B?Q0xRRFp0d1JZMzRxMFJPNE1DamNvRXRyY016NWVPVzRQbVdqQWRFV3M4N1ZB?=
- =?utf-8?B?aXU5S25YV2FMRTIyKzQ3Q1pudmFSM2s1eEU5KzA2eHRVWFk3Y2ZpdW5tWi9T?=
- =?utf-8?B?R3M2L0xsamk5Qm8ySGVrSkllWllwRUxkbE9haWZ1QklHdmRsRDlRbEdpS2Rm?=
- =?utf-8?B?MkdnNFBGQWtpUjJZekRBeGUxdE02bUFtKzVkMnJVT1VaTGU1bUZoUmlCTHd5?=
- =?utf-8?B?VlQyK2JPaHRWNERGRzNiZEJxVFNEQkJmY3JsQkM4c1oreFcwU3pqSjFsRmV5?=
- =?utf-8?B?c01YaHVhSkxPdzRBZUdiT2liRit2cGNqaDhDZGliMEZYTXd1QXoxME14bFps?=
- =?utf-8?B?Mk02clNmSXVJYjlVTTNSeVozeUtFK3EvczhMaDI4Z0xnQngyOWdmUXJMdTVk?=
- =?utf-8?B?cEVXaCtMZkhGSGJyRjhTN3RPdUp3d3EzelhNTm5TREtMK3JMZVNPS09kMVBv?=
- =?utf-8?B?cjhkSGRaMThIRTZmSkVlSGZINVpSbEswRFBaM2VRYThFR01oanI1YWFhRSt4?=
- =?utf-8?B?aHpwZktYUm4rdG1UUWhRWHZoS2huaFBGWVdIaERmNTNEYUQ0YncwMnV4Q3Rr?=
- =?utf-8?B?aDg4UmtvMlR4WURtaUcyUzIwcmdWcUd5WFA2L0tJNStHbWpXdSs0Z05OTVY5?=
- =?utf-8?B?eXhweW80Umk0d2VscFhQL2orb0t1cjlqVkVQbU1PSDZGNmZWci8wZ2xnQklB?=
- =?utf-8?B?ME9HTmh4bW5KOUxiUGYwbFFyY0NTZUdNSG5PWCtvWlBTWlQ0c0VJUDFOL0xY?=
- =?utf-8?B?TmI2aHZkNDhhL091RWlyd0c4TFdwUzErTnM5aEVWYnFPcmtWZ0RVMStQWjVY?=
- =?utf-8?B?K2lOcW1GR0tRT2h0OVpWUms3N1YwYnBzanI4cExDQVEyYVJPYTcxZG4xczR5?=
- =?utf-8?B?bnRVcllocUY5bndyakNxa0dDZkNpZTRnS0tXdk53eXFRVVNENFNZLytIb1d6?=
- =?utf-8?B?V3VPR29KeE9nYVlZemtYSmtiaVZUa1RLSHJLbk5xS0s5bkdhYWJQY21VNmlj?=
- =?utf-8?B?M3V4VFF0T1ZGZ2R4TVlVbFJJYlBPaGh5dHhGZlA2ZmhtNGFva3ZWWjhlekYz?=
- =?utf-8?B?S051QVpWYisyMFNSTUlvTDFMenQzRGZXQkkzTG5kaFd2em5YTGVUNmRSaE1Z?=
- =?utf-8?B?NU12NGhYMjI2eTNVOWxWK3Z2VWNaQ2gvRmdCSERIUmRMOFk4Y0tjOWNtQ3JB?=
- =?utf-8?B?TW81emFjMGo4dUJuZkt2V2ZOU2h2U3RxNHBWMGtpdS9LbFpKNWlUNFBySlJl?=
- =?utf-8?B?U09yM2l1ZndlbjczWDI0YTdOelV5aFhDQlBvbVkwSmpEVkhKWVFBdmxaQktj?=
- =?utf-8?B?VFlEdytWSXc2T1AvRlhDU2M2K094QXNiWWMwSVhmSkFYbTFobVE4bXpUV2pO?=
- =?utf-8?B?MG9VOTdMT1RKREQ5UmMxTlpXeGJzOGNZcSt3VjlzTTQraTZPQkpYQ2xTQXll?=
- =?utf-8?B?NjNlSjA1YXgxY010US9aY3pEUE5PNHRBUGNMVWJhQU5Va29XVFFoQW5NQmNn?=
- =?utf-8?Q?R9qroaJ7noMpLdfTusP2/AeMF?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e5b8cfd-f4a3-494b-fb73-08dcaa052838
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6434.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2024 04:17:10.8939
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PfDTaPKRcrNtqFcYfMRuOx6FXyFWNYyXNEqrs/3b+aWREZThpIe2Un6/d2fxDlmdlEYRkUL8HSwxmIycJUWtMg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8532
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <500f38b2-ad30-4161-8065-a10e53bf1b02@gmx.com>
 
-On 20-Jul-24 1:27 PM, Mateusz Guzik wrote:
-> On Fri, Jul 19, 2024 at 10:21 PM Yu Zhao <yuzhao@google.com> wrote:
->> I can't come up with any reasonable band-aid at this moment, i.e.,
->> something not too ugly to work around a more fundamental scalability
->> problem.
->>
->> Before I give up: what type of dirty data was written back to the nvme
->> device? Was it page cache or swap?
->>
+On Sun, Jul 21, 2024 at 09:10:59PM +0000, Artem S. Tashkinov wrote:
+> Hello,
 > 
-> With my corporate employee hat on, I would like to note a couple of
-> three things.
+> There are now two bug reports containing very similar if not exactly the
+> same backtraces.
 > 
-> 1. there are definitely bugs here and someone(tm) should sort them out(R)
+> https://bugzilla.kernel.org/show_bug.cgi?id=219072
+> https://bugzilla.kernel.org/show_bug.cgi?id=219078
 > 
-> however....
-> 
-> 2. the real goal is presumably to beat the kernel into shape where
-> production kernels no longer suffer lockups running this workload on
-> this hardware
-> 3. the flamegraph (to be found in [1]) shows expensive debug enabled,
-> notably for preemption count (search for preempt_count_sub to see)
-> 4. I'm told the lruvec problem is being worked on (but no ETA) and I
-> don't think the above justifies considering any hacks or otherwise
-> putting more pressure on it
-> 
-> It is plausible eliminating the aforementioned debug will be good enough.
-> 
-> Apart from that I note percpu_counter_add_batch (+ irq debug) accounts
-> for 5.8% cpu time. This will of course go down if irq tracing is
-> disabled, but so happens I optimized this routine to be faster
-> single-threaded (in particular by dodging the interrupt trip). The
-> patch is hanging out in the mm tree [2] and is trivially applicable
-> for testing.
-> 
-> Even if none of the debug opts can get modified, this should drop
-> percpu_counter_add_batch to 1.5% or so, which may or may not have a
-> side effect of avoiding the lockup problem.
+> Theodore, please take a look.
 
-Thanks, A few debug options were turned ON to gather debug data. Will do 
-a full run once with them turned OFF and with the above 
-percpu_counter_add_batch patch.
+[adding everyone involved in 744a56389f739 ("ext4: replace deprecated
+strncpy with alternatives") to cc]
 
-Regards,
-Bharata.
+Is strscpy_pad appropriate if the @src parameter itself is a fixed
+length char[16] which isn't null terminated when the label itself is 16
+chars long?
+
+--D
+
+> Might not be necesserily ext4 related but I cannot tell.
+> 
+> ------------[ cut here ]------------
+> strnlen: detected buffer overflow: 17 byte read of buffer size 16
+> WARNING: CPU: 3 PID: 1622 at lib/string_helpers.c:1029
+> __fortify_report+0x43/0x50
+> Modules linked in: rfcomm snd_seq_dummy snd_hrtimer snd_seq uhid cmac
+> algif_hash algif_skcipher af_alg bnep vfat fat amd_atl intel_rapl_msr
+> intel_rapl_common kvm_amd snd_hda_codec_realtek snd_hda_codec_generic
+> kvm ip6t_REJECT snd_hda_scodec_component snd_hda_codec_hdmi
+> nf_reject_ipv6 crct10dif_pclmul crc32_pclmul xt_hl snd_usb_audio
+> polyval_clmulni snd_hda_intel ip6t_rt polyval_generic snd_intel_dspcfg
+> gf128mul snd_usbmidi_lib snd_intel_sdw_acpi ghash_clmulni_intel
+> sha512_ssse3 snd_ump snd_hda_codec sha256_ssse3 snd_rawmidi sha1_ssse3
+> btusb snd_hda_core snd_seq_device aesni_intel btrtl mc snd_hwdep btintel
+> crypto_simd btbcm snd_pcm cryptd r8169 btmtk realtek snd_timer
+> mdio_devres rapl bluetooth snd wmi_bmof k10temp pcspkr ipt_REJECT ccp
+> i2c_piix4 libphy soundcore nf_reject_ipv4 xt_LOG rfkill nf_log_syslog
+> joydev mousedev nft_limit gpio_amdpt gpio_generic mac_hid lz4
+> lz4_compress xt_limit xt_addrtype xt_tcpudp xt_conntrack nf_conntrack
+> nf_defrag_ipv6 nf_defrag_ipv4 nft_compat nf_tables libcrc32c tcp_bbr
+>  winesync(OE) pkcs8_key_parser i2c_dev crypto_user dm_mod loop
+> nfnetlink zram ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2
+> hid_generic usbhid amdgpu video amdxcp i2c_algo_bit drm_ttm_helper ttm
+> drm_exec gpu_sched drm_suballoc_helper drm_buddy nvme drm_display_helper
+> nvme_core crc32c_intel cec xhci_pci xhci_pci_renesas nvme_auth wmi
+> CPU: 3 PID: 1622 Comm: KIO::WorkerThre Tainted: G           OE
+> 6.10.0-arch1-1 #1 3f70a25b32dbfb369f64430c352117d965bafd6c
+> Hardware name: Micro-Star International Co., Ltd MS-7C02/B450 TOMAHAWK
+> MAX (MS-7C02), BIOS 3.I0 10/14/2023
+> RIP: 0010:__fortify_report+0x43/0x50
+> Code: c1 83 e7 01 48 c7 c1 82 1a 45 8f 48 c7 c7 e8 49 4b 8f 48 8b 34 c5
+> e0 55 ed 8e 48 c7 c0 3d f7 44 8f 48 0f 44 c8 e8 7d 4b a3 ff <0f> 0b c3
+> cc cc cc cc 66 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90
+> RSP: 0018:ffffb4b09f7b3b68 EFLAGS: 00010286
+> RAX: 0000000000000000 RBX: ffff991a934c6000 RCX: 0000000000000027
+> RDX: ffff99219eba19c8 RSI: 0000000000000001 RDI: ffff99219eba19c0
+> RBP: ffffb4b09f7b3c38 R08: 0000000000000000 R09: ffffb4b09f7b39e8
+> R10: ffffffff8fcb21e8 R11: 0000000000000003 R12: 0000760a5dfff390
+> R13: ffff991a8a724af8 R14: ffff991aa4a3d478 R15: ffffffff8fd2a5a0
+> FS:  0000760a5e0006c0(0000) GS:ffff99219eb80000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007609e0013810 CR3: 000000012cb70000 CR4: 0000000000f50ef0
+> PKRU: 55555554
+> Call Trace:
+>  <TASK>
+>  ? __fortify_report+0x43/0x50
+>  ? __warn.cold+0x8e/0xe8
+>  ? __fortify_report+0x43/0x50
+>  ? report_bug+0xff/0x140
+>  ? console_unlock+0x84/0x130
+>  ? handle_bug+0x3c/0x80
+>  ? exc_invalid_op+0x17/0x70
+>  ? asm_exc_invalid_op+0x1a/0x20
+>  ? __fortify_report+0x43/0x50
+>  ? __fortify_report+0x43/0x50
+>  __fortify_panic+0xd/0xf
+>  __ext4_ioctl.cold+0x13/0x59 [ext4
+> 2a94c00997ffaf4059189da5c3ba69455dc04edb]
+>  ? do_filp_open+0xc4/0x170
+>  ? __fdget_raw+0xa5/0xc0
+>  ? terminate_walk+0x61/0x100
+>  __x64_sys_ioctl+0x94/0xd0
+>  do_syscall_64+0x82/0x190
+>  ? from_kgid_munged+0x12/0x30
+>  ? cp_statx+0x19f/0x1e0
+>  ? do_statx+0x72/0xa0
+>  ? syscall_exit_to_user_mode+0x72/0x200
+>  ? do_syscall_64+0x8e/0x190
+>  ? do_user_addr_fault+0x36c/0x620
+>  ? exc_page_fault+0x81/0x190
+>  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> RIP: 0033:0x760ade31f13f
+> Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89
+> 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d
+> 00 f0 ff ff 77 18 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+> RSP: 002b:0000760a5dfff310 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 0000760a5dfff560 RCX: 0000760ade31f13f
+> RDX: 0000760a5dfff390 RSI: 0000000081009431 RDI: 000000000000003e
+> RBP: 0000760a5dfff4b0 R08: 0000760a5dfff580 R09: 00007609e0007ae0
+> R10: 0000000000001000 R11: 0000000000000246 R12: 0000760a5dfff390
+> R13: 00007609e00135e0 R14: 0000760a5dfff540 R15: 0000000000010308
+>  </TASK>
+> ---[ end trace 0000000000000000 ]---
+> ------------[ cut here ]------------
+> kernel BUG at lib/string_helpers.c:1037!
+> Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+> CPU: 3 PID: 1622 Comm: KIO::WorkerThre Tainted: G        W  OE
+> 6.10.0-arch1-1 #1 3f70a25b32dbfb369f64430c352117d965bafd6c
+> Hardware name: Micro-Star International Co., Ltd MS-7C02/B450 TOMAHAWK
+> MAX (MS-7C02), BIOS 3.I0 10/14/2023
+> RIP: 0010:__fortify_panic+0xd/0xf
+> Code: ff e8 87 03 00 00 e9 08 b8 89 ff 66 90 90 90 90 90 90 90 90 90 90
+> 90 90 90 90 90 90 90 f3 0f 1e fa 40 0f b6 ff e8 b3 e2 89 ff <0f> 0b 48
+> 8b 54 24 10 48 8b 74 24 08 4c 89 e9 48 c7 c7 99 27 42 8f
+> RSP: 0018:ffffb4b09f7b3b70 EFLAGS: 00010286
+> RAX: 0000000000000000 RBX: ffff991a934c6000 RCX: 0000000000000027
+> RDX: ffff99219eba19c8 RSI: 0000000000000001 RDI: ffff99219eba19c0
+> RBP: ffffb4b09f7b3c38 R08: 0000000000000000 R09: ffffb4b09f7b39e8
+> R10: ffffffff8fcb21e8 R11: 0000000000000003 R12: 0000760a5dfff390
+> R13: ffff991a8a724af8 R14: ffff991aa4a3d478 R15: ffffffff8fd2a5a0
+> FS:  0000760a5e0006c0(0000) GS:ffff99219eb80000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007609e0013810 CR3: 000000012cb70000 CR4: 0000000000f50ef0
+> PKRU: 55555554
+> Call Trace:
+>  <TASK>
+>  ? __die_body.cold+0x19/0x27
+>  ? die+0x2e/0x50
+>  ? do_trap+0xca/0x110
+>  ? do_error_trap+0x6a/0x90
+>  ? __fortify_panic+0xd/0xf
+>  ? exc_invalid_op+0x50/0x70
+>  ? __fortify_panic+0xd/0xf
+>  ? asm_exc_invalid_op+0x1a/0x20
+>  ? __fortify_panic+0xd/0xf
+>  __ext4_ioctl.cold+0x13/0x59 [ext4
+> 2a94c00997ffaf4059189da5c3ba69455dc04edb]
+>  ? do_filp_open+0xc4/0x170
+>  ? __fdget_raw+0xa5/0xc0
+>  ? terminate_walk+0x61/0x100
+>  __x64_sys_ioctl+0x94/0xd0
+>  do_syscall_64+0x82/0x190
+>  ? from_kgid_munged+0x12/0x30
+>  ? cp_statx+0x19f/0x1e0
+>  ? do_statx+0x72/0xa0
+>  ? syscall_exit_to_user_mode+0x72/0x200
+>  ? do_syscall_64+0x8e/0x190
+>  ? do_user_addr_fault+0x36c/0x620
+>  ? exc_page_fault+0x81/0x190
+>  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> RIP: 0033:0x760ade31f13f
+> Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 10 00 00 00 48 89
+> 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 10 00 00 00 0f 05 <89> c2 3d
+> 00 f0 ff ff 77 18 48 8b 44 24 18 64 48 2b 04 25 28 00 00
+> RSP: 002b:0000760a5dfff310 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 0000760a5dfff560 RCX: 0000760ade31f13f
+> RDX: 0000760a5dfff390 RSI: 0000000081009431 RDI: 000000000000003e
+> RBP: 0000760a5dfff4b0 R08: 0000760a5dfff580 R09: 00007609e0007ae0
+> R10: 0000000000001000 R11: 0000000000000246 R12: 0000760a5dfff390
+> R13: 00007609e00135e0 R14: 0000760a5dfff540 R15: 0000000000010308
+>  </TASK>
+> Modules linked in: rfcomm snd_seq_dummy snd_hrtimer snd_seq uhid cmac
+> algif_hash algif_skcipher af_alg bnep vfat fat amd_atl intel_rapl_msr
+> intel_rapl_common kvm_amd snd_hda_codec_realtek snd_hda_codec_generic
+> kvm ip6t_REJECT snd_hda_scodec_component snd_hda_codec_hdmi
+> nf_reject_ipv6 crct10dif_pclmul crc32_pclmul xt_hl snd_usb_audio
+> polyval_clmulni snd_hda_intel ip6t_rt polyval_generic snd_intel_dspcfg
+> gf128mul snd_usbmidi_lib snd_intel_sdw_acpi ghash_clmulni_intel
+> sha512_ssse3 snd_ump snd_hda_codec sha256_ssse3 snd_rawmidi sha1_ssse3
+> btusb snd_hda_core snd_seq_device aesni_intel btrtl mc snd_hwdep btintel
+> crypto_simd btbcm snd_pcm cryptd r8169 btmtk realtek snd_timer
+> mdio_devres rapl bluetooth snd wmi_bmof k10temp pcspkr ipt_REJECT ccp
+> i2c_piix4 libphy soundcore nf_reject_ipv4 xt_LOG rfkill nf_log_syslog
+> joydev mousedev nft_limit gpio_amdpt gpio_generic mac_hid lz4
+> lz4_compress xt_limit xt_addrtype xt_tcpudp xt_conntrack nf_conntrack
+> nf_defrag_ipv6 nf_defrag_ipv4 nft_compat nf_tables libcrc32c tcp_bbr
+>  winesync(OE) pkcs8_key_parser i2c_dev crypto_user dm_mod loop
+> nfnetlink zram ip_tables x_tables ext4 crc32c_generic crc16 mbcache jbd2
+> hid_generic usbhid amdgpu video amdxcp i2c_algo_bit drm_ttm_helper ttm
+> drm_exec gpu_sched drm_suballoc_helper drm_buddy nvme drm_display_helper
+> nvme_core crc32c_intel cec xhci_pci xhci_pci_renesas nvme_auth wmi
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:__fortify_panic+0xd/0xf
+> Code: ff e8 87 03 00 00 e9 08 b8 89 ff 66 90 90 90 90 90 90 90 90 90 90
+> 90 90 90 90 90 90 90 f3 0f 1e fa 40 0f b6 ff e8 b3 e2 89 ff <0f> 0b 48
+> 8b 54 24 10 48 8b 74 24 08 4c 89 e9 48 c7 c7 99 27 42 8f
+> RSP: 0018:ffffb4b09f7b3b70 EFLAGS: 00010286
+> RAX: 0000000000000000 RBX: ffff991a934c6000 RCX: 0000000000000027
+> RDX: ffff99219eba19c8 RSI: 0000000000000001 RDI: ffff99219eba19c0
+> RBP: ffffb4b09f7b3c38 R08: 0000000000000000 R09: ffffb4b09f7b39e8
+> R10: ffffffff8fcb21e8 R11: 0000000000000003 R12: 0000760a5dfff390
+> R13: ffff991a8a724af8 R14: ffff991aa4a3d478 R15: ffffffff8fd2a5a0
+> FS:  0000760a5e0006c0(0000) GS:ffff99219eb80000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007609e0013810 CR3: 000000012cb70000 CR4: 0000000000f50ef0
+> PKRU: 55555554
+> 
+> 
 
