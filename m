@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-259439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C7F2939632
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 00:04:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EEEE939636
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 00:04:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C83C6281993
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:03:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFBA61C218DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD31B12E1D1;
-	Mon, 22 Jul 2024 22:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5495A502AD;
+	Mon, 22 Jul 2024 22:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="sYSgEzQU"
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="R/lL7+jc"
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71D8861FE7
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 22:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529E26EB59
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 22:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721685696; cv=none; b=KW9VzeoDbu4sR6Bqj/pucZH7hMHIuRm5K0YjTHI5szqqFHYwr/BjzhRbW/ngPgnBC/iLTlqf6TZFWMzr+u5KESP5J3RmpxtvdhGm/RSv/LmEUJAa+HSHNkKlTK2hsHAQX/ddtpXdTMaFMPcyuSuRYfl5QXVMQ9Yp7k7Itq0JaGs=
+	t=1721685697; cv=none; b=Vu5IkPCaIhyn4YcqlBU6k/OKZw9pFnkP4KfaUGNWGrqgvqrR61TD4vQ1zul4/z/lY3C3amh6qw5SVdklP2lpN7B4KzUP/0PHtaqSZuJoAOeLKL8JhIfoNRnvULJP/o/m027pI/8Q4G4bvRbpCKQ+lov6QwL03ZJtvI5/AU5xBxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721685696; c=relaxed/simple;
-	bh=i5fq6dLu/xqxt+O3YmVoa2/fRQ4pONuNiDxOd0O+2Ds=;
+	s=arc-20240116; t=1721685697; c=relaxed/simple;
+	bh=ozoXhi7TZ5bg/WgwHNio76mZ8ob0TDKqwt97BXyhuUo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oRlB4Gh5h9u0+lBklb1fjfYl7XScsB6gDLxadKDUimG9Gfiey56avS283gwQ7D10i0mOejTT9ZMuoDP7+snl+Z0FJdNwL3wp5jjyKpAXda+wr1HxlW25oT9WA8KzM8S2EtttzfD9CnIP3/eQJ0Q8ZVQr2aknNM3EVqVuXxV9hD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=sYSgEzQU; arc=none smtp.client-ip=209.85.160.41
+	 MIME-Version:Content-Type; b=II53UTR89vBJrWe4PPyjpeBWj2CJi2/6RcFpxOHba3v+xQHlcMtxkKe8FzlsNmX6NxKaW1sIXy7zDRKFbVfEgw91CxDcK2BM1PrQQRxrLdktoD8Ego9dmFliiWn9JhYo9fiY/IaxXbBZ/StYdsNsT46vBA82feTmGpDCeqNeAtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=R/lL7+jc; arc=none smtp.client-ip=209.85.210.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-260e1b5576aso2622996fac.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 15:01:33 -0700 (PDT)
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-704466b19c4so2251924a34.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 15:01:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721685692; x=1722290492; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721685693; x=1722290493; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EUzyivP6VRGWHx7tYSGIOnQeCUO67RlyYPuJMRsarok=;
-        b=sYSgEzQUaPhQlhgxExvZTEhKkqmTexrzn9x01IiClSRZ820BO/6Kzdb3KPXzNrbuPY
-         G8cFs+ptsK/i0KwoM6wC+X9/KKty848/XxoFyEbwFe52tii4iX42KLoXuWxlrQBGavuz
-         YkeOmkPS2imnqmlda6mJoZgybW6kxu+jEnMuZw4QY8bc0gQIQhoD3nqVjHVKLyiogpyc
-         1k/qr6Z2EU52AOkTDlvU7KLGjzc3cqVOGXvUx6lbeoJ3m8LABmOQcLRULNL0NGpih1qo
-         Dks7RtJTKGvsmW+UakR8zHDG2l7NO5FZqz/7QkWSCGf9xTrA9ZnGJU83EAxfHlyOzNrq
-         /rUw==
+        bh=sbV2uifrWqiRQxhBCL8VB9LMdHewgwxJIKx2N6g6zvQ=;
+        b=R/lL7+jcHaeV1mQQUNOhKAS5gl5OkVbk3qGw8/8HAKX6J4Q3sk8eQ3sUyp4FbTP8NC
+         RnB3YAqK0DxJY5f4lKaI7fCnIj6aGKSlPRkqbUo3pMcpiUE3tbKAHi8FO+sRAniG29FC
+         RzxocsvmlPUJvJzhU3qNW1baPuEoOfaXV1xACMd81fxXMcDo04Qq3NUuR0REwVRJe9qi
+         TNzuvTevOd6bjtEeWTufiDI+PqRCXVvUxw26EvtWpURGgNzN+2dJOMitdCrxjt95uVny
+         NvRTIO2pmue73UCWJORf30jxXDvsJ9XluqhGn39Z/yoQ09o6FpyUdz66iHhO6uQ0l60L
+         r5hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721685692; x=1722290492;
+        d=1e100.net; s=20230601; t=1721685693; x=1722290493;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EUzyivP6VRGWHx7tYSGIOnQeCUO67RlyYPuJMRsarok=;
-        b=hU1lq6d5b4ks7Ns6OGPthFLiCq/HxQ1Spaxr73Z9SnvjNCrYKnaucrxZIuDG63rfW5
-         QHxxuzonPnCxLqivrMpA77R3g9zUC4H7owRJAy7Kah5+7gRHcmmXZcOwsY8OOZErGlBy
-         ZlHRW1WBD/5wNabneC0FuJipcIP80rr8TwA4/zSBEBPdizxFV9ay7o6b0uO8SvK82V7n
-         vgcFHP2uKapPipPAQaXubUtpzG5DhKe8nB3OeT7hE3i/o67twOglViBb/YftjY36Seh4
-         xjM8xZqtSSAzxIoEVOpSsH1R2ciag9+Alr720hfYOtC9XuKPOtLUd41ckLlzWilZROr+
-         g6jg==
-X-Forwarded-Encrypted: i=1; AJvYcCV/3HW/08r9UwQwVmsWXg10lYTXKaoc72Y6gLHDEFu47hyq5G5hRyknQ/97id7bTS2xBjG6FFbmpV9guka4FHVz9sEokAo38SBJFE/u
-X-Gm-Message-State: AOJu0YwapQNEuSN8k1d59FkLIflndvpbq+MGxnCDfMshH/kfYpqQ1ej9
-	PKByQQ8B/b46y3QvCkeZq7jTXKRYvPzC2vQ1F3uRVIKUsfi4bY2eTiygUCSm348=
-X-Google-Smtp-Source: AGHT+IG5zMAelzP4qmAGblsSVB30TFvvH9JUw3U45Gd0sjE2FY39ATDcxmH98Vjz6qqSktUc2PQf+A==
-X-Received: by 2002:a05:6870:a10d:b0:260:e093:ff8d with SMTP id 586e51a60fabf-264692a6d2cmr912634fac.45.1721685692314;
-        Mon, 22 Jul 2024 15:01:32 -0700 (PDT)
+        bh=sbV2uifrWqiRQxhBCL8VB9LMdHewgwxJIKx2N6g6zvQ=;
+        b=NoaWhG6HrscVCFuvIP+bpTnNIYCmelieS82PBOWwipyuYhDq/bWEqnCE++hA5jcdja
+         kurcp6p9O9/mqrug/CUP6qq1nHaFUdes7iG4RNOqaQWUSsn87RV4fsxaXl+S2p9DvuS3
+         d1+MhP+6kJE4VXBUtOXg2cOcGIa20mY6OCIqKR6fHIRgl5CleO2HkhO3ZtgGcoz7xdoW
+         kZ3wOk5XfI7UIjgRSu8br5BekJNX3SOb+yIVLcYpyl6TDgv/q0etMZWmxPq7PD+e9+hc
+         nEzZ9kuwos/bQG1gNSfIwR2EQCpTk41eKYNA47dfmj+EU9/NhmlOaPkfPyHk/xCdWkg5
+         asng==
+X-Forwarded-Encrypted: i=1; AJvYcCULx5dG3vnbigy5kIyxmLsE8GBA3/tjBqeW9IbPjRFTnfGkLzFkWcHp2UUPJINDXgJdnSXSQOLSun5jTB1YLqkq3iVSMMkMKF5lEntt
+X-Gm-Message-State: AOJu0YxXwViXqiexCvA3cCj84b+c8VgxkKvM/zk2vxNfnX15Hud7RiLF
+	ueVpgBYr7Sx+KWPf2XqkT/a1rGdqDsr3tm8RhsvGPUTGLWyHzfAeJJwYSX+Bs2I=
+X-Google-Smtp-Source: AGHT+IGH4XrwdDU/5ZEcf8oBMum+Z6kRT3nANYPvUw3shGgmVjb0HG2TfD+RuB8Rpn5TQQUo/epIsw==
+X-Received: by 2002:a05:6830:2a0e:b0:703:61ea:f289 with SMTP id 46e09a7af769-708fdbb4afdmr12042986a34.28.1721685693197;
+        Mon, 22 Jul 2024 15:01:33 -0700 (PDT)
 Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-708f60a55e1sm1719911a34.11.2024.07.22.15.01.31
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-708f60a55e1sm1719911a34.11.2024.07.22.15.01.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 15:01:31 -0700 (PDT)
+        Mon, 22 Jul 2024 15:01:32 -0700 (PDT)
 From: David Lechner <dlechner@baylibre.com>
 To: Mark Brown <broonie@kernel.org>,
 	Jonathan Cameron <jic23@kernel.org>,
@@ -82,9 +82,9 @@ Cc: David Lechner <dlechner@baylibre.com>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-iio@vger.kernel.org
-Subject: [PATCH RFC v3 7/9] iio: buffer-dmaengine: generalize requesting DMA channel
-Date: Mon, 22 Jul 2024 16:57:14 -0500
-Message-ID: <20240722-dlech-mainline-spi-engine-offload-2-v3-7-7420e45df69b@baylibre.com>
+Subject: [PATCH RFC v3 8/9] dt-bindings: iio: adc: adi,ad7944: add SPI offload properties
+Date: Mon, 22 Jul 2024 16:57:15 -0500
+Message-ID: <20240722-dlech-mainline-spi-engine-offload-2-v3-8-7420e45df69b@baylibre.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
 References: <20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
@@ -98,184 +98,44 @@ Content-Type: text/plain; charset="utf-8"
 X-Mailer: b4 0.14.0
 Content-Transfer-Encoding: 8bit
 
-This patch generalizes the iio_dmaengine_buffer_setup_ext() functions
-by passing the pointer to the DMA channel as an argument rather than
-the channel name. This will allow future callers of the function to
-use other methods to get the DMA channel pointer.
-
-This aims to keep it as easy to use as possible by stealing ownership
-of the dma_chan pointer from the caller. This way, dma_request_chan()
-can be called inline in the function call without any extra error
-handling.
+To enable capturing data at high rates, the AD7944 is frequently used
+with the AXI SPI Engine IP core. This patch adds the properties needed
+to describe the SPI offload configuration in the device tree.
 
 Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
 
 v3 changes:
-* This is a new patch in v3.
----
- drivers/iio/buffer/industrialio-buffer-dmaengine.c | 39 +++++++++++++---------
- drivers/iio/dac/adi-axi-dac.c                      |  3 +-
- include/linux/iio/buffer-dmaengine.h               | 11 +++---
- 3 files changed, 33 insertions(+), 20 deletions(-)
+* Dropped properties that should be SPI controller properties.
 
-diff --git a/drivers/iio/buffer/industrialio-buffer-dmaengine.c b/drivers/iio/buffer/industrialio-buffer-dmaengine.c
-index 918f6f8d65b6..44c3b4fe0643 100644
---- a/drivers/iio/buffer/industrialio-buffer-dmaengine.c
-+++ b/drivers/iio/buffer/industrialio-buffer-dmaengine.c
-@@ -163,32 +163,34 @@ static const struct iio_dev_attr *iio_dmaengine_buffer_attrs[] = {
- /**
-  * iio_dmaengine_buffer_alloc() - Allocate new buffer which uses DMAengine
-  * @dev: Parent device for the buffer
-- * @channel: DMA channel name, typically "rx".
-+ * @chan: DMA channel.
-  *
-  * This allocates a new IIO buffer which internally uses the DMAengine framework
-  * to perform its transfers. The parent device will be used to request the DMA
-  * channel.
-  *
-+ * This "steals" the @chan pointer, so the caller must not call
-+ * dma_release_channel() on it. @chan is also checked for error, so callers
-+ * can pass the result of dma_request_chan() directly.
-+ *
-  * Once done using the buffer iio_dmaengine_buffer_free() should be used to
-  * release it.
-  */
- static struct iio_buffer *iio_dmaengine_buffer_alloc(struct device *dev,
--	const char *channel)
-+						     struct dma_chan *chan)
- {
- 	struct dmaengine_buffer *dmaengine_buffer;
- 	unsigned int width, src_width, dest_width;
- 	struct dma_slave_caps caps;
--	struct dma_chan *chan;
- 	int ret;
+v2 changes:
+
+This is a new patch that partially replaces "dt-bindings: iio: offload:
+add binding for PWM/DMA triggered buffer".
+
+In the previous review, it was suggested that having a separate binding
+and object node for the offload was overcomplicated. So instead this
+opts to use the proposed standard spi-offloads property as a flag to
+allow the SPI periperhal node require additional properties that are
+resources that are physically connected to the SPI offload.
+---
+ Documentation/devicetree/bindings/iio/adc/adi,ad7944.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7944.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7944.yaml
+index d17d184842d3..6533459add87 100644
+--- a/Documentation/devicetree/bindings/iio/adc/adi,ad7944.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7944.yaml
+@@ -129,6 +129,9 @@ properties:
+       line goes high while the SDI and CNV lines are high (chain mode),
+     maxItems: 1
  
--	dmaengine_buffer = kzalloc(sizeof(*dmaengine_buffer), GFP_KERNEL);
--	if (!dmaengine_buffer)
--		return ERR_PTR(-ENOMEM);
-+	if (IS_ERR(chan))
-+		return ERR_CAST(chan);
- 
--	chan = dma_request_chan(dev, channel);
--	if (IS_ERR(chan)) {
--		ret = PTR_ERR(chan);
--		goto err_free;
-+	dmaengine_buffer = kzalloc(sizeof(*dmaengine_buffer), GFP_KERNEL);
-+	if (!dmaengine_buffer) {
-+		ret = -ENOMEM;
-+		goto err_release;
- 	}
- 
- 	ret = dma_get_slave_caps(chan, &caps);
-@@ -221,6 +223,9 @@ static struct iio_buffer *iio_dmaengine_buffer_alloc(struct device *dev,
- 
- err_free:
- 	kfree(dmaengine_buffer);
-+err_release:
-+	dma_release_channel(chan);
++  spi-offloads:
++    maxItems: 1
 +
- 	return ERR_PTR(ret);
- }
- 
-@@ -244,13 +249,13 @@ EXPORT_SYMBOL_NS_GPL(iio_dmaengine_buffer_free, IIO_DMAENGINE_BUFFER);
- 
- struct iio_buffer *iio_dmaengine_buffer_setup_ext(struct device *dev,
- 						  struct iio_dev *indio_dev,
--						  const char *channel,
-+						  struct dma_chan *chan,
- 						  enum iio_buffer_direction dir)
- {
- 	struct iio_buffer *buffer;
- 	int ret;
- 
--	buffer = iio_dmaengine_buffer_alloc(dev, channel);
-+	buffer = iio_dmaengine_buffer_alloc(dev, chan);
- 	if (IS_ERR(buffer))
- 		return ERR_CAST(buffer);
- 
-@@ -277,22 +282,26 @@ static void __devm_iio_dmaengine_buffer_free(void *buffer)
-  * devm_iio_dmaengine_buffer_setup_ext() - Setup a DMA buffer for an IIO device
-  * @dev: Parent device for the buffer
-  * @indio_dev: IIO device to which to attach this buffer.
-- * @channel: DMA channel name, typically "rx".
-+ * @chan: DMA channel.
-  * @dir: Direction of buffer (in or out)
-  *
-  * This allocates a new IIO buffer with devm_iio_dmaengine_buffer_alloc()
-  * and attaches it to an IIO device with iio_device_attach_buffer().
-  * It also appends the INDIO_BUFFER_HARDWARE mode to the supported modes of the
-  * IIO device.
-+ *
-+ * This "steals" the @chan pointer, so the caller must not call
-+ * dma_release_channel() on it. @chan is also checked for error, so callers
-+ * can pass the result of dma_request_chan() directly.
-  */
- int devm_iio_dmaengine_buffer_setup_ext(struct device *dev,
- 					struct iio_dev *indio_dev,
--					const char *channel,
-+					struct dma_chan *chan,
- 					enum iio_buffer_direction dir)
- {
- 	struct iio_buffer *buffer;
- 
--	buffer = iio_dmaengine_buffer_setup_ext(dev, indio_dev, channel, dir);
-+	buffer = iio_dmaengine_buffer_setup_ext(dev, indio_dev, chan, dir);
- 	if (IS_ERR(buffer))
- 		return PTR_ERR(buffer);
- 
-diff --git a/drivers/iio/dac/adi-axi-dac.c b/drivers/iio/dac/adi-axi-dac.c
-index 880d83a014a1..7e6225920e49 100644
---- a/drivers/iio/dac/adi-axi-dac.c
-+++ b/drivers/iio/dac/adi-axi-dac.c
-@@ -124,7 +124,8 @@ static struct iio_buffer *axi_dac_request_buffer(struct iio_backend *back,
- 	if (device_property_read_string(st->dev, "dma-names", &dma_name))
- 		dma_name = "tx";
- 
--	return iio_dmaengine_buffer_setup_ext(st->dev, indio_dev, dma_name,
-+	return iio_dmaengine_buffer_setup_ext(st->dev, indio_dev,
-+					      dma_request_chan(st->dev, dma_name),
- 					      IIO_BUFFER_DIRECTION_OUT);
- }
- 
-diff --git a/include/linux/iio/buffer-dmaengine.h b/include/linux/iio/buffer-dmaengine.h
-index 81d9a19aeb91..a80397c3b198 100644
---- a/include/linux/iio/buffer-dmaengine.h
-+++ b/include/linux/iio/buffer-dmaengine.h
-@@ -7,6 +7,7 @@
- #ifndef __IIO_DMAENGINE_H__
- #define __IIO_DMAENGINE_H__
- 
-+#include <linux/dmaengine.h>
- #include <linux/iio/buffer.h>
- 
- struct iio_dev;
-@@ -15,20 +16,22 @@ struct device;
- void iio_dmaengine_buffer_free(struct iio_buffer *buffer);
- struct iio_buffer *iio_dmaengine_buffer_setup_ext(struct device *dev,
- 						  struct iio_dev *indio_dev,
--						  const char *channel,
-+						  struct dma_chan *chan,
- 						  enum iio_buffer_direction dir);
- 
- #define iio_dmaengine_buffer_setup(dev, indio_dev, channel)	\
--	iio_dmaengine_buffer_setup_ext(dev, indio_dev, channel,	\
-+	iio_dmaengine_buffer_setup_ext(dev, indio_dev,		\
-+				       dma_request_chan(dev, channel),\
- 				       IIO_BUFFER_DIRECTION_IN)
- 
- int devm_iio_dmaengine_buffer_setup_ext(struct device *dev,
- 					struct iio_dev *indio_dev,
--					const char *channel,
-+					struct dma_chan *chan,
- 					enum iio_buffer_direction dir);
- 
- #define devm_iio_dmaengine_buffer_setup(dev, indio_dev, channel)	\
--	devm_iio_dmaengine_buffer_setup_ext(dev, indio_dev, channel,	\
-+	devm_iio_dmaengine_buffer_setup_ext(dev, indio_dev,		\
-+					    dma_request_chan(dev, channel), \
- 					    IIO_BUFFER_DIRECTION_IN)
- 
- #endif
+ required:
+   - compatible
+   - reg
 
 -- 
 2.43.0
