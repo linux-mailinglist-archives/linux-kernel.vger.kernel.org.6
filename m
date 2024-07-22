@@ -1,110 +1,124 @@
-Return-Path: <linux-kernel+bounces-259302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBA6B9393BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:42:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0755E9393C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4F20281CA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:42:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E94EB20989
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3800172BB1;
-	Mon, 22 Jul 2024 18:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E547E171663;
+	Mon, 22 Jul 2024 18:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bp0CrouD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xoM81yJN"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FDD9172BD1;
-	Mon, 22 Jul 2024 18:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76AA171651
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 18:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721673706; cv=none; b=G0TkvAUDHSn5poWJRJjObLgepGr9vJYNHfZa6ddEQb1M4zpw/hmIXofuC55TOB4p0aQrEYG+DSEMUAPvAt92BZXwPMt5XV5iVfedx06EJ7Dws+9HHmHPfXirzop0UfajNrvBh7i0ZqOtQJJWqMpN2x2EwUedgCWulHY3nvyfvuc=
+	t=1721673732; cv=none; b=frA1XOmhPftKHxu9C/PXUCClxEr51/XXdjVardEErawrskwNXRbHmGW17cnTfk3au9KkyYGrKp1VSkln/AktQXokFXc3DkwL/OUQlHe84t2g6yfOyhO59K1Vm6NOb7NZU6Hyl43GH6NL9qRIphk2U37ELz2wNflYdOAO0/aMPoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721673706; c=relaxed/simple;
-	bh=itmwri9pB8iYLM1WV6O/hF7Nn5gJN5v0SqaL03cJnX0=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=Pgksbwf1EjIfMx7jbegBa8bEghHz5ZEWexgj0Ao+Rcbp2r+dl1iSOYN707QA9QwZYxyJZDlFDQyulEivCBYQ+OZpFVLk/1A9pqnKwF5xqOQG5npOO1FntM7BA4QDdGq67XTYxnObXFXl3nz8QbZ8b73iycIpocGD/ikDwkOV+P0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bp0CrouD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3C12C4AF0D;
-	Mon, 22 Jul 2024 18:41:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721673706;
-	bh=itmwri9pB8iYLM1WV6O/hF7Nn5gJN5v0SqaL03cJnX0=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=Bp0CrouDEKWs4tFfjbFTAe3LbSDxnMSqUs2nnWDZ84CwqekBpISwzngrpl8zlotVM
-	 F1R0BHHaYNV8eR0HQ9+zPCXJTK0cCdmWHulqFxv6sWem++wV+JzzFX+67oAOkcre3M
-	 IouurdA8Wv6/lPOpblzDQKOCkx8auQEFVH0UjkORV0AXmK7MLWxAz7H/zcAl6XkuFt
-	 sbRbN+hvW/D7pNtJ5KvnPeuzTygpAfdGK8d0y2SbqtDh9wMACxM470kGwAZcmjXv6m
-	 tkr0rOXZctcJnmIuPHwNt5riXriJV6Wam6D+bmwSZw19SY2gXalrSFdmge6bLr3wFO
-	 GbP7L41X2cUgg==
-Date: Mon, 22 Jul 2024 12:41:42 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1721673732; c=relaxed/simple;
+	bh=+amIieoWJ9CX4mMMjpPZdcjS+0jEdmiGnO2u6Xqp1Oo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DLNZB7ida5M41G8aNDqJp77iizra6B927e49EiZyhKmjN3uN52xFwzoSEfNVSBwPLfUbz2GKwj8BgWf6CtAG14iqazv/GLHF1NA4g/SBB48C8pbEiStTMmzbD+2tnmQe3yfcarpbCECJXZnQ7IZ5RiS3W/6DZz9an8sA7RWVJQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xoM81yJN; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-65fdfd7b3deso47579677b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:42:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721673730; x=1722278530; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y4rdGF+Z/Yh8hymhxBTniZ382LqDBxfp7vlKwSbjjk4=;
+        b=xoM81yJNcxAX32JmQ4I9U72mRFUyziBISzw722h0u9Nz9myutdzZYDVGqRlCviocsq
+         i10M7oZl5673cx+kQXKo/RmHhMh/OCCTupT9B0pGxgVOgmrS0rVjzh9apoUoi3hUOAvz
+         MO2YfaX+cRnzDRe/L6R4Ry+Fk77zeNGVt+vGgKOEFKppIljiMfDFlt5zlhIemC+ZITQL
+         kh+yU1MDbQQreUKS1rdOwtF0W7j6tfXctk8W649QlmGGgpaxjt7Xa4g5bs3zvbjg0fgp
+         0xD6pHc8yeFQsjvADWPW7OI4H1kq6PYSjb0DfE8MzYFt8MlunLs2MLx/UEouZt7F5Mmm
+         UVAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721673730; x=1722278530;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y4rdGF+Z/Yh8hymhxBTniZ382LqDBxfp7vlKwSbjjk4=;
+        b=tFxGa/HoaCDbcS2g7TXnbMjLJCGg2dlPTfP1PTp0DXhKh1jmqLESIl0+xh22co8cY3
+         M1O0RyquF4ihZMKw5TM23s5Umf2kW8TMHKOcdQCWg1qgqxDwUKRs+Iq8tcQi0FcOBoLg
+         gllxOGQYBqnHe8UQ9UnDkQ7EMik0/J77fpxhEnvM0v/CduHImI3FfsU6nvB5MWZZMOba
+         B/By3Wue1Vnll800u7pH0dbe4kzVzcm7xzvE0vZKeSGi9dhm+vgU+Qoiu8iLxBbI5esS
+         TO6WwK21lG9fB3x6RBDAxEicdzJebk1UxqUUHb7mR9WYvwlMaiyQEQWS/aG4B1HWflgP
+         rG7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUOAAJQPWdrtapWdfO+PvBFDDWuwqzlxzljalzzV2eRPyCmaoIjL4wt1hJfcMOsgAKNWYoxi2gYQglumRBdkFEBfj/ZHtgS+Nk1t9b8
+X-Gm-Message-State: AOJu0YwLl7ugi74CdyMksw7PUimDS8FHHglWlDo9LwbhVSk4kvbUw1hg
+	ZqCzThTpdzmYYKnlcQVzZe7OuLNMLHWjV0S3XcrcU+5fY+idHN+GrWNvbenWPH0ekXpcPgfZNaM
+	xP+n9BATiRFSzC2PYr5zprf7DT55R9z/c9xbGVA==
+X-Google-Smtp-Source: AGHT+IHyjq6NgbF3ZUXX0L4gapb6B1fFnlurqaVxvZPJbrOQlcRjRKj0aSuLj6GTSIGVU3z3I1mo6FeWF8LwK/kCyo8=
+X-Received: by 2002:a05:690c:2c81:b0:65f:80bb:e6b2 with SMTP id
+ 00721157ae682-66ad8ec55fdmr72566757b3.14.1721673729754; Mon, 22 Jul 2024
+ 11:42:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: ysionneau@kalrayinc.com
-Cc: Julian Vetter <jvetter@kalrayinc.com>, devicetree@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Jonathan Borne <jborne@kalrayinc.com>, linux-kernel@vger.kernel.org
-In-Reply-To: <20240722094226.21602-11-ysionneau@kalrayinc.com>
-References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
- <20240722094226.21602-11-ysionneau@kalrayinc.com>
-Message-Id: <172167367141.4771.1037260997382401873.robh@kernel.org>
-Subject: Re: [RFC PATCH v3 10/37] dt-bindings: kalray: Add CPU bindings for
- Kalray kvx
+References: <CGME20240719120945eucas1p2aa5e35f78daa7ec1ea07f512180db468@eucas1p2.samsung.com>
+ <20240719120853.1924771-1-m.majewski2@samsung.com> <20240719120853.1924771-2-m.majewski2@samsung.com>
+In-Reply-To: <20240719120853.1924771-2-m.majewski2@samsung.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Mon, 22 Jul 2024 13:41:59 -0500
+Message-ID: <CAPLW+4=VgRBqw0X9PTOwSNNfLgvv2-5dTF4bP78_7gk4BwJGcQ@mail.gmail.com>
+Subject: Re: [PATCH 1/6] drivers/thermal/exynos: use DEFINE_SIMPLE_DEV_PM_OPS
+To: Mateusz Majewski <m.majewski2@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On Mon, 22 Jul 2024 11:41:21 +0200, ysionneau@kalrayinc.com wrote:
-> From: Yann Sionneau <ysionneau@kalrayinc.com>
-> 
-> Add Kalray kvx CPU bindings.
-> 
-> Signed-off-by: Yann Sionneau <ysionneau@kalrayinc.com>
+On Fri, Jul 19, 2024 at 7:10=E2=80=AFAM Mateusz Majewski
+<m.majewski2@samsung.com> wrote:
+>
+> SIMPLE_DEV_PM_OPS is deprecated, as noted next to its definition.
+>
+> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
 > ---
-> 
-> Notes:
-> 
-> V2 -> V3: New patch
-> ---
->  .../devicetree/bindings/kalray/cpus.yaml      | 105 ++++++++++++++++++
->  1 file changed, 105 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/kalray/cpus.yaml
-> 
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/kalray/cpus.example.dtb: cpu@0: compatible: ['kalray,kv3-1-pe'] is too short
-	from schema $id: http://devicetree.org/schemas/kalray/cpus.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/kalray/cpus.example.dtb: cpu@1: compatible: ['kalray,kv3-1-pe'] is too short
-	from schema $id: http://devicetree.org/schemas/kalray/cpus.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240722094226.21602-11-ysionneau@kalrayinc.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+>  drivers/thermal/samsung/exynos_tmu.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsu=
+ng/exynos_tmu.c
+> index 96cffb2c44ba..9b7ca93a72f1 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -1150,8 +1150,8 @@ static int exynos_tmu_resume(struct device *dev)
+>         return 0;
+>  }
+>
+> -static SIMPLE_DEV_PM_OPS(exynos_tmu_pm,
+> -                        exynos_tmu_suspend, exynos_tmu_resume);
+> +static DEFINE_SIMPLE_DEV_PM_OPS(exynos_tmu_pm,
+> +                               exynos_tmu_suspend, exynos_tmu_resume);
+>  #define EXYNOS_TMU_PM  (&exynos_tmu_pm)
+>  #else
+>  #define EXYNOS_TMU_PM  NULL
+> --
+> 2.45.1
+>
+>
 
