@@ -1,107 +1,78 @@
-Return-Path: <linux-kernel+bounces-258376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ECCD938738
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 03:15:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B74AA938739
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 03:15:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E81FB20E12
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 01:15:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6F601C2091E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 01:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7444C92;
-	Mon, 22 Jul 2024 01:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1717DDD2;
+	Mon, 22 Jul 2024 01:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VWlypUHi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cJwsLmQh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7674409;
-	Mon, 22 Jul 2024 01:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B77C152;
+	Mon, 22 Jul 2024 01:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721610920; cv=none; b=LF9KHv2e+uuAnFN0pUka29fLfv3OY9i368GkNVD75lVjlcKmRz6Z2jhLaLfZ4wo0DQeJ7SgPtqi59NF50rPoA2DppZkt4o5PFQfLBqwLJghQClrhO6oWAqqvdGdMfvMRYjzyZKWE+pdEtZc0GMN+EtorIQdxSPNWef3cDNspc0c=
+	t=1721610924; cv=none; b=jAuHWLntm84lTtAaYVpI/dVXfm+2ujVvGCl59zos84F3K8KQ9lLtC0CKjr+kH1tyTNSabGJllix1L1CjRcdFeXpZGOiTF68LnF3fcpq365n2lhMQWI0BcXmUO/5DhhBVUhGrTWNHk7p4tceAY7kmKNqtZRsXVqzecxAgcvnMhO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721610920; c=relaxed/simple;
-	bh=aobF+UkeWrx3ppzGnDAWwY8QvfrDJ5/qVY+DYcIeGFo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PJkyEArCsuqzrCVgRUMxl7qgr7OcHl9styRJMsa4eU6URsG+Fk1ott54ygoiBsFAl1JTEBu2ap2M+GAMF5PasencVmhcy7AHBOPmns5zNYHUYndWahRBmrY22GGDz1bnCSt+83UjIUFnayYVCXI2xyo7ScJ/J4Fgao/8+LHM/xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VWlypUHi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 940B8C116B1;
-	Mon, 22 Jul 2024 01:15:18 +0000 (UTC)
+	s=arc-20240116; t=1721610924; c=relaxed/simple;
+	bh=qs0gXrYbCcQX8WXOavFNAGXQfERItMvGDclYZZTtw0o=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=sFuLtdVm8S+Z9TfuAVQ4y0K4paDGL12rdwMIXrstZGx9iNw3Fq26kzqkhEowfO8x5MdCTcltmMlnOTJUWem38oAWghWMmeUEqzZdWv9VBlJdcQN+zZm8m1D+ya9ZTMkV/6y+dNEzBLT9xsPCihojbYoL+v3UfCchDggiwljZtu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cJwsLmQh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EC784C4AF09;
+	Mon, 22 Jul 2024 01:15:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721610920;
-	bh=aobF+UkeWrx3ppzGnDAWwY8QvfrDJ5/qVY+DYcIeGFo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VWlypUHiNZ9LuCURWQJ+2ncdv9C1K6aV9ZD/ydW3AMCw911jD/6vnnKCV0btxIDhQ
-	 HEp4Dij8xTZOrf3Leyeme2fZGA3F36ci7KRCpeM5Le9CPfd/XthDjUJd97q5UUApkb
-	 n/6k9RMOanm+GaM+IbpdwR411urHeLZr70Xa4nYQzaOfxnk1rWfIJHYs6eySLdK53q
-	 lmupJ8rSGrZoJ2HvRfUfEdd4wFUFV7SJm5i7zyd8BaszjAbAQ9m8LgGiTIrjNFMst5
-	 JDtS1ay/bjDez4+KWyuVlygROdfSCGwwLkpBYdwELux0vjno2WsF5a1ryt2gMdjmJ1
-	 UkcAE//Ms5/Xg==
-Message-ID: <c0e65581-0f05-4143-bc45-0b681ef2bff6@kernel.org>
-Date: Mon, 22 Jul 2024 10:15:17 +0900
+	s=k20201202; t=1721610924;
+	bh=qs0gXrYbCcQX8WXOavFNAGXQfERItMvGDclYZZTtw0o=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=cJwsLmQhYRCo+TE7bhwoWtdwTFaKSIGRNTdcWZBORqvBUANvpF1L1uz4FaIPRhWzr
+	 SteAFZc1M6VRiv5Znlr0QqxPE3Dedgv87ahBW3poJ+G7nK6hwjEWo9GRJgjlHksXsH
+	 jDqhSrXsjrn+fcQPqRueoZ8CwWfkrKCaEV6dm4eZnwg2fm3p3U2/5Y3Yo0t3J66i+1
+	 rjP/IZ4o/JxIU5wDEqQQRHPANxv2OBcqwqokrH4tYt6pvm2LIFDpS9PLoXV13h9yLs
+	 w5NdmEFVGC0I4otKyW+gCKsQzE9RGoKMwY3cKONf6rDL0YDJ2sVTkJheW4UcqkjAx8
+	 Dk/O1S0AT4Fug==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id DC93BC4332E;
+	Mon, 22 Jul 2024 01:15:23 +0000 (UTC)
+Subject: Re: [GIT PULL] non-MM updates for 6.11-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240721151013.b9b331ce79f5f60c54c69636@linux-foundation.org>
+References: <20240721151013.b9b331ce79f5f60c54c69636@linux-foundation.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240721151013.b9b331ce79f5f60c54c69636@linux-foundation.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-nonmm-stable-2024-07-21-15-07
+X-PR-Tracked-Commit-Id: 67856f44da381973caf4eb692ad2cca1de7b2d37
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 527eff227d4321c6ea453db1083bc4fdd4d3a3e8
+Message-Id: <172161092389.21017.16605519697388783559.pr-tracker-bot@kernel.org>
+Date: Mon, 22 Jul 2024 01:15:23 +0000
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: ata: rockchip-dwc-ahci: add missing
- power-domains
-To: Heiko Stuebner <heiko@sntech.de>, cassel@kernel.org
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- sebastian.reichel@collabora.com, linux-ide@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- u.kleine-koenig@baylibre.com
-References: <20240720205705.776384-1-heiko@sntech.de>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20240720205705.776384-1-heiko@sntech.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 7/21/24 05:57, Heiko Stuebner wrote:
-> The Rockchip variant of the dwc-ahci controller does have and need power-
-> domains to work, though the binding does not mention them, making dtccheck
-> quite unhappy:
-> 
->   DTC_CHK arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dtb
-> /home/devel/hstuebner/00_git-repos/linux-rockchip/_build-arm64/arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dtb: sata@fc800000: Unevaluated properties are not allowed ('power-domains' was unexpected)
->         from schema $id: http://devicetree.org/schemas/ata/rockchip,dwc-ahci.yaml#
-> 
-> Fix that by adding the missing power-domain property to the binding.
-> 
-> Fixes: 85b0e13b19c2 ("dt-bindings: ata: dwc-ahci: add Rockchip RK3588")
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+The pull request you sent on Sun, 21 Jul 2024 15:10:13 -0700:
 
-I queued this as a fix for 6.11. Will send it out once rc1 is out. Thanks !
+> git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-nonmm-stable-2024-07-21-15-07
 
-> ---
->  Documentation/devicetree/bindings/ata/rockchip,dwc-ahci.yaml | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/ata/rockchip,dwc-ahci.yaml b/Documentation/devicetree/bindings/ata/rockchip,dwc-ahci.yaml
-> index b5e5767d86988..13eaa8d9a16e5 100644
-> --- a/Documentation/devicetree/bindings/ata/rockchip,dwc-ahci.yaml
-> +++ b/Documentation/devicetree/bindings/ata/rockchip,dwc-ahci.yaml
-> @@ -35,6 +35,9 @@ properties:
->    ports-implemented:
->      const: 1
->  
-> +  power-domains:
-> +    maxItems: 1
-> +
->    sata-port@0:
->      $ref: /schemas/ata/snps,dwc-ahci-common.yaml#/$defs/dwc-ahci-port
->  
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/527eff227d4321c6ea453db1083bc4fdd4d3a3e8
+
+Thank you!
 
 -- 
-Damien Le Moal
-Western Digital Research
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
