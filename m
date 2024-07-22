@@ -1,256 +1,248 @@
-Return-Path: <linux-kernel+bounces-258723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82EE5938C23
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:35:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00ED0938C28
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDBC6281C14
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:35:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 628F1B2136B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9590516B74D;
-	Mon, 22 Jul 2024 09:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KojORy2p"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DF526ADB
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1005416B75B;
+	Mon, 22 Jul 2024 09:36:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930F026ADB
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721640924; cv=none; b=Ao7DIMSY9MyT6P9bZmlE35ij3VsUwIXo20ZaSIZvPm4nyYnKmzE4AXF+aHgPoiCMrQhVGqchxmIt0e5NT4diWojU04CmVloQuVFGvXSFPdNL8Ck7HT1Wx4YDnQf14EY5nsWk6E8bYwpFfatyyxD6Ya1nmMn7S0tEGF+lMzcNeEE=
+	t=1721641015; cv=none; b=C8QDuPCpe4qDLErzesFDNwqk8W0jlCnLRFzjjo2unYSHXvSA4DC6UaBqF2qNId2T0FryK7DmbRbpU1Mf9EWuNxiEyv/B+BDwbTo9BxOey6JOfxaBB9FQTQoFjDRWDk9Yp7aDnGnYVI79ESwwKeVvKmq5vYdghqjdzZKcH+fXzKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721640924; c=relaxed/simple;
-	bh=X0rMaMHCRfgvbEOqAaQpWVELDFiAJTYZoLHg5QFes78=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
-	 MIME-Version:References; b=DF7ivC0h5I92Yh5lHcJWppoUJhI726qtM5k1L3rVWI9cW4Z9cUlDhZfVEJidmYPIEqsM+ttz77Iky/UfJ1Vm5/ZE6G+M01cF5WwUogQwE31RtQgNL18uqQ3N1wQw80mqXMo2YPHdxgVjylQxlDn6PiFNLgYWDRSMFhNza5X35SA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KojORy2p; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240722093513euoutp02201ef56f27914129413fcd44863c3563~kf0oc6up_1808118081euoutp02K
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:35:13 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240722093513euoutp02201ef56f27914129413fcd44863c3563~kf0oc6up_1808118081euoutp02K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1721640913;
-	bh=JTOj1r/QirQnbxz+lycvoW95ymFanaa09xD21a8hr0g=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-	b=KojORy2pIswD1LP05X9sULVMz1WA9cnWc5uCvuNf+y7VIAHT9+8o7zqAtnq/fUDPP
-	 9omZ4+6PMXv/fycLVf44qInG8O7c5FSLimSYwrboWn8t9HblDmz3I/30VGzo4NBQ8/
-	 x2WI1fUymhzut/S0661k3EcULZKCXq1v4/2V5mlY=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240722093513eucas1p20b9ceabff256c8cd34349094136a39f0~kf0oFC8JN0698806988eucas1p2h;
-	Mon, 22 Jul 2024 09:35:13 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id 43.41.09875.1D72E966; Mon, 22
-	Jul 2024 10:35:13 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240722093512eucas1p1f52d83646c27ffbdcb59550c3c751dcb~kf0nghXz03093630936eucas1p1C;
-	Mon, 22 Jul 2024 09:35:12 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240722093512eusmtrp1901a4a5aed72e38f092ed2bdf173d3f2~kf0nfq47X1407414074eusmtrp1D;
-	Mon, 22 Jul 2024 09:35:12 +0000 (GMT)
-X-AuditID: cbfec7f4-131ff70000002693-10-669e27d16d9b
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 1D.39.08810.0D72E966; Mon, 22
-	Jul 2024 10:35:12 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240722093512eusmtip178045709cd5e4d406541eadadb5a983e~kf0nN-Dfa1198511985eusmtip1y;
-	Mon, 22 Jul 2024 09:35:12 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) with Microsoft SMTP
-	Server (TLS) id 15.0.1497.2; Mon, 22 Jul 2024 10:35:11 +0100
-Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
-	([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Mon, 22 Jul
-	2024 10:35:11 +0100
-From: Daniel Gomez <da.gomez@samsung.com>
-To: Ryan Roberts <ryan.roberts@arm.com>
-CC: David Hildenbrand <david@redhat.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>, Jonathan
-	Corbet <corbet@lwn.net>, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Barry Song <baohua@kernel.org>, Lance Yang <ioworker0@gmail.com>, Baolin
-	Wang <baolin.wang@linux.alibaba.com>, Gavin Shan <gshan@redhat.com>, Pankaj
-	Raghav <kernel@pankajraghav.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [RFC PATCH v1 0/4] Control folio sizes used for page cache
- memory
-Thread-Topic: [RFC PATCH v1 0/4] Control folio sizes used for page cache
-	memory
-Thread-Index: AQHa2BkH9+ISTh9tgUugWxPZu07/5LH6qAEAgAAEAQCAB8fsAA==
-Date: Mon, 22 Jul 2024 09:35:11 +0000
-Message-ID: <joisx5udw4tebjykvcs2s75qxzkugr2rlyvngzmml5xhm7jnvu@o4nvt7g735oj>
-In-Reply-To: <99b33a29-e97a-4932-8d7a-85bc01885d18@arm.com>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <50487096AD92124D8AAA80BBAF19F7A5@scsc.local>
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1721641015; c=relaxed/simple;
+	bh=L20ZTmIRfCbcECMEeV6Hf2f+jO+ilJ9Pth+6RgZRqjs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Oq9tQw+FuXf0HlZyBMfI9yAkLecRyF5jJWjgXNdFLi6Md6LXVgG805gcsM/KEMya/5Fyes2in9EobI7I5RSKTa/0+rwIq5zpxAR3ByCkVgCEv90bovC5r9vFw2R95eouujdvkHw+wxBL+k3pTWXz2ICVnwzJpqvSBrM5PXJQmj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E96F1FEC;
+	Mon, 22 Jul 2024 02:37:17 -0700 (PDT)
+Received: from [10.1.27.165] (XHFQ2J9959.cambridge.arm.com [10.1.27.165])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9E0113F766;
+	Mon, 22 Jul 2024 02:36:50 -0700 (PDT)
+Message-ID: <d46fea2f-fbb1-41f7-8d29-9c25984278cf@arm.com>
+Date: Mon, 22 Jul 2024 10:36:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUxTdxTG87/39nLbrMm16nrChgoOyRARdR8uY1vsosnd4hssmmlMXCPX
-	gtKiLXVzmwnRTRhzZJFNoXZaYby066xWyqAdhFXWUgUNbxqYgn1hs4Axa3EKNTDaixvffuec
-	55znnORQuCQoiKfyVUWcWiUvSCJFRJNr6taanpQLBzJKe5cyeouZZALOb3BmttWFmEB7CWKe
-	WKZxJmhvwpjRUDnBVEc2MF3BMMH02fUkM2yeFTCnHd8jJvJMT24Us+YLZsS26O7HsQarlr3W
-	kMpaTV+RrDV0Jo7trIwQbIs3k60prxCw3UYZ+7htgGTD1mU7XtojeiuXK8g/yqnXvvORKO/s
-	n8X44ZaET1z9I0QxqpGWISEF9Bvwx+gjIsoSugGBpfV4GRLN8SSCK45HJB+EEZwasRAvOkq/
-	rsf5Qj2Cbr0H/081WDcwH3QhaLdaMD4wIujoC8X6Sfp1aPNY46K8hE6BZ0PVKCrC6UkcZh56
-	BdHCYnoH3Bjumhdlg9FSifH8Llz3PozlCToZvBW+2FAxvRUaHH4UZSGdBU2+iRgjOgF8xumY
-	HqelMBS4iPFHLILq87/iPL8MM3YvyXMadN8NIJ4zwFbbNn90IpS6Bkl+ThoYHKE5puY4E/zu
-	I3x6NdRdGsf5dRaBpypARO8C2iaC3/qN876boNJzXsDzYhhzN8Z9i9J0C9bTLbDQ/W+hW2Ch
-	W2BhQAITknJajVLBadaruI/TNXKlRqtSpO8vVFrR3DfenHFPNqP6sb/TnQijkBMBhSctEQfG
-	fjggEefKj33KqQv3qbUFnMaJXqGIJKk4OXc5J6EV8iLuEMcd5tQvqhgljC/Gtp9QbX41KFRH
-	LCsPrsrd2HH5bM9fd6tDtuWtqVj/MsUJ/dadpKtXagsVfnb92HPDkewsx0+i9t0JU+/t9I90
-	DjeeXLnL811+3vjqQx2+04U/T95z3+/AMppzfOax4yby3GjV44rb98Jn3s7pejMkrqvf9YFy
-	wz/+VZuoiuD+4Npf/Lfbi0xbrJcczdzvGfFfhm/kfPHkKrO3NEWlVGx72iMfUNTMZh813bG/
-	L6srm7hDntP+OPg8ccsp+8HE8ZMW+ebOB5LGktreLKHTWxJIni3CPoz482UT5Z+/ZvCAuEV2
-	UdeZKS0RycIht80se3A5vuqpd3qNrbYvZXxoRfaKoantSYQmT74uFVdr5P8CLvYPR/wDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPKsWRmVeSWpSXmKPExsVy+t/xu7oX1OelGZw7qWExZ/0aNosnh3qZ
-	Lf7vPcZo8eRAO6PF1/W/mC1e7trGZPH0Ux+LxaLfxhZnXn5msbi8aw6bxb01/1ktenZPZbT4
-	/WMOmwOvx5p5axg9ds66y+6xYFOpx+YVWh6bVnWyeWz6NInd48SM3yweOx9aeizum8zqcXal
-	o8f7fVfZPD5vkgvgidKzKcovLUlVyMgvLrFVija0MNIztLTQMzKx1DM0No+1MjJV0rezSUnN
-	ySxLLdK3S9DLmPasgblgp2zFsSv3WRoYF4t3MXJySAiYSHR0L2cGsYUEljJK7FjqBhGXkdj4
-	5SorhC0s8edaF1sXIxdQzUdGiQ37rrBBNJxhlJh3xAcisZJRYu+ZmWAdbAKaEvtObmIHsUUE
-	1CV+3FrECFLELPCFWWLf1HVA6zg4hAX8JDYeYoOoCZTof3qEBcJ2kjj88AVYL4uAqsTDyY/A
-	4rwCvhIrdj9mhFj2hVGiZV0LWBGngLXEtkdvGEFsRgFZiUcrf4HFmQXEJW49mc8E8YKAxJI9
-	55khbFGJl4//Qb2mI3H2+hNGCNtAYuvSfSwQtqJEx7GbbBBzdCQW7P7EBnIzs4ClxOPjhRBh
-	bYllC18zQ9wmKHFy5hOWCYwys5BsnoWkexZC9ywk3bOQdC9gZF3FKJJaWpybnltsqFecmFtc
-	mpeul5yfu4kRmPK2Hfu5eQfjvFcf9Q4xMnEwHmKU4GBWEuF98mpumhBvSmJlVWpRfnxRaU5q
-	8SFGU2DQTWSWEk3OBybdvJJ4QzMDU0MTM0sDU0szYyVxXs+CjkQhgfTEktTs1NSC1CKYPiYO
-	TqkGJkXnH+tff73nmbPzop+gwkH/o8d8pqt9fNSx/OoDxYspqVfPvL971Hvrw3mhLGfy71y7
-	x5yuZnLkbP+PE6dnvZb1Ze4ReXhb++UWngXrpX9+lgoT2uy6SX/5aYHG7Vcy5Wb9vef8/HCg
-	V9Hxmwqq21VKglcxXf2wvFb95dkTNoesnn9sfvfKZfqnqczL6l24jndO/Xvm662C7zMbZ5qW
-	HLjzvKNje0N2vHRQzPruow9nmL6wOh3C2vNYV5Z32ovI2ps3V8caTvgR1Xr/74q12cfdO2J6
-	dk3/Me+hm0urqiP/vIc+WUYtz2dqvWp9NS1pYcfZg9ca3y5+/Pp2ieajvCT+5Vxyf+9V1uwx
-	SerzmJT4WImlOCPRUIu5qDgRALSAGQkCBAAA
-X-CMS-MailID: 20240722093512eucas1p1f52d83646c27ffbdcb59550c3c751dcb
-X-Msg-Generator: CA
-X-RootMTR: 20240717104555eucas1p25498323e279fcc42702329d0df60e48a
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240717104555eucas1p25498323e279fcc42702329d0df60e48a
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 3/4] mm: Override mTHP "enabled" defaults at kernel
+ cmdline
+Content-Language: en-GB
+To: Daniel Gomez <da.gomez@samsung.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
+ <hughd@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <ioworker0@gmail.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Gavin Shan <gshan@redhat.com>,
+ Pankaj Raghav <kernel@pankajraghav.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>
 References: <20240717071257.4141363-1-ryan.roberts@arm.com>
-	<eb2d8027-6347-4cc5-b1f6-6e79dc9a02ef@redhat.com>
-	<CGME20240717104555eucas1p25498323e279fcc42702329d0df60e48a@eucas1p2.samsung.com>
-	<99b33a29-e97a-4932-8d7a-85bc01885d18@arm.com>
+ <CGME20240717071315eucas1p199a8b4a7134ecf38255a721432e1b65b@eucas1p1.samsung.com>
+ <20240717071257.4141363-4-ryan.roberts@arm.com>
+ <axqj32jqs3ehzpz4vewtfbgcl2sg4lkntfm4prrqcd3evt7klr@qlurbuivkgbe>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <axqj32jqs3ehzpz4vewtfbgcl2sg4lkntfm4prrqcd3evt7klr@qlurbuivkgbe>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 17, 2024 at 11:45:48AM GMT, Ryan Roberts wrote:
-> On 17/07/2024 11:31, David Hildenbrand wrote:
-> > On 17.07.24 09:12, Ryan Roberts wrote:
-> >> Hi All,
-> >>
-> >> This series is an RFC that adds sysfs and kernel cmdline controls to c=
-onfigure
-> >> the set of allowed large folio sizes that can be used when allocating
-> >> file-memory for the page cache. As part of the control mechanism, it p=
-rovides
-> >> for a special-case "preferred folio size for executable mappings" mark=
-er.
-> >>
-> >> I'm trying to solve 2 separate problems with this series:
-> >>
-> >> 1. Reduce pressure in iTLB and improve performance on arm64: This is a=
- modified
-> >> approach for the change at [1]. Instead of hardcoding the preferred ex=
-ecutable
-> >> folio size into the arch, user space can now select it. This decouples=
- the arch
-> >> code and also makes the mechanism more generic; it can be bypassed (th=
-e default)
-> >> or any folio size can be set. For my use case, 64K is preferred, but I=
-'ve also
-> >> heard from Willy of a use case where putting all text into 2M PMD-size=
-d folios
-> >> is preferred. This approach avoids the need for synchonous MADV_COLLAP=
-SE (and
-> >> therefore faulting in all text ahead of time) to achieve that.
-> >>
-> >> 2. Reduce memory fragmentation in systems under high memory pressure (=
-e.g.
-> >> Android): The theory goes that if all folios are 64K, then failure to =
-allocate a
-> >> 64K folio should become unlikely. But if the page cache is allocating =
-lots of
-> >> different orders, with most allocations having an order below 64K (as =
-is the
-> >> case today) then ability to allocate 64K folios diminishes. By providi=
-ng control
-> >> over the allowed set of folio sizes, we can tune to avoid crucial 64K =
-folio
-> >> allocation failure. Additionally I've heard (second hand) of the need =
-to disable
-> >> large folios in the page cache entirely due to latency concerns in som=
-e
-> >> settings. These controls allow all of this without kernel changes.
-> >>
-> >> The value of (1) is clear and the performance improvements are documen=
-ted in
-> >> patch 2. I don't yet have any data demonstrating the theory for (2) si=
-nce I
-> >> can't reproduce the setup that Barry had at [2]. But my view is that b=
-y adding
-> >> these controls we will enable the community to explore further, in the=
- same way
-> >> that the anon mTHP controls helped harden the understanding for anonym=
-ous
-> >> memory.
-> >>
-> >> ---
-> >=20
-> > How would this interact with other requirements we get from the filesys=
-tem (for
-> > example, because of the device) [1].
-> >=20
-> > Assuming a device has a filesystem has a min order of X, but we disable=
- anything
-> >>=3D X, how would we combine that configuration/information?
->=20
-> Currently order-0 is implicitly the "always-on" fallback order. My thinki=
-ng was
-> that with [1], the specified min order just becomes that "always-on" fall=
-back order.
->=20
-> Today:
->=20
->   orders =3D file_orders_always() | BIT(0);
->=20
-> Tomorrow:
->=20
->   orders =3D (file_orders_always() & ~(BIT(min_order) - 1)) | BIT(min_ord=
-er);
->=20
-> That does mean that in this case, a user-disabled order could still be us=
-ed. So
-> the controls are really hints rather than definitive commands.
+On 22/07/2024 10:13, Daniel Gomez wrote:
+> On Wed, Jul 17, 2024 at 08:12:55AM GMT, Ryan Roberts wrote:
+>> Add thp_anon= cmdline parameter to allow specifying the default
+>> enablement of each supported anon THP size. The parameter accepts the
+>> following format and can be provided multiple times to configure each
+>> size:
+>>
+>> thp_anon=<size>[KMG]:<value>
+> 
+> Minor suggestion. Should this be renamed to hp_anon= or hugepages_anon= instead?
+> This would align with the values under /sys/kernel/mm/transparent_hugepage/
+> hugepages-*kB.
 
-In the scenario where a min order is not enabled in hugepages-<size>kB/
-file_enabled, will the user still be allowed to automatically mkfs/mount wi=
-th
-blocksize=3Dmin_order, and will sysfs reflect this? Or, since it's a hint, =
-will it
-remain hidden but still allow mkfs/mount to proceed?
+"hp" doesn't feel right; that's not an abreviation we use today to my knowledge.
+But I'd be happy to change it to "hugepages_anon", if that's the concensus.
 
->=20
->=20
-> >=20
-> >=20
-> > [1]
-> > https://lore.kernel.org/all/20240715094457.452836-2-kernel@pankajraghav=
-.com/T/#u
-> >=20
-> =
+> 
+>>
+>> See Documentation/admin-guide/mm/transhuge.rst for more details.
+>>
+>> Configuring the defaults at boot time is useful to allow early user
+>> space to take advantage of mTHP before its been configured through
+>> sysfs.
+>>
+>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>> ---
+>>  .../admin-guide/kernel-parameters.txt         |  8 +++
+>>  Documentation/admin-guide/mm/transhuge.rst    | 26 +++++++--
+>>  mm/huge_memory.c                              | 55 ++++++++++++++++++-
+>>  3 files changed, 82 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+>> index bc55fb55cd26..48443ad12e3f 100644
+>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>> @@ -6592,6 +6592,14 @@
+>>  			<deci-seconds>: poll all this frequency
+>>  			0: no polling (default)
+>>  
+>> +	thp_anon=	[KNL]
+>> +			Format: <size>[KMG]:always|madvise|never|inherit
+>> +			Can be used to control the default behavior of the
+>> +			system with respect to anonymous transparent hugepages.
+>> +			Can be used multiple times for multiple anon THP sizes.
+>> +			See Documentation/admin-guide/mm/transhuge.rst for more
+>> +			details.
+>> +
+>>  	threadirqs	[KNL,EARLY]
+>>  			Force threading of all interrupt handlers except those
+>>  			marked explicitly IRQF_NO_THREAD.
+>> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+>> index 1aaf8e3a0b5a..f53d43d986e2 100644
+>> --- a/Documentation/admin-guide/mm/transhuge.rst
+>> +++ b/Documentation/admin-guide/mm/transhuge.rst
+>> @@ -311,13 +311,27 @@ performance.
+>>  Note that any changes to the allowed set of sizes only applies to future
+>>  file-backed THP allocations.
+>>  
+>> -Boot parameter
+>> -==============
+>> +Boot parameters
+>> +===============
+>>  
+>> -You can change the sysfs boot time defaults of Transparent Hugepage
+>> -Support by passing the parameter ``transparent_hugepage=always`` or
+>> -``transparent_hugepage=madvise`` or ``transparent_hugepage=never``
+>> -to the kernel command line.
+>> +You can change the sysfs boot time default for the top-level "enabled"
+>> +control by passing the parameter ``transparent_hugepage=always`` or
+>> +``transparent_hugepage=madvise`` or ``transparent_hugepage=never`` to the
+>> +kernel command line.
+>> +
+>> +Alternatively, each supported anonymous THP size can be controlled by
+>> +passing ``thp_anon=<size>[KMG]:<state>``, where ``<size>`` is the THP size
+>> +and ``<state>`` is one of ``always``, ``madvise``, ``never`` or
+>> +``inherit``.
+>> +
+>> +For example, the following will set 64K THP to ``always``::
+>> +
+>> +	thp_anon=64K:always
+>> +
+>> +``thp_anon=`` may be specified multiple times to configure all THP sizes as
+>> +required. If ``thp_anon=`` is specified at least once, any anon THP sizes
+>> +not explicitly configured on the command line are implicitly set to
+>> +``never``.
+>>  
+>>  Hugepages in tmpfs/shmem
+>>  ========================
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index 4249c0bc9388..794d2790d90d 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -82,6 +82,7 @@ unsigned long huge_anon_orders_madvise __read_mostly;
+>>  unsigned long huge_anon_orders_inherit __read_mostly;
+>>  unsigned long huge_file_orders_always __read_mostly;
+>>  int huge_file_exec_order __read_mostly = -1;
+>> +static bool anon_orders_configured;
+>>  
+>>  unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+>>  					 unsigned long vm_flags,
+>> @@ -763,7 +764,10 @@ static int __init hugepage_init_sysfs(struct kobject **hugepage_kobj)
+>>  	 * disable all other sizes. powerpc's PMD_ORDER isn't a compile-time
+>>  	 * constant so we have to do this here.
+>>  	 */
+>> -	huge_anon_orders_inherit = BIT(PMD_ORDER);
+>> +	if (!anon_orders_configured) {
+>> +		huge_anon_orders_inherit = BIT(PMD_ORDER);
+> 
+> PMD_ORDER for 64k base PS systems would result in a 512M value, which exceeds
+> the xarray limit [1]. Therefore, I think we need to avoid PMD-size orders by
+> checking if PMD_ORDER > MAX_PAGECACHE_ORDER.
+
+This is for anon memory, which isn't installed in the page cache so its
+independent of MAX_PAGECACHE_ORDER. I don't believe there is a problem here.
+
+> 
+> [1] https://lore.kernel.org/all/20240627003953.1262512-1-gshan@redhat.com/
+> 
+>> +		anon_orders_configured = true;
+>> +	}
+>>  
+>>  	/*
+>>  	 * For pagecache, default to enabling all orders. powerpc's PMD_ORDER
+>> @@ -955,6 +959,55 @@ static int __init setup_transparent_hugepage(char *str)
+>>  }
+>>  __setup("transparent_hugepage=", setup_transparent_hugepage);
+>>  
+>> +static int __init setup_thp_anon(char *str)
+>> +{
+>> +	unsigned long size;
+>> +	char *state;
+>> +	int order;
+>> +	int ret = 0;
+>> +
+>> +	if (!str)
+>> +		goto out;
+>> +
+>> +	size = (unsigned long)memparse(str, &state);
+>> +	order = ilog2(size >> PAGE_SHIFT);
+>> +	if (*state != ':' || !is_power_of_2(size) || size <= PAGE_SIZE ||
+>> +	    !(BIT(order) & THP_ORDERS_ALL_ANON))
+>> +		goto out;
+>> +
+>> +	state++;
+>> +
+>> +	if (!strcmp(state, "always")) {
+>> +		clear_bit(order, &huge_anon_orders_inherit);
+>> +		clear_bit(order, &huge_anon_orders_madvise);
+>> +		set_bit(order, &huge_anon_orders_always);
+>> +		ret = 1;
+>> +	} else if (!strcmp(state, "inherit")) {
+>> +		clear_bit(order, &huge_anon_orders_always);
+>> +		clear_bit(order, &huge_anon_orders_madvise);
+>> +		set_bit(order, &huge_anon_orders_inherit);
+>> +		ret = 1;
+>> +	} else if (!strcmp(state, "madvise")) {
+>> +		clear_bit(order, &huge_anon_orders_always);
+>> +		clear_bit(order, &huge_anon_orders_inherit);
+>> +		set_bit(order, &huge_anon_orders_madvise);
+>> +		ret = 1;
+>> +	} else if (!strcmp(state, "never")) {
+>> +		clear_bit(order, &huge_anon_orders_always);
+>> +		clear_bit(order, &huge_anon_orders_inherit);
+>> +		clear_bit(order, &huge_anon_orders_madvise);
+>> +		ret = 1;
+>> +	}
+>> +
+>> +	if (ret)
+>> +		anon_orders_configured = true;
+>> +out:
+>> +	if (!ret)
+>> +		pr_warn("thp_anon=%s: cannot parse, ignored\n", str);
+>> +	return ret;
+>> +}
+>> +__setup("thp_anon=", setup_thp_anon);
+>> +
+>>  pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
+>>  {
+>>  	if (likely(vma->vm_flags & VM_WRITE))
+>> -- 
+>> 2.43.0
+
 
