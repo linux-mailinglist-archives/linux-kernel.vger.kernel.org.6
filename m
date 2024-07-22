@@ -1,180 +1,195 @@
-Return-Path: <linux-kernel+bounces-258997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6604938FC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:17:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45F9E938FDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:25:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A611B20FEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:17:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D2C81C213C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626C816D9AE;
-	Mon, 22 Jul 2024 13:17:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Pja5Vc10"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1A316D9B5;
+	Mon, 22 Jul 2024 13:24:54 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1073016938C
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 13:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CB816A38B;
+	Mon, 22 Jul 2024 13:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721654261; cv=none; b=sWgzs+/r8qJduTKyEqkM9eYhxaxfymR/dzUEFGHsHoqRyTR/sr6N3vOlEhNRMhVu9ojxwtRigHmHwK7ccSj3JWb++5S9uBtENvjJxkhrsxBWQ0Ojh5ycBbJflWLiAx/9hvW+lz3U6ApcyOMQgVNZBAsarfzQju4YDrTOFlXbqW8=
+	t=1721654694; cv=none; b=tOhKFym4tbClfS96cWtIpq+c+YwCapg/3UGjB0j4hakQAUkJHSuuNLD5t18oxQMqS6sYS+RhNFAKaR5F4pAcrED8CLEoIae6cYBcio2tvQZyceEik+1oPQxjndw8xCRheYQlGIYVkkfx/CaugpRNfTRn+U6R0CHkTybcZiJpNP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721654261; c=relaxed/simple;
-	bh=X8Og4cRRjTFTAVcy3iYNTI7NPvrU8WWaBElWujRSza8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LCLl1H6RwPWrwvGSXlv7ptAFI0vMTtdDBjFecU6aF+ION8H5UoZKHYCPFaqUYFlpnyBkbSYWIO+DfYXVJ9pBMGm9vlPxfjNq8ZPm2qVRG5aP4GG8VK14AGWcJBNqgzfeADjjDYZjG1SLuLQTxi81jfVIeTcwgZ0Yxnju0UXfiBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Pja5Vc10; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5a20de39cfbso3433148a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 06:17:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1721654258; x=1722259058; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wTbGlt1EcdcYHcKZI4SFSpYHzZQnoTGlIL/NjhJzDtA=;
-        b=Pja5Vc10zkUyiGI0B3G3dUQ8l405GPQNA1hSuwhBVjiGHUoZmNlnMMu4DlVdZWdMex
-         gbTl+cK5CuXrPDolfs8dUlm4c18uC8+LqAtWhQuQd7bpdVjka/m4G2frURhftmz12bC3
-         ZlU36VJWQTAxVp2OyV/LnTUiS7QNn9wzlvbRI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721654258; x=1722259058;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wTbGlt1EcdcYHcKZI4SFSpYHzZQnoTGlIL/NjhJzDtA=;
-        b=HMPM4IdRMEkfjSwYnbmuNLO4xYlKoeydWjP4zjoStmMiBHGluHezUwzaC7UJO1X/BD
-         msuDA5kgKiPi68BnzTsGamBU1N5FasjEFzYU4YGPYcNOdSdr+F/2+5BzDaZAbFdazXkg
-         i3yu1UP/REeIEV5vArLpK9+dHdObQAQo2oZr637qUmuOauBFAg+H8ByvPGY3LmS5D3K2
-         ABkWs7gsNJpIDkj+apABPagBUedR6gxujW1X8EARredKQ8zlxg5T4OgilHTtHyv0IxoH
-         QGcNshY7AwkKEYYrXlNqH36iGNkTI8M5aGklkF6wfXlE17JVtwyqxa2qRoHCxXoBBevP
-         QpSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrNX/OSJHAuZTg4OpwWlFPoJJYL3RfpZc6i1yztc+O7s6AHkpbNnRQaYje9qs0cCav1jfyDWGssMECU1WYg6nWZD8ww3Rp1BXTt2Ph
-X-Gm-Message-State: AOJu0YzJBthZo59A1Nc5igPZbKXS3mF0yx2c8tX108ycTVvsk1vQCNfJ
-	611Ps+26PdNWBurYWfKBVcNw7fMy8gmb+2OrLiWKqwQ8uje4n6zuVVvUko18l4nimmEdfOT5Vo+
-	9TQ==
-X-Google-Smtp-Source: AGHT+IHfLqX3zNlBZAs0UvSLoRI6XlTWh50UKdTLS60yjsBTQkB7bM2OSEDZMD1CFVZ0mzuOomv7sQ==
-X-Received: by 2002:a05:6402:2553:b0:5a3:c00c:eafe with SMTP id 4fb4d7f45d1cf-5a3f089da5fmr5170527a12.23.1721654254598;
-        Mon, 22 Jul 2024 06:17:34 -0700 (PDT)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30c7d30a0sm6168309a12.83.2024.07.22.06.17.33
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jul 2024 06:17:33 -0700 (PDT)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a6fd513f18bso383133066b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 06:17:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXwaNo22p4391ZFXwMlic5deTnHmoFYrGIJqNSXQl3Y8+5MG7oTGVhRaUTSFP2kVNADkbNQBUTggusDZQyaERRnqXQaHAWrY9VfJlTu
-X-Received: by 2002:a17:906:ce57:b0:a72:b055:3de0 with SMTP id
- a640c23a62f3a-a7a01116219mr1036992766b.6.1721654252644; Mon, 22 Jul 2024
- 06:17:32 -0700 (PDT)
+	s=arc-20240116; t=1721654694; c=relaxed/simple;
+	bh=2BpJsPdlxUMrpsvgLLfigFUTFaZc7fnvSQoalYgm214=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AUcvrrMzSVVNdh1arPXLYqvkJybmA4dNNENs2a93Fu8M7RQHCp/j4whJTA0GGV4IPBAcxzVsrF7mmXalreaWUDNgrjkSysgJu8Tgty+LyMPyam9UCYBF8bfAJ2wT2WEHoEdTUIwSYXI2z/1FmLCxWk/C16TjL4YkIiIqydptj50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 39FF8100DA1C4;
+	Mon, 22 Jul 2024 15:17:34 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id E785A9F86C; Mon, 22 Jul 2024 15:17:33 +0200 (CEST)
+Date: Mon, 22 Jul 2024 15:17:33 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Stefan Berger <stefanb@linux.ibm.com>
+Cc: keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+	davem@davemloft.net, herbert@gondor.apana.org.au,
+	dhowells@redhat.com, zohar@linux.ibm.com, jarkko@kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patrick@puiterwijk.org
+Subject: Re: [PATCH v12 02/10] crypto: Add support for ECDSA signature
+ verification
+Message-ID: <Zp5b7ZQaXfGbkCVC@wunner.de>
+References: <20210316210740.1592994-1-stefanb@linux.ibm.com>
+ <20210316210740.1592994-3-stefanb@linux.ibm.com>
+ <ZpfuqeSVC47jqme2@wunner.de>
+ <6eee0c55-40cd-4e7b-8819-1a4c9596062a@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240722-fix-filter-mapping-v2-1-7ed5bb6c1185@chromium.org> <20240722122211.GF5732@pendragon.ideasonboard.com>
-In-Reply-To: <20240722122211.GF5732@pendragon.ideasonboard.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 22 Jul 2024 15:17:17 +0200
-X-Gmail-Original-Message-ID: <CANiDSCs1nuvG1XF1XUAJVvkrbe_bVnvqyTR7gvHDdQ8k0M4pLA@mail.gmail.com>
-Message-ID: <CANiDSCs1nuvG1XF1XUAJVvkrbe_bVnvqyTR7gvHDdQ8k0M4pLA@mail.gmail.com>
-Subject: Re: [PATCH v2] media: uvcvideo: Fix custom control mapping probing
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	pmenzel@molgen.mpg.de, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6eee0c55-40cd-4e7b-8819-1a4c9596062a@linux.ibm.com>
 
-On Mon, 22 Jul 2024 at 14:22, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> On Mon, Jul 22, 2024 at 11:52:26AM +0000, Ricardo Ribalda wrote:
-> > Custom control mapping introduced a bug, where the filter function was
-> > applied to every single control.
-> >
-> > Fix it so it is only applied to the matching controls.
-> >
-> > The following dmesg errors during probe are now fixed:
-> >
-> > usb 1-5: Found UVC 1.00 device Integrated_Webcam_HD (0c45:670c)
-> > usb 1-5: Failed to query (GET_CUR) UVC control 2 on unit 2: -75 (exp. 1).
-> > usb 1-5: Failed to query (GET_CUR) UVC control 3 on unit 2: -75 (exp. 1).
-> > usb 1-5: Failed to query (GET_CUR) UVC control 6 on unit 2: -75 (exp. 1).
-> > usb 1-5: Failed to query (GET_CUR) UVC control 7 on unit 2: -75 (exp. 1).
-> > usb 1-5: Failed to query (GET_CUR) UVC control 8 on unit 2: -75 (exp. 1).
-> > usb 1-5: Failed to query (GET_CUR) UVC control 9 on unit 2: -75 (exp. 1).
-> > usb 1-5: Failed to query (GET_CUR) UVC control 10 on unit 2: -75 (exp. 1).
-> >
-> > Reported-by: Paul Menzen <pmenzel@molgen.mpg.de>
-> > Closes: https://lore.kernel.org/linux-media/518cd6b4-68a8-4895-b8fc-97d4dae1ddc4@molgen.mpg.de/T/#t
-> > Cc: stable@vger.kernel.org
-> > Fixes: 8f4362a8d42b ("media: uvcvideo: Allow custom control mapping")
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
->
-> I'll add
->
-> Tested-by: Paul Menzel <pmenzel@molgen.mpg.de>
->
-> from v1 and fix the reported-by tag.
->
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->
+On Mon, Jul 22, 2024 at 08:19:41AM -0400, Stefan Berger wrote:
+> On 7/17/24 12:17, Lukas Wunner wrote:
+> > On Tue, Mar 16, 2021 at 05:07:32PM -0400, Stefan Berger wrote:
+> > > +/*
+> > > + * Get the r and s components of a signature from the X509 certificate.
+> > > + */
+> > > +static int ecdsa_get_signature_rs(u64 *dest, size_t hdrlen, unsigned char tag,
+> > > +				  const void *value, size_t vlen, unsigned int ndigits)
+> > > +{
+> > > +	size_t keylen = ndigits * sizeof(u64);
+> > > +	ssize_t diff = vlen - keylen;
+> > > +	const char *d = value;
+> > > +	u8 rs[ECC_MAX_BYTES];
+> > > +
+> > > +	if (!value || !vlen)
+> > > +		return -EINVAL;
+> > > +
+> > > +	/* diff = 0: 'value' has exacly the right size
+> > > +	 * diff > 0: 'value' has too many bytes; one leading zero is allowed that
+> > > +	 *           makes the value a positive integer; error on more
+> > > +	 * diff < 0: 'value' is missing leading zeros, which we add
+> > > +	 */
+> > > +	if (diff > 0) {
+> > > +		/* skip over leading zeros that make 'value' a positive int */
+> > > +		if (*d == 0) {
+> > > +			vlen -= 1;
+> > > +			diff--;
+> > > +			d++;
+> > > +		}
+> > > +		if (diff)
+> > > +			return -EINVAL;
+> > > +	}
+> > > +	if (-diff >= keylen)
+> > > +		return -EINVAL;
+> > 
+> > There's an oddity in the above-quoted function.  The check ...
+> > 
+> > +	if (-diff >= keylen)
+> > +		return -EINVAL;
+> > 
+> > ... seems superfluous.
+> 
+> You're right, this check is not necessary.
 
-Thanks :)
+After staring at the code a little longer I've realized that
+the purpose of this if-clause is likely to check for a signed
+integer overflow.  So it *does* seem to have a purpose,
+but it's quite subtle and not very obvious.
 
-> > ---
-> > Paul, could you check if this fixes your issue, thanks!
-> > ---
-> > Changes in v2:
-> > - Replace !(A && B) with (!A || !B)
-> > - Add error message to commit message
-> > - Link to v1: https://lore.kernel.org/r/20240722-fix-filter-mapping-v1-1-07cc9c6bf4e3@chromium.org
-> > ---
-> >  drivers/media/usb/uvc/uvc_ctrl.c | 8 +++++---
-> >  1 file changed, 5 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> > index 0136df5732ba..4fe26e82e3d1 100644
-> > --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> > @@ -2680,6 +2680,10 @@ static void uvc_ctrl_init_ctrl(struct uvc_video_chain *chain,
-> >       for (i = 0; i < ARRAY_SIZE(uvc_ctrl_mappings); ++i) {
-> >               const struct uvc_control_mapping *mapping = &uvc_ctrl_mappings[i];
-> >
-> > +             if (!uvc_entity_match_guid(ctrl->entity, mapping->entity) ||
-> > +                 ctrl->info.selector != mapping->selector)
-> > +                     continue;
-> > +
-> >               /* Let the device provide a custom mapping. */
-> >               if (mapping->filter_mapping) {
-> >                       mapping = mapping->filter_mapping(chain, ctrl);
-> > @@ -2687,9 +2691,7 @@ static void uvc_ctrl_init_ctrl(struct uvc_video_chain *chain,
-> >                               continue;
-> >               }
-> >
-> > -             if (uvc_entity_match_guid(ctrl->entity, mapping->entity) &&
-> > -                 ctrl->info.selector == mapping->selector)
-> > -                     __uvc_ctrl_add_mapping(chain, ctrl, mapping);
-> > +             __uvc_ctrl_add_mapping(chain, ctrl, mapping);
-> >       }
-> >  }
-> >
-> >
-> > ---
-> > base-commit: 68a72104cbcf38ad16500216e213fa4eb21c4be2
-> > change-id: 20240722-fix-filter-mapping-18477dc69048
->
-> --
-> Regards,
->
-> Laurent Pinchart
+I've provisionally added the (untested) commit below to my
+development branch to make it more obvious what's going on.
+Using check_sub_overflow() might be an alternative.
 
+I want to ask mips maintainers first whether signed integer
+overflows can really cause an exception on their arch
+as commit 36ccf1c0e391 suggests, despite -fno-strict-overflow...
 
+-- >8 --
 
+Subject: [PATCH] crypto: ecdsa - Avoid signed integer overflow on signature
+ decoding
+
+When extracting a signature component R or S from an ASN.1-encoded
+integer, ecdsa_get_signature_rs() subtracts the expected length
+"bufsize" from the ASN.1 length "vlen" (both of unsigned type size_t)
+and stores the result in "diff" (of signed type ssize_t).
+
+This results in a signed integer overflow if vlen > SSIZE_MAX + bufsize.
+
+The kernel is compiled with -fno-strict-overflow, which implies -fwrapv,
+meaning signed integer overflow is not undefined behavior.  And the
+function does check for overflow:
+
+       if (-diff >= bufsize)
+               return -EINVAL;
+
+However that's not very readable and may trigger a false-positive with
+CONFIG_UBSAN_SIGNED_WRAP=y.  It also seems that certain Mips CPUs may
+raise an exception regardless of -fno-strict-overflow (see do_ov() in
+arch/mips/kernel/traps.c).
+
+Avoid by comparing the two unsigned variables directly and erroring out
+if "vlen" is too large.
+
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+---
+ crypto/ecdsa.c | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
+
+diff --git a/crypto/ecdsa.c b/crypto/ecdsa.c
+index 08c2c76..0cead9b 100644
+--- a/crypto/ecdsa.c
++++ b/crypto/ecdsa.c
+@@ -36,29 +36,20 @@ static int ecdsa_get_signature_rs(u64 *dest, size_t hdrlen, unsigned char tag,
+ 				  const void *value, size_t vlen, unsigned int ndigits)
+ {
+ 	size_t bufsize = ndigits * sizeof(u64);
+-	ssize_t diff = vlen - bufsize;
+ 	const char *d = value;
+ 
+-	if (!value || !vlen)
++	if (!value || !vlen || vlen > bufsize + 1)
+ 		return -EINVAL;
+ 
+-	/* diff = 0: 'value' has exacly the right size
+-	 * diff > 0: 'value' has too many bytes; one leading zero is allowed that
+-	 *           makes the value a positive integer; error on more
+-	 * diff < 0: 'value' is missing leading zeros
+-	 */
+-	if (diff > 0) {
++	if (vlen > bufsize) {
+ 		/* skip over leading zeros that make 'value' a positive int */
+ 		if (*d == 0) {
+ 			vlen -= 1;
+-			diff--;
+ 			d++;
+-		}
+-		if (diff)
++		} else {
+ 			return -EINVAL;
++		}
+ 	}
+-	if (-diff >= bufsize)
+-		return -EINVAL;
+ 
+ 	ecc_digits_from_bytes(d, vlen, dest, ndigits);
+ 
 -- 
-Ricardo Ribalda
+2.43.0
 
