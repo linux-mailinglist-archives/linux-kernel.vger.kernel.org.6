@@ -1,149 +1,245 @@
-Return-Path: <linux-kernel+bounces-258645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F1F8938B0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:18:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C802938B17
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FD6D1C210C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:18:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42855281A20
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE031684B0;
-	Mon, 22 Jul 2024 08:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350EB160873;
+	Mon, 22 Jul 2024 08:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eC4BGD5k"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="eMbxl77Q"
 Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C833416726E
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 08:18:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE845464A
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 08:20:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721636308; cv=none; b=m6hNEE27vNwmbV9GOmmx4JSOxtikkr9UxK3Gqkstpvg8vyw7gtvTHbRQnpY13ZryrTqi27qQBjg4kaLq1Ug5XpUM7zfbsGMSciLIMmFoFZmL1Ogcae5mlLaeHchMF2XY+mcwf6vaix6m+g6BzLBzeSgnWCKSvm/QgDBiim+b6D4=
+	t=1721636448; cv=none; b=RqEEDaN15aEFj39QwQne1DcEz9fqrFENTfJE3zy9GUxXd3TY0KmpISnpVWbcYMUiAkq4v7ubS2zRVQSgsnh7vjvYZDrfa4byVmltC+JpXEKNq5cy4zr7Vi9JjiXa5UXb7Y80xCHR0IhOmM1Pz7HETXDZxMzAoyh6Yx75aRI1z5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721636308; c=relaxed/simple;
-	bh=v4mM+bgWeSg6rjqV2ojgpf+DYYgWDnrtaQ/tokfk8Zg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UiSkSMO0BRWBt9dQ2NE+jsR53gpCoFeOEQJbsqjmJ4jUisUVEItYo7Qn+iVKLidFm98QsH9EZmSyhSJfb3eP46s9z0y3Rem9Uk3Nri0k9OVdqgiER6PJOCjxaILLdClGIfy5wrjiL7LGSExxxavFBnP9m1W6viAMeLtaP43d77E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eC4BGD5k; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ef2fbf1d14so5501331fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 01:18:25 -0700 (PDT)
+	s=arc-20240116; t=1721636448; c=relaxed/simple;
+	bh=Gc9GfiVqIOW6AG0XYb6oTsaSrqIXqslUw+R/1OUGG6w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=c7RjygrtmPMRhwTP037m2b3AZ1xOG7xLfKRjHbgI0KplUJvcK1nEHnwjgLpGJ4jehf8BldC7PI1uDlwNetfQ0YebdKVe0+LmpluEmtrl/5x+oODw/5KPwLIV/htSCVhPZN9W3+SvA1af6g01n5XclNDyHiPdmrYlf9HuJiE4960=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=eMbxl77Q; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ef2d582e31so8888921fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 01:20:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721636304; x=1722241104; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=j2YYNydr91hY9SUP1qO73rcnIKppoYrhA5vIDVvsVpM=;
-        b=eC4BGD5kTaLme0E/+y5MLBPYrdEc0HZOkXA9LG1pJ6uesyNFW9ulmk/BpUjVZ/ZSAb
-         d+mNjpFLfBDG7cvx1CT+QS2qZtRPMJ3K/4wxok0oOJGnnNh/i6XXoweR8Z2ghdyimmYU
-         iAXZxfx3y9IEI2kzsw3l/Ll/D66VhNTuQsMZEd/iXHgaVWjS/WbxW4+OJO+0VM9WxnCr
-         5OQ6SySdck2qpbfIPj0+zDFzfUSxts00yZ2U2xQwrgCjzW3r3fK6sEP1vUe5hX8nxUU7
-         7DcM0wjGFN5BuyBinZ6OwtcYs3O+m98T9tsRvfmIpurMmJ/Na6FX5mABxi92h7qB6s4y
-         lb2g==
+        d=suse.com; s=google; t=1721636444; x=1722241244; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7VgB/lccVac6zBTZqqHsKy16+19WVuie2nqQLn2rSGc=;
+        b=eMbxl77QZ2yzU12J8h9FCuAGPolVsKbzqdYDefpmeMvmjTi4c4GRaD+9403M/UOOjn
+         Vqp6xDnljVdeXE+XBq6W0xV5UwiBLrzTdWML0g9X0QR1mYLMJaM4zyxviPdt/0Nkt6Ox
+         CmneRS4Pfzk9yM5y/3swgm7PF1q8Cxfp87bJonNGsKul7j6AvrIYAQIm+5xXjCZTZ45j
+         lAG3TVHY9e3Ene205cFv/Ecas4lEXGSaC4FnF2gZKOY5n9eCnbOUa4rQsvYbDxdowNg/
+         fvoFacFbhVUrOIpQ/Vmt2sw8z+2ioorBVEh8EbpMTGlfS6Xeox+5xdowKszps5WFmlOa
+         r7gQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721636304; x=1722241104;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j2YYNydr91hY9SUP1qO73rcnIKppoYrhA5vIDVvsVpM=;
-        b=U2Ewwb0NMngrZXVh0I8ICJ9edgVRvKbZ6+r2vXQAYGfErl6ZUeS4GDBQ98zIt8CLPv
-         ooSLFWPxZ368WmCdZ/txfW2CdYCsdybi8VWoH3tAf2AIc9UfaC6iR5jFUFekIH213tKd
-         7vrLN4/NBsbaBytzk0rLuj82KnT+G8wUHeAwKbJxOO//IejCn+fVb4sl7jXJ2TdacB8v
-         F+TNAdYDtBVomlICaWxGyTBQbeGhcPzRZFH7ujgZo2IpZqoQi+3HfGUCemM6GR6Io1Ap
-         EiavEtLT/S+DzW6KUwMYjK49etT8QJybj01l8O5m+FRkNlgAyxmCpxql4ef3J+pQqtUY
-         4a+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVzn+QAIx5N7XpsAfior07zCnAarfd+97gdlkju7PjRcXyx4nbCCOIdM8CUvd6+A1EOIDxIvalYApOVm1EzhHh9Y8+MX/vpxD9F1FUp
-X-Gm-Message-State: AOJu0YzuH3z3lA9otJr4pMr9qeruxMUA/k6NLpjY8uCbzof18GUZb2sH
-	oSC0No7htFnmVSf7Ghp4tOp2g6VIJHXEubTJ6+eBxOyvGUzt8kMTszw0Z+FFcvY=
-X-Google-Smtp-Source: AGHT+IEbkru7fNizX7xMy50mhZzku9vEb3dv34HFkQDPLX7osSafc3vJ5cXUQ79K1sqUjMAbPMPwvA==
-X-Received: by 2002:a2e:b8d4:0:b0:2ef:1efb:1b6b with SMTP id 38308e7fff4ca-2ef1efb1e0dmr16408341fa.15.1721636303917;
-        Mon, 22 Jul 2024 01:18:23 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ef2aba1489sm5951191fa.78.2024.07.22.01.18.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 01:18:23 -0700 (PDT)
-Date: Mon, 22 Jul 2024 11:18:21 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
-	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
-	quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org, arnd@arndb.de
-Subject: Re: [PATCH v2] misc: fastrpc: Add support for multiple PD from one
- process
-Message-ID: <nggoobovb223pxknzai5luaq6wqrv7ovtawodds4bjiegbxlth@ro5cvoxed24w>
-References: <20240720034611.2219308-1-quic_ekangupt@quicinc.com>
+        d=1e100.net; s=20230601; t=1721636444; x=1722241244;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7VgB/lccVac6zBTZqqHsKy16+19WVuie2nqQLn2rSGc=;
+        b=NBSajEfwTQxz5nr9fXuHAkwRTh7QIyULj1z9uA9DOwgJ5DVOyQT7avWWbdWRzSW/hR
+         LAq9f3z1lXdBVBjb4DhXFuTRlh7nI4pt6eVLvobruHoLhvdKhCN/NC3SbKvWnf4xdWo8
+         DFEkZCkG5kg0M/khAWF3p6aqAA+wYeTL1fWx4f9KWe8TXXyTgtFU4jOJHK18Ryhr4XGL
+         xKRtB/wSbQKlII0XjIxdy4ApPMYAMq6HnaZOepO5f0zZisv2/MxHFmDgLYmchF9g1aI8
+         MpQvlzCzhdOcqPJeSOGpJXzI0N76Yc3mQRmD3lSgUeZHMtP8uaWeq5nmdo1IL/8oP8sg
+         1d5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUT3M6ch9YaEYtiUVKidnzmQONTv2LKZ8yrXJecpbzqb6GgnqdV15RTjbx+71WwEBQT1H5guu8NeVP0P8J9FfT7ydXEk65RAsRBQrGN
+X-Gm-Message-State: AOJu0YyuQUaPagbC3ooJkYUnGDD+6REG9c2dQxhkw6fJK9uRBzHLQkxu
+	gKfBUDJFI4hEmWeCdDD7PDe76kpJ0v9r4d3taXGUVb4/oChAtEbyaML67p1S1hg=
+X-Google-Smtp-Source: AGHT+IFZ2Q+AkcV37TqF+QsvZ6J2I6gHwlMwj3NTq7zlAw3SR5/ehvU6L+ZpDtObyjgWCJAuX4BG7Q==
+X-Received: by 2002:a2e:2d12:0:b0:2ef:1f68:eae1 with SMTP id 38308e7fff4ca-2ef1f68ebe1mr34682991fa.17.1721636444239;
+        Mon, 22 Jul 2024 01:20:44 -0700 (PDT)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cb76a46dfcsm3186370a91.0.2024.07.22.01.20.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jul 2024 01:20:43 -0700 (PDT)
+Message-ID: <00714a65-953f-4885-9229-1990543c4154@suse.com>
+Date: Mon, 22 Jul 2024 10:20:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240720034611.2219308-1-quic_ekangupt@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/15] Implement MODVERSIONS for Rust
+Content-Language: en-US
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain
+ <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+References: <20240617175818.58219-17-samitolvanen@google.com>
+ <0b2697fd-7ab4-469f-83a6-ec9ebc701ba0@suse.com>
+ <CABCJKueGRBdFfGW-cvOvqxc-a85GpxtwPmLdE_1RiAkNLrEg+g@mail.gmail.com>
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <CABCJKueGRBdFfGW-cvOvqxc-a85GpxtwPmLdE_1RiAkNLrEg+g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jul 20, 2024 at 09:16:11AM GMT, Ekansh Gupta wrote:
-> Memory intensive applications(which requires more tha 4GB) that wants
-> to offload tasks to DSP might have to split the tasks to multiple
-> user PD to make the resources available.
+On 7/15/24 22:39, Sami Tolvanen wrote:
+> On Wed, Jul 10, 2024 at 7:30 AM Petr Pavlu <petr.pavlu@suse.com> wrote:
+>> On 6/17/24 19:58, Sami Tolvanen wrote:
+>>> The first 12 patches of this series add a small tool for computing
+>>> symbol versions from DWARF, called gendwarfksyms. When passed a list
+>>> of exported symbols, the tool generates an expanded type string
+>>> for each symbol, and computes symbol CRCs similarly to genksyms.
+>>> gendwarfksyms is written in C and uses libdw to process DWARF, mainly
+>>> because of the existing support for C host tools that use elfutils
+>>> (e.g., objtool).
+>>
+>> In addition to calculating CRCs of exported symbols, genksyms has other
+>> features which I think are important.
+>>
+>> Firstly, the genksyms tool has a human-readable storage format for input
+>> data used in the calculation of symbol CRCs. Setting the make variable
+>> KBUILD_SYMTYPES enables dumping this data and storing it in *.symtypes
+>> files.
+>>
+>> When a developer later modifies the kernel and wants to check if some
+>> symbols have changed, they can take these files and feed them as
+>> *.symref back to genksyms. This allows the tool to provide an actual
+>> reason why some symbols have changed, instead of just printing that
+>> their CRCs are different.
+>>
+>> Is there any plan to add the same functionality to gendwarfksyms, or do
+>> you envison that people will use libabigail, Symbol-Type Graph, or
+>> another tool for making this type of comparison?
 > 
-> For every call to DSP, fastrpc driver passes the process tgid which
-> works as an identifier for the DSP to enqueue the tasks to specific PD.
-> With current design, if any process opens device node more than once
-> and makes PD initmrequest, same tgid will be passed to DSP which will
-> be considered a bad request and this will result in failure as the same
-> identifier cannot be used for multiple DSP PD.
+> gendwarfksyms also uses human-readable input for the CRC calculations,
+> and it prints out the input strings with the --debug option. I plan to
+> hook this up to KBUILD_SYMTYPES in v2. It should be convenient enough
+> to simply compare the pretty-printed output with diff, so I'm not sure
+> if a built-in comparison option is needed. Any other DWARF analysis
+> tool can be used to spot the differences too, as you mentioned.
+
+From my perspective, I'm okay if gendwarfksyms doesn't provide
+functionality to compare a new object file with its reference symtypes
+file.
+
+As mentioned, genksyms has this functionality but I actually think the
+way it works is not ideal. Its design is to operate on one compilation
+unit at the time. This has the advantage that a comparison of each file
+is performed in parallel during the build, simply because of the make
+job system. On the other hand, it has two problems.
+
+The first one is that genksyms doesn't provide a comparison of the
+kernel as a whole. This means that the tool gives rather scattered and
+duplicated output about changed structs in the build log. Ideally, one
+would like to see a single compact report about what changed at the end
+of the build.
+
+The second problem is the handling of symtypes files. This data is large
+and if one wants to store them in a Git repository together with the
+kernel source, it is advisable to first compress/consolidate it in some
+way. This is trivial because these files typically contain many
+duplicates. However, the issue is that to feed the data back to
+genksyms, they need to be unpacked during each build which can take some
+time.
+
+I think a better approach is to have a tool that can be given
+a consolidated symtypes file as one input and can compare it with all
+new symtypes files produced during a kernel build. An example of a tool
+that takes this approach is the kabi Python script in UEK [1].
+
+A few months ago, I also started working on a tool inspired by this
+script. The goal is to have similar functionality but hopefully with
+a much faster implementation. Hence, this tool is written in a compiled
+language (Rust at the moment) and should also become multi-threaded. I'm
+hoping to find some time to make progress on it and make the code
+public. It could later be added to the upstream kernel to replace the
+comparison functionality implemented by genksyms, if there is interest.
+
+So as mentioned, I'm fine if gendwarfksyms doesn't have this
+functionality. However, for distributions that rely on the symtypes
+format, I'd be interested in having gendwarfksyms output its dump data
+in this format as well.
+
+For example, instead of producing:
+
+gendwarfksyms: process_exported_symbols: _some_mangled_func_name (@ XYZ)
+subprogram(
+   [formal parameters...]
+)
+-> structure_type core::result::Result<(), core::fmt::Error> {
+   [a description of the structure...]
+};
+
+.. the output could be something like this:
+
+S#'core::result::Result<(), core::fmt::Error>' structure_type core::result::Result<(), core::fmt::Error> { [a description of the structure...] }
+_some_mangled_func_name subprogram _some_mangled_func_name ( [formal parameters...] ) -> S#'core::result::Result<(), core::fmt::Error>'
+
+>> Secondly, when distributions want to maintain stable kABI, they need to
+>> be able to deal with patch backports that add new members to structures.
+>> One common approach is to have placeholders in important structures
+>> which can be later replaced by the new members as needed. __GENKSYMS__
+>> ifdefs are then used at the C source level to hide these kABI-compatible
+>> changes from genksyms.
+>>
+>> Gendwarfksyms works on the resulting binary and so using such ifdefs
+>> wouldn't work. Instead, I suspect that what is required is a mechanism
+>> to tell the tool that a given change is ok, probably by allowing to
+>> specify some map from the original definition to the new one.
+>>
+>> Is there a plan to implement something like this, or how could it be
+>> addressed?
 > 
-> Allocate and pass an effective pgid to DSP which would be allocated
+> That's a great question. Here's what Android uses currently to
+> maintain a stable kABI, I assume you're doing something similar?
 
-effective pgid makes me think about the setegid() system call. Can we
-just name them "client ID" (granted that session is already reserved)?
-Or is it really session ID? Can we use the index of the session instead
-and skip the whole IDR allocation?
+Correct, (open)SUSE kernels have placeholders in likely-to-change
+structs which can be used for new members. Or if no placeholder is
+present, it might be necessary to place a new member in a gap (padding)
+in the struct layout.
 
-> during device open and will have a lifetime till the device is closed.
-> This will allow the same process to open the device more than once and
-> spawn multiple dynamic PD for ease of processing.
 > 
-> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> ---
-> Changes in v2:
->   - Reformatted commit text.
->   - Moved from ida to idr.
->   - Changed dsp_pgid data type.
->   - Resolved memory leak.
+> https://android.googlesource.com/kernel/common/+/refs/heads/android15-6.6/include/linux/android_kabi.h
 > 
->  drivers/misc/fastrpc.c | 49 +++++++++++++++++++++++++++++++-----------
->  1 file changed, 37 insertions(+), 12 deletions(-)
+> If using unions here is acceptable to everyone, a simple solution
+> would be to use a known name prefix for the reserved members and teach
+> gendwarfksyms to only print out the original type for the replaced
+> ones. For example:
 > 
-> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> index a7a2bcedb37e..b4a5af2d2dfa 100644
-> --- a/drivers/misc/fastrpc.c
-> +++ b/drivers/misc/fastrpc.c
-> @@ -105,6 +105,10 @@
->  
->  #define miscdev_to_fdevice(d) container_of(d, struct fastrpc_device, miscdev)
->  
-> +#define MAX_DSP_PD	64	/* Maximum 64 PDs are allowed on DSP */
+> The initial placeholder:
+> 
+>     u8 __kabi_reserved_1[8];
+> 
+> After replacement:
+> 
+>     union {
+>             u64 new_member;
+>             struct {
+>                     u8 __kabi_reserved_1[8];
+>             };
+>     }
+> 
+> Here gendwarfksyms would see the __kabi_reserved prefix and only use
+> u8 [8] for the CRC calculation. Does this sound reasonable?
 
-Why?
+I like this idea. I think it's good that the necessary kABI information
+about an updated member can be expressed at the source code level in
+place of the actual change, and it isn't needed to feed additional input
+to the tool.
 
-> +#define MIN_FRPC_PGID	1000
+[1] https://github.com/oracle/linux-uek/blob/dbdd7f3611cb03e607e156834497dd2767103530/uek-rpm/tools/kabi
 
-Is it some random number or some pre-defined constant? Can we use 0
-instead?
-
-> +#define MAX_FRPC_PGID	(MIN_FRPC_PGID + MAX_DSP_PD)
-> +
->  static const char *domains[FASTRPC_DEV_MAX] = { "adsp", "mdsp",
->  						"sdsp", "cdsp"};
->  struct fastrpc_phy_page {
-
-
--- 
-With best wishes
-Dmitry
+Thanks,
+Petr
 
