@@ -1,93 +1,103 @@
-Return-Path: <linux-kernel+bounces-258868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F832938D81
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:30:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EC27938D78
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B290286C43
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:30:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB5CE1F21785
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C6216C6BA;
-	Mon, 22 Jul 2024 10:30:01 +0000 (UTC)
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0390216C6B0;
+	Mon, 22 Jul 2024 10:28:55 +0000 (UTC)
+Received: from irl.hu (irl.hu [95.85.9.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C890149DF4;
-	Mon, 22 Jul 2024 10:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA98914F70;
+	Mon, 22 Jul 2024 10:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721644200; cv=none; b=uvHQYtLajGEED4syPyMaZmKSvEanPaatOwudqUmy2q8krSEGqjagrVKGEA8oZEOh8yj6FQVd/PFMT9vxS/hdMlOpE9Vr03Nd0ahK8dj59Qo5Kh+j8qWtpZWPgX907DhgkgDc8lHfh8woPkfCbEBo+tf4k/PGGDrHFr65TQGC1qk=
+	t=1721644134; cv=none; b=g5m4H0zLFws63mFKkgos0f7agn2kxN9yFbqD8Y3NZ9UEzfSrk3I9L1HqtQ4X6EbafuI/NNMSKWEJfOZ0kP8E4A3DJtdgkQdGX1koODbQ5m1CzYxE+eaK0mwfnkHf4gFiJzuXAgk14ANGiO6NZW2i2SBpyzkIbeU4lvY/UDXqqz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721644200; c=relaxed/simple;
-	bh=1FRGGeU+wym2xELmubxiqoYTkV0hARifRn2Z6nZoCfU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GUGhY1KN1SResAO76ixKob2YBQero6T03U41tTMACCngoT60xh7yUIsufF2qNh9WCwKv6B3B6nHssDp2a4Oq3LnCSUVQwi8smyddi+fLfHu4iN1FTr84cS01U0W+pW2DmMYLraPXWC6zZxlOy1Eye67i/qC3jzhLxYisvvX8xwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-X-QQ-mid: bizesmtpsz1t1721643990twg6sco
-X-QQ-Originating-IP: ZQWrQ315tVoU0wN0faBAvkhf0b2ujopfRfQI60mXTkc=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Ò», 22 7ÔÂ 2024 18:26:28 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 6738067066252403474
-From: WangYuli <wangyuli@uniontech.com>
-To: zhaotianrui@loongson.cn,
-	maobibo@loongson.cn,
-	chenhuacai@kernel.org,
-	kernel@xen0n.name
-Cc: kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	pbonzini@redhat.com,
-	chao.p.peng@linux.intel.com,
-	WangYuli <wangyuli@uniontech.com>,
-	Wentao Guan <guanwentao@uniontech.com>
-Subject: [PATCH] KVM: Loongarch: remove unnecessary definition of KVM_PRIVATE_MEM_SLOTS
-Date: Mon, 22 Jul 2024 18:26:24 +0800
-Message-ID: <09A6BAA84F3EF573+20240722102624.293359-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.43.4
+	s=arc-20240116; t=1721644134; c=relaxed/simple;
+	bh=vbqw1rhwKEBipFQr77dq1GtSuMncujER1heBjIgNenI=;
+	h=From:To:Cc:Subject:Date:Message-ID:Mime-Version:Content-Type; b=BUKCUu0kRFsvoDeX85U85ZGxgUg9lD8IlxAXc2L4ODoW29UM2Ze+mbj7LvmOq7FcDSONkhvCnnleMpx0e651aKXfU51hUXuRYFB4G0m3Bc9cLPYWxfkNB7w5X6oLQBH2dTzqnl2230sX4AOTfA/v306W1Hm1i/jvT8XZb1hqeO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
+Received: from fedori.lan (51b68624.dsl.pool.telekom.hu [::ffff:81.182.134.36])
+  (AUTH: CRAM-MD5 soyer@irl.hu, )
+  by irl.hu with ESMTPSA
+  id 00000000000738B1.00000000669E345C.001898B3; Mon, 22 Jul 2024 12:28:44 +0200
+From: Gergo Koteles <soyer@irl.hu>
+To: Hans de Goede <hdegoede@redhat.com>,
+  =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+  Ike Panhc <ike.pan@canonical.com>
+Cc: platform-driver-x86@vger.kernel.org,
+  linux-kernel@vger.kernel.org, Gergo Koteles <soyer@irl.hu>
+Subject: [PATCH v3 0/4] platform/x86: ideapad-laptop: synchronize VPC commands
+Date: Mon, 22 Jul 2024 12:27:20 +0200
+Message-ID: <cover.1721294787.git.soyer@irl.hu>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mime-Autoconverted: from 8bit to 7bit by courier 1.0
 
-"KVM_PRIVATE_MEM_SLOTS" is renamed as "KVM_INTERNAL_MEM_SLOTS".
+Hi,
 
-KVM_PRIVATE_MEM_SLOTS defaults to zero, so it is not necessary to
-define it in Loongarch's asm/kvm_host.h.
+Sometimes the Yoga mode control switch did not work properly on my 
+laptop, and sometimes even caused a platform profile switch. It turned 
+out that it was caused by a race situation, the lenovo-ymc wmi notify 
+handler was running at the same time as the ideapad-laptop acpi notify 
+handler, and the partial results of the VPC calls in the two were mixed 
+up.
 
-Link: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=bdd1c37a315bc50ab14066c4852bc8dcf070451e
-Link: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?id=b075450868dbc0950f0942617f222eeb989cad10
-Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
+This series introduces a notification chain to receive YMC or other 
+events, moves the EC triggering into ideapad-laptop, and then introduces 
+a mutex to eliminate the problem.
+
+Best regards,
+Gergo Koteles
+
 ---
- arch/loongarch/include/asm/kvm_host.h | 2 --
- 1 file changed, 2 deletions(-)
+Changes in v3:
+- use devm_mutex_init for vpc_mutex
+- Link to v2: https://lore.kernel.org/all/cover.1721258854.git.soyer@irl.hu/
 
-diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
-index fe38f98eeff8..ce3d36a890aa 100644
---- a/arch/loongarch/include/asm/kvm_host.h
-+++ b/arch/loongarch/include/asm/kvm_host.h
-@@ -26,8 +26,6 @@
- 
- #define KVM_MAX_VCPUS			256
- #define KVM_MAX_CPUCFG_REGS		21
--/* memory slots that does not exposed to userspace */
--#define KVM_PRIVATE_MEM_SLOTS		0
- 
- #define KVM_HALT_POLL_NS_DEFAULT	500000
- #define KVM_REQ_TLB_FLUSH_GPA		KVM_ARCH_REQ(0)
+Changes in v2:
+- Skip the already merged "platform/x86: ideapad-laptop: use cleanup.h" commit
+- Based on the WMI driver development guide and the dell drivers,
+  introduce a generic notification chain
+- Use the notification chain to send the YMC event from lenovo-ymc to
+  the ideapad-laptop module
+- Move the ec_trigger module parameter to the ideapad-laptop as well
+- Mutex changes go into one patch
+- Link to v1: https://lore.kernel.org/all/cover.1720515666.git.soyer@irl.hu/
+---
+
+
+Gergo Koteles (4):
+  platform/x86: ideapad-laptop: introduce a generic notification chain
+  platform/x86: ideapad-laptop: move ymc_trigger_ec from lenovo-ymc
+  platform/x86: ideapad-laptop: move ACPI helpers from header to source
+    file
+  platform/x86: ideapad-laptop: add a mutex to synchronize VPC commands
+
+ drivers/platform/x86/Kconfig          |   1 +
+ drivers/platform/x86/ideapad-laptop.c | 282 ++++++++++++++++++++++++--
+ drivers/platform/x86/ideapad-laptop.h | 142 +------------
+ drivers/platform/x86/lenovo-ymc.c     |  60 +-----
+ 4 files changed, 275 insertions(+), 210 deletions(-)
+
 -- 
-2.43.4
+2.45.2
 
 
