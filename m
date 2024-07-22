@@ -1,159 +1,230 @@
-Return-Path: <linux-kernel+bounces-258955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E8C938F1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:33:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46173938F22
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A85A71C2124E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:33:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2E15281C0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E135416CD16;
-	Mon, 22 Jul 2024 12:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3DC16CD16;
+	Mon, 22 Jul 2024 12:35:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ajPCYfFe"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TsE7SiAP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B6D3A8D0
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 12:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0513A8D0
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 12:35:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721651621; cv=none; b=M5+uMfKXTxwrfFWtaYwXl9InRcvDN1FozMDGOGMV4Z4bEgDJRMJ7AcURlO0bUKsivUjIg94YQQdUG4SrNW5Gy50I8X9VsqEkU/ZXmVOMH0FJyL2IqSQsbdddgBThNhGu0n9MRwZwUdgNhrZygijMz3uF6KYy08WGHht54iJyYxQ=
+	t=1721651718; cv=none; b=AzL20Ibf175jzwDTibzcYUSNyLT/3dZwNZHNRshvVq8tEjZ0NDRyD6bKJPQxT9Ih+UWgpYVQlbTwuj+T6Qw9vtbmgGuRvBzqsDwvQLhalwahNXSsbct7ekFhJC9rFAgA0gx5bP+PS8gdooffVwNIIbVc2zWhEt4N87CnLzTmq8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721651621; c=relaxed/simple;
-	bh=UVxnc1rcxu3BzUjKxD6Elxpz395U590fU6TZg9xEaiY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EHbg38ArpSD844UynP1Bycg8k3HU2YvPaYW51/o7bPF/Tq89sin8HWpEfAL012QU7EghG/pNp/lhjM5jozV15AEMJNkhahvGGCk+elyNcR99IYSbajdcLmXw/zgNEPLye0/BqKen6+Krs4B73GBfOXf47otYL94zZ8lqAqY0ESU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ajPCYfFe; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-26109c97728so1928071fac.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 05:33:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1721651617; x=1722256417; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FVWwL5VO4q04b45BWmiVgKpzDu/7jE1+3wyYKYbandI=;
-        b=ajPCYfFef0DTVg6GZvKdIp8LenUrqH7fNNJxj8J7ufB4psO44i/gJD0Eqjv2+oMOQN
-         Uom6yW3Urg8Cg6G2CyIFgfOe8Lm2XiN0Rk/6EepflWyYoQI0kmGGqnLPX8IDabZvTp7o
-         qswF6rzENGRhq9+EoNEB34sHLbchEAQUATZL7GTZJeHWt8U0ec0rtWGulkOR/erOq+kN
-         kzWVkh3WhnWKC4E7sqDR1ClZw+/4gyTAyjXUYdF2TA1wRmuEUBMQYaRlQy9gdUZx9SsP
-         kWfsCJUk29/BQKNmaamgn0yx71+DAr0OMaWIx9lR35DciLT+MMB3pNjDpElp/ImQyzRD
-         wJ0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721651617; x=1722256417;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FVWwL5VO4q04b45BWmiVgKpzDu/7jE1+3wyYKYbandI=;
-        b=BTWBxfDa3DBYMtUkJRydwlA0cjaym4NliHlolsBKd+6y1d3sjZa053RujB971dwNgh
-         Wrpk0cBbGJVk9HZLki3lzcCtoRgJ2zIG49g7GnuJ1+JNsCWGUfG8HkOorHxdZJq7ulii
-         RSt1X0GRZaPaN9Gd8ILAclorXsHCZu1GdJwsQDMmvQSbPICrSBdSJdy1teqBTFG4YQMD
-         Ro/FNOZhN/85dYuJulut2Qbs+IyJnNh1r7v+Eo5qFwB0BET/ubTu0f6K5YjJCLRdcGfn
-         /qzfJRndzAPchFpii28jF0NSGCQ+LuqUdBYL4gGY1vAW1M6qOVwkuUe4MrMOWYWPMiWr
-         U5Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCUsvVI+U2qi5XeHeBqD2eijNoUV+7AGuYQdchDCXPCb6RuWrXQiBmjbPEr/51wPQ0JeLj2XPBXEYm2i8IqTypFIUylHe6LQZAbOnO6X
-X-Gm-Message-State: AOJu0YybsNV70qrhxOEEwDOoqBjrQEO5WxsRcm56d84gs68ShCyIv2/0
-	/eTldAY1kIVG9yaGopagOdAA5EC8YSClHy/my46KfkmqiMLVRECHb1XqXFTNoz8=
-X-Google-Smtp-Source: AGHT+IEdgVG9XJ+pUl9SRJ1Ab1oscuqPq6XDBYqsC81riN+r66R19akgikYx2rlNAaK0kbgS9WOekw==
-X-Received: by 2002:a05:6871:551:b0:254:c617:a9a0 with SMTP id 586e51a60fabf-26121652e01mr7197994fac.50.1721651617511;
-        Mon, 22 Jul 2024 05:33:37 -0700 (PDT)
-Received: from n37-034-248.byted.org ([180.184.51.134])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a0eeec2bf0sm3191229a12.10.2024.07.22.05.33.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 05:33:36 -0700 (PDT)
-From: Zhongkun He <hezhongkun.hzk@bytedance.com>
-To: peterz@infradead.org,
-	mgorman@suse.de,
-	ying.huang@intel.com
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Zhongkun He <hezhongkun.hzk@bytedance.com>
-Subject: [PATCH] mm/numa_balancing: Fix the memory thrashing problem in the single-threaded process
-Date: Mon, 22 Jul 2024 20:33:20 +0800
-Message-Id: <20240722123320.2382992-1-hezhongkun.hzk@bytedance.com>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1721651718; c=relaxed/simple;
+	bh=DcMhNvxHCz7/9X+74PuaSWFaJ9c+bNH5mM29uH1i718=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rxmHCSn3XR9VP4pYktTlA82oeNXSyLMoF237xKwBPim/7kG9FFVTInMGuaORlYlY0xyT/HvNMg4fTqrfCKa78B/ocHL0hWvSt69YHphSmkqAzY+AEyBX6V7B3trpY36a0Sa3xhNvJ0MqsaoY8X2XMOW9ViAg+C/aSB/LO+yAyiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TsE7SiAP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44279C116B1;
+	Mon, 22 Jul 2024 12:35:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721651718;
+	bh=DcMhNvxHCz7/9X+74PuaSWFaJ9c+bNH5mM29uH1i718=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TsE7SiAPBYyvX/ppdAqRZ3bdjqR+a5HBNaCi0GvQr+ZrXKu81A7oCFwFGa/Am87Zo
+	 gBHSznyjwhxKG0xHCG3lhrUf8o8uwcoT/+VntoNMDoqer54UrgJDniHUaUlpWJWOTK
+	 2fP+ZLsyoF2gHBbepe+IupF3WQYVkzVnAnWrvBl9/fnVL4v6FGj/T4XMPQow8TLtWP
+	 OUIZv89EzA040ysOkJP0/Zfi5vlcS9Hr4vggiHJOIuTtBRzbLPEjtr/sdbvTuglmDL
+	 EBr36/uu3inYTZ+pBWCz69hkE1WjA7jRZj2QDjAeoAc8mKNkLC5gtXEY9MDJUiw7Sa
+	 DLTk6fDGCjlwA==
+Message-ID: <1c4a5ec3-cf51-49d6-a62b-53c081aacb1b@kernel.org>
+Date: Mon, 22 Jul 2024 14:35:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 33/37] kvx: Add support for cpuinfo
+To: ysionneau@kalrayinc.com, linux-kernel@vger.kernel.org
+Cc: Jonathan Borne <jborne@kalrayinc.com>,
+ Julian Vetter <jvetter@kalrayinc.com>,
+ Clement Leger <clement@clement-leger.fr>,
+ Guillaume Thouvenin <thouveng@gmail.com>, Jules Maselbas <jmaselbas@zdiv.net>
+References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
+ <20240722094226.21602-34-ysionneau@kalrayinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20240722094226.21602-34-ysionneau@kalrayinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-I found a problem in my test machine that the memory of a process is
-repeatedly migrated between two nodes and does not stop.
+On 22/07/2024 11:41, ysionneau@kalrayinc.com wrote:
+> From: Yann Sionneau <ysionneau@kalrayinc.com>
+> 
+> Add support for cpuinfo on kvx arch.
+> 
+> Co-developed-by: Clement Leger <clement@clement-leger.fr>
+> Signed-off-by: Clement Leger <clement@clement-leger.fr>
+> Co-developed-by: Guillaume Thouvenin <thouveng@gmail.com>
+> Signed-off-by: Guillaume Thouvenin <thouveng@gmail.com>
+> Co-developed-by: Julian Vetter <jvetter@kalrayinc.com>
+> Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
+> Signed-off-by: Jules Maselbas <jmaselbas@zdiv.net>
+> Signed-off-by: Yann Sionneau <ysionneau@kalrayinc.com>
+> ---
+> 
+> Notes:
+> V1 -> V2: No changes
+> V2 -> V3:
+> - add missing function declaration for setup_cpuinfo()
+> - replace printk(KERN_WARNING... with pr_warn(...
+> ---
+>  arch/kvx/include/asm/cpuinfo.h |  7 +++
+>  arch/kvx/kernel/cpuinfo.c      | 95 ++++++++++++++++++++++++++++++++++
+>  2 files changed, 102 insertions(+)
+>  create mode 100644 arch/kvx/include/asm/cpuinfo.h
+>  create mode 100644 arch/kvx/kernel/cpuinfo.c
+> 
+> diff --git a/arch/kvx/include/asm/cpuinfo.h b/arch/kvx/include/asm/cpuinfo.h
+> new file mode 100644
+> index 0000000000000..ace9b85fbafaf
+> --- /dev/null
+> +++ b/arch/kvx/include/asm/cpuinfo.h
+> @@ -0,0 +1,7 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +#ifndef __ASM_KVX_CPUINFO_H
+> +#define __ASM_KVX_CPUINFO_H
+> +
+> +extern void setup_cpuinfo(void);
+> +
+> +#endif /* __ASM_KVX_CPUINFO_H */
+> diff --git a/arch/kvx/kernel/cpuinfo.c b/arch/kvx/kernel/cpuinfo.c
+> new file mode 100644
+> index 0000000000000..6d46fd2a1bd93
+> --- /dev/null
+> +++ b/arch/kvx/kernel/cpuinfo.c
+> @@ -0,0 +1,95 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2017-2023 Kalray Inc.
+> + * Author(s): Clement Leger
+> + *            Guillaume Thouvenin
+> + */
+> +
+> +#include <linux/seq_file.h>
+> +#include <linux/delay.h>
+> +#include <linux/clk.h>
+> +#include <linux/cpu.h>
+> +#include <linux/of.h>
+> +
+> +unsigned long elf_hwcap __read_mostly;
+> +
+> +static int show_cpuinfo(struct seq_file *m, void *v)
+> +{
+> +	int cpu_num = *(unsigned int *)v;
+> +	struct cpuinfo_kvx *n = per_cpu_ptr(&cpu_info, cpu_num);
+> +
+> +	seq_printf(m, "processor\t: %d\nvendor_id\t: Kalray\n", cpu_num);
+> +
+> +	seq_printf(m,
+> +		   "copro enabled\t: %s\n"
+> +		   "arch revision\t: %d\n"
+> +		   "uarch revision\t: %d\n",
+> +		   n->copro_enable ? "yes" : "no",
+> +		   n->arch_rev,
+> +		   n->uarch_rev);
+> +
+> +	seq_printf(m,
+> +		   "bogomips\t: %lu.%02lu\n"
+> +		   "cpu MHz\t\t: %llu.%03llu\n\n",
+> +		   (loops_per_jiffy * HZ) / 500000,
+> +		   ((loops_per_jiffy * HZ) / 5000) % 100,
+> +		   n->freq / 1000000, (n->freq / 10000) % 100);
+> +
+> +	return 0;
+> +}
+> +
+> +static void *c_start(struct seq_file *m, loff_t *pos)
+> +{
+> +	if (*pos == 0)
+> +		*pos = cpumask_first(cpu_online_mask);
+> +	if (*pos >= num_online_cpus())
+> +		return NULL;
+> +
+> +	return pos;
+> +}
+> +
+> +static void *c_next(struct seq_file *m, void *v, loff_t *pos)
+> +{
+> +	*pos = cpumask_next(*pos, cpu_online_mask);
+> +
+> +	return c_start(m, pos);
+> +}
+> +
+> +static void c_stop(struct seq_file *m, void *v)
+> +{
+> +}
+> +
+> +const struct seq_operations cpuinfo_op = {
 
-1.Test step and the machines.
-------------
-VM machine: 4 numa nodes and 10GB per node.
+Where is this used?
 
-stress --vm 1 --vm-bytes 12g --vm-keep
+> +	.start = c_start,
+> +	.next = c_next,
+> +	.stop = c_stop,
+> +	.show = show_cpuinfo,
+> +};
+> +
 
-The info of numa stat:
-while :;do cat memory.numa_stat | grep -w anon;sleep 5;done
-anon N0=98304 N1=0 N2=10250747904 N3=2634334208
-anon N0=98304 N1=0 N2=10250747904 N3=2634334208
-anon N0=98304 N1=0 N2=9937256448 N3=2947825664
-anon N0=98304 N1=0 N2=8863514624 N3=4021567488
-anon N0=98304 N1=0 N2=7789772800 N3=5095309312
-anon N0=98304 N1=0 N2=6716030976 N3=6169051136
-anon N0=98304 N1=0 N2=5642289152 N3=7242792960
-anon N0=98304 N1=0 N2=5105442816 N3=7779639296
-anon N0=98304 N1=0 N2=5105442816 N3=7779639296
-anon N0=98304 N1=0 N2=4837007360 N3=8048074752
-anon N0=98304 N1=0 N2=3763265536 N3=9121816576
-anon N0=98304 N1=0 N2=2689523712 N3=10195558400
-anon N0=98304 N1=0 N2=2515148800 N3=10369933312
-anon N0=98304 N1=0 N2=2515148800 N3=10369933312
-anon N0=98304 N1=0 N2=2515148800 N3=10369933312
-anon N0=98304 N1=0 N2=3320455168 N3=9564626944
-anon N0=98304 N1=0 N2=4394196992 N3=8490885120
-anon N0=98304 N1=0 N2=5105442816 N3=7779639296
-anon N0=98304 N1=0 N2=6174195712 N3=6710886400
-anon N0=98304 N1=0 N2=7247937536 N3=5637144576
-anon N0=98304 N1=0 N2=8321679360 N3=4563402752
-anon N0=98304 N1=0 N2=9395421184 N3=3489660928
-anon N0=98304 N1=0 N2=10247872512 N3=2637209600
-anon N0=98304 N1=0 N2=10247872512 N3=2637209600
-
-2. Root cause:
-Since commit 3e32158767b0 ("mm/mprotect.c: don't touch single threaded
-PTEs which are on the right node")the PTE of local pages will not be
-changed in change_pte_range() for single-threaded process, so no
-page_faults information will be generated in do_numa_page(). If a
-single-threaded process has memory on another node, it will
-unconditionally migrate all of it's local memory to that node,
-even if the remote node has only one page.
-
-So, let's fix it. The memory of single-threaded process should follow
-the cpu, not the numa faults info in order to avoid memory thrashing.
-
-Signed-off-by: Zhongkun He <hezhongkun.hzk@bytedance.com>
----
- kernel/sched/fair.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 24dda708b699..d7cbbda568fb 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -2898,6 +2898,12 @@ static void task_numa_placement(struct task_struct *p)
- 		numa_group_count_active_nodes(ng);
- 		spin_unlock_irq(group_lock);
- 		max_nid = preferred_group_nid(p, max_nid);
-+	} else if (atomic_read(&p->mm->mm_users) == 1) {
-+		/*
-+		 * The memory of a single-threaded process should
-+		 * follow the CPU in order to avoid memory thrashing.
-+		 */
-+		max_nid = numa_node_id();
- 	}
- 
- 	if (max_faults) {
--- 
-2.20.1
+Best regards,
+Krzysztof
 
 
