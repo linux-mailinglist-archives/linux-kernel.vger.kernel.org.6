@@ -1,126 +1,161 @@
-Return-Path: <linux-kernel+bounces-258504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 912049388F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:34:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2496C9388DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C30F21C20EE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:34:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3516281597
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB4C199B9;
-	Mon, 22 Jul 2024 06:34:19 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD9E17C6B;
+	Mon, 22 Jul 2024 06:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Gn4f3PxT"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8A417C9B;
-	Mon, 22 Jul 2024 06:34:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B5C4C7D;
+	Mon, 22 Jul 2024 06:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721630058; cv=none; b=BN21tLfBuF5Eeb7F8bYsdOFpQKJx3It06Q4QtTTyW7DF0n9DbVUg21yyDc85qa+wj6cYvreP2G8F95f63KZPle29DrDkxkL5BOez4/Xu299ibxrgC7boxbY3inSN69B5iSfjBrrxaEBs3FlTh34aug1oBHblg37QrWPBqhHUH5o=
+	t=1721629365; cv=none; b=ovyJgivRrZ01t686FrW/jVa+y1b5T9qA6QeB/NBCtKnBUoXfddRsM1CsAocYC46SAKQn4VTSiSPOZ84bIfXYkE9NJD4mreiRJbUbmUE3vqhE7qgVDK0OtCURBZHKWLRIHZU0hWCDUVi6cOM/X1K7RyDjzXZb9SmOOqXCi7uU+bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721630058; c=relaxed/simple;
-	bh=xRJH4YLDXNzYsFzPjS7ocicNqmtabVQEM0ATruD2Xss=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=u60oGubT/cBZDU8rqtCREveEdfRT82woocchcG/jWq5hg9Sm99jkpjWf7aT1miWyf9apD+XQORRJv4lC6wKOeLLQcyipOrMKe6wbwA3hw4IJ5fvrQEE60d8Hy84HV/6RfGXEojU5P5JAU9twfccCZmJBEtD+NX+bbQy6FRdzDsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 456F5200DE2;
-	Mon, 22 Jul 2024 08:34:10 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0AD1C200DE1;
-	Mon, 22 Jul 2024 08:34:10 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 748521802183;
-	Mon, 22 Jul 2024 14:34:08 +0800 (+08)
-From: Richard Zhu <hongxing.zhu@nxp.com>
-To: kwilczynski@kernel.org,
-	bhelgaas@google.com,
-	lorenzo.pieralisi@arm.com,
-	frank.li@nxp.com,
-	mani@kernel.org
-Cc: linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de,
-	imx@lists.linux.dev,
-	Richard Zhu <hongxing.zhu@nxp.com>
-Subject: [PATCH v2] PCI: dwc: Fix resume failure if no EP is connected at some platforms
-Date: Mon, 22 Jul 2024 14:15:13 +0800
-Message-Id: <1721628913-1449-1-git-send-email-hongxing.zhu@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1721629365; c=relaxed/simple;
+	bh=bNc+q4Zc8RndXEm6FNdap94dUeXfeCVy2oPwT85ZZM0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VvIW5wykvb5EMmHrPlkUk770gqMs0mD4Vz4qAXKY/5FL76hU/OVZl+oUaRVSKD07ZigyzJN0nLRUS+/W4cPxW9cFaiC8uvpC1Zd1A0uAPCbWvoh9fJ+/k8TWBh4KBn5ggrSbDHTCxdWX1dwTdy+rpkuOC+stfmdSv4X+8ABY6jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Gn4f3PxT; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: c90e64f247f211efb5b96b43b535fdb4-20240722
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=bkvgIktChmzkooE5NvOvL26cQeo/bI5bJkOyPX+YUEQ=;
+	b=Gn4f3PxTqaOq/WUPUHaceJAaHs5AFeIOeYvuFtjI4+uaPinobYg4Mon4rVrPDIbMIqU+pCqGJwVFCnYzHnLBrlSCMbZ826OuP85erPuyMqLJczTbQMKI6QGMt6qESJc9KGISsJpgMY8P15MUJblVorcEmMpFRFKkbEW0rvcAV3g=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.40,REQID:fc9a14e0-da6f-4a34-b900-d253d8a460c4,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:ba885a6,CLOUDID:60819fd5-0d68-4615-a20f-01d7bd41f0bb,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_ULN,TF_CID_SPAM_SNR
+X-UUID: c90e64f247f211efb5b96b43b535fdb4-20240722
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
+	(envelope-from <chris.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1472777845; Mon, 22 Jul 2024 14:22:35 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 22 Jul 2024 14:22:35 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 22 Jul 2024 14:22:35 +0800
+From: Chris Lu <chris.lu@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Sean Wang <sean.wang@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>,
+	Steve Lee <steve.lee@mediatek.com>, linux-bluetooth
+	<linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
+Subject: [PATCH] Bluetooth: btmtk: Fix function-declaration build error
+Date: Mon, 22 Jul 2024 14:22:16 +0800
+Message-ID: <20240722062216.16090-1-chris.lu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain
 
-The dw_pcie_suspend_noirq() function currently returns success directly
-if no endpoint (EP) device is connected. However, on some platforms, power
-loss occurs during suspend, causing dw_resume() to do nothing in this case.
-This results in a system halt because the DWC controller is not initialized
-after power-on during resume.
+Separate out the declaration of usb related function into another
+if/else condition in btmtk.h, avoiding function-declaration issue
+happened when CONFIG_BT_HCIBTUSB was defined but CONFIG_BT_HCIBTUSB_MTK
+wasn't.
 
-Change call to deinit() in suspend and init() at resume regardless of
-whether there are EP device connections or not. It is not harmful to
-perform deinit() and init() again for the no power-off case, and it keeps
-the code simple and consistent in logic.
+'btmtk_usb_subsys_reset';
+ISO C99 and later do not support implicit
+function declarations [-Wimplicit-function-declaration]
+'alloc_mtk_intr_urb';
+ISO C99 and later do not support implicit
+function declarations [-Wimplicit-function-declaration]
+'btmtk_usb_setup';
+ISO C99 and later do not support implicit
+function declarations [-Wimplicit-function-declaration]
+'btmtk_usb_shutdown';ISO C99 and later do not support
+implicit function declarations [-Wimplicit-function-declaration]
 
-Fixes: 4774faf854f5 ("PCI: dwc: Implement generic suspend/resume functionality")
-Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Fixes: 52828ea60dfd ("Bluetooth: btmtk: Fix btmtk.c undefined reference build error")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202407200904.hRqT3JKD-lkp@intel.com/
+Signed-off-by: Chris Lu <chris.lu@mediatek.com>
 ---
- .../pci/controller/dwc/pcie-designware-host.c | 30 +++++++++----------
- 1 file changed, 15 insertions(+), 15 deletions(-)
+ drivers/bluetooth/btmtk.h | 35 ++++++++++++++++++-----------------
+ 1 file changed, 18 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index a0822d5371bc5..cb8c3c2bcc790 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -933,23 +933,23 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
- 	if (dw_pcie_readw_dbi(pci, offset + PCI_EXP_LNKCTL) & PCI_EXP_LNKCTL_ASPM_L1)
- 		return 0;
+diff --git a/drivers/bluetooth/btmtk.h b/drivers/bluetooth/btmtk.h
+index 6fc69cd8636b..fcc44800cf29 100644
+--- a/drivers/bluetooth/btmtk.h
++++ b/drivers/bluetooth/btmtk.h
+@@ -201,23 +201,6 @@ int btmtk_process_coredump(struct hci_dev *hdev, struct sk_buff *skb);
  
--	if (dw_pcie_get_ltssm(pci) <= DW_PCIE_LTSSM_DETECT_ACT)
--		return 0;
+ void btmtk_fw_get_filename(char *buf, size_t size, u32 dev_id, u32 fw_ver,
+ 			   u32 fw_flavor);
 -
--	if (pci->pp.ops->pme_turn_off)
--		pci->pp.ops->pme_turn_off(&pci->pp);
--	else
--		ret = dw_pcie_pme_turn_off(pci);
-+	if (dw_pcie_get_ltssm(pci) > DW_PCIE_LTSSM_DETECT_ACT) {
-+		/* Only send out PME_TURN_OFF when PCIE link is up */
-+		if (pci->pp.ops->pme_turn_off)
-+			pci->pp.ops->pme_turn_off(&pci->pp);
-+		else
-+			ret = dw_pcie_pme_turn_off(pci);
+-#if IS_ENABLED(CONFIG_BT_HCIBTUSB_MTK)
+-int btmtk_usb_subsys_reset(struct hci_dev *hdev, u32 dev_id);
+-
+-int btmtk_usb_recv_acl(struct hci_dev *hdev, struct sk_buff *skb);
+-
+-struct urb *alloc_mtk_intr_urb(struct hci_dev *hdev, struct sk_buff *skb,
+-			       usb_complete_t tx_complete);
+-
+-int btmtk_usb_resume(struct hci_dev *hdev);
+-
+-int btmtk_usb_suspend(struct hci_dev *hdev);
+-
+-int btmtk_usb_setup(struct hci_dev *hdev);
+-
+-int btmtk_usb_shutdown(struct hci_dev *hdev);
+-#endif
+ #else
  
--	if (ret)
--		return ret;
-+		if (ret)
-+			return ret;
+ static inline int btmtk_set_bdaddr(struct hci_dev *hdev,
+@@ -259,7 +242,25 @@ static inline void btmtk_fw_get_filename(char *buf, size_t size, u32 dev_id,
+ 					 u32 fw_ver, u32 fw_flavor)
+ {
+ }
++#endif
++
++/* USB interface related functions */
++#if IS_ENABLED(CONFIG_BT_HCIBTUSB_MTK)
++int btmtk_usb_subsys_reset(struct hci_dev *hdev, u32 dev_id);
++
++int btmtk_usb_recv_acl(struct hci_dev *hdev, struct sk_buff *skb);
++
++struct urb *alloc_mtk_intr_urb(struct hci_dev *hdev, struct sk_buff *skb,
++			       usb_complete_t tx_complete);
  
--	ret = read_poll_timeout(dw_pcie_get_ltssm, val, val == DW_PCIE_LTSSM_L2_IDLE,
--				PCIE_PME_TO_L2_TIMEOUT_US/10,
--				PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
--	if (ret) {
--		dev_err(pci->dev, "Timeout waiting for L2 entry! LTSSM: 0x%x\n", val);
--		return ret;
-+		ret = read_poll_timeout(dw_pcie_get_ltssm, val, val == DW_PCIE_LTSSM_L2_IDLE,
-+					PCIE_PME_TO_L2_TIMEOUT_US/10,
-+					PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
-+		if (ret) {
-+			dev_err(pci->dev, "Timeout waiting for L2 entry! LTSSM: 0x%x\n", val);
-+			return ret;
-+		}
- 	}
- 
- 	if (pci->pp.ops->deinit)
++int btmtk_usb_resume(struct hci_dev *hdev);
++
++int btmtk_usb_suspend(struct hci_dev *hdev);
++
++int btmtk_usb_setup(struct hci_dev *hdev);
++
++int btmtk_usb_shutdown(struct hci_dev *hdev);
++#else
+ static inline int btmtk_usb_subsys_reset(struct hci_dev *hdev, u32 dev_id)
+ {
+ 	return -EOPNOTSUPP;
 -- 
-2.37.1
+2.18.0
 
 
