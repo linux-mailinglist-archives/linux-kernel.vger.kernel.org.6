@@ -1,187 +1,103 @@
-Return-Path: <linux-kernel+bounces-258999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ACF5938FD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:19:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31520938FD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF22A1F21ACD
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:19:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6275F1C213C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B9D16D9A8;
-	Mon, 22 Jul 2024 13:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6582116D4F1;
+	Mon, 22 Jul 2024 13:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PlviBwLd"
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VV/O/Ryk"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE18916938C;
-	Mon, 22 Jul 2024 13:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9EC16938C;
+	Mon, 22 Jul 2024 13:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721654379; cv=none; b=t0zoKC/0ikrmJPk50Lx4pb3qnw/kZSD3WwigTTk3nFw5Qmqa2Z1YZf9XdA2GyvXf0w8Ftobu5udYZ32aJUEUppwNCHruzexArkw1Xc/itUkeerkZqGN0xEDiRzqQp/chfnOwYsx8cNgU9Y3iUU3AZCiKUOICpxEMgwlZ5/11Mhc=
+	t=1721654421; cv=none; b=ROOfwlV/TA5P7pt1inM8wqWbSehbqwYFBb23i62giIExAFqZBe7wjkdOQyRgBjBW/9ZQN8biB0YfWe2KXOZ3oX5Y631rs0pEI+DDI1If0eZuFz/6MImCn5rBaCvB+/qrsfmvaYuX0QRuSEv9z4+ux1CkAbbNx5iNHRjb4tcD9sM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721654379; c=relaxed/simple;
-	bh=6nFLP/ciY3DfP7kbKQXLTQ5W82Xb9tsB2hQvnQAFRCs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JcfLwoHzj3ZK55z8qEfE5j0fVfxq31o1HyTfBsfL8ADTaZm40d8OM8j++uO84oYYIydtOD0yIoRneVPqC8BKrI9prSH+FO4kjlh8BBippKVjI26REtl4P34nfvDgV/m0I4jK+dOR0RcE17Gjpo7MiT4PYpunfphKiSbz46P2uxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PlviBwLd; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-823227e7572so2227939241.1;
-        Mon, 22 Jul 2024 06:19:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721654376; x=1722259176; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=07fP8yssZ0tKq69jIj+FMPQwqseZTcnXvz35hYzvfjQ=;
-        b=PlviBwLd5n8tXjI8YUB8WezuDx4iC5Rf2ZfnwaGAVCoR6T4TVl7ZfFjtU20Lm64Evw
-         CUENtpEXouzGK9Lm3f2/nVV5WRlIAJvCe4KkhFJbYZlZ6ytcgwVsAt7HJ3UZQL8Bdi0J
-         8dswlgUD8A1TrPEjkEel5YyObOjrGw/mzdBr0DBq/otQJi098O4DEt5ECzqoc36bajxv
-         Ehe0LQl+Hnb0ynND8G8c2TQYbYvIapHf4RmTC3MOnoa14vRVHSv/hVPMmQm7EHPrd2vh
-         p/pLg/MdtlwySk0utsgt/Xfx1EeUtwwOcrJGKWJye5EUiFqPIZyIV4iE8/luW+AmATxj
-         KDbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721654376; x=1722259176;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=07fP8yssZ0tKq69jIj+FMPQwqseZTcnXvz35hYzvfjQ=;
-        b=SGlrwr3kaMxxHV5UJN6GyxGwphYDpjrImGgFhOakOQo8+w2GVostWoLyRjLK4YY33A
-         3QpNB2fkY27B0L1qBgzZ1osSmuxYScOyIwV2P0khgaP9weEmbgDU/VXgAwWA/6FuX8L3
-         CjPwyfjrzM3dj0w3O2hm4UQ1JpwLE+4f+vIahxaT4hFDNDjMW+XcMZTLJ9cCGfcXcH8U
-         n3WcUp9h/CdJX9fVwJiWyl0F7EviESD0aaPha/VvvwTFPtU2PYxSFhBDdLFk8P4o+04p
-         PnzQAT5mGqqQEXaJOrWdDxCdTY796iDrn56BajG6ulK5hbjfS0122ueMW9KDHMLywcOJ
-         P/yw==
-X-Forwarded-Encrypted: i=1; AJvYcCXHuXECc6QCqySyGAyBrLasc9MZAgodF23/ig0K5ZQi4KnON5sJy0+6wbvUSUXPd3Vn4jGmITpMXiIIjD8pc2+dbZAKjO4gs5QGRB25anIdYtE233u6C3H+/ngVD4LOLke3YAjaAzfMMrMBzuSmKbK9j85HVxAal2EJscd+fIKJq2txnpdWzFYJd9FwWsK7FWAeDKVMayZyJNGD7ZMd+6bTpJUxQ6p7
-X-Gm-Message-State: AOJu0Yy1IyCvLn2DirkHWUFpmVTedLiya21yVk4VUfFtiwO7MPFI7Ae5
-	XjJHPrqq3uxy+Eww1w8IFnNBJXOMg+h0kI4bUWE8swhds8SyBmfj2+rHj4cBhRzKLYp0vGiD+Vh
-	IW+JoApAH9uD5wY/gEpVj9+Lx5oc=
-X-Google-Smtp-Source: AGHT+IEL/nroc1mlmfx0Yrfx++3jeFEcvf1cyf4cZ36K2s4RuLwjF/Sft1Y4OHQJQBZTjBPk3OfNuuEFvFwQVGkuinY=
-X-Received: by 2002:a05:6122:3281:b0:4f5:2849:598d with SMTP id
- 71dfb90a1353d-4f528496166mr961245e0c.4.1721654376282; Mon, 22 Jul 2024
- 06:19:36 -0700 (PDT)
+	s=arc-20240116; t=1721654421; c=relaxed/simple;
+	bh=y3Gx+WfjFQRIfL61Lgwl8Womf5PGQfiTOfwgOeMTPp0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cSEVdboTiowlo7RA2TpDZXIq6askWiCX0Hkajveqc8x8/Ib8JXbQE1RJ/Wy1M49o3dovrydmqC4wJ+CbRF72dZ/h1uomlK9N3HGhlYPzi75MoHOagNwzaKEt66r8mNnP5CYSg/Mez2+k0oeA/Aho6matts23KvHNTUMyCMY2gzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VV/O/Ryk; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 10AF91BF203;
+	Mon, 22 Jul 2024 13:20:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1721654411;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y3Gx+WfjFQRIfL61Lgwl8Womf5PGQfiTOfwgOeMTPp0=;
+	b=VV/O/RykB4p0YBJhii1Db0yWjWo0upQV2+h4lwoCGzwkWOCXBpsF1oyBD0EXPqiLrVmydg
+	ZbGBRo3OvriuefmCqweJLaO3FNvtLEiOs/t6ZchUNjT50mTl0k+OwiiuhKqWK3/zt5J4x9
+	mcZj+6TfveDZpSx9aiam1X32cSMsHvEgQlrIJ7T587qiR0XjF7WKFAsbMKddQ3r45jgjkE
+	P6AffzCppPdlH8Spag9R8t+ixOxf4MVuG/rlHcYJJ995gSMrDi6njWIvBwGN9LTxZ9yoyb
+	KCXouIdbmmpFLsorgv2I33B8j5lixRlZqggWfocLKx/L9s3PpLbg4Xl1FcMtkg==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, "paulburton@kernel.org"
+ <paulburton@kernel.org>
+Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org, =?utf-8?Q?Th=C3=A9o?= Lebrun
+ <theo.lebrun@bootlin.com>,
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, Tawfik Bayouk
+ <tawfik.bayouk@mobileye.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH] MIPS: SMP-CPS: Fix address for GCR_ACCESS register for
+ I6500
+In-Reply-To: <302ca8fb-0185-4872-9d82-d472854e5a43@app.fastmail.com>
+References: <20240719-smp_i6500-v1-1-8738e67d4802@bootlin.com>
+ <302ca8fb-0185-4872-9d82-d472854e5a43@app.fastmail.com>
+Date: Mon, 22 Jul 2024 15:20:10 +0200
+Message-ID: <87bk2pk1h1.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240626132341.342963-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240626132341.342963-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <ZoUb_olfaVapoYBi@shikoro> <CA+V-a8uJ-jv65fK7=XYtMvCCiEbFKcRHW3xNj8SQd2TJ++43QQ@mail.gmail.com>
-In-Reply-To: <CA+V-a8uJ-jv65fK7=XYtMvCCiEbFKcRHW3xNj8SQd2TJ++43QQ@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 22 Jul 2024 14:19:10 +0100
-Message-ID: <CA+V-a8uQz4fbCHeG-88Re3sxa3ye+5NfZ=NRdgV-58=9tHpN+A@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] dt-bindings: mmc: renesas,sdhi: Document RZ/V2H(P) support
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	Magnus Damm <magnus.damm@gmail.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: gregory.clement@bootlin.com
 
-Hi Wolfram,
+"Jiaxun Yang" <jiaxun.yang@flygoat.com> writes:
 
-On Thu, Jul 4, 2024 at 7:27=E2=80=AFPM Lad, Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
+> =E5=9C=A82024=E5=B9=B47=E6=9C=8819=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=
+=E5=8D=8810:14=EF=BC=8CGregory CLEMENT=E5=86=99=E9=81=93=EF=BC=9A
+>> Unlike most other MIPS CPUs, the I6500 CPUs have different address
+>> offsets for the Global CSR Access Privilege register. In the "MIPS64
+>> I6500 Multiprocessing System Programmer's Guide," it is stated that
+>> "the Global CSR Access Privilege register is located at offset 0x0120"
+>> in section 5.4.
+>>
+>> However, this is not the case for other MIPS64 CPUs such as the
+>> P6600. In the "MIPS64=C2=AE P6600 Multiprocessing System Software User's
+>> Guide," section 6.4.2.6 states that the GCR_ACCESS register has an
+>> offset of 0x0020.
 >
-> Hi Wolfram,
+> Hi Gregory,
 >
-> On Wed, Jul 3, 2024 at 10:38=E2=80=AFAM Wolfram Sang
-> <wsa+renesas@sang-engineering.com> wrote:
-> >
-> > On Wed, Jun 26, 2024 at 02:23:39PM +0100, Prabhakar wrote:
-> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > >
-> > > The SD/MMC block on the RZ/V2H(P) ("R9A09G057") SoC is similar to tha=
-t
-> > > of the R-Car Gen3, but it has some differences:
-> > > - HS400 is not supported.
-> > > - It supports the SD_IOVS bit to control the IO voltage level.
-> > > - It supports fixed address mode.
-> > >
-> > > To accommodate these differences, a SoC-specific 'renesas,sdhi-r9a09g=
-057'
-> > > compatible string is added.
-> > >
-> > > A 'vqmmc-regulator' object is introduced to handle the power enable (=
-PWEN)
-> > > and voltage level switching for the SD/MMC.
-> > >
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
+> I confirmed this is a CM3 feature rather than CPU core (Samruai) feature.
 >
-> >
-> > Can we have an example here? I can read DTS snippets better than YAML
-> > code :/ Also wondering about the "regulator-compatible" property but
-> > maybe the example makes the problem clear?
-> >
-> You mean in the commit message or comment section? (I had added below
-> in the cover letter)
->
-> SoC DTSI node:
-> sdhi1: mmc@15c10000 {
->         compatible =3D "renesas,sdhi-r9a09g057";
->         reg =3D <0x0 0x15c10000 0 0x10000>;
->         interrupts =3D <GIC_SPI 737 IRQ_TYPE_LEVEL_HIGH>,
->                         <GIC_SPI 738 IRQ_TYPE_LEVEL_HIGH>;
->         clocks =3D <&cpg CPG_MOD 167>,
->                         <&cpg CPG_MOD 169>,
->                         <&cpg CPG_MOD 168>,
->                         <&cpg CPG_MOD 170>;
->         clock-names =3D "core", "clkh", "cd", "aclk";
->         resets =3D <&cpg 168>;
->         power-domains =3D <&cpg>;
->         status =3D "disabled";
->
->         vqmmc_sdhi1: vqmmc-regulator {
->                 regulator-compatible =3D "vqmmc-r9a09g057-regulator";
->                 regulator-name =3D "sdhi1-vqmmc-regulator";
->                 regulator-min-microvolt =3D <1800000>;
->                 regulator-max-microvolt =3D <3300000>;
->                 status =3D "disabled";
->         };
-> };
->
-> Board DTS:
-> &sdhi1 {
->         pinctrl-0 =3D <&sdhi1_pins>;
->         pinctrl-1 =3D <&sdhi1_pins>;
->         pinctrl-names =3D "default", "state_uhs";
->         vmmc-supply =3D <&reg_3p3v>;
->         vqmmc-supply =3D <&vqmmc_sdhi1>;
->         bus-width =3D <4>;
->         sd-uhs-sdr50;
->         sd-uhs-sdr104;
->         status =3D "okay";
-> };
->
-> &vqmmc_sdhi1 {
->      status =3D "okay";
-> };
->
-> Based on feedback from Conor, we cannot use the regulator-compatible
-> property. This would require us to implement separate drivers (one for
-> VMMC and another for VQMMC), which I believe would necessitate the use
-> of regmap. Currently, this seems unnecessary for controlling the two
-> bits as a regulator. As Geert previously pointed out, the PWEN and
-> IOVS pins can always be multiplexed as GPIOs on the RZ/V2H SoC (as is
-> done on R-Car devices). Therefore, I am inclined to drop the internal
-> regulator support for now.
->
-> Let me know your thoughts.
->
-Gentle ping.
+> Please use CM version to select register region.
 
-Cheers,
-Prabhakar
+
+
+> (And perhaps Cc stable for this patch?)
+
+Actually, from my experience, the "Fixes:" tag is enough. The stable
+teams (and their bots) extensively backport patches from the Linus tree.
+
+Gregory
 
