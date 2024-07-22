@@ -1,91 +1,152 @@
-Return-Path: <linux-kernel+bounces-258967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA931938F43
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:46:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C7C938F47
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:47:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A19441F21CF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:46:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A2E01C21182
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A061816D31F;
-	Mon, 22 Jul 2024 12:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25D616D31F;
+	Mon, 22 Jul 2024 12:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PN0fc4on"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lbenSxit"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5AC16A399;
-	Mon, 22 Jul 2024 12:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5081116CD1B
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 12:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721652381; cv=none; b=RbFOApaBZWfsv1Aa68HeeO8+Y+kz7ZET0cgmDt/GV+vZ+Df6QTLKlB19y+KjLjZGteZ9kZYfe9ptVp5aPXtgu7SHi5Bbe3QqeO1uRLfjwkiQrNrhPVSvYnsUjE6N4rDrtawIbt2QIRer3+DRZgLZhsFZhHR1mTUexy68YSvo5io=
+	t=1721652406; cv=none; b=FQLntFEol2TweDFT7gY3tXVFMA0TYG6HeUa4KTqPlR/ZkZhd0E5mGGQEiqskyWFFKiOSlaxKZzvLJA0B+sJqQXFCfHakpoKa012OnGTUzjB0Sb1Rxq+XR8J+Q4OV1waZ6X0FIo2TYhwVrjklQDBOVyKaGIb6oG28s3g5N/Je0gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721652381; c=relaxed/simple;
-	bh=1HKmNtpBLaJ/1itDqyN89g/bbmGsW4YT3x22U21KFmo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=crxntCwhGE4bm7Xsa0LuDJueVQMswsd3Ch7ra5arQV5wbVzcLjajtDvxQ1Qd0wgZuF/Hr47Cwr1rh4hxe4ygy1sTINu3iM92DJspbsb1CqlSLvn/yH5C31syjWM9AQY2GvC9hrwgbfp731oULZIyOxemZdH9kqmECt9v3tPe2oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PN0fc4on; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88FF7C116B1;
-	Mon, 22 Jul 2024 12:46:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721652379;
-	bh=1HKmNtpBLaJ/1itDqyN89g/bbmGsW4YT3x22U21KFmo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PN0fc4onvI2E9OF63pGR4CC2W3tUn1cshDFhjN0l95Ijb0ETIPFwiQZU31ALXP/dn
-	 jgb8La5ToaIwdgMsO959lbUc/ssc91OOIyWZYslnvoJw5Om5lKt3jRFBp2woOipX9l
-	 Bax2LD7fYLZiIHGyxHgJ3uu0Due+T0kpSLomFO4OgtElSUXVafW4jU9f9ry4dJSyML
-	 7F2r00YjzP2Xz60klbPFcLgt1wRZBPrxU7wCnqRbSiZ3tECx02JH2XTlic02C3i+hH
-	 RDtmd36sqLtV8touE722DXW6yVWIb7J1JepEk4YBm+anOC/M6xDqxi5m9wvdttqcNg
-	 C2wplJ6bk4TOQ==
-Date: Mon, 22 Jul 2024 08:46:18 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Agathe Boutmy <agathe@boutmy.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>, matan@svgalib.org,
-	platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 5.4 08/11] platform/x86: lg-laptop: Remove
- LGEX0815 hotkey handling
-Message-ID: <Zp5Umno8LyWoP03J@sashalap>
-References: <20240709162654.33343-1-sashal@kernel.org>
- <20240709162654.33343-8-sashal@kernel.org>
- <4d5e5d39-d53c-4650-8729-01cf0bf478c6@gmx.de>
+	s=arc-20240116; t=1721652406; c=relaxed/simple;
+	bh=YDEFunlU9thkcObyTwq65bMlk/9oqWEFq6tLdp+finQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MxYdQ6CfdtGtsUUVfyUBYBYYj++I/bVl/OIlT5PMc5+g6lY4cmxIR5QuTWRc/G/rl87LbZRQBVh9MC5TrTSUqg9yK0gAAGiGAHziXrX4sNhj88E3gREc2UtCgPHdWM7qdgox4gSsjuuoF+3Pg7dR2AF+EL41sLeQe7HGT2RFQ7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lbenSxit; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52efd530a4eso2555327e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 05:46:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721652402; x=1722257202; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=fUUAspRsviG+LuFsEgaORaM+7vdly2/qnP2s6lDpnhY=;
+        b=lbenSxitRVQE0GBT3p5d6nhN3JLlYIRTW8owtcojwqCylfsWYarmq0Uf5z8D7Q0hjt
+         s+BGfEvvxM1CNu9+Co605v5INfvJGCnbV+SXAb83QbK3q/4CORL6tb4hcF3WJLxGyKNi
+         +Ohtw9VgaiqJjcfkyyI3XzuwuIGud4uzcxIn3jAi4uh1FILmqLTRBN7DA3JMzwcTmdJj
+         zfRxZUdLV3+6IGiMrBkGJMHjldi4Ylv8kJA7vIvGGK7of1mFOYjhe9guSV4GfvHOGklI
+         HSHADe5oGuQYojNQTnpcXk9aZpNItwyl9fh1G2H+c7J780w/I78BXHeQrz3qTWVDouaY
+         nZsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721652402; x=1722257202;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fUUAspRsviG+LuFsEgaORaM+7vdly2/qnP2s6lDpnhY=;
+        b=W+kPQ4ZhAy0Rc7jWkEHX2rL4dLC+CwHMGNhfGd5wkKSKpeLFbahVrjUddLVhLCldYR
+         CJOmP+30XEOWZsk70Hm1CoZCtqO8zQV5mY0fskWTbx8yIEbnVN+3LLv02WDZdygJQmeY
+         kSBpmaaW+TIQGdjQ+a6WEv7Bh4JDOEAT1ZI/KIl2svP+Xqpjg1cuK8CWuTaT7jHWJH0R
+         gXzKGoqnHdHXiuT9CUJnkgcijZj4KlAQztK5j1qedryVEiU7ngOF4qbDNL65i1CEXB9K
+         5WUXJ9xIgmke1O7/mtjvJEFU5tL+vr65ymkedbXtKv2JNSrJUbmHr3h007iJzkhbjKmx
+         ku7g==
+X-Forwarded-Encrypted: i=1; AJvYcCU5SEjzFDBLdIc/37HP84ROaCWoY1d04WQC71uZxz0zQR5AJB7eW+FUN63BnigwhnxT43NsTSNGXz0wIit5svwidL1qBGmdEYjBf6dw
+X-Gm-Message-State: AOJu0Yz/WIgcXzNJKEcPrPXJecz0+z1AUCoeaPnPTEy+wMGfotfywl7m
+	DwvJShvL/D1CCqgRp4mx6kPS5uzA5Jj0c9qa1YCkSkwMUJH+dP2XcfxSf/kgmh8=
+X-Google-Smtp-Source: AGHT+IG3iR/7RXekZil9nrQHJGjiqJZmiVZR/YKkT7Xt75WedmMbkPBDEpzugmog0/Rjlz1FWCoK4A==
+X-Received: by 2002:a05:6512:ad1:b0:52f:c148:f5e4 with SMTP id 2adb3069b0e04-52fc148f777mr944358e87.21.1721652402086;
+        Mon, 22 Jul 2024 05:46:42 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c94edb4sm418888966b.196.2024.07.22.05.46.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jul 2024 05:46:41 -0700 (PDT)
+Message-ID: <c52b7bf6-734b-49fd-96e3-e4cde406f4e0@linaro.org>
+Date: Mon, 22 Jul 2024 14:46:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <4d5e5d39-d53c-4650-8729-01cf0bf478c6@gmx.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] HID for 6.11
+To: Benjamin Tissoires <bentiss@kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jiri Kosina <jikos@kernel.org>, linux-kernel@vger.kernel.org,
+ Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>
+References: <uirri5bsktq5pk2tu4gs2u22qimjcn7hi66ek6gbj65qyczfex@yjy4brkoixfv>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <uirri5bsktq5pk2tu4gs2u22qimjcn7hi66ek6gbj65qyczfex@yjy4brkoixfv>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 09, 2024 at 06:35:36PM +0200, Armin Wolf wrote:
->Am 09.07.24 um 18:26 schrieb Sasha Levin:
->
->>From: Armin Wolf <W_Armin@gmx.de>
->>
->>[ Upstream commit 413c204595ca98a4f33414a948c18d7314087342 ]
->>
->>The rfkill hotkey handling is already provided by the wireless-hotkey
->>driver. Remove the now unnecessary rfkill hotkey handling to avoid
->>duplicating functionality.
->>
->>The ACPI notify handler still prints debugging information when
->>receiving ACPI notifications to aid in reverse-engineering.
->
->Hi,
->
->this depends on other patches not in kernel 5.4, please do not use this
->patch for kernel 5.4.
 
-Ack, I'll drop the two patches you've pointed out.
 
--- 
-Thanks,
-Sasha
+On 16.07.2024 3:34 PM, Benjamin Tissoires wrote:
+> Linus,
+> 
+> please pull from
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/for-linus-2024071601
+> 
+> to receive HID subsystem updates for 6.11 merge window. Highlights:
+> 
+
+[...]
+
+>       HID: bpf: Add support for the XP-PEN Deco Mini 4
+>       HID: bpf: Add Huion Dial 2 bpf fixup
+>       HID: bpf: Thrustmaster TCA Yoke Boeing joystick fix
+>       HID: fix for amples in for-6.11/bpf
+
+Hi,
+
+this commit broke b4 for everyone starting next-20240719, as it's
+an empty cover letter with b4 tracking information
+
+Konrad
 
