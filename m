@@ -1,351 +1,178 @@
-Return-Path: <linux-kernel+bounces-258407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03BC1938795
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:57:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD3D9938797
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:59:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ABACB20E24
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 02:57:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A6B81C20C7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 02:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A2DEAF1;
-	Mon, 22 Jul 2024 02:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="KZfG3q3O"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7888E134B2;
+	Mon, 22 Jul 2024 02:59:28 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146154437
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 02:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6A2EAF1
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 02:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721617042; cv=none; b=Oj/iLc4JdkInswCU9aKo/g0LhpzvEtc8hLDHgug9YH6ebziBqgfEUshDXkhRcwCai6qlBwkjUScSU+5/a6ddFhadDH8aNDlwhD7lDKcxoMI+lVjpYRvqaEpDzyYN0Rq98y0RQyi8wzgGtOkxD4Fd8jbKE0XVrDydFdFN5EelQSY=
+	t=1721617167; cv=none; b=bCZJ7w/ZCrvIqW07ttnCcHrJNI2YP6y9zZOapqmTBklu935heP9YLvYqKPNp2cLXTkyuv5jxzVuXxlc/lzK4qKS3mliIn58a+Nk3/stinODvLxs2OygvUx4GjPXuM43ivYsQhjgMZQIHgj0a+d8vS0PgvRMV5HwvfUJGqPbAHnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721617042; c=relaxed/simple;
-	bh=HAkfLC+PKGm47dgQq9Zjaj+GMiGX0zsGCPVR4ql0G00=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eZISwx+G1g8Y2Sc0MwIKsFB9D/J8sru0ZsJPrgJPaLyauCsOuq+UKEB8X0SHrDx79ooE/86LqhJqsWP2W12/6qBS3UYu3TE73QNcxTixRwOjkis7M5e9UgGy2UeUF2TwOLfe5wn8zzPGQ31E8zU2Ps9Uwf+6KHB35rNxfdz+4Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=KZfG3q3O; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-25d6dd59170so1814545fac.0
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 19:57:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1721617040; x=1722221840; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uF269dLG3DSvHPzvfk1TfdfasopOhhcCZ5ZSpqY2pxk=;
-        b=KZfG3q3O292e6PlbGZoiO4j9yUKGgYh5pVkSQCFley96IRJutezPHwetjVQDuSjNgj
-         i6XB+rUp1YfrRcBd6De/1xPgEFP6qNYmfuGhHo9gHeOwZRt881DUTG28TksAZRchzyjZ
-         3epleYwyQIFSBvsJY8LloR/HGcThNVl/PY5dFLlqaOjCpsz8wH1XroSjZC+VRWcK1PeA
-         6YNisqNpPfvOA00gnzmRe4CDqPN1beQ+YN82EHLDDuMLrWeWJ6ZQVyF7InFfbYrUt6pW
-         SkjRFJ5uR5wc+aquYQbBKATUENhRNEfg2E49JntssbwUOqyJB8S8s4O0GclIpz1dzKad
-         Nvaw==
+	s=arc-20240116; t=1721617167; c=relaxed/simple;
+	bh=fnNvtVYu9841oAbcEi/wwNmNti+GwXT0AiQPzlkRTYs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=hq7JFw0kQaG4JApqnpy7i7yETHekeGMfxtpzMNjc/0qfWoE1twyelxTqdUqXNxQyeUBhYaC1xquet5WOeDWncT3ntFckerxymDfokhbiaZkXfgIwWeGpYPp4FoXtEUnRZ+633AdCkc2wsFctUVYwS8C5duR5psqInFg5TnzBPgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-397a7f98808so54245385ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 19:59:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721617040; x=1722221840;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uF269dLG3DSvHPzvfk1TfdfasopOhhcCZ5ZSpqY2pxk=;
-        b=KRgJgeP9J5uK9przi33cXCFaa2cB0ZYje49sY3w7D9qZUtBRu2MfUl2sTf21Ij0kH6
-         7dF+iVSRj7mwVUaqqBc2aGHjS48LQW148BUIBiM5jKG0mHcLYCAH4lAILzSItOtGS5+U
-         TVYBTCrBo0c0z1LhavHlbzmmFH+mfL8bcp3gKhZfZTZ7NZ9Yj4Bjku8S7/P1DB9eEIHp
-         mWteLa4l0Jh5pq6bURyq0o1uWcCv2CeEahmdsXWIgSfwPxupUgxmqrZImZE3Tn1r+NBk
-         3RAF6xYStDYIR7VUgCUqhgOrwS0NoUTjyrYfhtn+ZiuhBNd4K2/45YhgDoSy+/z71ncG
-         CnwA==
-X-Forwarded-Encrypted: i=1; AJvYcCXCn9mS2JOzEKvARKqbT0udbofmX5ESnLYx2qc93LSBrXWpqwn1aJQ7u1+QnzE8hAssMaE0c/r4/Fk8aafSeHJ5FkOuG9zQjfE1W8qj
-X-Gm-Message-State: AOJu0YwgNc774U45Z0tzEisCa09ml7lfAAiYYKaKheat/Ge2WcIWVl+e
-	KAwZ2hO5BXrnOEyMQFxcWcHGVBzjnq1z3yBjpUJvBzSEWI8n6jdrdEWKbAzHiNqO8EMJ9Xab4hU
-	g6fRj2KviaqQpLhNvNYR3TbOkde1qxbt8qTu/mg==
-X-Google-Smtp-Source: AGHT+IExbEwOpVKYYta/J7YcIPxDB0N39rpcLEauff4Y27dV6diop2XxerWxFW2cUQMmrYKu70b0eX/q5e1l47vnZ+I=
-X-Received: by 2002:a05:6870:b487:b0:260:8f6d:f01f with SMTP id
- 586e51a60fabf-263ab6513cfmr2716697fac.39.1721617039859; Sun, 21 Jul 2024
- 19:57:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721617165; x=1722221965;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ueGLKV6NVXnEKdgpkNR/ZMhR7GBDaHk0gOzZZ/egVIE=;
+        b=g2Tw1iuoKDp1J/1cKIM+v28yAgKmJYvT5UCi9+NwyrWXvx67HaRqDkO6wRk/E9uPDQ
+         0oRRON0rrICZYvAOkm7OeCWDJ3EXReSterPXj3P7h9LLEDrvy0kfcN8R36/SWtMmkH4c
+         2Muco6lqMS/RDHzVy+6V18h6soCq1+JhNsdYg1PjxkCFOFkp4Nte7kGD+hmQrAPRY0+J
+         vaqitXVj2vijeAWzLl/dGLvsG0IBXjWpFq9CS6utdVD6ER94DGgNV3O2DgVNIfHolawN
+         F6AIwV0mITw1J4y8aohUqnIjtdvuYY4C1bGZQpM8ksLu7XnDdDikSAc0P5PDJWvM10/U
+         uUFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWKoGFOg27FuTNSOkzNDb8E9RM4m9le+ajlubwpwJRaSYnIo06x1X3FUS+ab4/RgH0JJuMV52v4CPVUmTux4rTukQ/SevJMFe8kfI1v
+X-Gm-Message-State: AOJu0YyyQqvVWIR6sEiY5Omp+X6VinKjPFa2j0xt761JpYj+7WhZtjyi
+	3R4AmD1nGW4TKA+7sKgh2zXnu2easCwe07y764Y6Aa42X0h//mw36Qnqos4pvbPWEWMTi7byGta
+	s7mZiE9nNfVR9uR5gidANpbWVIlHQyDzRJSYR9WgE37xBfxbQeg8b0EI=
+X-Google-Smtp-Source: AGHT+IHeFkYVH1icTw/weReGKosNPDp83s0pfcZnWgjIjnJ2FUyfH9iLDVqbjYO62KllVjvyBPNROSRqnhxQ3UlNtz45YuOnA16M
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717060125.139416-1-alexghiti@rivosinc.com> <20240717060125.139416-4-alexghiti@rivosinc.com>
-In-Reply-To: <20240717060125.139416-4-alexghiti@rivosinc.com>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Mon, 22 Jul 2024 10:57:08 +0800
-Message-ID: <CAEEQ3wnwAzpRVDJWhG1pKXZQYpgJhivUSHM5qPpU-mCbGDh9jw@mail.gmail.com>
-Subject: Re: [External] [PATCH v4 3/4] riscv: Stop emitting preventive
- sfence.vma for new vmalloc mappings
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Ved Shanbhogue <ved@rivosinc.com>, Matt Evans <mev@rivosinc.com>, Anup Patel <anup@brainfault.org>, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org
+X-Received: by 2002:a05:6e02:219c:b0:397:3e38:eb30 with SMTP id
+ e9e14a558f8ab-398e6d8925dmr4712165ab.3.1721617165354; Sun, 21 Jul 2024
+ 19:59:25 -0700 (PDT)
+Date: Sun, 21 Jul 2024 19:59:25 -0700
+In-Reply-To: <0000000000009d1d0a061d91b803@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000949a14061dcd3b05@google.com>
+Subject: Re: [syzbot] [bpf?] [net?] general protection fault in __dev_flush
+From: syzbot <syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com, 
+	haoluo@google.com, hawk@kernel.org, john.fastabend@gmail.com, 
+	jolsa@kernel.org, kpsingh@kernel.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
+	sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com, 
+	yonghong.song@linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Alex,
+syzbot has found a reproducer for the following issue on:
 
-On Wed, Jul 17, 2024 at 2:04=E2=80=AFPM Alexandre Ghiti <alexghiti@rivosinc=
-.com> wrote:
->
-> In 6.5, we removed the vmalloc fault path because that can't work (see
-> [1] [2]). Then in order to make sure that new page table entries were
-> seen by the page table walker, we had to preventively emit a sfence.vma
-> on all harts [3] but this solution is very costly since it relies on IPI.
->
-> And even there, we could end up in a loop of vmalloc faults if a vmalloc
-> allocation is done in the IPI path (for example if it is traced, see
-> [4]), which could result in a kernel stack overflow.
->
-> Those preventive sfence.vma needed to be emitted because:
->
-> - if the uarch caches invalid entries, the new mapping may not be
->   observed by the page table walker and an invalidation may be needed.
-> - if the uarch does not cache invalid entries, a reordered access
->   could "miss" the new mapping and traps: in that case, we would actually
->   only need to retry the access, no sfence.vma is required.
->
-> So this patch removes those preventive sfence.vma and actually handles
-> the possible (and unlikely) exceptions. And since the kernel stacks
-> mappings lie in the vmalloc area, this handling must be done very early
-> when the trap is taken, at the very beginning of handle_exception: this
-> also rules out the vmalloc allocations in the fault path.
->
-> Link: https://lore.kernel.org/linux-riscv/20230531093817.665799-1-bjorn@k=
-ernel.org/ [1]
-> Link: https://lore.kernel.org/linux-riscv/20230801090927.2018653-1-dylan@=
-andestech.com [2]
-> Link: https://lore.kernel.org/linux-riscv/20230725132246.817726-1-alexghi=
-ti@rivosinc.com/ [3]
-> Link: https://lore.kernel.org/lkml/20200508144043.13893-1-joro@8bytes.org=
-/ [4]
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> ---
->  arch/riscv/include/asm/cacheflush.h  | 18 +++++-
->  arch/riscv/include/asm/thread_info.h |  7 +++
->  arch/riscv/kernel/asm-offsets.c      |  7 +++
->  arch/riscv/kernel/entry.S            | 87 ++++++++++++++++++++++++++++
->  arch/riscv/mm/init.c                 |  2 +
->  5 files changed, 120 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/include/asm/cacheflush.h b/arch/riscv/include/asm=
-/cacheflush.h
-> index ce79c558a4c8..8de73f91bfa3 100644
-> --- a/arch/riscv/include/asm/cacheflush.h
-> +++ b/arch/riscv/include/asm/cacheflush.h
-> @@ -46,7 +46,23 @@ do {                                                 \
->  } while (0)
->
->  #ifdef CONFIG_64BIT
-> -#define flush_cache_vmap(start, end)           flush_tlb_kernel_range(st=
-art, end)
-> +extern u64 new_vmalloc[NR_CPUS / sizeof(u64) + 1];
-> +extern char _end[];
-> +#define flush_cache_vmap flush_cache_vmap
-> +static inline void flush_cache_vmap(unsigned long start, unsigned long e=
-nd)
-> +{
-> +       if (is_vmalloc_or_module_addr((void *)start)) {
-> +               int i;
-> +
-> +               /*
-> +                * We don't care if concurrently a cpu resets this value =
-since
-> +                * the only place this can happen is in handle_exception(=
-) where
-> +                * an sfence.vma is emitted.
-> +                */
-> +               for (i =3D 0; i < ARRAY_SIZE(new_vmalloc); ++i)
-> +                       new_vmalloc[i] =3D -1ULL;
-> +       }
-> +}
->  #define flush_cache_vmap_early(start, end)     local_flush_tlb_kernel_ra=
-nge(start, end)
->  #endif
->
-> diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/as=
-m/thread_info.h
-> index 5d473343634b..0ddf1123b5ba 100644
-> --- a/arch/riscv/include/asm/thread_info.h
-> +++ b/arch/riscv/include/asm/thread_info.h
-> @@ -60,6 +60,13 @@ struct thread_info {
->         void                    *scs_base;
->         void                    *scs_sp;
->  #endif
-> +#ifdef CONFIG_64BIT
-> +       /*
-> +        * Used in handle_exception() to save a0, a1 and a2 before knowin=
-g if we
-> +        * can access the kernel stack.
-> +        */
-> +       unsigned long           a0, a1, a2;
-> +#endif
->  };
->
->  #ifdef CONFIG_SHADOW_CALL_STACK
-> diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offs=
-ets.c
-> index b09ca5f944f7..e94180ba432f 100644
-> --- a/arch/riscv/kernel/asm-offsets.c
-> +++ b/arch/riscv/kernel/asm-offsets.c
-> @@ -36,6 +36,8 @@ void asm_offsets(void)
->         OFFSET(TASK_THREAD_S9, task_struct, thread.s[9]);
->         OFFSET(TASK_THREAD_S10, task_struct, thread.s[10]);
->         OFFSET(TASK_THREAD_S11, task_struct, thread.s[11]);
-> +
-> +       OFFSET(TASK_TI_CPU, task_struct, thread_info.cpu);
->         OFFSET(TASK_TI_FLAGS, task_struct, thread_info.flags);
->         OFFSET(TASK_TI_PREEMPT_COUNT, task_struct, thread_info.preempt_co=
-unt);
->         OFFSET(TASK_TI_KERNEL_SP, task_struct, thread_info.kernel_sp);
-> @@ -43,6 +45,11 @@ void asm_offsets(void)
->  #ifdef CONFIG_SHADOW_CALL_STACK
->         OFFSET(TASK_TI_SCS_SP, task_struct, thread_info.scs_sp);
->  #endif
-> +#ifdef CONFIG_64BIT
-> +       OFFSET(TASK_TI_A0, task_struct, thread_info.a0);
-> +       OFFSET(TASK_TI_A1, task_struct, thread_info.a1);
-> +       OFFSET(TASK_TI_A2, task_struct, thread_info.a2);
-> +#endif
->
->         OFFSET(TASK_TI_CPU_NUM, task_struct, thread_info.cpu);
->         OFFSET(TASK_THREAD_F0,  task_struct, thread.fstate.f[0]);
-> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-> index 68a24cf9481a..d80b90f99bc1 100644
-> --- a/arch/riscv/kernel/entry.S
-> +++ b/arch/riscv/kernel/entry.S
-> @@ -19,6 +19,79 @@
->
->         .section .irqentry.text, "ax"
->
-> +.macro new_vmalloc_check
-> +       REG_S   a0, TASK_TI_A0(tp)
-> +       csrr    a0, CSR_CAUSE
-> +       /* Exclude IRQs */
-> +       blt     a0, zero, _new_vmalloc_restore_context_a0
-> +
-> +       REG_S   a1, TASK_TI_A1(tp)
-> +       /* Only check new_vmalloc if we are in page/protection fault */
-> +       li      a1, EXC_LOAD_PAGE_FAULT
-> +       beq     a0, a1, _new_vmalloc_kernel_address
-> +       li      a1, EXC_STORE_PAGE_FAULT
-> +       beq     a0, a1, _new_vmalloc_kernel_address
-> +       li      a1, EXC_INST_PAGE_FAULT
-> +       bne     a0, a1, _new_vmalloc_restore_context_a1
-> +
-> +_new_vmalloc_kernel_address:
-> +       /* Is it a kernel address? */
-> +       csrr    a0, CSR_TVAL
-> +       bge     a0, zero, _new_vmalloc_restore_context_a1
-> +
-> +       /* Check if a new vmalloc mapping appeared that could explain the=
- trap */
-> +       REG_S   a2, TASK_TI_A2(tp)
-> +       /*
-> +        * Computes:
-> +        * a0 =3D &new_vmalloc[BIT_WORD(cpu)]
-> +        * a1 =3D BIT_MASK(cpu)
-> +        */
-> +       REG_L   a2, TASK_TI_CPU(tp)
-> +       /*
-> +        * Compute the new_vmalloc element position:
-> +        * (cpu / 64) * 8 =3D (cpu >> 6) << 3
-> +        */
-> +       srli    a1, a2, 6
-> +       slli    a1, a1, 3
-> +       la      a0, new_vmalloc
-> +       add     a0, a0, a1
-> +       /*
-> +        * Compute the bit position in the new_vmalloc element:
-> +        * bit_pos =3D cpu % 64 =3D cpu - (cpu / 64) * 64 =3D cpu - (cpu =
->> 6) << 6
-> +        *         =3D cpu - ((cpu >> 6) << 3) << 3
-> +        */
-> +       slli    a1, a1, 3
-> +       sub     a1, a2, a1
-> +       /* Compute the "get mask": 1 << bit_pos */
-> +       li      a2, 1
-> +       sll     a1, a2, a1
-> +
-> +       /* Check the value of new_vmalloc for this cpu */
-> +       REG_L   a2, 0(a0)
-> +       and     a2, a2, a1
-> +       beq     a2, zero, _new_vmalloc_restore_context
-> +
-> +       /* Atomically reset the current cpu bit in new_vmalloc */
-> +       amoxor.d        a0, a1, (a0)
-> +
-> +       /* Only emit a sfence.vma if the uarch caches invalid entries */
-> +       ALTERNATIVE("sfence.vma", "nop", 0, RISCV_ISA_EXT_SVVPTC, 1)
-> +
-> +       REG_L   a0, TASK_TI_A0(tp)
-> +       REG_L   a1, TASK_TI_A1(tp)
-> +       REG_L   a2, TASK_TI_A2(tp)
-> +       csrw    CSR_SCRATCH, x0
-> +       sret
-> +
-> +_new_vmalloc_restore_context:
-> +       REG_L   a2, TASK_TI_A2(tp)
-> +_new_vmalloc_restore_context_a1:
-> +       REG_L   a1, TASK_TI_A1(tp)
-> +_new_vmalloc_restore_context_a0:
-> +       REG_L   a0, TASK_TI_A0(tp)
-> +.endm
-> +
-> +
->  SYM_CODE_START(handle_exception)
->         /*
->          * If coming from userspace, preserve the user thread pointer and=
- load
-> @@ -30,6 +103,20 @@ SYM_CODE_START(handle_exception)
->
->  .Lrestore_kernel_tpsp:
->         csrr tp, CSR_SCRATCH
-> +
-> +#ifdef CONFIG_64BIT
-> +       /*
-> +        * The RISC-V kernel does not eagerly emit a sfence.vma after eac=
-h
-> +        * new vmalloc mapping, which may result in exceptions:
-> +        * - if the uarch caches invalid entries, the new mapping would n=
-ot be
-> +        *   observed by the page table walker and an invalidation is nee=
-ded.
-> +        * - if the uarch does not cache invalid entries, a reordered acc=
-ess
-> +        *   could "miss" the new mapping and traps: in that case, we onl=
-y need
-> +        *   to retry the access, no sfence.vma is required.
-> +        */
-> +       new_vmalloc_check
-> +#endif
-> +
->         REG_S sp, TASK_TI_KERNEL_SP(tp)
->
->  #ifdef CONFIG_VMAP_STACK
-> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> index e3405e4b99af..2367a156c33b 100644
-> --- a/arch/riscv/mm/init.c
-> +++ b/arch/riscv/mm/init.c
-> @@ -36,6 +36,8 @@
->
->  #include "../kernel/head.h"
->
-> +u64 new_vmalloc[NR_CPUS / sizeof(u64) + 1];
-> +
->  struct kernel_mapping kernel_map __ro_after_init;
->  EXPORT_SYMBOL(kernel_map);
->  #ifdef CONFIG_XIP_KERNEL
-> --
-> 2.39.2
->
+HEAD commit:    7846b618e0a4 Merge tag 'rtc-6.11' of git://git.kernel.org/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=142d3eb5980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=be4129de17851dbe
+dashboard link: https://syzkaller.appspot.com/bug?extid=44623300f057a28baf1e
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=154c40b1980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14f3e11d980000
 
-Reviewed-by: Yunhui Cui <cuiyunhui@bytedance.com>
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-7846b618.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3a2831ffe61c/vmlinux-7846b618.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/575e23a7c452/bzImage-7846b618.xz
 
-Thanks,
-Yunhui
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 1 PID: 5389 Comm: syz-executor357 Not tainted 6.10.0-syzkaller-11323-g7846b618e0a4 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__dev_flush+0x49/0x1e0 kernel/bpf/devmap.c:424
+Code: 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 98 01 00 00 48 b8 00 00 00 00 00 fc ff df 49 8b 2f 48 8d 5d 80 48 89 ea 48 c1 ea 03 <80> 3c 02 00 0f 85 69 01 00 00 48 8b 45 00 49 39 ef 4c 8d 60 80 0f
+RSP: 0018:ffffc900008b0c90 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: ffffffffffffff80 RCX: ffffffff88d6a5bb
+RDX: 0000000000000000 RSI: ffffffff81af9c56 RDI: ffffc9000345fa68
+RBP: 0000000000000000 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffffc9000345fa58
+R13: ffff888022ec0fb0 R14: ffffc9000345fa68 R15: ffffc9000345fa68
+FS:  0000555568ea6380(0000) GS:ffff88806b100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff4743880f0 CR3: 0000000023168000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ xdp_do_check_flushed+0x40a/0x4e0 net/core/filter.c:4300
+ __napi_poll.constprop.0+0xd1/0x550 net/core/dev.c:6774
+ napi_poll net/core/dev.c:6840 [inline]
+ net_rx_action+0xa92/0x1010 net/core/dev.c:6962
+ handle_softirqs+0x216/0x8f0 kernel/softirq.c:554
+ do_softirq kernel/softirq.c:455 [inline]
+ do_softirq+0xb2/0xf0 kernel/softirq.c:442
+ </IRQ>
+ <TASK>
+ __local_bh_enable_ip+0x100/0x120 kernel/softirq.c:382
+ local_bh_enable include/linux/bottom_half.h:33 [inline]
+ tun_get_user+0x1d9b/0x3c30 drivers/net/tun.c:1936
+ tun_chr_write_iter+0xe8/0x210 drivers/net/tun.c:2052
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0x6b6/0x1140 fs/read_write.c:590
+ ksys_write+0x12f/0x260 fs/read_write.c:643
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff47430af50
+Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 80 3d 51 e1 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
+RSP: 002b:00007ffde0326728 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007ffde03267c0 RCX: 00007ff47430af50
+RDX: 0000000000000e80 RSI: 0000000020000100 RDI: 00000000000000c8
+RBP: 00007ffde0326770 R08: 00007ffde0326750 R09: 00007ffde0326750
+R10: 00007ffde0326750 R11: 0000000000000202 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__dev_flush+0x49/0x1e0 kernel/bpf/devmap.c:424
+Code: 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 98 01 00 00 48 b8 00 00 00 00 00 fc ff df 49 8b 2f 48 8d 5d 80 48 89 ea 48 c1 ea 03 <80> 3c 02 00 0f 85 69 01 00 00 48 8b 45 00 49 39 ef 4c 8d 60 80 0f
+RSP: 0018:ffffc900008b0c90 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: ffffffffffffff80 RCX: ffffffff88d6a5bb
+RDX: 0000000000000000 RSI: ffffffff81af9c56 RDI: ffffc9000345fa68
+RBP: 0000000000000000 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffffc9000345fa58
+R13: ffff888022ec0fb0 R14: ffffc9000345fa68 R15: ffffc9000345fa68
+FS:  0000555568ea6380(0000) GS:ffff88806b100000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff4743880f0 CR3: 0000000023168000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess), 4 bytes skipped:
+   0:	48 c1 ea 03          	shr    $0x3,%rdx
+   4:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
+   8:	0f 85 98 01 00 00    	jne    0x1a6
+   e:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  15:	fc ff df
+  18:	49 8b 2f             	mov    (%r15),%rbp
+  1b:	48 8d 5d 80          	lea    -0x80(%rbp),%rbx
+  1f:	48 89 ea             	mov    %rbp,%rdx
+  22:	48 c1 ea 03          	shr    $0x3,%rdx
+* 26:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
+  2a:	0f 85 69 01 00 00    	jne    0x199
+  30:	48 8b 45 00          	mov    0x0(%rbp),%rax
+  34:	49 39 ef             	cmp    %rbp,%r15
+  37:	4c 8d 60 80          	lea    -0x80(%rax),%r12
+  3b:	0f                   	.byte 0xf
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
