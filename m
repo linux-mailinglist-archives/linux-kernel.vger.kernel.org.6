@@ -1,146 +1,104 @@
-Return-Path: <linux-kernel+bounces-259078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECD5F9390EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:48:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C80D9390F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:49:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E03391C214E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:48:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 778751C21103
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5811016DC1F;
-	Mon, 22 Jul 2024 14:48:34 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D324D16B74D;
-	Mon, 22 Jul 2024 14:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A7716DEC2;
+	Mon, 22 Jul 2024 14:48:48 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4C116DEB2;
+	Mon, 22 Jul 2024 14:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721659713; cv=none; b=nuSNmWOK3JjoczE2Q8UJi6SAvFL6mcJYbFanP3ePWq7qFM95pQyn4feDUrpoTMieBd1BecMSsCrvwLIr6j0Shs71B5yp89llqD0RLfJ44EuTLljWqvvDvb1kZ0cP+iNZ6e+MpHsNBPapNDric0aAivA9ZDjvdE7K70cIHiqHN5g=
+	t=1721659727; cv=none; b=CzB86MMS0xTCnkI8b82HG342wFSpr99qkqjVpG/m1fvtiebt/UZhxIkY0Jua1j9553Xo7q/vr3Cq9VeARJAUrbwV1oOYJ1ofzYvgVIAmc4OI+lKVp5lF18oj3K0NnB368uZWjRRPg3vNrw2BKvBPI3C2Oo/Z1GZBGM2KBofq7iU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721659713; c=relaxed/simple;
-	bh=cuzDDnA3GBV7pB5L/CiGYs8DablqcIWcQ3YQbmqoty0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pK1xQscqyWJl3VI3DkKq4JXosTwD3Y6dGceqBUKwMgZcrkoaiQsDeNhu/g4zENEvdcYhwUimUa3TLmMRIlVOMYqzty5felWo5nSj3mEh3s+TvaL7g0B42anhKGDQ4Wt96aYybKhxiusVRZlspFEKVTtydedifX5sUgS0hkVUzAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0280C116B1;
-	Mon, 22 Jul 2024 14:48:30 +0000 (UTC)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev,
-	linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Guo Ren <guoren@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [GIT PULL] LoongArch changes for v6.11
-Date: Mon, 22 Jul 2024 22:48:22 +0800
-Message-ID: <20240722144822.4040791-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1721659727; c=relaxed/simple;
+	bh=atDlABSs8TWqozIAX0lOgTXANYKDnBCRPkaJ2w/TPTE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=JeZYL3j5VSscX8rO9CxdB6hk1AH6dY2AIvrjJRjLqmLbxFJQIFcuP3XTvg39cmiWAo0kWxbBrF3ZozCPXlNo84rhgztpZsnRlINh2sxXOA1twu850/oI93zLOG0LFI1q987qUFiSsu3UTa3m2Hbv+Myqv+spH7R/ffThAd4T54Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C767DFEC;
+	Mon, 22 Jul 2024 07:49:07 -0700 (PDT)
+Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4196D3F73F;
+	Mon, 22 Jul 2024 07:48:40 -0700 (PDT)
+Message-ID: <8df1a663-1720-4ee6-9097-b0d6e05beb0e@arm.com>
+Date: Mon, 22 Jul 2024 15:48:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/6] perf auxtrace s390: Set the 'auxtrace' flag for
+ AUX events
+To: Adrian Hunter <adrian.hunter@intel.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ James Clark <james.clark@linaro.org>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, John Garry <john.g.garry@oracle.com>,
+ Will Deacon <will@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240721202113.380750-1-leo.yan@arm.com>
+ <20240721202113.380750-4-leo.yan@arm.com>
+ <a9d07994-cf6e-4059-8180-c0b9cd51e528@intel.com>
+Content-Language: en-US
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <a9d07994-cf6e-4059-8180-c0b9cd51e528@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The following changes since commit 0c3836482481200ead7b416ca80c68a29cfdaabd:
 
-  Linux 6.10 (2024-07-14 15:43:32 -0700)
 
-are available in the Git repository at:
+On 7/22/24 11:54, Adrian Hunter wrote:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-6.11
+[...]
 
-for you to fetch changes up to 998b17d4440b8559a8bf4926e86f493101995519:
+> On 21/07/24 23:21, Leo Yan wrote:
+>> Set the 'auxtrace' flag for AUX events on s390.
+>>
+>> Signed-off-by: Leo Yan <leo.yan@arm.com>
+>> ---
+>>   tools/perf/arch/s390/util/auxtrace.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/tools/perf/arch/s390/util/auxtrace.c b/tools/perf/arch/s390/util/auxtrace.c
+>> index 5068baa3e092..d7e72413b262 100644
+>> --- a/tools/perf/arch/s390/util/auxtrace.c
+>> +++ b/tools/perf/arch/s390/util/auxtrace.c
+>> @@ -99,6 +99,7 @@ struct auxtrace_record *auxtrace_record__init(struct evlist *evlist,
+>>                if (pos->core.attr.config == PERF_EVENT_CPUM_SF_DIAG) {
+>>                        diagnose = 1;
+>>                        pos->needs_auxtrace_mmap = true;
+>> +                     pos->pmu->auxtrace = true;
+> 
+> This is probably too late. See:
+> 
+> https://lore.kernel.org/all/20240715160712.127117-7-adrian.hunter@intel.com/
 
-  LoongArch: Make the users of larch_insn_gen_break() constant (2024-07-20 22:41:07 +0800)
+Okay, I will drop this patch.
 
-----------------------------------------------------------------
-LoongArch changes for v6.11
+Thanks,
+Leo
 
-1, Define __ARCH_WANT_NEW_STAT in unistd.h;
-2, Always enumerate MADT and setup logical-physical CPU mapping;
-3, Add irq_work support via self IPIs;
-4, Add RANDOMIZE_KSTACK_OFFSET support;
-5, Add ARCH_HAS_PTE_DEVMAP support;
-6, Add ARCH_HAS_DEBUG_VM_PGTABLE support;
-7, Add writecombine support for DMW-based ioremap();
-8, Add architectural preparation for CPUFreq;
-9, Add ACPI standard hardware register based S3 support;
-10, Add support for relocating the kernel with RELR relocation;
-11, Some bug fixes and other small changes.
 
-----------------------------------------------------------------
-Huacai Chen (10):
-      Merge tag 'asm-generic-6.11' into loongarch-next
-      LoongArch: Define __ARCH_WANT_NEW_STAT in unistd.h
-      LoongArch: Always enumerate MADT and setup logical-physical CPU mapping
-      LoongArch: Add irq_work support via self IPIs
-      LoongArch: Add ARCH_HAS_PTE_DEVMAP support
-      LoongArch: Add ARCH_HAS_DEBUG_VM_PGTABLE support
-      LoongArch: Add writecombine support for DMW-based ioremap()
-      LoongArch: Add architectural preparation for CPUFreq
-      LoongArch: Automatically disable KASLR for hibernation
-      LoongArch: Use correct API to map cmdline in relocate_kernel()
-
-Jiaxun Yang (1):
-      LoongArch: Add ACPI standard hardware register based S3 support
-
-Jinjie Ruan (1):
-      LoongArch: Add RANDOMIZE_KSTACK_OFFSET support
-
-Oleg Nesterov (1):
-      LoongArch: Make the users of larch_insn_gen_break() constant
-
-Tiezhu Yang (1):
-      LoongArch: Check TIF_LOAD_WATCH to enable user space watchpoint
-
-WANG Rui (1):
-      LoongArch: Use rustc option -Zdirect-access-external-data
-
-Xi Ruoyao (2):
-      LoongArch: Remove a redundant checking in relocator
-      LoongArch: Add support for relocating the kernel with RELR relocation
-
- .../debug/debug-vm-pgtable/arch-support.txt        |  2 +-
- arch/loongarch/Kconfig                             |  5 +++
- arch/loongarch/Makefile                            |  3 +-
- arch/loongarch/include/asm/addrspace.h             |  4 ++
- arch/loongarch/include/asm/asmmacro.h              |  1 +
- arch/loongarch/include/asm/hardirq.h               |  3 +-
- arch/loongarch/include/asm/inst.h                  |  3 ++
- arch/loongarch/include/asm/io.h                    | 10 ++++-
- arch/loongarch/include/asm/irq_work.h              | 10 +++++
- arch/loongarch/include/asm/loongarch.h             | 13 +++++-
- arch/loongarch/include/asm/pgtable-bits.h          |  6 ++-
- arch/loongarch/include/asm/pgtable.h               | 19 ++++++++
- arch/loongarch/include/asm/setup.h                 |  5 +++
- arch/loongarch/include/asm/smp.h                   |  2 +
- arch/loongarch/include/asm/stackframe.h            | 11 +++++
- arch/loongarch/include/asm/unistd.h                |  1 +
- arch/loongarch/include/asm/uprobes.h               |  4 +-
- arch/loongarch/kernel/Makefile.syscalls            |  3 +-
- arch/loongarch/kernel/acpi.c                       | 22 ++++++---
- arch/loongarch/kernel/head.S                       | 11 +----
- arch/loongarch/kernel/hw_breakpoint.c              |  2 +-
- arch/loongarch/kernel/kprobes.c                    |  4 +-
- arch/loongarch/kernel/paravirt.c                   |  6 +++
- arch/loongarch/kernel/ptrace.c                     |  3 ++
- arch/loongarch/kernel/relocate.c                   | 52 ++++++++++++++++++++--
- arch/loongarch/kernel/setup.c                      |  4 +-
- arch/loongarch/kernel/smp.c                        | 21 +++++++--
- arch/loongarch/kernel/syscall.c                    | 22 ++++++++-
- arch/loongarch/kernel/vmlinux.lds.S                |  8 ++++
- arch/loongarch/power/platform.c                    | 37 ++++++++++++---
- arch/loongarch/power/suspend_asm.S                 |  8 +---
- drivers/firmware/efi/libstub/loongarch.c           |  2 +
- 32 files changed, 256 insertions(+), 51 deletions(-)
- create mode 100644 arch/loongarch/include/asm/irq_work.h
+> 
+>>                        break;
+>>                }
+>>        }
+> 
 
