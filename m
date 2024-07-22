@@ -1,109 +1,132 @@
-Return-Path: <linux-kernel+bounces-258565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17ECF9389D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:14:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 547949389DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A11E1C2105C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:14:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2319B2170F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63C2629E4;
-	Mon, 22 Jul 2024 07:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BDD0208D1;
+	Mon, 22 Jul 2024 07:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="YFEenxm1"
-Received: from mx0.riseup.net (mx0.riseup.net [198.252.153.6])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="ny7J4Qsc"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA63B5C603;
-	Mon, 22 Jul 2024 07:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A26B18042;
+	Mon, 22 Jul 2024 07:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721632303; cv=none; b=uAk/pZ1wRsPGBJ3E7SVnfWwHYJw4+a/d28PDwoTn1hdICpF33Z1/Omr6CLUq8CR+fe7VMLx+PYH4vsHBrKEPPOJdv15BoSDmSrpdBNG5IlpbPHU8j46aMuCRTi+R8lpGtKIxQNqts7ccCErm/5T/TvbMCI0GpOMbMgkIvwFlzSo=
+	t=1721632439; cv=none; b=epzTBd6+yJSCgB6zPLNyuurL+rtQ2ZGKdNbtskhK385JuY7c+Q5tRN+gCUv65YAMJDtDnuGqZzDhr7XSeV5EIsS9fJKDOTmdt76sUXXk2PbK+jcZf/aKbERjZsSJsD/ypuQWqlS2QVzMcedTTnUVHtFnU3CbjlmaLB6UoDlajgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721632303; c=relaxed/simple;
-	bh=Qp1HPrxtCdVBwj+fKMzHWw50d5Ybm0uUddMCdm6lVq8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rPojWqtY9ApkLyGzZT/C4SiRg7JbF0KyTRIXpn6L2hZ/ryBOUdFQAL+KnNs8crssu5oz7tPdEuGiq/ldNX+pvagmQaL+FU0v44BGRnbDQNWswtXD552F1zdc5zk5crKggdce/o5Dn8MaFuyZ5ugDrDJjQX+Xxi29c4sPwkWZgIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=YFEenxm1; arc=none smtp.client-ip=198.252.153.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
-Received: from fews01-sea.riseup.net (fews01-sea-pn.riseup.net [10.0.1.109])
+	s=arc-20240116; t=1721632439; c=relaxed/simple;
+	bh=iB1QOBqFVvlM/tdGuOs0pX0CIU12BzEFaEcvVN2YBOs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=JrRp3OdGvA/Pcb2KcAQyyUq8nftaUH2T+vL9nmPhz7gAxvZq+N9Tx4Kc+ur3I92aFzP6RTRHeNJUwNjQsmdZQ81ilRdgkhl2FsCYi7ERgl9Eus791Erwoj8k3z4o6YQFiJPMxUpA1FWX/FyzsB1qwM/Glhrvciz/M0GGEJ2rgDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=ny7J4Qsc; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1721632434;
+	bh=6l9oTJbEcWGJwSJxH1MEdCIBrY+RHN7wzT3mRVNamcw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=ny7J4QscA7BWI6vcC412b5mW2ix1Qw4tkN2E38BJ+FhP4qi98iP3whWAw9ij4ef7w
+	 k/HCMmakYVFo14Hr7bFOqI0hGaecjH/iInyXrTgrUqcg60CVvy5reHAeJHPrO6y8aZ
+	 SCgmF8CCVTKQkIqnltNUcacpRqZsXbkXpm1tuGcC/8wADBekoihBEym035Mysdvexx
+	 IVEBwrqucJup4aEHV56YodHDlRiNzzGEvV8ze4Ws9rdKa8bCKeIZQAdZqBONE7e6PB
+	 XuDVU0bNcsOhSjI/j1dVhCJqci91ms8lG+uEY2Pw4Iu6sqQb0auP/MLSlSSsH9wQDc
+	 /G5IuSysaiP5g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx0.riseup.net (Postfix) with ESMTPS id 4WSBKT2Bbbz9v89;
-	Mon, 22 Jul 2024 07:11:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-	t=1721632301; bh=Qp1HPrxtCdVBwj+fKMzHWw50d5Ybm0uUddMCdm6lVq8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=YFEenxm17Qziom9S4BzvhPAUMOfyXqzeZrMI3tNwcJPgNiQsV3if9cXKXrAv4o1wx
-	 +ldkvsnaIsfsocY2tZLUp8AJ6HYhkNyYFj5Gq3Ed/DQdeg5DOIPWIyqTFKiXcWwiVS
-	 5QjaOaMDpYZDfIyPIWFnhVAN5nLwGoPGgJjDg8SE=
-X-Riseup-User-ID: 92DF24B5FB6C06253BDC6747F3C07A91FE2B59A39A253CA2BF8D1637276449BC
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	 by fews01-sea.riseup.net (Postfix) with ESMTPSA id 4WSBKQ3WlVzJmqy;
-	Mon, 22 Jul 2024 07:11:38 +0000 (UTC)
-From: Dang Huynh <danct12@riseup.net>
-Date: Mon, 22 Jul 2024 14:10:22 +0700
-Subject: [PATCH 12/12] arm64: dts: qcom: sm6115-pro1x: Enable ATH10K WLAN
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WSBN070S7z4wxk;
+	Mon, 22 Jul 2024 17:13:52 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Nicholas
+ Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org, Jeff
+ Johnson <quic_jjohnson@quicinc.com>
+Subject: Re: [PATCH] cpufreq: powerpc: add missing MODULE_DESCRIPTION() macros
+In-Reply-To: <20240614-md-powerpc-drivers-cpufreq-v1-1-de4034d87fd2@quicinc.com>
+References: <20240614-md-powerpc-drivers-cpufreq-v1-1-de4034d87fd2@quicinc.com>
+Date: Mon, 22 Jul 2024 17:13:51 +1000
+Message-ID: <87bk2px5jk.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240722-qx1050-feature-expansion-v1-12-c4d486435b96@riseup.net>
-References: <20240722-qx1050-feature-expansion-v1-0-c4d486435b96@riseup.net>
-In-Reply-To: <20240722-qx1050-feature-expansion-v1-0-c4d486435b96@riseup.net>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Dang Huynh <danct12@riseup.net>
+Content-Type: text/plain
 
-Enable onboard Wi-Fi on the F(x)tec Pro1X.
-
-For reference, HW/SW identifies as:
-qmi chip_id 0x120 chip_family 0x4007 board_id 0xff soc_id 0x40670000
-qmi fw_version 0x324103d6 fw_build_timestamp 2021-12-02 08:20
-fw_build_id QC_IMAGE_VERSION_STRING=WLAN.HL.3.2.4-00982-QCAHLSWMTPLZ-1
-
-Signed-off-by: Dang Huynh <danct12@riseup.net>
----
- arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts b/arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts
-index 14d4f533f741..c148ebd1c8b4 100644
---- a/arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts
-+++ b/arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts
-@@ -531,6 +531,17 @@ &usb_qmpphy_out {
- 	remote-endpoint = <&pmi632_ss_in>;
- };
+Jeff Johnson <quic_jjohnson@quicinc.com> writes:
+> With ARCH=powerpc, make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/ppc-cbe-cpufreq.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/powernv-cpufreq.o
+>
+> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+> files which have a MODULE_LICENSE().
+>
+> This includes three additional files which, although they did not
+> produce a warning with the powerpc allmodconfig configuration, may
+> cause this warning with specific options enabled in the kernel
+> configuration.
+>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> Corrections to these descriptions are welcomed. I'm not an expert in
+> this code so in most cases I've taken these descriptions directly from
+> code comments, Kconfig descriptions, or git logs.  History has shown
+> that in some cases these are originally wrong due to cut-n-paste
+> errors, and in other cases the drivers have evolved such that the
+> original information is no longer accurate.
+> ---
+>  drivers/cpufreq/maple-cpufreq.c   | 1 +
+>  drivers/cpufreq/pasemi-cpufreq.c  | 1 +
+>  drivers/cpufreq/pmac64-cpufreq.c  | 1 +
+>  drivers/cpufreq/powernv-cpufreq.c | 1 +
+>  drivers/cpufreq/ppc_cbe_cpufreq.c | 1 +
+>  5 files changed, 5 insertions(+)
+>
+> diff --git a/drivers/cpufreq/maple-cpufreq.c b/drivers/cpufreq/maple-cpufreq.c
+> index f9306410a07f..19ca7f874d28 100644
+> --- a/drivers/cpufreq/maple-cpufreq.c
+> +++ b/drivers/cpufreq/maple-cpufreq.c
+> @@ -238,4 +238,5 @@ static int __init maple_cpufreq_init(void)
+>  module_init(maple_cpufreq_init);
+>  
+>  
+> +MODULE_DESCRIPTION("cpufreq driver for Maple 970FX Evaluation Board");
  
-+&wifi {
-+	status = "okay";
-+
-+	vdd-0.8-cx-mx-supply = <&pm6125_l8a>;
-+	vdd-1.8-xo-supply = <&pm6125_l16a>;
-+	vdd-1.3-rfa-supply = <&pm6125_l17a>;
-+	vdd-3.3-ch0-supply = <&pm6125_l23a>;
-+
-+	qcom,ath10k-calibration-variant = "Fxtec_QX1050";
-+};
-+
- &xo_board {
- 	clock-frequency = <19200000>;
- };
+Can you change this one to:
 
--- 
-2.45.2
+"cpufreq driver for Maple 970FX/970MP boards");
 
+It looks for both those CPUs in probe.
+
+> diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
+> index fddbd1ea1635..e923f717e1d7 100644
+> --- a/drivers/cpufreq/powernv-cpufreq.c
+> +++ b/drivers/cpufreq/powernv-cpufreq.c
+> @@ -1162,5 +1162,6 @@ static void __exit powernv_cpufreq_exit(void)
+>  }
+>  module_exit(powernv_cpufreq_exit);
+>  
+> +MODULE_DESCRIPTION("cpufreq driver for the IBM POWER processors");
+
+This one's tricky, because it probes based on the device tree, though it
+is restricted to CONFIG_POWERNV. It also supports non-IBM CPUs in theory
+at least. Maybe something like:
+
+"cpufreq driver for IBM/OpenPOWER powernv systems");
+
+cheers
 
