@@ -1,74 +1,73 @@
-Return-Path: <linux-kernel+bounces-258672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 207A8938B72
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:43:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A170D938B75
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 995D11F21B11
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:43:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5E791C2117E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69AC1662EF;
-	Mon, 22 Jul 2024 08:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382BC167296;
+	Mon, 22 Jul 2024 08:43:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eWTeTs4p"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XtkGWdje"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40642125BA
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 08:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B39635280
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 08:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721637783; cv=none; b=RQoF1GmJOKIpXOyumbw/U+ZsPO/2QDfyB9Dmc5pF7Rd6ZWm+uQYhDrYOErcs0fAy4IvEmCHE3pSHUysCx5DFNlHToDeDZXvS+cXU3H60GFTdivb9P2kSSmntAAyEKL2ogi3Uxkov8blvcpPLO4UqaOBbiceaVj37c8wnfgE7QNI=
+	t=1721637804; cv=none; b=WBceARS9vg6GSf049I7ONeuQWWps0QUs1EXBIU8d1hglH22o/9sAEkuVwWj19x+WRHjn/LiqJhAfE2JAobAR2yi/xhCVjfKF4E+jJlqTrtnhZl3BvCqBrp0zTcoUdzdnADfF4VO69dRv46l2WCBVX94ezTVo6oyBANu7E8X6yy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721637783; c=relaxed/simple;
-	bh=mZ2ZAr8/8AQLW0UxQVEkzfi7S7q+mzom0U/sJs8IMfw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iDFjNC0OesG+WiCeeaRsQkl9X06wggcB6X42rA7QRqNE/U9RscZxekEpyTYW4A+Iw7CRESBLAyLp0bv/zfgyOtlxzJghe1oOOt5f18deZYQ8TuKe1zCbg0DJYAh4+un5b6G5kFM+rOHbuH6rlpWpjbMDGbFqAq3KCe7dCvJjvuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eWTeTs4p; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ebed33cb65so46375351fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 01:43:02 -0700 (PDT)
+	s=arc-20240116; t=1721637804; c=relaxed/simple;
+	bh=QlcfM8FQqlembNaRN3eTe/m30wjIgQyhSNgdU9HSVn4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=oVorDIfMOhFLTZM4Zsmj/E958bdA2kW7weu3nUl/E/WIVZjYH36cABVd/0FLeN2zWS46be108d82kFi2bZvO+a95M95Z5d/YNkX9GfzYm0eFFxt6PQFqvoocYZWZeZb1vfST851aURn+/r4nzwTZcEPgZvxNfitkW0qL3638tjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XtkGWdje; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4266ea6a488so33834845e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 01:43:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721637780; x=1722242580; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=HyUaXhZy7w+rjNltMSOBdyRI/n7iZnDzkC1zUe6T1R0=;
-        b=eWTeTs4p77OGpuv+PtiXi0hJXDDkfc4Z5/gDeXdlbNcxUB98pcz4FqBb3OPt63TXFU
-         Vb9oWITVFAeA2CGeTSxXFDSjv2rBpjdHGQF9ps+JUXBIB2C3BgKZxDBPOQUK2Wl4vWGt
-         byI1J6vXh/j+L73LQuUAJt3rmpt86Tzr5iLQxS0RChOwU6AvCsKljE3raVyPcG7zw3Hv
-         ugqi/98dmhVKe/HhcbYoZKUiFlsJesfvb7UtxRyoK6PCKoChTkWVN2q3u8EumrLnzPc3
-         yirqG1KtkfgxYchjOGpLqxhclQaMIkZEKV6LXC1DfylaNXA5+GZCBmcu4fXitVuoyltE
-         ARRw==
+        d=gmail.com; s=20230601; t=1721637800; x=1722242600; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=g+PBfNzfyUUsqlo6xuJq2KzuHaAI09zpwcW3cyT8Tfo=;
+        b=XtkGWdje2sjsiBHLzi5CdoL0dD/t2hPOv4OZHC+t+MwoJ9owlO1Iw/Gr8bCRYbOQ6n
+         G4dH+8UkVnSyLfoWm7AFvBhpHq4m1DBF17n+CtU5+8sEMUSndgFIinG2QuDkOf34zsgC
+         QvcXOQVBCrwjPz8vkMkvLLNB3/bZbySqgz+5ztd7Ut3/fy+LMzpy21nWvFm/dyg/N6m9
+         myaZZckT1a472MTomwjrrt2kPwEhMfnw3RfkAoKvI3zfJZcDDDgehS+ReTNddjnnGpdT
+         h/0tGFyzfC1vzXYeOK1R8rm/JeTgq+CfdNLpRppyJhYTUbMPYQpolrgekqpt/iHIfWBM
+         tjKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721637780; x=1722242580;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HyUaXhZy7w+rjNltMSOBdyRI/n7iZnDzkC1zUe6T1R0=;
-        b=vVnkUQjADPBucx2uKvC9wxskvt7jmqf21UofhzUOqBmbvfD9wMVQP17tx0ReuDOXA2
-         cm9V+64Pe4Hp1m8euB6yt4ZGeX+1HgxKSot1gaX3ZZGUom8vMpCFkHdh/gS9wCz88dFg
-         QpwNc5UQ8uzmksmtovcVuZt8SuvJwDb9DeavkRwtnMR5hUraHhi5R4Lm5VRu5Y+RKdCq
-         yq4s550VQDUSNFp+y+DUysqqIk+GMVzhi+5U0hQGQn94jKb4ZPJI+b6/zz+FeBE547Jp
-         xDTylZfx6rCgn2oL9OjXwOZkpiTguwxtqcTrlKev85lsrH6HpE7pCJgLxrjFyx/bMnUa
-         o4dw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXPOdFujUtEcWriDQOkACq9Vd+ClPAJyQOvY5tlTUbDyxeNdoZATPaHzUqcWYAt2e9EvbByHPH2dwo+AsJiQCVEy+7mJ8NXS/w1ixo
-X-Gm-Message-State: AOJu0YxJ+9oSlA6ZEJV7gbDOGhGv+2z3c1xmpfnQF+MqnkA93oRPgIOl
-	iP49pXnaRPh6+Wmprm2MLOwgg2e6TU9EUp7MkopGOOl0lkBaelFbmRYNgslAYbQ=
-X-Google-Smtp-Source: AGHT+IHnnQrBpEx4mKKZT6curmy2n5diSz0Y+cPDCOViZgapxBUutKjBWnf/d6QMEX7xqF6BduPUgQ==
-X-Received: by 2002:a05:651c:2224:b0:2ef:26dc:efb3 with SMTP id 38308e7fff4ca-2ef26dcf107mr38663731fa.2.1721637780134;
-        Mon, 22 Jul 2024 01:43:00 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a745917f82sm1989940a12.85.2024.07.22.01.42.58
+        d=1e100.net; s=20230601; t=1721637800; x=1722242600;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g+PBfNzfyUUsqlo6xuJq2KzuHaAI09zpwcW3cyT8Tfo=;
+        b=Aou56bCAKqRsR208hQc6r0XSzm/qR98XbhoZFTUrbQlYTd3qYdE/IjFHwiP43Q/iuP
+         iaTLhPAoHOPDOyyGGafCyzUQ9ARJeInpTG3GOoTWLgIaHCE5PgpiFRHc6MXdrUKh3Kh6
+         +JjIGq31pOVF6wJ/I8w0Dr6IhUWt8Z0f9GRV1EOeAMCKwRuoSi0wizZMPb3Kaxkm/ewT
+         1NdEpzOBD5opvJQpsCQ3SoLZqiCwDws10KN2xnbS79kFOPKGS1559vXNJkPmOAK//bAs
+         czryRwsytVhoyyFQtLNT5IgJvAgXDJINBZ7IM4Hd1ug+uHYKcUAHUGpi9CgziLrsMv6M
+         KuYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgZnU/fiSklFzejcumwjCZ601OtqlhAzIgAge8ktOADThkkDFIVjW91RDfsCBYlxArfY2GKT4i8s8PoxGkEv+ROlUzPb4O46+DLClw
+X-Gm-Message-State: AOJu0Yy3s4gkO9Es68BYRNoTeWxha3BsNMM//LJDrQ5MmPqBvhfRDi7p
+	+oqnTLLctc+P5ExMBzRvQ0aPchzD6kpshbUpf/vPjnoGlmH6iq6X
+X-Google-Smtp-Source: AGHT+IG9TWmyekMunn7arqTs6wK7XiKa21iN8IJ94PIvH6V44kpdRLR4KO7UF6usEPYmOfmXAPPE0Q==
+X-Received: by 2002:a05:600c:1d92:b0:426:5e1c:1ac2 with SMTP id 5b1f17b1804b1-427dcf67fe1mr52890585e9.8.1721637800042;
+        Mon, 22 Jul 2024 01:43:20 -0700 (PDT)
+Received: from [10.254.108.81] (munvpn.amd.com. [165.204.72.6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36878695165sm7857306f8f.62.2024.07.22.01.43.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jul 2024 01:42:59 -0700 (PDT)
-Message-ID: <824edc08-f67f-4b2f-b4aa-da5df69b9df4@linaro.org>
-Date: Mon, 22 Jul 2024 10:42:57 +0200
+        Mon, 22 Jul 2024 01:43:19 -0700 (PDT)
+Message-ID: <1266c4af-a000-48c0-bd0d-79c2e918aea9@gmail.com>
+Date: Mon, 22 Jul 2024 10:43:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,142 +75,239 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: Add X1E78100 ThinkPad T14s Gen 6
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
-References: <20240719-topic-t14s_upstream-v1-0-d7d97fdebb28@linaro.org>
- <20240719-topic-t14s_upstream-v1-3-d7d97fdebb28@linaro.org>
- <Zp055OR+OzSgiHhX@linaro.org>
+Subject: Re: 6.10/bisected/regression - Since commit e356d321d024 in the
+ kernel log appears the message "MES failed to respond to msg=MISC
+ (WAIT_REG_MEM)" which were never seen before
+To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
+ amd-gfx list <amd-gfx@lists.freedesktop.org>,
+ dri-devel <dri-devel@lists.freedesktop.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ "Deucher, Alexander" <alexander.deucher@amd.com>, mukul.joshi@amd.com,
+ Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+ Linux regressions mailing list <regressions@lists.linux.dev>
+References: <CABXGCsMmtqzBfUykT-JgyhZn-7ZXtftHL35znDdYuTnUOpGnoQ@mail.gmail.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <Zp055OR+OzSgiHhX@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
+In-Reply-To: <CABXGCsMmtqzBfUykT-JgyhZn-7ZXtftHL35znDdYuTnUOpGnoQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 21.07.2024 6:40 PM, Abel Vesa wrote:
-> On 24-07-19 22:16:38, Konrad Dybcio wrote:
->> Add support for the aforementioned laptop. That includes:
->>
->> - input methods, incl. lid switch (keyboard needs the pdc
->>   wakeup-parent removal hack..)
->> - NVMe, WiFi
->> - USB-C ports
->> - GPU, display
->> - DSPs
->>
->> Notably, the USB-A ports on the side are depenedent on the USB
->> multiport controller making it upstream.
->>
->> At least one of the eDP panels used (non-touchscreen) identifies as
->> BOE 0x0b66.
->>
->> See below for the hardware description from the OEM.
->>
->> Link: https://www.lenovo.com/us/en/p/laptops/thinkpad/thinkpadt/lenovo-thinkpad-t14s-gen-6-(14-inch-snapdragon)/len101t0099
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> 
-> Few comments below. Otherwise, LGTM.
-> 
-> Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
-> 
->> ---
->>  arch/arm64/boot/dts/qcom/Makefile                  |   1 +
->>  .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts     | 792 +++++++++++++++++++++
->>  2 files changed, 793 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
->> index 0e5c810304fb..734a05e04c4a 100644
->> --- a/arch/arm64/boot/dts/qcom/Makefile
->> +++ b/arch/arm64/boot/dts/qcom/Makefile
->> @@ -261,6 +261,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-hdk-display-card.dtb
->>  dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-hdk.dtb
->>  dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-mtp.dtb
->>  dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-qrd.dtb
->> +dtb-$(CONFIG_ARCH_QCOM)	+= x1e78100-lenovo-thinkpad-t14s.dtb
->>  dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-asus-vivobook-s15.dtb
->>  dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-crd.dtb
->>  dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-lenovo-yoga-slim7x.dtb
->> diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
-> 
-> So what happens for SKUs of this model wil have x1e80100 ?
-> 
-> Maybe we should stick to x1e80100 ?
+That's a known issue and we are already working on it.
 
-This one only ships with 78100
+Regards,
+Christian.
 
-[...]
-
->> +	vreg_edp_3p3: regulator-edp-3p3 {
->> +		compatible = "regulator-fixed";
->> +
->> +		regulator-name = "VREG_EDP_3P3";
->> +		regulator-min-microvolt = <3300000>;
->> +		regulator-max-microvolt = <3300000>;
->> +
->> +		gpio = <&tlmm 70 GPIO_ACTIVE_HIGH>;
->> +		enable-active-high;
->> +
->> +		pinctrl-0 = <&edp_reg_en>;
->> +		pinctrl-names = "default";
->> +
->> +		regulator-always-on;
-> 
-> Drop this.
-
-Oops!
-
-[...]
-
->> +
->> +	edp_reg_en: edp-reg-en-state {
->> +		pins = "gpio70";
->> +		function = "gpio";
->> +		drive-strength = <16>;
->> +		bias-pull-up;
-> 
-> bias-disable, maybe ?
-
-Yeah, probably
-
-Konrad
+Am 20.07.24 um 19:08 schrieb Mikhail Gavrilov:
+> Hi,
+> I spotted "MES failed to respond to msg=MISC (WAIT_REG_MEM)" messages
+> in my kernel log since 6.10-rc5.
+> After this message, usually follow "[drm:amdgpu_mes_reg_write_reg_wait
+> [amdgpu]] *ERROR* failed to reg_write_reg_wait".
+>
+> [ 8972.590502] input: Noble FoKus Mystique (AVRCP) as
+> /devices/virtual/input/input21
+> [ 9964.748433] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9964.748433] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9964.748434] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9964.748434] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9964.748434] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9964.748434] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9964.748434] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9964.748434] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9964.748434] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9964.748434] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9964.748434] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9964.748434] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9964.748434] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9964.748434] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9964.748434] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9964.748434] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9964.748493] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9964.748494] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9964.748493] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9964.748493] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9964.748476] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9964.748478] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9964.748479] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9964.748477] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9964.748477] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9964.748477] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9964.748478] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9964.748477] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9964.748477] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9964.748478] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9964.748661] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9964.748770] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9977.224893] Bluetooth: hci0: ACL packet for unknown connection handle 3837
+> [ 9980.347061] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9980.347077] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9980.349857] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9980.349857] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9980.349857] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9980.349858] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9980.349858] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9980.349858] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9980.349858] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9980.349858] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9980.349858] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9980.349858] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9980.349858] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9980.349859] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9980.349858] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9980.349858] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9980.349859] amdgpu 0000:03:00.0: amdgpu: MES failed to respond to
+> msg=MISC (WAIT_REG_MEM)
+> [ 9980.349870] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9980.349868] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9980.349870] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9980.349890] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9980.349866] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9980.349865] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9980.349865] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9980.349866] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9980.349866] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9980.349867] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9980.349867] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9980.349869] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9980.349871] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9980.349871] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [ 9980.349871] [drm:amdgpu_mes_reg_write_reg_wait [amdgpu]] *ERROR*
+> failed to reg_write_reg_wait
+> [10037.250083] Bluetooth: hci0: ACL packet for unknown connection handle 3837
+> [12054.238867] workqueue: gc_worker [nf_conntrack] hogged CPU for
+>> 10000us 1027 times, consider switching to WQ_UNBOUND
+> [12851.087896] fossilize_repla (45968) used greatest stack depth:
+> 17440 bytes left
+>
+> Unfortunately, it is not easily reproducible.
+> Usually it appears when I play several hours in the game "STAR WARS
+> Jedi: Survivor".
+> So it is why I bisected it so long.
+>
+> git bisect start
+> # status: waiting for both good and bad commits
+> # bad: [f2661062f16b2de5d7b6a5c42a9a5c96326b8454] Linux 6.10-rc5
+> git bisect bad f2661062f16b2de5d7b6a5c42a9a5c96326b8454
+> # good: [50736169ecc8387247fe6a00932852ce7b057083] Merge tag
+> 'for-6.10-rc4-tag' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux
+> git bisect good 50736169ecc8387247fe6a00932852ce7b057083
+> # bad: [d4ba3313e84dfcdeb92a13434a2d02aad5e973e1] Merge tag
+> 'loongarch-fixes-6.10-2' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson
+> git bisect bad d4ba3313e84dfcdeb92a13434a2d02aad5e973e1
+> # good: [264efe488fd82cf3145a3dc625f394c61db99934] Merge tag
+> 'ovl-fixes-6.10-rc5' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs
+> git bisect good 264efe488fd82cf3145a3dc625f394c61db99934
+> # bad: [35bb670d65fc0f80c62383ab4f2544cec85ac57a] Merge tag
+> 'scsi-fixes' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi
+> git bisect bad 35bb670d65fc0f80c62383ab4f2544cec85ac57a
+> # good: [f0d576f840153392d04b2d52cf3adab8f62e8cb6] drm/amdgpu: fix
+> UBSAN warning in kv_dpm.c
+> git bisect good f0d576f840153392d04b2d52cf3adab8f62e8cb6
+> # bad: [07e06189c5ea7ffe897d12b546c918380d3bffb1] Merge tag
+> 'amd-drm-fixes-6.10-2024-06-19' of
+> https://gitlab.freedesktop.org/agd5f/linux into drm-fixes
+> git bisect bad 07e06189c5ea7ffe897d12b546c918380d3bffb1
+> # bad: [ed5a4484f074aa2bfb1dad99ff3628ea8da4acdc] drm/amdgpu: init TA
+> fw for psp v14
+> git bisect bad ed5a4484f074aa2bfb1dad99ff3628ea8da4acdc
+> # bad: [e356d321d0240663a09b139fa3658ddbca163e27] drm/amdgpu: cleanup
+> MES11 command submission
+> git bisect bad e356d321d0240663a09b139fa3658ddbca163e27
+> # first bad commit: [e356d321d0240663a09b139fa3658ddbca163e27]
+> drm/amdgpu: cleanup MES11 command submission
+>
+> Author: Christian König <christian.koenig@amd.com>
+> Date:   Fri May 31 10:56:00 2024 +0200
+>
+>      drm/amdgpu: cleanup MES11 command submission
+>
+>      The approach of having a separate WB slot for each submission doesn't
+>      really work well and for example breaks GPU reset.
+>
+>      Use a status query packet for the fence update instead since those
+>      should always succeed we can use the fence of the original packet to
+>      signal the state of the operation.
+>
+>      While at it cleanup the coding style.
+>
+>      Fixes: eef016ba8986 ("drm/amdgpu/mes11: Use a separate fence per
+> transaction")
+>      Reviewed-by: Mukul Joshi <mukul.joshi@amd.com>
+>      Signed-off-by: Christian König <christian.koenig@amd.com>
+>      Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+>
+> And I can confirm after reverting e356d321d024 I played the whole day,
+> and the "MES failed to respond" error message does not appear anymore.
+>
+> My hardware specs are: https://linux-hardware.org/?probe=78d8c680db
+>
+> Christian, can you look into it, please?
+>
 
 
