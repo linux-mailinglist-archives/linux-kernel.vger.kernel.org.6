@@ -1,101 +1,245 @@
-Return-Path: <linux-kernel+bounces-259497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6492F939735
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 01:58:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50472939738
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 01:59:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CED31F2217F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 23:58:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC5AB1F21876
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 23:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106A87344A;
-	Mon, 22 Jul 2024 23:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C536F06A;
+	Mon, 22 Jul 2024 23:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gbeTtmJT"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h7aE2jfC"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC956EB46
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 23:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D1E61FE7
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 23:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721692690; cv=none; b=eSQ197k/8KaDGDIICRj1Yn1BPhqLl9bXm7igpIu0WwBXmlldx+81jz9h3FZeYXWqzadrRvKob9WEaCZ9kkp0AzbNlcshPwHbUuvmmE9c3MKfONhsrzIL9jypaufnHtyyRmCelKqwLwVHz+T3GfOUru6AwF9oX6Q84ZTqMHFH09o=
+	t=1721692768; cv=none; b=UHex5QK+htt7wVZQ/NEhjDXh77jRBcY/hvShn9yVgjEIKofZiN12in8oszQXOm1sV9vI2bTYhUCFmVv0xpwMP7VAIYHaYtlpY/1CCVK43WLSbPPfZdZCxTwyy1fZteZVfwnmkTzV6OYGUOS2IMaeFgiteGFiJbApMn0gu+kl5qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721692690; c=relaxed/simple;
-	bh=DkseDYfGNcDzvbqyqU0DKg6iWql0jky4zKQP/8CT7IQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=oXTmxk48L+8j7u3cNudjTyUSuttyaBHi6rcI/EAGNFQgT8N2At794RHSCvCJHTqem89L0ZBQRHa2XvlNPwuVD5wGgUAXYrVzw+KP0THq6TjQPl8Yw7nQRRdcMsE2wCEYerIKakZq3G/9iGtDFDHqJG4qLmrh2MuTNaioIzWx4qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gbeTtmJT; arc=none smtp.client-ip=209.85.214.202
+	s=arc-20240116; t=1721692768; c=relaxed/simple;
+	bh=7DJkcqfbiIJw8y8meEfqCDF4uloJkbR/JLCUcj9GkK0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Eb8Xj+mU46JQcPY0K9SzOP1fvLDjd5BQScihnsiJKm6mzEkylw0yulpP6zJ6vFTeDIxXEj2imMOn3fJOQd3DO2sIsmqLVruvGYaDnV5V/a80AS9iIN9QF61Ac74x3eKg/4IPt7HzxiT4UmLU1Y7zUDLdf6ShTWG72tarAomcnQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h7aE2jfC; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1fd8a1a75e7so830995ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 16:58:08 -0700 (PDT)
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e05ed51f6b0so10697383276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 16:59:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721692688; x=1722297488; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NiszAb6OEqq/qypn9MCSLFVFctQpfQJGPfYT/lahHTw=;
-        b=gbeTtmJTKeWPlkVg5mJMEotFpEDrEIaK5+/qOiljBBUXFd0ByApQBtBohLGwDuED5t
-         te+4SmnXdrQyh7iGL47rZhvxcpZqyNe307EllKUcPWn2kLOAFXlj1WWIDtarMI2gJoiR
-         X8Fyr9qIN+jin5fxyDeAbiNVEZKzMB1vdn35frvMfZ/BIwLJHr85PamnBa/0Dk31Hy/l
-         kzEfG+O5EVH2UCp/7fb8hhwm9jffCKS3l9T0j/VWZ7SNmjsQCkSSlXzo9ItkQNugATUt
-         FqaW5eqYtW++IsvXnChWfELHHaKSaw3PAF+C4DO7R5FqkCWkAelgefIJgmcbxEvn7saj
-         KT3Q==
+        d=google.com; s=20230601; t=1721692765; x=1722297565; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jIZbpEZ5rQHg2l2abLN3jpiDoDaWQbvMPk1rX68w1Ng=;
+        b=h7aE2jfCZuewT76lJibcOTnbBYle+Lze8hmYy7Ra1gB56cr8siaH6dM2ccCvfvhp69
+         RnSRVfNSmo43F8mOf9kOquuUY+v4QVFyvW7U1TS1Yd4RDzxLMHhO73WR3DoqoDamzCyq
+         xb9D08F59JBwAXnuqv/cihg5sz/KFCiTQA/RTNCb1mO5VvTQoC2NxJrNIAd1/Qv2Tqqe
+         kk/9sXHBZeghHbA1ic+gLn1DdlpZpwUeI2q9eiIdmx7rCKmzkcFJv6ELGiyA7ssqMZAW
+         mt8+LRqU/r22uQVWFHSjB0H9XCobqDZGE5wh14ntd7H7UYmNe8uTde3B7sCjm4u4JqPf
+         OTVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721692688; x=1722297488;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NiszAb6OEqq/qypn9MCSLFVFctQpfQJGPfYT/lahHTw=;
-        b=aCa4mVLzsqmGFBej0MhHwpKjSBq1dYmY1EwVhoSjj1ho2LBz19hyxv6QtlNRcdTdqd
-         4oVcjvTJFJcl0KXvY7+6kuoVa4HDsskW7QOZIb2bCc7bq7cNzsPdQqY4vrNfzod2pG0U
-         P3LNgawZrv9+fsSObgGidM4zTlF81IvWw4/tC2nZZrlN8Byxsfyy2csP+Z8cb+AdGUDp
-         7BJi3+Gpm75jUBB9NhQMdkZ/2IH9/YQb6DejgEZTDWf6lsceE5NRYWU87l6NkxJZo/C7
-         8NOSweACOsXXiERiBbn0eZyNw0bHmqs3heb+urM1pT75TBRy4Mlno0waY2dmYDQFU5BA
-         HKIw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvT8HxKEzZZj6h6l4GF0gRuKUb7DSKJKGM7nDssXihREd9GO+NMTLhlMhvpcsq+pU4Cgh7PoqXLh2j5quWQy0/18DRpTxQykJQslBx
-X-Gm-Message-State: AOJu0Yzv82Oyk80moXXjhjVPzYV+KQj4NgtAZ/rt+PF1ABaR13rFT4BI
-	zaszEYZqccS953Tg0v/hxH2ex+RbHNPC6HdxPYCt5JPkdzOg6uKdZl0W9gEQCcIbhmN4C3L8w8y
-	9sQ==
-X-Google-Smtp-Source: AGHT+IGMCIJ7k/wO1EtyoCI8S2HbGG8sVrIvZRS9cKnBzdCHGWdrefCpopFvU1Qotp33npJMX/2I7gM4+Os=
+        d=1e100.net; s=20230601; t=1721692765; x=1722297565;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jIZbpEZ5rQHg2l2abLN3jpiDoDaWQbvMPk1rX68w1Ng=;
+        b=jvMkvTMC4lLBk4Byevd2AJPrPyGgrrpzMFih4ZGlxmpYcXxdmiF1BhdTQxPN5XdU0m
+         cIKKad5/ryhAWeSApl8vwLJpycdOL0YYvoV8jChSoQmh0Me/EfLjKkTVchPud3FZKE8X
+         NmoYvIEyH/tLwEv6hIiwZCpKtCDWSIYZ8oJgyADo4n9QzPOsnIlPjt0f4OHNmaalzluI
+         Wyne5zQgU52J89caooJ88clw3WOVlxkeVplOAI3dCFpIX4lAY05TjAzmdo6EZApQhTf4
+         HGtMy8CTfY2U6M0YdYczUeA4bh0BJ3JeWuFVw6G9OyMU8EwbnuHVFZVO2yQFaLaDiWpD
+         dDNg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQr/MhpFp02GbgMCRtwqyVpCizd9PXRf9JszTnynat7aqgqXWS+eWSW74C6c2hsYSh0MwVfwy9M/dqufbVd+SiVOWHA8vxg6zoj5pv
+X-Gm-Message-State: AOJu0Yxu7cGSAPw2A3uNftYSeuccvH4JmOZFg7iK3mYggPv1RTM9tARv
+	0qPLTbRASAbyibBETU3n0/WtpBZPgPaaraYt93YDaTve66LbigdVrmte0zkRBzLtND5+hag+Ihi
+	diw==
+X-Google-Smtp-Source: AGHT+IFcimbsqyOG/qvbE60GZOEvk25xTTC2e43d8+QS/h1am29TATI9J8tkk0GYefunh8u/rNyHUKceoAs=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:e887:b0:1fb:1ae6:6aab with SMTP id
- d9443c01a7336-1fd74513c53mr8074635ad.2.1721692688226; Mon, 22 Jul 2024
- 16:58:08 -0700 (PDT)
-Date: Mon, 22 Jul 2024 16:58:06 -0700
-In-Reply-To: <Zp5Wq1h40JMSYL5a@chao-email>
+ (user=seanjc job=sendgmr) by 2002:a25:804e:0:b0:e03:53a4:1a7 with SMTP id
+ 3f1490d57ef6-e087046cademr40372276.10.1721692765078; Mon, 22 Jul 2024
+ 16:59:25 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Mon, 22 Jul 2024 16:59:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20240720000138.3027780-1-seanjc@google.com> <Zp5Wq1h40JMSYL5a@chao-email>
-Message-ID: <Zp7yDvcwfPtgED0j@google.com>
-Subject: Re: [PATCH 0/6] KVM: nVMX: Fix IPIv vs. nested posted interrupts
+X-Mailer: git-send-email 2.45.2.1089.g2a221341d9-goog
+Message-ID: <20240722235922.3351122-1-seanjc@google.com>
+Subject: [PATCH] KVM: nVMX: Honor userspace MSR filter lists for nested VM-Enter/VM-Exit
 From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Zeng Guang <guang.zeng@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Hou Wenlong <houwenlong.hwl@antgroup.com>, Jim Mattson <jmattson@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jul 22, 2024, Chao Gao wrote:
-> On Fri, Jul 19, 2024 at 05:01:32PM -0700, Sean Christopherson wrote:
-> >Fix a bug where KVM injects L2's nested posted interrupt into L1 as a
-> >nested VM-Exit instead of triggering PI processing.  The actual bug is
-> >technically a generic nested posted interrupts problem, but due to the
-> >way that KVM handles interrupt delivery, I'm 99.9% certain the issue is
-> >limited to IPI virtualization being enabled.
-> 
-> Theoretically VT-d posted interrupt can also trigger this issue.
+Synthesize a consistency check VM-Exit (VM-Enter) or VM-Abort (VM-Exit) if
+L1 attempts to load/store an MSR via the VMCS MSR lists that userspace has
+disallowed access to via an MSR filter.  Intel already disallows including
+a handful of "special" MSRs in the VMCS lists, so denying access isn't
+completely without precedent.
 
-Hmm, yeah, I think you're right.  L1 could program an assigned device to _post_
-an interrupt to L2's vector, via L1's PID.PIR.  Which would let the interrupt
-into vIRR without KVM checking vmcs12's NV.  It seems unlikely L1 would do that,
-but it definitely seems possible.
+More importantly, the behavior is well-defined _and_ can be communicated
+the end user, e.g. to the customer that owns a VM running as L1 on top of
+KVM.  On the other hand, ignoring userspace MSR filters is all but
+guaranteed to result in unexpected behavior as the access will hit KVM's
+internal state, which is likely not up-to-date.
 
-Unless I'm missing something (else), I'll update the changelog and Fixes: to make
-it clear that IPI virtualization just makes the bug easier to hit, but that the
-issue exists with nested assigned devices, too.
+Unlike KVM-internal accesses, instruction emulation, and dedicated VMCS
+fields, the MSRs in the VMCS load/store lists are 100% guest controlled,
+thus making it all but impossible to reason about the correctness of
+ignoring the MSR filter.  And if userspace *really* wants to deny access
+to MSRs via the aforementioned scenarios, userspace can hide the
+associated feature from the guest, e.g. by disabling the PMU to prevent
+accessing PERF_GLOBAL_CTRL via its VMCS field.  But for the MSR lists, KVM
+is blindly processing MSRs; the  MSR filters are the _only_ way for
+userspace to deny access.
+
+This partially reverts commit ac8d6cad3c7b ("KVM: x86: Only do MSR
+filtering when access MSR by rdmsr/wrmsr").
+
+Cc: Hou Wenlong <houwenlong.hwl@antgroup.com>
+Cc: Jim Mattson <jmattson@google.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+---
+
+I found this by inspection when backporting Hou's change to an internal kernel.
+I don't love piggybacking Intel's "you can't touch these special MSRs" behavior,
+but ignoring the userspace MSR filters is far worse IMO.  E.g. if userspace is
+denying access to an MSR in order to reduce KVM's attack surface, letting L1
+sneak in reads/writes through VM-Enter/VM-Exit completely circumvents the
+filters.
+
+ Documentation/virt/kvm/api.rst  | 19 ++++++++++++++++---
+ arch/x86/include/asm/kvm_host.h |  2 ++
+ arch/x86/kvm/vmx/nested.c       | 12 ++++++------
+ arch/x86/kvm/x86.c              |  6 ++++--
+ 4 files changed, 28 insertions(+), 11 deletions(-)
+
+diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+index 8e5dad80b337..e6b1e42186f3 100644
+--- a/Documentation/virt/kvm/api.rst
++++ b/Documentation/virt/kvm/api.rst
+@@ -4226,9 +4226,22 @@ filtering. In that mode, ``KVM_MSR_FILTER_DEFAULT_DENY`` is invalid and causes
+ an error.
+ 
+ .. warning::
+-   MSR accesses as part of nested VM-Enter/VM-Exit are not filtered.
+-   This includes both writes to individual VMCS fields and reads/writes
+-   through the MSR lists pointed to by the VMCS.
++   MSR accesses that are side effects of instruction execution (emulated or
++   native) are not filtered as hardware does not honor MSR bitmaps outside of
++   RDMSR and WRMSR, and KVM mimics that behavior when emulating instructions
++   to avoid pointless divergence from hardware.  E.g. RDPID reads MSR_TSC_AUX,
++   SYSENTER reads the SYSENTER MSRs, etc.
++
++   MSRs that are loaded/stored via dedicated VMCS fields are not filtered as
++   part of VM-Enter/VM-Exit emulation.
++
++   MSRs that are loaded/store via VMX's load/store lists _are_ filtered as part
++   of VM-Enter/VM-Exit emulation.  If an MSR access is denied on VM-Enter, KVM
++   synthesizes a consistency check VM-Exit(EXIT_REASON_MSR_LOAD_FAIL).  If an
++   MSR access is denied on VM-Exit, KVM synthesizes a VM-Abort.  In short, KVM
++   extends Intel's architectural list of MSRs that cannot be loaded/saved via
++   the VM-Enter/VM-Exit MSR list.  It is platform owner's responsibility to
++   to communicate any such restrictions to their end users.
+ 
+    x2APIC MSR accesses cannot be filtered (KVM silently ignores filters that
+    cover any x2APIC MSRs).
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 950a03e0181e..94d0bedc42ee 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -2059,6 +2059,8 @@ void kvm_prepare_emulation_failure_exit(struct kvm_vcpu *vcpu);
+ 
+ void kvm_enable_efer_bits(u64);
+ bool kvm_valid_efer(struct kvm_vcpu *vcpu, u64 efer);
++int kvm_get_msr_with_filter(struct kvm_vcpu *vcpu, u32 index, u64 *data);
++int kvm_set_msr_with_filter(struct kvm_vcpu *vcpu, u32 index, u64 data);
+ int __kvm_get_msr(struct kvm_vcpu *vcpu, u32 index, u64 *data, bool host_initiated);
+ int kvm_get_msr(struct kvm_vcpu *vcpu, u32 index, u64 *data);
+ int kvm_set_msr(struct kvm_vcpu *vcpu, u32 index, u64 data);
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index 2392a7ef254d..674f7089cc44 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -981,7 +981,7 @@ static u32 nested_vmx_load_msr(struct kvm_vcpu *vcpu, u64 gpa, u32 count)
+ 				__func__, i, e.index, e.reserved);
+ 			goto fail;
+ 		}
+-		if (kvm_set_msr(vcpu, e.index, e.value)) {
++		if (kvm_set_msr_with_filter(vcpu, e.index, e.value)) {
+ 			pr_debug_ratelimited(
+ 				"%s cannot write MSR (%u, 0x%x, 0x%llx)\n",
+ 				__func__, i, e.index, e.value);
+@@ -1017,7 +1017,7 @@ static bool nested_vmx_get_vmexit_msr_value(struct kvm_vcpu *vcpu,
+ 		}
+ 	}
+ 
+-	if (kvm_get_msr(vcpu, msr_index, data)) {
++	if (kvm_get_msr_with_filter(vcpu, msr_index, data)) {
+ 		pr_debug_ratelimited("%s cannot read MSR (0x%x)\n", __func__,
+ 			msr_index);
+ 		return false;
+@@ -1112,9 +1112,9 @@ static void prepare_vmx_msr_autostore_list(struct kvm_vcpu *vcpu,
+ 			/*
+ 			 * Emulated VMEntry does not fail here.  Instead a less
+ 			 * accurate value will be returned by
+-			 * nested_vmx_get_vmexit_msr_value() using kvm_get_msr()
+-			 * instead of reading the value from the vmcs02 VMExit
+-			 * MSR-store area.
++			 * nested_vmx_get_vmexit_msr_value() by reading KVM's
++			 * internal MSR state instead of reading the value from
++			 * the vmcs02 VMExit MSR-store area.
+ 			 */
+ 			pr_warn_ratelimited(
+ 				"Not enough msr entries in msr_autostore.  Can't add msr %x\n",
+@@ -4806,7 +4806,7 @@ static void nested_vmx_restore_host_state(struct kvm_vcpu *vcpu)
+ 				goto vmabort;
+ 			}
+ 
+-			if (kvm_set_msr(vcpu, h.index, h.value)) {
++			if (kvm_set_msr_with_filter(vcpu, h.index, h.value)) {
+ 				pr_debug_ratelimited(
+ 					"%s WRMSR failed (%u, 0x%x, 0x%llx)\n",
+ 					__func__, j, h.index, h.value);
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index af6c8cf6a37a..7b3659a05c27 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -1942,19 +1942,21 @@ static int kvm_get_msr_ignored_check(struct kvm_vcpu *vcpu,
+ 	return ret;
+ }
+ 
+-static int kvm_get_msr_with_filter(struct kvm_vcpu *vcpu, u32 index, u64 *data)
++int kvm_get_msr_with_filter(struct kvm_vcpu *vcpu, u32 index, u64 *data)
+ {
+ 	if (!kvm_msr_allowed(vcpu, index, KVM_MSR_FILTER_READ))
+ 		return KVM_MSR_RET_FILTERED;
+ 	return kvm_get_msr_ignored_check(vcpu, index, data, false);
+ }
++EXPORT_SYMBOL_GPL(kvm_get_msr_with_filter);
+ 
+-static int kvm_set_msr_with_filter(struct kvm_vcpu *vcpu, u32 index, u64 data)
++int kvm_set_msr_with_filter(struct kvm_vcpu *vcpu, u32 index, u64 data)
+ {
+ 	if (!kvm_msr_allowed(vcpu, index, KVM_MSR_FILTER_WRITE))
+ 		return KVM_MSR_RET_FILTERED;
+ 	return kvm_set_msr_ignored_check(vcpu, index, data, false);
+ }
++EXPORT_SYMBOL_GPL(kvm_set_msr_with_filter);
+ 
+ int kvm_get_msr(struct kvm_vcpu *vcpu, u32 index, u64 *data)
+ {
+
+base-commit: 332d2c1d713e232e163386c35a3ba0c1b90df83f
+-- 
+2.45.2.1089.g2a221341d9-goog
+
 
