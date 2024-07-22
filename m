@@ -1,188 +1,180 @@
-Return-Path: <linux-kernel+bounces-258405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 824D293878E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:41:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5CAE938791
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E31C81F20FB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 02:41:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B958B20CAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 02:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7CCFC0B;
-	Mon, 22 Jul 2024 02:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="iu/3mm69"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A2D10A1F;
+	Mon, 22 Jul 2024 02:53:24 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1C7611E
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 02:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE77A4437;
+	Mon, 22 Jul 2024 02:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721616102; cv=none; b=btKectyOpdSsO8upyUZufoaai9G9wzFbpoUbvhqyUbmpG/tnG8l2ngBP5P+OKHFpyIAcNiJP8j8UBz9RimaFBsn+3sb2D9N1iBMleFp8T+hH7avRdPWQDNUNbqvDfSM6Ul72/9SuL5gXfEF8DoPtDBzOG0SzTGlIXp2nhKNbh4A=
+	t=1721616804; cv=none; b=i86KnXl7WHYodfmTfk8gA3Xnyt+nvvEdBZavdyNTzjFonDc7kxP9p2EvyMgyQWAJMrrO2JnBNRSKXjE+X0SHoLj4cjwLAHR/VYoKM23WVzSSUtP8e6kOR+s1UiJlK1bSlOBNgfDTRUbt2U20ivBEGsdQLiKxe7T6fE2+aiVIGJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721616102; c=relaxed/simple;
-	bh=8p1VQJI+7jJHGUbO67r/i1Fs9cPM0O2WEgZJlu2gQQ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IR+u0jlTj/2Tivj4w2r19nFnEkwYVrdFLQlRW3aR0fy/a0yrNtp8ViVo43l7/8W4pfAPyxogSXIz3f/YXGi7pRODXbyz5hgq+K2stE/2+RUv70oj1Vfd5/YuoDkTYuHnVmwQhuguNlyKydVHdajsVtIk29X+GI/FgdG2oHmBfYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=iu/3mm69; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1721616089; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=MDu4lboHE5IBLMlTXv0+WLMrtUvTsp5YiapPNShBuAk=;
-	b=iu/3mm69Pn7dpusP28nHIR6PD4KaD7dUYvbX5o2oahf26Y3rLFHdn6uG1PEL+cC4gLOMUUW4lQKq7AxLJfu6dSThuCSvGk03W0GV1uS36d2AfdIA/U+5ZZCcmsOiYGy83Nup6JWZ/S9yXMysV+yeourrHUH32S+nX/D8uA8A4oQ=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0WAyFM2g_1721616075;
-Received: from 30.97.56.74(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WAyFM2g_1721616075)
-          by smtp.aliyun-inc.com;
-          Mon, 22 Jul 2024 10:41:28 +0800
-Message-ID: <f206ad30-a007-499e-941c-1c4abc0c5eb3@linux.alibaba.com>
-Date: Mon, 22 Jul 2024 10:41:14 +0800
+	s=arc-20240116; t=1721616804; c=relaxed/simple;
+	bh=1eaSnjG8AdSQMMFrz0WaAj7CyvTggSoz+o1UQ0LfDE8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=FLTV233RkJ0s9w9LTyT5iOCoSvh/lZwm0t4AG0mo/Klt8qBnG9OMUBlQILvB+RGI0DvgEJcLjWm8rxaUzXFDpaIBHf973bbJTU/ITr6YFW3ek5VqwROiwB6ZtS0FU1GLLASP7xotoNkTQ6TJSOr4Zx1Rw8oFKseRuYikzXDt1aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WS4YH2qK8z20lVq;
+	Mon, 22 Jul 2024 10:51:31 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5B29F1A0188;
+	Mon, 22 Jul 2024 10:53:12 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 22 Jul 2024 10:53:10 +0800
+Message-ID: <b8792d9c-c2a2-6808-f94b-e3b826232f78@huawei.com>
+Date: Mon, 22 Jul 2024 10:53:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] mm: shmem: move shmem_huge_global_enabled() into
- shmem_allowable_huge_orders()
-To: Ryan Roberts <ryan.roberts@arm.com>, akpm@linux-foundation.org,
- hughd@google.com
-Cc: willy@infradead.org, david@redhat.com, 21cnbao@gmail.com, ziy@nvidia.com,
- ioworker0@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <cover.1720755677.git.baolin.wang@linux.alibaba.com>
- <16dad33282617ecb90a3f466b35273b10be68d21.1720755678.git.baolin.wang@linux.alibaba.com>
- <b670b981-bc79-4c8c-8b69-4879300066d4@arm.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <b670b981-bc79-4c8c-8b69-4879300066d4@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v2] ARM: Add support for STACKLEAK gcc plugin
+Content-Language: en-US
+To: <linux@armlinux.org.uk>, <ardb@kernel.org>, <arnd@arndb.de>, <afd@ti.com>,
+	<akpm@linux-foundation.org>, <rmk+kernel@armlinux.org.uk>,
+	<linus.walleij@linaro.org>, <eric.devolder@oracle.com>, <robh@kernel.org>,
+	<kees@kernel.org>, <masahiroy@kernel.org>, <palmer@rivosinc.com>,
+	<samitolvanen@google.com>, <xiao.w.wang@intel.com>, <alexghiti@rivosinc.com>,
+	<nathan@kernel.org>, <jan.kiszka@siemens.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-efi@vger.kernel.org>
+References: <20240624023612.2134144-1-ruanjinjie@huawei.com>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <20240624023612.2134144-1-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-(Sorry for the late reply due to my vacation.)
+Gentle ping.
 
-On 2024/7/15 21:36, Ryan Roberts wrote:
-> On 13/07/2024 14:24, Baolin Wang wrote:
->> Move shmem_huge_global_enabled() into the shmem_allowable_huge_orders() function,
->> so that shmem_allowable_huge_orders() can also help to find the allowable huge
->> orders for tmpfs. Moreover the shmem_huge_global_enabled() can become static.
->>
->> No functional changes.
->>
->> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+On 2024/6/24 10:36, Jinjie Ruan wrote:
+> Add the STACKLEAK gcc plugin to arm32 by adding the helper used by
+> stackleak common code: on_thread_stack(). It initialize the stack with the
+> poison value before returning from system calls which improves the kernel
+> security. Additionally, this disables the plugin in EFI stub code and
+> decompress code, which are out of scope for the protection.
 > 
-> one nit below, but either way:
+> Before the test on Qemu versatilepb board:
+> 	# echo STACKLEAK_ERASING  > /sys/kernel/debug/provoke-crash/DIRECT
+> 	lkdtm: Performing direct entry STACKLEAK_ERASING
+> 	lkdtm: XFAIL: stackleak is not supported on this arch (HAVE_ARCH_STACKLEAK=n)
 > 
-> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+> After:
+> 	# echo STACKLEAK_ERASING  > /sys/kernel/debug/provoke-crash/DIRECT
+> 	lkdtm: Performing direct entry STACKLEAK_ERASING
+> 	lkdtm: stackleak stack usage:
+> 	  high offset: 80 bytes
+> 	  current:     280 bytes
+> 	  lowest:      696 bytes
+> 	  tracked:     696 bytes
+> 	  untracked:   192 bytes
+> 	  poisoned:    7220 bytes
+> 	  low offset:  4 bytes
+> 	lkdtm: OK: the rest of the thread stack is properly erased
 > 
->> ---
->>   include/linux/shmem_fs.h | 12 ++----------
->>   mm/huge_memory.c         | 12 +++---------
->>   mm/shmem.c               | 41 ++++++++++++++++++++++++++--------------
->>   3 files changed, 32 insertions(+), 33 deletions(-)
->>
->> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
->> index 405ee8d3589a..1564d7d3ca61 100644
->> --- a/include/linux/shmem_fs.h
->> +++ b/include/linux/shmem_fs.h
->> @@ -111,21 +111,13 @@ extern void shmem_truncate_range(struct inode *inode, loff_t start, loff_t end);
->>   int shmem_unuse(unsigned int type);
->>   
->>   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->> -extern bool shmem_huge_global_enabled(struct inode *inode, pgoff_t index, bool shmem_huge_force,
->> -				      struct mm_struct *mm, unsigned long vm_flags);
->>   unsigned long shmem_allowable_huge_orders(struct inode *inode,
->>   				struct vm_area_struct *vma, pgoff_t index,
->> -				bool global_huge);
->> +				bool shmem_huge_force);
->>   #else
->> -static __always_inline bool shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
->> -						      bool shmem_huge_force, struct mm_struct *mm,
->> -						      unsigned long vm_flags)
->> -{
->> -	return false;
->> -}
->>   static inline unsigned long shmem_allowable_huge_orders(struct inode *inode,
->>   				struct vm_area_struct *vma, pgoff_t index,
->> -				bool global_huge)
->> +				bool shmem_huge_force)
->>   {
->>   	return 0;
->>   }
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index cc9bad12be75..f69980b5b5fc 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -151,16 +151,10 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
->>   	 * Must be done before hugepage flags check since shmem has its
->>   	 * own flags.
->>   	 */
->> -	if (!in_pf && shmem_file(vma->vm_file)) {
->> -		bool global_huge = shmem_huge_global_enabled(file_inode(vma->vm_file),
->> -							     vma->vm_pgoff, !enforce_sysfs,
->> -							     vma->vm_mm, vm_flags);
->> -
->> -		if (!vma_is_anon_shmem(vma))
->> -			return global_huge ? orders : 0;
->> +	if (!in_pf && shmem_file(vma->vm_file))
->>   		return shmem_allowable_huge_orders(file_inode(vma->vm_file),
->> -							vma, vma->vm_pgoff, global_huge);
->> -	}
->> +						   vma, vma->vm_pgoff,
->> +						   !enforce_sysfs);
->>   
->>   	if (!vma_is_anonymous(vma)) {
->>   		/*
->> diff --git a/mm/shmem.c b/mm/shmem.c
->> index 1445dcd39b6f..4d274f5a17d9 100644
->> --- a/mm/shmem.c
->> +++ b/mm/shmem.c
->> @@ -581,7 +581,7 @@ static bool __shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
->>   	}
->>   }
->>   
->> -bool shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
->> +static bool shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
->>   		   bool shmem_huge_force, struct mm_struct *mm,
->>   		   unsigned long vm_flags)
->>   {
->> @@ -772,6 +772,13 @@ static unsigned long shmem_unused_huge_shrink(struct shmem_sb_info *sbinfo,
->>   {
->>   	return 0;
->>   }
->> +
->> +static bool shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
->> +		bool shmem_huge_force, struct mm_struct *mm,
->> +		unsigned long vm_flags)
->> +{
->> +	return false;
->> +}
->>   #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->>   
->>   /*
->> @@ -1625,27 +1632,39 @@ static gfp_t limit_gfp_mask(gfp_t huge_gfp, gfp_t limit_gfp)
->>   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>   unsigned long shmem_allowable_huge_orders(struct inode *inode,
->>   				struct vm_area_struct *vma, pgoff_t index,
->> -				bool global_huge)
->> +				bool shmem_huge_force)
->>   {
->>   	unsigned long mask = READ_ONCE(huge_shmem_orders_always);
->>   	unsigned long within_size_orders = READ_ONCE(huge_shmem_orders_within_size);
->> -	unsigned long vm_flags = vma->vm_flags;
->> +	unsigned long vm_flags = vma ? vma->vm_flags : 0;
->> +	struct mm_struct *fault_mm = vma ? vma->vm_mm : NULL;
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> Acked-by: Ard Biesheuvel <ardb@kernel.org>
+> ---
+> v2:
+> - Make on_thread_stack() more legible.
+> - Add Acked-by.
+> ---
+>  arch/arm/Kconfig                      | 1 +
+>  arch/arm/boot/compressed/Makefile     | 1 +
+>  arch/arm/include/asm/stacktrace.h     | 7 +++++++
+>  arch/arm/kernel/entry-common.S        | 3 +++
+>  drivers/firmware/efi/libstub/Makefile | 3 ++-
+>  5 files changed, 14 insertions(+), 1 deletion(-)
 > 
-> nit: rather than deriving the fault_mm here, I wonder if its cleaner to just
-> pass vma to shmem_huge_global_enabled()? shmem_huge_global_enabled() is just
-> using it as a guard to access vm_flags, which you can just as easily do by
-> testing the vma for non-NULL. And you can access mm flags with vma->vm_mm->flags
-> after testing the vma too.
-
-Make sense to me, and will do in next version.
-
-Thanks for reviewing.
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 036381c5d42f..b211b7f5a138 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -86,6 +86,7 @@ config ARM
+>  	select HAVE_ARCH_PFN_VALID
+>  	select HAVE_ARCH_SECCOMP
+>  	select HAVE_ARCH_SECCOMP_FILTER if AEABI && !OABI_COMPAT
+> +	select HAVE_ARCH_STACKLEAK
+>  	select HAVE_ARCH_THREAD_STRUCT_WHITELIST
+>  	select HAVE_ARCH_TRACEHOOK
+>  	select HAVE_ARCH_TRANSPARENT_HUGEPAGE if ARM_LPAE
+> diff --git a/arch/arm/boot/compressed/Makefile b/arch/arm/boot/compressed/Makefile
+> index 6bca03c0c7f0..945b5975fce2 100644
+> --- a/arch/arm/boot/compressed/Makefile
+> +++ b/arch/arm/boot/compressed/Makefile
+> @@ -9,6 +9,7 @@ OBJS		=
+>  
+>  HEAD	= head.o
+>  OBJS	+= misc.o decompress.o
+> +CFLAGS_decompress.o += $(DISABLE_STACKLEAK_PLUGIN)
+>  ifeq ($(CONFIG_DEBUG_UNCOMPRESS),y)
+>  OBJS	+= debug.o
+>  AFLAGS_head.o += -DDEBUG
+> diff --git a/arch/arm/include/asm/stacktrace.h b/arch/arm/include/asm/stacktrace.h
+> index 360f0d2406bf..f80a85b091d6 100644
+> --- a/arch/arm/include/asm/stacktrace.h
+> +++ b/arch/arm/include/asm/stacktrace.h
+> @@ -26,6 +26,13 @@ struct stackframe {
+>  #endif
+>  };
+>  
+> +static inline bool on_thread_stack(void)
+> +{
+> +	unsigned long delta = current_stack_pointer ^ (unsigned long)current->stack;
+> +
+> +	return delta < THREAD_SIZE;
+> +}
+> +
+>  static __always_inline
+>  void arm_get_current_stackframe(struct pt_regs *regs, struct stackframe *frame)
+>  {
+> diff --git a/arch/arm/kernel/entry-common.S b/arch/arm/kernel/entry-common.S
+> index 5c31e9de7a60..f379c852dcb7 100644
+> --- a/arch/arm/kernel/entry-common.S
+> +++ b/arch/arm/kernel/entry-common.S
+> @@ -119,6 +119,9 @@ no_work_pending:
+>  
+>  	ct_user_enter save = 0
+>  
+> +#ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+> +	bl	stackleak_erase_on_task_stack
+> +#endif
+>  	restore_user_regs fast = 0, offset = 0
+>  ENDPROC(ret_to_user_from_irq)
+>  ENDPROC(ret_to_user)
+> diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+> index 06f0428a723c..20d8a491f25f 100644
+> --- a/drivers/firmware/efi/libstub/Makefile
+> +++ b/drivers/firmware/efi/libstub/Makefile
+> @@ -27,7 +27,8 @@ cflags-$(CONFIG_ARM64)		+= -fpie $(DISABLE_STACKLEAK_PLUGIN) \
+>  cflags-$(CONFIG_ARM)		+= -DEFI_HAVE_STRLEN -DEFI_HAVE_STRNLEN \
+>  				   -DEFI_HAVE_MEMCHR -DEFI_HAVE_STRRCHR \
+>  				   -DEFI_HAVE_STRCMP -fno-builtin -fpic \
+> -				   $(call cc-option,-mno-single-pic-base)
+> +				   $(call cc-option,-mno-single-pic-base) \
+> +				   $(DISABLE_STACKLEAK_PLUGIN)
+>  cflags-$(CONFIG_RISCV)		+= -fpic -DNO_ALTERNATIVE -mno-relax
+>  cflags-$(CONFIG_LOONGARCH)	+= -fpie
+>  
 
