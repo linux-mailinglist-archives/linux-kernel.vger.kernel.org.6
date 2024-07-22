@@ -1,225 +1,104 @@
-Return-Path: <linux-kernel+bounces-259363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E55169394D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:38:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C7489394D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:39:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B194281AB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:38:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7A331C2150B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99960381AF;
-	Mon, 22 Jul 2024 20:38:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E027B3BBE3;
+	Mon, 22 Jul 2024 20:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Id7/ujMy"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="egXuJs/w"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1168C1C6A8;
-	Mon, 22 Jul 2024 20:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C437C3A1BA
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 20:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721680721; cv=none; b=J7jtppBJv++/TcOTYrSUBj2VJe0bZzj6RGoXNCwdoy71ZwSPuCgIq1QFsSS9dcmcW4e7Qup0mzmtt/1Wd5XsHLhaHvHIFk1+99GywdnMJhlA1wPYidhRCI9/Y/p5yl/i5XG/KfhCLzJEl2FmCiaKs428FriZ4myc+DLvVJ6ZPGk=
+	t=1721680729; cv=none; b=sEQDpPJ3iEI9NnefZyoZc5JiPileIvCVjrnRBSIHCQoHhi6Ungxh1KHbdJnJhjbnnXD68Ddi1r45giao2Hq3sG3plMuF4XxT55onhDobMwP7yJvlNd3jRYBo2YOZ7DToVAi0cln/m7tH7BbhG/UB+Rb8hsHfTwY6U7Nb5wXVs0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721680721; c=relaxed/simple;
-	bh=oj7iizPmx9Uac534TDn+iK6P7w94M6HPkwDq4rx9hbg=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LFMoY8ulZ5oEFBblQR3Sw7GwLctgkdcxJqz9vQVr0GUg8WSUlY4TCYfrTFm/zCFDxKE3bZFynPETlI+evvC2cWRv99gmqvBOeCdLfXVobnCCZUqH8s6oDaRzKqqH/e7BMBwPZyZucTfra8aFPEIiEhIUaG/s3Iig6FnJj0Yedas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Id7/ujMy; arc=none smtp.client-ip=209.85.208.48
+	s=arc-20240116; t=1721680729; c=relaxed/simple;
+	bh=g+fv7OJVWOMMleBQzuG7E8psB777BJk/nbaQACHZyX0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qhTG1KOLy/4MJsBzT4dDX0XeSXoUWuqYic1i6bQtAb05mzDs4eN3eFQxjLR3OzRCeaqpZv/bEc6TIp8pJCt6nGbxS0I2YMyqnLj8YC+/2L87ehliBrYH2KsJRntUMg+bwMPKbvYIftmBupIJ3KE1WYBXozE+s7aKUYwGCdtVM2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=egXuJs/w; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5a156556fb4so3834288a12.3;
-        Mon, 22 Jul 2024 13:38:39 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3683f56b9bdso2331449f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 13:38:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721680718; x=1722285518; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4soFdbWI6WlrT388kgL0g2NFrLFysdOT5ujOm7GMw3s=;
-        b=Id7/ujMyhKAKwmpJOdwOw5rbUkbf8Q1EDVBgfaIkdvcOclPs8ovFZ7OfhKOCGvgnA+
-         Yv1rJFv+WurV/74a6gVdzFSxjuufuY6OfLh/en20WhnwG7lPE2WCiFIeWOUlMkTGuUJT
-         ox7IIncZ/m7hb7idUdEngpNy/rHcLe83litNUAjeXcqZFrCFhCFtXqu1BL22xR4HmOZZ
-         hDYKXG+SpHWBPJVQApBdLRK5y4cPNeGb88eyhpqDdW1z65EGmVGMyPx83cmxmwPQDpt1
-         JzkFMOjtCaFiJ3qHVGfOsXjW6D5RbtJaI3RryU8LCQ6xU6yYv/4nLiZQJVsWRo372Pfu
-         VTMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721680718; x=1722285518;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1721680726; x=1722285526; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4soFdbWI6WlrT388kgL0g2NFrLFysdOT5ujOm7GMw3s=;
-        b=oh2ubs8Tbo9WG3nnfO50zG26ePY/BINfP0prXadWbZ1X2Xi0iM4WVu6ZhG1I5hZdJq
-         6UMCA+yB9IlYmzpTmipAlwvLqTX6taD3GZr2r3PGyjk/wMi6/KaNpIvlrAtEVxEP3URF
-         YyoNRUgBzEAZs0TE5DUTadQUvjK9MqhT48CAHMvEYsaMgIE6y7UE5CzzK6tLDtxut1+v
-         pN2i7eQVF9yzCiGCN5LmlgI3O16I3Bo8b6T71Vwa/kD4PyjHpKVel8riEz7CY+opqAVh
-         ncivWEoRHvT89Tuf0O3/MWKuYRVvt2NziNAjCzvBg0v5IQhhnNWJFwR9FWGvN1RViF7e
-         Qu1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUv/efd73qOwBWY0+51yHMF3Ful0VWIlevfdc/DJgHwBrp6/MX7sIDqFuRpl0YdQ+idyY/mIfarwttDnoGDvBUrTPcSFRC0dkTGOaLmrUwpuiSSL38BHzlbGbiBXqUJRaT0hjT4T6BUiNDnzErwrBVIQeE+a43l/7KmA65iNnNtxcsoBA==
-X-Gm-Message-State: AOJu0YzI3oWeWqy3YThyj0ps6AWd0qKBS4zJjKduJspWh6jgvORMAeRu
-	pY7ZF4yGAxKpTWJ5KXjSvqMaZnl4H6lsL0THOtnfR5FBpDkm0s5H
-X-Google-Smtp-Source: AGHT+IEhhx04/8t1mBceev5cCkjM+y02k9b7hRo6GVXAdNpYCApOTGeRgRIM6BPwR9J/nTo9Fh/47A==
-X-Received: by 2002:a50:c30f:0:b0:5a3:ca25:56e2 with SMTP id 4fb4d7f45d1cf-5a47afefb48mr4681612a12.23.1721680718093;
-        Mon, 22 Jul 2024 13:38:38 -0700 (PDT)
-Received: from vamoiridPC ([2a04:ee41:82:7577:a09a:d3e:5e36:412c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30af83e8dsm6610671a12.49.2024.07.22.13.38.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 13:38:37 -0700 (PDT)
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-X-Google-Original-From: Vasileios Amoiridis <vamoirid@vamoiridPC>
-Date: Mon, 22 Jul 2024 22:38:34 +0200
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	andriy.shevchenko@linux.intel.com, ang.iglesiasg@gmail.com,
-	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
-	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
-	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 09/10] iio: pressure: bmp280: Add data ready trigger
- support
-Message-ID: <20240722203834.GA468105@vamoiridPC>
-References: <20240711211558.106327-1-vassilisamir@gmail.com>
- <20240711211558.106327-10-vassilisamir@gmail.com>
- <20240720123727.7598111b@jic23-huawei>
- <20240721235113.GF325365@vamoiridPC>
- <20240722203138.07b21300@jic23-huawei>
+        bh=WWvxWL/SNIp/p1/ug+eVMpMZjJit2TPmzxyd8I18mCI=;
+        b=egXuJs/w824NoK+wyBRzI8GqppQ2uk9HyVsKCwCjv1kRN4PJ+uG7jB+mltBmHGIozS
+         o1STubrqiKArn1TnteRn23vSiK/O548p6uHUHdyQ7LG7z/wZUVvtz6+cmNMYUnnb0/qP
+         dRJ/PiqwV4yZ/P1p+xXG20Yb+awG4tZbU+UPbxO9KtdtnGlRS4V4Qci/GpyuXzJgxV/c
+         lfU4iEbwe/k1KwLyLqTQGsgNoIKUzxpaldMqrW2kmr4tDaAKRtyd72VhtvU8AlCDuKyp
+         bKVBh8oTj1x/rjd3CZl0jg9xxmwbREhRYLm4IK+AH9B0pWjIqI469nZ+H+yFXofdrt6X
+         YNZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721680726; x=1722285526;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WWvxWL/SNIp/p1/ug+eVMpMZjJit2TPmzxyd8I18mCI=;
+        b=afBBT/msPLHk84a/yFeswqy0hOgfocfpsgGCWPlPpqXcyLJFpqJit091iStk8FhCF1
+         o8xJtRMsPs/TWKrOLU2Wfe8F6tL9MufIogTHIaGsjlDx+zjBYUdTl6sNk47uKf8UwRTm
+         VAY+t1d3W+oD/b4UHiKmTOccUPrVh2tNXLdH92kMLwAQmNiSoy4k0lmzgJnyYBXPD9I5
+         GfsINN4BQYIYMZXETSXP9X24WpwbFnQlwuTba9Q+c2K0V2MtWw3g3rqGAWFPd42ygBXi
+         v3dKrZJcSXqP9S56V6BJBkagPBmqsG76qUrnsxsplR5Lblj3FeUms8BOXPlbrZY/Xez3
+         D6hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXo471YuFujc+LO+OQ1c16xquqsR6PMvOBUAGB8V33qDgv5wwgpuTTjoYTB0csHZRVKlNiYdVYBWP5S9Hl9w8B0k6vlIc2fhSRly6V
+X-Gm-Message-State: AOJu0Ywcq3akj79E4cGohHCsas2VvRZhSnOrgdzmp+4w69kNd+sQ1l1n
+	Q/ZAIPNGXML5fyEB0kF/VZ9ckVwXDvGLobhSP+QQw28PwOBcfMC/GgfaAAAQtjJboClacqxF4LK
+	czqVJ39Lt68xOSpiYaKjUeflMXPo=
+X-Google-Smtp-Source: AGHT+IF8J39DuFIL/NKaVBRas1RRiYK8t648txfmNo9Ttbikt7JIk4Wdvhex5K3BTc1O7+q90FGcdZ0AAp0YrRgpAs8=
+X-Received: by 2002:a5d:4a06:0:b0:368:5e34:4b4b with SMTP id
+ ffacd0b85a97d-369bbbb3025mr4808628f8f.6.1721680726073; Mon, 22 Jul 2024
+ 13:38:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240722203138.07b21300@jic23-huawei>
+References: <20240722202502.70301-1-andrey.konovalov@linux.dev> <CACT4Y+Zb5ffw0MiYMNqT6YUSdJ7X6xDxJND0ZZPQ7SZmoGybXA@mail.gmail.com>
+In-Reply-To: <CACT4Y+Zb5ffw0MiYMNqT6YUSdJ7X6xDxJND0ZZPQ7SZmoGybXA@mail.gmail.com>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Mon, 22 Jul 2024 22:38:34 +0200
+Message-ID: <CA+fCnZeZqPX-K=FAAHfT3nZKWPgAABsqKBUrhrZJ-omuyH=w6A@mail.gmail.com>
+Subject: Re: [PATCH] x86, kcov: ignore stack trace coverage
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: andrey.konovalov@linux.dev, Andrew Morton <akpm@linux-foundation.org>, 
+	Aleksandr Nogikh <nogikh@google.com>, Marco Elver <elver@google.com>, 
+	Alexander Potapenko <glider@google.com>, kasan-dev@googlegroups.com, linux-mm@kvack.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 22, 2024 at 08:31:38PM +0100, Jonathan Cameron wrote:
-> On Mon, 22 Jul 2024 01:51:13 +0200
-> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> 
-> > On Sat, Jul 20, 2024 at 12:37:27PM +0100, Jonathan Cameron wrote:
-> > > On Thu, 11 Jul 2024 23:15:57 +0200
-> > > Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> > >   
-> > > > The BMP3xx and BMP5xx sensors have an interrupt pin which can be used as
-> > > > a trigger for when there are data ready in the sensor for pick up.
-> > > > 
-> > > > This use case is used along with NORMAL_MODE in the sensor, which allows
-> > > > the sensor to do consecutive measurements depending on the ODR rate value.
-> > > > 
-> > > > The trigger pin can be configured to be open-drain or push-pull and either
-> > > > rising or falling edge.
-> > > > 
-> > > > No support is added yet for interrupts for FIFO, WATERMARK and out of range
-> > > > values.
-> > > > 
-> > > > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>  
-> > > 
-> > > A few minor things inline.
-> > > 
-> > > It might be worth thinking a bit about future fifo support as that can
-> > > get a little messy in a driver that already supports a dataready trigger.
-> > > We end up with no trigger being set meaning use the fifo.  Sometimes
-> > > it makes more sense to not support triggers at all.
-> > > 
-> > > What you have here is fine though as we have a bunch of drivers
-> > > that grew dataready trigger support before adding fifos later
-> > > particularly as often it's a 'new chip' that brings the fifo
-> > > support but maintains backwards compatibility if you don't use it.
-> > >   
-> > 
-> > Hi Jonathan,
-> > 
-> > Thank you very much for your thorough review again!
-> > 
-> > What I could do to make the code even better to be able to accept
-> > FIFO irq support are the following:
-> > 
-> > 1) in the bmp{380/580}_trigger_handler() currently, the data registers
-> > are being read. What I could do is to move the reading of registers
-> > to a separe function like bmpxxx_drdy_trigger_handler() and calling
-> > it inside the bmp{380/580}_trigger_handler() when I have DRDY or
-> > sysfs irq. In order to check the enabled irqs I propose also no.2
-> 
-> You shouldn't get to the trigger_handler by other paths.  But sure 
-> a bit of code reuse might make sense if fifo read out path is same
-> as for other data reads.  Superficially it looks totally different
-> on the bmp380 though as there is a separate fifo register.
-> 
+On Mon, Jul 22, 2024 at 10:36=E2=80=AFPM Dmitry Vyukov <dvyukov@google.com>=
+ wrote:
+>
+> > +# These produce large amounts of uninteresting coverage.
+> > +KCOV_INSTRUMENT_dumpstack.o                            :=3D n
+> > +KCOV_INSTRUMENT_dumpstack_$(BITS).o                    :=3D n
+> > +KCOV_INSTRUMENT_stacktrace.o                           :=3D n
+> > +KCOV_INSTRUMENT_unwind_orc.o                           :=3D n
+> > +KCOV_INSTRUMENT_unwind_frame.o                         :=3D n
+> > +KCOV_INSTRUMENT_unwind_guess.o                         :=3D n
 
-So, I don't mean getting into the trigger_handler by other paths. I will
-always end up in the trigger_handler and then, depending on the interrupt
-that was triggered (DRDY, FIFO, etc...) I choose different actions.
+Ah, I even reviewed it, completely forgot :(
 
-> > 
-> > 2) in the following bmp{380/580}_trigger_probe() functions instead of
-> > just doing:
-> > 
-> >        irq = fwnode_irq_get_byname(fwnode, "DRDY");
-> >        if (!irq) {
-> >                dev_err(data->dev, "No DRDY interrupt found\n");
-> >                return -ENODEV;
-> >        }
-> > 
-> > I could also use some type of variable like we do for the active
-> > channels in order to track "active/existing irqs".
-> 
-> I think there is only one IRQ on the 380 at least.  So
-> you should only request it once for this driver.  Then software
-> gets to configure what it is for.
-> 
-> However it shouldn't be called DRDY for these parts at least. It's
-> just INT on the datasheet.
-> The interrupt control register value will tell you what is enabled.
-> No need to track it separately.
-> 
+That's great then, thank you!
 
-So I am a bit confused. Indeed, BMP380 has only irq line. So I understand
-why I should call it INT. The actual IRQ inside the chip that will be 
-triggered needs to be configured by software. I do it through the
-bmp{3/5}80_int_config() function. How am I supposed to know
-which IRQ to enable? Options are:
-
-	a) DRDY only
-	b) FIFO only
-	c) both
-
-How can I inform the driver about which to enable? Shouldn't this go
-through the device-tree?
-
-> If you mean track the one from the poll function registered for
-> handling triggers - that's an internal detail but you would indeed
-> need to track in your data structures whether that's the trigger
-> currently being used or not (easy to do by comparing iio_dev->trig
-> with a pointer for each trigger in iio_priv() data - so should be no
-> need for separate tracking.
-> 
-
-My idea is that there is one trigger_handler which inside you check
-which interrupt triggered and you choose which path to choose. If that's
-wrong, do you know any specific driver that implements it in the correct
-way? Because in my mind, the iio_dev->trig is one and just inside the
-handler, different functions are called.
-
-> Jonathan
-> 
-> 
-
-Thanks for the feedback :)
-
-Cheers,
-Vasilis
-
-> 
-> > 
-> > Like this it would be easier to track the active irqs of the sensor.
-> > 
-> > Let me know what you think, or if I manage to have time I might send
-> > a v2 with those changes even earlier :)
-> > 
-> > Cheers,
-> > Vasilis
-> > 
-> 
+This patch can be ignored.
 
