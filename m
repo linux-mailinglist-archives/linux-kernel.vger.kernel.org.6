@@ -1,156 +1,133 @@
-Return-Path: <linux-kernel+bounces-259092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78832939118
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:56:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D49093911A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33DA328210C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:56:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C3701F22068
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7869616DC36;
-	Mon, 22 Jul 2024 14:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JcwGK4YF"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07F916DC24;
+	Mon, 22 Jul 2024 14:57:44 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F15616DC18;
-	Mon, 22 Jul 2024 14:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0647E1598F4
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 14:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721660212; cv=none; b=UxxHav9/1uJn58B8Srtlf0nNqEVS6BORD21EZloy6R9qUnUg9tsJhkz5vZOOyjqnocBxBZzGxse+YKNTjDGE1A4k1HYkse9t2mDkDbpv+rUGuOK/VJ0EwJmOkqaDf9+zj63F4IsF7dzu6VwZRWDQARuZcvO/tnSC3FBKQFzbbao=
+	t=1721660264; cv=none; b=mcbEzPLn6QX4V4rACh4HzlwNJKZW8nWX+TfqwKO4OKIWiP7mvslfoturPzP7g3KMo2ftPo46oqKHcyiPa6j2JZo3Qiz8Lc3fsc5jYBl2Jpskyu5aQMmfy0cLFX3EMXBnWdwO4noNWRTWWfInFAR/T1ss2cE70dY4UdySY9eSXTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721660212; c=relaxed/simple;
-	bh=wkJ8iIbLDJtmLlh5cYY3xms12LJiEr8uCYopHEhJ5W8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u2iEosY/6piqaRbf+Gr4me9umuSW0Rj6r1z6YXdqFRs/de8YFT3eburrWj01qcMWzVU5RoyKu3/Xk/pHz4r4lkmYQ/dqmE4410sIYdfqXNNt/qN9Lk3Htz8AqkfU7bE8gp7u0/HfRcZ0IwvasdAGgOJCGdHdJFmkrIUS6bvcnJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JcwGK4YF; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B81014CF;
-	Mon, 22 Jul 2024 16:56:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1721660167;
-	bh=wkJ8iIbLDJtmLlh5cYY3xms12LJiEr8uCYopHEhJ5W8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JcwGK4YFLaWzl6MONALmDjSq4dU5xT7BrQpRGDCZ31iHblzoWGUBYqTNSe7k/KUjf
-	 hJAuvRLjpGT/ZPc9kgoUJQhQQA2Gftml16cDvtNXzM5RE9PHGr5ELmv7eDqG5D+mgz
-	 JRbIXiK1mVyRarB7Ldt5q5yR/63cbqTWrR7CKR3Y=
-Date: Mon, 22 Jul 2024 17:56:31 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Mingjia Zhang <mingjia.zhang@mediatek.com>,
-	Jack Zhu <jack.zhu@starfivetech.com>,
-	Keith Zhao <keith.zhao@starfivetech.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [PATCH v5 14/14] admin-guide: media: Update documents for
- StarFive Camera Subsystem
-Message-ID: <20240722145631.GM13497@pendragon.ideasonboard.com>
-References: <20240709083824.430473-1-changhuang.liang@starfivetech.com>
- <20240709083824.430473-15-changhuang.liang@starfivetech.com>
+	s=arc-20240116; t=1721660264; c=relaxed/simple;
+	bh=WL/GM7WE0wU/NcCtoanPw23IJTYZBmQy3B/6tKl5tOU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=gsQ7kBCMGwyd+qZNCNvHIE4a6OD8269jhU0fxbjDW+jIJ9X/OsjufY/eMfdmA/3q3FevNXkoVY4aCkgS5Orr6E3BuGhN1GjHHPjMg585R+wi3OcAtpFdxlUjMAf8c2lVoKudGC6chXGHc2VWlIO5kE5Zrbq/Ki13AF5rOZa0GS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39941f4c5a1so38906115ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:57:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721660262; x=1722265062;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4EMuhfU9gd7TV5OuHBnL1tsJUlRGxE+o4zw1F7KEaF4=;
+        b=tDU/I52Vh2z4fXPYM2yY/6ORdHFlQGkMcepi39CFg8q+hbUCYDSetRbNoy+rM40rvt
+         W5V75iFwGprIgAZjJgG3wML2SFYo38/KaXbDc6YPUOXTFsDs3kaFrtOFtOANqIcfPUIu
+         KvwfoqgwU56IRjF/IZOYOh5f4IVWCFkMg2p2/lxw785AfGvpKYoxGXOpTbpDize3gdJ3
+         Mkc4B3JBp345OJwExO8Sc8jex5+n2K3YuuA/7tWlkTKdz5mvEvN9hF1L6tNICK/sPfSM
+         Q/yYfO5W5Tqtph674zxfYx5dzeAT/s10Uj9wKrP5oXUr8+Pfwvo52F5blP7GRKKeKBsA
+         v5kA==
+X-Gm-Message-State: AOJu0YwiQEUAgrLDbKVIn7IOJuFtfCdHAPR8PoELyoL5P+sYXyQMs61A
+	5Pl5XWMo4kx24oSyW2UyPv5wYEZ326VvY9Geb1qKBi2JckAYftks20H9IbsmG+pGBW9O2IQ48vn
+	m5yudErtFL9av2OJ4c4RGZZzZA0B3P4tGB7+H04E8exf57e69a9H0jLg=
+X-Google-Smtp-Source: AGHT+IFTQMalkEpIshLx/WqG6Yy7lsISfkEm+9cORDMEpeqSUnli6Zk2USUTBj+U9t/a6+0bhvUg7ixb7QmcfWCVIwjmyYP7ZCPs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240709083824.430473-15-changhuang.liang@starfivetech.com>
+X-Received: by 2002:a05:6e02:1a8a:b0:397:3a28:94f1 with SMTP id
+ e9e14a558f8ab-398e6d89e9emr6810465ab.3.1721660262201; Mon, 22 Jul 2024
+ 07:57:42 -0700 (PDT)
+Date: Mon, 22 Jul 2024 07:57:42 -0700
+In-Reply-To: <000000000000e8fcab061d53308f@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005a4c84061dd744dd@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [bpf?] [net?] general protection fault in __xsk_map_flush
+From: syzbot <syzbot+61a1cfc2b6632363d319@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Changhuang,
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Thank you for the patch.
+***
 
-On Tue, Jul 09, 2024 at 01:38:24AM -0700, Changhuang Liang wrote:
-> Add ISP output parameters and 3A statistisc collection data video
-> device for documents.
-> 
-> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
-> ---
->  .../admin-guide/media/starfive_camss.rst      | 11 +++++++---
->  .../media/starfive_camss_graph.dot            | 22 +++++++++++--------
->  2 files changed, 21 insertions(+), 12 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/media/starfive_camss.rst b/Documentation/admin-guide/media/starfive_camss.rst
-> index ca42e9447c47..020f1969e67f 100644
-> --- a/Documentation/admin-guide/media/starfive_camss.rst
-> +++ b/Documentation/admin-guide/media/starfive_camss.rst
-> @@ -58,15 +58,20 @@ The media controller pipeline graph is as follows:
->      :alt:   starfive_camss_graph.dot
->      :align: center
->  
-> -The driver has 2 video devices:
-> +The driver has 4 video devices:
->  
-> +- output_params: The meta output device, transmitting the parameters to ISP
-> +  module.
->  - capture_raw: The capture device, capturing image data directly from a sensor.
->  - capture_yuv: The capture device, capturing YUV frame data processed by the
-> -  ISP module
-> +  ISP module.
-> +- capture_scd: The meta capture device, capturing 3A statistics collection data
+Subject: Re: [syzbot] [bpf?] [net?] general protection fault in __xsk_map_flush
+Author: aha310510@gmail.com
 
-Renaming "scd" to "stats" (here and through the whole series) would make
-the code and documentation easier to understand for third parties, as
-it's not immediately clear what "scd" means. I won't insist too much if
-this would cause lots of issues.
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 
-> +  processed by the ISP module.
->  
->  The driver has 3 subdevices:
->  
-> -- stf_isp: is responsible for all the isp operations, outputs YUV frames.
-> +- stf_isp: is responsible for all the isp operations, outputs YUV frames
-> +  and 3A statistics collection data.
->  - cdns_csi2rx: a CSI-2 bridge supporting up to 4 CSI lanes in input, and 4
->    different pixel streams in output.
->  - imx219: an image sensor, image data is sent through MIPI CSI-2.
-> diff --git a/Documentation/admin-guide/media/starfive_camss_graph.dot b/Documentation/admin-guide/media/starfive_camss_graph.dot
-> index 8eff1f161ac7..7961255d3ad6 100644
-> --- a/Documentation/admin-guide/media/starfive_camss_graph.dot
-> +++ b/Documentation/admin-guide/media/starfive_camss_graph.dot
-> @@ -1,12 +1,16 @@
->  digraph board {
->  	rankdir=TB
-> -	n00000001 [label="{{<port0> 0} | stf_isp\n/dev/v4l-subdev0 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
-> -	n00000001:port1 -> n00000008 [style=dashed]
-> -	n00000004 [label="capture_raw\n/dev/video0", shape=box, style=filled, fillcolor=yellow]
-> -	n00000008 [label="capture_yuv\n/dev/video1", shape=box, style=filled, fillcolor=yellow]
-> -	n0000000e [label="{{<port0> 0} | cdns_csi2rx.19800000.csi-bridge\n | {<port1> 1 | <port2> 2 | <port3> 3 | <port4> 4}}", shape=Mrecord, style=filled, fillcolor=green]
-> -	n0000000e:port1 -> n00000001:port0 [style=dashed]
-> -	n0000000e:port1 -> n00000004 [style=dashed]
-> -	n00000018 [label="{{} | imx219 6-0010\n/dev/v4l-subdev1 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
-> -	n00000018:port0 -> n0000000e:port0 [style=bold]
-> +	n00000001 [label="{{<port0> 0 | <port1> 1} | stf_isp\n/dev/v4l-subdev0 | {<port2> 2 | <port3> 3}}", shape=Mrecord, style=filled, fillcolor=green]
-> +	n00000001:port2 -> n0000000e
-> +	n00000001:port3 -> n00000012 [style=dashed]
-> +	n00000006 [label="output_params\n/dev/video0", shape=box, style=filled, fillcolor=yellow]
-> +	n00000006 -> n00000001:port1 [style=dashed]
-> +	n0000000a [label="capture_raw\n/dev/video1", shape=box, style=filled, fillcolor=yellow]
-> +	n0000000e [label="capture_yuv\n/dev/video2", shape=box, style=filled, fillcolor=yellow]
-> +	n00000012 [label="capture_scd\n/dev/video3", shape=box, style=filled, fillcolor=yellow]
-> +	n0000001c [label="{{<port0> 0} | cdns_csi2rx.19800000.csi-bridge\n/dev/v4l-subdev1 | {<port1> 1 | <port2> 2 | <port3> 3 | <port4> 4}}", shape=Mrecord, style=filled, fillcolor=green]
-> +	n0000001c:port1 -> n00000001:port0 [style=dashed]
-> +	n0000001c:port1 -> n0000000a [style=dashed]
-> +	n00000026 [label="{{} | imx219 6-0010\n/dev/v4l-subdev2 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
-> +	n00000026:port0 -> n0000001c:port0 [style=bold]
->  }
+---
+ include/linux/filter.h | 6 +++---
+ kernel/bpf/cpumap.c    | 2 +-
+ kernel/bpf/devmap.c    | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
--- 
-Regards,
-
-Laurent Pinchart
+diff --git a/include/linux/filter.h b/include/linux/filter.h
+index b6672ff61407..22691015d175 100644
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -842,15 +842,15 @@ static inline void bpf_net_ctx_get_all_used_flush_lists(struct list_head **lh_ma
+ 	if (!IS_ENABLED(CONFIG_BPF_SYSCALL))
+ 		return;
+ 
+-	lh = &bpf_net_ctx->dev_map_flush_list;
++	lh = this_cpu_ptr(&bpf_net_ctx->dev_map_flush_list);
+ 	if (kern_flags & BPF_RI_F_DEV_MAP_INIT && !list_empty(lh))
+ 		*lh_dev = lh;
+ 
+-	lh = &bpf_net_ctx->cpu_map_flush_list;
++	lh = this_cpu_ptr(&bpf_net_ctx->cpu_map_flush_list);
+ 	if (kern_flags & BPF_RI_F_CPU_MAP_INIT && !list_empty(lh))
+ 		*lh_map = lh;
+ 
+-	lh = &bpf_net_ctx->xskmap_map_flush_list;
++	lh = this_cpu_ptr(&bpf_net_ctx->xskmap_map_flush_list);
+ 	if (IS_ENABLED(CONFIG_XDP_SOCKETS) &&
+ 	    kern_flags & BPF_RI_F_XSK_MAP_INIT && !list_empty(lh))
+ 		*lh_xsk = lh;
+diff --git a/kernel/bpf/cpumap.c b/kernel/bpf/cpumap.c
+index fbdf5a1aabfe..8fccc311397c 100644
+--- a/kernel/bpf/cpumap.c
++++ b/kernel/bpf/cpumap.c
+@@ -676,7 +676,7 @@ static void bq_flush_to_queue(struct xdp_bulk_queue *bq)
+ 	struct ptr_ring *q;
+ 	int i;
+ 
+-	if (unlikely(!bq->count))
++	if (unlikely(!bq->count) || unlikely(bq->count) > CPU_MAP_BULK_SIZE)
+ 		return;
+ 
+ 	q = rcpu->queue;
+diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
+index 9e0e3b0a18e4..4b9203deb711 100644
+--- a/kernel/bpf/devmap.c
++++ b/kernel/bpf/devmap.c
+@@ -378,7 +378,7 @@ static void bq_xmit_all(struct xdp_dev_bulk_queue *bq, u32 flags)
+ 	int to_send = cnt;
+ 	int i;
+ 
+-	if (unlikely(!cnt))
++	if (unlikely(!cnt) || unlikely(cnt) > DEV_MAP_BULK_SIZE)
+ 		return;
+ 
+ 	for (i = 0; i < cnt; i++) {
+--
 
