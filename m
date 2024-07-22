@@ -1,187 +1,295 @@
-Return-Path: <linux-kernel+bounces-259144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D8E69391DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:32:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB599391E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:33:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E81F1C21182
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:32:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72124B20549
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED19116E867;
-	Mon, 22 Jul 2024 15:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343E116E876;
+	Mon, 22 Jul 2024 15:33:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e8iFXR5F"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y7dx4Z33"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A704C2FD
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 15:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553AAC2FD;
+	Mon, 22 Jul 2024 15:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721662316; cv=none; b=mVe63E6lR54iRdJkUn3ALF32FuZs2Qo96JIO7Ydaj9PeppIkQG2VpaKmhFyeDq0WkBUzAuRrfYZq8YjAqYOqxmnHsCmViR1YmQQi77xGK01kZHwE3pcyW8fpITV6IQGKH5F+LFA74ghvjbHBqK8JIYV8zsCwSADkMTZxZjPwFPw=
+	t=1721662384; cv=none; b=FCosqWMWjSAiM4HacXcUEoTLFViKmPmiYhwoN/rKLVMjOV4ng9RdOJ4x2bvxPYA+CizhR1rJGQzsHY7R2tn1FVzobF+1jmoNqydsjHKYw6WdG96dQDWA7sAbq/lXPW1mvMRDfMwZmvDYF7+VhziyqdEL41/HrxojAlYMBm9CMvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721662316; c=relaxed/simple;
-	bh=Qme2HpEsv7RSmE58takLuJoDVmou4OYpE5Ns+lgc4w8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rZKwf6zV/09pjOnKIm14f4VP1tPjNNT30PrRMqOC36TpVUU/zhnuCYSlGEElZ7wP9XyPmcfMImSsQV8z5Y8bvWGbMqd6M5vcOcKkFfYjWriybDcI/Og0sOw6PmB8intqevDzpIaABxH05EuzW1mcSDjN4nleuLLMQ1XBvtyPq4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e8iFXR5F; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721662313;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jy2hKoepXG/rD4fs1gDu/NkLXDQ0MSD+ICWqPzfOpkw=;
-	b=e8iFXR5FjMpRqjzWoXmGV4rVxrRhwQLPbExuo+6FB8bJBWWWOEcpYU1zIpdPcpXaZtM6E6
-	W3LxbECIGSLpocxBe7XynleoT7Mv17Q7iwGsbKE3M175bPCgJ64BQs/EhhTRdkZVy8WIKr
-	txoJwVW24+lWXCJmGu2IZ+bVK8HHwzA=
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
- [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-563--PVYgRVPNj6ZecFYsxdRkg-1; Mon, 22 Jul 2024 11:31:52 -0400
-X-MC-Unique: -PVYgRVPNj6ZecFYsxdRkg-1
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-6657a405603so10591237b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 08:31:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721662312; x=1722267112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1721662384; c=relaxed/simple;
+	bh=hd7KMdPfW+S/vgqmVMaOXvJkkj7Utztp8HNlnS5csbk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u2xaHZ9rNV1vVW4pSEFY98mnty/5lHrtIGxgQaTBkPa/Y+6GwwB9b7EZzpTs0dTpAs7a+x1ojreVRwXeg+Sf4/RAXJVpyjjX+TYDt+sGtEearQ6czdMTaWTZsGuPuKOgP438HKg8F5FTdgjMNc3O1JMfrKAIaKeWGoioFiPToSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y7dx4Z33; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4266f344091so32580165e9.0;
+        Mon, 22 Jul 2024 08:33:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721662381; x=1722267181; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Jy2hKoepXG/rD4fs1gDu/NkLXDQ0MSD+ICWqPzfOpkw=;
-        b=JtUN/4EWZWAhUxDzvgzasw4ARJtovn6qsjkdXCSJ3SG8xEPpKnWv8zjiNh4AXr5MHs
-         0mUR678hD2x1I2QskRkRURRPqIg5zKwtfZvaWJICTxjcWwGMier1+8MNm0hgdqnWZPrK
-         bvIIm9XaMy0KvgMsp0ol/m/M1jS2ossJHcSBMbwm3xHPBfe/7ck0SCyJQ08EWnSeuW8S
-         wjkNmBBAEP5QXfvOS90/6KxAwusMHq+3ROiyIx42ZX7aQOoA2g+KqQKU8J8/b1KeJSMy
-         E2fGl0aBqEUm1p1XwZ8PSGkJ1Tvoh3AQNJ/BizMLF/tnKksU9l8y/RKTktb/jJqZZYJA
-         d9iA==
-X-Gm-Message-State: AOJu0Yzjmxv4ctxcCNABZtrMN3sKP+XVqdawVf5ZBrJAGPrp7QBPUgZ2
-	+25X8EkCMRLnE7HrGbFBFLHpb1bCu8qgDhRk1NS/K07qzWjvWQu7k5Fb+ad2CSRj4qMpBLxrPLM
-	WX1Hr9MloRiHRoz8KOSyh5u7j89XLKSKwMIR9Za9QQ/78/xtqpKQtFnEhfbRx5A==
-X-Received: by 2002:a05:690c:12:b0:62f:7951:fe4d with SMTP id 00721157ae682-66a6645377bmr38047497b3.4.1721662311578;
-        Mon, 22 Jul 2024 08:31:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEjAYBMqsJOtNPwFqnMhMAJ/HDPRITSVBivrOVSPNdHxvmNPnz6ZnQiqjkhPkHbmoLpOWtDQA==
-X-Received: by 2002:a05:690c:12:b0:62f:7951:fe4d with SMTP id 00721157ae682-66a6645377bmr38047287b3.4.1721662311092;
-        Mon, 22 Jul 2024 08:31:51 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a198fba6efsm372071285a.41.2024.07.22.08.31.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 08:31:50 -0700 (PDT)
-Date: Mon, 22 Jul 2024 11:31:48 -0400
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Oscar Salvador <osalvador@suse.de>, linux-s390@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Michal Hocko <mhocko@kernel.org>, linux-riscv@lists.infradead.org,
-	sparclinux@vger.kernel.org,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Jason Gunthorpe <jgg@nvidia.com>, x86@kernel.org,
-	Alistair Popple <apopple@nvidia.com>, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Hugh Dickins <hughd@google.com>,
-	Axel Rasmussen <axelrasmussen@google.com>
-Subject: Re: [PATCH RFC 0/6] mm: THP-agnostic refactor on huge mappings
-Message-ID: <Zp57ZLk2IQoHOI7u@x1n>
-References: <20240717220219.3743374-1-peterx@redhat.com>
- <cf36725d-c197-4c07-8998-d34711335fdb@redhat.com>
+        bh=qw3MXdh1l+GSHgjHWnYdzfuWkMoYNmYb7vb1OJfAtBk=;
+        b=Y7dx4Z33KY01s47acui7Dvzz8HK6WD1xFavsOXOCxGIu9lmljLdbqa/I2sq5ShTlI9
+         bwUYMb7dt5uVO+Cb79H7vKrGDEygXopwFxfo9zQZGoZ6T36IRp8+QvLGpT8z8FWnuDFw
+         Y8mvd1GwqBxl5z7fCnoxRysS4yoR/1P3DSL5g80T66ZtbModU+zVDr32qNRJlQRHWQ0I
+         Ra2MqDK2PcvMKLS0L5AJlh/QwdtB7iqPgvD1DDaK4aTrt6LXpZ5MtBlqLxzExPgsZgs6
+         9UJ/IWaT5GbgICez0kQuGfTslkbx98iE2+5KxPQIU9scZezVxiqmQ+93wQTJk0ZRjueu
+         JMOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721662381; x=1722267181;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qw3MXdh1l+GSHgjHWnYdzfuWkMoYNmYb7vb1OJfAtBk=;
+        b=AnTsCx3pVL2XYeuA1DGv6Dw0pK8hbJiBU/9ozDqxqwMmPFBXnDNsXFBSNHR4JD7kKy
+         KFKURuaSDFw3+KUS/p0xzjARinN0NOL5xe5B2mDtL6y5MwzzG4SYwsEmTMv9YcS4QnFh
+         +v4QIn7aD3/1CalpkNHa3ppLz5UfnY4rzulre9Z2JnU0EXvS04zK5JbTSoa8mtKDLEJ9
+         H0tsEaf8DfZ67zv2a9ET7nhVmvnKtKJl/YfrZQzxctnTeAppTLe3DjEBg8xZ12OvEXNy
+         5knLEk2pAwLMRu1PGLodct8qeGQX33ujL697zI+ptmhat30e6fOKeD/gbN5ix7xoBe6h
+         iPZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCunb9JywqOV04uCy/FiNSPa5y8bMluD73++q7L6uGks8cUlC9D04DnglEze+AzfO30f9+wxfbtg39Omp1DqgzAsSufOEeTLMRqfDqvUjoGqEu1YEJqoxI/K2RLA8y1jdnoB9b
+X-Gm-Message-State: AOJu0YxK2UNiuoFKBYdwDZgCZyH9hxdHRgciD4PjqWOEVOFCTBB1P6fR
+	cTaQWfTY95H8ILdSKpAqsFBBZ0nqxeZUdvwrf3vEUh3Q8oRHnvsS6BVDOZUMnqfC3gOcohL2Odm
+	Ad03cO11J6ZABwWqbw5rXI3SZmp8=
+X-Google-Smtp-Source: AGHT+IEj9m4RflaxiV+GYMly5G1qIp3Qd3TRRIsl4lMoSEJkKSsDRRzvTMHWo0mf0MM8xeGkiYl/DFjyLYTsnsfObgA=
+X-Received: by 2002:a05:600c:4f50:b0:426:616e:db8d with SMTP id
+ 5b1f17b1804b1-427dc52128fmr44639115e9.15.1721662380408; Mon, 22 Jul 2024
+ 08:33:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cf36725d-c197-4c07-8998-d34711335fdb@redhat.com>
+References: <20240719093338.55117-1-linyunsheng@huawei.com>
+ <20240719093338.55117-9-linyunsheng@huawei.com> <dbf876b000158aed8380d6ac3a3f6e8dd40ace7b.camel@gmail.com>
+ <fdc778be-907a-49bd-bf10-086f45716181@huawei.com>
+In-Reply-To: <fdc778be-907a-49bd-bf10-086f45716181@huawei.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Mon, 22 Jul 2024 08:32:23 -0700
+Message-ID: <CAKgT0UeQ9gwYo7qttak0UgXC9+kunO2gedm_yjtPiMk4VJp9yQ@mail.gmail.com>
+Subject: Re: [RFC v11 08/14] mm: page_frag: some minor refactoring before
+ adding new API
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 22, 2024 at 03:29:43PM +0200, David Hildenbrand wrote:
-> On 18.07.24 00:02, Peter Xu wrote:
-> > This is an RFC series, so not yet for merging.  Please don't be scared by
-> > the code changes: most of them are code movements only.
-> > 
-> > This series is based on the dax mprotect fix series here (while that one is
-> > based on mm-unstable):
-> > 
-> >    [PATCH v3 0/8] mm/mprotect: Fix dax puds
-> >    https://lore.kernel.org/r/20240715192142.3241557-1-peterx@redhat.com
-> > 
-> > Overview
-> > ========
-> > 
-> > This series doesn't provide any feature change.  The only goal of this
-> > series is to start decoupling two ideas: "THP" and "huge mapping".  We
-> > already started with having PGTABLE_HAS_HUGE_LEAVES config option, and this
-> > one extends that idea into the code.
-> > 
-> > The issue is that we have so many functions that only compile with
-> > CONFIG_THP=on, even though they're about huge mappings, and huge mapping is
-> > a pretty common concept, which can apply to many things besides THPs
-> > nowadays.  The major THP file is mm/huge_memory.c as of now.
-> > 
-> > The first example of such huge mapping users will be hugetlb.  We lived
-> > until now with no problem simply because Linux almost duplicated all the
-> > logics there in the "THP" files into hugetlb APIs.  If we want to get rid
-> > of hugetlb specific APIs and paths, this _might_ be the first thing we want
-> > to do, because we want to be able to e.g., zapping a hugetlb pmd entry even
-> > if !CONFIG_THP.
-> > 
-> > Then consider other things like dax / pfnmaps.  Dax can depend on THP, then
-> > it'll naturally be able to use pmd/pud helpers, that's okay.  However is it
-> > a must?  Do we also want to have every new pmd/pud mappings in the future
-> > to depend on THP (like PFNMAP)?  My answer is no, but I'm open to opinions.
-> > 
-> > If anyone agrees with me that "huge mapping" (aka, PMD/PUD mappings that
-> > are larger than PAGE_SIZE) is a more generic concept than THP, then I think
-> > at some point we need to move the generic code out of THP code into a
-> > common code base.
-> > 
-> > This is what this series does as a start.
-> 
-> Hi Peter!
-> 
-> From a quick glimpse, patch #1-#4 do make sense independent of patch #5.
-> 
-> I am not so sure about all of the code movement in patch #5. If large folios
-> are the future, then likely huge_memory.c should simply be the home for all
-> that logic.
-> 
-> Maybe the goal should better be to compile huge_memory.c not only for THP,
-> but also for other use cases that require that logic, and fence off all THP
-> specific stuff using #ifdef?
-> 
-> Not sure, though. But a lot of this code movements/churn might be avoidable.
+On Mon, Jul 22, 2024 at 5:55=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.co=
+m> wrote:
+>
+> On 2024/7/22 7:40, Alexander H Duyck wrote:
+> > On Fri, 2024-07-19 at 17:33 +0800, Yunsheng Lin wrote:
+> >> Refactor common codes from __page_frag_alloc_va_align()
+> >> to __page_frag_cache_refill(), so that the new API can
+> >> make use of them.
+> >>
+> >> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> >> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> >> ---
+> >>  include/linux/page_frag_cache.h |  2 +-
+> >>  mm/page_frag_cache.c            | 93 +++++++++++++++++---------------=
+-
+> >>  2 files changed, 49 insertions(+), 46 deletions(-)
+> >>
+> >> diff --git a/include/linux/page_frag_cache.h b/include/linux/page_frag=
+_cache.h
+> >> index 12a16f8e8ad0..5aa45de7a9a5 100644
+> >> --- a/include/linux/page_frag_cache.h
+> >> +++ b/include/linux/page_frag_cache.h
+> >> @@ -50,7 +50,7 @@ static inline void *encoded_page_address(unsigned lo=
+ng encoded_va)
+> >>
+> >>  static inline void page_frag_cache_init(struct page_frag_cache *nc)
+> >>  {
+> >> -    nc->encoded_va =3D 0;
+> >> +    memset(nc, 0, sizeof(*nc));
+> >>  }
+> >>
+> >
+> > I do not like requiring the entire structure to be reset as a part of
+> > init. If encoded_va is 0 then we have reset the page and the flags.
+> > There shouldn't be anything else we need to reset as remaining and bias
+> > will be reset when we reallocate.
+>
+> The argument is about aoviding one checking for fast path by doing the
+> memset in the slow path, which you might already know accroding to your
+> comment in previous version.
+>
+> It is just sometimes hard to understand your preference for maintainabili=
+ty
+> over performance here as sometimes your comment seems to perfer performan=
+ce
+> over maintainability, like the LEA trick you mentioned and offset count-d=
+own
+> before this patchset. It would be good to be more consistent about this,
+> otherwise it is sometimes confusing when doing the refactoring.
 
-I'm fine using ifdefs in the current fine, but IMHO it's a matter of
-whether we want to keep huge_memory.c growing into even larger file, and
-keep all large folio logics only in that file.  Currently it's ~4000 LOCs.
+The use of a negative offset is arguably more maintainable in my mind
+rather than being a performance trick. Essentially if you use the
+negative value you can just mask off the upper bits and it is the
+offset in the page. As such it is actually easier for me to read
+versus "remaining" which is an offset from the end of the page.
+Assuming you read the offset in hex anyway.
 
-Nornally I don't see this as much of a "code churn" category, because it
-doesn't changes the code itself but only move things.  I personally also
-prefer without code churns, but only in the case where there'll be tiny
-little functional changes here and there without real benefit.
+> >
+> >>  static inline bool page_frag_cache_is_pfmemalloc(struct page_frag_cac=
+he *nc)
+> >> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
+> >> index 7928e5d50711..d9c9cad17af7 100644
+> >> --- a/mm/page_frag_cache.c
+> >> +++ b/mm/page_frag_cache.c
+> >> @@ -19,6 +19,28 @@
+> >>  #include <linux/page_frag_cache.h>
+> >>  #include "internal.h"
+> >>
+> >> +static struct page *__page_frag_cache_recharge(struct page_frag_cache=
+ *nc)
+> >> +{
+> >> +    unsigned long encoded_va =3D nc->encoded_va;
+> >> +    struct page *page;
+> >> +
+> >> +    page =3D virt_to_page((void *)encoded_va);
+> >> +    if (!page_ref_sub_and_test(page, nc->pagecnt_bias))
+> >> +            return NULL;
+> >> +
+> >> +    if (unlikely(encoded_page_pfmemalloc(encoded_va))) {
+> >> +            VM_BUG_ON(compound_order(page) !=3D
+> >> +                      encoded_page_order(encoded_va));
+> >> +            free_unref_page(page, encoded_page_order(encoded_va));
+> >> +            return NULL;
+> >> +    }
+> >> +
+> >> +    /* OK, page count is 0, we can safely set it */
+> >> +    set_page_count(page, PAGE_FRAG_CACHE_MAX_SIZE + 1);
+> >> +
+> >> +    return page;
+> >> +}
+> >> +
+> >>  static struct page *__page_frag_cache_refill(struct page_frag_cache *=
+nc,
+> >>                                           gfp_t gfp_mask)
+> >>  {
+> >> @@ -26,6 +48,14 @@ static struct page *__page_frag_cache_refill(struct=
+ page_frag_cache *nc,
+> >>      struct page *page =3D NULL;
+> >>      gfp_t gfp =3D gfp_mask;
+> >>
+> >> +    if (likely(nc->encoded_va)) {
+> >> +            page =3D __page_frag_cache_recharge(nc);
+> >> +            if (page) {
+> >> +                    order =3D encoded_page_order(nc->encoded_va);
+> >> +                    goto out;
+> >> +            }
+> >> +    }
+> >> +
+> >
+> > This code has no business here. This is refill, you just dropped
+> > recharge in here which will make a complete mess of the ordering and be
+> > confusing to say the least.
+> >
+> > The expectation was that if we are calling this function it is going to
+> > overwrite the virtual address to NULL on failure so we discard the old
+> > page if there is one present. This changes that behaviour. What you
+> > effectively did is made __page_frag_cache_refill into the recharge
+> > function.
+>
+> The idea is to reuse the below for both __page_frag_cache_refill() and
+> __page_frag_cache_recharge(), which seems to be about maintainability
+> to not having duplicated code. If there is a better idea to avoid that
+> duplicated code while keeping the old behaviour, I am happy to change
+> it.
+>
+>         /* reset page count bias and remaining to start of new frag */
+>         nc->pagecnt_bias =3D PAGE_FRAG_CACHE_MAX_SIZE + 1;
+>         nc->remaining =3D PAGE_SIZE << order;
+>
 
-It's pretty unavoidable to me when one file grows too large and we'll need
-to split, and in this case git doesn't have a good way to track such
-movement..
+The only piece that is really reused here is the pagecnt_bias
+assignment. What is obfuscated away is that the order is gotten
+through one of two paths. Really order isn't order here it is size.
+Which should have been fetched already. What you end up doing with
+this change is duplicating a bunch of code throughout the function.
+You end up having to fetch size multiple times multiple ways. here you
+are generating it with order. Then you have to turn around and get it
+again at the start of the function, and again after calling this
+function in order to pull it back out.
 
-Irrelevant of this, just to mention I think there's still one option that I
-at least can make the huge pfnmap depends on THP again which shouldn't be a
-huge deal (I don't have any use case that needs huge pfnmap but disable
-THP, anyway..), so this series isn't an immediate concern to me for that
-route.  But for a hugetlb rework this might be something we need to do,
-because we simplly can't make CONFIG_HUGETLB rely on CONFIG_THP..
+> >
+> >>  #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
+> >>      gfp_mask =3D (gfp_mask & ~__GFP_DIRECT_RECLAIM) |  __GFP_COMP |
+> >>                 __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
+> >> @@ -35,7 +65,7 @@ static struct page *__page_frag_cache_refill(struct =
+page_frag_cache *nc,
+> >>      if (unlikely(!page)) {
+> >>              page =3D alloc_pages_node(NUMA_NO_NODE, gfp, 0);
+> >>              if (unlikely(!page)) {
+> >> -                    nc->encoded_va =3D 0;
+> >> +                    memset(nc, 0, sizeof(*nc));
+> >>                      return NULL;
+> >>              }
+> >>
+> >
+> > The memset will take a few more instructions than the existing code
+> > did. I would prefer to keep this as is if at all possible.
+>
+> It will not take more instructions for arm64 as it has 'stp' instruction =
+for
+> __HAVE_ARCH_MEMSET is set.
+> There is something similar for x64?
 
-Thanks,
+The x64 does not last I knew without getting into the SSE/AVX type
+stuff. This becomes two seperate 8B store instructions.
 
--- 
-Peter Xu
+> >
+> >> @@ -45,6 +75,16 @@ static struct page *__page_frag_cache_refill(struct=
+ page_frag_cache *nc,
+> >>      nc->encoded_va =3D encode_aligned_va(page_address(page), order,
+> >>                                         page_is_pfmemalloc(page));
+> >>
+> >> +    /* Even if we own the page, we do not use atomic_set().
+> >> +     * This would break get_page_unless_zero() users.
+> >> +     */
+> >> +    page_ref_add(page, PAGE_FRAG_CACHE_MAX_SIZE);
+> >> +
+> >> +out:
+> >> +    /* reset page count bias and remaining to start of new frag */
+> >> +    nc->pagecnt_bias =3D PAGE_FRAG_CACHE_MAX_SIZE + 1;
+> >> +    nc->remaining =3D PAGE_SIZE << order;
+> >> +
+> >>      return page;
+> >>  }
+> >>
+> >
+> > Why bother returning a page at all? It doesn't seem like you don't use
+> > it anymore. It looks like the use cases you have for it in patch 11/12
+> > all appear to be broken from what I can tell as you are adding page as
+> > a variable when we don't need to be passing internal details to the
+> > callers of the function when just a simple error return code would do.
+>
+> It would be good to be more specific about the 'broken' part here.
 
+We are passing internals to the caller. Basically this is generally
+frowned upon for many implementations of things as the general idea is
+that the internal page we are using should be a pseudo-private value.
+I understand that you have one or two callers that need it for the use
+cases you have in patches 11/12, but it also seems like you are just
+passing it regardless. For example I noticed in a few cases you added
+the page pointer in 12 to handle the return value, but then just used
+it to check for NULL. My thought would be that rather than returning
+the page here you would be better off just returning 0 or an error and
+then doing the virt_to_page translation for all the cases where the
+page is actually needed since you have to go that route for a cached
+page anyway.
 
