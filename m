@@ -1,158 +1,178 @@
-Return-Path: <linux-kernel+bounces-258726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D672B938C2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:39:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C60D3938C9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 139411C212D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:39:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAADF1C225AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B361E16C437;
-	Mon, 22 Jul 2024 09:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FCC16DC13;
+	Mon, 22 Jul 2024 09:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="OHdYvh3B"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="eeof3l0V";
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="rBuwuXjf"
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E90926ADB
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7995816DC14;
+	Mon, 22 Jul 2024 09:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721641183; cv=none; b=U02PZEdq55/f4BYi0ckNplkHEUNryL9JD71ss3PyhFDGcU+k9L8vrAu/KfXTba3ZfEyUern2siBJ0VBhVPx1rVsRlEnqLTyUKm/meP03/WnJNj/otGg/RCLPT2TDgT6y1Egjs1VT1X9JFBlEs4mtXTTz/nZyyWgrVBfUgxu2wlg=
+	t=1721641607; cv=none; b=r9GXatnLZeSjT3t2ajnESe48L03K3sVHg9DGlIlFXIKIUIKYFFLnd/hDD54dh54Uarmyrr3arXIftmPiFGDiJqsqlPzXhDECXDFrqG3m+sOa0BvoKYb7qa5RZk6zY3+VQdb/1K5xzUcdjI0Ym/luwWUaJjI7kyNiDCOgcaoeRho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721641183; c=relaxed/simple;
-	bh=eq5Xpv/5EUYhcWbqrc0Zl5Iwg09zgdkZh8XoWGL5H/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A3Tl4cuGjAJtlfp6oioJov3sgbRo6UXZcX9gp4a0LPpE9IP84k43ooRbUtpcFu689U4bqMpEF8th4bgoRj4XTcryZG2o6XgvsHp49SXbj/aF7lFEiHipZhhFhcsD6y75fvDXH9CVkacCgQ1Jui7oLwKiTQpX/Z69yG6IWYvVgXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=OHdYvh3B; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7a2123e9ad5so506513a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 02:39:41 -0700 (PDT)
+	s=arc-20240116; t=1721641607; c=relaxed/simple;
+	bh=Kt7HXDwiBElWrJm6zss/fQS8BGnuWpL711k4K31mkrM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nsAG8bRyuPVsQbogMCsIxwBGeQHiGHTjQc4Yam74bIWoVdrbOpmiWfYW2j4GYSvMMHHAX7jti72MyO2/GcyUd5TVv+zDsoRkBcPR+5YCPOaFRg3IJTU5dWOUGD1RWHOd5kFvKXLnN4pdQ0yQYqVDSiH6eRpNZNMBMawE+a5AM+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=eeof3l0V; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=rBuwuXjf; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
+Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 85FC72112;
+	Mon, 22 Jul 2024 09:32:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1721641181; x=1722245981; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A1sFLMAddajkGuvG7pwl8VcoUW+BvLkAuKqaPHXhUdg=;
-        b=OHdYvh3BY/HSUrCcuHLLa6Eih2RENoGmtCe1qcYLn3p5PtJtJEC2sJ9EehcQQOFVLs
-         GQWNnvMWpXfm80tu6jGkUEQ6ALPaHeIhTOlnyr6E/zWSxht8A/UTS5CoOG+Xey1F9f6d
-         EXbx6QShPnVqvS3PBlqzyBCWwpvF8hZRZ1r7OMUuhCMvXJsMrz9MD0jGncn6ExtD+i3R
-         07cDIPRTynXioIbCfPLN3rRUcvbz00ssiEac3uH4ELbT0OZdqFddedIc3v4ylCP+zlno
-         NdlOGI8NzxBYD43o28V3+lxca0wM3XmXS8WdGnbMnJKWwm0rg10CeiSTrzArfPLUBIS9
-         egUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721641181; x=1722245981;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=A1sFLMAddajkGuvG7pwl8VcoUW+BvLkAuKqaPHXhUdg=;
-        b=R94b1W9FwtiIXbFVIMmHTj3UVDTv5THwQ2MeYElNbHijWVXs1zr6W3gPYzNvEee6mR
-         37IjNnyNBcRSEjaJpiTiRr75ZoKIUnFvXkAY/NKP2+1VF7WzD+vNvH6fwJHYCfzmMTBe
-         QbeVLoPVGHOwKvr1poxJl4uLg01S6TEginka3qKcEXkZJGGDCDJARVnQ2rZdB9DWgqzz
-         wzvU0z998S2Yni9oQL+kWjvrqyYStN6Yr8NJH2FaaV48WiNqHA5oT84b+yMmVkxs/vX9
-         ALV33OLt3xi10Y1C3ANqQtOaCB+dzwS5/gI7ir/2iZuqR7TicXGir1M/XRTFdt4RH4MB
-         N2nQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUiSb1QBUTKUVRH7TgxxNIMtgg7t8OTxK7ah1fILuXjE3AWaEtcv/zBuHdqY2Encjn2DLCJoB4YWGGhpOhqh7O8AAFI08QecIpmg5MG
-X-Gm-Message-State: AOJu0YwEKQeis4dC0AqD/FvMOJmsai8Q4zZbiyMsknYQ2Amv4EKthQEa
-	ysHgf2/HS/8FvJenRF1h6xog++M8stPAgWdLImOtKLq70bN2BwN6PMZpY7ZUdT8=
-X-Google-Smtp-Source: AGHT+IFlHPXWVLMxGpOhptGVNtkgtFYRULMLycpK3rgMXm3tfT/OCqXgEzUeCz7KEKDOIItIXZO/3w==
-X-Received: by 2002:a17:90b:344:b0:2c9:6aab:67c4 with SMTP id 98e67ed59e1d1-2cb7735dcdbmr17838260a91.10.1721641181357;
-        Mon, 22 Jul 2024 02:39:41 -0700 (PDT)
-Received: from [10.254.189.162] ([139.177.225.235])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70cff49159bsm4986511b3a.21.2024.07.22.02.39.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jul 2024 02:39:41 -0700 (PDT)
-Message-ID: <0e522193-b4af-40ad-9762-41bfa643dd60@bytedance.com>
-Date: Mon, 22 Jul 2024 17:39:34 +0800
+	d=paragon-software.com; s=mail; t=1721640731;
+	bh=46lCVp8tQR5E4Pu8GCe1wMNMKnaWMfCUEAu6zS+CavQ=;
+	h=From:To:CC:Subject:Date;
+	b=eeof3l0VLtUkU1jCO9RBU1lDU8NMpCRE9JqcTj5VIcWlwbrVsUs1JvBH/T3DNr5Ao
+	 qWXd/pc1wTGm0Cn8272Ma/oQQpIyEml4SA9qsGrw5OI8OTEsS/cbTd57hhSQnWXpYQ
+	 vy8zfGpoS/hWabDh1BlJnLiLCYYQuPtyte6A5Mm4=
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 5E8672185;
+	Mon, 22 Jul 2024 09:40:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=paragon-software.com; s=mail; t=1721641227;
+	bh=46lCVp8tQR5E4Pu8GCe1wMNMKnaWMfCUEAu6zS+CavQ=;
+	h=From:To:CC:Subject:Date;
+	b=rBuwuXjfdhdjnkH3sLz46Txhw+ac3EIeqZuqugNb8BsWZr2nk5KiLGEDqIZcZgpJf
+	 OcYc0BlN/hNQTtSk0tmbW/K+GRJRmWGLu/Xjqzq7x0FeSTE4Bt7N/JG9SSaoExPTZa
+	 9mDRWu/m/VgBHxSO2MSz7PZJI2pqliWpo6my2izo=
+Received: from ntfs3vm.paragon-software.com (192.168.211.13) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Mon, 22 Jul 2024 12:40:26 +0300
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To: <torvalds@linux-foundation.org>
+CC: <ntfs3@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] ntfs3: bugfixes for 6.11
+Date: Mon, 22 Jul 2024 12:40:14 +0300
+Message-ID: <20240722094014.16888-1-almaz.alexandrovich@paragon-software.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] sched/fair: Sync se's load_avg with cfs_rq in
- reweight_task
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com
-Cc: chengming.zhou@linux.dev, linux-kernel@vger.kernel.org
-References: <20240720051248.59608-1-zhouchuyi@bytedance.com>
- <0575c014-6fe7-4118-bae8-cbb5b303a390@arm.com>
-From: Chuyi Zhou <zhouchuyi@bytedance.com>
-In-Reply-To: <0575c014-6fe7-4118-bae8-cbb5b303a390@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-Hello,
+Please pull this branch containing ntfs3 code for 6.11.
 
-在 2024/7/22 14:34, Dietmar Eggemann 写道:
-> On 20/07/2024 07:12, Chuyi Zhou wrote:
->> In reweight_task(), there are two situations:
->>
->> 1. The task was on_rq, then the task's load_avg is accurate because we
->> synchronized it with cfs_rq through update_load_avg() in dequeue_task().
->>
->> 2. The task is sleeping, its load_avg might not have been updated for some
->> time, which can result in inaccurate dequeue_load_avg() in
->> reweight_entity().
->>
->> This patch solves this by using update_load_avg() to synchronize the
->> load_avg of se with cfs_rq. For tasks were on_rq, since we already update
->> load_avg to accurate values in dequeue_task(), this change will not have
->> other effects due to the short time interval between the two updates.
->>
->> Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
->> ---
->> Changes in v2:
->> - change the description in commit log.
->> - use update_load_avg() in reweight_task() rather than in reweight_entity
->> suggested by chengming.
->> - Link to v1: https://lore.kernel.org/lkml/20240716150840.23061-1-zhouchuyi@bytedance.com/
->> ---
->>   kernel/sched/fair.c | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index 9057584ec06d..b1e07ce90284 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -3835,12 +3835,15 @@ static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
->>   	}
->>   }
->>   
->> +static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags);
->> +
->>   void reweight_task(struct task_struct *p, const struct load_weight *lw)
->>   {
->>   	struct sched_entity *se = &p->se;
->>   	struct cfs_rq *cfs_rq = cfs_rq_of(se);
->>   	struct load_weight *load = &se->load;
->>   
->> +	update_load_avg(cfs_rq, se, 0);
-> 
-> IIUC, you only want to sync the sleeping task with its cfs_rq. IMHO,
-> sync_entity_load_avg() should be used here instead of update_load_avg().
-> The latter is doing much more than this.
+All changed code was in linux-next branch for several weeks.
+ 
+Regards,
+Konstantin
 
-Indeed, sync_entity_load_avg() is better.
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
-> 
->>   	reweight_entity(cfs_rq, se, lw->weight);
->>   	load->inv_weight = lw->inv_weight;
->>   }
-> 
-> Maybe even do this in reweight_entity()?. You would have to do it under
-> 'if (!se->on_rq) in reweight_task() anyway I assume.
-> 
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
 
-Yes, we can do it reweight_entity() and it's more clear.
+are available in the Git repository at:
 
-Thanks for your suggestion.
+  https://github.com/Paragon-Software-Group/linux-ntfs3.git tags/ntfs3_for_6.11
 
+for you to fetch changes up to 911daf695a740d9a58daef65dabfb5f69f18190f:
 
+  fs/ntfs3: Fix formatting, change comments, renaming (2024-07-11 12:19:46 +0300)
+
+----------------------------------------------------------------
+ntfs3 changes for 6.11-rc1
+
+Added:
+    simple fileattr has been implement.
+Fixed:
+    transform resident to nonresident for compressed files;
+    the format of the "nocase" mount option;
+    getting file type;
+    many other internal bugs.
+Refactored:
+    unused function and macros have been removed;
+    partial transition from page to folio (suggested by Matthew Wilcox);
+    legacy ntfs support.
+
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      fs/ntfs3: Drop stray '\' (backslash) in formatting string
+
+Huacai Chen (1):
+      fs/ntfs3: Update log->page_{mask,bits} if log->page_size changed
+
+Konstantin Komarov (29):
+      fs/ntfs3: Remove unused function
+      fs/ntfs3: Merge synonym COMPRESSION_UNIT and NTFS_LZNT_CUNIT
+      fs/ntfs3: Simplify initialization of $AttrDef and $UpCase
+      fs/ntfs3: Use macros NTFS_LABEL_MAX_LENGTH instead of hardcoded value
+      fs/ntfs3: Remove unused macros MAXIMUM_REPARSE_DATA_BUFFER_SIZE
+      fs/ntfs3: Fix transform resident to nonresident for compressed files
+      fs/ntfs3: Deny getting attr data block in compressed frame
+      fs/ntfs3: Missed NI_FLAG_UPDATE_PARENT setting
+      fs/ntfs3: Fix getting file type
+      fs/ntfs3: Remove sync_blockdev_nowait()
+      fs/ntfs3: Add missing .dirty_folio in address_space_operations
+      fs/ntfs3: Fix attr_insert_range at end of file
+      fs/ntfs3: Replace inode_trylock with inode_lock
+      fs/ntfs3: One more reason to mark inode bad
+      fs/ntfs3: Correct undo if ntfs_create_inode failed
+      fs/ntfs3: Add a check for attr_names and oatbl
+      fs/ntfs3: Rename variables
+      fs/ntfs3: Add some comments
+      fs/ntfs3: Fix field-spanning write in INDEX_HDR
+      fs/ntfs3: Fix the format of the "nocase" mount option
+      fs/ntfs3: Missed error return
+      fs/ntfs3: Keep runs for $MFT::$ATTR_DATA and $MFT::$ATTR_BITMAP
+      fs/ntfs3: Do copy_to_user out of run_lock
+      fs/ntfs3: Check more cases when directory is corrupted
+      fs/ntfs3: Minor ntfs_list_ea refactoring
+      fs/ntfs3: Use function file_inode to get inode from file
+      fs/ntfs3: Redesign legacy ntfs support
+      fs/ntfs3: Implement simple fileattr
+      fs/ntfs3: Fix formatting, change comments, renaming
+
+Matthew Wilcox (Oracle) (10):
+      ntfs3: Convert ntfs_read_folio to use a folio
+      ntfs3: Convert ntfs_write_begin to use a folio
+      ntfs3: Convert attr_data_read_resident() to take a folio
+      ntfs3: Convert ntfs_write_end() to work on a folio
+      ntfs3: Convert attr_data_write_resident to use a folio
+      ntfs3: Convert attr_make_nonresident to use a folio
+      ntfs3: Remove calls to set/clear the error flag
+      ntfs3: Convert ntfs_get_frame_pages() to use a folio
+      ntfs3: Convert ni_readpage_cmpr() to take a folio
+      ntfs3: Convert attr_wof_frame_info() to use a folio
+
+lei lu (1):
+      fs/ntfs3: Validate ff offset
+
+ fs/ntfs3/attrib.c  | 132 ++++++++++++++++++++++++++++-------------------------
+ fs/ntfs3/bitmap.c  |   2 +-
+ fs/ntfs3/dir.c     |  57 ++++++++++++++---------
+ fs/ntfs3/file.c    | 124 +++++++++++++++++++++++++++++++++++++------------
+ fs/ntfs3/frecord.c | 110 +++++++++++++++++++++++++++++++++++---------
+ fs/ntfs3/fslog.c   |  77 +++++++++++++++++++++----------
+ fs/ntfs3/fsntfs.c  |  11 +++--
+ fs/ntfs3/index.c   |   4 +-
+ fs/ntfs3/inode.c   | 119 ++++++++++++++++++++++++-----------------------
+ fs/ntfs3/namei.c   |   6 +--
+ fs/ntfs3/ntfs.h    |  15 ++----
+ fs/ntfs3/ntfs_fs.h |  36 ++++++---------
+ fs/ntfs3/super.c   |  71 +++++++++++-----------------
+ fs/ntfs3/xattr.c   |  25 +++++-----
+ 14 files changed, 480 insertions(+), 309 deletions(-)
 
