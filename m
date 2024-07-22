@@ -1,143 +1,95 @@
-Return-Path: <linux-kernel+bounces-258687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 024DF938BA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:58:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0B5C938C21
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:34:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FE3C1F20D3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:58:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 766A0281B85
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B159168499;
-	Mon, 22 Jul 2024 08:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kSZTdHNT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC776182BD;
-	Mon, 22 Jul 2024 08:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E8116C6A4;
+	Mon, 22 Jul 2024 09:33:48 +0000 (UTC)
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9E716A945
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721638667; cv=none; b=crVXa6DY4oos289X9uB1+dJqlShW2xKSY6hEEXXZ8bh8rReFkORRxMfdodntrXKUtU6QCLg8+bVm/2D8pdkeiOLsNp7eCad9x8Ho6Xmz2PfeOtc656ZiRR2M6WmYvCmWOCceMcmf+UYyq2kqOG3InvobhVATnzTS5ZtBjezEPPE=
+	t=1721640828; cv=none; b=MlgZTmxrYgpH2/PF6xhfIYhweY7UF5QFp8ha8YhXYYfDlbC0vhpUuJXCn7gnCPJyA4OtPKiLF+yUtJfnBg5Mfei3bsrN9Qd3qcwuVppu21Tu6S5w15nKEGHQ30luz/Pazvrh0R7x0skznQZuxN3IL2KMHcmeyU1N7/z/nnacuWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721638667; c=relaxed/simple;
-	bh=Ynkt5jht3P7V4msgrdvDPMK/YT+rZLOmSP8colKEDIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jEx6AZBQrB77UQIPoriuBqbsxtTetStQGKwPCEjNY7EZ1IaSLYAkyD6wG6OV7l5iQrvIEaHbllpW20MGMRFnuwvuaXwezI8WGxPUjRl57fjMTDntM6b58I5zycy4Mogx7Cocwz39a+4vACnj/IkjX79rfjndxY5eeeoQaUY174s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kSZTdHNT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46LNfjQP022070;
-	Mon, 22 Jul 2024 08:57:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	RSSTUV2TQKIAMaYLBP7gP+3fe5NiDXh0YqWbwhegPLc=; b=kSZTdHNTFkFXMZs/
-	L7vpHbuHCVKRGDwSIpGgne07yxFPr9+NDfwSljtCy8h6Bmy7Ym4kDjXNrRsbsd2h
-	QWj37cz6W8mXsO5xPp0Cg8mq+Fu8Cwc9kj/gLni9/aTc3uZ5cYwukiKJtSDtCUfS
-	EWvZIEwWMcD74G0MMMuCQWJnmgkhRk6vI/L/chbInT07SBeGAzwEDYDojoFZbyWO
-	2qZ9kqSu7k3QBRENw5Hg/kVuNCj8aeds9CLjdnz3O+GOZxVhPFJHaTQgW357sP1C
-	bCB5ZkHv7pQFI4IegUmyReKCuItEFRdCkW4zqbF0mkmmvq/UGpZT3anMBvVb0JuT
-	clT0KQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g487b75p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jul 2024 08:57:41 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46M8veOl011225
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jul 2024 08:57:40 GMT
-Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 22 Jul
- 2024 01:57:36 -0700
-Message-ID: <6055cb14-de80-97bc-be23-7af8ffc89fcc@quicinc.com>
-Date: Mon, 22 Jul 2024 14:27:33 +0530
+	s=arc-20240116; t=1721640828; c=relaxed/simple;
+	bh=74sKzrcRLF3sE51Un0CO6Zd7Kq9R6SfffjcOrEAVLfU=;
+	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=DFMVJ141ntOP3GW2HnX5rE9Y/rRDevmKXTOnQT2iev3NAmZ/nGZtFMbw2VlyBocL6lqWHCVGN9DsJPrxIPqanSQ5MksavKDpzpr80xLnO7PaAfb5UNmALaVIMhCEMD6CmKhjinfFCCQEkEz+x9oI281DS2wLzGygGd9OlCwLvTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from [10.130.0.149] (unknown [113.200.148.30])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8CxJMX_Hp5mmO5TAA--.45177S3;
+	Mon, 22 Jul 2024 16:57:36 +0800 (CST)
+Subject: Re: arch/loongarch/kernel/alternative.o: warning: objtool:
+ apply_alternatives+0xa0: unreachable instruction
+To: kernel test robot <lkp@intel.com>
+References: <202407221208.6SSBeN9H-lkp@intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Huacai Chen <chenhuacai@kernel.org>, Jinyang He <hejinyang@loongson.cn>,
+ Youling Tang <tangyouling@kylinos.cn>
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <a1871e00-936c-8487-a22a-efe3cc4c53a4@loongson.cn>
+Date: Mon, 22 Jul 2024 16:57:35 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH] clk: qcom: camcc-sc8280xp: Remove always-on GDSC
- hard-coding
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen
- Boyd <sboyd@kernel.org>
-CC: <dmitry.baryshkov@linaro.org>, <stable@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org>
- <f0d4b7a3-2b61-3d42-a430-34b30eeaa644@quicinc.com>
- <86068581-0ce7-47b5-b1c6-fda4f7d1037f@linaro.org>
- <02679111-1a35-b931-fecd-01c952553652@quicinc.com>
- <ce14800d-7411-47c5-ad46-6baa6fb678f4@linaro.org>
- <dd588276-8f1c-4389-7b3a-88f483b7072e@quicinc.com>
- <610efa39-e476-45ae-bd2b-3a0b8ea485dc@linaro.org>
-From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-In-Reply-To: <610efa39-e476-45ae-bd2b-3a0b8ea485dc@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: atiBSgbYmls0h1wd6btyARUF3lNZED8I
-X-Proofpoint-GUID: atiBSgbYmls0h1wd6btyARUF3lNZED8I
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-22_05,2024-07-18_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 mlxlogscore=794
- malwarescore=0 adultscore=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2407220069
+In-Reply-To: <202407221208.6SSBeN9H-lkp@intel.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:AQAAf8CxJMX_Hp5mmO5TAA--.45177S3
+X-Coremail-Antispam: 1UD129KBjvJXoWrZr17CF1rtw1UCr4fGF4Uurg_yoW8JrW5pF
+	4fXFWYvF4rXrsYga17tw1DuF1FqanxJ3W3KrykZr4UCF4qvr12krySkrW3ZF9F9wsYgry8
+	Aw4xX3W3KF1jv3JanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
+	IcxG8wCY02Avz4vE14v_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
+	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
+	14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
+	IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
+	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
+	IFyTuYvjfU0yxRDUUUU
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
 
-
-On 7/20/2024 2:03 PM, Bryan O'Donoghue wrote:
-> On 19/07/2024 08:25, Satya Priya Kakitapalli (Temp) wrote:
->>>
->>> What is the use-case to keep that clock always-on unless/util 
->>> someone wants camss ?
->>>
->>
->> The clock also has dependency on MMCX rail, this rail anyway will be 
->> OFF until there is a use-case. So the clock will also be OFF.
+On 07/22/2024 12:38 PM, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+> head:   7846b618e0a4c3e08888099d1d4512722b39ca99
+> commit: cb8a2ef0848ca80d67d6d56e2df757cfdf6b3355 LoongArch: Add ORC stack unwinder support
+> date:   4 months ago
+> config: loongarch-randconfig-001-20240722 (https://download.01.org/0day-ci/archive/20240722/202407221208.6SSBeN9H-lkp@intel.com/config)
+> compiler: loongarch64-linux-gcc (GCC) 14.1.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240722/202407221208.6SSBeN9H-lkp@intel.com/reproduce)
 >
-> arch/arm64/boot/dts/qcom/sc8280xp.dtsi
->
-> camcc: clock-controller@ad00000 {
->     power-domains = <&rpmhpd SC8280XP_MMCX>;
-> };
->
->>
->>
->>> I've tested this patch on sc8280xp and it works just fine.
->>>
->>
->> Is the cam_cc_gdsc_clk clock ON after the boot up?
->
-> I have no idea. Why does it matter ?
->
-
-This clock expected to be kept always ON, as per design, or else the 
-GDSC transition form ON to OFF (vice versa) wont work.
-
-Want to know the clock status after bootup, to understand if the clock 
-got turned off during the late init. May I know exactly what you have 
-tested? Did you test the camera usecases as well?
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202407221208.6SSBeN9H-lkp@intel.com/
 
 
-> ---
-> bod
+A quick test shows that the objtool warnings are related with compiler
+optimization level, it uses -Os (CONFIG_CC_OPTIMIZE_FOR_SIZE=y) rather
+than the default -O2 (CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE is not set)
+in the randconfig. I will keep digging.
+
+Thanks,
+Tiezhu
+
 
