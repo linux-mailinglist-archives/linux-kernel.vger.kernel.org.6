@@ -1,46 +1,75 @@
-Return-Path: <linux-kernel+bounces-258431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 070DA9387D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 05:52:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05A729387D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 05:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A0721F2177B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 03:52:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C51BB21065
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 03:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB611396;
-	Mon, 22 Jul 2024 03:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0BB15E96;
+	Mon, 22 Jul 2024 03:53:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="pxsuNdl3"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SJiL7/61"
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B9717580
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 03:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177DA10979;
+	Mon, 22 Jul 2024 03:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721620337; cv=none; b=YPIUE2zh3NxLpYlQaKtm8lrkgE1Intz9gzat+rv/r7tdMtF3RF/kMvidYDUDB8uHmRMxr1qdbARLq9O/5oa4DFkCU7WcKhtCxNfMXmhMmjesDOvssmSfYv7cTlpLV04UAq1PN3Lk/FozH7Uu2KW9dNciu0z59Cv4MSblf/HaA7w=
+	t=1721620417; cv=none; b=GZk0tO0THbOn9lRS2yqoG2RW/LoQivmyIWUqOvmVkdfgXUl0Nx1R7IgzyT3TVVjIudbN6QmZ501bBRElQCqVw5KIec9SXqB6yc9Kt2c+DMLKurE1kLnC0S6KoQsrnfneRuaJiQ81Iaue8xA9vKc+N2wg9Urnq8GuKmLtSRqCw7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721620337; c=relaxed/simple;
-	bh=Yg/PYVDcapMPncEQQkcMV6LJnROgypb2pYdoZuLaDTg=;
+	s=arc-20240116; t=1721620417; c=relaxed/simple;
+	bh=v5ej+QHAYRtzwvwyNZuFnJwqbwaB/QFI5GNYhKWRc3w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z8hhID30js6V/9tirLJO6mv8HmS9KYA5ZwPnd5u/mOBeTUoY6WJjJBB7yThscJZ7QPB1hvEQfYcd+NpqJRwpi0Ftksi/AeI29N55S/yu0dqCui07iKgKT22rScRmSij4EfrUrcbjNfORyKlaCMugZcsBpUxiKS2inbDm8HPxO34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=pxsuNdl3; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1721620332; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=ZRZsaWjHik4fJ4+vcINy/iv5wgmnKjA60/N2NkOyV/A=;
-	b=pxsuNdl3LR7ses0/G0ZHcSLL7sEybGG6eTjmCNWI2EyvxR+dTO2WBotprSIR+EgG/invskbQqR5RXFXle8Amkj+eWDhujyB6UG+eoOxfTN80OWHljLmee0tW8agIFJktG5E1F5f+8/c9djxXju5+avs+3LAX4RdJSyobBup8u1A=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R381e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067113;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0WAyfmNo_1721620329;
-Received: from 30.97.56.74(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WAyfmNo_1721620329)
-          by smtp.aliyun-inc.com;
-          Mon, 22 Jul 2024 11:52:10 +0800
-Message-ID: <26e84b0f-68ed-4e98-925e-5799a2ae1164@linux.alibaba.com>
-Date: Mon, 22 Jul 2024 11:52:09 +0800
+	 In-Reply-To:Content-Type; b=saUG8oJAEWtiQIxICyJYHZiCZ0Q27z6zTV6KqwpkBFdkLA5JTfgmihEuOSk0fwgVf7/Z22BvPaPAl8AXxUyzgLQI7MKBqn+DwCzT/2JeMKlq9hZ1RIPNYEVQaujTo0Bb6b5or6VfPsPo+ypgqPVL86H8bu/PsW+Ik7t+yQljF78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SJiL7/61; arc=none smtp.client-ip=209.85.160.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-260e5b2dfb5so2235386fac.3;
+        Sun, 21 Jul 2024 20:53:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721620415; x=1722225215; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=1iD8loJCEK8S+S3SAkzQSxIdWLCgBghxXkHptXFwg0g=;
+        b=SJiL7/613ghvmmN93kaDuPScC+91ARfJWsUGIM6pWJRB7BJ5j8K6CWryiTVoPTEWha
+         xcdFv3XNPZoegTP/nSjw+z+wIga6Xfq/0UlUFXWQ1qh+ERZGh16o5ZgPTZWdGM5DV/Tx
+         C3oyjBeHko3q2ZRNx6z4q2XgZ9r7Az1j/Qlg5dRdnFJNdnyKenEYI0b9TDLiMfdVlAAd
+         WXnjnY2aXRKyeQKXUomsFVyB7d40NXdi7lI+CemBQQjTcwBTAmHNvN1M3RzTOhbwrbx5
+         qw/qxLyeOj4Ssg/EE/20hmhOwHYSN3rzSI3dMXfI1oauHm5W6Fsn003uk7zWLH2+7BD/
+         uidg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721620415; x=1722225215;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1iD8loJCEK8S+S3SAkzQSxIdWLCgBghxXkHptXFwg0g=;
+        b=rBm9suQ1oD0s+sYWTqpHCFEUjVSTUDCjZr4SGojHxUDKF3TFYjg9wy5W52bCHtxByF
+         wKwmJcpvj/5cT5anZon3c/DnovC475KkIDfBY5IYlvnqwvIe1aLCoEd7sbDbOng0ipq+
+         DBPhtqL7DA4P9YBA3FQrGIYlnf4lTBN1XJJMZsO8h54caI1AEWWd4IbaCPS+1QnM7hkE
+         VrIJ6Qz0nEVK+YdT3NLw2ts/ECxR8ZLf3ojFZfnwxoRS+ze4HNwym33Kpdi78qysHJKT
+         brUMbK+iwrMHPw8sIqLsXrl8mfWpJ2uZzy7G65+RrI9wJrZB/ONsCm7aw6iyPo4HnGo4
+         gkNg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5pP5sZVl9TfYvORcnr1yAp9GQ1eUQT0rAtcQEu6qGIwaxiiyBYAPDYofAxGzA1n/Bm0VJpBVd2yc6f0V/4zkBSP/0yXLp+spnBiVx30WTEH3hOOAaEnJVvInP4k6T7396U7tnE1jg+Ey63oyJqE/rpZ1Mkoj0yWhySKiIeQ70STo0wA==
+X-Gm-Message-State: AOJu0YzQIHMzVR9sVDsmBK2ntsiCDnuuEp/c8STA6LnMGqPL+46uhFVJ
+	J40xopymEZEVk1CjdWLuS4NRpIBjF2TpJE5td91/MnwotcdygD+x
+X-Google-Smtp-Source: AGHT+IHZijDAM2ucUD2gE3ulZWZMetR+HHznBRaBWoqS0qs44a/XCCWbKW4MnlXinzoO6Qa/XwHbtA==
+X-Received: by 2002:a05:6870:71c3:b0:260:ffaf:811a with SMTP id 586e51a60fabf-2638de5ba01mr5240250fac.8.1721620415145;
+        Sun, 21 Jul 2024 20:53:35 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70cff4b2f6esm4488837b3a.67.2024.07.21.20.53.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 21 Jul 2024 20:53:34 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <15f4c51c-3f7d-4e93-9c3a-71ac1d626463@roeck-us.net>
+Date: Sun, 21 Jul 2024 20:53:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,130 +77,133 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] mm: mTHP stats for pagecache folio allocations
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- Jonathan Corbet <corbet@lwn.net>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>,
- Lance Yang <ioworker0@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240711072929.3590000-1-ryan.roberts@arm.com>
- <20240711072929.3590000-3-ryan.roberts@arm.com>
- <9e0d84e5-2319-4425-9760-2c6bb23fc390@linux.alibaba.com>
- <29f0fc5a-c2b7-4925-9bdb-fd2abe5383ae@arm.com>
- <b8d1dc3c-ee05-450e-961e-b13dded06a78@linux.alibaba.com>
- <f21c97ea-426a-46e3-900a-42cc039acc6f@arm.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <f21c97ea-426a-46e3-900a-42cc039acc6f@arm.com>
+Subject: Re: [PATCH v6 3/3] hwmon: (adt7475) Add support for configuring
+ initial PWM state
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>, jdelvare@suse.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, ukleinek@kernel.org
+Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
+References: <20240722005825.1800403-1-chris.packham@alliedtelesis.co.nz>
+ <20240722005825.1800403-4-chris.packham@alliedtelesis.co.nz>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240722005825.1800403-4-chris.packham@alliedtelesis.co.nz>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-
-
-On 2024/7/14 17:05, Ryan Roberts wrote:
-> On 13/07/2024 13:54, Baolin Wang wrote:
->>
->>
->> On 2024/7/13 19:00, Ryan Roberts wrote:
->>> [...]
->>>
->>>>> +static int thpsize_create(int order, struct kobject *parent)
->>>>>     {
->>>>>         unsigned long size = (PAGE_SIZE << order) / SZ_1K;
->>>>> +    struct thpsize_child *stats;
->>>>>         struct thpsize *thpsize;
->>>>>         int ret;
->>>>>     +    /*
->>>>> +     * Each child object (currently only "stats" directory) holds a
->>>>> +     * reference to the top-level thpsize object, so we can drop our ref to
->>>>> +     * the top-level once stats is setup. Then we just need to drop a
->>>>> +     * reference on any children to clean everything up. We can't just use
->>>>> +     * the attr group name for the stats subdirectory because there may be
->>>>> +     * multiple attribute groups to populate inside stats and overlaying
->>>>> +     * using the name property isn't supported in that way; each attr group
->>>>> +     * name, if provided, must be unique in the parent directory.
->>>>> +     */
->>>>> +
->>>>>         thpsize = kzalloc(sizeof(*thpsize), GFP_KERNEL);
->>>>> -    if (!thpsize)
->>>>> -        return ERR_PTR(-ENOMEM);
->>>>> +    if (!thpsize) {
->>>>> +        ret = -ENOMEM;
->>>>> +        goto err;
->>>>> +    }
->>>>> +    thpsize->order = order;
->>>>>           ret = kobject_init_and_add(&thpsize->kobj, &thpsize_ktype, parent,
->>>>>                        "hugepages-%lukB", size);
->>>>>         if (ret) {
->>>>>             kfree(thpsize);
->>>>> -        return ERR_PTR(ret);
->>>>> +        goto err;
->>>>>         }
->>>>>     -    ret = sysfs_create_group(&thpsize->kobj, &thpsize_attr_group);
->>>>> -    if (ret) {
->>>>> +    stats = kzalloc(sizeof(*stats), GFP_KERNEL);
->>>>> +    if (!stats) {
->>>>>             kobject_put(&thpsize->kobj);
->>>>> -        return ERR_PTR(ret);
->>>>> +        ret = -ENOMEM;
->>>>> +        goto err;
->>>>>         }
->>>>>     -    ret = sysfs_create_group(&thpsize->kobj, &stats_attr_group);
->>>>> +    ret = kobject_init_and_add(&stats->kobj, &thpsize_child_ktype,
->>>>> +                   &thpsize->kobj, "stats");
->>>>> +    kobject_put(&thpsize->kobj);
->>>>>         if (ret) {
->>>>> -        kobject_put(&thpsize->kobj);
->>>>> -        return ERR_PTR(ret);
->>>>> +        kfree(stats);
->>>>> +        goto err;
->>>>>         }
->>>>>     -    thpsize->order = order;
->>>>> -    return thpsize;
->>>>> +    if (BIT(order) & THP_ORDERS_ALL_ANON) {
->>>>> +        ret = sysfs_create_group(&thpsize->kobj, &thpsize_attr_group);
->>>>> +        if (ret)
->>>>> +            goto err_put;
->>>>> +
->>>>> +        ret = sysfs_create_group(&stats->kobj, &stats_attr_group);
->>>>> +        if (ret)
->>>>> +            goto err_put;
->>>>> +    }
->>>>> +
->>>>> +    if (BIT(order) & PAGECACHE_LARGE_ORDERS) {
->>>>> +        ret = sysfs_create_group(&stats->kobj, &file_stats_attr_group);
->>>>> +        if (ret)
->>>>> +            goto err_put;
->>>>> +    }
->>>>> +
->>>>> +    list_add(&stats->node, &thpsize_child_list);
->>>>> +    return 0;
->>>>> +err_put:
->>>>
->>>> IIUC, I think you should call 'sysfs_remove_group' to remove the group before
->>>> putting the kobject.
->>>
->>> Are you sure about that? As I understood it, sysfs_create_group() was
->>> conceptually modifying the state of the kobj, so when the kobj gets destroyed,
->>> all its state is tidied up. __kobject_del() (called on the last kobject_put())
->>> calls sysfs_remove_groups() and tidies up the sysfs state as far as I can see?
->>
->> IIUC, __kobject_del() only removes the ktype defaut groups by
->> 'sysfs_remove_groups(kobj, ktype->default_groups)', but your created groups are
->> not added into the ktype->default_groups. That means you should mannuly remove
->> them, or am I miss something?
+On 7/21/24 17:58, Chris Packham wrote:
+> By default the PWM duty cycle in hardware is 100%. On some systems this
+> can cause unwanted fan noise. Add the ability to specify the fan
+> connections and initial state of the PWMs via device properties.
 > 
-> That was also putting doubt in my mind. But the sample at
-> samples/kobject/kobject-example.c does not call sysfs_remove_group(). It just
-> calls sysfs_create_group() in example_init() and calls kobject_put() in
-> example_exit(). So I think that's the correct pattern.
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
 > 
-> Looking at the code more closely, sysfs_create_group() just creates files for
-> each of the attributes in the group. __kobject_del() calls sysfs_remove_dir(),
-> who's comment states "we remove any files in the directory before we remove the
-> directory" so I'm pretty sure sysfs_remove_group() is not required.
+> Notes:
+>      Changes in v6:
+>      - Use do_div() instead of plain /
+>      - Use a helper function to avoid repetition between the of and non-of
+>        code paths.
+>      Changes in v5:
+>      - Deal with PWM frequency and duty cycle being specified in nanoseconds
+>      Changes in v4:
+>      - Support DT and ACPI fwnodes
+>      - Put PWM into manual mode
+>      Changes in v3:
+>      - Use the pwm provider/consumer bindings
+>      Changes in v2:
+>      - Use correct device property string for frequency
+>      - Allow -EINVAL and only warn on error
+>      - Use a frequency of 0 to indicate that the hardware should be left as-is
+> 
+>   drivers/hwmon/adt7475.c | 130 ++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 130 insertions(+)
+> 
+> diff --git a/drivers/hwmon/adt7475.c b/drivers/hwmon/adt7475.c
+> index 4224ffb30483..fc5605d34f36 100644
+> --- a/drivers/hwmon/adt7475.c
+> +++ b/drivers/hwmon/adt7475.c
+> @@ -21,6 +21,8 @@
+>   #include <linux/of.h>
+>   #include <linux/util_macros.h>
+>   
+> +#include <dt-bindings/pwm/pwm.h>
+> +
+>   /* Indexes for the sysfs hooks */
+>   
+>   #define INPUT		0
+> @@ -1662,6 +1664,130 @@ static int adt7475_set_pwm_polarity(struct i2c_client *client)
+>   	return 0;
+>   }
+>   
+> +struct adt7475_pwm_config {
+> +	int index;
+> +	int freq;
+> +	int flags;
+> +	int duty;
+> +};
+> +
+> +static int _adt7475_pwm_properties_parse_args(u32 args[4], struct adt7475_pwm_config *cfg)
+> +{
+> +	unsigned long freq_hz;
+> +	unsigned long duty;
+> +
+> +	if (args[1] == 0)
+> +		return -EINVAL;
+> +
+> +	freq_hz = 1000000000UL;
+> +	do_div(freq_hz, args[1]);
+> +	duty = 255 * args[3];
+> +	do_div(duty, args[1]);
+> +
 
-Thanks for the explanation, and I think you are right after checking the 
-code again. Sorry for the noise.
+Gues I am a bit at loss here, just as 0-day. Why use do_div ? It is only needed
+for 64-bit divide operations.
+
+Thanks,
+Guenter
+
 
