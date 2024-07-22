@@ -1,166 +1,160 @@
-Return-Path: <linux-kernel+bounces-258663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06E44938B58
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:38:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F3D938B5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:38:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1FB02814D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:38:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C55F1F2198E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434A5167D83;
-	Mon, 22 Jul 2024 08:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFFE3166318;
+	Mon, 22 Jul 2024 08:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VWa3bZdj"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ub2pCdyY"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC01E33CD1
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 08:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FAEF1B977
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 08:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721637486; cv=none; b=d3NGHQKvCctym+LryBuh6ulvRapKuNY0RlJILITxIn6E+uUd9t/ikKlT/nbOaRBuJSQPiRkFeIHlrXceID0lCDiSECQLqtSfNjC+Xk1lIikk1+pIWxLQRSidasC7hVdm0tmYvpREDVMaQMnmyLNL5XQ6jRFvvZNf20PFBeluxlE=
+	t=1721637493; cv=none; b=mHWsZf1ai45JbDFHrp/EpFH3eoSuzYQ6SQF9CInjYhLvwRRQ3wRHNcItBXZE28eejLC2UHpv+8bpH/asXMpuNvtoetskP1fcMY/QIepBC71J6YlbKsaMIhzkbmkpIRdT3ExTciTPKiCn/3Z1+gAdNDj06Q7IhpceSbkFEnwgs10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721637486; c=relaxed/simple;
-	bh=tdtnsGdG9Ah2ucRzsVZYSjdWwb4VBHuucRGsMV8r2A4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h8tMRXhepRW/f9JuusH/PL8Z374rDO61fxav8ar0cVWiI5u1vdvk43VXl/H014WHFCjW+5KOtVYzOW6nys1e8JIld7YEY0yA98v8vGKKt+jfDUOghBCSCC9esgUsgZuRzAp/oXQsPh7xmwk8D8RwGPfVn4zifax88N3BLQo8qek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VWa3bZdj; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52ea2f58448so5188280e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 01:38:04 -0700 (PDT)
+	s=arc-20240116; t=1721637493; c=relaxed/simple;
+	bh=zj1cn66/vQ5MXFUAsLxAh/TomF3ys4vZsbL3NdjigaU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CdKJXmYRwTLTRixZPjleRlGLE7PK1XdUMHcbcVUtCbKIDr8EP31LMZalfVkHDKbeUHf8PHMmL98XzuSbGz08mbvI/fT2Xz12ByznWthoHiwKw1kbEQWa+E7sThjwXDukitBBttTBL3cnj9+T/ImFmM4H1LmfzOwlLCyB63OviXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ub2pCdyY; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-70361c6fd50so2019407a34.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 01:38:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721637483; x=1722242283; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=viy4DOUz6EqSyRMuAWetkHNM/Xn/IPNTPSMVXraeMWw=;
-        b=VWa3bZdj4G9n05NMDoJ7Q43qQTuGEqy56c6uJCD3267JLaWWwOp4CGrOK+sYkO+IK1
-         b46/joSpg5HrJF7USRuHf9f8o3UEZJ2aQQsW5VrI8ML1eBZKNRFyuzwq5uHYudcHuUWr
-         fJY666zHMBwAfAaAJMzkPU5RdXmvI1xHgyBj+orQgHOJT7DT8P+gj5XKZBM2mom1P8A8
-         pDNB/nFCxWAwXufrwEpAofpdYo+Da7ZP+6q5hNXmWfdRPahUKniQC7FAqQZcUFSYe71z
-         BaXWb6sV+hvHWAQ5okVoWQabUwcjz22fsK9eg5HwSIz9+5ojE9R0TuEG5pc/Ds+3bL7T
-         wdUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721637483; x=1722242283;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1721637491; x=1722242291; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=viy4DOUz6EqSyRMuAWetkHNM/Xn/IPNTPSMVXraeMWw=;
-        b=YqfF67sNWT0/KmoKhgiqnpYqN7ZSPQhmPiFFTDPPmVkLyCJxgzTKBqLoOBqQN0gRVl
-         2y/x+193/REpO6jDSI7qTqLwKRFAFSNwD98nYXo5LRb8JBkrgW0X51CRmGHGwYRw+6D+
-         qTg4w0OwKCQD1hMI+JZ0IcVZI/yPts/PgjiZhQr+wo3/ppCz12ro8ndxH3rlXqGpSVN9
-         ykb60oivCYXfAwpOi0Sd+Olhe2Oxi/GAPlNtJtYr073KQNCFC5govSwxgeRByjwwNdhl
-         aH3Epch48E2GQ2GCw3alEK/v2FTYYAkC2kmqg80dmUoGdtqIRGJHO3++ZkWV0puFabqa
-         Pu1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUIgelKT867APCGlI3tZ8XDPP0CY0aWh7YKfDzePs3yw7dXF+RzLt6xjElS+qyiRRBOEd0+HDmHoH5N/DL9T/YmkT+Jj+8LPQrX/nOP
-X-Gm-Message-State: AOJu0Yyl/eMsyujo8qpkcU/hCHPiL7bfsOnZ+oRMhdPN4rhDnSXDSUMA
-	9Oflxbx84s9K/2vweRqKSMicSmwqPYFgdqBDcXHLxGd/POPuo5Clor3XRSNu41Y=
-X-Google-Smtp-Source: AGHT+IHl5S1Hv4aljesKT/0/93+3BpBOkF4UsuQa+KfqWL4JswXAtrL2kqaP9qfUdy0xQslFEfeb4Q==
-X-Received: by 2002:a05:6512:3e19:b0:52e:fc74:552c with SMTP id 2adb3069b0e04-52efc74586fmr3523465e87.33.1721637482657;
-        Mon, 22 Jul 2024 01:38:02 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a59be83c69sm2395523a12.58.2024.07.22.01.38.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jul 2024 01:38:02 -0700 (PDT)
-Message-ID: <09c3a2c5-68d9-41c9-85e0-397b08715fa3@linaro.org>
-Date: Mon, 22 Jul 2024 10:38:00 +0200
+        bh=LLy2SrIyNS/BtIAkKA6BvJoHkOLVxRWMUEDFd16KBRE=;
+        b=Ub2pCdyYIeCE2dTa+eZLKsiqZeIajqCiYxKWGB0WoszKocOyKpWOuAK4DfsyhmDdCX
+         amD5oD1QKUkSjNiBEvbVXfLJ9hCHBltWP9XXKhJntXW66yPcsNboDIR/s27xLTjoj+gl
+         B8byA1/ns1fTZG+pF1LKEKRGNC3b3DC1qLynpkd2Hy0stBLZM3euyb5R1UmkCzoI0jvG
+         QIJ4oAIByQtejTIKOBoCD3wxzLtC8zrssh9Q14DXOGDlIet9EAWda3zcAxc05sjdZQfq
+         aCk6LFweuSaiZTotQHnA5A0AgnzlL5+qY/X8ciV+eZe603yHoxoD+opRL4cSCehqQSLP
+         6jpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721637491; x=1722242291;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LLy2SrIyNS/BtIAkKA6BvJoHkOLVxRWMUEDFd16KBRE=;
+        b=ihnT76RWoWSI/6hlvb1Y3qKDLbYLIooomry+u4C6/W6qrrgr8Yf2aw9xJ2BmYrL4zM
+         npv+vVNOr3/qgPlAI8gnztwuiT8hplvIGqLso1M8xehM3cL1MQX5s1xeJcMFWf5AhlJS
+         qaqcSlKlhg/yn4l24v6RiO7D552kKA55FS6GcU4gjt9D+4O0wZGGKzt43U6/kIG2L+MH
+         oQv0Uc2yX5DUMpDhk+meCSjXLjHrNUl4DmEsYZvTN3U39+1glMKfVisThlSOSic4OuD5
+         zJR/62R3//BeNCxvgdrP+3hXb2PeY8YbRHt4FWfaOUcf66DaloytVsSBx7wasT5OqPfL
+         6suA==
+X-Forwarded-Encrypted: i=1; AJvYcCU38wWPImtDDdn1ZfFT9rDs9E8pOIjzx5LSSHpcHY5iqC1z4XKs3zIw3Re/jCpibf5CRGx5htjsppefIhCJtLSY7mNTj8WW5UTqYKUv
+X-Gm-Message-State: AOJu0Ywa9qTQFJPlEN1KLdGAS6fKfCe6uilnAhs1IPI3E22k0PVsNUCy
+	+fjqWWfN7YI2l3ijkOjZP1xEK8JHw3gDDMHcQSnMEGnP+Egkz0+VI2TUg5oFXTe6bgANbOa+I/7
+	CApQfNMIUIj4eZAzBdTpVx73nZRg=
+X-Google-Smtp-Source: AGHT+IED9sgp0XJRTrLdgRC9+QtNiUQcgpNSQZW++T17WK1mNEKhGIErQwceTSb8Zdl4TwT9yetFMFVBBj0lyMUU2OA=
+X-Received: by 2002:a05:6830:6486:b0:704:4c66:b6f3 with SMTP id
+ 46e09a7af769-708fda82511mr9301123a34.7.1721637491606; Mon, 22 Jul 2024
+ 01:38:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/12] arm64: dts: qcom: sm6115-pro1x: Add Caps Lock LED
-To: Dang Huynh <danct12@riseup.net>, Bjorn Andersson <andersson@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240722-qx1050-feature-expansion-v1-0-c4d486435b96@riseup.net>
- <20240722-qx1050-feature-expansion-v1-4-c4d486435b96@riseup.net>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240722-qx1050-feature-expansion-v1-4-c4d486435b96@riseup.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240129104106.43141-1-raphael.gallais-pou@foss.st.com> <21f4d43d-4abd-4aca-7abb-7321bcfa0f1d@foss.st.com>
+In-Reply-To: <21f4d43d-4abd-4aca-7abb-7321bcfa0f1d@foss.st.com>
+From: Yanjun Yang <yangyj.ee@gmail.com>
+Date: Mon, 22 Jul 2024 16:38:00 +0800
+Message-ID: <CAE8JAfy9NtBa--DnUt2AEZPFnvjU6idj8DqUbaeLaH0DMFvuhw@mail.gmail.com>
+Subject: Re: [Linux-stm32] [PATCH RESEND v3 0/3] Update STM DSI PHY driver
+To: Philippe CORNU <philippe.cornu@foss.st.com>
+Cc: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+	Yannick Fertre <yannick.fertre@foss.st.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	linux-arm-kernel@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22.07.2024 9:10 AM, Dang Huynh wrote:
-> The Pro1X has a caps lock LED on the keyboard.
-> 
-> Signed-off-by: Dang Huynh <danct12@riseup.net>
-> ---
->  arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts b/arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts
-> index d91d31646b29..60c046fe8e52 100644
-> --- a/arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts
-> +++ b/arch/arm64/boot/dts/qcom/sm6115-fxtec-pro1x.dts
-> @@ -8,6 +8,7 @@
->  #include "sm6115.dtsi"
->  #include "pm6125.dtsi"
->  #include <dt-bindings/arm/qcom,ids.h>
-> +#include <dt-bindings/leds/common.h>
->  
->  / {
->  	model = "F(x)tec Pro1X (QX1050)";
-> @@ -63,6 +64,16 @@ key-volume-up {
->  		};
->  	};
->  
-> +	gpio-leds {
-> +		compatible = "gpio-leds";
-> +
-> +		capslock-led {
-> +			color = <LED_COLOR_ID_GREEN>;
-> +			function = LED_FUNCTION_CAPSLOCK;
-> +			gpios = <&pca9534 1 GPIO_ACTIVE_HIGH>;
+On Fri, Jun 28, 2024 at 8:47=E2=80=AFPM Philippe CORNU
+<philippe.cornu@foss.st.com> wrote:
+>
+>
+>
+> On 1/29/24 11:41, Raphael Gallais-Pou wrote:
+> >
+> > This patch series aims to add several features of the dw-mipi-dsi phy
+> > driver that are missing or need to be updated.
+> >
+> > First patch update a PM macro.
+> >
+> > Second patch adds runtime PM functionality to the driver.
+> >
+> > Third patch adds a clock provider generated by the PHY itself.  As
+> > explained in the commit log of the second patch, a clock declaration is
+> > missing.  Since this clock is parent of 'dsi_k', it leads to an orphan
+> > clock.  Most importantly this patch is an anticipation for future
+> > versions of the DSI PHY, and its inclusion within the display subsystem
+> > and the DRM framework.
+> >
+> > Last patch fixes a corner effect introduced previously.  Since 'dsi' an=
+d
+> > 'dsi_k' are gated by the same bit on the same register, both reference
+> > work as peripheral clock in the device-tree.
+> >
 
-You may want to take a look at msm8998-fxtec-pro1.dts which has a
-bit more properties describing it
+This patch (commit id:185f99b614427360) seems to break the dsi of
+stm32f469 chip.
+I'm not familiar with the drm and the clock framework, maybe it's
+because there is no
+ "ck_dsi_phy" defined for stm32f469.
+PS:  Sorry for receiving multiple copies of this email, I forgot to
+use plain text mode last time.
 
-Konrad
-
+> > ---
+> > Changes in v3-resend:
+> >       - Removed last patch as it has been merged
+> > https://lore.kernel.org/lkml/bf49f4c9-9e81-4c91-972d-13782d996aaa@foss.=
+st.com/
+> >
+> > Changes in v3:
+> >       - Fix smatch warning (disable dsi->pclk when clk_register fails)
+> >
+> > Changes in v2:
+> >       - Added patch 1/4 to use SYSTEM_SLEEP_PM_OPS instead of old macro
+> >         and removed __maybe_used for accordingly
+> >       - Changed SET_RUNTIME_PM_OPS to RUNTIME_PM_OPS
+> >
+> > Raphael Gallais-Pou (3):
+> >    drm/stm: dsi: use new SYSTEM_SLEEP_PM_OPS() macro
+> >    drm/stm: dsi: expose DSI PHY internal clock
+> >
+> > Yannick Fertre (1):
+> >    drm/stm: dsi: add pm runtime ops
+> >
+> >   drivers/gpu/drm/stm/dw_mipi_dsi-stm.c | 279 ++++++++++++++++++++++---=
+-
+> >   1 file changed, 238 insertions(+), 41 deletions(-)
+> >
+>
+> Hi Rapha=C3=ABl & Yannick,
+> Applied on drm-misc-next.
+> Many thanks,
+> Philippe :-)
+> _______________________________________________
+> Linux-stm32 mailing list
+> Linux-stm32@st-md-mailman.stormreply.com
+> https://st-md-mailman.stormreply.com/mailman/listinfo/linux-stm32
 
