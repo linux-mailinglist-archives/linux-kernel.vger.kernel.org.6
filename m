@@ -1,64 +1,73 @@
-Return-Path: <linux-kernel+bounces-258877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D9D0938D96
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:41:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF181938DA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:46:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 290BF2819AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:41:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8231B1F21138
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C29D16C69E;
-	Mon, 22 Jul 2024 10:41:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42D416CD01;
+	Mon, 22 Jul 2024 10:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kFgsP0Hg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="0IhFle3D"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F57946C;
-	Mon, 22 Jul 2024 10:41:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81DF31B977
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 10:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721644866; cv=none; b=QCWJyHC6Z7VoRpPYz5BpYVBU9kFq3o9sGt/LdgIZ2mLmVTuTv0y3gxhsxBVGwqr1n4HMFgp34X064IaXBG6m2mkNe5jxbU9aO25kIgNq9rI1RhK9M4MxWa/pI/un5F2fKU1WyxK4R+3Lzw3OIwHYBue4DaMYnA7611oEZdUor5Y=
+	t=1721645154; cv=none; b=c4nglvncBHTNN7gT72S9S+sSMHlKUTCoiL/KPqsqGY8vJ4oe2vqf6v/3pL2jfMdZPAgoe+1UxNwkD18pLSg4VfOuWiGP4TnAQRnwR/9nfUqdI7K2nyP1VA4kGIUXJ/Otpzw/n9uOL1GqM9e+KdBbB2DEAlmcwf4Zb0Pf4Q9tDxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721644866; c=relaxed/simple;
-	bh=EFV2wzzwODmtn/7Y0xB5l/izBemdfK2HYblHgY6ccaE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=S5GU1iXPoIA/p199vS7oMHpiD6V+ANzQ3lvCNa/UcQwAX3SQfxxfBeYRfLgYwB+X1TneQORXEE1ndxf9FS2eFI6Tkc925KLl5fDMyRGGbS+55q+RigwvDqmb4e+D4AEZv7QCL/7ZcpgD42cvH6vhtMW5N9LeBYgDswtl4AeIcpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kFgsP0Hg; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721644865; x=1753180865;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=EFV2wzzwODmtn/7Y0xB5l/izBemdfK2HYblHgY6ccaE=;
-  b=kFgsP0Hg7G/fpFJjIrz4mB0mroEypW5SwacdYJAsj1oWeUVIhVo/1IpJ
-   hhzC6pZ3gtAFCVbtZ8jEajtiBxvoAg7WQdHKQzapvlf+EosZWtDfby1ni
-   IKT+X3kBe1odOqFji9AkdBqst5O0Ieoyo+BYPO4CpRsemSxZhxb4xsd67
-   NEy/wSVkUmLKvf7RUSj/PvXJcAm7KguxzZbiB6McRa6b0UKByh5Igixc3
-   1TxRHguEP2zlpf26R/rMwFA1bG0ZPqXnPm1hCpwmPPq4ABmBZYKOonYJM
-   W6oLNFfR3eIHZ4EdEqJA687Itu2aq+ZGDAbzfx0fbxKOsqqE12+DY4dZz
-   Q==;
-X-CSE-ConnectionGUID: yQmo61SwTc65OEjlgfLTww==
-X-CSE-MsgGUID: P+7077VoQD63ejMdXXYE3Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11140"; a="19354517"
-X-IronPort-AV: E=Sophos;i="6.09,227,1716274800"; 
-   d="scan'208";a="19354517"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 03:41:05 -0700
-X-CSE-ConnectionGUID: 7BLo0Y8NTTuX5AE51ygT5g==
-X-CSE-MsgGUID: c1KscY52SLGWR2kBiOV+OQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,227,1716274800"; 
-   d="scan'208";a="82857199"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.41.28])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 03:41:01 -0700
-Message-ID: <3c25ed2b-9538-4d10-9152-ed1e6106b41a@intel.com>
-Date: Mon, 22 Jul 2024 13:40:56 +0300
+	s=arc-20240116; t=1721645154; c=relaxed/simple;
+	bh=aF3j0TrmnVp1p2npQybDiv9LcE984vxGW4haXJ10hMY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o6nB9YfwCDK66a8Fj1tjxv3wnDj8TE2owP/Jfi1FFazI/AXrAbmuQLJ2tGWbG1RNUJUYo9N5SAhzZssq9UZgiCSPj+0MGjapOh4WZvFcuKZ2UQEtYJRtmJiPrj8q05pguNgaUacGO6MaeezinYUAgspZeoT3DyxPyHcFirO4ZUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=0IhFle3D; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70d0fc15efbso26123b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 03:45:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1721645151; x=1722249951; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Yk4UQACOPEhu0mUYszop0tJksRuFg9b/i8uYeB9F4sQ=;
+        b=0IhFle3DAfFitRliix32nUj3H1My774JMDpbk/6S/WygCcTXtVli0pym5Ga5vqhqR4
+         TxlX6jvvclN4WpajwpMXC+vbbHTsll8QhwSpo7v9UeHZxzOfBukQkNvU/e09GnjVvmfS
+         O/Gc6jRnr+6S+i1VeRUE/t/2ai0n2tqDu3wropDjmB5B9CKchEY8hrYq7hqPs8Bn10Gn
+         fDcD63WBdQsRP4IqOtj1jtc7LJqrcI1No+zxXyXA6swN9670fJCsQNhVCarwyyxDtXgj
+         1Pe9W82Qh+XehAtNRirohnt5T/mgEyHeO6g2da3bGZePVgeNqnNwVQzouYmCATaQZYJI
+         I5Tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721645151; x=1722249951;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yk4UQACOPEhu0mUYszop0tJksRuFg9b/i8uYeB9F4sQ=;
+        b=jlSypS2CEW2BZh0qFfdBzM/r1jygaVa/OhlvJPkHS4IWX5VrtJ80fBbfbjEM6R1xMg
+         JDKIwV3/7/yVZfG7mLa6Zx0GsT5oDRF7qdOHBw0J6alOnsVzEf3rtby4oEo0YLTyG6zT
+         0A0SXjwhxnoR++gYKe0Nqmp5X4Gw+mWBrl8x5Oz8YrLTFcxSVZ3AM6Y5aTTz5pqff9f9
+         B+Uhsd5f3uh/xSrLqve1gfZDJRFM2yINKM4n6xGlgDi0e2v3hptUIBOc2th3fj4zBq/Y
+         TkKOZlSKCLjDLyyTytKC0DVxz/ghcQuTt0c36rMmX9kD9l7Ab1Bqo3fKxulDpnDzbK08
+         tQeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVqjcQV+mHQZJPHqpO7pHxLSnjZGjGbd/EVkRk7nbM851BF7KdWu88Xe0aLfTWuloqf3EysLSrPjmuoxASN7ZAylWekZc0IaszeIR0e
+X-Gm-Message-State: AOJu0YyDxvjvtSciHXye2bra5DCGMrMzYPUatlE/fbEn9p6A54iqqOR+
+	WEocMsyaO2884FuE0I/zMvP6Gl2kDQbYwkQdJUyehn2f/w6us/VNymI+f1E3tw==
+X-Google-Smtp-Source: AGHT+IGbTDbBwca1C4VrH0/hA3S6xV1DimazE2cwql0k7QUaUo+m4vZviNr4xZ00h+PE/OuBz/gSuA==
+X-Received: by 2002:a05:6a00:391b:b0:704:173c:5111 with SMTP id d2e1a72fcca58-70d08635b76mr5376790b3a.3.1721645150824;
+        Mon, 22 Jul 2024 03:45:50 -0700 (PDT)
+Received: from [172.22.58.167] ([117.250.76.237])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70cff5a149csm5078144b3a.169.2024.07.22.03.45.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jul 2024 03:45:50 -0700 (PDT)
+Message-ID: <5a865811-a6c0-47ad-b8a0-265bb31d4124@beagleboard.org>
+Date: Mon, 22 Jul 2024 16:15:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,52 +75,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/6] perf pmu: Directly use evsel's PMU pointer
-To: Leo Yan <leo.yan@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- James Clark <james.clark@linaro.org>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, John Garry <john.g.garry@oracle.com>,
- Will Deacon <will@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240721202113.380750-1-leo.yan@arm.com>
- <20240721202113.380750-2-leo.yan@arm.com>
+Subject: Re: [PATCH 1/3] dt-bindings: net: ti,cc1352p7: Add boot-gpio
+To: Conor Dooley <conor@kernel.org>
+Cc: jkridner@beagleboard.org, robertcnelson@beagleboard.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+ Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ greybus-dev@lists.linaro.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240719-beagleplay_fw_upgrade-v1-0-8664d4513252@beagleboard.org>
+ <20240719-beagleplay_fw_upgrade-v1-1-8664d4513252@beagleboard.org>
+ <20240719-scuttle-strongbox-e573441c45e6@spud>
 Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240721202113.380750-2-leo.yan@arm.com>
-Content-Type: text/plain; charset=UTF-8
+From: Ayush Singh <ayush@beagleboard.org>
+In-Reply-To: <20240719-scuttle-strongbox-e573441c45e6@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 21/07/24 23:21, Leo Yan wrote:
-> Rather than iterating the whole PMU list for finding the associated PMU
-> device for an evsel, this commit optimizes to directly use evsel's 'pmu'
-> pointer for accessing PMU device.
-> 
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
-> ---
->  tools/perf/util/pmu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-> index 986166bc7c78..798cd5a2ebc4 100644
-> --- a/tools/perf/util/pmu.c
-> +++ b/tools/perf/util/pmu.c
-> @@ -1199,7 +1199,7 @@ void perf_pmu__warn_invalid_formats(struct perf_pmu *pmu)
->  
->  bool evsel__is_aux_event(const struct evsel *evsel)
->  {
-> -	struct perf_pmu *pmu = evsel__find_pmu(evsel);
-> +	struct perf_pmu *pmu = evsel->pmu;
 
-Assumes event parser has populated evsel->pmu for auxtrace events.
-Could use a comment to that effect.
+On 7/19/24 20:25, Conor Dooley wrote:
+> On Fri, Jul 19, 2024 at 03:15:10PM +0530, Ayush Singh wrote:
+>> boot-gpio (along with reset-gpio) is used to enable bootloader backdoor
+>> for flashing new firmware.
+>>
+>> The pin and pin level to enabel bootloader backdoor is configed using
+>> the following CCFG variables in cc1352p7:
+>> - SET_CCFG_BL_CONFIG_BL_PIN_NO
+>> - SET_CCFG_BL_CONFIG_BL_LEVEL
+>>
+>> Signed-off-by: Ayush Singh <ayush@beagleboard.org>
+>> ---
+>>   Documentation/devicetree/bindings/net/ti,cc1352p7.yaml | 4 ++++
+>>   1 file changed, 4 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/net/ti,cc1352p7.yaml b/Documentation/devicetree/bindings/net/ti,cc1352p7.yaml
+>> index 3dde10de4630..a3511bb59b05 100644
+>> --- a/Documentation/devicetree/bindings/net/ti,cc1352p7.yaml
+>> +++ b/Documentation/devicetree/bindings/net/ti,cc1352p7.yaml
+>> @@ -29,6 +29,9 @@ properties:
+>>     reset-gpios:
+>>       maxItems: 1
+>>   
+>> +  boot-gpios:
+>> +    maxItems: 1
+> I think this needs a description that explains what this is actually
+> for, and "boot-gpios" is not really an accurate name for what it is used
+> for IMO.
 
->  
->  	return pmu && pmu->auxtrace;
->  }
+I was using the name `boot-gpios` since cc1352-flasher uses the name 
+boot-line. Anyway, would `bsl-gpios` be better? Or for more descriptive 
+names, I guess it can be `bootloader-config-gpios` or 
+`bootloader-backdoor-gpios`.
+
+
+Ayush Singh
 
 
