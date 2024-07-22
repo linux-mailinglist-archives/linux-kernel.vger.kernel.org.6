@@ -1,285 +1,201 @@
-Return-Path: <linux-kernel+bounces-259071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB70E9390D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:41:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BF2D9390DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B0CE1C2149F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:41:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AFA11F21D60
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC53E16DC21;
-	Mon, 22 Jul 2024 14:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iIemd3Kw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4412C16DC16;
+	Mon, 22 Jul 2024 14:42:39 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E273216C6B8;
-	Mon, 22 Jul 2024 14:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCF1125D6
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 14:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721659288; cv=none; b=juqYteaiXzLiPlQd6Q712zSy0kmk8E0CpmkKGEf6Eziv0kd5SXKvd0pOEqApLAuVoEADS7OKgJ+9s0AF82GRJ/1vxEaCHr48BF1lFacGhfjvdQTQGsX148pu6qIALr1lQGefIzfIsBZXAt1qWKUC4F3/XMMcsHBlrdiGDPcuhJs=
+	t=1721659358; cv=none; b=cm4s4AYgAG0H+nIgbsa95lXZSrZrVFoAEZmMjMB2b5dP4zrsg2eb7vo+nmpXCrinDVsJhm1GMVticRXSs+vT+p7EBYiVtQzEGIOB3GdAvy4o0LKIM8U+Yi0Ot2+03OA6VMHsTMuuQvcm7pt6Qlm7YNZRz9DMYH4cAoQ1H45dOO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721659288; c=relaxed/simple;
-	bh=zT/d4EzGgPVkMeU++ZavEy4AZLZrrIkwCrPWwgHvFj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YDyzzgfqacNm07VoD4WXsmiP5/9OpaVT72I7x7UqxeVLy1s1KIsvK7x5fYWHoux5ameasp9+d0XBtjF0+FVMrMaKL+0Ja8Ftb6Qk6S0g6JCE62DEQoFXczT1yfOP9CG0FnlUZukjkazjtW3L3kfWXeCXxxN+NwJCJcBYo1zcCk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iIemd3Kw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 189D7C116B1;
-	Mon, 22 Jul 2024 14:41:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721659287;
-	bh=zT/d4EzGgPVkMeU++ZavEy4AZLZrrIkwCrPWwgHvFj0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iIemd3KwYy0YgddRwXx03axTOfrGVrNfsbVEZkm9B+Os5agC5uMKLh9S2dLK+mdG0
-	 TfQGKXFMcDiiSryjwm5Sd9Z4pFypVMp43Rd7E+964j50KnI65VjRnluYgf9yUN6wpb
-	 B009sMnDCReg62Cb6Kn6ec6MuvxJW0BxCXP1CaZzXiDXjgb/7L2bKC4a6+tirdiyX9
-	 0uYLDvTZiHCII45Ezw9EPDqu1NJmxVVwMemW4pqUEbOQXUvHkZHtLt3bZHKGafqMz7
-	 Ad+lN4Mx5CvMlLY9CxvnplxujyGEEyf/rUGHuQSUV/s9vFa6HZu/L3Vqq8+cdXF+PP
-	 1TI5X4m/Aadgg==
-Date: Mon, 22 Jul 2024 16:41:22 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-serial <linux-serial@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] tty: tty_io: fix race between tty_fops and
- hung_up_tty_fops
-Message-ID: <20240722-gehminuten-fichtenwald-9dd5a7e45bc5@brauner>
-References: <a11e31ab-6ffc-453f-ba6a-b7f6e512c55e@I-love.SAKURA.ne.jp>
+	s=arc-20240116; t=1721659358; c=relaxed/simple;
+	bh=Zie3hndK/+jy0eGBxYvNqHkOM4xG0Bl7NL/fSzSywLo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XH9YQ3DvDkMLV8d+FxJ7V4icEEQdCSOobuEcYYPfVlefdF5d26NnSOXvgHYSlStRqk4TX2CkyyBSgWT89sJx0SZJ0cjgncYJCoiYsBCgjA6jo20I8eqFzGYvlzGw7hHockoXFBqBzAr0BvQqJAyB58oaFCmsTlcjAoDksgkR0mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39673758efeso66749795ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:42:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721659356; x=1722264156;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sTa1aFDadFRqKTnzJzDkp3TlrT/LXicGWcAimTXo8lA=;
+        b=BvFeGi1rbdrVl7i/hXSmCpWWxA3WnpgxJXQHh4ghPfEWn2BQDaO9+pw9MlEUQ33yE4
+         VX7k0Xflss5tUlQd6tAKV0eAOJXTCXtn/WoURMhmobgocQjN8vVd+IQIIcyyqIE2sfb9
+         6YaVgj7HB3lUTIQsZd5FJYpcdh0twJcpFJ98KfujjW4CdCVhhXshjC5pkJ8keDIWOYgD
+         lhcsWWNsLCIv1ZJXZAjZlUO9sIadM/YxKWvtKusKLCI2xESvqcxLMgtlDUYabSJixrZP
+         g3ed9CJRjMY0ERCIX/OLZaP+Pw6NmiIVL4k43L/LS78j6BhtsNB1s571hquFk0Sismim
+         lSzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGWvkrRWwnDtq4C5FIK5JCBBMBtNtlnphu7lWd/OCg9rVmpQJIANmhREJEARems60xsv/sqKb/zSMpbH81io5HuA+4uKe66Tby+Lnf
+X-Gm-Message-State: AOJu0Yzugf6OAs2y2tnELzAC8BnoHd1EOl1cKTpxqoZJtQnTcRs2laTT
+	kMC8GbbYtOQmDYETMWgUGg70yuvWBiS1WDtzqxiaA546unEYrLV7T44PQV9mwbx/oii+kn2l93V
+	V7TAu4lq4cumLSSwmcGQsLelPFUdMq5GhuMMk1EpXQ93eFsVRo2mMDyw=
+X-Google-Smtp-Source: AGHT+IHesvNRHIU7/UvpO8C/NLYFyDeqyZy0+w6MnPJWWNRTaEfTbj0QEL7Tu7Ws+TWTTlRD6pbixlQLOPpF01wd7b/teebD0Hry
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <a11e31ab-6ffc-453f-ba6a-b7f6e512c55e@I-love.SAKURA.ne.jp>
+X-Received: by 2002:a05:6638:841f:b0:4c0:a8a5:81e9 with SMTP id
+ 8926c6da1cb9f-4c23fe63d83mr373948173.3.1721659356272; Mon, 22 Jul 2024
+ 07:42:36 -0700 (PDT)
+Date: Mon, 22 Jul 2024 07:42:36 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005aed00061dd70e04@google.com>
+Subject: [syzbot] [bcachefs?] BUG: sleeping function called from invalid
+ context in bch2_printbuf_make_room
+From: syzbot <syzbot+f765e51170cf13493f0b@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jul 19, 2024 at 10:37:47PM GMT, Tetsuo Handa wrote:
-> syzbot is reporting data race between __tty_hangup() and __fput(), and
-> Dmitry Vyukov mentioned that this race has possibility of NULL pointer
-> dereference, for tty_fops implements e.g. splice_read callback whereas
-> hung_up_tty_fops does not.
-> 
->   CPU0                                  CPU1
->   ----                                  ----
->   do_splice_read() {
->                                         __tty_hangup() {
->     // f_op->splice_read was copy_splice_read
->     if (unlikely(!in->f_op->splice_read))
->       return warn_unsupported(in, "read");
->                                           filp->f_op = &hung_up_tty_fops;
->     // f_op->splice_read is now NULL
->     return in->f_op->splice_read(in, ppos, pipe, len, flags);
->                                         }
->   }
-> 
-> Fix possibility of NULL pointer dereference by implementing missing
-> callbacks, and suppress KCSAN messages by adding __data_racy qualifier
-> to "struct file"->f_op .
+Hello,
 
-This f_op replacing without synchronization seems really iffy imho.
-Why can't the hangup just be recorded in tty_file_private and then
-checked in the corresponding f_op->$method()?
+syzbot found the following issue on:
 
-And if that's not possible for some reason I'd be willing to sacrifice
-one of the FMODE_* bits I recently freed up and add e.g.,
-FMODE_TTY_HANGUP instead of this f_op raciness (Why wasn't this using
-replace_fops anyway so it'd be easy to grep for it?).
+HEAD commit:    73399b58e5e5 Add linux-next specific files for 20240718
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=155c13e9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=54e443ddc2b981c8
+dashboard link: https://syzkaller.appspot.com/bug?extid=f765e51170cf13493f0b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1390d2f1980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=146805fd980000
 
-Something like the completely untested below:
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/fbab059c854f/disk-73399b58.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/874a209f4c3f/vmlinux-73399b58.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f34e5c7be278/bzImage-73399b58.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/db661929ee72/mount_0.gz
 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index bc9aebcb873f..219bf6391fed 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -583,6 +583,26 @@ static struct file *tty_release_redirect(struct tty_struct *tty)
-        return f;
- }
+The issue was bisected to:
 
-+static noinline void noinline tty_mark_hungup(struct file *file)
-+{
-+       fmode_t fmode = READ_ONCE(file->f_mode);
-+
-+       do {
-+               if (fmode & FMODE_TTY_HUNGUP)
-+                       break;
-+       } while (!try_cmpxchg(&file->f_mode, &fmode, fmode | FMODE_TTY_HUNGUP));
-+}
-+
-+static noinline void noinline tty_clear_hungup(struct file *file)
-+{
-+       fmode_t fmode = READ_ONCE(file->f_mode);
-+
-+       do {
-+               if (!(fmode & FMODE_TTY_HUNGUP))
-+                       break;
-+       } while (!try_cmpxchg(&file->f_mode, &fmode, fmode & ~FMODE_TTY_HUNGUP));
-+}
-+
- /**
-  * __tty_hangup - actual handler for hangup events
-  * @tty: tty device
-@@ -652,7 +672,7 @@ static void __tty_hangup(struct tty_struct *tty, int exit_session)
-                        continue;
-                closecount++;
-                __tty_fasync(-1, filp, 0);      /* can't block */
--               filp->f_op = &hung_up_tty_fops;
-+               tty_mark_hungup(filp);
-        }
-        spin_unlock(&tty->files_lock);
+commit f7643bc9749f270d487c32dc35b578575bf1adb0
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Wed Apr 17 05:26:02 2024 +0000
 
-@@ -776,7 +796,7 @@ void tty_vhangup_session(struct tty_struct *tty)
-  */
- int tty_hung_up_p(struct file *filp)
- {
--       return (filp && filp->f_op == &hung_up_tty_fops);
-+       return (filp && (READ_ONCE(filp->f_mode) & FMODE_TTY_HUNGUP));
- }
- EXPORT_SYMBOL(tty_hung_up_p);
+    bcachefs: make btree read errors silent during scan
 
-@@ -2204,7 +2224,7 @@ static int tty_open(struct inode *inode, struct file *filp)
-                 * Need to reset f_op in case a hangup happened.
-                 */
-                if (tty_hung_up_p(filp))
--                       filp->f_op = &tty_fops;
-+                       tty_clear_hungup(filp);
-                goto retry_open;
-        }
-        clear_bit(TTY_HUPPED, &tty->flags);
-@@ -2718,6 +2738,10 @@ long tty_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
-        int retval;
-        struct tty_ldisc *ld;
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=123cf7a5980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=113cf7a5980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=163cf7a5980000
 
-+       /* Check whether the tty hung up. */
-+       if (tty_hung_up_p(file))
-+               return hung_up_tty_ioctl(file, cmd, arg);
-+
-        if (tty_paranoia_check(tty, file_inode(file), "tty_ioctl"))
-                return -EINVAL;
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f765e51170cf13493f0b@syzkaller.appspotmail.com
+Fixes: f7643bc9749f ("bcachefs: make btree read errors silent during scan")
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index ea3df718c53e..e96b86bab356 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -128,7 +128,8 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
- /* File supports atomic writes */
- #define FMODE_CAN_ATOMIC_WRITE ((__force fmode_t)(1 << 7))
-
--/* FMODE_* bit 8 */
-+/* File driver hung up (tty specific)  */
-+#define FMODE_TTY_HUNGUP       ((__force fmode_t)(1 << 8))
-
- /* 32bit hashes as llseek() offset (for directories) */
- #define FMODE_32BITHASH         ((__force fmode_t)(1 << 9))
+bcachefs (loop0): recovering from clean shutdown, journal seq 13
+bcachefs (loop0): Doing compatible version upgrade from 1.7: mi_btree_bitmap to 1.9: disk_accounting_v2
+  running recovery passes: check_allocations
+BUG: sleeping function called from invalid context at include/linux/sched/mm.h:337
+in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 5104, name: syz-executor271
+preempt_count: 1, expected: 0
+RCU nest depth: 0, expected: 0
+2 locks held by syz-executor271/5104:
+ #0: ffff888078f00278 (&c->state_lock){+.+.}-{3:3}, at: bch2_fs_start+0x45/0x5b0 fs/bcachefs/super.c:1006
+ #1: ffff888078f4a880 (&j->lock){+.+.}-{2:2}, at: spin_lock include/linux/spinlock.h:351 [inline]
+ #1: ffff888078f4a880 (&j->lock){+.+.}-{2:2}, at: bch2_fs_journal_start+0x1219/0x14a0 fs/bcachefs/journal.c:1265
+Preemption disabled at:
+[<0000000000000000>] 0x0
+CPU: 0 UID: 0 PID: 5104 Comm: syz-executor271 Not tainted 6.10.0-next-20240718-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ __might_resched+0x5d4/0x780 kernel/sched/core.c:8526
+ might_alloc include/linux/sched/mm.h:337 [inline]
+ slab_pre_alloc_hook mm/slub.c:3939 [inline]
+ slab_alloc_node mm/slub.c:4017 [inline]
+ __do_kmalloc_node mm/slub.c:4157 [inline]
+ __kmalloc_node_track_caller_noprof+0xcb/0x440 mm/slub.c:4177
+ __do_krealloc mm/slab_common.c:1280 [inline]
+ krealloc_noprof+0x7d/0x120 mm/slab_common.c:1313
+ bch2_printbuf_make_room+0x1f1/0x350 fs/bcachefs/printbuf.c:59
+ bch2_prt_printf+0x267/0x6d0 fs/bcachefs/printbuf.c:186
+ bch2_journal_space_available+0x89b/0x1b00 fs/bcachefs/journal_reclaim.c:209
+ bch2_fs_journal_start+0x1356/0x14a0 fs/bcachefs/journal.c:1275
+ bch2_fs_recovery+0x1ec8/0x38d0 fs/bcachefs/recovery.c:833
+ bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
+ bch2_fs_get_tree+0xd61/0x1700 fs/bcachefs/fs.c:1951
+ vfs_get_tree+0x90/0x2a0 fs/super.c:1789
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3472
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fdab3de2dea
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc5678dad8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffc5678daf0 RCX: 00007fdab3de2dea
+RDX: 0000000020000000 RSI: 000000002000f680 RDI: 00007ffc5678daf0
+RBP: 0000000000000004 R08: 00007ffc5678db30 R09: 000000000000f626
+R10: 0000000000200012 R11: 0000000000000282 R12: 0000000000200012
+R13: 00007ffc5678db30 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+bcachefs (loop0): insufficient writeable journal devices available: have 0, need 1
+rw journal devs:
+bcachefs (loop0): accounting_read... done
+bcachefs (loop0): alloc_read... done
+bcachefs (loop0): stripes_read... done
+bcachefs (loop0): snapshots_read... done
+bcachefs (loop0): check_allocations...
+btree ptr not marked in member info btree allocated bitmap
+  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq 1818ce08861e3527 written 40 min_key POS_MIN durability: 1 ptr: 0:26:0 gen 0, shutting down
+bcachefs (loop0): inconsistency detected - emergency read only at journal seq 13
+bcachefs (loop0): bch2_gc_mark_key(): error fsck_errors_not_fixed
+bcachefs (loop0): bch2_gc_btree(): error fsck_errors_not_fixed
+bcachefs (loop0): bch2_gc_btrees(): error fsck_errors_not_fixed
+bcachefs (loop0): bch2_check_allocations(): error fsck_errors_not_fixed
+bcachefs (loop0): bch2_fs_recovery(): error fsck_errors_not_fixed
+bcachefs (loop0): bch2_fs_start(): error starting filesystem fsck_errors_not_fixed
+bcachefs (loop0): shutting down
+bcachefs (loop0): shutdown complete
+bcachefs: bch2_fs_get_tree() error: fsck_errors_not_fixed
 
 
-> 
-> Reported-by: syzbot <syzbot+b7c3ba8cdc2f6cf83c21@syzkaller.appspotmail.com>
-> Closes: https://syzkaller.appspot.com/bug?extid=b7c3ba8cdc2f6cf83c21
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Dmitry Vyukov <dvyukov@google.com>
-> Cc: Marco Elver <elver@google.com>
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> ---
-> This patch has been tested using linux-next tree via my tomoyo tree since 20240611,
-> and there was no response on
->   [fs] Are you OK with updating "struct file"->f_op value dynamically?
-> at https://lkml.kernel.org/r/b221d2cf-7dc0-4624-a040-85c131ed72a1@I-love.SAKURA.ne.jp .
-> Thus, I guess we can go with this approach.
-> 
->  drivers/tty/tty_io.c | 34 ++++++++++++++++++++++++++++++++++
->  include/linux/fs.h   |  2 +-
->  2 files changed, 35 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-> index 407b0d87b7c1..bc9aebcb873f 100644
-> --- a/drivers/tty/tty_io.c
-> +++ b/drivers/tty/tty_io.c
-> @@ -430,6 +430,24 @@ static ssize_t hung_up_tty_write(struct kiocb *iocb, struct iov_iter *from)
->  	return -EIO;
->  }
->  
-> +static ssize_t hung_up_copy_splice_read(struct file *in, loff_t *ppos,
-> +					struct pipe_inode_info *pipe,
-> +					size_t len, unsigned int flags)
-> +{
-> +	return -EINVAL;
-> +}
-> +
-> +static ssize_t hung_up_iter_file_splice_write(struct pipe_inode_info *pipe, struct file *out,
-> +					      loff_t *ppos, size_t len, unsigned int flags)
-> +{
-> +	return -EINVAL;
-> +}
-> +
-> +static int hung_up_no_open(struct inode *inode, struct file *file)
-> +{
-> +	return -ENXIO;
-> +}
-> +
->  /* No kernel lock held - none needed ;) */
->  static __poll_t hung_up_tty_poll(struct file *filp, poll_table *wait)
->  {
-> @@ -462,6 +480,12 @@ static void tty_show_fdinfo(struct seq_file *m, struct file *file)
->  }
->  
->  static const struct file_operations tty_fops = {
-> +	/*
-> +	 * WARNING: You must implement all callbacks defined in tty_fops in
-> +	 * hung_up_tty_fops, for tty_fops and hung_up_tty_fops are toggled
-> +	 * after "struct file" is published. Failure to synchronize has a risk
-> +	 * of NULL pointer dereference bug.
-> +	 */
->  	.llseek		= no_llseek,
->  	.read_iter	= tty_read,
->  	.write_iter	= tty_write,
-> @@ -491,14 +515,24 @@ static const struct file_operations console_fops = {
->  };
->  
->  static const struct file_operations hung_up_tty_fops = {
-> +	/*
-> +	 * WARNING: You must implement all callbacks defined in hung_up_tty_fops
-> +	 * in tty_fops, for tty_fops and hung_up_tty_fops are toggled after
-> +	 * "struct file" is published. Failure to synchronize has a risk of
-> +	 * NULL pointer dereference bug.
-> +	 */
->  	.llseek		= no_llseek,
->  	.read_iter	= hung_up_tty_read,
->  	.write_iter	= hung_up_tty_write,
-> +	.splice_read    = hung_up_copy_splice_read,
-> +	.splice_write   = hung_up_iter_file_splice_write,
->  	.poll		= hung_up_tty_poll,
->  	.unlocked_ioctl	= hung_up_tty_ioctl,
->  	.compat_ioctl	= hung_up_tty_compat_ioctl,
-> +	.open           = hung_up_no_open,
->  	.release	= tty_release,
->  	.fasync		= hung_up_tty_fasync,
-> +	.show_fdinfo    = tty_show_fdinfo,
->  };
->  
->  static DEFINE_SPINLOCK(redirect_lock);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 0283cf366c2a..636bcc59a3f5 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1008,7 +1008,7 @@ struct file {
->  	struct file_ra_state	f_ra;
->  	struct path		f_path;
->  	struct inode		*f_inode;	/* cached value */
-> -	const struct file_operations	*f_op;
-> +	const struct file_operations	*__data_racy f_op;
->  
->  	u64			f_version;
->  #ifdef CONFIG_SECURITY
-> -- 
-> 2.43.5
-> 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
