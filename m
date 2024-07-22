@@ -1,123 +1,196 @@
-Return-Path: <linux-kernel+bounces-258991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F7EC938FB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:12:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63155938FB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 469781C2116F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:12:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D842281A38
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E04E16D9AE;
-	Mon, 22 Jul 2024 13:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317E116D9B0;
+	Mon, 22 Jul 2024 13:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xc+YgmRX"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WUaQ4vDy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE2616CD07;
-	Mon, 22 Jul 2024 13:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F9916A38B;
+	Mon, 22 Jul 2024 13:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721653947; cv=none; b=qw8m9H1f7YDykR9EgBkmCVHcneMvB4QNtTgPM9kwUVq6v+1S8YfvXdx6RBIE4NnMoWOtOlZxZjvF9lE4U2+AcywYzbmEmkzzjVfyJpaZ4Ym7rDYgXXMqClC38Zo6Omp8BcRmzYmbFqIEuk4/VBVR0NvgSKIqmXMFxyYiE+sEddo=
+	t=1721654056; cv=none; b=l3t5W95qwj2yo1eXTOjlLmQuQpQfuWtKSJ8BugyK+ypc1KF/5DFc4nOvTLFTDUgxT0Gbx7IkSGRLVUJVbiL2ZDXTsA9pBrsZZAoTIydhVZGjPBzOegnbgF0Bk66oa1qKH6CJNkDiyRSOZWgAiHNAjfSK3XZMwU13Ou/FJbzJ9LA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721653947; c=relaxed/simple;
-	bh=bMT2dyBII7tLgqT7mnBHGSRjOTh9mxWb08VtzOIC8PE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c6Kc6hZur1C/u1520NHn9WZNfzPCp5R2yZZVUMW76yTsfGFbhW5oCoo3AQvuAD2ewl+0yiBW1irvzJyIoiz0acW72flGtQzxyrntlw9DTKTrGPcwyyZXR21xHdXrKa/DKi6znuweshbKnscPgd9eR3DpPv/iDVDqhk4KCL6yXTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xc+YgmRX; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fd66cddd4dso24691105ad.2;
-        Mon, 22 Jul 2024 06:12:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721653946; x=1722258746; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VZJLDD0LzaMvG1+dbrIfZxfQlgfBT2L9YVJz4EoL2CY=;
-        b=Xc+YgmRXqOVY98pOS8Y4CzGHYlFruQOdOchLOgOylmGLw56rfGSUuqfwh4fJDcikki
-         pRKyI+D+kFngNXDf6lJzpRgINWTjOgJyhShGILdLRBjzaW7p35WRYckxqZqNdzRNq+sH
-         XJaseOodlONU4V+aipxKFu13bLwb4ehhdEIeVLteyrnKogU2WM96xwvlqtIw5dC/Uyug
-         6i99g7F0sMiml/wuMSrHf/Dl0TsoFzNWNToqOixC9WSJ8c+ItsteUk1OAo1dMbQS10O+
-         Gm84Trv5uHKwvKL4ttkEO5PfEw0/rdnnB/Ln5UBOeVyC231em3gokntbfdRqw8+oe/jW
-         7tqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721653946; x=1722258746;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VZJLDD0LzaMvG1+dbrIfZxfQlgfBT2L9YVJz4EoL2CY=;
-        b=JtwdRAz2X/ZqVjgfnH46fB+LZiKfwFHQv55vXXkptZQ7JdMey/NU2FzMn1tJ6fq80w
-         wlpxSmbornsLoiXlCYAl+sVUzIKTGIF4F0G7ERmXoTZx4tb9fgXG5BbPA4AHawy6fXtL
-         J0bmWp6AODFXOMT0fcnIvlv7X6o3EhfoV8bk95eu+cJlPK6I9/gr7hNLm0PIpXC0RweI
-         U8YfwQc9qXJxaGb/a3d7XhFu6ExQM6XqFiZHZ4GcoxR4mz2yT/+VTimrTSXTmZNN9PuB
-         dLj2WMce6egSRP7N6WDaGVDBllg9CUp5BJGLB3HlJR0mUmH4lXwc3TzQXeJj9ouZa8NC
-         j9zQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW2a5oMuDZmz5Mn/053JiqdIZu4jD448OEJgv1Puxc8Zwdor5mRBLaZ0wcTVjEDi0Ut3+mjfKE8cDbUicXwU178LXFJZ0z9zuLWKqxFWYV+K4sy4uFNshpMoJ60lMV8TZXN1F6hKcP0FEzXWBZlK9PxXNyuS3zQiSvtnazGVCnlfMpwlvWrIJy8
-X-Gm-Message-State: AOJu0Yz2O6ewrRiAgJlHSxjsfOYe4lj20Yw67f4Ezof+yljJdQwIpIDr
-	6fnZXNlecYPSGF/Gz3v3EZBS6fPkS1u2+YAt/EZ167+r0lPFRxPhYd4eU8Rr
-X-Google-Smtp-Source: AGHT+IHG1BXRYZ+x1YPG7CjIyEVdTJSWOj86Zv1/fM+njufIQEUsw2K+wJ72egtjd+HP1XdZ8UkDiQ==
-X-Received: by 2002:a17:90b:2305:b0:2c7:ab33:e01 with SMTP id 98e67ed59e1d1-2cd161b88c1mr6775862a91.27.1721653945762;
-        Mon, 22 Jul 2024 06:12:25 -0700 (PDT)
-Received: from five231003 ([2405:201:c006:312d:8653:831a:b06f:a502])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ccf80a8865sm6937621a91.49.2024.07.22.06.12.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 06:12:25 -0700 (PDT)
-Date: Mon, 22 Jul 2024 18:42:18 +0530
-From: Kousik Sanagavarapu <five231003@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, Nishanth Menon <nm@ti.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/3] dt-bindings: watchdog: ti,davinci-wdt: convert
- to dtschema
-Message-ID: <Zp5asqhipQHEoviM@five231003>
-References: <20240721170840.15569-1-five231003@gmail.com>
- <20240721170840.15569-3-five231003@gmail.com>
- <629a925c-24ef-4a44-832f-a06a60c266a7@kernel.org>
+	s=arc-20240116; t=1721654056; c=relaxed/simple;
+	bh=D0RxZYASpCCQKAC5UTydCFu3Tp1+vhfN386aUNTQLnI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=XSUUVxdMpTco25QqZr74qdQhzbtsT/cC6iQ2F/VAunv2jb173XLiK1MCGw3EoL+PMx3JaZMRvVPirp5AkNo0VNKJXYy4L9Mrhi1Zi8L458Oy2fz1Wy+Cpm5wNkrJ12fLeF4LSDBSlhJFjUrIEfiQFy+weZiMOg4o3Xz1SEiMfGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WUaQ4vDy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC6E1C116B1;
+	Mon, 22 Jul 2024 13:14:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721654055;
+	bh=D0RxZYASpCCQKAC5UTydCFu3Tp1+vhfN386aUNTQLnI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=WUaQ4vDydyxXmNNhyCXrkdssaDZ0GspWER5TWaufbWFgSyPp69Fv9RD1v9Vt1wjOf
+	 FIk/sj2wX+epmwdWlAiudVOZwEB+GtGYgdWWnXxR5jRj7ULLbFuBcWn9pppbKvbkSq
+	 RT+RT1jOvMVXGxVr3W7pyWMd027WF4v3Bg7DQP5rs/QlUQNfPsxJ84X1b/Y6+YqgB7
+	 HO6ptpGC0m/i0ALKyH2PXr31yZFEEYa4hzkp5s6mtz2B8SwhD3mHiQltqoC+lOUsmu
+	 4wyCBOiPptir9VC7Vw9ch+Hbsh0iawEMiBwjfQj4fV0laD+e45AcWWQduim41jZ6N4
+	 ZzsDnLwPl/46g==
+From: Christian Brauner <brauner@kernel.org>
+To: linux-fsdevel@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>,
+	Edward Adam Davis <eadavis@qq.com>,
+	syzbot+34a0ee986f61f15da35d@syzkaller.appspotmail.com,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	viro@zeniv.linux.org.uk
+Subject: [PATCH 1/2] pidfs: handle kernels without namespaces cleanly
+Date: Mon, 22 Jul 2024 15:13:54 +0200
+Message-ID: <20240722-work-pidfs-e6a83030f63e@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <tencent_7FAE8DB725EE0DD69236DDABDDDE195E4F07@qq.com>
+References: <tencent_7FAE8DB725EE0DD69236DDABDDDE195E4F07@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <629a925c-24ef-4a44-832f-a06a60c266a7@kernel.org>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4320; i=brauner@kernel.org; h=from:subject:message-id; bh=D0RxZYASpCCQKAC5UTydCFu3Tp1+vhfN386aUNTQLnI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTNi5bunnlWI/VajsNEN+4LRwSLylKk/pj0HJL+tPpOA R/jna2GHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNJ+MbwP/KF7LM/u4LeOKTJ /eMLND70NUklSPZQ3DOLdU8m1C2bX8zwT8OVX/G5VWaZqF7Xd7XfdxSMc7IrX4rXbLk9J41pTfB ePgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 22, 2024 at 10:15:03AM +0200, Krzysztof Kozlowski wrote:
-> On 21/07/2024 18:28, Kousik Sanagavarapu wrote:
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - ti,davinci-wdt
-> > +      - ti,keystone-wdt
-> 
-> This does not match the original binding and commit msg did not explain
-> why such change is necessary.
+The nsproxy structure contains nearly all of the namespaces associated
+with a task. When a given namespace type is not supported by this kernel
+the rules whether the corresponding pointer in struct nsproxy is NULL or
+always init_<ns_type>_ns differ per namespace. Ideally, that wouldn't be
+the case and for all namespace types we'd always set it to
+init_<ns_type>_ns when the corresponding namespace type isn't supported.
 
-I don't understand.  Do you mean both the compatibles are always
-compulsory?  Meaning
+Make sure we handle all namespaces where the pointer in struct nsproxy
+can be NULL when the namespace type isn't supported.
 
-	compatible:
-	  items:
-	    - const: ti,davinci-wdt
-	    - const: ti,keystone-wdt
+Fixes: 5b08bd408534 ("pidfs: allow retrieval of namespace file descriptors") # mainline only
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/pidfs.c | 65 +++++++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 42 insertions(+), 23 deletions(-)
 
-It is enum because I intended it to align with the subsequent patch
-which changes DTS.
+diff --git a/fs/pidfs.c b/fs/pidfs.c
+index fe0ddab48f57..7ffdc88dfb52 100644
+--- a/fs/pidfs.c
++++ b/fs/pidfs.c
+@@ -119,7 +119,7 @@ static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	struct task_struct *task __free(put_task) = NULL;
+ 	struct nsproxy *nsp __free(put_nsproxy) = NULL;
+ 	struct pid *pid = pidfd_pid(file);
+-	struct ns_common *ns_common;
++	struct ns_common *ns_common = NULL;
+ 
+ 	if (arg)
+ 		return -EINVAL;
+@@ -146,54 +146,73 @@ static long pidfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 	switch (cmd) {
+ 	/* Namespaces that hang of nsproxy. */
+ 	case PIDFD_GET_CGROUP_NAMESPACE:
+-		get_cgroup_ns(nsp->cgroup_ns);
+-		ns_common = to_ns_common(nsp->cgroup_ns);
++		if (IS_ENABLED(CONFIG_CGROUPS)) {
++			get_cgroup_ns(nsp->cgroup_ns);
++			ns_common = to_ns_common(nsp->cgroup_ns);
++		}
+ 		break;
+ 	case PIDFD_GET_IPC_NAMESPACE:
+-		get_ipc_ns(nsp->ipc_ns);
+-		ns_common = to_ns_common(nsp->ipc_ns);
++		if (IS_ENABLED(CONFIG_IPC_NS)) {
++			get_ipc_ns(nsp->ipc_ns);
++			ns_common = to_ns_common(nsp->ipc_ns);
++		}
+ 		break;
+ 	case PIDFD_GET_MNT_NAMESPACE:
+ 		get_mnt_ns(nsp->mnt_ns);
+ 		ns_common = to_ns_common(nsp->mnt_ns);
+ 		break;
+ 	case PIDFD_GET_NET_NAMESPACE:
+-		ns_common = to_ns_common(nsp->net_ns);
+-		get_net_ns(ns_common);
++		if (IS_ENABLED(CONFIG_NET_NS)) {
++			ns_common = to_ns_common(nsp->net_ns);
++			get_net_ns(ns_common);
++		}
+ 		break;
+ 	case PIDFD_GET_PID_FOR_CHILDREN_NAMESPACE:
+-		get_pid_ns(nsp->pid_ns_for_children);
+-		ns_common = to_ns_common(nsp->pid_ns_for_children);
++		if (IS_ENABLED(CONFIG_PID_NS)) {
++			get_pid_ns(nsp->pid_ns_for_children);
++			ns_common = to_ns_common(nsp->pid_ns_for_children);
++		}
+ 		break;
+ 	case PIDFD_GET_TIME_NAMESPACE:
+-		get_time_ns(nsp->time_ns);
+-		ns_common = to_ns_common(nsp->time_ns);
+-		if (!nsp->time_ns)
+-			return -EINVAL;
++		if (IS_ENABLED(CONFIG_TIME_NS)) {
++			get_time_ns(nsp->time_ns);
++			ns_common = to_ns_common(nsp->time_ns);
++		}
+ 		break;
+ 	case PIDFD_GET_TIME_FOR_CHILDREN_NAMESPACE:
+-		get_time_ns(nsp->time_ns_for_children);
+-		ns_common = to_ns_common(nsp->time_ns_for_children);
++		if (IS_ENABLED(CONFIG_TIME_NS)) {
++			get_time_ns(nsp->time_ns_for_children);
++			ns_common = to_ns_common(nsp->time_ns_for_children);
++		}
+ 		break;
+ 	case PIDFD_GET_UTS_NAMESPACE:
+-		get_uts_ns(nsp->uts_ns);
+-		ns_common = to_ns_common(nsp->uts_ns);
++		if (IS_ENABLED(CONFIG_UTS_NS)) {
++			get_uts_ns(nsp->uts_ns);
++			ns_common = to_ns_common(nsp->uts_ns);
++		}
+ 		break;
+ 	/* Namespaces that don't hang of nsproxy. */
+ 	case PIDFD_GET_USER_NAMESPACE:
+-		rcu_read_lock();
+-		ns_common = to_ns_common(get_user_ns(task_cred_xxx(task, user_ns)));
+-		rcu_read_unlock();
++		if (IS_ENABLED(CONFIG_USER_NS)) {
++			rcu_read_lock();
++			ns_common = to_ns_common(get_user_ns(task_cred_xxx(task, user_ns)));
++			rcu_read_unlock();
++		}
+ 		break;
+ 	case PIDFD_GET_PID_NAMESPACE:
+-		rcu_read_lock();
+-		ns_common = to_ns_common(get_pid_ns(task_active_pid_ns(task)));
+-		rcu_read_unlock();
++		if (IS_ENABLED(CONFIG_PID_NS)) {
++			rcu_read_lock();
++			ns_common = to_ns_common( get_pid_ns(task_active_pid_ns(task)));
++			rcu_read_unlock();
++		}
+ 		break;
+ 	default:
+ 		return -ENOIOCTLCMD;
+ 	}
+ 
++	if (!ns_common)
++		return -EOPNOTSUPP;
++
+ 	/* open_namespace() unconditionally consumes the reference */
+ 	return open_namespace(ns_common);
+ }
+-- 
+2.43.0
 
-> This also does not match DTS.
-
-Yes.  I've asked about changing the DTS in the subsequent patch.
-
-Thanks for the review
 
