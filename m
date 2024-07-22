@@ -1,125 +1,122 @@
-Return-Path: <linux-kernel+bounces-259320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29013939415
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:19:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62469939418
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:19:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BC2A1C216E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:19:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F26B5B21A08
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957A0170826;
-	Mon, 22 Jul 2024 19:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="ONH8jy3V"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335CC171074;
+	Mon, 22 Jul 2024 19:19:37 +0000 (UTC)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8C41C695
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 19:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6CF01C695;
+	Mon, 22 Jul 2024 19:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721675949; cv=none; b=iTEV978VG7X2qLC7HS/hSOSOq06az0odUcPX1HqJICX4QQ3PhQ67qoMiZ1iC7dgTQpKLAfyM5D6AcRhXewozWuEHpj1htrKT7vwBlKK2yB28Y2bkF2jkImESlgwQoYMjT6sqnymu2bp9iefn4a95e/k+7kHwTfUPoF5oac7UlIo=
+	t=1721675976; cv=none; b=mxcW8dvuJebs61dTprRDReWNBl8AgKQKjkY1bwukr0/8lu6TUvv1vG/BS98Pb+ldgMTVc7oOi7AawQldiuE6HedKOagmA0blJfJLb4tNz/4VqxCrerv40ndTKupW3TYquAuX+DRkSywL/sySK/zyoW3Yi98u+CTJkBvQZ9JH57U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721675949; c=relaxed/simple;
-	bh=r9kLVIViVucIerQTivQNa2tjjSeW2pCf16/nfvHRyMo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I5fziXB7gKNkKt6DYA1ibPNJNlxNDPoO0eIkrA+0oMz+oR50V/JWpG+VYZx5gbc9cLiG2HdJMBqVbkeLOzEhoc8UOVNS9cMVJoALNtN/D2r5ypgpA0yUmsyjQHDb8cGs7JDWMOmE7h9S2jbgnMiLIFELZiOHaIq7n60W0p89soY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=ONH8jy3V; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70d25b5b6b0so866926b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 12:19:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1721675947; x=1722280747; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wFGvL9DSEw7hw4F5KO2hzB8OPf4PNI1O89SSx0g1aqo=;
-        b=ONH8jy3V25IoiZHCCYPQcyihE8719DX1Pp7lIkrZmbxEKnu9zyG+qYdH4jADVOLSm6
-         5CIWGsQg7Oh5GtNbQLH26XcAqqEOi9O74Q6hasl6EVpM9uq+CxH4gdVacgVUOipMgoVr
-         mzzyfGqCK1hO3Cqx7KKWEMETv8yjxnQ/FoXCjBZgzeWh0SoQ1irkbLDtsa1DUc9wL3sf
-         D4ieEzhcp2Bq9eMdRbiHop9stks0ThHje4v+lZMNwdAPw4ZAfM3xw7soneWxa1dVOcKv
-         rUHbg5PQgT6LXv9x9UOn/xG3VxGj5XIdMTaT6ldMUXC/ZgjM2+gSxMD+1gMlWZ1FjDER
-         a4uw==
+	s=arc-20240116; t=1721675976; c=relaxed/simple;
+	bh=F6tdgoxHmbHywL1bTJUHvCgNS0eivvXkjsomsnH/DUE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LdiAdlb+ImKimW+tF+Xp0Kz/4GwwFtLE7gQ9LEI6UMs/BTYtbDkkV8idf1/C7lWzTQRzmZNhvva5nigz3Lt130PMhPSFLTKIe75PE/6ktjvO8XElycArRP5p0A8WLAHXUi4ysMwoaGHUzVTxbgobmPHRNTvIGQrLuAHJMtFadKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-661d7e68e89so33940877b3.0;
+        Mon, 22 Jul 2024 12:19:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721675947; x=1722280747;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wFGvL9DSEw7hw4F5KO2hzB8OPf4PNI1O89SSx0g1aqo=;
-        b=VXN178lSu1wil+IJxKdULt5kSlR6qKtJZEEkjd7xwmv22QW/8jTKp0G9WHlgUuZrJn
-         u8Rzxa8GASMdh/N0ubgg26pZifEV8at99xUWdR4I+UfJ2mrvu6u/jk8BM+/jI7KkniLC
-         bF4KonfXlLFrQ7iJbQayT0fG/V1gPq6eBJtaCmdwOt8XVLOlYOFcg22YuqOChiyuKp+b
-         pCZwa4MSmb35uA09lg7ejPj6H43p/x9xQda4k5XjSfFYtRI7mgTeR0dhXzR/adEbZJsx
-         MYFU/mbK935C6sRlfH+j/DcZNyeNiA/N17fRObXB79fGEOBhnBMuwM5wT8yq3tBYyYl5
-         IHSg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsRBKqexNGaAL9yTZgxAwYi446s38uH73662pS37wQJNVaVAkKzVpXgjFwfAfmOJ8XY8pgPEFV7esvC9tlFLYLRHyNMGa3QOPCKrip
-X-Gm-Message-State: AOJu0YzkDCJ+0sJbxZ22VdW0nlY33uv5kHxsPwrVhLKqL9YMnCSH/eds
-	2AtN2Nv4GLts5jHPGSOHs5wW+0kk04hTjGE+XEle9wfIRbvpLEYyl6VLi2lebus=
-X-Google-Smtp-Source: AGHT+IF+6ezlAEacxRcRnQTAh+ST7ge2mD1E/qoknXTm8h+8a0i06zt6N8Y3TJNeGHwhl804Jsw0PA==
-X-Received: by 2002:a05:6a00:3989:b0:70a:9672:c3a2 with SMTP id d2e1a72fcca58-70d0f176ed2mr5620185b3a.24.1721675947389;
-        Mon, 22 Jul 2024 12:19:07 -0700 (PDT)
-Received: from dev-cachen.dev.purestorage.com ([208.88.159.128])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70d156a3891sm3534133b3a.123.2024.07.22.12.19.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 12:19:06 -0700 (PDT)
-From: Casey Chen <cachen@purestorage.com>
-To: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com
-Cc: yzhong@purestorage.com,
-	Casey Chen <cachen@purestorage.com>
-Subject: [PATCHv4] perf tool: fix dereferencing NULL al->maps
-Date: Mon, 22 Jul 2024 13:18:58 -0600
-Message-ID: <20240722191858.123607-1-cachen@purestorage.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1721675973; x=1722280773;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UAErRK34Xe8ThdBPmcqB8a+EFP80SYmedsGYuAMjeXE=;
+        b=wXmwyjYkz/LbkKH8mKKvQLf3Vwoh03mZ3ICkDTpMi4PCQDg6S2BcW/ywdf6CTuKIt6
+         Bt9pSCJAeHIRpFxMTIfLrUS2e9FpsDSUQCIP8OT2Ajn4mFzSgha74Oopg33CJJCiO8qv
+         U+hazyKgxTy81/9UuT+1/Yhv4BgGpfGijmx4IUKSz3MMzaADYYXIjyHEp6QW5bG9ZKKB
+         IXi/wI3gE9+v1xvUtjAc3HsINQCQ0ORG2+zsUZbTJPAELT2ZtQ05FMGUBh/BVqE4f1RL
+         QjRHzHrcFgjwtjZPrbH04K/EnRhvMR0KqHRzHMH5ilDlTf+PGIjidmTpL9Wd4trlc6no
+         GVzg==
+X-Forwarded-Encrypted: i=1; AJvYcCVam5co5Iq835/vzVqoNEwcMh9/GA1WO+Zf6femp/L4PhxFzR0++XtY/Q2H0oCO4q71etpFoyNvEwLpBz5bp8HhM1x8FoZZcBmHsdZaQ3reMR2sUGXDxw3lZPaG91EFTbmaRgy4Ljq4D4A=
+X-Gm-Message-State: AOJu0YwPwn6gesfMLejBaBc01VMTah+bjZUEbxEazppqoNlgx13dR6Mm
+	xySn+AS5zpyFJNG5DzHn7mpfEucFagGlLrtfZd8O7FKcqbXgD+Lr5FBbXcfS
+X-Google-Smtp-Source: AGHT+IGIHOm4F1mrGs+YS/ekkWXxwBO6UcDCWrhDRFvTqHfP+zJ5LwlOHfBGGEgDOLd7R8bwtHBMiA==
+X-Received: by 2002:a05:690c:4988:b0:64a:8adc:f978 with SMTP id 00721157ae682-66a678c644fmr54452517b3.12.1721675973298;
+        Mon, 22 Jul 2024 12:19:33 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-66953bd542dsm17565727b3.86.2024.07.22.12.19.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jul 2024 12:19:33 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-65f7bd30546so34090097b3.1;
+        Mon, 22 Jul 2024 12:19:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXWdXKN7yBe46n3nNoirNmI+CKeLdK7ElIN1Z/mnOwUawbA/nk+m/Xy6hoKQBYETFO31dmci++fdO263GWXDgvKCEP1u6mt/ZAO49dfX1bty3HUrdd09W5GlHytMJsqdy0T06B014E6w0I=
+X-Received: by 2002:a81:7c0b:0:b0:651:ee07:76c with SMTP id
+ 00721157ae682-66609d6a8d9mr102480547b3.15.1721675972917; Mon, 22 Jul 2024
+ 12:19:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <8e1c6c3a32919603072bb7278c66b4d469f7e762.1721661958.git.geert+renesas@glider.be>
+ <ol5jiqwo26s6nrl3a3x4qcs7etxkbzbaz24lah2vgdsfj7qifr@5wnrk3tjr6n4>
+In-Reply-To: <ol5jiqwo26s6nrl3a3x4qcs7etxkbzbaz24lah2vgdsfj7qifr@5wnrk3tjr6n4>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 22 Jul 2024 21:19:20 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWzoVDzw34mYP2_R9bo3JTC36-j-=wV7LPfApNut2ngNg@mail.gmail.com>
+Message-ID: <CAMuHMdWzoVDzw34mYP2_R9bo3JTC36-j-=wV7LPfApNut2ngNg@mail.gmail.com>
+Subject: Re: [PATCH] media: raspberrypi: VIDEO_RASPBERRYPI_PISP_BE should
+ depend on ARCH_BCM2835
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Nick Hollinghurst <nick.hollinghurst@raspberrypi.org>, Naushir Patuck <naush@raspberrypi.com>, 
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>, David Plowman <david.plowman@raspberrypi.com>, 
+	linux-media@vger.kernel.org, kernel-list@raspberrypi.com, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-With 0dd5041c9a0e ("perf addr_location: Add init/exit/copy functions"),
-when cpumode is 3 (macro PERF_RECORD_MISC_HYPERVISOR),
-thread__find_map() could return with al->maps being NULL.
+Hi Jacopo,
 
-The path below could add a callchain_cursor_node with NULL ms.maps.
+On Mon, Jul 22, 2024 at 5:59=E2=80=AFPM Jacopo Mondi
+<jacopo.mondi@ideasonboard.com> wrote:
+> On Mon, Jul 22, 2024 at 05:28:28PM GMT, Geert Uytterhoeven wrote:
+> > Currently, the Raspberry Pi PiSP Backend (BE) ISP is only present on th=
+e
+> > Broadcom BCM2712-based Raspberry Pi 5.  Hence add a dependency on
+>                                         ^ nit: double space
 
-add_callchain_ip()
-  thread__find_symbol(.., &al)
-    thread__find_map(.., &al)   // al->maps becomes NULL
-  ms.maps = maps__get(al.maps)
-  callchain_cursor_append(..., &ms, ...)
-    node->ms.maps = maps__get(ms->maps)
+Yep, double space after a full stop.
 
-Then the path below would dereference NULL maps and get segfault.
+> > ARCH_BCM2835, to prevent asking the user about this driver when
+> > configuring a kernel without Broadcom BCM2835 family support.  The
+>
+> double space before "The" as well
 
-fill_callchain_info()
-  maps__machine(node->ms.maps);
+Likewise.
 
-Fix it by checking if maps is NULL in fill_callchain_info().
----
- tools/perf/util/callchain.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Acked-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 
-diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
-index 1730b852a947..6d075648d2cc 100644
---- a/tools/perf/util/callchain.c
-+++ b/tools/perf/util/callchain.c
-@@ -1141,7 +1141,7 @@ int hist_entry__append_callchain(struct hist_entry *he, struct perf_sample *samp
- int fill_callchain_info(struct addr_location *al, struct callchain_cursor_node *node,
- 			bool hide_unresolved)
- {
--	struct machine *machine = maps__machine(node->ms.maps);
-+	struct machine *machine = node->ms.maps ? maps__machine(node->ms.maps) : NULL;
- 
- 	maps__put(al->maps);
- 	al->maps = maps__get(node->ms.maps);
--- 
-2.45.2
+Thanks!
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
