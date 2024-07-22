@@ -1,279 +1,199 @@
-Return-Path: <linux-kernel+bounces-259085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEDDF9390FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:51:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F7ED939106
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:53:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 693E2281607
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:51:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE0621F21E6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 847B916DC37;
-	Mon, 22 Jul 2024 14:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Br6NEXRR"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E49F16DC32;
+	Mon, 22 Jul 2024 14:53:30 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD711F954;
-	Mon, 22 Jul 2024 14:51:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5B1C8C7
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 14:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721659887; cv=none; b=u7A1MZePQlqwdQVflYgfduLgiNKuMznTqaHgzlmHq1PClO/r1PBee4hNN0khGivmsraNnWGxpTVik1/LHqCkr7GRy4Fj4XkROv61BlqcHJGrW8mE3jFkaxKp648UobpmhIw3ODVa5/yZ9WuKedGpEdPRuIDpFzpmJ/WjN2OnJJU=
+	t=1721660009; cv=none; b=hQ/AU8iBBwgfVvWLID89Hlr/ZRPSwrDL+lcCL+c9EYhwLw91lnJv9H4K4fqySlFMoAsHyy66RnNpNzbi0WX8zXP1VkpnMg8VOb/d0lgeVdCZ4ZeflwctH+Z8kV4Rq/8gBiaGYYzCWBecE7Y2xsXOhpbXV53I+tEqxKd5iLjYLhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721659887; c=relaxed/simple;
-	bh=/9u/Enuc4T5xnskpqw9mL/WB/R6cSYXOFLCDURWM8kE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iyy1GtI1PoMFuQszKDN1sQBdFjZxgA9wIBhhtv0Cb2O8chhqlSpE2vYUhJ8hVLPn/tMBZdhgspQEl4B3v5xFN/q9U8+/J+5FNTNaEW7y1BplqKYssWoT0seohDDpdAN9xg5K5cncX4Uno2TDJd8aJAB+l7tLaUlWn6e6x49DSU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Br6NEXRR; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 22A76D1F;
-	Mon, 22 Jul 2024 16:50:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1721659843;
-	bh=/9u/Enuc4T5xnskpqw9mL/WB/R6cSYXOFLCDURWM8kE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Br6NEXRRN9YpT96gKD65Cm0L1J21FHroLIz5eZ1HGOy69c5bZ4AiLMUlhMzYblvxH
-	 9sB1+w08KvkMgrDlYx5bFKCB/1Cq7dYjz9AfD8yFH75MqyAeGfb+zvadDZZ6fY0IXc
-	 VHsCJkWpJDYO4FY+DpX6lEWpr2xfl2rI/K6g1WR8=
-Date: Mon, 22 Jul 2024 17:51:06 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Mingjia Zhang <mingjia.zhang@mediatek.com>,
-	Jack Zhu <jack.zhu@starfivetech.com>,
-	Keith Zhao <keith.zhao@starfivetech.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [PATCH v5 04/14] staging: media: starfive: Add a params sink pad
- and a scd source pad for ISP
-Message-ID: <20240722145106.GJ13497@pendragon.ideasonboard.com>
-References: <20240709083824.430473-1-changhuang.liang@starfivetech.com>
- <20240709083824.430473-5-changhuang.liang@starfivetech.com>
+	s=arc-20240116; t=1721660009; c=relaxed/simple;
+	bh=sXM+EnPkkwWT4eEFDw6EWeXxACgQrb2zOFY9i9EnJz4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=UsLbgf0ywC4YoCoDwqvTrYHCy8VHFlHHZR7wDJraiSrau1rw9u56Lq/jtx6EvzdSHRcCCfnNJl/IJ2DgFKUB2jOHZBhGFypP+a+xmjYPO4b0Lq6yeg7WvziVGRxucWmZ+VnEmUaz8OyoBjlbLuH0vSIlsjyUhyKRoD9IVKiy1rA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39a06767cd3so16451675ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:53:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721660007; x=1722264807;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=y17J8imGi7iRmB7lYAoQiD2t5PpJd8kzmiPCYBp0DhM=;
+        b=g4VPE1FnRvjXTiC2mdy97l6z4WfH8O0jpnqfcsSgSdVya+nJfNVAYzmsT3IxNPuFW4
+         X7atA/pi6cyzydQORKMkAYlrpAlrv+7CQTy/no6wqVkYFawsscL2SuQ3B34Dr9i0MSdG
+         NU8NdLhQJMEhOokU/Gobw5/YjleIUsB4vF/cX5vAKo0fMP2lo2t75e8MrY+F1Dbm1Vml
+         ja06Obr2iuFOZfIxsoYh0DAA2tAaN9KpiTOMe8d62IwTeDRnDT2f0IL4JzfVd3WGzqSC
+         KPM2NNmULoLs+JNdhzdJdNB0pRNYaiUjqI2bwGBRjm0ryRN3zQe2yIJjnh5Cl2vEQ8DX
+         kvDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQC3CZCBLo5OJigKxAx2e4THcoYI2xvMQSYfMv6XXh4AIRjqcWVL84gKxWfijcbbW8ldZtQ4iBI3eGAgUZy+iw82pSC/1DnGm2/mhQ
+X-Gm-Message-State: AOJu0Yyv0tEBAP8FSRljX3gphoTRF+v/YjG0V1K0CYONhNCZ4gmuSJ5Y
+	6qHAuSWMhsCLV0GgmKX0Y4s3ImklQ0OaS0+vu7Fg3PaQE7opujTovrxCUbDSGHGlCkAcj1tWVuK
+	71LleRwf3cPzWrgzEGwWcu6wDoZdU3lbgoHXeMvZjM0x2Ypqud+ZlNFY=
+X-Google-Smtp-Source: AGHT+IHnki3nytThvNNU63jQ2vC+LUBakJI8Te5h1stWnIzCQvWX1lb/U7nRUjxDYSLpGO6ESrhNZKVX9E1b+d7bfo/ThQp2S2v5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240709083824.430473-5-changhuang.liang@starfivetech.com>
+X-Received: by 2002:a05:6e02:1d9d:b0:396:ec3b:df65 with SMTP id
+ e9e14a558f8ab-398e753ce0bmr6675165ab.4.1721660007478; Mon, 22 Jul 2024
+ 07:53:27 -0700 (PDT)
+Date: Mon, 22 Jul 2024 07:53:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002b84dc061dd73544@google.com>
+Subject: [syzbot] [kvm?] general protection fault in is_page_fault_stale
+From: syzbot <syzbot+23786faffb695f17edaa@syzkaller.appspotmail.com>
+To: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com, 
+	pbonzini@redhat.com, seanjc@google.com, syzkaller-bugs@googlegroups.com, 
+	tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Changhuang,
+Hello,
 
-Thank you for the patch.
+syzbot found the following issue on:
 
-On Tue, Jul 09, 2024 at 01:38:14AM -0700, Changhuang Liang wrote:
-> StarFive ISP can use params sink pad to transmit ISP parameters and use
-> scd source pad to capture statistics collection data.
-> 
-> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
-> ---
->  .../staging/media/starfive/camss/stf-isp.c    | 77 +++++++++++++++++--
->  .../staging/media/starfive/camss/stf-isp.h    |  2 +
->  2 files changed, 71 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/staging/media/starfive/camss/stf-isp.c b/drivers/staging/media/starfive/camss/stf-isp.c
-> index 4e6e26736852..0ebffd09842a 100644
-> --- a/drivers/staging/media/starfive/camss/stf-isp.c
-> +++ b/drivers/staging/media/starfive/camss/stf-isp.c
-> @@ -21,13 +21,23 @@ static const struct stf_isp_format isp_formats_sink[] = {
->  	{ MEDIA_BUS_FMT_SBGGR10_1X10, 10 },
->  };
->  
-> +static const struct stf_isp_format isp_formats_sink_params[] = {
-> +	{ MEDIA_BUS_FMT_METADATA_FIXED },
-> +};
-> +
->  static const struct stf_isp_format isp_formats_source[] = {
->  	{ MEDIA_BUS_FMT_YUYV8_1_5X8, 8 },
->  };
->  
-> +static const struct stf_isp_format isp_formats_source_scd[] = {
-> +	{ MEDIA_BUS_FMT_METADATA_FIXED },
-> +};
-> +
->  static const struct stf_isp_format_table isp_formats_st7110[] = {
->  	{ isp_formats_sink, ARRAY_SIZE(isp_formats_sink) },
-> +	{ isp_formats_sink_params, ARRAY_SIZE(isp_formats_sink_params) },
->  	{ isp_formats_source, ARRAY_SIZE(isp_formats_source) },
-> +	{ isp_formats_source_scd, ARRAY_SIZE(isp_formats_source_scd) },
->  };
->  
->  static const struct stf_isp_format *
-> @@ -93,13 +103,19 @@ static void isp_try_format(struct stf_isp_dev *isp_dev,
->  
->  	formats = &isp_dev->formats[pad];
->  
-> -	fmt->width = clamp_t(u32, fmt->width, STFCAMSS_FRAME_MIN_WIDTH,
-> -			     STFCAMSS_FRAME_MAX_WIDTH);
-> -	fmt->height = clamp_t(u32, fmt->height, STFCAMSS_FRAME_MIN_HEIGHT,
-> -			      STFCAMSS_FRAME_MAX_HEIGHT);
-> -	fmt->height &= ~0x1;
-> +	if (pad != STF_ISP_PAD_SRC_SCD && pad != STF_ISP_PAD_SINK_PARAMS) {
-> +		fmt->width = clamp_t(u32, fmt->width, STFCAMSS_FRAME_MIN_WIDTH,
-> +				     STFCAMSS_FRAME_MAX_WIDTH);
-> +		fmt->height = clamp_t(u32, fmt->height, STFCAMSS_FRAME_MIN_HEIGHT,
-> +				      STFCAMSS_FRAME_MAX_HEIGHT);
-> +		fmt->height &= ~0x1;
-> +		fmt->colorspace = V4L2_COLORSPACE_SRGB;
-> +	} else {
-> +		fmt->width = 1;
-> +		fmt->height = 1;
+HEAD commit:    2c9b3512402e Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17abcfe9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e322acd9c27a6b84
+dashboard link: https://syzkaller.appspot.com/bug?extid=23786faffb695f17edaa
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
-You should set fmt->colorspace here too. I think you can set it to 0.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> +	}
-> +
->  	fmt->field = V4L2_FIELD_NONE;
-> -	fmt->colorspace = V4L2_COLORSPACE_SRGB;
->  	fmt->flags = 0;
->  
->  	if (!stf_g_fmt_by_mcode(formats, fmt->code))
-> @@ -119,7 +135,7 @@ static int isp_enum_mbus_code(struct v4l2_subdev *sd,
->  
->  		formats = &isp_dev->formats[code->pad];
->  		code->code = formats->fmts[code->index].code;
-> -	} else {
-> +	} else if (code->pad == STF_ISP_PAD_SRC) {
->  		struct v4l2_mbus_framefmt *sink_fmt;
->  
->  		if (code->index >= ARRAY_SIZE(isp_formats_source))
-> @@ -131,6 +147,10 @@ static int isp_enum_mbus_code(struct v4l2_subdev *sd,
->  		code->code = sink_fmt->code;
->  		if (!code->code)
->  			return -EINVAL;
-> +	} else {
-> +		if (code->index > 0)
-> +			return -EINVAL;
-> +		code->code = MEDIA_BUS_FMT_METADATA_FIXED;
->  	}
->  	code->flags = 0;
->  
-> @@ -151,6 +171,9 @@ static int isp_set_format(struct v4l2_subdev *sd,
->  	isp_try_format(isp_dev, state, fmt->pad, &fmt->format);
->  	*format = fmt->format;
->  
-> +	if (fmt->pad == STF_ISP_PAD_SRC_SCD || fmt->pad == STF_ISP_PAD_SINK_PARAMS)
-> +		return 0;
-> +
->  	isp_dev->current_fmt = stf_g_fmt_by_mcode(&isp_dev->formats[fmt->pad],
->  						  fmt->format.code);
->  
-> @@ -202,6 +225,9 @@ static int isp_get_selection(struct v4l2_subdev *sd,
->  	struct v4l2_subdev_format fmt = { 0 };
->  	struct v4l2_rect *rect;
->  
-> +	if (sel->pad == STF_ISP_PAD_SRC_SCD || sel->pad == STF_ISP_PAD_SINK_PARAMS)
-> +		return -EINVAL;
-> +
->  	switch (sel->target) {
->  	case V4L2_SEL_TGT_CROP_BOUNDS:
->  		if (sel->pad == STF_ISP_PAD_SINK) {
-> @@ -239,6 +265,9 @@ static int isp_set_selection(struct v4l2_subdev *sd,
->  	struct stf_isp_dev *isp_dev = v4l2_get_subdevdata(sd);
->  	struct v4l2_rect *rect;
->  
-> +	if (sel->pad == STF_ISP_PAD_SRC_SCD || sel->pad == STF_ISP_PAD_SINK_PARAMS)
-> +		return -EINVAL;
-> +
->  	if (sel->target != V4L2_SEL_TGT_CROP)
->  		return -EINVAL;
->  
-> @@ -296,8 +325,38 @@ static int isp_init_formats(struct v4l2_subdev *sd,
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c112a5c3b199/disk-2c9b3512.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d0dae74e61d2/vmlinux-2c9b3512.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/54648874d89c/bzImage-2c9b3512.xz
 
-While at it, you could rename the function to isp_init_state().
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+23786faffb695f17edaa@syzkaller.appspotmail.com
 
->  			.height = 1080
->  		}
->  	};
-> +	struct v4l2_subdev_format format_params = {
-> +		.pad = STF_ISP_PAD_SINK_PARAMS,
-> +		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+Oops: general protection fault, probably for non-canonical address 0xe000013ffffffffd: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: maybe wild-memory-access in range [0x000029ffffffffe8-0x000029ffffffffef]
+CPU: 0 PID: 11829 Comm: syz.1.1799 Not tainted 6.10.0-syzkaller-11185-g2c9b3512402e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:to_shadow_page arch/x86/kvm/mmu/spte.h:245 [inline]
+RIP: 0010:spte_to_child_sp arch/x86/kvm/mmu/spte.h:250 [inline]
+RIP: 0010:root_to_sp arch/x86/kvm/mmu/spte.h:267 [inline]
+RIP: 0010:is_page_fault_stale+0xc4/0x530 arch/x86/kvm/mmu/mmu.c:4517
+Code: e9 00 01 00 00 48 b8 ff ff ff ff ff 00 00 00 48 21 c3 48 c1 e3 06 49 bc 28 00 00 00 00 ea ff ff 49 01 dc 4c 89 e0 48 c1 e8 03 <42> 80 3c 28 00 74 08 4c 89 e7 e8 6d b7 d8 00 4d 8b 2c 24 31 ff 4c
+RSP: 0018:ffffc9000fc6f6f0 EFLAGS: 00010202
+RAX: 0000053ffffffffd RBX: 00003fffffffffc0 RCX: ffff88806a8bda00
+RDX: 0000000000000000 RSI: 000fffffffffffff RDI: 00000000000129d3
+RBP: 00000000000129d3 R08: ffffffff8120c8e0 R09: 1ffff920005e6c00
+R10: dffffc0000000000 R11: fffff520005e6c01 R12: 000029ffffffffe8
+R13: dffffc0000000000 R14: ffffc9000fc6f800 R15: ffff88807cbed000
+FS:  0000000000000000(0000) GS:ffff8880b9400000(0063) knlGS:00000000f5d46b40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 00000000576d24c0 CR3: 000000007d930000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ kvm_tdp_mmu_page_fault arch/x86/kvm/mmu/mmu.c:4662 [inline]
+ kvm_tdp_page_fault+0x25c/0x320 arch/x86/kvm/mmu/mmu.c:4693
+ kvm_mmu_do_page_fault+0x589/0xca0 arch/x86/kvm/mmu/mmu_internal.h:323
+ kvm_tdp_map_page arch/x86/kvm/mmu/mmu.c:4715 [inline]
+ kvm_arch_vcpu_pre_fault_memory+0x2db/0x5a0 arch/x86/kvm/mmu/mmu.c:4760
+ kvm_vcpu_pre_fault_memory+0x24c/0x4b0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:4418
+ kvm_vcpu_ioctl+0xa47/0xea0 arch/x86/kvm/../../../virt/kvm/kvm_main.c:4648
+ kvm_vcpu_compat_ioctl+0x242/0x450 arch/x86/kvm/../../../virt/kvm/kvm_main.c:4700
+ __do_compat_sys_ioctl fs/ioctl.c:1007 [inline]
+ __se_compat_sys_ioctl+0x51c/0xca0 fs/ioctl.c:950
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0xb4/0x110 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x34/0x80 arch/x86/entry/common.c:411
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf7f92579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 002b:00000000f5d4656c EFLAGS: 00000206 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 00000000c040aed5
+RDX: 0000000020000040 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:to_shadow_page arch/x86/kvm/mmu/spte.h:245 [inline]
+RIP: 0010:spte_to_child_sp arch/x86/kvm/mmu/spte.h:250 [inline]
+RIP: 0010:root_to_sp arch/x86/kvm/mmu/spte.h:267 [inline]
+RIP: 0010:is_page_fault_stale+0xc4/0x530 arch/x86/kvm/mmu/mmu.c:4517
+Code: e9 00 01 00 00 48 b8 ff ff ff ff ff 00 00 00 48 21 c3 48 c1 e3 06 49 bc 28 00 00 00 00 ea ff ff 49 01 dc 4c 89 e0 48 c1 e8 03 <42> 80 3c 28 00 74 08 4c 89 e7 e8 6d b7 d8 00 4d 8b 2c 24 31 ff 4c
+RSP: 0018:ffffc9000fc6f6f0 EFLAGS: 00010202
+RAX: 0000053ffffffffd RBX: 00003fffffffffc0 RCX: ffff88806a8bda00
+RDX: 0000000000000000 RSI: 000fffffffffffff RDI: 00000000000129d3
+RBP: 00000000000129d3 R08: ffffffff8120c8e0 R09: 1ffff920005e6c00
+R10: dffffc0000000000 R11: fffff520005e6c01 R12: 000029ffffffffe8
+R13: dffffc0000000000 R14: ffffc9000fc6f800 R15: ffff88807cbed000
+FS:  0000000000000000(0000) GS:ffff8880b9400000(0063) knlGS:00000000f5d46b40
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 00000000576d24c0 CR3: 000000007d930000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	e9 00 01 00 00       	jmp    0x105
+   5:	48 b8 ff ff ff ff ff 	movabs $0xffffffffff,%rax
+   c:	00 00 00
+   f:	48 21 c3             	and    %rax,%rbx
+  12:	48 c1 e3 06          	shl    $0x6,%rbx
+  16:	49 bc 28 00 00 00 00 	movabs $0xffffea0000000028,%r12
+  1d:	ea ff ff
+  20:	49 01 dc             	add    %rbx,%r12
+  23:	4c 89 e0             	mov    %r12,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	4c 89 e7             	mov    %r12,%rdi
+  34:	e8 6d b7 d8 00       	call   0xd8b7a6
+  39:	4d 8b 2c 24          	mov    (%r12),%r13
+  3d:	31 ff                	xor    %edi,%edi
+  3f:	4c                   	rex.WR
 
-That's not quite right, as the .init_state() handler is used to
-initialized both the TRY and ACTIVE states. As the "which" field is
-currently ignored through the driver the code should behave correctly
-(as far as I can tell), but you may want at some point to initialize the
-formats and selection rectangles directly in this function instead of
-calling isp_set_format().
 
-> +		.format = {
-> +			.code = MEDIA_BUS_FMT_METADATA_FIXED,
-> +			.width = 1,
-> +			.height = 1
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-According to
-https://docs.kernel.org/userspace-api/media/v4l/subdev-formats.html#metadata-formats,
-width and height should be set to 0 for MEDIA_BUS_FMT_METADATA_FIXED.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-> +		}
-> +	};
-> +	struct v4l2_subdev_format format_scd = {
-> +		.pad = STF_ISP_PAD_SRC_SCD,
-> +		.which = V4L2_SUBDEV_FORMAT_ACTIVE,
-> +		.format = {
-> +			.code = MEDIA_BUS_FMT_METADATA_FIXED,
-> +			.width = 1,
-> +			.height = 1
-> +		}
-> +	};
-> +	int ret;
-> +
-> +	/* Init for STF_ISP_PAD_SINK and STF_ISP_PAD_SRC pad */
-> +	ret = isp_set_format(sd, sd_state, &format);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	/* Init for STF_ISP_PAD_SINK_PARAMS pad */
-> +	ret = isp_set_format(sd, sd_state, &format_params);
-> +	if (ret < 0)
-> +		return ret;
->  
-> -	return isp_set_format(sd, sd_state, &format);
-> +	/* Init for STF_ISP_PAD_SRC_SCD pad */
-> +	return isp_set_format(sd, sd_state, &format_scd);
->  }
->  
->  static const struct v4l2_subdev_video_ops isp_video_ops = {
-> @@ -338,7 +397,9 @@ int stf_isp_register(struct stf_isp_dev *isp_dev, struct v4l2_device *v4l2_dev)
->  	v4l2_set_subdevdata(sd, isp_dev);
->  
->  	pads[STF_ISP_PAD_SINK].flags = MEDIA_PAD_FL_SINK;
-> +	pads[STF_ISP_PAD_SINK_PARAMS].flags = MEDIA_PAD_FL_SINK;
->  	pads[STF_ISP_PAD_SRC].flags = MEDIA_PAD_FL_SOURCE;
-> +	pads[STF_ISP_PAD_SRC_SCD].flags = MEDIA_PAD_FL_SOURCE;
->  
->  	sd->entity.function = MEDIA_ENT_F_PROC_VIDEO_ISP;
->  	sd->entity.ops = &isp_media_ops;
-> diff --git a/drivers/staging/media/starfive/camss/stf-isp.h b/drivers/staging/media/starfive/camss/stf-isp.h
-> index 955cbb048363..bc7e7b0736fa 100644
-> --- a/drivers/staging/media/starfive/camss/stf-isp.h
-> +++ b/drivers/staging/media/starfive/camss/stf-isp.h
-> @@ -392,7 +392,9 @@
->  /* pad id for media framework */
->  enum stf_isp_pad_id {
->  	STF_ISP_PAD_SINK = 0,
-> +	STF_ISP_PAD_SINK_PARAMS,
->  	STF_ISP_PAD_SRC,
-> +	STF_ISP_PAD_SRC_SCD,
->  	STF_ISP_PAD_MAX
->  };
->  
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
--- 
-Regards,
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Laurent Pinchart
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
