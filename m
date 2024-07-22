@@ -1,141 +1,181 @@
-Return-Path: <linux-kernel+bounces-259260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ED0393932F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:25:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D2A8939331
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6B5F1F219BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:25:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08546284354
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD30616EB58;
-	Mon, 22 Jul 2024 17:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D172616EB59;
+	Mon, 22 Jul 2024 17:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CwNreV3l"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MWQrGnFD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9727316DEB1
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 17:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E781401B
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 17:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721669102; cv=none; b=vEu+sQClYI4LSXtwDdbWqRxi59Z4Wf4qeOeNVVrXXrBT1GWyEDr2NcKyYbznJ79K87/mvVrxyR9Gx3cSC2rqSaPpKzzL5iaRXaFtC/LWxSMNvhRXSiTFnRovmszvBsnwh8eMkLqDeGJT2QOEDrsJEs20SVxfGXvVvm3Ecg68pkQ=
+	t=1721669318; cv=none; b=lmQcVt/iKscQ2dYIft2FdDAP/2SwNqb5h62JFTGH+3YSf/VqYE8PhdqQKwrgZoESa/7xdhWhbPjMor/MXrXqyoVW0V72FwKQMcaiCvxzz6HX6+N60J0tNKr5EtzOcTMBf3jtPEpSd6ql8l+2PBqbYzDE8lNcmoDHC5sI2ebYs18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721669102; c=relaxed/simple;
-	bh=kw0bVtDTHTwovc8PS32qPknhsuAh5ciJPoQH5LDsNlo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hL7ilIWDASjag6QkmklRR3NtTGKdsmQZAsG6ejVFxMovmQPUFakdxZsQsQL1NwO3gKDRmUFLxmqmXeiTCvWK0vYZp4mpJ+trVzOWrIY1X1R1G52c3x36hcVQZZeHoRCWLtde0uMrl0xvckHLwegiXGW/Gqhr8llYp9acIp2O5Bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=CwNreV3l; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4494d41090bso22684931cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 10:25:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1721669097; x=1722273897; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5Kw2Bwo9a08jpWFROykkB0PNFh++FU/bydYKmyQ3V9Y=;
-        b=CwNreV3llu/WgwiYBdTvxaLLjM8M39yiNye8YIGtIL8EsIlOnfgNdQrxUDf4wuGk+u
-         oQ/Y1xpb2vtGjKeQjCUILRaELzZMlHsbhDCVWb00OQrZEVEqJ56SizeGC60G7PqSmtcX
-         Ej1mhjX1DlUQjwcJIUZK8ZvfNlsOYvT3Bp0Bs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721669097; x=1722273897;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5Kw2Bwo9a08jpWFROykkB0PNFh++FU/bydYKmyQ3V9Y=;
-        b=s7wwDbOC+soM+Gzm+PYjsWhAtcXuEUIeEKQpBpRYpyDzh/zRHHQ/LJwVTvv3qZTVOF
-         1hktRjwl06naodpl/pZQUftIRprmLdGZX2gofysDNzBA7vzPYnHHdNrPjSgBB1BDDK7T
-         bSD4cSLwuyqBRmL4Ur9kp5/xglbTO25XesxX8PWtmS3xmsYYDku2KGQwLxruWwa//zKa
-         hTcRd/mqTiu1LijpYCBOXQ07hOHypM/viuBMjo07me+ymYfRMjLEF7zm0A581NLNMwsO
-         lHc4G1VldglsGPXEeFu6DKahz5dEArRhP2HEpPOZgC3LbBSGcdtoQ6ytqgrhF5yWhdTh
-         VMDA==
-X-Gm-Message-State: AOJu0Yy5gEImfsWvyWbSUMUqko82gLsN+7gVZqtIwu2F04J/IJJ7lUj3
-	qqUxQNesJ0r6nWerbgf4NpzFRdN9th3Ekhnkxr2nKHZQCurp9DSFKk8XAc+cDOOmMhkL0Bbug1I
-	=
-X-Google-Smtp-Source: AGHT+IGud8OoQ4njZQac9kVBK4C89QLO2WZ/U0sTUy9eyVSPIaDTywqlTdlmZ0HulM9FuDVndbyA5Q==
-X-Received: by 2002:a05:6214:29e7:b0:6b4:ff80:ee0e with SMTP id 6a1803df08f44-6b940140021mr116769016d6.0.1721669097458;
-        Mon, 22 Jul 2024 10:24:57 -0700 (PDT)
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com. [209.85.160.170])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b8ae76dcb6sm31482956d6.25.2024.07.22.10.24.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jul 2024 10:24:56 -0700 (PDT)
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-447df43324fso11241cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 10:24:56 -0700 (PDT)
-X-Received: by 2002:a05:622a:5b8e:b0:447:e3e3:77c1 with SMTP id
- d75a77b69052e-44faaa81ca5mr5373691cf.29.1721669095913; Mon, 22 Jul 2024
- 10:24:55 -0700 (PDT)
+	s=arc-20240116; t=1721669318; c=relaxed/simple;
+	bh=gE67ioz8zjgYuEjUmRgDNta4WfPWJYFrCQjm41DlRjY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h1aMnNT31eCBjNPEwZV20JVQg4ETG5Z3KscPDae7lKq0x+iF+q8mvgK6F/kjgZg66dVKtrchuiPg2ED9e69ASkMIYid3x4nOtJbEkbN2HxcPwQmjSn3X6N0mTTk5ptWu9KkUJHD184yo14G/K+SJidFwbWk3UHJEFQP+pULjiUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MWQrGnFD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50D11C116B1;
+	Mon, 22 Jul 2024 17:28:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721669317;
+	bh=gE67ioz8zjgYuEjUmRgDNta4WfPWJYFrCQjm41DlRjY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MWQrGnFDi6rtSeHvm2PJj2hRQ1xi9VLbeoJ4pys14muvHF4xmKqkBNQPzJIZIi9gV
+	 gf0xZoYoR194PtP7fUQBfyQYIgyDCd4R5ObBA2acwscvdSrsk83N+Ji1dKx4/ffDju
+	 HpF6xNy0ioejp3CoCLJmGF5REPBV6IY7p/bb7CrDQYPtzM2EieAEPkTNgp2u9JI8I1
+	 vL2NtdsTUq050sfHSgPqgODKZm0+giTsoScQuOAQ6gQcJ7caX9EBFC8PWO5wNr7VwV
+	 E/p5355oh9x9C/gpaUbBpEAjUKFQB4403t7Yg8Z9nSVffm4HUARFS9PXIyzfUt3nzt
+	 LvPuIqFhmWj/Q==
+Date: Mon, 22 Jul 2024 18:28:32 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Yunhui Cui <cuiyunhui@bytedance.com>
+Cc: punit.agrawal@bytedance.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	akpm@linux-foundation.org, surenb@google.com, peterx@redhat.com,
+	alexghiti@rivosinc.com, willy@infradead.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] riscv/mm/fault: add show_pte() before die()
+Message-ID: <20240722-pantyhose-salvaging-96faac4b4661@spud>
+References: <20240722042037.27934-1-cuiyunhui@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717093925.3017-1-terry_hsiao@compal.corp-partner.google.com>
- <CAD=FV=XM7X5J6rzu5gDdmDhJ4Ut8raC92HvcnHmRJmWY7_boSA@mail.gmail.com> <CA+hhT3-77s+jjoBGw_fWWjsvO1kDu_JTDHgj=q-pEXcrkzPkLQ@mail.gmail.com>
-In-Reply-To: <CA+hhT3-77s+jjoBGw_fWWjsvO1kDu_JTDHgj=q-pEXcrkzPkLQ@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 22 Jul 2024 10:24:40 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=U1=5MLUKOok2mTkEeTkT-r504+f9UJuvErLzVbFq_4Hg@mail.gmail.com>
-Message-ID: <CAD=FV=U1=5MLUKOok2mTkEeTkT-r504+f9UJuvErLzVbFq_4Hg@mail.gmail.com>
-Subject: Re: [PATCH v1] drm/panel-edp: Add panels with conservative timings
-To: Terry Hsiao <terry_hsiao@compal.corp-partner.google.com>
-Cc: linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="jxAOmrTq4DroifFi"
+Content-Disposition: inline
+In-Reply-To: <20240722042037.27934-1-cuiyunhui@bytedance.com>
+
+
+--jxAOmrTq4DroifFi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Jul 22, 2024 at 12:20:37PM +0800, Yunhui Cui wrote:
+> When the kernel displays "Unable to handle kernel paging request at
+> virtual address", we would like to confirm the status of the virtual
+> address in the page table. So add show_pte() before die().
+>=20
+> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
-On Sun, Jul 21, 2024 at 4:00=E2=80=AFAM Terry Hsiao
-<terry_hsiao@compal.corp-partner.google.com> wrote:
->
-> Hi Doug,
->
-> Thank you for your reply.
-> The patch has been modified and will be sent to you shortly.
+The patchwork automation reports:
++      1 ../arch/riscv/mm/fault.c:39:4: warning: format specifies type 'uns=
+igned long' but the argument has type 'phys_addr_t' (aka 'unsigned long lon=
+g') [-Wformat]
 
-For future reference, the Linux community frowns upon "top posting".
-Search for "top-posting" on [1]
+Cheers,
+Conor.
 
-[1] https://www.arm.linux.org.uk/mailinglists/etiquette.php
+> ---
+>  arch/riscv/mm/fault.c | 53 +++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 53 insertions(+)
+>=20
+> diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
+> index 5224f3733802..666d282a8bf4 100644
+> --- a/arch/riscv/mm/fault.c
+> +++ b/arch/riscv/mm/fault.c
+> @@ -22,6 +22,58 @@
+> =20
+>  #include "../kernel/head.h"
+> =20
+> +static void show_pte(unsigned long addr)
+> +{
+> +	pgd_t *pgdp, pgd;
+> +	p4d_t *p4dp, p4d;
+> +	pud_t *pudp, pud;
+> +	pmd_t *pmdp, pmd;
+> +	pte_t *ptep, pte;
+> +	struct mm_struct *mm =3D current->mm;
+> +
+> +	if (!mm)
+> +		mm =3D &init_mm;
+> +
+> +	pr_alert("Current %s pgtable: %luK pagesize, %d-bit VAs, pgdp=3D0x%016l=
+x\n",
+> +		 current->comm, PAGE_SIZE/SZ_1K, VA_BITS,
+> +		 (mm =3D=3D &init_mm ? __pa_symbol(mm->pgd) :
+> +		 (unsigned long)virt_to_phys(mm->pgd)));
+> +
+> +	pgdp =3D pgd_offset(mm, addr);
+> +	pgd =3D pgdp_get(pgdp);
+> +	pr_alert("[%016lx] pgd=3D%016lx", addr, pgd_val(pgd));
+> +	if (pgd_none(pgd) || pgd_bad(pgd) || pgd_leaf(pgd))
+> +		goto out;
+> +
+> +	p4dp =3D p4d_offset(pgdp, addr);
+> +	p4d =3D p4dp_get(p4dp);
+> +	pr_cont(", p4d=3D%016lx", p4d_val(p4d));
+> +	if (p4d_none(p4d) || p4d_bad(p4d) || p4d_leaf(p4d))
+> +		goto out;
+> +
+> +	pudp =3D pud_offset(p4dp, addr);
+> +	pud =3D pudp_get(pudp);
+> +	pr_cont(", pud=3D%016lx", pud_val(pud));
+> +	if (pud_none(pud) || pud_bad(pud) || pud_leaf(pud))
+> +		goto out;
+> +
+> +	pmdp =3D pmd_offset(pudp, addr);
+> +	pmd =3D pmdp_get(pmdp);
+> +	pr_cont(", pmd=3D%016lx", pmd_val(pmd));
+> +	if (pmd_none(pmd) || pmd_bad(pmd) || pmd_leaf(pmd))
+> +		goto out;
+> +
+> +	ptep =3D pte_offset_map(pmdp, addr);
+> +	if (!ptep)
+> +		goto out;
+> +
+> +	pte =3D ptep_get(ptep);
+> +	pr_cont(", pte=3D%016lx", pte_val(pte));
+> +	pte_unmap(ptep);
+> +out:
+> +	pr_cont("\n");
+> +}
+> +
+>  static void die_kernel_fault(const char *msg, unsigned long addr,
+>  		struct pt_regs *regs)
+>  {
+> @@ -31,6 +83,7 @@ static void die_kernel_fault(const char *msg, unsigned =
+long addr,
+>  		addr);
+> =20
+>  	bust_spinlocks(0);
+> +	show_pte(addr);
+>  	die(regs, "Oops");
+>  	make_task_dead(SIGKILL);
+>  }
+> --=20
+> 2.39.2
+>=20
+>=20
 
+--jxAOmrTq4DroifFi
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> The timings are set based on the panel datasheets in IssueTracker
-> (https://partnerissuetracker.corp.google.com/issues/348109270)
+-----BEGIN PGP SIGNATURE-----
 
-FWIW, if you want to privately provide links to datasheets to me to
-double-check your work then that's fine, but the above link is useless
-to others on the Linux kernel mailing list and people usually don't
-appreciate such links. In this case you could have replied publicly
-and told others that you'd gotten your work double-checked and that
-would have been sufficient for the public lists.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZp6WwAAKCRB4tDGHoIJi
+0sv+AQDVz6BxNdfqj/Mhhk++WSIcOjYj9aQBtAsjf3uv08sPAgD+K8cK7ypV/tvn
+IX+ITIjwsuR4c3NegxPFbQjzeDDGNgY=
+=RQTs
+-----END PGP SIGNATURE-----
 
-
-> B116XTN02.3: B116XTN02.3(HW 9A)_HP_ Functional Spec_0617Y24.pdf
-> B116XAN06.1: B116XAN06.1_7A_HP_ Final Functional Spec 0617Y24.pdf
-> B116XAT04.1: B116XAT04.1 HW 0 A(HH)_ Pre Functional Spec_HP_ 0425Y24.pdf
-> NV116WHM-A4D: NV116WHM-A4D V8.0 Teacake  Product Specification-20240416.p=
-df
-> N116BCA-EA2: Approval Specification N116BCA-EA2_C3_20231212.pdf
-> N116BCP-EA2: TFT-LCD Tentative N116BCP-EA2 C2 for HP Ver 0.2-240502.pdf
->
-> On page 24 of the N116BCP-EA2
-> datasheet(https://partnerissuetracker.corp.google.com/action/issues/34810=
-9270/attachments/57530666?download=3Dfalse),
-> the value for t9 as disable is "null".
->
-> If I have misunderstood what you mean, please correct me.
-
-I've double-checked and this looks fine to me.
-
-
--Doug
+--jxAOmrTq4DroifFi--
 
