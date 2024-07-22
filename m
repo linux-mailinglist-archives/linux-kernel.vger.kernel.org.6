@@ -1,165 +1,162 @@
-Return-Path: <linux-kernel+bounces-258497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCB469388DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:26:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA2E69388E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:26:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CD221C20DD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:26:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F34B281511
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D283B17C6C;
-	Mon, 22 Jul 2024 06:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FA518E25;
+	Mon, 22 Jul 2024 06:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l65nNzRL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="rtKuw8kq"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2058.outbound.protection.outlook.com [40.107.243.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC71117BA7;
-	Mon, 22 Jul 2024 06:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721629582; cv=none; b=HnWFEMKk0QbqcKWoUJp4jMPjjAKkbspl+FvPQ1P2q3vIcyAbNlnFubI5SY8IWNGKXr5FbLdYgfqpmzG/tAyQqLl/cfbOyLhgJOpzjRBfNrbhpJSLTmo/2Uuy5iI6rwC+fDKW1jXYiRCBXjiW3GS4GOtapG23I50TgIxghkaDN34=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721629582; c=relaxed/simple;
-	bh=2E488IRTbelelyapvBjmOTKnIJ3Ma9OdzspZXkZJrlo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IXJtfmr8uQd6zAl/DG68kOudaHaDeOoaibi/EO9jw7XYv/QAHfBgNHcYQbJQHm6ay1BWU/aBMxajzA1LGUrHKwKHHiB2CmdNbcXbcr42stUu2Gem/Plw8BEESixCF2IorzN2izoBY0bU5tJiMObHGvOOQjzbhM6zkks+5m/eoLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l65nNzRL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46LNrNF2009144;
-	Mon, 22 Jul 2024 06:25:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	epzHvjGfNTuW8kWBWUpAehPis3xDQaoIaU0NM0n+f38=; b=l65nNzRLrEmyaPSC
-	zlC0XogCCyj19J9HJ9R8TuN747Octzg28oBuDuHCiUeu9Djx3LD5g4i+C/9WfLm0
-	pZw6mc6oFHRW6p2vf4T/cJ2TDa/Bjf7qU3+ml0nCPTHdvWTokr/DrJhNVNSDSdJQ
-	e3bwsSM9mS5Qj8/WkkY7ECBE/upSJe2mIXPy9EEeNSeWDba+EOSlCgHxKUwnblIl
-	I7Y6LPTSpYgb4yoTJDgAZD36S8eue1VbAoZLJFgYZ37IMCeEx3dYF6NzPfkDIahG
-	5qY1INv1VI7dOcDxIK+LG1Yu10k+MFTTXnEEcH3DEat8kSpcSFcmy99odXdBZqdH
-	MScrxQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g487aubw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jul 2024 06:25:26 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46M6PPWc012603
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jul 2024 06:25:25 GMT
-Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 21 Jul
- 2024 23:25:22 -0700
-Message-ID: <35e52822-a81f-4b2c-adc1-903785ce1849@quicinc.com>
-Date: Mon, 22 Jul 2024 11:55:19 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1651863F;
+	Mon, 22 Jul 2024 06:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721629589; cv=fail; b=FCXgdnCT0Bu+zlJ0BpyypYqCibx8V7HoC8/0AzZF6tu5zMCtpISmicALaZ4nhmZhFlPebTJfvjVq/MqOdSWa/hEOtWuEX6GIpR4pmDpk2LUTHjCYzd2huONN0ehG4YaW/pAlAPqCH42F5aOWAXyE+/a7TB0oUI/M4g4VuBeMU9c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721629589; c=relaxed/simple;
+	bh=GbUh4/IRcy52YfxmFvJ+aKVJ/2rnOSSGsPaFagm8gNk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T2LBImkdotBGYJOEydVmp7TQxAmlxonjFmt61IzpGy1GXLojbmgsKRiTBXNSwPcAZgH4pPIjmnDNRnifMwj7jg/Mo+mJq0w7kEAsbV6MEHFN/aXhEzOe6GkTM7xWleS2Bf24tRrcuerFAoCafOTxhzXp7omZABwmxPRN99o+zQc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=rtKuw8kq; arc=fail smtp.client-ip=40.107.243.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=c6QEPw9zmhq+tV/gJlBZ16/4WIcrF6mtTeXUWQD5L7xWJfzNuJ1I8NQhK8ae041CyhQRhRBGyNHbyF5LjvGV+yYStl9bUgn4OEMpTRiWt7MK4Xr1JwLki+rsaxROlRUvOqNtXyaxv04GLr/WDjAtp7gW8oMte86usrqqePzxEN0CTOLwVciknwzEo/hq8VIGXHF4iUCraJR81S6804UeNsOFoKEaQNjZmZb3lN+7J6PIV2pU6D1bGe6BZweyCGwbOMGUyi7qOWg3JXGqYEXVXWqUnMZofZzOj2aQcA4nqCxq+gS2i86Ra6D6NIFFtejTso2X+sdmLd2jJ+v4ua1MdQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aSeXNLa9odPskqVpG+u+6Oqqltm+z9XiEnJsSFoeSLQ=;
+ b=xcXbePXESkKQUbENSzUdccv7tphUmnHOSfQtaJ+pOmbC0OfNf989LqwVYRNE0kRM1R2OpcFaHF5t+T5ID5M/NVSj5OU0/Y0VMvDq9OajpbR+pablUd+kfNpA+vmE/ElOagoF9McEDDwR9LpJ4ffF8yfCdeOIoVZAPfp1YSe8gmc5rTK0C4xIbXPTAai5Srrmv0ICTSP44gA43pdBowqnn/oaP3Cv0QEnA84z1JmVO0s3xJ7g5yKRzmA+WSwcfRrEtmG2d2kaozg6KCdao966mdbCFfn6C26A/G6rMT5VJUxeEZCqYGUV6u+XQM/bRbe6bU0lRowVPwns66qpQ76xZQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aSeXNLa9odPskqVpG+u+6Oqqltm+z9XiEnJsSFoeSLQ=;
+ b=rtKuw8kqSF0sQYqMRXopFH/tT8mYbuEj6CnRUnIAoVykbFa3kfHlu7yzOBcfWP0VMsjfGxLpJqfyMpFpnB3xQ14NQnWsqiB6M1XbwdWlBA3irwaYOoVHUvfj6QHjRKt58Ios2xkbTsmDs19lR5iq2oWcM/68Ez9+BdU8CeLb9dE=
+Received: from CH2PR18CA0052.namprd18.prod.outlook.com (2603:10b6:610:55::32)
+ by SN7PR12MB6981.namprd12.prod.outlook.com (2603:10b6:806:263::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16; Mon, 22 Jul
+ 2024 06:26:25 +0000
+Received: from DS2PEPF0000343C.namprd02.prod.outlook.com
+ (2603:10b6:610:55:cafe::6) by CH2PR18CA0052.outlook.office365.com
+ (2603:10b6:610:55::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.17 via Frontend
+ Transport; Mon, 22 Jul 2024 06:26:22 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ DS2PEPF0000343C.mail.protection.outlook.com (10.167.18.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7784.11 via Frontend Transport; Mon, 22 Jul 2024 06:26:21 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 22 Jul
+ 2024 01:26:20 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 22 Jul
+ 2024 01:26:20 -0500
+Received: from xhdthippesw40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 22 Jul 2024 01:26:17 -0500
+From: Thippeswamy Havalige <thippesw@amd.com>
+To: <lpieralisi@kernel.org>, <kw@linux.com>, <robh@kernel.org>,
+	<bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>, <thippeswamy.havalige@amd.com>,
+	<linux-arm-kernel@lists.infradead.org>, <michal.simek@amd.com>, "Thippeswamy
+ Havalige" <thippesw@amd.com>
+Subject: [PATCH v2 0/2] Add support for Xilinx XDMA Soft IP as Root Port
+Date: Mon, 22 Jul 2024 11:55:56 +0530
+Message-ID: <20240722062558.1578744-1-thippesw@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] misc: fastrpc: Increase unsigned PD initmem size
-Content-Language: en-US
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_bkumar@quicinc.com>, <linux-kernel@vger.kernel.org>,
-        <quic_chennak@quicinc.com>, <dri-devel@lists.freedesktop.org>,
-        <arnd@arndb.de>, stable <stable@kernel.org>
-References: <20240722055437.3467900-1-quic_ekangupt@quicinc.com>
- <20240722055437.3467900-3-quic_ekangupt@quicinc.com>
- <2024072235-daydream-clunky-0272@gregkh>
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-In-Reply-To: <2024072235-daydream-clunky-0272@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: g6mNA2sHTMUHVEl96SEUvXV5NRkW6U-8
-X-Proofpoint-GUID: g6mNA2sHTMUHVEl96SEUvXV5NRkW6U-8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-22_02,2024-07-18_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 mlxlogscore=998
- malwarescore=0 adultscore=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2407220048
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF0000343C:EE_|SN7PR12MB6981:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2d803fb5-3b45-400c-9de7-08dcaa173470
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|1800799024|7416014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?d8SdLNhNT9i5GU+3Kw23fP9seZ4MRddR328ZUsEEj4Q655S+9AualNvuHWCr?=
+ =?us-ascii?Q?FWGbL3W4tvxgpkAbStQrRrf9GH1bDLcexMA8FXIHMR4SivXYmmbCLJkJt7LC?=
+ =?us-ascii?Q?VmAtMIpFCGROnbtUe+DgKyxOSaT4F10zLXPIj2Gdqqg436nOyQpvXmIdhk+P?=
+ =?us-ascii?Q?JrgsnfP0L5jFIPWVpHZTtGmhLpWnLEy85Wlyh3yYUyB1wURqj05+1EOCQsMT?=
+ =?us-ascii?Q?YAp1c3Wyh4pFYHRvemhNTDwWVLHNhUjhG6D/L123KleGlj2PPNSMpvCyLbO3?=
+ =?us-ascii?Q?Hot4C7qdrgg88Thb82UjQxPHVfqn5g+YVFgiMK92lc2RlibTsrdW4qQ2SAMm?=
+ =?us-ascii?Q?dpYQF5dVVpLmFxONQ0lnAjW992nFWfo77ddSiQko41ZelXET8jgudmitMJ6p?=
+ =?us-ascii?Q?qSm42J7fkFxdBPsCindklfgRQqWxuAhp8KHaZaWI6wxbtRsheC6oFfkWxgZi?=
+ =?us-ascii?Q?SWHYmNC7BEal+1XskIh6pTkgthmU32TfKYV0g+QJEIFHjlQ74REhiucBHscV?=
+ =?us-ascii?Q?WRGKTcW5cq3bzP2VijphVm2AFVkNloNJ1qx9qqz2jTDqeahThzhLJ7TqdacN?=
+ =?us-ascii?Q?kIHMe+pJhXTbfsJ8pHElDmaorPnlB/kvHxY9bU2xcgYSRbgNGm+0OkX3CVBI?=
+ =?us-ascii?Q?WE4S2iTAsPnqeMKLDcVIpq5JrKNIWZ6pnCKUUetJz9qAqlWYEz79PC113/D/?=
+ =?us-ascii?Q?wIHoeqNQDiMDHT4yyM7e0Uk/9bPPRbIEDEDVvkuHSUM1NAv4isTDQUU76v9C?=
+ =?us-ascii?Q?ipx25/howW/35Miu6a5lVT3VRgxup3FLHabUc7EXZ1ZM/PRNoDyhi7X1RFCa?=
+ =?us-ascii?Q?11Lm7cG/vkQEHAgPZpv8/kenqaVIPA9JUZEUbWNOFP1+ktBdER3y+cbs3fyU?=
+ =?us-ascii?Q?AtZsVOAZQyyvtQ4EbuGM3ZLCtSIMImnEMK5kr6llx+fT3YA8RkLk2kmDH4L5?=
+ =?us-ascii?Q?xrvUyghulEhjomOGlkDq8UD/TaTRMm3qadRPAQK/GbdbNsYjQYb1guE3UQMq?=
+ =?us-ascii?Q?iI5Q25aoulhUABod0PiNEtV1pslRombmKw+TORyhvwr/oRlhB6Jz5zZhW07V?=
+ =?us-ascii?Q?4clDUz1Fjbz3dc49T6paIBQoI5AfpcpKfqhi715qKQCZSZ/EtOJI2Hk9cGjr?=
+ =?us-ascii?Q?GuLuXoahzHXjns89DNCZC0XgBSNax2Q+H4K9FpOv64AqR7EU0wLv/spNf4/9?=
+ =?us-ascii?Q?GkhuMR7CD0jfSiMx45lx33ZXIVadIhcUQREpOxJqUJraDpm03fwvP/HhkwPs?=
+ =?us-ascii?Q?bopi5JpIP7KqicEszY/gSsSADFJTD/+xMJzklAFjGu30Hg9WUyGK0VfuHtXp?=
+ =?us-ascii?Q?6IHM93KAXoA7jy7K2i9YzEBufTHgp8dGyGHvAA+vYIyA3X+O/1CN5pAcxHRV?=
+ =?us-ascii?Q?ITi/lm6sgQyvHRmyIO1tZt7Fc+dBzKpaxJtKe5iIPpbzaBNiGQlBWwAgqGCR?=
+ =?us-ascii?Q?y7c4gu/x7dIyjCZyjd6okeYQwbMWkOXB?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(7416014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2024 06:26:21.9283
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2d803fb5-3b45-400c-9de7-08dcaa173470
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF0000343C.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6981
 
+This series of patch add support for Xilinx QDMA Soft IP as Root Port.
 
+The Xilinx QDMA Soft IP support's 32 bit and 64bit BAR's.
+As Root Port it supports MSI and legacy interrupts.
 
-On 7/22/2024 11:30 AM, Greg KH wrote:
-> On Mon, Jul 22, 2024 at 11:24:37AM +0530, Ekansh Gupta wrote:
->> For unsigned PD offloading requirement, additional memory is required
->> because of additional static heap initialization. Without this
->> additional memory, PD initialization would fail. Increase the initmem
->> size by 2MB for unsigned PD initmem buffer allocation. Any additional
->> memory sent to DSP during PD init is used as the PD heap.
->>
->> Fixes: 7f1f481263c3 ("misc: fastrpc: check before loading process to the DSP")
->> Cc: stable <stable@kernel.org>
->> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
->> ---
->>  drivers/misc/fastrpc.c | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
->> index a3a5b745936e..18668b020a87 100644
->> --- a/drivers/misc/fastrpc.c
->> +++ b/drivers/misc/fastrpc.c
->> @@ -40,6 +40,7 @@
->>  #define FASTRPC_CTXID_MASK (0xFF0)
->>  #define INIT_FILELEN_MAX (2 * 1024 * 1024)
->>  #define FASTRPC_INITLEN_MIN (3 * 1024 * 1024)
->> +#define FASTRPC_STATIC_HEAP_LEN (2 * 1024 * 1024)
->>  #define INIT_FILE_NAMELEN_MAX (128)
->>  #define FASTRPC_DEVICE_NAME	"fastrpc"
->>  
->> @@ -1411,8 +1412,14 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
->>  			goto err;
->>  	}
->>  
->> +	/* Allocate buffer in kernel for donating to remote process.
->> +	 * Unsigned PD requires additional memory because of the
-> What is "PD"?
-DSP PD(protection domain) is execution environment supported by DSP.
->
->> +	 * additional static heap initialized within the process.
->> +	 */
-> Why are you using networking comment style for a non-networking file?
-I observed similar style in this driver file. I will update this in proper style in the next patch.
->
->>  	memlen = ALIGN(max(FASTRPC_INITLEN_MIN, (int)init.filelen * 4),
->>  		       1024 * 1024);
->> +	if (unsigned_module)
->> +		memlen += FASTRPC_STATIC_HEAP_LEN;
-> I don't understand, why is "static heap length" being added for
-> something that is "unsigned"?  Why isn't this just "SIGNING FREE SPACE"
-> or something like that?
-The difference between signed PD and unsigned PD is:
-Signed PD: Available on all DSPs and requires that the shared objects being loaded in the PD
-are signed with a digital signature.
+Thippeswamy Havalige (2):
+  dt-bindings: PCI: xilinx-xdma: Add schemas for Xilinx QDMA PCIe Root
+    Port Bridge
+  PCI: xilinx-xdma: Add Xilinx QDMA Root Port driver
 
-Unsigned PD: Sandboxed low-rights process that allows signature-free shared objects to run on
-CDSP.
+ .../bindings/pci/xlnx,xdma-host.yaml          | 41 ++++++++++++-
+ drivers/pci/controller/pcie-xilinx-dma-pl.c   | 58 ++++++++++++++++++-
+ 2 files changed, 94 insertions(+), 5 deletions(-)
 
-For unsigned PD there are some additional statically initialized heap for which additional memory
-is required. I'll try to come up with a better name.
-
-Thanks for the review.
-
---Ekansh
->
-> thanks,
->
-> greg "naming is hard" k-h
->
+-- 
+2.25.1
 
 
