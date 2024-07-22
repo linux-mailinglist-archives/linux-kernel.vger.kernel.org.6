@@ -1,117 +1,98 @@
-Return-Path: <linux-kernel+bounces-258549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D382493899A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:06:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65C2693899C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9279928140B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:06:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 060D2B2234E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A4F17BD5;
-	Mon, 22 Jul 2024 07:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FCA18EA2;
+	Mon, 22 Jul 2024 07:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="E2tFQNKp"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m6ouTnn0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4F62F41;
-	Mon, 22 Jul 2024 07:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7A5208A4;
+	Mon, 22 Jul 2024 07:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721631987; cv=none; b=N4KLA0bah2i4+b2iOS9mL6jZX+T1su/xugQIL9/EkAYhg9El9DC53bqrO04pxrXN9vg4vQf61MAm04jeEPILrNLjSDHhsiHJBmCvSeV9kJRJFaLzaHQln/DS54Tv+l3P7A9jviOec1i6H7SWsYAa8afKJL0TOMVtMjhUwypvHDw=
+	t=1721632021; cv=none; b=c/jn2QpxIanMHvwOv7e8UpSG6XwJuEN0eIuddvGZAG60aYUEH++4F+Puxp2tLwJVIZLml/dQOOSQ9yoVsYToHQ9JBD7othObeVnSz6G2ZcNjsIdR6tFRm9ADs3de/6HdDjClbveucZVrSgrw9tzdAN5HVh0W0QKg5SKGGkG0kT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721631987; c=relaxed/simple;
-	bh=1+E9tbS14VMdqskXQej+GaKPqQyY0ZidczUggt3RCBg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M6oiQPdVlCe+xiiHhtqwb97AkMHrDOzI9xLh/WEQxQd6omwu15bLMQDGll8RPdr0IlystEkhuIgbuaWdopAyotK7zxPN0Qv9nv2TtMj0kcBC/YPpMf6YNfWtca9FXBiGnNhieORgSrHqjzUsJH+zzpKQEtxmeQ0g6Agx9sg7JVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=E2tFQNKp; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 791821C0082; Mon, 22 Jul 2024 09:06:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1721631983;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0k6CMcYT278I93fU4dSlU6NHaQreWoiXjYqC3mADNWE=;
-	b=E2tFQNKpUuRjrwcu3nORkt8HtqDliJp+ypLbkeec8JM0XvjrCwT/q3ZlxnUxlthUl8Bcr+
-	Cd6w0qPof+Y3AcEQlziFLl2q/uzLdB1ETKUEoydOTTh+eoprovWZVeoJI557+aIwblZv4Q
-	zOqkgcMYnYI5t80yXwVlJZm20lvt364=
-Date: Mon, 22 Jul 2024 09:06:23 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-Cc: lee@kernel.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] leds: Add LED1202 I2C driverr
-Message-ID: <Zp4E76JNHTyx21wE@duo.ucw.cz>
-References: <ZpzkBM_ZwM8hdwgP@admins-MacBook-Air.local>
+	s=arc-20240116; t=1721632021; c=relaxed/simple;
+	bh=Ij2cO0q9FMHHVwhqlDYX/2GmqyF+N0IDQ5jk35GRLCs=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=YgYreK698FsEJrao2/dc7VsTXjXVHETtjjoNL8BiJXmiigU4k+kgrDGXo806JsgXYfQvZBSMxKiETCAro0PnWXWrQ2sML8bdKeRrgVEZS1wjKN7Cz5s1f2hNiJyNeiNOrwzPgodjRA/xczJ45PV/rQ9dqTcQWcBFEx7H1kgMyeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m6ouTnn0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BCBDC116B1;
+	Mon, 22 Jul 2024 07:07:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721632021;
+	bh=Ij2cO0q9FMHHVwhqlDYX/2GmqyF+N0IDQ5jk35GRLCs=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=m6ouTnn0Xq2hcRZ/ka0LhyZKK1LGwJ0slzVu2AsxEYkPqlfJy2gkpAPt1CTKnkkN7
+	 WtZpmC+I5TlB0cHcbG8qeAx9MdklLongjC9c/pgKLHTtkMHtX0PJqfaLRLXj3POB/S
+	 XKo0KcgL9sLC8l90EzHqvc0UY58O7mUxmlz9HbVFyxakxOntfVddywcYSUxpRRqz1b
+	 oEl6eroH3aR6TtDSsBfRDJ7OX0Q7xEurP2viC7UcCEybFU9nY58xPu8SiC3gl37HLj
+	 SHYjBypeJIh0C0UXNLXnGrWr3BHMOYLNnvk9OPKYFsOcYjI/Tyuu/DVv2diqLAnAgl
+	 vv3LuPnZZh8aA==
+Date: Mon, 22 Jul 2024 00:06:59 -0700
+From: Kees Cook <kees@kernel.org>
+To: "Darrick J. Wong" <djwong@kernel.org>, "Artem S. Tashkinov" <aros@gmx.com>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-ext4@vger.kernel.org, xcreativ@gmail.com, madeisbaer@arcor.de,
+ justinstitt@google.com, keescook@chromium.org,
+ linux-hardening@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_Linux_6=2E10_regression_resulting_in?=
+ =?US-ASCII?Q?_a_crash_when_using_an_ext4_filesystem?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20240722041924.GB103010@frogsfrogsfrogs>
+References: <500f38b2-ad30-4161-8065-a10e53bf1b02@gmx.com> <20240722041924.GB103010@frogsfrogsfrogs>
+Message-ID: <BEEA84E0-1CF5-4F06-BC5C-A0F97240D76D@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="IY44DbwITeRXMDmb"
-Content-Disposition: inline
-In-Reply-To: <ZpzkBM_ZwM8hdwgP@admins-MacBook-Air.local>
-
-
---IY44DbwITeRXMDmb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
-
-> The LED1202 is a 12-channel low quiescent current LED driver.
-> The output current can be adjusted separately for each channel by
-> 8-bit analog (current sink input) and 12-bit digital (PWM) dimming contro=
-l.
-> The LED1202 implements 12 low-side current generators with independent di=
-mming control.
-> Internal volatile memory allows the user to store up to 8 different patte=
-rns, each
-> pattern is a particular output configuration in terms of PWM duty-cycle (=
-on 4096 steps).
-> Analog dimming (on 256 steps) is per channel but common to all patterns.
 
 
-> +static ssize_t st1202_duration_pattern_show(struct device *dev,
-> +					struct device_attribute *attr, char *buf)
-> +{
-> +	struct st1202_chip *chip;
-> +	struct dev_ext_attribute *eattr;
-> +	struct st1202_led_pattern_map *map;
+On July 21, 2024 9:19:24 PM PDT, "Darrick J=2E Wong" <djwong@kernel=2Eorg>=
+ wrote:
+>On Sun, Jul 21, 2024 at 09:10:59PM +0000, Artem S=2E Tashkinov wrote:
+>> Hello,
+>>=20
+>> There are now two bug reports containing very similar if not exactly th=
+e
+>> same backtraces=2E
+>>=20
+>> https://bugzilla=2Ekernel=2Eorg/show_bug=2Ecgi?id=3D219072
+>> https://bugzilla=2Ekernel=2Eorg/show_bug=2Ecgi?id=3D219078
+>>=20
+>> Theodore, please take a look=2E
+>
+>[adding everyone involved in 744a56389f739 ("ext4: replace deprecated
+>strncpy with alternatives") to cc]
+>
+>Is strscpy_pad appropriate if the @src parameter itself is a fixed
+>length char[16] which isn't null terminated when the label itself is 16
+>chars long?
 
-New sysfs files need documentation.
+Nope; it needed memtostr_pad()=2E I sent the fix back at the end of May, b=
+ut it only just recently landed:
+https://git=2Ekernel=2Eorg/pub/scm/linux/kernel/git/torvalds/linux=2Egit/c=
+ommit/?id=3Dbe27cd64461c45a6088a91a04eba5cd44e1767ef
 
-Plus, this probably should use this interface, not custom one:
+-Kees
 
-Documentation/ABI/testing/sysfs-class-led-trigger-pattern:What:         /sy=
-s/class/leds/<led>/hw_pattern
-
-It might be better to submit driver without pattern support, then
-re-add it when driver is merged.
-
-Best regards,
-							Pavel
 --=20
-People of Russia, stop Putin before his war on Ukraine escalates.
-
---IY44DbwITeRXMDmb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZp4E7wAKCRAw5/Bqldv6
-8lhLAJwMA/1uXVFBA1PUFM7TAdvvp5SZqACgoT9jPpa90vj5S95u+0seSnyC/7o=
-=E2B4
------END PGP SIGNATURE-----
-
---IY44DbwITeRXMDmb--
+Kees Cook
 
