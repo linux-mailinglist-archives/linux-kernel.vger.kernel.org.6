@@ -1,500 +1,183 @@
-Return-Path: <linux-kernel+bounces-259224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71E789392E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:59:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D94F79392E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:00:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94D091C21682
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:59:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0CDD1C217C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D8A16F825;
-	Mon, 22 Jul 2024 16:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BD116F0F9;
+	Mon, 22 Jul 2024 16:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b="NR6GOOaa"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lfcle7Sh"
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D71916F0CA
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 16:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C4316EC11
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 16:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721667534; cv=none; b=C4/kPff5JD+ua+3pWIIAF7OenNLEVJ5CPm58Tzao/S91c/eRuutpvJ8S5jBSZWcZzn86beD9Denm8s1FluETKcR9ScEK/ct/j9q7QmM/rdmwUlyGvMjOabKhAU173zRsQM3INy1HvKanbEt+zBojX6vPp0UQSdAnpVJpF06k6CI=
+	t=1721667573; cv=none; b=eTAjdKM/LVmqkhqyGnneoBfVWhjcsS77ZIkYksJjmqraqzm6aQCPMj/9Bljn50wiuVuwWgP+5ogSBXWszZ4f4wspZfZxOVEunEReVG7pt1/rsIa9/i6VaOqxCiANp21+Y45FGkQO7yT9D8ref5LR9BbDCFbbEu/LhZjZd3kwJtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721667534; c=relaxed/simple;
-	bh=mqWrU3scnTZMpLJqnWzO2uIY68DKBT3JCJ/LsOnwo4I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=phI7yk75fGILps33QAplYW3lYPzIfB0+BoSS2LtY61OveNYr8sekACHScpe7cBBpiCGyL/SSQeKlBZgSddZxphUR+MCL/TGLzYbvQpq3mDSU3tqfafpPCnZ2GGsCKXiF5J3ZkPtXhnR9b5ZdqGcif7au4DDcFcnWTrCb82maz3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk; spf=pass smtp.mailfrom=thegoodpenguin.co.uk; dkim=pass (2048-bit key) header.d=thegoodpenguin-co-uk.20230601.gappssmtp.com header.i=@thegoodpenguin-co-uk.20230601.gappssmtp.com header.b=NR6GOOaa; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thegoodpenguin.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thegoodpenguin.co.uk
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4257d5fc9b7so39253875e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:58:52 -0700 (PDT)
+	s=arc-20240116; t=1721667573; c=relaxed/simple;
+	bh=6Z5Ir7rhiBPr3RRCCNoLO7VsrsAMZfPkRGLwL8wNXLI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PvD93n5RjBdNcvzj+ko4TvENwAmTJxT2Gnu9PS5XLz96ZeYQtwd6JS792dd7fqunr6dXU8I+j6+ylo818Jcf7oOgmSkOK/D/6wj9PS1Z6br7I3qLP/ulSj14JmpFl57dLoXCQY7ozK7Ciip8cIiPIX0H+I9qtamVv1kxAxKv9YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lfcle7Sh; arc=none smtp.client-ip=209.85.217.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-49299323d71so563360137.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:59:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=thegoodpenguin-co-uk.20230601.gappssmtp.com; s=20230601; t=1721667531; x=1722272331; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sVT0gOf+NtOjihQ2nIWu7Ft9BgKRkrwt18aNIThkUj8=;
-        b=NR6GOOaa7lbA3BJPtCJU2QSyjWN3Wd3h3lFg8z2zsd+VhtvzhoTGCCFbXfEv8Gfd++
-         F/DlZkLwNOSbEO2oXvBV6TJ8j/05u4k30oyfiXSPWFqF710n1YOMGYPYTyS7c826oSWf
-         5mYvXimkr70UIQhif38op2n24zjn9ijQgAdnAJ0gxqmjCOSlvQN+V0wAuFNupKrPx2/B
-         TSG9UEoojda5SGVDvWL8TjyqGSipyHLLr2LNFVgFzcmJ54ROq2aooiEdqZSgoeutWL5E
-         1TQc13eC2p2+0oA+rPpBWG2cn1yAN9OIpDwatddvM0TD3g7VGk5AotsNSlweYCXB7HcF
-         Rblg==
+        d=chromium.org; s=google; t=1721667568; x=1722272368; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6Z5Ir7rhiBPr3RRCCNoLO7VsrsAMZfPkRGLwL8wNXLI=;
+        b=lfcle7ShmRhCpUR6bgEyknYCnRDZCk/PQeLcPXhUCGoKnBSILVVZ9A8GeHYFc1k4k6
+         Hv3/HCaFIoOJ9fLrXVxyLsQf9+hQfrk1VNe5OyIc6PguvfMhPjSlelbOJx4HdriD7A8x
+         PogyGMTSfR8zpbMSqi8brfpVgEnrwUzeL2Bdw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721667531; x=1722272331;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1721667568; x=1722272368;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sVT0gOf+NtOjihQ2nIWu7Ft9BgKRkrwt18aNIThkUj8=;
-        b=fyRjjpHX+V83J4OBdEqMn61bCgsZyQmHLiU3SvS53VmBIN6sZWz1WfU10/dgWXTYk1
-         p0j2ir8izt41RUtLgzmBDKkosLDhSMq0r/MKZThTlmXsf1w5UbecNY160JlfENawZV4k
-         rfECw51UrHi0m+Rce0zexOgRq0SjWdCMMdfZ/iefPPCvwGutGytV+oSqZfBKuY9HeDqZ
-         fgm6iK5kJGUsA1BjqApJ1DG8ouUkXvnDLWgymx5zxlZlDwk/6A0/2QVSUw6MLwPhtSs0
-         /PJhgrkHNsR5o9CZWrAjcuAFm7+ue3lRdmS03eM1MGBgnl4j/2Xm66njqQi67RPVBsEU
-         8WoA==
-X-Forwarded-Encrypted: i=1; AJvYcCXl+YmNTWQI8+UBiY+LFHnHkVSpgXFFU0Oy2aCkGzS/t0Wjvn15b5DEFVqJy8xz5NHbjNtCPw9+MKoUzIzQpWEPg4yvnpiS0f/UKf2O
-X-Gm-Message-State: AOJu0YyGf5EsWHGoC6A0B9Bc7T7uQKCbgzn/u48H668wNnwa0x8AiZ1E
-	qz1BiYUrr5hrfh4teoRf4zZ5hECr2XYzqJFtocpglCsakEKLxSUObQvZu9+YxzS/bNu39GV2W5f
-	K
-X-Google-Smtp-Source: AGHT+IEf5Z2BHiSbz5jeExeu1x4AURd20Z5mAdPYMuYoH526y4oOlikjVZuGNfO3Hmhe1sfyzkDnxA==
-X-Received: by 2002:a05:600c:45ce:b0:426:5520:b835 with SMTP id 5b1f17b1804b1-427dc515ce5mr61802035e9.5.1721667530878;
-        Mon, 22 Jul 2024 09:58:50 -0700 (PDT)
-Received: from carbon.local (aztw-29-b2-v4wan-166913-cust1764.vm26.cable.virginm.net. [82.37.38.229])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a8e436sm161660055e9.33.2024.07.22.09.58.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 09:58:50 -0700 (PDT)
-From: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
-Date: Mon, 22 Jul 2024 17:58:43 +0100
-Subject: [PATCH v5 2/2] iio: humidity: Add support for ENS210
+        bh=6Z5Ir7rhiBPr3RRCCNoLO7VsrsAMZfPkRGLwL8wNXLI=;
+        b=INkXbK4K77VPItYViCg25MShFdnzLFDDgWEJhIneMmhwwQ1kMnhcoi58CqBiNmn1+I
+         1ZfeXSM1XjpGi+/tUYZcWZB5DvQ8ZOoRP/T+AbgBEsp4DcfEd2K02pPI1N4D6qzhk0v8
+         ZfOU3RRyGXN97YkAKDr+9cOeuMyVfMhFqUQXUoI39KGBgDFSLoEOuWHGG/74KB38b9SM
+         vsVLGgAmPj9cIGM5KR22lniN6X7pxX0oyqkVrqU60YhbO6g2vkbdxFtjN1MAuWXB1x2M
+         2P5Jw7RymKjKcjhQVxe1kavuuW/mOXFLOynweSuo92Yy4ZgHzL9ViIgDltEQXeYI/v8H
+         1C+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWn6oVbcCXrRrRXOfbq5S0upqU8hRcMFM+DRmp4WUMAdVqipLJb/1LuFyQshVWkeA8VqdbifAhutBI8Nh3ZZGn8tPX8lmBfQRo0z6Z5
+X-Gm-Message-State: AOJu0Yzf1vMpFe3IOnPgQ4+TKg0sdYWgSK+cxX8deEbhZYIwvlbYjSdD
+	hfeLTGrTnzMU66D2Tj7SsfteBONcPDFJV+wn4dTQy1f6aSGowbuiHS1gFxBaTkQQa6Xj3ABw8ag
+	=
+X-Google-Smtp-Source: AGHT+IHd8uZMVVqVrXXett/XDIhJDIVkHiubbr1GOJhM2Wo5/0aZ2chtQMxmbnYo2VkoQB2+Zf0hzw==
+X-Received: by 2002:a05:6102:33c3:b0:48f:ebb7:3919 with SMTP id ada2fe7eead31-493b06d6f6fmr644943137.7.1721667568591;
+        Mon, 22 Jul 2024 09:59:28 -0700 (PDT)
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com. [209.85.160.174])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a198fbda21sm376445585a.36.2024.07.22.09.59.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jul 2024 09:59:27 -0700 (PDT)
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-44e534a1fbeso768041cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:59:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVEVI1Zz0U6cnxvE8mpUl5cLd6izofTV9M7RAUVVOXTfsi1KvWxZVH+gLP5x9FsYI9o4Lcat8ivxUqQ53Ed9gZVMnAhMweNeU31h32r
+X-Received: by 2002:ac8:5e4e:0:b0:447:d81a:9320 with SMTP id
+ d75a77b69052e-44fa7da9b77mr4941551cf.20.1721667567117; Mon, 22 Jul 2024
+ 09:59:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240722-ens21x-v5-2-cda88dce100e@thegoodpenguin.co.uk>
-References: <20240722-ens21x-v5-0-cda88dce100e@thegoodpenguin.co.uk>
-In-Reply-To: <20240722-ens21x-v5-0-cda88dce100e@thegoodpenguin.co.uk>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>, 
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1721667526; l=11346;
- i=jfelmeden@thegoodpenguin.co.uk; s=20240709; h=from:subject:message-id;
- bh=mqWrU3scnTZMpLJqnWzO2uIY68DKBT3JCJ/LsOnwo4I=;
- b=9fhgYhZk5srgHHdYqPmpe7lBZ2LTul4ndyXcuaXDrR1YULycf6e/X5jb7+5nP3DhQxqNDGlhy
- iVLtk6rMw+QCwfLsIC7WneO24mQ8HsuOp8wTPCMWW+3HNgDWwN0rIiI
-X-Developer-Key: i=jfelmeden@thegoodpenguin.co.uk; a=ed25519;
- pk=tePkZ5iJ3ejQ2O3vjhsj7GrLYcyJN1o1sMT3IEXvKo0=
+References: <20240716133117.483514-1-tejasvipin76@gmail.com>
+ <p7fahem6egnooi5org4lv3gtz2elafylvlnyily7buvzcpv2qh@vssvpfci3lwn>
+ <a05b4e6e-272a-43be-8202-2b81049a41a4@gmail.com> <CAA8EJpoRd3ooMnH8Z38yNH0M-L_CUd+H4WoYydd2AEmpXGeU8Q@mail.gmail.com>
+ <CAD=FV=XDpEfTjTQbO-fZKKwgHCMUmCrb+FBr=3DMzVfs3on9XQ@mail.gmail.com> <758b3f44-5c8f-46b5-8f02-103601eae278@gmail.com>
+In-Reply-To: <758b3f44-5c8f-46b5-8f02-103601eae278@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 22 Jul 2024 09:58:53 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WiRfyteOKwhDm6-bP1yrRWqggDqqPr5=Exw6x9zzPYFg@mail.gmail.com>
+Message-ID: <CAD=FV=WiRfyteOKwhDm6-bP1yrRWqggDqqPr5=Exw6x9zzPYFg@mail.gmail.com>
+Subject: Re: [PATCH] drm/mipi-dsi: Introduce macros to create mipi_dsi_*_multi functions
+To: Tejas Vipin <tejasvipin76@gmail.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support for ENS210/ENS210A/ENS211/ENS212/ENS213A/ENS215.
+Hi,
 
-The ENS21x is a family of temperature and relative humidity sensors with
-accuracies tailored to the needs of specific applications.
+On Fri, Jul 19, 2024 at 10:19=E2=80=AFPM Tejas Vipin <tejasvipin76@gmail.co=
+m> wrote:
+>
+> On 7/19/24 10:29 PM, Doug Anderson wrote:
+> > Hi,
+> >
+> > On Wed, Jul 17, 2024 at 3:07=E2=80=AFAM Dmitry Baryshkov
+> > <dmitry.baryshkov@linaro.org> wrote:
+> >>
+> >>>> However it might be better to go other way arround.
+> >>>> Do we want for all the drivers to migrate to _multi()-kind of API? I=
+f
+> >>>> so, what about renaming the multi and non-multi functions accordingl=
+y
+> >>>> and making the old API a wrapper around the multi() function?
+> >>>>
+> >>>
+> >>> I think this would be good. For the wrapper to make a multi() functio=
+n
+> >>> non-multi, what do you think about a macro that would just pass a
+> >>> default dsi_ctx to the multi() func and return on error? In this case
+> >>> it would also be good to let the code fill inline instead of generati=
+ng
+> >>> a whole new function imo.
+> >>>
+> >>> So in this scenario all the mipi dsi functions would be multi functio=
+ns,
+> >>> and a function could be called non-multi like MACRO_NAME(func) at the
+> >>> call site.
+> >>
+> >> Sounds good to me. I'd suggest to wait for a day or two for further
+> >> feedback / comments from other developers.
+> >
+> > I don't totally hate the idea of going full-multi and just having
+> > macros to wrap anyone who hasn't converted, but I'd be curious how
+> > much driver bloat this will cause for drivers that aren't converted.
+> > Would the compiler do a good job optimizing here? Maybe we don't care
+> > if we just want everyone to switch over? If nothing else, it might
+> > make sense to at least keep both versions for the very generic
+> > functions (mipi_dsi_generic_write_multi and
+> > mipi_dsi_dcs_write_buffer_multi)
+> >
+> > ...oh, but wait. We probably have the non-multi versions wrap the
+> > _multi ones. One of the things about the _multi functions is that they
+> > are also "chatty" and print errors. They're designed for the use case
+> > of a pile of init code where any error is fatal and needs to be
+> > printed. I suspect that somewhere along the way someone will want to
+> > be able to call these functions and not have them print errors...
+> >
+>
+> I think what would be interesting is if we had "chatty" member as a
+> part of mipi_dsi_multi_context as a check for if dev_err should run.
+> That way, we could make any function not chatty. If we did this, is
+> there any reason for a driver to not switch over to using the multi
+> functions?
 
-Signed-off-by: Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>
----
- drivers/iio/humidity/Kconfig  |  11 ++
- drivers/iio/humidity/Makefile |   1 +
- drivers/iio/humidity/ens210.c | 344 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 356 insertions(+)
+I'd be OK with that. My preference would be that "chatty" would be the
+zero-initialized value just to make that slightly more efficient and
+preserve existing behavior. So I guess the member would be something
+like "quiet" and when 0 (false) it wouldn't be quiet.
 
-diff --git a/drivers/iio/humidity/Kconfig b/drivers/iio/humidity/Kconfig
-index b15b7a3b66d5..54f11f000b6f 100644
---- a/drivers/iio/humidity/Kconfig
-+++ b/drivers/iio/humidity/Kconfig
-@@ -25,6 +25,17 @@ config DHT11
- 	  Other sensors should work as well as long as they speak the
- 	  same protocol.
- 
-+config ENS210
-+	tristate "ENS210 temperature and humidity sensor"
-+	depends on I2C
-+	select CRC7
-+	help
-+	  Say yes here to get support for the ScioSense ENS210 family of
-+	  humidity and temperature sensors.
-+
-+	  This driver can also be built as a module. If so, the module will be
-+	  called ens210.
-+
- config HDC100X
- 	tristate "TI HDC100x relative humidity and temperature sensor"
- 	depends on I2C
-diff --git a/drivers/iio/humidity/Makefile b/drivers/iio/humidity/Makefile
-index 5fbeef299f61..34b3dc749466 100644
---- a/drivers/iio/humidity/Makefile
-+++ b/drivers/iio/humidity/Makefile
-@@ -5,6 +5,7 @@
- 
- obj-$(CONFIG_AM2315) += am2315.o
- obj-$(CONFIG_DHT11) += dht11.o
-+obj-$(CONFIG_ENS210) += ens210.o
- obj-$(CONFIG_HDC100X) += hdc100x.o
- obj-$(CONFIG_HDC2010) += hdc2010.o
- obj-$(CONFIG_HDC3020) += hdc3020.o
-diff --git a/drivers/iio/humidity/ens210.c b/drivers/iio/humidity/ens210.c
-new file mode 100644
-index 000000000000..9fe60a9eeef0
---- /dev/null
-+++ b/drivers/iio/humidity/ens210.c
-@@ -0,0 +1,344 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * ens210.c - Support for ScioSense ens210 temperature & humidity sensor family
-+ *
-+ * (7-bit I2C slave address 0x43 ENS210)
-+ * (7-bit I2C slave address 0x43 ENS210A)
-+ * (7-bit I2C slave address 0x44 ENS211)
-+ * (7-bit I2C slave address 0x45 ENS212)
-+ * (7-bit I2C slave address 0x46 ENS213A)
-+ * (7-bit I2C slave address 0x47 ENS215)
-+ *
-+ * Datasheet:
-+ *  https://www.sciosense.com/wp-content/uploads/2024/04/ENS21x-Datasheet.pdf
-+ *  https://www.sciosense.com/wp-content/uploads/2023/12/ENS210-Datasheet.pdf
-+ */
-+
-+#include <linux/crc7.h>
-+#include <linux/delay.h>
-+#include <linux/i2c.h>
-+#include <linux/iio/iio.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/types.h>
-+
-+#include <asm/unaligned.h>
-+
-+/* register definitions */
-+#define ENS210_REG_PART_ID		0x00
-+#define ENS210_REG_DIE_REV		0x02
-+#define ENS210_REG_UID			0x04
-+#define ENS210_REG_SYS_CTRL		0x10
-+#define ENS210_REG_SYS_STAT		0x11
-+#define ENS210_REG_SENS_RUN		0x21
-+#define ENS210_REG_SENS_START		0x22
-+#define ENS210_REG_SENS_STOP		0x23
-+#define ENS210_REG_SENS_STAT		0x24
-+#define ENS210_REG_T_VAL		0x30
-+#define ENS210_REG_H_VAL		0x33
-+
-+/* value definitions */
-+#define ENS210_SENS_START_T_START		BIT(0)
-+#define ENS210_SENS_START_H_START		BIT(1)
-+
-+#define ENS210_SENS_STAT_T_ACTIVE		BIT(0)
-+#define ENS210_SENS_STAT_H_ACTIVE		BIT(1)
-+
-+#define ENS210_SYS_CTRL_LOW_POWER_ENABLE	BIT(0)
-+#define ENS210_SYS_CTRL_SYS_RESET		BIT(7)
-+
-+#define ENS210_SYS_STAT_SYS_ACTIVE		BIT(0)
-+
-+enum ens210_partnumber {
-+	ENS210	= 0x0210,
-+	ENS210A	= 0xa210,
-+	ENS211	= 0x0211,
-+	ENS212	= 0x0212,
-+	ENS213A	= 0xa213,
-+	ENS215	= 0x0215,
-+};
-+
-+/**
-+ * struct ens210_chip_info - Humidity/Temperature chip specific information
-+ * @name:		name of device
-+ * @part_id:		chip identifier
-+ * @conv_time_msec:	time for conversion calculation in m/s
-+ */
-+struct ens210_chip_info {
-+	const char *name;
-+	enum ens210_partnumber part_id;
-+	unsigned int conv_time_msec;
-+};
-+
-+/**
-+ * struct ens210_data - Humidity/Temperature sensor device structure
-+ * @client:	i2c client
-+ * @chip_info:	chip specific information
-+ * @lock:	lock protecting the i2c conversion
-+ */
-+struct ens210_data {
-+	struct i2c_client *client;
-+	const struct ens210_chip_info *chip_info;
-+	struct mutex lock;
-+};
-+
-+/* calculate 17-bit crc7 */
-+static u8 ens210_crc7(u32 val)
-+{
-+	unsigned int val_be = (val & 0x1ffff) >> 0x8;
-+
-+	return crc7_be(0xde, (u8 *)&val_be, 3) >> 1;
-+}
-+
-+static int ens210_get_measurement(struct iio_dev *indio_dev, bool temp, int *val)
-+{
-+	struct ens210_data *data = iio_priv(indio_dev);
-+	struct device *dev = &data->client->dev;
-+	u32 regval;
-+	u8 regval_le[3];
-+	int ret;
-+
-+	/* assert read */
-+	ret = i2c_smbus_write_byte_data(data->client, ENS210_REG_SENS_START,
-+				  temp ? ENS210_SENS_START_T_START :
-+					 ENS210_SENS_START_H_START);
-+	if (ret)
-+		return ret;
-+
-+	/* wait for conversion to be ready */
-+	msleep(data->chip_info->conv_time_msec);
-+
-+	ret = i2c_smbus_read_byte_data(data->client,
-+				       ENS210_REG_SENS_STAT);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* perform read */
-+	ret = i2c_smbus_read_i2c_block_data(
-+		data->client, temp ? ENS210_REG_T_VAL : ENS210_REG_H_VAL, 3,
-+		(u8 *)&regval_le);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to read register");
-+		return -EIO;
-+	} else if (ret != 3) {
-+		dev_err(dev, "expected 3 bytes, received %d\n", ret);
-+		return -EIO;
-+	}
-+
-+	regval = get_unaligned_le24(regval_le);
-+	if (ens210_crc7(regval) != ((regval >> 17) & 0x7f)) {
-+		/* crc fail */
-+		dev_err(dev, "ens invalid crc\n");
-+		return -EIO;
-+	}
-+
-+	if (!((regval >> 16) & 0x1)) {
-+		dev_err(dev, "ens data is not valid");
-+		return -EIO;
-+	}
-+
-+	*val = regval & 0xffff;
-+	return IIO_VAL_INT;
-+}
-+
-+static int ens210_read_raw(struct iio_dev *indio_dev,
-+			   struct iio_chan_spec const *channel, int *val,
-+			   int *val2, long mask)
-+{
-+	struct ens210_data *data = iio_priv(indio_dev);
-+	int ret = -EINVAL;
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_RAW:
-+		scoped_guard(mutex, &data->lock) {
-+			ret = ens210_get_measurement(indio_dev,
-+				channel->type == IIO_TEMP, val);
-+			if (ret)
-+				return ret;
-+			return IIO_VAL_INT;
-+		}
-+		return ret;
-+	case IIO_CHAN_INFO_SCALE:
-+		if (channel->type == IIO_TEMP) {
-+			*val = 15;
-+			*val2 = 625000;
-+		} else {
-+			*val = 1;
-+			*val2 = 953125;
-+		}
-+		return IIO_VAL_INT_PLUS_MICRO;
-+	case IIO_CHAN_INFO_OFFSET:
-+		if (channel->type == IIO_TEMP) {
-+			*val = -17481;
-+			*val2 = 600000;
-+			ret = IIO_VAL_INT_PLUS_MICRO;
-+			break;
-+		}
-+		*val = 0;
-+		return IIO_VAL_INT;
-+	default:
-+		return -EINVAL;
-+	}
-+	unreachable();
-+}
-+
-+static const struct iio_chan_spec ens210_channels[] = {
-+	{
-+		.type = IIO_TEMP,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-+				      BIT(IIO_CHAN_INFO_SCALE) |
-+				      BIT(IIO_CHAN_INFO_OFFSET),
-+	},
-+	{
-+		.type = IIO_HUMIDITYRELATIVE,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-+				      BIT(IIO_CHAN_INFO_SCALE) |
-+				      BIT(IIO_CHAN_INFO_OFFSET),
-+	}
-+};
-+
-+static const struct iio_info ens210_info = {
-+	.read_raw = ens210_read_raw,
-+};
-+
-+static int ens210_probe(struct i2c_client *client)
-+{
-+	struct ens210_data *data;
-+	struct iio_dev *indio_dev;
-+	uint16_t part_id;
-+	int ret;
-+
-+	if (!i2c_check_functionality(client->adapter,
-+			I2C_FUNC_SMBUS_WRITE_BYTE_DATA |
-+			I2C_FUNC_SMBUS_WRITE_BYTE |
-+			I2C_FUNC_SMBUS_READ_I2C_BLOCK)) {
-+		return dev_err_probe(&client->dev, -EOPNOTSUPP,
-+			"adapter does not support some i2c transactions\n");
-+	}
-+
-+	indio_dev = devm_iio_device_alloc(&client->dev, sizeof(*data));
-+	if (!indio_dev)
-+		return -ENOMEM;
-+
-+	data = iio_priv(indio_dev);
-+	data->client = client;
-+	mutex_init(&data->lock);
-+	data->chip_info = i2c_get_match_data(client);
-+
-+	ret = devm_regulator_get_enable(&client->dev, "vdd");
-+	if (ret)
-+		return ret;
-+
-+	/* reset device */
-+	ret = i2c_smbus_write_byte_data(client, ENS210_REG_SYS_CTRL,
-+					ENS210_SYS_CTRL_SYS_RESET);
-+	if (ret)
-+		return ret;
-+
-+	/* wait for device to become active */
-+	usleep_range(4000, 5000);
-+
-+	/* disable low power mode */
-+	ret = i2c_smbus_write_byte_data(client, ENS210_REG_SYS_CTRL, 0x00);
-+	if (ret)
-+		return ret;
-+
-+	/* wait for device to finish */
-+	usleep_range(4000, 5000);
-+
-+	/* get part_id */
-+	part_id = i2c_smbus_read_word_data(client, ENS210_REG_PART_ID);
-+
-+	if (part_id != data->chip_info->part_id) {
-+		dev_info(&client->dev,
-+			"Part ID does not match (0x%04x != 0x%04x)\n", part_id,
-+			data->chip_info->part_id);
-+	}
-+
-+	/* reenable low power */
-+	ret = i2c_smbus_write_byte_data(client, ENS210_REG_SYS_CTRL,
-+					ENS210_SYS_CTRL_LOW_POWER_ENABLE);
-+	if (ret)
-+		return ret;
-+
-+	indio_dev->name = data->chip_info->name;
-+	indio_dev->modes = INDIO_DIRECT_MODE;
-+	indio_dev->channels = ens210_channels;
-+	indio_dev->num_channels = ARRAY_SIZE(ens210_channels);
-+	indio_dev->info = &ens210_info;
-+
-+	return devm_iio_device_register(&client->dev, indio_dev);
-+}
-+
-+static const struct ens210_chip_info ens210_chip_info_data = {
-+	.name = "ens210",
-+	.part_id = ENS210,
-+	.conv_time_msec = 130,
-+};
-+
-+static const struct ens210_chip_info ens210a_chip_info_data = {
-+	.name = "ens210a",
-+	.part_id = ENS210A,
-+	.conv_time_msec = 130,
-+};
-+
-+static const struct ens210_chip_info ens211_chip_info_data = {
-+	.name = "ens211",
-+	.part_id = ENS211,
-+	.conv_time_msec = 32,
-+};
-+
-+static const struct ens210_chip_info ens212_chip_info_data = {
-+	.name = "ens212",
-+	.part_id = ENS212,
-+	.conv_time_msec = 32,
-+};
-+
-+static const struct ens210_chip_info ens213a_chip_info_data = {
-+	.name = "ens213a",
-+	.part_id = ENS213A,
-+	.conv_time_msec = 130,
-+};
-+
-+static const struct ens210_chip_info ens215_chip_info_data = {
-+	.name = "ens215",
-+	.part_id = ENS215,
-+	.conv_time_msec = 130,
-+};
-+
-+static const struct of_device_id ens210_of_match[] = {
-+	{ .compatible = "sciosense,ens210", .data = &ens210_chip_info_data},
-+	{ .compatible = "sciosense,ens210a", .data = &ens210a_chip_info_data },
-+	{ .compatible = "sciosense,ens211", .data = &ens211_chip_info_data},
-+	{ .compatible = "sciosense,ens212", .data = &ens212_chip_info_data},
-+	{ .compatible = "sciosense,ens213a", .data = &ens213a_chip_info_data },
-+	{ .compatible = "sciosense,ens215", .data = &ens215_chip_info_data },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, ens210_of_match);
-+
-+static const struct i2c_device_id ens210_id_table[] = {
-+	{ "ens210", (kernel_ulong_t)&ens210_chip_info_data },
-+	{ "ens210a", (kernel_ulong_t)&ens210a_chip_info_data },
-+	{ "ens211", (kernel_ulong_t)&ens211_chip_info_data },
-+	{ "ens212", (kernel_ulong_t)&ens212_chip_info_data },
-+	{ "ens213a", (kernel_ulong_t)&ens213a_chip_info_data },
-+	{ "ens215", (kernel_ulong_t)&ens215_chip_info_data },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(i2c, ens210_id_table);
-+
-+static struct i2c_driver ens210_driver = {
-+	.probe = ens210_probe,
-+	.id_table = ens210_id_table,
-+	.driver = {
-+		.name = "ens210",
-+		.of_match_table = ens210_of_match,
-+	},
-+};
-+
-+module_i2c_driver(ens210_driver);
-+
-+MODULE_DESCRIPTION("ScioSense ENS210 temperature and humidity sensor driver");
-+MODULE_AUTHOR("Joshua Felmeden <jfelmeden@thegoodpenguin.co.uk>");
-+MODULE_LICENSE("GPL");
 
--- 
-2.39.2
+> > Maybe going with Dmitry's suggested syntax is the best option here?
+> > Depending on how others feel, we could potentially even get rid of the
+> > special error message and just stringify the function name for the
+> > error message?
+> >
+> The problem with any macro solution that defines new multi functions is
+> that it creates a lot of bloat. Defining the function through macros
+> might be smaller than defining them manually, but there are still twice
+> as many function declarations as there would be if we went all multi.
+> The generated code is still just as big as if we manually defined
+> everything. I think a macro that defines functions should be more of a
+> last resort if we don't have any other options.
 
+Ah, somehow I was thinking that Dmitry's solution was conflated with
+switching back to a macro. I haven't prototyped it, but I thought
+Dmitry's primary complaint was that the syntax for declaring the
+"_multi" function was a bit dodgy and I'd expect that using a macro
+would solve that.
+
+In any case, I'm good with keeping away from macros / bloating things.
+
+-Doug
 
