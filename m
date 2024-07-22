@@ -1,178 +1,195 @@
-Return-Path: <linux-kernel+bounces-258875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB9B8938D91
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:35:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5522C938D94
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:37:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAC081C2135A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:35:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D65951F21AA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0897F16C6A4;
-	Mon, 22 Jul 2024 10:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9144F16C437;
+	Mon, 22 Jul 2024 10:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Mj9aKqcX"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="U/k1L1Qd";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Kwq5GoYW"
+Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A793234;
-	Mon, 22 Jul 2024 10:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6450C23DE;
+	Mon, 22 Jul 2024 10:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721644520; cv=none; b=o97P44KH6C6SZurb1AL9BoPlWgTnf4rQGzhXFzlDwvfZf/oUCqnzb9ghc5dlR7r/2/ZY15DatvrwSiXmiSehz0Qn5O5GDeRHmCsPKsNx374sGN/f/KIcKJe2drcX4dftIdnGl97ox+hEzEYBLCqtCNujEdVeGt7yhvUz+L+j9ZE=
+	t=1721644621; cv=none; b=Zxf4KG+ulmR+mmHumiig5Z/hesjpwdfiwbwOnamohZpZEJi+Zia/jSkck2oFzfDWCzd0LelUfFP7HaD9riR/XiSPGA29AJyKwkMu9MSuHyqlOf65ouWLXC9QoEl6dYyUCmfuWxNKLGpTwiVddu2ZG8WfnFm65euuIdEkBDyspC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721644520; c=relaxed/simple;
-	bh=D7hVRLYfxkch1U1mtSpiAIE5Iff35/q9e/U0R4Lh5oA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KUFm2faypuZH47oSQb1maNzwxfXAkkWynJGPDt1I/aBTsVsehs8H3aOiiy6NRSneSnosz+Sx8oq0+zXyOdAih0rVAEpSuQb1ScLHI0cz23erKnwm5A+f+kqoQCr9QByyARzO2oRZXGFwPPuIhKJuitOSx0/h5RqmgnsVPks1o0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Mj9aKqcX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46M0Drod012212;
-	Mon, 22 Jul 2024 10:35:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4Zj27V7JTwoD0SUx9EXR9+qKQSy89DA4nYKIcLU0tdI=; b=Mj9aKqcX5g4cx4Ji
-	B93jWhPgqKKhWo9r/82mx7HzBxwEo2Xic8QG7jDvvdWhahzaINZw8gDUGZXVUet7
-	FohqkDqb1NZZOnm3Kuz+uVEmpA+W4BaRTtYqfadc5rW1U1KYdKY1QYoTmg9zrPKq
-	/xbDzsHSGUYACDE8VXBbwS1QDVSb+r/xUXyTC0PpNn5dY3MVJkkFvBfvYrW61RXx
-	W9J5nPAic+iaEad1/iJTEFnpIHCHFni0B6tE6tO6XiumsWLviFBXSYfcyVeIXhVp
-	TACU4knATFEvqvbxmZVwUHxzoOfsC20iKWrXC44o/esf4eQLOMyHICihqkUlOOgP
-	tKpK7g==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g5m6uebc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jul 2024 10:35:01 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46MAYxZg018256
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jul 2024 10:34:59 GMT
-Received: from [10.239.133.49] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 22 Jul
- 2024 03:34:56 -0700
-Message-ID: <bbfb3ab2-1b59-4e84-bdff-a150b0393378@quicinc.com>
-Date: Mon, 22 Jul 2024 18:34:53 +0800
+	s=arc-20240116; t=1721644621; c=relaxed/simple;
+	bh=gIqQeeHccS1JosV/coIo4u8V0NEzZt0pXYow2gpkKZg=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=e/hSA41IwzUC48vxBffn4Es4HC0zB6L106KlkEq+EIMGutTOeCHvVnAePdCe1HquxkG/1+u2piP5ZzzM83CI4soBATqZg0HOWw+Qg+e1olpVDYJD/0m8LDKbfrNHENTeCOxD/UaKEdDH08Mkz8LpLbysiKJTdTzIEJ3zUPV/PiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=U/k1L1Qd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Kwq5GoYW; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 2FDB8138011A;
+	Mon, 22 Jul 2024 06:36:58 -0400 (EDT)
+Received: from wimap26 ([10.202.2.86])
+  by compute5.internal (MEProxy); Mon, 22 Jul 2024 06:36:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1721644618;
+	 x=1721731018; bh=gIqQeeHccS1JosV/coIo4u8V0NEzZt0pXYow2gpkKZg=; b=
+	U/k1L1QdNSuFOpsZKM8Rx2go25mrb6hC56G5s0KaJdYePMuRi03fg57zGN+AEU39
+	j4Fu+R7FrHbk6/6MTvb1RV5Bei/kWtjsHmfXTerciLC0bbL1PYpmlNCU8dM07URZ
+	yH9Q5duuLFZ00Ry3cyecTy+GIFwgCvYC1L7VFPr30rmD5E73tsDaIQ/TYwTO74HY
+	d7NpSNvVyK4H7Hug1tuft+3E1O/SqScGG33ETjqvaCSei6C2kn0Ta9pM2UMsQ0JV
+	qofT7agkD71sNdDHrP3/G/x6AY2MGGa+9HVTnsBQQdVVYdMhhmByLZGPExsMDZJR
+	KBYpqowGQ1j7C5uZbCNdyg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1721644618; x=
+	1721731018; bh=gIqQeeHccS1JosV/coIo4u8V0NEzZt0pXYow2gpkKZg=; b=K
+	wq5GoYWV9HrxJAOyBYBhiSFiadKGp9X1ltD7wEwsL6VEeCFIKSJzJA850z9Fktr/
+	/ByOg8yGYEqp37TdF2KQxXVrRHn2pp+jZ98YfpEMmCCVeSVrfHAQO0Ji2ggcmUd2
+	QIj/9AeGkaNrSH0j61IZwuqK0kqz7Tj1PZMktgCTXTzn9ZB/ajndk042q8OXA+5R
+	a95rVJ8q+ixaeVZ2X1GwIQPgMSKC8m+0GhNjXOW8P/MtAuxk2PYkfhLacryaFtis
+	FJOlM3i7V31lMIXWGzELr7PzXQC/WWv2Uz1q61LsaYeXP1C3ze/4y4yjo0EjkmDY
+	4Nss46t2Ui0a8HYYqZFpA==
+X-ME-Sender: <xms:STaeZtSUK5WvzRFP1IQ-b0a1mmctUGcyZHLZKDTd1416W996LYpP9g>
+    <xme:STaeZmzyqv4I2f_g9qSzNixj1YrycfyThtHe4EA6YkFn_Rhy-EqAc0lzqlHyKJFWT
+    3uaDhYUKJAcAdhSe60>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrheejgdeftdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgfgsehtqhertderreejnecuhfhrohhmpedflfhi
+    rgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
+    eqnecuggftrfgrthhtvghrnhephffhjefhhfetledvieehtdeghefgleegkefffedvffek
+    ffeuueeikefgjeelteeknecuffhomhgrihhnpegrmhgriihonhgrfihsrdgtohhmnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhn
+    rdihrghnghesfhhlhihgohgrthdrtghomh
+X-ME-Proxy: <xmx:STaeZi2Yhh-SNwam89Csat_e7ZXZeQoSpW6BQw5i3u4AkU0L7_GxSQ>
+    <xmx:STaeZlClZu1fDuBdy3uYqpiLl9mD1frfO9NfqAjorsN0tqPtR6ziMQ>
+    <xmx:STaeZmgHPk8fCRsBHiTIyvNyw8aPoTFAkvqXSxFPLTBPUvEm-XFbRg>
+    <xmx:STaeZpoz1_z14GX_Cya8uBYd-B1BBXaTYtUc3mtJvzju3EOHd7zB1w>
+    <xmx:SjaeZvXlbxo-DOB-GqfLSGuudCH8E5UIKfaLdwd-jSbi89qMnzNd0wV->
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 752B019C0069; Mon, 22 Jul 2024 06:36:57 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] coresight: Add preferred trace id support
-To: Mike Leach <mike.leach@linaro.org>
-CC: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        James Clark
-	<james.clark@arm.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>,
-        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>,
-        "Tingwei
- Zhang" <quic_tingweiz@quicinc.com>,
-        Yuanfang Zhang
-	<quic_yuanfang@quicinc.com>,
-        Tao Zhang <quic_taozha@quicinc.com>,
-        songchai
-	<quic_songchai@quicinc.com>
-References: <20240626060724.28862-1-quic_jinlmao@quicinc.com>
- <CAJ9a7VhG4qNLnT87J7OiXpygbtMRZ8uAvNhZhcRCBxovMEPDEg@mail.gmail.com>
-Content-Language: en-US
-From: Jinlong Mao <quic_jinlmao@quicinc.com>
-In-Reply-To: <CAJ9a7VhG4qNLnT87J7OiXpygbtMRZ8uAvNhZhcRCBxovMEPDEg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: PvBxoxGpQ_XelUOUq5HNNU0_df6cCoP2
-X-Proofpoint-ORIG-GUID: PvBxoxGpQ_XelUOUq5HNNU0_df6cCoP2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-22_06,2024-07-18_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- mlxlogscore=999 adultscore=0 bulkscore=0 mlxscore=0 spamscore=0
- priorityscore=1501 lowpriorityscore=0 clxscore=1011 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407220081
+Message-Id: <1811a5de-1a7f-46a9-b8ad-a76ec51f3a23@app.fastmail.com>
+In-Reply-To: <87h6chk9xo.fsf@BLaptop.bootlin.com>
+References: <20240719-smp_i6500-v1-1-8738e67d4802@bootlin.com>
+ <302ca8fb-0185-4872-9d82-d472854e5a43@app.fastmail.com>
+ <6cbe8375-c11d-4fbf-8e4f-b15828ac3480@app.fastmail.com>
+ <87jzhdkask.fsf@BLaptop.bootlin.com> <87h6chk9xo.fsf@BLaptop.bootlin.com>
+Date: Mon, 22 Jul 2024 18:36:37 +0800
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Gregory CLEMENT" <gregory.clement@bootlin.com>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "paulburton@kernel.org" <paulburton@kernel.org>
+Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ "Tawfik Bayouk" <tawfik.bayouk@mobileye.com>,
+ "Thomas Petazzoni" <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH] MIPS: SMP-CPS: Fix address for GCR_ACCESS register for I6500
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
 
-On 2024/7/18 23:57, Mike Leach wrote:
-> Hi,
-> 
-> I have detailed comments in the following patches but in summary we should:
-> 1) consistently use the term "static trace id" for these devices where
-> the hardware sets a non-programmable trace ID
-> 2) Simplify the patch set by introducing a new API function
-> int coresight_trace_id_get_system_static_id(int trace_id)
-> This would avoid having to change drivers which use the existing
-> function where no static ID is required.
-> 
+=E5=9C=A82024=E5=B9=B47=E6=9C=8822=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=E5=
+=8D=886:17=EF=BC=8CGregory CLEMENT=E5=86=99=E9=81=93=EF=BC=9A
+> Gregory CLEMENT <gregory.clement@bootlin.com> writes:
+>
+>> Hello Jiaxun,
+>>
+>>> =E5=9C=A82024=E5=B9=B47=E6=9C=8820=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=
+=8A=E5=8D=8811:13=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
+>>>> =E5=9C=A82024=E5=B9=B47=E6=9C=8819=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=
+=8B=E5=8D=8810:14=EF=BC=8CGregory CLEMENT=E5=86=99=E9=81=93=EF=BC=9A
+>>>>> Unlike most other MIPS CPUs, the I6500 CPUs have different address
+>>>>> offsets for the Global CSR Access Privilege register. In the "MIPS=
+64
+>>>>> I6500 Multiprocessing System Programmer's Guide," it is stated that
+>>>>> "the Global CSR Access Privilege register is located at offset 0x0=
+120"
+>>>>> in section 5.4.
+>>>>>
+>>>>> However, this is not the case for other MIPS64 CPUs such as the
+>>>>> P6600. In the "MIPS64=C2=AE P6600 Multiprocessing System Software =
+User's
+>>>>> Guide," section 6.4.2.6 states that the GCR_ACCESS register has an
+>>>>> offset of 0x0020.
+>>>>
+>>>> Hi Gregory,
+>>>>
+>>>> I confirmed this is a CM3 feature rather than CPU core (Samruai) fe=
+ature.
+>>>
+>>> Oh I=E2=80=99m not really sure if it=E2=80=99s CM 3.5 only.
+>>>
+>>> Let me check this Monday once I can checkout old design database for
+>>> I6400.
+>>
+>> Ok, so I am waiting for your feedback :)
+>> And I am also trying to see if I can find the datasheet for I6400.
+>>>
+>>> Hardware resets GCR_ACCESS to the most permissive value so I assume
+>>> it=E2=80=99s your bootloader doing wired hacks.
+>
+> I found an I6400 datasheet [1] and in the "5.4 CM Register Access
+> Permissions" paragraph, it is written "the Global CSR Access Privilege
+> register located at offset 0x0120". So it has the same offset as the
+> I6500.
 
-Thanks for the comments, Mike.
-I will address your comments in next version.
+Yes, I hand confirmed this modification was made to CM block at transiti=
+on
+from CM2.5 to CM3.
+
+Other unannounced CM3 products (Daiymo, King for people knowing codename=
+s)
+have this change as well.
+
+So for this modification, you can safely do:
+mips_cm_revision() >=3D CM_REV_CM3
+
+And perhaps name this GCR after access_cm3.
 
 Thanks
-Jinlong Mao
+- Jiaxun
 
-> Regards
-> 
-> Mike
-> 
-> 
-> On Wed, 26 Jun 2024 at 07:07, Mao Jinlong <quic_jinlmao@quicinc.com> wrote:
+>
+> Gregory
+>
+> [1]:=20
+> https://s3-eu-west-1.amazonaws.com/downloads-mips/documents/MIPS_Warri=
+or_I6400_ProgrammerGuide_MD01196_P_1.00.pdf
+>
 >>
->> Some HW has static trace id which cannot be changed via
->> software programming. For this case, configure the trace id
->> in device tree with "arm,trace-id = <xxx>", and
->> call coresight_trace_id_get_system_id with the trace id value
->> in device probe function. The id will be reserved for the HW
->> all the time if the device is probed.
+>> Indeed, other bootloaders seem to not modify it, so that's why I think
+>> the issue was never detected until now. However, we want to be as
+>> independent as possible from the bootloader, so we really need to fix
+>> it.
 >>
->> Changes since V2:
->> 1. Change "trace-id" to "arm,trace-id".
->> 2. Add trace id flag for getting preferred id or ODD id.
+>> Thanks for your review!
 >>
->> Changes since V1:
->> 1. Add argument to coresight_trace_id_get_system_id for preferred id
->> instead of adding new function coresight_trace_id_reserve_system_id.
->> 2. Add constraint to trace-id in dt-binding file.
+>> Gregory
 >>
->> Mao Jinlong (3):
->>    dt-bindings: arm: Add arm,trace-id for coresight dummy source
->>    coresight: Add support to get preferred id for system trace sources
->>    coresight: dummy: Add reserve atid support for dummy source
->>
->>   .../sysfs-bus-coresight-devices-dummy-source  | 15 +++++
->>   .../arm/arm,coresight-dummy-source.yaml       |  6 ++
->>   drivers/hwtracing/coresight/coresight-dummy.c | 59 +++++++++++++++++--
->>   .../hwtracing/coresight/coresight-platform.c  | 25 ++++++++
->>   drivers/hwtracing/coresight/coresight-stm.c   |  2 +-
->>   drivers/hwtracing/coresight/coresight-tpda.c  |  2 +-
->>   .../hwtracing/coresight/coresight-trace-id.c  | 35 +++++++----
->>   .../hwtracing/coresight/coresight-trace-id.h  | 11 +++-
->>   include/linux/coresight.h                     |  1 +
->>   9 files changed, 137 insertions(+), 19 deletions(-)
->>   create mode 100644 Documentation/ABI/testing/sysfs-bus-coresight-devices-dummy-source
->>
->> --
->> 2.41.0
->>
-> 
-> 
-> --
-> Mike Leach
-> Principal Engineer, ARM Ltd.
-> Manchester Design Centre. UK
+
+--=20
+- Jiaxun
 
