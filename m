@@ -1,317 +1,160 @@
-Return-Path: <linux-kernel+bounces-259370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 345559394EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:46:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBD279394EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5832E1C21829
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:46:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72795283A93
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:46:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1042B3770C;
-	Mon, 22 Jul 2024 20:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7538A28DCB;
+	Mon, 22 Jul 2024 20:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mipt1dWg"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OkDZOqkI"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D891CFB6
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 20:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552DE3C6BA
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 20:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721681182; cv=none; b=l/pwgpXLqT7O2/6KmMpGi6ZdvEG4h0AooTZlM840zhWIzSqriHA00QdB3+ATn6KIAHQDXtfkevRuemCdGfT+0MMxx94nTOUmSBxJCEG3Q4zXPb4XgvGyAD8aN/XHFsZofFm2x/04ZlBNrD/86U2Vagb3INsruh/ml/XP7PSCiZY=
+	t=1721681195; cv=none; b=kTSDh6OU0ZECAh/S+k/9IWCAuD+yGXgMDOYl0sLUb/Uixsq/HlKy8+UmBdbhP78oIhIQGSEygFzcHXf3kKWiIDd3DxeJivJeDFZCTMmblV2koZLhRjK0omUCo96tOS7IpXl/FvplkIiLCKyYQL+K+q3FZqEaMeWVX62IU1DZSTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721681182; c=relaxed/simple;
-	bh=/+51pdv1BE32TzIpcUMnL9pAgL9LPgsuHGxWK97F+fc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hksj43qKCXMvZK1u83OovsyUWfd7F7wwOzUev08Y/atLHlTqJqhBg6m+iF6XbwGsu93szq9893+mG6sybP+p7UuKM9/f2s0eGPFxibU4OEjzDfe1WpD4AOAxQbkYAl8xX+W5iVVjJOlCpmbZ14lELNyHQHscSl9iTErFThK43KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mipt1dWg; arc=none smtp.client-ip=209.85.160.169
+	s=arc-20240116; t=1721681195; c=relaxed/simple;
+	bh=0p/5ngv6XCO83taddH9u5RDAVRbGDvsU173BdbpNyWA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ZmWa13vZ6bQxa2C8p6xji7HGYglJ8uC+mhL6nwhIbwI+jZdm/Thmpk6j/8BdzR/WfvsSwuHPLeEUgaUuu6iyBLSVGyCkXNyhiKhc2vhuchmiQkq4yMPSii+8z2B0ymmghglTw6SisGLEMyGWtQuN5QlvPZhl+1B1rs7u8kK5VgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--peternewman.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OkDZOqkI; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-447f8aa87bfso96191cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 13:46:20 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--peternewman.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-70d1339c4c2so2433480b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 13:46:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721681179; x=1722285979; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+dA2de0TPq97lZ7zf2Lryp0hLTOjDnt1RCWONOWWc3s=;
-        b=mipt1dWgZfWrNQDxhgM9jVHcf7EbILz77PEA2sKExKa5TpEkJ9DZlajP13GlQs2sCN
-         pKQ/YcEXOMz5NH6vc2RcJZ91p0RmeZVzd8oV08fQYKEaDscVMzRIHURa4UXBqLZF+qD4
-         YQmasl/1cM5/hMq3vm6af6XbhrpBavWJxqiKtIQxqf1dGcahY+zk4/+xj06F0hGcsude
-         dxs9PYV9AMc1LLW2Po0MD0no4OA8rwN7QbFgr5hV6pkO5Sm9P8kANYz+E76w1NHkSEMN
-         eIIQD3ugV0uQf1r3PTDpqjUpQXUg/gWaylrRTfuWmdRUHttj69u12CstVMnjpecSpYSw
-         IPDw==
+        d=google.com; s=20230601; t=1721681193; x=1722285993; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=pdb7JuYkQVZLHjYJy7/Pp9N8EudoQcGMvd3VIzYqq/g=;
+        b=OkDZOqkIFUne/8ubqTSfh6qioCqvzrgibeBZKBBD04JosDNUh4/7ecRHwVoUOtUsyP
+         7z6SRnZf41X3luM5wQVJ3d9e+uLdBszj/0+6FrW+82EtUNIStoSFxvoxxRZ6j4TrN82N
+         VbzI8LTLG0sDJnZiBww9YiYKUV2yDlG856XkGhWYLx4I/yyTIZy1zPVvQNncufsYsgvu
+         F7LzK5IbDGS408CGNQZYJMobwvTy/MSqN6bh01NZg1YDhSQh4mOnLNo/Vv3vziOmEkLS
+         wnU96rxF7pV4mfAiRfbwTmx1ITVHpARz1mj/lSB71HdVxNv09TZKj+0Xr9Ke0QtbBzWQ
+         AY4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721681179; x=1722285979;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+dA2de0TPq97lZ7zf2Lryp0hLTOjDnt1RCWONOWWc3s=;
-        b=Bpwxzun3kkgWt/jBMk6Qd0bvm/VWjb3H1MDsAHVlwvaMbv5BmRW9HStl4H4e7eUsko
-         r7HrU+MFLoWYiQSBjQULeUcoZswSpkFsyT66BWJgnAlx+mrL4cAOedddQuIJOZvBo46B
-         FhZQW+YZFR9MeVvw0Ppt3fEhhVh3c2NFeH5xS+oqsbxSmgtXN0atvrXifwtScvPyBs1n
-         8pjk6DQtQGk5Pa9yEF1pCJ4U+Hu+P+Fv2JeegFhg+t/pBC/0V/K3EFuD9K/xT4PatvBh
-         3W1QJ6RJP8x+xVnhPT0b/XitwELupGEkteHXRDmOWTFJfzdvr+PZurpR5cnT1Yc/qFoa
-         +C5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWn3bTCGZVd2F7/zftULPS3XSLRY/KCd5cWVnRA8LN3Tij79A7MQ8oYwlzaK+qw2jHXfr0NxXym9ue0QqIfB5haOTN1l0XK9MF1qxgj
-X-Gm-Message-State: AOJu0YwmUKC7i4OGbO1PzYOR7PaoRDRqJSJOxUqcxEYXDdUfccVOlcV7
-	R9ds/gzMsuq27VEZms/U6j0PESJj8tWMDFE+I1zxHMzokE3OiyJ7sBQIv1XdNc4LxusAxOAOy/j
-	nld3BZFpDDbg+3LksuUIl6J/CZD1toiHKjmM3
-X-Google-Smtp-Source: AGHT+IHmG6svEkQAUKQGLl75jQoJQoNjqUrFjS34eF1iJLFIfux81mHYuigDqfh57v63/vRcBxBh34E0nXtZyYS1jfA=
-X-Received: by 2002:ac8:5e4e:0:b0:447:d81a:9320 with SMTP id
- d75a77b69052e-44fa7da9b77mr5801921cf.20.1721681179016; Mon, 22 Jul 2024
- 13:46:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721681193; x=1722285993;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pdb7JuYkQVZLHjYJy7/Pp9N8EudoQcGMvd3VIzYqq/g=;
+        b=tiOrITfd4xDKw0YfC+gXth0qTclPCTJeVjshfBNUAaizsDxw66e3QpPWh2Cn8tYZBy
+         ugRW9xgBkskon0+CWVvxGcBsVpafK55iFu1byHyvN8GEoha2SWPsNfH4OLy93UL7relM
+         5ZvfF42I6Q7zY4rMJs2rAZToixJON5i7YGk+tlj69hKOAsCIXZhBQiSIkq2Qg/6tHLYE
+         MqtPu3OFtjdZO7zq98xJNTTeD9/HvfBW2MiKVvMv55Vuz7jf1Lvtmo4AgiDulrJK4tUH
+         5VnvkjTGNdcZ96AdRNJiR10l7/eqhbSJmpiTaIetLSBUsiBNdrh95FprT8GdNqvfoOs3
+         qJqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXchI5YyMLMfIBqW2XxKEa5P8Rr/DmLUVJZihOpkB1oxhbjw5+rCYqFRhvnB7gl5zHABViQfBX7G4Sdct/bwL2oS+XjALbSGFWjh8M
+X-Gm-Message-State: AOJu0Yy2XudQE9dR3EdhkxFBSUocASMIwwsnsBOmnxliZiHpCzmY50pO
+	N+B1winDcnBjhJA4+TJh2t7N77ZdlztaEA5/lc56Fx6imNVDhd+eMH8WAd8NMdlOIZjf2UJNw1i
+	0gXx6EfgeVA31q7TbIHpeow==
+X-Google-Smtp-Source: AGHT+IFA3bkszRtIYCKKkuY8p4m3ZyHzNIjtlpAXdTSumNCIxUFKb6bkDapHkQMNVHfqi9J4ZqWZ/Iw4e7YrdojCBw==
+X-Received: from peternewman-us.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:3dcc])
+ (user=peternewman job=sendgmr) by 2002:a05:6a00:4f8d:b0:705:27de:74e7 with
+ SMTP id d2e1a72fcca58-70d3a8520b1mr64042b3a.1.1721681193245; Mon, 22 Jul 2024
+ 13:46:33 -0700 (PDT)
+Date: Mon, 22 Jul 2024 13:46:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240611002145.2078921-1-jthoughton@google.com>
- <20240611002145.2078921-9-jthoughton@google.com> <CAOUHufb2f_EwHY5LQ59k7Nh7aS1-ZbOKtkoysb8BtxRNRFMypQ@mail.gmail.com>
- <CADrL8HUJaG=O+jBVvXGVjJOriev9vxkZ6n27ekc5Pxv5D+fbcg@mail.gmail.com> <CAOUHufZ2Vd+Ea5vka20+SCVB446LZEA0mWy=RScN=7AChd869w@mail.gmail.com>
-In-Reply-To: <CAOUHufZ2Vd+Ea5vka20+SCVB446LZEA0mWy=RScN=7AChd869w@mail.gmail.com>
-From: James Houghton <jthoughton@google.com>
-Date: Mon, 22 Jul 2024 13:45:42 -0700
-Message-ID: <CADrL8HVRSyS8ZADRTvHZ-QDKBRv1SFvVyJKkr-CW2mzpNjW5Zw@mail.gmail.com>
-Subject: Re: [PATCH v5 8/9] mm: multi-gen LRU: Have secondary MMUs participate
- in aging
-To: Yu Zhao <yuzhao@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Ankit Agrawal <ankita@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, David Matlack <dmatlack@google.com>, 
-	David Rientjes <rientjes@google.com>, James Morse <james.morse@arm.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Raghavendra Rao Ananta <rananta@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Sean Christopherson <seanjc@google.com>, Shaoqin Huang <shahuang@redhat.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>, 
-	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev, 
-	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.1089.g2a221341d9-goog
+Message-ID: <20240722204611.3549213-1-peternewman@google.com>
+Subject: [PATCH] x86/resctrl: Fix arch_mbm_* array overrun on SNC
+From: Peter Newman <peternewman@google.com>
+To: Fenghua Yu <fenghua.yu@intel.com>, Reinette Chatre <reinette.chatre@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H . Peter Anvin" <hpa@zytor.com>, Shaopeng Tan <tan.shaopeng@fujitsu.com>, 
+	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, 
+	Peter Newman <peternewman@google.com>, Tony Luck <tony.luck@intel.com>, 
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>, linux-kernel@vger.kernel.org, 
+	eranian@google.com, irogers@google.com, namhyung@google.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 8, 2024 at 4:42=E2=80=AFPM Yu Zhao <yuzhao@google.com> wrote:
->
-> On Mon, Jul 8, 2024 at 11:31=E2=80=AFAM James Houghton <jthoughton@google=
-.com> wrote:
-> >
-> > On Fri, Jul 5, 2024 at 11:36=E2=80=AFAM Yu Zhao <yuzhao@google.com> wro=
-te:
-> > >
-> > > On Mon, Jun 10, 2024 at 6:22=E2=80=AFPM James Houghton <jthoughton@go=
-ogle.com> wrote:
-> > > > @@ -3389,8 +3450,9 @@ static bool walk_pte_range(pmd_t *pmd, unsign=
-ed long start, unsigned long end,
-> > > >                 if (!folio)
-> > > >                         continue;
-> > > >
-> > > > -               if (!ptep_test_and_clear_young(args->vma, addr, pte=
- + i))
-> > > > -                       VM_WARN_ON_ONCE(true);
-> > > > +               lru_gen_notifier_clear_young(mm, addr, addr + PAGE_=
-SIZE);
-> > > > +               if (pte_young(ptent))
-> > > > +                       ptep_test_and_clear_young(args->vma, addr, =
-pte + i);
-> > > >
-> > > >                 young++;
-> > > >                 walk->mm_stats[MM_LEAF_YOUNG]++;
-> > >
-> > >
-> > > There are two ways to structure the test conditions in walk_pte_range=
-():
-> > > 1. a single pass into the MMU notifier (combine test/clear) which
-> > > causes a cache miss from get_pfn_page() if the page is NOT young.
-> > > 2. two passes into the MMU notifier (separate test/clear) if the page
-> > > is young, which does NOT cause a cache miss if the page is NOT young.
-> > >
-> > > v2 can batch up to 64 PTEs, i.e., it only goes into the MMU notifier
-> > > twice every 64 PTEs, and therefore the second option is a clear win.
-> > >
-> > > But you are doing twice per PTE. So what's the rationale behind going
-> > > with the second option? Was the first option considered?
-> >
-> > Hi Yu,
-> >
-> > I didn't consider changing this from your v2[1]. Thanks for bringing it=
- up.
-> >
-> > The only real change I have made is that I reordered the
-> > (!test_spte_young() && !pte_young()) to what it is now (!pte_young()
-> > && !lru_gen_notifier_test_young()) because pte_young() can be
-> > evaluated much faster.
-> >
-> > I am happy to change the initial test_young() notifier to a
-> > clear_young() (and drop the later clear_young(). In fact, I think I
-> > should. Making the condition (!pte_young() &&
-> > !lru_gen_notifier_clear_young()) makes sense to me. This returns the
-> > same result as if it were !lru_gen_notifier_test_young() instead,
-> > there is no need for a second clear_young(), and we don't call
-> > get_pfn_folio() on pages that are not young.
->
-> We don't want to do that because we would lose the A-bit for a folio
-> that's beyond the current reclaim scope, i.e., the cases where
-> get_pfn_folio() returns NULL (a folio from another memcg, e.g.).
->
-> > WDYT? Have I misunderstood your comment?
->
-> I hope this is clear enough:
->
-> @@ -3395,7 +3395,7 @@ static bool walk_pte_range(pmd_t *pmd, unsigned
-> long start, unsigned long end,
->                 if (pfn =3D=3D -1)
->                         continue;
->
-> -               if (!pte_young(ptent)) {
-> +               if (!pte_young(ptent) && !mm_has_notifiers(args->mm)) {
->                         walk->mm_stats[MM_LEAF_OLD]++;
->                         continue;
->                 }
-> @@ -3404,8 +3404,8 @@ static bool walk_pte_range(pmd_t *pmd, unsigned
-> long start, unsigned long end,
->                 if (!folio)
->                         continue;
->
-> -               if (!ptep_test_and_clear_young(args->vma, addr, pte + i))
-> -                       VM_WARN_ON_ONCE(true);
-> +               if (!ptep_clear_young_notify(args->vma, addr, pte + i))
+When using resctrl on systems with Sub-NUMA Clustering enabled,
+monitoring groups may be allocated RMID values which would overrun the
+arch_mbm_{local,total} arrays.
 
-walk->mm_stats[MM_LEAF_OLD]++ should be here, I take it.
+This is due to inconsistencies in whether the SNC-adjusted num_rmid
+value or the unadjusted value in resctrl_arch_system_num_rmid_idx() is
+used. The num_rmid value for the L3 resource is currently:
 
-> +                       continue;
->
->                 young++;
->                 walk->mm_stats[MM_LEAF_YOUNG]++;
->
-> > Also, I take it your comment was not just about walk_pte_range() but
-> > about the similar bits in lru_gen_look_around() as well, so I'll make
-> > whatever changes we agree on there too (or maybe factor out the common
-> > bits).
-> >
-> > [1]: https://lore.kernel.org/kvmarm/20230526234435.662652-11-yuzhao@goo=
-gle.com/
-> >
-> > > In addition, what about the non-lockless cases? Would this change mak=
-e
-> > > them worse by grabbing the MMU lock twice per PTE?
-> >
-> > That's a good point. Yes I think calling the notifier twice here would
-> > indeed exacerbate problems with a non-lockless notifier.
->
-> I think so too, but I haven't verified it. Please do?
+ resctrl_arch_system_num_rmid_idx() / snc_nodes_per_l3_cache
 
-I have some results now, sorry for the wait.
+As a simple fix, make resctrl_arch_system_num_rmid_idx() return the
+SNC-adjusted, L3 num_rmid value on x86.
 
-It seems like one notifier is definitely better. It doesn't look like
-the read lock actually made anything worse with what I was testing
-(faulting memory in while doing aging). This is kind of surprising,
-but either way, I'll change it to the single notifier in v6. Thanks
-Yu!
+Fixes: e13db55b5a0d ("x86/resctrl: Introduce snc_nodes_per_l3_cache")
+Signed-off-by: Peter Newman <peternewman@google.com>
+---
+ arch/x86/include/asm/resctrl.h     | 6 ------
+ arch/x86/kernel/cpu/resctrl/core.c | 8 ++++++++
+ include/linux/resctrl.h            | 3 +++
+ 3 files changed, 11 insertions(+), 6 deletions(-)
 
-Here are the results I'm basing this conclusion on, using the selftest
-added at the end of this series.
+diff --git a/arch/x86/include/asm/resctrl.h b/arch/x86/include/asm/resctrl.h
+index 12dbd2588ca7..8b1b6ce1e51b 100644
+--- a/arch/x86/include/asm/resctrl.h
++++ b/arch/x86/include/asm/resctrl.h
+@@ -156,12 +156,6 @@ static inline void resctrl_sched_in(struct task_struct *tsk)
+ 		__resctrl_sched_in(tsk);
+ }
+ 
+-static inline u32 resctrl_arch_system_num_rmid_idx(void)
+-{
+-	/* RMID are independent numbers for x86. num_rmid_idx == num_rmid */
+-	return boot_cpu_data.x86_cache_max_rmid + 1;
+-}
+-
+ static inline void resctrl_arch_rmid_idx_decode(u32 idx, u32 *closid, u32 *rmid)
+ {
+ 	*rmid = idx;
+diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+index 1930fce9dfe9..8591d53c144b 100644
+--- a/arch/x86/kernel/cpu/resctrl/core.c
++++ b/arch/x86/kernel/cpu/resctrl/core.c
+@@ -119,6 +119,14 @@ struct rdt_hw_resource rdt_resources_all[] = {
+ 	},
+ };
+ 
++u32 resctrl_arch_system_num_rmid_idx(void)
++{
++	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
++
++	/* RMID are independent numbers for x86. num_rmid_idx == num_rmid */
++	return r->num_rmid;
++}
++
+ /*
+  * cache_alloc_hsw_probe() - Have to probe for Intel haswell server CPUs
+  * as they do not have CPUID enumeration support for Cache allocation.
+diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
+index b0875b99e811..43ac241471b3 100644
+--- a/include/linux/resctrl.h
++++ b/include/linux/resctrl.h
+@@ -248,6 +248,9 @@ struct resctrl_schema {
+ 
+ /* The number of closid supported by this resource regardless of CDP */
+ u32 resctrl_arch_get_num_closid(struct rdt_resource *r);
++
++u32 resctrl_arch_system_num_rmid_idx(void);
++
+ int resctrl_arch_update_domains(struct rdt_resource *r, u32 closid);
+ 
+ /*
+-- 
+2.45.2.1089.g2a221341d9-goog
 
-# Use taskset to minimize NUMA concern.
-# Give an extra core for the aging thread.
-# THPs disabled (echo never > /sys/kernel/mm/transparent_hugepage/enabled)
-
-x86:
-
-# taskset -c 0-32 ./access_tracking_perf_test -l -v 32
-# # One notifier
-Populating memory             : 1.933017284s
-Writing to populated memory   : 0.017323539s
-Reading from populated memory : 0.013113260s
-lru_gen: Aging                : 0.894133259s
-lru_gen: Aging                : 0.738950525s
-Writing to idle memory        : 0.059661329s
-lru_gen: Aging                : 0.922719935s
-lru_gen: Aging                : 0.829129877s
-Reading from idle memory      : 0.059095098s
-lru_gen: Aging                : 0.922689975s
-
-# # Two notifiers
-Populating memory             : 1.842645795s
-Writing to populated memory   : 0.017277075s
-Reading from populated memory : 0.013047457s
-lru_gen: Aging                : 0.900751764s
-lru_gen: Aging                : 0.707203167s
-Writing to idle memory        : 0.060663733s
-lru_gen: Aging                : 1.539957250s  <------ got longer
-lru_gen: Aging                : 0.797475887s
-Reading from idle memory      : 0.084415591s
-lru_gen: Aging                : 1.539417121s  <------ got longer
-
-arm64*:
-(*Patched to do aging; not done in v5 or v6. Doing this to see if the read
-lock is made substantially worse by using two notifiers vs. one.)
-
-# taskset -c 0-16 ./access_tracking_perf_test -l -v 16 -m 3
-# # One notifier
-Populating memory             : 1.439261355s
-Writing to populated memory   : 0.009755279s
-Reading from populated memory : 0.007714120s
-lru_gen: Aging                : 0.540183328s
-lru_gen: Aging                : 0.455427973s
-Writing to idle memory        : 0.010130399s
-lru_gen: Aging                : 0.563424247s
-lru_gen: Aging                : 0.500419850s
-Reading from idle memory      : 0.008519640s
-lru_gen: Aging                : 0.563178643s
-
-# # Two notifiers
-Populating memory             : 1.526805625s
-Writing to populated memory   : 0.009836118s
-Reading from populated memory : 0.007757280s
-lru_gen: Aging                : 0.537770978s
-lru_gen: Aging                : 0.421915391s
-Writing to idle memory        : 0.010281959s
-lru_gen: Aging                : 0.971448688s  <------ got longer
-lru_gen: Aging                : 0.466956547s
-Reading from idle memory      : 0.008588559s
-lru_gen: Aging                : 0.971030648s  <------ got longer
-
-
-arm64, faulting memory in while aging:
-
-# perf record -g -- taskset -c 0-16 ./access_tracking_perf_test -l -v 16 -m=
- 3 -p
-# # One notifier
-vcpu wall time                : 1.433908058s
-lru_gen avg pass duration     : 0.172128073s, (passes:11, total:1.893408807=
-s)
-
-# # Two notifiers
-vcpu wall time                : 1.450387765s
-lru_gen avg pass duration     : 0.175652974s, (passes:10, total:1.756529744=
-s)
-
-# perf report
-# # One notifier
--    6.25%     0.00%  access_tracking  [kernel.kallsyms]  [k] try_to_inc_ma=
-x_seq
-   - try_to_inc_max_seq
-      - 6.06% walk_page_range
-           __walk_page_range
-         - walk_pgd_range
-            - 6.04% walk_pud_range
-               - 4.73% __mmu_notifier_clear_young
-                  + 4.29% kvm_mmu_notifier_clear_young
-
-# # Two notifiers
--    6.43%     0.00%  access_tracking  [kernel.kallsyms]  [k] try_to_inc_ma=
-x_seq
-   - try_to_inc_max_seq
-      - 6.25% walk_page_range
-           __walk_page_range
-         - walk_pgd_range
-            - 6.23% walk_pud_range
-               - 2.75% __mmu_notifier_test_young
-                  + 2.48% kvm_mmu_notifier_test_young
-               - 2.39% __mmu_notifier_clear_young
-                  + 2.19% kvm_mmu_notifier_clear_young
 
