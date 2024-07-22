@@ -1,69 +1,124 @@
-Return-Path: <linux-kernel+bounces-259134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D909391BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:27:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE0E69391C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:27:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E8B11F21D59
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:27:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82D351F21A71
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB43216E863;
-	Mon, 22 Jul 2024 15:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C2616DEDA;
+	Mon, 22 Jul 2024 15:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sGhiOb44"
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SagOMCU9"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1933F16DEC3
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 15:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1401316CD07;
+	Mon, 22 Jul 2024 15:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721662016; cv=none; b=nUJV/exYDXOW/Du9b/vKQJI7lvnJhcM02eYfJWR2ywPBJCg5CZrefL6ZLaB+Rz8djRPugo31pMm5EWj9wDKkj+jYqxXP1oxzoYEOJsXGUlsBXOhNlnGPbK93MvUGDBfL/OEfoKITX+z74wIdir4XabDBlr1UT+t8H+gn0bAMtRU=
+	t=1721662051; cv=none; b=g8+urmkdMddpxkBGKQujYeGbE9vWAL7P4/wrMqA/RGXbQfwUG6YglgIWK/84Gw+GIf44ske2sJhfhHvF1SSRaC6XlLIibcIArZg2J//1R5yc4jrjzLnQxFDZ01MJaUnp6jhuPKygGDfQqdwNGyLGl+z6B2PvK4ebjOGZQXlVpSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721662016; c=relaxed/simple;
-	bh=zROLnWFUOH9//DnXFkvEIzheV7uPIgEQmuaGwINSTbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SrwNJX/8h4/OPqX2gU66NuIlJiY6Pn9VzX0qKpxJXElmwnRtqNkgU31wWL7vi7fdOOJ8OumhNx68BjC1Cd4S7lkXJXEFieiejWK7cPWyBZ1xLvxob4rMl2BgbDt8Av9QDqokk0O5u0hhQlbkzTbINWaLxxtJgAW9IoW2wkGouKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sGhiOb44; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: syzbot+f765e51170cf13493f0b@syzkaller.appspotmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721662011;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zROLnWFUOH9//DnXFkvEIzheV7uPIgEQmuaGwINSTbY=;
-	b=sGhiOb44IM/zpozOFhFMC4NhJw5i0ahW2iqOU7gAcyeQbk2FUzWS4zyXpcbwLxQqguTS7P
-	KfoE4BSzNoo71JclKMSpj+8HMneTh+8ihoda/OtwRnUseQVgAWW+pQ1nNhqCCbzLGAtAaH
-	OR2YSidYS+667ob0NNRJgFfHKwe5OBU=
-X-Envelope-To: bfoster@redhat.com
-X-Envelope-To: linux-bcachefs@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: syzkaller-bugs@googlegroups.com
-Date: Mon, 22 Jul 2024 11:26:47 -0400
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: syzbot <syzbot+f765e51170cf13493f0b@syzkaller.appspotmail.com>
-Cc: bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] BUG: sleeping function called from invalid
- context in bch2_printbuf_make_room
-Message-ID: <vynklplials4rgqztoysaclfs3nyv75t5wm2g5yov6aoy5kqwy@vng7wfpmwicd>
-References: <0000000000005aed00061dd70e04@google.com>
+	s=arc-20240116; t=1721662051; c=relaxed/simple;
+	bh=8F8AqL8+uz10xZlIRw115rqKTtHgjwv0e3CayfgJVno=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DrJoOZjCyb06lDGNXC2fHrlC6vf6NYiFIlg+zCiZRp8y/l6Qqvp43J6THJ35RkBQ45Grf6zHZlljHcOQW4du9yUWe4/UxKR/BaD7dJRpDbO013TTSm4f+cCxnJXw5PzwKAbBKaiyUvYYPe+ttGptQlijJb+U3kvhtQgX8tie2dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SagOMCU9; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721662048;
+	bh=8F8AqL8+uz10xZlIRw115rqKTtHgjwv0e3CayfgJVno=;
+	h=From:Date:Subject:To:Cc:From;
+	b=SagOMCU94ZPPnQfyFh6zFI2khT9EEF4MUcPcSRe7pwncodoAfwvPKlKTBi9yQAADO
+	 phRE4ogpZoaWIS67EqGkT5cXNku33U0qSNmZfGImbPZbAML4kIHwJNdYiJv/JjGnEU
+	 tGsAIWVB3mTWMDkEVKAWimvOy9fu90EcHuysvsK7KbThlDu/1ukBj90l1635Ml1Mm3
+	 vIu/obugyqQ+s5XoBPIKDEfYK1kY1Wdvat6819IOoa+Eh+tPSVcsJQ7FMhrHq+69Uw
+	 5UAvItx7YQNxYN8QhkLjEeThmVHg1IpF9Rrkp45cRHzr9QcHUEDELUHVZzB2XYMjTa
+	 6w/ESdtIwWcxA==
+Received: from [192.168.1.217] (zone.collabora.co.uk [167.235.23.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0CFC137800DE;
+	Mon, 22 Jul 2024 15:27:25 +0000 (UTC)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Date: Mon, 22 Jul 2024 11:26:55 -0400
+Subject: [PATCH] arm64: dts: mediatek: mt8195: Add missing clock for xhci1
+ controller
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000005aed00061dd70e04@google.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240722-usb-1129-probe-pci-clk-fix-v1-1-99ea804228b6@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAD56nmYC/x3MTQqAIBBA4avErBvIQeznKtHCbKyhKFGKILp70
+ vJ7i/dA4iicoCseiHxJkmPPUGUBbrH7zChTNlBFuqqJ8EwjKkUthniMjMEJum1FLzeyb4w2Xht
+ rHeRBiJzzP++H9/0Af+1nAWwAAAA=
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, kernel@collabora.com, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+X-Mailer: b4 0.14.0
 
-#syz fix: bcachefs: Fix printbuf usage while atomic
+Currently if the xhci1 controller happens to probe before the pcie1
+controller then it fails with the following errors:
+
+xhci-mtk 11290000.usb: clocks are not stable (0x1003d0f)
+xhci-mtk 11290000.usb: can't setup: -110
+xhci-mtk: probe of 11290000.usb failed with error -110
+
+The issue has been tracked down to the CLK_INFRA_AO_PCIE_P1_TL_96M
+clock, although exactly why this pcie clock is needed for the usb
+controller is still unknown. Add the clock to the xhci1 controller so it
+always probes successfully and use a placeholder clock name for it.
+
+Reported-by: Nícolas F. R. A. Prado <nfraprado@collabora.com> #KernelCI
+Closes: https://lore.kernel.org/all/9fce9838-ef87-4d1b-b3df-63e1ddb0ec51@notapiano/
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+---
+ arch/arm64/boot/dts/mediatek/mt8195.dtsi | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+index 2ee45752583c..cc5169871f1c 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+@@ -1453,9 +1453,15 @@ xhci1: usb@11290000 {
+ 				 <&topckgen CLK_TOP_SSUSB_P1_REF>,
+ 				 <&apmixedsys CLK_APMIXED_USB1PLL>,
+ 				 <&clk26m>,
+-				 <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>;
++				 <&pericfg_ao CLK_PERI_AO_SSUSB_1P_XHCI>,
++				 /*
++				  * This clock is required due to a hardware
++				  * bug. The 'frmcnt_ck' clock name is used as a
++				  * placeholder.
++				  */
++				 <&infracfg_ao CLK_INFRA_AO_PCIE_P1_TL_96M>;
+ 			clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck",
+-				      "xhci_ck";
++				      "xhci_ck", "frmcnt_ck";
+ 			mediatek,syscon-wakeup = <&pericfg 0x400 104>;
+ 			wakeup-source;
+ 			status = "disabled";
+
+---
+base-commit: dee7f101b64219f512bb2f842227bd04c14efe30
+change-id: 20240722-usb-1129-probe-pci-clk-fix-ef8646f46aac
+
+Best regards,
+-- 
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
 
