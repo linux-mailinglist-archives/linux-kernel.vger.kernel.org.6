@@ -1,93 +1,73 @@
-Return-Path: <linux-kernel+bounces-259441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E99F1939637
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 00:04:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE9899395C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 23:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75E9A1F2181C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:04:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71CB61F2161A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4B0130A68;
-	Mon, 22 Jul 2024 22:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B573946447;
+	Mon, 22 Jul 2024 21:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="KwXQMUiT"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="QgRsKGqQ"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8C474BEC
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 22:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B739B3BBE2
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 21:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721685698; cv=none; b=VU8pPCJn67sU5FWAuUDNbROVNtb1cX5Hg+d0twKgqIK9YieUbXcsE8jUDZaL81Dq8kd2RxWx7Z0eBveMJTD2Q3q4Ps/FtWg06BWLs+8fSlltoPjXpiYEi+UEC/xv7K/0dQi1wnPl4gHDS5qZZG/d5u+FNmD/SGHwrcY4X1eeNj4=
+	t=1721685494; cv=none; b=X0pgEyXk4KvL8LTjTs+TktEormS0gZof9awPqGCJN5tfhj/4QDNdD2r9De2srl1x9JH0Y75JqZZTCKmm/j4BHMgScxs2zpkrhv369av0ZmGKMyzL6YXLwWKgZNdyNpOt5iRsWJHqxAmdH7jhUulNLbVrxy61g4up0jIIEuYbSYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721685698; c=relaxed/simple;
-	bh=wLwtAkIBM4hq/kR6Mmx+dPtGfZzSSBSwcvcMoP+c4hU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZxHw01wxF2N3bbQ1wkQfjpP/DxdaGK3r3LsN50X4PVQ8Z1R+ESpdkgWaUbMo5YGQoLlJe8rrT8tqk7Zc2ngn52VLyWX7ncZo0fRukBIdHpLJI0glh6D+dM+DiLiZzsas2SO6oLtef+5OkQ3S8LR0wrB2PJZP0quh496AxGECDEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=KwXQMUiT; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-708adad61f8so2613942a34.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 15:01:34 -0700 (PDT)
+	s=arc-20240116; t=1721685494; c=relaxed/simple;
+	bh=yJtg1hTrBiZ4CAX9VN8QzkdggpJgnALtnkaOzGygba8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PxJHNaICDWjCczoQhTVQjb3iIHoKOJirwaQ0SMz/CGPoCA9Sk7EvAp654KajJmur/pA5hMWxCCgKpAV2iXO38azZ2PnR6/A3dxZ4lPmxoZsyXecX+5uKeC1rkuPX7qypKFgHCrvZ5v4rcSZru2ufsk4iMXVUdVYH0oFPELLWJOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=QgRsKGqQ; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7a10b293432so90765a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 14:58:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721685694; x=1722290494; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UhPgWBgcgXIA+u+ClJPVILjR7vSD2cCOFhbPqeE2xbQ=;
-        b=KwXQMUiTtm5zOKk7tW2xHx1Gl/lne+8fBJsfiSG3ccUbsqMrz8QsIhrQGK5sYbHFz4
-         hWEeIPLMr/veXavhXXw2N4re2PmZjpMxDqKq+iRa+Jcu/LeGoNM0ecH6Eiw9sk1l01en
-         CRa3/kUdncvsC8PXaWXDiriYo8+geX0pQpQnLcGiBYh04ruoUezi2qeTJpJWMBl/grzQ
-         Kf78qZIRkyhNaZH766N3ClXt9AF3UJqtWgg9NeJirK4UAmNsT6QgCMbSjGAHwzvX6Kqb
-         UDq7NiI6jHgqWMZaLhcL8YSvAvShVFCggeL9jq3TVpVw7CojK+JcEzQ8uRFVgiHrhMOf
-         X+0g==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721685491; x=1722290291; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wKNXrH3uRfrUHwuvmyxzEYstiGhgKC7vXRXEaoabqN8=;
+        b=QgRsKGqQ5I7pUG4hSMn9P8LCtPMQtGRg1/NP3rMsUAHPIVy+Xb9PWS5O5k7tkBAcov
+         ExLQekVHQInMFoESOn25yuOhFotSlIu+QSAqBMZEYzDhuKYiI3rvnC9pxrGSShY+f6pz
+         LaRZeL+JtvGeB0iZOb0ynxLuQGhZNyrgHH8VbfU+g6eN90c3w2HxnFbOZ3YnxyJ2dd7f
+         hvvwuahV8/l8InTaPmDG0mhYmnaf4Tasaw9zU7m0VxQZX+aPONNe84DDRUMMk2KtXs3g
+         bMZu4QHEaiXsSYQSxh2BIQ0nl8d9Q0z8evzcHyHPRHFsWe8SORCjUg6jY41YSX6aHP5P
+         xQTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721685694; x=1722290494;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UhPgWBgcgXIA+u+ClJPVILjR7vSD2cCOFhbPqeE2xbQ=;
-        b=CHEdi6tWUE5n9THULBHG9y4jxX/Ri9VDqoWKjkWtvThHoZIBGB2+s/mzSHRq9ybU+V
-         L3Qa5iO5LqvMcH2F1WUNpW7XVXnapfJ+exkVpFdCsmyHQBxvKPChETpHpN2712iq7XJq
-         E3rt/d9OM8H2K595/NHAFrHrl55nS7Y9pBLeSCNUo4qdiyE4w7DlwKDFK+LopdYqI6QP
-         mrsTMP6HHi6qQDOphaINLn0ANRirUoSs2d6603FZfLbAaLch3ljPhJz79H7YeMdfjzq9
-         vdUi+7oXkLEgfTOlSkMVURj3I7izXwXFHpFN0/mR9+yhsZi0CWTItZVvNtX+gjtJcE7/
-         Emsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVS8TCwKnn/vv0YczzKJMPxBiZMBJFpYLOLkXYEIU611HOP6vAewtDd5wr/Jzkuzct6PZXCgkqc9zr4yDkX/idFjy1s9ENOH0UIrGos
-X-Gm-Message-State: AOJu0YyRiM8HiEhkL3dzBf5N1M1u9ygltfrS2ObiINcW94Mk1PcWipb6
-	yfJStYf9ZQ0nrC1m1VTLnDu++ly7zt2Od94uCZtkRTiFzH5wPdmLWQcC/u/VfRo=
-X-Google-Smtp-Source: AGHT+IHXDgeNbeZYlN1uzwQdl3tCZ2beK6K+VycJjOQkxwH827CZ/P//PGWZ3iQGkscdaaE2b16UQA==
-X-Received: by 2002:a05:6830:6a16:b0:703:6ca6:27 with SMTP id 46e09a7af769-708fdb34f44mr13425465a34.16.1721685694085;
-        Mon, 22 Jul 2024 15:01:34 -0700 (PDT)
-Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-708f60a55e1sm1719911a34.11.2024.07.22.15.01.33
+        d=1e100.net; s=20230601; t=1721685491; x=1722290291;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wKNXrH3uRfrUHwuvmyxzEYstiGhgKC7vXRXEaoabqN8=;
+        b=rWCodn0IUmwZzg12C4CAltprSiPm6GrHR1hU9Lb+WqXqf0wa9gUQiuduSyQ6uPehsS
+         LIFze5yhW6443xpIR6AcfTmre5LI+1vmp22GiyJ44Zkno8F2yYKn7wSqvdk7gFT2Ms0v
+         oEF8Pci+ebpajMmOqgf/JXqVixT1j7v7UB9BiI5IDl57N7LXgDLgvaSWITVsJhH+3v0k
+         DxbQTvnTmKvGqXHX4Mn4U847sS4fbP2W2P6iJ72OF6Xl4VidGKY8Bx6Wbrbw2AzAuDI4
+         8yMxpYKOdWMhVs9d0GLyDgDW2KHDyLclLmfya0ImRO4GSW94Ge8SjrXIuoaWLm04ZpEy
+         Ov7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUfof6paBEkvV1Z1UBD46c5ayc3vwHorQ8oh9la/q4Cur96ymq2Cq8RvyVK6X4bI950fAbEu2UJldmbXG8CmKSzznBVMXL+C+rgC8+Z
+X-Gm-Message-State: AOJu0YzZwaz965+iD87hG7UtNfNdml7F3IlWde3PH6nicWWGLIwFYpZk
+	XBP2T7s2DMoEbvSbxjXaH+Npj2xPZK3q9NmAOBQTOF6QHI3LbosY83ppaAAeOQY=
+X-Google-Smtp-Source: AGHT+IEJKHWbrGpgFOQo0ZxK3srMWG+z72k5/Eg5bPpA7ScCrmMHr65nXQSYsTaNjh4B+JI/xRRVyw==
+X-Received: by 2002:a05:6a20:6a12:b0:1c0:e288:e5b3 with SMTP id adf61e73a8af0-1c42857a5damr7306720637.25.1721685491022;
+        Mon, 22 Jul 2024 14:58:11 -0700 (PDT)
+Received: from charlie.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f44f0d4sm59997775ad.219.2024.07.22.14.58.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 15:01:33 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-To: Mark Brown <broonie@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	David Jander <david@protonic.nl>,
-	Martin Sperl <kernel@martin.sperl.org>,
-	linux-spi@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: [PATCH RFC v3 9/9] iio: adc: ad7944: add support for SPI offload
-Date: Mon, 22 Jul 2024 16:57:16 -0500
-Message-ID: <20240722-dlech-mainline-spi-engine-offload-2-v3-9-7420e45df69b@baylibre.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
-References: <20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
+        Mon, 22 Jul 2024 14:58:10 -0700 (PDT)
+From: Charlie Jenkins <charlie@rivosinc.com>
+Subject: [PATCH v6 00/13] riscv: Add support for xtheadvector
+Date: Mon, 22 Jul 2024 14:58:04 -0700
+Message-Id: <20240722-xtheadvector-v6-0-c9af0130fa00@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,312 +75,173 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.14.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOzVnmYC/23OTW7DIBAF4KtErEsFDD+mq96j6sLAULOoHUGEU
+ kW+eyfpoq7r5RvxvceNNawFG3s53VjFXlpZZgr26cTiNM4fyEuizJRQWhgQ/HqZcEwd42WpfAB
+ IkKQLWgEjcq6Yy/VR9/ZOeSqNnn092ru8X3+KrPB/i7rkgkNG42VyWQr/WktfWpnjc1w+2b2rq
+ 42Xu490Rd67UQ9WwpisPvCw9ft9IB9yBo/BWzvggde/3gm185q8CrQ8KJGClAfebPy/fUNeBz2
+ YHF0yJu/8uq7fLN52hqsBAAA=
+To: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Samuel Holland <samuel.holland@sifive.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
+ Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>, 
+ Andy Chiu <andy.chiu@sifive.com>, Jessica Clarke <jrtc27@jrtc27.com>, 
+ Andrew Jones <ajones@ventanamicro.com>
+Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ Charlie Jenkins <charlie@rivosinc.com>, 
+ Conor Dooley <conor.dooley@microchip.com>, Heiko Stuebner <heiko@sntech.de>, 
+ Heiko Stuebner <heiko@sntech.de>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1721685488; l=6875;
+ i=charlie@rivosinc.com; s=20231120; h=from:subject:message-id;
+ bh=yJtg1hTrBiZ4CAX9VN8QzkdggpJgnALtnkaOzGygba8=;
+ b=EX6Nu4zGRD0+PPZ7gxDAwTcdVHl3/BJzl/QQ5Q2W2vu1jtJyYogBu9j/9LMXPyInz8LZGIQ2E
+ DOWFDmPCD1QAlslrRS5csADVT2AZrYHd7zb/5/HNIBCLHqTxQQ/ZpFy
+X-Developer-Key: i=charlie@rivosinc.com; a=ed25519;
+ pk=t4RSWpMV1q5lf/NWIeR9z58bcje60/dbtxxmoSfBEcs=
 
-This adds support for SPI offload to the ad7944 driver. This allows
-reading data at the max sample rate of 2.5 MSPS.
+xtheadvector is a custom extension that is based upon riscv vector
+version 0.7.1 [1]. All of the vector routines have been modified to
+support this alternative vector version based upon whether xtheadvector
+was determined to be supported at boot.
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
+vlenb is not supported on the existing xtheadvector hardware, so a
+devicetree property thead,vlenb is added to provide the vlenb to Linux.
+
+There is a new hwprobe key RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0 that is
+used to request which thead vendor extensions are supported on the
+current platform. This allows future vendors to allocate hwprobe keys
+for their vendor.
+
+Support for xtheadvector is also added to the vector kselftests.
+
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+
+[1] https://github.com/T-head-Semi/thead-extension-spec/blob/95358cb2cca9489361c61d335e03d3134b14133f/xtheadvector.adoc
+
 ---
+This series is a continuation of a different series that was fragmented
+into two other series in an attempt to get part of it merged in the 6.10
+merge window. The split-off series did not get merged due to a NAK on
+the series that added the generic riscv,vlenb devicetree entry. This
+series has converted riscv,vlenb to thead,vlenb to remedy this issue.
 
-Note: in v2 we discussed if we should make the SPI offload use buffer1
-instead of buffer0 as to not break userspace. I'm still on the fence
-about if we should do that or not. Mainly because many userspace tools
-aren't aware of multiple buffers yet, so would make it harder to
-use the driver. And technically, the way it is implemented right now
-is not going to change anything for existing users since they won't
-be using the offload feature. So the argument could be made that this
-isn't really breaking userspace after all.
+The original series is titled "riscv: Support vendor extensions and
+xtheadvector" [3].
 
-v3 changes:
-* Finished TODOs.
-* Adapted to changes in other patches.
+The series titled "riscv: Extend cpufeature.c to detect vendor
+extensions" is still under development and this series is based on that
+series! [4]
 
-v2 changes:
+I have tested this with an Allwinner Nezha board. I ran into issues
+booting the board after 6.9-rc1 so I applied these patches to 6.8. There
+are a couple of minor merge conflicts that do arrise when doing that, so
+please let me know if you have been able to boot this board with a 6.9
+kernel. I used SkiffOS [1] to manage building the image, but upgraded
+the U-Boot version to Samuel Holland's more up-to-date version [2] and
+changed out the device tree used by U-Boot with the device trees that
+are present in upstream linux and this series. Thank you Samuel for all
+of the work you did to make this task possible.
 
-In the previous version, there was a new separate driver for the PWM
-trigger and DMA hardware buffer. This was deemed too complex so they
-are moved into the ad7944 driver.
+[1] https://github.com/skiffos/SkiffOS/tree/master/configs/allwinner/nezha
+[2] https://github.com/smaeul/u-boot/commit/2e89b706f5c956a70c989cd31665f1429e9a0b48
+[3] https://lore.kernel.org/all/20240503-dev-charlie-support_thead_vector_6_9-v6-0-cb7624e65d82@rivosinc.com/
+[4] https://lore.kernel.org/lkml/20240719-support_vendor_extensions-v3-4-0af7587bbec0@rivosinc.com/T/
 
-It has also been reworked to accommodate for the changes described in
-the other patches.
 ---
- drivers/iio/adc/ad7944.c | 173 +++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 166 insertions(+), 7 deletions(-)
+Changes in v6:
+- Fix return type of is_vector_supported()/is_xthead_supported() to be bool
+- Link to v5: https://lore.kernel.org/r/20240719-xtheadvector-v5-0-4b485fc7d55f@rivosinc.com
 
-diff --git a/drivers/iio/adc/ad7944.c b/drivers/iio/adc/ad7944.c
-index 0f36138a7144..43674ff439d2 100644
---- a/drivers/iio/adc/ad7944.c
-+++ b/drivers/iio/adc/ad7944.c
-@@ -9,6 +9,7 @@
- #include <linux/align.h>
- #include <linux/bitfield.h>
- #include <linux/bitops.h>
-+#include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/device.h>
- #include <linux/err.h>
-@@ -21,6 +22,7 @@
- 
- #include <linux/iio/iio.h>
- #include <linux/iio/sysfs.h>
-+#include <linux/iio/buffer-dmaengine.h>
- #include <linux/iio/trigger_consumer.h>
- #include <linux/iio/triggered_buffer.h>
- 
-@@ -54,6 +56,8 @@ struct ad7944_adc {
- 	enum ad7944_spi_mode spi_mode;
- 	struct spi_transfer xfers[3];
- 	struct spi_message msg;
-+	struct spi_transfer offload_xfers[3];
-+	struct spi_message offload_msg;
- 	void *chain_mode_buf;
- 	/* Chip-specific timing specifications. */
- 	const struct ad7944_timing_spec *timing_spec;
-@@ -65,6 +69,8 @@ struct ad7944_adc {
- 	bool always_turbo;
- 	/* Reference voltage (millivolts). */
- 	unsigned int ref_mv;
-+	/* Clock that triggers SPI offload. */
-+	struct clk *trigger_clk;
- 
- 	/*
- 	 * DMA (thus cache coherency maintenance) requires the
-@@ -81,6 +87,8 @@ struct ad7944_adc {
- 
- /* quite time before CNV rising edge */
- #define T_QUIET_NS	20
-+/* minimum CNV high time to trigger conversion */
-+#define T_CNVH_NS	20
- 
- static const struct ad7944_timing_spec ad7944_timing_spec = {
- 	.conv_ns = 420,
-@@ -123,6 +131,7 @@ static const struct ad7944_chip_info _name##_chip_info = {		\
- 			.scan_type.endianness = IIO_CPU,		\
- 			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW)	\
- 					| BIT(IIO_CHAN_INFO_SCALE),	\
-+			.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SAMP_FREQ),\
- 		},							\
- 		IIO_CHAN_SOFT_TIMESTAMP(1),				\
- 	},								\
-@@ -236,6 +245,54 @@ static int ad7944_chain_mode_init_msg(struct device *dev, struct ad7944_adc *adc
- 	return devm_spi_optimize_message(dev, adc->spi, &adc->msg);
- }
- 
-+static void ad7944_offload_unprepare(void *p)
-+{
-+	struct ad7944_adc *adc = p;
-+
-+	spi_offload_unprepare(adc->spi, NULL, &adc->offload_msg);
-+}
-+
-+/*
-+ * Unlike ad7944_3wire_cs_mode_init_msg(), this creates a message that reads
-+ * during the conversion phase instead of the acquisition phase when reading
-+ * a sample from the ADC. This is needed to be able to read at the maximum
-+ * sample rate. It requires the SPI controller to have offload support and a
-+ * high enough SCLK rate to read the sample during the conversion phase.
-+ */
-+static int ad7944_3wire_cs_mode_init_offload_msg(struct device *dev,
-+						 struct ad7944_adc *adc,
-+						 const struct iio_chan_spec *chan)
-+{
-+	struct spi_transfer *xfers = adc->offload_xfers;
-+	int ret;
-+
-+	/*
-+	 * CS is tied to CNV and we need a low to high transition to start the
-+	 * conversion, so place CNV low for t_QUIET to prepare for this.
-+	 */
-+	xfers[0].delay.value = T_QUIET_NS;
-+	xfers[0].delay.unit = SPI_DELAY_UNIT_NSECS;
-+
-+	/* CNV has to be high for a minimum time to trigger conversion. */
-+	xfers[1].cs_off = 1;
-+	xfers[1].delay.value = T_CNVH_NS;
-+	xfers[1].delay.unit = SPI_DELAY_UNIT_NSECS;
-+
-+	/* Then we can read the previous sample during the conversion phase */
-+	xfers[2].offload_flags = SPI_OFFLOAD_XFER_RX_STREAM;
-+	xfers[2].len = BITS_TO_BYTES(chan->scan_type.storagebits);
-+	xfers[2].bits_per_word = chan->scan_type.realbits;
-+
-+	spi_message_init_with_transfers(&adc->offload_msg, xfers,
-+					ARRAY_SIZE(adc->offload_xfers));
-+
-+	ret = spi_offload_prepare(adc->spi, NULL, &adc->offload_msg);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "failed to prepare offload\n");
-+
-+	return devm_add_action_or_reset(dev, ad7944_offload_unprepare, adc);
-+}
-+
- /**
-  * ad7944_convert_and_acquire - Perform a single conversion and acquisition
-  * @adc: The ADC device structure
-@@ -323,6 +380,30 @@ static int ad7944_read_raw(struct iio_dev *indio_dev,
- 			return -EINVAL;
- 		}
- 
-+	case IIO_CHAN_INFO_SAMP_FREQ:
-+		if (!adc->trigger_clk)
-+			return -EOPNOTSUPP;
-+
-+		*val = clk_get_rate(adc->trigger_clk);
-+		return IIO_VAL_INT;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int ad7944_write_raw(struct iio_dev *indio_dev,
-+			    const struct iio_chan_spec *chan,
-+			    int val, int val2, long info)
-+{
-+	struct ad7944_adc *adc = iio_priv(indio_dev);
-+
-+	switch (info) {
-+	case IIO_CHAN_INFO_SAMP_FREQ:
-+		if (!adc->trigger_clk)
-+			return -EOPNOTSUPP;
-+
-+		return clk_set_rate(adc->trigger_clk, val);
- 	default:
- 		return -EINVAL;
- 	}
-@@ -330,6 +411,48 @@ static int ad7944_read_raw(struct iio_dev *indio_dev,
- 
- static const struct iio_info ad7944_iio_info = {
- 	.read_raw = &ad7944_read_raw,
-+	.write_raw = &ad7944_write_raw,
-+};
-+
-+static int ad7944_offload_buffer_postenable(struct iio_dev *indio_dev)
-+{
-+	struct ad7944_adc *adc = iio_priv(indio_dev);
-+	int ret;
-+
-+	gpiod_set_value_cansleep(adc->turbo, 1);
-+
-+	ret = clk_prepare_enable(adc->trigger_clk);
-+	if (ret)
-+		goto err_turbo_off;
-+
-+	ret = spi_offload_hw_trigger_mode_enable(adc->spi, NULL);
-+	if (ret)
-+		goto err_clk_off;
-+
-+	return 0;
-+
-+err_clk_off:
-+	clk_disable_unprepare(adc->trigger_clk);
-+err_turbo_off:
-+	gpiod_set_value_cansleep(adc->turbo, 0);
-+
-+	return ret;
-+}
-+
-+static int ad7944_offload_buffer_predisable(struct iio_dev *indio_dev)
-+{
-+	struct ad7944_adc *adc = iio_priv(indio_dev);
-+
-+	spi_offload_hw_trigger_mode_disable(adc->spi, NULL);
-+	clk_disable_unprepare(adc->trigger_clk);
-+	gpiod_set_value_cansleep(adc->turbo, 0);
-+
-+	return 0;
-+}
-+
-+static const struct iio_buffer_setup_ops ad7944_offload_buffer_setup_ops = {
-+	.postenable = &ad7944_offload_buffer_postenable,
-+	.predisable = &ad7944_offload_buffer_predisable,
- };
- 
- static irqreturn_t ad7944_trigger_handler(int irq, void *p)
-@@ -444,6 +567,11 @@ static const char * const ad7944_power_supplies[] = {
- 	"avdd",	"dvdd",	"bvdd", "vio"
- };
- 
-+static void ad7944_put_clk_trigger(void *p)
-+{
-+	clk_put(p);
-+}
-+
- static int ad7944_probe(struct spi_device *spi)
- {
- 	const struct ad7944_chip_info *chip_info;
-@@ -554,13 +682,11 @@ static int ad7944_probe(struct spi_device *spi)
- 		ret = ad7944_4wire_mode_init_msg(dev, adc, &chip_info->channels[0]);
- 		if (ret)
- 			return ret;
--
- 		break;
- 	case AD7944_SPI_MODE_SINGLE:
- 		ret = ad7944_3wire_cs_mode_init_msg(dev, adc, &chip_info->channels[0]);
- 		if (ret)
- 			return ret;
--
- 		break;
- 	case AD7944_SPI_MODE_CHAIN:
- 		ret = device_property_read_u32(dev, "#daisy-chained-devices",
-@@ -597,11 +723,43 @@ static int ad7944_probe(struct spi_device *spi)
- 		indio_dev->num_channels = ARRAY_SIZE(chip_info->channels);
- 	}
- 
--	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
--					      iio_pollfunc_store_time,
--					      ad7944_trigger_handler, NULL);
--	if (ret)
--		return ret;
-+	if (device_property_present(dev, "spi-offloads")) {
-+		if (adc->spi_mode != AD7944_SPI_MODE_SINGLE)
-+			return dev_err_probe(dev, -EINVAL,
-+					     "offload only supported in single mode\n");
-+
-+		ret = ad7944_3wire_cs_mode_init_offload_msg(dev, adc,
-+							    &chip_info->channels[0]);
-+		if (ret)
-+			return ret;
-+
-+		adc->trigger_clk = spi_offload_hw_trigger_get_clk(spi, NULL);
-+		if (IS_ERR(adc->trigger_clk))
-+			return dev_err_probe(dev, PTR_ERR(adc->trigger_clk),
-+					     "failed to get trigger clk\n");
-+
-+		ret = devm_add_action_or_reset(dev, ad7944_put_clk_trigger,
-+					       adc->trigger_clk);
-+		if (ret)
-+			return ret;
-+
-+		ret = devm_iio_dmaengine_buffer_setup_ext(dev, indio_dev,
-+			spi_offload_rx_stream_get_dma_chan(spi, NULL),
-+			IIO_BUFFER_DIRECTION_IN);
-+		if (ret)
-+			return ret;
-+
-+		indio_dev->setup_ops = &ad7944_offload_buffer_setup_ops;
-+		/* offload can't have soft timestamp */
-+		indio_dev->num_channels--;
-+	} else {
-+		ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
-+						      iio_pollfunc_store_time,
-+						      ad7944_trigger_handler,
-+						      NULL);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	return devm_iio_device_register(dev, indio_dev);
- }
-@@ -636,3 +794,4 @@ module_spi_driver(ad7944_driver);
- MODULE_AUTHOR("David Lechner <dlechner@baylibre.com>");
- MODULE_DESCRIPTION("Analog Devices AD7944 PulSAR ADC family driver");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(IIO_DMAENGINE_BUFFER);
+Changes in v5:
+- Rebase on for-next
+- Link to v4: https://lore.kernel.org/r/20240702-xtheadvector-v4-0-2bad6820db11@rivosinc.com
 
+Changes in v4:
+- Replace inline asm with C (Samuel)
+- Rename VCSRs to CSRs (Samuel)
+- Replace .insn directives with .4byte directives
+- Link to v3: https://lore.kernel.org/r/20240619-xtheadvector-v3-0-bff39eb9668e@rivosinc.com
+
+Changes in v3:
+- Add back Heiko's signed-off-by (Conor)
+- Mark RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0 as a bitmask
+- Link to v2: https://lore.kernel.org/r/20240610-xtheadvector-v2-0-97a48613ad64@rivosinc.com
+
+Changes in v2:
+- Removed extraneous references to "riscv,vlenb" (Jess)
+- Moved declaration of "thead,vlenb" into cpus.yaml and added
+  restriction that it's only applicable to thead cores (Conor)
+- Check CONFIG_RISCV_ISA_XTHEADVECTOR instead of CONFIG_RISCV_ISA_V for
+  thead,vlenb (Jess)
+- Fix naming of hwprobe variables (Evan)
+- Link to v1: https://lore.kernel.org/r/20240609-xtheadvector-v1-0-3fe591d7f109@rivosinc.com
+
+---
+Charlie Jenkins (12):
+      dt-bindings: riscv: Add xtheadvector ISA extension description
+      dt-bindings: cpus: add a thead vlen register length property
+      riscv: dts: allwinner: Add xtheadvector to the D1/D1s devicetree
+      riscv: Add thead and xtheadvector as a vendor extension
+      riscv: vector: Use vlenb from DT for thead
+      riscv: csr: Add CSR encodings for CSR_VXRM/CSR_VXSAT
+      riscv: Add xtheadvector instruction definitions
+      riscv: vector: Support xtheadvector save/restore
+      riscv: hwprobe: Add thead vendor extension probing
+      riscv: hwprobe: Document thead vendor extensions and xtheadvector extension
+      selftests: riscv: Fix vector tests
+      selftests: riscv: Support xtheadvector in vector tests
+
+Heiko Stuebner (1):
+      RISC-V: define the elements of the VCSR vector CSR
+
+ Documentation/arch/riscv/hwprobe.rst               |  10 +
+ Documentation/devicetree/bindings/riscv/cpus.yaml  |  19 ++
+ .../devicetree/bindings/riscv/extensions.yaml      |  10 +
+ arch/riscv/Kconfig.vendor                          |  26 ++
+ arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi      |   3 +-
+ arch/riscv/include/asm/cpufeature.h                |   2 +
+ arch/riscv/include/asm/csr.h                       |  15 ++
+ arch/riscv/include/asm/hwprobe.h                   |   5 +-
+ arch/riscv/include/asm/switch_to.h                 |   2 +-
+ arch/riscv/include/asm/vector.h                    | 223 ++++++++++++----
+ arch/riscv/include/asm/vendor_extensions/thead.h   |  42 +++
+ .../include/asm/vendor_extensions/thead_hwprobe.h  |  18 ++
+ .../include/asm/vendor_extensions/vendor_hwprobe.h |  37 +++
+ arch/riscv/include/uapi/asm/hwprobe.h              |   3 +-
+ arch/riscv/include/uapi/asm/vendor/thead.h         |   3 +
+ arch/riscv/kernel/cpufeature.c                     |  54 +++-
+ arch/riscv/kernel/kernel_mode_vector.c             |   8 +-
+ arch/riscv/kernel/process.c                        |   4 +-
+ arch/riscv/kernel/signal.c                         |   6 +-
+ arch/riscv/kernel/sys_hwprobe.c                    |   5 +
+ arch/riscv/kernel/vector.c                         |  24 +-
+ arch/riscv/kernel/vendor_extensions.c              |  10 +
+ arch/riscv/kernel/vendor_extensions/Makefile       |   2 +
+ arch/riscv/kernel/vendor_extensions/thead.c        |  18 ++
+ .../riscv/kernel/vendor_extensions/thead_hwprobe.c |  19 ++
+ tools/testing/selftests/riscv/vector/.gitignore    |   3 +-
+ tools/testing/selftests/riscv/vector/Makefile      |  17 +-
+ .../selftests/riscv/vector/v_exec_initval_nolibc.c |  93 +++++++
+ tools/testing/selftests/riscv/vector/v_helpers.c   |  68 +++++
+ tools/testing/selftests/riscv/vector/v_helpers.h   |   8 +
+ tools/testing/selftests/riscv/vector/v_initval.c   |  22 ++
+ .../selftests/riscv/vector/v_initval_nolibc.c      |  68 -----
+ .../selftests/riscv/vector/vstate_exec_nolibc.c    |  20 +-
+ .../testing/selftests/riscv/vector/vstate_prctl.c  | 295 ++++++++++++---------
+ 34 files changed, 889 insertions(+), 273 deletions(-)
+---
+base-commit: 554462ced9ac97487c8f725fe466a9c20ed87521
+change-id: 20240530-xtheadvector-833d3d17b423
 -- 
-2.43.0
+- Charlie
 
 
