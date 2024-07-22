@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-259251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C17F939322
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C359939323
 	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:22:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B85F8282441
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:21:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D6011C21565
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F336E171E45;
-	Mon, 22 Jul 2024 17:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03490171E48;
+	Mon, 22 Jul 2024 17:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t3F2w50B";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nA7DJV8+"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hscES2pM";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5gEWP+k8"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0196116F8F8;
-	Mon, 22 Jul 2024 17:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2627616F903;
+	Mon, 22 Jul 2024 17:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721668794; cv=none; b=Iu3OtKSCuVdXF1KUG2w0z9+Ed2d1zmFv/y+RRqZKnEDZOBUWUo/fuDsgHyYePUtEmy3+nMJRGlGORQ/o2Hq4AUgPhEvuiS5Gz0xu8NDsv0gwpuwy6MQ7XnRjLWnv3fJYzjnK+LU4+ICJXzB9qbHSp2SEdycMbehbluSy1Z2/5JA=
+	t=1721668794; cv=none; b=guHYAUs3swjqPfvk/8NPz2Kbs5Dd2vDz18FMMcl0XdlJpx2AhnTsDkBVHXj6YcqdOGQexosuzE71r6KHWwesIzzCPC8iehImrnUSmwLmCAF9oFYSZM2Iio7Vr//cS2h2i3naeCzg+8YLwKNuhNycExT0KqjQJlf3idBUKKLNxp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721668794; c=relaxed/simple;
-	bh=c8qynhdzyIK/U/Ozfr3U3Wi9LTUUnTpnQRxfUcOyN88=;
+	bh=GA0FHsOuyzgGhTea4jgXklRGbAD3dnv/ZQqXWojJ8gA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oAgxEFI345jDd6j/cfPphuMDzo6dpKjnrturlNTVm91EzUj/3a73mSza+dYTuBDov8TCe4ii2S73izOMD/cmSrvgbgdeMjNAqizHS78W+LCC3i0zG8WVdTLqWrkkBlcJps/BG5N5c4zcEpH+IjcGizE/cgKdWUnsqBQmZHs3qTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t3F2w50B; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nA7DJV8+; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=mdIyse4kKot59vgrfOM9qea2Bpf+8zOjHj+QJRLIrppjQq8GFQ0QkJp2DoqYtNTkFKbEp6TSfCON7gcbRqs1PiGE2+Ow+P9ia6GNwBaZT2WeCV44j69pz8xkeDsRTFx6vZsoLpflS+oPnI2DzEGBJNWoiFSNsi6bS6US2b7aqy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hscES2pM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5gEWP+k8; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: John Ogness <john.ogness@linutronix.de>
@@ -38,30 +38,32 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=So0AzHFpVy4lGb5Smj06XEnjo7Cib55zsw/bkGnKvh0=;
-	b=t3F2w50BDxOJT4XMTwPy6mfz98fT2EhAPOdRbLrYyQiGSwT3aN7VbGlMowgDJAI0sTCQyH
-	OAO/MFwgI+0tU3cmOCxb+/hio2GsCHV0lSBa8HMmFQNJ3YV1f5EJU9BcrWGARpQOPMVR6D
-	IOVr96hceCB0moS/KrSJb8r+6jkcFJ0mKxTxzZgSERBZFPuG1MTxlRmHtz4bIBg9QzMdc/
-	+fWKrE7kU/pPyoGxUzY7wbJHfvfXfmO3wGw4bMw7VtXh/6oqXvXBjm3t7WVQRmvXMqtGRR
-	GgS6J/U9gkzX6sizZsKF3FzunYAqkNfzvr3oMDCeK6rJWeoeLWg+HO6PViGhtg==
+	bh=pSvfpE6goL/87JMNQ367S+Uq3TCC1GnMITarxZW2fNs=;
+	b=hscES2pMy9HgoeDGXcrcMmkr1+qVCf2u2H+LjM7DZNHXhqFBG/UME9KlDbRBJ3gS5QAQGa
+	InE9bVsKn0anouM1zJmo7B6YDH67hs+09TBk6RWIENOjJACPNdieRs62hxFPTy+EaffIMm
+	wZvcg8olExe+kT9M3G4Pf5sOHyNisJoQK5bfCuSgf1LYNNyRai4JbBmL/IihissOxpq+dl
+	O2Sd8/5l2zRFaHQlrcpdtkMXAHM/j6+M1ZbcFgrXkg3ymRPnEqeXPSMBqJHCy+e252x6qm
+	/7dr167XBWod0qvxU8ec9yBJWa7DTFLwp2zUUM5b1T33hGlxbQMnnZ7yhnauRA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1721668785;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=So0AzHFpVy4lGb5Smj06XEnjo7Cib55zsw/bkGnKvh0=;
-	b=nA7DJV8+ncEMoS+2E9sdHMrpJs84fRaXOOaFI2fcdQ06fMejOsqoFdOyjvgS07c4Y6OTAO
-	hIwELXssm39yJPBw==
+	bh=pSvfpE6goL/87JMNQ367S+Uq3TCC1GnMITarxZW2fNs=;
+	b=5gEWP+k8QbKpoMCQiDgw/q9wgTUiSPQ7tjQ350PrpYYnx9CG6qHlvcEF/ptbz2jeo/zCcJ
+	GbfqpMvTdLmKnzDQ==
 To: Petr Mladek <pmladek@suse.com>
 Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
 	Steven Rostedt <rostedt@goodmis.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH printk v3 15/19] proc: Add nbcon support for /proc/consoles
-Date: Mon, 22 Jul 2024 19:25:35 +0206
-Message-Id: <20240722171939.3349410-16-john.ogness@linutronix.de>
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	linux-serial@vger.kernel.org
+Subject: [PATCH printk v3 16/19] tty: sysfs: Add nbcon support for 'active'
+Date: Mon, 22 Jul 2024 19:25:36 +0206
+Message-Id: <20240722171939.3349410-17-john.ogness@linutronix.de>
 In-Reply-To: <20240722171939.3349410-1-john.ogness@linutronix.de>
 References: <20240722171939.3349410-1-john.ogness@linutronix.de>
 Precedence: bulk
@@ -72,41 +74,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Update /proc/consoles output to show 'W' if an nbcon console is
-registered. Since the write_thread() callback is mandatory, it
-enough just to check if it is an nbcon console.
-
-Also update /proc/consoles output to show 'N' if it is an
-nbcon console.
+Allow the 'active' attribute to list nbcon consoles.
 
 Signed-off-by: John Ogness <john.ogness@linutronix.de>
 ---
- fs/proc/consoles.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/tty/tty_io.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/proc/consoles.c b/fs/proc/consoles.c
-index 7036fdfa0bec..b7cab1ad990d 100644
---- a/fs/proc/consoles.c
-+++ b/fs/proc/consoles.c
-@@ -21,6 +21,7 @@ static int show_console_dev(struct seq_file *m, void *v)
- 		{ CON_ENABLED,		'E' },
- 		{ CON_CONSDEV,		'C' },
- 		{ CON_BOOT,		'B' },
-+		{ CON_NBCON,		'N' },
- 		{ CON_PRINTBUFFER,	'p' },
- 		{ CON_BRL,		'b' },
- 		{ CON_ANYTIME,		'a' },
-@@ -58,8 +59,8 @@ static int show_console_dev(struct seq_file *m, void *v)
- 	seq_printf(m, "%s%d", con->name, con->index);
- 	seq_pad(m, ' ');
- 	seq_printf(m, "%c%c%c (%s)", con->read ? 'R' : '-',
--			con->write ? 'W' : '-', con->unblank ? 'U' : '-',
--			flags);
-+		   ((con->flags & CON_NBCON) || con->write) ? 'W' : '-',
-+		   con->unblank ? 'U' : '-', flags);
- 	if (dev)
- 		seq_printf(m, " %4d:%d", MAJOR(dev), MINOR(dev));
- 
+diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
+index 407b0d87b7c1..9140825e810f 100644
+--- a/drivers/tty/tty_io.c
++++ b/drivers/tty/tty_io.c
+@@ -3567,7 +3567,7 @@ static ssize_t show_cons_active(struct device *dev,
+ 	for_each_console(c) {
+ 		if (!c->device)
+ 			continue;
+-		if (!c->write)
++		if (!(c->flags & CON_NBCON) && !c->write)
+ 			continue;
+ 		if ((c->flags & CON_ENABLED) == 0)
+ 			continue;
 -- 
 2.39.2
 
