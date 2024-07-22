@@ -1,46 +1,49 @@
-Return-Path: <linux-kernel+bounces-258863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC27938D78
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:29:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7656C938D7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB5CE1F21785
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:29:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AC8D1F21760
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0390216C6B0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD5F16C863;
 	Mon, 22 Jul 2024 10:28:55 +0000 (UTC)
 Received: from irl.hu (irl.hu [95.85.9.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA98914F70;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9E6168498;
 	Mon, 22 Jul 2024 10:28:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721644134; cv=none; b=g5m4H0zLFws63mFKkgos0f7agn2kxN9yFbqD8Y3NZ9UEzfSrk3I9L1HqtQ4X6EbafuI/NNMSKWEJfOZ0kP8E4A3DJtdgkQdGX1koODbQ5m1CzYxE+eaK0mwfnkHf4gFiJzuXAgk14ANGiO6NZW2i2SBpyzkIbeU4lvY/UDXqqz4=
+	t=1721644135; cv=none; b=NsUfShcYSSoVsXSMpZkmJsewHnJj/wj338YS1bMAOFfFQnM9NPiGnPMDqudQtk2X+30YnJJ48oICkelP78w8ACnOSKWnS4xYaUK04hwdIHtym2lFF1ldfpBnsoigyvYT1CjuZ915X6lm1UHVgvLmOqygU2Y6hcPko5/8uteY3To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721644134; c=relaxed/simple;
-	bh=vbqw1rhwKEBipFQr77dq1GtSuMncujER1heBjIgNenI=;
-	h=From:To:Cc:Subject:Date:Message-ID:Mime-Version:Content-Type; b=BUKCUu0kRFsvoDeX85U85ZGxgUg9lD8IlxAXc2L4ODoW29UM2Ze+mbj7LvmOq7FcDSONkhvCnnleMpx0e651aKXfU51hUXuRYFB4G0m3Bc9cLPYWxfkNB7w5X6oLQBH2dTzqnl2230sX4AOTfA/v306W1Hm1i/jvT8XZb1hqeO8=
+	s=arc-20240116; t=1721644135; c=relaxed/simple;
+	bh=VQDKFcoOxMKGDPSCKWVQ27wov+YG6LkdDqErAAwXv44=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=QdLpc/PzdwgLEWLyRVVas3Wqm09qutHrf11LEL/tet8A364E9WmBNAhtW1a4S7GUllCquIzRw0qJSKMarK+HGzOqh4Ahn/hssJkO4jP4T8aS5PBqA3OiODHW+baxnBkBY1abWCxA//a3S/YfHYzS51HQRGEJIZzPE38ksptXmI0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
 Received: from fedori.lan (51b68624.dsl.pool.telekom.hu [::ffff:81.182.134.36])
   (AUTH: CRAM-MD5 soyer@irl.hu, )
   by irl.hu with ESMTPSA
-  id 00000000000738B1.00000000669E345C.001898B3; Mon, 22 Jul 2024 12:28:44 +0200
+  id 00000000000738C3.00000000669E345D.001898B4; Mon, 22 Jul 2024 12:28:45 +0200
 From: Gergo Koteles <soyer@irl.hu>
 To: Hans de Goede <hdegoede@redhat.com>,
   =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
   Ike Panhc <ike.pan@canonical.com>
 Cc: platform-driver-x86@vger.kernel.org,
   linux-kernel@vger.kernel.org, Gergo Koteles <soyer@irl.hu>
-Subject: [PATCH v3 0/4] platform/x86: ideapad-laptop: synchronize VPC commands
-Date: Mon, 22 Jul 2024 12:27:20 +0200
-Message-ID: <cover.1721294787.git.soyer@irl.hu>
+Subject: [PATCH v3 1/4] platform/x86: ideapad-laptop: introduce a generic notification chain
+Date: Mon, 22 Jul 2024 12:27:21 +0200
+Message-ID: <c5a43efae8a32bd034c3d19c0a686941347575a7.1721294787.git.soyer@irl.hu>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <cover.1721294787.git.soyer@irl.hu>
+References: <cover.1721294787.git.soyer@irl.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,52 +54,95 @@ Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 X-Mime-Autoconverted: from 8bit to 7bit by courier 1.0
 
-Hi,
+There are several cases where a notification chain can simplify Lenovo
+WMI drivers.
 
-Sometimes the Yoga mode control switch did not work properly on my 
-laptop, and sometimes even caused a platform profile switch. It turned 
-out that it was caused by a race situation, the lenovo-ymc wmi notify 
-handler was running at the same time as the ideapad-laptop acpi notify 
-handler, and the partial results of the VPC calls in the two were mixed 
-up.
+Add a generic notification chain into ideapad-laptop.
 
-This series introduces a notification chain to receive YMC or other 
-events, moves the EC triggering into ideapad-laptop, and then introduces 
-a mutex to eliminate the problem.
-
-Best regards,
-Gergo Koteles
-
+Signed-off-by: Gergo Koteles <soyer@irl.hu>
 ---
-Changes in v3:
-- use devm_mutex_init for vpc_mutex
-- Link to v2: https://lore.kernel.org/all/cover.1721258854.git.soyer@irl.hu/
+ drivers/platform/x86/ideapad-laptop.c | 37 +++++++++++++++++++++++++++
+ drivers/platform/x86/ideapad-laptop.h |  5 ++++
+ 2 files changed, 42 insertions(+)
 
-Changes in v2:
-- Skip the already merged "platform/x86: ideapad-laptop: use cleanup.h" commit
-- Based on the WMI driver development guide and the dell drivers,
-  introduce a generic notification chain
-- Use the notification chain to send the YMC event from lenovo-ymc to
-  the ideapad-laptop module
-- Move the ec_trigger module parameter to the ideapad-laptop as well
-- Mutex changes go into one patch
-- Link to v1: https://lore.kernel.org/all/cover.1720515666.git.soyer@irl.hu/
----
-
-
-Gergo Koteles (4):
-  platform/x86: ideapad-laptop: introduce a generic notification chain
-  platform/x86: ideapad-laptop: move ymc_trigger_ec from lenovo-ymc
-  platform/x86: ideapad-laptop: move ACPI helpers from header to source
-    file
-  platform/x86: ideapad-laptop: add a mutex to synchronize VPC commands
-
- drivers/platform/x86/Kconfig          |   1 +
- drivers/platform/x86/ideapad-laptop.c | 282 ++++++++++++++++++++++++--
- drivers/platform/x86/ideapad-laptop.h | 142 +------------
- drivers/platform/x86/lenovo-ymc.c     |  60 +-----
- 4 files changed, 275 insertions(+), 210 deletions(-)
-
+diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
+index 1ace711f7442..866b32bfe2c9 100644
+--- a/drivers/platform/x86/ideapad-laptop.c
++++ b/drivers/platform/x86/ideapad-laptop.c
+@@ -1592,6 +1592,39 @@ static void ideapad_sync_touchpad_state(struct ideapad_private *priv, bool send_
+ 	priv->r_touchpad_val = value;
+ }
+ 
++static int ideapad_laptop_nb_notify(struct notifier_block *nb,
++				    unsigned long action, void *data)
++{
++	switch (action) {
++	}
++
++	return 0;
++}
++
++static struct notifier_block ideapad_laptop_notifier = {
++	.notifier_call = ideapad_laptop_nb_notify,
++};
++
++static BLOCKING_NOTIFIER_HEAD(ideapad_laptop_chain_head);
++
++int ideapad_laptop_register_notifier(struct notifier_block *nb)
++{
++	return blocking_notifier_chain_register(&ideapad_laptop_chain_head, nb);
++}
++EXPORT_SYMBOL_NS_GPL(ideapad_laptop_register_notifier, IDEAPAD_LAPTOP);
++
++int ideapad_laptop_unregister_notifier(struct notifier_block *nb)
++{
++	return blocking_notifier_chain_unregister(&ideapad_laptop_chain_head, nb);
++}
++EXPORT_SYMBOL_NS_GPL(ideapad_laptop_unregister_notifier, IDEAPAD_LAPTOP);
++
++void ideapad_laptop_call_notifier(unsigned long action, void *data)
++{
++	blocking_notifier_call_chain(&ideapad_laptop_chain_head, action, data);
++}
++EXPORT_SYMBOL_NS_GPL(ideapad_laptop_call_notifier, IDEAPAD_LAPTOP);
++
+ static void ideapad_acpi_notify(acpi_handle handle, u32 event, void *data)
+ {
+ 	struct ideapad_private *priv = data;
+@@ -1974,6 +2007,8 @@ static int ideapad_acpi_add(struct platform_device *pdev)
+ 	if (err)
+ 		goto shared_init_failed;
+ 
++	ideapad_laptop_register_notifier(&ideapad_laptop_notifier);
++
+ 	return 0;
+ 
+ shared_init_failed:
+@@ -2006,6 +2041,8 @@ static void ideapad_acpi_remove(struct platform_device *pdev)
+ 	struct ideapad_private *priv = dev_get_drvdata(&pdev->dev);
+ 	int i;
+ 
++	ideapad_laptop_unregister_notifier(&ideapad_laptop_notifier);
++
+ 	ideapad_shared_exit(priv);
+ 
+ 	acpi_remove_notify_handler(priv->adev->handle,
+diff --git a/drivers/platform/x86/ideapad-laptop.h b/drivers/platform/x86/ideapad-laptop.h
+index 4498a96de597..3eb0dcd6bf7b 100644
+--- a/drivers/platform/x86/ideapad-laptop.h
++++ b/drivers/platform/x86/ideapad-laptop.h
+@@ -12,6 +12,11 @@
+ #include <linux/acpi.h>
+ #include <linux/jiffies.h>
+ #include <linux/errno.h>
++#include <linux/notifier.h>
++
++int ideapad_laptop_register_notifier(struct notifier_block *nb);
++int ideapad_laptop_unregister_notifier(struct notifier_block *nb);
++void ideapad_laptop_call_notifier(unsigned long action, void *data);
+ 
+ enum {
+ 	VPCCMD_R_VPC1 = 0x10,
 -- 
 2.45.2
 
