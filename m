@@ -1,88 +1,200 @@
-Return-Path: <linux-kernel+bounces-259476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5068E9396CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 01:06:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B8439396D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 01:08:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BA15281EBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 23:06:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE7611C21410
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 23:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F22C4CE0F;
-	Mon, 22 Jul 2024 23:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GRHIZiUI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DBDE4D584;
+	Mon, 22 Jul 2024 23:08:32 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DD718EB8;
-	Mon, 22 Jul 2024 23:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B403770D
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 23:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721689589; cv=none; b=QzkoadajtGggymk2KTW0zFJw+8zHeQE6BWacgNyW4YSeYu5FPYUnbHXB1vVgdOOEr35QtxhU8J6FiFhisG8msXq/tdSJgaVmPKBWNeZ0lQSjOgIu3lWsfaGgCQxgTCBVSpRiLtgZ7yWnH/J7CmwiROYRANXRhMfUKkXyO1Wzhpc=
+	t=1721689712; cv=none; b=ot65amfOOa7VxojgSmmytBuuNjZ3k9tuctPLmfwD3rEyoUCzNY7lpGP0szFYesKA4TPnf8OeN8uLJd/jqPKwdgDXbDL+g42VosW0xap1Lw3SLCvivJIYhndgLsGyIrNycM9AwcYfphOeJLIwBUSNj/fM5AvpD06Js5przX3IpNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721689589; c=relaxed/simple;
-	bh=cC5eyWtTP19+7MNd7JmetoV2H8+x45FW1NUV40fuwgI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ia/TGFldwnq2bZlutjRZ8SR+vZcMkZKWb1EkCE9eog5MsndXz+/Erp/v2Gle2WnCevDqLPZdkBB2a92X4BPs0IZsSENackB0TrzHtQ6XwwNWUar5eI2ml15k+SsDjECA1O3ji242IUzCYwi7YuO9JvWoNXPykGM3be6c08mQp9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GRHIZiUI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C4E2C4AF0A;
-	Mon, 22 Jul 2024 23:06:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721689589;
-	bh=cC5eyWtTP19+7MNd7JmetoV2H8+x45FW1NUV40fuwgI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GRHIZiUIVpBScGRm9xbLaUYGpJcDXoWRnV0M3ZsGI/g/HEID7Iw1+in0LjpYpLbF+
-	 nGdv8aSeztRhfOp/G751tSkgIw60t5W4bIinFFc/sgMXCwvXU+OoEW9B12juQhv9Zz
-	 dmR5yNCiPdjOm5Ml6Ec26FHWaKSJqCoNNk8WkWDwA+hBeguGZHPR1BNhHw6oPxE/wF
-	 xYHxvLjxGSuvsCPN4mWLY/GX35mBAcfjabgi9wX/jO3eF8USuiPIUrDHg2v5mzKNZy
-	 XpLGu0eExUL/St9Jn64YPUYLM7Puiw41FUNNObDuWm0CMGjFEyLrry4+8GC1ibXehL
-	 AIhdxpECb2RkA==
-Date: Mon, 22 Jul 2024 17:06:23 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: francesco@dolcini.it, aisheng.dong@nxp.com, vkoul@kernel.org,
-	dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
-	p.zabel@pengutronix.de, linux-kernel@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	airlied@gmail.com, mripard@kernel.org, s.hauer@pengutronix.de,
-	frank.li@nxp.com, kishon@kernel.org, agx@sigxcpu.org,
-	maarten.lankhorst@linux.intel.com, tglx@linutronix.de,
-	devicetree@vger.kernel.org, shawnguo@kernel.org, festevam@gmail.com,
-	tzimmermann@suse.de, kernel@pengutronix.de, conor+dt@kernel.org,
-	krzk+dt@kernel.org, daniel@ffwll.ch
-Subject: Re: [PATCH v2 04/16] dt-bindings: interrupt-controller: Add i.MX8qxp
- Display Controller interrupt controller
-Message-ID: <172168958076.231033.5039687741098447913.robh@kernel.org>
-References: <20240712093243.2108456-1-victor.liu@nxp.com>
- <20240712093243.2108456-5-victor.liu@nxp.com>
+	s=arc-20240116; t=1721689712; c=relaxed/simple;
+	bh=rwGIutc2zYh2Gaz+gc6mt86fq0/d0gQib+xjJM/qH9w=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=iFVjt+v4hO0xp6iGyvWv/FebN/esR1l4VJq3bvO6Q2qtfaKcrwxbdmdPLR7VG5gdMjfHMoPqnfYgl/n3AjtXr2OikQaXyZijA8ezDgm1OQe2O2d7vEYDHnf1Jcr1O5S6rlb7KdydSIEjtUd9DKnmXDl2gxuuEfjaJz2eKhTRtBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-397a7f98808so69920695ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 16:08:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721689709; x=1722294509;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B8DSqv9G7o9mnNghAnNmvOA6qRTWCX+Wd6Im/3V6HNE=;
+        b=nz63omSCm7VlTmtxu04AI+mGEg/+xies8KwBXBJtW3hVSHyZMPWQ7v8oA+Y7mKve68
+         YYw77tO9Yca7XGuIFbNTAuWwyi3zjc1ZwMwmZqQWHPdo9OaIPNiTKz8lvSI1brX3RW7X
+         HSwIjq32C10ccI5r9fi656QVEAUhIfWeK45o+UfZyNnsQANzxzn7xpZXKjhkZTBGoGb4
+         d+svuuQ9JjO4dyfp+SfzEu7/CG9Lolu0s69iqWThJCQFhcbBrAHxyJyksvpMBi7030hj
+         YfOW1WBoioWoYpP5nwHWbWSA27te7Y64+NoSReU8wq9gxbG6i9rqJtdbVWqi4l6L1Udp
+         tFfw==
+X-Forwarded-Encrypted: i=1; AJvYcCVucThZlQL0n4QrEvKK0ufzOzlsi7tNTCsmLHNsttO0HNYGVMNno37Z2n2BsyouAq3Zl2ukIzU73nt3ekXPud3ywnHMHy4GYxCP4YHT
+X-Gm-Message-State: AOJu0Yyu0qD3CYVflCgRT9THUD43u4tOl4AAsyocBHnFepDh2go3JtJ2
+	U+UutVJrhOJS4fz8Kz2FHGByz8Sm5bZBUFGOW862mRMFGisGPLQL5EyDcoLN/Y3mfWpYLaSvuL+
+	Y+m5fd5ixiFHYqrwiO4QSw6ffj2YQq0BqdIMzCkU4bcA3yBUE/Mc1sHo=
+X-Google-Smtp-Source: AGHT+IEf4KHTuU6VvAnEQKQ1PLhTyb0ITUAoncEWt4+1jOcJjdrO3LQ+Lchue1DbsJMd1dKu2tco5hfaJofFIaXUfWo9hJMauSl+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240712093243.2108456-5-victor.liu@nxp.com>
+X-Received: by 2002:a05:6e02:1d15:b0:380:9233:96e6 with SMTP id
+ e9e14a558f8ab-398e7633dfdmr7842055ab.4.1721689709380; Mon, 22 Jul 2024
+ 16:08:29 -0700 (PDT)
+Date: Mon, 22 Jul 2024 16:08:29 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008a971a061dde1f74@google.com>
+Subject: [syzbot] [btrfs?] kernel BUG in btrfs_folio_end_all_writers
+From: syzbot <syzbot+a14d8ac9af3a2a4fd0c8@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, johannes.thumshirn@wdc.com, 
+	josef@toxicpanda.com, linux-btrfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    b1bc554e009e Merge tag 'media/v6.11-1' of git://git.kernel..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=15f02349980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=65e004fdd6e65e46
+dashboard link: https://syzkaller.appspot.com/bug?extid=a14d8ac9af3a2a4fd0c8
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11656f2d980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11cd1179980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1e6d5d2330c1/disk-b1bc554e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f753d2415c93/vmlinux-b1bc554e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/80bbcb43a23d/bzImage-b1bc554e.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/17f63396bdfd/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/df45c13c09ac/mount_5.gz
+
+The issue was bisected to:
+
+commit 0586d0a89e77d717da14df42648ace4a9fd67981
+Author: Josef Bacik <josef@toxicpanda.com>
+Date:   Wed Mar 20 21:24:13 2024 +0000
+
+    btrfs: move extent bit and page cleanup into cow_file_range_inline
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1653443d980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1553443d980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1153443d980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a14d8ac9af3a2a4fd0c8@syzkaller.appspotmail.com
+Fixes: 0586d0a89e77 ("btrfs: move extent bit and page cleanup into cow_file_range_inline")
+
+BTRFS: error (device loop0 state EAL) in free_log_tree:3267: errno=-5 IO failure
+BTRFS warning (device loop0 state EAL): Skipping commit of aborted transaction.
+BTRFS: error (device loop0 state EAL) in cleanup_transaction:2018: errno=-5 IO failure
+assertion failed: folio_test_locked(folio), in fs/btrfs/subpage.c:871
+------------[ cut here ]------------
+kernel BUG at fs/btrfs/subpage.c:871!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 PID: 5090 Comm: syz-executor225 Not tainted 6.10.0-syzkaller-05505-gb1bc554e009e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:btrfs_folio_end_all_writers+0x55b/0x610 fs/btrfs/subpage.c:871
+Code: e9 d3 fb ff ff e8 25 22 c2 fd 48 c7 c7 c0 3c 0e 8c 48 c7 c6 80 3d 0e 8c 48 c7 c2 60 3c 0e 8c b9 67 03 00 00 e8 66 47 ad 07 90 <0f> 0b e8 6e 45 b0 07 4c 89 ff be 08 00 00 00 e8 21 12 25 fe 4c 89
+RSP: 0018:ffffc900033d72e0 EFLAGS: 00010246
+RAX: 0000000000000045 RBX: 00fff0000000402c RCX: 663b7a08c50a0a00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffffc900033d73b0 R08: ffffffff8176b98c R09: 1ffff9200067adfc
+R10: dffffc0000000000 R11: fffff5200067adfd R12: 0000000000000001
+R13: dffffc0000000000 R14: 0000000000000000 R15: ffffea0001cbee80
+FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f5f076012f8 CR3: 000000000e134000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __extent_writepage fs/btrfs/extent_io.c:1597 [inline]
+ extent_write_cache_pages fs/btrfs/extent_io.c:2251 [inline]
+ btrfs_writepages+0x14d7/0x2760 fs/btrfs/extent_io.c:2373
+ do_writepages+0x359/0x870 mm/page-writeback.c:2656
+ filemap_fdatawrite_wbc+0x125/0x180 mm/filemap.c:397
+ __filemap_fdatawrite_range mm/filemap.c:430 [inline]
+ __filemap_fdatawrite mm/filemap.c:436 [inline]
+ filemap_flush+0xdf/0x130 mm/filemap.c:463
+ btrfs_release_file+0x117/0x130 fs/btrfs/file.c:1547
+ __fput+0x24a/0x8a0 fs/file_table.c:422
+ task_work_run+0x24f/0x310 kernel/task_work.c:222
+ exit_task_work include/linux/task_work.h:40 [inline]
+ do_exit+0xa2f/0x27f0 kernel/exit.c:877
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1026
+ __do_sys_exit_group kernel/exit.c:1037 [inline]
+ __se_sys_exit_group kernel/exit.c:1035 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1035
+ x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5f075b70c9
+Code: Unable to access opcode bytes at 0x7f5f075b709f.
+RSP: 002b:00007ffd1c3f9a58 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f5f075b70c9
+RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
+RBP: 00007f5f07638390 R08: ffffffffffffffb8 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f5f07638390
+R13: 0000000000000000 R14: 00007f5f07639100 R15: 00007f5f07585050
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:btrfs_folio_end_all_writers+0x55b/0x610 fs/btrfs/subpage.c:871
+Code: e9 d3 fb ff ff e8 25 22 c2 fd 48 c7 c7 c0 3c 0e 8c 48 c7 c6 80 3d 0e 8c 48 c7 c2 60 3c 0e 8c b9 67 03 00 00 e8 66 47 ad 07 90 <0f> 0b e8 6e 45 b0 07 4c 89 ff be 08 00 00 00 e8 21 12 25 fe 4c 89
+RSP: 0018:ffffc900033d72e0 EFLAGS: 00010246
+RAX: 0000000000000045 RBX: 00fff0000000402c RCX: 663b7a08c50a0a00
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffffc900033d73b0 R08: ffffffff8176b98c R09: 1ffff9200067adfc
+R10: dffffc0000000000 R11: fffff5200067adfd R12: 0000000000000001
+R13: dffffc0000000000 R14: 0000000000000000 R15: ffffea0001cbee80
+FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f5f076012f8 CR3: 000000000e134000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
-On Fri, 12 Jul 2024 17:32:31 +0800, Liu Ying wrote:
-> i.MX8qxp Display Controller has a built-in interrupt controller to support
-> Enable/Status/Preset/Clear interrupt bit.
-> 
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> ---
-> v2:
-> * Drop unneeded "|". (Krzysztof)
-> 
->  .../fsl,imx8qxp-dc-intc.yaml                  | 318 ++++++++++++++++++
->  1 file changed, 318 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/fsl,imx8qxp-dc-intc.yaml
-> 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
