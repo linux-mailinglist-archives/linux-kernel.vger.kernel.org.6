@@ -1,102 +1,97 @@
-Return-Path: <linux-kernel+bounces-259018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E79C3939007
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:40:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED8C093900C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:42:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A352528149C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:40:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 993E81F21C0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986D916D9AE;
-	Mon, 22 Jul 2024 13:40:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9081716D9B7;
+	Mon, 22 Jul 2024 13:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e3EIWpay"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mua6d5e4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35361D696;
-	Mon, 22 Jul 2024 13:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBFD31D696;
+	Mon, 22 Jul 2024 13:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721655620; cv=none; b=Yqia+9phOyuRRCoT/hk95Z16cYeeRBSrWqLzrF0BDoZ/yMBxrPEnT3kguoQZeFT1Wpnr6JMQfDJ+3hsZIeOkHbGob/rAuQvf6mJDDvmaT3Oa9i8yrtoy/5rec6C/mw1xkf1W2hQEiZQ0Onkqvk3DR0L8DEajGcY/Niwu1s/usys=
+	t=1721655724; cv=none; b=PCHKrOHSqcrbFirI0SzAsv9TjhRIycSA36lLV/gq6e3YnLsWTJPFezTXtGVyY1+EK19DN95fpus3K6qs1zgjkWk91KEp/81ySNS4furgsjue3VANdZd9gu+x6T3ol0jBttfIQA1iBU1lY9iX+Rp+sEnQNJg7cnummcaE0PU8Qs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721655620; c=relaxed/simple;
-	bh=rZGFKbtpKbDrvqMnz5K9vjEwRQTJh8QOOkfo7MqkkVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XzEQ6TLxh4PP/xpwflxvjs1fT/aONlyswEHKrfne4Iu8nBSoqab27q2n0Ky74TY36cb59scCLSb6vijgZWiR2pAACQRf79SncAMqwhpzxBm0lEvcyLMgxVB3q6f4IqINMIGZmki2IbNM/s9s3uu8IKECVEn7EMLNB100wbNYVAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e3EIWpay; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C24B1C116B1;
-	Mon, 22 Jul 2024 13:40:18 +0000 (UTC)
+	s=arc-20240116; t=1721655724; c=relaxed/simple;
+	bh=99EO1k0o8YDQtkUpSIzsfA64IvvnUDYcndvdN/LqiyQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PI6PpkBsT25uvsIC0Vhhz1NSL5NhYV8Jrb93wyTJoxT8s8rDiS4k+UKyiBA6rHy78TuXf4fgHe4Yf9wC6qRJDU//hNCrFSUjN5UlRfPny4PKfq/WMRUt6EB8pI7UW6Ap6ZjTergtQeguFUzemLEarNw5oTyRx/orJnR3JgJ/zi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mua6d5e4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F34A4C116B1;
+	Mon, 22 Jul 2024 13:42:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721655620;
-	bh=rZGFKbtpKbDrvqMnz5K9vjEwRQTJh8QOOkfo7MqkkVo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e3EIWpay8X4kfpKmKYuy+jxBvXC6JUlRNZOahRaFvELzwRXvvqzPyDQplwouxEzGT
-	 pGo2XZBNGIawsvmeZyXWy4ZFy5uZqSSaq4womE8D/ugZK15k7xyZ9Etj6+m+5YySlt
-	 /hXjlNJ/c/0iH308KUfCaLQ/cm+UeeTJrSeSZopADvjUbS0CySvvIjmJzZCrzGsSAM
-	 5Uzh0qeIeO+EvPIRqfWwtrfGnjni90ie7+UPR/PrjJRZGV7DJHyXz1sygDDiPJOlVf
-	 GPUhTVBub7jVgY6njUF8l+AOiY/r3FB9YYo+pD5MflURnAkmPND5M1O5Lk6/qhR46w
-	 kbVjPj4M08qTw==
-Date: Mon, 22 Jul 2024 14:40:15 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: sfalco@harris.com, sr@denx.de, dbrownell@users.sourceforge.net,
-	jwboyer@linux.vnet.ibm.com, akpm@linux-foundation.org,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] spi: ppc4xx: handle irq_of_parse_and_map() errors
-Message-ID: <6234dbfd-c153-4f67-a828-342919d41de6@sirena.org.uk>
-References: <20240722123519.333088-1-make24@iscas.ac.cn>
+	s=k20201202; t=1721655724;
+	bh=99EO1k0o8YDQtkUpSIzsfA64IvvnUDYcndvdN/LqiyQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Mua6d5e44UFy8/iraVKBwQ22OYIM8zIq91MYOuYmVgjr1Mr1uemJOG2qmh9ARlGfQ
+	 a4HQuOJYD3dK7HG9Vlxc0bxaWajk5/Tgp/DMPBjnIer4pfEVCKkAGuyoNpTwvDlL27
+	 priRtBVxYItcuzoh+tRsL8gxcBKtcrpKcC+J68Qjt/8jFm4ixJPdV+YfUcc6qvcGe7
+	 qdVm0ho1jQNc8aInoFMQexNGcBce8zySh3IcgabRNzlP1ukaJU1amkhUkPbnc+JiUx
+	 E33ih5bJrQPYJhe14auf0iIGS1pfbRJy0vGYdsqASVtCwsdrzYxbokJbIqtq21dJ2e
+	 B+VBxdN+QgsgQ==
+From: Christian Brauner <brauner@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfs: Fix writeback that needs to go to both server and cache
+Date: Mon, 22 Jul 2024 15:41:57 +0200
+Message-ID: <20240722-umringt-kurgast-1fbd329ad5cc@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <1599053.1721398818@warthog.procyon.org.uk>
+References: <1599053.1721398818@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4CmWo2V43qz1bA2V"
-Content-Disposition: inline
-In-Reply-To: <20240722123519.333088-1-make24@iscas.ac.cn>
-X-Cookie: Everything you know is wrong!
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1390; i=brauner@kernel.org; h=from:subject:message-id; bh=99EO1k0o8YDQtkUpSIzsfA64IvvnUDYcndvdN/LqiyQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTNS1zGY/rrg46N9sY6lrOXS9ceKJinUtS4pPhcUqnhg uKMl7pzO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbyhJvhf83jq2LNFque625n dnfaxyVhxPrB5tkqPcEz0u2nFaxmbWb4X1amEc5wOOX0FOP6C0Gyat3cZxUbowSeHQ1hZnu/7cR TLgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
+On Fri, 19 Jul 2024 15:20:18 +0100, David Howells wrote:
+> When netfslib is performing writeback (ie. ->writepages), it maintains two
+> parallel streams of writes, one to the server and one to the cache, but it
+> doesn't mark either stream of writes as active until it gets some data that
+> needs to be written to that stream.
+> 
+> This is done because some folios will only be written to the cache
+> (e.g. copying to the cache on read is done by marking the folios and
+> letting writeback do the actual work) and sometimes we'll only be writing
+> to the server (e.g. if there's no cache).
+> 
+> [...]
 
---4CmWo2V43qz1bA2V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-On Mon, Jul 22, 2024 at 08:35:19PM +0800, Ma Ke wrote:
-> Zero and negative number is not a valid IRQ for in-kernel code and the
-> irq_of_parse_and_map() function returns zero on error.  So this check for
-> valid IRQs should only accept values > 0.
->=20
-> Cc: stable@vger.kernel.org
-> Fixes: 44dab88e7cc9 ("spi: add spi_ppc4xx driver")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
-> Changes in v2:
-> - added Cc stable line;
-> - added Fixes line.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-The Cc stable seems clearly disproportionate here.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
---4CmWo2V43qz1bA2V
-Content-Type: application/pgp-signature; name="signature.asc"
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
------BEGIN PGP SIGNATURE-----
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaeYT8ACgkQJNaLcl1U
-h9BYigf+NBUu7Pk0mub0WJJ4W3R/oMZmv8uP0Ks/+xr4Fl1e9lfBjgJoGR7zhbT4
-mSvv2VgYgNxMmVlikHTEf2s6exRkaGMw/0CcI4HtMPXeeC7zEdA4patRvBlyfM6p
-m5+pPwFut8U9o4f/T63BRICKxLr65guvcwJBaWwgAdTpCPuMa0ulJ3YSbSSb+/Kl
-wsiwhd+xn3kH8ghROSEi9J7lCdtfKB4bgX6B2cdbuOnESyLJxGnNMcfnCV4teWqS
-90CPG3QmaIk/G+keHGJQGou5AKqTuRH+2MIBue5H73K/Qr/avErBnrwmKMHh3pV2
-tsHbD3+yRMh/FwZh59tQwJiQiyIWlg==
-=4r3H
------END PGP SIGNATURE-----
-
---4CmWo2V43qz1bA2V--
+[1/1] netfs: Fix writeback that needs to go to both server and cache
+      https://git.kernel.org/vfs/vfs/c/55e81a4aa9ae
 
