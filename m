@@ -1,140 +1,239 @@
-Return-Path: <linux-kernel+bounces-259388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C122939531
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 23:08:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94F24939532
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 23:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B51AEB21A4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:08:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E45C1C21750
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:08:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC8438FA3;
-	Mon, 22 Jul 2024 21:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF933EA69;
+	Mon, 22 Jul 2024 21:08:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mrT12hic"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LYm75zr2"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7DE482CA;
-	Mon, 22 Jul 2024 21:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5186038F83;
+	Mon, 22 Jul 2024 21:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721682428; cv=none; b=tJr19YSioKAoswE7uBLoR//NUlgPcOKxikILWGLeZso9dJ4cefjdQkrY65ekGDDbOnE/RLeNYYJRAN6dMFbHjunA8O9HnvoH2pSoAgCkk6TQyDGdMzsIWdI6PO7m0JOOvicy4YcSbUpz6MYkZp1g3s5uMC04CroCj7UhT5D3QXc=
+	t=1721682496; cv=none; b=pAznC+eTFTWbrc2ha/7HuzY4nT1rYGJ9yec3E+cTHzoVLnn1aAYKIfxyASf5PGuadnzpztN3pKlPpCog7QDXFhSIJxDrLWXPJe2HpfcZIvlgaetZqdbCl3MEmpJxvtRM8yk5bGxowYiYIkdM3a7E1qJXS+0MFLG/5QEMcjCzUJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721682428; c=relaxed/simple;
-	bh=o4lTucE/YybaswT34FevEnarms9wVB2T0SXwubW+jOY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lDgvHYsALYclaKQQ2dsJpO6eNhuJ4y+z6y8VwdAb23BYDtCiDGIMMf+uinm3hDnHnhDTOMXyHa6b8Iqj0mEQY8g2D2T3WyM9npCSmrpwObwHriNWCSSuo5qYUbfjEMmRT5S4CtJ8I2YnHxrTB2G4u4+XTvxHAlYBNm0x6MIJ9VE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mrT12hic; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721682427; x=1753218427;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=o4lTucE/YybaswT34FevEnarms9wVB2T0SXwubW+jOY=;
-  b=mrT12hicbc4LJ4CkEArGq7+RjcSjSEQpGyOUlyCn/qQYGPcvGG+xV4qz
-   YTakBmtQy8X5KcfiKukWCBBo0Zc7S6+9xJk46R0fiC/SGT+bqDYPaLvOm
-   MCmhHiH4U3YNViufSlTPQe+EIOPI0DSZtTbQhN+JtUv8Y4JoFRDjeHpVj
-   U1XQ0oPANs92cW9oqx1AFxkRMDWEyiI9hcAEqcRyHR+ZSroOszQjBj3Vl
-   4HFsJObGRwsaValbiODHsyMOe5MCBic59ytfU3dB0dN4yeUNtqdYHFi+B
-   sU5ujvJJdh+wNGMdVhaFyBAE9G2RTS2Q7AF67yv9KPbq8soaMSIY4pY2K
-   Q==;
-X-CSE-ConnectionGUID: eJscQsTRSNGvd4FJa0s7Yg==
-X-CSE-MsgGUID: nixPIWkUR3yqVZlHsmJ2PA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11141"; a="30428327"
-X-IronPort-AV: E=Sophos;i="6.09,229,1716274800"; 
-   d="scan'208";a="30428327"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 14:07:03 -0700
-X-CSE-ConnectionGUID: 2LXmSF7dQTaMagER66M4bw==
-X-CSE-MsgGUID: WLvDDELxSzq0X9+MrTcTRw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,229,1716274800"; 
-   d="scan'208";a="51653313"
-Received: from lucas-s2600cw.jf.intel.com ([10.165.21.196])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 14:07:03 -0700
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: intel-gfx@lists.freedesktop.org,
-	linux-perf-users@vger.kernel.org
-Cc: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-	dri-devel@lists.freedesktop.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Lucas De Marchi <lucas.demarchi@intel.com>
-Subject: [PATCH 7/7] drm/i915/pmu: Do not set event_init to NULL
-Date: Mon, 22 Jul 2024 14:06:48 -0700
-Message-ID: <20240722210648.80892-8-lucas.demarchi@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240722210648.80892-1-lucas.demarchi@intel.com>
-References: <20240722210648.80892-1-lucas.demarchi@intel.com>
+	s=arc-20240116; t=1721682496; c=relaxed/simple;
+	bh=Xbyd/70IHOv1ezkPeRZVUOlK4Zy9BuBOOSYr+GjtXjA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aDtHTIFwcOHU34k64s2WYuhPXaZcBjFv0B6S2XBvHI72/LBjR1H46xGvgyXqntcPFCTsKEjF0/3r/e2OIU5hKuXRHxMcpUV6TYfE71LZD2OSC9mC+0sdhcb8ZtbFe5NyvAnGllmsEiKCr7HUcfOQ7s6Spz0xmH+FAgf5BJYLTfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LYm75zr2; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70d316f0060so625277b3a.1;
+        Mon, 22 Jul 2024 14:08:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721682495; x=1722287295; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YLNHOJdoQ1OpK4qxqT1/Vb6qgV4yW7MKmMSvNb+jevk=;
+        b=LYm75zr2ucNXwhgCcqwAjda8W2r34SeXxeoDbwMXt0q+mYrm8ODeuJWgCWwoH3AQ53
+         0mW0g9WZ54KflV/xowVzaYjXi+SOMsKQ5zxN/kXqLQRJ3HFnAu7TNvNJRw0BjN6JJ/vf
+         11z9k9kCjPBX+tBlaQTaXNFiX0wu5ii5hAq0tl/xQbsTmvxiB+U2kKiti1TJ2/u9818j
+         VawYvmQxT5YD9TfdxldPnjO123fJYbziUEDflY2obgVs1gUxsxcvXw7SWx1Glqd6Ri6L
+         UXguq8fEykqaIQb4IIBFTi+BEGvnLK6aetvpiBgKAB9Ii5TmyJexln/kKteuIvyyFHLs
+         7DFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721682495; x=1722287295;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YLNHOJdoQ1OpK4qxqT1/Vb6qgV4yW7MKmMSvNb+jevk=;
+        b=I1FeoE8oAZf1ZGD0uGT3rcQ83ON+J28bghzjiAhIOnAfaiIsurz0DB7uD3qtDy6Hp2
+         VlozvJrPZ9Yd2bxK9vq7W0xfOyM1Khs+b4/ORQgDyAmE0dDFxJ5+9Xyciivtqefk8UNv
+         JORROPXy3aLocctsDzBT3qMEQ+gV1fCWXWPyHXhgqIQMIEC7nX0bJlZpFbs26biLTCUn
+         fwBIRN+HtouEy1uApthA0/oyUxkrt5x7PRnVpaRcGcwryjMDUQuxWfPTIq+3fl7nIxG1
+         Hb1pvtpXQs4k5dKJFT3ikCSAn/1Rk8L4L952WpyYtXaeCNHJB2ocJF9Xy5DoCMyc0Ejn
+         43rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGZf+0Se/0oNqffTznd9EOVLicehOIY6nV/dNu85IaSnMWHAPjNicytTaAg4r9R64+qKef7WytkZq9q3jOJOBOo9SSY+S364eJ+b58jYY6gjplilwxLun8yAiekHSmEmSiJduM+o0aUd3OtOZbXzuYh4dzqh9eAnxUaRaLH62/+UH9fdeb
+X-Gm-Message-State: AOJu0YwCI6PRQHDiT+QubIIckNu2p9BlvR80EyhoY5NlmCjHtZC3zifO
+	DHbZE2dPTL6xf3FsU+LPrt7XVZ/MMIR309GKPOLZs/KQUNNvpz623/rVkJXjDgx2gM2sypKsz82
+	+4dF+eLoXVsGOqs4Fql0P9b9h4fU=
+X-Google-Smtp-Source: AGHT+IHfxRH5gJ/iWcX51rzb+TbNkPuOf3fN5Ga2EkXNJJCXLrrTS9QRLiA+Qsgb5/ys1MirkiBCuk5xVq8GLhhrvkE=
+X-Received: by 2002:a17:90a:bd8f:b0:2c8:2cd1:881b with SMTP id
+ 98e67ed59e1d1-2cd8d11ca43mr150402a91.20.1721682494568; Mon, 22 Jul 2024
+ 14:08:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240722182050.38513-1-technoboy85@gmail.com>
+In-Reply-To: <20240722182050.38513-1-technoboy85@gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 22 Jul 2024 14:08:02 -0700
+Message-ID: <CAEf4BzbzPWCY0uJGNG-hBvDrUc_KMYNpQ2KnzFO6+K3ML6NcwQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next] bpf: allow bpf_current_task_under_cgroup() with BPF_CGROUP_*
+To: technoboy85@gmail.com
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, bpf@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Matteo Croce <teknoraver@meta.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-event_init is not an optional function pointer from perf events. Now
-that pmu unregister happens only when freeing i915, setting it to NULL
-only protects other functions in i915. Replace that by checking
-pmu->closed.
+On Mon, Jul 22, 2024 at 11:21=E2=80=AFAM <technoboy85@gmail.com> wrote:
+>
+> From: Matteo Croce <teknoraver@meta.com>
+>
+> The helper bpf_current_task_under_cgroup() currently is only allowed for
+> tracing programs.
+> Allow its usage also in the BPF_CGROUP_* program types.
+> Move the code from kernel/trace/bpf_trace.c to kernel/bpf/cgroup.c,
+> so it compiles also without CONFIG_BPF_EVENTS.
+>
+> Signed-off-by: Matteo Croce <teknoraver@meta.com>
+> ---
+>  include/linux/bpf.h      |  1 +
+>  kernel/bpf/cgroup.c      | 25 +++++++++++++++++++++++++
+>  kernel/trace/bpf_trace.c | 27 ++-------------------------
+>  3 files changed, 28 insertions(+), 25 deletions(-)
+>
 
-Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
----
- drivers/gpu/drm/i915/i915_pmu.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+It seems fine to allow this, but also note that we have
+bpf_task_under_cgroup() kfunc, which you might want to check if it is
+allowed where you need it as well.
 
-diff --git a/drivers/gpu/drm/i915/i915_pmu.c b/drivers/gpu/drm/i915/i915_pmu.c
-index df53a8fe53ec..c5738035bc2f 100644
---- a/drivers/gpu/drm/i915/i915_pmu.c
-+++ b/drivers/gpu/drm/i915/i915_pmu.c
-@@ -303,7 +303,7 @@ void i915_pmu_gt_parked(struct intel_gt *gt)
- {
- 	struct i915_pmu *pmu = &gt->i915->pmu;
- 
--	if (!pmu->base.event_init)
-+	if (pmu->closed)
- 		return;
- 
- 	spin_lock_irq(&pmu->lock);
-@@ -325,7 +325,7 @@ void i915_pmu_gt_unparked(struct intel_gt *gt)
- {
- 	struct i915_pmu *pmu = &gt->i915->pmu;
- 
--	if (!pmu->base.event_init)
-+	if (pmu->closed)
- 		return;
- 
- 	spin_lock_irq(&pmu->lock);
-@@ -1325,12 +1325,12 @@ void i915_pmu_register(struct drm_i915_private *i915)
- err_groups:
- 	kfree(pmu->base.attr_groups);
- err_attr:
--	pmu->base.event_init = NULL;
- 	free_event_attributes(pmu);
- err_name:
- 	if (IS_DGFX(i915))
- 		kfree(pmu->name);
- err:
-+	pmu->closed = true;
- 	drm_notice(&i915->drm, "Failed to register PMU!\n");
- }
- 
-@@ -1346,6 +1346,4 @@ void i915_pmu_unregister(struct drm_i915_private *i915)
- 
- 	hrtimer_cancel(&pmu->timer);
- 	i915_pmu_unregister_cpuhp_state(pmu);
--
--	pmu->base.event_init = NULL;
- }
--- 
-2.43.0
+And the latter one is defined in kernel/bpf/helpers.c, so I'd move
+this one next to it to keep them close.
 
+pw-bot: cr
+
+
+> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> index 4f1d4a97b9d1..4000fd161dda 100644
+> --- a/include/linux/bpf.h
+> +++ b/include/linux/bpf.h
+> @@ -3188,6 +3188,7 @@ extern const struct bpf_func_proto bpf_sock_hash_up=
+date_proto;
+>  extern const struct bpf_func_proto bpf_get_current_cgroup_id_proto;
+>  extern const struct bpf_func_proto bpf_get_current_ancestor_cgroup_id_pr=
+oto;
+>  extern const struct bpf_func_proto bpf_get_cgroup_classid_curr_proto;
+> +extern const struct bpf_func_proto bpf_current_task_under_cgroup_proto;
+>  extern const struct bpf_func_proto bpf_msg_redirect_hash_proto;
+>  extern const struct bpf_func_proto bpf_msg_redirect_map_proto;
+>  extern const struct bpf_func_proto bpf_sk_redirect_hash_proto;
+> diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
+> index 8ba73042a239..b99add9570e6 100644
+> --- a/kernel/bpf/cgroup.c
+> +++ b/kernel/bpf/cgroup.c
+> @@ -2308,6 +2308,29 @@ static const struct bpf_func_proto bpf_get_netns_c=
+ookie_sockopt_proto =3D {
+>  };
+>  #endif
+>
+> +BPF_CALL_2(bpf_current_task_under_cgroup, struct bpf_map *, map, u32, id=
+x)
+> +{
+> +       struct bpf_array *array =3D container_of(map, struct bpf_array, m=
+ap);
+> +       struct cgroup *cgrp;
+> +
+> +       if (unlikely(idx >=3D array->map.max_entries))
+> +               return -E2BIG;
+> +
+> +       cgrp =3D READ_ONCE(array->ptrs[idx]);
+> +       if (unlikely(!cgrp))
+> +               return -EAGAIN;
+> +
+> +       return task_under_cgroup_hierarchy(current, cgrp);
+> +}
+> +
+> +const struct bpf_func_proto bpf_current_task_under_cgroup_proto =3D {
+> +       .func           =3D bpf_current_task_under_cgroup,
+> +       .gpl_only       =3D false,
+> +       .ret_type       =3D RET_INTEGER,
+> +       .arg1_type      =3D ARG_CONST_MAP_PTR,
+> +       .arg2_type      =3D ARG_ANYTHING,
+> +};
+> +
+>  static const struct bpf_func_proto *
+>  cg_sockopt_func_proto(enum bpf_func_id func_id, const struct bpf_prog *p=
+rog)
+>  {
+> @@ -2581,6 +2604,8 @@ cgroup_current_func_proto(enum bpf_func_id func_id,=
+ const struct bpf_prog *prog)
+>         case BPF_FUNC_get_cgroup_classid:
+>                 return &bpf_get_cgroup_classid_curr_proto;
+>  #endif
+> +       case BPF_FUNC_current_task_under_cgroup:
+> +               return &bpf_current_task_under_cgroup_proto;
+>         default:
+>                 return NULL;
+>         }
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index cd098846e251..ea5cdd122024 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -798,29 +798,6 @@ const struct bpf_func_proto bpf_task_pt_regs_proto =
+=3D {
+>         .ret_btf_id     =3D &bpf_task_pt_regs_ids[0],
+>  };
+>
+> -BPF_CALL_2(bpf_current_task_under_cgroup, struct bpf_map *, map, u32, id=
+x)
+> -{
+> -       struct bpf_array *array =3D container_of(map, struct bpf_array, m=
+ap);
+> -       struct cgroup *cgrp;
+> -
+> -       if (unlikely(idx >=3D array->map.max_entries))
+> -               return -E2BIG;
+> -
+> -       cgrp =3D READ_ONCE(array->ptrs[idx]);
+> -       if (unlikely(!cgrp))
+> -               return -EAGAIN;
+> -
+> -       return task_under_cgroup_hierarchy(current, cgrp);
+> -}
+> -
+> -static const struct bpf_func_proto bpf_current_task_under_cgroup_proto =
+=3D {
+> -       .func           =3D bpf_current_task_under_cgroup,
+> -       .gpl_only       =3D false,
+> -       .ret_type       =3D RET_INTEGER,
+> -       .arg1_type      =3D ARG_CONST_MAP_PTR,
+> -       .arg2_type      =3D ARG_ANYTHING,
+> -};
+> -
+>  struct send_signal_irq_work {
+>         struct irq_work irq_work;
+>         struct task_struct *task;
+> @@ -1548,8 +1525,6 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, co=
+nst struct bpf_prog *prog)
+>                 return &bpf_get_numa_node_id_proto;
+>         case BPF_FUNC_perf_event_read:
+>                 return &bpf_perf_event_read_proto;
+> -       case BPF_FUNC_current_task_under_cgroup:
+> -               return &bpf_current_task_under_cgroup_proto;
+>         case BPF_FUNC_get_prandom_u32:
+>                 return &bpf_get_prandom_u32_proto;
+>         case BPF_FUNC_probe_write_user:
+> @@ -1578,6 +1553,8 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, co=
+nst struct bpf_prog *prog)
+>                 return &bpf_cgrp_storage_get_proto;
+>         case BPF_FUNC_cgrp_storage_delete:
+>                 return &bpf_cgrp_storage_delete_proto;
+> +       case BPF_FUNC_current_task_under_cgroup:
+> +               return &bpf_current_task_under_cgroup_proto;
+>  #endif
+>         case BPF_FUNC_send_signal:
+>                 return &bpf_send_signal_proto;
+> --
+> 2.45.2
+>
+>
 
