@@ -1,299 +1,326 @@
-Return-Path: <linux-kernel+bounces-258505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04CB19388FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:37:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D4D99388FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:37:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1200281534
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:37:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60A361C20E84
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:37:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A88718044;
-	Mon, 22 Jul 2024 06:37:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D6A18044;
+	Mon, 22 Jul 2024 06:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hlh174Nx"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="JaTA7zee"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3079817BCD;
-	Mon, 22 Jul 2024 06:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD2F17BCD
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 06:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721630253; cv=none; b=LWeARdMXESQmvoR1dXAzTWtYGQ6m8OsyfwYLvaRsqqOU0kFuu4Un8dmVOLeTqZXhagarpoHmyfuDTSQOsSNuxNGGocv5mcfpQbY05eMAo1sQdRaIfIbxkck/MOU+xMyLuUMC6vwULIGWwePM0C/4P+r9drAxx8BLnwFXtpkQ0Ww=
+	t=1721630266; cv=none; b=HL3pfJPKI5GPStrCi5G6WGO6L4OM7SB4bbJDNZQf6MJ5kULgtLXz3HmwGqUiu70pyKARPGNsad2LqAqsZ/EY1QCQ56zKAmSXobTUumS2DrYiT3YlH7arR3uoGMoxIdZ7slAPbdQy/eLaad19HjTOpuMYmjrE7NVGKRDmyDesPKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721630253; c=relaxed/simple;
-	bh=tCiUOPC+LHGq7yVm6U1jnO+V/S+Vj3cMrsyAv3mqaN0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dSLStj7vajmczz8Cz05V+3STvAGWbRB1qiUA1GXG+srz1jYKl3vN+lTEjQ2FGrNlHNc3mdtHjnnP397OaMJTLIkJP0xNXQ2iM05w/eXvkXNAf26gfgVUOGxdKovLDM3BwVWOCt7vMgQa+fxg0uDrpNMRDVKdDvP3a/hZSng9mxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hlh174Nx; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7a264a24ea7so439495a12.3;
-        Sun, 21 Jul 2024 23:37:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721630251; x=1722235051; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=H3OdDRR0s7gFlYGOFG3KlnC5bWBGEwt6D2ZCwoIo8Ls=;
-        b=hlh174NxsInODOuoo6pNmya51Qw/O6KLj4bSMYAJFfZPITu6yCkPgupNnj+jExsAf6
-         SyUUPxoOiaIjiFNIeyB4rE7zL67Ux6DBr0HuRpI6clDt/ItDD6yHgfx9kSzOWMHlWcNt
-         miq9LD/axt0JxrVjyfV5TBmndsLJrnOcxTyNm3IBf+O/VfQ0YEOXWRK71a2mSTFAZq/Y
-         zm2W/yPjUNaA4IMB8FEEZoL6uL7YPi4d8CuxgaatLkcTntttvEe8/BZKpsTSUZ9rFqL8
-         /hR048tqoEfR7vj4h0+LMRc8lD5KxTNf41/f4QsAHo/gyep7tidQNsBvYsw02Qz/icb4
-         ZT3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721630251; x=1722235051;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H3OdDRR0s7gFlYGOFG3KlnC5bWBGEwt6D2ZCwoIo8Ls=;
-        b=Bwt5DCIvmf+tuxrnO8xDldMIbiOBK3Oy/LXpGyHglXAM3LSPdiKmsehblEWebh/gBj
-         KFwMwdH8IcPNTwXP6+x2WeYg0VQH621eXXOAkAkE10SGe0NNbEeM0CKKI26Eo6hjdu3Q
-         V/NFpEHG2vY93du38Sgih0QMyIBJMVFTgRBve2HKhqu7J/nQTGl4G4e5nd+a7ZwYd6r8
-         4MOe0A1Wb0oHvD7WHcOAFEHMuYvV4ZpkdoC3oE9IOWqZgLfKv14jSYO9ylOpnBTbQXBt
-         esz5RDbS1CvMQ8p3SB5247jcdGFP4F0uUk1QmCH6FMxVMUJseC2IZScIGVxAImVTcdNt
-         dwpg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFgedpvXZEaC9Cg/nwRgyicBrcyVV6ZB//Y0me4iJfaK4RBHJvkwgGYBaeh799mG8El7mpbwptV6xstGv5dcrDGYE/DD5tIXOdX+8yfoOpfKsNV2wa8nmRodLPL6morezPa3ozaQF/8VpJcxzDPYO7Yuue1OUN+NHKMVBNJoddB7xPEK9t
-X-Gm-Message-State: AOJu0YyzfMCEGqwv5ttBAiiBkpCpJkUBFNhUS1Q3MjNRYuN8fN1+9VOw
-	MWmXSj4ViTFdoTamR4KWhEdIZKRbYNiBHLruPp5cvMxgcrr2RdR1
-X-Google-Smtp-Source: AGHT+IFXYNzbTnKGTt9iEE6dtvm0saWHOBj8QQ6eRdU15WdgpiZx+d+Tjpig6aIZgQzB7p/YCNmoAA==
-X-Received: by 2002:a05:6a21:3117:b0:1c3:b16f:31 with SMTP id adf61e73a8af0-1c4228c37f0mr8833544637.30.1721630251167;
-        Sun, 21 Jul 2024 23:37:31 -0700 (PDT)
-Received: from localhost.localdomain ([115.240.194.54])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f485bbbsm46499085ad.277.2024.07.21.23.37.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jul 2024 23:37:30 -0700 (PDT)
-From: Animesh Agarwal <animeshagarwal28@gmail.com>
-To: 
-Cc: Animesh Agarwal <animeshagarwal28@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ASoC: dt-bindings: fsl,imx-audio-es8328: Convert to dtschema
-Date: Mon, 22 Jul 2024 12:06:51 +0530
-Message-ID: <20240722063657.23018-1-animeshagarwal28@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1721630266; c=relaxed/simple;
+	bh=hC1fIoL/k2MFkLE3UC5SpYr4SefsnDgH9S4tOjzD69Q=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=mkXWwro+l7DJDrFx7UuIqssd0paDK6TC1sFlLRgnGqblXNV7W12/rpMcl2TpRuFkYbMbznZBpwnht/NzOC5EMO2AfqzUO4BIMNUrWvVbpwaWpxmG4lCAt1MX2uzk3jEhoHA8rprZnlOPLeWxaik0CS8qKE8Al+Utg47bM0xouN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=JaTA7zee; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1721630259;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2X4G9phBgH8Lk9uVjmD3QFcV2wSgIIyVsCvsrmO1ghw=;
+	b=JaTA7zeeVx9970mf1M4mWXUmDuKsVkDbenJ3dQ47aJdGLMe6Xf7Ek6TyVk5yHKdcDe99kq
+	ogyCxxM8uFFjKf6318Mj1RtDTm5vdXpzOatgtmHbT9gBDlRBdWSwrYI3f6YU+8NHapxpvd
+	uPZj9e5bWQTbyfWzOxO3u9QtSsrd1YXLddceWwkk3IifxEGqRtHmrmv545cO2OniV9G5uw
+	OqeZdpOXk4Ho5nW8BoaGmgJwRPCEzOnr8EGs7KxJFttAtrsDjflS2N/h7/qcdCDuITpJI/
+	ELj+T/tuCXyvU58UMSXhnPZff8WOAqXhuhgG97g0Xjh14LVUiknFYw8v/ru7Wg==
+Date: Mon, 22 Jul 2024 08:37:37 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org,
+ daniel@ffwll.ch, airlied@gmail.com, tzimmermann@suse.de, mripard@kernel.org,
+ maarten.lankhorst@linux.intel.com, andy.yan@rock-chips.com, heiko@sntech.de,
+ hjc@rock-chips.com
+Subject: Re: [PATCH RESEND] rockchip/drm: vop2: add support for gamma LUT
+In-Reply-To: <ZVMxgcrtgHui9fJpnhbN6TSPhofHbbXElh241lImrzzTUl-8WejGpaR8CPzYhBgoqe_xj7N6En8Ny7Z-gsCr0kaFs7apwjYV1MBJJLmLHxs=@proton.me>
+References: <ZVMxgcrtgHui9fJpnhbN6TSPhofHbbXElh241lImrzzTUl-8WejGpaR8CPzYhBgoqe_xj7N6En8Ny7Z-gsCr0kaFs7apwjYV1MBJJLmLHxs=@proton.me>
+Message-ID: <d019761504b540600d9fc7a585d6f95f@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Convert the Freescale i.MX audio complex with ES8328 codec bindings to
-DT schema format.
+Hello Piotr,
 
-Cc: Daniel Baluta <daniel.baluta@nxp.com>
-Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+Thanks for the patch.  Please see a few general comments below.
 
----
-Changes in v2:
-  - Changed top level ref to sound-card-common.yaml
----
- .../bindings/sound/fsl,imx-audio-es8328.yaml  | 111 ++++++++++++++++++
- .../bindings/sound/imx-audio-es8328.txt       |  60 ----------
- 2 files changed, 111 insertions(+), 60 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/sound/fsl,imx-audio-es8328.yaml
- delete mode 100644 Documentation/devicetree/bindings/sound/imx-audio-es8328.txt
+On 2024-07-21 12:06, Piotr Zalewski wrote:
+> Add support for gamma LUT in VOP2 driver. The implementation is based 
+> on
+> the one found in VOP driver and modified to be compatible with VOP2. 
+> Blue
+> and red channels in gamma LUT register write were swapped with respect 
+> to
+> how gamma LUT values are written in VOP. Write of the current video 
+> port id
+> to VOP2_SYS_LUT_PORT_SEL register was added before the write of 
+> DSP_LUT_EN
+> bit. Gamma size is set and drm color management is enabled for each 
+> video
+> port's CRTC except ones which have no associated device. Tested on 
+> RK3566
+> (Pinetab2).
+> 
+> Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
+> ---
+> 
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+> b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+> index 9873172e3fd3..16abdc4a59a8 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+> @@ -278,6 +278,15 @@ static u32 vop2_readl(struct vop2 *vop2, u32 
+> offset)
+>  	return val;
+>  }
+> 
+> +static u32 vop2_vp_read(struct vop2_video_port *vp, u32 offset)
+> +{
+> +	u32 val;
+> +
+> +	regmap_read(vp->vop2->map, vp->data->offset + offset, &val);
+> +
+> +	return val;
+> +}
+> +
+>  static void vop2_win_write(const struct vop2_win *win, unsigned int 
+> reg, u32 v)
+>  {
+>  	regmap_field_write(win->reg[reg], v);
+> @@ -1482,6 +1491,97 @@ static bool vop2_crtc_mode_fixup(struct drm_crtc 
+> *crtc,
+>  	return true;
+>  }
+> 
+> +static bool vop2_vp_dsp_lut_is_enabled(struct vop2_video_port *vp)
+> +{
+> +	return (u32) (vop2_vp_read(vp, RK3568_VP_DSP_CTRL) &
+> RK3568_VP_DSP_CTRL__DSP_LUT_EN) >
+> +	    0;
+> +}
+> +
+> +static void vop2_vp_dsp_lut_enable(struct vop2_video_port *vp)
+> +{
+> +	u32 dsp_ctrl = vop2_vp_read(vp, RK3568_VP_DSP_CTRL);
+> +
+> +	dsp_ctrl |= RK3568_VP_DSP_CTRL__DSP_LUT_EN;
+> +	vop2_vp_write(vp, RK3568_VP_DSP_CTRL, dsp_ctrl);
+> +}
+> +
+> +static void vop2_vp_dsp_lut_disable(struct vop2_video_port *vp)
+> +{
+> +	u32 dsp_ctrl = vop2_vp_read(vp, RK3568_VP_DSP_CTRL);
+> +
+> +	dsp_ctrl &= ~RK3568_VP_DSP_CTRL__DSP_LUT_EN;
+> +	vop2_vp_write(vp, RK3568_VP_DSP_CTRL, dsp_ctrl);
+> +}
+> +
+> +static void vop2_crtc_write_gamma_lut(struct vop2 *vop2, struct 
+> drm_crtc *crtc)
+> +{
+> +	const struct vop2_data *vop2_data = vop2->data;
+> +	const struct vop2_video_port *vp = to_vop2_video_port(crtc);
+> +	const struct vop2_video_port_data *vp_data = &vop2_data->vp[vp->id];
 
-diff --git a/Documentation/devicetree/bindings/sound/fsl,imx-audio-es8328.yaml b/Documentation/devicetree/bindings/sound/fsl,imx-audio-es8328.yaml
-new file mode 100644
-index 000000000000..5eb6f5812cf2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/fsl,imx-audio-es8328.yaml
-@@ -0,0 +1,111 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/fsl,imx-audio-es8328.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Freescale i.MX audio complex with ES8328 codec
-+
-+maintainers:
-+  - Shawn Guo <shawnguo@kernel.org>
-+  - Sascha Hauer <s.hauer@pengutronix.de>
-+
-+allOf:
-+  - $ref: sound-card-common.yaml#
-+
-+properties:
-+  compatible:
-+    const: fsl,imx-audio-es8328
-+
-+  model:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description: The user-visible name of this sound complex
-+
-+  ssi-controller:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: The phandle of the i.MX SSI controller
-+
-+  jack-gpio:
-+    description: Optional GPIO for headphone jack
-+    maxItems: 1
-+
-+  audio-amp-supply:
-+    description: Power regulator for speaker amps
-+
-+  audio-codec:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: The phandle to the ES8328 audio codec
-+
-+  audio-routing:
-+    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
-+    description: |
-+      A list of the connections between audio components. Each entry
-+      is a pair of strings, the first being the connection's sink, the second
-+      being the connection's source. Valid names could be power supplies,
-+      ES8328 pins, and the jacks on the board:
-+
-+      Power supplies:
-+        * audio-amp
-+
-+      ES8328 pins:
-+        * LOUT1
-+        * LOUT2
-+        * ROUT1
-+        * ROUT2
-+        * LINPUT1
-+        * LINPUT2
-+        * RINPUT1
-+        * RINPUT2
-+        * Mic PGA
-+
-+      Board connectors:
-+        * Headphone
-+        * Speaker
-+        * Mic Jack
-+
-+  mux-int-port:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: The internal port of the i.MX audio muxer (AUDMUX)
-+    enum: [1, 2, 7]
-+    default: 1
-+
-+  mux-ext-port:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: The external port of the i.MX audio muxer (AUDMIX)
-+    enum: [3, 4, 5, 6]
-+    default: 3
-+
-+required:
-+  - compatible
-+  - model
-+  - ssi-controller
-+  - jack-gpio
-+  - audio-amp-supply
-+  - audio-codec
-+  - audio-routing
-+  - mux-int-port
-+  - mux-ext-port
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    sound {
-+        compatible = "fsl,imx-audio-es8328";
-+        model = "imx-audio-es8328";
-+        ssi-controller = <&ssi1>;
-+        audio-codec = <&codec>;
-+        jack-gpio = <&gpio5 15 0>;
-+        audio-amp-supply = <&reg_audio_amp>;
-+        audio-routing =
-+            "Speaker", "LOUT2",
-+            "Speaker", "ROUT2",
-+            "Speaker", "audio-amp",
-+            "Headphone", "ROUT1",
-+            "Headphone", "LOUT1",
-+            "LINPUT1", "Mic Jack",
-+            "RINPUT1", "Mic Jack",
-+            "Mic Jack", "Mic Bias";
-+        mux-int-port = <1>;
-+        mux-ext-port = <3>;
-+    };
-diff --git a/Documentation/devicetree/bindings/sound/imx-audio-es8328.txt b/Documentation/devicetree/bindings/sound/imx-audio-es8328.txt
-deleted file mode 100644
-index 07b68ab206fb..000000000000
---- a/Documentation/devicetree/bindings/sound/imx-audio-es8328.txt
-+++ /dev/null
-@@ -1,60 +0,0 @@
--Freescale i.MX audio complex with ES8328 codec
--
--Required properties:
--- compatible       : "fsl,imx-audio-es8328"
--- model            : The user-visible name of this sound complex
--- ssi-controller   : The phandle of the i.MX SSI controller
--- jack-gpio        : Optional GPIO for headphone jack
--- audio-amp-supply : Power regulator for speaker amps
--- audio-codec      : The phandle of the ES8328 audio codec
--- audio-routing    : A list of the connections between audio components.
--                     Each entry is a pair of strings, the first being the
--		     connection's sink, the second being the connection's
--		     source. Valid names could be power supplies, ES8328
--		     pins, and the jacks on the board:
--
--			Power supplies:
--			   * audio-amp
--
--			ES8328 pins:
--			   * LOUT1
--			   * LOUT2
--			   * ROUT1
--			   * ROUT2
--			   * LINPUT1
--			   * LINPUT2
--			   * RINPUT1
--			   * RINPUT2
--			   * Mic PGA
--
--			Board connectors:
--			   * Headphone
--			   * Speaker
--			   * Mic Jack
--- mux-int-port     : The internal port of the i.MX audio muxer (AUDMUX)
--- mux-ext-port     : The external port of the i.MX audio muxer (AUDMIX)
--
--Note: The AUDMUX port numbering should start at 1, which is consistent with
--hardware manual.
--
--Example:
--
--sound {
--	compatible = "fsl,imx-audio-es8328";
--	model = "imx-audio-es8328";
--	ssi-controller = <&ssi1>;
--	audio-codec = <&codec>;
--	jack-gpio = <&gpio5 15 0>;
--	audio-amp-supply = <&reg_audio_amp>;
--	audio-routing =
--		"Speaker", "LOUT2",
--		"Speaker", "ROUT2",
--		"Speaker", "audio-amp",
--		"Headphone", "ROUT1",
--		"Headphone", "LOUT1",
--		"LINPUT1", "Mic Jack",
--		"RINPUT1", "Mic Jack",
--		"Mic Jack", "Mic Bias";
--	mux-int-port = <1>;
--	mux-ext-port = <3>;
--};
--- 
-2.45.2
+Perhaps vop2_data could be dropped as a separate variable.
 
+> +
+> +	struct drm_color_lut *lut = crtc->state->gamma_lut->data;
+> +	unsigned int i, bpc = ilog2(vp_data->gamma_lut_len);
+> +	u32 word;
+> +
+> +	for (i = 0; i < crtc->gamma_size; i++) {
+> +		word = (drm_color_lut_extract(lut[i].blue, bpc) << (2 * bpc)) |
+> +		    (drm_color_lut_extract(lut[i].green, bpc) << bpc) |
+> +		    drm_color_lut_extract(lut[i].red, bpc);
+> +
+> +		writel(word, vop2->lut_regs + i * 4);
+> +	}
+> +}
+> +
+> +static void vop2_crtc_gamma_set(struct vop2 *vop2, struct drm_crtc 
+> *crtc,
+> +				struct drm_crtc_state *old_state)
+> +{
+> +	struct drm_crtc_state *state = crtc->state;
+> +	struct vop2_video_port *vp = to_vop2_video_port(crtc);
+> +	u32 dsp_ctrl;
+> +	int ret;
+> +
+> +	if (!vop2->lut_regs)
+> +		return;
+> +
+> +	if (!state->gamma_lut) {
+> +		/*
+> +		 * To disable gamma (gamma_lut is null) or to write
+> +		 * an update to the LUT, clear dsp_lut_en.
+> +		 */
+> +		vop2_lock(vop2);
+> +
+> +		vop2_vp_dsp_lut_disable(vp);
+> +
+> +		vop2_cfg_done(vp);
+> +		vop2_unlock(vop2);
+> +		/*
+> +		 * In order to write the LUT to the internal memory,
+> +		 * we need to first make sure the dsp_lut_en bit is cleared.
+> +		 */
+> +		ret =
+> +		    readx_poll_timeout(vop2_vp_dsp_lut_is_enabled, vp, dsp_ctrl,
+> !dsp_ctrl, 5,
+> +				       30 * 1000);
+
+It would look nicer to keep "ret =" and "readx_poll_timeout(..." in the 
+same line,
+and to introduce line breaks later in the same line.
+
+> +
+> +		if (ret) {
+> +			DRM_DEV_ERROR(vop2->dev, "display LUT RAM enable timeout!\n");
+> +			return;
+> +		}
+> +
+> +		if (!state->gamma_lut)
+> +			return;
+> +	}
+> +
+> +	vop2_crtc_write_gamma_lut(vop2, crtc);
+> +
+> +	vop2_lock(vop2);
+> +	vop2_writel(vp->vop2, RK3568_LUT_PORT_SEL, vp->id);
+> +
+> +	vop2_vp_dsp_lut_enable(vp);
+> +
+> +	vop2_cfg_done(vp);
+> +	vop2_unlock(vop2);
+> +}
+> +
+>  static void vop2_dither_setup(struct drm_crtc *crtc, u32 *dsp_ctrl)
+>  {
+>  	struct rockchip_crtc_state *vcstate = 
+> to_rockchip_crtc_state(crtc->state);
+> @@ -1925,6 +2025,7 @@ static void vop2_crtc_atomic_enable(struct 
+> drm_crtc *crtc,
+>  	const struct vop2_data *vop2_data = vop2->data;
+>  	const struct vop2_video_port_data *vp_data = &vop2_data->vp[vp->id];
+>  	struct drm_crtc_state *crtc_state =
+> drm_atomic_get_new_crtc_state(state, crtc);
+> +	struct drm_crtc_state *old_state = 
+> drm_atomic_get_old_crtc_state(state, crtc);
+>  	struct rockchip_crtc_state *vcstate = 
+> to_rockchip_crtc_state(crtc->state);
+>  	struct drm_display_mode *mode = &crtc->state->adjusted_mode;
+>  	unsigned long clock = mode->crtc_clock * 1000;
+> @@ -2060,6 +2161,9 @@ static void vop2_crtc_atomic_enable(struct 
+> drm_crtc *crtc,
+>  	drm_crtc_vblank_on(crtc);
+> 
+>  	vop2_unlock(vop2);
+> +
+> +	if (crtc->state->gamma_lut)
+> +		vop2_crtc_gamma_set(vop2, crtc, old_state);
+>  }
+> 
+>  static int vop2_crtc_atomic_check(struct drm_crtc *crtc,
+> @@ -2070,6 +2174,16 @@ static int vop2_crtc_atomic_check(struct 
+> drm_crtc *crtc,
+>  	int nplanes = 0;
+>  	struct drm_crtc_state *crtc_state =
+> drm_atomic_get_new_crtc_state(state, crtc);
+> 
+> +	if (vp->vop2->lut_regs && crtc_state->color_mgmt_changed &&
+> crtc_state->gamma_lut) {
+> +		unsigned int len = drm_color_lut_size(crtc_state->gamma_lut);
+> +
+> +		if (len != crtc->gamma_size) {
+> +			DRM_DEBUG_KMS("Invalid LUT size; got %d, expected %d\n",
+> +				      len, crtc->gamma_size);
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+>  	drm_atomic_crtc_state_for_each_plane(plane, crtc_state)
+>  		nplanes++;
+> 
+> @@ -2459,6 +2573,10 @@ static void vop2_setup_dly_for_windows(struct 
+> vop2 *vop2)
+>  static void vop2_crtc_atomic_begin(struct drm_crtc *crtc,
+>  				   struct drm_atomic_state *state)
+>  {
+> +	struct drm_crtc_state *crtc_state = 
+> drm_atomic_get_new_crtc_state(state,
+> +									  crtc);
+> +	struct drm_crtc_state *old_crtc_state = 
+> drm_atomic_get_old_crtc_state(state,
+> +									      crtc);
+>  	struct vop2_video_port *vp = to_vop2_video_port(crtc);
+>  	struct vop2 *vop2 = vp->vop2;
+>  	struct drm_plane *plane;
+> @@ -2482,6 +2600,9 @@ static void vop2_crtc_atomic_begin(struct 
+> drm_crtc *crtc,
+>  	vop2_setup_layer_mixer(vp);
+>  	vop2_setup_alpha(vp);
+>  	vop2_setup_dly_for_windows(vop2);
+> +
+> +	if (crtc_state->color_mgmt_changed && !crtc_state->active_changed)
+> +		vop2_crtc_gamma_set(vop2, crtc, old_crtc_state);
+>  }
+> 
+>  static void vop2_crtc_atomic_flush(struct drm_crtc *crtc,
+> @@ -2791,6 +2912,14 @@ static int vop2_create_crtcs(struct vop2 *vop2)
+> 
+>  		drm_crtc_helper_add(&vp->crtc, &vop2_crtc_helper_funcs);
+> 
+> +		if (vop2->lut_regs && vp->crtc.dev != NULL) {
+> +			const struct vop2_video_port_data *vp_data = 
+> &vop2_data->vp[vp->id];
+> +
+> +			drm_mode_crtc_set_gamma_size(&vp->crtc, vp_data->gamma_lut_len);
+> +			drm_crtc_enable_color_mgmt(&vp->crtc, 0, false,
+> +						   vp_data->gamma_lut_len);
+> +		}
+> +
+>  		init_completion(&vp->dsp_hold_completion);
+>  	}
+> 
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+> b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+> index 615a16196aff..3a58b73fa876 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+> @@ -394,6 +394,7 @@ enum dst_factor_mode {
+>  #define RK3568_REG_CFG_DONE__GLB_CFG_DONE_EN		BIT(15)
+> 
+>  #define RK3568_VP_DSP_CTRL__STANDBY			BIT(31)
+> +#define RK3568_VP_DSP_CTRL__DSP_LUT_EN			BIT(28)
+>  #define RK3568_VP_DSP_CTRL__DITHER_DOWN_MODE		BIT(20)
+>  #define RK3568_VP_DSP_CTRL__DITHER_DOWN_SEL		GENMASK(19, 18)
+>  #define RK3568_VP_DSP_CTRL__DITHER_DOWN_EN		BIT(17)
 
