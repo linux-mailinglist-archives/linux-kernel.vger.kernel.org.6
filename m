@@ -1,212 +1,312 @@
-Return-Path: <linux-kernel+bounces-259276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4100893935A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:57:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 720DE93935D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB248282124
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:57:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 955641C215C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBF416F0E1;
-	Mon, 22 Jul 2024 17:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2A516F82F;
+	Mon, 22 Jul 2024 17:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="EbaFcVO+"
-Received: from forward500d.mail.yandex.net (forward500d.mail.yandex.net [178.154.239.208])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evn7FQ2R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E88C13C;
-	Mon, 22 Jul 2024 17:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D24816F0D6;
+	Mon, 22 Jul 2024 17:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721671024; cv=none; b=NLJBbZixZNNhibLVr2NNehryKYHzoMkS4FsenKmayiVz853fviVjghYGD+sR7jQhfcSFhVmttfAT5R73/jNuc+XpMq70TNt1nV9be7Zp1l+9nprzXMOVDrcKPpvpCC41PIyurl+1q9XaWBiAoWKITBlSxs2rBQkkyR64uNVTGjg=
+	t=1721671041; cv=none; b=iJVXhp3x7K6aWpvkKeGoqCbf8yuLWeLlHzD00HHKFeKanVoebSVR0fNsVoZf5TeP3t+ZnKO+DhkXSFnV1rP6oLcI5G7ZVycuO4+g4igtTncO4m4WsJ0zFD3IXD/JxSaTGWcJs11OSFu+nDHj8a/QOgOEtc4B85uuOXZkFRub8jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721671024; c=relaxed/simple;
-	bh=yPpL6oe42dLTZp5uU5OTc5tOwtAVq1CoWFThS3HQxVA=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pktGh8aPLhpScsVWTTxVssE4YRxooiMkbepgTjBmReLUwTWQv82U3UUzyQR9iMPWRldYSbd3UOw29C4zZcQz7LGpzbKIRDzHIzFaPglw97HAAWEtuvXSzZ2otRBe3Lt26wC5MfoBCS/+9eF7mH1zxFxeUh4vwE1oje8Bx43DO24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=EbaFcVO+; arc=none smtp.client-ip=178.154.239.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-77.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-77.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:2e23:0:640:e883:0])
-	by forward500d.mail.yandex.net (Yandex) with ESMTPS id F195160CA1;
-	Mon, 22 Jul 2024 20:56:51 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-77.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id ouRpL75m70U0-LGeuwe7p;
-	Mon, 22 Jul 2024 20:56:51 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1721671011; bh=6mBv2LuIC04HW36BwRBTUhRpyKQwuvnW5K+3eMpsC2E=;
-	h=In-Reply-To:Date:References:To:From:Subject:Message-ID;
-	b=EbaFcVO+4FPsYKT3PdE0zYzUDKBGD4zmfONmSZZgv+x6JDbuAjOB/o4z2DL+sHvxJ
-	 72CV0Uzif1zFHMzenhEcuQ5OSSgdh+P4VPpORkrU8tIa/zNa4m2fYI2zeG3rLZT/kp
-	 SebTekiuHtdWIHQ+7E8fIhlFjXqVMnZE24e5NQSg=
-Authentication-Results: mail-nwsmtp-smtp-production-main-77.klg.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <57241c91337e8fc3257b6d4a35c273af59875eff.camel@yandex.ru>
-Subject: Re: Lockup of (raid5 or raid6) + vdo after taking out a disk under
- load
-From: Konstantin Kharlamov <Hi-Angel@yandex.ru>
-To: Yu Kuai <yukuai1@huaweicloud.com>, Song Liu <song@kernel.org>, 
- linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- "yangerkun@huawei.com" <yangerkun@huawei.com>, "yukuai (C)"
- <yukuai3@huawei.com>
-Date: Mon, 22 Jul 2024 20:56:50 +0300
-In-Reply-To: <9c60881e-d28f-d8d5-099c-b9678bd69db9@huaweicloud.com>
-References: <a6d068a26a90057fb3cdaa59f9d57a2af41a6b22.camel@yandex.ru>
-	 <1f879e67-4d64-4df0-5817-360d84ff8b89@huaweicloud.com>
-	 <29d69e586e628ef2e5f2fd7b9fe4e7062ff36ccf.camel@yandex.ru>
-	 <517243f0-77c5-9d67-a399-78c449f6afc6@huaweicloud.com>
-	 <810a319b846c7e16d85a7f52667d04252a9d0703.camel@yandex.ru>
-	 <9c60881e-d28f-d8d5-099c-b9678bd69db9@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+	s=arc-20240116; t=1721671041; c=relaxed/simple;
+	bh=gLe2umgqwhHYuD0lOMCuwPcdgZ3WgUSWvxweYSYrAeA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ju/Xqe2IS5VHtQCiCjefncCa5oKCsruRrFTUVn78IWy0tqQaPdK3i822130We0epiFeWWosgYDs7Tnp1V85qc4XiC2Krw08QFk5lcdnpWw6CyHG+WxJ89/pgehgGLGg848kM8qobpvOIhfATDq2XH+6KkK0cgRDd0VsehBqZOKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evn7FQ2R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96ADBC4AF15;
+	Mon, 22 Jul 2024 17:57:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721671040;
+	bh=gLe2umgqwhHYuD0lOMCuwPcdgZ3WgUSWvxweYSYrAeA=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=evn7FQ2R94h8tEX5h6K1R7y5QTqbDdU3a06nixSfTicpUr4SDZqjVUUtVmqtamDa6
+	 kTcxYo0NqtAR6TPsg6t4jzThRScj67a6K8QyRBCyCDPcRv5Xv1k0+DM8afXQc9+sB8
+	 NdyTwLxDQEjr/6dcIaQ33cPWcOGWvBzWdhzr1pAYpAN8QEoWce9JzWzut5NVN0qXXf
+	 XA+FWLxzXEmj3cnJO22WF+fI3wDyYk7QfdwW8hfp8THjF3h2YXg89S/zzxg/xiLtIy
+	 VH8C7Aqnn8JSkrYG/Qr0TTCQzdRal4U8cWKUEXtH4fCD5SP65daf43qglB4c6kUK1R
+	 1IIWDeb/w1Zng==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ef2fccca2cso15422891fa.1;
+        Mon, 22 Jul 2024 10:57:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWQZJNIukkn9vAsFRQ+lU0QbvFwDW0z63yocS8nV+9pzGTs014KicvgXEau22EBr35jVobB0ZWwq8WAM236w4i0UTi3v5g6LBX/XxVyp3+4xwauYnqYQA50BYwuAmNzW8WKGmcn2FQssdwjfEQy989POVwoI4trYwyXHI97mZhQ8mp9jvPLzw==
+X-Gm-Message-State: AOJu0YxMgzME9lEJ3Y8rFQNqjRfvm7MtMcWIR0UsjlDdwMET2QgriOT/
+	js+fJ51ZA0F0emMHkNr8f1CE+aEZmkyWkYHK0xcXimsvsJwHluKQGlOPOUngZvAmLiVXAGggnkt
+	VTn6DW/wftYkh9A2Lb79s+QMh54M=
+X-Google-Smtp-Source: AGHT+IEG03JkqirBP9XkQG4NM1JUJU5kVRXR7Lg2r8kdI7m+ph+YlmCwtxJCdn/y0qIZNAsmNDBdM3/fapg0DIQIWd4=
+X-Received: by 2002:a2e:a54b:0:b0:2ef:2f4b:deeb with SMTP id
+ 38308e7fff4ca-2ef2f4c1181mr32945621fa.23.1721671038811; Mon, 22 Jul 2024
+ 10:57:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <cover.1720969799.git.daniel@makrotopia.org> <6779787.ZJYUc1KeCW@bagend>
+ <CAGb2v67zxs03xScN8OfWXR1gf8tddJciXrjw3FQZcL7pR3ocxA@mail.gmail.com> <3190961.CRkYR5qTbq@bagend>
+In-Reply-To: <3190961.CRkYR5qTbq@bagend>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Tue, 23 Jul 2024 01:57:05 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64Dx7XaJOu0HHzFxYYY2ddUZao5Tar8-s1R_miVZqWcXA@mail.gmail.com>
+Message-ID: <CAGb2v64Dx7XaJOu0HHzFxYYY2ddUZao5Tar8-s1R_miVZqWcXA@mail.gmail.com>
+Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
+To: Diederik de Haas <didi.debian@cknow.org>
+Cc: Daniel Golle <daniel@makrotopia.org>, linux-rockchip@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Martin Kaiser <martin@kaiser.cx>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, Ard Biesheuvel <ardb@kernel.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@debian.org>, 
+	devicetree@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Olivia Mackall <olivia@selenic.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Dragan Simic <dsimic@manjaro.org>, 
+	Aurelien Jarno <aurelien@aurel32.net>, Heiko Stuebner <heiko@sntech.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, sorry for the delay, I had to give away the nodes and we had a week
-of teambuilding and company party, so for the past week I only managed
-to hack away stripping debug symbols, get another node and set it up.
-
-Experiments below are based off of vanilla 6.9.8 kernel *without* your
-patch.
-
-On Mon, 2024-07-15 at 09:56 +0800, Yu Kuai wrote:
-> Line number will be helpful.
-
-So, after tinkering with building scripts I managed to build modules
-with debug symbols (not the kernel itself but should be good enough),
-but for some reason kernel doesn't show line numbers in stacktraces. No
-idea what could be causing it, so I had to decode line numbers
-manually, below is an output where I inserted line numbers for raid456
-manually after decoding them with `gdb`.
-
-    [=E2=80=A6]
-    [ 1677.293366]  <TASK>
-    [ 1677.293661]  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
-    [ 1677.293972]  ? _raw_spin_unlock_irq+0x10/0x30
-    [ 1677.294276]  ? _raw_spin_unlock_irq+0xa/0x30
-    [ 1677.294586]  raid5d at drivers/md/raid5.c:6572
-    [ 1677.294910]  md_thread+0xc1/0x170
-    [ 1677.295228]  ? __pfx_autoremove_wake_function+0x10/0x10
-    [ 1677.295545]  ? __pfx_md_thread+0x10/0x10
-    [ 1677.295870]  kthread+0xff/0x130
-    [ 1677.296189]  ? __pfx_kthread+0x10/0x10
-    [ 1677.296498]  ret_from_fork+0x30/0x50
-    [ 1677.296810]  ? __pfx_kthread+0x10/0x10
-    [ 1677.297112]  ret_from_fork_asm+0x1a/0x30
-    [ 1677.297424]  </TASK>
-    [=E2=80=A6]
-    [ 1705.296253]  <TASK>
-    [ 1705.296554]  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
-    [ 1705.296864]  ? _raw_spin_unlock_irq+0x10/0x30
-    [ 1705.297172]  ? _raw_spin_unlock_irq+0xa/0x30
-    [ 1677.294586]  raid5d at drivers/md/raid5.c:6597
-    [ 1705.297794]  md_thread+0xc1/0x170
-    [ 1705.298099]  ? __pfx_autoremove_wake_function+0x10/0x10
-    [ 1705.298409]  ? __pfx_md_thread+0x10/0x10
-    [ 1705.298714]  kthread+0xff/0x130
-    [ 1705.299022]  ? __pfx_kthread+0x10/0x10
-    [ 1705.299333]  ret_from_fork+0x30/0x50
-    [ 1705.299641]  ? __pfx_kthread+0x10/0x10
-    [ 1705.299947]  ret_from_fork_asm+0x1a/0x30
-    [ 1705.300257]  </TASK>
-    [=E2=80=A6]
-    [ 1733.296255]  <TASK>
-    [ 1733.296556]  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
-    [ 1733.296862]  ? _raw_spin_unlock_irq+0x10/0x30
-    [ 1733.297170]  ? _raw_spin_unlock_irq+0xa/0x30
-    [ 1677.294586]  raid5d at drivers/md/raid5.c:6572
-    [ 1733.297792]  md_thread+0xc1/0x170
-    [ 1733.298096]  ? __pfx_autoremove_wake_function+0x10/0x10
-    [ 1733.298403]  ? __pfx_md_thread+0x10/0x10
-    [ 1733.298711]  kthread+0xff/0x130
-    [ 1733.299018]  ? __pfx_kthread+0x10/0x10
-    [ 1733.299330]  ret_from_fork+0x30/0x50
-    [ 1733.299637]  ? __pfx_kthread+0x10/0x10
-    [ 1733.299943]  ret_from_fork_asm+0x1a/0x30
-    [ 1733.300251]  </TASK>
-
-> Meanwhile, can you check if the underlying
-> disks has IO while raid5 stuck, by /sys/block/[device]/inflight.
-
-The two devices that are left after the 3rd one is removed has these
-numbers that don't change with time:
-
-    [Mon Jul 22 20:18:06 @ ~]:> for d in dm-19 dm-17; do echo -n $d; cat
-    /sys/block/$d/inflight; done
-    dm-19       9        1
-    dm-17      11        2
-    [Mon Jul 22 20:18:11 @ ~]:> for d in dm-19 dm-17; do echo -n $d; cat
-    /sys/block/$d/inflight; done
-    dm-19       9        1
-    dm-17      11        2
-
-They also don't change after I return the disk back (which is to be
-expected I guess, given that the lockup doesn't go away).
-
-> >
-> > > At first, can the problem reporduce with raid1/raid10? If not,
-> > > this
-> > > is
-> > > probably a raid5 bug.
-> >
-> > This is not reproducible with raid1 (i.e. no lockups for raid1), I
-> > tested that. I didn't test raid10, if you want I can try (but
-> > probably
-> > only after the weekend, because today I was asked to give the nodes
-> > away, for the weekend at least, to someone else).
+On Wed, Jul 17, 2024 at 12:54=E2=80=AFAM Diederik de Haas <didi.debian@ckno=
+w.org> wrote:
 >
-> Yes, please try raid10 as well. For now I'll say this is a raid5
-> problem.
+> On Tuesday, 16 July 2024 17:18:48 CEST Chen-Yu Tsai wrote:
+> > On Jul 16, 2024 at 10:13=E2=80=AFPM Diederik de Haas <didi.debian@cknow=
+.org> wrote:
+> > > On Tuesday, 16 July 2024 15:59:40 CEST Diederik de Haas wrote:
+> > > > For shits and giggles, I tried it on my PineTab2 too (also rk3566):
+> > > >
+> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > root@pinetab2:~# uname -a
+> > > > Linux pinetab2 6.10+unreleased-arm64 #1 SMP Debian 6.10-1~cknow
+> > > > (2024-04-24) aarch64 GNU/Linux
+> > > >
+> > > > root@pinetab2:~# dd if=3D/dev/hwrng bs=3D100000 count=3D1 > /dev/nu=
+ll
+> > > > 1+0 records in
+> > > > 1+0 records out
+> > > > 100000 bytes (100 kB, 98 KiB) copied, 5,69533 s, 17,6 kB/s
+> > > >
+> > > > root@plebian-pinetab2:~# cat /dev/hwrng | rngtest -c 1000
+> > > > rngtest 5
+> > > > Copyright (c) 2004 by Henrique de Moraes Holschuh
+> > > > This is free software; see the source for copying conditions.
+> > > > There is NO warranty; not even for MERCHANTABILITY or
+> > > > FITNESS FOR A PARTICULAR PURPOSE.
+> > > >
+> > > > rngtest: starting FIPS tests...
+> > > > rngtest: bits received from input: 20000032
+> > > > rngtest: FIPS 140-2 successes: 730
+> > > > rngtest: FIPS 140-2 failures: 270
+> > > > rngtest: FIPS 140-2(2001-10-10) Monobit: 266
+> > > > rngtest: FIPS 140-2(2001-10-10) Poker: 23
+> > > > rngtest: FIPS 140-2(2001-10-10) Runs: 9
+> > > > rngtest: FIPS 140-2(2001-10-10) Long run: 0
+> > > > rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+> > > > rngtest: input channel speed: (min=3D2.615; avg=3D137.889;
+> > > > max=3D9765625.000)Kibits/s rngtest: FIPS tests speed: (min=3D24.643=
+;
+> > > > avg=3D34.518; max=3D68.364)Mibits/s rngtest: Program run time: 1496=
+74336
+> > > > microseconds
+> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > >
+> > > > That's looking quite a lot better ... and I have no idea why.
+> > > >
+> > > > The Q64-A is used as headless server and the PineTab2 is not,
+> > > > but I connected to both over SSH and they were freshly booted
+> > > > into, thus I haven't actually/normally used the PT2 since boot.
+> > >
+> > > I did freshly install rng-tools5 package before running the test, so
+> > > I rebooted again to make sure that wasn't a factor:
+> > >
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > root@pinetab2:~# cat /dev/hwrng | rngtest -c 1000
+> > > rngtest 5
+> > > ...
+> > >
+> > > rngtest: starting FIPS tests...
+> > > rngtest: bits received from input: 20000032
+> > > rngtest: FIPS 140-2 successes: 704
+> > > rngtest: FIPS 140-2 failures: 296
+> > > rngtest: FIPS 140-2(2001-10-10) Monobit: 293
+> > > rngtest: FIPS 140-2(2001-10-10) Poker: 32
+> > > rngtest: FIPS 140-2(2001-10-10) Runs: 10
+> > > rngtest: FIPS 140-2(2001-10-10) Long run: 0
+> > > rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+> > > rngtest: input channel speed: (min=3D2.612; avg=3D137.833;
+> > > max=3D9765625.000)Kibits/s rngtest: FIPS tests speed: (min=3D24.391;
+> > > avg=3D34.416; max=3D68.364)Mibits/s rngtest: Program run time: 149736=
+205
+> > > microseconds
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > >
+> > > So that 704/296 vs 730/270 in the previous run on the PT2.
+> > >
+> > > In case it helps:
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > root@quartz64a:~# grep . /sys/devices/virtual/misc/hw_random/rng_*
+> > > /sys/devices/virtual/misc/hw_random/rng_available:rockchip-rng
+> > > /sys/devices/virtual/misc/hw_random/rng_current:rockchip-rng
+> > > /sys/devices/virtual/misc/hw_random/rng_quality:900
+> > > /sys/devices/virtual/misc/hw_random/rng_selected:0
+> > >
+> > > root@pinetab2:~# grep . /sys/devices/virtual/misc/hw_random/rng_*
+> > > /sys/devices/virtual/misc/hw_random/rng_available:rockchip-rng
+> > > /sys/devices/virtual/misc/hw_random/rng_current:rockchip-rng
+> > > /sys/devices/virtual/misc/hw_random/rng_quality:900
+> > > /sys/devices/virtual/misc/hw_random/rng_selected:0
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > On my Rock 3A:
+> >
+> > wens@rock-3a:~$ sudo cat /dev/hwrng | rngtest -c 1000
+> > rngtest 5
+> > Copyright (c) 2004 by Henrique de Moraes Holschuh
+> > This is free software; see the source for copying conditions.  There
+> > is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+> > PARTICULAR PURPOSE.
+> >
+> > rngtest: starting FIPS tests...
+> > rngtest: bits received from input: 20000032
+> > rngtest: FIPS 140-2 successes: 992
+> > rngtest: FIPS 140-2 failures: 8
+> > rngtest: FIPS 140-2(2001-10-10) Monobit: 7
+> > rngtest: FIPS 140-2(2001-10-10) Poker: 0
+> > rngtest: FIPS 140-2(2001-10-10) Runs: 0
+> > rngtest: FIPS 140-2(2001-10-10) Long run: 1
+> > rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+> > rngtest: input channel speed: (min=3D2.658; avg=3D140.067;
+> > max=3D9765625.000)Kibits/s rngtest: FIPS tests speed: (min=3D26.751;
+> > avg=3D34.901; max=3D65.320)Mibits/s rngtest: Program run time: 14736759=
+4
+> > microseconds
+> >
+> > wens@rock-3a:~$ uname -a
+> > Linux rock-3a 6.10.0-rc7-next-20240712-12899-g7df602fe7c8b #9 SMP Mon
+> > Jul 15 00:39:32 CST 2024 aarch64 GNU/Linux
+>
+> I wondered if ``dd if=3D/dev/hwrng bs=3D100000 count=3D1 > /dev/null`` be=
+fore
+> the actual test run made a difference.
+> Tried it on my Quartz64 Model A: no
+>
+> Then I tried it on my Quartz64 Model B:
+>
+> root@quartz64b:~# cat /dev/hwrng | rngtest -c 1000
+> rngtest 5
+> ...
+> rngtest: starting FIPS tests...
+> rngtest: bits received from input: 20000032
+> rngtest: FIPS 140-2 successes: 120
+> rngtest: FIPS 140-2 failures: 880
+> rngtest: FIPS 140-2(2001-10-10) Monobit: 879
+> rngtest: FIPS 140-2(2001-10-10) Poker: 332
+> rngtest: FIPS 140-2(2001-10-10) Runs: 91
+> rngtest: FIPS 140-2(2001-10-10) Long run: 0
+> rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+> rngtest: input channel speed: (min=3D2.615; avg=3D138.117; max=3D9765625.=
+000)Kibits/s
+> rngtest: FIPS tests speed: (min=3D20.777; avg=3D34.535; max=3D68.857)Mibi=
+ts/s
+> rngtest: Program run time: 149461754 microseconds
+>
+> root@quartz64b:~# dd if=3D/dev/hwrng bs=3D100000 count=3D1 > /dev/null
+> 1+0 records in
+> 1+0 records out
+> 100000 bytes (100 kB, 98 KiB) copied, 5.71466 s, 17.5 kB/s
+>
+> root@quartz64b:~# cat /dev/hwrng | rngtest -c 1000
+> rngtest 5
+> ...
+> rngtest: starting FIPS tests...
+> rngtest: bits received from input: 20000032
+> rngtest: FIPS 140-2 successes: 104
+> rngtest: FIPS 140-2 failures: 896
+> rngtest: FIPS 140-2(2001-10-10) Monobit: 892
+> rngtest: FIPS 140-2(2001-10-10) Poker: 335
+> rngtest: FIPS 140-2(2001-10-10) Runs: 79
+> rngtest: FIPS 140-2(2001-10-10) Long run: 0
+> rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+> rngtest: input channel speed: (min=3D2.613; avg=3D138.098; max=3D9765625.=
+000)Kibits/s
+> rngtest: FIPS tests speed: (min=3D20.465; avg=3D34.587; max=3D69.107)Mibi=
+ts/s
+> rngtest: Program run time: 149475187 microseconds
+>
+> root@quartz64b:~# uname -a
+> Linux quartz64b 6.10+unreleased-arm64 #1 SMP Debian 6.10-1~cknow (2024-04=
+-24) aarch64 GNU/Linux
+>
+> :-O
 
-Tested: raid10 works just fine, i.e. no lockup and fio continues
-having non-zero IOPS.
+I pulled out my Quartz64 model B, and the results seem better than yours.
 
-> > > The best will be that if I can reporduce this problem myself.
-> > > The problem is that I don't understand the step 4: turning off
-> > > jbod
-> > > slot's power, is this only possible for a real machine, or can I
-> > > do
-> > > this in my VM?
-> >
-> > Well, let's say that if it is possible, I don't know a way to do
-> > that.
-> > The `sg_ses` commands that I used
-> >
-> > 	sg_ses --dev-slot-num=3D9 --set=3D3:4:1=C2=A0=C2=A0 /dev/sg26 # turnin=
-g
-> > off
-> > 	sg_ses --dev-slot-num=3D9 --clear=3D3:4:1 /dev/sg26 # turning
-> > on
-> >
-> > =E2=80=A6sets and clears the value of the 3:4:1 bit, where the bit is
-> > defined
-> > by the JBOD's manufacturer datasheet. The 3:4:1 specifically is
-> > defined
-> > by "AIC" manufacturer. That means the command as is unlikely to
-> > work on
-> > a different hardware.
->
-> I never do this before, I'll try.
-> >
-> > Well, while on it, do you have any thoughts why just using a `echo
-> > 1 >
-> > /sys/block/sdX/device/delete` doesn't reproduce it? Does perhaps
-> > kernel
-> > not emulate device disappearance too well?
->
-> echo 1 > delete just delete the disk from kernel, and scsi/dm-raid
-> will
-> know that this disk is deleted. However, the disk will stay in kernel
-> for the other way, dm-raid does not aware that underlying disks are
-> problematic and IO will still be generated and issued.
->
-> Thanks,
-> Kuai
+root@quartz64:~# sudo dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
+rngtest 5
+Copyright (c) 2004 by Henrique de Moraes Holschuh
+This is free software; see the source for copying conditions.  There
+is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.
+
+rngtest: starting FIPS tests...
+rngtest: bits received from input: 20000032
+rngtest: FIPS 140-2 successes: 859
+rngtest: FIPS 140-2 failures: 141
+rngtest: FIPS 140-2(2001-10-10) Monobit: 137
+rngtest: FIPS 140-2(2001-10-10) Poker: 10
+rngtest: FIPS 140-2(2001-10-10) Runs: 5
+rngtest: FIPS 140-2(2001-10-10) Long run: 0
+rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+rngtest: input channel speed: (min=3D134.990; avg=3D143.460; max=3D157.836)=
+Kibits/s
+rngtest: FIPS tests speed: (min=3D34.742; avg=3D40.675; max=3D41.285)Mibits=
+/s
+rngtest: Program run time: 136667679 microseconds
+root@quartz64:~# sudo dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
+rngtest 5
+Copyright (c) 2004 by Henrique de Moraes Holschuh
+This is free software; see the source for copying conditions.  There
+is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.
+
+rngtest: starting FIPS tests...
+rngtest: bits received from input: 20000032
+rngtest: FIPS 140-2 successes: 843
+rngtest: FIPS 140-2 failures: 157
+rngtest: FIPS 140-2(2001-10-10) Monobit: 155
+rngtest: FIPS 140-2(2001-10-10) Poker: 13
+rngtest: FIPS 140-2(2001-10-10) Runs: 7
+rngtest: FIPS 140-2(2001-10-10) Long run: 0
+rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+rngtest: input channel speed: (min=3D134.977; avg=3D143.669; max=3D157.906)=
+Kibits/s
+rngtest: FIPS tests speed: (min=3D37.036; avg=3D40.666; max=3D41.285)Mibits=
+/s
+rngtest: Program run time: 136459178 microseconds
 
