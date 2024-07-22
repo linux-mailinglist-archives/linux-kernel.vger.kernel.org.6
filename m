@@ -1,147 +1,195 @@
-Return-Path: <linux-kernel+bounces-258502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FC3B9388EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:33:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 577E69388F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 964051C20EC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:33:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 887DC1C20D7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CF718030;
-	Mon, 22 Jul 2024 06:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wUsowPXU"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D8517BCD
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 06:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F016517C6B;
+	Mon, 22 Jul 2024 06:34:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FCE123DE
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 06:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721629996; cv=none; b=Gu6wuDeqcrODkAb6SiMNmM7Fqb97lrVbmu58M9/EgUhtlejfuvtTyOi4E90jCN/zXGNUxnSm2xfOztWNVTT9BzMVd7HCJF6NDlMBp1Op5jVm3eWCaxIy/LGcCjbL+g6CPo1cPxEBsdENQbTv0tdt/YeKWxdMZKPKAR4LAqhUpxM=
+	t=1721630056; cv=none; b=BSR8Kwz/B9Hk3ZI0beN6N2NS55wfJgpRcuVbKEfPApU7lt80/IOEqgKxu7Xi4GgC9DoSE1/kWersKkl4bSB2RwLdy1UghfsfDTduhGyMOc2cNNSjLox9MIbn/L2K/HNSJWO7qCDPOZloSlibasF2wwSD9Xn0pvMWmrSbho8LL9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721629996; c=relaxed/simple;
-	bh=PN1n9CaTCL1HxBSjtyOCIXUtDYrf4lCA00khcB/7w3M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YUgWjgpumfPAMKmGmkI0LopR6drW6UXOew8L+HTEvUaz1tMCcc1hgQxOhCATr6aPh679eCrgXxpJpdtqLDmZh6aTYlGNxldN6SzLlcuFrynRfkuxriQ9QuhWDTYzg31bVQEIeuCpCG9oKaom9AovKoJsbU91B4CXD9OQ5bEaknw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wUsowPXU; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5a22f09d976so4347465a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 23:33:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721629993; x=1722234793; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xj+wDOWyCzvjTCTUDA0Y6iSTZh2VAEBUpnU4/tK6YAQ=;
-        b=wUsowPXUagBJ12OFgMUSU5mPxKiturgnOj7jXKFuAT6uDHbA5h419IIYYXdCaHucV/
-         e4koGNChj3y7HzMlsnF80WSFVbueRrRzD+kbM6zzl+Lusn6EQaXp6a7Itdft0xhhzns+
-         8G+9oYFqIMKjG/BgumiUleIFJZOxAgjAzasp5mY08MiTa4TbfEqlDib61iUdB8LdSAzs
-         3+TLAQ10iDLzlv2oCAjbVzQYatDKVtUwiaWRsA4YlW5/apw63S4HF0rPB0zQjbWKEA9E
-         WVLfieW7LJQ5Vqg+8443A/TPHkcA8XNcZFPH4f8uZOqINzn8su1IwC1/9M7QVjKDbqT+
-         meAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721629993; x=1722234793;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xj+wDOWyCzvjTCTUDA0Y6iSTZh2VAEBUpnU4/tK6YAQ=;
-        b=gZGkBQ3JgE3AyJqYnjT3zz7m8o65JV3vGIT8Q000saNC+ED06rts/ZaO6TnG022t+G
-         vweiLhlpvDbkHvwNYIL4DMM7Jv+VBDfC2/HRMN8wErU7/WDk/rgrJYopReI2szekZIM1
-         ZxwpHUHIY2zVHPS+WRo6eIuMNSKMs8s9v22JrVCd9/lAA5fPCRGcnnXN7zk2iSQbSdi0
-         TAPRJGj7OeuM8MrCf7ME9MhFd3tgcX5qLnRomXrrBYGc7cZTHJ4ypFCAJstwk1zaGwMg
-         7mzlB2Lg1Roa0TZYo5HcpwMhEh+0qrM26FCj13YzPONltlSJ6qEDaRe2qXuI3ZbuCZ1p
-         dLlw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxOyqzkIQHCpqis2CCPfmGDi8Bj1sK4VHrhQdW7E/AZLykX0JXZnwjBJSY7UVeNkZv7TE7NNyjphswlp/xLlBXCxp85Gje9Lci3de6
-X-Gm-Message-State: AOJu0YwaSdlLviUQI7YkwQlMuluA2qNcHsR7AYzWgd9HdwEdTptAOUwi
-	EZUlm0B2WVwf93+QPtJPRLGACBalPqVYKTFbr05l7jLCB4rWKevygULUrERfA1s=
-X-Google-Smtp-Source: AGHT+IFZgwQ8kBjg7wQirGUAy1IQokyWZyFwi8jSTwEZ3OWVxp38Ndo890Qs2NlTwlbxjDVAmkOW7A==
-X-Received: by 2002:a50:c05b:0:b0:57d:455:d395 with SMTP id 4fb4d7f45d1cf-5a2caf4e97fmr9818292a12.7.1721629992621;
-        Sun, 21 Jul 2024 23:33:12 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a4c7e67af1sm3319217a12.56.2024.07.21.23.33.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jul 2024 23:33:12 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Artur Weber <aweber.kernel@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] clk: samsung: fix getting Exynos4 fin_pll rate from external clocks
-Date: Mon, 22 Jul 2024 08:33:09 +0200
-Message-ID: <20240722063309.60054-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1721630056; c=relaxed/simple;
+	bh=XM5iXPI2APS3U9VxpvSZA5GkqsXzpGEFEY0hwXbS+Do=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tsMq93MJgzuniwBGwco5oxHJakoayOZHuU0qx/j7JRXR8HyTu3obsIalqszLUmtLfTrHSVroiMzfdgtIbphsJySbGAlfz8vif8iIFB2GEfysO/SG4kdjpg6+uUYsYn1RpQ8EWiCgM2IKH1cMsKgXpI6z8m9wgr+EqD41PtPBfqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 03454FEC;
+	Sun, 21 Jul 2024 23:34:38 -0700 (PDT)
+Received: from [192.168.178.115] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC8413F73F;
+	Sun, 21 Jul 2024 23:34:10 -0700 (PDT)
+Message-ID: <0575c014-6fe7-4118-bae8-cbb5b303a390@arm.com>
+Date: Mon, 22 Jul 2024 08:34:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] sched/fair: Sync se's load_avg with cfs_rq in
+ reweight_task
+To: Chuyi Zhou <zhouchuyi@bytedance.com>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com
+Cc: chengming.zhou@linux.dev, linux-kernel@vger.kernel.org
+References: <20240720051248.59608-1-zhouchuyi@bytedance.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <20240720051248.59608-1-zhouchuyi@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Commit 0dc83ad8bfc9 ("clk: samsung: Don't register clkdev lookup for the
-fixed rate clocks") claimed registering clkdev lookup is not necessary
-anymore, but that was not entirely true: Exynos4210/4212/4412 clock code
-still relied on it to get the clock rate of xxti or xusbxti external
-clocks.
+On 20/07/2024 07:12, Chuyi Zhou wrote:
+> In reweight_task(), there are two situations:
+> 
+> 1. The task was on_rq, then the task's load_avg is accurate because we
+> synchronized it with cfs_rq through update_load_avg() in dequeue_task().
+> 
+> 2. The task is sleeping, its load_avg might not have been updated for some
+> time, which can result in inaccurate dequeue_load_avg() in
+> reweight_entity().
+> 
+> This patch solves this by using update_load_avg() to synchronize the
+> load_avg of se with cfs_rq. For tasks were on_rq, since we already update
+> load_avg to accurate values in dequeue_task(), this change will not have
+> other effects due to the short time interval between the two updates.
+> 
+> Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
+> ---
+> Changes in v2:
+> - change the description in commit log.
+> - use update_load_avg() in reweight_task() rather than in reweight_entity
+> suggested by chengming.
+> - Link to v1: https://lore.kernel.org/lkml/20240716150840.23061-1-zhouchuyi@bytedance.com/
+> ---
+>  kernel/sched/fair.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 9057584ec06d..b1e07ce90284 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -3835,12 +3835,15 @@ static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
+>  	}
+>  }
+>  
+> +static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags);
+> +
+>  void reweight_task(struct task_struct *p, const struct load_weight *lw)
+>  {
+>  	struct sched_entity *se = &p->se;
+>  	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+>  	struct load_weight *load = &se->load;
+>  
+> +	update_load_avg(cfs_rq, se, 0);
 
-Drop that requirement by accessing already registered clk_hw when
-looking up the xxti/xusbxti rate.
+IIUC, you only want to sync the sleeping task with its cfs_rq. IMHO, 
+sync_entity_load_avg() should be used here instead of update_load_avg(). 
+The latter is doing much more than this.
 
-Reported-by: Artur Weber <aweber.kernel@gmail.com>
-Closes: https://lore.kernel.org/all/6227c1fb-d769-462a-b79b-abcc15d3db8e@gmail.com/
-Fixes: 0dc83ad8bfc9 ("clk: samsung: Don't register clkdev lookup for the fixed rate clocks")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/clk/samsung/clk-exynos4.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+>  	reweight_entity(cfs_rq, se, lw->weight);
+>  	load->inv_weight = lw->inv_weight;
+>  }
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index a026ccca7315..28945b6b0ee1 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -1040,19 +1040,20 @@ static unsigned long __init exynos4_get_xom(void)
- static void __init exynos4_clk_register_finpll(struct samsung_clk_provider *ctx)
- {
- 	struct samsung_fixed_rate_clock fclk;
--	struct clk *clk;
--	unsigned long finpll_f = 24000000;
-+	unsigned long finpll_f;
-+	unsigned int parent;
- 	char *parent_name;
- 	unsigned int xom = exynos4_get_xom();
- 
- 	parent_name = xom & 1 ? "xusbxti" : "xxti";
--	clk = clk_get(NULL, parent_name);
--	if (IS_ERR(clk)) {
-+	parent = xom & 1 ? CLK_XUSBXTI : CLK_XXTI;
+Maybe even do this in reweight_entity()?. You would have to do it under 
+'if (!se->on_rq) in reweight_task() anyway I assume.
+
+-->8--
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 9057584ec06d..555392be4e82 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -3669,11 +3669,31 @@ dequeue_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se)
+        cfs_rq->avg.load_sum = max_t(u32, cfs_rq->avg.load_sum,
+                                          cfs_rq->avg.load_avg * PELT_MIN_DIVIDER);
+ }
 +
-+	finpll_f = clk_hw_get_rate(ctx->clk_data.hws[parent]);
-+	if (!finpll_f) {
- 		pr_err("%s: failed to lookup parent clock %s, assuming "
- 			"fin_pll clock frequency is 24MHz\n", __func__,
- 			parent_name);
--	} else {
--		finpll_f = clk_get_rate(clk);
-+		finpll_f = 24000000;
- 	}
++static inline u64 cfs_rq_last_update_time(struct cfs_rq *cfs_rq)
++{
++       return u64_u32_load_copy(cfs_rq->avg.last_update_time,
++                                cfs_rq->last_update_time_copy);
++}
++
++/*
++ * Synchronize entity load avg of dequeued entity without locking
++ * the previous rq.
++ */
++static void sync_entity_load_avg(struct sched_entity *se)
++{
++       struct cfs_rq *cfs_rq = cfs_rq_of(se);
++       u64 last_update_time;
++
++       last_update_time = cfs_rq_last_update_time(cfs_rq);
++       __update_load_avg_blocked_se(last_update_time, se);
++}
+ #else
+ static inline void
+ enqueue_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se) { }
+ static inline void
+ dequeue_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se) { }
++static void sync_entity_load_avg(struct sched_entity *se) { }
+ #endif
  
- 	fclk.id = CLK_FIN_PLL;
--- 
-2.43.0
+ static void reweight_eevdf(struct sched_entity *se, u64 avruntime,
+@@ -3795,7 +3815,10 @@ static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
+                if (!curr)
+                        __dequeue_entity(cfs_rq, se);
+                update_load_sub(&cfs_rq->load, se->load.weight);
++       } else if (entity_is_task(se)) {
++               sync_entity_load_avg(se);
+        }
++
+        dequeue_load_avg(cfs_rq, se);
+ 
+        if (se->on_rq) {
+@@ -4033,12 +4056,6 @@ static inline bool load_avg_is_decayed(struct sched_avg *sa)
+ 
+        return true;
+ }
+-
+-static inline u64 cfs_rq_last_update_time(struct cfs_rq *cfs_rq)
+-{
+-       return u64_u32_load_copy(cfs_rq->avg.last_update_time,
+-                                cfs_rq->last_update_time_copy);
+-}
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ /*
+  * Because list_add_leaf_cfs_rq always places a child cfs_rq on the list
+@@ -4773,19 +4790,6 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+        }
+ }
+ 
+-/*
+- * Synchronize entity load avg of dequeued entity without locking
+- * the previous rq.
+- */
+-static void sync_entity_load_avg(struct sched_entity *se)
+-{
+-       struct cfs_rq *cfs_rq = cfs_rq_of(se);
+-       u64 last_update_time;
+-
+-       last_update_time = cfs_rq_last_update_time(cfs_rq);
+-       __update_load_avg_blocked_se(last_update_time, se);
+-}
+-
+ /*
+  * Task first catches up with cfs_rq, and then subtract
+  * itself from the cfs_rq (task must be off the queue now).
 
 
