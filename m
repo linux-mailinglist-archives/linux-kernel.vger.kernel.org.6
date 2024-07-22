@@ -1,121 +1,134 @@
-Return-Path: <linux-kernel+bounces-258695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80EB3938BBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:09:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CB67938BC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFC2B1C212A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:09:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E2391C2125F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374571684A8;
-	Mon, 22 Jul 2024 09:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848D216A37C;
+	Mon, 22 Jul 2024 09:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Kymzt0pR"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="dzmm2rB7"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F7112B63
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8DF161311;
+	Mon, 22 Jul 2024 09:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721639361; cv=none; b=XSjNXxpkUtXGVWvBj2GHBTd3X/w4j0tc2nYV4DYzDa4b+WQgsM/mLDoHFn42Hv12NauGCCzSG96RctqC3KPAkEeXK+ZJ1MZU1rzHtiLLdTTzjm0JY1B2B31wtDsphH9qQ407kHhOgG/9gF0VdlFT1fRVQU4xPNu9RJpof1SuE4A=
+	t=1721639447; cv=none; b=ubBCceRoH/DhWyE+lzJH8+CAToiqoGsDJHfrraU4ZNF+ZErO2BJ8iafmHxL8ubsOuMP+44B4KlvG5ioIMvz0qJfStSltjXYTCQmHO73d+fYOas9MvaTmSBNmlQ9wZIsl1Y/I3R9R6ungcaXsswa6JKo/MNBu02mZF/jYtw+Ixr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721639361; c=relaxed/simple;
-	bh=gTL1VCkA01/hHiwB+85YSNQGYqFQPUDfry1s+s15yNs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oR1n5TRs7O6FUl7InkV08PPsh4N1r+MePutjT6tUy9+8i6BAxose22WjTTDMQMM/rB9oDDJGtlPUWF8JvY3B4Aez1mvnFv1ZCAI1j4dWCkV3Oms+auwnkjuV+jGjEfdE7FRGoiFxV+i7otjs6FuIM8gJ6hGlvgxe28Bhq6sAl/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Kymzt0pR; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3683178b226so1922582f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 02:09:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721639358; x=1722244158; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ah24y1yQSASYJYM3HEnqaKXhBwm1vy49N5JwUW8UEr4=;
-        b=Kymzt0pRQ7XrLu/DJUN98O7FJr31kA8xbLG5ECWN68ND5BLwh9/hMpJyN+3/L8eP0b
-         f8ELTqDePI9nFxRfCgjkXU1pEsiSaUg/DVmzrAryZeJUgQS7QOx1jPn5Ca2Xl0Di0qc5
-         OidTgu/3pnxcXO98Tbd5f8ovTIokQly4OF3HCAkCAzW4lwRLlp59qkSFjqVNixsNGXwH
-         0W164gfVruLCFIHdsVi3nf99bdvxS0+Otq5VHpZbTO4tfSSUndzxZBJkGDsioJyFGmWs
-         FnYHGjEvuZykkjXS1YIryrcGlMJLsmxO+ajuk6u9BLjuWZfggUVLGqhKYqY3Y15rKA9a
-         BKqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721639358; x=1722244158;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ah24y1yQSASYJYM3HEnqaKXhBwm1vy49N5JwUW8UEr4=;
-        b=aBX3VeWO3PrntYZDRMC5TLXDO8uxo+SR4JobmjpjVaP0EFcu55+ce3SPUzskxI++4V
-         ApwXazcT20JeUpzAYnvSirpxv76bpDzGD2DhGVmIq4Jo9vdCoQ6oSUfGf/eo9Jg6kW+7
-         FrGClXZCEdTh2MaJQ24gOhVXGk3g3lEPVTVFFxA1EYjf7mJ4vzlxRagnhE1+QKyMGJ5B
-         RDUoVda1wZ8tCGsW3VBmnNhU+s7zWfvieYjXp+iUy8tf6R4IWogIPI1SCpAs9kpz6EhS
-         x5mDtd2y01zPEjcxw/7dZ4uCuLoT7ftms+CuF2nF7OaIryn7g9iEwgXekHxN9phb2BjG
-         ljjw==
-X-Forwarded-Encrypted: i=1; AJvYcCVteCyzQSsM+WuMUbERsCGroaJbxdK1W8MFQdxF+/uxiKIIWm/769h8Rm7Cg62opO9fbkz7G+7fRrowtW5wIBoU81lsPORevfmNMHOm
-X-Gm-Message-State: AOJu0YzmMtYuJWk5ch5QhaHyCiRx76dMPnpxoZX+D7cnMfbFdyVxM6T/
-	+pqmHqgatfDZ4sJCfaANLuosfa7l96esj2ptfdovEPYGWr7wIREpPfLtJhondDAP8JtCar5THVU
-	ZkWM5Lj69pBm1c2jvzNtf7yX250AYh6ciSSmL
-X-Google-Smtp-Source: AGHT+IGwSprF0fVSAeDXSVP69s81y0vecBUb0pn4T8XiVJU9XW190kHqnX6vSFoO3578vVBstvt8xVTHpBcR7doSBF4=
-X-Received: by 2002:a5d:58e4:0:b0:368:4b9d:ee51 with SMTP id
- ffacd0b85a97d-369bb2e1a52mr2903177f8f.57.1721639357955; Mon, 22 Jul 2024
- 02:09:17 -0700 (PDT)
+	s=arc-20240116; t=1721639447; c=relaxed/simple;
+	bh=F5XBAe/GKrCj0xLEXgFxWDYnSZgfCE914QJJeyW8fc8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CIUD50j1vvWZrLLK30jC+Lw6v3LEwwN96fvqoqzEhTiANHFf/NnajNdljAIheRzmHL8+/u/8ojcUPavqJxXcpwB9ZFGkrEDoIn32CWw70xjL+u32ycq1reNQ7q87r9RmrbRNFgmYTRLoB0xjHi+MvdVK+LpAuQpmQMgGB9xslWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=dzmm2rB7; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46M7wtTW005443;
+	Mon, 22 Jul 2024 02:10:15 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=UZ8qbwV8H5Uru+28S5SaGf9Al
+	hy/rbNI7CI4WhPzKlU=; b=dzmm2rB7zo2tr5pLB+fubm3C4F6L+MIp6nF8GXX04
+	iNvpNVXVUgJWJvk/hBTfDvo3Vg4tmnyR7vFcRV4//Gnk6jGloxEvfVMr+LG4jEEw
+	wxSDKEUJCZM1rKOaGzn0hm/UkdpjRbr3pnDUuCHyR3iVl/6aGVoFhLc3lneECGd/
+	TNYqYgoqztuERvV0GYvJt8y3e2A7AmA06dcOgZVQdrf4CtEsQX1QA0BXgMRjoTqw
+	J25xtF2PNgH9FF56Vj0VYemw/a/WCVeW7297NaUk8soVQS7MPe96oPcYCET+HkS+
+	L03Fssg9crdG1WBhbk6HsMuLkbydqsrbETSKCF6U12w8A==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 40hkgrr6yj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Jul 2024 02:10:15 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 22 Jul 2024 02:10:15 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 22 Jul 2024 02:10:14 -0700
+Received: from test-OptiPlex-Tower-Plus-7010 (unknown [10.29.37.157])
+	by maili.marvell.com (Postfix) with SMTP id 971D73F7041;
+	Mon, 22 Jul 2024 02:10:08 -0700 (PDT)
+Date: Mon, 22 Jul 2024 14:40:07 +0530
+From: Hariprasad Kelam <hkelam@marvell.com>
+To: Alex Elder <elder@ieee.org>
+CC: Andrew Lunn <andrew@lunn.ch>, Ayush Singh <ayush@beagleboard.org>,
+        <jkridner@beagleboard.org>, <robertcnelson@beagleboard.org>,
+        "David S.
+ Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Johan Hovold
+	<johan@kernel.org>,
+        Alex Elder <elder@kernel.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        <greybus-dev@lists.linaro.org>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 3/3] greybus: gb-beagleplay: Add firmware upload API
+Message-ID: <Zp4h72rWwgnGmvcP@test-OptiPlex-Tower-Plus-7010>
+References: <20240719-beagleplay_fw_upgrade-v1-0-8664d4513252@beagleboard.org>
+ <20240719-beagleplay_fw_upgrade-v1-3-8664d4513252@beagleboard.org>
+ <Zppeg3eKcKEifJNW@test-OptiPlex-Tower-Plus-7010>
+ <b3269dc8-85ac-41d2-8691-0a70b630de50@lunn.ch>
+ <e7e88268-a56b-447c-9d59-6a4eb8fcd25a@ieee.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719192234.330341-1-alexmantel93@mailbox.org>
-In-Reply-To: <20240719192234.330341-1-alexmantel93@mailbox.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 22 Jul 2024 11:09:05 +0200
-Message-ID: <CAH5fLggs=5k0HR2G9XbZ3k-9gjN=CwU_ZHmAbB7zzWj4Lcu+aA@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: Implement the smart pointer `InPlaceInit` for `Arc`
-To: Alex Mantel <alexmantel93@mailbox.org>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@samsung.com, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <e7e88268-a56b-447c-9d59-6a4eb8fcd25a@ieee.org>
+X-Proofpoint-ORIG-GUID: uf0FV3BztW2j4yQ85RZegmP76Gjj-a41
+X-Proofpoint-GUID: uf0FV3BztW2j4yQ85RZegmP76Gjj-a41
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-22_05,2024-07-18_01,2024-05-17_01
 
-On Fri, Jul 19, 2024 at 9:22=E2=80=AFPM Alex Mantel <alexmantel93@mailbox.o=
-rg> wrote:
->
-> For pinned and unpinned initialization of structs, a trait named
-> `InPlaceInit` exists for uniform access. `Arc` did not implement
-> `InPlaceInit` yet, although the functions already existed. The main
-> reason for that, was that the trait itself returned a `Pin<Self>`. The
-> `Arc` implementation of the kernel is already implicitly pinned.
->
-> To enable `Arc` to implement `InPlaceInit` and to have uniform access,
-> for in-place and pinned in-place initialization, an associated type is
-> introduced for `InPlaceInit`. The new implementation of `InPlaceInit`
-> for `Arc` sets `Arc` as the associated type. Older implementations use
-> an explicit `Pin<T>` as the associated type. The implemented methods for
-> `Arc` are mostly moved from a direct implementation on `Arc`. There
-> should be no user impact. The implementation for `ListArc` is omitted,
-> because it is not merged yet.
->
-> Link: https://github.com/Rust-for-Linux/linux/issues/1079
-> Signed-off-by: Alex Mantel <alexmantel93@mailbox.org>
-> [...]
->  /// Smart pointer that can initialize memory in-place.
->  pub trait InPlaceInit<T>: Sized {
-> +    /// A type might be pinned implicitly. An addtional `Pin<ImplicitlyP=
-inned>` is useless. In
-> +    /// doubt, the type can just be set to `Pin<Self>`.
-> +    type PinnedResult;
-> +
-
-It's unfortunate that we can't use an associated type default here.
-
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-
-Alice
+On 2024-07-20 at 03:09:55, Alex Elder (elder@ieee.org) wrote:
+> On 7/19/24 2:15 PM, Andrew Lunn wrote:
+> > > >   drivers/greybus/Kconfig         |   1 +
+> > > >   drivers/greybus/gb-beagleplay.c | 625 +++++++++++++++++++++++++++++++++++++++-
+> > 
+> > > > +static u8 csum8(const u8 *data, size_t size, u8 base)
+> > > > +{
+> > > > +	size_t i;
+> > > > +	u8 sum = base;
+> > > follow reverse x-mas tree
+> > 
+> > Since this is not networking, even thought it was posted to the netdev
+> > list, this comment might not be correct. I had a quick look at some
+> > greybus code and reverse x-mas tree is not strictly used.
+> > 
+> > Please see what the Graybus Maintainers say.
+> 
+> Andrew is correct.  The Greybus code does not strictly follow
+> the "reverse christmas tree" convention, so there is no need
+> to do that here.  Please understand that, while checkpatch.pl
+> offers good and well-intentioned advice, not everything it
+> warns about must be fixed, and in some cases it suggests things
+> certain maintainers don't agree with.
+> 
+> 					-Alex
+> 
+> > 	Andrew
+> 
+> Ok got it. 
 
