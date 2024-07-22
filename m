@@ -1,101 +1,106 @@
-Return-Path: <linux-kernel+bounces-259090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E81939112
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:54:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0190939114
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:55:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 518F5281E85
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:54:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D57291C215B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A7516DC34;
-	Mon, 22 Jul 2024 14:54:45 +0000 (UTC)
-Received: from greygoose-centos7.csh.rit.edu (greygoose-centos7.csh.rit.edu [129.21.49.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2E216DC39;
+	Mon, 22 Jul 2024 14:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cp2wyqxj"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35F9C8C7;
-	Mon, 22 Jul 2024 14:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.21.49.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D946F1598F4;
+	Mon, 22 Jul 2024 14:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721660085; cv=none; b=ko6HX1o2g21p/WnFOq7ASshlGI3b/ZQlOCHsqLueiF/JX5NnRwT8V8Q7JnlZrNOZrN7T9DEY6H+n0EDRH4VxHgj8yoM1UruE0UJY0Gx2QYDC4ZIRF5M6nker8RWA/uAwJhd9OUmP86O/n9zLdcb8UcESM0b1YWVYxmaCDNkba6w=
+	t=1721660096; cv=none; b=Wv/d1vYPfe+flk2a/w5FrszM4B7b51tW0oMjMPVW93DpClMQ2711KsZ5PTrD1Ut3qPLo0K6mSjKzD3EOh52/yo3/9BLaJNl4B0D+I+rp8NqKpCAW07wKjSbt+5mCcb/gkKKFGsMK0tn6rbUqLs/wVmDaszfoicegW1IASklZaXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721660085; c=relaxed/simple;
-	bh=r260F2Xl37oIGQIACcCpiElBJU7s/mlo4ZgNLXp+7Wk=;
+	s=arc-20240116; t=1721660096; c=relaxed/simple;
+	bh=SFMbi+gzer0+l8x74gNu4ktUYZ87yZwEQXW/AUYWIKQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dJBEu+uqyPV66AMJuVpU/R4AvFQ9oXUPqXdvl8v7CQJZLLZs0VvZ8o5NLz6nn/fbO3MbKPnA2Ud4VHxJNtIXqQDDkkB7tJy3tJmoZm3vWP4DVLa/0F9JEy/iNVrzOH75kMmJ0dXP6WsqiGjE8DaUDY6N49b+yJ0adME1NtQBdvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=freedom.csh.rit.edu; spf=none smtp.mailfrom=freedom.csh.rit.edu; arc=none smtp.client-ip=129.21.49.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=freedom.csh.rit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=freedom.csh.rit.edu
-Received: from localhost (localhost [127.0.0.1])
-	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id 1194F40D7C93;
-	Mon, 22 Jul 2024 10:54:36 -0400 (EDT)
-X-Virus-Scanned: amavisd-new at csh.rit.edu
-Received: from greygoose-centos7.csh.rit.edu ([127.0.0.1])
- by localhost (mail.csh.rit.edu [127.0.0.1]) (amavisd-new, port 10026)
- with ESMTP id k_4pUcb4fZ1y; Mon, 22 Jul 2024 10:54:35 -0400 (EDT)
-Received: from freedom.csh.rit.edu (freedom.csh.rit.edu [129.21.49.182])
-	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTPS id 9BA2A45735E9;
-	Mon, 22 Jul 2024 10:54:35 -0400 (EDT)
-Date: Mon, 22 Jul 2024 10:54:34 -0400
-From: Mary Strodl <mstrodl@freedom.csh.rit.edu>
-To: Rudolf Marek <r.marek@assembler.cz>
-Cc: Christian Gmeiner <christian.gmeiner@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	Mary Strodl <mstrodl@csh.rit.edu>, linux-kernel@vger.kernel.org,
-	urezki@gmail.com, linux-mm@kvack.org, lee@kernel.org,
-	andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
-	s.hauer@pengutronix.de
-Subject: Re: [PATCH 1/3] mm: vmalloc: export __vmalloc_node_range
-Message-ID: <Zp5yqoeH752kli8J@freedom.csh.rit.edu>
-References: <ZpkOV3mdOU1b8vMn@casper.infradead.org>
- <ZpkPStwq_S3mJYb5@infradead.org>
- <ZpkQQ5GzJ4atvR6a@casper.infradead.org>
- <ZpkWj-iFiA-JHbbf@freedom.csh.rit.edu>
- <20240718143103.82e33c556b2d1b6145ae43e0@linux-foundation.org>
- <ZpmKho9_t0_MeOP7@casper.infradead.org>
- <20240718143924.43e22f68cf639b064a83f118@linux-foundation.org>
- <CAH9NwWf_S-PyY5X_cJGSW-8YDk4-C0VvnPCX8iVuo0FhTqsy2Q@mail.gmail.com>
- <ZppU8FhsFd9cB-Fi@freedom.csh.rit.edu>
- <b3d6d20d-1b14-447f-a6b2-aa7712df1156@assembler.cz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=M2btjJxgM/2G5YTwgLyosn12n2v+6hmoo6NlCEOlcHNjF68EzqysIqTnUNulDk1MB1RGvGH45YBuTLFv+AG/s/ID53c+hM3IupHlG9JM1yF5QPS1YKbLLHU+/IXu+hN8d+edMTQb7SsBx1g53nsHMO8buA+sH+x7Krfuaj/HzZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=cp2wyqxj; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0D9024CF;
+	Mon, 22 Jul 2024 16:54:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1721660052;
+	bh=SFMbi+gzer0+l8x74gNu4ktUYZ87yZwEQXW/AUYWIKQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cp2wyqxjg3WpgxoiiNR+NOuQV48c2MOsutgl0Dc+frzhZAyXRz2G7AR/2wASTPJcM
+	 c0gZnsUKDmgOUPet556m/q6TeYKBU45+cnDmie4iLRaa5SUAOL9k9Rtr0bAT6u4N4A
+	 IzMawm7cnO4wpbmt3OPXDv+p2/vMwlwPvkhgyoaU=
+Date: Mon, 22 Jul 2024 17:54:35 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	Mingjia Zhang <mingjia.zhang@mediatek.com>,
+	Jack Zhu <jack.zhu@starfivetech.com>,
+	Keith Zhao <keith.zhao@starfivetech.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v5 13/14] staging: media: starfive: Drop read support for
+ video capture devices
+Message-ID: <20240722145435.GL13497@pendragon.ideasonboard.com>
+References: <20240709083824.430473-1-changhuang.liang@starfivetech.com>
+ <20240709083824.430473-14-changhuang.liang@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <b3d6d20d-1b14-447f-a6b2-aa7712df1156@assembler.cz>
+In-Reply-To: <20240709083824.430473-14-changhuang.liang@starfivetech.com>
 
-On Fri, Jul 19, 2024 at 09:59:37PM +0200, Rudolf Marek wrote:
-> I would suggest to simply run the BIOS code of this interface in usermode. Sort of similar to VM86 VESA stuff.
-> Last time I looked into this it used STI/CLI/RDMSR/WRMSR and couple of I/O ports and cf8/cfc for PCI.
+Hi Changhuang,
 
-I took a look at uvesafb (which appears to be what you were talking about) and
-it looks like it starts a separate executable and uses some IPC to talk to it.
-Is that the best way to do it?
+Thank you for the patch.
 
-I guess it would look something like:
-- driver gets loaded
-- driver spawns /sbin/cgeb-helper
-- driver uses cn_netlink_send to send the `high_desc` to helper
+On Tue, Jul 09, 2024 at 01:38:23AM -0700, Changhuang Liang wrote:
+> StarFive video capture devices is not support VB2_READ queue access
+> method. Drop the implementation of the read hook.
+> 
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
 
-Then the calls to `board->entry` in the driver get replaced with
-`cn_netlink_send` with a `cgeb_fps`.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-When the userspace helper gets the message with the `cgeb_fps`, it calls into
-the bios code and replies to the driver with send() and passes back cgeb_fps.
+> ---
+>  drivers/staging/media/starfive/camss/stf-video.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/staging/media/starfive/camss/stf-video.c b/drivers/staging/media/starfive/camss/stf-video.c
+> index 8c6c45d8b7a1..28e6679ee9b9 100644
+> --- a/drivers/staging/media/starfive/camss/stf-video.c
+> +++ b/drivers/staging/media/starfive/camss/stf-video.c
+> @@ -570,7 +570,6 @@ static const struct v4l2_file_operations stf_vid_fops = {
+>  	.release        = vb2_fop_release,
+>  	.poll           = vb2_fop_poll,
+>  	.mmap           = vb2_fop_mmap,
+> -	.read           = vb2_fop_read,
+>  };
+>  
+>  /* -----------------------------------------------------------------------------
 
-From there, a callback registered with cn_add_callback will pick up the message
-and call `wake_up_interruptible` to send the message back to the `cgeb_call`
-caller.
+-- 
+Regards,
 
-Is this what you were imagining? Or is there a simpler way to do it?
-
-Where should the code for the userspace helper live? The vesa stuff appeared to
-be out of tree.
+Laurent Pinchart
 
