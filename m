@@ -1,185 +1,156 @@
-Return-Path: <linux-kernel+bounces-258989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49771938FA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:09:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0DE9938FAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:12:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7672F1C212A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:09:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59840281453
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:12:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80AD116D4FE;
-	Mon, 22 Jul 2024 13:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD78416D9AE;
+	Mon, 22 Jul 2024 13:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V9ZrZl2R"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IVlMUY/i"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E423416CD07
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 13:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F0616CD07
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 13:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721653781; cv=none; b=J+RJh6wYgdfHAeTuffaErzbr95w10OEqS+Iw27s9FNv9zOGhlF1wiWx4dRA9HY+j6tyuvz9cLyWd0gbCve7lqPhXEE2q6FB74+3jdkID6SM89P+qrXwh3KnjxeJP1eN9RHp5d95m1uIKneuuOKe2YegQ2UGbjvDdz+MoRlGTwWI=
+	t=1721653913; cv=none; b=eH+LmhnuGPTPGXRYHpHvZmH1+9fxQHivGlo5xNqLnRGzFMNumg70Se3dxqDfVnzpMSe7fagLceOmlPZI0coZZtmGyvmJEKMjHfFFcthMw5GOtdbVBSHDP8g0BU8negsvIJKnaAgBkb8SOPCeGy/sVgUxuw9SPsw344a7YUoPSvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721653781; c=relaxed/simple;
-	bh=dACOo0fmf97BNI4s1f8a/S3c6BJcwbtOOnHYFvk7Yhk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iac82V9FOBRXuyQ52X9RmRja9noFwDytSyJ3UZinxRREtY0RMak7bimb/ct0kBP+RgWoIryipgtnHBbXNeGCE1vorhcgEIT7bdVvcgU9FcsCwNSNZhryVUkjr20yA7vRP9XFTSwBk9DABGv4JWObMuCLGNu8fdoqCL7kQMqFEes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V9ZrZl2R; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721653778;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pPjmGtQSxYLqY3oA0GTldwdaTnqKLEINoaeFI9U5dsc=;
-	b=V9ZrZl2Renh/4wI/1Tfj/AEWkqL5LZFWzMvCzuxZ/Tx/Xv/PqKJHZbb0MqiwQvoYhwqJtW
-	tlJsK8T0ko3luKukZqiyqXVHpY3fszM9ti4J/D0VzwzsVOka2MCi4H90fLTiAmwCFMBcAR
-	BTu1RWN9u/IG+PPTCDm3qC6omttvQOw=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-695-NFB4h7Y1Pxu8K6xij5ylFA-1; Mon, 22 Jul 2024 09:09:37 -0400
-X-MC-Unique: NFB4h7Y1Pxu8K6xij5ylFA-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3687f4f9fecso3251882f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 06:09:37 -0700 (PDT)
+	s=arc-20240116; t=1721653913; c=relaxed/simple;
+	bh=Yl54IhhBl5KN5lxPnpBkpytGNX+6KNwM0QpeivEX8uc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uUBii0xVvRZGSMSQ3YTDEpB/czzvG92cWL5lavvhiwZt56MBUy7d8yzPxZnftskMEswGrNSBgPeiTcFGGivvvdfWlFq8sz2ykS0W6iHR/qqADDnHBNQTXV/+wVzss3qHVEUQB8K50apcYeH8bM1uT27K79OAXHMJvUtzA4QL6Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IVlMUY/i; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fc56fd4de1so29780385ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 06:11:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721653911; x=1722258711; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WNLdaVhZLCULcVm0BuO6uOnDm8k9XTjZNc3bP/bzyl0=;
+        b=IVlMUY/iSdXQ5RGX+Xj+5FLUNieock8eGfBhmxYKqYcB/ZV0NiNigS5g31bKUGpZn8
+         H9D319kSJwFOB4Xc8XlpfVkeUSDhA/3PoogmjRV+tz91hfm0q+NskvDD56PcsHSZw1HS
+         0eVghYClsYWFn4CwZVJ3xMKc32Fq8BvO9fhdtPCzGurd7NdUiOozVO36ltqUufgKJx7v
+         NQZ7gpvgNmFUWoH+otCKtMdF0ra14s4Jr8pWMId1uedmyNuRjWEUBBhvNtaB5hdhQOwJ
+         7+PBVyYj9az/gLxe4nXPBqXTvxNR3zJR5skVhMIPmVuJcFbw85+WsyPAEAlgpGooybcd
+         Ja6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721653776; x=1722258576;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pPjmGtQSxYLqY3oA0GTldwdaTnqKLEINoaeFI9U5dsc=;
-        b=XdqRTzjVAJ+t80DE7ZS6RIWZ2J3V0mPi4nzaLTOqeT1qnFsT9dtMWRsh0D9AxAvXBX
-         5Wg104n4WCV/ev58e2XgbalmmBiwCXFl2v/txmpfxezZSkafzHr7NKzgLXNXGPpI41dB
-         ukuRmdoEAb97dEdXiKPQVdLrX3WWJlKTVK3tWhbBZoYwQCOFGq6EOo9yZ6NfZJV/Tfz9
-         CCuSrxfd9Fmow80WUh2vCMUi8yIV8Fhf3u/UWKNCJmYNjPi2/+9LZhPUXPOb0u1YQKoR
-         Qud1SXbv89Ny0Tte4qr00EWiskbGo6kJYM5MjJTcQ0/YljnBp2csyyRJozZ27A/uS7ty
-         eZng==
-X-Gm-Message-State: AOJu0Yz8OxnHooLCDzNDUrwMXO8Uhn7IAgta2taa/WAXdi+yqVTYpXrX
-	3bV30uDc3UPTFVcpQtBu5/7v8LSDxsQg4LrTkCAooKfXY+S6YO4vj1vX8OHnzhKEZbavM6s7obj
-	TQEmSaDPYgqJAERM3XGXNtvl0DeRQqVf70gVOwRTPskBLBDgSfpJUS1zbhTQ9Nw==
-X-Received: by 2002:a5d:4444:0:b0:366:f50a:2061 with SMTP id ffacd0b85a97d-369bb2b40cemr4879370f8f.50.1721653776221;
-        Mon, 22 Jul 2024 06:09:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHoaG2eLWBIBI8fxbZUOyO7o0VaPNn/aLxAJc2HvsEESpvUDsRZ8oLQx3drcW1lulkUq0Q+3Q==
-X-Received: by 2002:a5d:4444:0:b0:366:f50a:2061 with SMTP id ffacd0b85a97d-369bb2b40cemr4879342f8f.50.1721653775728;
-        Mon, 22 Jul 2024 06:09:35 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c727:7000:c050:e303:f8a7:6ed9? (p200300cbc7277000c050e303f8a76ed9.dip0.t-ipconnect.de. [2003:cb:c727:7000:c050:e303:f8a7:6ed9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36878811bedsm8494497f8f.117.2024.07.22.06.09.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jul 2024 06:09:35 -0700 (PDT)
-Message-ID: <0c390494-e6ba-4cde-aace-cd726f2409a1@redhat.com>
-Date: Mon, 22 Jul 2024 15:09:34 +0200
+        d=1e100.net; s=20230601; t=1721653911; x=1722258711;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WNLdaVhZLCULcVm0BuO6uOnDm8k9XTjZNc3bP/bzyl0=;
+        b=MUvfNSl06lVMu5NmbQohNpnllE7196KW9Kj2vlugHBGoRiACE9x5S6Q5cC/kqD7t94
+         D48CFyDa71LtUFJTxJ62ls8xxLnYj9zzT5BFzku++Ry/I8OQuQ9w018UwnJsn9qFR8cA
+         j67uD72Xe7mzUAS7JwBkdJ9q+rD0Ga8+//TjZhpUXyOLLjuY938hv2FeW44OAJGLTNaF
+         EfTHpmmoT74nGU3iUhD9nDea24CCnow0Bx7Ounec54vAflhp7lrJiwwCp632JggmDsYh
+         /dQTewaJ+qu/8HYS66Za0aIGGc25Udnd2vZoEcWmw26WNjREOGEWYXDdHn/K+t8Kkarn
+         +7FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVIISf++CXYYCR0MrnFDlB5QKrnmyMr4vckioPtdtp+9aTBsFz7mKVyclDKlu1rnqgdyvhJvA8vKCv/ZWaseeayPiHDN12v/HfhHxn
+X-Gm-Message-State: AOJu0Yzy6Z0A7MYa4Fr9G3tEaH4BII7xZ2kTQAtYt9gNzLygAdEGcZcv
+	Yv6XbjzVw03ttXUw6Q1INAeg/GmmJSONST+cgMo/7czqcNFViegNpFcB3D/s4MvYxdq5B+vmjt4
+	=
+X-Google-Smtp-Source: AGHT+IGkI1eeF3+ZjtqrWZ8QSMwy1g3He8uLa7RwxeT+z0eXBTnNP30Q7FcMNTGWn5a1pQb16PjBLg==
+X-Received: by 2002:a17:902:680a:b0:1fc:4680:820d with SMTP id d9443c01a7336-1fd74d16bfamr100301405ad.9.1721653910688;
+        Mon, 22 Jul 2024 06:11:50 -0700 (PDT)
+Received: from localhost.localdomain ([120.60.138.134])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f486a3bsm53945765ad.284.2024.07.22.06.11.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 06:11:50 -0700 (PDT)
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: lpieralisi@kernel.org,
+	kw@linux.com
+Cc: robh@kernel.org,
+	bhelgaas@google.com,
+	linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH] PCI: qcom: Use OPP only if the platform supports it
+Date: Mon, 22 Jul 2024 18:41:28 +0530
+Message-Id: <20240722131128.32470-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: fix maxnode for mbind(), set_mempolicy() and
- migrate_pages()
-To: Jerome Glisse <jglisse@google.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20240720173543.897972-1-jglisse@google.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240720173543.897972-1-jglisse@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 20.07.24 19:35, Jerome Glisse wrote:
-> Because maxnode bug there is no way to bind or migrate_pages to the
-> last node in multi-node NUMA system unless you lie about maxnodes
-> when making the mbind, set_mempolicy or migrate_pages syscall.
-> 
-> Manpage for those syscall describe maxnodes as the number of bits in
-> the node bitmap ("bit mask of nodes containing up to maxnode bits").
-> Thus if maxnode is n then we expect to have a n bit(s) bitmap which
-> means that the mask of valid bits is ((1 << n) - 1). The get_nodes()
-> decrement lead to the mask being ((1 << (n - 1)) - 1).
-> 
-> The three syscalls use a common helper get_nodes() and first things
-> this helper do is decrement maxnode by 1 which leads to using n-1 bits
-> in the provided mask of nodes (see get_bitmap() an helper function to
-> get_nodes()).
-> 
-> The lead to two bugs, either the last node in the bitmap provided will
-> not be use in either of the three syscalls, or the syscalls will error
-> out and return EINVAL if the only bit set in the bitmap was the last
-> bit in the mask of nodes (which is ignored because of the bug and an
-> empty mask of nodes is an invalid argument).
-> 
-> I am surprised this bug was never caught ... it has been in the kernel
-> since forever.
+With commit 5b6272e0efd5 ("PCI: qcom: Add OPP support to scale
+performance"), OPP was used to control the interconnect and power domains
+if the platform supported OPP. Also to maintain the backward compatibility
+with platforms not supporting OPP but just ICC, the above mentioned commit
+assumed that if ICC was not available on the platform, it would resort to
+OPP.
 
-Let's look at QEMU: backends/hostmem.c
+Unfortunately, some old platforms don't support either ICC or OPP. So on
+those platforms, resorting to OPP in the absence of ICC throws below errors
+from OPP core during suspend and resume:
 
-     /*
-      * We can have up to MAX_NODES nodes, but we need to pass maxnode+1
-      * as argument to mbind() due to an old Linux bug (feature?) which
-      * cuts off the last specified node. This means backend->host_nodes
-      * must have MAX_NODES+1 bits available.
-      */
+qcom-pcie 1c08000.pcie: dev_pm_opp_set_opp: device opp doesn't exist
+qcom-pcie 1c08000.pcie: _find_key: OPP table not found (-19)
 
-Which means that it's been known for a long time, and the workaround 
-seems to be pretty easy.
+Also, it doesn't make sense to invoke the OPP APIs when OPP is not
+supported by the platform at all. So let's use a flag to identify whether
+OPP is supported by the platform or not and use it to control invoking the
+OPP APIs.
 
-So I wonder if we rather want to update the documentation to match reality.
+Fixes: 5b6272e0efd5 ("PCI: qcom: Add OPP support to scale performance")
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/pci/controller/dwc/pcie-qcom.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+index 0180edf3310e..6f953e32d990 100644
+--- a/drivers/pci/controller/dwc/pcie-qcom.c
++++ b/drivers/pci/controller/dwc/pcie-qcom.c
+@@ -261,6 +261,7 @@ struct qcom_pcie {
+ 	const struct qcom_pcie_cfg *cfg;
+ 	struct dentry *debugfs;
+ 	bool suspended;
++	bool use_pm_opp;
+ };
+ 
+ #define to_qcom_pcie(x)		dev_get_drvdata((x)->dev)
+@@ -1433,7 +1434,7 @@ static void qcom_pcie_icc_opp_update(struct qcom_pcie *pcie)
+ 			dev_err(pci->dev, "Failed to set bandwidth for PCIe-MEM interconnect path: %d\n",
+ 				ret);
+ 		}
+-	} else {
++	} else if (pcie->use_pm_opp) {
+ 		freq_mbps = pcie_dev_speed_mbps(pcie_link_speed[speed]);
+ 		if (freq_mbps < 0)
+ 			return;
+@@ -1592,6 +1593,8 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+ 				      max_freq);
+ 			goto err_pm_runtime_put;
+ 		}
++
++		pcie->use_pm_opp = true;
+ 	} else {
+ 		/* Skip ICC init if OPP is supported as it is handled by OPP */
+ 		ret = qcom_pcie_icc_init(pcie);
+@@ -1683,7 +1686,7 @@ static int qcom_pcie_suspend_noirq(struct device *dev)
+ 		if (ret)
+ 			dev_err(dev, "Failed to disable CPU-PCIe interconnect path: %d\n", ret);
+ 
+-		if (!pcie->icc_mem)
++		if (pcie->use_pm_opp)
+ 			dev_pm_opp_set_opp(pcie->pci->dev, NULL);
+ 	}
+ 	return ret;
 -- 
-Cheers,
-
-David / dhildenb
+2.25.1
 
 
