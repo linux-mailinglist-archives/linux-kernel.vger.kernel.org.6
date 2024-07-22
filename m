@@ -1,232 +1,192 @@
-Return-Path: <linux-kernel+bounces-259220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF3F9392D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:56:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CC329392D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:57:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEC931F2213C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:56:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F99B1F224FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:57:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736CB16EBE2;
-	Mon, 22 Jul 2024 16:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45D916EBE2;
+	Mon, 22 Jul 2024 16:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fireburn-co-uk.20230601.gappssmtp.com header.i=@fireburn-co-uk.20230601.gappssmtp.com header.b="sEG90JxP"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="AZn7RZLb"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2063.outbound.protection.outlook.com [40.107.236.63])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72A416EB50
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 16:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721667381; cv=none; b=qOURf/Lb07+IXCTXZdooutGqZeERcMsUDVjDvPv75/YNEipAvVmAp23mcK2meJwq0on1YW3kEeAtmZvb0xGG5yerKskeX0jYgxzjW6yq2vKLpc9Q/xOUNf0HYq95fengVX9tPSEg/J//+UYfMhvViVcS4C4TrbK6sqKstEZme/M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721667381; c=relaxed/simple;
-	bh=qWS+P3Xttn1kxQZfDyagjS0gAxal6b05YpgQknqLBT4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bZOjphzsR8ifM0i1TitI1L6kcMXjV7XvfiwyFDMpbtM6PIyZKX95nc6GWLh7XY4oaYOIKnZmSCEPE6StIePcmx2kEzK+18Jt/zobyPTbTvxJxgU/eevhA5JHfiMmqSvcZZgwhbfoU/mN5YIG6/R5b2EX3t9AZ9nstz1SWr6mjSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fireburn.co.uk; spf=none smtp.mailfrom=fireburn.co.uk; dkim=pass (2048-bit key) header.d=fireburn-co-uk.20230601.gappssmtp.com header.i=@fireburn-co-uk.20230601.gappssmtp.com header.b=sEG90JxP; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fireburn.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fireburn.co.uk
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70d333d5890so589203b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:56:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fireburn-co-uk.20230601.gappssmtp.com; s=20230601; t=1721667379; x=1722272179; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HaPFqVHSx1KfpH7V20r5UGQPGW7ZAAcltHc6WnVyWFA=;
-        b=sEG90JxPv2dLnXnV8UR4SuHiK/mNEZiC2G9htfiFseL8Za6w+Rio6RvrTI6HjiyJxC
-         swwaxDsAa/MiQQ088njUHyGU1ekHjQQy9rLoUQvpqwvxTP0X9gp/Ep++xcij4QjwwjzD
-         MmDydbRV/TyP5jTWkV8pfcoCxjUILseHvBNEgs/nF9ytqWdvfoA/rLbvYfYOftwHbOKc
-         JcsoTgp3MQl/NE7W86m8SSNtCflDwwW9kuPRK2VUTkAAT/jdYWv9PDq5yHXAEe14Uq9s
-         gKFkqJYEksvBiYOXc7GpDVvnJVvZu9XH+Yl7UNuQFXqYw+b/kfu58Pe4LQT1tXKJVecx
-         sVLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721667379; x=1722272179;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HaPFqVHSx1KfpH7V20r5UGQPGW7ZAAcltHc6WnVyWFA=;
-        b=cQb9XGNjWC81XDLUfVfQXqMfHeoo3ydmP1ny0AV82BilrWurkqrkw87eH+Z3la/yDT
-         KEO4NyOMxVrLRwPsb5YbeXLEwLCDpSDz+iNCpUzIW+q+M/QHe9i8AaYA9oFiP/EHaArF
-         X9efcOhE1TntaMA7Kbh8c/JOn7Fwcm5kSaiBSlHQicGWm8ZIqPFmRKEVfGemwZkJLObz
-         QunnUaugRPGPoX1E0/52wswcoKzgB2tI7vsoSWbjFQdPZrDrYiIKvB/qg5BehkK9PVyO
-         0OVd0245uWdeOfgM5VpNn7Lh3/M0TRvUZP0cekGKRcwfDtIFkq50U6X4iJgER9yQuB9k
-         4mJw==
-X-Forwarded-Encrypted: i=1; AJvYcCWsAoj0rtReFM97wJuCpaw43Hx0RRiKliwDlwIRsSbdia6yettWeUFl1N8MFwhbdEN6DX+A/btmLKltvjvPHnkMutxMpav7n5QsDXS8
-X-Gm-Message-State: AOJu0Yyl9oM9pH5Em70ZuT0J5yuzdnu8NqRzlHfFFAA4hM+qFMi4fj3L
-	K7IGAhAZdMl4bQYbLOsHN0XW621BkJpOrYUi5IiuUaXvNNEKlPtOQcf13pKG3h4WpTvHUJaE3+E
-	pvG+WN0snUuKIYlFvJRcPe/tQAe28y2o3GN8GMlcqlNxsenpbbyRm
-X-Google-Smtp-Source: AGHT+IHlCWzv3WwWBjI4tZnpzweNtV0lQc4jmtsZE7VqE1QoVmYF0013pH0goDjIIXdT+yL2ln2NCGQriqN7xFsKDLE=
-X-Received: by 2002:a05:6a00:1384:b0:705:de1d:f7f9 with SMTP id
- d2e1a72fcca58-70d08314452mr11422785b3a.0.1721667379173; Mon, 22 Jul 2024
- 09:56:19 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DFCB28370
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 16:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721667419; cv=fail; b=PJOTUj/CLYEzeBa+SIxHO0xv745Qt5AK0HfIHUS2bf5Zy/3BFalB3JSplinZeYffi33I+tafQ5X1XrGrT/MPqChAddx+euYKmM2UnCe4U//H7gfr+1bs/CNNZzW9b3dvqf1qaLr3aXSH2tHcJ1fI5kU1KRyr8fyMrCgHbbrVnwo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721667419; c=relaxed/simple;
+	bh=/wCzykgko6JK8EE9TS8CGMNvQ+Pf4kmQQE9/feNTTuM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JKH4+3pMedM5Rq8P5ESFL8L9hrAruJGUNwq2EFHDAQMaUhtXzO/WFBIgbQ/FeUbJXTSlB+T9jUjvuC8rav5z73HGWZZDFCQ+UDkz17T6QTwPQY9UKew/q2ssmFxk2cb/2n/M4TByTuJV7piff4TyA7lePejxbOmS2rBYcyC1n68=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=AZn7RZLb; arc=fail smtp.client-ip=40.107.236.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lOocVqLM6711Mwq5vzYumV5J9YgKR4/YgFT04ZnjCvbI4n7LBA36YtRO6mCRYxhGKe7Nsr0+eq5yWOf+9rKGR/T8m2KF7AGn3qsd3/y4BXDISd2Ta3tPyk9hC5pO/oYglDZ+ADj5q0dwMPh+a2j4O9kJFLpEOWLFTWpb0CAXalbIsiTzdhAkJFH2ZLFl+n+o5OwcqYmCkr1zx1LSY5XcZjuleQkxPUudW96a7shvIOoNytIe3/l4uaHMwZ9Fx0K5fT+QGhW0rFS5+I+Klp1TwbtfFsXCu3eM1+CdieZAyxbJ7AFfBprOdt+4+fzywm5Ku9PM1mEcsATxfSwOdGYI+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1yBN/3rehwVC2piTa/uSJ1DffY1OPxwdIZ4NJBx+Dws=;
+ b=Yt7TMwsH8654VbF63RkMVISYfEkOW7RZj8AZKH9zuHoHhlzP5s0HBYD+ar0lLQZjBST6Mm6nf/RVyDaGYoKeoasfjwouijE6IH59dZQFBLwWilTn+O0IBoPp5JE/GFEm/0L1wK7CGy81wnNAbIlBS1Evm/cdYQ1TDIDTuhyaAGcgA4Sp2pkLuK5LRzJdQoFmBlDcw9evd1pdQ2649wIiZ7kpwhAo0vNGnpae+IKQf7KNh8NJCPeb3HAt0xOK3i7F63LdwW15bzkfgW930dRyp15mQSREJrhv+GWmeAklBDDO885AqRKS6dP99Lv4bMgEXYDXtAzyYnbi3MBkBbOQpg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=web.de smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1yBN/3rehwVC2piTa/uSJ1DffY1OPxwdIZ4NJBx+Dws=;
+ b=AZn7RZLbcO6OOPdJjITqwFB2mkyvde4aUp3PUWFJK9mrZeRHlIxt0UWvfY5RyDsRtql26QNF+qfQti3jaDnVbHMHu3qZesuIRqStOz2LrudEgd1po2T1pvfdCt7Lo+Ss1VI1JG7IoPZaac56IlWoPDZKTes18e3rrD9T6BY/mTY=
+Received: from DS7PR03CA0173.namprd03.prod.outlook.com (2603:10b6:5:3b2::28)
+ by LV2PR12MB5752.namprd12.prod.outlook.com (2603:10b6:408:177::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.17; Mon, 22 Jul
+ 2024 16:56:55 +0000
+Received: from CY4PEPF0000EE39.namprd03.prod.outlook.com
+ (2603:10b6:5:3b2:cafe::9e) by DS7PR03CA0173.outlook.office365.com
+ (2603:10b6:5:3b2::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14 via Frontend
+ Transport; Mon, 22 Jul 2024 16:56:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ CY4PEPF0000EE39.mail.protection.outlook.com (10.167.242.11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7784.11 via Frontend Transport; Mon, 22 Jul 2024 16:56:55 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 22 Jul
+ 2024 11:56:54 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 22 Jul
+ 2024 11:56:54 -0500
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 22 Jul 2024 11:56:53 -0500
+Message-ID: <5b936661-9608-bfce-d7e4-f03cf4538780@amd.com>
+Date: Mon, 22 Jul 2024 09:56:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHbf0-G4bmpuXorwH-e_chWm1fXX7AJ8ck5AL4p+AFevhvdBfg@mail.gmail.com>
- <20240722152330.GCZp55ck8E_FT4kPnC@fat_crate.local>
-In-Reply-To: <20240722152330.GCZp55ck8E_FT4kPnC@fat_crate.local>
-From: Mike Lothian <mike@fireburn.co.uk>
-Date: Mon, 22 Jul 2024 17:56:08 +0100
-Message-ID: <CAHbf0-FTrRPfDTkkSjq9yvyFrWvoYjH_uJAW5KDae8vO-hch+w@mail.gmail.com>
-Subject: Re: Boot Warning
-To: Borislav Petkov <bp@alien8.de>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH 04/10] accel/amdxdna: Add hardware context
+Content-Language: en-US
+To: Markus Elfring <Markus.Elfring@web.de>, Min Ma <min.ma@amd.com>,
+	<dri-devel@lists.freedesktop.org>, Oded Gabbay <ogabbay@kernel.org>
+CC: LKML <linux-kernel@vger.kernel.org>, Max Zhen <max.zhen@amd.com>, "Sonal
+ Santan" <sonal.santan@amd.com>
+References: <20240719175128.2257677-5-lizhi.hou@amd.com>
+ <d24462fb-b9ed-4212-8008-eefaeed8c04b@web.de>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <d24462fb-b9ed-4212-8008-eefaeed8c04b@web.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB05.amd.com: lizhi.hou@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE39:EE_|LV2PR12MB5752:EE_
+X-MS-Office365-Filtering-Correlation-Id: 02b41b30-d35f-4659-24db-08dcaa6f4ae6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MW9PbDdHS2ZyZmdjVUVCM3N3ak9adzdOQkZMMjQvOTNtbXcvNVREMzg5MFhC?=
+ =?utf-8?B?L3pzbFVsQ3VpQnRpaTNtME1lZGN0cVVLSG5TYWpHNUEvVG4vWE5POWdwMFFa?=
+ =?utf-8?B?Y3VCamZiNWNCR3Z3cE85dDk1WlY3RC9vVXJQRCtxZ241blZTYlZQZExLckdo?=
+ =?utf-8?B?Z1hEd0pRS3M5aUE2ZFV1d0U3OFNJN1VLMHUvU2VqUFVxcmhxdnRwM2NicDdp?=
+ =?utf-8?B?MkF6aWsvVGg3RFRiV0ozbDhKdVN4eUM1bEQwZVJwZ1lnWGxsS3BtK3MwUkk2?=
+ =?utf-8?B?NFRMU0JZL2cwZm9jMzV1OTRPNDg4UGg3Z0VjMzA2aEgzNGFDRTlvM1RET0VW?=
+ =?utf-8?B?blNtdVFvZDN2UEJoWWhjeEc1Mk5EcVhha0ZZTzRuaHhIVzF0K1dSZ0xvM3dX?=
+ =?utf-8?B?ajhXVFE2RVVZZ0JXTy85UlN2OGlXdWJ6NWtGbSs4cVo2cDluVjZNYWl1K1p0?=
+ =?utf-8?B?dXdoOXNrdzRiM2Nxa3N3d2xhU004YVdtNEcxb0oyTXY2ZnFaaUIxMkhDOVZy?=
+ =?utf-8?B?QVJXTXpkWjJNUWRSVDJhZzJlM2ZwNDFiaDZScmtrV1J0SGpOOHJrcGRHbDd6?=
+ =?utf-8?B?YlFUUm5GbjBjUkVybWJ2Q25oaUQzTkRKdlVMSzZSOTJtYk5MeVg3Rm5ETGZV?=
+ =?utf-8?B?RjBpcyttNHB4RUFwT2h4TlU5RnlvYzFiMWhuRmxLdHlia0JhQzRsS3ExdS9K?=
+ =?utf-8?B?OG1wVFBvWm5jSXNuVUk3QkxRb2kyaEI1T2p5bThEN2tIc0svOFlMdFYzY2dB?=
+ =?utf-8?B?QThnNjJzeGlxeUh2RkdWaitkS1ZoTVdSbUxMY3BTVXJZbEJtWHZUN0lncHZE?=
+ =?utf-8?B?V0NaYkh1bHRFQnJUdDVMbGo4MHgybDY2Tm50YWd5QlhUL3hFcnJXSUlSR3lP?=
+ =?utf-8?B?OThQVnh0UXJMYUdIRFR2M2swQmFKYTRVNkV2YWhnZnd6amI2ZzNacDJGSjhU?=
+ =?utf-8?B?aXZyYWFCcGxwQXppZWpNdEpycDFtTXFqYUNwUDV4Vm83MlZBblBKZFRPL2Fa?=
+ =?utf-8?B?MmtXU0ozZ3dxcDZWVWRCVlJMZisxcGZOb2NibFVIR2UzRndYejFqWUlkNUFn?=
+ =?utf-8?B?MjFGaFl1VzRBOVZQQWhxNUJ4NGJJSU5nbklLL3VIRXh2elRMUVhzTjJqM1dN?=
+ =?utf-8?B?LzNQYXRpbnlYQS9KR0t4ZmZQMEdFT3U4V3RkSkNNZnVYZEF1elpncVU3bkRE?=
+ =?utf-8?B?cXdGbzhwN1RXdVlUUWhKVjZPcDdIUGNqVlFOejk4bXBESFBFOG5FbmYrd2V6?=
+ =?utf-8?B?MEtuOGlJaFRmQVdLWm1VbFMvTTFhK0d6S1NmMnRHajh3N25rTGJYQXF6ZDBz?=
+ =?utf-8?B?eVhLWTRwSU5FczZOYTFJOTdFY1QrODdZUlZjcDN5RTlmaUdNa0RjVHRLK2hC?=
+ =?utf-8?B?WTc0YlREVnlRVWM0bEJ0OEZTdEhMRXBxcHZHYy9JM3BhYk5wOW9mKzZhMmth?=
+ =?utf-8?B?Rkw5SlhEZEZ6OER5N2tyeDYxam5PRzgzUVN1ZVZOaGtLSkdjN0xGR1RkcG96?=
+ =?utf-8?B?c0Q2akN5a1h4aC9GK1F0OG55MStCZXJLMVR2Q2V4clBzNXNTOTJtM1hucEMv?=
+ =?utf-8?B?dHd2d3M0cXNVR0FyVnZ2M29TWS9zYS9YRGJFcUlGMGRjWVQ2MUx4ODFRSVY3?=
+ =?utf-8?B?QlQ3MUgraU5DT21rTy9lb01TNUp0UlhsVElubXAxRUNMQlNEQ2x2RlZqaE1y?=
+ =?utf-8?B?SVlBREZjRXd1RWFKREZZamY5UTJNR1RSRlkzRExvdmEyUkJHTjBudnpxODdC?=
+ =?utf-8?B?c2s0Y01pem9BWEljNUxwdDNEMVkyWHBRbUhncnAyOXBpV1RZTXpST1ZTcWc0?=
+ =?utf-8?B?RjREc0RzWWFQdE5NL0pJUWdZUXptMTlKM3hBVCtZaVRINWx1N24zL2wxQTJi?=
+ =?utf-8?B?eU5GRGp0SkJxZ3pqWk9BeFRMRlUvVlc2MFB6T1BhNEl0alZ6MVVlKzRROTJE?=
+ =?utf-8?Q?uQ8Yzgrus6uWnSaASE4CWD64166d2Y6x?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2024 16:56:55.3362
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02b41b30-d35f-4659-24db-08dcaa6f4ae6
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE39.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5752
 
-That patch does indeed make the warning go away :D
 
-Is there anything else you need from me?
+On 7/20/24 03:54, Markus Elfring wrote:
+>>                                          … The tile columns belong to
+> …
+>                                                               which …?
+>
+>
+> …
+>> +++ b/drivers/accel/amdxdna/aie2_ctx.c
+>> @@ -0,0 +1,181 @@
+> …
+>> +void aie2_hwctx_fini(struct amdxdna_hwctx *hwctx)
+>> +{
+>> +	struct amdxdna_dev *xdna;
+>> +
+>> +	xdna = hwctx->client->xdna;
+> …
+>> +}
+> …
+>
+> Please omit such an unused local variable.
 
-On Mon, 22 Jul 2024 at 16:23, Borislav Petkov <bp@alien8.de> wrote:
+Ok. It is used in one of the following patch. I will move this line to 
+that patch.
+
+
+Thanks,
+
+Lizhi
+
 >
-> On Mon, Jul 22, 2024 at 01:45:35PM +0100, Mike Lothian wrote:
-> > Hi
-> >
-> > I'm seeing the following boot warning:
-> >
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 0 PID: 0 at arch/x86/lib/cmdline.c:211
-> > cmdline_find_option_bool+0x741/0x760
-> > Modules linked in:
-> > CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.10.0-tip+ #4105
-> > RIP: 0010:cmdline_find_option_bool+0x741/0x760
-> > Code: 85 07 f9 ff ff eb 20 41 80 f8 21 72 1c 45 31 c9 41 80 f8 21 41
-> > 0f 93 c1 45 01 c9 81 f9 00 08 00 00 0f 85 e5 f8 ff ff 31 c0 c3 <0f> 0b
-> > 48 85 ff 0f 85 ce f8 ff ff b8 ff ff ff ff c3 cc cc cc cc cc
-> > RSP: 0000:ffffffff83803f18 EFLAGS: 00010046 ORIG_RAX: 0000000000000000
-> > RAX: 000000000a50000c RBX: 0000000068747541 RCX: ffffffff833f2bec
-> > RDX: 0000000000000000 RSI: ffffffff832def4e RDI: ffffffff83b98820
-> > RBP: 0000000000a50f00 R08: 00cf9a000000ffff R09: 0000000000000030
-> > R10: 000000006c617470 R11: 0000000000100000 R12: 0000000000000000
-> > R13: 0000000000000000 R14: 00000000b53e4000 R15: 00000000b53e4000
-> > FS:  0000000000000000(0000) GS:ffffffff83acd000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: ffff8880b61c6810 CR3: 0000000004b57000 CR4: 00000000000000b0
-> > Call Trace:
-> > <TASK>
-> > ? __warn+0xcb/0x1c0
-> > ? cmdline_find_option_bool+0x741/0x760
-> > ? report_bug+0x173/0x220
-> > ? early_fixup_exception+0x4a/0xa0
-> > ? early_idt_handler_common+0x2f/0x40
-> > ? cmdline_find_option_bool+0x741/0x760
-> > ? check_loader_disabled_bsp+0x46/0xa0
-> > ? load_ucode_bsp+0x6b/0x80
-> > ? x86_64_start_kernel+0x4b/0x70
-> > ? common_startup_64+0x12c/0x137
-> > </TASK>
-> > ---[ end trace 0000000000000000 ]---
-> >
-> > I use an efi stub kernel
-> > https://github.com/FireBurn/KernelStuff/blob/master/dot_config_tip
-> >
-> > I wasn't quite sure where to report this in the bugzilla, I'll happily
-> > raise one if you let me know which section it should be in
->
-> Yeah, you can usually CC x86@ and lkml and that is fine too - bugzilla is not
-> absolutely required. Did that now.
->
-> Anyway, yeah, this is nasty. Our handling of the merging of the builtin and
-> boot cmdline options would need some serious reshuffling to fix this: the
-> ucode loader needs to parse cmdline but the final cmdline is built a lot
-> later.
->
-> The only easy thing I could think of right now is, well, to check both cmdline
-> strings before the merging happens.
->
-> Something like the completely untested below:
->
-> ---
->  arch/x86/include/asm/cmdline.h |  4 ++++
->  arch/x86/kernel/setup.c        |  2 +-
->  arch/x86/lib/cmdline.c         | 27 ++++++++++++++++++++-------
->  3 files changed, 25 insertions(+), 8 deletions(-)
->
-> diff --git a/arch/x86/include/asm/cmdline.h b/arch/x86/include/asm/cmdline.h
-> index 6faaf27e8899..abcb270e2a07 100644
-> --- a/arch/x86/include/asm/cmdline.h
-> +++ b/arch/x86/include/asm/cmdline.h
-> @@ -2,6 +2,10 @@
->  #ifndef _ASM_X86_CMDLINE_H
->  #define _ASM_X86_CMDLINE_H
->
-> +#include <asm/setup.h>
-> +
-> +extern char __initdata builtin_cmdline[COMMAND_LINE_SIZE];
-> +
->  int cmdline_find_option_bool(const char *cmdline_ptr, const char *option);
->  int cmdline_find_option(const char *cmdline_ptr, const char *option,
->                         char *buffer, int bufsize);
-> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> index 5d34cad9b7b1..6129dc2ba784 100644
-> --- a/arch/x86/kernel/setup.c
-> +++ b/arch/x86/kernel/setup.c
-> @@ -164,7 +164,7 @@ unsigned long saved_video_mode;
->
->  static char __initdata command_line[COMMAND_LINE_SIZE];
->  #ifdef CONFIG_CMDLINE_BOOL
-> -static char __initdata builtin_cmdline[COMMAND_LINE_SIZE] = CONFIG_CMDLINE;
-> +char builtin_cmdline[COMMAND_LINE_SIZE] = CONFIG_CMDLINE;
->  bool builtin_cmdline_added __ro_after_init;
->  #endif
->
-> diff --git a/arch/x86/lib/cmdline.c b/arch/x86/lib/cmdline.c
-> index 384da1fdd5c6..75e7e2cc4569 100644
-> --- a/arch/x86/lib/cmdline.c
-> +++ b/arch/x86/lib/cmdline.c
-> @@ -207,18 +207,31 @@ __cmdline_find_option(const char *cmdline, int max_cmdline_size,
->
->  int cmdline_find_option_bool(const char *cmdline, const char *option)
->  {
-> -       if (IS_ENABLED(CONFIG_CMDLINE_BOOL))
-> -               WARN_ON_ONCE(!builtin_cmdline_added);
-> +       int ret;
->
-> -       return __cmdline_find_option_bool(cmdline, COMMAND_LINE_SIZE, option);
-> +       ret = __cmdline_find_option_bool(cmdline, COMMAND_LINE_SIZE, option);
-> +       if (ret > 0)
-> +               return ret;
-> +
-> +#ifdef CONFIG_CMDLINE_BOOL
-> +       if (!builtin_cmdline_added)
-> +               ret = __cmdline_find_option_bool(builtin_cmdline, COMMAND_LINE_SIZE, option);
-> +#endif
-> +       return ret;
->  }
->
->  int cmdline_find_option(const char *cmdline, const char *option, char *buffer,
->                         int bufsize)
->  {
-> -       if (IS_ENABLED(CONFIG_CMDLINE_BOOL))
-> -               WARN_ON_ONCE(!builtin_cmdline_added);
-> +       int ret;
-> +
-> +       ret = __cmdline_find_option(cmdline, COMMAND_LINE_SIZE, option, buffer, bufsize);
-> +       if (ret > 0)
-> +               return ret;
->
-> -       return __cmdline_find_option(cmdline, COMMAND_LINE_SIZE, option,
-> -                                    buffer, bufsize);
-> +#ifdef CONFIG_CMDLINE_BOOL
-> +       if (!builtin_cmdline_added)
-> +               ret = __cmdline_find_option(builtin_cmdline, COMMAND_LINE_SIZE, option, buffer, bufsize);
-> +#endif
-> +       return ret;
->  }
-> --
-> 2.43.0
->
->
-> --
-> Regards/Gruss,
->     Boris.
->
-> https://people.kernel.org/tglx/notes-about-netiquette
+> Regards,
+> Markus
 
