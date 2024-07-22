@@ -1,129 +1,110 @@
-Return-Path: <linux-kernel+bounces-259293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75E099393A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:40:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F23C9393A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:41:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FFBC1C21557
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:40:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCFDD2810A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B9717084F;
-	Mon, 22 Jul 2024 18:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 543E5170850;
+	Mon, 22 Jul 2024 18:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e/wE/RZQ"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="npuMCOOr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C7216EB7A
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 18:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAF1770E6;
+	Mon, 22 Jul 2024 18:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721673602; cv=none; b=FkZDNe2VmhaX/jx+GotPtMAqwEdg+QECqTdYHmYRfbGJVVczdrugHwg0x4x4nZKC99ZLMwYJEeufRhL6uSZUGfgny5LKGP9/bUnDSowuG5fAzQ27BVGBEXUIYn1XFwrOWvsAQKINnqQEDbsKG9o3d5owz7dzKje+LLMKR/dqJ78=
+	t=1721673681; cv=none; b=YPqt71DtHevK+exNrBWG0k8j0jg+lz9lyNumrTljrUGiYe1DuE2sEEngovMEokFepkCnlUQeDzsYsscQVafQmVvzgExrTRa+td1lU/pD7octPXXk2hAWEVhOUOaCrD64Gmd+TbaFMiq00ULg8DweEAmmWoBKfVfSgo+ryUwjjWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721673602; c=relaxed/simple;
-	bh=jiivNKC7lQbRfNg1Kjpt39Y+ifXLk9Fuixvd9EbV8+Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TWIbC47ZXmlu8v1VFzDsu04BSRPcj8XScNSEt5MZnGnYZdN/y9+1F0ZpiHtwJYprH806E9/8DMJzvNm8yQwXTXpUSn1KUMYB7j/dMv6dHWuIVWgzRYOn01XKhWM4Pw4BnbnIUBfP0Wn303q/AVC7DRP6sGGJfTLIv46F9j3y5Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e/wE/RZQ; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-651da7c1531so43437867b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:39:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721673598; x=1722278398; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r1c97fZFJ3UOJw/ZZR/BLt9bIZt0krqS+WJPVRsmyTw=;
-        b=e/wE/RZQWHKigEckl6HNT959oxaZ7ZC4jQi2uz1f11XBtrOdCSL2IOvOfawiqHTWY4
-         tqpzp4yG3rGi4ZGCajXWslVG50XnJXqXKtX+dIta6m1COUOZeOsXLqdsuRKGm+lcFfAd
-         JR7M7CRlc7TXZ0rXSmKvHAsASWPu6j+7RUNhKb4V4Lyj19ngD64lp2Z++aHEu5b7U6Pf
-         Ng3r19lk1eFB3CC7zBBxHg5eVdm4OpHmDC6YJnPRWt4cWfKlH0JM28FzAIhjLRct+CSC
-         3JWKtX4DABpBOXkQCTldq7Go43GrHCZZMcGdG730JvLrdyojYM/YDhr5Sqqzs1tknvAc
-         q5wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721673598; x=1722278398;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r1c97fZFJ3UOJw/ZZR/BLt9bIZt0krqS+WJPVRsmyTw=;
-        b=DXb3cyuFTYcJyda6ql85MwzU4eD5HZ/KNOQobb0Tzocqfeby2iJOpJaUQvHrs5mhGN
-         zL6CpQmYeVisjKwaR7iqvVtfmH5fiT4IIp8sONFNzJlg0cK+T39TnTKh4os0fezStkXD
-         AK5ki58idPdE1t6Z+fHTKTNZ5Z3FryLZkC3goTqyNmwbk66suuYHVtdsOXoOZcyWs9F3
-         zybjL4xwytSCoOOs+SCp5M+/xnvUT9pVTpPOEq31+OYhOyKV0KgkR+jI2KNlUNF2qAit
-         MJ1DFym7MKxXUtwKmMgvEA5hqALmfILhAsIQsfh+xufvI8e+WuHaKn/Ep4v4xtfgNiud
-         uI2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXU7S60FuJ5osM7AIng8BoTB9brh4w32QXXsxRWaRXSJ715acxpu0EPhuLRQ5ErA28xEMgn4m8XvSwkt8TH8ZBztHMzDwM/iEogP9/F
-X-Gm-Message-State: AOJu0Ywq3zDC09XnWP9A74O4gZdWLR1xAb3SydZ4MfofiBZ3tOqSem80
-	bPomqk1nqw/rW1ChiYKcXa6bN21EdNhOHIOnO2WyCtKE8jkGq+1Zd5rU8f0Ka136pzEpgSVwkrt
-	knF1sp8YVrNgCfOyt2c4B0sElaZizs/sI4D8PxA==
-X-Google-Smtp-Source: AGHT+IEReHOHNiIFa0oMgVRxlCG9RA8ftspFBW9UmBDqwYk4Nh57Mi8IAfbccJjJtUaTYgJaPpM1V++zASopTbzE/EM=
-X-Received: by 2002:a05:690c:2e0d:b0:64a:7e85:9a94 with SMTP id
- 00721157ae682-66ad91c36aamr79649327b3.21.1721673598539; Mon, 22 Jul 2024
- 11:39:58 -0700 (PDT)
+	s=arc-20240116; t=1721673681; c=relaxed/simple;
+	bh=pjVpDue3MFwWNWnMBUNHk2Q/wswn4BTAbLMZ9AEkuUc=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=NkfP/IjBUHce3RviUhravHdVih8NTkmbuq4pca9LJNurgzd8g7TSE0woB79Rk7Glu9YYwG/nZnSYdecuSpUNtK79tq2+Gjxuf/+uozPUppTW0Y29ErivxfWbbsQhGlw0nQ38q8wHEdq3JHvn56pZlKftyta/FE4c01uUZQcxIJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=npuMCOOr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93E10C116B1;
+	Mon, 22 Jul 2024 18:41:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721673681;
+	bh=pjVpDue3MFwWNWnMBUNHk2Q/wswn4BTAbLMZ9AEkuUc=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=npuMCOOrmNSziA9LbQ8Syf4zi3i4oTX300wYJjk6cRfsNYPnGoMS6R5XmtI8KdBmR
+	 RpZhzrOlyiY3DNo0h5RhoczpKwIZviPrsQWIZDjZsreMOYzfqWl9b3oz4AHVtvaN1Q
+	 WLbb/OlCZRHW+ACVXKyX6k26NHsz+Dd+JTzUIq8fsl53aAyzNxlbsZVUL4BG9mPgB7
+	 GXCLxCLKLKWx3h11v8FIS+6m5MArGOYkps2grGmCbmWsafsVq+0u/xabHmIMvRX5SO
+	 vX+xvuYQqL9B0Ole7l+IPwcBj9enKBf/S1HzpFSm2xa+NAUbXbH0vpxfyLajbWW4Kq
+	 BCGiCJhATEaWQ==
+Date: Mon, 22 Jul 2024 12:41:17 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240719120944eucas1p29318fb588150b15f60f637fbea48271f@eucas1p2.samsung.com>
- <20240719120853.1924771-1-m.majewski2@samsung.com>
-In-Reply-To: <20240719120853.1924771-1-m.majewski2@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Mon, 22 Jul 2024 13:39:47 -0500
-Message-ID: <CAPLW+4m0xG5yHOT_ucGdrOhLZvjhga8caqHQZmVH6HHKUnBgkw@mail.gmail.com>
-Subject: Re: [PATCH 0/6] Add initial Exynos 850 support to the thermal driver
-To: Mateusz Majewski <m.majewski2@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi Mateusz,
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: ysionneau@kalrayinc.com
+Cc: Jonathan Borne <jborne@kalrayinc.com>, linux-kernel@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, Julian Vetter <jvetter@kalrayinc.com>, 
+ devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>
+In-Reply-To: <20240722094226.21602-3-ysionneau@kalrayinc.com>
+References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
+ <20240722094226.21602-3-ysionneau@kalrayinc.com>
+Message-Id: <172167363239.4080.15874423880359295295.robh@kernel.org>
+Subject: Re: [RFC PATCH v3 02/37] dt-bindings: soc: kvx: Add binding for
+ kalray,coolidge-pwr-ctrl
 
 
-On Fri, Jul 19, 2024 at 7:09=E2=80=AFAM Mateusz Majewski
-<m.majewski2@samsung.com> wrote:
->
-> This series adds initial Exynos 850 support to the thermal driver
-> together with its requirements (tmu_temp_mask fix, making data->clk
-> optional, adding the new string to dt-bindings), while also cleaning up
-> a bit (using DEFINE_SIMPLE_DEV_PM_OPS and removing some outdated
-> information from dt-bindings).
->
-> Mateusz Majewski (6):
->   drivers/thermal/exynos: use DEFINE_SIMPLE_DEV_PM_OPS
->   drivers/thermal/exynos: use tmu_temp_mask consistently
->   drivers/thermal/exynos: check IS_ERR(data->clk) consistently
->   dt-bindings: thermal: samsung,exynos: add exynos850-tmu string
->   drivers/thermal/exynos: add initial Exynos 850 support
->   dt-bindings: thermal: samsung,exynos: remove outdated information on
->     trip point count
->
->  .../thermal/samsung,exynos-thermal.yaml       |  33 ++-
->  drivers/thermal/samsung/exynos_tmu.c          | 279 +++++++++++++++---
->  2 files changed, 270 insertions(+), 42 deletions(-)
->
-> --
+On Mon, 22 Jul 2024 11:41:13 +0200, ysionneau@kalrayinc.com wrote:
+> From: Yann Sionneau <ysionneau@kalrayinc.com>
+> 
+> Add binding for Kalray Coolidge SoC cluster power controller.
+> 
+> Signed-off-by: Yann Sionneau <ysionneau@kalrayinc.com>
+> ---
+> 
+> Notes:
+> 
+> V2 -> V3: New patch
+> ---
+>  .../soc/kvx/kalray,coolidge-pwr-ctrl.yaml     | 37 +++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soc/kvx/kalray,coolidge-pwr-ctrl.yaml
+> 
 
-Thank you for the contribution! Did you by chance test it on any
-hardware, perhaps on E850-96 board? Just noticed there are no dts
-changes in this series (or as separate patches). If no -- I'll be glad
-to assist you on that, if you can share dts definitions for E850-96
-and the testing instructions with me.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Thanks!
+yamllint warnings/errors:
 
-> 2.45.1
->
->
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/kvx/kalray,coolidge-pwr-ctrl.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
+ 	 $id: http://devicetree.org/schemas/kalray/kalray,coolidge-pwr-ctrl.yaml
+ 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/kvx/kalray,coolidge-pwr-ctrl.yaml
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/soc/kvx/kalray,coolidge-pwr-ctrl.example.dtb: pwr-ctrl@a40000: reg: [[0, 10747904], [0, 16728]] is too long
+	from schema $id: http://devicetree.org/schemas/kalray/kalray,coolidge-pwr-ctrl.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240722094226.21602-3-ysionneau@kalrayinc.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
