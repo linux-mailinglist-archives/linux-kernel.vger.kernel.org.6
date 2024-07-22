@@ -1,156 +1,228 @@
-Return-Path: <linux-kernel+bounces-258922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B08F938E7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:53:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC4C938E7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:53:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26138281B32
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:53:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4ED2280D74
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8B716D318;
-	Mon, 22 Jul 2024 11:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF8E16D4D6;
+	Mon, 22 Jul 2024 11:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WfTmXDlh"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cP6O5bWY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C023116D324
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E6816CD3B
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721649153; cv=none; b=BPJQW5mi+i1iqbHWY+AQXaCC1WLvq+cpzPTZoGEg4VBWvAkrUi18SAdXGvdOIEt3NvzfOQO43+VdihqescyrSYkyKBHXoI3J+6smLVIvYFHLmeNHToX7yNqcGAkqKcuVRBafDAxXQcUI8/I2qlGMDCYX6e7jXFcV42V/Xbrzm/Y=
+	t=1721649206; cv=none; b=WGuxSWriPWfo9zBS2h012i7YGWUzUs8xvwmC+EMlFBEalldBJOZkG2kzewpK8OcfBnTLvm9iESD59bxql3RNgFLc1fkYo5V1wOIrZ0nEAgx/OtvWkGOF2oZ1tU1EjgeirXIylKGnxEOfRhx+NuSr73JdyHaMGRo4d2ZCgU/aVk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721649153; c=relaxed/simple;
-	bh=QsXTXPHta5hqnSr3LHCTAZhJ1stEGXqeSCLWBUmyozw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=WSxHvmfvHtiWysakMUYbFXljyUtKG7hfWr/zFtF1zXd8SXP2usq50//Wuzw3/yuD8Ipu9KQ6qp5MQcsOwOgV5pzJQYg24WAtGtZ3/TwYC5g9TXafDAuwjV1DR+ixyaZ41doB0GCfGq4TbnDVuc+FfKdqfDJvjJw6+MBcbmky8G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WfTmXDlh; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-44c2c4ccb7aso29375181cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 04:52:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1721649150; x=1722253950; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XQYfbL9PFIw2vg4G+G5d59yXENQMiik/7/3n9CbSyT4=;
-        b=WfTmXDlhy59TsUQiHTpVUqswyT2yJCoGaRmlr8mBb2dBR/wIKsqavNs8RjBfREUE16
-         fJLhIcVrBFOaGg/yLehy4qHXXlFhAT0M87M+4vImdbElj0EyELYNPKjF+WdIZShEoPml
-         ZzzbOpJM8MCZxarVyh/HxNl9ykXGs5z8BnwzE=
+	s=arc-20240116; t=1721649206; c=relaxed/simple;
+	bh=KXgVDnB/4ep52qLF7X9aT43SOUa5ZyHZOpbOkrIl1DQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AKXAZD+M5ScXsUy8Ryb9GgU1YeMTh8WK5EJxyuoGSbt+zxe/6A+xn8J1toRVML+qV/6UaqazKZFMl0WIOVMXeCT1SPT0KBXMLQenE4tiEicL0oGEg2gZkdSv4JFK7oJv90FBOzSrhQ0KBZIc06cZOt7gRPnKcPUjEljPwxfN6Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cP6O5bWY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721649203;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O+uxYEy71BTLlKxVksIrikvEA78NJ0VV65h60HjI7v0=;
+	b=cP6O5bWY7tewxjLMcV1C4/9fozsNSTymVJf4JMyWrYE7ZoJLLvh78U4H6Dt/k9BK4Ow9XH
+	OrgVF0hN5bRty2Q8HIEkCauF0P0h1Czw8esfZaCEagIDiTEzyUBVsRN9EKgyVwTndTfdbN
+	Nby7l0LZLjzfUPAveR1+E9smFNWBieI=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-568-c3uteq1-MD6uRUFISfOwhQ-1; Mon, 22 Jul 2024 07:53:21 -0400
+X-MC-Unique: c3uteq1-MD6uRUFISfOwhQ-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a77e6eb8b3aso162503466b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 04:53:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721649150; x=1722253950;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XQYfbL9PFIw2vg4G+G5d59yXENQMiik/7/3n9CbSyT4=;
-        b=HDn5SA8fPRL5d4afwN8qYgzkjEjHPiFRo3OFGAERaQdFRPt0BgwMFFqgPaEGg+wUfU
-         9QAxBcVjfj8pG7RbLCzzfL+LEeSVkNCVQUW9I2UccbxjSAkcr9fgdjJhpcd2q/12sVel
-         7HzfqYMqWDpqdJywFF8CK7PB1DaB/EK3wxRfblvW3Ku8LyTRaKEmiqYG+StcVc5L68W5
-         7DYw3SmQir/x5A/kahEWXWIOnDyIr533xEekMjNTnp0KAV5WIpxVBFlbshy4jMrnBe3e
-         EtdpJCuspgQXz0uI6Uy3aVRvp+gQYTBy8EQs4rAGcsJSM4uLh+nJxZaUQVlbu3UhLaAe
-         +dLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJqCnPA9Lb0cC3VrtpDLrWJcrlYy4zuY8hgg3HnxKKs3pG8B6B51bqnC9XlUe8v8z+eeQLTyZaB7kyAUEsYdT5XxogLFonC6Pk0aX0
-X-Gm-Message-State: AOJu0YwVDp5BeCPlVefD38g1BZJHOOJNS86avjekoK6sgjrvxOHGke3p
-	fPkvRYCjrVJE6ee4D8kE1cos1EmiJXGF3yi3BZhDnixM18YUWODIAs7+1FFO54rdJbw2uUV3uV4
-	0Sw==
-X-Google-Smtp-Source: AGHT+IHtBu5wz+9EWExK47KziP0oA/oIeohoyQXcWuVyU89lepQlMMboXK68AersAqjxj3D97IA/Gg==
-X-Received: by 2002:ad4:5042:0:b0:6b4:f979:1e03 with SMTP id 6a1803df08f44-6b79cd51d63mr238282386d6.25.1721649150341;
-        Mon, 22 Jul 2024 04:52:30 -0700 (PDT)
-Received: from denia.c.googlers.com (197.5.86.34.bc.googleusercontent.com. [34.86.5.197])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b96c8fe8d4sm13914726d6.17.2024.07.22.04.52.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 04:52:29 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 22 Jul 2024 11:52:26 +0000
-Subject: [PATCH v2] media: uvcvideo: Fix custom control mapping probing
+        d=1e100.net; s=20230601; t=1721649200; x=1722254000;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O+uxYEy71BTLlKxVksIrikvEA78NJ0VV65h60HjI7v0=;
+        b=uO4Fkc8sgZkwKiZ2bkzcJo7lBg8GChbf5MSGdbhNSD+3ad0rCHCQi/pIibXEStnPqf
+         9TFr4M1HObHUTwSufvmB7OreHkQaY0MDPISmT0SmcxFS0ASRbG4Jisx5XY3t4hCJ1PQ8
+         TMoIWZRt2I+aFhZue0ZJQDS5WDeAbd7pnjikILNxnrcKvr+0bGDgHccrhBSNCyF/L9nL
+         1AQYAbQAuQSq0dPqKl6esBCQyL5YyNWB4/4Rl/v/k+5tA4+BqStWniRt5Cg7KtKn/aSm
+         toeiH/EDa7YIL90LxpC9tEoikrbBIFsL6MvAHvea6oEnny4FXdypYN3NbMyHOsdTYexy
+         zCPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxcNr35X2MhcWv+3vJVRG55DX6HNcp/4d7rF6A7l3ey9JChbnqILejX7g1ASKiigWukeBelugeEIS7wWuD8uFsMvS0lywPAsXzT9Ic
+X-Gm-Message-State: AOJu0YwQbT1WixKanYeUQRqDtDq7Ltjt9hqXv4pMkP2jgj8Dl/ufUM1g
+	ARuW+8a62UI9cG2JmuHZuyJ6BPBSSZ93gaJaRBABDnhpiBWxmUWD8Y1v2i5E1x68w/AM2icT/Qa
+	G2BR/VN/q9SrVZDE+xvIcOvSMpij+7EzIQej7a7Wx+Ron2S/B18nl5EnshX+R7Q==
+X-Received: by 2002:a50:8751:0:b0:5a1:a08a:e08 with SMTP id 4fb4d7f45d1cf-5a478f6b6cdmr5059202a12.11.1721649200524;
+        Mon, 22 Jul 2024 04:53:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEWLFS9risa/qC+0rtPi8Ua2sKubIVvp+XpXJo0PB3iyqeJXiq2MRmWL7gMq+Z4dZvNFf+BCw==
+X-Received: by 2002:a50:8751:0:b0:5a1:a08a:e08 with SMTP id 4fb4d7f45d1cf-5a478f6b6cdmr5059183a12.11.1721649200087;
+        Mon, 22 Jul 2024 04:53:20 -0700 (PDT)
+Received: from [192.168.2.168] (business-90-187-152-45.pool2.vodafone-ip.de. [90.187.152.45])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30c2f87d1sm6059698a12.70.2024.07.22.04.53.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jul 2024 04:53:19 -0700 (PDT)
+Message-ID: <d1d57a98-dcba-43d0-aa90-016c4f85a32f@redhat.com>
+Date: Mon, 22 Jul 2024 13:53:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240722-fix-filter-mapping-v2-1-7ed5bb6c1185@chromium.org>
-X-B4-Tracking: v=1; b=H4sIAPlHnmYC/32NTQ6CMBCFr0JmbU1bGwquvIdhgWVoJxHaTJFoC
- He3cgAXb/G9vJ8NMjJhhmu1AeNKmeJcQJ8qcKGfPQoaCoOW2kirtRjpXfRckMXUp0SzF6ox1g6
- ubqVpoBQTY0kdo/eucKC8RP4cH6v6uX/nViWUkNa51tWP0eDl5gLHiV7TObKHbt/3L+Nivqq3A
- AAA
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- pmenzel@molgen.mpg.de, stable@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] drm: backlight quirk infrastructure and lower
+ minimum for Framework AMD 13
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
+ Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Matt Hartley <matt.hartley@gmail.com>, Kieran Levin <ktl@framework.net>,
+ amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>
+References: <20240623-amdgpu-min-backlight-quirk-v2-0-cecf7f49da9b@weissschuh.net>
+ <e61010e4-cb49-44d6-8f0d-044a193d29b2@redhat.com>
+ <51f68b3b-dd21-44ef-8ec8-05bea5db6e55@t-8ch.de>
+ <6db5abf9-cbdd-4ec0-b669-5df23de6c2ad@redhat.com>
+ <a050aad4-d195-42e6-8a84-02170a4f9835@t-8ch.de>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <a050aad4-d195-42e6-8a84-02170a4f9835@t-8ch.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Custom control mapping introduced a bug, where the filter function was
-applied to every single control.
+Hi Thomas,
 
-Fix it so it is only applied to the matching controls.
+On 7/20/24 9:31 AM, Thomas Weißschuh wrote:
+> Hi Hans,
+> 
+> On 2024-07-18 10:25:18+0000, Hans de Goede wrote:
+>> On 6/24/24 6:15 PM, Thomas Weißschuh wrote:
+>>> On 2024-06-24 11:11:40+0000, Hans de Goede wrote:
+>>>> On 6/23/24 10:51 AM, Thomas Weißschuh wrote:
+>>>>> The value of "min_input_signal" returned from ATIF on a Framework AMD 13
+>>>>> is "12". This leads to a fairly bright minimum display backlight.
+>>>>>
+>>>>> Add a generic quirk infrastructure for backlight configuration to
+>>>>> override the settings provided by the firmware.
+>>>>> Also add amdgpu as a user of that infrastructure and a quirk for the
+>>>>> Framework 13 matte panel.
+>>>>> Most likely this will also work for the glossy panel, but I can't test
+>>>>> that.
+>>>>>
+>>>>> One solution would be a fixed firmware version, but given that the
+>>>>> problem exists since the release of the hardware, it has been known for
+>>>>> a month that the hardware can go lower and there was no acknowledgment
+>>>>> from Framework in any way, I'd like to explore this alternative
+>>>>> way forward.
+>>>>
+>>>> There are many panels where the brightness can go lower then the advertised
+>>>> minimum brightness by the firmware (e.g. VBT for i915). For most users
+>>>> the minimum brightness is fine, especially since going lower often may lead
+>>>> to an unreadable screen when indoors (not in the full sun) during daylight
+>>>> hours. And some users get confused by the unreadable screen and find it
+>>>> hard to recover things from this state.
+>>>
+>>> There are a fair amount of complaints on the Framework forums about this.
+>>> And that specific panel is actually readable even at 0% PWM.
+>>
+>> If a lot of Framework users are complaining about this, then maybe Framework
+>> should fix their VBT in a BIOS update ?  That seems like a better solution
+>> then quirking this in the kernel.
+> 
+> Framework has now stated that they will update the VBT for their 13' device. [0]
+> It won't happen for the 16' one as its out of spec there, although it
+> has been reported to work.
+> 
+> <snip>
+> 
+>>> From my experience with ThinkPads, the default brightness range there
+>>> was fine for me. But on the Framework 13 AMD it is not.
+>>>
+>>>> So rather then quirking this, with the above mentioned disadvantages I believe
+>>>> that it would be better to extend the existing video=eDP-1:.... kernel
+>>>> commandline parsing to allow overriding the minimum brightness in a driver
+>>>> agnostic way.
+>>>
+>>> I'm not a fan. It seems much too complicated for most users.
+>>
+>> Wanting lower minimum brightness really is mostly a power-user thing
+>> and what is the right value is somewhat subjective and this is an often
+>> heard complained. I really believe that the kernel should NOT get in
+>> the business of adding quirks for this. OTOH given that this is an often
+>> heard complaint having some generic mechanism to override the VBT value
+>> would be good to have.
+>>
+>> As for this being too complicated, I fully agree that ideally things
+>> should just work 100% OOTB, which is why I believe that a firmware fix
+>> from Framework would be good. But when things do not work 100% adding
+>> a kernel cmdline option is something which is regularly asked from users /
+>> found in support questions on fora so I don't think this is overly
+>> complicated. I agree it is not ideal but IMHO it is workable.
+>>
+>> E.g. on Fedora it would simply be a question of users having to run:
+>>
+>> sudo grubby --update-kernel=ALL --args="video=eDP-1:min-brightness=1"
+>>
+>> will add the passed in argument to all currently installed (and
+>> future) kernels.
+> 
+> Thanks for taking the time for your explanations.
+> I came around to agree with your proposal for a cmdline override.
+> 
+> What to you think about:
+> 
+> void drm_connector_get_cmdline_backlight_overrides(struct drm_connector *connector,
+> 						   struct drm_backlight_override *overrides);
+> 
+> struct drm_backlight_override would look like
+> struct drm_panel_backlight_quirk from this patch.
 
-The following dmesg errors during probe are now fixed:
+I'm not entirely convinced that we need the struct drm_backlight_override
+abstraction right away. Maybe we can start with just a
+drm_connector_get_cmdline_min_brightness_override() which just returns an int?
 
-usb 1-5: Found UVC 1.00 device Integrated_Webcam_HD (0c45:670c)
-usb 1-5: Failed to query (GET_CUR) UVC control 2 on unit 2: -75 (exp. 1).
-usb 1-5: Failed to query (GET_CUR) UVC control 3 on unit 2: -75 (exp. 1).
-usb 1-5: Failed to query (GET_CUR) UVC control 6 on unit 2: -75 (exp. 1).
-usb 1-5: Failed to query (GET_CUR) UVC control 7 on unit 2: -75 (exp. 1).
-usb 1-5: Failed to query (GET_CUR) UVC control 8 on unit 2: -75 (exp. 1).
-usb 1-5: Failed to query (GET_CUR) UVC control 9 on unit 2: -75 (exp. 1).
-usb 1-5: Failed to query (GET_CUR) UVC control 10 on unit 2: -75 (exp. 1).
+If you prefer to keep the struct drm_backlight_override that is fine too,
+we can see what others think when you submit a new version for review.
 
-Reported-by: Paul Menzen <pmenzel@molgen.mpg.de>
-Closes: https://lore.kernel.org/linux-media/518cd6b4-68a8-4895-b8fc-97d4dae1ddc4@molgen.mpg.de/T/#t
-Cc: stable@vger.kernel.org
-Fixes: 8f4362a8d42b ("media: uvcvideo: Allow custom control mapping")
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
-Paul, could you check if this fixes your issue, thanks!
----
-Changes in v2:
-- Replace !(A && B) with (!A || !B)
-- Add error message to commit message
-- Link to v1: https://lore.kernel.org/r/20240722-fix-filter-mapping-v1-1-07cc9c6bf4e3@chromium.org
----
- drivers/media/usb/uvc/uvc_ctrl.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-index 0136df5732ba..4fe26e82e3d1 100644
---- a/drivers/media/usb/uvc/uvc_ctrl.c
-+++ b/drivers/media/usb/uvc/uvc_ctrl.c
-@@ -2680,6 +2680,10 @@ static void uvc_ctrl_init_ctrl(struct uvc_video_chain *chain,
- 	for (i = 0; i < ARRAY_SIZE(uvc_ctrl_mappings); ++i) {
- 		const struct uvc_control_mapping *mapping = &uvc_ctrl_mappings[i];
- 
-+		if (!uvc_entity_match_guid(ctrl->entity, mapping->entity) ||
-+		    ctrl->info.selector != mapping->selector)
-+			continue;
-+
- 		/* Let the device provide a custom mapping. */
- 		if (mapping->filter_mapping) {
- 			mapping = mapping->filter_mapping(chain, ctrl);
-@@ -2687,9 +2691,7 @@ static void uvc_ctrl_init_ctrl(struct uvc_video_chain *chain,
- 				continue;
- 		}
- 
--		if (uvc_entity_match_guid(ctrl->entity, mapping->entity) &&
--		    ctrl->info.selector == mapping->selector)
--			__uvc_ctrl_add_mapping(chain, ctrl, mapping);
-+		__uvc_ctrl_add_mapping(chain, ctrl, mapping);
- 	}
- }
- 
+>>> Some more background to the Framework 13 AMD case:
+>>> The same panel on the Intel variant already goes darker.
+>>> The last responses we got from Framework didn't indicate that the high
+>>> minimum brightness was intentional [0], [1].
+>>> Coincidentally the "12" returned from ATIF matches
+>>> AMDGPU_DM_DEFAULT_MIN_BACKLIGHT, so maybe the firmware is just not set
+>>> up completely.
+>>
+>> Right, so I think this should be investigated closer and then get
+>> framework to issue a BIOS fix, not add a quirk mechanism to the kernel.
+>>
+>> IIRC the amdgpu driver will use AMDGPU_DM_DEFAULT_MIN_BACKLIGHT when
+>> that setting is 0 in the VBT.
+> 
+> This is not my reading of the code.
+> To me it seems "0" will be accepted, which is also why the second "fix"
+> from [1] works.
 
----
-base-commit: 68a72104cbcf38ad16500216e213fa4eb21c4be2
-change-id: 20240722-fix-filter-mapping-18477dc69048
+I have not looked at that code i quite a while, so you're probably right.
 
-Best regards,
--- 
-Ricardo Ribalda <ribalda@chromium.org>
+Regards,
+
+Hans
 
 
