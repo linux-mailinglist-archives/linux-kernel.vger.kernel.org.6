@@ -1,228 +1,139 @@
-Return-Path: <linux-kernel+bounces-258923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEC4C938E7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:53:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C6DA938E85
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:56:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4ED2280D74
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:53:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31AD61F21AA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF8E16D4D6;
-	Mon, 22 Jul 2024 11:53:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A2616D333;
+	Mon, 22 Jul 2024 11:55:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cP6O5bWY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JO8Kt4ES"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E6816CD3B
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CECB16CD3B;
+	Mon, 22 Jul 2024 11:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721649206; cv=none; b=WGuxSWriPWfo9zBS2h012i7YGWUzUs8xvwmC+EMlFBEalldBJOZkG2kzewpK8OcfBnTLvm9iESD59bxql3RNgFLc1fkYo5V1wOIrZ0nEAgx/OtvWkGOF2oZ1tU1EjgeirXIylKGnxEOfRhx+NuSr73JdyHaMGRo4d2ZCgU/aVk4=
+	t=1721649355; cv=none; b=euBWtocYV6a2oiyvzqOcbPaQ38VmYiMe6L8wZsZZzMHpNC26+dX0KFcR63Wpj8h6LfdzxFf/Jiuv8AauW5njM7yCApHGizCBpOCyzHgfyPzOF9o2P/bLT9SEyn0h7LxSy7VLgFXR5PHA4z52SxuputqiAeozF60quJsRuyOZBzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721649206; c=relaxed/simple;
-	bh=KXgVDnB/4ep52qLF7X9aT43SOUa5ZyHZOpbOkrIl1DQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AKXAZD+M5ScXsUy8Ryb9GgU1YeMTh8WK5EJxyuoGSbt+zxe/6A+xn8J1toRVML+qV/6UaqazKZFMl0WIOVMXeCT1SPT0KBXMLQenE4tiEicL0oGEg2gZkdSv4JFK7oJv90FBOzSrhQ0KBZIc06cZOt7gRPnKcPUjEljPwxfN6Jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cP6O5bWY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721649203;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=O+uxYEy71BTLlKxVksIrikvEA78NJ0VV65h60HjI7v0=;
-	b=cP6O5bWY7tewxjLMcV1C4/9fozsNSTymVJf4JMyWrYE7ZoJLLvh78U4H6Dt/k9BK4Ow9XH
-	OrgVF0hN5bRty2Q8HIEkCauF0P0h1Czw8esfZaCEagIDiTEzyUBVsRN9EKgyVwTndTfdbN
-	Nby7l0LZLjzfUPAveR1+E9smFNWBieI=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-568-c3uteq1-MD6uRUFISfOwhQ-1; Mon, 22 Jul 2024 07:53:21 -0400
-X-MC-Unique: c3uteq1-MD6uRUFISfOwhQ-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a77e6eb8b3aso162503466b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 04:53:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721649200; x=1722254000;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=O+uxYEy71BTLlKxVksIrikvEA78NJ0VV65h60HjI7v0=;
-        b=uO4Fkc8sgZkwKiZ2bkzcJo7lBg8GChbf5MSGdbhNSD+3ad0rCHCQi/pIibXEStnPqf
-         9TFr4M1HObHUTwSufvmB7OreHkQaY0MDPISmT0SmcxFS0ASRbG4Jisx5XY3t4hCJ1PQ8
-         TMoIWZRt2I+aFhZue0ZJQDS5WDeAbd7pnjikILNxnrcKvr+0bGDgHccrhBSNCyF/L9nL
-         1AQYAbQAuQSq0dPqKl6esBCQyL5YyNWB4/4Rl/v/k+5tA4+BqStWniRt5Cg7KtKn/aSm
-         toeiH/EDa7YIL90LxpC9tEoikrbBIFsL6MvAHvea6oEnny4FXdypYN3NbMyHOsdTYexy
-         zCPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxcNr35X2MhcWv+3vJVRG55DX6HNcp/4d7rF6A7l3ey9JChbnqILejX7g1ASKiigWukeBelugeEIS7wWuD8uFsMvS0lywPAsXzT9Ic
-X-Gm-Message-State: AOJu0YwQbT1WixKanYeUQRqDtDq7Ltjt9hqXv4pMkP2jgj8Dl/ufUM1g
-	ARuW+8a62UI9cG2JmuHZuyJ6BPBSSZ93gaJaRBABDnhpiBWxmUWD8Y1v2i5E1x68w/AM2icT/Qa
-	G2BR/VN/q9SrVZDE+xvIcOvSMpij+7EzIQej7a7Wx+Ron2S/B18nl5EnshX+R7Q==
-X-Received: by 2002:a50:8751:0:b0:5a1:a08a:e08 with SMTP id 4fb4d7f45d1cf-5a478f6b6cdmr5059202a12.11.1721649200524;
-        Mon, 22 Jul 2024 04:53:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEWLFS9risa/qC+0rtPi8Ua2sKubIVvp+XpXJo0PB3iyqeJXiq2MRmWL7gMq+Z4dZvNFf+BCw==
-X-Received: by 2002:a50:8751:0:b0:5a1:a08a:e08 with SMTP id 4fb4d7f45d1cf-5a478f6b6cdmr5059183a12.11.1721649200087;
-        Mon, 22 Jul 2024 04:53:20 -0700 (PDT)
-Received: from [192.168.2.168] (business-90-187-152-45.pool2.vodafone-ip.de. [90.187.152.45])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30c2f87d1sm6059698a12.70.2024.07.22.04.53.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jul 2024 04:53:19 -0700 (PDT)
-Message-ID: <d1d57a98-dcba-43d0-aa90-016c4f85a32f@redhat.com>
-Date: Mon, 22 Jul 2024 13:53:17 +0200
+	s=arc-20240116; t=1721649355; c=relaxed/simple;
+	bh=jdZOd+1x/UUwORwUz2YLmGgfUG/GAuQjIIUf2/RLMD8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iarpYOb0BnY8++Xo5uDcys2fuc5YhfTCRNbSyub13ABnQIqE6FEIopAFBVPQGwId1A9qao8HPoTTAAVwxakAJ8O9dJ+AbfqWZJc+0u3r40ScbDl1IK+3A8M3Wp/wUP4BkWnA7dYtGyHe89khco+BON+epKhNdI/f86i/O4oULYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JO8Kt4ES; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6701C116B1;
+	Mon, 22 Jul 2024 11:55:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721649354;
+	bh=jdZOd+1x/UUwORwUz2YLmGgfUG/GAuQjIIUf2/RLMD8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=JO8Kt4ESCie2QzLgfzTe+N+WlH/PTKW+HGMPmphWK6eRrsqvSp9v43TyCR3ri+dFB
+	 1gGTcwpV9XATI4RVtCuapHxp+o6R0wExoj1M+gY1eHytMfw8vKE03Km8oq/c193cN2
+	 3Qz5tdHCQ9pQrOfoLa7bPa2JNFdauo7pmEwIuEnNdqwy4MmwP9j2U54hJ4xrkt3w7E
+	 qRH+zodkwDXs6azmgWSO+6hzQZtdvK7K8/VSfeL3Ju44purrQ9W7GyWoMBkGbxKvVl
+	 5i+w9pPvUOfLKNhYekwgco7ZVGIiSXl19KAOG/LXWOI2kAZOM9ABY9XZT+HyVIFSuL
+	 rYjmN3iQ+9I4g==
+Message-ID: <1cd7516391a4c51890c5b0c60a6f149b00cae3af.camel@kernel.org>
+Subject: Re: [PATCH v2] KVM: SVM: let alternatives handle the cases when RSB
+ filling is required
+From: Amit Shah <amit@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: David Kaplan <David.Kaplan@amd.com>, Jim Mattson <jmattson@google.com>, 
+ "pbonzini@redhat.com" <pbonzini@redhat.com>, "x86@kernel.org"
+ <x86@kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,  "mingo@redhat.com"
+ <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "hpa@zytor.com" <hpa@zytor.com>, Kim Phillips <kim.phillips@amd.com>
+Date: Mon, 22 Jul 2024 13:55:49 +0200
+In-Reply-To: <ZpbFvTUeB3gMIKiU@google.com>
+References: <20240626073719.5246-1-amit@kernel.org>
+	 <Zn7gK9KZKxBwgVc_@google.com>
+	 <CALMp9eSfZsGTngMSaWbFrdvMoWHyVK_SWf9W1Ps4BFdwAzae_g@mail.gmail.com>
+	 <52d965101127167388565ed1520e1f06d8492d3b.camel@kernel.org>
+	 <DS7PR12MB57665C3E8A7F0AF59E034B3C94D32@DS7PR12MB5766.namprd12.prod.outlook.com>
+	 <Zow3IddrQoCTgzVS@google.com> <ZpTeuJHgwz9u8d_k@t470s.drde.home.arpa>
+	 <ZpbFvTUeB3gMIKiU@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] drm: backlight quirk infrastructure and lower
- minimum for Framework AMD 13
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
- Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Matt Hartley <matt.hartley@gmail.com>, Kieran Levin <ktl@framework.net>,
- amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>
-References: <20240623-amdgpu-min-backlight-quirk-v2-0-cecf7f49da9b@weissschuh.net>
- <e61010e4-cb49-44d6-8f0d-044a193d29b2@redhat.com>
- <51f68b3b-dd21-44ef-8ec8-05bea5db6e55@t-8ch.de>
- <6db5abf9-cbdd-4ec0-b669-5df23de6c2ad@redhat.com>
- <a050aad4-d195-42e6-8a84-02170a4f9835@t-8ch.de>
-Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <a050aad4-d195-42e6-8a84-02170a4f9835@t-8ch.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-Hi Thomas,
+On Tue, 2024-07-16 at 12:10 -0700, Sean Christopherson wrote:
+> On Mon, Jul 15, 2024, Amit Shah wrote:
+> > On (Mon) 08 Jul 2024 [11:59:45], Sean Christopherson wrote:
+> > > On Mon, Jul 01, 2024, David Kaplan wrote:
+> > > > > >=20
 
-On 7/20/24 9:31 AM, Thomas Weißschuh wrote:
-> Hi Hans,
-> 
-> On 2024-07-18 10:25:18+0000, Hans de Goede wrote:
->> On 6/24/24 6:15 PM, Thomas Weißschuh wrote:
->>> On 2024-06-24 11:11:40+0000, Hans de Goede wrote:
->>>> On 6/23/24 10:51 AM, Thomas Weißschuh wrote:
->>>>> The value of "min_input_signal" returned from ATIF on a Framework AMD 13
->>>>> is "12". This leads to a fairly bright minimum display backlight.
->>>>>
->>>>> Add a generic quirk infrastructure for backlight configuration to
->>>>> override the settings provided by the firmware.
->>>>> Also add amdgpu as a user of that infrastructure and a quirk for the
->>>>> Framework 13 matte panel.
->>>>> Most likely this will also work for the glossy panel, but I can't test
->>>>> that.
->>>>>
->>>>> One solution would be a fixed firmware version, but given that the
->>>>> problem exists since the release of the hardware, it has been known for
->>>>> a month that the hardware can go lower and there was no acknowledgment
->>>>> from Framework in any way, I'd like to explore this alternative
->>>>> way forward.
->>>>
->>>> There are many panels where the brightness can go lower then the advertised
->>>> minimum brightness by the firmware (e.g. VBT for i915). For most users
->>>> the minimum brightness is fine, especially since going lower often may lead
->>>> to an unreadable screen when indoors (not in the full sun) during daylight
->>>> hours. And some users get confused by the unreadable screen and find it
->>>> hard to recover things from this state.
->>>
->>> There are a fair amount of complaints on the Framework forums about this.
->>> And that specific panel is actually readable even at 0% PWM.
->>
->> If a lot of Framework users are complaining about this, then maybe Framework
->> should fix their VBT in a BIOS update ?  That seems like a better solution
->> then quirking this in the kernel.
-> 
-> Framework has now stated that they will update the VBT for their 13' device. [0]
-> It won't happen for the 16' one as its out of spec there, although it
-> has been reported to work.
-> 
-> <snip>
-> 
->>> From my experience with ThinkPads, the default brightness range there
->>> was fine for me. But on the Framework 13 AMD it is not.
->>>
->>>> So rather then quirking this, with the above mentioned disadvantages I believe
->>>> that it would be better to extend the existing video=eDP-1:.... kernel
->>>> commandline parsing to allow overriding the minimum brightness in a driver
->>>> agnostic way.
->>>
->>> I'm not a fan. It seems much too complicated for most users.
->>
->> Wanting lower minimum brightness really is mostly a power-user thing
->> and what is the right value is somewhat subjective and this is an often
->> heard complained. I really believe that the kernel should NOT get in
->> the business of adding quirks for this. OTOH given that this is an often
->> heard complaint having some generic mechanism to override the VBT value
->> would be good to have.
->>
->> As for this being too complicated, I fully agree that ideally things
->> should just work 100% OOTB, which is why I believe that a firmware fix
->> from Framework would be good. But when things do not work 100% adding
->> a kernel cmdline option is something which is regularly asked from users /
->> found in support questions on fora so I don't think this is overly
->> complicated. I agree it is not ideal but IMHO it is workable.
->>
->> E.g. on Fedora it would simply be a question of users having to run:
->>
->> sudo grubby --update-kernel=ALL --args="video=eDP-1:min-brightness=1"
->>
->> will add the passed in argument to all currently installed (and
->> future) kernels.
-> 
-> Thanks for taking the time for your explanations.
-> I came around to agree with your proposal for a cmdline override.
-> 
-> What to you think about:
-> 
-> void drm_connector_get_cmdline_backlight_overrides(struct drm_connector *connector,
-> 						   struct drm_backlight_override *overrides);
-> 
-> struct drm_backlight_override would look like
-> struct drm_panel_backlight_quirk from this patch.
-
-I'm not entirely convinced that we need the struct drm_backlight_override
-abstraction right away. Maybe we can start with just a
-drm_connector_get_cmdline_min_brightness_override() which just returns an int?
-
-If you prefer to keep the struct drm_backlight_override that is fine too,
-we can see what others think when you submit a new version for review.
+(snipped to what is now emerging as the core of the discussion)
 
 
->>> Some more background to the Framework 13 AMD case:
->>> The same panel on the Intel variant already goes darker.
->>> The last responses we got from Framework didn't indicate that the high
->>> minimum brightness was intentional [0], [1].
->>> Coincidentally the "12" returned from ATIF matches
->>> AMDGPU_DM_DEFAULT_MIN_BACKLIGHT, so maybe the firmware is just not set
->>> up completely.
->>
->> Right, so I think this should be investigated closer and then get
->> framework to issue a BIOS fix, not add a quirk mechanism to the kernel.
->>
->> IIRC the amdgpu driver will use AMDGPU_DM_DEFAULT_MIN_BACKLIGHT when
->> that setting is 0 in the VBT.
-> 
-> This is not my reading of the code.
-> To me it seems "0" will be accepted, which is also why the second "fix"
-> from [1] works.
+> > Also - reviewers of code will get confused, wondering why this code
+> > for AMD exists when the CPU vuln does not.
+> >=20
+> > I get that we want to write defensive code, but this was a very
+> > special condition that is unlikely to happen in this part of the
+> > code,
+> > and also this was missed by the devs and the reviewers.
+>=20
+> Defensive code is only part of it, and a minor part at that.=C2=A0 The
+> main "issue" is
+> having divergent VM-Enter/VM-Exit code for Intel vs. AMD.=C2=A0 To those
+> of us that
+> care primarily about virtualization and are only passingly familiar
+> with the myriad
+> speculation bugs and mitigations, omitting RSB_VMEXIT_LITE _looks_
+> wrong.
+>=20
+> To know that the omission is correct, one has to suss out that it's
+> (supposed to
+> be) impossible for RSB_VMEXIT_LITE to be set on AMD.=C2=A0 And as a KVM
+> person, that's
+> a detail I don't want to care about.
 
-I have not looked at that code i quite a while, so you're probably right.
+OK - I get that.  Cognitive overload is a real thing, and the less of
+it the better.
 
-Regards,
+Since this isn't a discussion about any AMD bug or implementation
+detail, but rather a uniformity in KVM code across different CPU
+implementations from different vendors, I prefer someone else code up
+the patch to add that uniformity.  I don't have an objection to that.
 
-Hans
+I can of course offer a comment in this hunk, though, that says AMD
+does not have the bug that necessitates VMEXIT_LITE, and that should
+help in the meantime.  You've not queued this patch yet, right?  Do you
+think it's better I do a v3 with this comment update?
 
+> FWIW, I feel the same way about all the other post-VM-Exit
+> mitigations, they just
+> don't stand out in the same way because the entire mitigation
+> sequence is absent
+> on one vendor the other, i.e. they don't look wrong at first glance.=C2=
+=A0
+> But if KVM
+> could have a mostly unified VM-Enter =3D> VM-Exit assembly code, I
+> would happliy eat
+> a dead NOP/JMP or three.=C2=A0 Now that I look at it, that actually seems
+> very doable...
+
+Sure.  I think some of the fallacy there is also to treat VMX and SVM
+as similar (while not treating the Arm side as similar).  They are
+different implementations, with several overlapping details - but it's
+perilous to think everything maps the same across vendors.
+
+
+		Amit
 
