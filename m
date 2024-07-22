@@ -1,124 +1,128 @@
-Return-Path: <linux-kernel+bounces-259304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0755E9393C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:43:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8232D9393BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E94EB20989
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:43:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B0631F2212E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E547E171663;
-	Mon, 22 Jul 2024 18:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED7117084F;
+	Mon, 22 Jul 2024 18:42:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xoM81yJN"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HSTUdhrv"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76AA171651
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 18:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADA4770E6
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 18:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721673732; cv=none; b=frA1XOmhPftKHxu9C/PXUCClxEr51/XXdjVardEErawrskwNXRbHmGW17cnTfk3au9KkyYGrKp1VSkln/AktQXokFXc3DkwL/OUQlHe84t2g6yfOyhO59K1Vm6NOb7NZU6Hyl43GH6NL9qRIphk2U37ELz2wNflYdOAO0/aMPoY=
+	t=1721673727; cv=none; b=pEAGI/xS07+J7uVeTN/1a2WBlJqOz/eOGRZwQvcoVTvMXja/wGCp/3kBsej/opSJj+tQUh3i+RtrfplHnHAJsYG9tHerYaO7OXFLtL8N8fRBtfEOXlId+fFlvBCE1CjVKLslsyL7TBqcZTY0TZYmei3yPboZ/slJzJEAGW2OPh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721673732; c=relaxed/simple;
-	bh=+amIieoWJ9CX4mMMjpPZdcjS+0jEdmiGnO2u6Xqp1Oo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DLNZB7ida5M41G8aNDqJp77iizra6B927e49EiZyhKmjN3uN52xFwzoSEfNVSBwPLfUbz2GKwj8BgWf6CtAG14iqazv/GLHF1NA4g/SBB48C8pbEiStTMmzbD+2tnmQe3yfcarpbCECJXZnQ7IZ5RiS3W/6DZz9an8sA7RWVJQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xoM81yJN; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-65fdfd7b3deso47579677b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:42:10 -0700 (PDT)
+	s=arc-20240116; t=1721673727; c=relaxed/simple;
+	bh=0E1fNsDif3VQXgBcyMnbWqtdpW+WZ9QRELLlUphu3v8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l/gzP6vBh2evacKtnsX/KEkmuwGMEnvt4GFCiphSTMILls1Fhi+w4Bnp0QQWWQIQ4a4zYvHQjlnlePmU1sOslFCytR7mmorSlsC1c3TGohZemYZ+vh+rbPf62WulMRgd2iDWrA/Ht8wxgOv6kAeryrQTkWhdArEtHf+wR3lfGSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HSTUdhrv; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-39633f58414so1823855ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:42:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721673730; x=1722278530; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y4rdGF+Z/Yh8hymhxBTniZ382LqDBxfp7vlKwSbjjk4=;
-        b=xoM81yJNcxAX32JmQ4I9U72mRFUyziBISzw722h0u9Nz9myutdzZYDVGqRlCviocsq
-         i10M7oZl5673cx+kQXKo/RmHhMh/OCCTupT9B0pGxgVOgmrS0rVjzh9apoUoi3hUOAvz
-         MO2YfaX+cRnzDRe/L6R4Ry+Fk77zeNGVt+vGgKOEFKppIljiMfDFlt5zlhIemC+ZITQL
-         kh+yU1MDbQQreUKS1rdOwtF0W7j6tfXctk8W649QlmGGgpaxjt7Xa4g5bs3zvbjg0fgp
-         0xD6pHc8yeFQsjvADWPW7OI4H1kq6PYSjb0DfE8MzYFt8MlunLs2MLx/UEouZt7F5Mmm
-         UVAw==
+        d=linuxfoundation.org; s=google; t=1721673724; x=1722278524; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0fXwDk328PWlLbWRpQs1+cfkwX+2wF82ZM6SOq+7S10=;
+        b=HSTUdhrvpvUIMO7Ob6rr4JCXcXbW7bw7zmgoLrNKrR+VIr8B4Vs9tAca0LACZ/uO6t
+         9qwDuvQK/3sJ9aOWkQrdHejpAtrKhqKnAZmklmso7RXe+H0gyBtg5K4zWsNkVBNAn3aP
+         C9om1LOgcVkqlAJpkA0DNv49LXN8anu4dIcHY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721673730; x=1722278530;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y4rdGF+Z/Yh8hymhxBTniZ382LqDBxfp7vlKwSbjjk4=;
-        b=tFxGa/HoaCDbcS2g7TXnbMjLJCGg2dlPTfP1PTp0DXhKh1jmqLESIl0+xh22co8cY3
-         M1O0RyquF4ihZMKw5TM23s5Umf2kW8TMHKOcdQCWg1qgqxDwUKRs+Iq8tcQi0FcOBoLg
-         gllxOGQYBqnHe8UQ9UnDkQ7EMik0/J77fpxhEnvM0v/CduHImI3FfsU6nvB5MWZZMOba
-         B/By3Wue1Vnll800u7pH0dbe4kzVzcm7xzvE0vZKeSGi9dhm+vgU+Qoiu8iLxBbI5esS
-         TO6WwK21lG9fB3x6RBDAxEicdzJebk1UxqUUHb7mR9WYvwlMaiyQEQWS/aG4B1HWflgP
-         rG7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUOAAJQPWdrtapWdfO+PvBFDDWuwqzlxzljalzzV2eRPyCmaoIjL4wt1hJfcMOsgAKNWYoxi2gYQglumRBdkFEBfj/ZHtgS+Nk1t9b8
-X-Gm-Message-State: AOJu0YwLl7ugi74CdyMksw7PUimDS8FHHglWlDo9LwbhVSk4kvbUw1hg
-	ZqCzThTpdzmYYKnlcQVzZe7OuLNMLHWjV0S3XcrcU+5fY+idHN+GrWNvbenWPH0ekXpcPgfZNaM
-	xP+n9BATiRFSzC2PYr5zprf7DT55R9z/c9xbGVA==
-X-Google-Smtp-Source: AGHT+IHyjq6NgbF3ZUXX0L4gapb6B1fFnlurqaVxvZPJbrOQlcRjRKj0aSuLj6GTSIGVU3z3I1mo6FeWF8LwK/kCyo8=
-X-Received: by 2002:a05:690c:2c81:b0:65f:80bb:e6b2 with SMTP id
- 00721157ae682-66ad8ec55fdmr72566757b3.14.1721673729754; Mon, 22 Jul 2024
- 11:42:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721673724; x=1722278524;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0fXwDk328PWlLbWRpQs1+cfkwX+2wF82ZM6SOq+7S10=;
+        b=P/TpY8ThdpNi3M0zxNn0EiefJ3IZQbQPhBFqPWdAUQu476zlQLeX5x4redDxkkVmVR
+         rq2lUVzWnYANCqYJj66omQD17var8gYPW8XARuFyJa+3wVW9JXeXzGV6S10ziHhiwiGB
+         LAenI26A/dDNyOxHxHnzqIYxov1ALBYQosKEG4N2dh0vDSU0j1qDLy6LLlZ9B0Nx7kcY
+         tAKtj5yBlftub2yuZNsr71uU1WEzfm0zlG29bm/PRiEHucU3Zn5rrkqSBDi4YMRUPOQU
+         s5UJ9kSZvmH2hmSoiw+y9rh2Jzzc9R7d8VdpsLEfnhBWwk4Nx0+2xxW9PPRv3WeXZqVl
+         OKxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVDNJCVlNP74KrscDg4E/VTfLyDh0FiEUna4zyunFtdPDellcZKgS8tpKOc51/cb4kb4GQoFN0D9bJ49Z/GG7Zbvzw56bQywLBX4fjr
+X-Gm-Message-State: AOJu0YxW6yaiEhMaHDUKoz1/aD5DsHr8SqMe1vcGC4ebUB90kAuewlZD
+	JpmwjEGYx2/uRajaEdMu2K33vjglr6FKldIbQG5C3ou1lbO65XDGCgnjEZGAVtU=
+X-Google-Smtp-Source: AGHT+IFY4lRe7g4vBeCyqyzghwmKnXlwRNyo4g8Qu9oGXhbrhUa7NUUCi5GcqzC+1V3HqAjYxSLXKw==
+X-Received: by 2002:a05:6e02:1d8a:b0:38e:cdf9:8878 with SMTP id e9e14a558f8ab-398e7446c00mr39082535ab.5.1721673724442;
+        Mon, 22 Jul 2024 11:42:04 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-397f5c2b5aasm26785885ab.38.2024.07.22.11.42.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jul 2024 11:42:04 -0700 (PDT)
+Message-ID: <6f599bfe-3d54-4972-aa06-c987c0bb65b0@linuxfoundation.org>
+Date: Mon, 22 Jul 2024 12:42:03 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240719120945eucas1p2aa5e35f78daa7ec1ea07f512180db468@eucas1p2.samsung.com>
- <20240719120853.1924771-1-m.majewski2@samsung.com> <20240719120853.1924771-2-m.majewski2@samsung.com>
-In-Reply-To: <20240719120853.1924771-2-m.majewski2@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Mon, 22 Jul 2024 13:41:59 -0500
-Message-ID: <CAPLW+4=VgRBqw0X9PTOwSNNfLgvv2-5dTF4bP78_7gk4BwJGcQ@mail.gmail.com>
-Subject: Re: [PATCH 1/6] drivers/thermal/exynos: use DEFINE_SIMPLE_DEV_PM_OPS
-To: Mateusz Majewski <m.majewski2@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: ksft: Track skipped tests when finishing the
+ test suite
+To: Laura Nao <laura.nao@collabora.com>, shuah@kernel.org
+Cc: gregkh@linuxfoundation.org, nfraprado@collabora.com,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@collabora.com, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240722154319.619944-1-laura.nao@collabora.com>
+ <0fe1b57e-4557-4020-878a-7eec13a2fdb1@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <0fe1b57e-4557-4020-878a-7eec13a2fdb1@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 19, 2024 at 7:10=E2=80=AFAM Mateusz Majewski
-<m.majewski2@samsung.com> wrote:
->
-> SIMPLE_DEV_PM_OPS is deprecated, as noted next to its definition.
->
-> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
-> ---
+On 7/22/24 11:32, Shuah Khan wrote:
+> On 7/22/24 09:43, Laura Nao wrote:
+>> Consider skipped tests in addition to passed tests when evaluating the
+>> overall result of the test suite in the finished() helper.
+>>
+>> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+>> ---
+>>   tools/testing/selftests/kselftest/ksft.py | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/tools/testing/selftests/kselftest/ksft.py b/tools/testing/selftests/kselftest/ksft.py
+>> index cd89fb2bc10e..bf215790a89d 100644
+>> --- a/tools/testing/selftests/kselftest/ksft.py
+>> +++ b/tools/testing/selftests/kselftest/ksft.py
+>> @@ -70,7 +70,7 @@ def test_result(condition, description=""):
+>>   def finished():
+>> -    if ksft_cnt["pass"] == ksft_num_tests:
+>> +    if ksft_cnt["pass"] + ksft_cnt["skip"] == ksft_num_tests:
+> 
+> Please don't. Counting skips in pass or fail isn't accurate
+> reporting. skips need to be reported as skips.
+> 
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+More on this since I keep seeing patches like this one that
+make the reporting confusing.
 
->  drivers/thermal/samsung/exynos_tmu.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsu=
-ng/exynos_tmu.c
-> index 96cffb2c44ba..9b7ca93a72f1 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -1150,8 +1150,8 @@ static int exynos_tmu_resume(struct device *dev)
->         return 0;
->  }
->
-> -static SIMPLE_DEV_PM_OPS(exynos_tmu_pm,
-> -                        exynos_tmu_suspend, exynos_tmu_resume);
-> +static DEFINE_SIMPLE_DEV_PM_OPS(exynos_tmu_pm,
-> +                               exynos_tmu_suspend, exynos_tmu_resume);
->  #define EXYNOS_TMU_PM  (&exynos_tmu_pm)
->  #else
->  #define EXYNOS_TMU_PM  NULL
-> --
-> 2.45.1
->
->
+There is a reason why you don't want to mark a test passed
+when there are several skips. Skips are an indication that
+there are several tests and/or test cases that couldn't not
+be run because of unmet dependencies. This condition needs
+to be investigated to see if there are any config options
+that could be enabled to get a better coverage.
+
+Including skips to determine pass gives a false sense security
+that all is well when it isn't
+
+thanks,
+-- Shuah
+
 
