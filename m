@@ -1,166 +1,280 @@
-Return-Path: <linux-kernel+bounces-259140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47F0A9391CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:29:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 152FE9391C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AEDE1C21717
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:29:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CFACB2106E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1743D16E897;
-	Mon, 22 Jul 2024 15:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F89C16E870;
+	Mon, 22 Jul 2024 15:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GKKMwMv2"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="TuOswZE7"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 985E416DEDB
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 15:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAB816DEDC;
+	Mon, 22 Jul 2024 15:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721662139; cv=none; b=pDy35OPEFlvbgqcFKz+1wAp91C3oChog3fKwSGfgE9Z+uYsxdwZneBeHJISUHC8r+jdJxpMzgGd09f94KyBHp9xjl4DK64sJMrA0s+D7JKB8zCjB+OUChe/jShsSILdx8s0CTBoQ2sKsJtSp2xzUIK0bU49G0tRI+8AaWcNppf4=
+	t=1721662109; cv=none; b=ZxZfUprXbJmQMXxwlgS6EHg/fNs/Kj9SzK0RUhjBv3uRboIEtoyL1iI3T1NQgXj1qJIcHzMTlxVQ4byCkMcsbkbnSKwiL7ms84Ciy/SB2qfi7uH4pFNSrmE/TLziXj/5sJAkh1rMuKLlYL1OWUpfKRTkump/S7oV4hmW6ceXY3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721662139; c=relaxed/simple;
-	bh=+5pv0qtz/ijrY++7RLRA+HZnVxXMRvl1jcfm/oqvyAQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hQZ08q/YH4NXlipXp8rEgui8tOCe+0+3v75c2iGLAMaId1U8Ibupt2dSHkwLED9L833DYKjqvNsn28zNSJ0YkcWoaGRt0kossKDsK+4VBGV/6r/X9HenL7CWcQFp9ApemxDbh/Cm9izW9e0sr+X6hMnxctG3Vnh8jYoEV+UAu+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GKKMwMv2; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-426636ef8c9so31391785e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 08:28:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721662136; x=1722266936; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KRn2GZZ7rqyxxxS3W1yWD0PtlBv3YIhE78qAMXkvguI=;
-        b=GKKMwMv2fzbCmq98eXX4pUo4tXLGhOx+ZAPUK+K+YM7R76Z8waCoF84uEYDiUw6Nj/
-         lAm9y05HZObMLx19GDkl9ODMTavOQPI1FQesCNjULIUjJPxj3ya6mBI72C0WZxS5MPLW
-         MurWB8jK6oLUcaQDh3TULcvn5pqYvzTiQjYM5/ef0aIv63J+1UZfp3ZnwBv1BrFESEq0
-         3d1oMXbHnQM4MBQYo1xxLOl29UE/GErMEI8yOrqwtNN8Ex5cDcpJMpRfn25En2FHkM99
-         WmDBqvwgmHf3uUbOqFgUNn0LnJmmuRjpSCO+FE+bNiEOSV1+N96ksmDF3nFJArVxpJq/
-         rMSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721662136; x=1722266936;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KRn2GZZ7rqyxxxS3W1yWD0PtlBv3YIhE78qAMXkvguI=;
-        b=fwPGsRKAjdSCKrmzgS9EAZPCV5lcgcKxCv+pgT2Kamr2AsfXQCp9iy2dRfum2y3rcR
-         SrHOFw+stR5EFaZx6+f4v6yWI18j+xIhRWmRNnhz4vZ9Jo/SKdfDLUDGdFuU09kOXFbD
-         cDIntqMdhBv0y0E7tby7ofTapJAXASH4moEsWUK9DtLzTTCvvBiWj7p+6Mg4c2fFG8Mr
-         qsBdh4/9zpRgsdNoBkxPwNpt5otnozAFb24E25kovo/RyAi7T3DhfvIhglQ/M7nwYbCI
-         qhyvTKc3U8TzFBC33fpBAET9RcpXfgrW4WEl4tApEx3E+pDOOAjBqkTQ6bA5ba/YdYkJ
-         4Vjg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9crCKmj3CyTFx3CDLXmi6O89FW6bkueyP6qM8b6eMoBQBQeEdkCgl37EbGoaKxavR+Gh19d/PBQKDCCSN867Bkp8d5n0Bot6JvVPA
-X-Gm-Message-State: AOJu0Yy4oxsWFPwif9Wjl0C40jYxIEbeX0GOUAPxapiJf1mDqr3UAR71
-	bCtiOfnWJN9l9Qyh5rDYurF6RFGv2WNCY0ubpomVVAAsVL+HD/a8hBRFvPgBJ9g=
-X-Google-Smtp-Source: AGHT+IF7tKYq40uDVXznXPqhK+EAGVR7+QJEgApq+9Cj2Yd9pJFFjFsijIYOFzkudhGr0yO3VT9Q2g==
-X-Received: by 2002:adf:fa0f:0:b0:366:ebd1:3bc1 with SMTP id ffacd0b85a97d-369bae23a8cmr4451255f8f.3.1721662136027;
-        Mon, 22 Jul 2024 08:28:56 -0700 (PDT)
-Received: from localhost.localdomain ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a43598sm160654535e9.1.2024.07.22.08.28.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 08:28:55 -0700 (PDT)
-From: James Clark <james.clark@linaro.org>
-To: coresight@lists.linaro.org,
-	gankulkarni@os.amperecomputing.com,
-	mike.leach@linaro.org,
-	leo.yan@arm.com,
-	suzuki.poulose@arm.com
-Cc: James Clark <james.clark@linaro.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Will Deacon <will@kernel.org>,
-	James Clark <james.clark@arm.com>,
-	Leo Yan <leo.yan@linux.dev>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] perf cs-etm: Output 0 instead of 0xdeadbeef when exception packets are flushed
-Date: Mon, 22 Jul 2024 16:27:56 +0100
-Message-Id: <20240722152756.59453-2-james.clark@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240722152756.59453-1-james.clark@linaro.org>
-References: <20240722152756.59453-1-james.clark@linaro.org>
+	s=arc-20240116; t=1721662109; c=relaxed/simple;
+	bh=NW3BGeX6Aw+YNDaH/ML4okS799UMs5G9OYJ+NCOMUFU=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=uxmBOXWCQjgNA0Zmr8OV1bCu/SKTY8xOF/YVtpY606KHShEtYgcLO9Ml6eqzkvaWha6QTu4x1IChZRcK5VmQ4y6yrN1l22sbK8lxTF6NAMYOEW65IbkqZhDWT6I7Pn6qZ8lZ5oOE0miIVets4Z05Yr3rlc2YCuXUYni05650ueA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=TuOswZE7; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
+	s=s31663417; t=1721662085; x=1722266885; i=frank-w@public-files.de;
+	bh=9zzQ9qsjOrJKYJgiEf+Hw1iQEuR/+oJDdIA6G8lNnBA=;
+	h=X-UI-Sender-Class:Date:From:To:CC:Subject:Reply-to:In-Reply-To:
+	 References:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=TuOswZE7lxQA0wrf/MAx6jvQuGompBZifZdmZK/rvRFgKcohgY7xN3/2ryIixvZN
+	 57QKRirDJQa0r4lCqfkwrE/fU5bfE3t3PfrdrpCGIWWE19mGHs6vu01qrnHwFiTXP
+	 TbKPY/E9meLHv5TGg7JF+Y/jumEavDsodo6ELy0cDluj4EoK/j1xgwN6bhoewSYkP
+	 fW3LBgnKxokXqb1HVMrHJjGtHrbS2/lKkXRUmFWziZ4d85BMPuvLF0levZZCZpGiN
+	 mRf0+dX+cqwAlg+7qD6B9vPnOIDGrqsHkOOoVizxBiw9GKUdiQW++RF7ORCYtDDB6
+	 6WWYFBBGzNKq1cH6xw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [127.0.0.1] ([217.61.158.78]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MNKhs-1sgGqN1mF0-00Vvt5; Mon, 22
+ Jul 2024 17:28:05 +0200
+Date: Mon, 22 Jul 2024 17:28:05 +0200
+From: Frank Wunderlich <frank-w@public-files.de>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Frank Wunderlich <linux@fw-web.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>
+CC: Daniel Golle <daniel@makrotopia.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v1=5D_arm64=3A_dts=3A_mediatek=3A_?=
+ =?US-ASCII?Q?mt7988=3A_add_labels_for_different_nodes?=
+User-Agent: K-9 Mail for Android
+Reply-to: frank-w@public-files.de
+In-Reply-To: <89f6381b-8572-4d58-a8a9-0a3596efc627@collabora.com>
+References: <20240709081614.19993-1-linux@fw-web.de> <89f6381b-8572-4d58-a8a9-0a3596efc627@collabora.com>
+Message-ID: <C0F28241-DBD1-48F8-B09D-F41DB30E1678@public-files.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:OS5lTSGxKOymZirZZWv/F/jIcjpywbSkBtsJkIf7dA2AW96XtoR
+ BD+ta8ObDhoFgHw6UFejU8lURnQFELWBPyMtROyTjp7fxNlpxTpDA2qzcOCayYn42MauBzW
+ dCD6BSe++J1SVf0F1Tuv8ZlTCuDidJKayAQLqKBwBB6+iFsFpkXHd5rdOEZ0sNeM2AVUCpi
+ 13rcb4837ot81IkpsuR5w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:fgvbCBc82oU=;o6Y3dPGAbn8l29Gh9/34m4QZ+a4
+ bcCpe01vlSP9oAFdhLG8rAf6uFYud9aJT9sE1i0IRcowjZxwUFP3iKWMoH/XSmiOp87SDgLNW
+ uf6Xs0P1O8/Lv8MFJqQGIfB82yXxRsiSEs6ZcON1Qdtv4qp/K/MZZN5UEg0gx8436+V0CT949
+ 5bEYL+jNwL1iZ70eP0HBfuonvMUiriqhq8RHpjWJNOCpL2InXRlWqNdghO2xggzTE86CntmB4
+ hQmxPwVkUDOfYZydf+HEOqxV/Aw4Y7PcZkG2Y4rvHuFBLJ+i7qnhNuXctA880VaKxAeykJ24k
+ xwN29VYmp6xQCigWgdVu7o9J4L0h0ZND8zWg8kMvRLafECr5Uo7sJl144KB4bKWvcu2+jTgig
+ F6pIqdLFeW5W3DGtg/GtLvJvb9BeJQKYFB16nGqN/sACv9WFP3UXRHKFdOaFTO355B1BNR1PR
+ tZRDq7bOVq/3qjrlrqVfvuFOZO6dYTi6qX3V/hOdhQykoFTrGRWCOukmvO/II+urPAKmXhsUi
+ thRNT0B77+gjv+OB9+4kF/dEa8Xueu2c+n8BJIhV4RuU898t6mcKSZKYwfzWaFproGKsMNSzZ
+ iAl5N8sDW3lLcBig2KfbyPosN+AOY5W/Ybj0Yti/oZmWICHKVzqaP8yiuvDRFWzHHTNV6gzwo
+ jYgnL1P0vhbIjaFgiyy+w2lcZv0sqRFffcruhPcprRAwCIXEtI+dmrlSpMDX9QsqzaGlu1i0o
+ 1nVRon+HMGvceALGgwkrvI1FBWUCfxCXSF5g/DTzvpChT1N7HdOU2iI5Pi5bWwllIcO6qW+/o
+ L0zBpYuEfwRRYfYOK9CW4JYQ==
 
-Normally exception packets don't directly output a branch sample, but
-if they're the last record in a buffer then they will. Because they
-don't have addresses set we'll see the placeholder value
-CS_ETM_INVAL_ADDR (0xdeadbeef) in the output.
+Hi
+Am 22=2E Juli 2024 17:14:07 MESZ schrieb AngeloGioacchino Del Regno <angel=
+ogioacchino=2Edelregno@collabora=2Ecom>:
+>Il 09/07/24 10:16, Frank Wunderlich ha scritto:
+>> From: Frank Wunderlich <frank-w@public-files=2Ede>
+>>=20
+>> Current devicetree-nodes missing a label which allows to add apropertie=
+s
+>> or phandles to them, so add them=2E
+>>=20
+>> Signed-off-by: Frank Wunderlich <frank-w@public-files=2Ede>
+>> Fixes: 660c230bf302 ("arm64: dts: mediatek: mt7988: add I2C controllers=
+")
+>> Fixes: 09ff2216a035 ("arm64: dts: mediatek: mt7988: add PWM controller"=
+)
+>> Fixes: 09346afaba0a ("arm64: dts: mediatek: mt7988: add XHCI controller=
+s")
+>> Fixes: b616b403cbff ("arm64: dts: mediatek: mt7988: add clock controlle=
+rs")
+>> Fixes: 6c1d134a103f ("arm64: dts: mediatek: Add initial MT7988A and BPI=
+-R4")
+>
+>You're just only adding node labels, what does this actually fix?!?
+>
+>Besides, I could tell you to remove the Fixes tags, but then, there's sti=
+ll nothing
+>using those node labels - so there's nothing justifying this addition, at=
+ all=2E
+>
+>I guess that you want to use those (bar the cpu[0-3] labels, which you're=
+ adding
+>because=2E=2E=2E uhh=2E=2E why?) from some board DT=2E=2E=2E so please ju=
+st do that: send a commit
+>adding your board DT and adding the required node label(s) here as a cons=
+equence=2E
 
-Since commit 6035b6804bdf ("perf cs-etm: Support dummy address value for
-CS_ETM_TRACE_ON packet") we've used 0 as an externally visible "not set"
-address value. For consistency reasons and to not make exceptions look
-like an error, change them to use 0 too.
+Currently i need these labels in uboot to add additional properties (e=2Eg=
+=2E hwver to cpu-nodes) and linking the existing nodes (clocks to eth node)=
+ to some added in uboot overlay=2E
 
-This is particularly visible when doing userspace only tracing because
-trace is disabled when jumping to the kernel, causing the flush and then
-forcing the last exception packet to be emitted as a branch. With kernel
-trace included, there is no flush so exception packets don't generate
-samples until the next range packet and they'll pick up the correct
-address.
+Currently we face some hen-egg issue as support is in mainline uboot and w=
+e forced to move to of_upstream to add pcie support and maybe more,but in m=
+ainline linux we miss nearly all nodes we have in our private repos=2E=2E=
+=2Ebut i'm busy in getting of_upstream in uboot working basicly=2E
 
-Before:
-
-  $ perf record -e cs_etm//u -- stress -i 1 -t 1
-  $ perf script -F comm,ip,addr,flags
-
-  stress   syscall                    ffffb7eedbc0 => deadbeefdeadbeef
-  stress   syscall                    ffffb7f14a14 => deadbeefdeadbeef
-  stress   syscall                    ffffb7eedbc0 => deadbeefdeadbeef
-
-After:
-
-  stress   syscall                    ffffb7eedbc0 =>                0
-  stress   syscall                    ffffb7f14a14 =>                0
-  stress   syscall                    ffffb7eedbc0 =>                0
-
-Signed-off-by: James Clark <james.clark@linaro.org>
+>Cheers,
+>Angelo
+>
+>> ---
+>>   arch/arm64/boot/dts/mediatek/mt7988a=2Edtsi | 32 +++++++++++---------=
 ---
- tools/perf/util/cs-etm.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+>>   1 file changed, 16 insertions(+), 16 deletions(-)
+>>=20
+>> diff --git a/arch/arm64/boot/dts/mediatek/mt7988a=2Edtsi b/arch/arm64/b=
+oot/dts/mediatek/mt7988a=2Edtsi
+>> index aa728331e876=2E=2E9ced005b1595 100644
+>> --- a/arch/arm64/boot/dts/mediatek/mt7988a=2Edtsi
+>> +++ b/arch/arm64/boot/dts/mediatek/mt7988a=2Edtsi
+>> @@ -14,28 +14,28 @@ cpus {
+>>   		#address-cells =3D <1>;
+>>   		#size-cells =3D <0>;
+>>   -		cpu@0 {
+>> +		cpu0: cpu@0 {
+>>   			compatible =3D "arm,cortex-a73";
+>>   			reg =3D <0x0>;
+>>   			device_type =3D "cpu";
+>>   			enable-method =3D "psci";
+>>   		};
+>>   -		cpu@1 {
+>> +		cpu1: cpu@1 {
+>>   			compatible =3D "arm,cortex-a73";
+>>   			reg =3D <0x1>;
+>>   			device_type =3D "cpu";
+>>   			enable-method =3D "psci";
+>>   		};
+>>   -		cpu@2 {
+>> +		cpu2: cpu@2 {
+>>   			compatible =3D "arm,cortex-a73";
+>>   			reg =3D <0x2>;
+>>   			device_type =3D "cpu";
+>>   			enable-method =3D "psci";
+>>   		};
+>>   -		cpu@3 {
+>> +		cpu3: cpu@3 {
+>>   			compatible =3D "arm,cortex-a73";
+>>   			reg =3D <0x3>;
+>>   			device_type =3D "cpu";
+>> @@ -43,7 +43,7 @@ cpu@3 {
+>>   		};
+>>   	};
+>>   -	oscillator-40m {
+>> +	system_clk: oscillator-40m {
+>>   		compatible =3D "fixed-clock";
+>>   		clock-frequency =3D <40000000>;
+>>   		#clock-cells =3D <0>;
+>> @@ -86,7 +86,7 @@ infracfg: clock-controller@10001000 {
+>>   			#clock-cells =3D <1>;
+>>   		};
+>>   -		clock-controller@1001b000 {
+>> +		topckgen: clock-controller@1001b000 {
+>>   			compatible =3D "mediatek,mt7988-topckgen", "syscon";
+>>   			reg =3D <0 0x1001b000 0 0x1000>;
+>>   			#clock-cells =3D <1>;
+>> @@ -99,13 +99,13 @@ watchdog: watchdog@1001c000 {
+>>   			#reset-cells =3D <1>;
+>>   		};
+>>   -		clock-controller@1001e000 {
+>> +		apmixedsys: clock-controller@1001e000 {
+>>   			compatible =3D "mediatek,mt7988-apmixedsys";
+>>   			reg =3D <0 0x1001e000 0 0x1000>;
+>>   			#clock-cells =3D <1>;
+>>   		};
+>>   -		pwm@10048000 {
+>> +		pwm: pwm@10048000 {
+>>   			compatible =3D "mediatek,mt7988-pwm";
+>>   			reg =3D <0 0x10048000 0 0x1000>;
+>>   			clocks =3D <&infracfg CLK_INFRA_66M_PWM_BCK>,
+>> @@ -124,7 +124,7 @@ pwm@10048000 {
+>>   			status =3D "disabled";
+>>   		};
+>>   -		i2c@11003000 {
+>> +		i2c0: i2c@11003000 {
+>>   			compatible =3D "mediatek,mt7981-i2c";
+>>   			reg =3D <0 0x11003000 0 0x1000>,
+>>   			      <0 0x10217080 0 0x80>;
+>> @@ -137,7 +137,7 @@ i2c@11003000 {
+>>   			status =3D "disabled";
+>>   		};
+>>   -		i2c@11004000 {
+>> +		i2c1: i2c@11004000 {
+>>   			compatible =3D "mediatek,mt7981-i2c";
+>>   			reg =3D <0 0x11004000 0 0x1000>,
+>>   			      <0 0x10217100 0 0x80>;
+>> @@ -150,7 +150,7 @@ i2c@11004000 {
+>>   			status =3D "disabled";
+>>   		};
+>>   -		i2c@11005000 {
+>> +		i2c2: i2c@11005000 {
+>>   			compatible =3D "mediatek,mt7981-i2c";
+>>   			reg =3D <0 0x11005000 0 0x1000>,
+>>   			      <0 0x10217180 0 0x80>;
+>> @@ -163,7 +163,7 @@ i2c@11005000 {
+>>   			status =3D "disabled";
+>>   		};
+>>   -		usb@11190000 {
+>> +		ssusb0: usb@11190000 {
+>>   			compatible =3D "mediatek,mt7988-xhci", "mediatek,mtk-xhci";
+>>   			reg =3D <0 0x11190000 0 0x2e00>,
+>>   			      <0 0x11193e00 0 0x0100>;
+>> @@ -177,7 +177,7 @@ usb@11190000 {
+>>   			clock-names =3D "sys_ck", "ref_ck", "mcu_ck", "dma_ck", "xhci_ck";
+>>   		};
+>>   -		usb@11200000 {
+>> +		ssusb1: usb@11200000 {
+>>   			compatible =3D "mediatek,mt7988-xhci", "mediatek,mtk-xhci";
+>>   			reg =3D <0 0x11200000 0 0x2e00>,
+>>   			      <0 0x11203e00 0 0x0100>;
+>> @@ -191,21 +191,21 @@ usb@11200000 {
+>>   			clock-names =3D "sys_ck", "ref_ck", "mcu_ck", "dma_ck", "xhci_ck";
+>>   		};
+>>   -		clock-controller@11f40000 {
+>> +		xfi_pll: clock-controller@11f40000 {
+>>   			compatible =3D "mediatek,mt7988-xfi-pll";
+>>   			reg =3D <0 0x11f40000 0 0x1000>;
+>>   			resets =3D <&watchdog 16>;
+>>   			#clock-cells =3D <1>;
+>>   		};
+>>   -		clock-controller@15000000 {
+>> +		ethsys: clock-controller@15000000 {
+>>   			compatible =3D "mediatek,mt7988-ethsys", "syscon";
+>>   			reg =3D <0 0x15000000 0 0x1000>;
+>>   			#clock-cells =3D <1>;
+>>   			#reset-cells =3D <1>;
+>>   		};
+>>   -		clock-controller@15031000 {
+>> +		ethwarp: clock-controller@15031000 {
+>>   			compatible =3D "mediatek,mt7988-ethwarp";
+>>   			reg =3D <0 0x15031000 0 0x1000>;
+>>   			#clock-cells =3D <1>;
+>
+>
 
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 5e9fbcfad7d4..d3e9c64d17d4 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -1267,8 +1267,12 @@ static inline int cs_etm__t32_instr_size(struct cs_etm_queue *etmq,
- 
- static inline u64 cs_etm__first_executed_instr(struct cs_etm_packet *packet)
- {
--	/* Returns 0 for the CS_ETM_DISCONTINUITY packet */
--	if (packet->sample_type == CS_ETM_DISCONTINUITY)
-+	/*
-+	 * Return 0 for packets that have no addresses so that CS_ETM_INVAL_ADDR doesn't
-+	 * appear in samples.
-+	 */
-+	if (packet->sample_type == CS_ETM_DISCONTINUITY ||
-+	    packet->sample_type == CS_ETM_EXCEPTION)
- 		return 0;
- 
- 	return packet->start_addr;
--- 
-2.34.1
 
+regards Frank
 
