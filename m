@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-259384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39217939528
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 23:07:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8304C939522
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 23:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D542CB217D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:07:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F67B28238E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4362745BE3;
-	Mon, 22 Jul 2024 21:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A0C45030;
+	Mon, 22 Jul 2024 21:07:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LT+sorIw"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DYIrgQ4u"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DEF38DC7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C51B383B1;
 	Mon, 22 Jul 2024 21:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721682425; cv=none; b=J7ykZ/AMFkJDczM2CeqgDNC0OJBHI/mgcKbAn5uFuvIkc/RfGKsEQYQIB91t+iGRPjE8iBLbYWnw/+97LyLCvGK5qbpaY13LHZ7XWN5UqBxoT0PcpSBHSpycVJpuK9EcRjkjV7OjJBVx1u7HLpFfl9lW0OGjHYZrjrAqEii16zs=
+	t=1721682425; cv=none; b=Ya1Khr9eKZbckgd8AxdnwVaZnW5jOHLVJ19jqQYmh1qtfhAwjyFC+AglU8mofU/xbhwE2cbvhmeaMlVQVcAODNjFBCAb1AFmCD1Pov+cpn/zHFjQS9psduq6zuQxvEfH/2pGAAcNgQ3rAdEFeufJdoIS5KQBQd4/GgtKWZp2odA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721682425; c=relaxed/simple;
-	bh=VAfU6gzUiAe44BSUbXq2+RC8Fp/CWug4QPOlPPDUjyo=;
+	bh=CLDzciEero0wXQ8D8VOvwQtfDeWAgDoyzgMa/VmjAO0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=eorxyK/0nrltH9UpYu0y/bXcp6+YU31Tr/tNY4/9ieUuo22fTRza9z8Pl8PfwLNrPm6GhCXap5OGvoJS8VjdAEni+LeGjSPqynBteJhv+pFwYfydyBR+niSw4ure12uoLVoR8c9/lPEXmXSJ5rlR5C0L3nmjSyp17h/kQugC0PU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LT+sorIw; arc=none smtp.client-ip=198.175.65.13
+	 MIME-Version; b=uaOQG0JEmSccjLOelClvb4fgr2QKn2V8aWHw67RdgimKUKDOMfpZ0pxhGa1EYspP6VTMnd9MjFp6AqGzV11bul+YiKllSWc8RLe4fL2txS2j9UT/RxyIH72c7sEfwGWEsj2PGbHG4INTtcnYOiLbGmRYVXv3TGH5+jPRacePTfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DYIrgQ4u; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721682424; x=1753218424;
+  t=1721682423; x=1753218423;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=VAfU6gzUiAe44BSUbXq2+RC8Fp/CWug4QPOlPPDUjyo=;
-  b=LT+sorIw30NfqLWihneFKCOGehzfFSCGvB4yHnJ9on3T2rSpijyOtabW
-   zxb65JnraTZ6logat6UJO/TQWMgW6RsJ1YSu4m1bSOgehPZOXhPYHcqqh
-   SAORWKKfDxrAdAnKRMusvID3wvcYtvQdujNZ3M2+Ddxnz9t7guCpucAzE
-   NeK35/vW+9mTV/OAsQJgrvootT8MPoQp7XCKMWw73LlXJl6BJptQDEQKr
-   Scn1RUpCEID1Bvc5fcrOKV0p05qsHzCSpQ8/krCuE4wphGIPEDHMvPRoV
-   g8B0zMe4Z+mZhI1+c3IpaBHo4UOn7WkePQDBwApw37gzYZmHJEKpQGHDf
-   w==;
-X-CSE-ConnectionGUID: felPt+bSQWCuDUY0aH9MYA==
-X-CSE-MsgGUID: FV1j0LdHQyu+jhupLlNZqQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11141"; a="30428296"
+  bh=CLDzciEero0wXQ8D8VOvwQtfDeWAgDoyzgMa/VmjAO0=;
+  b=DYIrgQ4uAMkUf5UuLPLb3FYWG5rIJ0QCl/UKJ3j05nzHWI5WZAqcYERl
+   mdFvjjsQ8WrSf42tFV0Zd3Rq/4MF6U933tw/klyJuha3d0odOHlFw7jpC
+   1r+uiPrvdTNQZncS0paVuuKLduJZOgqdfFbRj3PQbKxasQjxGFIVBCFEV
+   0motSB9slxF/iUzzgk6A9bDxBRC3rt0LsbhAMxY6+ihxLcqkFbtsSTqCd
+   pt06S3I9H7pO5b92PM3uSkLhGGmxMqcNlvPCItIPX1/XvSNUiCU5KPzYo
+   daM5Dw5ej6uuhrIK3esByrU4dX+XWx+NU299Onl3Fiw9TQgzTsiXerJP1
+   Q==;
+X-CSE-ConnectionGUID: T8LC4ZEVR9W67CzWxLz6gg==
+X-CSE-MsgGUID: 1OCk9NbmSK+Bj/Ph/E1SRQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11141"; a="30428302"
 X-IronPort-AV: E=Sophos;i="6.09,229,1716274800"; 
-   d="scan'208";a="30428296"
+   d="scan'208";a="30428302"
 Received: from fmviesa006.fm.intel.com ([10.60.135.146])
   by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 14:07:01 -0700
-X-CSE-ConnectionGUID: DkVx8NGRRuOCzUS/0sNtzQ==
-X-CSE-MsgGUID: gWSi5Rj6T3m97o+tGcOgvA==
+X-CSE-ConnectionGUID: hu99ZmEUQSqsTKwyznoSWg==
+X-CSE-MsgGUID: Nmi7OYq1T/WIR85QVowNHQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,229,1716274800"; 
-   d="scan'208";a="51653288"
+   d="scan'208";a="51653292"
 Received: from lucas-s2600cw.jf.intel.com ([10.165.21.196])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 14:07:00 -0700
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 14:07:01 -0700
 From: Lucas De Marchi <lucas.demarchi@intel.com>
 To: intel-gfx@lists.freedesktop.org,
 	linux-perf-users@vger.kernel.org
@@ -66,11 +66,10 @@ Cc: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
 	Ingo Molnar <mingo@redhat.com>,
 	Arnaldo Carvalho de Melo <acme@kernel.org>,
 	linux-kernel@vger.kernel.org,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 2/7] drm/i915/pmu: Fix crash due to use-after-free
-Date: Mon, 22 Jul 2024 14:06:43 -0700
-Message-ID: <20240722210648.80892-3-lucas.demarchi@intel.com>
+	Lucas De Marchi <lucas.demarchi@intel.com>
+Subject: [PATCH 3/7] drm/i915/pmu: Use event_to_pmu()
+Date: Mon, 22 Jul 2024 14:06:44 -0700
+Message-ID: <20240722210648.80892-4-lucas.demarchi@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240722210648.80892-1-lucas.demarchi@intel.com>
 References: <20240722210648.80892-1-lucas.demarchi@intel.com>
@@ -82,109 +81,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When an i915 PMU counter is enabled and the driver is then unbound, the
-PMU will be unregistered via perf_pmu_unregister(), however the event
-will still be alive. i915 currently tries to deal with this situation
-by:
+i915 pointer is not needed in this function and all the others simply
+calculate the i915_pmu container based on the event->pmu. Follow the
+same logic as in other functions.
 
-	a) Marking the pmu as "closed" and shortcut the calls from perf
-	b) Taking a reference from i915, that is put back when the event
-	   is destroyed.
-	c) Setting event_init to NULL to avoid any further event
-
-(a) is ugly, but may be left as is since it protects not trying to
-access the HW that is now gone. Unless a pmu driver can call
-perf_pmu_unregister() and not receive any more calls, it's a necessary
-ugliness.
-
-(b) doesn't really work: when the event is destroyed and the i915 ref is
-put it may free the i915 object, that contains the pmu, not only the
-event. After event->destroy() callback, perf still expects the pmu
-object to be alive.
-
-Instead of pigging back on the event->destroy() to take and put the
-device reference, implement the new get()/put() on the pmu object for
-that purpose.
-
-(c) is not entirely correct as from the perf POV it's not an optional
-call: perf would just dereference the NULL pointer. However this also
-protects other entrypoints in i915_pmu. A new event creation from perf
-after the pmu has been unregistered should not be possible anyway:
-perf_init_event() bails out when not finding the pmu. This may be
-cleaned up later.
-
-Cc: <stable@vger.kernel.org> # 5.11+
 Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
 ---
- drivers/gpu/drm/i915/i915_pmu.c | 34 +++++++++++++++++++--------------
- 1 file changed, 20 insertions(+), 14 deletions(-)
+ drivers/gpu/drm/i915/i915_pmu.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpu/drm/i915/i915_pmu.c b/drivers/gpu/drm/i915/i915_pmu.c
-index 21eb0c5b320d..cb5f6471ec6e 100644
+index cb5f6471ec6e..3a8bd11b87e7 100644
 --- a/drivers/gpu/drm/i915/i915_pmu.c
 +++ b/drivers/gpu/drm/i915/i915_pmu.c
-@@ -514,15 +514,6 @@ static enum hrtimer_restart i915_sample(struct hrtimer *hrtimer)
- 	return HRTIMER_RESTART;
- }
+@@ -820,15 +820,14 @@ static void i915_pmu_event_start(struct perf_event *event, int flags)
  
--static void i915_pmu_event_destroy(struct perf_event *event)
--{
--	struct i915_pmu *pmu = event_to_pmu(event);
--	struct drm_i915_private *i915 = pmu_to_i915(pmu);
--
--	drm_WARN_ON(&i915->drm, event->parent);
--
--	drm_dev_put(&i915->drm);
--}
+ static void i915_pmu_event_stop(struct perf_event *event, int flags)
+ {
+-	struct drm_i915_private *i915 =
+-		container_of(event->pmu, typeof(*i915), pmu.base);
+-	struct i915_pmu *pmu = &i915->pmu;
++	struct i915_pmu *pmu = event_to_pmu(event);
  
- static int
- engine_event_status(struct intel_engine_cs *engine,
-@@ -628,11 +619,6 @@ static int i915_pmu_event_init(struct perf_event *event)
- 	if (ret)
- 		return ret;
+ 	if (pmu->closed)
+ 		goto out;
  
--	if (!event->parent) {
--		drm_dev_get(&i915->drm);
--		event->destroy = i915_pmu_event_destroy;
--	}
--
- 	return 0;
- }
- 
-@@ -872,6 +858,24 @@ static int i915_pmu_event_event_idx(struct perf_event *event)
- 	return 0;
- }
- 
-+static struct pmu *i915_pmu_get(struct pmu *base)
-+{
-+	struct i915_pmu *pmu = container_of(base, struct i915_pmu, base);
-+	struct drm_i915_private *i915 = pmu_to_i915(pmu);
+ 	if (flags & PERF_EF_UPDATE)
+ 		i915_pmu_event_read(event);
 +
-+	drm_dev_get(&i915->drm);
-+
-+	return base;
-+}
-+
-+static void i915_pmu_put(struct pmu *base)
-+{
-+	struct i915_pmu *pmu = container_of(base, struct i915_pmu, base);
-+	struct drm_i915_private *i915 = pmu_to_i915(pmu);
-+
-+	drm_dev_put(&i915->drm);
-+}
-+
- struct i915_str_attribute {
- 	struct device_attribute attr;
- 	const char *str;
-@@ -1299,6 +1303,8 @@ void i915_pmu_register(struct drm_i915_private *i915)
- 	pmu->base.stop		= i915_pmu_event_stop;
- 	pmu->base.read		= i915_pmu_event_read;
- 	pmu->base.event_idx	= i915_pmu_event_event_idx;
-+	pmu->base.get		= i915_pmu_get;
-+	pmu->base.put		= i915_pmu_put;
+ 	i915_pmu_disable(event);
  
- 	ret = perf_pmu_register(&pmu->base, pmu->name, -1);
- 	if (ret)
+ out:
 -- 
 2.43.0
 
