@@ -1,95 +1,213 @@
-Return-Path: <linux-kernel+bounces-258721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0B5C938C21
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:34:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9653938BA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:58:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 766A0281B85
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:33:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 556681F21AB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:58:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E8116C6A4;
-	Mon, 22 Jul 2024 09:33:48 +0000 (UTC)
-Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9E716A945
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70C116A938;
+	Mon, 22 Jul 2024 08:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="tgCzFzSZ"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924F5182BD;
+	Mon, 22 Jul 2024 08:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721640828; cv=none; b=MlgZTmxrYgpH2/PF6xhfIYhweY7UF5QFp8ha8YhXYYfDlbC0vhpUuJXCn7gnCPJyA4OtPKiLF+yUtJfnBg5Mfei3bsrN9Qd3qcwuVppu21Tu6S5w15nKEGHQ30luz/Pazvrh0R7x0skznQZuxN3IL2KMHcmeyU1N7/z/nnacuWY=
+	t=1721638678; cv=none; b=SKNMaDgi+8T6iu6Sa2+3sdksJxWZfpL4Gupt4U26AuuNPbhGzxniRy+G/r3HZL2B9DXFvkrvT/WIbcY5n4g12MdT2CDUtWNKNDdtoMHlZRW+Zj3EnKAZh/qOUgKLwSanQ/9rZ+A7c473B/w5T1n3ACHOlIs9XTlA+DU6kUeSkoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721640828; c=relaxed/simple;
-	bh=74sKzrcRLF3sE51Un0CO6Zd7Kq9R6SfffjcOrEAVLfU=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=DFMVJ141ntOP3GW2HnX5rE9Y/rRDevmKXTOnQT2iev3NAmZ/nGZtFMbw2VlyBocL6lqWHCVGN9DsJPrxIPqanSQ5MksavKDpzpr80xLnO7PaAfb5UNmALaVIMhCEMD6CmKhjinfFCCQEkEz+x9oI281DS2wLzGygGd9OlCwLvTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from [10.130.0.149] (unknown [113.200.148.30])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8CxJMX_Hp5mmO5TAA--.45177S3;
-	Mon, 22 Jul 2024 16:57:36 +0800 (CST)
-Subject: Re: arch/loongarch/kernel/alternative.o: warning: objtool:
- apply_alternatives+0xa0: unreachable instruction
-To: kernel test robot <lkp@intel.com>
-References: <202407221208.6SSBeN9H-lkp@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
- Huacai Chen <chenhuacai@kernel.org>, Jinyang He <hejinyang@loongson.cn>,
- Youling Tang <tangyouling@kylinos.cn>
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <a1871e00-936c-8487-a22a-efe3cc4c53a4@loongson.cn>
-Date: Mon, 22 Jul 2024 16:57:35 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+	s=arc-20240116; t=1721638678; c=relaxed/simple;
+	bh=6ngb144Y3HqtnibA0+DkzecN3nyfkEIsKVefuUcYsK8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WqCBISUMbQ+mkIx36X9khENV3ixdioOpEgcusK5eblNKpBzseBc2Gkpq+/y5eXqUjIyQPz6lj23B63LmX2gR8cYY/kfLoavpyrbRlnlSY1zGgPktauGymMLGmqu+Z+R9x6S9Fl7f3g1t/MWtLvx0vVLGpkh81YqALn31ePzWw2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=tgCzFzSZ; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (mob-5-90-43-135.net.vodafone.it [5.90.43.135])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DD9AB3E;
+	Mon, 22 Jul 2024 10:57:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1721638633;
+	bh=6ngb144Y3HqtnibA0+DkzecN3nyfkEIsKVefuUcYsK8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tgCzFzSZFYqn+cUf6+sL+vtk0q2mv2GiCGVm4eB5JVd6Dzcsw1JK+Fmc+ZHKchgJT
+	 gfsjQ3k7zjyaEGZm4YVPWcfOPjmiD5aSDf/yGz+CM0HZj/mu9Jtxx6hZpBae6otG3/
+	 6qyMdwaYKrV7mALqBXGS0zRkZWGUg5/G6vBm1LJ4=
+Date: Mon, 22 Jul 2024 10:57:50 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
+	Jack Zhu <jack.zhu@starfivetech.com>, Keith Zhao <keith.zhao@starfivetech.com>, 
+	Jayshri Pawar <jpawar@cadence.com>, Jai Luthra <j-luthra@ti.com>, 
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>
+Subject: Re: =?utf-8?B?5Zue5aSNOiBbUEFUQw==?= =?utf-8?Q?H?= v2 5/5] staging:
+ media: starfive: Add system PM support
+Message-ID: <zmuytuvsjpe4rx7oak762onncax7ko5ljfzber3dsirrpbpvne@lr7t2ultlsdk>
+References: <20240718032834.53876-1-changhuang.liang@starfivetech.com>
+ <20240718032834.53876-6-changhuang.liang@starfivetech.com>
+ <ecqbazcjtzat7yxwh7uuerjrrh3umpwutiwha2zo5njmwnj25g@ocpntbuecb3z>
+ <ZQ0PR01MB13020F080F8D1B024D211971F2AD2@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <202407221208.6SSBeN9H-lkp@intel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:AQAAf8CxJMX_Hp5mmO5TAA--.45177S3
-X-Coremail-Antispam: 1UD129KBjvJXoWrZr17CF1rtw1UCr4fGF4Uurg_yoW8JrW5pF
-	4fXFWYvF4rXrsYga17tw1DuF1FqanxJ3W3KrykZr4UCF4qvr12krySkrW3ZF9F9wsYgry8
-	Aw4xX3W3KF1jv3JanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCY02Avz4vE14v_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
-	1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
-	14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7
-	IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E
-	87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73Uj
-	IFyTuYvjfU0yxRDUUUU
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZQ0PR01MB13020F080F8D1B024D211971F2AD2@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
 
-On 07/22/2024 12:38 PM, kernel test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   7846b618e0a4c3e08888099d1d4512722b39ca99
-> commit: cb8a2ef0848ca80d67d6d56e2df757cfdf6b3355 LoongArch: Add ORC stack unwinder support
-> date:   4 months ago
-> config: loongarch-randconfig-001-20240722 (https://download.01.org/0day-ci/archive/20240722/202407221208.6SSBeN9H-lkp@intel.com/config)
-> compiler: loongarch64-linux-gcc (GCC) 14.1.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240722/202407221208.6SSBeN9H-lkp@intel.com/reproduce)
+Hi Changhuang
+
+On Fri, Jul 19, 2024 at 02:08:20AM GMT, Changhuang Liang wrote:
+> Hi Jacopo,
 >
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202407221208.6SSBeN9H-lkp@intel.com/
+> Thanks for your comments.
+>
+> >
+> > Hi Changhuang
+> >
+> > On Wed, Jul 17, 2024 at 08:28:34PM GMT, Changhuang Liang wrote:
+> > > This patch implements system suspend and system resume operation for
+> > > StarFive Camera Subsystem. It supports hibernation during streaming
+> > > and restarts streaming at system resume time.
+> > >
+> > > Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> > > ---
+> > >  .../staging/media/starfive/camss/stf-camss.c  | 49
+> > > +++++++++++++++++++
+> > >  1 file changed, 49 insertions(+)
+> > >
+> > > diff --git a/drivers/staging/media/starfive/camss/stf-camss.c
+> > > b/drivers/staging/media/starfive/camss/stf-camss.c
+> > > index fecd3e67c7a1..8dcd35aef69d 100644
+> > > --- a/drivers/staging/media/starfive/camss/stf-camss.c
+> > > +++ b/drivers/staging/media/starfive/camss/stf-camss.c
+> > > @@ -416,10 +416,59 @@ static int __maybe_unused
+> > stfcamss_runtime_resume(struct device *dev)
+> > >  	return 0;
+> > >  }
+> > >
+> > > +static int __maybe_unused stfcamss_suspend(struct device *dev) {
+> > > +	struct stfcamss *stfcamss = dev_get_drvdata(dev);
+> > > +	struct stfcamss_video *video;
+> >
+> > Can be declared inside the for loop
+> >
+> > > +	unsigned int i;
+> > > +
+> > > +	for (i = 0; i < STF_CAPTURE_NUM; ++i) {
+> >
+> > Likewise, if you like it, you can
+> >
+> >         for (unsigned int i...
+> >
+> > > +		video = &stfcamss->captures[i].video;
+> > > +		if (video->vb2_q.streaming) {
+> > > +			video->ops->stop_streaming(video);
+> > > +			video->ops->flush_buffers(video, VB2_BUF_STATE_ERROR);
+> > > +		}
+> > > +	}
+> > > +
+> > > +	return pm_runtime_force_suspend(dev); }
+> > > +
+> > > +static int __maybe_unused stfcamss_resume(struct device *dev) {
+> > > +	struct stfcamss *stfcamss = dev_get_drvdata(dev);
+> > > +	struct stf_isp_dev *isp_dev = &stfcamss->isp_dev;
+> > > +	struct v4l2_subdev_state *sd_state;
+> > > +	struct stfcamss_video *video;
+> > > +	unsigned int i;
+> >
+> > same here
+> >
+> > > +	int ret;
+> > > +
+> > > +	ret = pm_runtime_force_resume(dev);
+> > > +	if (ret < 0) {
+> > > +		dev_err(dev, "Failed to resume\n");
+> > > +		return ret;
+> > > +	}
+> > > +
+> > > +	sd_state = v4l2_subdev_lock_and_get_active_state(&isp_dev->subdev);
+> > > +
+> > > +	if (isp_dev->streaming)
+> > > +		stf_isp_stream_on(isp_dev, sd_state);
+> >
+> > I was wondering if you shouldn't propagate start_streaming along the whole
+> > pipline, but I presume the connected subdevs have to handle resuming
+> > streaming after a system resume themselves ?
+> >
+>
+> Currently our Camera subsystem contains ISP subdev , capture_raw video device, and capture_yuv
+> video device. So you can see only one system PM hook can be used by them.
+>
+
+Sorry, maybe I was not clear (and I was probably confused as well).
+
+You are right this is the main entry point for system sleep PM hooks
+
+> >
+> > > +
+> > > +	v4l2_subdev_unlock_state(sd_state);
+> > > +
+> > > +	for (i = 0; i < STF_CAPTURE_NUM; ++i) {
+> > > +		video = &stfcamss->captures[i].video;
+> > > +		if (video->vb2_q.streaming)
+> > > +			video->ops->start_streaming(video);
+
+And here you propagate the start_streaming (and stop_streaming on
+suspend) call to all your video devices.
+
+I see your video devices propagating the s_stream call to their
+'source_subdev'. And your ISP subdev doing the same in
+'isp_set_stream()'.
+
+According to the media graph in
+Documentation/admin-guide/media/starfive_camss_graph.dot
+
+your 'capture_yuv' video device is connected to your ISP, and your
+'capture_raw' video device is connected to your 'CSI-RX' subdev.
+
+If my understanding is correct, your CSI-RX subdev will receive 2
+calls to s_stream() (one from the ISP subdev and one from the
+'capture_raw' video device). Am I mistaken maybe ?
+
+Also, if the CSI-RX subdev is already part of a capture pipeline, as
+Tomi pointed out in his review of patch [2/5] it doesn't need to
+implement handlers for system suspend/resume.
 
 
-A quick test shows that the objtool warnings are related with compiler
-optimization level, it uses -Os (CONFIG_CC_OPTIMIZE_FOR_SIZE=y) rather
-than the default -O2 (CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE is not set)
-in the randconfig. I will keep digging.
+> >
+> > You can use vb2_is_streaming() maybe.
 
-Thanks,
-Tiezhu
+I was suggesting to use vb2_is_streaming() instead of openly code
 
+		if (video->vb2_q.streaming)
+
+> > If the queue is streaming, do you need to keep a 'streaming' flag for the isp ?
+> > Probably yes, as the ISP subdev is used by several video nodes ?
+> >
+>
+> I set the "streaming" flag in PATCH 4, so it does not affect that even if several video
+> nodes use it.
+
+Yeah I was wondering if you could have saved manually tracking the
+streaming state in the isp (re-reading the patches, where do you
+actually use the 'streaming' flag in the ISP subdev ?) by tracking the
+vb2_queue state.
+
+>
+> Regards,
+> Changhuang
 
