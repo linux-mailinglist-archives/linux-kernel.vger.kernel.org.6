@@ -1,195 +1,73 @@
-Return-Path: <linux-kernel+bounces-259004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45F9E938FDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:25:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2A95938FCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D2C81C213C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:25:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3065F1C21216
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1A316D9B5;
-	Mon, 22 Jul 2024 13:24:54 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3750416D32D;
+	Mon, 22 Jul 2024 13:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dzfTQGBP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CB816A38B;
-	Mon, 22 Jul 2024 13:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DFF116938C
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 13:18:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721654694; cv=none; b=tOhKFym4tbClfS96cWtIpq+c+YwCapg/3UGjB0j4hakQAUkJHSuuNLD5t18oxQMqS6sYS+RhNFAKaR5F4pAcrED8CLEoIae6cYBcio2tvQZyceEik+1oPQxjndw8xCRheYQlGIYVkkfx/CaugpRNfTRn+U6R0CHkTybcZiJpNP0=
+	t=1721654337; cv=none; b=Q+xxP5pK7pnHYU/YL4G7jkF5stC10vVdu6RxabJSaFYJ1fDOKTP0kMgY8p+n8mfH9tXVJYmLFMs1SytZW3XQnqQSO1aPSEwuhH+7MaWhkYu7cVvjZHcy6H6i3/qFxVAIj0i1fZwYmeH48PCVM/+Fh6Z4ZTINDTys3K3ykyAdFsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721654694; c=relaxed/simple;
-	bh=2BpJsPdlxUMrpsvgLLfigFUTFaZc7fnvSQoalYgm214=;
+	s=arc-20240116; t=1721654337; c=relaxed/simple;
+	bh=aKQylPPGV/2YWPrHnL/16+8EB6CzBmiRaNKBmXR7vEI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AUcvrrMzSVVNdh1arPXLYqvkJybmA4dNNENs2a93Fu8M7RQHCp/j4whJTA0GGV4IPBAcxzVsrF7mmXalreaWUDNgrjkSysgJu8Tgty+LyMPyam9UCYBF8bfAJ2wT2WEHoEdTUIwSYXI2z/1FmLCxWk/C16TjL4YkIiIqydptj50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 39FF8100DA1C4;
-	Mon, 22 Jul 2024 15:17:34 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id E785A9F86C; Mon, 22 Jul 2024 15:17:33 +0200 (CEST)
-Date: Mon, 22 Jul 2024 15:17:33 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Stefan Berger <stefanb@linux.ibm.com>
-Cc: keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-	davem@davemloft.net, herbert@gondor.apana.org.au,
-	dhowells@redhat.com, zohar@linux.ibm.com, jarkko@kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	patrick@puiterwijk.org
-Subject: Re: [PATCH v12 02/10] crypto: Add support for ECDSA signature
- verification
-Message-ID: <Zp5b7ZQaXfGbkCVC@wunner.de>
-References: <20210316210740.1592994-1-stefanb@linux.ibm.com>
- <20210316210740.1592994-3-stefanb@linux.ibm.com>
- <ZpfuqeSVC47jqme2@wunner.de>
- <6eee0c55-40cd-4e7b-8819-1a4c9596062a@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PVakuPZztEoFwLe2fFnYniGyC1TjXSR4u9gWs6x8a5VLxM1wXWG4S48tWd8qBddK/zla1DLWw9LdE/t4mvIWRYkerVnKV44PgMhlLjaAgHqii8ACtWf+KKjobsS3kU67nnDX2ZqfSAgKIf6jgSpM4+N5my4ZZlkDnAK3jE7c/Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dzfTQGBP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB46CC116B1;
+	Mon, 22 Jul 2024 13:18:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721654337;
+	bh=aKQylPPGV/2YWPrHnL/16+8EB6CzBmiRaNKBmXR7vEI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dzfTQGBPGW+baBZGEmPjvM3qyywuCbM/bWs5GY4igo/XYPPg3mKMPZWwskaUbtBsB
+	 nzv4fN3Dp57ysYBIvK9PO+rJ36HVdPxuJ3jFoV1iYupnE5jWFivG0S+3YPVnaDGfBi
+	 LizxJMlYA1zW6i/uFngY9SwQiVMDMi5+77tYvwozYcgBqNNMQKprK0va6zXCWOMo3s
+	 kLkxst3bg7AitQNrt5rwSiUcr60zUmMN5UssrjfKsqNlJpZmGrx91IqaSGYuYj1KOb
+	 MO7MSmLAA7ugoyi/eb/vakywjMIiEb01cBZQH6RbxQztIMh+2a2JQdTa3dLleM8KcW
+	 vtNHQYYzQ4Pdg==
+Date: Mon, 22 Jul 2024 15:18:54 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Bert Karwatzki <spasswolf@web.de>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>, tglx@linutronix.de,
+	linux-kernel@vger.kernel.org
+Subject: Re: commit 7a5ee4aa61af causes warning on boot
+Message-ID: <Zp5cPikQUTgQxcHS@localhost.localdomain>
+References: <20240722123912.3602-1-spasswolf@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <6eee0c55-40cd-4e7b-8819-1a4c9596062a@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240722123912.3602-1-spasswolf@web.de>
 
-On Mon, Jul 22, 2024 at 08:19:41AM -0400, Stefan Berger wrote:
-> On 7/17/24 12:17, Lukas Wunner wrote:
-> > On Tue, Mar 16, 2021 at 05:07:32PM -0400, Stefan Berger wrote:
-> > > +/*
-> > > + * Get the r and s components of a signature from the X509 certificate.
-> > > + */
-> > > +static int ecdsa_get_signature_rs(u64 *dest, size_t hdrlen, unsigned char tag,
-> > > +				  const void *value, size_t vlen, unsigned int ndigits)
-> > > +{
-> > > +	size_t keylen = ndigits * sizeof(u64);
-> > > +	ssize_t diff = vlen - keylen;
-> > > +	const char *d = value;
-> > > +	u8 rs[ECC_MAX_BYTES];
-> > > +
-> > > +	if (!value || !vlen)
-> > > +		return -EINVAL;
-> > > +
-> > > +	/* diff = 0: 'value' has exacly the right size
-> > > +	 * diff > 0: 'value' has too many bytes; one leading zero is allowed that
-> > > +	 *           makes the value a positive integer; error on more
-> > > +	 * diff < 0: 'value' is missing leading zeros, which we add
-> > > +	 */
-> > > +	if (diff > 0) {
-> > > +		/* skip over leading zeros that make 'value' a positive int */
-> > > +		if (*d == 0) {
-> > > +			vlen -= 1;
-> > > +			diff--;
-> > > +			d++;
-> > > +		}
-> > > +		if (diff)
-> > > +			return -EINVAL;
-> > > +	}
-> > > +	if (-diff >= keylen)
-> > > +		return -EINVAL;
-> > 
-> > There's an oddity in the above-quoted function.  The check ...
-> > 
-> > +	if (-diff >= keylen)
-> > +		return -EINVAL;
-> > 
-> > ... seems superfluous.
+Le Mon, Jul 22, 2024 at 02:39:11PM +0200, Bert Karwatzki a écrit :
+> Since linux-next-20240722 the following warning is shown on boot which can
+> be bisected to commit 7a5ee4aa61af:
 > 
-> You're right, this check is not necessary.
+> [    T1] ------------[ cut here ]------------
+> [    T1] WARNING: CPU: 0 PID: 1 at kernel/time/timer_migration.c:1742
+> tmigr_cpu_prepare+0x469/0x540
 
-After staring at the code a little longer I've realized that
-the purpose of this if-clause is likely to check for a signed
-integer overflow.  So it *does* seem to have a purpose,
-but it's quite subtle and not very obvious.
+Good catch, and here is a fix proposal (untested!):
 
-I've provisionally added the (untested) commit below to my
-development branch to make it more obvious what's going on.
-Using check_sub_overflow() might be an alternative.
-
-I want to ask mips maintainers first whether signed integer
-overflows can really cause an exception on their arch
-as commit 36ccf1c0e391 suggests, despite -fno-strict-overflow...
-
--- >8 --
-
-Subject: [PATCH] crypto: ecdsa - Avoid signed integer overflow on signature
- decoding
-
-When extracting a signature component R or S from an ASN.1-encoded
-integer, ecdsa_get_signature_rs() subtracts the expected length
-"bufsize" from the ASN.1 length "vlen" (both of unsigned type size_t)
-and stores the result in "diff" (of signed type ssize_t).
-
-This results in a signed integer overflow if vlen > SSIZE_MAX + bufsize.
-
-The kernel is compiled with -fno-strict-overflow, which implies -fwrapv,
-meaning signed integer overflow is not undefined behavior.  And the
-function does check for overflow:
-
-       if (-diff >= bufsize)
-               return -EINVAL;
-
-However that's not very readable and may trigger a false-positive with
-CONFIG_UBSAN_SIGNED_WRAP=y.  It also seems that certain Mips CPUs may
-raise an exception regardless of -fno-strict-overflow (see do_ov() in
-arch/mips/kernel/traps.c).
-
-Avoid by comparing the two unsigned variables directly and erroring out
-if "vlen" is too large.
-
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
----
- crypto/ecdsa.c | 17 ++++-------------
- 1 file changed, 4 insertions(+), 13 deletions(-)
-
-diff --git a/crypto/ecdsa.c b/crypto/ecdsa.c
-index 08c2c76..0cead9b 100644
---- a/crypto/ecdsa.c
-+++ b/crypto/ecdsa.c
-@@ -36,29 +36,20 @@ static int ecdsa_get_signature_rs(u64 *dest, size_t hdrlen, unsigned char tag,
- 				  const void *value, size_t vlen, unsigned int ndigits)
- {
- 	size_t bufsize = ndigits * sizeof(u64);
--	ssize_t diff = vlen - bufsize;
- 	const char *d = value;
- 
--	if (!value || !vlen)
-+	if (!value || !vlen || vlen > bufsize + 1)
- 		return -EINVAL;
- 
--	/* diff = 0: 'value' has exacly the right size
--	 * diff > 0: 'value' has too many bytes; one leading zero is allowed that
--	 *           makes the value a positive integer; error on more
--	 * diff < 0: 'value' is missing leading zeros
--	 */
--	if (diff > 0) {
-+	if (vlen > bufsize) {
- 		/* skip over leading zeros that make 'value' a positive int */
- 		if (*d == 0) {
- 			vlen -= 1;
--			diff--;
- 			d++;
--		}
--		if (diff)
-+		} else {
- 			return -EINVAL;
-+		}
- 	}
--	if (-diff >= bufsize)
--		return -EINVAL;
- 
- 	ecc_digits_from_bytes(d, vlen, dest, ndigits);
- 
--- 
-2.43.0
+https://lore.kernel.org/all/Zp5bpLJHlYsZinGj@localhost.localdomain/
 
