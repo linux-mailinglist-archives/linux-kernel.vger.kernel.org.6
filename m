@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-259340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99EA593945F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:36:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C07FC93945C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD9D51C20F2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:36:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67BF11F221CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E901173354;
-	Mon, 22 Jul 2024 19:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E54172BCD;
+	Mon, 22 Jul 2024 19:35:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IPhmUQOd";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HxisOiAj"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z/uZ8/bz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yNJExm0x"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DBE17165F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B16F171655;
 	Mon, 22 Jul 2024 19:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721676925; cv=none; b=YfMPPuuMPSyL0gve+u8cnAlyzFteyEnsk2vBYvyw6zzLanzFBohJbTN4BP5iMapLQjKst0nJtuH6mUbOrF1CDbUTcv746BQdIt/hcsMI7QLJgZwwa5+5Vo6iRyNb2y98/5O+ucoh9p8OxKqsxLMFgSoHIiKpMlFTgpPrlY1aQMg=
+	t=1721676924; cv=none; b=bWlMNzLqfJ1q8o5HMK9oGzkhh37KCflf8KS30S7RmJiQyNpYzeIvb0MVvaZitKjcVd1ENZyy6Z+27211Ja6ie/A/N9f358ZusNcm0l2RLz2svw1OMPl1LRi1uhjsk+eZfFWBhNGsjDZXXRUdB0Np27qog4NkQCBWKsROsNx1LEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721676925; c=relaxed/simple;
-	bh=LqtIIx2LnvGa/ZMI7JcvQ5q3JSfkSmp5si1w5vwjMX0=;
+	s=arc-20240116; t=1721676924; c=relaxed/simple;
+	bh=DyXpRc21lA5PNoYxSGUg8tpUAJAbGxpVptVHK/nXu5I=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=YhSC/EuVoXS+DNDreX96TLk5pWcUcG0aHbgX4piHBKpStzp7HBSrIsuHqeIR9OFPziwk4aRXzgNlwbp6VZonjvC7qZ0Sy4tZvnaJ6XCL2diPdWJzlWy/ucy7uX5Woe9/OZLCPqtBiop9brJVUQr5WDsjFWmqvZOC6fD4p5yDabk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IPhmUQOd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HxisOiAj; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=aPTRWgKAFlaHHS8Zl0YbdWwA/Yj1UZnzKo1okri0vgKyVyoXNE2BgkcenmSnvY8h7qyVN7u1l17Xp0/A7Q01Ar8Q/Y090RyvbJMZZOPzST2kLGwEuvGRqlZf9eQaFG5tC9PAKCb0d+ZvuI+dnjYoGhSXwiyAD3koCsyGNNkI0Hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z/uZ8/bz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yNJExm0x; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Mon, 22 Jul 2024 19:35:20 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1721676921;
+	s=2020; t=1721676920;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TPNTiBeGjCeHehH4UJ6mM2QplCdUug2ZmqIHNZ6x6MM=;
-	b=IPhmUQOdc0hJ0yaRD38N76PQvRwAy+OkI7BycetFJWOGTEtmHYnk7pU70foSGjMTE/HH/D
-	Hn+rZUkfkpBG+ggNECR/M/uYbMdJ4IzwyKFG14jGALEXgtcYelqQB0Io1SUK5eA7XDyx2v
-	IaedUVS7UPZLZcE4BIlkbDfD/4qQ5/YR5Ni0IfeehbKJtcyQ5bQCa1EEP8fo+vgaitaFw0
-	yRZK0z7SXzkOtS5pgdVAX7momUvWn9Wo+72ZbOKQYEODv4C5r31aetPVXDmABe28XqusME
-	Rk5BCZnZRpoG1bleq8Cb5MTdoQG862KPU82jEYlrCouHw6aJIvl1hMLUPlb73A==
+	bh=HLOCwij10VLL1BYys/xjrFmDzoCWkMm0Tqz9jBFesy4=;
+	b=z/uZ8/bz2Z9nmOdpp6pgfpzw2Q/XEZ0+Hfy02v/LYpbNAz2eWiArCOmOwXSOZ/7NA30+QJ
+	ejOhWvn4fmO9tw9S9SkewzNC1WCkjDYUqtlBujFJql6cVcP6iSoMJgVb9jQN8pDBJit3tB
+	Lwxx/t33CBQW1LdIyOq5t07K1ZFxJRbxAMcKNqeXvm6bZRIB05nCXFvQ8XNQC1CvrQIP5G
+	F68fDsD33jrIO9P//EBAvUgfoO8hi1WVQBYHBFicyvHpN95jD0hiMFxTYGeS3kfbD1eIZs
+	uA6YTpP5KMRyc2Cw4QrEBImodiHo2fkcgvrw3WCjvY31BxIH50OV0yLMxY0mKg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1721676921;
+	s=2020e; t=1721676920;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=TPNTiBeGjCeHehH4UJ6mM2QplCdUug2ZmqIHNZ6x6MM=;
-	b=HxisOiAjiwaXop0yZdfzQdRqNi4LtVTaJFnRvN8MqdSgQ1bi0WjeiSkmXVbY2GklmYxYSf
-	KrQxpHVThMTVOqDg==
+	bh=HLOCwij10VLL1BYys/xjrFmDzoCWkMm0Tqz9jBFesy4=;
+	b=yNJExm0xR+dxMFRCMywpUhBEQf3ZeuawaNKqRlxtRw1cO4D5WN5g0bpX+/CNlXGKT9MzH6
+	+vMkVHXPQ5SyuwCQ==
 From: "tip-bot2 for Anna-Maria Behnsen" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/urgent] timers/migration: Move hierarchy setup into
- cpuhotplug prepare callback
+Subject: [tip: timers/urgent] timers/migration: Improve tracing
 Cc: "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
  Thomas Gleixner <tglx@linutronix.de>,
  Frederic Weisbecker <frederic@kernel.org>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20240717094940.18687-1-anna-maria@linutronix.de>
-References: <20240717094940.18687-1-anna-maria@linutronix.de>
+In-Reply-To: <20240716-tmigr-fixes-v4-3-757baa7803fe@linutronix.de>
+References: <20240716-tmigr-fixes-v4-3-757baa7803fe@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172167692057.2215.2711846105941183540.tip-bot2@tip-bot2>
+Message-ID: <172167692009.2215.9790596749360519014.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -83,597 +82,75 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the timers/urgent branch of tip:
 
-Commit-ID:     10a0e6f3d3db7dcfe36e578923e5f038f1d2b72a
-Gitweb:        https://git.kernel.org/tip/10a0e6f3d3db7dcfe36e578923e5f038f1d2b72a
+Commit-ID:     92506741521fd09dfaa9d6ef3c3620a9dd6bbafd
+Gitweb:        https://git.kernel.org/tip/92506741521fd09dfaa9d6ef3c3620a9dd6bbafd
 Author:        Anna-Maria Behnsen <anna-maria@linutronix.de>
-AuthorDate:    Wed, 17 Jul 2024 11:49:40 +02:00
+AuthorDate:    Tue, 16 Jul 2024 16:19:21 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Mon, 22 Jul 2024 18:03:34 +02:00
 
-timers/migration: Move hierarchy setup into cpuhotplug prepare callback
+timers/migration: Improve tracing
 
-When a CPU comes online the first time, it is possible that a new top level
-group will be created. In general all propagation is done from the bottom
-to top. This minimizes complexity and prevents possible races. But when a
-new top level group is created, the formely top level group needs to be
-connected to the new level. This is the only time, when the direction to
-propagate changes is changed: the changes are propagated from top (new top
-level group) to bottom (formerly top level group).
+Trace points of inactive and active propagation are located at the end of
+the related functions. The interesting information of those trace points is
+the updated group state. When trace points are not located directly at the
+place where group state changed, order of trace points in traces could be
+confusing.
 
-This introduces two races (see (A) and (B)) as reported by Frederic:
+Move inactive and active propagation trace points directly after update of
+group state values.
 
-(A) This race happens, when marking the formely top level group as active,
-but the last active CPU of the formerly top level group goes idle. Then
-it's likely that formerly group is no longer active, but marked
-nevertheless as active in new top level group:
-
-		  [GRP0:0]
-	       migrator = 0
-	       active   = 0
-	       nextevt  = KTIME_MAX
-	       /         \
-	      0         1 .. 7
-	  active         idle
-
-0) Hierarchy has for now only 8 CPUs and CPU 0 is the only active CPU.
-
-			     [GRP1:0]
-			migrator = TMIGR_NONE
-			active   = NONE
-			nextevt  = KTIME_MAX
-					 \
-		 [GRP0:0]                  [GRP0:1]
-	      migrator = 0              migrator = TMIGR_NONE
-	      active   = 0              active   = NONE
-	      nextevt  = KTIME_MAX      nextevt  = KTIME_MAX
-		/         \
-	      0          1 .. 7                8
-	  active         idle                !online
-
-1) CPU 8 is booting and creates a new group in first level GRP0:1 and
-   therefore also a new top group GRP1:0. For now the setup code proceeded
-   only until the connected between GRP0:1 to the new top group. The
-   connection between CPU8 and GRP0:1 is not yet established and CPU 8 is
-   still !online.
-
-			     [GRP1:0]
-			migrator = TMIGR_NONE
-			active   = NONE
-			nextevt  = KTIME_MAX
-		       /                  \
-		 [GRP0:0]                  [GRP0:1]
-	      migrator = 0              migrator = TMIGR_NONE
-	      active   = 0              active   = NONE
-	      nextevt  = KTIME_MAX      nextevt  = KTIME_MAX
-		/         \
-	      0          1 .. 7                8
-	  active         idle                !online
-
-2) Setup code now connects GRP0:0 to GRP1:0 and observes while in
-   tmigr_connect_child_parent() that GRP0:0 is not TMIGR_NONE. So it
-   prepares to call tmigr_active_up() on it. It hasn't done it yet.
-
-			     [GRP1:0]
-			migrator = TMIGR_NONE
-			active   = NONE
-			nextevt  = KTIME_MAX
-		       /                  \
-		 [GRP0:0]                  [GRP0:1]
-	      migrator = TMIGR_NONE        migrator = TMIGR_NONE
-	      active   = NONE              active   = NONE
-	      nextevt  = KTIME_MAX         nextevt  = KTIME_MAX
-		/         \
-	      0          1 .. 7                8
-	    idle         idle                !online
-
-3) CPU 0 goes idle. Since GRP0:0->parent has been updated by CPU 8 with
-   GRP0:0->lock held, CPU 0 observes GRP1:0 after calling
-   tmigr_update_events() and it propagates the change to the top (no change
-   there and no wakeup programmed since there is no timer).
-
-			     [GRP1:0]
-			migrator = GRP0:0
-			active   = GRP0:0
-			nextevt  = KTIME_MAX
-		       /                  \
-		 [GRP0:0]                  [GRP0:1]
-	      migrator = TMIGR_NONE       migrator = TMIGR_NONE
-	      active   = NONE             active   = NONE
-	      nextevt  = KTIME_MAX        nextevt  = KTIME_MAX
-		/         \
-	      0          1 .. 7                8
-	    idle         idle                !online
-
-4) Now the setup code finally calls tmigr_active_up() to and sets GRP0:0
-   active in GRP1:0
-
-			     [GRP1:0]
-			migrator = GRP0:0
-			active   = GRP0:0, GRP0:1
-			nextevt  = KTIME_MAX
-		       /                  \
-		 [GRP0:0]                  [GRP0:1]
-	      migrator = TMIGR_NONE       migrator = 8
-	      active   = NONE             active   = 8
-	      nextevt  = KTIME_MAX        nextevt  = KTIME_MAX
-		/         \                    |
-	      0          1 .. 7                8
-	    idle         idle                active
-
-5) Now CPU 8 is connected with GRP0:1 and CPU 8 calls tmigr_active_up() out
-   of tmigr_cpu_online().
-
-			     [GRP1:0]
-			migrator = GRP0:0
-			active   = GRP0:0
-			nextevt  = T8
-		       /                  \
-		 [GRP0:0]                  [GRP0:1]
-	      migrator = TMIGR_NONE         migrator = TMIGR_NONE
-	      active   = NONE               active   = NONE
-	      nextevt  = KTIME_MAX          nextevt  = T8
-		/         \                    |
-	      0          1 .. 7                8
-	    idle         idle                  idle
-
-5) CPU 8 goes idle with a timer T8 and relies on GRP0:0 as the migrator.
-   But it's not really active, so T8 gets ignored.
-
---> The update which is done in third step is not noticed by setup code. So
-    a wrong migrator is set to top level group and a timer could get
-    ignored.
-
-(B) Reading group->parent and group->childmask when an hierarchy update is
-ongoing and reaches the formerly top level group is racy as those values
-could be inconsistent. (The notation of migrator and active now slightly
-changes in contrast to the above example, as now the childmasks are used.)
-
-			     [GRP1:0]
-			migrator = TMIGR_NONE
-			active   = 0x00
-			nextevt  = KTIME_MAX
-					 \
-		 [GRP0:0]                  [GRP0:1]
-	      migrator = TMIGR_NONE     migrator = TMIGR_NONE
-	      active   = 0x00           active   = 0x00
-	      nextevt  = KTIME_MAX      nextevt  = KTIME_MAX
-	      childmask= 0		childmask= 1
-	      parent   = NULL		parent   = GRP1:0
-		/         \
-	      0          1 .. 7                8
-	  idle           idle                !online
-	  childmask=1
-
-1) Hierarchy has 8 CPUs. CPU 8 is at the moment in the process of onlining
-   but did not yet connect GRP0:0 to GRP1:0.
-
-			     [GRP1:0]
-			migrator = TMIGR_NONE
-			active   = 0x00
-			nextevt  = KTIME_MAX
-		       /                  \
-		 [GRP0:0]                  [GRP0:1]
-	      migrator = TMIGR_NONE     migrator = TMIGR_NONE
-	      active   = 0x00           active   = 0x00
-	      nextevt  = KTIME_MAX      nextevt  = KTIME_MAX
-	      childmask= 0		childmask= 1
-	      parent   = GRP1:0		parent   = GRP1:0
-		/         \
-	      0          1 .. 7                8
-	  idle           idle                !online
-	  childmask=1
-
-2) Setup code (running on CPU 8) now connects GRP0:0 to GRP1:0, updates
-   parent pointer of GRP0:0 and ...
-
-			     [GRP1:0]
-			migrator = TMIGR_NONE
-			active   = 0x00
-			nextevt  = KTIME_MAX
-		       /                  \
-		 [GRP0:0]                  [GRP0:1]
-	      migrator = 0x01           migrator = TMIGR_NONE
-	      active   = 0x01           active   = 0x00
-	      nextevt  = KTIME_MAX      nextevt  = KTIME_MAX
-	      childmask= 0		childmask= 1
-	      parent   = GRP1:0		parent   = GRP1:0
-		/         \
-	      0          1 .. 7                8
-	  active          idle                !online
-	  childmask=1
-
-	  tmigr_walk.childmask = 0
-
-3) ... CPU 0 comes active in the same time. As migrator in GRP0:0 was
-   TMIGR_NONE, childmask of GRP0:0 is stored in update propagation data
-   structure tmigr_walk (as update of childmask is not yet
-   visible/updated). And now ...
-
-			     [GRP1:0]
-			migrator = TMIGR_NONE
-			active   = 0x00
-			nextevt  = KTIME_MAX
-		       /                  \
-		 [GRP0:0]                  [GRP0:1]
-	      migrator = 0x01           migrator = TMIGR_NONE
-	      active   = 0x01           active   = 0x00
-	      nextevt  = KTIME_MAX      nextevt  = KTIME_MAX
-	      childmask= 2		childmask= 1
-	      parent   = GRP1:0		parent   = GRP1:0
-		/         \
-	      0          1 .. 7                8
-	  active          idle                !online
-	  childmask=1
-
-	  tmigr_walk.childmask = 0
-
-4) ... childmask of GRP0:0 is updated by CPU 8 (still part of setup
-   code).
-
-			     [GRP1:0]
-			migrator = 0x00
-			active   = 0x00
-			nextevt  = KTIME_MAX
-		       /                  \
-		 [GRP0:0]                  [GRP0:1]
-	      migrator = 0x01           migrator = TMIGR_NONE
-	      active   = 0x01           active   = 0x00
-	      nextevt  = KTIME_MAX      nextevt  = KTIME_MAX
-	      childmask= 2		childmask= 1
-	      parent   = GRP1:0		parent   = GRP1:0
-		/         \
-	      0          1 .. 7                8
-	  active          idle                !online
-	  childmask=1
-
-	  tmigr_walk.childmask = 0
-
-5) CPU 0 sees the connection to GRP1:0 and now propagates active state to
-   GRP1:0 but with childmask = 0 as stored in propagation data structure.
-
---> Now GRP1:0 always has a migrator as 0x00 != TMIGR_NONE and for all CPUs
-    it looks like GRP1:0 is always active.
-
-To prevent those races, the setup of the hierarchy is moved into the
-cpuhotplug prepare callback. The prepare callback is not executed by the
-CPU which will come online, it is executed by the CPU which prepares
-onlining of the other CPU. This CPU is active while it is connecting the
-formerly top level to the new one. This prevents from (A) to happen and it
-also prevents from any further walk above the formerly top level until that
-active CPU becomes inactive, releasing the new ->parent and ->childmask
-updates to be visible by any subsequent walk up above the formerly top
-level hierarchy. This prevents from (B) to happen. The direction for the
-updates is now forced to look like "from bottom to top".
-
-However if the active CPU prevents from tmigr_cpu_(in)active() to walk up
-with the update not-or-half visible, nothing prevents walking up to the new
-top with a 0 childmask in tmigr_handle_remote_up() or
-tmigr_requires_handle_remote_up() if the active CPU doing the prepare is
-not the migrator. But then it looks fine because:
-
-  * tmigr_check_migrator() should just return false
-  * The migrator is active and should eventually observe the new childmask
-    at some point in a future tick.
-
-Split setup functionality of online callback into the cpuhotplug prepare
-callback and setup hotplug state. Change init call into early_initcall() to
-make sure an already active CPU prepares everything for newly upcoming
-CPUs. Reorder the code, that all prepare related functions are close to
-each other and online and offline callbacks are also close together.
-
-Fixes: 7ee988770326 ("timers: Implement the hierarchical pull model")
 Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-Link: https://lore.kernel.org/r/20240717094940.18687-1-anna-maria@linutronix.de
+Link: https://lore.kernel.org/r/20240716-tmigr-fixes-v4-3-757baa7803fe@linutronix.de
 
 ---
- include/linux/cpuhotplug.h    |   1 +-
- kernel/time/timer_migration.c | 206 +++++++++++++++++++--------------
- 2 files changed, 120 insertions(+), 87 deletions(-)
+ kernel/time/timer_migration.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index 7a5785f..df59666 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -122,6 +122,7 @@ enum cpuhp_state {
- 	CPUHP_KVM_PPC_BOOK3S_PREPARE,
- 	CPUHP_ZCOMP_PREPARE,
- 	CPUHP_TIMERS_PREPARE,
-+	CPUHP_TMIGR_PREPARE,
- 	CPUHP_MIPS_SOC_PREPARE,
- 	CPUHP_BP_PREPARE_DYN,
- 	CPUHP_BP_PREPARE_DYN_END		= CPUHP_BP_PREPARE_DYN + 20,
 diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
-index d91efe1..867f0ec 100644
+index 867f0ec..4fbd930 100644
 --- a/kernel/time/timer_migration.c
 +++ b/kernel/time/timer_migration.c
-@@ -1438,6 +1438,66 @@ u64 tmigr_quick_check(u64 nextevt)
- 	return KTIME_MAX;
- }
+@@ -656,6 +656,8 @@ static bool tmigr_active_up(struct tmigr_group *group,
  
-+/*
-+ * tmigr_trigger_active() - trigger a CPU to become active again
-+ *
-+ * This function is executed on a CPU which is part of cpu_online_mask, when the
-+ * last active CPU in the hierarchy is offlining. With this, it is ensured that
-+ * the other CPU is active and takes over the migrator duty.
-+ */
-+static long tmigr_trigger_active(void *unused)
-+{
-+	struct tmigr_cpu *tmc = this_cpu_ptr(&tmigr_cpu);
-+
-+	WARN_ON_ONCE(!tmc->online || tmc->idle);
-+
-+	return 0;
-+}
-+
-+static int tmigr_cpu_offline(unsigned int cpu)
-+{
-+	struct tmigr_cpu *tmc = this_cpu_ptr(&tmigr_cpu);
-+	int migrator;
-+	u64 firstexp;
-+
-+	raw_spin_lock_irq(&tmc->lock);
-+	tmc->online = false;
-+	WRITE_ONCE(tmc->wakeup, KTIME_MAX);
-+
-+	/*
-+	 * CPU has to handle the local events on his own, when on the way to
-+	 * offline; Therefore nextevt value is set to KTIME_MAX
-+	 */
-+	firstexp = __tmigr_cpu_deactivate(tmc, KTIME_MAX);
-+	trace_tmigr_cpu_offline(tmc);
-+	raw_spin_unlock_irq(&tmc->lock);
-+
-+	if (firstexp != KTIME_MAX) {
-+		migrator = cpumask_any_but(cpu_online_mask, cpu);
-+		work_on_cpu(migrator, tmigr_trigger_active, NULL);
-+	}
-+
-+	return 0;
-+}
-+
-+static int tmigr_cpu_online(unsigned int cpu)
-+{
-+	struct tmigr_cpu *tmc = this_cpu_ptr(&tmigr_cpu);
-+
-+	/* Check whether CPU data was successfully initialized */
-+	if (WARN_ON_ONCE(!tmc->tmgroup))
-+		return -EINVAL;
-+
-+	raw_spin_lock_irq(&tmc->lock);
-+	trace_tmigr_cpu_online(tmc);
-+	tmc->idle = timer_base_is_idle();
-+	if (!tmc->idle)
-+		__tmigr_cpu_activate(tmc);
-+	tmc->online = true;
-+	raw_spin_unlock_irq(&tmc->lock);
-+	return 0;
-+}
-+
- static void tmigr_init_group(struct tmigr_group *group, unsigned int lvl,
- 			     int node)
- {
-@@ -1510,9 +1570,10 @@ static struct tmigr_group *tmigr_get_group(unsigned int cpu, int node,
- }
+ 	} while (!atomic_try_cmpxchg(&group->migr_state, &curstate.state, newstate.state));
  
- static void tmigr_connect_child_parent(struct tmigr_group *child,
--				       struct tmigr_group *parent)
-+				       struct tmigr_group *parent,
-+				       bool activate)
- {
--	union tmigr_state childstate;
-+	struct tmigr_walk data;
- 
- 	raw_spin_lock_irq(&child->lock);
- 	raw_spin_lock_nested(&parent->lock, SINGLE_DEPTH_NESTING);
-@@ -1525,6 +1586,9 @@ static void tmigr_connect_child_parent(struct tmigr_group *child,
- 
- 	trace_tmigr_connect_child_parent(child);
- 
-+	if (!activate)
-+		return;
++	trace_tmigr_group_set_cpu_active(group, newstate, childmask);
 +
- 	/*
- 	 * To prevent inconsistent states, active children need to be active in
- 	 * the new parent as well. Inactive children are already marked inactive
-@@ -1540,22 +1604,24 @@ static void tmigr_connect_child_parent(struct tmigr_group *child,
- 	 *   child to the new parent. So tmigr_connect_child_parent() is
- 	 *   executed with the formerly top level group (child) and the newly
- 	 *   created group (parent).
-+	 *
-+	 * * It is ensured that the child is active, as this setup path is
-+	 *   executed in hotplug prepare callback. This is exectued by an
-+	 *   already connected and !idle CPU. Even if all other CPUs go idle,
-+	 *   the CPU executing the setup will be responsible up to current top
-+	 *   level group. And the next time it goes inactive, it will release
-+	 *   the new childmask and parent to subsequent walkers through this
-+	 *   @child. Therefore propagate active state unconditionally.
+ 	if (walk_done == false)
+ 		data->childmask = group->childmask;
+ 
+@@ -673,8 +675,6 @@ static bool tmigr_active_up(struct tmigr_group *group,
  	 */
--	childstate.state = atomic_read(&child->migr_state);
--	if (childstate.migrator != TMIGR_NONE) {
--		struct tmigr_walk data;
--
--		data.childmask = child->childmask;
-+	data.childmask = child->childmask;
+ 	group->groupevt.ignore = true;
  
--		/*
--		 * There is only one new level per time (which is protected by
--		 * tmigr_mutex). When connecting the child and the parent and
--		 * set the child active when the parent is inactive, the parent
--		 * needs to be the uppermost level. Otherwise there went
--		 * something wrong!
--		 */
--		WARN_ON(!tmigr_active_up(parent, child, &data) && parent->parent);
--	}
-+	/*
-+	 * There is only one new level per time (which is protected by
-+	 * tmigr_mutex). When connecting the child and the parent and set the
-+	 * child active when the parent is inactive, the parent needs to be the
-+	 * uppermost level. Otherwise there went something wrong!
-+	 */
-+	WARN_ON(!tmigr_active_up(parent, child, &data) && parent->parent);
+-	trace_tmigr_group_set_cpu_active(group, newstate, childmask);
+-
+ 	return walk_done;
  }
  
- static int tmigr_setup_groups(unsigned int cpu, unsigned int node)
-@@ -1608,7 +1674,7 @@ static int tmigr_setup_groups(unsigned int cpu, unsigned int node)
- 		 * Update tmc -> group / child -> group connection
- 		 */
- 		if (i == 0) {
--			struct tmigr_cpu *tmc = this_cpu_ptr(&tmigr_cpu);
-+			struct tmigr_cpu *tmc = per_cpu_ptr(&tmigr_cpu, cpu);
+@@ -1306,9 +1306,10 @@ static bool tmigr_inactive_up(struct tmigr_group *group,
  
- 			raw_spin_lock_irq(&group->lock);
+ 		WARN_ON_ONCE((newstate.migrator != TMIGR_NONE) && !(newstate.active));
  
-@@ -1623,7 +1689,8 @@ static int tmigr_setup_groups(unsigned int cpu, unsigned int node)
- 			continue;
- 		} else {
- 			child = stack[i - 1];
--			tmigr_connect_child_parent(child, group);
-+			/* Will be activated at online time */
-+			tmigr_connect_child_parent(child, group, false);
- 		}
+-		if (atomic_try_cmpxchg(&group->migr_state, &curstate.state,
+-				       newstate.state))
++		if (atomic_try_cmpxchg(&group->migr_state, &curstate.state, newstate.state)) {
++			trace_tmigr_group_set_cpu_inactive(group, newstate, childmask);
+ 			break;
++		}
  
- 		/* check if uppermost level was newly created */
-@@ -1634,12 +1701,21 @@ static int tmigr_setup_groups(unsigned int cpu, unsigned int node)
+ 		/*
+ 		 * The memory barrier is paired with the cmpxchg() in
+@@ -1327,8 +1328,6 @@ static bool tmigr_inactive_up(struct tmigr_group *group,
+ 	if (walk_done == false)
+ 		data->childmask = group->childmask;
  
- 		lvllist = &tmigr_level_list[top];
- 		if (group->num_children == 1 && list_is_singular(lvllist)) {
-+			/*
-+			 * The target CPU must never do the prepare work, except
-+			 * on early boot when the boot CPU is the target. Otherwise
-+			 * it may spuriously activate the old top level group inside
-+			 * the new one (nevertheless whether old top level group is
-+			 * active or not) and/or release an uninitialized childmask.
-+			 */
-+			WARN_ON_ONCE(cpu == raw_smp_processor_id());
-+
- 			lvllist = &tmigr_level_list[top - 1];
- 			list_for_each_entry(child, lvllist, list) {
- 				if (child->parent)
- 					continue;
- 
--				tmigr_connect_child_parent(child, group);
-+				tmigr_connect_child_parent(child, group, true);
- 			}
- 		}
- 	}
-@@ -1661,80 +1737,31 @@ static int tmigr_add_cpu(unsigned int cpu)
- 	return ret;
+-	trace_tmigr_group_set_cpu_inactive(group, newstate, childmask);
+-
+ 	return walk_done;
  }
  
--static int tmigr_cpu_online(unsigned int cpu)
-+static int tmigr_cpu_prepare(unsigned int cpu)
- {
--	struct tmigr_cpu *tmc = this_cpu_ptr(&tmigr_cpu);
--	int ret;
--
--	/* First online attempt? Initialize CPU data */
--	if (!tmc->tmgroup) {
--		raw_spin_lock_init(&tmc->lock);
--
--		ret = tmigr_add_cpu(cpu);
--		if (ret < 0)
--			return ret;
--
--		if (tmc->childmask == 0)
--			return -EINVAL;
--
--		timerqueue_init(&tmc->cpuevt.nextevt);
--		tmc->cpuevt.nextevt.expires = KTIME_MAX;
--		tmc->cpuevt.ignore = true;
--		tmc->cpuevt.cpu = cpu;
--
--		tmc->remote = false;
--		WRITE_ONCE(tmc->wakeup, KTIME_MAX);
--	}
--	raw_spin_lock_irq(&tmc->lock);
--	trace_tmigr_cpu_online(tmc);
--	tmc->idle = timer_base_is_idle();
--	if (!tmc->idle)
--		__tmigr_cpu_activate(tmc);
--	tmc->online = true;
--	raw_spin_unlock_irq(&tmc->lock);
--	return 0;
--}
--
--/*
-- * tmigr_trigger_active() - trigger a CPU to become active again
-- *
-- * This function is executed on a CPU which is part of cpu_online_mask, when the
-- * last active CPU in the hierarchy is offlining. With this, it is ensured that
-- * the other CPU is active and takes over the migrator duty.
-- */
--static long tmigr_trigger_active(void *unused)
--{
--	struct tmigr_cpu *tmc = this_cpu_ptr(&tmigr_cpu);
-+	struct tmigr_cpu *tmc = per_cpu_ptr(&tmigr_cpu, cpu);
-+	int ret = 0;
- 
--	WARN_ON_ONCE(!tmc->online || tmc->idle);
--
--	return 0;
--}
--
--static int tmigr_cpu_offline(unsigned int cpu)
--{
--	struct tmigr_cpu *tmc = this_cpu_ptr(&tmigr_cpu);
--	int migrator;
--	u64 firstexp;
-+	/* Not first online attempt? */
-+	if (tmc->tmgroup)
-+		return ret;
- 
--	raw_spin_lock_irq(&tmc->lock);
--	tmc->online = false;
-+	raw_spin_lock_init(&tmc->lock);
-+	timerqueue_init(&tmc->cpuevt.nextevt);
-+	tmc->cpuevt.nextevt.expires = KTIME_MAX;
-+	tmc->cpuevt.ignore = true;
-+	tmc->cpuevt.cpu = cpu;
-+	tmc->remote = false;
- 	WRITE_ONCE(tmc->wakeup, KTIME_MAX);
- 
--	/*
--	 * CPU has to handle the local events on his own, when on the way to
--	 * offline; Therefore nextevt value is set to KTIME_MAX
--	 */
--	firstexp = __tmigr_cpu_deactivate(tmc, KTIME_MAX);
--	trace_tmigr_cpu_offline(tmc);
--	raw_spin_unlock_irq(&tmc->lock);
-+	ret = tmigr_add_cpu(cpu);
-+	if (ret < 0)
-+		return ret;
- 
--	if (firstexp != KTIME_MAX) {
--		migrator = cpumask_any_but(cpu_online_mask, cpu);
--		work_on_cpu(migrator, tmigr_trigger_active, NULL);
--	}
-+	if (tmc->childmask == 0)
-+		return -EINVAL;
- 
--	return 0;
-+	return ret;
- }
- 
- static int __init tmigr_init(void)
-@@ -1793,6 +1820,11 @@ static int __init tmigr_init(void)
- 		tmigr_hierarchy_levels, TMIGR_CHILDREN_PER_GROUP,
- 		tmigr_crossnode_level);
- 
-+	ret = cpuhp_setup_state(CPUHP_TMIGR_PREPARE, "tmigr:prepare",
-+				tmigr_cpu_prepare, NULL);
-+	if (ret)
-+		goto err;
-+
- 	ret = cpuhp_setup_state(CPUHP_AP_TMIGR_ONLINE, "tmigr:online",
- 				tmigr_cpu_online, tmigr_cpu_offline);
- 	if (ret)
-@@ -1804,4 +1836,4 @@ err:
- 	pr_err("Timer migration setup failed\n");
- 	return ret;
- }
--late_initcall(tmigr_init);
-+early_initcall(tmigr_init);
 
