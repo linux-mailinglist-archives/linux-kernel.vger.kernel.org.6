@@ -1,155 +1,349 @@
-Return-Path: <linux-kernel+bounces-259313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB6EB9393F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:04:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EA209393FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 792F5281E3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:04:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3C59B219C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08ED5182D8;
-	Mon, 22 Jul 2024 19:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499FA17107A;
+	Mon, 22 Jul 2024 19:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kPUhrxC8"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="aBI+0EK3"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A6E18030
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 19:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63A018C08
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 19:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721675040; cv=none; b=fwTlvyU6HU8vRRwdh4F66IQxpB8GIR1jntA7Qm+2h+R3BM9DGCVscZ0tX5+mTM+TW8W7sGJjkFN0UVG9jXwDKdHIGLiEmOnTZz7dTjC+klx5/97q3gtZ3FkYzOHj0YLFreDKQG3Te9sMpPnQ1H9LiT0I78OQZAU1/fbFksMO50I=
+	t=1721675049; cv=none; b=KvEyjbiSDtJ/C4LOsg1O2vhC350NNuCUkRU9gyH2JEJcDjFLJyF3XHCcxdqq4OrYu7z1gwcnYjh2Od34vm4iHZaYmnRPx0vopf9C7C1cN1/Hh22BMbvmaX7XLB40MAH5qmBSrNaPG1zg5R+soO7b8uU5GdmTPX619TThyq2iWnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721675040; c=relaxed/simple;
-	bh=ZuCr8Q3MXq7FKFxOumVO8h9QuyBPSWk2YAWb6LR+p3Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AXat20Qi0ftFOg4HwFOQ1bI52HOoIlvIguF410352X4j3WJFvGRlLtYAOJymXMgAemYPrJHvUs3JGvXtdc1xE4M8LKuA3DUwXSIiLTNSOZiEbOvpjfZcHwAXUXWo4y1x01y8HKkgRJfGPmRt6djWxqq+l2jo5ATw9jOd8KSVK4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kPUhrxC8; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-66a1842b452so28959467b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 12:03:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721675038; x=1722279838; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/aLyzQjs5NsslSdkV31IgEOcyf1Zm6WnIlOUy4KlEfU=;
-        b=kPUhrxC8xyaF3BDUKcpVMnk2VRmTGpT821t17waaW6alcXTbrOJHPFo0dS4+yXc+EK
-         TTXmS5vQrZVTX13UcMRsicJ4OxFunlpf8JzDQBkzYMcTOhF7ZED4dwrku4IHA9mq3QCN
-         6Bb4DzQl5Ly8WmMjGc1UFojn7V26Mo0WBLWlRNrhs8tyImvCu91933/qQfXLVfH4BiUy
-         PSfqv/BY80igoKBG7+L3vDZxAM9SgTlJUSYIJcJrVBQE9XzsLxWarET5IsdX4Hkw25Rh
-         8pOXnvxyLYl0Ej/iwoH7FteMkgQOemdhf5rICcOsOIPXWdV8A1T03H+T1GTNAgjAiUoA
-         Wnug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721675038; x=1722279838;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/aLyzQjs5NsslSdkV31IgEOcyf1Zm6WnIlOUy4KlEfU=;
-        b=rh+/lUHkyjpebdddvBu+GIcX/0mN0YszSFvcDOLxKbkBLX7eHn+ZWAEnd9YIG3AUml
-         q6IG4swQlnuGA6B0ZMErjT36TETV+k5murwEnwDxAwGoyoctFFWaTjdbAhlX7MdOZjav
-         5VzEYPspvlL20pixiUv1DJEUStzG8q4w45Xf8gvPtLfPlRxVceRhJ//h/rObhu4CEc6P
-         MeVKKDPEaBz26vTO+RKJZUXj7e/1JoGmUV7ESYU3W5UwbXr+bVyIolq8pCEaY36RLnIn
-         eO8E6GkT5D2aJpL1YJICDaO/o58HWSlKm2VF4tk55qffLBo/q62JYMbm356v/FrvvKbX
-         M3PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWD2hZtLAS96sWIq9sj7u1FuNOYeC16KsvqT2aptwrUdgnGHHl/t5+SzQJCQUF0nGewFsAHAgwA29eZ5bM6oMOJMtwdQcZWzRMK6Tv6
-X-Gm-Message-State: AOJu0YxeQzGeHBZtPAFomIsCBKWlj2F+/trc1mnSG9kDlwaqo5Am9vf6
-	oAuEmbxoOPjBqNh7GR92PcB10S8N3OjFWuA6yhpKndDQ7INrVC1IcyICSOThvg/KAhVF3LuaT7S
-	itFsZvTm5LWeYmRskajAo2ahFrUQE0/VqV1rw3A==
-X-Google-Smtp-Source: AGHT+IGHHSAltb/w1lzf5cIkIkQspIiU9P8A/vUbkhLHt8k+PzD8zXZ+mZuEGvyPGNY8yUTQbEDWGpCcg1+oltHu7YU=
-X-Received: by 2002:a05:690c:5717:b0:615:1ad2:1102 with SMTP id
- 00721157ae682-66a688a5612mr79225097b3.11.1721675037800; Mon, 22 Jul 2024
- 12:03:57 -0700 (PDT)
+	s=arc-20240116; t=1721675049; c=relaxed/simple;
+	bh=8sLTIyS8TZWjmlWYCZZ1+fuTzwlxAzROzLQ+A6GLbMY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ru3QLNOXq03ZU3ILPy7rIx2AnfCIoHk9t7ndoHhIr0KyfFxy0CTqh3E1UEQhKlISUub7S48CvxfMig+S0EqUhWqOq8p1QRbBzGJVSzzM4kLMMLG9KHQsbYYAWSln/NrWIvzR786LxDBE3aaXY4PIBHVtJlqhYaz4G0o9tb1f4IE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=aBI+0EK3; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+X-Envelope-To: wens@kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1721675044;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vCehHTNE0yJwghwUTXXSJntL5vplfQCDdSOUf961ASQ=;
+	b=aBI+0EK3wjLxJSZThjUWcQviQSjA/o39gjU7+8eXu4hFQE5Inwz0rQjd5C1uSkpT/+AIhk
+	SFgp7iseg3AzPFgPvvH9JiEy/lCdZ+nn1j4b3m5MasY+QZ8enEk/DarMP9w/KdeQqfX0L2
+	Icn5we5tV7++NxWd1JF+12mAaGgt1PMlVmOJfBSinCr0nGml260axTI+4n5Mt6ZC/q9ee6
+	LhT9ukw60icBwfjSEeM6sDll6GbuhWPFuzaG5mPZdf1IKo8G2l6vglSrcSUVBaClTMULWB
+	ZCJQsBm4vGwePZaujkbUHoex0pWxPXrYnqOuxY6qdUXBabGkND7vsqP3Bh33+g==
+X-Envelope-To: daniel@makrotopia.org
+X-Envelope-To: linux-rockchip@lists.infradead.org
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: robh@kernel.org
+X-Envelope-To: conor+dt@kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: herbert@gondor.apana.org.au
+X-Envelope-To: martin@kaiser.cx
+X-Envelope-To: s.hauer@pengutronix.de
+X-Envelope-To: sebastian.reichel@collabora.com
+X-Envelope-To: ardb@kernel.org
+X-Envelope-To: ukleinek@debian.org
+X-Envelope-To: devicetree@vger.kernel.org
+X-Envelope-To: linux-crypto@vger.kernel.org
+X-Envelope-To: p.zabel@pengutronix.de
+X-Envelope-To: olivia@selenic.com
+X-Envelope-To: krzk+dt@kernel.org
+X-Envelope-To: dsimic@manjaro.org
+X-Envelope-To: aurelien@aurel32.net
+X-Envelope-To: heiko@sntech.de
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Diederik de Haas <didi.debian@cknow.org>
+To: Chen-Yu Tsai <wens@kernel.org>
+Cc: Daniel Golle <daniel@makrotopia.org>, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+ Herbert Xu <herbert@gondor.apana.org.au>, Martin Kaiser <martin@kaiser.cx>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Ard Biesheuvel <ardb@kernel.org>,
+ Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <ukleinek@debian.org>,
+ devicetree@vger.kernel.org, linux-crypto@vger.kernel.org,
+ Philipp Zabel <p.zabel@pengutronix.de>, Olivia Mackall <olivia@selenic.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Dragan Simic <dsimic@manjaro.org>,
+ Aurelien Jarno <aurelien@aurel32.net>, Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
+Date: Mon, 22 Jul 2024 21:03:52 +0200
+Message-ID: <4406786.zLnsZ2vfAB@bagend>
+Organization: Connecting Knowledge
+In-Reply-To:
+ <CAGb2v64Dx7XaJOu0HHzFxYYY2ddUZao5Tar8-s1R_miVZqWcXA@mail.gmail.com>
+References:
+ <cover.1720969799.git.daniel@makrotopia.org> <3190961.CRkYR5qTbq@bagend>
+ <CAGb2v64Dx7XaJOu0HHzFxYYY2ddUZao5Tar8-s1R_miVZqWcXA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240719120945eucas1p16058905c95c92840679831ae3383a67a@eucas1p1.samsung.com>
- <20240719120853.1924771-1-m.majewski2@samsung.com> <20240719120853.1924771-3-m.majewski2@samsung.com>
-In-Reply-To: <20240719120853.1924771-3-m.majewski2@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Mon, 22 Jul 2024 14:03:46 -0500
-Message-ID: <CAPLW+4kP25-LWArZGxQ2yy-pc1RDCVng+5Z667cCbb+h_V6A8Q@mail.gmail.com>
-Subject: Re: [PATCH 2/6] drivers/thermal/exynos: use tmu_temp_mask consistently
-To: Mateusz Majewski <m.majewski2@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="nextPart2509603.0URhkfn4ud";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+X-Migadu-Flow: FLOW_OUT
+
+--nextPart2509603.0URhkfn4ud
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"; protected-headers="v1"
+From: Diederik de Haas <didi.debian@cknow.org>
+To: Chen-Yu Tsai <wens@kernel.org>
+Date: Mon, 22 Jul 2024 21:03:52 +0200
+Message-ID: <4406786.zLnsZ2vfAB@bagend>
+Organization: Connecting Knowledge
+MIME-Version: 1.0
 
-On Fri, Jul 19, 2024 at 7:10=E2=80=AFAM Mateusz Majewski
-<m.majewski2@samsung.com> wrote:
->
-> Some of the usages in sanitize_temp_error were missed, probably because
-> the boards being used never actually exceeded 255 in their trimming
-> information. This is needed for Exynos 850 support, which uses 9-bit
-> temperature codes.
->
+On Monday, 22 July 2024 19:57:05 CEST Chen-Yu Tsai wrote:
+> On Wed, Jul 17, 2024 at 12:54=E2=80=AFAM Diederik de Haas <didi.debian@ck=
+now.org>=20
+wrote:
+> > On Tuesday, 16 July 2024 17:18:48 CEST Chen-Yu Tsai wrote:
+> > > On Jul 16, 2024 at 10:13=E2=80=AFPM Diederik de Haas <didi.debian@ckn=
+ow.org>=20
+wrote:
+> > > > On Tuesday, 16 July 2024 15:59:40 CEST Diederik de Haas wrote:
+> > > > > For shits and giggles, I tried it on my PineTab2 too (also rk3566=
+):
+> > > > >=20
+> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > root@pinetab2:~# uname -a
+> > > > > Linux pinetab2 6.10+unreleased-arm64 #1 SMP Debian 6.10-1~cknow
+> > > > > (2024-04-24) aarch64 GNU/Linux
+> > > > >=20
+> > > > > root@pinetab2:~# dd if=3D/dev/hwrng bs=3D100000 count=3D1 > /dev/=
+null
+> > > > > 1+0 records in
+> > > > > 1+0 records out
+> > > > > 100000 bytes (100 kB, 98 KiB) copied, 5,69533 s, 17,6 kB/s
+> > > > >=20
+> > > > > root@plebian-pinetab2:~# cat /dev/hwrng | rngtest -c 1000
+> > > > > rngtest 5
+> > > > > ...
+> > > > > rngtest: starting FIPS tests...
+> > > > > rngtest: bits received from input: 20000032
+> > > > > rngtest: FIPS 140-2 successes: 730
+> > > > > rngtest: FIPS 140-2 failures: 270
+> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > >=20
+> > > > > That's looking quite a lot better ... and I have no idea why.
+> > > > >=20
+> > > > > The Q64-A is used as headless server and the PineTab2 is not,
+> > > > > but I connected to both over SSH and they were freshly booted
+> > > > > into, thus I haven't actually/normally used the PT2 since boot.
+> > > >=20
+> > > > I did freshly install rng-tools5 package before running the test, so
+> > > > I rebooted again to make sure that wasn't a factor:
+> > > >=20
+> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > root@pinetab2:~# cat /dev/hwrng | rngtest -c 1000
+> > > > rngtest 5
+> > > > ...
+> > > > rngtest: starting FIPS tests...
+> > > > rngtest: bits received from input: 20000032
+> > > > rngtest: FIPS 140-2 successes: 704
+> > > > rngtest: FIPS 140-2 failures: 296
+> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > >=20
+> > > > So that 704/296 vs 730/270 in the previous run on the PT2.
+> > > >=20
+> > > On my Rock 3A:
+> > >=20
+> > > wens@rock-3a:~$ sudo cat /dev/hwrng | rngtest -c 1000
+> > > rngtest 5
+> > > ...
+> > > rngtest: starting FIPS tests...
+> > > rngtest: bits received from input: 20000032
+> > > rngtest: FIPS 140-2 successes: 992
+> > > rngtest: FIPS 140-2 failures: 8
+> > >=20
+> > > wens@rock-3a:~$ uname -a
+> > > Linux rock-3a 6.10.0-rc7-next-20240712-12899-g7df602fe7c8b #9 SMP Mon
+> > > Jul 15 00:39:32 CST 2024 aarch64 GNU/Linux
+> >=20
+> > I wondered if ``dd if=3D/dev/hwrng bs=3D100000 count=3D1 > /dev/null`` =
+before
+> > the actual test run made a difference.
+> > Tried it on my Quartz64 Model A: no
+> >=20
+> > Then I tried it on my Quartz64 Model B:
+> >=20
+> > root@quartz64b:~# cat /dev/hwrng | rngtest -c 1000
+> > rngtest 5
+> > ...
+> > rngtest: starting FIPS tests...
+> > rngtest: bits received from input: 20000032
+> > rngtest: FIPS 140-2 successes: 120
+> > rngtest: FIPS 140-2 failures: 880
+> >=20
+> > root@quartz64b:~# dd if=3D/dev/hwrng bs=3D100000 count=3D1 > /dev/null
+> > 1+0 records in
+> > 1+0 records out
+> > 100000 bytes (100 kB, 98 KiB) copied, 5.71466 s, 17.5 kB/s
+> >=20
+> > root@quartz64b:~# cat /dev/hwrng | rngtest -c 1000
+> > rngtest 5
+> > ...
+> > rngtest: starting FIPS tests...
+> > rngtest: bits received from input: 20000032
+> > rngtest: FIPS 140-2 successes: 104
+> > rngtest: FIPS 140-2 failures: 896
+> >=20
+> > root@quartz64b:~# uname -a
+> > Linux quartz64b 6.10+unreleased-arm64 #1 SMP Debian 6.10-1~cknow
+> > (2024-04-24) aarch64 GNU/Linux>=20
+> > :-O
+>=20
+> I pulled out my Quartz64 model B, and the results seem better than yours.
+>=20
+> root@quartz64:~# sudo dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
+> rngtest 5
+> ...
+> rngtest: starting FIPS tests...
+> rngtest: bits received from input: 20000032
+> rngtest: FIPS 140-2 successes: 859
+> rngtest: FIPS 140-2 failures: 141
+> root@quartz64:~# sudo dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
+> rngtest 5
+> ...
+> rngtest: starting FIPS tests...
+> rngtest: bits received from input: 20000032
+> rngtest: FIPS 140-2 successes: 843
+> rngtest: FIPS 140-2 failures: 157
 
-That looks like an actual fix to me, so maybe also add the
-corresponding "Fixes:" tag here?
+I noticed you used ``dd`` instead of ``cat``, so I tried again ...
 
-> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
-> ---
->  drivers/thermal/samsung/exynos_tmu.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsu=
-ng/exynos_tmu.c
-> index 9b7ca93a72f1..61606a9b9a00 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -237,17 +237,17 @@ static void sanitize_temp_error(struct exynos_tmu_d=
-ata *data, u32 trim_info)
->
->         data->temp_error1 =3D trim_info & tmu_temp_mask;
->         data->temp_error2 =3D ((trim_info >> EXYNOS_TRIMINFO_85_SHIFT) &
+Quartz64-A:
+root@quartz64a:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
+rngtest 5
+=2E..
+rngtest: starting FIPS tests...                                            =
+                  =20
+rngtest: bits received from input: 20000032                                =
+                  =20
+rngtest: FIPS 140-2 successes: 411                                         =
+                  =20
+rngtest: FIPS 140-2 failures: 589
 
-EXYNOS_TRIMINFO_85_SHIFT=3D8 in the driver. Is that value actually
-correct in case of Exynos850? I just checked the TRM and it says the
-layout for TRIMINFO0 register is as follows:
+root@quartz64a:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
+=2E..
+rngtest: starting FIPS tests...          =20
+rngtest: bits received from input: 20000032
+rngtest: FIPS 140-2 successes: 391        =20
+rngtest: FIPS 140-2 failures: 609
 
-  - RSVD: Bit [31:24]
-  - CALIB_SEL: Bit [23]
-  - T_BUF_VREF_SEL: Bit [22:18]
-  - TRIMINFO_85_P0: Bit [17:9]
-  - TRIMINFO_25_P0: Bit [8:0]
+root@quartz64a:~# dd if=3D/dev/hwrng bs=3D100000 count=3D1 > /dev/null
+1+0 records in                            =20
+1+0 records out                  =20
+100000 bytes (100 kB, 98 KiB) copied, 5.66202 s, 17.7 kB/s
 
-So maybe that shift value should be 9 instead of 8 for Exynos850? Not
-sure about other platforms though, this might be also the case for
-Exynos7 SoCs too (SOC_ARCH_EXYNOS7 in the driver).
+root@quartz64a:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
+=2E..
+rngtest: FIPS 140-2 successes: 386                                         =
+                  =20
+rngtest: FIPS 140-2 failures: 614
 
-> -                               EXYNOS_TMU_TEMP_MASK);
-> +                               tmu_temp_mask);
->
->         if (!data->temp_error1 ||
->             (data->min_efuse_value > data->temp_error1) ||
->             (data->temp_error1 > data->max_efuse_value))
-> -               data->temp_error1 =3D data->efuse_value & EXYNOS_TMU_TEMP=
-_MASK;
-> +               data->temp_error1 =3D data->efuse_value & tmu_temp_mask;
->
->         if (!data->temp_error2)
->                 data->temp_error2 =3D
->                         (data->efuse_value >> EXYNOS_TRIMINFO_85_SHIFT) &
-> -                       EXYNOS_TMU_TEMP_MASK;
-> +                       tmu_temp_mask;
->  }
->
->  static int exynos_tmu_initialize(struct platform_device *pdev)
-> --
-> 2.45.1
->
->
+root@quartz64a:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
+=2E..
+rngtest: FIPS 140-2 successes: 356
+rngtest: FIPS 140-2 failures: 644
+
+Quartz64-B:
+root@quartz64b:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
+=2E..
+rngtest: FIPS 140-2 successes: 118
+rngtest: FIPS 140-2 failures: 882
+
+root@quartz64b:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
+=2E..
+rngtest: FIPS 140-2 successes: 133
+rngtest: FIPS 140-2 failures: 867
+
+root@quartz64b:~# dd if=3D/dev/hwrng bs=3D100000 count=3D1 > /dev/null
+
+root@quartz64b:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
+=2E..
+rngtest: FIPS 140-2 successes: 97
+rngtest: FIPS 140-2 failures: 903
+
+root@quartz64b:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
+=2E..
+rngtest: FIPS 140-2 successes: 130
+rngtest: FIPS 140-2 failures: 870
+
+And lastly on PineTab2:
+root@pinetab2:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
+=2E..
+rngtest: FIPS 140-2 successes: 705
+rngtest: FIPS 140-2 failures: 295
+
+root@pinetab2:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
+=2E..
+rngtest: FIPS 140-2 successes: 678
+rngtest: FIPS 140-2 failures: 322
+
+root@pinetab2:~# dd if=3D/dev/hwrng bs=3D100000 count=3D1 > /dev/null
+
+root@pinetab2:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
+=2E..
+rngtest: FIPS 140-2 successes: 681
+rngtest: FIPS 140-2 failures: 319
+
+root@pinetab2:~# dd if=3D/dev/hwrng bs=3D256 | rngtest -c 1000
+=2E..
+rngtest: FIPS 140-2 successes: 669
+rngtest: FIPS 140-2 failures: 331
+
+
+So my Q64-B tests are consistently MUCH worse then your Q64-B tests ...
+This seems BAD to me, now that we even have completely different results pe=
+r=20
+device of the EXACT same model?!? Hardware revision may be different (I hav=
+e a=20
+v1.4), but it seems rather pointless to go into that direction.
+
+It then also seems rather pointless to try it with different parameters if =
+the=20
+results on the same SBC model can vary this much.
+
+Thanks for your tests,
+  Diederik
+
+--nextPart2509603.0URhkfn4ud
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZp6tGAAKCRDXblvOeH7b
+bnIPAP9eRr0EgWFfuf4HAEy2gbcjRS0YYCyCeha4MjfASco9EQD/XQXNEecekolM
+xPv/OQmXAzX1hHLrt8gX4KRIaxkJ8wc=
+=5Ged
+-----END PGP SIGNATURE-----
+
+--nextPart2509603.0URhkfn4ud--
+
+
+
 
