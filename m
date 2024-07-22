@@ -1,142 +1,96 @@
-Return-Path: <linux-kernel+bounces-258906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3315B938E2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:44:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3428938E39
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:45:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFD02281D8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:44:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 548171F21DF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C228D16D30B;
-	Mon, 22 Jul 2024 11:44:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF61816D312;
+	Mon, 22 Jul 2024 11:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fuos9wN1"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="Ilm6RCdf"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7A617597;
-	Mon, 22 Jul 2024 11:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BA716C85E
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721648657; cv=none; b=tKytiFVPZUB2t63fgke7yHzwDvGK2vZQTLwJ7amkkOPAJqglQZXjOmneqkeiwCh584FAGWWiBYu6SPk29p0QyuL79EVvpJQccog+tRz/xhdVg/f3nMEjSRP+LokSgNYzEHZagXTocK+shMWbrejj/F5u7NyZEErT4ONjJUutrfs=
+	t=1721648744; cv=none; b=cy8dFV34yxoj2BZC/WoQcmhXTWMUeSTnpMCO73BLm6k0C0p1YQdwF77ykXHKtRxA0rlKP2MT9g4gtbh8v+hEZV//uG3uKXdcziLLcfNNau8pzh5XptPE5k3F4EgMP5ebBhZkd67Z19mCFRutiiMaq67wo30NbMl+MXoXuHYnVpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721648657; c=relaxed/simple;
-	bh=pPQlCbJfh8RvldYR2ao9QDdb0XigxOlzDalrLf12DjE=;
+	s=arc-20240116; t=1721648744; c=relaxed/simple;
+	bh=8F6Yx5uGHUiSVGdyffU911J9L+V8oHUHpXfo1JiltGE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jg7pBr2yA/42NmZtlbRVSFNWV9RgLdBfQccuwzKtcCrfKDcMs8lmt6E0TL9S/xpiH9sO4QvlN/AYbetHo44d03z3f6LBGUzdgtQit8dImlP5LkqsRHkG4pVjLIlIlrTJwfcQqFRoHs+PVcQnDgbVS0swVLmiChsbt4voqi/DHMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fuos9wN1; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 598852B3;
-	Mon, 22 Jul 2024 13:43:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1721648612;
-	bh=pPQlCbJfh8RvldYR2ao9QDdb0XigxOlzDalrLf12DjE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fuos9wN1+ff26XufeyqVnkTtBZ/ybrcBAmEPuynFs7VV+s8q5FrBUtlRPIgwgRtFx
-	 c/sx34m/mc4OlNUfUKuf+V7hMWcOjxWEwTFLadvWkZNzTaxnHz5qIH7LnZkH6OZAly
-	 ad4Q1phw2q+hYB0OZgKb9cHI6GlC/nviYHoPlmW8=
-Date: Mon, 22 Jul 2024 14:43:55 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pmenzel@molgen.mpg.de, stable@vger.kernel.org
-Subject: Re: [PATCH] media: uvcvideo: Fix custom control mapping probing
-Message-ID: <20240722114355.GF13497@pendragon.ideasonboard.com>
-References: <20240722-fix-filter-mapping-v1-1-07cc9c6bf4e3@chromium.org>
- <20240722113836.GE13497@pendragon.ideasonboard.com>
- <CANiDSCsvoiUFPMDatH0OiENtscHYysiRJdCpxVCiK-WtQZS-DQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z8hdmZOjMI17nCj9Od8nUecbzZWPecba/dgT4zEL+StOVZWdtg8ZvCbdkNvV1Na5dD6jnQCrQ197mwwmRq9cHZYPsN9XU/uedF1P0oCRzmN9g1qN0Yw31U2N4HgQVTPcRsemIJnuHSpwpXILS7OvmGEVGqvsJIJYZr+eA8Idh18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=Ilm6RCdf; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-115-17.bstnma.fios.verizon.net [173.48.115.17])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 46MBj4sV025431
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Jul 2024 07:45:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1721648706; bh=tbBSjUa3aVRf1LpHb2pNF8m25+nI+R5jh6E4MKLm1ek=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=Ilm6RCdfK36zM9yfQVhQPqVkxvGX+kaXMKOPZglOnPxOF9y2F1z0xFSLQUxS8OpBf
+	 Ok69i7cBwTAesYN9VK3y6W0Ux1unZ1w3GVH9ZV67Q6DJLkBsE5P6PU5LXOlTY1NyQh
+	 kAZVOxDu57NTX30F3xXUm1eF0BUNly3GwP6cNyiZDKqylrhFEykfRQ6hRO6DiFXtLe
+	 soH2x3HIWQt+nc8Cd9mROwrOGQP6lVNZWCBDinYJO8PTCOFYez3kUkkumeKTxhkF7l
+	 ACpfXj7xfdHAgaWD4hLR0UpMMaF0xmbhbFC08+gzpyX2ZNcVqFG+zbrUgcYk2I2I9W
+	 aIQZEeRk93sUw==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id 1ED9815C029B; Mon, 22 Jul 2024 07:45:04 -0400 (EDT)
+Date: Mon, 22 Jul 2024 07:45:04 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mike Snitzer <snitzer@kernel.org>,
+        Mikulas Patocka <mpatocka@redhat.com>, dm-devel@lists.linux.dev
+Subject: Re: mounts failing with -EBUSY on device mapper (was: Re: [GIT PULL]
+ bcachefs changes for 6.11)
+Message-ID: <20240722114504.GA2309824@mit.edu>
+References: <r75jqqdjp24gikil2l26wwtxdxvqxpgfaixb2rqmuyzxnbhseq@6k34emck64hv>
+ <CAHk-=wigjHuE2OPyuT6GK66BcQSAukSp0sm8vYvVJeB7+V+ecQ@mail.gmail.com>
+ <5ypgzehnp2b3z2e5qfu2ezdtyk4dc4gnlvme54hm77aypl3flj@xlpjs7dbmkwu>
+ <CAHk-=wgzMxdCRi9Fqhq2Si+HzyKgWEvMupq=Q-QRQ1xgD_7n=Q@mail.gmail.com>
+ <4l32ehljkxjavy3d2lwegx3adec25apko3v355tnlnxhrs43r4@efhplbikcoqs>
+ <20240719143001.GA2333818@mit.edu>
+ <xp5nl7zi3k6ddkby4phm4swv2wi43slwtvw5fmve5g3jxtdw7w@ygiltwihp2hv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANiDSCsvoiUFPMDatH0OiENtscHYysiRJdCpxVCiK-WtQZS-DQ@mail.gmail.com>
+In-Reply-To: <xp5nl7zi3k6ddkby4phm4swv2wi43slwtvw5fmve5g3jxtdw7w@ygiltwihp2hv>
 
-On Mon, Jul 22, 2024 at 01:41:14PM +0200, Ricardo Ribalda wrote:
-> On Mon, 22 Jul 2024 at 13:39, Laurent Pinchart wrote:
-> > On Mon, Jul 22, 2024 at 07:59:43AM +0000, Ricardo Ribalda wrote:
-> > > Custom control mapping introduced a bug, where the filter function was
-> > > applied to every single control.
-> > >
-> > > Fix it so it is only applied to the matching controls.
-> > >
-> > > Reported-by: Paul Menzen <pmenzel@molgen.mpg.de>
-> > > Closes: https://lore.kernel.org/linux-media/518cd6b4-68a8-4895-b8fc-97d4dae1ddc4@molgen.mpg.de/T/#t
-> > > Cc: stable@vger.kernel.org
-> > > Fixes: 8f4362a8d42b ("media: uvcvideo: Allow custom control mapping")
-> > > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > > ---
-> > > Paul, could you check if this fixes your issue, thanks!
-> > > ---
-> > >  drivers/media/usb/uvc/uvc_ctrl.c | 8 +++++---
-> > >  1 file changed, 5 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> > > index 0136df5732ba..06fede57bf36 100644
-> > > --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> > > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> > > @@ -2680,6 +2680,10 @@ static void uvc_ctrl_init_ctrl(struct uvc_video_chain *chain,
-> > >       for (i = 0; i < ARRAY_SIZE(uvc_ctrl_mappings); ++i) {
-> > >               const struct uvc_control_mapping *mapping = &uvc_ctrl_mappings[i];
-> > >
-> > > +             if (!(uvc_entity_match_guid(ctrl->entity, mapping->entity) &&
-> > > +                 ctrl->info.selector == mapping->selector))
-> > > +                     continue;
-> >
-> > I have a slight preference for
-> >
-> >                 if (!uvc_entity_match_guid(ctrl->entity, mapping->entity) ||
-> >                     ctrl->info.selector != mapping->selector)
-> >                         continue;
-> >
-> > If that's fine with you, I can handle that when applying the patch.
+On Sat, Jul 20, 2024 at 11:48:09AM -0400, Kent Overstreet wrote:
+> > As far as bcachefs is concerned, my xfstests-bld infrastructure isn't
+> > set up to build rust userspace, and Debian has a very ancient bcachefs
+> > packages --- the latest version in Debian stable and unstable dates
+> > from November 2022.  So I haven't enabled bcachefs support in
+> > gce-xfstests and kvm-xfstests yet.  Patches gratefully accepted.  :-)
 > 
-> That looks also good. I can send a v2 if you prefer. I would also add
-> the error messages to the commit message.
-> Let me know what do you prefer, I have time today
+> I can apt install 1.9.1?
 
-If you can send a v2 with an improved commit message that would be nice.
-I'll apply it right away.
+Ah, I see.  bcachefs-tools is currently in Debian unstable, but not in
+Debian testing[1]; it's currently hung up due to the auto-libsodium
+transition[2].  Once that clears I can look at backporting it to
+debian-backports (since my test appliance runs on Debian stable,
+for better repeatable test appliance creation.  :-)
 
-> > This change means that the entity and selector test will use the
-> > original mapping, not the mapping returned by the filtering function. I
-> > think that's fine, both mappings should have the same entity and
-> > selector, only the menu mask is meant to change.
-> >
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> >
-> > > +
-> > >               /* Let the device provide a custom mapping. */
-> > >               if (mapping->filter_mapping) {
-> > >                       mapping = mapping->filter_mapping(chain, ctrl);
-> > > @@ -2687,9 +2691,7 @@ static void uvc_ctrl_init_ctrl(struct uvc_video_chain *chain,
-> > >                               continue;
-> > >               }
-> > >
-> > > -             if (uvc_entity_match_guid(ctrl->entity, mapping->entity) &&
-> > > -                 ctrl->info.selector == mapping->selector)
-> > > -                     __uvc_ctrl_add_mapping(chain, ctrl, mapping);
-> > > +             __uvc_ctrl_add_mapping(chain, ctrl, mapping);
-> > >       }
-> > >  }
-> > >
-> > >
-> > > ---
-> > > base-commit: 68a72104cbcf38ad16500216e213fa4eb21c4be2
-> > > change-id: 20240722-fix-filter-mapping-18477dc69048
+[1] https://tracker.debian.org/pkg/bcachefs-tools
+[2] https://release.debian.org/transitions/html/auto-libsodium.html
 
--- 
-Regards,
-
-Laurent Pinchart
+						- Ted
 
