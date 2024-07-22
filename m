@@ -1,131 +1,105 @@
-Return-Path: <linux-kernel+bounces-258690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3438938BB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:02:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4651938BB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20C0B1C21279
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:02:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63D202817C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5797612B63;
-	Mon, 22 Jul 2024 09:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F2A167DB8;
+	Mon, 22 Jul 2024 09:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bHh10a9z"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="dPDLY4QL"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1330D523A
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C27A523A
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721638945; cv=none; b=qY+6Gx2qseDJAWI/hkUw6DA/82y4uy9F2TBpehQDIH5xGpG7vKNC5c74EcqBMy98E8iA3Ismk+OS8coMwzu2CFg+6TL+YsVFL5Sa2QsHZScHZTJJDpUYef0YNsjck4fJ6TMGagOfGpW6pOVdrHYNfr8atlSytc0nSO+V57sbAIY=
+	t=1721639227; cv=none; b=WCFPrbKfnhb2PhVqZ4CzwobEXp/yp5Ny9z02pCLVyNt3UgIxZkJQXJ2roDIMoaBQ1JogXmnA/qK/XKXyOUTNLiysEgXs8BGHUoC9efTk6BC7fJlNyWZuvzY+V2z1GeCH/ryB6kg1sN04I5OBlyEXIPags3s9Wb3VnzBq+VmYSf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721638945; c=relaxed/simple;
-	bh=U0lkHrSTLCBCsQqeMoWQa6ogRlMB0DgaC4BX0Yn3Nuk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fX2LogoNtzhZepc9rukXlx+lv9LEKcRS7Dknyxc9O9UUuCD4DwBECD3Z/Qb3u7IH8GcFD7zuebxdDyrMTo2a2sJ1oRrcgZp6XPgA4UTj6cYnoHQH0jZjf/B5erukCKA+kG8iaQqnF8+c4s9YtfXHL1r62BF2Ziw+/SOwG8ALGUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bHh10a9z; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4279c924ca7so29188335e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 02:02:23 -0700 (PDT)
+	s=arc-20240116; t=1721639227; c=relaxed/simple;
+	bh=MlDwDQRKF9twVEG79iWcfbddm9tGGXPNnP1U28eThpY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HJx0a3jNEWqmlg54p3oWgg9rZYv9/kyEPJrq94i9wMsn+iSj5xZeO4rM4gTAaU3z2Jf5SdzJf5atEaWkSfu3TWDF6l28XIbps9QCmkjTHyZGjWI+j88H3Y5kg0QS8Kmv8/ifryzI8YzP9FoLt6SAWRxyGgJG4KW7AUwKXmPjdSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=dPDLY4QL; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ef2d7d8854so9257891fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 02:07:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721638942; x=1722243742; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qy3prohTdKukbZeeTIm9GnFzCUR4CLmWXZ94N/+yPNg=;
-        b=bHh10a9zXpnIouUPEsgpgjUXSGRHoYLxbz2t5Yhp4MimzlrtFNFL09Je/X9TUbafSg
-         FU6Z45sNiY3gMtBA/cL/xfVNMhrgs2o/fLGftBUu3tKhxIoVCJijEXTAhRtR9B+XhNEx
-         4f2AHWnV87a0fMPiIcKYTVBxgQsQNBgpgiIQOx2xqhX5gQ280k4BqHGI0XCP7xvdDSN/
-         XJlF/LtDktx6qy/nXT55nAHB+vP7yWv0OuEYvqHzUXY8hurukMWoujWocFIcC3XWSElU
-         wtL1cpS6ybPRjAHSXYr9WkBCKo6IGKpG2oUrhXmZlk3fgcU8AIHeSjEmIDrgeftt1msr
-         N/kQ==
+        d=suse.com; s=google; t=1721639223; x=1722244023; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=q6KDeZL1mIopzYRyhCPAZSAzBi25x25dsv53MOad9y0=;
+        b=dPDLY4QLD5+hC+fvnpHrdsKwQuZs+SaQMBzaHV/fHFbxAQb7vOp/WfkOsVg+/fHoMb
+         yD/X5C4coTC/Dh+zAFHAUkV04JgGjAzKYhL0mrLA320LcKdPdbAoWlOSmnxxJ2Vfubps
+         BsZOHHwbqcbfW3/aQkL/jT/CsO4xhCw6C8sXUu09gH+sU4ZcEhq3uv+pcZ1nFtGf+BV8
+         Qi/gvoEd5uv3qDuIbWT5cFFCGLjy5CYpGjkROwhLt2Thcw3ErQOT19s2mftxJAPsuR+c
+         LteVK+z3MguTzwR8Mqi0zQlMhR5mKZy8NbNptoTo8/QX+M9zGChWAd7ooGD5gIm7tSx9
+         4Onw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721638942; x=1722243742;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qy3prohTdKukbZeeTIm9GnFzCUR4CLmWXZ94N/+yPNg=;
-        b=KEm1w5F2TiF1Oq52LvqwXmDGvY38WYKpv4GaS27IrNJxzuqEu+KVh57L8PfqBJCJcv
-         F7FAzt1UiAgOhJ7HBrT3f5DalrE3wy/z3ObQkoTeU9QBcZ0l00YLqX1qBGjF6LBqudiv
-         FCAOMqV0cGsOESCAS9Xde64Yw2DyZmuguOfmFFALMB2UYb2v7KMAOW8WDBF/d7+EKEki
-         1ax0KQvLrHoyif3uS1F/NoWCCdef5l7ZzYdgCVYr2OUSmCJLJOO04Mu2aDJ6vSZFbJMd
-         P2eaAB0qbXFdke3+NyIQ8H39ncHsbuT+55BiQrCULUDvA1VkGl38Z5nQnkB8lQmDAE5u
-         sD1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVc35ox20VHyNBX6PAdqpkpAhEGunlvBBn2FOtjOCax/gI0t2QWPt8y0TKQBkeiFML9W2/b1sDuWCiOcFbXni05jJfhnGAA/lNh4rqB
-X-Gm-Message-State: AOJu0YxNc4+Vb2usIhjbrFVl8Ml45XDEq2Q2F6ltVatz8MqZoRj81TLa
-	mQhgfFiWX0MnXCtYb5jM7qa8lATUaj/Z4lYdB0DHqjFrF9zVy4FHbPQkTOt8bIrBYBPM76AV7mF
-	Jm7iEtGhrUem2AUHxIdWBSk3xCCuvTjadYSGf
-X-Google-Smtp-Source: AGHT+IEsd5dvn5A2mqFen80qMtQ/JIIOvc7TZZUXavWiZyTt87ua1ZrxMMfyPbkZftrRqdx1QVfeZSkwq8qIrzDoYMM=
-X-Received: by 2002:adf:a382:0:b0:368:3f61:b955 with SMTP id
- ffacd0b85a97d-369bae6b08cmr3273430f8f.38.1721638942107; Mon, 22 Jul 2024
- 02:02:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721639223; x=1722244023;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q6KDeZL1mIopzYRyhCPAZSAzBi25x25dsv53MOad9y0=;
+        b=vWX5CInGLaJHKZVbIR7+kN/wMNPRGpITNb7hCi7yu0jUqGe1znCYhS4qvfoqFfIMyE
+         ESv6Vkb1r2qFlzWDMS3K6fHcwtBAPjzWNPtN8gqZkFP62RU+Jfue6poBc6gRNMhKa8R3
+         6bnZm7vmafIJt3dB1E2X6eowLCgR4XVzMxLeRibMJHtPVL7AuUq0m1CHukedkPNFEEeA
+         dy043xW3OXkFchGRikAh7m+zMrWwoVdPT06Lp5+7x8Aw0qGfqqoa0/yn4Yy7jcQG6C2e
+         QAjobxAaMMEMaN+0YtXR6GBqNLVym/7+olaeeUFuhvBY6l8Wqr8Qtx5l25R/fVtwNl8g
+         AJVg==
+X-Forwarded-Encrypted: i=1; AJvYcCU40aXo9QMGtbQtpWJEnGwG/6cPttPr4MO364YgIHxpScaxBRjWQPe6Z4MGiZa9YrmStOwMXOUIq3TxJPNelv4jZo2ciyizmCcKeXqQ
+X-Gm-Message-State: AOJu0YwDGnUnAejkonhdUZHpqSA58UgiDhzUI4eCXhun9JlUPLuCrT7x
+	ANEkG2AgISRUj61ri4Bp8rC4CNook88pzdfw4q6Phnz7fcY8PO7GUjEJZt3kgzs=
+X-Google-Smtp-Source: AGHT+IHFXv/AlJ5AFRio6/mnRlwfA1+SuMUPkn58Vp4I8PzI9zyHIY0SW3KIC6yxvKFubCQIIg2inQ==
+X-Received: by 2002:a05:651c:503:b0:2ef:2dfe:f058 with SMTP id 38308e7fff4ca-2ef2dfef4ccmr23347061fa.42.1721639223527;
+        Mon, 22 Jul 2024 02:07:03 -0700 (PDT)
+Received: from dhcp161.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cb7753abeasm7534290a91.48.2024.07.22.02.06.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 02:07:03 -0700 (PDT)
+From: Petr Pavlu <petr.pavlu@suse.com>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	linux-modules@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Petr Pavlu <petr.pavlu@suse.com>
+Subject: [PATCH 0/2] module: Split modules_install compression and in-kernel decompression
+Date: Mon, 22 Jul 2024 11:06:20 +0200
+Message-Id: <20240722090622.16524-1-petr.pavlu@suse.com>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717142644.1106060-1-jfalempe@redhat.com> <20240717142644.1106060-5-jfalempe@redhat.com>
-In-Reply-To: <20240717142644.1106060-5-jfalempe@redhat.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 22 Jul 2024 11:02:09 +0200
-Message-ID: <CAH5fLgj2v-7Fx8pwrnQCkHXZeR6m7kOBRzBDS94hjh9BsT+vtw@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] drm/panic: Add a QR code panic screen
-To: Jocelyn Falempe <jfalempe@redhat.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	Bjorn Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, 
-	Danilo Krummrich <dakr@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 17, 2024 at 4:27=E2=80=AFPM Jocelyn Falempe <jfalempe@redhat.co=
-m> wrote:
->
-> This patch adds a new panic screen, with a QR code and the kmsg data
-> embedded.
-> If DRM_PANIC_SCREEN_QR_CODE_URL is set, then the kmsg data will be
-> compressed with zlib and encoded as a numerical segment, and appended
-> to the URL as a URL parameter. This allows to save space, and put
-> about ~7500 bytes of kmsg data, in a V40 QR code.
-> Linux distributions can customize the URL, and put a web frontend to
-> directly open a bug report with the kmsg data.
->
-> Otherwise the kmsg data will be encoded as a binary segment (ie raw
-> ascii) and only a maximum of 2953 bytes of kmsg data will be
-> available in the QR code.
->
-> You can also limit the QR code size with DRM_PANIC_SCREEN_QR_VERSION.
->
-> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+Allow enabling the in-kernel module decompression support separately,
+without requiring to enable also the automatic compression during
+'make modules_install'.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Petr Pavlu (2):
+  module: Split modules_install compression and in-kernel decompression
+  module: Clean up the description of MODULE_SIG_<type>
 
-Alice
+ kernel/module/Kconfig    | 77 ++++++++++++++++++++--------------------
+ scripts/Makefile.modinst |  2 ++
+ 2 files changed, 41 insertions(+), 38 deletions(-)
 
-> v2:
->  * Rewrite the rust comments with Markdown (Alice Ryhl)
->  * Mark drm_panic_qr_generate() as unsafe (Alice Ryhl)
->  * Use CStr directly, and remove the call to as_str_unchecked()
->    (Alice Ryhl)
->  * Add a check for data_len <=3D data_size (Greg KH)
->
-> v3:
->  * Fix all rust comments (typo, punctuation) (Miguel Ojeda)
->  * Change the wording of safety comments (Alice Ryhl)
->  * Add a link to the javascript decoder in the Kconfig (Greg KH)
->  * Fix data_size and tmp_size check in drm_panic_qr_generate()
->
-> v4:
->  * Fix the logic to find next line and skip the '\n' (Alic Ryhl)
->  * Remove __LOG_PREFIX as it's not used (Alice Ryhl)
+
+base-commit: 933069701c1b507825b514317d4edd5d3fd9d417
+-- 
+2.35.3
+
 
