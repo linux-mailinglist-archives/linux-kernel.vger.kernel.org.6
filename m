@@ -1,334 +1,630 @@
-Return-Path: <linux-kernel+bounces-258700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9E62938BCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:13:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D339938BD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:15:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 149241C21138
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:13:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C88D92817DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A1F169AD0;
-	Mon, 22 Jul 2024 09:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD11216ABF3;
+	Mon, 22 Jul 2024 09:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="eIVsjJfr"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MYFq9t39"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E410161936
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB79168C20;
+	Mon, 22 Jul 2024 09:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721639612; cv=none; b=PbklJrCjyRYHg6tX5SQbYLkQyUlf9scdYuKjGv/4z4d+vYoxPZFE28Y9nx2di4O8DJXzd2Aop70AxACyWFzBizFYYY+u53Ny7yERe1doqwubVIuvY3k8srnXhEVhO+6S48h26vf9B40x/LWH9r/JBA4J8PvidmhVDYO2919dyvk=
+	t=1721639703; cv=none; b=sTbqzpy4x2VwNGgMM+Cv7jSTLbXx2OkGZUHT7tRC1APle98OPTzw1Fi2FqUG0GC9KVhp2Fsvg+g8xPPdEKWFSBG4J6+Bbs3LzJy388xPga9UNDqwPbuXKw4JOiu//kR5aDbh9nsi+zy4hpHVbkJst9Hrb0pR0jzkcSeeZmzAjOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721639612; c=relaxed/simple;
-	bh=GMHa8pdYX1lXOL7GJx0Y/oD7TNvUOaUeS9nAENKKr2o=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:Content-Type:
-	 MIME-Version:References; b=J62ZG3BwjvpOznONhyc1nJVYzuraK/LApkDvW6B7pXIQ8s9FB4FPfKRUygGduuD/kIv2nBEyTh5W2HYRhSqb4gVRTE9/7M0rW03id3bi9BaKc1yFp6iUEBdOXn9Gx2Stn4sQGzFc1W0S4eERXTNuhwezr0VUMWJGguiPHSYTenU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=eIVsjJfr; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240722091322euoutp01a47aee8d80bc079c41b353ba2dfa9643~kfhjIpKhW1523215232euoutp01a
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:13:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240722091322euoutp01a47aee8d80bc079c41b353ba2dfa9643~kfhjIpKhW1523215232euoutp01a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1721639602;
-	bh=fL649yRlqma+1qKxqnlEH6xA44iNIiPZSzHqaJsKH3E=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References:From;
-	b=eIVsjJfrXMrewZDrCCafCvNKQSE24C6XA39ojhsYhh9yC8OJz7mlyq9ajRIFE2nPp
-	 MeswvuKP2nnu5fmktem5oATQjLqdn0wPZk6XAomNofLJcuaMQkQYstAodQpJ/9qlDZ
-	 p2VRvhcjSvP+t6rOeAvBclxi134yB9wrCrYBv8w0=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240722091322eucas1p15e4f88f8c31414c3b409c98f35d87b29~kfhixPE0n1112411124eucas1p1F;
-	Mon, 22 Jul 2024 09:13:22 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 28.6A.09624.1B22E966; Mon, 22
-	Jul 2024 10:13:21 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240722091321eucas1p1c2bf23fbaef130ec7aaa9a258767b06c~kfhiQMR3j0678906789eucas1p1u;
-	Mon, 22 Jul 2024 09:13:21 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240722091321eusmtrp2f2d39bdd5f1a83306e1d45fcc93e57f2~kfhiPT0dY1641716417eusmtrp2m;
-	Mon, 22 Jul 2024 09:13:21 +0000 (GMT)
-X-AuditID: cbfec7f2-bfbff70000002598-04-669e22b117ab
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id DC.8E.09010.1B22E966; Mon, 22
-	Jul 2024 10:13:21 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240722091321eusmtip24f5a3d35c16981971e3844584ac47830~kfhh97jT43119631196eusmtip2B;
-	Mon, 22 Jul 2024 09:13:21 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) with Microsoft SMTP
-	Server (TLS) id 15.0.1497.2; Mon, 22 Jul 2024 10:13:20 +0100
-Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
-	([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Mon, 22 Jul
-	2024 10:13:20 +0100
-From: Daniel Gomez <da.gomez@samsung.com>
-To: Ryan Roberts <ryan.roberts@arm.com>
-CC: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
-	<hughd@google.com>, Jonathan Corbet <corbet@lwn.net>, "Matthew Wilcox
- (Oracle)" <willy@infradead.org>, David Hildenbrand <david@redhat.com>,
-	"Barry Song" <baohua@kernel.org>, Lance Yang <ioworker0@gmail.com>, Baolin
-	Wang <baolin.wang@linux.alibaba.com>, Gavin Shan <gshan@redhat.com>, Pankaj
-	Raghav <kernel@pankajraghav.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [RFC PATCH v1 3/4] mm: Override mTHP "enabled" defaults at
- kernel cmdline
-Thread-Topic: [RFC PATCH v1 3/4] mm: Override mTHP "enabled" defaults at
-	kernel cmdline
-Thread-Index: AQHa2BkHvPb5vL5oYUaDGeyhE1sit7ICbdOA
-Date: Mon, 22 Jul 2024 09:13:20 +0000
-Message-ID: <axqj32jqs3ehzpz4vewtfbgcl2sg4lkntfm4prrqcd3evt7klr@qlurbuivkgbe>
-In-Reply-To: <20240717071257.4141363-4-ryan.roberts@arm.com>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <474A2AE92269224E9E597995E77FDFBA@scsc.local>
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1721639703; c=relaxed/simple;
+	bh=d7xHslyF97tJsVZUBlUYphB1JXCq3oyEqSrlI2iYOVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kZKegW5uL/f1IX7pYJMSwyfRwnp2jb0ND7eHxj6pShrvfRgBJ03geiJz6ql1FvbXsbKg5zar3ck7QRtZ4RYsP+Y4sHCxcmUrYXOX0i4GNIcvu8Lyh7BlPdJLBxKPPJPfkfrw5OR12wp5jSjHk7wxmS+WYszu2qnADtgG2H5LWLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=MYFq9t39; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C174645B;
+	Mon, 22 Jul 2024 11:14:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1721639658;
+	bh=d7xHslyF97tJsVZUBlUYphB1JXCq3oyEqSrlI2iYOVo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MYFq9t39ZWqF4PIP1g1B53NOlzleaLjzeI3h+JYt0RYO5vli3OfXrKQrEO5LWzHjf
+	 JFs1IQwZqE1haSzcIBmo50wyCufYLsFgzO5jDuPtVc9lB2+M9wd2QfDeUyjVpo9L/d
+	 +FHVUcRkqE+kCSpEIDKYQr6OF8ZOSA7wQNU+HnfM=
+Date: Mon, 22 Jul 2024 12:14:41 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Haibo Chen <haibo.chen@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
+	Frank Li <Frank.li@nxp.com>
+Subject: Re: [PATCH v6 2/4] mfd: adp5585: Add Analog Devices ADP5585 core
+ support
+Message-ID: <20240722091441.GA13497@pendragon.ideasonboard.com>
+References: <20240721160049.20470-1-laurent.pinchart@ideasonboard.com>
+ <20240721160049.20470-3-laurent.pinchart@ideasonboard.com>
+ <20240722085629.GX501857@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOKsWRmVeSWpSXmKPExsWy7djP87oblealGWy7a2wxZ/0aNosnh3qZ
-	Lf7vPcZo8eRAO6PF1/W/mC1e7trGZPH0Ux+LxaLfxhZnXn5msbi8aw6bxb01/1ktenZPZbT4
-	/WMOmwOvx5p5axg9ds66y+6xYFOpx+YVWh6bVnWyeWz6NInd48SM3yweOx9aeizum8zqcXal
-	o8f7fVfZPD5vkgvgieKySUnNySxLLdK3S+DKONV2m6Vgj2nF1Qd8DYzNOl2MnBwSAiYS7RPa
-	mboYuTiEBFYwSjy+dokFwvnCKDFv5y42COczo0R/1yFGmJYFN96zQySWM0os+NvNBFd1dVkr
-	I4RzhlFix8LHYC1CAisZJWY3uYLYbAKaEvtObmIHsUUE1CV+3FoEVsMs8I1Z4ks/dxcjB4ew
-	QITEgnU+IKaIQKTEy3kGENVGEg0zjzGD2CwCqhLr7swA6+QV8JVYtmQeC4jNKWAj8ePMfLA4
-	o4CsxKOVv9ghpotL3HoynwniAUGJRbP3MEPYYhL/dj1kg7B1JM5efwL1pIHE1qX7WCBsRYmO
-	YzfZIOboSCzY/QnKtpRonLucCcLWlli28DUzxD2CEidnPgEHo4TAWi6JWW9boZa5SCyfe5kd
-	whaWeHV8C/sERp1ZSO6bhWTHLCQ7ZiHZMQvJjgWMrKsYxVNLi3PTU4sN81LL9YoTc4tL89L1
-	kvNzNzEC0+Lpf8c/7WCc++qj3iFGJg7GQ4wSHMxKIrxPXs1NE+JNSaysSi3Kjy8qzUktPsQo
-	zcGiJM6rmiKfKiSQnliSmp2aWpBaBJNl4uCUamAKXDdN3fbnzRq7R5vcla13aGgceeTU7qqe
-	OiWgYUpkTgT3Il32uRNU3xoXRDq3Xd0qo/XkwFS/GV17HJW1OOJqLnk92W0VWn/VvVfIIOfH
-	Rdn+ju2T7W7oKtbm3OItsQpc9dtvZ/+yGTdPSzv/2dQ3YTKXwcfzJ3d8W2Bq56h9+TXPKuG3
-	hhs0fn8KMQ56HRHQOsclwiJ6pw/3pCNbdNN3HXMMv8356Q/bYcmtc3cliK2+9efSww8/Jx7b
-	9fvLbYHvRyZEbgs/rm8v8pDj2YfEkh1PJd23Kf3QdPqfuOZU6dxDG5k0/vyWa327V1SAX2iD
-	xJN5nZfWPDKXOXO6jMuNrfrK6gMPD937lVzduuswnxJLcUaioRZzUXEiANqS+az6AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrEKsWRmVeSWpSXmKPExsVy+t/xe7oblealGezeI2oxZ/0aNosnh3qZ
-	Lf7vPcZo8eRAO6PF1/W/mC1e7trGZPH0Ux+LxaLfxhZnXn5msbi8aw6bxb01/1ktenZPZbT4
-	/WMOmwOvx5p5axg9ds66y+6xYFOpx+YVWh6bVnWyeWz6NInd48SM3yweOx9aeizum8zqcXal
-	o8f7fVfZPD5vkgvgidKzKcovLUlVyMgvLrFVija0MNIztLTQMzKx1DM0No+1MjJV0rezSUnN
-	ySxLLdK3S9DLONV2m6Vgj2nF1Qd8DYzNOl2MnBwSAiYSC268ZwexhQSWMkr8bCmEiMtIbPxy
-	lRXCFpb4c62LrYuRC6jmI6PE0UOr2CGcM4wSp969YIFwVjJKLPi8ngWkhU1AU2LfyU1gY0UE
-	1CV+3FrECFLELPCNWeLz5x1gc4UFIiRurNzLBlEUKbG46RwLhG0k0TDzGDOIzSKgKrHuzgxG
-	EJtXwFdi2ZJ5UNsOMkp87z4AVsQpYCPx48x8sCJGAVmJRyt/gW1mFhCXuPVkPhPEEwISS/ac
-	Z4awRSVePv4H9ZyOxNnrTxghbAOJrUv3sUDYihIdx26yQczRkViw+xOUbSnROHc5E4StLbFs
-	4WtmiOMEJU7OfMIygVFmFpLVs5C0z0LSPgtJ+ywk7QsYWVcxiqSWFuem5xYb6RUn5haX5qXr
-	JefnbmIEJr5tx35u2cG48tVHvUOMTByMhxglOJiVRHifvJqbJsSbklhZlVqUH19UmpNafIjR
-	FBh4E5mlRJPzgak3ryTe0MzA1NDEzNLA1NLMWEmc17OgI1FIID2xJDU7NbUgtQimj4mDU6qB
-	aamMWXPBGQ5TucQnxRxcD2WesYfe05eZGLaD/+qFVtUOL277RXMaPm6vfBowL+ZI+mzp/GNM
-	E5+3LpE5VqV3/K0209p7kks0OIp4Il0VW1bcVz/y6OLClpOCqo7sarN6nSu2e1r9yLuqIntk
-	zsyrE5r6dStXKapmynsd/cZ1rYJrqZLM2a1sAgu4Ul5LuebnLsnr698qMCvQ3Zl5Z82J8vV/
-	GCp72yd93nXeQGNPrJlvr0+1N5OYiBDXxc4tP58u1uFN0b1mx8hVy+uqVqN0Q+f5zTkPfpTc
-	1nB5WmN55eaZ9c8rdEvu8XhahU3QdWl0lt6+88Os+74ff8//8qw1pEicL9djk73J60WMvxYp
-	sRRnJBpqMRcVJwIA0fXj+AUEAAA=
-X-CMS-MailID: 20240722091321eucas1p1c2bf23fbaef130ec7aaa9a258767b06c
-X-Msg-Generator: CA
-X-RootMTR: 20240717071315eucas1p199a8b4a7134ecf38255a721432e1b65b
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240717071315eucas1p199a8b4a7134ecf38255a721432e1b65b
-References: <20240717071257.4141363-1-ryan.roberts@arm.com>
-	<CGME20240717071315eucas1p199a8b4a7134ecf38255a721432e1b65b@eucas1p1.samsung.com>
-	<20240717071257.4141363-4-ryan.roberts@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240722085629.GX501857@google.com>
 
-On Wed, Jul 17, 2024 at 08:12:55AM GMT, Ryan Roberts wrote:
-> Add thp_anon=3D cmdline parameter to allow specifying the default
-> enablement of each supported anon THP size. The parameter accepts the
-> following format and can be provided multiple times to configure each
-> size:
->=20
-> thp_anon=3D<size>[KMG]:<value>
+Hi Lee,
 
-Minor suggestion. Should this be renamed to hp_anon=3D or hugepages_anon=3D=
- instead?
-This would align with the values under /sys/kernel/mm/transparent_hugepage/
-hugepages-*kB.
+Thank you for the review.
 
->=20
-> See Documentation/admin-guide/mm/transhuge.rst for more details.
->=20
-> Configuring the defaults at boot time is useful to allow early user
-> space to take advantage of mTHP before its been configured through
-> sysfs.
->=20
-> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> ---
->  .../admin-guide/kernel-parameters.txt         |  8 +++
->  Documentation/admin-guide/mm/transhuge.rst    | 26 +++++++--
->  mm/huge_memory.c                              | 55 ++++++++++++++++++-
->  3 files changed, 82 insertions(+), 7 deletions(-)
->=20
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentat=
-ion/admin-guide/kernel-parameters.txt
-> index bc55fb55cd26..48443ad12e3f 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -6592,6 +6592,14 @@
->  			<deci-seconds>: poll all this frequency
->  			0: no polling (default)
-> =20
-> +	thp_anon=3D	[KNL]
-> +			Format: <size>[KMG]:always|madvise|never|inherit
-> +			Can be used to control the default behavior of the
-> +			system with respect to anonymous transparent hugepages.
-> +			Can be used multiple times for multiple anon THP sizes.
-> +			See Documentation/admin-guide/mm/transhuge.rst for more
-> +			details.
-> +
->  	threadirqs	[KNL,EARLY]
->  			Force threading of all interrupt handlers except those
->  			marked explicitly IRQF_NO_THREAD.
-> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/a=
-dmin-guide/mm/transhuge.rst
-> index 1aaf8e3a0b5a..f53d43d986e2 100644
-> --- a/Documentation/admin-guide/mm/transhuge.rst
-> +++ b/Documentation/admin-guide/mm/transhuge.rst
-> @@ -311,13 +311,27 @@ performance.
->  Note that any changes to the allowed set of sizes only applies to future
->  file-backed THP allocations.
-> =20
-> -Boot parameter
-> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +Boot parameters
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> =20
-> -You can change the sysfs boot time defaults of Transparent Hugepage
-> -Support by passing the parameter ``transparent_hugepage=3Dalways`` or
-> -``transparent_hugepage=3Dmadvise`` or ``transparent_hugepage=3Dnever``
-> -to the kernel command line.
-> +You can change the sysfs boot time default for the top-level "enabled"
-> +control by passing the parameter ``transparent_hugepage=3Dalways`` or
-> +``transparent_hugepage=3Dmadvise`` or ``transparent_hugepage=3Dnever`` t=
-o the
-> +kernel command line.
-> +
-> +Alternatively, each supported anonymous THP size can be controlled by
-> +passing ``thp_anon=3D<size>[KMG]:<state>``, where ``<size>`` is the THP =
-size
-> +and ``<state>`` is one of ``always``, ``madvise``, ``never`` or
-> +``inherit``.
-> +
-> +For example, the following will set 64K THP to ``always``::
-> +
-> +	thp_anon=3D64K:always
-> +
-> +``thp_anon=3D`` may be specified multiple times to configure all THP siz=
-es as
-> +required. If ``thp_anon=3D`` is specified at least once, any anon THP si=
-zes
-> +not explicitly configured on the command line are implicitly set to
-> +``never``.
-> =20
->  Hugepages in tmpfs/shmem
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 4249c0bc9388..794d2790d90d 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -82,6 +82,7 @@ unsigned long huge_anon_orders_madvise __read_mostly;
->  unsigned long huge_anon_orders_inherit __read_mostly;
->  unsigned long huge_file_orders_always __read_mostly;
->  int huge_file_exec_order __read_mostly =3D -1;
-> +static bool anon_orders_configured;
-> =20
->  unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
->  					 unsigned long vm_flags,
-> @@ -763,7 +764,10 @@ static int __init hugepage_init_sysfs(struct kobject=
- **hugepage_kobj)
->  	 * disable all other sizes. powerpc's PMD_ORDER isn't a compile-time
->  	 * constant so we have to do this here.
->  	 */
-> -	huge_anon_orders_inherit =3D BIT(PMD_ORDER);
-> +	if (!anon_orders_configured) {
-> +		huge_anon_orders_inherit =3D BIT(PMD_ORDER);
+On Mon, Jul 22, 2024 at 09:56:29AM +0100, Lee Jones wrote:
+> On Sun, 21 Jul 2024, Laurent Pinchart wrote:
+> 
+> > From: Haibo Chen <haibo.chen@nxp.com>
+> > 
+> > The ADP5585 is a 10/11 input/output port expander with a built in keypad
+> > matrix decoder, programmable logic, reset generator, and PWM generator.
+> > This driver supports the chip by modelling it as an MFD device, with two
+> > child devices for the GPIO and PWM functions.
+> > 
+> > The driver is derived from an initial implementation from NXP, available
+> > in commit 8059835bee19 ("MLK-25917-1 mfd: adp5585: add ADI adp5585 core
+> > support") in their BSP kernel tree. It has been extensively rewritten.
+> > 
+> > Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > ---
+> > Changes since v4:
+> > 
+> > - One more GENMASK() usage
+> > - Include err.h
+> > 
+> > Changes since v2:
+> > 
+> > - Add missing and remove extraneous headers
+> > - Use i2c_get_match_data()
+> > - Drop unneeded parentheses
+> > - Use GENMASK()
+> > - Drop of_match_ptr()
+> > - Allow compilation on !OF with COMPILE_TEST
+> > - Replace ADP5585_MAN_ID() macro with ADP5585_MAN_ID_MASK
+> > - Drop unneeded macro
+> > 
+> > Changes since v1:
+> > 
+> > - Add comment to explain BANK and BIT macros
+> > - Drop compatible strings from cells
+> > - White space fixes
+> > - Fix comparison to NULL
+> > 
+> > Changes compared to the NXP original version:
+> > 
+> > - Add MAINTAINERS entry
+> > - Fix compatible strings for child devices
+> > - Fix header guards
+> > - Use lowercase hex constants
+> > - White space fixes
+> > - Use module_i2c_driver()
+> > - Switch to regmap
+> > - Drop I2C device ID table
+> > - Drop ADP5585_REG_MASK
+> > - Support R5 GPIO pin
+> > - Drop dev field from adp5585_dev structure
+> > - Check device ID at probe time
+> > - Fix register field names
+> > - Update copyright
+> > - Update license to GPL-2.0-only
+> > - Implement suspend/resume
+> > ---
+> >  MAINTAINERS                 |   2 +
+> >  drivers/mfd/Kconfig         |  12 +++
+> >  drivers/mfd/Makefile        |   1 +
+> >  drivers/mfd/adp5585.c       | 200 ++++++++++++++++++++++++++++++++++++
+> >  include/linux/mfd/adp5585.h | 126 +++++++++++++++++++++++
+> >  5 files changed, 341 insertions(+)
+> >  create mode 100644 drivers/mfd/adp5585.c
+> >  create mode 100644 include/linux/mfd/adp5585.h
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 4fe8bd8752a5..ebb1a1833bbc 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -532,6 +532,8 @@ L:	linux-gpio@vger.kernel.org
+> >  L:	linux-pwm@vger.kernel.org
+> >  S:	Maintained
+> >  F:	Documentation/devicetree/bindings/*/adi,adp5585*.yaml
+> > +F:	drivers/mfd/adp5585.c
+> > +F:	include/linux/mfd/adp5585.h
+> >  
+> >  ADP5588 QWERTY KEYPAD AND IO EXPANDER DRIVER (ADP5588/ADP5587)
+> >  M:	Michael Hennerich <michael.hennerich@analog.com>
+> > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> > index 266b4f54af60..05e8e1f0b602 100644
+> > --- a/drivers/mfd/Kconfig
+> > +++ b/drivers/mfd/Kconfig
+> > @@ -20,6 +20,18 @@ config MFD_CS5535
+> >  	  This is the core driver for CS5535/CS5536 MFD functions.  This is
+> >  	  necessary for using the board's GPIO and MFGPT functionality.
+> >  
+> > +config MFD_ADP5585
+> > +	tristate "Analog Devices ADP5585 MFD driver"
+> 
+> It's not an MFD driver (whatever one of those is), is a Keypad Decoder
+> and I/O Expander.
 
-PMD_ORDER for 64k base PS systems would result in a 512M value, which excee=
-ds
-the xarray limit [1]. Therefore, I think we need to avoid PMD-size orders b=
-y
-checking if PMD_ORDER > MAX_PAGECACHE_ORDER.
+OK.
 
-[1] https://lore.kernel.org/all/20240627003953.1262512-1-gshan@redhat.com/
+> > +	select MFD_CORE
+> > +	select REGMAP_I2C
+> > +	depends on I2C
+> > +	depends on OF || COMPILE_TEST
+> > +	help
+> > +	  Say yes here to add support for the Analog Devices ADP5585 GPIO
+> > +	  expander, PWM and keypad controller. This includes the I2C driver and
+> > +	  the core APIs _only_, you have to select individual components like
+> > +	  the GPIO and PWM functions under the corresponding menus.
+> > +
+> >  config MFD_ALTERA_A10SR
+> >  	bool "Altera Arria10 DevKit System Resource chip"
+> >  	depends on ARCH_INTEL_SOCFPGA && SPI_MASTER=y && OF
+> > diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> > index c66f07edcd0e..37f36a019a68 100644
+> > --- a/drivers/mfd/Makefile
+> > +++ b/drivers/mfd/Makefile
+> > @@ -188,6 +188,7 @@ obj-$(CONFIG_MFD_DB8500_PRCMU)	+= db8500-prcmu.o
+> >  obj-$(CONFIG_AB8500_CORE)	+= ab8500-core.o ab8500-sysctrl.o
+> >  obj-$(CONFIG_MFD_TIMBERDALE)    += timberdale.o
+> >  obj-$(CONFIG_PMIC_ADP5520)	+= adp5520.o
+> > +obj-$(CONFIG_MFD_ADP5585)	+= adp5585.o
+> >  obj-$(CONFIG_MFD_KEMPLD)	+= kempld-core.o
+> >  obj-$(CONFIG_MFD_INTEL_QUARK_I2C_GPIO)	+= intel_quark_i2c_gpio.o
+> >  obj-$(CONFIG_LPC_SCH)		+= lpc_sch.o
+> > diff --git a/drivers/mfd/adp5585.c b/drivers/mfd/adp5585.c
+> > new file mode 100644
+> > index 000000000000..5dc3e47a0533
+> > --- /dev/null
+> > +++ b/drivers/mfd/adp5585.c
+> > @@ -0,0 +1,200 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Analog Devices ADP5585 I/O expander, PWM controller and keypad controller
+> > + *
+> > + * Copyright 2022 NXP
+> > + * Copyright 2024 Ideas on Board Oy
+> > + */
+> > +
+> > +#include <linux/array_size.h>
+> > +#include <linux/device.h>
+> > +#include <linux/err.h>
+> > +#include <linux/i2c.h>
+> > +#include <linux/mfd/adp5585.h>
+> > +#include <linux/mfd/core.h>
+> > +#include <linux/mod_devicetable.h>
+> > +#include <linux/module.h>
+> > +#include <linux/regmap.h>
+> > +#include <linux/types.h>
+> > +
+> > +static const struct mfd_cell adp5585_devs[] = {
+> > +	{ .name = "adp5585-gpio", },
+> > +	{ .name = "adp5585-pwm", },
+> > +};
+> > +
+> > +static const struct regmap_range adp5585_volatile_ranges[] = {
+> > +	regmap_reg_range(ADP5585_ID, ADP5585_GPI_STATUS_B),
+> > +};
+> > +
+> > +static const struct regmap_access_table adp5585_volatile_regs = {
+> > +	.yes_ranges = adp5585_volatile_ranges,
+> > +	.n_yes_ranges = ARRAY_SIZE(adp5585_volatile_ranges),
+> > +};
+> > +
+> > +static const u8 adp5585_regmap_defaults_00[ADP5585_MAX_REG + 1] = {
+> > +	/* 0x00 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +	/* 0x08 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +	/* 0x10 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +	/* 0x18 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +	/* 0x20 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +	/* 0x28 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +	/* 0x30 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +	/* 0x38 */ 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +};
+> > +
+> > +static const u8 adp5585_regmap_defaults_02[ADP5585_MAX_REG + 1] = {
+> > +	/* 0x00 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +	/* 0x08 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +	/* 0x10 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xc3,
+> > +	/* 0x18 */ 0x03, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +	/* 0x20 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +	/* 0x28 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +	/* 0x30 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +	/* 0x38 */ 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +};
+> > +
+> > +static const u8 adp5585_regmap_defaults_04[ADP5585_MAX_REG + 1] = {
+> > +	/* 0x00 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +	/* 0x08 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +	/* 0x10 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x55,
+> > +	/* 0x18 */ 0x05, 0x55, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +	/* 0x20 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +	/* 0x28 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +	/* 0x30 */ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +	/* 0x38 */ 0x00, 0x00, 0x00, 0x00, 0x00,
+> > +};
+> 
+> This 'patches', 'default's whatever you want to call them are horrid!
 
-> +		anon_orders_configured =3D true;
-> +	}
-> =20
->  	/*
->  	 * For pagecache, default to enabling all orders. powerpc's PMD_ORDER
-> @@ -955,6 +959,55 @@ static int __init setup_transparent_hugepage(char *s=
-tr)
->  }
->  __setup("transparent_hugepage=3D", setup_transparent_hugepage);
-> =20
-> +static int __init setup_thp_anon(char *str)
-> +{
-> +	unsigned long size;
-> +	char *state;
-> +	int order;
-> +	int ret =3D 0;
-> +
-> +	if (!str)
-> +		goto out;
-> +
-> +	size =3D (unsigned long)memparse(str, &state);
-> +	order =3D ilog2(size >> PAGE_SHIFT);
-> +	if (*state !=3D ':' || !is_power_of_2(size) || size <=3D PAGE_SIZE ||
-> +	    !(BIT(order) & THP_ORDERS_ALL_ANON))
-> +		goto out;
-> +
-> +	state++;
-> +
-> +	if (!strcmp(state, "always")) {
-> +		clear_bit(order, &huge_anon_orders_inherit);
-> +		clear_bit(order, &huge_anon_orders_madvise);
-> +		set_bit(order, &huge_anon_orders_always);
-> +		ret =3D 1;
-> +	} else if (!strcmp(state, "inherit")) {
-> +		clear_bit(order, &huge_anon_orders_always);
-> +		clear_bit(order, &huge_anon_orders_madvise);
-> +		set_bit(order, &huge_anon_orders_inherit);
-> +		ret =3D 1;
-> +	} else if (!strcmp(state, "madvise")) {
-> +		clear_bit(order, &huge_anon_orders_always);
-> +		clear_bit(order, &huge_anon_orders_inherit);
-> +		set_bit(order, &huge_anon_orders_madvise);
-> +		ret =3D 1;
-> +	} else if (!strcmp(state, "never")) {
-> +		clear_bit(order, &huge_anon_orders_always);
-> +		clear_bit(order, &huge_anon_orders_inherit);
-> +		clear_bit(order, &huge_anon_orders_madvise);
-> +		ret =3D 1;
-> +	}
-> +
-> +	if (ret)
-> +		anon_orders_configured =3D true;
-> +out:
-> +	if (!ret)
-> +		pr_warn("thp_anon=3D%s: cannot parse, ignored\n", str);
-> +	return ret;
-> +}
-> +__setup("thp_anon=3D", setup_thp_anon);
-> +
->  pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
->  {
->  	if (likely(vma->vm_flags & VM_WRITE))
-> --=20
-> 2.43.0
-> =
+As far as I understand, that's what regmap requires to handle default
+register values when using the regmap cache. Is there a better way ?
+
+> > +enum adp5585_regmap_type {
+> > +	ADP5585_REGMAP_00,
+> > +	ADP5585_REGMAP_02,
+> > +	ADP5585_REGMAP_04,
+> > +};
+> 
+> What is a type 00, 02 and 04?
+
+Those are devices variants, described in the datasheet. -00 is the
+default, -02 doesn't have internal pull-up resistors, and -04 has
+pull-down resistors instead. See
+https://www.analog.com/media/en/technical-documentation/data-sheets/ADP5585.pdf
+if you're curious.
+
+> > +static const struct regmap_config adp5585_regmap_configs[] = {
+> > +	[ADP5585_REGMAP_00] = {
+> > +		.reg_bits = 8,
+> > +		.val_bits = 8,
+> > +		.max_register = ADP5585_MAX_REG,
+> > +		.volatile_table = &adp5585_volatile_regs,
+> > +		.cache_type = REGCACHE_MAPLE,
+> > +		.reg_defaults_raw = adp5585_regmap_defaults_00,
+> > +		.num_reg_defaults_raw = sizeof(adp5585_regmap_defaults_00),
+> > +	},
+> > +	[ADP5585_REGMAP_02] = {
+> > +		.reg_bits = 8,
+> > +		.val_bits = 8,
+> > +		.max_register = ADP5585_MAX_REG,
+> > +		.volatile_table = &adp5585_volatile_regs,
+> > +		.cache_type = REGCACHE_MAPLE,
+> > +		.reg_defaults_raw = adp5585_regmap_defaults_02,
+> > +		.num_reg_defaults_raw = sizeof(adp5585_regmap_defaults_02),
+> > +	},
+> > +	[ADP5585_REGMAP_04] = {
+> > +		.reg_bits = 8,
+> > +		.val_bits = 8,
+> > +		.max_register = ADP5585_MAX_REG,
+> > +		.volatile_table = &adp5585_volatile_regs,
+> > +		.cache_type = REGCACHE_MAPLE,
+> > +		.reg_defaults_raw = adp5585_regmap_defaults_04,
+> > +		.num_reg_defaults_raw = sizeof(adp5585_regmap_defaults_04),
+> > +	},
+> > +};
+> > +
+> > +static int adp5585_i2c_probe(struct i2c_client *i2c)
+> > +{
+> > +	const struct regmap_config *regmap_config;
+> > +	struct adp5585_dev *adp5585;
+> > +	unsigned int id;
+> > +	int ret;
+> > +
+> > +	adp5585 = devm_kzalloc(&i2c->dev, sizeof(struct adp5585_dev),
+> 
+> sizeof(*adp5585)
+
+Indeed, not sure how I missed that.
+
+> > +			       GFP_KERNEL);
+> 
+> No need to line-wrap here - user 100 chars to improve readability.
+> 
+> > +	if (!adp5585)
+> > +		return -ENOMEM;
+> > +
+> > +	i2c_set_clientdata(i2c, adp5585);
+> > +
+> > +	regmap_config = i2c_get_match_data(i2c);
+> > +	adp5585->regmap = devm_regmap_init_i2c(i2c, regmap_config);
+> 
+> Is regmap_config guaranteed to be !NULL?
+
+Unless someone modifies the driver without understanding what they're
+doing, yes. Please see below.
+
+> How would devm_regmap_init_i2c() handle that if it were?
+> 
+> > +	if (IS_ERR(adp5585->regmap))
+> > +		return dev_err_probe(&i2c->dev, PTR_ERR(adp5585->regmap),
+> > +				     "Failed to initialize register map\n");
+> > +
+> > +	/* Verify the device ID. */
+> 
+> Probably superfluous.
+
+The comment, or verifying the ID ?
+
+> > +	ret = regmap_read(adp5585->regmap, ADP5585_ID, &id);
+> > +	if (ret)
+> > +		return dev_err_probe(&i2c->dev, ret,
+> > +				     "Failed to read device ID\n");
+> > +
+> > +	if ((id & ADP5585_MAN_ID_MASK) != ADP5585_MAN_ID_VALUE)
+> > +		return dev_err_probe(&i2c->dev, -ENODEV,
+> > +				     "Invalid device ID 0x%02x\n", id);
+> > +
+> > +	dev_dbg(&i2c->dev, "device ID 0x%02x\n", id);
+> 
+> How often to you think this well be useful post-dev?
+> 
+> I'd wager, never.
+
+I'll drop that.
+
+> > +
+> > +	/* Add MFD devices. */
+> 
+> Definitely superfluous.
+
+I assume you mean the comment only :-) I can drop it.
+
+> > +	ret = devm_mfd_add_devices(&i2c->dev, PLATFORM_DEVID_AUTO,
+> > +				   adp5585_devs, ARRAY_SIZE(adp5585_devs),
+> > +				   NULL, 0, NULL);
+> > +	if (ret)
+> > +		return dev_err_probe(&i2c->dev, ret,
+> > +				     "Failed to add MFD devices\n");
+> 
+> s/MFD/child/
+> 
+> Or
+> 
+> s/MFD /sub-/
+> 
+> > +	return 0;
+> > +}
+> > +
+> > +static int adp5585_suspend(struct device *dev)
+> > +{
+> > +	struct adp5585_dev *adp5585 = dev_get_drvdata(dev);
+> > +
+> > +	regcache_cache_only(adp5585->regmap, true);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int adp5585_resume(struct device *dev)
+> > +{
+> > +	struct adp5585_dev *adp5585 = dev_get_drvdata(dev);
+> > +
+> > +	regcache_cache_only(adp5585->regmap, false);
+> > +	regcache_mark_dirty(adp5585->regmap);
+> > +
+> > +	return regcache_sync(adp5585->regmap);
+> > +}
+> > +
+> > +static DEFINE_SIMPLE_DEV_PM_OPS(adp5585_pm, adp5585_suspend, adp5585_resume);
+> > +
+> > +static const struct of_device_id adp5585_of_match[] = {
+> > +	{
+> > +		.compatible = "adi,adp5585-00",
+> > +		.data = &adp5585_regmap_configs[ADP5585_REGMAP_00],
+> > +	}, {
+> > +		.compatible = "adi,adp5585-01",
+> > +		.data = &adp5585_regmap_configs[ADP5585_REGMAP_00],
+> > +	}, {
+> > +		.compatible = "adi,adp5585-02",
+> > +		.data = &adp5585_regmap_configs[ADP5585_REGMAP_02],
+> > +	}, {
+> > +		.compatible = "adi,adp5585-03",
+> > +		.data = &adp5585_regmap_configs[ADP5585_REGMAP_00],
+> > +	}, {
+> > +		.compatible = "adi,adp5585-04",
+> > +		.data = &adp5585_regmap_configs[ADP5585_REGMAP_04],
+> > +	}, {
+> 
+> 	{	.compatible = "adi,adp5585-05"	},  /* Whoops, did I just dereference a NULL poiner? */
+
+Don't add an entry without .data.
+
+ 	{ .compatible = "adi,adp5585-05", .data = (void *)ADP5585_REGMAP_05 },
+
+would also lead to problems. Someone adding support for a new variant is
+expected to understand a bit of the driver. Furthemore, the NULL pointer
+dereference would be caught immediately at development time, so it won't
+make it to mainline. I don't think this calls for a runtime check in
+probe().
+
+> > +	{ /* sentinel */ }
+> 
+> Comment sounds cool, but is it necessary?
+
+That's the common practice, and I think it makes the code clearer..
+
+> > +};
+> > +MODULE_DEVICE_TABLE(of, adp5585_of_match);
+> > +
+> > +static struct i2c_driver adp5585_i2c_driver = {
+> > +	.driver = {
+> > +		.name = "adp5585",
+> > +		.of_match_table = adp5585_of_match,
+> > +		.pm = pm_sleep_ptr(&adp5585_pm),
+> > +	},
+> > +	.probe = adp5585_i2c_probe,
+> > +};
+> > +module_i2c_driver(adp5585_i2c_driver);
+> > +
+> > +MODULE_DESCRIPTION("ADP5585 core driver");
+> > +MODULE_AUTHOR("Haibo Chen <haibo.chen@nxp.com>");
+> > +MODULE_LICENSE("GPL");
+> > diff --git a/include/linux/mfd/adp5585.h b/include/linux/mfd/adp5585.h
+> > new file mode 100644
+> > index 000000000000..25025b381c63
+> > --- /dev/null
+> > +++ b/include/linux/mfd/adp5585.h
+> > @@ -0,0 +1,126 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > +/*
+> > + * Analog Devices ADP5585 I/O expander, PWM controller and keypad controller
+> > + *
+> > + * Copyright 2022 NXP
+> > + * Copyright 2024 Ideas on Board Oy
+> > + */
+> > +
+> > +#ifndef __LINUX_MFD_ADP5585_H_
+> 
+> You can probably drop the LINUX_ part.
+
+$ git grep 'ifndef.*_H_\?$' include/linux/ | grep LINUX_ | wc -l
+1408
+$ git grep 'ifndef.*_H_\?$' include/linux/ | grep -v LINUX_ | wc -l
+804
+
+Namespacing the header guards seems a good practice to me. I agree that
+we will likely not have another mfd/adp5585.h file in any other
+directory in include/, so that's more of a theoretical concern, but can
+I still go with the majority practice ?
+
+> > +#define __LINUX_MFD_ADP5585_H_
+> > +
+> > +#include <linux/bits.h>
+> > +
+> > +#define ADP5585_ID			0x00
+> > +#define		ADP5585_MAN_ID_VALUE		0x20
+> > +#define		ADP5585_MAN_ID_MASK		GENMASK(7, 4)
+> > +#define ADP5585_INT_STATUS		0x01
+> > +#define ADP5585_STATUS			0x02
+> > +#define ADP5585_FIFO_1			0x03
+> > +#define ADP5585_FIFO_2			0x04
+> > +#define ADP5585_FIFO_3			0x05
+> > +#define ADP5585_FIFO_4			0x06
+> > +#define ADP5585_FIFO_5			0x07
+> > +#define ADP5585_FIFO_6			0x08
+> > +#define ADP5585_FIFO_7			0x09
+> > +#define ADP5585_FIFO_8			0x0a
+> > +#define ADP5585_FIFO_9			0x0b
+> > +#define ADP5585_FIFO_10			0x0c
+> > +#define ADP5585_FIFO_11			0x0d
+> > +#define ADP5585_FIFO_12			0x0e
+> > +#define ADP5585_FIFO_13			0x0f
+> > +#define ADP5585_FIFO_14			0x10
+> > +#define ADP5585_FIFO_15			0x11
+> > +#define ADP5585_FIFO_16			0x12
+> > +#define ADP5585_GPI_INT_STAT_A		0x13
+> > +#define ADP5585_GPI_INT_STAT_B		0x14
+> > +#define ADP5585_GPI_STATUS_A		0x15
+> > +#define ADP5585_GPI_STATUS_B		0x16
+> > +#define ADP5585_RPULL_CONFIG_A		0x17
+> > +#define ADP5585_RPULL_CONFIG_B		0x18
+> > +#define ADP5585_RPULL_CONFIG_C		0x19
+> > +#define ADP5585_RPULL_CONFIG_D		0x1a
+> > +#define		ADP5585_Rx_PULL_CFG_PU_300K	0
+> 
+> Assuming these are bits - 2 spaces is usually enough.
+
+I find a tab tobe more readable. Is this a showstopper or can I keep the
+tab ?
+
+> > +#define		ADP5585_Rx_PULL_CFG_PD_300K	1
+> > +#define		ADP5585_Rx_PULL_CFG_PU_100K	2
+> > +#define		ADP5585_Rx_PULL_CFG_DISABLE	3
+> > +#define		ADP5585_Rx_PULL_CFG_MASK	3
+> > +#define ADP5585_GPI_INT_LEVEL_A		0x1b
+> > +#define ADP5585_GPI_INT_LEVEL_B		0x1c
+> > +#define ADP5585_GPI_EVENT_EN_A		0x1d
+> > +#define ADP5585_GPI_EVENT_EN_B		0x1e
+> > +#define ADP5585_GPI_INTERRUPT_EN_A	0x1f
+> > +#define ADP5585_GPI_INTERRUPT_EN_B	0x20
+> > +#define ADP5585_DEBOUNCE_DIS_A		0x21
+> > +#define ADP5585_DEBOUNCE_DIS_B		0x22
+> > +#define ADP5585_GPO_DATA_OUT_A		0x23
+> > +#define ADP5585_GPO_DATA_OUT_B		0x24
+> > +#define ADP5585_GPO_OUT_MODE_A		0x25
+> > +#define ADP5585_GPO_OUT_MODE_B		0x26
+> > +#define ADP5585_GPIO_DIRECTION_A	0x27
+> > +#define ADP5585_GPIO_DIRECTION_B	0x28
+> > +#define ADP5585_RESET1_EVENT_A		0x29
+> > +#define ADP5585_RESET1_EVENT_B		0x2a
+> > +#define ADP5585_RESET1_EVENT_C		0x2b
+> > +#define ADP5585_RESET2_EVENT_A		0x2c
+> > +#define ADP5585_RESET2_EVENT_B		0x2d
+> > +#define ADP5585_RESET_CFG		0x2e
+> > +#define ADP5585_PWM_OFFT_LOW		0x2f
+> > +#define ADP5585_PWM_OFFT_HIGH		0x30
+> > +#define ADP5585_PWM_ONT_LOW		0x31
+> > +#define ADP5585_PWM_ONT_HIGH		0x32
+> > +#define ADP5585_PWM_CFG			0x33
+> > +#define		ADP5585_PWM_IN_AND		BIT(2)
+> > +#define		ADP5585_PWM_MODE		BIT(1)
+> > +#define		ADP5585_PWM_EN			BIT(0)
+> > +#define ADP5585_LOGIC_CFG		0x34
+> > +#define ADP5585_LOGIC_FF_CFG		0x35
+> > +#define ADP5585_LOGIC_INT_EVENT_EN	0x36
+> > +#define ADP5585_POLL_PTIME_CFG		0x37
+> > +#define ADP5585_PIN_CONFIG_A		0x38
+> > +#define ADP5585_PIN_CONFIG_B		0x39
+> > +#define ADP5585_PIN_CONFIG_C		0x3a
+> > +#define		ADP5585_PULL_SELECT		BIT(7)
+> > +#define		ADP5585_C4_EXTEND_CFG_GPIO11	(0U << 6)
+> > +#define		ADP5585_C4_EXTEND_CFG_RESET2	(1U << 6)
+> > +#define		ADP5585_C4_EXTEND_CFG_MASK	GENMASK(6, 6)
+> > +#define		ADP5585_R4_EXTEND_CFG_GPIO5	(0U << 5)
+> > +#define		ADP5585_R4_EXTEND_CFG_RESET1	(1U << 5)
+> > +#define		ADP5585_R4_EXTEND_CFG_MASK	GENMASK(5, 5)
+> > +#define		ADP5585_R3_EXTEND_CFG_GPIO4	(0U << 2)
+> > +#define		ADP5585_R3_EXTEND_CFG_LC	(1U << 2)
+> > +#define		ADP5585_R3_EXTEND_CFG_PWM_OUT	(2U << 2)
+> > +#define		ADP5585_R3_EXTEND_CFG_MASK	GENMASK(3, 2)
+> > +#define		ADP5585_R0_EXTEND_CFG_GPIO1	(0U << 0)
+> > +#define		ADP5585_R0_EXTEND_CFG_LY	(1U << 0)
+> > +#define		ADP5585_R0_EXTEND_CFG_MASK	GENMASK(0, 0)
+> > +#define ADP5585_GENERAL_CFG		0x3b
+> > +#define		ADP5585_OSC_EN			BIT(7)
+> > +#define		ADP5585_OSC_FREQ_50KHZ		(0U << 5)
+> > +#define		ADP5585_OSC_FREQ_100KHZ		(1U << 5)
+> > +#define		ADP5585_OSC_FREQ_200KHZ		(2U << 5)
+> > +#define		ADP5585_OSC_FREQ_500KHZ		(3U << 5)
+> > +#define		ADP5585_OSC_FREQ_MASK		GENMASK(6, 5)
+> > +#define		ADP5585_INT_CFG			BIT(1)
+> > +#define		ADP5585_RST_CFG			BIT(0)
+> > +#define ADP5585_INT_EN			0x3c
+> > +
+> > +#define ADP5585_MAX_REG			ADP5585_INT_EN
+> > +
+> > +/*
+> > + * Bank 0 covers pins "GPIO 1/R0" to "GPIO 6/R5", numbered 0 to 5 by the
+> > + * driver, and bank 1 covers pins "GPIO 7/C0" to "GPIO 11/C4", numbered 6 to
+> > + * 10. Some variants of the ADP5585 don't support "GPIO 6/R5". As the driver
+> > + * uses identical GPIO numbering for all variants to avoid confusion, GPIO 5 is
+> > + * marked as reserved in the device tree for variants that don't support it.
+> > + */
+> > +#define ADP5585_BANK(n)			((n) >= 6 ? 1 : 0)
+> > +#define ADP5585_BIT(n)			((n) >= 6 ? BIT((n) - 6) : BIT(n))
+> > +
+> > +struct regmap;
+> > +
+> > +struct adp5585_dev {
+> > +	struct regmap *regmap;
+> > +};
+> > +
+> > +#endif
+
+-- 
+Regards,
+
+Laurent Pinchart
 
