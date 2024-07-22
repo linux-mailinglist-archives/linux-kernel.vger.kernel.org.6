@@ -1,126 +1,113 @@
-Return-Path: <linux-kernel+bounces-259065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E38479390BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:35:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B32969390C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:36:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A02BC2820BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:35:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69B141F21DAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9ECB16D9D8;
-	Mon, 22 Jul 2024 14:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cD0Lh955"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A4ED515;
-	Mon, 22 Jul 2024 14:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1DD16DC16;
+	Mon, 22 Jul 2024 14:36:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30388D512;
+	Mon, 22 Jul 2024 14:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721658941; cv=none; b=Cu5RzjC0zbPPytmBWWViuz8I8tRw+xTR6MM2Bavu5YEsXR+WuK3D2lNCApPWZIVXg2SK80ojgqdJgQcwLcWyb+zTYKw84wKEw4cIVUWnm53JXJ7d1CRnaoaPbvtSHB+Pn0Nd7YvXJBg30CooMogIt0lsl14heSIuKEkQ/dI4N0M=
+	t=1721658965; cv=none; b=K+QgVZL2KqmaguaXRwKi25ATzQaYAkP2u29JHaJFbajwkm0vycAqFvlRAcawqiacfICgz+iAUOE1uQKxaiDBbt4u3iBUxAtJD7OcdEJZYowl4wp2eG54dtsk5iv9HRjA36MQQddjty1Dt48C/xkEVfBmvOV3+oxsHw6UiD0+/KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721658941; c=relaxed/simple;
-	bh=U8jN0W6WejJQMjHKa3nh4lgxmv2xEkd3nnTj+ctWbx0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gfmFGSCzmf1XGVw1LlaIQXuQ95Wzklbo+leHOPUwH3PHkylEn4t7ZS9auPvXYV7g809qZSB2XdFIhZyK3TQnWml9yukOSwwWcYSymFnc4v4ge76JD1sdgzzhc+bnv3z+rAIlI6PLlvy5dyL9CQ15gwq/haUR7GjvQxkZ72gaorc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=cD0Lh955; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E4A2B4CF;
-	Mon, 22 Jul 2024 16:34:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1721658897;
-	bh=U8jN0W6WejJQMjHKa3nh4lgxmv2xEkd3nnTj+ctWbx0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cD0Lh955V0wzfaAhqfks34kNJmZ74YMZAJBs1HqF6hB2BYqPMIDWunRIRVFcNu1Y2
-	 YFGSVujZtH16s+OQVRnYJVpqUYmIkPRTyshNnOtwjOMZgZM34no3NAsuI2tLfx0EZi
-	 8XGMr4uP6HvMicpz5BI9qERPfzCoBufuBjOSGfK8=
-Date: Mon, 22 Jul 2024 17:35:20 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-	Mingjia Zhang <mingjia.zhang@mediatek.com>,
-	Jack Zhu <jack.zhu@starfivetech.com>,
-	Keith Zhao <keith.zhao@starfivetech.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: Re: [PATCH v5 03/14] media: videodev2.h, v4l2-ioctl: Add StarFive
- ISP meta buffer format
-Message-ID: <20240722143520.GI13497@pendragon.ideasonboard.com>
-References: <20240709083824.430473-1-changhuang.liang@starfivetech.com>
- <20240709083824.430473-4-changhuang.liang@starfivetech.com>
+	s=arc-20240116; t=1721658965; c=relaxed/simple;
+	bh=BpVyv/M3UGBgS/ElQfopI9P8wU/5L91obliX6RnpKpQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=b4O4cuViA1SiMYy/vPIaQJNF+60WY0y8VIkbXNrDMpv9GdlU5/pb74APLKQfMaUBxy80Y4VdRKswYq9Axy/Il//RPGsPTzKtge5TKUX3sev1BmaOH/CA8C7/qo4ANLvf1sQTaGP57v6hFg/Sx7M0n9rgZ2nGJHvuB5Ancegyuvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27429FEC;
+	Mon, 22 Jul 2024 07:36:29 -0700 (PDT)
+Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 96D233F73F;
+	Mon, 22 Jul 2024 07:36:01 -0700 (PDT)
+Message-ID: <e5bddf8b-931a-46fc-8461-7fce939e1445@arm.com>
+Date: Mon, 22 Jul 2024 15:36:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240709083824.430473-4-changhuang.liang@starfivetech.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/6] perf auxtrace arm: Set the 'auxtrace' flag for AUX
+ events
+To: Adrian Hunter <adrian.hunter@intel.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ James Clark <james.clark@linaro.org>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, John Garry <john.g.garry@oracle.com>,
+ Will Deacon <will@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240721202113.380750-1-leo.yan@arm.com>
+ <20240721202113.380750-3-leo.yan@arm.com>
+ <785cf263-5a76-48d8-964b-c248297de47e@intel.com>
+Content-Language: en-US
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <785cf263-5a76-48d8-964b-c248297de47e@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello Changhuang,
-
-Thank you for the patch.
-
-On Tue, Jul 09, 2024 at 01:38:13AM -0700, Changhuang Liang wrote:
-> Add the StarFive ISP specific metadata format
-> V4L2_META_FMT_STF_ISP_PARAMS & V4L2_META_FMT_STF_ISP_STAT_3A for 3A.
+On 7/22/24 11:49, Adrian Hunter wrote:
+> On 21/07/24 23:21, Leo Yan wrote:
+>> Originally, the 'auxtrace' flag in the PMU event is used for AUX area
+>> sampling. It indicates a PMU event is for AUX tracing.
+>>
+>> Set this flag for AUX trace events on Arm.
+>>
+>> Signed-off-by: Leo Yan <leo.yan@arm.com>
 > 
-> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
-
-This patch looks fine. Once the documentation issues are addressed in
-patch 01/14,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  drivers/media/v4l2-core/v4l2-ioctl.c | 2 ++
->  include/uapi/linux/videodev2.h       | 4 ++++
->  2 files changed, 6 insertions(+)
+> Note same as:
 > 
-> diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-> index 4c76d17b4629..8770bfb31c5c 100644
-> --- a/drivers/media/v4l2-core/v4l2-ioctl.c
-> +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-> @@ -1456,6 +1456,8 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
->  	case V4L2_META_FMT_VIVID:       descr = "Vivid Metadata"; break;
->  	case V4L2_META_FMT_RK_ISP1_PARAMS:	descr = "Rockchip ISP1 3A Parameters"; break;
->  	case V4L2_META_FMT_RK_ISP1_STAT_3A:	descr = "Rockchip ISP1 3A Statistics"; break;
-> +	case V4L2_META_FMT_STF_ISP_PARAMS:	descr = "StarFive ISP 3A Parameters"; break;
-> +	case V4L2_META_FMT_STF_ISP_STAT_3A:	descr = "StarFive ISP 3A Statistics"; break;
->  	case V4L2_PIX_FMT_NV12_8L128:	descr = "NV12 (8x128 Linear)"; break;
->  	case V4L2_PIX_FMT_NV12M_8L128:	descr = "NV12M (8x128 Linear)"; break;
->  	case V4L2_PIX_FMT_NV12_10BE_8L128:	descr = "10-bit NV12 (8x128 Linear, BE)"; break;
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index fe6b67e83751..cfcbfe9bf973 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -841,6 +841,10 @@ struct v4l2_pix_format {
->  #define V4L2_META_FMT_RK_ISP1_PARAMS	v4l2_fourcc('R', 'K', '1', 'P') /* Rockchip ISP1 3A Parameters */
->  #define V4L2_META_FMT_RK_ISP1_STAT_3A	v4l2_fourcc('R', 'K', '1', 'S') /* Rockchip ISP1 3A Statistics */
->  
-> +/* Vendor specific - used for StarFive JH7110 ISP camera sub-system */
-> +#define V4L2_META_FMT_STF_ISP_PARAMS	v4l2_fourcc('S', 'T', 'F', 'P') /* StarFive ISP 3A Parameters */
-> +#define V4L2_META_FMT_STF_ISP_STAT_3A	v4l2_fourcc('S', 'T', 'F', 'S') /* StarFive ISP 3A Statistics */
-> +
->  #ifdef __KERNEL__
->  /*
->   * Line-based metadata formats. Remember to update v4l_fill_fmtdesc() when
+> https://eur03.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Fall%2F20240715160712.127117-6-adrian.hunter%40intel.com%2F&data=05%7C02%7Cleo.yan%40arm.com%7C909e738ccfd84b1ad1dc08dcaa3bf922%7Cf34e597957d94aaaad4db122a662184d%7C0%7C0%7C638572421778104310%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=rJq9SLjbFOrZRkWIGLj8Xj682h%2BW%2FD8O0IL3ac0UcO4%3D&reserved=0
+> 
+> Either should be fine:
+> 
+> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
--- 
-Regards,
+Thank you for the patch, I will drop my one.
 
-Laurent Pinchart
+Leo
+>> ---
+>>   tools/perf/arch/arm/util/pmu.c | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/tools/perf/arch/arm/util/pmu.c b/tools/perf/arch/arm/util/pmu.c
+>> index 1c9541d01722..b7fa1245e242 100644
+>> --- a/tools/perf/arch/arm/util/pmu.c
+>> +++ b/tools/perf/arch/arm/util/pmu.c
+>> @@ -25,6 +25,7 @@ void perf_pmu__arch_init(struct perf_pmu *pmu)
+>>                /* add ETM default config here */
+>>                pmu->selectable = true;
+>>                pmu->perf_event_attr_init_default = cs_etm_get_default_config;
+>> +             pmu->auxtrace = true;
+>>   #if defined(__aarch64__)
+>>        } else if (strstarts(pmu->name, ARM_SPE_PMU_NAME)) {
+>>                pmu->selectable = true;
+>> @@ -32,8 +33,10 @@ void perf_pmu__arch_init(struct perf_pmu *pmu)
+>>                pmu->perf_event_attr_init_default = arm_spe_pmu_default_config;
+>>                if (strstarts(pmu->name, "arm_spe_"))
+>>                        pmu->mem_events = perf_mem_events_arm;
+>> +             pmu->auxtrace = true;
+>>        } else if (strstarts(pmu->name, HISI_PTT_PMU_NAME)) {
+>>                pmu->selectable = true;
+>> +             pmu->auxtrace = true;
+>>   #endif
+>>        }
+>>   #endif
+> 
 
