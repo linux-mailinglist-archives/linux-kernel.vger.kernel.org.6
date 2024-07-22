@@ -1,178 +1,89 @@
-Return-Path: <linux-kernel+bounces-258408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD3D9938797
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:59:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEDDD93879C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 05:06:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A6B81C20C7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 02:59:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B79EB20D66
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 03:06:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7888E134B2;
-	Mon, 22 Jul 2024 02:59:28 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74A612B82;
+	Mon, 22 Jul 2024 03:05:55 +0000 (UTC)
+Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.77.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6A2EAF1
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 02:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF081396;
+	Mon, 22 Jul 2024 03:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.77.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721617167; cv=none; b=bCZJ7w/ZCrvIqW07ttnCcHrJNI2YP6y9zZOapqmTBklu935heP9YLvYqKPNp2cLXTkyuv5jxzVuXxlc/lzK4qKS3mliIn58a+Nk3/stinODvLxs2OygvUx4GjPXuM43ivYsQhjgMZQIHgj0a+d8vS0PgvRMV5HwvfUJGqPbAHnU=
+	t=1721617555; cv=none; b=NUpOnxvlETQ0p2lrJKtopk6ynQZRBfriZ4c/JSfUWYAKwA+S9Gtv64bQxLIPHJj23AVP8JDniktWIiuf/duSWnCpKqZF6VdtmRrUfTOz8ePbWnNQozz2kotSg2GY08/pgsHt3uOLWt4zKoWJrf/5p9AJZf3nHeJ5wm1YbktxenY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721617167; c=relaxed/simple;
-	bh=fnNvtVYu9841oAbcEi/wwNmNti+GwXT0AiQPzlkRTYs=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=hq7JFw0kQaG4JApqnpy7i7yETHekeGMfxtpzMNjc/0qfWoE1twyelxTqdUqXNxQyeUBhYaC1xquet5WOeDWncT3ntFckerxymDfokhbiaZkXfgIwWeGpYPp4FoXtEUnRZ+633AdCkc2wsFctUVYwS8C5duR5psqInFg5TnzBPgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-397a7f98808so54245385ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 19:59:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721617165; x=1722221965;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ueGLKV6NVXnEKdgpkNR/ZMhR7GBDaHk0gOzZZ/egVIE=;
-        b=g2Tw1iuoKDp1J/1cKIM+v28yAgKmJYvT5UCi9+NwyrWXvx67HaRqDkO6wRk/E9uPDQ
-         0oRRON0rrICZYvAOkm7OeCWDJ3EXReSterPXj3P7h9LLEDrvy0kfcN8R36/SWtMmkH4c
-         2Muco6lqMS/RDHzVy+6V18h6soCq1+JhNsdYg1PjxkCFOFkp4Nte7kGD+hmQrAPRY0+J
-         vaqitXVj2vijeAWzLl/dGLvsG0IBXjWpFq9CS6utdVD6ER94DGgNV3O2DgVNIfHolawN
-         F6AIwV0mITw1J4y8aohUqnIjtdvuYY4C1bGZQpM8ksLu7XnDdDikSAc0P5PDJWvM10/U
-         uUFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWKoGFOg27FuTNSOkzNDb8E9RM4m9le+ajlubwpwJRaSYnIo06x1X3FUS+ab4/RgH0JJuMV52v4CPVUmTux4rTukQ/SevJMFe8kfI1v
-X-Gm-Message-State: AOJu0YyyQqvVWIR6sEiY5Omp+X6VinKjPFa2j0xt761JpYj+7WhZtjyi
-	3R4AmD1nGW4TKA+7sKgh2zXnu2easCwe07y764Y6Aa42X0h//mw36Qnqos4pvbPWEWMTi7byGta
-	s7mZiE9nNfVR9uR5gidANpbWVIlHQyDzRJSYR9WgE37xBfxbQeg8b0EI=
-X-Google-Smtp-Source: AGHT+IHeFkYVH1icTw/weReGKosNPDp83s0pfcZnWgjIjnJ2FUyfH9iLDVqbjYO62KllVjvyBPNROSRqnhxQ3UlNtz45YuOnA16M
+	s=arc-20240116; t=1721617555; c=relaxed/simple;
+	bh=fjD5rSVN+4EWc0Dnk+tVtxxRmPHbGYVcwdZdROXDyXg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HqnU2iGAiQDlty04IfVoeMMmWsFOT4QjdYcPuCA6cCTgyHCmXz73GvppIDjnA+HEOxhyzyTjl+LRHoKs7qE4lYYYRpVQKH7lPAQkO9lc81VdqjxP6VZqVcwjpBuCXFP31bZsyJJmwMsckkLbj1khZScTwu5o008C+hl4uFXsDFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gxmicro.cn; spf=none smtp.mailfrom=gxmicro.cn; arc=none smtp.client-ip=114.132.77.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gxmicro.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=gxmicro.cn
+X-QQ-mid: bizesmtp91t1721617474tn9cv7hw
+X-QQ-Originating-IP: HgxVm+2+8nwJZnYfeP9Iei5wgzhKIo3qjDg1wSprtPc=
+Received: from zhengdongxiong.. ( [210.22.143.226])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 22 Jul 2024 11:04:32 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 8639400719520395088
+From: dongxiong zheng <zhengdongxiong@gxmicro.cn>
+To: manivannan.sadhasivam@linaro.org,
+	fancer.lancer@gmail.com,
+	vkoul@kernel.org
+Cc: dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dongxiong zheng <zhengdongxiong@gxmicro.cn>
+Subject: [PATCH v2] dmaengine: dw-edma: Move "Set consumer cycle" into first condition in dw_hdma_v0_core_start()
+Date: Mon, 22 Jul 2024 11:04:05 +0800
+Message-Id: <20240722030405.3385-1-zhengdongxiong@gxmicro.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:219c:b0:397:3e38:eb30 with SMTP id
- e9e14a558f8ab-398e6d8925dmr4712165ab.3.1721617165354; Sun, 21 Jul 2024
- 19:59:25 -0700 (PDT)
-Date: Sun, 21 Jul 2024 19:59:25 -0700
-In-Reply-To: <0000000000009d1d0a061d91b803@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000949a14061dcd3b05@google.com>
-Subject: Re: [syzbot] [bpf?] [net?] general protection fault in __dev_flush
-From: syzbot <syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com, 
-	haoluo@google.com, hawk@kernel.org, john.fastabend@gmail.com, 
-	jolsa@kernel.org, kpsingh@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org, 
-	sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com, 
-	yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:gxmicro.cn:qybglogicsvrgz:qybglogicsvrgz8a-0
 
-syzbot has found a reproducer for the following issue on:
+Reference: Chapter 6.4.9.1 LL Operation Overview:
+"Figure 6-23 Linked List Flow for Producer and Consumer" in
+DesignWare Cores PCI Express Controller Databook (Version 6.00a June 2022)
 
-HEAD commit:    7846b618e0a4 Merge tag 'rtc-6.11' of git://git.kernel.org/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=142d3eb5980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=be4129de17851dbe
-dashboard link: https://syzkaller.appspot.com/bug?extid=44623300f057a28baf1e
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=154c40b1980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14f3e11d980000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-7846b618.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3a2831ffe61c/vmlinux-7846b618.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/575e23a7c452/bzImage-7846b618.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 1 PID: 5389 Comm: syz-executor357 Not tainted 6.10.0-syzkaller-11323-g7846b618e0a4 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:__dev_flush+0x49/0x1e0 kernel/bpf/devmap.c:424
-Code: 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 98 01 00 00 48 b8 00 00 00 00 00 fc ff df 49 8b 2f 48 8d 5d 80 48 89 ea 48 c1 ea 03 <80> 3c 02 00 0f 85 69 01 00 00 48 8b 45 00 49 39 ef 4c 8d 60 80 0f
-RSP: 0018:ffffc900008b0c90 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: ffffffffffffff80 RCX: ffffffff88d6a5bb
-RDX: 0000000000000000 RSI: ffffffff81af9c56 RDI: ffffc9000345fa68
-RBP: 0000000000000000 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffc9000345fa58
-R13: ffff888022ec0fb0 R14: ffffc9000345fa68 R15: ffffc9000345fa68
-FS:  0000555568ea6380(0000) GS:ffff88806b100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ff4743880f0 CR3: 0000000023168000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- xdp_do_check_flushed+0x40a/0x4e0 net/core/filter.c:4300
- __napi_poll.constprop.0+0xd1/0x550 net/core/dev.c:6774
- napi_poll net/core/dev.c:6840 [inline]
- net_rx_action+0xa92/0x1010 net/core/dev.c:6962
- handle_softirqs+0x216/0x8f0 kernel/softirq.c:554
- do_softirq kernel/softirq.c:455 [inline]
- do_softirq+0xb2/0xf0 kernel/softirq.c:442
- </IRQ>
- <TASK>
- __local_bh_enable_ip+0x100/0x120 kernel/softirq.c:382
- local_bh_enable include/linux/bottom_half.h:33 [inline]
- tun_get_user+0x1d9b/0x3c30 drivers/net/tun.c:1936
- tun_chr_write_iter+0xe8/0x210 drivers/net/tun.c:2052
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0x6b6/0x1140 fs/read_write.c:590
- ksys_write+0x12f/0x260 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff47430af50
-Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 80 3d 51 e1 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
-RSP: 002b:00007ffde0326728 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007ffde03267c0 RCX: 00007ff47430af50
-RDX: 0000000000000e80 RSI: 0000000020000100 RDI: 00000000000000c8
-RBP: 00007ffde0326770 R08: 00007ffde0326750 R09: 00007ffde0326750
-R10: 00007ffde0326750 R11: 0000000000000202 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__dev_flush+0x49/0x1e0 kernel/bpf/devmap.c:424
-Code: 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 98 01 00 00 48 b8 00 00 00 00 00 fc ff df 49 8b 2f 48 8d 5d 80 48 89 ea 48 c1 ea 03 <80> 3c 02 00 0f 85 69 01 00 00 48 8b 45 00 49 39 ef 4c 8d 60 80 0f
-RSP: 0018:ffffc900008b0c90 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: ffffffffffffff80 RCX: ffffffff88d6a5bb
-RDX: 0000000000000000 RSI: ffffffff81af9c56 RDI: ffffc9000345fa68
-RBP: 0000000000000000 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffffc9000345fa58
-R13: ffff888022ec0fb0 R14: ffffc9000345fa68 R15: ffffc9000345fa68
-FS:  0000555568ea6380(0000) GS:ffff88806b100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ff4743880f0 CR3: 0000000023168000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess), 4 bytes skipped:
-   0:	48 c1 ea 03          	shr    $0x3,%rdx
-   4:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
-   8:	0f 85 98 01 00 00    	jne    0x1a6
-   e:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  15:	fc ff df
-  18:	49 8b 2f             	mov    (%r15),%rbp
-  1b:	48 8d 5d 80          	lea    -0x80(%rbp),%rbx
-  1f:	48 89 ea             	mov    %rbp,%rdx
-  22:	48 c1 ea 03          	shr    $0x3,%rdx
-* 26:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
-  2a:	0f 85 69 01 00 00    	jne    0x199
-  30:	48 8b 45 00          	mov    0x0(%rbp),%rax
-  34:	49 39 ef             	cmp    %rbp,%r15
-  37:	4c 8d 60 80          	lea    -0x80(%rax),%r12
-  3b:	0f                   	.byte 0xf
-
-
+Signed-off-by: dongxiong zheng <zhengdongxiong@gxmicro.cn>
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ drivers/dma/dw-edma/dw-hdma-v0-core.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/dma/dw-edma/dw-hdma-v0-core.c b/drivers/dma/dw-edma/dw-hdma-v0-core.c
+index 10e8f0715..d77051d1e 100644
+--- a/drivers/dma/dw-edma/dw-hdma-v0-core.c
++++ b/drivers/dma/dw-edma/dw-hdma-v0-core.c
+@@ -262,10 +262,10 @@ static void dw_hdma_v0_core_start(struct dw_edma_chunk *chunk, bool first)
+ 			  lower_32_bits(chunk->ll_region.paddr));
+ 		SET_CH_32(dw, chan->dir, chan->id, llp.msb,
+ 			  upper_32_bits(chunk->ll_region.paddr));
++		/* Set consumer cycle */
++		SET_CH_32(dw, chan->dir, chan->id, cycle_sync,
++			HDMA_V0_CONSUMER_CYCLE_STAT | HDMA_V0_CONSUMER_CYCLE_BIT);
+ 	}
+-	/* Set consumer cycle */
+-	SET_CH_32(dw, chan->dir, chan->id, cycle_sync,
+-		  HDMA_V0_CONSUMER_CYCLE_STAT | HDMA_V0_CONSUMER_CYCLE_BIT);
+ 
+ 	dw_hdma_v0_sync_ll_data(chunk);
+ 
+-- 
+2.34.1
+
 
