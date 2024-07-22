@@ -1,209 +1,151 @@
-Return-Path: <linux-kernel+bounces-258552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 943D89389A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:09:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC5A19389A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E28BCB21AC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:08:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A36FB21367
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE84A18AF9;
-	Mon, 22 Jul 2024 07:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="YCPZUKGU"
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF83817BD5;
+	Mon, 22 Jul 2024 07:08:38 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDDE17BC9
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC443DF51
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721632135; cv=none; b=U6QjsO6i1sI3H7Eo2PyjfnAHe39pERI379wHKHJM/N8BoGDxD10BWLbHavRs7NkjRcNzJIOW/ZmZN8QUXqHOJwVXMEDyIL2k8SP2gmu0qrLOg/rmhlFAK5+tvF4kB+B36kWLPvrIwYqrgY5fDjVQhLj1NP57IxaXfKE1hmXgr9g=
+	t=1721632118; cv=none; b=uVgjYttU9cbAVeN2TN+qwPp01UDZ/KiBc9femEEQDIjW4S3Js0LnSlbgVXbszK60kFGrvcB4+4Y8Li0zzfaCiGd7WRgUnCmd5g977ahL2mQ821q2exwhQ2He4N3BVtM1fxosFSV1vvlGHyXSsK82/j9yYwXYgC0zD6r9Emd7wjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721632135; c=relaxed/simple;
-	bh=V8g0NHByCB8Qyv9K9tuDa0hOGBUPepJmv/HKefsrIvg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ayMMwScH2u93wnM2aszKhNR5s1zx+0AAAZE1mpD9l2CffGo0wwSPoAN3LaM7AAMv5yFSzAf1XqI934boMzFRsXTqRmac3xKs4CmdaY0yxEnujielwcRhTDFrPiJF8ERB7ybffQ6qzEouB/y9xb/F2xx7T9CtZTz3H4kfn4cYmN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=YCPZUKGU; arc=none smtp.client-ip=209.85.167.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3dab2bb288aso2185453b6e.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 00:08:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1721632132; x=1722236932; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oHPVRWiuUtWTrvLskZ3yStEQcSQvqjLGmDrDS3cHO/M=;
-        b=YCPZUKGUk0E+TnwYVnJdEYDBXW5IT3qkeQPvlCRlKEgoH9vV9LYO5U8u/8MG6wOOt0
-         lqV99Lfq9kQpbbRWYC+fm3TdcBjiSET4jwieU+7TOmFd1KdoKok5+5dTocX3UqRYg4qv
-         rr4PEYP7RS0CARjvn96Is7Sbfd7Uuow43CX/IZxpcy6lHZFQy5DEYgS9it4HUIZFjYij
-         TzOkYZrjcTGNSjJX3UOQ838iq5RbZ3HL7Wq3y9qPsP/hByF4aicnbIGvpE6s3YIZfXHS
-         Cp36lOPuxr7LhsuQw0dZyMSFUrSB+Hz96gH84YJmDFSIdP+vN0QacMgcU1K6MCI3Fu/A
-         yXdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721632132; x=1722236932;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oHPVRWiuUtWTrvLskZ3yStEQcSQvqjLGmDrDS3cHO/M=;
-        b=XIsqf8GMExSstWzBfQTzygLcvTAEeGnPSVEVagIO8zJDZ0eRjXwlSuoySdynopPJl+
-         Wj9We9Pq6HD3TYZ9QZfvvdikgCKmE0/sZyea/5XcuT83mlChCuXwQC6/HfmqTwwgVbhC
-         EaclLyYLOOEngMHOPgfEwFz29YmnSRaVZpUE4EUiaEeUBSkZG2TtPENCTmQnpzP6KSEI
-         QgrLVK9mquXRlIZC8NVBWNp5NVWM+84Z3DItI8uNo6Yrnto9Yxx2wcZnbq9SOwkvmm1J
-         L43mR3HoNbhcSLY+vKsZvy/IULx2AgM8NWFtCmRgnnuaJOffOzSS/i9JrumfynqE8V1T
-         vbDw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjkX8vBdlm5VPc+hENUS17k0z0a7upzrcBsYOZEgtwos4rlzWn/UV1lhHJPqDXldhlyzJcDohnmGqEdc/8stt0Ae2PIetp/YNu/4dA
-X-Gm-Message-State: AOJu0YyuPB5T7w6NlMmW47eUOWPPih3OL9D8py4ntAHzWVKoPc/qPD26
-	ANeIs9MTmJeABnfniWJKmNN1nSEp6pydOm6IdcbIc0XSK14GwjDENJCs/9AGtOY=
-X-Google-Smtp-Source: AGHT+IHr7HkR/anMuG3VKEXdqsl9UtpZ/IDbd1la2gHLu5qQkQ1uPTgweGow+GK9PeOlEBlcbdHfrw==
-X-Received: by 2002:a05:6808:19a9:b0:3da:3207:edb1 with SMTP id 5614622812f47-3dae5f401aamr9948741b6e.7.1721632131712;
-        Mon, 22 Jul 2024 00:08:51 -0700 (PDT)
-Received: from PXLDJ45XCM.bytedance.net ([139.177.225.240])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70d11b66ef9sm2914539b3a.219.2024.07.22.00.08.47
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 22 Jul 2024 00:08:51 -0700 (PDT)
-From: Muchun Song <songmuchun@bytedance.com>
-To: hannes@cmpxchg.org,
-	mhocko@kernel.org,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	muchun.song@linux.dev,
-	akpm@linux-foundation.org
-Cc: cgroups@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Muchun Song <songmuchun@bytedance.com>
-Subject: [PATCH] mm: kmem: add lockdep assertion to obj_cgroup_memcg
-Date: Mon, 22 Jul 2024 15:08:10 +0800
-Message-Id: <20240722070810.46016-1-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1721632118; c=relaxed/simple;
+	bh=zR0fiIg21DFh/exHdAf9KRFt3nu7sGyvhkwqQpW1Zdk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VgyASaQiEVSfijItl0+mdQbHR72tScReIipH5XgodJ18Ml+SOcuC09/eHkfya8RNGt6sJ2Xege9SSm2BW1G7pZ/9jAZaI6J38SssRlfwCCAbuAQnGGGKce2QSYre5PyisyDfRkFwU1kqC2qmmf982XUAMyu/AS9kjTluPIcfqD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WSB860gDrzxTgY;
+	Mon, 22 Jul 2024 15:03:34 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 63AF4140427;
+	Mon, 22 Jul 2024 15:08:32 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 22 Jul 2024 15:08:31 +0800
+Message-ID: <5816d4d5-e038-c90b-5ac2-1a3b3a8b9e46@huawei.com>
+Date: Mon, 22 Jul 2024 15:08:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v4 3/3] riscv: kdump: Fix crash memory reserve exceed
+ system memory bug
+Content-Language: en-US
+To: Mike Rapoport <rppt@kernel.org>
+CC: <linux@armlinux.org.uk>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
+	<aou@eecs.berkeley.edu>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
+	<arnd@arndb.de>, <gregkh@linuxfoundation.org>, <deller@gmx.de>,
+	<javierm@redhat.com>, <bhe@redhat.com>, <robh@kernel.org>,
+	<alexghiti@rivosinc.com>, <bjorn@rivosinc.com>, <akpm@linux-foundation.org>,
+	<namcao@linutronix.de>, <dawei.li@shingroup.cn>, <chenjiahao16@huawei.com>,
+	<julian.stecklina@cyberus-technology.de>, <rafael.j.wysocki@intel.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-riscv@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240722035701.696874-1-ruanjinjie@huawei.com>
+ <20240722035701.696874-4-ruanjinjie@huawei.com> <Zp3-dZHhN7LbMggc@kernel.org>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <Zp3-dZHhN7LbMggc@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-The obj_cgroup_memcg() is supposed to safe to prevent the returned
-memory cgroup from being freed only when the caller is holding the
-rcu read lock or objcg_lock or cgroup_mutex. It is very easy to
-ignore thoes conditions when users call some upper APIs which call
-obj_cgroup_memcg() internally like mem_cgroup_from_slab_obj() (See
-the link below). So it is better to add lockdep assertion to
-obj_cgroup_memcg() to find those issues ASAP.
 
-Because there is no user of obj_cgroup_memcg() holding objcg_lock
-to make the returned memory cgroup safe, do not add objcg_lock
-assertion (We should export objcg_lock if we really want to do)
-and leave a comment to indicate it is intentional.
 
-Some users like __mem_cgroup_uncharge() do not care the lifetime
-of the returned memory cgroup, which just want to know if the
-folio is charged to a memory cgroup, therefore, they do not need
-to hold the needed locks. In which case, introduce a new helper
-folio_memcg_charged() to do this. Compare it to folio_memcg(), it
-could eliminate a memory access of objcg->memcg for kmem, actually,
-a really small gain.
+On 2024/7/22 14:38, Mike Rapoport wrote:
+> Hi,
+> 
+> On Mon, Jul 22, 2024 at 11:57:01AM +0800, Jinjie Ruan wrote:
+>> Similar with x86_32, on Riscv32 Qemu "virt" machine with 1GB memory, the
+>> crash kernel "crashkernel=4G" is ok as below:
+>> 	crashkernel reserved: 0x00000000bf400000 - 0x00000001bf400000 (4096 MB)
+>>
+>> The cause is that the crash_size is parsed and printed with "unsigned long
+>> long" data type which is 8 bytes but allocated used with "phys_addr_t"
+>> which is 4 bytes in memblock_phys_alloc_range().
+>>
+>> Fix it by checking if the crash_size is greater than system RAM size and
+>> warn out as parse_crashkernel_mem() do it if so.
+>>
+>> After this patch, it fails and there is no above confusing reserve
+>> success info.
+>>
+>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+>> ---
+>>  arch/riscv/mm/init.c | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+>> index bfa2dea95354..5d66a4937fcd 100644
+>> --- a/arch/riscv/mm/init.c
+>> +++ b/arch/riscv/mm/init.c
+>> @@ -1381,6 +1381,11 @@ static void __init arch_reserve_crashkernel(void)
+>>  	if (ret)
+>>  		return;
+>>  
+>> +	if (crash_size >= memblock_phys_mem_size()) {
+>> +		pr_warn("Crashkernel: invalid size.");
+>> +		return;
+>> +	}
+>> +
+> 
+> What the point of adding three identical checks right after the call to
+> parse_crashkernel()?
+> 
+> This check should be there and parse_crashkernel() should return error in
+> this case.
 
-Link: https://lore.kernel.org/all/20240718083607.42068-1-songmuchun@bytedance.com/
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
----
- include/linux/memcontrol.h | 22 +++++++++++++++++++---
- mm/memcontrol.c            |  6 +++---
- 2 files changed, 22 insertions(+), 6 deletions(-)
+Hi, Mike
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index fc94879db4dff..d616c50025098 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -360,11 +360,13 @@ static inline bool folio_memcg_kmem(struct folio *folio);
-  * After the initialization objcg->memcg is always pointing at
-  * a valid memcg, but can be atomically swapped to the parent memcg.
-  *
-- * The caller must ensure that the returned memcg won't be released:
-- * e.g. acquire the rcu_read_lock or css_set_lock.
-+ * The caller must ensure that the returned memcg won't be released.
-  */
- static inline struct mem_cgroup *obj_cgroup_memcg(struct obj_cgroup *objcg)
- {
-+	WARN_ON_ONCE(!rcu_read_lock_held() &&
-+		  /* !lockdep_is_held(&objcg_lock) && */
-+		     !lockdep_is_held(&cgroup_mutex));
- 	return READ_ONCE(objcg->memcg);
- }
- 
-@@ -438,6 +440,19 @@ static inline struct mem_cgroup *folio_memcg(struct folio *folio)
- 	return __folio_memcg(folio);
- }
- 
-+/*
-+ * folio_memcg_charged - If a folio is charged to a memory cgroup.
-+ * @folio: Pointer to the folio.
-+ *
-+ * Returns true if folio is charged to a memory cgroup, otherwise returns false.
-+ */
-+static inline bool folio_memcg_charged(struct folio *folio)
-+{
-+	if (folio_memcg_kmem(folio))
-+		return __folio_objcg(folio) != NULL;
-+	return __folio_memcg(folio) != NULL;
-+}
-+
- /**
-  * folio_memcg_rcu - Locklessly get the memory cgroup associated with a folio.
-  * @folio: Pointer to the folio.
-@@ -454,7 +469,6 @@ static inline struct mem_cgroup *folio_memcg_rcu(struct folio *folio)
- 	unsigned long memcg_data = READ_ONCE(folio->memcg_data);
- 
- 	VM_BUG_ON_FOLIO(folio_test_slab(folio), folio);
--	WARN_ON_ONCE(!rcu_read_lock_held());
- 
- 	if (memcg_data & MEMCG_DATA_KMEM) {
- 		struct obj_cgroup *objcg;
-@@ -463,6 +477,8 @@ static inline struct mem_cgroup *folio_memcg_rcu(struct folio *folio)
- 		return obj_cgroup_memcg(objcg);
- 	}
- 
-+	WARN_ON_ONCE(!rcu_read_lock_held());
-+
- 	return (struct mem_cgroup *)(memcg_data & ~OBJEXTS_FLAGS_MASK);
- }
- 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 622d4544edd24..3da0284573857 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -2366,7 +2366,7 @@ void mem_cgroup_cancel_charge(struct mem_cgroup *memcg, unsigned int nr_pages)
- 
- static void commit_charge(struct folio *folio, struct mem_cgroup *memcg)
- {
--	VM_BUG_ON_FOLIO(folio_memcg(folio), folio);
-+	VM_BUG_ON_FOLIO(folio_memcg_charged(folio), folio);
- 	/*
- 	 * Any of the following ensures page's memcg stability:
- 	 *
-@@ -4617,7 +4617,7 @@ void __mem_cgroup_uncharge(struct folio *folio)
- 	struct uncharge_gather ug;
- 
- 	/* Don't touch folio->lru of any random page, pre-check: */
--	if (!folio_memcg(folio))
-+	if (!folio_memcg_charged(folio))
- 		return;
- 
- 	uncharge_gather_clear(&ug);
-@@ -4662,7 +4662,7 @@ void mem_cgroup_replace_folio(struct folio *old, struct folio *new)
- 		return;
- 
- 	/* Page cache replacement: new folio already charged? */
--	if (folio_memcg(new))
-+	if (folio_memcg_charged(new))
- 		return;
- 
- 	memcg = folio_memcg(old);
--- 
-2.20.1
+How about the folling rough patch?
 
+--- a/kernel/crash_reserve.c
++++ b/kernel/crash_reserve.c
+@@ -313,7 +313,7 @@ int __init parse_crashkernel(char *cmdline,
+        if (high && ret == -ENOENT) {
+                ret = __parse_crashkernel(cmdline, 0, crash_size,
+                                crash_base, suffix_tbl[SUFFIX_HIGH]);
+-               if (ret || !*crash_size)
++               if (ret || !*crash_size || crash_size >= system_ram)
+                        return -EINVAL;
+
+                /*
+@@ -332,7 +332,7 @@ int __init parse_crashkernel(char *cmdline,
+                *high = true;
+        }
+ #endif
+-       if (!*crash_size)
++       if (!*crash_size || crash_size >= system_ram)
+                ret = -EINVAL;
+
+
+> 
+>>  	reserve_crashkernel_generic(cmdline, crash_size, crash_base,
+>>  				    low_size, high);
+>>  }
+>> -- 
+>> 2.34.1
+>>
+> 
 
