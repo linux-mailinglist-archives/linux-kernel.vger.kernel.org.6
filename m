@@ -1,109 +1,173 @@
-Return-Path: <linux-kernel+bounces-258776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBE49938C8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:53:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0345F938C72
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:51:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29B1C1C22A14
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:53:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A8B71C22927
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9936D176FA3;
-	Mon, 22 Jul 2024 09:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="A/5kNF2l"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BA816D31B;
+	Mon, 22 Jul 2024 09:45:06 +0000 (UTC)
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA42174EFC;
-	Mon, 22 Jul 2024 09:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97ADB16CD1C;
+	Mon, 22 Jul 2024 09:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721641516; cv=none; b=QUhnIwDsuJdk3spdt53gQFSY5lwP5N14IrtmY97OU4KRJ7lItZ4oJaGt3Pm8h148BfTR4LgNztH5kTKWFgmgRmf4pHOkP5hlUkdR1r+j94OmXq/344GLP0jcbkWm5KHVRyT6tarLEcvyeGTfd3js4BpmEcs47MGIkrqGslIHCZo=
+	t=1721641505; cv=none; b=THrzRZMZ0xi7k/HfXxeJ0G1p1nc0FobQjyWC9O6D9a6eYI9V8M4vvtVSxVG1BiAF4dfhi5LtcFO1h1nq9rklME24BgVk8oy9CSmH9HyBlfeHZNV4pj4SQh6BUAOwLMjZffwsCpcK+yT/gPsxNI+X+/keAQV+pqVG0qv+9KjCH0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721641516; c=relaxed/simple;
-	bh=tziOP+ESQ+W1d+CgJqInvXWL3SJa/jSdbKvvNhetQG0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=szHcU2ek+z5Bo1FDWwXH/2eZAQN+MRNq1FNt/2lwY/VAA0gAqxKTP9XgxSHCnV4RDaxWpLnM61Bw+VaUGCOQxF28/+M9M6XJOS9J8Q1XuCfRqNPOFcwgFiA/FIxxmIZYtS5FFvVDoOoAT/k+XzHjY0N4fEtuZz4RiYWidN+91f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=A/5kNF2l; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721641469; x=1722246269; i=markus.elfring@web.de;
-	bh=tziOP+ESQ+W1d+CgJqInvXWL3SJa/jSdbKvvNhetQG0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=A/5kNF2lRMUjggCZ4wGOPqkTrq42CzdOPyhxw1j29l0Mp2DWwdy+yBTFunqkfZc+
-	 AZlfWaejYfVie2dWf0nSTOiloryKbzHKRTwraP1uv4GvsoDjSXEuNvYSmyYAOWaUh
-	 uBylssfEpB9dvPpL04TJ/0VCkzH7Sb9pxu1Cz0Ldgkj/MtXKEUUNJLnCMrSI83Nt3
-	 q1PCF4dPf/+BZjTFwwmq1Zj7XUdOiFagHgkHqwb4C28VcP5d1xOvcGeY+oYp46Dgi
-	 mhHHc6tdH3ZYn27Kvp9VKNoLs4aByHCZQYloJ4o9VC6yIJZyyhcwgawoUEm0UZTbY
-	 di/IvQ5AdxZTHROxHw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Meler-1rvwsK2mij-00mRWx; Mon, 22
- Jul 2024 11:44:29 +0200
-Message-ID: <39a3552f-cbaa-4e29-ac76-95684859787a@web.de>
-Date: Mon, 22 Jul 2024 11:44:25 +0200
+	s=arc-20240116; t=1721641505; c=relaxed/simple;
+	bh=1g2d5q1Q7bi70ZFX/boaMrq4aTqtzniQBGMEhshUuWA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KsVT7PjBx1fzUUhC13lQd30+mAu9TDqhZlXxQ/I8tklV9+OeyxPux4C6QPUco2UJ4E5MHmIWdAfhk0lGNrN0swe4HOWcX0RQHF7eKB4d4KrLRyfCoGDaiip+yBhlyrLRQfOkfhLIGtH889IQA6GjRc2wVIT8t9QjE9E1Bdcsn7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so1135258e87.0;
+        Mon, 22 Jul 2024 02:45:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721641501; x=1722246301;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BqSAPXeU7//xQzF5D3KvNuPxtZjwj+8S9xO2DCeCvNQ=;
+        b=jiLzaJOqJK0srlCJhTHLe/zhpI3XwHTEEPE1QNksGPM1Ca5OsoWP/wjRt0JlupCd5q
+         HklvX3BPxMpUAZlMU67br13N0mQDvUDIXvDQIsz3RW/9QseU/3kBRQuTuy6szuTpOE02
+         E2E7KS49N0OasBD4ydXfsfWu7zvFZEOuek4fVpCXYfimsOn9DFM6Cfpkola4vMKzlP0B
+         EEFs3rrknJUDMEW+ZX3+zxZwC2EMRkPadVTPnfpDtHvrKdG+4eszWtRYIDaRzxLUl9gl
+         K9BeCDZEA9WnIAKw9rF/3rsXpBGcWeLt3wE/j5FLy1JkSqc3SD5QFBJ1ZzBMtSdlylhR
+         LGdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhUD65Ja/n1J8YGZaMYanJsJyn535gNfQweUzJRBzcRxZicAJdwezKj0bKWQ8l2DZzxQYmcKG1Gq13lsan3kHrPNH1e+Pufd1keCkN1TgSBo9OpD8G5BDTDjx6gEiPIUeXCoY+
+X-Gm-Message-State: AOJu0YxnD6lqu9tgG8AJhAlDEo9SvHLyE/4toZPR3fuq876W/9uiRKev
+	QypJ2QJImbcz+lCOZ4zjsEHYv96I5VcZl4/0VRYR4iy2X/Gq6MJ+
+X-Google-Smtp-Source: AGHT+IGK+uXHXqFkBqoNCUoaMd5o2qIhNCPmbjmyQLSs9GFkgwdEOtcvBDBx1xDF9P5TVdSlKYR3pA==
+X-Received: by 2002:a05:6512:3409:b0:52e:976a:b34b with SMTP id 2adb3069b0e04-52efb53bcc4mr4181809e87.15.1721641500332;
+        Mon, 22 Jul 2024 02:45:00 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-114.fbsv.net. [2a03:2880:30ff:72::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c951212sm397529766b.208.2024.07.22.02.44.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 02:45:00 -0700 (PDT)
+Date: Mon, 22 Jul 2024 02:44:57 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Rik van Riel <riel@surriel.com>
+Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, thepacketgeek@gmail.com, horms@kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	paulmck@kernel.org, davej@codemonkey.org.uk
+Subject: Re: [RFC PATCH 2/2] netconsole: Defer netpoll cleanup to avoid lock
+ release during list traversal
+Message-ID: <Zp4qGdGk7vLJaCPs@gmail.com>
+References: <20240718184311.3950526-1-leitao@debian.org>
+ <20240718184311.3950526-3-leitao@debian.org>
+ <5145c46c47d98d917c8ef1401cdac15fc5f8b638.camel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-perf-users@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Athira Rajeev <atrajeev@linux.vnet.ibm.com>, Ian Rogers
- <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
- James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
- Kan Liang <kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>,
- Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [RFC] perf bench: Adjusting concerns around
- asynchronous-signal-safety?
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:+M5y8U2ej04KHX+Faz4b48gH9S4gHWTqaNOo+v9UVE4NgkX70WA
- OfYAT/Lti6ztx+nbiHqmQotKWwnGyUeH17yhQKx0uQWhJjSByP+ZcWuQoTzrYhRpzE4QTOd
- uoBP3+J4YXvlmjvamAgpnZyWlsY0zTb70RNNT60ITJ3NT9hPegmn0bdCWhhSgLWn9TRmK6X
- Gu5Lo4D7nIgfDXOksOGQw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:g5ULUjZTu1E=;tz+ZDqwUFZrB3qnJkQ3Zj2fJ6aH
- LMxfHpSBvYMO1VhL1Iv33ILAspZi2/6p0Gj0dsmnTMDA+qkrNr1kANnBxkpUvmIZHsX67aw28
- 1q5XX7aBQ0d5ybOKdP6ha3qHAM5aPJX08Zee8Idn1FkOWUzJ/hPlBcmrCY9uGxQsiM/Bn09f7
- X5CtFkurw6noxmy7aqEMRQv3DlMtMoWnu/k1VHBC/a3yewZyZuNaZaHT8l2rb1F2F3QOe+YST
- Rro/ILvUztqAuGQWMZeDDsj03Z1JoqZXMCNyn9Y28g9bpEVNVO0dOsrKuxBWy/vThwor/GmD/
- H6QnOj3eQw6lWRd/2C7IoMiip2MJbWYs41q8K3WcMN+9DWjwwb5KVNneqEyFRBLulndJm22nE
- rc9aYx8/7sfj6dVDRCeSIHuYVJYQ8vH3ZdvW4z28SZcUY4fwUrxhAi4Pmx3LG5epountNSip2
- XDXlmj7BA89BqXZVVd6w3BdAoLybxwwnKZJixw6YscKwtYvXXYjlqKtsKMmlw+x/+7r4vXGUO
- 8Rr2V6E2MnHR+bTYHtljakcBog8lrbKF7PyHwVvhGXf3nIJW6StUJ7iNpDcc946aGKhIxE7pM
- pQuAG0aVcTBE82cLs6r9CxyCgoEpg6MWoGkDaClzOQjDug30qgPN/68jV/TeBioKRhATpngBy
- CyWGZU/bCOs6urEtLSHzP9sqG4uE5AuspPGrDfAgv1X5mLD9C8D000C6BNV7bytllVzdbKDWi
- oUpiHC6/Tlyf+GaQz7Ie48Q5d7uRy68H+T12QfiPl/7mQ3UoiJgcthyYTNiQU/NUTG++/RFjq
- fBxdGq7JKyJS9tqeq8b62zhg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5145c46c47d98d917c8ef1401cdac15fc5f8b638.camel@surriel.com>
 
-Hello,
+Hello Rik,
 
-The functions =E2=80=9Cgettimeofday=E2=80=9D and =E2=80=9Ctimersub=E2=80=
-=9D are called within the signal
-handler =E2=80=9Ctoggle_done=E2=80=9D so far.
-https://elixir.bootlin.com/linux/v6.10/source/tools/perf/bench/epoll-ctl.c=
-#L90
+On Thu, Jul 18, 2024 at 03:53:54PM -0400, Rik van Riel wrote:
+> On Thu, 2024-07-18 at 11:43 -0700, Breno Leitao wrote:
+> > 
+> > +/* Clean up every target in the cleanup_list and move the clean
+> > targets back to the
+> > + * main target_list.
+> > + */
+> > +static void netconsole_process_cleanups_core(void)
+> > +{
+> > +	struct netconsole_target *nt, *tmp;
+> > +	unsigned long flags;
+> > +
+> > +	/* The cleanup needs RTNL locked */
+> > +	ASSERT_RTNL();
+> > +
+> > +	mutex_lock(&target_cleanup_list_lock);
+> > +	list_for_each_entry_safe(nt, tmp, &target_cleanup_list,
+> > list) {
+> > +		/* all entries in the cleanup_list needs to be
+> > disabled */
+> > +		WARN_ON_ONCE(nt->enabled);
+> > +		do_netpoll_cleanup(&nt->np);
+> > +		/* moved the cleaned target to target_list. Need to
+> > hold both locks */
+> > +		spin_lock_irqsave(&target_list_lock, flags);
+> > +		list_move(&nt->list, &target_list);
+> > +		spin_unlock_irqrestore(&target_list_lock, flags);
+> > +	}
+> > +	WARN_ON_ONCE(!list_empty(&target_cleanup_list));
+> > +	mutex_unlock(&target_cleanup_list_lock);
+> > +}
+> > +
+> > +/* Do the list cleanup with the rtnl lock hold */
+> > +static void netconsole_process_cleanups(void)
+> > +{
+> > +	rtnl_lock();
+> > +	netconsole_process_cleanups_core();
+> > +	rtnl_unlock();
+> > +}
+> > 
 
-Do such implementation details trigger any programming concerns according =
-to
-asynchronous-signal-safety?
-https://wiki.sei.cmu.edu/confluence/display/c/SIG30-C.+Call+only+asynchron=
-ous-safe+functions+within+signal+handlers
+First of all, thanks for reviewing this patch.
 
-Regards,
-Markus
+> I've got what may be a dumb question.
+> 
+> If the traversal of the target_cleanup_list happens under
+> the rtnl_lock, why do you need a new lock.
+
+Because the lock protect the target_cleanup_list list, and in some
+cases, the list is accessed outside of the region that holds the `rtnl`
+locks.
+
+For instance, enabled_store() is a function that is called from
+user space (through confifs). This function needs to populate
+target_cleanup_list (for targets that are being disabled). This
+code path does NOT has rtnl at all.
+
+> and why is there
+> a wrapper function that only takes this one lock, and then
+> calls the other function?
+
+I assume that the network cleanup needs to hold rtnl, since  it is going
+to release a network interface. Thus, __netpoll_cleanup() needs to be
+called protected by rtnl lock.
+
+That said, netconsole calls `__netpoll_cleanup()` indirectly through 2
+different code paths.
+
+	1) From enabled_store() -- userspace disabling the interface from
+	   configfs.
+		* This code path does not have `rtnl` held, thus, it needs
+		  to be held along the way.
+
+	2) From netconsole_netdev_event() -- A network event callback
+		* This function is called with `rtnl` held, thus, no
+		  need to acquire it anymore.
+
+
+> Are you planning a user of netconsole_process_cleanups_core()
+> that already holds the rtnl_lock and should not use this
+> wrapper?
+
+In fact, this patch is already using it today. See its invocation from
+netconsole_netdev_event().
+
+> Also, the comment does not explain why the rtnl_lock is held.
+> We can see that it grabs it, but not why. It would be nice to
+> have that in the comment.
+
+Agree. I will add this comment in my changes.
+
+Thank you!
+--breno
 
