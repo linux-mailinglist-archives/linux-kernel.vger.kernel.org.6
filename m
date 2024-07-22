@@ -1,405 +1,200 @@
-Return-Path: <linux-kernel+bounces-258897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F61F938E05
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:23:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09DA5938E07
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:26:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4A51B21452
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:23:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11692B2150B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB12F16CD22;
-	Mon, 22 Jul 2024 11:23:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E6816CD22;
+	Mon, 22 Jul 2024 11:26:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LRUuGsCe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XvuyBPhI"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBE317996
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CB116C69D;
+	Mon, 22 Jul 2024 11:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721647416; cv=none; b=hkzho2cG60twS+cryGSQdyo5uKygOcWeG4wI/46v5dtHf4mMdn/lqhJLNyyil3VPmq/0G3Q/2h+/UC6nwMfeFwIA+hdAPpYypgah8wGqj1XGSeFYJqFtgW23aPr9nWa0QD7wb4jAjYA9N07Vv0nEwuyxthRM8SM1UUmxZypqb5M=
+	t=1721647562; cv=none; b=n6GIQ0hZPVUwNKT9lluxeTb3X6PhMuLJ2eDWysCsow4Ns3enbUq8eO2fyRcwF1GEGcXRpXVvIuqSmRUbUFzLQ+UZdj+P0lBPZa2PBjnEMClxSVlwEVFETLDC8EdrBIvhqAyDyvwr+LyjAi+9LJ2HdQG+upO6Sm7RXf1wLWTx7jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721647416; c=relaxed/simple;
-	bh=2DAjbj1aCgujFVQY0zO0bOcfzm/1RRgPVxswmShMif8=;
+	s=arc-20240116; t=1721647562; c=relaxed/simple;
+	bh=MB26KXWxNanSmGZFVaZDqQIkIwxfNASL/DNTvnlXroQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ooeYb9UjlDD9RlN1amO94wucWI2GCHjjguMLA1agY+hbT9hZEtCC9yQ9sUSFjKm4I0IboD/1sDYpweUHl9TkCHqLTEM8ZaE3dCqDUmFTzCt3IrV7YBOdbzuof0Gd6V0/cs5kBRCjPjEINQDefib4iXSL8pa++90XIdamK6inqgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LRUuGsCe; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721647413;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o17l1phER8ab+FLETuBEeJn9LRrpar9cz7vv4Rr+9+4=;
-	b=LRUuGsCeD5GQec2Px5gT+ZbH+f07KYtUu7Vi1H7zWZ5F8a/wJm43lzMMOZMtxADPqi9phs
-	KgAODzkvzWOgTKKnkuIrEGW5jNihUwRjkLTV4W/h+NT0ZUFcxzZqvDBK1cFx8s2RMjvOgh
-	7ALk6tOknpwdn1sAQUmebsGRoXVf5As=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-638-944ZgdIjP5iGlPrkJoon5g-1; Mon, 22 Jul 2024 07:23:31 -0400
-X-MC-Unique: 944ZgdIjP5iGlPrkJoon5g-1
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2ef23ec8dcfso15624871fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 04:23:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721647409; x=1722252209;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o17l1phER8ab+FLETuBEeJn9LRrpar9cz7vv4Rr+9+4=;
-        b=QYKiZJh3ujXkmbW+ZTCYaGcXwMKgOBOIfr9jdg/hkLwhWA5XynxA8ZShgiJDVjp5ow
-         4Ad4C6B347LR0EiND8hBxE2KFhlYZ6Ee0b6XbVj3dzFTViYPWjk+5sZze88Bn8oonrT5
-         u3FVOO5Kayr0a6V44nV1CcYPkfDJK/IU5cdqpP+AQeevSgJIohnTmRE1W838WP6op1+V
-         cfpav6wx90JS0wRdCP0SAyAWMD8DnQDsmF6ZJfUgZChHYBZn/okyt0AI5VgjCzFA5BS/
-         15OjPxL4cXk3Kwh0tJMlMyWFZVpIXmv10CdBGWFxjo/eZ7JO5AyM9jjP14IGxnNTvXaO
-         Jg1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXY981j77pb+SXMYA1Kw1Ba1AdyqnyH6nf3d3h06W0ptTwAj1g9g/FOHRlj1xM0fZMXYCxZn8D6No+O+eg3j2kSg7pYvXE+XHd6TPgG
-X-Gm-Message-State: AOJu0Yz24huSiYYTUEOlvMNlvTg0qkixMg07X8DVDRq7XLtfMOdWKY7T
-	c49bjkF80wsrMH+aI12u/DhdCK04gl0p/sS6UFKhhphqQMUnMbdv2N3POqYcHwdsSuavi9ho38W
-	SzIhjcIP9O/RQfQqHnPw8sbVvlUQErMMAnBidxXNAi8Zsl/qw1dl6zTtAblhycQ==
-X-Received: by 2002:a2e:b016:0:b0:2ef:22a4:6415 with SMTP id 38308e7fff4ca-2ef22a464f8mr40578541fa.28.1721647409167;
-        Mon, 22 Jul 2024 04:23:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFs+tZqmtAiyAyfj2u1NJ8qYVsn2PwCZGCGRuf5hokbBxvlaXuaQsdqa31w08iGwN18jShPOw==
-X-Received: by 2002:a2e:b016:0:b0:2ef:22a4:6415 with SMTP id 38308e7fff4ca-2ef22a464f8mr40578371fa.28.1721647408535;
-        Mon, 22 Jul 2024 04:23:28 -0700 (PDT)
-Received: from pollux ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427db34fe3fsm90887925e9.4.2024.07.22.04.23.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 04:23:27 -0700 (PDT)
-Date: Mon, 22 Jul 2024 13:23:25 +0200
-From: Danilo Krummrich <dakr@redhat.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
-	alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
-	daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2 01/10] rust: pass module name to `Module::init`
-Message-ID: <Zp5BLRRwRBCP-QDv@pollux>
-References: <20240618234025.15036-1-dakr@redhat.com>
- <20240618234025.15036-2-dakr@redhat.com>
- <2024062038-backroom-crunchy-d4c9@gregkh>
- <ZnRUXdMaFJydAn__@cassiopeiae>
- <2024062010-change-clubhouse-b16c@gregkh>
- <ZnSeAZu3IMA4fR8P@cassiopeiae>
- <2024071046-gaining-gave-b38f@gregkh>
- <Zo8-IZgJswTlyP8H@pollux>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ueCJGvde/AnT3vIKFypW1ZEpWPcRfXSvZB82ERnYCub3h6rRQlMTjkd/I/hGDoXbyaHmkcyct8YbWcZjZb7PyCP5KzlrX4OgWokzocukOfq8FfWtty33lGm/xEA7dhA36O7Kr1Disln4hz37JbEjMNm+3432/YmVqF92ErdEsbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=XvuyBPhI; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B2A222B3;
+	Mon, 22 Jul 2024 13:25:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1721647517;
+	bh=MB26KXWxNanSmGZFVaZDqQIkIwxfNASL/DNTvnlXroQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XvuyBPhIKcyQxth9P4xpMJ5UryjqhxRE1uinLDv8IY+Fv78xXlfgB6kyQTCqJm9vn
+	 +j4/7YHC4Vvz7grrITzOj58nAzykfg8IqlgxoN0RxnTw7B4YFZ6inKPODGO2LZzF8k
+	 FEUjE0naCO3qjE9QSKlrtXs7d7bs/6E+pAzSsLmw=
+Date: Mon, 22 Jul 2024 14:25:41 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Changhuang Liang <changhuang.liang@starfivetech.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Jack Zhu <jack.zhu@starfivetech.com>,
+	Keith Zhao <keith.zhao@starfivetech.com>,
+	Jayshri Pawar <jpawar@cadence.com>, Jai Luthra <j-luthra@ti.com>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>
+Subject: Re: =?utf-8?B?5Zue5aSNOiBbUEFUQw==?= =?utf-8?Q?H?= v2 2/5] media:
+ cadence: csi2rx: Add system PM support
+Message-ID: <20240722112541.GD13497@pendragon.ideasonboard.com>
+References: <20240718032834.53876-1-changhuang.liang@starfivetech.com>
+ <20240718032834.53876-3-changhuang.liang@starfivetech.com>
+ <26af0977-8e38-47d0-a521-c5b1e505d564@ideasonboard.com>
+ <ZQ0PR01MB13024828274542F14E89AD58F2A82@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+ <416ec496-a224-47d0-b092-6976aa039318@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zo8-IZgJswTlyP8H@pollux>
+In-Reply-To: <416ec496-a224-47d0-b092-6976aa039318@ideasonboard.com>
 
-On Thu, Jul 11, 2024 at 04:06:25AM +0200, Danilo Krummrich wrote:
+On Mon, Jul 22, 2024 at 11:53:02AM +0300, Tomi Valkeinen wrote:
+> Hi,
+> 
+> On 22/07/2024 05:17, Changhuang Liang wrote:
+> > Hi, Tomi
+> > 
+> >> Hi,
+> >>
+> >> On 18/07/2024 06:28, Changhuang Liang wrote:
+> >>> Add system PM support make it stopping streaming at system suspend
+> >>> time, and restarting streaming at system resume time.
+> >>>
+> >>> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> >>> ---
+> >>>    drivers/media/platform/cadence/cdns-csi2rx.c | 32
+> >> ++++++++++++++++++++
+> >>>    1 file changed, 32 insertions(+)
+> >>>
+> >>> diff --git a/drivers/media/platform/cadence/cdns-csi2rx.c
+> >>> b/drivers/media/platform/cadence/cdns-csi2rx.c
+> >>> index 981819adbb3a..81e90b31e9f8 100644
+> >>> --- a/drivers/media/platform/cadence/cdns-csi2rx.c
+> >>> +++ b/drivers/media/platform/cadence/cdns-csi2rx.c
+> >>> @@ -776,8 +776,40 @@ static int csi2rx_runtime_resume(struct device
+> >> *dev)
+> >>>    	return ret;
+> >>>    }
+> >>>
+> >>> +static int __maybe_unused csi2rx_suspend(struct device *dev) {
+> >>> +	struct csi2rx_priv *csi2rx = dev_get_drvdata(dev);
+> >>> +
+> >>> +	mutex_lock(&csi2rx->lock);
+> >>> +	if (csi2rx->count)
+> >>> +		csi2rx_stop(csi2rx);
+> >>> +	mutex_unlock(&csi2rx->lock);
+> >>> +
+> >>> +	pm_runtime_force_suspend(dev);
+> >>> +
+> >>> +	return 0;
+> >>> +}
+> >>> +
+> >>> +static int __maybe_unused csi2rx_resume(struct device *dev) {
+> >>> +	struct csi2rx_priv *csi2rx = dev_get_drvdata(dev);
+> >>> +	int ret;
+> >>> +
+> >>> +	ret = pm_runtime_force_resume(dev);
+> >>> +	if (ret < 0)
+> >>> +		return ret;
+> >>> +
+> >>> +	mutex_lock(&csi2rx->lock);
+> >>> +	if (csi2rx->count)
+> >>> +		csi2rx_start(csi2rx);
+> >>> +	mutex_unlock(&csi2rx->lock);
+> >>> +
+> >>> +	return 0;
+> >>> +}
+> >>> +
+> >>>    static const struct dev_pm_ops csi2rx_pm_ops = {
+> >>>    	SET_RUNTIME_PM_OPS(csi2rx_runtime_suspend,
+> >> csi2rx_runtime_resume,
+> >>> NULL)
+> >>> +	SET_SYSTEM_SLEEP_PM_OPS(csi2rx_suspend, csi2rx_resume)
+> >>>    };
+> >>>
+> >>>    static const struct of_device_id csi2rx_of_table[] = {
+> >>
+> >> If I'm not mistaken, this is a subdev driver, and is somewhere in the middle of
+> >> the pipeline. Afaiu, only the driver that handles the v4l2 video devices should
+> >> have system suspend hooks. The job of that driver is then to disable or enable
+> >> the pipeline using v4l2 functions, and for the rest of the pipeline system
+> >> suspend looks just like a normal pipeline disable.
+> >>
+> > 
+> > I see that the imx219 has a commit:
+> > 
+> > commit b8074db07429b845b805416d261b502f814a80fe
+> > Author: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Date:   Thu Sep 14 21:16:49 2023 +0300
+> > 
+> >      media: i2c: imx219: Drop system suspend and resume handlers
+> > 
+> >      Stopping streaming on a camera pipeline at system suspend time, and
+> >      restarting it at system resume time, requires coordinated action between
+> >      the bridge driver and the camera sensor driver. This is handled by the
+> >      bridge driver calling the sensor's .s_stream() handler at system suspend
+> >      and resume time. There is thus no need for the sensor to independently
+> >      implement system sleep PM operations. Drop them.
+> > 
+> >      The streaming field of the driver's private structure is now unused,
+> >      drop it as well.
+> > 
+> >      Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >      Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> >      Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> >      Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+> > 
+> > Implement the system PM of sensor using bridge. This csi2rx is also a bridge.
+> > So I add system PM in this driver.
+> 
+> It is not a bridge in the sense that the commit message means. The 
+> system suspend should be handled in the last (or first, depending on 
+> which way you think about it) driver in the pipeline, the one that 
+> handles the VIDIOC_STREAMON.
 
-Gentle reminder.
+That's right. Suspending/resuming a running camera pipeline is a complex
+operation that requires careful sequencing. For instance, if you resume
+a MIPI CSI-2 camera sensor before the CSI-2 receiver, it will switch its
+clock and data lanes to HS mode before the CSI-2 receiver is ready to
+synchronize.
 
-> On Wed, Jul 10, 2024 at 04:02:04PM +0200, Greg KH wrote:
-> > On Thu, Jun 20, 2024 at 11:24:17PM +0200, Danilo Krummrich wrote:
-> > > Ok, good you point this out. We should definitely discuss this point then and
-> > > build some consensus around it.
-> > > 
-> > > I propose to focus on this point first and follow up with the discussion of the
-> > > rest of the series afterwards.
-> > > 
-> > > Let me explain why I am convinced that it's very important to have abstractions
-> > > in place in general and from the get-go.
-> > > 
-> > > In general, having abstractions for C APIs is the foundation of being able to
-> > > make use of a lot of advantages Rust has to offer.
-> > > 
-> > > The most obvious one are all the safety aspects. For instance, with an
-> > > abstraction we have to get exactly one piece of code right in terms of pointer
-> > > validity, lifetimes, type safety, API semantics, etc. and in all other places
-> > > (e.g. drivers) we get the compiler to check those things for us through the
-> > > abstraction.
-> > > 
-> > > Now, the abstraction can be buggy or insufficient and hence there is no absolute
-> > > safety guarantee. *But*, if we get this one thing right, there is nothing a
-> > > driver can mess up by itself trying to do stupid things anymore.
-> > > 
-> > > If we just call the C code instead we have to get it right everywhere instead.
-> > 
-> > I too want a pony.  But unfortunatly you are shaving a yak here instead :)
-> > 
-> > I'm not saying to call C code from rust, I'm saying call rust code from
-> > C.
-> > 
-> > Have a "normal" pci_driver structure with C functions that THEN call
-> > into the rust code that you want to implement them, with a pointer to
-> > the proper structure.  That gives you everything that you really want
-> > here, EXCEPT you don't have to build the whole tower of drivers and
-> > busses and the like.
-> 
-> Please find my reply below where you expand this point.
-> 
-> > 
-> > > Now, you could approach this top-down instead and argue that we could at least
-> > > benefit from Rust for the driver specific parts.
-> > > 
-> > > Unfortunately, this doesn't really work out either. Also driver specific code is
-> > > typically (very) closely connected to kernel APIs. If you want to use the safety
-> > > aspects of Rust for the driver specific parts you inevitably end up writing
-> > > abstractions for the C APIs in your driver.
-> > > 
-> > > There are basically three options you can end up with:
-> > > 
-> > > (1) An abstraction for the C API within your driver that is actually generic
-> > >     for every driver, and hence shouldn't be there.
-> > > (2) Your driver specific code is full of raw pointers and `unsafe {}` calls,
-> > >     which in the end just means that you ended up baking the abstraction into
-> > >     your driver specific code.
-> > > (3) You ignore everything, put everything in a huge `unsafe {}` block and
-> > >     compile C code with the Rust compiler. (Admittedly, maybe slightly
-> > >     overstated, but not that far off either.)
-> > > 
-> > > The latter is also the reason why it doesn't make sense to only have
-> > > abstractions for some things, but not for other.
-> > > 
-> > > If an abstraction for B is based on A, but we don't start with A, then B ends up
-> > > implementing (at least partially) the abstraction for A as well. For instance,
-> > > if we don't implement `driver::Registration` then the PCI abstractions (and
-> > > platform, usb, etc.) have to implement it.
-> > > 
-> > > It really comes down to the point that it just bubbles up. We really have to do
-> > > this bottom-up, otherwise we just end up moving those abstractions up, layer by
-> > > layer, where they don't belong to and we re-implement them over and over again.
-> > 
-> > I think we are talking past each other.
-> 
-> Given your proposal below, that is correct.
-> 
-> I read your previous mail as if you question having abstractions for C APIs at
-> all. And some parts of your latest reply still read like that to me, but for the
-> rest of my reply I will assume that's not the case.
-> 
-> > 
-> > Here is an example .c file that you can use today for your "implement a
-> > PCI driver in rust" wish in a mere 34 lines of .c code:
-> 
-> Your proposal below actually only discards a rather small amount of the proposed
-> abstractions, in particular:
-> 
->   (1) the code to create a struct pci_driver and the code to call
->       pci_register_driver() and pci_unregister_driver() (implemented in Patch 2)
->   (2) the generic code to create the struct pci_device_id table (or any other ID
->       table) (implemented in Patch 3)
-> 
-> As I understand you, the concern here really seems to be about the complexity
-> vs. what we get from it and that someone has to maintain this.
-> 
-> I got the point and I take it seriously. As already mentioned, I'm also willing
-> to take responsibility for the code and offer to maintain it.
-> 
-> But back to the technical details.
-> 
-> Let's start with (2):
-> 
-> I agree that this seems a bit complicated. I'd propose to remove the
-> abstractions in device_id.rs (i.e. Patch 3) for now and let the PCI abstraction
-> simply create a struct pci_device_id table directly.
-> 
-> As for (1):
-> 
-> This just makes a pretty small part of the abstractions and, it's really only
-> about creating the struct pci_driver (or another driver type) instance and
-> call the corresponding register() / unregister() functions, since we already
-> have the Rust module support upstream.
-> 
-> As in C, we really just call register() from module_init() and unregister() from
-> module_exit() and the code for that, without comments, is around 50 lines of
-> code.
-> 
-> As mentioned this is implemented in Patch 2; Hence, please see my reply on Patch
-> 2, where I put a rather long and detailed explanation which hopefully clarifies
-> things.
-> 
-> Now, what do we get from that compared to the proposal below?
-> 
->   - The driver's probe() and remove() functions get called with the
->     corresponding abstraction types directly instead of raw pointers; this moves
->     the required  `unsafe {}` blocks to a cental place which otherwise *every*
->     driver would need to implement itself (obviously it'd be the same for future
->     suspend, resume, shutdown, etc. callbacks).
-> 
->   - More complex drivers can do the work required to be done in module_init()
->     and module_exit() in Rust directly, which allows them to attach the lifetime
->     of structures to the lifetime of the `Module` structure in Rust which avoids
->     the need for explicit cleanup in module_exit() since they can just implement
->     in Rust's drop() trait.
-> 
-> The latter may sound a bit less important than it actually is, since it can break
-> the design, safety and soundness of Rust types. Let me explain:
-> 
-> In Rust a type instance should cleanup after itself when it goes out of scope.
-> 
-> Let's make up an example:
-> 
-> ```
-> // DISCLAIMER: Obviously, this is not how we actually handle memory allocations
-> // in Rust, it's just an example.
-> struct Buffer {
-> 	ptr: *const u8,
-> }
-> 
-> impl Buffer {
-> 	fn alloc(size: u8) -> Result<Self> {
-> 		let ptr = Kmalloc::alloc(size, GFP_KERNEL)?;
-> 
-> 		// Return an instance of `Buffer` initialized with a pointer to
-> 		// the above memory allocation.
-> 		Ok(Self {
-> 			ptr,
-> 		})
-> 	}
-> }
-> 
-> impl Drop for Buffer {
-> 	fn drop(&mut self) {
-> 		// SAFETY: `Self` is always holding a pointer to valid memory
-> 		// allocated with `Kmalloc`.
-> 		unsafe { Kmalloc::free(self.ptr) };
-> 	}
-> }
-> ```
-> 
-> (Side note: `Kmalloc::free` is unsafe since it has no control on whether the
-> pointer passed to it is valid and was allocated with `Kmalloc` previously.)
-> 
-> In Rust's module_init() you could now attach an instance of `Buffer` to the
-> `Module` instance, which lives until module_exit(), which looks like this:
-> 
-> ```
-> struct MyModule {
-> 	buffer: Buffer,
-> }
-> 
-> impl kernel::Moduke for MyModule {
-> 	fn init(module: &'static ThisModule) -> Result<Self> {
-> 		Ok(MyModule {
-> 			buffer: Buffer::alloc(0x100)?,
-> 		})
-> 	}
-> }
-> ```
-> 
-> Note that we don't need to implement module_exit() here, since `MyModule` lives
-> until module_exit() and hence `buffer` has the same lifetime. Once `buffer` goes
-> out of scope it frees itself due to the drop() trait. In fact, buffer can never
-> leak it's memory.
-> 
-> With the proposed approach below we can't do this, we'd need to play dirty and
-> unsafe tricks in order to not entirely break the design of `Buffer`, or any
-> other more complex data structure that the module needs.
-> 
-> > 
-> > ------------------------------------------------------------------------
-> > // SPDX-License-Identifier: GPL-2.0-only
-> > #include <linux/module.h>
-> > #include <linux/pci.h>
-> > #include "my_pci_rust_bindings.h"
-> > 
-> > #define PCI_DEVICE_ID_FOO		0x0f00
-> > #define PCI_VENDOR_ID_FOO		0x0f00
-> > 
-> > static int probe(struct pci_dev *pdev, const struct pci_device_id *ent)
-> > {
-> > 	return my_rust_probe(pdev);
-> > }
-> > 
-> > static void remove(struct pci_dev *pdev)
-> > {
-> > 	my_rust_remove(pdev);
-> > }
-> > 
-> > static const struct pci_device_id pci_ids[] = {
-> > 	{PCI_DEVICE(PCI_VENDOR_ID_FOO, PCI_DEVICE_ID_FOO)},
-> > 	{}
-> > };
-> > MODULE_DEVICE_TABLE(pci, pci_ids);
-> > 
-> > static struct pci_driver my_rust_pci_driver = {
-> > 	.name = "my_pci_rust_driver",
-> > 	.id_table = pci_ids,
-> > 	.probe = probe,
-> > 	.remove = remove,
-> > };
-> > module_pci_driver(my_rust_pci_driver);
-> > 
-> > MODULE_DESCRIPTION("Driver for my fancy PCI device");
-> > MODULE_LICENSE("GPL v2");
-> > ------------------------------------------------------------------------
-> > 
-> > Now, all you have to do is provide a my_rust_probe() and
-> > my_rust_remove() call in your rust code, and handle the conversion of a
-> > struct pci_dev to whatever you want to use (which you had to do anyway),
-> > and you are set!
-> > 
-> > That .c code above is "obviously" correct, and much simpler and worlds
-> > easier for all of us to understand instead of the huge .rs files that
-> > this patch series was attempting to implement.
-> > 
-> > You have to draw the c/rust line somewhere, you all seem to be wanting
-> > to draw that line at "no .c in my module at all!" and I'm saying "put 34
-> > lines of .c in your module and you will save a LOT of headache now."
-> > 
-> > All of the "real" work you want to do for your driver is behind the
-> > probe/remove callbacks (ok, add a suspend/resume as well, forgot that),
-> > and stop worrying about all of the bindings and other mess to tie into
-> > the driver model for a specific bus type and the lunacy that the device
-> > id mess was.
-> > 
-> > In short, KEEP IT SIMPLE!
-> > 
-> > Then, after we are comfortable with stuff like the above, slowly think
-> > about moving the line back a bit more, if you really even need to.  But
-> > why would you need to?  Only reason I can think of is if you wanted to
-> > write an entire bus in rust, and for right now, I would strongly suggest
-> > anyone not attempt that.
-> 
-> We're not trying to do that. Also, please note that all the abstractions are
-> *only* making use of APIs that C drivers use directly, just abstracting them
-> in a way, such that we can actually use the strength of Rust.
-> 
-> > 
-> > The "joy" of writing a driver in rust is that a driver consumes from
-> > EVERYWHERE in the kernel (as you well know.)  Having to write bindings
-> > and mappings for EVERYTHING all at once, when all you really want to do
-> > is implement the logic between probe/remove is rough, I'm sorry.  I'm
-> > suggesting that you stop at the above line for now, which should make
-> > your life easier as the .c code is obviously correct, and anything you
-> > do in the rust side is your problem, not mine as a bus maintainer :)
-> 
-> As explained above, we already have the module abstraction in place. Really all
-> that we're left with is creating the struct pci_driver and call register() /
-> remove() from it.
-> 
-> Now, this could be fully done in the PCI abstraction. The only reason we have
-> the `Registration` and `DriverOps` (again there are a few misunderstandings
-> around that, that I try to clarify in the corresponding thread) in "driver.rs"
-> is to not duplicate code for maintainability.
-> 
-> What I'm trying to say, the stuff in "driver.rs" is not even abstracting things
-> from drivers/base/, but is Rust helper code for subsystems to abstract their
-> stuff (e.g. struct pci_driver).
-> 
-> And again, I'm willing to take responsibility for the code and offer to maintain
-> it - I really want to do this the proper way.
-> 
-> - Danilo
-> 
-> (cutting of the rest since it was based on the misunderstanding mentioned above)
+These sequencing requirements are already handled at VIDIOC_STREAMON and
+VIDIOC_STREAMOFF time. That's why we leverage that code for the
+suspend/resume implementation, the "main" driver that handles the video
+nodes and implements stream start/stop has to stop the pipeline at
+suspend time and restart it at resume time. Drivers for components along
+the pipeline will then see their .s_stream() operation being called, as
+done when starting/stopping the pipeline normally. They don't have to
+implement anything specific related to pipeline stop/start in their
+system suspend/resume handlers.
 
+-- 
+Regards,
+
+Laurent Pinchart
 
