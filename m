@@ -1,280 +1,182 @@
-Return-Path: <linux-kernel+bounces-258401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48ABE938782
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:17:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C96693877A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89A9CB20D52
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 02:17:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4A69B20CE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 02:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70CAFF9D4;
-	Mon, 22 Jul 2024 02:17:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3960BEAF1;
+	Mon, 22 Jul 2024 02:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W0cl4VZn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="T3po7Ka4"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C9E1849
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 02:17:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB189C125
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 02:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721614661; cv=none; b=qoUelgnCzZ5ZM9qm3sZjat4a/UO9HyPk0gZ+6swxLCRMY2e1WnWty7aTT8MBgAHzGtr9GgT9TxWEjhlxpFYizd0kc8UmuCp/QN7jXmLEtOjmpStJBGRCf19NlcZoxs8AUsvdXOwIQz30kh8QgyYjbjuXVu3E8yXiUfhsHUv2NYE=
+	t=1721614464; cv=none; b=I28LiW+F01Omt5C+XmaboOHU/mrORCLcUEHKRGgcU3chMDRPMGJK9llpu9eYHD8KbXCpiMU2vYDF/b1T8UKVEH5ZQ0q7ZUVZhbfPvCEHGomRvBfyn0mmfn1FqOfx4P5stEOIDelbG6vNV2nIpBqrQmj0cLaeaQc+7Q7j7qNXa2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721614661; c=relaxed/simple;
-	bh=9WpNI1lqce4FVULvexJBf8KieXCM0lVlLQAIpUtTnGM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lMlNbt+gxUz5ue3ec2raPC2ubbKeruoNvjdF+oQJYcoFkP++L0cO28Zy6+PashRfTOkc/vuNhbWFRrV0/58KKrmt+6WTQCqjLw8fn0K0xQKnH5MxFDz3kpMZdPgAOPaaTIsVbC5Up7uSP7/KKP2Nrx19V2U0KsKomnlYYSDBMWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W0cl4VZn; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721614660; x=1753150660;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=9WpNI1lqce4FVULvexJBf8KieXCM0lVlLQAIpUtTnGM=;
-  b=W0cl4VZnekleLJOOSaSKCkkym20A+yMHl7gcau/acYwlWQBlbKYf1oLK
-   Tg31NBEsOLJanu1ejVf2h1Dv/H6ghOhRF9qBPOALm00ytRla9r4BZKqXL
-   TC2KQCjtoDgZcDAa/Ax8etcuXaIwHhqVQATEygAv3Y6zVk078ZO2guY1C
-   LyOPHa9cSt0lmUloGDlp7X17c7OVOBFLc+8u7lPAk0X2Qq1ffsD5bO/vs
-   OIOh+kFJq3EJklH0M2GphoBQgQnwkXHxH3h0uen4I2o793q8mTvmPqbkM
-   Q8qwDntZj3LEO7OT+5AhgbFDqo7XEkoctJL0AKTll6/lNg9lRuNWpBROP
-   A==;
-X-CSE-ConnectionGUID: WYx29nkOS3e8ruhVmQ+vyA==
-X-CSE-MsgGUID: 2bsSJpRiRc6CwNzOdUULjQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11140"; a="44588126"
-X-IronPort-AV: E=Sophos;i="6.09,227,1716274800"; 
-   d="scan'208";a="44588126"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2024 19:17:39 -0700
-X-CSE-ConnectionGUID: dC9FdTT+SNuRMARWnklLsw==
-X-CSE-MsgGUID: sN+6lOviTeKtYcDGrQ1b2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,227,1716274800"; 
-   d="scan'208";a="56831651"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2024 19:17:37 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Chris Li <chrisl@kernel.org>,  Andrew Morton
- <akpm@linux-foundation.org>,  Kairui Song <kasong@tencent.com>,  Hugh
- Dickins <hughd@google.com>,  Kalesh Singh <kaleshsingh@google.com>,
-  <linux-kernel@vger.kernel.org>,  <linux-mm@kvack.org>,  Barry Song
- <baohua@kernel.org>
-Subject: Re: [PATCH v4 2/3] mm: swap: mTHP allocate swap entries from
- nonfull list
-In-Reply-To: <a50fe2d0-f22d-4ba0-8796-56732da0a5c4@arm.com> (Ryan Roberts's
-	message of "Fri, 19 Jul 2024 11:30:25 +0100")
-References: <20240711-swap-allocator-v4-0-0295a4d4c7aa@kernel.org>
-	<20240711-swap-allocator-v4-2-0295a4d4c7aa@kernel.org>
-	<ea720b4a-da70-4ee3-8f74-2c7344480170@arm.com>
-	<CACePvbW_g4T10mqcG-FnJ11nP0obRG8ZgtdAN_EMCosnk9EQpA@mail.gmail.com>
-	<b4b31314-1125-40ee-b784-20abc78bd468@arm.com>
-	<CACePvbXfeyt5cSX3zQhbZQ4Z5suW6iXw4Kb8BDH96SeMi54o8Q@mail.gmail.com>
-	<874j8nxhiq.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<a50fe2d0-f22d-4ba0-8796-56732da0a5c4@arm.com>
-Date: Mon, 22 Jul 2024 10:14:03 +0800
-Message-ID: <87o76qjhqs.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1721614464; c=relaxed/simple;
+	bh=AJiaG+8x6Qhj7Wc27cG9Bf54PaCAqk9PdZsLZCJ5YBI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EGYhLT9u6H8yUjWpuKNtykEfJaphpjWacVYh2BIuep31dvdedLyTykkwGMgfC+I9a5rxuSlfRoJ51Y1z2PAJwPSjQ7RbfxyXBf0yXs3DLsS2RWk1vpUrDN27Ze1MAs9uIc/r9NmmITW9LcqIP5xThaBaw1CzTguZZAmJ2IUF048=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=T3po7Ka4; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-250ca14422aso2085215fac.0
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 19:14:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1721614462; x=1722219262; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kl/5HdiGOfFOfo04ZJqI2kOtj4nNd83dcFbNpwK/70I=;
+        b=T3po7Ka4FkuG9TASaQl7cSeDfd107oKKu8ed8bpaeAqDuDaIrkcs1APMqclS/AZRss
+         tCm6mrCIHLf4sWIw5mYAINM63oSbbo6wshaK22uigiY/ClLyVMhC8oSQJz4671zTQT68
+         eDJCAfNCqyJbY0FXvLkGnyA8/XaDur5lS8UV/TTD7pu6OObld3DoLTqWIFHuCzM84fg8
+         BYm0LBRnjzycpEfq29uGlYxZl9eQZCiSOLWHnIRJHY0qlfArj6zw7p4tYXEKobYKxn2T
+         qkH8g4oX9RkZrHqhMakaFkeqV3UTwLdhHJO2NWpQNJLb23VKpCC6/oO0YpzIdvy+WJOx
+         NnZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721614462; x=1722219262;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kl/5HdiGOfFOfo04ZJqI2kOtj4nNd83dcFbNpwK/70I=;
+        b=KCQyt8fxBV/kCwCeDCpjNFQsIeRpT8YUhwmI4ztYeNQQR4GKmTJlP5nnzTrp7Y02dU
+         62xS7x42voFAeNJ2ZIL+23QzAAqRt63sL0zvGSFDfUNDdcwCqC4HB5GcXgenISHApbdk
+         IJrsRfvuY2JINNx98aFSMk4Rv46Ys73ZLFvOjmdPUwrsybBTLcvGVdcWrKVQyQu7iRoZ
+         XIoBUO7JOSB64CEZL6pekrvsYwFcxwyd11CfBlkuf/lIIj1Aeq45zCqzOUx41Q/Z9NFx
+         j6XopTKI/xma+klIkhccL8Mns+mHKYh5/6pAcP8Aspt70R2MC0VxbGx2UYQqOPCb4TyX
+         UFJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMawxiLi65HGzkNC+bgeLaUdWQHW6wfjzst/k7EvM+Q/9gOOixKL+ygeApt4FUBjtAJiKRqlKHAjinBieosiZj64kLOssuYC2D83/P
+X-Gm-Message-State: AOJu0YwQRsGBjk/gDh+qZR9oEtBqzDTy1JQ+dQXDyF8QLq+A6mhHOj8h
+	kRg5Ypg4fllzZGE1u7pQs1XJW21QDFRTpqzDVNBZrsHr/rWf5GXiBpaQ3Mwkl1VKMmB7sHZc7F5
+	Xzn8PW5mhcxNqi3vvBqDiYNmSc9Z1O/GccX9BUg==
+X-Google-Smtp-Source: AGHT+IHnB9IHVe+JUhN7+3oCZIPRki3xbro2mIHQOGvKQ+6goU1pu1Q9XgV6wLqCAmGxdb7cSYKKnOMLQd5vLv7Sn5A=
+X-Received: by 2002:a05:6871:b28:b0:261:10b7:8c48 with SMTP id
+ 586e51a60fabf-2638df8951dmr5202348fac.27.1721614461869; Sun, 21 Jul 2024
+ 19:14:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20240712083850.4242-1-yongxuan.wang@sifive.com>
+ <20240712083850.4242-3-yongxuan.wang@sifive.com> <727b966a-a8c4-4021-acf6-3c031ccd843a@sifive.com>
+ <CAMWQL2g-peSYJQaxeJtyOzGdEmDQ6cnkRBdFQvLr2NQA1+mv2g@mail.gmail.com> <20240719-flatten-elixir-d4476977ab95@spud>
+In-Reply-To: <20240719-flatten-elixir-d4476977ab95@spud>
+From: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Date: Mon, 22 Jul 2024 10:14:11 +0800
+Message-ID: <CAMWQL2iWsxLJZZ3H59csJ376Hdtq+ZKjD92BtM9zhdXm+fh2=A@mail.gmail.com>
+Subject: Re: [PATCH v7 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
+To: Conor Dooley <conor@kernel.org>
+Cc: Samuel Holland <samuel.holland@sifive.com>, greentime.hu@sifive.com, 
+	vincent.chen@sifive.com, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Ryan Roberts <ryan.roberts@arm.com> writes:
+Hi Conor,
 
-> On 18/07/2024 08:53, Huang, Ying wrote:
->> Chris Li <chrisl@kernel.org> writes:
->>=20
->>> On Wed, Jul 17, 2024 at 3:14=E2=80=AFAM Ryan Roberts <ryan.roberts@arm.=
-com> wrote:
->>>>
->>>> On 16/07/2024 23:46, Chris Li wrote:
->>>>> On Mon, Jul 15, 2024 at 8:40=E2=80=AFAM Ryan Roberts <ryan.roberts@ar=
-m.com> wrote:
->>>>>>
->>>>>> On 11/07/2024 08:29, Chris Li wrote:
-
-[snip]
-
->>>>>>> +
->>>>>>> +     if (!(ci->flags & CLUSTER_FLAG_NONFULL)) {
->>>>>>> +             list_add_tail(&ci->list, &p->nonfull_clusters[ci->ord=
-er]);
->>>>>>
->>>>>> I find the transitions when you add and remove a cluster from the
->>>>>> nonfull_clusters list a bit strange (if I've understood correctly): =
-It is added
->>>>>> to the list whenever there is at least one free swap entry if not al=
-ready on the
->>>>>> list. But you take it off the list when assigning it as the current =
-cluster for
->>>>>> a cpu in scan_swap_map_try_ssd_cluster().
->>>>>>
->>>>>> So you could have this situation:
->>>>>>
->>>>>>   - cpuA allocs cluster from free list (exclusive to that cpu)
->>>>>>   - cpuA allocs 1 swap entry from current cluster
->>>>>>   - swap entry is freed; cluster added to nonfull_clusters
->>>>>>   - cpuB "allocs" cluster from nonfull_clusters
->>>>>>
->>>>>> At this point both cpuA and cpuB share the same cluster as their cur=
-rent
->>>>>> cluster. So why not just put the cluster on the nonfull_clusters lis=
-t at
->>>>>> allocation time (when removed from free_list) and only remove it fro=
-m the
->>>>>
->>>>> The big rewrite on patch 3 does that, taking it off the free list and
->>>>> moving it into nonfull.
->>>>
->>>> Oh, from the title, "RFC: mm: swap: seperate SSD allocation from
->>>> scan_swap_map_slots()" I assumed that was just a refactoring of the co=
-de to
->>>> separate the SSD and HDD code paths. Personally I'd prefer to see the
->>>> refactoring separated from behavioural changes.
->>>
->>> It is not a refactoring. It is a big rewrite of the swap allocator
->>> using the cluster. Behavior change is expected. The goal is completely
->>> removing the brute force scanning of swap_map[] array for cluster swap
->>> allocation.
->>>
->>>>
->>>> Since the patch was titled RFC and I thought it was just refactoring, =
-I was
->>>> deferring review. But sounds like it is actually required to realize t=
-he test
->>>> results quoted on the cover letter?
->>>
->>> Yes, required because it handles the previous fall out case try_ssd()
->>> failed. This big rewrite has gone through a lot of testing and bug
->>> fix. It is pretty stable now. The only reason I keep it as RFC is
->>> because it is not feature complete. Currently it does not do swap
->>> cache reclaim. The next version will have swap cache reclaim and
->>> remove the RFC.
->>>
->>>>
->>>>> I am only making the minimal change in this step so the big rewrite c=
-an land.
->>>>>
->>>>>> nonfull_clusters list when it is completely full (or at least defini=
-tely doesn't
->>>>>> have room for an `order` allocation)? Then you allow "stealing" alwa=
-ys instead
->>>>>> of just sometimes. You would likely want to move the cluster to the =
-end of the
->>>>>> nonfull list when selecting it in scan_swap_map_try_ssd_cluster() to=
- reduce the
->>>>>> chances of multiple CPUs using the same cluster.
->>>>>
->>>>> For nonfull clusters it is less important to avoid multiple CPU
->>>>> sharing the cluster. Because the cluster already has previous swap
->>>>> entries allocated from the previous CPU.
->>>>
->>>> But if 2 CPUs have the same cluster, isn't there a pathalogical case w=
-here cpuA
->>>> could be slightly ahead of cpuB so that cpuA allocates all the free pa=
-ges and
->>>
->>> That happens to exist per cpu next pointer already. When the other CPU
->>> advances to the next cluster pointer, it can cross with the other
->>> CPU's next cluster pointer.
->>=20
->> No.  si->percpu_cluster[cpu].next will keep in the current per cpu
->> cluster only.  If it doesn't do that, we should fix it.
->>=20
->> I agree with Ryan that we should make per cpu cluster correct.  A
->> cluster in per cpu cluster shouldn't be put in nonfull list.  When we
->> scan to the end of a per cpu cluster, we can put the cluster in nonfull
->> list if necessary.  And, we should make it correct in this patch instead
->> of later in series.  I understand that you want to make the patch itself
->> simple, but it's important to make code simple to be understood too.
->> Consistent design choice will do that.
+On Fri, Jul 19, 2024 at 9:17=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
+te:
 >
-> I think I'm actually arguing for the opposite of what you suggest here.
-
-Sorry, I misunderstood your words.
-
-> As I see it, there are 2 possible approaches; either a cluster is always
-> considered exclusive to a single cpu when its set as a per-cpu cluster, s=
-o it
-> does not appear on the nonfull list. Or a cluster is considered sharable =
-in this
-> case, in which case it should be added to the nonfull list.
+> On Fri, Jul 19, 2024 at 02:58:59PM +0800, Yong-Xuan Wang wrote:
+> > Hi Samuel,
+> >
+> > On Fri, Jul 19, 2024 at 7:38=E2=80=AFAM Samuel Holland
+> > <samuel.holland@sifive.com> wrote:
+> > >
+> > > On 2024-07-12 3:38 AM, Yong-Xuan Wang wrote:
+> > > > Add entries for the Svade and Svadu extensions to the riscv,isa-ext=
+ensions
+> > > > property.
+> > > >
+> > > > Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+> > > > ---
+> > > >  .../devicetree/bindings/riscv/extensions.yaml | 28 +++++++++++++++=
+++++
+> > > >  1 file changed, 28 insertions(+)
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yam=
+l b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > > index 468c646247aa..e91a6f4ede38 100644
+> > > > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > > @@ -153,6 +153,34 @@ properties:
+> > > >              ratified at commit 3f9ed34 ("Add ability to manually t=
+rigger
+> > > >              workflow. (#2)") of riscv-time-compare.
+> > > >
+> > > > +        - const: svade
+> > > > +          description: |
+> > > > +            The standard Svade supervisor-level extension for SW-m=
+anaged PTE A/D
+> > > > +            bit updates as ratified in the 20240213 version of the=
+ privileged
+> > > > +            ISA specification.
+> > > > +
+> > > > +            Both Svade and Svadu extensions control the hardware b=
+ehavior when
+> > > > +            the PTE A/D bits need to be set. The default behavior =
+for the four
+> > > > +            possible combinations of these extensions in the devic=
+e tree are:
+> > > > +            1) Neither Svade nor Svadu present in DT =3D> It is te=
+chnically
+> > > > +               unknown whether the platform uses Svade or Svadu. S=
+upervisor
+> > > > +               software should be prepared to handle either hardwa=
+re updating
+> > > > +               of the PTE A/D bits or page faults when they need u=
+pdated.
+> > > > +            2) Only Svade present in DT =3D> Supervisor must assum=
+e Svade to be
+> > > > +               always enabled.
+> > > > +            3) Only Svadu present in DT =3D> Supervisor must assum=
+e Svadu to be
+> > > > +               always enabled.
+> > > > +            4) Both Svade and Svadu present in DT =3D> Supervisor =
+must assume
+> > > > +               Svadu turned-off at boot time. To use Svadu, superv=
+isor must
+> > > > +               explicitly enable it using the SBI FWFT extension.
+> > > > +
+> > > > +        - const: svadu
+> > > > +          description: |
+> > > > +            The standard Svadu supervisor-level extension for hard=
+ware updating
+> > > > +            of PTE A/D bits as ratified at commit c1abccf ("Merge =
+pull request
+> > > > +            #25 from ved-rivos/ratified") of riscv-svadu. Please r=
+efer to Svade
+> > >
+> > > Should we be referencing the archived riscv-svadu repository now that=
+ Svadu has
+> > > been merged to the main privileged ISA manual? Either way:
+> > >
+> > > Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+> > >
+> >
+> > Yes, this commit is from the archived riscv-svadu repo. Or should I upd=
+ate it to
+> > "commit c1abccf ("Merge pull request  #25 from ved-rivos/ratified") of
+> > riscvarchive/riscv-svadu."?
 >
-> The code at the moment sort of does both; when a cpu decides to use a clu=
-ster in
-> the nonfull list, it removes it from that list to make it exclusive. But =
-as soon
-> as a single swap entry is freed from that cluster it is put back on the l=
-ist.
-> This neither-one-policy-nor-the-other seems odd to me.
->
-> I think Huang, Ying is arguing to keep it always exclusive while installe=
-d as a
-> per-cpu cluster.
+> I think Samuel was saying that we should use the commit where it was
+> merged into riscv-isa-manual instead.
 
-Yes.
-
-> I was arguing to make it always shared. Perhaps the best
-> approach is to implement the exclusive policy in this patch (you'd need a=
- flag
-> to note if any pages were freed while in exclusive use, then when exclusi=
-ve use
-> completes, put it back on the nonfull list if the flag was set). Then mig=
-rate to
-> the shared approach as part of the "big rewrite"?
->>=20
->>>> cpuB just ends up scanning and finding nothing to allocate. I think do=
- want to
->>>> share the cluster when you really need to, but try to avoid it if ther=
-e are
->>>> other options, and I think moving the cluster to the end of the list m=
-ight be a
->>>> way to help that?
->>>
->>> Simply moving to the end of the list can create a possible deadloop
->>> when all clusters have been scanned and not available swap range
->>> found.
-
-I also think that the shared approach has dead loop issue.
-
->> This is another reason that we should put the cluster in
->> nonfull_clusters[order--] if there are no free swap entry with "order"
->> in the cluster.  It makes design complex to keep it in
->> nonfull_clusters[order].
->>=20
->>> We have tried many different approaches including moving to the end of
->>> the list. It can cause more fragmentation because each CPU allocates
->>> their swap slot cache (64 entries) from a different cluster.
->>>
->>>>> Those behaviors will be fine
->>>>> tuned after the patch 3 big rewrite. Try to make this patch simple.
->>>
->>> Again, I want to keep it simple here so patch 3 can land.
->>>
->>>>>> Another potential optimization (which was in my hacked version IIRC)=
- is to only
->>>>>> add/remove from nonfull list when `total - count` crosses the (1 << =
-order)
->>>>>> boundary rather than when becoming completely full. You definitely w=
-on't be able
->>>>>> to allocate order-2 if there are only 3 pages available, for example.
->>>>>
->>>>> That is in patch 3 as well. This patch is just doing the bare minimum
->>>>> to introduce the nonfull list.
->>>>>
-
-[snip]
-
---
-Best Regards,
-Huang, Ying
+Got it. I will update the description in the next version. Thank you!
 
