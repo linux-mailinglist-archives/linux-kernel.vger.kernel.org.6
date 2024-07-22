@@ -1,131 +1,122 @@
-Return-Path: <linux-kernel+bounces-258370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87328938722
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 03:07:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E24B938734
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 03:13:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A2E11C20B19
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 01:07:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25F0728106F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 01:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77668BEA;
-	Mon, 22 Jul 2024 01:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A21747F;
+	Mon, 22 Jul 2024 01:13:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="UqVoU5D4"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FJPyLwj4"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA5B4C7D
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 01:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2A246B5
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 01:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721610449; cv=none; b=eqa6jddk7a6XJgMIDXjvx78GC+i15eKPsWwHPEjYSzFWt4Ewx4hrIGUGSQzkiAAUj5O+vWtMo+Rkf0JHRw6DhWRHgruGQrYeId03H7tIsncsUIsudTkKdggaKkot1adsj63567H7ERGtmPyUvfkZL8ddcaGaDXrt94M4cJnhR7g=
+	t=1721610780; cv=none; b=T6F3+LJ1agkXLvKp5rSJSscbVh9M+IeOoqa+Xgo5K6HeUh/kXbL/Mn74au6krvx7np3Kyd0NY4YeKMkGQIT/BIMbgNwgdK039VAYxdDY5HP/BYGCqEY9s+EuZMtKxCWu/mPd4uNSCnbcHeth4h7hUUAuhBz6NWqW0EEPZBDU4wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721610449; c=relaxed/simple;
-	bh=TSmfXgnydARLwr7mv0kzl+RBgKIwOhswaVDeCGIIVsk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fF9jc+reX+vW8qZQjGOc3L7iLpvEL76Dc8C+S8OYxOSjkxCR2WwTs4QyF5InpHtE6+pnrKp1kbK1NvRP2wLHwbcWBjbNPeSPp2PWohI7Qux6VhbEgvGnPlUiZSxSEMBoDncu2APhzvCZ0Ajw10TAHOobX40SjY5nYCHkWbYR3A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=UqVoU5D4; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-79f0e7faafcso233602585a.3
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 18:07:25 -0700 (PDT)
+	s=arc-20240116; t=1721610780; c=relaxed/simple;
+	bh=tCut4qU1NxMAK76eXQVTCNfTH1sNoI1sNersotmkaRw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KobE/13GocPBbyiOfoSYj7I2IodBgDcroESLb46UdFAm2jw5zAFL9VUpolsA7eNPQcCVp6nIlz5E3zn87pCit5LOLbSgspr0ORWvHA+v52JEOKFsqj6p+sxobX5X4TMevPF8bTikTMp1D7aOs55Wm9jkQnPf0cDRquJu6LG3wno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FJPyLwj4; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52efc89dbedso980569e87.3
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 18:12:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1721610445; x=1722215245; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GAHiE58iDMnOq7mpXPmqVzhRum0LLcYC2L+ZB58l620=;
-        b=UqVoU5D4q4F3vw9mqbZxyGwMLKlzaY87cl2DV8Gnw1eiwWMk3yfXuyjmdBR2SIxOZA
-         sncd2HrnE3LFegeDK4Sav1jlmcDG6En7b2hJG9JZfnd31ShVSIeD1pXjw9UZI0ViETzt
-         UOCHW6iYE6VDWLxNZMju+0CNrvjHfBPg0FkMsVM9QfPH5GBy3EkB4kaC8H5LjfEDJs03
-         gTrUS0s2X9ZqnJsQ1ICy208uCXUhBrGyMBD9Od6AV4yYLAtFvlXYgqLU7+JcDNkrIzTj
-         2PABlgugPMsF6q3yCcBobwX0LR0DKr4WBYn3EPFmCIYNS4+DhaPgbFm7vcBPVGBf8vAX
-         J8Jg==
+        d=linux-foundation.org; s=google; t=1721610776; x=1722215576; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Ks9M3kzBCPwupF4DA1Vj4pSXzb7G5/N05vKszYZASg=;
+        b=FJPyLwj4eMDqwmkaHhAuakN4wy2eXVRtHyWEQBokWl+jQN1PcLIswz3oiMfymnOXeI
+         PhfDe615UVnO6FNQEtnwLpnVcP9JxozOKlcviup1RFqrhN3wDA5+UkDzz+GRZE6Va6Bq
+         xO8b8W3vf7SEOp7uYczOFVXe1E+UOthwyEnWM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721610445; x=1722215245;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GAHiE58iDMnOq7mpXPmqVzhRum0LLcYC2L+ZB58l620=;
-        b=Azcdi6D+xIzAOMK+BjUKU6JLbGlM/lAQ492XXH8fsPoHeSXon7NgC9/X7pa8wLa9Ax
-         L08tN6Qi67tA/gFVfeZx1EclEspYffcI/hV8b76yioqp5CSxzLA3Mq0/hEU6YaLzASt0
-         AP4GsNc5JZFZJkgzTaUKmAhy+kZ/1YonkjCHtd+SUTeIOeR18S0w4vePecU46EFyGDuj
-         Zbxdmsh3fqo+TmX2ulKnY3QJnQaU5kyttbyezINrt1VloXWcsaSnWQyiU/HZ9n/CQfpm
-         wfzrzFGAnIZ4c1ZE48P8nIghmvbPbJCwHjCazmTWK069J/6iuUjx1GOZu/1YasPhLkmB
-         SRLg==
-X-Forwarded-Encrypted: i=1; AJvYcCWwMqS1vl88EXGCKoC9yj1GdTiS1+Y5MVWXpgg2nxkTlHHbcoOpMW4idB8AIL2T0p/8FJqnxx1mLVxK/bKCl5PujqDx4ruUAnDKdSVT
-X-Gm-Message-State: AOJu0Yzcl9Y22rQGYawst5UkjnkKLavSznfQGsdJNyQQz0rUnF2BKOm6
-	/LKoAIgYwd1xHOHPgeE7qqx+iv/i0M4Laxwo8rQgfzNdAO474049sypI9Nrm4g==
-X-Google-Smtp-Source: AGHT+IH9pnVMRWIV3YKK+JwL6olh4K3erV80NpJ3mXsnmlqGMvAHvjzn6pvEYnaMSnwmCMPoU9uY+Q==
-X-Received: by 2002:a05:620a:3954:b0:79f:4b5:3697 with SMTP id af79cd13be357-7a1a667f968mr641629585a.63.1721610445036;
-        Sun, 21 Jul 2024 18:07:25 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::179c])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a198ff997esm308267985a.56.2024.07.21.18.07.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jul 2024 18:07:24 -0700 (PDT)
-Date: Sun, 21 Jul 2024 21:07:21 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: crwulff@gmail.com
-Cc: linux-usb@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Roy Luo <royluo@google.com>,
-	Krishna Kurapati <quic_kriskura@quicinc.com>,
-	Michael Grzeschik <m.grzeschik@pengutronix.de>,
-	yuan linyu <yuanlinyu@hihonor.com>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Felipe Balbi <balbi@kernel.org>, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] usb: gadget: core: Check for unset descriptor
-Message-ID: <29bc21ae-1f8a-47fd-b361-c761564f483a@rowland.harvard.edu>
-References: <20240721192048.3530097-2-crwulff@gmail.com>
+        d=1e100.net; s=20230601; t=1721610776; x=1722215576;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4Ks9M3kzBCPwupF4DA1Vj4pSXzb7G5/N05vKszYZASg=;
+        b=Y/icgpTvdXRX2l+1N+SXb4z/9ykmVEzCpvrWUeNpnVrBMyXgJwRndACSU5FeSPWwyX
+         vLtKJJlYQ+LvN/Hrq6IdkecHXDX0rfEDTtU1Ukety4c46IOir8SK90k9D7Fn2KLV68x8
+         i7RM7cuWatckwi9bGA2csKTiyfrSSL4nupZA8L97tySBNTgWNgSPLZqbEP6biwmQMSl4
+         MX0OZnvKxER0IANLOnhvIUO0SnNYALPqpJ8E2Dt5ByBxk3l+H/mzzZ8vdev4WYw1EcUn
+         X2pk8H6JmB5Ak+x03amcQ5vJSxjEg4UCB6PTp6G3IWlQhur+1Xnibqs7pvXSH9Oap5pq
+         3nkg==
+X-Forwarded-Encrypted: i=1; AJvYcCUi9Crh9jT6qYHB6QdyppMrxvuU7hzjYDKql7OUl1ZXzbDFb+6KiC9G/J3aqan9W7hTnG7/jyvHoqd+3fukDXJ9RaAheVMItNGj7yYT
+X-Gm-Message-State: AOJu0YzzA1a1epF+ltanIxVLu0M8G0ZEV/plbMqjhx+J2mclIYz3BxWi
+	ZBoqPDXw5h2IuA66au0N1zYusvOoXX0e7o0iA8H8yi8Nfc0Qdrn1/ScJZRt0Ha/0h+S81j8MLbB
+	kNpI=
+X-Google-Smtp-Source: AGHT+IFhCBMDxJ5hhcdsWGiScMvwcaRukSjSNyO05c5gV6ZWAaLIsqtmKI+RpoJ/m9xYI4J+7MKCiQ==
+X-Received: by 2002:a05:6512:3f0b:b0:52e:9b15:1c60 with SMTP id 2adb3069b0e04-52ee5426f95mr10573682e87.48.1721610776114;
+        Sun, 21 Jul 2024 18:12:56 -0700 (PDT)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c94fc2esm347922466b.210.2024.07.21.18.12.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 21 Jul 2024 18:12:55 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5a309d1a788so2786879a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 18:12:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW1+6XIrgmuGCXA+s2S15dAFte90Har46vv5+zvS+XVrFo7xkX00HUz5VGy9pnbD+FgoEkW0czC+gyTDnu8PevJddnz3yhbIrxK3jvn
+X-Received: by 2002:a05:6402:2114:b0:5a1:ef24:e9dc with SMTP id
+ 4fb4d7f45d1cf-5a3ebea7d26mr4934512a12.0.1721610774619; Sun, 21 Jul 2024
+ 18:12:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240721192048.3530097-2-crwulff@gmail.com>
+References: <20240721151013.b9b331ce79f5f60c54c69636@linux-foundation.org>
+In-Reply-To: <20240721151013.b9b331ce79f5f60c54c69636@linux-foundation.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 21 Jul 2024 18:12:37 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whqXizOqcpcrqvRJ88Twi4+o=G1Y=5qsLBs5R-8uHjs+Q@mail.gmail.com>
+Message-ID: <CAHk-=whqXizOqcpcrqvRJ88Twi4+o=G1Y=5qsLBs5R-8uHjs+Q@mail.gmail.com>
+Subject: Re: [GIT PULL] non-MM updates for 6.11-rc1
+To: Andrew Morton <akpm@linux-foundation.org>, Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	mm-commits@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Jul 21, 2024 at 03:20:49PM -0400, crwulff@gmail.com wrote:
-> From: Chris Wulff <crwulff@gmail.com>
-> 
-> Make sure the descriptor has been set before looking at maxpacket.
-> This fixes a null pointer panic in this case.
-> 
-> This may happen if the gadget doesn't properly set up the endpoint
-> for the current speed, or the gadget descriptors are malformed and
-> the descriptor for the speed/endpoint are not found.
+On Sun, 21 Jul 2024 at 15:10, Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> - In the series "treewide: Refactor heap related implementation",
+>   Kuan-Wei Chiu has significantly reworked the min_heap library code and
+>   has taught bcachefs to use the new more generic implementation.
 
-If that happens, doesn't it mean there's a bug in the gadget driver?  
-And if there's a bug, don't we want to be told about it by a big 
-impossible-to-miss error message, so the bug can be fixed?
+Bah. I think the users should probably have been converted in their
+own trees, instead of having this thing that caused a somewhat nasty
+conflict.
 
-> Fixes: 54f83b8c8ea9 ("USB: gadget: Reject endpoints with 0 maxpacket value")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Chris Wulff <crwulff@gmail.com>
-> ---
->  drivers/usb/gadget/udc/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
-> index 2dfae7a17b3f..36a5d5935889 100644
-> --- a/drivers/usb/gadget/udc/core.c
-> +++ b/drivers/usb/gadget/udc/core.c
-> @@ -118,7 +118,7 @@ int usb_ep_enable(struct usb_ep *ep)
->  		goto out;
->  
->  	/* UDC drivers can't handle endpoints with maxpacket size 0 */
-> -	if (usb_endpoint_maxp(ep->desc) == 0) {
-> +	if (!ep->desc || usb_endpoint_maxp(ep->desc) == 0) {
->  		/*
->  		 * We should log an error message here, but we can't call
->  		 * dev_err() because there's no way to find the gadget
+I think I sorted it out correctly, but I'm not seeing why the bcachefs
+conversion was done outside the bcachefs tree.
 
-This will just hide the error.  That's not good.
+(Ok, it's not like the conflict was all that nasty, really. It's more
+that conflicts in this _kind_ of code is a bit nasty).
 
-Alan Stern
+As it is, I do see the Ack from Kent, but I'm going to ask him to also
+double-check my merge.
+
+I see what happened in linux-next, but that state also seems different
+from my tree (at a minimum, Kent also moved the tiemr_lock around a
+bit too).
+
+Anyway.. The conflict resolution looks sane to me and doesn't seem
+fundamentally complex, but (a) mistakes happen and (b) it does seem
+like this whole heap conversion could have happened in the bcachefs
+tree.
+
+Kent, mind checking that I didn't do something horribly horribly bad?
+
+              Linus
 
