@@ -1,116 +1,157 @@
-Return-Path: <linux-kernel+bounces-258893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4068938DF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:14:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3B65938DF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89EA11F21BDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:14:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6CB5B21217
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A81316D300;
-	Mon, 22 Jul 2024 11:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB22816CD15;
+	Mon, 22 Jul 2024 11:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="MnezjYde"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CC7f0/bP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D5A3A8F7;
-	Mon, 22 Jul 2024 11:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B003A8F7;
+	Mon, 22 Jul 2024 11:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721646845; cv=none; b=tSF1FCrWIk5AD/Tc4eI0xnrtuvB+nVnTrzBPQ6qXqN0dIx3OMUlmm0XSurQOoNohLg5x0ff7ghYSw2O2nWpREMfQxj9l1eT/PrPqPtVTBMBahcGR222re3NgYcnhleL4dU6OAQKa0OdZaTnEGUHaj3PI6NumENmO3araH0O0Jus=
+	t=1721646836; cv=none; b=uJM+nFx7flvjTfo2+o5ml5r6QDgcmoA3zBwdWCjgSa/SATU8YoFcneTQDx1ueLi8hhFmFveNO75XaT5hQy+G3eTySyQIEse5b3ykoXJ+LUSp6A8yfj/990CudulNmRpqPo8lvacGv5f7iJLWuexiNeDL7ezuJCkkuTGMpuN5IVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721646845; c=relaxed/simple;
-	bh=k2V9BZKvCGMHXeloQCdzZXYrnoWQegTQUZhBJJkTTXs=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IF/gvvq7EFmTos3EJT+RBvYgNjvojdRJNKcGYVL9W7AYHWxBanKrpY6yRE9y4kO4l21UvUIhZev9DuSnzsIUmzMr2OqOmo434X3M9VxyoMHA4Ml8nrKJndA0WI8fCn4uM3t2STmhtwyk6+5vifbbF+Dg8yst8DD9SRocCDuELi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=MnezjYde; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1721646836; c=relaxed/simple;
+	bh=epq/oVOAbsZItv4EApiSC0nImHFpX+Gb33tvWPeHBYo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=DJd4PmRCN0ZBZ5S9dedA6igYpUbOVISwr2elY51FhkNMe8rpbqLBmoogWEt+QuNhodsG4ZPpzhZeQQrl6f73QJPBbHSItSo55LA5jnmbPj7x62NjzlBd4NqqtLfiTfqE+iqu9IfX7WVysh1IFmauKKAEx8hf2iJquGzEgKp3PBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CC7f0/bP; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1721646843; x=1753182843;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=k2V9BZKvCGMHXeloQCdzZXYrnoWQegTQUZhBJJkTTXs=;
-  b=MnezjYde7JOBPjtPHIPqv1E6cfP9GHg3w6zX81ZU1bbNHbJKUEgECOYy
-   kVyvvojQ4eO9K97kqbARdaFqD6aNjUzGK/PoHG+UemCpr490fIrDSPkg5
-   DuIiklMrJX005oss/tbg49cL1Kutelaqna9xMQwvn9pnlV3+U74AdjcIf
-   tk5TJmQ/ivzvFmP+gENu2vSsl/ANaS+8l7qv4Nly5CBpfQfq1zPIYAvRc
-   uiPbxICkjwMvDzLeBKSVTuk7Ua1xalXrWOmp6xNJFq82FJvFu1EPmM/1E
-   Ropd2z/FEkGsT+R3xtmbJv8LZv0l4ndZgAlFAK37RJKuws34cZVImfcr/
-   A==;
-X-CSE-ConnectionGUID: 61IbvXjYQIyRYEoGtyM+mQ==
-X-CSE-MsgGUID: hcc9W0ZYR2e6MfolmIGg3g==
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721646834; x=1753182834;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=epq/oVOAbsZItv4EApiSC0nImHFpX+Gb33tvWPeHBYo=;
+  b=CC7f0/bPt0HBroTSxdzyTD9oIgjnN8BNtulQh/DZ0H/gSR62crY2sBUX
+   saNXuPU+TDsuaY7AbhMXWUn3TU7hc0vobBGciX6qxiUBYb+wx/qDjFTW7
+   mL6J8lVB4S18IUnmer6tXCuTd94BVwfOF2y8l32kwITAUfhSYTb/4m5OJ
+   iUDKDHRrl3rA66sS7lQOYvSGdeFCUP8Bneb7uykO+rNT4rzm2dmX6w2PT
+   /y7dJ2Wwxd3/rQkTuAySg87fHCMP8X4l9tDM6EMe5qb0PxebZmp7fDoin
+   5N3WY8c1kZ+f948nypvV3/IlwQzlo7fLmFemN88RG1s3SG+0mq3KQLzeO
+   g==;
+X-CSE-ConnectionGUID: N3Sj0/QMTLadgkXmGNV8Yw==
+X-CSE-MsgGUID: FS+69JT0TOuA9siPVte1gQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11140"; a="19080175"
 X-IronPort-AV: E=Sophos;i="6.09,228,1716274800"; 
-   d="asc'?scan'208";a="30167700"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 22 Jul 2024 04:12:54 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 22 Jul 2024 04:12:46 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Mon, 22 Jul 2024 04:12:45 -0700
-Date: Mon, 22 Jul 2024 12:12:21 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <ysionneau@kalrayinc.com>, <linux-kernel@vger.kernel.org>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Jonathan Borne <jborne@kalrayinc.com>, Julian Vetter
-	<jvetter@kalrayinc.com>, <devicetree@vger.kernel.org>
-Subject: Re: [RFC PATCH v3 36/37] kvx: dts: DeviceTree for qemu emulated
- Coolidge SoC
-Message-ID: <20240722-cuddly-valiant-ba6153953190@wendy>
-References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
- <20240722094226.21602-37-ysionneau@kalrayinc.com>
- <d93f93fa-bbc8-4b89-9abc-767486bc443c@kernel.org>
+   d="scan'208";a="19080175"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 04:13:52 -0700
+X-CSE-ConnectionGUID: g0rJ/vUPRvSo0+TcOy12CQ==
+X-CSE-MsgGUID: 9jb6BcuBSeit7re7VGHE5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,228,1716274800"; 
+   d="scan'208";a="56702178"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.41.28])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 04:13:48 -0700
+Message-ID: <9f08c5cb-fb4b-4994-9128-0484aa6c06d7@intel.com>
+Date: Mon, 22 Jul 2024 14:13:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="XuLz4nGzZl9P9olv"
-Content-Disposition: inline
-In-Reply-To: <d93f93fa-bbc8-4b89-9abc-767486bc443c@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 4/6] perf auxtrace: Iterate all AUX events when finish
+ reading
+To: Leo Yan <leo.yan@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ James Clark <james.clark@linaro.org>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, John Garry <john.g.garry@oracle.com>,
+ Will Deacon <will@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240721202113.380750-1-leo.yan@arm.com>
+ <20240721202113.380750-5-leo.yan@arm.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240721202113.380750-5-leo.yan@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---XuLz4nGzZl9P9olv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 21/07/24 23:21, Leo Yan wrote:
+> When finished to read AUX trace data from mmaped buffer, based on the
+> AUX buffer index the core layer needs to search the corresponding PMU
+> event and re-enable it to continue tracing.
+> 
+> However, current code only searches the first AUX event. It misses to
+> search other enabled AUX events, thus, it returns failure if the buffer
+> index does not belong to the first AUX event.
+> 
+> This patch extends the auxtrace_record__read_finish() function to
+> search for every enabled AUX events, so all the mmaped buffer indexes
+> can be covered.
+> 
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>  tools/perf/util/auxtrace.c | 15 +++++++++++----
+>  1 file changed, 11 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+> index e2f317063eec..95be330d7e10 100644
+> --- a/tools/perf/util/auxtrace.c
+> +++ b/tools/perf/util/auxtrace.c
+> @@ -670,18 +670,25 @@ static int evlist__enable_event_idx(struct evlist *evlist, struct evsel *evsel,
+>  int auxtrace_record__read_finish(struct auxtrace_record *itr, int idx)
+>  {
+>  	struct evsel *evsel;
+> +	int ret = -EINVAL;
+>  
+>  	if (!itr->evlist || !itr->pmu)
+>  		return -EINVAL;
+>  
+>  	evlist__for_each_entry(itr->evlist, evsel) {
+> -		if (evsel->core.attr.type == itr->pmu->type) {
+> +		if (evsel__is_aux_event(evsel)) {
 
-On Mon, Jul 22, 2024 at 11:55:46AM +0200, Krzysztof Kozlowski wrote:
-> On 22/07/2024 11:41, ysionneau@kalrayinc.com wrote:
-> > From: Yann Sionneau <ysionneau@kalrayinc.com>
-> >=20
-> > Add device tree for QEMU that emulates a Coolidge V1 SoC.
+If the type is the same, then there is no need to
+change the logic here?
 
-> > +	model =3D "Kalray Coolidge processor (QEMU)";
-> > +	compatible =3D "kalray,coolidge-qemu";
+Otherwise, maybe that should be a separate patch
 
-I'm not sure that this should even be in the kernel. Why isn't QEMU able
-to generate a devicetree for this emulated platform, like it can on
-other architectures?
+>  			if (evsel->disabled)
+> -				return 0;
+> -			return evlist__enable_event_idx(itr->evlist, evsel, idx);
+> +				continue;
+> +			ret = evlist__enable_event_idx(itr->evlist, evsel, idx);
+> +			if (ret >= 0)
 
---XuLz4nGzZl9P9olv
-Content-Type: application/pgp-signature; name="signature.asc"
+Should this be:
 
------BEGIN PGP SIGNATURE-----
+			if (ret < 0)
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZp4+lQAKCRB4tDGHoIJi
-0jDXAP9yD+J9QOu8PzMbtxgo62LiceIpCHdlvPI91zBaqb9tuAD8DtvMRhSJySFG
-2neRFeuiK4wY+omh60eiQjE7v+ou2wo=
-=6AzY
------END PGP SIGNATURE-----
+> +				return ret;
 
---XuLz4nGzZl9P9olv--
+And will need a common error path for the pr_err() below.
+
+>  		}
+>  	}
+> -	return -EINVAL;
+> +
+> +	if (ret < 0)
+> +		pr_err("Failed to event enable event (idx=%d): %d\n", idx, ret);
+> +
+> +	return ret;
+>  }
+>  
+>  /*
+
 
