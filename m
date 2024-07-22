@@ -1,66 +1,67 @@
-Return-Path: <linux-kernel+bounces-258751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 000C9938C60
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:48:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0273E938C62
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:48:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71D8A1F221E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:48:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B68BB21D38
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D314016F287;
-	Mon, 22 Jul 2024 09:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BE9116F82C;
+	Mon, 22 Jul 2024 09:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="LC8viOLr"
-Received: from smtpout148.security-mail.net (smtpout148.security-mail.net [85.31.212.148])
+	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="FbS9DoRP"
+Received: from smtpout149.security-mail.net (smtpout149.security-mail.net [85.31.212.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4519316EC16
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.31.212.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462CD16C847
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.31.212.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721641433; cv=none; b=G+wyWsWiorrPNMW81GXW2M7pnBZ5BG0YNKZ1KUGIKJS5LuYFIAuoIkJCNpn38GCIFzavJm3iCyodC0kSfQOdXS5tCASEaQrrANVcTLNgrF0QkJzm4z7cFYpbBtGXPUrjEwqrAW1Od8u3VXAplemJ5dx4YrwhfFLn4b/ubq0rkFw=
+	t=1721641434; cv=none; b=oY2i+2UjeoPyZjkrfb4TT+Qu23+h9djnY9J3RjC6HxA9HzGYgEALdbncTfqMv0U6h0yBIndLOZtGaM6yUdAb1R0K5AbAvcYizB7Xh/Q1GevQbY7fi3hWb7icn5sZ8dAkxMDr5ZejczPRMz4FZYVRN5hbGhqnDE5yTsidItbzqWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721641433; c=relaxed/simple;
-	bh=E3NqyE5MkJRoUNLDK5J4AjC7b5sHyADHFow0omJkUhY=;
+	s=arc-20240116; t=1721641434; c=relaxed/simple;
+	bh=MWUsgTr5EuOubB9gzKhFGSdMC/v2HrUmZunk2jYGDNE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z3D0DZ0xHKYBfn1DsR8NvFQFRgFTZv9TDw86iuYIWYwtZBD+zaVPPJWEk2bp9moV4uoeML6fhM5mkGrDH7Lc83iCxXvAx3trVsXNNXo6uI6sR+cipNTWDYdj/+VIh9wqtktwfZV//QVFUfzYcFwZMm8Ls074SXDXSi064baNG2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=LC8viOLr; arc=none smtp.client-ip=85.31.212.148
+	 MIME-Version:Content-Type; b=AWn060bojLF/zaEriUJnxQkarrQx28j4j831hdMt52/iYw+2INsfdkV6KAshBh4fdgdbIVHXa70ATTxbe8GdoLFs3+LZK0QMnaeOiV5YZ0IKZdfttnDyUQB6v4utxJ5XemBt1Lc0IswACs5B8TVKBGmuQCmdM49H8NxMmi5xhwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=FbS9DoRP; arc=none smtp.client-ip=85.31.212.149
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
-Received: from localhost (fx408.security-mail.net [127.0.0.1])
-	by fx408.security-mail.net (Postfix) with ESMTP id E27683224EC
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:43:49 +0200 (CEST)
+Received: from localhost (fx409.security-mail.net [127.0.0.1])
+	by fx409.security-mail.net (Postfix) with ESMTP id DF42534971F
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:43:50 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
-	s=sec-sig-email; t=1721641429;
-	bh=E3NqyE5MkJRoUNLDK5J4AjC7b5sHyADHFow0omJkUhY=;
+	s=sec-sig-email; t=1721641430;
+	bh=MWUsgTr5EuOubB9gzKhFGSdMC/v2HrUmZunk2jYGDNE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=LC8viOLrLNFGD0z5pVHtUPhNwpdYUln70sJxz2ghkLg/TvbZ7xeTjCDBlMamU2UAQ
-	 sPcYB5OhOFoBajQx48nMJM8zCqwsVxOEce7WkHJS3SUNQdAxsNPgg8E0UJ8BQw34ik
-	 m6kUtya+x9ezEIpX6KUgCJaiqJ0KIKBpOI0O5E4M=
-Received: from fx408 (fx408.security-mail.net [127.0.0.1]) by
- fx408.security-mail.net (Postfix) with ESMTP id BD7A73223EC; Mon, 22 Jul
- 2024 11:43:49 +0200 (CEST)
+	b=FbS9DoRPlyPcACDgyYXadIgMZDJ3zelKPoHC/1nZtPbYGKc2z7BPTRFqu5Z7cTP+Q
+	 +HVMky8cZD946R2UEE+4vRAHOMcAOmJ5lTJehMbKoesQnIJgyWaUOhXHa8zxE6f4ul
+	 mEarlDlGH8AdAg+m59C/xS0/sRg9c2qtI3ZRFjKg=
+Received: from fx409 (fx409.security-mail.net [127.0.0.1]) by
+ fx409.security-mail.net (Postfix) with ESMTP id 9E309349696; Mon, 22 Jul
+ 2024 11:43:50 +0200 (CEST)
 Received: from srvsmtp.lin.mbt.kalray.eu (unknown [217.181.231.53]) by
- fx408.security-mail.net (Postfix) with ESMTPS id 2500B3221BA; Mon, 22 Jul
+ fx409.security-mail.net (Postfix) with ESMTPS id A90A4349619; Mon, 22 Jul
  2024 11:43:49 +0200 (CEST)
 Received: from junon.lan.kalrayinc.com (unknown [192.168.37.161]) by
- srvsmtp.lin.mbt.kalray.eu (Postfix) with ESMTPS id E3D8E40317; Mon, 22 Jul
- 2024 11:43:48 +0200 (CEST)
-X-Secumail-id: <9d64.669e29d5.235af.0>
+ srvsmtp.lin.mbt.kalray.eu (Postfix) with ESMTPS id 7AEB640317; Mon, 22 Jul
+ 2024 11:43:49 +0200 (CEST)
+X-Secumail-id: <53b3.669e29d5.a537a.0>
 From: ysionneau@kalrayinc.com
-To: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
- Peter Zijlstra <peterz@infradead.org>
+To: linux-kernel@vger.kernel.org
 Cc: Jonathan Borne <jborne@kalrayinc.com>, Julian Vetter
- <jvetter@kalrayinc.com>, Yann Sionneau <ysionneau@kalrayinc.com>, Clement
- Leger <clement@clement-leger.fr>, Julien Hascoet <jhascoet@kalrayinc.com>,
- Louis Morhet <lmorhet@kalrayinc.com>, Luc Michel <luc@lmichel.fr>, Marius
- Gligor <mgligor@kalrayinc.com>, bpf@vger.kernel.org
-Subject: [RFC PATCH v3 30/37] kvx: Add multi-processor (SMP) support
-Date: Mon, 22 Jul 2024 11:41:41 +0200
-Message-ID: <20240722094226.21602-31-ysionneau@kalrayinc.com>
+ <jvetter@kalrayinc.com>, Yann Sionneau <ysionneau@kalrayinc.com>, Ashley
+ Lesdalons <alesdalons@kalrayinc.com>, Benjamin Mugnier
+ <mugnier.benjamin@gmail.com>, Clement Leger <clement@clement-leger.fr>,
+ Guillaume Thouvenin <thouveng@gmail.com>, Jules Maselbas
+ <jmaselbas@zdiv.net>, Samuel Jones <sjones@kalrayinc.com>, Thomas Costis
+ <thcostis@gmail.com>, Vincent Chardon <vincent.chardon@elsys-design.com>
+Subject: [RFC PATCH v3 31/37] kvx: Add kvx default config file
+Date: Mon, 22 Jul 2024 11:41:42 +0200
+Message-ID: <20240722094226.21602-32-ysionneau@kalrayinc.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240722094226.21602-1-ysionneau@kalrayinc.com>
 References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
@@ -76,387 +77,173 @@ X-ALTERMIMEV2_out: done
 
 From: Yann Sionneau <ysionneau@kalrayinc.com>
 
-Coolidge v1 SoC has 5 clusters of 17 kvx cores:
- - 16 application cores aka PE
- - 1 privileged core, the Resource Manager, aka RM.
+Add a default config file for kvx based Coolidge SoC.
 
-Linux can run in SMP config on the 16 cores of a Cluster.
-
-Memory coherency between all cores is guaranteed by the L2 cache.
-
+Co-developed-by: Ashley Lesdalons <alesdalons@kalrayinc.com>
+Signed-off-by: Ashley Lesdalons <alesdalons@kalrayinc.com>
+Co-developed-by: Benjamin Mugnier <mugnier.benjamin@gmail.com>
+Signed-off-by: Benjamin Mugnier <mugnier.benjamin@gmail.com>
 Co-developed-by: Clement Leger <clement@clement-leger.fr>
 Signed-off-by: Clement Leger <clement@clement-leger.fr>
+Co-developed-by: Guillaume Thouvenin <thouveng@gmail.com>
+Signed-off-by: Guillaume Thouvenin <thouveng@gmail.com>
+Co-developed-by: Jules Maselbas <jmaselbas@zdiv.net>
+Signed-off-by: Jules Maselbas <jmaselbas@zdiv.net>
 Co-developed-by: Julian Vetter <jvetter@kalrayinc.com>
 Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
-Co-developed-by: Julien Hascoet <jhascoet@kalrayinc.com>
-Signed-off-by: Julien Hascoet <jhascoet@kalrayinc.com>
-Co-developed-by: Louis Morhet <lmorhet@kalrayinc.com>
-Signed-off-by: Louis Morhet <lmorhet@kalrayinc.com>
-Co-developed-by: Luc Michel <luc@lmichel.fr>
-Signed-off-by: Luc Michel <luc@lmichel.fr>
-Co-developed-by: Marius Gligor <mgligor@kalrayinc.com>
-Signed-off-by: Marius Gligor <mgligor@kalrayinc.com>
+Co-developed-by: Samuel Jones <sjones@kalrayinc.com>
+Signed-off-by: Samuel Jones <sjones@kalrayinc.com>
+Co-developed-by: Thomas Costis <thcostis@gmail.com>
+Signed-off-by: Thomas Costis <thcostis@gmail.com>
+Co-developed-by: Vincent Chardon <vincent.chardon@elsys-design.com>
+Signed-off-by: Vincent Chardon <vincent.chardon@elsys-design.com>
 Signed-off-by: Yann Sionneau <ysionneau@kalrayinc.com>
 ---
 
 Notes:
-V1 -> V2:
-- removed L2 cache driver
-- removed ipi and pwr-ctrl driver (split into their own patch)
-
-V2 -> V3:
-- Refactored smp_init_cpus function to use
-  `of_get_cpu_hwid` and `set_cpu_possible`
-- boot secondary CPUs via "smp_ops" / DT enable-method
-- put most IPI code in its own driver in drivers/irqchip
-  which fills a smp_cross_call func pointer.
-  see remarks in there:
-  - https://lore.kernel.org/bpf/Y8qlOpYgDefMPqWH@zx2c4.com/T/#m5786c05e937e99a4c7e5353a4394f870240853d8
-- don't hardcode probing of pwr-ctrl in smpboot.c
-  instead let a driver in drivers/soc/kvx probe and register smp_ops
-  see remarks in there:
-  - https://lore.kernel.org/bpf/Y8qlOpYgDefMPqWH@zx2c4.com/T/#mf43bfb87d7a8f03ec98fb15e66f0bec19e85839c
-  - https://lore.kernel.org/bpf/Y8qlOpYgDefMPqWH@zx2c4.com/T/#m1da9ac16c5ed93f895a82687b3e53ba9cdb26578
+V1 -> V2: default_defconfig renamed to defconfig
+V2 -> V3: ext4 now builtin, add virtio-blk and devtmpfs
 ---
- arch/kvx/include/asm/smp.h |  63 ++++++++++++++++
- arch/kvx/kernel/smp.c      |  83 +++++++++++++++++++++
- arch/kvx/kernel/smpboot.c  | 146 +++++++++++++++++++++++++++++++++++++
- include/linux/cpuhotplug.h |   2 +
- 4 files changed, 294 insertions(+)
- create mode 100644 arch/kvx/include/asm/smp.h
- create mode 100644 arch/kvx/kernel/smp.c
- create mode 100644 arch/kvx/kernel/smpboot.c
+ arch/kvx/configs/defconfig | 130 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 130 insertions(+)
+ create mode 100644 arch/kvx/configs/defconfig
 
-diff --git a/arch/kvx/include/asm/smp.h b/arch/kvx/include/asm/smp.h
+diff --git a/arch/kvx/configs/defconfig b/arch/kvx/configs/defconfig
 new file mode 100644
-index 0000000000000..7a8dab6b1300e
+index 0000000000000..9d7a37801c028
 --- /dev/null
-+++ b/arch/kvx/include/asm/smp.h
-@@ -0,0 +1,63 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2017-2024 Kalray Inc.
-+ * Author(s): Clement Leger
-+ *            Jonathan Borne
-+ *            Yann Sionneau
-+ */
-+
-+#ifndef _ASM_KVX_SMP_H
-+#define _ASM_KVX_SMP_H
-+
-+#include <linux/cpumask.h>
-+#include <linux/irqreturn.h>
-+
-+#include <asm/sfr.h>
-+
-+void smp_init_cpus(void);
-+
-+#ifdef CONFIG_SMP
-+
-+extern void set_smp_cross_call(void (*)(const struct cpumask *, unsigned int));
-+asmlinkage void __init start_kernel_secondary(void);
-+
-+/* Hook for the generic smp_call_function_many() routine. */
-+void arch_send_call_function_ipi_mask(struct cpumask *mask);
-+
-+/* Hook for the generic smp_call_function_single() routine. */
-+void arch_send_call_function_single_ipi(int cpu);
-+
-+void __init setup_processor(void);
-+int __init setup_smp(void);
-+
-+#define raw_smp_processor_id() ((int) \
-+	((kvx_sfr_get(PCR) & KVX_SFR_PCR_PID_MASK) \
-+					>> KVX_SFR_PCR_PID_SHIFT))
-+
-+#define flush_cache_vmap(start, end)		do { } while (0)
-+#define flush_cache_vunmap(start, end)		do { } while (0)
-+extern void handle_IPI(unsigned long ops);
-+
-+struct smp_operations {
-+	int  (*smp_boot_secondary)(unsigned int cpu);
-+};
-+
-+struct of_cpu_method {
-+	const char *method;
-+	const struct smp_operations *ops;
-+};
-+
-+#define CPU_METHOD_OF_DECLARE(name, _method, _ops)			\
-+	static const struct of_cpu_method __cpu_method_of_table_##name	\
-+		__used __section("__cpu_method_of_table")		\
-+		= { .method = _method, .ops = _ops }
-+
-+extern void smp_set_ops(const struct smp_operations *ops);
-+
-+#else
-+
-+void smp_init_cpus(void) {}
-+
-+#endif /* CONFIG_SMP */
-+
-+#endif
-diff --git a/arch/kvx/kernel/smp.c b/arch/kvx/kernel/smp.c
-new file mode 100644
-index 0000000000000..c2cb96797c90b
---- /dev/null
-+++ b/arch/kvx/kernel/smp.c
-@@ -0,0 +1,83 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2017-2024 Kalray Inc.
-+ * Author(s): Clement Leger
-+ *            Jonathan Borne
-+ *            Yann Sionneau
-+ */
-+
-+#include <linux/cpumask.h>
-+#include <linux/irq_work.h>
-+
-+static void (*smp_cross_call)(const struct cpumask *, unsigned int);
-+
-+enum ipi_message_type {
-+	IPI_RESCHEDULE,
-+	IPI_CALL_FUNC,
-+	IPI_IRQ_WORK,
-+	IPI_MAX
-+};
-+
-+void __init set_smp_cross_call(void (*fn)(const struct cpumask *, unsigned int))
-+{
-+	smp_cross_call = fn;
-+}
-+
-+static void send_ipi_message(const struct cpumask *mask,
-+			     enum ipi_message_type operation)
-+{
-+	if (!smp_cross_call)
-+		panic("ipi controller init failed\n");
-+	smp_cross_call(mask, (unsigned int)operation);
-+}
-+
-+void arch_send_call_function_ipi_mask(struct cpumask *mask)
-+{
-+	send_ipi_message(mask, IPI_CALL_FUNC);
-+}
-+
-+void arch_send_call_function_single_ipi(int cpu)
-+{
-+	send_ipi_message(cpumask_of(cpu), IPI_CALL_FUNC);
-+}
-+
-+#ifdef CONFIG_IRQ_WORK
-+void arch_irq_work_raise(void)
-+{
-+	send_ipi_message(cpumask_of(smp_processor_id()), IPI_IRQ_WORK);
-+}
-+#endif
-+
-+static void ipi_stop(void *unused)
-+{
-+	local_cpu_stop();
-+}
-+
-+void smp_send_stop(void)
-+{
-+	struct cpumask targets;
-+
-+	cpumask_copy(&targets, cpu_online_mask);
-+	cpumask_clear_cpu(smp_processor_id(), &targets);
-+
-+	smp_call_function_many(&targets, ipi_stop, NULL, 0);
-+}
-+
-+void arch_smp_send_reschedule(int cpu)
-+{
-+	send_ipi_message(cpumask_of(cpu), IPI_RESCHEDULE);
-+}
-+
-+void handle_IPI(unsigned long ops)
-+{
-+	if (ops & (1 << IPI_RESCHEDULE))
-+		scheduler_ipi();
-+
-+	if (ops & (1 << IPI_CALL_FUNC))
-+		generic_smp_call_function_interrupt();
-+
-+	if (ops & (1 << IPI_IRQ_WORK))
-+		irq_work_run();
-+
-+	WARN_ON_ONCE((ops >> IPI_MAX) != 0);
-+}
-diff --git a/arch/kvx/kernel/smpboot.c b/arch/kvx/kernel/smpboot.c
-new file mode 100644
-index 0000000000000..ab7f29708fed2
---- /dev/null
-+++ b/arch/kvx/kernel/smpboot.c
-@@ -0,0 +1,146 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2017-2024 Kalray Inc.
-+ * Author(s): Clement Leger
-+ *            Julian Vetter
-+ *            Yann Sionneau
-+ */
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/io.h>
-+#include <linux/of.h>
-+#include <linux/smp.h>
-+#include <linux/cpu.h>
-+#include <linux/sched.h>
-+#include <linux/cpumask.h>
-+#include <linux/sched/mm.h>
-+#include <linux/mm_types.h>
-+#include <linux/of_platform.h>
-+#include <linux/sched/task_stack.h>
-+
-+#include <asm/tlbflush.h>
-+#include <asm/ipi.h>
-+
-+void *__cpu_up_stack_pointer[NR_CPUS];
-+void *__cpu_up_task_pointer[NR_CPUS];
-+static struct smp_operations smp_ops __ro_after_init;
-+extern struct of_cpu_method __cpu_method_of_table[];
-+
-+void __init smp_prepare_boot_cpu(void)
-+{
-+}
-+
-+void __init smp_set_ops(const struct smp_operations *ops)
-+{
-+	if (ops)
-+		smp_ops = *ops;
-+};
-+
-+int __cpu_up(unsigned int cpu, struct task_struct *tidle)
-+{
-+	int ret;
-+
-+	__cpu_up_stack_pointer[cpu] = task_stack_page(tidle) + THREAD_SIZE;
-+	__cpu_up_task_pointer[cpu] = tidle;
-+	/* We need to be sure writes are committed */
-+	smp_mb();
-+
-+	if (!smp_ops.smp_boot_secondary) {
-+		pr_err_once("No smp_ops registered: could not bring up secondary CPUs\n");
-+		return -ENOSYS;
-+	}
-+
-+	ret = smp_ops.smp_boot_secondary(cpu);
-+	if (ret == 0) {
-+		/* CPU was successfully started */
-+		while (!cpu_online(cpu))
-+			cpu_relax();
-+	} else {
-+		pr_err("CPU%u: failed to boot: %d\n", cpu, ret);
-+	}
-+
-+	return ret;
-+}
-+
-+
-+
-+static int __init set_smp_ops_by_method(struct device_node *node)
-+{
-+	const char *method;
-+	struct of_cpu_method *m = __cpu_method_of_table;
-+
-+	if (of_property_read_string(node, "enable-method", &method))
-+		return 0;
-+
-+	for (; m->method; m++)
-+		if (!strcmp(m->method, method)) {
-+			smp_set_ops(m->ops);
-+			return 1;
-+		}
-+
-+	return 0;
-+}
-+
-+void __init smp_cpus_done(unsigned int max_cpus)
-+{
-+}
-+
-+void __init smp_init_cpus(void)
-+{
-+	struct device_node *cpu, *cpus;
-+	u32 cpu_id;
-+	unsigned int nr_cpus = 0;
-+	int found_method = 0;
-+
-+	cpus = of_find_node_by_path("/cpus");
-+	for_each_of_cpu_node(cpu) {
-+		if (!of_device_is_available(cpu))
-+			continue;
-+
-+		cpu_id = of_get_cpu_hwid(cpu, 0);
-+		if ((cpu_id < NR_CPUS) && (nr_cpus < nr_cpu_ids)) {
-+			nr_cpus++;
-+			set_cpu_possible(cpu_id, true);
-+			if (!found_method)
-+				found_method = set_smp_ops_by_method(cpu);
-+		}
-+	}
-+
-+	if (!found_method)
-+		set_smp_ops_by_method(cpus);
-+
-+	pr_info("%d possible cpus\n", nr_cpus);
-+}
-+
-+void __init smp_prepare_cpus(unsigned int max_cpus)
-+{
-+	if (num_present_cpus() <= 1)
-+		init_cpu_present(cpu_possible_mask);
-+}
-+
-+/*
-+ * C entry point for a secondary processor.
-+ */
-+asmlinkage void __init start_kernel_secondary(void)
-+{
-+	struct mm_struct *mm = &init_mm;
-+	unsigned int cpu = smp_processor_id();
-+
-+	setup_processor();
-+	kvx_mmu_early_setup();
-+
-+	/* All kernel threads share the same mm context.  */
-+	mmgrab(mm);
-+	current->active_mm = mm;
-+	cpumask_set_cpu(cpu, mm_cpumask(mm));
-+
-+	notify_cpu_starting(cpu);
-+	set_cpu_online(cpu, true);
-+	trace_hardirqs_off();
-+
-+	local_flush_tlb_all();
-+
-+	local_irq_enable();
-+	cpu_startup_entry(CPUHP_AP_ONLINE_IDLE);
-+}
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index 7a5785f405b62..aa35c19dbd99a 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -147,6 +147,7 @@ enum cpuhp_state {
- 	CPUHP_AP_IRQ_LOONGARCH_STARTING,
- 	CPUHP_AP_IRQ_SIFIVE_PLIC_STARTING,
- 	CPUHP_AP_IRQ_RISCV_IMSIC_STARTING,
-+	CPUHP_AP_IRQ_KVX_STARTING,
- 	CPUHP_AP_ARM_MVEBU_COHERENCY,
- 	CPUHP_AP_PERF_X86_AMD_UNCORE_STARTING,
- 	CPUHP_AP_PERF_X86_STARTING,
-@@ -176,6 +177,7 @@ enum cpuhp_state {
- 	CPUHP_AP_CSKY_TIMER_STARTING,
- 	CPUHP_AP_TI_GP_TIMER_STARTING,
- 	CPUHP_AP_HYPERV_TIMER_STARTING,
-+	CPUHP_AP_KVX_TIMER_STARTING,
- 	/* Must be the last timer callback */
- 	CPUHP_AP_DUMMY_TIMER_STARTING,
- 	CPUHP_AP_ARM_XEN_STARTING,
++++ b/arch/kvx/configs/defconfig
+@@ -0,0 +1,130 @@
++CONFIG_DEFAULT_HOSTNAME="KVXlinux"
++CONFIG_SERIAL_KVX_SCALL_COMM=y
++CONFIG_CONFIGFS_FS=y
++CONFIG_DEBUG_KERNEL=y
++CONFIG_DEBUG_INFO=y
++CONFIG_DEBUG_INFO_DWARF4=y
++CONFIG_PRINTK_TIME=y
++CONFIG_CONSOLE_LOGLEVEL_DEFAULT=15
++CONFIG_MESSAGE_LOGLEVEL_DEFAULT=7
++CONFIG_PANIC_TIMEOUT=-1
++CONFIG_BLK_DEV_INITRD=y
++CONFIG_GDB_SCRIPTS=y
++CONFIG_FRAME_POINTER=y
++CONFIG_HZ_100=y
++CONFIG_SERIAL_EARLYCON=y
++CONFIG_HOTPLUG_PCI_PCIE=y
++CONFIG_PCIEAER=y
++CONFIG_PCIE_DPC=y
++CONFIG_HOTPLUG_PCI=y
++CONFIG_SERIAL_8250=y
++CONFIG_SERIAL_8250_CONSOLE=y
++CONFIG_SERIAL_8250_DW=y
++CONFIG_SERIAL_8250_NR_UARTS=8
++CONFIG_SERIAL_8250_RUNTIME_UARTS=8
++CONFIG_PINCTRL=y
++CONFIG_PINCTRL_SINGLE=y
++CONFIG_POWER_RESET_KVX_SCALL_POWEROFF=y
++CONFIG_PCI=y
++CONFIG_PCI_MSI=y
++CONFIG_PCIE_KVX_NWL=y
++CONFIG_PCIEPORTBUS=y
++# CONFIG_PCIEASPM is not set
++CONFIG_PCIEAER_INJECT=y
++CONFIG_TMPFS=y
++CONFIG_DMADEVICES=y
++CONFIG_KVX_DMA_NOC=m
++CONFIG_KVX_IOMMU=y
++CONFIG_KVX_OTP_NV=y
++CONFIG_PACKET=y
++CONFIG_NET=y
++# CONFIG_WLAN is not set
++CONFIG_INET=y
++CONFIG_IPV6=y
++CONFIG_NETDEVICES=y
++CONFIG_NET_CORE=y
++CONFIG_E1000E=y
++CONFIG_BLK_DEV_NVME=y
++CONFIG_VFAT_FS=y
++CONFIG_NLS_DEFAULT="iso8859-1"
++CONFIG_NLS_CODEPAGE_437=y
++CONFIG_NLS_ISO8859_1=y
++CONFIG_WATCHDOG=y
++CONFIG_KVX_WATCHDOG=y
++CONFIG_HUGETLBFS=y
++CONFIG_MAILBOX=y
++CONFIG_KVX_MBOX=y
++CONFIG_REMOTEPROC=y
++CONFIG_KVX_REMOTEPROC=y
++CONFIG_VIRTIO_NET=y
++CONFIG_VIRTIO_MMIO=y
++CONFIG_RPMSG_VIRTIO=y
++CONFIG_RPMSG_CHAR=y
++CONFIG_MODULES=y
++CONFIG_MODULE_UNLOAD=y
++CONFIG_MODVERSIONS=y
++CONFIG_MODULE_SRCVERSION_ALL=y
++CONFIG_BLK_DEV=y
++CONFIG_BLK_DEV_LOOP=m
++CONFIG_BLK_DEV_LOOP_MIN_COUNT=8
++CONFIG_EXT4_FS=y
++CONFIG_EXT4_USE_FOR_EXT2=y
++CONFIG_SYSVIPC=y
++CONFIG_UNIX=y
++CONFIG_NET_VENDOR_KALRAY=y
++CONFIG_NET_KVX_SOC=m
++CONFIG_STACKPROTECTOR=y
++CONFIG_GPIO_DWAPB=y
++CONFIG_I2C=y
++CONFIG_I2C_SLAVE=y
++CONFIG_I2C_CHARDEV=y
++CONFIG_I2C_DESIGNWARE_PLATFORM=y
++CONFIG_I2C_DESIGNWARE_CORE=y
++CONFIG_I2C_DESIGNWARE_SLAVE=y
++CONFIG_I2C_SLAVE_USPACE=y
++CONFIG_POWER_RESET=y
++CONFIG_POWER_RESET_SYSCON=y
++CONFIG_SPI=y
++CONFIG_SPI_DESIGNWARE=y
++CONFIG_SPI_DW_MMIO=y
++CONFIG_SPI_DW_KVX=y
++CONFIG_MTD=y
++CONFIG_MTD_SPI_NOR=y
++# CONFIG_MTD_SPI_NOR_USE_4K_SECTORS is not set
++CONFIG_SQUASHFS=m
++CONFIG_USB=y
++CONFIG_USB_CONFIGFS=m
++CONFIG_USB_CONFIGFS_ACM=y
++CONFIG_USB_CONFIGFS_ECM=y
++CONFIG_USB_DWC2=y
++CONFIG_USB_DWC2_DUAL_ROLE=y
++CONFIG_USB_GADGET=y
++CONFIG_U_SERIAL_CONSOLE=y
++CONFIG_USB_USBNET=m
++CONFIG_USB_NET_SMSC95XX=m
++# CONFIG_NOP_USB_XCEIV is not set
++CONFIG_USB_PHY=y
++CONFIG_GENERIC_PHY=y
++CONFIG_GENERIC_PHY_USB=y
++CONFIG_MMC=y
++CONFIG_MMC_SDHCI=y
++CONFIG_MMC_SDHCI_PLTFM=y
++CONFIG_MMC_SDHCI_OF_DWCMSHC=y
++CONFIG_MDIO_BITBANG=m
++CONFIG_MDIO_GPIO=m
++CONFIG_MARVELL_PHY=m
++CONFIG_GPIO_PCA953X=y
++CONFIG_NETFILTER=y
++CONFIG_NF_CONNTRACK=m
++CONFIG_NF_NAT=m
++CONFIG_IP_NF_IPTABLES=m
++CONFIG_IP_NF_NAT=m
++CONFIG_LEDS_GPIO=y
++CONFIG_LEDS_CLASS=y
++CONFIG_LEDS_TRIGGERS=y
++CONFIG_LEDS_TRIGGER_NETDEV=y
++CONFIG_LEDS_TRIGGER_PATTERN=y
++CONFIG_DCB=y
++CONFIG_VIRTIO_BLK=y
++CONFIG_DEVTMPFS=y
++CONFIG_DEVTMPFS_MOUNT=y
 -- 
 2.45.2
 
