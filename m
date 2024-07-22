@@ -1,143 +1,531 @@
-Return-Path: <linux-kernel+bounces-258941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C952E938EF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:12:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB40938EFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:19:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 409191F22597
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:12:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 446C91F21C80
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA1316D4F2;
-	Mon, 22 Jul 2024 12:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5400016D4C2;
+	Mon, 22 Jul 2024 12:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HKr06lu7"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GqD0Cep6"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2042.outbound.protection.outlook.com [40.107.223.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF1C16D4C0
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 12:12:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721650332; cv=none; b=OrANG/zMVVA0lqi10M6E3qP46LXWIThtzSy96oxFWY1fmqGDltvJwPmpeVZd4puKunGT3qq5qG1gTBQqrpCvGg4pngJ5g4E9SUEnvbFE7xRYEp2kXVU75uxWU05b65NJjYxrW1iBwTy8SXCu9ov6BsrrHeCDesSYpntxUluZ/v4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721650332; c=relaxed/simple;
-	bh=ymDHi15Wil0W5xbGoLtGCVSMFJ5LMYedoT78zWjurnA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=calHi3mhzaXmHNy0lnzt+OQqG5RSDJcXX1PT41ASHHOjLaA0r1lCQ+IevjaAkjwNp9yncdh6Stc3zSfSvC6Dj2VHF/dV6OMpop7GibcN7tflDSQ0Xr38UJIBhFAfDCHF+Gemf7NG13SaCZvCTEJR6J6TH1MfVCbDwQ/7jUubX+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HKr06lu7; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ef2d7d8854so11311711fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 05:12:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721650329; x=1722255129; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=GF4uprXlfxLLmYcxs700jeX5OUVC5m3lA+uEi1iNqsc=;
-        b=HKr06lu7BdBg+sbnvqGoZvhvJpNpP6ZimZBXUxfOwVKCwHqM84RZE7iJpNIXc8ctaZ
-         OwxcdfWtef/LPKSnpFF+lhZns9cgNbWNAoLpqhM2PmFS0BoloOWXMviaBXxjyeSPPtoS
-         OZMhTSNJTZtlu+9ZFBtfA7QXU4ZKcrOZ4B8MZdN7xXhQs8gsPIjkqc6LFK9/qNqm+225
-         rsrLf4CSsYElZQgXZv3jrBV4rzwrqxepyRuR/qnXHUbdcDSVa0/hTnhYeKM0bSxmw5X5
-         avk4cOTseqfXbVQiObVDi18oEerkI1CdpPWPtFnojVBX78Wx/46v20VWxU6yhiZn4eJ3
-         8JmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721650329; x=1722255129;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:from:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GF4uprXlfxLLmYcxs700jeX5OUVC5m3lA+uEi1iNqsc=;
-        b=hmd2wCBWdY9cE6dLLmbQUdeL3WYIH0S/jr2dSzeAKz+egiWGxs0jRPlFmeeX5F1ug+
-         zKccQA0OiqGO/cNrFQ7MVGDYJRZxlqSbFEXAOxE3zjO4zJlmSxbhy7HRTIy45RmdIzWn
-         szKfJwJCh3d8Mcds/4uDGg4ut0gQZbTEfVeYFFF+HrUCF4j71rPCXCKcwksTW0Gmuhlh
-         j8SwWemFfMP5C1FifTvktqf+jCkTuL28ITxDpzkjcw3abHARfCNt/0XZY9EhgvR2FxXr
-         cQttNwwITQnRFrac35deRwJDSVg67mH1OCMikmFJy8pifbikFhSvGf9LsCKMDvOMbOGK
-         KJXw==
-X-Gm-Message-State: AOJu0Ywp2bFqh4ckz5qLTPgAup49WPXiygBLKIeLZ625sEvtd0gzWPre
-	0lWFDEsyTykmWCmdcLxLa7j0U2TYC7hQRgq+UPJA22tajRVKc5zCNfDm0ZxQU/I=
-X-Google-Smtp-Source: AGHT+IGSBu81Z24jwqkRzF3oc/1vtM8xQX2VUlcZIHbS9NfH5AVfWQTya2tLqgzcqHvOTMYh50++aA==
-X-Received: by 2002:a05:651c:19a9:b0:2ef:3250:d0d4 with SMTP id 38308e7fff4ca-2ef3250d296mr18933481fa.48.1721650328419;
-        Mon, 22 Jul 2024 05:12:08 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30c2f8645sm6008186a12.72.2024.07.22.05.12.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jul 2024 05:12:07 -0700 (PDT)
-Message-ID: <ef5cd913-b79f-4e71-9de9-7e115ca6ac72@linaro.org>
-Date: Mon, 22 Jul 2024 14:12:05 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2CDA1754B;
+	Mon, 22 Jul 2024 12:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721650766; cv=fail; b=BGTvB1W45svBy24vqKQaoenVw9rQ6TZgOzJJzSuLblXywVscDotCUbphIZcUSPHDXPoed2sE7CReV52fN/yls9qLizszbDNsYzxECnbuUGkTDCbGezhVo4hykvd77g8wADG1eMCaksZ2eovQhFMuNVHfO3emuZME5RHgCtAxoYQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721650766; c=relaxed/simple;
+	bh=r5478eT3TK+fDj9xuzHMuYoHZiYYWt+n2EdgNOBbA/g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uCvUYys802lDPPprYC9KUseKNPGBnqjvb8q63DJYm9vjZst7+VSbZdeK3zlqR598FwqVwkrXQt6WylMFDSeOCcyRoSY/SyKqz1BQ6kKzkZZbipGIjQh9W3q/xXfwqpX2NkcH0KzaoXC5N/QrofMHEUb6BODzEgod6qh5myhpddo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GqD0Cep6; arc=fail smtp.client-ip=40.107.223.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qZH1up5mjBzh8+XISYXSv79HZrZ7f/av4xaR360BBcQaVTohJ/spqNcTFNi4SvGiIopZPNMEfoELTiOn5wwLCmAVvmPAvhr/B/O1YPyqp5oB+59HbqLbJnFZfDy3m4s6TMgEpvQEjIlcvJL50MwG4K2LcRTUobE8Ua5vfdXsapDArsaJ03vMMCyV/gR4Gz9QHNQBYy/LhTGgDFs1xhfVQ5knZusbCJE9XM9/djfYip9rmN0hTcYYej43PGiaNiqDvPNM1Pv/DBXWwfdmm4Gub73sFqw379DAOGXet761j+9r7XCWw9vUhORD/cVzOoVjPhfUgK4mUm3HuVp0jmQxcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eb7HkxB/TtxbirSGIeZigLKMvtBDNy5WIoOkcrVGA6c=;
+ b=se/TP//Zha6R8cLCbV3wgPp8D2fb981tc685o+tBT775vnNydi/FTpQoYE9wIP7ohiF9ZUr7jrD32n+QJc7wvtv9FrAq37KPr2hubX3kG2XNQF++mT9N4TPreu6fz4iAoEWfAulpU1xs+t1t5oH+hEEi08RuOWbmvs1AnEGBYrQXPyDAPf6MyilFyN7BliGRMsx1LXot6qBcw8Cf+IwhwlFKsRpVItB0hZIiELoBF7J7En0S9gq8prbIrlh3eo916YGUeZQNIKCIc84R/ANcavLBLfavqzJUDH03UPVrkn3PK5TcRk3tP4cHmcWUEvisV7+YUk+GQ2VBB330IpBdQg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=baylibre.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eb7HkxB/TtxbirSGIeZigLKMvtBDNy5WIoOkcrVGA6c=;
+ b=GqD0Cep6/YH6VkSoGvYbH6xoldNYSMtnIxVPsgdfRxbAmjqKuGT+XTqnIdWTpUIcVCeYQ4YSrIC6/kGDkEfu2GDB/nVdwD0/lZSwIM6yP5aqT3HPEmIOCAEur/XyS397poXaR/p0enFLUp2BIg+2cVNfGFk/8vQOYVdkypndEnk=
+Received: from CH2PR14CA0018.namprd14.prod.outlook.com (2603:10b6:610:60::28)
+ by CY8PR12MB7218.namprd12.prod.outlook.com (2603:10b6:930:5a::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28; Mon, 22 Jul
+ 2024 12:19:20 +0000
+Received: from CH2PEPF00000141.namprd02.prod.outlook.com
+ (2603:10b6:610:60:cafe::8c) by CH2PR14CA0018.outlook.office365.com
+ (2603:10b6:610:60::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14 via Frontend
+ Transport; Mon, 22 Jul 2024 12:19:20 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH2PEPF00000141.mail.protection.outlook.com (10.167.244.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7784.11 via Frontend Transport; Mon, 22 Jul 2024 12:19:20 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 22 Jul
+ 2024 07:19:18 -0500
+Received: from xsjarunbala50.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 22 Jul 2024 07:19:18 -0500
+From: Naman Trivedi <naman.trivedimanojbhai@amd.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <michal.simek@amd.com>,
+	<senthilnathan.thangaraj@amd.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, Naman Trivedi Manojbhai
+	<naman.trivedimanojbhai@amd.com>
+Subject: [PATCH V2] drivers: clk: zynqmp: remove clock name dependency
+Date: Mon, 22 Jul 2024 05:19:10 -0700
+Message-ID: <20240722121910.14647-1-naman.trivedimanojbhai@amd.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V6 5/5] arm64: dts: qcom: x1e80100: Enable cpufreq
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>, sudeep.holla@arm.com,
- cristian.marussi@arm.com, andersson@kernel.org, jassisinghbrar@gmail.com,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- dmitry.baryshkov@linaro.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, quic_rgottimu@quicinc.com,
- quic_kshivnan@quicinc.com, conor+dt@kernel.org, quic_nkela@quicinc.com,
- quic_psodagud@quicinc.com, abel.vesa@linaro.org
-References: <20240612124056.39230-1-quic_sibis@quicinc.com>
- <20240612124056.39230-6-quic_sibis@quicinc.com>
- <3335d95d-d5eb-41cf-b18f-90894967d713@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <3335d95d-d5eb-41cf-b18f-90894967d713@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB04.amd.com: naman.trivedimanojbhai@amd.com does
+ not designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000141:EE_|CY8PR12MB7218:EE_
+X-MS-Office365-Filtering-Correlation-Id: fda4c429-96c3-4cd5-eb0f-08dcaa4883d1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?lXUuglnkJQSipvJLyOoOC4TE/XQpczk/T2uB9MUOn5eBQn0Id64iXTwvB2Ow?=
+ =?us-ascii?Q?PZQmUzyJc20B3OVD8wP90ts4rY1ZdS0WAltHBmlJZOUOEHuut4QpV3H2+4SY?=
+ =?us-ascii?Q?aJFxnGag7iuO19+Bta/K5QtZv8GpgYGY4zy/Q3QptrJIkqS4iZwJqaLkSXE+?=
+ =?us-ascii?Q?W7QY6cqzndguv7avaph0byrt0weXwPXFfd1obWoyDIuHcul4wrinx/MnBHPl?=
+ =?us-ascii?Q?zh8PAop0kFpfez0eoKeJrglLanz5RBWWWMm8y72X1qfn27qpRNbIgDe2vDVT?=
+ =?us-ascii?Q?yzmulsdEUbk977L7VPkT+/YoxFL1xhqIAyOJRQaj15NEymSocDRr5GEKUUKF?=
+ =?us-ascii?Q?lMVwz/laqyJlW6CMyg14QaC8e0cW/nC++8lTYDCvbpHVUvhU21CU6Zrsxd10?=
+ =?us-ascii?Q?iumlcxLBAtlXaxQhVCTWFAzSfrUQ8jfhzZrjpf+BRA+XDn1wBdEAAEkxs1u+?=
+ =?us-ascii?Q?a/SMklUChfut8aBIVGa3l+GHU8TADWC14DAZfVO/prLBP/sYjqs91ZryQMbf?=
+ =?us-ascii?Q?cznCjRU3OUFvqkrMrTQNqb/SW54tOFsGfaqGn+WGKhG6eDLAKr8OyYBcnntw?=
+ =?us-ascii?Q?vmUGbJDbIKVZt6hcOmBqSNVCjZ0xHankI/qXvctf0adP/CZuUNqXL/0U8dmL?=
+ =?us-ascii?Q?bWUS0nzv9F+FkAti4yZNy5jLwn/uebtHBUiBo/Y25zPURBDcS0W8r6z4xyjZ?=
+ =?us-ascii?Q?/It8u73K6goCtI7OvSOinFVvw0hueErPRTiAepZxDceWABj64CuO18Nxbkao?=
+ =?us-ascii?Q?bLQC38qkKa2l0C4/YQs+tUk4h2mbpiZ9Aa5DxG3EWpvVf3+UL+moi3172yXz?=
+ =?us-ascii?Q?ozQDOsBTUQasm8bpC5Q7p9vrG9zD0JEBJ1ziM//T7/ceEZvrKdJrXaHRZH7Z?=
+ =?us-ascii?Q?VeAuBPPQwNj2YBtDObQ/geG2nKs3+v8CN7/rBK5Usfjkrg4IncybM2ZucOp0?=
+ =?us-ascii?Q?a4CvXrEwGaSXagWPtNChYKUp13pZO0+N259b3D8LTNLIzCs5lk6eX8fwWhbG?=
+ =?us-ascii?Q?LgG5wZ2JqwBCXvpswx8HTPg/2nH/UbgHiPtgGg4FwjguwTk+UVa3qAJKzsN5?=
+ =?us-ascii?Q?UrLH+HvXLO675zorPmQ6BuoBBLpTLO3xZrELaazwuoYwFkSNun5FvkbPtky6?=
+ =?us-ascii?Q?MnncfjMI/9vI4yBam581gLOyblNa3aFbLyiivec3j8iDd3DXO/PaVE6zpW0H?=
+ =?us-ascii?Q?h02gDFrXJTc6Rlc1M0Q2bMaZuZpqEPMeDk0s207d7c29h19ML6hKogrwEycB?=
+ =?us-ascii?Q?kvYTp2ZPSvOTanPebCUyjIm9xVvPh/Zgqbbm+4U16RdydqzVsTxt3D4t6cx4?=
+ =?us-ascii?Q?X90cZ6/wTss6vzlbPW8MgpwtHJeTCIXEsAhflpxtkobO+8IGRpari42/vPOW?=
+ =?us-ascii?Q?ZUscg5tBJAtZAhMKDmJq/5KAW8UuKxuBzEsLd8CwnrTHQ3mTlw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2024 12:19:20.4926
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fda4c429-96c3-4cd5-eb0f-08dcaa4883d1
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH2PEPF00000141.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7218
 
-On 16.07.2024 12:45 PM, Konrad Dybcio wrote:
-> On 12.06.2024 2:40 PM, Sibi Sankar wrote:
->> Enable cpufreq on X1E80100 SoCs through the SCMI perf protocol node.
->>
->> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
->> ---
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+From: Naman Trivedi Manojbhai <naman.trivedimanojbhai@amd.com>
 
-Taking this back.. forgot about <ZoQjAWse2YxwyRJv@hovoldconsulting.com>
+Use struct clk_parent_data to register the clock parents with the clock
+framework instead of parent name.
 
-Konrad
+Signed-off-by: Naman Trivedi Manojbhai <naman.trivedimanojbhai@amd.com>
+---
+V1: https://lore.kernel.org/lkml/20240103072017.1646007-1-naman.trivedimanojbhai@amd.com
+V1 -> V2:
+- Used struct clk_parent_data instead of parent names to register clock
+  parents with the clock framework
+---
+ drivers/clk/zynqmp/clk-gate-zynqmp.c |  8 +--
+ drivers/clk/zynqmp/clk-mux-zynqmp.c  |  9 +--
+ drivers/clk/zynqmp/clk-zynqmp.h      | 26 ++++-----
+ drivers/clk/zynqmp/clkc.c            | 83 +++++++++++++++++++---------
+ drivers/clk/zynqmp/divider.c         |  8 +--
+ drivers/clk/zynqmp/pll.c             |  9 +--
+ 6 files changed, 89 insertions(+), 54 deletions(-)
+
+diff --git a/drivers/clk/zynqmp/clk-gate-zynqmp.c b/drivers/clk/zynqmp/clk-gate-zynqmp.c
+index b89e55737198..6bb9704ee1d3 100644
+--- a/drivers/clk/zynqmp/clk-gate-zynqmp.c
++++ b/drivers/clk/zynqmp/clk-gate-zynqmp.c
+@@ -104,8 +104,8 @@ static const struct clk_ops zynqmp_clk_gate_ops = {
+  *
+  * Return: clock hardware of the registered clock gate
+  */
+-struct clk_hw *zynqmp_clk_register_gate(const char *name, u32 clk_id,
+-					const char * const *parents,
++struct clk_hw *zynqmp_clk_register_gate(struct device_node *np, const char *name, u32 clk_id,
++					const struct clk_parent_data *parents,
+ 					u8 num_parents,
+ 					const struct clock_topology *nodes)
+ {
+@@ -124,7 +124,7 @@ struct clk_hw *zynqmp_clk_register_gate(const char *name, u32 clk_id,
+ 
+ 	init.flags = zynqmp_clk_map_common_ccf_flags(nodes->flag);
+ 
+-	init.parent_names = parents;
++	init.parent_data = parents;
+ 	init.num_parents = 1;
+ 
+ 	/* struct clk_gate assignments */
+@@ -133,7 +133,7 @@ struct clk_hw *zynqmp_clk_register_gate(const char *name, u32 clk_id,
+ 	gate->clk_id = clk_id;
+ 
+ 	hw = &gate->hw;
+-	ret = clk_hw_register(NULL, hw);
++	ret = of_clk_hw_register(np, hw);
+ 	if (ret) {
+ 		kfree(gate);
+ 		hw = ERR_PTR(ret);
+diff --git a/drivers/clk/zynqmp/clk-mux-zynqmp.c b/drivers/clk/zynqmp/clk-mux-zynqmp.c
+index 9b5d3050b742..30daf1f77b4c 100644
+--- a/drivers/clk/zynqmp/clk-mux-zynqmp.c
++++ b/drivers/clk/zynqmp/clk-mux-zynqmp.c
+@@ -128,8 +128,9 @@ static inline unsigned long zynqmp_clk_map_mux_ccf_flags(
+  *
+  * Return: clock hardware of the registered clock mux
+  */
+-struct clk_hw *zynqmp_clk_register_mux(const char *name, u32 clk_id,
+-				       const char * const *parents,
++struct clk_hw *zynqmp_clk_register_mux(struct device_node *np,
++				       const char *name, u32 clk_id,
++				       const struct clk_parent_data *parents,
+ 				       u8 num_parents,
+ 				       const struct clock_topology *nodes)
+ {
+@@ -150,14 +151,14 @@ struct clk_hw *zynqmp_clk_register_mux(const char *name, u32 clk_id,
+ 
+ 	init.flags = zynqmp_clk_map_common_ccf_flags(nodes->flag);
+ 
+-	init.parent_names = parents;
++	init.parent_data = parents;
+ 	init.num_parents = num_parents;
+ 	mux->flags = zynqmp_clk_map_mux_ccf_flags(nodes->type_flag);
+ 	mux->hw.init = &init;
+ 	mux->clk_id = clk_id;
+ 
+ 	hw = &mux->hw;
+-	ret = clk_hw_register(NULL, hw);
++	ret = of_clk_hw_register(np, hw);
+ 	if (ret) {
+ 		kfree(mux);
+ 		hw = ERR_PTR(ret);
+diff --git a/drivers/clk/zynqmp/clk-zynqmp.h b/drivers/clk/zynqmp/clk-zynqmp.h
+index 60cbc0674a9e..6343cfb57a4f 100644
+--- a/drivers/clk/zynqmp/clk-zynqmp.h
++++ b/drivers/clk/zynqmp/clk-zynqmp.h
+@@ -67,31 +67,31 @@ struct clock_topology {
+ 
+ unsigned long zynqmp_clk_map_common_ccf_flags(const u32 zynqmp_flag);
+ 
+-struct clk_hw *zynqmp_clk_register_pll(const char *name, u32 clk_id,
+-				       const char * const *parents,
++struct clk_hw *zynqmp_clk_register_pll(struct device_node *np, const char *name, u32 clk_id,
++				       const struct clk_parent_data *parents,
+ 				       u8 num_parents,
+ 				       const struct clock_topology *nodes);
+ 
+-struct clk_hw *zynqmp_clk_register_gate(const char *name, u32 clk_id,
+-					const char * const *parents,
++struct clk_hw *zynqmp_clk_register_gate(struct device_node *np, const char *name, u32 clk_id,
++					const struct clk_parent_data *parents,
+ 					u8 num_parents,
+ 					const struct clock_topology *nodes);
+ 
+-struct clk_hw *zynqmp_clk_register_divider(const char *name,
++struct clk_hw *zynqmp_clk_register_divider(struct device_node *np, const char *name,
+ 					   u32 clk_id,
+-					   const char * const *parents,
++					   const struct clk_parent_data *parents,
+ 					   u8 num_parents,
+ 					   const struct clock_topology *nodes);
+ 
+-struct clk_hw *zynqmp_clk_register_mux(const char *name, u32 clk_id,
+-				       const char * const *parents,
++struct clk_hw *zynqmp_clk_register_mux(struct device_node *np, const char *name, u32 clk_id,
++				       const struct clk_parent_data *parents,
+ 				       u8 num_parents,
+ 				       const struct clock_topology *nodes);
+ 
+-struct clk_hw *zynqmp_clk_register_fixed_factor(const char *name,
+-					u32 clk_id,
+-					const char * const *parents,
+-					u8 num_parents,
+-					const struct clock_topology *nodes);
++struct clk_hw *zynqmp_clk_register_fixed_factor(struct device_node *np, const char *name,
++						u32 clk_id,
++						const struct clk_parent_data *parents,
++						u8 num_parents,
++						const struct clock_topology *nodes);
+ 
+ #endif
+diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
+index a91d98e238c2..b791a459280e 100644
+--- a/drivers/clk/zynqmp/clkc.c
++++ b/drivers/clk/zynqmp/clkc.c
+@@ -12,6 +12,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
++#include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/string.h>
+@@ -119,11 +120,10 @@ static const char clk_type_postfix[][10] = {
+ 	[TYPE_PLL] = ""
+ };
+ 
+-static struct clk_hw *(* const clk_topology[]) (const char *name, u32 clk_id,
+-					const char * const *parents,
+-					u8 num_parents,
+-					const struct clock_topology *nodes)
+-					= {
++static struct clk_hw *(* const clk_topology[]) (struct device_node *np, const char *name,
++						u32 clk_id, const struct clk_parent_data *parents,
++						u8 num_parents,
++						const struct clock_topology *nodes) = {
+ 	[TYPE_INVALID] = NULL,
+ 	[TYPE_MUX] = zynqmp_clk_register_mux,
+ 	[TYPE_PLL] = zynqmp_clk_register_pll,
+@@ -307,14 +307,16 @@ unsigned long zynqmp_clk_map_common_ccf_flags(const u32 zynqmp_flag)
+  *
+  * Return: clock hardware to the registered clock
+  */
+-struct clk_hw *zynqmp_clk_register_fixed_factor(const char *name, u32 clk_id,
+-					const char * const *parents,
+-					u8 num_parents,
+-					const struct clock_topology *nodes)
++struct clk_hw *zynqmp_clk_register_fixed_factor(struct device_node *np, const char *name,
++						u32 clk_id,
++						const struct clk_parent_data *parents,
++						u8 num_parents,
++						const struct clock_topology *nodes)
+ {
+ 	u32 mult, div;
+ 	struct clk_hw *hw;
+ 	struct zynqmp_pm_query_data qdata = {0};
++	struct platform_device *plat_dev;
+ 	u32 ret_payload[PAYLOAD_ARG_CNT];
+ 	int ret;
+ 	unsigned long flag;
+@@ -331,10 +333,19 @@ struct clk_hw *zynqmp_clk_register_fixed_factor(const char *name, u32 clk_id,
+ 
+ 	flag = zynqmp_clk_map_common_ccf_flags(nodes->flag);
+ 
+-	hw = clk_hw_register_fixed_factor(NULL, name,
+-					  parents[0],
+-					  flag, mult,
+-					  div);
++	plat_dev = of_find_device_by_node(np);
++	if (!plat_dev)
++		return NULL;
++
++	if (parents->name)
++		hw = clk_hw_register_fixed_factor(NULL, name,
++						  parents->name,
++						  flag, mult,
++						  div);
++	else
++		hw = devm_clk_hw_register_fixed_factor_index(&plat_dev->dev, name,
++							     parents->index,
++							     flag, mult, div);
+ 
+ 	return hw;
+ }
+@@ -543,7 +554,7 @@ static int zynqmp_clock_get_parents(u32 clk_id, struct clock_parent *parents,
+  * Return: 0 on success else error+reason
+  */
+ static int zynqmp_get_parent_list(struct device_node *np, u32 clk_id,
+-				  const char **parent_list, u32 *num_parents)
++				  struct clk_parent_data *parent_list, u32 *num_parents)
+ {
+ 	int i = 0, ret;
+ 	u32 total_parents = clock[clk_id].num_parents;
+@@ -555,18 +566,30 @@ static int zynqmp_get_parent_list(struct device_node *np, u32 clk_id,
+ 
+ 	for (i = 0; i < total_parents; i++) {
+ 		if (!parents[i].flag) {
+-			parent_list[i] = parents[i].name;
++			ret = of_property_match_string(np, "clock-names",
++						       parents[i].name);
++			if (ret >= 0) {
++				parent_list[i].index = ret;
++			} else {
++				parent_list[i].fw_name = parents[i].name;
++				parent_list[i].name = parents[i].name;
++			}
+ 		} else if (parents[i].flag == PARENT_CLK_EXTERNAL) {
+ 			ret = of_property_match_string(np, "clock-names",
+ 						       parents[i].name);
+-			if (ret < 0)
++			if (ret >= 0) {
++				parent_list[i].index = ret;
++			} else {
+ 				strcpy(parents[i].name, "dummy_name");
+-			parent_list[i] = parents[i].name;
++				parent_list[i].fw_name = parents[i].name;
++				parent_list[i].name = parents[i].name;
++			}
+ 		} else {
+ 			strcat(parents[i].name,
+ 			       clk_type_postfix[clk_nodes[parents[i].flag - 1].
+ 			       type]);
+-			parent_list[i] = parents[i].name;
++			parent_list[i].fw_name = parents[i].name;
++			parent_list[i].name = parents[i].name;
+ 		}
+ 	}
+ 
+@@ -583,9 +606,9 @@ static int zynqmp_get_parent_list(struct device_node *np, u32 clk_id,
+  *
+  * Return: Returns either clock hardware or error+reason
+  */
+-static struct clk_hw *zynqmp_register_clk_topology(int clk_id, char *clk_name,
+-						   int num_parents,
+-						   const char **parent_names)
++static struct clk_hw *zynqmp_register_clk_topology(struct device_node *np, int clk_id,
++						   char *clk_name, int num_parents,
++						   struct clk_parent_data *parent_names)
+ {
+ 	int j;
+ 	u32 num_nodes, clk_dev_id;
+@@ -612,7 +635,7 @@ static struct clk_hw *zynqmp_register_clk_topology(int clk_id, char *clk_name,
+ 		if (!clk_topology[nodes[j].type])
+ 			continue;
+ 
+-		hw = (*clk_topology[nodes[j].type])(clk_out[j], clk_dev_id,
++		hw = (*clk_topology[nodes[j].type])(np, clk_out[j], clk_dev_id,
+ 						    parent_names,
+ 						    num_parents,
+ 						    &nodes[j]);
+@@ -621,7 +644,10 @@ static struct clk_hw *zynqmp_register_clk_topology(int clk_id, char *clk_name,
+ 				     __func__,  clk_dev_id, clk_name,
+ 				     PTR_ERR(hw));
+ 
+-		parent_names[0] = clk_out[j];
++		if (parent_names->fw_name) {
++			parent_names->name = clk_out[j];
++			parent_names->fw_name = clk_out[j];
++		}
+ 	}
+ 
+ 	for (j = 0; j < num_nodes; j++)
+@@ -640,9 +666,14 @@ static int zynqmp_register_clocks(struct device_node *np)
+ {
+ 	int ret;
+ 	u32 i, total_parents = 0, type = 0;
+-	const char *parent_names[MAX_PARENT];
++	struct clk_parent_data *parent_names;
++
++	parent_names = kmalloc(sizeof(*parent_names) * MAX_PARENT, GFP_KERNEL);
++	if (!parent_names)
++		return -ENOMEM;
+ 
+ 	for (i = 0; i < clock_max_idx; i++) {
++		memset(parent_names, 0, sizeof(struct clk_parent_data) * MAX_PARENT);
+ 		char clk_name[MAX_NAME_LEN];
+ 
+ 		/* get clock name, continue to next clock if name not found */
+@@ -665,7 +696,7 @@ static int zynqmp_register_clocks(struct device_node *np)
+ 		}
+ 
+ 		zynqmp_data->hws[i] =
+-			zynqmp_register_clk_topology(i, clk_name,
++			zynqmp_register_clk_topology(np, i, clk_name,
+ 						     total_parents,
+ 						     parent_names);
+ 	}
+@@ -677,6 +708,8 @@ static int zynqmp_register_clocks(struct device_node *np)
+ 			WARN_ON(1);
+ 		}
+ 	}
++
++	kfree(parent_names);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divider.c
+index 5a00487ae408..7c0905be2f26 100644
+--- a/drivers/clk/zynqmp/divider.c
++++ b/drivers/clk/zynqmp/divider.c
+@@ -269,9 +269,9 @@ static inline unsigned long zynqmp_clk_map_divider_ccf_flags(
+  *
+  * Return: clock hardware to registered clock divider
+  */
+-struct clk_hw *zynqmp_clk_register_divider(const char *name,
++struct clk_hw *zynqmp_clk_register_divider(struct device_node *np, const char *name,
+ 					   u32 clk_id,
+-					   const char * const *parents,
++					   const struct clk_parent_data *parents,
+ 					   u8 num_parents,
+ 					   const struct clock_topology *nodes)
+ {
+@@ -293,7 +293,7 @@ struct clk_hw *zynqmp_clk_register_divider(const char *name,
+ 
+ 	init.flags = zynqmp_clk_map_common_ccf_flags(nodes->flag);
+ 
+-	init.parent_names = parents;
++	init.parent_data = parents;
+ 	init.num_parents = 1;
+ 
+ 	/* struct clk_divider assignments */
+@@ -311,7 +311,7 @@ struct clk_hw *zynqmp_clk_register_divider(const char *name,
+ 	div->max_div = zynqmp_clk_get_max_divisor(clk_id, nodes->type);
+ 
+ 	hw = &div->hw;
+-	ret = clk_hw_register(NULL, hw);
++	ret = of_clk_hw_register(np, hw);
+ 	if (ret) {
+ 		kfree(div);
+ 		hw = ERR_PTR(ret);
+diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
+index 7411a7fd50ac..4bd93efed9f2 100644
+--- a/drivers/clk/zynqmp/pll.c
++++ b/drivers/clk/zynqmp/pll.c
+@@ -309,8 +309,9 @@ static const struct clk_ops zynqmp_pll_ops = {
+  *
+  * Return: clock hardware to the registered clock
+  */
+-struct clk_hw *zynqmp_clk_register_pll(const char *name, u32 clk_id,
+-				       const char * const *parents,
++struct clk_hw *zynqmp_clk_register_pll(struct device_node *np,
++				       const char *name, u32 clk_id,
++				       const struct clk_parent_data *parents,
+ 				       u8 num_parents,
+ 				       const struct clock_topology *nodes)
+ {
+@@ -324,7 +325,7 @@ struct clk_hw *zynqmp_clk_register_pll(const char *name, u32 clk_id,
+ 
+ 	init.flags = zynqmp_clk_map_common_ccf_flags(nodes->flag);
+ 
+-	init.parent_names = parents;
++	init.parent_data = parents;
+ 	init.num_parents = 1;
+ 
+ 	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
+@@ -335,7 +336,7 @@ struct clk_hw *zynqmp_clk_register_pll(const char *name, u32 clk_id,
+ 	pll->clk_id = clk_id;
+ 
+ 	hw = &pll->hw;
+-	ret = clk_hw_register(NULL, hw);
++	ret = of_clk_hw_register(np, hw);
+ 	if (ret) {
+ 		kfree(pll);
+ 		return ERR_PTR(ret);
+-- 
+2.25.1
+
 
