@@ -1,440 +1,257 @@
-Return-Path: <linux-kernel+bounces-259105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CB8C939144
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:02:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03A7F939163
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90CAE1C21767
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:02:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 573D7B21C28
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA03816DEA5;
-	Mon, 22 Jul 2024 15:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3026E16E870;
+	Mon, 22 Jul 2024 15:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="IDUFbk7p"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2042.outbound.protection.outlook.com [40.107.22.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BUCB4tfH"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C7116DC1D
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 15:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721660557; cv=fail; b=ULb9OhZ2mvEZY12xtSNIUPx6sbiy0z0V6DDYM+p+0nL2U2hG/jQU4gZ1x8G2xNdpnJ4haQcqUU7k2dpLDdr6KL/shHHcQ1/W5q0YCZ9N29skpYuPvlLESCM4YwKT00XCwdPSGJdx/Y6MknIemMr5vAZrl0GUByeDNbUinpteCMw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721660557; c=relaxed/simple;
-	bh=q+kyLXQ/6sIGPvHnDtEeVOLZgLTrZnQiZ5a79WvFI5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=JMQYNZpm0bmYDWYIgidha6t0YCoSfUyKnW1mOYP2uVrKDAqL/GrvWfl4NCAJ0jPHplqXeLWQjLkcKg/AYC6uYFTysdkrkzgch5MJbKe3EYMigBpoK4KsdpiBFcaaiZEx95zD6v0SiMKMFOadrRwbrhKaOHl8xXkUpGR/j4F/z1E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=IDUFbk7p; arc=fail smtp.client-ip=40.107.22.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=okJN+VciGSTjWZu0YTCSe6uvzHmw9N9rsj3IfTrYhAUnivbxNB+NOUegFQMqnQ55n6CJENwDq5oWiYWM07mifUbjzmlwO5jtIj5A+XbbS5ONQhGLbbT2NZp5dDOFOwUeuW4lkONOpRqcCXBe+KOvzEv7BLEQ5r2OI0mKUJ+eK9Jri3wIqdUulNVmL73R0XzdjSKWXOYCqpRss66N+Y17SL95ILQs06zGdjVQnnD44wzJN85tToujo4oNaJOoqaPdC4UpMmsXp3t+XZdjqWrSS5hwfiRZgajyH71tugGhODWjLG9S4W53TEJqDqN+BPQ1/A6Vp8V1P0F8KfU5hQ2VBg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XfZaXoYXRx1ao+yBvRghDdC13sAxlW3E5uQKMBXKZPI=;
- b=yT/fftTLc8PV1tyCwf+1mpnfPd09nL6Ef4JwcQ+W5JSTEqSf+sPXCyqcdGuUFgBEnRQld0KMJOjGaAuyj6px1+epHHy8Nu4bbcdelGurzmi21gtqMRw0MAvN8R/eGxSCxmut28L9nLzV+qxwdBFtXiCx8k0Z5cJ5K5R5FZ+YMaERkPS5BJ6QLDuDwodDQFYIGfjgcyO+W0DHGOYUfZImZI1HWkK7u3vqr9wQFxRgk6/fMtk1TuqAU1uhZ7zVb3RBMmHXOQqH4BqlP4mD623T2Mdz0poUPYw/E7U28iokp0FqCcMEj+j91c8Qt/yh7knp9axh3Y4mYm8LAgUQavDqMQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XfZaXoYXRx1ao+yBvRghDdC13sAxlW3E5uQKMBXKZPI=;
- b=IDUFbk7pcO6HcScp+15JFPfOFT0YhRIP+bTBAjRNuPnDEvMk06h2dNCCdF7eyM9T2EkhCxPM1eO3dUwaBQbsGivYmZrQnFt+FGfKF6kqauRcQJvE4u3J+GNYXcReJDS4qbV34KLyw+EvSbFwOCq5+d4CE/rk49vCOnP9FGBf8Rg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AS5PR04MB9771.eurprd04.prod.outlook.com (2603:10a6:20b:650::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20; Mon, 22 Jul
- 2024 15:02:31 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.7784.017; Mon, 22 Jul 2024
- 15:02:31 +0000
-Date: Mon, 22 Jul 2024 11:02:24 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Carlos Song <carlos.song@nxp.com>
-Cc: "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-	"conor.culhane@silvaco.com" <conor.culhane@silvaco.com>,
-	"alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-	"linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v2] i3c: master: svc: adjust the first broadcast speed
-Message-ID: <Zp50gJvEN0NOsPpm@lizhi-Precision-Tower-5810>
-References: <20240719080351.842848-1-carlos.song@nxp.com>
- <Zpp/uv0yeEhld6We@lizhi-Precision-Tower-5810>
- <VI1PR04MB50058C9E30C4A357E43CB34FE8AD2@VI1PR04MB5005.eurprd04.prod.outlook.com>
- <Zpqvs+ok7UQtlYkZ@lizhi-Precision-Tower-5810>
- <VI1PR04MB5005A8FA5CF72161C7654DB3E8AE2@VI1PR04MB5005.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <VI1PR04MB5005A8FA5CF72161C7654DB3E8AE2@VI1PR04MB5005.eurprd04.prod.outlook.com>
-X-ClientProxiedBy: SA9PR03CA0004.namprd03.prod.outlook.com
- (2603:10b6:806:20::9) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545E116DEDE
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 15:06:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721660771; cv=none; b=FigMWI9MmbPoUZiWGwMhdzQQeqKVodf4m1AEb8jTp8HN3w/tnny/dWoB8WuzMwGT8O9gU/IfgQKmilWqjJusTLQ0toDsstL3dQsiBFHIYjltBYJ1JW+tBmiCgNth793LRKkY6ugoNeiJpqhBoVcOm8VKSftQGHiGrfqrWibI7Ek=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721660771; c=relaxed/simple;
+	bh=LLmxdL4u/Mhyal3QF3/MChzoXEvP2wigRQ06+I85kmg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=nuFFHr+z6juLxvYidgzoJoOBhZ3x4E7tq/b8rvXQIdGR34rAa2XJpYr3RCRVahPzoNi4WFG0ZpgAtqZxPVyZgnCB0DfA/CndakSMXreDx6phJI9oS3nbT17JNvYom1gVez3NUEPGtGEzwWHAjRWmS4KZ0Nn90l4nxhVtijFv5UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BUCB4tfH; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--cmllamas.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7a2787eb33dso1155070a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 08:06:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721660767; x=1722265567; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KU5BQQwtIcalZfeboisW/1e2TYxwdVpk+lG2qlAAqv4=;
+        b=BUCB4tfHByW+4IIA3MYc0MLVISxJOaXNlryn+uwICK8WX6SIGRq9bOQ9hedpW81ilZ
+         rHzGvZlg8yRKZgwfgN2tBonsSqbrrEUSjvlclp+lWbH7P9B3xY4e/eDQaFwush3mZ/sH
+         Lhs8dcttIwIIyNz+TAypRcGI8mBHJkAX1bO21HN5uU8l+ShLPZGYW9pMBebKU8u0ofJT
+         NfFBy7iIxKY85pI0AffZ8RR3vZBeQujyCVITsGl6Xtuyrn+PJ4ozaITVzcVKsGWda006
+         eK265kNkQVA80p+G5HoGlp/rbvqdA5uqgQiQpPn5tuoZkhjGOBknXhzalFG4+d+KBPUS
+         ERIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721660767; x=1722265567;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KU5BQQwtIcalZfeboisW/1e2TYxwdVpk+lG2qlAAqv4=;
+        b=dkWGXxzK5jhTks7dwC82GhPOwol9WRD8J97oPO0AqyuuYkVtRihM9PC8UNhfct+6W6
+         4bAaC0v/9PE7rUWFUcWri2vs88unV2N3UlXevxqMqC95cQbAH6mCkAQcwMxlSg2FugZF
+         764h+ePYsWC94fh4SHxWdBcX0dwk51jmZQWyv/mCAyQg5POyQyNhrKBZ6K5/u/2C1ef/
+         MIwDezWAy6Y+HMYotlja5qwH8AIpssw9OThAAA2rNVk/tp9iyWex69wqzyQucHtQLJE/
+         k2SO6CcOjMnUe9zLToNHazXumkw2WpGBckVq/9fjf6boMRHn/oLKTIeDTPh8HdQCa/ix
+         vukg==
+X-Gm-Message-State: AOJu0YykUYdFicrVvJt+ZkZNIs4As+kxJNWfAw1yU/QaGQv1NsN0iWrK
+	YmLASlVKFthMPhQC4U+SfnJoo6HF+rSiJBH3ylR+yfqqnSlVHckPrxYBow2hIT8zIOmkS4+6oOO
+	EEC1z8OR7Fw==
+X-Google-Smtp-Source: AGHT+IEpZntRK1q7/f5m7UJELo9pH3YowAuw5RP+07SdJepHripYxPtr7//b8UY/ekC03Jhdkl3j3wkpvbQ2gQ==
+X-Received: from xllamas.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5070])
+ (user=cmllamas job=sendgmr) by 2002:a63:5a52:0:b0:787:6c0a:4683 with SMTP id
+ 41be03b00d2f7-79fa0fe721cmr23030a12.6.1721660767229; Mon, 22 Jul 2024
+ 08:06:07 -0700 (PDT)
+Date: Mon, 22 Jul 2024 15:05:11 +0000
+In-Reply-To: <CAH5fLgj6=6ZcVT13F8kP7g2NnRgBmZn+KKPANt=fSoFEJisi-w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS5PR04MB9771:EE_
-X-MS-Office365-Filtering-Correlation-Id: 891776b9-8e7f-4e85-4e14-08dcaa5f4f9c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hbnxeyi2Tcr7ZEuHM5Wha41HnJqXb5JCf00mapAe8iXfMxyaLh5h7FGikuE2?=
- =?us-ascii?Q?ABMb70zEKbIoc2XuVwrD2gRSPu+cG8zoEBcwG+pGDFP05RPoK35ohjr6+PrN?=
- =?us-ascii?Q?wH5Nqr9tWB4SH4GT9bqB3ZFI8SyQMJP/yuoQuA2Dvt3zPZm4IZJQdLt+ROHd?=
- =?us-ascii?Q?q4H2CjP/+gFWT/jzLg9lEjyhE+r2zoYQmqKwOf9q49OwLPp13kosSPGFCPo2?=
- =?us-ascii?Q?W8q9sw/I5YyAIUy0j55i4iUip0ZAXnGDaxLX5zaQtWMZsI5rMB5j7HyOONzo?=
- =?us-ascii?Q?4WQbcbh+7Gd8FLEuHW7EhY8P16v0RIM31w68HGNPTHBEBpRDj5JFV36tCSZ5?=
- =?us-ascii?Q?MGaoRkZzrHVsWKdDysy4wMmcsLjd5BNEqxivISBiZ14vQjQxSJioG4bSpyAz?=
- =?us-ascii?Q?xfn7k/y1mKPoO4MY+4y1d+Ie9459x6Oskdr52BtxGMlCqI7aucjGKCM+uY0I?=
- =?us-ascii?Q?56jZlzlvCDh8iSdW611ZwwuJuUgaY9CQ5o7lh7xiHnmreuO4s9Be1Zx5Mjiv?=
- =?us-ascii?Q?FpL5z4DsVDi+uELMyR6OuPHic3RuFtzHneMVO+gJCIb//ncF+37YOP8cVERJ?=
- =?us-ascii?Q?Kk+Qz1OzGgmMFSvbTvHWQlwN0CEL4I9Ugx7jLQ612Xo7rAXCn+UsB7+rFWiW?=
- =?us-ascii?Q?T/ZSItFEgkFU6SUZLe7yRwNBkNblMOD5Io8YZ3e1Nxzo+PMSzr+2B8voAHdq?=
- =?us-ascii?Q?ha2dSqSdLWTwOzpG7M3cK0aWbP4xda4g8gHGXQOG+TcT3JE5Pqq1z3N5hYgt?=
- =?us-ascii?Q?uCsUIkboJI8X9a08UHBU6mNbg5amBWA0BZoZO801pFue88/LgZRUP2d42n62?=
- =?us-ascii?Q?c/MkLRKyFq1PbcNJlQZ9kenvPtkrWKOmcYPbG3sQluXWbbj1+aUEQdJA18ux?=
- =?us-ascii?Q?gbX9OEncDU1liCgs4NyzCXuSGla4mUOW0Kvo87caCIDpM5+kTtOMPjx2VadK?=
- =?us-ascii?Q?LRYW3Mpac9COjlGHWSOBjW4g+tMrs4LCKb/ZwfdIcPLFkRBa6jRbzbLDVlck?=
- =?us-ascii?Q?8pmyVh5Pju6KC3086G7p6BbM0AnHb+1qR057Leqtc611T6OHXKrDSfFL1Hvh?=
- =?us-ascii?Q?7nOoSD8AMGhZ0EODumv4VtvvmPagpl0BttA4vGI3QNMOi5WvvuVeQnfl5CJo?=
- =?us-ascii?Q?z2oGcUUGuoUgTV7LSpBLRSeCt07ET/Whtc/ryBSgMtADBICl0hxCm+zLBhoh?=
- =?us-ascii?Q?/2Cqx7czzOSAtWG3YpuwT0uIF/Z25JZzyJGl39rcBhiTxmhbLMC2HjciPL8A?=
- =?us-ascii?Q?6kxBdZBnUJ4QuT3rjCAfITmxTbhXBOYvpc+R6xWlK+cIv6qCuzWJysPsjE/h?=
- =?us-ascii?Q?ISjeyjH4E2SdlryCasz2lJ48ykCTMuGtsicE4sq51cK5AfR9cGYyEeRwQ7Aj?=
- =?us-ascii?Q?XzWfdAPik3/zhBHuii7VjW5KqkpU9459qOGtTCvc4k3rfG+vdw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?EYaLwQTYM6ihu7XlzYfAxYhZ+YvLUimAUXppBmOio+jRHySs3JmLt1C5x1go?=
- =?us-ascii?Q?B5DJngc+lBm/MJGrywtRuOOOJq/JWLdlI7T2aqP9Yfo5gIQhyHUUG05o1lw2?=
- =?us-ascii?Q?QBVmnTugGLr/IAnP7sZQZ/SeDQMZ/jh+d7cn11+s6jwP6IphPAHvFLRpXEFH?=
- =?us-ascii?Q?JeFlI0pNeXj7gj3RcYW9Kbh1gojtPs1+O3H7J1HotvAJGXYUg01SNL0J4yiY?=
- =?us-ascii?Q?1ls0sNbd8UCbP9x83lurESLf7GfQ7/jQTXzN4oPS63YxlZ1cJpv9zvR/IeBy?=
- =?us-ascii?Q?SG4ZQx8giT9fK9M68Ri+hR8zPvhC42CFpJSWfBL69jfson1w3IRXmCjzPPfF?=
- =?us-ascii?Q?wpeDBbB0ulWNUiZ6yLBsQIUuvr0q3IRHvVSqZgNlEhbo318fN4XndL9cTJxF?=
- =?us-ascii?Q?FA++D7Qw30VbUctlqg4zHS2wregDlPJpY1165CW4mPsKc9vPibykAntqFPLx?=
- =?us-ascii?Q?aRKzOUYGv7Vt6dcw1peWoqGDQmThL9ZFZQfbfcR8a3sP116/A2fVdyxhGjx1?=
- =?us-ascii?Q?+nZw6GcHUr8PGFsXToTvpPrdkYk5rh19zQGpxzZ1YUIyU3/fBO964ZAKdJNf?=
- =?us-ascii?Q?oIN7Pb6E0UIWOk6v0Rb9NAYx6SvlxY+ReERLrxhvQ4ScZza0b0Dg9xzlXWbh?=
- =?us-ascii?Q?SZANNy6U+w3vwu1fw9+1m/gYhrWmzlmBEk5qTEhSNbcDErpsoFe7cOrcvX8S?=
- =?us-ascii?Q?DeZk1oNsnJLExWR41t3l/c0ogwLL7+TvMuj9473nYLYrJVg6fKKvBfVLBzab?=
- =?us-ascii?Q?sEHgmlVc0x39otOJY0UsVr72vTgtBRks2weS+xirgqwim9WK5GRuu6jWCzXM?=
- =?us-ascii?Q?hyfIzkQQZ3lxG1GWVYPNh1rIQpwR6rLEG2cNFwIm347XYk4kW3QqzVydypJK?=
- =?us-ascii?Q?CGixKsSfr42FiVwtekFA/LZcW4jiMWbtmAjjwuFCpOz9pXYJw8XU3GN4RrQK?=
- =?us-ascii?Q?rJiI4sSkx/cXmD/N8mUGG+Yj5kjOxLbOAOSut+YhuBBeFF2ucsYNKUXUupBI?=
- =?us-ascii?Q?wMJFgVg99uTvGcn6/phMsmz3kxlN7sN4i6pfv9UTFl2Pvjcr2b8/NmCdrf75?=
- =?us-ascii?Q?sryf3J8QJ6F0+yP4QyKIkYpF07mzU0Hq9g/TiEifk9nEg6BQKNvGrzeVrpPZ?=
- =?us-ascii?Q?Vn+96rxzrzU3ijQHbS4iMFCs8I9nLROT/GcG/M4BZ/Mlic+iNzMcigjcRhp3?=
- =?us-ascii?Q?ljkMG77hkQZb2+CHfAgswkEviROOUyoFyZxCHGWXuXM+qWn/rpmsVekQGPe2?=
- =?us-ascii?Q?6Lq7giV3yssJ4ZPKO/tSfKWg3124aoTTyhU/X2hE7kb8eHGgDT5BFU25qz2f?=
- =?us-ascii?Q?4Vsuxy960VeHm32JRYdUA0Nqw7pq2rXNu4Kh1YP8EXrGDUdc/I4bWApP05ym?=
- =?us-ascii?Q?26gcOpWpQn4bneT/pYNTsebST1yztrxg9HiETe4kwIxXZuCfbKtWRKXLiVKL?=
- =?us-ascii?Q?28XoMSoS0VoWXGlOoPz+Qqh2diZbU+6MZ3Y7VOM/9wi+lSZKKfTP2GaubSX9?=
- =?us-ascii?Q?gUAeLfIGnEBnO58vtSQdIakDvcA4uDRAm2HcvtBBPNO12IossUw9hNjlpY3Y?=
- =?us-ascii?Q?kJqAMFLiJzmaaH+NAZv04nYDFuSd+F9M1vQ0sg5Y?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 891776b9-8e7f-4e85-4e14-08dcaa5f4f9c
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2024 15:02:31.7132
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xesRsA4j6oD3Xzud8lQiyE7V5jexwdeW7BGqcBQO3gLeJ4NwrF2z399/cFmCoWlZ3rCqi596XN1J+7zVUqUFhg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB9771
+Mime-Version: 1.0
+References: <CAH5fLgj6=6ZcVT13F8kP7g2NnRgBmZn+KKPANt=fSoFEJisi-w@mail.gmail.com>
+X-Mailer: git-send-email 2.45.2.1089.g2a221341d9-goog
+Message-ID: <20240722150512.4192473-1-cmllamas@google.com>
+Subject: [PATCH v2] binder: fix descriptor lookup for context manager
+From: Carlos Llamas <cmllamas@google.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?=" <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <brauner@kernel.org>, 
+	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Alice Ryhl <aliceryhl@google.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, 
+	syzkaller-bugs@googlegroups.com, stable@vger.kernel.org, 
+	syzbot+3dae065ca76952a67257@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Jul 20, 2024 at 04:42:18AM +0000, Carlos Song wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Frank Li <frank.li@nxp.com>
-> > Sent: Saturday, July 20, 2024 2:26 AM
-> > To: Carlos Song <carlos.song@nxp.com>
-> > Cc: miquel.raynal@bootlin.com; conor.culhane@silvaco.com;
-> > alexandre.belloni@bootlin.com; linux-i3c@lists.infradead.org;
-> > linux-kernel@vger.kernel.org; imx@lists.linux.dev; dl-linux-imx
-> > <linux-imx@nxp.com>
-> > Subject: Re: [PATCH v2] i3c: master: svc: adjust the first broadcast speed
-> > 
-> > On Fri, Jul 19, 2024 at 04:37:01PM +0000, Carlos Song wrote:
-> > >
-> > >
-> > > > -----Original Message-----
-> > > > From: Frank Li <frank.li@nxp.com>
-> > > > Sent: Friday, July 19, 2024 11:01 PM
-> > > > To: Carlos Song <carlos.song@nxp.com>
-> > > > Cc: miquel.raynal@bootlin.com; conor.culhane@silvaco.com;
-> > > > alexandre.belloni@bootlin.com; linux-i3c@lists.infradead.org;
-> > > > linux-kernel@vger.kernel.org; imx@lists.linux.dev; dl-linux-imx
-> > > > <linux-imx@nxp.com>
-> > > > Subject: Re: [PATCH v2] i3c: master: svc: adjust the first broadcast
-> > > > speed
-> > > >
-> > > > On Fri, Jul 19, 2024 at 04:03:51PM +0800, carlos.song@nxp.com wrote:
-> > > > > From: Carlos Song <carlos.song@nxp.com>
-> > > > >
-> > > > > According to the i3c spec 6.2 Timing Specification, the first
-> > > > > broadcast open drain timing should be adjust to High Period of SCL
-> > > > > Clock is 200ns at least. I3C device working as a i2c device will
-> > > > > see the broadcast to close its Spike Filter to change to i3c mode.
-> > > > > After that I3C open drain SCL high level should be adjust to 32ns~45ns.
-> > > > >
-> > > > > Signed-off-by: Carlos Song <carlos.song@nxp.com>
-> > > > > ---
-> > > > > Change for V2:
-> > > > > - use slow_speed instead of first_broadcast
-> > > > > - add default_speed variable in svc_i3c_xfer to avoid set default
-> > > > >   speed every time
-> > > > > - change start_xfer if else for easy understand
-> > > > > ---
-> > > > >  drivers/i3c/master/svc-i3c-master.c | 55
-> > > > > +++++++++++++++++++++++++++++
-> > > > >  1 file changed, 55 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/i3c/master/svc-i3c-master.c
-> > > > > b/drivers/i3c/master/svc-i3c-master.c
-> > > > > index 78116530f431..7cd3a9a4d7dd 100644
-> > > > > --- a/drivers/i3c/master/svc-i3c-master.c
-> > > > > +++ b/drivers/i3c/master/svc-i3c-master.c
-> > > > > @@ -142,6 +142,7 @@ struct svc_i3c_cmd {
-> > > > >  	unsigned int actual_len;
-> > > > >  	struct i3c_priv_xfer *xfer;
-> > > > >  	bool continued;
-> > > > > +	bool slow_address;
-> > > > >  };
-> > > > >
-> > > > >  struct svc_i3c_xfer {
-> > > > > @@ -214,6 +215,11 @@ struct svc_i3c_master {
-> > > > >  	} ibi;
-> > > > >  	struct mutex lock;
-> > > > >  	int enabled_events;
-> > > > > +
-> > > > > +	unsigned long fclk_rate;
-> > > > > +	u32 mctrl_config;
-> > > > > +	bool slow_speed;
-> > > > > +	bool default_speed;
-> > > >
-> > > > I think you needn't two varible 'slow_speed' and 'default_speed'.
-> > > > 	default_speed should always !slow_speed
-> > > >
-> > > > Frank
-> > > >
-> > >
-> > > Hi, Frank
-> > >
-> > > In fact, I am struggling for using just one variable: slow speed. Adding a
-> > variable "default_speed "was also a have-to move.
-> > >
-> > > If I use "if else" in xfer for easy understand, it means I only can change the
-> > MCTRL register value one time in every xfer. So in the first xfer, I must change
-> > slow_speed to false, then next xfer cmd->slow_address will be false. So in next
-> > xfer, I can set initial configuration back to the controller.
-> > > But the question is I have to set it every time, so I add the extra variable to
-> > avoid writel in every xfer.
-> > > It looks bad... Sorry for my poor coding.
-> > >
-> > > If only one variable " slow_speed " is used , I think "if else" and "writel one
-> > time", only one can be used. Maybe there is a better code method but I don't
-> > get it?
-> > 
-> > If I understand correct.
-> > 
-> > svc_i3c_master_set_slow_address_speed()
-> > {
-> > 	...
-> > 	master->slow_speed = true;
-> > }
-> > 
-> > svc_i3c_master_set_default_speed()
-> > {
-> > 	if (master->slow_speed) {
-> > 		writel();
-> > 		master->slow_speed false;
-> > 	}
-> > }
-> > 
-> >   if (cmd->slow_address)
-> > 	svc_i3c_master_set_slow_address_speed(master);
-> >   else
-> > 	svc_i3c_master_set_default_speed(master);
-> > 
-> 
-> Above logic will never enter the svc_i3c_master_set_default_speed(master);
-> Because this :
-> svc_i3c_master_send_bdcast_ccc_cmd(){
->    if (master->slow_speed)
+In commit 15d9da3f818c ("binder: use bitmap for faster descriptor
+lookup"), it was incorrectly assumed that references to the context
+manager node should always get descriptor zero assigned to them.
 
-I think, it should be master->first_cmd, which reflect the real means.
-Then it means use two variables.
+However, if the context manager dies and a new process takes its place,
+then assigning descriptor zero to the new context manager might lead to
+collisions, as there could still be references to the older node. This
+issue was reported by syzbot with the following trace:
 
-If it is i3c standard, I prefer it should do by framework to avoid every
-driver add similar logic.
+  kernel BUG at drivers/android/binder.c:1173!
+  Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
+  Modules linked in:
+  CPU: 1 PID: 447 Comm: binder-util Not tainted 6.10.0-rc6-00348-g31643d84b8c3 #10
+  Hardware name: linux,dummy-virt (DT)
+  pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+  pc : binder_inc_ref_for_node+0x500/0x544
+  lr : binder_inc_ref_for_node+0x1e4/0x544
+  sp : ffff80008112b940
+  x29: ffff80008112b940 x28: ffff0e0e40310780 x27: 0000000000000000
+  x26: 0000000000000001 x25: ffff0e0e40310738 x24: ffff0e0e4089ba34
+  x23: ffff0e0e40310b00 x22: ffff80008112bb50 x21: ffffaf7b8f246970
+  x20: ffffaf7b8f773f08 x19: ffff0e0e4089b800 x18: 0000000000000000
+  x17: 0000000000000000 x16: 0000000000000000 x15: 000000002de4aa60
+  x14: 0000000000000000 x13: 2de4acf000000000 x12: 0000000000000020
+  x11: 0000000000000018 x10: 0000000000000020 x9 : ffffaf7b90601000
+  x8 : ffff0e0e48739140 x7 : 0000000000000000 x6 : 000000000000003f
+  x5 : ffff0e0e40310b28 x4 : 0000000000000000 x3 : ffff0e0e40310720
+  x2 : ffff0e0e40310728 x1 : 0000000000000000 x0 : ffff0e0e40310710
+  Call trace:
+   binder_inc_ref_for_node+0x500/0x544
+   binder_transaction+0xf68/0x2620
+   binder_thread_write+0x5bc/0x139c
+   binder_ioctl+0xef4/0x10c8
+  [...]
 
-May Alexandre Belloni can provide comemnts about this.
+This patch adds back the previous behavior of assigning the next
+non-zero descriptor if references to previous context managers still
+exist. It amends both strategies, the newer dbitmap code and also the
+legacy slow_desc_lookup_olocked(), by allowing them to start looking
+for available descriptors at a given offset.
 
-static int i3c_master_bus_init(struct i3c_master_controller *master)
-{
-	...
-	master->ops->set_speed(low);
+Fixes: 15d9da3f818c ("binder: use bitmap for faster descriptor lookup")
+Cc: stable@vger.kernel.org
+Reported-and-tested-by: syzbot+3dae065ca76952a67257@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/000000000000c1c0a0061d1e6979@google.com/
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Signed-off-by: Carlos Llamas <cmllamas@google.com>
+---
+ drivers/android/binder.c  | 15 ++++++---------
+ drivers/android/dbitmap.h | 22 +++++++---------------
+ 2 files changed, 13 insertions(+), 24 deletions(-)
 
-	ret = i3c_master_rstdaa_locked(master, I3C_BROADCAST_ADDR);
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index f26286e3713e..905290c98c3c 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -1044,13 +1044,13 @@ static struct binder_ref *binder_get_ref_olocked(struct binder_proc *proc,
+ }
+ 
+ /* Find the smallest unused descriptor the "slow way" */
+-static u32 slow_desc_lookup_olocked(struct binder_proc *proc)
++static u32 slow_desc_lookup_olocked(struct binder_proc *proc, u32 offset)
+ {
+ 	struct binder_ref *ref;
+ 	struct rb_node *n;
+ 	u32 desc;
+ 
+-	desc = 1;
++	desc = offset;
+ 	for (n = rb_first(&proc->refs_by_desc); n; n = rb_next(n)) {
+ 		ref = rb_entry(n, struct binder_ref, rb_node_desc);
+ 		if (ref->data.desc > desc)
+@@ -1071,21 +1071,18 @@ static int get_ref_desc_olocked(struct binder_proc *proc,
+ 				u32 *desc)
+ {
+ 	struct dbitmap *dmap = &proc->dmap;
++	unsigned int nbits, offset;
+ 	unsigned long *new, bit;
+-	unsigned int nbits;
+ 
+ 	/* 0 is reserved for the context manager */
+-	if (node == proc->context->binder_context_mgr_node) {
+-		*desc = 0;
+-		return 0;
+-	}
++	offset = (node == proc->context->binder_context_mgr_node) ? 0 : 1;
+ 
+ 	if (!dbitmap_enabled(dmap)) {
+-		*desc = slow_desc_lookup_olocked(proc);
++		*desc = slow_desc_lookup_olocked(proc, offset);
+ 		return 0;
+ 	}
+ 
+-	if (dbitmap_acquire_first_zero_bit(dmap, &bit) == 0) {
++	if (dbitmap_acquire_next_zero_bit(dmap, offset, &bit) == 0) {
+ 		*desc = bit;
+ 		return 0;
+ 	}
+diff --git a/drivers/android/dbitmap.h b/drivers/android/dbitmap.h
+index b8ac7b4764fd..956f1bd087d1 100644
+--- a/drivers/android/dbitmap.h
++++ b/drivers/android/dbitmap.h
+@@ -6,8 +6,7 @@
+  *
+  * Used by the binder driver to optimize the allocation of the smallest
+  * available descriptor ID. Each bit in the bitmap represents the state
+- * of an ID, with the exception of BIT(0) which is used exclusively to
+- * reference binder's context manager.
++ * of an ID.
+  *
+  * A dbitmap can grow or shrink as needed. This part has been designed
+  * considering that users might need to briefly release their locks in
+@@ -58,11 +57,7 @@ static inline unsigned int dbitmap_shrink_nbits(struct dbitmap *dmap)
+ 	if (bit < (dmap->nbits >> 2))
+ 		return dmap->nbits >> 1;
+ 
+-	/*
+-	 * Note that find_last_bit() returns dmap->nbits when no bits
+-	 * are set. While this is technically not possible here since
+-	 * BIT(0) is always set, this check is left for extra safety.
+-	 */
++	/* find_last_bit() returns dmap->nbits when no bits are set. */
+ 	if (bit == dmap->nbits)
+ 		return NBITS_MIN;
+ 
+@@ -132,16 +127,17 @@ dbitmap_grow(struct dbitmap *dmap, unsigned long *new, unsigned int nbits)
+ }
+ 
+ /*
+- * Finds and sets the first zero bit in the bitmap. Upon success @bit
++ * Finds and sets the next zero bit in the bitmap. Upon success @bit
+  * is populated with the index and 0 is returned. Otherwise, -ENOSPC
+  * is returned to indicate that a dbitmap_grow() is needed.
+  */
+ static inline int
+-dbitmap_acquire_first_zero_bit(struct dbitmap *dmap, unsigned long *bit)
++dbitmap_acquire_next_zero_bit(struct dbitmap *dmap, unsigned long offset,
++			      unsigned long *bit)
+ {
+ 	unsigned long n;
+ 
+-	n = find_first_zero_bit(dmap->map, dmap->nbits);
++	n = find_next_zero_bit(dmap->map, dmap->nbits, offset);
+ 	if (n == dmap->nbits)
+ 		return -ENOSPC;
+ 
+@@ -154,9 +150,7 @@ dbitmap_acquire_first_zero_bit(struct dbitmap *dmap, unsigned long *bit)
+ static inline void
+ dbitmap_clear_bit(struct dbitmap *dmap, unsigned long bit)
+ {
+-	/* BIT(0) should always set for the context manager */
+-	if (bit)
+-		clear_bit(bit, dmap->map);
++	clear_bit(bit, dmap->map);
+ }
+ 
+ static inline int dbitmap_init(struct dbitmap *dmap)
+@@ -168,8 +162,6 @@ static inline int dbitmap_init(struct dbitmap *dmap)
+ 	}
+ 
+ 	dmap->nbits = NBITS_MIN;
+-	/* BIT(0) is reserved for the context manager */
+-	set_bit(0, dmap->map);
+ 
+ 	return 0;
+ }
+-- 
+2.45.2.1089.g2a221341d9-goog
 
-	master->ops->set_speed(normal);
-	...
-}
-
-> 		cmd->slow_address = true;
->    else
-> 		cmd->slow_address = false;
-> }
-> 
-> Then svc_i3c_master_start_xfer_locked(){
-> 	if (cmd->slow_address)
->  		svc_i3c_master_set_slow_address_speed(master);
-> 	else
->  		svc_i3c_master_set_default_speed(master);
-> }
-> 
-> In svc_i3c_master_send_bdcast_ccc_cmd, we always need slow_speed to dicide cmd->slow_address is true or false. Then in svc_i3c_master_start_xfer_locked,
-> We use cmd->slow_address to chose set slow_speed or default speed.
-> when use "if else", it means we put slow_speed true->false into next xfer.
-> 
-> When first xfer finish, slow_speed is still true. So in next svc_i3c_master_send_bdcast_ccc_cmd:
-> then cmd->slow_address=ture, so in next xfer it will continue enter the "if" branch not the "else" branch:
-> 
-> if (cmd->slow_address)
->  	svc_i3c_master_set_slow_address_speed(master);
-> else
->  	svc_i3c_master_set_default_speed(master);
-> 
-> so whatever we need change master->slow_speed = false in the first xfer, don't put it into next xfer.
-> This is the reason I always do taht in my V1 V2 patch.
-> 
-> Carlos
-> 
-> > When slow_address is ture, always set slow_speed = ture when slow_address is
-> > false, call to set_sefault_speed, if previous
-> > 	slow_speed is true, then change to default speed, slow_speed will be false.
-> > 	when next time call to set_default_speed() do nothing.
-> > 
-> > Frank
-> > >
-> > > Carlos
-> > > > >  };
-> > > > >
-> > > > >  /**
-> > > > > @@ -531,6 +537,43 @@ static irqreturn_t
-> > > > > svc_i3c_master_irq_handler(int
-> > > > irq, void *dev_id)
-> > > > >  	return IRQ_HANDLED;
-> > > > >  }
-> > > > >
-> > > > > +static void svc_i3c_master_set_slow_address_speed(struct
-> > > > > +svc_i3c_master *master) {
-> > > > > +	struct i3c_bus *bus = i3c_master_get_bus(&master->base);
-> > > > > +	u32 ppbaud, odbaud, odhpp, mconfig;
-> > > > > +
-> > > > > +	master->mctrl_config = readl(master->regs + SVC_I3C_MCONFIG);
-> > > > > +	mconfig = master->mctrl_config;
-> > > > > +
-> > > > > +	/*
-> > > > > +	 * Set the I3C OPEN-DRAIN mode to the FM speed of 50%
-> > > > duty-cycle(400K/2500ns),
-> > > > > +	 * so that the first broadcast is visible to all devices on the i3c bus.
-> > > > > +	 * I3C device with 50ns filter will turn off the filter.
-> > > > > +	 */
-> > > > > +
-> > > > > +	ppbaud = FIELD_GET(GENMASK(11, 8), mconfig);
-> > > > > +	odhpp = 0;
-> > > > > +	odbaud = DIV_ROUND_UP(master->fclk_rate, bus->scl_rate.i2c * (2
-> > > > > ++ 2 *
-> > > > ppbaud)) - 1;
-> > > > > +	mconfig &= ~GENMASK(24, 16);
-> > > > > +	mconfig |= SVC_I3C_MCONFIG_ODBAUD(odbaud) |
-> > > > > +SVC_I3C_MCONFIG_ODHPP(odhpp);
-> > > > > +
-> > > > > +	writel(mconfig, master->regs + SVC_I3C_MCONFIG);
-> > > > > +	master->slow_speed = false;
-> > > > > +}
-> > > > > +
-> > > > > +static void svc_i3c_master_set_default_speed(struct
-> > > > > +svc_i3c_master
-> > > > > +*master) {
-> > > > > +	/*
-> > > > > +	 * The bus mode is already determined when the bus is
-> > > > > +initialized, so
-> > > > setting initial
-> > > > > +	 * configuration back to the controller. No need to set it in
-> > > > > +every transfer,
-> > > > just
-> > > > > +	 * restore it once time.
-> > > > > +	 */
-> > > > > +	if (!master->default_speed) {
-> > > > > +		writel(master->mctrl_config, master->regs +
-> > SVC_I3C_MCONFIG);
-> > > > > +		master->default_speed = true;
-> > > > > +	}
-> > > > > +}
-> > > > > +
-> > > > >  static int svc_i3c_master_bus_init(struct i3c_master_controller
-> > > > > *m) {
-> > > > >  	struct svc_i3c_master *master = to_svc_i3c_master(m); @@ -624,6
-> > > > > +667,8 @@ static int svc_i3c_master_bus_init(struct
-> > > > > +i3c_master_controller
-> > > > *m)
-> > > > >  	      SVC_I3C_MCONFIG_I2CBAUD(i2cbaud);
-> > > > >  	writel(reg, master->regs + SVC_I3C_MCONFIG);
-> > > > >
-> > > > > +	master->slow_speed = true;
-> > > > > +	master->fclk_rate = fclk_rate;
-> > > > >  	/* Master core's registration */
-> > > > >  	ret = i3c_master_get_free_addr(m, 0);
-> > > > >  	if (ret < 0)
-> > > > > @@ -1251,6 +1296,11 @@ static void
-> > > > svc_i3c_master_start_xfer_locked(struct svc_i3c_master *master)
-> > > > >  	for (i = 0; i < xfer->ncmds; i++) {
-> > > > >  		struct svc_i3c_cmd *cmd = &xfer->cmds[i];
-> > > > >
-> > > > > +		if (cmd->slow_address)
-> > > > > +			svc_i3c_master_set_slow_address_speed(master);
-> > > > > +		else
-> > > > > +			svc_i3c_master_set_default_speed(master);
-> > > > > +
-> > > > >  		ret = svc_i3c_master_xfer(master, cmd->rnw, xfer->type,
-> > > > >  					  cmd->addr, cmd->in, cmd->out,
-> > > > >  					  cmd->len, &cmd->actual_len, @@ -1346,6
-> > +1396,11 @@ static
-> > > > > int
-> > > > svc_i3c_master_send_bdcast_ccc_cmd(struct svc_i3c_master *master,
-> > > > >  	cmd->actual_len = 0;
-> > > > >  	cmd->continued = false;
-> > > > >
-> > > > > +	if (master->slow_speed)
-> > > > > +		cmd->slow_address = true;
-> > > > > +	else
-> > > > > +		cmd->slow_address = false;
-> > > > > +
-> > > > >  	mutex_lock(&master->lock);
-> > > > >  	svc_i3c_master_enqueue_xfer(master, xfer);
-> > > > >  	if (!wait_for_completion_timeout(&xfer->comp,
-> > > > > msecs_to_jiffies(1000)))
-> > > > > --
-> > > > > 2.34.1
-> > > > >
 
