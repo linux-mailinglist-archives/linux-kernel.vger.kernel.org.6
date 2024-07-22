@@ -1,161 +1,153 @@
-Return-Path: <linux-kernel+bounces-259201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9237293928D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:30:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7C56939293
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:32:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48C031F232E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:30:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EFB228275F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2467216EB4E;
-	Mon, 22 Jul 2024 16:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6374416EBE2;
+	Mon, 22 Jul 2024 16:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DardbNI0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/zBGla2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C05426ACD;
-	Mon, 22 Jul 2024 16:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D9D16E898;
+	Mon, 22 Jul 2024 16:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721665849; cv=none; b=MUXerL9S1M+bj4DLZiPKhGoLSiFhrvpauCTnG30Zfsg36jd0Wf2ygI8AIyEZD6sN2FRssaWKdPPDgTI+0PoH2ZVj+qksvoho1AVP1t804aQxOHZxP1V/OZubaoWUZQRLWDpVXjJZIB+V5E5A/fGhaqGbemsTwHNL5BTBiFoP6MU=
+	t=1721665932; cv=none; b=p7UsSZl/CnSZLwF5Zz/Oj6InibmWjK+sv79LUO7WsKfy0q608pTq9LsybzTVRgLhq5uM0A++UqA65NnH7UJ7kvu/qWZjzBr11cLUvRw3uNGb5GyO1/E79KktXXYo/wyPPo11f4nO+g8jm1Jb8LTjLkFyloGmfMOLxiwvFzR+fEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721665849; c=relaxed/simple;
-	bh=iy+DHszSYzVd/2RQ3w/4OKIj+1QnSngPdSBIBoonwvM=;
+	s=arc-20240116; t=1721665932; c=relaxed/simple;
+	bh=iuxYF76BWen5oelQAVza+RGmuADg2hrhOBQc2xTCn1Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SEsHPMeOwvDg/UUVekH4OgsFK0OW8JwQ6Ye1wpDxl2O9CxzD0cBihjiMLu18sx5pDtkROnexfdL31AvskQigov6chCis5NxJE6sIb9IP/DmAMrQuPew3TZarfa1HTQ9kk/Nkc7/qRMQ5lSq4nS6mUl/K6WrnN2e3eYGdy5E5nHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DardbNI0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 792BAC32782;
-	Mon, 22 Jul 2024 16:30:46 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LwGZEeqIfz1HxuWaXRus1ah9SAch3pM56IpHe1eQIbe8z9YypHrmuiT5Jk98OJiS6zTf90paz7uoXcgJFRHR+KGL02DCM+PfcdiTgOGrNwdErIP79dmwxqWRq65vILnzT2Z8q3kyo9hatm82DXI2FE1dG1G44vXT7WlclUjJYaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/zBGla2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1937EC116B1;
+	Mon, 22 Jul 2024 16:32:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721665848;
-	bh=iy+DHszSYzVd/2RQ3w/4OKIj+1QnSngPdSBIBoonwvM=;
+	s=k20201202; t=1721665932;
+	bh=iuxYF76BWen5oelQAVza+RGmuADg2hrhOBQc2xTCn1Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DardbNI0Zi+RDgiJERVOwi5alDu4PtEZH0sFLoddTiENZ55EbDexeoAcOfqHVvglk
-	 /MXT8RiVqvx7VkKtnCWluzn1ycZhiD+EEz82YPRWKOSt7H9ZMgBQXEjVHNhgXC44YV
-	 pfBzYsQYIoUraJ9xm93Tig6NG8PH2XK1oGLEf1eqJL4oj8mN5yeaYBz5qrP2zCU6af
-	 a3gubOF6zHJ2mYvpsc8EsKMQubuLDrmgmREaSL4NqlDBtYtpkrykwI4oaT0FVtNDbh
-	 8iTk+rUpXIu+zkdfMo4axtftmQoHqUx8Sq8CYJ+FIzopdcldIAtkCMeYojAr7/wyhy
-	 JNstCBkcNlmcg==
-Date: Mon, 22 Jul 2024 18:30:44 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Chris Hixon <linux-kernel-bugs@hixontech.com>, 
-	Basavaraj Natikar <bnatikar@amd.com>
-Cc: Linux regressions mailing list <regressions@lists.linux.dev>, 
-	Jiri Kosina <jkosina@suse.com>, LKML <linux-kernel@vger.kernel.org>, Li Ma <li.ma@amd.com>, 
-	amd-gfx@lists.freedesktop.org, Alexander.Deucher@amd.com, yifan1.zhang@amd.com, 
-	linux-input@vger.kernel.org, Basavaraj Natikar <basavaraj.natikar@amd.com>
-Subject: Re: [BUG] HID: amd_sfh (drivers/hid/amd-sfh-hid/): memory/page
- corruption
-Message-ID: <kkenglf5lkvu2um3o44umdxaoeh5zgsaus73kauc6vwcqpnsfv@5i6xtjnxtb5c>
-References: <3b129b1f-8636-456a-80b4-0f6cce0eef63@hixontech.com>
- <ade43b5b-9b93-40a8-acbf-99df944b45f9@leemhuis.info>
- <11fdf362-8fa5-4d44-904b-c0c9867ebd07@amd.com>
- <f6162b22-c6c6-47d7-9bda-dd702fcc5b4b@hixontech.com>
+	b=k/zBGla2VfG1JyquNRs4F0vi6HUYdyEsBsORyO0iKtrdSRSLK/AyzdPPqId0NN1om
+	 EWUchZFvgItvFZDU0++lydCJDOYeJzibWu52dOFqAkktPlThKg+XVp2ccdCuCmYwG9
+	 HMYGb6Ew0nXwiybCQ2PH0pmpBd42EO9lXldh/WnAwlfMWEc3H6EB2+lu3dOx+Q7nlr
+	 0moztlT6aOYebW7KR+bqsd675/YHTBMV4VRZ8UvWFmZX9BfJJuUDbdKJ45/D3HwdFA
+	 vrCVYjMnukmFZqjMyywLBO3lCEzc7T4C1+KeS8xvLAt6RJgbQIcW5BygvGzZ+w+Sd5
+	 CrPsvd/1kkDBQ==
+Date: Mon, 22 Jul 2024 17:32:08 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Matteo Martelli <matteomartelli3@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marius Cristea <marius.cristea@microchip.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: iio: adc: add binding for pac1921
+Message-ID: <20240722-squire-amply-15d761c0ec10@spud>
+References: <20240722-iio-pac1921-v3-0-05dc9916cb33@gmail.com>
+ <20240722-iio-pac1921-v3-1-05dc9916cb33@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Ufgd4XPcO7ajK7Ys"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f6162b22-c6c6-47d7-9bda-dd702fcc5b4b@hixontech.com>
+In-Reply-To: <20240722-iio-pac1921-v3-1-05dc9916cb33@gmail.com>
 
-On Jul 21 2024, Chris Hixon wrote:
-> On 7/21/24 00:20, Basavaraj Natikar wrote:
-> 
-> > On 7/17/2024 4:51 PM, Linux regression tracking (Thorsten Leemhuis) wrote:
-> >> On 15.07.24 06:39, Chris Hixon wrote:
-> >>> System: HP ENVY x360 Convertible 15-ds1xxx; AMD Ryzen 7 4700U with
-> >>> Radeon Graphics
-> >>>
-> >>> Problem commits (introduced in v6.9-rc1):
-> >>> 6296562f30b1 HID: amd_sfh: Extend MP2 register access to SFH
-> >>> 2105e8e00da4 HID: amd_sfh: Improve boot time when SFH is available
-> >>>> It appears amd_sfh commits 6296562f30b1 and 2105e8e00da4 correlate with
-> >>> some form of memory/page corruption. 
-> >> Hi! From a quick search on lore it looks like Basavaraj Natikar who
-> >> authored those two commits is inactive since a few days. This is totally
-> >> fine, but given the nature of the problem slightly unfortunate. That's
-> >> why I'm trying to raise awareness to this report by adding the
-> >> subsystems maintainers, a few lists, and a few people to the list of
-> >> recipients that were involved in the submission of those two patches.
-> >> With a bit of luck somebody might be able to help out. Ciao, Thorsten
-> >>
-> >>> On my system, this typically
-> >>> presents itself as a page dump followed by BTRFS errors, usually
-> >>> involving "corrupt leaf" (see dmesg output below); often the BTRFS
-> >>> filesystem becomes read-only afterwards. Note that the underlying NVME
-> >>> disk seems fine, and the BTRFS filesystem does not actually appear to be
-> >>> corrupt when booted/checked from kernels without this bug (no BTRFS
-> >>> errors or I/O errors reported on non-problem kernels).
-> >>>
-> >>> I have no problems when I blacklist the amd_sfh module (any kernel
-> >>> version), or revert both commits 6296562f30b1 and 2105e8e00da4 (on
-> >>> stable, linux-6.9.y). I have no problems on any recent linux-mainline
-> >>> (v6.10{,-rc*}) when reverting these two commits (in addition to
-> >>> reverting 7902ec988a9a and 6856f079cd45 to successfully build the
-> >>> kernel). I have had no problems with any 6.6.y, v6.7.y, or v6.8.y version.
-> >>>
-> >>> It is curious BTRFS always seems involved, but problems go away with
-> >>> these amd_sfh commits reverted (or amd_afh disabled).
-> >>>
-> >>> Further notes:
-> >>>
-> >>> I have not specifically used the amd_sfh module for anything. As far
-> >>> I've been able to determine, my system has the "Sensor Fusion Hub" mp2
-> >>> chip, but has no supported sensors/sub-devices (or I need to do
-> >>> something to enable them), (or there is an error while detecting
-> >>> sensors?). All logs I've checked contain something like:
-> >>>
-> >>> Jul 09 04:14:37 arch kernel: pcie_mp2_amd 0000:04:00.7: enabling device
-> >>> (0000 -> 0002)
-> >>> Jul 09 04:15:07 arch kernel: pcie_mp2_amd 0000:04:00.7: Failed to
-> >>> discover, sensors not enabled is 0
-> >>> Jul 09 04:15:07 arch kernel: pcie_mp2_amd 0000:04:00.7:
-> >>> amd_sfh_hid_client_init failed err -95
-> >>>
-> >>> Excerpt from lshw:
-> >>>            *-generic:1 UNCLAIMED
-> >>>                 description: Signal processing controller
-> >>>                 product: Sensor Fusion Hub
-> >>>                 vendor: Advanced Micro Devices, Inc. [AMD]
-> >>>                 physical id: 0.7
-> >>>                 bus info: pci@0000:04:00.7
-> >>>                 version: 00
-> >>>                 width: 32 bits
-> >>>                 clock: 33MHz
-> >>>                 capabilities: pm pciexpress msi msix cap_list
-> >>>                 configuration: latency=0
-> >>>                 resources: memory:fe000000-fe0fffff
-> >>> memory:fe4cc000-fe4cdfff
-> > 
-> > Could you please check with the latest version, including the patch below?
-> > 
-> > https://lore.kernel.org/all/20240718111616.3012155-1-Basavaraj.Natikar@amd.com/
-> > 
-> > Thanks,
-> > --
-> > Basavaraj
-> > 
-> 
-> Hi,
-> 
-> Unfortunately, that patch doesn't fix the issue. I do get different crashes...
 
-Thanks for the quick testing.
+--Ufgd4XPcO7ajK7Ys
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Basavaraj, was the patch from above an attempt at fixing that particular
-regression or was it emerging from some other means?
+On Mon, Jul 22, 2024 at 12:03:18PM +0200, Matteo Martelli wrote:
+> Add binging for Microchip PAC1921 Power/Current monitor
+>=20
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
+> ---
+>  .../bindings/iio/adc/microchip,pac1921.yaml        | 71 ++++++++++++++++=
+++++++
+>  1 file changed, 71 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/microchip,pac1921.=
+yaml b/Documentation/devicetree/bindings/iio/adc/microchip,pac1921.yaml
+> new file mode 100644
+> index 000000000000..b6f01b79b91d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/microchip,pac1921.yaml
+> @@ -0,0 +1,71 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/microchip,pac1921.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Microchip PAC1921 High-Side Power/Current Monitor with Anaog Outp=
+ut
+> +
+> +maintainers:
+> +  - Matteo Martelli <matteomartelli3@gmail.com>
+> +
+> +description: |
+> +  The PAC1921 is a power/current monitoring device with an analog output
+> +  and I2C/SMBus interface.
+> +
+> +  Datasheet can be found here:
+> +  https://ww1.microchip.com/downloads/en/DeviceDoc/PAC1921-Data-Sheet-DS=
+20005293E.pdf
+> +
+> +properties:
+> +  compatible:
+> +    const: microchip,pac1921
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  vdd-supply: true
+> +
+> +  "#io-channel-cells":
+> +    const: 1
+> +
+> +  shunt-resistor-micro-ohms:
+> +    description:
+> +      Value in micro Ohms of the shunt resistor connected between
+> +      the SENSE+ and SENSE- inputs, across which the current is measured.
+> +      Value is needed to compute the scaling of the measured current.
+> +
+> +  label:
+> +    description: Unique name to identify which device this is.
+> +
+> +  microchip,read-int-gpios:
 
-In other words: should I apply the fix even if it's still not the
-correct one for Chris?
+IIRC, it is not required to have vendor prefixes on -gpios properties.
+Otherwise, this all seems pretty reasonable to me.
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
 Cheers,
-Benjamin
+Conor.
+
+--Ufgd4XPcO7ajK7Ys
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZp6JhwAKCRB4tDGHoIJi
+0mXIAQCb89FgV5uHesmmcAc9VfkL+Txv5+ntVpe/hbj3eY8MBAD/faHtk6v01RC8
+QPjLI1uFzG5N6lLLeGpKI6r1z19utww=
+=Co9Q
+-----END PGP SIGNATURE-----
+
+--Ufgd4XPcO7ajK7Ys--
 
