@@ -1,85 +1,124 @@
-Return-Path: <linux-kernel+bounces-259115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 912C6939173
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:10:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99BB493917D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1C991C2176C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:10:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD25728202F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7A316DEA8;
-	Mon, 22 Jul 2024 15:10:45 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26E116DEC4;
+	Mon, 22 Jul 2024 15:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XbtFr2hW"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFE21F954
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 15:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9966416DC1D;
+	Mon, 22 Jul 2024 15:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721661045; cv=none; b=cD9sAcfBXYY83npxmIQrsbl1CzJF+SPWGz2gUJu7VoUT7ewG/Z6WszepOxBj/6GbwQ4MpN+HkJjX/uEGstmeR8XE4N5II0LpP/3HzeCX5ZBmUmXhehVo4dsAAPWyTgft0s29Glwr3skCj4msoicCO1jy11xQWdDbWYw+7HZ6FNk=
+	t=1721661143; cv=none; b=R4ujx6fGBFozOOZ6+Kq0rgONkGjIMSGGBIK6U0XEOCH3sNzPFsi2LDZW1+kZmvq/yfqJvKXZ8vHG79yqb4lBtMgjMpaQH0vwdoUtdN38Anm4qbkufGyZZjM96S1mhzL1n0/lS7wvEcnHvbwRYDC75/VRICCqRCdXr8yUak6FU98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721661045; c=relaxed/simple;
-	bh=h0avLBh1l9SpGT34z41LHtNgE3HKNHjT+leiPk8F7lM=;
+	s=arc-20240116; t=1721661143; c=relaxed/simple;
+	bh=m7n4dc4xNreoq3nEBkSTgwTBcQJMJsdmiJXdjfrTUD8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ETkZDXg6gGmnAWGRfrbAAIAf0gbvZCydt9WPH+A7kO9h6zew0dzHhopT8DA0WG0F1/sREOiVTlGFLptYj72GszKqYSzpOTWDpK9A5Y4OFvEZGw3s57OVHc26hHuEk56RfppysAw2mA6isN2Do+KTse/kgR3L8S2fWAYQph/s0ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 1E0D968C7B; Mon, 22 Jul 2024 17:10:38 +0200 (CEST)
-Date: Mon, 22 Jul 2024 17:10:37 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Leon Romanovsky <leonro@nvidia.com>,
-	Easwar Hariharan <eahariha@linux.microsoft.com>,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v3 2/2] dma: add IOMMU static calls with clear default
- ops
-Message-ID: <20240722151037.GA25001@lst.de>
-References: <cover.1721547902.git.leon@kernel.org> <bf0b200d4600edd9d6d12168e89f9f3abd6b9789.1721547902.git.leon@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AFEsTjYNGhIh/rTy1seirBZ3ZkG7PWOSfLtlWtPEeL3drg+mPYF1/wAkx6W/FwQ+o7j4HPYXHpu7rtKHKR1SUxqOryQIPz+NupBZ9IFfgROcttZUlUfMpBaCVzY9IrtwYyDUJAuDSaQVzAuYqXAARi5IssiwccCwYGtH2/huKYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=XbtFr2hW; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A98922B3;
+	Mon, 22 Jul 2024 17:11:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1721661098;
+	bh=m7n4dc4xNreoq3nEBkSTgwTBcQJMJsdmiJXdjfrTUD8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XbtFr2hWGL3ygzmRE8p1NsWYKJNn42DBfeWKpdztd+Qe+MJ9RFwbKv/TTTEfReDw9
+	 P9jC7KamR+hbLJx//sWqkDW4adoJrOwdpbc8tWy45UoRpD5sll0aXqvTc8T2TsQwt/
+	 OSDkiFVmEPB/gI5sKR8OhAbrlksVV9lyqcI54PTk=
+Date: Mon, 22 Jul 2024 18:12:02 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v11 2/6] media: videodev2.h: add visconti viif meta
+ buffer format
+Message-ID: <20240722151202.GB31490@pendragon.ideasonboard.com>
+References: <20240709000848.1108788-1-yuji2.ishikawa@toshiba.co.jp>
+ <20240709000848.1108788-3-yuji2.ishikawa@toshiba.co.jp>
+ <20240722151035.GA31490@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <bf0b200d4600edd9d6d12168e89f9f3abd6b9789.1721547902.git.leon@kernel.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20240722151035.GA31490@pendragon.ideasonboard.com>
 
-On Sun, Jul 21, 2024 at 10:49:11AM +0300, Leon Romanovsky wrote:
-> -static void iommu_dma_free_noncontiguous(struct device *dev, size_t size,
-> -		struct sg_table *sgt, enum dma_data_direction dir)
-> +void iommu_dma_free_noncontiguous(struct device *dev, size_t size,
-> +				  struct sg_table *sgt,
-> +				  enum dma_data_direction dir)
+On Mon, Jul 22, 2024 at 06:10:37PM +0300, Laurent Pinchart wrote:
+> Hi Ishikawa-san,
+> 
+> Thank you for the patch.
+> 
+> On Tue, Jul 09, 2024 at 09:08:44AM +0900, Yuji Ishikawa wrote:
+> > Adds the Toshiba Visconti VIIF specific metadata format
+> > 
+> > - V4L2_META_FMT_VISCONTI_VIIF_PARAMS for ISP parameters
+> > - V4L2_META_FMT_VISCONTI_VIIF_STATS for ISP statistics
+> > 
+> > Signed-off-by: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
+> 
+> This patch looks fine. Assuming the corresponding documentation patch is
+> fine too,
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Why are you reformatting these to a much less readable coding style?
+Actually I spoke a bit too fast, you need to update
+drivers/media/v4l2-core/v4l2-ioctl.c with the two new formats. See
+commit 8f6c2202222fa for an example.
 
-> +static inline struct page *
-> +dma_common_alloc_pages(struct device *dev, size_t size, dma_addr_t *dma_handle,
-> +		       enum dma_data_direction dir, gfp_t gfp)
-> +{
-> +	return NULL;
-> +}
-> +static inline void dma_common_free_pages(struct device *dev, size_t size,
-> +					 struct page *vaddr,
-> +					 dma_addr_t dma_handle,
-> +					 enum dma_data_direction dir)
-> +{
-> +}
+> > ---
+> > Changelog v10:
+> > - add entry for V4L2_META_FMT_VISCONTI_VIIF_PARAMS
+> > - add entry for V4L2_META_FMT_VISCONTI_VIIF_STATS
+> > 
+> > Changelog v11:
+> > - no change
+> > 
+> >  include/uapi/linux/videodev2.h | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> > index 4e91362da6..562038f144 100644
+> > --- a/include/uapi/linux/videodev2.h
+> > +++ b/include/uapi/linux/videodev2.h
+> > @@ -858,6 +858,10 @@ struct v4l2_pix_format {
+> >  /* Vendor specific - used for RaspberryPi PiSP */
+> >  #define V4L2_META_FMT_RPI_BE_CFG	v4l2_fourcc('R', 'P', 'B', 'C') /* PiSP BE configuration */
+> >  
+> > +/* Vendor specific - used for Visconti VIIF sub-system */
+> > +#define V4L2_META_FMT_VISCONTI_VIIF_PARAMS	v4l2_fourcc('V', 'I', 'F', 'P') /* ISP Params */
+> > +#define V4L2_META_FMT_VISCONTI_VIIF_STATS	v4l2_fourcc('V', 'I', 'F', 'S') /* ISP Stats */
+> > +
+> >  #ifdef __KERNEL__
+> >  /*
+> >   * Line-based metadata formats. Remember to update v4l_fill_fmtdesc() when
 
-dma-iommu very much depends on these.  So we'll need to also
-build ops_helpers.o if dma-iommu is enabled.  So we'll probably need
-a separate Kconfig option for it that the various users select.
+-- 
+Regards,
 
+Laurent Pinchart
 
