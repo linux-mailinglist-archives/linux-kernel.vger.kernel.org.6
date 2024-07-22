@@ -1,78 +1,101 @@
-Return-Path: <linux-kernel+bounces-258378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C38093873A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 03:15:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D690293873C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 03:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C1DE281A4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 01:15:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 776461F21391
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 01:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8EF5DDDC;
-	Mon, 22 Jul 2024 01:15:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1E0610D;
+	Mon, 22 Jul 2024 01:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M18EJqqM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KiyNexAX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321DCC2ED;
-	Mon, 22 Jul 2024 01:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6D846B5
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 01:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721610924; cv=none; b=dqrzCDhLeUQ6r/mU42aDidv+pNNdtIM/TkU7pC57VOI6qb7DuB0128gKNTrB5r3lzmYevfF2m9ODPJbSb2usmmkoHdijKbSiGs4Iwb1XLx5ePLUqaHx2q8Cf9uVJcMqDnjQb54N9DcDDJKWFmvHRS2T6GhTTzrCbyOvXsIfVjhw=
+	t=1721611730; cv=none; b=EGv/FsGvIUwTYBh5uL4t1OGWd/miVu4F4OkB1tWopoF5pCSdNpZfWhIK9WEdeKdQysdZUVbuB4V1FY2Ftullnrp8+o8gaPJMpe0KGezKjLCmkpmA/nrHqmnZ0t9SnDSWreGM7shJ7xKmDMkhdqFbUGcLMbwrmWdX/Q19hpk0JxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721610924; c=relaxed/simple;
-	bh=Ww1NU0Eh9y4l/qtALACWFICY66s4bvmwMdMQ8EQ8T/8=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=uu964bxbEmk4bcQOtMJ756giMX4F/lNQkAhTpFpkGh6XqLUl3v4wdv5sF4bCq1BYKNX1jsppsKmzEZYsQJJN4PO926GH1/nyDig6IM0wGqdNjra3joY+GltK+wMxN7oEKhxdsbqKAz6Te3F8B/H3BH64baHPt1Uj0a4k2PMMLZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M18EJqqM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BE0EEC4AF0B;
-	Mon, 22 Jul 2024 01:15:23 +0000 (UTC)
+	s=arc-20240116; t=1721611730; c=relaxed/simple;
+	bh=g2tSq9APFMR0Bl17C+GbBQhxN8oIR1MC2bDyCs6g6OE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eUAH6+U1aXYJkYkJTIRZeXJxk4LzS+BnCPFM9398F9C/MRecjbTghCSFVPK0zFsOgLaedgWM/C3LuzcdQiJFbSNbmHnoZk4L+zhFz4J2plhtQHWepLFEgObAAyeVBuKkJiL0hEDixwoaZPUQELpJqeBJGp5COytk0B1g3xcne+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KiyNexAX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6084C116B1;
+	Mon, 22 Jul 2024 01:28:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721610923;
-	bh=Ww1NU0Eh9y4l/qtALACWFICY66s4bvmwMdMQ8EQ8T/8=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=M18EJqqMtB3tevsplU52gjwj9aPQk2pyRIh6z1k0YoHT5+4sbDSnUe2qXmXLuqK+k
-	 C9aQPYqQ1URu++Zq1izeGBEKGbh/yzS/ncYiCTmDYofzKGKHlon443YHtt/nkFFKHB
-	 t5+CSyqWAWFBWrVg5OalIZIFHq2yNJfUzhw13rRgh8ZJSC3Dz/GZOT6N0lhWb3wwTm
-	 9mOXNbMueSalOPQtAkBT46N5/wsGb5FezYe79QFa3L4wrxCa69bgcxudhEjbMcNVgj
-	 yF4UZrtXIGey4ei8H1s9/nScj4HNX9YDvQMBstML1s+Q0XfAJnmWo+NdgUAFCpS8xz
-	 j495bxbA5lfPw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B5BD6C4332C;
-	Mon, 22 Jul 2024 01:15:23 +0000 (UTC)
-Subject: Re: [GIT PULL] MM updates for 6.11-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240721145415.fbeb01a853962ef91334f3d1@linux-foundation.org>
-References: <20240721145415.fbeb01a853962ef91334f3d1@linux-foundation.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240721145415.fbeb01a853962ef91334f3d1@linux-foundation.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-stable-2024-07-21-14-50
-X-PR-Tracked-Commit-Id: 30d77b7eef019fa4422980806e8b7cdc8674493e
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: fbc90c042cd1dc7258ebfebe6d226017e5b5ac8c
-Message-Id: <172161092373.21017.16428992388199740936.pr-tracker-bot@kernel.org>
-Date: Mon, 22 Jul 2024 01:15:23 +0000
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=k20201202; t=1721611729;
+	bh=g2tSq9APFMR0Bl17C+GbBQhxN8oIR1MC2bDyCs6g6OE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KiyNexAXxxhWCzfOnl7t3ckfxAPOlNjcBSm3MJGrAZt1BJCpunm6IgWUOFyFyY027
+	 zun53EGWDkaCXAZ+sy4xJ/arOxe3rt5WbF4a4EWGMMcWIfthpr3jE3s6zLhAPc3RlN
+	 vXp+JkVI9dGAVrn8B7eC2j5501HP4r0fe+I3kB8iNOxVyO+i/wrtS5/plDxhr3BhJ3
+	 I2E/T41ff9Uy9aDhf6slsBT3QmuvmPSbFVE0DiUQU8Ly4uiprZ44AS6EUgUhum0LXm
+	 FWPAWRkiOLiK5teiaFkddVqyHus2RW4qwK+OzSjliDB9fy2RYG6ORy19Ly62Tb231n
+	 h93VfvPXCA+Dg==
+Message-ID: <c81af94d-3b56-4169-b2eb-5d82623ab0af@kernel.org>
+Date: Mon, 22 Jul 2024 09:28:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] f2fs: free victim_secmap when pinned_secmap allocation
+ fails
+To: Yongpeng Yang <yangyongpeng1@oppo.com>, Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+References: <20240720103349.3347764-1-yangyongpeng1@oppo.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20240720103349.3347764-1-yangyongpeng1@oppo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Sun, 21 Jul 2024 14:54:15 -0700:
+On 2024/7/20 18:33, Yongpeng Yang wrote:
+> In the init_victim_secmap function, if the allocation of
+> dirty_i->pinned_secmap fails, dirty_i->victim_secmap is not
+> freed, which can cause a memory leak.
+> 
+> Signed-off-by: Yongpeng Yang <yangyongpeng1@oppo.com>
+> ---
+>   fs/f2fs/segment.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index 78c3198a6308..1e784ea3dbb4 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -4971,8 +4971,10 @@ static int init_victim_secmap(struct f2fs_sb_info *sbi)
+>   		return -ENOMEM;
+>   
+>   	dirty_i->pinned_secmap = f2fs_kvzalloc(sbi, bitmap_size, GFP_KERNEL);
+> -	if (!dirty_i->pinned_secmap)
+> +	if (!dirty_i->pinned_secmap) {
+> +		kvfree(dirty_i->victim_secmap);
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-stable-2024-07-21-14-50
+Yongpeng,
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/fbc90c042cd1dc7258ebfebe6d226017e5b5ac8c
+In below path, it will release pinned_secmap/victim_secmap?
 
-Thank you!
+- f2fs_destroy_segment_manager
+  - destroy_victim_secmap
+   : kvfree(dirty_i->pinned_secmap);
+   : kvfree(dirty_i->victim_secmap);
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Thanks,
+
+>   		return -ENOMEM;
+> +	}
+>   
+>   	dirty_i->pinned_secmap_cnt = 0;
+>   	dirty_i->enable_pin_section = true;
 
