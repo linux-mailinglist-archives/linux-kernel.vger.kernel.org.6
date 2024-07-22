@@ -1,104 +1,131 @@
-Return-Path: <linux-kernel+bounces-259186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8086A939255
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:10:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31687939256
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:10:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1F0D1C216BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:10:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60F1C1C21701
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A1916EB61;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F02116EB63;
 	Mon, 22 Jul 2024 16:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="ANXBP8w9"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VxDV//bT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373038F70
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 16:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 796B116DC19;
+	Mon, 22 Jul 2024 16:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721664612; cv=none; b=XmadRIWYlldeWpgXxLy3KwQnONfZK9T9RtXkk4UlWyGy8tqxfWqCv3EBJH7iwZX5XqeQLbL0wgwfmX0GpZOuql+EuT9lsK77JXWq2/dmvtSMRUMz62/XtWhCdSy94CTimspD8x1XT/vYKF3vEK++oHFgqNb1QLTQtpwJJr6Ym9Y=
+	t=1721664612; cv=none; b=j1eazDB0oNj5bKBw4pIJGSWO0jpymXBmd2qBSv16ipYnkAV1LMEBY7AKIueJ3fSVESjz6eNIWfT19oL5QuY8cK03CnDUe92lk1dUmMWUohlXTvTSVDo7ElFKdHY+FEp/8idPhFrX2mLIqhA9s9vnX9udZ69RDBCrdMR4zRo4b6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721664612; c=relaxed/simple;
-	bh=KPqpw+Rw363nK1U4y/Ityjaf6K1QdFD+vTvOqNdWhUo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BcEkcsdzEICMzLGVSm74Xuf5BlETqU60nbBquqWBsvUKDaKAw8KqP1PR6EOLoPipOFPJZrtm6aCWdsYXe40ESjRwf0vfNcYOlRgSxt81G0p2JlJDtxihbL41zE23jjs6UmpgL6Ymc4HIzGE5cAfpmApzsTCJ4C2Idcvij4e0G+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=ANXBP8w9; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721664595; x=1722269395; i=spasswolf@web.de;
-	bh=Q6n9mqxDqEcK3NlYYkLieebEU0QAs+R9mU1jL02YaxY=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ANXBP8w9PfbCiI5SgKxuv0ONq8iV9GGzr+Ih4dGz5TgCIC1URxTxsU8Rxx7JwNeQ
-	 VPW6NLbKEWopHggfjLdtGaMxZAwoM3h1GL72uTTHjH0nPiIZCNX2iH9mQM/7rxZyK
-	 FG49+a0Yu/vSzWFHtDg6tgWdV2TlwJODhqT9v5MJZMi26lnbC/q2WQcOD1dRiPLnl
-	 2OqRUF/Biwlw2CGolODwK9Qw/O6hssiWrMI69p6eNh6KUU/jF/cfdceJ6s74p4TbC
-	 z99HuPTyjTHbVzT+SfFuCMq9VCiSDbKgHJPDykyCHpbkT6fsFKteelebuCQNTbvjF
-	 oxjKxQuUwsfpUaS0zQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.0.101] ([84.119.92.193]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MxHYA-1s7geg3pwO-00x2nQ; Mon, 22
- Jul 2024 18:09:54 +0200
-Message-ID: <804033d07a13a8c53c9dc8a55c2383799f55020e.camel@web.de>
-Subject: Re: commit 7a5ee4aa61af causes warning on boot
-From: Bert Karwatzki <spasswolf@web.de>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>, tglx@linutronix.de, 
-	linux-kernel@vger.kernel.org, spasswolf@web.de
-Date: Mon, 22 Jul 2024 18:09:54 +0200
-In-Reply-To: <Zp5cPikQUTgQxcHS@localhost.localdomain>
-References: <20240722123912.3602-1-spasswolf@web.de>
-	 <Zp5cPikQUTgQxcHS@localhost.localdomain>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.52.3-1 
+	bh=kbNJoeObUW73S37fdBRUEm2sVREy9y3Eq4uGyyVPnQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WHHyg1gUbnDD+c2fzMz6bFmR2/EQR4MlVo5sDhDXzYcAss0QowWG4NH2ZCu4yyb4h8Prlst2dJWgX8UTsBjUXohR/GEWiYtrjZGJ23FqSji70UAizR0aHIw79FXVSpP5gS87rfE8vT+hqy4TAYF3HNA4HHpf326JL4Sqcy2Bg0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VxDV//bT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2280C116B1;
+	Mon, 22 Jul 2024 16:10:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721664612;
+	bh=kbNJoeObUW73S37fdBRUEm2sVREy9y3Eq4uGyyVPnQ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VxDV//bTl6r0XxihWx9ErPCMoLguxaJ2jURmrUvpC5yGJIQX90myYKG+lxedWdS89
+	 +M+jaahPoHlSzkMvllg8Ssglpd59LvU3BBt26v5V2aeG77qd1ho3MR6ZdLM5skiaVw
+	 eATw6LAhZNquhryfxFR9JIBsjExFEf5vuBCSoGbuTY33Dt1AvEmEBnkdTbuLrT+RjE
+	 ETzZbgydJMF0jomBow0rVJeEJtFgM6SlpWlESeFJznCWkNZwThtIYhfk1BsUNiCmQN
+	 cfGI06KyCv7phZ7ZQL3GnDxy5N5W2HnUqefdfIlOISMd+pZizRcsx9Rm49KGWM5h/A
+	 m2KWVuTIoc2ww==
+Date: Mon, 22 Jul 2024 18:10:08 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org
+Subject: Re: [PATCH] hid: bpf: avoid building struct ops without JIT
+Message-ID: <t2kq5rb2lftun7fugy2w4fkxq5bn25q7gepyrqg2jkyahkockh@3jaj7gt33s6v>
+References: <20240719095117.3482509-1-arnd@kernel.org>
+ <gf7t6iyj3ueewvbbmqo2ypzitiy6bvnzj2l6tgccvi22xe5fgm@xvlbq3vkndgr>
+ <96a00b6f-eb81-4c67-8c4b-6b1f3f045034@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:c/E4oyMG0BZjPyopXOAxVZLNi8onkyW6j3uzhOxpV+gpNIzFs0R
- IFIcjje9D6cwkik89JIW0QC5qHP1OITvPBVg+8Uk9t/S3azchgm0uG26VAvjnlC5UbeEkui
- g0cG1CoqFWqShtDE9mxcMm2p6bqLpONVhJbSLiaEzlVdqA8vCR3iRDj3OD8LTOwNo9ud7IW
- 68Lw/k36l+0d7sDT9jf3g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:irX6kDWpysE=;VVrJo98Pdq5ZOtZ/o5xm9YUwk71
- TpqAS24U8soZtJEHbWi+ruLOxO7H3srAbieKkoYTyb8SpoFKx7Ca2SxGdx/9okbJucVX5/n6Z
- EfWAD/WY0q+dkPeq587KukRzBngbETgS5aLzyqeYFYTV5ETaHatY6h2B1WoM25sFdYeZOqjf8
- OYQ3G7llp6S9RAatb/1htyePWD/FZqIZImdU6Chu37wqwZv5RfDUAkqzMZ8b8wUrQIRgD/+cz
- r/214s7RHQNWx5IctRjE4HcHjCyUAzB39QyV7NvcI1mqeRTRPvkD/i5uXgz1SXp22ze5GFZ5x
- ug0KgIz0C2zwEg/CCH7Ijfiu/aIRVQc+yb1BB0DnmHaINJx3SqfqBUbJF9YFyjG5Tb94XChZc
- PMXYejxqqk56nXQ20rw6WsW2DLbC938ramD03gFC+RyqP4OTRF8NOQqyEpoo9i3667ui1E5bl
- KkzV5jR8mCxcoCZ/S5J5MHcvbR4SMx6qwfngU4gayMj8CBc9xXy8m2XU4TU5sBMXiG3+vu6Y0
- KbYbqjSO0Owq77o7IlmEWdZ3Mv77wRypodOY11nYa/VwEGHJWK3V6rFCmhR6mbjNjcGcVUdrX
- XI2zhvWteko44GRhJgypOU5ObzvOccR+8nu1bulAnY9TGBXt37GBcI1CaKrC3FeOubVVhJqJJ
- JIKq/cbUyNTj/2EoVS/vXZWaHSjQd5TWydfe3ccXDaAoPioqKw8yz14PRLtR9dRQEVuSjrEGX
- 9xywfbVHyeBtKLPGtxxZsH7J8t85T886NRd+SZiIydqLrAmJef2AdZ2FK0F+VBeg93XRUqcGW
- tQ5IpyQIzRJgJZA5gO2Y8FvA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <96a00b6f-eb81-4c67-8c4b-6b1f3f045034@app.fastmail.com>
 
-Am Montag, dem 22.07.2024 um 15:18 +0200 schrieb Frederic Weisbecker:
-> Le Mon, Jul 22, 2024 at 02:39:11PM +0200, Bert Karwatzki a =C3=A9crit :
-> > Since linux-next-20240722 the following warning is shown on boot which=
- can
-> > be bisected to commit 7a5ee4aa61af:
+On Jul 19 2024, Arnd Bergmann wrote:
+> On Fri, Jul 19, 2024, at 15:52, Benjamin Tissoires wrote:
+> > On Jul 19 2024, Arnd Bergmann wrote:
+> >> 
+> >> This could be avoided by making HID-BPF just depend on JIT, but that
+> >> is probably not what we want here. Checking the other users of struct_ops,
+> >> I see that those just leave out the struct_ops usage, so do the same here.
 > >
-> > [    T1] ------------[ cut here ]------------
-> > [    T1] WARNING: CPU: 0 PID: 1 at kernel/time/timer_migration.c:1742
-> > tmigr_cpu_prepare+0x469/0x540
->
-> Good catch, and here is a fix proposal (untested!):
->
-> https://lore.kernel.org/all/Zp5bpLJHlYsZinGj@localhost.localdomain/
-Just tested the patch with linux-next-20240722, it works for me.
+> > Actually, if we make the struct_ops part only depend on JIT HID-BPF is
+> > kind of moot. All we could do is use HID-BPF to communicate with the
+> > device, without getting any feedback, so nothing much more than what
+> > hidraw provides.
+> >
+> > The only "interesting" bit we could do is inject a new event on a device
+> > as if it were originated from the device itself, but I really do not see
+> > the point without the struct_ops hooks.
+> >
+> > So I think struct_ops is now the base for HID-BPF, and if it's not
+> > available, we should not have HID-BPF at all.
+> >
+> 
+> Ok, got it. So my original patch was correct after all.
+> I had tried this version and then discarded it.
+> 
+>     Arnd
+> 
+> 8<------
+> Subject: [PATCH] hid: bpf: add BPF_JIT dependency
+> 
+> The module does not do anything when the JIT is disabled, but instead
+> causes a warning:
+> 
+> In file included from include/linux/bpf_verifier.h:7,
+>                  from drivers/hid/bpf/hid_bpf_struct_ops.c:10:
+> drivers/hid/bpf/hid_bpf_struct_ops.c: In function 'hid_bpf_struct_ops_init':
+> include/linux/bpf.h:1853:50: error: statement with no effect [-Werror=unused-value]
+>  1853 | #define register_bpf_struct_ops(st_ops, type) ({ (void *)(st_ops); 0; })
+>       |                                                  ^~~~~~~~~~~~~~~~
+> drivers/hid/bpf/hid_bpf_struct_ops.c:305:16: note: in expansion of macro 'register_bpf_struct_ops'
+>   305 |         return register_bpf_struct_ops(&bpf_hid_bpf_ops, hid_bpf_ops);
+>       |                ^~~~~~~~~~~~~~~~~~~~~~~
+> 
+> Add a Kconfig dependency to only allow building the HID-BPF support
+> when a JIT is enabled.
+> 
+> Fixes: ebc0d8093e8c ("HID: bpf: implement HID-BPF through bpf_struct_ops")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ----
+> diff --git a/drivers/hid/bpf/Kconfig b/drivers/hid/bpf/Kconfig
+> index 83214bae6768..d65482e02a6c 100644
+> --- a/drivers/hid/bpf/Kconfig
+> +++ b/drivers/hid/bpf/Kconfig
+> @@ -3,7 +3,7 @@ menu "HID-BPF support"
+>  
+>  config HID_BPF
+>         bool "HID-BPF support"
+> -       depends on BPF
+> +       depends on BPF_JIT
+>         depends on BPF_SYSCALL
+>         depends on DYNAMIC_FTRACE_WITH_DIRECT_CALLS
+>         help
 
-Bert Karwatzki
+Thanks. I've applied this patch to for-6.11/upstream-fixes in the HID
+tree.
+
+Cheers,
+Benjamin
 
