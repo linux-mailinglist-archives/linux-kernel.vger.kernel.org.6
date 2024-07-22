@@ -1,127 +1,146 @@
-Return-Path: <linux-kernel+bounces-258569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABFED9389E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:15:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06C4C9389E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:15:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 550591F2188C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:15:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3647E1C20C5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF758D53F;
-	Mon, 22 Jul 2024 07:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6FD1BDC8;
+	Mon, 22 Jul 2024 07:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WMbN+HKh"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hc4IYgAs"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC0E38DCC;
-	Mon, 22 Jul 2024 07:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29E317C77
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721632482; cv=none; b=mYkF+g8wMQZXlDnypmXAJo2kAc4zA9L96CUEFLHuaFy+UBBXBIwrT2qsjBDjZ6Il+w0TbxGXz1SUWUJXNrEly6eY+g0J0T/PTJ+JRSUvkTxyUAwooa466CF9wOfpv/q7FktPAoXb0zUSSBzZg7ymkcF2jAchtd8Zgm1AVOUIHAg=
+	t=1721632529; cv=none; b=cBksnRFzn3GiGqinSTX1avLoae8whtDQQDDn8+MFhAvU8KAboR1XvtbLrqwTBLDYCeqoOJEl9xZ3rj9i+ptRNh3by/kbe2IlkgbvZlrDRk2ecOeIBUkW/Me/mEjgDqctUJxh2iF8bSUybJMpxPHwTvKnZwAFG8s7xunVWkWsI08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721632482; c=relaxed/simple;
-	bh=tr1O+hPwM0KJEn4ww9SJW6izyACl1EooSgjgX+2CExA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KjIp+fe92I8V8j2g8xD/enOpUock3J7BONiO+fClC9xK1FE3YznvnynOC8F2k+04EaJXYxVRwht23JbYikNNLRtKbw/pjZQev5eCV2VhZWLl6O0wDuobnZruTIVxBZHgVtM5BwlI+I2kOpmWwPSbuWZMNd9vqjnpRdcTrxUJ4lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WMbN+HKh; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-44bd4920ef8so20056851cf.0;
-        Mon, 22 Jul 2024 00:14:40 -0700 (PDT)
+	s=arc-20240116; t=1721632529; c=relaxed/simple;
+	bh=JunXkzrzfc4l5XOzx3vNO/SZqFOdGk51V4HbEy6B8Hs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=duHikJDNZcviA4eHKNrFIdzE29JjnG/c89O7BMHddCXnwKxfz9wn/jqkXIiQ5lfNRSClfNoobdwwpXXnZMi/MWmM2tB/Bad19EhVUk6l7fmLlsnPquzCCIN5YSd4Y/R61wGl8dBXZr8mE7czqmZJm9VBAloJFc1miWE8BwMkk/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hc4IYgAs; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2eee083c044so45068901fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 00:15:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721632479; x=1722237279; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GHAnK7eluryXOEPZRmaUZuOauSYKDPyEBhx9PYcGeRQ=;
-        b=WMbN+HKhlSiQJmxQooP0DHOm88dXHKLDWuBxhRtQRE6kUXNua9idI75yhiQl4a6/ki
-         oVFLilpGCbJn4IPJYiTzhl16k43LENErKj8ANe5U700qxP548EfpFckFMLp3RfVVX1Hp
-         PepYjg/f0qcGmyORlHksSDLNR5lnbxecEpAUaS2GnTY+XYlUmC4e65NdHGbdQT4OgGuQ
-         sH/BkZRXMzF83u6I35UU/Hf9fIu5j4eMLHqw8SdFJCmQ3OU4NrJeFoqFV+I9qyLgiVaI
-         FMDPscdFVLFBzKoFRCgrPRUQ03crU1aEW40PEq05e7NOqrhm+lv4+7M4wVdSR3gHpp7n
-         zKrg==
+        d=linaro.org; s=google; t=1721632526; x=1722237326; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6DeasHBm5l7r94AIOITFewYly2vv/ZgayXIERa9+VDo=;
+        b=Hc4IYgAsW9bEsG7RJ/N1u06r6NYLAg0TQYD0ua4xZkak2dd+U/h8mwLVCabecRhJG5
+         W5HWiccsWTZT/3GnGbc7xBi/G1v3iOguze7JFh5wZ50n2St/qnjTqozVYiF8F595dzKm
+         OzTBRZ5XpLivy+LuBNjlCGDcX2E9IRn14awKKMVNB13xylEVXf3xASVzCygzBpib/0Uu
+         G8sehE80A7OZMKYew5rROrVtPw0hD6snw1DFdo1DmSt/shudVvZHaErE+H4ZLcyYq7ci
+         Whjye7idlbM8TcAxhgSRcxR0V74LwKH39RmFVfMqNMoXZNeicQwtMDe5d4yq21/rRoJC
+         5WjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721632479; x=1722237279;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GHAnK7eluryXOEPZRmaUZuOauSYKDPyEBhx9PYcGeRQ=;
-        b=W0nNRpCpKqF4ptOyZIHY9wnvmlLEf/69JTMZA3T0KwUwZu+WxDrDBp0dnmJ7SZbShn
-         kOfUm/5XtO7DdJh1pqomQxrxlEV/8G5IImXkqq4cKyVxod8cQGY/T8MQtc/CpauTn6aK
-         e0ncd898aHp5CIP5hqkEI3AkqiU77Rg9DYzd/Jm+ZlUm6+OUXMDKYSAPrR6B68XJXWBo
-         j+Kt6w/poJU51UGi80L5/9gIdRhCNG0G6ugNJpvaBeMr/mRxsC3CNj+I27ndMnY+pPvO
-         t3eorBPwKv1eLvOFIaNbGzjrybOXTNPfRM1SXu2Nj8gEEmHsUUeqzVyJyGNS3RB9jsy1
-         AVBw==
-X-Forwarded-Encrypted: i=1; AJvYcCWTJNeRGMbW+Q0kz/hoV6I6LOzPzQBuuh5B9dIoYSoDBhXjvLoqKki2+E9HrmL3tllJ9Po4vtgJB2+5ZfzxLBTkWpNiNdAfyxXTWrugdJR+eMlDefWKzQJWvq8Sih804Pmb6wsn2TDtckgFZTjImMjdMMqr8gb9YnzTfezHFnNF/wnGmw==
-X-Gm-Message-State: AOJu0YwOsStKqhCwm1cRzYoYSzH6avHdNrpwVuKwPPOJULLSPPqNexe8
-	mUhQoc6gJgJhhcb6AaNoSRPabuZWnm+xVhhPd3TUyIfloDeZbSz4
-X-Google-Smtp-Source: AGHT+IFmt0kaRJkF7l1ZGUohrajnngP9LZQ7XiBkhajLauRmvkAVb+EHMoZ67DjkISZfM7G0gN2+zw==
-X-Received: by 2002:a05:6214:29ea:b0:6b2:9d0b:6148 with SMTP id 6a1803df08f44-6b95a7926a4mr101278676d6.53.1721632479495;
-        Mon, 22 Jul 2024 00:14:39 -0700 (PDT)
-Received: from [10.76.84.172] ([5.2.194.157])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b7b051c86csm30646556d6.116.2024.07.22.00.14.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jul 2024 00:14:39 -0700 (PDT)
-Message-ID: <6226f65a-3420-45e0-aeb9-8d31d26a070d@gmail.com>
-Date: Mon, 22 Jul 2024 10:14:34 +0300
+        d=1e100.net; s=20230601; t=1721632526; x=1722237326;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6DeasHBm5l7r94AIOITFewYly2vv/ZgayXIERa9+VDo=;
+        b=rlQUKRXq8fmizKC2gLB5zVc4dkLsS5Jg9WJ0cpYBHwMs0Po/8pOhVy/+oa8p+FHH5R
+         UOHGT2VJvrI95x5oEer8mRHEPWol65GiU33JpZNN0aqYfiApWITgPMA2uerjjQ6noDgy
+         kXwkjd5M6ijrG9UDTkyvIG1GVMCvYJjuLOt8GX4DzgUZRDHML8Qm5AyaCMircdoCJNzg
+         HB2XzLyXEFK1oTcI/MwMZJlMOwvshg34rozJ+JSA29/RoEqb2KeB3TFxC5R2lBCMp2qg
+         EimoEpIQE3ig/hfSsswznCezMv9nsDQgmS31i5sjWDl+GM9m5qH6xv+b8jHIILpBABZZ
+         97pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZUCDqDpTgVwfDQOnr0atsUEoTczX3jx0efM0FlYQEUee2UjMk6I+BaXILVeH2/HvEWL2il2p+O+RqN9/usMFyZx3qaFfnzpquGScU
+X-Gm-Message-State: AOJu0YwJWY0FBMePPdXTvw/6ZjGq2GR20kLXshXByQsN54iWRl3eZJcr
+	2wjXdF6MwVqNyfQDxGrJTU9TsNfK/D+X5tXJqummV2/y1JrgcsTj+Gb7v9R+KpY=
+X-Google-Smtp-Source: AGHT+IEIgyoC5LrmEEQGwXIALUB1F/rCy3akHI/QLl6buZz04VT6lhQn1evWrQ18wpihikm/W+7ieQ==
+X-Received: by 2002:a05:651c:1a0c:b0:2ef:2dbe:7454 with SMTP id 38308e7fff4ca-2ef2dbe7664mr23641521fa.43.1721632525909;
+        Mon, 22 Jul 2024 00:15:25 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff1f:b280:702:9410:ae6e:5c88])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30af839a3sm5736923a12.46.2024.07.22.00.15.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 00:15:25 -0700 (PDT)
+Date: Mon, 22 Jul 2024 09:15:20 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Rob Clark <robdclark@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, Doug Anderson <dianders@chromium.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Rob Clark <robdclark@chromium.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: x1e80100-yoga: Update panel
+ bindings
+Message-ID: <Zp4HCPYId4sjd32Q@linaro.org>
+References: <20240719185250.4877-1-robdclark@gmail.com>
+ <20240719185250.4877-2-robdclark@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 9/9] iio: adc: ad7173: Add support for AD411x devices
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- dumitru.ceclan@analog.com
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, David Lechner <dlechner@baylibre.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240607-ad4111-v7-0-97e3855900a0@analog.com>
- <20240607-ad4111-v7-9-97e3855900a0@analog.com>
- <e48b2dee-11d2-4dbc-868d-10870e3c07dd@linaro.org>
- <68a25946-247d-4351-b847-35605220b16f@gmail.com>
- <04be66d2-de35-4190-ba9d-011b2b639f94@linaro.org>
-Content-Language: en-US
-From: "Ceclan, Dumitru" <mitrutzceclan@gmail.com>
-In-Reply-To: <04be66d2-de35-4190-ba9d-011b2b639f94@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240719185250.4877-2-robdclark@gmail.com>
 
-On 16/07/2024 09:31, Krzysztof Kozlowski wrote:
-> On 15/07/2024 19:17, Ceclan, Dumitru wrote:
->>>
->>> Please run scripts/checkpatch.pl and fix reported warnings. Then please
->>> run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
->>> Some warnings can be ignored, especially from --strict run, but the code
->>> here looks like it needs a fix. Feel free to get in touch if the warning
->>> is not clear.
->>>
->>> Best regards,
->>> Krzysztof
->>>
->>
->> I do not get any warnings, only checks
->>
->> If you meant the checks:
->> - for the alignment check, i would only argue for struct_group(config_props that looks good
->> - for unnecessary parentheses the compiler warning appears without the parentheses:
->>       warning: suggest parentheses around comparison in operand of ‘!=’ [-Wparentheses]
+On Fri, Jul 19, 2024 at 11:52:50AM -0700, Rob Clark wrote:
+> From: Rob Clark <robdclark@chromium.org>
 > 
-> Hm, in that case it looks like you documented some entirely different
-> bindings?
+> Use the correct panel compatible, and wire up enable-gpio.  It is wired
+> up in the same way as the x1e80100-crd.
 > 
-> Best regards,
-> Krzysztof
+> Signed-off-by: Rob Clark <robdclark@chromium.org>
+> ---
+>  .../boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts   | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
 > 
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
+> index f569f0fbd1fc..28a6ea5a24fd 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
+> @@ -592,9 +592,13 @@ &mdss_dp3 {
+>  
+>  	aux-bus {
+>  		panel {
+> -			compatible = "edp-panel";
+> +			compatible = "samsung,atna45dc02", "samsung,atna33xc20";
+> +			enable-gpios = <&pmc8380_3_gpios 4 GPIO_ACTIVE_HIGH>;
+>  			power-supply = <&vreg_edp_3p3>;
+>  
+> +			pinctrl-0 = <&edp_bl_en>;
+> +			pinctrl-names = "default";
+> +
+>  			port {
+>  				edp_panel_in: endpoint {
+>  					remote-endpoint = <&mdss_dp3_out>;
+> @@ -663,6 +667,13 @@ &pcie6a_phy {
+>  	status = "okay";
+>  };
+>  
+> +&pmc8380_3_gpios {
+> +	edp_bl_en: edp-bl-en-state {
+> +		pins = "gpio4";
+> +		function = "normal";
+> +	};
 
-On which file checkpatch returned warnings for you?
+Did you omit the "power-source" here on purpose? It works without
+because the firmware already configures this pin, but ideally we should
+provide the full configuration.
+
+In /sys/kernel/debug/gpio you can check how the firmware has configured
+the pin. It is probably exactly the same as for the CRD.
+
+Thanks,
+Stephan
 
