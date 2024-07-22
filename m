@@ -1,138 +1,118 @@
-Return-Path: <linux-kernel+bounces-259060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 844759390AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:31:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 123BD9390B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5C251C212F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:31:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4690281F74
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D2A1D551;
-	Mon, 22 Jul 2024 14:31:24 +0000 (UTC)
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A783516DC2E;
+	Mon, 22 Jul 2024 14:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rjmEXCND"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41738C1A;
-	Mon, 22 Jul 2024 14:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D542E8F70;
+	Mon, 22 Jul 2024 14:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721658684; cv=none; b=klxYMQYrA8H74iHm38hnz+N7Ajre1oNUmD08dY8H3FOgjptwJXEXZ4dGUkAL8LwgJ7GVAVpTMOP1ssH88tr2S+MAEtdVMMTENuCfOENUzZWAOS/6oJb9L2OyLiyjN0eqJGfPJTWvUHX3so4atnNovOojuZxDUwe9h1A4065+mbI=
+	t=1721658694; cv=none; b=mi2zRqTLwgPmi0cSEbhw96S17RzGjdQZSpYPL3klM9w1oYL8OzfAPKHN+1JazF0JY9q7BqJeRYS0VQKWnD1KONlA9b3z6v2chQGK+3/u07mTrwJdn9M8Ujbb1SkwZA82lAUjUmi2YCDRhpE2enPDBKnRNA6fBEk9k779Ho+C94k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721658684; c=relaxed/simple;
-	bh=rapf4oFoI+WA3AOgT0/UquPXp4pcbY2UpSY/HF7NMk8=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=T3Sy4CYsdtgFgzoL6p0UXCopCYNoTGZW0c1zL1LrGbiUcMMK9pyg1IPlXUCTJDH1CPvPExbc71w8n97+k5y/jhb9Etg44gXWcqIoR2KZqH5et2aUdhodeSYBVWfPlswPzwKFIZ72y2agtz1yZUngzL3uv3AapoW+uj3iPEZaO+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
-	by madrid.collaboradmins.com (Postfix) with ESMTP id AD5993780523;
-	Mon, 22 Jul 2024 14:31:20 +0000 (UTC)
-From: "Shreeya Patel" <shreeya.patel@collabora.com>
-In-Reply-To: <20240720142236.22f8dbb2@jic23-huawei>
-Content-Type: text/plain; charset="utf-8"
-X-Forward: 127.0.0.1
-References: <20240714193709.543509-1-shreeya.patel@collabora.com> <20240720142236.22f8dbb2@jic23-huawei>
-Date: Mon, 22 Jul 2024 15:31:20 +0100
-Cc: lars@metafoo.de, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@collabora.com, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Marek Vasut" <marex@denx.de>, "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
-To: "Jonathan Cameron" <jic23@kernel.org>
+	s=arc-20240116; t=1721658694; c=relaxed/simple;
+	bh=19lbAMuG8/46S2vgOQ57EZ7eAEiw5QZgfuSPqQZDrsA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n2z2wjoXmnLpYkBpeA+5vmNE1ET12mSsNohMdue1lW2dOpQ8DsnbCL+6TibuoOUXEejP3C2CKMj2vDNuSInxzpQFP+27S3n3GSOtV7x5Mzg71oaSdJpICW5zXMmeevPLAdJUxiAV/kJmu8U5TjV3eiXHEZrCtaMyHrnfWJts7Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rjmEXCND; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6A25C4AF0B;
+	Mon, 22 Jul 2024 14:31:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721658693;
+	bh=19lbAMuG8/46S2vgOQ57EZ7eAEiw5QZgfuSPqQZDrsA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rjmEXCNDKBFkXhGlJsIiF/YiOAsxKiiVQ1yy0ea0mM7am81QSF76gClDv9enAtAlY
+	 k5zMblh91dP2iCOQWwD6UXBINMw2SURV0D5VkPmSTcCj+7qrLkiTc9H5X2ZXYxh7QX
+	 /ztn3FxVCqDdZwqpFFWuHB/egHyBWfmfrmpKrYkCGpLDHUdnmnfjb/anl9IGvbPEnH
+	 XugwdYQn62/PfBmN2Sx/MlckvPbNVxoeQqCGdrWIx9EJAnA97fRcl1FAgUYZvFPWh/
+	 St8tz1MT7X7blLPvAvrsbs+/p6oIUcWDkcQJuST7wIJtoLExPii3xtAVeQFrVH08LG
+	 pTi8SManLPJQA==
+Date: Mon, 22 Jul 2024 15:31:24 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>, Kees Cook <kees@kernel.org>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Ross Burton <ross.burton@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v9 38/39] kselftest/arm64: Add a GCS stress test
+Message-ID: <19c8a2eb-1c52-43aa-a329-3dc245c966e6@sirena.org.uk>
+References: <20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org>
+ <20240625-arm64-gcs-v9-38-0f634469b8f0@kernel.org>
+ <875xt2xojp.fsf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <337fb5-669e6d00-5-3b412bc0@82250038>
-Subject: =?utf-8?q?Re=3A?= [PATCH] =?utf-8?q?iio=3A?==?utf-8?q?_light=3A?=
- =?utf-8?q?_ltrf216a=3A?= Document the device name
-User-Agent: SOGoMail 5.10.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fZmP/tHPENLmAEIV"
+Content-Disposition: inline
+In-Reply-To: <875xt2xojp.fsf@linaro.org>
+X-Cookie: Everything you know is wrong!
 
-On Saturday, July 20, 2024 18:52 IST, Jonathan Cameron <jic23@kernel.or=
-g> wrote:
 
-> On Mon, 15 Jul 2024 01:07:09 +0530
-> Shreeya Patel <shreeya.patel@collabora.com> wrote:
->=20
-> > Compatible 'ltr,ltrf216a' is used by Valve's Steamdeck device
-> > via the ACPI + PRP0001 mechanism.
-> > Document the device name alognside the compatible.
-> >=20
-> > Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
-> Hi Shreeya,
->=20
-> I'm guessing you used get=5Fmaintainers for this.  Always check that =
-there
-> isn't anyone else who should be added.
->=20
-> Given the root of this was the discussion about dropping this undocum=
-ented
-> binding the DT maintainers and list should definitely be CC'd + Marek
-> who was part of the earlier discussion.
->=20
+--fZmP/tHPENLmAEIV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Sorry about that, I used get=5Fmaintainers like you said but I'll keep =
-this in
-mind next time.
+On Thu, Jul 18, 2024 at 08:34:18PM -0300, Thiago Jung Bauermann wrote:
+> Mark Brown <broonie@kernel.org> writes:
 
-> The fact that this isn't a typical ID from a Windows consumer device =
-does
-> change things a little, but I'd imagine a firmware update for the ste=
-amdeck
-> is equally unlikely to happen in order to fix the vendor-id.
-> (I was surprised to discover they provide windows drivers for it but
-> not seeing the light sensor in the list)
->=20
-> So my opinion is that we should keep this ID in place with an enhance=
-d
-> description.
->=20
-> The other suggestion from the Krzysztof's thread was the risk of this=
- getting
-> abused.  Perhaps we should specifically fail to probe if that ID is u=
-sed and
-> it's not an ACPI firmware?
->=20
+> # # Waiting for 9 children
+> # # Thread-4030: Failed to enable GCS
+> # # Thread-4031: Failed to enable GCS
 
-Rob said in another thread that use of it can now not pass the validati=
-on
-with dtschema. So I'm guessing we don't need to add any extra checks an=
-ymore?
+This is already fixed locally, just rebasing bitrot.
 
-However, I'll send a v2 with enhanced description alongside the ID.
+--fZmP/tHPENLmAEIV
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Shreeya Patel
+-----BEGIN PGP SIGNATURE-----
 
->=20
-> > ---
-> >  drivers/iio/light/ltrf216a.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/iio/light/ltrf216a.c b/drivers/iio/light/ltrf2=
-16a.c
-> > index 68dc48420a88..e97ff8f7ecd0 100644
-> > --- a/drivers/iio/light/ltrf216a.c
-> > +++ b/drivers/iio/light/ltrf216a.c
-> > @@ -528,7 +528,7 @@ MODULE=5FDEVICE=5FTABLE(i2c, ltrf216a=5Fid);
-> > =20
-> >  static const struct of=5Fdevice=5Fid ltrf216a=5Fof=5Fmatch[] =3D {
-> >  	{ .compatible =3D "liteon,ltrf216a" },
-> > -	{ .compatible =3D "ltr,ltrf216a" },
-> > +	{ .compatible =3D "ltr,ltrf216a" }, /* For Valve's Steamdeck devi=
-ce */
->=20
-> Add that the steamdeck is an ACPI platform using PRP0001 as that's
-> the key part that is different from a normal 'wrong' of=5Fdevice=5Fid=
-.
->=20
->=20
-> >  	{}
-> >  };
-> >  MODULE=5FDEVICE=5FTABLE(of, ltrf216a=5Fof=5Fmatch);
->
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaebTsACgkQJNaLcl1U
+h9A1BAf/U0ze5vCUOiRu38u3xvKe2wO4c/NxU38BnN6U5lriKaPwnoC8WAtlYPBJ
+67+s8YadLJLRgDMtuUHW85HuikmcDmVUs5SUM7HwwVd6qMVx9FYmMls8aA9Powqn
+u0Y4vFhfQwlvL0aSBnYPBF2vjCXMYzN8EVHJaJhPJlB5HsZstADQQM77apbd9U2V
+BD0gJukw9LhNPPTmNyuuBnF9jXXCAUXEpEosdsWYl4f6+msBc5abKIt1agzRJhFE
+yYalLzSD/wqZOZGLXf/Cx/DzdJLC8/ahN8cI5MqCUDDQFLFnhV/vS2yld0/Cu0sw
+qwhjMxP9NPq+uiruBXIU7nGO40rudg==
+=Kw0J
+-----END PGP SIGNATURE-----
 
+--fZmP/tHPENLmAEIV--
 
