@@ -1,102 +1,78 @@
-Return-Path: <linux-kernel+bounces-259365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE90B9394DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:40:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C2489394E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B92F28265E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:40:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D76531F220C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AA353BBF2;
-	Mon, 22 Jul 2024 20:40:35 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77C02C879;
-	Mon, 22 Jul 2024 20:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA7838DD2;
+	Mon, 22 Jul 2024 20:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OgDOMPp1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C10D2C879;
+	Mon, 22 Jul 2024 20:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721680835; cv=none; b=bs1+RObjDqYDTmvZpkt8NE43aDXcqHiv39rr+0OkwEmaaCpbLcwdroqjuIG1CgQykDt45jhxemFHvbVaKPw+3WqktfAW1Z7E1PrQnObLpBsdZO33u1gDJYufMREeiMJMN1QVyfZ0DhQRakY+XaVDYm8UoAsRsQ8ek/P4ACLq7l4=
+	t=1721681085; cv=none; b=KUDXWut60lC0RoyKhCQSXIHn/rN7wJ58JBsPQ6KCMdlVi9O9yrU1lHgU8dqw0Ze0yVnDtb7OaDAAzsgUkb5E+jExQ8MRygIxMLeW6xAupiGeeLs91FS2xd9aTQNAAZhlHmacy10sOUEVlrQC8bSulazGIxuMqsmwNkmPIKB9wpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721680835; c=relaxed/simple;
-	bh=zMq1COTfxr28zTUf4ikrErgLDnhXEQIb4HQURyhtF7M=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=gRPGefbVrH+lKXSrzaxPSc5NRjPcFSHpqsV6gCEdEXieZnaN9L3k6vcxM4oEvTWdX8K1fX4jPIN5L5D577sDRP7GRqb7txdXzzvJw+fD8vgLYyJxQ3d9lttW220zOZje8uHdbp3oVJaH2NTLzKniKP4hGIqrLJ92Q+GI1yJtdgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 3F9AC92009C; Mon, 22 Jul 2024 22:40:29 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 38AC992009B;
-	Mon, 22 Jul 2024 21:40:29 +0100 (BST)
-Date: Mon, 22 Jul 2024 21:40:29 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Matthew W Carlis <mattc@purestorage.com>
-cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-    alex.williamson@redhat.com, Bjorn Helgaas <bhelgaas@google.com>, 
-    christophe.leroy@csgroup.eu, "David S. Miller" <davem@davemloft.net>, 
-    david.abdurachmanov@gmail.com, edumazet@google.com, kuba@kernel.org, 
-    leon@kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-    linux-rdma@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, lukas@wunner.de, 
-    mahesh@linux.ibm.com, mika.westerberg@linux.intel.com, mpe@ellerman.id.au, 
-    netdev@vger.kernel.org, npiggin@gmail.com, oohall@gmail.com, 
-    pabeni@redhat.com, pali@kernel.org, saeedm@nvidia.com, sr@denx.de, 
-    Jim Wilson <wilson@tuliptree.org>
-Subject: Re: PCI: Work around PCIe link training failures
-In-Reply-To: <20240722193407.23255-1-mattc@purestorage.com>
-Message-ID: <alpine.DEB.2.21.2407222117300.51207@angie.orcam.me.uk>
-References: <alpine.DEB.2.21.2306111619570.64925@angie.orcam.me.uk> <20240722193407.23255-1-mattc@purestorage.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1721681085; c=relaxed/simple;
+	bh=9HziypFt7UmheTx1kExdsVxWElmmGCTeLc5pkbsTTUM=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=XRYEFMj31/4sDui+g1qNuquUHzSfh8cQXJz/AddfU5q7uUSeWUNrvh88t+izhmoFEPU+1JogPEoPiBY0AWLGeua4/BlsaWElrCggbZb2BiBgOJAp5NBt83YnsPeufKy1FblGf6g/2NC7ovLk5vvcbi/c1ELfDZlOGoyOcXZS/xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OgDOMPp1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3E669C116B1;
+	Mon, 22 Jul 2024 20:44:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721681085;
+	bh=9HziypFt7UmheTx1kExdsVxWElmmGCTeLc5pkbsTTUM=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=OgDOMPp1UCE+WgZzfTlABPTWuXowicAixlJatrDPbQiRyc1JAr11q7ku0gtme70Rn
+	 5Xh32qp7KzoFicrUxCcRsR+SsIBm6LQq97Sz8itF/ZjD0sP99ZrQnw3cAx51Oq3HK5
+	 Wa5oed4nfRRpfNmezNjjI0RZpU+TfSUsVScUimchE1OU5XGqMFIuSZvklHrC2KDCP/
+	 UrLK24Ka0mpvHJN68oIfCibI2lecO3GYZRqbAqHLqdYfspqzkq60KeukDVeBUk35Vr
+	 hybIvWPKk/3/wt5zXPnxfLi1gfq8qU0Yjg46vknnnf6FOgoIapdWG3mj79efObDAtN
+	 9pSrJocgdEROA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 3287AC433E9;
+	Mon, 22 Jul 2024 20:44:45 +0000 (UTC)
+Subject: Re: [GIT PULL] ntfs3: bugfixes for 6.11
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240722094014.16888-1-almaz.alexandrovich@paragon-software.com>
+References: <20240722094014.16888-1-almaz.alexandrovich@paragon-software.com>
+X-PR-Tracked-List-Id: <ntfs3.lists.linux.dev>
+X-PR-Tracked-Message-Id: <20240722094014.16888-1-almaz.alexandrovich@paragon-software.com>
+X-PR-Tracked-Remote: https://github.com/Paragon-Software-Group/linux-ntfs3.git tags/ntfs3_for_6.11
+X-PR-Tracked-Commit-Id: 911daf695a740d9a58daef65dabfb5f69f18190f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 5ea6d72489a4a937fb9e9f9e81474cdf3483196e
+Message-Id: <172168108519.32529.14879953561624262800.pr-tracker-bot@kernel.org>
+Date: Mon, 22 Jul 2024 20:44:45 +0000
+To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc: torvalds@linux-foundation.org, ntfs3@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
 
-[+cc Ilpo for his previous involvement here]
+The pull request you sent on Mon, 22 Jul 2024 12:40:14 +0300:
 
-On Mon, 22 Jul 2024, Matthew W Carlis wrote:
+> https://github.com/Paragon-Software-Group/linux-ntfs3.git tags/ntfs3_for_6.11
 
-> Sorry to resurrect this one, but I was wondering why the
-> PCI device ID in drivers/pci/quirks.c for the ASMedia ASM2824
-> isn't checked before forcing the link down to Gen1... We have
-> had to revert this patch during our kernel migration due to it
-> interacting poorly with at least one older Gen3 PLX PCIe switch
-> vendor/generation while using DPC. In another context we have
-> found similar issues during system bringup without DPC while
-> using a more legacy hot-plug model (BIOS defaults for us..).
-> In both contexts our devices are stuck at Gen1 after physical
-> hot-plug/insert, power-cycle.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/5ea6d72489a4a937fb9e9f9e81474cdf3483196e
 
- Sorry to hear about your problems.  However the workaround is supposed to 
-only trigger if the link has already failed negotiation.  Could you please 
-be more specific as to the actual scenario where it triggers?
+Thank you!
 
- A scenario was mentioned earlier on, where a downstream device has been 
-removed from a slot and left behind the LBMS bit set in the corresponding 
-downstream port of the upstream device.  It then triggered the workaround 
-where the port was rescanned with the slot still empty, which then left 
-the link capped at 2.5GT/s for a device subsequently inserted.  Is it what 
-happens for you?
-
- As I recall Ilpo has been working on changes that among others should 
-make sure no stale LBMS bit has been left set, but I'm not sure what the 
-state of affairs has been here.  Myself I've been too swamped in the 
-recent months and consequently didn't look into any improvements in this 
-area (and unrelated issues involving the system in question in my remote 
-lab have further impeded me).
-
-> Tried reading through the patch history/review but it was still
-> a little bit unclear to me. Can we add the device ID check as a
-> precondition to forcing link to Gen1?
-
- The main reason is it is believed that it is the downstream device 
-causing the issue, and obviously you can't fetch its ID if you can't 
-negotiate link so as to talk to it in the first place.
-
-  Maciej
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
