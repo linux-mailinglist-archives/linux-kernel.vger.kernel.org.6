@@ -1,102 +1,106 @@
-Return-Path: <linux-kernel+bounces-259046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D420A939073
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:17:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27208939078
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:19:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D89BB21995
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:17:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C334D1F22207
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:19:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8734DC8FE;
-	Mon, 22 Jul 2024 14:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nNW6tN4h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12108C8FE;
+	Mon, 22 Jul 2024 14:19:03 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66BED2F5;
-	Mon, 22 Jul 2024 14:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DFE1D555;
+	Mon, 22 Jul 2024 14:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721657824; cv=none; b=WfwY8a0p6nD8wi0Gio5Br7EKXZiEAAgWWzrTp7jo5VgGXSVjN+jzAGvHigeW2pT40benSOH2yD4FT2yIsn0CxSsW9tI2fhJcfukYgNXiu25ZbQwcJg5GR+gtSUySNR703kYveln39vfXGca78SrP7ueLcZX88GZQqDJbGnp+ekQ=
+	t=1721657942; cv=none; b=QyPa3wzfD+JT/4+J+NqMQeiRWShVuxe8giokgA/JTGWmX6V3LXxEV+cBqpVqF40UCgz4Ljbi+G1wAxVTA37QbSt5JxSEhnRHK9jEMTk/hh2m16qNJqegPg7nldstVA/yCHJDSsKRYzrfP8uc+ixFMJctyDHPLatDyin3kuS31g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721657824; c=relaxed/simple;
-	bh=Ko2Yxrd9A82RGO0V5UXcG4SDQffxJqnPcBN2Rk9wwLU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=XHhMhoenRP83t9d2pZdcHrssgaBbzHJRqP3j8MuHucB0y8VR9lI8JarR4WHgAOJHRV8LsgK3yIl/48EBgYRqv7O3rQZEWgUtw4QPNOOfVw0npbyU65M/3zwTdkOhs+I+AtwAT5/pxS2dqxRbRjwKkcWYqZoMHR17XcySWdhSHhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nNW6tN4h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB464C4AF0B;
-	Mon, 22 Jul 2024 14:17:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721657824;
-	bh=Ko2Yxrd9A82RGO0V5UXcG4SDQffxJqnPcBN2Rk9wwLU=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=nNW6tN4hkwMEY5JWOF7rlmzprQVbp2Rzlxjj9XFrPxumaiKU2FNL9ZEZSrsnDCQMO
-	 Dd7Bo3gr3Jen5OTheNWdCOxQ200jH1HS0j7N6t+fAIVbTtpMfOw70GZnfCMklfspLo
-	 tPnyfQU8Ds//hLptpoDd/04+P/xpP0Mnk6fUiQxO3d5jb7xJHRKbkuZRSqVCrwkCwI
-	 mcx67nNz61c9xZbh75F93CIqI58tl7UKMBxezBSMav4bM9ttLWWffT+BbM+8Oldo74
-	 MNuzZ2j29jaBJRaU4/yQqhTL2gUgntY/Nketld3E6ye24//Xg/yZtZr0PJ70h1ikBF
-	 HdIUefSqJ5zKQ==
-Message-ID: <7b02e164-c6de-41b5-b036-0d4b705a992c@kernel.org>
-Date: Mon, 22 Jul 2024 15:16:59 +0100
+	s=arc-20240116; t=1721657942; c=relaxed/simple;
+	bh=Xbs3UoWOYGOngJPTQG/teNnhaR6M0GSk/kW8lB9VjU0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kUR7PEjisStdsGXQ2wBVOo/EB2k1Fw9pvvQSiq5rUSPlLnxECqqStEw/vjO9f+zssCqjQQGADKBzrDQ7L89Ow5a4OTJvCDFTzhmSwSuiysuw+JHfhGepquj72YZ+00CWcBQrxs6KdRTplmohvrkxqW9U9rhVh0snls+UcSSGt/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowAB3XTg1ap5mDvtiAA--.21150S2;
+	Mon, 22 Jul 2024 22:18:32 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: broonie@kernel.org,
+	jwboyer@linux.vnet.ibm.com,
+	dbrownell@users.sourceforge.net,
+	sfalco@harris.com,
+	akpm@linux-foundation.org,
+	sr@denx.de
+Cc: linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>
+Subject: [PATCH v3] spi: ppc4xx: handle irq_of_parse_and_map() errors
+Date: Mon, 22 Jul 2024 22:18:22 +0800
+Message-Id: <20240722141822.1052370-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Quentin Monnet <qmo@kernel.org>
-Subject: Re: [v3 PATCH bpf-next 2/4] bpftool: add net attach/detach command to
- tcx prog
-To: Tao Chen <chen.dylane@gmail.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>
-Cc: Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240721144221.96228-1-chen.dylane@gmail.com>
-Content-Language: en-GB
-In-Reply-To: <20240721144221.96228-1-chen.dylane@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAB3XTg1ap5mDvtiAA--.21150S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JrWfuF17Kr4DCr4kZF43KFg_yoWfurb_Cw
+	4fZr4I9rWUCrnaka4UKr4fAryF9398Xw1vvr92qF9xtrZ8GFnFv34IvF1UXay09w4UGF12
+	kwnrZa45ZrnIqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
+	1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+	w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMc
+	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v
+	4I1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
+	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
+	17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
+	73UjIFyTuYvjfUF0eHDUUUU
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-2024-07-21 22:42 UTC+0800 ~ Tao Chen <chen.dylane@gmail.com>
-> Now, attach/detach tcx prog supported in libbpf, so we can add new
-> command 'bpftool attach/detach tcx' to attach tcx prog with bpftool
-> for user.
-> 
->  # bpftool prog load tc_prog.bpf.o /sys/fs/bpf/tc_prog
->  # bpftool prog show
-> 	...
-> 	192: sched_cls  name tc_prog  tag 187aeb611ad00cfc  gpl
-> 	loaded_at 2024-07-11T15:58:16+0800  uid 0
-> 	xlated 152B  jited 97B  memlock 4096B  map_ids 100,99,97
-> 	btf_id 260
->  # bpftool net attach tcx_ingress name tc_prog dev lo
->  # bpftool net
-> 	...
-> 	tc:
-> 	lo(1) tcx/ingress tc_prog prog_id 29
-> 
->  # bpftool net detach tcx_ingress dev lo
->  # bpftool net
-> 	...
-> 	tc:
->  # bpftool net attach tcx_ingress name tc_prog dev lo
->  # bpftool net
-> 	tc:
-> 	lo(1) tcx/ingress tc_prog prog_id 29
-> 
-> Test environment: ubuntu_22_04, 6.7.0-060700-generic
-> 
-> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+Zero and negative number is not a valid IRQ for in-kernel code and the
+irq_of_parse_and_map() function returns zero on error.  So this check for
+valid IRQs should only accept values > 0.
 
-The series looks good from my side, thanks for this work!
+Fixes: 44dab88e7cc9 ("spi: add spi_ppc4xx driver")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+Changes in v3:
+- removed Cc stable line as suggestions.
+Changes in v2:
+- added Cc stable line;
+- added Fixes line.
+---
+ drivers/spi/spi-ppc4xx.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Acked-by: Quentin Monnet <qmo@kernel.org>
+diff --git a/drivers/spi/spi-ppc4xx.c b/drivers/spi/spi-ppc4xx.c
+index 01fdecbf132d..599c29a31269 100644
+--- a/drivers/spi/spi-ppc4xx.c
++++ b/drivers/spi/spi-ppc4xx.c
+@@ -416,6 +416,9 @@ static int spi_ppc4xx_of_probe(struct platform_device *op)
+ 	if (hw->irqnum <= 0)
+ 		goto free_host;
+ 
++	if (hw->irqnum <= 0)
++		goto free_host;
++
+ 	ret = request_irq(hw->irqnum, spi_ppc4xx_int,
+ 			  0, "spi_ppc4xx_of", (void *)hw);
+ 	if (ret) {
+-- 
+2.25.1
+
 
