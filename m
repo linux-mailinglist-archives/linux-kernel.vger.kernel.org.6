@@ -1,462 +1,118 @@
-Return-Path: <linux-kernel+bounces-258361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B88359386C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 02:11:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C77C19386CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 02:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74CE11C20B8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 00:11:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 839BF281206
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 00:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903F41FA4;
-	Mon, 22 Jul 2024 00:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908484A31;
+	Mon, 22 Jul 2024 00:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BQc8olGy"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JJ/sTkSn"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BFF366;
-	Mon, 22 Jul 2024 00:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FFD23AD
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 00:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721607074; cv=none; b=bViJDUOG3W3K1fHOzkSwQ+7r08O+6nwmPoHaxYN8saDkUQAbABWvubKZYFoxDPGtfWVGpcMjPgYODOixZyXW7ozZ6D9938uYGPmUtPYP/GLiUFzUlmggbaf/lf0yLiZ0e2Uwep2WD2E7bWEXF9T90PwPb/743hI9LbIMC4XDcsQ=
+	t=1721607320; cv=none; b=XoV5zOxlZhJzpKKzoIrVfHPkFATSvxZbNgh/VvGujufamAYIqUGbFWVI6gF674+IZ17zAV7MiXVrj6tCdO2n1RKFchUepR79EFtKTw4mw83IuiBzUc8WP83vJCHdN/4srUOzI9O98pmAJxeAN6+GU2nwYSrgUZZdfLaM9JK7NTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721607074; c=relaxed/simple;
-	bh=OxRgbhecBdanuVXzQ0K8DPaBf0aPeEE7SpsUo7s7qXQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=IiWc8iKiPKxAZLTjVJP6mDEKQr9gBpVSUDx8SarmTDL3XAjYNYoEYQoPBy4tHKuJGm8HZxqQCXPvxbGNqbMaodjNE1wIPVljh+7t1f4N7VmEBv4SFB7Pg5kxOoSQQ1spGcM7HeLWH0YJcfxxV4MRKbEYIJ/Jeaet6SPZ85tCOy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BQc8olGy; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-79f190d8ebfso249799985a.3;
-        Sun, 21 Jul 2024 17:11:11 -0700 (PDT)
+	s=arc-20240116; t=1721607320; c=relaxed/simple;
+	bh=4Lbvqiw93G2zHnDDYZ8Omb+j3DFInAVl4LQ2gZSThOg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WR2WFZW81PYep8p3/fpQjE5iQsDN6K365FYcaJJGU1vjkzSWkBbaVgSuplQk5Cp0760o/LNf+4NtVjq2y8GVWxuXB1aMcNxLgaqNTsZq7GuBQP70Azap1hmVThndE0Q5Q/i0/D5o66BbTcOCT+7PG5aq4UvFHOP/R1vmn2dTDDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JJ/sTkSn; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7a47e2179dso141735066b.3
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 17:15:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721607070; x=1722211870; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=zL32Nv+jjZ2wD8DQgYux14fODMd/vGdn84o/sQVGQEI=;
-        b=BQc8olGy/DXohZLVQJi99c5l1l4pUQAipUo/WaFyN2i5FCnt+UezRlY0YMfySkwO+f
-         nAfzlwEfJVsxcXR0quk1iZSxhM+uPenG0z0KWmeKQHj/MrTY2niDyG4fq0fYiFksLCqe
-         pZr4sFg4ISlIDi4zYZbC4oF4BHlMlSYVI2cyUzq/yReh0so714e0Hl24BA/pAAy1PDGt
-         zGN5PC796BIxlLsYUTMv3PVADTploBp/zY+c5CmvRs4CBJ6pH406EMwwqETUJOnK0DHE
-         jEN+ZS9+4tsunkPRhdQrd1GW8MCUCvtOtUcRFaDtF/OVD7XsAOc4nJRIBwHAQDMsB2wW
-         48EQ==
+        d=linux-foundation.org; s=google; t=1721607317; x=1722212117; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fk+ZewaFQX4J1b598U+n7tTY7Ck12eH0e7NaScJUzQE=;
+        b=JJ/sTkSnj4dWqLFQWOqk+S24G6i3Z6RGXAQc6AFTUwgfBjsZ74NkM9O0Ze7xG4TlI7
+         B45ifVecEO+TnTb8QmTUX1vCRZRnODYTxCs2ghXT+mVVOr0hhy+3PeBNUamr19YV8EPe
+         eYG9mtMgJoCXUGCd4xR5LkT2IGs90U4jaA/gs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721607070; x=1722211870;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zL32Nv+jjZ2wD8DQgYux14fODMd/vGdn84o/sQVGQEI=;
-        b=ZxEA9mLZIZxDcMNM4LrV4FaPWVdiwtp0EoUyk3Kc8op5DX2urBXSYyhgv7R5u50CKb
-         7Z/Qom41715d8+2GbudQSbYYc0nXUSddB3kmyIIa8oCwzgXeoJgBIcwl62mwAit/a9Mx
-         HghqX7ScI5RewUEH/aW7BNrjB55L6Nx9VqzqxG+U61nenQoqDPxjJGiMXeGxQDYwszcj
-         J+Tz9PMPqru3OItazBEMXMjIP1FJ8k5ZjHtUzuWU2Df6KiPrvAlJ3aSZpVoMuy4Wc05J
-         pWU29pCCzXMNK1YXBVS8UVdb9JdPTIrZTXoi5lFW/KYnRyrCKvq9Ubew11qxWkOq7zLp
-         6a1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUj17Gw1NEoal0Gdtd2vspoCIwfGubQ62iaShILCoZ4yPVZzpzyEClPDBvVVo97ojOFnisau/Fhst3cCyuBoEUMKEl5ENfitWVvzm/g7pGFDsray6/bBLCG1jvOZSmdVQBeGIZrvxgh++E=
-X-Gm-Message-State: AOJu0YwrZXaaCSb1fQ7mwZSEhM5xXLQ7lXMGOcHp8T5/4oVcCH7mU2A1
-	YC1IBi2g5/+b6qmq9frwax70PDT/KDew+bCEJbRUJM5kv1jJJAtkuI/E69QbfUK5jKzDEBqnecF
-	VdPIQpkSQMI8qTr8ocOQAaDhWmQ==
-X-Google-Smtp-Source: AGHT+IGRdhnRxnoZ//E6qNGvKACcldFNltx3KGlGVUVMj8CeFNE+nJK4h2Ff6FDPfRE4FFkwWUjdyuEoVPZrH/okk04=
-X-Received: by 2002:a05:620a:19a9:b0:79d:916d:ae5 with SMTP id
- af79cd13be357-7a1a130ad89mr936546985a.5.1721607070434; Sun, 21 Jul 2024
- 17:11:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721607317; x=1722212117;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Fk+ZewaFQX4J1b598U+n7tTY7Ck12eH0e7NaScJUzQE=;
+        b=rofISwtckfIf5x1XS2qpsWKp6cRy0izhO4G4NPgjYW6uHRb34KA/THwIE+4fMQlaRB
+         w6rT4UbeEuN9/xYS+R+sj5NUfBEvE7Ev4BqJkWUsZMUwKYwYJxfM7akokY8rP+Z6/GFG
+         pLZIf8WnhO4WaIOUnMBZHhXrXGllRqqCFCQ+umcdV1N00Cg7q0bmRzbxJsVIaYeu9eu9
+         Evh212t/zdJK9JRA0slAydcgKT/MnX9OgO/2Xx5aLegq+HjneiyDHguqBGyM1XIX16h/
+         X0l5NfQWmz91DHfxtVcqk1K0cIGspCpBWJOMVgJiC64OYnK42TNm1fTo0mPEOHJnYf5P
+         8RRw==
+X-Forwarded-Encrypted: i=1; AJvYcCUeZuSds1zAGNW7obfEekbvX+EFHGpJyfCaOsN5RrUma4gOUOOqNEB73uVH826BKtIZ881BThjGAO5X3XOPHwezN6iSrooD6ClQl2UL
+X-Gm-Message-State: AOJu0YwyIN9TrF+jIaRlzry8u9fT614pEqsUagO/EIPSe/Qy2SpZ0CRN
+	vGtUkbFv8ND1KRHpTKS20pZkwArS0jEd5RUTUHAt7wlAm96x9hbZfOWx9Uzjg7k/6Gm4D4aW/Xc
+	nxIM=
+X-Google-Smtp-Source: AGHT+IFyu3+/xpS/AbQmyGmpRgssd80qHwVpc251oTyNfvk6CSxA2pC1TUHo1YC6G9FDeeb8JS2AOg==
+X-Received: by 2002:a17:907:980d:b0:a77:bfca:da57 with SMTP id a640c23a62f3a-a7a4c445b67mr323008466b.44.1721607316976;
+        Sun, 21 Jul 2024 17:15:16 -0700 (PDT)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c8c1ae1sm348325466b.109.2024.07.21.17.15.16
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 21 Jul 2024 17:15:16 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5a10bb7b237so2864083a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 17:15:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXWFTd+0VHB7UiSeqwz9s9Gd7JeWoaTqUy7X4IhiK97LxLzv/MnQQiuRcSqntobNkUZDClD/EyXk/m/cIE84nUr/GOAY4mP6JQyxhni
+X-Received: by 2002:a05:6402:5204:b0:58d:81ac:ea90 with SMTP id
+ 4fb4d7f45d1cf-5a47c2763damr2803143a12.38.1721607316164; Sun, 21 Jul 2024
+ 17:15:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Nick Weihs <nick.weihs@gmail.com>
-Date: Sun, 21 Jul 2024 17:10:59 -0700
-Message-ID: <CAGKKx0-FRCbeS5CTQfoe3Zqw9BH6Wws1ch_XhyzxaP_s2z+OqA@mail.gmail.com>
-Subject: [PATCH] ALSA: hda/realtek: Implement sound init sequence for Samsung
- Galaxy Book3 Pro 360
-To: tiwai@suse.com
-Cc: lsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Nick Weihs <nick.weihs@gmail.com>
+References: <20240721145415.fbeb01a853962ef91334f3d1@linux-foundation.org>
+In-Reply-To: <20240721145415.fbeb01a853962ef91334f3d1@linux-foundation.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 21 Jul 2024 17:14:59 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjPuiT+qqWXYb04AssPqo8FYMpjE43OQR4y91wtqxoHdg@mail.gmail.com>
+Message-ID: <CAHk-=wjPuiT+qqWXYb04AssPqo8FYMpjE43OQR4y91wtqxoHdg@mail.gmail.com>
+Subject: Re: [GIT PULL] MM updates for 6.11-rc1
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Samsung Galaxy Book3 Pro 360 sends a large amount of data to the codec
-through hda processing coefficients.  This data was captured using a
-modified version of QEMU, but the actual content of the data remains
-opaque to me.  Elliding any part of the data seems to cause sound to
-not work.
+On Sun, 21 Jul 2024 at 14:54, Andrew Morton <akpm@linux-foundation.org> wrote:
+>
+> - Is anyone reading this stuff?  If so, email me!
 
-Signed-off-by: Nick Weihs <nick.weihs@gmail.com>
----
- sound/pci/hda/patch_realtek.c | 305 ++++++++++++++++++++++++++++++++++
- 1 file changed, 305 insertions(+)
+I do actually try to read the explanations..
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index aa76d1c88589..cbe6d9689fc3 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -4796,6 +4796,304 @@ static void alc298_fixup_samsung_amp(struct
-hda_codec *codec,
-     }
- }
+However, I also do build testing, which seems to have been missing. Notably:
 
-+static inline void alc298_samsung_write_coef_pack2(struct hda_codec *codec,
-+                           const unsigned short coefs[4])
-+{
-+    int i;
-+
-+    for (i = 0; i < 100; i++) {
-+        if ((alc_read_coef_idx(codec, 0x26) & 0x0010) == 0)
-+            break;
-+    }
-+
-+    alc_write_coef_idx(codec, 0x23, coefs[0]);
-+    alc_write_coef_idx(codec, 0x24, coefs[1]);
-+    alc_write_coef_idx(codec, 0x25, coefs[2]);
-+    alc_write_coef_idx(codec, 0x26, coefs[3]);
-+}
-+
-+static inline void alc298_samsung_write_coef_pack_seq(
-+                        struct hda_codec *codec,
-+                        unsigned char target,
-+                        const unsigned short (*sequence)[4],
-+                        int count)
-+{
-+    alc_write_coef_idx(codec, 0x22, target);
-+    for (int i = 0; i < count; i++)
-+        alc298_samsung_write_coef_pack2(codec, sequence[i]);
-+}
-+
-+struct alc298_samsung_coeff_fixup_desc {
-+    unsigned char coeff_idx;
-+    unsigned short coeff_value;
-+};
-+
-+static void alc298_fixup_samsung_amp2(struct hda_codec *codec,
-+                      const struct hda_fixup *fix, int action)
-+{
-+    int i;
-+    static const struct alc298_samsung_coeff_fixup_desc fixups1[] = {
-+        { 0x99, 0x8000 }, { 0x82, 0x4408 }, { 0x32, 0x3f00 }, { 0x0e, 0x6f80 },
-+        { 0x10, 0x0e21 }, { 0x55, 0x8000 }, { 0x08, 0x2fcf }, { 0x08, 0x2fcf },
-+        { 0x2d, 0xc020 }, { 0x19, 0x0017 }, { 0x50, 0x1000 }, { 0x0e, 0x6f80 },
-+        { 0x08, 0x2fcf }, { 0x80, 0x0011 }, { 0x2b, 0x0c10 }, { 0x2d, 0xc020 },
-+        { 0x03, 0x0042 }, { 0x0f, 0x0062 }, { 0x08, 0x2fcf },
-+    };
-+
-+    static const unsigned short amp_0x38[][4] = {
-+        { 0x2000, 0x0000, 0x0001, 0xB011 }, { 0x23FF, 0x0000, 0x0000, 0xB011 },
-+        { 0x203A, 0x0000, 0x0080, 0xB011 }, { 0x23E1, 0x0000, 0x0000, 0xB011 },
-+        { 0x2012, 0x0000, 0x006F, 0xB011 }, { 0x2014, 0x0000, 0x0000, 0xB011 },
-+        { 0x201B, 0x0000, 0x0001, 0xB011 }, { 0x201D, 0x0000, 0x0001, 0xB011 },
-+        { 0x201F, 0x0000, 0x00FE, 0xB011 }, { 0x2021, 0x0000, 0x0000, 0xB011 },
-+        { 0x2022, 0x0000, 0x0010, 0xB011 }, { 0x203D, 0x0000, 0x0005, 0xB011 },
-+        { 0x203F, 0x0000, 0x0003, 0xB011 }, { 0x2050, 0x0000, 0x002C, 0xB011 },
-+        { 0x2076, 0x0000, 0x000E, 0xB011 }, { 0x207C, 0x0000, 0x004A, 0xB011 },
-+        { 0x2081, 0x0000, 0x0003, 0xB011 }, { 0x2399, 0x0000, 0x0003, 0xB011 },
-+        { 0x23A4, 0x0000, 0x00B5, 0xB011 }, { 0x23A5, 0x0000, 0x0001, 0xB011 },
-+        { 0x23BA, 0x0000, 0x0094, 0xB011 }, { 0x2100, 0x00D0, 0x950E, 0xB017 },
-+        { 0x2104, 0x0061, 0xD4E2, 0xB017 }, { 0x2108, 0x00D0, 0x950E, 0xB017 },
-+        { 0x210C, 0x0075, 0xF4E2, 0xB017 }, { 0x2110, 0x00B4, 0x4B0D, 0xB017 },
-+        { 0x2114, 0x000A, 0x1000, 0xB017 }, { 0x2118, 0x0015, 0x2000, 0xB017 },
-+        { 0x211C, 0x000A, 0x1000, 0xB017 }, { 0x2120, 0x0075, 0xF4E2, 0xB017 },
-+        { 0x2124, 0x00B4, 0x4B0D, 0xB017 }, { 0x2128, 0x0000, 0x0010, 0xB017 },
-+        { 0x212C, 0x0000, 0x0000, 0xB017 }, { 0x2130, 0x0000, 0x0000, 0xB017 },
-+        { 0x2134, 0x0000, 0x0000, 0xB017 }, { 0x2138, 0x0000, 0x0000, 0xB017 },
-+        { 0x213C, 0x0000, 0x0010, 0xB017 }, { 0x2140, 0x0000, 0x0000, 0xB017 },
-+        { 0x2144, 0x0000, 0x0000, 0xB017 }, { 0x2148, 0x0000, 0x0000, 0xB017 },
-+        { 0x214C, 0x0000, 0x0000, 0xB017 }, { 0x2150, 0x0000, 0x0010, 0xB017 },
-+        { 0x2154, 0x0000, 0x0000, 0xB017 }, { 0x2158, 0x0000, 0x0000, 0xB017 },
-+        { 0x215C, 0x0000, 0x0000, 0xB017 }, { 0x2160, 0x0000, 0x0000, 0xB017 },
-+        { 0x2164, 0x0000, 0x0010, 0xB017 }, { 0x2168, 0x0000, 0x0000, 0xB017 },
-+        { 0x216C, 0x0000, 0x0000, 0xB017 }, { 0x2170, 0x0000, 0x0000, 0xB017 },
-+        { 0x2174, 0x0000, 0x0000, 0xB017 }, { 0x2178, 0x0000, 0x0010, 0xB017 },
-+        { 0x217C, 0x0000, 0x0000, 0xB017 }, { 0x2180, 0x0000, 0x0000, 0xB017 },
-+        { 0x2184, 0x0000, 0x0000, 0xB017 }, { 0x2188, 0x0000, 0x0000, 0xB017 },
-+        { 0x218C, 0x0064, 0x5800, 0xB017 }, { 0x2190, 0x00C8, 0xB000, 0xB017 },
-+        { 0x2194, 0x0064, 0x5800, 0xB017 }, { 0x2198, 0x003D, 0x5BE7, 0xB017 },
-+        { 0x219C, 0x0054, 0x060A, 0xB017 }, { 0x21A0, 0x00C8, 0xA310, 0xB017 },
-+        { 0x21A4, 0x0029, 0x4DE5, 0xB017 }, { 0x21A8, 0x0032, 0x420C, 0xB017 },
-+        { 0x21AC, 0x0029, 0x4DE5, 0xB017 }, { 0x21B0, 0x00FA, 0xE50C, 0xB017 },
-+        { 0x21B4, 0x0000, 0x0010, 0xB017 }, { 0x21B8, 0x0000, 0x0000, 0xB017 },
-+        { 0x21BC, 0x0000, 0x0000, 0xB017 }, { 0x21C0, 0x0000, 0x0000, 0xB017 },
-+        { 0x21C4, 0x0000, 0x0000, 0xB017 }, { 0x21C8, 0x0056, 0xC50F, 0xB017 },
-+        { 0x21CC, 0x007B, 0xD7E1, 0xB017 }, { 0x21D0, 0x0077, 0xA70E, 0xB017 },
-+        { 0x21D4, 0x00E0, 0xBDE1, 0xB017 }, { 0x21D8, 0x0032, 0x530E, 0xB017 },
-+        { 0x2204, 0x00FB, 0x7E0F, 0xB017 }, { 0x2208, 0x000B, 0x02E1, 0xB017 },
-+        { 0x220C, 0x00FB, 0x7E0F, 0xB017 }, { 0x2210, 0x00D5, 0x17E1, 0xB017 },
-+        { 0x2214, 0x00C0, 0x130F, 0xB017 }, { 0x2218, 0x00E5, 0x0A00, 0xB017 },
-+        { 0x221C, 0x00CB, 0x1500, 0xB017 }, { 0x2220, 0x00E5, 0x0A00, 0xB017 },
-+        { 0x2224, 0x00D5, 0x17E1, 0xB017 }, { 0x2228, 0x00C0, 0x130F, 0xB017 },
-+        { 0x222C, 0x00F5, 0xDB0E, 0xB017 }, { 0x2230, 0x0017, 0x48E2, 0xB017 },
-+        { 0x2234, 0x00F5, 0xDB0E, 0xB017 }, { 0x2238, 0x00EF, 0x5CE2, 0xB017 },
-+        { 0x223C, 0x00C1, 0xCC0D, 0xB017 }, { 0x2240, 0x00F5, 0xDB0E, 0xB017 },
-+        { 0x2244, 0x0017, 0x48E2, 0xB017 }, { 0x2248, 0x00F5, 0xDB0E, 0xB017 },
-+        { 0x224C, 0x00EF, 0x5CE2, 0xB017 }, { 0x2250, 0x00C1, 0xCC0D, 0xB017 },
-+        { 0x2254, 0x00F5, 0xDB0E, 0xB017 }, { 0x2258, 0x0017, 0x48E2, 0xB017 },
-+        { 0x225C, 0x00F5, 0xDB0E, 0xB017 }, { 0x2260, 0x00EF, 0x5CE2, 0xB017 },
-+        { 0x2264, 0x00C1, 0xCC0D, 0xB017 }, { 0x2268, 0x00F5, 0xDB0E, 0xB017 },
-+        { 0x226C, 0x0017, 0x48E2, 0xB017 }, { 0x2270, 0x00F5, 0xDB0E, 0xB017 },
-+        { 0x2274, 0x00EF, 0x5CE2, 0xB017 }, { 0x2278, 0x00C1, 0xCC0D, 0xB017 },
-+        { 0x227C, 0x00F5, 0xDB0E, 0xB017 }, { 0x2280, 0x0017, 0x48E2, 0xB017 },
-+        { 0x2284, 0x00F5, 0xDB0E, 0xB017 }, { 0x2288, 0x00EF, 0x5CE2, 0xB017 },
-+        { 0x228C, 0x00C1, 0xCC0D, 0xB017 }, { 0x22CC, 0x00E8, 0x8D00, 0xB017 },
-+        { 0x22D0, 0x0000, 0x0000, 0xB017 }, { 0x22D4, 0x0018, 0x72FF, 0xB017 },
-+        { 0x22D8, 0x00CE, 0x25E1, 0xB017 }, { 0x22DC, 0x002F, 0xE40E, 0xB017 },
-+        { 0x238E, 0x0000, 0x0099, 0xB011 }, { 0x238F, 0x0000, 0x0011, 0xB011 },
-+        { 0x2390, 0x0000, 0x0056, 0xB011 }, { 0x2391, 0x0000, 0x0004, 0xB011 },
-+        { 0x2392, 0x0000, 0x00BB, 0xB011 }, { 0x2393, 0x0000, 0x006D, 0xB011 },
-+        { 0x2394, 0x0000, 0x0010, 0xB011 }, { 0x2395, 0x0000, 0x0064, 0xB011 },
-+        { 0x2396, 0x0000, 0x00B6, 0xB011 }, { 0x2397, 0x0000, 0x0028, 0xB011 },
-+        { 0x2398, 0x0000, 0x000B, 0xB011 }, { 0x239A, 0x0000, 0x0099, 0xB011 },
-+        { 0x239B, 0x0000, 0x000D, 0xB011 }, { 0x23A6, 0x0000, 0x0064, 0xB011 },
-+        { 0x23A7, 0x0000, 0x0078, 0xB011 }, { 0x23B9, 0x0000, 0x0000, 0xB011 },
-+        { 0x23E0, 0x0000, 0x0021, 0xB011 }, { 0x23E1, 0x0000, 0x0001, 0xB011 },
-+    };
-+
-+    static const unsigned short amp_0x39[][4] = {
-+        { 0x2000, 0x0000, 0x0001, 0xB011 }, { 0x23FF, 0x0000, 0x0000, 0xB011 },
-+        { 0x203A, 0x0000, 0x0080, 0xB011 }, { 0x23E1, 0x0000, 0x0000, 0xB011 },
-+        { 0x2012, 0x0000, 0x006F, 0xB011 }, { 0x2014, 0x0000, 0x0000, 0xB011 },
-+        { 0x201B, 0x0000, 0x0002, 0xB011 }, { 0x201D, 0x0000, 0x0002, 0xB011 },
-+        { 0x201F, 0x0000, 0x00FD, 0xB011 }, { 0x2021, 0x0000, 0x0001, 0xB011 },
-+        { 0x2022, 0x0000, 0x0010, 0xB011 }, { 0x203D, 0x0000, 0x0005, 0xB011 },
-+        { 0x203F, 0x0000, 0x0003, 0xB011 }, { 0x2050, 0x0000, 0x002C, 0xB011 },
-+        { 0x2076, 0x0000, 0x000E, 0xB011 }, { 0x207C, 0x0000, 0x004A, 0xB011 },
-+        { 0x2081, 0x0000, 0x0003, 0xB011 }, { 0x2399, 0x0000, 0x0003, 0xB011 },
-+        { 0x23A4, 0x0000, 0x00B5, 0xB011 }, { 0x23A5, 0x0000, 0x0001, 0xB011 },
-+        { 0x23BA, 0x0000, 0x0094, 0xB011 }, { 0x2100, 0x00D0, 0x950E, 0xB017 },
-+        { 0x2104, 0x0061, 0xD4E2, 0xB017 }, { 0x2108, 0x00D0, 0x950E, 0xB017 },
-+        { 0x210C, 0x0075, 0xF4E2, 0xB017 }, { 0x2110, 0x00B4, 0x4B0D, 0xB017 },
-+        { 0x2114, 0x000A, 0x1000, 0xB017 }, { 0x2118, 0x0015, 0x2000, 0xB017 },
-+        { 0x211C, 0x000A, 0x1000, 0xB017 }, { 0x2120, 0x0075, 0xF4E2, 0xB017 },
-+        { 0x2124, 0x00B4, 0x4B0D, 0xB017 }, { 0x2128, 0x0000, 0x0010, 0xB017 },
-+        { 0x212C, 0x0000, 0x0000, 0xB017 }, { 0x2130, 0x0000, 0x0000, 0xB017 },
-+        { 0x2134, 0x0000, 0x0000, 0xB017 }, { 0x2138, 0x0000, 0x0000, 0xB017 },
-+        { 0x213C, 0x0000, 0x0010, 0xB017 }, { 0x2140, 0x0000, 0x0000, 0xB017 },
-+        { 0x2144, 0x0000, 0x0000, 0xB017 }, { 0x2148, 0x0000, 0x0000, 0xB017 },
-+        { 0x214C, 0x0000, 0x0000, 0xB017 }, { 0x2150, 0x0000, 0x0010, 0xB017 },
-+        { 0x2154, 0x0000, 0x0000, 0xB017 }, { 0x2158, 0x0000, 0x0000, 0xB017 },
-+        { 0x215C, 0x0000, 0x0000, 0xB017 }, { 0x2160, 0x0000, 0x0000, 0xB017 },
-+        { 0x2164, 0x0000, 0x0010, 0xB017 }, { 0x2168, 0x0000, 0x0000, 0xB017 },
-+        { 0x216C, 0x0000, 0x0000, 0xB017 }, { 0x2170, 0x0000, 0x0000, 0xB017 },
-+        { 0x2174, 0x0000, 0x0000, 0xB017 }, { 0x2178, 0x0000, 0x0010, 0xB017 },
-+        { 0x217C, 0x0000, 0x0000, 0xB017 }, { 0x2180, 0x0000, 0x0000, 0xB017 },
-+        { 0x2184, 0x0000, 0x0000, 0xB017 }, { 0x2188, 0x0000, 0x0000, 0xB017 },
-+        { 0x218C, 0x0064, 0x5800, 0xB017 }, { 0x2190, 0x00C8, 0xB000, 0xB017 },
-+        { 0x2194, 0x0064, 0x5800, 0xB017 }, { 0x2198, 0x003D, 0x5BE7, 0xB017 },
-+        { 0x219C, 0x0054, 0x060A, 0xB017 }, { 0x21A0, 0x00C8, 0xA310, 0xB017 },
-+        { 0x21A4, 0x0029, 0x4DE5, 0xB017 }, { 0x21A8, 0x0032, 0x420C, 0xB017 },
-+        { 0x21AC, 0x0029, 0x4DE5, 0xB017 }, { 0x21B0, 0x00FA, 0xE50C, 0xB017 },
-+        { 0x21B4, 0x0000, 0x0010, 0xB017 }, { 0x21B8, 0x0000, 0x0000, 0xB017 },
-+        { 0x21BC, 0x0000, 0x0000, 0xB017 }, { 0x21C0, 0x0000, 0x0000, 0xB017 },
-+        { 0x21C4, 0x0000, 0x0000, 0xB017 }, { 0x21C8, 0x0056, 0xC50F, 0xB017 },
-+        { 0x21CC, 0x007B, 0xD7E1, 0xB017 }, { 0x21D0, 0x0077, 0xA70E, 0xB017 },
-+        { 0x21D4, 0x00E0, 0xBDE1, 0xB017 }, { 0x21D8, 0x0032, 0x530E, 0xB017 },
-+        { 0x2204, 0x00FB, 0x7E0F, 0xB017 }, { 0x2208, 0x000B, 0x02E1, 0xB017 },
-+        { 0x220C, 0x00FB, 0x7E0F, 0xB017 }, { 0x2210, 0x00D5, 0x17E1, 0xB017 },
-+        { 0x2214, 0x00C0, 0x130F, 0xB017 }, { 0x2218, 0x00E5, 0x0A00, 0xB017 },
-+        { 0x221C, 0x00CB, 0x1500, 0xB017 }, { 0x2220, 0x00E5, 0x0A00, 0xB017 },
-+        { 0x2224, 0x00D5, 0x17E1, 0xB017 }, { 0x2228, 0x00C0, 0x130F, 0xB017 },
-+        { 0x222C, 0x00F5, 0xDB0E, 0xB017 }, { 0x2230, 0x0017, 0x48E2, 0xB017 },
-+        { 0x2234, 0x00F5, 0xDB0E, 0xB017 }, { 0x2238, 0x00EF, 0x5CE2, 0xB017 },
-+        { 0x223C, 0x00C1, 0xCC0D, 0xB017 }, { 0x2240, 0x00F5, 0xDB0E, 0xB017 },
-+        { 0x2244, 0x0017, 0x48E2, 0xB017 }, { 0x2248, 0x00F5, 0xDB0E, 0xB017 },
-+        { 0x224C, 0x00EF, 0x5CE2, 0xB017 }, { 0x2250, 0x00C1, 0xCC0D, 0xB017 },
-+        { 0x2254, 0x00F5, 0xDB0E, 0xB017 }, { 0x2258, 0x0017, 0x48E2, 0xB017 },
-+        { 0x225C, 0x00F5, 0xDB0E, 0xB017 }, { 0x2260, 0x00EF, 0x5CE2, 0xB017 },
-+        { 0x2264, 0x00C1, 0xCC0D, 0xB017 }, { 0x2268, 0x00F5, 0xDB0E, 0xB017 },
-+        { 0x226C, 0x0017, 0x48E2, 0xB017 }, { 0x2270, 0x00F5, 0xDB0E, 0xB017 },
-+        { 0x2274, 0x00EF, 0x5CE2, 0xB017 }, { 0x2278, 0x00C1, 0xCC0D, 0xB017 },
-+        { 0x227C, 0x00F5, 0xDB0E, 0xB017 }, { 0x2280, 0x0017, 0x48E2, 0xB017 },
-+        { 0x2284, 0x00F5, 0xDB0E, 0xB017 }, { 0x2288, 0x00EF, 0x5CE2, 0xB017 },
-+        { 0x228C, 0x00C1, 0xCC0D, 0xB017 }, { 0x22CC, 0x00E8, 0x8D00, 0xB017 },
-+        { 0x22D0, 0x0000, 0x0000, 0xB017 }, { 0x22D4, 0x0018, 0x72FF, 0xB017 },
-+        { 0x22D8, 0x00CE, 0x25E1, 0xB017 }, { 0x22DC, 0x002F, 0xE40E, 0xB017 },
-+        { 0x238E, 0x0000, 0x0099, 0xB011 }, { 0x238F, 0x0000, 0x0011, 0xB011 },
-+        { 0x2390, 0x0000, 0x0056, 0xB011 }, { 0x2391, 0x0000, 0x0004, 0xB011 },
-+        { 0x2392, 0x0000, 0x00BB, 0xB011 }, { 0x2393, 0x0000, 0x006D, 0xB011 },
-+        { 0x2394, 0x0000, 0x0010, 0xB011 }, { 0x2395, 0x0000, 0x0064, 0xB011 },
-+        { 0x2396, 0x0000, 0x00B6, 0xB011 }, { 0x2397, 0x0000, 0x0028, 0xB011 },
-+        { 0x2398, 0x0000, 0x000B, 0xB011 }, { 0x239A, 0x0000, 0x0099, 0xB011 },
-+        { 0x239B, 0x0000, 0x000D, 0xB011 }, { 0x23A6, 0x0000, 0x0064, 0xB011 },
-+        { 0x23A7, 0x0000, 0x0078, 0xB011 }, { 0x23B9, 0x0000, 0x0000, 0xB011 },
-+        { 0x23E0, 0x0000, 0x0021, 0xB011 }, { 0x23E1, 0x0000, 0x0001, 0xB011 },
-+    };
-+
-+    static const unsigned short amp_0x3c[][4] = {
-+        { 0x2000, 0x0000, 0x0001, 0xB011 }, { 0x23FF, 0x0000, 0x0000, 0xB011 },
-+        { 0x203A, 0x0000, 0x0080, 0xB011 }, { 0x23E1, 0x0000, 0x0000, 0xB011 },
-+        { 0x2012, 0x0000, 0x006F, 0xB011 }, { 0x2014, 0x0000, 0x0000, 0xB011 },
-+        { 0x201B, 0x0000, 0x0001, 0xB011 }, { 0x201D, 0x0000, 0x0001, 0xB011 },
-+        { 0x201F, 0x0000, 0x00FE, 0xB011 }, { 0x2021, 0x0000, 0x0000, 0xB011 },
-+        { 0x2022, 0x0000, 0x0010, 0xB011 }, { 0x203D, 0x0000, 0x0005, 0xB011 },
-+        { 0x203F, 0x0000, 0x0003, 0xB011 }, { 0x2050, 0x0000, 0x002C, 0xB011 },
-+        { 0x2076, 0x0000, 0x000E, 0xB011 }, { 0x207C, 0x0000, 0x004A, 0xB011 },
-+        { 0x2081, 0x0000, 0x0003, 0xB011 }, { 0x23BA, 0x0000, 0x008D, 0xB011 },
-+        { 0x2128, 0x0005, 0x460D, 0xB017 }, { 0x212C, 0x00F6, 0x73E5, 0xB017 },
-+        { 0x2130, 0x0005, 0x460D, 0xB017 }, { 0x2134, 0x00C0, 0xE9E5, 0xB017 },
-+        { 0x2138, 0x00D5, 0x010B, 0xB017 }, { 0x213C, 0x009D, 0x7809, 0xB017 },
-+        { 0x2140, 0x00C5, 0x0EED, 0xB017 }, { 0x2144, 0x009D, 0x7809, 0xB017 },
-+        { 0x2148, 0x00C4, 0x4EF0, 0xB017 }, { 0x214C, 0x003A, 0x3106, 0xB017 },
-+        { 0x2150, 0x00AF, 0x750E, 0xB017 }, { 0x2154, 0x008C, 0x1FF1, 0xB017 },
-+        { 0x2158, 0x009E, 0x360C, 0xB017 }, { 0x215C, 0x008C, 0x1FF1, 0xB017 },
-+        { 0x2160, 0x004D, 0xAC0A, 0xB017 }, { 0x2164, 0x007D, 0xA00F, 0xB017 },
-+        { 0x2168, 0x00E1, 0x9CE3, 0xB017 }, { 0x216C, 0x00E8, 0x590E, 0xB017 },
-+        { 0x2170, 0x00E1, 0x9CE3, 0xB017 }, { 0x2174, 0x0066, 0xFA0D, 0xB017 },
-+        { 0x2178, 0x0000, 0x0010, 0xB017 }, { 0x217C, 0x0000, 0x0000, 0xB017 },
-+        { 0x2180, 0x0000, 0x0000, 0xB017 }, { 0x2184, 0x0000, 0x0000, 0xB017 },
-+        { 0x2188, 0x0000, 0x0000, 0xB017 }, { 0x218C, 0x0000, 0x0010, 0xB017 },
-+        { 0x2190, 0x0000, 0x0000, 0xB017 }, { 0x2194, 0x0000, 0x0000, 0xB017 },
-+        { 0x2198, 0x0000, 0x0000, 0xB017 }, { 0x219C, 0x0000, 0x0000, 0xB017 },
-+        { 0x21A0, 0x0000, 0x0010, 0xB017 }, { 0x21A4, 0x0000, 0x0000, 0xB017 },
-+        { 0x21A8, 0x0000, 0x0000, 0xB017 }, { 0x21AC, 0x0000, 0x0000, 0xB017 },
-+        { 0x21B0, 0x0000, 0x0000, 0xB017 }, { 0x21B4, 0x0000, 0x0010, 0xB017 },
-+        { 0x21B8, 0x0000, 0x0000, 0xB017 }, { 0x21BC, 0x0000, 0x0000, 0xB017 },
-+        { 0x21C0, 0x0000, 0x0000, 0xB017 }, { 0x21C4, 0x0000, 0x0000, 0xB017 },
-+        { 0x23B9, 0x0000, 0x0000, 0xB011 }, { 0x23E0, 0x0000, 0x0020, 0xB011 },
-+        { 0x23E1, 0x0000, 0x0001, 0xB011 },
-+    };
-+
-+    static const unsigned short amp_0x3d[][4] = {
-+        { 0x2000, 0x0000, 0x0001, 0xB011 }, { 0x23FF, 0x0000, 0x0000, 0xB011 },
-+        { 0x203A, 0x0000, 0x0080, 0xB011 }, { 0x23E1, 0x0000, 0x0000, 0xB011 },
-+        { 0x2012, 0x0000, 0x006F, 0xB011 }, { 0x2014, 0x0000, 0x0000, 0xB011 },
-+        { 0x201B, 0x0000, 0x0002, 0xB011 }, { 0x201D, 0x0000, 0x0002, 0xB011 },
-+        { 0x201F, 0x0000, 0x00FD, 0xB011 }, { 0x2021, 0x0000, 0x0001, 0xB011 },
-+        { 0x2022, 0x0000, 0x0010, 0xB011 }, { 0x203D, 0x0000, 0x0005, 0xB011 },
-+        { 0x203F, 0x0000, 0x0003, 0xB011 }, { 0x2050, 0x0000, 0x002C, 0xB011 },
-+        { 0x2076, 0x0000, 0x000E, 0xB011 }, { 0x207C, 0x0000, 0x004A, 0xB011 },
-+        { 0x2081, 0x0000, 0x0003, 0xB011 }, { 0x23BA, 0x0000, 0x008D, 0xB011 },
-+        { 0x2128, 0x0005, 0x460D, 0xB017 }, { 0x212C, 0x00F6, 0x73E5, 0xB017 },
-+        { 0x2130, 0x0005, 0x460D, 0xB017 }, { 0x2134, 0x00C0, 0xE9E5, 0xB017 },
-+        { 0x2138, 0x00D5, 0x010B, 0xB017 }, { 0x213C, 0x009D, 0x7809, 0xB017 },
-+        { 0x2140, 0x00C5, 0x0EED, 0xB017 }, { 0x2144, 0x009D, 0x7809, 0xB017 },
-+        { 0x2148, 0x00C4, 0x4EF0, 0xB017 }, { 0x214C, 0x003A, 0x3106, 0xB017 },
-+        { 0x2150, 0x00AF, 0x750E, 0xB017 }, { 0x2154, 0x008C, 0x1FF1, 0xB017 },
-+        { 0x2158, 0x009E, 0x360C, 0xB017 }, { 0x215C, 0x008C, 0x1FF1, 0xB017 },
-+        { 0x2160, 0x004D, 0xAC0A, 0xB017 }, { 0x2164, 0x007D, 0xA00F, 0xB017 },
-+        { 0x2168, 0x00E1, 0x9CE3, 0xB017 }, { 0x216C, 0x00E8, 0x590E, 0xB017 },
-+        { 0x2170, 0x00E1, 0x9CE3, 0xB017 }, { 0x2174, 0x0066, 0xFA0D, 0xB017 },
-+        { 0x2178, 0x0000, 0x0010, 0xB017 }, { 0x217C, 0x0000, 0x0000, 0xB017 },
-+        { 0x2180, 0x0000, 0x0000, 0xB017 }, { 0x2184, 0x0000, 0x0000, 0xB017 },
-+        { 0x2188, 0x0000, 0x0000, 0xB017 }, { 0x218C, 0x0000, 0x0010, 0xB017 },
-+        { 0x2190, 0x0000, 0x0000, 0xB017 }, { 0x2194, 0x0000, 0x0000, 0xB017 },
-+        { 0x2198, 0x0000, 0x0000, 0xB017 }, { 0x219C, 0x0000, 0x0000, 0xB017 },
-+        { 0x21A0, 0x0000, 0x0010, 0xB017 }, { 0x21A4, 0x0000, 0x0000, 0xB017 },
-+        { 0x21A8, 0x0000, 0x0000, 0xB017 }, { 0x21AC, 0x0000, 0x0000, 0xB017 },
-+        { 0x21B0, 0x0000, 0x0000, 0xB017 }, { 0x21B4, 0x0000, 0x0010, 0xB017 },
-+        { 0x21B8, 0x0000, 0x0000, 0xB017 }, { 0x21BC, 0x0000, 0x0000, 0xB017 },
-+        { 0x21C0, 0x0000, 0x0000, 0xB017 }, { 0x21C4, 0x0000, 0x0000, 0xB017 },
-+        { 0x23B9, 0x0000, 0x0000, 0xB011 }, { 0x23E0, 0x0000, 0x0020, 0xB011 },
-+        { 0x23E1, 0x0000, 0x0001, 0xB011 },
-+    };
-+
-+    static const unsigned short amp_seq1[][4] = {
-+        { 0x23FF, 0x0000, 0x0000, 0xB011 }, { 0x203A, 0x0000, 0x0080, 0xB011 },
-+    };
-+
-+    static const struct alc298_samsung_coeff_fixup_desc fixups2[] = {
-+        { 0x4f, 0xb029 }, { 0x05, 0x2be0 }, { 0x30, 0x2421 },
-+    };
-+
-+
-+    static const unsigned short amp_seq2[][4] = {
-+        { 0x203A, 0x0000, 0x0081, 0xB011 }, { 0x23FF, 0x0000, 0x0001, 0xB011 },
-+    };
-+
-+    if (action != HDA_FIXUP_ACT_INIT)
-+        return;
-+
-+    ///// First set of fixups
-+    for (i = 0; i < ARRAY_SIZE(fixups1); i++)
-+        alc_write_coef_idx(codec, fixups1[i].coeff_idx,
-fixups1[i].coeff_value);
-+
-+    ///// First set of writes
-+    alc298_samsung_write_coef_pack_seq(codec, 0x38, amp_0x38,
-ARRAY_SIZE(amp_0x38));
-+    alc298_samsung_write_coef_pack_seq(codec, 0x39, amp_0x39,
-ARRAY_SIZE(amp_0x39));
-+    alc298_samsung_write_coef_pack_seq(codec, 0x3c, amp_0x3c,
-ARRAY_SIZE(amp_0x3c));
-+    alc298_samsung_write_coef_pack_seq(codec, 0x3d, amp_0x3d,
-ARRAY_SIZE(amp_0x3d));
-+
-+    ///// Second set of writes
-+    alc298_samsung_write_coef_pack_seq(codec, 0x38, amp_seq1,
-ARRAY_SIZE(amp_seq1));
-+    alc298_samsung_write_coef_pack_seq(codec, 0x39, amp_seq1,
-ARRAY_SIZE(amp_seq1));
-+    alc298_samsung_write_coef_pack_seq(codec, 0x3c, amp_seq1,
-ARRAY_SIZE(amp_seq1));
-+    alc298_samsung_write_coef_pack_seq(codec, 0x3d, amp_seq1,
-ARRAY_SIZE(amp_seq1));
-+
-+    ////// Second set of fixups
-+    for (i = 0; i < ARRAY_SIZE(fixups2); i++)
-+        alc_write_coef_idx(codec, fixups2[i].coeff_idx,
-fixups2[i].coeff_value);
-+
-+    ///// Third set of writes
-+    alc298_samsung_write_coef_pack_seq(codec, 0x38, amp_seq2,
-ARRAY_SIZE(amp_seq2));
-+    alc298_samsung_write_coef_pack_seq(codec, 0x39, amp_seq2,
-ARRAY_SIZE(amp_seq2));
-+    alc298_samsung_write_coef_pack_seq(codec, 0x3c, amp_seq2,
-ARRAY_SIZE(amp_seq2));
-+    alc298_samsung_write_coef_pack_seq(codec, 0x3d, amp_seq2,
-ARRAY_SIZE(amp_seq2));
-+
-+    ///// Final fixup
-+    alc_write_coef_idx(codec, 0x10, 0x0F21);
-+}
-+
- #if IS_REACHABLE(CONFIG_INPUT)
- static void gpio2_mic_hotkey_event(struct hda_codec *codec,
-                    struct hda_jack_callback *event)
-@@ -7426,6 +7724,7 @@ enum {
-     ALC236_FIXUP_HP_MUTE_LED,
-     ALC236_FIXUP_HP_MUTE_LED_MICMUTE_VREF,
-     ALC298_FIXUP_SAMSUNG_AMP,
-+    ALC298_FIXUP_SAMSUNG_AMP2,
-     ALC298_FIXUP_SAMSUNG_HEADPHONE_VERY_QUIET,
-     ALC256_FIXUP_SAMSUNG_HEADPHONE_VERY_QUIET,
-     ALC295_FIXUP_ASUS_MIC_NO_PRESENCE,
-@@ -9021,6 +9320,10 @@ static const struct hda_fixup alc269_fixups[] = {
-         .chained = true,
-         .chain_id = ALC298_FIXUP_SAMSUNG_HEADPHONE_VERY_QUIET
-     },
-+    [ALC298_FIXUP_SAMSUNG_AMP2] = {
-+        .type = HDA_FIXUP_FUNC,
-+        .v.func = alc298_fixup_samsung_amp2
-+    },
-     [ALC298_FIXUP_SAMSUNG_HEADPHONE_VERY_QUIET] = {
-         .type = HDA_FIXUP_VERBS,
-         .v.verbs = (const struct hda_verb[]) {
-@@ -10352,6 +10655,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
-     SND_PCI_QUIRK(0x144d, 0xc832, "Samsung Galaxy Book Flex Alpha
-(NP730QCJ)", ALC256_FIXUP_SAMSUNG_HEADPHONE_VERY_QUIET),
-     SND_PCI_QUIRK(0x144d, 0xca03, "Samsung Galaxy Book2 Pro 360
-(NP930QED)", ALC298_FIXUP_SAMSUNG_AMP),
-     SND_PCI_QUIRK(0x144d, 0xc868, "Samsung Galaxy Book2 Pro
-(NP930XED)", ALC298_FIXUP_SAMSUNG_AMP),
-+    SND_PCI_QUIRK(0x144d, 0xc1ca, "Samsung Galaxy Book3 Pro 360
-(NP960QFG-KB1US)", ALC298_FIXUP_SAMSUNG_AMP2),
-     SND_PCI_QUIRK(0x1458, 0xfa53, "Gigabyte BXBT-2807",
-ALC283_FIXUP_HEADSET_MIC),
-     SND_PCI_QUIRK(0x1462, 0xb120, "MSI Cubi MS-B120",
-ALC283_FIXUP_HEADSET_MIC),
-     SND_PCI_QUIRK(0x1462, 0xb171, "Cubi N 8GL (MS-B171)",
-ALC283_FIXUP_HEADSET_MIC),
-@@ -10781,6 +11085,7 @@ static const struct hda_model_fixup
-alc269_fixup_models[] = {
-     {.id = ALC298_FIXUP_HUAWEI_MBX_STEREO, .name = "huawei-mbx-stereo"},
-     {.id = ALC256_FIXUP_MEDION_HEADSET_NO_PRESENCE, .name =
-"alc256-medion-headset"},
-     {.id = ALC298_FIXUP_SAMSUNG_AMP, .name = "alc298-samsung-amp"},
-+    {.id = ALC298_FIXUP_SAMSUNG_AMP2, .name = "alc298-samsung-amp2"},
-     {.id = ALC256_FIXUP_SAMSUNG_HEADPHONE_VERY_QUIET, .name =
-"alc256-samsung-headphone"},
-     {.id = ALC255_FIXUP_XIAOMI_HEADSET_MIC, .name = "alc255-xiaomi-headset"},
-     {.id = ALC274_FIXUP_HP_MIC, .name = "alc274-hp-mic-detect"},
--- 
-2.45.2
+> Ho-Ren (Jack) Chuang (1):
+>      memory tier: consolidate the initialization of memory tiers
+
+causes
+
+  WARNING: modpost: vmlinux: section mismatch in reference:
+hmat_set_default_dram_perf+0xc (section: .text) -> default_dram_nodes
+(section: .init.data)
+  WARNING: modpost: vmlinux: section mismatch in reference:
+hmat_set_default_dram_perf+0x6c (section: .text) -> default_dram_nodes
+(section: .init.data)
+
+and sure enough, default_dram_nodes() is an init section, and is
+accessed from hmat_set_default_dram_perf().
+
+I think the fix is to just mark hmat_set_default_dram_perf() as an
+init function too. Testing that now.
+
+                Linus
 
