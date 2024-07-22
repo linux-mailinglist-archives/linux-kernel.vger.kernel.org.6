@@ -1,87 +1,175 @@
-Return-Path: <linux-kernel+bounces-258444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC6EF9387EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:07:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0469387F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:09:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66F1F281A9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:07:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50DCD1C20F88
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E08A41;
-	Mon, 22 Jul 2024 04:06:14 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A318915AC4;
+	Mon, 22 Jul 2024 04:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="wO30gIeu"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FDB7171CD
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 04:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC8EA41
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 04:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721621174; cv=none; b=PhRzjLEk1T4tE5/M7DBqN/SykVSXiiA5jh320TYhjf8dmeDrEvSa5ELnzHVtRUK+NpNziN1JHvD9CjrmB2aWmVjW2ziSjrk+qApAlucNxievYWYaIsNw4aGtQY9HoHXLLjnO/9r0GLBcYKwaNn2xJs4uWnjSTqMwR2rLXCqizKE=
+	t=1721621391; cv=none; b=Lxo3AVjRhoNNdu8LKEhNTXhQ7FyHlSAGf+aJW5WjrdH/ROyetQz4F6d4vKOhWgCQQ1TW3IoBeLtoHomkJSAVaNo5lcMjlpHoiTF+I/HTD5P4fOgWjONbZD/Ch4G9cMnxQ4saa4kwI09ZJYc6gMs5SOolu0Uhvp8MI9ySe+EHAn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721621174; c=relaxed/simple;
-	bh=OmWu9roJ8Ekx1OC9ld+LTwlVUjG9XH4xD1JTTUre6so=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LMTChsbzQFyzsaHVYTradOu/pFCEp5i3b9wtJGe3GE5tLZVfuc7Wlm7scctxJP3F6qnU/X3jmda/wMx04MaGZbMSPi/qnasY6sf+jD+HdknxvUUg404KIAju1wX/6Rrb043XClZHZtVoF9uFjuCr5mBo5EB988F1bRR1L2F76uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WS65z2p9tz1X4k0;
-	Mon, 22 Jul 2024 12:01:27 +0800 (CST)
-Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8D0BE1A0188;
-	Mon, 22 Jul 2024 12:05:50 +0800 (CST)
-Received: from huawei.com (10.175.103.91) by kwepemf100008.china.huawei.com
- (7.202.181.222) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 22 Jul
- 2024 12:05:49 +0800
-From: Zeng Heng <zengheng4@huawei.com>
-To: <james.morse@arm.com>, <rohit.mathew@arm.com>, <amitsinght@marvell.com>,
-	<sdonthineni@nvidia.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<zengheng4@huawei.com>, <liwei391@huawei.com>
-Subject: [PATCH mpam/v6.10-rc1 RFC 4/4] arm_mpam: Fix typo about mbw_min controls
-Date: Mon, 22 Jul 2024 12:01:40 +0800
-Message-ID: <20240722040140.515173-5-zengheng4@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240722040140.515173-1-zengheng4@huawei.com>
-References: <20240722040140.515173-1-zengheng4@huawei.com>
+	s=arc-20240116; t=1721621391; c=relaxed/simple;
+	bh=tvxoEuEatyM2W7KamTa8qc2roxde9Ug4DJkb5OYOHtM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QI3mYPaW8vqu4CDjC2emoNZ7btXk4LfLVHaanE/NEuxHaYYAnZC25E3X763RNJdMQr0sBvv1MsDz3CBG/m+UKPkOZNF6emnJs7pl4WoJHktU3VlhopgcNHjXVcKBxI1o7cSwM/3Sd1Gw5pUECjUSdtG0NnaZMKFeSuxz53BOlTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=wO30gIeu; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id EE7B22C04C9;
+	Mon, 22 Jul 2024 16:09:46 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1721621386;
+	bh=tvxoEuEatyM2W7KamTa8qc2roxde9Ug4DJkb5OYOHtM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=wO30gIeuj/6a5LaDdtvO3D0kfTBrVSAHI4QaEfKUEKs22u/rbKy/S0jrBsJFbutRl
+	 gIGuFKuqkhOi353+lm4odTHzqHMNmPrf+ertit3B+s0zT45eK89vXQdL2AlAfEsCND
+	 CosDNoMFCTT5miv/Av1yzbW3AYanprmjMWlkO5xQyEKOpPQ8pVfJYjSfTEJw/tkBS6
+	 1q44stN4NoyNNpk4CIlreOUoZ0lyEF0a+UW4ojt+pWydFYixjH1GSzhBHjUEhKhpAx
+	 zEHgAf//Dge64/zUPqXqK3qpdG72HLdwaI5/R3v3iJ+CoC0KZlPjpt9rtFtDW0wTO1
+	 h7jfOp/oieriw==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B669ddb8a0000>; Mon, 22 Jul 2024 16:09:46 +1200
+Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id C8B3513ED2A;
+	Mon, 22 Jul 2024 16:09:46 +1200 (NZST)
+Message-ID: <c261c74f-6829-4888-9836-6f27ba87dc25@alliedtelesis.co.nz>
+Date: Mon, 22 Jul 2024 16:09:46 +1200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemf100008.china.huawei.com (7.202.181.222)
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v6 3/3] hwmon: (adt7475) Add support for configuring
+ initial PWM state
+To: Guenter Roeck <linux@roeck-us.net>, jdelvare@suse.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, ukleinek@kernel.org
+Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
+References: <20240722005825.1800403-1-chris.packham@alliedtelesis.co.nz>
+ <20240722005825.1800403-4-chris.packham@alliedtelesis.co.nz>
+ <15f4c51c-3f7d-4e93-9c3a-71ac1d626463@roeck-us.net>
+Content-Language: en-US
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <15f4c51c-3f7d-4e93-9c3a-71ac1d626463@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=Gqbh+V1C c=1 sm=1 tr=0 ts=669ddb8a a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=4kmOji7k6h8A:10 a=Kv0HwWCj8ggcw1s04G8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-Correct the judgment condition about mbw_min default value.
 
-Fixes: 099f47353bc5 ("arm_mpam: Generate a configuration for min controls")
-Signed-off-by: Zeng Heng <zengheng4@huawei.com>
----
- drivers/platform/arm64/mpam/mpam_devices.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 22/07/24 15:53, Guenter Roeck wrote:
+> On 7/21/24 17:58, Chris Packham wrote:
+>> By default the PWM duty cycle in hardware is 100%. On some systems thi=
+s
+>> can cause unwanted fan noise. Add the ability to specify the fan
+>> connections and initial state of the PWMs via device properties.
+>>
+>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+>> ---
+>>
+>> Notes:
+>> =C2=A0=C2=A0=C2=A0=C2=A0 Changes in v6:
+>> =C2=A0=C2=A0=C2=A0=C2=A0 - Use do_div() instead of plain /
+>> =C2=A0=C2=A0=C2=A0=C2=A0 - Use a helper function to avoid repetition b=
+etween the of and=20
+>> non-of
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 code paths.
+>> =C2=A0=C2=A0=C2=A0=C2=A0 Changes in v5:
+>> =C2=A0=C2=A0=C2=A0=C2=A0 - Deal with PWM frequency and duty cycle bein=
+g specified in=20
+>> nanoseconds
+>> =C2=A0=C2=A0=C2=A0=C2=A0 Changes in v4:
+>> =C2=A0=C2=A0=C2=A0=C2=A0 - Support DT and ACPI fwnodes
+>> =C2=A0=C2=A0=C2=A0=C2=A0 - Put PWM into manual mode
+>> =C2=A0=C2=A0=C2=A0=C2=A0 Changes in v3:
+>> =C2=A0=C2=A0=C2=A0=C2=A0 - Use the pwm provider/consumer bindings
+>> =C2=A0=C2=A0=C2=A0=C2=A0 Changes in v2:
+>> =C2=A0=C2=A0=C2=A0=C2=A0 - Use correct device property string for freq=
+uency
+>> =C2=A0=C2=A0=C2=A0=C2=A0 - Allow -EINVAL and only warn on error
+>> =C2=A0=C2=A0=C2=A0=C2=A0 - Use a frequency of 0 to indicate that the h=
+ardware should be=20
+>> left as-is
+>>
+>> =C2=A0 drivers/hwmon/adt7475.c | 130 +++++++++++++++++++++++++++++++++=
++++++++
+>> =C2=A0 1 file changed, 130 insertions(+)
+>>
+>> diff --git a/drivers/hwmon/adt7475.c b/drivers/hwmon/adt7475.c
+>> index 4224ffb30483..fc5605d34f36 100644
+>> --- a/drivers/hwmon/adt7475.c
+>> +++ b/drivers/hwmon/adt7475.c
+>> @@ -21,6 +21,8 @@
+>> =C2=A0 #include <linux/of.h>
+>> =C2=A0 #include <linux/util_macros.h>
+>> =C2=A0 +#include <dt-bindings/pwm/pwm.h>
+>> +
+>> =C2=A0 /* Indexes for the sysfs hooks */
+>> =C2=A0 =C2=A0 #define INPUT=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =
+0
+>> @@ -1662,6 +1664,130 @@ static int adt7475_set_pwm_polarity(struct=20
+>> i2c_client *client)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+>> =C2=A0 }
+>> =C2=A0 +struct adt7475_pwm_config {
+>> +=C2=A0=C2=A0=C2=A0 int index;
+>> +=C2=A0=C2=A0=C2=A0 int freq;
+>> +=C2=A0=C2=A0=C2=A0 int flags;
+>> +=C2=A0=C2=A0=C2=A0 int duty;
+>> +};
+>> +
+>> +static int _adt7475_pwm_properties_parse_args(u32 args[4], struct=20
+>> adt7475_pwm_config *cfg)
+>> +{
+>> +=C2=A0=C2=A0=C2=A0 unsigned long freq_hz;
+>> +=C2=A0=C2=A0=C2=A0 unsigned long duty;
+>> +
+>> +=C2=A0=C2=A0=C2=A0 if (args[1] =3D=3D 0)
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EINVAL;
+>> +
+>> +=C2=A0=C2=A0=C2=A0 freq_hz =3D 1000000000UL;
+>> +=C2=A0=C2=A0=C2=A0 do_div(freq_hz, args[1]);
+>> +=C2=A0=C2=A0=C2=A0 duty =3D 255 * args[3];
+>> +=C2=A0=C2=A0=C2=A0 do_div(duty, args[1]);
+>> +
+>
+> Gues I am a bit at loss here, just as 0-day. Why use do_div ? It is=20
+> only needed
+> for 64-bit divide operations.
 
-diff --git a/drivers/platform/arm64/mpam/mpam_devices.c b/drivers/platform/arm64/mpam/mpam_devices.c
-index 9acac8a22573..64a1f1767a68 100644
---- a/drivers/platform/arm64/mpam/mpam_devices.c
-+++ b/drivers/platform/arm64/mpam/mpam_devices.c
-@@ -1483,7 +1483,7 @@ static void mpam_reprogram_ris_partid(struct mpam_msc_ris *ris, u16 partid,
- 	}
- 
- 	if (mpam_has_feature(mpam_feat_mbw_min, rprops)) {
--		if (mpam_has_feature(mpam_feat_mbw_max, cfg))
-+		if (mpam_has_feature(mpam_feat_mbw_min, cfg))
- 			mpam_write_partsel_reg(msc, MBW_MIN, cfg->mbw_min);
- 		else
- 			mpam_write_partsel_reg(msc, MBW_MIN, 0);
--- 
-2.25.1
+Mainly because of Uwe's comment on v5. I think I've avoided the original=20
+u64 issue now that I'm converting fwnode_reference_args::args to a u32=20
+array. I can probably get away with plain division, although 255 *=20
+args[3] / args[1] might overflow in theory but shouldn't in practice.
 
+I'll let the earth turn and send out a v7 that uses plain division=20
+unless someone has a strong opinion that I should sprinkle some more=20
+u64s around.
+
+>
+> Thanks,
+> Guenter
+>
 
