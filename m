@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-259159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADD2B939202
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:46:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86C9F939208
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFB8C1C21651
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:46:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16AFA281FBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9942216E863;
-	Mon, 22 Jul 2024 15:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2AC716DC2D;
+	Mon, 22 Jul 2024 15:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RGIxXZkQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VoNfkVMs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB01C134B6;
-	Mon, 22 Jul 2024 15:46:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB221E891;
+	Mon, 22 Jul 2024 15:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721663166; cv=none; b=jMNCzxoer2oBfXFpCFmxppmjN+rJt/4MZmDKfn61vNjCoSIOyPYgllfIcPSPg5irgF2436wZ7Igowr0K0mDho5OmRNY24H/oTkzx95CIJS858pmr2gVoJuvmNhnRtaO7AyypOhyBAHDjEKQPvZP9YLF2yDBseOPhHpWK2IOYFSI=
+	t=1721663210; cv=none; b=MvFSyyDmyXRk5Wm2pAq0h86fD5V7Gx2O69F30qwS1m93DGE4kQVOyCSZ0eNZ36pqno+Y4LS2xRzJdtXd57jOTEtR1/qWlXq9SM0pg4TodWFeCJxzkKka2DT7w0xl63+McADUKqPI0p/NpCCOuuF8TYoCb5ZVZxt24UoNjygApcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721663166; c=relaxed/simple;
-	bh=KVrgqRJLa009HN4Ih+y3E93YQ8tVG0uoPOXEzO3x/NU=;
+	s=arc-20240116; t=1721663210; c=relaxed/simple;
+	bh=M0qHKecT+ezPtez8suauFp9H5oe4ODGeXLXT0BBzyfw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q1JcAjmuAnrJCAG2UqTQPrsoDFrFTKWPMMUtQR8t0Qo9cDdtg8VZBUFT/hMwsJ2N+1dLl+Q2b7usiYqCkyRjxLLiLamaXPr8NsgFQp4PJvvep4DWwoHfK0nomy/GMP9U14xFPWFWVmzNC5GJk9hxA5oa6HD0s78xdV1cop8VLbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RGIxXZkQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C05CC116B1;
-	Mon, 22 Jul 2024 15:46:00 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=ShiBYogPtLzT9Oqa/BeePicobs8kkBebZc6Kt0+NTKnzg1++EHUuVjr2Wd5blJo9RhRQlE+nI/keXxkstV4dXvs104gB+mfOThMcZqZp0x1s2WKCfzeza5NsRTymO63pljEU0W00OizRZ4bmsvBxAGDBXn36oGwSXyzUs9NmdJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VoNfkVMs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEA08C4AF0F;
+	Mon, 22 Jul 2024 15:46:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721663166;
-	bh=KVrgqRJLa009HN4Ih+y3E93YQ8tVG0uoPOXEzO3x/NU=;
+	s=k20201202; t=1721663209;
+	bh=M0qHKecT+ezPtez8suauFp9H5oe4ODGeXLXT0BBzyfw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RGIxXZkQ68lohhADyn52Cg+38TEDGVf/glHLE77lTVok65fMxbA0wY9K1e/TlZf+O
-	 gKq6DPvc0zuZ0MCfCiYqB/33FsCyGhlYk+qbQicjfNQcb6tJ6CPBtDDkatYry1Cp0H
-	 0llqMxJSm7ujzoY1zu8XNWwczFAUQtf33wrZzEwLI0NpUci0BAP8VYn4VMH67w457D
-	 l33mH+a12ZZYLW9PnzMakvA11dfsXpUlewaUGPgSEpnW7CPmdYhx15KnjXAzpijyjw
-	 rKpIRH1x71JDh02tPG493WEEtpHZxN95mGnwR6//0Rlbc68uXtuLzzUzh90+U1LL3j
-	 JVDVhEoPwIjvw==
-Message-ID: <f8e0ff0f-8b6a-4735-aaa8-803a5ea6cf54@kernel.org>
-Date: Mon, 22 Jul 2024 17:45:59 +0200
+	b=VoNfkVMsjW7ZamKDDmHZrfWU1Tn7HyM/HmEekBk56xYoY4W5q4j8jeiOmdUXz5S/d
+	 3v6xNyx0LAWMhnIeyR/b/diyrr0lpPse81OYy5AmGnKj1VzHwO2Les39JLHHbJ5ote
+	 2ItSbIemFCxtLSGZkxeHD3ZVB7EfdNXYlOu7UicAbjk4l4lmZPsJaCSaRzT4Aq6vur
+	 s3gWqMLPoRWUaIUfZOMHq3jm8L5tohashWpdG0bMzUztcP9YfoRfqu4JjfzxgmGVtw
+	 mAS+ADaTAStDU/8qR3i0d71PdiV6nKOEHn7A3gVJgsfUqjiEih0T8CjXBWmSmaFXwx
+	 v7HG067WDrpmA==
+Message-ID: <03b977e1-a6af-4232-aff5-48bc6e14ef90@kernel.org>
+Date: Mon, 22 Jul 2024 17:46:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,28 +49,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3 3/6] dt-bindings: phy: cp110-utmi-phy: add
- compatible string for armada-38x
-To: Josua Mayer <josua@solid-run.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
- Gregory Clement <gregory.clement@bootlin.com>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Konstantin Porotchkin <kostap@marvell.com>
-Cc: Yazan Shhady <yazan.shhady@solid-run.com>,
- "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
+Subject: Re: [PATCH v8 2/3] Input: adp5588-keys - add support for pure gpio
+To: "Agarwal, Utsav" <Utsav.Agarwal@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>
+Cc: "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <20240720-a38x-utmi-phy-v3-0-4c16f9abdbdc@solid-run.com>
- <20240720-a38x-utmi-phy-v3-3-4c16f9abdbdc@solid-run.com>
- <d48d261f-c428-4b96-9a88-725e29f6648f@kernel.org>
- <14090e3b-e627-4342-91b0-d6d0b769b736@solid-run.com>
- <55671e6b-abb3-4773-9f55-41920a3ff8f4@solid-run.com>
- <14f53dce-e26e-4af3-9275-f2aef4e03c98@kernel.org>
- <53c3dbc6-5d14-455f-8c3d-6a7293068ed9@solid-run.com>
+ "Artamonovs, Arturs" <Arturs.Artamonovs@analog.com>,
+ "Bimpikas, Vasileios" <Vasileios.Bimpikas@analog.com>,
+ "Gaskell, Oliver" <Oliver.Gaskell@analog.com>
+References: <20240704-adp5588_gpio_support-v8-0-208cf5d4c2d6@analog.com>
+ <20240704-adp5588_gpio_support-v8-2-208cf5d4c2d6@analog.com>
+ <9c64adf6a686b2845c15b368592115f3f9ab39e4.camel@gmail.com>
+ <SJ0PR03MB6343870FAE4E1054009C698B9BA82@SJ0PR03MB6343.namprd03.prod.outlook.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -116,50 +111,43 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <53c3dbc6-5d14-455f-8c3d-6a7293068ed9@solid-run.com>
+In-Reply-To: <SJ0PR03MB6343870FAE4E1054009C698B9BA82@SJ0PR03MB6343.namprd03.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 22/07/2024 17:31, Josua Mayer wrote:
+On 22/07/2024 17:27, Agarwal, Utsav wrote:
+>> From: Nuno Sá <noname.nuno@gmail.com>
+>> Sent: Tuesday, July 9, 2024 7:37 AM
+>> To: Agarwal, Utsav <Utsav.Agarwal@analog.com>; Hennerich, Michael
+>> <Michael.Hennerich@analog.com>; Dmitry Torokhov
+>> <dmitry.torokhov@gmail.com>; Rob Herring <robh@kernel.org>; Krzysztof
+>> Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Sa,
+>> Nuno <Nuno.Sa@analog.com>
+>> Cc: linux-input@vger.kernel.org; devicetree@vger.kernel.org; linux-
+>> kernel@vger.kernel.org; Artamonovs, Arturs
+>> <Arturs.Artamonovs@analog.com>; Bimpikas, Vasileios
+>> <Vasileios.Bimpikas@analog.com>; Gaskell, Oliver
+>> <Oliver.Gaskell@analog.com>
+>> Subject: Re: [PATCH v8 2/3] Input: adp5588-keys - add support for pure gpio
 >>
->>>       - compatible
->>>       - reg
->>>       - "#address-cells"
->>>       - "#size-cells"
->>>   - if:
->>>       not:
->>>         properties:
->>>           reg-names:
->>>             allOf:
->>>               - contains:
->>>                   const: usb-cfg
->>>               - contains:
->>>                   const: utmi-cfg
->>>     then:
->>>       required:
->>>         - marvell,system-controller
->>>
->>> This works okay for any combinations of reg-names.
->> ??? I expected this to be per variant.
-> As in by compatible string?
-
-Yes, each device has fixed properties, at least usually.
-
+>> [External]
 >>
->>> However when device-tree is missing reg-names all together,
->>> marvell,system-controller is not marked required.
+>> On Thu, 2024-07-04 at 15:26 +0100, Utsav Agarwal via B4 Relay wrote:
+>>> From: Utsav Agarwal <utsav.agarwal@analog.com>
 >>>
->>> Would it be acceptable to make reg-names required?
->> I don't understand what you want to achieve.
-> When there are both usb-cfg and utmi-cfg regs,
-> then marvell,system-controller is optional,
+>>> Keypad specific setup is relaxed if no keypad rows/columns are specified,
+>>> enabling a purely gpio operation.
+>>>
+>>> Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
+>>> ---
+>>
+>> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+>>
+> Hi,
 > 
-> regardless of armada 380 or 8k.
+> Since there have not been feedback comments on the same for some time, I wanted to check if any further changes/actions are required for it to be accepted.
 
-Whether the device has additional MMIO address space, depends on type of
-the device, not on some other properties. IOW, either you have here
-second reg or not. The hardware has or has not.
-
+Please observe merge window timeline.
 
 Best regards,
 Krzysztof
