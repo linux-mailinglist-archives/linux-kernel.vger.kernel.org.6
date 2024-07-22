@@ -1,155 +1,212 @@
-Return-Path: <linux-kernel+bounces-259275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B256939358
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:56:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4100893935A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:57:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF9181C213EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:56:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB248282124
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D0616F0C5;
-	Mon, 22 Jul 2024 17:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBF416F0E1;
+	Mon, 22 Jul 2024 17:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wh1iTVXH"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="EbaFcVO+"
+Received: from forward500d.mail.yandex.net (forward500d.mail.yandex.net [178.154.239.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5D5C13C;
-	Mon, 22 Jul 2024 17:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3E88C13C;
+	Mon, 22 Jul 2024 17:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721670956; cv=none; b=nDkUEiKAd+VQ/WurjU+vPPIM+bYiFL4+NbJlrYHTGRkP0cobZzOtMO1PDJRk4MaVyXI2JLcBgXYBc7aZxH9WlZXl+UWsrRakxZNI6PXAHkX3itvk8wTY4ZkCOQTiVp42hrBNFwhtL0nC3MT7J6c4S3Is3/74kaFpU3FUu0hcCLw=
+	t=1721671024; cv=none; b=NLJBbZixZNNhibLVr2NNehryKYHzoMkS4FsenKmayiVz853fviVjghYGD+sR7jQhfcSFhVmttfAT5R73/jNuc+XpMq70TNt1nV9be7Zp1l+9nprzXMOVDrcKPpvpCC41PIyurl+1q9XaWBiAoWKITBlSxs2rBQkkyR64uNVTGjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721670956; c=relaxed/simple;
-	bh=mpvVW7mQf44kawB7sLbXdkOzx0RI3DhyJUPJZUZD0xg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gRzCJiC/X8bkrV67zywqJs0ORGJvTXAZpLtD6CYB+2WV4xrIiHSEl5Emu2nZIxSvjjgQTsXNmeXyR4F8pOMnihRqVzEcNyNjckPTODx/kr1VgcUq05B930OgicmJZLIYbRSbCeNucRNXmptAZMmuTisZcYrKW2eRh3co/Tj38wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wh1iTVXH; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7037a208ff5so2631018a34.0;
-        Mon, 22 Jul 2024 10:55:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721670953; x=1722275753; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=O2OArvbFTZD4MOvzzr92whknsjou7hxu1jymE3tQovA=;
-        b=Wh1iTVXH9UTCnCvZcNGzayfrxdvYOe01Qsou0dtXUI6BSBZgtfl8xZyU88v+++Zf04
-         0e30rrRWMNvCVtzCUdyAiXos7/xXcG4JFpVgWYd7kgxW7vbkhC1BrDOKLrnZpQktsg9/
-         ZJjj/sp2MRToV+zWAmk10+mMxFsSZ9s+yVrUUtHLgXaszkdveF70vvFccnhlTerM1QC8
-         EqrQxOpqEOu41tdoPngNJhkMjLW8qsG2zRoiB+DNhkBuwelIirT8qPOZlER239qSIcJY
-         jBso6vcl7znjqEBbiE0pO2oEbcFEudfXfKRTvqECLkVrte/l0goX4tTp4xKV2naAS0nc
-         ov8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721670953; x=1722275753;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=O2OArvbFTZD4MOvzzr92whknsjou7hxu1jymE3tQovA=;
-        b=LOGcgakRTPXTgDyu0nG3DbhzEs/itnLiF19UQZrczZjuT2wQWIrpEOvtpP+Gu2peIB
-         xKuI5o1bAu0mGNLAef51cVuZK3O0/NutxvXBLEryiwTkRlIkHVazkfbowlCKo2qqlqAG
-         fIx9Rokc3x+lGPB8gb+8e53GuLBxZ5nfFV4E920LgQo5QJjX/2QJb9yd5CiwFhHOxquw
-         iOSqOZn460EGkUKFESyhJIdtRW5PPGECEXVkswf9ud1o7r0RW1xyufC3IBl5ByP97THt
-         gGiQuoXsECBvgOu7bRpiFXBAH6/X14QOo83vOGQb4h+5FumiE27z7hiuTaI3jTYzUtG0
-         ZEvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWfH/QIqDAZ66P6Wb+eaLyLOFqEp6gVew8ULuTxR54NgYT1IfV6pYuqT1ddwsARu+RRiMKe+XuZ2jkcCqCjbM1ANFEV1HI6S8+yy1LWGZt/Ktw/8uTrgKOIls1QTimYh97c
-X-Gm-Message-State: AOJu0YyP3c3ELlZ689Y0aJOgd7t87ToduqzOz55jMVOx6vwc/UbmrYE3
-	KAHoCT+yArkZcPvmBk1jLO246AO5YrLWsXeJdGAR4qjz6PsaXjsFzoZ6yA==
-X-Google-Smtp-Source: AGHT+IG2wWckv/bYUTsp44vHKqVOV2hlrx5gFuw/hdumf9VFX6t0hYykOIgZzdXhT5HH9/rnYFOsZg==
-X-Received: by 2002:a05:6830:3c8d:b0:703:6f25:96ab with SMTP id 46e09a7af769-708fdb2ca0emr12985189a34.16.1721670953639;
-        Mon, 22 Jul 2024 10:55:53 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b7acb0f114sm36523856d6.146.2024.07.22.10.55.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 10:55:53 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 21EE11200066;
-	Mon, 22 Jul 2024 13:55:52 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 22 Jul 2024 13:55:52 -0400
-X-ME-Sender: <xms:KJ2eZoObw-7YPKOzvrWwdA4tS6nedGfj46XCqz5A22sJadfrvA63xA>
-    <xme:KJ2eZu8Eu6XOSP228wzPA0jC1JYe9becc0VIMJ5WY2CcezadCm3aA9YuIJ7EJPy-6
-    1tYypUiSSHHUe6euw>
-X-ME-Received: <xmr:KJ2eZvQrxFzJZQzpZ4wPglQVJile9YsKMpl2st5L6w6jckWQ6EjfAf37FwOo1A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrheejgdduvddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpeekvedvheefheeihfffgeehgfeuhfekfeffhefftedtffdujedtkedtfeeh
-    vefgueenucffohhmrghinhepshihiihkrghllhgvrhdrrghpphhsphhothdrtghomhdpgh
-    hithhhuhgsrdgtohhmpdhshiiisghothdrmhgupdhkvghrnhgvlhdrohhrghenucevlhhu
-    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvg
-    hsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheeh
-    hedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:KJ2eZgtb1yCd1JcU0MRG6v6Ghae0_fm2GB_CzxGH4YrhzyF3Tigweg>
-    <xmx:KJ2eZgdq5SuyZAVB1fZCYfpVOrLab1sinUwUz3TVuXgIUuoJ3a_dYg>
-    <xmx:KJ2eZk0LSx__Gy2QbUx-pfmnngwu_Cq_iKTl8KQUxFepNnJxob1B_Q>
-    <xmx:KJ2eZk-PtGKU0vDXr6hoAteCQGSmZkHGkOmnigDUKWa0OseYj1Mpiw>
-    <xmx:KJ2eZn_LJucG1db1rpH3PbrnokWwzRrHkBmk4KBlonIuq71q5bq4sGa4>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 22 Jul 2024 13:55:51 -0400 (EDT)
-Date: Mon, 22 Jul 2024 10:55:33 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Z qiang <qiang.zhang1211@gmail.com>
-Cc: paulmck@kernel.org,
-	syzbot <syzbot+784d0a1246a539975f05@syzkaller.appspotmail.com>,
-	frederic@kernel.org, jiangshanlai@gmail.com, joel@joelfernandes.org,
-	josh@joshtriplett.org, linux-kernel@vger.kernel.org,
-	mathieu.desnoyers@efficios.com, neeraj.upadhyay@kernel.org,
-	rcu@vger.kernel.org, rostedt@goodmis.org,
-	syzkaller-bugs@googlegroups.com, urezki@gmail.com
-Subject: Re: [syzbot] [rcu?] WARNING in rcu_note_context_switch (2)
-Message-ID: <Zp6dFQc6yyL3bqRa@boqun-archlinux>
-References: <000000000000d0e3b5061dc16993@google.com>
- <2897a6bd-6c7d-4b9b-8891-27051df45f8e@paulmck-laptop>
- <CALm+0cWP3=HJfdbQcRNf-StdfFEJw66HSX4i8a+fTek3zR=ORA@mail.gmail.com>
- <29449e47-d40b-4d01-94dc-630b2a92279b@paulmck-laptop>
- <CALm+0cXx4LADq0XJeUP6M0KwY_ok9bx7YLOz1BSX09D3XrvUAQ@mail.gmail.com>
+	s=arc-20240116; t=1721671024; c=relaxed/simple;
+	bh=yPpL6oe42dLTZp5uU5OTc5tOwtAVq1CoWFThS3HQxVA=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pktGh8aPLhpScsVWTTxVssE4YRxooiMkbepgTjBmReLUwTWQv82U3UUzyQR9iMPWRldYSbd3UOw29C4zZcQz7LGpzbKIRDzHIzFaPglw97HAAWEtuvXSzZ2otRBe3Lt26wC5MfoBCS/+9eF7mH1zxFxeUh4vwE1oje8Bx43DO24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=EbaFcVO+; arc=none smtp.client-ip=178.154.239.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-77.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-77.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:2e23:0:640:e883:0])
+	by forward500d.mail.yandex.net (Yandex) with ESMTPS id F195160CA1;
+	Mon, 22 Jul 2024 20:56:51 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-77.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id ouRpL75m70U0-LGeuwe7p;
+	Mon, 22 Jul 2024 20:56:51 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1721671011; bh=6mBv2LuIC04HW36BwRBTUhRpyKQwuvnW5K+3eMpsC2E=;
+	h=In-Reply-To:Date:References:To:From:Subject:Message-ID;
+	b=EbaFcVO+4FPsYKT3PdE0zYzUDKBGD4zmfONmSZZgv+x6JDbuAjOB/o4z2DL+sHvxJ
+	 72CV0Uzif1zFHMzenhEcuQ5OSSgdh+P4VPpORkrU8tIa/zNa4m2fYI2zeG3rLZT/kp
+	 SebTekiuHtdWIHQ+7E8fIhlFjXqVMnZE24e5NQSg=
+Authentication-Results: mail-nwsmtp-smtp-production-main-77.klg.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <57241c91337e8fc3257b6d4a35c273af59875eff.camel@yandex.ru>
+Subject: Re: Lockup of (raid5 or raid6) + vdo after taking out a disk under
+ load
+From: Konstantin Kharlamov <Hi-Angel@yandex.ru>
+To: Yu Kuai <yukuai1@huaweicloud.com>, Song Liu <song@kernel.org>, 
+ linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "yangerkun@huawei.com" <yangerkun@huawei.com>, "yukuai (C)"
+ <yukuai3@huawei.com>
+Date: Mon, 22 Jul 2024 20:56:50 +0300
+In-Reply-To: <9c60881e-d28f-d8d5-099c-b9678bd69db9@huaweicloud.com>
+References: <a6d068a26a90057fb3cdaa59f9d57a2af41a6b22.camel@yandex.ru>
+	 <1f879e67-4d64-4df0-5817-360d84ff8b89@huaweicloud.com>
+	 <29d69e586e628ef2e5f2fd7b9fe4e7062ff36ccf.camel@yandex.ru>
+	 <517243f0-77c5-9d67-a399-78c449f6afc6@huaweicloud.com>
+	 <810a319b846c7e16d85a7f52667d04252a9d0703.camel@yandex.ru>
+	 <9c60881e-d28f-d8d5-099c-b9678bd69db9@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALm+0cXx4LADq0XJeUP6M0KwY_ok9bx7YLOz1BSX09D3XrvUAQ@mail.gmail.com>
 
-On Mon, Jul 22, 2024 at 02:42:10PM +0800, Z qiang wrote:
-[...]
-> > >
-> > > This should be caused by this modification  (commit id:
-> > > ca567df74a28a9fb368c6b2d93e864113f73f5c2)
-> > > when tsk is null, miss invoke rcu_read_unlock() for NS_GET_TGID_IN_PIDNS.
+Hi, sorry for the delay, I had to give away the nodes and we had a week
+of teambuilding and company party, so for the past week I only managed
+to hack away stripping debug symbols, get another node and set it up.
+
+Experiments below are based off of vanilla 6.9.8 kernel *without* your
+patch.
+
+On Mon, 2024-07-15 at 09:56 +0800, Yu Kuai wrote:
+> Line number will be helpful.
+
+So, after tinkering with building scripts I managed to build modules
+with debug symbols (not the kernel itself but should be good enough),
+but for some reason kernel doesn't show line numbers in stacktraces. No
+idea what could be causing it, so I had to decode line numbers
+manually, below is an output where I inserted line numbers for raid456
+manually after decoding them with `gdb`.
+
+    [=E2=80=A6]
+    [ 1677.293366]  <TASK>
+    [ 1677.293661]  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
+    [ 1677.293972]  ? _raw_spin_unlock_irq+0x10/0x30
+    [ 1677.294276]  ? _raw_spin_unlock_irq+0xa/0x30
+    [ 1677.294586]  raid5d at drivers/md/raid5.c:6572
+    [ 1677.294910]  md_thread+0xc1/0x170
+    [ 1677.295228]  ? __pfx_autoremove_wake_function+0x10/0x10
+    [ 1677.295545]  ? __pfx_md_thread+0x10/0x10
+    [ 1677.295870]  kthread+0xff/0x130
+    [ 1677.296189]  ? __pfx_kthread+0x10/0x10
+    [ 1677.296498]  ret_from_fork+0x30/0x50
+    [ 1677.296810]  ? __pfx_kthread+0x10/0x10
+    [ 1677.297112]  ret_from_fork_asm+0x1a/0x30
+    [ 1677.297424]  </TASK>
+    [=E2=80=A6]
+    [ 1705.296253]  <TASK>
+    [ 1705.296554]  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
+    [ 1705.296864]  ? _raw_spin_unlock_irq+0x10/0x30
+    [ 1705.297172]  ? _raw_spin_unlock_irq+0xa/0x30
+    [ 1677.294586]  raid5d at drivers/md/raid5.c:6597
+    [ 1705.297794]  md_thread+0xc1/0x170
+    [ 1705.298099]  ? __pfx_autoremove_wake_function+0x10/0x10
+    [ 1705.298409]  ? __pfx_md_thread+0x10/0x10
+    [ 1705.298714]  kthread+0xff/0x130
+    [ 1705.299022]  ? __pfx_kthread+0x10/0x10
+    [ 1705.299333]  ret_from_fork+0x30/0x50
+    [ 1705.299641]  ? __pfx_kthread+0x10/0x10
+    [ 1705.299947]  ret_from_fork_asm+0x1a/0x30
+    [ 1705.300257]  </TASK>
+    [=E2=80=A6]
+    [ 1733.296255]  <TASK>
+    [ 1733.296556]  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
+    [ 1733.296862]  ? _raw_spin_unlock_irq+0x10/0x30
+    [ 1733.297170]  ? _raw_spin_unlock_irq+0xa/0x30
+    [ 1677.294586]  raid5d at drivers/md/raid5.c:6572
+    [ 1733.297792]  md_thread+0xc1/0x170
+    [ 1733.298096]  ? __pfx_autoremove_wake_function+0x10/0x10
+    [ 1733.298403]  ? __pfx_md_thread+0x10/0x10
+    [ 1733.298711]  kthread+0xff/0x130
+    [ 1733.299018]  ? __pfx_kthread+0x10/0x10
+    [ 1733.299330]  ret_from_fork+0x30/0x50
+    [ 1733.299637]  ? __pfx_kthread+0x10/0x10
+    [ 1733.299943]  ret_from_fork_asm+0x1a/0x30
+    [ 1733.300251]  </TASK>
+
+> Meanwhile, can you check if the underlying
+> disks has IO while raid5 stuck, by /sys/block/[device]/inflight.
+
+The two devices that are left after the 3rd one is removed has these
+numbers that don't change with time:
+
+    [Mon Jul 22 20:18:06 @ ~]:> for d in dm-19 dm-17; do echo -n $d; cat
+    /sys/block/$d/inflight; done
+    dm-19       9        1
+    dm-17      11        2
+    [Mon Jul 22 20:18:11 @ ~]:> for d in dm-19 dm-17; do echo -n $d; cat
+    /sys/block/$d/inflight; done
+    dm-19       9        1
+    dm-17      11        2
+
+They also don't change after I return the disk back (which is to be
+expected I guess, given that the lockup doesn't go away).
+
 > >
-> > Very good, and it looks like that to me as well.  Would you like to
-> > submit a fix patch and see if syzbot agrees?
-> 
-> I see there is a c test
-> program(https://syzkaller.appspot.com/x/repro.c?x=17a3c349980000),
-> I will run this test on my local machine, and then make a fix.
-> 
+> > > At first, can the problem reporduce with raid1/raid10? If not,
+> > > this
+> > > is
+> > > probably a raid5 bug.
+> >
+> > This is not reproducible with raid1 (i.e. no lockups for raid1), I
+> > tested that. I didn't test raid10, if you want I can try (but
+> > probably
+> > only after the weekend, because today I was asked to give the nodes
+> > away, for the weekend at least, to someone else).
+>
+> Yes, please try raid10 as well. For now I'll say this is a raid5
+> problem.
 
-FWIW, syzbot provides a way to do tests automatically:
+Tested: raid10 works just fine, i.e. no lockup and fio continues
+having non-zero IOPS.
 
-	https://github.com/google/syzkaller/blob/master/docs/syzbot.md#testing-patches
-
-But looks like Christian already fixed this:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=280e36f0d5b997173d014c07484c03a7f7750668
-
-Regards,
-Boqun
-
-> Thanks
-> Zqiang
-> 
-> 
-[...]
+> > > The best will be that if I can reporduce this problem myself.
+> > > The problem is that I don't understand the step 4: turning off
+> > > jbod
+> > > slot's power, is this only possible for a real machine, or can I
+> > > do
+> > > this in my VM?
+> >
+> > Well, let's say that if it is possible, I don't know a way to do
+> > that.
+> > The `sg_ses` commands that I used
+> >
+> > 	sg_ses --dev-slot-num=3D9 --set=3D3:4:1=C2=A0=C2=A0 /dev/sg26 # turnin=
+g
+> > off
+> > 	sg_ses --dev-slot-num=3D9 --clear=3D3:4:1 /dev/sg26 # turning
+> > on
+> >
+> > =E2=80=A6sets and clears the value of the 3:4:1 bit, where the bit is
+> > defined
+> > by the JBOD's manufacturer datasheet. The 3:4:1 specifically is
+> > defined
+> > by "AIC" manufacturer. That means the command as is unlikely to
+> > work on
+> > a different hardware.
+>
+> I never do this before, I'll try.
+> >
+> > Well, while on it, do you have any thoughts why just using a `echo
+> > 1 >
+> > /sys/block/sdX/device/delete` doesn't reproduce it? Does perhaps
+> > kernel
+> > not emulate device disappearance too well?
+>
+> echo 1 > delete just delete the disk from kernel, and scsi/dm-raid
+> will
+> know that this disk is deleted. However, the disk will stay in kernel
+> for the other way, dm-raid does not aware that underlying disks are
+> problematic and IO will still be generated and issued.
+>
+> Thanks,
+> Kuai
 
