@@ -1,204 +1,137 @@
-Return-Path: <linux-kernel+bounces-259067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 931019390C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:37:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5EF8939051
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:07:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B728D1C2100E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:37:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D52E282071
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB68516DC17;
-	Mon, 22 Jul 2024 14:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A538616D9DC;
+	Mon, 22 Jul 2024 14:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="REaeCjLQ"
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lxTc7X+D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6570FF9FE;
-	Mon, 22 Jul 2024 14:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FDE8F5E;
+	Mon, 22 Jul 2024 14:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721659039; cv=none; b=p4nftBm1Uvj5hG88Rn/VXYo6jUvBwnJSk2EVxJBwt0xJZZmgmHvARIsVTwYVNtewSlcXFq2PqiUE2ArYTwe6CduEYMsRTd/YCq7xx7tYewcWW8nOSesmGVsYCKP+Sgj8t6lpMF1JL9gkpGPcyymdo9DVezcgXeoDv7OjANKv/4o=
+	t=1721657256; cv=none; b=NnHysHWi/BJdjTaAg/w6jfK+w80cz9aw9KbF4fGp9xhiXQDP7KmTl/zZd1RlYrG3QdnOPlVmBYHG3ghbrIBdhLkP0NQZEf7B0M+JOPolNI6lGyeYrac8z7jpJdcN2NdfBmTqZUUxyvHpZAZbEKbSQGv5mgTUOsA99KBoSxk7VjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721659039; c=relaxed/simple;
-	bh=jFV16UmVCI6fxImUzE1wTiJZxB/8UcM+LYPVCkYuhX4=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jbGlMNsTUqT7pZY1i7JAU589Mq900bBrOOEnxU9Ib16XpSDaEc0m2kpty8Y2n8EjmAngShzM0mt8KGI6UAYQ2sTETpDfkxl0X8u6EJcpTcTh7Xh2Q+3paZH/T5HBIhVTmA1WBHUcou3KBBbTUeEByAAhd3BKOCSmLgEEsavmf+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=REaeCjLQ; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46MC4wb5025513;
-	Mon, 22 Jul 2024 09:45:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=FB2/W
-	eqXqRX1phygT/WXuafr1de4oPqjPnsJDOqdkZ4=; b=REaeCjLQF6BFnLr7YYLM7
-	TMnKSBaEn3QycdzBWvRbLbgk+UJBbPKmmFSlWPXTbdUoaWhjgX0mxBErD548m2K0
-	TMcU1iadgQIggv9FwtE1am4ASuzEOLmH4Pz5pjgSLVhoPvSvLpnhtsPgVB1CqHWk
-	OoPwimqT1WzWnQ4uh3eDVglAt2zeyW4My5e61YAqBBDi7B+mBbZ2eEDB9r0H3W+Y
-	lW00CWkKI6jMmY0Mof5nhc7DqOwYjmCT+BJMXKMRsiwDGDhEV/oZJFOSjQy4i/sl
-	ovOS3JAJlNuQ5KKbSaxWjES494mcGpYAzhNqaRwlXf3Nn/maDraD2KtzVz2ll1mb
-	A==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 40hj2b9d74-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jul 2024 09:45:37 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 46MDja0S025940
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 22 Jul 2024 09:45:36 -0400
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Mon, 22 Jul 2024 09:45:35 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Mon, 22 Jul 2024 09:45:35 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Mon, 22 Jul 2024 09:45:35 -0400
-Received: from amiclaus-VirtualBox.ad.analog.com ([10.65.36.213])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 46MDjH9K016251;
-	Mon, 22 Jul 2024 09:45:24 -0400
-From: Antoniu Miclaus <antoniu.miclaus@analog.com>
-To: Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich
-	<Michael.Hennerich@analog.com>,
-        Antoniu Miclaus <antoniu.miclaus@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-        "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        "Dragos Bogdan" <dragos.bogdan@analog.com>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 2/2] iio: frequency: adf4377: add adf4378 support
-Date: Mon, 22 Jul 2024 16:45:06 +0300
-Message-ID: <20240722134508.25234-2-antoniu.miclaus@analog.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240722134508.25234-1-antoniu.miclaus@analog.com>
-References: <20240722134508.25234-1-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1721657256; c=relaxed/simple;
+	bh=X2Dq9EEgIsw217TATz57R704BTL8O+bNFphSbNYfFVU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q9oqK6t5ZKKEIrwrVaHIjAUGbUAqWA+/9IooOcbQ4mZeQJ48Pr+PyLwCMy3VP9e6K99IiM18CMtUdIFAN6zYbdn+vsjCj7EiHc0WV/Lba/9thG75IGsKFEJSAY8pTFD5O5aodTxAkrpcDfdcpmQqBgdYFCnKgIdXRKOZ0cVeSZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lxTc7X+D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 112B6C116B1;
+	Mon, 22 Jul 2024 14:07:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721657255;
+	bh=X2Dq9EEgIsw217TATz57R704BTL8O+bNFphSbNYfFVU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=lxTc7X+DqbXcwu0lTAP6ofwGu7Ww9JRnyg3cZBFaaeDujewWiTwNFSGgCj57Exy3s
+	 MmxuxSCfkCtdv7o3NYZXw4S5boca2vyFol9Prn21guqlpYyGEf7nX+KiDS5GNngpsM
+	 7zlL0iQ7u9ZsCG9gK4GiHvpmr2q9ZO5GNeQjCyABSHO08oJCPBsuaIaYd9+UYHOboD
+	 CSqBBlOzZ26tlXV0rqwfy3bx5nW9z9AXMj+S6ow6TkO4bH6VJ7XQ0MHq4CsOzIb8sl
+	 UB51yaC/K02dRtlz9qBtFqCVXAVw83poq0CloWaCo22cWk7+c5aKQm8ZcNCPC81rR1
+	 7/DMc1QPaoyLA==
+Message-ID: <f2dffc5d-9598-4722-8a24-8ad113c9321a@kernel.org>
+Date: Mon, 22 Jul 2024 16:07:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-ORIG-GUID: tUrVznoMtNlT3vH_U7XWk4k2fRHVSLa3
-X-Proofpoint-GUID: tUrVznoMtNlT3vH_U7XWk4k2fRHVSLa3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-22_09,2024-07-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 malwarescore=0 suspectscore=0 mlxlogscore=999
- phishscore=0 mlxscore=0 priorityscore=1501 impostorscore=0 adultscore=0
- clxscore=1015 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407220103
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 3/3] ARM: dts: davinci, keystone: correct watchdog
+ nodenames
+To: Kousik Sanagavarapu <five231003@gmail.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>,
+ Guenter Roeck <linux@roeck-us.net>, Nishanth Menon <nm@ti.com>,
+ Santosh Shilimkar <ssantosh@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-watchdog@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240721170840.15569-1-five231003@gmail.com>
+ <20240721170840.15569-4-five231003@gmail.com>
+ <e0e36e05-f565-48ad-9309-854b6fb7985c@kernel.org>
+ <Zp5c9rNyNJwQZ4+k@five231003>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <Zp5c9rNyNJwQZ4+k@five231003>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add separate handling for adf4378 within the driver.
+On 22/07/2024 15:21, Kousik Sanagavarapu wrote:
+> On Mon, Jul 22, 2024 at 10:13:59AM +0200, Krzysztof Kozlowski wrote:
+>> On 21/07/2024 18:28, Kousik Sanagavarapu wrote:
+>>> Using "wdt" instead of "watchdog" for watchdog timer nodes doesn't allow
+>>> for validation with the corresponding dtschema and gives errors
+>>>
+>>> [...]
+>>>
+>> That's entirely unrelated patch. Don't mix simple cleanups with patches
+>> affecting ABI and users. Also, explain why.
+> 
+> Got it.  Will submit v2 as a seperate patch, outside of this series.
 
-The main difference between adf4377 and adf4378 is that adf4378 has only
-one output which is handled by only one gpio.
+... and carefully re-think why. I am 99% sure your patch breaks the
+users. Better if you test your changes.
 
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
----
-changes in v2:
- - use chip_info structure to handle new added part (adf4378)
- - use spi_get_device_match_data
- - drop redundant check in if statement.
- drivers/iio/frequency/adf4377.c | 36 ++++++++++++++++++++++++++-------
- 1 file changed, 29 insertions(+), 7 deletions(-)
+Conversion of the bindings is a task which requires to know how DTS works.
 
-diff --git a/drivers/iio/frequency/adf4377.c b/drivers/iio/frequency/adf4377.c
-index 9284c13f1abb..82374f5d2695 100644
---- a/drivers/iio/frequency/adf4377.c
-+++ b/drivers/iio/frequency/adf4377.c
-@@ -400,7 +400,13 @@ enum muxout_select_mode {
- 	ADF4377_MUXOUT_HIGH = 0x8,
- };
- 
-+struct adf4377_chip_info {
-+	const char *name;
-+	bool has_gpio_enclk2;
-+};
-+
- struct adf4377_state {
-+	const struct adf4377_chip_info	*chip_info;
- 	struct spi_device	*spi;
- 	struct regmap		*regmap;
- 	struct clk		*clkin;
-@@ -889,11 +895,13 @@ static int adf4377_properties_parse(struct adf4377_state *st)
- 		return dev_err_probe(&spi->dev, PTR_ERR(st->gpio_enclk1),
- 				     "failed to get the CE GPIO\n");
- 
--	st->gpio_enclk2 = devm_gpiod_get_optional(&st->spi->dev, "clk2-enable",
--						  GPIOD_OUT_LOW);
--	if (IS_ERR(st->gpio_enclk2))
--		return dev_err_probe(&spi->dev, PTR_ERR(st->gpio_enclk2),
--				     "failed to get the CE GPIO\n");
-+	if (st->chip_info->has_gpio_enclk2) {
-+		st->gpio_enclk2 = devm_gpiod_get_optional(&st->spi->dev, "clk2-enable",
-+							  GPIOD_OUT_LOW);
-+		if (IS_ERR(st->gpio_enclk2))
-+			return dev_err_probe(&spi->dev, PTR_ERR(st->gpio_enclk2),
-+					"failed to get the CE GPIO\n");
-+	}
- 
- 	ret = device_property_match_property_string(&spi->dev, "adi,muxout-select",
- 						    adf4377_muxout_modes,
-@@ -921,6 +929,17 @@ static int adf4377_freq_change(struct notifier_block *nb, unsigned long action,
- 	return NOTIFY_OK;
- }
- 
-+static const struct adf4377_chip_info adf4377_chip_info_tbl[] = {
-+	{
-+		.name = "adf4377",
-+		.has_gpio_enclk2 = true,
-+	},
-+	{
-+		.name = "adf4378",
-+		.has_gpio_enclk2 = false,
-+	},
-+};
-+
- static int adf4377_probe(struct spi_device *spi)
- {
- 	struct iio_dev *indio_dev;
-@@ -945,6 +964,7 @@ static int adf4377_probe(struct spi_device *spi)
- 
- 	st->regmap = regmap;
- 	st->spi = spi;
-+	st->chip_info = spi_get_device_match_data(spi);
- 	mutex_init(&st->lock);
- 
- 	ret = adf4377_properties_parse(st);
-@@ -964,13 +984,15 @@ static int adf4377_probe(struct spi_device *spi)
- }
- 
- static const struct spi_device_id adf4377_id[] = {
--	{ "adf4377", 0 },
-+	{ "adf4377", (kernel_ulong_t)&adf4377_chip_info_tbl[0] },
-+	{ "adf4378", (kernel_ulong_t)&adf4377_chip_info_tbl[1] },
- 	{}
- };
- MODULE_DEVICE_TABLE(spi, adf4377_id);
- 
- static const struct of_device_id adf4377_of_match[] = {
--	{ .compatible = "adi,adf4377" },
-+	{ .compatible = "adi,adf4377", .data = &adf4377_chip_info_tbl[0] },
-+	{ .compatible = "adi,adf4378", .data = &adf4377_chip_info_tbl[1]},
- 	{}
- };
- MODULE_DEVICE_TABLE(of, adf4377_of_match);
--- 
-2.45.2
+Best regards,
+Krzysztof
 
 
