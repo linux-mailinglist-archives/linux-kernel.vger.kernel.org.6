@@ -1,157 +1,168 @@
-Return-Path: <linux-kernel+bounces-258601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D98938A57
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:46:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C709938A5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DEF0281194
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:46:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D1B41C210AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A541586F5;
-	Mon, 22 Jul 2024 07:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095101607B4;
+	Mon, 22 Jul 2024 07:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="k7AIG/pj"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YN//Bj54"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEC5158202
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE95D1607A5
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721634395; cv=none; b=luyXpSvdprvKI3cCXby0qNSM9aLwbiU4jNKKN/DZg+pzGkO0yV3Jwx7PwZlVhanm41+ne3zp8Orv1lfrNNbDDzMK5JqteXoouCZB1PJFcX3uxsyVnhqHPXxE6VJrnBsbXCM5WsK18hr5JmaQSeINBBMtAucxyltxjhhGC6V9lJI=
+	t=1721634508; cv=none; b=h4cxi7CvhPzKTOwTNDEb9jvHWUDfaY6mspUxpehqHJcfSY+xkq8qjfjJAbDTykOciAIDunAh1kPD0315qH7lP1xrdMddc3daG/xQoBhEv7txVX0O8gwwkdTyz9/08e6hsHrCDn/EpxAqRQsm3slLidK+DEars3iIEmd547hmLlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721634395; c=relaxed/simple;
-	bh=Dp/QhsbatvF3hBrR80X7+q5TbAEJOUdpQ8bDbChkvYU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fXIOM/gdnSkIRSAKCbBfPGP3FQ9+WBJ/91t0RfHN8SxxI5D1UDiSjLumGQ/Z8tn2N4Y41/ZwKHJQOX8kVoOWBz5osLp1VOcfGoPpW2ByL4VfdaEYbG1dqzhFmUjto206SMw/RJq1OqV0KXpUd3gGAYJ+RxzZufw96fEITRxmcUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=k7AIG/pj; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-260209df55dso1933038fac.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 00:46:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1721634392; x=1722239192; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c2oZMADNy7ggKDtNiN/O71dpaVIuM51IzWkENQuhDmE=;
-        b=k7AIG/pjqQWLah45D/MttYT74a0AR6bVg/mW+Y+1AM1DGK9yz0mOqOSLye9plHM/I1
-         7PYiIZbqAVQkmzOK66DIWoy8yJq4Prb+Z2rCMEkkTmmwB4AldflokUyoTnCexDsT7zFI
-         bXIpZNciNIZ2EKMegqZN2UDp7acMp0YvXVyzerqs+OQF9JWj5fla+iFbqswV3dOG9BD8
-         XpJmEeTzgrz7AEHe8HB+ASy/9YgrURJ+YNhR9Ek4cIT+JPJee+TWdF7LHGGkk3d/baqs
-         DJmGIMjTxBaDBHIJy1ts1KTENqRSLFPqjihrmSJwKf9UWDRBDYSUePXHo5XM+2ccLLJo
-         Gjyw==
+	s=arc-20240116; t=1721634508; c=relaxed/simple;
+	bh=qwelGQSOHsBlu5/R+Td9lnRymixbgCg1HZ+vhkQvB5E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rHoijlzWKG/0hauq9Bt/68BvhLq/fA9/1GTbsOP1hvGEdKhf1N104HuSKSKpiWzYwUDCFANWspy/obu9g0Pyi13E7vZ0Nqk/rvI6DJZsozhra4JHsVIHYodQsqRQalpHPTx88ByA3Tt6Nw5s/OvZcFGWXp14309gfrx85cK7qzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YN//Bj54; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721634505;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I/mcqTp3y3xN2oxPQLtpcs5nTeZV7vOd20nAM2VvMok=;
+	b=YN//Bj54p78hUtvO2ttcCWFbQuPzBudyHeJvZ8CtXNlGR2Rc8wkJtD4+ozZ0jAeeKSqGsd
+	o27CIuQbmu6z4P9fmUrOJPIVVIiwPeMOHvYsJgjyMZba5SA9mTpqhcDerSruhkNfyMKFX4
+	VOQ2BJiTUphulSw1UJg7qfzHvR8mD5g=
+Received: from mail-ua1-f70.google.com (mail-ua1-f70.google.com
+ [209.85.222.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-683-17JfleMnOSCnyaa7dUijVw-1; Mon, 22 Jul 2024 03:48:24 -0400
+X-MC-Unique: 17JfleMnOSCnyaa7dUijVw-1
+Received: by mail-ua1-f70.google.com with SMTP id a1e0cc1a2514c-81ff8a9ba5aso1289815241.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 00:48:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721634392; x=1722239192;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=c2oZMADNy7ggKDtNiN/O71dpaVIuM51IzWkENQuhDmE=;
-        b=v4IBHaj4NnBcq744HCdfMoU/ttqPUGKxjbRd686pDwdYXNoxNF/tRKf0MHsAGBvfnk
-         DqiEJEx8GD+uKb+mqmdLWYVXZY+M/gofu141NjXSL8tH3YjcVbFG/EQ1DL6R5+zwAJJt
-         xrndlXIqi0KEZ8/kZ3D50Ak8JDqSAxDX15FWKRKJSel49Q7e0dSHVsrJvTewJ4VL6nrU
-         SvPkFA4qXURut4BxQ3BtqfyBFrOQ/MFzHkRLCJV/P5joVbTi9OiciuBbmBJwAb9zU/4N
-         b85mAggiEOzjFQ01ySLU6ni8M4B/cM4NyYNDfGoCTNZo5c1WbTftplA1m0zC3kN9g5Hr
-         DjeA==
-X-Forwarded-Encrypted: i=1; AJvYcCW9otASSyoz8CP1dHkcv1zkyudODKNYxegp5cmJiGhdP1Xml8yNz44sdAertMiiCLpKThlLGuCKXjC5RAYXt2FZikZHOZihtDmsTfte
-X-Gm-Message-State: AOJu0YygT9Ks0sZntAGXiBu4uZvWe1yu/idv34KMxmx9nUfFuAeGMt/K
-	KCgWeMVGCdBATd3ReGDf26JfEderZbDIEwSUWoAwDY/ITpDUsm9L0Xq0p0JXYC4=
-X-Google-Smtp-Source: AGHT+IE84mGJX+1WfMsfj781hYl7v/wzKO7/MrM1QhDiVL85SSxVRn/TtRPv4Ycrmkequ60U0gwaqg==
-X-Received: by 2002:a05:6870:8183:b0:260:e678:b660 with SMTP id 586e51a60fabf-263ab65243cmr4660701fac.51.1721634392001;
-        Mon, 22 Jul 2024 00:46:32 -0700 (PDT)
-Received: from [10.254.189.162] ([139.177.225.235])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70d1971a5bcsm2334447b3a.0.2024.07.22.00.46.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jul 2024 00:46:31 -0700 (PDT)
-Message-ID: <e4e3a63d-a5f2-4c1d-a9da-4ddbc3693450@bytedance.com>
-Date: Mon, 22 Jul 2024 15:46:24 +0800
+        d=1e100.net; s=20230601; t=1721634499; x=1722239299;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I/mcqTp3y3xN2oxPQLtpcs5nTeZV7vOd20nAM2VvMok=;
+        b=jRDs8G6F3VhJGj3lv1qjVmAG1yOklTTa1wl7W5opkodQXQre1ioVW+N6+p1131IV8w
+         ZQmVyDJ2RLkuD/az0ttAYAXR8B/KDfPT5Jc00P7asWr8Mh6z6P7CubQjoJB9/Vgf2mvv
+         L43O6+BQdgPPvnafgfhyDdx4mhXriVYK8k3TJ+UsmnUmpqv/sv8oLA5mqqk3WtQs9UGx
+         n8YQLqi4KqM8x8KRxFlpHyXgkrQPCicepv0IPU1Y4HPsytV63KgI4iv5H7FlJnzIgxFY
+         GbaAwmBo5AHAwGlyORdxC3WZqiLwbjwuusBYQJjUMTbGaVCH49EAI55lLHDJzC8M40i1
+         l6Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCWs4Fov1V/MNeUtgvE4YsLWaJ1+GzPxRhhPsXws5D9whkqae9MhTGDuECoTaDPGRvNt28uCs63cBlvuFgbyvxbpCvxH/rmTk/XHgWtb
+X-Gm-Message-State: AOJu0YwF1pT1EYywI+zHg81WN6PXPjB4br+x6b4l9SVwOlnP8Mao8yvI
+	XQdk/HkXyiBtPG96IjuvUt9WgqxUIIybw3bLammtlrIPRQtVq450ePxaWX2WUaO1PdPEKhC3QDs
+	5mTFA/IzJT1cqw62wsyh8nWYV6NjlHmYcvVj56ZP2PZf7Q1FF2ad9kug2iLG3krHsJkhaBRF5VU
+	khPoUHhHLv61ZaHecShGISVTpdfpdE5FQ44Nt08NsR0q+lJdGoMw==
+X-Received: by 2002:a05:6102:5e96:b0:48d:a5ff:2f5f with SMTP id ada2fe7eead31-49283e2b004mr4468188137.12.1721634498691;
+        Mon, 22 Jul 2024 00:48:18 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGAp5cOsjJMIxSSgdrU2NI/bo+MBLdUDPozloHXQyx7N7sL3/bEoMgtqLF7ISAqIr6HhTEILPOLPhO3xtGIBgs=
+X-Received: by 2002:a05:6102:5e96:b0:48d:a5ff:2f5f with SMTP id
+ ada2fe7eead31-49283e2b004mr4468168137.12.1721634498275; Mon, 22 Jul 2024
+ 00:48:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] sched/fair: Decrease cfs bandwidth usage in
- task_group destruction
-To: Zhang Qiao <zhangqiao22@huawei.com>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com
-Cc: chengming.zhou@linux.dev, linux-kernel@vger.kernel.org, joshdon@google.com
-References: <20240721125208.5348-1-zhouchuyi@bytedance.com>
- <20240721125208.5348-2-zhouchuyi@bytedance.com>
- <91e88019-52f7-4fa6-a14b-ca5ecb8e63cf@huawei.com>
- <d0918be2-8d4e-427d-ac98-32aecffe3a3b@bytedance.com>
- <14c3db2b-5de2-4f1c-b4d4-6183568b8c24@huawei.com>
-From: Chuyi Zhou <zhouchuyi@bytedance.com>
-In-Reply-To: <14c3db2b-5de2-4f1c-b4d4-6183568b8c24@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240722010625.1016854-1-lulu@redhat.com> <20240722010625.1016854-3-lulu@redhat.com>
+In-Reply-To: <20240722010625.1016854-3-lulu@redhat.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Mon, 22 Jul 2024 15:48:02 +0800
+Message-ID: <CACGkMEtq=2yO=4te+qQxwSzi4G-4E_kdq=tCQq_N94Pk8Ro3Zw@mail.gmail.com>
+Subject: Re: [PATH v4 2/3] vdpa_sim_net: Add the support of set mac address
+To: Cindy Lu <lulu@redhat.com>
+Cc: dtatulea@nvidia.com, mst@redhat.com, parav@nvidia.com, sgarzare@redhat.com, 
+	netdev@vger.kernel.org, virtualization@lists.linux-foundation.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, Jul 22, 2024 at 9:06=E2=80=AFAM Cindy Lu <lulu@redhat.com> wrote:
+>
+> Add the function to support setting the MAC address.
+> For vdpa_sim_net, the driver will write the MAC address
+> to the config space, and other devices can implement
+> their own functions to support this.
+>
+> Signed-off-by: Cindy Lu <lulu@redhat.com>
+> ---
+>  drivers/vdpa/vdpa_sim/vdpa_sim_net.c | 22 +++++++++++++++++++++-
+>  1 file changed, 21 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim_net.c b/drivers/vdpa/vdpa_sim=
+/vdpa_sim_net.c
+> index cfe962911804..936e33e5021a 100644
+> --- a/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
+> +++ b/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
+> @@ -414,6 +414,25 @@ static void vdpasim_net_get_config(struct vdpasim *v=
+dpasim, void *config)
+>         net_config->status =3D cpu_to_vdpasim16(vdpasim, VIRTIO_NET_S_LIN=
+K_UP);
+>  }
+>
+> +static int vdpasim_net_set_attr(struct vdpa_mgmt_dev *mdev,
+> +                               struct vdpa_device *dev,
+> +                               const struct vdpa_dev_set_config *config)
+> +{
+> +       struct vdpasim *vdpasim =3D container_of(dev, struct vdpasim, vdp=
+a);
+> +       struct virtio_net_config *vio_config =3D vdpasim->config;
+> +
+> +       mutex_lock(&vdpasim->mutex);
+> +
+> +       if (config->mask & (1 << VDPA_ATTR_DEV_NET_CFG_MACADDR)) {
+> +               memcpy(vio_config->mac, config->net.mac, ETH_ALEN);
+> +               mutex_unlock(&vdpasim->mutex);
+> +               return 0;
+> +       }
+> +
+> +       mutex_unlock(&vdpasim->mutex);
 
-在 2024/7/22 15:16, Zhang Qiao 写道:
-> hi
-> 
-> 在 2024/7/22 14:04, Chuyi Zhou 写道:
->> Hello
->>
->> 在 2024/7/22 11:47, Zhang Qiao 写道:
->>>
->>>
->>> Hi, Chuyi
->>>
->>> 在 2024/7/21 20:52, Chuyi Zhou 写道:
->>>> The static key __cfs_bandwidth_used is used to indicate whether bandwidth
->>>> control is enabled in the system. Currently, it is only decreased when a
->>>> task group disables bandwidth control. This is incorrect because if there
->>>> was a task group in the past that enabled bandwidth control, the
->>>> __cfs_bandwidth_used will never go to zero, even if there are no task_group
->>>> using bandwidth control now.
->>>>
->>>> This patch tries to fix this issue by decrsasing bandwidth usage in
->>>> destroy_cfs_bandwidth().
->>>>
->>>> Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
->>>> ---
->>>>    kernel/sched/fair.c | 3 +++
->>>>    1 file changed, 3 insertions(+)
->>>>
->>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>>> index b1e07ce90284..7ad50dc31a93 100644
->>>> --- a/kernel/sched/fair.c
->>>> +++ b/kernel/sched/fair.c
->>>> @@ -6447,6 +6447,9 @@ static void destroy_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
->>>>        hrtimer_cancel(&cfs_b->period_timer);
->>>>        hrtimer_cancel(&cfs_b->slack_timer);
->>>>    +    if (cfs_b->quota != RUNTIME_INF)
->>>> +        cfs_bandwidth_usage_dec();
->>>
->>> This calls static_key_slow_dec_cpuslocked, but destroy_cfs_bandwidth
->>> isn't holding the hotplug lock [1].
->>>
->>> For fixing this issue, i also sent a patch, but it be not merged into mainline [2].
->>>
->>> [1]: https://lore.kernel.org/all/20210712162655.w3j6uczwbfkzazvt@oracle.com/
->>> [2]: https://lore.kernel.org/all/20210910094139.184582-1-zhangqiao22@huawei.com/
->>>
->>
->> Thanks for your information.
->>
->> I think maybe cfs_bandwidth_usage_dec() should be moved to other more suitable places where could
->> hold hotplug lock(e.g. cpu_cgroup_css_released()). I would do some test to verify it.
->>
-> 
-> The cpu_cgroup_css_released() also doesn't seem to be in the cpu hotplug lock-holding context.
-> 
+Do we need to protect:
 
-IIUC, cpus_read_lock/cpus_read_unlock can be called in 
-cpu_cgroup_css_released() right? But cfs bandwidth destroy maybe run in 
-a rcu callback since task group list is protected by RCU so we could not
-get the lock. Did I miss something important?
+        case VIRTIO_NET_CTRL_MAC_ADDR_SET:
+read =3D vringh_iov_pull_iotlb(&cvq->vring, &cvq->in_iov,
+                                             vio_config->mac, ETH_ALEN);
+                if (read =3D=3D ETH_ALEN)
+                        status =3D VIRTIO_NET_OK;
+                break;
+
+As both are modifying vio_config?
+
+Thanks
+
+> +       return -EINVAL;
+> +}
+> +
+>  static void vdpasim_net_setup_config(struct vdpasim *vdpasim,
+>                                      const struct vdpa_dev_set_config *co=
+nfig)
+>  {
+> @@ -510,7 +529,8 @@ static void vdpasim_net_dev_del(struct vdpa_mgmt_dev =
+*mdev,
+>
+>  static const struct vdpa_mgmtdev_ops vdpasim_net_mgmtdev_ops =3D {
+>         .dev_add =3D vdpasim_net_dev_add,
+> -       .dev_del =3D vdpasim_net_dev_del
+> +       .dev_del =3D vdpasim_net_dev_del,
+> +       .dev_set_attr =3D vdpasim_net_set_attr
+>  };
+>
+>  static struct virtio_device_id id_table[] =3D {
+> --
+> 2.45.0
+>
 
 
