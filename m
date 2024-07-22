@@ -1,114 +1,123 @@
-Return-Path: <linux-kernel+bounces-258593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 838CB938A3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:39:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85331938A40
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B57B61C21102
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:39:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 408A4281935
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D95A1428F1;
-	Mon, 22 Jul 2024 07:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A7114AD3F;
+	Mon, 22 Jul 2024 07:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LfywjiTh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kXWj5Gsx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E05E1F943;
-	Mon, 22 Jul 2024 07:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D7313E02A;
+	Mon, 22 Jul 2024 07:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721633981; cv=none; b=QEvIghVZldq3h3CUzIpwzrgUf3g8mZd8h8YqBSxpshSACNDU+hyG14R4ava/zC65FKM9qWARzGhp113GsG9/lZPqF9GnvwnJZ5C8e3xMEQKuEY7ZlNuishXKC+b4crJSKmbooOWuUJgcDBduE59u5C8BrVSlF2Lxq8hzBhWFuoU=
+	t=1721633997; cv=none; b=oL5W133vZCyUIDj9kbFjfFc8orH0vj02xD5lJlWljW4AEYVIhH/o2BHlGp5yQ9k7NWalvjnlhrwk4K+U3lE9pIp/1X90J2CELw/qi1Kai5q2DxrWWtQY8FwKHj+rM0c6ma8cURJEljVOJ2aexlhSdKx8mc4I0f7egA+YdP3YUWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721633981; c=relaxed/simple;
-	bh=824pP1iK9VhmN65PhNriTvUG1w+JpngpsQe+FpwGwx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AHDMZ56dhqlXgCWhEl0PgcAVQgsPzQQlDnjUtbAeF87XePAaaEkC6wxnEdOMfFAyurSbOsObtlgXJtN2TFuxE+V+C4mTE99cwtz7PXZCXoNei5WcWv00xytQNExfJwjAK7+NihyPj/DeIHDq+e/E6Z3tiCxDq8aWNgyx2RS6NPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LfywjiTh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47D40C116B1;
-	Mon, 22 Jul 2024 07:39:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721633980;
-	bh=824pP1iK9VhmN65PhNriTvUG1w+JpngpsQe+FpwGwx4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LfywjiThkIMmuOu2ytMk7TmnpAbwvnez32yMdeHyPuY//m8+VdsGqMag0uzhYZdk8
-	 p7KHnlZD/ZrWTXHId21I6hUsq1xK3pSQhoXtdk4dfPIV6Z6y/aZ2amWc7kZbMVinKs
-	 F102SNTVfRQJBnSEpCK8pDG8J1Hx/vLfGND2xyZg=
-Date: Mon, 22 Jul 2024 09:39:37 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org,
-	quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org,
-	quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org,
-	arnd@arndb.de, stable <stable@kernel.org>
-Subject: Re: [PATCH v5 1/2] misc: fastrpc: Define a new initmem size for user
- PD
-Message-ID: <2024072227-purposely-swinger-86ad@gregkh>
-References: <20240722055437.3467900-1-quic_ekangupt@quicinc.com>
- <20240722055437.3467900-2-quic_ekangupt@quicinc.com>
- <2024072234-slug-payer-2dec@gregkh>
- <607362f2-8ae5-46bd-a3a4-2d78da98b12a@quicinc.com>
+	s=arc-20240116; t=1721633997; c=relaxed/simple;
+	bh=oEC/Lwj06wbQoxnr7za85dRZRUfGfj8vnerb6oSYZsY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H4DeUgBwdPZFbGIP/+KcxtwCRIUOeYnOHbQSmQMt8gAbRFKljDSrX3svYoLH17obZnqEp+36bm9r3a2zIGMp/0QajH9gZw6VLDdzFaQSl2eYLh9hApczZWLQrvznjphTtVvc8YWoX3bfnWPPLNnA3tZwfIpnaD7d9dEx1CC2j1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kXWj5Gsx; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721633996; x=1753169996;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=oEC/Lwj06wbQoxnr7za85dRZRUfGfj8vnerb6oSYZsY=;
+  b=kXWj5GsxCfr4Lz3N9VQfIStN1d2zPYQ+3W1cy+viGUx7/6f/Yf3DH1tm
+   7dJD8pGEoqUq/8BtlZk2G26tZPb9xmfA1kFWz9/3mZKoqDDkoVrqAh7Ub
+   FdQMSRO6NvoAzqLR89/c3epocnnyXGv41Ftr1e8yaSozqkCdrRrX4bUvt
+   NBzeomwQXE6W2FiOJbtHzxCY80Jv9VIZk45N5BdLXbKDjueihOK9Mmt+k
+   SzRpmjPGODZYuD4DlRfpGWi4YHefDLNb80/9QFhk8I5ggEQQeOJQxE1d/
+   GA78IfTz5KMJmUVQq+VsWHEeXVvsy0D8UHdjdcifA8cQW/jqUVK741OWL
+   A==;
+X-CSE-ConnectionGUID: m6LP8fHvROCM2PYTjLFtSQ==
+X-CSE-MsgGUID: ITFtoqCBQiiSUfVw45dtFg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11140"; a="19060490"
+X-IronPort-AV: E=Sophos;i="6.09,227,1716274800"; 
+   d="scan'208";a="19060490"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 00:39:55 -0700
+X-CSE-ConnectionGUID: QNdvz+AqRJqOcXLuZw/r2Q==
+X-CSE-MsgGUID: cevTNEMIRiG/a1AZaeCigQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,227,1716274800"; 
+   d="scan'208";a="55971761"
+Received: from zhaohaif-mobl.ccr.corp.intel.com (HELO [10.249.175.144]) ([10.249.175.144])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 00:39:51 -0700
+Message-ID: <a50b3865-8a04-4a9a-8d27-b317619a75c0@linux.intel.com>
+Date: Mon, 22 Jul 2024 15:39:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <607362f2-8ae5-46bd-a3a4-2d78da98b12a@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] PCI: pci_call_probe: call local_pci_probe() when
+ selected cpu is offline
+To: Hongchen Zhang <zhanghongchen@loongson.cn>,
+ Markus Elfring <Markus.Elfring@web.de>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: Alex Belits <abelits@marvell.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Nitesh Narayan Lal <nitesh@redhat.com>,
+ Frederic Weisbecker <frederic@kernel.org>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ stable@vger.kernel.org, Huacai Chen <chenhuacai@loongson.cn>
+References: <20240613074258.4124603-1-zhanghongchen@loongson.cn>
+From: Ethan Zhao <haifeng.zhao@linux.intel.com>
+In-Reply-To: <20240613074258.4124603-1-zhanghongchen@loongson.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 22, 2024 at 11:42:52AM +0530, Ekansh Gupta wrote:
-> 
-> 
-> On 7/22/2024 11:28 AM, Greg KH wrote:
-> > On Mon, Jul 22, 2024 at 11:24:36AM +0530, Ekansh Gupta wrote:
-> >> For user PD initialization, initmem is allocated and sent to DSP for
-> >> initial memory requirements like shell loading. The size of this memory
-> >> is decided based on the shell size that is passed by the user space.
-> >> With the current implementation, a minimum of 2MB is always allocated
-> >> for initmem even if the size passed by user is less than that. For this
-> >> a MACRO is being used which is intended for shell size bound check.
-> >> This minimum size of 2MB is not recommended as the PD will have very
-> >> less memory for heap and will have to request HLOS again for memory.
-> >> Define a new macro for initmem minimum length of 3MB.
-> >>
-> >> Fixes: d73f71c7c6ee ("misc: fastrpc: Add support for create remote init process")
-> >> Cc: stable <stable@kernel.org>
-> >> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> >> ---
-> >>  drivers/misc/fastrpc.c | 3 ++-
-> >>  1 file changed, 2 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-> >> index a7a2bcedb37e..a3a5b745936e 100644
-> >> --- a/drivers/misc/fastrpc.c
-> >> +++ b/drivers/misc/fastrpc.c
-> >> @@ -39,6 +39,7 @@
-> >>  #define FASTRPC_DSP_UTILITIES_HANDLE	2
-> >>  #define FASTRPC_CTXID_MASK (0xFF0)
-> >>  #define INIT_FILELEN_MAX (2 * 1024 * 1024)
-> >> +#define FASTRPC_INITLEN_MIN (3 * 1024 * 1024)
-> > Meta-comment, for a future change, why not tabs to line things up?
-> Sure, I'll add a comment.
 
-I didn't say anything about comments :(
+On 6/13/2024 3:42 PM, Hongchen Zhang wrote:
+> Call work_on_cpu(cpu, fn, arg) in pci_call_probe() while the argument
+> @cpu is a offline cpu would cause system stuck forever.
+>
+> This can be happen if a node is online while all its CPUs are
+> offline (We can use "maxcpus=1" without "nr_cpus=1" to reproduce it).
+>
+> So, in the above case, let pci_call_probe() call local_pci_probe()
+> instead of work_on_cpu() when the best selected cpu is offline.
+>
+> Fixes: 69a18b18699b ("PCI: Restrict probe functions to housekeeping CPUs")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> Signed-off-by: Hongchen Zhang <zhanghongchen@loongson.cn>
+> ---
+> v2 -> v3: Modify commit message according to Markus's suggestion
+> v1 -> v2: Add a method to reproduce the problem
+> ---
+>   drivers/pci/pci-driver.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+> index af2996d0d17f..32a99828e6a3 100644
+> --- a/drivers/pci/pci-driver.c
+> +++ b/drivers/pci/pci-driver.c
+> @@ -386,7 +386,7 @@ static int pci_call_probe(struct pci_driver *drv, struct pci_dev *dev,
+>   		free_cpumask_var(wq_domain_mask);
+>   	}
+>   
+> -	if (cpu < nr_cpu_ids)
 
-> Should I line up all the MACRO definitions? If yes, should I send it as a separate patch?
+Why not choose the right cpu to callwork_on_cpu() ? the one that is online. Thanks, Ethan
 
-As I said, yes, for a future change.
-
-> > How was this tested?
-> This is tested with fastrpc use cases available in hexagon SDK:
-> https://developer.qualcomm.com/software/hexagon-dsp-sdk/sample-apps
-
-Do you have regression tests that attempt to check the boundry
-conditions and alignment here?
-
-thanks,
-
-greg k-h
+> +	if ((cpu < nr_cpu_ids) && cpu_online(cpu))
+>   		error = work_on_cpu(cpu, local_pci_probe, &ddi);
+>   	else
+>   		error = local_pci_probe(&ddi);
 
