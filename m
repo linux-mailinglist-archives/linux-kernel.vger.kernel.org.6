@@ -1,225 +1,127 @@
-Return-Path: <linux-kernel+bounces-258679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBCAB938B89
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:53:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA26D938B8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:53:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 489221F21A26
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:53:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FE951F21BAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78E116A956;
-	Mon, 22 Jul 2024 08:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA32516B3B5;
+	Mon, 22 Jul 2024 08:53:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HhWRQMj0"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E0/xGH9J"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB8691684A6;
-	Mon, 22 Jul 2024 08:53:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B611684A7;
+	Mon, 22 Jul 2024 08:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721638390; cv=none; b=XnZHLVpvjNp6PcrHCsyw1EGzLtNFpr06avk41XU0VQx9vk9cTr0ZYLF6uOPPrUCCW+IJCBaRkoXipt8f8aXtqWOKFBZ+kl1+a1NOK9321nOurwu7ClLGtn8wroM54/qvIt0hArD3fE+vtqAYBDiNtbJgHK2WjP5b83H5h07Lxcw=
+	t=1721638393; cv=none; b=e7ZPhq34qNSNJ5kXRSYOQAnxg33cEvTy/wdZnBaOCvG9OhmbfLy0HJ9hLxAxJe5A5JJfgKK0GZxfbPV/Z1QXT0vb/fLBuVK+oqbKCOISidAKmyZoahomlEMlGslX+8f6VA+6aucREWqahk23GNwaGECwWHQdx53UnSpEejzoJEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721638390; c=relaxed/simple;
-	bh=RABwcbuJTKGsJDAbco1inY1w99Id8/vZ+Lctjp24GqU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O0dTXoz4wmYbt7lISSQzYdqLhaVZFkX6DVF/vXef0CxHdD52CBRn8ZtoKIYX0sHnuY+vX8QXNi57Qok5OjYOjGq4JRPo0KalCJAmFpwpRFlyofOc7c15BV4pNbUms0Iq8PXURGda0RYPrzEYDXcyMqhSWlc8ersUqDSDVNsXlXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HhWRQMj0; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-157-149-128.elisa-laajakaista.fi [91.157.149.128])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 217072B3;
-	Mon, 22 Jul 2024 10:52:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1721638344;
-	bh=RABwcbuJTKGsJDAbco1inY1w99Id8/vZ+Lctjp24GqU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HhWRQMj0lXomE4RPG6BITO9+26ShQx/W9CNXbQ2GH9poC6AOhnHdtRNTDhCw9OKs0
-	 7/4LBMeJ77x09TBjFv+ys746Hm05TCxjcgikQXgE2kKT2RJwgGKD2RkhbogUoINP0t
-	 zFZzzELyIV/PLnhF1YkIh1dSLpcm1S463dYykKOw=
-Message-ID: <416ec496-a224-47d0-b092-6976aa039318@ideasonboard.com>
-Date: Mon, 22 Jul 2024 11:53:02 +0300
+	s=arc-20240116; t=1721638393; c=relaxed/simple;
+	bh=y1yRWrvRLNtYpXWSf96WuRJhUzco+Pej1TdQBcny6YY=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZZcrJPzl+yu3oUjo6ehTp8g77MWLtATX/lQ4MmLR2NW8xK9vFIgGUSpu+r4TPZcjPuYDFXrN7CWtGMfFSxzUCBQFFKrPt+/hSuUA/J13Tf68r8FhZp4+XrgFddJeudE74vezExQjQdDvShQKMQA3penoKd7OG/Z0OblbJdxlRBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E0/xGH9J; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52f04c29588so718520e87.3;
+        Mon, 22 Jul 2024 01:53:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721638389; x=1722243189; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RjQKuOS8Mmoj1EwG/GAC7KkpAM6rBytEEbUs/s5SH1s=;
+        b=E0/xGH9JOnEf+8ntEe4hScLy0XIhEenHBarTFSYEnkMdMnIQ33WchbHCb8GgOiOrjk
+         yP8rxlGtSSZFjS605E+em2GR0vtPIrLtmAXeWMjifgLrEVb16TfgubdaUZ+3jTSgw2fw
+         GfllcR/twPrFe5QMDBuyMqRR+gHW8eirpIdx/ttnEm0W36AzZ8uRqeoeYxV9pQiyLSfp
+         uc7F6xQVwrgLVOrz+0G77AVxPyXCGqmZpgvYCfnmw1ON+WnMeNwzyyxfGT5c2FuMff9J
+         skIeljt5Wttmr4q5URuJuhNiScydESiOXb3t/IBonw3bKjtF7SrmfIygDS6v7rseZz1S
+         Wk6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721638389; x=1722243189;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RjQKuOS8Mmoj1EwG/GAC7KkpAM6rBytEEbUs/s5SH1s=;
+        b=Ah2i8A/EOHZTqUVsO3YgwmcR3D4SYpf/DD7vLZgNfRns9WJKt6w4e0HP/x/2m0yK6P
+         xAsB/73dE/fqrEgQJ0VSs/9T5VMAiwsGm7BNJbvoTD7OS7gwcJZSQC4DHldIWkKROx1g
+         X0Kk7g5cR7vcNxqujh6MTSv9Kps/rZsL7DY9NEEOP3hF60jxa8ZW9XxAWi63LnzttS12
+         QjCZRsng0bCf+T6c2e/5yPfpGAe+8zdUbm63WnKjsLYVZj1Ux1Zrk+qsb2cYn0EPba3B
+         baIpIRe0r9Z3ktGlWvKDKDLBSlCGyYPS4LBFgC7spHMyO1lXLpZiPX+/FVQfP7019Aqg
+         7+HA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRMRBSUahgMgw8W6BDw/w9Y23icV8zXWp3kl41wS/SXtBO5ZuoDCdc26ACo6PyWV5DNY7EcpkNe9iCAtU18yCh+9dGm8se8U5OKluo
+X-Gm-Message-State: AOJu0Yw28XU8AAhenP+QmFW4bz3KvSpCy1jX+3XkOAAQ1zxrc5uG1NR9
+	mWTrwVEdP3haN10MuFyfmt9jTmSko2tCwzDfdva2geHie+ZXwf84
+X-Google-Smtp-Source: AGHT+IHiNsKZG/7P+pDW+lYQXgxCqCa+SSXBU7aX0unXFLRIe/QTIE274ZFea1UWbDHgMET/oV5tTA==
+X-Received: by 2002:a05:6512:2310:b0:52e:f410:fe43 with SMTP id 2adb3069b0e04-52efb852299mr4126804e87.39.1721638389132;
+        Mon, 22 Jul 2024 01:53:09 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30c2f8a5fsm5746924a12.62.2024.07.22.01.53.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 01:53:08 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Mon, 22 Jul 2024 10:53:06 +0200
+To: Liwei Song <liwei.song.lsong@gmail.com>
+Cc: bpf@vger.kernel.org, ast@kernel.org, daniel@iogearbox.net,
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
+	song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com,
+	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
+	vmalik@redhat.com, alan.maguire@oracle.com, friedrich.vock@gmx.de,
+	dxu@dxuuu.xyz, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tools/resolve_btfids: fix comparison of distinct pointer
+ types warning in resolve_btfids
+Message-ID: <Zp4d8mAt0RYtTAuc@krava>
+References: <20240722083305.4009723-1-liwei.song.lsong@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?B?UmU6IOWbnuWkjTogW1BBVENIIHYyIDIvNV0gbWVkaWE6IGNhZGVuY2U6?=
- =?UTF-8?Q?_csi2rx=3A_Add_system_PM_support?=
-To: Changhuang Liang <changhuang.liang@starfivetech.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Maxime Ripard <mripard@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Jack Zhu <jack.zhu@starfivetech.com>,
- Keith Zhao <keith.zhao@starfivetech.com>, Jayshri Pawar
- <jpawar@cadence.com>, Jai Luthra <j-luthra@ti.com>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>
-References: <20240718032834.53876-1-changhuang.liang@starfivetech.com>
- <20240718032834.53876-3-changhuang.liang@starfivetech.com>
- <26af0977-8e38-47d0-a521-c5b1e505d564@ideasonboard.com>
- <ZQ0PR01MB13024828274542F14E89AD58F2A82@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <ZQ0PR01MB13024828274542F14E89AD58F2A82@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240722083305.4009723-1-liwei.song.lsong@gmail.com>
 
-Hi,
+On Mon, Jul 22, 2024 at 04:32:59PM +0800, Liwei Song wrote:
+> Add a type cast for set8->pairs to fix below compile warning:
+> 
+> main.c: In function 'sets_patch':
+> main.c:699:50: warning: comparison of distinct pointer types lacks a cast
+>   699 |        BUILD_BUG_ON(set8->pairs != &set8->pairs[0].id);
+>       |                                 ^~
+> 
+> Fixes: 9707ac4fe2f5 ("tools/resolve_btfids: Refactor set sorting with types from btf_ids.h")
+> Signed-off-by: Liwei Song <liwei.song.lsong@gmail.com>
 
-On 22/07/2024 05:17, Changhuang Liang wrote:
-> Hi, Tomi
-> 
->> Hi,
->>
->> On 18/07/2024 06:28, Changhuang Liang wrote:
->>> Add system PM support make it stopping streaming at system suspend
->>> time, and restarting streaming at system resume time.
->>>
->>> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
->>> ---
->>>    drivers/media/platform/cadence/cdns-csi2rx.c | 32
->> ++++++++++++++++++++
->>>    1 file changed, 32 insertions(+)
->>>
->>> diff --git a/drivers/media/platform/cadence/cdns-csi2rx.c
->>> b/drivers/media/platform/cadence/cdns-csi2rx.c
->>> index 981819adbb3a..81e90b31e9f8 100644
->>> --- a/drivers/media/platform/cadence/cdns-csi2rx.c
->>> +++ b/drivers/media/platform/cadence/cdns-csi2rx.c
->>> @@ -776,8 +776,40 @@ static int csi2rx_runtime_resume(struct device
->> *dev)
->>>    	return ret;
->>>    }
->>>
->>> +static int __maybe_unused csi2rx_suspend(struct device *dev) {
->>> +	struct csi2rx_priv *csi2rx = dev_get_drvdata(dev);
->>> +
->>> +	mutex_lock(&csi2rx->lock);
->>> +	if (csi2rx->count)
->>> +		csi2rx_stop(csi2rx);
->>> +	mutex_unlock(&csi2rx->lock);
->>> +
->>> +	pm_runtime_force_suspend(dev);
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int __maybe_unused csi2rx_resume(struct device *dev) {
->>> +	struct csi2rx_priv *csi2rx = dev_get_drvdata(dev);
->>> +	int ret;
->>> +
->>> +	ret = pm_runtime_force_resume(dev);
->>> +	if (ret < 0)
->>> +		return ret;
->>> +
->>> +	mutex_lock(&csi2rx->lock);
->>> +	if (csi2rx->count)
->>> +		csi2rx_start(csi2rx);
->>> +	mutex_unlock(&csi2rx->lock);
->>> +
->>> +	return 0;
->>> +}
->>> +
->>>    static const struct dev_pm_ops csi2rx_pm_ops = {
->>>    	SET_RUNTIME_PM_OPS(csi2rx_runtime_suspend,
->> csi2rx_runtime_resume,
->>> NULL)
->>> +	SET_SYSTEM_SLEEP_PM_OPS(csi2rx_suspend, csi2rx_resume)
->>>    };
->>>
->>>    static const struct of_device_id csi2rx_of_table[] = {
->>
->> If I'm not mistaken, this is a subdev driver, and is somewhere in the middle of
->> the pipeline. Afaiu, only the driver that handles the v4l2 video devices should
->> have system suspend hooks. The job of that driver is then to disable or enable
->> the pipeline using v4l2 functions, and for the rest of the pipeline system
->> suspend looks just like a normal pipeline disable.
->>
-> 
-> I see that the imx219 has a commit:
-> 
-> commit b8074db07429b845b805416d261b502f814a80fe
-> Author: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Date:   Thu Sep 14 21:16:49 2023 +0300
-> 
->      media: i2c: imx219: Drop system suspend and resume handlers
-> 
->      Stopping streaming on a camera pipeline at system suspend time, and
->      restarting it at system resume time, requires coordinated action between
->      the bridge driver and the camera sensor driver. This is handled by the
->      bridge driver calling the sensor's .s_stream() handler at system suspend
->      and resume time. There is thus no need for the sensor to independently
->      implement system sleep PM operations. Drop them.
-> 
->      The streaming field of the driver's private structure is now unused,
->      drop it as well.
-> 
->      Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->      Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
->      Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
->      Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-> 
-> Implement the system PM of sensor using bridge. This csi2rx is also a bridge.
-> So I add system PM in this driver.
+Acked-by: Jiri Olsa <jolsa@kernel.org>
 
-It is not a bridge in the sense that the commit message means. The 
-system suspend should be handled in the last (or first, depending on 
-which way you think about it) driver in the pipeline, the one that 
-handles the VIDIOC_STREAMON.
+jirka
 
-  Tomi
-
+> ---
+>  tools/bpf/resolve_btfids/main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/bpf/resolve_btfids/main.c b/tools/bpf/resolve_btfids/main.c
+> index af393c7dee1f..b3edc239fe56 100644
+> --- a/tools/bpf/resolve_btfids/main.c
+> +++ b/tools/bpf/resolve_btfids/main.c
+> @@ -696,7 +696,7 @@ static int sets_patch(struct object *obj)
+>  			 * Make sure id is at the beginning of the pairs
+>  			 * struct, otherwise the below qsort would not work.
+>  			 */
+> -			BUILD_BUG_ON(set8->pairs != &set8->pairs[0].id);
+> +			BUILD_BUG_ON((u32 *)set8->pairs != &set8->pairs[0].id);
+>  			qsort(set8->pairs, set8->cnt, sizeof(set8->pairs[0]), cmp_id);
+>  
+>  			/*
+> -- 
+> 1.8.3.1
+> 
 
