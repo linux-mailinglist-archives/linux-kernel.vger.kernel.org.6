@@ -1,266 +1,116 @@
-Return-Path: <linux-kernel+bounces-259332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 848BB93944E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:34:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42959939452
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:35:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A834B1C21902
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:34:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB7BD1F22372
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE0817108C;
-	Mon, 22 Jul 2024 19:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94774171096;
+	Mon, 22 Jul 2024 19:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="N62yEBdW"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 429B316FF4E;
-	Mon, 22 Jul 2024 19:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qJlDRPXw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zx8xqXhn"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67358200A3;
+	Mon, 22 Jul 2024 19:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721676885; cv=none; b=ja0uhkFpfUmfCpsZ7tiN7T97etZfLX6KHBIssyb3ond7RxIBi4fB2tjG/LHDo2TeNK7lKG9n6xBq/oOr0fftpZtuE1LFn/5kTigZ31bTIz/moa7UlxIAxjfNC72Yu+CbuB8SerhOMJMu6kXVdOcPOuPhq24Agxea/xGeX4Ta698=
+	t=1721676921; cv=none; b=HaZVQO77L95dyGsUjpR5CunSi7O5WRAiy7+RTE2nIQ4nJe9rtTKJpzmLkk3kaQV2Uq/jMZG/dWM1bYaBMmUj7ljE0VE/dx5uDQKfU0p+078T7Lajm5Uxa4AC8dAT1UCDX5b+X4P565kROEh8idajpaVxND+3YhJFFjMRnxAoGdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721676885; c=relaxed/simple;
-	bh=RPxFfg3uTiX9+mevAadqkOMWa0BWobrzKEKan0TjrNA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HaGgRYkt0AS4tVy+ybdiw+G1A2KtzRX4hCPKQMCXpvi8VtYsrJyeDJ0Te8qBSH+baCl1jGczkDgqiPrcoRd0J250y4oPkRvf33RP8lb43g0SRVlVe+sLf2JFeM9LZPng9MDothjMMsQdgvmrEfS0gC8/0mb1y5no/VpL/hj8fJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=N62yEBdW; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.186.190] (unknown [131.107.159.62])
-	by linux.microsoft.com (Postfix) with ESMTPSA id C341620B7165;
-	Mon, 22 Jul 2024 12:34:43 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C341620B7165
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1721676884;
-	bh=FQmh/EYQknSmmbveLSRuVujcbnn6z8lPRt8o/jsxY58=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=N62yEBdW7/cLTjulRYqDD6iK3BoFHzexx4tC0R8sXdK08GwIa76rFsXh+kGP6AlYt
-	 9eqDXlJjXi2JQ9VNHTS/Sam7QwRwFhuKO/amhyelpJaqaIObRg7Ui93xtpaAQHmfGi
-	 yKlfLfloCM/qwgptOZ1tKqpUFsUicZ1fmavl7RZw=
-Message-ID: <f43d094c-ff06-4821-90c6-6602afb443bc@linux.microsoft.com>
-Date: Mon, 22 Jul 2024 12:34:44 -0700
+	s=arc-20240116; t=1721676921; c=relaxed/simple;
+	bh=X5WwcJBGJZXDBmGuRpw/Dh7nj39OVCD7V9HdUQaAMnM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=TRrzHJFocqs8eJZAuQzBmwAPAPdCs66CBGq872EWmif63CvPJyQMIFLME8oiVJn7jevfLyxka/fdI18xa3RnyjRqEUIV+feWqw+ks/QwPBJzqXPKWJK6Ki/aAJyovgeEil+/977czgZUn6SvKcUJVExIYeT9e/Sg+2bgC0mszuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qJlDRPXw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zx8xqXhn; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 22 Jul 2024 19:35:17 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1721676918;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WAKdQixtGqCuyvCEGHDgYk8NVUGS8bFYBPocywZq70M=;
+	b=qJlDRPXw/tMeaxbM64hsz7iF4ymfacz5UDZQCq/E1cJnXAjn0K8um+h2TigdXY+sZcZaI0
+	7xcAYrZbVwrkpicK6iv/wBnBI4RmTmwVV7SWHzBnAFSgifjfkhyQIeF3RRojCmGtpFvTnZ
+	gmOHM2EWom2pT0FggfVAcf0fZmWnisFwWkZET3bEL5SBq9fFJL3Npv/cNvGvnNZhBvbhyb
+	pNz34n2njQbvyxApEro5u/1QOdHROtKwQFzdoyEsm6CFd7tPd9iNAxjlR0zZ5UBC/FlwmE
+	7JJ/eHxYbrtW3kq34DGEKTboGr+a4jUg34eMM2OzBEcdKlkfC+5M71kDQ/3/Tg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1721676918;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WAKdQixtGqCuyvCEGHDgYk8NVUGS8bFYBPocywZq70M=;
+	b=zx8xqXhnhLy/x2ylbC2fD5/pTME37JhnRSi7V9F1WIXSRPXzcP17e8TiPGQpuBM0LvcR7Z
+	7cC3ADxc73RsfnAQ==
+From: "tip-bot2 for Anna-Maria Behnsen" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/urgent] timers/migration: Fix grammar in comment
+Cc: "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240716-tmigr-fixes-v4-8-757baa7803fe@linutronix.de>
+References: <20240716-tmigr-fixes-v4-8-757baa7803fe@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] coredump: Standartize and fix logging
-To: Allen Pais <apais@linux.microsoft.com>
-Cc: akpm@linux-foundation.org, ardb@kernel.org, bigeasy@linutronix.de,
- brauner@kernel.org, ebiederm@xmission.com, jack@suse.cz,
- Kees Cook <keescook@chromium.org>, linux-fsdevel@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-mm@kvack.org, nagvijay@microsoft.com, oleg@redhat.com,
- tandersen@netflix.com, vincent.whitchurch@axis.com, viro@zeniv.linux.org.uk,
- Allen Pais <apais@microsoft.com>, benhill@microsoft.com,
- ssengar@microsoft.com, sunilmut@microsoft.com, vdso@hexbites.dev
-References: <20240718182743.1959160-1-romank@linux.microsoft.com>
- <20240718182743.1959160-2-romank@linux.microsoft.com>
- <1AEC6E18-313E-495F-AEE7-9C6C9DB3BAEA@linux.microsoft.com>
-Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <1AEC6E18-313E-495F-AEE7-9C6C9DB3BAEA@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <172167691792.2215.3079215938469586868.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the timers/urgent branch of tip:
 
+Commit-ID:     f004bf9de057004f7ccea4239317aec2fbd8240b
+Gitweb:        https://git.kernel.org/tip/f004bf9de057004f7ccea4239317aec2fbd8240b
+Author:        Anna-Maria Behnsen <anna-maria@linutronix.de>
+AuthorDate:    Tue, 16 Jul 2024 16:19:26 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Mon, 22 Jul 2024 18:03:34 +02:00
 
-On 7/19/2024 10:33 AM, Allen Pais wrote:
-> 
-> 
->> On Jul 18, 2024, at 11:27 AM, Roman Kisel <romank@linux.microsoft.com> 
->> wrote:
->>
->> The coredump code does not log the process ID and the comm
->> consistently, logs unescaped comm when it does log it, and
->> does not always use the ratelimited logging. That makes it
->> harder to analyze logs and puts the system at the risk of
->> spamming the system log incase something crashes many times
->> over and over again.
->>
->> Fix that by logging TGID and comm (escaped) consistently and
->> using the ratelimited logging always.
->>
->> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-> 
-> LGTM.
-> 
-> Tested-by: Allen Pais <apais@linux.microsoft.com 
-> <mailto:apais@linux.microsoft.com>>
-Allen, thank you for your help!
+timers/migration: Fix grammar in comment
 
-> 
-> Thanks.
-> 
-> 
->> ---
->> fs/coredump.c            | 43 +++++++++++++++-------------------------
->> include/linux/coredump.h | 22 ++++++++++++++++++++
->> 2 files changed, 38 insertions(+), 27 deletions(-)
->>
->> diff --git a/fs/coredump.c b/fs/coredump.c
->> index a57a06b80f57..19d3343b93c6 100644
->> --- a/fs/coredump.c
->> +++ b/fs/coredump.c
->> @@ -586,8 +586,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->> struct subprocess_info *sub_info;
->>
->> if (ispipe < 0) {
->> -printk(KERN_WARNING "format_corename failed\n");
->> -printk(KERN_WARNING "Aborting core\n");
->> +coredump_report_failure("format_corename failed, aborting core");
->> goto fail_unlock;
->> }
->>
->> @@ -607,27 +606,21 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->> * right pid if a thread in a multi-threaded
->> * core_pattern process dies.
->> */
->> -printk(KERN_WARNING
->> -"Process %d(%s) has RLIMIT_CORE set to 1\n",
->> -task_tgid_vnr(current), current->comm);
->> -printk(KERN_WARNING "Aborting core\n");
->> +coredump_report_failure("RLIMIT_CORE is set to 1, aborting core");
->> goto fail_unlock;
->> }
->> cprm.limit = RLIM_INFINITY;
->>
->> dump_count = atomic_inc_return(&core_dump_count);
->> if (core_pipe_limit && (core_pipe_limit < dump_count)) {
->> -printk(KERN_WARNING "Pid %d(%s) over core_pipe_limit\n",
->> -      task_tgid_vnr(current), current->comm);
->> -printk(KERN_WARNING "Skipping core dump\n");
->> +coredump_report_failure("over core_pipe_limit, skipping core dump");
->> goto fail_dropcount;
->> }
->>
->> helper_argv = kmalloc_array(argc + 1, sizeof(*helper_argv),
->>    GFP_KERNEL);
->> if (!helper_argv) {
->> -printk(KERN_WARNING "%s failed to allocate memory\n",
->> -      __func__);
->> +coredump_report_failure("%s failed to allocate memory", __func__);
->> goto fail_dropcount;
->> }
->> for (argi = 0; argi < argc; argi++)
->> @@ -644,8 +637,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->>
->> kfree(helper_argv);
->> if (retval) {
->> -printk(KERN_INFO "Core dump to |%s pipe failed\n",
->> -      cn.corename);
->> +coredump_report_failure("|%s pipe failed", cn.corename);
->> goto close_fail;
->> }
->> } else {
->> @@ -658,10 +650,8 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->> goto fail_unlock;
->>
->> if (need_suid_safe && cn.corename[0] != '/') {
->> -printk(KERN_WARNING "Pid %d(%s) can only dump core "\
->> -"to fully qualified path!\n",
->> -task_tgid_vnr(current), current->comm);
->> -printk(KERN_WARNING "Skipping core dump\n");
->> +coredump_report_failure(
->> +"this process can only dump core to a fully qualified path, skipping 
->> core dump");
->> goto fail_unlock;
->> }
->>
->> @@ -730,13 +720,13 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->> idmap = file_mnt_idmap(cprm.file);
->> if (!vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode),
->>    current_fsuid())) {
->> -pr_info_ratelimited("Core dump to %s aborted: cannot preserve file 
->> owner\n",
->> -   cn.corename);
->> +coredump_report_failure("Core dump to %s aborted: "
->> +"cannot preserve file owner", cn.corename);
->> goto close_fail;
->> }
->> if ((inode->i_mode & 0677) != 0600) {
->> -pr_info_ratelimited("Core dump to %s aborted: cannot preserve file 
->> permissions\n",
->> -   cn.corename);
->> +coredump_report_failure("Core dump to %s aborted: "
->> +"cannot preserve file permissions", cn.corename);
->> goto close_fail;
->> }
->> if (!(cprm.file->f_mode & FMODE_CAN_WRITE))
->> @@ -757,7 +747,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->> * have this set to NULL.
->> */
->> if (!cprm.file) {
->> -pr_info("Core dump to |%s disabled\n", cn.corename);
->> +coredump_report_failure("Core dump to |%s disabled", cn.corename);
->> goto close_fail;
->> }
->> if (!dump_vma_snapshot(&cprm))
->> @@ -983,11 +973,10 @@ void validate_coredump_safety(void)
->> {
->> if (suid_dumpable == SUID_DUMP_ROOT &&
->>    core_pattern[0] != '/' && core_pattern[0] != '|') {
->> -pr_warn(
->> -"Unsafe core_pattern used with fs.suid_dumpable=2.\n"
->> -"Pipe handler or fully qualified core dump path required.\n"
->> -"Set kernel.core_pattern before fs.suid_dumpable.\n"
->> -);
->> +
->> +coredump_report_failure("Unsafe core_pattern used with 
->> fs.suid_dumpable=2: "
->> +"pipe handler or fully qualified core dump path required. "
->> +"Set kernel.core_pattern before fs.suid_dumpable.");
->> }
->> }
->>
->> diff --git a/include/linux/coredump.h b/include/linux/coredump.h
->> index 0904ba010341..45e598fe3476 100644
->> --- a/include/linux/coredump.h
->> +++ b/include/linux/coredump.h
->> @@ -43,8 +43,30 @@ extern int dump_align(struct coredump_params *cprm, 
->> int align);
->> int dump_user_range(struct coredump_params *cprm, unsigned long start,
->>    unsigned long len);
->> extern void do_coredump(const kernel_siginfo_t *siginfo);
->> +
->> +/*
->> + * Logging for the coredump code, ratelimited.
->> + * The TGID and comm fields are added to the message.
->> + */
->> +
->> +#define __COREDUMP_PRINTK(Level, Format, ...) \
->> +do {\
->> +char comm[TASK_COMM_LEN];\
->> +\
->> +get_task_comm(comm, current);\
->> +printk_ratelimited(Level "coredump: %d(%*pE): " Format "\n",\
->> +task_tgid_vnr(current), (int)strlen(comm), comm, ##__VA_ARGS__);\
->> +} while (0)\
->> +
->> +#define coredump_report(fmt, ...) __COREDUMP_PRINTK(KERN_INFO, fmt, 
->> ##__VA_ARGS__)
->> +#define coredump_report_failure(fmt, ...) 
->> __COREDUMP_PRINTK(KERN_WARNING, fmt, ##__VA_ARGS__)
->> +
->> #else
->> static inline void do_coredump(const kernel_siginfo_t *siginfo) {}
->> +
->> +#define coredump_report(...)
->> +#define coredump_report_failure(...)
->> +
->> #endif
->>
->> #if defined(CONFIG_COREDUMP) && defined(CONFIG_SYSCTL)
->> -- 
->> 2.45.2
-> 
+Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Link: https://lore.kernel.org/r/20240716-tmigr-fixes-v4-8-757baa7803fe@linutronix.de
 
--- 
-Thank you,
-Roman
+---
+ kernel/time/timer_migration.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
+index 9c15ae8..8d57f76 100644
+--- a/kernel/time/timer_migration.c
++++ b/kernel/time/timer_migration.c
+@@ -1368,7 +1368,7 @@ u64 tmigr_cpu_deactivate(u64 nextexp)
+  *			  the only one in the level 0 group; and if it is the
+  *			  only one in level 0 group, but there are more than a
+  *			  single group active on the way to top level)
+- * * nextevt		- when CPU is offline and has to handle timer on his own
++ * * nextevt		- when CPU is offline and has to handle timer on its own
+  *			  or when on the way to top in every group only a single
+  *			  child is active but @nextevt is before the lowest
+  *			  next_expiry encountered while walking up to top level.
 
