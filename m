@@ -1,143 +1,178 @@
-Return-Path: <linux-kernel+bounces-259266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EF8293933D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:34:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76670939340
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:36:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DF6DB21301
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:34:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E42111F21EE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6BD16EB58;
-	Mon, 22 Jul 2024 17:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910AB16EBE6;
+	Mon, 22 Jul 2024 17:36:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qld73ZAt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hqCNJrbT"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54DC716E864
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 17:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F25C16E89E
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 17:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721669639; cv=none; b=fl8Oy4YMdT7xnoSXuQOMFsLPJwmt9VMtBKRN1jXuyaHT8zUUWHUKfQo/oS/k3yM3qNpxZMCSIxXWTHGHOxnjt1TJsZkOMe/VJuRjalm5le1L8a5lI+mPPEYqSPMkVtPJ0cN5bN6d752V4bvapzFwUspTsGyq9Wk3JZlSbTWSuZg=
+	t=1721669771; cv=none; b=tqqbJae2tNJlI+F8Ea7IQMEztY25kzhN3ZpjGiHkenfsFjG7pC2i1tmWodNgOSERgicnNLFRNZOHSYp5jtyFV3/5X8+XplFRRWsMROkwDdmIiBw+H74CldA44JaKrrm6uamzqoiCxWGcpv/OqHasddUKui235rBq9zbuptupPNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721669639; c=relaxed/simple;
-	bh=SylpFuWYr8O9DlS4O2vphUzA64YgGD956wPb+dXkl9g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=sSySdaGt7h4DvVoZJnKEqnk3iDx9ztme4/4H0hZVC/2oNVsTee9Ta5+Zm2bkUAJf8Li4w8fOar7vvalGPvgmcZ0CWCisGhW1eq//iOEFxhndzU+FrD3gkQY3gwDCJN42MQ9zh+cX9FXcYnXuk4D492cs/sQiZHMQ+siNwOWW1TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qld73ZAt; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721669637; x=1753205637;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=SylpFuWYr8O9DlS4O2vphUzA64YgGD956wPb+dXkl9g=;
-  b=Qld73ZAtlu3j5J4kSxOJi4I5qWXAcWnG6qNYmPBQlS8lYG7lrMQvYwSx
-   HtYn5Cbh0PS+opqKA7u/3rg2pnigX/2XQomkZxx6P031MRmsWF81NyC8i
-   3Lo3g+pUbeHFkUtd4KHerRH4ixISZmMaJs14qRtvPWbqOpD1sqq/AJoeX
-   6L9kOB33otpkMY46fImo9z9FuTkQP8I3vvpsT6DwnXJUQmbSx9h5T51MG
-   QOWh7LwKT+3ep4stlcRZZGaKoK0LryVmgno+5o16et1/NNPPgs75Ey3RU
-   aDctUVF+WUi694LFbxn+BoZqQItHy5PQ07cYxEbpk0qex68gulQxARSCU
-   Q==;
-X-CSE-ConnectionGUID: MxBTiz5pT62GVkEYBajELA==
-X-CSE-MsgGUID: R4bDqVlqSq2TbkzU8D47cQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11141"; a="22153976"
-X-IronPort-AV: E=Sophos;i="6.09,228,1716274800"; 
-   d="scan'208";a="22153976"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 10:33:50 -0700
-X-CSE-ConnectionGUID: +V4FCHunTYOYtBb0idQrvg==
-X-CSE-MsgGUID: WmGLjcm8SFOgCGuHbNlnLA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,228,1716274800"; 
-   d="scan'208";a="51838721"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 22 Jul 2024 10:33:49 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sVwuw-000lH2-2I;
-	Mon, 22 Jul 2024 17:33:46 +0000
-Date: Tue, 23 Jul 2024 01:33:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mohan Kumar <mkumard@nvidia.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>, Sameer Pujar <spujar@nvidia.com>
-Subject: sound/soc/tegra/tegra210_i2s.c:922:(.text+0x4f0): relocation
- truncated to fit: R_NIOS2_CALL26 against `simple_util_parse_convert'
-Message-ID: <202407230154.Bazhs02X-lkp@intel.com>
+	s=arc-20240116; t=1721669771; c=relaxed/simple;
+	bh=PW8rxhXZ+UWKe6Geds+5qnoxX+jM+izmdxxMwg08wXQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GJ98BRH9fqCdXca2wh7qMSiLyWCXOrZQq5r/VJMD8lGiCBGNjXIcNZ2fKb2L6iVcvUywtjlNtaFRRCXSo/6PtuCWDmHTvXCFPXL9UPScfC6rBYZaBigythcNYsdrcpT9qn7Ox0Ty+6MMu8ZzLlM9MIBoO45y9DW32hfWpWEzEyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=hqCNJrbT; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a77cbb5e987so412324666b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 10:36:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1721669767; x=1722274567; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eKmnFtuUUL/6/Qz31VCLadtYrbr5QB0/wZevNZHeBHQ=;
+        b=hqCNJrbT7aFd73EaY8L2ipltQOSxCLS/lJrXrwhXrTu4ZlWpeKMm31lNu62gv6bmgQ
+         Qz8IIJB6hR+YXQRZvX5I1wy9VEYSuEtWtiK9RVvH4Sqkbtbjgh7tngJUpViAzMiku4AN
+         YkV8LAMyEKlHV8BZfezalbthlF69jF06d2v8U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721669767; x=1722274567;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eKmnFtuUUL/6/Qz31VCLadtYrbr5QB0/wZevNZHeBHQ=;
+        b=wZNZi+L+lqncoPFSSzWoTM4VqbHLUrLal3cj1kSUbGDGOkt9tqNrqmlvFvTJUwnqYb
+         a/OsY+GExBBijZRWWif2OGDcag1IIPVonFmon7/ALvHaLJSKptU4bstoDLDGVOjlA+ho
+         uxYXOeeO7ddpLOE21g+9w9nH7J5da76JrlS7gQ0iF21wc2QHrOSg3VPQ+BIE7LFF9FZj
+         0B8mwjbBucSBbpc8USrVu+phBRyhcMWSBI1fuMu+Um2MqmtT8Xsy4byFX1TgZnNZcDRJ
+         0fX16q3bs6E+AKI3PI6MfMEGO10Hd+mRD0bC+PWFqkDG3zFWPU4BCr9sIFEmBt/g7XOs
+         ASHg==
+X-Gm-Message-State: AOJu0YxSyOvFvgL6pxQZHOSdC5wmew4tx9/+xfVvh6dhpuIReXvBVygk
+	sUIOf0+47x5Esizoc0ZNhaEBSGtJVLoifL68vHmU44Q6UgrjswUbJ7nLXnRNkCPxok8HKSvzzEC
+	mSg==
+X-Google-Smtp-Source: AGHT+IG64mDnL5gnOB41quDPA09ZAC7pXgnhZhi1OLdzDuOFkQy8QdzuFQPoLrnrF9n3ikVCgGq9xw==
+X-Received: by 2002:a17:907:94c6:b0:a77:e7b9:fda0 with SMTP id a640c23a62f3a-a7a4bfa342amr533985766b.14.1721669766812;
+        Mon, 22 Jul 2024 10:36:06 -0700 (PDT)
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com. [209.85.128.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c785c6csm444397666b.20.2024.07.22.10.36.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jul 2024 10:36:05 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42725f8a789so2305e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 10:36:05 -0700 (PDT)
+X-Received: by 2002:a05:600c:3b07:b0:426:7018:2e2f with SMTP id
+ 5b1f17b1804b1-427dd16e865mr2883575e9.5.1721669765333; Mon, 22 Jul 2024
+ 10:36:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240721100449.8280-1-terry_hsiao@compal.corp-partner.google.com>
+In-Reply-To: <20240721100449.8280-1-terry_hsiao@compal.corp-partner.google.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 22 Jul 2024 10:35:48 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VJQaf2H8M1D+UoJGtXy0yij86atX5Rk70njW2zGCquZg@mail.gmail.com>
+Message-ID: <CAD=FV=VJQaf2H8M1D+UoJGtXy0yij86atX5Rk70njW2zGCquZg@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/panel-edp: Add 6 panels used by MT8186 Chromebooks
+To: Terry Hsiao <terry_hsiao@compal.corp-partner.google.com>
+Cc: linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   933069701c1b507825b514317d4edd5d3fd9d417
-commit: 2502f8dd8c30edbca9253d5999294f58211039b1 ASoC: tegra: I2S client convert formats handling
-date:   8 weeks ago
-config: nios2-buildonly-randconfig-r004-20230209 (https://download.01.org/0day-ci/archive/20240723/202407230154.Bazhs02X-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 13.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240723/202407230154.Bazhs02X-lkp@intel.com/reproduce)
+Hi,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407230154.Bazhs02X-lkp@intel.com/
+On Sun, Jul 21, 2024 at 3:04=E2=80=AFAM Terry Hsiao
+<terry_hsiao@compal.corp-partner.google.com> wrote:
+>
+> The raw EDIDs for each panel:
+>
+> AUO
+> - B116XTN02.3
+> 00 ff ff ff ff ff ff 00 06 af aa 73 00 00 00 00
+> 00 21 01 04 95 1a 0e 78 02 6b f5 91 55 54 91 27
+> 22 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+> 01 01 01 01 01 01 ce 1d 56 e2 50 00 1e 30 26 16
+> 36 00 00 90 10 00 00 18 df 13 56 e2 50 00 1e 30
+> 26 16 36 00 00 90 10 00 00 18 00 00 00 00 00 00
+> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02
+> 00 10 48 ff 0f 3c 7d 50 05 18 7d 20 20 20 00 67
+> - B116XAN06.1
+> 00 ff ff ff ff ff ff 00 06 af 99 a1 00 00 00 00
+> 00 1f 01 04 95 1a 0e 78 02 9e a5 96 59 58 96 28
+> 1b 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+> 01 01 01 01 01 01 ce 1d 56 ea 50 00 1a 30 30 20
+> 46 00 00 90 10 00 00 18 df 13 56 ea 50 00 1a 30
+> 30 20 46 00 00 90 10 00 00 18 00 00 00 00 00 00
+> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02
+> 00 10 48 ff 0f 3c 7d 0c 0a 2a 7d 20 20 20 00 3a
+> - B116XAT04.1
+> 00 ff ff ff ff ff ff 00 06 af b4 c4 00 00 00 00
+> 12 22 01 04 95 1a 0e 78 02 9e a5 96 59 58 96 28
+> 1b 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+> 01 01 01 01 01 01 ce 1d 56 ea 50 00 1a 30 30 20
+> 46 00 00 90 10 00 00 18 df 13 56 ea 50 00 1a 30
+> 30 20 46 00 00 90 10 00 00 18 00 00 00 00 00 00
+> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02
+> 00 10 48 ff 0f 3c 7d 0c 0a 2a 7d 20 20 20 00 e7
+>
+> BOE
+> - NV116WHM-A4D
+> 00 ff ff ff ff ff ff 00 09 e5 fa 0c 00 00 00 00
+> 12 22 01 04 95 1a 0e 78 03 0b 55 9a 5f 58 95 28
+> 1e 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+> 01 01 01 01 01 01 96 1d 56 c8 50 00 26 30 30 20
+> 36 00 00 90 10 00 00 1a b9 13 56 c8 50 00 26 30
+> 30 20 36 00 00 90 10 00 00 1a 00 00 00 00 00 00
+> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02
+> 00 0d 40 ff 0a 3c 7d 0f 0c 17 7d 00 00 00 00 1a
+>
+> CMN
+> - N116BCA-EA2
+> 00 ff ff ff ff ff ff 00 0d ae 5d 11 00 00 00 00
+> 0f 21 01 04 95 1a 0e 78 03 67 75 98 59 53 90 27
+> 1c 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+> 01 01 01 01 01 01 da 1d 56 e2 50 00 20 30 30 20
+> a6 00 00 90 10 00 00 1a e7 13 56 e2 50 00 20 30
+> 30 20 a6 00 00 90 10 00 00 1a 00 00 00 00 00 00
+> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02
+> 00 0c 3d ff 0d 3c 7d 0d 0a 15 7d 00 00 00 00 0f
+> - N116BCP-EA2
+> 00 ff ff ff ff ff ff 00 0d ae 61 11 00 00 00 00
+> 0f 21 01 04 95 1a 0e 78 03 67 75 98 59 53 90 27
+> 1c 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
+> 01 01 01 01 01 01 da 1d 56 e2 50 00 20 30 30 20
+> a6 00 00 90 10 00 00 1a e7 13 56 e2 50 00 20 30
+> 30 20 a6 00 00 90 10 00 00 1a 00 00 00 00 00 00
+> 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02
+> 00 0c 3d ff 0d 3c 7d 0d 0a 15 7d 00 00 00 00 0b
+>
+> Signed-off-by: Terry Hsiao <terry_hsiao@compal.corp-partner.google.com>
+> ---
+>  Change from v1 to v2
+>  * Modify the description of subject
+>  * Add the raw EDIDs
+>  * Sorted according to the order
+>  drivers/gpu/drm/panel/panel-edp.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 
-All errors (new ones prefixed by >>):
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-   nios2-linux-ld: sound/soc/tegra/tegra210_i2s.o: in function `tegra210_i2s_probe':
-   sound/soc/tegra/tegra210_i2s.c:922:(.text+0x4f0): undefined reference to `simple_util_parse_convert'
->> sound/soc/tegra/tegra210_i2s.c:922:(.text+0x4f0): relocation truncated to fit: R_NIOS2_CALL26 against `simple_util_parse_convert'
->> nios2-linux-ld: sound/soc/tegra/tegra210_i2s.c:932:(.text+0x51c): undefined reference to `simple_util_get_sample_fmt'
->> sound/soc/tegra/tegra210_i2s.c:932:(.text+0x51c): relocation truncated to fit: R_NIOS2_CALL26 against `simple_util_get_sample_fmt'
+...and pushed to drm-misc-next.
 
+[1/1] drm/panel-edp: Add 6 panels used by MT8186 Chromebooks
+      commit: d4b9b6da5777bb03f36f01bb6b05c6cc303ededb
 
-vim +922 sound/soc/tegra/tegra210_i2s.c
-
-   900	
-   901	/*
-   902	 * The AHUB HW modules are interconnected with CIF which are capable of
-   903	 * supporting Channel and Sample bit format conversion. This needs different
-   904	 * CIF Audio and client configuration. As one of the config comes from
-   905	 * params_channels() or params_format(), the extra configuration is passed from
-   906	 * CIF Port of DT I2S node which can help to perform this conversion.
-   907	 *
-   908	 *    4ch          audio = 4ch      client = 2ch       2ch
-   909	 *   -----> ADMAIF -----------> CIF -------------> I2S ---->
-   910	 */
-   911	static void tegra210_parse_client_convert(struct device *dev)
-   912	{
-   913		struct tegra210_i2s *i2s = dev_get_drvdata(dev);
-   914		struct device_node *ports, *ep;
-   915		struct simple_util_data data = {};
-   916		int cif_port = 0;
-   917	
-   918		ports = of_get_child_by_name(dev->of_node, "ports");
-   919		if (ports) {
-   920			ep = of_graph_get_endpoint_by_regs(ports, cif_port, -1);
-   921			if (ep) {
- > 922				simple_util_parse_convert(ep, NULL, &data);
-   923				of_node_put(ep);
-   924			}
-   925			of_node_put(ports);
-   926		}
-   927	
-   928		if (data.convert_channels)
-   929			i2s->client_channels = data.convert_channels;
-   930	
-   931		if (data.convert_sample_format)
- > 932			i2s->client_sample_format = simple_util_get_sample_fmt(&data);
-   933	}
-   934	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+-Doug
 
