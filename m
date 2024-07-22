@@ -1,153 +1,124 @@
-Return-Path: <linux-kernel+bounces-259205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7C56939293
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:32:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAEC0939296
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EFB228275F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:32:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 567CD1F232C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:33:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6374416EBE2;
-	Mon, 22 Jul 2024 16:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F15916EB6D;
+	Mon, 22 Jul 2024 16:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k/zBGla2"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Webi8DPC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D9D16E898;
-	Mon, 22 Jul 2024 16:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A6E26ACD;
+	Mon, 22 Jul 2024 16:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721665932; cv=none; b=p7UsSZl/CnSZLwF5Zz/Oj6InibmWjK+sv79LUO7WsKfy0q608pTq9LsybzTVRgLhq5uM0A++UqA65NnH7UJ7kvu/qWZjzBr11cLUvRw3uNGb5GyO1/E79KktXXYo/wyPPo11f4nO+g8jm1Jb8LTjLkFyloGmfMOLxiwvFzR+fEI=
+	t=1721665978; cv=none; b=dMIf6cqAZW3ySEAGiVJawDm6t7rJMohUl88Bm8VEDU1UPcSgKzt2KouSElZgGvGVusrJ/6DREPLuDQOVDHypI4H4mZmB1d4l9Y9PplpuhitldmB32nCOgGUq2JHXa0E2ZJppWN6rJwzS687XioBSuHB3Z+gvzepubjag6sB6GJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721665932; c=relaxed/simple;
-	bh=iuxYF76BWen5oelQAVza+RGmuADg2hrhOBQc2xTCn1Y=;
+	s=arc-20240116; t=1721665978; c=relaxed/simple;
+	bh=1M0mxD+ofI58h7xIrBA0625MaIsQLwX633kvF94BbAA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LwGZEeqIfz1HxuWaXRus1ah9SAch3pM56IpHe1eQIbe8z9YypHrmuiT5Jk98OJiS6zTf90paz7uoXcgJFRHR+KGL02DCM+PfcdiTgOGrNwdErIP79dmwxqWRq65vILnzT2Z8q3kyo9hatm82DXI2FE1dG1G44vXT7WlclUjJYaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k/zBGla2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1937EC116B1;
-	Mon, 22 Jul 2024 16:32:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721665932;
-	bh=iuxYF76BWen5oelQAVza+RGmuADg2hrhOBQc2xTCn1Y=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Asx/yIihE8LvKpTWvPm6Ujj8PQ5/JA1u6Ybta1CMSZo63oAWgqhMlZflmO6EWrO3ZkbXAcyGcKwwq6ql2ZUC7ALf4GesYLzA053bY/lUzy7DI9UYDLBBq8fSg4xCkvO4+oAw/8obPVVxWNLFFt//psQYWgjXiVsDjj8eMIrc1jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Webi8DPC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8461C116B1;
+	Mon, 22 Jul 2024 16:32:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1721665978;
+	bh=1M0mxD+ofI58h7xIrBA0625MaIsQLwX633kvF94BbAA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k/zBGla2VfG1JyquNRs4F0vi6HUYdyEsBsORyO0iKtrdSRSLK/AyzdPPqId0NN1om
-	 EWUchZFvgItvFZDU0++lydCJDOYeJzibWu52dOFqAkktPlThKg+XVp2ccdCuCmYwG9
-	 HMYGb6Ew0nXwiybCQ2PH0pmpBd42EO9lXldh/WnAwlfMWEc3H6EB2+lu3dOx+Q7nlr
-	 0moztlT6aOYebW7KR+bqsd675/YHTBMV4VRZ8UvWFmZX9BfJJuUDbdKJ45/D3HwdFA
-	 vrCVYjMnukmFZqjMyywLBO3lCEzc7T4C1+KeS8xvLAt6RJgbQIcW5BygvGzZ+w+Sd5
-	 CrPsvd/1kkDBQ==
-Date: Mon, 22 Jul 2024 17:32:08 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Matteo Martelli <matteomartelli3@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marius Cristea <marius.cristea@microchip.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	b=Webi8DPCmkZgw1wCJHxOwfIBke6hMiuFL+GejK9m6v9M21aYb0GLxAxSFZYOBVS2b
+	 HAtFHnDhLGouECdKRv8B2MM8XhWkWeFgqJ79xErEOCVXoqhpJZAqIo0NZADBUAELIb
+	 wX8LXiYxNxDRqFa37vWdTGgDmHXSVhPW4J8FuSn8=
+Date: Mon, 22 Jul 2024 18:32:55 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Aurelio Mannara <aurelio.mannara@gmail.com>
+Cc: johan@kernel.org, linux-usb@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: iio: adc: add binding for pac1921
-Message-ID: <20240722-squire-amply-15d761c0ec10@spud>
-References: <20240722-iio-pac1921-v3-0-05dc9916cb33@gmail.com>
- <20240722-iio-pac1921-v3-1-05dc9916cb33@gmail.com>
+Subject: Re: [PATCH] Added support for Silicon Labs Phoenix Contact UPS
+ Device Silicon Labs Phoenix Contact UPS Device VID/PID pair has been added
+ to CP210x driver in order for the OS to properly detect it
+Message-ID: <2024072228-cosmos-portion-f842@gregkh>
+References: <CAM-gfB_v9m3j2v0u+8M8fr54z_ka-3XFQep31uTRtdUre2a8_g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Ufgd4XPcO7ajK7Ys"
-Content-Disposition: inline
-In-Reply-To: <20240722-iio-pac1921-v3-1-05dc9916cb33@gmail.com>
-
-
---Ufgd4XPcO7ajK7Ys
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAM-gfB_v9m3j2v0u+8M8fr54z_ka-3XFQep31uTRtdUre2a8_g@mail.gmail.com>
 
-On Mon, Jul 22, 2024 at 12:03:18PM +0200, Matteo Martelli wrote:
-> Add binging for Microchip PAC1921 Power/Current monitor
->=20
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
+On Mon, Jul 22, 2024 at 05:19:51PM +0200, Aurelio Mannara wrote:
 > ---
->  .../bindings/iio/adc/microchip,pac1921.yaml        | 71 ++++++++++++++++=
-++++++
->  1 file changed, 71 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/microchip,pac1921.=
-yaml b/Documentation/devicetree/bindings/iio/adc/microchip,pac1921.yaml
-> new file mode 100644
-> index 000000000000..b6f01b79b91d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/microchip,pac1921.yaml
-> @@ -0,0 +1,71 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/adc/microchip,pac1921.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Microchip PAC1921 High-Side Power/Current Monitor with Anaog Outp=
-ut
-> +
-> +maintainers:
-> +  - Matteo Martelli <matteomartelli3@gmail.com>
-> +
-> +description: |
-> +  The PAC1921 is a power/current monitoring device with an analog output
-> +  and I2C/SMBus interface.
-> +
-> +  Datasheet can be found here:
-> +  https://ww1.microchip.com/downloads/en/DeviceDoc/PAC1921-Data-Sheet-DS=
-20005293E.pdf
-> +
-> +properties:
-> +  compatible:
-> +    const: microchip,pac1921
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  vdd-supply: true
-> +
-> +  "#io-channel-cells":
-> +    const: 1
-> +
-> +  shunt-resistor-micro-ohms:
-> +    description:
-> +      Value in micro Ohms of the shunt resistor connected between
-> +      the SENSE+ and SENSE- inputs, across which the current is measured.
-> +      Value is needed to compute the scaling of the measured current.
-> +
-> +  label:
-> +    description: Unique name to identify which device this is.
-> +
-> +  microchip,read-int-gpios:
+>  drivers/usb/serial/cp210x.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/usb/serial/cp210x.c b/drivers/usb/serial/cp210x.c
+> index 21fd26609252..a3b931441557 100644
+> --- a/drivers/usb/serial/cp210x.c
+> +++ b/drivers/usb/serial/cp210x.c
+> @@ -254,6 +254,7 @@ static const struct usb_device_id id_table[] = {
+>   { USB_DEVICE(0x3195, 0xF281) }, /* Link Instruments MSO-28 */
+>   { USB_DEVICE(0x3923, 0x7A0B) }, /* National Instruments USB Serial
+> Console */
+>   { USB_DEVICE(0x413C, 0x9500) }, /* DW700 GPS USB interface */
+> + { USB_DEVICE(0x1b93, 0x1013) }, /* Silicon Labs Phoenix Contact UPS
+> Device */
+>   { } /* Terminating Entry */
+>  };
+> 
+> --
 
-IIRC, it is not required to have vendor prefixes on -gpios properties.
-Otherwise, this all seems pretty reasonable to me.
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Hi,
 
-Cheers,
-Conor.
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
---Ufgd4XPcO7ajK7Ys
-Content-Type: application/pgp-signature; name="signature.asc"
+You are receiving this message because of the following common error(s)
+as indicated below:
 
------BEGIN PGP SIGNATURE-----
+- Your patch is malformed (tabs converted to spaces, linewrapped, etc.)
+  and can not be applied.  Please read the file,
+  Documentation/process/email-clients.rst in order to fix this.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZp6JhwAKCRB4tDGHoIJi
-0mXIAQCb89FgV5uHesmmcAc9VfkL+Txv5+ntVpe/hbj3eY8MBAD/faHtk6v01RC8
-QPjLI1uFzG5N6lLLeGpKI6r1z19utww=
-=Co9Q
------END PGP SIGNATURE-----
+- Your patch does not have a Signed-off-by: line.  Please read the
+  kernel file, Documentation/process/submitting-patches.rst and resend
+  it after adding that line.  Note, the line needs to be in the body of
+  the email, before the patch, not at the bottom of the patch or in the
+  email signature.
 
---Ufgd4XPcO7ajK7Ys--
+- You did not specify a description of why the patch is needed, or
+  possibly, any description at all, in the email body.  Please read the
+  section entitled "The canonical patch format" in the kernel file,
+  Documentation/process/submitting-patches.rst for what is needed in
+  order to properly describe the change.
+
+- You did not write a descriptive Subject: for the patch, allowing Greg,
+  and everyone else, to know what this patch is all about.  Please read
+  the section entitled "The canonical patch format" in the kernel file,
+  Documentation/process/submitting-patches.rst for what a proper
+  Subject: line should look like.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
