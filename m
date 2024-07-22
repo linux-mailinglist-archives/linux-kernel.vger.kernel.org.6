@@ -1,281 +1,982 @@
-Return-Path: <linux-kernel+bounces-259062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 927029390B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:32:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 909439390BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:34:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E46F0B2167E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:32:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14E121F21DD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A64125D6;
-	Mon, 22 Jul 2024 14:32:07 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9094416D9D8;
+	Mon, 22 Jul 2024 14:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="PwTDIQJS"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E0ED515
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 14:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75379D515;
+	Mon, 22 Jul 2024 14:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721658727; cv=none; b=FC97MzFyDqThGRgd3gAtKUbXxsbb6D9MUX4yDc46XvRyPJX//Ng9b7eoEHzMt+fucO13fqTMMTsVlQ0FIInOhHkb5XoVQdtgMYLv01iBwiMckLSSk1aiYumMTdnPjt1I2ygbF3vz1cs4qCkLMGx/q4AsXBuikn56SuoZVvQ/IxU=
+	t=1721658842; cv=none; b=fclkiRVU7Pz3CkIhjBtEzSTaDGimBcvNRsHPyFRuH3jn03Dc9sU5g0FZdEg75YDq6FbEZ2IwvVg/M4XHKBPe/V5vGQE4GChWUgdFUtFX6w8H/vpECpqy2pvg2FvSS3N6zAEf90FyMUgE6N0ZAcJUDZOy7AcZAQc+SbCyuX0xyE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721658727; c=relaxed/simple;
-	bh=X3FmQCmoKBtXXMxk5yzmuIY/ZYYVOD4j6RT1mVsFO9I=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=EoIKlgTDwDepvjcaEwuKal/1RM4W0WpoPqbCM153d7/msR3yfNg4xLHWNpHDfrwgQPYbyHyq0JPZexuKvJcfpxRpmKu89AOhpZSWlvODnsUgUQD2SSrw8/9Tw1S3oKBIG5HQO8s8yb/XtnYCdN7FTzv9mYJSWLzfzbcDYxJESIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3988d01a236so47566695ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:32:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721658724; x=1722263524;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YyjkwRLPn5DlZytUE8p5/g3bKJSaKxdZvTaHZYLXS9I=;
-        b=iI2HJdLK4haK2pNQgdsTGObRh+7c049hsA+YFS3/WAnFQO+uKprcX2MVEDKCqjVghG
-         ULKWrcoDIhLHGNo9O135oJTQFFphwPjb0hEPWn0fChp3MfJqpp5/FlY2HnXmUixOGMXq
-         i0yYW3vMlfqnbMSNPag157gqVGKIUy58EaQYVPIWeyDrpLBWkIxFf+TPAFR9tY1ifrPK
-         hmP+QJraBqLrI1YCCqghRZveKKgnMmAW+cV5AnupxpgAVPkgTe2yHXhaetu2t004aCNN
-         i75xQB6lXFrQFQWoovO5wNyo6/9Y+z57uPSZfl1fMIaJtu30bNo2bQVWyiXmTo74dNoI
-         6dHw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+aozXpvCPVDamiu+ZY/fLwVfghAyJjxqg6yMO1usgUt9pQKPNo8NtkCjTX5kyLxSIQhEoVNzDLmTziO+ByCnfMI6d1Okq2hXg++oc
-X-Gm-Message-State: AOJu0YwalAxeENQ/qckKPyb8U6zXaCMy40Ius3Tef9FROtV8fiV35/Km
-	BrPQScMqRZinTx3K3r6u7xDNxqJc18YBZSkgnRhxtvB4vhyu0/D5xgZBpZoLbn/GzsDVfZ87A+4
-	3Z5pFpIDGRXvXY3iaE7L8FnPnVrrOlyL5yacQ1STqjJSfypS/Nc+KMlA=
-X-Google-Smtp-Source: AGHT+IFZYYEJUFIlqOvS4ip5Tc42MOR1Vkj0gm5QZsLO5DgEdZds7n9i6LGVtOrWUK9hzCp5PD/+/p3+bo5dDwah/cDA5QVvcwfv
+	s=arc-20240116; t=1721658842; c=relaxed/simple;
+	bh=dTCB/bFz7ctAgMvZwOBH2g0RWzb7iUkhFpiXDHdKNys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B5+l2WFxSE30Fp+Z5tbZZluBIChK7Qnt0oipOAeo++pl2gx7yFo2rpWq6IzPRCPOhiLfEUP8pAaLo5av4g2IOxmNfkIBedwomzh5orlnIQSjxcyU35+rifg90M2ktdY1TNkgqZE1kE4geBaHeWp3te/O/xQ0Z46IwygFEg3Zt6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=PwTDIQJS; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B23954CF;
+	Mon, 22 Jul 2024 16:33:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1721658797;
+	bh=dTCB/bFz7ctAgMvZwOBH2g0RWzb7iUkhFpiXDHdKNys=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PwTDIQJSHU470eV/Pv8pBpp9JsbmksPWx2ROCVe0LV1K4K9qITWf+kI0uHOVq5yHu
+	 6EPcPHciU2mhMKgWnZRHy3MSPurIwWK8KrpzwE9Ym03N3Ue29YOlMe7yCZPHKFZquH
+	 /KKwSZ8CPzJj40Yb5apo3Pi8s/8QKAwDdj1kcyzg=
+Date: Mon, 22 Jul 2024 17:33:39 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Changhuang Liang <changhuang.liang@starfivetech.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Jean-Michel Hautbois <jeanmichel.hautbois@ideasonboard.com>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+	Mingjia Zhang <mingjia.zhang@mediatek.com>,
+	Jack Zhu <jack.zhu@starfivetech.com>,
+	Keith Zhao <keith.zhao@starfivetech.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: Re: [PATCH v5 01/14] media: starfive: Add JH7110 ISP module
+ definitions
+Message-ID: <20240722143339.GA29820@pendragon.ideasonboard.com>
+References: <20240709083824.430473-1-changhuang.liang@starfivetech.com>
+ <20240709083824.430473-2-changhuang.liang@starfivetech.com>
+ <h52qw6ndset7h7rgbfs6jqbsweldgvc3ewforvzlhmacvmqzzl@u4ik6jeswswi>
+ <20240722142724.GG5732@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20c6:b0:398:b1d3:7c9d with SMTP id
- e9e14a558f8ab-398e6f78362mr8054235ab.3.1721658724508; Mon, 22 Jul 2024
- 07:32:04 -0700 (PDT)
-Date: Mon, 22 Jul 2024 07:32:04 -0700
-In-Reply-To: <20240722125338.6315-1-aha310510@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b30c4e061dd6e8c8@google.com>
-Subject: Re: [syzbot] [bpf?] [net?] general protection fault in __xsk_map_flush
-From: syzbot <syzbot+61a1cfc2b6632363d319@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240722142724.GG5732@pendragon.ideasonboard.com>
 
-Hello,
+On Mon, Jul 22, 2024 at 05:27:26PM +0300, Laurent Pinchart wrote:
+> On Wed, Jul 10, 2024 at 11:11:57AM +0200, Jacopo Mondi wrote:
+> > On Tue, Jul 09, 2024 at 01:38:11AM GMT, Changhuang Liang wrote:
+> > > Add JH7110 ISP module definitions for user space.
+> > >
+> > > Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> > > Signed-off-by: Zejian Su <zejian.su@starfivetech.com>
+> > > ---
+> > >  MAINTAINERS                     |   1 +
+> > >  include/uapi/linux/jh7110-isp.h | 739 ++++++++++++++++++++++++++++++++
+> > 
+> > With the recently merged support for the RaspberryPi PiSP BE we have
+> > introduced include/uapi/linux/media/raspberry.
+> > 
+> > Would you consider placing this in
+> > include/uapi/linux/media/startfive/ ?
+> 
+> That sounds like a good idea.
+> 
+> > >  2 files changed, 740 insertions(+)
+> > >  create mode 100644 include/uapi/linux/jh7110-isp.h
+> > >
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 507f04a80499..890604eb0d64 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -21305,6 +21305,7 @@ S:	Maintained
+> > >  F:	Documentation/admin-guide/media/starfive_camss.rst
+> > >  F:	Documentation/devicetree/bindings/media/starfive,jh7110-camss.yaml
+> > >  F:	drivers/staging/media/starfive/camss
+> > > +F:	include/uapi/linux/jh7110-isp.h
+> > >
+> > >  STARFIVE CRYPTO DRIVER
+> > >  M:	Jia Jie Ho <jiajie.ho@starfivetech.com>
+> > > diff --git a/include/uapi/linux/jh7110-isp.h b/include/uapi/linux/jh7110-isp.h
+> > > new file mode 100644
+> > > index 000000000000..4939cd63e771
+> > > --- /dev/null
+> > > +++ b/include/uapi/linux/jh7110-isp.h
+> > > @@ -0,0 +1,739 @@
+> > > +/* SPDX-License-Identifier: ((GPL-2.0+ WITH Linux-syscall-note) OR BSD-3-Clause) */
+> > > +/*
+> > > + * jh7110-isp.h
+> > > + *
+> > > + * JH7110 ISP driver - user space header file.
+> > > + *
+> > > + * Copyright © 2023 StarFive Technology Co., Ltd.
+> > > + *
+> > > + * Author: Zejian Su <zejian.su@starfivetech.com>
+> > > + *
+> > > + */
+> > > +
+> > > +#ifndef __JH7110_ISP_H_
+> > > +#define __JH7110_ISP_H_
+> > > +
+> > 
+> > Do you need to include
+> > 
+> > #include <linux/types.h>
+> > 
+> > > +/**
+> > 
+> > Is this kernel-doc or a single * would do ?
+> > 
+> > > + * ISP Module Diagram
+> > > + * ------------------
+> > > + *
+> > > + *  Raw  +-----+    +------+    +------+    +----+
+> > > + *  ---->| OBC |--->| OECF |--->| LCCF |--->| WB |-----+
+> > > + *       +-----+    +------+    +------+    +----+     |
+> > > + *                                                     |
+> > > + *  +--------------------------------------------------+
+> > > + *  |
+> > > + *  |    +-----+    +-----+    +-----+    +-----+
+> > > + *  +--->| DBC |--->| CTC |--->| CFA |--->| CAR |------+
+> > > + *       +-----+    +-----+    +-----+    +-----+      |
+> > > + *                                                     |
+> > > + *  +--------------------------------------------------+
+> > > + *  |
+> > > + *  |    +-----+    +--------+    +-----+    +------+
+> > > + *  +--->| CCM |--->| GMARGB |--->| R2Y |--->| YCRV |--+
+> > > + *       +-----+    +--------+    +-----+    +------+  |
+> > > + *                                                     |
+> > > + *  +--------------------------------------------------+
+> > > + *  |
+> > > + *  |    +-------+    +-------+    +-----+    +----+
+> > > + *  +--->| SHARP |--->| DNYUV |--->| SAT |--->| SC |
+> > > + *       +-------+    +-------+    +-----+    +----+
+> > > + *
+> 
+> The diagram is useful, thank you. A glossary would also be nice, maybe
+> as
+> 
+>  * - OBC: Optical Black Correction
+>  * - OECF: Opto-Electric Conversion Function
+>  * ...
+> 
+> I think that would be easier to read than the comments above each macro
+> below. Up to you.
+> 
+> > > + */
+> > > +
+> > > +/* Auto White Balance */
+> > > +#define JH7110_ISP_MODULE_WB_SETTING			(1U << 0)
+> > > +/* Color Artifact Removal */
+> > > +#define JH7110_ISP_MODULE_CAR_SETTING			(1U << 1)
+> > > +/* Color Correction Matrix */
+> > > +#define JH7110_ISP_MODULE_CCM_SETTING			(1U << 2)
+> > > +/* Color Filter Arrays */
+> > > +#define JH7110_ISP_MODULE_CFA_SETTING			(1U << 3)
+> > > +/* Crosstalk Correction */
+> > > +#define JH7110_ISP_MODULE_CTC_SETTING			(1U << 4)
+> > > +/* Defect Bad Pixel Correction */
+> > > +#define JH7110_ISP_MODULE_DBC_SETTING			(1U << 5)
+> > > +/* Denoise YUV */
+> > > +#define JH7110_ISP_MODULE_DNYUV_SETTING			(1U << 6)
+> > > +/* RGB Gamma */
+> > > +#define JH7110_ISP_MODULE_GMARGB_SETTING		(1U << 7)
+> > > +/* Lens Correction Cosine Fourth */
+> > > +#define JH7110_ISP_MODULE_LCCF_SETTING			(1U << 8)
+> > > +/* Optical Black Correction */
+> > > +#define JH7110_ISP_MODULE_OBC_SETTING			(1U << 9)
+> > > +/* Opto-Electric Conversion Function */
+> > > +#define JH7110_ISP_MODULE_OECF_SETTING			(1U << 10)
+> > > +/* RGB To YUV */
+> > > +#define JH7110_ISP_MODULE_R2Y_SETTING			(1U << 11)
+> > > +/* Saturation */
+> > > +#define JH7110_ISP_MODULE_SAT_SETTING			(1U << 12)
+> > > +/* Sharpen */
+> > > +#define JH7110_ISP_MODULE_SHARP_SETTING			(1U << 13)
+> > > +/* Y Curve */
+> > > +#define JH7110_ISP_MODULE_YCRV_SETTING			(1U << 14)
+> > > +/* Statistics Collection */
+> > > +#define JH7110_ISP_MODULE_SC_SETTING			(1U << 15)
+> 
+> Unless there's a specific reason to keep the current order, maybe you
+> could sort those macros in the same order as in the module diagram ?
+> 
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_wb_gain - auto white balance gain
+> > > + *
+> > > + * @gain_r: gain value for red component.
+> > > + * @gain_g: gain value for green component.
+> > > + * @gain_b: gain value for blue component.
+> 
+> I suppose the gains are expressed as fixed-point integers. This needs
+> more details, what are the limits, and how many bits of integer and
+> fractional parts are there ?
+> 
+> Same comment for all the other values below.
+> 
+> > > + */
+> > > +struct jh7110_isp_wb_gain {
+> > > +	__u16 gain_r;
+> > > +	__u16 gain_g;
+> > > +	__u16 gain_b;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_wb_setting - Configuration used by auto white balance gain
+> > > + *
+> > > + * @enabled: enabled setting flag.
+> > > + * @gains: auto white balance gain setting.
+> > > + */
+> > > +struct jh7110_isp_wb_setting {
+> > > +	__u32 enabled;
+> > > +	struct jh7110_isp_wb_gain gains;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_car_setting - Configuration used by color artifact removal
+> > > + *
+> > > + * @enabled: enabled setting flag.
+> > > + */
+> > > +struct jh7110_isp_car_setting {
+> > > +	__u32 enabled;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_ccm_smlow - Color correction matrix
+> > > + *
+> > > + * @ccm: color transform matrix with size 3 by 3.
+> > > + * @offsets: the offsets of R, G, B after the transform by the ccm.
+> > > + */
+> > > +struct jh7110_isp_ccm_smlow {
+> > > +	__s32 ccm[3][3];
+> > > +	__s32 offsets[3];
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_ccm_setting - Configuration used by color correction matrix
+> > > + *
+> > > + * @enabled: enabled setting flag.
+> > > + * @ccm_smlow: Color correction matrix.
+> > > + */
+> > > +struct jh7110_isp_ccm_setting {
+> > > +	__u32 enabled;
+> > > +	struct jh7110_isp_ccm_smlow ccm_smlow;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_cfa_params - demosaic parameters
+> > > + *
+> > > + * @hv_width: detail smooth factor
+> > > + * @cross_cov: Cross covariance weighting.
+> 
+> This documentation doesn't tell how to use those paraemeters. This
+> comment applies to many other parameters below. There are three main
+> options to improve that:
+> 
+> - Expanding the documentation in this header file to clearly explain how
+>   to compute the parameters values.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-out-of-bounds Read in bq_xmit_all
+Here's an example of the level of details that would be expected:
+https://lore.kernel.org/linux-media/20240709132906.3198927-19-dan.scally@ideasonboard.com/T/#m1bc3fe5b5cea831ece6452b13225d291bc4619db
 
-==================================================================
-BUG: KASAN: slab-out-of-bounds in bq_xmit_all+0x134/0x11d0 kernel/bpf/devmap.c:385
-Read of size 8 at addr ffff88807a1c2d50 by task syz.0.283/6567
+> 
+> - Providing an open userspace implementation of ISP algorithms that
+>   showcase how to calculate the values.
+> 
+> - Providing detailed hardware documentation for the ISP. This is usually
+>   not favoured by ISP vendors, and we are not pushing for this, but I
+>   wanted to mention it for completeness.
+> 
+> If you would prefer the second option, any open-source camera framework
+> would be acceptable, but in practice the only real option is likely
+> libcamera.
+> 
+> This does not mean that you have to open-source all your ISP control
+> algorithms. Only the code needed to explain how ISP parameters are
+> applied to the image and are computed is needed. Other parts, such as
+> for instance AI-based computation of white balance gains, or complex AGC
+> calculations, don't need to be open-source.
+> 
+> The explain this requirement different and perhaps more clearly, the
+> goal is to make sure that developers who have access to only open-source
+> code (ISP kernel driver, this header, any open-source userspace code,
+> ...) will have enough information to configure and control the ISP.
+> 
+> > > + */
+> > > +struct jh7110_isp_cfa_params {
+> > > +	__s32 hv_width;
+> > > +	__s32 cross_cov;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_cfa_params - Configuration used by demosaic module
+> > > + *
+> > > + * @enabled: enabled setting flag.
+> > > + * @settings: demosaic parameters.
+> > > + */
+> > > +struct jh7110_isp_cfa_setting {
+> > > +	__u32 enabled;
+> > > +	struct jh7110_isp_cfa_params settings;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_ctc_params - crosstalk remove parameters
+> > > + *
+> > > + * @saf_mode: smooth area filter mode.
+> > > + * @daf_mode: detail area filter mode.
+> > > + * @max_gt: the threshold for imbalance detection when pixel intensity is close to maximum.
+> > 
+> > You could easily make this < 80 cols (here and in other places).
+> > 
+> > I know there are different opinions on how strict on the 80 cols limit
+> > we should be, so up to you.
+> > 
+> > > + * @min_gt: the threshold for imbalance detection when pixel intensity is close to 0.
+> > > + */
+> > > +struct jh7110_isp_ctc_params {
+> > > +	__u8 saf_mode;
+> > > +	__u8 daf_mode;
+> > > +	__s32 max_gt;
+> > > +	__s32 min_gt;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_ctc_params - Configuration used by crosstalk remove
+> > > + *
+> > > + * @enabled: enabled setting flag.
+> > > + * @settings: corsstalk remove parameters.
+> > 
+> > crosstalk
+> > 
+> > > + */
+> > > +struct jh7110_isp_ctc_setting {
+> > > +	__u32 enabled;
+> > > +	struct jh7110_isp_ctc_params settings;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_dbc_params - defect pixels correction parameters
+> > > + *
+> > > + * @bad_gt: bad pixel threshold for the green channel.
+> > > + * @bad_xt: bad pixel threshold for the red and blue channels.
+> > > + */
+> > > +struct jh7110_isp_dbc_params {
+> > > +	__s32 bad_gt;
+> > > +	__s32 bad_xt;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_dbc_params - Configuration used by defect bad pixels correction
+> > > + *
+> > > + * @enabled: enabled setting flag.
+> > > + * @settings: defect pixels correction parameters.
+> > > + */
+> > > +struct jh7110_isp_dbc_setting {
+> > > +	__u32 enabled;
+> > > +	struct jh7110_isp_dbc_params settings;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_dnyuv_params - yuv domain denoise parameters
+> > > + *
+> > > + * @y_sweight: ten coefficients of 7x7 spatial filter for Y channel.
+> > > + * @y_curve: intensity difference (similarity) weight lookup table for Y channel.
+> > > + * @uv_sweight: ten coefficients of 7x7 spatial filter for U and V channel.
+> > > + * @uv_curve: intensity difference (similarity) weight lookup table for U and V channel.
+> > > + */
+> > > +struct jh7110_isp_dnyuv_params {
+> > > +	__u8 y_sweight[10];
+> > > +	__u16 y_curve[7];
+> > > +	__u8 uv_sweight[10];
+> > > +	__u16 uv_curve[7];
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_dnyuv_params - Configuration used by yuv domain denoise
+> > > + *
+> > > + * @enabled: enabled setting flag.
+> > > + * @settings: yuv domain denoise parameters.
+> > > + */
+> > > +struct jh7110_isp_dnyuv_setting {
+> > > +	__u32 enabled;
+> > > +	struct jh7110_isp_dnyuv_params settings;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_gmargb_point - RGB Gamma point
+> > > + *
+> > > + * @g_val: RGB gamma value.
+> > > + * @sg_val: RGB gamma slope value.
+> > > + */
+> > > +struct jh7110_isp_gmargb_point {
+> > > +	__u16 g_val;
+> > > +	__u16 sg_val;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_gmargb_setting - Configuration used by RGB gamma
+> > > + *
+> > > + * @enabled: enabled setting flag.
+> > > + * @curve: RGB Gamma point table.
+> > > + */
+> > > +struct jh7110_isp_gmargb_setting {
+> > > +	__u32 enabled;
+> > > +	struct jh7110_isp_gmargb_point curve[15];
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_lccf_circle - len circle
+> > 
+> > lens ?
+> > 
+> > > + *
+> > > + * @center_x: center X distance from capture window.
+> > > + * @center_y: center Y distance from capture window.
+> > > + * @radius: len circle radius.
+> > 
+> > here as well
+> > 
+> > > + */
+> > > +struct jh7110_isp_lccf_circle {
+> > > +	__s16 center_x;
+> > > +	__s16 center_y;
+> > > +	__u8 radius;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_lccf_curve_param - lens correction cosine fourth curve param
+> > > + *
+> > > + * @f1: F1 parameter.
+> > > + * @f2: F2 parameter.
+> > > + */
+> > > +struct jh7110_isp_lccf_curve_param {
+> > > +	__s16 f1;
+> > > +	__s16 f2;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_lccf_setting - Configuration used by lens correction cosine fourth
+> > > + *
+> > > + * @enabled: enabled setting flag.
+> > > + * @circle: len circle.
+> > > + * @r_param: lens correction cosine fourth curve param for Bayer pattern R.
+> > > + * @gr_param: lens correction cosine fourth curve param for Bayer pattern Gr.
+> > > + * @gb_param: lens correction cosine fourth curve param for Bayer pattern Gb.
+> > > + * @b_param: lens correction cosine fourth curve param for Bayer pattern B.
+> > > + */
+> > > +struct jh7110_isp_lccf_setting {
+> > > +	__u32 enabled;
+> > > +	struct jh7110_isp_lccf_circle circle;
+> > > +	struct jh7110_isp_lccf_curve_param r_param;
+> > > +	struct jh7110_isp_lccf_curve_param gr_param;
+> > > +	struct jh7110_isp_lccf_curve_param gb_param;
+> > > +	struct jh7110_isp_lccf_curve_param b_param;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_obc_win_size - optical black correction window size
+> > > + *
+> > > + * @width: window width.
+> > > + * @height: window height.
+> > > + */
+> > > +struct jh7110_isp_obc_win_size {
+> > > +	__u32 width;
+> > > +	__u32 height;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_obc_gain - optical black correction symbol gain
+> > > + *
+> > > + * @tl_gain: gain at point A for symbol.
+> > > + * @tr_gain: gain at point B for symbol.
+> > > + * @bl_gain: gain at point C for symbol.
+> > > + * @br_gain: gain at point D for symbol.
+> > > + */
+> > > +struct jh7110_isp_obc_gain {
+> > > +	__u8 tl_gain;
+> > > +	__u8 tr_gain;
+> > > +	__u8 bl_gain;
+> > > +	__u8 br_gain;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_obc_offset - optical black correction symbol offset
+> > > + *
+> > > + * @tl_offset: offset at point A for symbol.
+> > > + * @tr_offset: offset at point B for symbol.
+> > > + * @bl_offset: offset at point C for symbol.
+> > > + * @br_offset: offset at point D for symbol.
+> > > + */
+> > > +struct jh7110_isp_obc_offset {
+> > > +	__u8 tl_offset;
+> > > +	__u8 tr_offset;
+> > > +	__u8 bl_offset;
+> > > +	__u8 br_offset;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_obc_setting - Configuration used by optical black correction
+> > > + *
+> > > + * @enabled: enabled setting flag.
+> > > + * @win_size: optical black correction window size.
+> > > + * @gain: optical black correction symbol gain.
+> > > + * @offset: optical black correction symbol offset.
+> > > + */
+> > > +struct jh7110_isp_obc_setting {
+> > > +	__u32 enabled;
+> > > +	struct jh7110_isp_obc_win_size win_size;
+> > > +	struct jh7110_isp_obc_gain gain[4];
+> > > +	struct jh7110_isp_obc_offset offset[4];
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_oecf_point - oecf curve
+> > > + *
+> > > + * @x: x coordinate.
+> > > + * @y: y coordinate.
+> > > + * @slope: the slope between this point and the next point.
+> > > + */
+> > > +struct jh7110_isp_oecf_point {
+> > > +	__u16 x;
+> > > +	__u16 y;
+> > > +	__s16 slope;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_oecf_setting - Configuration used by opto-electric conversion function
+> > > + *
+> > > + * @enabled: enabled setting flag.
+> > > + * @r_curve: red pixel oecf curve.
+> > > + * @gr_curve: green pixel oecf curve in GR line.
+> > > + * @gb_curve: green pixel oecf curve in GB line.
+> > > + * @b_curve: blue pixel oecf curve.
+> > > + */
+> > > +struct jh7110_isp_oecf_setting {
+> > > +	__u32 enabled;
+> > > +	struct jh7110_isp_oecf_point r_curve[16];
+> > > +	struct jh7110_isp_oecf_point gr_curve[16];
+> > > +	struct jh7110_isp_oecf_point gb_curve[16];
+> > > +	struct jh7110_isp_oecf_point b_curve[16];
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_r2y_matrix - RGB to YUV color conversion matrix
+> > > + *
+> > > + * @m: The 3x3 color conversion matrix coefficient.
+> > > + */
+> > > +struct jh7110_isp_r2y_matrix {
+> > > +	__s16 m[9];
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_r2y_setting - Configuration used by RGB To YUV
+> > > + *
+> > > + * @enabled: enabled setting flag.
+> > > + * @matrix: RGB to YUV color conversion matrix.
+> > > + */
+> > > +struct jh7110_isp_r2y_setting {
+> > > +	__u32 enabled;
+> > > +	struct jh7110_isp_r2y_matrix matrix;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_sat_curve - Saturation curve
+> > > + *
+> > > + * @yi_min: the minimum input Y value.
+> > > + * @yo_ir: the ratio of Y output range to input range.
+> > > + * @yo_min: the minimum output Y value.
+> > > + * @yo_max: the maximum output Y value.
+> > > + */
+> > > +struct jh7110_isp_sat_curve {
+> > > +	__s16 yi_min;
+> > > +	__s16 yo_ir;
+> > > +	__s16 yo_min;
+> > > +	__s16 yo_max;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_sat_hue_info - Chroma Saturation Hue Factor
+> > > + *
+> > > + * @cos: COS hue factor.
+> > > + * @sin: SIN hue factor.
+> > > + */
+> > > +struct jh7110_isp_sat_hue_info {
+> > > +	__s16 cos;
+> > > +	__s16 sin;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_sat_info - Saturation information
+> > > + *
+> > > + * @gain_cmab: Chroma saturation magnitude amplification base for gain.
+> > > + * @gain_cmmd: Chroma saturation magnitude amplification delta for gain.
+> > > + * @threshold_cmb: Chroma saturation magnitude base threshold.
+> > > + * @threshold_cmd: Chroma saturation magnitude delta threshold.
+> > > + * @offset_u: Chroma saturation U offset.
+> > > + * @offset_v: Chroma saturation V offset.
+> > > + * @cmsf: Chroma saturation magnitude scaling factor.
+> > > + */
+> > > +struct jh7110_isp_sat_info {
+> > > +	__s16 gain_cmab;
+> > > +	__s16 gain_cmmd;
+> > > +	__s16 threshold_cmb;
+> > > +	__s16 threshold_cmd;
+> > > +	__s16 offset_u;
+> > > +	__s16 offset_v;
+> > > +	__s16 cmsf;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_sat_setting - Configuration used by Saturation
+> > > + *
+> > > + * @enabled: enabled setting flag.
+> > > + * @curve: Saturation curve.
+> > > + * @hue_info: Chroma Saturation Hue Factor.
+> > > + * @sat_info: Saturation information.s
+> > 
+> > informations.
+> > 
+> > > + */
+> > > +struct jh7110_isp_sat_setting {
+> > > +	__u32 enabled;
+> > > +	struct jh7110_isp_sat_curve curve;
+> > > +	struct jh7110_isp_sat_hue_info hue_info;
+> > > +	struct jh7110_isp_sat_info sat_info;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_sharp_weight - Sharpe weight
+> > > + *
+> > > + * @weight: Sharpen filter weight.
+> > > + * @recip_wei_sum: Sharpen amplification filter weight normalization factor.
+> > > + */
+> > > +struct jh7110_isp_sharp_weight {
+> > > +	__u8 weight[15];
+> > > +	__u32 recip_wei_sum;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_sharp_strength - Sharpen strength
+> > > + *
+> > > + * @diff: Sharpen Edge amplification delta level.
+> > > + * @f: Sharpen Edge amplification factor.
+> > > + * @s: Sharpen Edge amplification factor slope.
+> > > + */
+> > > +struct jh7110_isp_sharp_strength {
+> > > +	__s16 diff[4];
+> > > +	__s16 f[3];
+> > > +	__s32 s[3];
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_sharp_setting - Configuration used by Sharpen
+> > > + *
+> > > + * @enabled: enabled setting flag.
+> > > + * @weight: Sharpe weight.
+> > > + * @strength: Sharpen strength.
+> > > + * @pdirf: Positive Factor Multiplier.
+> > > + * @ndirf: Negative Factor Multiplier.
+> > > + */
+> > > +struct jh7110_isp_sharp_setting {
+> > > +	__u32 enabled;
+> > > +	struct jh7110_isp_sharp_weight weight;
+> > > +	struct jh7110_isp_sharp_strength strength;
+> > > +	__s8 pdirf;
+> > > +	__s8 ndirf;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_ycrv_curve - Y Curve parameters table
+> > > + *
+> > > + * @y: Y curve L parameters value.
+> > > + */
+> > > +struct jh7110_isp_ycrv_curve {
+> > > +	__s16 y[64];
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_ycrv_setting - Configuration used by Y Curve
+> > > + *
+> > > + * @enabled: enabled setting flag.
+> > > + * @curve: Y Curve parameters table.
+> > > + */
+> > > +struct jh7110_isp_ycrv_setting {
+> > > +	__u32 enabled;
+> > > +	struct jh7110_isp_ycrv_curve curve;
+> > 
+> > I am a bit failing in seeing the point of embedding the settings in a
+> > dedicated structure when you have a single instance of the
+> > configuration like this and in other instances. Isn't
+> > 
+> >         struct jh7110_isp_ycrv_setting {
+> >                 __u32 enabled;
+> >                 __s16 y[64];
+> >         };
+> > 
+> > easier ? Or do you need a dedicated type for other reasons ?
+> > 
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_sc_config - statistics collection crop configure
+> > > + *
+> > > + * @h_start: Horizontal starting point for frame cropping.
+> > > + * @v_start: Vertical starting point for frame cropping.
+> > > + * @sw_width: Width of statistics collection sub-window.
+> > > + * @sw_height: Height of statistics collection sub-window.
+> > > + * @hperiod: Horizontal period.
+> > > + * @hkeep: Horizontal keep.
+> > > + * @vperiod: Vertical period.
+> > > + * @vkeep: Vertical keep.
+> > > + */
+> > > +struct jh7110_isp_sc_config {
+> > > +	__u16 h_start;
+> > > +	__u16 v_start;
+> > > +	__u8 sw_width;
+> > > +	__u8 sw_height;
+> > > +	__u8 hperiod;
+> > > +	__u8 hkeep;
+> > > +	__u8 vperiod;
+> > > +	__u8 vkeep;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_sc_af_config - statistics collection auto focus configure
+> > > + *
+> > > + * @es_hor_mode: Horizontal mode.
+> > > + * @es_sum_mode: sum mode.
+> > 
+> > Other fields are documented with a capital letter -> "Sum mode."
+> > 
+> > > + * @hor_en: Horizontal enable.
+> > > + * @ver_en: Vertical enable.
+> > > + * @es_ver_thr: Vertical threshold.
+> > > + * @es_hor_thr: Horizontal threshold.
+> > > + */
+> > > +struct jh7110_isp_sc_af_config {
+> > > +	__u8 es_hor_mode;
+> > > +	__u8 es_sum_mode;
+> > > +	__u8 hor_en;
+> > > +	__u8 ver_en;
+> > > +	__u8 es_ver_thr;
+> > > +	__u16 es_hor_thr;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_sc_awb_ps - statistics collection auto white balance pixel sum
+> > > + *
+> > > + * @awb_ps_rl: Lower boundary of R value for pixel sum.
+> > > + * @awb_ps_ru: Upper boundary of R value for pixel sum.
+> > > + * @awb_ps_gl: Lower boundary of G value for pixel sum.
+> > > + * @awb_ps_gu: Upper boundary of G value for pixel sum.
+> > > + * @awb_ps_bl: Lower boundary of B value for pixel sum.
+> > > + * @awb_ps_bu: Upper boundary of B value for pixel sum.
+> > > + * @awb_ps_yl: Lower boundary of Y value for pixel sum.
+> > > + * @awb_ps_yu: Upper boundary of Y value for pixel sum.
+> > > + * @awb_ps_grl: Lower boundary of G/R ratio for pixel sum.
+> > > + * @awb_ps_gru: Upper boundary of G/R ratio for pixel sum.
+> > > + * @awb_ps_gbl: Lower boundary of G/B ratio for pixel sum.
+> > > + * @awb_ps_gbu: Upper boundary of G/B ratio for pixel sum.
+> > > + * @awb_ps_grbl: Lower boundary of (Gr/R + b/a * Gb/B) for pixel sum.
+> > > + * @awb_ps_grbu: Upper boundary of (Gr/R + b/a * Gb/B) for pixel sum.
+> > > + */
+> > > +struct jh7110_isp_sc_awb_ps {
+> > > +	__u8 awb_ps_rl;
+> > > +	__u8 awb_ps_ru;
+> > > +	__u8 awb_ps_gl;
+> > > +	__u8 awb_ps_gu;
+> > > +	__u8 awb_ps_bl;
+> > > +	__u8 awb_ps_bu;
+> > > +	__u8 awb_ps_yl;
+> > > +	__u8 awb_ps_yu;
+> > > +	__u16 awb_ps_grl;
+> > > +	__u16 awb_ps_gru;
+> > > +	__u16 awb_ps_gbl;
+> > > +	__u16 awb_ps_gbu;
+> > > +	__u16 awb_ps_grbl;
+> > > +	__u16 awb_ps_grbu;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_sc_awb_ws - statistics collection auto white balance weight sum
+> > > + *
+> > > + * @awb_ws_rl: Lower boundary of R value for weight sum.
+> > > + * @awb_ws_ru: Upper boundary of R value for weight sum.
+> > > + * @awb_ws_grl: Lower boundary of Gr value for weight sum.
+> > > + * @awb_ws_gru: Upper boundary of Gr value for weight sum.
+> > > + * @awb_ws_gbl: Lower boundary of Gb value for weight sum.
+> > > + * @awb_ws_gbu: Upper boundary of Gb value for weight sum.
+> > > + * @awb_ws_bl: Lower boundary of B value for weight sum.
+> > > + * @awb_ws_bu: Upper boundary of B value for weight sum.
+> > > + */
+> > > +struct jh7110_isp_sc_awb_ws {
+> > > +	__u8 awb_ws_rl;
+> > > +	__u8 awb_ws_ru;
+> > > +	__u8 awb_ws_grl;
+> > > +	__u8 awb_ws_gru;
+> > > +	__u8 awb_ws_gbl;
+> > > +	__u8 awb_ws_gbu;
+> > > +	__u8 awb_ws_bl;
+> > > +	__u8 awb_ws_bu;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_sc_awb_point - statistics collection auto white balance point
+> > > + *
+> > > + * @weight: Weighting value at point.
+> > > + */
+> > > +struct jh7110_isp_sc_awb_point {
+> > > +	__u8 weight;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_sc_awb_config - statistics collection auto white balance configure
+> > > + *
+> > > + * @ps_config: statistics collection auto white balance pixel sum.
+> > 
+> > nit: please be consistent with using capital letters or not in doc.
+> > 
+> > > + * @awb_ps_grb_ba: auto white balance b/a value.
+> > > + * @sel: input mux for statistics collection auto white balance.
+> > > + * @ws_config: statistics collection auto white balance weight sum.
+> > > + * @awb_cw: Weighting value at 13x13 point.
+> > > + * @pts: statistics collection auto white balance point.
+> > > + */
+> > > +struct jh7110_isp_sc_awb_config {
+> > > +	struct jh7110_isp_sc_awb_ps ps_config;
+> > > +	__u8 awb_ps_grb_ba;
+> > > +	__u8 sel;
+> > > +	struct jh7110_isp_sc_awb_ws ws_config;
+> > > +	__u8 awb_cw[169];
+> > > +	struct jh7110_isp_sc_awb_point pts[17];
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_sc_setting - Configuration used by statistics collection
+> > > + *
+> > > + * @enabled: enabled setting flag.
+> > > + * @crop_config: statistics collection crop configure.
+> > > + * @af_config: statistics collection auto focus configure.
+> > > + * @awb_config: statistics collection auto white balance configure.
+> > > + */
+> > > +struct jh7110_isp_sc_setting {
+> > > +	__u32 enabled;
+> > > +	struct jh7110_isp_sc_config crop_config;
+> > > +	struct jh7110_isp_sc_af_config af_config;
+> > > +	struct jh7110_isp_sc_awb_config awb_config;
+> > > +};
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_params_buffer - StarFive JH7110 ISP Parameters Meta Data
+> > > + *
+> > > + * @enable_setting: enabled setting module (JH7110_ISP_MODULE_* definitions).
+> > > + * @wb_setting: Configuration used by auto white balance gain.
+> > > + * @car_setting: Configuration used by color artifact removal.
+> > > + * @ccm_setting: Configuration used by color correction matrix.
+> > > + * @cfa_setting: Configuration used by demosaic module.
+> > > + * @ctc_setting: Configuration used by crosstalk remove.
+> > > + * @dbc_setting: Configuration used by defect bad pixels correction.
+> > > + * @dnyuv_setting: Configuration used by yuv domain denoise.
+> > > + * @gmargb_setting: Configuration used by RGB gamma.
+> > > + * @lccf_setting: Configuration used by lens correction cosine fourth.
+> > > + * @obc_setting: Configuration used by optical black compensation.
+> > > + * @oecf_setting: Configuration used by opto-electric conversion function.
+> > > + * @r2y_setting: Configuration used by RGB To YUV.
+> > > + * @sat_setting: Configuration used by Saturation.
+> > > + * @sharp_setting: Configuration used by Sharpen.
+> > > + * @ycrv_setting: Configuration used by Y Curve.
+> > > + * @sc_setting: Configuration used by statistics collection.
+> > > + */
+> > > +struct jh7110_isp_params_buffer {
+> > > +	__u32 enable_setting;
+> > > +	struct jh7110_isp_wb_setting wb_setting;
+> > > +	struct jh7110_isp_car_setting car_setting;
+> > > +	struct jh7110_isp_ccm_setting ccm_setting;
+> > > +	struct jh7110_isp_cfa_setting cfa_setting;
+> > > +	struct jh7110_isp_ctc_setting ctc_setting;
+> > > +	struct jh7110_isp_dbc_setting dbc_setting;
+> > > +	struct jh7110_isp_dnyuv_setting dnyuv_setting;
+> > > +	struct jh7110_isp_gmargb_setting gmargb_setting;
+> > > +	struct jh7110_isp_lccf_setting lccf_setting;
+> > > +	struct jh7110_isp_obc_setting obc_setting;
+> > > +	struct jh7110_isp_oecf_setting oecf_setting;
+> > > +	struct jh7110_isp_r2y_setting r2y_setting;
+> > > +	struct jh7110_isp_sat_setting sat_setting;
+> > > +	struct jh7110_isp_sharp_setting sharp_setting;
+> > > +	struct jh7110_isp_ycrv_setting ycrv_setting;
+> > > +	struct jh7110_isp_sc_setting sc_setting;
+> > > +};
+> > > +
+> > > +/**
+> > > + * Statistics Collection Meta Data Flag
+> > > + */
+> > > +#define JH7110_ISP_SC_FLAG_AWB			0x0
+> > > +#define JH7110_ISP_SC_FLAG_AE_AF		0xffff
+> > > +
+> > > +#pragma pack(1)
+> > > +
+> > > +/**
+> > > + * struct jh7110_isp_sc_buffer - StarFive JH7110 ISP Statistics Collection Meta Data
+> > > + *
+> > > + * @y_histogram: Y histogram data for saturation control.
+> > > + * @reserv0: reserve byte.
+> > > + * @bright_sc: bright statistic. If flag is JH7110_ISP_SC_FLAG_AE_AF, This field is
+> > 
+> > s/bright statistics/brightness statistics/
+> > 
+> > no capital "T" after ,
+> > 
+> > > + *             saved auto exposure and auto focus. If flag is JH7110_ISP_SC_FLAG_AWB,
+> > > + *             This field is saved auto white balance.
+> > 
+> > no capital "T" after ,
+> > 
+> > I would replace "this field is saved" which doesn't sound great in
+> > English (not a native speaker though) with "this field stores".
+> > 
+> > > + * @reserv1: reserve byte.
+> > > + * @ae_hist_y: Y histogram for auto exposure.
+> > > + * @reserv2: reserve byte.
+> > > + * @flag: Statistics Collection Meta Data Flag (JH7110_ISP_SC_FLAG_* definitions)
+> > > + */
 
-CPU: 0 UID: 0 PID: 6567 Comm: syz.0.283 Not tainted 6.10.0-syzkaller-11840-g933069701c1b #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- bq_xmit_all+0x134/0x11d0 kernel/bpf/devmap.c:385
- __dev_flush+0x81/0x160 kernel/bpf/devmap.c:425
- xdp_do_check_flushed+0x129/0x240 net/core/filter.c:4300
- __napi_poll+0xe4/0x490 net/core/dev.c:6774
- napi_poll net/core/dev.c:6840 [inline]
- net_rx_action+0x89b/0x1240 net/core/dev.c:6962
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:__sanitizer_cov_trace_pc+0x5d/0x70 kernel/kcov.c:225
-Code: f8 15 00 00 83 fa 02 75 21 48 8b 91 00 16 00 00 48 8b 32 48 8d 7e 01 8b 89 fc 15 00 00 48 39 cf 73 08 48 89 3a 48 89 44 f2 08 <c3> cc cc cc cc 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 90 90 90
-RSP: 0018:ffffc90003ddf398 EFLAGS: 00000293
-RAX: ffffffff81d0022b RBX: dffffc0000000000 RCX: ffff888026fe8000
-RDX: 0000000000000000 RSI: 000000000000000f RDI: 000000000000001f
-RBP: ffffc90003ddf4b0 R08: ffffffff81d001ee R09: 1ffffd40003c2f6e
-R10: dffffc0000000000 R11: fffff940003c2f6f R12: ffffc90003ddf5a0
-R13: ffffea0001e17b80 R14: ffffc90003ddf520 R15: 000000000000000f
- folios_put_refs+0x19b/0x860 mm/swap.c:994
- free_pages_and_swap_cache+0x2ea/0x690 mm/swap_state.c:332
- __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
- tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
- tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
- tlb_flush_mmu+0x3a3/0x680 mm/mmu_gather.c:373
- tlb_finish_mmu+0xd4/0x200 mm/mmu_gather.c:465
- exit_mmap+0x44f/0xc80 mm/mmap.c:3395
- __mmput+0x115/0x390 kernel/fork.c:1345
- exit_mm+0x220/0x310 kernel/exit.c:571
- do_exit+0x9b2/0x27f0 kernel/exit.c:869
- do_group_exit+0x207/0x2c0 kernel/exit.c:1031
- get_signal+0x16a1/0x1740 kernel/signal.c:2917
- arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:310
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1635175bd9
-Code: Unable to access opcode bytes at 0x7f1635175baf.
-RSP: 002b:00007f1635e770f8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 00007f1635303f68 RCX: 00007f1635175bd9
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007f1635303f68
-RBP: 00007f1635303f60 R08: 00007f1635e776c0 R09: 00007f1635e776c0
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f1635303f6c
-R13: 000000000000000b R14: 00007ffeb68d9450 R15: 00007ffeb68d9538
- </TASK>
+The statistics also require more documentation. See
+https://lore.kernel.org/linux-media/20240709132906.3198927-19-dan.scally@ideasonboard.com/T/#m107e94a23f6deccddf2afdfba9c9cf5bf63522a9
+for an example of the level of details that is expected.
 
-Allocated by task 5754:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:312 [inline]
- __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
- kasan_slab_alloc include/linux/kasan.h:201 [inline]
- slab_post_alloc_hook mm/slub.c:3988 [inline]
- slab_alloc_node mm/slub.c:4037 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4044
- vm_area_dup+0x27/0x290 kernel/fork.c:486
- dup_mmap kernel/fork.c:695 [inline]
- dup_mm kernel/fork.c:1672 [inline]
- copy_mm+0xc7b/0x1f30 kernel/fork.c:1721
- copy_process+0x187a/0x3dc0 kernel/fork.c:2374
- kernel_clone+0x226/0x8f0 kernel/fork.c:2781
- __do_sys_clone kernel/fork.c:2924 [inline]
- __se_sys_clone kernel/fork.c:2908 [inline]
- __x64_sys_clone+0x258/0x2a0 kernel/fork.c:2908
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> > > +struct jh7110_isp_sc_buffer {
+> > > +	__u32 y_histogram[64];
+> > > +	__u32 reserv0[33];
+> > > +	__u32 bright_sc[4096];
+> > > +	__u32 reserv1[96];
+> > > +	__u32 ae_hist_y[128];
+> > > +	__u32 reserv2[511];
+> > > +	__u16 flag;
+> > > +};
+> > > +
+> > > +#pragma pack()
+> > 
+> > This structure is packed, is it populated directly from HW registers
+> > with a memcpy or a DMA transfer ? I guess I'll find it out in the next
+> > patches.
+> > 
+> > > +
+> > > +#endif
 
-The buggy address belongs to the object at ffff88807a1c2c98
- which belongs to the cache vm_area_struct of size 184
-The buggy address is located 0 bytes to the right of
- allocated 184-byte region [ffff88807a1c2c98, ffff88807a1c2d50)
+-- 
+Regards,
 
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x7a1c2
-memcg:ffff8880227b2101
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xfdffffff(slab)
-raw: 00fff00000000000 ffff888015eefb40 dead000000000100 dead000000000122
-raw: 0000000000000000 0000000000100010 00000001fdffffff ffff8880227b2101
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x152cc0(GFP_USER|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 5972, tgid 5972 (dhcpcd-run-hook), ts 122017798005, free_ts 121858197708
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
- prep_new_page mm/page_alloc.c:1501 [inline]
- get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3438
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4696
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
- alloc_slab_page+0x5f/0x120 mm/slub.c:2321
- allocate_slab+0x5a/0x2f0 mm/slub.c:2484
- new_slab mm/slub.c:2537 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3723
- __slab_alloc+0x58/0xa0 mm/slub.c:3813
- __slab_alloc_node mm/slub.c:3866 [inline]
- slab_alloc_node mm/slub.c:4025 [inline]
- kmem_cache_alloc_noprof+0x1c1/0x2a0 mm/slub.c:4044
- vm_area_dup+0x27/0x290 kernel/fork.c:486
- dup_mmap kernel/fork.c:695 [inline]
- dup_mm kernel/fork.c:1672 [inline]
- copy_mm+0xc7b/0x1f30 kernel/fork.c:1721
- copy_process+0x187a/0x3dc0 kernel/fork.c:2374
- kernel_clone+0x226/0x8f0 kernel/fork.c:2781
- __do_sys_clone kernel/fork.c:2924 [inline]
- __se_sys_clone kernel/fork.c:2908 [inline]
- __x64_sys_clone+0x258/0x2a0 kernel/fork.c:2908
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 5966 tgid 5966 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1094 [inline]
- free_unref_page+0xd22/0xea0 mm/page_alloc.c:2608
- discard_slab mm/slub.c:2583 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3051
- put_cpu_partial+0x17c/0x250 mm/slub.c:3126
- __slab_free+0x2ea/0x3d0 mm/slub.c:4343
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9e/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:322
- kasan_slab_alloc include/linux/kasan.h:201 [inline]
- slab_post_alloc_hook mm/slub.c:3988 [inline]
- slab_alloc_node mm/slub.c:4037 [inline]
- __do_kmalloc_node mm/slub.c:4157 [inline]
- __kmalloc_noprof+0x1a6/0x400 mm/slub.c:4170
- kmalloc_noprof include/linux/slab.h:685 [inline]
- tomoyo_realpath_from_path+0xcf/0x5e0 security/tomoyo/realpath.c:251
- tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
- tomoyo_path_perm+0x2b7/0x740 security/tomoyo/file.c:822
- security_inode_getattr+0xd8/0x130 security/security.c:2269
- vfs_getattr+0x45/0x430 fs/stat.c:204
- vfs_fstat fs/stat.c:229 [inline]
- vfs_fstatat+0xe4/0x190 fs/stat.c:338
- __do_sys_newfstatat fs/stat.c:505 [inline]
- __se_sys_newfstatat fs/stat.c:499 [inline]
- __x64_sys_newfstatat+0x11d/0x1a0 fs/stat.c:499
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff88807a1c2c00: 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc
- ffff88807a1c2c80: fc fc fc 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff88807a1c2d00: 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc
-                                                 ^
- ffff88807a1c2d80: fc fc 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff88807a1c2e00: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
-==================================================================
-----------------
-Code disassembly (best guess):
-   0:	f8                   	clc
-   1:	15 00 00 83 fa       	adc    $0xfa830000,%eax
-   6:	02 75 21             	add    0x21(%rbp),%dh
-   9:	48 8b 91 00 16 00 00 	mov    0x1600(%rcx),%rdx
-  10:	48 8b 32             	mov    (%rdx),%rsi
-  13:	48 8d 7e 01          	lea    0x1(%rsi),%rdi
-  17:	8b 89 fc 15 00 00    	mov    0x15fc(%rcx),%ecx
-  1d:	48 39 cf             	cmp    %rcx,%rdi
-  20:	73 08                	jae    0x2a
-  22:	48 89 3a             	mov    %rdi,(%rdx)
-  25:	48 89 44 f2 08       	mov    %rax,0x8(%rdx,%rsi,8)
-* 2a:	c3                   	ret <-- trapping instruction
-  2b:	cc                   	int3
-  2c:	cc                   	int3
-  2d:	cc                   	int3
-  2e:	cc                   	int3
-  2f:	66 2e 0f 1f 84 00 00 	cs nopw 0x0(%rax,%rax,1)
-  36:	00 00 00
-  39:	0f 1f 40 00          	nopl   0x0(%rax)
-  3d:	90                   	nop
-  3e:	90                   	nop
-  3f:	90                   	nop
-
-
-Tested on:
-
-commit:         93306970 Merge tag '6.11-rc-smb3-server-fixes' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=130810c9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d04f9888ed34da73
-dashboard link: https://syzkaller.appspot.com/bug?extid=61a1cfc2b6632363d319
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
+Laurent Pinchart
 
