@@ -1,136 +1,131 @@
-Return-Path: <linux-kernel+bounces-258369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C88993871E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 03:07:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87328938722
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 03:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED4C11F210AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 01:07:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A2E11C20B19
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 01:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AAC3107A0;
-	Mon, 22 Jul 2024 01:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77668BEA;
+	Mon, 22 Jul 2024 01:07:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JND6bYfq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="UqVoU5D4"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18F515E86
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 01:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA5B4C7D
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 01:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721610419; cv=none; b=jiYWHAVyK/eahsAgzxhcMRbM7SIngoulFXMEMqcGZQQJA4vhMa2ZWvK+FfHsPKdfXRBG0TRqZ5/MH3zmG1q5ojnhdlSm/qOwnii0/fNwGME1aEsbVQ7os3IzZd7cYrHw92Jj2Y+mMtxnAAP5mmxbGZ2G1GaBn9uTkKz0iz9Y7LM=
+	t=1721610449; cv=none; b=eqa6jddk7a6XJgMIDXjvx78GC+i15eKPsWwHPEjYSzFWt4Ewx4hrIGUGSQzkiAAUj5O+vWtMo+Rkf0JHRw6DhWRHgruGQrYeId03H7tIsncsUIsudTkKdggaKkot1adsj63567H7ERGtmPyUvfkZL8ddcaGaDXrt94M4cJnhR7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721610419; c=relaxed/simple;
-	bh=gXbWIq+gxkTzT3zch5PQ/lEQzgZ4K6uVJ8NO5W4Cj6g=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TGRso2K+9Sbgw6rKF8YKchdu1yyrbt+SyjBK0MmqYctyFO0YCqfwfAU3h/NIQ2wGtPMjPpukcxs7XfokrskIEqp+gySz1F9JYOhbzyFWiFTZS0IWxI4aa3zU5M8D7CD7/MUkNd8SXPcft6bJ/PjXUr08GwvwPadVFc7Bir6eZvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JND6bYfq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721610417;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K4jF6VLeOGDtL4UWMcNA9VQvzb5OUV9kjKDeZZWn4yk=;
-	b=JND6bYfqnjU68MY3zeSXWbtHWZfVR4Xt7HzGbpwsp66fvRT2ZRcDZBzdoHC0AHtOSGdNp9
-	WbYQp0pAajlrW4LHWHi0S3NEpIzTlnAFuUPnSn4pZEIAidKlXREsXoCxWri2oHViAG8q/A
-	vQUkbWvAbFikOr0JbRDSpctuiYUrCdU=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-591-8veGnTEQMDyOHd8Y2cAJZw-1; Sun,
- 21 Jul 2024 21:06:53 -0400
-X-MC-Unique: 8veGnTEQMDyOHd8Y2cAJZw-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 79FC219560AD;
-	Mon, 22 Jul 2024 01:06:52 +0000 (UTC)
-Received: from server.redhat.com (unknown [10.72.112.22])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7C69A195605A;
-	Mon, 22 Jul 2024 01:06:47 +0000 (UTC)
-From: Cindy Lu <lulu@redhat.com>
-To: lulu@redhat.com,
-	dtatulea@nvidia.com,
-	mst@redhat.com,
-	jasowang@redhat.com,
-	parav@nvidia.com,
-	sgarzare@redhat.com,
-	netdev@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATH v4 3/3] vdpa/mlx5: Add the support of set mac address
-Date: Mon, 22 Jul 2024 09:05:20 +0800
-Message-ID: <20240722010625.1016854-4-lulu@redhat.com>
-In-Reply-To: <20240722010625.1016854-1-lulu@redhat.com>
-References: <20240722010625.1016854-1-lulu@redhat.com>
+	s=arc-20240116; t=1721610449; c=relaxed/simple;
+	bh=TSmfXgnydARLwr7mv0kzl+RBgKIwOhswaVDeCGIIVsk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fF9jc+reX+vW8qZQjGOc3L7iLpvEL76Dc8C+S8OYxOSjkxCR2WwTs4QyF5InpHtE6+pnrKp1kbK1NvRP2wLHwbcWBjbNPeSPp2PWohI7Qux6VhbEgvGnPlUiZSxSEMBoDncu2APhzvCZ0Ajw10TAHOobX40SjY5nYCHkWbYR3A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=UqVoU5D4; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-79f0e7faafcso233602585a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 18:07:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1721610445; x=1722215245; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GAHiE58iDMnOq7mpXPmqVzhRum0LLcYC2L+ZB58l620=;
+        b=UqVoU5D4q4F3vw9mqbZxyGwMLKlzaY87cl2DV8Gnw1eiwWMk3yfXuyjmdBR2SIxOZA
+         sncd2HrnE3LFegeDK4Sav1jlmcDG6En7b2hJG9JZfnd31ShVSIeD1pXjw9UZI0ViETzt
+         UOCHW6iYE6VDWLxNZMju+0CNrvjHfBPg0FkMsVM9QfPH5GBy3EkB4kaC8H5LjfEDJs03
+         gTrUS0s2X9ZqnJsQ1ICy208uCXUhBrGyMBD9Od6AV4yYLAtFvlXYgqLU7+JcDNkrIzTj
+         2PABlgugPMsF6q3yCcBobwX0LR0DKr4WBYn3EPFmCIYNS4+DhaPgbFm7vcBPVGBf8vAX
+         J8Jg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721610445; x=1722215245;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GAHiE58iDMnOq7mpXPmqVzhRum0LLcYC2L+ZB58l620=;
+        b=Azcdi6D+xIzAOMK+BjUKU6JLbGlM/lAQ492XXH8fsPoHeSXon7NgC9/X7pa8wLa9Ax
+         L08tN6Qi67tA/gFVfeZx1EclEspYffcI/hV8b76yioqp5CSxzLA3Mq0/hEU6YaLzASt0
+         AP4GsNc5JZFZJkgzTaUKmAhy+kZ/1YonkjCHtd+SUTeIOeR18S0w4vePecU46EFyGDuj
+         Zbxdmsh3fqo+TmX2ulKnY3QJnQaU5kyttbyezINrt1VloXWcsaSnWQyiU/HZ9n/CQfpm
+         wfzrzFGAnIZ4c1ZE48P8nIghmvbPbJCwHjCazmTWK069J/6iuUjx1GOZu/1YasPhLkmB
+         SRLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWwMqS1vl88EXGCKoC9yj1GdTiS1+Y5MVWXpgg2nxkTlHHbcoOpMW4idB8AIL2T0p/8FJqnxx1mLVxK/bKCl5PujqDx4ruUAnDKdSVT
+X-Gm-Message-State: AOJu0Yzcl9Y22rQGYawst5UkjnkKLavSznfQGsdJNyQQz0rUnF2BKOm6
+	/LKoAIgYwd1xHOHPgeE7qqx+iv/i0M4Laxwo8rQgfzNdAO474049sypI9Nrm4g==
+X-Google-Smtp-Source: AGHT+IH9pnVMRWIV3YKK+JwL6olh4K3erV80NpJ3mXsnmlqGMvAHvjzn6pvEYnaMSnwmCMPoU9uY+Q==
+X-Received: by 2002:a05:620a:3954:b0:79f:4b5:3697 with SMTP id af79cd13be357-7a1a667f968mr641629585a.63.1721610445036;
+        Sun, 21 Jul 2024 18:07:25 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::179c])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a198ff997esm308267985a.56.2024.07.21.18.07.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Jul 2024 18:07:24 -0700 (PDT)
+Date: Sun, 21 Jul 2024 21:07:21 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: crwulff@gmail.com
+Cc: linux-usb@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Roy Luo <royluo@google.com>,
+	Krishna Kurapati <quic_kriskura@quicinc.com>,
+	Michael Grzeschik <m.grzeschik@pengutronix.de>,
+	yuan linyu <yuanlinyu@hihonor.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Felipe Balbi <balbi@kernel.org>, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] usb: gadget: core: Check for unset descriptor
+Message-ID: <29bc21ae-1f8a-47fd-b361-c761564f483a@rowland.harvard.edu>
+References: <20240721192048.3530097-2-crwulff@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240721192048.3530097-2-crwulff@gmail.com>
 
-Add the function to support setting the MAC address.
-For vdpa/mlx5, the function will use mlx5_mpfs_add_mac
-to set the mac address
+On Sun, Jul 21, 2024 at 03:20:49PM -0400, crwulff@gmail.com wrote:
+> From: Chris Wulff <crwulff@gmail.com>
+> 
+> Make sure the descriptor has been set before looking at maxpacket.
+> This fixes a null pointer panic in this case.
+> 
+> This may happen if the gadget doesn't properly set up the endpoint
+> for the current speed, or the gadget descriptors are malformed and
+> the descriptor for the speed/endpoint are not found.
 
-Tested in ConnectX-6 Dx device
+If that happens, doesn't it mean there's a bug in the gadget driver?  
+And if there's a bug, don't we want to be told about it by a big 
+impossible-to-miss error message, so the bug can be fixed?
 
-Signed-off-by: Cindy Lu <lulu@redhat.com>
----
- drivers/vdpa/mlx5/net/mlx5_vnet.c | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+> Fixes: 54f83b8c8ea9 ("USB: gadget: Reject endpoints with 0 maxpacket value")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Chris Wulff <crwulff@gmail.com>
+> ---
+>  drivers/usb/gadget/udc/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
+> index 2dfae7a17b3f..36a5d5935889 100644
+> --- a/drivers/usb/gadget/udc/core.c
+> +++ b/drivers/usb/gadget/udc/core.c
+> @@ -118,7 +118,7 @@ int usb_ep_enable(struct usb_ep *ep)
+>  		goto out;
+>  
+>  	/* UDC drivers can't handle endpoints with maxpacket size 0 */
+> -	if (usb_endpoint_maxp(ep->desc) == 0) {
+> +	if (!ep->desc || usb_endpoint_maxp(ep->desc) == 0) {
+>  		/*
+>  		 * We should log an error message here, but we can't call
+>  		 * dev_err() because there's no way to find the gadget
 
-diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-index ecfc16151d61..415b527a9c72 100644
---- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-+++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-@@ -3785,10 +3785,35 @@ static void mlx5_vdpa_dev_del(struct vdpa_mgmt_dev *v_mdev, struct vdpa_device *
- 	destroy_workqueue(wq);
- 	mgtdev->ndev = NULL;
- }
-+static int mlx5_vdpa_set_attr(struct vdpa_mgmt_dev *v_mdev,
-+			      struct vdpa_device *dev,
-+			      const struct vdpa_dev_set_config *add_config)
-+{
-+	struct mlx5_vdpa_dev *mvdev;
-+	struct mlx5_vdpa_net *ndev;
-+	struct mlx5_core_dev *mdev;
-+	struct virtio_net_config *config;
-+	struct mlx5_core_dev *pfmdev;
-+	int err = -EOPNOTSUPP;
-+
-+	mvdev = to_mvdev(dev);
-+	ndev = to_mlx5_vdpa_ndev(mvdev);
-+	mdev = mvdev->mdev;
-+	config = &ndev->config;
-+
-+	if (add_config->mask & (1 << VDPA_ATTR_DEV_NET_CFG_MACADDR)) {
-+		pfmdev = pci_get_drvdata(pci_physfn(mdev->pdev));
-+		err = mlx5_mpfs_add_mac(pfmdev, config->mac);
-+		if (!err)
-+			memcpy(config->mac, add_config->net.mac, ETH_ALEN);
-+	}
-+	return err;
-+}
- 
- static const struct vdpa_mgmtdev_ops mdev_ops = {
- 	.dev_add = mlx5_vdpa_dev_add,
- 	.dev_del = mlx5_vdpa_dev_del,
-+	.dev_set_attr = mlx5_vdpa_set_attr,
- };
- 
- static struct virtio_device_id id_table[] = {
--- 
-2.45.0
+This will just hide the error.  That's not good.
 
+Alan Stern
 
