@@ -1,122 +1,341 @@
-Return-Path: <linux-kernel+bounces-259287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFD57939390
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:25:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEACB939394
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:27:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 384001F21B05
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:25:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3970F1F21D78
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E6516F908;
-	Mon, 22 Jul 2024 18:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583B116F909;
+	Mon, 22 Jul 2024 18:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sWp9LK1o"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="kIR6wbCJ"
+Received: from mail-43166.protonmail.ch (mail-43166.protonmail.ch [185.70.43.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D5C16F0C2;
-	Mon, 22 Jul 2024 18:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C0E16F903
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 18:26:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721672704; cv=none; b=NAf09XdSHwEMsqYUhT8nBRNnyNAUVD0gxUlG0GME/sgZjOhMsi9yfq/VFD00Mual4t6tO6+8+ICDJaxaLeDj76pq5GIHzGzUqSy1I8xNPdB+LGulnL3vGZuh0baiVaeJ6zq/PyxiGKsKR2A09cutFBbk4aaqO7Vlmm4XHTcFJCE=
+	t=1721672814; cv=none; b=snGvOCIOjVgJN9BtR9AFb++CwSKinuC4lXLSmpCLgq/LkrSk7XEZHXJzDW8Aaj8zshzcAs0EwTC9HI/AeH4jvJfZ7+/1pr1z+tZVJe5eVX8ftkkOZR/iaX4Z+fP/PIZmJiAQeSFNs/PamaWtzkWIKcBlM3+k6zXCzqP818zmJ0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721672704; c=relaxed/simple;
-	bh=WX0VtNoRbqAErf90cp8dai9ieT+dqy97QRBrWMOGyxA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qKs6Ind66pLl88UFIEsira9ZEgpEujg6zi8fsDU18RJ7hVIvOud98Nk5zRU0+hwUFB41ldyOvXTGwG/UHlR7gC/nihT7+W7TWpifD480t1HC/51YCCr/5FX7mCM2rD2vXNdTOndJ7W52crtid385DCilW1FhMhguAikw5mugMjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sWp9LK1o; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721672670; x=1722277470; i=markus.elfring@web.de;
-	bh=WX0VtNoRbqAErf90cp8dai9ieT+dqy97QRBrWMOGyxA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=sWp9LK1o0zo1bsYiWtoXQpWIehoYLBcW99+brcppQpT/GMYOn42MR5eEeJwcWJ/X
-	 MqS/fEgF1qxl7Zr35fjxE7KOkrpo2ajOhwpfeK2EXirfc3AWba2005NbrmWg9LID7
-	 0xFLpBndEHCLXx9PGZXofwBVW5x1BA5GuQRcoj0evAg43Mg1WnBcTE/Aib4pisgdu
-	 YmidHxjbjcTtXy5Us5HkrTLgqU3UNPsJzRZXO1cKZAOqGWR0gGYJzLRUTWCgyqUyy
-	 t74pnjujIWOxlF3KfJG3FVOGrMz2ZJPC49B+nsBTCRkubBI7tFk5kcMUeohtntZZC
-	 28cOx/+bpeh9lIaRBw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MHVal-1sacPc480n-00HRTA; Mon, 22
- Jul 2024 20:24:30 +0200
-Message-ID: <3fa16801-50f2-482d-93db-29a7b07c2a06@web.de>
-Date: Mon, 22 Jul 2024 20:24:28 +0200
+	s=arc-20240116; t=1721672814; c=relaxed/simple;
+	bh=mOgnAl41sFrWGJo+3xOGusaA3kVBZ9rqK5x4UigzAEk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nJsEHQtI/DV8mOvYtwebG+rjGWKyWLtIWZE4c8Bx1HCggLeSO2jTo5A1vEKOl4KUhSz83uLFmBixGxO3eNJ8R7KllVvx1SEvZms3VmeTecNQF3/0WhJw/BqIKg/pQQU6CzS+Jw+bK7eMTY36zfKpUGZzWHdSMZa2zp0GgFrv4Cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=kIR6wbCJ; arc=none smtp.client-ip=185.70.43.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=6qebepoplzf2flm7zxkjwxsj4m.protonmail; t=1721672803; x=1721932003;
+	bh=mOgnAl41sFrWGJo+3xOGusaA3kVBZ9rqK5x4UigzAEk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=kIR6wbCJLVHf7jt4iNCSxtjO+8vene0MBVtxnIo4dW5+ouybskDKzEnhuX0SLeTY9
+	 mI3cx47uH6yewkhAd89WswvL8mQV6H0z7HpN9lPe4rFG/ixIhBo7LmlGKiXSuJUVMG
+	 r8A3J0KkKuBS+ZWQfD4eRAFxaYZN8DdkfqKY0Rzt8X9OVDvZoXD1r4J6Me9KpdVGzo
+	 aas5+02ROVxsC/OC2jQkQ2lYXWrvNyIgVH5YdNPBQgfiBAqHVP4ckc5HrEiHyzmKP4
+	 PKlGnn11DPD1uMPU/ClFJUQItIjUSvpQGNWQV5b3RYyxhCD++A1QzkoEqxF7Uva5Yk
+	 FdzU+ZIDSQ9MA==
+Date: Mon, 22 Jul 2024 18:26:36 +0000
+To: Dragan Simic <dsimic@manjaro.org>
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, daniel@ffwll.ch, airlied@gmail.com, tzimmermann@suse.de, mripard@kernel.org, maarten.lankhorst@linux.intel.com, andy.yan@rock-chips.com, heiko@sntech.de, hjc@rock-chips.com
+Subject: Re: [PATCH RESEND] rockchip/drm: vop2: add support for gamma LUT
+Message-ID: <1j9TaYWvKClDhffohlNyAKGnqXD7fg9eA7FmPunHO__2SxvClWRZp7a1wNMf5Fl4KWGXzZ745LjQOl2Lmu3w0D3sc-1en-cA8vBmvol6OqM=@proton.me>
+In-Reply-To: <d019761504b540600d9fc7a585d6f95f@manjaro.org>
+References: <ZVMxgcrtgHui9fJpnhbN6TSPhofHbbXElh241lImrzzTUl-8WejGpaR8CPzYhBgoqe_xj7N6En8Ny7Z-gsCr0kaFs7apwjYV1MBJJLmLHxs=@proton.me> <d019761504b540600d9fc7a585d6f95f@manjaro.org>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: 63ca6cb77cf33c2ffd872d068b37e7c3695f5c2d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v3] spi: ppc4xx: handle irq_of_parse_and_map() errors
-To: Mark Brown <broonie@kernel.org>, make24@iscas.ac.cn,
- linux-spi@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Josh Boyer <jwboyer@linux.vnet.ibm.com>, Stefan Roese <sr@denx.de>
-References: <20240722141822.1052370-1-make24@iscas.ac.cn>
- <bceb4055-e315-4c70-a682-228cb997f86c@web.de>
- <2dbd470c-80aa-45af-9324-0e81e1d9196c@sirena.org.uk>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <2dbd470c-80aa-45af-9324-0e81e1d9196c@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:/3LgpV7XD650P1s0vnkTrTFzdMAHohEwIKAEGlt6sPHdBOV7ZNl
- /i73lC4fFCUFk6iS+MvLGJfOEuHvZ4vvHRB/PpOfLEgE3sCQYW8uGmSNfkU8t27+nSwSsSw
- YqSM93NeZCaXTDGjZVWaKSZJuaFb41dJchZpcMdpJtpQ37gMpaoRwC3DGlwgbN35nRwSKyz
- Uo08+VzK7vFyU3EVuUQUg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:oxmBtoTqeLA=;XSjYid3KsQVMMUpM6vIHFYrVNoU
- ll3tc+7uG0tsTghMq/gInUe/NI1QVqW18c/K4uoqbehBlmSHqikYznjdOCA8j1oEeMlU/mUK9
- Fwq4LSuMMQ5lzIFTdzYiZHRrvMdzIfV6Hs7EVYja9Kt01TYf7vdwP+WD2InYLs9SSCpPr2nRV
- 8LuU3usq0L0TDpQ+rLXUAFHdm8v0K3iMaiUaBfjjVJBqgKA7LrqEi2ku/zMMyqGrZUpWkafmc
- yl6+KBX09MjvQAM8kbyxH7JxWcE3Sv0Ea0eq13NKAa92uJriHYDodnoDD+bt6HmaACAbiwM2k
- 30ZJxdbgWOksYj6EAMd1lT+dCCbSxMlC9QwETVkxAqyIuMl1cz3FVuRSJGYKhdtjxXI8AkXyL
- MgtpJdeQwKgkDwZcJ9znIkT/puBI9S4K1d2mvBF8YKHedlA8nW4vG8gicbyVwsUnKjo3nAmM+
- W8L78yDAgxmQ8ppwxKLspT0IQ5fsW5cjP+c2i0eI1F6QYjjnAhxy2TclOi8qIfQAeMRNuYD+5
- /FQD/T4fAid1ZbCVEXUeNDku9IeeuZXZj4rO8e0eRgH51q8t74bsQSaG/91IhYMPn0672E3Rg
- zJrh9iom6izQzO3nf/Xz3j3/ZmgcOdHsBvPOPJa6B8x/DzR3Nr8kNx0x5TGFoAlzE1pa+kMFm
- t0V4+eZxZZQUSYxLpd9a0xj5zvgSFbDtDO9hGugjLMeNBmgXPv+TIxDEd7gky1Yk81dZGScis
- nN27MoWTjqMdFHR7sPxS8SBNm6gWaigQ2Nyjsd08ccZzt+gX5SmwgELu3DMOWgb/vJOHdstxo
- 8y+HpwFVSL0jO7/c2g4qpfsQ==
 
->> =E2=80=A6
->>> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
->>
->> Will any contributors care more for rules also according to such inform=
-ation?
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/Documentation/process/submitting-patches.rst?h=3Dv6.10#n398
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/Documentation/process/researcher-guidelines.rst?h=3Dv6.10#n5
->
-> Feel free to ignore Markus,
+Hello Dragan,=20
 
-Form letter =E2=80=A6?
+Thank you for the comment/review. Your code styling suggestions are
+naturally justified. Also, thanks to your comment, I noticed one extra=20
+thing. Namely, in my patch, gamma LUT write happens outside of the vop2
+lock - which should happen inside of the lock.=20
 
+I'm not sure in what form should I supply corrections to my patch now.
+Should it be whole new patch with said fixes, or a patch on top of my
+patch?
 
-> he has a long history of sending unhelpful review comments
+On Monday, July 22nd, 2024 at 8:37 AM, Dragan Simic <dsimic@manjaro.org> wr=
+ote:
 
-The offered information can occasionally be handled in more constructive w=
-ays,
-can't it?
+> Hello Piotr,
+>=20
+> Thanks for the patch. Please see a few general comments below.
+>=20
+> On 2024-07-21 12:06, Piotr Zalewski wrote:
+>=20
+> > Add support for gamma LUT in VOP2 driver. The implementation is based
+> > on
+> > the one found in VOP driver and modified to be compatible with VOP2.
+> > Blue
+> > and red channels in gamma LUT register write were swapped with respect
+> > to
+> > how gamma LUT values are written in VOP. Write of the current video
+> > port id
+> > to VOP2_SYS_LUT_PORT_SEL register was added before the write of
+> > DSP_LUT_EN
+> > bit. Gamma size is set and drm color management is enabled for each
+> > video
+> > port's CRTC except ones which have no associated device. Tested on
+> > RK3566
+> > (Pinetab2).
+> >=20
+> > Signed-off-by: Piotr Zalewski pZ010001011111@proton.me
+> > ---
+> >=20
+> > diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+> > b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+> > index 9873172e3fd3..16abdc4a59a8 100644
+> > --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+> > +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+> > @@ -278,6 +278,15 @@ static u32 vop2_readl(struct vop2 *vop2, u32
+> > offset)
+> > return val;
+> > }
+> >=20
+> > +static u32 vop2_vp_read(struct vop2_video_port *vp, u32 offset)
+> > +{
+> > + u32 val;
+> > +
+> > + regmap_read(vp->vop2->map, vp->data->offset + offset, &val);
+> > +
+> > + return val;
+> > +}
+> > +
+> > static void vop2_win_write(const struct vop2_win *win, unsigned int
+> > reg, u32 v)
+> > {
+> > regmap_field_write(win->reg[reg], v);
+> > @@ -1482,6 +1491,97 @@ static bool vop2_crtc_mode_fixup(struct drm_crtc
+> > *crtc,
+> > return true;
+> > }
+> >=20
+> > +static bool vop2_vp_dsp_lut_is_enabled(struct vop2_video_port *vp)
+> > +{
+> > + return (u32) (vop2_vp_read(vp, RK3568_VP_DSP_CTRL) &
+> > RK3568_VP_DSP_CTRL__DSP_LUT_EN) >
+> > + 0;
+> > +}
+> > +
+> > +static void vop2_vp_dsp_lut_enable(struct vop2_video_port *vp)
+> > +{
+> > + u32 dsp_ctrl =3D vop2_vp_read(vp, RK3568_VP_DSP_CTRL);
+> > +
+> > + dsp_ctrl |=3D RK3568_VP_DSP_CTRL__DSP_LUT_EN;
+> > + vop2_vp_write(vp, RK3568_VP_DSP_CTRL, dsp_ctrl);
+> > +}
+> > +
+> > +static void vop2_vp_dsp_lut_disable(struct vop2_video_port *vp)
+> > +{
+> > + u32 dsp_ctrl =3D vop2_vp_read(vp, RK3568_VP_DSP_CTRL);
+> > +
+> > + dsp_ctrl &=3D ~RK3568_VP_DSP_CTRL__DSP_LUT_EN;
+> > + vop2_vp_write(vp, RK3568_VP_DSP_CTRL, dsp_ctrl);
+> > +}
+> > +
+> > +static void vop2_crtc_write_gamma_lut(struct vop2 *vop2, struct
+> > drm_crtc *crtc)
+> > +{
+> > + const struct vop2_data *vop2_data =3D vop2->data;
+> > + const struct vop2_video_port *vp =3D to_vop2_video_port(crtc);
+> > + const struct vop2_video_port_data *vp_data =3D &vop2_data->vp[vp->id]=
+;
+>=20
+>=20
+> Perhaps vop2_data could be dropped as a separate variable.
+>=20
+> > +
+> > + struct drm_color_lut *lut =3D crtc->state->gamma_lut->data;
+> > + unsigned int i, bpc =3D ilog2(vp_data->gamma_lut_len);
+> > + u32 word;
+> > +
+> > + for (i =3D 0; i < crtc->gamma_size; i++) {
+> > + word =3D (drm_color_lut_extract(lut[i].blue, bpc) << (2 * bpc)) |
+> > + (drm_color_lut_extract(lut[i].green, bpc) << bpc) |
+> > + drm_color_lut_extract(lut[i].red, bpc);
+> > +
+> > + writel(word, vop2->lut_regs + i * 4);
+> > + }
+> > +}
+> > +
+> > +static void vop2_crtc_gamma_set(struct vop2 *vop2, struct drm_crtc
+> > *crtc,
+> > + struct drm_crtc_state *old_state)
+> > +{
+> > + struct drm_crtc_state *state =3D crtc->state;
+> > + struct vop2_video_port vp =3D to_vop2_video_port(crtc);
+> > + u32 dsp_ctrl;
+> > + int ret;
+> > +
+> > + if (!vop2->lut_regs)
+> > + return;
+> > +
+> > + if (!state->gamma_lut) {
+> > + /
+> > + * To disable gamma (gamma_lut is null) or to write
+> > + * an update to the LUT, clear dsp_lut_en.
+> > + /
+> > + vop2_lock(vop2);
+> > +
+> > + vop2_vp_dsp_lut_disable(vp);
+> > +
+> > + vop2_cfg_done(vp);
+> > + vop2_unlock(vop2);
+> > + /
+> > + * In order to write the LUT to the internal memory,
+> > + * we need to first make sure the dsp_lut_en bit is cleared.
+> > + */
+> > + ret =3D
+> > + readx_poll_timeout(vop2_vp_dsp_lut_is_enabled, vp, dsp_ctrl,
+> > !dsp_ctrl, 5,
+> > + 30 * 1000);
+>=20
+>=20
+> It would look nicer to keep "ret =3D" and "readx_poll_timeout(..." in the
+> same line,
+> and to introduce line breaks later in the same line.
+>=20
+> > +
+> > + if (ret) {
+> > + DRM_DEV_ERROR(vop2->dev, "display LUT RAM enable timeout!\n");
+> > + return;
+> > + }
+> > +
+> > + if (!state->gamma_lut)
+> > + return;
+> > + }
+> > +
+> > + vop2_crtc_write_gamma_lut(vop2, crtc);
+> > +
 
+Here the gamma LUT write happens outside of the vop2 lock.
 
-> and continues to ignore repeated requests to stop.
-
-I hope that circumstances will evolve somehow so that additional views
-will trigger further positive effects.
-
-Regards,
-Markus
+> > + vop2_lock(vop2);
+> > + vop2_writel(vp->vop2, RK3568_LUT_PORT_SEL, vp->id);
+> > +
+> > + vop2_vp_dsp_lut_enable(vp);
+> > +
+> > + vop2_cfg_done(vp);
+> > + vop2_unlock(vop2);
+> > +}
+> > +
+> > static void vop2_dither_setup(struct drm_crtc *crtc, u32 *dsp_ctrl)
+> > {
+> > struct rockchip_crtc_state *vcstate =3D
+> > to_rockchip_crtc_state(crtc->state);
+> > @@ -1925,6 +2025,7 @@ static void vop2_crtc_atomic_enable(struct
+> > drm_crtc *crtc,
+> > const struct vop2_data *vop2_data =3D vop2->data;
+> > const struct vop2_video_port_data *vp_data =3D &vop2_data->vp[vp->id];
+> > struct drm_crtc_state *crtc_state =3D
+> > drm_atomic_get_new_crtc_state(state, crtc);
+> > + struct drm_crtc_state *old_state =3D
+> > drm_atomic_get_old_crtc_state(state, crtc);
+> > struct rockchip_crtc_state *vcstate =3D
+> > to_rockchip_crtc_state(crtc->state);
+> > struct drm_display_mode *mode =3D &crtc->state->adjusted_mode;
+> > unsigned long clock =3D mode->crtc_clock * 1000;
+> > @@ -2060,6 +2161,9 @@ static void vop2_crtc_atomic_enable(struct
+> > drm_crtc *crtc,
+> > drm_crtc_vblank_on(crtc);
+> >=20
+> > vop2_unlock(vop2);
+> > +
+> > + if (crtc->state->gamma_lut)
+> > + vop2_crtc_gamma_set(vop2, crtc, old_state);
+> > }
+> >=20
+> > static int vop2_crtc_atomic_check(struct drm_crtc *crtc,
+> > @@ -2070,6 +2174,16 @@ static int vop2_crtc_atomic_check(struct
+> > drm_crtc *crtc,
+> > int nplanes =3D 0;
+> > struct drm_crtc_state *crtc_state =3D
+> > drm_atomic_get_new_crtc_state(state, crtc);
+> >=20
+> > + if (vp->vop2->lut_regs && crtc_state->color_mgmt_changed &&
+> > crtc_state->gamma_lut) {
+> > + unsigned int len =3D drm_color_lut_size(crtc_state->gamma_lut);
+> > +
+> > + if (len !=3D crtc->gamma_size) {
+> > + DRM_DEBUG_KMS("Invalid LUT size; got %d, expected %d\n",
+> > + len, crtc->gamma_size);
+> > + return -EINVAL;
+> > + }
+> > + }
+> > +
+> > drm_atomic_crtc_state_for_each_plane(plane, crtc_state)
+> > nplanes++;
+> >=20
+> > @@ -2459,6 +2573,10 @@ static void vop2_setup_dly_for_windows(struct
+> > vop2 *vop2)
+> > static void vop2_crtc_atomic_begin(struct drm_crtc *crtc,
+> > struct drm_atomic_state *state)
+> > {
+> > + struct drm_crtc_state *crtc_state =3D
+> > drm_atomic_get_new_crtc_state(state,
+> > + crtc);
+> > + struct drm_crtc_state *old_crtc_state =3D
+> > drm_atomic_get_old_crtc_state(state,
+> > + crtc);
+> > struct vop2_video_port *vp =3D to_vop2_video_port(crtc);
+> > struct vop2 *vop2 =3D vp->vop2;
+> > struct drm_plane *plane;
+> > @@ -2482,6 +2600,9 @@ static void vop2_crtc_atomic_begin(struct
+> > drm_crtc *crtc,
+> > vop2_setup_layer_mixer(vp);
+> > vop2_setup_alpha(vp);
+> > vop2_setup_dly_for_windows(vop2);
+> > +
+> > + if (crtc_state->color_mgmt_changed && !crtc_state->active_changed)
+> > + vop2_crtc_gamma_set(vop2, crtc, old_crtc_state);
+> > }
+> >=20
+> > static void vop2_crtc_atomic_flush(struct drm_crtc *crtc,
+> > @@ -2791,6 +2912,14 @@ static int vop2_create_crtcs(struct vop2 *vop2)
+> >=20
+> > drm_crtc_helper_add(&vp->crtc, &vop2_crtc_helper_funcs);
+> >=20
+> > + if (vop2->lut_regs && vp->crtc.dev !=3D NULL) {
+> > + const struct vop2_video_port_data *vp_data =3D
+> > &vop2_data->vp[vp->id];
+> > +
+> > + drm_mode_crtc_set_gamma_size(&vp->crtc, vp_data->gamma_lut_len);
+> > + drm_crtc_enable_color_mgmt(&vp->crtc, 0, false,
+> > + vp_data->gamma_lut_len);
+> > + }
+> > +
+> > init_completion(&vp->dsp_hold_completion);
+> > }
+> >=20
+> > diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+> > b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+> > index 615a16196aff..3a58b73fa876 100644
+> > --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+> > +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+> > @@ -394,6 +394,7 @@ enum dst_factor_mode {
+> > #define RK3568_REG_CFG_DONE__GLB_CFG_DONE_EN BIT(15)
+> >=20
+> > #define RK3568_VP_DSP_CTRL__STANDBY BIT(31)
+> > +#define RK3568_VP_DSP_CTRL__DSP_LUT_EN BIT(28)
+> > #define RK3568_VP_DSP_CTRL__DITHER_DOWN_MODE BIT(20)
+> > #define RK3568_VP_DSP_CTRL__DITHER_DOWN_SEL GENMASK(19, 18)
+> > #define RK3568_VP_DSP_CTRL__DITHER_DOWN_EN BIT(17)
 
