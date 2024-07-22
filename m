@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-258735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D1CC938C36
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:44:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ED30938C38
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0D7B1C21333
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:44:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF40F281E4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C5D16D31B;
-	Mon, 22 Jul 2024 09:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87BC916D4C6;
+	Mon, 22 Jul 2024 09:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="cocUl2za"
-Received: from smtpout43.security-mail.net (smtpout43.security-mail.net [85.31.212.43])
+	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="mqfThSte"
+Received: from smtpout145.security-mail.net (smtpout145.security-mail.net [85.31.212.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54BA16CD05
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.31.212.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61C016CD3A
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.31.212.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721641417; cv=none; b=a8Kjkr/EWOe16IdhXPgnZlBdtrh1Xdt7KZtuvqOicnoTWb/w0V7eiInmMNU3RE01Bis0cHLWdIuBG9xUfKteYuhF9bKmwn/eOdKSvdZCR8nStbGvCxMbFTp3vNBINNNoVEpG3z4WWRsXN6a6UhTZv37mUoKAmKTGTknoPPx9KWM=
+	t=1721641420; cv=none; b=QcmwEX27kl4/mf0xx5wcFpkxkVGKn1zrsWvucc7mA52Mjg8I8l8YG2nEjr0rFRqZ9rBbbHT989npdN+33LolZb/hVTf/D1DrKQ6cNXPCKeLW0GHBjkJZ2Vwoi5I+HXfUmxG8JppnnnTzQoInf8GZGzrNmLfy2Z/Mzp6z0h3cLyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721641417; c=relaxed/simple;
-	bh=f0O95pfNxRih9yCZu4XYDwcU7fm8dulNHBC/bzASeEo=;
+	s=arc-20240116; t=1721641420; c=relaxed/simple;
+	bh=L96ODBHo6UR6sT6ZF6s0e8YDw+7iW1MS0z104V6XW2M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UnB/tQSeg3EfdeNkqt9ilkKeHNkSUrqNjWjMS29fII7j7gZGgHctsLUIslhWtax1SyibqvJCPmVHARnJ3XuP3mFjvQYdxdIIOMPH9CTgESysx83B0Nzg5Ov/LRCO9HyKCPONiLxaT4tGDiq4g2na33mjzQuCHp+yMSDxmA1QIg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=cocUl2za; arc=none smtp.client-ip=85.31.212.43
+	 MIME-Version:Content-Type; b=LCM8ujcshbssdUE1ntj3sokytcnJcYwuCYYnfcL7GqAEepf35kje463H9wHoGxoT5zZPWtu5LNy1Im61cLeGeqzv03bXj/sYqX3/OTfF5bE92lUB8ou4wKx7mWULXF6ojf62XRPsm4RYZKx0KUec3+suRwVp8PsGkaICItBGDNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=mqfThSte; arc=none smtp.client-ip=85.31.212.145
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
-Received: from localhost (fx303.security-mail.net [127.0.0.1])
-	by fx303.security-mail.net (Postfix) with ESMTP id 4FA4E30EF96
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:43:34 +0200 (CEST)
+Received: from localhost (fx405.security-mail.net [127.0.0.1])
+	by fx405.security-mail.net (Postfix) with ESMTP id 109F2335F4D
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:43:36 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
-	s=sec-sig-email; t=1721641414;
-	bh=f0O95pfNxRih9yCZu4XYDwcU7fm8dulNHBC/bzASeEo=;
+	s=sec-sig-email; t=1721641416;
+	bh=L96ODBHo6UR6sT6ZF6s0e8YDw+7iW1MS0z104V6XW2M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=cocUl2za0D6G/5OQO1ABaUshnKmMPrdxmco/vgnBOP0IRDf1ps3CAz9Vt9J9PLTiv
-	 uMsH0TbjNsEdLifrt+U8AwCPWI+fVAYzt4+DI9ScIyziY2TNdqq+3Dfjmu6fnSWz5X
-	 rOHp7JS5wogwM/h2ILP9EP4zz60SVdsDxEjdgmaQ=
-Received: from fx303 (fx303.security-mail.net [127.0.0.1]) by
- fx303.security-mail.net (Postfix) with ESMTP id 1B4E430EF08; Mon, 22 Jul
- 2024 11:43:34 +0200 (CEST)
+	b=mqfThSte/Q7qp2WfoN8PcJB7qJ59t7ULhup44eZz0ORc7OV/YV2vdYDjZYmbmT60E
+	 D+XVLFSt1FN8H+p5DNAVEFbh6Kj3Vh2OWOxh9+Uf4ujDiL8lgaeyIN1bEBGr/TTbal
+	 TiJEM4wyz7wOK/a7JqyjRSNdpYpAv47sd5jkLLvA=
+Received: from fx405 (fx405.security-mail.net [127.0.0.1]) by
+ fx405.security-mail.net (Postfix) with ESMTP id 99E6B335E3E; Mon, 22 Jul
+ 2024 11:43:35 +0200 (CEST)
 Received: from srvsmtp.lin.mbt.kalray.eu (unknown [217.181.231.53]) by
- fx303.security-mail.net (Postfix) with ESMTPS id 8758930EEE1; Mon, 22 Jul
- 2024 11:43:33 +0200 (CEST)
+ fx405.security-mail.net (Postfix) with ESMTPS id 67BD2335DAF; Mon, 22 Jul
+ 2024 11:43:34 +0200 (CEST)
 Received: from junon.lan.kalrayinc.com (unknown [192.168.37.161]) by
- srvsmtp.lin.mbt.kalray.eu (Postfix) with ESMTPS id 4971740317; Mon, 22 Jul
- 2024 11:43:33 +0200 (CEST)
-X-Secumail-id: <9700.669e29c5.84e85.0>
+ srvsmtp.lin.mbt.kalray.eu (Postfix) with ESMTPS id 32E8740317; Mon, 22 Jul
+ 2024 11:43:34 +0200 (CEST)
+X-Secumail-id: <8c76.669e29c6.63f6b.0>
 From: ysionneau@kalrayinc.com
 To: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
 Cc: Jonathan Borne <jborne@kalrayinc.com>, Julian Vetter
  <jvetter@kalrayinc.com>, Yann Sionneau <ysionneau@kalrayinc.com>, Clement
- Leger <clement@clement-leger.fr>, Vincent Chardon
- <vincent.chardon@elsys-design.com>
-Subject: [RFC PATCH v3 20/37] irqchip: Add irq-kvx-itgen driver
-Date: Mon, 22 Jul 2024 11:41:31 +0200
-Message-ID: <20240722094226.21602-21-ysionneau@kalrayinc.com>
+ Leger <clement@clement-leger.fr>, Jules Maselbas <jmaselbas@zdiv.net>, Luc
+ Michel <luc@lmichel.fr>
+Subject: [RFC PATCH v3 21/37] irqchip: Add irq-kvx-apic-mailbox driver
+Date: Mon, 22 Jul 2024 11:41:32 +0200
+Message-ID: <20240722094226.21602-22-ysionneau@kalrayinc.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240722094226.21602-1-ysionneau@kalrayinc.com>
 References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
@@ -74,318 +74,556 @@ X-ALTERMIMEV2_out: done
 
 From: Yann Sionneau <ysionneau@kalrayinc.com>
 
-The Kalray Coolidge SoC contains several interrupt generators (itgen).
-The itgen is both an interrupt-controller and a msi-client.
-
-Peripheral Controllers such as PCIe, I2C, SPI, GPIO, etc.
-need to send interrupts to the Compute Clusters.
-The purpose of this module is to forward interrupts to the compute clusters
-through the AXI interconnect.
-
-Features:
-- up to 256 inputs.
-- supports level interrupt inputs.
-- five interrupt outputs (one per cluster).
+The APIC includes a mailbox controller, containing 128 mailboxes.
+Each mailbox is an 8-byte word.
+Each mailbox can be independently configured with a trigger condition
+and an input function.
+After a write to a mailbox if the trigger condition is met, an
+interrupt will be generated.
+Since this hardware block generates IRQs based on writes at some memory
+locations, it is both an interrupt-controller and an MSI controller.
 
 Co-developed-by: Clement Leger <clement@clement-leger.fr>
 Signed-off-by: Clement Leger <clement@clement-leger.fr>
+Co-developed-by: Jules Maselbas <jmaselbas@zdiv.net>
+Signed-off-by: Jules Maselbas <jmaselbas@zdiv.net>
 Co-developed-by: Julian Vetter <jvetter@kalrayinc.com>
 Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
-Co-developed-by: Vincent Chardon <vincent.chardon@elsys-design.com>
-Signed-off-by: Vincent Chardon <vincent.chardon@elsys-design.com>
+Co-developed-by: Luc Michel <luc@lmichel.fr>
+Signed-off-by: Luc Michel <luc@lmichel.fr>
 Signed-off-by: Yann Sionneau <ysionneau@kalrayinc.com>
 ---
 
 Notes:
-V1 -> V2: new patch
-- removed header include/linux/irqchip/irq-kvx-apic-gic.h
-- header moved to drivers/irqchip/ but in another patch
+V1 -> V2:
+- new patch
 - removed print on probe success
 
-V2 -> V3:
-- replace core intc by itgen in commit msg
-- use dev_err_probe()
-- typos
-- add static qualifier
-- update compatible
+V2 -> V3: update compatible
 ---
- drivers/irqchip/Kconfig         |   8 ++
- drivers/irqchip/Makefile        |   1 +
- drivers/irqchip/irq-kvx-itgen.c | 234 ++++++++++++++++++++++++++++++++
- 3 files changed, 243 insertions(+)
- create mode 100644 drivers/irqchip/irq-kvx-itgen.c
+ drivers/irqchip/Kconfig                |   8 +
+ drivers/irqchip/Makefile               |   1 +
+ drivers/irqchip/irq-kvx-apic-mailbox.c | 480 +++++++++++++++++++++++++
+ 3 files changed, 489 insertions(+)
+ create mode 100644 drivers/irqchip/irq-kvx-apic-mailbox.c
 
 diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 566425731b757..bf06506d611d5 100644
+index bf06506d611d5..dbac5b4400e02 100644
 --- a/drivers/irqchip/Kconfig
 +++ b/drivers/irqchip/Kconfig
-@@ -338,6 +338,14 @@ config KVX_APIC_GIC
+@@ -346,6 +346,14 @@ config KVX_ITGEN
  	select IRQ_DOMAIN
  	select IRQ_DOMAIN_HIERARCHY
  
-+config KVX_ITGEN
-+	bool
-+	depends on KVX
-+	select GENERIC_IRQ_IPI if SMP
-+	select GENERIC_MSI_IRQ_DOMAIN
-+	select IRQ_DOMAIN
-+	select IRQ_DOMAIN_HIERARCHY
++config KVX_APIC_MAILBOX
++       bool
++       depends on KVX
++       select GENERIC_IRQ_IPI if SMP
++       select GENERIC_MSI_IRQ_DOMAIN
++       select IRQ_DOMAIN
++       select IRQ_DOMAIN_HIERARCHY
 +
  config INGENIC_IRQ
  	bool
  	depends on MACH_INGENIC
 diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index f59255947c8ed..b2c514faf9bf7 100644
+index b2c514faf9bf7..16a2f666b788d 100644
 --- a/drivers/irqchip/Makefile
 +++ b/drivers/irqchip/Makefile
-@@ -69,6 +69,7 @@ obj-$(CONFIG_BRCMSTB_L2_IRQ)		+= irq-brcmstb-l2.o
- obj-$(CONFIG_KEYSTONE_IRQ)		+= irq-keystone.o
+@@ -70,6 +70,7 @@ obj-$(CONFIG_KEYSTONE_IRQ)		+= irq-keystone.o
  obj-$(CONFIG_MIPS_GIC)			+= irq-mips-gic.o
  obj-$(CONFIG_KVX_APIC_GIC)		+= irq-kvx-apic-gic.o
-+obj-$(CONFIG_KVX_ITGEN)			+= irq-kvx-itgen.o
+ obj-$(CONFIG_KVX_ITGEN)			+= irq-kvx-itgen.o
++obj-$(CONFIG_KVX_APIC_MAILBOX)		+= irq-kvx-apic-mailbox.o
  obj-$(CONFIG_ARCH_MEDIATEK)		+= irq-mtk-sysirq.o irq-mtk-cirq.o
  obj-$(CONFIG_ARCH_DIGICOLOR)		+= irq-digicolor.o
  obj-$(CONFIG_ARCH_SA1100)		+= irq-sa11x0.o
-diff --git a/drivers/irqchip/irq-kvx-itgen.c b/drivers/irqchip/irq-kvx-itgen.c
+diff --git a/drivers/irqchip/irq-kvx-apic-mailbox.c b/drivers/irqchip/irq-kvx-apic-mailbox.c
 new file mode 100644
-index 0000000000000..67d76ab528ad6
+index 0000000000000..6f0e9134db2ff
 --- /dev/null
-+++ b/drivers/irqchip/irq-kvx-itgen.c
-@@ -0,0 +1,234 @@
++++ b/drivers/irqchip/irq-kvx-apic-mailbox.c
+@@ -0,0 +1,480 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/*
 + * Copyright (c) 2017-2023 Kalray Inc.
 + * Author(s): Clement Leger
-+ *            Julian Vetter
-+ *            Vincent Chardon
++ *            Jules Maselbas
 + */
 +
-+#include <linux/platform_device.h>
-+#include <linux/of_platform.h>
++#define pr_fmt(fmt)	"kvx_apic_mailbox: " fmt
++
++#include <linux/irqchip/chained_irq.h>
 +#include <linux/of_address.h>
 +#include <linux/interrupt.h>
 +#include <linux/irqdomain.h>
++#include <linux/iommu.h>
 +#include <linux/irqchip.h>
 +#include <linux/module.h>
++#include <linux/of_irq.h>
++#include <linux/init.h>
 +#include <linux/msi.h>
 +#include <linux/of.h>
-+#include <linux/of_irq.h>
 +
-+/* Parameters */
-+#define KVX_ITGEN_PARAM_OFFSET			0x1100
-+#define KVX_ITGEN_PARAM_IT_NUM_OFFSET		0x0
++#define KVX_MAILBOX_MODE_WRITE  0x0
++#define KVX_MAILBOX_MODE_OR  0x1
++#define KVX_MAILBOX_MODE_ADD  0x2
 +
-+/* Target configuration */
-+#define KVX_ITGEN_CFG_ENABLE_OFFSET		0x8
-+#define KVX_ITGEN_CFG_ELEM_SIZE		0x10
-+#define KVX_ITGEN_CFG_TARGET_OFFSET		0x0
-+#define KVX_ITGEN_CFG_TARGET_MAILBOX_SHIFT	0x0
-+#define KVX_ITGEN_CFG_TARGET_MAILBOX_MASK	0x7FUL
-+#define KVX_ITGEN_CFG_TARGET_CLUSTER_SHIFT	0x8
-+#define KVX_ITGEN_CFG_TARGET_CLUSTER_MASK	0x700UL
-+#define KVX_ITGEN_CFG_TARGET_SELECT_BIT_SHIFT	0x18
-+#define KVX_ITGEN_CFG_TARGET_SELECT_BIT_MASK	0x3F000000UL
++#define KVX_MAILBOX_TRIG_NO_TRIG 0x0
++#define KVX_MAILBOX_TRIG_DOORBELL 0x1
++#define KVX_MAILBOX_TRIG_MATCH 0x2
++#define KVX_MAILBOX_TRIG_BARRIER 0x3
++#define KVX_MAILBOX_TRIG_THRESHOLD 0x4
 +
-+#define MB_ADDR_CLUSTER_SHIFT	24
-+#define MB_ADDR_MAILBOX_SHIFT	9
++#define KVX_MAILBOX_OFFSET 0x0
++#define KVX_MAILBOX_ELEM_SIZE 0x200
++#define KVX_MAILBOX_MASK_OFFSET     0x10
++#define KVX_MAILBOX_FUNCT_OFFSET     0x18
++#define KVX_MAILBOX_LAC_OFFSET     0x8
++#define KVX_MAILBOX_VALUE_OFFSET     0x0
++#define KVX_MAILBOX_FUNCT_MODE_SHIFT  0x0
++#define KVX_MAILBOX_FUNCT_TRIG_SHIFT 0x8
++
++#define MAILBOXES_MAX_COUNT 128
++
++/* Mailboxes are 64 bits wide */
++#define MAILBOXES_BIT_SIZE 64
++
++/* Maximum number of mailboxes available */
++#define MAILBOXES_MAX_BIT_COUNT (MAILBOXES_MAX_COUNT * MAILBOXES_BIT_SIZE)
++
++/* Mailboxes are grouped by 8 in a single page */
++#define MAILBOXES_BITS_PER_PAGE (8 * MAILBOXES_BIT_SIZE)
 +
 +/**
-+ * struct kvx_itgen - kvx interrupt generator (MSI client)
-+ * @base: base address of the itgen controller
-+ * @domain: IRQ domain of the controller
-+ * @pdev: Platform device associated to the controller
++ * struct mb_data - per mailbox data
++ * @cpu: CPU on which the mailbox is routed
++ * @parent_irq: Parent IRQ on the GIC
 + */
-+struct kvx_itgen {
++struct mb_data {
++	unsigned int cpu;
++	unsigned int parent_irq;
++};
++
++/**
++ * struct kvx_apic_mailbox - kvx apic mailbox
++ * @base: base address of the controller
++ * @device_domain: IRQ device domain for mailboxes
++ * @msi_domain: platform MSI domain for MSI interface
++ * @domain_info: Domain information needed for the MSI domain
++ * @mb_count: Count of mailboxes we are handling
++ * @available: bitmap of availables bits in mailboxes
++ * @mailboxes_lock: lock for irq migration
++ * @mask_lock: lock for irq masking
++ * @mb_data: data associated to each mailbox
++ */
++struct kvx_apic_mailbox {
 +	void __iomem *base;
-+	struct irq_domain *domain;
-+	struct platform_device *pdev;
++	phys_addr_t phys_base;
++	struct irq_domain *device_domain;
++	struct irq_domain *msi_domain;
++	struct msi_domain_info domain_info;
++	/* Start and count of device mailboxes */
++	unsigned int mb_count;
++	/* Bitmap of allocated bits in mailboxes */
++	DECLARE_BITMAP(available, MAILBOXES_MAX_BIT_COUNT);
++	spinlock_t mailboxes_lock;
++	raw_spinlock_t mask_lock;
++	struct mb_data mb_data[MAILBOXES_MAX_COUNT];
 +};
 +
-+static void __iomem *get_itgen_cfg_offset(struct kvx_itgen *itgen,
-+						irq_hw_number_t hwirq)
-+{
-+	return itgen->base + KVX_ITGEN_CFG_TARGET_OFFSET +
-+				hwirq * KVX_ITGEN_CFG_ELEM_SIZE;
-+}
-+
-+static void __iomem *get_itgen_param_offset(struct kvx_itgen *itgen)
-+{
-+	return itgen->base + KVX_ITGEN_PARAM_OFFSET;
-+}
-+
-+static void kvx_itgen_enable(struct irq_data *data, u32 value)
-+{
-+	struct kvx_itgen *itgen = irq_data_get_irq_chip_data(data);
-+	void __iomem *enable_reg =
-+		get_itgen_cfg_offset(itgen, irqd_to_hwirq(data)) +
-+		KVX_ITGEN_CFG_ENABLE_OFFSET;
-+
-+	dev_dbg(&itgen->pdev->dev, "%sabling hwirq %d, addr %p\n",
-+		 value ? "En" : "Dis",
-+		 (int) irqd_to_hwirq(data),
-+		 enable_reg);
-+	writel(value, enable_reg);
-+}
-+
-+static void kvx_itgen_mask(struct irq_data *data)
-+{
-+	kvx_itgen_enable(data, 0x0);
-+	irq_chip_mask_parent(data);
-+}
-+
-+static void kvx_itgen_unmask(struct irq_data *data)
-+{
-+	kvx_itgen_enable(data, 0x1);
-+	irq_chip_unmask_parent(data);
-+}
-+
-+#ifdef CONFIG_SMP
-+static int kvx_itgen_irq_set_affinity(struct irq_data *data,
-+				      const struct cpumask *dest, bool force)
-+{
-+	return -ENOSYS;
-+}
-+#endif
-+
-+static struct irq_chip itgen_irq_chip = {
-+	.name =			"kvx-itgen",
-+	.irq_mask =		kvx_itgen_mask,
-+	.irq_unmask =		kvx_itgen_unmask,
-+#ifdef CONFIG_SMP
-+	.irq_set_affinity =	kvx_itgen_irq_set_affinity,
-+#endif
++/**
++ * struct kvx_irq_data - per irq data
++ * @mb: Mailbox structure
++ */
++struct kvx_irq_data {
++	struct kvx_apic_mailbox *mb;
 +};
 +
-+#define ITGEN_UNSUPPORTED_TYPES (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_EDGE_FALLING)
++static void kvx_mailbox_get_from_hwirq(unsigned int hw_irq,
++				       unsigned int *mailbox_num,
++				       unsigned int *mailbox_bit)
++{
++	*mailbox_num = hw_irq / MAILBOXES_BIT_SIZE;
++	*mailbox_bit = hw_irq % MAILBOXES_BIT_SIZE;
++}
 +
-+static int kvx_itgen_domain_alloc(struct irq_domain *domain, unsigned int virq,
-+				   unsigned int nr_irqs, void *args)
++static void __iomem *kvx_mailbox_get_addr(struct kvx_apic_mailbox *mb,
++				   unsigned int num)
++{
++	return mb->base + (num * KVX_MAILBOX_ELEM_SIZE);
++}
++
++static phys_addr_t kvx_mailbox_get_phys_addr(struct kvx_apic_mailbox *mb,
++				   unsigned int num)
++{
++	return mb->phys_base + (num * KVX_MAILBOX_ELEM_SIZE);
++}
++
++static void kvx_mailbox_msi_compose_msg(struct irq_data *data,
++					struct msi_msg *msg)
++{
++	struct kvx_irq_data *kd = irq_data_get_irq_chip_data(data);
++	struct kvx_apic_mailbox *mb = kd->mb;
++	unsigned int mb_num, mb_bit;
++	phys_addr_t mb_addr;
++
++	kvx_mailbox_get_from_hwirq(irqd_to_hwirq(data), &mb_num, &mb_bit);
++	mb_addr = kvx_mailbox_get_phys_addr(mb, mb_num);
++
++	msg->address_hi = upper_32_bits(mb_addr);
++	msg->address_lo = lower_32_bits(mb_addr);
++	msg->data = mb_bit;
++
++	iommu_dma_compose_msi_msg(irq_data_get_msi_desc(data), msg);
++}
++
++static void kvx_mailbox_set_irq_enable(struct irq_data *data,
++				     bool enabled)
++{
++	struct kvx_irq_data *kd = irq_data_get_irq_chip_data(data);
++	struct kvx_apic_mailbox *mb = kd->mb;
++	unsigned int mb_num, mb_bit;
++	void __iomem *mb_addr;
++	u64 mask_value, mb_value;
++
++	kvx_mailbox_get_from_hwirq(irqd_to_hwirq(data), &mb_num, &mb_bit);
++	mb_addr = kvx_mailbox_get_addr(mb, mb_num);
++
++	raw_spin_lock(&mb->mask_lock);
++	mask_value = readq(mb_addr + KVX_MAILBOX_MASK_OFFSET);
++	if (enabled)
++		mask_value |= BIT_ULL(mb_bit);
++	else
++		mask_value &= ~BIT_ULL(mb_bit);
++
++	writeq(mask_value, mb_addr + KVX_MAILBOX_MASK_OFFSET);
++
++	raw_spin_unlock(&mb->mask_lock);
++
++	/**
++	 * Since interrupts on mailboxes are edge triggered and are only
++	 * triggered when writing the value, we need to trigger it manually
++	 * after updating the mask if enabled. If the interrupt was triggered by
++	 * the device just after the mask write, we can trigger a spurious
++	 * interrupt but that is still better than missing one...
++	 * Moreover, the mailbox is configured in OR mode which means that even
++	 * if we write a single bit, all other bits will be kept intact.
++	 */
++	if (enabled) {
++		mb_value = readq(mb_addr + KVX_MAILBOX_VALUE_OFFSET);
++		if (mb_value & BIT_ULL(mb_bit))
++			writeq(BIT_ULL(mb_bit),
++			       mb_addr + KVX_MAILBOX_VALUE_OFFSET);
++	}
++}
++
++static void kvx_mailbox_mask(struct irq_data *data)
++{
++	kvx_mailbox_set_irq_enable(data, false);
++}
++
++static void kvx_mailbox_unmask(struct irq_data *data)
++{
++	kvx_mailbox_set_irq_enable(data, true);
++}
++
++static void kvx_mailbox_set_cpu(struct kvx_apic_mailbox *mb, int mb_id,
++			       int new_cpu)
++{
++	irq_set_affinity(mb->mb_data[mb_id].parent_irq, cpumask_of(new_cpu));
++	mb->mb_data[mb_id].cpu = new_cpu;
++}
++
++static void kvx_mailbox_free_bit(struct kvx_apic_mailbox *mb, int hw_irq)
++{
++	unsigned int mb_num, mb_bit;
++
++	kvx_mailbox_get_from_hwirq(hw_irq, &mb_num, &mb_bit);
++	bitmap_clear(mb->available, hw_irq, 1);
++
++	/* If there is no more IRQ on this mailbox, reset it to CPU 0 */
++	if (mb->available[mb_num] == 0)
++		kvx_mailbox_set_cpu(mb, mb_num, 0);
++}
++
++struct irq_chip kvx_apic_mailbox_irq_chip = {
++	.name = "kvx apic mailbox",
++	.irq_compose_msi_msg = kvx_mailbox_msi_compose_msg,
++	.irq_mask = kvx_mailbox_mask,
++	.irq_unmask = kvx_mailbox_unmask,
++};
++
++static int kvx_mailbox_allocate_bits(struct kvx_apic_mailbox *mb, int num_req)
++{
++	int first, align_mask = 0;
++
++	/* This must be a power of 2 for bitmap_find_next_zero_area to work */
++	BUILD_BUG_ON((MAILBOXES_BITS_PER_PAGE & (MAILBOXES_BITS_PER_PAGE - 1)));
++
++	/*
++	 * If user requested more than 1 mailbox, we must make sure it will be
++	 * aligned on a page size for iommu_dma_prepare_msi to be correctly
++	 * mapped in a single page.
++	 */
++	if (num_req > 1)
++		align_mask = (MAILBOXES_BITS_PER_PAGE - 1);
++
++	spin_lock(&mb->mailboxes_lock);
++
++	first = bitmap_find_next_zero_area(mb->available,
++			mb->mb_count * MAILBOXES_BIT_SIZE, 0,
++			num_req, align_mask);
++	if (first >= MAILBOXES_MAX_BIT_COUNT) {
++		spin_unlock(&mb->mailboxes_lock);
++		return -ENOSPC;
++	}
++
++	bitmap_set(mb->available, first, num_req);
++
++	spin_unlock(&mb->mailboxes_lock);
++
++	return first;
++}
++
++static int kvx_apic_mailbox_msi_alloc(struct irq_domain *domain,
++				      unsigned int virq,
++				      unsigned int nr_irqs, void *args)
 +{
 +	int i, err;
-+	struct irq_fwspec *fwspec = args;
-+	int hwirq = fwspec->param[0];
-+	int type = IRQ_TYPE_NONE;
-+	struct kvx_itgen *itgen;
++	int hwirq = 0;
++	u64 mb_addr;
++	struct irq_data *d;
++	struct kvx_irq_data *kd;
++	struct kvx_apic_mailbox *mb = domain->host_data;
++	struct msi_alloc_info *msi_info = (struct msi_alloc_info *)args;
++	struct msi_desc *desc = msi_info->desc;
++	unsigned int mb_num, mb_bit;
 +
-+	if (fwspec->param_count >= 2)
-+		type = fwspec->param[1];
++	/* We will not be able to guarantee page alignment ! */
++	if (nr_irqs > MAILBOXES_BITS_PER_PAGE)
++		return -EINVAL;
 +
-+	WARN_ON(type & ITGEN_UNSUPPORTED_TYPES);
++	hwirq = kvx_mailbox_allocate_bits(mb, nr_irqs);
++	if (hwirq < 0)
++		return hwirq;
 +
-+	err = platform_msi_device_domain_alloc(domain, virq, nr_irqs);
++	kvx_mailbox_get_from_hwirq(hwirq, &mb_num, &mb_bit);
++	mb_addr = (u64) kvx_mailbox_get_phys_addr(mb, mb_num);
++	err = iommu_dma_prepare_msi(desc, mb_addr);
 +	if (err)
-+		return err;
-+
-+	itgen = platform_msi_get_host_data(domain);
++		goto free_mb_bits;
 +
 +	for (i = 0; i < nr_irqs; i++) {
-+		irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
-+				      &itgen_irq_chip, itgen);
-+		if (type == IRQ_TYPE_LEVEL_HIGH)
-+			irq_set_handler(virq + i, handle_level_irq);
++		kd = kmalloc(sizeof(*kd), GFP_KERNEL);
++		if (!kd) {
++			err = -ENOMEM;
++			goto free_irq_data;
++		}
++
++		kd->mb = mb;
++		irq_domain_set_info(domain, virq + i, hwirq + i,
++				    &kvx_apic_mailbox_irq_chip,
++				    kd, handle_simple_irq,
++				    NULL, NULL);
 +	}
 +
 +	return 0;
-+}
 +
-+static const struct irq_domain_ops itgen_domain_ops = {
-+	.alloc		= kvx_itgen_domain_alloc,
-+	.free		= irq_domain_free_irqs_common,
-+};
-+
-+static void kvx_itgen_write_msg(struct msi_desc *desc, struct msi_msg *msg)
-+{
-+	struct irq_data *d = irq_get_irq_data(desc->irq);
-+	struct kvx_itgen *itgen = irq_data_get_irq_chip_data(d);
-+	uint32_t cfg_val = 0;
-+	uintptr_t dest_addr = ((uint64_t) msg->address_hi << 32) |
-+							msg->address_lo;
-+	void __iomem *cfg = get_itgen_cfg_offset(itgen, irqd_to_hwirq(d));
-+
-+	/*
-+	 * The address passed in the msi data is the address of the target
-+	 * mailbox. The itgen however writes to the mailbox based on the mppa
-+	 * id, cluster id and mailbox id instead of an address. So, extract
-+	 * these information from the mailbox address.
-+	 */
-+
-+	cfg_val |= (((kvx_sfr_get(PCR) & KVX_SFR_PCR_CID_MASK) >>
-+				 KVX_SFR_PCR_CID_SHIFT)
-+				<< KVX_ITGEN_CFG_TARGET_CLUSTER_SHIFT);
-+	cfg_val |= ((dest_addr >> MB_ADDR_MAILBOX_SHIFT) &
-+		     KVX_ITGEN_CFG_TARGET_MAILBOX_MASK)
-+		    << KVX_ITGEN_CFG_TARGET_MAILBOX_SHIFT;
-+
-+	/*
-+	 * msg->data contains the bit number to be written and is included in
-+	 * the itgen config
-+	 */
-+	cfg_val |= ((msg->data << KVX_ITGEN_CFG_TARGET_SELECT_BIT_SHIFT)
-+		    & KVX_ITGEN_CFG_TARGET_SELECT_BIT_MASK);
-+
-+	dev_dbg(&itgen->pdev->dev,
-+		"Writing dest_addr %lx, value %x to cfg %p\n",
-+		dest_addr, cfg_val, cfg);
-+
-+	writel(cfg_val, cfg);
-+}
-+
-+static int
-+kvx_itgen_device_probe(struct platform_device *pdev)
-+{
-+	struct kvx_itgen *itgen;
-+	u32 it_count;
-+	struct resource *mem;
-+
-+	itgen = devm_kzalloc(&pdev->dev, sizeof(*itgen), GFP_KERNEL);
-+	if (!itgen)
-+		return -ENOMEM;
-+
-+	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	itgen->base = devm_ioremap_resource(&pdev->dev, mem);
-+	if (IS_ERR(itgen->base))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(itgen->base),
-+				     "Failed to ioremap itgen\n");
-+
-+	itgen->pdev = pdev;
-+	it_count = readl(get_itgen_param_offset(itgen) +
-+				KVX_ITGEN_PARAM_IT_NUM_OFFSET);
-+
-+	itgen->domain = platform_msi_create_device_domain(&pdev->dev,
-+						   it_count,
-+						   kvx_itgen_write_msg,
-+						   &itgen_domain_ops,
-+						   itgen);
-+	if (!itgen->domain) {
-+		dev_err(&pdev->dev, "Failed to create device domain\n");
-+		return -ENOMEM;
++free_irq_data:
++	for (i--; i >= 0; i--) {
++		d = irq_domain_get_irq_data(domain, virq + i);
++		kd = irq_data_get_irq_chip_data(d);
++		kfree(kd);
 +	}
 +
-+	platform_set_drvdata(pdev, itgen);
++free_mb_bits:
++	spin_lock(&mb->mailboxes_lock);
++	bitmap_clear(mb->available, hwirq, nr_irqs);
++	spin_unlock(&mb->mailboxes_lock);
++
++	return err;
++}
++
++static void kvx_apic_mailbox_msi_free(struct irq_domain *domain,
++				      unsigned int virq,
++				      unsigned int nr_irqs)
++{
++	int i;
++	struct irq_data *d;
++	struct kvx_irq_data *kd;
++	struct kvx_apic_mailbox *mb = domain->host_data;
++
++	spin_lock(&mb->mailboxes_lock);
++
++	for (i = 0; i < nr_irqs; i++) {
++		d = irq_domain_get_irq_data(domain, virq + i);
++		kd = irq_data_get_irq_chip_data(d);
++		kfree(kd);
++		kvx_mailbox_free_bit(mb, d->hwirq);
++	}
++
++	spin_unlock(&mb->mailboxes_lock);
++}
++
++static const struct irq_domain_ops kvx_apic_mailbox_domain_ops = {
++	.alloc  = kvx_apic_mailbox_msi_alloc,
++	.free	= kvx_apic_mailbox_msi_free
++};
++
++static struct irq_chip kvx_msi_irq_chip = {
++	.name	= "KVX MSI",
++};
++
++static void kvx_apic_mailbox_handle_irq(struct irq_desc *desc)
++{
++	struct irq_data *data = irq_desc_get_irq_data(desc);
++	struct kvx_apic_mailbox *mb = irq_desc_get_handler_data(desc);
++	void __iomem *mb_addr = kvx_mailbox_get_addr(mb, irqd_to_hwirq(data));
++	unsigned int irqn, cascade_irq, bit;
++	u64 mask_value, masked_its;
++	u64 mb_value;
++	/* Since we allocate 64 interrupts for each mailbox, the scheme
++	 * to find the hwirq associated to a mailbox irq is the
++	 * following:
++	 * hw_irq = mb_num * MAILBOXES_BIT_SIZE + bit
++	 */
++	unsigned int mb_hwirq = irqd_to_hwirq(data) * MAILBOXES_BIT_SIZE;
++
++	mb_value = readq(mb_addr + KVX_MAILBOX_LAC_OFFSET);
++	mask_value = readq(mb_addr + KVX_MAILBOX_MASK_OFFSET);
++	/* Mask any disabled interrupts */
++	mb_value &= mask_value;
++
++	/**
++	 * Write all pending ITs that are masked to process them later
++	 * Since the mailbox is in OR mode, these bits will be merged with any
++	 * already set bits and thus avoid losing any interrupts.
++	 */
++	masked_its = (~mask_value) & mb_value;
++	if (masked_its)
++		writeq(masked_its, mb_addr + KVX_MAILBOX_LAC_OFFSET);
++
++	for_each_set_bit(bit, (unsigned long *) &mb_value, BITS_PER_LONG) {
++		irqn = bit + mb_hwirq;
++		cascade_irq = irq_find_mapping(mb->device_domain, irqn);
++		generic_handle_irq(cascade_irq);
++	}
++}
++
++static void __init
++apic_mailbox_reset(struct kvx_apic_mailbox *mb)
++{
++	unsigned int i;
++	unsigned int mb_end = mb->mb_count;
++	void __iomem *mb_addr;
++	u64 funct_val = (KVX_MAILBOX_MODE_OR << KVX_MAILBOX_FUNCT_MODE_SHIFT) |
++		(KVX_MAILBOX_TRIG_DOORBELL << KVX_MAILBOX_FUNCT_TRIG_SHIFT);
++
++	for (i = 0; i < mb_end; i++) {
++		mb_addr = kvx_mailbox_get_addr(mb, i);
++		/* Disable all interrupts */
++		writeq(0ULL, mb_addr + KVX_MAILBOX_MASK_OFFSET);
++		/* Set mailbox to OR mode + trigger */
++		writeq(funct_val, mb_addr + KVX_MAILBOX_FUNCT_OFFSET);
++		/* Load & Clear mailbox value */
++		readq(mb_addr + KVX_MAILBOX_LAC_OFFSET);
++	}
++}
++
++static struct msi_domain_ops kvx_msi_domain_ops = {
++};
++
++static struct msi_domain_info kvx_msi_domain_info = {
++	.flags	= (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS),
++	.ops	= &kvx_msi_domain_ops,
++	.chip	= &kvx_msi_irq_chip,
++};
++
++static int __init
++kvx_init_apic_mailbox(struct device_node *node,
++		      struct device_node *parent)
++{
++	struct kvx_apic_mailbox *mb;
++	unsigned int parent_irq, irq_count;
++	struct resource res;
++	int ret, i;
++
++	mb = kzalloc(sizeof(*mb), GFP_KERNEL);
++	if (!mb)
++		return -ENOMEM;
++
++	ret = of_address_to_resource(node, 0, &res);
++	if (ret)
++		return -EINVAL;
++
++	mb->phys_base = res.start;
++	mb->base = of_io_request_and_map(node, 0, node->name);
++	if (!mb->base) {
++		ret = -EINVAL;
++		goto err_kfree;
++	}
++
++	spin_lock_init(&mb->mailboxes_lock);
++	raw_spin_lock_init(&mb->mask_lock);
++
++	irq_count = of_irq_count(node);
++	if (irq_count == 0 || irq_count > MAILBOXES_MAX_COUNT) {
++		ret = -EINVAL;
++		goto err_kfree;
++	}
++	mb->mb_count = irq_count;
++
++	apic_mailbox_reset(mb);
++
++	mb->device_domain = irq_domain_add_tree(node,
++						&kvx_apic_mailbox_domain_ops,
++						mb);
++	if (!mb->device_domain) {
++		pr_err("Failed to setup device domain\n");
++		ret = -EINVAL;
++		goto err_iounmap;
++	}
++
++	mb->msi_domain = platform_msi_create_irq_domain(of_node_to_fwnode(node),
++						     &kvx_msi_domain_info,
++						     mb->device_domain);
++	if (!mb->msi_domain) {
++		ret = -EINVAL;
++		goto err_irq_domain_add_tree;
++	}
++
++	/* Chain all interrupts from gic to mailbox */
++	for (i = 0; i < irq_count; i++) {
++		parent_irq = irq_of_parse_and_map(node, i);
++		if (parent_irq == 0) {
++			pr_err("unable to parse irq\n");
++			ret = -EINVAL;
++			goto err_irq_domain_msi_create;
++		}
++		mb->mb_data[i].parent_irq = parent_irq;
++
++		irq_set_chained_handler_and_data(parent_irq,
++						 kvx_apic_mailbox_handle_irq,
++						 mb);
++	}
 +
 +	return 0;
++
++err_irq_domain_msi_create:
++	irq_domain_remove(mb->msi_domain);
++err_irq_domain_add_tree:
++	irq_domain_remove(mb->device_domain);
++err_iounmap:
++	iounmap(mb->base);
++err_kfree:
++	kfree(mb);
++
++	return ret;
 +}
 +
-+static const struct of_device_id itgen_of_match[] = {
-+	{ .compatible = "kalray,coolidge-itgen" },
-+	{ /* END */ }
-+};
-+MODULE_DEVICE_TABLE(of, itgen_of_match);
-+
-+static struct platform_driver itgen_platform_driver = {
-+	.driver = {
-+		.name		= "kvx-itgen",
-+		.of_match_table	= itgen_of_match,
-+	},
-+	.probe			= kvx_itgen_device_probe,
-+};
-+
-+static int __init kvx_itgen_init(void)
-+{
-+	return platform_driver_register(&itgen_platform_driver);
-+}
-+
-+arch_initcall(kvx_itgen_init);
++IRQCHIP_DECLARE(kvx_apic_mailbox, "kalray,coolidge-apic-mailbox",
++		kvx_init_apic_mailbox);
 -- 
 2.45.2
 
