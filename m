@@ -1,258 +1,128 @@
-Return-Path: <linux-kernel+bounces-259398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0E28939544
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 23:15:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B549693954C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 23:16:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D6051F22414
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:15:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5136EB21D35
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1263D969;
-	Mon, 22 Jul 2024 21:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7105A2E646;
+	Mon, 22 Jul 2024 21:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="PHlu6V+Y"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="SJoLjlJf"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D82A44C9B
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 21:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430B78F70
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 21:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721682892; cv=none; b=qBz+UmkJtAKnl5zQpBP5RXkZPnFSWpHtPamZ9EptYnb+ISrc3XctV7Im/bAKTpse8LexaRoIMk9wMcC8zWlaluIiYqNBjxgPHlze5QOd+jocpdsfsbOZYeTnMY8MojvQ7j6STnIXnzc0XetzKGMhCnBsT8VU7GqEK/zqArpZq6k=
+	t=1721682958; cv=none; b=ska/FC+nGrJaaPdvpjwjjDv+/z6GqH0FzSS4exob/R89RvKCL390J4R6klVl4h3GY2TzwmoAA8oOlxa2TLED1kqCn5ZWYH2eY5KeIXJpaH0LYKkfPN2c7YUTJW6GoQK/aP3kIBpPDiLQwZRu3UG0+5Xtf5T79IjuauMC0gwwoGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721682892; c=relaxed/simple;
-	bh=1lagUwf3RC7JZReX5Mnpd7A0gWXy3u+C9i+YHhmoyxc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WHmERsytzErqkq3p4i/cials+GcDBuJp7LAs7h+gWklrNcYdjJrxAo8I4CQNH0b3Nvt92W5V8nDym7wdvLYB8iuETiHvTEnEmqb/NkQmOp+JwIFRCHcgLBHOSTs79pPFC2WORSz89746iCLzuQMyjN35j7b/X5weJeVeVyqNpXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=PHlu6V+Y; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fd6ed7688cso776455ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 14:14:49 -0700 (PDT)
+	s=arc-20240116; t=1721682958; c=relaxed/simple;
+	bh=7KFOC5wLs3EJl4NsTnqfnwdjiRRNzD7PATmyJ6TduFA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C4QRu9rcifIurVDAkkS6Vkrbgf9r69fJgACXwN796uk12gn0xfnHPP9dqgVe37siyOdfJcLK5z5KwPYn/t2u7XSjE5xZqOP6zS5KCJHOiYOzXavPaoMNSNKMcK7HXKgGaL0J3SLHv7cA8HMDL0PvTqharRMZ9/AjIe1ALgbvafU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=SJoLjlJf; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-79b530ba612so2522466a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 14:15:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721682889; x=1722287689; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=re4a/549teXfpxRZzb1IT6fF6eSAFMvkPvsA5nTBSEI=;
-        b=PHlu6V+Y1tSVP4PYEI+aO1Y5Vhvotnse984CQjdRHMQmysJnhxRkkpTU4Ma3NA+xAZ
-         XLCt/MIBou5dG4gsbvB0+RqFYiXwsuI5Lt7NC6j3co0V+i0SCmC+AGJn2JQar49XPQ4L
-         h4xyARp8Ja2IQBQGlXlO4oUfKbd8sRNsj2XqcVtmfJGYEKVZZ5OY+v5RdXg/zd/ulsQf
-         wIyGr3MtHBh6LnOU1EXiQzRdz5PQrMlwgTIlHhRPQSVNDhdmrCF8M/DX4gmEgBQxd+zU
-         gE5KdMaGu6kuEzwNwt7+1guX3B37fVCWVeIq7jbvJHMUn+o6AJ9EsjRx4BFdoYcqwlxF
-         rFvw==
+        d=purestorage.com; s=google2022; t=1721682956; x=1722287756; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qOO2jji9U8j5jqgweOYexBqjPNMVig6bzmPu41c6FV4=;
+        b=SJoLjlJfpb4+VTjGMVo1c4ygxlKdEGxG3lxOo4V8o7oMmOJEQQlggrxeXu1/NMtDMu
+         zu1d7R4g4ULnq2AiDnMAR29SSY3jIJbzxTHKqUubHYyy1vLrUFdoK+c+2hRd0cvnFF0q
+         unq7zBPb5lIalmuEsTyBz63obs4sWlbNXUPzs6o6w5EH+BTTYHCvRMZC0TwBVhQrgGfC
+         MY0yIoUdXVr23LLvRZfjgLm7UUcWZi8KYybfoFMAM3Kv+hqVe+mj6TshZwvv2qeYWPU1
+         4eHIEN9ixkkngsnb+xwSHSDZT1ITkD+1yMAf1p9/0Q84tbLzKBY29gOSOuaeXX1IGFiK
+         BwEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721682889; x=1722287689;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=re4a/549teXfpxRZzb1IT6fF6eSAFMvkPvsA5nTBSEI=;
-        b=H8x/tllIqgKSxIFVem9az+d91CpbxyH9ddOLaU0V2fcuVhrgIgkIwvJkMvRkAlNTvL
-         NawZkUmau2nMfUVBkBmx6/lHXoYoQqCtPssVz7Mj3HupfMSK0VQRXF8hOxKSiTPDravi
-         QE4NTb464kYj45XUV1XrgXYGudAoJIXfLpFNWv+6T/KDR73Vo4UlDDobKP6wHpDzzFIj
-         wKd4nauKN1EUBkeJ/1fZxoSXknkF7+8YcZvWNOfU9TVd4Y1rp44rfj3NApCk09D4lvl2
-         TCrWr3a6zaBeaPpOJPr5xry/zHwFzMrRuSQAcw04oXhHpax3v9HGEXRPHwcUE3IqWPH1
-         w/Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCW1u5Za8npe7WNodRZQdzRjxDv2e3a0nbbsbGZtNs2etdLRPQ8/Fpw5nYX+0khoAGkoDSgSu7mao29M4rxs4LSxv6FW5YKUIVKpqQy0
-X-Gm-Message-State: AOJu0YzXdZ8nw/97DGmKTbz79+XqE4ElirQbdRfsU2t/5q/L1JaIg0/s
-	AWIqzau7FCa8lGD+9eYmIRpIm6mOcwHUva8mnYRRXcXOB344TuCnzpaK/mhaRLE=
-X-Google-Smtp-Source: AGHT+IHNGpumvDD95UYgz2v1+PPZ4GlU1XFvLWIOWNaPJpQc9m08TfGb1igAHvmYgQ6MZbrThHXc8A==
-X-Received: by 2002:a17:902:db02:b0:1fb:4b87:6e9d with SMTP id d9443c01a7336-1fdb5f6b95fmr9284455ad.42.1721682888632;
-        Mon, 22 Jul 2024 14:14:48 -0700 (PDT)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f485bd1sm59363665ad.275.2024.07.22.14.14.46
+        d=1e100.net; s=20230601; t=1721682956; x=1722287756;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qOO2jji9U8j5jqgweOYexBqjPNMVig6bzmPu41c6FV4=;
+        b=tqJhNvfjaZTPVxWYXO8bSs5jdKUogjj9EltcfhXKGYuEa9VbXycT80+b4QwSSBzbrR
+         kSfwz81TNpuyHPLqzLYPISdt8HuuLRRWPFqJC4RZDjlcdzrrKqWEOrErYkhyNlvFnnj5
+         tDgrIfXDG/xymZQMLrT7+ULdHO7yt/0s1tEpsEij1cr/Naqkdj12uAjfZspfj8uz9xcl
+         Vm0ZA5Ty54pSy/D0onqv27jtNs1SXb0ESAOYPPBD7Tlep8WylvYfmWxvI4VW08RiSKE4
+         DhZgLGSVqBWjznVwozDbtYvja74Tvbf78G2fnsS2OK1JVFPwyVRA/zEoi/2FsvhNxzVb
+         Bigw==
+X-Forwarded-Encrypted: i=1; AJvYcCWzH3SQNtSqGBxnT2MBRTbmmA7gEbBzvI9Hl0nZ38iFz2qUrDqqiW2vDJGGAGYKvmzjn46tGFASTysV9Ajq/RVyUcQoRoEOW/FkRAYu
+X-Gm-Message-State: AOJu0YyWgWhdnHISti92yyu5VtZZTikVV2emQ9rpKsfnQwDBBqUJK2sF
+	S/cFDh4lakm7MuY3zo33Svxl8jdBXVwyMLuGZcAPElyzxEprQDrIvnt/mleHGBU=
+X-Google-Smtp-Source: AGHT+IE2SCRbidasSEcvUS+FBkZiidEQHa2TVu6rFttRlOgPYgJmcCb4tj758FeHkNi2yyoJQ5XZ+g==
+X-Received: by 2002:a05:6a20:4327:b0:1c0:e5d1:619f with SMTP id adf61e73a8af0-1c42285ee9dmr8697515637.4.1721682956411;
+        Mon, 22 Jul 2024 14:15:56 -0700 (PDT)
+Received: from dev-cachen.dev.purestorage.com ([208.88.159.129])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1fd6f452c67sm59463035ad.225.2024.07.22.14.15.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 14:14:48 -0700 (PDT)
-Date: Mon, 22 Jul 2024 14:14:44 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
-	Andy Chiu <andy.chiu@sifive.com>,
-	Jessica Clarke <jrtc27@jrtc27.com>, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-sunxi@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v5 12/13] selftests: riscv: Fix vector tests
-Message-ID: <Zp7LxAWkDQMQhVLq@ghost>
-References: <20240719-xtheadvector-v5-0-4b485fc7d55f@rivosinc.com>
- <20240719-xtheadvector-v5-12-4b485fc7d55f@rivosinc.com>
- <20240722-0940cd64c0d8bb03f2427022@orel>
+        Mon, 22 Jul 2024 14:15:55 -0700 (PDT)
+From: Casey Chen <cachen@purestorage.com>
+To: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	namhyung@kernel.org,
+	irogers@google.com
+Cc: yzhong@purestorage.com,
+	Casey Chen <cachen@purestorage.com>
+Subject: [PATCHv5] perf tool: fix dereferencing NULL al->maps
+Date: Mon, 22 Jul 2024 15:15:48 -0600
+Message-ID: <20240722211548.61455-1-cachen@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240722-0940cd64c0d8bb03f2427022@orel>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 22, 2024 at 01:47:29PM -0500, Andrew Jones wrote:
-> On Fri, Jul 19, 2024 at 09:19:07AM GMT, Charlie Jenkins wrote:
-> > Overhaul the riscv vector tests to use kselftest_harness to help the
-> > test cases correctly report the results and decouple the individual test
-> > cases from each other. With this refactoring, only run the test cases is
-> > vector is reported and properly report the test case as skipped
-> > otherwise. The v_initval_nolibc test was previously not checking if
-> > vector was supported and used a function (malloc) which invalidates
-> > the state of the vector registers.
-> > 
-> > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> > ---
-> >  tools/testing/selftests/riscv/abi/ptrace           | Bin 0 -> 759368 bytes
-> >  tools/testing/selftests/riscv/vector/.gitignore    |   3 +-
-> >  tools/testing/selftests/riscv/vector/Makefile      |  17 +-
-> >  .../selftests/riscv/vector/v_exec_initval_nolibc.c |  84 +++++++
-> >  tools/testing/selftests/riscv/vector/v_helpers.c   |  56 +++++
-> >  tools/testing/selftests/riscv/vector/v_helpers.h   |   5 +
-> >  tools/testing/selftests/riscv/vector/v_initval.c   |  16 ++
-> >  .../selftests/riscv/vector/v_initval_nolibc.c      |  68 ------
-> >  .../testing/selftests/riscv/vector/vstate_prctl.c  | 266 ++++++++++++---------
-> >  9 files changed, 324 insertions(+), 191 deletions(-)
-> > 
-> > diff --git a/tools/testing/selftests/riscv/abi/ptrace b/tools/testing/selftests/riscv/abi/ptrace
-> > new file mode 100755
-> > index 000000000000..2b03e77b4dcf
-> > Binary files /dev/null and b/tools/testing/selftests/riscv/abi/ptrace differ
-> > diff --git a/tools/testing/selftests/riscv/vector/.gitignore b/tools/testing/selftests/riscv/vector/.gitignore
-> > index 9ae7964491d5..7d9c87cd0649 100644
-> > --- a/tools/testing/selftests/riscv/vector/.gitignore
-> > +++ b/tools/testing/selftests/riscv/vector/.gitignore
-> > @@ -1,3 +1,4 @@
-> >  vstate_exec_nolibc
-> >  vstate_prctl
-> > -v_initval_nolibc
-> > +v_initval
-> > +v_exec_initval_nolibc
-> > diff --git a/tools/testing/selftests/riscv/vector/Makefile b/tools/testing/selftests/riscv/vector/Makefile
-> > index bfff0ff4f3be..995746359477 100644
-> > --- a/tools/testing/selftests/riscv/vector/Makefile
-> > +++ b/tools/testing/selftests/riscv/vector/Makefile
-> > @@ -2,18 +2,27 @@
-> >  # Copyright (C) 2021 ARM Limited
-> >  # Originally tools/testing/arm64/abi/Makefile
-> >  
-> > -TEST_GEN_PROGS := vstate_prctl v_initval_nolibc
-> > -TEST_GEN_PROGS_EXTENDED := vstate_exec_nolibc
-> > +TEST_GEN_PROGS := v_initval vstate_prctl
-> > +TEST_GEN_PROGS_EXTENDED := vstate_exec_nolibc v_exec_initval_nolibc sys_hwprobe.o v_helpers.o
-> >  
-> >  include ../../lib.mk
-> >  
-> > -$(OUTPUT)/vstate_prctl: vstate_prctl.c ../hwprobe/sys_hwprobe.S
-> > +$(OUTPUT)/sys_hwprobe.o: ../hwprobe/sys_hwprobe.S
-> > +	$(CC) -static -c -o$@ $(CFLAGS) $^
-> > +
-> > +$(OUTPUT)/v_helpers.o: v_helpers.c
-> > +	$(CC) -static -c -o$@ $(CFLAGS) $^
-> > +
-> > +$(OUTPUT)/vstate_prctl: vstate_prctl.c $(OUTPUT)/sys_hwprobe.o $(OUTPUT)/v_helpers.o
-> >  	$(CC) -static -o$@ $(CFLAGS) $(LDFLAGS) $^
-> >  
-> >  $(OUTPUT)/vstate_exec_nolibc: vstate_exec_nolibc.c
-> >  	$(CC) -nostdlib -static -include ../../../../include/nolibc/nolibc.h \
-> >  		-Wall $(CFLAGS) $(LDFLAGS) $^ -o $@ -lgcc
-> >  
-> > -$(OUTPUT)/v_initval_nolibc: v_initval_nolibc.c
-> > +$(OUTPUT)/v_initval: v_initval.c $(OUTPUT)/sys_hwprobe.o $(OUTPUT)/v_helpers.o
-> > +	$(CC) -static -o$@ $(CFLAGS) $(LDFLAGS) $^
-> > +
-> > +$(OUTPUT)/v_exec_initval_nolibc: v_exec_initval_nolibc.c
-> >  	$(CC) -nostdlib -static -include ../../../../include/nolibc/nolibc.h \
-> >  		-Wall $(CFLAGS) $(LDFLAGS) $^ -o $@ -lgcc
-> > diff --git a/tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c b/tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c
-> > new file mode 100644
-> > index 000000000000..74b13806baf0
-> > --- /dev/null
-> > +++ b/tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c
-> > @@ -0,0 +1,84 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * Get values of vector registers as soon as the program starts to test if
-> > + * is properly cleaning the values before starting a new program. Vector
-> > + * registers are caller saved, so no function calls may happen before reading
-> > + * the values. To further ensure consistency, this file is compiled without
-> > + * libc and without auto-vectorization.
-> > + *
-> > + * To be "clean" all values must be either all ones or all zeroes.
-> > + */
-> > +
-> > +#define __stringify_1(x...)	#x
-> > +#define __stringify(x...)	__stringify_1(x)
-> > +
-> > +int main(int argc, char **argv)
-> > +{
-> > +	char prev_value = 0, value;
-> > +	unsigned long vl;
-> > +	int first = 1;
-> > +
-> > +	asm volatile (
-> > +		".option push\n\t"
-> > +		".option arch, +v\n\t"
-> > +		"vsetvli	%[vl], x0, e8, m1, ta, ma\n\t"
-> > +		".option pop\n\t"
-> > +		: [vl] "=r" (vl)
-> > +	);
-> > +
-> > +#define CHECK_VECTOR_REGISTER(register) ({					\
-> > +	for (int i = 0; i < vl; i++) {						\
-> > +		asm volatile (							\
-> > +			".option push\n\t"					\
-> > +			".option arch, +v\n\t"					\
-> > +			"vmv.x.s %0, " __stringify(register) "\n\t"		\
-> > +			"vsrl.vi " __stringify(register) ", " __stringify(register) ", 8\n\t" \
-> > +			".option pop\n\t"					\
-> > +			: "=r" (value));					\
-> > +		if (first) {							\
-> > +			first = 0;						\
-> > +		} else if (value != prev_value || !(value == 0x00 || value == 0xff)) { \
-> > +			printf("Register " __stringify(register) " values not clean! value: %u\n", value);	\
-> > +			exit(-1);						\
-> 
-> I think we should ensure all tests in tools/testing/selftests/riscv/ use
-> TAP output, exiting with ksft_finished(), or at least exit with 0 for
-> success. For example, vstate_exec_nolibc exits with 2 for success since
-> it exits with the return value of prctl(PR_RISCV_V_GET_CONTROL). And
-> vstate_prctl.c exits with several different negative values, which means
-> it'll exit with several different values around 255. To figure what went
-> wrong, one will have to convert those exit codes to the original negative
-> values in order to look them up. Having these types of inconsistent exit
-> values complicates QA.
-> 
-> Thanks,
-> drew
+With 0dd5041c9a0e ("perf addr_location: Add init/exit/copy functions"),
+when cpumode is 3 (macro PERF_RECORD_MISC_HYPERVISOR),
+thread__find_map() could return with al->maps being NULL.
 
-I do not follow. I am using the kselftest_harness
-(tools/testing/selftests/kselftest_harness.h) that does output using the
-TAP format. vstate_exec_nolibc is not a test in itself but is a helper.
-The Makefile for the vector tests describes this as:
+The path below could add a callchain_cursor_node with NULL ms.maps.
 
-TEST_GEN_PROGS := v_initval vstate_prctl
+add_callchain_ip()
+  thread__find_symbol(.., &al)
+    thread__find_map(.., &al)   // al->maps becomes NULL
+  ms.maps = maps__get(al.maps)
+  callchain_cursor_append(..., &ms, ...)
+    node->ms.maps = maps__get(ms->maps)
 
-If you run the riscv collection of tests with:
+Then the path below would dereference NULL maps and get segfault.
 
-$ ./run_kselftest.sh --collection riscv
+fill_callchain_info()
+  maps__machine(node->ms.maps);
 
-You will see that the only vector test cases are v_initval and
-vstate_prctl, which both output as expected in TAP format.
+Fix it by checking if maps is NULL in fill_callchain_info().
 
-I do see that I messed up the return type of the is_vector_supported()
-function, I had meant to change that to a bool from an int since
-RISCV_HWPROBE_EXT_ZVE32X is greater than 32 bits. I will send a new
-version.
+Signed-off-by: Casey Chen <cachen@purestorage.com>
+Reviewed-by: Ian Rogers <irogers@google.com>
+---
+ tools/perf/util/callchain.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- Charlie
+diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
+index 1730b852a947..6d075648d2cc 100644
+--- a/tools/perf/util/callchain.c
++++ b/tools/perf/util/callchain.c
+@@ -1141,7 +1141,7 @@ int hist_entry__append_callchain(struct hist_entry *he, struct perf_sample *samp
+ int fill_callchain_info(struct addr_location *al, struct callchain_cursor_node *node,
+ 			bool hide_unresolved)
+ {
+-	struct machine *machine = maps__machine(node->ms.maps);
++	struct machine *machine = node->ms.maps ? maps__machine(node->ms.maps) : NULL;
+ 
+ 	maps__put(al->maps);
+ 	al->maps = maps__get(node->ms.maps);
+-- 
+2.45.2
 
 
