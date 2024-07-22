@@ -1,182 +1,168 @@
-Return-Path: <linux-kernel+bounces-258617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8F85938A8C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:57:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8513938A89
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23622B216FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:57:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 983851C20F42
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED3F2161326;
-	Mon, 22 Jul 2024 07:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402FA160865;
+	Mon, 22 Jul 2024 07:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dC9AT6yD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sbawr4QQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6725D16087B
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C54415252D;
+	Mon, 22 Jul 2024 07:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721635045; cv=none; b=U5Ujafoi4/MHwS1UOf7LlVwfh4XSxdolBP9wa+DPgXt2IVHlFfimQeQmdJVMAwRHkRx6a3IqgZILHSOhu3ZECNDbE1CAym51YBKc909Ww8ROknZ31sKxZ2u7VPW0v134Z4DH5W7YjrZuLyfA5SmJAH+Rkcc3a32ZCAE4ieEGH2g=
+	t=1721635018; cv=none; b=uzumqsuoV6vPNVucdCmbsW+E9UXKQy8OLD3XWFiIMjRczBLUh4L2FYfMP679sPNDtiPhOg+cFtmaM7VjiBxw3imy1csouY30snvtf8z0rH+LK7PrZ6nM0atDLOYLShvh69a5s+8x7LougoScYfc9STL8SoWnNrnn6qxUFZqTrtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721635045; c=relaxed/simple;
-	bh=HWNPQ/1vUrq7iKlpWAUp1cUMrSt4KvhLV953piOX8g8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dYBSLhPrXlPwNF08nD4tc+Wpl/Tl98dcuKpCbHYdAU2LD0ZltK1ZrQe52PkB4DaGn5+dBS4KaiJad71V+21PgSXQ40ZzT7YIbCU7ZEsW7/uCNReGB8LPC0xj7n3ahQFRiyQnJTxwnIZiKUtFqVgTGVlrSjKUFdQDFjx97iVXKRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dC9AT6yD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721635042;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YQEopZwHga4C7qzVJPruzVlevn1Kn/ATvarPGUPiBhY=;
-	b=dC9AT6yDbhN12Q1SkXFoLFJogupoRhqRhKyaJHC1yZ3CwgCkInAA4xi0DFyQ3dY2EB3gFW
-	1QQbK1FA6eXg1iaIrbEYFh+MCeKFE/NOIZYLvLLQJwdNbaP2OoRQpRBr0TsqZ97ivjxrs8
-	G8bAma1NcAmaFAeGUD/0l5vpZ0+qjHs=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-607-lbnSZAkROOKOQGGVGd7Ecg-1; Mon, 22 Jul 2024 03:57:17 -0400
-X-MC-Unique: lbnSZAkROOKOQGGVGd7Ecg-1
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2ef311ad4bcso4975491fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 00:57:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721635035; x=1722239835;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YQEopZwHga4C7qzVJPruzVlevn1Kn/ATvarPGUPiBhY=;
-        b=wN1FaGhBrnJ1LeZwvMqRLvwf2Z204kfglBvDRezSj1psngEvl0w2kvtukVGEPe/GKj
-         lQwCFBnPI8gF8iNhoEIEYziX1OBgtxStUlptlIDxzDXayObA2uzKdh8wMNCY85lq2Xth
-         o+6ORYFCbb141HwLiZZgqTrq6fMFVMJ08N49vdnVeGLuQpgeHcDxN7Njbmd1envrGTRo
-         w31FfORDSGPabQWat2zfZBLWs5MZ6kIZdgI3rICvoSDZLLPZDKM5MGKTj/Z/PdHrHGVl
-         LpJkU1dZrTXO5qX0IEnz58YVnjrA+dw3/ucTcgD1PNW2/KUrOv2UO0W40p3DURIGgAax
-         dMLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWYiPPpxhg2oaphn9E6wgmBvDlz0m4RGYwMVPOGiUTHtBNy2+teX5yXoqCBlGAPIdsyikCRxONvpGk3xkY97Y9ou4Lp3isFIodxJa0
-X-Gm-Message-State: AOJu0Yz9pYwKl77oz87PJf26q+8oBkfDFEcPyuj5qp3ZEdBGurlQkGdu
-	3Z8hOFrDuZlbT7k9UMZLmbpp4nMOZoV765maTzR9RI+Z5lt7pGzfa4aDdk8sRl10w7vAssP98Iw
-	w9wl+5Wfhj8oNJYRcboBXmco8CNCJcFQUJwmA+qkGYOD+kX+qcZytd3+o/jDXIDSRlLN7+zcCMl
-	bsnqoum7Vl3N7y5MG5qT9brQzCxm5h/X/SDpuG0BXIyG0UaWk=
-X-Received: by 2002:a05:651c:50d:b0:2ef:17ee:62b0 with SMTP id 38308e7fff4ca-2ef17ee6747mr44078041fa.2.1721635035150;
-        Mon, 22 Jul 2024 00:57:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFYfWrHNz6DUflgtw/ZcTjXibd8jwa6+RV9ykMQ9YOOIBFKj5ChXg/RudR/hIBIlgmdHIluX8YxfscwNFeCP2U=
-X-Received: by 2002:a05:651c:50d:b0:2ef:17ee:62b0 with SMTP id
- 38308e7fff4ca-2ef17ee6747mr44077821fa.2.1721635034786; Mon, 22 Jul 2024
- 00:57:14 -0700 (PDT)
+	s=arc-20240116; t=1721635018; c=relaxed/simple;
+	bh=COQMtfBNJwfO8uljz2p9okL45TamVuQg+CNbtYLtpZM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BkEU74y3d7HPNHIaP0ti0tOAT0D2awTF3IC/RC0BmTOk/PznWY2E9lAP93oNbO1iwv6gbYLZUGF1uwaW0GKBb1+BpweSq5vMTnsUjFWe7wH4LBpFJyk7nEkY116baOP6S8e2bZi0Ur1YF6mSSlBqd+6CldR9h0uJr0bnEajJhBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sbawr4QQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B32EC116B1;
+	Mon, 22 Jul 2024 07:56:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721635018;
+	bh=COQMtfBNJwfO8uljz2p9okL45TamVuQg+CNbtYLtpZM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Sbawr4QQYzw5QLZVw8zvAqKoy7urqCgbWgYlzmZaBYFN9RPr+ZzuP9p7jhtK0/laG
+	 QO8/5fCc8oNhng7DxdUzK5Rd3qkKXj4jcXdKOVhShzba0OXRgg4aXW5defW8lq0AMx
+	 Jmv4ieATVzjO7dM7fpnr/FrHFdEGkhyrqrVTOlZV13e76LA3nlFh6DDhpDFN5N2Eiv
+	 a7XCfPvcz8MDOnKOtsb0Vl1Ny7WHHojLiYi8VUWXbiQzXw2+/yA2uda+v5kR6u4RGq
+	 EpzJfNw+cTG4HIoojCtpiwjtV2KFQQHAirTQ7N89ZBtshELZ9ynJugep+jglGHE7hS
+	 MidUhEHCxk8Sw==
+Message-ID: <ebe3853e-aa69-417c-ad0d-efe58a0dd1b9@kernel.org>
+Date: Mon, 22 Jul 2024 09:56:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240722010625.1016854-1-lulu@redhat.com> <20240722010625.1016854-3-lulu@redhat.com>
- <CACGkMEtq=2yO=4te+qQxwSzi4G-4E_kdq=tCQq_N94Pk8Ro3Zw@mail.gmail.com>
-In-Reply-To: <CACGkMEtq=2yO=4te+qQxwSzi4G-4E_kdq=tCQq_N94Pk8Ro3Zw@mail.gmail.com>
-From: Cindy Lu <lulu@redhat.com>
-Date: Mon, 22 Jul 2024 15:56:38 +0800
-Message-ID: <CACLfguUaDo3seJZT_yQNp_fa4bELHwwAb8OTbXGwBLw2fGdj+w@mail.gmail.com>
-Subject: Re: [PATH v4 2/3] vdpa_sim_net: Add the support of set mac address
-To: Jason Wang <jasowang@redhat.com>
-Cc: dtatulea@nvidia.com, mst@redhat.com, parav@nvidia.com, sgarzare@redhat.com, 
-	netdev@vger.kernel.org, virtualization@lists.linux-foundation.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] ARM: dts: samsung: exynos4212-tab3: Drop dummy mic
+ bias regulators
+To: Artur Weber <aweber.kernel@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+References: <20240716-midas-audio-tab3-v1-0-a53ea075af5a@gmail.com>
+ <20240716-midas-audio-tab3-v1-6-a53ea075af5a@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240716-midas-audio-tab3-v1-6-a53ea075af5a@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 22 Jul 2024 at 15:48, Jason Wang <jasowang@redhat.com> wrote:
->
-> On Mon, Jul 22, 2024 at 9:06=E2=80=AFAM Cindy Lu <lulu@redhat.com> wrote:
-> >
-> > Add the function to support setting the MAC address.
-> > For vdpa_sim_net, the driver will write the MAC address
-> > to the config space, and other devices can implement
-> > their own functions to support this.
-> >
-> > Signed-off-by: Cindy Lu <lulu@redhat.com>
-> > ---
-> >  drivers/vdpa/vdpa_sim/vdpa_sim_net.c | 22 +++++++++++++++++++++-
-> >  1 file changed, 21 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/vdpa/vdpa_sim/vdpa_sim_net.c b/drivers/vdpa/vdpa_s=
-im/vdpa_sim_net.c
-> > index cfe962911804..936e33e5021a 100644
-> > --- a/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
-> > +++ b/drivers/vdpa/vdpa_sim/vdpa_sim_net.c
-> > @@ -414,6 +414,25 @@ static void vdpasim_net_get_config(struct vdpasim =
-*vdpasim, void *config)
-> >         net_config->status =3D cpu_to_vdpasim16(vdpasim, VIRTIO_NET_S_L=
-INK_UP);
-> >  }
-> >
-> > +static int vdpasim_net_set_attr(struct vdpa_mgmt_dev *mdev,
-> > +                               struct vdpa_device *dev,
-> > +                               const struct vdpa_dev_set_config *confi=
-g)
-> > +{
-> > +       struct vdpasim *vdpasim =3D container_of(dev, struct vdpasim, v=
-dpa);
-> > +       struct virtio_net_config *vio_config =3D vdpasim->config;
-> > +
-> > +       mutex_lock(&vdpasim->mutex);
-> > +
-> > +       if (config->mask & (1 << VDPA_ATTR_DEV_NET_CFG_MACADDR)) {
-> > +               memcpy(vio_config->mac, config->net.mac, ETH_ALEN);
-> > +               mutex_unlock(&vdpasim->mutex);
-> > +               return 0;
-> > +       }
-> > +
-> > +       mutex_unlock(&vdpasim->mutex);
->
-> Do we need to protect:
->
->         case VIRTIO_NET_CTRL_MAC_ADDR_SET:
-> read =3D vringh_iov_pull_iotlb(&cvq->vring, &cvq->in_iov,
->                                              vio_config->mac, ETH_ALEN);
->                 if (read =3D=3D ETH_ALEN)
->                         status =3D VIRTIO_NET_OK;
->                 break;
->
-> As both are modifying vio_config?
->
-> Thanks
->
-i have added a lock for this; CVQ also needs to take this lock to
-change the MAC address.I thinks maybe this can protect?
-Do you mean I need to compare the mac address from the vdpa_tool and
-mac address in vio_config?
-this vdpa tool should not be used after the guest load, if this is
-different this is also acceptable
-thanks
-Cindy
+On 16/07/2024 21:36, Artur Weber wrote:
+> Add the samsung,tab3-audio compatible that makes mic bias regulators
+> non-required, and drop the dummy main/sub mic bias regulators that
+> don't exist in hardware.
+> 
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> ---
+>  arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 20 ++------------------
+>  1 file changed, 2 insertions(+), 18 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
+> index 2f39f3c0661e..a140f86d399b 100644
+> --- a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
+> +++ b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
+> @@ -286,20 +286,6 @@ display_3v3_supply: voltage-regulator-3 {
+>  		enable-active-high;
+>  	};
+>  
+> -	mic_bias_reg: voltage-regulator-4 {
+> -		compatible = "regulator-fixed";
+> -		regulator-name = "MICBIAS_LDO_2.8V";
+> -		regulator-min-microvolt = <2800000>;
+> -		regulator-max-microvolt = <2800000>;
+> -	};
+> -
+> -	submic_bias_reg: voltage-regulator-5 {
+> -		compatible = "regulator-fixed";
+> -		regulator-name = "SUB_MICBIAS_LDO_2.8V";
+> -		regulator-min-microvolt = <2800000>;
+> -		regulator-max-microvolt = <2800000>;
+> -	};
+> -
+>  	earmic_bias_reg: voltage-regulator-6 {
 
-> > +       return -EINVAL;
-> > +}
-> > +
-> >  static void vdpasim_net_setup_config(struct vdpasim *vdpasim,
-> >                                      const struct vdpa_dev_set_config *=
-config)
-> >  {
-> > @@ -510,7 +529,8 @@ static void vdpasim_net_dev_del(struct vdpa_mgmt_de=
-v *mdev,
-> >
-> >  static const struct vdpa_mgmtdev_ops vdpasim_net_mgmtdev_ops =3D {
-> >         .dev_add =3D vdpasim_net_dev_add,
-> > -       .dev_del =3D vdpasim_net_dev_del
-> > +       .dev_del =3D vdpasim_net_dev_del,
-> > +       .dev_set_attr =3D vdpasim_net_set_attr
-> >  };
-> >
-> >  static struct virtio_device_id id_table[] =3D {
-> > --
-> > 2.45.0
-> >
->
+This should be voltage-regulator-4.
+
+>  		compatible = "regulator-fixed";
+>  		regulator-name = "EAR_MICBIAS_LDO_2.8V";
+> @@ -310,14 +296,12 @@ earmic_bias_reg: voltage-regulator-6 {
+>  	};
+>  
+>  	sound: sound {
+> -		compatible = "samsung,midas-audio";
+> +		compatible = "samsung,tab3-audio", "samsung,midas-audio";
+>  		model = "TAB3";
+> -		mic-bias-supply = <&mic_bias_reg>;
+> -		submic-bias-supply = <&submic_bias_reg>;
+> -		headset-mic-bias-supply = <&earmic_bias_reg>;
+>  
+
+You just added this line. Organize patches or code in a way that does
+not move it within one patchset.
+
+
+Best regards,
+Krzysztof
 
 
