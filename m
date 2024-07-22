@@ -1,109 +1,109 @@
-Return-Path: <linux-kernel+bounces-259189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCAFD93925C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:12:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D82D939262
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1445B1C216B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:12:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1205D1F223E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E4B16EB44;
-	Mon, 22 Jul 2024 16:12:48 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F16F8F70
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 16:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5345B16EB55;
+	Mon, 22 Jul 2024 16:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="V+Be+luh"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5850916D9B2;
+	Mon, 22 Jul 2024 16:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721664767; cv=none; b=HL3BGSjfKSREWr8S2qMQgrWdNSjCQgrN42gQaWn6VzrvvW1cAJC44arEyRNjhuxdRD6My9DCpdKa88MlSp/RBBrmeYRve7LmV5HcY3Ya2hU7MQKLLYt2fRqvwliN2t6rmrW9zxv7L7cubne6pSvZVEgD+vaw3XT3gwzN4AFBskU=
+	t=1721664917; cv=none; b=pgRKAalH4M+m5TqIsPcX0g9y9jU7D3Rwksd7WATrO9cLPP+ZWmY++qnZ2TPtm9/4sITMhdZandFn8GA5V460vjH92G4n6svM09h9OBNVrnLDr7apskZQrllFTXip/9492125sJ28FdCcYqFl46MPU5U3lf0Kx63VKg1mn32Wt98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721664767; c=relaxed/simple;
-	bh=raWnl5yd/WoJDjEVHG2f1oJYeWREY9V4eS0WpJDr6Xc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MySjb3V4hhrG0RqyPiVtCug9OdGuE9/UkwbVi8gPcdClqt6KBHMqrgFk19xauBYvRpYZCYTn4FojJtFhIoodPJRG+wWFTLctx2+V0meYy05hHnz5NStftNW/fLpnk3hRSG/igo96zY0CdDtktxm9BGp1Hm3lqFhETQqD3hqvd+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-80ba1cbd94eso786137539f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:12:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721664765; x=1722269565;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xwP8JDD+wLN0+te14QljZ4JWGndpfzGPPVNtJMbttm4=;
-        b=MAyI0wWJ/FWFLOr9J/qfdplu1B93jikDeSG4yjpSVp4nxwbq1b22MGYE+D9dS2nFZw
-         5sxJ/GU2XL5SLLBgfb2FctLG55LJqz/I2zJIvpM16c7JJCfBE03DRVorYaUlzr+mcql1
-         XJJ1Tu2751qYkN8OavJwdQwR7p1USJKnxXu5oaYqMt2xCnLNo0yn21Q/Tr5eQuh819Xz
-         JI7h/4DuLSsHSJ9fKQCHEFXg0FUOaEmLlbmqL1IF/hOkd4/HQW9y0W8DxJRBNUg9I/Cn
-         DnerjjIVfVBgE9r+6Jwpj/HeA6c3/z8U5OUMgsH7y4QyYokGuvrY25N4mG8pelEyGBXT
-         OMIg==
-X-Gm-Message-State: AOJu0YzUT+DKuvl7/6n0RA1TAhz6X8Igga+WUiwXyb9zqvwlIYt5FFNm
-	QFVkVvnli4asxhDhGTp3czPq2Vd/PHQr8UvLHfbGxM+SD/jq3slrMeZigVAhBsrZK7eU893sU3/
-	02wVGlrYKfj3BG7+rlEup4yvCd8PjttluZYd6LfEQsRNOyFqdeh2pVhg=
-X-Google-Smtp-Source: AGHT+IE40z6OcrEQdRpo89bNvhBcItHkTj7K3xRrYuvpwPC3haBbC834g85NQw89WNHYHQmHJAXYwb6SMDITkQpURm5dxOtp1tgU
+	s=arc-20240116; t=1721664917; c=relaxed/simple;
+	bh=Q8L1szdCcCjQa6Ldga+hyv/VGsgv62eqHQuFy6N43Z0=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=NIaNbfmnvmVVLUuTr3xWOQQRY7ceRqmorIYGYNkIXleyVAC2T7NYcCtZZbXwp0xgGB96IBBOVMXKfYcRKqxdk0djJUp4LtJumS3CovAIJcdzyTphQ3Re1o6OqBqYC/tQNN/K2wTEvT/c6twAj+RxPeKTkrF6sPfdN1J47FczWJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=V+Be+luh; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.49.54] (c-73-118-245-227.hsd1.wa.comcast.net [73.118.245.227])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 4184C20B7165;
+	Mon, 22 Jul 2024 09:15:09 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 4184C20B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1721664910;
+	bh=ozaD6a0NowW7U00u2hDPiAL5ijIAeQOS6klyJ53d2c4=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=V+Be+luhiZ8Vm/+HC2PjwH4zOP92nkalDiLRJjrSQvC864P+D/G4vw/lmtCrL7Q8X
+	 G7WleFzsAkcxI/PB6XLFlYW+dla75nxrE0O7vv/A33otKhT1NGFd5hIwVDq4yT7bf7
+	 yHV3vX0SAFFRgXi8unj18rDH25shXH/3nQiLksGE=
+Message-ID: <24fa9e9b-81a8-4bbe-8d13-4d559ee76a96@linux.microsoft.com>
+Date: Mon, 22 Jul 2024 09:15:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c1:b0:381:7405:7887 with SMTP id
- e9e14a558f8ab-398e49e04a1mr5230985ab.2.1721664765251; Mon, 22 Jul 2024
- 09:12:45 -0700 (PDT)
-Date: Mon, 22 Jul 2024 09:12:45 -0700
-In-Reply-To: <000000000000e8fcab061d53308f@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c16969061dd85071@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [bpf?] [net?] general protection fault in __xsk_map_flush
-From: syzbot <syzbot+61a1cfc2b6632363d319@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Cc: eahariha@linux.microsoft.com, Jani Nikula <jani.nikula@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Zhenyu Wang <zhenyuw@linux.intel.com>,
+ Zhi Wang <zhi.wang.linux@gmail.com>,
+ "open list:INTEL DRM DISPLAY FOR XE AND I915 DRIVERS"
+ <intel-gfx@lists.freedesktop.org>,
+ "open list:INTEL DRM DISPLAY FOR XE AND I915 DRIVERS"
+ <intel-xe@lists.freedesktop.org>,
+ "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:INTEL GVT-g DRIVERS (Intel GPU Virtualization)"
+ <intel-gvt-dev@lists.freedesktop.org>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ "open list:RADEON and AMDGPU DRM DRIVERS" <amd-gfx@lists.freedesktop.org>,
+ "open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
+ "open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>,
+ Zhi Wang <zhiwang@kernel.org>
+Subject: Re: [PATCH v4 3/6] drm/i915: Make I2C terminology more inclusive
+To: Andi Shyti <andi.shyti@linux.intel.com>
+References: <20240711052734.1273652-1-eahariha@linux.microsoft.com>
+ <20240711052734.1273652-4-eahariha@linux.microsoft.com>
+ <Zp5Vq9JoYC_OrA2C@ashyti-mobl2.lan>
+Content-Language: en-US
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+In-Reply-To: <Zp5Vq9JoYC_OrA2C@ashyti-mobl2.lan>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On 7/22/2024 5:50 AM, Andi Shyti wrote:
+> Hi Easwar,
+> 
+> merged to drm-intel-next. Thanks!
+> 
+> On Thu, Jul 11, 2024 at 05:27:31AM +0000, Easwar Hariharan wrote:
+>> I2C v7, SMBus 3.2, and I3C 1.1.1 specifications have replaced "master/slave"
+>> with more appropriate terms. Inspired by Wolfram's series to fix drivers/i2c/,
+>> fix the terminology for users of I2C_ALGOBIT bitbanging interface, now that
+>> the approved verbiage exists in the specification.
+>>
+>> Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> 
+> I realized after pushing that this had the tag:
+> 
+> Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> 
+> Not a big deal, but it's still a minor mistake.
+> 
+> Andi
 
-***
+Thank you for the merge, Andi! I'm missing what the mistake is, I added
+the tags as I got them. Was I supposed to drop the R-B when Rodrigo gave
+an A-B?
 
-Subject: Re: [syzbot] [bpf?] [net?] general protection fault in __xsk_map_flush
-Author: aha310510@gmail.com
-
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-
----
- kernel/bpf/cpumap.c    | 2 +-
- kernel/bpf/devmap.c    | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/bpf/cpumap.c b/kernel/bpf/cpumap.c
-index fbdf5a1aabfe..8fccc311397c 100644
---- a/kernel/bpf/cpumap.c
-+++ b/kernel/bpf/cpumap.c
-@@ -676,7 +676,7 @@ static void bq_flush_to_queue(struct xdp_bulk_queue *bq)
- 	struct ptr_ring *q;
- 	int i;
- 
--	if (unlikely(!bq->count))
-+	if (unlikely(!bq->count) || unlikely(bq->count) > CPU_MAP_BULK_SIZE)
- 		return;
- 
- 	q = rcpu->queue;
-diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
-index 9e0e3b0a18e4..4b9203deb711 100644
---- a/kernel/bpf/devmap.c
-+++ b/kernel/bpf/devmap.c
-@@ -378,7 +378,7 @@ static void bq_xmit_all(struct xdp_dev_bulk_queue *bq, u32 flags)
- 	int to_send = cnt;
- 	int i;
- 
--	if (unlikely(!cnt))
-+	if (unlikely(!cnt) || unlikely(cnt) > DEV_MAP_BULK_SIZE)
- 		return;
- 
- 	for (i = 0; i < cnt; i++) {
---
+Thanks,
+Easwar
 
