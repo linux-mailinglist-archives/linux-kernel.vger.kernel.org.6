@@ -1,245 +1,156 @@
-Return-Path: <linux-kernel+bounces-258646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C802938B17
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:20:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C7C1938B1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42855281A20
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:20:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FB72281B34
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350EB160873;
-	Mon, 22 Jul 2024 08:20:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D5A1662F1;
+	Mon, 22 Jul 2024 08:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="eMbxl77Q"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RIiRBORg"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE845464A
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 08:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FADA160873
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 08:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721636448; cv=none; b=RqEEDaN15aEFj39QwQne1DcEz9fqrFENTfJE3zy9GUxXd3TY0KmpISnpVWbcYMUiAkq4v7ubS2zRVQSgsnh7vjvYZDrfa4byVmltC+JpXEKNq5cy4zr7Vi9JjiXa5UXb7Y80xCHR0IhOmM1Pz7HETXDZxMzAoyh6Yx75aRI1z5Y=
+	t=1721636470; cv=none; b=Z6+kBa5M5qp01ip0rUKijHLsKxShrOP8SWpVlsQQgBaHKhp09I7p/3uMfTQLaVvR7V3QxMX7cQw3T6nDX8eMNLdhWyqhbslRnC1Bgt/5QkA05AqcxqkWkTtxiDUW6gd92dplkcA2udMVdWGFR9+3KC1qSjnG41jMCLJgeoXdb7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721636448; c=relaxed/simple;
-	bh=Gc9GfiVqIOW6AG0XYb6oTsaSrqIXqslUw+R/1OUGG6w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c7RjygrtmPMRhwTP037m2b3AZ1xOG7xLfKRjHbgI0KplUJvcK1nEHnwjgLpGJ4jehf8BldC7PI1uDlwNetfQ0YebdKVe0+LmpluEmtrl/5x+oODw/5KPwLIV/htSCVhPZN9W3+SvA1af6g01n5XclNDyHiPdmrYlf9HuJiE4960=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=eMbxl77Q; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ef2d582e31so8888921fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 01:20:45 -0700 (PDT)
+	s=arc-20240116; t=1721636470; c=relaxed/simple;
+	bh=1UWRME8UjecgW+uo8uUWZOJ49UnbJYQ+He2u9cxh/K8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xya9U8nzq6ApX5zf+kZ1K0lIrPchBkRfIe7tFlkuwu3WMi56o0OUaov4C2T3WsCEKBxckKnVkZJ4+YCnozJRg/r097RjAzB6FVv4mNtJC8BEwPtiBj+qR75/y84qMW6bf7wron4yECWZp5ynAUGybCDXpfWGGS9OQtAtJiYJU8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RIiRBORg; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52f01afa11cso1457120e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 01:21:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721636444; x=1722241244; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7VgB/lccVac6zBTZqqHsKy16+19WVuie2nqQLn2rSGc=;
-        b=eMbxl77QZ2yzU12J8h9FCuAGPolVsKbzqdYDefpmeMvmjTi4c4GRaD+9403M/UOOjn
-         Vqp6xDnljVdeXE+XBq6W0xV5UwiBLrzTdWML0g9X0QR1mYLMJaM4zyxviPdt/0Nkt6Ox
-         CmneRS4Pfzk9yM5y/3swgm7PF1q8Cxfp87bJonNGsKul7j6AvrIYAQIm+5xXjCZTZ45j
-         lAG3TVHY9e3Ene205cFv/Ecas4lEXGSaC4FnF2gZKOY5n9eCnbOUa4rQsvYbDxdowNg/
-         fvoFacFbhVUrOIpQ/Vmt2sw8z+2ioorBVEh8EbpMTGlfS6Xeox+5xdowKszps5WFmlOa
-         r7gQ==
+        d=linaro.org; s=google; t=1721636467; x=1722241267; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uO05PChGh3iOVl9QN4C/DTf4iIyJWKDSt2PZpVRmyXs=;
+        b=RIiRBORgQTtIkOoxUd+6ViDQx3O7qOwpyGDpNvMjrG2gNYFAfsxtpJAQkWXzGb8vAw
+         vOvDvZiXePnpP6k0g1lzHTPOKGeEBdJkMEme4yI0pB1kZgym1oQI/C8SSPChT64vYYDr
+         kgy9b1mmojQ7VNOm+Cplb6yFgE9sxkZvKH8Tfg1vDgUQFIgDzzS/G/SFkZvbTkPLdILh
+         QKxZ6qvAg/pIXzbhPnIlRqjGzRtYf+tfO6bYjCCz7MXupYHGSeHEe9iUcw4s8iARMs07
+         wqzogUc7tGRRPzOQdqc9HSgHICnQgB5aSDlYb+qbFR6TF/KDlav33QT+rO92J0nLN/c+
+         0dLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721636444; x=1722241244;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7VgB/lccVac6zBTZqqHsKy16+19WVuie2nqQLn2rSGc=;
-        b=NBSajEfwTQxz5nr9fXuHAkwRTh7QIyULj1z9uA9DOwgJ5DVOyQT7avWWbdWRzSW/hR
-         LAq9f3z1lXdBVBjb4DhXFuTRlh7nI4pt6eVLvobruHoLhvdKhCN/NC3SbKvWnf4xdWo8
-         DFEkZCkG5kg0M/khAWF3p6aqAA+wYeTL1fWx4f9KWe8TXXyTgtFU4jOJHK18Ryhr4XGL
-         xKRtB/wSbQKlII0XjIxdy4ApPMYAMq6HnaZOepO5f0zZisv2/MxHFmDgLYmchF9g1aI8
-         MpQvlzCzhdOcqPJeSOGpJXzI0N76Yc3mQRmD3lSgUeZHMtP8uaWeq5nmdo1IL/8oP8sg
-         1d5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUT3M6ch9YaEYtiUVKidnzmQONTv2LKZ8yrXJecpbzqb6GgnqdV15RTjbx+71WwEBQT1H5guu8NeVP0P8J9FfT7ydXEk65RAsRBQrGN
-X-Gm-Message-State: AOJu0YyuQUaPagbC3ooJkYUnGDD+6REG9c2dQxhkw6fJK9uRBzHLQkxu
-	gKfBUDJFI4hEmWeCdDD7PDe76kpJ0v9r4d3taXGUVb4/oChAtEbyaML67p1S1hg=
-X-Google-Smtp-Source: AGHT+IFZ2Q+AkcV37TqF+QsvZ6J2I6gHwlMwj3NTq7zlAw3SR5/ehvU6L+ZpDtObyjgWCJAuX4BG7Q==
-X-Received: by 2002:a2e:2d12:0:b0:2ef:1f68:eae1 with SMTP id 38308e7fff4ca-2ef1f68ebe1mr34682991fa.17.1721636444239;
-        Mon, 22 Jul 2024 01:20:44 -0700 (PDT)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cb76a46dfcsm3186370a91.0.2024.07.22.01.20.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jul 2024 01:20:43 -0700 (PDT)
-Message-ID: <00714a65-953f-4885-9229-1990543c4154@suse.com>
-Date: Mon, 22 Jul 2024 10:20:34 +0200
+        d=1e100.net; s=20230601; t=1721636467; x=1722241267;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uO05PChGh3iOVl9QN4C/DTf4iIyJWKDSt2PZpVRmyXs=;
+        b=od/+Y0GodhmDq+qAKvWhq6T90+qaRoEE7uOHXM+Pm69t5zcWqTj2Mf8GJd90pgvi2K
+         0Dr9pKjJVbQKpV4jmU59g8lBs6T5IbILk1UyHB5i+YkTj1gIZNpKMScjpDCw5ns1mr63
+         vXXIhdHpSZVlQFrDyFbLxGT1NmHlVyQhrmx4Im7NFAD+nr6xcC5W9SZ1KGAjqCIEbLb4
+         G3Pesx4sLN1t7rWpArcnlTa7f+irpfL1vIN8RzvXRcsZyWLg/7NdDvcRhGpPl5zHTRzT
+         /tYfj10/mXvAvL/JyAB2uNj65qJC9wn8Dq3GINJ/V+eUVrCzvZyBhxKch5pOtZw7edh/
+         tQEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWaNfmbmLxFzEd9Vp3ytpAGQUI8wLaN3NgkppDBs6GNfiLRKvYH4TV9/YkvpbWP8FlWUbyWeUc27tQ6t9n8VuRiz+s4zqapggKtiToW
+X-Gm-Message-State: AOJu0Yz/yA47Ls6OJOjoUMHLGlofvAiNw/evLJMBY7fd2HEBHnYFpQBL
+	tPjrwhCFeyoj18m6NNRn288ErVrW7DGVshi2oeOmrfUwfb+0YSMepBjDjAOgmWQ=
+X-Google-Smtp-Source: AGHT+IFOYzs4W3Sj0Mw1a+T5H+CE0aw+VqAYln2wj9EwBWio131yafI6yp7GnSY6HSkLNUL0nx6ZpA==
+X-Received: by 2002:a2e:b8c3:0:b0:2ef:2f7d:c502 with SMTP id 38308e7fff4ca-2ef2f7dc5d9mr18337991fa.49.1721636466583;
+        Mon, 22 Jul 2024 01:21:06 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f01b6a196csm847621fa.61.2024.07.22.01.21.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 01:21:06 -0700 (PDT)
+Date: Mon, 22 Jul 2024 11:21:04 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Ekansh Gupta <quic_ekangupt@quicinc.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, srinivas.kandagatla@linaro.org, 
+	linux-arm-msm@vger.kernel.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
+	quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org, arnd@arndb.de, 
+	stable <stable@kernel.org>
+Subject: Re: [PATCH v5 1/2] misc: fastrpc: Define a new initmem size for user
+ PD
+Message-ID: <jbahzoz76s6nei2wlb5zuu3qeigji32hwghy2fm5sftsgcr7fn@hltr7aal5k6s>
+References: <20240722055437.3467900-1-quic_ekangupt@quicinc.com>
+ <20240722055437.3467900-2-quic_ekangupt@quicinc.com>
+ <2024072234-slug-payer-2dec@gregkh>
+ <607362f2-8ae5-46bd-a3a4-2d78da98b12a@quicinc.com>
+ <2024072227-purposely-swinger-86ad@gregkh>
+ <0d29ff01-9d8c-48b9-b845-3370222c4ff4@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/15] Implement MODVERSIONS for Rust
-Content-Language: en-US
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain
- <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-References: <20240617175818.58219-17-samitolvanen@google.com>
- <0b2697fd-7ab4-469f-83a6-ec9ebc701ba0@suse.com>
- <CABCJKueGRBdFfGW-cvOvqxc-a85GpxtwPmLdE_1RiAkNLrEg+g@mail.gmail.com>
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <CABCJKueGRBdFfGW-cvOvqxc-a85GpxtwPmLdE_1RiAkNLrEg+g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0d29ff01-9d8c-48b9-b845-3370222c4ff4@quicinc.com>
 
-On 7/15/24 22:39, Sami Tolvanen wrote:
-> On Wed, Jul 10, 2024 at 7:30 AM Petr Pavlu <petr.pavlu@suse.com> wrote:
->> On 6/17/24 19:58, Sami Tolvanen wrote:
->>> The first 12 patches of this series add a small tool for computing
->>> symbol versions from DWARF, called gendwarfksyms. When passed a list
->>> of exported symbols, the tool generates an expanded type string
->>> for each symbol, and computes symbol CRCs similarly to genksyms.
->>> gendwarfksyms is written in C and uses libdw to process DWARF, mainly
->>> because of the existing support for C host tools that use elfutils
->>> (e.g., objtool).
->>
->> In addition to calculating CRCs of exported symbols, genksyms has other
->> features which I think are important.
->>
->> Firstly, the genksyms tool has a human-readable storage format for input
->> data used in the calculation of symbol CRCs. Setting the make variable
->> KBUILD_SYMTYPES enables dumping this data and storing it in *.symtypes
->> files.
->>
->> When a developer later modifies the kernel and wants to check if some
->> symbols have changed, they can take these files and feed them as
->> *.symref back to genksyms. This allows the tool to provide an actual
->> reason why some symbols have changed, instead of just printing that
->> their CRCs are different.
->>
->> Is there any plan to add the same functionality to gendwarfksyms, or do
->> you envison that people will use libabigail, Symbol-Type Graph, or
->> another tool for making this type of comparison?
+On Mon, Jul 22, 2024 at 01:23:56PM GMT, Ekansh Gupta wrote:
 > 
-> gendwarfksyms also uses human-readable input for the CRC calculations,
-> and it prints out the input strings with the --debug option. I plan to
-> hook this up to KBUILD_SYMTYPES in v2. It should be convenient enough
-> to simply compare the pretty-printed output with diff, so I'm not sure
-> if a built-in comparison option is needed. Any other DWARF analysis
-> tool can be used to spot the differences too, as you mentioned.
-
-From my perspective, I'm okay if gendwarfksyms doesn't provide
-functionality to compare a new object file with its reference symtypes
-file.
-
-As mentioned, genksyms has this functionality but I actually think the
-way it works is not ideal. Its design is to operate on one compilation
-unit at the time. This has the advantage that a comparison of each file
-is performed in parallel during the build, simply because of the make
-job system. On the other hand, it has two problems.
-
-The first one is that genksyms doesn't provide a comparison of the
-kernel as a whole. This means that the tool gives rather scattered and
-duplicated output about changed structs in the build log. Ideally, one
-would like to see a single compact report about what changed at the end
-of the build.
-
-The second problem is the handling of symtypes files. This data is large
-and if one wants to store them in a Git repository together with the
-kernel source, it is advisable to first compress/consolidate it in some
-way. This is trivial because these files typically contain many
-duplicates. However, the issue is that to feed the data back to
-genksyms, they need to be unpacked during each build which can take some
-time.
-
-I think a better approach is to have a tool that can be given
-a consolidated symtypes file as one input and can compare it with all
-new symtypes files produced during a kernel build. An example of a tool
-that takes this approach is the kabi Python script in UEK [1].
-
-A few months ago, I also started working on a tool inspired by this
-script. The goal is to have similar functionality but hopefully with
-a much faster implementation. Hence, this tool is written in a compiled
-language (Rust at the moment) and should also become multi-threaded. I'm
-hoping to find some time to make progress on it and make the code
-public. It could later be added to the upstream kernel to replace the
-comparison functionality implemented by genksyms, if there is interest.
-
-So as mentioned, I'm fine if gendwarfksyms doesn't have this
-functionality. However, for distributions that rely on the symtypes
-format, I'd be interested in having gendwarfksyms output its dump data
-in this format as well.
-
-For example, instead of producing:
-
-gendwarfksyms: process_exported_symbols: _some_mangled_func_name (@ XYZ)
-subprogram(
-   [formal parameters...]
-)
--> structure_type core::result::Result<(), core::fmt::Error> {
-   [a description of the structure...]
-};
-
-.. the output could be something like this:
-
-S#'core::result::Result<(), core::fmt::Error>' structure_type core::result::Result<(), core::fmt::Error> { [a description of the structure...] }
-_some_mangled_func_name subprogram _some_mangled_func_name ( [formal parameters...] ) -> S#'core::result::Result<(), core::fmt::Error>'
-
->> Secondly, when distributions want to maintain stable kABI, they need to
->> be able to deal with patch backports that add new members to structures.
->> One common approach is to have placeholders in important structures
->> which can be later replaced by the new members as needed. __GENKSYMS__
->> ifdefs are then used at the C source level to hide these kABI-compatible
->> changes from genksyms.
->>
->> Gendwarfksyms works on the resulting binary and so using such ifdefs
->> wouldn't work. Instead, I suspect that what is required is a mechanism
->> to tell the tool that a given change is ok, probably by allowing to
->> specify some map from the original definition to the new one.
->>
->> Is there a plan to implement something like this, or how could it be
->> addressed?
 > 
-> That's a great question. Here's what Android uses currently to
-> maintain a stable kABI, I assume you're doing something similar?
+> On 7/22/2024 1:09 PM, Greg KH wrote:
+> > On Mon, Jul 22, 2024 at 11:42:52AM +0530, Ekansh Gupta wrote:
+> >>
+> >> On 7/22/2024 11:28 AM, Greg KH wrote:
+> >>> On Mon, Jul 22, 2024 at 11:24:36AM +0530, Ekansh Gupta wrote:
+> >>>> For user PD initialization, initmem is allocated and sent to DSP for
+> >>>> initial memory requirements like shell loading. The size of this memory
+> >>>> is decided based on the shell size that is passed by the user space.
+> >>>> With the current implementation, a minimum of 2MB is always allocated
+> >>>> for initmem even if the size passed by user is less than that. For this
+> >>>> a MACRO is being used which is intended for shell size bound check.
+> >>>> This minimum size of 2MB is not recommended as the PD will have very
+> >>>> less memory for heap and will have to request HLOS again for memory.
+> >>>> Define a new macro for initmem minimum length of 3MB.
+> >>>>
+> >>>> Fixes: d73f71c7c6ee ("misc: fastrpc: Add support for create remote init process")
+> >>>> Cc: stable <stable@kernel.org>
+> >>>> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+> >>>> ---
+> >>>>  drivers/misc/fastrpc.c | 3 ++-
+> >>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+> >>>>
+> >>>> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+> >>>> index a7a2bcedb37e..a3a5b745936e 100644
+> >>>> --- a/drivers/misc/fastrpc.c
+> >>>> +++ b/drivers/misc/fastrpc.c
+> >>>> @@ -39,6 +39,7 @@
+> >>>>  #define FASTRPC_DSP_UTILITIES_HANDLE	2
+> >>>>  #define FASTRPC_CTXID_MASK (0xFF0)
+> >>>>  #define INIT_FILELEN_MAX (2 * 1024 * 1024)
+> >>>> +#define FASTRPC_INITLEN_MIN (3 * 1024 * 1024)
+> >>> Meta-comment, for a future change, why not tabs to line things up?
+> >> Sure, I'll add a comment.
+> > I didn't say anything about comments :(
+> Oops, sorry.
+> >
+> >> Should I line up all the MACRO definitions? If yes, should I send it as a separate patch?
+> > As I said, yes, for a future change.
+> Noted, thanks.
+> >>> How was this tested?
+> >> This is tested with fastrpc use cases available in hexagon SDK:
+> >> https://developer.qualcomm.com/software/hexagon-dsp-sdk/sample-apps
+> > Do you have regression tests that attempt to check the boundry
+> > conditions and alignment here?
+> For most of the test cases, I used the fastrpc lib:
+> https://github.com/quic/fastrpc
+> 
+> This library is taking care of passing proper shell size which is within the boundary for
+> all the platform that I've tried.
+> I'll try creating and running some regression tests for this change.
 
-Correct, (open)SUSE kernels have placeholders in likely-to-change
-structs which can be used for new members. Or if no placeholder is
-present, it might be necessary to place a new member in a gap (padding)
-in the struct layout.
+Existing userspace implementation provides an example of good behaviour.
+Please consider implenting and publishing 'bad' behaviour testcases
+which make sure that the driver doesn't break if it gets passed 'bad'
+data.
 
-> 
-> https://android.googlesource.com/kernel/common/+/refs/heads/android15-6.6/include/linux/android_kabi.h
-> 
-> If using unions here is acceptable to everyone, a simple solution
-> would be to use a known name prefix for the reserved members and teach
-> gendwarfksyms to only print out the original type for the replaced
-> ones. For example:
-> 
-> The initial placeholder:
-> 
->     u8 __kabi_reserved_1[8];
-> 
-> After replacement:
-> 
->     union {
->             u64 new_member;
->             struct {
->                     u8 __kabi_reserved_1[8];
->             };
->     }
-> 
-> Here gendwarfksyms would see the __kabi_reserved prefix and only use
-> u8 [8] for the CRC calculation. Does this sound reasonable?
-
-I like this idea. I think it's good that the necessary kABI information
-about an updated member can be expressed at the source code level in
-place of the actual change, and it isn't needed to feed additional input
-to the tool.
-
-[1] https://github.com/oracle/linux-uek/blob/dbdd7f3611cb03e607e156834497dd2767103530/uek-rpm/tools/kabi
-
-Thanks,
-Petr
+-- 
+With best wishes
+Dmitry
 
