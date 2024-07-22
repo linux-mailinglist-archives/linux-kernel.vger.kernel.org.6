@@ -1,105 +1,99 @@
-Return-Path: <linux-kernel+bounces-259318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C57D6939409
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:12:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F362939411
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A7A61F21D98
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:12:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3B96282AA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2756F170829;
-	Mon, 22 Jul 2024 19:12:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ADC6170826;
+	Mon, 22 Jul 2024 19:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HGzII5Cg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AT9BCsxh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63563171090;
-	Mon, 22 Jul 2024 19:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582FB14287;
+	Mon, 22 Jul 2024 19:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721675549; cv=none; b=kZgWGJIFriBUO1BCbGSAxajlRN5CpaeCTrOuNsp5Uh728kNycVRo0NraBAi63ct3zBFGNMh9nk2+pqqZm+8qfscMp08N2znMWcCMQvgOtKIIgh1cbGypyvSjTydqHZbg1w7bBtQosF7SDg0MqRfNFSh5EjRa/FCfGbjdt9166SU=
+	t=1721675758; cv=none; b=uDSLoz4zMfCfnDvARwqSnRjYfce+Li8HKItDSNiIohiwek6Ri8qbmPS/5WyudVRMlFr69bCcxpawlbL05JKlS/yNUhV5BknKD8Xn2jd+GdX5670ZqWyuyknOOzEKeiKyP5xK4MJ3AvV9Q6pqneQvcamWhpZL1HUFDOwRxzsRIp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721675549; c=relaxed/simple;
-	bh=tt7nBCTkE08woPcGBlj1kAwJ+cvv//ghyZPhMNwcEfU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=JbhnIjy937f3CoDHoIjC2wUZqO9LAQNBTHijS8i5V9Crp0fvWCeY45dJpAZ9X1j/dYRs3v6FnWdE0sAgltSYKOvQUeyqzfcRMogw0QCf/Ivge2sweRnaf9AQJ8X/z3+prZnOVZV9AT4uNFZIiC+Pq7uRGoQC7ezrrckk3U2OsUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HGzII5Cg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78164C116B1;
-	Mon, 22 Jul 2024 19:12:26 +0000 (UTC)
+	s=arc-20240116; t=1721675758; c=relaxed/simple;
+	bh=WVY+AkD7g4G+jyPp7Le/5xFjdMjntzVxcHnRY57NjqA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aotuc7naMJpb5+qpMtNl//Phh6j3Rv5ypBHz4Okg6eHD/GLQyt5KHexHp5NaZB137e0tRbR0wqAIN5YwpalMcHx7oNieMl24xAksFR4hyJp31Q/56JHiY9v0n6KwgnCywMUGSeM92ZCWk8ZcacIWTwGYFwIH6bbBso5SQmej7vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AT9BCsxh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8E82C4AF0B;
+	Mon, 22 Jul 2024 19:15:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721675549;
-	bh=tt7nBCTkE08woPcGBlj1kAwJ+cvv//ghyZPhMNwcEfU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=HGzII5CgcYvIgbwkJMWOQ0TiW3NE6s9srOT1idXfehlpzwwssns4xBuxOE3MgAuPN
-	 rxXGJA42q9jiiJ6mDhv1KuKgKRrrMiFBLQ7hr+Exr0tUdKzQdIH2/fYR6qvNdMCrwc
-	 oAbSsIeOm+bYaLzuGP8JSCDggt1sZ9mPOWZ/uuu3gS4UKDgcj6RYfMlkQK04qFVTRv
-	 o0wiB8Ao0nvJHTq5Nc5ByY7gR/VCoBvF2ecRaXvxvmjcjhA5oRi+GX7eJE1W8oSH6h
-	 iDQoOA5DCd28x/CxhyukicKypcGrCe7GWurx4Iw23iZu8ntd4gEUmUvvwp/koaI+u1
-	 8vvPibwzOA68Q==
-From: Mark Brown <broonie@kernel.org>
-To: Mohan Kumar <mkumard@nvidia.com>, Sameer Pujar <spujar@nvidia.com>, 
- Arnd Bergmann <arnd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, linux-sound@vger.kernel.org, 
- linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240719074831.3253995-1-arnd@kernel.org>
-References: <20240719074831.3253995-1-arnd@kernel.org>
-Subject: Re: [PATCH] ASoC: tegra: select CONFIG_SND_SIMPLE_CARD_UTILS
-Message-Id: <172167554618.83479.16434509879831157082.b4-ty@kernel.org>
-Date: Mon, 22 Jul 2024 20:12:26 +0100
+	s=k20201202; t=1721675757;
+	bh=WVY+AkD7g4G+jyPp7Le/5xFjdMjntzVxcHnRY57NjqA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AT9BCsxhwLic0XzDg1cFCmhPnvAlmv6Iv8hSVp/cU15okDlds/6elXYgD7aIMvHgM
+	 /dXXR/bYhVG4Ebx8Rv8RdEwdWQVL51pDsJgf6b8NQyhVNhM2XKVEqtjgiInfQEeQSC
+	 xakkFdUyrOiwOZfxXv0wVXhwZvy2/cAv6Vom4LdyjB78qILhLdAm+PuEyqJwfOY37y
+	 CAOJzClwpUfvYwdVGLjQYCJ7jjIW2ueJkje+crtZy+RzFlZ0khgF6NAZsf+Ccx/BzL
+	 neHBBxeo0BR2eh/wbgJkjzu8MC93vowO5pPOsHqeZHYhYthBCkT2aZXgEQlkKoAsEs
+	 AQnB/xCKmrkTg==
+Date: Mon, 22 Jul 2024 20:15:49 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
+ ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
+ biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com,
+ semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 07/10] iio: pressure: bmp280: Use sleep and forced
+ mode for oneshot captures
+Message-ID: <20240722201549.709dc107@jic23-huawei>
+In-Reply-To: <20240721221156.GD325365@vamoiridPC>
+References: <20240711211558.106327-1-vassilisamir@gmail.com>
+	<20240711211558.106327-8-vassilisamir@gmail.com>
+	<20240720122802.2c899ee7@jic23-huawei>
+	<20240721221156.GD325365@vamoiridPC>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
 
-On Fri, 19 Jul 2024 09:48:03 +0200, Arnd Bergmann wrote:
-> This I2S client driver now uses functions exported from a helper module
-> but fails to link when the helper is disabled:
+
+> > >  
+> > >  	.trigger_handler = bmp580_trigger_handler,
+> > > @@ -2503,6 +2721,16 @@ static int bmp180_read_press(struct bmp280_data *data, u32 *comp_press)
+> > >  	return 0;
+> > >  }
+> > >  
+> > > +static int bmp180_set_mode(struct bmp280_data *data, u8 mode)
+> > > +{
+> > > +	return 0;  
+> > Add a comment on why these are stubs.  It's in the patch description, but
+> > better to have it recorded in the code.
+> >   
 > 
-> ERROR: modpost: "simple_util_parse_convert" [sound/soc/tegra/snd-soc-tegra210-i2s.ko] undefined!
-> ERROR: modpost: "simple_util_get_sample_fmt" [sound/soc/tegra/snd-soc-tegra210-i2s.ko] undefined!
+> I didn't add because as you can see below there is another function exactly
+> like this one that doesn't have one. Should I add also to the other one?
+Hmm. Maybe? :)
+
 > 
-> Add a Kconfig select line to ensure it's always turned on here.
-> 
-> [...]
-
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: tegra: select CONFIG_SND_SIMPLE_CARD_UTILS
-      commit: 83340b855d222f257354afd272dc8d315fecc3ee
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+> > > +}
+> > > +
+> > > +static int bmp180_wait_conv(struct bmp280_data *data)
+> > > +{
+> > > +	return 0;
+> > > +}
+> > > +
+> > >  
 
 
