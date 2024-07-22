@@ -1,203 +1,239 @@
-Return-Path: <linux-kernel+bounces-259237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C5593930F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:18:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C7AD939313
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:20:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED044282786
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:18:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C35761F224D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A934416EB6F;
-	Mon, 22 Jul 2024 17:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A1516F0D0;
+	Mon, 22 Jul 2024 17:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cs-soprasteria.com header.i=@cs-soprasteria.com header.b="F7xbjGdX"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2050.outbound.protection.outlook.com [40.107.241.50])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CI1ha6sg";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mozUhsV3"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D32A16DC15;
-	Mon, 22 Jul 2024 17:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721668702; cv=fail; b=dMxK2TKbDF+KAqiO5vCQc+2rtajKbF7YMf5Dlu0xsfWsu+VxHud87GfOdppi8YJDODwUKdytTL0yg6uWvRuzrkV32bcYjXytpGQ4Jppx3yWwrXnBzTiagHEIj7iWv0IOzKc1qtecdbhMSq0YP6TNF47ml/i5yd2xQbX4W7fctdQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721668702; c=relaxed/simple;
-	bh=mjH1FHfYmVaA1oR4QA2H8X0pn4SFPdQ02aBXZwohLtw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Q2Wdp1sWlfH+uDjRji8yfRJvAaVa1BDRd0rIIm+vhEreCMhL1CFAeWN/fAieuH0iMJG8EEpXcpYdX2gJkbg9r5M4coWhAK4qAR70AZGNR8jzRHchLOiqIh9MAmD0iUdD5pnyCCg/rNPbv9Te7arHHDpiAgmGiIqO4VlT7MtjpbI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cs-soprasteria.com; spf=pass smtp.mailfrom=cs-soprasteria.com; dkim=pass (2048-bit key) header.d=cs-soprasteria.com header.i=@cs-soprasteria.com header.b=F7xbjGdX; arc=fail smtp.client-ip=40.107.241.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cs-soprasteria.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cs-soprasteria.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=p/qTf5MFsjVthciEMNvBjuUzo+orBKHGE41So7yyaQXSghcsxG8CaOmjTiDzvxezVtLOuBEAfAw7CdVZDjxcI/jB3WO5D8eyreK2PjAe44zhR7rfjJNSxtA/8EbzNwpk4oSJiJfXigjfoxVB3NYys54UgKYMXEqJacxmyCS6RGLZwahUSnTfsgtBvqjVmKPGjbuNLmtwbkgQyl8G0hHwUVH2NSDZLtQp358Eu8y3psHrNGqr6VoJBN6RJqsHqGSps40PJxaouSrF3WFugo5Dvms4cp9Dc9jIUXGYMNUQzqWVl58OkJ6b8kgYnhnCtdUvC8A6YpuJbrMyycWxpo/k+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mjH1FHfYmVaA1oR4QA2H8X0pn4SFPdQ02aBXZwohLtw=;
- b=PNpW2wxa/6kZmQ4x+smNTRJZbLzB/ZJBLtvKnl4vQfao3t6ukLd4Dz7gRwn8+flvnhCRWKboAv0mqc96fmS4dOqtNZrc+DPioLa3v7di6t4wQx3cS/t/ZRs/ce5ujupFz6ycW0IgLtdDJJ1lbxiXm6XWB+LUTCygs1/5vg6Rf9vXvYPMTbCwFFLugaUnWha55vdR6aFxBfMDvCw/fp+9x2OOwXXZaj7WTYbhJ/MpChn4mcXLxesIMUQG0Br3KKyXDAQDIh4FLx54hPZZWAw57d9Y7t5fjri79uhQ82ZWaAjekPmMk3Gt1lGWl6zZjGI1Gz7U+T5LEWhfAUvekAW9eA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cs-soprasteria.com; dmarc=pass action=none
- header.from=cs-soprasteria.com; dkim=pass header.d=cs-soprasteria.com;
- arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cs-soprasteria.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mjH1FHfYmVaA1oR4QA2H8X0pn4SFPdQ02aBXZwohLtw=;
- b=F7xbjGdXyG9dWo+Hr0xqGYZFsXQ24OTvX6yJch4KpKhpgcMKjHRwPOVllyfRU1ActBdJjSrmW3LqDNa6ccGu11tz1CAHlEdLed0zTxQ0ty1AtghFsaDijmvh6I0r7X2t4WNprtbEl0Q8Jf+ZmwarnpK9d/JRxixiMohLKsElExr6ElhJqLYdalqHLw8K9e6JrdBKkUdQsc1Gsoabuqd/eEapLrXatXxE1jXl0u2SKTQktnpOCVgD/y3BUdiUkmO/IlmcA0FHgZHGgeUcRvgFreviU2YwCTmsyKBfXJHk9FDIpnR58rG6z9EbXZ1YXNcHnJ7u6Heo4iHmvlIeyiP3tQ==
-Received: from AM0PR07MB4962.eurprd07.prod.outlook.com (2603:10a6:208:f3::19)
- by GV1PR07MB10167.eurprd07.prod.outlook.com (2603:10a6:150:200::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.9; Mon, 22 Jul
- 2024 17:18:17 +0000
-Received: from AM0PR07MB4962.eurprd07.prod.outlook.com
- ([fe80::6724:2919:9cbb:2bb2]) by AM0PR07MB4962.eurprd07.prod.outlook.com
- ([fe80::6724:2919:9cbb:2bb2%5]) with mapi id 15.20.7784.013; Mon, 22 Jul 2024
- 17:18:17 +0000
-From: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds
-	<torvalds@linux-foundation.org>
-CC: "linux-mm@kvack.org" <linux-mm@kvack.org>, "mm-commits@vger.kernel.org"
-	<mm-commits@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] MM updates for 6.11-rc1
-Thread-Topic: [GIT PULL] MM updates for 6.11-rc1
-Thread-Index: AQHa27jCEoghGShY3EusEEHWOlb2L7IC/tUA
-Date: Mon, 22 Jul 2024 17:18:17 +0000
-Message-ID: <8a6943ab-7536-4d92-b5ca-76de96e9ac85@cs-soprasteria.com>
-References: <20240721145415.fbeb01a853962ef91334f3d1@linux-foundation.org>
-In-Reply-To: <20240721145415.fbeb01a853962ef91334f3d1@linux-foundation.org>
-Accept-Language: fr-FR, en-US
-Content-Language: fr-FR
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cs-soprasteria.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM0PR07MB4962:EE_|GV1PR07MB10167:EE_
-x-ms-office365-filtering-correlation-id: d5c54e43-6878-41a0-5b37-08dcaa7246d0
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?UFA5UWV1aWMrelUwR3d2cVFGWlhWK25uMVdUbmhXcWNQOGpTNDN5S2M0NEhQ?=
- =?utf-8?B?Q2lqdVJvQTZjVXJiZys2WDZwS0ZHSDh3eHltMVY5dWJoelNmTFE3a0NqSDA4?=
- =?utf-8?B?Mzc5RThrU3M5dE9DWmx6MUVtZzZhcW1tZFBzSDd5NmJkNndKMkFnU1J0aHdR?=
- =?utf-8?B?aVpNeWxzQStYR3lybThLRHRqaUdsS2Foc040R2M5Q0Y5b0lIK25ZTXg5Lzgx?=
- =?utf-8?B?NEx4RFVsU3N3UFlnSG10NkQ0bUl0ZzJzOUtIRVZmZlVMSjJKOUpOdEpQTHpD?=
- =?utf-8?B?ZUN0NTZ2aVQzdGV5bjg1UjRzbHp3cllRY09PdmZkYXFzMzdwQnhvUGlqRExQ?=
- =?utf-8?B?TXVrYXp3RzdFdjlUcDZXOEtiamhqdTJReEt2bzltTG5uVDFJSmJ5a0xzWnRq?=
- =?utf-8?B?R1dXN1RFa1hzbGZ3NUdhSzMyY1lTOWdVZFdhcTJMbUtJTWJINi9VMDJiM2hK?=
- =?utf-8?B?cFN5dHJTbzZUN0x4YmxCUkJMMm81dzQ1OEZRcEZrRmNlSTl0ZnhtWmFpQzVX?=
- =?utf-8?B?UFVvV0VxNm5QTVlFWEh3Mm5SeGswWHExVmFUb2F1OEE0WnpBa0dEaG9zZzAz?=
- =?utf-8?B?ai94amd3ZjRjbDNzWjVOVWVyNUFiQkFwVUJFRXZWcjNYc3VDUUw5cXEzQjNO?=
- =?utf-8?B?YVJMWkxPdVF1TzcxVzFXM2RZNGp1Q29oWlM5Y3kwWEhPVlVPWVRidmk2U2c3?=
- =?utf-8?B?dEphMFUvTG8wMDVpT2lIaUhCaHJ2akdoMzZxRkZTTlV4dWpXVERjTEdZMDdZ?=
- =?utf-8?B?bTNOZnUxdC81VzdJc3EvMUZBWHFLUjZYVko2M0JabkhJS3NLMncrOFVRMklQ?=
- =?utf-8?B?aEtuMnlFaHR2RVJrdDlIcG1aSnNudEtjNmJTb0lSVCtlM282eVhtdWx1aFJO?=
- =?utf-8?B?RWhsTlFrUmtXbnRxUGpXYkR0MjlxMVBXZmI3d1ZIbGxQMHJmOGVqc3RESlZv?=
- =?utf-8?B?MkNudlNDWjBJS2NBd2xjdEQ3V1NvS1ZnYjhuWVA1NUJUMHQwZ0Z6QVVRYTlS?=
- =?utf-8?B?S0NyT0dUYXZILzJtNjhWSzExb0ZiWjJ3MDQyTlRDRlcwQkxCQlEvTnF1V2I3?=
- =?utf-8?B?YXhqZHo4WU5VK3UzOFgzUU5PRVBRMENMeVdxanRTRVZQaXA0emw4OHAyVU1x?=
- =?utf-8?B?bW9oM3N6R05tQTdzd3NUN1FmeEhRa1FWdGo3OVpKcHFZWXJpT2R2czlJWXov?=
- =?utf-8?B?ZGNFcCtHODl0WmtUM2hMTzh3N3BMYUVUc1ZSZkNaa0JVTG41c254TmdzaGIx?=
- =?utf-8?B?bzFLV2JKYUtTVWQzeWZ6NnJqUXBCK1JTVmxHWUFsakUyV24vZlJFMGFSRlBl?=
- =?utf-8?B?SW8yaDdISUxVQmloSERqeG84d3MwbTZ5VEM0bWg3OVI4b2kzb25sYW1tQ08x?=
- =?utf-8?B?SVpzQWZHYTNsL3JUU29oUUtkTXBPaWZBbUhxcjZSWlRKb29RTnl5UHJkcFo2?=
- =?utf-8?B?ZWF4cHpNVEM1MXBMcnZ5ZE14dFIvSFhBZ055bWcza1U5RUxSYzhVblRoY2RT?=
- =?utf-8?B?VmFkRTNJVWVCcklvaDlDaEJOVWlTMCtteVdRNGZYVGJJaTR0K0ZTcDBReExN?=
- =?utf-8?B?R0tvRXZrbDNHREdWRFpKOXdsWG9iSUVLdUxPbnphclNiWXUwMndCY2I4cDAy?=
- =?utf-8?B?V1UyeW9BN0NIaVZIM3pOVjRUcklHc3E1R3B0MWpvamRHTnBZTXFmRTRPTWdH?=
- =?utf-8?B?enM1RmNGYkNGSUkzRmExbUpkekg0aklpcjlHQitsZFlFeWM0WnFlVGkyZU54?=
- =?utf-8?B?TFo2NGszSkp0RzlFQlBxNzBCVGJJK0lvcnVVODVmbUVqVGpjUmtTYjRXWXNL?=
- =?utf-8?B?MitjU1M4MW9EaS9uZU9Wd0NOOUVzQnc0Nzd2bXZxbCtVTlRRQ2NlcDcvN0s0?=
- =?utf-8?B?VDhFaDZXNzNBUks4L1dBOFRjcnhiQnRPRU9Na3ZPZWVRTlE9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR07MB4962.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?WnNqaWRYMzYxNWhkRWpUOFJ3QmVxajFwQkVnUWtFbGlQMTY5aUJiVHYrZjhy?=
- =?utf-8?B?VkV6SDMxUDVLcW95WjZhN1pwR0ZJdUV4QWVSVFFJdjdxZkRIV0lhM0NwQ3NT?=
- =?utf-8?B?UmNMVmVvQTBrVnNnMmFKYUVFa3puQlRsei9WcWdqN0tRYzBkSHgrMTMwSm43?=
- =?utf-8?B?NjlBNDg5K2lvSEVFTDZCSmVSbS9SdHk5UXlQdU5tT0M4VVhSankzZXJHNS96?=
- =?utf-8?B?cUNDWjNMZ0d3amM2c256OTBLcE9ETlB4TzcxNlJkdnFydmVjcXU2dFIwQnB4?=
- =?utf-8?B?Q1BieGhKZUVaeHAvZXNYU21PcXNmTVhBd1Z1M1R0Zy8rQndwd3ZMR1VQTkJG?=
- =?utf-8?B?cDkwZEVyVVh4SUYzVU05WlFMT1NYYjQzWFk3bTlNYnZneks2TGptOVpTVmJC?=
- =?utf-8?B?T1ZmdnVOeG8yZFo2c2wxeXlyNjhKeG13M051dDEvellpUEZnNVZXcEhjY1Rq?=
- =?utf-8?B?SHRQQ3VqNm9mV29hTG9iWDI2V0JOYlhQcDA5NG90bk5kd2d5U1EzL2FqUmMy?=
- =?utf-8?B?YnhkOWdGZDVUQmxuSEg0amtSdW9UYkZPQ0c4b0J1eWtmclZ4NG42NkVxWThG?=
- =?utf-8?B?NStXTUZVZFJNZXk2M1B0ekxQWTRVQmNwYWRUTUU1L2k0UitSbVN1RUZqV09O?=
- =?utf-8?B?aHZqUDlmVzNqM24vOTFpMFQwOHl5aFlXSk9qNllVTGRUc2UzeWx4bkdTb0Zq?=
- =?utf-8?B?ZmRoNTlMaVFnSVQ5bnJ3bjVpQ3BiQlFsRXRGVUgvekJ6aFIreTk4NzZUclpM?=
- =?utf-8?B?UnAwMGNRdVpiMm9LV0lmaTdtTEMxTVNuYmlqWHpkZ0F1SEZBS1VKVXVCUkRJ?=
- =?utf-8?B?RkwvclFnRW1KSmk3SjRSczRZMSt3UFNSSlRoTDlMQlZYWVp6d0lQRGs1TCtW?=
- =?utf-8?B?RFM2MGhHRG5DKzk3dGlZWkNkai9SdTVmOG5NRHo3N1Jya0I1cmRQUkptYWZ4?=
- =?utf-8?B?Mk1jRlF2ejQ1WTRDakN2U0FuK2Y1ekFIT0t2TDlvbUlHOUhKcHp0L3pESk5y?=
- =?utf-8?B?VjB1OGZUbWcyU2RMMHpGUFAxTi9JR2VydWxXME5XRDFlZ2g2NktYVVJ4eEcv?=
- =?utf-8?B?Mm9DMGV1cGczZTZEWmR3WWNIOWJIbnNhREY4dU51V21SVlI0c21MUTZWMlJY?=
- =?utf-8?B?U1Vac0krSE5aMXZtU1JhVnpkWUdXQzhJcEpSZjQ3RW9meHphbkxEQjFEODdo?=
- =?utf-8?B?UmtCc0hWbDhFKzhUb2FLWURhcXl1SXpDWGF6ZFhxNnhYdFg1RjNKTWxyY3NX?=
- =?utf-8?B?dm1ZV3ljcnB5dWRNcTlpM284QTE0Mmh1ZWlTME5DdmdzZjlDUElhUnovdGRG?=
- =?utf-8?B?OTc4c2VYa0Qvbmc2bENiSmdFN0pYeUpQMzczYlRhQURRR0c4RGVrNzJBSkor?=
- =?utf-8?B?S2dESWF6NFpDT3Z5RDE0VG5jTEpoMHpLNnBJelByMS9CNHpoVndqdWV1TUtQ?=
- =?utf-8?B?dzFKbTlrNVloTkFMd2k0TDd2ZU53dDV2ZlB3MHRDVVJRcVZ3ajVqWXpHTjdV?=
- =?utf-8?B?dHAxNE9Vd2dQdENuTS9VRVRoYmttL3krSXgvMzVUR2FuRjJLNXZkL3g4cjFv?=
- =?utf-8?B?c1FkbFVlbURGV1ZMS3N5Y1BOcWliOW9HMFdyNWtiNThNaXlHenZIVDNjejE5?=
- =?utf-8?B?MDJ1OGhXSUpHamF4RDlsL3ErYTlqbXNneWJ6NVVQeGkzM3RNY2ZNVDRwR3FS?=
- =?utf-8?B?bGd3eEMzeEpjbUE5K3dtSG1qMmw0QS9xdzllMkNZQ3dSSlNCQkY4d0hNMnZ6?=
- =?utf-8?B?bk9zbThhdUNFaUZHWVV1aisxdkFSd2FuWW9lZG9abVhDUUc0aGRTWWl0Y0JF?=
- =?utf-8?B?UWNlQVJOSzJ4d2I2UmgxUWwvTlRGQTFrZUVLd0lLYVAxRkt4WFZZYk1GYmZF?=
- =?utf-8?B?QU8zMFVDMFB1RDVIbnc1eit4WkV3V1J1MWh6d2dnL1ZDVnFNZEVHemhHVWVP?=
- =?utf-8?B?S01nZ2tsOEtrTUFodTN4NVNlZVp6S0pSNUxJUXVyaWhOYzV2ZGdaNkEvVFo5?=
- =?utf-8?B?RlJ0T1c3dWVnaGR2YmlqNTUrL3BRNFpzTVNuT281ZkJmWHR5eXhkY3dkeFVU?=
- =?utf-8?B?ZklMcmgrYkRCNy94M2swYm5EMjhKdFA3NUpJdnN0cDkwU045YWg3K0tkd2dG?=
- =?utf-8?B?Zlp0azJuaysrMGtQNGlBNEt6WjRrTTlsVTlDM3djV1JURytVSENJZ0dVRnI0?=
- =?utf-8?B?TUlkYUd5bnl1TEk0Rm1OaStOZlc4YXVZVWtDanUwbCszdEhzK0dIZU5uaUJU?=
- =?utf-8?B?MVYxa0llNUVGRkxEQ3dVbXdjUlB3PT0=?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3496E2057BEEAE499DF13813F4B5485F@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399E916DEC9;
+	Mon, 22 Jul 2024 17:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721668789; cv=none; b=cw1TsvYzkY3nc08l/APhhy2Iee2lLCwmpeAssl+FkBzkIQVmolbUolDp5RRfIRvzNgRzLHPsBaUlOY+6D8Y5ozgIruesbZdQ7T7bnCoI0cZSJHXaBlz9KCGmoTNMJfNyP8tUipuAfDU4ywjPPYc0Kzf25HrUEZQXNBBYjSfCLmk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721668789; c=relaxed/simple;
+	bh=S24rbS1dBhsPsAQ26UaebUrV3Y8oAluEK00ubLfEFAc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ACf2Y6BvdDCz2wBfSNsGUNkid4eRaWLvqVp/FdXDmSiDbzc9SRQocM4QVJX6XAb4pkRL25UIeSeKu2eRY+4saIZX5ZzBTnBrV9zk7zMgbtM50P7bHRHNVo1hGOKUxaymfhYM107rEu3yd9JsS6pfWiY4tn6rTko6a1QU1TnCvdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CI1ha6sg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mozUhsV3; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1721668780;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/zuXBjx2k6ssMbDQrerlXcnzbXlUZ31BP+oqNurGDpo=;
+	b=CI1ha6sgzLA9v/lPInPoUWs+9Kt93Vrhp33sLH75LxlH9az92Rrw1EqLwoYR1uAgCYeT0q
+	ctXuS1TSH5+mrMtbk/OLbd1IXd1XQxYIrfYrL+rieVs53KUc13SH6YvZpyGKgfP25Rn1VA
+	kxIl7ypu1x2qLjm/F/TfsWneVkUQq85ebK414rPOsh7JaGVlHXK4/XFJz8ngrr6T9CuquK
+	ypXALdGhtgqgN4zHGlcWTPWF7oGeFSk4aRhkEuRd1FdtiqNx0x9nP7c2r/Uc1BXago0hUi
+	DlWbiVLJJoZPSA/0rvCL6dQmQSjMjJugwpMOYeDh2KiOkFo42w8lr8N3haSGbw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1721668780;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=/zuXBjx2k6ssMbDQrerlXcnzbXlUZ31BP+oqNurGDpo=;
+	b=mozUhsV3hJPWAgpEE9KsBfbLiSHpbgwG9u1Ugg/tJzdPQBhf71I3eR7rEOEUBqdQmy6pH0
+	qQiexVKWPabvrWBQ==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	Jiri Slaby <jirislaby@kernel.org>,
+	linux-serial@vger.kernel.org
+Subject: [PATCH printk v3 00/19] add threaded printing + the rest
+Date: Mon, 22 Jul 2024 19:25:20 +0206
+Message-Id: <20240722171939.3349410-1-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: cs-soprasteria.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR07MB4962.eurprd07.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d5c54e43-6878-41a0-5b37-08dcaa7246d0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jul 2024 17:18:17.0671
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8b87af7d-8647-4dc7-8df4-5f69a2011bb5
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: TggEEXXFc6y3hakUgV4fVQyAOdZOF8BLzX6TFE/mAr0lAl2SVy2Vu9hiOu7zqW7pzU+Yi3YvpI7CivPpCYF4XYswDl2gBbmkhHnYaW9ACedvDgoT+muMJZc6UXPAyOEx
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR07MB10167
-X-MS-Exchange-CrossPremises-AuthAs: Internal
-X-MS-Exchange-CrossPremises-AuthMechanism: 04
-X-MS-Exchange-CrossPremises-AuthSource: AM0PR07MB4962.eurprd07.prod.outlook.com
-X-MS-Exchange-CrossPremises-TransportTrafficType: Email
-X-MS-Exchange-CrossPremises-SCL: 1
-X-MS-Exchange-CrossPremises-messagesource: StoreDriver
-X-MS-Exchange-CrossPremises-BCC:
-X-MS-Exchange-CrossPremises-originalclientipaddress: 2a01:cb16:46:4387:4f42:54b0:22d0:309b
-X-MS-Exchange-CrossPremises-transporttraffictype: Email
-X-MS-Exchange-CrossPremises-antispam-scancontext: DIR:Originating;SFV:NSPM;SKIP:0;
-X-MS-Exchange-CrossPremises-processed-by-journaling: Journal Agent
-X-OrganizationHeadersPreserved: GV1PR07MB10167.eurprd07.prod.outlook.com
+Content-Transfer-Encoding: 8bit
 
-DQoNCkxlIDIxLzA3LzIwMjQgw6AgMjM6NTQsIEFuZHJldyBNb3J0b24gYSDDqWNyaXTCoDoNCj4g
-DQo+IExpbnVzLCBwbGVhc2UgcHVsbCB0aGlzIGN5Y2xlJ3MgTU0gdXBkYXRlcywgdGhhbmtzLg0K
-PiANCj4gDQo+IA0KPiAtIE1pY2hhZWwgRWxsZXJtYW4gaGFzIGRldmVsb3BlZCB0aGUgc2VyaWVz
-ICJSZWltcGxlbWVudCBodWdlIHBhZ2VzDQo+ICAgIHdpdGhvdXQgaHVnZXBkIG9uIHBvd2VycGMg
-KDh4eCwgZTUwMCwgYm9vazNzLzY0KSIuICBUaGlzIHBlcm1pdHMNCj4gICAgdXNlcnNwYWNlIHRv
-IHVzZSBhbGwgYXZhaWxhYmxlIGh1Z2UgcGFnZSBzaXplcy4NCj4gDQoNCkFuZHJldywNCg0KVGhh
-dCBzZXJpZXMgaXMgbm90IGZyb20gTWljaGFlbCBidXQgZnJvbSBtZS4NCg0KVGhlIHB1cnBvc2Ug
-b2YgdGhlIHNlcmllIHdhcyB0byBlbmFibGUgcmVmYWN0b3Jpbmcgb2YgZGlmZmVyZW50IHBhZ2Ug
-DQp3YWxrZXIgd2l0aG91dCBoYXZpbmcgdG8gaGFuZGxlIGh1Z2VwZCB3aGljaCB3YXMgc3BlY2lm
-aWMgdG8gcG93ZXJwYy4NCg0KVGhlcmUgaXMgbm8gY2hhbmdlIGZvciB1c2Vyc3BhY2UuDQoNClRo
-YW5rcw0KQ2hyaXN0b3BlDQo=
+Hi,
+
+This is v3 of a series to implement threaded console printing as
+well as some other minor pieces (such as proc and sysfs support). v2
+is here [0].
+
+For information about the motivation of the nbcon consoles, please
+read the cover letter of the original v1 [1].
+
+This series provides the remaining pieces of the printk rework. All
+other components are either already mainline or are currently in
+linux-next. In particular this series does:
+
+- Implement dedicated printing threads per nbcon console.
+
+- Implement forced threading of legacy consoles for PREEMPT_RT.
+
+- Implement nbcon support for proc and sysfs console-related files.
+
+- Provide a new helper function nbcon_reacquire_nobuf() to allow
+  nbcon console drivers to reacquire ownership.
+
+Note that this series does *not* provide an nbcon console driver.
+That will come in a follow-up series.
+
+Here are the main changes since v2:
+
+- Drop the patch for "threadprintk" boot arg for !PREEMPT_RT.
+
+- Rename variables and functions:
+
+force_printkthreads()		-> force_legacy_kthread()
+nbcon_reacquire()		-> nbcon_reacquire_nobuf()
+nbcon_wake_threads()		-> nbcon_wake_kthreads()
+nbcon_legacy_kthread_func()	-> legacy_kthread_func()
+wake_up_legacy_kthread()	-> legacy_kthread_wake()
+@printk_threads_enabled		-> @printk_kthreads_running
+@nbcon_legacy_kthread		-> @printk_legacy_kthread
+
+- Introduce @printk_kthreads_ready to flag when it is allowed to
+  create kthreads.
+
+- Rename lockdep map functions with updated comments to hopefully
+  better clarify their purpose.
+
+- The write_thread() callback is now mandatory. write_atomic()
+  remains optional. (This also simplifies the changes to
+  drivers/tty/tty_io.c and fs/proc/consoles.c.)
+
+- Merge nbcon_init() into nbcon_alloc(). This simplifies the rules
+  and more closely resembles the legacy registration.
+
+- Introduce struct console_flush_type to inform which flushing type
+  to use.
+
+- Introduce flushing type macro printk_get_console_flush_type() for
+  non-emergency CPU states.
+
+- Introduce flushing type macro
+  printk_get_emergency_console_flush_type() for emergency CPU
+  states.
+
+- Remove @printing_via_unlock macro since there is now the flushing
+  type macros.
+
+- Replace _all_ flushing decisions with calls to new flushing type
+  macros.
+
+- Introduce helper function nbcon_write_context_set_buf() for
+  setting up the write context for nbcon printers.
+
+- In nbcon and legacy kthread functions, do not check for spurious
+  signals.
+
+- In nbcon_kthread_func(), check for kthread_should_stop() inside
+  the printing loop.
+
+- In nbcon_kthread_func(), add cond_resched() inside the printing
+  loop.
+
+- In rcuwait_has_sleeper(), avoid unnecessary RCU dereference.
+
+- In nbcon_wake_kthreads(), do not try to wake if kthreads are not
+  fully available.
+
+- In nbcon_legacy_emit_next_record(), split the atomic/thread cases
+  before and after printing.
+
+- Use suggested alternative implementation for
+  console_prepend_message().
+
+- Move all functions to start/stop kthreads into printk.c.
+
+- Introduce printk_kthreads_check_locked() to start/stop kthreads if
+  needed when the console list has changed.
+
+- Unregister nbcon console if the related kthread printer cannot be
+  created.
+
+- On failure to start the legacy kthread, unregister all legacy
+  consoles.
+
+- If all legacy consoles unregister, stop legacy kthread.
+
+- If all nbcon consoles unregister, clear @nbcon_kthreads_running.
+
+- On shutdown, clear @nbcon_kthreads_running.
+
+- In unregister_console_locked(), flush the console before
+  unregistering.
+
+- Let pr_flush() fail if called _very_ early.
+
+- Do not wake nbcon kthreads in printk_trigger_flush().
+
+- In console_try_replay_all(), add support for the legacy kthread.
+
+- Refactor the series to hopefully provide a cleaner transition to
+  the final desired stand.
+
+- Split -20 nice for kthreads into a separate patch.
+
+- Rewrite many comments and commit messages as requested.
+
+John Ogness
+
+[0] https://lore.kernel.org/lkml/20240603232453.33992-1-john.ogness@linutronix.de
+
+[1] https://lore.kernel.org/lkml/20230302195618.156940-1-john.ogness@linutronix.de
+
+John Ogness (18):
+  printk: nbcon: Clarify nbcon_get_default_prio() context
+  printk: nbcon: Consolidate alloc() and init()
+  printk: nbcon: Add function for printers to reacquire ownership
+  printk: nbcon: Clarify rules of the owner/waiter matching
+  printk: Fail pr_flush() if before SYSTEM_SCHEDULING
+  printk: Flush console on unregister_console()
+  printk: Add helpers for flush type logic
+  printk: nbcon: Add context to usable() and emit()
+  printk: nbcon: Use thread callback if in task context for legacy
+  printk: nbcon: Rely on kthreads for normal operation
+  printk: Provide helper for message prepending
+  printk: nbcon: Show replay message on takeover
+  proc: consoles: Add notation to c_start/c_stop
+  proc: Add nbcon support for /proc/consoles
+  tty: sysfs: Add nbcon support for 'active'
+  printk: Implement legacy printer kthread for PREEMPT_RT
+  printk: nbcon: Assign nice -20 for printing threads
+  printk: Avoid false positive lockdep report for legacy printing
+
+Thomas Gleixner (1):
+  printk: nbcon: Introduce printer kthreads
+
+ drivers/tty/tty_io.c     |   2 +-
+ fs/proc/consoles.c       |   7 +-
+ include/linux/console.h  |  50 +++-
+ kernel/printk/internal.h | 159 ++++++++++-
+ kernel/printk/nbcon.c    | 530 ++++++++++++++++++++++++++++++-----
+ kernel/printk/printk.c   | 588 +++++++++++++++++++++++++++++++--------
+ 6 files changed, 1137 insertions(+), 199 deletions(-)
+
+
+base-commit: b18703ea7157f62f02eb0ceb11f6fa0138e90adc
+-- 
+2.39.2
+
 
