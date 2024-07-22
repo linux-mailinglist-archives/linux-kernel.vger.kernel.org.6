@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-258847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1D75938D51
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:14:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42B0E938D52
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D0E9282FCB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:14:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E99B7283226
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB33216D9B0;
-	Mon, 22 Jul 2024 10:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE6E16D9D1;
+	Mon, 22 Jul 2024 10:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wFdzV8iL"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="crRQF7Ct"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A13516D9A4
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 10:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3573A16D9C6
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 10:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721643196; cv=none; b=jvklz+ugaXNuKKpahFjkKtSwQK+HEi8m45Sp2u1DD/kxL40mcDSJFUMtg7k/q0TrmXfPBXWt7e6bxeN9mmKIFVdJYiAhcAGVi3NGdZmVKioi2NhhkNj3VNUpulb9GgyXT0Z0DDV/Z7v3ljrkN5oK3X0WEBG7c1Y+2OMjxnITnb0=
+	t=1721643200; cv=none; b=Kb3IPKrq5mNMQ84GDekTAXB7n+m/461oLjmb9vS7btDwJvgfahLNFbsM4KYYNW/ov26z2HtTHBPgq0ehAMfqlgOxcDIM1P5W3B3wrIM2Faul/bMwGIbwxzqnGkXi0Ss7JSySlIl2ayzOmmpr5DDTFxLOB9K5GwqrFwOewY08Q0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721643196; c=relaxed/simple;
-	bh=wVHh6zOEtD5JgYpRaWP8ByjQrHdnbNe5JxysK+W/6X8=;
+	s=arc-20240116; t=1721643200; c=relaxed/simple;
+	bh=NJv4Ip/0MGeUDqPRCBtTePKyAhBC1HwlgSVGeLozqqE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AmQ2kcd6vDpY7dVhPh2qK6gWYq268YZjzTHTcgjcpLTn4qp3o9gsjUMXysTKh7+1OYhAzXyzORZa4hk8nL5cZ4fjJbpwICxvmjLSFm9dZX1dOgUQn5PehiWJzkbstdSeo1/TKDL5kxx2uQn33o2zw3XqlDjfWPhSHYs0LA2hV1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wFdzV8iL; arc=none smtp.client-ip=209.85.128.43
+	 MIME-Version; b=GHqUMKjmywGtgUcTmZcrQkhC+n5d7Nkr7nS9fXoQoWxxrQ/rvMjbhyFGlZzJsWVZy5W+Hrxo/OtsOP1rkFuUoEnDGQIv1Iz1U5S8ylyZztpk0pMawzQp4Tp4P20ANTsnGJYaOTi/IbsMedYLSYyP8L/s80F0bKpy8SBJ7ocGpyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=crRQF7Ct; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-427db004e36so15966635e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 03:13:14 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-427cede1e86so28794685e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 03:13:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721643193; x=1722247993; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1721643197; x=1722247997; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CtaJjK7rrgJVkNfrm1RPI3wUUBorSunZ8bK+jPbC78c=;
-        b=wFdzV8iLaDLWXZvF0L2CFYTvhfkZ6kbUNXf7GltKzu+n3n55gHaz+rNpTfEH0PE+ZD
-         K5gzH5olc1CTPHoHakwFZ0cmH8HlpLGQAROfHIeHHxpovh9V6dBa8kSalxofDPaIZWPF
-         B9m00vZD3scaZlTDi+dTZawWSGks7de6TtrDas8PcKu3VcO+77zpCUuF/0X0hrDD7aHj
-         FywkTJf4qfNRESbmfg9ehjli6PxAEwdws2Re6+ijtW4ISxg2Kl3s1WNQgmQWDW+JK1QI
-         q/J4I3jQVpvffZJdpTGSrFcatdeAMC9P4dIt4RAXRVBcKUh1y+hf05wC65JGxJynePio
-         kWgQ==
+        bh=9CvKA9Oo8oUAGLDUMUBH2byBqwwnuDLfYbLv1IHZER0=;
+        b=crRQF7CtbV82vfsxE3bSUfs20cH3fmGVf295mQ1iNhPA426ELPz18fSpu1HgUNpMTx
+         4hZGUjHf+UAaGpMJDnmtGxSRuCDDkygyn8EeuTuPC8N94qkS2I6fHbp0HQ3IgclpOoEQ
+         RotcYcaYTvqcwsnPZCrWLWk1gxSa+OGSo/lKreDqZmRS64kKaaxIPvN5a+Jb2MCVPRyW
+         LtKPfTBlWI9UZk1ALE8FXKMpooT9y+qSQJSclB7MH+KH3LPO8pPKKwoCVxb8mlu+Bj+S
+         idmqzf3D5Me4l1MNzwwruTZPSgzVN1QGNXpgH4deNeWoIm+fZN3RCyGmiUd+rqO6/y1V
+         Dhww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721643193; x=1722247993;
+        d=1e100.net; s=20230601; t=1721643197; x=1722247997;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CtaJjK7rrgJVkNfrm1RPI3wUUBorSunZ8bK+jPbC78c=;
-        b=I1NXyDUHd63lnhsgIPorsQeIX2ogOGPKnrZADhdMLQTWUDIK/fOOYJnIJXO78b93+q
-         5nq8VBO1xG8UYtIwwdprGJboQ2CuD7yNYGGr6qUx8m+yZBjnHSZ7TLr7/NVdhk07sj13
-         e7SQzJa6dTopoNth3i/NUHhN0EGXtXjnHjtfSMxPcP/z0zArQX5C68eAjBUBn1Yn5xD+
-         n3c94Fvw70hDT6X1U9OjKHPKUuxnjGZCWtN/q1ywQ728W2K+LR+IoTU3uvPlaiBgNxB8
-         iJroFt3Tb+jzSVXSiZJQeHTbjZqoTZan1vVyHftSG/TAiQOxcSh4McjNLin8U2LSIe6b
-         NLbg==
-X-Forwarded-Encrypted: i=1; AJvYcCW656rvERVn2zhgbumMNR4ouVW9XzwGJP1USnCMZ/3e4BrzQ/nDPg063CI84CEtH/Luyf/5Su1P04BdiFOXWs5hdQPOtnXMmQF02TdX
-X-Gm-Message-State: AOJu0YySviPc9J9l3TV613X28+r0USke3fe/O9eKLvcC8KuF6tu83/7P
-	XHddI0ETl02Zv/ABGyY6DWGF3ftG+fopr36swmpsU+pcXlV4MRSfHKgNe1BqCzg=
-X-Google-Smtp-Source: AGHT+IGdhd7RpxJePLbZIYhR6xs+qj7oZ8Lfr0TNgtXBBhZbnw2zVwMKW7uEaoI3NiSjTwpc8kM/Ag==
-X-Received: by 2002:a05:600c:5493:b0:426:6ea2:31af with SMTP id 5b1f17b1804b1-427dc5753a9mr33453755e9.37.1721643192769;
-        Mon, 22 Jul 2024 03:13:12 -0700 (PDT)
+        bh=9CvKA9Oo8oUAGLDUMUBH2byBqwwnuDLfYbLv1IHZER0=;
+        b=e6BIZ2whGs2QiU2FQu4HGeO2w6aQ4zC+BpkKxkNoFyYb36kWBthnl42yDNTeKGfwV9
+         aYldP0r/u1UDrXc9L8wraQETa0Fr+5g9PTrkYwKXa8KuS2tY0e9cz7D4GsUUF4KCUamJ
+         Kj1nDHaA0tbnmR3vyYUnE7wZYl7rYHoIFgR5/dKIZv73A4CdHDTf07hnUm8h2miP3MJs
+         E3SeE/ToT/lGQ8OdPZfAB6VOcr/UVeYwbjRxewxuGTLCEReqXKS1G22SzN2MhRZjcEGd
+         m6B/eMUsIHnZ/RffkRLPf09Uo2/O/C2F8NYUNRJ0Ql8Y4BPw/2BZWwBp89gr0pBtlMO2
+         SD7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUqFD3ROh7jt+6LhT6t17alQSrG985vF6leCJI/yrq76qpJzLRE2x84lTHnhwAnuyGi+OXg3WVNN2TpVSfm8ITrwnRJukPdCJbLthkM
+X-Gm-Message-State: AOJu0Yy7K1MADfGplbRlqx1O5q4dAonuVf+ht1seTJY655Xflow5Zytu
+	fGhMc712MmOJVoESZ/chMk3C8wIp0AnV1lNQ+qYVfKndSeulUMQAlVhn378fZlw=
+X-Google-Smtp-Source: AGHT+IF7qS/l5dBLpir4Vw8LPazyz0x8s3+xWgLLeI6+jb9MqA3mHfayIPDgC0IjLcyLxDckxJt5aw==
+X-Received: by 2002:a05:600c:35d4:b0:426:593c:9361 with SMTP id 5b1f17b1804b1-427dc569cb0mr43200815e9.26.1721643197578;
+        Mon, 22 Jul 2024 03:13:17 -0700 (PDT)
 Received: from localhost.localdomain ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a8e436sm147993865e9.33.2024.07.22.03.13.11
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a8e436sm147993865e9.33.2024.07.22.03.13.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 03:13:12 -0700 (PDT)
+        Mon, 22 Jul 2024 03:13:17 -0700 (PDT)
 From: James Clark <james.clark@linaro.org>
 To: coresight@lists.linaro.org,
 	suzuki.poulose@arm.com,
@@ -94,9 +94,9 @@ Cc: James Clark <james.clark@arm.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-stm32@st-md-mailman.stormreply.com,
 	linux-perf-users@vger.kernel.org
-Subject: [PATCH v6 09/17] coresight: Remove unused ETM Perf stubs
-Date: Mon, 22 Jul 2024 11:11:51 +0100
-Message-Id: <20240722101202.26915-10-james.clark@linaro.org>
+Subject: [PATCH v6 10/17] coresight: Clarify comments around the PID of the sink owner
+Date: Mon, 22 Jul 2024 11:11:52 +0100
+Message-Id: <20240722101202.26915-11-james.clark@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240722101202.26915-1-james.clark@linaro.org>
 References: <20240722101202.26915-1-james.clark@linaro.org>
@@ -110,9 +110,11 @@ Content-Transfer-Encoding: 8bit
 
 From: James Clark <james.clark@arm.com>
 
-This file is never included anywhere if CONFIG_CORESIGHT is not set so
-they are unused and aren't currently compile tested with any config so
-remove them.
+"Process being monitored" and "pid of the process to monitor" imply that
+this would be the same PID if there were two sessions targeting the same
+process. But this is actually the PID of the process that did the Perf
+event open call, rather than the target of the session. So update the
+comments to make this clearer.
 
 Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 Reviewed-by: Mike Leach <mike.leach@linaro.org>
@@ -121,45 +123,49 @@ Tested-by: Leo Yan <leo.yan@arm.com>
 Tested-by: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
 Signed-off-by: James Clark <james.clark@linaro.org>
 ---
- .../hwtracing/coresight/coresight-etm-perf.h   | 18 ------------------
- 1 file changed, 18 deletions(-)
+ drivers/hwtracing/coresight/coresight-tmc-etr.c | 5 +++--
+ drivers/hwtracing/coresight/coresight-tmc.h     | 5 +++--
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.h b/drivers/hwtracing/coresight/coresight-etm-perf.h
-index bebbadee2ceb..744531158d6b 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.h
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.h
-@@ -62,7 +62,6 @@ struct etm_event_data {
- 	struct list_head * __percpu *path;
- };
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+index e75428fa1592..8962fc27d04f 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+@@ -36,7 +36,8 @@ struct etr_buf_hw {
+  * etr_perf_buffer - Perf buffer used for ETR
+  * @drvdata		- The ETR drvdaga this buffer has been allocated for.
+  * @etr_buf		- Actual buffer used by the ETR
+- * @pid			- The PID this etr_perf_buffer belongs to.
++ * @pid			- The PID of the session owner that etr_perf_buffer
++ *			  belongs to.
+  * @snaphost		- Perf session mode
+  * @nr_pages		- Number of pages in the ring buffer.
+  * @pages		- Array of Pages in the ring buffer.
+@@ -1662,7 +1663,7 @@ static int tmc_enable_etr_sink_perf(struct coresight_device *csdev, void *data)
+ 		goto unlock_out;
+ 	}
  
--#if IS_ENABLED(CONFIG_CORESIGHT)
- int etm_perf_symlink(struct coresight_device *csdev, bool link);
- int etm_perf_add_symlink_sink(struct coresight_device *csdev);
- void etm_perf_del_symlink_sink(struct coresight_device *csdev);
-@@ -77,23 +76,6 @@ static inline void *etm_perf_sink_config(struct perf_output_handle *handle)
- int etm_perf_add_symlink_cscfg(struct device *dev,
- 			       struct cscfg_config_desc *config_desc);
- void etm_perf_del_symlink_cscfg(struct cscfg_config_desc *config_desc);
--#else
--static inline int etm_perf_symlink(struct coresight_device *csdev, bool link)
--{ return -EINVAL; }
--int etm_perf_add_symlink_sink(struct coresight_device *csdev)
--{ return -EINVAL; }
--void etm_perf_del_symlink_sink(struct coresight_device *csdev) {}
--static inline void *etm_perf_sink_config(struct perf_output_handle *handle)
--{
--	return NULL;
--}
--int etm_perf_add_symlink_cscfg(struct device *dev,
--			       struct cscfg_config_desc *config_desc)
--{ return -EINVAL; }
--void etm_perf_del_symlink_cscfg(struct cscfg_config_desc *config_desc) {}
--
--#endif /* CONFIG_CORESIGHT */
--
- int __init etm_perf_init(void);
- void etm_perf_exit(void);
+-	/* Get a handle on the pid of the process to monitor */
++	/* Get a handle on the pid of the session owner */
+ 	pid = etr_perf->pid;
  
+ 	/* Do not proceed if this device is associated with another session */
+diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
+index c77763b49de0..2671926be62a 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc.h
++++ b/drivers/hwtracing/coresight/coresight-tmc.h
+@@ -171,8 +171,9 @@ struct etr_buf {
+  * @csdev:	component vitals needed by the framework.
+  * @miscdev:	specifics to handle "/dev/xyz.tmc" entry.
+  * @spinlock:	only one at a time pls.
+- * @pid:	Process ID of the process being monitored by the session
+- *		that is using this component.
++ * @pid:	Process ID of the process that owns the session that is using
++ *		this component. For example this would be the pid of the Perf
++ *		process.
+  * @buf:	Snapshot of the trace data for ETF/ETB.
+  * @etr_buf:	details of buffer used in TMC-ETR
+  * @len:	size of the available trace for ETF/ETB.
 -- 
 2.34.1
 
