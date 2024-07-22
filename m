@@ -1,103 +1,179 @@
-Return-Path: <linux-kernel+bounces-259000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31520938FD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:20:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3083B938FD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:22:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6275F1C213C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:20:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C57B1C20E38
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6582116D4F1;
-	Mon, 22 Jul 2024 13:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A29716D9A5;
+	Mon, 22 Jul 2024 13:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VV/O/Ryk"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DD3nB2jY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9EC16938C;
-	Mon, 22 Jul 2024 13:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43F816938C;
+	Mon, 22 Jul 2024 13:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721654421; cv=none; b=ROOfwlV/TA5P7pt1inM8wqWbSehbqwYFBb23i62giIExAFqZBe7wjkdOQyRgBjBW/9ZQN8biB0YfWe2KXOZ3oX5Y631rs0pEI+DDI1If0eZuFz/6MImCn5rBaCvB+/qrsfmvaYuX0QRuSEv9z4+ux1CkAbbNx5iNHRjb4tcD9sM=
+	t=1721654517; cv=none; b=uAp0a1wKk8EdoRiJoCYhyMh3dxOk6I1Ij2xPIpACYqd7I7axhND1W935JZDJfSUdFMAdgYXhn+O68mO5wVjDQtYvWNykU1WCFbYZ8PVs1dhLBf7dLTE7KaHWth8PK9OJz2VjMT3PJAmuWrR/oQ6rwE0E5rwW0T8MttUF4SY9QF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721654421; c=relaxed/simple;
-	bh=y3Gx+WfjFQRIfL61Lgwl8Womf5PGQfiTOfwgOeMTPp0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cSEVdboTiowlo7RA2TpDZXIq6askWiCX0Hkajveqc8x8/Ib8JXbQE1RJ/Wy1M49o3dovrydmqC4wJ+CbRF72dZ/h1uomlK9N3HGhlYPzi75MoHOagNwzaKEt66r8mNnP5CYSg/Mez2+k0oeA/Aho6matts23KvHNTUMyCMY2gzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VV/O/Ryk; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 10AF91BF203;
-	Mon, 22 Jul 2024 13:20:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1721654411;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y3Gx+WfjFQRIfL61Lgwl8Womf5PGQfiTOfwgOeMTPp0=;
-	b=VV/O/RykB4p0YBJhii1Db0yWjWo0upQV2+h4lwoCGzwkWOCXBpsF1oyBD0EXPqiLrVmydg
-	ZbGBRo3OvriuefmCqweJLaO3FNvtLEiOs/t6ZchUNjT50mTl0k+OwiiuhKqWK3/zt5J4x9
-	mcZj+6TfveDZpSx9aiam1X32cSMsHvEgQlrIJ7T587qiR0XjF7WKFAsbMKddQ3r45jgjkE
-	P6AffzCppPdlH8Spag9R8t+ixOxf4MVuG/rlHcYJJ995gSMrDi6njWIvBwGN9LTxZ9yoyb
-	KCXouIdbmmpFLsorgv2I33B8j5lixRlZqggWfocLKx/L9s3PpLbg4Xl1FcMtkg==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, "paulburton@kernel.org"
- <paulburton@kernel.org>
-Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- linux-kernel@vger.kernel.org, =?utf-8?Q?Th=C3=A9o?= Lebrun
- <theo.lebrun@bootlin.com>,
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, Tawfik Bayouk
- <tawfik.bayouk@mobileye.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH] MIPS: SMP-CPS: Fix address for GCR_ACCESS register for
- I6500
-In-Reply-To: <302ca8fb-0185-4872-9d82-d472854e5a43@app.fastmail.com>
-References: <20240719-smp_i6500-v1-1-8738e67d4802@bootlin.com>
- <302ca8fb-0185-4872-9d82-d472854e5a43@app.fastmail.com>
-Date: Mon, 22 Jul 2024 15:20:10 +0200
-Message-ID: <87bk2pk1h1.fsf@BLaptop.bootlin.com>
+	s=arc-20240116; t=1721654517; c=relaxed/simple;
+	bh=1vJOalqPs9gOtVB5xXuL0vKmb83B5xaZIYuNaKLZ/NQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AgBERyhS1XOCrwAnV6RTR2ZLQeKba+IOS+VofNV2DvqJTfO1nxm4TTYN/eQI9lrv2sLDyBIMxmXXboY4iM4x2U901UdKMZZL27eL5SK3/X069+6jNaYcuxJ9km20VGY8jyHZdj+AhQGJz6xQr+mhVfDl4Ob44BMLLB2ufES4MEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DD3nB2jY; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721654515; x=1753190515;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=1vJOalqPs9gOtVB5xXuL0vKmb83B5xaZIYuNaKLZ/NQ=;
+  b=DD3nB2jYctSqea2kM7l9fq+R+azAyCluzmPBU0tkHmq38Ip74R1LMrNB
+   Py3HibPDocsktBebpVI5qCrEkqfEJH3Le7JbO6zu8U/o7q8j6uf9UzdiC
+   h87wdNVuxkQunsG08i/ZX6TojCcIxCDChAxH6IDnGUk7nDsvxinedQzVy
+   IyLbLsJykkvr4Ad5HxGMoSpXfnyp8WiO2JlUjZqRjtxxtgBbTeL5iRaKz
+   MINU00CbYCst4et8xC+wWq0lFFt1TViqaU0VsVb3gt7DUIBZ3DlLfHhhl
+   x+nOGcJ2vjdUiRQLnog0Hqt/IaYinX5OA7UaZB1DaTIYwFPUuAAfLEQNf
+   g==;
+X-CSE-ConnectionGUID: hqdEVa3aTQGlg8dNhv4ikg==
+X-CSE-MsgGUID: GoEx5Bf4Q7+R9YDSwiymjQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11140"; a="19350832"
+X-IronPort-AV: E=Sophos;i="6.09,228,1716274800"; 
+   d="scan'208";a="19350832"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 06:21:54 -0700
+X-CSE-ConnectionGUID: MwsEo92TSNm2uceUqllnrA==
+X-CSE-MsgGUID: Gid4Vo0kTeCtr+L+fHmSgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,228,1716274800"; 
+   d="scan'208";a="51541362"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.41.28])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 06:21:50 -0700
+Message-ID: <22bee274-23e1-4298-a936-50bebd802482@intel.com>
+Date: Mon, 22 Jul 2024 16:21:46 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: gregory.clement@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/8] perf: build-id: name debugging vdso as "debug"
+To: duchangbin <changbin.du@huawei.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "llvm@lists.linux.dev" <llvm@lists.linux.dev>,
+ "Wanghui (OS Kernel Lab, Beijing)" <hw.huiwang@huawei.com>
+References: <20240702041837.5306-1-changbin.du@huawei.com>
+ <20240702041837.5306-5-changbin.du@huawei.com>
+ <14afba8e-cb85-4d7d-96e4-d65fd8ebc2d5@intel.com>
+ <8a7156281b45450ebf0511373f65afa7@huawei.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <8a7156281b45450ebf0511373f65afa7@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-"Jiaxun Yang" <jiaxun.yang@flygoat.com> writes:
-
-> =E5=9C=A82024=E5=B9=B47=E6=9C=8819=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=
-=E5=8D=8810:14=EF=BC=8CGregory CLEMENT=E5=86=99=E9=81=93=EF=BC=9A
->> Unlike most other MIPS CPUs, the I6500 CPUs have different address
->> offsets for the Global CSR Access Privilege register. In the "MIPS64
->> I6500 Multiprocessing System Programmer's Guide," it is stated that
->> "the Global CSR Access Privilege register is located at offset 0x0120"
->> in section 5.4.
+On 22/07/24 15:08, duchangbin wrote:
+> On Thu, Jul 18, 2024 at 08:03:07PM +0300, Adrian Hunter wrote:
+>> On 2/07/24 07:18, Changbin Du wrote:
+>>> As normal objects, we will add debugging vdso elf to build-id cache later.
+>>> Here we name the debugging one as "debug".
+>>>
+>>> Signed-off-by: Changbin Du <changbin.du@huawei.com>
+>>> ---
+>>>  tools/perf/util/build-id.c | 4 ++--
+>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
+>>> index 83a1581e8cf1..15530af2bad9 100644
+>>> --- a/tools/perf/util/build-id.c
+>>> +++ b/tools/perf/util/build-id.c
+>>> @@ -259,8 +259,8 @@ static bool build_id_cache__valid_id(char *sbuild_id)
+>>>  static const char *build_id_cache__basename(bool is_kallsyms, bool is_vdso,
+>>>  					    bool is_debug)
+>>>  {
+>>> -	return is_kallsyms ? "kallsyms" : (is_vdso ? "vdso" : (is_debug ?
+>>> -	    "debug" : "elf"));
+>>> +	return is_kallsyms ? "kallsyms" : (is_debug ? "debug" : (is_vdso ?
+>>> +		"vdso" : "elf"));
+>>>  }
+>>>  
+>>>  char *__dso__build_id_filename(const struct dso *dso, char *bf, size_t size,
 >>
->> However, this is not the case for other MIPS64 CPUs such as the
->> P6600. In the "MIPS64=C2=AE P6600 Multiprocessing System Software User's
->> Guide," section 6.4.2.6 states that the GCR_ACCESS register has an
->> offset of 0x0020.
->
-> Hi Gregory,
->
-> I confirmed this is a CM3 feature rather than CPU core (Samruai) feature.
->
-> Please use CM version to select register region.
+>> To actually add "debug", this also needs:
+>>
+>> diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
+>> index 15530af2bad9..b5bd02a1ad0f 100644
+>> --- a/tools/perf/util/build-id.c
+>> +++ b/tools/perf/util/build-id.c
+>> @@ -701,7 +701,7 @@ build_id_cache__add(const char *sbuild_id, const char *name, const char *realnam
+>>  	 * file itself may not be very useful to users of our tools without a
+>>  	 * symtab.
+>>  	 */
+>> -	if (!is_kallsyms && !is_vdso &&
+>> +	if (!is_kallsyms &&
+>>  	    strncmp(".ko", name + strlen(name) - 3, 3)) {
+>>  		debugfile = build_id_cache__find_debug(sbuild_id, nsi, root_dir);
+>>  		if (debugfile) {
+>>
+>>
+>>
+> This is done by later patch named "perf: build-id: try to search debugging vdso
+> and add to cache". I split the changes into two patches.
 
+With the above, the split is more functionally logical:
+	1. Add support for build-id cache vdso debug
+	2. For vdso, extend build_id_cache__find_debug() to find
+	local kernel build files
 
+> 
+>> With that perf will populated the "debug" entry in the build-id cache.
+>> Currently, when adding to the build-id cache, perf only looks in
+>> /usr/lib/debug/.build-id (refer build_id_cache__find_debug()), for
+>> example:
+>>
+>>
+>> $ sudo ln -s /lib/modules/6.9.2-local/build/arch/x86/entry/vdso/vdso64.so.dbg /usr/lib/debug/.build-id/cf/702469f4637840fd6ba1a8d8a628ff83253d04.debug
+>> $ ls -l ~/.debug/\[vdso\]/cf702469f4637840fd6ba1a8d8a628ff83253d04/
+>> total 8
+>> -rw-r--r-- 1 ahunter ahunter    0 Jul 18 13:33 probes
+>> -rw------- 1 ahunter ahunter 8192 Jul 18 13:33 vdso
+>> $ perf record uname
+>> Linux
+>> [ perf record: Woken up 1 times to write data ]
+>> [ perf record: Captured and wrote 0.010 MB perf.data (2 samples) ]
+>> $ ls -l ~/.debug/\[vdso\]/cf702469f4637840fd6ba1a8d8a628ff83253d04/
+>> total 40
+>> -rwxrwxr-x 2 ahunter ahunter 32760 May 27 17:42 debug
+>> -rw-r--r-- 1 ahunter ahunter     0 Jul 18 13:33 probes
+>> -rw------- 1 ahunter ahunter  8192 Jul 18 13:33 vdso
+>>
+>>
+>> Note, perf will anyway find the debug object in /usr/lib/debug/.build-id
+>> so the benefit is if perf-archive is used to copy from the buildid-cache
+>> to take to another machine.
+>>
+>>
+> 
 
-> (And perhaps Cc stable for this patch?)
-
-Actually, from my experience, the "Fixes:" tag is enough. The stable
-teams (and their bots) extensively backport patches from the Linus tree.
-
-Gregory
 
