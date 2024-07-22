@@ -1,147 +1,171 @@
-Return-Path: <linux-kernel+bounces-258464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60B1E938831
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:56:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8132938833
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D413281398
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:56:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AC5BB20E9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3680E1CD37;
-	Mon, 22 Jul 2024 04:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13DE31758E;
+	Mon, 22 Jul 2024 04:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ztf37u1G"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BGK3GXQZ"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5961803D;
-	Mon, 22 Jul 2024 04:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFE08BFC;
+	Mon, 22 Jul 2024 04:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721624145; cv=none; b=WR6I/ie45TCs7nhh4QegLzGoYkae97vhMUcvCWVYjR0xpFvyMx4nbY82RrNdIZa9BkCA+E71bVhhsaNSJ6f3HULG1sLfFBBDLX/eB8+60V5+/W9qxWfdgqXsYNVPK4hPSnDEzPWuR2Zyecm9+Qn85zvqYdWrhQnWVgpBuxEOPiM=
+	t=1721624258; cv=none; b=NVU4GBhJinA3+f51mnyVhjKjipQEvDh1UtWEoM4BueROqBnjKsm/jFJ01DV/dnRz+qckYrXixarUF3hUTbkiz1lpdA59cPYa3eWN5zAb0T7qiBeuNqxHtE4PEEbT7VRhMLdxmTwK9TY+KzmE0+OC01SqnIrDGUbYD6e4GZSm4/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721624145; c=relaxed/simple;
-	bh=0up8aCtWNsxAC4uhGA5lK93k/Cdyl3JxBMFq0lL7/1o=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WqSgRxcR3AyTRj5R6LVbtgTOAgIpJSohDOQ8ELddiv07tSQ01+bsRZEQDKEddkIFV3X/qxGDVxHnb0M4k3CffzqIG/G2IJ8WHKv+FnvrPIQC8BCccIHaQSx4lrkEhQ83OO7Wdl7Ojcxnaa0bbVBrjeloaM8cq7W1nGw7ttvS3Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ztf37u1G; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46LNuPUg005325;
-	Mon, 22 Jul 2024 04:55:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=3nsbi7sFx1ra6m9fFn76vA3G
-	Jnm1RAxiBUkonXtuWyQ=; b=Ztf37u1G+BFvYeot7+ZPTwDE2Uw1R+Oliyu/BQof
-	sv7XMJJopnfA0iNDPNK7fw4+JDFfIgVdZiOVzXkxOfC4pcRqzyOAAwMacgipfjGj
-	S6eQSiiAATsnJ+j6oQHtS2/7wy5Gcg/aVyXAmdllUcwXXqoqoa/fs88lZNUEMIC1
-	3cUYaHiFlnlxWKWpJL3sYvOKSyUhVYPfqiHZEkgpuN5XmF4vGbXj2FbAJFGBZZBK
-	uHu/HLOqVz1ih28aHksdCVqqJC62VaW9VBeSytJAA5Mfam9a3d7EwUN46fUsIiqk
-	skYRlzIi+5YZVvkXLCwm6emKT6AiDKbLZSDX/tiMA+KoOg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g5aujm26-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jul 2024 04:55:33 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46M4tVsi025737
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jul 2024 04:55:31 GMT
-Received: from hu-pkondeti-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Sun, 21 Jul 2024 21:55:29 -0700
-Date: Mon, 22 Jul 2024 10:25:26 +0530
-From: Pavan Kondeti <quic_pkondeti@quicinc.com>
-To: Stephen Boyd <swboyd@chromium.org>
-CC: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <patches@lists.linux.dev>,
-        <linux-arm-msm@vger.kernel.org>,
-        Konrad Dybcio <konrad.dybcio@somainline.org>
-Subject: Re: [PATCH RESEND 1/2] soc: qcom: cmd-db: Mark device as having no
- PM support
-Message-ID: <1cc3b5cb-a938-4768-a1eb-020e2d2f6ab8@quicinc.com>
-References: <20221015004934.3930651-1-swboyd@chromium.org>
+	s=arc-20240116; t=1721624258; c=relaxed/simple;
+	bh=EffWJCJWTHLmJnAHT6Ac6+Vnyib2j7zgkQknG7DKlM4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aecO6x+LlwCHoZIy/U6KwpAL9lWcNy1aA33TUByh2nOWzFlmtOsdCORkdDch8Lqxr6FrxR4FuKG3zkBVapnVG8TFfdcHqhrHXC1MNb2MY5vVmTTne0A6x7ah6q+HTi4gr8Jk0gEfT9FPAwnjI/V0xN1JS4cFNCmKoZx/AlYmS9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BGK3GXQZ; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-260f4c9dfe2so1759466fac.0;
+        Sun, 21 Jul 2024 21:57:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721624256; x=1722229056; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CmEwT+Coyv+UcBMEGsDoi0+n6MRPLwi4C8KTf2IQTtU=;
+        b=BGK3GXQZTIBcWyt38Gww+PmTa6+32qcJY5jxUF/t+6H2VH/J/vhLKpKq8tJzB9VZ4X
+         IpVkp+RjqW5V1GyxU0p3G6EXdITuPEYDbhMWDDAhVtnvlmpbWxqVRrAzQG+5w4/1l+KO
+         OI1mqtUbz5QLVfv+H2REOe9YFDQYjMq70II3IpOYCfyKvdF4p2oZmnondlPvz375+Ko9
+         lKWUCSLqm4yT4t6N+Z7OVElIrGuv8x/hFFpxLI94zTjzY4mB14oZbN7lJiolpDkAwCQ8
+         5f7LsTX4pVP47cm5lr2Ti1PsnJmZGJUkBgTzgTlapRWR4ToY09u2jN0eN84SL+jxGiiW
+         I1+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721624256; x=1722229056;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CmEwT+Coyv+UcBMEGsDoi0+n6MRPLwi4C8KTf2IQTtU=;
+        b=aLeZ391vNS9nr+SqVFO99tj0+AbCU33QBpkzu00OAeoWcI/T8krBju8Tq+k6TM7y6P
+         vNYJL4Va2NMnerYjI+pVCQrENa7vdvkd/iQSjudXl2mvMhE0t9ANx/2yhS1a1gONW5ub
+         8plUw0dXgmXsJv7AZs01Yv1fjpk7mzQr4cR7N+8eKrR6fTzpX5taJ/wO4nPA3s850oUO
+         kA7B5u8mqCUwWPRWFnv2rwdgHn/biAf2GCvgLmCAP8tSNeeLDZwgPq2bud7eRSsOyHnX
+         7XTUqFPetqDVWR3ZBk4QmDTyrXuz1a72ZItpy9mUi3OFs//ff+LdJEAZnsneCrxA5qJQ
+         dAlg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+dDhAp/dY0FcDQs8WQFDOeGXbUldIDrp2F9ORfBhND9P2zoWlcddrsTIfiQHb8MEB2gncjW4LnRo5Pbl2uAbhm16ANMZyhqyHv6mUmsRQKAANc0kpioHK/nlhZp/cG/g0Qq9TXZFTPUo1fxKR
+X-Gm-Message-State: AOJu0YxFAWvLdJ2WdvBnHVAXS0BX8dOJELGfTdTLhWnSoRaCON1ovJXb
+	yyOmYS7ngLbakvxe3si6cyT84cfsfDfwQE0MiYFPeLYuC7p4CZqqBeATvumpvnZVrPMIdAttDOX
+	0SIT/Ad5ao40uP1/t2FaTc9b9WZY=
+X-Google-Smtp-Source: AGHT+IG+TyR9WaS5pduZzBveMPWvj0g+FCryKlb2QaRBPI3LzkTJiKwc50G+cBZlyl8TrmMuBI5j4YDuUsCagg8wTIk=
+X-Received: by 2002:a05:6870:350e:b0:260:e404:6c88 with SMTP id
+ 586e51a60fabf-26121d3e53fmr3546724fac.20.1721624255739; Sun, 21 Jul 2024
+ 21:57:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20221015004934.3930651-1-swboyd@chromium.org>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: eUiWWsH8vtpaN96ZP57UuiMYzZlt90U3
-X-Proofpoint-GUID: eUiWWsH8vtpaN96ZP57UuiMYzZlt90U3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-22_01,2024-07-18_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 bulkscore=0 malwarescore=0 suspectscore=0 mlxscore=0
- clxscore=1011 phishscore=0 spamscore=0 adultscore=0 mlxlogscore=999
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407220035
+References: <20240720063937.2311958-2-davidgow@google.com>
+In-Reply-To: <20240720063937.2311958-2-davidgow@google.com>
+From: Noah Goldstein <goldstein.w.n@gmail.com>
+Date: Mon, 22 Jul 2024 12:57:24 +0800
+Message-ID: <CAFUsyfKYKsO6krUoa0YYe_hsWqVgZazRXmj7AiBN0LpkaW01NA@mail.gmail.com>
+Subject: Re: [PATCH RESEND] x86: checksum: Fix unaligned checksums on < i686
+To: David Gow <davidgow@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
-On Fri, Oct 14, 2022 at 05:49:33PM -0700, Stephen Boyd wrote:
-> This driver purely exposes information from memory to the kernel. Let's
-> mark it as not having any device PM functionality, so that during
-> suspend we skip even trying to call a suspend function on this device.
-> This clears up suspend logs more than anything else, but it also shaves
-> a few cycles off suspend.
-> 
-> Cc: Konrad Dybcio <konrad.dybcio@somainline.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+On Sat, Jul 20, 2024 at 2:40=E2=80=AFPM David Gow <davidgow@google.com> wro=
+te:
+>
+> The checksum_32 code was originally written to only handle 2-byte
+> aligned buffers, but was later extended to support arbitrary alignment.
+> However, the non-PPro variant doesn't apply the carry before jumping to
+> the 2- or 4-byte aligned versions, which clear CF.
+>
+> This causes the new checksum_kunit test to fail, as it runs with a large
+> number of different possible alignments and both with and without
+> carries.
+>
+> For example:
+> ./tools/testing/kunit/kunit.py run --arch i386 --kconfig_add CONFIG_M486=
+=3Dy checksum
+> Gives:
+>     KTAP version 1
+>     # Subtest: checksum
+>     1..3
+>     ok 1 test_csum_fixed_random_inputs
+>     # test_csum_all_carry_inputs: ASSERTION FAILED at lib/checksum_kunit.=
+c:267
+>     Expected result =3D=3D expec, but
+>         result =3D=3D 65281 (0xff01)
+>         expec =3D=3D 65280 (0xff00)
+>     not ok 2 test_csum_all_carry_inputs
+>     # test_csum_no_carry_inputs: ASSERTION FAILED at lib/checksum_kunit.c=
+:314
+>     Expected result =3D=3D expec, but
+>         result =3D=3D 65535 (0xffff)
+>         expec =3D=3D 65534 (0xfffe)
+>     not ok 3 test_csum_no_carry_inputs
+>
+> With this patch, it passes.
+>     KTAP version 1
+>     # Subtest: checksum
+>     1..3
+>     ok 1 test_csum_fixed_random_inputs
+>     ok 2 test_csum_all_carry_inputs
+>     ok 3 test_csum_no_carry_inputs
+>
+> I also tested it on a real 486DX2, with the same results.
+>
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Signed-off-by: David Gow <davidgow@google.com>
 > ---
-> 
-> Resend to fix Bjorn's email.
-> 
->  drivers/soc/qcom/cmd-db.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/soc/qcom/cmd-db.c b/drivers/soc/qcom/cmd-db.c
-> index 629a7188b576..33856abd560c 100644
-> --- a/drivers/soc/qcom/cmd-db.c
-> +++ b/drivers/soc/qcom/cmd-db.c
-> @@ -338,6 +338,8 @@ static int cmd_db_dev_probe(struct platform_device *pdev)
->  
->  	debugfs_create_file("cmd-db", 0400, NULL, NULL, &cmd_db_debugfs_ops);
->  
-> +	device_set_pm_not_required(&pdev->dev);
-> +
->  	return 0;
->  }
->  
-> 
+>
+> Re-sending this from [1]. While there's an argument that the whole
+> 32-bit checksum code could do with rewriting, it's:
+> (a) worth fixing before someone takes the time to rewrite it, and
+> (b) worth any future rewrite starting from a point where the tests pass
+>
+> I don't think there should be any downside to this fix: it only affects
+> ancient computers, and adds a single instruction which isn't in a loop.
+>
+> Cheers,
+> -- David
+>
+> [1]: https://lore.kernel.org/lkml/20230704083206.693155-2-davidgow@google=
+.com/
+>
+> ---
+>  arch/x86/lib/checksum_32.S | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/x86/lib/checksum_32.S b/arch/x86/lib/checksum_32.S
+> index 68f7fa3e1322..a5123b29b403 100644
+> --- a/arch/x86/lib/checksum_32.S
+> +++ b/arch/x86/lib/checksum_32.S
+> @@ -62,6 +62,7 @@ SYM_FUNC_START(csum_partial)
+>         jl 8f
+>         movzbl (%esi), %ebx
+>         adcl %ebx, %eax
+> +       adcl $0, %eax
+>         roll $8, %eax
+>         inc %esi
+>         testl $2, %esi
+> --
+> 2.45.2.1089.g2a221341d9-goog
+>
 
-Sorry for asking this question here, thought it would be easy for you to
-get the context.
+I'm not maintainer but LGTM.
 
-I was recently reading this driver and learned about
-device_set_pm_not_required() API. However, it is not clear how this is
-working in practice? 
-
-The driver is calling device_set_pm_not_required() in probe(), however
-all the checks for device_pm_not_required() happen before probe() is
-called. For ex: dpm_sysfs_add() and device_pm_add() both happens before
-probe(). I was expecting not to see
-/sys/bus/platform/devices/XXXXXX.aop-cmd-db/power directory but it is
-still present.
-
-Also, I believe once driver set this flag, the device clean up might not
-remove sysfs entries as we have device_pm_not_required() checks active
-by that time.
-
-Would it make sense to add code after probe() and take some action if
-device_pm_not_required() returns true?
-
-Thanks,
-Pavan
+Reviewed-by: Noah Goldstein <goldstein.w.n@gmail.com>
 
