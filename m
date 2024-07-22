@@ -1,59 +1,80 @@
-Return-Path: <linux-kernel+bounces-259076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C85689390EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:46:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C08719390ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:47:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8454028217C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:46:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 416F21F21C9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424F716D9D7;
-	Mon, 22 Jul 2024 14:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF6E16D9D7;
+	Mon, 22 Jul 2024 14:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cLLfWM/0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XOYweopR"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8776DC8C7
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 14:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3914DC8C7
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 14:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721659586; cv=none; b=bWtQfrBDSFQUdgD6nFb7nTL3vsJMJfJsD17jBaob6mwSUVzcO3Rto36FZiXt4lhh/tYRQEAPoAB4jL7+20bSiN/uday7/ocYnoKi80IAAfCyPuMif5GcaM7KRr6ByUGmyO7N+vJ0t7p2f98kTGDSjvnI93ACHHVGYKt4HXQDoPo=
+	t=1721659639; cv=none; b=cHGbe0tG6GaBSIsl5vUvRf9iK2hAHXOj26qS7WaIpmbaHsFQgAtIbn+376GxL9bATGU/P5qOt6YMks0tHzCzDrg1ihXAcB0TRNspTqGIAskX76AdQRXB1JRaq6V9T4wgx6auZbwvzH03hS/+/yDzA2zK4A/gK++Dxi2dsoyAekk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721659586; c=relaxed/simple;
-	bh=/hcAlppWRMQ4kBgz/1HNiIVC3fCjtz9gIVIM83KEraQ=;
+	s=arc-20240116; t=1721659639; c=relaxed/simple;
+	bh=OUMNNCR39NfCOHTmzz2B3xu9QZ2bD3hDkBbPR+hwUSE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PhDWY6K1V4/QaFCruaC2MaKZrFTxkTp6o38Zw46aNzQrMi0YvFh6FsuBYBx1BHgk+NjNPUYg2FlqiM8Sz6quOLRnq7Nu30aYzIB53T+Zntse05dPum+9m6ef0sewi+kePIKpMIBiY4Bz4a5rJur97r7N8fx9qk5yhze20btBeKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cLLfWM/0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57265C116B1;
-	Mon, 22 Jul 2024 14:46:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721659586;
-	bh=/hcAlppWRMQ4kBgz/1HNiIVC3fCjtz9gIVIM83KEraQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cLLfWM/0pVGMZkkHgUa5pAD5bbMa5puua7grNkCGSN+enk/ac+WHFYF9lC8wc0ijO
-	 7uX0G9M7SxatsFKwigQQF02nxdb6apcNxMLev2+946U5GSmjlN8/f9S2GzLcT+23bb
-	 Q3Sqy9uvwJAtKNye0xuG58Vep3USTPTdZZo3uC0e4X2Yy9H5ANQEK6jF4LnDDzbfvX
-	 6B30J4O7UtUeMtDYwscx3UpJcUkGW7j+DTtkhU0DIfQklY+AXhzG/6cFGfmfHOzm/S
-	 KY4AvD/Nj1iiM3UNRIaW++my3zDXzY7lhpg3ua5JzMO5b9IlkFJXFd5zBSc/U8W+Ix
-	 B0HQpkYjPmtWg==
-Date: Mon, 22 Jul 2024 08:46:23 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: stuart hayes <stuart.w.hayes@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	linux-nvme@lists.infradead.org, Hannes Reinecke <hare@suse.de>,
-	Martin Wilck <martin.wilck@suse.com>,
-	Ayush Siddarath <ayush.siddarath@dell.com>
-Subject: Re: [PATCH v4] nvme_core: scan namespaces asynchronously
-Message-ID: <Zp5wv_cPBvijRUSV@kbusch-mbp.dhcp.thefacebook.com>
-References: <20240717185550.22102-1-stuart.w.hayes@gmail.com>
- <Zpgtr33uqbMogK7c@kbusch-mbp.dhcp.thefacebook.com>
- <6629583d-4681-49bc-8a7c-a87c3051c30b@gmail.com>
- <ZplpjJqx0lySDzx-@kbusch-mbp.dhcp.thefacebook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ExxZgqxK8rQ6wuxtb+D5CqQvLY+sJowsHimgjHQCCJXzCS1BSuMnVrttUFCnlkpwVsrry3xkdeDAqPk2qdrFHx3xaRW5pj6LMqCMgc8XNqC3LLxkTRGD1Z6W9c92qnt/fA+5MfJvMR5uCI5co6e8FRvzYWmQfrutgOBoBp05Iq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XOYweopR; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7a843bef98so31686466b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:47:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1721659635; x=1722264435; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gfDTHBCuRohEK0ncm3xzBbUnv8j4LdhEVL2pu4g/bkQ=;
+        b=XOYweopRECfWN7exCnq9GDUKjut7L6w/6TJBx46y9VJcz3XYr8xExd1NBxef8jV5IG
+         2jx3JzdDrse3fDitWCcZSb3XSI7fiZhQ/8vOdjy37H8rVQ3gwnRDL0L2CARxvOrKGSs7
+         9OpTzTTi9a0aSq4f1oKFerV637WHYI68UzkSBaOB4lXlQMmI6jJUB5UWB9dnHb+j/7N/
+         aEIF0Zb5pXbcqc/AHC8QFFfd2C60YCMPr8SBabpgZRFoChQLJa5bkxql9H4uWuLDmkXP
+         U6tyF1iqlNS+nzAJeLpIyE/kuJx/9EdcFGVN2X4e4werBwubqIQPEzdOhozNXsmlrMYd
+         ROoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721659635; x=1722264435;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gfDTHBCuRohEK0ncm3xzBbUnv8j4LdhEVL2pu4g/bkQ=;
+        b=qi3Q7sRnz9DeAypRf2+eiyPv1EFVUJgcRXvdyLahPHox8TM3bJ/jMpWwsyjk1xE/Fo
+         JRlddEMXiCUOOfdqsuV0UZMMoD/C+FvPbrGw/Cx8KH9e9FWMdbEt8wvNcLu5SE4+eSQE
+         9G/Ril3qitBtfg6oKn4uEQ6vbrAYxq/iUwZwdaeY5Ex5C+csYdpxsT8joeP/8bG+FxQY
+         PAjjqLkITl3+hEShOZgBtgOxo4nxbBScby+UjoXhOiJZeaOkNFtPmUgJDWyTSrDPWE0J
+         C1OirD8rDOnr3MpDDev0SEsKmMF4MdZNSvTWatkxi5m9NDzfMBt/rYiuic43T3VmYpHH
+         JQ4g==
+X-Forwarded-Encrypted: i=1; AJvYcCVGAj9qey021LR110b/CbyiTD/NFzOnqT9AjgCzTpEehWgthdsXnuYZ+d8aB1xG3Mi0hu0iPgnqLDgxAZkml9LEl7MSsThNif5issJ2
+X-Gm-Message-State: AOJu0YwEXbHY2SMiGYm2jBZRk1I/e/CL983PhMnbXkOielq/7TvkHNBW
+	VZ13lbcRTkNorlj9pGKLhJ9j2lnj7Vp3EJsWkQEjckwZtJalMgzKg0GMpfThLg4=
+X-Google-Smtp-Source: AGHT+IE/V1ysK9/7OluPGIkN0XxqlvLcHiyifibp3AqEmHQQVIDrvMt+Q9jhUgW5HQKnT40KciPX5w==
+X-Received: by 2002:a17:907:7209:b0:a75:3627:fccc with SMTP id a640c23a62f3a-a7a4c446614mr523305966b.51.1721659635495;
+        Mon, 22 Jul 2024 07:47:15 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c922cb5sm431561366b.162.2024.07.22.07.47.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 07:47:15 -0700 (PDT)
+Date: Mon, 22 Jul 2024 16:47:13 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>
+Subject: Re: [PATCH printk 0/1] alternate fix for nbcon_cpu_emergency_flush()
+Message-ID: <Zp5w8Z0DHJ8v9ORh@pathway.suse.cz>
+References: <20240719134818.3311665-1-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,17 +83,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZplpjJqx0lySDzx-@kbusch-mbp.dhcp.thefacebook.com>
+In-Reply-To: <20240719134818.3311665-1-john.ogness@linutronix.de>
 
-On Thu, Jul 18, 2024 at 01:14:20PM -0600, Keith Busch wrote:
-> On Wed, Jul 17, 2024 at 09:10:23PM -0500, stuart hayes wrote:
-> > I agree, you aren't missing anything.  Thank you very much!  If you want
-> > me to submit a new patch with this and Thomas' changes, let me know.
+On Fri 2024-07-19 15:54:17, John Ogness wrote:
+> Hi Petr,
 > 
-> No problem, I've folded in Thomas's suggestions as well, pushed to
-> nvme-6.11. Thanks!
+> Currently in linux-next we have commit b955f0eead54 ("printk: nbcon:
+> Fix nbcon_cpu_emergency_flush() when preemptible"). But as you
+> pointed out [0], there is no need to disable preemption at all if
+> we only need to know if the current CPU is in emergency state.
+> 
+> Here is an alternative patch that correctly addresses the issue by
+> avoiding the migration checks.
+> 
+> Since the previous patch is not yet mainline, perhaps you want to
+> use this one instead in order to avoid a revert. Up to you.
 
-On further consideration, this is a bit late for 6.11 inclusion. This
-one could use time in linux-next, so it's top of my stack for 6.12 once
-that branch gets created.
+Makes sense. I have replaced the commit b955f0eead54 ("printk: nbcon:
+Fix nbcon_cpu_emergency_flush() when preemptible") with this new patch
+in printk/linux.git, branch rework/write-atomic.
+
+> [0] https://lore.kernel.org/lkml/Zn7b8g1HtuTIAwyi@pathway.suse.cz
+> 
+> John Ogness (1):
+>   printk: nbcon: do not require migration disabled for
+>     nbcon_get_cpu_emergency_nesting()
+> 
+>  kernel/printk/nbcon.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+
+Best Regards,
+Petr
 
