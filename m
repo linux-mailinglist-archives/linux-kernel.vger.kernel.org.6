@@ -1,203 +1,171 @@
-Return-Path: <linux-kernel+bounces-259180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 611C893923C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:04:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DE349392E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7204CB21766
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:04:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF192B21D15
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7950F16E884;
-	Mon, 22 Jul 2024 16:04:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2516D16EC1B;
+	Mon, 22 Jul 2024 16:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="I6IWtWxw"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504028F70
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 16:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3B416EC11
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 16:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721664245; cv=none; b=TXAumF5U2zVlrBzkjO7OtoIpgqU4m5qMvzUByi5uhI3AvRtX3mqJBK0FAZjJihh1+izrzhTzI7wZ4JA8SMV75S6GRp9Y2qQh2Gifr+FGtIEHVJi1MGfkmTt89LTUuu8P5bmLhYkhZG34nOB3ejLmEcq/fusiHPsRw6/Q3ysL24Q=
+	t=1721667553; cv=none; b=JY8ayccsPIuj0hfHv4jqh1WnwEskVc+DwaY0ojgNOGIMzWNbHJkGFUJzOru+w7CeGFFUSvKrfecDzS8h+8di3P/H/zBswqJpPl7MD6K+oYDlULMt7fM4Zjr258AEu03QTNBh6pxMpKdCdaGed3xchVlzSavxuPWHVEVxQKFEa3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721664245; c=relaxed/simple;
-	bh=dBvPbttBsydsmsUrFqNyQecJ2458QwJasAGRdSTdpj8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=BQ7JwWRHfpoJIHJLqyh057FNgDA6Y/ggjII1MVx3ujCNFv8lsC+FXjSTzkIavlH119q3+PisU3zDYagvB8i7y0EvkJJbPhKlInePiK2sEjaCimJ9Q/PP/wflDD8+z8qbDBuW7SEIoHN0NlzUGgDaM7hvpmGifrw2wC4E1tsn5nU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3982257ab28so54118345ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:04:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721664243; x=1722269043;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jNKOWdqSlBzyB2+x9QyGUdTXeGl0m0k6SJ2xE2/eohc=;
-        b=aQW/KjJZgsyxl5rGaK9t/YavLgVJYssc5GH1lbsEd5OfOeyHECvx6mtzS0L0M8yWmO
-         Exi4vXihcdtGBv7J+PqXp6RiYsT9Uteyc2p4EefUTO5ffRsRgK99RMW+X9M8enELG5Iw
-         ijLjfQahLOTWiJvwHG1h0YDPCu14YNypoZc5wtsn8cFc5fh0inn6pl0zX9m8GaZ8SIwu
-         OgoS/jWr1dbo4bUE14DOrFjV1QjYOcrgMly14rh36TKuo+XieBhLRvwSQJgCYYf63+EB
-         GHR70YVvda+n8U9TxaVj/rTjbcK3i+ehW0Xa7LLmeJuDTyFDNwoa8PLArDtgZ4rYynFy
-         3U+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVoYC2+sbpYY1H6tlQ0SvGbf4m7tK7+GO3+d7csbqLUeIFUUND4xBRB8u3u1Jhvb6l0NGn4WfRlZ8S+Kxt19XIi0H3lDjZoSuxA5Las
-X-Gm-Message-State: AOJu0YyX13C48cZjy3daO3iYFjVZFs9LNeJTQXHhiVAiCaJnhm4uf/ZB
-	MChO9pBkTjwarDZKScTHQmllff1hxwgexU2ZwjWS0NP7GZ66TTuFF67dLZ7cf2ihrY7G4ctIX94
-	aJY0x2ItaQmkWaBOu3qrTUnBtJ4qu8mKUUvu2Sf6mVuzGFk3Yo/wScCQ=
-X-Google-Smtp-Source: AGHT+IGoo2GsGYrIAnv1oNtBkXEW3SctPJPzMGLpUx6iE1rRGhzuGQb9ARAxohFshhdkFFXwgIS+EHqheKcW6zjvxLLqa9ywq9M1
+	s=arc-20240116; t=1721667553; c=relaxed/simple;
+	bh=Hl160DELcfUJEMLYmH3MiMDfdMOe+YcPvKAceU+mZZM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=eC3Uj1uCqxyPJW8LHylx47sH7iC942hZAzAYwgln3164kPR/DKdg00Ocv/ixit4mma5sqhnobx+VELm+jRJuVFDNkv8ZGvKZn5FT4zz+h+FYfx0oJaOdp8P5y5V7ZlzmK0/JYvX3zakRH/t/xzyd7HSW6GIRLXzp8whJOlhsYCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=I6IWtWxw; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240722165901epoutp040cf131bbab98fa4b5a5a68c35e7dff52~kl4H0y43f1067010670epoutp04F
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 16:59:01 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240722165901epoutp040cf131bbab98fa4b5a5a68c35e7dff52~kl4H0y43f1067010670epoutp04F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1721667542;
+	bh=ZPVHrwf5yEWr0C7HjWIjCbt24ZYiSE/6yR1KmtOSSR4=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=I6IWtWxwy+Gaf5jZcOc7gfJI9+Yyr/nZVvJ/U/QQz9v9X1wF9fy4nLYCeQTAa0QPF
+	 ZqYsjWrbNSKYcgaVVaF+nYQrAFybtoRKxwVoZ+LPQvWrl8S11V3lj1S2WjO88eryh5
+	 QbcqOuDdiGpXqekiJ1O7JVo9aYch6Z7B+1ZZVAO0=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240722165900epcas5p1df85433a84fd194e6df9a77c10e3251c~kl4GiL7BG1862018620epcas5p1F;
+	Mon, 22 Jul 2024 16:59:00 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.175]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4WSRM65K3Jz4x9Pp; Mon, 22 Jul
+	2024 16:58:58 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	7C.E0.09642.2DF8E966; Tue, 23 Jul 2024 01:58:58 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240722145728epcas5p38f8ecf57278b4a89c0b09430518c8599~kkN-kLqeV3092130921epcas5p31;
+	Mon, 22 Jul 2024 14:57:28 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240722145728epsmtrp2a58776e0d6700da884b32054091e25dd~kkN-jZWFR3128031280epsmtrp2a;
+	Mon, 22 Jul 2024 14:57:28 +0000 (GMT)
+X-AuditID: b6c32a4b-613ff700000025aa-a9-669e8fd23886
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	09.DE.19367.8537E966; Mon, 22 Jul 2024 23:57:28 +0900 (KST)
+Received: from INBRO002811.samsungds.net (unknown [107.122.5.126]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240722145726epsmtip2d6aa1846f9d2ae5955431a91ef56fb52~kkN9e6Mo20575605756epsmtip2E;
+	Mon, 22 Jul 2024 14:57:26 +0000 (GMT)
+From: Selvarasu Ganesan <selvarasu.g@samsung.com>
+To: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: jh0801.jung@samsung.com, dh10.jung@samsung.com, naushad@samsung.com,
+	akash.m5@samsung.com, rc93.raju@samsung.com, taehyun.cho@samsung.com,
+	hongpooh.kim@samsung.com, eomji.oh@samsung.com, shijie.cai@samsung.com,
+	Selvarasu Ganesan <selvarasu.g@samsung.com>
+Subject: [PATCH] usb: dwc3: core: Prevent USB core invalid event buffer
+ address access
+Date: Mon, 22 Jul 2024 20:26:09 +0530
+Message-ID: <20240722145617.537-1-selvarasu.g@samsung.com>
+X-Mailer: git-send-email 2.45.2.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20ea:b0:397:fa4e:3df0 with SMTP id
- e9e14a558f8ab-398e7821024mr4045515ab.3.1721664243486; Mon, 22 Jul 2024
- 09:04:03 -0700 (PDT)
-Date: Mon, 22 Jul 2024 09:04:03 -0700
-In-Reply-To: <20240722145736.3603-1-aha310510@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a7e919061dd83111@google.com>
-Subject: Re: [syzbot] [bpf?] [net?] general protection fault in __xsk_map_flush
-From: syzbot <syzbot+61a1cfc2b6632363d319@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHJsWRmVeSWpSXmKPExsWy7bCmhu6l/nlpBrtmqFu8ubqK1eLOgmlM
+	FqeWL2SyaF68ns1i0p6tLBZ3H/5gsbi8aw6bxaJlrcwWn47+Z7VY1TmHxeLI8o9MFpe/72S2
+	mHRQ1GLVggPsDnwe++euYffo27KK0WPL/s+MHp83yQWwRGXbZKQmpqQWKaTmJeenZOal2yp5
+	B8c7x5uaGRjqGlpamCsp5CXmptoqufgE6Lpl5gDdqKRQlphTChQKSCwuVtK3synKLy1JVcjI
+	Ly6xVUotSMkpMCnQK07MLS7NS9fLSy2xMjQwMDIFKkzIzpjxMrrgEHfF300JDYxbObsYOTkk
+	BEwkdjcfZexi5OIQEtjNKPF/1z4mkISQwCdGiQMXC+HsbUeFYRo2d12CatjJKHHywF0o5zuj
+	xKk7z9i7GDk42AQMJZ6dsAFpEBEokbj0diMTSA2zQAeTROeyB6wgCWGBCIlXs76B2SwCqhLP
+	jjxmBLF5Bawk/t16zA6xTVPiz4q9LBBxQYmTM5+A2cwC8hLNW2czgwyVEPjILjHvUi9Ug4tE
+	x+r5ULawxKvjW6BsKYnP7/ayQdjVEqvvfGSDaG5hlDj85BtUkb3E46OPmEE+YAbavH6XPkRY
+	VmLqqXVMEIv5JHp/P2GCiPNK7JgHY6tKnGq8DDVfWuLekmusELaHxMrlx1kgwRgr8e/oa5YJ
+	jPKzkPwzC8k/sxA2L2BkXsUomVpQnJueWmxaYJyXWg6P1uT83E2M4ISq5b2D8dGDD3qHGJk4
+	GA8xSnAwK4nwPnk1N02INyWxsiq1KD++qDQntfgQoykwkCcyS4km5wNTel5JvKGJpYGJmZmZ
+	iaWxmaGSOO/r1rkpQgLpiSWp2ampBalFMH1MHJxSDUznpv1M+7v3ocjhB1IyEkdyfY9+DKhn
+	b/6oPnWPwYkrCm9dXa4836zPd6tO0788te+hx3y2s+0uxy00vsyf+EollYsjW3T3Bf1n885o
+	W0y/wK0cuVctqotfef537Vs7362c+Zzt9OoXNiujLH+pZWgc5BT6fVk4tF5NyyPNPVXf8bfO
+	q2zhkLCAT1K//or9uuscG9MdsrzFN/h+e6TPMeEf6Tv4m7p+XT8rwPv511+Dzgxbf/XaFVl3
+	P6wx0ffiYIzuVril47vB0PqYPevqjak8TovFq7fe5z67r0FFSK5hjvG2cKV5fct+zPjOw27L
+	oT5PaVlKp6aStuvxzVnVUxycDn6QYeltCUr4/6D5oRJLcUaioRZzUXEiAHUKVjcxBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrGLMWRmVeSWpSXmKPExsWy7bCSvG5E8bw0g1WTtC3eXF3FanFnwTQm
+	i1PLFzJZNC9ez2Yxac9WFou7D3+wWFzeNYfNYtGyVmaLT0f/s1qs6pzDYnFk+Ucmi8vfdzJb
+	TDooarFqwQF2Bz6P/XPXsHv0bVnF6LFl/2dGj8+b5AJYorhsUlJzMstSi/TtErgyZryMLjjE
+	XfF3U0ID41bOLkZODgkBE4nNXZcYuxi5OIQEtjNK3Nr0ixEiIS3xelYXlC0ssfLfc3aIoq+M
+	Eje6OoEcDg42AUOJZydsQGpEBCokHi+cwQJSwywwhUliwbSDLCAJYYEwiZ1bIAaxCKhKPDvy
+	GMzmFbCS+HfrMTvEAk2JPyv2skDEBSVOznwCZjMLyEs0b53NPIGRbxaS1CwkqQWMTKsYRVML
+	inPTc5MLDPWKE3OLS/PS9ZLzczcxgoNaK2gH47L1f/UOMTJxMB5ilOBgVhLhffJqbpoQb0pi
+	ZVVqUX58UWlOavEhRmkOFiVxXuWczhQhgfTEktTs1NSC1CKYLBMHp1QDU/jtuW+DtNvsjKbM
+	d5wq+lXIWyuNt8LCrt60yivzfYnAx9uO8nIciw4nx3+8+Gt2+e/4GTP/CP5is++bvVbQe+Lb
+	aw8m8XepTfIKfXagfn/Npo6GwjU/L5barZKed/5CYZ/DykmXvr56vGj9zBspzN4nXzresEmw
+	kbVrPDU9qM330nSPZva6lSp/gra/CvxlI7a1/MMRd9OnV/iL3r2+MeWRaunBb8EG4lycLGLJ
+	nbM1NGVyGFSXerucsf9oaiqQ/oStdnq/yebS71/8Hp4Sa7OzSqksN599+sTu2l2RCnoZRu8j
+	mBw599vK1D4oNb7Quj1k2sZFa3y4liuue5BQ87WsfNq31TnPXkd5mW6NV2Ipzkg01GIuKk4E
+	ANPHnL7ZAgAA
+X-CMS-MailID: 20240722145728epcas5p38f8ecf57278b4a89c0b09430518c8599
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240722145728epcas5p38f8ecf57278b4a89c0b09430518c8599
+References: <CGME20240722145728epcas5p38f8ecf57278b4a89c0b09430518c8599@epcas5p3.samsung.com>
 
-Hello,
+This commit addresses an issue where the USB core could access an
+invalid event buffer address during runtime suspend, potentially causing
+SMMU faults and other memory issues. The problem arises from the
+following sequence.
+	1. In dwc3_gadget_suspend, there is a chance of a timeout when
+	moving the USB core to the halt state after clearing the
+	run/stop bit by software.
+	2. In dwc3_core_exit, the event buffer is cleared regardless of
+	the USB core's status, which may lead to an SMMU faults and
+	other memory issues. if the USB core tries to access the event
+	buffer address.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-BUG: unable to handle kernel paging request in bpf_net_ctx_get_all_used_flush_lists
+To prevent this issue, this commit ensures that the event buffer address
+is not cleared by software  when the USB core is active during runtime
+suspend by checking its status before clearing the buffer address.
 
-BUG: unable to handle page fault for address: ffffe63017937f02
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 1503a067 P4D 1503a067 PUD 0 
-Oops: Oops: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 UID: 0 PID: 6602 Comm: syz.0.303 Not tainted 6.10.0-syzkaller-11840-g933069701c1b-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-RIP: 0010:list_empty include/linux/list.h:373 [inline]
-RIP: 0010:bpf_net_ctx_get_all_used_flush_lists+0x16b/0x390 include/linux/filter.h:846
-Code: e6 08 31 ff e8 f6 c8 29 f8 4c 89 f8 48 83 e0 08 75 07 e8 08 c4 29 f8 eb 56 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c 08 00 74 08 48 89 df e8 47 0f 91 f8 48 8b 03 48 39 d8 74 2a
-RSP: 0000:ffffc90000a18a28 EFLAGS: 00010a02
-RAX: 1fffea3017937f02 RBX: ffff5180bc9bf810 RCX: dffffc0000000000
-RDX: 0000000080000101 RSI: 0000000000000008 RDI: 0000000000000000
-RBP: ffffffff8ddf3a48 R08: ffffffff8969be0a R09: 1ffffffff1f5f50d
-R10: dffffc0000000000 R11: fffffbfff1f5f50e R12: 1ffff9200014315c
-R13: ffffc900034bf7c0 R14: ffffc90000a18ae0 R15: 0000000000697f0a
-FS:  00007fd8f234c6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffe63017937f02 CR3: 0000000072ffa000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- xdp_do_check_flushed+0x130/0x2f0 net/core/filter.c:4298
- __napi_poll+0xe4/0x490 net/core/dev.c:6774
- napi_poll net/core/dev.c:6840 [inline]
- net_rx_action+0x89b/0x1240 net/core/dev.c:6962
- handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:rdtsc_ordered arch/x86/include/asm/msr.h:230 [inline]
-RIP: 0010:__pvclock_clocksource_read arch/x86/kernel/pvclock.c:77 [inline]
-RIP: 0010:pvclock_clocksource_read_nowd+0x4a/0xf0 arch/x86/kernel/pvclock.c:120
-Code: 89 e1 48 d3 e3 4c 89 2c 24 48 89 d8 48 f7 24 24 48 0f ac d0 20 49 8b 4e 10 41 0f b6 56 1d 41 8b 36 39 ee 89 f5 74 5d 0f 01 f9 <66> 90 48 89 d3 48 c1 e3 20 48 09 c3 49 2b 5e 08 83 e5 fe 45 8b 6e
-RSP: 0000:ffffc900034bf318 EFLAGS: 00000283
-RAX: 0000000068d4b4f6 RBX: 0000000000000000 RCX: 0000000000000001
-RDX: 0000000000000089 RSI: 0000000000000000 RDI: ffffffff929f5040
-RBP: 0000000000000004 R08: ffffea00019b5cf7 R09: 0000000000000000
-R10: ffffed100cdae600 R11: fffff94000336b9f R12: 0000000000140dca
-R13: 0000000000000001 R14: ffffffff929f5040 R15: dffffc0000000000
- kvm_sched_clock_read+0x11/0x20 arch/x86/kernel/kvmclock.c:91
- local_clock_noinstr+0xe/0xe0 kernel/sched/clock.c:301
- local_clock+0x10/0x30 kernel/sched/clock.c:315
- __set_page_owner+0x80/0x800 mm/page_owner.c:317
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
- prep_new_page mm/page_alloc.c:1501 [inline]
- get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3438
- __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4696
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2263
- folio_alloc_mpol_noprof mm/mempolicy.c:2281 [inline]
- vma_alloc_folio_noprof+0xf3/0x1f0 mm/mempolicy.c:2309
- folio_prealloc+0x31/0x170
- alloc_anon_folio mm/memory.c:4498 [inline]
- do_anonymous_page mm/memory.c:4555 [inline]
- do_pte_missing mm/memory.c:3945 [inline]
- handle_pte_fault+0x252d/0x6eb0 mm/memory.c:5522
- __handle_mm_fault mm/memory.c:5665 [inline]
- handle_mm_fault+0x1021/0x1990 mm/memory.c:5830
- do_user_addr_fault arch/x86/mm/fault.c:1338 [inline]
- handle_page_fault arch/x86/mm/fault.c:1481 [inline]
- exc_page_fault+0x459/0x8c0 arch/x86/mm/fault.c:1539
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-RIP: 0033:0x7fd8f1447716
-Code: 13 ff ff 48 c7 c0 ff ff ff ff eb b0 0f 1f 84 00 00 00 00 00 41 56 41 55 41 54 55 53 48 81 ec 40 20 00 00 48 8b 05 6a fd 1a 00 <48> 89 7c 24 18 48 89 74 24 10 be 02 55 08 80 48 89 54 24 08 48 8b
-RSP: 002b:00007fd8f2349fd0 EFLAGS: 00010202
-RAX: 0000100000000000 RBX: 00007fd8f1703f60 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffffffffffff
-RBP: 00007fd8f15e4e60 R08: 0000000000000000 R09: 0000000000000000
-R10: ffffffffffffffff R11: 0000000000000000 R12: 0000000000000000
-R13: 000000000000000b R14: 00007fd8f1703f60 R15: 00007ffd1bc275c8
- </TASK>
-Modules linked in:
-CR2: ffffe63017937f02
----[ end trace 0000000000000000 ]---
-RIP: 0010:list_empty include/linux/list.h:373 [inline]
-RIP: 0010:bpf_net_ctx_get_all_used_flush_lists+0x16b/0x390 include/linux/filter.h:846
-Code: e6 08 31 ff e8 f6 c8 29 f8 4c 89 f8 48 83 e0 08 75 07 e8 08 c4 29 f8 eb 56 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c 08 00 74 08 48 89 df e8 47 0f 91 f8 48 8b 03 48 39 d8 74 2a
-RSP: 0000:ffffc90000a18a28 EFLAGS: 00010a02
-RAX: 1fffea3017937f02 RBX: ffff5180bc9bf810 RCX: dffffc0000000000
-RDX: 0000000080000101 RSI: 0000000000000008 RDI: 0000000000000000
-RBP: ffffffff8ddf3a48 R08: ffffffff8969be0a R09: 1ffffffff1f5f50d
-R10: dffffc0000000000 R11: fffffbfff1f5f50e R12: 1ffff9200014315c
-R13: ffffc900034bf7c0 R14: ffffc90000a18ae0 R15: 0000000000697f0a
-FS:  00007fd8f234c6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffe63017937f02 CR3: 0000000072ffa000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	e6 08                	out    %al,$0x8
-   2:	31 ff                	xor    %edi,%edi
-   4:	e8 f6 c8 29 f8       	call   0xf829c8ff
-   9:	4c 89 f8             	mov    %r15,%rax
-   c:	48 83 e0 08          	and    $0x8,%rax
-  10:	75 07                	jne    0x19
-  12:	e8 08 c4 29 f8       	call   0xf829c41f
-  17:	eb 56                	jmp    0x6f
-  19:	48 89 d8             	mov    %rbx,%rax
-  1c:	48 c1 e8 03          	shr    $0x3,%rax
-  20:	48 b9 00 00 00 00 00 	movabs $0xdffffc0000000000,%rcx
-  27:	fc ff df
-* 2a:	80 3c 08 00          	cmpb   $0x0,(%rax,%rcx,1) <-- trapping instruction
-  2e:	74 08                	je     0x38
-  30:	48 89 df             	mov    %rbx,%rdi
-  33:	e8 47 0f 91 f8       	call   0xf8910f7f
-  38:	48 8b 03             	mov    (%rbx),%rax
-  3b:	48 39 d8             	cmp    %rbx,%rax
-  3e:	74 2a                	je     0x6a
+Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
+---
+ drivers/usb/dwc3/core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-
-Tested on:
-
-commit:         93306970 Merge tag '6.11-rc-smb3-server-fixes' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11b58b79980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d04f9888ed34da73
-dashboard link: https://syzkaller.appspot.com/bug?extid=61a1cfc2b6632363d319
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=145810a1980000
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index cb82557678dd..c7c1a253862e 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -559,8 +559,10 @@ int dwc3_event_buffers_setup(struct dwc3 *dwc)
+ void dwc3_event_buffers_cleanup(struct dwc3 *dwc)
+ {
+ 	struct dwc3_event_buffer	*evt;
++	u32				reg;
+ 
+-	if (!dwc->ev_buf)
++	reg = dwc3_readl(dwc->regs, DWC3_DSTS);
++	if (!dwc->ev_buf || !(reg & DWC3_DSTS_DEVCTRLHLT))
+ 		return;
+ 
+ 	evt = dwc->ev_buf;
+-- 
+2.17.1
 
 
