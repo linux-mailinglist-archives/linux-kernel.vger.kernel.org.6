@@ -1,176 +1,264 @@
-Return-Path: <linux-kernel+bounces-259030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BDC1939034
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:53:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19605939033
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:53:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB488281CE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:53:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61F43B20B99
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D6816DC23;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DA416DC15;
 	Mon, 22 Jul 2024 13:53:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O2gP95A7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AB016D9D1
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 13:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6607816D9BA;
+	Mon, 22 Jul 2024 13:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721656388; cv=none; b=nlG6Ta0gUE3RhkD+XfP54xdR+/DX+gtJKWLxjG6vP2OV/wE1uiuQH3P6vKmh3aekso7DPRtUgjVkrGgDt04Tzc10CktyeWvbPY1UpXbvYqJJZ8jVrzx8MkQvFVmtw1/bqbk6sSpc7iK2gAQbOx4feugX7va3SqntgqrzaUOmBxk=
+	t=1721656387; cv=none; b=QEmnxMMzZEdc46gPZKX/d1I0sDsZFHKwb7exMLV73yJP9ZF7WgRl24sZ1+D395K96Im5fnPRFMLRKC/UR/DGH4r7zq/+A3xOR/LhEHl+KmXz/vL3qGNJvbu8E6V/XypoQJQoCPiq16Mw7OszdsutzOZZIYKc6xv/iGBjjwrfc+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721656388; c=relaxed/simple;
-	bh=BOwZ4vF66z6wa6MKO33rnyYPrAj9i0vfjPJ/MqZzYgU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NZ5eENPBef7J0OKp8Y2qv1n+AvsFEV31tdZAJuk4vWs3dMw0j6Ij4dIJ7QB65/uiHnQexehj2ptY+T1qCqRM+qnxs2eZ56jOwpLPcQu7B2Vc44w3eFPVU2xREhQV/2yIwsXuWf+hfGan16PafK0zjRtuGM+17ZFgPV+AbuWPL6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O2gP95A7; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721656385;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZetsGJ5blfoCZSbkciEC6WflLyvv2m8UF1Hjh4ODOYY=;
-	b=O2gP95A7wwRr5E3ifWwZSoISHIvc51NItIx6eCc9dzDER4nzw75fntZFQPSdRbQCQhfw6g
-	iOJ5mVACHt1GHHt2XggqLmGlguJafRaH6mD9qNhuTqjE2yDTJPJjdAeqGpFKhVtO+X5P65
-	ADC0xAhZ2nWWP70N+ELlDfVDNHHXPA8=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-352-wwJ61nsKOciIoNFaQQbK5Q-1; Mon,
- 22 Jul 2024 09:53:00 -0400
-X-MC-Unique: wwJ61nsKOciIoNFaQQbK5Q-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BBFC41944A88;
-	Mon, 22 Jul 2024 13:52:57 +0000 (UTC)
-Received: from alecto.usersys.redhat.com (unknown [10.43.17.6])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5AD021955F40;
-	Mon, 22 Jul 2024 13:52:55 +0000 (UTC)
-From: Artem Savkov <asavkov@redhat.com>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	bpf@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Artem Savkov <asavkov@redhat.com>
-Subject: [PATCH bpf-next v2] selftests/bpf: fix compilation failure when CONFIG_NET_FOU!=y
-Date: Mon, 22 Jul 2024 15:52:53 +0200
-Message-ID: <20240722135253.3298964-1-asavkov@redhat.com>
-In-Reply-To: <005ef8ac-d48e-304f-65c5-97a17d83fd86@iogearbox.net>
-References: <005ef8ac-d48e-304f-65c5-97a17d83fd86@iogearbox.net>
+	s=arc-20240116; t=1721656387; c=relaxed/simple;
+	bh=AbDvZ72xd2iAiDvkGlFhknAmLdGYCkcPuPuNKN8J0Hw=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=rYk08T7u2ACSSjMNEgG32AXt7q0XLSTCnPLkdauct+9qJWbFNum5+SnSMOlxUrejdkEt8xIo+4Hlut6Lr+v3BZY1n+MErIS+Ucob1YSZ7XD6nHP+XBW4FZQBIkLaKCLDt5MwrHPTGRof0+6LqpZXipdb02GgGFuZQEfg13qpn6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
+	by madrid.collaboradmins.com (Postfix) with ESMTP id A9CC537811CD;
+	Mon, 22 Jul 2024 13:53:01 +0000 (UTC)
+From: "Shreeya Patel" <shreeya.patel@collabora.com>
+In-Reply-To: <c926b73e-9ee7-4c4f-9c06-761929425468@yandex.com>
+Content-Type: text/plain; charset="utf-8"
+X-Forward: 127.0.0.1
+References: <20240719124032.26852-1-shreeya.patel@collabora.com>
+ <20240719124032.26852-3-shreeya.patel@collabora.com> <c926b73e-9ee7-4c4f-9c06-761929425468@yandex.com>
+Date: Mon, 22 Jul 2024 14:53:01 +0100
+Cc: heiko@sntech.de, mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, jose.abreu@synopsys.com, nelson.costa@synopsys.com, shawn.wen@rock-chips.com, nicolas.dufresne@collabora.com, hverkuil@xs4all.nl, hverkuil-cisco@xs4all.nl, kernel@collabora.com, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, "Dmitry Osipenko" <dmitry.osipenko@collabora.com>
+To: "Johan Jonker" <jbx6244@yandex.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Message-ID: <3328a8-669e6400-1-609f7800@94177214>
+Subject: =?utf-8?q?Re=3A?= [PATCH v4 2/4] =?utf-8?q?dt-bindings=3A?=
+ =?utf-8?q?_media=3A?= Document bindings for HDMI RX Controller
+User-Agent: SOGoMail 5.10.0
+Content-Transfer-Encoding: quoted-printable
 
-Without CONFIG_NET_FOU bpf selftests are unable to build because of
-missing definitions. Add ___local versions of struct bpf_fou_encap and
-enum bpf_fou_encap_type to fix the issue.
+On Saturday, July 20, 2024 16:14 IST, Johan Jonker <jbx6244@yandex.com>=
+ wrote:
 
-Signed-off-by: Artem Savkov <asavkov@redhat.com>
+Hi Johan,
 
----
-v2: added BPF_NO_KFUNC_PROTOTYPES define to avoid issues when
-CONFIG_NET_FOU is set.
----
- .../selftests/bpf/progs/test_tunnel_kern.c    | 25 +++++++++++++------
- 1 file changed, 18 insertions(+), 7 deletions(-)
+>=20
+>=20
+> On 7/19/24 14:40, Shreeya Patel wrote:
+> > Document bindings for the Synopsys DesignWare HDMI RX Controller.
+> >=20
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> > Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+> > ---
+> >=20
+> > Changes in v4 :-
+> >   - No change
+> >=20
+> > Changes in v3 :-
+> >   - Rename hdmirx=5Fcma to hdmi=5Freceiver=5Fcma
+> >   - Add a Reviewed-by tag
+> >=20
+> > Changes in v2 :-
+> >   - Add a description for the hardware
+> >   - Rename resets, vo1 grf and HPD properties
+> >   - Add a proper description for grf and vo1-grf phandles
+> >   - Rename the HDMI Input node name to hdmi-receiver
+> >   - Improve the subject line
+> >   - Include gpio header file in example to fix dt=5Fbinding=5Fcheck=
+ failure
+> >=20
+> >  .../bindings/media/snps,dw-hdmi-rx.yaml       | 132 ++++++++++++++=
+++++
+> >  1 file changed, 132 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/media/snps,dw=
+-hdmi-rx.yaml
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/media/snps,dw-hdmi-r=
+x.yaml b/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
+> > new file mode 100644
+> > index 000000000000..96ae1e2d2816
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
+> > @@ -0,0 +1,132 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +# Device Tree bindings for Synopsys DesignWare HDMI RX Controller
+> > +
+> > +---
+> > +$id: http://devicetree.org/schemas/media/snps,dw-hdmi-rx.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Synopsys DesignWare HDMI RX Controller
+> > +
+> > +maintainers:
+> > +  - Shreeya Patel <shreeya.patel@collabora.com>
+> > +
+> > +description:
+> > +  Synopsys DesignWare HDMI Input Controller preset on RK3588 SoCs
+> > +  allowing devices to receive and decode high-resolution video str=
+eams
+> > +  from external sources like media players, cameras, laptops, etc.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    items:
+> > +      - const: rockchip,rk3588-hdmirx-ctrler
+>=20
+> > +      - const: snps,dw-hdmi-rx
+>=20
+> 1: Compatible strings must be SoC orientated.
+> 2: In Linux there's no priority in which string will probed first.=20
+> What's the point of having a fallback string when there's no common c=
+ode, but instead only the first string is used?
+>=20
+> +static const struct of=5Fdevice=5Fid hdmirx=5Fid[] =3D {
+> +	{ .compatible =3D "rockchip,rk3588-hdmirx-ctrler" },
+> +	{ },
+> +};
+>=20
 
-diff --git a/tools/testing/selftests/bpf/progs/test_tunnel_kern.c b/tools/testing/selftests/bpf/progs/test_tunnel_kern.c
-index 3f5abcf3ff136..4d526fc73f2bb 100644
---- a/tools/testing/selftests/bpf/progs/test_tunnel_kern.c
-+++ b/tools/testing/selftests/bpf/progs/test_tunnel_kern.c
-@@ -6,6 +6,7 @@
-  * modify it under the terms of version 2 of the GNU General Public
-  * License as published by the Free Software Foundation.
-  */
-+#define BPF_NO_KFUNC_PROTOTYPES
- #include "vmlinux.h"
- #include <bpf/bpf_core_read.h>
- #include <bpf/bpf_helpers.h>
-@@ -26,10 +27,20 @@
-  */
- #define ASSIGNED_ADDR_VETH1 0xac1001c8
- 
-+struct bpf_fou_encap___local {
-+       __be16 sport;
-+       __be16 dport;
-+};
-+
-+enum bpf_fou_encap_type___local {
-+       FOU_BPF_ENCAP_FOU___local,
-+       FOU_BPF_ENCAP_GUE___local,
-+};
-+
- int bpf_skb_set_fou_encap(struct __sk_buff *skb_ctx,
--			  struct bpf_fou_encap *encap, int type) __ksym;
-+			  struct bpf_fou_encap___local *encap, int type) __ksym;
- int bpf_skb_get_fou_encap(struct __sk_buff *skb_ctx,
--			  struct bpf_fou_encap *encap) __ksym;
-+			  struct bpf_fou_encap___local *encap) __ksym;
- struct xfrm_state *
- bpf_xdp_get_xfrm_state(struct xdp_md *ctx, struct bpf_xfrm_state_opts *opts,
- 		       u32 opts__sz) __ksym;
-@@ -745,7 +756,7 @@ SEC("tc")
- int ipip_gue_set_tunnel(struct __sk_buff *skb)
- {
- 	struct bpf_tunnel_key key = {};
--	struct bpf_fou_encap encap = {};
-+	struct bpf_fou_encap___local encap = {};
- 	void *data = (void *)(long)skb->data;
- 	struct iphdr *iph = data;
- 	void *data_end = (void *)(long)skb->data_end;
-@@ -769,7 +780,7 @@ int ipip_gue_set_tunnel(struct __sk_buff *skb)
- 	encap.sport = 0;
- 	encap.dport = bpf_htons(5555);
- 
--	ret = bpf_skb_set_fou_encap(skb, &encap, FOU_BPF_ENCAP_GUE);
-+	ret = bpf_skb_set_fou_encap(skb, &encap, FOU_BPF_ENCAP_GUE___local);
- 	if (ret < 0) {
- 		log_err(ret);
- 		return TC_ACT_SHOT;
-@@ -782,7 +793,7 @@ SEC("tc")
- int ipip_fou_set_tunnel(struct __sk_buff *skb)
- {
- 	struct bpf_tunnel_key key = {};
--	struct bpf_fou_encap encap = {};
-+	struct bpf_fou_encap___local encap = {};
- 	void *data = (void *)(long)skb->data;
- 	struct iphdr *iph = data;
- 	void *data_end = (void *)(long)skb->data_end;
-@@ -806,7 +817,7 @@ int ipip_fou_set_tunnel(struct __sk_buff *skb)
- 	encap.sport = 0;
- 	encap.dport = bpf_htons(5555);
- 
--	ret = bpf_skb_set_fou_encap(skb, &encap, FOU_BPF_ENCAP_FOU);
-+	ret = bpf_skb_set_fou_encap(skb, &encap, FOU_BPF_ENCAP_FOU___local);
- 	if (ret < 0) {
- 		log_err(ret);
- 		return TC_ACT_SHOT;
-@@ -820,7 +831,7 @@ int ipip_encap_get_tunnel(struct __sk_buff *skb)
- {
- 	int ret;
- 	struct bpf_tunnel_key key = {};
--	struct bpf_fou_encap encap = {};
-+	struct bpf_fou_encap___local encap = {};
- 
- 	ret = bpf_skb_get_tunnel_key(skb, &key, sizeof(key), 0);
- 	if (ret < 0) {
--- 
-2.45.2
+We believe the HDMIRX driver can be used for the Synopsys IP on other S=
+oCs
+in the future, which is why we have added snps,dw-hdmi-rx as the fallba=
+ck compatible.
+Currently, we have tested the driver only on the RK3588 Rock5B, so we a=
+re using the
+rockchip,rk3588-hdmirx-ctrler compatible in the driver instead of the f=
+allback one.
+
+
+Thanks,
+Shreeya Patel
+
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  interrupts:
+> > +    maxItems: 3
+> > +
+> > +  interrupt-names:
+> > +    items:
+> > +      - const: cec
+> > +      - const: hdmi
+> > +      - const: dma
+> > +
+> > +  clocks:
+> > +    maxItems: 7
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: aclk
+> > +      - const: audio
+> > +      - const: cr=5Fpara
+> > +      - const: pclk
+> > +      - const: ref
+> > +      - const: hclk=5Fs=5Fhdmirx
+> > +      - const: hclk=5Fvo1
+> > +
+> > +  power-domains:
+> > +    maxItems: 1
+> > +
+> > +  resets:
+> > +    maxItems: 4
+> > +
+> > +  reset-names:
+> > +    items:
+> > +      - const: axi
+> > +      - const: apb
+> > +      - const: ref
+> > +      - const: biu
+> > +
+> > +  memory-region:
+> > +    maxItems: 1
+> > +
+> > +  hpd-gpios:
+> > +    description: GPIO specifier for HPD.
+> > +    maxItems: 1
+> > +
+> > +  rockchip,grf:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description:
+> > +      The phandle of the syscon node for the general register file
+> > +      containing HDMIRX PHY status bits.
+> > +
+> > +  rockchip,vo1-grf:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description:
+> > +      The phandle of the syscon node for the Video Output GRF regi=
+ster
+> > +      to enable EDID transfer through SDAIN and SCLIN.
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - interrupts
+> > +  - interrupt-names
+> > +  - clocks
+> > +  - clock-names
+> > +  - power-domains
+> > +  - resets
+> > +  - pinctrl-0
+> > +  - hpd-gpios
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/clock/rockchip,rk3588-cru.h>
+> > +    #include <dt-bindings/gpio/gpio.h>
+> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +    #include <dt-bindings/interrupt-controller/irq.h>
+> > +    #include <dt-bindings/power/rk3588-power.h>
+> > +    #include <dt-bindings/reset/rockchip,rk3588-cru.h>
+> > +    hdmi=5Freceiver: hdmi-receiver@fdee0000 {
+> > +      compatible =3D "rockchip,rk3588-hdmirx-ctrler", "snps,dw-hdm=
+i-rx";
+> > +      reg =3D <0xfdee0000 0x6000>;
+> > +      interrupts =3D <GIC=5FSPI 177 IRQ=5FTYPE=5FLEVEL=5FHIGH 0>,
+> > +                   <GIC=5FSPI 436 IRQ=5FTYPE=5FLEVEL=5FHIGH 0>,
+> > +                   <GIC=5FSPI 179 IRQ=5FTYPE=5FLEVEL=5FHIGH 0>;
+> > +      interrupt-names =3D "cec", "hdmi", "dma";
+> > +      clocks =3D <&cru ACLK=5FHDMIRX>,
+> > +               <&cru CLK=5FHDMIRX=5FAUD>,
+> > +               <&cru CLK=5FCR=5FPARA>,
+> > +               <&cru PCLK=5FHDMIRX>,
+> > +               <&cru CLK=5FHDMIRX=5FREF>,
+> > +               <&cru PCLK=5FS=5FHDMIRX>,
+> > +               <&cru HCLK=5FVO1>;
+> > +      clock-names =3D "aclk",
+> > +                    "audio",
+> > +                    "cr=5Fpara",
+> > +                    "pclk",
+> > +                    "ref",
+> > +                    "hclk=5Fs=5Fhdmirx",
+> > +                    "hclk=5Fvo1";
+> > +      power-domains =3D <&power RK3588=5FPD=5FVO1>;
+> > +      resets =3D <&cru SRST=5FA=5FHDMIRX>, <&cru SRST=5FP=5FHDMIRX=
+>,
+> > +               <&cru SRST=5FHDMIRX=5FREF>, <&cru SRST=5FA=5FHDMIRX=
+=5FBIU>;
+> > +      reset-names =3D "axi", "apb", "ref", "biu";
+> > +      memory-region =3D <&hdmi=5Freceiver=5Fcma>;
+> > +      pinctrl-0 =3D <&hdmim1=5Frx=5Fcec &hdmim1=5Frx=5Fhpdin &hdmi=
+m1=5Frx=5Fscl &hdmim1=5Frx=5Fsda &hdmirx=5F5v=5Fdetection>;
+> > +      pinctrl-names =3D "default";
+> > +      hpd-gpios =3D <&gpio1 22 GPIO=5FACTIVE=5FLOW>;
+> > +    };
 
 
