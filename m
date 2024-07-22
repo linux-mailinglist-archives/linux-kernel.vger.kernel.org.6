@@ -1,145 +1,152 @@
-Return-Path: <linux-kernel+bounces-258821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9819E938D14
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:06:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5D5A938D21
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C75C8B218A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:06:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B6AB285F89
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6EE916C6A8;
-	Mon, 22 Jul 2024 10:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5642E16EBEA;
+	Mon, 22 Jul 2024 10:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gux0cL1P"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DBBu7nwa"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCB416C6AC
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 10:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFDFC168491;
+	Mon, 22 Jul 2024 10:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721642599; cv=none; b=SMC0mmorvWGwcbUIgs2A/btCKLu8Jy+IQdiYKBAVo9qlMopUW39rt3q4oaI7ciF+eE7tlcRLIv3f7TkiCJxKSFnjX1uxFNdWYwhgmfL4F/VL3jXwU2y4GP4AEbYQi3w779sjmLqQffbOfzhWMoTgdr7MZxtYZuShp3Kfxzj83Zw=
+	t=1721642626; cv=none; b=F6q9WbfGk/4HTr42wetAaWnLTu/G8xPOgGzZRORrGfqiZguyutuDAE/NDOniOBjNIV4H2lQOzKP6BzYV5dG3DsasWYxfj1bYDrIfglQPo2E5nfk73exiu7wcbxufY28rM0Q3fZ/tFvGq+qoYdu4EeVF/UuSKQNMcTRf9Le/UJL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721642599; c=relaxed/simple;
-	bh=o4RZcY4W7Uwu6UFVroj/gdueZlAftoT3H+QJcWPsMOc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sVOqgK726rVHhGTjVP9To8UVU4f6TDKp6/yaE3E6C+mQf/Cf+2Yk7Y8FV66Ltobzf+S4ZxL0UuJXu7c+lVYIkSBLsojhe4xjRcGlDI4jASDRYIbH9+oFDClp8B7jqcdGDs+PPTUq4yJT9OBZPIaGVo6IDwsLZZzYEAJ0L9opaPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gux0cL1P; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-59f9f59b827so3542547a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 03:03:17 -0700 (PDT)
+	s=arc-20240116; t=1721642626; c=relaxed/simple;
+	bh=eTseU1JvNfE/gA355AGdxgDwaG6TNzVXAoONYhqXy+0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oMj5vH3a6O1r1pLmyoQlrqiy5TH3tA2MAWu3dc5ZlGWKj5kIssoEPFXAjvyjUv8MOYlEtVbtc7GcXdWalAJxMVTI/a1MjOpFb9+imew8erSUchXTozTUhGjxcYZjXh7Y6/AUfFOSzBWupLBohkasukI+/MO6BsV8jAEKeOS1XXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DBBu7nwa; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3685afd0c56so273328f8f.1;
+        Mon, 22 Jul 2024 03:03:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721642596; x=1722247396; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=rOwpugS95aKFSVrwyonBdyE1UJidF+jjYwlg/0nAfHE=;
-        b=gux0cL1PaDqGA7v4s0SFOOJu96Z8vbrm2CFCscR7WBO27hN7bRBVXJ5ihILeRW7ZWJ
-         5zVwIVIWIHFazGHq87WNWyAbI7Sl0qLCHtKk86XqHGFEfNKjUw7J+oms/N/5+oZZ+G0h
-         tGuydbPDHY2QjV1mwrn4uYKRsHx2MzyoygwTegz5qj1wRnafHDURczDaIYvsYCRUeCsm
-         ryd8bcLMnUeePsxSzl5Ew/W6rUmaaJq2Ok6dUXjirCl82J2HDkAdYHagQsAFPWqy8B5W
-         mAX8PqHVztUFRsdSLm+gh62O8MDidCdtW3Ze3Mjt8Lk/0Q/Dd4QSD5Uxgqr7ZauGMKzA
-         aqjg==
+        d=gmail.com; s=20230601; t=1721642623; x=1722247423; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eL9cUWDiG/jZtMM6Ijga1UNFxgVDFmD7PbpUrEC1BO8=;
+        b=DBBu7nwaNiPNX49BHGGlFxehAhJ74uXlb5tNKd66mzVImWzuMMEekX4NG2GRm7ZCAb
+         8Fgo7YZ/wYn1ham0/ivC9mbLEdFd9Rsom2IkcIPNh+v9b5OlqynCsNPaEveTinmsqrbR
+         0Em3a+FYgsqMRucqHCeehv8GDx75vVUdOyxx9ujf33hmr+WHVfehiF4cxAm4tUlRZPc8
+         Np3ACJJEGyPwlzonvofVQYi02DmdzkEZmJJANtaqcwXB2eCL4JFHPzohrIKwE1HWYWqC
+         eCltFuOfya5iq5K9WKWHHBh6TW5jN7Y3EFE43pdxIiZBJvx2DHvIZfp/lB8X6aGj5lpE
+         Z9gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721642596; x=1722247396;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rOwpugS95aKFSVrwyonBdyE1UJidF+jjYwlg/0nAfHE=;
-        b=ue+JD8eTKl6EVqG3xTGapumlU2JaPLC8vYw/y1v4uAH6GnDEYjmP3v59Q1HwYdIhhl
-         R6E4MpwX8ZnhxtNbnN5ob3Amu0RWLeo3LtcKgo3JUxk9ETdVruYGbt5ecgit+bNn7NUy
-         mLRvo0vR194/mkZooroXPhwNBJuFO1aqbTU9nudqH/OJqcwXkEITcBnMYe5eRyoT50Xp
-         a186p+d8g5KkpSlwm7AqMvw5657g9f9SAUPzyMys6/orxBe1V3n1Hqu89pm1VkiQJzU2
-         6WMfakuBSDSJTO4Ka7Apohp5T82Jva/NS0WknPaNkdTSQ4trOYlNvI4fWCGhjHz1KG+c
-         Y/uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUR6dcy+MoEp2V8bDdN6CwprJepvc+Ixl1i42i0VckhV+puYwHF6lVLdxEuOTM3eAj1jq2+ItcA7Qlv9oYYzK7h+0rT2VgKPHMHbvh3
-X-Gm-Message-State: AOJu0Yw2g4v/QOccVOkSu/g3QFwNHv/7N+jZ6hYTTwRIeF5ow9ydVDWD
-	Kp+o27QxnYJ0+ogVyF5FPUjdRON20ptbPluI9P6FKEQkqHk6TggU3PaV/mNdHZw=
-X-Google-Smtp-Source: AGHT+IFaPovvL+J27yUcLLsytE4cYRr9/Nyjd4Yr5S8EgLDHi9IH3xceTrHf2Z5Zm+3QWm06/nXLRQ==
-X-Received: by 2002:a05:6402:2682:b0:5a1:f74d:2d58 with SMTP id 4fb4d7f45d1cf-5a479f5a9a6mr3905330a12.24.1721642595714;
-        Mon, 22 Jul 2024 03:03:15 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a44cb995absm4253102a12.45.2024.07.22.03.03.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jul 2024 03:03:15 -0700 (PDT)
-Message-ID: <caa472d5-8f4c-4d0c-98b1-2d381959ad2a@linaro.org>
-Date: Mon, 22 Jul 2024 12:03:13 +0200
+        d=1e100.net; s=20230601; t=1721642623; x=1722247423;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eL9cUWDiG/jZtMM6Ijga1UNFxgVDFmD7PbpUrEC1BO8=;
+        b=h0n1WtAxpeAooVrbXnOz7LgmdHIZRQjzsKdhN8+qPnyRbeqHV6gyk7NR1rNbHSB1t9
+         h/Qqw1xWw7NUF2SDlSGT0ZcthlN1bHKHtztnxJhP4vdhRFADKK2bPQYRkeX1dwkxV5sC
+         lZo/EzZ0uwqiCYFE1DjkpTgL0NAONUppavoF7z0jqyJOBKT0y3sQOiDFweknur3tYHX2
+         +eNxXncPg7ZAYMU1vPx9wRMarAtzaf+I4345ftXQAwn+6E8BQbOAE9azJ9Gt3fLA4a36
+         RnQ92TvNf+uEJj2bKnwGQJ/e8biC53shAcdxeDwZ4BhRR+CdnkgasanQOSBRWIPD1Hfq
+         uFhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUM37ySHLvx9aRCtN7ZXco1xB81VKQ5qgUF68kDJWTTzXBBWZMvEACiM3LmrZBX0X06Q0zCJS8HwmiwNRQjU9rWyKzG5cRawqBZUd2zHyC8awCGI7zbvq250MWnIHkZiC8jMHLzNRwKg==
+X-Gm-Message-State: AOJu0YxKn/zU917KREZLcwH+ObD7+IFIaoufhEf+EiBggJVe4SBHnAhB
+	v/Xmsl3clX4AkFo/4KS0DLmP+ZjMHlZqLEAh4WotIZJ1zQ8iSEVqsX24OAm0
+X-Google-Smtp-Source: AGHT+IE62JawKCAKhkLNJB/qu1W7vAGb4zU4gSpGosM+4UAr51OK7unC4qQsDDndOt2GhlwHzJC7oQ==
+X-Received: by 2002:a05:6000:1f82:b0:366:e1a6:3386 with SMTP id ffacd0b85a97d-369bb2a1d34mr4478756f8f.44.1721642622858;
+        Mon, 22 Jul 2024 03:03:42 -0700 (PDT)
+Received: from localhost (host-82-58-19-206.retail.telecomitalia.it. [82.58.19.206])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3687868490fsm8104360f8f.6.2024.07.22.03.03.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 03:03:42 -0700 (PDT)
+From: Matteo Martelli <matteomartelli3@gmail.com>
+Subject: [PATCH v3 0/3] iio: adc: add support for pac1921
+Date: Mon, 22 Jul 2024 12:03:17 +0200
+Message-Id: <20240722-iio-pac1921-v3-0-05dc9916cb33@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/12] arm64: dts: qcom: x1e80100-vivobook-s15: fix up
- PCIe6a pinctrl node
-To: Johan Hovold <johan+linaro@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>,
- Abel Vesa <abel.vesa@linaro.org>, Rajendra Nayak <quic_rjendra@quicinc.com>,
- Xilin Wu <wuxilin123@gmail.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240722095459.27437-1-johan+linaro@kernel.org>
- <20240722095459.27437-7-johan+linaro@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240722095459.27437-7-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGUunmYC/1WMSw6DIBQAr2JYl+bxUaSr3qPpAhH1JVUMNKSN8
+ e5Fu9HlTDKzkOgCukhuxUKCSxjRTxnEpSB2MFPvKLaZCQcuoYKKIno6G8s0Z1SpzkBnREZGcjE
+ H1+Fnvz2emQeMbx+++zyxzf4/CsTpkxgFWkorVatZDU1170eDr6v1I9k+iR9beW55bqF1jS6Nr
+ CXoY7uu6w/oKMKP4gAAAA==
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Marius Cristea <marius.cristea@microchip.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Matteo Martelli <matteomartelli3@gmail.com>
+X-Mailer: b4 0.14.0
 
-On 22.07.2024 11:54 AM, Johan Hovold wrote:
-> The PCIe6a pinctrl node appears to have been copied from the sc8280xp
-> CRD dts (via the x1e80100 CRD dts), which has the NVMe on pcie2a.
-> 
-> Fix up the node name to match the x1e80100 use and label.
-> 
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
+Add iio driver and DT binding for the Microchip PAC1921 Current/Power
+monitor.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Implemented most of the features with few limitations listed in the
+driver commit message.
 
-Konrad
+Tested with a Pine64 host board connected to a PAC1921 click board [1]
+via I2C. The PAC1921 click board embeds the Microchip PAC1921 device
+and a 10 mOhms shunt resistor. The PAC1921 datasheet is at [2].
+
+[1]: https://www.mikroe.com/pac1921-click
+[2]: https://ww1.microchip.com/downloads/en/DeviceDoc/PAC1921-Data-Sheet-DS20005293E.pdf
+
+Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
+---
+Changes in v3:
+- Add shunt_resistor attribute for current channel
+- Generalize shunt_resistor ABI
+- Remove specific pac1921 ABI
+- Remove resolution and filters controls
+- Use scale attributes instead of hwgain attributes to control gains
+- Replace integration_num_samples and integration_time attributes with
+  oversample_ratio and sampling_frequency
+- Consider time to enter integration mode before marking data available
+- Add controls for overflow events
+- Add select fields in Kconfig
+- Refactoring based on Jonathan feedback from v2
+- Link to v2: https://lore.kernel.org/r/20240704-iio-pac1921-v2-0-0deb95a48409@gmail.com
+
+Changes in v2:
+- DT binding: remove vendor specific gains, add vdd-supply, add
+  read/int gpio and fix properties order in example
+- Remove parsing of gains from DT
+- Handle vdd regulator
+- Fix return value in filter_en write handler
+- Link to v1: https://lore.kernel.org/r/20240703-iio-pac1921-v1-0-54c47d9180b6@gmail.com
+
+---
+Matteo Martelli (3):
+      dt-bindings: iio: adc: add binding for pac1921
+      iio: ABI: generalize shunt_resistor attribute
+      iio: adc: add support for pac1921
+
+ Documentation/ABI/testing/sysfs-bus-iio            |    8 +
+ .../ABI/testing/sysfs-bus-iio-adc-max9611          |   17 -
+ Documentation/ABI/testing/sysfs-bus-iio-ina2xx-adc |    9 -
+ .../bindings/iio/adc/microchip,pac1921.yaml        |   71 ++
+ MAINTAINERS                                        |    7 +
+ drivers/iio/adc/Kconfig                            |   13 +
+ drivers/iio/adc/Makefile                           |    1 +
+ drivers/iio/adc/pac1921.c                          | 1265 ++++++++++++++++++++
+ 8 files changed, 1365 insertions(+), 26 deletions(-)
+---
+base-commit: 1ebab783647a9e3bf357002d5c4ff060c8474a0a
+change-id: 20240606-iio-pac1921-77fa0fa3ac11
+
+Best regards,
+-- 
+Matteo Martelli <matteomartelli3@gmail.com>
+
 
