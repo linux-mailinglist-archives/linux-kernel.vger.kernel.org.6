@@ -1,134 +1,140 @@
-Return-Path: <linux-kernel+bounces-258697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CB67938BC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:10:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE9C0938BC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:10:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E2391C2125F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:10:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F8461C21253
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848D216A37C;
-	Mon, 22 Jul 2024 09:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE6616849F;
+	Mon, 22 Jul 2024 09:10:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="dzmm2rB7"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="2VGLy/jK"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8DF161311;
-	Mon, 22 Jul 2024 09:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0053312B63;
+	Mon, 22 Jul 2024 09:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721639447; cv=none; b=ubBCceRoH/DhWyE+lzJH8+CAToiqoGsDJHfrraU4ZNF+ZErO2BJ8iafmHxL8ubsOuMP+44B4KlvG5ioIMvz0qJfStSltjXYTCQmHO73d+fYOas9MvaTmSBNmlQ9wZIsl1Y/I3R9R6ungcaXsswa6JKo/MNBu02mZF/jYtw+Ixr8=
+	t=1721639435; cv=none; b=dLq/QYPhzkHwrKuztpt7bR/qmtoWpfFMleGQPUWHojLT5j1l5iHbVoffmUOIQiwOhb8YJAbSTjPZ/9k+WGQsay3dgAd+Sn34uz7dvDEXe6l1dyco+xp5RSmVjOaB7pKwVZIwhlI2b3Gvp/y5xzR4SF/SUsaBJJ7msiuQ7GPVaPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721639447; c=relaxed/simple;
-	bh=F5XBAe/GKrCj0xLEXgFxWDYnSZgfCE914QJJeyW8fc8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CIUD50j1vvWZrLLK30jC+Lw6v3LEwwN96fvqoqzEhTiANHFf/NnajNdljAIheRzmHL8+/u/8ojcUPavqJxXcpwB9ZFGkrEDoIn32CWw70xjL+u32ycq1reNQ7q87r9RmrbRNFgmYTRLoB0xjHi+MvdVK+LpAuQpmQMgGB9xslWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=dzmm2rB7; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46M7wtTW005443;
-	Mon, 22 Jul 2024 02:10:15 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=UZ8qbwV8H5Uru+28S5SaGf9Al
-	hy/rbNI7CI4WhPzKlU=; b=dzmm2rB7zo2tr5pLB+fubm3C4F6L+MIp6nF8GXX04
-	iNvpNVXVUgJWJvk/hBTfDvo3Vg4tmnyR7vFcRV4//Gnk6jGloxEvfVMr+LG4jEEw
-	wxSDKEUJCZM1rKOaGzn0hm/UkdpjRbr3pnDUuCHyR3iVl/6aGVoFhLc3lneECGd/
-	TNYqYgoqztuERvV0GYvJt8y3e2A7AmA06dcOgZVQdrf4CtEsQX1QA0BXgMRjoTqw
-	J25xtF2PNgH9FF56Vj0VYemw/a/WCVeW7297NaUk8soVQS7MPe96oPcYCET+HkS+
-	L03Fssg9crdG1WBhbk6HsMuLkbydqsrbETSKCF6U12w8A==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 40hkgrr6yj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jul 2024 02:10:15 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Mon, 22 Jul 2024 02:10:15 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Mon, 22 Jul 2024 02:10:14 -0700
-Received: from test-OptiPlex-Tower-Plus-7010 (unknown [10.29.37.157])
-	by maili.marvell.com (Postfix) with SMTP id 971D73F7041;
-	Mon, 22 Jul 2024 02:10:08 -0700 (PDT)
-Date: Mon, 22 Jul 2024 14:40:07 +0530
-From: Hariprasad Kelam <hkelam@marvell.com>
-To: Alex Elder <elder@ieee.org>
-CC: Andrew Lunn <andrew@lunn.ch>, Ayush Singh <ayush@beagleboard.org>,
-        <jkridner@beagleboard.org>, <robertcnelson@beagleboard.org>,
-        "David S.
- Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Johan Hovold
-	<johan@kernel.org>,
-        Alex Elder <elder@kernel.org>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        <greybus-dev@lists.linaro.org>, <netdev@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 3/3] greybus: gb-beagleplay: Add firmware upload API
-Message-ID: <Zp4h72rWwgnGmvcP@test-OptiPlex-Tower-Plus-7010>
-References: <20240719-beagleplay_fw_upgrade-v1-0-8664d4513252@beagleboard.org>
- <20240719-beagleplay_fw_upgrade-v1-3-8664d4513252@beagleboard.org>
- <Zppeg3eKcKEifJNW@test-OptiPlex-Tower-Plus-7010>
- <b3269dc8-85ac-41d2-8691-0a70b630de50@lunn.ch>
- <e7e88268-a56b-447c-9d59-6a4eb8fcd25a@ieee.org>
+	s=arc-20240116; t=1721639435; c=relaxed/simple;
+	bh=0y+SSd3HzuVB5A6DL6ENAzZ5/ElbVtDZp3b9VkjVamI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fVslFIRNqFLJPWRIN8MDPixnoN55DtQEOlfij+vgJip/5KJIJG5HeQlqLZdYqp4kqlfWJQaTpNvxuq4pgvclvNUwRENvs+N7gyCfMAy3iXq7JGGamjEC5R+ptHBxEh6Vcx2sKUhPXIOtBGES/3Z16ozChsoGXZu0qe1v8BsJW7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=2VGLy/jK; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721639432;
+	bh=0y+SSd3HzuVB5A6DL6ENAzZ5/ElbVtDZp3b9VkjVamI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=2VGLy/jK8YVxqbFJktL3gY9D52LdEm31BRANHinVSGUKuJNyWn5MFnI57uXDPK4ML
+	 i8xFgjrLxYfKcEKOm0Y3+BSgbvhvrT2w2hQbZGMV10FtS+3PXEvVyn8ELtzQ3AVknF
+	 TAZ3DiXaVYdoDpMiIRPWN3Z7EXL+mrrCyAJosPNBrTWnqvDIS9OBBjxmlV6a2GnWQy
+	 dsBlDwlIvONpdj0C8LMokb2LxFBTrPq0kwJ3xaDCwGeoRJ+BhAOwm9Q+3Rtu35eXP9
+	 mqurhhY8ZpB983rjUR1WE27dH2gDOPxte2afuhHR9jm0RB8fBCeuIaSIjQbNgQn24c
+	 P4BxqVotUui/g==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 6FF0237800DE;
+	Mon, 22 Jul 2024 09:10:31 +0000 (UTC)
+Message-ID: <d39045cf-bcf5-4d9a-8347-752ff09ccc24@collabora.com>
+Date: Mon, 22 Jul 2024 11:10:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <e7e88268-a56b-447c-9d59-6a4eb8fcd25a@ieee.org>
-X-Proofpoint-ORIG-GUID: uf0FV3BztW2j4yQ85RZegmP76Gjj-a41
-X-Proofpoint-GUID: uf0FV3BztW2j4yQ85RZegmP76Gjj-a41
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-22_05,2024-07-18_01,2024-05-17_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: mediatek: mt8186-corsola: Update ADSP
+ reserved memory region
+To: Fei Shao <fshao@chromium.org>
+Cc: Chen-Yu Tsai <wenst@chromium.org>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+References: <20240719045823.3264974-1-fshao@chromium.org>
+ <7edb3361-9e53-44ad-82ec-b2c81834b2ea@collabora.com>
+ <CAC=S1nh0c4HL2uUcz_zMmtuJvk7+3iWT5mEtmtpDrp1+nWp2cQ@mail.gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <CAC=S1nh0c4HL2uUcz_zMmtuJvk7+3iWT5mEtmtpDrp1+nWp2cQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 2024-07-20 at 03:09:55, Alex Elder (elder@ieee.org) wrote:
-> On 7/19/24 2:15 PM, Andrew Lunn wrote:
-> > > >   drivers/greybus/Kconfig         |   1 +
-> > > >   drivers/greybus/gb-beagleplay.c | 625 +++++++++++++++++++++++++++++++++++++++-
-> > 
-> > > > +static u8 csum8(const u8 *data, size_t size, u8 base)
-> > > > +{
-> > > > +	size_t i;
-> > > > +	u8 sum = base;
-> > > follow reverse x-mas tree
-> > 
-> > Since this is not networking, even thought it was posted to the netdev
-> > list, this comment might not be correct. I had a quick look at some
-> > greybus code and reverse x-mas tree is not strictly used.
-> > 
-> > Please see what the Graybus Maintainers say.
+Il 22/07/24 05:37, Fei Shao ha scritto:
+> On Fri, Jul 19, 2024 at 5:22 PM AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com> wrote:
+>>
+>> Il 19/07/24 06:58, Fei Shao ha scritto:
+>>> Corsola firmware reserves the memory region of [0x60000000, 0x61100000)
+>>
+>> Sorry but if the region is supposed to be 0x1100000 long....
+>>
+>>> exclusively for ADSP usage.
+>>> But in fact, a 6 MB "hole" of [0x60A00000, 0x61000000) didn't get
+>>> assigned to the ADSP node in the Corsola device tree, meaning no audio
+>>> tasks can access and utilize that memory section.
+>>>
+>>> Update the reserved ADSP memory region to fill the gap.
+>>>
+>>> Fixes: 8855d01fb81f ("arm64: dts: mediatek: Add MT8186 Krabby platform based Tentacruel / Tentacool")
+>>> Signed-off-by: Fei Shao <fshao@chromium.org>
+>>> ---
+>>>
+>>>    arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi | 2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi b/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
+>>> index afdab5724eaa..0c4a26117428 100644
+>>> --- a/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
+>>> +++ b/arch/arm64/boot/dts/mediatek/mt8186-corsola.dtsi
+>>> @@ -169,7 +169,7 @@ adsp_dma_mem: memory@61000000 {
+>>>
+>>>                adsp_mem: memory@60000000 {
+>>>                        compatible = "shared-dma-pool";
+>>> -                     reg = <0 0x60000000 0 0xA00000>;
+>>> +                     reg = <0 0x60000000 0 0x1000000>;
+>>
+>> ...why are you making it 0x1000000 long?
 > 
-> Andrew is correct.  The Greybus code does not strictly follow
-> the "reverse christmas tree" convention, so there is no need
-> to do that here.  Please understand that, while checkpatch.pl
-> offers good and well-intentioned advice, not everything it
-> warns about must be fixed, and in some cases it suggests things
-> certain maintainers don't agree with.
+> Because 0x61000000-0x61100000 belongs to another existing region,
+> `adsp_dma_mem`.
+> It's slightly confusing because the diff doesn't show that directly...
+> here's its snippet for ref:
 > 
-> 					-Alex
+
+Oh, sorry about that, that's right.
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+> adsp_dma_mem: memory@61000000 {
+>          compatible = "shared-dma-pool";
+>          reg = <0 0x61000000 0 0x100000>;
+>          no-map;
+> };
 > 
-> > 	Andrew
-> 
-> Ok got it. 
+> Regards,
+> Fei
+>>
+>> Cheers,
+>> Angelo
+>>
+>>>                        no-map;
+>>>                };
+>>>
+>>
+>>
+
 
