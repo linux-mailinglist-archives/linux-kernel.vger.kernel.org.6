@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-259393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2E16939539
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 23:10:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F184393953B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 23:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78F0DB21A4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:10:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A12C1F22403
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:10:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627D238FA3;
-	Mon, 22 Jul 2024 21:10:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B193C099;
+	Mon, 22 Jul 2024 21:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ew4j3S7I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V7akdbAs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F9C224FD
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 21:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6359A288B1;
+	Mon, 22 Jul 2024 21:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721682609; cv=none; b=GB6tarbKNDnlJUEQC4SaH50rPFVsUqjJfElr03tK+BlhUPF04fkCEsi17o6QdkiuNhZo+ldoQ1Eoqi99b4K+YN4cKpr/GWuqeZ2ShIds2v2QdVhmSzUFtNti44D0XTNiXplS/gPhgq3u8DCHRRcCCJ+Y5sy1sKTEJfT2X8A27ZA=
+	t=1721682626; cv=none; b=tpsglx5ZzbkJDrTD62UkkGjzfi3BwVzIx8RNyfsJhhyOfrUW8KxGTsmMatFiwJ7IczYxX+ChFJRGgyLwQFS4+iLmMlGN46wCe7zoeuqUKaFz7TsWU7xTtnSFvH9DsreDFW4tpbk9FmiCSHZiZD8hXgqstdMBN+lTZ/vqsLrucgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721682609; c=relaxed/simple;
-	bh=M84YmXOOZxzGa0L7FvgC24POY1B1JjlXsEniI61LiQo=;
+	s=arc-20240116; t=1721682626; c=relaxed/simple;
+	bh=wJdVcZtA8Vz7D5QJ3TkCiKzty3+W9DJoGYii77MYDTI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VyhNPpcYy/cZzu2UWU5JEqKop9qrTYOGQFtyT2bdsGkdmnwTxqoPPHvtSJxDPdUOE9RIURUZ7PzMBaZ8xnpxwhzw0CB3jno8pUnjo04wmUFtei6vDbAXY+kB2cxwlxZYA+lRGEjbF8YVNyGAXCYnskh+ldnH4ZwOS+nEfZxlg6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ew4j3S7I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 237DEC116B1;
-	Mon, 22 Jul 2024 21:10:09 +0000 (UTC)
+	 Content-Disposition; b=gelbNQacQLmHbfVxee3HERU2WgglKfHh2GXe1aPnQw4b79el0qEH1PPZenQvbTzg6Q0go+qnkoqff/D40Lk80IewclRQfNwRmyDJiUgzS8Fq8G06ToMRt7lSWV1qbM9m/ZLclrf2dDkF3SA7fo4QDDH71OhnxjtbZjXLVUhL+P8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V7akdbAs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C3B8C116B1;
+	Mon, 22 Jul 2024 21:10:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721682609;
-	bh=M84YmXOOZxzGa0L7FvgC24POY1B1JjlXsEniI61LiQo=;
+	s=k20201202; t=1721682626;
+	bh=wJdVcZtA8Vz7D5QJ3TkCiKzty3+W9DJoGYii77MYDTI=;
 	h=Date:From:To:Cc:Subject:From;
-	b=Ew4j3S7IRxsvhp67tVPN+KTyd7m5Ts2qNmHZKJnbl5AxLaF2mRfcFzai4HeDUqbGl
-	 aVAyW/LZfdwhJ+3n0+BRuJon+87PceNle5mgQzI1uOBhxxO19/D+UgLNygrQ6YjtRu
-	 6QdXOjWCR5FKHG6T1HQYzx9+u1BoMjfPRA2uzK+eqZJpN5klRSMhoCmpxdXE4Ydvsa
-	 S9IiBOf7AkdfDd6ASl+nYq+4qHzSe4WhH9y381o53jJOJ0CAV47pL/EKHzC+svfe5/
-	 aLtjQ63V7GGlafu3G+1etZcJ7PyE8oIxmxARsEY1bsxZYQUfz3R2drcBfaSAB/5WFG
-	 q9hzGFBabzNjw==
+	b=V7akdbAsoP93wXeMj8WaZwVMYlZiU8eAKJYoqa55+0DWmXWVVD9qM4sOkClJgtB8F
+	 CrdVyL9bIEd9ej42CxbJyEJ/DjCX15/Mv1OLYB+joWK189OvNqGGElxrxE2iRZdvNV
+	 r4kg+lOWyEg+MJ15UmbCoRts2tJ0zL7sZ8vU0GFE9TGDA+KpoUFVem0cQ84Mz2XXJ1
+	 5pUkGXAvFxaEswO/0TdZAjqtQUOvGYnn1yvBlVCE0NP3KiD+LqPeRj43wlNkP3aiUt
+	 g9zzgYnIehSN+meSBEjZrN91dKX08fORLq5AWaKTDew5ehFtt/Sn+pZ0aAjC8yF3DJ
+	 LBVQUuEqyDzHQ==
 Received: by mercury (Postfix, from userid 1000)
-	id A972D106097F; Mon, 22 Jul 2024 23:10:06 +0200 (CEST)
-Date: Mon, 22 Jul 2024 23:10:06 +0200
+	id 44B89106097F; Mon, 22 Jul 2024 23:10:23 +0200 (CEST)
+Date: Mon, 22 Jul 2024 23:10:23 +0200
 From: Sebastian Reichel <sre@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [GIT PULL] hsi changes for hsi-6.11
-Message-ID: <g6m7rjparpj2iy27hgi347ctlf7qq7xyetonu2p5ylcwvzw7za@rjzn7mtxgjjq>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [GIT PULL] power-supply changes for 6.11
+Message-ID: <sk3tppb46bmrbk6x67lzrrqmuu45jhfxlb7tazol36av7i6ozr@pdmyqxobq3yj>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,15 +55,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2uwjop5b73lktmyw"
+	protocol="application/pgp-signature"; boundary="ip5bv667r5wohcbv"
 Content-Disposition: inline
 
 
---2uwjop5b73lktmyw
-Content-Type: text/plain; charset=us-ascii
+--ip5bv667r5wohcbv
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 Hi Linus,
+
+This time Stephen Rothwell noticed one merge conflict
+with the LED tree. The discussion around that can be
+found here:
+
+https://lore.kernel.org/all/20240709133420.55645c59@canb.auug.org.au/
+
+All changes have been in -next for 3 weeks and are
+well-hung by now.
+
+Greetings,
+
+-- Sebastian
 
 The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
@@ -71,43 +85,165 @@ The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-hsi.git tags/hsi-for-6.11
+  https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.gi=
+t tags/for-v6.11
 
-for you to fetch changes up to f02cfe6950479b04fb75cf8424a852af7c50d3ad:
+for you to fetch changes up to be6299c6e55e971ffc060495708740a59aa0e45b:
 
-  HSI: ssi_protocol: Remove unused linux/gpio.h (2024-05-27 12:19:06 +0200)
-
-----------------------------------------------------------------
-HSI changes for the 6.11 series
-
- * drop unused gpio.h header from SSI McSAAB protocol driver
+  power: supply: sysfs: use power_supply_property_is_writeable() (2024-07-0=
+4 12:30:49 +0200)
 
 ----------------------------------------------------------------
-Andy Shevchenko (1):
-      HSI: ssi_protocol: Remove unused linux/gpio.h
+power supply and reset changes for the 6.11 series
 
- drivers/hsi/clients/ssi_protocol.c | 1 -
- 1 file changed, 1 deletion(-)
+ * power-supply core
+   - new charging_orange_full_green RGB LED trigger
+   - simplify and cleanup power-supply LED trigger code
+   - expose power information via hwmon compatibility layer
+ * new hardware support
+   - enable battery support for Qualcomm Snapdragon X Elite
+   - new battery driver for Maxim MAX17201/MAX17205
+   - new battery driver for Lenovo Yoga C630 laptop (custom EC)
+ * cleanup 'struct i2c_device_id' initializations
+ * misc. small battery driver cleanups and fixes
 
---2uwjop5b73lktmyw
+----------------------------------------------------------------
+Abel Vesa (1):
+      power: supply: qcom_battmgr: Enable battery support on x1e80100
+
+Armin Wolf (1):
+      power: supply: hwmon: Add support for power sensors
+
+Bjorn Andersson (1):
+      dt-bindings: platform: Add Lenovo Yoga C630 EC
+
+Christophe JAILLET (6):
+      power: supply: ab8500: Fix error handling when calling iio_read_chann=
+el_processed()
+      power: supply: ab8500: Use iio_read_channel_processed_scale()
+      power: supply: ab8500: Clean some error messages
+      power: supply: ingenic: Fix some error handling paths in ingenic_batt=
+ery_get_property()
+      power: supply: samsung-sdi-battery: Constify struct power_supply_vbat=
+_ri_table
+      power: supply: samsung-sdi-battery: Constify struct power_supply_main=
+tenance_charge_table
+
+Dimitri Fedrau (2):
+      dt-bindings: power: supply: add support for MAX17201/MAX17205 fuel ga=
+uge
+      power: supply: add support for MAX1720x standalone fuel gauge
+
+Dmitry Baryshkov (3):
+      platform: arm64: add Lenovo Yoga C630 WOS EC driver
+      platform/arm64: build drivers even on non-ARM64 platforms
+      power: supply: lenovo_yoga_c630_battery: add Lenovo C630 driver
+
+Dr. David Alan Gilbert (2):
+      power: supply: bd99954: remove unused struct 'battery_data'
+      power: supply: ab8500: remove unused struct 'inst_curr_result_list'
+
+Hans de Goede (6):
+      leds: rgb: leds-ktd202x: Initialize mutex earlier
+      leds: core: Add led_mc_set_brightness() function
+      leds: trigger: Add led_mc_trigger_event() function
+      power: supply: leds: Add power_supply_[un]register_led_trigger()
+      power: supply: leds: Share trig pointer for online and charging_full
+      power: supply: leds: Add activate() callback to triggers
+
+Jeff Johnson (1):
+      power: reset: piix4: add missing MODULE_DESCRIPTION() macro
+
+Kate Hsuan (3):
+      leds: rgb: leds-ktd202x: Get device properties through fwnode to supp=
+ort ACPI
+      leds: rgb: leds-ktd202x: I2C ID tables for KTD2026 and 2027
+      power: supply: power-supply-leds: Add charging_orange_full_green trig=
+ger for RGB LED
+
+Sebastian Reichel (2):
+      Merge tag 'ib-leds-platform-power-v6.11'
+      Merge tag 'platform-drivers-x86-ib-lenovo-c630-v6.11-2'
+
+Thomas Wei=DFschuh (1):
+      power: supply: sysfs: use power_supply_property_is_writeable()
+
+Uwe Kleine-K=F6nig (1):
+      power: supply: Drop explicit initialization of struct i2c_device_id::=
+driver_data to 0
+
+ .../bindings/platform/lenovo,yoga-c630-ec.yaml     |  83 ++++
+ .../bindings/power/supply/maxim,max17201.yaml      |  58 +++
+ drivers/leds/led-class-multicolor.c                |   1 +
+ drivers/leds/led-core.c                            |  31 ++
+ drivers/leds/led-triggers.c                        |  20 +
+ drivers/leds/rgb/Kconfig                           |   1 -
+ drivers/leds/rgb/leds-ktd202x.c                    |  80 ++--
+ drivers/platform/Makefile                          |   2 +-
+ drivers/platform/arm64/Kconfig                     |  14 +
+ drivers/platform/arm64/Makefile                    |   1 +
+ drivers/platform/arm64/lenovo-yoga-c630.c          | 291 ++++++++++++
+ drivers/power/reset/piix4-poweroff.c               |   1 +
+ drivers/power/supply/Kconfig                       |  21 +
+ drivers/power/supply/Makefile                      |   2 +
+ drivers/power/supply/ab8500_chargalg.c             |   2 +-
+ drivers/power/supply/ab8500_charger.c              |  52 ++-
+ drivers/power/supply/ab8500_fg.c                   |   5 -
+ drivers/power/supply/adp5061.c                     |   2 +-
+ drivers/power/supply/bd99954-charger.c             |   7 -
+ drivers/power/supply/bq24735-charger.c             |   2 +-
+ drivers/power/supply/bq25890_charger.c             |  10 +-
+ drivers/power/supply/cw2015_battery.c              |   2 +-
+ drivers/power/supply/ingenic-battery.c             |  10 +-
+ drivers/power/supply/lenovo_yoga_c630_battery.c    | 501 +++++++++++++++++=
+++++
+ drivers/power/supply/lp8727_charger.c              |   2 +-
+ drivers/power/supply/ltc4162-l-charger.c           |   4 +-
+ drivers/power/supply/max14656_charger_detector.c   |   2 +-
+ drivers/power/supply/max1720x_battery.c            | 337 ++++++++++++++
+ drivers/power/supply/max77976_charger.c            |   4 +-
+ drivers/power/supply/mm8013.c                      |   2 +-
+ drivers/power/supply/power_supply_core.c           |   4 +-
+ drivers/power/supply/power_supply_hwmon.c          |  25 +
+ drivers/power/supply/power_supply_leds.c           | 179 +++++---
+ drivers/power/supply/power_supply_sysfs.c          |   3 +-
+ drivers/power/supply/qcom_battmgr.c                |   1 +
+ drivers/power/supply/rt9455_charger.c              |   4 +-
+ drivers/power/supply/samsung-sdi-battery.c         |  26 +-
+ drivers/power/supply/sbs-charger.c                 |   2 +-
+ drivers/power/supply/sbs-manager.c                 |   4 +-
+ include/linux/leds.h                               |  26 ++
+ include/linux/platform_data/lenovo-yoga-c630.h     |  44 ++
+ include/linux/power_supply.h                       |  19 +-
+ 42 files changed, 1700 insertions(+), 187 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/platform/lenovo,yoga-=
+c630-ec.yaml
+ create mode 100644 Documentation/devicetree/bindings/power/supply/maxim,ma=
+x17201.yaml
+ create mode 100644 drivers/platform/arm64/lenovo-yoga-c630.c
+ create mode 100644 drivers/power/supply/lenovo_yoga_c630_battery.c
+ create mode 100644 drivers/power/supply/max1720x_battery.c
+ create mode 100644 include/linux/platform_data/lenovo-yoga-c630.h
+
+--ip5bv667r5wohcbv
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmaeyqgACgkQ2O7X88g7
-+ppBrA/+MI62aVIeLizoc+TnM3MeH+5tcOFdOY7YS0dU+dXNiIOeKQfgSgGl0kOu
-eVI6PK2DcMQcngqMXlLOaINvlclEKBx3//cTZX3Ic8nwa8Rpfgf48dF+iT4JNv0g
-Sb2tF2m01LDeKCMrUjTExnz0lO7vXW0FcX4mSGdZ3uifYoqurXzT7YWhsoiDWgsn
-JVDdkIZyRB4Cm+KCmtiYacjedE4C8wvKyabD+ZsZS1GWTG8NN7l3A5iVn2Dz1Oky
-DtCe0Bxrec4nj/JvwLZN35Ly6YDyWe/JbXaTki6d7FTIzADw9ZfYxi3W+o61Ve2w
-gBzF3hkgWzus6mwY4jkyTb8gSPzYYEUTjv9ygywxTQyMvyDko8vi058os7dquxN3
-KuEG5puKWGpJr0yrY+xvq1kny+V5zb9GcER9XFnRFYC9euLJqBhzVxE0fYj6Kxbp
-BxsZYR40xIIS2DEmQlk40/XOMF+Zl3+Lt7D/4vdE08OKYmab2g86RcNAycJR/E3N
-iS+AzQJPFxZ4c32sRof/8Oi+7cG1E2JLg7U4dOa9sWsY3iGvyNTOy9A1ZrhE/rqt
-mb4hphM6sEhkYkHEKmCwRpdmiANbF2uJnY12qSJJJrrdn+ZfXgR38itZHub45h+x
-Rx7pY1oiQEA7saL+A2iVtGpB+oOnwBYiHCz16E1Tetqq8RUYGFk=
-=Dzgr
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmaeyr4ACgkQ2O7X88g7
++pqPIhAAnrjfzh8GqtqP2GTcGyiALYX0GoJnmJx1yqxmtBlxe6wQwXK/X6Mtcd/z
+28Jiz8UID1t0XsHL9LWBMg99CiT7oYBo0wncqE5Hx+/r8VlFIbU8aCUDgJ45y756
+6tbfIhKjjqpiHX6Htc52Vs/OB1pXNRBeAxyYUi/yIzDw1HU4Peyh8nEraRM0MEpy
+rVl+wi6JYBE/5TlMaGuXHubsQM3PMQTZDdhyCqdHgfrCug8lGiYZZRbuddjXyImI
+ztJ0q/nhmhk3zG/Qp+EwB7d96qPYFpT7d6xUnDN/snmJ8EVwFKvjxsjtlFCXAaEB
+Bd7Moo1hkcOmDbcH4tee84OoECfcy4pEAGHoIcS0Ooern38pMK1Uvi31E1unPoKm
+agQbxSlIjTdd+h6BuN3E54S8UzCiQZkvwMuVQuwOIBKBds5y8/l/aipPnM5c8WA6
+idTTL2HFtTIEbVWKSjPCggQCicuLR630sXaKA2adiMkxqmhtYU+wRGpe53MdpxDo
+//dwHetmidMvHM2d+/LgIvLFovUv9Zlr4CN8WN4BftV+raxs0dntXT1EWd/lO1eM
+ATBFSdgtoxOuhRxnIuNwrFlQ1dPf0MKslflqkJhx5SEL8LW+OvLMU/TDi13mFaPc
+e0CR/6fTrwixzSDVNPhIv5mumOTzv/81ROj0/V+CD14THv8LZFI=
+=yrtu
 -----END PGP SIGNATURE-----
 
---2uwjop5b73lktmyw--
+--ip5bv667r5wohcbv--
 
