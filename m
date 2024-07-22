@@ -1,551 +1,126 @@
-Return-Path: <linux-kernel+bounces-259359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AC899394B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:25:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 751CC9394BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:27:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCF61B21337
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:25:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36CA228219B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46F8628DCB;
-	Mon, 22 Jul 2024 20:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gCtShsCe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573492E403;
+	Mon, 22 Jul 2024 20:26:51 +0000 (UTC)
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C8117C8D;
-	Mon, 22 Jul 2024 20:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA4217C8D;
+	Mon, 22 Jul 2024 20:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721679909; cv=none; b=eYPsKp4hkCwTiTt8/+0zx2Ma95LqSu3l9kemEKCR7Pm1TT7AYdYQ4k8LQyyWVLs4o71fbLRlqtNDkynlKuVpTzinWyHulbuKvFHQOXwUbYfb7LL8E0HOrbVFtuE3WCVD53pFna2Jjti9gYLWn2606xun0hxsfat4+2WLCPCIknc=
+	t=1721680010; cv=none; b=hvDhWGug/sN40rLxL8SPBcYP2nLnnVapK8ImRjUNS/lSxg6imowOAIKDsrf9wlxsoqGiL+SS24k5Gh4JT3mBL3L1HUOzskBKCLMfsp9kq/GBnbryOLXdYNPJkdV/R0ULPEWczRWGdqFk2gkhk1phZp5XxVLcxNtIl8EaMmSh3Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721679909; c=relaxed/simple;
-	bh=C2Rdjakp6x1K9VIwySKkqllnAAHdQkVGXYegMmtjlMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HN7xYP9F23LVPgLKQfdi4O/1rp3PE+r1j6gcDye9H5FHyKXhkeGWzc7O0VR/fCukXB2l7VSNA114sX+4yTvhPMD3MckuNNBSk9aA6imlu2/jo195QvfLJRDpwVnaJul3eIw/OGzrUJe00RTm6l0bMVJgxGl0JUGceioejycjw2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gCtShsCe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 008CEC116B1;
-	Mon, 22 Jul 2024 20:25:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721679908;
-	bh=C2Rdjakp6x1K9VIwySKkqllnAAHdQkVGXYegMmtjlMQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gCtShsCecuDsar5vZhQU9mHhb64aJTY+x9FpfjMiuDXraQHbqTKMyfTEHZ1IIf1fs
-	 hkK11Jh9uSPT2YigY12GtLUvvH3W5EInm68Ug2xOz4vRlcDcVAITVo16xtqJU59Kry
-	 7dldSeTVfWIQd0Yx17gZ0mPON002ZXSnBV/BGQMfqvcOm7oGr2r+8D3D/eCr3c4QOB
-	 QjX0A+sNsMfP16mscIo8JtOPrQsU3Yox0YFygvA13WPDckvBmVm4V9ylAU9SDhXvV5
-	 CPKPq2t9LG9D0ZJvbHD3hXhlJ36ZtrKkh9XfA4hBse+NTEyeyORuOG6g4DlF0lKlm5
-	 oWUEYysoVf0iQ==
-Received: by pali.im (Postfix)
-	id 5071FAA4; Mon, 22 Jul 2024 22:25:04 +0200 (CEST)
-Date: Mon, 22 Jul 2024 22:25:04 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Andres Salomon <dilinger@queued.net>
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-	Matthew Garrett <mjg59@srcf.ucam.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	linux-pm@vger.kernel.org, Dell.Client.Kernel@dell.com,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: Re: [PATCH] platform/x86:dell-laptop: Add knobs to change battery
- charge settings
-Message-ID: <20240722202504.jgz6tcc247mjxq4f@pali>
-References: <20240720052419.73b1415a@5400>
- <20240720095507.uyaotkofkyasdgbd@pali>
- <20240720220606.1934df43@5400>
- <20240721090238.wrei5nu6y3awujws@pali>
- <20240721193716.3156050f@5400>
- <20240721234037.nxthfeqdjl3z74oc@pali>
- <20240721195851.76e2b220@5400>
- <20240722071845.w7v23ixu5wujrpol@pali>
- <20240722143432.35c356b1@5400>
- <20240722184132.l6nibqkpna2wkszo@pali>
+	s=arc-20240116; t=1721680010; c=relaxed/simple;
+	bh=PDhWG48FfeZ9Iz4GyMw7dlBvGX6UW/gxvZDmFODusXQ=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=Di4iQz+uHggiHGTHpiuhuVL/3og96A4ADc+L+sR2FyhiNGLUD2n0Czym+5aCY1QPJNmsYiRY5FL8fZnKXU003a6tql608MzR3ieumuImWt1VcySjFXkKNgzFDg6uwIGFqBYyOv6e9eCrea2tgrG7dm741+TXr7/ns+gCJI6x3Fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
+	by madrid.collaboradmins.com (Postfix) with ESMTP id A2DE53780692;
+	Mon, 22 Jul 2024 20:26:45 +0000 (UTC)
+From: "Shreeya Patel" <shreeya.patel@collabora.com>
+In-Reply-To: <20240722193946.1246372-1-hoff.benjamin.k@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+X-Forward: 127.0.0.1
+References: <20240719124032.26852-1-shreeya.patel@collabora.com> <20240722193946.1246372-1-hoff.benjamin.k@gmail.com>
+Date: Mon, 22 Jul 2024 21:26:45 +0100
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, heiko@sntech.de, hverkuil-cisco@xs4all.nl, hverkuil@xs4all.nl, jose.abreu@synopsys.com, kernel@collabora.com, krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, mchehab@kernel.org, mturquette@baylibre.com, nelson.costa@synopsys.com, nicolas.dufresne@collabora.com, p.zabel@pengutronix.de, robh@kernel.org, sboyd@kernel.org, shawn.wen@rock-chips.com
+To: hoff.benjamin.k@gmail.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240722184132.l6nibqkpna2wkszo@pali>
-User-Agent: NeoMutt/20180716
+Message-ID: <354380-669ec080-1-27ae20c0@20216750>
+Subject: =?utf-8?q?Re=3A?= [PATCH v4 4/4] =?utf-8?q?media=3A?=
+ =?utf-8?q?_platform=3A?==?utf-8?q?_synopsys=3A?= Add support for hdmi input 
+ driver
+User-Agent: SOGoMail 5.10.0
+Content-Transfer-Encoding: quoted-printable
 
-On Monday 22 July 2024 20:41:32 Pali Rohár wrote:
-> On Monday 22 July 2024 14:34:32 Andres Salomon wrote:
-> > On Mon, 22 Jul 2024 09:18:45 +0200
-> > Pali Rohár <pali@kernel.org> wrote:
-> > 
-> > > On Sunday 21 July 2024 19:58:51 Andres Salomon wrote:
-> > > > On Mon, 22 Jul 2024 01:40:37 +0200
-> > > > Pali Rohár <pali@kernel.org> wrote:
-> > > >   
-> > > > > On Sunday 21 July 2024 19:37:16 Andres Salomon wrote:  
-> > > > > > On Sun, 21 Jul 2024 11:02:38 +0200
-> > > > > > Pali Rohár <pali@kernel.org> wrote:
-> > > > > >     
-> > > > > > > On Saturday 20 July 2024 22:06:06 Andres Salomon wrote:    
-> > > > > > > > On Sat, 20 Jul 2024 11:55:07 +0200
-> > > > > > > > Pali Rohár <pali@kernel.org> wrote:
-> > > > > > > >       
-> > > > > > > > > On Saturday 20 July 2024 05:24:19 Andres Salomon wrote:      
-> > > > > > > > > > Thanks for the quick feedback! Responses below.
-> > > > > > > > > > 
-> > > > > > > > > > On Sat, 20 Jul 2024 10:40:19 +0200
-> > > > > > > > > > Pali Rohár <pali@kernel.org> wrote:
-> > > > > > > > > >         
-> > > > > > 
-> > > > > > [...]
-> > > > > >     
-> > > > > > > > > > > > +
-> > > > > > > > > > > > +static void __init dell_battery_init(struct device *dev)
-> > > > > > > > > > > > +{
-> > > > > > > > > > > > +	enum battery_charging_mode current_mode = DELL_BAT_MODE_NONE;
-> > > > > > > > > > > > +
-> > > > > > > > > > > > +	dell_battery_read_req(BAT_CUSTOM_MODE_TOKEN, (int *) &current_mode);
-> > > > > > > > > > > > +	if (current_mode != DELL_BAT_MODE_NONE) {          
-> > > > > > > > > > > 
-> > > > > > > > > > > I quite do not understand how is this code suppose to work.
-> > > > > > > > > > > 
-> > > > > > > > > > > Why is there mix of custom kernel enum battery_charging_mode and return
-> > > > > > > > > > > value from Dell's API?        
-> > > > > > > > > > 
-> > > > > > > > > > This is from the original patch from Dell; tbh, I'm not sure. It does
-> > > > > > > > > > work, though. That is, current_mode ends up holding the correct value
-> > > > > > > > > > based on what was previously set, even if the charging mode is set from
-> > > > > > > > > > the BIOS.
-> > > > > > > > > > 
-> > > > > > > > > > I just scanned through the libsmbios code to see what it's doing, and
-> > > > > > > > > > it appears to loop through every charging mode to check if its active.
-> > > > > > > > > > I'm not really sure that makes much more sense, so I'll try some more
-> > > > > > > > > > tests.        
-> > > > > > > > > 
-> > > > > > > > > Keyboard backlight code (kbd_get_first_active_token_bit) is doing also
-> > > > > > > > > this type scan. If I remember correctly, for every keyboard backlight
-> > > > > > > > > token we just know the boolean value - if the token is set or not.
-> > > > > > > > > 
-> > > > > > > > > It would really nice to see what (raw) value is returned by the
-> > > > > > > > > dell_battery_read_req(token) function for every battery token and for
-> > > > > > > > > every initial state.      
-> > > > > > > > 
-> > > > > > > > I checked this. The BIOS sets the mode value in every related token
-> > > > > > > > location. I'm still not really sure what libsmbios is doing, but the
-> > > > > > > > kernel code seems to arbitrarily choose one of the token locations
-> > > > > > > > to read from. This makes sense to me now.
-> > > > > > > > 
-> > > > > > > > In the BIOS when I set the mode to "ExpressCharge",
-> > > > > > > > this what I pulled for each token location:
-> > > > > > > > 
-> > > > > > > > [    5.704651] dell-laptop dell-laptop: BAT_CUSTOM_MODE_TOKEN value: 2
-> > > > > > > > [    5.707015] dell-laptop dell-laptop: BAT_PRI_AC_MODE_TOKEN value: 2
-> > > > > > > > [    5.709114] dell-laptop dell-laptop: BAT_ADAPTIVE_MODE_TOKEN value: 2
-> > > > > > > > [    5.711041] dell-laptop dell-laptop: BAT_STANDARD_MODE_TOKEN value: 2
-> > > > > > > > [    5.713705] dell-laptop dell-laptop: BAT_EXPRESS_MODE_TOKEN value: 2
-> > > > > > > > 
-> > > > > > > > Similar story when I set it to Custom (all were '5'), or Standard ('1').
-> > > > > > > > When I set it from linux as well, it changed all location values.      
-> > > > > > > 
-> > > > > > > Interesting... Anyway, I still think that the API could be similar to
-> > > > > > > what is used in keyboard backlight.
-> > > > > > > 
-> > > > > > > Could you please dump all information about each token? They are in
-> > > > > > > struct calling_interface_token returned by dell_smbios_find_token.
-> > > > > > > 
-> > > > > > > I'm interesting in tokenID, location and value.
-> > > > > > > 
-> > > > > > > Ideally to compare what is in token->value and then in buffer.output[1]
-> > > > > > > (in case dell_send_request does not fail).    
-> > > > > > 
-> > > > > > 
-> > > > > > Alright, here's what I see:
-> > > > > > 
-> > > > > > [    5.904775] dell_laptop: dell_battery_read_req: token requested: 0x343, tokenID=0x343, location=0x343, value=5
-> > > > > > [    5.908675] dell_laptop: dell_battery_read_req: buffer.output[1]=3
-> > > > > > [    5.908680] dell_laptop: dell_battery_init: BAT_CUSTOM_MODE_TOKEN value: 3
-> > > > > > [    5.908682] dell_laptop: dell_battery_read_req: token requested: 0x341, tokenID=0x341, location=0x341, value=3
-> > > > > > [    5.910922] dell_laptop: dell_battery_read_req: buffer.output[1]=3
-> > > > > > [    5.910926] dell_laptop: dell_battery_init: BAT_PRI_AC_MODE_TOKEN value: 3
-> > > > > > [    5.910928] dell_laptop: dell_battery_read_req: token requested: 0x342, tokenID=0x342, location=0x342, value=4
-> > > > > > [    5.913042] dell_laptop: dell_battery_read_req: buffer.output[1]=3
-> > > > > > [    5.913046] dell_laptop: dell_battery_init: BAT_ADAPTIVE_MODE_TOKEN value: 3
-> > > > > > [    5.913048] dell_laptop: dell_battery_read_req: token requested: 0x346, tokenID=0x346, location=0x346, value=1
-> > > > > > [    5.914996] dell_laptop: dell_battery_read_req: buffer.output[1]=3
-> > > > > > [    5.914999] dell_laptop: dell_battery_init: BAT_STANDARD_MODE_TOKEN value: 3
-> > > > > > [    5.915000] dell_laptop: dell_battery_read_req: token requested: 0x347, tokenID=0x347, location=0x347, value=2
-> > > > > > [    5.916723] dell_laptop: dell_battery_read_req: buffer.output[1]=3
-> > > > > > [    5.916724] dell_laptop: dell_battery_init: BAT_EXPRESS_MODE_TOKEN value: 3
-> > > > > > [    5.916725] dell_laptop: dell_battery_read_req: token requested: 0x349, tokenID=0x349, location=0x349, value=65535
-> > > > > > [    5.918727] dell_laptop: dell_battery_read_req: buffer.output[1]=65
-> > > > > > [    5.918731] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_START value: 65
-> > > > > > [    5.918734] dell_laptop: dell_battery_read_req: token requested: 0x34a, tokenID=0x34a, location=0x34a, value=65535
-> > > > > > [    5.920864] dell_laptop: dell_battery_read_req: buffer.output[1]=85
-> > > > > > [    5.920867] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_END value: 85    
-> > > > > 
-> > > > > Perfect. And can you check dumps when the mode is set to some other than BAT_PRI_AC_MODE_TOKEN?  
-> > > > 
-> > > > Here's Express:
-> > > > 
-> > > > [    5.880090] dell_laptop: dell_battery_read_req: token requested: 0x343, tokenID=0x343, location=0x343, value=5
-> > > > [    5.882011] dell_laptop: dell_battery_read_req: buffer.output[1]=2
-> > > > [    5.882014] dell_laptop: dell_battery_init: BAT_CUSTOM_MODE_TOKEN value: 2
-> > > > [    5.882016] dell_laptop: dell_battery_read_req: token requested: 0x341, tokenID=0x341, location=0x341, value=3
-> > > > [    5.894513] dell_laptop: dell_battery_read_req: buffer.output[1]=2
-> > > > [    5.894518] dell_laptop: dell_battery_init: BAT_PRI_AC_MODE_TOKEN value: 2
-> > > > [    5.894520] dell_laptop: dell_battery_read_req: token requested: 0x342, tokenID=0x342, location=0x342, value=4
-> > > > [    5.913870] dell_laptop: dell_battery_read_req: buffer.output[1]=2
-> > > > [    5.913874] dell_laptop: dell_battery_init: BAT_ADAPTIVE_MODE_TOKEN value: 2
-> > > > [    5.913875] dell_laptop: dell_battery_read_req: token requested: 0x346, tokenID=0x346, location=0x346, value=1
-> > > > [    5.915622] dell_laptop: dell_battery_read_req: buffer.output[1]=2
-> > > > [    5.915625] dell_laptop: dell_battery_init: BAT_STANDARD_MODE_TOKEN value: 2
-> > > > [    5.915626] dell_laptop: dell_battery_read_req: token requested: 0x347, tokenID=0x347, location=0x347, value=2
-> > > > [    5.917349] dell_laptop: dell_battery_read_req: buffer.output[1]=2
-> > > > [    5.917351] dell_laptop: dell_battery_init: BAT_EXPRESS_MODE_TOKEN value: 2
-> > > > [    5.917352] dell_laptop: dell_battery_read_req: token requested: 0x349, tokenID=0x349, location=0x349, value=65535
-> > > > [    5.919068] dell_laptop: dell_battery_read_req: buffer.output[1]=65
-> > > > [    5.919070] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_START value: 65
-> > > > [    5.919071] dell_laptop: dell_battery_read_req: token requested: 0x34a, tokenID=0x34a, location=0x34a, value=65535
-> > > > [    5.920780] dell_laptop: dell_battery_read_req: buffer.output[1]=85
-> > > > [    5.920782] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_END value: 85
-> > > > 
-> > > > And here's Adaptive:
-> > > > 
-> > > > [    5.945319] dell_laptop: dell_battery_read_req: token requested: 0x343, tokenID=0x343, location=0x343, value=5
-> > > > [    5.973685] dell_laptop: dell_battery_read_req: buffer.output[1]=4
-> > > > [    5.973690] dell_laptop: dell_battery_init: BAT_CUSTOM_MODE_TOKEN value: 4
-> > > > [    5.973692] dell_laptop: dell_battery_read_req: token requested: 0x341, tokenID=0x341, location=0x341, value=3
-> > > > [    5.976533] dell_laptop: dell_battery_read_req: buffer.output[1]=4
-> > > > [    5.976538] dell_laptop: dell_battery_init: BAT_PRI_AC_MODE_TOKEN value: 4
-> > > > [    5.976540] dell_laptop: dell_battery_read_req: token requested: 0x342, tokenID=0x342, location=0x342, value=4
-> > > > [    5.981013] dell_laptop: dell_battery_read_req: buffer.output[1]=4
-> > > > [    5.981018] dell_laptop: dell_battery_init: BAT_ADAPTIVE_MODE_TOKEN value: 4
-> > > > [    5.981020] dell_laptop: dell_battery_read_req: token requested: 0x346, tokenID=0x346, location=0x346, value=1
-> > > > [    5.983474] dell_laptop: dell_battery_read_req: buffer.output[1]=4
-> > > > [    5.983479] dell_laptop: dell_battery_init: BAT_STANDARD_MODE_TOKEN value: 4
-> > > > [    5.983481] dell_laptop: dell_battery_read_req: token requested: 0x347, tokenID=0x347, location=0x347, value=2
-> > > > [    5.985881] dell_laptop: dell_battery_read_req: buffer.output[1]=4
-> > > > [    5.985885] dell_laptop: dell_battery_init: BAT_EXPRESS_MODE_TOKEN value: 4
-> > > > [    5.985887] dell_laptop: dell_battery_read_req: token requested: 0x349, tokenID=0x349, location=0x349, value=65535
-> > > > [    5.988332] dell_laptop: dell_battery_read_req: buffer.output[1]=65
-> > > > [    5.988337] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_START value: 65
-> > > > [    5.988339] dell_laptop: dell_battery_read_req: token requested: 0x34a, tokenID=0x34a, location=0x34a, value=65535
-> > > > [    5.990769] dell_laptop: dell_battery_read_req: buffer.output[1]=85
-> > > > [    5.990774] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_END value: 85
-> > > > 
-> > > > 
-> > > > 
-> > > > -- 
-> > > > I'm available for contract & employment work, see:
-> > > > https://spindle.queued.net/~dilinger/resume-tech.pdf  
-> > > 
-> > > Nice! So it is exactly same as API of keyboard backlight tokens. Thanks.
-> > > 
-> > > In dell_battery_write_req function you can drop second "val" argument
-> > > and replace it by token->value. So the dell_fill_request call in that
-> > > function would look like:
-> > > 
-> > >     dell_fill_request(&buffer, token->location, token->value, 0, 0);
-> > 
-> > 
-> > Well, except that we use dell_battery_write_req for writing the charge
-> > start/end values as well (in dell_battery_custom_set). Those can't be
-> > obtained from token->value.
-> > 
-> > We could have two separate functions for that, or set 'val' to a
-> > sentinel value (0) that, if detected, we set val=token->value. I'm
-> > still not really understanding the point, though.
-> 
-> I think that two separate functions would be needed. One which set
-> battery mode (enum) and which set custom thresholds.
-> 
-> > > 
-> > > And then you can mimic the usage as it is done in keyboard backlight
-> > > functions (kbd_get_first_active_token_bit).
-> > > 
-> > > If you do not know what I mean then later (today or tomorrow) I can
-> > > write code example of the functionality.
-> > 
-> > Sorry, I still don't understand what the goal is here. Is the goal to
-> > not pull from a random location to determine the current charging mode?
-> > Is the goal to determine what charging modes are currently supported
-> > (and if so, I don't see how)? Is the goal to avoid having the kernel
-> > hardcode a list of enums that the BIOS might have different values
-> > for? Is the goal to merge the keyboard backlight and battery setting
-> > functions?
-> 
-> Avoid having the kernel hardcoded values for enums which SMBIOS
-> provides. Future (or maybe also older) modes may have different enum
-> values. So we should use what SMBIOS provides to us.
-> 
-> Also to determinate which charging modes are supported by the current HW
-> configuration. If BIOS does not support some mode or does not allow to
-> set some mode, kernel should not export this as supported option.
-> 
-> If you do not see how to do it, please give me some time, I will send
-> you an example. Going to look at it right now.
-> 
-> Merging keyboard backlight and battery code is bonus, not required.
-> But I thought that it would be easier to build a new code from common
-> blocks.
+On Tuesday, July 23, 2024 01:09 IST, hoff.benjamin.k@gmail.com wrote:
 
-Here is very quick & hacky example of what I mean (completely untested):
+Hi Benjamin,
 
---- dell-laptop.c
-+++ dell-laptop.c
-@@ -353,6 +353,105 @@ static const struct dmi_system_id dell_q
- 	{ }
- };
- 
-+static int dell_read_token_value(u16 tokenid, u32 *value)
-+{
-+	struct calling_interface_buffer buffer;
-+	struct calling_interface_token *token;
-+	int ret;
-+
-+	token = dell_smbios_find_token(tokenid);
-+	if (!token)
-+		return -ENODEV;
-+
-+	dell_fill_request(&buffer, token->location, 0, 0, 0);
-+	ret = dell_send_request(&buffer, CLASS_TOKEN_READ, SELECT_TOKEN_STD);
-+	if (ret)
-+		return ret;
-+
-+	*value = buffer.output[1];
-+	return 0;
-+}
-+
-+static int dell_write_token_value(u16 tokenid, u32 value)
-+{
-+	struct calling_interface_buffer buffer;
-+	struct calling_interface_token *token;
-+
-+	token = dell_smbios_find_token(type);
-+	if (!token)
-+		return -ENODEV;
-+
-+	dell_fill_request(&buffer, token->location, value, 0, 0);
-+	return dell_send_request(&buffer, CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
-+}
-+
-+static int dell_is_enum_token_active(u16 tokenid)
-+{
-+	struct calling_interface_buffer buffer;
-+	struct calling_interface_token *token;
-+	int ret;
-+
-+	token = dell_smbios_find_token(tokenid);
-+	if (!token)
-+		return -EINVAL;
-+
-+	if (token->value == (u16)-1)
-+		return -EINVAL;
-+
-+	dell_fill_request(&buffer, token->location, 0, 0, 0);
-+	ret = dell_send_request(&buffer, CLASS_TOKEN_READ, SELECT_TOKEN_STD);
-+	if (ret)
-+		return ret;
-+
-+	return (buffer.output[1] == token->value);
-+}
-+
-+static int dell_activate_enum_token(u16 tokenid)
-+{
-+	struct calling_interface_buffer buffer;
-+	struct calling_interface_token *token;
-+	int ret;
-+
-+	token = dell_smbios_find_token(tokenid);
-+	if (!token)
-+		return -EINVAL;
-+
-+	if (token->value == (u16)-1)
-+		return -EINVAL;
-+
-+	dell_fill_request(&buffer, token->location, token->value, 0, 0);
-+	return dell_send_request(&buffer, CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
-+}
-+
-+static u32 dell_get_supported_enum_tokens(const u16 *tokenids, u32 count)
-+{
-+	u32 supported_mask = 0;
-+	u32 i;
-+
-+	for (i = 0; i < count; i++) {
-+		if (dell_smbios_find_token(tokenids[i]))
-+			supported_mask |= BIT(i);
-+	}
-+
-+	return supported_mask;
-+}
-+
-+static int dell_get_active_enum_token(const u16 *tokenids, u32 count, u32 supported_mask)
-+{
-+	int ret;
-+	u32 i;
-+
-+	for (i = 0; i < count; i++) {
-+		if (!(supported_mask & BIT(i)))
-+			continue;
-+		ret = dell_is_enum_token_active(tokenids[i]);
-+		if (ret == 1)
-+			return i;
-+	}
-+
-+	return -EINVAL;
-+}
-+
- /*
-  * Derived from information in smbios-wireless-ctl:
-  *
-@@ -2183,6 +2282,144 @@ static struct led_classdev mute_led_cdev
- 	.default_trigger = "audio-mute",
- };
- 
-+static const u16 battery_mode_tokens[] = {
-+	BAT_STANDARD_MODE_TOKEN,
-+	BAT_EXPRESS_MODE_TOKEN,
-+	BAT_PRI_AC_MODE_TOKEN,
-+	BAT_ADAPTIVE_MODE_TOKEN,
-+	BAT_CUSTOM_MODE_TOKEN,
-+};
-+
-+static const char * const battery_mode_names[] = {
-+	"standard",
-+	"express",
-+	"primarily_ac",
-+	"adaptive",
-+	"custom",
-+};
-+
-+static u32 battery_mode_token_mask;
-+
-+static int dell_battery_read_custom_charge(u16 token)
-+{
-+	u32 value;
-+	int ret;
-+
-+	ret = dell_read_token_value(token, &value);
-+	if (ret)
-+		return ret;
-+	if (value > 100)
-+		return -EINVAL;
-+	return value;
-+}
-+
-+#define CHARGE_START_MIN	50
-+#define CHARGE_START_MAX	95
-+#define CHARGE_END_MIN		55
-+#define CHARGE_END_MAX		100
-+#define CHARGE_MIN_DIFF		5
-+
-+static int dell_battery_set_custom_charge_start(int val)
-+{
-+	int end;
-+
-+	if (val < CHARGE_START_MIN)
-+		val = CHARGE_START_MIN;
-+	else if (val > CHARGE_START_MAX)
-+		val = CHARGE_START_MAX;
-+
-+	end = dell_battery_get_custom_charge(BAT_CUSTOM_CHARGE_END);
-+	if (end < 0)
-+		return end;
-+
-+	if (end - val < CHARGE_MIN_DIFF)
-+		val = end - CHARGE_MIN_DIFF;
-+
-+	return dell_write_token_value(BAT_CUSTOM_CHARGE_START, val);
-+}
-+
-+static int dell_battery_set_custom_charge_end(int val)
-+{
-+	int start;
-+
-+	if (val < CHARGE_END_MIN)
-+		val = CHARGE_END_MIN;
-+	else if (val > CHARGE_END_MAX)
-+		val = CHARGE_END_MAX;
-+
-+	start = dell_battery_get_custom_charge(BAT_CUSTOM_CHARGE_START);
-+	if (start < 0)
-+		return start;
-+
-+	if (val - start < CHARGE_MIN_DIFF)
-+		val = start + CHARGE_MIN_DIFF;
-+
-+	return dell_write_token_value(BAT_CUSTOM_CHARGE_END, val);
-+}
-+
-+static ssize_t charge_type_show(struct device *dev,
-+				struct device_attribute *attr,
-+				char *buf)
-+{
-+	int active;
-+	ssize_t count;
-+
-+	active = dell_get_active_enum_token(battery_mode_tokens, ARRAY_SIZE(battery_mode_tokens), battery_mode_token_mask);
-+	if (active < 0)
-+		return ret;
-+
-+	for (count = 0, i = 0; i < ARRAY_SIZE(battery_mode_names); i++) {
-+		if (!(BIT(i) & battery_mode_token_mask))
-+			continue;
-+		count += sysfs_emit_at(buf, count, i == active ? "[%s] " : "%s ", battery_mode_names[mode]);
-+	}
-+
-+	/* convert the last space to a newline */
-+	/* battery_mode_names is non-empty and battery_mode_token_mask is non-zero, so count is also non-zero */
-+	count--;
-+	count += sysfs_emit_at(buf, count, "\n");
-+
-+	return count;
-+}
-+
-+static ssize_t charge_type_store(struct device *dev,
-+				struct device_attribute *attr,
-+				const char *buf, size_t size)
-+{
-+	size_t i;
-+	int ret;
-+
-+	for (i = 0; i < ARRAY_SIZE(battery_mode_names); i++) {
-+		if (sysfs_streq(battery_mode_names[i], buf))
-+			break;
-+	}
-+
-+	if (i >= ARRAY_SIZE(battery_mode_names))
-+		return -EINVAL;
-+
-+	if (!(BIT(i) & battery_mode_token_mask))
-+		return -EINVAL;
-+
-+	ret = dell_activate_enum_token(battery_mode_tokens[i]);
-+	if (ret)
-+		return ret;
-+
-+	return size;
-+}
-+
-+static void __init dell_battery_init(struct device *dev)
-+{
-+	battery_mode_token_mask = dell_get_supported_enum_tokens(battery_mode_tokens, ARRAY_SIZE(battery_mode_tokens));
-+	if (battery_mode_token_mask != 0)
-+		battery_hook_register(&dell_battery_hook);
-+}
-+
-+static void __exit dell_battery_exit(void)
-+{
-+	if (battery_mode_token_mask != 0)
-+		battery_hook_unregister(&dell_battery_hook);
-+}
-+
- static int __init dell_init(void)
- {
- 	struct calling_interface_token *token;
+> > Add initial support for the Synopsys DesignWare HDMI RX
+> > Controller Driver used by Rockchip RK3588. The driver
+> > supports:
+> >  - HDMI 1.4b and 2.0 modes (HDMI 4k@60Hz)
+> >  - RGB888, YUV422, YUV444 and YCC420 pixel formats
+> >  - CEC
+> >  - EDID configuration
+> >
+> > The hardware also has Audio and HDCP capabilities, but these are
+> > not yet supported by the driver.
+> >
+> > Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> > Tested-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+> > Co-developed-by: Dingxian Wen <shawn.wen@rock-chips.com>
+> > Signed-off-by: Dingxian Wen <shawn.wen@rock-chips.com>
+> > Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+> > ---
+> >
+...
+> > +
+> > +static const struct of=5Fdevice=5Fid hdmirx=5Fid[] =3D {
+> > +	{ .compatible =3D "rockchip,rk3588-hdmirx-ctrler" },
+> > +	{ },
+> > +};
+> > +MODULE=5FDEVICE=5FTABLE(of, hdmirx=5Fid);
+> >
+> >
+> According to the platform=5Fdriver struct, they like the `remove=5Fne=
+w` over remove.=20
+> When I was compiling for Armbian, I was getting a type mismatch that =
+prevented compililng
+>=20
+> See here: https://github.com/torvalds/linux/blob/933069701c1b507825b5=
+14317d4edd5d3fd9d417/include/linux/platform=5Fdevice.h#L236
+>=20
+
+This patch series is based on linux-next and there seems to be some rec=
+ent changes
+related to .remove and .remove=5Fnew. New drivers are supposed to use .=
+remove()
+
+See the reason here :-
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tre=
+e/include/linux/platform=5Fdevice.h?h=3Dnext-20240722#n239
+
+If you apply the patches on top of linux-next then there shouldn't be a=
+ny
+compilation error.
+
+> >
+> > +
+> > +static struct platform=5Fdriver hdmirx=5Fdriver =3D {
+> > +	.probe =3D hdmirx=5Fprobe,
+> > +	.remove =3D hdmirx=5Fremove,
+> > +	.driver =3D {
+> > +		.name =3D "snps=5Fhdmirx",
+> > +		.of=5Fmatch=5Ftable =3D hdmirx=5Fid,
+> > +		.pm =3D &snps=5Fhdmirx=5Fpm=5Fops,
+> > +	}
+> > +};
+> > +module=5Fplatform=5Fdriver(hdmirx=5Fdriver);
+> > +
+> > +MODULE=5FDESCRIPTION("Rockchip HDMI Receiver Driver");
+> > +MODULE=5FAUTHOR("Dingxian Wen <shawn.wen@rock-chips.com>");
+> > +MODULE=5FAUTHOR("Shreeya Patel <shreeya.patel@collabora.com>");
+> > +MODULE=5FLICENSE("GPL");
+
 
