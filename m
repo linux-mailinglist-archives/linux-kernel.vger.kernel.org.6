@@ -1,332 +1,393 @@
-Return-Path: <linux-kernel+bounces-258676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2295938B81
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:50:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 120E5938B82
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8054D281AA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:50:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3BC8281A7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1ACE1684A4;
-	Mon, 22 Jul 2024 08:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1923161924;
+	Mon, 22 Jul 2024 08:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KQpjxN6a"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kom+WFSk"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154B18F66
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 08:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09C58F66
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 08:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721638196; cv=none; b=FYgM3vhde3gR4JYLN7Q1avrZ+fh3+Cc5aafR0ES+7pbfYdbRmrugWnizLushnB4OQZQEF8Kk3EhHRZU3d9pXHZEB/4CwcLIw9UvAFnHITLlnJJ3dnAaejgBsWVgz/u7A1LvT3hMFOuAp+/UJBkL87XODy8LCrbX2fFcvxVlzJvY=
+	t=1721638272; cv=none; b=fQOXH6R+nztxIbPKS4qb9sbdwC81B+BDOCy84iVkf1//aBB1r/gHa8sKs6w1enQfDVKa5bqkyPtnZ1BCpq5sjNT3SC1A+Ynb1pgBIqK6ldh419RoXm54feK3TFZWn2ltdMMVAlGfQcj8d0e9uqzIbJTOrdbPHkwRDuw+HoeCdqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721638196; c=relaxed/simple;
-	bh=47VPo2UorIlNZcLnbJEBEqv9wf0h06RjopgrPHwuUC4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SKK1jNQGxX5lVEf/MZ05OvODrR+ZjeZhUsHRsAlkNG8Dncne/a7pH9WG4Lu7BTsBD22SkV+TThnaDgRskg3wlNLX8cnRevF8UaCb2QUJrFwGG1QJw9GmY1FXFHivi1+TV6BxDz5lLRUul9S9qdGOXz8qbwppiw0DChxYiccwE4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KQpjxN6a; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4266ed6c691so26528655e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 01:49:53 -0700 (PDT)
+	s=arc-20240116; t=1721638272; c=relaxed/simple;
+	bh=m56gr4OA5J01Y+YnUXt+ynbCjsXwh8zf9oFWBuMz5yQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NToHiwkqWEaqm/2F+WJQAaCmjnSGNglLExEKvBw3y3YzjRKiAMGDnbc64HBwC9mptKZHvv6GtIlFkLv2v8RF56MoMbDgDRZuwnl1rpZUXuBMn+fLYfH03X4n9y7/t0UuNevS6oNdDTHcYQN3bx7FJpahD0Dv4wlbZNpvxJpjsEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kom+WFSk; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fc4fccdd78so19877255ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 01:51:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721638192; x=1722242992; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ow+3TiyVj0GJ9511ydtr5o2dgkAgB9VcYLqHCc+aPiQ=;
-        b=KQpjxN6alDCYEMRWCY0UW1facRhmAikdpUe8c1yXpnumPnmFyr2b0McAofXuq5Xafz
-         3bRbXWENLIgHF1Mcq9EPyMdnCchI51m2uR5xfSGT7gqTrVeT89g9Lj50Rc49ZVbuFcUL
-         w2DthRbcVhyNET6QJBDQz6InO/WVCPoeFCu+SAQLICznZxIs+HbwMuheL2Sc6sD3pioj
-         ClRcqyWaN9PsXK9F3/FF/xkPUjNotUMc/7u0NABYdN3UlbwSfEYwYY+6nBgzVgaK/iz5
-         s1UsktkmbZkLhwAAW/Y5AweOVBsnCupTyzabxZyuk965jhz7h/h4I/MxQTJkiF7g1X8/
-         VhFQ==
+        d=gmail.com; s=20230601; t=1721638269; x=1722243069; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hxNiJ7wIiKjtvnc9wwX6TLuO6qWJsPU7G3qlk/ncD28=;
+        b=kom+WFSksivdJ0Hdhw4tzrWrh9A4nM+aqV4lnKQCtJZiZijvoCPLO153ylNjl4A7HG
+         4mQBajO6S/PB3eYGxtJQ8oFOc7Q1SMJJruuQXWZ46cRcbPYTQPxVp0Q/hjsooFT4sJa2
+         Blc4lXdadRk851m5IfmpJrUgYP/yPdrqOiwNUW4ar+IJLkY1yeO6nxJVS6yzxdVL+AQG
+         RWksKJwz3iYTyAb5WP/4JVQqKLT5UG9z9L5MANtBY7rUW2NdjdRY4wdjcLpj+FzMAQkx
+         wlJNs4N/7sa3Kv387uyNAcDg9/olmvthqNDn9sQdYtsr9INoTqs7aBgLznAOSRlEsXtK
+         R01g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721638192; x=1722242992;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ow+3TiyVj0GJ9511ydtr5o2dgkAgB9VcYLqHCc+aPiQ=;
-        b=jZbFk07/BG24zqX/WmPCAHbj2lEku3ITzJAb/M3P72TxW2lzhaP3gDv6XDd3muD+fp
-         CDI+rvWUSqndBU0ccRs/dwK9jukBSFOh76uRss4A9yJN9VFGKU2GukBCW1DkQNGutiZN
-         lBnaS9/cx+XdDGeBUdlBHXz8NBGgC6VDRdjFdw856woEPM+ygJCVrzUj8ZaeQom85V3b
-         a1H7QBMRLo0mVv+EBmeCv5vmWhGT9yRx1BGFRI4h8wIN087N8/Ip4HB5Nj/xmjJxMTqn
-         ZgrcCn3DgQ82evd9kzpF6hpIwJZPIFmHMlfdTeeLDBrMKZJ8wZIrS8tO12sBN26o9FKL
-         9i7w==
-X-Forwarded-Encrypted: i=1; AJvYcCWqf2GvxtXTW9UCfclmfl+pFU4mZEEwHzfC88Vrg3abHDyDskEqJA/l0l1qxagmbiUoLv7O5cIjh7aS7dQt4rJkNjZNgdT79D8l3KXL
-X-Gm-Message-State: AOJu0Yy6pzMfinUgvphyrK1rpUyX2rBorPeejD+ZwHzX4PiMztEzEgR2
-	f1q3F/otgzevmRso8s8klvrPyYD8wk2G0No296Fq6OUPWbdIvGuWyXAdukw5r0Y=
-X-Google-Smtp-Source: AGHT+IEV6ZArP3dSMTn33w6BUO0/tULLfdMjg6DA7wmDUW0v+Jzor4zkYN97P4gu9T/Bns/QI18YWA==
-X-Received: by 2002:a05:600c:4f0c:b0:426:5f8f:51a4 with SMTP id 5b1f17b1804b1-427daa2815cmr36000095e9.12.1721638192233;
-        Mon, 22 Jul 2024 01:49:52 -0700 (PDT)
-Received: from ?IPV6:2001:a61:137b:5001:be5a:c750:b487:ff1b? ([2001:a61:137b:5001:be5a:c750:b487:ff1b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d6902a1fsm116372845e9.20.2024.07.22.01.49.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jul 2024 01:49:52 -0700 (PDT)
-Message-ID: <82f03be5-b8b1-4df2-8b4b-0cae5d6d67ba@suse.com>
-Date: Mon, 22 Jul 2024 10:49:49 +0200
+        d=1e100.net; s=20230601; t=1721638269; x=1722243069;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hxNiJ7wIiKjtvnc9wwX6TLuO6qWJsPU7G3qlk/ncD28=;
+        b=phBAB+Up5E83h+Pd2prnQneOSHN0MgWQ5n2yK5+jxcp7CZMDrZbBMRJ4FBVLdfu4mY
+         xb11U+7tKXrdmiJqBBu0CNpAd2vUSkqvGrp3CB1J25mSas/D4r1EL8WNIVU0moQx+5/X
+         NhYpyNGGi/TIjyRziKc2vi69ucZPn/gJOaBLuE1YsGMdZYIzdWLijhApuAeRyRUNnxhm
+         omg++SYKrFWsReOQp8yXFK67ysyFSn4MNbKsJ+8+gc3qJAJkjge7OMsnL4iGmRO17BKT
+         2Ag5bf5szDd1Mwu2ZUA3hvjdfjIuYheWYmWjeW0ZbyijXcbS3z5moUK7+CSBupQukpcH
+         H0qg==
+X-Forwarded-Encrypted: i=1; AJvYcCXRHqU6QpA9QK2t9bifTyk6fk3rD7rl7BD94dbCWchgKRCsRYcP8cd9wuyz8O+vu+cEogx+lae1FbenQ5rX+EeQJm0Dlzd3PHLhiKF8
+X-Gm-Message-State: AOJu0Yw5ExiTJIjp/EduTWsw7Rua7Yf/qrIodnKDHHFhJ3MB1kFIR4dq
+	6NVv4nLR6GYN4K1d194fR9HTdlCZgXKgAwLJL77e0tYvm4lBY1yk
+X-Google-Smtp-Source: AGHT+IGKgNP7LZLV8Nh4qEhVssgvvhPdOq1y1eJcYk/0NCSYIznF+emvZE8rAuEoJgc+yEYtJiP+bg==
+X-Received: by 2002:a17:903:1d0:b0:1fd:a264:9433 with SMTP id d9443c01a7336-1fda26497f6mr10504635ad.29.1721638269015;
+        Mon, 22 Jul 2024 01:51:09 -0700 (PDT)
+Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f2abbffsm49366185ad.116.2024.07.22.01.51.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 01:51:08 -0700 (PDT)
+Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
+	by twhmp6px (Postfix) with ESMTPS id 6B8F0805EC;
+	Mon, 22 Jul 2024 17:00:49 +0800 (CST)
+From: Cheng Ming Lin <linchengming884@gmail.com>
+To: tudor.ambarus@linaro.org,
+	pratyush@kernel.org,
+	mwalle@kernel.org,
+	miquel.raynal@bootlin.com,
+	richard@nod.at,
+	vigneshr@ti.com,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: leoyu@mxic.com.tw,
+	alvinzhou@mxic.com.tw,
+	Cheng Ming Lin <chengminglin@mxic.com.tw>
+Subject: [PATCH v2] mtd: spi-nor: macronix: Add support for serial NOR flash
+Date: Mon, 22 Jul 2024 16:49:52 +0800
+Message-Id: <20240722084952.608770-1-linchengming884@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/3] net/9p/usbg: Add new usb gadget function transport
-To: Michael Grzeschik <m.grzeschik@pengutronix.de>,
- Eric Van Hensbergen <ericvh@kernel.org>, Latchesar Ionkov
- <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>,
- Christian Schoenebeck <linux_oss@crudebyte.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Andrzej Pietrasiewicz <andrzej.p@collabora.com>, v9fs@lists.linux.dev,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, kernel@pengutronix.de
-References: <20240116-ml-topic-u9p-v7-0-3a1eeef77fbe@pengutronix.de>
- <20240116-ml-topic-u9p-v7-2-3a1eeef77fbe@pengutronix.de>
-Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <20240116-ml-topic-u9p-v7-2-3a1eeef77fbe@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Cheng Ming Lin <chengminglin@mxic.com.tw>
 
+MX66U1G45G and MX66L2G45G are Macronix serial NOR flash.
 
-On 22.07.24 00:08, Michael Grzeschik wrote:
+These flashes have been tested on Xilinx Zynq-picozed board
+using MXIC SPI controller.
 
-> +
-> +static int usb9pfs_queue_tx(struct f_usb9pfs *usb9pfs, struct usb_request *req,
-> +			    gfp_t gfp_flags)
-> +{
-> +	struct usb_composite_dev *cdev = usb9pfs->function.config->cdev;
-> +	int ret = -ENOMEM;
+Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
+---
+zynq> cat /sys/bus/spi/devices/spi0.0/spi-nor/jedec_id
+c2201c
+zynq> cat /sys/bus/spi/devices/spi0.0/spi-nor/manufacturer
+macronix
+zynq> hexdump -Cv /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
+00000000  53 46 44 50 06 01 02 ff  00 06 01 10 30 00 00 ff  |SFDP........0...|
+00000010  c2 00 01 04 10 01 00 ff  84 00 01 02 c0 00 00 ff  |................|
+00000020  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+00000030  e5 20 fb ff ff ff ff 7f  44 eb 08 6b 08 3b 04 bb  |. ......D..k.;..|
+00000040  fe ff ff ff ff ff 00 ff  ff ff 44 eb 0c 20 0f 52  |..........D.. .R|
+00000050  10 d8 00 ff 87 49 bd 00  84 d2 04 e2 44 03 67 38  |.....I......D.g8|
+00000060  30 b0 30 b0 f7 bd ff 5c  4a 9e 29 ff f0 50 f9 85  |0.0....\J.)..P..|
+00000070  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+00000080  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+00000090  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+000000a0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+000000b0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+000000c0  7f 8f ff ff 21 5c dc ff  ff ff ff ff ff ff ff ff  |....!\..........|
+000000d0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+000000e0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+000000f0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+00000100  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+00000110  00 36 00 27 9d f9 c0 64  85 cb ff ff ff ff ff ff  |.6.'...d........|
+00000120
+zynq> sha256sum /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
+9af233495e5cffd2f38e9e2b8334a0d51c01fa93e9a17a991f674c8d6a350358  /sys/bus/spi/devices/spi0.0/p
+zynq> cat /sys/kernel/debug/spi-nor/spi0.0/capabilities
+Supported read modes by the flash
+ 1S-1S-1S
+  opcode        0x13
+  mode cycles   0
+  dummy cycles  0
+ 1S-1S-2S
+  opcode        0x3c
+  mode cycles   0
+  dummy cycles  8
+ 1S-2S-2S
+  opcode        0xbc
+  mode cycles   0
+  dummy cycles  4
+ 1S-1S-4S
+  opcode        0x6c
+  mode cycles   0
+  dummy cycles  8
+ 1S-4S-4S
+  opcode        0xec
+  mode cycles   2
+  dummy cycles  4
+ 4S-4S-4S
+  opcode        0xec
+  mode cycles   2
+  dummy cycles  4
 
-No need. This will be overwritten.
+Supported page program modes by the flash
+ 1S-1S-1S
+  opcode        0x12
+ 1S-4S-4S
+  opcode        0x3e
+zynq> cat /sys/kernel/debug/spi-nor/spi0.0/params
+name            (null)
+id              c2 20 1c c2 20 1c
+size            256 MiB
+write size      1
+page size       256
+address nbytes  4
+flags           4B_OPCODES | HAS_4BAIT | SOFT_RESET
 
-> +
-> +	if (!(usb9pfs->p9_tx_req->tc.size % usb9pfs->in_ep->maxpacket))
-> +		req->zero = 1;
-> +
-> +	req->buf = usb9pfs->p9_tx_req->tc.sdata;
-> +	req->length = usb9pfs->p9_tx_req->tc.size;
-> +
-> +	dev_dbg(&cdev->gadget->dev, "%s usb9pfs send --> %d/%d, zero: %d\n",
-> +		usb9pfs->in_ep->name, req->actual, req->length, req->zero);
-> +
-> +	ret = usb_ep_queue(usb9pfs->in_ep, req, gfp_flags);
-> +
-> +	dev_dbg(&cdev->gadget->dev, "tx submit --> %d\n", ret);
-> +
-> +	return ret;
-> +}
-> +
-> +static int usb9pfs_queue_rx(struct f_usb9pfs *usb9pfs, struct usb_request *req,
-> +			    gfp_t gfp_flags)
-> +{
-> +	struct usb_composite_dev *cdev = usb9pfs->function.config->cdev;
-> +	int ret = -ENOMEM;
+opcodes
+ read           0xec
+  dummy cycles  6
+ erase          0x21
+ program        0x3e
+ 8D extension   none
 
-Overwritten in literally the next statement.
+protocols
+ read           1S-4S-4S
+ write          1S-4S-4S
+ register       1S-1S-1S
 
-> +	ret = usb_ep_queue(usb9pfs->out_ep, req, gfp_flags);
-> +
-> +	dev_dbg(&cdev->gadget->dev, "rx submit --> %d\n", ret);
-> +
-> +	return ret;
-> +}
-> +
-> +static int usb9pfs_transmit(struct f_usb9pfs *usb9pfs)
-> +{
-> +	struct p9_req_t *p9_req = NULL;
-> +	unsigned long flags;
-> +	int ret = 0;
-> +
-> +	spin_lock_irqsave(&usb9pfs->lock, flags);
-> +	if (usb9pfs->p9_tx_req) {
-> +		spin_unlock_irqrestore(&usb9pfs->lock, flags);
-> +		return -EBUSY;
-> +	}
-> +
-> +	p9_req = list_first_entry_or_null(&usb9pfs->tx_req_list,
-> +					  struct p9_req_t, req_list);
-> +	if (!p9_req) {
-> +		spin_unlock_irqrestore(&usb9pfs->lock, flags);
-> +		return -ENOENT;
-> +	}
-> +
-> +	list_del(&p9_req->req_list);
+erase commands
+ 21 (4.00 KiB) [1]
+ 5c (32.0 KiB) [2]
+ dc (64.0 KiB) [3]
+ c7 (256 MiB)
 
-You have deleted it from the list
+sector map
+ region (in hex)   | erase mask | overlaid
+ ------------------+------------+----------
+ 00000000-0fffffff |     [ 1  ] | no
+zynq> dd if=/dev/urandom of=/tmp/spi_test bs=1M count=2
+2+0 records in
+2+0 records out
+2097152 bytes (2.0MB) copied, 0.083620 seconds, 23.9MB/s
+zynq> mtd_debug erase /dev/mtd0 0 2097152
+Erased 2097152 bytes from address 0x00000000 in flash
+zynq> mtd_debug read /dev/mtd0 0 2097152 /tmp/spi_read
+Copied 2097152 bytes from address 0x00000000 in flash to /tmp/spi_read
+zynq> hexdump /tmp/spi_read
+0000000 ffff ffff ffff ffff ffff ffff ffff ffff
+*
+0200000
+zynq> sha256sum /tmp/spi_read
+4bda3a28f4ffe603c0ec1258c0034d65a1a0d35ab7bd523a834608adabf03cc5  /tmp/spi_read
+zynq> mtd_debug write /dev/mtd0 0 2097152 /tmp/spi_test
+Copied 2097152 bytes from /tmp/spi_test to address 0x00000000 in flash
+zynq> mtd_debug read /dev/mtd0 0 2097152 /tmp/spi_read
+Copied 2097152 bytes from address 0x00000000 in flash to /tmp/spi_read
+zynq> sha256sum /tmp/spi*
+2c63296c93c97967e87279c3a4d4a9a5af4e7c2b9d2bc58579c3f01a6c522dfa  /tmp/spi_read
+2c63296c93c97967e87279c3a4d4a9a5af4e7c2b9d2bc58579c3f01a6c522dfa  /tmp/spi_test
+zynq> mtd_debug erase /dev/mtd0 0 2097152
+Erased 2097152 bytes from address 0x00000000 in flash
+zynq> mtd_debug read /dev/mtd0 0 2097152 /tmp/spi_read
+Copied 2097152 bytes from address 0x00000000 in flash to /tmp/spi_read
+zynq> sha256sum /tmp/spi*
+4bda3a28f4ffe603c0ec1258c0034d65a1a0d35ab7bd523a834608adabf03cc5  /tmp/spi_read
+2c63296c93c97967e87279c3a4d4a9a5af4e7c2b9d2bc58579c3f01a6c522dfa  /tmp/spi_test
 
-> +	usb9pfs->p9_tx_req = p9_req;
-> +
-> +	p9_req_get(usb9pfs->p9_tx_req);
-> +
-> +	ret = usb9pfs_queue_tx(usb9pfs, usb9pfs->in_req, GFP_ATOMIC);
+zynq> mtd_debug info /dev/mtd0
+mtd.type = MTD_NORFLASH
+mtd.flags = MTD_CAP_NORFLASH
+mtd.size = 268435456 (256M)
+mtd.erasesize = 4096 (4K)
+mtd.writesize = 1
+mtd.oobsize = 0
+regions = 0
 
-This means that if this function returns an error, the deletion
-from the list may or may not have happened.
+zynq> cat /sys/bus/spi/devices/spi0.0/spi-nor/jedec_id
+c2253b
+zynq> cat /sys/bus/spi/devices/spi0.0/spi-nor/manufacturer
+zynq> cat /sys/bus/spi/devices/spi0.0/spi-nor/jedec_id
+c2253b
+zynq> cat /sys/bus/spi/devices/spi0.0/spi-nor/manufacturer
+macronix
+zynq> hexdump -Cv /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
+00000000  53 46 44 50 06 01 02 ff  00 06 01 10 30 00 00 ff  |SFDP........0...|
+00000010  c2 00 01 04 10 01 00 ff  84 00 01 02 c0 00 00 ff  |................|
+00000020  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+00000030  e5 20 fb ff ff ff ff 3f  44 eb 08 6b 08 3b 04 bb  |. .....?D..k.;..|
+00000040  fe ff ff ff ff ff 00 ff  ff ff 44 eb 0c 20 0f 52  |..........D.. .R|
+00000050  10 d8 00 ff 89 49 bd 00  8d 12 00 e2 44 03 67 44  |.....I......D.gD|
+00000060  30 b0 30 b0 f7 bd d5 5c  4a 9e 29 ff f0 50 f9 85  |0.0....\J.)..P..|
+00000070  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+00000080  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+00000090  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+000000a0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+000000b0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+000000c0  7f 8f ff ff 21 5c dc ff  ff ff ff ff ff ff ff ff  |....!\..........|
+000000d0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+000000e0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+000000f0  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+00000100  ff ff ff ff ff ff ff ff  ff ff ff ff ff ff ff ff  |................|
+00000110  00 20 00 17 9d f9 c0 64  85 cb ff ff ff ff ff ff  |. .....d........|
+00000120
+zynq> sha256sum /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
+ef47525560aa30ca7eb4634eb2eb15a0aa618d3b61f774933f9935d05fb475f6  /sys/bus/spi/devices/spi0.0/p
+zynq> cat /sys/kernel/debug/spi-nor/spi0.0/capabilities
+Supported read modes by the flash
+ 1S-1S-1S
+  opcode        0x13
+  mode cycles   0
+  dummy cycles  0
+ 1S-1S-2S
+  opcode        0x3c
+  mode cycles   0
+  dummy cycles  8
+ 1S-2S-2S
+  opcode        0xbc
+  mode cycles   0
+  dummy cycles  4
+ 1S-1S-4S
+  opcode        0x6c
+  mode cycles   0
+  dummy cycles  8
+ 1S-4S-4S
+  opcode        0xec
+  mode cycles   2
+  dummy cycles  4
+ 4S-4S-4S
+  opcode        0xec
+  mode cycles   2
+  dummy cycles  4
 
-> +	spin_unlock_irqrestore(&usb9pfs->lock, flags);
-> +
-> +	return ret;
-> +}
-> +
-> +static void usb9pfs_tx_complete(struct usb_ep *ep, struct usb_request *req)
-> +{
-> +	struct f_usb9pfs *usb9pfs = ep->driver_data;
-> +	struct usb_composite_dev *cdev = usb9pfs->function.config->cdev;
-> +	int ret = 0;
-> +
-> +	if (req->status) {
-> +		dev_err(&cdev->gadget->dev, "%s usb9pfs complete --> %d, %d/%d\n",
-> +			ep->name, req->status, req->actual, req->length);
-> +		return;
-> +	}
-> +
-> +	/* reset zero packages */
-> +	req->zero = 0;
-> +
-> +	dev_dbg(&cdev->gadget->dev, "%s usb9pfs complete --> %d, %d/%d\n",
-> +		ep->name, req->status, req->actual, req->length);
-> +
-> +	WRITE_ONCE(usb9pfs->p9_tx_req->status, REQ_STATUS_SENT);
-> +
-> +	p9_req_put(usb9pfs->client, usb9pfs->p9_tx_req);
-> +
-> +	ret = usb9pfs_queue_rx(usb9pfs, usb9pfs->out_req, GFP_ATOMIC);
-> +	if (ret)
-> +		return;
+Supported page program modes by the flash
+ 1S-1S-1S
+  opcode        0x12
+ 1S-4S-4S
+  opcode        0x3e
+zynq> cat /sys/kernel/debug/spi-nor/spi0.0/params
+name            (null)
+id              c2 25 3b c2 25 3b
+size            128 MiB
+write size      1
+page size       256
+address nbytes  4
+flags           4B_OPCODES | HAS_4BAIT | SOFT_RESET
 
-Ehhh ? Could you explain the error handling here?
+opcodes
+ read           0xec
+  dummy cycles  6
+ erase          0x21
+ program        0x3e
+ 8D extension   none
 
-> +
-> +	return;
-> +}
-> +
-> +static struct p9_req_t *usb9pfs_rx_header(struct f_usb9pfs *usb9pfs, void *buf)
-> +{
-> +	struct p9_req_t *p9_rx_req;
-> +	struct p9_fcall	rc;
-> +	int ret;
-> +
-> +	/* start by reading header */
-> +	rc.sdata = buf;
-> +	rc.offset = 0;
-> +	rc.capacity = P9_HDRSZ;
-> +	rc.size = P9_HDRSZ;
-> +
-> +	p9_debug(P9_DEBUG_TRANS, "mux %p got %zu bytes\n", usb9pfs,
-> +		 rc.capacity - rc.offset);
-> +
-> +	ret = p9_parse_header(&rc, &rc.size, NULL, NULL, 0);
-> +	if (ret) {
-> +		p9_debug(P9_DEBUG_ERROR,
-> +			 "error parsing header: %d\n", ret);
-> +		return NULL;
-> +	}
-> +
-> +	p9_debug(P9_DEBUG_TRANS,
-> +		 "mux %p pkt: size: %d bytes tag: %d\n",
-> +		 usb9pfs, rc.size, rc.tag);
-> +
-> +	p9_rx_req = p9_tag_lookup(usb9pfs->client, rc.tag);
-> +	if (!p9_rx_req || p9_rx_req->status != REQ_STATUS_SENT) {
-> +		p9_debug(P9_DEBUG_ERROR, "Unexpected packet tag %d\n", rc.tag);
-> +		return NULL;
-> +	}
-> +
-> +	if (rc.size > p9_rx_req->rc.capacity) {
-> +		p9_debug(P9_DEBUG_ERROR,
-> +			 "requested packet size too big: %d for tag %d with capacity %zd\n",
-> +			 rc.size, rc.tag, p9_rx_req->rc.capacity);
-> +		p9_req_put(usb9pfs->client, p9_rx_req);
-> +		return NULL;
-> +	}
-> +
-> +	if (!p9_rx_req->rc.sdata) {
-> +		p9_debug(P9_DEBUG_ERROR,
-> +			 "No recv fcall for tag %d (req %p), disconnecting!\n",
-> +			 rc.tag, p9_rx_req);
-> +		p9_req_put(usb9pfs->client, p9_rx_req);
-> +		return NULL;
-> +	}
-> +
-> +	return p9_rx_req;
-> +}
-> +
-> +static void usb9pfs_rx_complete(struct usb_ep *ep, struct usb_request *req)
-> +{
-> +	struct f_usb9pfs *usb9pfs = ep->driver_data;
-> +	struct usb_composite_dev *cdev = usb9pfs->function.config->cdev;
-> +	struct p9_req_t *p9_rx_req;
-> +	unsigned long flags;
-> +
-> +	if (req->status) {
-> +		dev_err(&cdev->gadget->dev, "%s usb9pfs complete --> %d, %d/%d\n",
-> +			ep->name, req->status, req->actual, req->length);
-> +		return;
-> +	}
-> +
-> +	p9_rx_req = usb9pfs_rx_header(usb9pfs, req->buf);
-> +	if (!p9_rx_req)
-> +		return;
-> +
-> +	memcpy(p9_rx_req->rc.sdata, req->buf, req->actual);
-> +
-> +	p9_rx_req->rc.size = req->actual;
-> +
-> +	p9_client_cb(usb9pfs->client, p9_rx_req, REQ_STATUS_RCVD);
-> +	p9_req_put(usb9pfs->client, p9_rx_req);
-> +
-> +	spin_lock_irqsave(&usb9pfs->lock, flags);
-> +	usb9pfs->p9_tx_req = NULL;
-> +
-> +	spin_unlock_irqrestore(&usb9pfs->lock, flags);
+protocols
+ read           1S-4S-4S
+ write          1S-4S-4S
+ register       1S-1S-1S
 
-Why can usb9pfs_tx_complete() touch this without taking the spinlock?
+erase commands
+ 21 (4.00 KiB) [1]
+ 5c (32.0 KiB) [2]
+ dc (64.0 KiB) [3]
+ c7 (128 MiB)
 
-> +
-> +	usb9pfs_transmit(usb9pfs);
+sector map
+ region (in hex)   | erase mask | overlaid
+ ------------------+------------+----------
+ 00000000-07ffffff |     [ 1  ] | no
+zynq> dd if=/dev/urandom of=/tmp/spi_test bs=1M count=2
+2+0 records in
+2+0 records out
+2097152 bytes (2.0MB) copied, 0.083028 seconds, 24.1MB/s
+zynq> mtd_debug erase /dev/mtd0 0 2097152
+Erased 2097152 bytes from address 0x00000000 in flash
+zynq> mtd_debug read /dev/mtd0 0 2097152 /tmp/spi_read
+Copied 2097152 bytes from address 0x00000000 in flash to /tmp/spi_read
+zynq> hexdump /tmp/spi_read
+0000000 ffff ffff ffff ffff ffff ffff ffff ffff
+*
+0200000
+zynq> sha256sum /tmp/spi_read
+4bda3a28f4ffe603c0ec1258c0034d65a1a0d35ab7bd523a834608adabf03cc5  /tmp/spi_read
+zynq> mtd_debug write /dev/mtd0 0 2097152 /tmp/spi_test
+Copied 2097152 bytes from /tmp/spi_test to address 0x00000000 in flash
+zynq> mtd_debug read /dev/mtd0 0 2097152 /tmp/spi_read
+Copied 2097152 bytes from address 0x00000000 in flash to /tmp/spi_read
+zynq> sha256sum /tmp/spi*
+45b3b6898c7dccd9bdc3cabd42d25ce6a875f4bdebe0b2a5d51632c67ecdc4a2  /tmp/spi_read
+45b3b6898c7dccd9bdc3cabd42d25ce6a875f4bdebe0b2a5d51632c67ecdc4a2  /tmp/spi_test
+zynq> mtd_debug erase /dev/mtd0 0 2097152
+Erased 2097152 bytes from address 0x00000000 in flash
+zynq> mtd_debug read /dev/mtd0 0 2097152 /tmp/spi_read
+Copied 2097152 bytes from address 0x00000000 in flash to /tmp/spi_read
+zynq> sha256sum /tmp/spi*
+4bda3a28f4ffe603c0ec1258c0034d65a1a0d35ab7bd523a834608adabf03cc5  /tmp/spi_read
+45b3b6898c7dccd9bdc3cabd42d25ce6a875f4bdebe0b2a5d51632c67ecdc4a2  /tmp/spi_test
 
-This can fail. What happens then?
+zynq> mtd_debug info /dev/mtd0
+mtd.type = MTD_NORFLASH
+mtd.flags = MTD_CAP_NORFLASH
+mtd.size = 134217728 (128M)
+mtd.erasesize = 4096 (4K)
+mtd.writesize = 1
+mtd.oobsize = 0
+regions = 0
 
-> +
-> +	return;
-> +}
-> +
+ drivers/mtd/spi-nor/macronix.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-
-[..]
-
-> +static int p9_usbg_cancel(struct p9_client *client, struct p9_req_t *req)
-
-This ought to be boolean
-
-> +{
-> +	struct f_usb9pfs *usb9pfs = client->trans;
-> +	unsigned long flags;
-> +	int ret = 1;
-> +
-> +	p9_debug(P9_DEBUG_TRANS, "client %p req %p\n", client, req);
-> +
-> +	spin_lock_irqsave(&usb9pfs->lock, flags);
-> +
-> +	if (req->status == REQ_STATUS_UNSENT) {
-> +		list_del(&req->req_list);
-> +		WRITE_ONCE(req->status, REQ_STATUS_FLSHD);
-> +		p9_req_put(client, req);
-> +		ret = 0;
-> +	}
-> +	spin_unlock_irqrestore(&usb9pfs->lock, flags);
-> +
-> +	return ret;
-> +}
-
-	Regards
-		Oliver
+diff --git a/drivers/mtd/spi-nor/macronix.c b/drivers/mtd/spi-nor/macronix.c
+index ea6be95e75a5..387836b27605 100644
+--- a/drivers/mtd/spi-nor/macronix.c
++++ b/drivers/mtd/spi-nor/macronix.c
+@@ -90,6 +90,10 @@ static const struct flash_info macronix_nor_parts[] = {
+ 		.name = "mx66l1g45g",
+ 		.size = SZ_128M,
+ 		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
++	}, {
++		.id = SNOR_ID(0xc2, 0x20, 0x1c),
++		.size = SZ_256M,
++		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+ 	}, {
+ 		.id = SNOR_ID(0xc2, 0x23, 0x14),
+ 		.name = "mx25v8035f",
+@@ -143,6 +147,11 @@ static const struct flash_info macronix_nor_parts[] = {
+ 		.size = SZ_64M,
+ 		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+ 		.fixup_flags = SPI_NOR_4B_OPCODES,
++	}, {
++		.id = SNOR_ID(0xc2, 0x25, 0x3b),
++		.size = SZ_128M,
++		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
++		.fixup_flags = SPI_NOR_4B_OPCODES,
+ 	}, {
+ 		.id = SNOR_ID(0xc2, 0x25, 0x3c),
+ 		.name = "mx66u2g45g",
+-- 
+2.25.1
 
 
