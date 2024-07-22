@@ -1,154 +1,152 @@
-Return-Path: <linux-kernel+bounces-259487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7805A9396F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 01:25:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E2A939704
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 01:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA5BDB2155D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 23:25:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0788A2824EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 23:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2DE73443;
-	Mon, 22 Jul 2024 23:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3706C4CB4E;
+	Mon, 22 Jul 2024 23:35:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i47jZ8+l"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MTTw4jEh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7264D5AA
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 23:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810C58F5E;
+	Mon, 22 Jul 2024 23:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721690689; cv=none; b=UD4dPjatH3CeLKWHGktEU5Scsr15lHCoVtCm8lzkVtO9BCY/xp0FKlBeJtSal/CNdCZRdN1xQTNbSFrwGTD1zYL9zn44xvkHRZL267jH/sokjB6F8aamLH9/LuobBkUYfuZzFcRVKW3Tb9fABO3LZd756xOmjsU2LNh32ZG9EMg=
+	t=1721691353; cv=none; b=rwuhpPn4lx11vfmE9LUXzreCGOhLhpy26d36tlgsM92vVYjYAdyNYpgsivfFiWx7i8+XkeL1lHm2efFm9y62+33//dUgr/4ypc4Onc4t9RG1JhJJafK0H3+eBsGzD4WOBkvA6s+I5tQiuD/fTGDd4PIjV1ZAyvAfaFmBmY9WUk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721690689; c=relaxed/simple;
-	bh=6AGjh6IqOic1kh+c56KN6dzsU0thGDOAqHtADTWMHRo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RAcdrg381EfUVtmEqBGw4qtkZnJh0pxmSsFVbSlEyjXLBaGAgEWKt+Krs/tuNOAvUqL34nwfCbnDAQlr5nAqri7aZnfevwotNGmxBw62OrYMiTvj3ZrtTcKu8NIPjXA44ijDD8XjYm6GI14PYm4raW0YMzxD0jAx/9ZXZ5+z1Vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i47jZ8+l; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a1337cfbb5so4686270a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 16:24:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721690687; x=1722295487; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=oC2RL14r19Xt8DAfEK47GawQ7i/umdedeXiIPYHsSig=;
-        b=i47jZ8+lE8npfI6IinEQ6rEtSCJspXCZzlTBCD2C1rq3jKlpdgyPQ64w5/lQduf4un
-         MI9dxeDmCpRgFUyGJDt+dkikK/KC0Yrt2+bXlCZSPPl+r030FTFv+b2HE9jBWVev2CCj
-         ucaqpZYC3micGmxx07hZm/RW0C7dGQT0rfLMtYOUbuPAxtNgGgT4YJb7TFpLFeDK3bfz
-         FVRHi62nxkzDCA3wbPg8v3+czN5JtPvSqmSiMnf/LOzII4dDLOhexa+/LQgclPu06MAL
-         JW0D3ZQRbC9zboBC1+03qpefbFJJDNVEtmuQHWoyoBXF8lZjzi53IhwuW1IPKYeQLAq7
-         oiRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721690687; x=1722295487;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oC2RL14r19Xt8DAfEK47GawQ7i/umdedeXiIPYHsSig=;
-        b=tqvgfgpnLvCLbyrzJeoO5D6Jtq4D7eEGhAJOvW1TpRtcDrmeUwUn1ewCP1FeUpOZCW
-         fwpRmDpI418+abNpRsqgb1H0yby/l7P6Ny+xS0OMv2+KLWpifQJIMdTzuF3r89icIR9u
-         jxNfla9ipTQKvXEmm363wHIF9BAZUzgjJYXWgS3xqM6bMlk5Vpv3VRQ+qm9CxpTPp7zc
-         o+rpTU2195vAP/Uv2APBXtsSO+XPlbO6Tsyhgae7fljIXS6G+4uPwiSTFsYj8T/042jm
-         9XxHV52cmdOiYKITRXdiJ4It12GN4edFIkFKDSY1qQf0lRGZMoyvChRJ9w7GxvgyKdLT
-         HIwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVG6kWkCv4WCRXr5ykt1nuq3wGHNvABksZ59vSZuMgGUNwWuyR6e2lx2dylA/Rjy5DvQAzLSMluE8HqhlOv46XZygfJk2H0dooyVvjR
-X-Gm-Message-State: AOJu0YyMsADsicQ2/a6sfvy1aYoelvTR3yW0pW4VL2y0b4Pu32E6O58F
-	EoIheKIBo4Vuj9/lUqOKDFcvR2/o1N6KP6U+AIcxfE2iPGz1zZ06wr7yeGw8vVU=
-X-Google-Smtp-Source: AGHT+IFRf27aw3c3+9anEvnfyMrCyg6ri7H6p7qCHgZFlBRbwPP6Fv6NdIr2rUfOCMZGkLf9M6r59g==
-X-Received: by 2002:a17:907:9802:b0:a6f:501d:c224 with SMTP id a640c23a62f3a-a7a885c0000mr95934766b.57.1721690686392;
-        Mon, 22 Jul 2024 16:24:46 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c9273a5sm472498866b.165.2024.07.22.16.24.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jul 2024 16:24:46 -0700 (PDT)
-Message-ID: <ca6ebe75-08d1-42ca-99bb-327e9dc99323@linaro.org>
-Date: Tue, 23 Jul 2024 01:24:44 +0200
+	s=arc-20240116; t=1721691353; c=relaxed/simple;
+	bh=uHBs++XUB5PWKoO0mZ43r19mbkrWMGRIfh+BSU4Ubuc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ARzelVoyFMlM/82VxEGrbTb6kXfcEy0uSpbne4SjX1PSGvRcYEA+TaEPQKv3YFIgEtQVNotL7ZdIs9bsuCL0VcK9lTnFnahVP9jcgpwNjj1KgIIaJpz2HQ8LFFlaWuN52JpneP8LiH9NzSc58YFeZfLHT8eFtbO5DKPzQ50p8FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MTTw4jEh; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721691352; x=1753227352;
+  h=date:message-id:from:to:cc:subject:in-reply-to:
+   references:mime-version;
+  bh=uHBs++XUB5PWKoO0mZ43r19mbkrWMGRIfh+BSU4Ubuc=;
+  b=MTTw4jEhrU9kSjVhHbTiniX8jbwQJ8DeQg9WVdBvJVX4uR7e3tCoAqAW
+   Enwww5QZy/7Q2aQLiicf5CIUXMLdQOj5sKr1uI6SO2vdOBG8n5HGPMhND
+   DnyQmN5px/M1lFYBCSL46J12tDCoKrD+hyly6kNjePfjuK9S1BWau8ynE
+   f+voZOgijwkn0272Vbyq2nsGQPuG74hiK4MQ49l8qW+JiDQoKRn9up0NE
+   Rq57/G6mYYHvhjSiTAUWKnl6RnVpJY1fJIgFpyn8guSZSNj7jnO/FUWMv
+   50xyLhD9wqv2Oxx5/DhojmVv11M3ILrLdIiOgZgvBGaqWAZ1X9Y+JnBIc
+   Q==;
+X-CSE-ConnectionGUID: tIDtT98EQKeXMNDzkndJkg==
+X-CSE-MsgGUID: 5QZlejUzSDmXFCDbYhu2ow==
+X-IronPort-AV: E=McAfee;i="6700,10204,11141"; a="44713379"
+X-IronPort-AV: E=Sophos;i="6.09,229,1716274800"; 
+   d="scan'208";a="44713379"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 16:35:51 -0700
+X-CSE-ConnectionGUID: Djh7fBLgQL+Ljm5+Kp4vUA==
+X-CSE-MsgGUID: cF1aP7AUTiyovMn8k1nhrA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,229,1716274800"; 
+   d="scan'208";a="51929193"
+Received: from dmprieto-mobl1.amr.corp.intel.com (HELO adixit-arch.intel.com) ([10.125.48.92])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 16:35:50 -0700
+Date: Mon, 22 Jul 2024 16:25:27 -0700
+Message-ID: <87a5i9c8m0.wl-ashutosh.dixit@intel.com>
+From: "Dixit, Ashutosh" <ashutosh.dixit@intel.com>
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: intel-gfx@lists.freedesktop.org,
+	linux-perf-users@vger.kernel.org,
+	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+	dri-devel@lists.freedesktop.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/7] drm/i915/pmu: Drop is_igp()
+In-Reply-To: <20240722210648.80892-5-lucas.demarchi@intel.com>
+References: <20240722210648.80892-1-lucas.demarchi@intel.com>
+	<20240722210648.80892-5-lucas.demarchi@intel.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL-LB/10.8 EasyPG/1.0.0
+ Emacs/29.4 (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] arm64: dts: qcom: msm8998-clamshell: enable
- resin/VolDown
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Jeffrey Hugo <quic_jhugo@quicinc.com>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240722-miix630-support-v1-0-a6483cfe8674@linaro.org>
- <20240722-miix630-support-v1-4-a6483cfe8674@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240722-miix630-support-v1-4-a6483cfe8674@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 
-On 22.07.2024 1:57 PM, Dmitry Baryshkov wrote:
-> Let resin device generate the VolumeDown key.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On Mon, 22 Jul 2024 14:06:45 -0700, Lucas De Marchi wrote:
+>
+> There's no reason to hardcode checking for integrated graphics on a
+> specific pci slot. That information is already available per platform an
+> can be checked with IS_DGFX().
+
+Reviewed-by: Ashutosh Dixit <ashutosh.dixit@intel.com>
+
+> Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
 > ---
->  arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi b/arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi
-> index 3b7172aa4037..75958c4013b4 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi
-> @@ -128,6 +128,11 @@ pm8005_s1: s1 { /* VDD_GFX supply */
->  	};
->  };
->  
-> +&pm8998_resin {
-> +	linux,code = <KEY_VOLUMEDOWN>;
-> +	status = "okay";
-
-A newline before status, please
-
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-
-Konrad
+>  drivers/gpu/drm/i915/i915_pmu.c | 17 +++--------------
+>  1 file changed, 3 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/i915/i915_pmu.c b/drivers/gpu/drm/i915/i915_pmu.c
+> index 3a8bd11b87e7..b5d14dd318e4 100644
+> --- a/drivers/gpu/drm/i915/i915_pmu.c
+> +++ b/drivers/gpu/drm/i915/i915_pmu.c
+> @@ -1235,17 +1235,6 @@ static void i915_pmu_unregister_cpuhp_state(struct i915_pmu *pmu)
+>	cpuhp_state_remove_instance(cpuhp_slot, &pmu->cpuhp.node);
+>  }
+>
+> -static bool is_igp(struct drm_i915_private *i915)
+> -{
+> -	struct pci_dev *pdev = to_pci_dev(i915->drm.dev);
+> -
+> -	/* IGP is 0000:00:02.0 */
+> -	return pci_domain_nr(pdev->bus) == 0 &&
+> -	       pdev->bus->number == 0 &&
+> -	       PCI_SLOT(pdev->devfn) == 2 &&
+> -	       PCI_FUNC(pdev->devfn) == 0;
+> -}
+> -
+>  void i915_pmu_register(struct drm_i915_private *i915)
+>  {
+>	struct i915_pmu *pmu = &i915->pmu;
+> @@ -1269,7 +1258,7 @@ void i915_pmu_register(struct drm_i915_private *i915)
+>	pmu->cpuhp.cpu = -1;
+>	init_rc6(pmu);
+>
+> -	if (!is_igp(i915)) {
+> +	if (IS_DGFX(i915)) {
+>		pmu->name = kasprintf(GFP_KERNEL,
+>				      "i915_%s",
+>				      dev_name(i915->drm.dev));
+> @@ -1323,7 +1312,7 @@ void i915_pmu_register(struct drm_i915_private *i915)
+>	pmu->base.event_init = NULL;
+>	free_event_attributes(pmu);
+>  err_name:
+> -	if (!is_igp(i915))
+> +	if (IS_DGFX(i915))
+>		kfree(pmu->name);
+>  err:
+>	drm_notice(&i915->drm, "Failed to register PMU!\n");
+> @@ -1351,7 +1340,7 @@ void i915_pmu_unregister(struct drm_i915_private *i915)
+>	perf_pmu_unregister(&pmu->base);
+>	pmu->base.event_init = NULL;
+>	kfree(pmu->base.attr_groups);
+> -	if (!is_igp(i915))
+> +	if (IS_DGFX(i915))
+>		kfree(pmu->name);
+>	free_event_attributes(pmu);
+>  }
+> --
+> 2.43.0
+>
 
