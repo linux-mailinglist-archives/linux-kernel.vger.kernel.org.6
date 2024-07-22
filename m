@@ -1,222 +1,167 @@
-Return-Path: <linux-kernel+bounces-259131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7519E9391B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:24:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3C739391B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:24:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 952211C2121E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:24:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F01671C2141F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7857F16DEDC;
-	Mon, 22 Jul 2024 15:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F3C16E86B;
+	Mon, 22 Jul 2024 15:24:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MiOqlKHt"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YJ7k8ixz"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CEA1F954
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 15:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B27D16DEB2;
+	Mon, 22 Jul 2024 15:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721661835; cv=none; b=gsedzC+r45q5fxSCMczrOZHTW4zODKgMiI7ZvJpmkx+KhLUk6+vaDf3TZ404YVBdXX68Yg/4MyEb8W/QB21nMUlPkCI2d6inkabgnFSUWkVsVajIU1rnAgVSsEFsTR+Qvgyflnm+fZgcdt3S9AoUdakNexG2GFSEJ5JOsLrvAmk=
+	t=1721661869; cv=none; b=SICrT70td/ZdOeKmgGwg1H4Lfmwl0LeZaxExXI3k2t+0eogWBrv2jqGwWmtDJGg76fJSCVfZ9DsXx3GL89+X/DAf1kXZ6G7mmUrK94NbkzGQHtbHoAfJebrQ7Non1d2MrZdLyZnj8bZqy0HeTAsGbQJMBfAEUL00I1bthykykKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721661835; c=relaxed/simple;
-	bh=RMACHLpVpYM4R76oqhYTWyo08oDWGnAAePE/xNL9xj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aUOaUJsF4kaOVLRaNsoJEKBeIolR1LwCkub9G8FRbul4ckxA0iISpo1wde8RMqj57nIViiZTmQPr3QTh0HclfRkS1uDdzs4HDnBdWb6B/pCa7bY7gzimENihVPtGYb3VsWSTjKI6GuTHyjcqpRAEYZVC3HfPSNB+koYqcquhzfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MiOqlKHt; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6275140E0192;
-	Mon, 22 Jul 2024 15:23:43 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id iR0Mp5_YjBjt; Mon, 22 Jul 2024 15:23:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1721661820; bh=/W1Mjjqu9zf3p9Lj4B5+TqoD2FIVDe//5FXoGD2BvWY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MiOqlKHtRun8B+l4rY8Weql2SRSsrPNLhWNpwe4e3462V/VGk2Mofhng4F3V+0BdH
-	 Iw3VPYB+nnYKOCKYO695Pvv1OWweHcC0cZpfvrRKN6fT8/dAvlkvwHzAaPhFJFJuUE
-	 9m7qRvt/0Gu4WV7V6CaAhPNU+wnDNWs2KHVp/Ozn8WzI7GfnDq4+v0AnJ+yaYFH0x4
-	 7LxG05EUPgyrZXN/ylvwddmRodvVVDMIQlOVjuizfmsC+F73L168guNFzzOhgwOM6f
-	 cpDXrVhEG3B4M1cy3m9IJSd3CJl7LvBWkpb2AQSNhFK5MWbMUkkK7hzHEFn8BlSWSI
-	 ozKeHGx15YhLDS5t+NK4xjyTDAlbTzfYT3OcJyk5U3iglXp7Si8X8QI2EB9td9IDjS
-	 3WSB2bTBD3Jj45xJsFkcfnXKvlzgjfbXq1gOiDBp/BR6YIWyH2g5RfJcJJp6a7dv3/
-	 8imJt1bfIZAZncgpFXFMEs+EmYmn73zCJbhW0KhnSoR9PCYWFvNllOoJe5Rhd6VItf
-	 9GVXQXO5ypQe9rCtmXutEC3JBxde/Yv9Ax0mnq4DCjk8a6iBlhubTOUDS+njzi0s0Z
-	 QlGPzPSGRwdXWFqRgB3ZMSNY2lpgT7CEiays7d/wdnKXnRDGMGtz3PzaNIfZ+O5CkS
-	 C8wy4GNtk0hA9K2wq7O+IBlU=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0DC9E40E0184;
-	Mon, 22 Jul 2024 15:23:37 +0000 (UTC)
-Date: Mon, 22 Jul 2024 17:23:30 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Mike Lothian <mike@fireburn.co.uk>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: Re: Boot Warning
-Message-ID: <20240722152330.GCZp55ck8E_FT4kPnC@fat_crate.local>
-References: <CAHbf0-G4bmpuXorwH-e_chWm1fXX7AJ8ck5AL4p+AFevhvdBfg@mail.gmail.com>
+	s=arc-20240116; t=1721661869; c=relaxed/simple;
+	bh=W1l8xKQmQ78BiNBkCoQoEuXpIhW355bXn3d1WaMxI9I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ciMpxCX5jWkvwzDMCSqZRTNIZOMQE3bQpusYgabq2pmLlNSGHpFO0MaIKb7BwdCmN7v27tVIQvDqQOsHQZ6QfVzSxzp5D9EKkN8LdTiY7H7fIgDWFuTATivbp7m1c7vc3Qx+MK8sRJ6YMQnnZX7N6EaqlunuRPmAj/KdCkZZqYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YJ7k8ixz; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46MAoGVb009490;
+	Mon, 22 Jul 2024 15:23:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5XcYVp0fth3+xLeWpTP085l2qx7SpUWkFbC/bEVSgh0=; b=YJ7k8ixzmW3ULrvA
+	IVNKT5b2yM522q+04JZvfhBcjACnSkQP7xEoG8t5QDfb/32E8gH0efxS7Cb2dPRJ
+	Vjk5CZdakCHlAA4IgntX/R5t6FF7BGmnU1EB4u3TwilwploBCjsr1Xi2ReBwsL5f
+	mJoYVCoXluFotgZqDC7gaQEzSOFGextauVa9+60jY+AdlfgZC4KcnJlx5SwLtk6Z
+	PwFSxxCMBJl8k/ET0gaUL0XZbEa+4CHSLatJpKmD6VZ3xRHAbpr5T02pGAYrKZe/
+	DP+KlAzsJtiavu2HynVFgPB14kEzpyv0Xcxi2SgrCnZ9Lkm8bo1nO0Q63KKlK+8t
+	d5rWLA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g6djv2k2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Jul 2024 15:23:35 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46MFNZr6009829
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Jul 2024 15:23:35 GMT
+Received: from [10.48.244.127] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 22 Jul
+ 2024 08:23:34 -0700
+Message-ID: <5f57a034-71fb-4b6a-a718-3dd323d72f7a@quicinc.com>
+Date: Mon, 22 Jul 2024 08:23:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHbf0-G4bmpuXorwH-e_chWm1fXX7AJ8ck5AL4p+AFevhvdBfg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cpufreq: powerpc: add missing MODULE_DESCRIPTION() macros
+Content-Language: en-US
+To: Michael Ellerman <mpe@ellerman.id.au>,
+        "Rafael J. Wysocki"
+	<rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Nicholas Piggin
+	<npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        "Naveen
+ N. Rao" <naveen.n.rao@linux.ibm.com>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxppc-dev@lists.ozlabs.org>, <kernel-janitors@vger.kernel.org>
+References: <20240614-md-powerpc-drivers-cpufreq-v1-1-de4034d87fd2@quicinc.com>
+ <87bk2px5jk.fsf@mail.lhotse>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <87bk2px5jk.fsf@mail.lhotse>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 1YDudvbZknYUxr0zHSJkfb_rRf_8OgWd
+X-Proofpoint-ORIG-GUID: 1YDudvbZknYUxr0zHSJkfb_rRf_8OgWd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-22_10,2024-07-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 suspectscore=0 impostorscore=0 phishscore=0 mlxlogscore=999
+ malwarescore=0 spamscore=0 adultscore=0 bulkscore=0 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407220116
 
-On Mon, Jul 22, 2024 at 01:45:35PM +0100, Mike Lothian wrote:
-> Hi
+On 7/22/2024 12:13 AM, Michael Ellerman wrote:
+> Jeff Johnson <quic_jjohnson@quicinc.com> writes:
+>> With ARCH=powerpc, make allmodconfig && make W=1 C=1 reports:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/ppc-cbe-cpufreq.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/powernv-cpufreq.o
+>>
+>> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
+>> files which have a MODULE_LICENSE().
+>>
+>> This includes three additional files which, although they did not
+>> produce a warning with the powerpc allmodconfig configuration, may
+>> cause this warning with specific options enabled in the kernel
+>> configuration.
+>>
+>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>> ---
+>> Corrections to these descriptions are welcomed. I'm not an expert in
+>> this code so in most cases I've taken these descriptions directly from
+>> code comments, Kconfig descriptions, or git logs.  History has shown
+>> that in some cases these are originally wrong due to cut-n-paste
+>> errors, and in other cases the drivers have evolved such that the
+>> original information is no longer accurate.
+>> ---
+>>  drivers/cpufreq/maple-cpufreq.c   | 1 +
+>>  drivers/cpufreq/pasemi-cpufreq.c  | 1 +
+>>  drivers/cpufreq/pmac64-cpufreq.c  | 1 +
+>>  drivers/cpufreq/powernv-cpufreq.c | 1 +
+>>  drivers/cpufreq/ppc_cbe_cpufreq.c | 1 +
+>>  5 files changed, 5 insertions(+)
+>>
+>> diff --git a/drivers/cpufreq/maple-cpufreq.c b/drivers/cpufreq/maple-cpufreq.c
+>> index f9306410a07f..19ca7f874d28 100644
+>> --- a/drivers/cpufreq/maple-cpufreq.c
+>> +++ b/drivers/cpufreq/maple-cpufreq.c
+>> @@ -238,4 +238,5 @@ static int __init maple_cpufreq_init(void)
+>>  module_init(maple_cpufreq_init);
+>>  
+>>  
+>> +MODULE_DESCRIPTION("cpufreq driver for Maple 970FX Evaluation Board");
+>  
+> Can you change this one to:
 > 
-> I'm seeing the following boot warning:
+> "cpufreq driver for Maple 970FX/970MP boards");
 > 
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 0 at arch/x86/lib/cmdline.c:211
-> cmdline_find_option_bool+0x741/0x760
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.10.0-tip+ #4105
-> RIP: 0010:cmdline_find_option_bool+0x741/0x760
-> Code: 85 07 f9 ff ff eb 20 41 80 f8 21 72 1c 45 31 c9 41 80 f8 21 41
-> 0f 93 c1 45 01 c9 81 f9 00 08 00 00 0f 85 e5 f8 ff ff 31 c0 c3 <0f> 0b
-> 48 85 ff 0f 85 ce f8 ff ff b8 ff ff ff ff c3 cc cc cc cc cc
-> RSP: 0000:ffffffff83803f18 EFLAGS: 00010046 ORIG_RAX: 0000000000000000
-> RAX: 000000000a50000c RBX: 0000000068747541 RCX: ffffffff833f2bec
-> RDX: 0000000000000000 RSI: ffffffff832def4e RDI: ffffffff83b98820
-> RBP: 0000000000a50f00 R08: 00cf9a000000ffff R09: 0000000000000030
-> R10: 000000006c617470 R11: 0000000000100000 R12: 0000000000000000
-> R13: 0000000000000000 R14: 00000000b53e4000 R15: 00000000b53e4000
-> FS:  0000000000000000(0000) GS:ffffffff83acd000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: ffff8880b61c6810 CR3: 0000000004b57000 CR4: 00000000000000b0
-> Call Trace:
-> <TASK>
-> ? __warn+0xcb/0x1c0
-> ? cmdline_find_option_bool+0x741/0x760
-> ? report_bug+0x173/0x220
-> ? early_fixup_exception+0x4a/0xa0
-> ? early_idt_handler_common+0x2f/0x40
-> ? cmdline_find_option_bool+0x741/0x760
-> ? check_loader_disabled_bsp+0x46/0xa0
-> ? load_ucode_bsp+0x6b/0x80
-> ? x86_64_start_kernel+0x4b/0x70
-> ? common_startup_64+0x12c/0x137
-> </TASK>
-> ---[ end trace 0000000000000000 ]---
+> It looks for both those CPUs in probe.
 > 
-> I use an efi stub kernel
-> https://github.com/FireBurn/KernelStuff/blob/master/dot_config_tip
+>> diff --git a/drivers/cpufreq/powernv-cpufreq.c b/drivers/cpufreq/powernv-cpufreq.c
+>> index fddbd1ea1635..e923f717e1d7 100644
+>> --- a/drivers/cpufreq/powernv-cpufreq.c
+>> +++ b/drivers/cpufreq/powernv-cpufreq.c
+>> @@ -1162,5 +1162,6 @@ static void __exit powernv_cpufreq_exit(void)
+>>  }
+>>  module_exit(powernv_cpufreq_exit);
+>>  
+>> +MODULE_DESCRIPTION("cpufreq driver for the IBM POWER processors");
 > 
-> I wasn't quite sure where to report this in the bugzilla, I'll happily
-> raise one if you let me know which section it should be in
+> This one's tricky, because it probes based on the device tree, though it
+> is restricted to CONFIG_POWERNV. It also supports non-IBM CPUs in theory
+> at least. Maybe something like:
+> 
+> "cpufreq driver for IBM/OpenPOWER powernv systems");
+> 
+> cheers
+Sure, I'll send an update shortly.
 
-Yeah, you can usually CC x86@ and lkml and that is fine too - bugzilla is not
-absolutely required. Did that now.
-
-Anyway, yeah, this is nasty. Our handling of the merging of the builtin and
-boot cmdline options would need some serious reshuffling to fix this: the
-ucode loader needs to parse cmdline but the final cmdline is built a lot
-later.
-
-The only easy thing I could think of right now is, well, to check both cmdline
-strings before the merging happens. 
-
-Something like the completely untested below:
-
----
- arch/x86/include/asm/cmdline.h |  4 ++++
- arch/x86/kernel/setup.c        |  2 +-
- arch/x86/lib/cmdline.c         | 27 ++++++++++++++++++++-------
- 3 files changed, 25 insertions(+), 8 deletions(-)
-
-diff --git a/arch/x86/include/asm/cmdline.h b/arch/x86/include/asm/cmdline.h
-index 6faaf27e8899..abcb270e2a07 100644
---- a/arch/x86/include/asm/cmdline.h
-+++ b/arch/x86/include/asm/cmdline.h
-@@ -2,6 +2,10 @@
- #ifndef _ASM_X86_CMDLINE_H
- #define _ASM_X86_CMDLINE_H
- 
-+#include <asm/setup.h>
-+
-+extern char __initdata builtin_cmdline[COMMAND_LINE_SIZE];
-+
- int cmdline_find_option_bool(const char *cmdline_ptr, const char *option);
- int cmdline_find_option(const char *cmdline_ptr, const char *option,
- 			char *buffer, int bufsize);
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 5d34cad9b7b1..6129dc2ba784 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -164,7 +164,7 @@ unsigned long saved_video_mode;
- 
- static char __initdata command_line[COMMAND_LINE_SIZE];
- #ifdef CONFIG_CMDLINE_BOOL
--static char __initdata builtin_cmdline[COMMAND_LINE_SIZE] = CONFIG_CMDLINE;
-+char builtin_cmdline[COMMAND_LINE_SIZE] = CONFIG_CMDLINE;
- bool builtin_cmdline_added __ro_after_init;
- #endif
- 
-diff --git a/arch/x86/lib/cmdline.c b/arch/x86/lib/cmdline.c
-index 384da1fdd5c6..75e7e2cc4569 100644
---- a/arch/x86/lib/cmdline.c
-+++ b/arch/x86/lib/cmdline.c
-@@ -207,18 +207,31 @@ __cmdline_find_option(const char *cmdline, int max_cmdline_size,
- 
- int cmdline_find_option_bool(const char *cmdline, const char *option)
- {
--	if (IS_ENABLED(CONFIG_CMDLINE_BOOL))
--		WARN_ON_ONCE(!builtin_cmdline_added);
-+	int ret;
- 
--	return __cmdline_find_option_bool(cmdline, COMMAND_LINE_SIZE, option);
-+	ret = __cmdline_find_option_bool(cmdline, COMMAND_LINE_SIZE, option);
-+	if (ret > 0)
-+		return ret;
-+
-+#ifdef CONFIG_CMDLINE_BOOL
-+	if (!builtin_cmdline_added)
-+		ret = __cmdline_find_option_bool(builtin_cmdline, COMMAND_LINE_SIZE, option);
-+#endif
-+	return ret;
- }
- 
- int cmdline_find_option(const char *cmdline, const char *option, char *buffer,
- 			int bufsize)
- {
--	if (IS_ENABLED(CONFIG_CMDLINE_BOOL))
--		WARN_ON_ONCE(!builtin_cmdline_added);
-+	int ret;
-+
-+	ret = __cmdline_find_option(cmdline, COMMAND_LINE_SIZE, option, buffer, bufsize);
-+	if (ret > 0)
-+		return ret;
- 
--	return __cmdline_find_option(cmdline, COMMAND_LINE_SIZE, option,
--				     buffer, bufsize);
-+#ifdef CONFIG_CMDLINE_BOOL
-+	if (!builtin_cmdline_added)
-+		ret = __cmdline_find_option(builtin_cmdline, COMMAND_LINE_SIZE, option, buffer, bufsize);
-+#endif
-+	return ret;
- }
--- 
-2.43.0
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+/jeff
 
