@@ -1,85 +1,102 @@
-Return-Path: <linux-kernel+bounces-259348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39CC5939482
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:58:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F131939488
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:01:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2DD71F22378
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:58:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5B952826DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B4E17164D;
-	Mon, 22 Jul 2024 19:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B191D1CA94;
+	Mon, 22 Jul 2024 20:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mlwd0MtU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nGXi5th1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9758E1CF96;
-	Mon, 22 Jul 2024 19:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED808DDDC;
+	Mon, 22 Jul 2024 20:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721678290; cv=none; b=uLm6mEV5z/3CAIpsJF1wMubx2FNk8ggFRwGMwERcUQrMmc+iS32AFFciI51WqBXYuKNkKvqIT8yICltIyEcOudOpCJN7GTUWc/9PIikjy0ZM9Ye0HrUbMWQUB5dGWtZDQQ9yq8+Qqij0tpb/WaHnNLYwK+IovBOKl6dAXiccVgI=
+	t=1721678478; cv=none; b=czsZQva9pmbLHVcrj3PNqpDjFt37OojUkyBltpsziX15TWb8xELvTckwkRz9copMNsMx/QSozM8HzOV2ujTM4Pk7tAzMG+vDzsNcEObPlalzknSx1ml4xczOcGlhXbMdLKQe4l2+FuOpzbJ6h7MnaQ/P14Mt/T17pWXHQAdFS/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721678290; c=relaxed/simple;
-	bh=wNxQzc6PHcEur/gfPKmxYKmaxva5dftyG4TEkbeZSB0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=TVb1F6ssGUNlZM98Yer6xMFE9zFMO963Sy2LCbr+p+7B2PA9Up4VFkAys5jkxVdeEcgcCEcoON/yxDmJ62njaCfbdpwn+D/OBONpq2wkzzbvraOoSO0VnnUpZwyRWBGAQ9+4Oo108dWzxBBihogMHuYo+3OKlvQCyHtmr1xfFd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mlwd0MtU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9458C116B1;
-	Mon, 22 Jul 2024 19:58:09 +0000 (UTC)
+	s=arc-20240116; t=1721678478; c=relaxed/simple;
+	bh=cfx2IEBAJvr/Le7OR2NOFIbsx6vpBws+z8Tgwex+Ras=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=agF26Ej6qR+bYG6H6J0iYQ0upePm5nxoUWWGMVHZWstsmx0TzhKq5KOrGbunz6mUUqzAysJ9iz21wwnyf+nCf0CqjKPjiKqhLLwe8FPpSRu3SdkJFN2T3d79PTJ1MPgfLjquCRgmNUf1VuDenBA2tpHrW70TAH1+h2mXS1rarRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nGXi5th1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16C75C116B1;
+	Mon, 22 Jul 2024 20:01:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721678290;
-	bh=wNxQzc6PHcEur/gfPKmxYKmaxva5dftyG4TEkbeZSB0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=mlwd0MtUG63ckboCPW5h/okSrziS2J88ECm5sIpsJ03nPt81dinQumnZKBIpH9UHP
-	 Yw2NaRwE3lOXmhLm1kBaqksXYBb38BOhJyPR3myORcENIhVA1O+jdCxmVKdhKlPEmx
-	 aPFf3KzuEh/qWhgUtJ21O//DX6nBlzMiXVIBvWDAn6KevryIy7qMbIM2m84xnii3SL
-	 jnxRXm6P9tlmTXfueEGv5OXQJpPcDPO6ic4yFTh9ZnozD5q47RfiH6sdewAW9zpiG7
-	 ycpug3EevugRAAHCCj+2AnyiJom5/TB+2BRISPanmuNcB2RTv8dc1PbRMwryaJ/UYI
-	 1VacNNpxApSvw==
-Date: Mon, 22 Jul 2024 14:58:08 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: ngn <ngn@ngn.tf>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: shpchp: Remove hpc_ops
-Message-ID: <20240722195808.GA729979@bhelgaas>
+	s=k20201202; t=1721678477;
+	bh=cfx2IEBAJvr/Le7OR2NOFIbsx6vpBws+z8Tgwex+Ras=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nGXi5th1VN70wpahO3OHaswmRmu1x+884UcatqPke1zNs90KRWYIMzbrPGBUgXZJG
+	 FW2p8BSUL3ZhVEy2zjajtCHoyz3sbaj6fkue3goniZ/TJghYcb+qyWEirKufCQ2+b0
+	 wjSWjFC361B8hCRKBfHuWY+xidKW17zNH5bg1o6HFu02vjg/4x9IvL1kgZDWjbZqOF
+	 ssWsC3PQ+r5WE1Nn2eYZnoL+8oe/emvfzeKt+conzZ1S0qWfpXWn9UEnKC5F6FsJu+
+	 tP/XMQGWqw/UT/8ImWdX/4aJoM0WdEaSy9xLKcCcelC2tTVdtNWePGzB4N8w5spoDF
+	 E7EKgWfcSrMyA==
+Date: Mon, 22 Jul 2024 21:01:11 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Vasileios Amoiridis
+ <vassilisamir@gmail.com>, linux-iio@vger.kernel.org,
+ kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] iio: pressure: bmp280-core: Make read-only const
+ array conversion_time_max static
+Message-ID: <20240722210111.49e66c4e@jic23-huawei>
+In-Reply-To: <20240722151738.572913-1-colin.i.king@gmail.com>
+References: <20240722151738.572913-1-colin.i.king@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zp48oG47T_ZcwSI1@archbtw>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 22, 2024 at 02:04:00PM +0300, ngn wrote:
-> hpc_ops struct is only used by shpchp, and it's unnecessary. This is
-> explained in the TODO file: drivers/pci/hotplug/TODO.
+On Mon, 22 Jul 2024 16:17:38 +0100
+Colin Ian King <colin.i.king@gmail.com> wrote:
 
-This is a true statement, but it doesn't actually say what the patch
-*does* about it.
+> Don't populate the read-only array conversion_time_max on the stack at
+> run time, instead make it static.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-The subject line does say it, but it should also be in the commit log
-itself because the subject is a title, not part of the commit log:
+I'm almost 100% the compiler can hoist this off the stack if it feels like
+it but sure, it might not and adding the static keyword probably obliges
+it to do so. Is that better or worse? Probably better.
 
-https://chris.beams.io/posts/git-commit/
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=v6.9#n94
+Ah well, I don't feel strongly and it's probably a good thing.
+Applied to the testing branch of iio.git for now. I'll rebase on rc1 once available.
 
-Point to the commit(s) that make similar changes to other drivers.
+Thanks,
 
-Please also update the TODO file to remove this item.
+Jonathan
 
-> Signed-off-by: ngn <ngn@ngn.tf>
+
 > ---
+>  drivers/iio/pressure/bmp280-core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+> index 49081b729618..9ead52954de3 100644
+> --- a/drivers/iio/pressure/bmp280-core.c
+> +++ b/drivers/iio/pressure/bmp280-core.c
+> @@ -1865,7 +1865,7 @@ EXPORT_SYMBOL_NS(bmp580_chip_info, IIO_BMP280);
+>  
+>  static int bmp180_wait_for_eoc(struct bmp280_data *data, u8 ctrl_meas)
+>  {
+> -	const int conversion_time_max[] = { 4500, 7500, 13500, 25500 };
+> +	static const int conversion_time_max[] = { 4500, 7500, 13500, 25500 };
+>  	unsigned int delay_us;
+>  	unsigned int ctrl;
+>  	int ret;
 
-What's the change from v1?  It can go here (below the "---" cut line),
-where it's useful but doesn't get included in the commit log when
-merged.
-
-Bjorn
 
