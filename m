@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-259042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A445F939059
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:08:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B83A793905D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:10:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8701528221C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:08:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BC121F2183F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F85816D9DC;
-	Mon, 22 Jul 2024 14:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dqfOb+qm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC661DFE3;
-	Mon, 22 Jul 2024 14:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B01416D9D0;
+	Mon, 22 Jul 2024 14:10:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43748F5E
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 14:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721657298; cv=none; b=gFw+vRSs0zJx4XFTnlRPH8Zudvf62v5X/LbrRZC5GgxSWV7NpouZXxG7CR2iWLcxEwrTEB1TtB1SsZJbyi58jmVf0fAGLZ3e8jFeYljcISfaUSdZi9pt5Twf5Rne4iJPfJfAZceOcTcGfwg//xy8VqLePuSq7E8lTo1+Dhs4mh4=
+	t=1721657432; cv=none; b=qt95gW/fNYt00LT905/N6iU6fwEMnDQHo5L9dbK8Zfjbrkv1jHLkSLFDKcE5XAFVTQbwVzgPgb4G4P0ufDszRtw6T9x4T/zJv7TmgjUvwS+zVGHBWvcLI/yL8E5KSiQ48ES7DXos85wQJVcfYgzFyye2kvjWmt1TIvTioPj8R8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721657298; c=relaxed/simple;
-	bh=N6IiowuXKaiT8NYw3UN1F4KTF+aBzmB19xg+QeJxfA4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SaZWNQUqtrBCB6gY58hFdOkqPzK7Bj8nYT1vb64Gmdr9k5xkSDafXUrU9HyTx/0vSddTlCv5eWiTDRklJPi9KkKidNbj5fcQLHYkFkb3pZ4bHc1LVu2T0FigqvukAaAZBcBERXyQwhBa+R6nUDRnSiqXt/35fTUq8XMOQNn71kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dqfOb+qm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0DD8C116B1;
-	Mon, 22 Jul 2024 14:08:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721657298;
-	bh=N6IiowuXKaiT8NYw3UN1F4KTF+aBzmB19xg+QeJxfA4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dqfOb+qm3Gr6Tc7r8QA6xQiAIdbGcNUDKMfw+LGZrdiPCD0Up4ptskT7f12pMMHSS
-	 rtYmNc5Q8RGAvYqccBiX65mUSF9N+JxwAbcVP4Y2qC/OWDj6K2hbeT6YghJB1SfALf
-	 POCTluzGcPx0xzfzMwYc+crZ6suafKeephJdUouF4+myIdIhS+DrWi1FZmJmiqMCBP
-	 hP80dTaczo79KB9r3BCheVE8aPlD7Z84Qkp9ijlN5m8e6A7gRWUd0DpYY3kpwUSqpi
-	 HkTzsY1gk+fiJNVt9i4/dm477pOzGpmVtXYL/Jbpg/7N7UNM62o8sjPuzcwW6WHuaA
-	 8XdMFA4zzPoEg==
-Message-ID: <0f1becb9-56e9-4b71-b9ca-263dd6592c43@kernel.org>
-Date: Mon, 22 Jul 2024 16:08:11 +0200
+	s=arc-20240116; t=1721657432; c=relaxed/simple;
+	bh=K/6Qwa6EzamjPG++1waTjTeBj8ru+goP6Ae6K0UhmoI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hq9UD8pLWy2ndvi2ZYfL5hebUYlnNgWDAKXvGJuVaPeNP3ogYi/pgqddwTBnlZllJZQz1+S7bG9I44lxYR0qGkWvQ3Uz2owJTN7AxX9SC4S+W05T8S9ilKBZrVGPfI8q7RigsAYSO/GwbKGXiHjlyr3QXX9US1QMammddM5QwKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 75867FEC;
+	Mon, 22 Jul 2024 07:10:54 -0700 (PDT)
+Received: from [10.1.27.165] (XHFQ2J9959.cambridge.arm.com [10.1.27.165])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7790A3F73F;
+	Mon, 22 Jul 2024 07:10:27 -0700 (PDT)
+Message-ID: <3a499df9-f1ef-4552-b460-8585bf8bca92@arm.com>
+Date: Mon, 22 Jul 2024 15:10:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,139 +41,226 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/3] dt-bindings: watchdog: ti,davinci-wdt: convert to
- dtschema
-To: Kousik Sanagavarapu <five231003@gmail.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
- Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>,
- Guenter Roeck <linux@roeck-us.net>, Nishanth Menon <nm@ti.com>,
- Santosh Shilimkar <ssantosh@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-watchdog@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240721170840.15569-1-five231003@gmail.com>
- <20240721170840.15569-3-five231003@gmail.com>
- <629a925c-24ef-4a44-832f-a06a60c266a7@kernel.org>
- <Zp5asqhipQHEoviM@five231003>
- <2d8ceef8-9d5e-42a9-af2e-f9292728a3bf@kernel.org>
- <Zp5mkcDca6jRvOnf@five231003>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Zp5mkcDca6jRvOnf@five231003>
+Subject: Re: [RFC PATCH v1 3/4] mm: Override mTHP "enabled" defaults at kernel
+ cmdline
+Content-Language: en-GB
+From: Ryan Roberts <ryan.roberts@arm.com>
+To: Daniel Gomez <da.gomez@samsung.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
+ <hughd@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <ioworker0@gmail.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Gavin Shan <gshan@redhat.com>,
+ Pankaj Raghav <kernel@pankajraghav.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>
+References: <20240717071257.4141363-1-ryan.roberts@arm.com>
+ <CGME20240717071315eucas1p199a8b4a7134ecf38255a721432e1b65b@eucas1p1.samsung.com>
+ <20240717071257.4141363-4-ryan.roberts@arm.com>
+ <axqj32jqs3ehzpz4vewtfbgcl2sg4lkntfm4prrqcd3evt7klr@qlurbuivkgbe>
+ <d46fea2f-fbb1-41f7-8d29-9c25984278cf@arm.com>
+In-Reply-To: <d46fea2f-fbb1-41f7-8d29-9c25984278cf@arm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/07/2024 16:02, Kousik Sanagavarapu wrote:
-> On Mon, Jul 22, 2024 at 03:50:15PM +0200, Krzysztof Kozlowski wrote:
->> On 22/07/2024 15:12, Kousik Sanagavarapu wrote:
->>> On Mon, Jul 22, 2024 at 10:15:03AM +0200, Krzysztof Kozlowski wrote:
->>>> On 21/07/2024 18:28, Kousik Sanagavarapu wrote:
->>>>> +properties:
->>>>> +  compatible:
->>>>> +    enum:
->>>>> +      - ti,davinci-wdt
->>>>> +      - ti,keystone-wdt
->>>>
->>>> This does not match the original binding and commit msg did not explain
->>>> why such change is necessary.
+On 22/07/2024 10:36, Ryan Roberts wrote:
+> On 22/07/2024 10:13, Daniel Gomez wrote:
+>> On Wed, Jul 17, 2024 at 08:12:55AM GMT, Ryan Roberts wrote:
+>>> Add thp_anon= cmdline parameter to allow specifying the default
+>>> enablement of each supported anon THP size. The parameter accepts the
+>>> following format and can be provided multiple times to configure each
+>>> size:
 >>>
->>> I don't understand.  Do you mean both the compatibles are always
->>> compulsory?  Meaning
->>>
->>> 	compatible:
->>> 	  items:
->>> 	    - const: ti,davinci-wdt
->>> 	    - const: ti,keystone-wdt
+>>> thp_anon=<size>[KMG]:<value>
 >>
->> Yes, this is what old binding said.
+>> Minor suggestion. Should this be renamed to hp_anon= or hugepages_anon= instead?
+>> This would align with the values under /sys/kernel/mm/transparent_hugepage/
+>> hugepages-*kB.
 > 
-> That was what I thought initially too, but the example in the old
-> binding says otherwise and also the DTS from ti/davinci/da850.dtsi
-> says
+> "hp" doesn't feel right; that's not an abreviation we use today to my knowledge.
+> But I'd be happy to change it to "hugepages_anon", if that's the concensus.
+
+Thinking about this a bit more, "hugepages=" is already a cmdline parameter used
+to reserve hugepages for use with HugeTLB. So I think that could get confusing.
+
+transparent_hugepage= is the existing cmdline parameter for the top-level (anon)
+control. I considered "transparent_hugepage_anon=" or even just extending to use
+the same parameter for both the top level and the per-size controls (with
+optional size):
+
+  transparent_hugepage=[<size>[KMG]:]<value>
+
+But given they likely need to be provided multiple times, both of those options
+seem too long. Which is how I settled on thp_anon= (and in the next patch,
+thp_file=).
+
 > 
-> 	wdt: watchdog@21000 {
-> 		compatible = "ti,davinci-wdt";
-> 		reg = <0x21000 0x1000>;
-> 		clocks = <&pll0_auxclk>;
-> 		status = "disabled";
-> 	};
-> 
-> Or am I seeing it the wrong way?
-> 
->>>
->>> It is enum because I intended it to align with the subsequent patch
->>> which changes DTS.
->>>
->>>> This also does not match DTS.
->>>
->>> Yes.  I've asked about changing the DTS in the subsequent patch.
->>>
 >>
->> Changing the DTS cannot be the reason to affect users and DTS... It's
->> tautology. You change DTS because you intent to change DTS?
+>>>
+>>> See Documentation/admin-guide/mm/transhuge.rst for more details.
+>>>
+>>> Configuring the defaults at boot time is useful to allow early user
+>>> space to take advantage of mTHP before its been configured through
+>>> sysfs.
+>>>
+>>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>>> ---
+>>>  .../admin-guide/kernel-parameters.txt         |  8 +++
+>>>  Documentation/admin-guide/mm/transhuge.rst    | 26 +++++++--
+>>>  mm/huge_memory.c                              | 55 ++++++++++++++++++-
+>>>  3 files changed, 82 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+>>> index bc55fb55cd26..48443ad12e3f 100644
+>>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>>> @@ -6592,6 +6592,14 @@
+>>>  			<deci-seconds>: poll all this frequency
+>>>  			0: no polling (default)
+>>>  
+>>> +	thp_anon=	[KNL]
+>>> +			Format: <size>[KMG]:always|madvise|never|inherit
+>>> +			Can be used to control the default behavior of the
+>>> +			system with respect to anonymous transparent hugepages.
+>>> +			Can be used multiple times for multiple anon THP sizes.
+>>> +			See Documentation/admin-guide/mm/transhuge.rst for more
+>>> +			details.
+>>> +
+>>>  	threadirqs	[KNL,EARLY]
+>>>  			Force threading of all interrupt handlers except those
+>>>  			marked explicitly IRQF_NO_THREAD.
+>>> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+>>> index 1aaf8e3a0b5a..f53d43d986e2 100644
+>>> --- a/Documentation/admin-guide/mm/transhuge.rst
+>>> +++ b/Documentation/admin-guide/mm/transhuge.rst
+>>> @@ -311,13 +311,27 @@ performance.
+>>>  Note that any changes to the allowed set of sizes only applies to future
+>>>  file-backed THP allocations.
+>>>  
+>>> -Boot parameter
+>>> -==============
+>>> +Boot parameters
+>>> +===============
+>>>  
+>>> -You can change the sysfs boot time defaults of Transparent Hugepage
+>>> -Support by passing the parameter ``transparent_hugepage=always`` or
+>>> -``transparent_hugepage=madvise`` or ``transparent_hugepage=never``
+>>> -to the kernel command line.
+>>> +You can change the sysfs boot time default for the top-level "enabled"
+>>> +control by passing the parameter ``transparent_hugepage=always`` or
+>>> +``transparent_hugepage=madvise`` or ``transparent_hugepage=never`` to the
+>>> +kernel command line.
+>>> +
+>>> +Alternatively, each supported anonymous THP size can be controlled by
+>>> +passing ``thp_anon=<size>[KMG]:<state>``, where ``<size>`` is the THP size
+>>> +and ``<state>`` is one of ``always``, ``madvise``, ``never`` or
+>>> +``inherit``.
+>>> +
+>>> +For example, the following will set 64K THP to ``always``::
+>>> +
+>>> +	thp_anon=64K:always
+>>> +
+>>> +``thp_anon=`` may be specified multiple times to configure all THP sizes as
+>>> +required. If ``thp_anon=`` is specified at least once, any anon THP sizes
+>>> +not explicitly configured on the command line are implicitly set to
+>>> +``never``.
+>>>  
+>>>  Hugepages in tmpfs/shmem
+>>>  ========================
+>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>> index 4249c0bc9388..794d2790d90d 100644
+>>> --- a/mm/huge_memory.c
+>>> +++ b/mm/huge_memory.c
+>>> @@ -82,6 +82,7 @@ unsigned long huge_anon_orders_madvise __read_mostly;
+>>>  unsigned long huge_anon_orders_inherit __read_mostly;
+>>>  unsigned long huge_file_orders_always __read_mostly;
+>>>  int huge_file_exec_order __read_mostly = -1;
+>>> +static bool anon_orders_configured;
+>>>  
+>>>  unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+>>>  					 unsigned long vm_flags,
+>>> @@ -763,7 +764,10 @@ static int __init hugepage_init_sysfs(struct kobject **hugepage_kobj)
+>>>  	 * disable all other sizes. powerpc's PMD_ORDER isn't a compile-time
+>>>  	 * constant so we have to do this here.
+>>>  	 */
+>>> -	huge_anon_orders_inherit = BIT(PMD_ORDER);
+>>> +	if (!anon_orders_configured) {
+>>> +		huge_anon_orders_inherit = BIT(PMD_ORDER);
+>>
+>> PMD_ORDER for 64k base PS systems would result in a 512M value, which exceeds
+>> the xarray limit [1]. Therefore, I think we need to avoid PMD-size orders by
+>> checking if PMD_ORDER > MAX_PAGECACHE_ORDER.
 > 
-> Not exactly.  I thought that the DTS was wrong when it said
+> This is for anon memory, which isn't installed in the page cache so its
+> independent of MAX_PAGECACHE_ORDER. I don't believe there is a problem here.
 > 
-> 	compatible = "ti,keystone-wdt", "ti,davinci-wdt";
+>>
+>> [1] https://lore.kernel.org/all/20240627003953.1262512-1-gshan@redhat.com/
+>>
+>>> +		anon_orders_configured = true;
+>>> +	}
+>>>  
+>>>  	/*
+>>>  	 * For pagecache, default to enabling all orders. powerpc's PMD_ORDER
+>>> @@ -955,6 +959,55 @@ static int __init setup_transparent_hugepage(char *str)
+>>>  }
+>>>  __setup("transparent_hugepage=", setup_transparent_hugepage);
+>>>  
+>>> +static int __init setup_thp_anon(char *str)
+>>> +{
+>>> +	unsigned long size;
+>>> +	char *state;
+>>> +	int order;
+>>> +	int ret = 0;
+>>> +
+>>> +	if (!str)
+>>> +		goto out;
+>>> +
+>>> +	size = (unsigned long)memparse(str, &state);
+>>> +	order = ilog2(size >> PAGE_SHIFT);
+>>> +	if (*state != ':' || !is_power_of_2(size) || size <= PAGE_SIZE ||
+>>> +	    !(BIT(order) & THP_ORDERS_ALL_ANON))
+>>> +		goto out;
+>>> +
+>>> +	state++;
+>>> +
+>>> +	if (!strcmp(state, "always")) {
+>>> +		clear_bit(order, &huge_anon_orders_inherit);
+>>> +		clear_bit(order, &huge_anon_orders_madvise);
+>>> +		set_bit(order, &huge_anon_orders_always);
+>>> +		ret = 1;
+>>> +	} else if (!strcmp(state, "inherit")) {
+>>> +		clear_bit(order, &huge_anon_orders_always);
+>>> +		clear_bit(order, &huge_anon_orders_madvise);
+>>> +		set_bit(order, &huge_anon_orders_inherit);
+>>> +		ret = 1;
+>>> +	} else if (!strcmp(state, "madvise")) {
+>>> +		clear_bit(order, &huge_anon_orders_always);
+>>> +		clear_bit(order, &huge_anon_orders_inherit);
+>>> +		set_bit(order, &huge_anon_orders_madvise);
+>>> +		ret = 1;
+>>> +	} else if (!strcmp(state, "never")) {
+>>> +		clear_bit(order, &huge_anon_orders_always);
+>>> +		clear_bit(order, &huge_anon_orders_inherit);
+>>> +		clear_bit(order, &huge_anon_orders_madvise);
+>>> +		ret = 1;
+>>> +	}
+>>> +
+>>> +	if (ret)
+>>> +		anon_orders_configured = true;
+>>> +out:
+>>> +	if (!ret)
+>>> +		pr_warn("thp_anon=%s: cannot parse, ignored\n", str);
+>>> +	return ret;
+>>> +}
+>>> +__setup("thp_anon=", setup_thp_anon);
+>>> +
+>>>  pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
+>>>  {
+>>>  	if (likely(vma->vm_flags & VM_WRITE))
+>>> -- 
+>>> 2.43.0
 > 
-> while it should have been
-> 
-> 	compatible = "ti,keystone-wdt";
-> 
-> I was not sure about this though and hence marked both the patches as
-> RFC, in case I was interpretting them the wrong way.
-
-Ah, right, the DTS says keystone+davinci while old binding suggested
-davinci+keystone. Considering there is no driver binding to keystone, I
-think the answer is obvious - intention was keystone+davinci. Anyway,
-commit msg should mention why you are doing something else than pure
-conversion.
-
-Best regards,
-Krzysztof
 
 
