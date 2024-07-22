@@ -1,213 +1,154 @@
-Return-Path: <linux-kernel+bounces-258688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9653938BA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:58:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9D2D938BAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:00:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 556681F21AB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:58:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 077261C21338
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70C116A938;
-	Mon, 22 Jul 2024 08:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D03F16849F;
+	Mon, 22 Jul 2024 09:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="tgCzFzSZ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VqI5usS6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924F5182BD;
-	Mon, 22 Jul 2024 08:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC509523A;
+	Mon, 22 Jul 2024 09:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721638678; cv=none; b=SKNMaDgi+8T6iu6Sa2+3sdksJxWZfpL4Gupt4U26AuuNPbhGzxniRy+G/r3HZL2B9DXFvkrvT/WIbcY5n4g12MdT2CDUtWNKNDdtoMHlZRW+Zj3EnKAZh/qOUgKLwSanQ/9rZ+A7c473B/w5T1n3ACHOlIs9XTlA+DU6kUeSkoo=
+	t=1721638835; cv=none; b=Jn+aHlxsVXtoQpvvZe/e5lWvtUX6nc7m60E76rBITyfwgODRxHjLjgjuKS+l9vA0RFOG+I3V3fovzQVCbIpa77PCceYDbBpH45AfyqcCwCk5QMcPCUVtkKgzZBdc/oNfSkZLX7N9Vzjo9I/707KythWQEM+iILIDJXbnLu25j00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721638678; c=relaxed/simple;
-	bh=6ngb144Y3HqtnibA0+DkzecN3nyfkEIsKVefuUcYsK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WqCBISUMbQ+mkIx36X9khENV3ixdioOpEgcusK5eblNKpBzseBc2Gkpq+/y5eXqUjIyQPz6lj23B63LmX2gR8cYY/kfLoavpyrbRlnlSY1zGgPktauGymMLGmqu+Z+R9x6S9Fl7f3g1t/MWtLvx0vVLGpkh81YqALn31ePzWw2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=tgCzFzSZ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (mob-5-90-43-135.net.vodafone.it [5.90.43.135])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DD9AB3E;
-	Mon, 22 Jul 2024 10:57:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1721638633;
-	bh=6ngb144Y3HqtnibA0+DkzecN3nyfkEIsKVefuUcYsK8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tgCzFzSZFYqn+cUf6+sL+vtk0q2mv2GiCGVm4eB5JVd6Dzcsw1JK+Fmc+ZHKchgJT
-	 gfsjQ3k7zjyaEGZm4YVPWcfOPjmiD5aSDf/yGz+CM0HZj/mu9Jtxx6hZpBae6otG3/
-	 6qyMdwaYKrV7mALqBXGS0zRkZWGUg5/G6vBm1LJ4=
-Date: Mon, 22 Jul 2024 10:57:50 +0200
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>
-Cc: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, 
-	Jack Zhu <jack.zhu@starfivetech.com>, Keith Zhao <keith.zhao@starfivetech.com>, 
-	Jayshri Pawar <jpawar@cadence.com>, Jai Luthra <j-luthra@ti.com>, 
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>
-Subject: Re: =?utf-8?B?5Zue5aSNOiBbUEFUQw==?= =?utf-8?Q?H?= v2 5/5] staging:
- media: starfive: Add system PM support
-Message-ID: <zmuytuvsjpe4rx7oak762onncax7ko5ljfzber3dsirrpbpvne@lr7t2ultlsdk>
-References: <20240718032834.53876-1-changhuang.liang@starfivetech.com>
- <20240718032834.53876-6-changhuang.liang@starfivetech.com>
- <ecqbazcjtzat7yxwh7uuerjrrh3umpwutiwha2zo5njmwnj25g@ocpntbuecb3z>
- <ZQ0PR01MB13020F080F8D1B024D211971F2AD2@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+	s=arc-20240116; t=1721638835; c=relaxed/simple;
+	bh=e0cxkfUfv3pilNjZXjP1tP2K/9ZSiMjDQ9EsFQlgV7c=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=CcVm5FCl+nq6q0f4zthRLSItdJVFHQgQ4T9m2i2YGHoYGxh/M5uU26lkkGO5uO/0s3zlqQ7eqETXpaD6WdpmatKPTNR0OlLNUp1JMOALlpyQZDKhGvkcG1ojPy2UCERqB6IEBJ2qJciAbFbPjM//J+bH1RXtfSm7W3GMISOsAdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VqI5usS6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9FF6C32782;
+	Mon, 22 Jul 2024 09:00:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721638835;
+	bh=e0cxkfUfv3pilNjZXjP1tP2K/9ZSiMjDQ9EsFQlgV7c=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=VqI5usS676WzWHELnlHyAqGgI4xGLSESNRM4pZGFwzdB51kgDBJlWA+T+E5YcOJa4
+	 GxZF7ZEEecY32uPrxRdlFj3YDvO5UEJ2jj8xqAIhq6XJ2b1+FRK1ZFW4NXlgpepSqE
+	 sNlMBzcKmAwiF8+Nr7Vg0WVk/pWsvC7tSVryucRX2Tg0/nHNfimHMhNLnwgeM/TBge
+	 9ULXvGpS9hrwikycgW3P89YR3GeiKUWhrZIbizMVE+Q3dQw2hAFZjNI4Dbiwpv/vsZ
+	 z2Qahpi3K/H0BznZ6EYeLcFUAqL9G1l0w8ExV1eNIeeMz/GknPsX6EC3iNij5TfY2a
+	 9WEyRud/xwZEA==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZQ0PR01MB13020F080F8D1B024D211971F2AD2@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240718145747.131318-1-brgl@bgdev.pl>
+References: <20240718145747.131318-1-brgl@bgdev.pl>
+Subject: Re: [RFT PATCH net] net: phy: aquantia: only poll GLOBAL_CFG registers on aqr113c and aqr115c
+From: Antoine Tenart <atenart@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Jon Hunter <jonathanh@nvidia.com>
+To: Andrew Lunn <andrew@lunn.ch>, Bartosz Golaszewski <brgl@bgdev.pl>, David S . Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Heiner Kallweit <hkallweit1@gmail.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>
+Date: Mon, 22 Jul 2024 11:00:31 +0200
+Message-ID: <172163883154.3798.5139161262655916040@kwain.local>
 
-Hi Changhuang
+Quoting Bartosz Golaszewski (2024-07-18 16:57:47)
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>=20
+> Commit 708405f3e56e ("net: phy: aquantia: wait for the GLOBAL_CFG to
+> start returning real values") introduced a workaround for an issue
+> observed on aqr115c. However there were never any reports of it
+> happening on other models and the workaround has been reported to cause
+> and issue on aqr113c (and it may cause the same on any other model not
+> supporting 10M mode).
+>=20
+> Let's limit the impact of the workaround to aqr113c and aqr115c and poll
+> the 100M GLOBAL_CFG register instead as both models are known to support
+> it correctly.
+>=20
+> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> Closes: https://lore.kernel.org/lkml/7c0140be-4325-4005-9068-7e0fc5ff344d=
+@nvidia.com/
+> Fixes: 708405f3e56e ("net: phy: aquantia: wait for the GLOBAL_CFG to star=
+t returning real values")
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  drivers/net/phy/aquantia/aquantia_main.c | 29 +++++++++++++++++-------
+>  1 file changed, 21 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/a=
+quantia/aquantia_main.c
+> index d12e35374231..6e3e0fc6ea27 100644
+> --- a/drivers/net/phy/aquantia/aquantia_main.c
+> +++ b/drivers/net/phy/aquantia/aquantia_main.c
+> @@ -653,13 +653,7 @@ static int aqr107_fill_interface_modes(struct phy_de=
+vice *phydev)
+>         unsigned long *possible =3D phydev->possible_interfaces;
+>         unsigned int serdes_mode, rate_adapt;
+>         phy_interface_t interface;
+> -       int i, val, ret;
+> -
+> -       ret =3D phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
+> -                                       VEND1_GLOBAL_CFG_10M, val, val !=
+=3D 0,
+> -                                       1000, 100000, false);
+> -       if (ret)
+> -               return ret;
+> +       int i, val;
+> =20
+>         /* Walk the media-speed configuration registers to determine which
+>          * host-side serdes modes may be used by the PHY depending on the
+> @@ -708,6 +702,25 @@ static int aqr107_fill_interface_modes(struct phy_de=
+vice *phydev)
+>         return 0;
+>  }
+> =20
+> +static int aqr113c_fill_interface_modes(struct phy_device *phydev)
+> +{
+> +       int val, ret;
+> +
+> +       /* It's been observed on some models that - when coming out of su=
+spend
+> +        * - the FW signals that the PHY is ready but the GLOBAL_CFG regi=
+sters
+> +        * continue on returning zeroes for some time. Let's poll the 10M
 
-On Fri, Jul 19, 2024 at 02:08:20AM GMT, Changhuang Liang wrote:
-> Hi Jacopo,
+nit: 100M?
+
+> +        * register until it returns a real value as both 113c and 115c s=
+upport
+> +        * this mode.
+> +        */
+> +       ret =3D phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
+> +                                       VEND1_GLOBAL_CFG_100M, val, val !=
+=3D 0,
+> +                                       1000, 100000, false);
+> +       if (ret)
+> +               return ret;
+> +
+> +       return aqr107_fill_interface_modes(phydev);
+> +}
+> +
+>  static int aqr113c_config_init(struct phy_device *phydev)
+>  {
+>         int ret;
+> @@ -725,7 +738,7 @@ static int aqr113c_config_init(struct phy_device *phy=
+dev)
+>         if (ret)
+>                 return ret;
+> =20
+> -       return aqr107_fill_interface_modes(phydev);
+> +       return aqr113c_fill_interface_modes(phydev);
+>  }
+> =20
+>  static int aqr107_probe(struct phy_device *phydev)
+> --=20
+> 2.43.0
+>=20
 >
-> Thanks for your comments.
->
-> >
-> > Hi Changhuang
-> >
-> > On Wed, Jul 17, 2024 at 08:28:34PM GMT, Changhuang Liang wrote:
-> > > This patch implements system suspend and system resume operation for
-> > > StarFive Camera Subsystem. It supports hibernation during streaming
-> > > and restarts streaming at system resume time.
-> > >
-> > > Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
-> > > ---
-> > >  .../staging/media/starfive/camss/stf-camss.c  | 49
-> > > +++++++++++++++++++
-> > >  1 file changed, 49 insertions(+)
-> > >
-> > > diff --git a/drivers/staging/media/starfive/camss/stf-camss.c
-> > > b/drivers/staging/media/starfive/camss/stf-camss.c
-> > > index fecd3e67c7a1..8dcd35aef69d 100644
-> > > --- a/drivers/staging/media/starfive/camss/stf-camss.c
-> > > +++ b/drivers/staging/media/starfive/camss/stf-camss.c
-> > > @@ -416,10 +416,59 @@ static int __maybe_unused
-> > stfcamss_runtime_resume(struct device *dev)
-> > >  	return 0;
-> > >  }
-> > >
-> > > +static int __maybe_unused stfcamss_suspend(struct device *dev) {
-> > > +	struct stfcamss *stfcamss = dev_get_drvdata(dev);
-> > > +	struct stfcamss_video *video;
-> >
-> > Can be declared inside the for loop
-> >
-> > > +	unsigned int i;
-> > > +
-> > > +	for (i = 0; i < STF_CAPTURE_NUM; ++i) {
-> >
-> > Likewise, if you like it, you can
-> >
-> >         for (unsigned int i...
-> >
-> > > +		video = &stfcamss->captures[i].video;
-> > > +		if (video->vb2_q.streaming) {
-> > > +			video->ops->stop_streaming(video);
-> > > +			video->ops->flush_buffers(video, VB2_BUF_STATE_ERROR);
-> > > +		}
-> > > +	}
-> > > +
-> > > +	return pm_runtime_force_suspend(dev); }
-> > > +
-> > > +static int __maybe_unused stfcamss_resume(struct device *dev) {
-> > > +	struct stfcamss *stfcamss = dev_get_drvdata(dev);
-> > > +	struct stf_isp_dev *isp_dev = &stfcamss->isp_dev;
-> > > +	struct v4l2_subdev_state *sd_state;
-> > > +	struct stfcamss_video *video;
-> > > +	unsigned int i;
-> >
-> > same here
-> >
-> > > +	int ret;
-> > > +
-> > > +	ret = pm_runtime_force_resume(dev);
-> > > +	if (ret < 0) {
-> > > +		dev_err(dev, "Failed to resume\n");
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	sd_state = v4l2_subdev_lock_and_get_active_state(&isp_dev->subdev);
-> > > +
-> > > +	if (isp_dev->streaming)
-> > > +		stf_isp_stream_on(isp_dev, sd_state);
-> >
-> > I was wondering if you shouldn't propagate start_streaming along the whole
-> > pipline, but I presume the connected subdevs have to handle resuming
-> > streaming after a system resume themselves ?
-> >
->
-> Currently our Camera subsystem contains ISP subdev , capture_raw video device, and capture_yuv
-> video device. So you can see only one system PM hook can be used by them.
->
-
-Sorry, maybe I was not clear (and I was probably confused as well).
-
-You are right this is the main entry point for system sleep PM hooks
-
-> >
-> > > +
-> > > +	v4l2_subdev_unlock_state(sd_state);
-> > > +
-> > > +	for (i = 0; i < STF_CAPTURE_NUM; ++i) {
-> > > +		video = &stfcamss->captures[i].video;
-> > > +		if (video->vb2_q.streaming)
-> > > +			video->ops->start_streaming(video);
-
-And here you propagate the start_streaming (and stop_streaming on
-suspend) call to all your video devices.
-
-I see your video devices propagating the s_stream call to their
-'source_subdev'. And your ISP subdev doing the same in
-'isp_set_stream()'.
-
-According to the media graph in
-Documentation/admin-guide/media/starfive_camss_graph.dot
-
-your 'capture_yuv' video device is connected to your ISP, and your
-'capture_raw' video device is connected to your 'CSI-RX' subdev.
-
-If my understanding is correct, your CSI-RX subdev will receive 2
-calls to s_stream() (one from the ISP subdev and one from the
-'capture_raw' video device). Am I mistaken maybe ?
-
-Also, if the CSI-RX subdev is already part of a capture pipeline, as
-Tomi pointed out in his review of patch [2/5] it doesn't need to
-implement handlers for system suspend/resume.
-
-
-> >
-> > You can use vb2_is_streaming() maybe.
-
-I was suggesting to use vb2_is_streaming() instead of openly code
-
-		if (video->vb2_q.streaming)
-
-> > If the queue is streaming, do you need to keep a 'streaming' flag for the isp ?
-> > Probably yes, as the ISP subdev is used by several video nodes ?
-> >
->
-> I set the "streaming" flag in PATCH 4, so it does not affect that even if several video
-> nodes use it.
-
-Yeah I was wondering if you could have saved manually tracking the
-streaming state in the isp (re-reading the patches, where do you
-actually use the 'streaming' flag in the ISP subdev ?) by tracking the
-vb2_queue state.
-
->
-> Regards,
-> Changhuang
 
