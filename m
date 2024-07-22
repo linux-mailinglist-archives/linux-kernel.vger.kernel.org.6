@@ -1,136 +1,138 @@
-Return-Path: <linux-kernel+bounces-259197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBFC393927C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:26:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BE4E939280
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:28:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70E73281D41
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:26:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF712282042
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CF616EB6A;
-	Mon, 22 Jul 2024 16:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FCD16EB6E;
+	Mon, 22 Jul 2024 16:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="stthm30L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P2gvWKrW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7481B16419;
-	Mon, 22 Jul 2024 16:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE1852907;
+	Mon, 22 Jul 2024 16:28:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721665602; cv=none; b=KDxXgaJqHFuBJhiEO8BiDVAJ59mCe80it3+AhN1ILurJ12RuqZk2eywoZ13bdFXOi2wDvcfgToeJhyjjSGwpU0E3kFLjUPTaDjVqumv40XYv5R6MBis/4U6iIPGiTXDl0s4S406as1y4PN6KkCjX6eITiBbF3z+Iu3ibkTh9YBA=
+	t=1721665729; cv=none; b=Opj8hNkSsZvjpyvl1MET2kIUL8TfZxjMRrxo0GYvq6BTQsO2CI3456r9MjhyKrOCp+CMlXCkOl1deXSMj3jpccKRtqwACDHxKzZO6jiQZDwyEdV6rzNZc2V29P8xPUpD3C5TGqv8VM397kjhAICMCzoGoNbKjIwxtlAk6lGYfiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721665602; c=relaxed/simple;
-	bh=UDqBe1b077LvJtEdbbfQEQg4LEyCvgzmG0eD9KFM+KM=;
+	s=arc-20240116; t=1721665729; c=relaxed/simple;
+	bh=O6PV0z1EQeDCS7838sXriVwFRCvZQyidYdmAWxD6its=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qMYsctXI/PLkhKXKp+xlatcxxgZ8xu5feoF497Vqtex/Qzo40Knp60mDlDlFQF7xlVUPfI6yjKr1wxXhpr6Zol5e85P/OBUTQ0X8mdyJYBnYr6aYY5sn5BKLUmq/A58NGSMS4NyVPpSY80bqGDNajWL3m9tOA3xkRbcbnPFD+io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=stthm30L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BBABC116B1;
-	Mon, 22 Jul 2024 16:26:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721665601;
-	bh=UDqBe1b077LvJtEdbbfQEQg4LEyCvgzmG0eD9KFM+KM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=stthm30L5JEShKSTa5HS8I2Nt4Jd+QP5IKZauoHxw4C2Y3mXQxxNVXy1e231xnikX
-	 VP8usJbX18NAl/WUxKOl9sz9QTl9Xj5tN0ebdHsEaRy2u6mDfPbtsCJf2UKY40CL5o
-	 R/MDDS2Yh0nfYdCFwfAzz64WRQD+VQu45On/HPqX9NItu7O1Rx6eHP94BSwEvWp8cD
-	 RUX3ptCLbZiWOKZaaPQfzkUJxWBKBIJN2hliYy76HRNdfiXclMgkHDJVHBEqOmrtUc
-	 mx0Wm4gmfYRBnJ9pmif/msiD78yYPMbS+t10a1mIRNkmqGwugxoRPO3nUnVEad8Wkd
-	 5q2A3KORlcKPg==
-Date: Mon, 22 Jul 2024 17:26:37 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Dragos Bogdan <dragos.bogdan@analog.com>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: iio: adf4377: add adf4378 support
-Message-ID: <20240722-legibly-senator-db5651fb279b@spud>
-References: <20240722134508.25234-1-antoniu.miclaus@analog.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dGUGq4Ei1yhasp1y+rc4fLZJNRGFB1aN9cVE7UROEXcxJxMBkxr+1Nd9uzkZd7BDSpxc/G/KjLtBftrmFJwjYpP2NZP5pgXR/TUplG3SRd+eUauVRDwZyUQKhHYcfNPYStwUjZ2bcGvZFOmm2TfbnA1GRsIW2DjBd+Sf732I2Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P2gvWKrW; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721665728; x=1753201728;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=O6PV0z1EQeDCS7838sXriVwFRCvZQyidYdmAWxD6its=;
+  b=P2gvWKrWXYyOx4E3VUCEdFCAuHeVwyw085mFBfKVOnlMA6uzKYKGEzOE
+   7bCFXyX/OK4RCAhPAOMCuJXqqQy3AnhPsrMsMwQZCdltLTkDo+Qe8Wi/6
+   IzlY50Ey+qwlpgX4pIvpmdhKyMK8V2yu8gOOpxu07gwO1smJlnl+lUO4c
+   TIBqDRiSwZKALJBLogZYCTK7GDkgYQYEd4RRIJdbmxd3iezVlIzx1oqSb
+   rulPJljkq5aB0gDaZIVvik/6tbuDSHG+ph2h/1vdMsIrmNyXfYd0Gdfnj
+   Euv/dJocKL16X2m9WfuVbBth4zFWhWAfm4jmMWfQSezI20DbqoDAhuMrC
+   A==;
+X-CSE-ConnectionGUID: H3yXGf97TUu0XcT5HPQ61A==
+X-CSE-MsgGUID: NwUHk/IyRVCQ3S1XZ52cVg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11141"; a="18864854"
+X-IronPort-AV: E=Sophos;i="6.09,228,1716274800"; 
+   d="scan'208";a="18864854"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 09:27:48 -0700
+X-CSE-ConnectionGUID: Tr6MVFI8SpWBPVLz0HFYVg==
+X-CSE-MsgGUID: VKKt6ttPR/STmKV9N+0CoA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,228,1716274800"; 
+   d="scan'208";a="56765396"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO intel.com) ([10.245.246.28])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 09:27:42 -0700
+Date: Mon, 22 Jul 2024 18:27:37 +0200
+From: Andi Shyti <andi.shyti@linux.intel.com>
+To: Easwar Hariharan <eahariha@linux.microsoft.com>
+Cc: Andi Shyti <andi.shyti@linux.intel.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Zhenyu Wang <zhenyuw@linux.intel.com>,
+	Zhi Wang <zhi.wang.linux@gmail.com>,
+	"open list:INTEL DRM DISPLAY FOR XE AND I915 DRIVERS" <intel-gfx@lists.freedesktop.org>,
+	"open list:INTEL DRM DISPLAY FOR XE AND I915 DRIVERS" <intel-xe@lists.freedesktop.org>,
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:INTEL GVT-g DRIVERS (Intel GPU Virtualization)" <intel-gvt-dev@lists.freedesktop.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	"open list:RADEON and AMDGPU DRM DRIVERS" <amd-gfx@lists.freedesktop.org>,
+	"open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
+	"open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>,
+	Zhi Wang <zhiwang@kernel.org>
+Subject: Re: [PATCH v4 3/6] drm/i915: Make I2C terminology more inclusive
+Message-ID: <Zp6IeYDbdCSeFmo9@ashyti-mobl2.lan>
+References: <20240711052734.1273652-1-eahariha@linux.microsoft.com>
+ <20240711052734.1273652-4-eahariha@linux.microsoft.com>
+ <Zp5Vq9JoYC_OrA2C@ashyti-mobl2.lan>
+ <24fa9e9b-81a8-4bbe-8d13-4d559ee76a96@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="5g+/csKuU79US8qj"
-Content-Disposition: inline
-In-Reply-To: <20240722134508.25234-1-antoniu.miclaus@analog.com>
-
-
---5g+/csKuU79US8qj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <24fa9e9b-81a8-4bbe-8d13-4d559ee76a96@linux.microsoft.com>
 
-On Mon, Jul 22, 2024 at 04:45:05PM +0300, Antoniu Miclaus wrote:
-> Add porperty conditions for the adf4378.
-> Add product link for the adf4378.
+Hi Easwar,
 
-I can see this from the diff. You need to explain /why/ this gpio is not
-valid for use on this device.
+On Mon, Jul 22, 2024 at 09:15:08AM -0700, Easwar Hariharan wrote:
+> On 7/22/2024 5:50 AM, Andi Shyti wrote:
+> > Hi Easwar,
+> > 
+> > merged to drm-intel-next. Thanks!
+> > 
+> > On Thu, Jul 11, 2024 at 05:27:31AM +0000, Easwar Hariharan wrote:
+> >> I2C v7, SMBus 3.2, and I3C 1.1.1 specifications have replaced "master/slave"
+> >> with more appropriate terms. Inspired by Wolfram's series to fix drivers/i2c/,
+> >> fix the terminology for users of I2C_ALGOBIT bitbanging interface, now that
+> >> the approved verbiage exists in the specification.
+> >>
+> >> Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> > 
+> > I realized after pushing that this had the tag:
+> > 
+> > Reviewed-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> > Acked-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> > 
+> > Not a big deal, but it's still a minor mistake.
+> > 
+> > Andi
+> 
+> Thank you for the merge, Andi! I'm missing what the mistake is, I added
+> the tags as I got them. Was I supposed to drop the R-B when Rodrigo gave
+> an A-B?
 
->=20
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
-> changes in v2:
->  - use property conditions for clk2 gpio
-> Note: the compatible is already available from the firs iteration of the =
-driver
-> where these particularities weren't available for adf4378
->  .../devicetree/bindings/iio/frequency/adi,adf4377.yaml | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/frequency/adi,adf4377.=
-yaml b/Documentation/devicetree/bindings/iio/frequency/adi,adf4377.yaml
-> index aa6a3193b4e0..5f950ee9aec7 100644
-> --- a/Documentation/devicetree/bindings/iio/frequency/adi,adf4377.yaml
-> +++ b/Documentation/devicetree/bindings/iio/frequency/adi,adf4377.yaml
-> @@ -17,6 +17,7 @@ description: |
->     applications.
-> =20
->     https://www.analog.com/en/products/adf4377.html
-> +   https://www.analog.com/en/products/adf4378.html
-> =20
->  properties:
->    compatible:
-> @@ -73,6 +74,15 @@ required:
-> =20
->  allOf:
->    - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - adi,adf4378
-> +    then:
-> +      properties:
-> +        clk2-enable-gpios: false
-> =20
->  unevaluatedProperties: false
-> =20
-> --=20
-> 2.45.2
->=20
+Sorry, it's not yours, it's mine. I should have checked more
+carefully the tag section before pushing. You did everything
+right.
 
---5g+/csKuU79US8qj
-Content-Type: application/pgp-signature; name="signature.asc"
+The dim tool (drm maintianers tool) picked up all the tags added
+and I missed the double tag.
 
------BEGIN PGP SIGNATURE-----
+This was more a message for Rodrigo, in case he wanted to fix it,
+but I guess no one will complain about.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZp6IPQAKCRB4tDGHoIJi
-0txGAP0ZdtczeTowZG72UHj2+WEbvBL/WcR1eq9pizIyQbcIngEA9ACer00fE6oB
-mlb4kTva2zT/5Z/Rig5WgyWWiSWgLA0=
-=evtU
------END PGP SIGNATURE-----
-
---5g+/csKuU79US8qj--
+Thanks a lot for your work and effort!
+Andi
 
