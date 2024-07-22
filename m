@@ -1,314 +1,185 @@
-Return-Path: <linux-kernel+bounces-258807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E34D6938CE0
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:02:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77D05938CE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:02:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97A212862A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:02:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B9351C24A0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3147416D9A9;
-	Mon, 22 Jul 2024 09:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD95516D9CA;
+	Mon, 22 Jul 2024 09:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="boBsxW7c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v5/+pC3Y"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4762116C87F;
-	Mon, 22 Jul 2024 09:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3678A16C87F
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721642152; cv=none; b=U+eg0XaVLMYdRP+Q1lbCGQ2t8YV6RilAqZL1xC/jqp5mC8jp7QjwGCaj9k63TFFs1YmdzZz2Jq8J4bFJTizkkwIVOG4Z+bC02AyUaoRVCloqf8KjDgepSxv3My1apMjhqsVPQqF7FOf1ITqItF+2TyhWwkn95d3kxMT99gPsEUY=
+	t=1721642161; cv=none; b=aYr3aO+odeLH5JNBOd5nSbAM4M/rVJwk29IPt5MNPeKlr4N2xezBljS6LFy3mPcfLt96txD6avzeM1tY+6OVBjy7/BRSMxDcjDbznEwu7sExYym4C8inCo72LMyYTVtDTCH3Xtv7c3r4KLm6fNsoTcN/QpAzkxjfZ0pjrt1zpwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721642152; c=relaxed/simple;
-	bh=VUm/4nzd6L1YqI6HmvdGtLsE3cjX9nZgcwI7HiNqX2k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qQbyKgZ0SiZAZvqXFsm6IBdQlT2TKXySu+XlYQZEBo1rlgoD2+SXLqL1x09Yx9ozGPtd+8l/MVR1TKh+uphWTPTAI7dvGqdFysOBQpl/5+eswz0ARWPDclnEcESSLiTWMFX8yhCsX9koZDpYbpMGpdtkZ3vZfkeVUVTzFauAzUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=boBsxW7c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CB48C116B1;
-	Mon, 22 Jul 2024 09:55:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721642152;
-	bh=VUm/4nzd6L1YqI6HmvdGtLsE3cjX9nZgcwI7HiNqX2k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=boBsxW7cy1hfdxARNhpwh9hGRic+NMDxFeYNS5NwX5hsl+918W5qcNNzGcTnrlras
-	 /yz9NN+w4O2Q8Mi8UCzkl8vp8T7ZcG0ZKjRtdz7NWG0Ps4pk2s9MR6bcnkwP9ZhWd7
-	 Hi80JsaApULq/8Sf+xTMX7uJhuEbeX63uadGjiO6DLvrbD2WTDnkBiCkwLNv3efUt5
-	 mAVEEiBnk8gnxrrbAKdkIvcpqNdteEGg556KbQkkPLBTGuq7t+4oFSYkCOBv3vNAua
-	 m9g1b+1lO2YO8PX5ApNS7Bm71o9goX2+seV7ZtctAXXebEjSZ4B5bweAxIID6LMH2U
-	 kcH0p9b1vdq4g==
-Message-ID: <d93f93fa-bbc8-4b89-9abc-767486bc443c@kernel.org>
-Date: Mon, 22 Jul 2024 11:55:46 +0200
+	s=arc-20240116; t=1721642161; c=relaxed/simple;
+	bh=o8nGtEc2kpnMUmf2U71YT6yCSot9yCpI/7sIaXOluA8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iVVSR1zMU/g1FAhlK/PaKnV1TWP8awnNxXtfcXoUZoGaMSNOw3cWgihEaBUa0+S1qPKIiPHMyFNsjeJbngUGo3ykYug6ivb26WcGIoD8R4MlW7FRPG4drYSiIDnfSDKal1mE/ZcYCtxPkfcTasLnZOjo4Z+fC9vMb19U1bKP8S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v5/+pC3Y; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so19897385e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 02:55:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721642157; x=1722246957; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VTtJ+vDA5uzuu0VDx7khbFQ5AXZbG+ve0g3qIVvAkRU=;
+        b=v5/+pC3YV4VYwpXMDMw+v72zsuqk0K4uIjeWuN138Lw9rlaVkLSGdsMOiG9txwChNj
+         yCMizxby7sKqEZUdjBqlVwdKWb6zKx4z+j0WIZ80rLYXUMocJWNCsXY7TOE9aqCkC/rA
+         yDvm3tlLoxDoRIn8gilPv1UcGT8YGCPbHXvgZOdzXMIGKKxZpgSqxUR3OEfo4AZUcGlt
+         gdAj9l6KfmO3loIv7S6lPWOaPYNpggzkBlowi7A7d4rmAYZLIHqojse0+ZDx2eCS5/3m
+         /T6hLAFARKwCmfhwaI+dgW+qoRafB0KCE3jinjiwkgqm1c5+imniIRvPzRhDz4UKsfbP
+         Vp5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721642157; x=1722246957;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VTtJ+vDA5uzuu0VDx7khbFQ5AXZbG+ve0g3qIVvAkRU=;
+        b=uWb+v2lwDU5QVmNx3KdRoUHJ0mhsy0o3Xqbku0ms/+NQEUSyK8mDyDBztQQf4S463l
+         BuCCA+WvYGJg2RQMHRVZRXL2nxCuMPg0BxGspp8zm65x85efoQWY02vlOMAiPG8VTzo/
+         WLby7RxDF03UhbkJ64ozbDm1+/42lnwL+bHmSU6xlAZbJ8l7tqQqZBOhxxFdurKFg0bZ
+         YVPHpe5BAd88Z+tFlOSuaT7Ld6vmwp+Fp5YRA7V3JT25K2uIWzRImVfsh+tPc7SEMkUH
+         PFvi2xGmfLHbsjJqJGiW5GzSyRco2go+f4SLNBl3Gej3npHPX9d2AuIylIzl96ag44kt
+         6+xg==
+X-Forwarded-Encrypted: i=1; AJvYcCX44ifIJiaLj1pFjOcW9+W2bS2PeFkYJui4mT27j/tfJQrWh25TwWNUB9imwE4QYM80FB/NbF/Dn9beI7D+6IWz98HVqADRZ9Mrlwr2
+X-Gm-Message-State: AOJu0Yytc7YMjNZXB83dPX+HxPG+qJOSIXsqUwmskao3M67Eboi6r1Kh
+	STnbSUcHc18yM4X/YX5Hcpglz4mNeo+y7rrDdCBUQMtdFbWV3dPE/B3LEokAnw==
+X-Google-Smtp-Source: AGHT+IHipZhj7Y2KFl3PDY3WTjrKvQpfTpc9/K6/8B/38O0e+y0ScKh6+mqCVh+sNi1ktWRbzCY1Sw==
+X-Received: by 2002:a05:600c:5486:b0:427:aab7:976b with SMTP id 5b1f17b1804b1-427d2a8e1b1mr80885665e9.5.1721642157104;
+        Mon, 22 Jul 2024 02:55:57 -0700 (PDT)
+Received: from elver.google.com ([2a00:79e0:9c:201:4fae:446:e08f:a725])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d692996bsm120952255e9.37.2024.07.22.02.55.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 02:55:56 -0700 (PDT)
+Date: Mon, 22 Jul 2024 11:55:50 +0200
+From: Marco Elver <elver@google.com>
+To: Kees Cook <kees@kernel.org>
+Cc: David Gow <davidgow@google.com>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	Rae Moar <rmoar@google.com>, John Hubbard <jhubbard@nvidia.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] Documentation: KUnit: Update filename best practices
+Message-ID: <Zp4spjsaqQ85fVuk@elver.google.com>
+References: <20240720165441.it.320-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 36/37] kvx: dts: DeviceTree for qemu emulated
- Coolidge SoC
-To: ysionneau@kalrayinc.com, linux-kernel@vger.kernel.org,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Jonathan Borne <jborne@kalrayinc.com>,
- Julian Vetter <jvetter@kalrayinc.com>, devicetree@vger.kernel.org
-References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
- <20240722094226.21602-37-ysionneau@kalrayinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240722094226.21602-37-ysionneau@kalrayinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240720165441.it.320-kees@kernel.org>
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On 22/07/2024 11:41, ysionneau@kalrayinc.com wrote:
-> From: Yann Sionneau <ysionneau@kalrayinc.com>
+On Sat, Jul 20, 2024 at 09:54AM -0700, Kees Cook wrote:
+> Based on feedback from Linus[1] and follow-up discussions, change the
+> suggested file naming for KUnit tests.
 > 
-> Add device tree for QEMU that emulates a Coolidge V1 SoC.
+> Link: https://lore.kernel.org/lkml/CAHk-=wgim6pNiGTBMhP8Kd3tsB7_JTAuvNJ=XYd3wPvvk=OHog@mail.gmail.com/ [1]
+> Signed-off-by: Kees Cook <kees@kernel.org>
+[...]
+>  Documentation/dev-tools/kunit/style.rst | 25 +++++++++++++++----------
+>  1 file changed, 15 insertions(+), 10 deletions(-)
 > 
-> Signed-off-by: Yann Sionneau <ysionneau@kalrayinc.com>
-> ---
-> 
-> Notes:
-> 
-> V2 -> V3: New patch
-> ---
->  arch/kvx/boot/dts/Makefile          |   1 +
->  arch/kvx/boot/dts/coolidge-qemu.dts | 444 ++++++++++++++++++++++++++++
->  2 files changed, 445 insertions(+)
->  create mode 100644 arch/kvx/boot/dts/Makefile
->  create mode 100644 arch/kvx/boot/dts/coolidge-qemu.dts
-> 
-> diff --git a/arch/kvx/boot/dts/Makefile b/arch/kvx/boot/dts/Makefile
-> new file mode 100644
-> index 0000000000000..cd27ceb7a6cce
-> --- /dev/null
-> +++ b/arch/kvx/boot/dts/Makefile
-> @@ -0,0 +1 @@
-> +dtb-y += coolidge-qemu.dtb
-> diff --git a/arch/kvx/boot/dts/coolidge-qemu.dts b/arch/kvx/boot/dts/coolidge-qemu.dts
-> new file mode 100644
-> index 0000000000000..1d5af0d2e687d
-> --- /dev/null
-> +++ b/arch/kvx/boot/dts/coolidge-qemu.dts
-> @@ -0,0 +1,444 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/dts-v1/;
-> +/*
-> + * Copyright (C) 2024, Kalray Inc.
-> + */
-> +
-> +/ {
-> +	model = "Kalray Coolidge processor (QEMU)";
-> +	compatible = "kalray,coolidge-qemu";
-> +	#address-cells = <0x02>;
+> diff --git a/Documentation/dev-tools/kunit/style.rst b/Documentation/dev-tools/kunit/style.rst
+> index b6d0d7359f00..1538835cd0e2 100644
+> --- a/Documentation/dev-tools/kunit/style.rst
+> +++ b/Documentation/dev-tools/kunit/style.rst
+> @@ -188,15 +188,20 @@ For example, a Kconfig entry might look like:
+>  Test File and Module Names
+>  ==========================
+>  
+> -KUnit tests can often be compiled as a module. These modules should be named
+> -after the test suite, followed by ``_test``. If this is likely to conflict with
+> -non-KUnit tests, the suffix ``_kunit`` can also be used.
+> -
+> -The easiest way of achieving this is to name the file containing the test suite
+> -``<suite>_test.c`` (or, as above, ``<suite>_kunit.c``). This file should be
+> -placed next to the code under test.
+> +Whether a KUnit test is compiled as a separate module or via an
+> +``#include`` in a core kernel source file, the file should be named
+> +after the test suite, followed by ``_kunit``, and live in a ``tests``
+> +subdirectory to avoid conflicting with regular modules (e.g. if "foobar"
+> +is the core module, then "foobar_kunit" is the KUnit test module) or the
+> +core kernel source file names (e.g. for tab-completion). Many existing
+> +tests use a ``_test`` suffix, but this is considered deprecated.
 
-That's not a hex, so just <2>
+What's wrong with the `_test` suffix (if inside a "tests" subdir)?
 
-> +	#size-cells = <0x02>;
-> +
-> +	chosen {
-> +		stdout-path = "/axi/serial@20210000";
+Rules are good, but please can we retain some common sense?
 
-No, use phandle/label.
+I understand the requirement for adding things to a "tests" subdir, so
+that $foo.c is not right next to a $foo_test.c or $foo_kunit.c.
 
-> +	};
-> +
-> +	memory@100000000 {
-> +		phandle = <0x40>;
-> +		reg = <0x01 0x00 0x00 0x8000000>;
-> +		device_type = "memory";
-> +	};
-> +
-> +	axi {
-> +		compatible = "simple-bus";
-> +		#address-cells = <0x02>;
+There are exception, however, if there is no $foo.c. For example:
 
-Same problem.
+	- mm/kfence/kfence_test.c
+	- kernel/kcsan/kcsan_test.c
+	- mm/kmsan/kmsan_test.c
 
+In all these cases it'd be very annoying to move things into a "tests"
+subdir, because there's only 1 test, and there isn't even a $foo.c file.
+While there's a $foo.h file, I consider deeper directory nesting with 1
+file in the subdir to be more annoying.
 
-> +		#size-cells = <0x02>;
-> +		ranges;
-> +
-> +		virtio-mmio@30003c00 {
+The rules should emphasize some basic guidelines, as they have until
+now, and maybe add some additional suggestions to avoid the problem that
+Linus mentioned. But _overfitting_ the new rules to avoid that single
+problem is just adding more friction elsewhere if followed blindly.
 
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+> +So for the common case, name the file containing the test suite
+> +``tests/<suite>_kunit.c``. The ``tests`` directory should be placed at
+> +the same level as the code under test. For example, tests for
+> +``lib/string.c`` live in ``lib/tests/string_kunit.c``.
+>  
+>  If the suite name contains some or all of the name of the test's parent
+> -directory, it may make sense to modify the source filename to reduce redundancy.
+> -For example, a ``foo_firmware`` suite could be in the ``foo/firmware_test.c``
+> -file.
+> +directory, it may make sense to modify the source filename to reduce
+> +redundancy. For example, a ``foo_firmware`` suite could be in the
+> +``tests/foo/firmware_kunit.c`` file.
 
+I'm more confused now. This is just moving tests further away from what
+they are testing for no good reason. If there's a directory "foo", then
+moving things to "tests/foo" is unclear. It's unclear if "tests" is
+inside parent of "foo" or actually a subdir of "foo". Per the paragraph
+above, I inferred it's "foo/tests/foo/...", which is horrible. If it's
+"../tests/foo/..." it's also bad because it's just moving tests further
+away from what they are testing.
 
-> +			compatible = "virtio,mmio";
-> +			reg = <0x00 0x30003c00 0x00 0x200>;
-> +			interrupt-parent = <&itgen0>;
-> +			interrupts = <0x9e 0x04>;
-> +		};
-> +
-> +		virtio-mmio@30003e00 {
-> +			compatible = "virtio,mmio";
-> +			reg = <0x00 0x30003e00 0x00 0x200>;
-> +			interrupt-parent = <&itgen0>;
-> +			interrupts = <0x9f 0x04>;
-> +		};
-> +
-> +		itgen0: itgen_soc_periph0@27000000 {
+And keeping tests close to the source files under test is generally
+considered good practice, as it avoids the friction required to discover
+where tests live. Moving tests to "../tests" or "../../*/tests" in the
+majority of cases is counterproductive.
 
-Please follow DTS coding style.
+It is more important for people to quickly discover tests nearby and
+actually run them, vs. having them stashed away somewhere so they don't
+bother us.
 
-> +			compatible = "kalray,coolidge-itgen";
-> +			reg = <0x00 0x27000000 0x00 0x1104>;
-> +			msi-parent = <&apic_mailbox>;
-> +			#interrupt-cells = <0x02>;
-> +			interrupt-controller;
-> +		};
-> +
-> +		serial@20210000 {
-> +			reg-shift = <0x02>;
-> +			reg-io-width = <0x04>;
+While we can apply common sense, all too often someone follows these
+rules blindly and we end up with a mess.
 
-Sorry, but width and shift are rarely hex values. Make your code
-readable. Adhere to existing coding style.
-
-
-> +			clocks = <&ref_clk>;
-> +			interrupts = <0x29 0x04>;
-> +			interrupt-parent = <&itgen0>;
-> +			reg = <0x00 0x20210000 0x00 0x100>;
-> +			compatible = "snps,dw-apb-uart";
-
-Follow DTS coding style - order the properties correctly.
-
-
-> +		};
-> +
-> +		serial@20211000 {
-> +			reg-shift = <0x02>;
-> +			reg-io-width = <0x04>;
-> +			phandle = <0x3c>;
-> +			clocks = <&ref_clk>;
-> +			interrupts = <0x2a 0x04>;
-> +			interrupt-parent = <&itgen0>;
-> +			reg = <0x00 0x20211000 0x00 0x100>;
-> +			compatible = "snps,dw-apb-uart";
-> +		};
-> +
-> +		serial@20212000 {
-> +			reg-shift = <0x02>;
-> +			reg-io-width = <0x04>;
-> +			phandle = <0x3b>;
-> +			clocks = <&ref_clk>;
-> +			interrupts = <0x2b 0x04>;
-> +			interrupt-parent = <&itgen0>;
-> +			reg = <0x00 0x20212000 0x00 0x100>;
-> +			compatible = "snps,dw-apb-uart";
-> +		};
-> +
-> +		serial@20213000 {
-> +			reg-shift = <0x02>;
-> +			reg-io-width = <0x04>;
-> +			phandle = <0x3a>;
-> +			clocks = <&ref_clk>;
-> +			interrupts = <0x2c 0x04>;
-> +			interrupt-parent = <&itgen0>;
-> +			reg = <0x00 0x20213000 0x00 0x100>;
-> +			compatible = "snps,dw-apb-uart";
-> +		};
-> +
-> +		serial@20214000 {
-> +			reg-shift = <0x02>;
-> +			reg-io-width = <0x04>;
-> +			phandle = <0x39>;
-> +			clocks = <&ref_clk>;
-> +			interrupts = <0x2d 0x04>;
-> +			interrupt-parent = <&itgen0>;
-> +			reg = <0x00 0x20214000 0x00 0x100>;
-> +			compatible = "snps,dw-apb-uart";
-> +		};
-> +
-> +		serial@20215000 {
-> +			reg-shift = <0x02>;
-> +			reg-io-width = <0x04>;
-> +			phandle = <0x38>;
-> +			clocks = <&ref_clk>;
-> +			interrupts = <0x2e 0x04>;
-> +			interrupt-parent = <&itgen0>;
-> +			reg = <0x00 0x20215000 0x00 0x100>;
-> +			compatible = "snps,dw-apb-uart";
-> +		};
-> +	};
-> +
-> +	memory@0 {
-
-Why memory is in multiple places?
-
-> +		device_type = "memory";
-> +		reg = <0x00 0x00 0x00 0x400000>;
-> +	};
-> +
-> +	apic_mailbox: apic_mailbox@a00000 {
-
-Why this is outside of SoC? Where is the SoC anyway?
-
-> +		compatible = "kalray,coolidge-apic-mailbox";
-
-Your compatibles are confusing. What is the soc name? In other binding
-you entirely omitted coolidge. See writing bindings (or any other recent
-DTS which passed review) - it has rationale behind it.
-
-> +		reg = <0x00 0xa00000 0x00 0xea00>;
-> +		#interrupt-cells = <0x00>;
-> +		#address-cells = <0>;
-
-And this is not <0x0>? It's like random coding style.
-
-I stopped reviewing here. Rest of the DTS does not look better.
-
-Best regards,
-Krzysztof
-
+Thanks,
+- Marco
 
