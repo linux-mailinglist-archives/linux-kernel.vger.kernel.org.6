@@ -1,147 +1,169 @@
-Return-Path: <linux-kernel+bounces-258977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46E14938F62
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:51:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A06DF938F64
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 795491C2139D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:51:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 532321F207BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F44E16D33E;
-	Mon, 22 Jul 2024 12:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6FE16D9A2;
+	Mon, 22 Jul 2024 12:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bPXdFjeU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZGfN/Ozp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FAED16A399
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 12:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C1E16CD32
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 12:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721652710; cv=none; b=RDEjF+NpFkfx+AEXTtGvdg2YBaOEjLgqPz5fEZoKhh7Ihw9x9vroxRIDcAlaxObRx6a3C+n+vO0PZs43Kx8fYr6jliKj5vIFy3AukWWtzWWEGL++iPZNnD4fAzuoKNd9qpfDqb7TAlbnuoIW8h/tOiw6AYyLFj33vEwHOxiHdLk=
+	t=1721652819; cv=none; b=uOBZW2U8Ey+PwVI8jGya4QE6LQDA87cdhEKLpm6NgCJteFhXTU2xsa7fdWMvP69t4QvBQwzAjsg7Y5dr2I6b+T9BnmI/URIlXOD4JD+VpdASNVo2Z9AFr0+9+tF+6V8fHyOY8CQ18vFls6bl8gWpR+UJjSybjTRFC1y5cdGNFxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721652710; c=relaxed/simple;
-	bh=SRKgCPhP0TB8ggK0YWdDe9dE+CYaY49R4SK5cwyVhzk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gMZXFC1S7xZ5LFm4sNTYqXTmoPyW1cHhVPN/9qy6u84lDSchwYcdzOPM0hL19OrO/AxjfCLx2/GmLy7yF1uT8bDkQGFEDA8U7iQZhhOhF/LkFqliKqv6mI8ZeMJYYP7sOp/FYx0nmVpRtV0fCWMagzMiR2U2xPEX7p3n+Vq+jsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bPXdFjeU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3164C116B1;
-	Mon, 22 Jul 2024 12:51:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721652710;
-	bh=SRKgCPhP0TB8ggK0YWdDe9dE+CYaY49R4SK5cwyVhzk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bPXdFjeUHscW3aWTBZb4G6QonsimXsCYqrTd3ATIXBnEN7q7DcVTOdBjTMV63RkX8
-	 0HVZS6sQtXalePWE3n0W0RPC1i3F36FJfmnlY8h9YY1056REsHdWQy0EKR9eU9mE3N
-	 iZ6vVb942k+0oCAeEJ7bm5wYu4ANO/MiUp3D1+ToD40GRHew1Q0j2BymMzMaGKmL3o
-	 fEdGZfifXZsWJ+CA8CgI81Ae/lgtZZO5CSqbzIcuPY46AQBp6+V+Hn3qqdFyylM3oa
-	 SXP+72wqziaxuDdFsqSgV0R0pWBY9Wln3yKDREm38apiWLonKWwUiHkHescCxvcz2B
-	 Bqa0VcRcIYLGA==
-Message-ID: <f94c747c-7ee4-41b9-9851-610cecf2e555@kernel.org>
-Date: Mon, 22 Jul 2024 14:51:44 +0200
+	s=arc-20240116; t=1721652819; c=relaxed/simple;
+	bh=Hb2vlo6jvMfawcIP5+hm/LNCX6XVc0VQ/rbcyfyg/Xg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kLHbPtmPCGydjhSJMB5fbknoY2B0pOf+ejqmpBr6lQAWVU+ZLY+lphnYya9qm/AsEnuIXmBVW78uAUFweMVxmVtCIUGdbS1hsENaCi2xjty2xlRBTNDGFbdNyMEjJA8sHoNuXxtxwe5L1vagoIrPMeqXEE3F9oZOP3s/dX3kCFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZGfN/Ozp; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721652816;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eU/D7g+qP7HfNmpAQB1UFGkewZKa63OdmYLP+myK2LI=;
+	b=ZGfN/Ozp15oLm0er9RTwQA8+i46erzUuxg7TjMU8wqm2lPuMRKqZkW0q351TtlquswGY5u
+	G6bM/UCxCGw6TpH/Gf/RnB1l8prmEWLoN2UCHysy4OboVj2QE/IPdCZ5p4psq6qTPK/E4g
+	IKDtYJGc4X0vlmjzTRhBzzr0jxp9FUU=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-653-6V_M6RsyMjyg94E9gMLL8A-1; Mon, 22 Jul 2024 08:53:35 -0400
+X-MC-Unique: 6V_M6RsyMjyg94E9gMLL8A-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-52e9557e312so3057591e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 05:53:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721652810; x=1722257610;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eU/D7g+qP7HfNmpAQB1UFGkewZKa63OdmYLP+myK2LI=;
+        b=iTL4JsmBE7uFm52zHILA7PTavNH61FTRpYDyE3S2anK3+bVLJOdRsJcTNZ1xi+yTlS
+         dD+JE/cveeJWX9rOkBFzi8CuFukBUicAorHWHQFwVWmlUW1gEfRVJ8s7KJ4oPc8LOUz1
+         wsL6MOcrULtQoW74Jz1afxPUtZ9O8McwIKcp4uLQCjE5w2SMAAGKmX5dcNlsbhGPmuZo
+         0wSMattxa+Wq6x/n0gqHaeucJLrKJW87TzH+JCbcNwdSjBTPpWoSR/P33orKOieAS1Fi
+         3KKv+1DipjgDnaUe7ox0Pzsg7OwHzt/Ipvz0Lzmbjfa5j3k7j7ESRbyM6cWpuN4l/1iN
+         3eRw==
+X-Forwarded-Encrypted: i=1; AJvYcCXdw3QPAPR+eePRFZO2lWPfYWouPsO/lOjGKqE0HxvwnnYpFPtY/JBJqs8M785wkCKRjqM5b9afO2RyRtxPcD39JGVEXGwV94k/eBpC
+X-Gm-Message-State: AOJu0Yx/yf3mkUlCN/RcNcrxGl5eQKC9pPLqhWzkr2X6dBJjBRhNIVFw
+	dijd2sMFlWAoc5C6VndosKHuWGWH1Gq+/pP5q0Q2U/hzgeCaZrd5K/3fslC7+M+xbRBiEZuxXN1
+	vdKh0LhYuyaORrkZ0E04J2A+gW/WoNYYQeo6rHD2GgAr/4DxH+afyiASIXBa54S3KdVCKmmO6u+
+	H5jQht+EgQB6pd5s+MbqG9dE+fa/ZiTFkWjIIG
+X-Received: by 2002:a05:6512:b93:b0:52c:da18:618c with SMTP id 2adb3069b0e04-52efb7c81e5mr4946311e87.45.1721652810676;
+        Mon, 22 Jul 2024 05:53:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF1mNcBQlFjEipVBmIhBwOyNuYK7PE8pk7ocN9FHW1CRN8mmKIK/bPZP3oGT+TMvN+d/t1tuhOEjNRdYMGH2b0=
+X-Received: by 2002:a05:6512:b93:b0:52c:da18:618c with SMTP id
+ 2adb3069b0e04-52efb7c81e5mr4946290e87.45.1721652810311; Mon, 22 Jul 2024
+ 05:53:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] HID for 6.11
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
- Benjamin Tissoires <bentiss@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Kosina <jikos@kernel.org>, linux-kernel@vger.kernel.org,
- Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-References: <uirri5bsktq5pk2tu4gs2u22qimjcn7hi66ek6gbj65qyczfex@yjy4brkoixfv>
- <c52b7bf6-734b-49fd-96e3-e4cde406f4e0@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <c52b7bf6-734b-49fd-96e3-e4cde406f4e0@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240722010625.1016854-1-lulu@redhat.com> <20240722010625.1016854-4-lulu@redhat.com>
+ <CACGkMEvXk8_sXRtugePAMv8PM0qGU-su0eFUsFZ=-=_TjcGZNg@mail.gmail.com>
+In-Reply-To: <CACGkMEvXk8_sXRtugePAMv8PM0qGU-su0eFUsFZ=-=_TjcGZNg@mail.gmail.com>
+From: Cindy Lu <lulu@redhat.com>
+Date: Mon, 22 Jul 2024 20:52:51 +0800
+Message-ID: <CACLfguV27KGZE9z5OKuse44tpsF2u8DALhGNxu+g8==qV50CYQ@mail.gmail.com>
+Subject: Re: [PATH v4 3/3] vdpa/mlx5: Add the support of set mac address
+To: Jason Wang <jasowang@redhat.com>
+Cc: dtatulea@nvidia.com, mst@redhat.com, parav@nvidia.com, sgarzare@redhat.com, 
+	netdev@vger.kernel.org, virtualization@lists.linux-foundation.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22/07/2024 14:46, Konrad Dybcio wrote:
-> 
-> 
-> On 16.07.2024 3:34 PM, Benjamin Tissoires wrote:
->> Linus,
->>
->> please pull from
->>
->>   git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/for-linus-2024071601
->>
->> to receive HID subsystem updates for 6.11 merge window. Highlights:
->>
-> 
-> [...]
-> 
->>       HID: bpf: Add support for the XP-PEN Deco Mini 4
->>       HID: bpf: Add Huion Dial 2 bpf fixup
->>       HID: bpf: Thrustmaster TCA Yoke Boeing joystick fix
->>       HID: fix for amples in for-6.11/bpf
-> 
-> Hi,
-> 
-> this commit broke b4 for everyone starting next-20240719, as it's
-> an empty cover letter with b4 tracking information
-
-Uh, reminds me, I guess the same mistake of not seeing differences
-between git pull and git am...
-https://lore.kernel.org/all/311c8b64-be13-4740-a659-3a14cf68774a@kernel.org/
-
-So just to recap:
-
-Please *do not merge your own trees* into kernel.org repos. Instead use
-b4 shazam to pick up entire patchset, even if it is yours. b4 allows to
-merge/apply also the cover letter, if this is your intention.
-
-Best regards,
-Krzysztof
+On Mon, 22 Jul 2024 at 15:49, Jason Wang <jasowang@redhat.com> wrote:
+>
+> On Mon, Jul 22, 2024 at 9:06=E2=80=AFAM Cindy Lu <lulu@redhat.com> wrote:
+> >
+> > Add the function to support setting the MAC address.
+> > For vdpa/mlx5, the function will use mlx5_mpfs_add_mac
+> > to set the mac address
+> >
+> > Tested in ConnectX-6 Dx device
+> >
+> > Signed-off-by: Cindy Lu <lulu@redhat.com>
+> > ---
+> >  drivers/vdpa/mlx5/net/mlx5_vnet.c | 25 +++++++++++++++++++++++++
+> >  1 file changed, 25 insertions(+)
+> >
+> > diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx5/net/=
+mlx5_vnet.c
+> > index ecfc16151d61..415b527a9c72 100644
+> > --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> > +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> > @@ -3785,10 +3785,35 @@ static void mlx5_vdpa_dev_del(struct vdpa_mgmt_=
+dev *v_mdev, struct vdpa_device *
+> >         destroy_workqueue(wq);
+> >         mgtdev->ndev =3D NULL;
+> >  }
+> > +static int mlx5_vdpa_set_attr(struct vdpa_mgmt_dev *v_mdev,
+> > +                             struct vdpa_device *dev,
+> > +                             const struct vdpa_dev_set_config *add_con=
+fig)
+> > +{
+> > +       struct mlx5_vdpa_dev *mvdev;
+> > +       struct mlx5_vdpa_net *ndev;
+> > +       struct mlx5_core_dev *mdev;
+> > +       struct virtio_net_config *config;
+> > +       struct mlx5_core_dev *pfmdev;
+> > +       int err =3D -EOPNOTSUPP;
+> > +
+> > +       mvdev =3D to_mvdev(dev);
+> > +       ndev =3D to_mlx5_vdpa_ndev(mvdev);
+> > +       mdev =3D mvdev->mdev;
+> > +       config =3D &ndev->config;
+> > +
+> > +       if (add_config->mask & (1 << VDPA_ATTR_DEV_NET_CFG_MACADDR)) {
+> > +               pfmdev =3D pci_get_drvdata(pci_physfn(mdev->pdev));
+> > +               err =3D mlx5_mpfs_add_mac(pfmdev, config->mac);
+> > +               if (!err)
+> > +                       memcpy(config->mac, add_config->net.mac, ETH_AL=
+EN);
+> > +       }
+> > +       return err;
+>
+> Similar to net simulator, how could be serialize the modification to
+> mac address:
+>
+> 1) from vdpa tool
+> 2) via control virtqueue
+>
+> Thanks
+>
+sure. Wiil do
+thanks
+cindy
+> > +}
+> >
+> >  static const struct vdpa_mgmtdev_ops mdev_ops =3D {
+> >         .dev_add =3D mlx5_vdpa_dev_add,
+> >         .dev_del =3D mlx5_vdpa_dev_del,
+> > +       .dev_set_attr =3D mlx5_vdpa_set_attr,
+> >  };
+> >
+> >  static struct virtio_device_id id_table[] =3D {
+> > --
+> > 2.45.0
+> >
+>
 
 
