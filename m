@@ -1,374 +1,139 @@
-Return-Path: <linux-kernel+bounces-258957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADB92938F25
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:37:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADA11938F2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:39:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E06C281B51
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:37:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE4B4281E5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D75D16D4DF;
-	Mon, 22 Jul 2024 12:37:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9FF16D4D8;
+	Mon, 22 Jul 2024 12:39:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D6PqFaex"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="MxNfwqq9"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB2517597;
-	Mon, 22 Jul 2024 12:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7CA322E
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 12:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721651862; cv=none; b=gnkv8xoWBvtMcruecZ60zSj+NSwxLIu9Uc1n+CHsUlynDsMo35IBv59yYKygI+bAcygSJFJEqz1+HN1GbYicDUfUxjf2kd2ZocJZak4t3xXqz2UsZPVsdbSDSIHWVTxUx2Csbz1PWBKzPPS9g9rdL59/I0eqD6IBcUge6+IdBb0=
+	t=1721651972; cv=none; b=Vpugg312KNojeaYHb1aAxDM+y/ZMlaSE6xj/PDQ85831LtkYhD2pPStQ8H+ah5om+u1cj358ZUEKRJTi0goF3PzvT1hMHJ/yXYOsD/B0MRigSgzoOi/OCoPNp98hczlK+KzPGuIG4YrvZca7xZKfD2i8ZajHlQuUFi0AIYpZ2Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721651862; c=relaxed/simple;
-	bh=TygWs13EGpZICGbiqrNSJqWpyf5yTBhooAGO1AoAC60=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pjhzoucDU9C/wbuc66HOClczKYk6kf0jjmyGvZ06yUTdS8XZMhJGvoO84qPoJ25SBFj7hElDxEBl/Cl5dKfTkabRvzbNaxHNsHKSPeBeeEbLnCojIBk1m0oJP9wq+7wOfpYq/RHkOD2whrgEpeoB+NfTH/ye+3LzkA2OH0s+gnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D6PqFaex; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5820AC116B1;
-	Mon, 22 Jul 2024 12:37:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721651861;
-	bh=TygWs13EGpZICGbiqrNSJqWpyf5yTBhooAGO1AoAC60=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=D6PqFaexDWWeDa8U6Uh+twv8KXP80uxsKidrrpMKrdQ5UgWP+RjhdNI//B67Ke0Sc
-	 8qiwOnMJEqYIaPjG9SyBaIqSAL9Wkth5O57Zm0JbLoS/SN+kl+AZu5ylFPQlbMaB5H
-	 caurK8RKZj68N2Q15GKkply1wRq7hgP+VMFShh76WEde2ajmeahd4HVoBqSROkE+cH
-	 AgZTvX3JTq/8j1pgZhWrCoQI57Ll/rDRdiiEMk7cOkFBqRw2CPD1iXao+uWBAKZMzo
-	 9202U7idbwIKV6CJMsNYbYGwE/EyudQIBWIvcm2uBi5BBcke0rvqsMZNvDUrsHHaLt
-	 GnWLYz+n9FZNA==
-Message-ID: <daa59ab0-08d6-4a65-9367-c34bb42b8ad8@kernel.org>
-Date: Mon, 22 Jul 2024 14:37:37 +0200
+	s=arc-20240116; t=1721651972; c=relaxed/simple;
+	bh=q4B6CnIBisdjIeaTnGwa+EuAanP7Ge/LHdBNdocREGg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=U86e2SsTHEpwNkqc+ZALQnKEz5wl8+xSWdzvXu6tFvYuIhuE18UCVbLfZaS3p5oo2f4iMpYHGTAUKijZblcRB6LB4vaTIlfLMHqcqt7NoO9WngOGDYwAjSODjk8AR2A7RcVuylxP6TIq+TcDA/fkFHV4ct+ZgLUChCJbKlkY9io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=MxNfwqq9; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721651954; x=1722256754; i=spasswolf@web.de;
+	bh=J4lM5L5pKqgUoxmlP002m5V+oxTlNrdG/aRja77Futo=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
+	 References:MIME-Version:cc:content-transfer-encoding:content-type:
+	 date:from:message-id:mime-version:reply-to:subject:to;
+	b=MxNfwqq9JdNKQHlpkeVqaG8mqk+C8skMNeKWoXhO0JuwNwKM4MTq2OtK7w0a6GLY
+	 V1FysmpG61Dn95V1K49QjNztaGU3C132rBjFOEghENrmKcqFrlEb8FeltWumRFxqn
+	 sDfiPLJiVk+KbB6+Mu5J+JDnkwIs0xCZB2n3qIXGIhsYOILaBXidfKEArCg0R68Yf
+	 pyv0ITsswN8EggqWCbDyYNCwL0ngvta6C37B8mT+/enXraGnHu+P/VcUV09GpAAt+
+	 SN9RrMD0QeNg5PDbnC2Zbzy3qkdY81/yr4MIZa8mMhjkP1XX4YptJsa9K1Or2k9lk
+	 RUkOV6TQwYGnj0sR+Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from localhost.localdomain ([84.119.92.193]) by smtp.web.de
+ (mrweb006 [213.165.67.108]) with ESMTPSA (Nemesis) id
+ 1Mq1CA-1s0g9g0ueY-00j3AA; Mon, 22 Jul 2024 14:39:14 +0200
+From: Bert Karwatzki <spasswolf@web.de>
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Bert Karwatzki <spasswolf@web.de>,
+	tglx@linutronix.de,
+	frederic@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: commit 7a5ee4aa61af causes warning on boot
+Date: Mon, 22 Jul 2024 14:39:11 +0200
+Message-ID: <20240722123912.3602-1-spasswolf@web.de>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: 20240717094940.18687-1-anna-maria@linutronix.de 
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 34/37] kvx: Add power controller driver
-To: ysionneau@kalrayinc.com, linux-kernel@vger.kernel.org
-Cc: Jonathan Borne <jborne@kalrayinc.com>,
- Julian Vetter <jvetter@kalrayinc.com>,
- Clement Leger <clement@clement-leger.fr>,
- Louis Morhet <lmorhet@kalrayinc.com>, Marius Gligor <mgligor@kalrayinc.com>,
- Jules Maselbas <jmaselbas@zdiv.net>, bpf@vger.kernel.org
-References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
- <20240722094226.21602-35-ysionneau@kalrayinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240722094226.21602-35-ysionneau@kalrayinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:bPpuyn1lpMqXFRyyVvPZ4LyJ2WAx5kJymCBMAAu4SDvG9hjHUCq
+ PlS+csMRFdDxK6sOf7J3DjFSmH1URTLPcLLP14wHGuHgxcgYcREPqOdJFtLPt1pMT1sYW3i
+ aCITdd9sdwT3GmdbFYGEHPi9dlmyHHldORDr6axbrM6XEjpWeOBT7KHGMi77lgpKAGA5UoS
+ +HeS0I91Ym+nh52Qt4LXQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:jtcD4LYMh8E=;JaaXK/ApsxBnrWCGGV9pwxO/IZ+
+ 1sQl7VmD2SO0J0+43mXDfGRb8rzpvfEiAxVPP0YyFbhSEgC0QkAzyYAMcmaQBX4kTLxS7YlaE
+ 3QxiKM5xT07aPXD3U4JLt5Wk+8il5GHQ84zG7wWPIRrHnima/totfexL04PzkkwziTDKku8pB
+ wVG+ouNvlEAhfHLtpSMzZxhwiFWzTcZnkMAwsxHyeP1XShP61cQKKbJqe1STRNAotK4o59+E8
+ TDCxB7FiNgPW4GHVRyYWBt0LP3PrKVw6tDsi/D5WddzmtIbVgYUFKypch7DrS25RLTsbxEbmd
+ +iGURJEfyLZQLzg3WXuUnooSTNcv4F7ZHZXOSkkhJlUfUaXtDus92JxT1TA9HBRbGECUKnPIK
+ rgx62ukLxoy967IBxxFNlhVSVT1TRJQcnLR1aatF98W0tBE4ml8BvmKbyK2kpLiTu2kNL4N5t
+ 5pesX6wrxqvn0vGttv86T84wjtksvdDamOU4Pspmcnp3w16vLFTVReBVpEhQ40XTe8vyM1eLY
+ HTz77EF/is/WFm9EApgs0i50eQjmb2+Xbi7b4sMHkQAO1VdaASqxBsA6TS9Jysi68bqNmXTMD
+ COyBXbOkVt3BiFTmcU94RjZEJnlJ+BjwAJbM+OBUnqdnwbSdDT0mphTXpK+KpAEqNalbtX8J2
+ IAwQzeG79E9Kw71gJYDCnS17F+CRep6w7yWO3f9dd/BXFRA2W2U03j5W7a09sFMg8C5sctBsw
+ zm2Tk9+m//GPkbrMfewlDT+tu3jEyUm/yQpcjPonCIwAW2JE6yOBKGgtEc/3jVfp5wKn5XqyG
+ w7TXBsFDgaqYV0xBBEYoCv6Q==
 
-On 22/07/2024 11:41, ysionneau@kalrayinc.com wrote:
-> From: Yann Sionneau <ysionneau@kalrayinc.com>
-> 
-> The Power Controller (pwr-ctrl) controls cores reset and wake-up
-> procedure.
-> 
-> Co-developed-by: Clement Leger <clement@clement-leger.fr>
-> Signed-off-by: Clement Leger <clement@clement-leger.fr>
-> Co-developed-by: Julian Vetter <jvetter@kalrayinc.com>
-> Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
-> Co-developed-by: Louis Morhet <lmorhet@kalrayinc.com>
-> Signed-off-by: Louis Morhet <lmorhet@kalrayinc.com>
-> Co-developed-by: Marius Gligor <mgligor@kalrayinc.com>
-> Signed-off-by: Marius Gligor <mgligor@kalrayinc.com>
-> Signed-off-by: Jules Maselbas <jmaselbas@zdiv.net>
-> Signed-off-by: Yann Sionneau <ysionneau@kalrayinc.com>
-> ---
-> 
-> Notes:
-> V1 -> V2: new patch
-> V2 -> V3:
-> - Moved driver from arch/kvx/platform to drivers/soc/kvx/
->   see discussions there:
->   - https://lore.kernel.org/bpf/Y8qlOpYgDefMPqWH@zx2c4.com/T/#m722d8f7c7501615251e4f97705198f5485865ce2
-> - indent
-> - add missing static qualifier
-> - driver now registers a cpu_method/smp_op via CPU_METHOD_OF_DECLARE
->   like arm and sh, it puts a struct into a __cpu_method_of_table ELF section.
->   the smp_ops is used by smpboot.c if its name matches the DT 'cpus' node
->   enable-method property.
-> ---
->  arch/kvx/include/asm/pwr_ctrl.h     | 57 ++++++++++++++++++++
->  drivers/soc/Kconfig                 |  1 +
->  drivers/soc/Makefile                |  1 +
->  drivers/soc/kvx/Kconfig             | 10 ++++
->  drivers/soc/kvx/Makefile            |  2 +
->  drivers/soc/kvx/coolidge_pwr_ctrl.c | 84 +++++++++++++++++++++++++++++
->  6 files changed, 155 insertions(+)
->  create mode 100644 arch/kvx/include/asm/pwr_ctrl.h
->  create mode 100644 drivers/soc/kvx/Kconfig
->  create mode 100644 drivers/soc/kvx/Makefile
->  create mode 100644 drivers/soc/kvx/coolidge_pwr_ctrl.c
-> 
-> diff --git a/arch/kvx/include/asm/pwr_ctrl.h b/arch/kvx/include/asm/pwr_ctrl.h
-> new file mode 100644
-> index 0000000000000..715eddd45a88c
-> --- /dev/null
-> +++ b/arch/kvx/include/asm/pwr_ctrl.h
-> @@ -0,0 +1,57 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (C) 2017-2024 Kalray Inc.
-> + * Author(s): Clement Leger
-> + *            Marius Gligor
-> + *            Julian Vetter
-> + *            Yann Sionneau
-> + */
-> +
-> +#ifndef _ASM_KVX_PWR_CTRL_H
-> +#define _ASM_KVX_PWR_CTRL_H
-> +
-> +#ifndef __ASSEMBLY__
-> +
-> +static int kvx_pwr_ctrl_probe(void);
-> +
-> +int kvx_pwr_ctrl_cpu_poweron(unsigned int cpu);
-> +
-> +#endif
-> +
-> +#define PWR_CTRL_ADDR                           0xA40000
-> +
-> +/* Power controller vector register definitions */
-> +#define KVX_PWR_CTRL_VEC_OFFSET                 0x1000
-> +#define KVX_PWR_CTRL_VEC_WUP_SET_OFFSET         0x10
-> +#define KVX_PWR_CTRL_VEC_WUP_CLEAR_OFFSET       0x20
-> +
-> +/* Power controller PE reset PC register definitions */
-> +#define KVX_PWR_CTRL_RESET_PC_OFFSET            0x2000
-> +
-> +/* Power controller global register definitions */
-> +#define KVX_PWR_CTRL_GLOBAL_OFFSET              0x4040
-> +
-> +#define KVX_PWR_CTRL_GLOBAL_SET_OFFSET          0x10
-> +#define KVX_PWR_CTRL_GLOBAL_CLEAR_OFFSET        0x20
-> +#define KVX_PWR_CTRL_GLOBAL_SET_PE_EN_SHIFT     0x1
-> +
-> +#define PWR_CTRL_WUP_SET_OFFSET  \
-> +		(KVX_PWR_CTRL_VEC_OFFSET + \
-> +		 KVX_PWR_CTRL_VEC_WUP_SET_OFFSET)
-> +
-> +#define PWR_CTRL_WUP_CLEAR_OFFSET  \
-> +		(KVX_PWR_CTRL_VEC_OFFSET + \
-> +		 KVX_PWR_CTRL_VEC_WUP_CLEAR_OFFSET)
-> +
-> +#define PWR_CTRL_GLOBAL_CONFIG_SET_OFFSET \
-> +		(KVX_PWR_CTRL_GLOBAL_OFFSET + \
-> +		 KVX_PWR_CTRL_GLOBAL_SET_OFFSET)
-> +
-> +#define PWR_CTRL_GLOBAL_CONFIG_CLEAR_OFFSET \
-> +		(KVX_PWR_CTRL_GLOBAL_OFFSET + \
-> +		 KVX_PWR_CTRL_GLOBAL_CLEAR_OFFSET)
-> +
-> +#define PWR_CTRL_GLOBAL_CONFIG_PE_EN \
-> +	(1 << KVX_PWR_CTRL_GLOBAL_SET_PE_EN_SHIFT)
-> +
-> +#endif /* _ASM_KVX_PWR_CTRL_H */
-> diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
-> index 5d924e946507b..f28078620da14 100644
-> --- a/drivers/soc/Kconfig
-> +++ b/drivers/soc/Kconfig
-> @@ -12,6 +12,7 @@ source "drivers/soc/fujitsu/Kconfig"
->  source "drivers/soc/hisilicon/Kconfig"
->  source "drivers/soc/imx/Kconfig"
->  source "drivers/soc/ixp4xx/Kconfig"
-> +source "drivers/soc/kvx/Kconfig"
->  source "drivers/soc/litex/Kconfig"
->  source "drivers/soc/loongson/Kconfig"
->  source "drivers/soc/mediatek/Kconfig"
-> diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
-> index fb2bd31387d07..240e148eaaff8 100644
-> --- a/drivers/soc/Makefile
-> +++ b/drivers/soc/Makefile
-> @@ -16,6 +16,7 @@ obj-$(CONFIG_ARCH_GEMINI)	+= gemini/
->  obj-y				+= hisilicon/
->  obj-y				+= imx/
->  obj-y				+= ixp4xx/
-> +obj-$(CONFIG_KVX)		+= kvx/
->  obj-$(CONFIG_SOC_XWAY)		+= lantiq/
->  obj-$(CONFIG_LITEX_SOC_CONTROLLER) += litex/
->  obj-y				+= loongson/
-> diff --git a/drivers/soc/kvx/Kconfig b/drivers/soc/kvx/Kconfig
-> new file mode 100644
-> index 0000000000000..96d05efe4bfb5
-> --- /dev/null
-> +++ b/drivers/soc/kvx/Kconfig
-> @@ -0,0 +1,10 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +config COOLIDGE_POWER_CONTROLLER
-> +	bool "Coolidge power controller"
-> +	default n
-> +	depends on KVX
-> +	help
-> +	  The Kalray Coolidge Power Controller is used to manage the power
-> +	  state of secondary CPU cores. Currently only powering up is
-> +	  supported.
-> diff --git a/drivers/soc/kvx/Makefile b/drivers/soc/kvx/Makefile
-> new file mode 100644
-> index 0000000000000..c7b0b3e99eabc
-> --- /dev/null
-> +++ b/drivers/soc/kvx/Makefile
-> @@ -0,0 +1,2 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +obj-$(CONFIG_COOLIDGE_POWER_CONTROLLER)	+= coolidge_pwr_ctrl.o
-> diff --git a/drivers/soc/kvx/coolidge_pwr_ctrl.c b/drivers/soc/kvx/coolidge_pwr_ctrl.c
-> new file mode 100644
-> index 0000000000000..67af3e446d0e7
-> --- /dev/null
-> +++ b/drivers/soc/kvx/coolidge_pwr_ctrl.c
-> @@ -0,0 +1,84 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2017-2024 Kalray Inc.
-> + * Author(s): Clement Leger
-> + *            Yann Sionneau
-> + */
-> +
-> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> +
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/slab.h>
-> +#include <linux/smp.h>
-> +#include <linux/types.h>
-> +
-> +#include <asm/pwr_ctrl.h>
-> +#include <asm/symbols.h>
-> +
-> +struct kvx_pwr_ctrl {
-> +	void __iomem *regs;
-> +};
-> +
-> +static struct kvx_pwr_ctrl kvx_pwr_controller;
-> +
-> +static bool pwr_ctrl_not_initialized = true;
+Since linux-next-20240722 the following warning is shown on boot which can
+be bisected to commit 7a5ee4aa61af:
 
-Do not use inverted meanings.
+[    T1] ------------[ cut here ]------------
+[    T1] WARNING: CPU: 0 PID: 1 at kernel/time/timer_migration.c:1742 tmigr_cpu_prepare+0x469/0x540
+[    T1] Modules linked in:
+[    T1] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.10.0-rc6-bisect-00002-g7a5ee4aa61af-dirty #135
+[    T1] Hardware name: Micro-Star International Co., Ltd. Alpha 15 B5EEK/MS-158L, BIOS E158LAMS.107 11/10/2021
+[    T1] RIP: 0010:tmigr_cpu_prepare+0x469/0x540
+[    T1] Code: fc 7d 00 0f b6 43 60 48 89 de 48 89 ef 48 8d 54 24 28 88 44 24 40 e8 16 fb ff ff 84 c0 75 94 48 83 7d 08 00 74 8d 0f 0b eb 89 <0f> 0b e9 d6 fb ff ff 48 89 ef eb 08 49 8b 7d 00 41 83 ec 01 48 8b
+[    T1] RSP: 0018:ffffa2e3c0107d60 EFLAGS: 00010246
+[    T1] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+[    T1] RDX: ffff94edee61bcc0 RSI: 0000000000000040 RDI: 0000000000000000
+[    T1] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+[    T1] R10: ffffa2e3c0107d40 R11: ffffffff90099d48 R12: 0000000000000000
+[    T1] R13: 0000000000017400 R14: 0000000000000040 R15: ffff94edee61bcc0
+[    T1] FS:  0000000000000000(0000) GS:ffff94edee600000(0000) knlGS:0000000000000000
+[    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    T1] CR2: ffff94e666c01000 CR3: 0000000826818000 CR4: 0000000000750ef0
+[    T1] PKRU: 55555554
+[    T1] Call Trace:
+[    T1]  <TASK>
+[    T1]  ? __warn+0x6a/0xc0
+[    T1]  ? tmigr_cpu_prepare+0x469/0x540
+[    T1]  ? report_bug+0x142/0x180
+[    T1]  ? handle_bug+0x3a/0x70
+[    T1]  ? exc_invalid_op+0x17/0x70
+[    T1]  ? asm_exc_invalid_op+0x1a/0x20
+[    T1]  ? tmigr_cpu_prepare+0x469/0x540
+[    T1]  ? srso_alias_return_thunk+0x5/0xfbef5
+[    T1]  ? prb_read_valid+0x16/0x20
+[    T1]  ? srso_alias_return_thunk+0x5/0xfbef5
+[    T1]  ? cpuhp_issue_call+0xf7/0x170
+[    T1]  ? __cpuhp_setup_state_cpuslocked+0x128/0x2c0
+[    T1]  ? tmigr_trigger_active+0x30/0x30
+[    T1]  ? tmigr_trigger_active+0x30/0x30
+[    T1]  ? __cpuhp_setup_state+0x5e/0xe0
+[    T1]  ? tick_nohz_init+0x120/0x120
+[    T1]  ? tmigr_init+0xd2/0x130
+[    T1]  ? tick_nohz_init+0x120/0x120
+[    T1]  ? do_one_initcall+0x70/0x2c0
+[    T1]  ? kernel_init_freeable+0xc5/0x260
+[    T1]  ? rest_init+0xc0/0xc0
+[    T1]  ? kernel_init+0x15/0x1b0
+[    T1]  ? ret_from_fork+0x2f/0x50
+[    T1]  ? rest_init+0xc0/0xc0
+[    T1]  ? ret_from_fork_asm+0x11/0x20
+[    T1]  </TASK>
+[    T1] ---[ end trace 0000000000000000 ]---
 
-> +
-> +/**
-> + * kvx_pwr_ctrl_cpu_poweron() - Wakeup a cpu
-> + * @cpu: cpu to wakeup
-> + */
-> +int __init kvx_pwr_ctrl_cpu_poweron(unsigned int cpu)
-> +{
-> +	int ret = 0;
-> +
-> +	if (pwr_ctrl_not_initialized) {
-> +		pr_err("KVX power controller not initialized!\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	/* Set PE boot address */
-> +	writeq((unsigned long long)kvx_start,
+Hardware: MSI Alpha 15 Notebook Ryzen 5800H (x86_64)
 
-Addresses use kernel_ulong_t
-
-> +			kvx_pwr_controller.regs + KVX_PWR_CTRL_RESET_PC_OFFSET);
-> +	/* Wake up processor ! */
-> +	writeq(1ULL << cpu,
-
-That's BIT
-
-> +	       kvx_pwr_controller.regs + PWR_CTRL_WUP_SET_OFFSET);
-> +	/* Then clear wakeup to allow processor to sleep */
-> +	writeq(1ULL << cpu,
-
-BIT
-
-> +	       kvx_pwr_controller.regs + PWR_CTRL_WUP_CLEAR_OFFSET);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct smp_operations coolidge_smp_ops __initconst = {
-> +	.smp_boot_secondary = kvx_pwr_ctrl_cpu_poweron,
-> +};
-> +
-> +static int __init kvx_pwr_ctrl_probe(void)
-
-That's not a probe, please rename to avoid confusion. Or make it a
-proper device driver.
-
-> +{
-> +	struct device_node *ctrl;
-> +
-> +	ctrl = of_find_compatible_node(NULL, NULL, "kalray,coolidge-pwr-ctrl");
-> +	if (!ctrl) {
-> +		pr_err("Failed to get power controller node\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	kvx_pwr_controller.regs = of_iomap(ctrl, 0);
-> +	if (!kvx_pwr_controller.regs) {
-> +		pr_err("Failed ioremap\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	pwr_ctrl_not_initialized = false;
-> +	pr_info("KVX power controller probed\n");
-> +
-> +	return 0;
-> +}
-> +
-> +CPU_METHOD_OF_DECLARE(coolidge_pwr_ctrl, "kalray,coolidge-pwr-ctrl",
-> +		      &coolidge_smp_ops);
-> +
-> +early_initcall(kvx_pwr_ctrl_probe);
-
-Best regards,
-Krzysztof
-
+Bert Karwatzki
 
