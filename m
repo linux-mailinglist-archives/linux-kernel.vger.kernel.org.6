@@ -1,63 +1,65 @@
-Return-Path: <linux-kernel+bounces-259129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96F699391B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:22:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8517F9391CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C87061C20E47
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:22:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AC061F21E9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF39016E89E;
-	Mon, 22 Jul 2024 15:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="E8h+Vy88"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D489A16E86B;
+	Mon, 22 Jul 2024 15:29:53 +0000 (UTC)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259CF16E86E;
-	Mon, 22 Jul 2024 15:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519C616E862
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 15:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.40.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721661698; cv=none; b=hgQGqc4UQALGmRnOd+MIiDH+PCqRGBcm86q1cM6iruSxMEs6F4vs5783MmFvSM0Lf11ZsUF7bG6Zunq0vW4DUl73AQyDaUjbJDJqehkmaF6lCPFzItVstrMb5UEv0KhSdWvZff/fGFHqfujnUvEFlQy1qRj9+7BEPczAi/mJYKU=
+	t=1721662193; cv=none; b=KKF9do1uEWDCyw/Ixk/3FI5yyTfPxBMYIivUr+O9HsDrGh8du0+3ZjFQL4MrN1oPWpuZgJd2NaJN0GM3uBdpvxIeWgI1V71stb71U6rrfM4lhRhn7Nwn/U5b9gQkSnfchosD0ZF5vr2FXJ0h8/LsiUsbTAgiUQy6WlbES3/PhzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721661698; c=relaxed/simple;
-	bh=qmA/UB5BoDVUD8LihBkIsL5bMzIrgMopZxIAWpKq7V8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sSQlaAKXfFxxINp+xeQ1B7iWHvz9gbM+tuYkBiwJcjM5rz5pWF8lgnRnHoSaAOalGSmq6Imw/3IUdkL9G4Qua8JmYw7XvEEZ9H6jqVQuZfVnkcxuVkghE/O+ESlFMIRNlHgxhy8oPm+5wt/fQ+JcFhGeHax62vzxDXtTRLsWxLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=E8h+Vy88; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E703E2B3;
-	Mon, 22 Jul 2024 17:20:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1721661654;
-	bh=qmA/UB5BoDVUD8LihBkIsL5bMzIrgMopZxIAWpKq7V8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E8h+Vy882C2QOKuWVW4/padY0ED+52F77F/l/CMdnjgUqf2Vw3d4GgxDeNujZdGYB
-	 uu9Jq+7xDLAZNJojPJ9GAsGdwlNt8vYDG2EWHV4ICNukv0JJGQGZBSCJfVv2uIfyt5
-	 s5hbH1HXFh0713wnz+mcIb4z1R0G2Iv0ChG5dneI=
-Date: Mon, 22 Jul 2024 18:21:17 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v11 1/6] dt-bindings: media: platform: visconti: Add
- Toshiba Visconti Video Input Interface
-Message-ID: <20240722152117.GO13497@pendragon.ideasonboard.com>
-References: <20240709000848.1108788-1-yuji2.ishikawa@toshiba.co.jp>
- <20240709000848.1108788-2-yuji2.ishikawa@toshiba.co.jp>
+	s=arc-20240116; t=1721662193; c=relaxed/simple;
+	bh=CMz/UJxN47BQ6tDxFxwfIRMNWKWNrIcUjG5LNTtghS0=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=pnvWAlJMib8MIFIguj7aewnJP5BFBNmxYRdHph88ZCuklVL/4/Az365Xlkh9MI2gFLjgXtT6R771RJ++2oKw1a93IqzIzE/fS6w3Q4zLjOhmMx/Bpi1E0ie4b9UbZqR6/GmImRtGpyOXBbHpYM2bymcuDvwb9kBpv096u1SFxaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=195.201.40.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id D89626196A4A;
+	Mon, 22 Jul 2024 17:21:22 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id Qza8hDRPG0nx; Mon, 22 Jul 2024 17:21:22 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 3DB0E609184C;
+	Mon, 22 Jul 2024 17:21:22 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Q9HYSQTFU0cQ; Mon, 22 Jul 2024 17:21:22 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 10D4E6196A4A;
+	Mon, 22 Jul 2024 17:21:22 +0200 (CEST)
+Date: Mon, 22 Jul 2024 17:21:21 +0200 (CEST)
+From: Richard Weinberger <richard@nod.at>
+To: Jocelyn Falempe <jfalempe@redhat.com>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, 
+	linux-mtd <linux-mtd@lists.infradead.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	DRI mailing list <dri-devel@lists.freedesktop.org>, 
+	Knop Ryszard <ryszard.knop@intel.com>
+Message-ID: <1868573045.102281.1721661681881.JavaMail.zimbra@nod.at>
+In-Reply-To: <20240719152542.1554440-1-jfalempe@redhat.com>
+References: <20240719152542.1554440-1-jfalempe@redhat.com>
+Subject: Re: [PATCH] mtd: mtdoops: Fix kmsgdump parameter renaming.
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,198 +67,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240709000848.1108788-2-yuji2.ishikawa@toshiba.co.jp>
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF97 (Linux)/8.8.12_GA_3809)
+Thread-Topic: mtdoops: Fix kmsgdump parameter renaming.
+Thread-Index: TphXISdImxx2iJrcLR4C9m8Leyhpgw==
 
-Hello Ishikawa-san,
+----- Urspr=C3=BCngliche Mail -----
+> Betreff: [PATCH] mtd: mtdoops: Fix kmsgdump parameter renaming.
 
-Thank you for the patch.
-
-On Tue, Jul 09, 2024 at 09:08:43AM +0900, Yuji Ishikawa wrote:
-> Adds the Device Tree binding documentation that allows to describe
-> the Video Input Interface found in Toshiba Visconti SoCs.
-> 
-> Signed-off-by: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
-> Reviewed-by: Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> When the kmsg_dumper callback parameter changed, the reason variable
+> in mtdoops_do_dump() was not updated accordingly.
+> This breaks the build with mtdoops.
+>=20
+> Fixes: e1a261ba599e ("printk: Add a short description string to kmsg_dump=
+()")
+> Reported-by: Knop Ryszard <ryszard.knop@intel.com>
+> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
 > ---
-> Changelog v2:
-> - no change
-> 
-> Changelog v3:
-> - no change
-> 
-> Changelog v4:
-> - fix style problems at the v3 patch
-> - remove "index" member
-> - update example
-> 
-> Changelog v5:
-> - no change
-> 
-> Changelog v6:
-> - add register definition of BUS-IF and MPU
-> 
-> Changelog v7:
-> - remove trailing "bindings" from commit header message
-> - remove trailing "Device Tree Bindings" from title
-> - fix text wrapping of description
-> - change compatible to visconti5-viif
-> - explicitly define allowed properties for port::endpoint
-> 
-> Changelog v8:
-> - Suggestion from Krzysztof Kozlowski
->   - rename bindings description file
->   - use block style array instead of inline style
->   - remove clock-lane (as it is fixed at position 0)
->   - update sample node's name
->   - use lowercase hex for literals
-> - Suggestion from Laurent Pinchart
->   - update description message port::description
->   - remove port::endpoint::bus-type as it is fixed to <4>
->   - remove port::endpoint::clock-lanes from example
->   - add port::endpoint::data-lanes to required parameters list
->   - fix sequence of data-lanes: <1 2 3 4> because current driver does not support data reordering
->   - update port::endpoint::data-lanes::description
->   - remove redundant type definition for port::endpoint::data-lanes
-> 
-> Changelog v9:
-> - place "required" after "properties"
-> - dictionary ordering of properties
-> 
-> Changelog v10:
-> - no change
-> 
-> Changelog v11:
-> - no change
-> 
->  .../media/toshiba,visconti5-viif.yaml         | 105 ++++++++++++++++++
->  1 file changed, 105 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/toshiba,visconti5-viif.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/media/toshiba,visconti5-viif.yaml b/Documentation/devicetree/bindings/media/toshiba,visconti5-viif.yaml
-> new file mode 100644
-> index 0000000000..97e8bda427
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/toshiba,visconti5-viif.yaml
-> @@ -0,0 +1,105 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/toshiba,visconti5-viif.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Toshiba Visconti5 SoC Video Input Interface
-> +
-> +maintainers:
-> +  - Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-> +
-> +description: |-
-> +  Toshiba Visconti5 SoC Video Input Interface (VIIF) receives MIPI CSI2 video
-> +  stream, processes the stream with image signal processors (L1ISP, L2ISP),
-> +  then stores pictures to main memory.
-> +
-> +properties:
-> +  compatible:
-> +    const: toshiba,visconti5-viif
-> +
-> +  reg:
-> +    items:
-> +      - description: Registers for capture control
-> +      - description: Registers for CSI2 receiver control
-> +      - description: Registers for bus interface unit control
-> +      - description: Registers for Memory Protection Unit
+>=20
+> The offended commit is in the drm-misc tree, because it was needed
+> by drm_panic. So I will push the fix there too.
+>=20
+> drivers/mtd/mtdoops.c | 4 ++--
+> 1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/mtd/mtdoops.c b/drivers/mtd/mtdoops.c
+> index 86d49db9196d..7bf3777e1f13 100644
+> --- a/drivers/mtd/mtdoops.c
+> +++ b/drivers/mtd/mtdoops.c
+> @@ -305,7 +305,7 @@ static void mtdoops_do_dump(struct kmsg_dumper *dumpe=
+r,
+> =09struct kmsg_dump_iter iter;
+>=20
+> =09/* Only dump oopses if dump_oops is set */
+> -=09if (reason =3D=3D KMSG_DUMP_OOPS && !dump_oops)
+> +=09if (detail->reason =3D=3D KMSG_DUMP_OOPS && !dump_oops)
+> =09=09return;
+>=20
+> =09kmsg_dump_rewind(&iter);
+> @@ -317,7 +317,7 @@ static void mtdoops_do_dump(struct kmsg_dumper *dumpe=
+r,
+> =09=09=09     record_size - sizeof(struct mtdoops_hdr), NULL);
+> =09clear_bit(0, &cxt->oops_buf_busy);
+>=20
+> -=09if (reason !=3D KMSG_DUMP_OOPS) {
+> +=09if (detail->reason !=3D KMSG_DUMP_OOPS) {
 
-Is this part of the VIIF, or some sort of more standalone IOMMU ? In the
-latter case, should it be handled by a separate driver ?
+Acked-by: Richard Weinberger <richard@nod.at>
 
-> +
-> +  interrupts:
-> +    items:
-> +      - description: Sync Interrupt
-> +      - description: Status (Error) Interrupt
-> +      - description: CSI2 Receiver Interrupt
-> +      - description: L1ISP Interrupt
-> +
-> +  port:
-> +    $ref: /schemas/graph.yaml#/$defs/port-base
-> +    unevaluatedProperties: false
-> +    description: CSI-2 input port, with a single endpoint connected to the CSI-2 transmitter.
-> +
-> +    properties:
-> +      endpoint:
-> +        $ref: video-interfaces.yaml#
-> +        additionalProperties: false
-> +
-> +        properties:
-> +          data-lanes:
-> +            description: VIIF supports 1, 2, 3 or 4 data lanes
-> +            minItems: 1
-> +            items:
-> +              - const: 1
-> +              - const: 2
-> +              - const: 3
-> +              - const: 4
-> +
-> +          clock-noncontinuous: true
-> +          link-frequencies: true
-> +          remote-endpoint: true
-> +
-> +        required:
-> +          - clock-noncontinuous
-
-Does the hardware support the non-continuous clock mode only, or is it
-configurable ? This is a boolean property, so if both mode are
-supported, the property should not be required.
-
-> +          - data-lanes
-> +          - link-frequencies
-> +          - remote-endpoint
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - port
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        video@1c000000 {
-> +            compatible = "toshiba,visconti5-viif";
-> +            reg = <0 0x1c000000 0 0x6000>,
-> +                  <0 0x1c008000 0 0x400>,
-> +                  <0 0x1c00e000 0 0x1000>,
-> +                  <0 0x2417a000 0 0x1000>;
-> +            interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +            port {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                csi_in0: endpoint {
-> +                    clock-noncontinuous;
-> +                    data-lanes = <1 2>;
-> +                    link-frequencies = /bits/ 64 <456000000>;
-> +                    remote-endpoint = <&imx219_out0>;
-> +                };
-> +            };
-> +        };
-> +    };
-
--- 
-Regards,
-
-Laurent Pinchart
+Thanks,
+//richard
 
