@@ -1,223 +1,90 @@
-Return-Path: <linux-kernel+bounces-258981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E943A938F6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:55:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AE9F938F74
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:56:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 184B11C211AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:55:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07A591F21F9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDF716D9C9;
-	Mon, 22 Jul 2024 12:55:36 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3317D16D9A9;
+	Mon, 22 Jul 2024 12:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dO5bk3Ec"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B465C16CD21;
-	Mon, 22 Jul 2024 12:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6911516D30E;
+	Mon, 22 Jul 2024 12:55:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721652935; cv=none; b=OX6akmx6gEamupZyX0CkgGis+RUipMlBm8rrbeeNEmsblUXwiid7Yw0W/OS+5W2yro9HceRRHLbDJg6+3VkfXbDnX2JFAvWCJQpRJFm8CmuerYnJo1YM0UzZCviH/znrYehTTssNd+I37eEmNG8rOZbWssKTJc3nWpjmINncfrU=
+	t=1721652954; cv=none; b=NeoCY17P8xlCASFOBwHfU2qwVHbvcesXnVta8JKfD0qSYmOXCosOs7FQZtt8hN0CtxHyrU4mEfbilE91ihR97jkusV/nzPor0n7BNKxV02O8FVSLTBUdtzONLNzBq3ukCOJINeVE1gC1954F13d63zP9YHJH2VclKhZeZt+0eBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721652935; c=relaxed/simple;
-	bh=WyrP/fVboN9AgXLU72E/nMZ9X6/qUdNvR7jjtZ387mI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HcuHwVH/PxsOiqCCXpLk/rmIR+c+psluG8p4+LUTdcCHoXMl3WRCIO7FLP3s/O0mr2AZywWB2Bi2GN8T14MRIn5kVZ1H6Kp2udRn4OItBduNf6+mLB/XkMDz8K72VhZfybMKlfydmTXscky9TVKiX3fLmqM1opAMbapdJXyk5J8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WSKrP3GLmz1JDSt;
-	Mon, 22 Jul 2024 20:50:29 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id E79E0180064;
-	Mon, 22 Jul 2024 20:55:27 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 22 Jul 2024 20:55:27 +0800
-Message-ID: <fdc778be-907a-49bd-bf10-086f45716181@huawei.com>
-Date: Mon, 22 Jul 2024 20:55:27 +0800
+	s=arc-20240116; t=1721652954; c=relaxed/simple;
+	bh=XEr1R9iOxtde4IqHwns90ckqnpkrizp/7tl7omPCH9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KfjDY9yVHCZTa9VlbbFOHEraAq4Z8ur4ncdk8LP5hUeT9MVbqhLCO+boPUOHBG6iiJfthCIe5ewdbszJ/e2dbGCO+zNQUVBAJJ1bGvmgnG0IBwau3slzDd4t8Bb6DLivXmQRDZCCb2yqhw9FR9zpSLYtTKmSHKVCWuvt5ke3OdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dO5bk3Ec; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D4A7C116B1;
+	Mon, 22 Jul 2024 12:55:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721652953;
+	bh=XEr1R9iOxtde4IqHwns90ckqnpkrizp/7tl7omPCH9U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dO5bk3Eci+cstrckuFXddKynl3is4BpUi4nBExxwJ3k9ZzafTjF1Q2wbfJnPI+1lZ
+	 m2MBNVA8mFDDgf1ekeqwkPVPGp2/6WnZlv/WnpCNd6u8uTyqXiOHqpPGoj6WNNWmGJ
+	 5pFCTXYM8hqMpRmrGRmt7FmZt45ellyEaQqZgvYuKP4QTiUYy8Mr8FLQcR1R7mL4JZ
+	 0IJfoRzyFLKRQGR339F5T2cNeJyQpt1EhCHdxVO4q++7YcK5P6t3KN4ycT3zxgpIlC
+	 SOSL8YblC5TKdkt8F2sfWQu91nzSXjf7UVPUcHR5qdJTHAIEnRD0pqZRRt2+e1BfVI
+	 gA2C0nQqJJ83A==
+Date: Mon, 22 Jul 2024 08:55:52 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: Pavel Machek <pavel@denx.de>, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Jesse Zhang <jesse.zhang@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>, Xinhui.Pan@amd.com,
+	airlied@gmail.com, daniel@ffwll.ch, Felix.Kuehling@amd.com,
+	shashank.sharma@amd.com, guchun.chen@amd.com, Philip.Yang@amd.com,
+	mukul.joshi@amd.com, xiaogang.chen@amd.com,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH AUTOSEL 6.1 13/14] drm/amdgpu: fix dereference null
+ return value for the function amdgpu_vm_pt_parent
+Message-ID: <Zp5W2GE3G3j-0bjP@sashalap>
+References: <20240605120455.2967445-1-sashal@kernel.org>
+ <20240605120455.2967445-13-sashal@kernel.org>
+ <ZnFPL2BeQOEGPO6Q@duo.ucw.cz>
+ <6b933c16-5ddb-4b09-b367-3cf42ae94304@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v11 08/14] mm: page_frag: some minor refactoring before
- adding new API
-To: Alexander H Duyck <alexander.duyck@gmail.com>, <davem@davemloft.net>,
-	<kuba@kernel.org>, <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Andrew Morton
-	<akpm@linux-foundation.org>, <linux-mm@kvack.org>
-References: <20240719093338.55117-1-linyunsheng@huawei.com>
- <20240719093338.55117-9-linyunsheng@huawei.com>
- <dbf876b000158aed8380d6ac3a3f6e8dd40ace7b.camel@gmail.com>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <dbf876b000158aed8380d6ac3a3f6e8dd40ace7b.camel@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6b933c16-5ddb-4b09-b367-3cf42ae94304@amd.com>
 
-On 2024/7/22 7:40, Alexander H Duyck wrote:
-> On Fri, 2024-07-19 at 17:33 +0800, Yunsheng Lin wrote:
->> Refactor common codes from __page_frag_alloc_va_align()
->> to __page_frag_cache_refill(), so that the new API can
->> make use of them.
+On Tue, Jun 18, 2024 at 01:42:56PM +0200, Christian König wrote:
+>Am 18.06.24 um 11:11 schrieb Pavel Machek:
+>>Hi!
 >>
->> CC: Alexander Duyck <alexander.duyck@gmail.com>
->> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
->> ---
->>  include/linux/page_frag_cache.h |  2 +-
->>  mm/page_frag_cache.c            | 93 +++++++++++++++++----------------
->>  2 files changed, 49 insertions(+), 46 deletions(-)
+>>>[ Upstream commit a0cf36546cc24ae1c95d72253c7795d4d2fc77aa ]
+>>>
+>>>The pointer parent may be NULLed by the function amdgpu_vm_pt_parent.
+>>>To make the code more robust, check the pointer parent.
+>>If this can happen, it should not WARN().
 >>
->> diff --git a/include/linux/page_frag_cache.h b/include/linux/page_frag_cache.h
->> index 12a16f8e8ad0..5aa45de7a9a5 100644
->> --- a/include/linux/page_frag_cache.h
->> +++ b/include/linux/page_frag_cache.h
->> @@ -50,7 +50,7 @@ static inline void *encoded_page_address(unsigned long encoded_va)
->>  
->>  static inline void page_frag_cache_init(struct page_frag_cache *nc)
->>  {
->> -	nc->encoded_va = 0;
->> +	memset(nc, 0, sizeof(*nc));
->>  }
->>  
-> 
-> I do not like requiring the entire structure to be reset as a part of
-> init. If encoded_va is 0 then we have reset the page and the flags.
-> There shouldn't be anything else we need to reset as remaining and bias
-> will be reset when we reallocate.
+>>If this can not happen, we don't need the patch in stable.
+>
+>Right, that patch shouldn't be backported in any way.
 
-The argument is about aoviding one checking for fast path by doing the
-memset in the slow path, which you might already know accroding to your
-comment in previous version.
+I'll drop it, thanks!
 
-It is just sometimes hard to understand your preference for maintainability
-over performance here as sometimes your comment seems to perfer performance
-over maintainability, like the LEA trick you mentioned and offset count-down
-before this patchset. It would be good to be more consistent about this,
-otherwise it is sometimes confusing when doing the refactoring.
-
-> 
->>  static inline bool page_frag_cache_is_pfmemalloc(struct page_frag_cache *nc)
->> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
->> index 7928e5d50711..d9c9cad17af7 100644
->> --- a/mm/page_frag_cache.c
->> +++ b/mm/page_frag_cache.c
->> @@ -19,6 +19,28 @@
->>  #include <linux/page_frag_cache.h>
->>  #include "internal.h"
->>  
->> +static struct page *__page_frag_cache_recharge(struct page_frag_cache *nc)
->> +{
->> +	unsigned long encoded_va = nc->encoded_va;
->> +	struct page *page;
->> +
->> +	page = virt_to_page((void *)encoded_va);
->> +	if (!page_ref_sub_and_test(page, nc->pagecnt_bias))
->> +		return NULL;
->> +
->> +	if (unlikely(encoded_page_pfmemalloc(encoded_va))) {
->> +		VM_BUG_ON(compound_order(page) !=
->> +			  encoded_page_order(encoded_va));
->> +		free_unref_page(page, encoded_page_order(encoded_va));
->> +		return NULL;
->> +	}
->> +
->> +	/* OK, page count is 0, we can safely set it */
->> +	set_page_count(page, PAGE_FRAG_CACHE_MAX_SIZE + 1);
->> +
->> +	return page;
->> +}
->> +
->>  static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
->>  					     gfp_t gfp_mask)
->>  {
->> @@ -26,6 +48,14 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
->>  	struct page *page = NULL;
->>  	gfp_t gfp = gfp_mask;
->>  
->> +	if (likely(nc->encoded_va)) {
->> +		page = __page_frag_cache_recharge(nc);
->> +		if (page) {
->> +			order = encoded_page_order(nc->encoded_va);
->> +			goto out;
->> +		}
->> +	}
->> +
-> 
-> This code has no business here. This is refill, you just dropped
-> recharge in here which will make a complete mess of the ordering and be
-> confusing to say the least.
-> 
-> The expectation was that if we are calling this function it is going to
-> overwrite the virtual address to NULL on failure so we discard the old
-> page if there is one present. This changes that behaviour. What you
-> effectively did is made __page_frag_cache_refill into the recharge
-> function.
-
-The idea is to reuse the below for both __page_frag_cache_refill() and
-__page_frag_cache_recharge(), which seems to be about maintainability
-to not having duplicated code. If there is a better idea to avoid that
-duplicated code while keeping the old behaviour, I am happy to change
-it.
-
-	/* reset page count bias and remaining to start of new frag */
-	nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
-	nc->remaining = PAGE_SIZE << order;
-
-> 
->>  #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
->>  	gfp_mask = (gfp_mask & ~__GFP_DIRECT_RECLAIM) |  __GFP_COMP |
->>  		   __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
->> @@ -35,7 +65,7 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
->>  	if (unlikely(!page)) {
->>  		page = alloc_pages_node(NUMA_NO_NODE, gfp, 0);
->>  		if (unlikely(!page)) {
->> -			nc->encoded_va = 0;
->> +			memset(nc, 0, sizeof(*nc));
->>  			return NULL;
->>  		}
->>  
-> 
-> The memset will take a few more instructions than the existing code
-> did. I would prefer to keep this as is if at all possible.
-
-It will not take more instructions for arm64 as it has 'stp' instruction for
-__HAVE_ARCH_MEMSET is set.
-There is something similar for x64?
-
-> 
->> @@ -45,6 +75,16 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
->>  	nc->encoded_va = encode_aligned_va(page_address(page), order,
->>  					   page_is_pfmemalloc(page));
->>  
->> +	/* Even if we own the page, we do not use atomic_set().
->> +	 * This would break get_page_unless_zero() users.
->> +	 */
->> +	page_ref_add(page, PAGE_FRAG_CACHE_MAX_SIZE);
->> +
->> +out:
->> +	/* reset page count bias and remaining to start of new frag */
->> +	nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
->> +	nc->remaining = PAGE_SIZE << order;
->> +
->>  	return page;
->>  }
->>  
-> 
-> Why bother returning a page at all? It doesn't seem like you don't use
-> it anymore. It looks like the use cases you have for it in patch 11/12
-> all appear to be broken from what I can tell as you are adding page as
-> a variable when we don't need to be passing internal details to the
-> callers of the function when just a simple error return code would do.
-
-It would be good to be more specific about the 'broken' part here.
+-- 
+Thanks,
+Sasha
 
