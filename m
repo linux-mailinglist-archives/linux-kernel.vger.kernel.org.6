@@ -1,105 +1,181 @@
-Return-Path: <linux-kernel+bounces-258904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 902EF938E24
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:40:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E18D938E29
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C2CCB214E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:40:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1978FB21406
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D0F16CD31;
-	Mon, 22 Jul 2024 11:40:42 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A689B17597;
+	Mon, 22 Jul 2024 11:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="J/b/QCGN"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C8617597
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5F816CD1B
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721648442; cv=none; b=Ka7m6OGOchAITA7/TPq0eEkfkF4hCC/A++lsRSBcy3l5P16PVKWgQzdMrFU4gsDyv5dllzQ/j9ZJHrrmc4AXh+84oXx8opRqMhEVmW1CXSHpcFPC1ll5QZHyMsDg7O52u36JZEPG3yf8spl+qzpTOMwTkp9Vo3+O/cZ3hM1P2X4=
+	t=1721648495; cv=none; b=E55PZbaggpDX6hlcc6gqQDKxVOVhEY6jX/4PV/9dZBn5tzg/t6OxXR8GwP04y8HANhjtbpL8g2exxdKxodxwQTl70GeL6AJU7G6z6ALpJogbAy9iPkpHNHmauaHjMhcwhB2RZGRbB4KbeyVtDlbcwsCEIGhZHWPmxkKT9puQ7dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721648442; c=relaxed/simple;
-	bh=XcCS0t/NCepEBg34EMJfxW9WkiOyTn1ocn+BRBvY2FU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=NUcLWY2ZovTAEYjY/02imtPuEaURva5Ksqs0A1Y4sgS+Ud5fR4p/7Btky8J4VckHDaghovMycbxxVSd2uADFq8B52//L1Avx3kq5X2UUSpqu7kD7bjqAqgrIH1Vxe7j0fOz9HW6BdIVbR3zUowy00ZZH9KEU1OfrA12rGpaRhIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-803aad60527so678691539f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 04:40:41 -0700 (PDT)
+	s=arc-20240116; t=1721648495; c=relaxed/simple;
+	bh=Bjh0MAv0P/GsRYNWW4wP61T0kGTHqvY9fDXj4JmqJ9Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hGMS7+PZ1Wb0oRSXCbcBRLpxxbyHnPdkRb6nOIWD9uxR4wFGEUtitkhkuyl3TXs605foDW05k0j6E0i9EJAkvYnWYIcg37caQJAD6wSEfk3X7+EGyJ3quw7WpzcECl0h0WJjxb9ryvKCNq2cPHIZteprB9dl9rF+OY8lnAFfK6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=J/b/QCGN; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52efaae7edfso1288802e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 04:41:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1721648492; x=1722253292; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=W2olEgUDf5J+Y0TXQTQQpwpEdSqToj8rGyfTCMGyLNE=;
+        b=J/b/QCGNi9LinFrE1dZ1e/DL53PlQAiVHYMTP+sZ2v7V8y7+KfZS9zloSkYY9kC0yJ
+         6Ljm3LcGiODkpKj6GzMOKai8L5VTb7+DUKGEcManz+J62gSuih7T5fWZUmRvn/9xi+kN
+         MriHc0Z6Y160kJz5WpZxuXOqzr5wBD9jO3lQs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721648440; x=1722253240;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J2wxXXiPEQlTRFGH0mSk2E1ShgijLlffjgmbmxdv3qA=;
-        b=lr7rjA1tqBWNLvjX63dRKCuyDpbu7EfE83JaDFx0PswroFuyVhp5GOv+O0C0qSz4nx
-         TXoG1W9gS9mATbSTlLu4dWUlIgMr0NwN+SjCKyVlVJa9rmNffv95lfff/5HiX+LhB9So
-         cam6zEx7srOiUFhHUvsGpwX0oVNptCW9cYOzKUNhnrGKT9frqR09nRt2+JitBbDX47rK
-         i5iIxicclyAnwBLl15k/iBmfFOVMSfLWGuV77MumYZrpXZXMTWxBAV/qbZ/+/a1a/7gO
-         PlozuAx8gaRvq9liTdb85+TV5erVqlOHHdA+ms6ka/5C0dA9qxzo+8+oVNMtcN5oLzv4
-         /fZA==
-X-Gm-Message-State: AOJu0YwJm22WgElRQhAqXFtTUCCbY0buiM/ClPc0GhMCuIsbFuw9TilZ
-	5uG3y7UuicwjOsbLAINkswUhtB3wMJGzjW14Bf+jZOEEz98oga5rGMMjrGYVjjyuLutirhTwLcQ
-	/YbhTHUIYDaicvm/Td8dFkt9bCWsVzTYyR7qMjjwyxRVrThqzknUWIOo=
-X-Google-Smtp-Source: AGHT+IH1DWGx/CFNnr/61RgX9m4b0i7ybFIOl6wHFY0716Ubs6ablDQRl3DZgOkS2mNd7qp41vT4GVUkNXK3RtlXpZSSbFZ3n3Fp
+        d=1e100.net; s=20230601; t=1721648492; x=1722253292;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W2olEgUDf5J+Y0TXQTQQpwpEdSqToj8rGyfTCMGyLNE=;
+        b=sxfoYMkFxw8HsFjG5da8+NGjYDBy/o6OFzCsqAHafdhZNynIZ4Fqr1aHLtBlN/H8mC
+         11nwU7U51JAz2m/tEoQdRUZooxf0+dwiVzAxVXsn0BJCE/XBUoTW+lEiX43fGRjWE/Ub
+         xKQDhxdU20hEGzkaLJfhxOyQ9v2/VnhoO9p7hAb8oqM7lF8Ygyx7x+JwkoXxzCTvG7/t
+         HjTVzqGiafD/0Vimq4m4ZXV++L6eo4i8BhOzQgi64IwCEIiolAcJ9sdxH+S1z6DPVz/0
+         EfDzTkr86XiszfEYXeOMh3U+WDALv7/VT6PGsbz47GDw3CoFc/no1A3o0XCxqCiDef8d
+         SW6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU3ulGqB4hB+BhierkVwBSmDS7UeSUMPZS5VTzzSHRZ2go7N+RtQBmrP00lziQ8QT7b+xA0s77vgDvpPyBqlPDt59t6RJ1o/FpsNsbN
+X-Gm-Message-State: AOJu0YxWlwaIJsBnbI6ZbZYNnxCB6lHaEEuH9IAAkBDn4zjUIk9xWBME
+	yWU/crqRoyhY7Aq24qUWzhsPSSM8m/GMhPLv2eqUtWZCmGO2VvEkZH5Nw0szB5rzF1+ERUVWTpW
+	w8A==
+X-Google-Smtp-Source: AGHT+IEUQVG0E30s+mjcAVskqky7tewzVQ+zHoJyEVLcdSqUyfFR3GP2lvIsGZPvbXHB/xGuxxgkzg==
+X-Received: by 2002:a05:6512:32c2:b0:52c:850b:cfc6 with SMTP id 2adb3069b0e04-52efb84a70dmr4073381e87.38.1721648492315;
+        Mon, 22 Jul 2024 04:41:32 -0700 (PDT)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30aaa3295sm6058717a12.31.2024.07.22.04.41.31
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jul 2024 04:41:32 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a77e392f59fso428669266b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 04:41:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV3BINNeMIScJlMnKCf5bP8a0XgbI31rDoSPyaFOnqokdRZBgu8v0b0inbst72MrSKPGwgGbvKpK2DR7imNoevVqOTqfvSk/3DhwSlY
+X-Received: by 2002:a17:907:944b:b0:a77:cc90:7734 with SMTP id
+ a640c23a62f3a-a7a4c0f440dmr425910266b.42.1721648490580; Mon, 22 Jul 2024
+ 04:41:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a5e:9812:0:b0:804:bfc0:382e with SMTP id
- ca18e2360f4ac-81aa7cf6b47mr6529139f.4.1721648440375; Mon, 22 Jul 2024
- 04:40:40 -0700 (PDT)
-Date: Mon, 22 Jul 2024 04:40:40 -0700
-In-Reply-To: <0000000000009d1d0a061d91b803@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b790b7061dd48352@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [net?] [bpf?] general protection fault in __dev_flush
-From: syzbot <syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
+References: <20240722-fix-filter-mapping-v1-1-07cc9c6bf4e3@chromium.org> <20240722113836.GE13497@pendragon.ideasonboard.com>
+In-Reply-To: <20240722113836.GE13497@pendragon.ideasonboard.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 22 Jul 2024 13:41:14 +0200
+X-Gmail-Original-Message-ID: <CANiDSCsvoiUFPMDatH0OiENtscHYysiRJdCpxVCiK-WtQZS-DQ@mail.gmail.com>
+Message-ID: <CANiDSCsvoiUFPMDatH0OiENtscHYysiRJdCpxVCiK-WtQZS-DQ@mail.gmail.com>
+Subject: Re: [PATCH] media: uvcvideo: Fix custom control mapping probing
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	pmenzel@molgen.mpg.de, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+Hi Laurent
 
-***
+On Mon, 22 Jul 2024 at 13:39, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Ricardo,
+>
+> Thank you for the patch.
+>
+> On Mon, Jul 22, 2024 at 07:59:43AM +0000, Ricardo Ribalda wrote:
+> > Custom control mapping introduced a bug, where the filter function was
+> > applied to every single control.
+> >
+> > Fix it so it is only applied to the matching controls.
+> >
+> > Reported-by: Paul Menzen <pmenzel@molgen.mpg.de>
+> > Closes: https://lore.kernel.org/linux-media/518cd6b4-68a8-4895-b8fc-97d4dae1ddc4@molgen.mpg.de/T/#t
+> > Cc: stable@vger.kernel.org
+> > Fixes: 8f4362a8d42b ("media: uvcvideo: Allow custom control mapping")
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > ---
+> > Paul, could you check if this fixes your issue, thanks!
+> > ---
+> >  drivers/media/usb/uvc/uvc_ctrl.c | 8 +++++---
+> >  1 file changed, 5 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> > index 0136df5732ba..06fede57bf36 100644
+> > --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> > @@ -2680,6 +2680,10 @@ static void uvc_ctrl_init_ctrl(struct uvc_video_chain *chain,
+> >       for (i = 0; i < ARRAY_SIZE(uvc_ctrl_mappings); ++i) {
+> >               const struct uvc_control_mapping *mapping = &uvc_ctrl_mappings[i];
+> >
+> > +             if (!(uvc_entity_match_guid(ctrl->entity, mapping->entity) &&
+> > +                 ctrl->info.selector == mapping->selector))
+> > +                     continue;
+>
+> I have a slight preference for
+>
+>                 if (!uvc_entity_match_guid(ctrl->entity, mapping->entity) ||
+>                     ctrl->info.selector != mapping->selector)
+>                         continue;
+>
+> If that's fine with you, I can handle that when applying the patch.
 
-Subject: Re: [syzbot] [net?] [bpf?] general protection fault in __dev_flush
-Author: aha310510@gmail.com
+That looks also good. I can send a v2 if you prefer. I would also add
+the error messages to the commit message.
+Let me know what do you prefer, I have time today
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 7846b618e0a4c3e08888099d1d4512722b39ca99
+Thanks!
 
----
- include/linux/filter.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> This change means that the entity and selector test will use the
+> original mapping, not the mapping returned by the filtering function. I
+> think that's fine, both mappings should have the same entity and
+> selector, only the menu mask is meant to change.
+>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>
+> > +
+> >               /* Let the device provide a custom mapping. */
+> >               if (mapping->filter_mapping) {
+> >                       mapping = mapping->filter_mapping(chain, ctrl);
+> > @@ -2687,9 +2691,7 @@ static void uvc_ctrl_init_ctrl(struct uvc_video_chain *chain,
+> >                               continue;
+> >               }
+> >
+> > -             if (uvc_entity_match_guid(ctrl->entity, mapping->entity) &&
+> > -                 ctrl->info.selector == mapping->selector)
+> > -                     __uvc_ctrl_add_mapping(chain, ctrl, mapping);
+> > +             __uvc_ctrl_add_mapping(chain, ctrl, mapping);
+> >       }
+> >  }
+> >
+> >
+> > ---
+> > base-commit: 68a72104cbcf38ad16500216e213fa4eb21c4be2
+> > change-id: 20240722-fix-filter-mapping-18477dc69048
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index b6672ff61407..22691015d175 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -842,15 +842,15 @@ static inline void bpf_net_ctx_get_all_used_flush_lists(struct list_head **lh_ma
- 	if (!IS_ENABLED(CONFIG_BPF_SYSCALL))
- 		return;
- 
--	lh = &bpf_net_ctx->dev_map_flush_list;
-+	lh = this_cpu_ptr(&bpf_net_ctx->dev_map_flush_list);
- 	if (kern_flags & BPF_RI_F_DEV_MAP_INIT && !list_empty(lh))
- 		*lh_dev = lh;
- 
--	lh = &bpf_net_ctx->cpu_map_flush_list;
-+	lh = this_cpu_ptr(&bpf_net_ctx->cpu_map_flush_list);
- 	if (kern_flags & BPF_RI_F_CPU_MAP_INIT && !list_empty(lh))
- 		*lh_map = lh;
- 
--	lh = &bpf_net_ctx->xskmap_map_flush_list;
-+	lh = this_cpu_ptr(&bpf_net_ctx->xskmap_map_flush_list);
- 	if (IS_ENABLED(CONFIG_XDP_SOCKETS) &&
- 	    kern_flags & BPF_RI_F_XSK_MAP_INIT && !list_empty(lh))
- 		*lh_xsk = lh;
---
+
+
+-- 
+Ricardo Ribalda
 
