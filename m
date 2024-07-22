@@ -1,170 +1,262 @@
-Return-Path: <linux-kernel+bounces-259212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1C409392B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:44:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E18559392B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:45:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 070521C214FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:44:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D519B217ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA8416EBF4;
-	Mon, 22 Jul 2024 16:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E33C916EBE2;
+	Mon, 22 Jul 2024 16:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U8ic2+ht"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f5SGAZIL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6615516E89B;
-	Mon, 22 Jul 2024 16:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2731FC2FD;
+	Mon, 22 Jul 2024 16:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721666687; cv=none; b=AIPdXTmVWCtrzqG2jP5lZ4KsHt2iuFEUmJZXLuF9zOE5DPcORvs8r+mJKmgKt7Z+K3nyyoAD5I97C0jnnBMcwoxDcL9pxfZtBb7TGVOHaxNHS4RwU1+M4aHTQ2U8j6zcObAVsJPzaOsRThwfsgUYOgicHPAyHY/BlK132uAN3eI=
+	t=1721666740; cv=none; b=TWp+i89p1PrSf+D8SolxrGGNDENn6X2WLSHktk5Jm8uVDMxR2sl2DTrtDXN1KC/QH4HtykzOuG4nRmG5ld/NJb7s9Jruc/d50a/gOFkhLXX1hLULM75LjQnLf+50xWDQzzQf3EO65eDRoU/hPjnmsHbVRRenH3sDgboWNbXUIWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721666687; c=relaxed/simple;
-	bh=nMaQD7CcFCSVVlPv+PUVH+T24g4Li95JzDQj8TyNmdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PLc++61B9BrvMZ7WVOFDZyowWs//UaWfwfAxjgas6MLyySlMeccE5277XkfBQh3EpyU9j7mFLHQPm6by7q3r5Cm+Oo8k0WaggHalgCpA50Tsnkvr2b+0QwPSHw9Pxzb2KLMFzsygN3IIbFV3NGSrCJG+XIkjIYV6wtqoTmYgLUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U8ic2+ht; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52104C116B1;
-	Mon, 22 Jul 2024 16:44:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721666686;
-	bh=nMaQD7CcFCSVVlPv+PUVH+T24g4Li95JzDQj8TyNmdU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U8ic2+htmt2MeAxldBS//m5HkTfNo98txmw5/51xyGtpgrLCiqHXUodcNV8ygx2c2
-	 X+8p50V8xfCoNUTCzG4gcsB7f1NgNufaOM+Ivccp6IyNVNNWFqM8gAhgxuhobqnCBl
-	 8MavFPdJDUFXBMvxMcZGlltDnkqr9I1kFIAZ/1pziJzaZQGokjBxwTj+Js2N6WsWOc
-	 LhRSzRZuOLWdtgGKcC2K7MGMUkLoFeEQiFHBCUTG0vPjJRULchLwk0uI1Xxrslj2Jl
-	 zVj/l8qa/lpvW8xXOgff5SzMHwWZipgjddasZ9FK5RLFIbKkl6VEEPsAAKM0FQ3tAI
-	 4tCEOPY/8wFjQ==
-Date: Mon, 22 Jul 2024 17:44:42 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Thippeswamy Havalige <thippesw@amd.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org, thippeswamy.havalige@amd.com,
-	linux-arm-kernel@lists.infradead.org, michal.simek@amd.com
-Subject: Re: [PATCH v2 1/2] dt-bindings: PCI: xilinx-xdma: Add schemas for
- Xilinx QDMA PCIe Root Port Bridge
-Message-ID: <20240722-wham-molasses-ec515cc554a0@spud>
-References: <20240722062558.1578744-1-thippesw@amd.com>
- <20240722062558.1578744-2-thippesw@amd.com>
+	s=arc-20240116; t=1721666740; c=relaxed/simple;
+	bh=ETYLw21kbSQSjFu61FymF6xrk6sFkW23q48JZFsEk40=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NNbnzZnynHK+SJlLUpprXmN8ZFGXvbLmiE9GvzLKgXDqJgRl9Vro7b0e4nSi365RGfu6UZct1UYxYNuagWXhecar44ulVlqQu5wQS9gQ/GITWN3QFyAg3FLwQ74PfcSI5qcMLge8NJT01WTXEmmArP6OlS2UB1+p6k1V7gHmHX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f5SGAZIL; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721666738; x=1753202738;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ETYLw21kbSQSjFu61FymF6xrk6sFkW23q48JZFsEk40=;
+  b=f5SGAZILbychz9EofFnuunSmJeUwOV8X8msvSAXSk6+dwDYexxhXKWxO
+   cWm4isIm3L2+sKVVakDihfBzj9YAkAPibLyTFiWamjMbibhq/2NQnHvWM
+   qF9VYpDM8CkHed8KcZFSw/44YQsDrK2e8TiDoBND2zNB1OouUI9dFNDmg
+   81cH3G0vvEuLuwcIYO1ikdgDpPTMWD+IBzGXkumnjYsmQh0Cqd16/oyKU
+   TFhnYWKFpCQPNB8zVxedjlMUIPXJEV7RPLX1tuQR3++YtK6TAlkmlZc4K
+   KpCD4vVh521ew8W1z4A3UAZlqBoMP51nUdgo0C6bcLfc0wnXHM2VKobLT
+   A==;
+X-CSE-ConnectionGUID: tu0ROH8WRcqSUBACDsV6fg==
+X-CSE-MsgGUID: hEEwcL5lTja5o5q/VvgcQA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11141"; a="29833277"
+X-IronPort-AV: E=Sophos;i="6.09,228,1716274800"; 
+   d="scan'208";a="29833277"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 09:45:37 -0700
+X-CSE-ConnectionGUID: q7kPepZ/SqWRJ/HnOznk3g==
+X-CSE-MsgGUID: RiVLx5vjTLqzhuYvchLAog==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,228,1716274800"; 
+   d="scan'208";a="56790003"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 09:45:37 -0700
+Received: from [10.212.80.152] (kliang2-mobl1.ccr.corp.intel.com [10.212.80.152])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id F410520CFEE1;
+	Mon, 22 Jul 2024 09:45:33 -0700 (PDT)
+Message-ID: <aef9d7fd-ac33-45a3-91ed-2b4d3f0f70b5@linux.intel.com>
+Date: Mon, 22 Jul 2024 12:45:32 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="0qbwwrfU/idHp2B5"
-Content-Disposition: inline
-In-Reply-To: <20240722062558.1578744-2-thippesw@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/6] perf pmu: Add support for event.cpus files in
+ sysfs
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ James Clark <james.clark@arm.com>, Ravi Bangoria <ravi.bangoria@amd.com>,
+ Dominique Martinet <asmadeus@codewreck.org>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org,
+ Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, ananth.narayan@amd.com,
+ gautham.shenoy@amd.com, kprateek.nayak@amd.com, sandipan.das@amd.com
+References: <20240718003025.1486232-1-irogers@google.com>
+ <20240718003025.1486232-4-irogers@google.com>
+ <92ceb8b5-240a-4715-98db-c73e8e9d3e50@linux.intel.com>
+ <CAP-5=fUfoMZ0HjCNoJe6hgEMi5ciY+LqFjBbLzfiZgO6dioshA@mail.gmail.com>
+ <64030eab-6e95-494a-ab72-bc33792ef723@linux.intel.com>
+ <CAP-5=fVMV4ZmGk4-XguqV=LAuif-MgAL+BK=mMAE1tC3f3tbhQ@mail.gmail.com>
+ <e8872317-8e18-48aa-9f23-b98af9345bed@linux.intel.com>
+ <CAP-5=fUjEYwdOdmfa5N7b8OOLWDitJKBdeOr8-+UOYWA5+ehkA@mail.gmail.com>
+ <775d8f1d-437d-47a3-b4b2-da476e914cf5@linux.intel.com>
+ <CAP-5=fUH+n+f_q1Tc-a3oV3vDV60VGOLANRFWUemDen197rYog@mail.gmail.com>
+ <862f6bb1-ab67-4286-8c27-465b2f29de64@linux.intel.com>
+ <CAP-5=fVdiFYVP8RsE+JuhOCoGSyybv0ZUn=Sixv1ZcEe8G7=2A@mail.gmail.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <CAP-5=fVdiFYVP8RsE+JuhOCoGSyybv0ZUn=Sixv1ZcEe8G7=2A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
---0qbwwrfU/idHp2B5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 22, 2024 at 11:55:57AM +0530, Thippeswamy Havalige wrote:
-> Add YAML devicetree schemas for Xilinx QDMA Soft IP PCIe Root Port Bridge.
->=20
-> Signed-off-by: Thippeswamy Havalige <thippesw@amd.com>
-> ---
->  .../bindings/pci/xlnx,xdma-host.yaml          | 41 ++++++++++++++++++-
->  1 file changed, 39 insertions(+), 2 deletions(-)
-> ---
-> changes in v2
-> - update dt node label with pcie.
-> ---
-> diff --git a/Documentation/devicetree/bindings/pci/xlnx,xdma-host.yaml b/=
-Documentation/devicetree/bindings/pci/xlnx,xdma-host.yaml
-> index 2f59b3a73dd2..28d9350a7fb4 100644
-> --- a/Documentation/devicetree/bindings/pci/xlnx,xdma-host.yaml
-> +++ b/Documentation/devicetree/bindings/pci/xlnx,xdma-host.yaml
-> @@ -14,10 +14,21 @@ allOf:
-> =20
->  properties:
->    compatible:
-> -    const: xlnx,xdma-host-3.00
-> +    enum:
-> +      - xlnx,xdma-host-3.00
-> +      - xlnx,qdma-host-3.00
-> =20
->    reg:
-> -    maxItems: 1
-> +    items:
-> +      - description: configuration region and XDMA bridge register.
-> +      - description: QDMA bridge register.
+On 2024-07-22 11:43 a.m., Ian Rogers wrote:
+> On Mon, Jul 22, 2024 at 6:57 AM Liang, Kan <kan.liang@linux.intel.com> wrote:
+>>
+>>
+>>
+>> On 2024-07-19 6:02 p.m., Ian Rogers wrote:
+>>> On Fri, Jul 19, 2024 at 9:35 AM Liang, Kan <kan.liang@linux.intel.com> wrote:
+>>>> On 2024-07-19 10:59 a.m., Ian Rogers wrote:
+>>>>> Thanks Kan. I'm not wondering about a case of 2 CPUs, say on CPU0 and
+>>>>> solely its perf event context, I want to know its core power and
+>>>>> package power as a group so I never record one without the other. That
+>>>>> grouping wouldn't be possible with 2 PMUs.
+>>>>
+>>>> For power, to be honest, I don't think it improves anything. It gives
+>>>> users a false image that perf can group these counters.
+>>>> But the truth is that perf cannot. The power counters are all
+>>>> free-running counters. It's impossible to co-schedule them (which
+>>>> requires a global mechanism to disable/enable all counters, e.g.,
+>>>> GLOBAL_CTRL for core PMU). The kernel still has to read the counters one
+>>>> by one while the counters keep running. There are no differences with or
+>>>> without a group for the power events.
+>>>
+>>> Ok, so power should copy cstate with _core, _pkg, etc. I agree the
+>>> difference is small and I like the idea of being consistent. Do we
+>>> want to add "event.cpus" support to the tool anyway for potential
+>>> future uses?
+>>
+>> The only thing I can imagine is that it may be used to disclose the
+>> event constraint information, Or even more to update/override the event
+>> constraint information (which requires kernel update.). But what I'm
+>> worried about is that it may be abused. It's very easy to confuse an
+>> event and a counter in a PMU.
+> 
+> So you mean if you have a dual socket machine and an uncore PMU with a
+> cpumask of "0,48" you worry that someone setting an event on CPU 47
+> may think they are getting a CPU on the second socket? Perhaps if the
+> user can express an intent to the tool, say "perf stat
+> -randomly-select-uncore-cpus ...", then this can be avoided. I'm not
+> sure I'm worried about this as specifying the CPU for an event to use
+> is already something of a more niche/advanced thing to be doing.
+> 
 
-Please constrain the new entry to only the new compatible.
+The perf tool can specify any CPU the users want, as long as the kernel
+can respond properly. I'm not worried about it. The "event.cpus" is
+exposed by the kernel. The main concern is also from the kernel side.
+Some drivers may use it to distinguish different scopes of counters. So
+they can combine various types of counters into a single PMU, which may
+break some rules they don't realize. An example is the above 'group' rule.
 
-> +    minItems: 1
-> +
-> +  reg-names:
-> +    items:
-> +      - const: cfg
-> +      - const: breg
-> +    minItems: 1
-> =20
->    ranges:
->      maxItems: 2
-> @@ -111,4 +122,30 @@ examples:
->                  interrupt-controller;
->              };
->          };
-> +
-> +        pcie@80000000 {
+>>> This would at least avoid problems with newer kernels and
+>>> older perf tools were we to find a good use for it.
+>>>
+>>>>> My understanding had been that for core PMUs a "perf stat -C" option
+>>>>> would choose the particular CPU to count the event on, for an uncore
+>>>>> PMU the -C option would override the cpumask's "default" value. We
+>>>>> have code to validate this:
+>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/evlist.c?h=perf-tools-next#n2522
+>>>>> But it seems now that overriding an uncore PMU's default CPU is
+>>>>> ignored.
+>>>>
+>>>> For the uncore driver, no matter what -C set, it writes the default CPU
+>>>> back.
+>>>> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/arch/x86/events/intel/uncore.c#n760
+>>>>
+>>>>> If you did:
+>>>>> $ perf stat -C 1 -e data_read -a sleep 0.1
+>>>>> Then the tool thinks data_read is on CPU1 and will set its thread
+>>>>> affinity to CPU1 to avoid IPIs. It seems to fix this we need to just
+>>>>> throw away the -C option.
+>>>> The perf tool can still read the the counter from CPU1 and no IPIs
+>>>> because of the PMU_EV_CAP_READ_ACTIVE_PKG().
+>>>>
+>>>> Not quite sure, but it seems only the open and close may be impacted and
+>>>> silently changed to CPU0.
+>>>
+>>> There's also enable/disable. Andi did the work and there were some
+>>> notable gains but likely more on core events. Ultimately it'd be nice
+>>> to be opening, closing.. everything in parallel given the calls are
+>>> slow and the work is embarrassingly parallel.
+>>> It feels like the cpumasks for uncore could still do with some cleanup
+>>> wrt -C I'm just unsure at the moment what this should be. Tbh, I'm
+>>> tempted to rewrite evlist propagate maps as someone may look at it and
+>>> think I believe in what it is doing. The parallel stuff we should grab
+>>> Riccardo's past work.
+>>
+>> For core PMU, the parallel may not work, because the core PMU is usually
+>> MSR based. Perf has to access the MSRs on the specific CPU. IPIs may be
+>> triggered if the users try to operate them from the other CPUs.
+> 
+> Right, I think the idea would be to have as many threads as you have
+> CPUs then give each thread affinity to a different CPU. The work done
+> on the thread would match the CPU they have affinity with to avoid the
+> IPIs. Because of the use of RCU in the kernel perf code it is possible
+> to hit RCU synchronize where IPIs are sent after 200ms IIRC. If you
+> get an RCU synchronize needing an IPI then "200ms x num CPUs" can mean
+> seconds of delay in a serial implementation (500 CPUs would be 100
+> seconds). With parallel code a worst case slow down shouldn't increase
+> with the number of CPUs. On laptops, .. this doesn't matter much.
+> 
+>> But the parallel is good for the counters in the MMIO space. The
+>> counters can be accessed from any CPU. There are more and more counters
+>> which are moved to the MMIO space, e.g., new uncore PMUs, IOMMU PMU,
+>> TMPI (for power), etc.
+> 
+> Sounds good but I'm wondering how we can get the tool in the right
+> place for doing affinity games. For the MMIO case life's good and we
+> don't care. How can the tool know one case from another? Should the
+> tool always be just following the cpumask? What about on ARM where the
+> cpumasks are broken?
 
-tbh, don't see the point of a new example for this.
+The cpumask cannot tell such information. For example, the counters of
+the uncore PMUs can be located in three different places, MSRs, the PCI
+config space, and the MMIO space. But the scope of the uncore counters
+is the same. So the cpumask is the same for various uncore PMUs.
+To get the information, the kernel has to be updated, e.g., add a
+caps/counter_type in sysfs.
 
-> +            compatible =3D "xlnx,qdma-host-3.00";
-> +            reg =3D <0x0 0x80000000 0x0 0x10000000>, <0x0 0x90000000 0x0=
- 0x10000000>;
-> +            reg-names =3D "cfg", "breg";
-> +            ranges =3D <0x2000000 0x0 0xa8000000 0x0 0xa8000000 0x0 0x80=
-00000>,
-> +                     <0x43000000 0x4 0x80000000 0x4 0x80000000 0x0 0x400=
-00000>;
-> +            #address-cells =3D <3>;
-> +            #size-cells =3D <2>;
-> +            #interrupt-cells =3D <1>;
-> +            device_type =3D "pci";
-> +            interrupt-parent =3D <&gic>;
-> +            interrupts =3D <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 85=
- IRQ_TYPE_LEVEL_HIGH>,
-> +                         <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
-> +            interrupt-names =3D "misc", "msi0", "msi1";
-> +            interrupt-map-mask =3D <0x0 0x0 0x0 0x7>;
-> +            interrupt-map =3D <0 0 0 1 &pcie_intc_0 0>,
-> +                            <0 0 0 2 &pcie_intc_0 1>,
-> +                            <0 0 0 3 &pcie_intc_0 2>,
-> +                            <0 0 0 4 &pcie_intc_0 3>;
-> +            pcie_intc_1: interrupt-controller {
-> +                #address-cells =3D <0>;
-> +                #interrupt-cells =3D <1>;
-> +                interrupt-controller;
-> +            };
-> +        };
->      };
-> --=20
-> 2.25.1
->=20
-
---0qbwwrfU/idHp2B5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZp6MegAKCRB4tDGHoIJi
-0pcBAP9LahMFVPGTtlUm8+OhxWG5Ur/e8PepALBK4xDJtO4ONQEA7BRaZ7ZjdO/u
-9xk3Bxqvw53xVCsmlLWgeSbSeylHWg0=
-=+Q7I
------END PGP SIGNATURE-----
-
---0qbwwrfU/idHp2B5--
+Thanks,
+Kan
+> 
+> Thanks,
+> Ian
+> 
+>> Thanks,
+>> Kan
+>>>
+>>> Thanks,
+>>> Ian
+>>>
+>>>
+>>>> Thanks,
+>>>> Kan
+>>>>>
+>>>>>>> 2) do the /sys/devices/<pmu>/events/event.(unit|scale|per-pkg|snapshot)
+>>>>>>> files parse correctly and have a corresponding event.
+>>>>>>> 3) keep adding opening events on the PMU to a group to make sure that
+>>>>>>> when counters are exhausted the perf_event_open fails (I've seen this
+>>>>>>> bug on AMD)
+>>>>>>> 4) are the values in the type file unique
+>>>>>>>
+>>>>>>
+>>>>>> The rest sounds good to me.
+>>>>>
+>>>>> Cool. Let me know if you can think of more.
+>>>>>
+>>>>> Thanks,
+>>>>> Ian
+>>>>>
+>>>>>> Thanks,
+>>>>>> Kan
+>>>>>
+>>>
+> 
 
