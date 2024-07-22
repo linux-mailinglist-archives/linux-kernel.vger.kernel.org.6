@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-258693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60E1B938BBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:07:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8123D938BBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3D871F212FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:07:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C8F02814AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512111607B4;
-	Mon, 22 Jul 2024 09:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DF416A382;
+	Mon, 22 Jul 2024 09:07:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HOli7q4Z"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HQ10Z+bS"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6634D16A948
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DBB16B38B
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721639232; cv=none; b=KbYg4Wxq8W08pUY4D3/WTh5DPmEfOjoy/PSMTBseHzwrAuVfVucninn9+xK5EKOgJihRTxCciaMKJ+6m+8srmgVzVtOl0O924ydG5AZJwJSPBDTKkwjFDjtbaUVB3STwVN4ifPZQ3KnvjsEO6E6hIjRxHxNeBVYQAJ17RH51KNg=
+	t=1721639238; cv=none; b=FOxpTWFbB/P8Il8SHJv5sN4OGfsGjGKrzX229zImV1xt+JvIPXGL5e3OTkJZ7HCc3UocY4P3nr1DIRCBo+3MwciBP5Tkd++vo419WUJjYah4IRET/zCZ2uFbYsrtz/f5uQ/fGPqiCpY8xBFqp6tMvRWx+/Qqex8XFhxdco2tlW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721639232; c=relaxed/simple;
-	bh=UoQGzTDhvnmlCuBp8exgdrBKvRdVrxvPS1GGpCFUA+w=;
+	s=arc-20240116; t=1721639238; c=relaxed/simple;
+	bh=J9TwGknNWjs/N9deiPaq5k+uLL6PXCMwbiv/oe6XZ94=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fL3VZg/YpxJZqbGk2PUyNl2RUO+SAq/DtPlSWwP5JAAaG0rTHRYQPd/EwCww2iAHsOyrrjPCYNnXTDRwCRh8G76zzA7ejFNkd/a88qbqXkBftBDKVQ5RKVbV8aK1oirky0LZe5DRhakGH0BMKxrTt11mNSrWDR/r9yzEOX7GJsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HOli7q4Z; arc=none smtp.client-ip=209.85.208.179
+	 MIME-Version; b=S6EFw/SmpY6gvd1Hoqd/onFVMutoZUt1Fyfm32+5rxgyz38znwJUaKN1NeM0Jxorichjdl9cM5mJXBxkPOtm/T0QOPZSyoNR0WRgGIRdzNS2gjxCESp5h7csEpcNWRayGZXZY5C6+30QjpZMAsBq9YyKnq3/Jp+4rg3u6G1v9gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HQ10Z+bS; arc=none smtp.client-ip=209.85.208.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ef283c58f4so14936791fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 02:07:10 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2eea8ea8c06so53078901fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 02:07:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721639228; x=1722244028; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1721639233; x=1722244033; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=G3nTgko0OeNbyL3RvXdj8me3TnANxTs551sWuyc3xyM=;
-        b=HOli7q4Z3PksLpp5b/aEfCaBqWUlV6qYQkHMnJdsZB/v+JuK/6swsijUAdRhlkqDQH
-         3NDYUM5AC1Pgog6qcZegUxYIm0Bpd3uHC2i0RDMBauENEyrsZJ0QVMFcfHnh1B5uxEwJ
-         0QOxf8uGrBoUdmfWE/tNYcyzgjlkFUxqcZ2/IG775XPdjJbIKGn4AmGzr2pK0o9yFvXQ
-         dmCGVjbx131yaygboc9azAfLTzrrS+GPxOBLyE//P7pVT/v+8ZgtN2kDYw28okya+4uU
-         x0OZnoHqQyvP24Pd89oqrut0Dn6LuNtxfqJftxyaOs0KmlwqBGRuHQSHs2NAy0RmrUXL
-         OKRA==
+        bh=t/F0ZmP17hObUGx93Q7otIls3wWDQaOtJ+irX03aguA=;
+        b=HQ10Z+bSAbtFT8HdmzvO55SF5l1Z8FImaPwOkvWAp0fuUGZyJrCoPh/UAS3ddbrqks
+         Ob9MxFSHD7y0wEvPO20Iq7SmYsd4m+LSqv74tJ7AjA3v1oSGSIC4FlmDCLQ7hyAVhAyI
+         l0b0JnQZl0+eDnE1aJhZbcjJcQ0NkoQAFy45fIA0Rt4HSzxPJZnrYCE/C6BU0e6Ek7Zs
+         J9CeOoOcLiTO3gT3DlFqYJGKwtZsf2WuIdbQOqYubBTjuuH5AnZCjxklL+TKSrOe5w83
+         iSQoBR7YKhuXgFwPCBkpSO5v0m81jLdzshjBXoc1fSA/Q4lCLaYhCURTEoo9sM67O6dA
+         9vIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721639228; x=1722244028;
+        d=1e100.net; s=20230601; t=1721639233; x=1722244033;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=G3nTgko0OeNbyL3RvXdj8me3TnANxTs551sWuyc3xyM=;
-        b=xDQzhpKQhe5Em+dtV31kUyXsBrjR890yFdMnaDxfQ4CTSn7NhQowoJ52/DrwpEOQU+
-         D2xxx3SlLdF7UvDVms0MNMeK/KU5w5yq6OW6uMl2p0hE2hEo2bgToDEDSlBSSCv+hnT9
-         WZszcAc/3RLpMcjHFYgeQ2q0CUr4UuBhvuesge34rFvJ66LyTsyGMsScTTtj+qpdr2kR
-         DnRosI5LrP6Rtx0ypzfzVEU9+9DfNrBmnS723RrQyd0BAGxiB/04w6l6LpeoJPyhZMr3
-         SvAVqAFdmUf9oh7zx40S/v064yfsmm+YiZfB7i1d5INBXPyjPcVghHbdHg1QmhaJrEV2
-         NnkA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZRbLnZPHx7wPuy8y9mu4GdYEhUQoioAjtwOjiaYkmtz4C8i6a1g4UtNkoivTg+D2Imc8w5dDqTxnbybh0eFVsOIGAJzeomfSeTBRU
-X-Gm-Message-State: AOJu0YyCi9nlY5lK1VPMFLuYm5cKfwUncH7UfCwqlQFRNDbkl/SGrdDx
-	igIvRJhGDeQn6aE39HOpeHOKXsAblxW5yzdyqRgGMLaC9U2KS8BBHhop8brtb0I=
-X-Google-Smtp-Source: AGHT+IF2nh9a11k/95sobv4TRJjIrZcCKKH/wp6Qt14Noc3fFQtewHrx2UgLqDovP7C8C/7P+xgGCw==
-X-Received: by 2002:a2e:978d:0:b0:2ee:4dc6:fe28 with SMTP id 38308e7fff4ca-2ef16856deemr42974531fa.40.1721639228449;
-        Mon, 22 Jul 2024 02:07:08 -0700 (PDT)
+        bh=t/F0ZmP17hObUGx93Q7otIls3wWDQaOtJ+irX03aguA=;
+        b=M/5hs5VnEtouittN20oamVYCn9X8wbRAZO6wKD+qHHNDKHYj9pnmmJUMhA/LAJ5KjI
+         qDsOeWafi6WxfsndzKITC/BifrMimYuuQcoD/X6YmuaVLDyE60IB3gX7pLwacDmle1/S
+         f7xeJPu5lJKBff7QIX+ZDb8NUGYJ6twyXCdvJZUhtumfYxJfZc4vEMzqqP1orb/8mk3Q
+         g+PtvVtNh1a8SOnDqeqzcXyFiCPrfy6Ioc3Ls+BVdAuuuHxuinOukfvJyVl5R/wnedln
+         9mOwqPuKUI09cAxZgaAN+4sLMZxSRsR2vWRMMJLwLUOeZPP8YdmSFYLb1hkcWBbT/zL0
+         lytw==
+X-Forwarded-Encrypted: i=1; AJvYcCXKT7FXyM9BMdT1KaJLqH9KFY+WS22nU6t3tSHz1xzAkrMwtd7pdpIhjjcGUMNPDp21qTcE22rIwXsoNA5e3oAJDsTl1To+QlHrBAZi
+X-Gm-Message-State: AOJu0YyAr6d7UXteKaCtk5O7PJ3EUk9Z81nKSk6xtr45T1bsTGdC7XEG
+	P2/n4QYXQSfLjqh1dAIwys3NflHQSK7llsGSd97yU2Zsh2m6OrzcXuXOG8gaOu8=
+X-Google-Smtp-Source: AGHT+IFCPNC5SoKT5EINogEfHSqyN/UbbcWJnoEmhmIjj22SyV1kqmShS7JNJ5O4PLkhW1QWWrFjrg==
+X-Received: by 2002:a2e:8789:0:b0:2ef:2d8b:7cdb with SMTP id 38308e7fff4ca-2ef2d8b7ea9mr21511281fa.22.1721639233272;
+        Mon, 22 Jul 2024 02:07:13 -0700 (PDT)
 Received: from dhcp161.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cb7753abeasm7534290a91.48.2024.07.22.02.07.04
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cb7753abeasm7534290a91.48.2024.07.22.02.07.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 02:07:07 -0700 (PDT)
+        Mon, 22 Jul 2024 02:07:12 -0700 (PDT)
 From: Petr Pavlu <petr.pavlu@suse.com>
 To: Luis Chamberlain <mcgrof@kernel.org>
 Cc: Masahiro Yamada <masahiroy@kernel.org>,
@@ -75,9 +75,9 @@ Cc: Masahiro Yamada <masahiroy@kernel.org>,
 	linux-kbuild@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Petr Pavlu <petr.pavlu@suse.com>
-Subject: [PATCH 1/2] module: Split modules_install compression and in-kernel decompression
-Date: Mon, 22 Jul 2024 11:06:21 +0200
-Message-Id: <20240722090622.16524-2-petr.pavlu@suse.com>
+Subject: [PATCH 2/2] module: Clean up the description of MODULE_SIG_<type>
+Date: Mon, 22 Jul 2024 11:06:22 +0200
+Message-Id: <20240722090622.16524-3-petr.pavlu@suse.com>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20240722090622.16524-1-petr.pavlu@suse.com>
 References: <20240722090622.16524-1-petr.pavlu@suse.com>
@@ -89,170 +89,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The kernel configuration allows specifying a module compression mode. If
-one is selected then each module gets compressed during
-'make modules_install' and additionally one can also enable support for
-a respective direct in-kernel decompression support. This means that the
-decompression support cannot be enabled without the automatic compression.
+The MODULE_SIG_<type> config choice has an inconsistent prompt styled as
+a question and lengthy option names.
 
-Some distributions, such as the (open)SUSE family, use a signer service for
-modules. A build runs on a worker machine but signing is done by a separate
-locked-down server that is in possession of the signing key. The build
-invokes 'make modules_install' to create a modules tree, collects
-information about the modules, asks the signer service for their signature,
-appends each signature to the respective module and compresses all modules.
-
-When using this arrangment, the 'make modules_install' step produces
-unsigned+uncompressed modules and the distribution's own build recipe takes
-care of signing and compression later.
-
-The signing support can be currently enabled without automatically signing
-modules during 'make modules_install'. However, the in-kernel decompression
-support can be selected only after first enabling automatic compression
-during this step.
-
-To allow only enabling the in-kernel decompression support without the
-automatic compression during 'make modules_install', separate the
-compression options similarly to the signing options, as follows:
-
-> Enable loadable module support
-[*] Module compression
-      Module compression type (GZIP)  --->
-[*]   Automatically compress all modules
-[ ]   Support in-kernel module decompression
-
-* "Module compression" (MODULE_COMPRESS) is a new main switch for the
-  compression/decompression support. It replaces MODULE_COMPRESS_NONE.
-* "Module compression type" (MODULE_COMPRESS_<type>) chooses the
-  compression type, one of GZ, XZ, ZSTD.
-* "Automatically compress all modules" (MODULE_COMPRESS_ALL) is a new
-  option to enable module compression during 'make modules_install'. It
-  defaults to Y.
-* "Support in-kernel module decompression" (MODULE_DECOMPRESS) enables
-  in-kernel decompression.
+Simplify the prompt and option names to be consistent with other module
+options.
 
 Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
 ---
- kernel/module/Kconfig    | 61 ++++++++++++++++++++--------------------
- scripts/Makefile.modinst |  2 ++
- 2 files changed, 33 insertions(+), 30 deletions(-)
+ kernel/module/Kconfig | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
 diff --git a/kernel/module/Kconfig b/kernel/module/Kconfig
-index 4047b6d48255..bb7f7930fef6 100644
+index bb7f7930fef6..ccdbd1bc12aa 100644
 --- a/kernel/module/Kconfig
 +++ b/kernel/module/Kconfig
-@@ -278,64 +278,65 @@ config MODULE_SIG_HASH
- 	default "sha3-384" if MODULE_SIG_SHA3_384
- 	default "sha3-512" if MODULE_SIG_SHA3_512
+@@ -228,7 +228,7 @@ comment "Do not forget to sign required modules with scripts/sign-file"
+ 	depends on MODULE_SIG_FORCE && !MODULE_SIG_ALL
  
--choice
--	prompt "Module compression mode"
-+config MODULE_COMPRESS
-+	bool "Module compression"
+ choice
+-	prompt "Which hash algorithm should modules be signed with?"
++	prompt "Hash algorithm to sign modules"
+ 	depends on MODULE_SIG || IMA_APPRAISE_MODSIG
  	help
--	  This option allows you to choose the algorithm which will be used to
--	  compress modules when 'make modules_install' is run. (or, you can
--	  choose to not compress modules at all.)
--
--	  External modules will also be compressed in the same way during the
--	  installation.
--
--	  For modules inside an initrd or initramfs, it's more efficient to
--	  compress the whole initrd or initramfs instead.
--
-+	  Enable module compression to reduce on-disk size of module binaries.
- 	  This is fully compatible with signed modules.
+ 	  This determines which sort of hashing algorithm will be used during
+@@ -238,31 +238,31 @@ choice
+ 	  the signature on that module.
  
--	  Please note that the tool used to load modules needs to support the
--	  corresponding algorithm. module-init-tools MAY support gzip, and kmod
--	  MAY support gzip, xz and zstd.
-+	  The tool used to work with modules needs to support the selected
-+	  compression type. kmod MAY support gzip, xz and zstd. Other tools
-+	  might have a limited selection of the supported types.
+ config MODULE_SIG_SHA1
+-	bool "Sign modules with SHA-1"
++	bool "SHA-1"
+ 	select CRYPTO_SHA1
  
--	  Your build system needs to provide the appropriate compression tool
--	  to compress the modules.
-+	  Note that for modules inside an initrd or initramfs, it's more
-+	  efficient to compress the whole ramdisk instead.
+ config MODULE_SIG_SHA256
+-	bool "Sign modules with SHA-256"
++	bool "SHA-256"
+ 	select CRYPTO_SHA256
  
--	  If in doubt, select 'None'.
-+	  If unsure, say N.
+ config MODULE_SIG_SHA384
+-	bool "Sign modules with SHA-384"
++	bool "SHA-384"
+ 	select CRYPTO_SHA512
  
--config MODULE_COMPRESS_NONE
--	bool "None"
-+choice
-+	prompt "Module compression type"
-+	depends on MODULE_COMPRESS
- 	help
--	  Do not compress modules. The installed modules are suffixed
--	  with .ko.
-+	  Choose the supported algorithm for module compression.
+ config MODULE_SIG_SHA512
+-	bool "Sign modules with SHA-512"
++	bool "SHA-512"
+ 	select CRYPTO_SHA512
  
- config MODULE_COMPRESS_GZIP
- 	bool "GZIP"
- 	help
--	  Compress modules with GZIP. The installed modules are suffixed
--	  with .ko.gz.
-+	  Support modules compressed with GZIP. The installed modules are
-+	  suffixed with .ko.gz.
+ config MODULE_SIG_SHA3_256
+-	bool "Sign modules with SHA3-256"
++	bool "SHA3-256"
+ 	select CRYPTO_SHA3
  
- config MODULE_COMPRESS_XZ
- 	bool "XZ"
- 	help
--	  Compress modules with XZ. The installed modules are suffixed
--	  with .ko.xz.
-+	  Support modules compressed with XZ. The installed modules are
-+	  suffixed with .ko.xz.
+ config MODULE_SIG_SHA3_384
+-	bool "Sign modules with SHA3-384"
++	bool "SHA3-384"
+ 	select CRYPTO_SHA3
  
- config MODULE_COMPRESS_ZSTD
- 	bool "ZSTD"
- 	help
--	  Compress modules with ZSTD. The installed modules are suffixed
--	  with .ko.zst.
-+	  Support modules compressed with ZSTD. The installed modules are
-+	  suffixed with .ko.zst.
+ config MODULE_SIG_SHA3_512
+-	bool "Sign modules with SHA3-512"
++	bool "SHA3-512"
+ 	select CRYPTO_SHA3
  
  endchoice
- 
-+config MODULE_COMPRESS_ALL
-+	bool "Automatically compress all modules"
-+	default y
-+	depends on MODULE_COMPRESS
-+	help
-+	  Compress all modules during 'make modules_install'.
-+
-+	  Your build system needs to provide the appropriate compression tool
-+	  for the selected compression type. External modules will also be
-+	  compressed in the same way during the installation.
-+
- config MODULE_DECOMPRESS
- 	bool "Support in-kernel module decompression"
--	depends on MODULE_COMPRESS_GZIP || MODULE_COMPRESS_XZ || MODULE_COMPRESS_ZSTD
-+	depends on MODULE_COMPRESS
- 	select ZLIB_INFLATE if MODULE_COMPRESS_GZIP
- 	select XZ_DEC if MODULE_COMPRESS_XZ
- 	select ZSTD_DECOMPRESS if MODULE_COMPRESS_ZSTD
- 	help
--
- 	  Support for decompressing kernel modules by the kernel itself
- 	  instead of relying on userspace to perform this task. Useful when
- 	  load pinning security policy is enabled.
-diff --git a/scripts/Makefile.modinst b/scripts/Makefile.modinst
-index 0afd75472679..bce4a9adb893 100644
---- a/scripts/Makefile.modinst
-+++ b/scripts/Makefile.modinst
-@@ -51,9 +51,11 @@ $(foreach x, % :, $(if $(findstring $x, $(dst)), \
- 	$(error module installation path cannot contain '$x')))
- 
- suffix-y				:=
-+ifdef CONFIG_MODULE_COMPRESS_ALL
- suffix-$(CONFIG_MODULE_COMPRESS_GZIP)	:= .gz
- suffix-$(CONFIG_MODULE_COMPRESS_XZ)	:= .xz
- suffix-$(CONFIG_MODULE_COMPRESS_ZSTD)	:= .zst
-+endif
- 
- modules := $(patsubst $(extmod_prefix)%.o, $(dst)/%.ko$(suffix-y), $(modules))
- install-$(CONFIG_MODULES) += $(modules)
 -- 
 2.35.3
 
