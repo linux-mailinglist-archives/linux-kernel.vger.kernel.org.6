@@ -1,183 +1,171 @@
-Return-Path: <linux-kernel+bounces-258396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DCE5938775
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:11:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DFEC938779
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D612B20C80
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 02:11:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4124E280CAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 02:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0CE4DDA9;
-	Mon, 22 Jul 2024 02:11:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2681C8FE;
+	Mon, 22 Jul 2024 02:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ipYCD0mU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="rUugE5tP"
+Received: from esa4.hc1455-7.c3s2.iphmx.com (esa4.hc1455-7.c3s2.iphmx.com [68.232.139.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAD3610D;
-	Mon, 22 Jul 2024 02:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0239D8BFC
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 02:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.139.117
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721614262; cv=none; b=CHDirYAWraYLPOFQJDLL9ZZ2mUdNcaNgME9LccjrLUmowtzP2L2z1ECsj5pB19CohqvkTkQGattH60WH1Dw61ghwOgp9OHc3l8RDYa6ZLAyZ1dIDlr8ADduMLz0Uy5E7L4sLb23ZCwaOF4sHLJZZsIhyMgw9H4GRQih5AY+Yt38=
+	t=1721614373; cv=none; b=BpZMfiQMzXnxLPrZJYu5+7PNM6b7jQ25gW/XatH4GMe2F+1xEnfG5LxM3GFsciLizHzVNSZ/4bOlOSDHQ34rb6blkwh9APTv6JiYOHr4Ua49nhPMzY/9m0sZUgBysCzlin6jx4z+wySq/20WFztV7JRz/MGgOwM8vibrpcwSMVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721614262; c=relaxed/simple;
-	bh=DqCgC/c3s9Favave3nv1YMDm0RGrEYC1Cxb9EP9Ys6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DRqVfYYTCNDZARox1HabMB5rs5++7Vyt/Odu/5tXD/PGJbA++mxDcQ4OQ7m+Sjsif99tSePjooq6q2lP4zlhY5fXdbhVEwhbUQzqeg/m2qF5seyRIHRaAzEkFo1xoLz/u3OaHYGAbtdOatWE+4XW802AtwnMhRDnEs5g2oUzpbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ipYCD0mU; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721614259; x=1753150259;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DqCgC/c3s9Favave3nv1YMDm0RGrEYC1Cxb9EP9Ys6k=;
-  b=ipYCD0mUh0M1MSqyMHMNXF1nf/qmsLEgoYVkIkSTmChsHJKBjT/8m1l9
-   SaaqrDRpTfFgg2f92fj2b7gMIWBdnRycIyYxDsRyVX3YEjAgm0n+Ubn9H
-   r6Zef7aUIiHCqinC/qstC5L1ToMuxKpxuG1r1JqEYDSq81aLXyzkZSCb9
-   f4Uu18epgO/FosRUL08+0/5x4gVi5NFhoX/Ta+2AoqBtJY4QXlEuXRh8w
-   e1VlZgeyooUw9VjFOvP8GJtU0d4cKXO2LG4W5oO6IqzZPmh1zhzWXrQeU
-   nHC15GkSZY18iv4C7VCFxDcCMVJf+A6oLUM7m0p7zJjaDUShd2UVcXoUr
-   g==;
-X-CSE-ConnectionGUID: eEK2cceRSvC13YAIIaus3g==
-X-CSE-MsgGUID: v8/ehWebQMmvIBJhGHUFQA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11140"; a="19338581"
-X-IronPort-AV: E=Sophos;i="6.09,227,1716274800"; 
-   d="scan'208";a="19338581"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jul 2024 19:10:59 -0700
-X-CSE-ConnectionGUID: SbkeeR7FRKeBEK9JRb8tYQ==
-X-CSE-MsgGUID: etfCb4j5Sl+lldNDKrRV0Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,227,1716274800"; 
-   d="scan'208";a="89177499"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 21 Jul 2024 19:10:56 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sViVo-000kno-2Q;
-	Mon, 22 Jul 2024 02:10:52 +0000
-Date: Mon, 22 Jul 2024 10:10:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: Michael Grzeschik <m.grzeschik@pengutronix.de>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-	v9fs@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	kernel@pengutronix.de,
-	Michael Grzeschik <m.grzeschik@pengutronix.de>
-Subject: Re: [PATCH v8 2/3] net/9p/usbg: Add new usb gadget function transport
-Message-ID: <202407220933.WQ9L15Zw-lkp@intel.com>
-References: <20240116-ml-topic-u9p-v8-2-409e659ca4dd@pengutronix.de>
+	s=arc-20240116; t=1721614373; c=relaxed/simple;
+	bh=I5DMe3EnS7G1j/NeL0/4/YwmynXJRTUqok3lFtFxT7s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=retlI/JX10J7AqKZ5+eEPRwBc8xejrpspyululqnLZosK/5hVCjYeaHrara+PrOnGYxssINxXYfzYGQZs0HHb44qp1ltaMQBP6XntyPB6ywd7rZtngbeDWJG/Ff9cLsbDYs6i/wcnyiJJw95zQdVZ+TOHv2zF8fcI1fIplkZa9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=rUugE5tP; arc=none smtp.client-ip=68.232.139.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
+  t=1721614369; x=1753150369;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=I5DMe3EnS7G1j/NeL0/4/YwmynXJRTUqok3lFtFxT7s=;
+  b=rUugE5tPPdI7x0RZzx7dwnOgU4cNA+KcHHX3E9iwPRTf8h2eyC2pyxIF
+   H/ECRBk1CdhqnB8HS9PepVj6/LoyhNiwuUwiC+Ic8ZRic9jN9HltLyV5L
+   9t64/iAWThb/r8uqSnONRUFd8xQb8vZ0RNdKUgJLQ94Q63bfkarHVfSSw
+   cWxGWG1Vf4SJMp1+duP/2wo6Q0zAUIRU2UFmPJ/LPaEkZjdxquOs1CKks
+   pneSgGWt8OmPBWthScXv7TVtDdLAA2Xk6DA06QkA1oZN2xrJEILQ252ZS
+   OK9juKICFJPEfDcN5JPAD10lUwFH3DX7853CLOf9raUL5PEqj4dVm5Ejv
+   w==;
+X-IronPort-AV: E=McAfee;i="6700,10204,11140"; a="168168824"
+X-IronPort-AV: E=Sophos;i="6.09,227,1716217200"; 
+   d="scan'208";a="168168824"
+Received: from unknown (HELO oym-r4.gw.nic.fujitsu.com) ([210.162.30.92])
+  by esa4.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 11:11:21 +0900
+Received: from oym-m3.gw.nic.fujitsu.com (oym-nat-oym-m3.gw.nic.fujitsu.com [192.168.87.60])
+	by oym-r4.gw.nic.fujitsu.com (Postfix) with ESMTP id 46DD3D800F
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:11:19 +0900 (JST)
+Received: from kws-ab3.gw.nic.fujitsu.com (kws-ab3.gw.nic.fujitsu.com [192.51.206.21])
+	by oym-m3.gw.nic.fujitsu.com (Postfix) with ESMTP id 8E4C3D7494
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:11:18 +0900 (JST)
+Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
+	by kws-ab3.gw.nic.fujitsu.com (Postfix) with ESMTP id 2F28A2007CAB2
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:11:18 +0900 (JST)
+Received: from localhost.localdomain (unknown [10.167.226.45])
+	by edo.cn.fujitsu.com (Postfix) with ESMTP id 57B821A000B;
+	Mon, 22 Jul 2024 10:11:17 +0800 (CST)
+From: Li Zhijian <lizhijian@fujitsu.com>
+To: linux-mm@kvack.org
+Cc: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	Yasunori Gotou <y-goto@fujitsu.com>,
+	Li Zhijian <lizhijian@fujitsu.com>,
+	David Hildenbrand <david@redhat.com>,
+	Vlastimil Babka <vbabka@kernel.org>,
+	Yao Xingtao <yaoxt.fnst@fujitsu.com>
+Subject: [PATCH v2] mm/page_alloc: Fix pcp->count race between drain_pages_zone() vs __rmqueue_pcplist()
+Date: Mon, 22 Jul 2024 10:10:59 +0800
+Message-Id: <20240722021059.1076399-1-lizhijian@fujitsu.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240116-ml-topic-u9p-v8-2-409e659ca4dd@pengutronix.de>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-28544.004
+X-TM-AS-User-Approved-Sender: Yes
+X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-28544.004
+X-TMASE-Result: 10--5.996900-10.000000
+X-TMASE-MatchedRID: +R0/YEDHEDjoSitJVour/QuB7zdAMUjAl9q75JzWJRMarX6LchMkVuBw
+	lzWEEXt2fatVQLA534yNMkq6FfSn6lnGEjlsas2yFDuTLTe6zcNMkOX0UoduuV7V7de6UnlgmKb
+	hu5KaCkf9F5gpB/8TUo2MogdbmQhJWSEm/dnndoSdVNZaI2n6//SzAdIVxUno2vch1fMqmI8mIm
+	l+ywrqvklEFjVj/aAsbncztPPsTqsv+0FNnM7lDRVqL8+WwS7muhv94WF6cmmm04TWLzKiuBhBv
+	WgZlX+84vM1YF6AJbbCCfuIMF6xLSAHAopEd76vdp8SlsBStysjUE3BmlSs165ZdugdSt2/9b4c
+	9nQDp+sRP1XlvFsUag==
+X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
 
-Hi Michael,
+It's expected that no page should be left in pcp_list after calling
+zone_pcp_disable() in offline_pages(). Previously, it's observed that
+offline_pages() gets stuck [1] due to some pages remaining in pcp_list.
 
-kernel test robot noticed the following build warnings:
+Cause:
+There is a race condition between drain_pages_zone() and __rmqueue_pcplist()
+involving the pcp->count variable. See below scenario:
 
-[auto build test WARNING on 2c9b3512402ed192d1f43f4531fb5da947e72bd0]
+         CPU0                              CPU1
+    ----------------                    ---------------
+                                      spin_lock(&pcp->lock);
+                                      __rmqueue_pcplist() {
+zone_pcp_disable() {
+                                        /* list is empty */
+                                        if (list_empty(list)) {
+                                          /* add pages to pcp_list */
+                                          alloced = rmqueue_bulk()
+  mutex_lock(&pcp_batch_high_lock)
+  ...
+  __drain_all_pages() {
+    drain_pages_zone() {
+      /* read pcp->count, it's 0 here */
+      count = READ_ONCE(pcp->count)
+      /* 0 means nothing to drain */
+                                          /* update pcp->count */
+                                          pcp->count += alloced << order;
+      ...
+                                      ...
+                                      spin_unlock(&pcp->lock);
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Michael-Grzeschik/usb-gadget-function-move-u_f-h-to-include-linux-usb-func_utils-h/20240722-070652
-base:   2c9b3512402ed192d1f43f4531fb5da947e72bd0
-patch link:    https://lore.kernel.org/r/20240116-ml-topic-u9p-v8-2-409e659ca4dd%40pengutronix.de
-patch subject: [PATCH v8 2/3] net/9p/usbg: Add new usb gadget function transport
-config: sh-allyesconfig (https://download.01.org/0day-ci/archive/20240722/202407220933.WQ9L15Zw-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240722/202407220933.WQ9L15Zw-lkp@intel.com/reproduce)
+In this case, after calling zone_pcp_disable() though, there are still some
+pages in pcp_list. And these pages in pcp_list are neither movable nor
+isolated, offline_pages() gets stuck as a result.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407220933.WQ9L15Zw-lkp@intel.com/
+Solution:
+Expand the scope of the pcp->lock to also protect pcp->count in
+drain_pages_zone(), to ensure no pages are left in the pcp list after
+zone_pcp_disable()
 
-All warnings (new ones prefixed by >>):
+[1] https://lore.kernel.org/linux-mm/6a07125f-e720-404c-b2f9-e55f3f166e85@fujitsu.com/
 
-   net/9p/trans_usbg.c: In function 'p9_usbg_create':
->> net/9p/trans_usbg.c:407:35: warning: variable 'cdev' set but not used [-Wunused-but-set-variable]
-     407 |         struct usb_composite_dev *cdev;
-         |                                   ^~~~
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Vlastimil Babka (SUSE) <vbabka@kernel.org>
+Reported-by: Yao Xingtao <yaoxt.fnst@fujitsu.com>
+Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
+---
+V2:
+    - Narrow down the scope of the spin_lock() to limit the draining latency. # Vlastimil and David
+    - In above scenario, it's sufficient to read pcp->count once with lock held, and it fully fixed
+      my issue[1] in thounds runs(It happened in more than 5% before).
+RFC:
+    https://lore.kernel.org/linux-mm/20240716073929.843277-1-lizhijian@fujitsu.com/
+---
+ mm/page_alloc.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-
-vim +/cdev +407 net/9p/trans_usbg.c
-
-   404	
-   405	static int p9_usbg_create(struct p9_client *client, const char *devname, char *args)
-   406	{
- > 407		struct usb_composite_dev *cdev;
-   408		struct f_usb9pfs_dev *dev;
-   409		struct f_usb9pfs_dev *tmp;
-   410		struct f_usb9pfs *usb9pfs;
-   411		struct usb_function *f;
-   412		int ret = -ENOENT;
-   413		int found = 0;
-   414	
-   415		if (!devname)
-   416			return -EINVAL;
-   417	
-   418		mutex_lock(&usb9pfs_lock);
-   419		list_for_each_entry_safe(dev, tmp, &usbg_instance_list, usb9pfs_instance) {
-   420			if (!strncmp(devname, dev->tag, strlen(devname))) {
-   421				if (!dev->inuse) {
-   422					dev->inuse = true;
-   423					found = 1;
-   424					break;
-   425				}
-   426				ret = -EBUSY;
-   427				break;
-   428			}
-   429		}
-   430	
-   431		if (!found) {
-   432			mutex_unlock(&usb9pfs_lock);
-   433			pr_err("no channels available for device %s\n", devname);
-   434			return ret;
-   435		}
-   436	
-   437		usb9pfs = dev->usb9pfs;
-   438		if (!usb9pfs) {
-   439			mutex_unlock(&usb9pfs_lock);
-   440			return -EINVAL;
-   441		}
-   442	
-   443		INIT_LIST_HEAD(&usb9pfs->tx_req_list);
-   444	
-   445		f = &usb9pfs->function;
-   446		cdev = f->config->cdev;
-   447	
-   448		client->trans = (void *)usb9pfs;
-   449		if (!usb9pfs->in_req)
-   450			client->status = Disconnected;
-   451		else
-   452			client->status = Connected;
-   453		usb9pfs->client = client;
-   454	
-   455		client->trans_mod->maxsize = usb9pfs->buflen;
-   456	
-   457		mutex_unlock(&usb9pfs_lock);
-   458	
-   459		return 0;
-   460	}
-   461	
-
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 9ecf99190ea2..5388a35c4e9c 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -2323,8 +2323,11 @@ void drain_zone_pages(struct zone *zone, struct per_cpu_pages *pcp)
+ static void drain_pages_zone(unsigned int cpu, struct zone *zone)
+ {
+ 	struct per_cpu_pages *pcp = per_cpu_ptr(zone->per_cpu_pageset, cpu);
+-	int count = READ_ONCE(pcp->count);
++	int count;
+ 
++	spin_lock(&pcp->lock);
++	count = pcp->count;
++	spin_unlock(&pcp->lock);
+ 	while (count) {
+ 		int to_drain = min(count, pcp->batch << CONFIG_PCP_BATCH_SCALE_MAX);
+ 		count -= to_drain;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.29.2
+
 
