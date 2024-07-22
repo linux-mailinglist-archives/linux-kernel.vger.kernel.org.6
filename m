@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-258616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8513938A89
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:57:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 772CF938A90
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:59:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 983851C20F42
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:57:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7F8C1F21823
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402FA160865;
-	Mon, 22 Jul 2024 07:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E2D161313;
+	Mon, 22 Jul 2024 07:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sbawr4QQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p3l5QXhO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C54415252D;
-	Mon, 22 Jul 2024 07:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5EB438DE4;
+	Mon, 22 Jul 2024 07:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721635018; cv=none; b=uzumqsuoV6vPNVucdCmbsW+E9UXKQy8OLD3XWFiIMjRczBLUh4L2FYfMP679sPNDtiPhOg+cFtmaM7VjiBxw3imy1csouY30snvtf8z0rH+LK7PrZ6nM0atDLOYLShvh69a5s+8x7LougoScYfc9STL8SoWnNrnn6qxUFZqTrtE=
+	t=1721635131; cv=none; b=t+b3xtwZPF2p0FsWvwheDphd3Qh6cbBwo4tH1xwK1KjXQiLlMqMRtSb2+l3ykqYWh6wmOePH3deOiQ5lgDDu0cDa5Gz5z2MBgMPku/K4LprKQfzZHR1V3OvZBSM14iZ75ZEw3WKX1wy0KIGY6+YFZNazClTku0NXkeVAcrpFwxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721635018; c=relaxed/simple;
-	bh=COQMtfBNJwfO8uljz2p9okL45TamVuQg+CNbtYLtpZM=;
+	s=arc-20240116; t=1721635131; c=relaxed/simple;
+	bh=t4MoDf3FnLMIGWuvFCTqp8O+YxNp0r1Uz8HYq1c6io0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BkEU74y3d7HPNHIaP0ti0tOAT0D2awTF3IC/RC0BmTOk/PznWY2E9lAP93oNbO1iwv6gbYLZUGF1uwaW0GKBb1+BpweSq5vMTnsUjFWe7wH4LBpFJyk7nEkY116baOP6S8e2bZi0Ur1YF6mSSlBqd+6CldR9h0uJr0bnEajJhBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sbawr4QQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B32EC116B1;
-	Mon, 22 Jul 2024 07:56:54 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=hA0NCl18xBEMjvy66my+HwPWEpexhgcmwzgc9AYUaeGiDLUIXlsGT6Xaxc7uxIKet+yaXbHffsrXbgIrJKRwMFkMZ0+PBlQpaIGnwr3EqZM4m9vWL4g7k/299eHTtMDB0JsHzFff/5imBQaTf1KGNKCukm1RlN+bFOdfms5wD70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p3l5QXhO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FD54C116B1;
+	Mon, 22 Jul 2024 07:58:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721635018;
-	bh=COQMtfBNJwfO8uljz2p9okL45TamVuQg+CNbtYLtpZM=;
+	s=k20201202; t=1721635130;
+	bh=t4MoDf3FnLMIGWuvFCTqp8O+YxNp0r1Uz8HYq1c6io0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Sbawr4QQYzw5QLZVw8zvAqKoy7urqCgbWgYlzmZaBYFN9RPr+ZzuP9p7jhtK0/laG
-	 QO8/5fCc8oNhng7DxdUzK5Rd3qkKXj4jcXdKOVhShzba0OXRgg4aXW5defW8lq0AMx
-	 Jmv4ieATVzjO7dM7fpnr/FrHFdEGkhyrqrVTOlZV13e76LA3nlFh6DDhpDFN5N2Eiv
-	 a7XCfPvcz8MDOnKOtsb0Vl1Ny7WHHojLiYi8VUWXbiQzXw2+/yA2uda+v5kR6u4RGq
-	 EpzJfNw+cTG4HIoojCtpiwjtV2KFQQHAirTQ7N89ZBtshELZ9ynJugep+jglGHE7hS
-	 MidUhEHCxk8Sw==
-Message-ID: <ebe3853e-aa69-417c-ad0d-efe58a0dd1b9@kernel.org>
-Date: Mon, 22 Jul 2024 09:56:52 +0200
+	b=p3l5QXhOXSZ1jFehevzYIfybM8OAduoEqqsnzdKajKOkt9T1dBgpjeBicANeDfnvP
+	 TcwznGeeu/bOWZOOxBwBpYuDovwRyTKmQa3qlaBNGxrBrwJ4MnEJN91pLmHUL0gy51
+	 3L3Oa5U0m/glSk8G/RLRtgfic6cBez0KC6dBPxhowXw20Bm961yZ1BO17MI79iROyo
+	 6Qqpxy9JvUYrVSvN4QRMIf2/cJL/cJJ72SyothFh0exS+lOqd6Mbag5Q5J5YLqm66W
+	 FaXxW43sKeMiUbyLAXXlb/PlT84vo41glJR5vwHcJywWhVtnH0yjrmz+qu4m03MxWa
+	 UhBx2hhQhcmnw==
+Message-ID: <bbe8d8ad-d78c-43fe-8beb-39453832b5bf@kernel.org>
+Date: Mon, 22 Jul 2024 09:58:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,16 +49,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/6] ARM: dts: samsung: exynos4212-tab3: Drop dummy mic
- bias regulators
-To: Artur Weber <aweber.kernel@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-References: <20240716-midas-audio-tab3-v1-0-a53ea075af5a@gmail.com>
- <20240716-midas-audio-tab3-v1-6-a53ea075af5a@gmail.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: net: bluetooth: Add support for
+ Amlogic Bluetooth
+To: Yang Li <yang.li@amlogic.com>, Marcel Holtmann <marcel@holtmann.org>,
+ Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240718-btaml-v2-0-1392b2e21183@amlogic.com>
+ <20240718-btaml-v2-1-1392b2e21183@amlogic.com>
+ <18f1301f-6d93-4645-b6d9-e4ccd103ff5d@kernel.org>
+ <30cf7665-ff35-4a1a-ba26-0bbe377512be@amlogic.com>
+ <1582443b-c20a-4e3a-b633-2e7204daf7e0@kernel.org>
+ <e8adc4a7-ee03-401d-8a3f-0fb415318ad3@amlogic.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,63 +112,55 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240716-midas-audio-tab3-v1-6-a53ea075af5a@gmail.com>
+In-Reply-To: <e8adc4a7-ee03-401d-8a3f-0fb415318ad3@amlogic.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 16/07/2024 21:36, Artur Weber wrote:
-> Add the samsung,tab3-audio compatible that makes mic bias regulators
-> non-required, and drop the dummy main/sub mic bias regulators that
-> don't exist in hardware.
+On 22/07/2024 09:41, Yang Li wrote:
+>>>>> +    description: bluetooth chip 3.3V supply regulator handle
+>>>>> +
+>>>>> +  clocks:
+>>>>> +    maxItems: 1
+>>>>> +    description: clock provided to the controller (32.768KHz)
+>>>>> +
+>>>>> +  antenna-number:
+>>>>> +    default: 1
+>>>>> +    description: device supports up to two antennas
+>>>> Keep it consistent - either descriptions are the last property or
+>>>> somewhere else. Usually the last.
+>>>>
+>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>>> And what does it mean? What happens if BT uses antenna number 2, not 1?
+>>>> What is connected to the other antenna? It really feels useless to say
+>>>> which antenna is connected to hardware.
+>>> Sorry, the antenna description was incorrect, it should specify whether
+>>>
+>>> Bluetooth and WiFi coexist. I will change it as below:
+>>>
+>>>       aml,work-mode:
+>>>       type: boolean
+>>>       description: specifywhether Bluetooth and WiFi coexist.
+>> So one device can be used on different boards - some without WiFi
+>> antenna? But, why in the binding of bluetooth you describe whether there
+>> is WiFi antenna?
 > 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
->  arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi | 20 ++------------------
->  1 file changed, 2 insertions(+), 18 deletions(-)
+> Yes, it can be used on dirfferent boards. The device can operate in both 
+
+Please do not respond to only partial part of the comment. It is obvious
+device can work on different boards. You do not have to confirm it. The
+question was different - why do you need this property? I gave you
+possible answer, but you skipped this and answered with obvious statement.
+
+> standalone mode and coexistence mode. typically running standalone mode.
 > 
-> diff --git a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-> index 2f39f3c0661e..a140f86d399b 100644
-> --- a/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-> +++ b/arch/arm/boot/dts/samsung/exynos4212-tab3.dtsi
-> @@ -286,20 +286,6 @@ display_3v3_supply: voltage-regulator-3 {
->  		enable-active-high;
->  	};
->  
-> -	mic_bias_reg: voltage-regulator-4 {
-> -		compatible = "regulator-fixed";
-> -		regulator-name = "MICBIAS_LDO_2.8V";
-> -		regulator-min-microvolt = <2800000>;
-> -		regulator-max-microvolt = <2800000>;
-> -	};
-> -
-> -	submic_bias_reg: voltage-regulator-5 {
-> -		compatible = "regulator-fixed";
-> -		regulator-name = "SUB_MICBIAS_LDO_2.8V";
-> -		regulator-min-microvolt = <2800000>;
-> -		regulator-max-microvolt = <2800000>;
-> -	};
-> -
->  	earmic_bias_reg: voltage-regulator-6 {
+> Therefore, I would like to revise the description as follows:
+> 
+> aml,coexisting:
+>      type: boolean
+>      description: Enable coexistence mode, allowing shared antenna usage 
+> with Wi-Fi.
 
-This should be voltage-regulator-4.
-
->  		compatible = "regulator-fixed";
->  		regulator-name = "EAR_MICBIAS_LDO_2.8V";
-> @@ -310,14 +296,12 @@ earmic_bias_reg: voltage-regulator-6 {
->  	};
->  
->  	sound: sound {
-> -		compatible = "samsung,midas-audio";
-> +		compatible = "samsung,tab3-audio", "samsung,midas-audio";
->  		model = "TAB3";
-> -		mic-bias-supply = <&mic_bias_reg>;
-> -		submic-bias-supply = <&submic_bias_reg>;
-> -		headset-mic-bias-supply = <&earmic_bias_reg>;
->  
-
-You just added this line. Organize patches or code in a way that does
-not move it within one patchset.
-
+Why this is not enabled always?
 
 Best regards,
 Krzysztof
