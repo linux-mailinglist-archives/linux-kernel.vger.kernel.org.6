@@ -1,223 +1,131 @@
-Return-Path: <linux-kernel+bounces-259044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15EA9939061
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:13:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54242939070
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:16:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0AE128205B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:13:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69E9E1C21602
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEC816D9DC;
-	Mon, 22 Jul 2024 14:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3FF1EB3D;
+	Mon, 22 Jul 2024 14:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="giUCwqx5"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PWrzdmgE"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECCF1DFE3
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 14:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098D5BE5E;
+	Mon, 22 Jul 2024 14:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721657585; cv=none; b=HyqziTucmsXe0laNe12yFLJztF9bODNaprq5HCkV0LgKZUDqYYzrO5tUgVL9pbFKyNbqkhQ4+VJhG1hLKw8/Sr4mJFZ787hcu2Wb8PaDXSOfSdzAJnpv2oLKvoXlokoMxvBXjV7tiWUFDTraAgEnAcXDcxgJ/Rpy+bG4S9SNeSo=
+	t=1721657799; cv=none; b=cXzakW5WRskZgeDx+wwjFemonpKnB2m5FabNMbmRzPF32CBqUDfWGL1j9iv+fIA6xbGAT83D5249o8hykqU0x4WxFisvoLt+GvelRJx72rf7B4q/VqGpl1tDv6uRk9oOBpVMJinZp+L11u0nZD1uu4RJ1OPNd02Nconlx+CPTc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721657585; c=relaxed/simple;
-	bh=Ac0ZVFezlunGPwPXMVZW5bxBBc/RGcpHkhCF3Mu5yoA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MpAZ0lBh+SJ2Rjabw50E/n7HaTk3xVRIsDLkH4ERNUGohQrs2HyuVIaIZ8v1SvKX1e4Ww4s2KVm706GYTw55wRayGYKjEyru0khb8Hp6y9H2sVjaVOHxlLJ0gMwn3DOcfixixVPd00WcluCGScTkqbm/nw44DrnQMTyEb8dRsZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=giUCwqx5; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4266ea4e4bdso5011895e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:13:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1721657581; x=1722262381; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Tgbm5Spa6iNkRq2Ux0zzj+WvaN7ol/xJ5I1VMsf8wA=;
-        b=giUCwqx5TOsMiiOYTyefyb54PRX1ac9GYkm+BaIVksZx6VEOTWewc9yyT07Z6KQ8dF
-         NYfEWPhJ+GLgPwvNKu/lFiVImFNAb+XcI/hCc2qTsBr1YBuzwKFFtswrKwUQ3Afa+WDi
-         IUFMEkVaESZkdO+rh2M4DtWWJosj/3FizblLk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721657581; x=1722262381;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/Tgbm5Spa6iNkRq2Ux0zzj+WvaN7ol/xJ5I1VMsf8wA=;
-        b=FDfkl2idPzB2KfG2/M4ey/Gj/r91/6CWxpd3NM6gIqMNjLFoHMKDKblk72YX6VxadT
-         BvAHir6kbYinpHkefgaYBbn9ZJLecleox3Kj41/RKpbfGLYc0FWLDHxaBCBn+DVsx7Ol
-         mOKzdk7giI6KJTGbLpLvkHT2R5dWZk3AGFSS8EE2OCQvG+ItfqwgCZ9IbCOvOrgx+RcN
-         phC7SNzblS5pr0VKT4U31tvKwQ/2NmwvqfNcg1BBFP4igMCh+E1Kh/p6yC+Jv9sDd/1H
-         VHrcHMSdEPC/GbdAwxK/Xp44E6NSbRrdNuEQBK9H+6CBheaSOBwFkSug+ITlWugXTC7D
-         neGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAn74NX98o/sVZaZnBzAuPt1Z43Q4EAJNrChwI+OsERCuqKBHmUCETtb/StoKD2J67keJj97zvMPnpJQIRhVgPUw6hW0vl7yp3z7ts
-X-Gm-Message-State: AOJu0Yx5l0tJAjBttvGHU3MG7VSlwKYprCjtG+24cMOHm5y/s84cJmNd
-	jAxW9uJRZPPV8Josf5kpUzdAx9opWnHfkjZ4v5iKDseTQ/o/bN8A+wdK1ijrnac=
-X-Google-Smtp-Source: AGHT+IEWsvPxVi7zS2plkJNlwJ+meC0H3C4mcFP8YEp/srMJx9fmtOr9AjHG6UxguTL2eGdmswxsrw==
-X-Received: by 2002:a05:600c:4f4b:b0:427:9f71:16ba with SMTP id 5b1f17b1804b1-427daa927f5mr33298725e9.5.1721657580586;
-        Mon, 22 Jul 2024 07:13:00 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d6901781sm129162825e9.14.2024.07.22.07.12.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 07:12:59 -0700 (PDT)
-Date: Mon, 22 Jul 2024 16:12:57 +0200
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-To: Jocelyn Falempe <jfalempe@redhat.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Helge Deller <deller@gmx.de>,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Samuel Thibault <samuel.thibault@ens-lyon.org>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH 1/3] drm/panic: Add drm_panic_is_enabled()
-Message-ID: <Zp5o6fnBuTlxm-X_@phenom.ffwll.local>
-Mail-Followup-To: Jocelyn Falempe <jfalempe@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Helge Deller <deller@gmx.de>,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Samuel Thibault <samuel.thibault@ens-lyon.org>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org
-References: <20240717090102.968152-1-jfalempe@redhat.com>
- <20240717090102.968152-2-jfalempe@redhat.com>
- <ZpfeiMj48JQTQcOE@phenom.ffwll.local>
- <34305c58-38a6-4b5a-9777-69833aefa003@redhat.com>
- <60419d31-f467-4277-97da-23c9573af2bf@redhat.com>
+	s=arc-20240116; t=1721657799; c=relaxed/simple;
+	bh=nTXDt+l4Zuc6S41Z8e98PXIq3CzXrwpHhQdfJG+SCBg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IibBhJU1whxP780MJhL2YMUj2E4xht47tnQ4zgz2TG7ORnTKsUdiNw/BFR9uhqq+c4kBQRJjUuSjEN6lHdGbIW4Jg0MgC09Hb3sQyIfSTsOgI5MBQaO6KSs6lFK4AWSNnp4rRFjGSqTRVGOaJRIeT9Lefnqge5kDuEAgR+kPrN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PWrzdmgE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46MAlKa0024464;
+	Mon, 22 Jul 2024 14:16:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	PNR2ywxLBRAwgL+RND1uxuDJVf3sbd5jqUguxEb0BIQ=; b=PWrzdmgE5P2xLC84
+	Aqzrli9W2EcPmdMicBCy+1NzrCtJJ7o4y2993LC+HskJrWmUK7eIGGjcKtBE/KPW
+	nVVOzjCqaJbk+DnJzT4ONFvB02Gv/MNqVC1CVI9srm8MbuR+sFTgHrgoYn8mWI0q
+	r0yxJy+/2OW/bcBdraizC3EexPwXlglveafMU5Fgawwf02ZBpB99PDS328jrF5iu
+	+TFGjgN/NTVgwph1P15CLQ8yrozev2qVhJnqbwRH50mIT4RJZslnW4KKaYVtlcjy
+	aJ8Q0EXQbD0hAQT7EdRfo5qQDTp+AuUwjXfJI/8/reFnEef/KIObNH5Ju7c7+f8J
+	qrtcWg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g487c2f1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Jul 2024 14:16:19 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46MEGHmk023813
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Jul 2024 14:16:17 GMT
+Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 22 Jul
+ 2024 07:16:17 -0700
+Message-ID: <d1a7c02f-2a13-4319-be33-fc7f613b7e8a@quicinc.com>
+Date: Mon, 22 Jul 2024 07:16:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <60419d31-f467-4277-97da-23c9573af2bf@redhat.com>
-X-Operating-System: Linux phenom 6.9.7-amd64 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] lib/llist_kunit.c: add KUnit tests for llist
+To: Artur Alves <arturacb@gmail.com>,
+        Andrew Morton
+	<akpm@linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>,
+        Brendan Higgins
+	<brendan.higgins@linux.dev>,
+        David Gow <davidgow@google.com>, Rae Moar
+	<rmoar@google.com>,
+        <linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>
+CC: <n@nfraprado.net>, <andrealmeid@riseup.net>, <vinicius@nukelet.com>,
+        <diego.daniel.professional@gmail.com>
+References: <20240721234317.7935-1-arturacb@gmail.com>
+ <20240721234317.7935-2-arturacb@gmail.com>
+Content-Language: en-US
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240721234317.7935-2-arturacb@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: vGvAOY6yclgHRv8anmsyWCn4Gozh1RBK
+X-Proofpoint-GUID: vGvAOY6yclgHRv8anmsyWCn4Gozh1RBK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-22_10,2024-07-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ suspectscore=0 phishscore=0 priorityscore=1501 mlxlogscore=551
+ malwarescore=0 adultscore=0 impostorscore=0 clxscore=1011
+ lowpriorityscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2407220107
 
-On Thu, Jul 18, 2024 at 11:30:05AM +0200, Jocelyn Falempe wrote:
+On 7/21/24 16:43, Artur Alves wrote:
+> Add KUnit tests for the llist data structure. They test the vast
+> majority of methods and macros defined in include/linux/llist.h.
 > 
+> These are inspired by the existing tests for the 'list' doubly
+> linked in lib/list-test.c [1]. Each test case (llist_test_x)
+> tests the behaviour of the llist function/macro 'x'.
 > 
-> On 18/07/2024 09:04, Jocelyn Falempe wrote:
-> > 
-> > 
-> > On 17/07/2024 17:08, Daniel Vetter wrote:
-> > > On Wed, Jul 17, 2024 at 10:48:39AM +0200, Jocelyn Falempe wrote:
-> > > > It allows to check if the drm device supports drm_panic.
-> > > > Prepare the work to have better integration with fbcon and vtconsole.
-> > > > 
-> > > > Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
-> > > > ---
-> > > >   drivers/gpu/drm/drm_panic.c | 20 ++++++++++++++++++++
-> > > >   include/drm/drm_panic.h     |  2 ++
-> > > >   2 files changed, 22 insertions(+)
-> > > > 
-> > > > diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
-> > > > index 948aed00595e..d9a25c2d0a65 100644
-> > > > --- a/drivers/gpu/drm/drm_panic.c
-> > > > +++ b/drivers/gpu/drm/drm_panic.c
-> > > > @@ -703,6 +703,26 @@ static void debugfs_register_plane(struct
-> > > > drm_plane *plane, int index)
-> > > >   static void debugfs_register_plane(struct drm_plane *plane,
-> > > > int index) {}
-> > > >   #endif /* CONFIG_DRM_PANIC_DEBUG */
-> > > > +/**
-> > > > + * drm_panic_is_enabled
-> > > > + * @dev: the drm device that may supports drm_panic
-> > > > + *
-> > > > + * returns true if the drm device supports drm_panic
-> > > > + */
-> > > > +bool drm_panic_is_enabled(struct drm_device *dev)
-> > > > +{
-> > > > +    struct drm_plane *plane;
-> > > > +
-> > > > +    if (!dev->mode_config.num_total_plane)
-> > > > +        return false;
-> > > > +
-> > > > +    drm_for_each_plane(plane, dev)
-> > > > +        if (plane->helper_private &&
-> > > > plane->helper_private->get_scanout_buffer)
-> > > > +            return true;
-> > > > +    return false;
-> > > > +}
-> > > > +EXPORT_SYMBOL(drm_panic_is_enabled);
-> > > 
-> > > This feels like overkill since you currently only have one user in the
-> > > fbdev emulation code, but maybe useful in some other places ...
-> > > 
-> > > > +
-> > > >   /**
-> > > >    * drm_panic_register() - Initialize DRM panic for a device
-> > > >    * @dev: the drm device on which the panic screen will be displayed.
-> > > > diff --git a/include/drm/drm_panic.h b/include/drm/drm_panic.h
-> > > > index 73bb3f3d9ed9..c3a358dc3e27 100644
-> > > > --- a/include/drm/drm_panic.h
-> > > > +++ b/include/drm/drm_panic.h
-> > > > @@ -148,11 +148,13 @@ struct drm_scanout_buffer {
-> > > >   #ifdef CONFIG_DRM_PANIC
-> > > > +bool drm_panic_is_enabled(struct drm_device *dev);
-> > > 
-> > > Since it's internal only, this should be in
-> > > drivers/gpu/drm/drm_crtc_internal.h and not int he include for drivers.
-> > 
-> > Yes, that makes sense, drivers won't need that API.
-> > 
-> > > With that:
-> > > 
-> > > Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > > 
-> > > >   void drm_panic_register(struct drm_device *dev);
-> > > >   void drm_panic_unregister(struct drm_device *dev);
-> > > 
-> > > These two are only used in drm.ko. Can you please move them to
-> > > drm_crtc_internal.h too and drop the EXPORT_SYMBOL in a follow-up patch?
-> > > We're trying to limit the exported interface and official headers to
-> > > really only the pieces drivers actually need.
-> > 
-> > Sure, I'll add this to my next drm_panic series.
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/lib/list-test.c
 > 
-> I think this also applies to drm_panic_init() and drm_panic_exit(), that I
-> introduce in my QR code series:
-> https://patchwork.freedesktop.org/patch/604890/?series=135944&rev=2
-> I will move them to drm_crtc_internal.h
+> Signed-off-by: Artur Alves <arturacb@gmail.com>
+> ---
+>   lib/Kconfig.debug |  11 ++
+>   lib/Makefile      |   1 +
+>   lib/llist_kunit.c | 360 ++++++++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 372 insertions(+)
+>   create mode 100644 lib/llist_kunit.c
 
-Yup.
--Sima
+...
 
-> 
-> > 
-> > > 
-> > > Thanks, Sima
-> > > 
-> > > >   #else
-> > > > +bool drm_panic_is_enabled(struct drm_device *dev) {return false; }
-> > > >   static inline void drm_panic_register(struct drm_device *dev) {}
-> > > >   static inline void drm_panic_unregister(struct drm_device *dev) {}
-> > > > -- 
-> > > > 2.45.2
-> > > > 
-> > > 
-> > 
-> > Best regards,
-> > 
-> 
+> +MODULE_LICENSE("GPL v2");
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the 
+description is missing") a module without a MODULE_DESCRIPTION() will 
+result in a warning with make W=1.
+
+Multiple developers, including myself, have been fixing the existing 
+warnings for 6.11 so please don't introduce a new one :)
+
+/jeff
 
