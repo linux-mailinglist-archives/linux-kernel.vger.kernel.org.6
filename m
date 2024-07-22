@@ -1,131 +1,118 @@
-Return-Path: <linux-kernel+bounces-259146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 774029391E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:33:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A706B9391E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:34:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2065C1F21CF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:33:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B6A4B20A00
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66B016E863;
-	Mon, 22 Jul 2024 15:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE4D16E86B;
+	Mon, 22 Jul 2024 15:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTd8KjIa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Hq5af8zE"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01D116CD18
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 15:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA8F16CD18;
+	Mon, 22 Jul 2024 15:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721662412; cv=none; b=VasxEezmS9qRcVZHrIeea38iDs1e1hJPCJmQhACW5k70YYUF+yO4McRpGpgCzEowimVrq3+QDI4w0ZL84TjfylRv/rHV0uJTkDALf//aQMGzLQBSqbCjzxdZ2NMkqpEGxB2MRH+VwLaQXAs+Wh8v6uY7Xc1urDUldRP7tAVCJkQ=
+	t=1721662487; cv=none; b=Crw6dtbSL4dlOIcIAjHAEmRN9Oj1U0b7tCvMQIRaNbn5+vZZ2Dtm6ihWSwWLyizUwHio9GTguPrYpaYeA/NYJZ0MorBDiVcdesclYDrslHMeeqoKA1m5ysS9br8DzCfOoolgY80eVmXtP/b5zpDoVPrJLFNIssrr2KCSPI2k8W0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721662412; c=relaxed/simple;
-	bh=15Imh+OFzFlYBfvRORKJOPtZf3LObeq4k/Ll32cYq4U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HCFQCrVZhawQrOTSYsgUvCg8kZ1WiqrXqU7sZChCsbEwWMvm+EGvxFDkp8v6WR3frT2BuWqb91Zkn9ZJYdNHop7sCrUbC6eXAqtNOSKyoHMZMVTt+AZhU9YqufxeFcbC9gHjvBO6lYOvBWVqqhRinRdJc8LdIquDUbm8xsWanws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aTd8KjIa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1110C4AF0D;
-	Mon, 22 Jul 2024 15:33:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721662411;
-	bh=15Imh+OFzFlYBfvRORKJOPtZf3LObeq4k/Ll32cYq4U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aTd8KjIaWTRL96o59+FTMyeXyVvmUaF9nKnGHDMki2C56igprhfGt1eiwhuEkFbvx
-	 aOKoYJNFd6c1rscHvVfL7laDKIQJC/U2LOILLSCpE8eIEljrujsjBBSiBzlrtYJBP6
-	 bZ8U3G42IHuVIm2NU6HZtF+MAA72WperKHnsyq5WHFh2AxErHO4IoAxUnW0oK1b7+K
-	 Z9JFRNUNZ2AyLrAg/7UL1c1YOfXcuAmVgiM4qTTsKp467KIxrFdczOxyiQqSDD4Waq
-	 g8Lw01OSoiej6hOnQNExlfTe0ZfTMyd2+KEMKKpTGqiMYtbiHh67XJ4CBCaEOMb5kQ
-	 +O8wm+lC0Uynw==
-Date: Mon, 22 Jul 2024 16:33:27 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Palmer Dabbelt <palmer@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cache: StarFive: Require a 64-bit system
-Message-ID: <20240722-banter-balance-ead2d4bae7fd@spud>
-References: <20240719163841.19018-1-palmer@rivosinc.com>
+	s=arc-20240116; t=1721662487; c=relaxed/simple;
+	bh=pqX/1pKn6IJcxlRJ+2ycKGD17KperRGQRzjRVL8ZRBc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=B1ZoHFojxkO8CJJSv4qjLEk+VldmjW3JALvtMRtQraT2L8eLxMZQALDCz5iRXxU7Poj+NRYq/gc7njlw2gw8v8UxpBDZzP+VijGeWA02IN5/XjRRlp9XWhdq0iJRSChYtEuKjFBWxumbThOkXP51Bpk5R+AyZ9BpBi1PEfo0MJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Hq5af8zE; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721662484;
+	bh=pqX/1pKn6IJcxlRJ+2ycKGD17KperRGQRzjRVL8ZRBc=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Hq5af8zEoSqr9BQxGsL/7brCE3yfykI4+XK0q0X/R2RTPrNlxfUMRyp0ZXHbcLyfv
+	 zt4fIaJ5B4QTqkxlfDYzQdDtAcmmfXYsOvr1ctqEUYAHBe2pFP9e4+od0Z7QeI0/3N
+	 XV3pcA7uQ6jtx5g4mQRZ57AvsLeTg0ML3rZG8Qc6gpCEmIZZF5e8IcQq6wiqXM9qsc
+	 12/GDvGY6slpMcxRxmPCONHW1cGkaBdRr4qhjf+OpdvEabHAqMtPf7eWPNvyLHPP0o
+	 2SKiGqM3QgF009rWvYEhULM5hm70BaleDcdbDKrJj1P5jTu0yTM/dVd+qP+jQIjuWP
+	 rPCm9Bw9JnJRg==
+Received: from [192.168.1.217] (zone.collabora.co.uk [167.235.23.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0CD603780613;
+	Mon, 22 Jul 2024 15:34:40 +0000 (UTC)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Date: Mon, 22 Jul 2024 11:34:25 -0400
+Subject: [PATCH v2] arm64: dts: mediatek: mt8195-cherry: Remove
+ keyboard-backlight node
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="yYG3E7Nx1SPq8byV"
-Content-Disposition: inline
-In-Reply-To: <20240719163841.19018-1-palmer@rivosinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240722-cros-backlight-dt-probe-v2-1-d77cdf7018ec@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAAB8nmYC/4WMQQ7CIBAAv9Ls2TWAtNWe/IfxsFAsROwaICSm6
+ d8lfsDTZA4zG2SXgsswdRskV0MOvDZRhw6sp3VxGObmoITSYpQ92sQZDdlnDIsvOBd8JzYOx7H
+ XdD4pmgcBrfYhF06f37jKhtv/R5UoUZieHm7Q9qLN1XKMZDjR0fIL7vu+fwHK543ysgAAAA==
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+ Tzung-Bi Shih <tzungbi@kernel.org>, kernel@collabora.com, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Chen-Yu Tsai <wenst@chromium.org>, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+X-Mailer: b4 0.14.0
 
+Commit 970c3a6b7aa3 ("mfd: cros_ec: Register keyboard backlight
+subdevice") introduced support for detecting keyboard backlight
+fuctionality through communication with the ChromeOS EC. This means that
+the DT node is no longer used. Remove the unneeded node.
 
---yYG3E7Nx1SPq8byV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Tested-by: Chen-Yu Tsai <wenst@chromium.org>
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+---
+Changes in v2:
+- Removed RFC tag
+- Link to v1: https://lore.kernel.org/r/20240715-cros-backlight-dt-probe-v1-1-0b5afe64c94b@collabora.com
+---
+ arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi | 4 ----
+ 1 file changed, 4 deletions(-)
 
-On Fri, Jul 19, 2024 at 09:38:41AM -0700, Palmer Dabbelt wrote:
-> From: Palmer Dabbelt <palmer@rivosinc.com>
->=20
-> This has a bunch of {read,write}q() calls, so it won't work on 32-bit
-> systems.  I don't think there's any 32-bit StarFive systems, so for now
-> just require 64-bit.
->=20
-> Fixes: cabff60ca77d ("cache: Add StarFive StarLink cache management")
-> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+diff --git a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
+index fe5400e17b0f..20dfa18c9dda 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
+@@ -1228,10 +1228,6 @@ cros_ec: ec@0 {
+ 		spi-max-frequency = <3000000>;
+ 		wakeup-source;
+ 
+-		keyboard-backlight {
+-			compatible = "google,cros-kbd-led-backlight";
+-		};
+-
+ 		i2c_tunnel: i2c-tunnel {
+ 			compatible = "google,cros-ec-i2c-tunnel";
+ 			google,remote-bus = <0>;
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-if you wanna take it - might be worth being explicit about it causing
-build issues for rv32 though.
+---
+base-commit: 91e3b24eb7d297d9d99030800ed96944b8652eaf
+change-id: 20240715-cros-backlight-dt-probe-7754a832ad60
 
-Thanks,
-Conor.
+Best regards,
+-- 
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-> ---
->  drivers/cache/Kconfig                   | 1 +
->  drivers/cache/starfive_starlink_cache.c | 2 +-
->  2 files changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/cache/Kconfig b/drivers/cache/Kconfig
-> index 94abd8f632a7..db51386c663a 100644
-> --- a/drivers/cache/Kconfig
-> +++ b/drivers/cache/Kconfig
-> @@ -18,6 +18,7 @@ config STARFIVE_STARLINK_CACHE
->  	bool "StarFive StarLink Cache controller"
->  	depends on RISCV
->  	depends on ARCH_STARFIVE
-> +	depends on 64BIT
->  	select RISCV_DMA_NONCOHERENT
->  	select RISCV_NONSTANDARD_CACHE_OPS
->  	help
-> diff --git a/drivers/cache/starfive_starlink_cache.c b/drivers/cache/star=
-five_starlink_cache.c
-> index 24c7d078ca22..8ee9569771f8 100644
-> --- a/drivers/cache/starfive_starlink_cache.c
-> +++ b/drivers/cache/starfive_starlink_cache.c
-> @@ -19,7 +19,7 @@
->  #define STARLINK_CACHE_FLUSH_CTL			0x10
->  #define STARLINK_CACHE_ALIGN				0x40
-> =20
-> -#define STARLINK_CACHE_ADDRESS_RANGE_MASK		GENMASK(39, 0)
-> +#define STARLINK_CACHE_ADDRESS_RANGE_MASK		GENMASK(39ULL, 0)
->  #define STARLINK_CACHE_FLUSH_CTL_MODE_MASK		GENMASK(2, 1)
->  #define STARLINK_CACHE_FLUSH_CTL_ENABLE_MASK		BIT(0)
-> =20
-> --=20
-> 2.45.2
->=20
-
---yYG3E7Nx1SPq8byV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZp57xwAKCRB4tDGHoIJi
-0vqIAPwOOL4UUdb9ZZeCON6xMr9PV+oapD+cvpcj0rCtKB45ZAD8CNWB7YjcBpxE
-+RXtgZPtDU0aI+z8h284aB3cjZ8WVgE=
-=rlR+
------END PGP SIGNATURE-----
-
---yYG3E7Nx1SPq8byV--
 
