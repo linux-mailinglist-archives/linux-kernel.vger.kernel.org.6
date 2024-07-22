@@ -1,64 +1,66 @@
-Return-Path: <linux-kernel+bounces-258756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A82938C68
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:49:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56A5A938C6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:50:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BF981C21F86
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:49:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AC411C2240F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:50:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E505171086;
-	Mon, 22 Jul 2024 09:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44753171678;
+	Mon, 22 Jul 2024 09:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="OTFHcMlH"
-Received: from smtpout42.security-mail.net (smtpout42.security-mail.net [85.31.212.42])
+	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="ZRW4Z1Xr"
+Received: from smtpout148.security-mail.net (smtpout148.security-mail.net [85.31.212.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B126B16F831
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.31.212.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7156216E88E
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.31.212.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721641438; cv=none; b=QZLCavQly1DcxpXhEpKcAfqTPI6lHYT5jD4E1tC7hFHxVAe6FyCUZbor9jALHIsDZNl/LGMAo5iYMCqQ58dU5/QNRFpneImXrzpvU/ztw7lBsz+dgBxrh1nLYhWCAgaT5CDGVAq9Q4RBrG2W9oghPAGJ31dVNsBe+BsOFicMPWs=
+	t=1721641441; cv=none; b=EdMUlLT1cvKRD4f0ODQOvcdWUZ+61L13UhJtRl2ujE2Ln8LkkMD3oYD3gw9jwjY1EaRQEV4M+UAOv6/Xq7CUy8Pkvs2jdmpi4j+Bx8TNWPDrX4MLLuqSVoN23440a13njSJQkuwrdLOEaXK0856OH9pFDDdafhWdbjTw/XLbHeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721641438; c=relaxed/simple;
-	bh=i2aOZ3R/x/jElpWRK+yCYwSFaQECMP30EAy6IJbselM=;
+	s=arc-20240116; t=1721641441; c=relaxed/simple;
+	bh=o+ZeZemlYweYAhW2nOoXGrtnO8/h6eE+gaWwqbTXEkk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=amFV5npnXDfYaS1WxqKpGQpZceRKy0t55XQKArMmJPoiwUzohuKgr2+fWrgqcI/UZ/+xPMyxAh/8IaNzaTaQW8ty87I9X37A8IXDjOBiiHs5TMDX309UdjWKOos31XqKff7LkgKz3LUOZ9mSAMBX7p6SODJtJcC1/pNsdaeI+lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=OTFHcMlH; arc=none smtp.client-ip=85.31.212.42
+	 MIME-Version:Content-Type; b=E//vg+59Zuhyvgu27WLHfa5yMNzD0H0rKLTCQVMWgPWUJQNA0Zd34R5o5tqthy592mfqw+OLt73kME0dYnIpKVyMSkj5EciJxUrv+tB4Zfg8NsvUxw6GtV1haIusO79frQB+l9JIVllGN1cU+uyidzAFQm07Q2vQQ+VnHt7rUtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=ZRW4Z1Xr; arc=none smtp.client-ip=85.31.212.148
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
-Received: from localhost (localhost [127.0.0.1])
-	by fx302.security-mail.net (Postfix) with ESMTP id 5A56680BD0F
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:43:54 +0200 (CEST)
+Received: from localhost (fx408.security-mail.net [127.0.0.1])
+	by fx408.security-mail.net (Postfix) with ESMTP id DEBC0322B53
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:43:56 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
-	s=sec-sig-email; t=1721641434;
-	bh=i2aOZ3R/x/jElpWRK+yCYwSFaQECMP30EAy6IJbselM=;
+	s=sec-sig-email; t=1721641436;
+	bh=o+ZeZemlYweYAhW2nOoXGrtnO8/h6eE+gaWwqbTXEkk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=OTFHcMlHaC2e0XvVxtUvsBhWBDbf40/ljDQqBMEYcYgOd1fPN5F7VJLGUTuCHRQe/
-	 AX6RLWNnba28LpgfDcMXRV8VzNZMfPCrA+IahAq7M+6YuW7Hp62PO4c4j27ceN0tAl
-	 BKgtCi3yfoLECKhIT48lFOtXkHVZwiH8unu/u+tQ=
-Received: from fx302 (localhost [127.0.0.1]) by fx302.security-mail.net
- (Postfix) with ESMTP id 2515E80ADFD; Mon, 22 Jul 2024 11:43:54 +0200 (CEST)
+	b=ZRW4Z1Xr+zOn2ay+enqLemspVggx5fAvFc5QTTGN8zQx2qkAvmZjEUnvjJ4V06QA9
+	 QbSN90Fjjuy+ZnptrJCmA28hPyF+qYeiujbMkRc/gCVyCMjEd8m2Gs+z66s3Zac02G
+	 hFuWNso5XP7wczDBMtjvcSWDwE4BPtBxwtF5yFs4=
+Received: from fx408 (fx408.security-mail.net [127.0.0.1]) by
+ fx408.security-mail.net (Postfix) with ESMTP id AE4F6322BAC; Mon, 22 Jul
+ 2024 11:43:56 +0200 (CEST)
 Received: from srvsmtp.lin.mbt.kalray.eu (unknown [217.181.231.53]) by
- fx302.security-mail.net (Postfix) with ESMTPS id 8995280BC25; Mon, 22 Jul
- 2024 11:43:53 +0200 (CEST)
+ fx408.security-mail.net (Postfix) with ESMTPS id 4C5B3322B53; Mon, 22 Jul
+ 2024 11:43:54 +0200 (CEST)
 Received: from junon.lan.kalrayinc.com (unknown [192.168.37.161]) by
- srvsmtp.lin.mbt.kalray.eu (Postfix) with ESMTPS id 4F84C40317; Mon, 22 Jul
- 2024 11:43:53 +0200 (CEST)
-X-Secumail-id: <ae77.669e29d9.85e02.0>
+ srvsmtp.lin.mbt.kalray.eu (Postfix) with ESMTPS id 145B240317; Mon, 22 Jul
+ 2024 11:43:54 +0200 (CEST)
+X-Quarantine-ID: <2hqi8tId6onf>
+X-Secumail-id: <1813.669e29da.4a0de.0>
 From: ysionneau@kalrayinc.com
-To: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+To: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
 Cc: Jonathan Borne <jborne@kalrayinc.com>, Julian Vetter
- <jvetter@kalrayinc.com>, Yann Sionneau <ysionneau@kalrayinc.com>, Clement
- Leger <clement@clement-leger.fr>, Guillaume Thouvenin <thouveng@gmail.com>,
- Luc Michel <luc@lmichel.fr>, Jules Maselbas <jmaselbas@zdiv.net>,
- bpf@vger.kernel.org
-Subject: [RFC PATCH v3 35/37] kvx: Add IPI driver
-Date: Mon, 22 Jul 2024 11:41:46 +0200
-Message-ID: <20240722094226.21602-36-ysionneau@kalrayinc.com>
+ <jvetter@kalrayinc.com>, Yann Sionneau <ysionneau@kalrayinc.com>,
+ devicetree@vger.kernel.org
+Subject: [RFC PATCH v3 36/37] kvx: dts: DeviceTree for qemu emulated
+ Coolidge SoC
+Date: Mon, 22 Jul 2024 11:41:47 +0200
+Message-ID: <20240722094226.21602-37-ysionneau@kalrayinc.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240722094226.21602-1-ysionneau@kalrayinc.com>
 References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
@@ -74,237 +76,478 @@ X-ALTERMIMEV2_out: done
 
 From: Yann Sionneau <ysionneau@kalrayinc.com>
 
-The Inter-Processor Interrupt Controller (IPI) provides a fast
-synchronization mechanism to the software. It exposes eight independent
-sets of registers that can be used to notify each processor in the cluster.
+Add device tree for QEMU that emulates a Coolidge V1 SoC.
 
-Co-developed-by: Clement Leger <clement@clement-leger.fr>
-Signed-off-by: Clement Leger <clement@clement-leger.fr>
-Co-developed-by: Guillaume Thouvenin <thouveng@gmail.com>
-Signed-off-by: Guillaume Thouvenin <thouveng@gmail.com>
-Co-developed-by: Julian Vetter <jvetter@kalrayinc.com>
-Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
-Co-developed-by: Luc Michel <luc@lmichel.fr>
-Signed-off-by: Luc Michel <luc@lmichel.fr>
-Signed-off-by: Jules Maselbas <jmaselbas@zdiv.net>
 Signed-off-by: Yann Sionneau <ysionneau@kalrayinc.com>
 ---
 
 Notes:
-V1 -> V2: new patch
-V2 -> V3:
-- Restructured IPI code according to reviewer feedback
-  - move from arch/kvx/platform to drivers/irqchip/
-  - remove bogus comment
-  - call set_smp_cross_call() to set smpboot.c's ipi function pointer
-  - feedbacks: https://lore.kernel.org/bpf/Y8qlOpYgDefMPqWH@zx2c4.com/T/#mb02884ea498e627c2621973157330f2ea9977190
----
- arch/kvx/include/asm/ipi.h         |  16 ++++
- drivers/irqchip/Kconfig            |   4 +
- drivers/irqchip/Makefile           |   1 +
- drivers/irqchip/irq-kvx-ipi-ctrl.c | 143 +++++++++++++++++++++++++++++
- 4 files changed, 164 insertions(+)
- create mode 100644 arch/kvx/include/asm/ipi.h
- create mode 100644 drivers/irqchip/irq-kvx-ipi-ctrl.c
 
-diff --git a/arch/kvx/include/asm/ipi.h b/arch/kvx/include/asm/ipi.h
+V2 -> V3: New patch
+---
+ arch/kvx/boot/dts/Makefile          |   1 +
+ arch/kvx/boot/dts/coolidge-qemu.dts | 444 ++++++++++++++++++++++++++++
+ 2 files changed, 445 insertions(+)
+ create mode 100644 arch/kvx/boot/dts/Makefile
+ create mode 100644 arch/kvx/boot/dts/coolidge-qemu.dts
+
+diff --git a/arch/kvx/boot/dts/Makefile b/arch/kvx/boot/dts/Makefile
 new file mode 100644
-index 0000000000000..a23275d19d225
+index 0000000000000..cd27ceb7a6cce
 --- /dev/null
-+++ b/arch/kvx/include/asm/ipi.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (C) 2017-2023 Kalray Inc.
-+ * Author(s): Clement Leger
-+ */
-+
-+#ifndef _ASM_KVX_IPI_H
-+#define _ASM_KVX_IPI_H
-+
-+#include <linux/irqreturn.h>
-+
-+int kvx_ipi_ctrl_init(struct device_node *node, struct device_node *parent);
-+
-+void kvx_ipi_send(const struct cpumask *mask, unsigned int operation);
-+
-+#endif /* _ASM_KVX_IPI_H */
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index da1dbd79dab54..65db9990cf475 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -337,6 +337,10 @@ config KVX_CORE_INTC
- 	depends on KVX
- 	select IRQ_DOMAIN
- 
-+config KVX_IPI_CTRL
-+	bool
-+	depends on KVX
-+
- config KVX_APIC_GIC
- 	bool
- 	depends on KVX
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index 30b69db8789f7..f8fa246df74d2 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -69,6 +69,7 @@ obj-$(CONFIG_BRCMSTB_L2_IRQ)		+= irq-brcmstb-l2.o
- obj-$(CONFIG_KEYSTONE_IRQ)		+= irq-keystone.o
- obj-$(CONFIG_MIPS_GIC)			+= irq-mips-gic.o
- obj-$(CONFIG_KVX_CORE_INTC)		+= irq-kvx-core-intc.o
-+obj-$(CONFIG_KVX_IPI_CTRL)		+= irq-kvx-ipi-ctrl.o
- obj-$(CONFIG_KVX_APIC_GIC)		+= irq-kvx-apic-gic.o
- obj-$(CONFIG_KVX_ITGEN)			+= irq-kvx-itgen.o
- obj-$(CONFIG_KVX_APIC_MAILBOX)		+= irq-kvx-apic-mailbox.o
-diff --git a/drivers/irqchip/irq-kvx-ipi-ctrl.c b/drivers/irqchip/irq-kvx-ipi-ctrl.c
++++ b/arch/kvx/boot/dts/Makefile
+@@ -0,0 +1 @@
++dtb-y += coolidge-qemu.dtb
+diff --git a/arch/kvx/boot/dts/coolidge-qemu.dts b/arch/kvx/boot/dts/coolidge-qemu.dts
 new file mode 100644
-index 0000000000000..09d955a5c109a
+index 0000000000000..1d5af0d2e687d
 --- /dev/null
-+++ b/drivers/irqchip/irq-kvx-ipi-ctrl.c
-@@ -0,0 +1,143 @@
-+// SPDX-License-Identifier: GPL-2.0-only
++++ b/arch/kvx/boot/dts/coolidge-qemu.dts
+@@ -0,0 +1,444 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/dts-v1/;
 +/*
-+ * Copyright (C) 2017-2024 Kalray Inc.
-+ *
-+ * Author(s): Clement Leger
-+ *            Jonathan Borne
-+ *            Luc Michel
++ * Copyright (C) 2024, Kalray Inc.
 + */
 +
-+#define pr_fmt(fmt)	"kvx_ipi_ctrl: " fmt
++/ {
++	model = "Kalray Coolidge processor (QEMU)";
++	compatible = "kalray,coolidge-qemu";
++	#address-cells = <0x02>;
++	#size-cells = <0x02>;
 +
-+#include <linux/smp.h>
-+#include <linux/io.h>
-+#include <linux/slab.h>
-+#include <linux/types.h>
-+#include <linux/module.h>
-+#include <linux/irqchip.h>
-+#include <linux/of_irq.h>
-+#include <linux/cpumask.h>
-+#include <linux/interrupt.h>
-+#include <linux/cpuhotplug.h>
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
++	chosen {
++		stdout-path = "/axi/serial@20210000";
++	};
 +
-+#include <asm/ipi.h>
++	memory@100000000 {
++		phandle = <0x40>;
++		reg = <0x01 0x00 0x00 0x8000000>;
++		device_type = "memory";
++	};
 +
-+#define IPI_INTERRUPT_OFFSET	0x0
-+#define IPI_MASK_OFFSET		0x20
++	axi {
++		compatible = "simple-bus";
++		#address-cells = <0x02>;
++		#size-cells = <0x02>;
++		ranges;
 +
-+/*
-+ * IPI controller can signal RM and PE0 -> 15
-+ * In order to restrict that to the PE, write the corresponding mask
-+ */
-+#define KVX_IPI_CPU_MASK	(~0xFFFF)
++		virtio-mmio@30003c00 {
++			compatible = "virtio,mmio";
++			reg = <0x00 0x30003c00 0x00 0x200>;
++			interrupt-parent = <&itgen0>;
++			interrupts = <0x9e 0x04>;
++		};
 +
-+/* A collection of single bit ipi messages.  */
-+static DEFINE_PER_CPU_ALIGNED(unsigned long, ipi_data);
++		virtio-mmio@30003e00 {
++			compatible = "virtio,mmio";
++			reg = <0x00 0x30003e00 0x00 0x200>;
++			interrupt-parent = <&itgen0>;
++			interrupts = <0x9f 0x04>;
++		};
 +
-+struct kvx_ipi_ctrl {
-+	void __iomem *regs;
-+	unsigned int ipi_irq;
++		itgen0: itgen_soc_periph0@27000000 {
++			compatible = "kalray,coolidge-itgen";
++			reg = <0x00 0x27000000 0x00 0x1104>;
++			msi-parent = <&apic_mailbox>;
++			#interrupt-cells = <0x02>;
++			interrupt-controller;
++		};
++
++		serial@20210000 {
++			reg-shift = <0x02>;
++			reg-io-width = <0x04>;
++			clocks = <&ref_clk>;
++			interrupts = <0x29 0x04>;
++			interrupt-parent = <&itgen0>;
++			reg = <0x00 0x20210000 0x00 0x100>;
++			compatible = "snps,dw-apb-uart";
++		};
++
++		serial@20211000 {
++			reg-shift = <0x02>;
++			reg-io-width = <0x04>;
++			phandle = <0x3c>;
++			clocks = <&ref_clk>;
++			interrupts = <0x2a 0x04>;
++			interrupt-parent = <&itgen0>;
++			reg = <0x00 0x20211000 0x00 0x100>;
++			compatible = "snps,dw-apb-uart";
++		};
++
++		serial@20212000 {
++			reg-shift = <0x02>;
++			reg-io-width = <0x04>;
++			phandle = <0x3b>;
++			clocks = <&ref_clk>;
++			interrupts = <0x2b 0x04>;
++			interrupt-parent = <&itgen0>;
++			reg = <0x00 0x20212000 0x00 0x100>;
++			compatible = "snps,dw-apb-uart";
++		};
++
++		serial@20213000 {
++			reg-shift = <0x02>;
++			reg-io-width = <0x04>;
++			phandle = <0x3a>;
++			clocks = <&ref_clk>;
++			interrupts = <0x2c 0x04>;
++			interrupt-parent = <&itgen0>;
++			reg = <0x00 0x20213000 0x00 0x100>;
++			compatible = "snps,dw-apb-uart";
++		};
++
++		serial@20214000 {
++			reg-shift = <0x02>;
++			reg-io-width = <0x04>;
++			phandle = <0x39>;
++			clocks = <&ref_clk>;
++			interrupts = <0x2d 0x04>;
++			interrupt-parent = <&itgen0>;
++			reg = <0x00 0x20214000 0x00 0x100>;
++			compatible = "snps,dw-apb-uart";
++		};
++
++		serial@20215000 {
++			reg-shift = <0x02>;
++			reg-io-width = <0x04>;
++			phandle = <0x38>;
++			clocks = <&ref_clk>;
++			interrupts = <0x2e 0x04>;
++			interrupt-parent = <&itgen0>;
++			reg = <0x00 0x20215000 0x00 0x100>;
++			compatible = "snps,dw-apb-uart";
++		};
++	};
++
++	memory@0 {
++		device_type = "memory";
++		reg = <0x00 0x00 0x00 0x400000>;
++	};
++
++	apic_mailbox: apic_mailbox@a00000 {
++		compatible = "kalray,coolidge-apic-mailbox";
++		reg = <0x00 0xa00000 0x00 0xea00>;
++		#interrupt-cells = <0x00>;
++		#address-cells = <0>;
++		interrupt-parent = <&apic_gic>;
++		interrupts = <0x00>, <0x01>, <0x02>, <0x03>, <0x04>, <0x05>,
++			     <0x06>, <0x07>, <0x08>, <0x09>, <0x0a>, <0x0b>,
++			     <0x0c>, <0x0d>, <0x0e>, <0x0f>, <0x10>, <0x11>,
++			     <0x12>, <0x13>, <0x14>, <0x15>, <0x16>, <0x17>,
++			     <0x18>, <0x19>, <0x1a>, <0x1b>, <0x1c>, <0x1d>,
++			     <0x1e>, <0x1f>, <0x20>, <0x21>, <0x22>, <0x23>,
++			     <0x24>, <0x25>, <0x26>, <0x27>, <0x28>, <0x29>,
++			     <0x2a>, <0x2b>, <0x2c>, <0x2d>, <0x2e>, <0x2f>,
++			     <0x30>, <0x31>, <0x32>, <0x33>, <0x34>, <0x35>,
++			     <0x36>, <0x37>, <0x38>, <0x39>, <0x3a>, <0x3b>,
++			     <0x3c>, <0x3d>, <0x3e>, <0x3f>, <0x40>, <0x41>,
++			     <0x42>, <0x43>, <0x44>, <0x45>, <0x46>, <0x47>,
++			     <0x48>, <0x49>, <0x4a>, <0x4b>, <0x4c>, <0x4d>,
++			     <0x4e>, <0x4f>, <0x50>, <0x51>, <0x52>, <0x53>,
++			     <0x54>, <0x55>, <0x56>, <0x57>, <0x58>, <0x59>,
++			     <0x5a>, <0x5b>, <0x5c>, <0x5d>, <0x5e>, <0x5f>,
++			     <0x60>, <0x61>, <0x62>, <0x63>, <0x64>, <0x65>,
++			     <0x66>, <0x67>, <0x68>, <0x69>, <0x6a>, <0x6b>,
++			     <0x6c>, <0x6d>, <0x6e>, <0x6f>, <0x70>, <0x71>,
++			     <0x72>, <0x73>, <0x74>;
++		interrupt-controller;
++		msi-controller;
++	};
++
++	apic_gic: apic_gic@a20000 {
++		compatible = "kalray,coolidge-apic-gic";
++		reg = <0x00 0xa20000 0x00 0x12000>;
++		#interrupt-cells = <0x01>;
++		interrupts-extended = <&core_intc0 0x4>,
++				      <&core_intc1 0x4>,
++				      <&core_intc2 0x4>,
++				      <&core_intc3 0x4>,
++				      <&core_intc4 0x4>,
++				      <&core_intc5 0x4>,
++				      <&core_intc6 0x4>,
++				      <&core_intc7 0x4>,
++				      <&core_intc8 0x4>,
++				      <&core_intc9 0x4>,
++				      <&core_intc10 0x4>,
++				      <&core_intc11 0x4>,
++				      <&core_intc12 0x4>,
++				      <&core_intc13 0x4>,
++				      <&core_intc14 0x4>,
++				      <&core_intc15 0x4>;
++		interrupt-controller;
++	};
++
++	pwr_ctrl: pwr_ctrl@a40000 {
++		compatible = "kalray,coolidge-pwr-ctrl";
++		reg = <0x00 0xa40000 0x00 0x4188>;
++	};
++
++	dsu_clock@a44180 {
++		compatible = "kalray,coolidge-dsu-clock";
++		reg = <0x00 0xa44180 0x00 0x08>;
++		clocks = <&core_clk>;
++	};
++
++	ipi_ctrl@ad0000 {
++		compatible = "kalray,coolidge-ipi-ctrl";
++		reg = <0x00 0xad0000 0x00 0x1000>;
++		#interrupt-cells = <0>;
++		interrupt-controller;
++		interrupts-extended = <&core_intc0 0x18>,
++				      <&core_intc1 0x18>,
++				      <&core_intc2 0x18>,
++				      <&core_intc3 0x18>,
++				      <&core_intc4 0x18>,
++				      <&core_intc5 0x18>,
++				      <&core_intc6 0x18>,
++				      <&core_intc7 0x18>,
++				      <&core_intc8 0x18>,
++				      <&core_intc9 0x18>,
++				      <&core_intc10 0x18>,
++				      <&core_intc11 0x18>,
++				      <&core_intc12 0x18>,
++				      <&core_intc13 0x18>,
++				      <&core_intc14 0x18>,
++				      <&core_intc15 0x18>;
++	};
++
++	core_timer {
++		compatible = "kalray,kv3-1-timer";
++		clocks = <&core_clk>;
++		interrupts-extended = <&core_intc0 0>,
++				      <&core_intc1 0>,
++				      <&core_intc2 0>,
++				      <&core_intc3 0>,
++				      <&core_intc4 0>,
++				      <&core_intc5 0>,
++				      <&core_intc6 0>,
++				      <&core_intc7 0>,
++				      <&core_intc8 0>,
++				      <&core_intc9 0>,
++				      <&core_intc10 0>,
++				      <&core_intc11 0>,
++				      <&core_intc12 0>,
++				      <&core_intc13 0>,
++				      <&core_intc14 0>,
++				      <&core_intc15 0>;
++	};
++
++	clocks {
++
++		core_clk: core_clk {
++			compatible = "fixed-clock";
++			clock-frequency = <0x3b9aca00>;
++			#clock-cells = <0x00>;
++		};
++
++		ref_clk: ref_clk {
++			clock-frequency = <0x5f5e100>;
++			#clock-cells = <0x00>;
++			compatible = "fixed-clock";
++		};
++	};
++
++	cpus {
++		#address-cells = <0x01>;
++		#size-cells = <0x00>;
++		enable-method = "kalray,coolidge-pwr-ctrl";
++
++		cpu@0 {
++			compatible = "kalray,kv3-1-pe","kalray,kv3-pe";
++			device_type = "cpu";
++			reg = <0x00>;
++			clocks = <&core_clk>;
++			core_intc0: interrupt-controller {
++				compatible = "kalray,kv3-1-intc";
++				#interrupt-cells = <0x01>;
++				#address-cells = <0x0>;
++				interrupt-controller;
++			};
++		};
++
++		cpu@1 {
++			device_type = "cpu";
++			reg = <0x01>;
++			compatible = "kalray,kv3-1-pe","kalray,kv3-pe";
++			core_intc1: interrupt-controller {
++				compatible = "kalray,kv3-1-intc";
++				#interrupt-cells = <0x01>;
++				#address-cells = <0x0>;
++				interrupt-controller;
++			};
++		};
++
++		cpu@2 {
++			device_type = "cpu";
++			reg = <0x02>;
++			compatible = "kalray,kv3-1-pe","kalray,kv3-pe";
++			core_intc2: interrupt-controller {
++				compatible = "kalray,kv3-1-intc";
++				#interrupt-cells = <0x01>;
++				#address-cells = <0x0>;
++				interrupt-controller;
++			};
++		};
++
++		cpu@3 {
++			device_type = "cpu";
++			reg = <0x03>;
++			compatible = "kalray,kv3-1-pe","kalray,kv3-pe";
++			core_intc3: interrupt-controller {
++				compatible = "kalray,kv3-1-intc";
++				#interrupt-cells = <0x01>;
++				#address-cells = <0x0>;
++				interrupt-controller;
++			};
++		};
++
++		cpu@4 {
++			device_type = "cpu";
++			reg = <0x04>;
++			compatible = "kalray,kv3-1-pe","kalray,kv3-pe";
++			core_intc4: interrupt-controller {
++				compatible = "kalray,kv3-1-intc";
++				#interrupt-cells = <0x01>;
++				#address-cells = <0x0>;
++				interrupt-controller;
++			};
++		};
++
++		cpu@5 {
++			device_type = "cpu";
++			reg = <0x05>;
++			compatible = "kalray,kv3-1-pe","kalray,kv3-pe";
++			core_intc5: interrupt-controller {
++				compatible = "kalray,kv3-1-intc";
++				#interrupt-cells = <0x01>;
++				#address-cells = <0x0>;
++				interrupt-controller;
++			};
++		};
++
++		cpu@6 {
++			device_type = "cpu";
++			reg = <0x06>;
++			compatible = "kalray,kv3-1-pe","kalray,kv3-pe";
++			core_intc6: interrupt-controller {
++				compatible = "kalray,kv3-1-intc";
++				#interrupt-cells = <0x01>;
++				#address-cells = <0x0>;
++				interrupt-controller;
++			};
++		};
++
++		cpu@7 {
++			device_type = "cpu";
++			reg = <0x07>;
++			compatible = "kalray,kv3-1-pe","kalray,kv3-pe";
++			core_intc7: interrupt-controller {
++				compatible = "kalray,kv3-1-intc";
++				#interrupt-cells = <0x01>;
++				#address-cells = <0x0>;
++				interrupt-controller;
++			};
++		};
++
++		cpu@8 {
++			device_type = "cpu";
++			reg = <0x08>;
++			compatible = "kalray,kv3-1-pe","kalray,kv3-pe";
++			core_intc8: interrupt-controller {
++				compatible = "kalray,kv3-1-intc";
++				#interrupt-cells = <0x01>;
++				#address-cells = <0x0>;
++				interrupt-controller;
++			};
++		};
++
++		cpu@9 {
++			device_type = "cpu";
++			reg = <0x09>;
++			compatible = "kalray,kv3-1-pe","kalray,kv3-pe";
++			core_intc9: interrupt-controller {
++				compatible = "kalray,kv3-1-intc";
++				#interrupt-cells = <0x01>;
++				#address-cells = <0x0>;
++				interrupt-controller;
++			};
++		};
++
++		cpu@10 {
++			device_type = "cpu";
++			reg = <0x0a>;
++			compatible = "kalray,kv3-1-pe","kalray,kv3-pe";
++			core_intc10: interrupt-controller {
++				compatible = "kalray,kv3-1-intc";
++				#interrupt-cells = <0x01>;
++				#address-cells = <0x0>;
++				interrupt-controller;
++			};
++		};
++
++		cpu@11 {
++			device_type = "cpu";
++			reg = <0x0b>;
++			compatible = "kalray,kv3-1-pe","kalray,kv3-pe";
++			core_intc11: interrupt-controller {
++				compatible = "kalray,kv3-1-intc";
++				#interrupt-cells = <0x01>;
++				#address-cells = <0x0>;
++				interrupt-controller;
++			};
++		};
++
++		cpu@12 {
++			device_type = "cpu";
++			reg = <0x0c>;
++			compatible = "kalray,kv3-1-pe","kalray,kv3-pe";
++			core_intc12: interrupt-controller {
++				compatible = "kalray,kv3-1-intc";
++				#interrupt-cells = <0x01>;
++				#address-cells = <0x0>;
++				interrupt-controller;
++			};
++		};
++
++		cpu@13 {
++			device_type = "cpu";
++			reg = <0x0d>;
++			compatible = "kalray,kv3-1-pe","kalray,kv3-pe";
++			core_intc13: interrupt-controller {
++				compatible = "kalray,kv3-1-intc";
++				#interrupt-cells = <0x01>;
++				#address-cells = <0x0>;
++				interrupt-controller;
++			};
++		};
++
++		cpu@14 {
++			device_type = "cpu";
++			reg = <0x0e>;
++			compatible = "kalray,kv3-1-pe","kalray,kv3-pe";
++			core_intc14: interrupt-controller {
++				compatible = "kalray,kv3-1-intc";
++				#interrupt-cells = <0x01>;
++				#address-cells = <0x0>;
++				interrupt-controller;
++			};
++		};
++
++		cpu@15 {
++			device_type = "cpu";
++			reg = <0x0f>;
++			compatible = "kalray,kv3-1-pe","kalray,kv3-pe";
++			core_intc15: interrupt-controller {
++				compatible = "kalray,kv3-1-intc";
++				#interrupt-cells = <0x01>;
++				#address-cells = <0x0>;
++				interrupt-controller;
++			};
++		};
++
++	};
 +};
-+
-+static struct kvx_ipi_ctrl kvx_ipi_controller;
-+
-+void kvx_ipi_send(const struct cpumask *mask, unsigned int operation)
-+{
-+	const unsigned long *maskb = cpumask_bits(mask);
-+	unsigned long flags;
-+	int cpu;
-+
-+	/* Set operation that must be done by receiver */
-+	for_each_cpu(cpu, mask)
-+		set_bit(operation, &per_cpu(ipi_data, cpu));
-+
-+	/* Commit the write before sending IPI */
-+	smp_wmb();
-+
-+	local_irq_save(flags);
-+
-+	WARN_ON(*maskb & KVX_IPI_CPU_MASK);
-+	writel(*maskb, kvx_ipi_controller.regs + IPI_INTERRUPT_OFFSET);
-+
-+	local_irq_restore(flags);
-+}
-+
-+static int kvx_ipi_starting_cpu(unsigned int cpu)
-+{
-+	enable_percpu_irq(kvx_ipi_controller.ipi_irq, IRQ_TYPE_NONE);
-+
-+	return 0;
-+}
-+
-+static int kvx_ipi_dying_cpu(unsigned int cpu)
-+{
-+	disable_percpu_irq(kvx_ipi_controller.ipi_irq);
-+
-+	return 0;
-+}
-+
-+static irqreturn_t ipi_irq_handler(int irq, void *dev_id)
-+{
-+	unsigned long *pending_ipis = &per_cpu(ipi_data, smp_processor_id());
-+
-+	while (true) {
-+		unsigned long ops = xchg(pending_ipis, 0);
-+
-+		if (!ops)
-+			return IRQ_HANDLED;
-+
-+		handle_IPI(ops);
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+int __init kvx_ipi_ctrl_init(struct device_node *node,
-+			     struct device_node *parent)
-+{
-+	int ret;
-+	unsigned int ipi_irq;
-+	void __iomem *ipi_base;
-+
-+	BUG_ON(!node);
-+
-+	ipi_base = of_iomap(node, 0);
-+	BUG_ON(!ipi_base);
-+
-+	kvx_ipi_controller.regs = ipi_base;
-+
-+	/* Init mask for interrupts to PE0 -> PE15 */
-+	writel(KVX_IPI_CPU_MASK, kvx_ipi_controller.regs + IPI_MASK_OFFSET);
-+
-+	ipi_irq = irq_of_parse_and_map(node, 0);
-+	if (!ipi_irq) {
-+		pr_err("Failed to parse irq: %d\n", ipi_irq);
-+		return -EINVAL;
-+	}
-+
-+	ret = request_percpu_irq(ipi_irq, ipi_irq_handler,
-+						"kvx_ipi", &kvx_ipi_controller);
-+	if (ret) {
-+		pr_err("can't register interrupt %d (%d)\n",
-+						ipi_irq, ret);
-+		return ret;
-+	}
-+	kvx_ipi_controller.ipi_irq = ipi_irq;
-+
-+	ret = cpuhp_setup_state(CPUHP_AP_IRQ_KVX_STARTING,
-+				"kvx/ipi:online",
-+				kvx_ipi_starting_cpu,
-+				kvx_ipi_dying_cpu);
-+	if (ret < 0) {
-+		pr_err("Failed to setup hotplug state");
-+		return ret;
-+	}
-+
-+	set_smp_cross_call(kvx_ipi_send);
-+	pr_info("controller probed\n");
-+
-+	return 0;
-+}
-+IRQCHIP_DECLARE(kvx_ipi_ctrl, "kalray,coolidge-ipi-ctrl", kvx_ipi_ctrl_init);
 -- 
 2.45.2
 
