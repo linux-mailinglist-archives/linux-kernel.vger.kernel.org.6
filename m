@@ -1,118 +1,120 @@
-Return-Path: <linux-kernel+bounces-258362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C77C19386CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 02:15:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8984A9386D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 02:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 839BF281206
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 00:15:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB05A1C2031E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 00:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908484A31;
-	Mon, 22 Jul 2024 00:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60F74A31;
+	Mon, 22 Jul 2024 00:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JJ/sTkSn"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iZ2/j45P"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FFD23AD
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 00:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E0723BB;
+	Mon, 22 Jul 2024 00:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721607320; cv=none; b=XoV5zOxlZhJzpKKzoIrVfHPkFATSvxZbNgh/VvGujufamAYIqUGbFWVI6gF674+IZ17zAV7MiXVrj6tCdO2n1RKFchUepR79EFtKTw4mw83IuiBzUc8WP83vJCHdN/4srUOzI9O98pmAJxeAN6+GU2nwYSrgUZZdfLaM9JK7NTA=
+	t=1721607563; cv=none; b=WOzAyTTlvvgqT++TsFwTkBq0XJJ4NeZoJRhL/uWGrZcRI0x/NL45s5pOg6Au2+7d/hBbkg5g23RyH/to0ITx6obHjelS2nA+DOpVxS3Wa3qknklUWCRaBQPQlHoMOam2NKoalDPnhu2KrPAAddsw6/Yo+uw56yjuQX9NumSPwWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721607320; c=relaxed/simple;
-	bh=4Lbvqiw93G2zHnDDYZ8Omb+j3DFInAVl4LQ2gZSThOg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WR2WFZW81PYep8p3/fpQjE5iQsDN6K365FYcaJJGU1vjkzSWkBbaVgSuplQk5Cp0760o/LNf+4NtVjq2y8GVWxuXB1aMcNxLgaqNTsZq7GuBQP70Azap1hmVThndE0Q5Q/i0/D5o66BbTcOCT+7PG5aq4UvFHOP/R1vmn2dTDDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=JJ/sTkSn; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7a47e2179dso141735066b.3
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 17:15:18 -0700 (PDT)
+	s=arc-20240116; t=1721607563; c=relaxed/simple;
+	bh=3QnelwbS+SJ8QvUlG/2JW5a+0Sqe5Y96CsZTE1a1HlI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fT/SAaYyqYa20JPaCb1nI45kmiwun7PCdD80Jk8LvfTsgTLzMqRNcGM+Mf/v6d1UhRcCnL4LStNAf4NZ8pDjI/og/KfWhUjOgBy8am0Mm/fNQktVIoVLH8FXh9knU4jcZkJB/cvkSXnqkqYUUdXQG0AcxRHEtApw30L0Kh2x6Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iZ2/j45P; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70d2e68f5a8so98515b3a.3;
+        Sun, 21 Jul 2024 17:19:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1721607317; x=1722212117; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Fk+ZewaFQX4J1b598U+n7tTY7Ck12eH0e7NaScJUzQE=;
-        b=JJ/sTkSnj4dWqLFQWOqk+S24G6i3Z6RGXAQc6AFTUwgfBjsZ74NkM9O0Ze7xG4TlI7
-         B45ifVecEO+TnTb8QmTUX1vCRZRnODYTxCs2ghXT+mVVOr0hhy+3PeBNUamr19YV8EPe
-         eYG9mtMgJoCXUGCd4xR5LkT2IGs90U4jaA/gs=
+        d=gmail.com; s=20230601; t=1721607561; x=1722212361; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y+Hp3V9epOpNggmYY0jt3ZQHQAMSFsFqhPLXSckEz00=;
+        b=iZ2/j45POMYpNKmMIHj6pRDdrVBICcBuAFOFEtglnt0ehkEwxah+xg1eiRE9ppq03d
+         LrjwctSJOAlHjAwQ2QFzGtWH43wdRtEv23hnim0/7A27Ie55XQe225Cp+A4GZh0oZTvn
+         nTm/q41p4Z0jHWuB2mkQKwIQnGfevzo2487pEr7hUnUNmt7Q54owHZ1WlB570bi+1OJx
+         d/bhorSwHNY+JVpjHIutCaXNg3azZHV801Mn5kde/N82RyCWAITb8lDtaFxiRYT6x7xF
+         5xVqU5hcLYh6XWbXUaaFiuDcLF9IRAtgrwOIf7wYLYTEfZGcKHF9bsHn1qkaM/rD0sj4
+         v6nA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721607317; x=1722212117;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1721607561; x=1722212361;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Fk+ZewaFQX4J1b598U+n7tTY7Ck12eH0e7NaScJUzQE=;
-        b=rofISwtckfIf5x1XS2qpsWKp6cRy0izhO4G4NPgjYW6uHRb34KA/THwIE+4fMQlaRB
-         w6rT4UbeEuN9/xYS+R+sj5NUfBEvE7Ev4BqJkWUsZMUwKYwYJxfM7akokY8rP+Z6/GFG
-         pLZIf8WnhO4WaIOUnMBZHhXrXGllRqqCFCQ+umcdV1N00Cg7q0bmRzbxJsVIaYeu9eu9
-         Evh212t/zdJK9JRA0slAydcgKT/MnX9OgO/2Xx5aLegq+HjneiyDHguqBGyM1XIX16h/
-         X0l5NfQWmz91DHfxtVcqk1K0cIGspCpBWJOMVgJiC64OYnK42TNm1fTo0mPEOHJnYf5P
-         8RRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUeZuSds1zAGNW7obfEekbvX+EFHGpJyfCaOsN5RrUma4gOUOOqNEB73uVH826BKtIZ881BThjGAO5X3XOPHwezN6iSrooD6ClQl2UL
-X-Gm-Message-State: AOJu0YwyIN9TrF+jIaRlzry8u9fT614pEqsUagO/EIPSe/Qy2SpZ0CRN
-	vGtUkbFv8ND1KRHpTKS20pZkwArS0jEd5RUTUHAt7wlAm96x9hbZfOWx9Uzjg7k/6Gm4D4aW/Xc
-	nxIM=
-X-Google-Smtp-Source: AGHT+IFyu3+/xpS/AbQmyGmpRgssd80qHwVpc251oTyNfvk6CSxA2pC1TUHo1YC6G9FDeeb8JS2AOg==
-X-Received: by 2002:a17:907:980d:b0:a77:bfca:da57 with SMTP id a640c23a62f3a-a7a4c445b67mr323008466b.44.1721607316976;
-        Sun, 21 Jul 2024 17:15:16 -0700 (PDT)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c8c1ae1sm348325466b.109.2024.07.21.17.15.16
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 21 Jul 2024 17:15:16 -0700 (PDT)
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5a10bb7b237so2864083a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 17:15:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXWFTd+0VHB7UiSeqwz9s9Gd7JeWoaTqUy7X4IhiK97LxLzv/MnQQiuRcSqntobNkUZDClD/EyXk/m/cIE84nUr/GOAY4mP6JQyxhni
-X-Received: by 2002:a05:6402:5204:b0:58d:81ac:ea90 with SMTP id
- 4fb4d7f45d1cf-5a47c2763damr2803143a12.38.1721607316164; Sun, 21 Jul 2024
- 17:15:16 -0700 (PDT)
+        bh=y+Hp3V9epOpNggmYY0jt3ZQHQAMSFsFqhPLXSckEz00=;
+        b=mwGbFt5eShpHMzEHrzrqzwGK3AlaaZiAUUiCoHlX0Cl1NVx4Wbr3p37pT8ZW+mV3RS
+         7hy1GcUYh3+GoaoSjWC2YpSCa17rXn1tAUFcdW/TDognhgRBjkJY+5qJ3S/z94/B6hbP
+         lCC/Ou/g/z2MYUTAh/qioNlU6D/6qI0rYRyD9pZVL61Op8NhxO4kO6hOyCJu/6iJkFjL
+         esGHn4SH5zU4csA2N/M3xPAhcgIzknGCuEx5rEPyJFHVfBjKGecH/xoFOqMT2l5B2AoW
+         vHROGj7fzy8wAoi/XukVUyfghbpj9JwIeL2h7oH4ekijgfMz8uG9DSfsNaEbW1WuCQ2Y
+         DdWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWlZh5ex4A7twB2403J8PG6GMqSe830Wn+e7g2T8av0rGrKGTIdUlOPnG3WO5SBmQDU6Nlm2dif+G73jgCoQBEPEk+shp0DJqx9+97aTGJG4rtExRruoDFd1yqODV90EwQZ5FtRm0tZ5EpVJR4h
+X-Gm-Message-State: AOJu0YwoEwbJ5XSEBRcnSjyYLIVGE0bH7Eai/Ap0yp5D6EO+XZTGuzXN
+	OeK0hCKWQO99S9vtACRIBbrHhJKiv2ivwQK9dkcuGg/Zo+/xaIbg
+X-Google-Smtp-Source: AGHT+IG3zuxtz2wDMguMaY9bh0QXLns/7YvRJHbsB5ToIadeeJRSYCsxcM3YhbdbwvW+e2w7KliSXA==
+X-Received: by 2002:a05:6a00:1789:b0:70d:2a5d:867f with SMTP id d2e1a72fcca58-70d2a5d8981mr2107349b3a.21.1721607560916;
+        Sun, 21 Jul 2024 17:19:20 -0700 (PDT)
+Received: from localhost.localdomain (201-13-77-175.dsl.telesp.net.br. [201.13.77.175])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70d1370c6adsm2377736b3a.56.2024.07.21.17.19.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Jul 2024 17:19:20 -0700 (PDT)
+From: Diego Vieira <diego.daniel.professional@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>,
+	Rae Moar <rmoar@google.com>,
+	linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com
+Cc: n@nfraprado.net,
+	andrealmeid@riseup.net,
+	vinicius@nukelet.com,
+	diego.daniel.professional@gmail.com
+Subject: [PATCH 0/1] Add KUnit tests for kfifo
+Date: Mon, 22 Jul 2024 00:18:03 +0000
+Message-Id: <20240722001804.8120-1-diego.daniel.professional@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240721145415.fbeb01a853962ef91334f3d1@linux-foundation.org>
-In-Reply-To: <20240721145415.fbeb01a853962ef91334f3d1@linux-foundation.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 21 Jul 2024 17:14:59 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjPuiT+qqWXYb04AssPqo8FYMpjE43OQR4y91wtqxoHdg@mail.gmail.com>
-Message-ID: <CAHk-=wjPuiT+qqWXYb04AssPqo8FYMpjE43OQR4y91wtqxoHdg@mail.gmail.com>
-Subject: Re: [GIT PULL] MM updates for 6.11-rc1
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Sun, 21 Jul 2024 at 14:54, Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> - Is anyone reading this stuff?  If so, email me!
+From: diegodvv <diego.daniel.professional@gmail.com>
 
-I do actually try to read the explanations..
+Hi all,
 
-However, I also do build testing, which seems to have been missing. Notably:
+This is part of a hackathon organized by LKCAMP[1], focused on writing
+tests using KUnit. We reached out a while ago asking for advice on what would
+be a useful contribution[2] and ended up choosing data structures that did
+not yet have tests. 
 
-> Ho-Ren (Jack) Chuang (1):
->      memory tier: consolidate the initialization of memory tiers
+This patch adds tests for the kfifo data structure, defined in 
+include/linux/kfifo.h, and is inspired by the KUnit tests for the doubly
+linked list in lib/list-test.c[3].
 
-causes
+[1] https://lkcamp.dev/about/
+[2] https://lore.kernel.org/all/Zktnt7rjKryTh9-N@arch/
+[3] https://elixir.bootlin.com/linux/latest/source/lib/list-test.c
 
-  WARNING: modpost: vmlinux: section mismatch in reference:
-hmat_set_default_dram_perf+0xc (section: .text) -> default_dram_nodes
-(section: .init.data)
-  WARNING: modpost: vmlinux: section mismatch in reference:
-hmat_set_default_dram_perf+0x6c (section: .text) -> default_dram_nodes
-(section: .init.data)
+Diego Vieira (1):
+  lib/kfifo-test.c: add tests for the kfifo structure
 
-and sure enough, default_dram_nodes() is an init section, and is
-accessed from hmat_set_default_dram_perf().
+ lib/Kconfig.debug |  14 +++
+ lib/Makefile      |   1 +
+ lib/kfifo-test.c  | 222 ++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 237 insertions(+)
+ create mode 100644 lib/kfifo-test.c
 
-I think the fix is to just mark hmat_set_default_dram_perf() as an
-init function too. Testing that now.
+-- 
+2.34.1
 
-                Linus
 
