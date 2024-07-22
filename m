@@ -1,160 +1,197 @@
-Return-Path: <linux-kernel+bounces-259371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBD279394EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:46:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75FF39394F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72795283A93
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:46:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 367A428408B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7538A28DCB;
-	Mon, 22 Jul 2024 20:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC31D31A89;
+	Mon, 22 Jul 2024 20:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OkDZOqkI"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOEHTv9b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552DE3C6BA
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 20:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337921CFB6;
+	Mon, 22 Jul 2024 20:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721681195; cv=none; b=kTSDh6OU0ZECAh/S+k/9IWCAuD+yGXgMDOYl0sLUb/Uixsq/HlKy8+UmBdbhP78oIhIQGSEygFzcHXf3kKWiIDd3DxeJivJeDFZCTMmblV2koZLhRjK0omUCo96tOS7IpXl/FvplkIiLCKyYQL+K+q3FZqEaMeWVX62IU1DZSTg=
+	t=1721681253; cv=none; b=f4jKgnapIva2O1w7GMAe5OsQQbrMqMqDXKC1K3Ss35vvNbsNgy/groRIJxvcF/UcodIs8pwmzk9dBQW9UrCUw38JQICMcARISxUn0Puiimsa3h+vhTxhdDB4rEb8UYaswSCKFzlQJBe/ShLywC2a8Pw09Fu+w0rSCshw7sHFHDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721681195; c=relaxed/simple;
-	bh=0p/5ngv6XCO83taddH9u5RDAVRbGDvsU173BdbpNyWA=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ZmWa13vZ6bQxa2C8p6xji7HGYglJ8uC+mhL6nwhIbwI+jZdm/Thmpk6j/8BdzR/WfvsSwuHPLeEUgaUuu6iyBLSVGyCkXNyhiKhc2vhuchmiQkq4yMPSii+8z2B0ymmghglTw6SisGLEMyGWtQuN5QlvPZhl+1B1rs7u8kK5VgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--peternewman.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OkDZOqkI; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--peternewman.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-70d1339c4c2so2433480b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 13:46:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721681193; x=1722285993; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=pdb7JuYkQVZLHjYJy7/Pp9N8EudoQcGMvd3VIzYqq/g=;
-        b=OkDZOqkIFUne/8ubqTSfh6qioCqvzrgibeBZKBBD04JosDNUh4/7ecRHwVoUOtUsyP
-         7z6SRnZf41X3luM5wQVJ3d9e+uLdBszj/0+6FrW+82EtUNIStoSFxvoxxRZ6j4TrN82N
-         VbzI8LTLG0sDJnZiBww9YiYKUV2yDlG856XkGhWYLx4I/yyTIZy1zPVvQNncufsYsgvu
-         F7LzK5IbDGS408CGNQZYJMobwvTy/MSqN6bh01NZg1YDhSQh4mOnLNo/Vv3vziOmEkLS
-         wnU96rxF7pV4mfAiRfbwTmx1ITVHpARz1mj/lSB71HdVxNv09TZKj+0Xr9Ke0QtbBzWQ
-         AY4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721681193; x=1722285993;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pdb7JuYkQVZLHjYJy7/Pp9N8EudoQcGMvd3VIzYqq/g=;
-        b=tiOrITfd4xDKw0YfC+gXth0qTclPCTJeVjshfBNUAaizsDxw66e3QpPWh2Cn8tYZBy
-         ugRW9xgBkskon0+CWVvxGcBsVpafK55iFu1byHyvN8GEoha2SWPsNfH4OLy93UL7relM
-         5ZvfF42I6Q7zY4rMJs2rAZToixJON5i7YGk+tlj69hKOAsCIXZhBQiSIkq2Qg/6tHLYE
-         MqtPu3OFtjdZO7zq98xJNTTeD9/HvfBW2MiKVvMv55Vuz7jf1Lvtmo4AgiDulrJK4tUH
-         5VnvkjTGNdcZ96AdRNJiR10l7/eqhbSJmpiTaIetLSBUsiBNdrh95FprT8GdNqvfoOs3
-         qJqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXchI5YyMLMfIBqW2XxKEa5P8Rr/DmLUVJZihOpkB1oxhbjw5+rCYqFRhvnB7gl5zHABViQfBX7G4Sdct/bwL2oS+XjALbSGFWjh8M
-X-Gm-Message-State: AOJu0Yy2XudQE9dR3EdhkxFBSUocASMIwwsnsBOmnxliZiHpCzmY50pO
-	N+B1winDcnBjhJA4+TJh2t7N77ZdlztaEA5/lc56Fx6imNVDhd+eMH8WAd8NMdlOIZjf2UJNw1i
-	0gXx6EfgeVA31q7TbIHpeow==
-X-Google-Smtp-Source: AGHT+IFA3bkszRtIYCKKkuY8p4m3ZyHzNIjtlpAXdTSumNCIxUFKb6bkDapHkQMNVHfqi9J4ZqWZ/Iw4e7YrdojCBw==
-X-Received: from peternewman-us.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:3dcc])
- (user=peternewman job=sendgmr) by 2002:a05:6a00:4f8d:b0:705:27de:74e7 with
- SMTP id d2e1a72fcca58-70d3a8520b1mr64042b3a.1.1721681193245; Mon, 22 Jul 2024
- 13:46:33 -0700 (PDT)
-Date: Mon, 22 Jul 2024 13:46:11 -0700
+	s=arc-20240116; t=1721681253; c=relaxed/simple;
+	bh=2tgPmKD5jahHFSGGCNYlypaO0n4srZA5X95Ro2CcyCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F3gLHxIQjtgCoK3Xs+Aj3+2Zrp1/KBuMjmGMWoNiU+vmMIfZZi2Q5Ynn/9g9rxqrVkTnCAYxbxctqk5SNDQp4ul/BMZd10urJk9uM0qwiuFCISWkXaMQOTwHs9yTZRSAuMWx7QlnYteSkMuIr5bpI2coElyPnO9PXvio37u8HJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOEHTv9b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C445BC116B1;
+	Mon, 22 Jul 2024 20:47:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721681253;
+	bh=2tgPmKD5jahHFSGGCNYlypaO0n4srZA5X95Ro2CcyCc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JOEHTv9b8Namblx8+Js/MGy6ZJOPsnmOPkWQF/Kl2a9FeRyYkmmeSIoYDZatZ9C9b
+	 TjWrZWl6xgBfrt98QktIUx8vFvc3mWPg+jerzWM8MO0Qs85Hg3mX4RpsGBpWt8oB5Q
+	 fHvKqkkO6569S0dK3+In3PFwqt33b8U/l4B3dTDbfgNn6nQ93skIC02nzgGhhDSb6F
+	 NGkeO2TTkk80V6OMwyZyyGrmNQjtnJ3N4yNMsDndib49cmXi+ehyA8YvGSkiUAR8aS
+	 p51pCnwyC4UHHhITbu9Vfg195JmwUnQZJ/j/h7yIywtqc/jFAcKnAxH3Co9nZ3uu8h
+	 xPRx9mVbkhaHg==
+Date: Mon, 22 Jul 2024 14:47:23 -0600
+From: Rob Herring <robh@kernel.org>
+To: ysionneau@kalrayinc.com
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Borne <jborne@kalrayinc.com>,
+	Julian Vetter <jvetter@kalrayinc.com>,
+	Jules Maselbas <jmaselbas@zdiv.net>, devicetree@vger.kernel.org
+Subject: Re: [RFC PATCH v3 05/37] dt-bindings: Add binding for
+ kalray,coolidge-apic-mailbox
+Message-ID: <20240722204723.GA61731-robh@kernel.org>
+References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
+ <20240722094226.21602-6-ysionneau@kalrayinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.45.2.1089.g2a221341d9-goog
-Message-ID: <20240722204611.3549213-1-peternewman@google.com>
-Subject: [PATCH] x86/resctrl: Fix arch_mbm_* array overrun on SNC
-From: Peter Newman <peternewman@google.com>
-To: Fenghua Yu <fenghua.yu@intel.com>, Reinette Chatre <reinette.chatre@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H . Peter Anvin" <hpa@zytor.com>, Shaopeng Tan <tan.shaopeng@fujitsu.com>, 
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>, 
-	Peter Newman <peternewman@google.com>, Tony Luck <tony.luck@intel.com>, 
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>, linux-kernel@vger.kernel.org, 
-	eranian@google.com, irogers@google.com, namhyung@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240722094226.21602-6-ysionneau@kalrayinc.com>
 
-When using resctrl on systems with Sub-NUMA Clustering enabled,
-monitoring groups may be allocated RMID values which would overrun the
-arch_mbm_{local,total} arrays.
+On Mon, Jul 22, 2024 at 11:41:16AM +0200, ysionneau@kalrayinc.com wrote:
+> From: Yann Sionneau <ysionneau@kalrayinc.com>
+> 
+> Add binding for Kalray Coolidge APIC Mailbox interrupt-controller.
+> 
+> Co-developed-by: Jules Maselbas <jmaselbas@zdiv.net>
+> Signed-off-by: Jules Maselbas <jmaselbas@zdiv.net>
+> Signed-off-by: Yann Sionneau <ysionneau@kalrayinc.com>
+> ---
+> 
+> Notes:
+> 
+> V2 -> V3: Fixed bindings to adhere to dt-schema
+> ---
+>  .../kalray,coolidge-apic-mailbox.yaml         | 90 +++++++++++++++++++
+>  1 file changed, 90 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/kalray,coolidge-apic-mailbox.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/kalray,coolidge-apic-mailbox.yaml b/Documentation/devicetree/bindings/interrupt-controller/kalray,coolidge-apic-mailbox.yaml
+> new file mode 100644
+> index 0000000000000..334b816b80583
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/kalray,coolidge-apic-mailbox.yaml
+> @@ -0,0 +1,90 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/interrupt-controller/kalray,coolidge-apic-mailbox.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Kalray Coolidge APIC-Mailbox
+> +
+> +maintainers:
+> +  - Jonathan Borne <jborne@kalrayinc.com>
+> +  - Julian Vetter <jvetter@kalrayinc.com>
+> +  - Yann Sionneau <ysionneau@kalrayinc.com>
+> +
+> +description: |
+> +  Each cluster in the Coolidge SoC includes an Advanced Programmable Interrupt
+> +  Controller (APIC) which is split in two part:
+> +    - a Generic Interrupt Controller (referred as APIC-GIC)
+> +    - a Mailbox Controller           (referred as APIC-Mailbox)
+> +  The APIC-Mailbox contains 128 mailboxes of 8 bytes (size of a word),
+> +  this hardware block is basically a 1 KB of smart memory space.
+> +  Each mailbox can be independently configured with a trigger condition
+> +  and an input mode function.
+> +
+> +  Input mode are:
+> +   - write
+> +   - bitwise OR
+> +   - add
+> +
+> +  Interrupts are generated on a write when the mailbox content value
+> +  match the configured trigger condition.
+> +  Available conditions are:
+> +   - doorbell: always raise interruption on write
+> +   - match: when the mailbox's value equal the configured trigger value
+> +   - barrier: same as match but the mailbox's value is cleared on trigger
+> +   - threshold: when the mailbox's value is greater than, or equal to, the
+> +     configured trigger value
+> +
+> +  Since this hardware block generates IRQs based on writes to some memory
+> +  locations, it is both an interrupt controller and an MSI controller.
+> +
+> +properties:
+> +  compatible:
+> +    const: kalray,coolidge-apic-mailbox
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#interrupt-cells":
+> +    const: 0
+> +    description:
+> +      The IRQ number.
+> +
+> +  "#address-cells":
+> +    const: 0
+> +
+> +  interrupt-controller: true
+> +
+> +  interrupts:
+> +    maxItems: 128
+> +    minItems: 1
+> +    description: |
+> +     Specifies the interrupt line(s) in the interrupt-parent controller node;
+> +     valid values depend on the type of parent interrupt controller
 
-This is due to inconsistencies in whether the SNC-adjusted num_rmid
-value or the unadjusted value in resctrl_arch_system_num_rmid_idx() is
-used. The num_rmid value for the L3 resource is currently:
+Your description applies to all 'interrupts' properties and is therefore 
+redundant. What you should explain is what are the 1-128 possible 
+interrupts. Normally, you have to list each one out unless they are all 
+instances of the same type of interrupt.
 
- resctrl_arch_system_num_rmid_idx() / snc_nodes_per_l3_cache
+> +
+> +  msi-controller: true
 
-As a simple fix, make resctrl_arch_system_num_rmid_idx() return the
-SNC-adjusted, L3 num_rmid value on x86.
+"#msi-cells" should be specified too.
 
-Fixes: e13db55b5a0d ("x86/resctrl: Introduce snc_nodes_per_l3_cache")
-Signed-off-by: Peter Newman <peternewman@google.com>
----
- arch/x86/include/asm/resctrl.h     | 6 ------
- arch/x86/kernel/cpu/resctrl/core.c | 8 ++++++++
- include/linux/resctrl.h            | 3 +++
- 3 files changed, 11 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/include/asm/resctrl.h b/arch/x86/include/asm/resctrl.h
-index 12dbd2588ca7..8b1b6ce1e51b 100644
---- a/arch/x86/include/asm/resctrl.h
-+++ b/arch/x86/include/asm/resctrl.h
-@@ -156,12 +156,6 @@ static inline void resctrl_sched_in(struct task_struct *tsk)
- 		__resctrl_sched_in(tsk);
- }
- 
--static inline u32 resctrl_arch_system_num_rmid_idx(void)
--{
--	/* RMID are independent numbers for x86. num_rmid_idx == num_rmid */
--	return boot_cpu_data.x86_cache_max_rmid + 1;
--}
--
- static inline void resctrl_arch_rmid_idx_decode(u32 idx, u32 *closid, u32 *rmid)
- {
- 	*rmid = idx;
-diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-index 1930fce9dfe9..8591d53c144b 100644
---- a/arch/x86/kernel/cpu/resctrl/core.c
-+++ b/arch/x86/kernel/cpu/resctrl/core.c
-@@ -119,6 +119,14 @@ struct rdt_hw_resource rdt_resources_all[] = {
- 	},
- };
- 
-+u32 resctrl_arch_system_num_rmid_idx(void)
-+{
-+	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
-+
-+	/* RMID are independent numbers for x86. num_rmid_idx == num_rmid */
-+	return r->num_rmid;
-+}
-+
- /*
-  * cache_alloc_hsw_probe() - Have to probe for Intel haswell server CPUs
-  * as they do not have CPUID enumeration support for Cache allocation.
-diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-index b0875b99e811..43ac241471b3 100644
---- a/include/linux/resctrl.h
-+++ b/include/linux/resctrl.h
-@@ -248,6 +248,9 @@ struct resctrl_schema {
- 
- /* The number of closid supported by this resource regardless of CDP */
- u32 resctrl_arch_get_num_closid(struct rdt_resource *r);
-+
-+u32 resctrl_arch_system_num_rmid_idx(void);
-+
- int resctrl_arch_update_domains(struct rdt_resource *r, u32 closid);
- 
- /*
--- 
-2.45.2.1089.g2a221341d9-goog
-
+> +
+> +additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#interrupt-cells"
+> +  - "#address-cells"
+> +  - interrupt-controller
+> +  - interrupts
+> +  - msi-controller
+> +
+> +examples:
+> +  - |
+> +    apic_mailbox: interrupt-controller@a00000 {
+> +        compatible = "kalray,coolidge-apic-mailbox";
+> +        reg = <0 0xa00000 0 0x0f200>;
+> +        #interrupt-cells = <0>;
+> +        interrupt-controller;
+> +        interrupt-parent = <&apic_gic>;
+> +        interrupts = <0>, <1>, <2>, <3>, <4>, <5>, <6>, <7>, <8>, <9>;
+> +        msi-controller;
+> +    };
+> +
+> +...
+> -- 
+> 2.45.2
+> 
+> 
+> 
+> 
+> 
 
