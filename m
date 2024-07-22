@@ -1,135 +1,136 @@
-Return-Path: <linux-kernel+bounces-259413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC3C493958C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 23:35:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5AB1939599
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 23:39:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDF561C21896
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:35:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41ECBB21CC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41FAD3A1B6;
-	Mon, 22 Jul 2024 21:35:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665243C684;
+	Mon, 22 Jul 2024 21:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aekZUnLU"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lyOK6BbP"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12D222F19
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 21:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9461CAB5
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 21:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721684101; cv=none; b=uUB024fmgvVDAGF59MNkNMagY9SubF7i234wpNdiVuHq2rj9lEKPjn8gjJgLfIhNR5TklO5GftPkNe+SYcV2zyVhYEK9BMqqU8nHM9AM2qDQCne2lQXJ0JqhjOu8pCIB1cQvogilnfKoH6GadvjqMetaE7wbW66NWMqHoup0T9w=
+	t=1721684379; cv=none; b=qaKVWBt12dVOAADulSRafQiw4dxylNuaIf8S/edp9/TN7lVf2baBbAFbOuTAm7A8IH/iwdmnkDBxf3hTgWF8wDGiPJF5oMmd35qIbwKIVttOkMxufhURj3+WWB33CFqVLAzpWhC7sjn8j6HsZ7zu7GtPFfjjG5LmxMosC/7kvag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721684101; c=relaxed/simple;
-	bh=DavKR6zlsHTTROZB3HzBGry3JUwnrQbFua6WuPnbWp4=;
+	s=arc-20240116; t=1721684379; c=relaxed/simple;
+	bh=L4iHiOE6Rw0xEFgs/xuJpzTT/oQYwi1GVLVCM7PqeOM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mXGohx6L99eq+tuRFxPXkuRn0ufZqtlVsDYdZWa7EMVxJ+xpr2cZRPU/4hu3JK0z+Iy/FK1+aHkxRtJha3ecQEwUFfU25erq8HWBXApVEMSYU6ALF3BrfLobLioXtHB2+QBxRlUrRg1+4aNBxBnLIIIBw1PyDTvlberlJrzmOLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aekZUnLU; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-64b29539d86so45601407b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 14:34:59 -0700 (PDT)
+	 To:Cc:Content-Type; b=U9PC02h/kf8K90ypcDExVd23BMcbV3crpyydlold9vbra3/4jM0iuSFWnGsb/bic+Pa6rXlDvub+hxf4vPFRYUgDK/mtAVMxKeV/121t7vzoW7nqaJy0jIT3vDXEJE/uxgPKO6/iBl/MvVy4wuMoYSd2hPJrtB9Z98iejNRH6v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lyOK6BbP; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6b97097f7fdso12216346d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 14:39:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721684099; x=1722288899; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1721684377; x=1722289177; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Bew7kISzf+Slt4HQdKRNoanuwNUVw3tMPgUQzbpwb8I=;
-        b=aekZUnLUk6aVQQAgVJgBppyLsk0PRN9IP3rzKx7ylYE8JRGyYy+TrkHglCYMPWxMn8
-         BZV5RWHtRN9Wa5gHBRlg2ui7OFf1DHkwgfYCxjYn49ixRz+spE2wri8jSAuokf4loICb
-         hC86S5Vh2YXwlasYBV+eXXPSJjz9/KRyPgHF2/hmoxxvWQhoSHng7XRORlBep+dl5AVy
-         HOgnuCgYkBjj8GzDshFwr9Xt7Atw8kltCkl6Wkwu7pO19e6M7L9CY/qdt33ESL5S/S5n
-         +PKY5X8+G5OnYSaPlSBTBp/SV8zikL2ovoFwnX8hchTla+I2sOpLBNvUPTLDswDMGDTy
-         rBBA==
+        bh=N1Jz2M2BG7Jm1AKSR4a1EacnCUYfmHPhctjNqd1nvGI=;
+        b=lyOK6BbP1RhLtAO1D1yF6wseDPBnNCZ2wsA6wezkqisi/r9+RbfQzwFJCbqsE6W75y
+         dqgsIEqVDquttwXVvz9fcmdpLuT/dWqNTIkjAwtpbZZfTVKWc47lj+0+USWmH33km94S
+         IvkrrDD2Jcat+x2j82/wPk+jzo/1oMRFtv0Cjy3+LKQNUenNASNU0ImJak9hDgU5RW36
+         iIwyOSTQhFPsxwIm1/h/regXUePASPoS4Xo3b69GSGff3onROmslzVGxkPlc1ODGgn5b
+         d06Fp2h8dgBnEPfENTD9WX62hIYWGlACVZpzJb8Wc2YGdx9yR6VYL4VpBoWCrjFfCrrd
+         NGFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721684099; x=1722288899;
+        d=1e100.net; s=20230601; t=1721684377; x=1722289177;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Bew7kISzf+Slt4HQdKRNoanuwNUVw3tMPgUQzbpwb8I=;
-        b=Z0CpzMP5/t/RarHEBIyns0W3PH82BPGMI39sAfFZeng6bD31gvGCe2G4CuX3T7AF9u
-         0QGLs/g7aODMlz/TjKGXoSEtmTsr0oY6H48iK/vxIy4NRUKTQW7nVP4FwqvD0zCg/57c
-         JZ4pmqH+dNYNqPgrrawgmF/AXsvSLpsub2uDLrUVVnBI17mEjqcp7ec/qJiuA5o9hAsU
-         X9wdBV5FdtQHjPqwXEnC1u6LZHDqfsDLs+OM+gx5h9KFXokvctlAdRxV0vHud9GXvxYL
-         fX0M0MSycbezIgZh9cqsESwmny9R1vIFx0tQGyuSZ1tzSs4rk/bL5UI/HYUFdqZsR21d
-         iwsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXw94MlH9xX2k3PH8ng7z6/4py8zX6DtVPx1fOK4iqSxPGiRTTIFZap93F6JraFzTFkjH66gOM0kCyzkIP6C65xwJbrOrib6QtfhQmX
-X-Gm-Message-State: AOJu0YwctXWoK2fbQ8HS12G43sBPqFeZKe6SmfmndAflavJ004oLdaGU
-	8rLR+ppH2iJwsHNcrmbdgZhs8NbY5taJiY8yG1r0cxbwhZ9gZOEsSG6kW+2/NsTvZD/tmXHnu7K
-	E8+a3Cy5Errgm9ea+IRxnRZyB0+Qh6HQtoPUyIQ==
-X-Google-Smtp-Source: AGHT+IE0ltDhbLmGYW/fyUnYlpSuwc7uDLK7DxqB7eIHLb7TN7siloOmPdFA3AK/XHiKBZ174IJiHQAZ67jbE8WFQIA=
-X-Received: by 2002:a05:690c:298:b0:66a:843c:4c58 with SMTP id
- 00721157ae682-66a843c5e32mr107931177b3.34.1721684098995; Mon, 22 Jul 2024
- 14:34:58 -0700 (PDT)
+        bh=N1Jz2M2BG7Jm1AKSR4a1EacnCUYfmHPhctjNqd1nvGI=;
+        b=IdugwyZ+e4B+Z5f1LLsx3y35LH92HVW8SPvF4vjgtt7/VxR4smYFl+Psd2CBql6dVf
+         BMmwcqcYhUnn4I8ZHgWBPSyxNWDa8gPUX1y+Qtgb4Vt5VeUHI7zY5QbyqIIjSdXIhbPB
+         e0bB5GgsAPQXTyp7kTWySFpjs/d/5XfFZUBG5Wxa0IAW2+QlbObvpzRlLR7htjdOkeJ7
+         BeNCZaRA6nFCWDh9ztsrfR50Z/mTri06kzHq2f5Cone224dVTNIjrlYAAsuM+26eTeXh
+         puABjKqxYI8CsVKlsb6olxw6NAQ5i4EtPNOyGC3wY9oQVPx1v3pKjGSoT1smKQk1nbnN
+         rQ4w==
+X-Forwarded-Encrypted: i=1; AJvYcCVfi9aekAaMgy9ZEIhmSoCoHdZSOlVj4d4MoQUIixyetkgoRXoSLTTBxcoVsnqRKBhi50TU5P14UpBUwPDiMABF14RMMifZfQxA0lmx
+X-Gm-Message-State: AOJu0Yx5yOZkfXhHieiZxbE7gu4J7jXn5GtrOstMqafhgxlVew+YqDPF
+	YCSobM5V6V3JvneC8Bk//N8C8ioxkxBY2/cyQQiTXXWIofGFUlTukZ0RJ+qlxaUBYisBNXCrqhk
+	4TuZVYjaBPk2Bw8zWy+3IchQfI2U=
+X-Google-Smtp-Source: AGHT+IGbo31K+2oCMqlDUudtu4Lczyb0s1wh7dXqQFTh9uKWZW3oHVI/YP68W23DkQ9mI7o10wJoVxvWQ6aui+4iieQ=
+X-Received: by 2002:a05:6214:767:b0:6b7:a32a:2eeb with SMTP id
+ 6a1803df08f44-6b94f12865bmr126918626d6.23.1721684376854; Mon, 22 Jul 2024
+ 14:39:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240719120949eucas1p1b061c716ac55b4a79ba57c407c0b2d91@eucas1p1.samsung.com>
- <20240719120853.1924771-1-m.majewski2@samsung.com> <20240719120853.1924771-7-m.majewski2@samsung.com>
-In-Reply-To: <20240719120853.1924771-7-m.majewski2@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Mon, 22 Jul 2024 16:34:48 -0500
-Message-ID: <CAPLW+4=MSeYjWs4GbriiY2rj8FsZ0_GGVRqfxV9GH4VxDREKCQ@mail.gmail.com>
-Subject: Re: [PATCH 6/6] dt-bindings: thermal: samsung,exynos: remove outdated
- information on trip point count
-To: Mateusz Majewski <m.majewski2@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+References: <20240720044127.508042-1-flintglass@gmail.com> <20240720044127.508042-2-flintglass@gmail.com>
+In-Reply-To: <20240720044127.508042-2-flintglass@gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Mon, 22 Jul 2024 14:39:23 -0700
+Message-ID: <CAKEwX=NGu_MM3bzT9eXAAJhvCvv+x4Qvf77=_RFD-M7zxKFriA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] mm: zswap: fix global shrinker memcg iteration
+To: Takero Funaki <flintglass@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 19, 2024 at 7:10=E2=80=AFAM Mateusz Majewski
-<m.majewski2@samsung.com> wrote:
+On Fri, Jul 19, 2024 at 9:41=E2=80=AFPM Takero Funaki <flintglass@gmail.com=
+> wrote:
 >
-> This is not true as of commit 5314b1543787 ("thermal/drivers/exynos: Use
-> set_trips ops").
+> This patch fixes an issue where the zswap global shrinker stopped
+> iterating through the memcg tree.
 >
-> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
-> ---
+> The problem was that shrink_worker() would stop iterating when a memcg
+> was being offlined and restart from the tree root.  Now, it properly
+> handles the offline memcg and continues shrinking with the next memcg.
+>
+> To avoid holding refcount of offline memcg encountered during the memcg
+> tree walking, shrink_worker() must continue iterating to release the
+> offline memcg to ensure the next memcg stored in the cursor is online.
+>
+> The offline memcg cleaner has also been changed to avoid the same issue.
+> When the next memcg of the offlined memcg is also offline, the refcount
+> stored in the iteration cursor was held until the next shrink_worker()
+> run. The cleaner must release the offline memcg recursively.
+>
+> Fixes: a65b0e7607cc ("zswap: make shrinking memcg-aware")
+> Signed-off-by: Takero Funaki <flintglass@gmail.com>
+Hmm LGTM for the most part - a couple nits
+[...]
+> +                       zswap_next_shrink =3D mem_cgroup_iter(NULL,
+> +                                       zswap_next_shrink, NULL);
+nit: this can fit in a single line right? Looks like it's exactly 80 charac=
+ters.
+[...]
+> +                       zswap_next_shrink =3D mem_cgroup_iter(NULL,
+> +                                               zswap_next_shrink, NULL);
+Same with this.
+[...]
+> +               /*
+> +                * We verified the memcg is online and got an extra memcg
+> +                * reference.  Our memcg might be offlined concurrently b=
+ut the
+> +                * respective offline cleaner must be waiting for our loc=
+k.
+> +                */
+>                 spin_unlock(&zswap_shrink_lock);
+nit: can we remove this spin_unlock() call + the one within the `if
+(!memcg)` block, and just do it unconditionally outside of if
+(!memcg)? Looks like we are unlocking regardless of whether memcg is
+null or not.
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+memcg is a local variable, not protected by zswap_shrink_lock, so this
+should be fine right?
 
->  .../bindings/thermal/samsung,exynos-thermal.yaml           | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/thermal/samsung,exynos-the=
-rmal.yaml b/Documentation/devicetree/bindings/thermal/samsung,exynos-therma=
-l.yaml
-> index 4363ee625339..5a82764a4dbb 100644
-> --- a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.ya=
-ml
-> +++ b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.ya=
-ml
-> @@ -40,11 +40,8 @@ properties:
->    interrupts:
->      description: |
->        The Exynos TMU supports generating interrupts when reaching given
-> -      temperature thresholds. Number of supported thermal trip points de=
-pends
-> -      on the SoC (only first trip points defined in DT will be configure=
-d)::
-> -       - most of SoC: 4
-> -       - samsung,exynos5433-tmu: 8
-> -       - samsung,exynos7-tmu: 8
-> +      temperature thresholds. The trip points will be set dynamically in
-> +      runtime, which means there is no limit on the number of trip point=
-s.
->      maxItems: 1
->
->    reg:
-> --
-> 2.45.1
->
->
+Otherwise:
+Reviewed-by: Nhat Pham <nphamcs@gmail.com>
 
