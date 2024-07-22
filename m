@@ -1,132 +1,131 @@
-Return-Path: <linux-kernel+bounces-258930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B5FB938E9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:59:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16BED938EB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21D231F20C3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:59:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB22D1F2183C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8DB16D4CA;
-	Mon, 22 Jul 2024 11:58:05 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2502E16D4CA;
+	Mon, 22 Jul 2024 12:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I22mSe2w"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1613216D31F;
-	Mon, 22 Jul 2024 11:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E5516130D
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 12:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721649485; cv=none; b=UnvX3khmx1I4QxMcSEj72ZVnZuI8cuUq5U4/YH7p8kt5cGygUf4Ba6+q11UQsJ4MixxrAHav+DD694gl+f2EqE9Lg+sz78IJMM71Sd3mhKALhE3XFYakCB0hqQdDrLVtw42EMq451Mna1MonPnuPUXAXtffZ1VzvtZk19KAKKag=
+	t=1721649632; cv=none; b=SOmU+hDUfVsf6rrHfqTLVooe9TEIrIjaX3rP5atH2AjkXZMjGmGFnUbPMXF/Zi+87cqSj5n93QBu9RwFgGIJJ0uPfrJiK+AGgHgOjvjLTxdHddq+6+FJJsSYrVoHMb2zIHEhD5B2NvX3TzC9XvABQndr65Yv5rP7lgE19ZF7wio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721649485; c=relaxed/simple;
-	bh=pIefJiDQvzZ+kI6sT1pL4p3uPXLo21v4TCmyXBL7+Fg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pa0IHdOzbfQdrtfjyL92wDcWChrtoCj2FSfe2fBy4sdHT3T0z2RG/SjiU1l2TOGRsMl3Iyjvhw9TQyN/sh2EPcGCk/jnYDf3EGxK/X+r7A8qij+7Pw1tcK169nigFuNXu7T2wlJYQSO2ZIUg2ncqimmhPXWK90Wxgp85w+T79yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.220.45] (g45.guest.molgen.mpg.de [141.14.220.45])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 2CBFF61E5FE05;
-	Mon, 22 Jul 2024 13:57:48 +0200 (CEST)
-Message-ID: <b5d17765-3d4e-416d-beb0-fd0752ef75ec@molgen.mpg.de>
-Date: Mon, 22 Jul 2024 13:57:47 +0200
+	s=arc-20240116; t=1721649632; c=relaxed/simple;
+	bh=/H5dtfxa+Nw4zsSc6z5aDmVUmIULoNGWM3agejyxotY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AHLK9SSkGa0JEdjpZYoRb9g0ezLqHFZ117/tLWNa7YlxOVjrvcS4cWvt7IMPzo25VzcDCEXRCHZr6Dvng+80hOUnwai5uQ9aj9PZBQjaeo0SEhfyptARc1bY/+orzhMShVFZ64OFm0gZpuEDQRBO0rVvlcbsRzBKPghVmPdGrz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I22mSe2w; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ef27bfd15bso16868691fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 05:00:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721649629; x=1722254429; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=trXo2Kud/+4CHx1yH0TBjLSkOLQ44ny84aia5JfqCsM=;
+        b=I22mSe2wKPtaWjRUbhb0Zc0WRLnoLDJaRaj6ZeN+/oR7F1Iq2lbvaNh6WqzVC02jr7
+         jJq9pEvafghM5tae68p5OidJwwj/lGSzTukWTg+yzXt/0vFPpT6Q5cNGY5Ck8LXLC2tq
+         fyMOMa3tLVVvPkb2R6atmBBm7QAYela1Iw6eRsC2KBsI/is+GlpucGCC10sxqSPBNdHU
+         UM8IWTbzoBK+YZ3AKm9jC/V/UqLRpEIMefJOeMm2vshTekTQE7n/iDRtZTEi25uN6eXZ
+         L00Fp+utVCJr7l90GadlHHZyarY2Pf6GnqQD7FOUyh3pvGuTX6rA/gl6s33NMV470lWF
+         QB/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721649629; x=1722254429;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=trXo2Kud/+4CHx1yH0TBjLSkOLQ44ny84aia5JfqCsM=;
+        b=i0gINw6RwRcteoXeMHXle5Y+94CfPlnZ9tX19ELz+1lkI3/CXatlXpRLGZwmzaaCaq
+         kXPaCOdd2+ZrpoJ+3zANe2VoogEM4E05hx1BsuUrkh0/BKb6kk/VxT80vjP0eOarln4r
+         VJd66+SyaA24EdYhDGRkAGX5t2LQUpt72aQ+VFVOqdNGGkSVJWHfZz0aJAAHhQyCWMkS
+         alNAY/HqlyNmWdK931rw87Qsr28HEq+bAQPZadsf4wOHucFu4LJ7jUTASYqg51FiKcOW
+         frsgLcWDnTMQLghZw4PLGRHML19UlcHAtwemN4XOuATCCVleUnaguwDxcJIFj9ikBxtV
+         YoiA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFLN1wlBBTpST2bH0EiL7LwZV++0Funp5IJ372yb/tsoGrWc7LQ+y0t/eZu6QGcYO41sFGMjMFro/yEzzqV8c8zjNl6fp7qtFVfvEB
+X-Gm-Message-State: AOJu0YxDvLHZfW9qVnaIMt4GMzqHYYbmGHybheZCXVQ8OoCuMzu1v52V
+	WvpiWNwC2mgDM9MpEIApbB5XRwPpb3tTdaY8WYqwL2xNi6GI5L/HkVGlZyHXYlQ=
+X-Google-Smtp-Source: AGHT+IHfpRkiwCwyjhMtcbqX/KMogZuiuVRMVA2GKfuTw4dL3YtZnf0Zu/Vpy6wLwRiUYsUM8T5TnQ==
+X-Received: by 2002:a2e:9f57:0:b0:2ef:2006:bfb1 with SMTP id 38308e7fff4ca-2ef2006c9e1mr40429441fa.15.1721649629135;
+        Mon, 22 Jul 2024 05:00:29 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ef2eae89ecsm4705601fa.68.2024.07.22.05.00.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 05:00:28 -0700 (PDT)
+Date: Mon, 22 Jul 2024 15:00:27 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Adam Skladowski <a39.skl@gmail.com>
+Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Banajit Goswami <bgoswami@quicinc.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, linux-arm-msm@vger.kernel.org, 
+	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Vladimir Lypak <vladimir.lypak@gmail.com>
+Subject: Re: [PATCH 1/4] ASoC: qcom: apq8016_sbc.c: Add Quinary support
+Message-ID: <jx26jgbw2appm4yvcz45lisa2nr3uf7r4lvdd3i2eazl5nwjar@mk2xug4zhb7h>
+References: <20240722095147.3372-1-a39.skl@gmail.com>
+ <20240722095147.3372-2-a39.skl@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] media: uvcvideo: Fix custom control mapping probing
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20240722-fix-filter-mapping-v2-1-7ed5bb6c1185@chromium.org>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <20240722-fix-filter-mapping-v2-1-7ed5bb6c1185@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240722095147.3372-2-a39.skl@gmail.com>
 
-Dear Ricardo,
-
-
-Thank you for sending v2.
-
-
-Am 22.07.24 um 13:52 schrieb Ricardo Ribalda:
-> Custom control mapping introduced a bug, where the filter function was
-> applied to every single control.
+On Mon, Jul 22, 2024 at 11:51:05AM GMT, Adam Skladowski wrote:
+> From: Vladimir Lypak <vladimir.lypak@gmail.com>
 > 
-> Fix it so it is only applied to the matching controls.
+> Add support for configuring Quinary Mi2S interface
+> it will be used on MSM8953 and MSM8976 platform.
 > 
-> The following dmesg errors during probe are now fixed:
-> 
-> usb 1-5: Found UVC 1.00 device Integrated_Webcam_HD (0c45:670c)
-> usb 1-5: Failed to query (GET_CUR) UVC control 2 on unit 2: -75 (exp. 1).
-> usb 1-5: Failed to query (GET_CUR) UVC control 3 on unit 2: -75 (exp. 1).
-> usb 1-5: Failed to query (GET_CUR) UVC control 6 on unit 2: -75 (exp. 1).
-> usb 1-5: Failed to query (GET_CUR) UVC control 7 on unit 2: -75 (exp. 1).
-> usb 1-5: Failed to query (GET_CUR) UVC control 8 on unit 2: -75 (exp. 1).
-> usb 1-5: Failed to query (GET_CUR) UVC control 9 on unit 2: -75 (exp. 1).
-> usb 1-5: Failed to query (GET_CUR) UVC control 10 on unit 2: -75 (exp. 1).
-> 
-> Reported-by: Paul Menzen <pmenzel@molgen.mpg.de>
-
-Menze*l*
-
-> Closes: https://lore.kernel.org/linux-media/518cd6b4-68a8-4895-b8fc-97d4dae1ddc4@molgen.mpg.de/T/#t
-> Cc: stable@vger.kernel.org
-> Fixes: 8f4362a8d42b ("media: uvcvideo: Allow custom control mapping")
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
+> [Adam: Split from MSM8953 support patch,add msg]
+> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
 > ---
-> Paul, could you check if this fixes your issue, thanks!
-> ---
-> Changes in v2:
-> - Replace !(A && B) with (!A || !B)
-> - Add error message to commit message
-> - Link to v1: https://lore.kernel.org/r/20240722-fix-filter-mapping-v1-1-07cc9c6bf4e3@chromium.org
-> ---
->   drivers/media/usb/uvc/uvc_ctrl.c | 8 +++++---
->   1 file changed, 5 insertions(+), 3 deletions(-)
+>  sound/soc/qcom/apq8016_sbc.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> index 0136df5732ba..4fe26e82e3d1 100644
-> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> @@ -2680,6 +2680,10 @@ static void uvc_ctrl_init_ctrl(struct uvc_video_chain *chain,
->   	for (i = 0; i < ARRAY_SIZE(uvc_ctrl_mappings); ++i) {
->   		const struct uvc_control_mapping *mapping = &uvc_ctrl_mappings[i];
->   
-> +		if (!uvc_entity_match_guid(ctrl->entity, mapping->entity) ||
-> +		    ctrl->info.selector != mapping->selector)
-> +			continue;
+> diff --git a/sound/soc/qcom/apq8016_sbc.c b/sound/soc/qcom/apq8016_sbc.c
+> index 3023cf180a75..8971f4f5d339 100644
+> --- a/sound/soc/qcom/apq8016_sbc.c
+> +++ b/sound/soc/qcom/apq8016_sbc.c
+> @@ -320,6 +330,10 @@ static int apq8016_sbc_platform_probe(struct platform_device *pdev)
+>  	if (IS_ERR(data->spkr_iomux))
+>  		return PTR_ERR(data->spkr_iomux);
+>  
+> +	data->quin_iomux = devm_platform_ioremap_resource_byname(pdev, "quin-iomux");
+
+This should probably handle -ENOENT (or -ENODEV?) case and set the
+pointer to NULL.
+
+> +	if (IS_ERR(data->quin_iomux))
+> +		return PTR_ERR(data->quin_iomux);
 > +
->   		/* Let the device provide a custom mapping. */
->   		if (mapping->filter_mapping) {
->   			mapping = mapping->filter_mapping(chain, ctrl);
-> @@ -2687,9 +2691,7 @@ static void uvc_ctrl_init_ctrl(struct uvc_video_chain *chain,
->   				continue;
->   		}
->   
-> -		if (uvc_entity_match_guid(ctrl->entity, mapping->entity) &&
-> -		    ctrl->info.selector == mapping->selector)
-> -			__uvc_ctrl_add_mapping(chain, ctrl, mapping);
-> +		__uvc_ctrl_add_mapping(chain, ctrl, mapping);
->   	}
->   }
+>  	snd_soc_card_set_drvdata(card, data);
+>  
+>  	add_ops(card);
+> -- 
+> 2.45.2
+> 
 
-
-Kind regards,
-
-Paul
+-- 
+With best wishes
+Dmitry
 
