@@ -1,166 +1,124 @@
-Return-Path: <linux-kernel+bounces-259328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 728F7939445
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:31:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85154939446
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF9761F220D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:31:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4132328211A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E9117107F;
-	Mon, 22 Jul 2024 19:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D552170822;
+	Mon, 22 Jul 2024 19:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P9/eurte"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="K0XBWbgv"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CBF61BF54;
-	Mon, 22 Jul 2024 19:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD041BF54
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 19:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721676707; cv=none; b=kHc+IUmbsM5NLkV+ZLthFkwO3eFsnwh25RUFX+oxN+oDKHCC6hN8JPUbM5ekBFYwFumpIXu9BOAGqu4dJRERDr8nmRGmlEkSIiq2LJmZR2kUTFbAOhuYtjD3mn20iZHGFuuWNxQrkjA+/BKDRWFNiRXzRYENwmhyY+K7dKU5LNc=
+	t=1721676773; cv=none; b=bKfEwiO1nhySB3aSOgrGCTUPxWuF4/J1nZFUgCiiUe3Q1REVAayd8Rvem5KPmd0Njl4WqX8AvRwcIs7JgD2deq33FOnKQkmDHiFVWUfvWJ0wN83JzdShfhfwAoKk0fbaXqRy57lRJjIZIRmAMz/QM9VC101cw1AwD5eTioFhxtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721676707; c=relaxed/simple;
-	bh=nOkianMfG51fZ7daP0B6sbT+2LRI82yJDL+2nROUjfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mFHqLxM4buQZJA8NvqYxbr5vz1etuRyIEVSbEJ1bm+qz7NqVNSSKouZE8XQ2dBUdRsDTq6L79I0fKb9b+gqkhtGob4SrCmFu1O6Cn+XEkWJbmcJR8kV7KIKHhnBNmjocu/wkhz999M+VACtqeqyY0wE5L4wFWYTLMr3viPXCcNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P9/eurte; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 822C6C116B1;
-	Mon, 22 Jul 2024 19:31:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721676706;
-	bh=nOkianMfG51fZ7daP0B6sbT+2LRI82yJDL+2nROUjfU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=P9/eurteHWd0SwwNW4GmC9u4vw7sDve5Sq8nknbULRB+AtZM0o5mqlQWwBPIpCN9f
-	 yrtnw8B8j0TSC6JmL2UeT42qVpnLuHAwV/Z4WdwTJ21fZEfhR1Ao+ils/OLQxkoSlQ
-	 i0djSQlzZp+sWegfDkqz8EY700DD1B0KgpFJMFv+RNmGNJ+vCFdk0PywNyd5fbGlET
-	 hjnZGvUNVsB9wKc40tqSZpgKgjIdj2RZ4nhpzTRRIq2Ypy953dqafxzsqAPpyPc9Ef
-	 inZ/bG/zLo0NtzbtATSdZpleL3/XIDjPl7v4OVUD1EvB+slDWal8HIUqkv4AMC7hA3
-	 ZA5311xZLysNw==
-Date: Mon, 22 Jul 2024 20:31:38 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
- ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
- biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com,
- semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 09/10] iio: pressure: bmp280: Add data ready trigger
- support
-Message-ID: <20240722203138.07b21300@jic23-huawei>
-In-Reply-To: <20240721235113.GF325365@vamoiridPC>
-References: <20240711211558.106327-1-vassilisamir@gmail.com>
-	<20240711211558.106327-10-vassilisamir@gmail.com>
-	<20240720123727.7598111b@jic23-huawei>
-	<20240721235113.GF325365@vamoiridPC>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721676773; c=relaxed/simple;
+	bh=ZHXGTSwjVMsqoGS5cCvxLJxsPBQrXnXA/3OvJY1GrVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d3VoKpLVhMx1HhwbMgWHJHVuGz0qm4a3piBszsv/SsRv3p0hoDvjZK0yKxU31bGsNU7Ok87RFyzd8KUo3gezjp09cTkkaRVmJ5a9dFaMDh7TygdGTigiBAM+RgMhXVK38XepL2+pyK7f29SxZdSG3K98GsiUSvp/9LMEleaRfFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=K0XBWbgv; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-79efbc9328bso273179785a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 12:32:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1721676771; x=1722281571; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/TL88S/2Tbb1ImSXlSTv6BMkVNu83Hjf3x7A/KXZiFo=;
+        b=K0XBWbgvGmrHaQqeNSDo2wdY9UvCfkujUp7ruJS9hdeMlFl3P5faXNaAh+bbBgUqv2
+         XWEekWBBAnEVjHcdeveTLmKR5LO2K5Mt7IgS4Uh6eMtSJv1R5yx2cKtCCVQNeBGurGUd
+         pdJWVaLUxtV1Lh94Gbt+mLvhz6tkvtR4Plb5iKePisdjsCsFAsKQso7hQrpSaiBFt2sK
+         4yn3OErDjkyU5T+A/xwLhGwKk66E+bzIlRjLyBwyig/SU7TG/EWiqxQI5s1hO/hyO8f2
+         7PYDWGjdv7WmlzmjJwPvaYEr32OdyLKa9UQuGJVMWbvnlVtzereurEXq4c+jYmChusw3
+         Yapg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721676771; x=1722281571;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/TL88S/2Tbb1ImSXlSTv6BMkVNu83Hjf3x7A/KXZiFo=;
+        b=n6iq+akmP4EBRDLR7nplJkL/xRPmAEtcXfD10UlrRiHArRRFHPM3GeiD/Dru/1SAOq
+         qXCCYpZs405HiWkE2iLV3qaFWrsmD24BFCvbRTmZAN2qQHacd1Dy24Wm1eRRxkpt4bFR
+         5709LDhJnPtU2iB5Qb5QmYDsA2bMTzF2RWHFsrOtpUSXgqkky/Z9ULGjlmA25kNI46cg
+         bwPCFjMnHmWsIt06wAdxVF8zWukwF6ceHcc1njBzJ1pt/TqChmTCikEfojL/apmbpcDj
+         EYWzmtwZu7TFUNUaEPwiIYlp1W+CjcXTL6x2vlBKl0wBDc88XsciUSy1YpZcitBOiEqc
+         YSNA==
+X-Forwarded-Encrypted: i=1; AJvYcCVfr1sU2XSblBRj9j+yQO6095fCv0Bhp+bqyCGWxBAfoKqGhObH2BMMhUblHSLfxGlafyWmnoqLPwsJoQxgfE347stZymlQdqd1gwvw
+X-Gm-Message-State: AOJu0YxQCKfyTKtdaFKa5oFKzi3W4itZgpwlxJx40wW+x8QlONG+qoNh
+	XDZ1A+0nJHzjHrJelRI4/JnWWkRwAzHy/byZqLVLmqxMgpRmK8VRgHKlZDOHeBk=
+X-Google-Smtp-Source: AGHT+IFOObX/nJmFXIoaFCVc8Ij671uAJbT39NfWw6nz7bPjAvrV2JBAYXMpeMyh3BtxLMq5kWzdVA==
+X-Received: by 2002:a05:620a:2901:b0:79f:178f:99d9 with SMTP id af79cd13be357-7a1c06ad2f8mr104351785a.5.1721676771041;
+        Mon, 22 Jul 2024 12:32:51 -0700 (PDT)
+Received: from localhost ([140.82.166.162])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a198ffe9f8sm392206185a.62.2024.07.22.12.32.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 12:32:50 -0700 (PDT)
+Date: Mon, 22 Jul 2024 14:32:49 -0500
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor.dooley@microchip.com>, Evan Green <evan@rivosinc.com>, Andy Chiu <andy.chiu@sifive.com>, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Yu Chien Peter Lin <peterlin@andestech.com>
+Subject: Re: [PATCH v3 0/4] riscv: Separate vendor extensions from standard
+ extensions
+Message-ID: <20240722-0c2488245ce33131693c6d34@orel>
+References: <20240719-support_vendor_extensions-v3-0-0af7587bbec0@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240719-support_vendor_extensions-v3-0-0af7587bbec0@rivosinc.com>
 
-On Mon, 22 Jul 2024 01:51:13 +0200
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+On Fri, Jul 19, 2024 at 09:15:17AM GMT, Charlie Jenkins wrote:
+> All extensions, both standard and vendor, live in one struct
+> "riscv_isa_ext". There is currently one vendor extension, xandespmu, but
+> it is likely that more vendor extensions will be added to the kernel in
+> the future. As more vendor extensions (and standard extensions) are
+> added, riscv_isa_ext will become more bloated with a mix of vendor and
+> standard extensions.
 
-> On Sat, Jul 20, 2024 at 12:37:27PM +0100, Jonathan Cameron wrote:
-> > On Thu, 11 Jul 2024 23:15:57 +0200
-> > Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
-> >   
-> > > The BMP3xx and BMP5xx sensors have an interrupt pin which can be used as
-> > > a trigger for when there are data ready in the sensor for pick up.
-> > > 
-> > > This use case is used along with NORMAL_MODE in the sensor, which allows
-> > > the sensor to do consecutive measurements depending on the ODR rate value.
-> > > 
-> > > The trigger pin can be configured to be open-drain or push-pull and either
-> > > rising or falling edge.
-> > > 
-> > > No support is added yet for interrupts for FIFO, WATERMARK and out of range
-> > > values.
-> > > 
-> > > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>  
-> > 
-> > A few minor things inline.
-> > 
-> > It might be worth thinking a bit about future fifo support as that can
-> > get a little messy in a driver that already supports a dataready trigger.
-> > We end up with no trigger being set meaning use the fifo.  Sometimes
-> > it makes more sense to not support triggers at all.
-> > 
-> > What you have here is fine though as we have a bunch of drivers
-> > that grew dataready trigger support before adding fifos later
-> > particularly as often it's a 'new chip' that brings the fifo
-> > support but maintains backwards compatibility if you don't use it.
-> >   
-> 
-> Hi Jonathan,
-> 
-> Thank you very much for your thorough review again!
-> 
-> What I could do to make the code even better to be able to accept
-> FIFO irq support are the following:
-> 
-> 1) in the bmp{380/580}_trigger_handler() currently, the data registers
-> are being read. What I could do is to move the reading of registers
-> to a separe function like bmpxxx_drdy_trigger_handler() and calling
-> it inside the bmp{380/580}_trigger_handler() when I have DRDY or
-> sysfs irq. In order to check the enabled irqs I propose also no.2
-
-You shouldn't get to the trigger_handler by other paths.  But sure 
-a bit of code reuse might make sense if fifo read out path is same
-as for other data reads.  Superficially it looks totally different
-on the bmp380 though as there is a separate fifo register.
+But the mix doesn't hurt and with everything in one place it makes it easy
+to know where to look.
 
 > 
-> 2) in the following bmp{380/580}_trigger_probe() functions instead of
-> just doing:
-> 
->        irq = fwnode_irq_get_byname(fwnode, "DRDY");
->        if (!irq) {
->                dev_err(data->dev, "No DRDY interrupt found\n");
->                return -ENODEV;
->        }
-> 
-> I could also use some type of variable like we do for the active
-> channels in order to track "active/existing irqs".
+> This also allows each vendor to be conditionally enabled through
+> Kconfig.
 
-I think there is only one IRQ on the 380 at least.  So
-you should only request it once for this driver.  Then software
-gets to configure what it is for.
+We can do that anyway by adding an extension menu for each vendor. If we
+don't want a vendor's extensions bloating the array then we just need
+some #ifdefs, e.g.
 
-However it shouldn't be called DRDY for these parts at least. It's
-just INT on the datasheet.
-The interrupt control register value will tell you what is enabled.
-No need to track it separately.
-
-If you mean track the one from the poll function registered for
-handling triggers - that's an internal detail but you would indeed
-need to track in your data structures whether that's the trigger
-currently being used or not (easy to do by comparing iio_dev->trig
-with a pointer for each trigger in iio_priv() data - so should be no
-need for separate tracking.
-
-Jonathan
+@@ -405,7 +405,9 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
+        __RISCV_ISA_EXT_DATA(svinval, RISCV_ISA_EXT_SVINVAL),
+        __RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
+        __RISCV_ISA_EXT_DATA(svpbmt, RISCV_ISA_EXT_SVPBMT),
++#ifdef RISCV_ISA_VENDOR_EXT_ANDES
+        __RISCV_ISA_EXT_DATA(xandespmu, RISCV_ISA_EXT_XANDESPMU),
++#endif
+ };
 
 
+So, I'm not convinced we want the additional complexity of vendor
+extension arrays, but maybe I'm missing something.
 
-> 
-> Like this it would be easier to track the active irqs of the sensor.
-> 
-> Let me know what you think, or if I manage to have time I might send
-> a v2 with those changes even earlier :)
-> 
-> Cheers,
-> Vasilis
-> 
-
+Thanks,
+drew
 
