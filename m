@@ -1,239 +1,117 @@
-Return-Path: <linux-kernel+bounces-259158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C98D8939200
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:45:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2C1E93920A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:47:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 005D9B21C1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:45:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4A861C216DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A0A1E891;
-	Mon, 22 Jul 2024 15:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC4716E88B;
+	Mon, 22 Jul 2024 15:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="H7JO4+ph"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="mIV5IpPs"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7F716D300
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 15:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0362C134B6
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 15:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721663122; cv=none; b=n9SsGqK9uXfgFj8g0GBUinuAqlcOeiDHvcTvmlZCXN3ZKSRcIdrk5MUvZ+9N4lBk8Miila2L2e0OFeh2Jpkax2+XYiNTKsXUJKOuzh9y2QgYbnClnIaxpgEaqonIe2NbkkY9k2R6/Hf+DaBtYzGstQmUY7nG9QCiqc2ZCqg0fGg=
+	t=1721663222; cv=none; b=cuTNq4SMffMeJUjqEpAaa/BWXpLh3RTxWUZsEycL4xURHdQyQrYFOptBQRRE4raSD0X9KIPAtDx9zMVZ066259z0vdumw4FwwL0G3xpdpKFzG2ZeASgZmMLle4kp+tt5xhzrLnhheSyw+8omb28wvc3bC1weXyEbq5ZSv7x1h5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721663122; c=relaxed/simple;
-	bh=cFDJr/xGdVyJXbvejmGK81i2LvDjiM0dh/CdKN8HWuY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K3BHkTpsPi9e2dNaMLqdm0ushVdZcOXpDZck6Ye8hXfrffslCc8tuJGnzHVRX3fNUBYMFJdqUO1j35P2A+8Kc+W+28j1yZzc6hYTb7ShM9FQHCjqUelshMZZFpeXQe0+dHdMPt6tllmHZKRfZrglFpcOSdkmGfu7a3G9KFvhnG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=H7JO4+ph; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6b7acf213a3so17758686d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 08:45:21 -0700 (PDT)
+	s=arc-20240116; t=1721663222; c=relaxed/simple;
+	bh=BeLMWibimfFzBPoanEeoNm7JK5WFtArtOTr7BFhDoho=;
+	h=Subject:Date:Message-ID:MIME-Version:Cc:From:To; b=Ph0Km4shsWIhz8m3HAlCMEJ2u8Ose/xN1PzHx9Jq+NAXRx6YT2a+dJoNnfdoH3/R+kdJ0emoZStTV4HlJaDo2gKA7mm3WPMxQEODd5Hc6hlKni/j7pSW+mQzBMDIco68WX2mHqxjmmNnn7s2vegZKY4SZ15pE/k5wyaBY2wqyz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=mIV5IpPs; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fc60c3ead4so28904015ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 08:47:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1721663119; x=1722267919; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BDPtwwC5v8WJk5FRYY3avsIqqV6M4bWCFDqVrNinJ34=;
-        b=H7JO4+phUOHzd+Pt1z4hxDYGS1LEChwF1VhJ/MBmO1UypK/taoywjgjGwpQhIhwt2F
-         9gaEzHuOWMlY85ybRWu7v96ffzLxcCYTC/2dEZCob6eV2PT7gIKcCWArROIXnf06ARhw
-         z0ZaX5p0K4XoBtyflzNwYpEVSqH9/6zLYQYPM=
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721663220; x=1722268020; darn=vger.kernel.org;
+        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:to:cc:subject:date:message-id:reply-to;
+        bh=qFsD8P56tt4tzwUvq3CqBdSHL92rhAxRHlnzX+/Z2KY=;
+        b=mIV5IpPsSu477EyoSrmhwmVB8oaqz6VqXy0O3UHavj3r273hyBd1fe7b68JRALNp3x
+         EPyqkItesadtptqcTY34lUgGqLW2PodBmAGoU4rEQy9Y34Bc3hz98mcPM9T6P13F+GMm
+         rYnJu5WpPmjL3V5jj6n6ymiRui2iigBRIimJhsKaYPzeeJx+tQ4VnyspuBwSoGGqbqw/
+         MlO4nUuTUycNl5yYffBMQWcezCP7irdo0Fqsr94iEQCvZ6x9ol2LyH2KGbtUUfk1nYyW
+         YN8IOaY3xV/T9CpQF04Jhcahd95ve1hIeiuctXPPwOSuOFH01WzjJrE/re+zGx+kLZif
+         r6Yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721663119; x=1722267919;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BDPtwwC5v8WJk5FRYY3avsIqqV6M4bWCFDqVrNinJ34=;
-        b=xTcxowzXO5UPqfz3ZoJsVhZUR6QGFv4v5RH8INRjadFB/P9aWrIXGlZWPD++K3qDhT
-         UNKqPhHhuCWHm80AFyKvN3u569l2BaSArYfw+AuyLz7UpEC3dR7/ZSTdTnGn8U6pWSk4
-         n23v9KgQRrJfNRQhodLTWqnAVWkOBfO009ss9blM28aaXkD8eyRtptsZ0O46Eg8ECB6T
-         +fUxB1wqKoUkssi/bXcgC1BIXsKGfazrq9z87F3CDd4zFhYDNMDs5riyj3Iz/HRSabv1
-         LrDn2axmWefhlgfsmZmUMHdtk8EzZ8VhCx3XdI9+OknLogs/MMWm/RJXUfnmSRImXHMe
-         Z2Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCUD+JU3sh12HbxPvg0PU+dbPP4XUA8c1QcNH1gNANIH+6UZWlXQV0249AlZqzacouT1iiHkRUer9uKZ74uwGL3NjJz//dm57B/xDwHF
-X-Gm-Message-State: AOJu0YyFuRu5BKELZrIyQEnfCz8HuuNOY1P5qKyU1uH1voXnnYJRL4MG
-	r6j0MQfKewz5Ki3Jx7/H4KENvqfCrxJDyGzuxHS2E0+dZTs7xzv+RCG+Zj8zas8WJz/mj33sNT8
-	=
-X-Google-Smtp-Source: AGHT+IEbnNrcJN3dPaTPs2deYMvkwO0OWb7tA3jg8ohV363g8XNn3F3LoAH4nE5ORoZf9BpcL0I8aA==
-X-Received: by 2002:a05:6214:c23:b0:6b0:90b4:1cb3 with SMTP id 6a1803df08f44-6b9610a697bmr76940596d6.32.1721663118622;
-        Mon, 22 Jul 2024 08:45:18 -0700 (PDT)
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com. [209.85.160.181])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b97389cab4sm12017486d6.1.2024.07.22.08.45.17
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jul 2024 08:45:17 -0700 (PDT)
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-447df43324fso891311cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 08:45:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUt7QEhJK61WR3BbzjMdde1lcYX6xSVlV1rwjhGOzzn/mahtCj+BgnVQ0FFpDeuKv+CJtFOY+NdWAG7ohzQL6UjBu1oNjvZi2x8xVK8
-X-Received: by 2002:ac8:5f46:0:b0:447:f44d:d0ed with SMTP id
- d75a77b69052e-44faa973763mr4370471cf.1.1721663116858; Mon, 22 Jul 2024
- 08:45:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721663220; x=1722268020;
+        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
+         :subject:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qFsD8P56tt4tzwUvq3CqBdSHL92rhAxRHlnzX+/Z2KY=;
+        b=c9Z+cuoVMXOf9a5bgYyBiSSzkAW4HRNhYtg4Qdzfn8m8X/0UwjMS/dYQRb4teO0174
+         Wo674SrzcBK/k2yN6Q8pxlyBE8qD2ZoNPeVEf6p6OQPYmLu8Dnp7q8XZrDShiZfJ8D9z
+         YDVpKq0bw82rSJ/gnwQzu4UeBU+8C14Nsfiy40oTZE+bZty6r9PaXe81Pl8IO6OKlB7w
+         yMMwIDtZqWHmBC6/8R0ZxOJBkf7JpR6byzbZtcEWjomEI6veHcmTRXTDCYaGX/to4z5v
+         zNXyt55IVGOAYgl18HW8ym/WTpJ6jdVPqbsDsC1LyUVynPX//38ZDMPywQtqV7LnOwTr
+         Fyxw==
+X-Forwarded-Encrypted: i=1; AJvYcCWO29gWJwMaw91pkO+PiVRXsJz25fFlfbO73woH3xRcxVXvvxFhroRJrWb6Vm2wyBj/Unv6WMM2BAsDveCIgQJm9QRq2G9rAa6UaTBS
+X-Gm-Message-State: AOJu0YyFZsaaNWR0UOQvw/tsryrcf0cTpkdr8sDpU01BQHhIrUUiWIMo
+	2KfSVnTDpkImMbKaQwO7QChnWAlZ9c47ZaqAGx3EbJVOmzmRAk6bKo/gU7K2peY=
+X-Google-Smtp-Source: AGHT+IFPGavVgezBjaiJSW9/MTpsmyBqfw6HVevGo8Pxdxe7DzmjhIH1eDdDiCNeVyONE21ZhTaYug==
+X-Received: by 2002:a17:902:ec86:b0:1fd:88d2:47f6 with SMTP id d9443c01a7336-1fd88d24ae9mr36782385ad.38.1721663220183;
+        Mon, 22 Jul 2024 08:47:00 -0700 (PDT)
+Received: from localhost ([192.184.165.199])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f25aa4csm56031345ad.30.2024.07.22.08.46.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 08:46:59 -0700 (PDT)
+Subject: [PATCH v2] cache: StarFive: Require a 64-bit system
+Date: Mon, 22 Jul 2024 08:45:20 -0700
+Message-ID: <20240722154519.25375-2-palmer@rivosinc.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240715-x1e80100-crd-backlight-v2-0-31b7f2f658a3@linaro.org>
- <20240715-x1e80100-crd-backlight-v2-1-31b7f2f658a3@linaro.org>
- <20240715-scorn-canning-a7f23b9e2039@spud> <CAD=FV=U-nOMu-JDQ3T=ZRJ-rZ0BTtyzFVfnzbtCJdbRzAq3YMg@mail.gmail.com>
- <e017259b-bc62-4b57-9276-b834237225e1@kernel.org> <CAD=FV=VY5Ug3TfUo1RctiVQrHUjuod15HA8BxAyWdd_0bK8_Dw@mail.gmail.com>
- <20240718-frightful-naturist-a049ea7c0548@spud> <CAD=FV=VaGXMf6Srix6v=Me35BUN4B6ZHwebycka4Dbavqa5Vbw@mail.gmail.com>
- <CAD=FV=WyDF8LkPeHXTgsyDA74n+AjuHPQ1896ECDE17aYB9rtg@mail.gmail.com>
-In-Reply-To: <CAD=FV=WyDF8LkPeHXTgsyDA74n+AjuHPQ1896ECDE17aYB9rtg@mail.gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 22 Jul 2024 08:45:00 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=WQRt2yVL4KZ0W3LWL2wybvL89NDb64fizMe42_vu=+7w@mail.gmail.com>
-Message-ID: <CAD=FV=WQRt2yVL4KZ0W3LWL2wybvL89NDb64fizMe42_vu=+7w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: display: panel: samsung,atna33xc20:
- Document ATNA45AF01
-To: Conor Dooley <conor@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Stephan Gerhold <stephan.gerhold@linaro.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Cc: Conor Dooley <conor@kernel.org>, linux-riscv@lists.infradead.org,
+  linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>,
+  Conor Dooley <conor.dooley@microchip.com>
+From: Palmer Dabbelt <palmer@rivosinc.com>
+To: Conor Dooley <conor@kernel.org>, emil.renner.berthing@canonical.com
 
-Hi,
+From: Palmer Dabbelt <palmer@rivosinc.com>
 
-On Fri, Jul 19, 2024 at 10:07=E2=80=AFAM Doug Anderson <dianders@chromium.o=
-rg> wrote:
->
-> Hi,
->
-> On Thu, Jul 18, 2024 at 7:59=E2=80=AFAM Doug Anderson <dianders@chromium.=
-org> wrote:
-> >
-> > Hi,
-> >
-> > On Thu, Jul 18, 2024 at 7:56=E2=80=AFAM Conor Dooley <conor@kernel.org>=
- wrote:
-> > >
-> > > On Thu, Jul 18, 2024 at 07:45:57AM -0700, Doug Anderson wrote:
-> > > > Hi,
-> > > >
-> > > > On Wed, Jul 17, 2024 at 11:19=E2=80=AFPM Krzysztof Kozlowski <krzk@=
-kernel.org> wrote:
-> > > > >
-> > > > > On 18/07/2024 02:21, Doug Anderson wrote:
-> > > > > > Conor (and/or) Krzysztof and Rob,
-> > > > > >
-> > > > > > On Mon, Jul 15, 2024 at 8:31=E2=80=AFAM Conor Dooley <conor@ker=
-nel.org> wrote:
-> > > > > >>
-> > > > > >> On Mon, Jul 15, 2024 at 02:15:37PM +0200, Stephan Gerhold wrot=
-e:
-> > > > > >>> The Samsung ATNA45AF01 panel is an AMOLED eDP panel that has =
-backlight
-> > > > > >>> control over the DP AUX channel. While it works almost correc=
-tly with the
-> > > > > >>> generic "edp-panel" compatible, the backlight needs special h=
-andling to
-> > > > > >>> work correctly. It is similar to the existing ATNA33XC20 pane=
-l, just with
-> > > > > >>> a larger resolution and size.
-> > > > > >>>
-> > > > > >>> Add a new "samsung,atna45af01" compatible to describe this pa=
-nel in the DT.
-> > > > > >>> Use the existing "samsung,atna33xc20" as fallback compatible =
-since existing
-> > > > > >>> drivers should work as-is, given that resolution and size are=
- discoverable
-> > > > > >>> through the eDP link.
-> > > > > >>>
-> > > > > >>> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> > > > > >>
-> > > > > >> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> > > > > >
-> > > > > > Can you comment on whether you would consider this bindings a "=
-Fix"
-> > > > > > since it's a dependency for later patches in this series (which=
- are
-> > > > > > "Fix"es) to pass dtbs_check? See:
-> > > > > >
-> > > > > > https://lore.kernel.org/r/4bca316a-2334-425b-87a6-e1bb241d26b5@=
-linaro.org
-> > > > >
-> > > > > The patch itself is not a fix, for sure, but it might be a depend=
-ency of
-> > > > > a fix (which you wrote above), thus could be pulled to stable as =
-a
-> > > > > dependency.
-> > > > >
-> > > > > I do not care about dtbs_check warnings in stable kernels, mostly
-> > > > > because dtbs_check warnings depend heavily on dtschema and dtsche=
-ma
-> > > > > follows mainline kernel. Basically if you had warnings-free v6.8 =
-but try
-> > > > > to run dtbs_check now with latest dtschema, your results will dif=
-fer.
-> > > > >
-> > > > > At some point in the future, I could imagine "no new dtbs_check w=
-arnings
-> > > > > in stable kernels" requirement or at least preference, but so far=
- I
-> > > > > don't think there is any benefit.
-> > > >
-> > > > In this case it's not about whether it makes it to the stable kerne=
-l
-> > > > but about which main kernel it goes through.
-> > > >
-> > > > If we land the bindings in drm-misc-next right now then it'll be a
-> > > > long time before it makes it into Linus's tree because of the way t=
-hat
-> > > > drm-misc-next merges. It will make it to Linus's tree at 6.12. You =
-can
-> > > > see the drm-misc merging strategy at:
-> > > >
-> > > > https://drm.pages.freedesktop.org/maintainer-tools/drm-misc.html
-> > > >
-> > > > If we land the dts change (a fix) through the Qualcomm tree as a fi=
-x
-> > > > then it should target 6.11.
-> > > >
-> > > > This means that the 6.11 tree will have a dtbs_check error because =
-it
-> > > > has the dts change (a fix) but not the bindings change (not a fix).
-> > > >
-> > > > One way to resolve this would be to treat this bindings as a "fix" =
-and
-> > > > land it through "drm-misc-fixes". That would make the bindings and
-> > > > device tree change meet up in Linux 6.11.
-> > > >
-> > > > Did I get that all correct?
-> > >
-> > > Is not not fairly established that a dependency for a fix can go onto=
- a
-> > > fixes branch even if it is not a fix in and of itself?
-> >
-> > That would certainly be my take on it, but DT folks confirmation was
-> > requested by Neil in:
-> >
-> > https://lore.kernel.org/all/4bca316a-2334-425b-87a6-e1bb241d26b5@linaro=
-.org/
->
-> FWIW, I'd rather not let this stagnate too long. I'm fairly confident
-> in my assertion that this should go into drm-misc-fixes. I'll give it
-> until Monday and then I'm just going to land this bindings change in
-> drm-misc-fixes. Shout soon if you feel strongly that I shouldn't do
-> this. If someone wants to flame me after the fact then so be it.
+This has a bunch of {read,write}q() calls, so it won't work on 32-bit
+systems.  I don't think there's any 32-bit StarFive systems, so for now
+just require 64-bit.
 
-Landed in drm-misc-next fixes as per the flow chart [1] since the
-"samsung,atna33xc20.yaml" split from "panel-simple.yaml" is in
-mainline linux but not in any "rc" candidates yet.
+Fixes: cabff60ca77d ("cache: Add StarFive StarLink cache management")
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+---
+Changes since v1 <20240719163841.19018-1-palmer@rivosinc.com>:
 
-[1/4] dt-bindings: display: panel: samsung,atna33xc20: Document ATNA45AF01
-      commit: b6f7d984ebf826069d3dc6fa187b4d1cfb90f965
+* Drop the STARLINK_CACHE_ADDRESS_RANGE_MASK chunk, it's meaningless
+  without 32-bit support (as Emil pointed out on IRC).
+---
+ drivers/cache/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-[1] https://drm.pages.freedesktop.org/maintainer-tools/committer-drm-misc.h=
-tml#where-do-i-apply-my-patch
+diff --git a/drivers/cache/Kconfig b/drivers/cache/Kconfig
+index 94abd8f632a7..db51386c663a 100644
+--- a/drivers/cache/Kconfig
++++ b/drivers/cache/Kconfig
+@@ -18,6 +18,7 @@ config STARFIVE_STARLINK_CACHE
+ 	bool "StarFive StarLink Cache controller"
+ 	depends on RISCV
+ 	depends on ARCH_STARFIVE
++	depends on 64BIT
+ 	select RISCV_DMA_NONCOHERENT
+ 	select RISCV_NONSTANDARD_CACHE_OPS
+ 	help
+-- 
+2.45.2
 
--Doug
 
