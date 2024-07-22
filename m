@@ -1,156 +1,123 @@
-Return-Path: <linux-kernel+bounces-258990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0DE9938FAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:12:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F7EC938FB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59840281453
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:12:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 469781C2116F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD78416D9AE;
-	Mon, 22 Jul 2024 13:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E04E16D9AE;
+	Mon, 22 Jul 2024 13:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IVlMUY/i"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xc+YgmRX"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F0616CD07
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 13:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE2616CD07;
+	Mon, 22 Jul 2024 13:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721653913; cv=none; b=eH+LmhnuGPTPGXRYHpHvZmH1+9fxQHivGlo5xNqLnRGzFMNumg70Se3dxqDfVnzpMSe7fagLceOmlPZI0coZZtmGyvmJEKMjHfFFcthMw5GOtdbVBSHDP8g0BU8negsvIJKnaAgBkb8SOPCeGy/sVgUxuw9SPsw344a7YUoPSvA=
+	t=1721653947; cv=none; b=qw8m9H1f7YDykR9EgBkmCVHcneMvB4QNtTgPM9kwUVq6v+1S8YfvXdx6RBIE4NnMoWOtOlZxZjvF9lE4U2+AcywYzbmEmkzzjVfyJpaZ4Ym7rDYgXXMqClC38Zo6Omp8BcRmzYmbFqIEuk4/VBVR0NvgSKIqmXMFxyYiE+sEddo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721653913; c=relaxed/simple;
-	bh=Yl54IhhBl5KN5lxPnpBkpytGNX+6KNwM0QpeivEX8uc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uUBii0xVvRZGSMSQ3YTDEpB/czzvG92cWL5lavvhiwZt56MBUy7d8yzPxZnftskMEswGrNSBgPeiTcFGGivvvdfWlFq8sz2ykS0W6iHR/qqADDnHBNQTXV/+wVzss3qHVEUQB8K50apcYeH8bM1uT27K79OAXHMJvUtzA4QL6Zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IVlMUY/i; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fc56fd4de1so29780385ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 06:11:51 -0700 (PDT)
+	s=arc-20240116; t=1721653947; c=relaxed/simple;
+	bh=bMT2dyBII7tLgqT7mnBHGSRjOTh9mxWb08VtzOIC8PE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c6Kc6hZur1C/u1520NHn9WZNfzPCp5R2yZZVUMW76yTsfGFbhW5oCoo3AQvuAD2ewl+0yiBW1irvzJyIoiz0acW72flGtQzxyrntlw9DTKTrGPcwyyZXR21xHdXrKa/DKi6znuweshbKnscPgd9eR3DpPv/iDVDqhk4KCL6yXTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xc+YgmRX; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fd66cddd4dso24691105ad.2;
+        Mon, 22 Jul 2024 06:12:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721653911; x=1722258711; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WNLdaVhZLCULcVm0BuO6uOnDm8k9XTjZNc3bP/bzyl0=;
-        b=IVlMUY/iSdXQ5RGX+Xj+5FLUNieock8eGfBhmxYKqYcB/ZV0NiNigS5g31bKUGpZn8
-         H9D319kSJwFOB4Xc8XlpfVkeUSDhA/3PoogmjRV+tz91hfm0q+NskvDD56PcsHSZw1HS
-         0eVghYClsYWFn4CwZVJ3xMKc32Fq8BvO9fhdtPCzGurd7NdUiOozVO36ltqUufgKJx7v
-         NQZ7gpvgNmFUWoH+otCKtMdF0ra14s4Jr8pWMId1uedmyNuRjWEUBBhvNtaB5hdhQOwJ
-         7+PBVyYj9az/gLxe4nXPBqXTvxNR3zJR5skVhMIPmVuJcFbw85+WsyPAEAlgpGooybcd
-         Ja6w==
+        d=gmail.com; s=20230601; t=1721653946; x=1722258746; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VZJLDD0LzaMvG1+dbrIfZxfQlgfBT2L9YVJz4EoL2CY=;
+        b=Xc+YgmRXqOVY98pOS8Y4CzGHYlFruQOdOchLOgOylmGLw56rfGSUuqfwh4fJDcikki
+         pRKyI+D+kFngNXDf6lJzpRgINWTjOgJyhShGILdLRBjzaW7p35WRYckxqZqNdzRNq+sH
+         XJaseOodlONU4V+aipxKFu13bLwb4ehhdEIeVLteyrnKogU2WM96xwvlqtIw5dC/Uyug
+         6i99g7F0sMiml/wuMSrHf/Dl0TsoFzNWNToqOixC9WSJ8c+ItsteUk1OAo1dMbQS10O+
+         Gm84Trv5uHKwvKL4ttkEO5PfEw0/rdnnB/Ln5UBOeVyC231em3gokntbfdRqw8+oe/jW
+         7tqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721653911; x=1722258711;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WNLdaVhZLCULcVm0BuO6uOnDm8k9XTjZNc3bP/bzyl0=;
-        b=MUvfNSl06lVMu5NmbQohNpnllE7196KW9Kj2vlugHBGoRiACE9x5S6Q5cC/kqD7t94
-         D48CFyDa71LtUFJTxJ62ls8xxLnYj9zzT5BFzku++Ry/I8OQuQ9w018UwnJsn9qFR8cA
-         j67uD72Xe7mzUAS7JwBkdJ9q+rD0Ga8+//TjZhpUXyOLLjuY938hv2FeW44OAJGLTNaF
-         EfTHpmmoT74nGU3iUhD9nDea24CCnow0Bx7Ounec54vAflhp7lrJiwwCp632JggmDsYh
-         /dQTewaJ+qu/8HYS66Za0aIGGc25Udnd2vZoEcWmw26WNjREOGEWYXDdHn/K+t8Kkarn
-         +7FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVVIISf++CXYYCR0MrnFDlB5QKrnmyMr4vckioPtdtp+9aTBsFz7mKVyclDKlu1rnqgdyvhJvA8vKCv/ZWaseeayPiHDN12v/HfhHxn
-X-Gm-Message-State: AOJu0Yzy6Z0A7MYa4Fr9G3tEaH4BII7xZ2kTQAtYt9gNzLygAdEGcZcv
-	Yv6XbjzVw03ttXUw6Q1INAeg/GmmJSONST+cgMo/7czqcNFViegNpFcB3D/s4MvYxdq5B+vmjt4
-	=
-X-Google-Smtp-Source: AGHT+IGkI1eeF3+ZjtqrWZ8QSMwy1g3He8uLa7RwxeT+z0eXBTnNP30Q7FcMNTGWn5a1pQb16PjBLg==
-X-Received: by 2002:a17:902:680a:b0:1fc:4680:820d with SMTP id d9443c01a7336-1fd74d16bfamr100301405ad.9.1721653910688;
-        Mon, 22 Jul 2024 06:11:50 -0700 (PDT)
-Received: from localhost.localdomain ([120.60.138.134])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f486a3bsm53945765ad.284.2024.07.22.06.11.47
+        d=1e100.net; s=20230601; t=1721653946; x=1722258746;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VZJLDD0LzaMvG1+dbrIfZxfQlgfBT2L9YVJz4EoL2CY=;
+        b=JtwdRAz2X/ZqVjgfnH46fB+LZiKfwFHQv55vXXkptZQ7JdMey/NU2FzMn1tJ6fq80w
+         wlpxSmbornsLoiXlCYAl+sVUzIKTGIF4F0G7ERmXoTZx4tb9fgXG5BbPA4AHawy6fXtL
+         J0bmWp6AODFXOMT0fcnIvlv7X6o3EhfoV8bk95eu+cJlPK6I9/gr7hNLm0PIpXC0RweI
+         U8YfwQc9qXJxaGb/a3d7XhFu6ExQM6XqFiZHZ4GcoxR4mz2yT/+VTimrTSXTmZNN9PuB
+         dLj2WMce6egSRP7N6WDaGVDBllg9CUp5BJGLB3HlJR0mUmH4lXwc3TzQXeJj9ouZa8NC
+         j9zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2a5oMuDZmz5Mn/053JiqdIZu4jD448OEJgv1Puxc8Zwdor5mRBLaZ0wcTVjEDi0Ut3+mjfKE8cDbUicXwU178LXFJZ0z9zuLWKqxFWYV+K4sy4uFNshpMoJ60lMV8TZXN1F6hKcP0FEzXWBZlK9PxXNyuS3zQiSvtnazGVCnlfMpwlvWrIJy8
+X-Gm-Message-State: AOJu0Yz2O6ewrRiAgJlHSxjsfOYe4lj20Yw67f4Ezof+yljJdQwIpIDr
+	6fnZXNlecYPSGF/Gz3v3EZBS6fPkS1u2+YAt/EZ167+r0lPFRxPhYd4eU8Rr
+X-Google-Smtp-Source: AGHT+IHG1BXRYZ+x1YPG7CjIyEVdTJSWOj86Zv1/fM+njufIQEUsw2K+wJ72egtjd+HP1XdZ8UkDiQ==
+X-Received: by 2002:a17:90b:2305:b0:2c7:ab33:e01 with SMTP id 98e67ed59e1d1-2cd161b88c1mr6775862a91.27.1721653945762;
+        Mon, 22 Jul 2024 06:12:25 -0700 (PDT)
+Received: from five231003 ([2405:201:c006:312d:8653:831a:b06f:a502])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ccf80a8865sm6937621a91.49.2024.07.22.06.12.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 06:11:50 -0700 (PDT)
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: lpieralisi@kernel.org,
-	kw@linux.com
-Cc: robh@kernel.org,
-	bhelgaas@google.com,
-	linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH] PCI: qcom: Use OPP only if the platform supports it
-Date: Mon, 22 Jul 2024 18:41:28 +0530
-Message-Id: <20240722131128.32470-1-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.25.1
+        Mon, 22 Jul 2024 06:12:25 -0700 (PDT)
+Date: Mon, 22 Jul 2024 18:42:18 +0530
+From: Kousik Sanagavarapu <five231003@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, Nishanth Menon <nm@ti.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 2/3] dt-bindings: watchdog: ti,davinci-wdt: convert
+ to dtschema
+Message-ID: <Zp5asqhipQHEoviM@five231003>
+References: <20240721170840.15569-1-five231003@gmail.com>
+ <20240721170840.15569-3-five231003@gmail.com>
+ <629a925c-24ef-4a44-832f-a06a60c266a7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <629a925c-24ef-4a44-832f-a06a60c266a7@kernel.org>
 
-With commit 5b6272e0efd5 ("PCI: qcom: Add OPP support to scale
-performance"), OPP was used to control the interconnect and power domains
-if the platform supported OPP. Also to maintain the backward compatibility
-with platforms not supporting OPP but just ICC, the above mentioned commit
-assumed that if ICC was not available on the platform, it would resort to
-OPP.
+On Mon, Jul 22, 2024 at 10:15:03AM +0200, Krzysztof Kozlowski wrote:
+> On 21/07/2024 18:28, Kousik Sanagavarapu wrote:
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - ti,davinci-wdt
+> > +      - ti,keystone-wdt
+> 
+> This does not match the original binding and commit msg did not explain
+> why such change is necessary.
 
-Unfortunately, some old platforms don't support either ICC or OPP. So on
-those platforms, resorting to OPP in the absence of ICC throws below errors
-from OPP core during suspend and resume:
+I don't understand.  Do you mean both the compatibles are always
+compulsory?  Meaning
 
-qcom-pcie 1c08000.pcie: dev_pm_opp_set_opp: device opp doesn't exist
-qcom-pcie 1c08000.pcie: _find_key: OPP table not found (-19)
+	compatible:
+	  items:
+	    - const: ti,davinci-wdt
+	    - const: ti,keystone-wdt
 
-Also, it doesn't make sense to invoke the OPP APIs when OPP is not
-supported by the platform at all. So let's use a flag to identify whether
-OPP is supported by the platform or not and use it to control invoking the
-OPP APIs.
+It is enum because I intended it to align with the subsequent patch
+which changes DTS.
 
-Fixes: 5b6272e0efd5 ("PCI: qcom: Add OPP support to scale performance")
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/pci/controller/dwc/pcie-qcom.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+> This also does not match DTS.
 
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index 0180edf3310e..6f953e32d990 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -261,6 +261,7 @@ struct qcom_pcie {
- 	const struct qcom_pcie_cfg *cfg;
- 	struct dentry *debugfs;
- 	bool suspended;
-+	bool use_pm_opp;
- };
- 
- #define to_qcom_pcie(x)		dev_get_drvdata((x)->dev)
-@@ -1433,7 +1434,7 @@ static void qcom_pcie_icc_opp_update(struct qcom_pcie *pcie)
- 			dev_err(pci->dev, "Failed to set bandwidth for PCIe-MEM interconnect path: %d\n",
- 				ret);
- 		}
--	} else {
-+	} else if (pcie->use_pm_opp) {
- 		freq_mbps = pcie_dev_speed_mbps(pcie_link_speed[speed]);
- 		if (freq_mbps < 0)
- 			return;
-@@ -1592,6 +1593,8 @@ static int qcom_pcie_probe(struct platform_device *pdev)
- 				      max_freq);
- 			goto err_pm_runtime_put;
- 		}
-+
-+		pcie->use_pm_opp = true;
- 	} else {
- 		/* Skip ICC init if OPP is supported as it is handled by OPP */
- 		ret = qcom_pcie_icc_init(pcie);
-@@ -1683,7 +1686,7 @@ static int qcom_pcie_suspend_noirq(struct device *dev)
- 		if (ret)
- 			dev_err(dev, "Failed to disable CPU-PCIe interconnect path: %d\n", ret);
- 
--		if (!pcie->icc_mem)
-+		if (pcie->use_pm_opp)
- 			dev_pm_opp_set_opp(pcie->pci->dev, NULL);
- 	}
- 	return ret;
--- 
-2.25.1
+Yes.  I've asked about changing the DTS in the subsequent patch.
 
+Thanks for the review
 
