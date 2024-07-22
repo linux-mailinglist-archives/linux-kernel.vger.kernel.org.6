@@ -1,96 +1,103 @@
-Return-Path: <linux-kernel+bounces-259138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BBA19391C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:29:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BF4D9391D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C025B218E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:28:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE343B21AD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D4416E897;
-	Mon, 22 Jul 2024 15:28:40 +0000 (UTC)
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5766C16E894;
+	Mon, 22 Jul 2024 15:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Udibmumu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1AD16E864
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 15:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F58C2FD;
+	Mon, 22 Jul 2024 15:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721662119; cv=none; b=HRU6HhkvCKhs4Qnkk49+PZVBc5vEGFMuvAMW/DOQjNpFpz5I5OqkIiF2uoDVF//lXjbL/NCwAHC+5fSjzOGefLr/SWPuPTTVkkzr8t/IE7smISkloosN5fA2o5O8pNczHap+UMD8XYD03V14q0TxUlM66tnyN9drveZ7JK4mGmk=
+	t=1721662227; cv=none; b=p8FN06doOpvaxjdxpphp8fwlG6O/IxIkn/c6iJut3nFZAdgI6JLcbN31k7Y7LGuB9e6rGetoRLOOFZ0XA+fw6eYX1bBDGkh/GX/ogb1olU8GjJH3YxHTRAevCspNEA2rRXEY18BgZxJhq7SbdbAHc6uD7sDz4hvmwJMMhRjvHpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721662119; c=relaxed/simple;
-	bh=s4xSezAlNEuN7kmXzjU1dtPvUMKRnoPYZqdJ5NX9UWg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iNKKP8cT37QScaAO9uTqQ3GZ+8ScwhHIN0d0PBEMxLCCD8E2tPdgXeo62FskU1HO7UuLDH6A758ThLCNrCQ3/JYpdzEBrmgEDW20xEpoXQsurkzYyh7KY6ZYRh3VaB9Dp8FwRrAFtpFxoeSoABuboPgQJwW6YIRPDofLPiel9u4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:173b:9414:53f5:de4c])
-	by xavier.telenet-ops.be with bizsmtp
-	id qfUY2C0061wvoRx01fUYz0; Mon, 22 Jul 2024 17:28:35 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sVuxR-0031QM-Gg;
-	Mon, 22 Jul 2024 17:28:32 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sVuxj-0025eF-Uh;
-	Mon, 22 Jul 2024 17:28:31 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Nick Hollinghurst <nick.hollinghurst@raspberrypi.org>,
-	Naushir Patuck <naush@raspberrypi.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	David Plowman <david.plowman@raspberrypi.com>
-Cc: linux-media@vger.kernel.org,
-	kernel-list@raspberrypi.com,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] media: raspberrypi: VIDEO_RASPBERRYPI_PISP_BE should depend on ARCH_BCM2835
-Date: Mon, 22 Jul 2024 17:28:28 +0200
-Message-Id: <8e1c6c3a32919603072bb7278c66b4d469f7e762.1721661958.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1721662227; c=relaxed/simple;
+	bh=qeOMl00DgHVITw+FjVR23dUDZQ0dZ2F3RbfRASJShYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WjkMXh2+Ieay6zEP/Wtr7UfLo4dPHN+SxoK+rirZ2t1ex+JnC55HDr6cbUYB1+fi2PG5vJbSfoVOEjouIdw5x3auBu+UTCH4DCINZW0o3Q1rJEKmmzQmC68U8fmVKQwRIG23RtRnQS68NBQquvB2ECLv2EB5xaeWPedWaQ83mLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Udibmumu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F691C116B1;
+	Mon, 22 Jul 2024 15:30:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721662227;
+	bh=qeOMl00DgHVITw+FjVR23dUDZQ0dZ2F3RbfRASJShYY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Udibmumu7SLzxEKxqIecKZDLnygO3K9IPmsYRL3I6hL5eYqNIVWX7mLjSpajAEdtJ
+	 +34Wwg7S23Sx/TsNHnSCLXzlaT8K9BzSvT0TpzDZp4qpSIexecgt4YBIFxTyDVKdR4
+	 zoGjpH6i7DCAVXe/q3qIV7BqGL/VhVJeejTJZQ5AjoBDa5DUQ2nz2ml/skzftzqSlC
+	 5qNp9evMwxpnZuVl0mgCMoNVIFBdte25OlWnbcPfa0aHZjnWFch12yFrsCVCKAOuGg
+	 mqnhjXYfz2YA35SyHO1xRH0Y7C6QIOmi+MTocaJsucU4+99bRjM3aqFDZEN/X/Fw9k
+	 bZ6cWyiYCD1kA==
+Date: Mon, 22 Jul 2024 17:30:17 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Chandan Babu R <chandan.babu@oracle.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
+	Andreas Dilger <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, 
+	David Sterba <dsterba@suse.com>, Hugh Dickins <hughd@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Dave Chinner <david@fromorbit.com>, Andi Kleen <ak@linux.intel.com>, 
+	Christoph Hellwig <hch@infradead.org>, Uros Bizjak <ubizjak@gmail.com>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Arnd Bergmann <arnd@arndb.de>, 
+	Randy Dunlap <rdunlap@infradead.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v6 0/9] fs: multigrain timestamp redux
+Message-ID: <20240722-festmachen-lehrstellen-f86d1bd28997@brauner>
+References: <20240715-mgtime-v6-0-48e5d34bd2ba@kernel.org>
+ <20240716-zerlegen-haudegen-ba86a22f4322@brauner>
+ <60af7cff6b1cf00388e932804c81ed368fcc9f02.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <60af7cff6b1cf00388e932804c81ed368fcc9f02.camel@kernel.org>
 
-Currently, the Raspberry Pi PiSP Backend (BE) ISP is only present on the
-Broadcom BCM2712-based Raspberry Pi 5.  Hence add a dependency on
-ARCH_BCM2835, to prevent asking the user about this driver when
-configuring a kernel without Broadcom BCM2835 family support.  The
-dependency can be relaxed if/when the encoder appears on other SoC
-families.
+On Tue, Jul 16, 2024 at 08:45:16AM GMT, Jeff Layton wrote:
+> On Tue, 2024-07-16 at 09:37 +0200, Christian Brauner wrote:
+> > On Mon, Jul 15, 2024 at 08:48:51AM GMT, Jeff Layton wrote:
+> > > I think this is pretty much ready for linux-next now. Since the latest
+> > > changes are pretty minimal, I've left the Reviewed-by's intact. It would
+> > > be nice to have acks or reviews from maintainers for ext4 and tmpfs too.
+> > > 
+> > > I did try to plumb this into bcachefs too, but the way it handles
+> > > timestamps makes that pretty difficult. It keeps the active copies in an
+> > > internal representation of the on-disk inode and periodically copies
+> > > them to struct inode. This is backward from the way most blockdev
+> > > filesystems do this.
+> > > 
+> > > Christian, would you be willing to pick these up  with an eye toward
+> > > v6.12 after the merge window settles?
+> > 
+> > Yup. About to queue it up. I'll try to find some time to go through it
+> > so I might have some replies later but that shouldn't hold up linux-next
+> > at all.
+> 
+> Great!
+> 
+> There is one minor update to the percpu counter patch to compile those
+> out when debugfs isn't enabled, so it may be best to pick the series
+> from the "mgtime" branch in my public git tree. Let me know if you'd
 
-Fixes: 12187bd5d4f8c128 ("media: raspberrypi: Add support for PiSP BE")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/media/platform/raspberrypi/pisp_be/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/media/platform/raspberrypi/pisp_be/Kconfig b/drivers/media/platform/raspberrypi/pisp_be/Kconfig
-index 38c0f8305d620d83..46765a2e4c4d1573 100644
---- a/drivers/media/platform/raspberrypi/pisp_be/Kconfig
-+++ b/drivers/media/platform/raspberrypi/pisp_be/Kconfig
-@@ -2,6 +2,7 @@ config VIDEO_RASPBERRYPI_PISP_BE
- 	tristate "Raspberry Pi PiSP Backend (BE) ISP driver"
- 	depends on V4L_PLATFORM_DRIVERS
- 	depends on VIDEO_DEV
-+	depends on ARCH_BCM2835 || COMPILE_TEST
- 	select VIDEO_V4L2_SUBDEV_API
- 	select MEDIA_CONTROLLER
- 	select VIDEOBUF2_DMA_CONTIG
--- 
-2.34.1
-
+I did that now and pushed to vfs.mgtime. Please take a look as I rebased
+onto current master and resolved conflicts in xfs and btrfs. Thanks!
 
