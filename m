@@ -1,82 +1,58 @@
-Return-Path: <linux-kernel+bounces-259035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3E1593903E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:58:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CAD2939040
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30AFF1C215E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:58:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1D2C2820C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 13:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65BCC16D9CC;
-	Mon, 22 Jul 2024 13:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D890B16D9D0;
+	Mon, 22 Jul 2024 13:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZXij3Uip"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/1gTHgH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25CB16CD33
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 13:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2845516CD33
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 13:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721656727; cv=none; b=lODf0F+DCwu0e9sf4pKqM44h4lGZ4z5+VRu5WuVi+I4mEw01DB6qX0zC+zhhDx6Xeez8vptv0jCwnzmKH8X3vCk0hXZoyg2sWIYra3Wa+pbxcIFE/InUKNPJTRPUi1IEluxBRJlmcVkRvBL36kZtW+lroNAorpah25M1Hw+PPCs=
+	t=1721656777; cv=none; b=CNjkmlL4fQtLU/2BGRdj4b5jqcUAXSg/u4lz9bWZM19vBDzzSp44o08qTjNT65cFKwM5/k0tplyS8ciazgElFTSorljC8oPLEtUBw2cWDkXrpWBnF9n3TEg324cKmmYx5cNkfH39LqEC0fzPAgIn20d3JXVU6ymFRt1A4GJeoiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721656727; c=relaxed/simple;
-	bh=8OuEqS9mOLWKFhq5PGx35RUWy1TYEDf2dsaa6U/gv+A=;
+	s=arc-20240116; t=1721656777; c=relaxed/simple;
+	bh=iCxQ71WbzNABmbBFjX1zm5pj3iKgMFirBlm6soo6W48=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=otmz1Ssm+5uywyWb7AwMgnfcSMDctETMXAlZejBBscQWI7HKsEz2RHq763avQTnCpYI7Nm0p/k7m1KbLqts6b9TUU1yqwQmjEwb+EGll6YWMpyYQREW3lvehcgM4IU43r7uV3aDGXlPTbT/HBJxmWYrVgNKGrP7TdckCRXjVQmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZXij3Uip; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-36865a516f1so3053248f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 06:58:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721656724; x=1722261524; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=l5dlFxSv3FmJDU7tjADRKa+8ES8BSMLz55RewmO5kow=;
-        b=ZXij3UipOiBzoogXL3F0IMg8FJKiz6F1p6hzXvH5b6sxGJ1EzbSH47fCWb+hZUj3v7
-         8ufIQkxNABhFXo5jnTEQ5anu+uAdE28UF0WQRBa+/SbSz5+a/ZP6tsDix9F/NjqWBNM7
-         ktRxabw+JFTJPDlt4zx04cXt9txgk6HmWPp+g87Jo7bzyCBJP18jzerMWLtI2ekOhprG
-         eWZ+4l9pwgec2AVAOUT8NigHW7k2VyuuVuu0BzfotKayK+DG/JT5MdfTM5glAtfYjzGb
-         hmVau16/TTHxog21xsoRkVSgpgiboXJA4C+dfy+YswtZcDqKlSeS6YPMumfD75x6xOkf
-         QREg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721656724; x=1722261524;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l5dlFxSv3FmJDU7tjADRKa+8ES8BSMLz55RewmO5kow=;
-        b=PhU6mQ9jc0vUVPYHgqGlabOQ1iwywQreZNjdNwNVYhEcUagzXER6Yov+5d7iqtulud
-         Bqtk+o/ENDaHatbdTXpu29D0ZlC4BtqjRpj3e3YUylcPk+vB0+O8NfmEX/LhpMJtXyZs
-         KlAsxfHBQr1W0eXIW3ZxukRwYmee8kr4I6vDA26xSaIBhNh+b5QHuVVyZG3h5Auk9tn3
-         n+2jY1uO09Nwexsg5sw7FWxKm9QGyGcEUVFH7cYHtH5RBuWvuj+BMR3lg81RoiZZeluq
-         Vk5OefRjUIf64nQT3iP2nMEH9gQoSqQPC7CSyLj6nLSn+BytT2lAM7YKOAphnxLWgA3M
-         qtMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUh+3txRb30hGrr3+tL8yp1zXNQlDoTlM33OCTtBn+Zy8QCX+Nw/3VCcaZppDkgm41SeS+NRBr7KaTJLs1i/1xF2YKXK0YArAXgo5HK
-X-Gm-Message-State: AOJu0Yx7kY4WpxZXd1TuJV6be7uzU+EGUEQ9F/Rry8mWY1j2A66RvBrt
-	Dgpk69dLwznQOmslGiLKpsSzqKtGf+otH07/6eOJeoki1bfN6QdfSg6BMDVH0TM=
-X-Google-Smtp-Source: AGHT+IF75AIN+2RIZgOvNN1LxGtFJ+siGH546Ar1hpo7piMbmqYC/NjoJ/ZAr2en/66rK6KOJRpccw==
-X-Received: by 2002:adf:f303:0:b0:368:3ef7:3929 with SMTP id ffacd0b85a97d-369bae4cfdbmr4886297f8f.22.1721656723976;
-        Mon, 22 Jul 2024 06:58:43 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c8c014esm424599266b.133.2024.07.22.06.58.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 06:58:43 -0700 (PDT)
-Date: Mon, 22 Jul 2024 15:58:41 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>
-Subject: Re: [PATCH printk 1/1] printk: nbcon: do not require migration
- disabled for nbcon_get_cpu_emergency_nesting()
-Message-ID: <Zp5lcOihG4d6SNjt@pathway.suse.cz>
-References: <20240719134818.3311665-1-john.ogness@linutronix.de>
- <20240719134818.3311665-2-john.ogness@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GOqbq2bie3geggisJE7HBixnpp9xqCkYnSsVP+18nMCswGq7S8Snugy/LmnTuZE8WHaTveyCSyvo8TkrK9fOqzEoqgs5C9EWtoNS261G79Kpd9qKyjdHrOjN1LpdZmqg2rfMmBlgzefsqDs0EMZDEQ5y9DRnviLeqaPMLSjKDrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d/1gTHgH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 301D7C116B1;
+	Mon, 22 Jul 2024 13:59:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721656776;
+	bh=iCxQ71WbzNABmbBFjX1zm5pj3iKgMFirBlm6soo6W48=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d/1gTHgHf3WXrOMKELiUYnawBIZBJx3ZrwLEegU/RMLPaKNZU/RgLMfpAE1+s77sg
+	 fUs9Ef2gqofXkOJUegcX8LgDYvyotHE8X+VCCSvrnj1UUFBS+jcX8BE5ooxRAdzJj6
+	 VAy1JfDdT+SD6Bp+l3tXklQElFliYiIi3fpBOE06oLjU4jL0k+pbozfU44kGKwQ60g
+	 xy1K2Bog5LSklUxMMC4Xahx0KZKfediq54b3YXpgWiwymNCHQujYfUhLhfZf44QkTN
+	 lU7j4NgnVGrOYlpS+Xf1hjp94Q9m6CsE46svhV1jiZmjuxWmeFbS4f7hHaDCoZt0Da
+	 8cQH95GfmQHSg==
+Date: Mon, 22 Jul 2024 15:59:32 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Jiri Kosina <jikos@kernel.org>, linux-kernel@vger.kernel.org, 
+	Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Subject: Re: [GIT PULL] HID for 6.11
+Message-ID: <x5zjzunuxkhb4fuef6pgm2uaxqi5ry6kblctw63nfrpqdtbph3@pwgilrlrkpu2>
+References: <uirri5bsktq5pk2tu4gs2u22qimjcn7hi66ek6gbj65qyczfex@yjy4brkoixfv>
+ <c52b7bf6-734b-49fd-96e3-e4cde406f4e0@linaro.org>
+ <f94c747c-7ee4-41b9-9851-610cecf2e555@kernel.org>
+ <39ec733e-c49f-44c4-b998-19c7cbaf6ad1@kernel.org>
+ <3azgpqym2yaceheefnnj54rjjb5vz54haqayxmgbnjvb3rr3sj@aoiwdpfjo65s>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,25 +61,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240719134818.3311665-2-john.ogness@linutronix.de>
+In-Reply-To: <3azgpqym2yaceheefnnj54rjjb5vz54haqayxmgbnjvb3rr3sj@aoiwdpfjo65s>
 
-On Fri 2024-07-19 15:54:18, John Ogness wrote:
-> Since entering emergency state disables preemption, there is no
-> need for nbcon_get_cpu_emergency_nesting() to explicitly require
-> migration disasbled. Either the current CPU is in emergency state
-> (and thus preemption is disabled and the nesting level is not
-> zero) or the current CPU is not in emergency state and the nesting
-> level must by definition be zero, even when migration is enabled
-> and the current CPU could change. The current CPU could never
-> change to a CPU that is in emergency state.
+On Jul 22 2024, Benjamin Tissoires wrote:
+> On Jul 22 2024, Krzysztof Kozlowski wrote:
+> > On 22/07/2024 14:51, Krzysztof Kozlowski wrote:
+> > > On 22/07/2024 14:46, Konrad Dybcio wrote:
+> > >>
+> > >>
+> > >> On 16.07.2024 3:34 PM, Benjamin Tissoires wrote:
+> > >>> Linus,
+> > >>>
+> > >>> please pull from
+> > >>>
+> > >>>   git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/for-linus-2024071601
+> > >>>
+> > >>> to receive HID subsystem updates for 6.11 merge window. Highlights:
+> > >>>
+> > >>
+> > >> [...]
+> > >>
+> > >>>       HID: bpf: Add support for the XP-PEN Deco Mini 4
+> > >>>       HID: bpf: Add Huion Dial 2 bpf fixup
+> > >>>       HID: bpf: Thrustmaster TCA Yoke Boeing joystick fix
+> > >>>       HID: fix for amples in for-6.11/bpf
+> > >>
+> > >> Hi,
+> > >>
+> > >> this commit broke b4 for everyone starting next-20240719, as it's
+> > >> an empty cover letter with b4 tracking information
+> > > 
+> > > Uh, reminds me, I guess the same mistake of not seeing differences
+> > > between git pull and git am...
+> > > https://lore.kernel.org/all/311c8b64-be13-4740-a659-3a14cf68774a@kernel.org/
+> > > 
+> > > So just to recap:
+> > > 
+> > > Please *do not merge your own trees* into kernel.org repos. Instead use
+> > > b4 shazam to pick up entire patchset, even if it is yours. b4 allows to
+> > > merge/apply also the cover letter, if this is your intention.
 > 
-> Reported-by: Juri Lelli <juri.lelli@redhat.com>
-> Closes: https://lore.kernel.org/aqkcpca4vgadxc3yzcu74xwq3grslj5m43f3eb5fcs23yo2gy4@gcsnqcts5tos
-> Fixes: 46a1379208b7 ("printk: nbcon: Implement emergency sections")
-> Signed-off-by: John Ogness <john.ogness@linutronix.de>
+> Oh s***. Sorry for that. I was not at home for the whole week and
+> completely missed that the branch was the developement one (I usually
+> use a different machine for applying branches and sending PR).
+> 
+> > 
+> > Also, this was not present in next-20240717 and earlier. It was added in
+> > 20240719, so few days ago during merge window.
+> 
+> That's when I prepared my PR to Linus, but as I mentioned above I forgot
+> to reset that local branch.
+> 
+> > 
+> > I think features should be in the next for some time before the merge
+> > window starts, not added to next the moment they are sent to upstream.
+> 
+> Yes, completely agree and that's a big mistake for me. I made a diff
+> with our for-next branch and didn't see anything. The only commit on top
+> of that messed up b4 cover letter is a67a1deb11d9 ("HID: samples: fix the
+> 2 struct_ops definitions"), which was already in linux-next on July 8
+> as b35e0dc548aa ("HID: samples: fix the 2 struct_ops definitions"), so
+> almost a week before the opening of the MR.
+> 
+> I'm still trying to understand if I forgot to merge that for-6.11/bpf
+> branch into for-next at that time.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
+Looks like I still pushed the change to for-next as of 3959f155ad59 ("Merge
+branch 'for-6.11/bpf' into for-next") which is not appearing on Linus'
+tree as expected (on 2024-07-08).
 
-Best Regards,
-Petr
+So my only mistake was the messed up b4 cover letter, everything else
+was in linux-next. Again, so sorry :(
+
+
+> 
+> Is there anything we can do to rip off that commit from the tree and fix
+> b4?
+
+This still stands :)
+
+Cheers,
+Benjamin
 
