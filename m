@@ -1,178 +1,215 @@
-Return-Path: <linux-kernel+bounces-258607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75349938A65
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:50:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FFB3938A6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 310152819D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:50:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AA301F218CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2B71607BB;
-	Mon, 22 Jul 2024 07:49:57 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8B91607B7;
+	Mon, 22 Jul 2024 07:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LNhPfXYs"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE4791607B9
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F6215FA7A
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721634597; cv=none; b=Jok4vFoqm/LabW2cVNQW4m65qL7spFNGykVG0NRIPepBbXOCriMz9MqnzvBtChVnjSxweuPzPS4+j4fbmA5PX9eA7QUYcO+K3m5Mt+/MKhURom0NH6e/hL1SAnuI2N9qoUUbNxjfB6RoSCJwuXH1i+LNEItOGDxj5e2QicJNyx0=
+	t=1721634671; cv=none; b=dGmqFl544xvfYwVKKxZVgwrmb1yuaTlA6kgQfeBZFMM1ruUszoeH4GqXH2yP5kA4XCT28aHXN2J+u9E3jZF9lHALET2tslAEOApLB7dWkfJc7JysCucMCiAVHQQSXzPcAoTcwXatLxltactTn6H2B2yZPM3sTDE/QD+M+bW4RBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721634597; c=relaxed/simple;
-	bh=qWES6iMMiupLxaKVo0bUbt2asytFgSHzI/pv7kIz6AQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=N9pY1gczV1O4CwxCicF6AltkDyL+JKOCl/1z2YfIpwjES/OOLZoG0sHPNJVjJ5uSPaXbEyd2T80YRNbIXACyZIxIhvZlb+u6tONZ5YmuiNIUa8s3xmlhFdkKVrSeij52Ch2+sSfLfXuDTshSjqxJYPGf2ZqpV8gCVxDV4oVr90c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WSC3l6QmQz1JDK2;
-	Mon, 22 Jul 2024 15:44:51 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 16FC31402CE;
-	Mon, 22 Jul 2024 15:49:50 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 22 Jul 2024 15:49:48 +0800
-Message-ID: <f0cc1bc6-8fc0-d4a3-0aca-1f3576fa072d@huawei.com>
-Date: Mon, 22 Jul 2024 15:49:47 +0800
+	s=arc-20240116; t=1721634671; c=relaxed/simple;
+	bh=EnH0hjCJsqenVdJIOwLmnk1ZdSWDskungvUxR29H0VE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DIHdgfY8c5J/6um5I8vzq3Gt0r+3g1JayumL31Mmy6kMAMzMLBiLJ9b8Eb55EO4x8C7bymIC/x+OrT9AzSO2y9q3NknaPJSv2MOJGzGpbNAe1bebnUjgtLS24kBttYYc5bH5BvgCIXZYCUjlbMAHe+VQTjVoQYfV/xTcnKtdIlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LNhPfXYs; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a15692b6f6so3142050a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 00:51:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721634666; x=1722239466; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EnH0hjCJsqenVdJIOwLmnk1ZdSWDskungvUxR29H0VE=;
+        b=LNhPfXYsPOE2ObCRfUAb+CieFs0aVzwk5AX74GbnwvnvEZu0msTsRuDeJyq4fqPojr
+         2F561P6tlczhQjxUGFrfiMsAik9JravoAP1mhhbDOozG1vxP+c5YvFuKJVDseth3ODTe
+         jZbVhJ2Hw1JAyn/iisNmJU70mhshmI9qD8kXoHHTSLDrZQUN/5OsLeBNmobZFqdm0LPM
+         iY2uvZLs42Xj80/z4PGpVN2DALDKguHpwswWsBj2ZLKwhcJCI4O+uGzt78TO4xzPVW++
+         Amu3vRJO0Y1+v6PBcdvv9hBa0+KF/QWALD2yxcmWprN77uUI2yVvC9agm/UKyjE4v/gD
+         sM5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721634666; x=1722239466;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EnH0hjCJsqenVdJIOwLmnk1ZdSWDskungvUxR29H0VE=;
+        b=gqHbjsCurTFSg1NSRZyukPaueJMJbYzffD96qCnsiQSNlllurHhn4LecRqB4xYaCWZ
+         y+4G2FfzWidq9mKP+LJU78OW2BN98yDRcPOfRtZEzOUU3IGVJvZ2QtvdzuWveea/IZZb
+         WJ9QsyjGl1d5ezssIrwwGyfQDjp7rjuN+/tsmSExF3Pg1+5VhJ9jW7WBNIjEaKu3Fd5N
+         6Yv5HECaTsjvyV3IEZU9AxiqYTBF2ZXlePjrZrYDQ/BkHkBdTCJjmx/0BdHTMQ4kvg/1
+         x/cGaT2+koMgb/A94WXgClDERT1cF/B0ZOfeDfc2ky8Sa2idu4knhUDkK336B6U97fcN
+         rxtg==
+X-Forwarded-Encrypted: i=1; AJvYcCXCn/3jZob4PdgBfsDHAFTH20z1DUekoh2QLWdY2p6FaNq0vziDYDPFbHDNP82SYfmYbvkJp0Zjs0V3EehZ4i/zMcFh16pCock0qLXm
+X-Gm-Message-State: AOJu0YxEdPo7PUEUAyhj8Ni4QXeIMB35NBkX1BPX/jdkqcNVsTEKYxcn
+	jP3hw6VjRXcKQJlYmkfEeXkdYub44K/79nK0IeJoasvEj2WpZW+OXCma1rWbv+Y=
+X-Google-Smtp-Source: AGHT+IERPpuu0WjjXUrxYUbuy6duds0kLH+r0sY8euaPygoIAdU5GkvLdgJpcNxtsiPzvG1YmGPTUA==
+X-Received: by 2002:a50:9b4a:0:b0:5a4:12ea:333f with SMTP id 4fb4d7f45d1cf-5a47ba979acmr3556532a12.37.1721634666398;
+        Mon, 22 Jul 2024 00:51:06 -0700 (PDT)
+Received: from localhost (p50915eb1.dip0.t-ipconnect.de. [80.145.94.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30c2f8808sm5651235a12.78.2024.07.22.00.51.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 00:51:05 -0700 (PDT)
+Date: Mon, 22 Jul 2024 09:51:04 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: Guenter Roeck <linux@roeck-us.net>, jdelvare@suse.com, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-hwmon@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
+Subject: Re: [PATCH v6 3/3] hwmon: (adt7475) Add support for configuring
+ initial PWM state
+Message-ID: <5fnaskzlfybxiddwhm3fdm774ispvuxdmv4jb4wj5sts2btkf2@gmcfdzx3qvjy>
+References: <20240722005825.1800403-1-chris.packham@alliedtelesis.co.nz>
+ <20240722005825.1800403-4-chris.packham@alliedtelesis.co.nz>
+ <15f4c51c-3f7d-4e93-9c3a-71ac1d626463@roeck-us.net>
+ <c261c74f-6829-4888-9836-6f27ba87dc25@alliedtelesis.co.nz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v4 3/3] riscv: kdump: Fix crash memory reserve exceed
- system memory bug
-Content-Language: en-US
-To: Mike Rapoport <rppt@kernel.org>
-CC: <linux@armlinux.org.uk>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
-	<aou@eecs.berkeley.edu>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
-	<arnd@arndb.de>, <gregkh@linuxfoundation.org>, <deller@gmx.de>,
-	<javierm@redhat.com>, <bhe@redhat.com>, <robh@kernel.org>,
-	<alexghiti@rivosinc.com>, <bjorn@rivosinc.com>, <akpm@linux-foundation.org>,
-	<namcao@linutronix.de>, <dawei.li@shingroup.cn>, <chenjiahao16@huawei.com>,
-	<julian.stecklina@cyberus-technology.de>, <rafael.j.wysocki@intel.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-riscv@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240722035701.696874-1-ruanjinjie@huawei.com>
- <20240722035701.696874-4-ruanjinjie@huawei.com> <Zp3-dZHhN7LbMggc@kernel.org>
- <5816d4d5-e038-c90b-5ac2-1a3b3a8b9e46@huawei.com>
- <Zp4JCmiZgGZ8jq-b@kernel.org>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <Zp4JCmiZgGZ8jq-b@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="r4x3fdstgdwascyl"
+Content-Disposition: inline
+In-Reply-To: <c261c74f-6829-4888-9836-6f27ba87dc25@alliedtelesis.co.nz>
 
 
+--r4x3fdstgdwascyl
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/7/22 15:23, Mike Rapoport wrote:
-> On Mon, Jul 22, 2024 at 03:08:29PM +0800, Jinjie Ruan wrote:
->>
->>
->> On 2024/7/22 14:38, Mike Rapoport wrote:
->>> Hi,
->>>
->>> On Mon, Jul 22, 2024 at 11:57:01AM +0800, Jinjie Ruan wrote:
->>>> Similar with x86_32, on Riscv32 Qemu "virt" machine with 1GB memory, the
->>>> crash kernel "crashkernel=4G" is ok as below:
->>>> 	crashkernel reserved: 0x00000000bf400000 - 0x00000001bf400000 (4096 MB)
->>>>
->>>> The cause is that the crash_size is parsed and printed with "unsigned long
->>>> long" data type which is 8 bytes but allocated used with "phys_addr_t"
->>>> which is 4 bytes in memblock_phys_alloc_range().
->>>>
->>>> Fix it by checking if the crash_size is greater than system RAM size and
->>>> warn out as parse_crashkernel_mem() do it if so.
->>>>
->>>> After this patch, it fails and there is no above confusing reserve
->>>> success info.
->>>>
->>>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->>>> ---
->>>>  arch/riscv/mm/init.c | 5 +++++
->>>>  1 file changed, 5 insertions(+)
->>>>
->>>> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
->>>> index bfa2dea95354..5d66a4937fcd 100644
->>>> --- a/arch/riscv/mm/init.c
->>>> +++ b/arch/riscv/mm/init.c
->>>> @@ -1381,6 +1381,11 @@ static void __init arch_reserve_crashkernel(void)
->>>>  	if (ret)
->>>>  		return;
->>>>  
->>>> +	if (crash_size >= memblock_phys_mem_size()) {
->>>> +		pr_warn("Crashkernel: invalid size.");
->>>> +		return;
->>>> +	}
->>>> +
->>>
->>> What the point of adding three identical checks right after the call to
->>> parse_crashkernel()?
->>>
->>> This check should be there and parse_crashkernel() should return error in
->>> this case.
->>
->> Hi, Mike
->>
->> How about the folling rough patch?
->>
->> --- a/kernel/crash_reserve.c
->> +++ b/kernel/crash_reserve.c
->> @@ -313,7 +313,7 @@ int __init parse_crashkernel(char *cmdline,
->>         if (high && ret == -ENOENT) {
->>                 ret = __parse_crashkernel(cmdline, 0, crash_size,
->>                                 crash_base, suffix_tbl[SUFFIX_HIGH]);
->> -               if (ret || !*crash_size)
->> +               if (ret || !*crash_size || crash_size >= system_ram)
->>                         return -EINVAL;
->>
->>                 /*
->> @@ -332,7 +332,7 @@ int __init parse_crashkernel(char *cmdline,
->>                 *high = true;
->>         }
->>  #endif
->> -       if (!*crash_size)
->> +       if (!*crash_size || crash_size >= system_ram)
->>                 ret = -EINVAL;
->>
-> 
-> Why no simply
-> 
-> diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
-> index 5b2722a93a48..64312709877d 100644
-> --- a/kernel/crash_reserve.c
-> +++ b/kernel/crash_reserve.c
-> @@ -336,6 +336,9 @@ int __init parse_crashkernel(char *cmdline,
->  	if (!*crash_size)
->  		ret = -EINVAL;
->  
-> +	if (*crash_size >= system_ram)
-> +		ret = -EINVAL;
-> +
->  	return ret;
+On Mon, Jul 22, 2024 at 04:09:46PM +1200, Chris Packham wrote:
+>=20
+> On 22/07/24 15:53, Guenter Roeck wrote:
+> > On 7/21/24 17:58, Chris Packham wrote:
+> > > By default the PWM duty cycle in hardware is 100%. On some systems th=
+is
+> > > can cause unwanted fan noise. Add the ability to specify the fan
+> > > connections and initial state of the PWMs via device properties.
+> > >=20
+> > > Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> > > ---
+> > >=20
+> > > Notes:
+> > > =A0=A0=A0=A0 Changes in v6:
+> > > =A0=A0=A0=A0 - Use do_div() instead of plain /
+> > > =A0=A0=A0=A0 - Use a helper function to avoid repetition between the =
+of and
+> > > non-of
+> > > =A0=A0=A0=A0=A0=A0 code paths.
+> > > =A0=A0=A0=A0 Changes in v5:
+> > > =A0=A0=A0=A0 - Deal with PWM frequency and duty cycle being specified=
+ in
+> > > nanoseconds
+> > > =A0=A0=A0=A0 Changes in v4:
+> > > =A0=A0=A0=A0 - Support DT and ACPI fwnodes
+> > > =A0=A0=A0=A0 - Put PWM into manual mode
+> > > =A0=A0=A0=A0 Changes in v3:
+> > > =A0=A0=A0=A0 - Use the pwm provider/consumer bindings
+> > > =A0=A0=A0=A0 Changes in v2:
+> > > =A0=A0=A0=A0 - Use correct device property string for frequency
+> > > =A0=A0=A0=A0 - Allow -EINVAL and only warn on error
+> > > =A0=A0=A0=A0 - Use a frequency of 0 to indicate that the hardware sho=
+uld be
+> > > left as-is
+> > >=20
+> > > =A0 drivers/hwmon/adt7475.c | 130 +++++++++++++++++++++++++++++++++++=
++++++
+> > > =A0 1 file changed, 130 insertions(+)
+> > >=20
+> > > diff --git a/drivers/hwmon/adt7475.c b/drivers/hwmon/adt7475.c
+> > > index 4224ffb30483..fc5605d34f36 100644
+> > > --- a/drivers/hwmon/adt7475.c
+> > > +++ b/drivers/hwmon/adt7475.c
+> > > @@ -21,6 +21,8 @@
+> > > =A0 #include <linux/of.h>
+> > > =A0 #include <linux/util_macros.h>
+> > > =A0 +#include <dt-bindings/pwm/pwm.h>
+> > > +
+> > > =A0 /* Indexes for the sysfs hooks */
+> > > =A0 =A0 #define INPUT=A0=A0=A0=A0=A0=A0=A0 0
+> > > @@ -1662,6 +1664,130 @@ static int adt7475_set_pwm_polarity(struct
+> > > i2c_client *client)
+> > > =A0=A0=A0=A0=A0 return 0;
+> > > =A0 }
+> > > =A0 +struct adt7475_pwm_config {
+> > > +=A0=A0=A0 int index;
+> > > +=A0=A0=A0 int freq;
+> > > +=A0=A0=A0 int flags;
+> > > +=A0=A0=A0 int duty;
+> > > +};
+> > > +
+> > > +static int _adt7475_pwm_properties_parse_args(u32 args[4], struct
+> > > adt7475_pwm_config *cfg)
+> > > +{
+> > > +=A0=A0=A0 unsigned long freq_hz;
+> > > +=A0=A0=A0 unsigned long duty;
+> > > +
+> > > +=A0=A0=A0 if (args[1] =3D=3D 0)
+> > > +=A0=A0=A0=A0=A0=A0=A0 return -EINVAL;
+> > > +
+> > > +=A0=A0=A0 freq_hz =3D 1000000000UL;
+> > > +=A0=A0=A0 do_div(freq_hz, args[1]);
+> > > +=A0=A0=A0 duty =3D 255 * args[3];
+> > > +=A0=A0=A0 do_div(duty, args[1]);
+> > > +
+> >=20
+> > Gues I am a bit at loss here, just as 0-day. Why use do_div ? It is only
+> > needed
+> > for 64-bit divide operations.
+>=20
+> Mainly because of Uwe's comment on v5. I think I've avoided the original =
+u64
+> issue now that I'm converting fwnode_reference_args::args to a u32 array.
 
-This is good, thank you!
+My comment was only about the build bot finding a division where the gcc
+stub was missing with is an indication that do_div should be used.=20
 
->  }
->  
->  
->>>
->>>>  	reserve_crashkernel_generic(cmdline, crash_size, crash_base,
->>>>  				    low_size, high);
->>>>  }
->>>> -- 
->>>> 2.34.1
->>>>
->>>
-> 
+Usually for PWMs perdiod and duty_cycle are u64, but here it's only
+about values from the dtb, so they are u32 and a plain / should be fine.
+
+> can probably get away with plain division, although 255 * args[3] / args[=
+1]
+> might overflow in theory but shouldn't in practice.
+
+I don't like possible overflows, but I don't care enough for hwmon
+drivers to object. Still a check for args[3] <=3D 0x1010101 would be easy
+enough.
+
+Best regards
+Uwe
+
+--r4x3fdstgdwascyl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaeD2YACgkQj4D7WH0S
+/k5n5AgAoiOFkhm/1XqNRpW8sFdlsQuirycWjHtM7CNcf9FXDizyShxG1sMeFYq4
+hgfzlOKpzvMGZlrORtwH2cgZpK9baBzm2Z0jjRETdkHg9cFKhXzAlFWClNEnekwC
+dHuQOeE/0a6CNVb2b2kIps+9AVHutvTqLf4BUxuUieWCmiMA33bJp/j11ieYvW80
+9b/vXu5p8zgBACGJt8Jaz0DgKAbTuF/xorEUP+w5CKGS401cjkTQvD0pzCYFk0U8
+HJ/tGE8GaT7xUkuWECmydZ3psWxTwkXJZ2AKtzUqstBREJiDRO9j9ywST8IBgZeD
+glPw1K3wbIWgsueafREfGF/LF6f6+w==
+=/pvZ
+-----END PGP SIGNATURE-----
+
+--r4x3fdstgdwascyl--
 
