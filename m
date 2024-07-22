@@ -1,130 +1,189 @@
-Return-Path: <linux-kernel+bounces-258809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC0C938CE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:02:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F417B938CED
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:03:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BE0D288708
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:02:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78E051F287B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D464516DC11;
-	Mon, 22 Jul 2024 09:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D77016C6BE;
+	Mon, 22 Jul 2024 09:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a1FTGnJ7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="deDa2cyZ"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2427F16C852;
-	Mon, 22 Jul 2024 09:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1B5167296;
+	Mon, 22 Jul 2024 09:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721642178; cv=none; b=TzxI+ZuvRMQ0YpZsWcHVr3zrybVpunBHsFKV4gS73xSg3zyDvbs+9ZVuQnWNnnvs1pTyIWvPje+Lje819KdVA0tUdoT8gINaLgZP9I+17peO++twC3R24VrQ5YYuXICrlFzv5c02LCuUhlD6J+sh1f2MdCoelgcYtouz26n+zIA=
+	t=1721642337; cv=none; b=tDU43gbICUVYhFVqAIWcpGGNlcV3gJ1k8PzPoYEPSwcGhOGVv/guj7tdVHGsA+iK40eiyLUC5F7bA8QGSt5ExKxX8olCEuifKYA1hzQKJR5eV9Pe4WzjdTtzsrJVsM7ae0nPfkULlKtAw6Mez/xQ8vlJm1OMTsaSuAgWSz4wqmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721642178; c=relaxed/simple;
-	bh=GKHj9BvD+9lJ8g1YtS746wq1CTpdT5QhfUV2G3P5MRw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kMUojtFEUdn4SDUO271XQPNn5NEFmWe2jjslgCmJf8QGHzUw8ytfuF6HHm7/0Dk+tVc4JincHh0u42+lApIqH0E1hRhmNjufK9NMqieuYPA/Qta+xms3qBjF6m0UVphbSjJPhJmfa9jEZ6ZOY1l7zak8dispwazpqyiToqEX8aU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a1FTGnJ7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35912C116B1;
-	Mon, 22 Jul 2024 09:56:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721642177;
-	bh=GKHj9BvD+9lJ8g1YtS746wq1CTpdT5QhfUV2G3P5MRw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=a1FTGnJ7S6g+XoijtR0Tej9mBoppYppm5AJ5GUMfYU+l4Gna+jlorX1L0J66FhXxU
-	 ONDWFVlIZVL5Zc+Vyle4Ft+50tOLrzvZKQzAmCMgsYcJbujLBN+5TlZm9xup4Rvuay
-	 YQNXqulhK+a5bHFwMv/iLbwzhZpta4uRGYoPGZQSUAb31JImnlkKIRZwgpZJD5PPj8
-	 og7KCl+1Uvgza+pnuMdH4XNWEvgK8mkh0yflp/jCKwbeYfK70RC5pKvPFUmqLZSMM5
-	 GWKHbwWWNeMzEG4VEdBJigeihvHD+fXD+vPknciqb0+wLniyuhRlpzas0CXwltJFWC
-	 pNcRQhCj0VRDg==
-Message-ID: <e4f7caeb-6118-4c85-867f-064308c082ca@kernel.org>
-Date: Mon, 22 Jul 2024 11:56:13 +0200
+	s=arc-20240116; t=1721642337; c=relaxed/simple;
+	bh=9J3yO3VnNWzO/4STaUVUzujyu858CDek+7ttBwvKm1Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=JjH+dHNk7e3m4seyW29cw+dPso+0htb3o5/kvosIWkCI/VICTEGthykTK/WqfIKsZwjzrxJpv2h8BEZ73EbEwTJMy11j3JQO+lzIRAiLWJyC9WgY/ocJpciQlXy4YqX8toNwZT9Xh99D81REB37i733SWNUgZw2F5GM6pQuOXH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=deDa2cyZ; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4775E1C0002;
+	Mon, 22 Jul 2024 09:58:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1721642332;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g/jAjVSgCQGsv/OChkMWXRpZsKoUOm6qP05EXuWLEAc=;
+	b=deDa2cyZXK/WVwDqDkFUeqqrAK7RXja9FxvGIsK4UQPE0kn2ufXUP81r1HTH/NKOU+2x8N
+	jv1WcY67MFN2LC9szuPfFKBrfrU1LaHpuk+Zr1ZlIyLFfQ6uwfeiZ7FZnXeBI0xJ7NjO3x
+	LXs6jpOnmYjg7yfXB7tBEJufa04ubwJJ+eQruLGmf/EqKDIFk+AdZ1NBo4jCZHRH9YTsOg
+	ZKE6EaQcc7EpT8/QeEvBxoDR2JHEV7wR+Sth8pGbKIge0Zxz9eUpmZ66xUYpzgmzWpRyAe
+	BrgOIjjSXJAL8nvwjqwlx+5hjAW5ipq6aWvIJKV4dD9eNzR4HL7iMl+ZygtlFQ==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, "paulburton@kernel.org"
+ <paulburton@kernel.org>
+Cc: "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org, =?utf-8?Q?Th=C3=A9o?= Lebrun
+ <theo.lebrun@bootlin.com>,
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, Tawfik Bayouk
+ <tawfik.bayouk@mobileye.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH] MIPS: SMP-CPS: Fix address for GCR_ACCESS register for
+ I6500
+In-Reply-To: <6cbe8375-c11d-4fbf-8e4f-b15828ac3480@app.fastmail.com>
+References: <20240719-smp_i6500-v1-1-8738e67d4802@bootlin.com>
+ <302ca8fb-0185-4872-9d82-d472854e5a43@app.fastmail.com>
+ <6cbe8375-c11d-4fbf-8e4f-b15828ac3480@app.fastmail.com>
+Date: Mon, 22 Jul 2024 11:58:51 +0200
+Message-ID: <87jzhdkask.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 37/37] Add Kalray Inc. to the list of
- vendor-prefixes.yaml
-To: ysionneau@kalrayinc.com, linux-kernel@vger.kernel.org,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Jonathan Borne <jborne@kalrayinc.com>,
- Julian Vetter <jvetter@kalrayinc.com>, devicetree@vger.kernel.org
-References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
- <20240722094226.21602-38-ysionneau@kalrayinc.com>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240722094226.21602-38-ysionneau@kalrayinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: gregory.clement@bootlin.com
 
-On 22/07/2024 11:41, ysionneau@kalrayinc.com wrote:
-> From: Julian Vetter <jvetter@kalrayinc.com>
-> 
+Hello Jiaxun,
 
-Missing commit msg.
+> =E5=9C=A82024=E5=B9=B47=E6=9C=8820=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8A=
+=E5=8D=8811:13=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
+>> =E5=9C=A82024=E5=B9=B47=E6=9C=8819=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8B=
+=E5=8D=8810:14=EF=BC=8CGregory CLEMENT=E5=86=99=E9=81=93=EF=BC=9A
+>>> Unlike most other MIPS CPUs, the I6500 CPUs have different address
+>>> offsets for the Global CSR Access Privilege register. In the "MIPS64
+>>> I6500 Multiprocessing System Programmer's Guide," it is stated that
+>>> "the Global CSR Access Privilege register is located at offset 0x0120"
+>>> in section 5.4.
+>>>
+>>> However, this is not the case for other MIPS64 CPUs such as the
+>>> P6600. In the "MIPS64=C2=AE P6600 Multiprocessing System Software User's
+>>> Guide," section 6.4.2.6 states that the GCR_ACCESS register has an
+>>> offset of 0x0020.
+>>
+>> Hi Gregory,
+>>
+>> I confirmed this is a CM3 feature rather than CPU core (Samruai) feature.
+>
+> Oh I=E2=80=99m not really sure if it=E2=80=99s CM 3.5 only.
+>
+> Let me check this Monday once I can checkout old design database for
+> I6400.
 
-> Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
-> Signed-off-by: Yann Sionneau <ysionneau@kalrayinc.com>
-> ---
-> 
-> Notes:
-> 
-> V2 -> V3: New patch
+Ok, so I am waiting for your feedback :)
+And I am also trying to see if I can find the datasheet for I6400.
+>
+> Hardware resets GCR_ACCESS to the most permissive value so I assume
+> it=E2=80=99s your bootloader doing wired hacks.
 
-Bindings come before users.
+Indeed, other bootloaders seem to not modify it, so that's why I think
+the issue was never detected until now. However, we want to be as
+independent as possible from the bootloader, so we really need to fix
+it.
 
+Thanks for your review!
 
-Best regards,
-Krzysztof
+Gregory
 
+>
+> Thanks
+>
+>>
+>> Please use CM version to select register region.
+>> (And perhaps Cc stable for this patch?)
+>>
+>> Thanks
+>> - Jiaxun
+>>
+>>>
+>>> This fix allows to use the VP cores in SMP mode.
+>>>
+>>> Based on the work of Vladimir Kondratiev <vladimir.kondratiev@mobileye.=
+com>
+>>>
+>>> Fixes: 859aeb1b0dd1 ("MIPS: Probe the I6500 CPU")
+>>> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+>>> ---
+>>>  arch/mips/include/asm/mips-cm.h | 4 ++++
+>>>  arch/mips/kernel/smp-cps.c      | 5 ++++-
+>>>  2 files changed, 8 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/mips/include/asm/mips-cm.h b/arch/mips/include/asm/mi=
+ps-cm.h
+>>> index 3d9efc802e36..41bf9b3a98fb 100644
+>>> --- a/arch/mips/include/asm/mips-cm.h
+>>> +++ b/arch/mips/include/asm/mips-cm.h
+>>> @@ -240,6 +240,10 @@ GCR_ACCESSOR_RO(32, 0x0d0, gic_status)
+>>>  GCR_ACCESSOR_RO(32, 0x0f0, cpc_status)
+>>>  #define CM_GCR_CPC_STATUS_EX			BIT(0)
+>>>=20
+>>> +/* GCR_ACCESS - Controls core/IOCU access to GCRs */
+>>> +GCR_ACCESSOR_RW(32, 0x120, access_i6500)
+>>> +#define CM_GCR_ACCESS_ACCESSEN			GENMASK(7, 0)
+>>> +
+>>>  /* GCR_L2_CONFIG - Indicates L2 cache configuration when Config5.L2C=
+=3D1=20
+>>> */
+>>>  GCR_ACCESSOR_RW(32, 0x130, l2_config)
+>>>  #define CM_GCR_L2_CONFIG_BYPASS			BIT(20)
+>>> diff --git a/arch/mips/kernel/smp-cps.c b/arch/mips/kernel/smp-cps.c
+>>> index e074138ffd7f..60590890b6da 100644
+>>> --- a/arch/mips/kernel/smp-cps.c
+>>> +++ b/arch/mips/kernel/smp-cps.c
+>>> @@ -325,7 +325,10 @@ static void boot_core(unsigned int core, unsigned=
+=20
+>>> int vpe_id)
+>>>  	write_gcr_co_reset_ext_base(CM_GCR_Cx_RESET_EXT_BASE_UEB);
+>>>=20
+>>>  	/* Ensure the core can access the GCRs */
+>>> -	set_gcr_access(1 << core);
+>>> +	if (current_cpu_type() !=3D CPU_I6500)
+>>> +		set_gcr_access(1 << core);
+>>> +	else
+>>> +		set_gcr_access_i6500(1 << core);
+>>>=20
+>>>  	if (mips_cpc_present()) {
+>>>  		/* Reset the core */
+>>>
+>>> ---
+>>> base-commit: 9298d51eb3af24f88b211087eb698399f9efa439
+>>> change-id: 20240719-smp_i6500-8cb233878c41
+>>>
+>>> Best regards,
+>>> --=20
+>>> Gregory CLEMENT <gregory.clement@bootlin.com>
+>>
+>> --=20
+>> - Jiaxun
+>
+> --=20
+> - Jiaxun
 
