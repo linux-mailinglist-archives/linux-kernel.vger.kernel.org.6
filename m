@@ -1,346 +1,210 @@
-Return-Path: <linux-kernel+bounces-258400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F28093877F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:16:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD82E938784
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:18:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADE8C1C20860
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 02:16:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 199D9B20E30
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 02:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8843B11CA0;
-	Mon, 22 Jul 2024 02:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="T2i+5H6V"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991BB14AA9;
+	Mon, 22 Jul 2024 02:17:44 +0000 (UTC)
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2120.outbound.protection.partner.outlook.cn [139.219.146.120])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC221849
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 02:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721614552; cv=none; b=X3brvmPW85I3G1xr8p52GsC6BxysjvixR4Mit6Zushq+K8Cen31TLCvg8lMSJCcE4OOix+sgGbEC+EZlDhgat0K4/Iz2Ub1Xa+Um9H0U0eZuLwYcS2lSAmfgyGYAmyX0+93UUL01bgjMfxm+mcI6WGeCbUnLeFwrWY4zBULfjdQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721614552; c=relaxed/simple;
-	bh=yphmX1TKQ9qi/ZyqAMA/8YTigiBJfzot0d5eSQTpugg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BgY3aqUc2TgJFWuutaH6tunHVsvCF6U9FQSmn32E2xhOR0m4117zRogcedV/7mVw+X1n3dR75KjCPKBiTMmS2X9LWI4k03smu/O3uxpY21EaSITrJF8ZseLmADj654iKFAyrc0t3NgKR6XlNHKQgKWwnGZgMEpnUJYDWcb+DEN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=T2i+5H6V; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-260dde65a68so2036214fac.2
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 19:15:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1721614550; x=1722219350; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0xvGmjmivgHb95fqKTA/RvEneQkiZLUnnuZegb5vAT8=;
-        b=T2i+5H6V9zmaihCztwNm3tvHnSmIsrYwAHZY4XiCkDFHSJSCiSejQ8IwoUEM05wbV8
-         ua/c3WoZav+yOUe5UYyvW/PjczEm+lEBAoZEy7D9u1YrAk2SDRcsV99egbtybWBQvvqd
-         hw3QZJ27Q5j4GTCVDCPShVI8mWJcUkFdjD0BJqtgLOIWYWGA4VTI4uL+xFW46OTqXKup
-         mmyyxGaQhp0Or7S/F4SY1oZ4Ut44RQmyrAGc6pf+AYQooM6WZ10c9Q+qKA/YhfUyqbEA
-         EhaPdXgTR9xjKT6/7brIAnQ7F5Oh0BvjMHoPUwhW81o/BzBmA9/q5jEsHLusVeb9MaWq
-         uCpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721614550; x=1722219350;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0xvGmjmivgHb95fqKTA/RvEneQkiZLUnnuZegb5vAT8=;
-        b=C7fYTPK9SUHcrMYCJ2/ctghKGxkFMM+zcAbegLBja+H6v0g4t9JM7gSIs2tcOlu7FX
-         AAlifwRorZKlxFSfgoOjirVGmOQS4XkA0bmFEXhshinuROIddjHjYqQFOzhfstHw+t6M
-         1+bYgwNKfYPOWUwPM7/jbszdZDUYXuwrPNOnh57rLiZCwUWu2DzwMepn+jHi+r1vkccg
-         tLy57BpWw/0CEJLKRQMfhHdnReEVajirndcP9NFMLakz6cL4rR4oeri6bo7UrFJwVTju
-         DC0DikBc5b3UuDN5M8c3udRcmbdhqXy0GRWxaZBdD+bZpYKp0Fser4e47gI1qRN8x4vW
-         p5EA==
-X-Forwarded-Encrypted: i=1; AJvYcCVeQCJ+Fb5UnFKvwEga+uTY78mg5RFeGdCvBBnG9XJ5gPl+ofkn1d51++q3eO5MZQ4rdpNZQ3Rmkt8wfii7yeOMG2YKzbr1MHAG3ntR
-X-Gm-Message-State: AOJu0YwVRb6eRtZT2Q8mnjIbT94pHVnwcTzPwAb0bUqvPNyiQ5p8qIoT
-	0VGRWS/fzXzgo8tH0bFOtEFmK2rxFG1teuTc42/EX4CAbPCMAme+ryJgrq/06j5g1Uq02scw0R0
-	g74SWgRZMvv3AVGDWjiB7f8lW4j9Eo0uqU2v2vA==
-X-Google-Smtp-Source: AGHT+IGy8EGXhU/Y1aAR73X2BqKakPiS49me7AoWcRo43dyZ03I8ZqfZ6txxgWUCwzmo8e5D+pjLhwu5GRuFVklCRrQ=
-X-Received: by 2002:a05:6870:fb8f:b0:254:f00e:56a2 with SMTP id
- 586e51a60fabf-2612130e7efmr5576520fac.9.1721614549848; Sun, 21 Jul 2024
- 19:15:49 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE14CA64;
+	Mon, 22 Jul 2024 02:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.120
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721614663; cv=fail; b=JL1DAXJGgvKT8jcFUkfalRoLL2bPry7RKnZ1BFucuIlIFVuMR7yWRkHRwqAmVrDQbAzD5AWK2kqD8O/Tdrg9IZiYcRQArqwq0Qz4bOR3cNWQDVyX3LtqCoJeST4r+nu3msvtT450M4pgtbtYA9iVDPEv6wuq0grtWepyvBT5ejM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721614663; c=relaxed/simple;
+	bh=iu8JE7zpbHQVCtRBDI5fc4tTvEy3MYgWYGHgETOT2AY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=RnXIRMHljKH953vF0YFnuk2MyvAjD1qxAJju0eC9o8hlFHkjXSKyPobUjrsdZyWoHvJKqAAp9ofI4bEg8ajVfpN+G8NTrEpL8PRmj8hQ588PRj5o7N0PKkmTji1iPOHljXcmevkkbyrNByLemnYc1T2A86jdSHB0fEzJXgOj/Sg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MV7MQVnvDPuiioTMQnmsFbtlN+1MrPA+WU18zYZsRLfimKHca55h39ceT+oHRGqLx2yhLk/ZPXBbLsUjj4hGpf6uDSb1pPsu9dKtqOIRFEwvRf6HhVCuwmWtYZhUC+w2BmgjUxeoFVSFpfUFCc2xxkTlZZV1frhkalRNi+QjjEgYkkwEPdnIHpATF28d9ChZrWmARswkgkDPGKLsgRtyzi3NZcZe59m0+gBpeiLOasxO/fcAdZDwcvxtKwxX1sa60fOVsgDgiMe+BYO3Caez+bLgRcqLCEFw/15TOjZlE8g6Xba/58TguN+EYZIUy7n+kXeGs9qm3HKTrGSqCv+1rQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iu8JE7zpbHQVCtRBDI5fc4tTvEy3MYgWYGHgETOT2AY=;
+ b=mXyrotK8J1kMhVcb3Xt+4Rx44Ku+BWX66kzh2I42wWsTh+EdDDaRcPtGhTReaWARjtgD1dJg2lKCHKy+WzyfK9Fgrc/dDkbK+csjV56xWtsePsSNGbFGILUjRCmMDHlyxhQi4ZhOcj9SbRRK8BP1VPfluFL97ujLIKYRt3UHehSpn6NTB+gqG843O0g8l7R8543xCHujUlcew0Yqi+dE+6JFw9OdzKJKZIHA2LFFesdFzbnxXBDr2Zn8YjVDuOL8koGkTdQowQa1gU5hwhjvCE53+t6LRm4D4jAp8XfupF424S+LrNk56rZVIDtGwz1LYihR4kwbNzKd5SQIRkvEUg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:1b::9) by ZQ0PR01MB1096.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:c::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.38; Mon, 22 Jul
+ 2024 02:17:29 +0000
+Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
+ ([fe80::64c5:50d8:4f2c:59aa]) by
+ ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn ([fe80::64c5:50d8:4f2c:59aa%6])
+ with mapi id 15.20.7762.032; Mon, 22 Jul 2024 02:17:29 +0000
+From: Changhuang Liang <changhuang.liang@starfivetech.com>
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, Mauro Carvalho
+ Chehab <mchehab@kernel.org>, Maxime Ripard <mripard@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Hans Verkuil
+	<hverkuil-cisco@xs4all.nl>
+CC: Jacopo Mondi <jacopo.mondi@ideasonboard.com>, Laurent Pinchart
+	<laurent.pinchart@ideasonboard.com>, Jack Zhu <jack.zhu@starfivetech.com>,
+	Keith Zhao <keith.zhao@starfivetech.com>, Jayshri Pawar <jpawar@cadence.com>,
+	Jai Luthra <j-luthra@ti.com>, "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-staging@lists.linux.dev"
+	<linux-staging@lists.linux.dev>
+Subject:
+ =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjIgMi81XSBtZWRpYTogY2FkZW5jZTogY3NpMnJ4?=
+ =?utf-8?Q?:_Add_system_PM_support?=
+Thread-Topic: [PATCH v2 2/5] media: cadence: csi2rx: Add system PM support
+Thread-Index: AQHa2MKXFrG9Yf+6k0Wh6db3BATHKrH921SAgAQq+fA=
+Date: Mon, 22 Jul 2024 02:17:29 +0000
+Message-ID:
+ <ZQ0PR01MB13024828274542F14E89AD58F2A82@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
+References: <20240718032834.53876-1-changhuang.liang@starfivetech.com>
+ <20240718032834.53876-3-changhuang.liang@starfivetech.com>
+ <26af0977-8e38-47d0-a521-c5b1e505d564@ideasonboard.com>
+In-Reply-To: <26af0977-8e38-47d0-a521-c5b1e505d564@ideasonboard.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: ZQ0PR01MB1302:EE_|ZQ0PR01MB1096:EE_
+x-ms-office365-filtering-correlation-id: 7dab8780-b57b-4cd7-5e7e-08dca9f46ff0
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|1800799024|366016|41320700013|38070700018;
+x-microsoft-antispam-message-info:
+ NfMFEnd7xdPRrh1ZkB8QnNvNhQGlX/bVsoI8yCkP4dcTVQn96SM9dR7dRBBx3fJFEq/ChJ3jdNWAxq/nkAI5cJiqieRszWppMqRk8knNeozUmO0Vm0ALgLTqWIeLCsix0EH3r1zIYO1LKTjgl2yRgG3tKX6TDNSJyTqtbWILbwZfhxRITgoWXVJgP2kmRc5Tr+X3nYq+nqztb0uzTVtOVCVI0RsqkSQbdEv3cmKOXK62HPOf/H4LqyfzNMfvExeRJV8SeHLLS93lT6qb1+PiNeg2ht6aTCBNi5a5csTB5Z5arDb0evXwgqMwFP5vQJyQiFXLDsExzfPfyzAYXwC5wxEcVFd9ZVi7rdnivn2vAhruB8yx+ulTJZh8JrGOghDMuk91pzocj0dwyWOuMYTLehfG6GqWyepx9fnbzXuAhv6FZ1EesAutZePeVW9MPoFin0qX8GMl3t7zA5E7reTVO9FHYD85fTfNcBSO73oaTGuL8MEQ4pnzFb6RDtHE0m7RDwwKZzl7fCpa14MEXz9uFJGx+zPusDfDWTIZFLEXZeLRcIPB0ZSzNpRCzjm89i+vWzmn+qz2ialnHgsbWiwt57mIE8AY7fx8k62e5vPS7am70iqUaGUSS2ptVp1VEHbe
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(41320700013)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?TGNqcWxUYWxpR0Z2SDBRamRoRGZCSU9LeUtrQTlnVkdVeXEzclR6R25yajRy?=
+ =?utf-8?B?Zi9IZ2t6SjQramJRYURyR0FsRmtkdEx2VmljOVdFWFFUdDBtTi9TWE0yV0lv?=
+ =?utf-8?B?UzlSUERjOXcyN3FDZlF1ZS9iRFliVkNSVkdCYTdyd3ZkTmdPbEg3TVU2c0p2?=
+ =?utf-8?B?c2YxV2FnYTFMcVVSc3hQZzNJTVhia0J4Q2lCbURXNWJmd3lBZzVDZ1E0RC9v?=
+ =?utf-8?B?TmlWTWMvcHk5QWdCZnlUTG4zYnUrTGsyNENCTjhuUk5aZzh6aE9tWG0wYzRh?=
+ =?utf-8?B?a09tallDYnB5MndHZ2RweGxVTUM0QUZRRkRCS0xoc1ZsQTFGWkNZZ0F0Z1hk?=
+ =?utf-8?B?bGM0Uk5qQk9kaXJOZE1hRGVWV2g2UnZHMEIzdUJCOTltWjV2NWZFMk1ZNFow?=
+ =?utf-8?B?cGV2RW9yZEtFblVFams3TjBrSG5RUk5NdEc0ZWF4TVlKR1hOMzVtVDJCTDBV?=
+ =?utf-8?B?YUQ2aVY3aFZSVGVXWFVERXlhWFI3L3ZCWlFmcnhWSVVDcC9jZndLbXYxdTV6?=
+ =?utf-8?B?MEVWdUwwcHdaZEluY0hDLzh2S0p3WlJ4TnpRZWNWdkJ4VHRINWVQYnI2S1k2?=
+ =?utf-8?B?aWhWcGNkSFlMRHlaK1dCN2dPZ0Q3UzdDa09FWE5SK2c0REN1Q3paU2s4ZitE?=
+ =?utf-8?B?eTRCTXhCU2ltWE8zMmUxNXdsdko3cVhZWFNqMDlNSkE5eCtwWjcwcmxjY1lN?=
+ =?utf-8?B?UnVDU3kzdmVFT1hsb3g2Ykt5ekp4YTRnV3hJOEhUalV2UFE0Tk1yUS83UVVu?=
+ =?utf-8?B?cWNWeWw5Q3dYMTlnOUNyK0hpL2ZJTWdObTFpY1gvL0t2UmF6VWdhYWFjd2FH?=
+ =?utf-8?B?amtQWDJHSjJLdHhUd3JkajFYUXFxd01VQUhFLzE1MXpIYTdkWDZVL29nUjVK?=
+ =?utf-8?B?MTJGOUR2UzIvSUUzUDRqQS91S1puZzRPOFJ4ZURqd25VTTVBblFvZjVWTG9k?=
+ =?utf-8?B?Mm1xVlpmQVdDVE9XOU0rTXRLdUJBUDJucEJWb2xjMXpNSkhpUktXOUwvZHB6?=
+ =?utf-8?B?d1VHTHdZMW5LYWlTdlNjZ05wZDNta1oxS1paMnRLUzRNWFlwc2dRbCtESjM5?=
+ =?utf-8?B?SGYyY2dyTlBSdmFQK3cyWnNJSVNOd1BiY1ZaZkxINjhoVlFOZzlhdjh2SFNG?=
+ =?utf-8?B?UHc0MHF0bDhIN2pvYmI1TE5tRTlYb3doK2JCWVd1VGNDbWhxRkZlOTVBZDRh?=
+ =?utf-8?B?L0FuVUFwVzB6VWR2ZjVRWEgxWVFUUTVFM2VJUmQvUU80M1dJNyt0ZC8yZ2t3?=
+ =?utf-8?B?Z1lqYWhuMEtPWWVvbzk5L0dJemJmWG13Yll6bkhUUWgxdEdmWkRraFFOcWhv?=
+ =?utf-8?B?dHJxVlNyaFZsYzRlSXpBQkJtYUdRQlpjLzU4TVZ0c3c4d3RDdUdxTXRFZFQw?=
+ =?utf-8?B?bEVkWHdXbDloVjFXODVwd05qM0piSHJIVlpaZFVJVHI1T0E2T3dBTDFXNk5B?=
+ =?utf-8?B?SEJhQkgwWVVYN3AwVVdSM1AwREpoWmZLdTZhdXMzZ0pFaVVYNVFwWmJnNmp0?=
+ =?utf-8?B?clRJbGpxNVdCS2tPM3g5UytyVVNhci8vZnNxMHZCSGc1bytxM0NzQnJ4ZFk2?=
+ =?utf-8?B?QUFsMzlDWXpVNldVNXpxSjlxU3Y4Qm9DcHN5a2Q0bnpZRFROOTc4cVlZUkhq?=
+ =?utf-8?B?NXFaRU5xR0lZM3ppR21WT1BPcHdaOFBETFY1b1VxT0tlU1pBZEhCcGJrUi9B?=
+ =?utf-8?B?NEtRL2hvNzRuNDVtTHJNMy83dGhXSjEvSDhxRGszcWNpSWhvSXRlbDBOYk9V?=
+ =?utf-8?B?OGJHQ3daT0pxLzZKMUNvWnFPYkFaenU3Ritid2k0MlMwc015Y2NqVFo5T3J0?=
+ =?utf-8?B?MGJnNmgveENLVDJ1OGRXcUZ2cXV3ZGRYcWh3Y1ZiMjBCa1EybGdIN2JmbXNX?=
+ =?utf-8?B?RUg3Qm8vTnVBWWxEeGZQNjdySHlvZCtFUDNjNmxrUUM1cnoxNHI3TjZrWmdk?=
+ =?utf-8?B?VFZYV2hxT1FqWHlIYjBSRTFHdGtqbE5Wd3N2anZBRFV4NEJiN1ZCbzc0ODRi?=
+ =?utf-8?B?ZFRiM0ptSGpzeWVYYWh5bThGK21kMGpqL2FnaDBvUDVGOFFlV3FaWDU0c0d0?=
+ =?utf-8?B?WHBrTy8rajR4djVDd3Z5anpqMDdpUEExb3d2MnphMVRMdExOdUtKSXAzVTVX?=
+ =?utf-8?B?VzM0M24vdHExOVRucjg3eXpvTThhYmM2Z2V3clFFMDgydTJkbUtMejJLYll6?=
+ =?utf-8?B?NkE9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240712083850.4242-1-yongxuan.wang@sifive.com>
- <20240712083850.4242-2-yongxuan.wang@sifive.com> <6ad0c386-6777-4467-bab4-8fba149f3bfe@ghiti.fr>
- <2f1c7dff-168e-4ad0-b426-cfe99fc33fd0@rivosinc.com>
-In-Reply-To: <2f1c7dff-168e-4ad0-b426-cfe99fc33fd0@rivosinc.com>
-From: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Date: Mon, 22 Jul 2024 10:15:39 +0800
-Message-ID: <CAMWQL2j++-11jQjFweoZWWxRDjqUYT9CR-motNUrTVibpSxFOQ@mail.gmail.com>
-Subject: Re: [PATCH v7 1/4] RISC-V: Add Svade and Svadu Extensions Support
-To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-Cc: Alexandre Ghiti <alex@ghiti.fr>, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, greentime.hu@sifive.com, vincent.chen@sifive.com, 
-	Jinyu Tang <tjytimi@163.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Andrew Jones <ajones@ventanamicro.com>, Anup Patel <anup@brainfault.org>, 
-	Conor Dooley <conor.dooley@microchip.com>, Mayuresh Chitale <mchitale@ventanamicro.com>, 
-	Atish Patra <atishp@rivosinc.com>, Samuel Ortiz <sameo@rivosinc.com>, 
-	Daniel Henrique Barboza <dbarboza@ventanamicro.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	Evan Green <evan@rivosinc.com>, Xiao Wang <xiao.w.wang@intel.com>, 
-	Alexandre Ghiti <alexghiti@rivosinc.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
-	Leonardo Bras <leobras@redhat.com>, Charlie Jenkins <charlie@rivosinc.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Jisheng Zhang <jszhang@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7dab8780-b57b-4cd7-5e7e-08dca9f46ff0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jul 2024 02:17:29.4722
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: UdPH1Utd5X2Ux5dgz+DkTdx7b3YQ21HSCg9/BPCVcBq4WJnupK8OCdnp7eoYeCAxte0LHEi2jZrF/VbK4ipw2GKNv2dIsJViUfBs7fXwKOdMI7iGCR89SbL2DvgRp4hk
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB1096
 
-Hi Cl=C3=A9ment,
-
-On Fri, Jul 19, 2024 at 3:38=E2=80=AFPM Cl=C3=A9ment L=C3=A9ger <cleger@riv=
-osinc.com> wrote:
->
->
->
-> Hi Yong-Xuan,
->
->
-> On 18/07/2024 18:43, Alexandre Ghiti wrote:
-> > Hi Yong-Xuan,
-> >
-> > On 12/07/2024 10:38, Yong-Xuan Wang wrote:
-> >> Svade and Svadu extensions represent two schemes for managing the PTE =
-A/D
-> >> bits. When the PTE A/D bits need to be set, Svade extension intdicates
-> >> that a related page fault will be raised. In contrast, the Svadu
-> >> extension
-> >> supports hardware updating of PTE A/D bits. Since the Svade extension =
-is
-> >> mandatory and the Svadu extension is optional in RVA23 profile, by
-> >> default
-> >> the M-mode firmware will enable the Svadu extension in the menvcfg CSR
-> >> when only Svadu is present in DT.
-> >>
-> >> This patch detects Svade and Svadu extensions from DT and adds
-> >> arch_has_hw_pte_young() to enable optimization in MGLRU and
-> >> __wp_page_copy_user() when we have the PTE A/D bits hardware updating
-> >> support.
-> >>
-> >> Co-developed-by: Jinyu Tang <tjytimi@163.com>
-> >> Signed-off-by: Jinyu Tang <tjytimi@163.com>
-> >> Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-> >> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
-> >> ---
-> >>   arch/riscv/Kconfig               |  1 +
-> >>   arch/riscv/include/asm/csr.h     |  1 +
-> >>   arch/riscv/include/asm/hwcap.h   |  2 ++
-> >>   arch/riscv/include/asm/pgtable.h | 13 ++++++++++++-
-> >>   arch/riscv/kernel/cpufeature.c   | 32 ++++++++++++++++++++++++++++++=
-++
-> >>   5 files changed, 48 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> >> index 0525ee2d63c7..3d705e28ff85 100644
-> >> --- a/arch/riscv/Kconfig
-> >> +++ b/arch/riscv/Kconfig
-> >> @@ -36,6 +36,7 @@ config RISCV
-> >>       select ARCH_HAS_PMEM_API
-> >>       select ARCH_HAS_PREPARE_SYNC_CORE_CMD
-> >>       select ARCH_HAS_PTE_SPECIAL
-> >> +    select ARCH_HAS_HW_PTE_YOUNG
-> >>       select ARCH_HAS_SET_DIRECT_MAP if MMU
-> >>       select ARCH_HAS_SET_MEMORY if MMU
-> >>       select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL
-> >> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr=
-.h
-> >> index 25966995da04..524cd4131c71 100644
-> >> --- a/arch/riscv/include/asm/csr.h
-> >> +++ b/arch/riscv/include/asm/csr.h
-> >> @@ -195,6 +195,7 @@
-> >>   /* xENVCFG flags */
-> >>   #define ENVCFG_STCE            (_AC(1, ULL) << 63)
-> >>   #define ENVCFG_PBMTE            (_AC(1, ULL) << 62)
-> >> +#define ENVCFG_ADUE            (_AC(1, ULL) << 61)
-> >>   #define ENVCFG_CBZE            (_AC(1, UL) << 7)
-> >>   #define ENVCFG_CBCFE            (_AC(1, UL) << 6)
-> >>   #define ENVCFG_CBIE_SHIFT        4
-> >> diff --git a/arch/riscv/include/asm/hwcap.h
-> >> b/arch/riscv/include/asm/hwcap.h
-> >> index e17d0078a651..35d7aa49785d 100644
-> >> --- a/arch/riscv/include/asm/hwcap.h
-> >> +++ b/arch/riscv/include/asm/hwcap.h
-> >> @@ -81,6 +81,8 @@
-> >>   #define RISCV_ISA_EXT_ZTSO        72
-> >>   #define RISCV_ISA_EXT_ZACAS        73
-> >>   #define RISCV_ISA_EXT_XANDESPMU        74
-> >> +#define RISCV_ISA_EXT_SVADE             75
-> >> +#define RISCV_ISA_EXT_SVADU        76
-> >>     #define RISCV_ISA_EXT_XLINUXENVCFG    127
-> >>   diff --git a/arch/riscv/include/asm/pgtable.h
-> >> b/arch/riscv/include/asm/pgtable.h
-> >> index aad8b8ca51f1..ec0cdacd7da0 100644
-> >> --- a/arch/riscv/include/asm/pgtable.h
-> >> +++ b/arch/riscv/include/asm/pgtable.h
-> >> @@ -120,6 +120,7 @@
-> >>   #include <asm/tlbflush.h>
-> >>   #include <linux/mm_types.h>
-> >>   #include <asm/compat.h>
-> >> +#include <asm/cpufeature.h>
-> >>     #define __page_val_to_pfn(_val)  (((_val) & _PAGE_PFN_MASK) >>
-> >> _PAGE_PFN_SHIFT)
-> >>   @@ -288,7 +289,6 @@ static inline pte_t pud_pte(pud_t pud)
-> >>   }
-> >>     #ifdef CONFIG_RISCV_ISA_SVNAPOT
-> >> -#include <asm/cpufeature.h>
-> >>     static __always_inline bool has_svnapot(void)
-> >>   {
-> >> @@ -624,6 +624,17 @@ static inline pgprot_t
-> >> pgprot_writecombine(pgprot_t _prot)
-> >>       return __pgprot(prot);
-> >>   }
-> >>   +/*
-> >> + * Both Svade and Svadu control the hardware behavior when the PTE
-> >> A/D bits need to be set. By
-> >> + * default the M-mode firmware enables the hardware updating scheme
-> >> when only Svadu is present in
-> >> + * DT.
-> >> + */
-> >> +#define arch_has_hw_pte_young arch_has_hw_pte_young
-> >> +static inline bool arch_has_hw_pte_young(void)
-> >> +{
-> >> +    return riscv_has_extension_unlikely(RISCV_ISA_EXT_SVADU);
-> >> +}
-> >> +
-> >>   /*
-> >>    * THP functions
-> >>    */
-> >> diff --git a/arch/riscv/kernel/cpufeature.c
-> >> b/arch/riscv/kernel/cpufeature.c
-> >> index 5ef48cb20ee1..b2c3fe945e89 100644
-> >> --- a/arch/riscv/kernel/cpufeature.c
-> >> +++ b/arch/riscv/kernel/cpufeature.c
-> >> @@ -301,6 +301,8 @@ const struct riscv_isa_ext_data riscv_isa_ext[] =
-=3D {
-> >>       __RISCV_ISA_EXT_DATA(ssaia, RISCV_ISA_EXT_SSAIA),
-> >>       __RISCV_ISA_EXT_DATA(sscofpmf, RISCV_ISA_EXT_SSCOFPMF),
-> >>       __RISCV_ISA_EXT_DATA(sstc, RISCV_ISA_EXT_SSTC),
-> >> +    __RISCV_ISA_EXT_DATA(svade, RISCV_ISA_EXT_SVADE),
-> >> +    __RISCV_ISA_EXT_DATA(svadu, RISCV_ISA_EXT_SVADU),
-> >>       __RISCV_ISA_EXT_DATA(svinval, RISCV_ISA_EXT_SVINVAL),
-> >>       __RISCV_ISA_EXT_DATA(svnapot, RISCV_ISA_EXT_SVNAPOT),
-> >>       __RISCV_ISA_EXT_DATA(svpbmt, RISCV_ISA_EXT_SVPBMT),
-> >> @@ -554,6 +556,21 @@ static void __init
-> >> riscv_fill_hwcap_from_isa_string(unsigned long *isa2hwcap)
-> >>               clear_bit(RISCV_ISA_EXT_v, isainfo->isa);
-> >>           }
-> >>   +        /*
-> >> +         * When neither Svade nor Svadu present in DT, it is technica=
-lly
-> >> +         * unknown whether the platform uses Svade or Svadu.
-> >> Supervisor may
-> >> +         * assume Svade to be present and enabled or it can discover
-> >> based
-> >> +         * on mvendorid, marchid, and mimpid. When both Svade and
-> >> Svadu present
-> >> +         * in DT, supervisor must assume Svadu turned-off at boot
-> >> time. To use
-> >> +         * Svadu, supervisor must explicitly enable it using the SBI
-> >> FWFT extension.
-> >> +         */
-> >> +        if (!test_bit(RISCV_ISA_EXT_SVADE, isainfo->isa) &&
-> >> +            !test_bit(RISCV_ISA_EXT_SVADU, isainfo->isa))
-> >> +            set_bit(RISCV_ISA_EXT_SVADE, isainfo->isa);
-> >> +        else if (test_bit(RISCV_ISA_EXT_SVADE, isainfo->isa) &&
-> >> +             test_bit(RISCV_ISA_EXT_SVADU, isainfo->isa))
-> >> +            clear_bit(RISCV_ISA_EXT_SVADU, isainfo->isa);
-> >> +
-> >>           /*
-> >>            * All "okay" hart should have same isa. Set HWCAP based on
-> >>            * common capabilities of every "okay" hart, in case they do=
-n't
-> >> @@ -619,6 +636,21 @@ static int __init
-> >> riscv_fill_hwcap_from_ext_list(unsigned long *isa2hwcap)
-> >>             of_node_put(cpu_node);
-> >>   +        /*
-> >> +         * When neither Svade nor Svadu present in DT, it is technica=
-lly
-> >> +         * unknown whether the platform uses Svade or Svadu.
-> >> Supervisor may
-> >> +         * assume Svade to be present and enabled or it can discover
-> >> based
-> >> +         * on mvendorid, marchid, and mimpid. When both Svade and
-> >> Svadu present
-> >> +         * in DT, supervisor must assume Svadu turned-off at boot
-> >> time. To use
-> >> +         * Svadu, supervisor must explicitly enable it using the SBI
-> >> FWFT extension.
-> >> +         */
-> >> +        if (!test_bit(RISCV_ISA_EXT_SVADE, isainfo->isa) &&
-> >> +            !test_bit(RISCV_ISA_EXT_SVADU, isainfo->isa))
-> >> +            set_bit(RISCV_ISA_EXT_SVADE, isainfo->isa);
-> >> +        else if (test_bit(RISCV_ISA_EXT_SVADE, isainfo->isa) &&
-> >> +             test_bit(RISCV_ISA_EXT_SVADU, isainfo->isa))
-> >> +            clear_bit(RISCV_ISA_EXT_SVADU, isainfo->isa);
-> >> +
->
-> This is a duplicate of the previous chunk of code. Moreover, now that we
-> have a .validate callback for ISA extension (in for-next), I would
-> prefer this to be based on that support rather that having duplicated
-> extension specific handling code.
->
-> I think this could be translated (almost) using the following
-> .validate() callback for SVADU/SVADE extension:
->
-> static int riscv_ext_svadu_validate(const struct riscv_isa_ext_data *data=
-,
->                                   const unsigned long *isa_bitmap)
-> {
->         /* SVADE has already been detected, use SVADE only */
->         if (__riscv_isa_extension_available(isa_bitmap, RISCV_ISA_EXT_SVA=
-DE))
->                 return -ENOTSUPP;
->
->         return 0;
-> }
->
-> static int riscv_ext_svade_validate(const struct riscv_isa_ext_data *data=
-,
->                                   const unsigned long *isa_bitmap)
-> {
->         /* Clear SVADU, it will be enable using the FWFT extension if pre=
-sent */
->         clear_bit(RISCV_ISA_EXT_SVADU, isa_bitmap);
->
->         return 0;
-> }
->
-> However, this will not enable SVADE if neither SVADU/SVADE are set (as
-> done by your patch) but since SVADE does not seems to be used explicitly
-> in your patch series, I think it is sane to keep it like that.
->
-> Thanks,
->
-> Cl=C3=A9ment
->
->
-
-Got it. I will rebase to the for-next branch. Thank you!
-
-Regards,
-Yong-Xuan
-
->
-> >>           /*
-> >>            * All "okay" harts should have same isa. Set HWCAP based on
-> >>            * common capabilities of every "okay" hart, in case they
-> >> don't.
-> >
-> >
-> > Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> >
-> > Thanks,
-> >
-> > Alex
-> >
+SGksIFRvbWkNCg0KPiBIaSwNCj4gDQo+IE9uIDE4LzA3LzIwMjQgMDY6MjgsIENoYW5naHVhbmcg
+TGlhbmcgd3JvdGU6DQo+ID4gQWRkIHN5c3RlbSBQTSBzdXBwb3J0IG1ha2UgaXQgc3RvcHBpbmcg
+c3RyZWFtaW5nIGF0IHN5c3RlbSBzdXNwZW5kDQo+ID4gdGltZSwgYW5kIHJlc3RhcnRpbmcgc3Ry
+ZWFtaW5nIGF0IHN5c3RlbSByZXN1bWUgdGltZS4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IENo
+YW5naHVhbmcgTGlhbmcgPGNoYW5naHVhbmcubGlhbmdAc3RhcmZpdmV0ZWNoLmNvbT4NCj4gPiAt
+LS0NCj4gPiAgIGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vY2FkZW5jZS9jZG5zLWNzaTJyeC5jIHwg
+MzINCj4gKysrKysrKysrKysrKysrKysrKysNCj4gPiAgIDEgZmlsZSBjaGFuZ2VkLCAzMiBpbnNl
+cnRpb25zKCspDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9j
+YWRlbmNlL2NkbnMtY3NpMnJ4LmMNCj4gPiBiL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vY2FkZW5j
+ZS9jZG5zLWNzaTJyeC5jDQo+ID4gaW5kZXggOTgxODE5YWRiYjNhLi44MWU5MGIzMWU5ZjggMTAw
+NjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9jYWRlbmNlL2NkbnMtY3NpMnJ4
+LmMNCj4gPiArKysgYi9kcml2ZXJzL21lZGlhL3BsYXRmb3JtL2NhZGVuY2UvY2Rucy1jc2kycngu
+Yw0KPiA+IEBAIC03NzYsOCArNzc2LDQwIEBAIHN0YXRpYyBpbnQgY3NpMnJ4X3J1bnRpbWVfcmVz
+dW1lKHN0cnVjdCBkZXZpY2UNCj4gKmRldikNCj4gPiAgIAlyZXR1cm4gcmV0Ow0KPiA+ICAgfQ0K
+PiA+DQo+ID4gK3N0YXRpYyBpbnQgX19tYXliZV91bnVzZWQgY3NpMnJ4X3N1c3BlbmQoc3RydWN0
+IGRldmljZSAqZGV2KSB7DQo+ID4gKwlzdHJ1Y3QgY3NpMnJ4X3ByaXYgKmNzaTJyeCA9IGRldl9n
+ZXRfZHJ2ZGF0YShkZXYpOw0KPiA+ICsNCj4gPiArCW11dGV4X2xvY2soJmNzaTJyeC0+bG9jayk7
+DQo+ID4gKwlpZiAoY3NpMnJ4LT5jb3VudCkNCj4gPiArCQljc2kycnhfc3RvcChjc2kycngpOw0K
+PiA+ICsJbXV0ZXhfdW5sb2NrKCZjc2kycngtPmxvY2spOw0KPiA+ICsNCj4gPiArCXBtX3J1bnRp
+bWVfZm9yY2Vfc3VzcGVuZChkZXYpOw0KPiA+ICsNCj4gPiArCXJldHVybiAwOw0KPiA+ICt9DQo+
+ID4gKw0KPiA+ICtzdGF0aWMgaW50IF9fbWF5YmVfdW51c2VkIGNzaTJyeF9yZXN1bWUoc3RydWN0
+IGRldmljZSAqZGV2KSB7DQo+ID4gKwlzdHJ1Y3QgY3NpMnJ4X3ByaXYgKmNzaTJyeCA9IGRldl9n
+ZXRfZHJ2ZGF0YShkZXYpOw0KPiA+ICsJaW50IHJldDsNCj4gPiArDQo+ID4gKwlyZXQgPSBwbV9y
+dW50aW1lX2ZvcmNlX3Jlc3VtZShkZXYpOw0KPiA+ICsJaWYgKHJldCA8IDApDQo+ID4gKwkJcmV0
+dXJuIHJldDsNCj4gPiArDQo+ID4gKwltdXRleF9sb2NrKCZjc2kycngtPmxvY2spOw0KPiA+ICsJ
+aWYgKGNzaTJyeC0+Y291bnQpDQo+ID4gKwkJY3NpMnJ4X3N0YXJ0KGNzaTJyeCk7DQo+ID4gKwlt
+dXRleF91bmxvY2soJmNzaTJyeC0+bG9jayk7DQo+ID4gKw0KPiA+ICsJcmV0dXJuIDA7DQo+ID4g
+K30NCj4gPiArDQo+ID4gICBzdGF0aWMgY29uc3Qgc3RydWN0IGRldl9wbV9vcHMgY3NpMnJ4X3Bt
+X29wcyA9IHsNCj4gPiAgIAlTRVRfUlVOVElNRV9QTV9PUFMoY3NpMnJ4X3J1bnRpbWVfc3VzcGVu
+ZCwNCj4gY3NpMnJ4X3J1bnRpbWVfcmVzdW1lLA0KPiA+IE5VTEwpDQo+ID4gKwlTRVRfU1lTVEVN
+X1NMRUVQX1BNX09QUyhjc2kycnhfc3VzcGVuZCwgY3NpMnJ4X3Jlc3VtZSkNCj4gPiAgIH07DQo+
+ID4NCj4gPiAgIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIGNzaTJyeF9vZl90YWJs
+ZVtdID0gew0KPiANCj4gSWYgSSdtIG5vdCBtaXN0YWtlbiwgdGhpcyBpcyBhIHN1YmRldiBkcml2
+ZXIsIGFuZCBpcyBzb21ld2hlcmUgaW4gdGhlIG1pZGRsZSBvZg0KPiB0aGUgcGlwZWxpbmUuIEFm
+YWl1LCBvbmx5IHRoZSBkcml2ZXIgdGhhdCBoYW5kbGVzIHRoZSB2NGwyIHZpZGVvIGRldmljZXMg
+c2hvdWxkDQo+IGhhdmUgc3lzdGVtIHN1c3BlbmQgaG9va3MuIFRoZSBqb2Igb2YgdGhhdCBkcml2
+ZXIgaXMgdGhlbiB0byBkaXNhYmxlIG9yIGVuYWJsZQ0KPiB0aGUgcGlwZWxpbmUgdXNpbmcgdjRs
+MiBmdW5jdGlvbnMsIGFuZCBmb3IgdGhlIHJlc3Qgb2YgdGhlIHBpcGVsaW5lIHN5c3RlbQ0KPiBz
+dXNwZW5kIGxvb2tzIGp1c3QgbGlrZSBhIG5vcm1hbCBwaXBlbGluZSBkaXNhYmxlLg0KPiANCg0K
+SSBzZWUgdGhhdCB0aGUgaW14MjE5IGhhcyBhIGNvbW1pdDogDQoNCmNvbW1pdCBiODA3NGRiMDc0
+MjliODQ1YjgwNTQxNmQyNjFiNTAyZjgxNGE4MGZlDQpBdXRob3I6IExhdXJlbnQgUGluY2hhcnQg
+PGxhdXJlbnQucGluY2hhcnRAaWRlYXNvbmJvYXJkLmNvbT4NCkRhdGU6ICAgVGh1IFNlcCAxNCAy
+MToxNjo0OSAyMDIzICswMzAwDQoNCiAgICBtZWRpYTogaTJjOiBpbXgyMTk6IERyb3Agc3lzdGVt
+IHN1c3BlbmQgYW5kIHJlc3VtZSBoYW5kbGVycw0KDQogICAgU3RvcHBpbmcgc3RyZWFtaW5nIG9u
+IGEgY2FtZXJhIHBpcGVsaW5lIGF0IHN5c3RlbSBzdXNwZW5kIHRpbWUsIGFuZA0KICAgIHJlc3Rh
+cnRpbmcgaXQgYXQgc3lzdGVtIHJlc3VtZSB0aW1lLCByZXF1aXJlcyBjb29yZGluYXRlZCBhY3Rp
+b24gYmV0d2Vlbg0KICAgIHRoZSBicmlkZ2UgZHJpdmVyIGFuZCB0aGUgY2FtZXJhIHNlbnNvciBk
+cml2ZXIuIFRoaXMgaXMgaGFuZGxlZCBieSB0aGUNCiAgICBicmlkZ2UgZHJpdmVyIGNhbGxpbmcg
+dGhlIHNlbnNvcidzIC5zX3N0cmVhbSgpIGhhbmRsZXIgYXQgc3lzdGVtIHN1c3BlbmQNCiAgICBh
+bmQgcmVzdW1lIHRpbWUuIFRoZXJlIGlzIHRodXMgbm8gbmVlZCBmb3IgdGhlIHNlbnNvciB0byBp
+bmRlcGVuZGVudGx5DQogICAgaW1wbGVtZW50IHN5c3RlbSBzbGVlcCBQTSBvcGVyYXRpb25zLiBE
+cm9wIHRoZW0uDQoNCiAgICBUaGUgc3RyZWFtaW5nIGZpZWxkIG9mIHRoZSBkcml2ZXIncyBwcml2
+YXRlIHN0cnVjdHVyZSBpcyBub3cgdW51c2VkLA0KICAgIGRyb3AgaXQgYXMgd2VsbC4NCg0KICAg
+IFNpZ25lZC1vZmYtYnk6IExhdXJlbnQgUGluY2hhcnQgPGxhdXJlbnQucGluY2hhcnRAaWRlYXNv
+bmJvYXJkLmNvbT4NCiAgICBSZXZpZXdlZC1ieTogRGF2ZSBTdGV2ZW5zb24gPGRhdmUuc3RldmVu
+c29uQHJhc3BiZXJyeXBpLmNvbT4NCiAgICBTaWduZWQtb2ZmLWJ5OiBTYWthcmkgQWlsdXMgPHNh
+a2FyaS5haWx1c0BsaW51eC5pbnRlbC5jb20+DQogICAgU2lnbmVkLW9mZi1ieTogSGFucyBWZXJr
+dWlsIDxodmVya3VpbC1jaXNjb0B4czRhbGwubmw+DQoNCkltcGxlbWVudCB0aGUgc3lzdGVtIFBN
+IG9mIHNlbnNvciB1c2luZyBicmlkZ2UuIFRoaXMgY3NpMnJ4IGlzIGFsc28gYSBicmlkZ2UuIA0K
+U28gSSBhZGQgc3lzdGVtIFBNIGluIHRoaXMgZHJpdmVyLiANCg0KUmFnYXJkcywNCkNoYW5naHVh
+bmcNCg0K
 
