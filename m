@@ -1,234 +1,121 @@
-Return-Path: <linux-kernel+bounces-258883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77682938DB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:52:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A3A8938DB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAC471F21A16
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:52:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C2641C20E7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275C316C863;
-	Mon, 22 Jul 2024 10:52:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CAD616C875;
+	Mon, 22 Jul 2024 10:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IJ+ZojLF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DCE1B977
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 10:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFC216B39E;
+	Mon, 22 Jul 2024 10:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721645525; cv=none; b=hOxchvd+wPanw9B4mfXwURrqUO1z1SKwYfyClbU/PP/9A+wJNQ2MSQeS9FS3RuNptxXRL3pj3uLqa1fkCd/wPYqS3LhwgXG+A2MZMt2LtKOKffOO5Ak0ZInYNHdbEcbgS6F4QvPs45uCH9IcCp+SIVMTwqDg+jaXcTCYislgzr4=
+	t=1721645569; cv=none; b=g2fheL+uqvywzPHOR2g0U/+jS9PdojlTMPybg3W9nctLeJBQldc+c3FfNTYLPnLb/1fYcBTWiVjD/5YhEB6KmN54kElrIFLZGXYrBAStEgIhCzZOMKPqDUbqPtl8wT0P+4SrbNVZXAOcLzk5bOME2Mk4+U0yZLfa9LxraoAba3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721645525; c=relaxed/simple;
-	bh=3eIODS4n4o1OzXwSAhPhdMuzc6xW2B0D4/pMNK9O3bA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=lVIKGGMFmxUUN3rf/vfa7MFli+c5KekaVpb6wfpjvjWUomARMkUbwu3mT6x+ZBimRIr3ghCY7/mDcQNBGV0hHAX2K9h3KQJM3wv/gm08EH1HqVWHO/QBrS0TtiZuKDmMKGQCjoiHMt4iK8GOeSRPmAkjHGxSY5A5NtWMCyEFW2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-806199616d0so679738039f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 03:52:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721645523; x=1722250323;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wPG3q6xfFkpjCUfW1k4mAHW7o/gS9hixOBkoGtAhqf4=;
-        b=NaaBuguBUormmlh+ys5xfStA8omEpwy8CRcRGcopvn46JNp4ApgMKgrzMwI9v7lfxb
-         S4wR19+/KwFFLjny8E6CHmcR7YtaQ7DVOzRgjgHV1/y2Wcd8k3ZfeQ2wBIL0smE7w9VD
-         SeB4q6teeeB6KvDOkPB0c0opJOeDGKJHBaPoj1Jz+xoydep1sSNY7SVNcDReNOtYavyx
-         nwos7ncEkIDeIzfY381UWiNXhXJ8634TYwM8YPeusJoq5aO2bNeT5E3/DHu8VCqubvSS
-         BO83MrCun+cS54wTx7JpYU4LvewSrJn0n8ApWbv9fU8otT+S4FpIUsT6/RWvQYfZE52m
-         t0Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCViLht3F9qMzLVcWYiOFff2cnPdzESc8hwq5hKhl/H+FZWto+MkUdHVlKXN3mt+aYL6lO2kkOx6Bm2mFHNzZX5IpjCgJUndmMpOokfb
-X-Gm-Message-State: AOJu0YxL08Lz79FQdtX6vAxveG+Nnm2tmaIs5R1DjWCznhBV5E53MEhl
-	n6Cgn4oqWU1Oa1khpPNvnUuGbx2onqdlJtKm4N9Jcz9gkVCP1w4dKSWFoGLWtQLvVvoYFDmOpSD
-	/HfPGcrjRf3EyX5EWHgRU7UWHmBzgK1NLdQp5Jrkx9fXLpNxoSyCxh5I=
-X-Google-Smtp-Source: AGHT+IEXtujOUktgB9phxO0jKozUjC7kXoLsLwnWPIBQDq+6B2zPmlsIb/CHC0SCSAcATBZJI2UxGqUZJvA9R5/ZcT1s1YTIynWh
+	s=arc-20240116; t=1721645569; c=relaxed/simple;
+	bh=d/phvPCFH5b62HPy+3QDiw3vQq0Av/LO7MFoVObg1OY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qd+CMImM8x+zbTTnWevXLy5GX+n7e9zfovfEx4R/9Fd1C7Q/53oQzP+otRpKb8B/cEmBW89xAuMqbp5kxln/XLvucoMnxvr19erO4vfl8VARO65m5aQ9sZMb1cgBHGeWlMct4wVEzc+Tf0m0+m2pM/rxOuF6PBz6zg6Ks4tYB70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IJ+ZojLF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8916BC116B1;
+	Mon, 22 Jul 2024 10:52:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721645569;
+	bh=d/phvPCFH5b62HPy+3QDiw3vQq0Av/LO7MFoVObg1OY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IJ+ZojLFM9Wj7orCKE8k7kcHLxHlKDc0UmBL6mlLiI1+nGrswWaYt4dlLn2NCnrF1
+	 8OWQtO4pdoDt8x9Ula19MWuGDi/VhCmFklM4ceq/cybFABERPEEIYpPj/RfbmFsXPd
+	 4mQNMffonA2NgGqzo2ejWetGC7SncY23MDq8cVuCXHU/nhpTq+AGgwmxabJxqmKEHw
+	 PflzdO28df1xUtHspYtlb21s2IvsCv2MKcSyh1TCpRze0tJKnYY38ISnTpcduFPYWh
+	 v/S1eRd4mXnsTHHU/CoQpK6r6JbcK9Wc9zUZ74A7bHNInugUMYhUV8EJGD/qtZfmuN
+	 FiwFIZhe7GTMw==
+Date: Mon, 22 Jul 2024 11:52:44 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Jerome Audu <jau@free.fr>
+Cc: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: sti: add missing probe entry for player and reader
+Message-ID: <d85590f2-88b3-4bc2-b7b8-9f96a5d5bb17@sirena.org.uk>
+References: <20240721-sti-audio-fix-v1-1-a8b1ecf61cb4@free.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:841f:b0:4c0:a8a5:81e9 with SMTP id
- 8926c6da1cb9f-4c23fe63d83mr350413173.3.1721645523098; Mon, 22 Jul 2024
- 03:52:03 -0700 (PDT)
-Date: Mon, 22 Jul 2024 03:52:03 -0700
-In-Reply-To: <20240722103109.4668-1-aha310510@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d57245061dd3d547@google.com>
-Subject: Re: [syzbot] [bpf?] [net?] general protection fault in __dev_flush
-From: syzbot <syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: stack-out-of-bounds Read in xdp_do_check_flushed
-
-==================================================================
-BUG: KASAN: stack-out-of-bounds in bpf_net_ctx_get_all_used_flush_lists include/linux/filter.h:837 [inline]
-BUG: KASAN: stack-out-of-bounds in xdp_do_check_flushed+0x355/0x3f0 net/core/filter.c:4298
-Read of size 4 at addr ffffc90003387a50 by task syz.0.105/5938
-
-CPU: 0 UID: 0 PID: 5938 Comm: syz.0.105 Not tainted 6.10.0-syzkaller-g933069701c1b-dirty #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0xc3/0x620 mm/kasan/report.c:488
- kasan_report+0xd9/0x110 mm/kasan/report.c:601
- bpf_net_ctx_get_all_used_flush_lists include/linux/filter.h:837 [inline]
- xdp_do_check_flushed+0x355/0x3f0 net/core/filter.c:4298
- __napi_poll.constprop.0+0xd1/0x550 net/core/dev.c:6774
- napi_poll net/core/dev.c:6840 [inline]
- net_rx_action+0xa92/0x1010 net/core/dev.c:6962
- handle_softirqs+0x216/0x8f0 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu kernel/softirq.c:637 [inline]
- irq_exit_rcu+0xbb/0x120 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0x95/0xb0 arch/x86/kernel/apic/apic.c:1043
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:__schedule+0xe3f/0x5490 kernel/sched/core.c:6399
-Code: fa 48 c1 ea 03 80 3c 02 00 0f 85 ba 3f 00 00 48 8b bd 10 ff ff ff 4d 89 77 10 4c 89 f6 e8 c9 a5 0f f6 48 89 c7 e8 61 54 6a f6 <48> 8b 8d a0 fe ff ff 48 b8 00 00 00 00 00 fc ff df 48 01 c1 48 c7
-RSP: 0018:ffffc90003387980 EFLAGS: 00000206
-RAX: 00000000000001a9 RBX: ffff888043a40000 RCX: 1ffffffff1fce089
-RDX: 0000000000000000 RSI: ffffffff8b2cc580 RDI: ffffffff8b90c740
-RBP: ffffc90003387b10 R08: 0000000000000001 R09: 0000000000000001
-R10: ffffffff8fe7489f R11: 0000000000000001 R12: ffff88806b03f908
-R13: 0000000000000000 R14: ffff888043a40000 R15: ffff88806b03ee00
- preempt_schedule_common+0x44/0xc0 kernel/sched/core.c:6708
- preempt_schedule_thunk+0x1a/0x30 arch/x86/entry/thunk.S:12
- class_preempt_destructor include/linux/preempt.h:480 [inline]
- class_preempt_destructor include/linux/preempt.h:480 [inline]
- try_to_wake_up+0xc08/0x13e0 kernel/sched/core.c:4022
- wake_up_process kernel/sched/core.c:4299 [inline]
- wake_up_q+0x91/0x140 kernel/sched/core.c:1029
- futex_wake+0x43e/0x4e0 kernel/futex/waitwake.c:199
- do_futex+0x1e5/0x350 kernel/futex/syscalls.c:107
- __do_sys_futex kernel/futex/syscalls.c:179 [inline]
- __se_sys_futex kernel/futex/syscalls.c:160 [inline]
- __x64_sys_futex+0x1e1/0x4c0 kernel/futex/syscalls.c:160
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7faaa0975b59
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007faaa16670f8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: ffffffffffffffda RBX: 00007faaa0b05f68 RCX: 00007faaa0975b59
-RDX: 00000000000f4240 RSI: 0000000000000081 RDI: 00007faaa0b05f6c
-RBP: 00007faaa0b05f60 R08: 00007faaa1668080 R09: 00007faaa16676c0
-R10: 0000000000000e80 R11: 0000000000000246 R12: 00007faaa0b05f6c
-R13: 000000000000000b R14: 00007fff8e045980 R15: 00007fff8e045a68
- </TASK>
-
-The buggy address belongs to stack of task syz.0.105/5938
- and is located at offset 40 in frame:
- __schedule+0x0/0x5490
-
-This frame has 3 objects:
- [48, 52) 'cid'
- [64, 80) 'rf'
- [96, 120) 'ac'
-
-The buggy address belongs to the virtual mapping at
- [ffffc90003380000, ffffc90003389000) created by:
- kernel_clone+0xfd/0x980 kernel/fork.c:2781
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff88801f49d0f0 pfn:0x1f49d
-memcg:ffff88802787e902
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 0000000000000000 dead000000000122 0000000000000000
-raw: ffff88801f49d0f0 0000000000000000 00000001ffffffff ffff88802787e902
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x102dc2(GFP_HIGHUSER|__GFP_NOWARN|__GFP_ZERO), pid 5663, tgid 5663 (syz-executor), ts 127270798487, free_ts 127240380476
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1493
- prep_new_page mm/page_alloc.c:1501 [inline]
- get_page_from_freelist+0x1351/0x2e50 mm/page_alloc.c:3438
- __alloc_pages_noprof+0x22b/0x2460 mm/page_alloc.c:4696
- alloc_pages_mpol_noprof+0x275/0x610 mm/mempolicy.c:2263
- vm_area_alloc_pages mm/vmalloc.c:3584 [inline]
- __vmalloc_area_node mm/vmalloc.c:3660 [inline]
- __vmalloc_node_range_noprof+0xa6a/0x1520 mm/vmalloc.c:3841
- alloc_thread_stack_node kernel/fork.c:313 [inline]
- dup_task_struct kernel/fork.c:1113 [inline]
- copy_process+0x2f3b/0x8de0 kernel/fork.c:2204
- kernel_clone+0xfd/0x980 kernel/fork.c:2781
- __do_sys_clone+0xba/0x100 kernel/fork.c:2924
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 5663 tgid 5663 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1094 [inline]
- free_unref_page+0x64a/0xe40 mm/page_alloc.c:2608
- __folio_put+0x31c/0x3e0 mm/swap.c:128
- folio_put include/linux/mm.h:1479 [inline]
- free_page_and_swap_cache+0x249/0x2c0 mm/swap_state.c:308
- __tlb_remove_table arch/x86/include/asm/tlb.h:34 [inline]
- __tlb_remove_table_free mm/mmu_gather.c:227 [inline]
- tlb_remove_table_rcu+0x89/0xe0 mm/mmu_gather.c:282
- rcu_do_batch kernel/rcu/tree.c:2569 [inline]
- rcu_core+0x828/0x16b0 kernel/rcu/tree.c:2843
- handle_softirqs+0x216/0x8f0 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu kernel/softirq.c:637 [inline]
- irq_exit_rcu+0xbb/0x120 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0x95/0xb0 arch/x86/kernel/apic/apic.c:1043
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-
-Memory state around the buggy address:
- ffffc90003387900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffffc90003387980: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffffc90003387a00: 00 00 00 00 00 f1 f1 f1 f1 f1 f1 04 f2 00 00 f2
-                                                 ^
- ffffc90003387a80: f2 00 00 00 f3 f3 f3 f3 f3 00 00 00 00 00 00 00
- ffffc90003387b00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
-----------------
-Code disassembly (best guess):
-   0:	fa                   	cli
-   1:	48 c1 ea 03          	shr    $0x3,%rdx
-   5:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
-   9:	0f 85 ba 3f 00 00    	jne    0x3fc9
-   f:	48 8b bd 10 ff ff ff 	mov    -0xf0(%rbp),%rdi
-  16:	4d 89 77 10          	mov    %r14,0x10(%r15)
-  1a:	4c 89 f6             	mov    %r14,%rsi
-  1d:	e8 c9 a5 0f f6       	call   0xf60fa5eb
-  22:	48 89 c7             	mov    %rax,%rdi
-  25:	e8 61 54 6a f6       	call   0xf66a548b
-* 2a:	48 8b 8d a0 fe ff ff 	mov    -0x160(%rbp),%rcx <-- trapping instruction
-  31:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  38:	fc ff df
-  3b:	48 01 c1             	add    %rax,%rcx
-  3e:	48                   	rex.W
-  3f:	c7                   	.byte 0xc7
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uwcgTLsscWO31/aR"
+Content-Disposition: inline
+In-Reply-To: <20240721-sti-audio-fix-v1-1-a8b1ecf61cb4@free.fr>
+X-Cookie: Everything you know is wrong!
 
 
-Tested on:
+--uwcgTLsscWO31/aR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-commit:         93306970 Merge tag '6.11-rc-smb3-server-fixes' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1162fe3d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c043ce4607a33671
-dashboard link: https://syzkaller.appspot.com/bug?extid=44623300f057a28baf1e
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1214995e980000
+On Sun, Jul 21, 2024 at 05:40:02PM +0200, Jerome Audu wrote:
+> Restores the audio functionality that was broken
+> since Linux version 6.6.y by adding the missing probe
+> functions for the player and reader components.
+>=20
+> Fixes: 9f625f5e6cf9 ("ASoC: sti: merge DAI call back functions into ops")
+> Signed-off-by: Jerome Audu <jau@free.fr>
+> ---
+> Specifically, the probe function in `sound/soc/sti/sti_uniperif.c:415` is=
+ being replaced by another probe function located at `sound/soc/sti/sti_uni=
+perif.c:453`, which should instead be derived from the player and reader co=
+mponents. My patch correctly reinserts the missing probe entries, restoring=
+ the intended functionality.
 
+This should be in the changelog, your actual changelog doesn't describe
+the actual change at all.
+
+> The patch modifies the following files:
+> - `sound/soc/sti/sti_uniperif.c`: Changes the visibility of `sti_uniperip=
+h_dai_probe` to non-static.
+> - `sound/soc/sti/uniperif.h`: Adds the declaration of `sti_uniperiph_dai_=
+probe`.
+> - `sound/soc/sti/uniperif_player.c`: Adds `probe` function to `uni_player=
+_dai_ops`.
+> - `sound/soc/sti/uniperif_reader.c`: Adds `probe` function to `uni_reader=
+_dai_ops`.
+>=20
+> This ensures the correct `probe` functions are utilized, thus fixing the =
+audio regression.=20
+
+This detail isn't really needed, it just describes the content of the
+patch.
+
+--uwcgTLsscWO31/aR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaeOfsACgkQJNaLcl1U
+h9C03Qf/QXpJLlhj+1SJvQdYxrSRwLJKrcGsmk/kgcE+JjBKDzZe2iW2nK6+fJgr
+sxQtN1ytBBbvvsB2ZYRamU85xpsVdhQ6a10U110NYztC5JJ3HS/XPSuhVjVZk5zs
+rH+k1mzi/Zu/hmo6Jbdhf+73wPXF3uW7s+0/Ov3Fm6agDoIzd6xwcTe6BcW044ak
+o9c7ObJcKl0G2mdUQZ0RVbrQ/6eME01yqhUJoxPR6ArZ/HBMdKrmLO3lg5vSxzmq
+zFxCZJvYa9I/Rug4s67JptLVW86TCQRGzO0gbFWDPfD0t71SjBBDYNTGLyEmvA1p
+/Dgv9Is1wL6SjvhG17XKQ75DuGlZfg==
+=o3Ai
+-----END PGP SIGNATURE-----
+
+--uwcgTLsscWO31/aR--
 
