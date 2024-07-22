@@ -1,98 +1,154 @@
-Return-Path: <linux-kernel+bounces-258543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AE0D938971
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:59:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67694938975
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:00:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4135C1F22A8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:59:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F0CDB23134
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2019E224D6;
-	Mon, 22 Jul 2024 06:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289F43BBEA;
+	Mon, 22 Jul 2024 06:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="HQVrW/zI"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R3/8+LYr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438F518E25;
-	Mon, 22 Jul 2024 06:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FBAA38DE4
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 06:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721631355; cv=none; b=QSJEOBTGNne7h3HEFPPqTgiuN2KQRTyov+GTiaRbzMKyRFlyNRQevfKDxsPsQ7/yFjyYTr5TGm5uaEt6oTukmfZsIzerocqxmfiy7kjTlOwIvSjVBraGARV/HEEgPtDdEuz5TMuKV/hUuW8kOnFKASbKlsxdoia2G0z5mUVB+Nw=
+	t=1721631381; cv=none; b=OYY3q9/WqJn0HcPz9pRN3MBei8+V2z8n2kyC0lU3X2Po0n9fOr+rs1yRz3wS8CMMbX0A/qxXU0uFJtsv/HQSXw17d3AVNoCyuTuO0q0syRc1tq9dwHgetk3pqyyMOi9rEswjCF2d6UwxczZ/i9joeqlRv5d5sYMchqTHnXhB0ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721631355; c=relaxed/simple;
-	bh=Ko8xyGgocBN/wPPtGRaAEQedMQwY6e02BMceNIGgjf4=;
+	s=arc-20240116; t=1721631381; c=relaxed/simple;
+	bh=G3URHSbf6FGeZ+XY0OOljWL6/6YoryVf7iMmS+suTH0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nRsx4BIIwgXyhHCJ3RzO6j7D62ovbt3/OvyLlmdRbwyYtoIKpbH0RNyOOwU5Iz+P5IIW7v5qs1lE731/2xGk4CO+VmVh67nPhFb0B1rS82CBbYflsOrun5BUW2ZeEAvmk1/bw6HaUwJS2HqOkmeSxRxhgsh70D/gHfH1pO64GWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=HQVrW/zI; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 323981FA1F;
-	Mon, 22 Jul 2024 08:55:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1721631341;
-	bh=2Bg6YEuqceLZiz3jS9dKfEdns79OObSYHCiVyb4lmlM=;
-	h=Received:From:To:Subject;
-	b=HQVrW/zIPfHw2oIHXuzjUI8FUQ9qJmqswkDxj7WmvpghHTkkFkgWfZuT5yeam42fU
-	 gWc59stqkDe3MJXDHc2+BM2r3YP+dHGthjybxX58wYhTIjjRS9ByFyAoGaPOnTApbS
-	 9WeBPsyI27FXTPi0raAm8ubhlxNbkcH8MSK7J5FOBHETiUP8JI7kA/gH0+ftnGkowx
-	 WS+/JSnyfMy/3shrerkfRmQWijZmYyQIs8FI1MJvV5BON0TqxgXu0v5WKt1CNYoY+v
-	 7prstYowUuHEJlHyvi7xthNFMc+t9IQck6jbqeMHnn0cPJedx4fqsfYwAZDHNYMG8F
-	 Sd5x1yXz1mmtA==
-Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
-	id DBDF77F9C5; Mon, 22 Jul 2024 08:55:40 +0200 (CEST)
-Date: Mon, 22 Jul 2024 08:55:40 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-	Bharat Bhushan <bbhushan2@marvell.com>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Olivia Mackall <olivia@selenic.com>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [EXTERNAL] Re: [PATCH v1] hwrng: Kconfig - Do not enable by
- default CN10K driver
-Message-ID: <Zp4CbFEIvgVjgIug@gaggiata.pivistrello.it>
-References: <20240625195746.48905-1-francesco@dolcini.it>
- <ZoiLd/Cezq2CS4Zp@gondor.apana.org.au>
- <SN7PR18MB53144B37B82ADEEC5D35AE0CE3AC2@SN7PR18MB5314.namprd18.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eLrLUSL3CfJIHa9JrZb9gJarXAe6LDWsyT/brH0QsKGIeWO0NJ0OFdzfgtVgm5BtHJJgXSR6QFeBQgHJYBd9L4aDsZO6acHLS/FyIwZADNIWrXkdJ0vR4q2/pDR7lSkmLzWsgmNCnbXRy/AQmbroL8UtSaOnmRSPGjwPoXBpJXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R3/8+LYr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721631378;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uvUYsehnZayRqLIElwl0ruBmaZQ2mIx+T83BIjxhjLs=;
+	b=R3/8+LYrXjA47ssOL5TrDTrVjCPa0RE17vwWayvNCAAGQGbySLxLEHyUgius746iwQAMU1
+	hCu8bSvXLhbSPrH+AV+QYY2furLmNXNCQ2fQnIYJgb55djaDC3cSaVfuEs4tzhpor18M7y
+	Uqx3v5kFdazbKaF0Dct4NoV1KvjIB9I=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-622-BZ06GVJpP8S9SeCHHvCMxg-1; Mon,
+ 22 Jul 2024 02:56:11 -0400
+X-MC-Unique: BZ06GVJpP8S9SeCHHvCMxg-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E3DFA1955BEE;
+	Mon, 22 Jul 2024 06:56:09 +0000 (UTC)
+Received: from alecto.usersys.redhat.com (unknown [10.43.17.6])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6642A1955D44;
+	Mon, 22 Jul 2024 06:56:07 +0000 (UTC)
+Date: Mon, 22 Jul 2024 08:56:04 +0200
+From: Artem Savkov <asavkov@redhat.com>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
+	Network Development <netdev@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH bpf-next] selftests/bpf: fix compilation failure when
+ CONFIG_NET_FOU!=y
+Message-ID: <20240722065604.GA2770066@alecto.usersys.redhat.com>
+References: <20240718143122.2230780-1-asavkov@redhat.com>
+ <005ef8ac-d48e-304f-65c5-97a17d83fd86@iogearbox.net>
+ <CAADnVQKjgQg9Y=VxHL9jrkNdT6UKMbaFEOfjNFG_w_M=GgaRjQ@mail.gmail.com>
+ <CAEf4BzbgeCo09sfrQVgBHJJ-=uZEEm287xXkjoLMrUkcLN6VMQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <SN7PR18MB53144B37B82ADEEC5D35AE0CE3AC2@SN7PR18MB5314.namprd18.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzbgeCo09sfrQVgBHJJ-=uZEEm287xXkjoLMrUkcLN6VMQ@mail.gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Hello Herbert, Bharat
-
-On Thu, Jul 18, 2024 at 10:10:31AM +0000, Bharat Bhushan wrote:
-> > On Tue, Jun 25, 2024 at 09:57:46PM +0200, Francesco Dolcini wrote:
-> >> From: Francesco Dolcini <mailto:francesco.dolcini@toradex.com>
-> >> 
-> >> Do not enable by default the CN10K HW random generator driver.
-> >> 
-> >> CN10K Random Number Generator is available only on some specific
-> >> Marvell SoCs, however the driver is in practice enabled by default on
-> >> all arm64 configs.
-> >> 
-> >> Signed-off-by: Francesco Dolcini <mailto:francesco.dolcini@toradex.com>
-> >> ---
-> >> as an alternative I could propose
-> >> 
-> >> default HW_RANDOM if ARCH_THUNDER=y
+On Fri, Jul 19, 2024 at 11:44:34AM -0700, Andrii Nakryiko wrote:
+> On Fri, Jul 19, 2024 at 10:09 AM Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
+> >
+> > On Fri, Jul 19, 2024 at 8:45 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
+> > >
+> > > Hi Artem,
+> > >
+> > > On 7/18/24 4:31 PM, Artem Savkov wrote:
+> > > > Without CONFIG_NET_FOU bpf selftests are unable to build because of
+> > > > missing definitions. Add ___local versions of struct bpf_fou_encap and
+> > > > enum bpf_fou_encap_type to fix the issue.
+> > > >
+> > > > Signed-off-by: Artem Savkov <asavkov@redhat.com>
+> > >
+> > > This breaks BPF CI, ptal:
+> > >
+> > > https://github.com/kernel-patches/bpf/actions/runs/9999691294/job/27641198557
+> > >
+> > >    [...]
+> > >      CLNG-BPF [test_maps] btf__core_reloc_existence___wrong_field_defs.bpf.o
+> > >      CLNG-BPF [test_maps] verifier_bswap.bpf.o
+> > >      CLNG-BPF [test_maps] test_core_reloc_existence.bpf.o
+> > >      CLNG-BPF [test_maps] test_global_func8.bpf.o
+> > >      CLNG-BPF [test_maps] verifier_bitfield_write.bpf.o
+> > >      CLNG-BPF [test_maps] local_storage_bench.bpf.o
+> > >      CLNG-BPF [test_maps] verifier_runtime_jit.bpf.o
+> > >      CLNG-BPF [test_maps] test_pkt_access.bpf.o
+> > >    progs/test_tunnel_kern.c:39:5: error: conflicting types for 'bpf_skb_set_fou_encap'
+> > >       39 | int bpf_skb_set_fou_encap(struct __sk_buff *skb_ctx,
+> > >          |     ^
+> > >    /tmp/work/bpf/bpf/tools/testing/selftests/bpf/tools/include/vmlinux.h:107714:12: note: previous declaration is here
+> > >     107714 | extern int bpf_skb_set_fou_encap(struct __sk_buff *skb_ctx, struct bpf_fou_encap *encap, int type) __weak __ksym;
+> > >            |            ^
+> > >    progs/test_tunnel_kern.c:41:5: error: conflicting types for 'bpf_skb_get_fou_encap'
+> > >       41 | int bpf_skb_get_fou_encap(struct __sk_buff *skb_ctx,
+> > >          |     ^
+> > >    /tmp/work/bpf/bpf/tools/testing/selftests/bpf/tools/include/vmlinux.h:107715:12: note: previous declaration is here
+> > >     107715 | extern int bpf_skb_get_fou_encap(struct __sk_buff *skb_ctx, struct bpf_fou_encap *encap) __weak __ksym;
+> > >            |            ^
+> > >      CLNG-BPF [test_maps] verifier_typedef.bpf.o
+> > >      CLNG-BPF [test_maps] user_ringbuf_fail.bpf.o
+> > >      CLNG-BPF [test_maps] verifier_map_in_map.bpf.o
+> > >    progs/test_tunnel_kern.c:782:35: error: incompatible pointer types passing 'struct bpf_fou_encap___local *' to parameter of type 'struct bpf_fou_encap *' [-Werror,-Wincompatible-pointer-types]
+> > >      782 |         ret = bpf_skb_set_fou_encap(skb, &encap, FOU_BPF_ENCAP_GUE___local);
+> > >          |                                          ^~~~~~
+> > >    /tmp/work/bpf/bpf/tools/testing/selftests/bpf/tools/include/vmlinux.h:107714:83: note: passing argument to parameter 'encap' here
+> > >     107714 | extern int bpf_skb_set_fou_encap(struct __sk_buff *skb_ctx, struct bpf_fou_encap *encap, int type) __weak __ksym;
+> >
+> > It's a good idea to introduce struct bpf_fou_encap___local
+> > for !FOU builds, but kfunc signature needs to stay and
+> > __local variable needs to be type casted to (struct bpf_fou_encap *)
+> > when calling kfunc.
 > 
-> Yes, make default if ARCH_THUNDER is true
+> Given we specify
+> 
+> CONFIG_NET_FOU=y (not =m)
+> 
+> in selftests/bpf/config, do we really need to work around this? I bet
+> we have a bunch of other missing types if we don't set all the
+> settings as required by selftests/bpf/config.
 
-Herbert, this patch was merged, do you want a follow-up patch as Bharat wrote
-or you are good with the current status?
+We do have other missing types and a lot of them (not all) are fixed
+the same way with ___local versions by interested parties.
 
-Francesco
+-- 
+ Artem
 
 
