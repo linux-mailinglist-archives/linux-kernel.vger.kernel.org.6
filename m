@@ -1,140 +1,228 @@
-Return-Path: <linux-kernel+bounces-258946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86A01938F0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:22:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F0E938F0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 479AE281C17
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:22:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 401561C21162
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02CD516D4E5;
-	Mon, 22 Jul 2024 12:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04CCD16D4E5;
+	Mon, 22 Jul 2024 12:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="W8yvu5kb"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qaaD+vOu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A787C1754B;
-	Mon, 22 Jul 2024 12:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9831754B;
+	Mon, 22 Jul 2024 12:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721650952; cv=none; b=DvjSyOafDlsOCHKLVEOJBg/cy4iq0am4uXz6kPG1oTANjSm2ueEe8nyl8qyrkeLD0YVEJVx3yYcO6RydPHEIm0+9RYpTRrj60vIwLByirIAdD2ekCQxVzhtNGqxpDtWlMOoTKQsjtv5eaq+VtJieXk35k3K3cbcw13D2ldfKl4U=
+	t=1721651288; cv=none; b=s9Uro7Kh+eBYkbbYOEsYtOWSdsHztmkUoeO83ejCkGkkvcfHoAqub1AGlW6GRJiWnJzDQiiPyHd9kesCZK+j2PDzJ+C1bGTzpXy8VEmS0vR2c8Tkq0I3O0OSB80CveO62OOho4cJ6to/YdZCwDSxoxm9XUE4tDFCAOxW+fhSDxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721650952; c=relaxed/simple;
-	bh=5LRjXVaCr7Wfv1efvtW7uWzJ8ELYgMW0BFlDilFr7LY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UDL8LBryHDM9wJ4tpX/Hsf4XTzYX3yrnd7wfHz3IFeaSqx86fIbWSxjDWlnRLRBeTzZPNNMYjv9CmjWbmOsUdrmaey77XsaUwSpd4iJhKol+QRvR/At/FL3UnQGEjOgU+kzgswYxS+cCeNkRJ84/3d1ulV2yItnG0k7wUM4BB28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=W8yvu5kb; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 889C345B;
-	Mon, 22 Jul 2024 14:21:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1721650907;
-	bh=5LRjXVaCr7Wfv1efvtW7uWzJ8ELYgMW0BFlDilFr7LY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W8yvu5kbYh+vPm3Hmn0YXJqSg803WP9sdU3lrswy/eqzjGKvAn+kTrOzz9T8Uppid
-	 X+0l79Idb5s0RAjqIbgpA3E4wmyEDyzwdQoJkLzpkOBezf6fL3c8Ye5K0+nCI5UQ08
-	 MC+AcOqnAPdvwQCPi3TNECbPHluFgdChIRWXJMN4=
-Date: Mon, 22 Jul 2024 15:22:11 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pmenzel@molgen.mpg.de, stable@vger.kernel.org
-Subject: Re: [PATCH v2] media: uvcvideo: Fix custom control mapping probing
-Message-ID: <20240722122211.GF5732@pendragon.ideasonboard.com>
-References: <20240722-fix-filter-mapping-v2-1-7ed5bb6c1185@chromium.org>
+	s=arc-20240116; t=1721651288; c=relaxed/simple;
+	bh=1wHVWXdwDpPXbRdLNkJ+1cBk9V/oWHav1DfuBfI2DU0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r43jZcW1wZT1UZP66uwXvlK2gsHICikSMJKKm1b0VmsE+imVrwdpjbNjWtek8a+4tbmgpoibrv0Sx0CIrtTKNdlb/NQKsgdSGJcQhZ4bqQ/ufL9sNyJNnc0HhOhmyj8C5m1/v9VjzRBBqpZK41ifa4BlxUNR185+7XHdHxwAuzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qaaD+vOu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 512E3C4AF0A;
+	Mon, 22 Jul 2024 12:28:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721651287;
+	bh=1wHVWXdwDpPXbRdLNkJ+1cBk9V/oWHav1DfuBfI2DU0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qaaD+vOuS55OkCK49tMhg7IkjyjEz7lyTKp4gQ7wPXFkLebkAnJcXA60oaAX1TeSP
+	 liW3qKZ0pWcao0+2ItIgibEW6dz2vkLKZ9WmTmgi+pmxhfEs7GMTVCF558adcxawgx
+	 OXIxaqf71/TDPYdF5KxBdUx3R24zwLd/a+dMM1bIJ0DBteedSIQyBI1ru1TpVdPjiL
+	 moqc6lu88KActxvo3q69heozZ3rNJGqRgn/+HqGiEWcVX2vdcHFCs2i1LxnSoZP+ap
+	 eE6En9BX98heKsXsr4Mk6Noeswdq/IA/ezGoeVl05gfny2HHRMBKLIru3Ny5BTvMCa
+	 cFeyuA6qRT0Dg==
+Message-ID: <e12b91ef-ca0c-4b77-840b-dcfb2c76a984@kernel.org>
+Date: Mon, 22 Jul 2024 14:28:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240722-fix-filter-mapping-v2-1-7ed5bb6c1185@chromium.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/8] Unmapping guest_memfd from Direct Map
+Content-Language: en-US
+To: Patrick Roy <roypat@amazon.co.uk>, seanjc@google.com,
+ pbonzini@redhat.com, akpm@linux-foundation.org, dwmw@amazon.co.uk,
+ rppt@kernel.org, david@redhat.com
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ willy@infradead.org, graf@amazon.com, derekmn@amazon.com,
+ kalyazin@amazon.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, dmatlack@google.com, tabba@google.com,
+ chao.p.peng@linux.intel.com, xmarcalx@amazon.co.uk
+References: <20240709132041.3625501-1-roypat@amazon.co.uk>
+From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+In-Reply-To: <20240709132041.3625501-1-roypat@amazon.co.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 22, 2024 at 11:52:26AM +0000, Ricardo Ribalda wrote:
-> Custom control mapping introduced a bug, where the filter function was
-> applied to every single control.
+On 7/9/24 3:20 PM, Patrick Roy wrote:
+> Hey all,
 > 
-> Fix it so it is only applied to the matching controls.
+> This RFC series is a rough draft adding support for running
+> non-confidential compute VMs in guest_memfd, based on prior discussions
+> with Sean [1]. Our specific usecase for this is the ability to unmap
+> guest memory from the host kernel's direct map, as a mitigation against
+> a large class of speculative execution issues.
 > 
-> The following dmesg errors during probe are now fixed:
+> === Implementation ===
 > 
-> usb 1-5: Found UVC 1.00 device Integrated_Webcam_HD (0c45:670c)
-> usb 1-5: Failed to query (GET_CUR) UVC control 2 on unit 2: -75 (exp. 1).
-> usb 1-5: Failed to query (GET_CUR) UVC control 3 on unit 2: -75 (exp. 1).
-> usb 1-5: Failed to query (GET_CUR) UVC control 6 on unit 2: -75 (exp. 1).
-> usb 1-5: Failed to query (GET_CUR) UVC control 7 on unit 2: -75 (exp. 1).
-> usb 1-5: Failed to query (GET_CUR) UVC control 8 on unit 2: -75 (exp. 1).
-> usb 1-5: Failed to query (GET_CUR) UVC control 9 on unit 2: -75 (exp. 1).
-> usb 1-5: Failed to query (GET_CUR) UVC control 10 on unit 2: -75 (exp. 1).
+> This patch series introduces a new flag to the `KVM_CREATE_GUEST_MEMFD`
+> to remove its pages from the direct map when they are allocated. When
+> trying to run a guest from such a VM, we now face the problem that
+> without either userspace or kernelspace mappings of guest_memfd, KVM
+> cannot access guest memory to, for example, do MMIO emulation of access
+> memory used to guest/host communication. We have multiple options for
+> solving this when running non-CoCo VMs: (1) implement a TDX-light
+> solution, where the guest shares memory that KVM needs to access, and
+> relies on paravirtual solutions where this is not possible (e.g. MMIO),
+> (2) have KVM use userspace mappings of guest_memfd (e.g. a
+> memfd_secret-style solution), or (3) dynamically reinsert pages into the
+> direct map whenever KVM wants to access them.
 > 
-> Reported-by: Paul Menzen <pmenzel@molgen.mpg.de>
-> Closes: https://lore.kernel.org/linux-media/518cd6b4-68a8-4895-b8fc-97d4dae1ddc4@molgen.mpg.de/T/#t
-> Cc: stable@vger.kernel.org
-> Fixes: 8f4362a8d42b ("media: uvcvideo: Allow custom control mapping")
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> This RFC goes for option (3). Option (1) is a lot of overhead for very
+> little gain, since we are not actually constrained by a physical
+> inability to access guest memory (e.g. we are not in a TDX context where
+> accesses to guest memory cause a #MC). Option (2) has previously been
+> rejected [1].
 
-I'll add
+Do the pages have to have the same address when they are temporarily mapped?
+Wouldn't it be easier to do something similar to kmap_local_page() used for
+HIMEM? I.e. you get a temporary kernel mapping to do what's needed, but it
+doesn't have to alter the shared directmap.
 
-Tested-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Maybe that was already discussed somewhere as unsuitable but didn't spot it
+here.
 
-from v1 and fix the reported-by tag.
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
-> Paul, could you check if this fixes your issue, thanks!
-> ---
-> Changes in v2:
-> - Replace !(A && B) with (!A || !B)
-> - Add error message to commit message
-> - Link to v1: https://lore.kernel.org/r/20240722-fix-filter-mapping-v1-1-07cc9c6bf4e3@chromium.org
-> ---
->  drivers/media/usb/uvc/uvc_ctrl.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+> In this patch series, we make sufficient parts of KVM gmem-aware to be
+> able to boot a Linux initrd from private memory on x86. These include
+> KVM's MMIO emulation (including guest page table walking) and kvm-clock.
+> For VM types which do not allow accessing gmem, we return -EFAULT and
+> attempt to prepare a KVM_EXIT_MEMORY_FAULT.
 > 
-> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> index 0136df5732ba..4fe26e82e3d1 100644
-> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> @@ -2680,6 +2680,10 @@ static void uvc_ctrl_init_ctrl(struct uvc_video_chain *chain,
->  	for (i = 0; i < ARRAY_SIZE(uvc_ctrl_mappings); ++i) {
->  		const struct uvc_control_mapping *mapping = &uvc_ctrl_mappings[i];
->  
-> +		if (!uvc_entity_match_guid(ctrl->entity, mapping->entity) ||
-> +		    ctrl->info.selector != mapping->selector)
-> +			continue;
-> +
->  		/* Let the device provide a custom mapping. */
->  		if (mapping->filter_mapping) {
->  			mapping = mapping->filter_mapping(chain, ctrl);
-> @@ -2687,9 +2691,7 @@ static void uvc_ctrl_init_ctrl(struct uvc_video_chain *chain,
->  				continue;
->  		}
->  
-> -		if (uvc_entity_match_guid(ctrl->entity, mapping->entity) &&
-> -		    ctrl->info.selector == mapping->selector)
-> -			__uvc_ctrl_add_mapping(chain, ctrl, mapping);
-> +		__uvc_ctrl_add_mapping(chain, ctrl, mapping);
->  	}
->  }
->  
+> Additionally, this patch series adds support for "restricted" userspace
+> mappings of guest_memfd, which work similar to memfd_secret (e.g.
+> disallow get_user_pages), which allows handling I/O and loading the
+> guest kernel in a simple way. Support for this is completely independent
+> of the rest of the functionality introduced in this patch series.
+> However, it is required to build a minimal hypervisor PoC that actually
+> allows booting a VM from a disk.
 > 
-> ---
-> base-commit: 68a72104cbcf38ad16500216e213fa4eb21c4be2
-> change-id: 20240722-fix-filter-mapping-18477dc69048
+> === Performance ===
+> 
+> We have run some preliminary performance benchmarks to assess the impact
+> of on-the-fly direct map manipulations. We were mainly interested in the
+> impact of manipulating the direct map for MMIO emulation on virtio-mmio.
+> Particularly, we were worried about the impact of the TLB and L1/2/3
+> Cache flushes that set_memory_[n]p entails.
+> 
+> In our setup, we have taken a modified Firecracker VMM, spawned a Linux
+> guest with 1 vCPU, and used fio to stress a virtio_blk device. We found
+> that the cache flushes caused throughput to drop from around 600MB/s to
+> ~50MB/s (~90%) for both reads and writes (on a Intel(R) Xeon(R) Platinum
+> 8375C CPU with 64 cores). We then converted our prototype to use
+> set_direct_map_{invalid,default}_noflush instead of set_memory_[n]p and
+> found that without cache flushes the pure impact of the direct map
+> manipulation is indistinguishable from noise. This is why we use
+> set_direct_map_{invalid,default}_noflush instead of set_memory_[n]p in
+> this RFC.
+> 
+> Note that in this comparison, both the baseline, as well as the
+> guest_memfd-supporting version of Firecracker were made to bounce I/O
+> buffers in VMM userspace. As GUP is disabled for the guest_memfd VMAs,
+> the virtio stack cannot directly pass guest buffers to read/write
+> syscalls.
+> 
+> === Security ===
+> 
+> We want to use unmapping guest memory from the host kernel as a security
+> mitigation against transient execution attacks. Temporarily restoring
+> direct map entries whenever KVM requires access to guest memory leaves a
+> gap in this mitigation. We believe this to be acceptable for the above
+> cases, since pages used for paravirtual guest/host communication (e.g.
+> kvm-clock) and guest page tables do not contain sensitive data. MMIO
+> emulation will only end up reading pages containing privileged
+> instructions (e.g. guest kernel code).
+> 
+> === Summary ===
+> 
+> Patches 1-4 are about hot-patching various points inside of KVM that
+> access guest memory to correctly handle the case where memory happens to
+> be guest-private. This means either handling the access as a memory
+> error, or simply accessing the memslot's guest_memfd instead of looking
+> at the userspace provided VMA if the VM type allows these kind of
+> accesses. Patches 5-6 add a flag to KVM_CREATE_GUEST_MEMFD that will
+> make it remove its pages from the kernel's direct map. Whenever KVM
+> wants to access guest-private memory, it will temporarily re-insert the
+> relevant pages. Patches 7-8 allow for restricted userspace mappings
+> (e.g. get_user_pages paths are disabled like for memfd_secret) of
+> guest_memfd, so that userspace has an easy path for loading the guest
+> kernel and handling I/O-buffers.
+> 
+> === ToDos / Limitations ===
+> 
+> There are still a few rough edges that need to be addressed before
+> dropping the "RFC" tag, e.g.
+> 
+> * Handle errors of set_direct_map_default_not_flush in
+>   kvm_gmem_invalidate_folio instead of calling BUG_ON
+> * Lift the limitation of "at most one gfn_to_pfn_cache for each
+>   gfn/pfn" in e1c61f0a7963 ("kvm: gmem: Temporarily restore direct map
+>   entries when needed"). It currently means that guests with more than 1
+>   vcpu fail to boot, because multiple vcpus can put their kvm-clock PV
+>   structures into the same page (gfn)
+> * Write selftests, particularly around hole punching, direct map removal,
+>   and mmap.
+> 
+> Lastly, there's the question of nested virtualization which Sean brought
+> up in previous discussions, which runs into similar problems as MMIO. I
+> have looked at it very briefly. On Intel, KVM uses various gfn->uhva
+> caches, which run in similar problems as the gfn_to_hva_caches dealt
+> with in 200834b15dda ("kvm: use slowpath in gfn_to_hva_cache if memory
+> is private"). However, previous attempts at just converting this to
+> gfn_to_pfn_cache (which would make them work with guest_memfd) proved
+> complicated [2]. I suppose initially, we should probably disallow nested
+> virtualization in VMs that have their memory removed from the direct
+> map.
+> 
+> Best,
+> Patrick
+> 
+> [1]: https://lore.kernel.org/linux-mm/cc1bb8e9bc3e1ab637700a4d3defeec95b55060a.camel@amazon.com/
+> [2]: https://lore.kernel.org/kvm/ZBEEQtmtNPaEqU1i@google.com/
+> 
+> Patrick Roy (8):
+>   kvm: Allow reading/writing gmem using kvm_{read,write}_guest
+>   kvm: use slowpath in gfn_to_hva_cache if memory is private
+>   kvm: pfncache: enlighten about gmem
+>   kvm: x86: support walking guest page tables in gmem
+>   kvm: gmem: add option to remove guest private memory from direct map
+>   kvm: gmem: Temporarily restore direct map entries when needed
+>   mm: secretmem: use AS_INACCESSIBLE to prohibit GUP
+>   kvm: gmem: Allow restricted userspace mappings
+> 
+>  arch/x86/kvm/mmu/paging_tmpl.h |  94 +++++++++++++++++++-----
+>  include/linux/kvm_host.h       |   5 ++
+>  include/linux/kvm_types.h      |   1 +
+>  include/linux/secretmem.h      |  13 +++-
+>  include/uapi/linux/kvm.h       |   2 +
+>  mm/secretmem.c                 |   6 +-
+>  virt/kvm/guest_memfd.c         |  83 +++++++++++++++++++--
+>  virt/kvm/kvm_main.c            | 112 +++++++++++++++++++++++++++-
+>  virt/kvm/pfncache.c            | 130 +++++++++++++++++++++++++++++----
+>  9 files changed, 399 insertions(+), 47 deletions(-)
+> 
+> 
+> base-commit: 890a64810d59b1a58ed26efc28cfd821fc068e84
 
--- 
-Regards,
-
-Laurent Pinchart
 
