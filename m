@@ -1,152 +1,158 @@
-Return-Path: <linux-kernel+bounces-258599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDC42938A54
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:45:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4FD7938A85
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:56:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B81CB20A9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:45:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DEAB1F219CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86A114F11C;
-	Mon, 22 Jul 2024 07:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C935C1607B3;
+	Mon, 22 Jul 2024 07:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TMF+IQLT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=davidgow.net header.i=@davidgow.net header.b="nXy1SW5X";
+	dkim=pass (4096-bit key) header.d=davidgow.net header.i=@davidgow.net header.b="Ua19Yot6"
+Received: from sphereful.davidgow.net (sphereful.davidgow.net [203.29.242.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0206B14D2B7;
-	Mon, 22 Jul 2024 07:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3401607A4
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.242.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721634320; cv=none; b=NANsJnpK1dGUi9dSdmgNYQSly8C2LHfHn87HUQVjhdzCyIeQaJCElhtAYLNaT72ast62zpNjvXwaoGDMir2W/qWDp6zvmFAFPTv/LclxyfsprPItiNuyMzGzUPfWlsUrXQ+3eyOEitniVAgdPePIkuwav4C1rVWb1eXi8Pu/Bqc=
+	t=1721634967; cv=none; b=jlUx6PqLIqaWZcxFnK64Yw9s5BiWbz+TIZUf4SRqniVLFt9yZAx5wNAfqQsI1mdblC1iyp9JvLmltKORUPeAI0X5kfb6xIGip7biP8isqzGQzfRlHFmLOMjZ12YGanOq4yN9iaVYdpmaNhwkGQaA2qZdlmW0vT/dhxTCRU0C0Ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721634320; c=relaxed/simple;
-	bh=+MaJBgjNtkARNpfQULTFjsybhHCcQiUPkH4lCQ3ICrc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V0s2JLnENX0ABfjQo0w5FZ6zLneMXfykO50sfNKf0uM9zoUJVUyJ0eYvhWdhShjqyszgOYFi3b4M1i/7rbXRXI7o2sYWRacT1ICjjgnUXfaSrBxgTcd9tBWSGtqraYNF1jFq8OUKQkoWL5fgQHDTCD3MUSmjiCEAf9ENVrx23/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TMF+IQLT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6301C116B1;
-	Mon, 22 Jul 2024 07:45:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721634319;
-	bh=+MaJBgjNtkARNpfQULTFjsybhHCcQiUPkH4lCQ3ICrc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TMF+IQLTfIOn1GM/iKUWiDlYdlwjQus76rNAFKeGl3C6ZgudWeVxFThu3ulTlkWOF
-	 K6Ad4YZzCvttCJTkzNwIGlTOuXaHYkNtOhllocd+qirET9kMz/fo1JKKgc3c8K0w5r
-	 hEcgkwH9eaYxOHc5yOHZccd4OHUpJAyZLxpR6qZHtgOpsL53UuLBKyEfyEwX+Lo9Cn
-	 TekuTvOebkI2EEHQCXKhPhPvnnBIMQOjrIVI67FlTaaW6Ha9BNm7/6O/iDZJIC8Gee
-	 G+8oxIkm7Mkj515FhXVY6+HYTcDOUSNop0BR5VslQMrOdFDiPQeMCpeLCroyj4XdvI
-	 6A7EcuziLw68Q==
-Message-ID: <bdb3a8fd-2f49-4b97-bedd-4d65ee2a1d79@kernel.org>
-Date: Mon, 22 Jul 2024 09:45:13 +0200
+	s=arc-20240116; t=1721634967; c=relaxed/simple;
+	bh=sIsoIaEC5q4HVUj+ZnhPfTbfbDCCvrTzn9RJcdcWQUw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cgija9gBWgEdYVl91jx9eA2Y57OCcNPiqeW86Si9265xDWofTCdZn0mcwnWpQQ/COEsjhsrWCm5KnmPkjw8uUE8hBJhZD+RvXDNklguofTppOQ2Ft+3/AE9Z6cLRxB+LAqkeo9KPT5o9000RpR5pJRrUDkEXBFxukHhaZ6ptXM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidgow.net; spf=pass smtp.mailfrom=davidgow.net; dkim=pass (4096-bit key) header.d=davidgow.net header.i=@davidgow.net header.b=nXy1SW5X; dkim=pass (4096-bit key) header.d=davidgow.net header.i=@davidgow.net header.b=Ua19Yot6; arc=none smtp.client-ip=203.29.242.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=davidgow.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=davidgow.net
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=davidgow.net;
+	s=201606; t=1721634358;
+	bh=sIsoIaEC5q4HVUj+ZnhPfTbfbDCCvrTzn9RJcdcWQUw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nXy1SW5X0ni4nNdvSDr4LN3qkl4tEaxu9//KIrzRGqH3K+Tr6TglKOknJxdX+X9lL
+	 6JvBfDpcVljpQASsR+fRcddyJlKO4vRpewF1H2VEEeG2jhQJlUd0zfyi+KtR1/imzU
+	 KUtCORpu4+UVHZjothx6breyp/sIu7pdD62I/KBGymkIoGQ3b3+fqmLJ2tXDpM7i7u
+	 ef5/fTwBRznNPk7KP9/vT5bSqXMtT+vJSmVA6ela2y9+hFwubyTAaVYs7phNcPogyN
+	 lELjCG2uHWHVcJg+pT9DFPTT2NYQ1xeJbC8KQooZ/kNPrQG+JcRbjs1HKhpZTsg5el
+	 cWU/wd8MFEfenNI84ySDTXlracjPPAVyk5ecYuzJvOeadrBWL1xtuAOzzOBjMkJG20
+	 PGVDYukO9nNIktvepipfpHSjrUOv8o/D1broCd31Y/m5cSaFNasbE/f/OXtlUIoBTx
+	 jS6gg1J7IBS5GM0PKrZsXcHNmKThubmylPm3ezz0rS9daj+e2mn/mTSsgN4TY5Z71i
+	 8E2t6uSpCmQfxWqaqMn00HfES5KPSlIjXBVz1ng+Svb9i560PK0jJyBu7OMwuegHJ6
+	 a0WrCL8JMVTJPlq/SyImjAXmbZNOYNcjmj4fQc3pbXX1TRW8u9lMN1Atg8n7LrPbNT
+	 yee5tCX1E9YTCyqVgB5nKUQM=
+Received: by sphereful.davidgow.net (Postfix, from userid 119)
+	id 09AD11DBB82; Mon, 22 Jul 2024 15:45:58 +0800 (AWST)
+X-Spam-Level: 
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=davidgow.net;
+	s=201606; t=1721634355;
+	bh=sIsoIaEC5q4HVUj+ZnhPfTbfbDCCvrTzn9RJcdcWQUw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Ua19Yot6XTtFZsoc06vjBWA6nh8nCIjfjBldirI1IlLivXLtPf5rvPoKkL2AwnDhd
+	 l9gaB9eEcwjC2vTkjhOG5JNcMUV1MOL24pcf4TV6Pltze5SlZkZDZiY8B+9R7YiBSr
+	 dunv6f6NiFG18aWxfjpbiZertqef+BD4LAO5J/kyMvl9OgeH3Q06NepUmom/8TET8z
+	 wHB1YDOSzvfK2zxjyLsInM0HPLDmhHssIvkLiU5YwfQ86pASMji30h7lGS6hT/Paq6
+	 +48xJ/9s/k3tDnPvQUMVFlRru3Hi3k0O+jvB+3eihEWktIR0Sb9RGijf/8AmkGrKwR
+	 ksFutMtBvPd9iIRaO5MoZeRPOBKnxbTOulrlmbwPZ4z+7JARYsgFRSDLIjR26t/bx7
+	 6VPd6oUJWfNMAN7u0khwjivEfUCBuoFYDKf2L5HUmAoT4VR1r1yX/GycJWJagzp3QZ
+	 krg1N18B5ZqQeYuwPVvDv6BLWxsJEu7W0OJP5Ktcy67nrl/Jt8MZLgdkGlrMImiiCx
+	 A2vFS9fB4YAny2qO7x15aANA7wgFV9KOurGCYYNjQPLCCGGI6/Pboz8s+9UFHx+o+F
+	 5t6OGvxJhoawV6w93iTXPH0anXaFIB8FKIsGRlUz+0AyXK0c/+8zzWWOmrZje2uXZW
+	 zqN7Wgj571uR0aGN34o+/V5w=
+Received: from sparky.lan (unknown [IPv6:2001:8003:8824:9e00::bec])
+	by sphereful.davidgow.net (Postfix) with ESMTPSA id 1C2881DBB78;
+	Mon, 22 Jul 2024 15:45:55 +0800 (AWST)
+From: David Gow <david@davidgow.net>
+To: =?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+	Somalapuram Amaranath <Amaranath.Somalapuram@amd.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Cc: David Gow <david@davidgow.net>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
+	intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/i915: Allow evicting to use the requested placement
+Date: Mon, 22 Jul 2024 15:45:38 +0800
+Message-ID: <20240722074540.15295-1-david@davidgow.net>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] ASoC: dt-bindings: midas-audio: Declare required
- properties for GPIO jack det
-To: Artur Weber <aweber.kernel@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-sound@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-References: <20240716-midas-audio-tab3-v1-0-a53ea075af5a@gmail.com>
- <20240716-midas-audio-tab3-v1-1-a53ea075af5a@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240716-midas-audio-tab3-v1-1-a53ea075af5a@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 16/07/2024 21:36, Artur Weber wrote:
-> GPIO jack detection requires an IIO channel and the detection threshold
-> to work. Explicitly declare the requirement in DT schema.
-> 
-> Fixes: 0a590ecc672a ("ASoC: dt-bindings: samsung,midas-audio: Add GPIO-based headset jack detection")
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
->  .../bindings/sound/samsung,midas-audio.yaml        | 29 +++++++++++++++++++---
->  1 file changed, 26 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-> index 69ddfd4afdcd..e7af3c09de38 100644
-> --- a/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-> +++ b/Documentation/devicetree/bindings/sound/samsung,midas-audio.yaml
-> @@ -9,9 +9,6 @@ title: Samsung Midas audio complex with WM1811 codec
->  maintainers:
->    - Sylwester Nawrocki <s.nawrocki@samsung.com>
->  
-> -allOf:
-> -  - $ref: sound-card-common.yaml#
-> -
->  properties:
->    compatible:
->      const: samsung,midas-audio
-> @@ -102,6 +99,32 @@ required:
->    - mic-bias-supply
->    - submic-bias-supply
->  
-> +allOf:
-> +  - $ref: sound-card-common.yaml#
-> +
-> +  - if:
-> +      oneOf:
+In a78a8da5 ("drm/ttm: replace busy placement with flags v6"), the old
+system of having a separate placement list (for placements which should
+be used without eviction) and a 'busy' placement list (for placements
+which should be attempted if eviction is required) was replaced with a
+new one where placements could be marked 'FALLBACK' (to be attempted if
+eviction is required) or 'DESIRED' (to be attempted first, but not if
+eviction is required).
 
-This won't work if you have both detect and key gpios. I think you want
-anyOf here.
+i915 had always included the requested placement in the list of
+'busy' placements: i.e., the placement could be used either if eviction
+is required or not. But when the new system was put in place, the
+requested (first) placement was marked 'DESIRED', so would never be used
+if eviction became necessary. While a bug in the original commit
+prevented this flag from working, when this was fixed in
+4a0e7b3c ("drm/i915: fix applying placement flag"), it caused long hangs
+on DG2 systems with small BAR.
 
+Don't mark the requested placement DESIRED (or FALLBACK), allowing it to
+be used in both situations. This matches the old behaviour, and resolves
+the hangs.
 
-Best regards,
-Krzysztof
+Thanks to Justin Brewer for bisecting the issue.
+
+Fixes: a78a8da51b36 ("drm/ttm: replace busy placement with flags v6")
+Fixes: 4a0e7b3c3753 ("drm/i915: fix applying placement flag")
+Link: https://gitlab.freedesktop.org/drm/i915/kernel/-/issues/11255
+Signed-off-by: David Gow <david@davidgow.net>
+---
+
+I'm not 100% sure I understand exactly what went wrong here: I'm pretty
+sure the patch is correct, but let me know if the commit description is
+way off base.
+
+My system works much better with this applied, but it's possible that it
+could work better still with further changes: the buddy allocator is
+still chewing up a lot of the CPU, and there are still cases where this
+notably affects performance (though, in my experience, these are now
+'hitches' rather than multi-minute hangs).
+
+Cheers,
+-- David
+
+---
+ drivers/gpu/drm/i915/gem/i915_gem_ttm.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_ttm.c b/drivers/gpu/drm/i915/gem/i915_gem_ttm.c
+index e6f177183c0f..fb848fd8ba15 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_ttm.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_ttm.c
+@@ -165,7 +165,6 @@ i915_ttm_placement_from_obj(const struct drm_i915_gem_object *obj,
+ 	i915_ttm_place_from_region(num_allowed ? obj->mm.placements[0] :
+ 				   obj->mm.region, &places[0], obj->bo_offset,
+ 				   obj->base.size, flags);
+-	places[0].flags |= TTM_PL_FLAG_DESIRED;
+ 
+ 	/* Cache this on object? */
+ 	for (i = 0; i < num_allowed; ++i) {
+-- 
+2.45.2
 
 
