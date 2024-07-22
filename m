@@ -1,54 +1,45 @@
-Return-Path: <linux-kernel+bounces-258571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FD249389EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:16:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F8279389EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2BD31F217D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:16:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B39728185C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE6BE1CAAC;
-	Mon, 22 Jul 2024 07:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="chPfJ5gE"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E66F1B960;
+	Mon, 22 Jul 2024 07:17:06 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF1D1803D;
-	Mon, 22 Jul 2024 07:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDAD5288B1
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721632600; cv=none; b=cHHbcvGiyEAJGzG8bT5/Ur3KPOe7jRj8EQJ1H8CRp7fa+VB4ruQ00ZRhI3SPXS7DsaDF+qnha6dZ9iwJNDXEvIrUfMNucN6288gxAt++pI89WZuTZNIb0qIeMPDGiM7LJTarn7HAefi69arceG7elBd7wvhYmoKZ5QrsMJY+Rbc=
+	t=1721632625; cv=none; b=oYIybyhLxCDYFXPsmf3OBrF4NrJVzfMWMjFGE4eW1FDf+fb6HSESiVDta4Z82ZioS06yuJcjJ94XvtVh25zk9uqqHtzVydmspgZhgw80aVtz7SHUs2U6wKOhwnGi/lYKiQ8XKDjPbYemh6rvIQWRriAtVEDsNhvxRNxMtjs37+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721632600; c=relaxed/simple;
-	bh=YFLDcKIC9Uv+Lpa4xHklsR0hcUKSD5CTzcyTHP2K3cg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=pAeiTYYueGt8PPJ8AjNI75pfet1yoOb7L9msesyJsNMYuJdcoNvTdtSNiRA6DHeg5J5ouJEliUNKTEtkwq3wFKm30P8lQ6U3JEzUc3zbg8p3m6DYcynH/smaLUY4KAs/KVSr/kBZfq3oVOF3jx7GE8B2EpYTrauIZUO6nWKXDK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=chPfJ5gE; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721632549; x=1722237349; i=markus.elfring@web.de;
-	bh=YFLDcKIC9Uv+Lpa4xHklsR0hcUKSD5CTzcyTHP2K3cg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=chPfJ5gED78UP1PqTnS3A5EvhZm66glsEl179SG9fF3bYUYn9hrH+SvhFzSjfviF
-	 dmw9E9bRufBnGCAKR7QiiLKdkcjcj2GgonDp8J8g0Ta9kFfup8fkB5dCBQLn/JlM0
-	 WOfmc2GoUZHsEunOZseDovcV4FC7imZiZtXeUTyvGNseV4jPwWkhHsTvtPTp0Z/CJ
-	 D0ZAdW2bOJkvplk00RVrAMMIFTmK1W/F27kBdW/k41ebAVLORlOFYyBKDAC9dsTYL
-	 JxfNEGunqg1BovEZSa9oHGPNqo+mERdOJ7KP3qonlNDUUljMf2qDhSckuj/Q8Tbzn
-	 PQUDNNlHxbOH8gvH4g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mvbik-1sCkHj1MIQ-014vrz; Mon, 22
- Jul 2024 09:15:49 +0200
-Message-ID: <73b3e14a-c1c3-4f7b-aea8-2108912e21ca@web.de>
-Date: Mon, 22 Jul 2024 09:15:26 +0200
+	s=arc-20240116; t=1721632625; c=relaxed/simple;
+	bh=02H5MdfWCLeVQl4Cp/E/DdSWzSnVbh5Hb1GYdeUzX8s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VAiFqNgdgiMUu9Fd+XL4he38BGbDym+TlMEaPCnpj9XECPqyOpzomZhOgWIe2dv2Scergv/wV42yAhYix0HKEk4hsCBO+62b624xr4iVpwmAQREbJOgQO5a1y8Y4KeGPTbdTX92DwPAo9DxVcWRSE8LhBleVvPkNOidq9+lKnzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WSBQk3yrxznbss;
+	Mon, 22 Jul 2024 15:16:14 +0800 (CST)
+Received: from kwepemg200007.china.huawei.com (unknown [7.202.181.34])
+	by mail.maildlp.com (Postfix) with ESMTPS id 15404140415;
+	Mon, 22 Jul 2024 15:17:00 +0800 (CST)
+Received: from [10.45.188.173] (10.45.188.173) by
+ kwepemg200007.china.huawei.com (7.202.181.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 22 Jul 2024 15:16:58 +0800
+Message-ID: <14c3db2b-5de2-4f1c-b4d4-6183568b8c24@huawei.com>
+Date: Mon, 22 Jul 2024 15:16:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,58 +47,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- linux-hwmon@vger.kernel.org, linux-leds@vger.kernel.org,
- linux-acpi@vger.kernel.org, netdev@vger.kernel.org,
- Andreas Kemnade <andreas@kemnade.info>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Daniel Scally <djrscally@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?B?R8O8bnRlciBSw7Zjaw==?= <linux@roeck-us.net>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Jakub Kicinski <kuba@kernel.org>, Jean Delvare <jdelvare@suse.com>,
- Jonathan Cameron <jic23@kernel.org>, Lee Jones <lee@kernel.org>,
- Marcin Wojtas <marcin.s.wojtas@gmail.com>, Paolo Abeni <pabeni@redhat.com>,
- Pavel Machek <pavel@ucw.cz>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Rob Herring <robh@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <20240721-device_for_each_child_node-available-v2-1-f33748fd8b2d@gmail.com>
-Subject: Re: [PATCH v2 1/6] device property: document
- device_for_each_child_node macro
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240721-device_for_each_child_node-available-v2-1-f33748fd8b2d@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:xrBbMiLw9ljoQaybd5Se9hN78cCxX8gDvnFpicc5JDnMeWgJvPk
- I9c1qD+hb5e2+8SYdeOWSoirnR5QykLuGUfqKU19dYt+OFOkUCbHbLvk8uZJwIVOsEhA45r
- bmuq0ILq/mW+lUo7jhu/zAHi3b4m7iMpuTipe4yCUzmsGvCimtPrY6s+9G396RYaV89DxEp
- jqghjWTIaFtL7/Mi4dFRA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:zMXmFfshu/w=;jAInkgB3vloWqW9kgqI8uWOuokM
- n5IXptcGeplXc/NaEZxVWLFa/Io9spgPH3TH2rzipw06aXs3s4jLjf8OdtwNUg3FjAhRA3Hql
- DwBz+TKODiNo8fLGqR6eT+RKe1fOWVw7n7M36LjzBOqI9yBTMPJTsaoz9nKAMZYO1YW2vPT1D
- Ijp7TUQbDQKs38m5li9TRE8vNg3/ncd/TRO+svPdwVNSK4sd8rH0o5JApRiCsMLQjt1pIwbqW
- YMXWDphWozW0ZAsch2EBNC2g6oyN2Jfmf40LjUEmste+oeuxLkDaLDfrgM1aw0Pq/oy0K9wEo
- 339RvtJ4EbCF0j7wXp+saUmj14wfnd4AILUNn4X50XyzhkMepw5BFqE5CFrCPMbRdatCnQWX0
- 8zNTWLMhx0GRNz6Dv6Ev5THZjS4SpmDN+XmfOFeridUqaF0PDe1Jzkf8fRrTj8SFHgoHMkuAr
- p1brIA/TFz8FsNK1FCQjrj/cTGlcX6CuNQln1AE4LbluuAul6BaLb7jpPnD1ywRFIPO/UO0rW
- TmW/SicScUoXAnQ6rj/S6t2RPfI0hJNmg8w8m0wZjwH/n+G/lYTATCSRXy8w8xcu4OtBV8rzs
- yiPg+aJpgaMs22MOv+XLlQuQ7Icot43zQ/MT/qp5WIpGDqZ8Xas+1b96QAjhINwkqRG10k8kV
- 76dR8pUGfLUk/+/tlXvDzLRtkoGkoWrpMk+14HDfMa8pzQ/TDNREQ3xcwSZkB78JSL9iygLRK
- wUQ0CGFNDAHufOB/UEJNuef3c7g5bD6IGNikxvOrEjXiA52fFGiyM5sHRpM8ys0dOL7nLU0YE
- egEY/c+H7mNDTsMF0eKES1PA==
+Subject: Re: [PATCH 1/2] sched/fair: Decrease cfs bandwidth usage in
+ task_group destruction
+To: Chuyi Zhou <zhouchuyi@bytedance.com>, <mingo@redhat.com>,
+	<peterz@infradead.org>, <juri.lelli@redhat.com>,
+	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
+	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
+	<vschneid@redhat.com>
+CC: <chengming.zhou@linux.dev>, <linux-kernel@vger.kernel.org>,
+	<joshdon@google.com>
+References: <20240721125208.5348-1-zhouchuyi@bytedance.com>
+ <20240721125208.5348-2-zhouchuyi@bytedance.com>
+ <91e88019-52f7-4fa6-a14b-ca5ecb8e63cf@huawei.com>
+ <d0918be2-8d4e-427d-ac98-32aecffe3a3b@bytedance.com>
+From: Zhang Qiao <zhangqiao22@huawei.com>
+In-Reply-To: <d0918be2-8d4e-427d-ac98-32aecffe3a3b@bytedance.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemg200007.china.huawei.com (7.202.181.34)
 
-=E2=80=A6
-> + * Unavailable nodes are skipped i.e. this macro is implicitly _availab=
-le_.
-=E2=80=A6
+hi
 
-How good does presented information fit together in this comment line?
+在 2024/7/22 14:04, Chuyi Zhou 写道:
+> Hello
+> 
+> 在 2024/7/22 11:47, Zhang Qiao 写道:
+>>
+>>
+>> Hi, Chuyi
+>>
+>> 在 2024/7/21 20:52, Chuyi Zhou 写道:
+>>> The static key __cfs_bandwidth_used is used to indicate whether bandwidth
+>>> control is enabled in the system. Currently, it is only decreased when a
+>>> task group disables bandwidth control. This is incorrect because if there
+>>> was a task group in the past that enabled bandwidth control, the
+>>> __cfs_bandwidth_used will never go to zero, even if there are no task_group
+>>> using bandwidth control now.
+>>>
+>>> This patch tries to fix this issue by decrsasing bandwidth usage in
+>>> destroy_cfs_bandwidth().
+>>>
+>>> Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
+>>> ---
+>>>   kernel/sched/fair.c | 3 +++
+>>>   1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>> index b1e07ce90284..7ad50dc31a93 100644
+>>> --- a/kernel/sched/fair.c
+>>> +++ b/kernel/sched/fair.c
+>>> @@ -6447,6 +6447,9 @@ static void destroy_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
+>>>       hrtimer_cancel(&cfs_b->period_timer);
+>>>       hrtimer_cancel(&cfs_b->slack_timer);
+>>>   +    if (cfs_b->quota != RUNTIME_INF)
+>>> +        cfs_bandwidth_usage_dec();
+>>
+>> This calls static_key_slow_dec_cpuslocked, but destroy_cfs_bandwidth
+>> isn't holding the hotplug lock [1].
+>>
+>> For fixing this issue, i also sent a patch, but it be not merged into mainline [2].
+>>
+>> [1]: https://lore.kernel.org/all/20210712162655.w3j6uczwbfkzazvt@oracle.com/
+>> [2]: https://lore.kernel.org/all/20210910094139.184582-1-zhangqiao22@huawei.com/
+>>
+> 
+> Thanks for your information.
+> 
+> I think maybe cfs_bandwidth_usage_dec() should be moved to other more suitable places where could
+> hold hotplug lock(e.g. cpu_cgroup_css_released()). I would do some test to verify it.
+> 
 
-Regards,
-Markus
+The cpu_cgroup_css_released() also doesn't seem to be in the cpu hotplug lock-holding context.
+
+
+> Thanks.
+> 
+> 
+> 
+> 
+> 
 
