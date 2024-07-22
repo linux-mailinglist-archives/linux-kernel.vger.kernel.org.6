@@ -1,195 +1,183 @@
-Return-Path: <linux-kernel+bounces-258632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80A6A938ACD
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:10:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54ED4938ADD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FB9A281AD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:10:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7829E1C20FCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57A5160877;
-	Mon, 22 Jul 2024 08:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9DF161328;
+	Mon, 22 Jul 2024 08:11:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JLt6CO14";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Hd19cqAm";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mkUpZ9gy";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1xQsJN7Y"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bx2qprec"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01754199C2
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 08:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85C217C6C;
+	Mon, 22 Jul 2024 08:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721635807; cv=none; b=o/q74b2KxzAXxMkI5BCEjWamOADABqtaKEkJVJQCj9xQLPwyR7KeDoyk0VezndrUK6G6xKSZjUaUTMfsJYZuU/EXm0KahY8ziVwen2e3Ot7tzYHzxzJYsyfkyaAfgWTocYxYVA65OfzOS3eJAXt7rF0Da1fd9+HYlzFaKO6zvdw=
+	t=1721635912; cv=none; b=aRe5VzYT1vlU06gluFI4s8hVCBi6eXnbFxPYVYZYkuEnEEn7nmC01ylUsgp/I4eAganfw/HASATBQzd5YrvL6UWVOaqy/44GVnFP+Px2FRiMnikc9VGXPemmr6uDe2CA4KhysWlOylsI/RvbCLkf7ULGIgdnSJJi1HKEwI5OUvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721635807; c=relaxed/simple;
-	bh=eHUPXZOh4xUdc6W3Uil51m3p/Zn28VRZXZB5ndSUDmc=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZK9cHfrCIfim3icMwnhfj77tmzLI75vOmO9X+KuroFEkgDt1dy7GKS0BY0nLhIPwyGAYgqqwsJljnMrI0TVEm+6TG8pUTwZpKF9SN6hMmiDwjkRHrbEmAoN9u/072y0BXPY+hPFS2mMLF+gN6bly4TZt2UGTB7S2Cp3SC48Dai8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JLt6CO14; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Hd19cqAm; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mkUpZ9gy; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1xQsJN7Y; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A69DD21B4B;
-	Mon, 22 Jul 2024 08:10:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721635802; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3nVbO7LI0uS2TAY9BwLJSq+PVHyir89ZNFncsheHCqk=;
-	b=JLt6CO14Ok0bfDiWA+Gsa/GZWKrs1HHIwM3ocxtNyeEbBg4QGmCbesOmU6ZL58icL57Tfx
-	MEyYI2WWAnwhLoVbo1t1vkkE2ssAscsCO0Un/+lvK7Foxt22FEdtZf89rZ5gMlPmWOfo2+
-	caj9X7tmy4MRPOaRulDS9Mgnu/QUn0M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721635802;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3nVbO7LI0uS2TAY9BwLJSq+PVHyir89ZNFncsheHCqk=;
-	b=Hd19cqAmkIE+vXnolN2CfzYGeJLdWqvu3dUFNBTLo8yNs8fyeDxLzn5Mfrl0tUhNohCHQ0
-	oXFsY5rSxvM5sWBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=mkUpZ9gy;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=1xQsJN7Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721635801; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3nVbO7LI0uS2TAY9BwLJSq+PVHyir89ZNFncsheHCqk=;
-	b=mkUpZ9gyN1+0BIp53UsrYiPOqYn5yvNTZMXPMgOVyBRI0mpTvPwxGFdHmAVqf/oWBUzVp+
-	7xsQg/Gthf7xDXqVNR+BDhQFou1ztyAPdNviQJyIDrORJFY/nFAxpme4MV642VR47rX7yX
-	xImxNsbGaqiV+QgZfC3yuChM+RA91Z8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721635801;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3nVbO7LI0uS2TAY9BwLJSq+PVHyir89ZNFncsheHCqk=;
-	b=1xQsJN7YPK+lJOmeeubRo/n9rXgfjHu9g/u35s3msH1lmHypOA+R7/ysjtaTdYkJELwKEU
-	NJ7+uJ+liZEnN2DQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 64A6F138A7;
-	Mon, 22 Jul 2024 08:10:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id iz8bF9kTnma0VQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 22 Jul 2024 08:10:01 +0000
-Date: Mon, 22 Jul 2024 10:10:35 +0200
-Message-ID: <87wmldq22s.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: wangdicheng <wangdich9700@163.com>
-Cc: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	linux-kernel@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-arm-kernel@lists.infradead.org,
-	wangdicheng <wangdicheng@kylinos.cn>
-Subject: Re: [PATCH v2] ALSA: usb-audio: Add a quirk for Sonix HD USB Camera
-In-Reply-To: <20240722013021.10727-1-wangdich9700@163.com>
-References: <20240722013021.10727-1-wangdich9700@163.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1721635912; c=relaxed/simple;
+	bh=Hb+V5JTLbzwcjLm97otp2p06IEtCdCtoouMcxi5d8tg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uB8NXsIITG+W1mwVxm9NZvo2TmFCuWqBQ0t3K9TgPH7hd+s6a7e+05ZNrF7rYb55dARWI7GVucP26/HnJ3yNhDkpuFvkMgSKsaBmwfeqzVl0BcFbGPBaJ5F9yEmEf/f6YSTHbEtky1D90YDpU/TVu0D72qzEq9OE1AL8PRTIzZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bx2qprec; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46BD6C116B1;
+	Mon, 22 Jul 2024 08:11:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721635912;
+	bh=Hb+V5JTLbzwcjLm97otp2p06IEtCdCtoouMcxi5d8tg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bx2qprecs/1WVbqMxrG4w7ohsUf4gUjgDYsnR4Go1DkdSufizj3a6XvXt7UmbKLeI
+	 MNcLWPscmo58BUD1nAER5htxls6TyE4MJ7NA4Q2T3HRE7swfevAf/kiK1XeBp30p/j
+	 ck7oMLbSgbNywLNpzG4b5t5kcbsBUS78XZucWOydx8VCyKVLFT3guihGO/iE5ET7Cl
+	 ijgor6P2VPJWyRT9yhSQo0MVHRAS+vaSE/ZXcNLa55VAQw0WwZh4XBS7fsshnN4HqC
+	 SmUSFptTeA3WbZPKE1HhPHQungrlwQJwMEX7aDp7wZeCoGIY9x3LD1vzSrRpYVAri1
+	 Vuz+SN5irwu0g==
+Message-ID: <90413248-8849-4533-93c9-3a976aad0295@kernel.org>
+Date: Mon, 22 Jul 2024 10:11:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.31
-X-Rspamd-Action: no action
-X-Spam-Level: 
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: A69DD21B4B
-X-Spamd-Result: default: False [-3.31 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,kylinos.cn:email];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[163.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[163.com,gmail.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,kernel.org,perex.cz,suse.com,vger.kernel.org,alsa-project.org,lists.infradead.org,kylinos.cn];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[kylinos.cn:email,suse.de:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Flag: NO
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: timer: ti,davinci-timer: convert to
+ dtschema
+To: Kousik Sanagavarapu <five231003@gmail.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>,
+ Guenter Roeck <linux@roeck-us.net>, Nishanth Menon <nm@ti.com>,
+ Santosh Shilimkar <ssantosh@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240721170840.15569-1-five231003@gmail.com>
+ <20240721170840.15569-2-five231003@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240721170840.15569-2-five231003@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 22 Jul 2024 03:30:21 +0200,
-wangdicheng wrote:
+On 21/07/2024 18:28, Kousik Sanagavarapu wrote:
+> Convert txt binding of TI's DaVinci timer to dtschema to allow for
+> validation.
 > 
-> From: wangdicheng <wangdicheng@kylinos.cn>
-> 
-> Sonix HD USB Camera does not support reading the sample rate which leads
-> to many lines of "cannot get freq at ep 0x84".
-> This patch adds the USB ID to quirks.c and avoids those error messages.
-> 
-> (snip)
-> [1.789698] usb 3-3: new high-speed USB device number 2 using xhci_hcd
-> [1.984121] usb 3-3: New USB device found, idVendor=0c45, idProduct=6340, bcdDevice= 0.00
-> [1.984124] usb 3-3: New USB device strings: Mfr=2, Product=1, SerialNumber=0
-> [1.984127] usb 3-3: Product: USB 2.0 Camera
-> [1.984128] usb 3-3: Manufacturer: Sonix Technology Co., Ltd.
-> [5.440957] usb 3-3: 3:1: cannot get freq at ep 0x84
-> [12.130679] usb 3-3: 3:1: cannot get freq at ep 0x84
-> [12.175065] usb 3-3: 3:1: cannot get freq at ep 0x84
-> 
-> Signed-off-by: wangdicheng <wangdicheng@kylinos.cn>
-> ---
-> v1 -> v2: Arrange the ID in order
-
-It's still at a wrong position.  The ID 0c45 should be inserted at an
-early position of the table.
 
 
-thanks,
+> diff --git a/Documentation/devicetree/bindings/timer/ti,davinci-timer.yaml b/Documentation/devicetree/bindings/timer/ti,davinci-timer.yaml
+> new file mode 100644
+> index 000000000000..615ceb8f30af
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/timer/ti,davinci-timer.yaml
 
-Takashi
+Use compatible as filename.
 
-> ---
->  sound/usb/quirks.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
-> index 58156fbca02c..54b2d2f314ac 100644
-> --- a/sound/usb/quirks.c
-> +++ b/sound/usb/quirks.c
-> @@ -2225,6 +2225,8 @@ static const struct usb_audio_quirk_flags_table quirk_flags_table[] = {
->  		   QUIRK_FLAG_ALIGN_TRANSFER),
->  	DEVICE_FLG(0x534d, 0x2109, /* MacroSilicon MS2109 */
->  		   QUIRK_FLAG_ALIGN_TRANSFER),
-> +	DEVICE_FLG(0x0c45, 0x6340, /* Sonix HD USB Camera */
-> +		   QUIRK_FLAG_GET_SAMPLE_RATE),
->  
->  	/* Vendor matches */
->  	VENDOR_FLG(0x045e, /* MS Lifecam */
-> -- 
-> 2.25.1
-> 
+> @@ -0,0 +1,68 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/timer/ti,davinci-timer.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI DaVinci Timer
+> +
+> +maintainers:
+> +  - Kousik Sanagavarapu <five231003@gmail.com>
+> +
+> +description: |
+> +
+
+Drop blank line
+
+> +  This is a 64-bit timer found on TI's DaVinci architecture devices. The timer
+> +  can be configured as a general-purpose 64-bit timer, dual general-purpose
+> +  32-bit timers. When configured as dual 32-bit timers, each half can operate
+> +  in conjunction (chain mode) or independently (unchained mode) of each other.
+> +
+> +  The timer is a free running up-counter and can generate interrupts when the
+> +  counter reaches preset counter values.
+> +
+> +properties:
+> +  compatible:
+> +    const: ti,da830-timer
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    minItems: 2
+
+Missing maxItems
+
+> +
+> +  interrupt-names:
+> +    minItems: 2
+> +    items:
+> +      - const: tint12
+> +      - const: tint34
+> +      - const: cmpint0
+> +      - const: cmpint1
+> +      - const: cmpint2
+> +      - const: cmpint3
+> +      - const: cmpint4
+> +      - const: cmpint5
+> +      - const: cmpint6
+> +      - const: cmpint7
+
+Best regards,
+Krzysztof
+
 
