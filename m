@@ -1,249 +1,187 @@
-Return-Path: <linux-kernel+bounces-259041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21693939053
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:08:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A445F939059
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1C2F1F21EE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:08:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8701528221C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:08:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F29716DC00;
-	Mon, 22 Jul 2024 14:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F85816D9DC;
+	Mon, 22 Jul 2024 14:08:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VHQO925r"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dqfOb+qm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1B78F5E;
-	Mon, 22 Jul 2024 14:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC661DFE3;
+	Mon, 22 Jul 2024 14:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721657279; cv=none; b=cywAROSnvO8o6IlvGi//32YRVOLGPdJc5Yru2GxjezyWTLMQpCu9XGRy0Avb3KUr+3B4yea/Tn8hi/DRyJn2UsElzArZ/TZfG4EwWE2YRYz1Ke+gkZHbKKEEAmjip/hIR8Ulk4YX4ROg2vH9/7PM2qdXl/93sAFXECIoAt/CE2Y=
+	t=1721657298; cv=none; b=gFw+vRSs0zJx4XFTnlRPH8Zudvf62v5X/LbrRZC5GgxSWV7NpouZXxG7CR2iWLcxEwrTEB1TtB1SsZJbyi58jmVf0fAGLZ3e8jFeYljcISfaUSdZi9pt5Twf5Rne4iJPfJfAZceOcTcGfwg//xy8VqLePuSq7E8lTo1+Dhs4mh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721657279; c=relaxed/simple;
-	bh=+eZHdJDabvhe4yJl+I++bXRcuLcMT5qaWJvUi9IaS8A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kg3762vJgd9T97vgnskq/jIn4VKI1IAGsCCgru/XOAgS5FubkrfHmpeAdgXRzFJgx8cXffbgnsiyVla3AajTGyJZ3UMpPfb+ShJzPI36I3J4G2xyWcF1fdqCHl62r21lZ2+/dLdMk6DIEAetSJjch7utQTtSdhLqXfIGH/Sx86s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VHQO925r; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721657278; x=1753193278;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+eZHdJDabvhe4yJl+I++bXRcuLcMT5qaWJvUi9IaS8A=;
-  b=VHQO925rkFnZO6wJnRhzk8njwDFsIbyIx1Ydx82tt+Hy3BCfl9HHgp/Z
-   A+jupAvxF2Ts0vf4uIKCQDzHIUUGZ44OJt7Vcu1zR+U2uPwdlqJGp/We1
-   hY139+d78IQhjfUhVS7Y0PrKHkbD9983JO+6yChgCjcZotvWEgIKL9XUf
-   9C3XG+7pRY5LjceKAPaFjaD/GyTKVrxNnzWX2jDpjz0Iw1g12M+7m3emZ
-   iyjjprQ/p7vBAR/TthYfh24lpsYmshAvuNGV+mku2zR56sn4GdTmRL6al
-   EcFVhX1E0GFJlzigyQK5gKvC2yi7gGvDrLx6ynxB0fCb8OBMd3/wolVzi
-   g==;
-X-CSE-ConnectionGUID: TPw3bl/BRp6JZ/KG4NZ91g==
-X-CSE-MsgGUID: ypr4qVZBSzGv7/moWLHjIw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11141"; a="18932538"
-X-IronPort-AV: E=Sophos;i="6.09,228,1716274800"; 
-   d="scan'208";a="18932538"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 07:07:49 -0700
-X-CSE-ConnectionGUID: ofWiXJEZQwS3NF984WTZng==
-X-CSE-MsgGUID: wQZBfRJeTvOFGUBExfTpLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,228,1716274800"; 
-   d="scan'208";a="82537212"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa002.jf.intel.com with ESMTP; 22 Jul 2024 07:07:47 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id E0A04540; Mon, 22 Jul 2024 17:07:44 +0300 (EEST)
-Date: Mon, 22 Jul 2024 17:07:44 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	"Borislav Petkov (AMD)" <bp@alien8.de>, Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Jianxiong Gao <jxgao@google.com>, stable@vger.kernel.org
-Subject: Re: [PATCH] mm: Fix endless reclaim on machines with unaccepted
- memory.
-Message-ID: <brjw4kb3x4wohs4a6y5lqxr6a5zlz3m45hiyyyht5mgrqcryk7@m7mdyojo4h6a>
-References: <20240716130013.1997325-1-kirill.shutemov@linux.intel.com>
- <ZpdwcOv9WiILZNvz@tiehlicka>
- <xtcmz6b66wayqxzfio4funmrja7ezgmp3mvudjodt5xfx64rot@s6whj735oimb>
- <Zpez1rkIQzVWxi7q@tiehlicka>
+	s=arc-20240116; t=1721657298; c=relaxed/simple;
+	bh=N6IiowuXKaiT8NYw3UN1F4KTF+aBzmB19xg+QeJxfA4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SaZWNQUqtrBCB6gY58hFdOkqPzK7Bj8nYT1vb64Gmdr9k5xkSDafXUrU9HyTx/0vSddTlCv5eWiTDRklJPi9KkKidNbj5fcQLHYkFkb3pZ4bHc1LVu2T0FigqvukAaAZBcBERXyQwhBa+R6nUDRnSiqXt/35fTUq8XMOQNn71kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dqfOb+qm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0DD8C116B1;
+	Mon, 22 Jul 2024 14:08:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721657298;
+	bh=N6IiowuXKaiT8NYw3UN1F4KTF+aBzmB19xg+QeJxfA4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dqfOb+qm3Gr6Tc7r8QA6xQiAIdbGcNUDKMfw+LGZrdiPCD0Up4ptskT7f12pMMHSS
+	 rtYmNc5Q8RGAvYqccBiX65mUSF9N+JxwAbcVP4Y2qC/OWDj6K2hbeT6YghJB1SfALf
+	 POCTluzGcPx0xzfzMwYc+crZ6suafKeephJdUouF4+myIdIhS+DrWi1FZmJmiqMCBP
+	 hP80dTaczo79KB9r3BCheVE8aPlD7Z84Qkp9ijlN5m8e6A7gRWUd0DpYY3kpwUSqpi
+	 HkTzsY1gk+fiJNVt9i4/dm477pOzGpmVtXYL/Jbpg/7N7UNM62o8sjPuzcwW6WHuaA
+	 8XdMFA4zzPoEg==
+Message-ID: <0f1becb9-56e9-4b71-b9ca-263dd6592c43@kernel.org>
+Date: Mon, 22 Jul 2024 16:08:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zpez1rkIQzVWxi7q@tiehlicka>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/3] dt-bindings: watchdog: ti,davinci-wdt: convert to
+ dtschema
+To: Kousik Sanagavarapu <five231003@gmail.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>,
+ Guenter Roeck <linux@roeck-us.net>, Nishanth Menon <nm@ti.com>,
+ Santosh Shilimkar <ssantosh@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-watchdog@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240721170840.15569-1-five231003@gmail.com>
+ <20240721170840.15569-3-five231003@gmail.com>
+ <629a925c-24ef-4a44-832f-a06a60c266a7@kernel.org>
+ <Zp5asqhipQHEoviM@five231003>
+ <2d8ceef8-9d5e-42a9-af2e-f9292728a3bf@kernel.org>
+ <Zp5mkcDca6jRvOnf@five231003>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <Zp5mkcDca6jRvOnf@five231003>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 17, 2024 at 02:06:46PM +0200, Michal Hocko wrote:
-> Please try to investigate this further. The patch as is looks rather
-> questionable to me TBH. Spilling unaccepted memory into the reclaim
-> seems like something we should avoid if possible as this is something
+On 22/07/2024 16:02, Kousik Sanagavarapu wrote:
+> On Mon, Jul 22, 2024 at 03:50:15PM +0200, Krzysztof Kozlowski wrote:
+>> On 22/07/2024 15:12, Kousik Sanagavarapu wrote:
+>>> On Mon, Jul 22, 2024 at 10:15:03AM +0200, Krzysztof Kozlowski wrote:
+>>>> On 21/07/2024 18:28, Kousik Sanagavarapu wrote:
+>>>>> +properties:
+>>>>> +  compatible:
+>>>>> +    enum:
+>>>>> +      - ti,davinci-wdt
+>>>>> +      - ti,keystone-wdt
+>>>>
+>>>> This does not match the original binding and commit msg did not explain
+>>>> why such change is necessary.
+>>>
+>>> I don't understand.  Do you mean both the compatibles are always
+>>> compulsory?  Meaning
+>>>
+>>> 	compatible:
+>>> 	  items:
+>>> 	    - const: ti,davinci-wdt
+>>> 	    - const: ti,keystone-wdt
+>>
+>> Yes, this is what old binding said.
+> 
+> That was what I thought initially too, but the example in the old
+> binding says otherwise and also the DTS from ti/davinci/da850.dtsi
+> says
+> 
+> 	wdt: watchdog@21000 {
+> 		compatible = "ti,davinci-wdt";
+> 		reg = <0x21000 0x1000>;
+> 		clocks = <&pll0_auxclk>;
+> 		status = "disabled";
+> 	};
+> 
+> Or am I seeing it the wrong way?
+> 
+>>>
+>>> It is enum because I intended it to align with the subsequent patch
+>>> which changes DTS.
+>>>
+>>>> This also does not match DTS.
+>>>
+>>> Yes.  I've asked about changing the DTS in the subsequent patch.
+>>>
+>>
+>> Changing the DTS cannot be the reason to affect users and DTS... It's
+>> tautology. You change DTS because you intent to change DTS?
+> 
+> Not exactly.  I thought that the DTS was wrong when it said
+> 
+> 	compatible = "ti,keystone-wdt", "ti,davinci-wdt";
+> 
+> while it should have been
+> 
+> 	compatible = "ti,keystone-wdt";
+> 
+> I was not sure about this though and hence marked both the patches as
+> RFC, in case I was interpretting them the wrong way.
 
-Okay, I believe I have a better understanding of the situation:
+Ah, right, the DTS says keystone+davinci while old binding suggested
+davinci+keystone. Considering there is no driver binding to keystone, I
+think the answer is obvious - intention was keystone+davinci. Anyway,
+commit msg should mention why you are doing something else than pure
+conversion.
 
-- __alloc_pages_bulk() takes pages from the free list without accepting
-  more memory. This can cause number of free pages to fall below the
-  watermark.
+Best regards,
+Krzysztof
 
-  This issue can be resolved by accepting more memory in
-  __alloc_pages_bulk() if the watermark check fails.
-
-  The problem is not only related to unallocated memory. I think the
-  deferred page initialization mechanism could result in premature OOM if
-  __alloc_pages_bulk() allocates pages faster than deferred page
-  initialization can add them to the free lists. However, this scenario is
-  unlikely.
-
-- There is nothing that compels the kernel to accept more memory after the
-  watermarks have been calculated in __setup_per_zone_wmarks(). This can
-  put us under the watermark.
-
-  This issue can be resolved by accepting memory up to the watermark after
-  the watermarks have been initialized.
-
-- Once kswapd is started, it will begin spinning if we are below the
-  watermark and there is no memory that can be reclaimed. Once the above
-  problems are fixed, the issue will be resolved.
-
-- The kernel needs to accept memory up to the PROMO watermark. This will
-  prevent unaccepted memory from interfering with NUMA balancing.
-
-The patch below addresses the issues I listed earlier. It is not yet ready
-for application. Please see the issues listed below.
-
-Andrew, please drop the current patch.
-
-There are a few more things I am worried about:
-
-- The current get_page_from_freelist() and patched __alloc_pages_bulk()
-  only try to accept memory if the requested (alloc_flags & ALLOC_WMARK_MASK)
-  watermark check fails. For example, if a requested allocation with
-  ALLOC_WMARK_MIN is called, we will not try to accept more memory, which
-  could potentially put us under the high/promo watermark and cause the
-  following kswapd start to get us into an endless loop.
-
-  Do we want to make memory acceptance in these paths independent of
-  alloc_flags?
-
-- __isolate_free_page() removes a page from the free list without
-  accepting new memory. The function is called with the zone lock taken.
-  It is bad idea to accept memory while holding the zone lock, but
-  the alternative of pushing the accept to the caller is not much better.
-
-  I have not observed any issues caused by __isolate_free_page() in
-  practice, but there is no reason why it couldn't potentially cause
-  problems.
- 
-- The function take_pages_off_buddy() also removes pages from the free
-  list without accepting new memory. Unlike the function
-  __isolate_free_page(), it is called without the zone lock being held, so
-  we can accept memory there. I believe we should do so.
-
-I understand why adding unaccepted memory handling into the reclaim path
-is questionable. However, it may be the best way to handle cases like
-__isolate_free_page() and possibly others in the future that directly take
-memory from free lists.
-
-Any thoughts?
-
-I am still new to reclaim code and may be overlooking something
-significant. Please correct any misconceptions you see.
-
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index c11b7cde81ef..5e0bdfbe2f1f 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -667,6 +667,7 @@ enum zone_watermarks {
- #define min_wmark_pages(z) (z->_watermark[WMARK_MIN] + z->watermark_boost)
- #define low_wmark_pages(z) (z->_watermark[WMARK_LOW] + z->watermark_boost)
- #define high_wmark_pages(z) (z->_watermark[WMARK_HIGH] + z->watermark_boost)
-+#define promo_wmark_pages(z) (z->_watermark[WMARK_PROMO] + z->watermark_boost)
- #define wmark_pages(z, i) (z->_watermark[i] + z->watermark_boost)
- 
- /*
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index c62805dbd608..d537c633c6e9 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -1748,7 +1748,7 @@ static bool pgdat_free_space_enough(struct pglist_data *pgdat)
- 			continue;
- 
- 		if (zone_watermark_ok(zone, 0,
--				      wmark_pages(zone, WMARK_PROMO) + enough_wmark,
-+				      promo_wmark_pages(zone) + enough_wmark,
- 				      ZONE_MOVABLE, 0))
- 			return true;
- 	}
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 14d39f34d336..b744743d14a2 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4462,6 +4462,22 @@ unsigned long __alloc_pages_bulk(gfp_t gfp, int preferred_nid,
- 				alloc_flags, gfp)) {
- 			break;
- 		}
-+
-+		if (has_unaccepted_memory()) {
-+			if (try_to_accept_memory(zone, 0))
-+				break;
-+		}
-+
-+#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-+		/*
-+		 * Watermark failed for this zone, but see if we can
-+		 * grow this zone if it contains deferred pages.
-+		 */
-+		if (deferred_pages_enabled()) {
-+			if (_deferred_grow_zone(zone, 0))
-+				break;
-+		}
-+#endif
- 	}
- 
- 	/*
-@@ -5899,6 +5915,9 @@ static void __setup_per_zone_wmarks(void)
- 		zone->_watermark[WMARK_PROMO] = high_wmark_pages(zone) + tmp;
- 
- 		spin_unlock_irqrestore(&zone->lock, flags);
-+
-+		if (managed_zone(zone))
-+			try_to_accept_memory(zone, 0);
- 	}
- 
- 	/* update totalreserve_pages */
-@@ -6866,8 +6885,8 @@ static bool try_to_accept_memory(struct zone *zone, unsigned int order)
- 	long to_accept;
- 	int ret = false;
- 
--	/* How much to accept to get to high watermark? */
--	to_accept = high_wmark_pages(zone) -
-+	/* How much to accept to get to promo watermark? */
-+	to_accept = wmark_pages(zone, WMARK_PROMO) -
- 		    (zone_page_state(zone, NR_FREE_PAGES) -
- 		    __zone_watermark_unusable_free(zone, order, 0));
- 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 3ef654addd44..d20242e36904 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -6607,7 +6607,7 @@ static bool pgdat_balanced(pg_data_t *pgdat, int order, int highest_zoneidx)
- 			continue;
- 
- 		if (sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING)
--			mark = wmark_pages(zone, WMARK_PROMO);
-+			mark = promo_wmark_pages(zone);
- 		else
- 			mark = high_wmark_pages(zone);
- 		if (zone_watermark_ok_safe(zone, order, mark, highest_zoneidx))
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
 
