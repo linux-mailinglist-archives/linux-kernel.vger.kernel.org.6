@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-259317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46916939407
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:12:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C57D6939409
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:12:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFF75281F63
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:12:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A7A61F21D98
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE56171075;
-	Mon, 22 Jul 2024 19:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2756F170829;
+	Mon, 22 Jul 2024 19:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IZX7dIjw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HGzII5Cg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228BC16EBFE;
-	Mon, 22 Jul 2024 19:12:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63563171090;
+	Mon, 22 Jul 2024 19:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721675546; cv=none; b=Zhz2NnM1fJJiJv12UJuYySkQA0Y3WRt7hIxpMalWnZrhJC1YIlmnN+Q/Ot0r4laZAUx7vDM5kNA4SN6E1GaIyB3uhDbZ8/m2gbli2bNO9L1sOL5CcKtIR7L9j2XqZNNsJXqoWFcS+A4ZkBhgxNfqs6xmTdTd4cANONvav1MvqAs=
+	t=1721675549; cv=none; b=kZgWGJIFriBUO1BCbGSAxajlRN5CpaeCTrOuNsp5Uh728kNycVRo0NraBAi63ct3zBFGNMh9nk2+pqqZm+8qfscMp08N2znMWcCMQvgOtKIIgh1cbGypyvSjTydqHZbg1w7bBtQosF7SDg0MqRfNFSh5EjRa/FCfGbjdt9166SU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721675546; c=relaxed/simple;
-	bh=08Ix2ICoI12/cLhY4GIhbhpOUaxPusqc257F2p4YRgo=;
+	s=arc-20240116; t=1721675549; c=relaxed/simple;
+	bh=tt7nBCTkE08woPcGBlj1kAwJ+cvv//ghyZPhMNwcEfU=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=R7X6UoR2XSugwHe+uhVl5sT9Z1EY/Z8dd+l/boFjmjGesXKxfvYlELJfJK9La4rK55/SoiiGT6Mbdpnwyvz3t5tnsheCrOLk5HhyRE8T/EajGb4rGyLDayrV2f3tKT59NdRb69vlc0CWYA2/9sPvdoadmc94IY8L5DvARJ0jV3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IZX7dIjw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A204DC4AF0B;
-	Mon, 22 Jul 2024 19:12:23 +0000 (UTC)
+	 MIME-Version:Content-Type; b=JbhnIjy937f3CoDHoIjC2wUZqO9LAQNBTHijS8i5V9Crp0fvWCeY45dJpAZ9X1j/dYRs3v6FnWdE0sAgltSYKOvQUeyqzfcRMogw0QCf/Ivge2sweRnaf9AQJ8X/z3+prZnOVZV9AT4uNFZIiC+Pq7uRGoQC7ezrrckk3U2OsUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HGzII5Cg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78164C116B1;
+	Mon, 22 Jul 2024 19:12:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721675546;
-	bh=08Ix2ICoI12/cLhY4GIhbhpOUaxPusqc257F2p4YRgo=;
+	s=k20201202; t=1721675549;
+	bh=tt7nBCTkE08woPcGBlj1kAwJ+cvv//ghyZPhMNwcEfU=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=IZX7dIjwMPLhTMKg000zPem6udIF24kPaDuiDggQk3CWEcji8KaVHC3rsAK+5x+aL
-	 12eckH04vW7DW02IiuZnuxQjCsAWS0EsuBOX3ExIA/+RDep67EIuAr0CTuAokRKxY4
-	 t8u7uYyrTzMdKMyzaXIQUJae1gw9K02phDM1i1pal3dRvdAoTo5GC1dYh/x6+cWrMR
-	 XrCi0EjU0zISuMaN5O5izRLhr6PccUY+SF4oTRrSKIDJBi98/Z/t9eE00FPNOnc4W0
-	 U3Y0afjAATl06kBHC3A/9yNVugX6TYYpqUvcexza1yz6kB5c+wmI9LmNJb5BGXtI0u
-	 TzhjArwt7inpg==
+	b=HGzII5CgcYvIgbwkJMWOQ0TiW3NE6s9srOT1idXfehlpzwwssns4xBuxOE3MgAuPN
+	 rxXGJA42q9jiiJ6mDhv1KuKgKRrrMiFBLQ7hr+Exr0tUdKzQdIH2/fYR6qvNdMCrwc
+	 oAbSsIeOm+bYaLzuGP8JSCDggt1sZ9mPOWZ/uuu3gS4UKDgcj6RYfMlkQK04qFVTRv
+	 o0wiB8Ao0nvJHTq5Nc5ByY7gR/VCoBvF2ecRaXvxvmjcjhA5oRi+GX7eJE1W8oSH6h
+	 iDQoOA5DCd28x/CxhyukicKypcGrCe7GWurx4Iw23iZu8ntd4gEUmUvvwp/koaI+u1
+	 8vvPibwzOA68Q==
 From: Mark Brown <broonie@kernel.org>
-To: Shenghao Ding <shenghao-ding@ti.com>, 
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <18a29b68-cc85-4139-b7c7-2514e8409a42@stanley.mountain>
-References: <18a29b68-cc85-4139-b7c7-2514e8409a42@stanley.mountain>
-Subject: Re: [PATCH] ASoc: TAS2781: Fix tasdev_load_calibrated_data()
-Message-Id: <172167554332.83479.1180608727450798301.b4-ty@kernel.org>
-Date: Mon, 22 Jul 2024 20:12:23 +0100
+To: Mohan Kumar <mkumard@nvidia.com>, Sameer Pujar <spujar@nvidia.com>, 
+ Arnd Bergmann <arnd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Liam Girdwood <lgirdwood@gmail.com>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-sound@vger.kernel.org, 
+ linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240719074831.3253995-1-arnd@kernel.org>
+References: <20240719074831.3253995-1-arnd@kernel.org>
+Subject: Re: [PATCH] ASoC: tegra: select CONFIG_SND_SIMPLE_CARD_UTILS
+Message-Id: <172167554618.83479.16434509879831157082.b4-ty@kernel.org>
+Date: Mon, 22 Jul 2024 20:12:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,11 +63,16 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-d4707
 
-On Fri, 19 Jul 2024 18:53:48 -0500, Dan Carpenter wrote:
-> This function has a reversed if statement so it's either a no-op or it
-> leads to a NULL dereference.
+On Fri, 19 Jul 2024 09:48:03 +0200, Arnd Bergmann wrote:
+> This I2S client driver now uses functions exported from a helper module
+> but fails to link when the helper is disabled:
 > 
+> ERROR: modpost: "simple_util_parse_convert" [sound/soc/tegra/snd-soc-tegra210-i2s.ko] undefined!
+> ERROR: modpost: "simple_util_get_sample_fmt" [sound/soc/tegra/snd-soc-tegra210-i2s.ko] undefined!
 > 
+> Add a Kconfig select line to ensure it's always turned on here.
+> 
+> [...]
 
 Applied to
 
@@ -75,8 +80,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoc: TAS2781: Fix tasdev_load_calibrated_data()
-      commit: 92c78222168e9035a9bfb8841c2e56ce23e51f73
+[1/1] ASoC: tegra: select CONFIG_SND_SIMPLE_CARD_UTILS
+      commit: 83340b855d222f257354afd272dc8d315fecc3ee
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
