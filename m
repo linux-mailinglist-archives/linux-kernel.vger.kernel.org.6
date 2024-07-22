@@ -1,63 +1,64 @@
-Return-Path: <linux-kernel+bounces-258774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB472938C88
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:53:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D1CC938C36
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50A191F24F8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:53:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0D7B1C21333
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8786D176257;
-	Mon, 22 Jul 2024 09:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C5D16D31B;
+	Mon, 22 Jul 2024 09:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="TuR8JI1L"
-Received: from smtpout143.security-mail.net (smtpout143.security-mail.net [85.31.212.143])
+	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="cocUl2za"
+Received: from smtpout43.security-mail.net (smtpout43.security-mail.net [85.31.212.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D893816D31D
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.31.212.143
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54BA16CD05
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.31.212.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721641511; cv=none; b=lJTcV/O3W5cGuY5nDm24kSOh+cpBGg59q0Y2ColgAww/Z5AD3aD04QtFG0vmDSG2RVRpEe/trYQzSgj/BHJR2o9aLRbqKEiiOwmUV6wSXMEEr2uNG/VwdEkS7ZpU5OffQixOq7q+raF089XjZKku8Xqf3m2LYx47RZBYhptXar8=
+	t=1721641417; cv=none; b=a8Kjkr/EWOe16IdhXPgnZlBdtrh1Xdt7KZtuvqOicnoTWb/w0V7eiInmMNU3RE01Bis0cHLWdIuBG9xUfKteYuhF9bKmwn/eOdKSvdZCR8nStbGvCxMbFTp3vNBINNNoVEpG3z4WWRsXN6a6UhTZv37mUoKAmKTGTknoPPx9KWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721641511; c=relaxed/simple;
-	bh=wtUIEjp9nl8GBvzI2dMgN5okl7BiS/K6FDMX592+yNo=;
+	s=arc-20240116; t=1721641417; c=relaxed/simple;
+	bh=f0O95pfNxRih9yCZu4XYDwcU7fm8dulNHBC/bzASeEo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sdsBC4NkCRUDT82yWNt9T++kTJmlO79+7IvtQv8HvEXcML7AJ7mzQhioOJSefDBmKbRn/keqnd8AxEeJ/apMmp/CizYRdv7D8aDwgvCSvkFjGmVhWPs2jpZ1mQH8/jYmKoar4g9VQkBEizPf9bgGyhUz32ZucG0L9jnxM1gEzb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=TuR8JI1L; arc=none smtp.client-ip=85.31.212.143
+	 MIME-Version:Content-Type; b=UnB/tQSeg3EfdeNkqt9ilkKeHNkSUrqNjWjMS29fII7j7gZGgHctsLUIslhWtax1SyibqvJCPmVHARnJ3XuP3mFjvQYdxdIIOMPH9CTgESysx83B0Nzg5Ov/LRCO9HyKCPONiLxaT4tGDiq4g2na33mjzQuCHp+yMSDxmA1QIg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=cocUl2za; arc=none smtp.client-ip=85.31.212.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
-Received: from localhost (localhost [127.0.0.1])
-	by fx403.security-mail.net (Postfix) with ESMTP id CEA7948EDE9
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:43:33 +0200 (CEST)
+Received: from localhost (fx303.security-mail.net [127.0.0.1])
+	by fx303.security-mail.net (Postfix) with ESMTP id 4FA4E30EF96
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:43:34 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
-	s=sec-sig-email; t=1721641413;
-	bh=wtUIEjp9nl8GBvzI2dMgN5okl7BiS/K6FDMX592+yNo=;
+	s=sec-sig-email; t=1721641414;
+	bh=f0O95pfNxRih9yCZu4XYDwcU7fm8dulNHBC/bzASeEo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=TuR8JI1L4ZodMtuazz+okKzLYIoXD8FD2q4TqYRHxJ+X/pm6X+HBdEWhApGiyYh2C
-	 99X/jKAdbwWwn7AhjQQhwA6St2TXGWRPyWpBEOcoZXGT3S6utvKn/0EMNCmSQerD4o
-	 ummccDvPbx8L/b8T2HPI9Ikq3MLfB1hjnfBMyHSg=
-Received: from fx403 (localhost [127.0.0.1]) by fx403.security-mail.net
- (Postfix) with ESMTP id 8943848EE82; Mon, 22 Jul 2024 11:43:33 +0200 (CEST)
+	b=cocUl2za0D6G/5OQO1ABaUshnKmMPrdxmco/vgnBOP0IRDf1ps3CAz9Vt9J9PLTiv
+	 uMsH0TbjNsEdLifrt+U8AwCPWI+fVAYzt4+DI9ScIyziY2TNdqq+3Dfjmu6fnSWz5X
+	 rOHp7JS5wogwM/h2ILP9EP4zz60SVdsDxEjdgmaQ=
+Received: from fx303 (fx303.security-mail.net [127.0.0.1]) by
+ fx303.security-mail.net (Postfix) with ESMTP id 1B4E430EF08; Mon, 22 Jul
+ 2024 11:43:34 +0200 (CEST)
 Received: from srvsmtp.lin.mbt.kalray.eu (unknown [217.181.231.53]) by
- fx403.security-mail.net (Postfix) with ESMTPS id ADA9948E46E; Mon, 22 Jul
- 2024 11:43:32 +0200 (CEST)
+ fx303.security-mail.net (Postfix) with ESMTPS id 8758930EEE1; Mon, 22 Jul
+ 2024 11:43:33 +0200 (CEST)
 Received: from junon.lan.kalrayinc.com (unknown [192.168.37.161]) by
- srvsmtp.lin.mbt.kalray.eu (Postfix) with ESMTPS id 75FD040317; Mon, 22 Jul
- 2024 11:43:32 +0200 (CEST)
-X-Secumail-id: <cea8.669e29c4.a9f71.0>
+ srvsmtp.lin.mbt.kalray.eu (Postfix) with ESMTPS id 4971740317; Mon, 22 Jul
+ 2024 11:43:33 +0200 (CEST)
+X-Secumail-id: <9700.669e29c5.84e85.0>
 From: ysionneau@kalrayinc.com
 To: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
 Cc: Jonathan Borne <jborne@kalrayinc.com>, Julian Vetter
  <jvetter@kalrayinc.com>, Yann Sionneau <ysionneau@kalrayinc.com>, Clement
  Leger <clement@clement-leger.fr>, Vincent Chardon
  <vincent.chardon@elsys-design.com>
-Subject: [RFC PATCH v3 19/37] irqchip: Add irq-kvx-apic-gic driver
-Date: Mon, 22 Jul 2024 11:41:30 +0200
-Message-ID: <20240722094226.21602-20-ysionneau@kalrayinc.com>
+Subject: [RFC PATCH v3 20/37] irqchip: Add irq-kvx-itgen driver
+Date: Mon, 22 Jul 2024 11:41:31 +0200
+Message-ID: <20240722094226.21602-21-ysionneau@kalrayinc.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240722094226.21602-1-ysionneau@kalrayinc.com>
 References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
@@ -73,25 +74,18 @@ X-ALTERMIMEV2_out: done
 
 From: Yann Sionneau <ysionneau@kalrayinc.com>
 
-Each Cluster of the Coolidge SoC includes an Advanced Programmable
-Interrupt Controller (APIC) and Generic Interrupt Controller (GIC).
+The Kalray Coolidge SoC contains several interrupt generators (itgen).
+The itgen is both an interrupt-controller and a msi-client.
 
-The APIC GIC acts as an intermediary interrupt controller, muxing/routing
-incoming interrupts to cores in the cluster.
+Peripheral Controllers such as PCIe, I2C, SPI, GPIO, etc.
+need to send interrupts to the Compute Clusters.
+The purpose of this module is to forward interrupts to the compute clusters
+through the AXI interconnect.
 
-The 139 possible input interrupt lines are organized as follows:
- - 128 from the mailbox controller (one it per mailboxes)
- - 1   from the NoC router
- - 5   from IOMMUs
- - 1   from L2 cache DMA job FIFO
- - 1   from cluster watchdog
- - 2   for SECC, DECC
- - 1   from Data NoC
-
-The 72 possible output interrupt lines:
- -  68: 4 interrupts per core (17 cores)
- -  1 for L2 cache controller
- -  3 extra that are for padding
+Features:
+- up to 256 inputs.
+- supports level interrupt inputs.
+- five interrupt outputs (one per cluster).
 
 Co-developed-by: Clement Leger <clement@clement-leger.fr>
 Signed-off-by: Clement Leger <clement@clement-leger.fr>
@@ -103,31 +97,37 @@ Signed-off-by: Yann Sionneau <ysionneau@kalrayinc.com>
 ---
 
 Notes:
-V1 -> V2:
-- removed irq-kvx-itgen driver (moved in its own patch)
-- removed irq-kvx-apic-mailbox driver (moved in its own patch)
-- removed irq-kvx-core-intc driver (moved in its own patch)
+V1 -> V2: new patch
+- removed header include/linux/irqchip/irq-kvx-apic-gic.h
+- header moved to drivers/irqchip/ but in another patch
 - removed print on probe success
 
-V2 -> V3: update compatible
+V2 -> V3:
+- replace core intc by itgen in commit msg
+- use dev_err_probe()
+- typos
+- add static qualifier
+- update compatible
 ---
- drivers/irqchip/Kconfig            |   6 +
- drivers/irqchip/Makefile           |   1 +
- drivers/irqchip/irq-kvx-apic-gic.c | 356 +++++++++++++++++++++++++++++
- 3 files changed, 363 insertions(+)
- create mode 100644 drivers/irqchip/irq-kvx-apic-gic.c
+ drivers/irqchip/Kconfig         |   8 ++
+ drivers/irqchip/Makefile        |   1 +
+ drivers/irqchip/irq-kvx-itgen.c | 234 ++++++++++++++++++++++++++++++++
+ 3 files changed, 243 insertions(+)
+ create mode 100644 drivers/irqchip/irq-kvx-itgen.c
 
 diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 14464716bacbb..566425731b757 100644
+index 566425731b757..bf06506d611d5 100644
 --- a/drivers/irqchip/Kconfig
 +++ b/drivers/irqchip/Kconfig
-@@ -332,6 +332,12 @@ config MIPS_GIC
+@@ -338,6 +338,14 @@ config KVX_APIC_GIC
+ 	select IRQ_DOMAIN
  	select IRQ_DOMAIN_HIERARCHY
- 	select MIPS_CM
  
-+config KVX_APIC_GIC
++config KVX_ITGEN
 +	bool
 +	depends on KVX
++	select GENERIC_IRQ_IPI if SMP
++	select GENERIC_MSI_IRQ_DOMAIN
 +	select IRQ_DOMAIN
 +	select IRQ_DOMAIN_HIERARCHY
 +
@@ -135,379 +135,257 @@ index 14464716bacbb..566425731b757 100644
  	bool
  	depends on MACH_INGENIC
 diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index d9dc3d99aaa86..f59255947c8ed 100644
+index f59255947c8ed..b2c514faf9bf7 100644
 --- a/drivers/irqchip/Makefile
 +++ b/drivers/irqchip/Makefile
-@@ -68,6 +68,7 @@ obj-$(CONFIG_BCM7120_L2_IRQ)		+= irq-bcm7120-l2.o
- obj-$(CONFIG_BRCMSTB_L2_IRQ)		+= irq-brcmstb-l2.o
+@@ -69,6 +69,7 @@ obj-$(CONFIG_BRCMSTB_L2_IRQ)		+= irq-brcmstb-l2.o
  obj-$(CONFIG_KEYSTONE_IRQ)		+= irq-keystone.o
  obj-$(CONFIG_MIPS_GIC)			+= irq-mips-gic.o
-+obj-$(CONFIG_KVX_APIC_GIC)		+= irq-kvx-apic-gic.o
+ obj-$(CONFIG_KVX_APIC_GIC)		+= irq-kvx-apic-gic.o
++obj-$(CONFIG_KVX_ITGEN)			+= irq-kvx-itgen.o
  obj-$(CONFIG_ARCH_MEDIATEK)		+= irq-mtk-sysirq.o irq-mtk-cirq.o
  obj-$(CONFIG_ARCH_DIGICOLOR)		+= irq-digicolor.o
  obj-$(CONFIG_ARCH_SA1100)		+= irq-sa11x0.o
-diff --git a/drivers/irqchip/irq-kvx-apic-gic.c b/drivers/irqchip/irq-kvx-apic-gic.c
+diff --git a/drivers/irqchip/irq-kvx-itgen.c b/drivers/irqchip/irq-kvx-itgen.c
 new file mode 100644
-index 0000000000000..95196bd7ef058
+index 0000000000000..67d76ab528ad6
 --- /dev/null
-+++ b/drivers/irqchip/irq-kvx-apic-gic.c
-@@ -0,0 +1,356 @@
++++ b/drivers/irqchip/irq-kvx-itgen.c
+@@ -0,0 +1,234 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/*
-+ * Copyright (c) 2017 - 2022 Kalray Inc.
++ * Copyright (c) 2017-2023 Kalray Inc.
 + * Author(s): Clement Leger
 + *            Julian Vetter
++ *            Vincent Chardon
 + */
 +
-+#define pr_fmt(fmt)	"kvx_apic_gic: " fmt
-+
++#include <linux/platform_device.h>
++#include <linux/of_platform.h>
 +#include <linux/of_address.h>
-+#include <linux/cpuhotplug.h>
 +#include <linux/interrupt.h>
 +#include <linux/irqdomain.h>
-+#include <linux/spinlock.h>
 +#include <linux/irqchip.h>
-+#include <linux/of_irq.h>
 +#include <linux/module.h>
-+#include <linux/init.h>
++#include <linux/msi.h>
 +#include <linux/of.h>
++#include <linux/of_irq.h>
 +
-+/* APIC is organized in 18 groups of 4 output lines
-+ * However, the two upper lines are for Secure RM and DMA engine
-+ * Thus, we do not have to use them
-+ */
-+#define KVX_GIC_PER_CPU_IT_COUNT	4
-+#define KVX_GIC_INPUT_IT_COUNT		0x9D
-+#define KVX_GIC_OUTPUT_IT_COUNT		0x10
++/* Parameters */
++#define KVX_ITGEN_PARAM_OFFSET			0x1100
++#define KVX_ITGEN_PARAM_IT_NUM_OFFSET		0x0
 +
-+/* GIC enable register definitions */
-+#define KVX_GIC_ENABLE_OFFSET		0x0
-+#define KVX_GIC_ENABLE_ELEM_SIZE	0x1
-+#define KVX_GIC_ELEM_SIZE		0x400
++/* Target configuration */
++#define KVX_ITGEN_CFG_ENABLE_OFFSET		0x8
++#define KVX_ITGEN_CFG_ELEM_SIZE		0x10
++#define KVX_ITGEN_CFG_TARGET_OFFSET		0x0
++#define KVX_ITGEN_CFG_TARGET_MAILBOX_SHIFT	0x0
++#define KVX_ITGEN_CFG_TARGET_MAILBOX_MASK	0x7FUL
++#define KVX_ITGEN_CFG_TARGET_CLUSTER_SHIFT	0x8
++#define KVX_ITGEN_CFG_TARGET_CLUSTER_MASK	0x700UL
++#define KVX_ITGEN_CFG_TARGET_SELECT_BIT_SHIFT	0x18
++#define KVX_ITGEN_CFG_TARGET_SELECT_BIT_MASK	0x3F000000UL
 +
-+/* GIC status lac register definitions */
-+#define KVX_GIC_STATUS_LAC_OFFSET	0x120
-+#define KVX_GIC_STATUS_LAC_ELEM_SIZE	0x8
-+#define KVX_GIC_STATUS_LAC_ARRAY_SIZE	0x3
-+
-+/**
-+ * For each CPU, there is 4 output lines coming from the apic GIC.
-+ * We only use 1 line and this structure represent this line.
-+ * @base Output line base address
-+ * @cpu CPU associated to this line
-+ */
-+struct gic_out_irq_line {
-+	void __iomem *base;
-+	unsigned int cpu;
-+};
++#define MB_ADDR_CLUSTER_SHIFT	24
++#define MB_ADDR_MAILBOX_SHIFT	9
 +
 +/**
-+ * Input irq line.
-+ * This structure is used to store the status of the input line and the
-+ * associated output line.
-+ * @enabled Boolean for line status
-+ * @cpu CPU currently receiving this interrupt
-+ * @it_num Interrupt number
++ * struct kvx_itgen - kvx interrupt generator (MSI client)
++ * @base: base address of the itgen controller
++ * @domain: IRQ domain of the controller
++ * @pdev: Platform device associated to the controller
 + */
-+struct gic_in_irq_line {
-+	bool enabled;
-+	struct gic_out_irq_line *out_line;
-+	unsigned int it_num;
-+};
-+
-+/**
-+ * struct kvx_apic_gic - kvx apic gic
-+ * @base: Base address of the controller
-+ * @domain Domain for this controller
-+ * @input_nr_irqs: maximum number of supported input interrupts
-+ * @cpus: Per cpu interrupt configuration
-+ * @output_irq: Array of output irq lines
-+ * @input_irq: Array of input irq lines
-+ */
-+struct kvx_apic_gic {
-+	raw_spinlock_t lock;
++struct kvx_itgen {
 +	void __iomem *base;
 +	struct irq_domain *domain;
-+	uint32_t input_nr_irqs;
-+	/* For each cpu, there is an output IT line */
-+	struct gic_out_irq_line output_irq[KVX_GIC_OUTPUT_IT_COUNT];
-+	/* Input interrupt status */
-+	struct gic_in_irq_line input_irq[KVX_GIC_INPUT_IT_COUNT];
++	struct platform_device *pdev;
 +};
 +
-+static int gic_parent_irq;
-+
-+/**
-+ * Enable/Disable an output irq line
-+ * This function is used by both mask/unmask to disable/enable the line.
-+ */
-+static void irq_line_set_enable(struct gic_out_irq_line *irq_line,
-+				struct gic_in_irq_line *in_irq_line,
-+				int enable)
++static void __iomem *get_itgen_cfg_offset(struct kvx_itgen *itgen,
++						irq_hw_number_t hwirq)
 +{
-+	void __iomem *enable_line_addr = irq_line->base +
-+	       KVX_GIC_ENABLE_OFFSET +
-+	       in_irq_line->it_num * KVX_GIC_ENABLE_ELEM_SIZE;
-+
-+	writeb((uint8_t) enable ? 1 : 0, enable_line_addr);
-+	in_irq_line->enabled = enable;
++	return itgen->base + KVX_ITGEN_CFG_TARGET_OFFSET +
++				hwirq * KVX_ITGEN_CFG_ELEM_SIZE;
 +}
 +
-+static void kvx_apic_gic_set_line(struct irq_data *data, int enable)
++static void __iomem *get_itgen_param_offset(struct kvx_itgen *itgen)
 +{
-+	struct kvx_apic_gic *gic = irq_data_get_irq_chip_data(data);
-+	unsigned int in_irq = irqd_to_hwirq(data);
-+	struct gic_in_irq_line *in_line = &gic->input_irq[in_irq];
-+	struct gic_out_irq_line *out_line = in_line->out_line;
-+
-+	raw_spin_lock(&gic->lock);
-+	/* Set line enable on currently assigned cpu */
-+	irq_line_set_enable(out_line, in_line, enable);
-+	raw_spin_unlock(&gic->lock);
++	return itgen->base + KVX_ITGEN_PARAM_OFFSET;
 +}
 +
-+static void kvx_apic_gic_mask(struct irq_data *data)
++static void kvx_itgen_enable(struct irq_data *data, u32 value)
 +{
-+	kvx_apic_gic_set_line(data, 0);
++	struct kvx_itgen *itgen = irq_data_get_irq_chip_data(data);
++	void __iomem *enable_reg =
++		get_itgen_cfg_offset(itgen, irqd_to_hwirq(data)) +
++		KVX_ITGEN_CFG_ENABLE_OFFSET;
++
++	dev_dbg(&itgen->pdev->dev, "%sabling hwirq %d, addr %p\n",
++		 value ? "En" : "Dis",
++		 (int) irqd_to_hwirq(data),
++		 enable_reg);
++	writel(value, enable_reg);
 +}
 +
-+static void kvx_apic_gic_unmask(struct irq_data *data)
++static void kvx_itgen_mask(struct irq_data *data)
 +{
-+	kvx_apic_gic_set_line(data, 1);
++	kvx_itgen_enable(data, 0x0);
++	irq_chip_mask_parent(data);
++}
++
++static void kvx_itgen_unmask(struct irq_data *data)
++{
++	kvx_itgen_enable(data, 0x1);
++	irq_chip_unmask_parent(data);
 +}
 +
 +#ifdef CONFIG_SMP
-+
-+static int kvx_apic_gic_set_affinity(struct irq_data *d,
-+				     const struct cpumask *cpumask,
-+				     bool force)
++static int kvx_itgen_irq_set_affinity(struct irq_data *data,
++				      const struct cpumask *dest, bool force)
 +{
-+	struct kvx_apic_gic *gic = irq_data_get_irq_chip_data(d);
-+	unsigned int new_cpu;
-+	unsigned int hw_irq = irqd_to_hwirq(d);
-+	struct gic_in_irq_line *input_line = &gic->input_irq[hw_irq];
-+	struct gic_out_irq_line *new_out_line;
-+
-+	/* We assume there is only one cpu in the mask */
-+	new_cpu = cpumask_first(cpumask);
-+	new_out_line = &gic->output_irq[new_cpu];
-+
-+	raw_spin_lock(&gic->lock);
-+
-+	/* Nothing to do, line is the same */
-+	if (new_out_line == input_line->out_line)
-+		goto out;
-+
-+	/* If old line was enabled, enable the new one before disabling
-+	 * the old one
-+	 */
-+	if (input_line->enabled)
-+		irq_line_set_enable(new_out_line, input_line, 1);
-+
-+	/* Disable it on old line */
-+	irq_line_set_enable(input_line->out_line, input_line, 0);
-+
-+	/* Assign new output line to input IRQ */
-+	input_line->out_line = new_out_line;
-+
-+out:
-+	raw_spin_unlock(&gic->lock);
-+
-+	irq_data_update_effective_affinity(d, cpumask_of(new_cpu));
-+
-+	return IRQ_SET_MASK_OK;
++	return -ENOSYS;
 +}
 +#endif
 +
-+static struct irq_chip kvx_apic_gic_chip = {
-+	.name           = "kvx apic gic",
-+	.irq_mask	= kvx_apic_gic_mask,
-+	.irq_unmask	= kvx_apic_gic_unmask,
++static struct irq_chip itgen_irq_chip = {
++	.name =			"kvx-itgen",
++	.irq_mask =		kvx_itgen_mask,
++	.irq_unmask =		kvx_itgen_unmask,
 +#ifdef CONFIG_SMP
-+	.irq_set_affinity = kvx_apic_gic_set_affinity,
++	.irq_set_affinity =	kvx_itgen_irq_set_affinity,
 +#endif
 +};
 +
-+static int kvx_apic_gic_alloc(struct irq_domain *domain, unsigned int virq,
++#define ITGEN_UNSUPPORTED_TYPES (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_EDGE_FALLING)
++
++static int kvx_itgen_domain_alloc(struct irq_domain *domain, unsigned int virq,
 +				   unsigned int nr_irqs, void *args)
 +{
-+	int i;
++	int i, err;
 +	struct irq_fwspec *fwspec = args;
 +	int hwirq = fwspec->param[0];
++	int type = IRQ_TYPE_NONE;
++	struct kvx_itgen *itgen;
++
++	if (fwspec->param_count >= 2)
++		type = fwspec->param[1];
++
++	WARN_ON(type & ITGEN_UNSUPPORTED_TYPES);
++
++	err = platform_msi_device_domain_alloc(domain, virq, nr_irqs);
++	if (err)
++		return err;
++
++	itgen = platform_msi_get_host_data(domain);
 +
 +	for (i = 0; i < nr_irqs; i++) {
-+		irq_domain_set_info(domain, virq + i, hwirq + i,
-+				    &kvx_apic_gic_chip,
-+				    domain->host_data, handle_simple_irq,
-+				    NULL, NULL);
++		irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
++				      &itgen_irq_chip, itgen);
++		if (type == IRQ_TYPE_LEVEL_HIGH)
++			irq_set_handler(virq + i, handle_level_irq);
 +	}
 +
 +	return 0;
 +}
 +
-+static const struct irq_domain_ops kvx_apic_gic_domain_ops = {
-+	.alloc  = kvx_apic_gic_alloc,
-+	.free   = irq_domain_free_irqs_common,
++static const struct irq_domain_ops itgen_domain_ops = {
++	.alloc		= kvx_itgen_domain_alloc,
++	.free		= irq_domain_free_irqs_common,
 +};
 +
-+static void irq_line_get_status_lac(struct gic_out_irq_line *out_irq_line,
-+			uint64_t status[KVX_GIC_STATUS_LAC_ARRAY_SIZE])
++static void kvx_itgen_write_msg(struct msi_desc *desc, struct msi_msg *msg)
 +{
-+	int i;
++	struct irq_data *d = irq_get_irq_data(desc->irq);
++	struct kvx_itgen *itgen = irq_data_get_irq_chip_data(d);
++	uint32_t cfg_val = 0;
++	uintptr_t dest_addr = ((uint64_t) msg->address_hi << 32) |
++							msg->address_lo;
++	void __iomem *cfg = get_itgen_cfg_offset(itgen, irqd_to_hwirq(d));
 +
-+	for (i = 0; i < KVX_GIC_STATUS_LAC_ARRAY_SIZE; i++) {
-+		status[i] = readq(out_irq_line->base +
-+				  KVX_GIC_STATUS_LAC_OFFSET +
-+				  i * KVX_GIC_STATUS_LAC_ELEM_SIZE);
-+	}
++	/*
++	 * The address passed in the msi data is the address of the target
++	 * mailbox. The itgen however writes to the mailbox based on the mppa
++	 * id, cluster id and mailbox id instead of an address. So, extract
++	 * these information from the mailbox address.
++	 */
++
++	cfg_val |= (((kvx_sfr_get(PCR) & KVX_SFR_PCR_CID_MASK) >>
++				 KVX_SFR_PCR_CID_SHIFT)
++				<< KVX_ITGEN_CFG_TARGET_CLUSTER_SHIFT);
++	cfg_val |= ((dest_addr >> MB_ADDR_MAILBOX_SHIFT) &
++		     KVX_ITGEN_CFG_TARGET_MAILBOX_MASK)
++		    << KVX_ITGEN_CFG_TARGET_MAILBOX_SHIFT;
++
++	/*
++	 * msg->data contains the bit number to be written and is included in
++	 * the itgen config
++	 */
++	cfg_val |= ((msg->data << KVX_ITGEN_CFG_TARGET_SELECT_BIT_SHIFT)
++		    & KVX_ITGEN_CFG_TARGET_SELECT_BIT_MASK);
++
++	dev_dbg(&itgen->pdev->dev,
++		"Writing dest_addr %lx, value %x to cfg %p\n",
++		dest_addr, cfg_val, cfg);
++
++	writel(cfg_val, cfg);
 +}
 +
-+static void kvx_apic_gic_handle_irq(struct irq_desc *desc)
++static int
++kvx_itgen_device_probe(struct platform_device *pdev)
 +{
-+	struct kvx_apic_gic *gic_data = irq_desc_get_handler_data(desc);
-+	struct gic_out_irq_line *out_line;
-+	uint64_t status[KVX_GIC_STATUS_LAC_ARRAY_SIZE];
-+	unsigned long irqn, cascade_irq;
-+	unsigned long cpu = smp_processor_id();
++	struct kvx_itgen *itgen;
++	u32 it_count;
++	struct resource *mem;
 +
-+	out_line = &gic_data->output_irq[cpu];
-+
-+	irq_line_get_status_lac(out_line, status);
-+
-+	for_each_set_bit(irqn, (unsigned long *) status,
-+			KVX_GIC_STATUS_LAC_ARRAY_SIZE * BITS_PER_LONG) {
-+
-+		cascade_irq = irq_find_mapping(gic_data->domain, irqn);
-+
-+		generic_handle_irq(cascade_irq);
-+	}
-+}
-+
-+static void __init apic_gic_init(struct kvx_apic_gic *gic)
-+{
-+	unsigned int cpu, line;
-+	struct gic_in_irq_line *input_irq_line;
-+	struct gic_out_irq_line *output_irq_line;
-+	uint64_t status[KVX_GIC_STATUS_LAC_ARRAY_SIZE];
-+
-+	/* Initialize all input lines (device -> )*/
-+	for (line = 0; line < KVX_GIC_INPUT_IT_COUNT; line++) {
-+		input_irq_line = &gic->input_irq[line];
-+		input_irq_line->enabled = false;
-+		/* All input lines map on output 0 */
-+		input_irq_line->out_line = &gic->output_irq[0];
-+		input_irq_line->it_num = line;
-+	}
-+
-+	/* Clear all output lines (-> cpus) */
-+	for (cpu = 0; cpu < KVX_GIC_OUTPUT_IT_COUNT; cpu++) {
-+		output_irq_line = &gic->output_irq[cpu];
-+		output_irq_line->cpu = cpu;
-+		output_irq_line->base = gic->base +
-+			cpu * (KVX_GIC_ELEM_SIZE * KVX_GIC_PER_CPU_IT_COUNT);
-+
-+		/* Disable all external lines on this core */
-+		for (line = 0; line < KVX_GIC_INPUT_IT_COUNT; line++)
-+			irq_line_set_enable(output_irq_line,
-+					&gic->input_irq[line], 0x0);
-+
-+		irq_line_get_status_lac(output_irq_line, status);
-+	}
-+}
-+
-+static int kvx_gic_starting_cpu(unsigned int cpu)
-+{
-+	enable_percpu_irq(gic_parent_irq, IRQ_TYPE_NONE);
-+
-+	return 0;
-+}
-+
-+static int kvx_gic_dying_cpu(unsigned int cpu)
-+{
-+	disable_percpu_irq(gic_parent_irq);
-+
-+	return 0;
-+}
-+
-+static int __init kvx_init_apic_gic(struct device_node *node,
-+				    struct device_node *parent)
-+{
-+	struct kvx_apic_gic *gic;
-+	int ret;
-+	unsigned int irq;
-+
-+	if (!parent) {
-+		pr_err("kvx apic gic does not have parent\n");
-+		return -EINVAL;
-+	}
-+
-+	gic = kzalloc(sizeof(*gic), GFP_KERNEL);
-+	if (!gic)
++	itgen = devm_kzalloc(&pdev->dev, sizeof(*itgen), GFP_KERNEL);
++	if (!itgen)
 +		return -ENOMEM;
 +
-+	if (of_property_read_u32(node, "kalray,intc-nr-irqs",
-+						&gic->input_nr_irqs))
-+		gic->input_nr_irqs = KVX_GIC_INPUT_IT_COUNT;
++	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	itgen->base = devm_ioremap_resource(&pdev->dev, mem);
++	if (IS_ERR(itgen->base))
++		return dev_err_probe(&pdev->dev, PTR_ERR(itgen->base),
++				     "Failed to ioremap itgen\n");
 +
-+	if (WARN_ON(gic->input_nr_irqs > KVX_GIC_INPUT_IT_COUNT)) {
-+		ret = -EINVAL;
-+		goto err_kfree;
++	itgen->pdev = pdev;
++	it_count = readl(get_itgen_param_offset(itgen) +
++				KVX_ITGEN_PARAM_IT_NUM_OFFSET);
++
++	itgen->domain = platform_msi_create_device_domain(&pdev->dev,
++						   it_count,
++						   kvx_itgen_write_msg,
++						   &itgen_domain_ops,
++						   itgen);
++	if (!itgen->domain) {
++		dev_err(&pdev->dev, "Failed to create device domain\n");
++		return -ENOMEM;
 +	}
 +
-+	gic->base = of_io_request_and_map(node, 0, node->name);
-+	if (!gic->base) {
-+		ret = -EINVAL;
-+		goto err_kfree;
-+	}
-+
-+	raw_spin_lock_init(&gic->lock);
-+	apic_gic_init(gic);
-+
-+	gic->domain = irq_domain_add_linear(node,
-+					gic->input_nr_irqs,
-+					&kvx_apic_gic_domain_ops,
-+					gic);
-+	if (!gic->domain) {
-+		pr_err("Failed to add IRQ domain\n");
-+		ret = -EINVAL;
-+		goto err_iounmap;
-+	}
-+
-+	irq = irq_of_parse_and_map(node, 0);
-+	if (irq <= 0) {
-+		pr_err("unable to parse irq\n");
-+		ret = -EINVAL;
-+		goto err_irq_domain_remove;
-+	}
-+
-+	irq_set_chained_handler_and_data(irq, kvx_apic_gic_handle_irq,
-+								gic);
-+
-+	gic_parent_irq = irq;
-+	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN,
-+				"kvx/gic:online",
-+				kvx_gic_starting_cpu,
-+				kvx_gic_dying_cpu);
-+	if (ret < 0) {
-+		pr_err("Failed to setup hotplug state");
-+		goto err_irq_unmap;
-+	}
++	platform_set_drvdata(pdev, itgen);
 +
 +	return 0;
-+
-+err_irq_unmap:
-+	irq_dispose_mapping(irq);
-+err_irq_domain_remove:
-+	irq_domain_remove(gic->domain);
-+err_iounmap:
-+	iounmap(gic->base);
-+err_kfree:
-+	kfree(gic);
-+
-+	return ret;
 +}
 +
-+IRQCHIP_DECLARE(kvx_apic_gic, "kalray,coolidge-apic-gic", kvx_init_apic_gic);
++static const struct of_device_id itgen_of_match[] = {
++	{ .compatible = "kalray,coolidge-itgen" },
++	{ /* END */ }
++};
++MODULE_DEVICE_TABLE(of, itgen_of_match);
++
++static struct platform_driver itgen_platform_driver = {
++	.driver = {
++		.name		= "kvx-itgen",
++		.of_match_table	= itgen_of_match,
++	},
++	.probe			= kvx_itgen_device_probe,
++};
++
++static int __init kvx_itgen_init(void)
++{
++	return platform_driver_register(&itgen_platform_driver);
++}
++
++arch_initcall(kvx_itgen_init);
 -- 
 2.45.2
 
