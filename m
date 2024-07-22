@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-258846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AB89938D50
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:14:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D75938D51
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:14:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E53A1C20EBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:14:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D0E9282FCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37DFD16D4F4;
-	Mon, 22 Jul 2024 10:13:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB33216D9B0;
+	Mon, 22 Jul 2024 10:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BmfyZEzC"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wFdzV8iL"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C50316D4E9
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 10:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A13516D9A4
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 10:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721643191; cv=none; b=QzxNMyvb3LqpI93BS0mIw6zT8HAqiyTgmFyWWG31xGsZJ/h7E6gGB629waF6pIaoetvYjsxnK5x8ePmnvLmrKmFCUn9fuhzuExlgq4Ew7to2H+Am2HdFeYB7fD2PIIS/41Blz+FQbR60L1eQ/WeMZm44vJGHr6TdgR1btTVHaXQ=
+	t=1721643196; cv=none; b=jvklz+ugaXNuKKpahFjkKtSwQK+HEi8m45Sp2u1DD/kxL40mcDSJFUMtg7k/q0TrmXfPBXWt7e6bxeN9mmKIFVdJYiAhcAGVi3NGdZmVKioi2NhhkNj3VNUpulb9GgyXT0Z0DDV/Z7v3ljrkN5oK3X0WEBG7c1Y+2OMjxnITnb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721643191; c=relaxed/simple;
-	bh=Rmx9udRvRCv0Ng1SFnELTkKSgQvIMsfgbQtlWF36fnk=;
+	s=arc-20240116; t=1721643196; c=relaxed/simple;
+	bh=wVHh6zOEtD5JgYpRaWP8ByjQrHdnbNe5JxysK+W/6X8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LxAtIWYblbV6h8BrWbETmjqQihqWK/gBRj8WSuCq6IXxmYonztBsPsQt8AFLrxtNlWAaL1fdTcaYZYgaJmfm++aJ6YRFn9eTYOnPXw4lObGwNhUqzniPCMvdfKjlxdvA5ugCdh4Aw7Gq4rDumuQ149M3YMaYnQoQKCoiaXlEXx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BmfyZEzC; arc=none smtp.client-ip=209.85.128.53
+	 MIME-Version; b=AmQ2kcd6vDpY7dVhPh2qK6gWYq268YZjzTHTcgjcpLTn4qp3o9gsjUMXysTKh7+1OYhAzXyzORZa4hk8nL5cZ4fjJbpwICxvmjLSFm9dZX1dOgUQn5PehiWJzkbstdSeo1/TKDL5kxx2uQn33o2zw3XqlDjfWPhSHYs0LA2hV1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wFdzV8iL; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4266f344091so29867285e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 03:13:09 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-427db004e36so15966635e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 03:13:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721643188; x=1722247988; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1721643193; x=1722247993; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sPkIquw077gYIEvctFCCllwMLWJh43EU4ppM2MPUVYk=;
-        b=BmfyZEzCdg1doVGaUlA3QseTK8BWzyDlbinbMWNvENfS1XuV9FQvvSttYGroFT2UTJ
-         uWxOPHAxZWQzyhf/1G5sdUzqrW+YGmW+U9+STytogMyuKLw2TV7UTot7nCZOw+R4R+XV
-         pnWhdBn1J3kSxBKPj3K8z4Mbd3glRciPiczK8Sm7+3r9Kj7ks7aSyjwMTV6M93VMEhIs
-         yVlnDizHgkt7Ij1meNrD/MbIXbkGnqbIGWUj0Si5XBqfhZxOvurQiUn7s5kc/KptpbXl
-         o70UkHj19fe3FNkqjCaJyJmPQW7y5zNb5k26vAuqIATJAOHW1X5fjev4P674WQLnulWS
-         uonQ==
+        bh=CtaJjK7rrgJVkNfrm1RPI3wUUBorSunZ8bK+jPbC78c=;
+        b=wFdzV8iLaDLWXZvF0L2CFYTvhfkZ6kbUNXf7GltKzu+n3n55gHaz+rNpTfEH0PE+ZD
+         K5gzH5olc1CTPHoHakwFZ0cmH8HlpLGQAROfHIeHHxpovh9V6dBa8kSalxofDPaIZWPF
+         B9m00vZD3scaZlTDi+dTZawWSGks7de6TtrDas8PcKu3VcO+77zpCUuF/0X0hrDD7aHj
+         FywkTJf4qfNRESbmfg9ehjli6PxAEwdws2Re6+ijtW4ISxg2Kl3s1WNQgmQWDW+JK1QI
+         q/J4I3jQVpvffZJdpTGSrFcatdeAMC9P4dIt4RAXRVBcKUh1y+hf05wC65JGxJynePio
+         kWgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721643188; x=1722247988;
+        d=1e100.net; s=20230601; t=1721643193; x=1722247993;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sPkIquw077gYIEvctFCCllwMLWJh43EU4ppM2MPUVYk=;
-        b=WiJ0MNP8skOmODqGctIFE2wAcDR+CRAXUXKSiSu+iumnKbmp10Cgofs0CruLYR9kio
-         zTKX5pE8wnMxwNIqb/aQIG2V1ALCxUoarNCXT+ozFKQ97eMYMXyr+TCMGCuGDSDMVMHP
-         lhdLWDF17XJOH5x95k0041ysHbz8RsD2Cz+1RHpDvx5kQqoehU8DI5KYG9AfZYRRBI8D
-         +7ArlAncO/K6IMw+G882aYlXAwKabcYkUjJHotKk6Z5OqzhDwlgaU87Qg00D377ffSzK
-         nxybtpKWig0DL4MYQ0+QC1SEIWEeeWjxTvASPVcKbAwDGpUNrM+oWunevUO9eL//gvng
-         7UmA==
-X-Forwarded-Encrypted: i=1; AJvYcCWkIWkSxmoDoA6WXChhjOZ1O0LXldpKnuold24aqE27Y8tL/PTau8X3c+t7Z3OT/K2r6L4Puf6IictU+gnT+y5fxxza7qhADf+NjU5b
-X-Gm-Message-State: AOJu0YxlDXH4RGWFLaWGtPzYxwX2GPPq8td1VkPxNb+fXwNmR1dfCGmQ
-	CdSyYM9+Y6Hcd6h6U2GoVFEtGMqbZaawpkXJt9RKJUu5GdQyta1HDzCu3tZnH/I=
-X-Google-Smtp-Source: AGHT+IECJrbMk+SVuzf8P8M9gfHzpogypG1Je+ADnodsc8mmHRR3JgaHvZvv6i1KdtxQ2O7FGguNRw==
-X-Received: by 2002:a05:600c:524b:b0:426:6b85:bafb with SMTP id 5b1f17b1804b1-427dc529177mr44503555e9.20.1721643187954;
-        Mon, 22 Jul 2024 03:13:07 -0700 (PDT)
+        bh=CtaJjK7rrgJVkNfrm1RPI3wUUBorSunZ8bK+jPbC78c=;
+        b=I1NXyDUHd63lnhsgIPorsQeIX2ogOGPKnrZADhdMLQTWUDIK/fOOYJnIJXO78b93+q
+         5nq8VBO1xG8UYtIwwdprGJboQ2CuD7yNYGGr6qUx8m+yZBjnHSZ7TLr7/NVdhk07sj13
+         e7SQzJa6dTopoNth3i/NUHhN0EGXtXjnHjtfSMxPcP/z0zArQX5C68eAjBUBn1Yn5xD+
+         n3c94Fvw70hDT6X1U9OjKHPKUuxnjGZCWtN/q1ywQ728W2K+LR+IoTU3uvPlaiBgNxB8
+         iJroFt3Tb+jzSVXSiZJQeHTbjZqoTZan1vVyHftSG/TAiQOxcSh4McjNLin8U2LSIe6b
+         NLbg==
+X-Forwarded-Encrypted: i=1; AJvYcCW656rvERVn2zhgbumMNR4ouVW9XzwGJP1USnCMZ/3e4BrzQ/nDPg063CI84CEtH/Luyf/5Su1P04BdiFOXWs5hdQPOtnXMmQF02TdX
+X-Gm-Message-State: AOJu0YySviPc9J9l3TV613X28+r0USke3fe/O9eKLvcC8KuF6tu83/7P
+	XHddI0ETl02Zv/ABGyY6DWGF3ftG+fopr36swmpsU+pcXlV4MRSfHKgNe1BqCzg=
+X-Google-Smtp-Source: AGHT+IGdhd7RpxJePLbZIYhR6xs+qj7oZ8Lfr0TNgtXBBhZbnw2zVwMKW7uEaoI3NiSjTwpc8kM/Ag==
+X-Received: by 2002:a05:600c:5493:b0:426:6ea2:31af with SMTP id 5b1f17b1804b1-427dc5753a9mr33453755e9.37.1721643192769;
+        Mon, 22 Jul 2024 03:13:12 -0700 (PDT)
 Received: from localhost.localdomain ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a8e436sm147993865e9.33.2024.07.22.03.13.06
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a8e436sm147993865e9.33.2024.07.22.03.13.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 03:13:07 -0700 (PDT)
+        Mon, 22 Jul 2024 03:13:12 -0700 (PDT)
 From: James Clark <james.clark@linaro.org>
 To: coresight@lists.linaro.org,
 	suzuki.poulose@arm.com,
@@ -74,6 +74,7 @@ To: coresight@lists.linaro.org,
 	leo.yan@linux.dev,
 	anshuman.khandual@arm.com
 Cc: James Clark <james.clark@arm.com>,
+	Leo Yan <leo.yan@arm.com>,
 	James Clark <james.clark@linaro.org>,
 	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
 	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
@@ -93,9 +94,9 @@ Cc: James Clark <james.clark@arm.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-stm32@st-md-mailman.stormreply.com,
 	linux-perf-users@vger.kernel.org
-Subject: [PATCH v6 08/17] perf: cs-etm: Add runtime version check for OpenCSD
-Date: Mon, 22 Jul 2024 11:11:50 +0100
-Message-Id: <20240722101202.26915-9-james.clark@linaro.org>
+Subject: [PATCH v6 09/17] coresight: Remove unused ETM Perf stubs
+Date: Mon, 22 Jul 2024 11:11:51 +0100
+Message-Id: <20240722101202.26915-10-james.clark@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240722101202.26915-1-james.clark@linaro.org>
 References: <20240722101202.26915-1-james.clark@linaro.org>
@@ -109,127 +110,56 @@ Content-Transfer-Encoding: 8bit
 
 From: James Clark <james.clark@arm.com>
 
-OpenCSD is dynamically linked so although there is a build time check,
-at runtime the user might still have the wrong version. To avoid hard
-to debug errors, add a runtime version check.
+This file is never included anywhere if CONFIG_CORESIGHT is not set so
+they are unused and aren't currently compile tested with any config so
+remove them.
 
-Signed-off-by: James Clark <james.clark@arm.com>
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 Reviewed-by: Mike Leach <mike.leach@linaro.org>
+Signed-off-by: James Clark <james.clark@arm.com>
+Tested-by: Leo Yan <leo.yan@arm.com>
+Tested-by: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
 Signed-off-by: James Clark <james.clark@linaro.org>
 ---
- tools/build/feature/test-libopencsd.c               |  4 ++--
- tools/perf/Makefile.config                          |  2 +-
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.c     | 13 +++++++++++++
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.h     |  1 +
- tools/perf/util/cs-etm-decoder/cs-etm-min-version.h | 13 +++++++++++++
- tools/perf/util/cs-etm.c                            |  3 +++
- 6 files changed, 33 insertions(+), 3 deletions(-)
- create mode 100644 tools/perf/util/cs-etm-decoder/cs-etm-min-version.h
+ .../hwtracing/coresight/coresight-etm-perf.h   | 18 ------------------
+ 1 file changed, 18 deletions(-)
 
-diff --git a/tools/build/feature/test-libopencsd.c b/tools/build/feature/test-libopencsd.c
-index 4cfcef9da3e4..d092a0c662f4 100644
---- a/tools/build/feature/test-libopencsd.c
-+++ b/tools/build/feature/test-libopencsd.c
-@@ -1,12 +1,12 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <opencsd/c_api/opencsd_c_api.h>
-+#include "cs-etm-decoder/cs-etm-min-version.h"
+diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.h b/drivers/hwtracing/coresight/coresight-etm-perf.h
+index bebbadee2ceb..744531158d6b 100644
+--- a/drivers/hwtracing/coresight/coresight-etm-perf.h
++++ b/drivers/hwtracing/coresight/coresight-etm-perf.h
+@@ -62,7 +62,6 @@ struct etm_event_data {
+ 	struct list_head * __percpu *path;
+ };
  
- /*
-  * Check OpenCSD library version is sufficient to provide required features
-  */
--#define OCSD_MIN_VER ((1 << 16) | (2 << 8) | (1))
- #if !defined(OCSD_VER_NUM) || (OCSD_VER_NUM < OCSD_MIN_VER)
--#error "OpenCSD >= 1.2.1 is required"
-+#error "OpenCSD minimum version (OCSD_MIN_VER) not met."
- #endif
+-#if IS_ENABLED(CONFIG_CORESIGHT)
+ int etm_perf_symlink(struct coresight_device *csdev, bool link);
+ int etm_perf_add_symlink_sink(struct coresight_device *csdev);
+ void etm_perf_del_symlink_sink(struct coresight_device *csdev);
+@@ -77,23 +76,6 @@ static inline void *etm_perf_sink_config(struct perf_output_handle *handle)
+ int etm_perf_add_symlink_cscfg(struct device *dev,
+ 			       struct cscfg_config_desc *config_desc);
+ void etm_perf_del_symlink_cscfg(struct cscfg_config_desc *config_desc);
+-#else
+-static inline int etm_perf_symlink(struct coresight_device *csdev, bool link)
+-{ return -EINVAL; }
+-int etm_perf_add_symlink_sink(struct coresight_device *csdev)
+-{ return -EINVAL; }
+-void etm_perf_del_symlink_sink(struct coresight_device *csdev) {}
+-static inline void *etm_perf_sink_config(struct perf_output_handle *handle)
+-{
+-	return NULL;
+-}
+-int etm_perf_add_symlink_cscfg(struct device *dev,
+-			       struct cscfg_config_desc *config_desc)
+-{ return -EINVAL; }
+-void etm_perf_del_symlink_cscfg(struct cscfg_config_desc *config_desc) {}
+-
+-#endif /* CONFIG_CORESIGHT */
+-
+ int __init etm_perf_init(void);
+ void etm_perf_exit(void);
  
- int main(void)
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index 7f1e016a9253..2d21be42820e 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -141,7 +141,7 @@ endif
- ifdef CSLIBS
-   LIBOPENCSD_LDFLAGS := -L$(CSLIBS)
- endif
--FEATURE_CHECK_CFLAGS-libopencsd := $(LIBOPENCSD_CFLAGS)
-+FEATURE_CHECK_CFLAGS-libopencsd := $(LIBOPENCSD_CFLAGS) -I$(src-perf)/util
- FEATURE_CHECK_LDFLAGS-libopencsd := $(LIBOPENCSD_LDFLAGS) $(OPENCSDLIBS)
- 
- # for linking with debug library, run like:
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-index b78ef0262135..5e1b4503aab1 100644
---- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
-@@ -16,6 +16,7 @@
- 
- #include "cs-etm.h"
- #include "cs-etm-decoder.h"
-+#include "cs-etm-min-version.h"
- #include "debug.h"
- #include "intlist.h"
- 
-@@ -835,3 +836,15 @@ const char *cs_etm_decoder__get_name(struct cs_etm_decoder *decoder)
- {
- 	return decoder->decoder_name;
- }
-+
-+int cs_etm_decoder__check_ver(void)
-+{
-+	if (ocsd_get_version() < OCSD_MIN_VER) {
-+		pr_err("OpenCSD >= %d.%d.%d is required\n", OCSD_MIN_MAJOR,
-+							    OCSD_MIN_MINOR,
-+							    OCSD_MIN_PATCH);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-index 12c782fa6db2..2ec426ee16dc 100644
---- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
-@@ -107,5 +107,6 @@ int cs_etm_decoder__get_packet(struct cs_etm_packet_queue *packet_queue,
- 
- int cs_etm_decoder__reset(struct cs_etm_decoder *decoder);
- const char *cs_etm_decoder__get_name(struct cs_etm_decoder *decoder);
-+int cs_etm_decoder__check_ver(void);
- 
- #endif /* INCLUDE__CS_ETM_DECODER_H__ */
-diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-min-version.h b/tools/perf/util/cs-etm-decoder/cs-etm-min-version.h
-new file mode 100644
-index 000000000000..c69597e9d0af
---- /dev/null
-+++ b/tools/perf/util/cs-etm-decoder/cs-etm-min-version.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef INCLUDE__CS_ETM_MIN_VERSION_H__
-+#define INCLUDE__CS_ETM_MIN_VERSION_H__
-+
-+#define OCSD_MIN_MAJOR 1
-+#define OCSD_MIN_MINOR 2
-+#define OCSD_MIN_PATCH 1
-+
-+#define OCSD_MIN_VER ((OCSD_MIN_MAJOR << 16) | \
-+		      (OCSD_MIN_MINOR << 8) |  \
-+		      (OCSD_MIN_PATCH))
-+
-+#endif /* INCLUDE__CS_ETM_MIN_VERSION_H__ */
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 6298a5c7a651..3b4a5d5ca25b 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -3375,6 +3375,9 @@ int cs_etm__process_auxtrace_info_full(union perf_event *event,
- 	u64 *ptr = NULL;
- 	u64 **metadata = NULL;
- 
-+	if (cs_etm_decoder__check_ver())
-+		return -EINVAL;
-+
- 	/* First the global part */
- 	ptr = (u64 *) auxtrace_info->priv;
- 	num_cpu = ptr[CS_PMU_TYPE_CPUS] & 0xffffffff;
 -- 
 2.34.1
 
