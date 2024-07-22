@@ -1,144 +1,191 @@
-Return-Path: <linux-kernel+bounces-258583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2668938A15
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:32:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D9D9C938A18
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:33:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0488B210C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:32:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BC48B209A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D5813B5B4;
-	Mon, 22 Jul 2024 07:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="QjskFLXz"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E58D77A1E
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6AC381BA;
+	Mon, 22 Jul 2024 07:33:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A36314F9C9
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721633526; cv=none; b=GtGXLXzwcOIi83K9rpurp5SBmZlGI2zn/4ZBgMw5QCf3sk9T9SCc/4zjCl21LTihRnkg1CkbVM3ySItGfj7TvustyRqY2MC6XR1t6WcB8VjnvawajuvzBMdj2SEFZsXElEzYHhQX4f0wR3+PExuD24qZIA3Y0BDziE/BeMyL59s=
+	t=1721633592; cv=none; b=qtWb7FVQbjgzbE08WlwDMtR/IXIE8OwfxoXB6ZQ21sP6eammKohL/S5CCb7E/7upI7VxF7tZn8fQzE/yg5rzx1HG3FN764kTvd05YphCpictEX17bzozwzeuY13rG2JC4GxJyW23xWvdQg2m1sbMG5/X8GhRB8Zf7fgAp0H07zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721633526; c=relaxed/simple;
-	bh=lSLkqh+31wCIs4vlZ8wvzRHmLo3ZWREJRBUJU0f5UC4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=TdjW/lts3Ave0WjFgt9olSEvqgKdevEAdkcaaEElpNK0L5JwjjeUsnXaHcNMXoJs+FwIIk6zgraJXUR6I0dDZF1U1tOY7KsRa2QcbXTKOM99/J8hNosQKSuwHsEOikMJw4k61fbXcyncF5AYO41tcfXvE1fcdA1DXKaQAcn9cKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=QjskFLXz; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7037a208ff5so2308944a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 00:32:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1721633523; x=1722238323; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XtmPe8ZJK5pZD4LlL68HmeLqmeSQWeM4tCQK5wpvSgs=;
-        b=QjskFLXzGigUQDlSi3/5zC9lgdqgzF5mq3YnFCpVftKHx6snLQfJCQ/EbXKAg71WKH
-         fbFSh7r98KmIe8xpnWtbVGR0Z6UHS3PLRNxxZMgI5H/f8xHapoFsN6yVy7Qcs0IuP1yY
-         wpAq+Bo7zQEiWtOCFyuOtF3sSz6XgglqTsU2Yn490+DtAxlszc/hjbeXs75UBAZnHE8S
-         fCHth9QwmgnNygHHpg2BoEgyMzqAp6Xry4F4/qF7YNVsBf3fcPmVieq1FBxCE4wIWy0d
-         nBVV3kUh+NxP45IUTVVgk5CKdMRxdMIs+554p9scy3KRGvcaj6usrGkyXHEw8TZqugxC
-         Euew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721633523; x=1722238323;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XtmPe8ZJK5pZD4LlL68HmeLqmeSQWeM4tCQK5wpvSgs=;
-        b=LGwCK4pyYkEX1m1QG3ITZjePzB3U7eAK1tIr/+h0yfp2nr+a5CNM0U44Np8GMOZkMC
-         Mb0bn0ETYNcfwH65HCE/cZPmV2AxZfkJn2hsaAJNO52oPsobEPUVNnuWyFOHfOI29BRJ
-         ivil3Em3oanj31qsElRSP3JQAEvLF2ssQYyAu9+JPPr2lwaLMsfhJYQtUU76RZYamN9p
-         OHJ7f+ZnfYH9AIcyJGjW2zyJb5ucZRxUahjFOO7a5gPR6doyCMtQtO7AOewJuwv3yAP+
-         aKXZmjPXmxgpLlsXiCZAZhsnlJjVDzVwOArfuKeyptN3AbO3XPdTi+ZD98ztzYvzs/q/
-         cY0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWP+cKyDIn1O0UNzKondRaibcfIJ2BKf9GRkTheM2G5vUCMdpbxhH6UFZo/lnmbtbeFMPXcXfqjSMPgzPD9q464lQ5zSuAOQv5eXFd1
-X-Gm-Message-State: AOJu0YxmFkWPOjBRod+2ESiwo+E3xI9gJpJakK5pA8Ulhyj/wDKGrzLn
-	PSNf5eIGhWedXbJIL7AkHs/X1/RxvJ3cNIhN/Km3DgZ0fVFuQhRjQlBamDbO5xw=
-X-Google-Smtp-Source: AGHT+IEg4NSILA1YLMa11VPFL+p8V/3CB487/N4g+VcGFw1eoRMCp9wAkwWbl2NChxxU8jftD+UVVg==
-X-Received: by 2002:a05:6830:2807:b0:703:6003:11f4 with SMTP id 46e09a7af769-708fdb2292dmr10515146a34.14.1721633523650;
-        Mon, 22 Jul 2024 00:32:03 -0700 (PDT)
-Received: from lvzhaoxiong-KLVC-WXX9.huaqin.com ([116.66.212.162])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-79f0e6c9461sm4081162a12.61.2024.07.22.00.32.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 00:32:02 -0700 (PDT)
-From: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-To: dmitry.torokhov@gmail.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	jikos@kernel.org,
-	bentiss@kernel.org,
-	linus.walleij@linaro.org,
-	dianders@google.com,
-	hsinyi@google.com
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Subject: [PATCH v4 2/2] HID: i2c-hid: elan: Add elan-ekth6a12nay timing
-Date: Mon, 22 Jul 2024 15:31:36 +0800
-Message-Id: <20240722073136.8123-3-lvzhaoxiong@huaqin.corp-partner.google.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240722073136.8123-1-lvzhaoxiong@huaqin.corp-partner.google.com>
-References: <20240722073136.8123-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+	s=arc-20240116; t=1721633592; c=relaxed/simple;
+	bh=+iiQPCCgQmiZG1Rk8Q8zrrvUuq9+0lsyFBwnBEm+1wA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MLGa5u3utohl2hMCTbjPnTAP6bVk2cPOCE6ZWLLh55wxwqmuKKoHYmy0RkaTrIt0NlUrkiq6v8TOTPSP06cWbyyk6IlW0UzvaLoVARI3Ab4AqFLX39sYlIz8XXLKBCR5y6ADlM7erZEHLcS2/vVygtz+3ftGoadcBZ4PJ9j5JOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3ABCEFEC;
+	Mon, 22 Jul 2024 00:33:34 -0700 (PDT)
+Received: from [10.57.77.243] (unknown [10.57.77.243])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 541E53F766;
+	Mon, 22 Jul 2024 00:33:07 -0700 (PDT)
+Message-ID: <1732c37b-ab9d-47f7-8bfe-cc7992b632cf@arm.com>
+Date: Mon, 22 Jul 2024 08:33:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] mm: Tidy up shmem mTHP controls and stats
+Content-Language: en-GB
+To: Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>,
+ Lance Yang <ioworker0@gmail.com>, Gavin Shan <gshan@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20240716135907.4047689-1-ryan.roberts@arm.com>
+ <20240716135907.4047689-3-ryan.roberts@arm.com>
+ <9a7c863d-b64e-4278-bb5b-db777736ab6e@linux.alibaba.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <9a7c863d-b64e-4278-bb5b-db777736ab6e@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Elan-ekth6a12nay requires reset to pull down time greater than 10ms,
-so the configuration post_power_delay_ms is 10, and the chipset
-initial time is required to be greater than 300ms,
-so the post_gpio_reset_on_delay_ms is set to 300.
+On 22/07/2024 07:14, Baolin Wang wrote:
+> 
+> 
+> On 2024/7/16 21:59, Ryan Roberts wrote:
+>> Previously we had a situation where shmem mTHP controls and stats were
+>> not exposed for some supported sizes and were exposed for some
+>> unsupported sizes. So let's clean that up.
+>>
+>> Anon mTHP can support all large orders (2, PMD_ORDER). But shmem can
+>> support all large orders (1, MAX_PAGECACHE_ORDER). However, per-size
+>> shmem controls and stats were previously being exposed for all the anon
+>> mTHP orders, meaning order-1 was not present, and for arm64 64K base
+>> pages, orders 12 and 13 were exposed but were not supported internally.
+>>
+>> Tidy this all up by defining ctrl and stats attribute groups for anon
+>> and file separately. Anon ctrl and stats groups are populated for all
+>> orders in THP_ORDERS_ALL_ANON and file ctrl and stats groups are
+>> populated for all orders in THP_ORDERS_ALL_FILE_DEFAULT.
+> 
+> Make sense.
+> 
+>>
+>> The side-effect of all this is that different hugepage-*kB directories
+>> contain different sets of controls and stats, depending on which memory
+>> types support that size. This approach is preferred over the
+>> alternative, which is to populate dummy controls and stats for memory
+>> types that do not support a given size.
+> 
+> OK.
+> 
+>>
+>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>> ---
+>>   mm/huge_memory.c | 110 ++++++++++++++++++++++++++++++++++-------------
+>>   1 file changed, 80 insertions(+), 30 deletions(-)
+>>
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index f4be468e06a4..578ac212c172 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -463,8 +463,8 @@ static void thpsize_release(struct kobject *kobj);
+>>   static DEFINE_SPINLOCK(huge_anon_orders_lock);
+>>   static LIST_HEAD(thpsize_list);
+>>   -static ssize_t thpsize_enabled_show(struct kobject *kobj,
+>> -                    struct kobj_attribute *attr, char *buf)
+>> +static ssize_t anon_enabled_show(struct kobject *kobj,
+>> +                 struct kobj_attribute *attr, char *buf)
+>>   {
+>>       int order = to_thpsize(kobj)->order;
+>>       const char *output;
+>> @@ -481,9 +481,9 @@ static ssize_t thpsize_enabled_show(struct kobject *kobj,
+>>       return sysfs_emit(buf, "%s\n", output);
+>>   }
+>>   -static ssize_t thpsize_enabled_store(struct kobject *kobj,
+>> -                     struct kobj_attribute *attr,
+>> -                     const char *buf, size_t count)
+>> +static ssize_t anon_enabled_store(struct kobject *kobj,
+>> +                  struct kobj_attribute *attr,
+>> +                  const char *buf, size_t count)
+>>   {
+>>       int order = to_thpsize(kobj)->order;
+>>       ssize_t ret = count;
+>> @@ -525,19 +525,27 @@ static ssize_t thpsize_enabled_store(struct kobject *kobj,
+>>       return ret;
+>>   }
+>>   -static struct kobj_attribute thpsize_enabled_attr =
+>> -    __ATTR(enabled, 0644, thpsize_enabled_show, thpsize_enabled_store);
+>> +static struct kobj_attribute anon_enabled_attr =
+>> +    __ATTR(enabled, 0644, anon_enabled_show, anon_enabled_store);
+>>   -static struct attribute *thpsize_attrs[] = {
+>> -    &thpsize_enabled_attr.attr,
+>> +static struct attribute *anon_ctrl_attrs[] = {
+>> +    &anon_enabled_attr.attr,
+>> +    NULL,
+>> +};
+>> +
+>> +static const struct attribute_group anon_ctrl_attr_grp = {
+>> +    .attrs = anon_ctrl_attrs,
+>> +};
+>> +
+>> +static struct attribute *file_ctrl_attrs[] = {
+>>   #ifdef CONFIG_SHMEM
+>>       &thpsize_shmem_enabled_attr.attr,
+>>   #endif
+>>       NULL,
+>>   };
+>>   -static const struct attribute_group thpsize_attr_group = {
+>> -    .attrs = thpsize_attrs,
+>> +static const struct attribute_group file_ctrl_attr_grp = {
+>> +    .attrs = file_ctrl_attrs,
+>>   };
+>>     static const struct kobj_type thpsize_ktype = {
+>> @@ -583,57 +591,99 @@ DEFINE_MTHP_STAT_ATTR(split, MTHP_STAT_SPLIT);
+>>   DEFINE_MTHP_STAT_ATTR(split_failed, MTHP_STAT_SPLIT_FAILED);
+>>   DEFINE_MTHP_STAT_ATTR(split_deferred, MTHP_STAT_SPLIT_DEFERRED);
+>>   -static struct attribute *stats_attrs[] = {
+>> +static struct attribute *anon_stats_attrs[] = {
+>>       &anon_fault_alloc_attr.attr,
+>>       &anon_fault_fallback_attr.attr,
+>>       &anon_fault_fallback_charge_attr.attr,
+>>       &swpout_attr.attr,
+>>       &swpout_fallback_attr.attr,
+>> -    &shmem_alloc_attr.attr,
+>> -    &shmem_fallback_attr.attr,
+>> -    &shmem_fallback_charge_attr.attr,
+>>       &split_attr.attr,
+>>       &split_failed_attr.attr,
+>>       &split_deferred_attr.attr,
+>>       NULL,
+>>   };
+>>   -static struct attribute_group stats_attr_group = {
+>> +static struct attribute_group anon_stats_attr_grp = {
+>> +    .name = "stats",
+>> +    .attrs = anon_stats_attrs,
+>> +};
+>> +
+>> +static struct attribute *file_stats_attrs[] = {
+>> +#ifdef CONFIG_SHMEM
+>> +    &shmem_alloc_attr.attr,
+>> +    &shmem_fallback_attr.attr,
+>> +    &shmem_fallback_charge_attr.attr,
+> 
+> Shmem should also support swpout_* counters.
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
----
-Changes between V4 and V3:
--  1. No changes.
-v3: https://lore.kernel.org/all/20240716082851.18173-3-lvzhaoxiong@huaqin.corp-partner.google.com/
+OK, so to put it another way, swpout_* stats are required all orders in
+(THP_ORDERS_ALL_ANON | THP_ORDERS_ALL_FILE_DEFAULT) if CONFIG_SHMEM is defined,
+else all orders in THP_ORDERS_ALL_ANON. Have I understood correctly?
 
-Changes between V3 and V2:
--  1. No changes.
-v2: https://lore.kernel.org/all/20240715073159.25064-3-lvzhaoxiong@huaqin.corp-partner.google.com/
-
-Changes between V2 and V1:
--  1. No changes.
-v1: https://lore.kernel.org/all/20240704085555.11204-3-lvzhaoxiong@huaqin.corp-partner.google.com/
----
- drivers/hid/i2c-hid/i2c-hid-of-elan.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/hid/i2c-hid/i2c-hid-of-elan.c b/drivers/hid/i2c-hid/i2c-hid-of-elan.c
-index 091e37933225..3fcff6daa0d3 100644
---- a/drivers/hid/i2c-hid/i2c-hid-of-elan.c
-+++ b/drivers/hid/i2c-hid/i2c-hid-of-elan.c
-@@ -152,6 +152,13 @@ static const struct elan_i2c_hid_chip_data elan_ekth6915_chip_data = {
- 	.main_supply_name = "vcc33",
- };
- 
-+static const struct elan_i2c_hid_chip_data elan_ekth6a12nay_chip_data = {
-+	.post_power_delay_ms = 10,
-+	.post_gpio_reset_on_delay_ms = 300,
-+	.hid_descriptor_address = 0x0001,
-+	.main_supply_name = "vcc33",
-+};
-+
- static const struct elan_i2c_hid_chip_data ilitek_ili9882t_chip_data = {
- 	.post_power_delay_ms = 1,
- 	.post_gpio_reset_on_delay_ms = 200,
-@@ -174,6 +181,7 @@ static const struct elan_i2c_hid_chip_data ilitek_ili2901_chip_data = {
- 
- static const struct of_device_id elan_i2c_hid_of_match[] = {
- 	{ .compatible = "elan,ekth6915", .data = &elan_ekth6915_chip_data },
-+	{ .compatible = "elan,ekth6a12nay", .data = &elan_ekth6a12nay_chip_data },
- 	{ .compatible = "ilitek,ili9882t", .data = &ilitek_ili9882t_chip_data },
- 	{ .compatible = "ilitek,ili2901", .data = &ilitek_ili2901_chip_data },
- 	{ }
--- 
-2.17.1
+If so, I'll fix that in the next version.
 
 
