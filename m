@@ -1,255 +1,303 @@
-Return-Path: <linux-kernel+bounces-259272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2904693934D
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:48:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56BB593934E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 19:50:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89C391F21E68
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:48:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D39BC1F21EF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4AD616EC11;
-	Mon, 22 Jul 2024 17:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D1C16EBE6;
+	Mon, 22 Jul 2024 17:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EioOpZhV"
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VPpDbRCm"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C596016E86E
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 17:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92AE616C864
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 17:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721670477; cv=none; b=iXD1oF2AMGySHyXlsUaGE9q2Ur0CnpP6Qf8n/WfNLOIChzt/QqBMuqn6e9R/+RbL7B72lyLCKt50YXmos8EdvsCZ93sSyvDYWPdnm/T3ykxmDKVy9T5y/Q582rqN7EmkKRBBjNB1763EzXl38Rk6QEEd1niCLTnZeFStDiSEu2w=
+	t=1721670630; cv=none; b=INeZRZiSldP+dGTM395aMRHw60ePllfnh5fb3CnD3wDnrjLaZdXXJPNKS39pmtE9AKyLQvAr0FwXf7ad9+4r7OfY0pu6umuHYaijZaNYDmqrNBKmLzfHAgTwav8+4020TRBU6VhRJmcRLwoX4A+ekF1IhmtNos64G+qdNmM74GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721670477; c=relaxed/simple;
-	bh=dYweHWEvREtJTac+MMTBYVKSavgQcaBV+zTixFvWOfM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dS9yAY4ZOYbeZQD27ek5l32YWCWQrwnCXl1QxPBtCFiSs1NEGwtjNMQEn688jFjBuCByjAoATrVOyfeNQ9WaRRJwA7OEZigB9p3qfHlyZw/70M1TsqSY7fnf4OsqCcrgnAtITcD29uOp4158twDDdQ2gx/tys3Wf2W/aWwvJRrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EioOpZhV; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-4f5153a3a73so840047e0c.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 10:47:54 -0700 (PDT)
+	s=arc-20240116; t=1721670630; c=relaxed/simple;
+	bh=BJWiWO6DuidO5bDFJg3juQXqIB6fLQ7u4eqftzcVm34=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SQYhW951uXSKJPYERw43xZBIix91//87QTUnis57riGqYnQ0IpVnZG65uui1ZfqDNTelUTDMQx8Mve9FleBuw2aa3m4VfoaIgd9WbCw2yHM351CEk9xoMbcTnccGaevJHq7+OHxXdjPG+HpqyC5JMaok1g/36MmH8S3ROrwHf88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VPpDbRCm; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fd7509397bso14315ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 10:50:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721670473; x=1722275273; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1721670628; x=1722275428; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/ANlfruZmo4l7ccwD2B2KKiZpD4Y7MpMXUEVtTMzZJI=;
-        b=EioOpZhVIf/YCK0EkygcITgqzF3B/PWR1MwJizVDZJXzqrBoHMqRro+4EJW0d6fTHe
-         HOGosocYtqeGE7dwbghvZCJSmgMJz9kj5ej1LStt3rt8z5yatswL0Gk/z7Yl/TXf+PXX
-         zxUOavZZQbBd1ECCqKiyim4A0THyMx2gV6jnRgW6myo8VKtZxfca5VT4kZvpRe1kdbrQ
-         rz2fpTV1QlAIMz5isPToVYXrsRbwugR2n27Sn5iFd0HFDoPzLEXsnJO3MPKGmH1LelPr
-         0GbpljkVuQO1ZwFo2vKM3V94Xh+lsLVuXs2c8GSy8pZKKnCzBiDlZRaD5DqXBT7DVC2P
-         0d2Q==
+        bh=JAd7mdk40tiWhlxmPyk9C759iztuYOFsSYWWSaawEQ0=;
+        b=VPpDbRCmwqlkZWAkp78jiG2ihuX6cyFgFxNfhJDdQ+gALp3SSDKmINTAeiZqNNmm4x
+         c9tTPgqv5NeRijlZktfunuKPY6u7d3ful+9Wb0R1ygZdMDlDSR/tpOldV6GHXEgQoQXM
+         8Y4A3OhIoiDOkUcJS/B7GhLPBYBm4i41MCGH++0y3v6nLyk7V3m49fT0K0o2nzZYgZT1
+         ru4TJhH8beYy3lNfT8OTbC2npa3gWsaJIwvtzJmC77JTKbRDontaznYwsbr9dwKbQJAp
+         BcwyPsSd/p7f5HVgiQde46X83lVJ4KxUXyCFtHgCtyfGKBJaWQWZ9j8fyhfaxtZsTu/a
+         SG8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721670473; x=1722275273;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1721670628; x=1722275428;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/ANlfruZmo4l7ccwD2B2KKiZpD4Y7MpMXUEVtTMzZJI=;
-        b=H3aJ5m/jxxZlZvDg6mbz6cVWMZarC8A7McG7Va2iodmneSD1K8/xkKLGZGLo2e7tx+
-         Clk8iSCMLXXB5LxGK4ZN4G7e9esVs1MFStYpqAruEY9m9zS/fVHfF/MpEdicZWzoNGxA
-         FJH584Z1yFmJRE4Ahs7s4h0UxNmHAPNH3qF8qC+k0XBKP66PKrsmeTmb9ueD6kvp0Lzk
-         /B+cugRHRpPVBwIK63XnBzM8m7i8+ZRbnz4tf3Ik24g9kRPUw/9woxwxFAIncUXMzrPe
-         at4VvviTxFjm+f/RTsm+JNJufUTER3s+knI6g+JBerD3BRd5hrX3s4PKZOT3nskhT8Eg
-         cNrg==
-X-Forwarded-Encrypted: i=1; AJvYcCVbE89aZvg6qoAvHaKM1EqYKBTZuyZCJu85niCxFwCEkAgfC8wRdAE8SXkGZLdUZ+yUYeksofdXeYy4jkx5F//jdyrmH3DmAScoX47c
-X-Gm-Message-State: AOJu0YwbLjaHTYmMxudRUyjyqSLYXUWgSQI19FQE57jycQEbSQyw66+a
-	XxvJDO74VCCMHuWkRjwi1gAnbBRO0euQVTahwtETp9pcvtLW87Tk
-X-Google-Smtp-Source: AGHT+IGaojxqHxb5zQdMj/U7MB7QnqT/LcZ56HsdbQYnOJUSYoy0tjW0By+nVVAUk0K46UfhYyWndQ==
-X-Received: by 2002:a05:6122:4597:b0:4f5:1ea3:736f with SMTP id 71dfb90a1353d-4f51ea386eemr4706788e0c.13.1721670473446;
-        Mon, 22 Jul 2024 10:47:53 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a199013905sm382964385a.67.2024.07.22.10.47.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 10:47:52 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id DC79E1200066;
-	Mon, 22 Jul 2024 13:47:49 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Mon, 22 Jul 2024 13:47:49 -0400
-X-ME-Sender: <xms:RZueZmPUZfUpcM2r7hSpiRCl4Tci8j0HQAsElCET3v8dQecFWgLQdQ>
-    <xme:RZueZk98ZuYkVzkL4VufYWP0nWEYAwNfizbmeagXUC8ASrTBdpOi3RW6lIFq8Q265
-    ciiP2WBAWkv62ANew>
-X-ME-Received: <xmr:RZueZtQ_hj9tT5gZRVbfn1CxQEAiGY6pwZlo3VK80xdomBK0KPuc2bAagYpbPQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrheejgdduudekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpefhtedvgfdtueekvdekieetieetjeeihedvteehuddujedvkedtkeefgedv
-    vdehtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhh
-    phgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunh
-    drfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:RZueZmsR1Z10nCLZbrKXRaqHntPu9x7O1bKRX1Iksa9RoAuhZwD0mQ>
-    <xmx:RZueZudQRrbvhzmRoIbbWcazaixF8-IiXkpc08qbim-ARm4JRjm_dg>
-    <xmx:RZueZq2YejBQZ_CQCRNwl4xT5b-IdNmub4igl7fW-0PvH2ftlzxi9Q>
-    <xmx:RZueZi8BeAEoRxvuf19WYgetJWlPBptScAUqNzjMJu1bsthMhBdq1w>
-    <xmx:RZueZt-HLVPNg4trOSqYzNN1v2QHOBnT_Ijt26Fp09INLS6FX3FVbSnK>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 22 Jul 2024 13:47:48 -0400 (EDT)
-Date: Mon, 22 Jul 2024 10:47:30 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Kees Cook <keescook@chromium.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Christoph Lameter <cl@linux.com>, Dennis Zhou <dennis@kernel.org>,
-	Gary Guo <gary@garyguo.net>, Miguel Ojeda <ojeda@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>, linux-mm@kvack.org,
-	lkmm@lists.linux.dev
-Subject: Re: [linus:master] [mm]  24e44cc22a:
- BUG:KCSAN:data-race_in_pcpu_alloc_noprof/pcpu_block_update_hint_alloc
-Message-ID: <Zp6bMoDnUMxNrKos@boqun-archlinux>
-References: <202407191651.f24e499d-oliver.sang@intel.com>
+        bh=JAd7mdk40tiWhlxmPyk9C759iztuYOFsSYWWSaawEQ0=;
+        b=dXEj0dwKsy6Ai9j4LW0rYzH+0uNCf9ptFkXJdUkzdbf+PSccrodepUyLXNse/Ftkud
+         AjyEblQlGY6GYQdzYB6nZx250Qirq1+Ta3Vf0vQ5aFIOKFltwTNJLKvgfbf22OWbnfUv
+         +W9EaF6ZWdhFteMfJ2qahITboZplmGNLOv++MlKrYXRmPPK1jDIIPE+Ilfip88pA0Pqw
+         lZllKmIUDRwl0M+HT9XlsDl2DlOHOra+ye7LkWWQqPYYeDLiKdcpfD0EWNAJlAduWwBR
+         arkJaSqTwW3+qr8Eq7NsUvpQzmwoVArN62YIV+6FclB9sNOO9h8aHHv/Sgn0iNgixTOx
+         8xww==
+X-Forwarded-Encrypted: i=1; AJvYcCVaKMaQEShPV7MtYZ5nzFdPdeKxOQCdoW4qd3gzF63nMXW+2XF2xyR+xNPsxCu1iroE0OPLY6x1GXZfjXZbJfWZjNKMudDiAuGhlkdy
+X-Gm-Message-State: AOJu0YxygCROx7sL2cJ97vQv2wVirJPGDR6bxL1xoJ9Uy+TsuKrx/KrW
+	af0v2GU1DpPR477iD1woSHj3GPQVRQPQsTcmNzssiZekciDTmyMoYTu869Sn9ztKdnxaeaihVeW
+	7IBNvvZMfjYAamSVR3/1pFVGiyoaFAiNrvI/K
+X-Google-Smtp-Source: AGHT+IH/jY8cSEjiWeal21TuyCVinwhT10EG7TOMUepYpcU5+BC8sTlS7JaDhRE+PNcW9Rbe1SbdFak+CgL3sIQ/Z0k=
+X-Received: by 2002:a17:903:22c5:b0:1f6:8836:e43f with SMTP id
+ d9443c01a7336-1fd7ff48846mr4485415ad.17.1721670626342; Mon, 22 Jul 2024
+ 10:50:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202407191651.f24e499d-oliver.sang@intel.com>
+References: <20240718010023.1495687-1-irogers@google.com> <738b5c89-acb2-46a5-92a1-c36bd90abc30@intel.com>
+ <CAP-5=fU=5LxF0SKuAqVP+xtmdERCCgxh_mdpw5okMi1fmvpE+Q@mail.gmail.com>
+ <05fa0449-4fd4-41ed-93e8-db825e48268f@intel.com> <CAP-5=fU9riOR7onxCE3a2xOs_bVdQdTSkAHD5QLb=SO6SCzkzQ@mail.gmail.com>
+ <CAM9d7cjbi_P+V=QkLFg6OuEJqmCOsOoDBddQbyhMYD3aF8do4g@mail.gmail.com>
+In-Reply-To: <CAM9d7cjbi_P+V=QkLFg6OuEJqmCOsOoDBddQbyhMYD3aF8do4g@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 22 Jul 2024 10:50:06 -0700
+Message-ID: <CAP-5=fXd3t4pXKU7hVDRZp5DnRbZpJRp9zO3ia8cwbRSROKMRQ@mail.gmail.com>
+Subject: Re: [PATCH v6 00/27] Constify tool pointers
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, 
+	Will Deacon <will@kernel.org>, James Clark <james.clark@arm.com>, 
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Yicong Yang <yangyicong@hisilicon.com>, 
+	Jonathan Cameron <jonathan.cameron@huawei.com>, Nick Terrell <terrelln@fb.com>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, Song Liu <song@kernel.org>, 
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Huacai Chen <chenhuacai@kernel.org>, Yanteng Si <siyanteng@loongson.cn>, 
+	Sun Haiyong <sunhaiyong@loongson.cn>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 22, 2024 at 03:30:01PM +0800, kernel test robot wrote:
-> 
-> 
-> Hello,
-> 
-> kernel test robot noticed "BUG:KCSAN:data-race_in_pcpu_alloc_noprof/pcpu_block_update_hint_alloc" on:
-> 
-> commit: 24e44cc22aa3112082f2ee23137d048c73ca96d5 ("mm: percpu: enable per-cpu allocation tagging")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-> 
-> [test failed on linus/mater       68b59730459e5d1fe4e0bbeb04ceb9df0f002270]
-> [test failed on linux-next/master 73399b58e5e5a1b28a04baf42e321cfcfc663c2f]
-> 
-> in testcase: trinity
-> version: trinity-i386-abe9de86-1_20230429
-> with following parameters:
-> 
-> 	runtime: 300s
-> 	group: group-04
-> 	nr_groups: 5
-> 
-> 
-> 
-> compiler: gcc-13
-> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
-> 
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
-> 
-> 
-> as we understand, this commit is not the root-cause of KCSAN issue, just make
-> the issue change from form (1) to (2). furthermore, we don't understand why
-> the issue happens randomly. but we failed to bisect the issue (1). so we just
-> make out this report FYI, not sure if it could supply some hints to any real
-> issues.
-> 
-> 60fa4a9e23231721 24e44cc22aa3112082f2ee23137
-> ---------------- ---------------------------
->        fail:runs  %reproduction    fail:runs
->            |             |             |
->         281:999        -28%            :998   dmesg.BUG:KCSAN:data-race_in_pcpu_alloc/pcpu_block_update_hint_alloc   <--- (1)
->         296:999        -30%            :998   dmesg.BUG:KCSAN:data-race_in_pcpu_alloc/pcpu_block_update_hint_free
->          25:999         -3%            :998   dmesg.BUG:KCSAN:data-race_in_pcpu_alloc/pcpu_chunk_populated
->            :999         29%         292:998   dmesg.BUG:KCSAN:data-race_in_pcpu_alloc_noprof/pcpu_block_update_hint_alloc   <---(2)
->            :999         27%         269:998   dmesg.BUG:KCSAN:data-race_in_pcpu_alloc_noprof/pcpu_block_update_hint_free
->            :999          4%          44:998   dmesg.BUG:KCSAN:data-race_in_pcpu_alloc_noprof/pcpu_chunk_populated
-> 
-> 
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202407191651.f24e499d-oliver.sang@intel.com
-> 
-> 
-> 
-> [  117.357897][ T3648] ==================================================================
-> [  117.358568][ T3648] BUG: KCSAN: data-race in pcpu_alloc_noprof / pcpu_block_update_hint_alloc
-> [  117.359222][ T3648]
-> [  117.359424][ T3648] write to 0xffffffff8559e600 of 4 bytes by task 3653 on cpu 1:
-> [ 117.360048][ T3648] pcpu_block_update_hint_alloc (mm/percpu.c:602 mm/percpu.c:598 mm/percpu.c:923) 
-> [ 117.360554][ T3648] pcpu_alloc_area (mm/percpu.c:1260) 
-> [ 117.360960][ T3648] pcpu_alloc_noprof (mm/percpu.c:1835) 
-> [ 117.361393][ T3648] bpf_map_alloc_percpu (kernel/bpf/syscall.c:466) 
-> [ 117.361825][ T3648] prealloc_init (kernel/bpf/hashtab.c:338) 
-> [ 117.362211][ T3648] htab_map_alloc (kernel/bpf/hashtab.c:573) 
-> [ 117.362618][ T3648] map_create (kernel/bpf/syscall.c:1320) 
-> [ 117.362987][ T3648] __sys_bpf (kernel/bpf/syscall.c:5642) 
-> [ 117.363348][ T3648] __ia32_sys_bpf (kernel/bpf/syscall.c:5765) 
-> [ 117.363738][ T3648] ia32_sys_call (kbuild/obj/consumer/x86_64-randconfig-013-20240713/./arch/x86/include/generated/asm/syscalls_32.h:358) 
-> [ 117.364151][ T3648] do_int80_emulation (arch/x86/entry/common.c:165 (discriminator 1) arch/x86/entry/common.c:253 (discriminator 1)) 
-> [ 117.364578][ T3648] asm_int80_emulation (arch/x86/include/asm/idtentry.h:626) 
-> [  117.365004][ T3648]
-> [  117.365203][ T3648] read to 0xffffffff8559e600 of 4 bytes by task 3648 on cpu 0:
-> [ 117.365797][ T3648] pcpu_alloc_noprof (mm/percpu.c:1894) 
-> [ 117.366210][ T3648] bpf_map_alloc_percpu (kernel/bpf/syscall.c:466) 
-> [ 117.366627][ T3648] prealloc_init (kernel/bpf/hashtab.c:338) 
-> [ 117.367000][ T3648] htab_map_alloc (kernel/bpf/hashtab.c:573) 
-> [ 117.367400][ T3648] map_create (kernel/bpf/syscall.c:1320) 
-> [ 117.367766][ T3648] __sys_bpf (kernel/bpf/syscall.c:5642) 
-> [ 117.368120][ T3648] __ia32_sys_bpf (kernel/bpf/syscall.c:5765) 
-> [ 117.368503][ T3648] ia32_sys_call (kbuild/obj/consumer/x86_64-randconfig-013-20240713/./arch/x86/include/generated/asm/syscalls_32.h:358) 
-> [ 117.368907][ T3648] do_int80_emulation (arch/x86/entry/common.c:165 (discriminator 1) arch/x86/entry/common.c:253 (discriminator 1)) 
-> [ 117.369341][ T3648] asm_int80_emulation (arch/x86/include/asm/idtentry.h:626) 
-> [  117.369761][ T3648]
-> [  117.369968][ T3648] value changed: 0x00000003 -> 0x00000000
-> [  117.370454][ T3648]
-> [  117.370662][ T3648] Reported by Kernel Concurrency Sanitizer on:
-> [  117.371179][ T3648] CPU: 0 PID: 3648 Comm: trinity-c2 Not tainted 6.9.0-rc4-00089-g24e44cc22aa3 #1
-> [  117.371943][ T3648] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> [  117.372811][ T3648] ==================================================================
-> 
+On Mon, Jul 22, 2024 at 10:45=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> Hi,
+>
+> On Mon, Jul 22, 2024 at 9:06=E2=80=AFAM Ian Rogers <irogers@google.com> w=
+rote:
+> >
+> > On Mon, Jul 22, 2024 at 1:29=E2=80=AFAM Adrian Hunter <adrian.hunter@in=
+tel.com> wrote:
+> > >
+> > > On 19/07/24 19:26, Ian Rogers wrote:
+> > > > On Fri, Jul 19, 2024 at 1:51=E2=80=AFAM Adrian Hunter <adrian.hunte=
+r@intel.com> wrote:
+> > > >>
+> > > >> On 18/07/24 03:59, Ian Rogers wrote:
+> > > >>> struct perf_tool provides a set of function pointers that are cal=
+led
+> > > >>> through when processing perf data. To make filling the pointers l=
+ess
+> > > >>> cumbersome, if they are NULL perf_tools__fill_defaults will add
+> > > >>> default do nothing implementations.
+> > > >>>
+> > > >>> This change refactors struct perf_tool to have an init function t=
+hat
+> > > >>> provides the default implementation. The special use of NULL and
+> > > >>> perf_tools__fill_defaults are removed. As a consequence the tool
+> > > >>> pointers can then all be made const, which better reflects the
+> > > >>> behavior a particular perf command would expect of the tool and t=
+o
+> > > >>> some extent can reduce the cognitive load on someone working on a
+> > > >>> command.
+> > > >>>
+> > > >>> v6: Rebase adding Adrian's reviewed-by/tested-by and Leo's tested=
+-by.
+> > > >>
+> > > >> The tags were really meant only for patch 1, the email that was re=
+plied to.
+> > > >>
+> > > >> But now for patches 2 and 3:
+> > > >>
+> > > >> Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
+> > > >
+> > > > Sorry for that, you'd mentioned that pt and bts testing which is
+> > > > impacted by more than just patch 1.
+> > > >
+> > > >> Looking at patches 4 to 25, they do not seem to offer any benefit.
+> > > >>
+> > > >> Instead of patch 26, presumably perf_tool__fill_defaults() could
+> > > >> be moved to __perf_session__new(), which perhaps would allow
+> > > >> patch 27 as it is.
+> > > >
+> > > > What I'm trying to do in the series is make it so that the tool isn=
+'t
+> > > > mutated during its use by session. Ideally we'd be passing a const
+> > > > tool to session_new, that's not possible because there's a hack to =
+fix
+> > > > ordered events and pipe mode in session__new:
+> > > > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-nex=
+t.git/tree/tools/perf/util/session.c?h=3Dperf-tools-next#n275
+> > > > Imo, it isn't great to pass a tool to session__new where you say yo=
+u
+> > > > want ordered events and then session just goes to change that for y=
+ou.
+> > > > Altering that behavior was beyond the scope of this clean up, so to=
+ol
+> > > > is only const after session__new.
+> > >
+> > > Seems like a separate issue.  Since the session is created
+> > > by __perf_session__new(), session->tool will always be a pointer
+> > > to a const tool once there is:
+> > >
+> > > diff --git a/tools/perf/util/session.h b/tools/perf/util/session.h
+> > > index 7f69baeae7fb..7c8dd6956330 100644
+> > > --- a/tools/perf/util/session.h
+> > > +++ b/tools/perf/util/session.h
+> > > @@ -43,7 +43,7 @@ struct perf_session {
+> > >         u64                     one_mmap_offset;
+> > >         struct ordered_events   ordered_events;
+> > >         struct perf_data        *data;
+> > > -       struct perf_tool        *tool;
+> > > +       const struct perf_tool  *tool;
+> > >         u64                     bytes_transferred;
+> > >         u64                     bytes_compressed;
+> > >         struct zstd_data        zstd_data;
+> >
+> > That's the case after these changes, but not before.
+> >
+> > > >
+> > > > The reason for doing this is to make it so that when I have a tool =
+I
+> > > > can reason that nobody is doing things to change it under my feet.
+> > >
+> > > It still can be changed by the caller of __perf_session__new(), since
+> > > the tool itself is not const.
+> > >
+> > > Anything using container_of() like:
+> > >
+> > > static int process_sample_event(const struct perf_tool *tool,
+> > >                                 union perf_event *event,
+> > >                                 struct perf_sample *sample,
+> > >                                 struct evsel *evsel,
+> > >                                 struct machine *machine)
+> > > {
+> > >         struct perf_script *scr =3D container_of(tool, struct perf_sc=
+ript, tool);
+> > >
+> > > can then change scr->tool without even having to cast away const.
+> >
+> > Agreed, but such things happen in builtin_cmd where the tool is
+> > defined and presumably they know what they are doing. My objection is
+> > to code in util mutating the tool as I want the tool to have
+> > predictable behavior. As callers that take a tool can call fill in
+> > defaults (not all) then the tool has to be mutable and I don't want
+> > this to be the case.
+> >
+> > > Really, 'tool' needs to be defined as const in the first place.
+> >
+> > I'd like this. The problem is initializing all the function pointers
+> > and making such initialization robust to extra functions being added
+> > to the tool API. It can be done in a long winded way but I couldn't
+> > devise macro magic to do it. The other problem is around variables
+> > like ordered_events that can't currently be const. The patches move us
+> > closer to this being a possibility.
+> >
+> > > > My
+> > > > builtin_cmd is in charge of what the tool is rather than some code
+> > > > buried in util that thought it was going to do me a favor. The code=
+ is
+> > > > a refactor and so the benefit is intended to be for the developer a=
+nd
+> > > > how they reason about the use of tool.
+> > >
+> > > It creates another question though: since there is a lot of code
+> > > before perf_tool__init() is called, does the caller mistakenly
+> > > change tool before calling perf_tool__init()
+> >
+> > If they do this their function pointers will be clobbered and their
+> > code won't behave as expected, which I'd expect to be easy to observe.
+> > In C++ if you were to initialize memory and then use the memory for a
+> > placement new to create an object which would call the constructor,
+> > the expected behavior would be that the initialized memory's values
+> > would get overridden. I see the use of _init and _exit in the code as
+> > being our poor man replacements of constructors and destructors.
+> >
+> > > > how they reason about the use of tool. We generally use _init
+> > > > functions rather than having _fill_defaults, so there is a consiste=
+ncy
+> > > > argument.
+> > >
+> > > The caller does not need the "defaults", so why would it set them up.
+> > > The session could just as easily do:
+> > >
+> > >         if (tool->cb)
+> > >                 tool->cb(...);
+> > >         else
+> > >                 cb_stub(...);
+> >
+> > Multiplied by every stub, we'd probably need a helper function, how to
+> > handle argument passing. There's nothing wrong with this as an idea
+> > but I think of this code as trying to create a visitor pattern and
+> > this is a visitor pattern with a hard time for the caller.
+> >
+> > > > I don't expect any impact in terms of performance... Moving
+> > > > perf_tool__fill_defaults to __perf_session__new had issues with the
+> > > > existing code where NULL would be written over a function pointer
+> > > > expecting the later fill_defaults to fix it up, doesn't address cod=
+ing
+> > > > consistency where _init is the norm, and adds another reason the to=
+ol
+> > > > passed to session__new can't be const.
+> > >
+> > > perf_tool__init() is not a steeping stone to making 'tool' a
+> > > const in the first place.
+> >
+> > It is because the patch series gets rid of fill in defaults which is
+> > why we have a mutable tool passed around. I don't think this is up for
+> > debate as the patch series clearly goes from a non-const
+> > tool to a const tool at the end. Changing perf_tool__init to make all
+> > the function pointers NULL and then making every caller have to do a:
+> >
+> >          if (tool->cb)
+> >                  tool->cb(...);
+> >          else
+> >                  cb_stub(...);
+> >
+> > I think it is a less elegant solution at the end, it is also a large
+> > and more invasive change. The various refactorings to make tool const,
+> > changing the aux use of tool, etc. wouldn't be impacted by such a
+> > change but I think it is out of scope for this patch series.
+>
+> I don't think it's a large and invasive change.  The tools are mostly
+> zero-initialized so we don't need to reset to NULL.  And tool->cb is
+> called mostly from two functions: machines__deliver_event() and
+> perf_session__process_user_event().  Can we change them to check
+> NULL and get rid of perf_tool__fill_defaults() to keep it const?
 
-This looks like a data race because we read pcpu_nr_empty_pop_pages out
-of the lock for a best effort checking, @Tejun, maybe you could confirm
-on this?
+As I said above, I don't think that is good style and is out of scope
+here. It clearly can be done as follow up, but I don't see how that
+fixes the style issue.
 
-If so, a fix could be as the follow, i.e. telling KCSAN that the data
-race is expected. Another fix is making all accesses to
-pcpu_nr_empty_pop_pages atomics (via WRITE_ONCE() and READ_ONCE()).
-
-Regards,
-Boqun
-
-(is there a way to tell the bot to issue a rerun with a diff? ;-))
-
------------------------->8
-diff --git a/mm/percpu.c b/mm/percpu.c
-index 20d91af8c033..0626ef12099b 100644
---- a/mm/percpu.c
-+++ b/mm/percpu.c
-@@ -1891,7 +1891,12 @@ void __percpu *pcpu_alloc_noprof(size_t size, size_t align, bool reserved,
-                mutex_unlock(&pcpu_alloc_mutex);
-        }
-
--       if (pcpu_nr_empty_pop_pages < PCPU_EMPTY_POP_PAGES_LOW)
-+       /*
-+        * Checks pcpu_nr_empty_pop_pages out of the pcpu_lock, data races may
-+        * occur but this is just a best-effort checking, everything is synced
-+        * in pcpu_balance_work.
-+        */
-+       if (data_race(pcpu_nr_empty_pop_pages) < PCPU_EMPTY_POP_PAGES_LOW)
-                pcpu_schedule_balance_work();
-
-        /* clear the areas and return address relative to base address */
+Thanks,
+Ian
 
