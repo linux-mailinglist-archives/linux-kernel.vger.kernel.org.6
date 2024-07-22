@@ -1,104 +1,64 @@
-Return-Path: <linux-kernel+bounces-259080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C80D9390F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:49:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F7BC9390F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 778751C21103
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:49:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE42F1F21D82
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A7716DEC2;
-	Mon, 22 Jul 2024 14:48:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4C116DEB2;
-	Mon, 22 Jul 2024 14:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8AB16DC2E;
+	Mon, 22 Jul 2024 14:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cKzbptmO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8F716D30E;
+	Mon, 22 Jul 2024 14:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721659727; cv=none; b=CzB86MMS0xTCnkI8b82HG342wFSpr99qkqjVpG/m1fvtiebt/UZhxIkY0Jua1j9553Xo7q/vr3Cq9VeARJAUrbwV1oOYJ1ofzYvgVIAmc4OI+lKVp5lF18oj3K0NnB368uZWjRRPg3vNrw2BKvBPI3C2Oo/Z1GZBGM2KBofq7iU=
+	t=1721659767; cv=none; b=XiGZMppc4no2Jhxhh07fACpNg922L/Nt/JkUdKNUQkaKUOdfhobdJeCe3dxrbrQS76iMUAyRlj+ojQrLkG/HlAqQGLHA0LX+8HOsISs0db0gcO/oOVfCV6Ce7Jjm+itLResez8pkAndnQ/0+mr/ArdKSxJqxliAxCVcqGqXS2js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721659727; c=relaxed/simple;
-	bh=atDlABSs8TWqozIAX0lOgTXANYKDnBCRPkaJ2w/TPTE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JeZYL3j5VSscX8rO9CxdB6hk1AH6dY2AIvrjJRjLqmLbxFJQIFcuP3XTvg39cmiWAo0kWxbBrF3ZozCPXlNo84rhgztpZsnRlINh2sxXOA1twu850/oI93zLOG0LFI1q987qUFiSsu3UTa3m2Hbv+Myqv+spH7R/ffThAd4T54Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C767DFEC;
-	Mon, 22 Jul 2024 07:49:07 -0700 (PDT)
-Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4196D3F73F;
-	Mon, 22 Jul 2024 07:48:40 -0700 (PDT)
-Message-ID: <8df1a663-1720-4ee6-9097-b0d6e05beb0e@arm.com>
-Date: Mon, 22 Jul 2024 15:48:38 +0100
+	s=arc-20240116; t=1721659767; c=relaxed/simple;
+	bh=8uiNrNGTw2WynMkzOfJLi58fncsfVrLJLHedUgwX7lc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fzhX6P4x7YzK5Fw1elB9haPXdVSMlgXH8LCIB2L1epSTv/Ci0RqheTgZOvBcXm2dCvfL0ybwBwjnFjzA53rNfuvW8QKd9pD+T+0LqPSpnDa+sluJDC+IWTUjq2F8IEdy8BKU0IcypXvFt2nEotiDCUrvVYQls/kQIgqHtafWuYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cKzbptmO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C3F7C116B1;
+	Mon, 22 Jul 2024 14:49:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721659767;
+	bh=8uiNrNGTw2WynMkzOfJLi58fncsfVrLJLHedUgwX7lc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cKzbptmOTQz+nezc8V3oYYTnzRjay1hPGK9miHwAx4H3gcjxXet2aC/Z0t6zYQVIn
+	 n3qwLSZMSdYotRN/Op4csi28weioBVr0CpHeEWluZ3EF03B7caEOhwzLhGrNMAqqWx
+	 k+Oua2sffpSVfGLyTqNuAiW3HuDLSdR9/nRqnZoNJ6LxoqdpWPG144sCCDHnC0u0Q5
+	 rVqrHH5J333RpqojkcsTNjaYv38bjkCoQsgZFZr1M98X61fqXGL0nJNOwriRehvgXS
+	 m6eJn04mn3xtJ4XHvTJSp8guYm01FNgFxs2Jx9HYhXi+2z7i5XV5h6Gtvy7H1pU9cG
+	 LeBcb3qWuMrlQ==
+Date: Mon, 22 Jul 2024 16:49:23 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL for v6.11] vfs procfs
+Message-ID: <20240722-sonnabend-umwickeln-2f80a1b77dfb@brauner>
+References: <20240712-vfs-procfs-ce7e6c7cf26b@brauner>
+ <CAHk-=wiGWLChxYmUA5HrT5aopZrB7_2VTa0NLZcxORgkUe5tEQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/6] perf auxtrace s390: Set the 'auxtrace' flag for
- AUX events
-To: Adrian Hunter <adrian.hunter@intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- James Clark <james.clark@linaro.org>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, John Garry <john.g.garry@oracle.com>,
- Will Deacon <will@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240721202113.380750-1-leo.yan@arm.com>
- <20240721202113.380750-4-leo.yan@arm.com>
- <a9d07994-cf6e-4059-8180-c0b9cd51e528@intel.com>
-Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <a9d07994-cf6e-4059-8180-c0b9cd51e528@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiGWLChxYmUA5HrT5aopZrB7_2VTa0NLZcxORgkUe5tEQ@mail.gmail.com>
 
+> But not this horror.
 
-
-On 7/22/24 11:54, Adrian Hunter wrote:
-
-[...]
-
-> On 21/07/24 23:21, Leo Yan wrote:
->> Set the 'auxtrace' flag for AUX events on s390.
->>
->> Signed-off-by: Leo Yan <leo.yan@arm.com>
->> ---
->>   tools/perf/arch/s390/util/auxtrace.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/tools/perf/arch/s390/util/auxtrace.c b/tools/perf/arch/s390/util/auxtrace.c
->> index 5068baa3e092..d7e72413b262 100644
->> --- a/tools/perf/arch/s390/util/auxtrace.c
->> +++ b/tools/perf/arch/s390/util/auxtrace.c
->> @@ -99,6 +99,7 @@ struct auxtrace_record *auxtrace_record__init(struct evlist *evlist,
->>                if (pos->core.attr.config == PERF_EVENT_CPUM_SF_DIAG) {
->>                        diagnose = 1;
->>                        pos->needs_auxtrace_mmap = true;
->> +                     pos->pmu->auxtrace = true;
-> 
-> This is probably too late. See:
-> 
-> https://lore.kernel.org/all/20240715160712.127117-7-adrian.hunter@intel.com/
-
-Okay, I will drop this patch.
-
-Thanks,
-Leo
-
-
-> 
->>                        break;
->>                }
->>        }
-> 
+I agree and I didn't like it much myself (as evident from my pr message).
 
