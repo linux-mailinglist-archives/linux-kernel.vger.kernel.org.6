@@ -1,76 +1,59 @@
-Return-Path: <linux-kernel+bounces-258544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67694938975
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:00:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73F65938976
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:00:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F0CDB23134
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:00:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92D3A1C20F6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289F43BBEA;
-	Mon, 22 Jul 2024 06:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED22B17BB6;
+	Mon, 22 Jul 2024 06:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R3/8+LYr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FBAA38DE4
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 06:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="1eiaZJQ7"
+Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9C617C6C
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 06:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721631381; cv=none; b=OYY3q9/WqJn0HcPz9pRN3MBei8+V2z8n2kyC0lU3X2Po0n9fOr+rs1yRz3wS8CMMbX0A/qxXU0uFJtsv/HQSXw17d3AVNoCyuTuO0q0syRc1tq9dwHgetk3pqyyMOi9rEswjCF2d6UwxczZ/i9joeqlRv5d5sYMchqTHnXhB0ts=
+	t=1721631590; cv=none; b=cKxWIoVmLfYhda9ZN2xlfX/aW9oAgbIuTbuKrZ9TueUAhf/ZldeWOfKUuUd7vtWLLG1u9VtY0PijeDRRlXhQT6mD7k3MdHEinV8AAbX0FXl+CNcdNavvkpmiSpC3HMIAeoxy8r+MSBz5oFVpY6LgpF829oiShXnHnqquwKZav6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721631381; c=relaxed/simple;
-	bh=G3URHSbf6FGeZ+XY0OOljWL6/6YoryVf7iMmS+suTH0=;
+	s=arc-20240116; t=1721631590; c=relaxed/simple;
+	bh=/K4WJJpu5w/ixAKK77poL1WNPEn65qXKbiqtEOj058U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eLrLUSL3CfJIHa9JrZb9gJarXAe6LDWsyT/brH0QsKGIeWO0NJ0OFdzfgtVgm5BtHJJgXSR6QFeBQgHJYBd9L4aDsZO6acHLS/FyIwZADNIWrXkdJ0vR4q2/pDR7lSkmLzWsgmNCnbXRy/AQmbroL8UtSaOnmRSPGjwPoXBpJXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R3/8+LYr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721631378;
+	 Content-Type:Content-Disposition:In-Reply-To; b=G/b3/jluvkVujWiH760Rc5ei35FPWVEasgieQAK7NV2ZGMO/WN3bAtUvT8K1+g0wV9wPndDRE9vJMx9lGJg029ud2v4Wdinae8qU8JvGgvPeSBqJ/d8f4w1nZjonwG5EjobO6160Hg/kZjNd5Wrnj3zHP8VsmKQTbMZAdSBqhQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=1eiaZJQ7; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 680BB14C1E1;
+	Mon, 22 Jul 2024 08:59:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1721631580;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uvUYsehnZayRqLIElwl0ruBmaZQ2mIx+T83BIjxhjLs=;
-	b=R3/8+LYrXjA47ssOL5TrDTrVjCPa0RE17vwWayvNCAAGQGbySLxLEHyUgius746iwQAMU1
-	hCu8bSvXLhbSPrH+AV+QYY2furLmNXNCQ2fQnIYJgb55djaDC3cSaVfuEs4tzhpor18M7y
-	Uqx3v5kFdazbKaF0Dct4NoV1KvjIB9I=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-622-BZ06GVJpP8S9SeCHHvCMxg-1; Mon,
- 22 Jul 2024 02:56:11 -0400
-X-MC-Unique: BZ06GVJpP8S9SeCHHvCMxg-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E3DFA1955BEE;
-	Mon, 22 Jul 2024 06:56:09 +0000 (UTC)
-Received: from alecto.usersys.redhat.com (unknown [10.43.17.6])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6642A1955D44;
-	Mon, 22 Jul 2024 06:56:07 +0000 (UTC)
-Date: Mon, 22 Jul 2024 08:56:04 +0200
-From: Artem Savkov <asavkov@redhat.com>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
-	Network Development <netdev@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH bpf-next] selftests/bpf: fix compilation failure when
- CONFIG_NET_FOU!=y
-Message-ID: <20240722065604.GA2770066@alecto.usersys.redhat.com>
-References: <20240718143122.2230780-1-asavkov@redhat.com>
- <005ef8ac-d48e-304f-65c5-97a17d83fd86@iogearbox.net>
- <CAADnVQKjgQg9Y=VxHL9jrkNdT6UKMbaFEOfjNFG_w_M=GgaRjQ@mail.gmail.com>
- <CAEf4BzbgeCo09sfrQVgBHJJ-=uZEEm287xXkjoLMrUkcLN6VMQ@mail.gmail.com>
+	bh=HfIFdx4oWgQSVOCKIlbEQGzvUuQvIMzMdhNdW5DA4H0=;
+	b=1eiaZJQ7+ixGHzC0jlMK+9bjOSFc58FOztQKBstyftCg3v/0wt++LvMiAzMc1dz3cuSoEa
+	a9ZPCsKODnd0oHy+J2D+ujkbsbSGt4fxDYalL9NsDAnZItjfnfd0fx9rSOlV/Eo3s5vsh3
+	JFbGDtevY/5kK3A99ed5JFSGFke+v2KZRpWiNHOhSfpDrxcrAmlmdccIiA1OnDLKlzP0eL
+	yGXiRks0m6LRcMA0OeAbdPVWCHuHmgDrpwtiAWj6h6vDDQvAThQnNdXRlZWdtbCI0QEgqV
+	wct4yI2i3RMNOhh/GXiPjKlHrAT9pzvxu/cYJfy3S9SCHYkzSzFzh/uUls7GIA==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 906e708a;
+	Mon, 22 Jul 2024 06:59:36 +0000 (UTC)
+Date: Mon, 22 Jul 2024 15:59:21 +0900
+From: asmadeus@codewreck.org
+To: David Vernet <void@manifault.com>
+Cc: linux-kernel@vger.kernel.org, ericvh@kernel.org, lucho@ionkov.net,
+	linux_oss@crudebyte.com, v9fs@lists.linux.dev, kernel-team@meta.com
+Subject: Re: [PATCH] net/9p: Fix uaf / refcnt underflow for req object in
+ virtio
+Message-ID: <Zp4DSeHdOU0U1PZC@codewreck.org>
+References: <20240709162904.226952-1-void@manifault.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,76 +62,179 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzbgeCo09sfrQVgBHJJ-=uZEEm287xXkjoLMrUkcLN6VMQ@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+In-Reply-To: <20240709162904.226952-1-void@manifault.com>
 
-On Fri, Jul 19, 2024 at 11:44:34AM -0700, Andrii Nakryiko wrote:
-> On Fri, Jul 19, 2024 at 10:09 AM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> >
-> > On Fri, Jul 19, 2024 at 8:45 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
-> > >
-> > > Hi Artem,
-> > >
-> > > On 7/18/24 4:31 PM, Artem Savkov wrote:
-> > > > Without CONFIG_NET_FOU bpf selftests are unable to build because of
-> > > > missing definitions. Add ___local versions of struct bpf_fou_encap and
-> > > > enum bpf_fou_encap_type to fix the issue.
-> > > >
-> > > > Signed-off-by: Artem Savkov <asavkov@redhat.com>
-> > >
-> > > This breaks BPF CI, ptal:
-> > >
-> > > https://github.com/kernel-patches/bpf/actions/runs/9999691294/job/27641198557
-> > >
-> > >    [...]
-> > >      CLNG-BPF [test_maps] btf__core_reloc_existence___wrong_field_defs.bpf.o
-> > >      CLNG-BPF [test_maps] verifier_bswap.bpf.o
-> > >      CLNG-BPF [test_maps] test_core_reloc_existence.bpf.o
-> > >      CLNG-BPF [test_maps] test_global_func8.bpf.o
-> > >      CLNG-BPF [test_maps] verifier_bitfield_write.bpf.o
-> > >      CLNG-BPF [test_maps] local_storage_bench.bpf.o
-> > >      CLNG-BPF [test_maps] verifier_runtime_jit.bpf.o
-> > >      CLNG-BPF [test_maps] test_pkt_access.bpf.o
-> > >    progs/test_tunnel_kern.c:39:5: error: conflicting types for 'bpf_skb_set_fou_encap'
-> > >       39 | int bpf_skb_set_fou_encap(struct __sk_buff *skb_ctx,
-> > >          |     ^
-> > >    /tmp/work/bpf/bpf/tools/testing/selftests/bpf/tools/include/vmlinux.h:107714:12: note: previous declaration is here
-> > >     107714 | extern int bpf_skb_set_fou_encap(struct __sk_buff *skb_ctx, struct bpf_fou_encap *encap, int type) __weak __ksym;
-> > >            |            ^
-> > >    progs/test_tunnel_kern.c:41:5: error: conflicting types for 'bpf_skb_get_fou_encap'
-> > >       41 | int bpf_skb_get_fou_encap(struct __sk_buff *skb_ctx,
-> > >          |     ^
-> > >    /tmp/work/bpf/bpf/tools/testing/selftests/bpf/tools/include/vmlinux.h:107715:12: note: previous declaration is here
-> > >     107715 | extern int bpf_skb_get_fou_encap(struct __sk_buff *skb_ctx, struct bpf_fou_encap *encap) __weak __ksym;
-> > >            |            ^
-> > >      CLNG-BPF [test_maps] verifier_typedef.bpf.o
-> > >      CLNG-BPF [test_maps] user_ringbuf_fail.bpf.o
-> > >      CLNG-BPF [test_maps] verifier_map_in_map.bpf.o
-> > >    progs/test_tunnel_kern.c:782:35: error: incompatible pointer types passing 'struct bpf_fou_encap___local *' to parameter of type 'struct bpf_fou_encap *' [-Werror,-Wincompatible-pointer-types]
-> > >      782 |         ret = bpf_skb_set_fou_encap(skb, &encap, FOU_BPF_ENCAP_GUE___local);
-> > >          |                                          ^~~~~~
-> > >    /tmp/work/bpf/bpf/tools/testing/selftests/bpf/tools/include/vmlinux.h:107714:83: note: passing argument to parameter 'encap' here
-> > >     107714 | extern int bpf_skb_set_fou_encap(struct __sk_buff *skb_ctx, struct bpf_fou_encap *encap, int type) __weak __ksym;
-> >
-> > It's a good idea to introduce struct bpf_fou_encap___local
-> > for !FOU builds, but kfunc signature needs to stay and
-> > __local variable needs to be type casted to (struct bpf_fou_encap *)
-> > when calling kfunc.
+David Vernet wrote on Tue, Jul 09, 2024 at 11:29:04AM -0500:
+> We can currently encounter an underflow when freeing an rpc request object
+> when using a virtio 9p transport, as shown by stress-ng:
 > 
-> Given we specify
+> $ stress-ng --exec 1 -t 1
+> ...
+> [    5.188359] ------------[ cut here ]------------
+> [    5.211094] refcount_t: underflow; use-after-free.
+> [    5.230781] WARNING: CPU: 6 PID: 557 at lib/refcount.c:28 refcount_warn_saturate+0xb4/0x140
+> [    5.247551] Modules linked in:
+> [    5.258476] CPU: 6 PID: 557 Comm: stress-ng-exec- Not tainted 6.10.0-rc2-virtme #26
+> [    5.276072] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Arch Linux 1.16.3-1-1 04/01/2014
+> [    5.294310] RIP: 0010:refcount_warn_saturate+0xb4/0x140
+> [    5.313818] Code: ff 90 0f 0b 90 90 e9 16 07 91 00 cc 80 3d f9 14 83 01 00 75 90 c6 05 f0 14 83 01 01 90 48 c7 c7 97 ad 48 84 e8 5d d2 b5 ff 90 <0f> 0b 90 90 e9 ee 06 91 00 cc 80 3d ce 14 83 01 00 0f 85 64 ff ff
+> [    5.342462] RSP: 0018:ffffa9ac80a47a28 EFLAGS: 00010246
+> [    5.345307] RAX: b2786dec9d38b800 RBX: ffff9b67e704eaa8 RCX: ffffffff84c6e950
+> [    5.361743] RDX: 0000000000000002 RSI: 0000000100005ceb RDI: ffffffff84c9ed60
+> [    5.384172] RBP: 0000000000000000 R08: 0000000000001ceb R09: ffffffff84c6ed60
+> [    5.408242] R10: 00000000000056c1 R11: 0000000000000003 R12: 00000000fffffe00
+> [    5.425085] R13: ffffffff8452db57 R14: ffff9b67cb3b2f00 R15: ffff9b67c4e33ec0
+> [    5.444305] FS:  00007fb7ba9e16c0(0000) GS:ffff9b67fe780000(0000) knlGS:0000000000000000
+> [    5.464612] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    5.481423] CR2: 00007fffcdf76fe8 CR3: 000000000c142000 CR4: 0000000000750ef0
+> [    5.498275] PKRU: 55555554
+> [    5.502138] Call Trace:
+> [    5.505372]  <TASK>
+> [    5.507353]  ? __warn+0xc9/0x1c0
+> [    5.511056]  ? refcount_warn_saturate+0xb4/0x140
+> [    5.520082]  ? report_bug+0x148/0x1e0
+> [    5.531777]  ? handle_bug+0x3e/0x70
+> [    5.543371]  ? exc_invalid_op+0x1a/0x50
+> [    5.557119]  ? asm_exc_invalid_op+0x1a/0x20
+> [    5.564184]  ? refcount_warn_saturate+0xb4/0x140
+> [    5.576789]  ? refcount_warn_saturate+0xb3/0x140
+> [    5.589334]  p9_req_put+0x9e/0xf0
+> [    5.598119]  p9_client_zc_rpc+0x3ac/0x460
+> [    5.611438]  ? wake_page_function+0x41/0xa0
+> [    5.620745]  ? __wake_up_locked_key+0x3f/0x70
+> [    5.631290]  p9_client_read_once+0xd8/0x2d0
+> [    5.644251]  p9_client_read+0x3e/0x70
+> [    5.655285]  v9fs_issue_read+0x47/0x90
+> [    5.668043]  netfs_begin_read+0x3f2/0x880
+> [    5.673140]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [    5.676800]  ? netfs_alloc_request+0x21a/0x2b0
+> [    5.679999]  netfs_read_folio+0xde/0x380
+> [    5.685441]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [    5.695729]  ? __filemap_get_folio+0x158/0x2a0
+> [    5.713327]  filemap_read_folio+0x1f/0x70
+> [    5.726596]  filemap_fault+0x28d/0x510
+> [    5.737644]  __do_fault+0x42/0xb0
+> [    5.747996]  handle_mm_fault+0x59c/0x13a0
+> [    5.759156]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [    5.776631]  ? mt_find+0x2da/0x400
+> [    5.785758]  do_user_addr_fault+0x1fd/0x790
+> [    5.800640]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [    5.813852]  exc_page_fault+0x68/0x180
+> [    5.822403]  asm_exc_page_fault+0x26/0x30
+> [    5.933431]  </TASK>
+> [    5.941515] ---[ end trace 0000000000000000 ]---
 > 
-> CONFIG_NET_FOU=y (not =m)
+> The sequence that causes this underflow is as follows:
 > 
-> in selftests/bpf/config, do we really need to work around this? I bet
-> we have a bunch of other missing types if we don't set all the
-> settings as required by selftests/bpf/config.
+> 1. The virtio transport returns -ERESTARTSYS from p9_virtio_zc_request()
+>    due to virtqueue_add_sgs() returning -ENOSPC, and wait_event_killable()
+>    eventually returning -ERESTARTSYS.
+> 
+> 2. The request is never kicked, so its reference is dropped at the end of
+>    p9_virtio_zc_request(). This is the first of the two available
+>    references.
+> 
+> 3. In p9_client_zc_rpc(), the client is still connected, so we call
+>    p9_client_flush() which drops the second and final reference in
+>    the callback to p9_virtio_cancelled().
+> 
+> 4. We reference the req object below in p9_virtio_zc_request(), and then
+>    hit a refcnt underflow when we again try to drop a reference in the
+>    reterr path.
+> 
+> Let's fix this by only dropping that reference if we're not exiting due to
+> -ERESTARTSYS, as the assumption is that the reference will instead be
+> dropped later when we flush the request.
 
-We do have other missing types and a lot of them (not all) are fixed
-the same way with ___local versions by interested parties.
+Thanks for the patch!
+I hadn't forgotten about it, I'm just not convinced this is the only
+problem we have around these refs or how to fix that, and haven't had
+time to look in details...
+looking again now I think we can sum it up to a p9_client_flush problem
+instead: basically dropping your 3. instead of dropping the 2.
 
+If the request really was cancelled we'll get the flush reply before the
+response and that'll drop the second ref in the cancelled callback,
+which would also blow up, but afaik qemu doesn't implement this so this
+code path so this was never tested.
+
+And this also made me notice our cancelled callbacks are all over the
+place with rdma and xen not doing anything about the ref, so let's make
+that ref dropping common, so we can remove the virtio callback
+altogether - I'm now starting to doubt if any server actually implement
+cancelling flushes, it might be worth testing with a synthetic fd mount
+as syzcaller does..
+
+So something like that (untested)
+---
+diff --git a/net/9p/client.c b/net/9p/client.c
+index 5cd94721d974..51ce3bd4aece 100644
+--- a/net/9p/client.c
++++ b/net/9p/client.c
+@@ -616,9 +616,10 @@ static int p9_client_flush(struct p9_client *c, struct p9_req_t *oldreq)
+        if (READ_ONCE(oldreq->status) == REQ_STATUS_SENT) {
+                if (c->trans_mod->cancelled)
+                        c->trans_mod->cancelled(c, oldreq);
++               /* reply won't come anymore, drop the "receive" ref */
++               p9_req_put(client, req);
+        }
+ 
+-       p9_req_put(c, req);
+        return 0;
+ }
+ 
+diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+index 196060dc6138..5184730a2639 100644
+--- a/net/9p/trans_fd.c
++++ b/net/9p/trans_fd.c
+@@ -737,8 +737,6 @@ static int p9_fd_cancelled(struct p9_client *client, struct p9_req_t *req)
+        WRITE_ONCE(req->status, REQ_STATUS_FLSHD);
+        spin_unlock(&m->req_lock);
+ 
+-       p9_req_put(client, req);
+-
+        return 0;
+ }
+ 
+diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+index 0b8086f58ad5..1c1fd9fbecc9 100644
+--- a/net/9p/trans_virtio.c
++++ b/net/9p/trans_virtio.c
+@@ -195,13 +195,6 @@ static int p9_virtio_cancel(struct p9_client *client, struct p9_req_t *req)
+        return 1;
+ }
+ 
+-/* Reply won't come, so drop req ref */
+-static int p9_virtio_cancelled(struct p9_client *client, struct p9_req_t *req)
+-{
+-       p9_req_put(client, req);
+-       return 0;
+-}
+-
+ /**
+  * pack_sg_list_p - Just like pack_sg_list. Instead of taking a buffer,
+  * this takes a list of pages.
+@@ -793,7 +786,6 @@ static struct p9_trans_module p9_virtio_trans = {
+        .request = p9_virtio_request,
+        .zc_request = p9_virtio_zc_request,
+        .cancel = p9_virtio_cancel,
+-       .cancelled = p9_virtio_cancelled,
+        /*
+         * We leave one entry for input and one entry for response
+         * headers. We also skip one more entry to accommodate, address
+
+---
+
+I'll try to find time to play with it a bit more overnight then send the
+patch proper and ask syzbot if that fixes this one:
+https://lkml.kernel.org/r/000000000000c18c15061dcff478@google.com 
+
+But if you could also test that'd be great.
+Shall I keep you as the author for the above, or would you rather just
+be reported-by given the patch is different enough?
+I think most of the commit message can also be kept.
+
+Thanks,
 -- 
- Artem
-
+Dominique Martinet | Asmadeus
 
