@@ -1,75 +1,39 @@
-Return-Path: <linux-kernel+bounces-258620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53DA9938A98
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:00:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F0E9938A9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94604B2115B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:00:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8BEAB209CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E809D16087B;
-	Mon, 22 Jul 2024 08:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P2HyqMpG"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19F215FD01;
-	Mon, 22 Jul 2024 07:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D64160865;
+	Mon, 22 Jul 2024 08:00:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE60017C69;
+	Mon, 22 Jul 2024 08:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721635200; cv=none; b=W+F1M0yKBfIPyY3B5aCLiNOVRuSqusNoyrgDAApZ006uQ0H20aU9LcYHuoX4G6394qJiModWEGOZDpZl220VydTwXh52lnQGjyLhoFFrBKhC/VfF3yRJX/57OMx9CD4c6q+BlMsbGy7ra8zN4aPcnHydoZzi6pj2kARG8M9FpnI=
+	t=1721635242; cv=none; b=jL5xsAfuvZEcpeGYGz0cwy8DBw3TRWrbU3Q+5eMFgJH7DilvGGAxWAx6Fxds954Dz43fi+R8sDJpmDnsGp5PpsYQUXk0D4Bays7+fq+qSOUdc7bELNug6tlgrKSyXhbo7BpBLQFe1smjaybvpqn7/Q6YrLqpWhqJa4/Kn3xbm5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721635200; c=relaxed/simple;
-	bh=DETe9cqRl472ht2Rv9JHngPeg4K1nkxpvGkPc2r2hGw=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=psPb0jBChHzRWFwx4xjvyhAx/+A2zFMR/xiyGYIMq05qCJcguQNd7yb5eCySrpylQyzN3HV6d43L7CQmkEBQpZX3iyEIQkOb3DOLBe5EDFf+1JzbVEAtkSinF2nyGfufTLpW0h4P2Bd1aMKeZxoKoDt8kabh+dUf0gOk0kv6/3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P2HyqMpG; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fa9ecfb321so25681785ad.0;
-        Mon, 22 Jul 2024 00:59:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721635198; x=1722239998; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fYfE/3PpByzsoGwhv8BBvxXbgN0ILya8G+Bi1D7Wfn8=;
-        b=P2HyqMpGtsl4g9+JyhlYfycNz652hC8U5CQRs7Q2q9jKNcr/h/s5F0TQLZHRnIwg97
-         tdmYnpt4FmD9WZ2lW6IWXb28uJZo57n+duLzaQ61i+pXjrN4OMix5aXBbWR+MaBSNP5Z
-         KyHBdwuIkajWcE2n7FPWBj4yVWqQ9tFS5nZMo1J/8WIj4YHGigIv4CJLzI4eMFpfK8j5
-         ZCWLRfuirF0O9X9aYtRapcbl3eHpFOOpunrmg+bCk16XL61GkutrKlp2l02S6AYtM5Xi
-         rSrLOUovJy8XBK3w4AYcQmsO34/Ac4la9KwsbEnChhfrTiVLO7cfdnjtwX0lZTKOkk9d
-         112w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721635198; x=1722239998;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fYfE/3PpByzsoGwhv8BBvxXbgN0ILya8G+Bi1D7Wfn8=;
-        b=P362MH3/83uToK5I3fekwxuCAuu4leykmn9vJHweYHlBpvi74esYGmUIBvCC2jw4kj
-         Agjq85p7CAJZLaDAK21HukNAYpfu+Dlywrjt5ArRHQdTqK20tWfCXsXtXB6zJ+j3gJds
-         r8HshK089qpAvThI1FGoiIODvDF1/LnPSef63U81BBgz5cU2TyPioqkh7aBp0xa85t35
-         Eg9sqkXYxHXuwE1JBqpVMhzPer67le5wnYNRbvuAhnSP4bJzYnX/yHPZbzavn/42Dm8n
-         mB1SPQ2r5TlFixYHFCluiIT9jgv+oJ8ptZ614cjlyMHEjoREPzUkpMdl99m3KqVZB/Fd
-         Sh2w==
-X-Forwarded-Encrypted: i=1; AJvYcCU7uSJpJjqPhStP9S9vQKiHam8++8JOy29b87mkuOVUR9r37aYuBnq/mHmWJ2PQtKpi+YMpq8uE1JbJm0mv+hNA106Vz9G9GBzQNG7II8yta7wYNS2oXpRXd1lMJCJaXz+uSzr1EyKr/c4rW55XePqUVhHSedmPf1+qyfu0IQqUwU4r4eU=
-X-Gm-Message-State: AOJu0YzF1migHdvPIYXqrpP6HEHX/toXipKBZly7EMlOfCKq6KxuFNAs
-	ctC859EsXf5xl+hEagym42VfBFGMUp15bGI9WXM6CmSKIcaG+puT
-X-Google-Smtp-Source: AGHT+IH1/q7piFxaPApp/nFcftg2U5jv2fki91ORtk9udTyWHUR7dl8pWdRwBt/h+VS8LKQYhXu4fw==
-X-Received: by 2002:a17:902:f549:b0:1fb:3e8c:95a6 with SMTP id d9443c01a7336-1fd7465ba9amr33047925ad.40.1721635197623;
-        Mon, 22 Jul 2024 00:59:57 -0700 (PDT)
-Received: from [198.18.0.1] ([2401:d9c0:2902::c2eb])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f3181f4sm48696385ad.163.2024.07.22.00.59.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jul 2024 00:59:57 -0700 (PDT)
-From: Cryolitia PukNgae <cryolitia@gmail.com>
-X-Google-Original-From: Cryolitia PukNgae <Cryolitia@gmail.com>
-Message-ID: <3e1db249-f89e-4cc4-9e92-1f00f2e262f9@gmail.com>
-Date: Mon, 22 Jul 2024 15:59:52 +0800
+	s=arc-20240116; t=1721635242; c=relaxed/simple;
+	bh=zJcfuhn0DuH1uG0pDznMSXqnvuHQG9yPxqhYft8CvAQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TD3unEBlbS9kpYifEixqK9qeYnRLROWUScq/bxBwXmCQZb7uLnfKYbmNxdKbjiwaIhftCBsOUB/5lYOKLANvtSFgMe+RImAVUhr+GVOUCdVv8/QrFkB+lSt+yYy0Sb/J7u05X0g1rqdVoMIPoTtff1btUhdHFAfyikKfgdA0O9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BE3EB367;
+	Mon, 22 Jul 2024 01:01:05 -0700 (PDT)
+Received: from [10.162.41.8] (a077893.blr.arm.com [10.162.41.8])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 02BB83F73F;
+	Mon, 22 Jul 2024 01:00:36 -0700 (PDT)
+Message-ID: <4db40b5b-bcc7-4370-a70d-57c1cd83682f@arm.com>
+Date: Mon, 22 Jul 2024 13:30:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,138 +41,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] hwmon: add GPD devices sensor driver
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
- linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-doc@vger.kernel.org, Celeste Liu <CoelacanthusHex@gmail.com>,
- Yao Zi <ziyao@disroot.org>, =?UTF-8?Q?Marcin_Str=C4=85gowski?=
- <marcin@stragowski.com>
-References: <20240718-gpd_fan-v4-0-116e5431a9fe@gmail.com>
- <20240718-gpd_fan-v4-1-116e5431a9fe@gmail.com>
- <cf41c18f-8b35-4970-a274-2834a15c9f08@roeck-us.net>
+Subject: Re: [PATCH] arm64/sysreg: Correct the values for GICv4.1
+To: Marc Zyngier <maz@kernel.org>, Raghavendra Rao Ananta <rananta@google.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <20240718215532.616447-1-rananta@google.com>
+ <86ikx13jeu.wl-maz@kernel.org>
 Content-Language: en-US
-In-Reply-To: <cf41c18f-8b35-4970-a274-2834a15c9f08@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <86ikx13jeu.wl-maz@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
-On 2024/7/19 09:41, Guenter Roeck wrote:
-> I am havng a hard time reviewing this driver. I am going to pint out a few
-> issues, but this is far from a complete review.
 
-I'm new to kernel development, so please forgive my mistakes and thank 
-you for your patience.
+On 7/19/24 13:25, Marc Zyngier wrote:
+> On Thu, 18 Jul 2024 22:55:32 +0100,
+> Raghavendra Rao Ananta <rananta@google.com> wrote:
+>>
+>> Currently, sysreg has value as 0b0010 for the presence of GICv4.1 in
+>> ID_PFR1_EL1 and ID_AA64PFR0_EL1, instead of 0b0011 as per ARM ARM.
+>> Hence, correct them to reflect ARM ARM.
+>>
+>> Signed-off-by: Raghavendra Rao Ananta <rananta@google.com>
+>> ---
+>>  arch/arm64/tools/sysreg | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm64/tools/sysreg b/arch/arm64/tools/sysreg
+>> index a4c1dd4741a47..7ceaa1e0b4bc2 100644
+>> --- a/arch/arm64/tools/sysreg
+>> +++ b/arch/arm64/tools/sysreg
+>> @@ -149,7 +149,7 @@ Res0	63:32
+>>  UnsignedEnum	31:28	GIC
+>>  	0b0000	NI
+>>  	0b0001	GICv3
+>> -	0b0010	GICv4p1
+>> +	0b0011	GICv4p1
+>>  EndEnum
+>>  UnsignedEnum	27:24	Virt_frac
+>>  	0b0000	NI
+>> @@ -903,7 +903,7 @@ EndEnum
+>>  UnsignedEnum	27:24	GIC
+>>  	0b0000	NI
+>>  	0b0001	IMP
+>> -	0b0010	V4P1
+>> +	0b0011	V4P1
+> 
+> I wonder why we have different naming schemes for the same feature...
 
-I am modifying the source code of this driver according to your 
-suggestions, and I would like to discuss some of your comments first.
+Both definitions were added via different commits and different developers who
+might just have interpreted the following common description bit differently.
 
->> +static const struct gpd_model_quirk gpd_win4_quirk = {
->> +	.model_name	= "win4",
->> +	.address	= {
->> +				.addr_port		= 0x2E,
->> +				.data_port		= 0x2F,
->> +				.manual_control_enable	= 0xC311,
->> +				.rpm_read		= 0xC880,
->> +				.pwm_write		= 0xC311,
->> +				.pwm_max		= 127,
->> +			},
->> +	.read_rpm	= gpd_win4_read_rpm,
->> +	// same as GPD Win Mini
->> +	.set_pwm_enable	= gpd_win_mini_set_pwm_enable,
->> +	.read_pwm	= gpd_read_pwm,
->> +	// same as GPD Win Mini
-> I do not see te value in those comments.
+"System register interface to version 4.1 of the GIC CPU interface is supported"
 
-It's the struct of win4, but it's part of functions are the same as 
-win_mini's.
+1224308075f1 ("arm64/sysreg: Convert ID_PFR1_EL1 to automatic generation")
+cea08f2bf406 ("arm64/sysreg: Convert ID_AA64PFR0_EL1 to automatic generation")
 
-The comment is to remind that, it's by design to use win_mini's 
-function, not by mistake.
+But I agree that same fields should be named exactly the same both in their 32
+bit and 64 bit variants.
 
->> +
->> +static int gpd_fan_probe(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct gpd_driver_priv *data;
->> +	const struct resource *plat_res;
->> +	const struct device *dev_reg;
->> +	const struct resource *region_res;
->> +
->> +	data = dev_get_platdata(&pdev->dev);
->> +	if (IS_ERR(data))
->> +		return -ENODEV;
->> +
-> With all the "const" spread through the driver, this one is really odd.
-> I have never seen a driver there the _platform data_ is used to store
-> instance-specific information. Normally _that_ information is considered
-> constant and not modified by a driver.  I really have to say that it is
-> extremely odd to have the init function
-> declare values such as pwm enable and pwm value and use it in the driver.
->
-> Please provide a rationale for this unusual approach.
-I don't know how to pass which model the init function found. Is it a 
-good idea the use a global pointer to point to the instance-specific 
-information?
->> +	plat_res = platform_get_resource(pdev, IORESOURCE_IO, 0);
->> +	if (IS_ERR(plat_res))
->> +		return dev_err_probe(dev, PTR_ERR(plat_res),
->> +				     "Failed to get platform resource\n");
->> +
->> +	region_res = devm_request_region(dev, plat_res->start,
->> +					 resource_size(plat_res), DRIVER_NAME);
->> +	if (IS_ERR(region_res))
->> +		return dev_err_probe(dev, PTR_ERR(region_res),
->> +				     "Failed to request region\n");
->> +
->> +	dev_reg = devm_hwmon_device_register_with_info(
->> +		dev, DRIVER_NAME, data, &gpd_fan_chip_info, NULL);
-> CHECK: Lines should not end with a '('
-> #756: FILE: drivers/hwmon/gpd-fan.c:593:
-> +	dev_reg = devm_hwmon_device_register_with_info(
->
-> Plus on top of that multi-line code should be aligned with '('.
-
-The source code has been formatted by clang-format with kernel's 
-`.clang-format` file.
-
-But I would be glad to manually adjust it's style if needed.
-
->> +static int gpd_fan_remove(struct platform_device *pdev)
->> +{
->> +	struct gpd_driver_priv *data = dev_get_platdata(&pdev->dev);
->> +
->> +	data->pwm_enable = AUTOMATIC;
->> +	data->quirk->set_pwm_enable(data, AUTOMATIC);
->> +
-> This is even more unusual. Can you point me to other drivers in the kernel
-> using that same approach for handling device specific private data ?
-
-It's to set EC back to default status if user rmmod the driver, to 
-prevent a hardware damage.
-
-For example, they may use a userspace program to adjusting the fan 
-curve, setting the EC to manually control mode. It happened that the 
-device was in low power consumption and fan speed during rmmod, and the 
-user remove the module and then performed some tasks that generated a 
-lot of heat. Since the module was uninstalled and the EC was still in 
-manual mode, there was nothing to protect the device.
-
-I don't know how to implement this part elegantly
-
->> +
->> +	struct gpd_driver_priv data = {
->> +		.pwm_enable		= AUTOMATIC,
->> +		.pwm_value		= 255,
-> This is unusual, to say it mildly. Since the pwm value is never read
-> from the controller/chip, this is just a random value.
-
-We cannot read pwm out on win_mini, only wm2 support it.
-
-It's also to prevent the device from damaging.
-
-Assuming the user switches to manual control mode immediately after 
-loading the module, the fan will always run at full speed until the user 
-specifies the fan speed.
-
+> 
+>>  EndEnum
+>>  SignedEnum	23:20	AdvSIMD
+>>  	0b0000	IMP
+>>
+> 
+> Yup, this looks correct and checks out against revision H.b of the GICv3
+> spec, revision K.a of the ARM ARM, and even I.a (which the original
+> patches were referencing).
+> 
+> Once more, it shows that these dumps should be automatically generated
+> from the XML instead of (creatively) hand-written.
+> 
+> Reviewed-by: Marc Zyngier <maz@kernel.org>
+> 
+> 	M.
+> 
 
