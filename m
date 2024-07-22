@@ -1,158 +1,142 @@
-Return-Path: <linux-kernel+bounces-258694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8123D938BBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:07:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AF3B938BB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:06:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C8F02814AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:07:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9FE21F216E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DF416A382;
-	Mon, 22 Jul 2024 09:07:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05C2166313;
+	Mon, 22 Jul 2024 09:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HQ10Z+bS"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12DBB16B38B
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="oAVcmYyQ"
+Received: from submarine.notk.org (62-210-214-84.rev.poneytelecom.eu [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4F5523A
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721639238; cv=none; b=FOxpTWFbB/P8Il8SHJv5sN4OGfsGjGKrzX229zImV1xt+JvIPXGL5e3OTkJZ7HCc3UocY4P3nr1DIRCBo+3MwciBP5Tkd++vo419WUJjYah4IRET/zCZ2uFbYsrtz/f5uQ/fGPqiCpY8xBFqp6tMvRWx+/Qqex8XFhxdco2tlW8=
+	t=1721639211; cv=none; b=Zks8VjxtlxK/KZcbuhvnLkMLCXTvx2ws5soy3y+kuHEMa4IqTm2ZXXeztkcp3pLnHYPuIGspNQ3ZUwCPq2lQeTxG3ux4J1kdjg9K7c28bPLVUEn9fbbLRPeiTSRPrTAZlTZoJoZdDV1BejX2z9Burp1ROwcFz57vI+e8akHyOns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721639238; c=relaxed/simple;
-	bh=J9TwGknNWjs/N9deiPaq5k+uLL6PXCMwbiv/oe6XZ94=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=S6EFw/SmpY6gvd1Hoqd/onFVMutoZUt1Fyfm32+5rxgyz38znwJUaKN1NeM0Jxorichjdl9cM5mJXBxkPOtm/T0QOPZSyoNR0WRgGIRdzNS2gjxCESp5h7csEpcNWRayGZXZY5C6+30QjpZMAsBq9YyKnq3/Jp+4rg3u6G1v9gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HQ10Z+bS; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2eea8ea8c06so53078901fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 02:07:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721639233; x=1722244033; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t/F0ZmP17hObUGx93Q7otIls3wWDQaOtJ+irX03aguA=;
-        b=HQ10Z+bSAbtFT8HdmzvO55SF5l1Z8FImaPwOkvWAp0fuUGZyJrCoPh/UAS3ddbrqks
-         Ob9MxFSHD7y0wEvPO20Iq7SmYsd4m+LSqv74tJ7AjA3v1oSGSIC4FlmDCLQ7hyAVhAyI
-         l0b0JnQZl0+eDnE1aJhZbcjJcQ0NkoQAFy45fIA0Rt4HSzxPJZnrYCE/C6BU0e6Ek7Zs
-         J9CeOoOcLiTO3gT3DlFqYJGKwtZsf2WuIdbQOqYubBTjuuH5AnZCjxklL+TKSrOe5w83
-         iSQoBR7YKhuXgFwPCBkpSO5v0m81jLdzshjBXoc1fSA/Q4lCLaYhCURTEoo9sM67O6dA
-         9vIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721639233; x=1722244033;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t/F0ZmP17hObUGx93Q7otIls3wWDQaOtJ+irX03aguA=;
-        b=M/5hs5VnEtouittN20oamVYCn9X8wbRAZO6wKD+qHHNDKHYj9pnmmJUMhA/LAJ5KjI
-         qDsOeWafi6WxfsndzKITC/BifrMimYuuQcoD/X6YmuaVLDyE60IB3gX7pLwacDmle1/S
-         f7xeJPu5lJKBff7QIX+ZDb8NUGYJ6twyXCdvJZUhtumfYxJfZc4vEMzqqP1orb/8mk3Q
-         g+PtvVtNh1a8SOnDqeqzcXyFiCPrfy6Ioc3Ls+BVdAuuuHxuinOukfvJyVl5R/wnedln
-         9mOwqPuKUI09cAxZgaAN+4sLMZxSRsR2vWRMMJLwLUOeZPP8YdmSFYLb1hkcWBbT/zL0
-         lytw==
-X-Forwarded-Encrypted: i=1; AJvYcCXKT7FXyM9BMdT1KaJLqH9KFY+WS22nU6t3tSHz1xzAkrMwtd7pdpIhjjcGUMNPDp21qTcE22rIwXsoNA5e3oAJDsTl1To+QlHrBAZi
-X-Gm-Message-State: AOJu0YyAr6d7UXteKaCtk5O7PJ3EUk9Z81nKSk6xtr45T1bsTGdC7XEG
-	P2/n4QYXQSfLjqh1dAIwys3NflHQSK7llsGSd97yU2Zsh2m6OrzcXuXOG8gaOu8=
-X-Google-Smtp-Source: AGHT+IFCPNC5SoKT5EINogEfHSqyN/UbbcWJnoEmhmIjj22SyV1kqmShS7JNJ5O4PLkhW1QWWrFjrg==
-X-Received: by 2002:a2e:8789:0:b0:2ef:2d8b:7cdb with SMTP id 38308e7fff4ca-2ef2d8b7ea9mr21511281fa.22.1721639233272;
-        Mon, 22 Jul 2024 02:07:13 -0700 (PDT)
-Received: from dhcp161.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cb7753abeasm7534290a91.48.2024.07.22.02.07.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 02:07:12 -0700 (PDT)
-From: Petr Pavlu <petr.pavlu@suse.com>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	linux-modules@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Petr Pavlu <petr.pavlu@suse.com>
-Subject: [PATCH 2/2] module: Clean up the description of MODULE_SIG_<type>
-Date: Mon, 22 Jul 2024 11:06:22 +0200
-Message-Id: <20240722090622.16524-3-petr.pavlu@suse.com>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20240722090622.16524-1-petr.pavlu@suse.com>
-References: <20240722090622.16524-1-petr.pavlu@suse.com>
+	s=arc-20240116; t=1721639211; c=relaxed/simple;
+	bh=6G5bMEzcbSZGUf0rxwJ716RLr0ED+C9ZduoP4oB+Lhs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HsJoXmFzBIFR7oQXC6tKDYVVNIO/FY/1fyyNnVsAcKmySIamHa1iWnzCiiNaTmk5cZr8meRRyYn58NHMDWwDvxOhDGnykymnmjvZmt3ky8Yv+ibE5HcbAug1kPMMP+0iSbD2vrxr7tOeVixQqd3C3flG7XkiIBgYu0Aa0BMr3oE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=oAVcmYyQ; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 40A5814C1E1;
+	Mon, 22 Jul 2024 11:06:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1721639204;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b6ji23ojz05eF35yF+0f6k4PXpmGZQOUUr56sBX+JZA=;
+	b=oAVcmYyQz8QTmTKTqXsS/pE8opvM+SpO7+vYnhWKKOFM31vU54i32Lz1iqsvNQcRXnWlQY
+	zNQ2ldChWOMAoCdHpqNs9tbpoAnvAQFK0qe4tO/T72C1JxG/uCZ7T6ntke5pFoojpkFZHt
+	lGaxbjMfl5C6G0xR4faXqHjmjKNQ6siQ/3IEtzbHwUP5j/CiggK+sBP1ztJ3ZxsGmMb7ox
+	YTcV8/2+B/zXJx0TgFrxtQhUwF7nNFJkxbUInxu4+WOAYmJRb2LvwtalUFWk0L7JqYA2Wn
+	DKWFi7AWsX5Njcii+Ue+aEtrPmEhpTG38XTCPaXpHOF4sXs0kYa3/+ovUtm5tw==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 05485a21;
+	Mon, 22 Jul 2024 09:06:40 +0000 (UTC)
+Date: Mon, 22 Jul 2024 18:06:25 +0900
+From: asmadeus@codewreck.org
+To: Christian Schoenebeck <linux_oss@crudebyte.com>
+Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org,
+	ericvh@kernel.org, lucho@ionkov.net, v9fs@lists.linux.dev,
+	kernel-team@meta.com
+Subject: Re: [PATCH] net/9p: Fix uaf / refcnt underflow for req object in
+ virtio
+Message-ID: <Zp4hEX0Mlyu6p5a4@codewreck.org>
+References: <20240709162904.226952-1-void@manifault.com>
+ <Zp4DSeHdOU0U1PZC@codewreck.org>
+ <2328041.KKODgcftPW@silver>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2328041.KKODgcftPW@silver>
 
-The MODULE_SIG_<type> config choice has an inconsistent prompt styled as
-a question and lengthy option names.
+Christian Schoenebeck wrote on Mon, Jul 22, 2024 at 10:03:11AM +0200:
+>> diff --git a/net/9p/client.c b/net/9p/client.c
+>> index 5cd94721d974..51ce3bd4aece 100644
+>> --- a/net/9p/client.c
+>> +++ b/net/9p/client.c
+>> @@ -616,9 +616,10 @@ static int p9_client_flush(struct p9_client *c, struct p9_req_t *oldreq)
+>>         if (READ_ONCE(oldreq->status) == REQ_STATUS_SENT) {
+>>                 if (c->trans_mod->cancelled)
+>>                         c->trans_mod->cancelled(c, oldreq);
+>> +               /* reply won't come anymore, drop the "receive" ref */
+>> +               p9_req_put(client, req);
 
-Simplify the prompt and option names to be consistent with other module
-options.
+That was meant to be oldreq, not req (factoring out the dropping ref
+part out of the callback)
 
-Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
----
- kernel/module/Kconfig | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+>>         }
+>> 
+>> -       p9_req_put(c, req);
 
-diff --git a/kernel/module/Kconfig b/kernel/module/Kconfig
-index bb7f7930fef6..ccdbd1bc12aa 100644
---- a/kernel/module/Kconfig
-+++ b/kernel/module/Kconfig
-@@ -228,7 +228,7 @@ comment "Do not forget to sign required modules with scripts/sign-file"
- 	depends on MODULE_SIG_FORCE && !MODULE_SIG_ALL
- 
- choice
--	prompt "Which hash algorithm should modules be signed with?"
-+	prompt "Hash algorithm to sign modules"
- 	depends on MODULE_SIG || IMA_APPRAISE_MODSIG
- 	help
- 	  This determines which sort of hashing algorithm will be used during
-@@ -238,31 +238,31 @@ choice
- 	  the signature on that module.
- 
- config MODULE_SIG_SHA1
--	bool "Sign modules with SHA-1"
-+	bool "SHA-1"
- 	select CRYPTO_SHA1
- 
- config MODULE_SIG_SHA256
--	bool "Sign modules with SHA-256"
-+	bool "SHA-256"
- 	select CRYPTO_SHA256
- 
- config MODULE_SIG_SHA384
--	bool "Sign modules with SHA-384"
-+	bool "SHA-384"
- 	select CRYPTO_SHA512
- 
- config MODULE_SIG_SHA512
--	bool "Sign modules with SHA-512"
-+	bool "SHA-512"
- 	select CRYPTO_SHA512
- 
- config MODULE_SIG_SHA3_256
--	bool "Sign modules with SHA3-256"
-+	bool "SHA3-256"
- 	select CRYPTO_SHA3
- 
- config MODULE_SIG_SHA3_384
--	bool "Sign modules with SHA3-384"
-+	bool "SHA3-384"
- 	select CRYPTO_SHA3
- 
- config MODULE_SIG_SHA3_512
--	bool "Sign modules with SHA3-512"
-+	bool "SHA3-512"
- 	select CRYPTO_SHA3
- 
- endchoice
+That one is a different req that needs to be dropped alright; this
+should stay.
+
+(note to self: don't try to think about 9p refcounting during lunch
+break)
+
+>>         return 0;
+>>  }
+>
+> [...]
+>
+> So a Tflush request by client is immediately answered by a Rflush response and 
+> in this case no answer is sent to the original request being flushed.
+> 
+> There are also QEMU test cases guarding the expected Tflush behaviour:
+> https://github.com/qemu/qemu/blob/a7ddb48b/tests/qtest/virtio-9p-test.c#L403
+> and
+> https://github.com/qemu/qemu/blob/a7ddb48b/tests/qtest/virtio-9p-test.c#L444
+> 
+> The 2nd test case handles the behaviour when the Tflush request arrived too 
+> late, after the original request already completed successfully that is. So in 
+> this case client first receives a success response to the original request, 
+> then followed by Rflush response.
+
+Oh, I was convinced the flush was just queued after the original
+response to follow the spec, but that there was no mechanism to cancel
+the IO in flight so the 'cancelled' path was never exerced.
+
+If you're doing cancels (not sending the original response if the flush
+timing was early enough), then the third drop actually probably was that
+callback:
+ - one for the error code in p9_virtio_zc_request
+ - one for cancelled
+ - one at the end of p9_client_zc_rpc
+
+I agree p9_virtio_zc_request shouldn't drop the ref if we're going to
+cancel it, so dropping that put makes sense.
+We should actually also just drop that put altogether and make the code
+closer to what we do in p9_client_rpc (non-zc version) where we put the
+ref on error immediately after ->request(), because that code knows
+about the ERESTARTSYS logic, and it's not something each transport
+should have to worry about.
+
+(At which point we can also drop the ref in ERESTARTSYS for the flush
+request itself then as pointed out..)
+
+So I'll update the patch to drop p9_req_put() altogether from
+p9_virtio_zc_request and call it in p9_client_zc_rpc() more
+appropriately, and send the cancelled thing as follow up instead.
+
+Hopefully didn't get it wrong too much this time, tests will tell...
 -- 
-2.35.3
-
+Dominique Martinet | Asmadeus
 
