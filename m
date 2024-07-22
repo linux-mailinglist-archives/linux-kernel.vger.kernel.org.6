@@ -1,531 +1,228 @@
-Return-Path: <linux-kernel+bounces-258942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB40938EFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:19:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A047938F00
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:19:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 446C91F21C80
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:19:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D1531C20F1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5400016D4C2;
-	Mon, 22 Jul 2024 12:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GqD0Cep6"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2042.outbound.protection.outlook.com [40.107.223.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD7B16D4CD;
+	Mon, 22 Jul 2024 12:19:41 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2CDA1754B;
-	Mon, 22 Jul 2024 12:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721650766; cv=fail; b=BGTvB1W45svBy24vqKQaoenVw9rQ6TZgOzJJzSuLblXywVscDotCUbphIZcUSPHDXPoed2sE7CReV52fN/yls9qLizszbDNsYzxECnbuUGkTDCbGezhVo4hykvd77g8wADG1eMCaksZ2eovQhFMuNVHfO3emuZME5RHgCtAxoYQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721650766; c=relaxed/simple;
-	bh=r5478eT3TK+fDj9xuzHMuYoHZiYYWt+n2EdgNOBbA/g=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uCvUYys802lDPPprYC9KUseKNPGBnqjvb8q63DJYm9vjZst7+VSbZdeK3zlqR598FwqVwkrXQt6WylMFDSeOCcyRoSY/SyKqz1BQ6kKzkZZbipGIjQh9W3q/xXfwqpX2NkcH0KzaoXC5N/QrofMHEUb6BODzEgod6qh5myhpddo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GqD0Cep6; arc=fail smtp.client-ip=40.107.223.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qZH1up5mjBzh8+XISYXSv79HZrZ7f/av4xaR360BBcQaVTohJ/spqNcTFNi4SvGiIopZPNMEfoELTiOn5wwLCmAVvmPAvhr/B/O1YPyqp5oB+59HbqLbJnFZfDy3m4s6TMgEpvQEjIlcvJL50MwG4K2LcRTUobE8Ua5vfdXsapDArsaJ03vMMCyV/gR4Gz9QHNQBYy/LhTGgDFs1xhfVQ5knZusbCJE9XM9/djfYip9rmN0hTcYYej43PGiaNiqDvPNM1Pv/DBXWwfdmm4Gub73sFqw379DAOGXet761j+9r7XCWw9vUhORD/cVzOoVjPhfUgK4mUm3HuVp0jmQxcQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eb7HkxB/TtxbirSGIeZigLKMvtBDNy5WIoOkcrVGA6c=;
- b=se/TP//Zha6R8cLCbV3wgPp8D2fb981tc685o+tBT775vnNydi/FTpQoYE9wIP7ohiF9ZUr7jrD32n+QJc7wvtv9FrAq37KPr2hubX3kG2XNQF++mT9N4TPreu6fz4iAoEWfAulpU1xs+t1t5oH+hEEi08RuOWbmvs1AnEGBYrQXPyDAPf6MyilFyN7BliGRMsx1LXot6qBcw8Cf+IwhwlFKsRpVItB0hZIiELoBF7J7En0S9gq8prbIrlh3eo916YGUeZQNIKCIc84R/ANcavLBLfavqzJUDH03UPVrkn3PK5TcRk3tP4cHmcWUEvisV7+YUk+GQ2VBB330IpBdQg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=baylibre.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eb7HkxB/TtxbirSGIeZigLKMvtBDNy5WIoOkcrVGA6c=;
- b=GqD0Cep6/YH6VkSoGvYbH6xoldNYSMtnIxVPsgdfRxbAmjqKuGT+XTqnIdWTpUIcVCeYQ4YSrIC6/kGDkEfu2GDB/nVdwD0/lZSwIM6yP5aqT3HPEmIOCAEur/XyS397poXaR/p0enFLUp2BIg+2cVNfGFk/8vQOYVdkypndEnk=
-Received: from CH2PR14CA0018.namprd14.prod.outlook.com (2603:10b6:610:60::28)
- by CY8PR12MB7218.namprd12.prod.outlook.com (2603:10b6:930:5a::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.28; Mon, 22 Jul
- 2024 12:19:20 +0000
-Received: from CH2PEPF00000141.namprd02.prod.outlook.com
- (2603:10b6:610:60:cafe::8c) by CH2PR14CA0018.outlook.office365.com
- (2603:10b6:610:60::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14 via Frontend
- Transport; Mon, 22 Jul 2024 12:19:20 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH2PEPF00000141.mail.protection.outlook.com (10.167.244.74) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7784.11 via Frontend Transport; Mon, 22 Jul 2024 12:19:20 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 22 Jul
- 2024 07:19:18 -0500
-Received: from xsjarunbala50.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Mon, 22 Jul 2024 07:19:18 -0500
-From: Naman Trivedi <naman.trivedimanojbhai@amd.com>
-To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <michal.simek@amd.com>,
-	<senthilnathan.thangaraj@amd.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>, Naman Trivedi Manojbhai
-	<naman.trivedimanojbhai@amd.com>
-Subject: [PATCH V2] drivers: clk: zynqmp: remove clock name dependency
-Date: Mon, 22 Jul 2024 05:19:10 -0700
-Message-ID: <20240722121910.14647-1-naman.trivedimanojbhai@amd.com>
-X-Mailer: git-send-email 2.17.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72F4816C858;
+	Mon, 22 Jul 2024 12:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721650780; cv=none; b=SF90zfkNL55G9vLfdiW309feH+7CjebNAD2Dk4hD2ZCb9UI4DleMg3aB0pRfbT0yusymZ4G23dZS5Hf8N8oq6qv6MFWHTn4h9In/TZX/rJnddicXuyRlz4Lmb3l+Q4gNdw2sNkqcASzCRRRJpos07/mKBvoZDxQL8DIZcN56rhc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721650780; c=relaxed/simple;
+	bh=8QkNVVn4QVFDJ5e7DZeag2Ea6gt2ZVcLKQm5wtbZ/KM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=M6FmFWN02ZNDqwPq63Nccoq6K576cYWr7Y2aAb0RDIQumjnmgnuVqrz35qWSFLWUnBs01M9eLIsRKmfmLaVgWAuCYMVbIMne+EbijuOmkAO6ANWOf6r9WJvZZQlXayQ3IgNDDjznCUZGIzwwbHq8fFs85iWYBg+yC6RJonSiw3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WSK3t4G8gzQmMk;
+	Mon, 22 Jul 2024 20:15:22 +0800 (CST)
+Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
+	by mail.maildlp.com (Postfix) with ESMTPS id A3B42140414;
+	Mon, 22 Jul 2024 20:19:31 +0800 (CST)
+Received: from kwepemd100011.china.huawei.com (7.221.188.204) by
+ kwepemd200012.china.huawei.com (7.221.188.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 22 Jul 2024 20:19:31 +0800
+Received: from kwepemd100011.china.huawei.com ([7.221.188.204]) by
+ kwepemd100011.china.huawei.com ([7.221.188.204]) with mapi id 15.02.1258.034;
+ Mon, 22 Jul 2024 20:19:31 +0800
+From: duchangbin <changbin.du@huawei.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+CC: duchangbin <changbin.du@huawei.com>, Peter Zijlstra
+	<peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, "Arnaldo Carvalho de
+ Melo" <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Nathan
+ Chancellor <nathan@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
+	<jolsa@kernel.org>, "Ian Rogers" <irogers@google.com>, "Liang, Kan"
+	<kan.liang@linux.intel.com>, "Nick Desaulniers" <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>, "Wanghui (OS Kernel Lab,
+ Beijing)" <hw.huiwang@huawei.com>
+Subject: Re: [PATCH v5 1/8] perf: support specify vdso path in cmdline
+Thread-Topic: [PATCH v5 1/8] perf: support specify vdso path in cmdline
+Thread-Index: AQHazDb0ZhAUVWMBRUqSRKo3S0nR4rH8SfEAgAaAVoA=
+Date: Mon, 22 Jul 2024 12:19:31 +0000
+Message-ID: <c8fef007dd694d0993cd007c44f458ff@huawei.com>
+References: <20240702041837.5306-1-changbin.du@huawei.com>
+ <20240702041837.5306-2-changbin.du@huawei.com>
+ <4ddbcd4a-bbf1-4773-94da-0a2ad63469dc@intel.com>
+In-Reply-To: <4ddbcd4a-bbf1-4773-94da-0a2ad63469dc@intel.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-imapappendstamp: kwepemd100011.china.huawei.com (15.02.1258.034)
+x-ms-exchange-messagesentrepresentingtype: 1
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B23811831E55D14886C99E16F1583557@huawei.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB04.amd.com: naman.trivedimanojbhai@amd.com does
- not designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF00000141:EE_|CY8PR12MB7218:EE_
-X-MS-Office365-Filtering-Correlation-Id: fda4c429-96c3-4cd5-eb0f-08dcaa4883d1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?lXUuglnkJQSipvJLyOoOC4TE/XQpczk/T2uB9MUOn5eBQn0Id64iXTwvB2Ow?=
- =?us-ascii?Q?PZQmUzyJc20B3OVD8wP90ts4rY1ZdS0WAltHBmlJZOUOEHuut4QpV3H2+4SY?=
- =?us-ascii?Q?aJFxnGag7iuO19+Bta/K5QtZv8GpgYGY4zy/Q3QptrJIkqS4iZwJqaLkSXE+?=
- =?us-ascii?Q?W7QY6cqzndguv7avaph0byrt0weXwPXFfd1obWoyDIuHcul4wrinx/MnBHPl?=
- =?us-ascii?Q?zh8PAop0kFpfez0eoKeJrglLanz5RBWWWMm8y72X1qfn27qpRNbIgDe2vDVT?=
- =?us-ascii?Q?yzmulsdEUbk977L7VPkT+/YoxFL1xhqIAyOJRQaj15NEymSocDRr5GEKUUKF?=
- =?us-ascii?Q?lMVwz/laqyJlW6CMyg14QaC8e0cW/nC++8lTYDCvbpHVUvhU21CU6Zrsxd10?=
- =?us-ascii?Q?iumlcxLBAtlXaxQhVCTWFAzSfrUQ8jfhzZrjpf+BRA+XDn1wBdEAAEkxs1u+?=
- =?us-ascii?Q?a/SMklUChfut8aBIVGa3l+GHU8TADWC14DAZfVO/prLBP/sYjqs91ZryQMbf?=
- =?us-ascii?Q?cznCjRU3OUFvqkrMrTQNqb/SW54tOFsGfaqGn+WGKhG6eDLAKr8OyYBcnntw?=
- =?us-ascii?Q?vmUGbJDbIKVZt6hcOmBqSNVCjZ0xHankI/qXvctf0adP/CZuUNqXL/0U8dmL?=
- =?us-ascii?Q?bWUS0nzv9F+FkAti4yZNy5jLwn/uebtHBUiBo/Y25zPURBDcS0W8r6z4xyjZ?=
- =?us-ascii?Q?/It8u73K6goCtI7OvSOinFVvw0hueErPRTiAepZxDceWABj64CuO18Nxbkao?=
- =?us-ascii?Q?bLQC38qkKa2l0C4/YQs+tUk4h2mbpiZ9Aa5DxG3EWpvVf3+UL+moi3172yXz?=
- =?us-ascii?Q?ozQDOsBTUQasm8bpC5Q7p9vrG9zD0JEBJ1ziM//T7/ceEZvrKdJrXaHRZH7Z?=
- =?us-ascii?Q?VeAuBPPQwNj2YBtDObQ/geG2nKs3+v8CN7/rBK5Usfjkrg4IncybM2ZucOp0?=
- =?us-ascii?Q?a4CvXrEwGaSXagWPtNChYKUp13pZO0+N259b3D8LTNLIzCs5lk6eX8fwWhbG?=
- =?us-ascii?Q?LgG5wZ2JqwBCXvpswx8HTPg/2nH/UbgHiPtgGg4FwjguwTk+UVa3qAJKzsN5?=
- =?us-ascii?Q?UrLH+HvXLO675zorPmQ6BuoBBLpTLO3xZrELaazwuoYwFkSNun5FvkbPtky6?=
- =?us-ascii?Q?MnncfjMI/9vI4yBam581gLOyblNa3aFbLyiivec3j8iDd3DXO/PaVE6zpW0H?=
- =?us-ascii?Q?h02gDFrXJTc6Rlc1M0Q2bMaZuZpqEPMeDk0s207d7c29h19ML6hKogrwEycB?=
- =?us-ascii?Q?kvYTp2ZPSvOTanPebCUyjIm9xVvPh/Zgqbbm+4U16RdydqzVsTxt3D4t6cx4?=
- =?us-ascii?Q?X90cZ6/wTss6vzlbPW8MgpwtHJeTCIXEsAhflpxtkobO+8IGRpari42/vPOW?=
- =?us-ascii?Q?ZUscg5tBJAtZAhMKDmJq/5KAW8UuKxuBzEsLd8CwnrTHQ3mTlw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jul 2024 12:19:20.4926
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: fda4c429-96c3-4cd5-eb0f-08dcaa4883d1
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF00000141.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7218
 
-From: Naman Trivedi Manojbhai <naman.trivedimanojbhai@amd.com>
-
-Use struct clk_parent_data to register the clock parents with the clock
-framework instead of parent name.
-
-Signed-off-by: Naman Trivedi Manojbhai <naman.trivedimanojbhai@amd.com>
----
-V1: https://lore.kernel.org/lkml/20240103072017.1646007-1-naman.trivedimanojbhai@amd.com
-V1 -> V2:
-- Used struct clk_parent_data instead of parent names to register clock
-  parents with the clock framework
----
- drivers/clk/zynqmp/clk-gate-zynqmp.c |  8 +--
- drivers/clk/zynqmp/clk-mux-zynqmp.c  |  9 +--
- drivers/clk/zynqmp/clk-zynqmp.h      | 26 ++++-----
- drivers/clk/zynqmp/clkc.c            | 83 +++++++++++++++++++---------
- drivers/clk/zynqmp/divider.c         |  8 +--
- drivers/clk/zynqmp/pll.c             |  9 +--
- 6 files changed, 89 insertions(+), 54 deletions(-)
-
-diff --git a/drivers/clk/zynqmp/clk-gate-zynqmp.c b/drivers/clk/zynqmp/clk-gate-zynqmp.c
-index b89e55737198..6bb9704ee1d3 100644
---- a/drivers/clk/zynqmp/clk-gate-zynqmp.c
-+++ b/drivers/clk/zynqmp/clk-gate-zynqmp.c
-@@ -104,8 +104,8 @@ static const struct clk_ops zynqmp_clk_gate_ops = {
-  *
-  * Return: clock hardware of the registered clock gate
-  */
--struct clk_hw *zynqmp_clk_register_gate(const char *name, u32 clk_id,
--					const char * const *parents,
-+struct clk_hw *zynqmp_clk_register_gate(struct device_node *np, const char *name, u32 clk_id,
-+					const struct clk_parent_data *parents,
- 					u8 num_parents,
- 					const struct clock_topology *nodes)
- {
-@@ -124,7 +124,7 @@ struct clk_hw *zynqmp_clk_register_gate(const char *name, u32 clk_id,
- 
- 	init.flags = zynqmp_clk_map_common_ccf_flags(nodes->flag);
- 
--	init.parent_names = parents;
-+	init.parent_data = parents;
- 	init.num_parents = 1;
- 
- 	/* struct clk_gate assignments */
-@@ -133,7 +133,7 @@ struct clk_hw *zynqmp_clk_register_gate(const char *name, u32 clk_id,
- 	gate->clk_id = clk_id;
- 
- 	hw = &gate->hw;
--	ret = clk_hw_register(NULL, hw);
-+	ret = of_clk_hw_register(np, hw);
- 	if (ret) {
- 		kfree(gate);
- 		hw = ERR_PTR(ret);
-diff --git a/drivers/clk/zynqmp/clk-mux-zynqmp.c b/drivers/clk/zynqmp/clk-mux-zynqmp.c
-index 9b5d3050b742..30daf1f77b4c 100644
---- a/drivers/clk/zynqmp/clk-mux-zynqmp.c
-+++ b/drivers/clk/zynqmp/clk-mux-zynqmp.c
-@@ -128,8 +128,9 @@ static inline unsigned long zynqmp_clk_map_mux_ccf_flags(
-  *
-  * Return: clock hardware of the registered clock mux
-  */
--struct clk_hw *zynqmp_clk_register_mux(const char *name, u32 clk_id,
--				       const char * const *parents,
-+struct clk_hw *zynqmp_clk_register_mux(struct device_node *np,
-+				       const char *name, u32 clk_id,
-+				       const struct clk_parent_data *parents,
- 				       u8 num_parents,
- 				       const struct clock_topology *nodes)
- {
-@@ -150,14 +151,14 @@ struct clk_hw *zynqmp_clk_register_mux(const char *name, u32 clk_id,
- 
- 	init.flags = zynqmp_clk_map_common_ccf_flags(nodes->flag);
- 
--	init.parent_names = parents;
-+	init.parent_data = parents;
- 	init.num_parents = num_parents;
- 	mux->flags = zynqmp_clk_map_mux_ccf_flags(nodes->type_flag);
- 	mux->hw.init = &init;
- 	mux->clk_id = clk_id;
- 
- 	hw = &mux->hw;
--	ret = clk_hw_register(NULL, hw);
-+	ret = of_clk_hw_register(np, hw);
- 	if (ret) {
- 		kfree(mux);
- 		hw = ERR_PTR(ret);
-diff --git a/drivers/clk/zynqmp/clk-zynqmp.h b/drivers/clk/zynqmp/clk-zynqmp.h
-index 60cbc0674a9e..6343cfb57a4f 100644
---- a/drivers/clk/zynqmp/clk-zynqmp.h
-+++ b/drivers/clk/zynqmp/clk-zynqmp.h
-@@ -67,31 +67,31 @@ struct clock_topology {
- 
- unsigned long zynqmp_clk_map_common_ccf_flags(const u32 zynqmp_flag);
- 
--struct clk_hw *zynqmp_clk_register_pll(const char *name, u32 clk_id,
--				       const char * const *parents,
-+struct clk_hw *zynqmp_clk_register_pll(struct device_node *np, const char *name, u32 clk_id,
-+				       const struct clk_parent_data *parents,
- 				       u8 num_parents,
- 				       const struct clock_topology *nodes);
- 
--struct clk_hw *zynqmp_clk_register_gate(const char *name, u32 clk_id,
--					const char * const *parents,
-+struct clk_hw *zynqmp_clk_register_gate(struct device_node *np, const char *name, u32 clk_id,
-+					const struct clk_parent_data *parents,
- 					u8 num_parents,
- 					const struct clock_topology *nodes);
- 
--struct clk_hw *zynqmp_clk_register_divider(const char *name,
-+struct clk_hw *zynqmp_clk_register_divider(struct device_node *np, const char *name,
- 					   u32 clk_id,
--					   const char * const *parents,
-+					   const struct clk_parent_data *parents,
- 					   u8 num_parents,
- 					   const struct clock_topology *nodes);
- 
--struct clk_hw *zynqmp_clk_register_mux(const char *name, u32 clk_id,
--				       const char * const *parents,
-+struct clk_hw *zynqmp_clk_register_mux(struct device_node *np, const char *name, u32 clk_id,
-+				       const struct clk_parent_data *parents,
- 				       u8 num_parents,
- 				       const struct clock_topology *nodes);
- 
--struct clk_hw *zynqmp_clk_register_fixed_factor(const char *name,
--					u32 clk_id,
--					const char * const *parents,
--					u8 num_parents,
--					const struct clock_topology *nodes);
-+struct clk_hw *zynqmp_clk_register_fixed_factor(struct device_node *np, const char *name,
-+						u32 clk_id,
-+						const struct clk_parent_data *parents,
-+						u8 num_parents,
-+						const struct clock_topology *nodes);
- 
- #endif
-diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
-index a91d98e238c2..b791a459280e 100644
---- a/drivers/clk/zynqmp/clkc.c
-+++ b/drivers/clk/zynqmp/clkc.c
-@@ -12,6 +12,7 @@
- #include <linux/clk-provider.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- #include <linux/string.h>
-@@ -119,11 +120,10 @@ static const char clk_type_postfix[][10] = {
- 	[TYPE_PLL] = ""
- };
- 
--static struct clk_hw *(* const clk_topology[]) (const char *name, u32 clk_id,
--					const char * const *parents,
--					u8 num_parents,
--					const struct clock_topology *nodes)
--					= {
-+static struct clk_hw *(* const clk_topology[]) (struct device_node *np, const char *name,
-+						u32 clk_id, const struct clk_parent_data *parents,
-+						u8 num_parents,
-+						const struct clock_topology *nodes) = {
- 	[TYPE_INVALID] = NULL,
- 	[TYPE_MUX] = zynqmp_clk_register_mux,
- 	[TYPE_PLL] = zynqmp_clk_register_pll,
-@@ -307,14 +307,16 @@ unsigned long zynqmp_clk_map_common_ccf_flags(const u32 zynqmp_flag)
-  *
-  * Return: clock hardware to the registered clock
-  */
--struct clk_hw *zynqmp_clk_register_fixed_factor(const char *name, u32 clk_id,
--					const char * const *parents,
--					u8 num_parents,
--					const struct clock_topology *nodes)
-+struct clk_hw *zynqmp_clk_register_fixed_factor(struct device_node *np, const char *name,
-+						u32 clk_id,
-+						const struct clk_parent_data *parents,
-+						u8 num_parents,
-+						const struct clock_topology *nodes)
- {
- 	u32 mult, div;
- 	struct clk_hw *hw;
- 	struct zynqmp_pm_query_data qdata = {0};
-+	struct platform_device *plat_dev;
- 	u32 ret_payload[PAYLOAD_ARG_CNT];
- 	int ret;
- 	unsigned long flag;
-@@ -331,10 +333,19 @@ struct clk_hw *zynqmp_clk_register_fixed_factor(const char *name, u32 clk_id,
- 
- 	flag = zynqmp_clk_map_common_ccf_flags(nodes->flag);
- 
--	hw = clk_hw_register_fixed_factor(NULL, name,
--					  parents[0],
--					  flag, mult,
--					  div);
-+	plat_dev = of_find_device_by_node(np);
-+	if (!plat_dev)
-+		return NULL;
-+
-+	if (parents->name)
-+		hw = clk_hw_register_fixed_factor(NULL, name,
-+						  parents->name,
-+						  flag, mult,
-+						  div);
-+	else
-+		hw = devm_clk_hw_register_fixed_factor_index(&plat_dev->dev, name,
-+							     parents->index,
-+							     flag, mult, div);
- 
- 	return hw;
- }
-@@ -543,7 +554,7 @@ static int zynqmp_clock_get_parents(u32 clk_id, struct clock_parent *parents,
-  * Return: 0 on success else error+reason
-  */
- static int zynqmp_get_parent_list(struct device_node *np, u32 clk_id,
--				  const char **parent_list, u32 *num_parents)
-+				  struct clk_parent_data *parent_list, u32 *num_parents)
- {
- 	int i = 0, ret;
- 	u32 total_parents = clock[clk_id].num_parents;
-@@ -555,18 +566,30 @@ static int zynqmp_get_parent_list(struct device_node *np, u32 clk_id,
- 
- 	for (i = 0; i < total_parents; i++) {
- 		if (!parents[i].flag) {
--			parent_list[i] = parents[i].name;
-+			ret = of_property_match_string(np, "clock-names",
-+						       parents[i].name);
-+			if (ret >= 0) {
-+				parent_list[i].index = ret;
-+			} else {
-+				parent_list[i].fw_name = parents[i].name;
-+				parent_list[i].name = parents[i].name;
-+			}
- 		} else if (parents[i].flag == PARENT_CLK_EXTERNAL) {
- 			ret = of_property_match_string(np, "clock-names",
- 						       parents[i].name);
--			if (ret < 0)
-+			if (ret >= 0) {
-+				parent_list[i].index = ret;
-+			} else {
- 				strcpy(parents[i].name, "dummy_name");
--			parent_list[i] = parents[i].name;
-+				parent_list[i].fw_name = parents[i].name;
-+				parent_list[i].name = parents[i].name;
-+			}
- 		} else {
- 			strcat(parents[i].name,
- 			       clk_type_postfix[clk_nodes[parents[i].flag - 1].
- 			       type]);
--			parent_list[i] = parents[i].name;
-+			parent_list[i].fw_name = parents[i].name;
-+			parent_list[i].name = parents[i].name;
- 		}
- 	}
- 
-@@ -583,9 +606,9 @@ static int zynqmp_get_parent_list(struct device_node *np, u32 clk_id,
-  *
-  * Return: Returns either clock hardware or error+reason
-  */
--static struct clk_hw *zynqmp_register_clk_topology(int clk_id, char *clk_name,
--						   int num_parents,
--						   const char **parent_names)
-+static struct clk_hw *zynqmp_register_clk_topology(struct device_node *np, int clk_id,
-+						   char *clk_name, int num_parents,
-+						   struct clk_parent_data *parent_names)
- {
- 	int j;
- 	u32 num_nodes, clk_dev_id;
-@@ -612,7 +635,7 @@ static struct clk_hw *zynqmp_register_clk_topology(int clk_id, char *clk_name,
- 		if (!clk_topology[nodes[j].type])
- 			continue;
- 
--		hw = (*clk_topology[nodes[j].type])(clk_out[j], clk_dev_id,
-+		hw = (*clk_topology[nodes[j].type])(np, clk_out[j], clk_dev_id,
- 						    parent_names,
- 						    num_parents,
- 						    &nodes[j]);
-@@ -621,7 +644,10 @@ static struct clk_hw *zynqmp_register_clk_topology(int clk_id, char *clk_name,
- 				     __func__,  clk_dev_id, clk_name,
- 				     PTR_ERR(hw));
- 
--		parent_names[0] = clk_out[j];
-+		if (parent_names->fw_name) {
-+			parent_names->name = clk_out[j];
-+			parent_names->fw_name = clk_out[j];
-+		}
- 	}
- 
- 	for (j = 0; j < num_nodes; j++)
-@@ -640,9 +666,14 @@ static int zynqmp_register_clocks(struct device_node *np)
- {
- 	int ret;
- 	u32 i, total_parents = 0, type = 0;
--	const char *parent_names[MAX_PARENT];
-+	struct clk_parent_data *parent_names;
-+
-+	parent_names = kmalloc(sizeof(*parent_names) * MAX_PARENT, GFP_KERNEL);
-+	if (!parent_names)
-+		return -ENOMEM;
- 
- 	for (i = 0; i < clock_max_idx; i++) {
-+		memset(parent_names, 0, sizeof(struct clk_parent_data) * MAX_PARENT);
- 		char clk_name[MAX_NAME_LEN];
- 
- 		/* get clock name, continue to next clock if name not found */
-@@ -665,7 +696,7 @@ static int zynqmp_register_clocks(struct device_node *np)
- 		}
- 
- 		zynqmp_data->hws[i] =
--			zynqmp_register_clk_topology(i, clk_name,
-+			zynqmp_register_clk_topology(np, i, clk_name,
- 						     total_parents,
- 						     parent_names);
- 	}
-@@ -677,6 +708,8 @@ static int zynqmp_register_clocks(struct device_node *np)
- 			WARN_ON(1);
- 		}
- 	}
-+
-+	kfree(parent_names);
- 	return 0;
- }
- 
-diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divider.c
-index 5a00487ae408..7c0905be2f26 100644
---- a/drivers/clk/zynqmp/divider.c
-+++ b/drivers/clk/zynqmp/divider.c
-@@ -269,9 +269,9 @@ static inline unsigned long zynqmp_clk_map_divider_ccf_flags(
-  *
-  * Return: clock hardware to registered clock divider
-  */
--struct clk_hw *zynqmp_clk_register_divider(const char *name,
-+struct clk_hw *zynqmp_clk_register_divider(struct device_node *np, const char *name,
- 					   u32 clk_id,
--					   const char * const *parents,
-+					   const struct clk_parent_data *parents,
- 					   u8 num_parents,
- 					   const struct clock_topology *nodes)
- {
-@@ -293,7 +293,7 @@ struct clk_hw *zynqmp_clk_register_divider(const char *name,
- 
- 	init.flags = zynqmp_clk_map_common_ccf_flags(nodes->flag);
- 
--	init.parent_names = parents;
-+	init.parent_data = parents;
- 	init.num_parents = 1;
- 
- 	/* struct clk_divider assignments */
-@@ -311,7 +311,7 @@ struct clk_hw *zynqmp_clk_register_divider(const char *name,
- 	div->max_div = zynqmp_clk_get_max_divisor(clk_id, nodes->type);
- 
- 	hw = &div->hw;
--	ret = clk_hw_register(NULL, hw);
-+	ret = of_clk_hw_register(np, hw);
- 	if (ret) {
- 		kfree(div);
- 		hw = ERR_PTR(ret);
-diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
-index 7411a7fd50ac..4bd93efed9f2 100644
---- a/drivers/clk/zynqmp/pll.c
-+++ b/drivers/clk/zynqmp/pll.c
-@@ -309,8 +309,9 @@ static const struct clk_ops zynqmp_pll_ops = {
-  *
-  * Return: clock hardware to the registered clock
-  */
--struct clk_hw *zynqmp_clk_register_pll(const char *name, u32 clk_id,
--				       const char * const *parents,
-+struct clk_hw *zynqmp_clk_register_pll(struct device_node *np,
-+				       const char *name, u32 clk_id,
-+				       const struct clk_parent_data *parents,
- 				       u8 num_parents,
- 				       const struct clock_topology *nodes)
- {
-@@ -324,7 +325,7 @@ struct clk_hw *zynqmp_clk_register_pll(const char *name, u32 clk_id,
- 
- 	init.flags = zynqmp_clk_map_common_ccf_flags(nodes->flag);
- 
--	init.parent_names = parents;
-+	init.parent_data = parents;
- 	init.num_parents = 1;
- 
- 	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
-@@ -335,7 +336,7 @@ struct clk_hw *zynqmp_clk_register_pll(const char *name, u32 clk_id,
- 	pll->clk_id = clk_id;
- 
- 	hw = &pll->hw;
--	ret = clk_hw_register(NULL, hw);
-+	ret = of_clk_hw_register(np, hw);
- 	if (ret) {
- 		kfree(pll);
- 		return ERR_PTR(ret);
--- 
-2.25.1
-
+T24gVGh1LCBKdWwgMTgsIDIwMjQgYXQgMDg6MDI6MTZQTSArMDMwMCwgQWRyaWFuIEh1bnRlciB3
+cm90ZToNCj4gT24gMi8wNy8yNCAwNzoxOCwgQ2hhbmdiaW4gRHUgd3JvdGU6DQo+ID4gVGhlIHZk
+c28gZHVtcGVkIGZyb20gcHJvY2VzcyBtZW1vcnkgKGluIGJ1aWxkaWQtY2FjaGUpIGxhY2tzIGRl
+YnVnZ2luZw0KPiA+IGluZm8uIFRvIGFubm90YXRlIHZkc28gc3ltYm9scyB3aXRoIHNvdXJjZSBs
+aW5lcyB3ZSBuZWVkIHNwZWNpZnkgYQ0KPiA+IGRlYnVnZ2luZyB2ZXJzaW9uLg0KPiA+IA0KPiA+
+IEZvciB4ODYsIHdlIGNhbiBmaW5kIHRoZW0gZnJvbSB5b3VyIGxvY2FsIGJ1aWxkIGFzDQo+ID4g
+YXJjaC94ODYvZW50cnkvdmRzby92ZHNvezMyLDY0fS5zby5kYmcuIE9yIHRoZXkgbWF5IHJlc2lk
+ZSBpbg0KPiA+IC9saWIvbW9kdWxlcy88dmVyc2lvbj4vdmRzby92ZHNvezMyLDY0fS5zbyBvbiBV
+YnVudHUuIEJ1dCBub3RpY2UgdGhhdA0KPiA+IHRoZSBidWlsZGlkIGhhcyB0byBtYXRjaC4NCj4g
+PiANCj4gPiAkIHN1ZG8gcGVyZiByZWNvcmQgLWENCj4gPiAkIHN1ZG8gcGVyZiByZXBvcnQgLS1v
+YmpkdW1wPWxsdm0tb2JqZHVtcCBcDQo+ID4gICAtLXZkc28gYXJjaC94ODYvZW50cnkvdmRzby92
+ZHNvNjQuc28uZGJnLGFyY2gveDg2L2VudHJ5L3Zkc28vdmRzbzMyLnNvLmRiZw0KPiA+IA0KPiA+
+IFNhbXBsZXM6IDE3SyBvZiBldmVudCAnY3ljbGVzOlAnLCA0MDAwIEh6LCBFdmVudCBjb3VudCAo
+YXBwcm94Lik6IDE3NjANCj4gPiBfX3Zkc29fY2xvY2tfZ2V0dGltZSAgL3dvcmsvbGludXgtaG9z
+dC9hcmNoL3g4Ni9lbnRyeS92ZHNvL3Zkc282NC5zby5kDQo+ID4gUGVyY2VudOKUgiAgICAgICBt
+b3ZxICAgIC00OCglcmJwKSwlcnNpDQo+ID4gICAgICAgIOKUgiAgICAgICB0ZXN0cSAgICVyYXgs
+JXJheA0KPiA+ICAgICAgICDilIIgICAgIDsgICAgICAgICAgICAgICByZXR1cm4gdnJlYWRfaHZj
+bG9jaygpOw0KPiA+ICAgICAgICDilIIgICAgICAgbW92cSAgICAlcmF4LCVyZHgNCj4gPiAgICAg
+ICAg4pSCICAgICA7ICAgICAgICAgICAgICAgaWYgKHVubGlrZWx5KCF2ZHNvX2N5Y2xlc19vayhj
+eWNsZXMpKSkNCj4gPiAgICAgICAg4pSCICAgICDihpEganMgICAgICBlYg0KPiA+ICAgICAgICDi
+lIIgICAgIOKGkSBqbXAgICAgIDc0DQo+ID4gICAgICAgIOKUgiAgICAgOyAgICAgICAgICAgICAg
+IHRzLT50dl9zZWMgPSB2ZHNvX3RzLT5zZWM7DQo+ID4gICAwLjAyIOKUgjE0NzogICBsZWFxICAg
+IDIoJXJieCksJXJheA0KPiA+ICAgICAgICDilIIgICAgICAgc2hscSAgICAkNCwgJXJheA0KPiA+
+ICAgICAgICDilIIgICAgICAgYWRkcSAgICAlcjEwLCVyYXgNCj4gPiAgICAgICAg4pSCICAgICA7
+ICAgICAgICAgICAgICAgd2hpbGUgKChzZXEgPSBSRUFEX09OQ0UodmQtPnNlcSkpICYgMSkgew0K
+PiA+ICAgOS4zOCDilIIxNTI6ICAgbW92bCAgICAoJXIxMCksJWVjeA0KPiA+IA0KPiA+IFdoZW4g
+ZG9pbmcgY3Jvc3MgcGxhdGZvcm0gYW5hbHlzaXMsIHdlIGFsc28gbmVlZCBzcGVjaWZ5IHRoZSB2
+ZHNvIHBhdGggaWYNCj4gPiB3ZSBhcmUgaW50ZXJlc3RlZCBpbiBpdHMgc3ltYm9scy4NCj4gPiAN
+Cj4gDQo+IEp1c3QgcmVhbGl6ZWQgdGhpcyBpcyBhYm91dCBvYmpkdW1wLiAgU29ycnkgZm9yIG5v
+dCBnZXR0aW5nIHRoYXQNCj4gZWFybGllci4NCj4gDQo+IExpa2UgcGVyZiB0b29scywgb2JqZHVt
+cCBmb2xsb3dzIHRoZSBwYXJhZGlnbSBvZiBhdHRlbXB0aW5nIHRvDQo+IGxvY2F0ZSBhbmQgdXNl
+IGRlYnVnIGluZm8gdHJhbnNwYXJlbnRseS4gIEhvd2V2ZXIsIG9iamR1bXAgbG9va3MNCj4gYXQg
+dGhlIGluc3RhbGxlZCBkZWJ1ZyBpbmZvIGluIC91c3IvbGliL2RlYnVnLy5idWlsZC1pZC8NCj4g
+DQo+IEZvciBleGFtcGxlLCBpZiB0aGUgZGVidWcgZmlsZSBpcyBjb3BpZWQgKG9yIGxpbmtlZCkg
+dGhlcmUsIHRoZW4NCj4gb2JqZHVtcCBvciBsbHZtLW9iamR1bXAgd2lsbCBmaW5kIGl0Og0KPiAN
+Cj4gJCBsbHZtLW9iamR1bXAtMTggLWRTIH4vLmRlYnVnL1xbdmRzb1xdL2NmNzAyNDY5ZjQ2Mzc4
+NDBmZDZiYTFhOGQ4YTYyOGZmODMyNTNkMDQvdmRzbyB8IGhlYWQgLTIwDQo+IA0KPiB+Ly5kZWJ1
+Zy9bdmRzb10vY2Y3MDI0NjlmNDYzNzg0MGZkNmJhMWE4ZDhhNjI4ZmY4MzI1M2QwNC92ZHNvOiAg
+ICAgIGZpbGUgZm9ybWF0IGVsZjY0LXg4Ni02NA0KPiANCj4gRGlzYXNzZW1ibHkgb2Ygc2VjdGlv
+biAudGV4dDoNCj4gDQo+IDAwMDAwMDAwMDAwMDA2ZDAgPC50ZXh0PjoNCj4gICAgIDZkMDogNDgg
+OGQgM2QgMjkgZDkgZmYgZmYgICAgICAgICAgbGVhcSAgICAtMHgyNmQ3KCVyaXApLCAlcmRpICAg
+ICAjIDB4ZmZmZmZmZmZmZmZmZTAwMA0KPiAgICAgNmQ3OiBlYiAxOSAgICAgICAgICAgICAgICAg
+ICAgICAgICBqbXAgICAgIDB4NmYyIDwudGV4dCsweDIyPg0KPiAgICAgNmQ5OiA0YyA4YiAwZCAy
+OCBkOSBmZiBmZiAgICAgICAgICBtb3ZxICAgIC0weDI2ZDgoJXJpcCksICVyOSAgICAgICMgMHhm
+ZmZmZmZmZmZmZmZlMDA4DQo+ICAgICA2ZTA6IDRjIDhiIDA1IDI5IGQ5IGZmIGZmICAgICAgICAg
+IG1vdnEgICAgLTB4MjZkNyglcmlwKSwgJXI4ICAgICAgIyAweGZmZmZmZmZmZmZmZmUwMTANCj4g
+ICAgIDZlNzogMGYgMDEgZjkgICAgICAgICAgICAgICAgICAgICAgcmR0c2NwDQo+ICAgICA2ZWE6
+IDY2IDkwICAgICAgICAgICAgICAgICAgICAgICAgIG5vcA0KPiAgICAgNmVjOiA4YiAwZiAgICAg
+ICAgICAgICAgICAgICAgICAgICBtb3ZsICAgICglcmRpKSwgJWVjeA0KPiAgICAgNmVlOiAzOSBj
+ZSAgICAgICAgICAgICAgICAgICAgICAgICBjbXBsICAgICVlY3gsICVlc2kNCj4gICAgIDZmMDog
+NzQgMGUgICAgICAgICAgICAgICAgICAgICAgICAgamUgICAgICAweDcwMCA8LnRleHQrMHgzMD4N
+Cj4gICAgIDZmMjogOGIgMzcgICAgICAgICAgICAgICAgICAgICAgICAgbW92bCAgICAoJXJkaSks
+ICVlc2kNCj4gICAgIDZmNDogODUgZjYgICAgICAgICAgICAgICAgICAgICAgICAgdGVzdGwgICAl
+ZXNpLCAlZXNpDQo+ICAgICA2ZjY6IDc1IGUxICAgICAgICAgICAgICAgICAgICAgICAgIGpuZSAg
+ICAgMHg2ZDkgPC50ZXh0KzB4OT4NCj4gICAgIDZmODogNDggYzcgYzAgZmYgZmYgZmYgZmYgICAg
+ICAgICAgbW92cSAgICAkLTB4MSwgJXJheA0KPiAgICAgNmZmOiBjMyAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICByZXRxDQo+ICQgc3VkbyBsbiAtcyAvbGliL21vZHVsZXMvNi45LjItbG9jYWwv
+YnVpbGQvYXJjaC94ODYvZW50cnkvdmRzby92ZHNvNjQuc28uZGJnIC91c3IvbGliL2RlYnVnLy5i
+dWlsZC1pZC9jZi83MDI0NjlmNDYzNzg0MGZkNmJhMWE4ZDhhNjI4ZmY4MzI1M2QwNC5kZWJ1Zw0K
+PiAkIGxsdm0tb2JqZHVtcC0xOCAtZFMgfi8uZGVidWcvXFt2ZHNvXF0vY2Y3MDI0NjlmNDYzNzg0
+MGZkNmJhMWE4ZDhhNjI4ZmY4MzI1M2QwNC92ZHNvIHwgaGVhZCAtMjAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgDQo+IA0KPiB+Ly5kZWJ1Zy9b
+dmRzb10vY2Y3MDI0NjlmNDYzNzg0MGZkNmJhMWE4ZDhhNjI4ZmY4MzI1M2QwNC92ZHNvOiAgICAg
+IGZpbGUgZm9ybWF0IGVsZjY0LXg4Ni02NA0KPiANCj4gRGlzYXNzZW1ibHkgb2Ygc2VjdGlvbiAu
+dGV4dDoNCj4gDQo+IDAwMDAwMDAwMDAwMDA2ZDAgPHZyZWFkX2h2Y2xvY2s+Og0KPiA7IGh2X3Jl
+YWRfdHNjX3BhZ2VfdHNjKGNvbnN0IHN0cnVjdCBtc19oeXBlcnZfdHNjX3BhZ2UgKnRzY19wZywN
+Cj4gICAgIDZkMDogNDggOGQgM2QgMjkgZDkgZmYgZmYgICAgICAgICAgbGVhcSAgICAtMHgyNmQ3
+KCVyaXApLCAlcmRpICAgICAjIDB4ZmZmZmZmZmZmZmZmZTAwMCA8aHZjbG9ja19wYWdlPg0KPiAg
+ICAgNmQ3OiBlYiAxOSAgICAgICAgICAgICAgICAgICAgICAgICBqbXAgICAgIDB4NmYyIDx2cmVh
+ZF9odmNsb2NrKzB4MjI+DQo+IDsgICAgICAgICAgICAgICBzY2FsZSA9IFJFQURfT05DRSh0c2Nf
+cGctPnRzY19zY2FsZSk7DQo+ICAgICA2ZDk6IDRjIDhiIDBkIDI4IGQ5IGZmIGZmICAgICAgICAg
+IG1vdnEgICAgLTB4MjZkOCglcmlwKSwgJXI5ICAgICAgIyAweGZmZmZmZmZmZmZmZmUwMDggPGh2
+Y2xvY2tfcGFnZSsweDg+DQo+IDsgICAgICAgICAgICAgICBvZmZzZXQgPSBSRUFEX09OQ0UodHNj
+X3BnLT50c2Nfb2Zmc2V0KTsNCj4gICAgIDZlMDogNGMgOGIgMDUgMjkgZDkgZmYgZmYgICAgICAg
+ICAgbW92cSAgICAtMHgyNmQ3KCVyaXApLCAlcjggICAgICAjIDB4ZmZmZmZmZmZmZmZmZTAxMCA8
+aHZjbG9ja19wYWdlKzB4MTA+DQo+IDsgICAgICAgYXNtIHZvbGF0aWxlKEFMVEVSTkFUSVZFXzIo
+InJkdHNjIiwNCj4gICAgIDZlNzogMGYgMzEgICAgICAgICAgICAgICAgICAgICAgICAgcmR0c2MN
+Cj4gICAgIDZlOTogOTAgICAgICAgICAgICAgICAgICAgICAgICAgICAgbm9wDQo+ICAgICA2ZWE6
+IDkwICAgICAgICAgICAgICAgICAgICAgICAgICAgIG5vcA0KPiAgICAgNmViOiA5MCAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBub3ANCj4gOyAgICAgICB9IHdoaWxlIChSRUFEX09OQ0UodHNj
+X3BnLT50c2Nfc2VxdWVuY2UpICE9IHNlcXVlbmNlKTsNCj4gICAgIDZlYzogOGIgMGYgICAgICAg
+ICAgICAgICAgICAgICAgICAgbW92bCAgICAoJXJkaSksICVlY3gNCj4gJA0KPiANCj4gV291bGQg
+dGhhdCBzb2x2ZSB5b3VyIHByb2JsZW0/DQo+IA0KPiBOb3RhYmx5LCBsYXRlciB2ZXJzaW9ucyBv
+ZiBsbHZtLW9iamR1bXAgaGF2ZSBhbiBvcHRpb24NCj4gLS1kZWJ1Zy1maWxlLWRpcmVjdG9yeSB3
+aGljaCBtYWtlcyBpdCBwb3NzaWJsZSB0bw0KPiBoYXZlIHRoZSBkZWJ1ZyBpbmZvIGluIGEgZGly
+ZWN0b3J5IG93bmVkIGJ5IHRoZSB1c2VyLA0KPiBmb3IgZXhhbXBsZToNCj4gDQo+ICQgc3VkbyBy
+bSAvdXNyL2xpYi9kZWJ1Zy8uYnVpbGQtaWQvY2YvNzAyNDY5ZjQ2Mzc4NDBmZDZiYTFhOGQ4YTYy
+OGZmODMyNTNkMDQuZGVidWcNCj4gJCBsbHZtLW9iamR1bXAtMTggLWRTIH4vLmRlYnVnL1xbdmRz
+b1xdL2NmNzAyNDY5ZjQ2Mzc4NDBmZDZiYTFhOGQ4YTYyOGZmODMyNTNkMDQvdmRzbyB8IGhlYWQg
+LTIwDQo+IA0KPiB+Ly5kZWJ1Zy9bdmRzb10vY2Y3MDI0NjlmNDYzNzg0MGZkNmJhMWE4ZDhhNjI4
+ZmY4MzI1M2QwNC92ZHNvOiAgICAgIGZpbGUgZm9ybWF0IGVsZjY0LXg4Ni02NA0KPiANCj4gRGlz
+YXNzZW1ibHkgb2Ygc2VjdGlvbiAudGV4dDoNCj4gDQo+IDAwMDAwMDAwMDAwMDA2ZDAgPC50ZXh0
+PjoNCj4gICAgIDZkMDogNDggOGQgM2QgMjkgZDkgZmYgZmYgICAgICAgICAgbGVhcSAgICAtMHgy
+NmQ3KCVyaXApLCAlcmRpICAgICAjIDB4ZmZmZmZmZmZmZmZmZTAwMA0KPiAgICAgNmQ3OiBlYiAx
+OSAgICAgICAgICAgICAgICAgICAgICAgICBqbXAgICAgIDB4NmYyIDwudGV4dCsweDIyPg0KPiAg
+ICAgNmQ5OiA0YyA4YiAwZCAyOCBkOSBmZiBmZiAgICAgICAgICBtb3ZxICAgIC0weDI2ZDgoJXJp
+cCksICVyOSAgICAgICMgMHhmZmZmZmZmZmZmZmZlMDA4DQo+ICAgICA2ZTA6IDRjIDhiIDA1IDI5
+IGQ5IGZmIGZmICAgICAgICAgIG1vdnEgICAgLTB4MjZkNyglcmlwKSwgJXI4ICAgICAgIyAweGZm
+ZmZmZmZmZmZmZmUwMTANCj4gICAgIDZlNzogMGYgMDEgZjkgICAgICAgICAgICAgICAgICAgICAg
+cmR0c2NwDQo+ICAgICA2ZWE6IDY2IDkwICAgICAgICAgICAgICAgICAgICAgICAgIG5vcA0KPiAg
+ICAgNmVjOiA4YiAwZiAgICAgICAgICAgICAgICAgICAgICAgICBtb3ZsICAgICglcmRpKSwgJWVj
+eA0KPiAgICAgNmVlOiAzOSBjZSAgICAgICAgICAgICAgICAgICAgICAgICBjbXBsICAgICVlY3gs
+ICVlc2kNCj4gICAgIDZmMDogNzQgMGUgICAgICAgICAgICAgICAgICAgICAgICAgamUgICAgICAw
+eDcwMCA8LnRleHQrMHgzMD4NCj4gICAgIDZmMjogOGIgMzcgICAgICAgICAgICAgICAgICAgICAg
+ICAgbW92bCAgICAoJXJkaSksICVlc2kNCj4gICAgIDZmNDogODUgZjYgICAgICAgICAgICAgICAg
+ICAgICAgICAgdGVzdGwgICAlZXNpLCAlZXNpDQo+ICAgICA2ZjY6IDc1IGUxICAgICAgICAgICAg
+ICAgICAgICAgICAgIGpuZSAgICAgMHg2ZDkgPC50ZXh0KzB4OT4NCj4gICAgIDZmODogNDggYzcg
+YzAgZmYgZmYgZmYgZmYgICAgICAgICAgbW92cSAgICAkLTB4MSwgJXJheA0KPiAgICAgNmZmOiBj
+MyAgICAgICAgICAgICAgICAgICAgICAgICAgICByZXRxDQo+ICQgbWtkaXIgLXAgL3RtcC9kZWJ1
+Zy8uYnVpbGQtaWQvY2YvDQo+ICQgbG4gLXMgL2xpYi9tb2R1bGVzLzYuOS4yLWxvY2FsL2J1aWxk
+L2FyY2gveDg2L2VudHJ5L3Zkc28vdmRzbzY0LnNvLmRiZyAvdG1wL2RlYnVnLy5idWlsZC1pZC9j
+Zi83MDI0NjlmNDYzNzg0MGZkNmJhMWE4ZDhhNjI4ZmY4MzI1M2QwNC5kZWJ1ZyAgICAgICAgDQo+
+ICQgbGx2bS1vYmpkdW1wLTE4IC0tZGVidWctZmlsZS1kaXJlY3RvcnkgL3RtcC9kZWJ1ZyAtZFMg
+fi8uZGVidWcvXFt2ZHNvXF0vY2Y3MDI0NjlmNDYzNzg0MGZkNmJhMWE4ZDhhNjI4ZmY4MzI1M2Qw
+NC92ZHNvIHwgaGVhZCAtMjANCj4gDQo+IH4vLmRlYnVnL1t2ZHNvXS9jZjcwMjQ2OWY0NjM3ODQw
+ZmQ2YmExYThkOGE2MjhmZjgzMjUzZDA0L3Zkc286ICAgICAgZmlsZSBmb3JtYXQgZWxmNjQteDg2
+LTY0DQo+IA0KPiBEaXNhc3NlbWJseSBvZiBzZWN0aW9uIC50ZXh0Og0KPiANCj4gMDAwMDAwMDAw
+MDAwMDZkMCA8dnJlYWRfaHZjbG9jaz46DQo+IDsgaHZfcmVhZF90c2NfcGFnZV90c2MoY29uc3Qg
+c3RydWN0IG1zX2h5cGVydl90c2NfcGFnZSAqdHNjX3BnLA0KPiAgICAgNmQwOiA0OCA4ZCAzZCAy
+OSBkOSBmZiBmZiAgICAgICAgICBsZWFxICAgIC0weDI2ZDcoJXJpcCksICVyZGkgICAgICMgMHhm
+ZmZmZmZmZmZmZmZlMDAwIDxodmNsb2NrX3BhZ2U+DQo+ICAgICA2ZDc6IGViIDE5ICAgICAgICAg
+ICAgICAgICAgICAgICAgIGptcCAgICAgMHg2ZjIgPHZyZWFkX2h2Y2xvY2srMHgyMj4NCj4gOyAg
+ICAgICAgICAgICAgIHNjYWxlID0gUkVBRF9PTkNFKHRzY19wZy0+dHNjX3NjYWxlKTsNCj4gICAg
+IDZkOTogNGMgOGIgMGQgMjggZDkgZmYgZmYgICAgICAgICAgbW92cSAgICAtMHgyNmQ4KCVyaXAp
+LCAlcjkgICAgICAjIDB4ZmZmZmZmZmZmZmZmZTAwOCA8aHZjbG9ja19wYWdlKzB4OD4NCj4gOyAg
+ICAgICAgICAgICAgIG9mZnNldCA9IFJFQURfT05DRSh0c2NfcGctPnRzY19vZmZzZXQpOw0KPiAg
+ICAgNmUwOiA0YyA4YiAwNSAyOSBkOSBmZiBmZiAgICAgICAgICBtb3ZxICAgIC0weDI2ZDcoJXJp
+cCksICVyOCAgICAgICMgMHhmZmZmZmZmZmZmZmZlMDEwIDxodmNsb2NrX3BhZ2UrMHgxMD4NCj4g
+OyAgICAgICBhc20gdm9sYXRpbGUoQUxURVJOQVRJVkVfMigicmR0c2MiLA0KPiAgICAgNmU3OiAw
+ZiAzMSAgICAgICAgICAgICAgICAgICAgICAgICByZHRzYw0KPiAgICAgNmU5OiA5MCAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBub3ANCj4gICAgIDZlYTogOTAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgbm9wDQo+ICAgICA2ZWI6IDkwICAgICAgICAgICAgICAgICAgICAgICAgICAgIG5v
+cA0KPiA7ICAgICAgIH0gd2hpbGUgKFJFQURfT05DRSh0c2NfcGctPnRzY19zZXF1ZW5jZSkgIT0g
+c2VxdWVuY2UpOw0KPiAgICAgNmVjOiA4YiAwZiAgICAgICAgICAgICAgICAgICAgICAgICBtb3Zs
+ICAgICglcmRpKSwgJWVjeA0KPiAkDQo+DQpZZXMsIG5vdCBvbmx5IGxsdm0tb2JqZHVtcC4gSSBj
+YW4gc2VlIG90aGVyIHRvb2xzIGFsc28gY2FuIGhhbmRsZSB0aGlzIGFuZCBldmVuDQpjYW4gZG93
+bmxvYWQgZnJvbSBvbmxpbmUgYnkgRGVidWdpbmZvZC4NCiAgLSBwZXJmIGNhbiBzZWFyY2ggZGVi
+dWdnaW5nIGluZm8gdGhlcmUgaWYgSEFWRV9ERUJVR0lORk9EX1NVUFBPUlQuDQogIC0gZ2RiIGNh
+biBzZWFyY2ggZGVidWdnaW5nIGluZm8gdGhlcmUgYW5kIGRvd25sb2FkIHZpYSBEZWJ1Z2luZm9k
+IGlmIG5vdCBleGlzdC4NCg0KV2hpbGUgYWJvdmUgcmVxdWlyZXMgZGVidWdnaW5nIGZpbGVzIGFy
+ZSBwbGFjZWQgY29ycmVjdGx5IGluDQovdXNyL2xpYi9kZWJ1Zy8uYnVpbGQtaWQvLiBGb3IgdmRz
+byBtb3N0bHkgeW91IG5lZWQgdG8gY29weSBpdCBtYW51bGx5Lg0KDQpUaGUgdGFyZ2V0IG9mIHRo
+aXMgc2VyaWVzIGlzIHRvIGhhbmRsZSBpdCB0cmFuc3BhcmVudGx5LCBlc3BhY2lhbGx5IGZvciBs
+b2NhbGx5DQpidWlsdCBrZXJuZWxzLg0KDQo+IA0KPiANCg0KLS0gDQpDaGVlcnMsDQpDaGFuZ2Jp
+biBEdQ0K
 
