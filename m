@@ -1,176 +1,170 @@
-Return-Path: <linux-kernel+bounces-258449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 895BB93880A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:20:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ADAE93880F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FEEF1F214DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:20:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15F971F2174B
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78AB315AF6;
-	Mon, 22 Jul 2024 04:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D812416426;
+	Mon, 22 Jul 2024 04:22:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="McmO9zOF"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WuunfAdv"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815E6107A0
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 04:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C081759F;
+	Mon, 22 Jul 2024 04:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721622052; cv=none; b=saXZUF6L497/9+JjES1Rpi+KUw5nwoXCxDFWMH1+bgL4ieaeVNqmhNfOiwgBCaNvQ+MjCr7oz4pAEejgNccxnyjymZDBTWAdueza/SscG1OWXa8HDM+1CCGgQmgZF82VL4IY2PX7adYN7jNog6R7gemx6+4jHp3QfFjbyh7ZStY=
+	t=1721622152; cv=none; b=jN5AWRF6LsnNQ5mLztNQeACBwIuDcntoH9sKJZRctnbstgGlWHZ9j0G1iNQNs+NWPFx5JymRqAov+EViNBq/540czur29NtwOf8bBrLRJg5TQjiXj9kDMIJiCre84U23TqHyWYKRTIUN4SZKFTW38LtJIONeTQsA2aJ6RxurkZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721622052; c=relaxed/simple;
-	bh=MCHdMjDmkw+I2haDA7VmzctibtDty8BUy5xUGnwjQM0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=C5jcR2mTwXhL+r4LWjHKAq0MJ4f9D68Oq0NY4osTAkTO4mOxBLVlm5sEwRpMrJzAdCnMlusWEkXWnanJQNpt+GgvuoIpYC0ECOWpOou/jW6OySYayC8aHyjCsvsX8MZjBOxqCNdnffKQir/U9Txis5jh1fMjekm0p3Cov3LWCnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=McmO9zOF; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-70d2ae44790so191864b3a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 21 Jul 2024 21:20:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1721622050; x=1722226850; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=p54eG25IX4K7qH1am1LIVsFIDVdw1nNvCzAAhUWsgsw=;
-        b=McmO9zOF0Sdm1rVi8P6evVa2iftApL91hYTxFj+ki1Xs1vzZfo5vD2FRBCWgluwiVH
-         PGmcbKkYvqwJAtcCiXd1BLCYWQm801rP9OLbLNoSq85qXeoHjVi+BUgdaNb21vTko75k
-         JZSeWHEpkOHDqZCfMj5XLBZ/juQbCbqHKZ3/V7lWG0PFq9+pffPpNrBOwDkDKwPH0MoM
-         iRLTkAmfQWaYpuSw/1NPfaE30ar5SL62NHSu9IUXyKjaICnWJ5HM8BU8/42bj+Bm50H0
-         MW9WxoCQf8ehEr/t6XNizb23CaxX3K/+uU96raXMhBwZSwbtp/t6J4UOE0KbinOzocDr
-         k8rA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721622050; x=1722226850;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p54eG25IX4K7qH1am1LIVsFIDVdw1nNvCzAAhUWsgsw=;
-        b=Oo5ZvANDyoCMNOUMVogdMAqV6hn2IOOJjpNPaArOIokT65saM9qdq4/t512PRDWpPE
-         lxVbER2NPqqg3rUdRZvxnAI3lvN2u02Ifi6FEv6IwmxnduBD93655/xs+c9q49ZYGiCB
-         Aw0kWO9u9wjW0/KWEXWeif8PxCL8fGaSc31AMnvFoS3GxeppLX8048Qv3WaRraS0BpYr
-         kw6TFYBlBpQCPsEVhZEM5qlCav0916VoksfEIzBG2nckTpVSdH/SqiOIoaS+YeR9TcUC
-         G28l3A8Ochbrkc0X9B3omXPGy0bxaVpnWb1CfnH8r5HXhYDUiyGuBXBthEvmVdajl79/
-         40Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEUVx4b1futcCDaYvxUneqE5or/tG2Tnws/6wY2cDPqSA6DxrhU2CygaKLpNUDwz3LeQ3D1SJXb23PyHWTJ0wfJB+zeqit64yarf6V
-X-Gm-Message-State: AOJu0YwuY0vpTTwugZgiStCkkosltmLn2TiuCkjw6eoJ0JCsOy65Tl2P
-	pib1t5j6uFD+sXmepMvCwqdm5x5DgYIQFB1nCV5Q6jdv78uddpi5j+QbRdFbrIg=
-X-Google-Smtp-Source: AGHT+IH8fTq3s2tWLINAZyA5rbZ0LM6s0MZ12d2PMJTOXBz/IbcNiG5imYLZzJZ18BdDsyJ9KnNiwA==
-X-Received: by 2002:a05:6a00:3cc2:b0:70d:2a4d:2edc with SMTP id d2e1a72fcca58-70d2a4d3191mr1296928b3a.20.1721622049629;
-        Sun, 21 Jul 2024 21:20:49 -0700 (PDT)
-Received: from L6YN4KR4K9.bytedance.net ([139.177.225.225])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-79f0f267834sm3225618a12.79.2024.07.21.21.20.45
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 21 Jul 2024 21:20:49 -0700 (PDT)
-From: Yunhui Cui <cuiyunhui@bytedance.com>
-To: punit.agrawal@bytedance.com,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	akpm@linux-foundation.org,
-	surenb@google.com,
-	peterx@redhat.com,
-	alexghiti@rivosinc.com,
-	willy@infradead.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Yunhui Cui <cuiyunhui@bytedance.com>
-Subject: [PATCH v2] riscv/mm/fault: add show_pte() before die()
-Date: Mon, 22 Jul 2024 12:20:37 +0800
-Message-Id: <20240722042037.27934-1-cuiyunhui@bytedance.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+	s=arc-20240116; t=1721622152; c=relaxed/simple;
+	bh=62ls2IOTmXlvc5qzKM2wL/hisK4eyQN4wuTl9T4gi48=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PN9Uja86zA1EqGgXEF2Cy9w6Eo5xgIFeQm41p9UCyLgcuvuACyzdfdeDvCYGmMGELRbLxcfyq6kYurppsIVj5HzI3tbOSxXfYWfCX6kOFxiqnK7KTcODygnIEEZBjhokahvDtPRJyGlKNQLxW3XPm+/KbZgwKfsnBHau06BZ1ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WuunfAdv; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46LN0rq4016040;
+	Mon, 22 Jul 2024 04:22:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	N3EOVUD+WO15qHR0VO6+BdaZL27VH5th1kQoboWWqD0=; b=WuunfAdvdeSCR/My
+	0VIN+B7esRTRYL1X+NY1vLta/Ld/BnMVKlLgXl+KSEn/HRIk/Trl11CZrUizIcaH
+	08Zul3SgANcrpPH++WRe08L74PaHefdySC5kt6aZI6ht5EyhTks1CHZ3wBuj/tsv
+	WeGc2oU2Pc4Vcoquk+Di2BOdJZ44dROzci8IEdPBtrr4KI1+4zuOgo4SFWYnJaPO
+	Ac3kU38FWM25eBQsppdCrdEtnPxzMBIBwVKX/xjBfbu3YscS5wuVDfsT2D8Eh70/
+	XsSct+LCoxvh9CYBSjcItSvQlho5cguvqDKr58ONaJdoKwAh1AOIpAJ+NL74z0y0
+	feACIQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g46s2m6m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Jul 2024 04:22:17 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46M4MG2g013466
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Jul 2024 04:22:16 GMT
+Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 21 Jul
+ 2024 21:22:13 -0700
+Message-ID: <1fa821d4-eeba-4df9-8c08-f289832e0632@quicinc.com>
+Date: Mon, 22 Jul 2024 09:51:48 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] misc: fastrpc: Increase unsigned PD initmem size
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
+        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
+        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>,
+        stable
+	<stable@kernel.org>
+References: <20240719085708.1764952-1-quic_ekangupt@quicinc.com>
+ <wd3vpjh6u7tsaxccc6ek5t3ryio453exaprsmkxyzsh4brx7qk@ywkerf5fwqnd>
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+In-Reply-To: <wd3vpjh6u7tsaxccc6ek5t3ryio453exaprsmkxyzsh4brx7qk@ywkerf5fwqnd>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: -8av5zhCzifMUNtbZ_jyGED4ko4B3FcZ
+X-Proofpoint-ORIG-GUID: -8av5zhCzifMUNtbZ_jyGED4ko4B3FcZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-22_01,2024-07-18_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
+ lowpriorityscore=0 bulkscore=0 clxscore=1011 malwarescore=0
+ priorityscore=1501 phishscore=0 adultscore=0 suspectscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407220032
 
-When the kernel displays "Unable to handle kernel paging request at
-virtual address", we would like to confirm the status of the virtual
-address in the page table. So add show_pte() before die().
 
-Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
----
- arch/riscv/mm/fault.c | 53 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
 
-diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
-index 5224f3733802..666d282a8bf4 100644
---- a/arch/riscv/mm/fault.c
-+++ b/arch/riscv/mm/fault.c
-@@ -22,6 +22,58 @@
- 
- #include "../kernel/head.h"
- 
-+static void show_pte(unsigned long addr)
-+{
-+	pgd_t *pgdp, pgd;
-+	p4d_t *p4dp, p4d;
-+	pud_t *pudp, pud;
-+	pmd_t *pmdp, pmd;
-+	pte_t *ptep, pte;
-+	struct mm_struct *mm = current->mm;
-+
-+	if (!mm)
-+		mm = &init_mm;
-+
-+	pr_alert("Current %s pgtable: %luK pagesize, %d-bit VAs, pgdp=0x%016lx\n",
-+		 current->comm, PAGE_SIZE/SZ_1K, VA_BITS,
-+		 (mm == &init_mm ? __pa_symbol(mm->pgd) :
-+		 (unsigned long)virt_to_phys(mm->pgd)));
-+
-+	pgdp = pgd_offset(mm, addr);
-+	pgd = pgdp_get(pgdp);
-+	pr_alert("[%016lx] pgd=%016lx", addr, pgd_val(pgd));
-+	if (pgd_none(pgd) || pgd_bad(pgd) || pgd_leaf(pgd))
-+		goto out;
-+
-+	p4dp = p4d_offset(pgdp, addr);
-+	p4d = p4dp_get(p4dp);
-+	pr_cont(", p4d=%016lx", p4d_val(p4d));
-+	if (p4d_none(p4d) || p4d_bad(p4d) || p4d_leaf(p4d))
-+		goto out;
-+
-+	pudp = pud_offset(p4dp, addr);
-+	pud = pudp_get(pudp);
-+	pr_cont(", pud=%016lx", pud_val(pud));
-+	if (pud_none(pud) || pud_bad(pud) || pud_leaf(pud))
-+		goto out;
-+
-+	pmdp = pmd_offset(pudp, addr);
-+	pmd = pmdp_get(pmdp);
-+	pr_cont(", pmd=%016lx", pmd_val(pmd));
-+	if (pmd_none(pmd) || pmd_bad(pmd) || pmd_leaf(pmd))
-+		goto out;
-+
-+	ptep = pte_offset_map(pmdp, addr);
-+	if (!ptep)
-+		goto out;
-+
-+	pte = ptep_get(ptep);
-+	pr_cont(", pte=%016lx", pte_val(pte));
-+	pte_unmap(ptep);
-+out:
-+	pr_cont("\n");
-+}
-+
- static void die_kernel_fault(const char *msg, unsigned long addr,
- 		struct pt_regs *regs)
- {
-@@ -31,6 +83,7 @@ static void die_kernel_fault(const char *msg, unsigned long addr,
- 		addr);
- 
- 	bust_spinlocks(0);
-+	show_pte(addr);
- 	die(regs, "Oops");
- 	make_task_dead(SIGKILL);
- }
--- 
-2.39.2
+On 7/19/2024 3:36 PM, Dmitry Baryshkov wrote:
+> On Fri, Jul 19, 2024 at 02:27:08PM GMT, Ekansh Gupta wrote:
+>> For user PD initialization, initmem is allocated and sent to DSP for
+>> initial memory requirements like shell loading. This size is the shell
+>> size that is  passed by user space and is checked against a max size.
+>> For unsigned PD offloading requirement, additional memory is required
+>> because of additional static heap initialization. Without this
+>> additional memory, PD initialization would fail. Increase the initmem
+>> size by 2MB for unsigned PD initmem buffer allocation. Any additional
+>> memory sent to DSP during PD init is used as the PD heap.
+>>
+>> Fixes: 7f1f481263c3 ("misc: fastrpc: check before loading process to the DSP")
+>> Cc: stable <stable@kernel.org>
+>> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+>> ---
+>> Changes in v2:
+>>   - Modified commit text.
+>>   - Removed size check instead of updating max file size.
+>> Changes in v3:
+>>   - Added bound check again with a higher max size definition.
+>>   - Modified commit text accordingly.
+>> Changes in v4:
+>>   - Defined new initmem specific MACROs.
+>>   - Adding extra memory for unsigned PD.
+>>   - Added comment suggesting the reason for this change.
+>>   - Modified commit text.
+>>
+>>  drivers/misc/fastrpc.c | 10 +++++++++-
+>>  1 file changed, 9 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+>> index a7a2bcedb37e..18668b020a87 100644
+>> --- a/drivers/misc/fastrpc.c
+>> +++ b/drivers/misc/fastrpc.c
+>> @@ -39,6 +39,8 @@
+>>  #define FASTRPC_DSP_UTILITIES_HANDLE	2
+>>  #define FASTRPC_CTXID_MASK (0xFF0)
+>>  #define INIT_FILELEN_MAX (2 * 1024 * 1024)
+>> +#define FASTRPC_INITLEN_MIN (3 * 1024 * 1024)
+>> +#define FASTRPC_STATIC_HEAP_LEN (2 * 1024 * 1024)
+>>  #define INIT_FILE_NAMELEN_MAX (128)
+>>  #define FASTRPC_DEVICE_NAME	"fastrpc"
+>>  
+>> @@ -1410,8 +1412,14 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
+>>  			goto err;
+>>  	}
+>>  
+>> -	memlen = ALIGN(max(INIT_FILELEN_MAX, (int)init.filelen * 4),
+>> +	/* Allocate buffer in kernel for donating to remote process.
+>> +	 * Unsigned PD requires additional memory because of the
+>> +	 * additional static heap initialized within the process.
+>> +	 */
+>> +	memlen = ALIGN(max(FASTRPC_INITLEN_MIN, (int)init.filelen * 4),
+>>  		       1024 * 1024);
+> Ok, here you have two changes in the same patch. First one changes
+> the allocated memory size for the signed usecase and another one adds
+> separate handling for the unsigned case. Please split them into two
+> separate commits.
+Sure, will be splitting the patches. Thanks.
+
+--Ekansh
+>
+>> +	if (unsigned_module)
+>> +		memlen += FASTRPC_STATIC_HEAP_LEN;
+>>  	err = fastrpc_buf_alloc(fl, fl->sctx->dev, memlen,
+>>  				&imem);
+>>  	if (err)
+>> -- 
+>> 2.34.1
+>>
 
 
