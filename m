@@ -1,137 +1,133 @@
-Return-Path: <linux-kernel+bounces-259448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A21B939656
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 00:14:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A4C93965B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 00:15:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B7AB1C21827
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:14:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFBF0B21625
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE5245025;
-	Mon, 22 Jul 2024 22:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C392F45027;
+	Mon, 22 Jul 2024 22:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u2m+7L3g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eS2GWIka"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A47EB4963D;
-	Mon, 22 Jul 2024 22:14:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072F647F6C;
+	Mon, 22 Jul 2024 22:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721686482; cv=none; b=ARmkj4tc8Rvm2AwlMU8YAlDAzbQT8dgL4NF1XYleEh8agRNzf4S8CYda87AJ5Z25rf9J2Xcqzg1keR/SlSvaSwp5aYd58EU83UwCLqi2ZFBd9BM5oBsWMZG2yussKsiA2zUJ3GI+pj7XdSJvaJTNrNluRmg/CZrnh4l8Ug7yF+c=
+	t=1721686503; cv=none; b=UO/Kvgjq6rv2jC5sYRSiy/Ly8AmMNMhQcaP97PQRJKg3HxSrEgm7cNLMxU52Rt8suaMX5advFwrEiHv1dUin8WeS1a8e4Y7elAFV72vc7r6aDCiubWko3cK4vGZsIFXL21VBW93R7Q2cDMHd4gXFCZQCPoijfLyxPVQDbGF5aTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721686482; c=relaxed/simple;
-	bh=Jgmyw4r1hTvfrHmVFdlwtVqOx4dBD6X3d4dEdsO2pXw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z5Ty59SCRwuz0FLsWyVFSYVGBxR1syjO2+mwkEiZ/M358nz2ktmsSrVuEUg1T9Jm3Nmb0FFeBklI3HJtDbNv0hcr1u4kHBQkgdu3fzJb2klu+5mOuQn6Vivv1CsWytsnZiu18/dZUS0jQgeH/25svVm+G9tCHutqDHafMOiR53Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u2m+7L3g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46859C4AF10;
-	Mon, 22 Jul 2024 22:14:42 +0000 (UTC)
+	s=arc-20240116; t=1721686503; c=relaxed/simple;
+	bh=pltdNSZmHoCVSI5Sk1ELA9qb2K8O00alOaa1v/EU7+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LbxiX3PQs/hQ7bjOQWik23w0ehhMjF46a/TNJeIZPdZiC5Xdsd+RGnnC93EQ0HB0AKg0FBvwRZ7QMkckK2yrKiWFlEDrevz7aXXChd3LBcThcwjZW2CXK7eZWxoZ+3mm6Ts2yGAqlC6yA4N6sfzAni5c5J5pQlOoDobNwE0Gaf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eS2GWIka; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49F13C4AF0B;
+	Mon, 22 Jul 2024 22:15:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721686482;
-	bh=Jgmyw4r1hTvfrHmVFdlwtVqOx4dBD6X3d4dEdsO2pXw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=u2m+7L3g7fIokE3qxZL2ebzvJO7F3sAbzQojsyTUotcxb12wN1LnXEfW2HfuD4tVT
-	 O8qf5xqC3wnQtRsA7lBav39Z7FwZsSanzTaExmSZquKrN3QCIE6iIRh9Z7sQPNo9ii
-	 eUQCpEVDPZDFcQkr6jVU9j/hH2Ow3eIA71uHFlT+qePe+AvSvdBMOKIMLlhBE8gpl6
-	 2HHTTmr/f4G1mMPJBIPhAiOaGxvv9nnv3+z46M+h39DqV7ScwikX1POgiJJgwY0ch4
-	 62ytocgp7Hd2XpPS7dA9fK54gpECIpmbByLj+M+zyf/ZO+oM8EieysKi5GsxF2cw8D
-	 bXg8KGc843lMQ==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52f01ec08d6so2267140e87.2;
-        Mon, 22 Jul 2024 15:14:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUc+NZ1z0JPwj6reNGC/KikYWa9NEiR+tUfpq9V/tteWJvKY2i1C3SgaaLgUemR4o7v5RBimjSRxkdFx/vA7IwyWaWiFSx4Dunam8W9
-X-Gm-Message-State: AOJu0YzgFWtYBZmyRojyposTE6yNJZvV0CaKbwDMx1cm35yUxJFUA2ru
-	IPBV1KUY0cPxZfanogB7AK+K6TTOyjYt/UmY9GEwMYRA9Rsy1ibygSDYb32+4MhkcZu0bF9fF3D
-	1cTEmuunJGGK/Ap3EwsETmuQno8A=
-X-Google-Smtp-Source: AGHT+IHAn2/WwFGgmciXyJ+SkgPaePaYXDpeZImlbBDYaQjv4ZkkBCoW0NyGUjfUOPaJWKbmh+BmdrWrPMgTUtNcLng=
-X-Received: by 2002:a05:6512:e88:b0:52c:881b:73c0 with SMTP id
- 2adb3069b0e04-52fc4046a8fmr751322e87.17.1721686480596; Mon, 22 Jul 2024
- 15:14:40 -0700 (PDT)
+	s=k20201202; t=1721686502;
+	bh=pltdNSZmHoCVSI5Sk1ELA9qb2K8O00alOaa1v/EU7+o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=eS2GWIka5vU0Qn0pNkYc7lr5QHaxi1ZWuMgxqgY5Sy5iieoVqXwg/SZKOwF6SNNWz
+	 /nZqJLDtjl4qoCXLrSVokX6tIh/e4WWyH/pBYDoXornJ6VtdYgSfkr3eCIeF5AT4ek
+	 gw29mSYhAL4xycRBGfptWkJnlsUXf4B1UrtC2CFI2aTdnlJUBpO5obZS6aQVKLOt3p
+	 OzrBfqlwqiuJje8zwiW+cMn+fZWTw7ycPn8EIQTXdvEY2xgBIe2ZAnp1gMPszE6CCt
+	 b8+Bc90pK8zjMT3w6VrrewVLH+gSXymmwR3UlMskHFoyqhlDINDg3SAzd9Zfmw70ox
+	 mmX4bTwSiIPIQ==
+Date: Mon, 22 Jul 2024 17:15:00 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Thippeswamy Havalige <thippesw@amd.com>
+Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org, thippeswamy.havalige@amd.com,
+	linux-arm-kernel@lists.infradead.org, michal.simek@amd.com
+Subject: Re: [PATCH v2 2/2] PCI: xilinx-xdma: Add Xilinx QDMA Root Port driver
+Message-ID: <20240722221500.GA739438@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <DS7PR19MB570996A580C6F5D2C9CACCE48BA32@DS7PR19MB5709.namprd19.prod.outlook.com>
- <DS7PR19MB5709B2A263E769B461091B0D8BA32@DS7PR19MB5709.namprd19.prod.outlook.com>
- <CAMj1kXHBSNxrzbQoaDea7HFcjN9HHk5==tXg1WLHDzW61aj4cg@mail.gmail.com>
- <DS7PR19MB5709B39C90153DAA27DA122D8BAE2@DS7PR19MB5709.namprd19.prod.outlook.com>
- <CAMj1kXHS0rr9DfKCeD-Zz7y1Bk-3ncn2cEgVmnWE0Jq1B=+Acg@mail.gmail.com> <DS7PR19MB570924EC5BB1BA3F321A65B98BA82@DS7PR19MB5709.namprd19.prod.outlook.com>
-In-Reply-To: <DS7PR19MB570924EC5BB1BA3F321A65B98BA82@DS7PR19MB5709.namprd19.prod.outlook.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 23 Jul 2024 00:14:29 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFjWBpOij5V3=-9etqTW9p8guqPDCGU3DK0Yxq6zrBiBQ@mail.gmail.com>
-Message-ID: <CAMj1kXFjWBpOij5V3=-9etqTW9p8guqPDCGU3DK0Yxq6zrBiBQ@mail.gmail.com>
-Subject: Re: [Patch] Do not clear BSS region in x86 stub
-To: "Shao, Marshall" <Marshall.Shao@dell.com>
-Cc: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "bp@alien8.de" <bp@alien8.de>, 
-	"mingo@redhat.com" <mingo@redhat.com>, "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"Mishra, Ashish" <Ashish.Mishra4@dell.com>, "Chia, Jia Yuan" <JiaYuan.Chia@dell.com>, 
-	"Dion, Christopher" <Christopher.Dion@dell.com>, "Caisse, Joe" <Joe.Caisse@dell.com>, 
-	"Mukundan, Govind" <Govind.Mukundan@dell.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240722062558.1578744-3-thippesw@amd.com>
 
-On Mon, 22 Jul 2024 at 13:48, Shao, Marshall <Marshall.Shao@dell.com> wrote=
-:
->
-> Hi Ard,
->
-> > Given that GRUB now supports the native EFI entrypoint properly,
-> > the handover protocol is essentially deprecated.
->
-> In my case, the systemd-boot jumped into the EFI stub code via
-> handover protocol, this may not be an orthodox way to boot the kernel
-> but it performs well on the others, I have tested on at least
-> 6 firmware.
->
+On Mon, Jul 22, 2024 at 11:55:58AM +0530, Thippeswamy Havalige wrote:
+> Add support for Xilinx QDMA Soft IP core as Root Port.
+> 
+> The versal prime devices support QDMA soft IP module in
+> programmable logic.
 
-systemd-boot does not implement the EFI handover protocol.
-systemd-stub does implement it (for UKIs) but only for kernel versions
-v5.8 or older.
+Capitalize brand names.
 
-The EFI handover protocol is known to be problematic as the loaders
-often fail to allocate memory for the entire image, and only allocate
-enough pages to load the bzImage itself.
+> The integrated QDMA Soft IP block has integrated bridge function that
+> can act as PCIe Root Port.
 
-This means that clearing BSS will wipe unrelated memory if the region
-after the image happens to be used already. It also means that not
-clearing BSS is just a crutch, and the correct fix is to ensure that
-systemd-stub allocates the correct number of pages, and clears the
-ones that are not covered by the bzImage payload.
+Rewrap to fill 75 columns.
 
-> I understand that the handover protocol is going to be deprecated.
-> However, as of now, I can't guarantee which EFI loader will be
-> used to load my bzImage. Although it=E2=80=99s not very common, booting
-> from the handover protocol with uncleaned BSS memory is possible.
->
+> +#define QDMA_BRIDGE_BASE_OFF		0xCD8
 
-systemd-boot does not use the EFI handover protocol. Please try to
-determine where this confusion comes from: are you using a UKI image
-perhaps?
+Other #defines in this file user lower-case hex; please match them.
 
-> >> memset(_bss+0x10000, 0, _ebss - _bss - 0x10000)
->
-> > So now you are applying the memset only to part of BSS, right? How
-> > does this help?
->
-> This part doesn't work without increasing the BOOT_STACK_SIZE.
->
+>  static inline u32 pcie_read(struct pl_dma_pcie *port, u32 reg)
+>  {
+> -	return readl(port->reg_base + reg);
+> +	if (port->variant->version == XDMA)
+> +		return readl(port->reg_base + reg);
+> +	else
+> +		return readl(port->reg_base + reg + QDMA_BRIDGE_BASE_OFF);
+>  }
+>  
+>  static inline void pcie_write(struct pl_dma_pcie *port, u32 val, u32 reg)
+>  {
+> -	writel(val, port->reg_base + reg);
+> +	if (port->variant->version == XDMA)
+> +		writel(val, port->reg_base + reg);
+> +	else
+> +		writel(val, port->reg_base + reg + QDMA_BRIDGE_BASE_OFF);
+>  }
+>  
+>  static inline bool xilinx_pl_dma_pcie_link_up(struct pl_dma_pcie *port)
+> @@ -173,7 +198,10 @@ static void __iomem *xilinx_pl_dma_pcie_map_bus(struct pci_bus *bus,
+>  	if (!xilinx_pl_dma_pcie_valid_device(bus, devfn))
+>  		return NULL;
+>  
+> -	return port->reg_base + PCIE_ECAM_OFFSET(bus->number, devfn, where);
+> +	if (port->variant->version == XDMA)
+> +		return port->reg_base + PCIE_ECAM_OFFSET(bus->number, devfn, where);
+> +	else
+> +		return port->cfg_base + PCIE_ECAM_OFFSET(bus->number, devfn, where);
 
-... because the 0x10000 value would be incorrect otherwise?
+If you rework the variant tests above to use
+"if (port->variant->version == QDMA)" instead, they will match the one
+below, and you won't need to touch the existing code at all, e.g.,
 
-I am trying to understand *why* this particular change works around
-the issue. Please elaborate.
+  + if (port->variant->version == QDMA)
+  +   return port->cfg_base + PCIE_ECAM_OFFSET(bus->number, devfn, where);
 
-My preliminary conclusion here is that your implementation of the EFI
-handover protocol (which I fail to understand where it comes from) is
-not allocating enough memory. This should be fixed on the bootloader
-side, as not clearing the BSS does not prevent this memory from being
-corrupted.
+    return port->reg_base + PCIE_ECAM_OFFSET(bus->number, devfn, where);
+
+>  }
+>  
+>  /* PCIe operations */
+> @@ -731,6 +759,15 @@ static int xilinx_pl_dma_pcie_parse_dt(struct pl_dma_pcie *port,
+>  
+>  	port->reg_base = port->cfg->win;
+>  
+> +	if (port->variant->version == QDMA) {
+> +		port->cfg_base = port->cfg->win;
+> +		res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "breg");
+> +		port->reg_base = devm_ioremap_resource(dev, res);
+> +		if (IS_ERR(port->reg_base))
+> +			return PTR_ERR(port->reg_base);
+> +		port->phys_reg_base = res->start;
+> +	}
 
