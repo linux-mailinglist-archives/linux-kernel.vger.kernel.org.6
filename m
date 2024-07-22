@@ -1,63 +1,64 @@
-Return-Path: <linux-kernel+bounces-258749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 042B4938C5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:47:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D4DA938C5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CF481F21F38
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:47:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3AC41F21E8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152C516C864;
-	Mon, 22 Jul 2024 09:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F3B16EC1C;
+	Mon, 22 Jul 2024 09:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="RLi1KN7w"
-Received: from smtpout145.security-mail.net (smtpout145.security-mail.net [85.31.212.145])
+	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="V9NvfVC8"
+Received: from smtpout143.security-mail.net (smtpout143.security-mail.net [85.31.212.143])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F8816E88E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E0C16E899
 	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.31.212.145
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.31.212.143
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721641431; cv=none; b=rU6DA3j8mU5ABwJNgE1mK3hW19qPbTLvi+MsLfhAuBUu27dXtnDwz8OKruvtcYtcFvjjSchVrUEszRn5W5WI8fkZ6gxjFOT6iqrxcxrHBzbHYEFeLwjjd/e28YQldJvA/jS/tvhi0luCS9urRaW7b5EKTA5F35b9u22hqwcP5Jc=
+	t=1721641430; cv=none; b=DSYznywWOHi/SrRPsZCu9xSawxO6KaR3+zaGz/lFVaxZvtONa01RGeVVM7cnT3Uhdd0G8Ru83gj/T5OediRvZ+skGtSd6/nGr74XbbUkvKfO1GaNG8+I5UkKnRCXdhVQpDINgpP8meZ6/h61EiufwIjKT70TWrTn631/HHA0wPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721641431; c=relaxed/simple;
-	bh=giN4n+jzmplOf9Ex5NGT7uwj8TAAZeGrZHbapAwQ1vY=;
+	s=arc-20240116; t=1721641430; c=relaxed/simple;
+	bh=7YR6j+1R9mz+vgiTv2FAgB1g9CVaQI/buI0GwB5Mols=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cOmOJuELF1bAr1YbYkJuqeE1WHNo9ceUI1uWCljL0Y7c2ROLbVzFsH3yIBfy2xX1DH4ytFgSEMEz0TE33a6KaKT66cgZXIYKuSChsZqsvi+goHcj/LVxexRymARYxPWgDd11XTBnKkPTAXb57raPDKNFtDV7G3oXgsa7QkwDRFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=RLi1KN7w; arc=none smtp.client-ip=85.31.212.145
+	 MIME-Version:Content-Type; b=i22pjUaeo3L3cXhLF7zzGJawVTrH5Hz349gZHwr0cAFyilRQQUg8ORJpCLTXPEZ2cVK50H2liV0Pp2+o7nMBlJ7JjzbCZM1VHoHikiRLMxUdza1Rw3ZMgmlmltijAIxt6sO3NuQoXZpsl+VvRQHWse/kSE4cBfo4CNISyPsneSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=V9NvfVC8; arc=none smtp.client-ip=85.31.212.143
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
-Received: from localhost (fx405.security-mail.net [127.0.0.1])
-	by fx405.security-mail.net (Postfix) with ESMTP id 9E2E6335C57
+Received: from localhost (localhost [127.0.0.1])
+	by fx403.security-mail.net (Postfix) with ESMTP id D263B48ECED
 	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:43:46 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
 	s=sec-sig-email; t=1721641426;
-	bh=giN4n+jzmplOf9Ex5NGT7uwj8TAAZeGrZHbapAwQ1vY=;
+	bh=7YR6j+1R9mz+vgiTv2FAgB1g9CVaQI/buI0GwB5Mols=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=RLi1KN7wCc1aE/+FkGL9iZdOOsjnBLoJPM749uy7NhVyK/ybzZQ2EqurOgedCgwa4
-	 2RnTq6rNTwh5d24TF7Sfil+x0A8AzbTpar9kC1/yM/m+itCLfD41N247LXqv8+EVoX
-	 XjQh93BYHrUQ+iBcMQ6zSP9y2fw4T9gP4L3ulDis=
-Received: from fx405 (fx405.security-mail.net [127.0.0.1]) by
- fx405.security-mail.net (Postfix) with ESMTP id 3FEF8335F91; Mon, 22 Jul
- 2024 11:43:46 +0200 (CEST)
+	b=V9NvfVC8Gh9NdexNuysa6QNcEWw0Xx9VfDUMfGCL5Lg46w7TCOcrJpXcC+NOhg55O
+	 u0K0vGPc/HyDKH19HFD5aYiqEHxyb8epmKXkO+ymxfwcvt8Ukpl3ygoUW94gpWqs7L
+	 LeFBABjcrGt358/5N953KH9Q0WuBTlb/8IuG53qo=
+Received: from fx403 (localhost [127.0.0.1]) by fx403.security-mail.net
+ (Postfix) with ESMTP id 7B50248F114; Mon, 22 Jul 2024 11:43:46 +0200 (CEST)
 Received: from srvsmtp.lin.mbt.kalray.eu (unknown [217.181.231.53]) by
- fx405.security-mail.net (Postfix) with ESMTPS id 32040335FA9; Mon, 22 Jul
- 2024 11:43:44 +0200 (CEST)
+ fx403.security-mail.net (Postfix) with ESMTPS id 81A1548E6F0; Mon, 22 Jul
+ 2024 11:43:45 +0200 (CEST)
 Received: from junon.lan.kalrayinc.com (unknown [192.168.37.161]) by
- srvsmtp.lin.mbt.kalray.eu (Postfix) with ESMTPS id 7669240317; Mon, 22 Jul
- 2024 11:43:44 +0200 (CEST)
-X-Secumail-id: <114b4.669e29d0.b7bf2.0>
+ srvsmtp.lin.mbt.kalray.eu (Postfix) with ESMTPS id 4C4CE4032F; Mon, 22 Jul
+ 2024 11:43:45 +0200 (CEST)
+X-Secumail-id: <cc80.669e29d1.7e3eb.0>
 From: ysionneau@kalrayinc.com
-To: linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
+ Kees Cook <kees@kernel.org>
 Cc: Jonathan Borne <jborne@kalrayinc.com>, Julian Vetter
  <jvetter@kalrayinc.com>, Yann Sionneau <ysionneau@kalrayinc.com>, Clement
- Leger <clement@clement-leger.fr>, Jules Maselbas <jmaselbas@zdiv.net>
-Subject: [RFC PATCH v3 26/37] kvx: Add signal handling support
-Date: Mon, 22 Jul 2024 11:41:37 +0200
-Message-ID: <20240722094226.21602-27-ysionneau@kalrayinc.com>
+ Leger <clement@clement-leger.fr>, Marius Gligor <mgligor@kalrayinc.com>,
+ linux-mm@kvack.org
+Subject: [RFC PATCH v3 27/37] kvx: Add ELF relocations and module support
+Date: Mon, 22 Jul 2024 11:41:38 +0200
+Message-ID: <20240722094226.21602-28-ysionneau@kalrayinc.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240722094226.21602-1-ysionneau@kalrayinc.com>
 References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
@@ -73,404 +74,365 @@ X-ALTERMIMEV2_out: done
 
 From: Yann Sionneau <ysionneau@kalrayinc.com>
 
-Add sigcontext definition and signal handling support for kvx.
+Add ELF-related definition and module relocation code for basic
+kvx support.
 
 Co-developed-by: Clement Leger <clement@clement-leger.fr>
 Signed-off-by: Clement Leger <clement@clement-leger.fr>
-Co-developed-by: Jules Maselbas <jmaselbas@zdiv.net>
-Signed-off-by: Jules Maselbas <jmaselbas@zdiv.net>
 Co-developed-by: Julian Vetter <jvetter@kalrayinc.com>
 Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
+Co-developed-by: Marius Gligor <mgligor@kalrayinc.com>
+Signed-off-by: Marius Gligor <mgligor@kalrayinc.com>
 Signed-off-by: Yann Sionneau <ysionneau@kalrayinc.com>
 ---
 
 Notes:
-V1 -> V2: Use read_thread_flags() as suggested by Mark Rutland
-V2 -> V3:
-- Updated to use generic functions (e.g., arch_do_signal_or_restart)
-- Remove do_work_pending (now done by generic exit_to_user_mode_loop)
----
- arch/kvx/include/uapi/asm/sigcontext.h |  16 ++
- arch/kvx/kernel/signal.c               | 252 +++++++++++++++++++++++++
- arch/kvx/kernel/vdso.c                 |  87 +++++++++
- 3 files changed, 355 insertions(+)
- create mode 100644 arch/kvx/include/uapi/asm/sigcontext.h
- create mode 100644 arch/kvx/kernel/signal.c
- create mode 100644 arch/kvx/kernel/vdso.c
+V1 -> V2: no changes
 
-diff --git a/arch/kvx/include/uapi/asm/sigcontext.h b/arch/kvx/include/uapi/asm/sigcontext.h
+V2 -> V3: define CORE_DUMP_USE_REGSET
+---
+ arch/kvx/include/asm/elf.h      | 156 ++++++++++++++++++++++++++++++++
+ arch/kvx/include/asm/vermagic.h |  12 +++
+ arch/kvx/kernel/module.c        | 148 ++++++++++++++++++++++++++++++
+ 3 files changed, 316 insertions(+)
+ create mode 100644 arch/kvx/include/asm/elf.h
+ create mode 100644 arch/kvx/include/asm/vermagic.h
+ create mode 100644 arch/kvx/kernel/module.c
+
+diff --git a/arch/kvx/include/asm/elf.h b/arch/kvx/include/asm/elf.h
 new file mode 100644
-index 0000000000000..a26688fe8571f
+index 0000000000000..7b6804a939e5e
 --- /dev/null
-+++ b/arch/kvx/include/uapi/asm/sigcontext.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0-only WITH Linux-syscall-note */
++++ b/arch/kvx/include/asm/elf.h
+@@ -0,0 +1,156 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
 +/*
 + * Copyright (C) 2017-2023 Kalray Inc.
-+ * Author(s): Clement Leger
++ * Author(s): Yann Sionneau
++ *            Clement Leger
++ *            Marius Gligor
++ *            Guillaume Thouvenin
 + */
 +
-+#ifndef _UAPI_ASM_KVX_SIGCONTEXT_H
-+#define _UAPI_ASM_KVX_SIGCONTEXT_H
++#ifndef _ASM_KVX_ELF_H
++#define _ASM_KVX_ELF_H
++
++#include <linux/types.h>
 +
 +#include <asm/ptrace.h>
 +
-+struct sigcontext {
-+	struct user_regs_struct sc_regs;
-+};
++/*
++ * These are used to set parameters in the core dumps.
++ */
++#define ELF_CLASS	ELFCLASS64
++#define ELF_DATA	ELFDATA2LSB
++#define ELF_ARCH	EM_KVX
 +
-+#endif	/* _UAPI_ASM_KVX_SIGCONTEXT_H */
-diff --git a/arch/kvx/kernel/signal.c b/arch/kvx/kernel/signal.c
++typedef uint64_t elf_greg_t;
++typedef uint64_t elf_fpregset_t;
++
++#define ELF_NGREG	(sizeof(struct user_regs_struct) / sizeof(elf_greg_t))
++typedef elf_greg_t elf_gregset_t[ELF_NGREG];
++
++#define ELF_CORE_COPY_REGS(dest, regs)			\
++	*(struct user_regs_struct *)&(dest) =		\
++		*(struct user_regs_struct *)regs;	\
++
++/*
++ * This is used to ensure we don't load something for the wrong architecture.
++ */
++#define elf_check_arch(x) ((x)->e_machine == EM_KVX)
++
++#define ELF_CORE_EFLAGS 0x1308
++
++#define CORE_DUMP_USE_REGSET
++#define ELF_EXEC_PAGESIZE	(PAGE_SIZE)
++
++/*
++ * This is the location that an ET_DYN program is loaded if exec'ed.  Typical
++ * use of this is to invoke "./ld.so someprog" to test out a new version of
++ * the loader.  We need to make sure that it is out of the way of the program
++ * that it will "exec", and that there is sufficient room for the brk.
++ */
++#define ELF_ET_DYN_BASE		((TASK_SIZE / 3) * 2)
++
++/*
++ * This yields a mask that user programs can use to figure out what
++ * instruction set this CPU supports.  This could be done in user space,
++ * but it's not easy, and we've already done it here.
++ */
++#define ELF_HWCAP	(elf_hwcap)
++extern unsigned long elf_hwcap;
++
++/*
++ * This yields a string that ld.so will use to load implementation
++ * specific libraries for optimization.  This is more specific in
++ * intent than poking at uname or /proc/cpuinfo.
++ */
++#define ELF_PLATFORM	(NULL)
++
++#define ARCH_HAS_SETUP_ADDITIONAL_PAGES 1
++struct linux_binprm;
++extern int arch_setup_additional_pages(struct linux_binprm *bprm,
++				       int uses_interp);
++
++/* KVX relocs */
++#define R_KVX_NONE                                   0
++#define R_KVX_16                                     1
++#define R_KVX_32                                     2
++#define R_KVX_64                                     3
++#define R_KVX_S16_PCREL                              4
++#define R_KVX_PCREL17                                5
++#define R_KVX_PCREL27                                6
++#define R_KVX_32_PCREL                               7
++#define R_KVX_S37_PCREL_LO10                         8
++#define R_KVX_S37_PCREL_UP27                         9
++#define R_KVX_S43_PCREL_LO10                        10
++#define R_KVX_S43_PCREL_UP27                        11
++#define R_KVX_S43_PCREL_EX6                         12
++#define R_KVX_S64_PCREL_LO10                        13
++#define R_KVX_S64_PCREL_UP27                        14
++#define R_KVX_S64_PCREL_EX27                        15
++#define R_KVX_64_PCREL                              16
++#define R_KVX_S16                                   17
++#define R_KVX_S32_LO5                               18
++#define R_KVX_S32_UP27                              19
++#define R_KVX_S37_LO10                              20
++#define R_KVX_S37_UP27                              21
++#define R_KVX_S37_GOTOFF_LO10                       22
++#define R_KVX_S37_GOTOFF_UP27                       23
++#define R_KVX_S43_GOTOFF_LO10                       24
++#define R_KVX_S43_GOTOFF_UP27                       25
++#define R_KVX_S43_GOTOFF_EX6                        26
++#define R_KVX_32_GOTOFF                             27
++#define R_KVX_64_GOTOFF                             28
++#define R_KVX_32_GOT                                29
++#define R_KVX_S37_GOT_LO10                          30
++#define R_KVX_S37_GOT_UP27                          31
++#define R_KVX_S43_GOT_LO10                          32
++#define R_KVX_S43_GOT_UP27                          33
++#define R_KVX_S43_GOT_EX6                           34
++#define R_KVX_64_GOT                                35
++#define R_KVX_GLOB_DAT                              36
++#define R_KVX_COPY                                  37
++#define R_KVX_JMP_SLOT                              38
++#define R_KVX_RELATIVE                              39
++#define R_KVX_S43_LO10                              40
++#define R_KVX_S43_UP27                              41
++#define R_KVX_S43_EX6                               42
++#define R_KVX_S64_LO10                              43
++#define R_KVX_S64_UP27                              44
++#define R_KVX_S64_EX27                              45
++#define R_KVX_S37_GOTADDR_LO10                      46
++#define R_KVX_S37_GOTADDR_UP27                      47
++#define R_KVX_S43_GOTADDR_LO10                      48
++#define R_KVX_S43_GOTADDR_UP27                      49
++#define R_KVX_S43_GOTADDR_EX6                       50
++#define R_KVX_S64_GOTADDR_LO10                      51
++#define R_KVX_S64_GOTADDR_UP27                      52
++#define R_KVX_S64_GOTADDR_EX27                      53
++#define R_KVX_64_DTPMOD                             54
++#define R_KVX_64_DTPOFF                             55
++#define R_KVX_S37_TLS_DTPOFF_LO10                   56
++#define R_KVX_S37_TLS_DTPOFF_UP27                   57
++#define R_KVX_S43_TLS_DTPOFF_LO10                   58
++#define R_KVX_S43_TLS_DTPOFF_UP27                   59
++#define R_KVX_S43_TLS_DTPOFF_EX6                    60
++#define R_KVX_S37_TLS_GD_LO10                       61
++#define R_KVX_S37_TLS_GD_UP27                       62
++#define R_KVX_S43_TLS_GD_LO10                       63
++#define R_KVX_S43_TLS_GD_UP27                       64
++#define R_KVX_S43_TLS_GD_EX6                        65
++#define R_KVX_S37_TLS_LD_LO10                       66
++#define R_KVX_S37_TLS_LD_UP27                       67
++#define R_KVX_S43_TLS_LD_LO10                       68
++#define R_KVX_S43_TLS_LD_UP27                       69
++#define R_KVX_S43_TLS_LD_EX6                        70
++#define R_KVX_64_TPOFF                              71
++#define R_KVX_S37_TLS_IE_LO10                       72
++#define R_KVX_S37_TLS_IE_UP27                       73
++#define R_KVX_S43_TLS_IE_LO10                       74
++#define R_KVX_S43_TLS_IE_UP27                       75
++#define R_KVX_S43_TLS_IE_EX6                        76
++#define R_KVX_S37_TLS_LE_LO10                       77
++#define R_KVX_S37_TLS_LE_UP27                       78
++#define R_KVX_S43_TLS_LE_LO10                       79
++#define R_KVX_S43_TLS_LE_UP27                       80
++#define R_KVX_S43_TLS_LE_EX6                        81
++
++#endif	/* _ASM_KVX_ELF_H */
+diff --git a/arch/kvx/include/asm/vermagic.h b/arch/kvx/include/asm/vermagic.h
 new file mode 100644
-index 0000000000000..f49c66aef2df6
+index 0000000000000..fef9a33065df9
 --- /dev/null
-+++ b/arch/kvx/kernel/signal.c
-@@ -0,0 +1,252 @@
-+// SPDX-License-Identifier: GPL-2.0-only
++++ b/arch/kvx/include/asm/vermagic.h
+@@ -0,0 +1,12 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
 +/*
 + * Copyright (C) 2017-2023 Kalray Inc.
 + * Author(s): Clement Leger
 + */
 +
-+#include <linux/bug.h>
-+#include <linux/entry-common.h>
-+#include <linux/syscalls.h>
++#ifndef _ASM_KVX_VERMAGIC_H
++#define _ASM_KVX_VERMAGIC_H
 +
-+#include <asm/ucontext.h>
-+#include <asm/processor.h>
-+#include <asm/cacheflush.h>
-+#include <asm/syscall.h>
-+#include <asm/syscalls.h>
-+#include <linux/resume_user_mode.h>
++#define MODULE_ARCH_VERMAGIC    "kvx"
 +
-+struct rt_sigframe {
-+	struct siginfo info;
-+	struct ucontext uc;
-+};
-+
-+int __init setup_syscall_sigreturn_page(void *sigpage_addr)
-+{
-+	unsigned int frame_size = (uintptr_t) &user_scall_rt_sigreturn_end -
-+				  (uintptr_t) &user_scall_rt_sigreturn;
-+
-+	/* Copy the sigreturn scall implementation */
-+	memcpy(sigpage_addr, &user_scall_rt_sigreturn, frame_size);
-+
-+	flush_icache_range((unsigned long) sigpage_addr,
-+			   (unsigned long) sigpage_addr + frame_size);
-+
-+	return 0;
-+}
-+
-+static long restore_sigcontext(struct pt_regs *regs,
-+			       struct sigcontext __user *sc)
-+{
-+	long err;
-+
-+	/* sc_regs is structured the same as the start of pt_regs */
-+	err = __copy_from_user(regs, &sc->sc_regs, sizeof(sc->sc_regs));
-+
-+	return err;
-+}
-+
-+long sys_rt_sigreturn(void)
-+{
-+	struct pt_regs *regs = current_pt_regs();
-+	struct rt_sigframe __user *frame;
-+	struct task_struct *task;
-+	sigset_t set;
-+
-+	current->restart_block.fn = do_no_restart_syscall;
-+
-+	frame = (struct rt_sigframe __user *) user_stack_pointer(regs);
-+
-+	/*
-+	 * Stack is not aligned but should be !
-+	 * User probably did some malicious things.
-+	 */
-+	if (user_stack_pointer(regs) & STACK_ALIGN_MASK)
-+		goto badframe;
-+
-+	if (!access_ok(frame, sizeof(*frame)))
-+		goto badframe;
-+
-+	/* Restore sigmask */
-+	if (__copy_from_user(&set, &frame->uc.uc_sigmask, sizeof(set)))
-+		goto badframe;
-+
-+	set_current_blocked(&set);
-+
-+	if (restore_sigcontext(regs, &frame->uc.uc_mcontext))
-+		goto badframe;
-+
-+	if (restore_altstack(&frame->uc.uc_stack))
-+		goto badframe;
-+
-+	return regs->r0;
-+
-+badframe:
-+	task = current;
-+	if (show_unhandled_signals) {
-+		pr_info_ratelimited(
-+			"%s[%d]: bad frame in %s: frame=%p pc=%p sp=%p\n",
-+			task->comm, task_pid_nr(task), __func__,
-+			frame, (void *) instruction_pointer(regs),
-+			(void *) user_stack_pointer(regs));
-+	}
-+	force_sig(SIGSEGV);
-+	return 0;
-+}
-+
-+
-+static long setup_sigcontext(struct rt_sigframe __user *frame,
-+			     struct pt_regs *regs)
-+{
-+	struct sigcontext __user *sc = &frame->uc.uc_mcontext;
-+	long err;
-+
-+	/* sc_regs is structured the same as the start of pt_regs */
-+	err = __copy_to_user(&sc->sc_regs, regs, sizeof(sc->sc_regs));
-+
-+	return err;
-+}
-+
-+static inline void __user *get_sigframe(struct ksignal *ksig,
-+					struct pt_regs *regs, size_t framesize)
-+{
-+	unsigned long sp;
-+	/* Default to using normal stack */
-+	sp = regs->sp;
-+
-+	/*
-+	 * If we are on the alternate signal stack and would overflow it, don't.
-+	 * Return an always-bogus address instead so we will die with SIGSEGV.
-+	 */
-+	if (on_sig_stack(sp) && !likely(on_sig_stack(sp - framesize)))
-+		return (void __user __force *)(-1UL);
-+
-+	/* This is the X/Open sanctioned signal stack switching. */
-+	sp = sigsp(sp, ksig) - framesize;
-+
-+	/* Align the stack frame on 16bytes */
-+	sp &= ~STACK_ALIGN_MASK;
-+
-+	return (void __user *)sp;
-+}
-+
-+/* TODO: Use VDSO when ready ! */
-+static int setup_rt_frame(struct ksignal *ksig, sigset_t *set,
-+			  struct pt_regs *regs)
-+{
-+	unsigned long sigpage = current->mm->context.sigpage;
-+	struct rt_sigframe __user *frame;
-+	long err = 0;
-+
-+	frame = get_sigframe(ksig, regs, sizeof(*frame));
-+	if (!access_ok(frame, sizeof(*frame)))
-+		return -EFAULT;
-+
-+	err |= copy_siginfo_to_user(&frame->info, &ksig->info);
-+
-+	/* Create the ucontext. */
-+	err |= __put_user(0, &frame->uc.uc_flags);
-+	err |= __put_user(NULL, &frame->uc.uc_link);
-+	err |= __save_altstack(&frame->uc.uc_stack, user_stack_pointer(regs));
-+	err |= setup_sigcontext(frame, regs);
-+	err |= __copy_to_user(&frame->uc.uc_sigmask, set, sizeof(*set));
-+	if (err)
-+		return -EFAULT;
-+
-+	/*
-+	 * When returning from the handler, we want to jump to the
-+	 * sigpage which will execute the sigreturn scall.
-+	 */
-+	regs->ra = sigpage;
-+	/* Return to signal handler */
-+	regs->spc = (unsigned long)ksig->ka.sa.sa_handler;
-+	regs->sp = (unsigned long) frame;
-+
-+	/* Parameters for signal handler */
-+	regs->r0 = ksig->sig;                     /* r0: signal number */
-+	regs->r1 = (unsigned long)(&frame->info); /* r1: siginfo pointer */
-+	regs->r2 = (unsigned long)(&frame->uc);   /* r2: ucontext pointer */
-+
-+	return 0;
-+}
-+
-+static void handle_signal(struct ksignal *ksig, struct pt_regs *regs)
-+{
-+	bool stepping;
-+	sigset_t *oldset = sigmask_to_save();
-+	int ret;
-+
-+	/* Are we in a system call? */
-+	if (in_syscall(regs)) {
-+		/* If so, check system call restarting.. */
-+		switch (regs->r0) {
-+		case -ERESTART_RESTARTBLOCK:
-+		case -ERESTARTNOHAND:
-+			regs->r0 = -EINTR;
-+			break;
-+		case -ERESTARTSYS:
-+			if (!(ksig->ka.sa.sa_flags & SA_RESTART)) {
-+				regs->r0 = -EINTR;
-+				break;
-+			}
-+			fallthrough;
-+		case -ERESTARTNOINTR:
-+			regs->r0 = regs->orig_r0;
-+			regs->spc -= 0x4;
-+			break;
-+		}
-+	}
-+
-+	/*
-+	 * If TF is set due to a debugger (TIF_FORCED_TF), clear TF now
-+	 * so that register information in the sigcontext is correct and
-+	 * then notify the tracer before entering the signal handler.
-+	 */
-+	stepping = test_thread_flag(TIF_SINGLESTEP);
-+	if (stepping)
-+		user_disable_single_step(current);
-+
-+	ret = setup_rt_frame(ksig, oldset, regs);
-+
-+	signal_setup_done(ret, ksig, stepping);
-+}
-+
-+void arch_do_signal_or_restart(struct pt_regs *regs)
-+{
-+	struct ksignal ksig;
-+
-+	if (get_signal(&ksig)) {
-+		handle_signal(&ksig, regs);
-+		return;
-+	}
-+
-+	/* Did we come from a system call? */
-+	if (in_syscall(regs)) {
-+		/*
-+		 * If we are here, this means there is no handler
-+		 * present and we must restart the syscall.
-+		 */
-+		switch (regs->r0) {
-+		case -ERESTART_RESTARTBLOCK:
-+			/* Modify the syscall number in order to restart it */
-+			regs->r6 = __NR_restart_syscall;
-+			fallthrough;
-+		case -ERESTARTNOHAND:
-+		case -ERESTARTSYS:
-+		case -ERESTARTNOINTR:
-+			/* We are restarting the syscall */
-+			regs->r0 = regs->orig_r0;
-+			/*
-+			 * scall instruction isn't bundled with anything else,
-+			 * so we can just revert the spc to restart the syscall.
-+			 */
-+			regs->spc -= 0x4;
-+			break;
-+		}
-+	}
-+
-+	/*
-+	 * If there's no signal to deliver, we just put the saved sigmask
-+	 * back.
-+	 */
-+	restore_saved_sigmask();
-+}
-diff --git a/arch/kvx/kernel/vdso.c b/arch/kvx/kernel/vdso.c
++#endif /* _ASM_KVX_VERMAGIC_H */
+diff --git a/arch/kvx/kernel/module.c b/arch/kvx/kernel/module.c
 new file mode 100644
-index 0000000000000..1515de15eb31b
+index 0000000000000..b9383792ae456
 --- /dev/null
-+++ b/arch/kvx/kernel/vdso.c
-@@ -0,0 +1,87 @@
++++ b/arch/kvx/kernel/module.c
+@@ -0,0 +1,148 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/*
 + * Copyright (C) 2017-2023 Kalray Inc.
-+ * Author(s): Clement Leger
++ * Author(s): Yann Sionneau
++ *            Clement Leger
 + */
 +
-+#include <linux/mm.h>
-+#include <linux/vmalloc.h>
-+#include <linux/binfmts.h>
++#include <linux/elf.h>
++#include <linux/moduleloader.h>
++#include <linux/overflow.h>
 +
-+#include <asm/syscall.h>
 +
-+static struct page *signal_page;
-+
-+static int __init init_sigreturn(void)
++static int apply_rela_bits(Elf64_Addr loc, Elf64_Addr val,
++				  int sign, int immsize, int bits, int rshift,
++				  int lshift, unsigned int relocnum,
++				  struct module *me)
 +{
-+	struct page *sigpage;
-+	void *mapped_sigpage;
-+	int err;
++	unsigned long long umax;
++	long long min, max;
++	unsigned long long mask = GENMASK_ULL(bits + lshift - 1, lshift);
 +
-+	sigpage = alloc_page(GFP_KERNEL);
-+	if (!sigpage)
-+		panic("Cannot allocate sigreturn page");
++	if (sign) {
++		min = -(1ULL << (immsize - 1));
++		max = (1ULL << (immsize - 1)) - 1;
++		if ((long long) val < min || (long long) val > max)
++			goto too_big;
++		val = (Elf64_Addr)(((long) val) >> rshift);
++	} else {
++		if (immsize < 64)
++			umax = (1ULL << immsize) - 1;
++		else
++			umax = -1ULL;
++		if ((unsigned long long) val > umax)
++			goto too_big;
++		val >>= rshift;
++	}
 +
-+	mapped_sigpage = vmap(&sigpage, 1, 0, PAGE_KERNEL);
-+	if (!mapped_sigpage)
-+		panic("Cannot map sigreturn page");
-+
-+	clear_page(mapped_sigpage);
-+
-+	err = setup_syscall_sigreturn_page(mapped_sigpage);
-+	if (err)
-+		panic("Cannot set signal return syscall, err: %x.", err);
-+
-+	vunmap(mapped_sigpage);
-+
-+	signal_page = sigpage;
++	val <<= lshift;
++	val &= mask;
++	if (bits <= 32)
++		*(u32 *) loc = (*(u32 *)loc & ~mask) | val;
++	else
++		*(u64 *) loc = (*(u64 *)loc & ~mask) | val;
 +
 +	return 0;
-+}
-+arch_initcall(init_sigreturn);
-+
-+static int sigpage_mremap(const struct vm_special_mapping *sm,
-+		struct vm_area_struct *new_vma)
-+{
-+	current->mm->context.sigpage = new_vma->vm_start;
-+	return 0;
++too_big:
++	pr_err("%s: value %llx does not fit in %d bits for reloc %u",
++	       me->name, val, bits, relocnum);
++	return -ENOEXEC;
 +}
 +
-+static const struct vm_special_mapping sigpage_mapping = {
-+	.name = "[sigpage]",
-+	.pages = &signal_page,
-+	.mremap = sigpage_mremap,
-+};
-+
-+int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
++int apply_relocate_add(Elf64_Shdr *sechdrs,
++			   const char *strtab,
++			   unsigned int symindex,
++			   unsigned int relsec,
++			   struct module *me)
 +{
++	unsigned int i;
++	Elf64_Addr loc;
++	u64 val;
++	s64 sval;
++	Elf64_Sym *sym;
++	Elf64_Rela *rel = (void *)sechdrs[relsec].sh_addr;
 +	int ret = 0;
-+	unsigned long addr;
-+	struct mm_struct *mm = current->mm;
-+	struct vm_area_struct *vma;
 +
-+	mmap_write_lock(mm);
++	pr_debug("Applying relocate section %u to %u\n",
++			relsec, sechdrs[relsec].sh_info);
 +
-+	addr = get_unmapped_area(NULL, STACK_TOP, PAGE_SIZE, 0, 0);
-+	if (IS_ERR_VALUE(addr)) {
-+		ret = addr;
-+		goto up_fail;
++	for (i = 0; i < sechdrs[relsec].sh_size / sizeof(*rel); i++) {
++		/* This is where to make the change */
++		loc = (Elf64_Addr)sechdrs[sechdrs[relsec].sh_info].sh_addr
++			+ rel[i].r_offset;
++		/* This is the symbol it is referring to.  Note that all
++		 *  undefined symbols have been resolved.
++		 */
++		sym = (Elf64_Sym *)sechdrs[symindex].sh_addr
++			+ ELF64_R_SYM(rel[i].r_info);
++
++		pr_debug("type %d st_value %llx r_addend %llx loc %llx offset %llx\n",
++			 (int)ELF64_R_TYPE(rel[i].r_info),
++			 sym->st_value, rel[i].r_addend, (uint64_t)loc,
++			 rel[i].r_offset);
++
++		val = sym->st_value + rel[i].r_addend;
++		switch (ELF64_R_TYPE(rel[i].r_info)) {
++		case R_KVX_NONE:
++			break;
++		case R_KVX_32:
++			ret = apply_rela_bits(loc, val, 0, 32, 32, 0, 0,
++					      ELF64_R_TYPE(rel[i].r_info),
++					      me);
++			break;
++		case R_KVX_64:
++			ret = apply_rela_bits(loc, val, 0, 64, 64, 0, 0,
++					      ELF64_R_TYPE(rel[i].r_info),
++					      me);
++			break;
++		case R_KVX_S43_LO10:
++			ret = apply_rela_bits(loc, val, 1, 43, 10, 0, 6,
++					      ELF64_R_TYPE(rel[i].r_info),
++					      me);
++			break;
++		case R_KVX_S64_LO10:
++			ret = apply_rela_bits(loc, val, 1, 64, 10, 0, 6,
++					      ELF64_R_TYPE(rel[i].r_info),
++					      me);
++			break;
++		case R_KVX_S43_UP27:
++			ret = apply_rela_bits(loc, val, 1, 43, 27, 10, 0,
++					      ELF64_R_TYPE(rel[i].r_info),
++					      me);
++			break;
++		case R_KVX_S64_UP27:
++			ret = apply_rela_bits(loc, val, 1, 64, 27, 10, 0,
++					      ELF64_R_TYPE(rel[i].r_info),
++					      me);
++			break;
++		case R_KVX_S43_EX6:
++			ret = apply_rela_bits(loc, val, 1, 43, 6, 37, 0,
++					      ELF64_R_TYPE(rel[i].r_info),
++					      me);
++			break;
++		case R_KVX_S64_EX27:
++			ret = apply_rela_bits(loc, val, 1, 64, 27, 37, 0,
++					      ELF64_R_TYPE(rel[i].r_info),
++					      me);
++			break;
++		case R_KVX_PCREL27:
++			if (__builtin_sub_overflow(val, loc, &sval)) {
++				pr_err("%s: Signed integer overflow, this should not happen\n",
++				       me->name);
++				return -ENOEXEC;
++			}
++			sval >>= 2;
++			ret = apply_rela_bits(loc, (Elf64_Addr)sval, 1, 27, 27,
++					      0, 0,
++					      ELF64_R_TYPE(rel[i].r_info),
++					      me);
++			break;
++		default:
++			pr_err("%s: Unknown relocation: %llu\n",
++				me->name, ELF64_R_TYPE(rel[i].r_info));
++			ret = -ENOEXEC;
++		}
 +	}
-+
-+	vma = _install_special_mapping(
-+			mm,
-+			addr,
-+			PAGE_SIZE,
-+			VM_READ|VM_EXEC|VM_MAYREAD|VM_MAYEXEC,
-+			&sigpage_mapping);
-+	if (IS_ERR(vma)) {
-+		ret = PTR_ERR(vma);
-+		goto up_fail;
-+	}
-+
-+	mm->context.sigpage = addr;
-+
-+up_fail:
-+	mmap_write_unlock(mm);
 +	return ret;
 +}
++
 -- 
 2.45.2
 
