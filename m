@@ -1,105 +1,109 @@
-Return-Path: <linux-kernel+bounces-259083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2DC99390F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:49:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ABEC9390FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:50:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32A89B20A60
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:49:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EC0F2823E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DB916DC1D;
-	Mon, 22 Jul 2024 14:49:44 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5AC216DC28;
+	Mon, 22 Jul 2024 14:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HN8/6I+c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E7E16D30E
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 14:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB81D16B74D;
+	Mon, 22 Jul 2024 14:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721659784; cv=none; b=JsYMhbWp4RnIt6axBHwpLziwiFrkmrAqBTRJiWNg0qVPd9SaBzWjRh9XxoZCluqyBwXzIR7fpem5+9U/tKcF/hKFXlw1NoMQXsLn+z6a7WI6k4DJ+LpgYeyUN85BTSK3Qj5kBDe+4oFM2XSWcdGTrLqX3jj5yGC1xilf/uSSZmQ=
+	t=1721659832; cv=none; b=ZEUS9Ym4YTLNknwrgl5OMaXXWL+nSnVHVmYIS3lS1iXQya2d+GBw+dMOmHmq3djtejW2FmDMsEvQuYhey/2bv5AgoWfqfBcTd9uYFY+KSWsYFmhu0eaBEDtBn20hSDC5OsYNb7Q80hTFDiJIT4eQj8OflHQPXLP73y00I6DiCSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721659784; c=relaxed/simple;
-	bh=MdQ0sjsGubguiylnQyA86jpWmdO7skaXLjAm7b82ooo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=XUin3e0z8D/8U+490sXuL7qVMEPQ4wnkHQYYNoQhLtraJSwbE/zBHW/KmvX5Cl3RzFIoY1iLVmnwhnJwSXLcQ667D0BzyrAYSp7Uj9LVPZQdOUzTnxc3HXpYxTmHdWYRZKACES9zi4fgqmZEDHOyaPGQCUafuwu0bm7CCv8dVdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8152f0c4837so719814839f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:49:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721659782; x=1722264582;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=anegiXYY2/T91WqfPR4oSIKRa/1toqw7Jv5BF8plEUA=;
-        b=bIK9lxGu/oUucwjtiFtDfZA3mVB2YMvTQL4jnGkqRLx5g1kWyZCQB4HpZ8wlv3z0uj
-         hckpyeWmCCNC/3mBvEvARjk+zadZ1AElRH3NIFGPGTuk8f7Jodhc+3k4LjMJquKm9Do7
-         MP5P/r4bCuM1aZWKIYOTZyGWSeWDXkw3KPcygpjEFtrv6JQ7H4ohybvkf6DfT6Yqsbga
-         Sk99+E5ab8ll+NStOyQVyqOWKi9Qpj31qaiegicRVAvivfZ6GGJyUVPZTsvkPZ1SMBah
-         XDUUV9rSEMmd4DTvmrp2FFlQ25NEza97oraFcyBbJunHrAcusRGdJX21PW+BcchyZRCZ
-         Re8w==
-X-Gm-Message-State: AOJu0YzgxYL83tjhsMNqeCEMYNhlx5Q1za58oOFVpBvQIikndJPcRpAl
-	Sv0bOgSxaTPZL+xaW6stc4Y2596x5esgdYVuTT2xZ20b2bt1wjSKq4vO5nRB8QriVBAlXAfaq54
-	TQIcqGUIu94WbFJRcK1I5ieC5+GZpHre26/6KmVDjocTz7gOI8yyHJf0=
-X-Google-Smtp-Source: AGHT+IEfrqKspqUNb6A0gXO3iINJJejJn0bTNzqPCvrMMTXTn4LmMVz6PIBNkyQ3OB0oZNR2GiVmgtnGBECp2mwIwDXkC3N5cjXD
+	s=arc-20240116; t=1721659832; c=relaxed/simple;
+	bh=YGYGBci2u22GJF/LUTU8NgZrC5I0ECCipbmw78J61vA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=QCr7TLNgueMlPEwipN5htDedOrzqQFc2Dsm7Ntu1QZqK4gpHEGW7/v7tH9tL89OEkE66YXkY0osnP6vNk9GUQaBAavVIcFPwDsGMJVQEaCZ8i6LaRVi+mJanMiWn72UJFF1kNh6Bm65inlF84yt4FnV4mpsoraAmh5ct1NrjwY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HN8/6I+c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 78F67C4AF0D;
+	Mon, 22 Jul 2024 14:50:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721659831;
+	bh=YGYGBci2u22GJF/LUTU8NgZrC5I0ECCipbmw78J61vA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=HN8/6I+cBxftzESKovdbs0oIsT2cloc4bF1Ij21h44FHrSnlZq8lOYAJxvHo2YhNF
+	 Q1LlBBnxmOq3ZwgBElVZVAOUhdI2HnwHhXiXz2cNZTZBXVyjBVmpAD8dtnCiWsVALs
+	 hIkj6boctwOAjT3PNkl/O+TD00KVwdU6HEqIkvaer7kowIfF97NspzWIVkiaWnyYdl
+	 ELt7XmTbAjk/d/mCwQUpUN1tXId1GHj0NsmtMtt+5NFsl4IzEs7ZHtnhFRxNNni/DK
+	 at62SpeAPMDZy4vFflWTTcrdW6GRvxxQzlmIzYHN0cn6abqfPCdqz8FU//bpg85LxA
+	 nGKXr9+0zco9A==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6673FC43445;
+	Mon, 22 Jul 2024 14:50:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8910:b0:4c0:9a3e:c24b with SMTP id
- 8926c6da1cb9f-4c23fae1a3dmr558256173.0.1721659782184; Mon, 22 Jul 2024
- 07:49:42 -0700 (PDT)
-Date: Mon, 22 Jul 2024 07:49:42 -0700
-In-Reply-To: <000000000000e8fcab061d53308f@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bdd014061dd727b5@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [bpf?] [net?] general protection fault in __xsk_map_flush
-From: syzbot <syzbot+61a1cfc2b6632363d319@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [v3 PATCH bpf-next 0/4] bpftool: add tcx subcommand in net
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172165983141.18852.5035240081297600904.git-patchwork-notify@kernel.org>
+Date: Mon, 22 Jul 2024 14:50:31 +0000
+References: <20240721143353.95980-1-chen.dylane@gmail.com>
+In-Reply-To: <20240721143353.95980-1-chen.dylane@gmail.com>
+To: Tao Chen <chen.dylane@gmail.com>
+Cc: qmo@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+Hello:
 
-***
+This series was applied to bpf/bpf-next.git (master)
+by Daniel Borkmann <daniel@iogearbox.net>:
 
-Subject: Re: [syzbot] [bpf?] [net?] general protection fault in __xsk_map_flush
-Author: aha310510@gmail.com
+On Sun, 21 Jul 2024 22:33:49 +0800 you wrote:
+> XDP prog has already realised with net attach/detach subcommand.
+> As Qmonnet said [0], tcx prog may also can be added. So this patch set
+> adds tcx subcommand in net attach/detach.
+> 
+> [0] https://github.com/libbpf/bpftool/issues/124
+> 
+> Change list:
+> - v2 -> v3:
+>     - fix return value in patch2
+>     - replace tabs with spaces patch2
+> - v1 -> v2:
+>   - As suggested by Quentin, modification as fellows:
+>     - refactor xdp attach/detach type judgment in patch1
+>     - err handle fix for xdp in patch2
+>     - change command tcx* to tcx_* in patch2
+>     - some code modification for readable in patch2
+>     - document modification for readable in patch4
+> 
+> [...]
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+Here is the summary with links:
+  - [v3,bpf-next,1/4] bpftool: refactor xdp attach/detach type judgment
+    https://git.kernel.org/bpf/bpf-next/c/f408126f7b33
+  - [v3,bpf-next,2/4] bpftool: add net attach/detach command to tcx prog
+    https://git.kernel.org/bpf/bpf-next/c/7f1cfa6b64c6
+  - [v3,bpf-next,3/4] bpftool: add bash-completion for tcx subcommand
+    https://git.kernel.org/bpf/bpf-next/c/0445e0c5c2e1
+  - [v3,bpf-next,4/4] bpftool: add document for net attach/detach on tcx subcommand
+    https://git.kernel.org/bpf/bpf-next/c/6d5848d4fe98
 
----
- include/linux/filter.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index b6672ff61407..22691015d175 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -842,15 +842,15 @@ static inline void bpf_net_ctx_get_all_used_flush_lists(struct list_head **lh_ma
- 	if (!IS_ENABLED(CONFIG_BPF_SYSCALL))
- 		return;
- 
--	lh = &bpf_net_ctx->dev_map_flush_list;
-+	lh = this_cpu_ptr(&bpf_net_ctx->dev_map_flush_list);
- 	if (kern_flags & BPF_RI_F_DEV_MAP_INIT && !list_empty(lh))
- 		*lh_dev = lh;
- 
--	lh = &bpf_net_ctx->cpu_map_flush_list;
-+	lh = this_cpu_ptr(&bpf_net_ctx->cpu_map_flush_list);
- 	if (kern_flags & BPF_RI_F_CPU_MAP_INIT && !list_empty(lh))
- 		*lh_map = lh;
- 
--	lh = &bpf_net_ctx->xskmap_map_flush_list;
-+	lh = this_cpu_ptr(&bpf_net_ctx->xskmap_map_flush_list);
- 	if (IS_ENABLED(CONFIG_XDP_SOCKETS) &&
- 	    kern_flags & BPF_RI_F_XSK_MAP_INIT && !list_empty(lh))
- 		*lh_xsk = lh;
---
+
 
