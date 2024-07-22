@@ -1,103 +1,115 @@
-Return-Path: <linux-kernel+bounces-259199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D062F939285
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:29:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7160939288
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83F771F232B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:29:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C9B21F231D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD7A16EB6A;
-	Mon, 22 Jul 2024 16:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4DE16EB6A;
+	Mon, 22 Jul 2024 16:30:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nJESXwDS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E1nz/Oay"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E93BC2907;
-	Mon, 22 Jul 2024 16:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C8E2907;
+	Mon, 22 Jul 2024 16:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721665738; cv=none; b=YkRnkuix0JGeylQ4+anvP1JJQchJBYEh+d9oLw6Lz6ZHwUC+rYn2hDQHYZkdxGxFs5/bKWKhKYbaG8J/KiIAXcSSQ7XPz423CFLZYMJv0Qz4557TSgzuYy5JskP7Vx9HBsXw1mdt2UlwIu5tPMQ9UzsJRdQtq8o1C89FYn03Lws=
+	t=1721665801; cv=none; b=rILABqq56lxfMRmOTJ3HVmhiIGMDyI6J7gRgemSxPj0DljBMKksMahO/2gQS/AEvpeOTNQjE49C6MnTT6wJdICk5MpuH23s01csH5qkSowALJi1dzE1VqXjG1LXcxrSe93Vi6+W0+V1gDrGjOe7D9kNt0zcxO10TVDzWugyWNss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721665738; c=relaxed/simple;
-	bh=aRxkrr1hchobGn5jkuGOn9aNROWqwxpHRv1LjvFX83k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iUh4qHLxhX7Pd3llI6Ehi328e0txyp6gfqf6ik6xU9b2bHW3xYEbxzunO3wFXPyQKfyqU9cl3ivAyz0GEvJxsSNknn6LQ3JXXZEOVuNqpToU+UIXt7hUUvAdNsj/yNe0nW+3nqYvpiCl9idI9KufOhl9mYGepkAZt2deCKrpF4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nJESXwDS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C10CC4AF0B;
-	Mon, 22 Jul 2024 16:28:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721665737;
-	bh=aRxkrr1hchobGn5jkuGOn9aNROWqwxpHRv1LjvFX83k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nJESXwDS2LYppANglIUusnzlYoU3UmGIvBPd0fv5f4Xqm4Dpj+gsuqPIsFeZCBzjl
-	 3PgUQNsRV4edr+Fl0PakQcBiLcxIuybam8UxQ6f2BPpzIH48U7Xq0/TqMBN/97sYqy
-	 cS0tB1WqZMZdqVhXXyloOr2Tdiz6DIayDEdZq/+Y=
-Date: Mon, 22 Jul 2024 18:28:55 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Steven Davis <goldside000@outlook.com>
-Cc: christian.gromm@microchip.com, parthiban.veerasooran@microchip.com,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] Made the error messages a tad easier to read
-Message-ID: <2024072227-persecute-sweat-4534@gregkh>
-References: <SJ2P223MB1026A88F6556E5CCEAE52065F7A82@SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1721665801; c=relaxed/simple;
+	bh=TQMIdHBDqbQcpRzi7MPTAmUdhL2eie6DOnXyNiLx8MI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nm66W9mlSiWuHJBYr6+KLoTbfVFbFFGuONHRY8APyDVFsksXrSRKDcSVQZDeidxPsumX/oo9ZxntPrGV2+xc4js4ykfyYASDQjjoH7QWcXRS9BJVYr0boS/x5jROtemb+NctmCGQtBsmE7wAH8PZOdvDfiFbOu3dFzhi9JkIzSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E1nz/Oay; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4f51e80f894so570192e0c.1;
+        Mon, 22 Jul 2024 09:29:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721665799; x=1722270599; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EMpK173jqbhGBQkIhTiO0UNUwU5v1AxINxh19kaGO8Q=;
+        b=E1nz/OayAeE6c+q7P/sYhEAwpvBcX2q/XxfSX5dfYESN6Yv7Ss9TcMLI5qzfQF3stS
+         LSxcyq+os5G3QJqxk4mvy/EHM0Vs+tGmlC9jkw7fxuHZlSMuepu5ry3mczawPAxDsdAv
+         9ZcXFdR5piwPyuqS1yEuYXqcaTum+sGHpV5D4WdjaVdrhT3SdYpIOE3Ali4AyKxFyUH5
+         2cEupYTU/odUPjDMqIPIyAG9G63fcUmppRkbqNDg5fiBeY1V0vVi1aFfTjRI2De0knQC
+         bA6CtgfgJ9nHulhJLSvwczoD6E2QPx+JluXRdg5Aehgp1XEIwCUdu9Pz5QQUWPpH0l/h
+         /EtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721665799; x=1722270599;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EMpK173jqbhGBQkIhTiO0UNUwU5v1AxINxh19kaGO8Q=;
+        b=nRWA07A5zZCPdQjuO1/AeGH17q/Unxrm2fyPpGQxrYY7bVatEeF1qDmwYh5Tavn2fo
+         qVfdScdw3n4BR7GmGizUtV8KJjPCJ4uCBidaLYBKF67OdiBxBgVoYJan/nPXaN3KoKJh
+         YsHiDtmD6oFeI6XpRuCCdHbIOXoJM/cDUeLpecq+npEOaugQr0Okr7xRYGRVq2GUMvhG
+         tt1U8Pw9siV/nTwl6+NNgYHGfjlULsx0Db6LEN3NyHy4nl3tKCyQj/ROIslULDLzEZQX
+         tZb7Wnna4KGslwnmGOsNHJOhF1jMpvPjtroTfuFwzmwfaHRqQt8VFUmlHJvWB/GNZg95
+         uYyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLl5xWS07QPCHRd4Mukz+ewxF7oNEExpawsAdcoK1HXSULq+7W9Q4DGd2P/ovFvlKlyxe4KrNtKyEAz/D+rGiGKkdhLqLq0wh09J8UjWMF01AP+FKIQ+jKew7Tb0+q5uuaNFWFna8FpkcZscgvrFJUMaCiooURqz9X
+X-Gm-Message-State: AOJu0YyyRYeU7cwz+L42EWzoFiKLJC3Z37MlSdksK8tyAPe11VHEglyz
+	c1UU2zr1kQD8Qoy0ERDEuAuyu78qvLQ+Ob7pST1GMNuDEo+xDYlbXB0aQ8dxv9aJnZdXVxsDYvn
+	KkeBNhJKDTHiSGa4UqlKMycBsZmo=
+X-Google-Smtp-Source: AGHT+IEXABDa6VN4CsqLj7xeSwXNGQVxnM0LfKN1zcSnE8JaHi67IhpiyP8Bt8mxjlog677gjmHuMOW0jZXrvPri2Mw=
+X-Received: by 2002:a05:6122:169d:b0:4e4:ed90:27e6 with SMTP id
+ 71dfb90a1353d-4f506668452mr8406989e0c.5.1721665798870; Mon, 22 Jul 2024
+ 09:29:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SJ2P223MB1026A88F6556E5CCEAE52065F7A82@SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM>
+References: <6689541517901_12869e29412@willemb.c.googlers.com.notmuch> <20240722030841.93759-1-dracodingfly@gmail.com>
+In-Reply-To: <20240722030841.93759-1-dracodingfly@gmail.com>
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Date: Mon, 22 Jul 2024 09:29:21 -0700
+Message-ID: <CAF=yD-+Hx9Tg-Fj+7hutPJ7inL_GpgiY4WAXXdhN-tzj5Q1caQ@mail.gmail.com>
+Subject: Re: [PATCH bpf v5] bpf: Fixed segment issue when downgrade gso_size
+To: Fred Li <dracodingfly@gmail.com>
+Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, herbert@gondor.apana.org.au, john.fastabend@gmail.com, 
+	kpsingh@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	pabeni@redhat.com, song@kernel.org, yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 22, 2024 at 12:23:37PM -0400, Steven Davis wrote:
-> I realized I forgot to add a description in the previous version. Whoopsie!
-> Anyway, this patch makes three error messages in the driver easier to read by capitalizing the first letters properly.
-> For example, "channel already linked" became "Channel already linked".
-> In addition, "expect" becomes "expected", as you would typically find in an error message.
-> My hopes are that this patch makes the errors slightly clearer.
-> 
-> Signed-off-by: Steven Davis <goldside000@outlook.com>
-> ---
->  drivers/staging/most/video/video.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+On Sun, Jul 21, 2024 at 8:08=E2=80=AFPM Fred Li <dracodingfly@gmail.com> wr=
+ote:
+>
+> Linearize skb when downgrad gso_size to prevent triggering
+> the BUG_ON during segment skb as described in [1].
+>
+> v5 changes:
+>  - add bpf subject prefix.
+>  - adjust message to imperative mood.
+>
+> v4 changes:
+>  - add fixed tag.
+>
+> v3 changes:
+>  - linearize skb if having frag_list as Willem de Bruijn suggested [2].
+>
+> [1] https://lore.kernel.org/all/20240626065555.35460-2-dracodingfly@gmail=
+.com/
+> [2] https://lore.kernel.org/all/668d5cf1ec330_1c18c32947@willemb.c.google=
+rs.com.notmuch/
+>
+> Fixes: 2be7e212d541 ("bpf: add bpf_skb_adjust_room helper")
+> Signed-off-by: Fred Li <dracodingfly@gmail.com>
 
-Hi,
+Reviewed-by: Willem de Bruijn <willemb@google.com>
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- You did not specify a description of why the patch is needed, or
-  possibly, any description at all, in the email body.  Please read the
-  section entitled "The canonical patch format" in the kernel file,
-  Documentation/process/submitting-patches.rst for what is needed in
-  order to properly describe the change.
-
-- You did not write a descriptive Subject: for the patch, allowing Greg,
-  and everyone else, to know what this patch is all about.  Please read
-  the section entitled "The canonical patch format" in the kernel file,
-  Documentation/process/submitting-patches.rst for what a proper
-  Subject: line should look like.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+My comments were informational, for a next patch if any, really. v4
+was fine. v5 is too.
 
