@@ -1,196 +1,266 @@
-Return-Path: <linux-kernel+bounces-259417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B46769395B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 23:51:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91805939619
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 00:02:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA31AB21E56
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:51:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B52FB1C2184D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301DB3C684;
-	Mon, 22 Jul 2024 21:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2854C622;
+	Mon, 22 Jul 2024 22:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QyNuwIGt"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="SLKqfzRj"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79181849
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 21:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075D623DE
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 22:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721685090; cv=none; b=hCx/kkwMrALBLsyonrxzBPPH0Vbni6DCLb/mYQ2xLjYoL1WNNNhYUMtnKrH2HvnNU9oEfFq8DceThH+Kj51Icbbt9EY6QSr2u50Xkjf10GpcQHa5pNwxqN0nzN8adcAmkuJFu5QPO4lHB5DZJgBUz/3qkSW7rzl1KB7IHgGrw0k=
+	t=1721685690; cv=none; b=Qz9wiG6gzIbP5wsI4V5wUemD1jD60k96LKuIf9S4l+CYc6LJmak1E733E/0JIru5mYnfxItwUETQbxgM29LxXN9GKviEiYWa6XI+2o/5uO/WOoSMDobbdyIyHmSibEqKn2rPSWy2IscRU269C+ltwXZk3v0VswjsaUvjffd65oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721685090; c=relaxed/simple;
-	bh=P+ptbGgukWviGEiSpfbUTfBtQisbcwIW10hJdHakDt0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DlstaSAmbO0CNQYXDw0w554L/A976AOqtxUAA17dSFsLYvZmJSM6LrnnxQ5wkvGMJSRSOjFgy3DypcDJifqbUNyQ+BG7MHERYohdntc/ECHevbRq3miy6JnVlYYKp6S2hYCg7wgwAYkHaTxXgdSA76kAgcxAKernfh3/DdcMJFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QyNuwIGt; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-65f8626780aso49815767b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 14:51:28 -0700 (PDT)
+	s=arc-20240116; t=1721685690; c=relaxed/simple;
+	bh=/ru1Bf2H9W5Kc4MG8k98hW6Wdp+YW4glK8+b1cnQf0M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dJVXzXbx2tpacZkpxN6BHWByJ0UeneVSblQ8UbZdek0OJFKhubw7i7+QWaEejg74np3nuQRzIZkQR/IgHrlGf4pSjZjj7LKcEl28s95iwF3jlGOkE/eciD/es9I4VQasUbZ/2K6hgXSfeQ6k3GaWXtjrUPJevDLrq6jOGH3FR84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=SLKqfzRj; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-703d5b29e06so2039149a34.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 15:01:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721685088; x=1722289888; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z1AyKNnzGAkcTki8rPtv93FNMTvw546VYOSBbwMVqlA=;
-        b=QyNuwIGtqJZfjaIpdN80Vgq0iD2Rbbcouxq6FGHGS4gddxUxTqYeAPGmacLAT9k5Xg
-         IQiQXkoV3vLavFKhlA2wAtyH/y72mvidh3Gs/BMEfPl1RtBuQ2+ev/+XCG8IdfFKeOE/
-         8ys1T+q2wFR4OzD93oQXlM/Tb2XtHskhQCuIvJ50fVcPD15XFSpu7DDpdamB+Mp6l5nC
-         pSRqF4mCD9jMHeir4+RAJGxMjWnSNEdHrNV1Q/kvWoZUOp4gBC6oJ4q5zo/sTCbsFpER
-         yYp9C53daTzOGza+14TQaSyM9CfrDzwd4g/5Ej0/HJ3g7XZtIIYUFTTVIVMiEQiYjtwM
-         NU6w==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721685686; x=1722290486; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JAUt/ALexQ1OP269aBEvYCgpzgE08wFzuX6/YmuwpRo=;
+        b=SLKqfzRjxDwjqOUfDwK4XoDQ0BrEtqMUVuPUjv8CfvaQd2kUDJHEgkBVRWXahZ2zC0
+         SGUTZ52lfvyZYcxab7NsERSee2A9/2CvhTgjVMtEPj0EvGuX63I/86JfDj4tmYBTi7m9
+         Ghw4rQBG+vfOh3r72cvGtT+3hRETI0qvoGo1BtVkZZUUWJYXnzE2tUgp+RFQ/yMAqLUY
+         wU6dX2ao0KBRX/YsI+kbZ/vp2bp58st00Lk1KIK5YfoSW189DYqIBDAIq99YSYKfvErq
+         eWIPUBcSkxnoXVWnmCuB2N3sHSPs/bw/L+gEqqsnOWtcdwrBI4WIeljHfoZaCXPWnERA
+         06Xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721685088; x=1722289888;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z1AyKNnzGAkcTki8rPtv93FNMTvw546VYOSBbwMVqlA=;
-        b=u2vVjT/C7r9bte+qPgLUeLy4TNR56kVkzMjW/rcaLddrONx3JLqs6pyICbgmFIAuXo
-         5wx6U6bSCnMErNq6fyQyU6L7Ckji6PLXBZVjMr61/wn/SGOvslJbY7m/i3fDq/4pyGfQ
-         nQTU5DMyvcf4S5ZYOx/dYlaWxGHUhX8322a0YdP5hyekyppyBUCgGUkYUTEJXOqXjgyp
-         SnqyhW18tye087g8v9/ADWoWAbac0StKc5aKfA7WC48S2QWFuWRQLiBtTeoMi+k5uAe8
-         HhlI0d6XyCeWwWYJuyQZhFovapY8xL370HNKselvUFIz+v+vqctVhZ3LShMwTXfsLdjI
-         7bQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXIUQXct+Gx0EJlVhXjC3c/DwC2UKYuxGrYHeznBPlbiDZG7N4KEZ3hassVCKi+CJC9PmMExteczhbBhX87e4AOIiztfLhTqOzjolUs
-X-Gm-Message-State: AOJu0YzHW8y0sy0JnZFJudp/qSKhHf80dfC9S6aCvugixorzXweCWNJm
-	V0+uRE6COHj8uFLhJU1k+ACgadqsoqYabdkwvUguh0srQo89kwQ3qTTARaN0LvJrnsoAUaRwICS
-	qE3NwDZpVdk47RMNSjshEmWliNJE=
-X-Google-Smtp-Source: AGHT+IHB2RGwQBbyl5TKS5qq8ko4uSod5+wC0Mfz4fQZedFcwBKtXANszbYFgszowCQwwQe5uFGR3n45q6BwPNpa+k4=
-X-Received: by 2002:a05:690c:3249:b0:63b:d242:4fa0 with SMTP id
- 00721157ae682-66a67104a21mr101512367b3.21.1721685087744; Mon, 22 Jul 2024
- 14:51:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721685686; x=1722290486;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JAUt/ALexQ1OP269aBEvYCgpzgE08wFzuX6/YmuwpRo=;
+        b=nlJsCQ1QiM/oXTYXDj/NaZWmp6ECREOevmhUe4Lp5tSnRCcj4R1hU5ixjfSA0ZnyMi
+         RD/ZPYTuDXcu1i2eyndi7tf41eNvswAVaCI5MXPIsSbaK1+lkROtMUgS6PAeagsHJIVU
+         AtgYUoYYC0VLM2d3TExnqam08MENO4Ij5wXzN2wZYLhFJvQPevXgiPDBZrTjRP6dskLa
+         sYAnZsrn+AQB9EM+798DkgFEySDKpfLRPq7eEJx+Bx/YKbFa8g17V6/biG95sBeAUm+V
+         NG6B2UaA4jjT/VNFRQPNzPDVTELkPo3cbaR014WeZbmQcs5ALoc26TnUnFxF9sieUZzI
+         BGDg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1KNrEkseGb83sEL6pWU0nlVFhXawUwrSUZKb7/q8zA01LXqMHIUe4J8K0k5+F1Y3DQCcw9yd6tp+MXWN8X1gmhtfss06ascvwvwmh
+X-Gm-Message-State: AOJu0YzxdEIh8hery5FbwVLlcbImDbhOSdqZjyZcbIom7sIj6d3ZEjtl
+	jVIw/Ei8OHk0rezmvOSwuQLrN/B3YnCZ7fNrgOKHvaVp5OX2WNsPvnexKrXJRjc=
+X-Google-Smtp-Source: AGHT+IGuWCaXZ/ObQnICIEAQHJbPOg0EjyYDPnmTnt9i4wKh7ZomfYywEjSRg/G2c4JYj8HYTBA/Zg==
+X-Received: by 2002:a05:6870:4714:b0:261:fd5:aa34 with SMTP id 586e51a60fabf-263ab54f89amr4628410fac.30.1721685685764;
+        Mon, 22 Jul 2024 15:01:25 -0700 (PDT)
+Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-708f60a55e1sm1719911a34.11.2024.07.22.15.01.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 15:01:25 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+To: Mark Brown <broonie@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	David Jander <david@protonic.nl>,
+	Martin Sperl <kernel@martin.sperl.org>,
+	linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org
+Subject: [PATCH RFC v3 0/9] spi: axi-spi-engine: add offload support
+Date: Mon, 22 Jul 2024 16:57:07 -0500
+Message-ID: <20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240720044127.508042-1-flintglass@gmail.com> <20240720044127.508042-3-flintglass@gmail.com>
-In-Reply-To: <20240720044127.508042-3-flintglass@gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Mon, 22 Jul 2024 14:51:14 -0700
-Message-ID: <CAKEwX=NCm9t9Y6z8bWQ788_wnhQsGN0frroTabNpHStxGnJOqw@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] mm: zswap: fix global shrinker error handling logic
-To: Takero Funaki <flintglass@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: b4 0.14.0
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 19, 2024 at 9:41=E2=80=AFPM Takero Funaki <flintglass@gmail.com=
-> wrote:
->
-> This patch fixes zswap global shrinker that did not shrink zpool as
-> expected.
->
-> The issue it addresses is that `shrink_worker()` did not distinguish
-> between unexpected errors and expected error codes that should be
-> skipped, such as when there is no stored page in a memcg. This led to
-> the shrinking process being aborted on the expected error codes.
+There is a recap at the end of this cover letter for those not familiar
+with the previous discussions. For those that are, we'll get right to
+the changes since the last version.
 
-The code itself seems reasonable to me, but may I ask you to document
-(as a comment) all the expected v.s unexpected cases? i.e when do we
-increment (or not increment) the failure counter?
+In RFC v2, most of the discussion was around the DT bindings, so that
+is what has mostly changed since then. I think we mostly settled on
+what properties are needed and where they should go. There are probably
+still some details to work out (see PATCH 5/9 for more discussion) but
+I think we have the big-picture stuff figured out.
 
-My understanding is, we only increment the failure counter if we fail
-to reclaim from a selected memcg that is non-empty and
-writeback-enabled, or if we go a full tree walk without making any
-progress. Is this correct?
+Here is the actual devicetree used for testing to show how it all
+comes together:
 
->
-> The shrinker should ignore these cases and skip to the next memcg.
-> However,  skipping all memcgs presents another problem. To address this,
-> this patch tracks progress while walking the memcg tree and checks for
-> progress once the tree walk is completed.
->
-> To handle the empty memcg case, the helper function `shrink_memcg()` is
-> modified to check if the memcg is empty and then return -ENOENT.
->
-> Fixes: a65b0e7607cc ("zswap: make shrinking memcg-aware")
-> Signed-off-by: Takero Funaki <flintglass@gmail.com>
-> ---
->  mm/zswap.c | 23 +++++++++++++++++------
->  1 file changed, 17 insertions(+), 6 deletions(-)
->
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index 6528668c9af3..053d5be81d9a 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -1310,10 +1310,10 @@ static struct shrinker *zswap_alloc_shrinker(void=
-)
->
->  static int shrink_memcg(struct mem_cgroup *memcg)
->  {
-> -       int nid, shrunk =3D 0;
-> +       int nid, shrunk =3D 0, scanned =3D 0;
->
->         if (!mem_cgroup_zswap_writeback_enabled(memcg))
-> -               return -EINVAL;
-> +               return -ENOENT;
->
->         /*
->          * Skip zombies because their LRUs are reparented and we would be
-> @@ -1327,14 +1327,19 @@ static int shrink_memcg(struct mem_cgroup *memcg)
->
->                 shrunk +=3D list_lru_walk_one(&zswap_list_lru, nid, memcg=
-,
->                                             &shrink_memcg_cb, NULL, &nr_t=
-o_walk);
-> +               scanned +=3D 1 - nr_to_walk;
->         }
-> +
-> +       if (!scanned)
-> +               return -ENOENT;
-> +
->         return shrunk ? 0 : -EAGAIN;
->  }
->
->  static void shrink_worker(struct work_struct *w)
->  {
->         struct mem_cgroup *memcg;
-> -       int ret, failures =3D 0;
-> +       int ret, failures =3D 0, progress =3D 0;
->         unsigned long thr;
->
->         /* Reclaim down to the accept threshold */
-> @@ -1379,9 +1384,12 @@ static void shrink_worker(struct work_struct *w)
->                  */
->                 if (!memcg) {
->                         spin_unlock(&zswap_shrink_lock);
-> -                       if (++failures =3D=3D MAX_RECLAIM_RETRIES)
-> +
-> +                       /* tree walk completed but no progress */
-> +                       if (!progress && ++failures =3D=3D MAX_RECLAIM_RE=
-TRIES)
->                                 break;
->
-> +                       progress =3D 0;
->                         goto resched;
->                 }
->
-> @@ -1396,10 +1404,13 @@ static void shrink_worker(struct work_struct *w)
->                 /* drop the extra reference */
->                 mem_cgroup_put(memcg);
->
-> -               if (ret =3D=3D -EINVAL)
-> -                       break;
-> +               if (ret =3D=3D -ENOENT)
-> +                       continue;
-> +
->                 if (ret && ++failures =3D=3D MAX_RECLAIM_RETRIES)
->                         break;
-> +
-> +               ++progress;
->  resched:
->                 cond_resched();
->         } while (zswap_total_pages() > thr);
-> --
-> 2.43.0
->
+	trigger_clk: adc-trigger-clock {
+		compatible = "pwm-clock";
+		#clock-cells = <0>;
+		#trigger-source-cells = <0>;
+		pwms = <&adc_trigger 0 10000>;
+	};
+
+	...
+
+	axi_spi_engine_0: spi@44a00000 {
+		compatible = "adi,axi-spi-engine-1.00.a";
+		reg = <0x44a00000 0x1000>;
+		interrupt-parent = <&intc>;
+		interrupts = <0 56 IRQ_TYPE_LEVEL_HIGH>;
+		clocks = <&clkc 15>, <&spi_clk>;
+		clock-names = "s_axi_aclk", "spi_clk";
+
+		/* offload-specific properties */
+		#spi-offload-cells = <1>;
+		dmas = <&rx_dma 0>;
+		dma-names = "offload0-rx";
+		trigger-sources = <&trigger_clk>;
+
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		ad7986: adc@0 {
+			compatible = "adi,ad7986";
+			reg = <0>;
+			spi-max-frequency = <111111111>; /* 9 ns period */
+			adi,spi-mode = "single";
+			avdd-supply = <&eval_u12>;
+			dvdd-supply = <&eval_u12>;
+			vio-supply = <&eval_u3>;
+			bvdd-supply = <&eval_u10>;
+			ref-supply = <&eval_u5>;
+			turbo-gpios = <&gpio0 87 GPIO_ACTIVE_HIGH>;
+
+			spi-offloads = <&axi_spi_engine_0 0>;
+		};
+	};
+
+A working branch complete with extra hacks can be found at [1].
+
+Also, I took a detour looking into what it would take to get Martin
+Sperl's Raspberry Pi DMA offload proof-of-concept [2] updated to work
+with this. This way we could have a second user to help guide the
+design process. Given all of the SPI hardware quirks on that platform
+and the unsolved technical issues, like how to get accurate time delays
+and how to work around the 32-bit DMA word limitation, it would be more
+work than I have time for (at least without someone sponsoring the work).
+
+[1]: https://github.com/dlech/linux/tree/axi-spi-engine-offload-v3
+[2]: https://github.com/msperl/spi-bcm2835/blob/refactor_dmachain_for_prepared_messages/spi-bcm2835dma.c
+
+---
+Changes in v3:
+- See individual patches for more detailed changes.
+- Reworked DT bindings to have things physically connected to the SPI
+  controller be properties of the SPI controller and use more
+  conventional provider/consumer properties.
+- Added more SPI APIs for peripheral drivers to use to get auxillary
+  offload resources, like triggers.
+- Link to v2: https://lore.kernel.org/r/20240510-dlech-mainline-spi-engine-offload-2-v2-0-8707a870c435@baylibre.com
+
+---
+
+As a recap, here is the background and end goal of this series:
+
+The AXI SPI Engine is a SPI controller that has the ability to record a
+series of SPI transactions and then play them back using a hardware
+trigger. This allows operations to be performed, repeating many times,
+without any CPU intervention. This is needed for achieving high data
+rates (millions of samples per second) from ADCs and DACs that are
+connected via a SPI bus.
+
+The offload hardware interface consists of a trigger input and a data
+output for the RX data. These are connected to other hardware external
+to the SPI controller.
+
+To record one or more transactions, commands and TX data are written
+to memories in the controller (RX buffer is not used since RX data gets
+streamed to an external sink). This sequence of transactions can then be
+played back when the trigger input is asserted.
+
+This series includes core SPI support along with the first SPI
+controller (AXI SPI Engine) and SPI peripheral (AD7944 ADC) that use
+them. This enables capturing analog data at 2 million samples per
+second.
+
+The hardware setup looks like this:
+
++-------------------------------+   +------------------+
+|                               |   |                  |
+|  SOC/FPGA                     |   |  AD7944 ADC      |
+|  +---------------------+      |   |                  |
+|  | AXI SPI Engine      |      |   |                  |
+|  |             SPI Bus ============ SPI Bus          |
+|  |                     |      |   |                  |
+|  |  +---------------+  |      |   |                  |
+|  |  | Offload 0     |  |      |   +------------------+
+|  |  |   RX DATA OUT > > > >   |
+|  |  |    TRIGGER IN < < <  v  |
+|  |  +---------------+  | ^ v  |
+|  +---------------------+ ^ v  |
+|  | AXI PWM             | ^ v  |
+|  |                 CH0 > ^ v  |
+|  +---------------------+   v  |
+|  | AXI DMA             |   v  |
+|  |                 CH0 < < <  |
+|  +---------------------+      |
+|                               |
++-------------------------------+
+
+To: Mark Brown <broonie@kernel.org>
+To: Jonathan Cameron <jic23@kernel.org>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Nuno Sá <nuno.sa@analog.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>
+Cc: David Jander <david@protonic.nl>
+Cc: Martin Sperl <kernel@martin.sperl.org>
+Cc:  <linux-spi@vger.kernel.org>
+Cc:  <devicetree@vger.kernel.org>
+Cc:  <linux-kernel@vger.kernel.org>
+Cc:  <linux-iio@vger.kernel.org>
+
+---
+David Lechner (9):
+      spi: dt-bindings: add spi-offload properties
+      spi: add basic support for SPI offloading
+      spi: add support for hardware triggered offload
+      spi: add offload TX/RX streaming APIs
+      spi: dt-bindings: axi-spi-engine: document spi-offloads
+      spi: axi-spi-engine: implement offload support
+      iio: buffer-dmaengine: generalize requesting DMA channel
+      dt-bindings: iio: adc: adi,ad7944: add SPI offload properties
+      iio: adc: ad7944: add support for SPI offload
+
+ .../devicetree/bindings/iio/adc/adi,ad7944.yaml    |   3 +
+ .../bindings/spi/adi,axi-spi-engine.yaml           |  41 +++
+ .../devicetree/bindings/spi/spi-controller.yaml    |   5 +
+ .../bindings/spi/spi-peripheral-props.yaml         |  11 +
+ drivers/iio/adc/ad7944.c                           | 173 ++++++++++-
+ drivers/iio/buffer/industrialio-buffer-dmaengine.c |  39 ++-
+ drivers/iio/dac/adi-axi-dac.c                      |   3 +-
+ drivers/spi/spi-axi-spi-engine.c                   | 341 ++++++++++++++++++++-
+ drivers/spi/spi.c                                  | 226 +++++++++++++-
+ include/linux/iio/buffer-dmaengine.h               |  11 +-
+ include/linux/spi/spi.h                            | 169 ++++++++++
+ 11 files changed, 989 insertions(+), 33 deletions(-)
+---
+base-commit: 7a891f6a5000f7658274b554cf993dd56aa5adbc
+change-id: 20240510-dlech-mainline-spi-engine-offload-2-afce3790b5ab
 
