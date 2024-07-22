@@ -1,62 +1,75 @@
-Return-Path: <linux-kernel+bounces-258451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ADAE93880F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:22:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A8D9938814
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15F971F2174B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:22:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A69B1F212D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 04:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D812416426;
-	Mon, 22 Jul 2024 04:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B36B168B8;
+	Mon, 22 Jul 2024 04:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WuunfAdv"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nqysGY1I"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C081759F;
-	Mon, 22 Jul 2024 04:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DDF134B2;
+	Mon, 22 Jul 2024 04:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721622152; cv=none; b=jN5AWRF6LsnNQ5mLztNQeACBwIuDcntoH9sKJZRctnbstgGlWHZ9j0G1iNQNs+NWPFx5JymRqAov+EViNBq/540czur29NtwOf8bBrLRJg5TQjiXj9kDMIJiCre84U23TqHyWYKRTIUN4SZKFTW38LtJIONeTQsA2aJ6RxurkZA=
+	t=1721622479; cv=none; b=fGHRiHlzIx8mLH4Sc6mKkRA584huRwGy48Y6HS6atB9pkiAz1PXzoG0oXZEMBvXyJJ4mpKr4FRym0aWl/Auvi97WxOsPLFgyHvV65L3E7oeLawG3Lk0hYKG7txIg/e/setE08gjT8xWxPX4cRBHO5z4jg2sFZgDswhXLymLwlbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721622152; c=relaxed/simple;
-	bh=62ls2IOTmXlvc5qzKM2wL/hisK4eyQN4wuTl9T4gi48=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PN9Uja86zA1EqGgXEF2Cy9w6Eo5xgIFeQm41p9UCyLgcuvuACyzdfdeDvCYGmMGELRbLxcfyq6kYurppsIVj5HzI3tbOSxXfYWfCX6kOFxiqnK7KTcODygnIEEZBjhokahvDtPRJyGlKNQLxW3XPm+/KbZgwKfsnBHau06BZ1ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WuunfAdv; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46LN0rq4016040;
-	Mon, 22 Jul 2024 04:22:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	N3EOVUD+WO15qHR0VO6+BdaZL27VH5th1kQoboWWqD0=; b=WuunfAdvdeSCR/My
-	0VIN+B7esRTRYL1X+NY1vLta/Ld/BnMVKlLgXl+KSEn/HRIk/Trl11CZrUizIcaH
-	08Zul3SgANcrpPH++WRe08L74PaHefdySC5kt6aZI6ht5EyhTks1CHZ3wBuj/tsv
-	WeGc2oU2Pc4Vcoquk+Di2BOdJZ44dROzci8IEdPBtrr4KI1+4zuOgo4SFWYnJaPO
-	Ac3kU38FWM25eBQsppdCrdEtnPxzMBIBwVKX/xjBfbu3YscS5wuVDfsT2D8Eh70/
-	XsSct+LCoxvh9CYBSjcItSvQlho5cguvqDKr58ONaJdoKwAh1AOIpAJ+NL74z0y0
-	feACIQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g46s2m6m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jul 2024 04:22:17 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46M4MG2g013466
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jul 2024 04:22:16 GMT
-Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 21 Jul
- 2024 21:22:13 -0700
-Message-ID: <1fa821d4-eeba-4df9-8c08-f289832e0632@quicinc.com>
-Date: Mon, 22 Jul 2024 09:51:48 +0530
+	s=arc-20240116; t=1721622479; c=relaxed/simple;
+	bh=K8JWcAkS4a4liaNBpSRVd5qQrnIj7BxckMCwh1u91hA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tvW/vxdviC4/oc4dD2+uuiXh5P1ieFQCmfiOHCN+xknBxlSA7NUu7uy7D5434Ihg7M4gwKdUn2AbtnZRp6UzSPaLoJ92kE/yC/RonCWclBCqJkKGYHTU1QK31xX+43uEwoKO57Tjbi8HCMSTPJEgLoZyttVEkWWH/paZkqdp/Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nqysGY1I; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fc569440e1so31226155ad.3;
+        Sun, 21 Jul 2024 21:27:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721622477; x=1722227277; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=o8ZTrvUyb7a00X6v0/4Q9nPa7JlF0Pt0DDiwaLxc7V0=;
+        b=nqysGY1I3J089wXrZ2AcSqJDlTJLszRNSpczT8Sk6bsBQwX6szlSB/FLtXxUJFOi/O
+         rGprnneL9KKc3YRSi06qVnUXwbEBPp+nrUkqiFkoVGF91ctF4qh6fHN2hYY5mFTz3mPu
+         JKgklzi0PXDs0gmtuOym6LZ1swNb5tYtPw6Gh0KBtHyTGQ10RQHO9MSC9EpYzBIxzC6G
+         Vio/HbT8ul5gFVqOJ9oHpfmQvvXGKVbDVghUkSDMcN2uwZOR1dMFBUxiWZwAD/b+BN7Z
+         IqMKI0GQ8A8p4B53SuUg9N3L3/5E5120KkOcGoIi+NaCxanNCQbGjHJBVYOqCQBEwBdl
+         TL2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721622477; x=1722227277;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o8ZTrvUyb7a00X6v0/4Q9nPa7JlF0Pt0DDiwaLxc7V0=;
+        b=VGyHi9v+ShSrk5XmyH52JnJ7mw+/BWqCi6TNTFFthAFaG51IbWSoIdjOxUi9Z9Q/ae
+         sI1tvhk6aCfkPIhhXZT48ByQeJgOhv0PmTQBskQZlWiV4v0NCUMkcRuOaW1vx2Z/zQxw
+         M/LfOIhoDzhFMfjFymlkOsY81dthKWgSqsiFKalP8cqnqwDCjvqURfozwQm5psV2iKHT
+         nDLlSV5yYTMIA6MgbSZ4OZbHKsvBaebq2FMgvUERW750DN71w4Ob7MHnyMYo2L9wlu7/
+         Ev5BgfvrFf4fw7GMir27tMueo9sRYHRXDgYpcs/IBj6fP+FgsDB29VAzLlLsRvXqeOij
+         xHeA==
+X-Forwarded-Encrypted: i=1; AJvYcCUG8aObHx7mbkpzCggL07j0Gajzhe8vDZrDruKhqCxtRlnbp4ZOdgi3///meTus7EX9hzGjohlgmHhGNq5XJaBH1UPiZvxbMzxLvJb2NI7JH1tXDcWr6SPmPj5rvcPoWqASNMIauv6Lho1UAUKjGwfmNvbHzyC4oDaDofG1rAIbcfjpKw==
+X-Gm-Message-State: AOJu0YwiGS2Q78+9b6231NwNOLNm3BTSwDi66IJDfqTt83ZQf+BGW8Kh
+	m6IQuMDydYzXOdPHze1aeg58bUlgX+z9mq20MjmT/XWXqJVAtvZe
+X-Google-Smtp-Source: AGHT+IFFAOebhIiytgdnqRaEc/t69UnHbGRcN2PED+JI2D/d663/6m7itP5I9AIglNcqreMqnHVGqw==
+X-Received: by 2002:a17:902:fb4d:b0:1fc:6c23:8a3b with SMTP id d9443c01a7336-1fd74561d13mr57572865ad.17.1721622476663;
+        Sun, 21 Jul 2024 21:27:56 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f433e87sm44390545ad.195.2024.07.21.21.27.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 21 Jul 2024 21:27:55 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <ed179848-2c8c-41ef-acca-a53d958a30b6@roeck-us.net>
+Date: Sun, 21 Jul 2024 21:27:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,107 +77,147 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] misc: fastrpc: Increase unsigned PD initmem size
+Subject: Re: [PATCH v6 3/3] hwmon: (adt7475) Add support for configuring
+ initial PWM state
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>, jdelvare@suse.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, ukleinek@kernel.org
+Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
+References: <20240722005825.1800403-1-chris.packham@alliedtelesis.co.nz>
+ <20240722005825.1800403-4-chris.packham@alliedtelesis.co.nz>
+ <15f4c51c-3f7d-4e93-9c3a-71ac1d626463@roeck-us.net>
+ <c261c74f-6829-4888-9836-6f27ba87dc25@alliedtelesis.co.nz>
 Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
-        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>,
-        stable
-	<stable@kernel.org>
-References: <20240719085708.1764952-1-quic_ekangupt@quicinc.com>
- <wd3vpjh6u7tsaxccc6ek5t3ryio453exaprsmkxyzsh4brx7qk@ywkerf5fwqnd>
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-In-Reply-To: <wd3vpjh6u7tsaxccc6ek5t3ryio453exaprsmkxyzsh4brx7qk@ywkerf5fwqnd>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: -8av5zhCzifMUNtbZ_jyGED4ko4B3FcZ
-X-Proofpoint-ORIG-GUID: -8av5zhCzifMUNtbZ_jyGED4ko4B3FcZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-22_01,2024-07-18_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- lowpriorityscore=0 bulkscore=0 clxscore=1011 malwarescore=0
- priorityscore=1501 phishscore=0 adultscore=0 suspectscore=0 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407220032
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <c261c74f-6829-4888-9836-6f27ba87dc25@alliedtelesis.co.nz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-
-On 7/19/2024 3:36 PM, Dmitry Baryshkov wrote:
-> On Fri, Jul 19, 2024 at 02:27:08PM GMT, Ekansh Gupta wrote:
->> For user PD initialization, initmem is allocated and sent to DSP for
->> initial memory requirements like shell loading. This size is the shell
->> size that is  passed by user space and is checked against a max size.
->> For unsigned PD offloading requirement, additional memory is required
->> because of additional static heap initialization. Without this
->> additional memory, PD initialization would fail. Increase the initmem
->> size by 2MB for unsigned PD initmem buffer allocation. Any additional
->> memory sent to DSP during PD init is used as the PD heap.
+On 7/21/24 21:09, Chris Packham wrote:
+> 
+> On 22/07/24 15:53, Guenter Roeck wrote:
+>> On 7/21/24 17:58, Chris Packham wrote:
+>>> By default the PWM duty cycle in hardware is 100%. On some systems this
+>>> can cause unwanted fan noise. Add the ability to specify the fan
+>>> connections and initial state of the PWMs via device properties.
+>>>
+>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+>>> ---
+>>>
+>>> Notes:
+>>>      Changes in v6:
+>>>      - Use do_div() instead of plain /
+>>>      - Use a helper function to avoid repetition between the of and non-of
+>>>        code paths.
+>>>      Changes in v5:
+>>>      - Deal with PWM frequency and duty cycle being specified in nanoseconds
+>>>      Changes in v4:
+>>>      - Support DT and ACPI fwnodes
+>>>      - Put PWM into manual mode
+>>>      Changes in v3:
+>>>      - Use the pwm provider/consumer bindings
+>>>      Changes in v2:
+>>>      - Use correct device property string for frequency
+>>>      - Allow -EINVAL and only warn on error
+>>>      - Use a frequency of 0 to indicate that the hardware should be left as-is
+>>>
+>>>   drivers/hwmon/adt7475.c | 130 ++++++++++++++++++++++++++++++++++++++++
+>>>   1 file changed, 130 insertions(+)
+>>>
+>>> diff --git a/drivers/hwmon/adt7475.c b/drivers/hwmon/adt7475.c
+>>> index 4224ffb30483..fc5605d34f36 100644
+>>> --- a/drivers/hwmon/adt7475.c
+>>> +++ b/drivers/hwmon/adt7475.c
+>>> @@ -21,6 +21,8 @@
+>>>   #include <linux/of.h>
+>>>   #include <linux/util_macros.h>
+>>>   +#include <dt-bindings/pwm/pwm.h>
+>>> +
+>>>   /* Indexes for the sysfs hooks */
+>>>     #define INPUT        0
+>>> @@ -1662,6 +1664,130 @@ static int adt7475_set_pwm_polarity(struct i2c_client *client)
+>>>       return 0;
+>>>   }
+>>>   +struct adt7475_pwm_config {
+>>> +    int index;
+>>> +    int freq;
+>>> +    int flags;
+>>> +    int duty;
+>>> +};
+>>> +
+>>> +static int _adt7475_pwm_properties_parse_args(u32 args[4], struct adt7475_pwm_config *cfg)
+>>> +{
+>>> +    unsigned long freq_hz;
+>>> +    unsigned long duty;
+>>> +
+>>> +    if (args[1] == 0)
+>>> +        return -EINVAL;
+>>> +
+>>> +    freq_hz = 1000000000UL;
+>>> +    do_div(freq_hz, args[1]);
+>>> +    duty = 255 * args[3];
+>>> +    do_div(duty, args[1]);
+>>> +
 >>
->> Fixes: 7f1f481263c3 ("misc: fastrpc: check before loading process to the DSP")
->> Cc: stable <stable@kernel.org>
->> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
->> ---
->> Changes in v2:
->>   - Modified commit text.
->>   - Removed size check instead of updating max file size.
->> Changes in v3:
->>   - Added bound check again with a higher max size definition.
->>   - Modified commit text accordingly.
->> Changes in v4:
->>   - Defined new initmem specific MACROs.
->>   - Adding extra memory for unsigned PD.
->>   - Added comment suggesting the reason for this change.
->>   - Modified commit text.
->>
->>  drivers/misc/fastrpc.c | 10 +++++++++-
->>  1 file changed, 9 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
->> index a7a2bcedb37e..18668b020a87 100644
->> --- a/drivers/misc/fastrpc.c
->> +++ b/drivers/misc/fastrpc.c
->> @@ -39,6 +39,8 @@
->>  #define FASTRPC_DSP_UTILITIES_HANDLE	2
->>  #define FASTRPC_CTXID_MASK (0xFF0)
->>  #define INIT_FILELEN_MAX (2 * 1024 * 1024)
->> +#define FASTRPC_INITLEN_MIN (3 * 1024 * 1024)
->> +#define FASTRPC_STATIC_HEAP_LEN (2 * 1024 * 1024)
->>  #define INIT_FILE_NAMELEN_MAX (128)
->>  #define FASTRPC_DEVICE_NAME	"fastrpc"
->>  
->> @@ -1410,8 +1412,14 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
->>  			goto err;
->>  	}
->>  
->> -	memlen = ALIGN(max(INIT_FILELEN_MAX, (int)init.filelen * 4),
->> +	/* Allocate buffer in kernel for donating to remote process.
->> +	 * Unsigned PD requires additional memory because of the
->> +	 * additional static heap initialized within the process.
->> +	 */
->> +	memlen = ALIGN(max(FASTRPC_INITLEN_MIN, (int)init.filelen * 4),
->>  		       1024 * 1024);
-> Ok, here you have two changes in the same patch. First one changes
-> the allocated memory size for the signed usecase and another one adds
-> separate handling for the unsigned case. Please split them into two
-> separate commits.
-Sure, will be splitting the patches. Thanks.
+>> Gues I am a bit at loss here, just as 0-day. Why use do_div ? It is only needed
+>> for 64-bit divide operations.
+> 
+> Mainly because of Uwe's comment on v5. I think I've avoided the original u64 issue now that I'm converting fwnode_reference_args::args to a u32 array. I can probably get away with plain division, although 255 * args[3] / args[1] might overflow in theory but shouldn't in practice.
+> 
+> I'll let the earth turn and send out a v7 that uses plain division unless someone has a strong opinion that I should sprinkle some more u64s around.
+> 
 
---Ekansh
->
->> +	if (unsigned_module)
->> +		memlen += FASTRPC_STATIC_HEAP_LEN;
->>  	err = fastrpc_buf_alloc(fl, fl->sctx->dev, memlen,
->>  				&imem);
->>  	if (err)
->> -- 
->> 2.34.1
+You lost me, sorry. Neither duty nor freq_hz are u64. What u64 variables
+are you talking about ? Using so_div doesn't make those variables u64.
+
+Guenter
+
+>>
+>> Thanks,
+>> Guenter
 >>
 
 
