@@ -1,215 +1,145 @@
-Return-Path: <linux-kernel+bounces-258654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8038A938B3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:29:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D18B3938B42
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:33:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E342CB215AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:29:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81D8E28155C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E2216630A;
-	Mon, 22 Jul 2024 08:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AE6166301;
+	Mon, 22 Jul 2024 08:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gF1qUUwL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tpFyYqaM"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993E143169;
-	Mon, 22 Jul 2024 08:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213DB14A90
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 08:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721636958; cv=none; b=AkdO34L2TTAZaobkHv35dwOKGB5o/7we1fU6WOdbYSTZA7eHAJ9247qGOPme9npaoX1DXYfTh4Kov6lIBIlvdiYBXAIjOsG3CUOFSqYpdVLjCh1dNthjJ2jl2Juw+AHGOQFEts1vCMvPjc5EXHpW0xGkw3iLRFDk/bk7X5PaoY4=
+	t=1721637183; cv=none; b=VIlNU4Cf1Xt5gqG/93R0ChTAAwR7SVO3VEimZpf93w70R3w1rrMsdqIZ/MwmQEvixGfv91vbI4AeAEImLtMF4wVNMmoT6B/t9tLYA2zr0ktWULoBxL1T7mPJ2q5MfFt/8lhiz7fm0Q7FhBq5J9ildgayW702sqy3Ew28dLj8cEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721636958; c=relaxed/simple;
-	bh=WVUiUZZrhSyC5ogpqbKGLX1PHFwhFxJSq6enD4jXS94=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gKaDTS98jTLE4pKbxYKp4/tm+3cWQ4idCFNFIW5bNdfl3fa0v2XINKsMJfF9CyqTede5adzyEWPhoBjKdD3Z/xNBvV63v9lwChJPIWsA86p2RC1MOLM2zaQyrp1QKbwevLrnwbxzFxru/shyGKoleIY2mHC8fNATMjY8+EQiXXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gF1qUUwL; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721636957; x=1753172957;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=WVUiUZZrhSyC5ogpqbKGLX1PHFwhFxJSq6enD4jXS94=;
-  b=gF1qUUwLnbOm2uUHJkbMfaYe/im94HMrNaGN7OD1DjOHb5hN4nhmv+M9
-   KBQ3hKGQhDpEPZUoQxRM7j1yTBCWnF+2c2QzeWwQaUr9INSi2iVjnj9Fq
-   FXX9MF6OvB33lyptZZ/RSoYlUYa3Vut9ejpPoEkuTLyRrGwpf2T52AGMO
-   HWw7ppp6bCHvWO8a+GK08qVpXJza6vgf43/ateBQi60g9WXOlleUMiWlT
-   fZFntsUYj+Ty5ElZxUVMNWB39QVprPfuVYvmTxcGM+ROx+yxiH2vpSXmi
-   v0DyvoeWQXv5xTFyKXdzqKkP0DggwZO4pMCg8zR56OOmFTY3BwprZfAYc
-   w==;
-X-CSE-ConnectionGUID: y/WIla70TNOjP6CxxIlNLw==
-X-CSE-MsgGUID: hWBXZLeXRHCMyye3ayOrOQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11140"; a="44618478"
-X-IronPort-AV: E=Sophos;i="6.09,227,1716274800"; 
-   d="scan'208";a="44618478"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 01:28:55 -0700
-X-CSE-ConnectionGUID: qxVdrlWkQOOjlTuJ3O6rdQ==
-X-CSE-MsgGUID: RxoZp5BWT42LIo+ODeZ7iQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,227,1716274800"; 
-   d="scan'208";a="56092103"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.41.28])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 01:28:48 -0700
-Message-ID: <05fa0449-4fd4-41ed-93e8-db825e48268f@intel.com>
-Date: Mon, 22 Jul 2024 11:28:44 +0300
+	s=arc-20240116; t=1721637183; c=relaxed/simple;
+	bh=g4wD0Ler+IKJdwaaFfmTC6uHj2G72zSZDhKxHujKEec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OCzPao4Xw0uiDUCpTpY4jKysLWrDrbsxVe5DSz5X8m6yQTl0/hf+jXCEUouOhRKzZoUzfYkxwCYEwWJjGzOzMVCORkszPTL4gVjYVmYS2cp0TZuzejJCTZuNcgbcVBkhsRanmH4NMTztXRER7uwJc5+R0K/FGBW7fJpalEd+8/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tpFyYqaM; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2eea8ea8bb0so69112401fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 01:33:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721637179; x=1722241979; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=U8sNrx4VreOw/LgPBLnoWulqquEYUzh0E/7dzJx6llQ=;
+        b=tpFyYqaMroM5rSASaXRZ63pHJNRexP3r/lci0cqvEXlNS/N4RfPq2bwM7oY4r7nHfA
+         wrhWfQHpor20+VTEu/iu7EEjaKIZcTRujyrSTXtF9jDwwf5TprgN66P4UAbb9WG50cak
+         2fCJFgHmH499r+Fx67oQPa15XQ2D4xF8cl8Bf0x8EjdeiVxQtaur8Lq5TyFPcs9FrmIf
+         xWVYbcLgVZYQ1IQH/8A1DALs1R3z9D8JmybEBiKRu2sQl4T/37VTTWHX/bDMnddxa4qz
+         7/oyarubk9JGDqbwnFY9w9uQv0PPBmDFhUeOy+k7eg1QlFyoZpEh3YbxRyJ7/Qf7Ms5c
+         LrmA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721637179; x=1722241979;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U8sNrx4VreOw/LgPBLnoWulqquEYUzh0E/7dzJx6llQ=;
+        b=AGDy26UaK8Y1WBOgcaVKN0ILP04F07ugDpYqW3frtNAS5oLWJIrYhGV0uBDHRA1kSc
+         Cu9eUMdeUthHWBiskSlw/UFsGyBIYoszWWbDEnuxmeqLCwHrSlCx2n0se1x3i6hGSGVP
+         eugcRQRh4zYpe7ksY1phs+wgiE8XgqpXDhbktEZzjX+0lHPUge4l2pCWL9ZRRasSGjAe
+         4P7y2VTDKiJWqToStf/OrGLETHNcomuCvnuSmKC335zInecvROS1kiQPmXq/h8HAZ+7G
+         kng4rW9f2YUPkD7uHd6IBvJ6Tk3FEjJPddzqDr19X6Xsf2tw3rmWcK87QrceHeCZ40wg
+         L1OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULTUUV7C2swFqZVbNwTc2lQqqJWlSFF3+1tfhKAo7bNEZwl82I2YLdvJL0PAUZDuBW7RH/1AGX+ZDrmC9MaslgCgIvmzAKWoKdnrAs
+X-Gm-Message-State: AOJu0Yx3yWXfVEdI0pMZguXTV0T/gh8twetNjLVkyrUZ+oDf8tq11OSS
+	rRRU5W2usksWbJqrJjfsmDiSDQHI4fIzpORWWMDXfRWgXOM2Em4YhVWoICR7Qrk=
+X-Google-Smtp-Source: AGHT+IGUVxNFBkmLm7Caxhwg1z9pIP1ZJJmKfA9dUPMTeOS6qsRdqa8z5TuJ7r3mhAByJG5dV2LBng==
+X-Received: by 2002:a2e:3609:0:b0:2ef:2e3f:35d9 with SMTP id 38308e7fff4ca-2ef2e3f368amr24399581fa.33.1721637179187;
+        Mon, 22 Jul 2024 01:32:59 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ef28807aaesm6517221fa.43.2024.07.22.01.32.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jul 2024 01:32:58 -0700 (PDT)
+Date: Mon, 22 Jul 2024 11:32:57 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Ekansh Gupta <quic_ekangupt@quicinc.com>
+Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
+	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org, 
+	quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org, arnd@arndb.de, 
+	stable <stable@kernel.org>
+Subject: Re: [PATCH v6 1/2] misc: fastrpc: Define a new initmem size for user
+ PD
+Message-ID: <ydp5ntlresenovs6qaqt7wdaleuruubem5hajbfadkratfsiam@wjn33ymp4gyc>
+References: <20240722080200.3530850-1-quic_ekangupt@quicinc.com>
+ <20240722080200.3530850-2-quic_ekangupt@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 00/27] Constify tool pointers
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
- John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- James Clark <james.clark@arm.com>, Mike Leach <mike.leach@linaro.org>,
- Leo Yan <leo.yan@linux.dev>, Suzuki K Poulose <suzuki.poulose@arm.com>,
- Yicong Yang <yangyicong@hisilicon.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Nick Terrell <terrelln@fb.com>, Nick Desaulniers <ndesaulniers@google.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Anshuman Khandual <anshuman.khandual@arm.com>, Song Liu <song@kernel.org>,
- Ilkka Koskinen <ilkka@os.amperecomputing.com>,
- Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
- Huacai Chen <chenhuacai@kernel.org>, Yanteng Si <siyanteng@loongson.cn>,
- Sun Haiyong <sunhaiyong@loongson.cn>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20240718010023.1495687-1-irogers@google.com>
- <738b5c89-acb2-46a5-92a1-c36bd90abc30@intel.com>
- <CAP-5=fU=5LxF0SKuAqVP+xtmdERCCgxh_mdpw5okMi1fmvpE+Q@mail.gmail.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <CAP-5=fU=5LxF0SKuAqVP+xtmdERCCgxh_mdpw5okMi1fmvpE+Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240722080200.3530850-2-quic_ekangupt@quicinc.com>
 
-On 19/07/24 19:26, Ian Rogers wrote:
-> On Fri, Jul 19, 2024 at 1:51 AM Adrian Hunter <adrian.hunter@intel.com> wrote:
->>
->> On 18/07/24 03:59, Ian Rogers wrote:
->>> struct perf_tool provides a set of function pointers that are called
->>> through when processing perf data. To make filling the pointers less
->>> cumbersome, if they are NULL perf_tools__fill_defaults will add
->>> default do nothing implementations.
->>>
->>> This change refactors struct perf_tool to have an init function that
->>> provides the default implementation. The special use of NULL and
->>> perf_tools__fill_defaults are removed. As a consequence the tool
->>> pointers can then all be made const, which better reflects the
->>> behavior a particular perf command would expect of the tool and to
->>> some extent can reduce the cognitive load on someone working on a
->>> command.
->>>
->>> v6: Rebase adding Adrian's reviewed-by/tested-by and Leo's tested-by.
->>
->> The tags were really meant only for patch 1, the email that was replied to.
->>
->> But now for patches 2 and 3:
->>
->> Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
+On Mon, Jul 22, 2024 at 01:31:59PM GMT, Ekansh Gupta wrote:
+> For user PD initialization, initmem is allocated and sent to DSP for
+> initial memory requirements like shell loading. The size of this memory
+> is decided based on the shell size that is passed by the user space.
+> With the current implementation, a minimum of 2MB is always allocated
+> for initmem even if the size passed by user is less than that. For this
+> a MACRO is being used which is intended for shell size bound check.
+> This minimum size of 2MB is not recommended as the PD will have very
+> less memory for heap and will have to request HLOS again for memory.
+> Define a new macro for initmem minimum length of 3MB.
 > 
-> Sorry for that, you'd mentioned that pt and bts testing which is
-> impacted by more than just patch 1.
+> Fixes: d73f71c7c6ee ("misc: fastrpc: Add support for create remote init process")
+> Cc: stable <stable@kernel.org>
+> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+> ---
+>  drivers/misc/fastrpc.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
->> Looking at patches 4 to 25, they do not seem to offer any benefit.
->>
->> Instead of patch 26, presumably perf_tool__fill_defaults() could
->> be moved to __perf_session__new(), which perhaps would allow
->> patch 27 as it is.
+> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+> index a7a2bcedb37e..a3a5b745936e 100644
+> --- a/drivers/misc/fastrpc.c
+> +++ b/drivers/misc/fastrpc.c
+> @@ -39,6 +39,7 @@
+>  #define FASTRPC_DSP_UTILITIES_HANDLE	2
+>  #define FASTRPC_CTXID_MASK (0xFF0)
+>  #define INIT_FILELEN_MAX (2 * 1024 * 1024)
+> +#define FASTRPC_INITLEN_MIN (3 * 1024 * 1024)
+
+So, what is the difference between INIT_FILELEN_MAX and
+FASTRPC_INITLEN_MIN?
+
+>  #define INIT_FILE_NAMELEN_MAX (128)
+>  #define FASTRPC_DEVICE_NAME	"fastrpc"
+>  
+> @@ -1410,7 +1411,7 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
+>  			goto err;
+>  	}
+>  
+> -	memlen = ALIGN(max(INIT_FILELEN_MAX, (int)init.filelen * 4),
+> +	memlen = ALIGN(max(FASTRPC_INITLEN_MIN, (int)init.filelen * 4),
+
+BTW: why is the code multiplying filelen by 4? Nothing in the source
+code suggests that filelen is in u32 words, so I'd assume it's measured
+in bytes.
+
+>  		       1024 * 1024);
+>  	err = fastrpc_buf_alloc(fl, fl->sctx->dev, memlen,
+>  				&imem);
+> -- 
+> 2.34.1
 > 
-> What I'm trying to do in the series is make it so that the tool isn't
-> mutated during its use by session. Ideally we'd be passing a const
-> tool to session_new, that's not possible because there's a hack to fix
-> ordered events and pipe mode in session__new:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/util/session.c?h=perf-tools-next#n275
-> Imo, it isn't great to pass a tool to session__new where you say you
-> want ordered events and then session just goes to change that for you.
-> Altering that behavior was beyond the scope of this clean up, so tool
-> is only const after session__new.
 
-Seems like a separate issue.  Since the session is created
-by __perf_session__new(), session->tool will always be a pointer
-to a const tool once there is:
-
-diff --git a/tools/perf/util/session.h b/tools/perf/util/session.h
-index 7f69baeae7fb..7c8dd6956330 100644
---- a/tools/perf/util/session.h
-+++ b/tools/perf/util/session.h
-@@ -43,7 +43,7 @@ struct perf_session {
- 	u64			one_mmap_offset;
- 	struct ordered_events	ordered_events;
- 	struct perf_data	*data;
--	struct perf_tool	*tool;
-+	const struct perf_tool	*tool;
- 	u64			bytes_transferred;
- 	u64			bytes_compressed;
- 	struct zstd_data	zstd_data;
-
-> 
-> The reason for doing this is to make it so that when I have a tool I
-> can reason that nobody is doing things to change it under my feet.
-
-It still can be changed by the caller of __perf_session__new(), since
-the tool itself is not const.
-
-Anything using container_of() like:
-
-static int process_sample_event(const struct perf_tool *tool,
-				union perf_event *event,
-				struct perf_sample *sample,
-				struct evsel *evsel,
-				struct machine *machine)
-{
-	struct perf_script *scr = container_of(tool, struct perf_script, tool);
-
-can then change scr->tool without even having to cast away const.
-
-Really, 'tool' needs to be defined as const in the first place.
-
-> My
-> builtin_cmd is in charge of what the tool is rather than some code
-> buried in util that thought it was going to do me a favor. The code is
-> a refactor and so the benefit is intended to be for the developer and
-> how they reason about the use of tool.
-
-It creates another question though: since there is a lot of code
-before perf_tool__init() is called, does the caller mistakenly
-change tool before calling perf_tool__init()
-
-> how they reason about the use of tool. We generally use _init
-> functions rather than having _fill_defaults, so there is a consistency
-> argument.
-
-The caller does not need the "defaults", so why would it set them up.
-The session could just as easily do:
-
-	if (tool->cb)
-		tool->cb(...);
-	else
-		cb_stub(...);
-
-> I don't expect any impact in terms of performance... Moving
-> perf_tool__fill_defaults to __perf_session__new had issues with the
-> existing code where NULL would be written over a function pointer
-> expecting the later fill_defaults to fix it up, doesn't address coding
-> consistency where _init is the norm, and adds another reason the tool
-> passed to session__new can't be const.
-
-perf_tool__init() is not a steeping stone to making 'tool' a
-const in the first place.
-
+-- 
+With best wishes
+Dmitry
 
