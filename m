@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-258802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18C7E938CD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:01:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 403A7938CDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 12:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B732E1F27237
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:01:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95861F27286
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91C7171646;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE22517164E;
 	Mon, 22 Jul 2024 09:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bi8M30qk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MSYreWkq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0145516EC18;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D56116F0E1;
 	Mon, 22 Jul 2024 09:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721642121; cv=none; b=J02Md9NRtcFxyzjm5N3h2IEfbpWdOlV4OK8F+g4sZ3/PFqRFuHI/TAEEekdmLwJZFIItJRNyVg1H/67Oudo7dQswb5flYmXo3gqbvsUW5I3x1fYM0zW+YH/e71WO1HVjyljRIxOg//7Uaju+1tkGPM1Nn0gpwAxmfViCViRpfJ8=
+	t=1721642121; cv=none; b=aBvx3sAccRivrn4bCr1p9CoObWCDgymhQNS97wywWV1aFKNuPk8ztQaMWTWAxWcyChFznYmmuT7Cg5/UMr5++3kgBaLkpd6Y2bStl0+87B6bDPI8m9Q6XByPg5i2eCewCsMMOn2yLbkhVF7W5ttzqvkw0zOB2bOXWNk0N75VR28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721642121; c=relaxed/simple;
-	bh=ifl09MZWOBznlmJMqcf8Xqj34pV8iepPaLINN97wyYM=;
+	bh=tnTqghub0gpnpeLE6omoEXVHAcZJhvQATaNQQ++Wxyc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cyxBTzLM1DAqtNnU/KqdzKQdZLASqwvVoEHx5lXj0/gCQzIdymm1U5NVroFx1ad3QAeQfrRSGA69dj30A/+7xWJpgTUU9ZIOzX/6uOb46OjxAZ1wH16lgaxjhI0rKpFrLN+d18wAqsbT4LXC3FxGBdWW51xgkYwEHIz/TxbpaPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bi8M30qk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA656C4DDF8;
+	 MIME-Version; b=uCXmy61wGvkn+NfqpSHJsd2pR+z9d+0rejQsgTEgtydLtU82GOdnQr8gJ1cK4v/w4WJaYTa3+TZochGw8DQGDlpOBhJRsg99OUqLAter0VSjKJdZjpe0KhDInfI+tTL5p3uOaA/R/XDWc2Jhd14UZ4ny03EEKgM6DerSeqvjNPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MSYreWkq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA633C4DDF7;
 	Mon, 22 Jul 2024 09:55:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1721642120;
-	bh=ifl09MZWOBznlmJMqcf8Xqj34pV8iepPaLINN97wyYM=;
+	bh=tnTqghub0gpnpeLE6omoEXVHAcZJhvQATaNQQ++Wxyc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Bi8M30qkFeVpfvxqpB5v1IWECfhjhFjYliMfku1/yUUEGCX4gN/uqjJiMtuoY+B4N
-	 eLDwz0tKO/NsXNngiXM1oBOWQgcorlgYEhV+3gq0QzaoYIuYVPRW5DaAZUK9GDndDO
-	 R8IRbjQkkzR4Y4Hjp3xjXvuCfhj3hnoAhjZOQSvSSHqnr/ZeODDsFABFlPcS1Mqq9q
-	 yeREc2rjx0Q5iB1t76dSJsA7UlyumUxekYfgalPh4awNjxoN4rb1T7vx+FeYhMfKQm
-	 7JT1WjKRNMi0X7X6ppb7VVapS28CyPEwpaEhSZzzuVXoUvFFfrVAN398aAEKlwG3Av
-	 VmT20uc4jX8og==
+	b=MSYreWkqKqKtdB9TfzwIV5dzQ2Id9S0HrVJzzix1Si3o0x9lcTD6LRKR6p/xaGQrd
+	 qlQMdlLp8PPDpcobtK4JYTTBRKXLFoy+ZOGTUNRg1xMNdg7E9K09jRuMFIX/9hju+v
+	 nHvZ37DarDfEnDNjYZuEEqsMfL0nA4KkcV6md3ZTe8qNdtzlyYODJpiwkeSYPAK4rs
+	 l1yBZ7+8vDJ3jlG68U9HScvLg/HgyTMx38BH6VpD3kKVqSkVz9jI30e0FQSxt7Jslf
+	 +iqluh9G2EsaBFJE5IX4SDsTXHn5/rGY2fYS3q0SUx+vLGxvt9HbKa1mYLGZELp64p
+	 GUgK8RSqJT+BA==
 Received: from johan by xi.lan with local (Exim 4.97.1)
 	(envelope-from <johan+linaro@kernel.org>)
-	id 1sVplH-0000000079i-3tvN;
-	Mon, 22 Jul 2024 11:55:19 +0200
+	id 1sVplI-0000000079l-07yI;
+	Mon, 22 Jul 2024 11:55:20 +0200
 From: Johan Hovold <johan+linaro@kernel.org>
 To: Bjorn Andersson <andersson@kernel.org>,
 	Konrad Dybcio <konrad.dybcio@linaro.org>
@@ -59,9 +59,9 @@ Cc: Rob Herring <robh@kernel.org>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH 10/12] arm64: dts: qcom: x1e80100-yoga-slim7x: fix up PCIe6a pinctrl node
-Date: Mon, 22 Jul 2024 11:54:57 +0200
-Message-ID: <20240722095459.27437-11-johan+linaro@kernel.org>
+Subject: [PATCH 11/12] arm64: dts: qcom: x1e80100-yoga-slim7x: disable PCIe6a perst pull down
+Date: Mon, 22 Jul 2024 11:54:58 +0200
+Message-ID: <20240722095459.27437-12-johan+linaro@kernel.org>
 X-Mailer: git-send-email 2.44.2
 In-Reply-To: <20240722095459.27437-1-johan+linaro@kernel.org>
 References: <20240722095459.27437-1-johan+linaro@kernel.org>
@@ -73,48 +73,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The PCIe6a pinctrl node appears to have been copied from the sc8280xp
-CRD dts (via the x1e80100 CRD dts), which has the NVMe on pcie2a and
-uses some funny indentation.
-
-Fix up the node name to match the x1e80100 use and label and use only
-tabs for indentation.
+Disable the PCIe6a perst pull-down resistor to save some power.
 
 Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
 ---
- .../boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts    | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-index 0aeead5658ec..dde2957e6dc7 100644
+index dde2957e6dc7..f7534623ff77 100644
 --- a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
 +++ b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-@@ -782,7 +782,7 @@ nvme_reg_en: nvme-reg-en-state {
- 		bias-disable;
- 	};
- 
--	pcie6a_default: pcie2a-default-state {
-+	pcie6a_default: pcie6a-default-state {
- 		clkreq-n-pins {
- 			pins = "gpio153";
- 			function = "pcie6a_clk";
-@@ -798,11 +798,11 @@ perst-n-pins {
+@@ -794,7 +794,7 @@ perst-n-pins {
+ 			pins = "gpio152";
+ 			function = "gpio";
+ 			drive-strength = <2>;
+-			bias-pull-down;
++			bias-disable;
  		};
  
  		wake-n-pins {
--		       pins = "gpio154";
--		       function = "gpio";
--		       drive-strength = <2>;
--		       bias-pull-up;
--	       };
-+			pins = "gpio154";
-+			function = "gpio";
-+			drive-strength = <2>;
-+			bias-pull-up;
-+		};
- 	};
- 
- 	tpad_default: tpad-default-state {
 -- 
 2.44.2
 
