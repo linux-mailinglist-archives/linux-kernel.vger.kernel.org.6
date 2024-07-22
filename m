@@ -1,133 +1,96 @@
-Return-Path: <linux-kernel+bounces-259093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D49093911A
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:57:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A8D93911F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C3701F22068
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:57:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA0E51C21656
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 14:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07F916DC24;
-	Mon, 22 Jul 2024 14:57:44 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A816D16DC3B;
+	Mon, 22 Jul 2024 14:58:23 +0000 (UTC)
+Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0647E1598F4
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 14:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1817E1598F4;
+	Mon, 22 Jul 2024 14:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721660264; cv=none; b=mcbEzPLn6QX4V4rACh4HzlwNJKZW8nWX+TfqwKO4OKIWiP7mvslfoturPzP7g3KMo2ftPo46oqKHcyiPa6j2JZo3Qiz8Lc3fsc5jYBl2Jpskyu5aQMmfy0cLFX3EMXBnWdwO4noNWRTWWfInFAR/T1ss2cE70dY4UdySY9eSXTA=
+	t=1721660303; cv=none; b=S940kzsuxL+X3nchCia/NcNLH5G7kP2b8DBDVKHXmXiLH2ZciSDBVX8xZ9W+uaujqFATG12KevDJD3rBC89eOKuzZFAme+mtt6mY69LduM0PQ4iDfpOglFanZfR/VloYPDYFpCBcUXNS9eZ7T+TBxJgr2VPE0RJNGJQLHKudMjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721660264; c=relaxed/simple;
-	bh=WL/GM7WE0wU/NcCtoanPw23IJTYZBmQy3B/6tKl5tOU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=gsQ7kBCMGwyd+qZNCNvHIE4a6OD8269jhU0fxbjDW+jIJ9X/OsjufY/eMfdmA/3q3FevNXkoVY4aCkgS5Orr6E3BuGhN1GjHHPjMg585R+wi3OcAtpFdxlUjMAf8c2lVoKudGC6chXGHc2VWlIO5kE5Zrbq/Ki13AF5rOZa0GS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39941f4c5a1so38906115ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:57:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721660262; x=1722265062;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4EMuhfU9gd7TV5OuHBnL1tsJUlRGxE+o4zw1F7KEaF4=;
-        b=tDU/I52Vh2z4fXPYM2yY/6ORdHFlQGkMcepi39CFg8q+hbUCYDSetRbNoy+rM40rvt
-         W5V75iFwGprIgAZjJgG3wML2SFYo38/KaXbDc6YPUOXTFsDs3kaFrtOFtOANqIcfPUIu
-         KvwfoqgwU56IRjF/IZOYOh5f4IVWCFkMg2p2/lxw785AfGvpKYoxGXOpTbpDize3gdJ3
-         Mkc4B3JBp345OJwExO8Sc8jex5+n2K3YuuA/7tWlkTKdz5mvEvN9hF1L6tNICK/sPfSM
-         Q/yYfO5W5Tqtph674zxfYx5dzeAT/s10Uj9wKrP5oXUr8+Pfwvo52F5blP7GRKKeKBsA
-         v5kA==
-X-Gm-Message-State: AOJu0YwiQEUAgrLDbKVIn7IOJuFtfCdHAPR8PoELyoL5P+sYXyQMs61A
-	5Pl5XWMo4kx24oSyW2UyPv5wYEZ326VvY9Geb1qKBi2JckAYftks20H9IbsmG+pGBW9O2IQ48vn
-	m5yudErtFL9av2OJ4c4RGZZzZA0B3P4tGB7+H04E8exf57e69a9H0jLg=
-X-Google-Smtp-Source: AGHT+IFTQMalkEpIshLx/WqG6Yy7lsISfkEm+9cORDMEpeqSUnli6Zk2USUTBj+U9t/a6+0bhvUg7ixb7QmcfWCVIwjmyYP7ZCPs
+	s=arc-20240116; t=1721660303; c=relaxed/simple;
+	bh=VgvT5Q61KIMWA2CLu8ZknMiK/xT4j6mC8Y+9DX/EtCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d3xi+kTy6tyezwwwX0hMhHvcMMphZwE3WAlEZfVhkCoqxNNKSPb4xJB6fmEJLK24J7Xg+Df9q/FMR8GgjfCGC5EBy5XBdsFC2BPMO6aZMJO6DxocXnVDJbhGxMmSHBYPOo8zta0kLPvu+g05K8NW0fKeRfi8zMlUfcqK0EmvRt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 4CBA5100DE9C5;
+	Mon, 22 Jul 2024 16:58:17 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 02B3AF5100; Mon, 22 Jul 2024 16:58:16 +0200 (CEST)
+Date: Mon, 22 Jul 2024 16:58:16 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Wei Huang <wei.huang2@amd.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
+	Jonathan.Cameron@huawei.com, helgaas@kernel.org, corbet@lwn.net,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, alex.williamson@redhat.com, gospo@broadcom.com,
+	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
+	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
+	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
+	vadim.fedorenko@linux.dev, horms@kernel.org, bagasdotme@gmail.com,
+	bhelgaas@google.com, Paul Luse <paul.e.luse@intel.com>,
+	Jing Liu <jing2.liu@intel.com>
+Subject: Re: [PATCH V3 00/10] PCIe TPH and cache direct injection support
+Message-ID: <Zp5ziFP6JidCODF6@wunner.de>
+References: <20240717205511.2541693-1-wei.huang2@amd.com>
+ <ZptwfEGaI1NNQYZf@wunner.de>
+ <612bf6f2-17a4-46fe-a5cd-ecb7023235ef@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a8a:b0:397:3a28:94f1 with SMTP id
- e9e14a558f8ab-398e6d89e9emr6810465ab.3.1721660262201; Mon, 22 Jul 2024
- 07:57:42 -0700 (PDT)
-Date: Mon, 22 Jul 2024 07:57:42 -0700
-In-Reply-To: <000000000000e8fcab061d53308f@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005a4c84061dd744dd@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [bpf?] [net?] general protection fault in __xsk_map_flush
-From: syzbot <syzbot+61a1cfc2b6632363d319@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <612bf6f2-17a4-46fe-a5cd-ecb7023235ef@amd.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Mon, Jul 22, 2024 at 09:44:32AM -0500, Wei Huang wrote:
+> On 7/20/24 03:08, Lukas Wunner wrote:
+> > Paul Luse submitted a patch two years ago to save and restore
+> > TPH registers, perhaps you can include it in your patch set?
+> 
+> Thanks for pointing them out. I skimmed through Paul's patch and it is
+> straightforward to integrate.
+> 
+> Depending on Bjorn's preference, I can either integrate it into my
+> patchset with full credits to Paul and Jing, or Paul want to resubmit a
+> new version.
 
-***
+The former would likely be better as I'm not sure Paul has the time
+to respin the patch.  My recollection is that TPH save/restore support
+was dropped as a requirement for the Intel device this was originally
+developed for, but it would be a shame to lose the time and effort
+that already went into it and I think it might be useful for your
+use case as well to support reset recovery.
 
-Subject: Re: [syzbot] [bpf?] [net?] general protection fault in __xsk_map_flush
-Author: aha310510@gmail.com
+> I read Bjorn's comments, lots of them have been addressed in my patchset
+> (e.g. move under /pci/pcie, support _DSM and dev->tph).
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+Indeed, good job!
 
----
- include/linux/filter.h | 6 +++---
- kernel/bpf/cpumap.c    | 2 +-
- kernel/bpf/devmap.c    | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
+Thanks for taking a look!
 
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index b6672ff61407..22691015d175 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -842,15 +842,15 @@ static inline void bpf_net_ctx_get_all_used_flush_lists(struct list_head **lh_ma
- 	if (!IS_ENABLED(CONFIG_BPF_SYSCALL))
- 		return;
- 
--	lh = &bpf_net_ctx->dev_map_flush_list;
-+	lh = this_cpu_ptr(&bpf_net_ctx->dev_map_flush_list);
- 	if (kern_flags & BPF_RI_F_DEV_MAP_INIT && !list_empty(lh))
- 		*lh_dev = lh;
- 
--	lh = &bpf_net_ctx->cpu_map_flush_list;
-+	lh = this_cpu_ptr(&bpf_net_ctx->cpu_map_flush_list);
- 	if (kern_flags & BPF_RI_F_CPU_MAP_INIT && !list_empty(lh))
- 		*lh_map = lh;
- 
--	lh = &bpf_net_ctx->xskmap_map_flush_list;
-+	lh = this_cpu_ptr(&bpf_net_ctx->xskmap_map_flush_list);
- 	if (IS_ENABLED(CONFIG_XDP_SOCKETS) &&
- 	    kern_flags & BPF_RI_F_XSK_MAP_INIT && !list_empty(lh))
- 		*lh_xsk = lh;
-diff --git a/kernel/bpf/cpumap.c b/kernel/bpf/cpumap.c
-index fbdf5a1aabfe..8fccc311397c 100644
---- a/kernel/bpf/cpumap.c
-+++ b/kernel/bpf/cpumap.c
-@@ -676,7 +676,7 @@ static void bq_flush_to_queue(struct xdp_bulk_queue *bq)
- 	struct ptr_ring *q;
- 	int i;
- 
--	if (unlikely(!bq->count))
-+	if (unlikely(!bq->count) || unlikely(bq->count) > CPU_MAP_BULK_SIZE)
- 		return;
- 
- 	q = rcpu->queue;
-diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
-index 9e0e3b0a18e4..4b9203deb711 100644
---- a/kernel/bpf/devmap.c
-+++ b/kernel/bpf/devmap.c
-@@ -378,7 +378,7 @@ static void bq_xmit_all(struct xdp_dev_bulk_queue *bq, u32 flags)
- 	int to_send = cnt;
- 	int i;
- 
--	if (unlikely(!cnt))
-+	if (unlikely(!cnt) || unlikely(cnt) > DEV_MAP_BULK_SIZE)
- 		return;
- 
- 	for (i = 0; i < cnt; i++) {
---
+Lukas
 
