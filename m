@@ -1,202 +1,157 @@
-Return-Path: <linux-kernel+bounces-258600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CB7D938A56
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:46:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6D98938A57
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E30A1B211B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:46:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DEF0281194
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 07:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2305156676;
-	Mon, 22 Jul 2024 07:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A541586F5;
+	Mon, 22 Jul 2024 07:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oY1O8i41"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="k7AIG/pj"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF60A155C90
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEC5158202
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 07:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721634372; cv=none; b=g0yBBS9zSZRGsx1q96aMvbJDEUJVyh9fPwxHrmDlEFBL5JASLXlNXfLQk4HDbXXVK2AkMeZ5gFiXSk3bgSzmwSWjnFfdEHzl8HKojWhTNDfAL09JCmcIheg9npVZsztY1mulWC0oyvF/64GWsnUpG2a866z61jAUakB0dze5mJ8=
+	t=1721634395; cv=none; b=luyXpSvdprvKI3cCXby0qNSM9aLwbiU4jNKKN/DZg+pzGkO0yV3Jwx7PwZlVhanm41+ne3zp8Orv1lfrNNbDDzMK5JqteXoouCZB1PJFcX3uxsyVnhqHPXxE6VJrnBsbXCM5WsK18hr5JmaQSeINBBMtAucxyltxjhhGC6V9lJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721634372; c=relaxed/simple;
-	bh=LDhKpDLrdI3N8cptvMB+KnFzM4gxNCTzU7kYnwSHj28=;
+	s=arc-20240116; t=1721634395; c=relaxed/simple;
+	bh=Dp/QhsbatvF3hBrR80X7+q5TbAEJOUdpQ8bDbChkvYU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lUhWUxak1ss837BGXKjuhyVpnVtAs2U0ezTQk5FvRssFk0gnnL7xE6wG3zYDcGDNwHuJcuFr5zLP3pDHtnw8a2pjXY1nf4u8PYGi3lwSkP74Rrc2do9+k8d29dOtkMTluufgUQK3N72Sajq4o8qiww3kFEbC8xXnWLZvy13wC68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oY1O8i41; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: songmuchun@bytedance.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721634367;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2DvJeNnfExF7u6zH1jSiObdNgef3OT+XWYUKS2Aah9o=;
-	b=oY1O8i41AG97/AXEIyP2bmkEgOb4d23jRBbKoixeX3ZsfdUOmZWzJInb9M1keqFnzmQLjh
-	8E9jICrXZRLG3rY/hj1Wveq5c7iC2Lv2QB9VF7eY4udd+J/zw5qI3Ven3vuwpktBiLiPN+
-	4PsIqlf36R67n8oQCy8/N4tzCCpBnBU=
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: mhocko@kernel.org
-X-Envelope-To: roman.gushchin@linux.dev
-X-Envelope-To: shakeel.butt@linux.dev
-X-Envelope-To: muchun.song@linux.dev
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: cgroups@vger.kernel.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Message-ID: <d30c7de3-65b5-4b5c-9046-4eed2c7d0b57@linux.dev>
-Date: Mon, 22 Jul 2024 15:46:02 +0800
+	 In-Reply-To:Content-Type; b=fXIOM/gdnSkIRSAKCbBfPGP3FQ9+WBJ/91t0RfHN8SxxI5D1UDiSjLumGQ/Z8tn2N4Y41/ZwKHJQOX8kVoOWBz5osLp1VOcfGoPpW2ByL4VfdaEYbG1dqzhFmUjto206SMw/RJq1OqV0KXpUd3gGAYJ+RxzZufw96fEITRxmcUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=k7AIG/pj; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-260209df55dso1933038fac.2
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 00:46:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1721634392; x=1722239192; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c2oZMADNy7ggKDtNiN/O71dpaVIuM51IzWkENQuhDmE=;
+        b=k7AIG/pjqQWLah45D/MttYT74a0AR6bVg/mW+Y+1AM1DGK9yz0mOqOSLye9plHM/I1
+         7PYiIZbqAVQkmzOK66DIWoy8yJq4Prb+Z2rCMEkkTmmwB4AldflokUyoTnCexDsT7zFI
+         bXIpZNciNIZ2EKMegqZN2UDp7acMp0YvXVyzerqs+OQF9JWj5fla+iFbqswV3dOG9BD8
+         XpJmEeTzgrz7AEHe8HB+ASy/9YgrURJ+YNhR9Ek4cIT+JPJee+TWdF7LHGGkk3d/baqs
+         DJmGIMjTxBaDBHIJy1ts1KTENqRSLFPqjihrmSJwKf9UWDRBDYSUePXHo5XM+2ccLLJo
+         Gjyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721634392; x=1722239192;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=c2oZMADNy7ggKDtNiN/O71dpaVIuM51IzWkENQuhDmE=;
+        b=v4IBHaj4NnBcq744HCdfMoU/ttqPUGKxjbRd686pDwdYXNoxNF/tRKf0MHsAGBvfnk
+         DqiEJEx8GD+uKb+mqmdLWYVXZY+M/gofu141NjXSL8tH3YjcVbFG/EQ1DL6R5+zwAJJt
+         xrndlXIqi0KEZ8/kZ3D50Ak8JDqSAxDX15FWKRKJSel49Q7e0dSHVsrJvTewJ4VL6nrU
+         SvPkFA4qXURut4BxQ3BtqfyBFrOQ/MFzHkRLCJV/P5joVbTi9OiciuBbmBJwAb9zU/4N
+         b85mAggiEOzjFQ01ySLU6ni8M4B/cM4NyYNDfGoCTNZo5c1WbTftplA1m0zC3kN9g5Hr
+         DjeA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9otASSyoz8CP1dHkcv1zkyudODKNYxegp5cmJiGhdP1Xml8yNz44sdAertMiiCLpKThlLGuCKXjC5RAYXt2FZikZHOZihtDmsTfte
+X-Gm-Message-State: AOJu0YygT9Ks0sZntAGXiBu4uZvWe1yu/idv34KMxmx9nUfFuAeGMt/K
+	KCgWeMVGCdBATd3ReGDf26JfEderZbDIEwSUWoAwDY/ITpDUsm9L0Xq0p0JXYC4=
+X-Google-Smtp-Source: AGHT+IE84mGJX+1WfMsfj781hYl7v/wzKO7/MrM1QhDiVL85SSxVRn/TtRPv4Ycrmkequ60U0gwaqg==
+X-Received: by 2002:a05:6870:8183:b0:260:e678:b660 with SMTP id 586e51a60fabf-263ab65243cmr4660701fac.51.1721634392001;
+        Mon, 22 Jul 2024 00:46:32 -0700 (PDT)
+Received: from [10.254.189.162] ([139.177.225.235])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70d1971a5bcsm2334447b3a.0.2024.07.22.00.46.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jul 2024 00:46:31 -0700 (PDT)
+Message-ID: <e4e3a63d-a5f2-4c1d-a9da-4ddbc3693450@bytedance.com>
+Date: Mon, 22 Jul 2024 15:46:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] mm: kmem: add lockdep assertion to obj_cgroup_memcg
-To: Muchun Song <songmuchun@bytedance.com>, hannes@cmpxchg.org,
- mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
- muchun.song@linux.dev, akpm@linux-foundation.org
-Cc: cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20240722070810.46016-1-songmuchun@bytedance.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <20240722070810.46016-1-songmuchun@bytedance.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] sched/fair: Decrease cfs bandwidth usage in
+ task_group destruction
+To: Zhang Qiao <zhangqiao22@huawei.com>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com
+Cc: chengming.zhou@linux.dev, linux-kernel@vger.kernel.org, joshdon@google.com
+References: <20240721125208.5348-1-zhouchuyi@bytedance.com>
+ <20240721125208.5348-2-zhouchuyi@bytedance.com>
+ <91e88019-52f7-4fa6-a14b-ca5ecb8e63cf@huawei.com>
+ <d0918be2-8d4e-427d-ac98-32aecffe3a3b@bytedance.com>
+ <14c3db2b-5de2-4f1c-b4d4-6183568b8c24@huawei.com>
+From: Chuyi Zhou <zhouchuyi@bytedance.com>
+In-Reply-To: <14c3db2b-5de2-4f1c-b4d4-6183568b8c24@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On 2024/7/22 15:08, Muchun Song wrote:
-> The obj_cgroup_memcg() is supposed to safe to prevent the returned
-> memory cgroup from being freed only when the caller is holding the
-> rcu read lock or objcg_lock or cgroup_mutex. It is very easy to
-> ignore thoes conditions when users call some upper APIs which call
-> obj_cgroup_memcg() internally like mem_cgroup_from_slab_obj() (See
-> the link below). So it is better to add lockdep assertion to
-> obj_cgroup_memcg() to find those issues ASAP.
+Hello,
 
-Yeah, some users care about the lifetime of returned memcg, while
-some other users maybe not.
-
-Maybe a dumb question, can we just make objcg hold the refcount of
-its pointed memcg? So the users of that objcg don't need to care
-about the refcount of memcg? (We could switch the refcount from
-old memcg to the new memcg when objcg switch memcg pointer, right?)
-
-Thanks.
-
+在 2024/7/22 15:16, Zhang Qiao 写道:
+> hi
 > 
-> Because there is no user of obj_cgroup_memcg() holding objcg_lock
-> to make the returned memory cgroup safe, do not add objcg_lock
-> assertion (We should export objcg_lock if we really want to do)
-> and leave a comment to indicate it is intentional.
+> 在 2024/7/22 14:04, Chuyi Zhou 写道:
+>> Hello
+>>
+>> 在 2024/7/22 11:47, Zhang Qiao 写道:
+>>>
+>>>
+>>> Hi, Chuyi
+>>>
+>>> 在 2024/7/21 20:52, Chuyi Zhou 写道:
+>>>> The static key __cfs_bandwidth_used is used to indicate whether bandwidth
+>>>> control is enabled in the system. Currently, it is only decreased when a
+>>>> task group disables bandwidth control. This is incorrect because if there
+>>>> was a task group in the past that enabled bandwidth control, the
+>>>> __cfs_bandwidth_used will never go to zero, even if there are no task_group
+>>>> using bandwidth control now.
+>>>>
+>>>> This patch tries to fix this issue by decrsasing bandwidth usage in
+>>>> destroy_cfs_bandwidth().
+>>>>
+>>>> Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
+>>>> ---
+>>>>    kernel/sched/fair.c | 3 +++
+>>>>    1 file changed, 3 insertions(+)
+>>>>
+>>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>>>> index b1e07ce90284..7ad50dc31a93 100644
+>>>> --- a/kernel/sched/fair.c
+>>>> +++ b/kernel/sched/fair.c
+>>>> @@ -6447,6 +6447,9 @@ static void destroy_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
+>>>>        hrtimer_cancel(&cfs_b->period_timer);
+>>>>        hrtimer_cancel(&cfs_b->slack_timer);
+>>>>    +    if (cfs_b->quota != RUNTIME_INF)
+>>>> +        cfs_bandwidth_usage_dec();
+>>>
+>>> This calls static_key_slow_dec_cpuslocked, but destroy_cfs_bandwidth
+>>> isn't holding the hotplug lock [1].
+>>>
+>>> For fixing this issue, i also sent a patch, but it be not merged into mainline [2].
+>>>
+>>> [1]: https://lore.kernel.org/all/20210712162655.w3j6uczwbfkzazvt@oracle.com/
+>>> [2]: https://lore.kernel.org/all/20210910094139.184582-1-zhangqiao22@huawei.com/
+>>>
+>>
+>> Thanks for your information.
+>>
+>> I think maybe cfs_bandwidth_usage_dec() should be moved to other more suitable places where could
+>> hold hotplug lock(e.g. cpu_cgroup_css_released()). I would do some test to verify it.
+>>
 > 
-> Some users like __mem_cgroup_uncharge() do not care the lifetime
-> of the returned memory cgroup, which just want to know if the
-> folio is charged to a memory cgroup, therefore, they do not need
-> to hold the needed locks. In which case, introduce a new helper
-> folio_memcg_charged() to do this. Compare it to folio_memcg(), it
-> could eliminate a memory access of objcg->memcg for kmem, actually,
-> a really small gain.
+> The cpu_cgroup_css_released() also doesn't seem to be in the cpu hotplug lock-holding context.
 > 
-> Link: https://lore.kernel.org/all/20240718083607.42068-1-songmuchun@bytedance.com/
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> ---
->   include/linux/memcontrol.h | 22 +++++++++++++++++++---
->   mm/memcontrol.c            |  6 +++---
->   2 files changed, 22 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index fc94879db4dff..d616c50025098 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -360,11 +360,13 @@ static inline bool folio_memcg_kmem(struct folio *folio);
->    * After the initialization objcg->memcg is always pointing at
->    * a valid memcg, but can be atomically swapped to the parent memcg.
->    *
-> - * The caller must ensure that the returned memcg won't be released:
-> - * e.g. acquire the rcu_read_lock or css_set_lock.
-> + * The caller must ensure that the returned memcg won't be released.
->    */
->   static inline struct mem_cgroup *obj_cgroup_memcg(struct obj_cgroup *objcg)
->   {
-> +	WARN_ON_ONCE(!rcu_read_lock_held() &&
-> +		  /* !lockdep_is_held(&objcg_lock) && */
-> +		     !lockdep_is_held(&cgroup_mutex));
->   	return READ_ONCE(objcg->memcg);
->   }
->   
-> @@ -438,6 +440,19 @@ static inline struct mem_cgroup *folio_memcg(struct folio *folio)
->   	return __folio_memcg(folio);
->   }
->   
-> +/*
-> + * folio_memcg_charged - If a folio is charged to a memory cgroup.
-> + * @folio: Pointer to the folio.
-> + *
-> + * Returns true if folio is charged to a memory cgroup, otherwise returns false.
-> + */
-> +static inline bool folio_memcg_charged(struct folio *folio)
-> +{
-> +	if (folio_memcg_kmem(folio))
-> +		return __folio_objcg(folio) != NULL;
-> +	return __folio_memcg(folio) != NULL;
-> +}
-> +
->   /**
->    * folio_memcg_rcu - Locklessly get the memory cgroup associated with a folio.
->    * @folio: Pointer to the folio.
-> @@ -454,7 +469,6 @@ static inline struct mem_cgroup *folio_memcg_rcu(struct folio *folio)
->   	unsigned long memcg_data = READ_ONCE(folio->memcg_data);
->   
->   	VM_BUG_ON_FOLIO(folio_test_slab(folio), folio);
-> -	WARN_ON_ONCE(!rcu_read_lock_held());
->   
->   	if (memcg_data & MEMCG_DATA_KMEM) {
->   		struct obj_cgroup *objcg;
-> @@ -463,6 +477,8 @@ static inline struct mem_cgroup *folio_memcg_rcu(struct folio *folio)
->   		return obj_cgroup_memcg(objcg);
->   	}
->   
-> +	WARN_ON_ONCE(!rcu_read_lock_held());
-> +
->   	return (struct mem_cgroup *)(memcg_data & ~OBJEXTS_FLAGS_MASK);
->   }
->   
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 622d4544edd24..3da0284573857 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -2366,7 +2366,7 @@ void mem_cgroup_cancel_charge(struct mem_cgroup *memcg, unsigned int nr_pages)
->   
->   static void commit_charge(struct folio *folio, struct mem_cgroup *memcg)
->   {
-> -	VM_BUG_ON_FOLIO(folio_memcg(folio), folio);
-> +	VM_BUG_ON_FOLIO(folio_memcg_charged(folio), folio);
->   	/*
->   	 * Any of the following ensures page's memcg stability:
->   	 *
-> @@ -4617,7 +4617,7 @@ void __mem_cgroup_uncharge(struct folio *folio)
->   	struct uncharge_gather ug;
->   
->   	/* Don't touch folio->lru of any random page, pre-check: */
-> -	if (!folio_memcg(folio))
-> +	if (!folio_memcg_charged(folio))
->   		return;
->   
->   	uncharge_gather_clear(&ug);
-> @@ -4662,7 +4662,7 @@ void mem_cgroup_replace_folio(struct folio *old, struct folio *new)
->   		return;
->   
->   	/* Page cache replacement: new folio already charged? */
-> -	if (folio_memcg(new))
-> +	if (folio_memcg_charged(new))
->   		return;
->   
->   	memcg = folio_memcg(old);
+
+IIUC, cpus_read_lock/cpus_read_unlock can be called in 
+cpu_cgroup_css_released() right? But cfs bandwidth destroy maybe run in 
+a rcu callback since task group list is protected by RCU so we could not
+get the lock. Did I miss something important?
+
 
