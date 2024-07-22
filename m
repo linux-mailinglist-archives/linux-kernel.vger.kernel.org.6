@@ -1,39 +1,73 @@
-Return-Path: <linux-kernel+bounces-258725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00ED0938C28
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:37:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D672B938C2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:39:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 628F1B2136B
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:37:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 139411C212D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1005416B75B;
-	Mon, 22 Jul 2024 09:36:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930F026ADB
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B361E16C437;
+	Mon, 22 Jul 2024 09:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="OHdYvh3B"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E90926ADB
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721641015; cv=none; b=C8QDuPCpe4qDLErzesFDNwqk8W0jlCnLRFzjjo2unYSHXvSA4DC6UaBqF2qNId2T0FryK7DmbRbpU1Mf9EWuNxiEyv/B+BDwbTo9BxOey6JOfxaBB9FQTQoFjDRWDk9Yp7aDnGnYVI79ESwwKeVvKmq5vYdghqjdzZKcH+fXzKA=
+	t=1721641183; cv=none; b=U02PZEdq55/f4BYi0ckNplkHEUNryL9JD71ss3PyhFDGcU+k9L8vrAu/KfXTba3ZfEyUern2siBJ0VBhVPx1rVsRlEnqLTyUKm/meP03/WnJNj/otGg/RCLPT2TDgT6y1Egjs1VT1X9JFBlEs4mtXTTz/nZyyWgrVBfUgxu2wlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721641015; c=relaxed/simple;
-	bh=L20ZTmIRfCbcECMEeV6Hf2f+jO+ilJ9Pth+6RgZRqjs=;
+	s=arc-20240116; t=1721641183; c=relaxed/simple;
+	bh=eq5Xpv/5EUYhcWbqrc0Zl5Iwg09zgdkZh8XoWGL5H/o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Oq9tQw+FuXf0HlZyBMfI9yAkLecRyF5jJWjgXNdFLi6Md6LXVgG805gcsM/KEMya/5Fyes2in9EobI7I5RSKTa/0+rwIq5zpxAR3ByCkVgCEv90bovC5r9vFw2R95eouujdvkHw+wxBL+k3pTWXz2ICVnwzJpqvSBrM5PXJQmj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E96F1FEC;
-	Mon, 22 Jul 2024 02:37:17 -0700 (PDT)
-Received: from [10.1.27.165] (XHFQ2J9959.cambridge.arm.com [10.1.27.165])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9E0113F766;
-	Mon, 22 Jul 2024 02:36:50 -0700 (PDT)
-Message-ID: <d46fea2f-fbb1-41f7-8d29-9c25984278cf@arm.com>
-Date: Mon, 22 Jul 2024 10:36:49 +0100
+	 In-Reply-To:Content-Type; b=A3Tl4cuGjAJtlfp6oioJov3sgbRo6UXZcX9gp4a0LPpE9IP84k43ooRbUtpcFu689U4bqMpEF8th4bgoRj4XTcryZG2o6XgvsHp49SXbj/aF7lFEiHipZhhFhcsD6y75fvDXH9CVkacCgQ1Jui7oLwKiTQpX/Z69yG6IWYvVgXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=OHdYvh3B; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7a2123e9ad5so506513a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 02:39:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1721641181; x=1722245981; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A1sFLMAddajkGuvG7pwl8VcoUW+BvLkAuKqaPHXhUdg=;
+        b=OHdYvh3BY/HSUrCcuHLLa6Eih2RENoGmtCe1qcYLn3p5PtJtJEC2sJ9EehcQQOFVLs
+         GQWNnvMWpXfm80tu6jGkUEQ6ALPaHeIhTOlnyr6E/zWSxht8A/UTS5CoOG+Xey1F9f6d
+         EXbx6QShPnVqvS3PBlqzyBCWwpvF8hZRZ1r7OMUuhCMvXJsMrz9MD0jGncn6ExtD+i3R
+         07cDIPRTynXioIbCfPLN3rRUcvbz00ssiEac3uH4ELbT0OZdqFddedIc3v4ylCP+zlno
+         NdlOGI8NzxBYD43o28V3+lxca0wM3XmXS8WdGnbMnJKWwm0rg10CeiSTrzArfPLUBIS9
+         egUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721641181; x=1722245981;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=A1sFLMAddajkGuvG7pwl8VcoUW+BvLkAuKqaPHXhUdg=;
+        b=R94b1W9FwtiIXbFVIMmHTj3UVDTv5THwQ2MeYElNbHijWVXs1zr6W3gPYzNvEee6mR
+         37IjNnyNBcRSEjaJpiTiRr75ZoKIUnFvXkAY/NKP2+1VF7WzD+vNvH6fwJHYCfzmMTBe
+         QbeVLoPVGHOwKvr1poxJl4uLg01S6TEginka3qKcEXkZJGGDCDJARVnQ2rZdB9DWgqzz
+         wzvU0z998S2Yni9oQL+kWjvrqyYStN6Yr8NJH2FaaV48WiNqHA5oT84b+yMmVkxs/vX9
+         ALV33OLt3xi10Y1C3ANqQtOaCB+dzwS5/gI7ir/2iZuqR7TicXGir1M/XRTFdt4RH4MB
+         N2nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUiSb1QBUTKUVRH7TgxxNIMtgg7t8OTxK7ah1fILuXjE3AWaEtcv/zBuHdqY2Encjn2DLCJoB4YWGGhpOhqh7O8AAFI08QecIpmg5MG
+X-Gm-Message-State: AOJu0YwEKQeis4dC0AqD/FvMOJmsai8Q4zZbiyMsknYQ2Amv4EKthQEa
+	ysHgf2/HS/8FvJenRF1h6xog++M8stPAgWdLImOtKLq70bN2BwN6PMZpY7ZUdT8=
+X-Google-Smtp-Source: AGHT+IFlHPXWVLMxGpOhptGVNtkgtFYRULMLycpK3rgMXm3tfT/OCqXgEzUeCz7KEKDOIItIXZO/3w==
+X-Received: by 2002:a17:90b:344:b0:2c9:6aab:67c4 with SMTP id 98e67ed59e1d1-2cb7735dcdbmr17838260a91.10.1721641181357;
+        Mon, 22 Jul 2024 02:39:41 -0700 (PDT)
+Received: from [10.254.189.162] ([139.177.225.235])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70cff49159bsm4986511b3a.21.2024.07.22.02.39.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jul 2024 02:39:41 -0700 (PDT)
+Message-ID: <0e522193-b4af-40ad-9762-41bfa643dd60@bytedance.com>
+Date: Mon, 22 Jul 2024 17:39:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,208 +75,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 3/4] mm: Override mTHP "enabled" defaults at kernel
- cmdline
-Content-Language: en-GB
-To: Daniel Gomez <da.gomez@samsung.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
- <hughd@google.com>, Jonathan Corbet <corbet@lwn.net>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>,
- Lance Yang <ioworker0@gmail.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Gavin Shan <gshan@redhat.com>,
- Pankaj Raghav <kernel@pankajraghav.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>
-References: <20240717071257.4141363-1-ryan.roberts@arm.com>
- <CGME20240717071315eucas1p199a8b4a7134ecf38255a721432e1b65b@eucas1p1.samsung.com>
- <20240717071257.4141363-4-ryan.roberts@arm.com>
- <axqj32jqs3ehzpz4vewtfbgcl2sg4lkntfm4prrqcd3evt7klr@qlurbuivkgbe>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <axqj32jqs3ehzpz4vewtfbgcl2sg4lkntfm4prrqcd3evt7klr@qlurbuivkgbe>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2] sched/fair: Sync se's load_avg with cfs_rq in
+ reweight_task
+To: Dietmar Eggemann <dietmar.eggemann@arm.com>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, vschneid@redhat.com
+Cc: chengming.zhou@linux.dev, linux-kernel@vger.kernel.org
+References: <20240720051248.59608-1-zhouchuyi@bytedance.com>
+ <0575c014-6fe7-4118-bae8-cbb5b303a390@arm.com>
+From: Chuyi Zhou <zhouchuyi@bytedance.com>
+In-Reply-To: <0575c014-6fe7-4118-bae8-cbb5b303a390@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 22/07/2024 10:13, Daniel Gomez wrote:
-> On Wed, Jul 17, 2024 at 08:12:55AM GMT, Ryan Roberts wrote:
->> Add thp_anon= cmdline parameter to allow specifying the default
->> enablement of each supported anon THP size. The parameter accepts the
->> following format and can be provided multiple times to configure each
->> size:
->>
->> thp_anon=<size>[KMG]:<value>
-> 
-> Minor suggestion. Should this be renamed to hp_anon= or hugepages_anon= instead?
-> This would align with the values under /sys/kernel/mm/transparent_hugepage/
-> hugepages-*kB.
+Hello,
 
-"hp" doesn't feel right; that's not an abreviation we use today to my knowledge.
-But I'd be happy to change it to "hugepages_anon", if that's the concensus.
-
-> 
+在 2024/7/22 14:34, Dietmar Eggemann 写道:
+> On 20/07/2024 07:12, Chuyi Zhou wrote:
+>> In reweight_task(), there are two situations:
 >>
->> See Documentation/admin-guide/mm/transhuge.rst for more details.
+>> 1. The task was on_rq, then the task's load_avg is accurate because we
+>> synchronized it with cfs_rq through update_load_avg() in dequeue_task().
 >>
->> Configuring the defaults at boot time is useful to allow early user
->> space to take advantage of mTHP before its been configured through
->> sysfs.
+>> 2. The task is sleeping, its load_avg might not have been updated for some
+>> time, which can result in inaccurate dequeue_load_avg() in
+>> reweight_entity().
 >>
->> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>> This patch solves this by using update_load_avg() to synchronize the
+>> load_avg of se with cfs_rq. For tasks were on_rq, since we already update
+>> load_avg to accurate values in dequeue_task(), this change will not have
+>> other effects due to the short time interval between the two updates.
+>>
+>> Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
 >> ---
->>  .../admin-guide/kernel-parameters.txt         |  8 +++
->>  Documentation/admin-guide/mm/transhuge.rst    | 26 +++++++--
->>  mm/huge_memory.c                              | 55 ++++++++++++++++++-
->>  3 files changed, 82 insertions(+), 7 deletions(-)
+>> Changes in v2:
+>> - change the description in commit log.
+>> - use update_load_avg() in reweight_task() rather than in reweight_entity
+>> suggested by chengming.
+>> - Link to v1: https://lore.kernel.org/lkml/20240716150840.23061-1-zhouchuyi@bytedance.com/
+>> ---
+>>   kernel/sched/fair.c | 3 +++
+>>   1 file changed, 3 insertions(+)
 >>
->> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->> index bc55fb55cd26..48443ad12e3f 100644
->> --- a/Documentation/admin-guide/kernel-parameters.txt
->> +++ b/Documentation/admin-guide/kernel-parameters.txt
->> @@ -6592,6 +6592,14 @@
->>  			<deci-seconds>: poll all this frequency
->>  			0: no polling (default)
->>  
->> +	thp_anon=	[KNL]
->> +			Format: <size>[KMG]:always|madvise|never|inherit
->> +			Can be used to control the default behavior of the
->> +			system with respect to anonymous transparent hugepages.
->> +			Can be used multiple times for multiple anon THP sizes.
->> +			See Documentation/admin-guide/mm/transhuge.rst for more
->> +			details.
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index 9057584ec06d..b1e07ce90284 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -3835,12 +3835,15 @@ static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
+>>   	}
+>>   }
+>>   
+>> +static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags);
 >> +
->>  	threadirqs	[KNL,EARLY]
->>  			Force threading of all interrupt handlers except those
->>  			marked explicitly IRQF_NO_THREAD.
->> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
->> index 1aaf8e3a0b5a..f53d43d986e2 100644
->> --- a/Documentation/admin-guide/mm/transhuge.rst
->> +++ b/Documentation/admin-guide/mm/transhuge.rst
->> @@ -311,13 +311,27 @@ performance.
->>  Note that any changes to the allowed set of sizes only applies to future
->>  file-backed THP allocations.
->>  
->> -Boot parameter
->> -==============
->> +Boot parameters
->> +===============
->>  
->> -You can change the sysfs boot time defaults of Transparent Hugepage
->> -Support by passing the parameter ``transparent_hugepage=always`` or
->> -``transparent_hugepage=madvise`` or ``transparent_hugepage=never``
->> -to the kernel command line.
->> +You can change the sysfs boot time default for the top-level "enabled"
->> +control by passing the parameter ``transparent_hugepage=always`` or
->> +``transparent_hugepage=madvise`` or ``transparent_hugepage=never`` to the
->> +kernel command line.
->> +
->> +Alternatively, each supported anonymous THP size can be controlled by
->> +passing ``thp_anon=<size>[KMG]:<state>``, where ``<size>`` is the THP size
->> +and ``<state>`` is one of ``always``, ``madvise``, ``never`` or
->> +``inherit``.
->> +
->> +For example, the following will set 64K THP to ``always``::
->> +
->> +	thp_anon=64K:always
->> +
->> +``thp_anon=`` may be specified multiple times to configure all THP sizes as
->> +required. If ``thp_anon=`` is specified at least once, any anon THP sizes
->> +not explicitly configured on the command line are implicitly set to
->> +``never``.
->>  
->>  Hugepages in tmpfs/shmem
->>  ========================
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 4249c0bc9388..794d2790d90d 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -82,6 +82,7 @@ unsigned long huge_anon_orders_madvise __read_mostly;
->>  unsigned long huge_anon_orders_inherit __read_mostly;
->>  unsigned long huge_file_orders_always __read_mostly;
->>  int huge_file_exec_order __read_mostly = -1;
->> +static bool anon_orders_configured;
->>  
->>  unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
->>  					 unsigned long vm_flags,
->> @@ -763,7 +764,10 @@ static int __init hugepage_init_sysfs(struct kobject **hugepage_kobj)
->>  	 * disable all other sizes. powerpc's PMD_ORDER isn't a compile-time
->>  	 * constant so we have to do this here.
->>  	 */
->> -	huge_anon_orders_inherit = BIT(PMD_ORDER);
->> +	if (!anon_orders_configured) {
->> +		huge_anon_orders_inherit = BIT(PMD_ORDER);
+>>   void reweight_task(struct task_struct *p, const struct load_weight *lw)
+>>   {
+>>   	struct sched_entity *se = &p->se;
+>>   	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+>>   	struct load_weight *load = &se->load;
+>>   
+>> +	update_load_avg(cfs_rq, se, 0);
 > 
-> PMD_ORDER for 64k base PS systems would result in a 512M value, which exceeds
-> the xarray limit [1]. Therefore, I think we need to avoid PMD-size orders by
-> checking if PMD_ORDER > MAX_PAGECACHE_ORDER.
+> IIUC, you only want to sync the sleeping task with its cfs_rq. IMHO,
+> sync_entity_load_avg() should be used here instead of update_load_avg().
+> The latter is doing much more than this.
 
-This is for anon memory, which isn't installed in the page cache so its
-independent of MAX_PAGECACHE_ORDER. I don't believe there is a problem here.
+Indeed, sync_entity_load_avg() is better.
 
 > 
-> [1] https://lore.kernel.org/all/20240627003953.1262512-1-gshan@redhat.com/
+>>   	reweight_entity(cfs_rq, se, lw->weight);
+>>   	load->inv_weight = lw->inv_weight;
+>>   }
 > 
->> +		anon_orders_configured = true;
->> +	}
->>  
->>  	/*
->>  	 * For pagecache, default to enabling all orders. powerpc's PMD_ORDER
->> @@ -955,6 +959,55 @@ static int __init setup_transparent_hugepage(char *str)
->>  }
->>  __setup("transparent_hugepage=", setup_transparent_hugepage);
->>  
->> +static int __init setup_thp_anon(char *str)
->> +{
->> +	unsigned long size;
->> +	char *state;
->> +	int order;
->> +	int ret = 0;
->> +
->> +	if (!str)
->> +		goto out;
->> +
->> +	size = (unsigned long)memparse(str, &state);
->> +	order = ilog2(size >> PAGE_SHIFT);
->> +	if (*state != ':' || !is_power_of_2(size) || size <= PAGE_SIZE ||
->> +	    !(BIT(order) & THP_ORDERS_ALL_ANON))
->> +		goto out;
->> +
->> +	state++;
->> +
->> +	if (!strcmp(state, "always")) {
->> +		clear_bit(order, &huge_anon_orders_inherit);
->> +		clear_bit(order, &huge_anon_orders_madvise);
->> +		set_bit(order, &huge_anon_orders_always);
->> +		ret = 1;
->> +	} else if (!strcmp(state, "inherit")) {
->> +		clear_bit(order, &huge_anon_orders_always);
->> +		clear_bit(order, &huge_anon_orders_madvise);
->> +		set_bit(order, &huge_anon_orders_inherit);
->> +		ret = 1;
->> +	} else if (!strcmp(state, "madvise")) {
->> +		clear_bit(order, &huge_anon_orders_always);
->> +		clear_bit(order, &huge_anon_orders_inherit);
->> +		set_bit(order, &huge_anon_orders_madvise);
->> +		ret = 1;
->> +	} else if (!strcmp(state, "never")) {
->> +		clear_bit(order, &huge_anon_orders_always);
->> +		clear_bit(order, &huge_anon_orders_inherit);
->> +		clear_bit(order, &huge_anon_orders_madvise);
->> +		ret = 1;
->> +	}
->> +
->> +	if (ret)
->> +		anon_orders_configured = true;
->> +out:
->> +	if (!ret)
->> +		pr_warn("thp_anon=%s: cannot parse, ignored\n", str);
->> +	return ret;
->> +}
->> +__setup("thp_anon=", setup_thp_anon);
->> +
->>  pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
->>  {
->>  	if (likely(vma->vm_flags & VM_WRITE))
->> -- 
->> 2.43.0
+> Maybe even do this in reweight_entity()?. You would have to do it under
+> 'if (!se->on_rq) in reweight_task() anyway I assume.
+> 
+
+Yes, we can do it reweight_entity() and it's more clear.
+
+Thanks for your suggestion.
+
 
 
