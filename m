@@ -1,117 +1,93 @@
-Return-Path: <linux-kernel+bounces-259154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CF1D9391F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:43:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A5069391F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:43:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EE921F21F42
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:43:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 339B628209D
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC4816E87C;
-	Mon, 22 Jul 2024 15:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4126616E877;
+	Mon, 22 Jul 2024 15:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Lj03OggX"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Z24rXTCn"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C17CC2FD;
-	Mon, 22 Jul 2024 15:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18681C2FD;
+	Mon, 22 Jul 2024 15:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721663002; cv=none; b=DwDtljqtmkhjp55b5grx9vlBBkCxXohH6HUjqUIdeAYY+16ul4KySe7ZoKCUghP1S5WVeWLjd+lfhFhS7HaCRP6/+27psxQDbVv+VGmTA3QyUlAQ8Yq0bQOB03HV90iqOTG/GWx3Rgd6nwuPXgZ1p/JJPvaQ9zbzVNyWH7CqWy0=
+	t=1721662993; cv=none; b=HFuYlXrA7HDDY0TCY5GdyJuN12hjA2W4LOoi6Oge1xWoeggzU5oDJ44CxsHw1zaQAHMk6W0S1V4z6a1SAwtUOkS9ucA1G3/Dk6DwcXTpujTWs6hhoP2Z6HHHUX/hXJSVnGRbQOhA3rBdNSegA/gOCxzg3E+Eg0pIEGxyAgzIqU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721663002; c=relaxed/simple;
-	bh=N7twLd8JKxdrxrzqJPGwvzBZv8ilEvBHRVo/IGjl5Oo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ozAXOE1Hfo02uB9wOZAtvU2bLm23vp0AyYrboPimlDY4cGlSRsWY0iADwmnxdogSUSV0W0Lhkct4danqQLD+AyRCkNq/jOOHyUUIoZhTcjWS+uzetHYnsDdgRIlDRdzW5kswKOF/vC7AQYnbnsGWM5YJd50uDZ4F+kBoZ48pE8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Lj03OggX; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721662957; x=1722267757; i=markus.elfring@web.de;
-	bh=NV1QIh4OpNLnyA+klMSBI9RWWe6ygdsL7TNoxE+cCY8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Lj03OggXuOW19o2JPicR1M309VrcPX4Uaj9fYFRv+rQQjSaEUP+29RsTGNZcS+Mv
-	 TJO24ctg0mTsc6vxbfrbDu29obvibs629sl4Jc8H6VjLjd7zx5VH/p6LteOBWTTcn
-	 UftfWoiENjhpEtF9jGHHQW7EiJggOnVty/kCAL6SEUGzN1qpE9phCs5dGTSZpkhgs
-	 r2sNIkF0TyTDWQJiNBsH0HMSlHgTLYTMjgNmHjWnUUhlBraVQsrQaG+4bzLPhNQOX
-	 ttqh8IHLTGyE5+2ug018x+HjtsvikuNjttq9s6QqY0KbFdE35xEpDp7X2OR9iV02j
-	 9VIKLPKpazbv/07kPg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MzCA5-1s9hRG357b-00yxk7; Mon, 22
- Jul 2024 17:42:37 +0200
-Message-ID: <bceb4055-e315-4c70-a682-228cb997f86c@web.de>
-Date: Mon, 22 Jul 2024 17:42:23 +0200
+	s=arc-20240116; t=1721662993; c=relaxed/simple;
+	bh=h5POLGJfSGRMecB42sEXFpKK5KqVX/3/GyAAIx32zhg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ehKbX+j9JgjfsSGiKS0do7FiymXgYWePsV9LG7RbJsHvRv1VGNnWlRGoYnicRn6gLCHePX6NpT17M1r3pD17BuYq/35cD1vElQQhWqqkPzeTY0QS+MwiKiB/1HNloyFSj1J1xZS/5n40PqEMiOXek6uKrRxvzB4Jmo4KI6Ae15M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Z24rXTCn; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721662990;
+	bh=h5POLGJfSGRMecB42sEXFpKK5KqVX/3/GyAAIx32zhg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Z24rXTCnL95yb0j2+DFd4hiUatl+PAK16iy0+4EawqMklI4tYiMBiPEltxyfOJBBC
+	 ooQsQ9Nk+HdyXx4GNn/EMh142yVLrLO3y5vDW7WOA+CtcGxtCiJP+Z2hZmH7boFBqA
+	 uQ370pHT6kjYS52q24yVr7gci0Cm5Nu1CmLF5KyKqiqfmCU1ZinCPC6/GCPNx9rcKN
+	 rEgPbDrYLNarZHeS5wsw52r1RGP3sGRgOJlniCm1qe1PDzJLEbvhn1N+cGQKx/fnQX
+	 B7zJutzLNQNIsv9uRXgeYa9pTwBQyRxnhM1iGV6SdlOZJ1qunE7Q9fcWBwh5KKUHSP
+	 DIQfGxsJMh3rQ==
+Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laura.nao)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 48B2B37800DE;
+	Mon, 22 Jul 2024 15:43:09 +0000 (UTC)
+From: Laura Nao <laura.nao@collabora.com>
+To: shuah@kernel.org
+Cc: gregkh@linuxfoundation.org,
+	nfraprado@collabora.com,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel@collabora.com,
+	Laura Nao <laura.nao@collabora.com>
+Subject: [PATCH] selftests: ksft: Track skipped tests when finishing the test suite
+Date: Mon, 22 Jul 2024 17:43:19 +0200
+Message-Id: <20240722154319.619944-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: make24@iscas.ac.cn, linux-spi@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Brownell <dbrownell@users.sourceforge.net>,
- Josh Boyer <jwboyer@linux.vnet.ibm.com>, Mark Brown <broonie@kernel.org>,
- Stefan Roese <sr@denx.de>, "Steven A. Falco" <sfalco@harris.com>
-References: <20240722141822.1052370-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH v3] spi: ppc4xx: handle irq_of_parse_and_map() errors
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240722141822.1052370-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:gIL1nlCkQT5wws30MVWgPwW8pfySJoeVltaF0YGAsoCWUQtcO44
- qoiLS4gMT0Ltl6sUWAjIHQkEA9dlUz46lJyFOZ4iOEGQWeopk+S2esxBRfeSOTtSic65Kyl
- XvDR6h2RYRdzkfC5v/hLrzbab4kxm2dGaGg7/IfLuopjqnfZW62h8W2Xoi2kypghM0mfDnm
- tRCFM6MTPzNcZf+uq97ug==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:i/xHEy8h9+A=;dTzPPPtWuyy817xiO6ab0y9AM3T
- 6hl2O1lI9QaAYIGzvLLZdxnne5wIWrmyk5YFOeClfhlW199N0fDymUyfXoMUk16cKpKybzvkJ
- TMjnP+NBo2z1GwzL04vLkoEyAKl/imwt4qXyxUoZZfZ944r016XL/jg2tkk+72FqCtyTKMQIL
- WKpcTug3RQFM5hUgXmWou8yYiRgfJvGWSSrX5dVHk9E1oKZgQzrHrvk69PWZS19KTxChxFee8
- v+txs7LOAHEgBR/dXcy7E73gR9oQgD/wtw1ZPxzet4PeWRedj314HgiDuyz1ivdAKQs9nGEQH
- JAQi7EOZl6aXmoBViVYO+qPnwJtTV/Tpg2ZryJotEMKBJSWLufmkc6nnoWWkKZBepJrMVVAaL
- NzVi38k6OO+gnCEEHUdXbfJMXC/WuufobqH7wtY5BfqH5Pdc7tqjb/jW7W1ZdtNBoY/xgk4Ma
- oCZ6T+CXevWnEwtGZpKKX2Qzg3srU+UH2jjJ5rZY17Mm1x5qoheYqcRXlgqX0OkuPTuGsecPx
- SypadHBhy01hqeulKRfQ7HaoMlSAHoDyDvSF+gb5O+7I9/OZEJxYCqXd3yKWO6OfiwAkRqGVw
- BsyqauGRz+aEDqTVJLynabu2LW+HeHJwqwGiUwpzKT18g8gYCiU80AQyZbvWKegDXZ2oVmb0k
- NPOfrdZkr5Ajl7fc0kmxhzVvoch2VV1tanp5ahYs4ujXgmarSA2I98QIagKxsLGt/3ED5R2bd
- rVrajkW8hyGPDq4C6BC11h/+4fQZbFm2EsY0IFHyP+rsRfhM841VkJBqY3ItBKTBgBptwtlwg
- P0iXPhLOAnglCnOi22ktnu3w==
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+Consider skipped tests in addition to passed tests when evaluating the
+overall result of the test suite in the finished() helper.
 
-Will any contributors care more for rules also according to such informati=
-on?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10#n398
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/researcher-guidelines.rst?h=3Dv6.10#n5
+Signed-off-by: Laura Nao <laura.nao@collabora.com>
+---
+ tools/testing/selftests/kselftest/ksft.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/tools/testing/selftests/kselftest/ksft.py b/tools/testing/selftests/kselftest/ksft.py
+index cd89fb2bc10e..bf215790a89d 100644
+--- a/tools/testing/selftests/kselftest/ksft.py
++++ b/tools/testing/selftests/kselftest/ksft.py
+@@ -70,7 +70,7 @@ def test_result(condition, description=""):
+ 
+ 
+ def finished():
+-    if ksft_cnt["pass"] == ksft_num_tests:
++    if ksft_cnt["pass"] + ksft_cnt["skip"] == ksft_num_tests:
+         exit_code = KSFT_PASS
+     else:
+         exit_code = KSFT_FAIL
+-- 
+2.30.2
 
-=E2=80=A6
-> +++ b/drivers/spi/spi-ppc4xx.c
-> @@ -416,6 +416,9 @@ static int spi_ppc4xx_of_probe(struct platform_devic=
-e *op)
->  	if (hw->irqnum <=3D 0)
->  		goto free_host;
->
-> +	if (hw->irqnum <=3D 0)
-> +		goto free_host;
-=E2=80=A6
-
-Why do you propose anyhow to add duplicate source code here?
-
-Regards,
-Markus
 
