@@ -1,138 +1,120 @@
-Return-Path: <linux-kernel+bounces-258627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F327938AAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:02:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CE56938C20
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 11:33:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 045E41F21AA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:02:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6EF51C212E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 09:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1EC167D83;
-	Mon, 22 Jul 2024 08:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hD9a6OWv"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42802BD19;
-	Mon, 22 Jul 2024 08:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE5916C445;
+	Mon, 22 Jul 2024 09:33:48 +0000 (UTC)
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9A2168497
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 09:33:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721635351; cv=none; b=b5AvVivS6uqPsqI9p/x47/Ugj4N5ldfqctrEuG6ZQoW3wM7F/Vx7eflsKIiyQOHWINuWOJEZqN0ssiUINX70Yz6dssL5VDa24YGG77jdDRgZi9NTuWLP810m1KDuG9tNckX6iU1kuVxiI6PrN1pIRsAs+6bMaI9jX/W5Km7NbXc=
+	t=1721640828; cv=none; b=LwgTOB7Qgq7+LglIGrII3EescSHH/oUQCROoGPxjUk3N+4zVGya7fsSpP670l5xXGdJbKAD7jwThkUYjWztjDstAl9FrUHd8ha55MofD7psZwb1Fxz2Ee9EoR0SG2+5LZgJLbwSwnEQnvbNRt2mxLCj8HUwzlARbXwgXsa93Ar4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721635351; c=relaxed/simple;
-	bh=cMF+VgBjEYjzDLfuj/vm/Xm4Gsu1tOAq/3UZsjrt8jo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CAHSKa3hReoyxTLqaiMRUu65DqZtssT+W0txqBiIbqQXTkkxYeitQd4Mq46hwlxQWa1btOy0RWnJRja11DdqL3omwCIvTjaVCAUyZX5g2keIZRpLwTCspfatLoMzexXSLzYJcG6u7n+1g0GZDNpIJ2yASi0DdKb3bmZqDPJzswg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hD9a6OWv; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46M0hSHI019032;
-	Mon, 22 Jul 2024 08:02:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	R6rDmevpspTo4e2w7t1idKO6q/ovGrfS7kPM2SwT32w=; b=hD9a6OWvg+ptBUSi
-	vKTud1K8c3Lc5M21hbvLhIqUMFyDcSRX1vbO8To36+6hetYKlimonCDgIiLc5rnX
-	xyMtHKkAwL29koCHB2MgXGOuT2nMP4fc9DMI7cmp+TBCja7xtvl88fke+l8uxPOn
-	4c9q6HJPbjYr9LKahE5U/9ZWmPRwlkgBnLZdulem4MJ/+QoeZEKkRveRBomH/Aab
-	zTDDj94Jmp1cqnSUuIl8ra1vGCleErbbFFUMdxOvRbpd6w5LSv2XZUb7V12fUdr+
-	3k9x6xuLWRCLIPj4GYrJCQWiYfrAt3tGn/GNDayqrffieEELSx8eiwmb1+qRbfdH
-	hB9zfw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g60jtvya-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jul 2024 08:02:19 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46M82Joi027452
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jul 2024 08:02:19 GMT
-Received: from hu-ekangupt-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 22 Jul 2024 01:02:15 -0700
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-To: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>
-CC: <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
-        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>,
-        stable
-	<stable@kernel.org>
-Subject: [PATCH v6 2/2] misc: fastrpc: Increase unsigned PD initmem size
-Date: Mon, 22 Jul 2024 13:32:00 +0530
-Message-ID: <20240722080200.3530850-3-quic_ekangupt@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240722080200.3530850-1-quic_ekangupt@quicinc.com>
-References: <20240722080200.3530850-1-quic_ekangupt@quicinc.com>
+	s=arc-20240116; t=1721640828; c=relaxed/simple;
+	bh=oXNhXWirLughLvnpUpxnzDcj0TihYm2jssStkD8xCP0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Fm153+dj/0n68qr4xy0qkS02/rxEjFWC5eLfWQqYCt2aoqc+oU60iX6P37WLN7LUrRVYZxxPjv3VRLI7kDsXRoAe5XvRoG7YkbWuTvJCE7VkSkdr6g/0thD4elhNlgo/mbpwsbB2rKctKuTLR5EM2V+TJd6jyt96ftA5Ye2soQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8Bx28YxAp5mJclTAA--.55001S3;
+	Mon, 22 Jul 2024 14:54:43 +0800 (CST)
+Subject: Re: [PATCH] locking/pvqspinlock: Correct the type of "old" variable
+ in pv_kick_node()
+To: Uros Bizjak <ubizjak@gmail.com>, linux-kernel@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+ Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+ Boqun Feng <boqun.feng@gmail.com>
+References: <20240721164552.50175-1-ubizjak@gmail.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <62c029b7-13dc-f4fc-d67a-7bd86f973e2f@loongson.cn>
+Date: Mon, 22 Jul 2024 14:54:41 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20240721164552.50175-1-ubizjak@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: CgdwRxgxyExIaY_5IDW6EMcO2Wvz5gnB
-X-Proofpoint-GUID: CgdwRxgxyExIaY_5IDW6EMcO2Wvz5gnB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-22_04,2024-07-18_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- priorityscore=1501 bulkscore=0 impostorscore=0 lowpriorityscore=0
- mlxscore=0 suspectscore=0 phishscore=0 clxscore=1015 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407220061
+X-CM-TRANSID:AQAAf8Bx28YxAp5mJclTAA--.55001S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ar48tr1xur4kCF4kuryUKFg_yoW8Cw1xpa
+	y3CFsagasrtF409w1vg34j9ayFqws7Gr1fGFn2gr15tr9Iqr15GF1DAa13ZF10vFWxKFsx
+	tF1jvF1vyayxZrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b7Iv0xC_tr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwV
+	C2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21l
+	c2xSY4AK6svPMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWU
+	twCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU8
+	489tUUUUU==
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
 
-For unsigned PD offloading requirement, additional memory is required
-because of additional static heap initialization. Without this
-additional memory, PD initialization would fail. Increase the initmem
-size by 2MB for unsigned PD initmem buffer allocation. Any additional
-memory sent to DSP during PD init is used as the PD heap.
+Uros,
 
-Fixes: 7f1f481263c3 ("misc: fastrpc: check before loading process to the DSP")
-Cc: stable <stable@kernel.org>
-Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
----
- drivers/misc/fastrpc.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Sorry for late reply because of weekend time. This modification works 
+well for me.
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index a3a5b745936e..9daeb039c2a2 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -40,6 +40,7 @@
- #define FASTRPC_CTXID_MASK (0xFF0)
- #define INIT_FILELEN_MAX (2 * 1024 * 1024)
- #define FASTRPC_INITLEN_MIN (3 * 1024 * 1024)
-+#define FASTRPC_UNSIGNED_EXTRA_LEN (2 * 1024 * 1024)
- #define INIT_FILE_NAMELEN_MAX (128)
- #define FASTRPC_DEVICE_NAME	"fastrpc"
- 
-@@ -1411,8 +1412,15 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
- 			goto err;
- 	}
- 
-+	/*
-+	 * Allocate buffer in kernel for donating to remote process.
-+	 * Unsigned PD requires additional memory because of the
-+	 * additional static heap initialized within the process.
-+	 */
- 	memlen = ALIGN(max(FASTRPC_INITLEN_MIN, (int)init.filelen * 4),
- 		       1024 * 1024);
-+	if (unsigned_module)
-+		memlen += FASTRPC_UNSIGNED_EXTRA_LEN;
- 	err = fastrpc_buf_alloc(fl, fl->sctx->dev, memlen,
- 				&imem);
- 	if (err)
--- 
-2.34.1
+In later I want to define pv_node::state as int type on LoongArch 
+because there is only int32/int64 cmpxchg is better supported on the 
+system, however that is another issue.
+
+Tested-by:Bibo Mao <maobibo@loongson.cn>
+
+On 2024/7/22 上午12:45, Uros Bizjak wrote:
+> "enum vcpu_state" is not compatible with "u8" type for all targets,
+> resulting in:
+> 
+> error: initialization of 'u8 *' {aka 'unsigned char *'} from incompatible pointer type 'enum vcpu_state *'
+> 
+> for LoongArch. Correct the type of "old" variable to "u8".
+> 
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Waiman Long <longman@redhat.com>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Fixes: fea0e1820b51 ("locking/pvqspinlock: Use try_cmpxchg() in qspinlock_paravirt.h")
+> Reported-by: Bibo Mao <maobibo@loongson.cn>
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> Closes: https://lore.kernel.org/lkml/20240719024010.3296488-1-maobibo@loongson.cn/
+> ---
+>   kernel/locking/qspinlock_paravirt.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/kernel/locking/qspinlock_paravirt.h b/kernel/locking/qspinlock_paravirt.h
+> index f5a36e67b593..ac2e22502741 100644
+> --- a/kernel/locking/qspinlock_paravirt.h
+> +++ b/kernel/locking/qspinlock_paravirt.h
+> @@ -357,7 +357,7 @@ static void pv_wait_node(struct mcs_spinlock *node, struct mcs_spinlock *prev)
+>   static void pv_kick_node(struct qspinlock *lock, struct mcs_spinlock *node)
+>   {
+>   	struct pv_node *pn = (struct pv_node *)node;
+> -	enum vcpu_state old = vcpu_halted;
+> +	u8 old = vcpu_halted;
+>   	/*
+>   	 * If the vCPU is indeed halted, advance its state to match that of
+>   	 * pv_wait_node(). If OTOH this fails, the vCPU was running and will
+> 
 
 
