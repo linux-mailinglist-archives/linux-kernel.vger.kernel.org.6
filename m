@@ -1,126 +1,339 @@
-Return-Path: <linux-kernel+bounces-259281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F9A93937E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:04:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 858E193937F
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 20:05:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 485DB1C2172F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:04:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A82441C214AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871F716F910;
-	Mon, 22 Jul 2024 18:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EC916F902;
+	Mon, 22 Jul 2024 18:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V//GGZ91"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XF16gZ4+"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9FC16DC06;
-	Mon, 22 Jul 2024 18:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14B116DC0F
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 18:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721671460; cv=none; b=g6hcSoYkS0mHmRx3kj6OEOdyCWpmBPkEKzBpxQ91XqBUAg4apRmUOjsg/L8wFP7hvErzfJUb74+W3RsrmfYKs9dhhPXRQHxrysxB5SD4IBFUeFxPtLIUKmWv9rSFxPkSDlXwlPDsSmYSNHlVNWpZ/5ZStIzjtqHATwm9MShlTCo=
+	t=1721671512; cv=none; b=GpdhfY/bai5DC3V4hi1XtQpcykfREf5LTFo/LSdYTAECLNQhDSTm3Jq38Rnrvj5vhwqdF6LEbI4/eFdp1YeddpmLNAvdZOXhAZL/f7OhKvzuo7DpHFoZtcS+GKQc5QFze9GKADhr2liTjDEtodZCuUYb4NNywoXvgOGItNejMwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721671460; c=relaxed/simple;
-	bh=gBs5SHmm67OnvAktfjpwCiy9xFFpMESnJqk6fB4T/74=;
+	s=arc-20240116; t=1721671512; c=relaxed/simple;
+	bh=B/b4oSEdQIJSoZl90hzr7567DiLQI+lDSYxIHBtlDLM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=Dj3bS+mowHbaImmxgn5ahakMbgp8cV0Av2z070aJXXCHtiZ2VUSC9AgFpYuyo09dpEqJLhm0QJmjib6WppptotYIMia6iDOUmVPuMOtbHITw2VfDOe7muZlPH+GlbOgKVScBzjcHp44/gmNSi0zXCltSvcrCQBNVtgtPL0R0RlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V//GGZ91; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4257d5fc9b7so39890915e9.2;
-        Mon, 22 Jul 2024 11:04:19 -0700 (PDT)
+	 To:Cc:Content-Type; b=CYZpF2m86zXJrt0wln78z9SAk9A1hkbbiNap49SjDybkcU+1L/yAMgGjVF70FnoMEiSDa5mlaRM37BqDJnmM18LlVhKPNSrdrhTa9Ku84PL1YlA+pMt/FYgF1e/jT0W2VVdaxRJvpwywrS9zqGnEMF8Qy5ArW8QVIs3axIHHw+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XF16gZ4+; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fd7509397bso17675ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 11:05:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721671458; x=1722276258; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=google.com; s=20230601; t=1721671510; x=1722276310; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qLVIduvSyccDga4xJI9V3U/42Lv/6UsR4iyO6Z8QOb4=;
-        b=V//GGZ91kxwRtYyjiiZkEA4t2c+aqShVOlDmlMqhTyixYRcARlQSZO5C7PnndeHgSs
-         Oqo+ICHmO9byLPkFbG3zGiqFor38q5HNKRRtE7cYB751H7w8pCWmn7DBPVPertfRN68R
-         ZejdCn+sCh2LhuWRtCz1F+5PQ4Bt87FZmNQloAmvj6qkuDhm+WQgwnToexuBijuup/1M
-         kk0TLLdW0h06GL06MHLYLBYTYFe5F2Btj/zdvqu8P8Iy39W6l0KOg3FAKIPXxoRWsyJL
-         8xgQVL3uuBX079pUvmVTEtFnA5sE4xNQGTRZfNiDnPil5SvuPWxZUc4UQR2gNxm1/Pvq
-         +Rkg==
+        bh=D5vlvG03fUbvTFvup7c86o5P/axLn4J97RohqqjvM2g=;
+        b=XF16gZ4+qKaxqKYIg+++MiL+Q0AZhUGow9L2kj22u5OZAW/yNtYNK+C95ji2yLxbo3
+         MMnMU5HvdgyibOTHJBPIQO5YUBh8eXr/Ae4uURp2cOYKip7ikAVPS92B86xaXTzbDvth
+         sbbUR1gtRefTQZQV4e+OA0sclFzuS4YSe9LWIEwy/J8pCbH1vpjUWkZu2C49CtkZ71OL
+         tJkna/8PipZLpiHobUX14lH+N8Jk19aYzPZJGS/1SSrFVS9XSlmAGb0VhFPLQh6Z7Ojo
+         T7SqQXAUKH6H6Vjyd62kcB4ve4aV9ApC9auwpX6QVQw3h0nKym9Wf41lXcKNgLJ6pEGr
+         JtqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721671458; x=1722276258;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1721671510; x=1722276310;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qLVIduvSyccDga4xJI9V3U/42Lv/6UsR4iyO6Z8QOb4=;
-        b=EBx4oBAp2lv/lU0ts8ronEzAjZ9LOIMBz6wPXV9z3eUEXF4Q/Vs/do9NGnr8OMyX5L
-         rm2D7VhNZr7Z9bdqzjlrexD79RTIFhAAJb2lGsfq+sBaEo/DCLnM6ZiNHYsn45nzPDuQ
-         emtwbxLT3voftgeRXvFhdNDjFLAUDyHIPj7pir8uXWc81AOuwhKHzKDu5ZkoxdN1FKHw
-         4EKBzl/TwSreTB1OphupaNseLzTn5sJS89+QnU5NX4TtiaTV397hIk9TXFTXTDbV55pC
-         7FTYRs42dQE8Rh+sUUXTqvo548Haav1DajhHQXpYvG/psah6x3Tp/F/v7KR2+ibw1XHi
-         UIVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVvVOWjdYo2uSpXYFRwGmomGUcKMbRdNvbxgyQzEkTDoSmsuWrzcuL8f2jQ/oqPd6/OM+DwJO12UlPyp5eSXM9eGde33Zh/qEo4igz/0jezlYVUzLuY79/Vn3igL55KnKhvM0L5jls9gHiIxhe0JQZjDcGwbsft3zF1
-X-Gm-Message-State: AOJu0Yw2PcKk0cHw1vFalCVnjKdKehv23cULqS8UY5S5bJ1r66tzX45G
-	G1YdG44v4Udjc7iieGW+/SheiNxemqDrRToTBSOXeiPz/+KCVLXgr1/hPwRM7awoRLjuyOfD4HV
-	jm3SmrQZGVPu7qbj0sFMWsQPQCWk=
-X-Google-Smtp-Source: AGHT+IE4vI9A8GBpVSPi+BnMQiSe4a0uGFG/x/jx2/SR+6iulB+qLxDUN2RaS5XLm90zL8I76Ptwz9BU/GV0ix7UadY=
-X-Received: by 2002:adf:f303:0:b0:368:3ef7:3929 with SMTP id
- ffacd0b85a97d-369bae4cfdbmr5402428f8f.22.1721671457404; Mon, 22 Jul 2024
- 11:04:17 -0700 (PDT)
+        bh=D5vlvG03fUbvTFvup7c86o5P/axLn4J97RohqqjvM2g=;
+        b=HVAxkd/ZDXrB/2hMsXvkvVE2ThvNDcnJAmsL/R+vWJbmZVjvF5HspY2kI0fB8iWy9N
+         1vZPMp0cUNbyqvRmvCyJZvf4o0QP1HVuumukMgQIfeNPRqFdLo2+wm3DhS2XUdd9xRuA
+         nC8jUyJn1Wn7rfhf+nxf4hPIU0abskQiD3m3XRrw8Bq9lXzF9FAhxlTrMsaq4lEoDB83
+         kX3njziNukLjoyvkNyLug/P42+dGXF/oFFq80+MpfVpsJod60EMfxk6P2SLrjEChOWWY
+         og5ai0TSmqhT/lvNqncUNNU2TJJAUBZ22m2egsg01u9AzgdDnuUKHjBdpjO5EFjVQt2W
+         mQ4w==
+X-Forwarded-Encrypted: i=1; AJvYcCV4iFVFsh5152qEnSGVhBTJbFjGi4V7Tfb71swZI/3obPYGYVQfhzW8Yzhm6WE2rTHD3Y8DPBv/ExJKbO3Yq1E4971Y7PJt8RIoMPv4
+X-Gm-Message-State: AOJu0Yx5kPpRPjKfvUNSQ5uLQigPC7hytGx/a4Zrf04/HA8adl2v0XSg
+	bdIuJ1SI/SCs2SkFWezyoIq3APb20JpzozpRAtAC6DMGLWDrHs1D/awxGW1+u0fvBU+gYmOdSTv
+	yYURV1UOA6uxBRjZeHrPeLe19uyfUKWKg3pv+
+X-Google-Smtp-Source: AGHT+IHvMyNrL5r7VoktgasmMYZ4mtLLFQcjSQQTcLCY5s4TZCyXdO8XOqzKFVgWbXJSAG2d2lQ/BVR662AtS3eYjag=
+X-Received: by 2002:a17:902:cecd:b0:1f3:61f1:e340 with SMTP id
+ d9443c01a7336-1fd7ff4548emr4470985ad.13.1721671509429; Mon, 22 Jul 2024
+ 11:05:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240720164621.1983-1-eladwf@gmail.com> <Zp6GGzaJXhBcnGkC@LQ3V64L9R2>
-In-Reply-To: <Zp6GGzaJXhBcnGkC@LQ3V64L9R2>
-From: Elad Yifee <eladwf@gmail.com>
-Date: Mon, 22 Jul 2024 21:04:06 +0300
-Message-ID: <CA+SN3soUH9dxAkKD8AB64Ay48T=Dj-QFftMoMLZfVGH+Q1mjzA@mail.gmail.com>
-Subject: Re: [PATCH net-next RFC] net: ethernet: mtk_eth_soc: use prefetch methods
-To: Joe Damato <jdamato@fastly.com>, Elad Yifee <eladwf@gmail.com>, daniel@makrotopia.org, 
-	Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>, 
-	Mark Lee <Mark-MC.Lee@mediatek.com>, Lorenzo Bianconi <lorenzo@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, bpf@vger.kernel.org
+References: <20240718010023.1495687-1-irogers@google.com> <738b5c89-acb2-46a5-92a1-c36bd90abc30@intel.com>
+ <CAP-5=fU=5LxF0SKuAqVP+xtmdERCCgxh_mdpw5okMi1fmvpE+Q@mail.gmail.com>
+ <05fa0449-4fd4-41ed-93e8-db825e48268f@intel.com> <CAP-5=fU9riOR7onxCE3a2xOs_bVdQdTSkAHD5QLb=SO6SCzkzQ@mail.gmail.com>
+ <CAM9d7cjbi_P+V=QkLFg6OuEJqmCOsOoDBddQbyhMYD3aF8do4g@mail.gmail.com> <CAP-5=fXd3t4pXKU7hVDRZp5DnRbZpJRp9zO3ia8cwbRSROKMRQ@mail.gmail.com>
+In-Reply-To: <CAP-5=fXd3t4pXKU7hVDRZp5DnRbZpJRp9zO3ia8cwbRSROKMRQ@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 22 Jul 2024 11:04:57 -0700
+Message-ID: <CAP-5=fW4LmOMo6fD9d9Ymc9stDttxQv-Pjg-=Xeq41-LGumwSA@mail.gmail.com>
+Subject: Re: [PATCH v6 00/27] Constify tool pointers
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, 
+	Will Deacon <will@kernel.org>, James Clark <james.clark@arm.com>, 
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Yicong Yang <yangyicong@hisilicon.com>, 
+	Jonathan Cameron <jonathan.cameron@huawei.com>, Nick Terrell <terrelln@fb.com>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Anshuman Khandual <anshuman.khandual@arm.com>, Song Liu <song@kernel.org>, 
+	Ilkka Koskinen <ilkka@os.amperecomputing.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>, 
+	Huacai Chen <chenhuacai@kernel.org>, Yanteng Si <siyanteng@loongson.cn>, 
+	Sun Haiyong <sunhaiyong@loongson.cn>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 22, 2024 at 7:17=E2=80=AFPM Joe Damato <jdamato@fastly.com> wro=
-te:
+On Mon, Jul 22, 2024 at 10:50=E2=80=AFAM Ian Rogers <irogers@google.com> wr=
+ote:
 >
-> On Sat, Jul 20, 2024 at 07:46:18PM +0300, Elad Yifee wrote:
-> > Utilize kernel prefetch methods for faster cache line access.
-> > This change boosts driver performance,
-> > allowing the CPU to handle about 5% more packets/sec.
+> On Mon, Jul 22, 2024 at 10:45=E2=80=AFAM Namhyung Kim <namhyung@kernel.or=
+g> wrote:
+> >
+> > Hi,
+> >
+> > On Mon, Jul 22, 2024 at 9:06=E2=80=AFAM Ian Rogers <irogers@google.com>=
+ wrote:
+> > >
+> > > On Mon, Jul 22, 2024 at 1:29=E2=80=AFAM Adrian Hunter <adrian.hunter@=
+intel.com> wrote:
+> > > >
+> > > > On 19/07/24 19:26, Ian Rogers wrote:
+> > > > > On Fri, Jul 19, 2024 at 1:51=E2=80=AFAM Adrian Hunter <adrian.hun=
+ter@intel.com> wrote:
+> > > > >>
+> > > > >> On 18/07/24 03:59, Ian Rogers wrote:
+> > > > >>> struct perf_tool provides a set of function pointers that are c=
+alled
+> > > > >>> through when processing perf data. To make filling the pointers=
+ less
+> > > > >>> cumbersome, if they are NULL perf_tools__fill_defaults will add
+> > > > >>> default do nothing implementations.
+> > > > >>>
+> > > > >>> This change refactors struct perf_tool to have an init function=
+ that
+> > > > >>> provides the default implementation. The special use of NULL an=
+d
+> > > > >>> perf_tools__fill_defaults are removed. As a consequence the too=
+l
+> > > > >>> pointers can then all be made const, which better reflects the
+> > > > >>> behavior a particular perf command would expect of the tool and=
+ to
+> > > > >>> some extent can reduce the cognitive load on someone working on=
+ a
+> > > > >>> command.
+> > > > >>>
+> > > > >>> v6: Rebase adding Adrian's reviewed-by/tested-by and Leo's test=
+ed-by.
+> > > > >>
+> > > > >> The tags were really meant only for patch 1, the email that was =
+replied to.
+> > > > >>
+> > > > >> But now for patches 2 and 3:
+> > > > >>
+> > > > >> Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
+> > > > >
+> > > > > Sorry for that, you'd mentioned that pt and bts testing which is
+> > > > > impacted by more than just patch 1.
+> > > > >
+> > > > >> Looking at patches 4 to 25, they do not seem to offer any benefi=
+t.
+> > > > >>
+> > > > >> Instead of patch 26, presumably perf_tool__fill_defaults() could
+> > > > >> be moved to __perf_session__new(), which perhaps would allow
+> > > > >> patch 27 as it is.
+> > > > >
+> > > > > What I'm trying to do in the series is make it so that the tool i=
+sn't
+> > > > > mutated during its use by session. Ideally we'd be passing a cons=
+t
+> > > > > tool to session_new, that's not possible because there's a hack t=
+o fix
+> > > > > ordered events and pipe mode in session__new:
+> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-n=
+ext.git/tree/tools/perf/util/session.c?h=3Dperf-tools-next#n275
+> > > > > Imo, it isn't great to pass a tool to session__new where you say =
+you
+> > > > > want ordered events and then session just goes to change that for=
+ you.
+> > > > > Altering that behavior was beyond the scope of this clean up, so =
+tool
+> > > > > is only const after session__new.
+> > > >
+> > > > Seems like a separate issue.  Since the session is created
+> > > > by __perf_session__new(), session->tool will always be a pointer
+> > > > to a const tool once there is:
+> > > >
+> > > > diff --git a/tools/perf/util/session.h b/tools/perf/util/session.h
+> > > > index 7f69baeae7fb..7c8dd6956330 100644
+> > > > --- a/tools/perf/util/session.h
+> > > > +++ b/tools/perf/util/session.h
+> > > > @@ -43,7 +43,7 @@ struct perf_session {
+> > > >         u64                     one_mmap_offset;
+> > > >         struct ordered_events   ordered_events;
+> > > >         struct perf_data        *data;
+> > > > -       struct perf_tool        *tool;
+> > > > +       const struct perf_tool  *tool;
+> > > >         u64                     bytes_transferred;
+> > > >         u64                     bytes_compressed;
+> > > >         struct zstd_data        zstd_data;
+> > >
+> > > That's the case after these changes, but not before.
+> > >
+> > > > >
+> > > > > The reason for doing this is to make it so that when I have a too=
+l I
+> > > > > can reason that nobody is doing things to change it under my feet=
+.
+> > > >
+> > > > It still can be changed by the caller of __perf_session__new(), sin=
+ce
+> > > > the tool itself is not const.
+> > > >
+> > > > Anything using container_of() like:
+> > > >
+> > > > static int process_sample_event(const struct perf_tool *tool,
+> > > >                                 union perf_event *event,
+> > > >                                 struct perf_sample *sample,
+> > > >                                 struct evsel *evsel,
+> > > >                                 struct machine *machine)
+> > > > {
+> > > >         struct perf_script *scr =3D container_of(tool, struct perf_=
+script, tool);
+> > > >
+> > > > can then change scr->tool without even having to cast away const.
+> > >
+> > > Agreed, but such things happen in builtin_cmd where the tool is
+> > > defined and presumably they know what they are doing. My objection is
+> > > to code in util mutating the tool as I want the tool to have
+> > > predictable behavior. As callers that take a tool can call fill in
+> > > defaults (not all) then the tool has to be mutable and I don't want
+> > > this to be the case.
+> > >
+> > > > Really, 'tool' needs to be defined as const in the first place.
+> > >
+> > > I'd like this. The problem is initializing all the function pointers
+> > > and making such initialization robust to extra functions being added
+> > > to the tool API. It can be done in a long winded way but I couldn't
+> > > devise macro magic to do it. The other problem is around variables
+> > > like ordered_events that can't currently be const. The patches move u=
+s
+> > > closer to this being a possibility.
+> > >
+> > > > > My
+> > > > > builtin_cmd is in charge of what the tool is rather than some cod=
+e
+> > > > > buried in util that thought it was going to do me a favor. The co=
+de is
+> > > > > a refactor and so the benefit is intended to be for the developer=
+ and
+> > > > > how they reason about the use of tool.
+> > > >
+> > > > It creates another question though: since there is a lot of code
+> > > > before perf_tool__init() is called, does the caller mistakenly
+> > > > change tool before calling perf_tool__init()
+> > >
+> > > If they do this their function pointers will be clobbered and their
+> > > code won't behave as expected, which I'd expect to be easy to observe=
+.
+> > > In C++ if you were to initialize memory and then use the memory for a
+> > > placement new to create an object which would call the constructor,
+> > > the expected behavior would be that the initialized memory's values
+> > > would get overridden. I see the use of _init and _exit in the code as
+> > > being our poor man replacements of constructors and destructors.
+> > >
+> > > > > how they reason about the use of tool. We generally use _init
+> > > > > functions rather than having _fill_defaults, so there is a consis=
+tency
+> > > > > argument.
+> > > >
+> > > > The caller does not need the "defaults", so why would it set them u=
+p.
+> > > > The session could just as easily do:
+> > > >
+> > > >         if (tool->cb)
+> > > >                 tool->cb(...);
+> > > >         else
+> > > >                 cb_stub(...);
+> > >
+> > > Multiplied by every stub, we'd probably need a helper function, how t=
+o
+> > > handle argument passing. There's nothing wrong with this as an idea
+> > > but I think of this code as trying to create a visitor pattern and
+> > > this is a visitor pattern with a hard time for the caller.
+> > >
+> > > > > I don't expect any impact in terms of performance... Moving
+> > > > > perf_tool__fill_defaults to __perf_session__new had issues with t=
+he
+> > > > > existing code where NULL would be written over a function pointer
+> > > > > expecting the later fill_defaults to fix it up, doesn't address c=
+oding
+> > > > > consistency where _init is the norm, and adds another reason the =
+tool
+> > > > > passed to session__new can't be const.
+> > > >
+> > > > perf_tool__init() is not a steeping stone to making 'tool' a
+> > > > const in the first place.
+> > >
+> > > It is because the patch series gets rid of fill in defaults which is
+> > > why we have a mutable tool passed around. I don't think this is up fo=
+r
+> > > debate as the patch series clearly goes from a non-const
+> > > tool to a const tool at the end. Changing perf_tool__init to make all
+> > > the function pointers NULL and then making every caller have to do a:
+> > >
+> > >          if (tool->cb)
+> > >                  tool->cb(...);
+> > >          else
+> > >                  cb_stub(...);
+> > >
+> > > I think it is a less elegant solution at the end, it is also a large
+> > > and more invasive change. The various refactorings to make tool const=
+,
+> > > changing the aux use of tool, etc. wouldn't be impacted by such a
+> > > change but I think it is out of scope for this patch series.
+> >
+> > I don't think it's a large and invasive change.  The tools are mostly
+> > zero-initialized so we don't need to reset to NULL.  And tool->cb is
+> > called mostly from two functions: machines__deliver_event() and
+> > perf_session__process_user_event().  Can we change them to check
+> > NULL and get rid of perf_tool__fill_defaults() to keep it const?
 >
-> Nit: It'd be great to see before/after numbers and/or an explanation of
-> how you measured this in the commit message.
-Sure, I'll add iperf3 results in the next version.
+> As I said above, I don't think that is good style and is out of scope
+> here. It clearly can be done as follow up, but I don't see how that
+> fixes the style issue.
 
-> Is there any reason to mix net_prefetch (as you have below) with
-> prefetch and prefetchw ?
->
-> IMHO: you should consider using net_prefetch and net_prefetchw
-> everywhere instead of using both in your code.
-You are right, honestly I didn't notice it exists.
-I'll replace all prefetchw with net_prefetchw.
+Just to be clear on what the style issue is. We already have code:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/builtin-record.c?h=3Dperf-tools-next#n1461
+```
+if (rec->buildid_all && !rec->timestamp_boundary)
+    rec->tool.sample =3D NULL;
+```
+that relies on the special behavior of NULL in a function pointer
+being changed at dispatch time - a simple reading of that code would
+be anyone calling the function pointer would get a segv. I'm trying to
+make it so that NULL isn't magic in the context of tool and you can
+simply look at the tool to understand what its behavior is, much as a
+virtual method table would work if we could do proper object-oriented
+development.
 
-> > @@ -2039,7 +2040,7 @@ static int mtk_poll_rx(struct napi_struct *napi, =
-int budget,
-> >               idx =3D NEXT_DESP_IDX(ring->calc_idx, ring->dma_size);
-> >               rxd =3D ring->dma + idx * eth->soc->rx.desc_size;
-> >               data =3D ring->data[idx];
-> > -
-> > +             prefetch(rxd);
->
-> Maybe net_prefetch instead, as mentioned above?
-This is the only case where I think prefetch should be used since it's
-only the descriptor.
+Thanks,
+Ian
 
-Thank you for your suggestions
+> Thanks,
+> Ian
 
