@@ -1,136 +1,174 @@
-Return-Path: <linux-kernel+bounces-259208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC0BC93929F
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:37:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0766A9392A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 18:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDF0C1C2142E
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:37:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68336B218A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 16:37:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36DE716EBEE;
-	Mon, 22 Jul 2024 16:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2ECF16EBEE;
+	Mon, 22 Jul 2024 16:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NCt7bRqg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YuLshQKy";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ES3zeIgF";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YuLshQKy";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ES3zeIgF"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6644526ACD;
-	Mon, 22 Jul 2024 16:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA6C16EB7C;
+	Mon, 22 Jul 2024 16:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721666239; cv=none; b=cnZf+QLY8evXCp0bivcsNZF3HzJRM6mRsL33YtnSC2ReXgZPgSvb23ZttC2CFVVBunGBk09B+e0JuSMOpE3fbzudgMA4lp3xQa1rXTSCyosTLvddxk2wda7C4d7ts/E8WwRVb+eDlf6mzUcc7/BYI1QRnKRwtm/1GO9TPjvD3do=
+	t=1721666266; cv=none; b=roxgkslgOKGuFM1xbFSdmlK7NHV50CN2A4pgcA6y396+j+QZeeWVrc3GGe8jXq4dZ+S0/Ayo6MlSIwBdVTurVoo+yH8cAlGIq+eMHVtlkHoR7RXCcRIc/N1xpYTBcIZtjFCpx9iOKf3A/lmAQMva3uWn+R1FAIjtinPJFQ/TfXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721666239; c=relaxed/simple;
-	bh=r7wrzTEhZ4vHnTem3SM0inPLsOlVUJANiUV8d/psgLo=;
+	s=arc-20240116; t=1721666266; c=relaxed/simple;
+	bh=zMJJCnis1Uq0BYRZKiBmLhe9OCX+ANKrKj/5upTlcT4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J3/QPm8Pm0C/3MuELDA6OWGotEVKlmCl8qYHWV7KPYF/gLecXxCrTub+bxPnBfFUNSYygc2M/vmVJaVgLKoLO97CtllUYBnOT2AWNvm0scN4qz75FnxNqOP6IbzcKsMsTxik6wKXWpfELIOsYiWCJhtW5GMkSHG8zmqp1gd/ZYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NCt7bRqg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDA3FC116B1;
-	Mon, 22 Jul 2024 16:37:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721666239;
-	bh=r7wrzTEhZ4vHnTem3SM0inPLsOlVUJANiUV8d/psgLo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NCt7bRqgrIJtorXDDgsI6aVgh2IyB/qT8wPQEcU4ritxCOg5W2l4bfnNPTpo0vnRa
-	 qXZOIcU7D/Y+y47Eb0F8p4FC0gACBAUSVYAdkpp4eU2DFNP74XRFgZcmUZOWu2x565
-	 vgqaSTi0bLF6+fQEgrWPDomt3kCdf+HQBNZUoX4Xi+Q7AFVPXUsQekJu0wN9R6fOwS
-	 J24bebXY4t1ldyKxlhp0qRNcnl1zzvFEKCV/aHT2eEFDvm17R3KnFeGHV8uyhiF5oh
-	 EAd0xzza24suP4hsWn5fS9Y5dhZtDW823bb67/8S1NzVgaSF6m2qC6GSW2X+jVRheg
-	 9/iBsMc0CKh3Q==
-Date: Mon, 22 Jul 2024 17:37:14 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, l.stach@pengutronix.de,
-	devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de, imx@lists.linux.dev
-Subject: Re: [PATCH v1 1/4] dt-bindings: imx6q-pcie: Add reg-name "dbi2" and
- "atu" for i.MX8M PCIe Endpoint
-Message-ID: <20240722-displace-amusable-a884352e0ff9@spud>
-References: <1721634979-1726-1-git-send-email-hongxing.zhu@nxp.com>
- <1721634979-1726-2-git-send-email-hongxing.zhu@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SbfQkG2v3EaJVl/fCL+STyMK+WkwkJ8bh6UINUHPHNKOMQ2Va71wbB+6jQzOJXJ7igZkIuv5g861qwaEuEY6+RCuNpU6FXTIkMGJLRzfzc3kNvtbE8vGSzTclRrBS9bEPqOTvvSBovl34pXa1SSRZet5mr5zu/qKad9JMK3Fk6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YuLshQKy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ES3zeIgF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YuLshQKy; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ES3zeIgF; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4FBFD1F889;
+	Mon, 22 Jul 2024 16:37:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721666262; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UN/CUoY5IR9jUefIrJ0Rg5RXTiKLyTOlYaJplowL7rw=;
+	b=YuLshQKyOKLrk9v5NsF/drfQIb97OnM3J5SSCygrq5hpt5UNOBqcLXrysukfAPBc8cD/r9
+	Iz3vcx/Wh7tRUjNIwFKkBe49td8T4rvKLObjS8YHcPOTDIVCvlz1Lk1fRM77FzsL4w9isb
+	bH0sb3H1m65eI0P7JSZzk6vPWOjUAoU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721666262;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UN/CUoY5IR9jUefIrJ0Rg5RXTiKLyTOlYaJplowL7rw=;
+	b=ES3zeIgF9mQXmZO6Hx1Xr5ufmoRFPOovvntVPnJi/kN6dXBjeQfWmVmLxGqzS/JVGeCwdk
+	2e7TOgc7a3g9arDg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721666262; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UN/CUoY5IR9jUefIrJ0Rg5RXTiKLyTOlYaJplowL7rw=;
+	b=YuLshQKyOKLrk9v5NsF/drfQIb97OnM3J5SSCygrq5hpt5UNOBqcLXrysukfAPBc8cD/r9
+	Iz3vcx/Wh7tRUjNIwFKkBe49td8T4rvKLObjS8YHcPOTDIVCvlz1Lk1fRM77FzsL4w9isb
+	bH0sb3H1m65eI0P7JSZzk6vPWOjUAoU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721666262;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UN/CUoY5IR9jUefIrJ0Rg5RXTiKLyTOlYaJplowL7rw=;
+	b=ES3zeIgF9mQXmZO6Hx1Xr5ufmoRFPOovvntVPnJi/kN6dXBjeQfWmVmLxGqzS/JVGeCwdk
+	2e7TOgc7a3g9arDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 42F8F136A9;
+	Mon, 22 Jul 2024 16:37:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id c0W5D9aKnmbpcQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 22 Jul 2024 16:37:42 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A5790A08BD; Mon, 22 Jul 2024 18:37:41 +0200 (CEST)
+Date: Mon, 22 Jul 2024 18:37:41 +0200
+From: Jan Kara <jack@suse.cz>
+To: 47 Mohit Pawar <mohitpawar@mitaoe.ac.in>
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] Fixed: fs: file_table_c: Missing blank line warnings
+Message-ID: <20240722163741.us3r3v5pe2d76azk@quack3>
+References: <20240713180612.126523-1-mohitpawar@mitaoe.ac.in>
+ <CAO-FDEOhDSxOw8jyxtdqhJP8-wz8QP+Veo0yGehXTM9F=4bsnA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="xyn3EpKJewT48NFm"
-Content-Disposition: inline
-In-Reply-To: <1721634979-1726-2-git-send-email-hongxing.zhu@nxp.com>
-
-
---xyn3EpKJewT48NFm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAO-FDEOhDSxOw8jyxtdqhJP8-wz8QP+Veo0yGehXTM9F=4bsnA@mail.gmail.com>
+X-Spam-Score: -0.60
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-0.60 / 50.00];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email]
+X-Spam-Level: 
 
-On Mon, Jul 22, 2024 at 03:56:16PM +0800, Richard Zhu wrote:
-> Add reg-name: "dbi2", "atu" for i.MX8M PCIe Endpoint.
->=20
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+On Mon 15-07-24 09:26:29, 47 Mohit Pawar wrote:
+> From: Mohit0404 <mohitpawar@mitaoe.ac.in>
+> 
+> Fixed-
+>         WARNING: Missing a blank line after declarations
+>         WARNING: Missing a blank line after declarations
+
+The patch is missing your Signed-off-by tag. Please add it. Also I'm not
+sure how Christian sees these pure whitespace cleanups but in this case it
+is probably at least a readability win so feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > ---
->  .../devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml  | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml=
- b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
-> index a06f75df8458..309e8953dc91 100644
-> --- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
-> +++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
-> @@ -65,11 +65,13 @@ allOf:
->      then:
->        properties:
->          reg:
-> -          minItems: 2
-> -          maxItems: 2
-> +          minItems: 4
-> +          maxItems: 4
->          reg-names:
->            items:
->              - const: dbi
-> +            - const: dbi2
-> +            - const: atu
-
-New properties in the middle of the list is potentially an ABI break.
-Why not add them at the end?
-
->              - const: addr_space
-> =20
->    - if:
-> @@ -129,8 +131,11 @@ examples:
-> =20
->      pcie_ep: pcie-ep@33800000 {
->        compatible =3D "fsl,imx8mp-pcie-ep";
-> -      reg =3D <0x33800000 0x000400000>, <0x18000000 0x08000000>;
-> -      reg-names =3D "dbi", "addr_space";
-> +      reg =3D <0x33800000 0x100000>,
-> +            <0x33900000 0x100000>,
-> +            <0x33b00000 0x100000>,
-> +            <0x18000000 0x8000000>;
-> +      reg-names =3D "dbi", "dbi2", "atu", "addr_space";
->        clocks =3D <&clk IMX8MP_CLK_HSIO_ROOT>,
->                 <&clk IMX8MP_CLK_HSIO_AXI>,
->                 <&clk IMX8MP_CLK_PCIE_ROOT>;
-> --=20
-> 2.37.1
->=20
-
---xyn3EpKJewT48NFm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZp6KugAKCRB4tDGHoIJi
-0iZjAP9MWw8PkOtx8+vjhpvxv3uO7ors0U0S+LKqUtQKj1HO2wD/YM74SYCGKKyu
-CopteoUYR8rynNHrukYnXQJY+Zqavg8=
-=T1co
------END PGP SIGNATURE-----
-
---xyn3EpKJewT48NFm--
+>  fs/file_table.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/fs/file_table.c b/fs/file_table.c
+> index 4f03beed4737..9950293535e4 100644
+> --- a/fs/file_table.c
+> +++ b/fs/file_table.c
+> @@ -136,6 +136,7 @@ static int __init init_fs_stat_sysctls(void)
+>         register_sysctl_init("fs", fs_stat_sysctls);
+>         if (IS_ENABLED(CONFIG_BINFMT_MISC)) {
+>                 struct ctl_table_header *hdr;
+> +
+>                 hdr = register_sysctl_mount_point("fs/binfmt_misc");
+>                 kmemleak_not_leak(hdr);
+>         }
+> @@ -384,6 +385,7 @@ struct file *alloc_file_clone(struct file *base, int
+> flags,
+>                                 const struct file_operations *fops)
+>  {
+>         struct file *f = alloc_file(&base->f_path, flags, fops);
+> +
+>         if (!IS_ERR(f)) {
+>                 path_get(&f->f_path);
+>                 f->f_mapping = base->f_mapping;
+> 
+> --
+> 2.34.1
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
