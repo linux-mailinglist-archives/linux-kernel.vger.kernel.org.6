@@ -1,190 +1,329 @@
-Return-Path: <linux-kernel+bounces-258650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E48938B28
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:26:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A016938B32
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 10:26:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5493DB21260
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:25:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EF1B281806
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2D28166302;
-	Mon, 22 Jul 2024 08:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9011684A4;
+	Mon, 22 Jul 2024 08:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PALmCozA"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=l-acoustics.com header.i=@l-acoustics.com header.b="a3WTl0Rm"
+Received: from PAUP264CU001.outbound.protection.outlook.com (mail-francecentralazon11021088.outbound.protection.outlook.com [40.107.160.88])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B876160877
-	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 08:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721636746; cv=none; b=ZwBN0rWSw+DwI+1dGw0RcJ9E7pqHwW+Q2exp02SceNjrIwT3nkQqhVwP9sJu6wfee3yw2n8qUySJ3EPe7Hu0thefnaPALBy2sJZOqMcfOq6YGQnGONJyYalVWgKE5Il+j2CjVtAFQWAsAPLReEfT8arUn7PgRfZruHPNSn9shFo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721636746; c=relaxed/simple;
-	bh=bxsO03/71OqQAp+brgVffyBOJjfLj6AVs9v2PK3i3mc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FFHqBxvRCaI+M58wmjcXP03/J0sAXMCf9Ee0gAsqp/fh2t2GU1xkaNi/IJksUUptklHl1936tc2XtALdpjMZ256k8qvClWIOzlziYYD1rpyJczWTzejOxbjklQhSXxwimev1bbLiDM+xC+EDagzzKUmEms5ZvX5FcqK8xpDL9ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PALmCozA; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a77cbb5e987so357383766b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 01:25:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721636743; x=1722241543; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=XtqEPWiIr5vp/nAZ6HNI8AOL/dWbCPA+lfoLLgou6Hw=;
-        b=PALmCozA457llQIqYx6xzePI1U3goyVJT9v16P1cSwUjIjILNzrBRMilHkuOU4n4xB
-         eUnlNtkCPJjk12EFJdoaxvpAKYWcya4Tmu/Zt2aQpZ3K4jS3FwJfp0uIoV3wsCUkYzvx
-         VlHESa6mBdq0aUkjrAdJAFgI9zZcsNsPmUUXME14a/ZU9FQl7QYvc2hHN210VxHWDTA2
-         a8z/AjdWDbgj/IOjWZtxsGHS78NJvXocll+mBeFShfUYWz00gyZdbvNqDA+Cje3+G11F
-         0dmWasFD+GhxscbgFDQmDPjXArvWz3XvUP4tR8cKuNwu5cG64XPVKmhFejh9aGCTf9DX
-         nHeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721636743; x=1722241543;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XtqEPWiIr5vp/nAZ6HNI8AOL/dWbCPA+lfoLLgou6Hw=;
-        b=Y1FIIKHUp2m5W+QKSMnAsyvcHuQGCa7F7E6YYu2i2UKZCVfLx5+uYzx7HZmiHXTeaC
-         L0W8uVNx0h5fM3zFg/UE28246INLjf5naTd8mxTcxOa/NkuxInFXDDGZfMRXJ29bf5iy
-         4Qj0GSFZgJQky4nAAvBI9u4HmjaKxx9nN3fjUwHNAVhd/Adgnv3KQNZF7Q6N0vNEhSTs
-         sBNEqGrXIxdhLDisJs85h+VhjsHkkkovSyKhLCHLKvifp1TCmM2KDqHdHLK0zFMSKA8S
-         8/FPumcM9ypCYphqhMQrlF97VSwNKs+KV5bvRyRkTJzDZSS1fP1F471ObiZgrQLCyFRk
-         OKkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZP0LTifYDvCh/PMmXMGsanzxbxJxjJGpNoFt4XKcJyMbwOpQ58U32PiDPWNjlWAlmDkfx+vQ55PEK0N82XU9qh+UYmDzognAqI0RU
-X-Gm-Message-State: AOJu0YxvI5fIBjRqZhHFy+CXlBq4/TvWz1uz18fZkPZS07dov5ZxbIo1
-	xz6IEbd2rTS55y34PJFORJnu2bAU+rQckd7Q+QaTkqHfXm7k571GLgCZKJIIOHQ=
-X-Google-Smtp-Source: AGHT+IGKb0DMJLTWAhEF9XWfE2qhv3NGVnXyLBAa4TmYYsM6+WNSBb7kb393XBb48PWxntzfh8uogg==
-X-Received: by 2002:a17:907:968e:b0:a72:8d40:52b8 with SMTP id a640c23a62f3a-a7a4bfa38fdmr404781966b.3.1721636742993;
-        Mon, 22 Jul 2024 01:25:42 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c7be6f8sm393121666b.76.2024.07.22.01.25.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jul 2024 01:25:42 -0700 (PDT)
-Message-ID: <2b078266-c5be-427e-bb82-264ed31094e1@linaro.org>
-Date: Mon, 22 Jul 2024 10:25:39 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D143161326;
+	Mon, 22 Jul 2024 08:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.160.88
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721636758; cv=fail; b=j4B3VmRzY0d5RGXRgfcOvanrWSC8nQeEPZl05uVif5ju5XxMmA7OLqza7vFdMAuUymc8E74IQRm57m9kBGTpK6HVssqXy5Rcy+DlB3GYTOSyqjW1B0o51g131eoQ2yFmAPF1ZcZT0WN8OgVb30O0gjXo4VPyh3ouARSkOK1x0Gs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721636758; c=relaxed/simple;
+	bh=3hWWTKwkMqq1A8gBwRFX1bq3WCcLK+FQMQv3FSjJ52Q=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=EBTiEQKQ/hAanojkezDfuSNSzAAgTi1RlFGPUh159Igax4cyrqTxXeIFb00HccnGycnBXZfi68vW1inbynI9lfz5TQ8tzRBJiyLFWQLxBPACCfbWOc3QfVGg7NNoIz3leZYy8/XoHXJhUN+zk9TWrci7+LIepxToEndHxDg+15U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=l-acoustics.com; spf=pass smtp.mailfrom=l-acoustics.com; dkim=pass (1024-bit key) header.d=l-acoustics.com header.i=@l-acoustics.com header.b=a3WTl0Rm; arc=fail smtp.client-ip=40.107.160.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=l-acoustics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=l-acoustics.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TcjeeAGRV0tM6o2AN29vdx3JMg5ZsYM8QM9Ci9rEb0WHCnJpQIMj7s4Ogkal+zUHJrJ4++r4HITLJdnJBK866J+2eUj/nKDHzOBl/aMop2+Du/k2H8aezfA3E9z9Iy8a/BXvxF0wO1O0Vx37TOzKuwU2HxnGs5NFjQA7znTxPENOvOcLc9AqeDG72Aq29k+MHhOIg4gDRBuPYuek69AoorScx0c4L8etALpe8S66R1y7WrFzmNpxyBw/RjHS8vNMgqHdasNntR4lHY+8YqyFxkASCEevuzR7ifv1+mQPOw4jlyExz9hr5IM/YHeYJvVk6TBFVkWkKiobmQe4FWsFXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Y71VKafGctelsd0XLJpasQNfYyj3DBc16kxr8EVIfrs=;
+ b=xx8X86dJVupwTEmNMuu9nwhrsFeDqOrHsutrT/q9KKtpJ6tfAx8PbS9Jr9wh2A8v4aGWo/8iJ40cjuVkF2ChAxSZLjtKUkcrTZfo7PJ94GE9bnD1xiuRKfoT7TNmUwsPu/W8IBKlyy2SwPupAw6AfMZplZA0Su2ziyvuCGMxdXFDbwO7fzpyU7U9jtcbP8MYYHgQjjPJSjN0imNj67M62cgUNLcMozfhN9YAft6GuubDL6meVXHP1ZQqSp7Ul2BRGbBFS6qkuDsugCMDDET9/B3ZpMJoIXCgGdeHi4k0faBE+zn0U6LulEjB5p4dA8AOqh2nzj7Ym91vit9Lya8R+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=l-acoustics.com; dmarc=pass action=none
+ header.from=l-acoustics.com; dkim=pass header.d=l-acoustics.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=l-acoustics.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y71VKafGctelsd0XLJpasQNfYyj3DBc16kxr8EVIfrs=;
+ b=a3WTl0RmxI8PPKvuVR6MKVDGdpcMfm0xyH8xSTEiCeRYOuFcOH/KXqm2xyeevLUPrv8ScXMuPGovd22TufjVu/svRdJs0glSssDoORbTZHIf2bvEJLp5ugrTH+ndXvUKR9Thq9crNdJjeMVl1QZbT01avxNYmJ6n694LhzF1vjY=
+Received: from PR0P264MB4464.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:25d::9)
+ by MR0P264MB4890.FRAP264.PROD.OUTLOOK.COM (2603:10a6:501:4e::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20; Mon, 22 Jul
+ 2024 08:25:51 +0000
+Received: from PR0P264MB4464.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::8062:2bfa:50b2:8368]) by PR0P264MB4464.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::8062:2bfa:50b2:8368%5]) with mapi id 15.20.7784.017; Mon, 22 Jul 2024
+ 08:25:51 +0000
+From: Rodrigo CADORE CATALDO <rodrigo.cadore@l-acoustics.com>
+To: Vinicius Costa Gomes <vinicius.gomes@intel.com>, "Abdul Rahim, Faizal"
+	<faizal.abdul.rahim@linux.intel.com>, "David S . Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jesse Brandeburg
+	<jesse.brandeburg@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, Simon
+ Horman <horms@kernel.org>, Richard Cochran <richardcochran@gmail.com>, Paul
+ Menzel <pmenzel@molgen.mpg.de>, Sasha Neftin <sasha.neftin@intel.com>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [Intel-wired-lan] [PATCH iwl-net v2 2/3] igc: Fix reset adapter
+ logics when tx mode change
+Thread-Topic: [Intel-wired-lan] [PATCH iwl-net v2 2/3] igc: Fix reset adapter
+ logics when tx mode change
+Thread-Index: AQHa0yMzVmPogmS4tkOu4N6MFlYsB7HxasMAgABqGoCACLNUAIAA+8EAgAbwiXA=
+Date: Mon, 22 Jul 2024 08:25:51 +0000
+Message-ID:
+ <PR0P264MB446411F81A817554D03922B2C8A82@PR0P264MB4464.FRAP264.PROD.OUTLOOK.COM>
+References: <20240707125318.3425097-1-faizal.abdul.rahim@linux.intel.com>
+ <20240707125318.3425097-3-faizal.abdul.rahim@linux.intel.com>
+ <87o774u807.fsf@intel.com>
+ <6bb1ba4a-41ba-4bc1-9c4b-abfb27944891@linux.intel.com>
+ <87le27ssu4.fsf@intel.com>
+ <2c5a0dcf-f9b0-49da-9dea-0a276fa4a0d9@linux.intel.com>
+ <87msmf3cdd.fsf@intel.com>
+In-Reply-To: <87msmf3cdd.fsf@intel.com>
+Accept-Language: en-US, fr-FR
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-lsi-version: 1.0
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=l-acoustics.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PR0P264MB4464:EE_|MR0P264MB4890:EE_
+x-ms-office365-filtering-correlation-id: 4ef00e93-ce8a-4c11-1bd8-08dcaa27e5b5
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|376014|7416014|1800799024|921020|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?GlGZMDOYDYf6iBhHk7YkU4m6JTQH2QbFpCUhCNADG419Zjenl+LsMVzEskx3?=
+ =?us-ascii?Q?Oi0a1IJ0fFjVG9EsuXt2Pm2M6HRwvwTHEzNpAGBBT7ZQIhuxI0RFsaLvhI87?=
+ =?us-ascii?Q?X7jLsEA9oPlW14HaMdtawBpYTjbJkYY8s75sz+cCpEp9xXL7rIsAGhHHvMML?=
+ =?us-ascii?Q?FBWI9gzFnvI5XC2nWEwET1z/dzJFmDOVIvVipyBfYtmgMpixucxJfKf/vlC4?=
+ =?us-ascii?Q?SF20UY9rBjeDNCldUxG+50LiAF7uugU6kO7ebQaXLn7lyxtlK/0R6GdtT6L/?=
+ =?us-ascii?Q?Qa1EfCpChcQRwd74LNULuFQI2nVi4ohvVzaL4h8DwgnlaB75vLQJySY9r6EB?=
+ =?us-ascii?Q?9x4qxc8cEcMJLzYH/54z8rC94dDT6Bpc9XBtMUn3SnIFUC1l/6smo+M2WnD6?=
+ =?us-ascii?Q?52EaRwRT0nOuaRwJMjnQkYuhEcuYI77R542GXm9r4/+G44FSOTJ1z9G0MHml?=
+ =?us-ascii?Q?OETXmcL4vMcGxuuooSoiXKfoaQAXHAEJqYrScwOV9f/SgByCpaw4j6Qy1DtV?=
+ =?us-ascii?Q?n8iM8RVeVeTFtu30ZUgmAdmvTtxthLZ2usVgvp9CdThzIWFBbQkGZ+vPOpmG?=
+ =?us-ascii?Q?migWDJ0AxhGBPsYoRiWAUwjrgBSlzmwk9luJvtvrcAsdqGeJkvIXw9AqPwh5?=
+ =?us-ascii?Q?NGly12NzoJK0pibc0Y2bPhqpUOYVObf7z9fHRSlVR+vdJo1vUoVAzB/sxiEh?=
+ =?us-ascii?Q?8d0Vnw9LpI/yjKQdsQ8QKejd7o2H50b0s4CPvwBb6BoaGwyVgVdYVl2qWSEB?=
+ =?us-ascii?Q?UPqSrw1rNfA89LFFZaPlAvjEalPt7TBlzyi7YCqz0tVpMjWGXyPUC+cEdlJG?=
+ =?us-ascii?Q?BbvaEprvWrsIcPqxDrhvHuBJSG7/0HDyIpP10YsjnP0Cl2k1JNEsqBLYrU2K?=
+ =?us-ascii?Q?VnsQCQ7GOTahSV5EsP0ZIZZtvsjcORuuLsvuSYm6IQoATM5Ac79IwTYOjkiv?=
+ =?us-ascii?Q?TPh/K4alGbE/WE0j4wCWshPYgSfARyvUNrTt2xGbGQ7IHk4Cougalg9/n3Ex?=
+ =?us-ascii?Q?igrvDYZ7nM3cLswmg4zR/KQgQNpRLm/FospaqUgW7xKAKv8aqP2kOcy4ujj0?=
+ =?us-ascii?Q?KaasNoBshNVDEczGhX1ms2tPUWaYLR4/SqHAZpiTDezZp2VElUzue5etDqFB?=
+ =?us-ascii?Q?y9Oz6OlGVaelKqzLsacUiPS8udB9/+6MyI6cdOuBPq1eZzQad5TNB6BenmSk?=
+ =?us-ascii?Q?fFZsmr08vc+PlyBycBIxANisQ0fy6xJf2Bz19BhAW8eyqoRYbHG8hOdIR/26?=
+ =?us-ascii?Q?a5M8rOyW+GgFKGIx4ZK1X5DJIzIGZDybHR6UX01mV9kAV/q7n8aaN3QhgFdW?=
+ =?us-ascii?Q?d2h7GKzIM1f4uA2t7chCGDIeg+EoMIntJwJTLjhxmM1lHvSQw0FMBPkwisHn?=
+ =?us-ascii?Q?Y64rObqbbTzAku5/gC407mMeZroY87+NuSosDcZqVZnkCEANAf2GzFeyCaGP?=
+ =?us-ascii?Q?FCyAe+eUHRk=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PR0P264MB4464.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(921020)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?XgoI6BImgSJtF91URHkg2WwDXZR91AJIhh/4+8naGjUuKVHKQcWWfb9/YCLO?=
+ =?us-ascii?Q?dCbiAoBA6D4SoWWdC7cgd0ysWFMOJUZuUvwvQk0vwnFyURx4UpsP2oTTJCNh?=
+ =?us-ascii?Q?zV8ZlkGklAi4XjLE9zANV1XDxTRcCIyyGMZqheyuNhPwRaDnFwKq1V7zcvub?=
+ =?us-ascii?Q?j4kkfj7AtqEQlFVlt/TO6GabPKlDSz0AEKdhTvCNUJ0UYkl/Hoj2TmjYnwqb?=
+ =?us-ascii?Q?xZ1/eyqOizs+eZbD2uDweNV47e/bBzBydJPgiHgVD6ZRTfF5pIZqMhsuDm7s?=
+ =?us-ascii?Q?feFwSdXB+QYJf7VRLVn9IoKcQ9VP9qndH9bsYMb5zuhGO01bZaJCgV4/y2fX?=
+ =?us-ascii?Q?TptOU0l49r0SFhpcwnL1NnB+REGicCzOxXnNAyrLHGJqO/lGmYuHbokC9hyN?=
+ =?us-ascii?Q?ukDWfnsplAMjSluOKvPOfqmYcOYmSLfGFQCpdcvAEYfK6mC4TwJMQ1It8ABR?=
+ =?us-ascii?Q?lzPQYqFjm5empFjOz9UYy7ZVVVjV1Bx6oQNm5UCD9Q0yN754CLz0KiCK39Dk?=
+ =?us-ascii?Q?IDmiuaKKkTDny+u3glnNX8nHfg+xZYg+sxUXrUGEZmd4nVod+Hq3CBNX17Lw?=
+ =?us-ascii?Q?zst4zLSxQ29dIVFf6zuHE28IvJAyZmTJq+EfZoask3n8i0OVHlwArBLU/SCY?=
+ =?us-ascii?Q?H2FzLAx/xKvxeoADnvdNEc/WCS9SCGVAUihcvuGpSvGd+fR59ON5x8ksD3ae?=
+ =?us-ascii?Q?iCNlb+0Logf1aMlTc8Y7TKI9178l4DNvjNPEb858eQrfXfDQ+Ac8fTTOYXfZ?=
+ =?us-ascii?Q?zgO+eaxUjoIisOqUj4vNd3OhI3HXDQFDyog9WIlOTXoSOUhunIFCSjFjQsTo?=
+ =?us-ascii?Q?lswNqo67Ig5jJ40cUuXe2RNh1A7pOnkmXJ78JK016iUZ8tfo92Aqfd0Kf3Vu?=
+ =?us-ascii?Q?5vEnSIjqjy9zs28IBeMazMUJOFT6LM7aUMEBEJpYP7pRRHBvSXTWFMmDwYwZ?=
+ =?us-ascii?Q?JCIG9oP0Rsr2RXsNwW83ZVoUONqOjpr1hB0ckBTNvmeVP3d36wmFOF/3iS93?=
+ =?us-ascii?Q?fWLsRKzmyHw55tlTDOV7teS68c28HwXmR4htfUjBinHgCb8hovu4buCmhtlj?=
+ =?us-ascii?Q?+eiLzNF1LJSYIlWoug2cVBZ/wGCJGvkh+1OXOfut+CtF1nJZ1PsJEverR6va?=
+ =?us-ascii?Q?Mw0RuDgaOXkgTFA5uuXUN549Gj4mEFy+MuZEOjB/kjM5CgsZ40tHvJE/eE3m?=
+ =?us-ascii?Q?rjo+y6vjiwdTiwD5XYMUaWSSfGEFT+Yb+3htzOurWDQDt2sLPZIfUzeWQ1yh?=
+ =?us-ascii?Q?H1S2nE4kdomSW6dJb9HI6HDmjdmOgq7r2buzCJZQtbYRZYGeAvk2cuPWFR7K?=
+ =?us-ascii?Q?/mXonrp6x1306zLXFMtt+cr+iEmwSleSjGn0BdBNEFJwh8IMeIzzKgI78Wpk?=
+ =?us-ascii?Q?JWTpCm+srhZMxwL1+7jzLRsl3V2wb80q9gpFE6miy22mbDYbLcs0rIm56LR2?=
+ =?us-ascii?Q?NY1ibPKKYd9OekuTUPciXXmA1qTc7GfRcRfd6tS/ymfStxDnKTcEGQbKkFI5?=
+ =?us-ascii?Q?1W6CEkQEqafS/9e6XZ0nwpMY7MeQmGFD1oAbkUqvFuzYr2D9GLoqSSb/9vGB?=
+ =?us-ascii?Q?HsEHufis5QxLXNKWfd2g7If9Yqz6lC4dTLR0HR9T8GGzyAc9w1uaoG7w2C9R?=
+ =?us-ascii?Q?7g=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/msm/adreno: Add A306A support
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>,
- 20240618164303.66615-1-robdclark@gmail.com
-References: <20240620-a306a-v2-1-0d388e1deebf@gmail.com>
- <2f10d70a-aed6-4687-8e12-4d649f6a2a5e@linaro.org>
- <CAGsSOWUoSkDooRx+QUrucj517pBFxwDMiCwoA6tah5o2=q2oGw@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <CAGsSOWUoSkDooRx+QUrucj517pBFxwDMiCwoA6tah5o2=q2oGw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: l-acoustics.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PR0P264MB4464.FRAP264.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ef00e93-ce8a-4c11-1bd8-08dcaa27e5b5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Jul 2024 08:25:51.3450
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 68e431e8-d632-483e-ae79-f28a7b4c69e6
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Z/IglzwGjatOj/mOw4I/gEruDA2tY4k3bq84VQOp11w1v1BO9HTncsR6dO3f70u3Q/VHa/YJeRe98/x1OLR1Lwc5SvuEXNa5CMVMKLMF260=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MR0P264MB4890
 
-On 21.07.2024 11:43 PM, Barnabás Czémán wrote:
-> On Sat, Jun 22, 2024 at 1:36 PM Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->>
->> On 20.06.2024 11:52 PM, Barnabás Czémán wrote:
->>> From: Otto Pflüger <otto.pflueger@abscue.de>
->>>
->>> Add support for Adreno 306A GPU what is found in MSM8917 SoC.
->>> This GPU marketing name is Adreno 308.
->>>
->>> Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
->>> [use internal name of the GPU, reword the commit message]
->>> Signed-off-by: Barnabás Czémán <trabarni@gmail.com>
->>> ---
->>> Changes in v2:
->>> - Rebase on https://patchwork.freedesktop.org/series/127393/
->>> - Link to v1: https://lore.kernel.org/r/20240528-a306a-v1-1-03a66dacd8c7@gmail.com
->>> ---
+Vinicius Costa Gomes <vinicius.gomes@intel.com> writes:=20
 
-[...]
+> From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+> Hi,
+>=20
+> "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com> writes:
+>=20
+> > On 12/7/2024 1:10 am, Vinicius Costa Gomes wrote:
+> >> "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com> writes:
+> >>
+> >>> Hi Vinicius,
+> >>>
+> >>> On 11/7/2024 6:44 am, Vinicius Costa Gomes wrote:
+> >>>> Faizal Rahim <faizal.abdul.rahim@linux.intel.com> writes:
+> >>>>
+> >>>>> Following the "igc: Fix TX Hang issue when QBV Gate is close" chang=
+es,
+> >>>>> remaining issues with the reset adapter logic in igc_tsn_offload_ap=
+ply()
+> >>>>> have been observed:
+> >>>>>
+> >>>>> 1. The reset adapter logics for i225 and i226 differ, although they=
+ should
+> >>>>>      be the same according to the guidelines in I225/6 HW Design Se=
+ction
+> >>>>>      7.5.2.1 on software initialization during tx mode changes.
+> >>>>> 2. The i225 resets adapter every time, even though tx mode doesn't
+> change.
+> >>>>>      This occurs solely based on the condition  igc_is_device_id_i2=
+25() when
+> >>>>>      calling schedule_work().
+> >>>>> 3. i226 doesn't reset adapter for tsn->legacy tx mode changes. It o=
+nly
+> >>>>>      resets adapter for legacy->tsn tx mode transitions.
+> >>>>> 4. qbv_count introduced in the patch is actually not needed; in thi=
+s
+> >>>>>      context, a non-zero value of qbv_count is used to indicate if =
+tx mode
+> >>>>>      was unconditionally set to tsn in igc_tsn_enable_offload(). Th=
+is could
+> >>>>>      be replaced by checking the existing register
+> >>>>>      IGC_TQAVCTRL_TRANSMIT_MODE_TSN bit.
+> >>>>>
+> >>>>> This patch resolves all issues and enters schedule_work() to reset =
+the
+> >>>>> adapter only when changing tx mode. It also removes reliance on
+> qbv_count.
+> >>>>>
+> >>>>> qbv_count field will be removed in a future patch.
+> >>>>>
+> >>>>> Test ran:
+> >>>>>
+> >>>>> 1. Verify reset adapter behaviour in i225/6:
+> >>>>>      a) Enrol a new GCL
+> >>>>>         Reset adapter observed (tx mode change legacy->tsn)
+> >>>>>      b) Enrol a new GCL without deleting qdisc
+> >>>>>         No reset adapter observed (tx mode remain tsn->tsn)
+> >>>>>      c) Delete qdisc
+> >>>>>         Reset adapter observed (tx mode change tsn->legacy)
+> >>>>>
+> >>>>> 2. Tested scenario from "igc: Fix TX Hang issue when QBV Gate is cl=
+osed"
+> >>>>>      to confirm it remains resolved.
+> >>>>>
+> >>>>> Fixes: 175c241288c0 ("igc: Fix TX Hang issue when QBV Gate is close=
+d")
+> >>>>> Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+> >>>>> Reviewed-by: Simon Horman <horms@kernel.org>
+> >>>>> ---
+> >>>>
+> >>>> There were a quite a few bugs, some of them my fault, on this part o=
+f
+> >>>> the code, changing between the modes in the hardware.
+> >>>>
+> >>>> So I would like some confirmation that ETF offloading/LaunchTime was
+> >>>> also tested with this change. Just to be sure.
+> >>>>
+> >>>> But code-wise, looks good:
+> >>>>
+> >>>> Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+> >>>>
+> >>>>
+> >>>> Cheers,
+> >>>
+> >>>
+> >>> Tested etf with offload, looks like working correctly.
+> >>>
+> >>> 1. mqprio
+> >>> tc qdisc add dev enp1s0 handle 100: parent root mqprio num_tc 3 \
+> >>> map 2 2 1 0 2 2 2 2 2 2 2 2 2 2 2 2 \
+> >>> queues 1@0 1@1 2@2 \
+> >>> hw 0
+> >>>
+> >>> No reset adapter observed.
+> >>>
+> >>> 2. etf with offload
+> >>> tc qdisc replace dev enp1s0 parent 100:1 etf \
+> >>> clockid CLOCK_TAI delta 300000 offload
+> >>>
+> >>> Reset adapter observed (tx mode legacy -> tsn).
+> >>>
+> >>> 3. delete qdisc
+> >>> tc qdisc delete dev enp1s0 parent root handle 100
+> >>>
+> >>> Reset adapter observed (tx mode tsn -> legacy).
+> >>>
+> >>
+> >> That no unexpected resets are happening, is good.
+> >>
+> >> But what I had in mind was some functional tests that ETF is working. =
+I
+> >> guess that's the only way of knowing that it's still working. Sorry th=
+at
+> >> I wasn't clear about that.
+> >>
+> >>
+> >> Cheers,
+> >
+> > My bad.
+> >
+> > Just tested ETF functionality and it is working.
+> >
+>=20
+> Awesome. Thanks for the confirmation:
+>=20
+> Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+>=20
+>=20
+> Cheers,
+> --
+> Vinicius
 
->>>  drivers/gpu/drm/msm/adreno/a3xx_catalog.c | 11 +++++++++++
->>>  drivers/gpu/drm/msm/adreno/a3xx_gpu.c     | 14 +++++++++++---
->>>  drivers/gpu/drm/msm/adreno/adreno_gpu.h   |  6 ++++++
->>>  3 files changed, 28 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/msm/adreno/a3xx_catalog.c b/drivers/gpu/drm/msm/adreno/a3xx_catalog.c
->>> index 0de8465b6cf0..61aeac5054a2 100644
->>> --- a/drivers/gpu/drm/msm/adreno/a3xx_catalog.c
->>> +++ b/drivers/gpu/drm/msm/adreno/a3xx_catalog.c
->>> @@ -41,6 +41,17 @@ static const struct adreno_info a3xx_gpus[] = {
->>>               .gmem  = SZ_128K,
->>>               .inactive_period = DRM_MSM_INACTIVE_PERIOD,
->>>               .init  = a3xx_gpu_init,
->>> +     }, {
->>> +             .chip_ids = ADRENO_CHIP_IDS(0x03000620),
->>> +             .family = ADRENO_3XX,
->>> +             .revn  = 308,
->>
->> Double space
-> It is similar like other blocks.
+Hello Vinicius and Abdul,
+(I wanted to reply to the original email from Abdul, but I subscribed too
+late, so I'm replying to the last message. Apologies in advance)
 
-Feel free to correct it there as well
+This patch is very useful for us in L-Acoustics.
+According to Milan/AVB specification, we must use CBS for streaming audio.
 
-[...]
+Until this patch, we could not change the CBS configuration at runtime for =
+i225.
+For instance, adding or removing streams would cause the card to reset and
+drop all streams.
 
->>>
->>> +static inline bool adreno_is_a306a(const struct adreno_gpu *gpu)
->>> +{
->>> +     /* a306a marketing name is a308 */
->>
->> "marketing name is a308" could use a (), but it's me being picky..
-> /* a306a (marketing name is a308) */ ?
+To be precise, we submit a netlink request via `tc change` command every
+time a stream is added/removed.
 
-yes
+We were using a home-made patch that I planned to submit, but I forgot..
 
-Konrad
+I tested this patch, and it is working as expected for CBS runtime changes.
+Thank you!
 
