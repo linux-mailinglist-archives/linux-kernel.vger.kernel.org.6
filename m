@@ -1,380 +1,341 @@
-Return-Path: <linux-kernel+bounces-259404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5341939563
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 23:22:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14FC6939567
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 23:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 560751F22470
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:22:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 935CD1F2243C
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 21:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC65446DC;
-	Mon, 22 Jul 2024 21:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0F93C482;
+	Mon, 22 Jul 2024 21:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="nAXMH9Qg"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Bn203gYy"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2336A1E891;
-	Mon, 22 Jul 2024 21:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124E41CD37
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 21:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721683365; cv=none; b=q7d7HkjfgmgG0mdIumUVghfayiYDqNXmKCTeY3yFhthtHTdtI10rbck2FKX0dUC42Klsbv7WnABgPVobluf6vsyNYkeK7T1a2aaYcsreDVFwTPlVM8vncZf/XFbgQfwmQcSqq3QDjYuO7TcjjBn8fP5A5Pma8aG8tjbWi3fuiKs=
+	t=1721683451; cv=none; b=euxxtkWSVAhrrUI4j/RHk4dlaOyhESGU1kU/qDhcfr9whIkUId88GRD8T7Hm2fF1bUElhZOqOPe6bfDYboGAY12T4vFbJngAvNn7LWohCdoduhfrijjZ6UT/lO/GBT/JwFRTizDdVF79kt+moXC4aOmlVQu+CNmvpcrdL34snSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721683365; c=relaxed/simple;
-	bh=dNqmRPbzhxfMtmOH2kAqF0q4HRORo1txouo+J4kJiv8=;
+	s=arc-20240116; t=1721683451; c=relaxed/simple;
+	bh=BThTVvfcR9JWFWvbsMUclsG5OU2SU4XBfxzGrpzk6tQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hAy6w7uZoP3EYcBh5VXqy2Dev0xrQnxp9bKvmUIZ84JzXBio9880RWDDcVblk0LlOmXzZkLGa+kO6uS5MamkQ2Zi2DYT+iwVcsJhY/V5cvZ/7OF6wBc7P/sMpCFHXL1YVA78vZmQIjMFKoL+ZIjmDj++eO6KAkdUtspQjuhxrrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=nAXMH9Qg; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fc5549788eso36460495ad.1;
-        Mon, 22 Jul 2024 14:22:43 -0700 (PDT)
+	 To:Cc:Content-Type; b=k7pvXVMjeCMs5SrNtyv14uPZQImZE0lwce1UJsbQfkQGO4tNkTXHxvuYJ/WvBsjkhUWWlp/F9oBremJbGxBWT5gRIei/Wu3XEsXbDImMNEz7Zr0yLVoBvSy5CAITbbpdV5Qcc/yhkoUX+jHzbxVlziZ3ENYznDlmSDjT3srzELQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Bn203gYy; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-447f8aa87bfso110631cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 14:24:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1721683363; x=1722288163; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1721683449; x=1722288249; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZQr/7RC/VjpMlQ892H64p31mDRk6nZIad4SdpZs64ws=;
-        b=nAXMH9QgTE3mholQTFlFudJATJy0EL9QD9MW2NQiLTIxaaHOi6ynzj3/RXkvKf/Cb8
-         fI20vUgIbCEuuogMqledyX8J2Wcjq34GJmQWRH+Acyo16vmC5WlBfS3ehVCApCYmPVd+
-         6A2i/pu0wAPFGU6ujm6AMDWDXQj5IxZZUOvCLbuFx5hGk/OUjGFCVpiB5CB3JowPYByy
-         kL2f/AjR8QfMBbliGQFjbj61D/WBE9BC4TRWnyRyW4HqKs0Dt7P3TZrW7uiHDEDrFeHn
-         bbPt+1VtBFOdYRwzWs23iBsGd6WBHjdcQg4Lzapw6PSgpaoFErU32vKw3ImeYmyac3+E
-         s42Q==
+        bh=jUvbV8cr91Az3570PAWe2v2K6wrQs4UKFeU0Jgh3ytQ=;
+        b=Bn203gYyHJKRDBqW1dMqZ5Y0TRawfmsMVyDcmt0WuJkQ88PB9D2B7/ppc5RvJArx4l
+         wdtTU9+SULb3Bc1DByTOH2r06ye+QTWqOs33q6C4ixNVrz5rorUAyomYj9X20bdzu9qz
+         TzWI0V83U3ZaoZrw0tb1OAYGSB6eoaUBRDs2qDVHrL70rjPYtRWUK8/71Z/I+dnIcZqN
+         h6VAbLcK6tncvsC6f2aNaLpuyJkQ6bX3wDyvLQDY4KvfwU34ZSKACwW3jmRv6l5EryNu
+         oc3VceXiWg4OOcY8M6f3QbpDUVOzTXIXtmIjNgwBCYRwWLh7RALpqY32TtEc5o5RUObp
+         bMig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721683363; x=1722288163;
+        d=1e100.net; s=20230601; t=1721683449; x=1722288249;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZQr/7RC/VjpMlQ892H64p31mDRk6nZIad4SdpZs64ws=;
-        b=dmEKRja6zq4Ez5STmAhw612RKPVgfwLsvAdQ2Y3IM9K9UGDeg44CXRJw8I0l455isx
-         ZOixOm5Pn8TpALOqMEd/HVMOn0TiWaVUrCXteOdNWuKtYjihqMWyom1B5BbF9BHa6yLS
-         3lwzxSEhJBHOZtNXH8yWikYMwj9erC86KYU9q6N/QOr1vpoBA+RaOuuOrF0kKT5oV1Mb
-         wmUyZRlvDDNYj39RN+ZDbD0ZPu6Fd3xvYblWtASy3sX5oZdd3wpUOzdB5cKXMvtU1a3F
-         Gq3hbR8XPv2jcihBYd+m49MNKDNH+RJEdmjXf0NbHkZNw9IjdrHxOcKL35YrR2zzLcVk
-         87Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLNwgw0tPoGKxVasm64ghXmcWM2Yq2+aR1XenFwoVyD0SEnGsrYKXZeUTGcReLJRg2sQdKNLaxJhdXj3bHL3reKcyMcACZLa0CkDyshWN2A71ylbQAGaZGc7IX0SkabjatGjOX2YYn
-X-Gm-Message-State: AOJu0YxSnEg9c2sLs4QXFyHEdAJMoug2yw8QEOUPq2rzW+wRV1TP8f7R
-	z7yl7lhvJGJq5kbgPUhx+wmwqU7DGcfdyk3LTbsBGJVUpbSIw0obsdC4EwU2zA+bJSfEP3yIxtN
-	VvkQeYSJnmmExtsH/1gH8un7NZvMGmitw
-X-Google-Smtp-Source: AGHT+IFPY++jfiSDsNCLqW/DB+re75HSH4oIBOyxbtfZc6gz4wldWzhw7+5E/zfACJu71Ff7PxLtejhYYSIY/3WWVeY=
-X-Received: by 2002:a17:902:e5c5:b0:1fd:abd4:ed5b with SMTP id
- d9443c01a7336-1fdabd4f218mr23307675ad.39.1721683363247; Mon, 22 Jul 2024
- 14:22:43 -0700 (PDT)
+        bh=jUvbV8cr91Az3570PAWe2v2K6wrQs4UKFeU0Jgh3ytQ=;
+        b=IYat+7K9bgrLCWpp4BhOXw3Topmo3jpviyNkRn+UaDesmNPW2ty4IoS8f/nXdDZY1u
+         rvdSa2LV2kQfwxbb1B0QD+0+YwekGH8cqF3Pxq1ZlBSpnpWP1nU4iFdw3P5a7eBjpVDA
+         Hk0IbO4OEVpU1JyDySUmkcNFDSnZymIL/Fq3nTQIfRJ1H1TZTMSI0pUpRzZPm+cSOHUK
+         wStYslzOkSKRhuTetn61rUUvITbBoA2yakfuVwpI0MYcefr0Lq8K5sbo6SC0MI4XD9Pp
+         WY0eFFQwHHuFCk1b7DW4drqcrGRyGtvVhtdIqzOgD1jmGx1aXG8bttLKZiVKFUtpxeE9
+         aIug==
+X-Forwarded-Encrypted: i=1; AJvYcCUmHF0wC/FVx7j87fh0zROYmkMTg6IKsC2t0rG/qozP9gA77FpDMuep/UslpGr4nLXlyBTFVNBhMRZGCMRYr1VjzVZR44LyGY+I4NrF
+X-Gm-Message-State: AOJu0YwEyon3s8ZBFKVOaHgzLZWSzLt1QOyAADPXD7mF1RKL9edwHY7s
+	R5Jj3i8hOEQBf97XWyPI4Qgwpqbk4a36iIeYLIg7ZAmN4YytxDkf0kJ3nMTEuYYEf2A91NEjX48
+	f5tSwKMlCtqsdcynWCVGLo04tpyxL54LfnKpa
+X-Google-Smtp-Source: AGHT+IF65D9l0J9nysjn+Fs0bUa7Rk1bA005g2DJfpgR1lRIXz0pmT072M//KBwaPKskcNk0gii+b5JQqm5e6s9QHbM=
+X-Received: by 2002:a05:622a:164a:b0:447:e8bd:2fbe with SMTP id
+ d75a77b69052e-44faa96a947mr5161191cf.1.1721683448578; Mon, 22 Jul 2024
+ 14:24:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507131522.3546113-1-clabbe@baylibre.com> <20240507131522.3546113-2-clabbe@baylibre.com>
- <Zp5q5V_OnLAdvBrU@hovoldconsulting.com>
-In-Reply-To: <Zp5q5V_OnLAdvBrU@hovoldconsulting.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Mon, 22 Jul 2024 23:22:32 +0200
-Message-ID: <CAFBinCC9ftXxkyoiY=3ia6UubTeG-cHXa40ddd7WMNUhvVjr+g@mail.gmail.com>
-Subject: Re: [PATCH 1/1 v7] usb: serial: add support for CH348
-To: Johan Hovold <johan@kernel.org>
-Cc: Corentin Labbe <clabbe@baylibre.com>, gregkh@linuxfoundation.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, david@ixit.cz
+References: <20240611002145.2078921-1-jthoughton@google.com>
+ <20240611002145.2078921-9-jthoughton@google.com> <CAOUHufb2f_EwHY5LQ59k7Nh7aS1-ZbOKtkoysb8BtxRNRFMypQ@mail.gmail.com>
+ <CADrL8HUJaG=O+jBVvXGVjJOriev9vxkZ6n27ekc5Pxv5D+fbcg@mail.gmail.com>
+ <CAOUHufZ2Vd+Ea5vka20+SCVB446LZEA0mWy=RScN=7AChd869w@mail.gmail.com> <CADrL8HVRSyS8ZADRTvHZ-QDKBRv1SFvVyJKkr-CW2mzpNjW5Zw@mail.gmail.com>
+In-Reply-To: <CADrL8HVRSyS8ZADRTvHZ-QDKBRv1SFvVyJKkr-CW2mzpNjW5Zw@mail.gmail.com>
+From: Yu Zhao <yuzhao@google.com>
+Date: Mon, 22 Jul 2024 15:23:29 -0600
+Message-ID: <CAOUHufapvh13G9CAwsGiap0=LjE+qor4i1hT=3APOtBSjtX4Kw@mail.gmail.com>
+Subject: Re: [PATCH v5 8/9] mm: multi-gen LRU: Have secondary MMUs participate
+ in aging
+To: James Houghton <jthoughton@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Ankit Agrawal <ankita@nvidia.com>, Axel Rasmussen <axelrasmussen@google.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, David Matlack <dmatlack@google.com>, 
+	David Rientjes <rientjes@google.com>, James Morse <james.morse@arm.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Raghavendra Rao Ananta <rananta@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Sean Christopherson <seanjc@google.com>, Shaoqin Huang <shahuang@redhat.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>, 
+	Will Deacon <will@kernel.org>, Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello Johan,
-
-thanks for taking the time to go through this patch and providing feedback!
-
-On Mon, Jul 22, 2024 at 4:21=E2=80=AFPM Johan Hovold <johan@kernel.org> wro=
-te:
+On Mon, Jul 22, 2024 at 2:46=E2=80=AFPM James Houghton <jthoughton@google.c=
+om> wrote:
 >
-> On Tue, May 07, 2024 at 01:15:22PM +0000, Corentin Labbe wrote:
-> > The CH348 is an USB octo port serial adapter.
-> > The device multiplexes all 8 ports in the same pair of Bulk endpoints.
-> > Since there is no public datasheet, unfortunately it remains some magic=
- values
+> On Mon, Jul 8, 2024 at 4:42=E2=80=AFPM Yu Zhao <yuzhao@google.com> wrote:
+> >
+> > On Mon, Jul 8, 2024 at 11:31=E2=80=AFAM James Houghton <jthoughton@goog=
+le.com> wrote:
+> > >
+> > > On Fri, Jul 5, 2024 at 11:36=E2=80=AFAM Yu Zhao <yuzhao@google.com> w=
+rote:
+> > > >
+> > > > On Mon, Jun 10, 2024 at 6:22=E2=80=AFPM James Houghton <jthoughton@=
+google.com> wrote:
+> > > > > @@ -3389,8 +3450,9 @@ static bool walk_pte_range(pmd_t *pmd, unsi=
+gned long start, unsigned long end,
+> > > > >                 if (!folio)
+> > > > >                         continue;
+> > > > >
+> > > > > -               if (!ptep_test_and_clear_young(args->vma, addr, p=
+te + i))
+> > > > > -                       VM_WARN_ON_ONCE(true);
+> > > > > +               lru_gen_notifier_clear_young(mm, addr, addr + PAG=
+E_SIZE);
+> > > > > +               if (pte_young(ptent))
+> > > > > +                       ptep_test_and_clear_young(args->vma, addr=
+, pte + i);
+> > > > >
+> > > > >                 young++;
+> > > > >                 walk->mm_stats[MM_LEAF_YOUNG]++;
+> > > >
+> > > >
+> > > > There are two ways to structure the test conditions in walk_pte_ran=
+ge():
+> > > > 1. a single pass into the MMU notifier (combine test/clear) which
+> > > > causes a cache miss from get_pfn_page() if the page is NOT young.
+> > > > 2. two passes into the MMU notifier (separate test/clear) if the pa=
+ge
+> > > > is young, which does NOT cause a cache miss if the page is NOT youn=
+g.
+> > > >
+> > > > v2 can batch up to 64 PTEs, i.e., it only goes into the MMU notifie=
+r
+> > > > twice every 64 PTEs, and therefore the second option is a clear win=
+.
+> > > >
+> > > > But you are doing twice per PTE. So what's the rationale behind goi=
+ng
+> > > > with the second option? Was the first option considered?
+> > >
+> > > Hi Yu,
+> > >
+> > > I didn't consider changing this from your v2[1]. Thanks for bringing =
+it up.
+> > >
+> > > The only real change I have made is that I reordered the
+> > > (!test_spte_young() && !pte_young()) to what it is now (!pte_young()
+> > > && !lru_gen_notifier_test_young()) because pte_young() can be
+> > > evaluated much faster.
+> > >
+> > > I am happy to change the initial test_young() notifier to a
+> > > clear_young() (and drop the later clear_young(). In fact, I think I
+> > > should. Making the condition (!pte_young() &&
+> > > !lru_gen_notifier_clear_young()) makes sense to me. This returns the
+> > > same result as if it were !lru_gen_notifier_test_young() instead,
+> > > there is no need for a second clear_young(), and we don't call
+> > > get_pfn_folio() on pages that are not young.
+> >
+> > We don't want to do that because we would lose the A-bit for a folio
+> > that's beyond the current reclaim scope, i.e., the cases where
+> > get_pfn_folio() returns NULL (a folio from another memcg, e.g.).
+> >
+> > > WDYT? Have I misunderstood your comment?
+> >
+> > I hope this is clear enough:
+> >
+> > @@ -3395,7 +3395,7 @@ static bool walk_pte_range(pmd_t *pmd, unsigned
+> > long start, unsigned long end,
+> >                 if (pfn =3D=3D -1)
+> >                         continue;
+> >
+> > -               if (!pte_young(ptent)) {
+> > +               if (!pte_young(ptent) && !mm_has_notifiers(args->mm)) {
+> >                         walk->mm_stats[MM_LEAF_OLD]++;
+> >                         continue;
+> >                 }
+> > @@ -3404,8 +3404,8 @@ static bool walk_pte_range(pmd_t *pmd, unsigned
+> > long start, unsigned long end,
+> >                 if (!folio)
+> >                         continue;
+> >
+> > -               if (!ptep_test_and_clear_young(args->vma, addr, pte + i=
+))
+> > -                       VM_WARN_ON_ONCE(true);
+> > +               if (!ptep_clear_young_notify(args->vma, addr, pte + i))
 >
-> Could you please include a pointer to the vendor driver (which I assumed
-> you based this on)?
-We can do that, in case you want/need some info upfront you can find
-the reference code here: [0]
-
-[...]
-> > @@ -0,0 +1,725 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * USB serial driver for USB to Octal UARTs chip ch348.
-> > + *
-> > + * Copyright (C) 2022 Corentin Labbe <clabbe@baylibre.com>
+> walk->mm_stats[MM_LEAF_OLD]++ should be here, I take it.
 >
-> Do you need to include any copyrights from the vendor driver? It looks
-> like at least some of the code below was copied from somewhere (but
-> perhaps not that much).
-If you - or someone else - have any advice on this I'd be happy to go with =
-that!
-
-[...]
-> > +#define R_II_B1              0x06
-> > +#define R_II_B2              0x02
-> > +#define R_II_B3              0x00
+> > +                       continue;
+> >
+> >                 young++;
+> >                 walk->mm_stats[MM_LEAF_YOUNG]++;
+> >
+> > > Also, I take it your comment was not just about walk_pte_range() but
+> > > about the similar bits in lru_gen_look_around() as well, so I'll make
+> > > whatever changes we agree on there too (or maybe factor out the commo=
+n
+> > > bits).
+> > >
+> > > [1]: https://lore.kernel.org/kvmarm/20230526234435.662652-11-yuzhao@g=
+oogle.com/
+> > >
+> > > > In addition, what about the non-lockless cases? Would this change m=
+ake
+> > > > them worse by grabbing the MMU lock twice per PTE?
+> > >
+> > > That's a good point. Yes I think calling the notifier twice here woul=
+d
+> > > indeed exacerbate problems with a non-lockless notifier.
+> >
+> > I think so too, but I haven't verified it. Please do?
 >
-> This look like standard IIR masks (e.g. R_II_B2 would be Transmit
-> holding register empty).
-I didn't know about it until now - thanks for the hint.
-note to self: git grep UART_IIR_ include/
-
-[...]
-> > +     struct urb *status_urb;
-> > +     u8 status_buffer[];
+> I have some results now, sorry for the wait.
 >
-> This buffer should be allocated separately as it is used for DMA.
-I assume it's because of alignment reasons.
-Lucky me that I didn't hit any issues on ARM or x86_64.
+> It seems like one notifier is definitely better. It doesn't look like
+> the read lock actually made anything worse with what I was testing
+> (faulting memory in while doing aging). This is kind of surprising,
 
-[...}
-> > +     u8 reg_iir;
-> > +     union {
-> > +             u8 lsr_signal;
-> > +             u8 modem_signal;
-> > +             u8 init_data[10];
+Not at all if you were only doing the aging path, which only takes the
+lock for read.
+
+Under memory pressure, we need to both the aging and eviction, and the
+latter has to take the lock for write (to unmap). And that's when the
+real contention happens, because the search space is too big -- the
+entire system memory for global reclaim -- unmapping can easily
+collide with clearing the A-bit.
+
+> but either way, I'll change it to the single notifier in v6. Thanks
+> Yu!
 >
-> This init_data field is never used and looks a bit odd. What is it used
-> for?
-I think the firmware is sending back the configuration that was
-applied (see ch348_set_termios())
-
-> You mentioned that that the modem lines are not yet used either.
-My understanding is: we neither use init_data nor modem_signal in the
-driver so let's drop them for now (and add them back when they're
-actually needed).
-
-[...]
-> > +                     if (status_entry->lsr_signal & CH348_LO)
-> > +                             port->icount.overrun++;
-> > +                     if (status_entry->lsr_signal & CH348_LP)
-> > +                             port->icount.parity++;
-> > +                     if (status_entry->lsr_signal & CH348_LF)
-> > +                             port->icount.frame++;
-> > +                     if (status_entry->lsr_signal & CH348_LF)
+> Here are the results I'm basing this conclusion on, using the selftest
+> added at the end of this series.
 >
-> Should you really count every framing error as a break? Looks like this
-> should have been CH348_LB.
-Excellent catch - thank you!
-
-Also note to self: git grep UART_LSR_ include
-We can probably replace the custom #defines with the standard ones.
-
-[...]
-> > +static int ch348_configure(struct ch348 *ch348, int portnum)
-> > +{
-> > +     int ret;
-> > +
-> > +     ret =3D ch348_do_magic(ch348, portnum, CMD_W_R, R_C2, 0x87);
+> # Use taskset to minimize NUMA concern.
+> # Give an extra core for the aging thread.
+> # THPs disabled (echo never > /sys/kernel/mm/transparent_hugepage/enabled=
+)
 >
-> This looks like it could be a write to the standard Fifo Control
-> Register.
-And again, thank you! 0x87 translates to (which also makes sense):
-  UART_FCR_ENABLE_FIFO (0x01) |
-  UART_FCR_CLEAR_RCVR (0x02) |
-  UART_FCR_CLEAR_XMIT (0x04) |
-  UART_FCR_R_TRIG_10 (0x80) |
-  UART_FCR_T_TRIG_00 (0x00)
-
-[...]
-> > +static int ch348_write(struct tty_struct *tty, struct usb_serial_port =
-*port,
-> > +                    const unsigned char *buf, int count)
-> > +{
-> > +     struct ch348 *ch348 =3D usb_get_serial_data(port->serial);
-> > +     struct ch348_port *ch348_port =3D &ch348->ports[port->port_number=
-];
-> > +     int ret, max_tx_size;
-> > +
-> > +     if (tty_get_baud_rate(tty) < 9600 && count >=3D 128)
+> x86:
 >
-> You don't hold the termios lock here so this needs to be handled
-> differently. Perhaps you can set a flag in set_termios if this is
-> really needed.
+> # taskset -c 0-32 ./access_tracking_perf_test -l -v 32
+> # # One notifier
+> Populating memory             : 1.933017284s
+> Writing to populated memory   : 0.017323539s
+> Reading from populated memory : 0.013113260s
+> lru_gen: Aging                : 0.894133259s
+> lru_gen: Aging                : 0.738950525s
+> Writing to idle memory        : 0.059661329s
+> lru_gen: Aging                : 0.922719935s
+> lru_gen: Aging                : 0.829129877s
+> Reading from idle memory      : 0.059095098s
+> lru_gen: Aging                : 0.922689975s
 >
-> > +             /*
-> > +              * Writing larger buffers can take longer than the hardwa=
-re
-> > +              * allows before discarding the write buffer. Limit the
-> > +              * transfer size in such cases.
-> > +              * These values have been found by empirical testing.
-> > +              */
-> > +             max_tx_size =3D 128;
+> # # Two notifiers
+> Populating memory             : 1.842645795s
+> Writing to populated memory   : 0.017277075s
+> Reading from populated memory : 0.013047457s
+> lru_gen: Aging                : 0.900751764s
+> lru_gen: Aging                : 0.707203167s
+> Writing to idle memory        : 0.060663733s
+> lru_gen: Aging                : 1.539957250s  <------ got longer
+> lru_gen: Aging                : 0.797475887s
+> Reading from idle memory      : 0.084415591s
+> lru_gen: Aging                : 1.539417121s  <------ got longer
 >
-> Can you elaborate on you findings here? According to the vendor homepage
-> this device has a 1024 byte TX fifo per port. Are you really saying that
-> for some reason you can only fill it with 128 b when the line speed is
-> below 9600?
-For slow speeds I never receive the "Transmitter holding register
-empty" interrupt/signal when using the full TX buffer.
-It's not that the interrupt/signal is late - it just never arrives.
-I don't know why that is (whether the firmware tries to keep things
-"fair" for other ports, ...) though.
-
-> > +     else
-> > +             /*
-> > +             * Only ingest as many bytes as we can transfer with one U=
-RB at
-> > +             * a time. Once an URB has been written we need to wait fo=
-r the
-> > +             * R_II_B2 status event before we are allowed to send more=
- data.
+> arm64*:
+> (*Patched to do aging; not done in v5 or v6. Doing this to see if the rea=
+d
+> lock is made substantially worse by using two notifiers vs. one.)
 >
-> As I mentioned above R_II_B2 appears to be the transfer holding register
-> empty flag in IIR. So you write one endpoint size worth of data and then
-> wait for all of it to be processed on the device before sending more.
+> # taskset -c 0-16 ./access_tracking_perf_test -l -v 16 -m 3
+> # # One notifier
+> Populating memory             : 1.439261355s
+> Writing to populated memory   : 0.009755279s
+> Reading from populated memory : 0.007714120s
+> lru_gen: Aging                : 0.540183328s
+> lru_gen: Aging                : 0.455427973s
+> Writing to idle memory        : 0.010130399s
+> lru_gen: Aging                : 0.563424247s
+> lru_gen: Aging                : 0.500419850s
+> Reading from idle memory      : 0.008519640s
+> lru_gen: Aging                : 0.563178643s
 >
-> How big is the endpoint (please post lsusb -v)?
-Bus 003 Device 022: ID 1a86:55d9 QinHeng Electronics USB2.0 To Multi
-Serial Ports
-Device Descriptor:
- bLength                18
- bDescriptorType         1
- bcdUSB               2.00
- bDeviceClass          255 Vendor Specific Class
- bDeviceSubClass       128 [unknown]
- bDeviceProtocol        55
- bMaxPacketSize0        64
- idVendor           0x1a86 QinHeng Electronics
- idProduct          0x55d9 USB2.0 To Multi Serial Ports
- bcdDevice            1.36
- iManufacturer           1 wch.cn
- iProduct                2 USB2.0 To Multi Serial Ports
- iSerial                 0
- bNumConfigurations      1
- Configuration Descriptor:
-   bLength                 9
-   bDescriptorType         2
-   wTotalLength       0x002e
-   bNumInterfaces          1
-   bConfigurationValue     1
-   iConfiguration          0
-   bmAttributes         0x80
-     (Bus Powered)
-   MaxPower              200mA
-   Interface Descriptor:
-     bLength                 9
-     bDescriptorType         4
-     bInterfaceNumber        0
-     bAlternateSetting       0
-     bNumEndpoints           4
-     bInterfaceClass       255 Vendor Specific Class
-     bInterfaceSubClass    128 [unknown]
-     bInterfaceProtocol     55
-     iInterface              0
-     Endpoint Descriptor:
-       bLength                 7
-       bDescriptorType         5
-       bEndpointAddress     0x82  EP 2 IN
-       bmAttributes            2
-         Transfer Type            Bulk
-         Synch Type               None
-         Usage Type               Data
-       wMaxPacketSize     0x0200  1x 512 bytes
-       bInterval               0
-     Endpoint Descriptor:
-       bLength                 7
-       bDescriptorType         5
-       bEndpointAddress     0x02  EP 2 OUT
-       bmAttributes            2
-         Transfer Type            Bulk
-         Synch Type               None
-         Usage Type               Data
-       wMaxPacketSize     0x0200  1x 512 bytes
-       bInterval               0
-     Endpoint Descriptor:
-       bLength                 7
-       bDescriptorType         5
-       bEndpointAddress     0x81  EP 1 IN
-       bmAttributes            2
-         Transfer Type            Bulk
-         Synch Type               None
-         Usage Type               Data
-       wMaxPacketSize     0x0200  1x 512 bytes
-       bInterval               0
-     Endpoint Descriptor:
-       bLength                 7
-       bDescriptorType         5
-       bEndpointAddress     0x01  EP 1 OUT
-       bmAttributes            2
-         Transfer Type            Bulk
-         Synch Type               None
-         Usage Type               Data
-       wMaxPacketSize     0x0200  1x 512 bytes
-       bInterval               0
-Device Qualifier (for other device speed):
- bLength                10
- bDescriptorType         6
- bcdUSB               2.00
- bDeviceClass          255 Vendor Specific Class
- bDeviceSubClass         0 [unknown]
- bDeviceProtocol       255
- bMaxPacketSize0        64
- bNumConfigurations      1
-can't get debug descriptor: Resource temporarily unavailable
-Device Status:     0x0000
- (Bus Powered)
-
-> > +             * If we ingest more data then usb_serial_generic_write() =
-will
-> > +             * internally try to process as much data as possible with=
- any
-> > +             * number of URBs without giving us the chance to wait in
-> > +             * between transfers.
+> # # Two notifiers
+> Populating memory             : 1.526805625s
+> Writing to populated memory   : 0.009836118s
+> Reading from populated memory : 0.007757280s
+> lru_gen: Aging                : 0.537770978s
+> lru_gen: Aging                : 0.421915391s
+> Writing to idle memory        : 0.010281959s
+> lru_gen: Aging                : 0.971448688s  <------ got longer
+> lru_gen: Aging                : 0.466956547s
+> Reading from idle memory      : 0.008588559s
+> lru_gen: Aging                : 0.971030648s  <------ got longer
 >
-> If the hardware really works this way, then perhaps you should not use
-> the generic write implementation. Just maintain a single urb per port
-> and don't submit it until the device fifo is empty.
-I tried to avoid having to copy & paste (which then also means having
-to maintain it down the line) most of the generic write
-implementation.
-This whole dance with waiting for the "Transmitter holding register
-empty" by the way was the reason why parts of the transmit buffer got
-lost, see the report from Nicolas in v6 [1]
-
-> > +             */
-> > +             max_tx_size =3D port->bulk_out_size - CH348_TX_HDRSIZE;
-> > +
-> > +     reinit_completion(&ch348_port->write_completion);
 >
-> This is broken as write can be called at any time and may clear any
-> previous completion.
-I never hit that issue in my tests but I get your point.
-
-[...]
-> > +static struct usb_serial_driver ch348_device =3D {
-> > +     .driver =3D {
-> > +             .owner =3D THIS_MODULE,
-> > +             .name =3D "ch348",
-> > +     },
-> > +     .id_table =3D             ch348_ids,
-> > +     .num_ports =3D            CH348_MAXPORT,
-> > +     .num_bulk_in =3D          1,
-> > +     .num_bulk_out =3D         1,
+> arm64, faulting memory in while aging:
 >
-> Set both of these to 2 so that core verifies that you have all four
-> endpoints.
-I will have to test this because I thought that:
-- using 2 here makes usb-serial allocate an URB as well and by default
-assign it to the first and second port
-- usb-serial should not touch the second bulk in / bulk out endpoint
-(as they're entirely vendor / chip specific)
-
-I omitted replies to some of your comments because I agree with them
-and repeatedly writing "ACK" didn't seem to add much value.
-
-
-Best regards,
-Martin
-
-
-[0] https://github.com/WCHSoftGroup/ch9344ser_linux/tree/dcbe60d12ead4622b7=
-fdd6dec24e62facee23663/driver
-[1] https://lore.kernel.org/lkml/2595072.9XhBIDAVAK@archbook/
+> # perf record -g -- taskset -c 0-16 ./access_tracking_perf_test -l -v 16 =
+-m 3 -p
+> # # One notifier
+> vcpu wall time                : 1.433908058s
+> lru_gen avg pass duration     : 0.172128073s, (passes:11, total:1.8934088=
+07s)
+>
+> # # Two notifiers
+> vcpu wall time                : 1.450387765s
+> lru_gen avg pass duration     : 0.175652974s, (passes:10, total:1.7565297=
+44s)
+>
+> # perf report
+> # # One notifier
+> -    6.25%     0.00%  access_tracking  [kernel.kallsyms]  [k] try_to_inc_=
+max_seq
+>    - try_to_inc_max_seq
+>       - 6.06% walk_page_range
+>            __walk_page_range
+>          - walk_pgd_range
+>             - 6.04% walk_pud_range
+>                - 4.73% __mmu_notifier_clear_young
+>                   + 4.29% kvm_mmu_notifier_clear_young
+>
+> # # Two notifiers
+> -    6.43%     0.00%  access_tracking  [kernel.kallsyms]  [k] try_to_inc_=
+max_seq
+>    - try_to_inc_max_seq
+>       - 6.25% walk_page_range
+>            __walk_page_range
+>          - walk_pgd_range
+>             - 6.23% walk_pud_range
+>                - 2.75% __mmu_notifier_test_young
+>                   + 2.48% kvm_mmu_notifier_test_young
+>                - 2.39% __mmu_notifier_clear_young
+>                   + 2.19% kvm_mmu_notifier_clear_young
 
