@@ -1,133 +1,163 @@
-Return-Path: <linux-kernel+bounces-259449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51A4C93965B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 00:15:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77BDF939670
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 00:18:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFBF0B21625
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:15:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A95371C2180E
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 22:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C392F45027;
-	Mon, 22 Jul 2024 22:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB2A3BBE3;
+	Mon, 22 Jul 2024 22:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eS2GWIka"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="Ranay9hW"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072F647F6C;
-	Mon, 22 Jul 2024 22:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4D33FBA7
+	for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 22:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721686503; cv=none; b=UO/Kvgjq6rv2jC5sYRSiy/Ly8AmMNMhQcaP97PQRJKg3HxSrEgm7cNLMxU52Rt8suaMX5advFwrEiHv1dUin8WeS1a8e4Y7elAFV72vc7r6aDCiubWko3cK4vGZsIFXL21VBW93R7Q2cDMHd4gXFCZQCPoijfLyxPVQDbGF5aTc=
+	t=1721686667; cv=none; b=X+6cPLLBCvcKJrEakqttZGG2THUfoPl8ilNf6FGMjxdmYn4aTpSa8oUz+YLKJMhc+dWlvsVG879yZVNVGTbJj1LDcmi2aKSurfoRNxSO4y4Zlf0ukgRNVhJ+HRlTY6UFlehQgYej6fHtS2aKAVo/1noLs9nRGdkpbag/K2qwRlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721686503; c=relaxed/simple;
-	bh=pltdNSZmHoCVSI5Sk1ELA9qb2K8O00alOaa1v/EU7+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=LbxiX3PQs/hQ7bjOQWik23w0ehhMjF46a/TNJeIZPdZiC5Xdsd+RGnnC93EQ0HB0AKg0FBvwRZ7QMkckK2yrKiWFlEDrevz7aXXChd3LBcThcwjZW2CXK7eZWxoZ+3mm6Ts2yGAqlC6yA4N6sfzAni5c5J5pQlOoDobNwE0Gaf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eS2GWIka; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49F13C4AF0B;
-	Mon, 22 Jul 2024 22:15:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721686502;
-	bh=pltdNSZmHoCVSI5Sk1ELA9qb2K8O00alOaa1v/EU7+o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=eS2GWIka5vU0Qn0pNkYc7lr5QHaxi1ZWuMgxqgY5Sy5iieoVqXwg/SZKOwF6SNNWz
-	 /nZqJLDtjl4qoCXLrSVokX6tIh/e4WWyH/pBYDoXornJ6VtdYgSfkr3eCIeF5AT4ek
-	 gw29mSYhAL4xycRBGfptWkJnlsUXf4B1UrtC2CFI2aTdnlJUBpO5obZS6aQVKLOt3p
-	 OzrBfqlwqiuJje8zwiW+cMn+fZWTw7ycPn8EIQTXdvEY2xgBIe2ZAnp1gMPszE6CCt
-	 b8+Bc90pK8zjMT3w6VrrewVLH+gSXymmwR3UlMskHFoyqhlDINDg3SAzd9Zfmw70ox
-	 mmX4bTwSiIPIQ==
-Date: Mon, 22 Jul 2024 17:15:00 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Thippeswamy Havalige <thippesw@amd.com>
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org, thippeswamy.havalige@amd.com,
-	linux-arm-kernel@lists.infradead.org, michal.simek@amd.com
-Subject: Re: [PATCH v2 2/2] PCI: xilinx-xdma: Add Xilinx QDMA Root Port driver
-Message-ID: <20240722221500.GA739438@bhelgaas>
+	s=arc-20240116; t=1721686667; c=relaxed/simple;
+	bh=bFz7cXZ0GdFj8C3NoXMvUx/U5t0kcbX/2XLGDWgZz+E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bXu2A7R4nsExV2THcF2WisfMxTXkvIITwvgFaQbu64KwufUoXvSBoNXbfSjR4RuxLUNOvTnkLBZaqE8crjnho/bzBG/9ZXGRgsACuDtOvh8YMH6+u+KI5gWgJSSJhySoUi8ItdSJELIR06TXuuATpgwLItXlvl5T8y+ienD6lRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=Ranay9hW; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id D58282C041E;
+	Tue, 23 Jul 2024 10:17:40 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1721686660;
+	bh=lj7cvcC6X1fbMxOA4KtEWFlAVMhWdizy1GZrlb57mS8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Ranay9hWu8s25qxhMomHIfiLbRryWzfYA8HZwqkYp61KBXk6e7zQrt9T8MV+kXmEi
+	 0jOJ2aMAIsyaDU7rW/dykqHcp6sPfKq0AP+ziHkQ+aYQYSKEg8LOOwBnwdFydQlIWp
+	 7WguJo5eccbBvi3qYSgP8I92TmZfj/zqRu/rB7k/jR7Vzh0LMXw9TKLOaxA+cnD94U
+	 t2EJoJeNVve2oKAAKCXbgTTO7i4uU5F+6ltMthqqezyH6sWAV+tF/wZh9QGFcaSNJy
+	 nlJu9biGRrmK5iBL/BZGQxgiGjW+BI68RP/9RVU3GxfH1AaZUufZX6Gg4ewm/KKwTz
+	 MmTF0B0rlfJGA==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B669eda840000>; Tue, 23 Jul 2024 10:17:40 +1200
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id 9EF3413ED4A;
+	Tue, 23 Jul 2024 10:17:40 +1200 (NZST)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+	id 9A349280407; Tue, 23 Jul 2024 10:17:40 +1200 (NZST)
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: jdelvare@suse.com,
+	linux@roeck-us.net,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	ukleinek@kernel.org
+Cc: linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v7 0/3] hwmon: (adt7475) duty cycle configuration
+Date: Tue, 23 Jul 2024 10:17:34 +1200
+Message-ID: <20240722221737.3407958-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240722062558.1578744-3-thippesw@amd.com>
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=Gqbh+V1C c=1 sm=1 tr=0 ts=669eda84 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=4kmOji7k6h8A:10 a=1vY5SClPdTbzMX9iZtUA:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-On Mon, Jul 22, 2024 at 11:55:58AM +0530, Thippeswamy Havalige wrote:
-> Add support for Xilinx QDMA Soft IP core as Root Port.
-> 
-> The versal prime devices support QDMA soft IP module in
-> programmable logic.
+I have a system that has very over spec'd fans so the amount of noise whe=
+n they
+run at 100% duty cycle is considerable. We have userspace monitoring tool=
+s that
+will configure appropriate fan control parameters but there is a bit of a=
+ delay
+between the kernel loading the driver and the userland tools catching up =
+to
+configure the fan control. This series adds device properties that allow =
+the
+PWM duty cycle to be specified via device properties so the PWM duty cycl=
+e can
+be reduced as soon as possible.
 
-Capitalize brand names.
+This series attempts to setup the adt7475 as a pwm provider so that we ca=
+n
+specify these properties. The devicetree support was reasonably straight
+forward (example usage is in the binding patch). I struggled to get the A=
+CPI
+version working well and in the end the code had to distinguish between t=
+he
+of_node and other case. The ASL I've ended up with is
 
-> The integrated QDMA Soft IP block has integrated bridge function that
-> can act as PCIe Root Port.
+    Device (ADT0)
+    {
+        Name (_HID, "PRP0001")
+        Name (_CRS, ResourceTemplate () {
+            I2cSerialBusV2 (0x2E, ControllerInitiated,
+                            100000, AddressingMode7Bit,
+                            "^^CH00", 0x00,
+                            ResourceConsumer, , Exclusive, )
+        })
+        Name (_DSD, Package () {
+            ToUUID (UUID_DEVICE_PROPERTIES),
+            Package () {
+                Package () { "compatible", "adi,adt7476" },
+                Package () { "#pwm-cells", 4 },
+            },
+        })
+        Device (FAN0)
+        {
+            Name (_ADR, 0)
+            Name (_DSD, Package () {
+                ToUUID (UUID_DEVICE_PROPERTIES),
+                Package () {
+                    Package () { "pwms", Package () { 0, 44444, 1, 22222 =
+} },
+                }
+            })
+        }
+        Device (FAN1)
+        {
+            Name (_ADR, 0)
+            Name (_DSD, Package () {
+                ToUUID (UUID_DEVICE_PROPERTIES),
+                Package () {
+                    Package () { "pwms", Package () { 2, 44444, 1, 22222 =
+} },
+                }
+            })
+        }
+    }
 
-Rewrap to fill 75 columns.
+If had to introduce a code path that parses that because try as I might I=
+ could
+not convince fwnode_property_get_reference_args() to fetch the informatio=
+n out
+of the ACPI data. If I've missed something obvious please let me know.
 
-> +#define QDMA_BRIDGE_BASE_OFF		0xCD8
+Chris Packham (3):
+  dt-bindings: hwmon: Add adt7475 fan/pwm properties
+  dt-bindings: hwmon: adt7475: Deprecate adi,pwm-active-state
+  hwmon: (adt7475) Add support for configuring initial PWM state
 
-Other #defines in this file user lower-case hex; please match them.
+ .../devicetree/bindings/hwmon/adt7475.yaml    |  37 ++++-
+ drivers/hwmon/adt7475.c                       | 131 ++++++++++++++++++
+ 2 files changed, 166 insertions(+), 2 deletions(-)
 
->  static inline u32 pcie_read(struct pl_dma_pcie *port, u32 reg)
->  {
-> -	return readl(port->reg_base + reg);
-> +	if (port->variant->version == XDMA)
-> +		return readl(port->reg_base + reg);
-> +	else
-> +		return readl(port->reg_base + reg + QDMA_BRIDGE_BASE_OFF);
->  }
->  
->  static inline void pcie_write(struct pl_dma_pcie *port, u32 val, u32 reg)
->  {
-> -	writel(val, port->reg_base + reg);
-> +	if (port->variant->version == XDMA)
-> +		writel(val, port->reg_base + reg);
-> +	else
-> +		writel(val, port->reg_base + reg + QDMA_BRIDGE_BASE_OFF);
->  }
->  
->  static inline bool xilinx_pl_dma_pcie_link_up(struct pl_dma_pcie *port)
-> @@ -173,7 +198,10 @@ static void __iomem *xilinx_pl_dma_pcie_map_bus(struct pci_bus *bus,
->  	if (!xilinx_pl_dma_pcie_valid_device(bus, devfn))
->  		return NULL;
->  
-> -	return port->reg_base + PCIE_ECAM_OFFSET(bus->number, devfn, where);
-> +	if (port->variant->version == XDMA)
-> +		return port->reg_base + PCIE_ECAM_OFFSET(bus->number, devfn, where);
-> +	else
-> +		return port->cfg_base + PCIE_ECAM_OFFSET(bus->number, devfn, where);
+--=20
+2.45.2
 
-If you rework the variant tests above to use
-"if (port->variant->version == QDMA)" instead, they will match the one
-below, and you won't need to touch the existing code at all, e.g.,
-
-  + if (port->variant->version == QDMA)
-  +   return port->cfg_base + PCIE_ECAM_OFFSET(bus->number, devfn, where);
-
-    return port->reg_base + PCIE_ECAM_OFFSET(bus->number, devfn, where);
-
->  }
->  
->  /* PCIe operations */
-> @@ -731,6 +759,15 @@ static int xilinx_pl_dma_pcie_parse_dt(struct pl_dma_pcie *port,
->  
->  	port->reg_base = port->cfg->win;
->  
-> +	if (port->variant->version == QDMA) {
-> +		port->cfg_base = port->cfg->win;
-> +		res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "breg");
-> +		port->reg_base = devm_ioremap_resource(dev, res);
-> +		if (IS_ERR(port->reg_base))
-> +			return PTR_ERR(port->reg_base);
-> +		port->phys_reg_base = res->start;
-> +	}
 
