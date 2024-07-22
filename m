@@ -1,116 +1,117 @@
-Return-Path: <linux-kernel+bounces-259152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2AA49391F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:40:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CF1D9391F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 17:43:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1051C1C21572
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:40:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EE921F21F42
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 15:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DDB16EB4F;
-	Mon, 22 Jul 2024 15:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC4816E87C;
+	Mon, 22 Jul 2024 15:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OP5yirmN"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Lj03OggX"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D21916E88B;
-	Mon, 22 Jul 2024 15:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C17CC2FD;
+	Mon, 22 Jul 2024 15:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721662782; cv=none; b=PDUWXZXGwnlpu84RP3Ru9QFtXiIGGSepZmYhkAyWw5eN6D5P7lOmRiVIEJ/RVI99kCtt3cI8evNlxQsN6SCQNdLL7YT0i8yo3QZH7ep26ZyGxSLzfq50xSFez5o8ZwNsBYxskWaNkH79Q56hyS9P/h2k+Gww8sFk7uIcnZOgPn8=
+	t=1721663002; cv=none; b=DwDtljqtmkhjp55b5grx9vlBBkCxXohH6HUjqUIdeAYY+16ul4KySe7ZoKCUghP1S5WVeWLjd+lfhFhS7HaCRP6/+27psxQDbVv+VGmTA3QyUlAQ8Yq0bQOB03HV90iqOTG/GWx3Rgd6nwuPXgZ1p/JJPvaQ9zbzVNyWH7CqWy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721662782; c=relaxed/simple;
-	bh=HoAu3Q7YXEdfSInSzOu7vZeJB9+zbcTyotdzvCM1fPU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=DlSapqJ11Sikaorqd8RfkRT3dmpukhNF/jbbR8bM91Rh9dQu9gISoIGLAdS6mNUScd9iadxZiYeFA/Py/KBCbNtbCNSDGu69yBxT1Cu0apKTs5tSc/gKqymWTP9COsaikdqllE43JkeYtAtVz1BBMUeFTQ9ONmGlAVEj7MD6mdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OP5yirmN; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2eeb1ba0481so66933401fa.2;
-        Mon, 22 Jul 2024 08:39:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721662779; x=1722267579; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jALI6UyYbNYiJLxWXhrO5w7i6Qk20r5OJVMCi7IoOuI=;
-        b=OP5yirmNOI5DdSX7zFbRhs3ouG8fC6hvKmFxOOaPGIGik0NZB9uQdIdogWrXP1KS5Z
-         wTt9MPqmidclMsunGcwe8TNu0jiZsKgK5krIZ3yF5I4U4fNHaoRv97csvW4JMk9JTN1g
-         XJGZ0UD7zAP505ZcnSD/7IimTWzC86xI7CDZHZvo/VAWfVnv31em91baBuKZjNR7cuLO
-         UEalDYlJRAf9NypD+k6EpNVz/j1W73DvQwmrwidrLFfMZSmVmiJsJEsR/X6W/YdgTb2g
-         ayF7DM9Lv/Tv/TM8/q0zgmOtLW/+BQtKpAQfSpcxqYtD1zDJGSXGEA5DUfVQOdjU49MB
-         KpWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721662779; x=1722267579;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jALI6UyYbNYiJLxWXhrO5w7i6Qk20r5OJVMCi7IoOuI=;
-        b=nw1k2jTbdSK6r/r46015Zfg71075y2Q6wW8uFbEavBY8cPkTQMrnBYtj684kxGsBqe
-         m7hbpTMYnkmjX0Baxt0Uuf4J32ZY+D9uzFzHZgSCZKBAB0BuTr2XAZc/ovbEYysUes+z
-         XU8jPakae+kSrGM2cEScGUjnzIkSmg/2rQRwI+S6eETHG9+7YmD8m7AufAM9kK8+GlFc
-         qjXkgIUxid1DBIRORT0JVfOMOSJ1+wCuRnn3f1k4B86A1oWb77AR0XPwyWjr78LEwbuV
-         BjkTIH75/oQ5fj+++8w5cXtr/m3nLnAcdaupoS6WvC7jh2t/L+yKrV4UXP1AC0M3IjjZ
-         ZPUg==
-X-Forwarded-Encrypted: i=1; AJvYcCW1k+sM6ZO2ntoHPI4j/fsMXy6L4tShtE97Sj2CFlztCsYVzHtDJ7seF4cujRNBWWmjusUrY/RavHHeyAmcRM+xRAaV+of7J7NMysIg
-X-Gm-Message-State: AOJu0YxstSZbqEPRiL/GiglDh6BRo2lAHrLmGP8DW+hq+msp82tQ5Rsn
-	t3M2f/JcL9AZDnJK3INBjUizajUzjxX0O6ZMIPZwEDtNWT8wd++g
-X-Google-Smtp-Source: AGHT+IEhKUeP+/D9FQONxFDVZjw8vfePr2AjP+B5tksegFlWs6Qyu1RK+OOhND9kOEGL7YES1M1u1A==
-X-Received: by 2002:a2e:7a04:0:b0:2ef:2eb9:5e55 with SMTP id 38308e7fff4ca-2ef2eb95ea2mr24921191fa.13.1721662778449;
-        Mon, 22 Jul 2024 08:39:38 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2920313sm117230425e9.0.2024.07.22.08.39.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 08:39:37 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/i915/dp: Make read-only array bw_gbps static const
-Date: Mon, 22 Jul 2024 16:39:37 +0100
-Message-Id: <20240722153937.574819-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1721663002; c=relaxed/simple;
+	bh=N7twLd8JKxdrxrzqJPGwvzBZv8ilEvBHRVo/IGjl5Oo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ozAXOE1Hfo02uB9wOZAtvU2bLm23vp0AyYrboPimlDY4cGlSRsWY0iADwmnxdogSUSV0W0Lhkct4danqQLD+AyRCkNq/jOOHyUUIoZhTcjWS+uzetHYnsDdgRIlDRdzW5kswKOF/vC7AQYnbnsGWM5YJd50uDZ4F+kBoZ48pE8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Lj03OggX; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721662957; x=1722267757; i=markus.elfring@web.de;
+	bh=NV1QIh4OpNLnyA+klMSBI9RWWe6ygdsL7TNoxE+cCY8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Lj03OggXuOW19o2JPicR1M309VrcPX4Uaj9fYFRv+rQQjSaEUP+29RsTGNZcS+Mv
+	 TJO24ctg0mTsc6vxbfrbDu29obvibs629sl4Jc8H6VjLjd7zx5VH/p6LteOBWTTcn
+	 UftfWoiENjhpEtF9jGHHQW7EiJggOnVty/kCAL6SEUGzN1qpE9phCs5dGTSZpkhgs
+	 r2sNIkF0TyTDWQJiNBsH0HMSlHgTLYTMjgNmHjWnUUhlBraVQsrQaG+4bzLPhNQOX
+	 ttqh8IHLTGyE5+2ug018x+HjtsvikuNjttq9s6QqY0KbFdE35xEpDp7X2OR9iV02j
+	 9VIKLPKpazbv/07kPg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MzCA5-1s9hRG357b-00yxk7; Mon, 22
+ Jul 2024 17:42:37 +0200
+Message-ID: <bceb4055-e315-4c70-a682-228cb997f86c@web.de>
+Date: Mon, 22 Jul 2024 17:42:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: make24@iscas.ac.cn, linux-spi@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Brownell <dbrownell@users.sourceforge.net>,
+ Josh Boyer <jwboyer@linux.vnet.ibm.com>, Mark Brown <broonie@kernel.org>,
+ Stefan Roese <sr@denx.de>, "Steven A. Falco" <sfalco@harris.com>
+References: <20240722141822.1052370-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH v3] spi: ppc4xx: handle irq_of_parse_and_map() errors
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240722141822.1052370-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:gIL1nlCkQT5wws30MVWgPwW8pfySJoeVltaF0YGAsoCWUQtcO44
+ qoiLS4gMT0Ltl6sUWAjIHQkEA9dlUz46lJyFOZ4iOEGQWeopk+S2esxBRfeSOTtSic65Kyl
+ XvDR6h2RYRdzkfC5v/hLrzbab4kxm2dGaGg7/IfLuopjqnfZW62h8W2Xoi2kypghM0mfDnm
+ tRCFM6MTPzNcZf+uq97ug==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:i/xHEy8h9+A=;dTzPPPtWuyy817xiO6ab0y9AM3T
+ 6hl2O1lI9QaAYIGzvLLZdxnne5wIWrmyk5YFOeClfhlW199N0fDymUyfXoMUk16cKpKybzvkJ
+ TMjnP+NBo2z1GwzL04vLkoEyAKl/imwt4qXyxUoZZfZ944r016XL/jg2tkk+72FqCtyTKMQIL
+ WKpcTug3RQFM5hUgXmWou8yYiRgfJvGWSSrX5dVHk9E1oKZgQzrHrvk69PWZS19KTxChxFee8
+ v+txs7LOAHEgBR/dXcy7E73gR9oQgD/wtw1ZPxzet4PeWRedj314HgiDuyz1ivdAKQs9nGEQH
+ JAQi7EOZl6aXmoBViVYO+qPnwJtTV/Tpg2ZryJotEMKBJSWLufmkc6nnoWWkKZBepJrMVVAaL
+ NzVi38k6OO+gnCEEHUdXbfJMXC/WuufobqH7wtY5BfqH5Pdc7tqjb/jW7W1ZdtNBoY/xgk4Ma
+ oCZ6T+CXevWnEwtGZpKKX2Qzg3srU+UH2jjJ5rZY17Mm1x5qoheYqcRXlgqX0OkuPTuGsecPx
+ SypadHBhy01hqeulKRfQ7HaoMlSAHoDyDvSF+gb5O+7I9/OZEJxYCqXd3yKWO6OfiwAkRqGVw
+ BsyqauGRz+aEDqTVJLynabu2LW+HeHJwqwGiUwpzKT18g8gYCiU80AQyZbvWKegDXZ2oVmb0k
+ NPOfrdZkr5Ajl7fc0kmxhzVvoch2VV1tanp5ahYs4ujXgmarSA2I98QIagKxsLGt/3ED5R2bd
+ rVrajkW8hyGPDq4C6BC11h/+4fQZbFm2EsY0IFHyP+rsRfhM841VkJBqY3ItBKTBgBptwtlwg
+ P0iXPhLOAnglCnOi22ktnu3w==
 
-Don't populate the read-only array bw_gbps on the stack at run time,
-instead make it static const.
+=E2=80=A6
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpu/drm/i915/display/intel_dp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Will any contributors care more for rules also according to such informati=
+on?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10#n398
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/researcher-guidelines.rst?h=3Dv6.10#n5
 
-diff --git a/drivers/gpu/drm/i915/display/intel_dp.c b/drivers/gpu/drm/i915/display/intel_dp.c
-index 59f11af3b0a1..a082ed8f5464 100644
---- a/drivers/gpu/drm/i915/display/intel_dp.c
-+++ b/drivers/gpu/drm/i915/display/intel_dp.c
-@@ -3434,7 +3434,7 @@ static void intel_dp_get_pcon_dsc_cap(struct intel_dp *intel_dp)
- 
- static int intel_dp_pcon_get_frl_mask(u8 frl_bw_mask)
- {
--	int bw_gbps[] = {9, 18, 24, 32, 40, 48};
-+	static const int bw_gbps[] = {9, 18, 24, 32, 40, 48};
- 	int i;
- 
- 	for (i = ARRAY_SIZE(bw_gbps) - 1; i >= 0; i--) {
--- 
-2.39.2
 
+=E2=80=A6
+> +++ b/drivers/spi/spi-ppc4xx.c
+> @@ -416,6 +416,9 @@ static int spi_ppc4xx_of_probe(struct platform_devic=
+e *op)
+>  	if (hw->irqnum <=3D 0)
+>  		goto free_host;
+>
+> +	if (hw->irqnum <=3D 0)
+> +		goto free_host;
+=E2=80=A6
+
+Why do you propose anyhow to add duplicate source code here?
+
+Regards,
+Markus
 
