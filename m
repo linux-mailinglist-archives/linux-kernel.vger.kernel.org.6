@@ -1,161 +1,165 @@
-Return-Path: <linux-kernel+bounces-258496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-258497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2496C9388DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:22:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCB469388DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 08:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3516281597
-	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:22:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CD221C20DD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 22 Jul 2024 06:26:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CD9E17C6B;
-	Mon, 22 Jul 2024 06:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D283B17C6C;
+	Mon, 22 Jul 2024 06:26:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Gn4f3PxT"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l65nNzRL"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B5C4C7D;
-	Mon, 22 Jul 2024 06:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC71117BA7;
+	Mon, 22 Jul 2024 06:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721629365; cv=none; b=ovyJgivRrZ01t686FrW/jVa+y1b5T9qA6QeB/NBCtKnBUoXfddRsM1CsAocYC46SAKQn4VTSiSPOZ84bIfXYkE9NJD4mreiRJbUbmUE3vqhE7qgVDK0OtCURBZHKWLRIHZU0hWCDUVi6cOM/X1K7RyDjzXZb9SmOOqXCi7uU+bM=
+	t=1721629582; cv=none; b=HnWFEMKk0QbqcKWoUJp4jMPjjAKkbspl+FvPQ1P2q3vIcyAbNlnFubI5SY8IWNGKXr5FbLdYgfqpmzG/tAyQqLl/cfbOyLhgJOpzjRBfNrbhpJSLTmo/2Uuy5iI6rwC+fDKW1jXYiRCBXjiW3GS4GOtapG23I50TgIxghkaDN34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721629365; c=relaxed/simple;
-	bh=bNc+q4Zc8RndXEm6FNdap94dUeXfeCVy2oPwT85ZZM0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VvIW5wykvb5EMmHrPlkUk770gqMs0mD4Vz4qAXKY/5FL76hU/OVZl+oUaRVSKD07ZigyzJN0nLRUS+/W4cPxW9cFaiC8uvpC1Zd1A0uAPCbWvoh9fJ+/k8TWBh4KBn5ggrSbDHTCxdWX1dwTdy+rpkuOC+stfmdSv4X+8ABY6jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Gn4f3PxT; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: c90e64f247f211efb5b96b43b535fdb4-20240722
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=bkvgIktChmzkooE5NvOvL26cQeo/bI5bJkOyPX+YUEQ=;
-	b=Gn4f3PxTqaOq/WUPUHaceJAaHs5AFeIOeYvuFtjI4+uaPinobYg4Mon4rVrPDIbMIqU+pCqGJwVFCnYzHnLBrlSCMbZ826OuP85erPuyMqLJczTbQMKI6QGMt6qESJc9KGISsJpgMY8P15MUJblVorcEmMpFRFKkbEW0rvcAV3g=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.40,REQID:fc9a14e0-da6f-4a34-b900-d253d8a460c4,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:ba885a6,CLOUDID:60819fd5-0d68-4615-a20f-01d7bd41f0bb,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_ULN,TF_CID_SPAM_SNR
-X-UUID: c90e64f247f211efb5b96b43b535fdb4-20240722
-Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
-	(envelope-from <chris.lu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1472777845; Mon, 22 Jul 2024 14:22:35 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Mon, 22 Jul 2024 14:22:35 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Mon, 22 Jul 2024 14:22:35 +0800
-From: Chris Lu <chris.lu@mediatek.com>
-To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
-	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
-CC: Sean Wang <sean.wang@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>,
-	Steve Lee <steve.lee@mediatek.com>, linux-bluetooth
-	<linux-bluetooth@vger.kernel.org>, linux-kernel
-	<linux-kernel@vger.kernel.org>, linux-mediatek
-	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
-Subject: [PATCH] Bluetooth: btmtk: Fix function-declaration build error
-Date: Mon, 22 Jul 2024 14:22:16 +0800
-Message-ID: <20240722062216.16090-1-chris.lu@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1721629582; c=relaxed/simple;
+	bh=2E488IRTbelelyapvBjmOTKnIJ3Ma9OdzspZXkZJrlo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IXJtfmr8uQd6zAl/DG68kOudaHaDeOoaibi/EO9jw7XYv/QAHfBgNHcYQbJQHm6ay1BWU/aBMxajzA1LGUrHKwKHHiB2CmdNbcXbcr42stUu2Gem/Plw8BEESixCF2IorzN2izoBY0bU5tJiMObHGvOOQjzbhM6zkks+5m/eoLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l65nNzRL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46LNrNF2009144;
+	Mon, 22 Jul 2024 06:25:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	epzHvjGfNTuW8kWBWUpAehPis3xDQaoIaU0NM0n+f38=; b=l65nNzRLrEmyaPSC
+	zlC0XogCCyj19J9HJ9R8TuN747Octzg28oBuDuHCiUeu9Djx3LD5g4i+C/9WfLm0
+	pZw6mc6oFHRW6p2vf4T/cJ2TDa/Bjf7qU3+ml0nCPTHdvWTokr/DrJhNVNSDSdJQ
+	e3bwsSM9mS5Qj8/WkkY7ECBE/upSJe2mIXPy9EEeNSeWDba+EOSlCgHxKUwnblIl
+	I7Y6LPTSpYgb4yoTJDgAZD36S8eue1VbAoZLJFgYZ37IMCeEx3dYF6NzPfkDIahG
+	5qY1INv1VI7dOcDxIK+LG1Yu10k+MFTTXnEEcH3DEat8kSpcSFcmy99odXdBZqdH
+	MScrxQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g487aubw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Jul 2024 06:25:26 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46M6PPWc012603
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Jul 2024 06:25:25 GMT
+Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 21 Jul
+ 2024 23:25:22 -0700
+Message-ID: <35e52822-a81f-4b2c-adc1-903785ce1849@quicinc.com>
+Date: Mon, 22 Jul 2024 11:55:19 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/2] misc: fastrpc: Increase unsigned PD initmem size
+Content-Language: en-US
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <quic_bkumar@quicinc.com>, <linux-kernel@vger.kernel.org>,
+        <quic_chennak@quicinc.com>, <dri-devel@lists.freedesktop.org>,
+        <arnd@arndb.de>, stable <stable@kernel.org>
+References: <20240722055437.3467900-1-quic_ekangupt@quicinc.com>
+ <20240722055437.3467900-3-quic_ekangupt@quicinc.com>
+ <2024072235-daydream-clunky-0272@gregkh>
+From: Ekansh Gupta <quic_ekangupt@quicinc.com>
+In-Reply-To: <2024072235-daydream-clunky-0272@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: g6mNA2sHTMUHVEl96SEUvXV5NRkW6U-8
+X-Proofpoint-GUID: g6mNA2sHTMUHVEl96SEUvXV5NRkW6U-8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-22_02,2024-07-18_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ suspectscore=0 phishscore=0 priorityscore=1501 mlxlogscore=998
+ malwarescore=0 adultscore=0 impostorscore=0 clxscore=1015
+ lowpriorityscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2407220048
 
-Separate out the declaration of usb related function into another
-if/else condition in btmtk.h, avoiding function-declaration issue
-happened when CONFIG_BT_HCIBTUSB was defined but CONFIG_BT_HCIBTUSB_MTK
-wasn't.
 
-'btmtk_usb_subsys_reset';
-ISO C99 and later do not support implicit
-function declarations [-Wimplicit-function-declaration]
-'alloc_mtk_intr_urb';
-ISO C99 and later do not support implicit
-function declarations [-Wimplicit-function-declaration]
-'btmtk_usb_setup';
-ISO C99 and later do not support implicit
-function declarations [-Wimplicit-function-declaration]
-'btmtk_usb_shutdown';ISO C99 and later do not support
-implicit function declarations [-Wimplicit-function-declaration]
 
-Fixes: 52828ea60dfd ("Bluetooth: btmtk: Fix btmtk.c undefined reference build error")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202407200904.hRqT3JKD-lkp@intel.com/
-Signed-off-by: Chris Lu <chris.lu@mediatek.com>
----
- drivers/bluetooth/btmtk.h | 35 ++++++++++++++++++-----------------
- 1 file changed, 18 insertions(+), 17 deletions(-)
+On 7/22/2024 11:30 AM, Greg KH wrote:
+> On Mon, Jul 22, 2024 at 11:24:37AM +0530, Ekansh Gupta wrote:
+>> For unsigned PD offloading requirement, additional memory is required
+>> because of additional static heap initialization. Without this
+>> additional memory, PD initialization would fail. Increase the initmem
+>> size by 2MB for unsigned PD initmem buffer allocation. Any additional
+>> memory sent to DSP during PD init is used as the PD heap.
+>>
+>> Fixes: 7f1f481263c3 ("misc: fastrpc: check before loading process to the DSP")
+>> Cc: stable <stable@kernel.org>
+>> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+>> ---
+>>  drivers/misc/fastrpc.c | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>
+>> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+>> index a3a5b745936e..18668b020a87 100644
+>> --- a/drivers/misc/fastrpc.c
+>> +++ b/drivers/misc/fastrpc.c
+>> @@ -40,6 +40,7 @@
+>>  #define FASTRPC_CTXID_MASK (0xFF0)
+>>  #define INIT_FILELEN_MAX (2 * 1024 * 1024)
+>>  #define FASTRPC_INITLEN_MIN (3 * 1024 * 1024)
+>> +#define FASTRPC_STATIC_HEAP_LEN (2 * 1024 * 1024)
+>>  #define INIT_FILE_NAMELEN_MAX (128)
+>>  #define FASTRPC_DEVICE_NAME	"fastrpc"
+>>  
+>> @@ -1411,8 +1412,14 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
+>>  			goto err;
+>>  	}
+>>  
+>> +	/* Allocate buffer in kernel for donating to remote process.
+>> +	 * Unsigned PD requires additional memory because of the
+> What is "PD"?
+DSP PD(protection domain) is execution environment supported by DSP.
+>
+>> +	 * additional static heap initialized within the process.
+>> +	 */
+> Why are you using networking comment style for a non-networking file?
+I observed similar style in this driver file. I will update this in proper style in the next patch.
+>
+>>  	memlen = ALIGN(max(FASTRPC_INITLEN_MIN, (int)init.filelen * 4),
+>>  		       1024 * 1024);
+>> +	if (unsigned_module)
+>> +		memlen += FASTRPC_STATIC_HEAP_LEN;
+> I don't understand, why is "static heap length" being added for
+> something that is "unsigned"?  Why isn't this just "SIGNING FREE SPACE"
+> or something like that?
+The difference between signed PD and unsigned PD is:
+Signed PD: Available on all DSPs and requires that the shared objects being loaded in the PD
+are signed with a digital signature.
 
-diff --git a/drivers/bluetooth/btmtk.h b/drivers/bluetooth/btmtk.h
-index 6fc69cd8636b..fcc44800cf29 100644
---- a/drivers/bluetooth/btmtk.h
-+++ b/drivers/bluetooth/btmtk.h
-@@ -201,23 +201,6 @@ int btmtk_process_coredump(struct hci_dev *hdev, struct sk_buff *skb);
- 
- void btmtk_fw_get_filename(char *buf, size_t size, u32 dev_id, u32 fw_ver,
- 			   u32 fw_flavor);
--
--#if IS_ENABLED(CONFIG_BT_HCIBTUSB_MTK)
--int btmtk_usb_subsys_reset(struct hci_dev *hdev, u32 dev_id);
--
--int btmtk_usb_recv_acl(struct hci_dev *hdev, struct sk_buff *skb);
--
--struct urb *alloc_mtk_intr_urb(struct hci_dev *hdev, struct sk_buff *skb,
--			       usb_complete_t tx_complete);
--
--int btmtk_usb_resume(struct hci_dev *hdev);
--
--int btmtk_usb_suspend(struct hci_dev *hdev);
--
--int btmtk_usb_setup(struct hci_dev *hdev);
--
--int btmtk_usb_shutdown(struct hci_dev *hdev);
--#endif
- #else
- 
- static inline int btmtk_set_bdaddr(struct hci_dev *hdev,
-@@ -259,7 +242,25 @@ static inline void btmtk_fw_get_filename(char *buf, size_t size, u32 dev_id,
- 					 u32 fw_ver, u32 fw_flavor)
- {
- }
-+#endif
-+
-+/* USB interface related functions */
-+#if IS_ENABLED(CONFIG_BT_HCIBTUSB_MTK)
-+int btmtk_usb_subsys_reset(struct hci_dev *hdev, u32 dev_id);
-+
-+int btmtk_usb_recv_acl(struct hci_dev *hdev, struct sk_buff *skb);
-+
-+struct urb *alloc_mtk_intr_urb(struct hci_dev *hdev, struct sk_buff *skb,
-+			       usb_complete_t tx_complete);
- 
-+int btmtk_usb_resume(struct hci_dev *hdev);
-+
-+int btmtk_usb_suspend(struct hci_dev *hdev);
-+
-+int btmtk_usb_setup(struct hci_dev *hdev);
-+
-+int btmtk_usb_shutdown(struct hci_dev *hdev);
-+#else
- static inline int btmtk_usb_subsys_reset(struct hci_dev *hdev, u32 dev_id)
- {
- 	return -EOPNOTSUPP;
--- 
-2.18.0
+Unsigned PD: Sandboxed low-rights process that allows signature-free shared objects to run on
+CDSP.
+
+For unsigned PD there are some additional statically initialized heap for which additional memory
+is required. I'll try to come up with a better name.
+
+Thanks for the review.
+
+--Ekansh
+>
+> thanks,
+>
+> greg "naming is hard" k-h
+>
 
 
