@@ -1,114 +1,122 @@
-Return-Path: <linux-kernel+bounces-259562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19497939871
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 04:55:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0112939879
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 04:57:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE840282AF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 02:55:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B56A282D6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 02:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBC813B7A1;
-	Tue, 23 Jul 2024 02:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C08813BAFE;
+	Tue, 23 Jul 2024 02:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ow9kfqcZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUBbTU7f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383C72F32;
-	Tue, 23 Jul 2024 02:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11B51DA22;
+	Tue, 23 Jul 2024 02:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721703314; cv=none; b=K9y5IvDl0NLmOPzQN+qYdwndyo0O4Z7qlZ36twj3SOL1ZSTyyEK7arcPiU5dVek5W013BvULvmwHTfl4zs0ZJ9CkpoXrIdXHFNZu8FN7H+/9CCInBjWAJPHFRVGYVhLCjAvQWLJbi9XXmUvH8jL/Xi7SF46E+aVwkmplzXes+5Q=
+	t=1721703453; cv=none; b=RrnIiobd8dVXmFHHiyEAeHVy8Nk1dv3i4anrL4Ua3hbUO4Tx61oH8k2wqTkMpnd7pD4TLM78PrbBxM7lziO8gwub7ZOu7+tmLtU0mWnhiz0SD7tBkfmFJEVuyXHjdCfNbt1KMtWDxA0slj5NAFRPMSdydy9bO3aWr9YxVa1Qsio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721703314; c=relaxed/simple;
-	bh=r5Lkl9j3yYg2QYkDT2TRuuo/egzDRxDmqxTZO5LurjE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ql/leSrvYPPyT+qAWXVxVuRQ+xGn4khEFo4aoco//uv2EwKqRtafgGGKWTNMFRVdVJIY8x7/uL3ink5E/IzIrd8elymwp99FdlJ+EkeBoKwPcTCFVuiXJMGXNxSJdp78Tp6UDRuCZhfkB3a/cEGiF0IMxAvldAYX0NsA8Xk+MuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ow9kfqcZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEA8EC4AF0F;
-	Tue, 23 Jul 2024 02:55:13 +0000 (UTC)
+	s=arc-20240116; t=1721703453; c=relaxed/simple;
+	bh=xHGeQVmisuPGHf8llb2dE/jfNDnDq1Ltx01L+xpb6MU=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=d0a82gLmoLDvyKYF1RIBK/rckWxUyeUV/f5GK8YSBA0lmKWDSswGbIosZMH6n/1mU4xQIsCUx0JIqvY8ruFa+djFyoyqkaGoOIm8NObowPgTRVQVmXpdxoK5D1U7BtYF15IQsoA0Mjwx2Uz111IstI4FFK0TJPzROmci3J/QPY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tUBbTU7f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AFDBC116B1;
+	Tue, 23 Jul 2024 02:57:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721703313;
-	bh=r5Lkl9j3yYg2QYkDT2TRuuo/egzDRxDmqxTZO5LurjE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Ow9kfqcZmSumYdrLkrtcndoTHZUPe2tajWdsSU+1mNaXPXi1Pzp+HoFHpxJ1UmrFk
-	 JoUN6O5ZqX+LYvqxVCB/7Qu8ScLdHTXwTl6eXuFsSNqOiVmPvuV64Qikw9sq6K2Z1Y
-	 V3FoV2P96jGKziDmyVF08fdsUPjAJjcA8OOb5GUXaPLN+0X5u0sAPcDbmUNU6Cyxb7
-	 7XAAsXxy1L5ksKYVn+2svSb5ETa6lXAjx37nJOVAmuASpu4SquKr7hrIt/nn8xjsya
-	 dwP+YRSR7qWe5zcttyAFdDPpKKUXpI1JXl1UTeO8H5pJTgJiFkSiHLD+29aViW/fLZ
-	 c1H8C7Pe7Um0Q==
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5a2ffc34722so1150986a12.0;
-        Mon, 22 Jul 2024 19:55:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVIeVPEewRjFRctsJsnBCaBKW4tETlydvvm1GDtJ2ECFW96RaVdVRrkJRtZfU+wI5up1xcxAQrEadprXVQegJh/AOqKQm3oGlP1G6FM3b6Qt8jQHJfMD6uxFLHi+mbg3c9k
-X-Gm-Message-State: AOJu0Yz4b8sPXXz/9CTX7PSYcaDKv1xgSLWbOhuj/vVXW5mah/zm4ctd
-	DPsoaPasqO5yeElcPApg1AAdTYfzSXGJoM6Nwe7hG+HwDwM/s7LwuyD+oQszwsJpOld1ARd0qiu
-	WwM6438b4rzm095eBRYaLJsrP/ak=
-X-Google-Smtp-Source: AGHT+IGqqU2ONkKWwep0vC+pn7i7fB0FIRv7XrVoM2pXjMr3n2EucMyLpYljZbVnu1O8EX67qlWSob5H9bd4zyAKpxA=
-X-Received: by 2002:a50:8706:0:b0:57d:3df:ba2d with SMTP id
- 4fb4d7f45d1cf-5a99ca4d46cmr713090a12.2.1721703312488; Mon, 22 Jul 2024
- 19:55:12 -0700 (PDT)
+	s=k20201202; t=1721703452;
+	bh=xHGeQVmisuPGHf8llb2dE/jfNDnDq1Ltx01L+xpb6MU=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=tUBbTU7f5JZX0q12kG5PmR7igIGaPso3qx3LzYX5IZdHycEtpUjNQ2e4DqWKiRirc
+	 t4XOhW4LfRftgeMqqiYZdN2yk1pXJbpjFbmZcj0X5+gDyd9qxLvQBP4j469IT1f5Rd
+	 oTCMh6PS2uwbxdOIFK6ZHY3oR1r2ii8qWru0ntiSifOOkUMo/ao9cAGgln5imM0b/f
+	 AuX+cvLOfqYZp1De0Fws5E/QVe+sHF0AFRH5WhcT/qMWDi0jF+BmalCz/aYqJ0OoOh
+	 2exkBj7qIbCmfcbfL8LeONofnfqZiE7UjxMlx+yRZuaVD1cie7ApUyBB1cOiCzrwu+
+	 A3Gaf8Woi+YNw==
+Date: Mon, 22 Jul 2024 20:57:30 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <09A6BAA84F3EF573+20240722102624.293359-1-wangyuli@uniontech.com> <3bf88ffb-c57b-a881-5a7a-78567e048ae2@loongson.cn>
-In-Reply-To: <3bf88ffb-c57b-a881-5a7a-78567e048ae2@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 23 Jul 2024 10:55:00 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H7N8J-F4FRLZmSY4=uHo2DhG_pB-zMHCeGuSpx22_SGCQ@mail.gmail.com>
-Message-ID: <CAAhV-H7N8J-F4FRLZmSY4=uHo2DhG_pB-zMHCeGuSpx22_SGCQ@mail.gmail.com>
-Subject: Re: [PATCH] KVM: Loongarch: remove unnecessary definition of KVM_PRIVATE_MEM_SLOTS
-To: maobibo <maobibo@loongson.cn>
-Cc: WangYuli <wangyuli@uniontech.com>, zhaotianrui@loongson.cn, kernel@xen0n.name, 
-	kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	pbonzini@redhat.com, chao.p.peng@linux.intel.com, 
-	Wentao Guan <guanwentao@uniontech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Abel Vesa <abel.vesa@linaro.org>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Sibi Sankar <quic_sibis@quicinc.com>, 
+ Rajendra Nayak <quic_rjendra@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>
+In-Reply-To: <20240719131722.8343-1-johan+linaro@kernel.org>
+References: <20240719131722.8343-1-johan+linaro@kernel.org>
+Message-Id: <172170324360.205121.298903694803259916.robh@kernel.org>
+Subject: Re: [PATCH 0/7] arm64: dts: qcom: x1e80100: PCIe fixes and CRD
+ modem support
 
-Queued, thanks.
 
-On Tue, Jul 23, 2024 at 9:30=E2=80=AFAM maobibo <maobibo@loongson.cn> wrote=
-:
->
->
->
-> On 2024/7/22 =E4=B8=8B=E5=8D=886:26, WangYuli wrote:
-> > "KVM_PRIVATE_MEM_SLOTS" is renamed as "KVM_INTERNAL_MEM_SLOTS".
-> >
-> > KVM_PRIVATE_MEM_SLOTS defaults to zero, so it is not necessary to
-> > define it in Loongarch's asm/kvm_host.h.
-> >
-> > Link: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/=
-commit/?id=3Dbdd1c37a315bc50ab14066c4852bc8dcf070451e
-> > Link: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/=
-commit/?id=3Db075450868dbc0950f0942617f222eeb989cad10
-> > Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
-> > Signed-off-by: WangYuli <wangyuli@uniontech.com>
-> > ---
-> >   arch/loongarch/include/asm/kvm_host.h | 2 --
-> >   1 file changed, 2 deletions(-)
-> >
-> > diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/inc=
-lude/asm/kvm_host.h
-> > index fe38f98eeff8..ce3d36a890aa 100644
-> > --- a/arch/loongarch/include/asm/kvm_host.h
-> > +++ b/arch/loongarch/include/asm/kvm_host.h
-> > @@ -26,8 +26,6 @@
-> >
-> >   #define KVM_MAX_VCPUS                       256
-> >   #define KVM_MAX_CPUCFG_REGS         21
-> > -/* memory slots that does not exposed to userspace */
-> > -#define KVM_PRIVATE_MEM_SLOTS                0
-> >
-> >   #define KVM_HALT_POLL_NS_DEFAULT    500000
-> >   #define KVM_REQ_TLB_FLUSH_GPA               KVM_ARCH_REQ(0)
-> >
-> Reviewed-by: Bibo Mao <maobibo@loongson.cn>
->
+On Fri, 19 Jul 2024 15:17:15 +0200, Johan Hovold wrote:
+> This series fixes some issues with the current x1e80100 PCIe support,
+> adds the PCIe5 nodes and enables the modem on the CRD.
+> 
+> The fixes should go into 6.11, but the modem support depends on them so
+> I decided to send everything in one series.
+> 
+> Johan
+> 
+> 
+> Johan Hovold (7):
+>   arm64: dts: qcom: x1e80100-crd: fix PCIe4 PHY supply
+>   arm64: dts: qcom: x1e80100: fix PCIe domain numbers
+>   arm64: dts: qcom: x1e80100-crd: fix up PCIe6a pinctrl node
+>   arm64: dts: qcom: x1e80100-crd: disable PCIe6A perst pull down
+>   arm64: dts: qcom: x1e80100-crd: fix missing PCIe4 gpios
+>   arm64: dts: qcom: x1e80100: add PCIe5 nodes
+>   arm64: dts: qcom: x1e80100-crd: enable SDX65 modem
+> 
+>  arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 110 +++++++++++++++++--
+>  arch/arm64/boot/dts/qcom/x1e80100.dtsi    | 125 +++++++++++++++++++++-
+>  2 files changed, 224 insertions(+), 11 deletions(-)
+> 
+> --
+> 2.44.2
+> 
+> 
+> 
+
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y qcom/x1e80100-crd.dtb' for 20240719131722.8343-1-johan+linaro@kernel.org:
+
+arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: pci@1c00000: Unevaluated properties are not allowed ('vddpe-3v3-supply' was unexpected)
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
+
+
+
+
+
 
