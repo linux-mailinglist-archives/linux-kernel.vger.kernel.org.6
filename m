@@ -1,210 +1,180 @@
-Return-Path: <linux-kernel+bounces-259720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F08939BF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:50:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91209939BFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:53:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B8E01F22779
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:50:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADA9C1C2182B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B76C14B949;
-	Tue, 23 Jul 2024 07:50:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B8B14B94F;
+	Tue, 23 Jul 2024 07:53:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="eXbpiEoo"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b="QNRzbf+W"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D42B14B94B
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A9213C672
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721721018; cv=none; b=Ywohy+VmNiS59R7762aSfU57niw8jd+9InKbUuxkHMrj+F82SGvBH8csKxtKWSefz9slxlF1RPHJKvAvtGQyKMflsJWY1XSkPIp6oATlsbYdZWKPmPTrFfuXUezmGbSXSgUtz5+nYWZfSoWsUQDmxdJDRymz9fvvEI0nFcRPp3Q=
+	t=1721721184; cv=none; b=akbk66tAmNNcfGvx1ddqc7E51SrW0aEXTZs1L9pLd+qj++vA2C1D1vaZbc9s+wY2lre7wXKdlCcY5Z7X1fDLjhxD9Ix5vqSeBjQ1o/rJgIqX3SnWvHHQVQPiZ453q5ob0gmQgP27XYRTw01slXXXHM2GYfmIxtYJXbj9MLIxMgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721721018; c=relaxed/simple;
-	bh=aba1Lc4JrTPRKQU7uiIA6GUv1lNoMjp/vUTkLtk3sUU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UNXM7pu2KNK3wyhNeAB6vrVZ0CLrM6XZfHPujJFo+ubcXZZGiXx3ju+f1ID9ffQkqtZUlc9yfh2+7F6V5/TYr2Dpr4imr4qY4zPphsHcGIUHslJmx/Ad/kb/shAiMD0UeVCNnOkivi5OTpz/IJaO1Zte/3tCdf6uZUBNrDkQlg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=eXbpiEoo; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-427d2cc1c4eso36552335e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 00:50:16 -0700 (PDT)
+	s=arc-20240116; t=1721721184; c=relaxed/simple;
+	bh=NqwN1ivfdf//amCWTxGUXKkycY0A2iJVKDOTkVP/SIg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j+v2EavIETe4sWiXi6zR2YeeEFe668cQ1qKlKATgwyK87mVf9psuZ7qr2gSdUYNuC6xAphuCOIzwKYEf+zkJMGlXxGjVAHYyJMADGCve9iAibYoRY5sI0iw5FtQPsJJNzB25kZvxRBRwk3B2cOLHh3vfcqdqAnPkIMJbDCxTU7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=none smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b=QNRzbf+W; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ursulin.net
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-427db004e36so23817335e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 00:53:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721721015; x=1722325815; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AHbbiSpbwBUG2vvtlGIUjQprGr8z88fyXfa4wfrh8N0=;
-        b=eXbpiEoodIZmm2jeuD9+jMvv4DBQDo6HNOExcGS+d1KcZGjkP3DWwBVWlZWWyQwaNY
-         KJitRVMkC0fkRcj0TEBQVqTb2gRcyM14vWlrZ3ujWj/9oIkvV5pVq3udkxzE5E6pyZlu
-         FDcvHeWN9hEmJgsp0wtmhGqAcUvwExuDNiZosDdqcMqrn1VNeo5oSqaGpseYCnmHEHpJ
-         ZSLGK9UwajNrIVkVzZ7QAbgWhhqWrNNXABnoYwbrIVgR0ucIRQauK6m66VQhT4GlixOE
-         K2mxWKMd4McKVIoTuMmMejn048bpOo64Bt7/mSt24QQqhM9HcUXGFHVvxzoq+XlgJ8br
-         LOXw==
+        d=ursulin-net.20230601.gappssmtp.com; s=20230601; t=1721721179; x=1722325979; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NSxFHfDFN+MiVLSyULOWbYjXLDYVoJ0fH1mNtWGCU7I=;
+        b=QNRzbf+Wvhb2Ejqc/k0VIJvDzGJ5e87p18UpsSU7bS/sRE3He2VpXY+1cBOhoN8yKy
+         cqNuxVgACP+e6hF+UgRev6c3ZkhPgaZmNXySZGK86Tg++2vtvHLzu6gxNaLLFXcNpx71
+         IzKCPvEzzJt1KT8rxfS6PlnDJESGh2MIbwv29fYmhPlMtzxvvr9nEdTWzF6bqKw8fmYo
+         GjJJ6g41z18WQM88G2DsZPavFFWuwU3RFxdRZeLpot1enRJldJUtWfKKoSRYoJpn5UoC
+         Mp9cfzOpmPzZG71UGP5PlGLsqhSl6KaGOEMUiXzRs5SIjq7hIEkm3zePGJnaaaS8x7IS
+         s0Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721721015; x=1722325815;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AHbbiSpbwBUG2vvtlGIUjQprGr8z88fyXfa4wfrh8N0=;
-        b=aXVMhFoebQJOSnVNVJ0OW5eUcB8Xs6tkxxt93HEOWH6t/wulx2YzkjbwEtABrPAFAj
-         ihqo4oRBfN2ZirnrUEUzGJz7iQ6EraexhURnI5ZkviQx+yZj7RtCxgAkctJ0MV9dfABv
-         k6LcRhx1WVAGBpn438L+8no9xR5OtPiSytvRTPyjFoHxXF5gMiZ6PhPDt0F8IfjAQlly
-         r70BslIU/1E8BmJP3HavsKNjz3WzOCKRtVOAOm5GnlgUCC0h2bDsn3VzS9mRsp10f/zz
-         Ob3yoLQjfPrkS7Vw59IQ6LPrqSfQlR4EL18a+nD7tmlLnR5XFoB/k8Nr62FqTCqeND1f
-         tHlw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+fsCpofPZUJLKVL33ZWl3aY1qKjC+IbGgxmS5gE5bj0E88vgqk8eqZfSCNLfuJ9ORV9vNnrlcZR3f9OXJcrG/glD7TWnYGJvQxo7V
-X-Gm-Message-State: AOJu0Yx5tkaArc0Te3a0O8KDcfbeKY6dijiDN5dqKYAEDbrg5y/hCSBO
-	HFOtBrLSM0aM2MN5wnaak6AU35KrWZgcjbIi/h77FDNAiZz1Iee5pw/m4txmqCw=
-X-Google-Smtp-Source: AGHT+IFEa0dYyhrMKUpXQUIthirOp4aQ1GbTQq/jTNpcnXJtqU5/ALKEJJJtG0qMv9pXImiM03usdA==
-X-Received: by 2002:a05:600c:3ba4:b0:426:5dd0:a1ee with SMTP id 5b1f17b1804b1-427ecfce9c9mr14968095e9.2.1721721014618;
-        Tue, 23 Jul 2024 00:50:14 -0700 (PDT)
-Received: from localhost (109-81-94-157.rct.o2.cz. [109.81.94.157])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a9466bsm187338875e9.41.2024.07.23.00.50.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 00:50:14 -0700 (PDT)
-Date: Tue, 23 Jul 2024 09:50:13 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: cl@linux.com, penberg@kernel.org, rientjes@google.com,
-	iamjoonsoo.kim@lge.com, akpm@linux-foundation.org, vbabka@suse.cz,
-	roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, urezki@gmail.com,
-	hch@infradead.org, kees@kernel.org, ojeda@kernel.org,
-	wedsonaf@gmail.com, mpe@ellerman.id.au, chandan.babu@oracle.com,
-	christian.koenig@amd.com, maz@kernel.org, oliver.upton@linux.dev,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] mm: kvmalloc: align kvrealloc() with krealloc()
-Message-ID: <Zp9gtelmvzN5tfpS@tiehlicka>
-References: <20240722163111.4766-1-dakr@kernel.org>
- <20240722163111.4766-3-dakr@kernel.org>
+        d=1e100.net; s=20230601; t=1721721179; x=1722325979;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NSxFHfDFN+MiVLSyULOWbYjXLDYVoJ0fH1mNtWGCU7I=;
+        b=e2EVL3/05UmfuvKz2YY8t4GesaXxhmjkZk2ywf6CpAqtSoptK2x3BMvKrqXatW1QxN
+         R6fy0JqLjApMzZ3MVRdondTQUir/Ry8KhtvrGZgLyW6LKAeS7jI3XRek7uul70p9fGrh
+         +JxB3ThqMA0oRm4Xpk3IGcBbmOEH1JWhVKhGC0j78JAVXr5tsOsd9c4tBhlgjOopvKD+
+         WN+RmYLmXaS611NRGCDOUlvmn7LuppJh4iUBJJAleQ3JbGAenBXV0mxxwstCQFmwl2sl
+         eWbrkABdxxXe0LFgVUBUWg1R6xV9CbEJ/7qCbPHWKiQ+RcQ62M6DuaGa7y1zcIr6J2g9
+         16RA==
+X-Forwarded-Encrypted: i=1; AJvYcCUN/0l0GiqOP5Io6bup7g2gtaISjwuV1MzluAaUxuVX7is9fCzinLhDVG565BDUOa/ESc5Ru3XJw2dEs/b+Yu9rfqhM+ID5BXizVkfT
+X-Gm-Message-State: AOJu0YxpSWw3ULUiQnbp2vYPqEWWE3GyD1w/NSZteG3sZN9fIO4lT07E
+	NcujeqYsKq4IvlsCeQg9nwhl5znGqXGJZOuV2D3PqO42+kPJmE0XUqmDJa+fRmZQwTc4FybVCwz
+	N
+X-Google-Smtp-Source: AGHT+IE9Cvh25hfaQz/Gp/ZdOfzixVQt2BVNg/bV++7oWQiR7JI21E3NokuVP3ZF00d3/6mUezvKcQ==
+X-Received: by 2002:a05:600c:3c94:b0:426:629f:1556 with SMTP id 5b1f17b1804b1-427dc56476amr60061065e9.31.1721721179228;
+        Tue, 23 Jul 2024 00:52:59 -0700 (PDT)
+Received: from [192.168.0.101] ([84.69.19.168])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a7218esm181620735e9.25.2024.07.23.00.52.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jul 2024 00:52:58 -0700 (PDT)
+Message-ID: <4cd8c6c7-bd15-4663-bb0b-815904560c90@ursulin.net>
+Date: Tue, 23 Jul 2024 08:52:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240722163111.4766-3-dakr@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/7] drm/i915/pmu: Drop is_igp()
+To: Lucas De Marchi <lucas.demarchi@intel.com>,
+ intel-gfx@lists.freedesktop.org, linux-perf-users@vger.kernel.org
+Cc: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+ dri-devel@lists.freedesktop.org, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20240722210648.80892-1-lucas.demarchi@intel.com>
+ <20240722210648.80892-5-lucas.demarchi@intel.com>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tursulin@ursulin.net>
+In-Reply-To: <20240722210648.80892-5-lucas.demarchi@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon 22-07-24 18:29:24, Danilo Krummrich wrote:
-> Besides the obvious (and desired) difference between krealloc() and
-> kvrealloc(), there is some inconsistency in their function signatures
-> and behavior:
+
+On 22/07/2024 22:06, Lucas De Marchi wrote:
+> There's no reason to hardcode checking for integrated graphics on a
+> specific pci slot. That information is already available per platform an
+> can be checked with IS_DGFX().
+
+Hmm probably reason was this, added is_igp:
+
+commit 05488673a4d41383f9dd537f298e525e6b00fb93
+Author:     Tvrtko Ursulin <tursulin@ursulin.net>
+AuthorDate: Wed Oct 16 10:38:02 2019 +0100
+Commit:     Tvrtko Ursulin <tursulin@ursulin.net>
+CommitDate: Thu Oct 17 10:50:47 2019 +0100
+
+     drm/i915/pmu: Support multiple GPUs
+
+Added IS_DGFX:
+
+commit dc90fe3fd219c7693617ba09a9467e4aadc2e039
+Author:     José Roberto de Souza <jose.souza@intel.com>
+AuthorDate: Thu Oct 24 12:51:19 2019 -0700
+Commit:     Lucas De Marchi <lucas.demarchi@intel.com>
+CommitDate: Fri Oct 25 13:53:51 2019 -0700
+
+     drm/i915: Add is_dgfx to device info
+
+So innocently arrived just a bit before.
+
+Regards,
+
+Tvrtko
+
+> Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
+> ---
+>   drivers/gpu/drm/i915/i915_pmu.c | 17 +++--------------
+>   1 file changed, 3 insertions(+), 14 deletions(-)
 > 
->  - krealloc() frees the memory when the requested size is zero, whereas
->    kvrealloc() simply returns a pointer to the existing allocation.
-> 
->  - krealloc() behaves like kmalloc() if a NULL pointer is passed, whereas
->    kvrealloc() does not accept a NULL pointer at all and, if passed,
->    would fault instead.
-> 
->  - krealloc() is self-contained, whereas kvrealloc() relies on the caller
->    to provide the size of the previous allocation.
-> 
-> Inconsistent behavior throughout allocation APIs is error prone, hence make
-> kvrealloc() behave like krealloc(), which seems superior in all mentioned
-> aspects.
-
-I completely agree with this. Fortunately the number of existing callers
-is small and none of them really seem to depend on the current behavior
-in that aspect.
- 
-> Besides that, implementing kvrealloc() by making use of krealloc() and
-> vrealloc() provides oppertunities to grow (and shrink) allocations more
-> efficiently. For instance, vrealloc() can be optimized to allocate and
-> map additional pages to grow the allocation or unmap and free unused
-> pages to shrink the allocation.
-
-This seems like a change that is independent on the above and should be
-a patch on its own.
-
-[...]
-
-> diff --git a/mm/util.c b/mm/util.c
-> index bc488f0121a7..0ff5898cc6de 100644
-> --- a/mm/util.c
-> +++ b/mm/util.c
-> @@ -608,6 +608,28 @@ unsigned long vm_mmap(struct file *file, unsigned long addr,
->  }
->  EXPORT_SYMBOL(vm_mmap);
->  
-> +static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
-
-This seems like a generally useful helper which it is not. I would call
-it something like __kvmalloc_gfp_adjust or something similar so that it is
-clear that this is just a helper to adjust gfp flag for slab allocator
-path
-
-[...]
-> -void *kvrealloc_noprof(const void *p, size_t oldsize, size_t newsize, gfp_t flags)
-> +/**
-> + * kvrealloc - reallocate memory; contents remain unchanged
-> + * @p: object to reallocate memory for
-> + * @size: the size to reallocate
-> + * @flags: the flags for the page level allocator
-> + *
-> + * The contents of the object pointed to are preserved up to the lesser of the
-> + * new and old size (__GFP_ZERO flag is effectively ignored).
-> + *
-> + * If @p is %NULL, kvrealloc() behaves exactly like kvmalloc(). If @size is 0
-> + * and @p is not a %NULL pointer, the object pointed to is freed.
-> + *
-> + * Return: pointer to the allocated memory or %NULL in case of error
-> + */
-> +void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
->  {
-> -	void *newp;
-> +	void *n;
-> +
-
-	if (!size && p) {
-		kvfree(p);
-		return NULL;
-	}
-
-would make this code flow slightly easier to read because the freeing
-path would be shared for all compbinations IMO.
-
-> +	if (is_vmalloc_addr(p))
-> +		return vrealloc_noprof(p, size, flags);
-> +
-> +	n = krealloc_noprof(p, size, kmalloc_gfp_adjust(flags, size));
-> +	if (!n) {
-> +		/* We failed to krealloc(), fall back to kvmalloc(). */
-> +		n = kvmalloc_noprof(size, flags);
-
-Why don't you simply use vrealloc_noprof here?
-
-> +		if (!n)
-> +			return NULL;
-> +
-> +		if (p) {
-> +			/* We already know that `p` is not a vmalloc address. */
-> +			memcpy(n, p, ksize(p));
-> +			kfree(p);
-> +		}
-> +	}
->  
-> -	if (oldsize >= newsize)
-> -		return (void *)p;
-> -	newp = kvmalloc_noprof(newsize, flags);
-> -	if (!newp)
-> -		return NULL;
-> -	memcpy(newp, p, oldsize);
-> -	kvfree(p);
-> -	return newp;
-> +	return n;
->  }
->  EXPORT_SYMBOL(kvrealloc_noprof);
->  
-> -- 
-> 2.45.2
-
--- 
-Michal Hocko
-SUSE Labs
+> diff --git a/drivers/gpu/drm/i915/i915_pmu.c b/drivers/gpu/drm/i915/i915_pmu.c
+> index 3a8bd11b87e7..b5d14dd318e4 100644
+> --- a/drivers/gpu/drm/i915/i915_pmu.c
+> +++ b/drivers/gpu/drm/i915/i915_pmu.c
+> @@ -1235,17 +1235,6 @@ static void i915_pmu_unregister_cpuhp_state(struct i915_pmu *pmu)
+>   	cpuhp_state_remove_instance(cpuhp_slot, &pmu->cpuhp.node);
+>   }
+>   
+> -static bool is_igp(struct drm_i915_private *i915)
+> -{
+> -	struct pci_dev *pdev = to_pci_dev(i915->drm.dev);
+> -
+> -	/* IGP is 0000:00:02.0 */
+> -	return pci_domain_nr(pdev->bus) == 0 &&
+> -	       pdev->bus->number == 0 &&
+> -	       PCI_SLOT(pdev->devfn) == 2 &&
+> -	       PCI_FUNC(pdev->devfn) == 0;
+> -}
+> -
+>   void i915_pmu_register(struct drm_i915_private *i915)
+>   {
+>   	struct i915_pmu *pmu = &i915->pmu;
+> @@ -1269,7 +1258,7 @@ void i915_pmu_register(struct drm_i915_private *i915)
+>   	pmu->cpuhp.cpu = -1;
+>   	init_rc6(pmu);
+>   
+> -	if (!is_igp(i915)) {
+> +	if (IS_DGFX(i915)) {
+>   		pmu->name = kasprintf(GFP_KERNEL,
+>   				      "i915_%s",
+>   				      dev_name(i915->drm.dev));
+> @@ -1323,7 +1312,7 @@ void i915_pmu_register(struct drm_i915_private *i915)
+>   	pmu->base.event_init = NULL;
+>   	free_event_attributes(pmu);
+>   err_name:
+> -	if (!is_igp(i915))
+> +	if (IS_DGFX(i915))
+>   		kfree(pmu->name);
+>   err:
+>   	drm_notice(&i915->drm, "Failed to register PMU!\n");
+> @@ -1351,7 +1340,7 @@ void i915_pmu_unregister(struct drm_i915_private *i915)
+>   	perf_pmu_unregister(&pmu->base);
+>   	pmu->base.event_init = NULL;
+>   	kfree(pmu->base.attr_groups);
+> -	if (!is_igp(i915))
+> +	if (IS_DGFX(i915))
+>   		kfree(pmu->name);
+>   	free_event_attributes(pmu);
+>   }
 
