@@ -1,151 +1,169 @@
-Return-Path: <linux-kernel+bounces-260047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0666993A218
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:58:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1BCB93A21D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:58:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0972283CE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:58:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 212801C226A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D3A15382C;
-	Tue, 23 Jul 2024 13:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F99B15359A;
+	Tue, 23 Jul 2024 13:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Oc95XPwe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="czeE24oU"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD1F153824
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 13:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7237313698E;
+	Tue, 23 Jul 2024 13:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721743082; cv=none; b=UDJFVBB+BjmsE1z7/LdEXqBIvd7QoaQMjtPC9QSrwXYwEE+xHa1VBqzbvTKtL6EhJaaif5LSeYeDHUVsF1S+h5wSMwZoEVZT7sdlmZEnlzyOzwH549WPl6DplhkKc35aH80xT/Ad4pyS8dBw5/OyK0QSVsEZ7MJFqBk8Qf9lxAE=
+	t=1721743083; cv=none; b=RcGQmgj3Q/HoOeWzf5DvWsSBMqjAgGZTYss96UpZdw7H8y5eKkMIeqHft2tmfS6I3Y57yNo/mS0kBVmP6BZXnKvv5XELmE166IVigCwewjA/ybDFbDjttQXp0m87GIa9QW0Te3MevJcx4UkxefzZkhrIbs3sYjaOBJ3krgeD6hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721743082; c=relaxed/simple;
-	bh=IsvV5SGoXcqwNf5yP/OJMU1KbdYOYdNfrEYOx3PtXMI=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=LTzWDDqaxp8NtFxKj+e32IKN47v4pWAK/PZH5nA7A4yk/jRE2vsEaQ3+c+0AVBDHWgHDy0DEwoBAy8/nbNwsRdz2KZiHlBEDwi6kDTvDqxuiskpD6nHYF00Y8dM+xpR7X452vKNYO17HuXhQ4Pw1zKjDnXBDSjrzOOCCaDlukDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Oc95XPwe; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721743078;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+mD1ewwJQ3UoqJtaGN7mRy1QcxELMUlyTG0lTtPiLg4=;
-	b=Oc95XPweNthRKCbPcl+WBLKSUMtf318KAeWOrPuxUn2sjEONtLXIygM9ncPg3tVMp7GUUI
-	Yyd7GtV/THgx9T2jyY9qYgo3TW5bdudTrvzjntED8PftU0ctuNoJLAiBnDGk3mVgBoo3Rx
-	hDouP5eWhYmDNUWJ2Zqqzj/oT41huCg=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-588-poFk0CaNMfWaJRfm_9ZalA-1; Tue,
- 23 Jul 2024 09:57:54 -0400
-X-MC-Unique: poFk0CaNMfWaJRfm_9ZalA-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E72261955D5D;
-	Tue, 23 Jul 2024 13:57:50 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.216])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8A77119560B2;
-	Tue, 23 Jul 2024 13:57:47 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20240723104533.mznf3svde36w6izp@quack3>
-References: <20240723104533.mznf3svde36w6izp@quack3> <2136178.1721725194@warthog.procyon.org.uk>
-To: Jan Kara <jack@suse.cz>
-Cc: dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
-    Christian Brauner <brauner@kernel.org>,
-    Jeff Layton <jlayton@kernel.org>, Gao Xiang <xiang@kernel.org>,
-    Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
-    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfs: Fix potential circular locking through setxattr() and removexattr()
+	s=arc-20240116; t=1721743083; c=relaxed/simple;
+	bh=Tqg/mRP33sghqMs/WD/CVM2Fdu+Ue+osODMI05da5S0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MVMB6asc7eklRJhCVfaIRgugvh7R696Qu+2fKcCljqeI6Ea+syEWK0kdgYFGob53ItK5GGSXlWxb8X/6pG7zipcAXviL9OzNHdCUU/4jTm9VVUrhnir3vAcpwd2nxw19EDWff728jT97pEz2aB1WsJisoR5zDA3vy/kXkntvjH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=czeE24oU; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2cb81c0ecb4so3098490a91.0;
+        Tue, 23 Jul 2024 06:58:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721743081; x=1722347881; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=glL/MXWvNCQhnTo0a4PeMJsyu3UmSgFct4D6KzdzJdA=;
+        b=czeE24oU6Lb3+CfQ//3cfUBP0CfHxb2vIXoYkfmKBdQotUAyewYeNrrOH0wmf0bcoX
+         1dJO1BiRY2kx+Ayiy7YOp39yox1t5vrvMNsDzii9Cg5QFFx4zVbr29s9JGgj5ncfXBy8
+         iD+oOi4S5sueeSRYxiUA2EMuqj1uO/v12BPrtfDQAWN9pZNSmQXTEAohHlqNBcTfXbs6
+         wAxohtsDb0+UwEY2xQmsunvI7r1ZHKK0VOIKjuXk7SiWASUD3cQTph++M04nACpQNdJp
+         aWVoNnqt+6k8XeVqIwBp3Fwcqk8tg0cXKVNOWNICUIPGOUOrDiSWDlh/7aZuVGsF9XxY
+         u+HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721743081; x=1722347881;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=glL/MXWvNCQhnTo0a4PeMJsyu3UmSgFct4D6KzdzJdA=;
+        b=hQkDpNUCnR6xRLZ9f6pb8hAzRblnyaW1NXOJ1g/7MBVOIV0CZwavpL0PEcFQ11+Ecs
+         O5ZO5rxPupuGnT01ZNGkQSWMZPfATg7NhXBxExhaGYDBkH/WW0OpvmPqt0CmniSBDdhC
+         sTuzdds85yln/WgDCrZgBNWl7Pwz4Gm6WW1opFo8IznUiEzD68ifGjcp++UcLjFil5Qf
+         njYWJXmmIH603wZBVOWPRLLQDcFkXyJ1cSviAnYT5JaHgthsbBVNw+JyDscA8FMkZ6ZT
+         vaZcrnfpJsK3yQoyGNqQLOPjcJNMMJMXF1DeWP4bjvttT5GKgiMQ7vGYfAjhxRrmsubo
+         Fpsg==
+X-Forwarded-Encrypted: i=1; AJvYcCU0GPIHa9GeijQegUfhISuIWg4Meri+i+89EFEZBwz4ndDoGWs5pECholwsn8XR6QilwS+cNYQwUQH1RaJFFjDypPgP7A+yj1B77xnPmX1GsTuC06waK/GRTNdwe+Ls9w6ae3P82PTxZ+sileYnwiCIkhvmemOQb9PsUHntoSG4/96mcDUjqVQ=
+X-Gm-Message-State: AOJu0YyRfxMcSIWmbkpXqkHNEF/x+n83Ypvf4egsMBmI3PuInTKmq5UK
+	YYfQxQgoU1SWMk1UpDwX/NdeTOEgsEgN5l60OZIuUJO9qM/hA1S+8bMeNg==
+X-Google-Smtp-Source: AGHT+IEgJvFcPKZvb/pmtj/IlP2AW+3FPJdctk8gH8JF+Dxn3anpRuui1zPtJ5WCl23Z7XxsK1eb3g==
+X-Received: by 2002:a17:90a:300c:b0:2ca:f755:1040 with SMTP id 98e67ed59e1d1-2cd8cd51e66mr3340572a91.7.1721743080641;
+        Tue, 23 Jul 2024 06:58:00 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f436c6asm76621295ad.206.2024.07.23.06.57.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jul 2024 06:57:59 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <2de779a1-be76-4aab-8440-9b01a2cc22ce@roeck-us.net>
+Date: Tue, 23 Jul 2024 06:57:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2147167.1721743066.1@warthog.procyon.org.uk>
-Date: Tue, 23 Jul 2024 14:57:46 +0100
-Message-ID: <2147168.1721743066@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Capitalize Farenheit
+To: David Hunter <david.hunter.linux@gmail.com>, wim@linux-watchdog.org,
+ corbet@lwn.net, linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com
+References: <20240723131849.264939-1-david.hunter.linux@gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
+ RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
+ nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
+ 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
+ gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
+ IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
+ kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
+ VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
+ jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
+ BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
+ ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
+ CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
+ nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
+ hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
+ c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
+ 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
+ GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
+ sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
+ Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
+ HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
+ BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
+ l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
+ 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
+ pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
+ J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
+ pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
+ 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
+ ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
+ I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
+ nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
+ HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
+ JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
+ J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
+ cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
+ wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
+ hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
+ nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
+ QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
+ trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
+ WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
+ HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240723131849.264939-1-david.hunter.linux@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Jan Kara <jack@suse.cz> wrote:
-
-> Well, it seems like you are trying to get rid of the dependency
-> sb_writers->mmap_sem. But there are other places where this dependency is
-> created, in particular write(2) path is a place where it would be very
-> difficult to get rid of it (you take sb_writers, then do all the work
-> preparing the write and then you copy user data into page cache which
-> may require mmap_sem).
->
-> ...
+On 7/23/24 06:18, David Hunter wrote:
+> Not capitalizing "fahrenheit" is an extremely minor spelling mistake.
+> This commit fixes that.
 > 
-> This is the problematic step - from quite deep in the locking chain holding
-> invalidate_lock and having PG_Writeback set you suddently jump to very outer
-> locking context grabbing sb_writers. Now AFAICT this is not a real deadlock
-> problem because the locks are actually on different filesystems, just
-> lockdep isn't able to see this. So I don't think you will get rid of these
-> lockdep splats unless you somehow manage to convey to lockdep that there's
-> the "upper" fs (AFS in this case) and the "lower" fs (the one behind
-> cachefiles) and their locks are different.
 
-I'm not sure you're correct about that.  If you look at the lockdep splat:
+Please at least follow guidelines for submitting patches, specifically
 
->  -> #2 (sb_writers#14){.+.+}-{0:0}:
+"Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
+  instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
+  to do frotz", as if you are giving orders to the codebase to change
+  its behaviour.
+"
 
-The sb_writers lock is "personalised" to the filesystem type (the "#14"
-annotation) which is set here:
+Guenter
 
-	for (i = 0; i < SB_FREEZE_LEVELS; i++) {
-		if (__percpu_init_rwsem(&s->s_writers.rw_sem[i],
-					sb_writers_name[i],
-					&type->s_writers_key[i]))  <----
-			goto fail;
-	}
-
-in fs/super.c.
-
-I think the problem is (1) that on one side, you've got, say, sys_setxattr()
-taking an sb_writers lock and then accessing a userspace buffer, which (a) may
-take mm->mmap_lock and vma->vm_lock and (b) may cause reading or writeback
-from the netfs-based filesystem via an mmapped xattr name buffer].
-
-Then (2) on the other side, you have a read or a write to the network
-filesystem through netfslib which may invoke the cache, which may require
-cachefiles to check the xattr on the cache file and maybe set/remove it -
-which requires the sb_writers lock on the cache filesystem.
-
-So if ->read_folio(), ->readahead() or ->writepages() can ever be called with
-mm->mmap_lock or vma->vm_lock held, netfslib may call down to cachefiles and
-ultimately, it should[*] then take the sb_writers lock on the backing
-filesystem to perform xattr manipulation.
-
-[*] I say "should" because at the moment cachefiles calls vfs_set/removexattr
-    functions which *don't* take this lock (which is a bug).  Is this an error
-    on the part of vfs_set/removexattr()?  Should they take this lock
-    analogously with vfs_truncate() and vfs_iocb_iter_write()?
-
-However, as it doesn't it manages to construct a locking chain via the
-mapping.invalidate_lock, the afs vnode->validate_lock and something in execve
-that I don't exactly follow.
-
-
-I wonder if this is might be deadlockable by a multithreaded process (ie. so
-they share the mm locks) where one thread is writing to a cached file whilst
-another thread is trying to set/remove the xattr on that file.
-
-David
+> Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+> ---
+>   Documentation/watchdog/watchdog-api.rst | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/watchdog/watchdog-api.rst b/Documentation/watchdog/watchdog-api.rst
+> index 800dcd7586f2..78e228c272cf 100644
+> --- a/Documentation/watchdog/watchdog-api.rst
+> +++ b/Documentation/watchdog/watchdog-api.rst
+> @@ -249,7 +249,7 @@ Note that not all devices support these two calls, and some only
+>   support the GETBOOTSTATUS call.
+>   
+>   Some drivers can measure the temperature using the GETTEMP ioctl.  The
+> -returned value is the temperature in degrees fahrenheit::
+> +returned value is the temperature in degrees Fahrenheit::
+>   
+>       int temperature;
+>       ioctl(fd, WDIOC_GETTEMP, &temperature);
 
 
