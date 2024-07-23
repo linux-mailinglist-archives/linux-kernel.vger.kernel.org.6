@@ -1,295 +1,279 @@
-Return-Path: <linux-kernel+bounces-260348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5898A93A79E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:14:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E130793A7A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:17:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EFB22839CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:14:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 113811C21A18
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A6E13DDD3;
-	Tue, 23 Jul 2024 19:14:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8535C13E88C;
+	Tue, 23 Jul 2024 19:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kXsDrXkL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Jz+4h2FB"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2127313C9D3;
-	Tue, 23 Jul 2024 19:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A8D13D504
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 19:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721762077; cv=none; b=qROJQY333ZGepbYvmHqYJczBeBiNGCODqUoLR7OPe5fgx4NStHyx/YnonLyT7FVxpVl/y39LGCfCRkYxEeOUq9nPmm278+SgKL0/DPau8E41XdRJ4XKITySs6lavyGa6RXCBUvAEXL0K95qRYJLotXND+QzaM1eBbRRhdP66ybY=
+	t=1721762270; cv=none; b=Y3/yUEYGIGtU0B9lKWrksdZT3RjqfystbnXIVXbM/2fWgb7t+BRotNlxVD31QnHvUVZyARqf73PVUdmG3d4XU3y7PM1B3fvYfYiEpJSmn3yMeBinwEJ7y9d7J7jPezKMTr7y3yb7nTj7sgwK7pq+AV89BfSBCvOJ9LfJqoWmzCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721762077; c=relaxed/simple;
-	bh=4dx5AYwCwF/d/KGh67noqIku30q2B5+XqMtC+MzyJF8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lRYRbbk2quUHTIexIWvVI0X/nFLSMVYBjJMqZkwd9LTUA077K6EE+GQMKpHkg2TGGkjV6AuvhDjhbe1gZShtJn/LehGK7ezgrTYdReSLfvvnDzhQjFctlr5LKyfXcAeQU0160gTQX5jAmJy4qEHJldm5upqb7BncVFnW718mUXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kXsDrXkL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83CEDC4AF09;
-	Tue, 23 Jul 2024 19:14:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721762076;
-	bh=4dx5AYwCwF/d/KGh67noqIku30q2B5+XqMtC+MzyJF8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kXsDrXkLMkzPGuNTQu0MONelt7NJr85Ze67Kq9td1DjzgeK4Evai4bF+JVoCHQHFM
-	 xHniB6n1xQsvb+fvFiWdlPA5Fi1iQgxZyHEA37kBNikaW+zuN93xXwICULZlXB517l
-	 RoksFPMbarpEtUvLqrOG9iqmWfltnOluNduNg2a1kcN7IgbWJhP9Q461qXwrbSbYU9
-	 KHoZYv6OQNv94l7CV4tKXNBabV0U1KU1P70NQVE2vu7gVBBxJuPCmPQW35zUYZNJk/
-	 3bR53Ri6de0TfhfAJDXwPTcprXxjf5qcZ+j/AUOQxJK6kb+/Za7z9/3zDCFwWu0rk/
-	 hMOzmwTuFG+vQ==
-Date: Tue, 23 Jul 2024 16:14:30 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Cc: jolsa@kernel.org, adrian.hunter@intel.com, irogers@google.com,
-	namhyung@kernel.org, segher@kernel.crashing.org,
-	christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	akanksha@linux.ibm.com, maddy@linux.ibm.com, kjain@linux.ibm.com,
-	hbathini@linux.ibm.com, disgoel@linux.vnet.ibm.com
-Subject: Re: [PATCH V8 04/15] tools/perf: Add disasm_line__parse to parse raw
- instruction for powerpc
-Message-ID: <ZqABFhGYfcu60V7S@x1>
-References: <20240718084358.72242-1-atrajeev@linux.vnet.ibm.com>
- <20240718084358.72242-5-atrajeev@linux.vnet.ibm.com>
+	s=arc-20240116; t=1721762270; c=relaxed/simple;
+	bh=MoSUe8UtDKgYAQJpc7bEXz/Ktusv4aoCQejwWcyA59Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Syz6OVu5FqWj19Y+yOuw+NoTn+wXz2yg+N4RCuuZ9j+iGgmxDj2Kfn095EMp7ba7OJlPuQ7dHLhPzah7xNR99vdZo+xgJa4ylm/iG/aPjKkoMlXMUPcuO7YmhDOvmfuyi9XZuHefwtR7HK9xeaYBCTt1Eg5Vv1kyww9Menbh+wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Jz+4h2FB; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6b97097f7fdso18886976d6.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 12:17:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1721762266; x=1722367066; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R0HgeFN0Ay5AIJvxgptlaXcddVWeUebYTJmY/Mw+Yg0=;
+        b=Jz+4h2FBbNBKx0fZMgdQJW0EUD/Tqe4/zP71KkkGCf8qU31INhObZGYtKDar1BArdo
+         GJ6jn3bdpxexBjVV5PHr+3n1wuU+Soh5OMvn9hYKNrgu0MBuNx3iwLj3clZGXf6xvMvE
+         UbUK2ACWxOvKfuIVzoQy8Ed8hsuv9p3PsNV0U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721762266; x=1722367066;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R0HgeFN0Ay5AIJvxgptlaXcddVWeUebYTJmY/Mw+Yg0=;
+        b=rBeSB86rxUKkPwnabLex0qhDKli25qUeL3TWr5QEuR3rQt8F39uzmXDsf8R3G9ws/i
+         RjgP6ZDb/eaYh+rLaHu4DGvRsnm7V7DMjSwJH1uHKZU1+cDpgT0hSvTlLah5A1C3FGcK
+         lf7wor6fdpCdmDgTr/dNoTD1eOExDtSQJN/wYsmb942anjbF5oYWCoETum7aP5ZtKymK
+         WX5MwVlIlD5sKB9QzTZgEzMSroM/pbo1B07BhaS/868n0g2/zDBMS3NiWyMXveO+Nyqd
+         x5b9+T6qnA68NBvX7COi8uquBsXPEZbpvnVAlR0RPcA5qAtTixIehwl6MbHBY9n8WAwx
+         ZV6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX2xKGAR5xpCBCmnW5CLfH98onDjjyylHouzSkpmUqwlQeEGXIXjNa0qQuBHWoigIuPsGi6my5VroZ27R2SlXBkUHFGx1BBP9vLScw0
+X-Gm-Message-State: AOJu0Ywtvk+8pBufiQsm4E896impXe7M0XxSEtdNy/T3g2JHRUlv+2zT
+	YDHfazTawO5oozhTZxW08ai1dj8h4IT5JS/n4C0XqZ5Xwr0+/1CHD+R3wD1NqYvuY6l8zVhxb1c
+	=
+X-Google-Smtp-Source: AGHT+IEzo8k5j7KOquGfqnp5wweDesdW8cvA3nnIV0TlMQt9tmx3KV2EqKMuNGYiiasWRGjACAF27g==
+X-Received: by 2002:a05:6214:27ee:b0:6b5:52da:46f2 with SMTP id 6a1803df08f44-6b98ecf4b5emr5826926d6.6.1721762266074;
+        Tue, 23 Jul 2024 12:17:46 -0700 (PDT)
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com. [209.85.160.172])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b7b4b92c7fsm46536566d6.89.2024.07.23.12.17.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jul 2024 12:17:44 -0700 (PDT)
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-447f8aa87bfso91481cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 12:17:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV6DEeSrngMd36Hy9VuEFcTTc/CdA36YnwUPb0oLC1JUJO9b6DlPClBRO/48vfe0PyLyVgFB8UBvSC0G6ppMWqqUexyZV8nHjjLG6Pi
+X-Received: by 2002:a05:622a:491:b0:447:d81a:9320 with SMTP id
+ d75a77b69052e-44fd4c6382dmr843151cf.20.1721762263871; Tue, 23 Jul 2024
+ 12:17:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240718084358.72242-5-atrajeev@linux.vnet.ibm.com>
+References: <20240709-topic-sdm450-upstream-tbx605f-panel-v1-0-af473397835d@linaro.org>
+ <20240709-topic-sdm450-upstream-tbx605f-panel-v1-2-af473397835d@linaro.org>
+In-Reply-To: <20240709-topic-sdm450-upstream-tbx605f-panel-v1-2-af473397835d@linaro.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 23 Jul 2024 12:17:27 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VL1Wxd0veW7N+0Hy=LdKMzNbBang9_EZ9Zo_d-wZOBfw@mail.gmail.com>
+Message-ID: <CAD=FV=VL1Wxd0veW7N+0Hy=LdKMzNbBang9_EZ9Zo_d-wZOBfw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] drm/panel: add BOE tv101wum-ll2 panel driver
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Jessica Zhang <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 18, 2024 at 02:13:47PM +0530, Athira Rajeev wrote:
-> Currently, the perf tool infrastructure disasm_line__parse function to
-> parse disassembled line.
-> 
-> Example snippet from objdump:
-> objdump  --start-address=<address> --stop-address=<address>  -d --no-show-raw-insn -C <vmlinux>
-> 
-> c0000000010224b4:	lwz     r10,0(r9)
-> 
-> This line "lwz r10,0(r9)" is parsed to extract instruction name,
-> registers names and offset. In powerpc, the approach for data type
-> profiling uses raw instruction instead of result from objdump to identify
-> the instruction category and extract the source/target registers.
-> 
-> Example: 38 01 81 e8     ld      r4,312(r1)
-> 
-> Here "38 01 81 e8" is the raw instruction representation. Add function
-> "disasm_line__parse_powerpc" to handle parsing of raw instruction.
-> Also update "struct disasm_line" to save the binary code/
-> With the change, function captures:
-> 
-> line -> "38 01 81 e8     ld      r4,312(r1)"
-> raw instruction "38 01 81 e8"
-> 
-> Raw instruction is used later to extract the reg/offset fields. Macros
-> are added to extract opcode and register fields. "struct disasm_line"
-> is updated to carry union of "bytes" and "raw_insn" of 32 bit to carry raw
-> code (raw). Function "disasm_line__parse_powerpc fills the raw
-> instruction hex value and can use macros to get opcode. There is no
-> changes in existing code paths, which parses the disassembled code.
-> The size of raw instruction depends on architecture. In case of powerpc,
-> the parsing the disasm line needs to handle cases for reading binary code
-> directly from DSO as well as parsing the objdump result. Hence adding
-> the logic into separate function instead of updating "disasm_line__parse".
-> The architecture using the instruction name and present approach is
-> not altered. Since this approach targets powerpc, the macro
-> implementation is added for powerpc as of now.
-> 
-> Since the disasm_line__parse is used in other cases (perf annotate) and
-> not only data tye profiling, the powerpc callback includes changes to
-> work with binary code as well as mneumonic representation. Also in case
-> if the DSO read fails and libcapstone is not supported, the approach
-> fallback to use objdump as option. Hence as option, patch has changes to
-> ensure objdump option also works well.
-> 
-> Reviewed-and-tested-by: Kajol Jain <kjain@linux.ibm.com>
-> Reviewed-by: Namhyung Kim <namhyung@kernel.org>
-> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-> ---
->  tools/include/linux/string.h                  |  2 +
->  tools/lib/string.c                            | 13 +++++
->  .../perf/arch/powerpc/annotate/instructions.c |  1 +
->  tools/perf/arch/powerpc/util/dwarf-regs.c     |  9 ++++
->  tools/perf/util/annotate.h                    |  5 +-
->  tools/perf/util/disasm.c                      | 48 ++++++++++++++++++-
->  6 files changed, 76 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/include/linux/string.h b/tools/include/linux/string.h
-> index db5c99318c79..0acb1fc14e19 100644
-> --- a/tools/include/linux/string.h
-> +++ b/tools/include/linux/string.h
-> @@ -46,5 +46,7 @@ extern char * __must_check skip_spaces(const char *);
->  
->  extern char *strim(char *);
->  
-> +extern void remove_spaces(char *s);
+Hi,
+
+On Tue, Jul 9, 2024 at 6:06=E2=80=AFAM Neil Armstrong <neil.armstrong@linar=
+o.org> wrote:
+>
+> diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makef=
+ile
+> index 5581387707c6..79c90894b6a4 100644
+> --- a/drivers/gpu/drm/panel/Makefile
+> +++ b/drivers/gpu/drm/panel/Makefile
+> @@ -7,6 +7,7 @@ obj-$(CONFIG_DRM_PANEL_BOE_BF060Y8M_AJ0) +=3D panel-boe-b=
+f060y8m-aj0.o
+>  obj-$(CONFIG_DRM_PANEL_BOE_HIMAX8279D) +=3D panel-boe-himax8279d.o
+>  obj-$(CONFIG_DRM_PANEL_BOE_TH101MB31UIG002_28A) +=3D panel-boe-th101mb31=
+ig002-28a.o
+>  obj-$(CONFIG_DRM_PANEL_BOE_TV101WUM_NL6) +=3D panel-boe-tv101wum-nl6.o
+> +obj-$(CONFIG_DRM_PANEL_BOE_TV101WUM_LL2) +=3D panel-boe-tv101wum-ll2.o
+
+nit: please sort. L comes before N.
+
+
+>  obj-$(CONFIG_DRM_PANEL_DSI_CM) +=3D panel-dsi-cm.o
+>  obj-$(CONFIG_DRM_PANEL_LVDS) +=3D panel-lvds.o
+>  obj-$(CONFIG_DRM_PANEL_SIMPLE) +=3D panel-simple.o
+> diff --git a/drivers/gpu/drm/panel/panel-boe-tv101wum-ll2.c b/drivers/gpu=
+/drm/panel/panel-boe-tv101wum-ll2.c
+> new file mode 100644
+> index 000000000000..5513cb48d949
+> --- /dev/null
+> +++ b/drivers/gpu/drm/panel/panel-boe-tv101wum-ll2.c
+> @@ -0,0 +1,240 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +// Generated with linux-mdss-dsi-panel-driver-generator from vendor devi=
+ce tree:
+> +//   Copyright (c) 2013, The Linux Foundation. All rights reserved.
+> +//   Copyright (c) 2024, Neil Armstrong <neil.armstrong@linaro.org>
 > +
->  extern void *memchr_inv(const void *start, int c, size_t bytes);
->  #endif /* _TOOLS_LINUX_STRING_H_ */
-> diff --git a/tools/lib/string.c b/tools/lib/string.c
-> index 8b6892f959ab..3126d2cff716 100644
-> --- a/tools/lib/string.c
-> +++ b/tools/lib/string.c
-> @@ -153,6 +153,19 @@ char *strim(char *s)
->  	return skip_spaces(s);
->  }
->  
-> +/*
-> + * remove_spaces - Removes whitespaces from @s
-> + */
-> +void remove_spaces(char *s)
+> +#include <linux/delay.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+
+nit: sort header files?
+
+> +static int boe_tv101wum_ll2_prepare(struct drm_panel *panel)
 > +{
-> +	char *d = s;
+> +       struct boe_tv101wum_ll2 *ctx =3D to_boe_tv101wum_ll2(panel);
+> +       struct device *dev =3D &ctx->dsi->dev;
+> +       int ret;
 > +
-> +	do {
-> +		while (*d == ' ')
-> +			++d;
-> +	} while ((*s++ = *d++));
-> +}
+> +       ret =3D regulator_bulk_enable(ARRAY_SIZE(ctx->supplies),
+> +                                   ctx->supplies);
+> +       if (ret < 0)
+> +               return ret;
 > +
->  /**
->   * strreplace - Replace all occurrences of character in string.
->   * @s: The string to operate on.
-> diff --git a/tools/perf/arch/powerpc/annotate/instructions.c b/tools/perf/arch/powerpc/annotate/instructions.c
-> index a3f423c27cae..d57fd023ef9c 100644
-> --- a/tools/perf/arch/powerpc/annotate/instructions.c
-> +++ b/tools/perf/arch/powerpc/annotate/instructions.c
-> @@ -55,6 +55,7 @@ static int powerpc__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
->  		arch->initialized = true;
->  		arch->associate_instruction_ops = powerpc__associate_instruction_ops;
->  		arch->objdump.comment_char      = '#';
-> +		annotate_opts.show_asm_raw = true;
->  	}
->  
->  	return 0;
-> diff --git a/tools/perf/arch/powerpc/util/dwarf-regs.c b/tools/perf/arch/powerpc/util/dwarf-regs.c
-> index 0c4f4caf53ac..430623ca5612 100644
-> --- a/tools/perf/arch/powerpc/util/dwarf-regs.c
-> +++ b/tools/perf/arch/powerpc/util/dwarf-regs.c
-> @@ -98,3 +98,12 @@ int regs_query_register_offset(const char *name)
->  			return roff->ptregs_offset;
->  	return -EINVAL;
->  }
+> +       boe_tv101wum_ll2_reset(ctx);
 > +
-> +#define PPC_OP(op)	(((op) >> 26) & 0x3F)
-> +#define PPC_RA(a)	(((a) >> 16) & 0x1f)
-> +#define PPC_RT(t)	(((t) >> 21) & 0x1f)
-> +#define PPC_RB(b)	(((b) >> 11) & 0x1f)
-> +#define PPC_D(D)	((D) & 0xfffe)
-> +#define PPC_DS(DS)	((DS) & 0xfffc)
-> +#define OP_LD	58
-> +#define OP_STD	62
-> diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-> index d5c821c22f79..9ba772f46270 100644
-> --- a/tools/perf/util/annotate.h
-> +++ b/tools/perf/util/annotate.h
-> @@ -113,7 +113,10 @@ struct annotation_line {
->  struct disasm_line {
->  	struct ins		 ins;
->  	struct ins_operands	 ops;
-> -
-> +	union {
-> +		u8 bytes[4];
-> +		u32 raw_insn;
-> +	} raw;
->  	/* This needs to be at the end. */
->  	struct annotation_line	 al;
->  };
-> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
-> index d2723ba024bf..a53591a6111e 100644
-> --- a/tools/perf/util/disasm.c
-> +++ b/tools/perf/util/disasm.c
-> @@ -44,6 +44,7 @@ static int call__scnprintf(struct ins *ins, char *bf, size_t size,
->  
->  static void ins__sort(struct arch *arch);
->  static int disasm_line__parse(char *line, const char **namep, char **rawp);
-> +static int disasm_line__parse_powerpc(struct disasm_line *dl);
->  
->  static __attribute__((constructor)) void symbol__init_regexpr(void)
->  {
-> @@ -845,6 +846,48 @@ static int disasm_line__parse(char *line, const char **namep, char **rawp)
->  	return -1;
->  }
->  
-> +/*
-> + * Parses the result captured from symbol__disassemble_*
-> + * Example, line read from DSO file in powerpc:
-> + * line:    38 01 81 e8
-> + * opcode: fetched from arch specific get_opcode_insn
-> + * rawp_insn: e8810138
-> + *
-> + * rawp_insn is used later to extract the reg/offset fields
-> + */
-> +#define	PPC_OP(op)	(((op) >> 26) & 0x3F)
-> +#define	RAW_BYTES	11
-> +
-> +static int disasm_line__parse_powerpc(struct disasm_line *dl)
+> +       ret =3D boe_tv101wum_ll2_on(ctx);
+> +       if (ret < 0) {
+> +               dev_err(dev, "Failed to initialize panel: %d\n", ret);
+
+nit: Do you really need this error message? The "_multi" variants are
+all chatty and print the error message, so we don't really need this
+here...
+
+
+> +               gpiod_set_value_cansleep(ctx->reset_gpio, 1);
+> +               return ret;
+
+Shouldn't you turn off the regulators?
+
+
+> +static int boe_tv101wum_ll2_unprepare(struct drm_panel *panel)
 > +{
-> +	char *line = dl->al.line;
-> +	const char **namep = &dl->ins.name;
-> +	char **rawp = &dl->ops.raw;
-> +	char *tmp_raw_insn, *name_raw_insn = skip_spaces(line);
-> +	char *name = skip_spaces(name_raw_insn + RAW_BYTES);
-> +	int objdump = 0;
+> +       struct boe_tv101wum_ll2 *ctx =3D to_boe_tv101wum_ll2(panel);
+> +       struct device *dev =3D &ctx->dsi->dev;
+> +       int ret;
 > +
-> +	if (strlen(line) > RAW_BYTES)
-> +		objdump = 1;
+> +       ret =3D boe_tv101wum_ll2_off(ctx);
+> +       if (ret < 0)
+> +               dev_err(dev, "Failed to un-initialize panel: %d\n", ret);
+
+nit: Do you really need this error message? The "_multi" variants are
+all chatty and print the error message, so we don't really need this
+here...
+
+
 > +
-> +	if (name_raw_insn[0] == '\0')
-> +		return -1;
+> +       gpiod_set_value_cansleep(ctx->reset_gpio, 1);
 > +
-> +	if (objdump) {
-> +		disasm_line__parse(name, namep, rawp);
-> +	} else
-> +		*namep = "";
+> +       regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
 > +
-> +	tmp_raw_insn = strndup(name_raw_insn, 11);
+> +       return 0;
 
-Not  checking the result of strndup(), I'll try to add the check on an
-extra pass after I read the patches.
+Maybe add a comment justifying why you don't return the error code
+that boe_tv101wum_ll2_off() returned?
 
-- Arnaldo
 
-> +	remove_spaces(tmp_raw_insn);
+> +static int boe_tv101wum_ll2_get_modes(struct drm_panel *panel,
+> +                                     struct drm_connector *connector)
+> +{
+> +       return drm_connector_helper_get_modes_fixed(connector, &boe_tv101=
+wum_ll2_mode);
+
+Random question for you: on panels that don't use the
+drm_connector_helper the "bpc" gets set here. Is there a reason why
+some panel drivers (like this one) don't set bpc?
+
+
+> +static int boe_tv101wum_ll2_probe(struct mipi_dsi_device *dsi)
+> +{
+> +       struct device *dev =3D &dsi->dev;
+> +       struct boe_tv101wum_ll2 *ctx;
+> +       int ret;
 > +
-> +	sscanf(tmp_raw_insn, "%x", &dl->raw.raw_insn);
-> +	if (objdump)
-> +		dl->raw.raw_insn = be32_to_cpu(dl->raw.raw_insn);
+> +       ctx =3D devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+> +       if (!ctx)
+> +               return -ENOMEM;
 > +
-> +	return 0;
-> +}
+> +       ctx->supplies[0].supply =3D "vsp";
+> +       ctx->supplies[1].supply =3D "vsn";
 > +
->  static void annotation_line__init(struct annotation_line *al,
->  				  struct annotate_args *args,
->  				  int nr)
-> @@ -898,7 +941,10 @@ struct disasm_line *disasm_line__new(struct annotate_args *args)
->  		goto out_delete;
->  
->  	if (args->offset != -1) {
-> -		if (disasm_line__parse(dl->al.line, &dl->ins.name, &dl->ops.raw) < 0)
-> +		if (arch__is(args->arch, "powerpc")) {
-> +			if (disasm_line__parse_powerpc(dl) < 0)
-> +				goto out_free_line;
-> +		} else if (disasm_line__parse(dl->al.line, &dl->ins.name, &dl->ops.raw) < 0)
->  			goto out_free_line;
+> +       ret =3D devm_regulator_bulk_get(&dsi->dev, ARRAY_SIZE(ctx->suppli=
+es),
+> +                                     ctx->supplies);
 
-When the if has {}, the else should as well.
-Documentation/process/coding-style.rst has this documented.
+Any chance I can convince you to use devm_regulator_bulk_get_const()?
+Then you can list your supply structures as "static const" instead of
+having to initialize them via code.
 
-This is minor, I'm pointing out so that you take into account for the
-future.
 
-- Arnaldo
+> +       if (ret < 0)
+> +               return ret;
+> +
+> +       ctx->reset_gpio =3D devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
+> +       if (IS_ERR(ctx->reset_gpio))
+> +               return dev_err_probe(dev, PTR_ERR(ctx->reset_gpio),
+> +                                    "Failed to get reset-gpios\n");
+> +
+> +       ctx->dsi =3D dsi;
+> +       mipi_dsi_set_drvdata(dsi, ctx);
+> +
+> +       dsi->lanes =3D 4;
+> +       dsi->format =3D MIPI_DSI_FMT_RGB888;
+> +       dsi->mode_flags =3D MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BUR=
+ST |
+> +                         MIPI_DSI_MODE_VIDEO_HSE;
+> +
+> +       drm_panel_init(&ctx->panel, dev, &boe_tv101wum_ll2_panel_funcs,
+> +                      DRM_MODE_CONNECTOR_DSI);
+> +       ctx->panel.prepare_prev_first =3D true;
+> +
+> +       ret =3D drm_panel_of_backlight(&ctx->panel);
+> +       if (ret)
+> +               return dev_err_probe(dev, ret, "Failed to get backlight\n=
+");
+> +
+> +       drm_panel_add(&ctx->panel);
 
->  
->  		disasm_line__init_ins(dl, args->arch, &args->ms);
-> -- 
-> 2.43.0
+Any chance you could add devm_drm_panel_add() and then use it? Then
+you can fully get rid of your remove and error handling since
+devm_mipi_dsi_attach() already exists. Note that this would not change
+object lifetimes at all since you're already calling
+drm_panel_remove() in your remove code--it would just clean up the
+code...
+
+
+> +static struct mipi_dsi_driver boe_tv101wum_ll2_driver =3D {
+> +       .probe =3D boe_tv101wum_ll2_probe,
+> +       .remove =3D boe_tv101wum_ll2_remove,
+> +       .driver =3D {
+> +               .name =3D "panel-boe-tv101wum_ll2",
+> +               .of_match_table =3D boe_tv101wum_ll2_of_match,
+> +       },
+> +};
+> +module_mipi_dsi_driver(boe_tv101wum_ll2_driver);
+> +
+> +MODULE_DESCRIPTION("DRM driver for Boe TV101WUM-LL2 Panel");
+
+Should "Boe" be "BOE" ?
 
