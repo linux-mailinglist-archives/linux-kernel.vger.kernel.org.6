@@ -1,142 +1,121 @@
-Return-Path: <linux-kernel+bounces-260126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A23693A376
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:04:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BA3793A37A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CFFB1C2268E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:04:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CE4C1C2263A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBC1156F34;
-	Tue, 23 Jul 2024 15:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8A0156F2E;
+	Tue, 23 Jul 2024 15:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GFC6Uxh5"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KqsWfoOE"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E2F154BE8
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 15:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396A715445E
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 15:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721747070; cv=none; b=pDSajK8MdcliRwttEr4kQJ/l2kGB1UaLwcfDHa1bO2k8sFEftcYssoV2EMjCl0ZSbjCSiTi1HkaRYffM0uHJ9F4Y22ZdJ69hqp/dpuSkaF5+y/yvkhEWVTxapqv0gSVCowLswy7G3pNgveJDRIjhS5sFtJngwm8T6l9TitVP/cU=
+	t=1721747095; cv=none; b=atX/nJuzxcIcU6Y6R30oRpfYhs9Gul2dGqkCxTIjhJuHza3D1P2So63zs9m579mkFl+VpngUgkjuM5oEZVO9x98NRchyq/ILTL/gWCOWsMkX7xJBfNK3PVZNRWgeLLdgKy9rVj6x6MJQ9+8lMf11EjUVI5GfsU7xI818px4/Nc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721747070; c=relaxed/simple;
-	bh=zjPGRyyEZDMLmGkK31czDaTVI5gnoHj+/QGaesuptL8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=b52rOEqANP7UEdBMH4WgCHb5bYWzNO0kGJVLtsdP2V8kXW4GTvmoyP+dxbf0f+wPb6HVOpajLqy0Xc55pxi/lLkGYqK7PvXTfnNKCnpq2Q3AnfsfG/pgrl/xRScPBjJHY6y0w3hk5ilfOOpzNKIsAMd/4xMY+ZZgc1fiUmlcRLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GFC6Uxh5; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1721747095; c=relaxed/simple;
+	bh=7Cj4qXUfM9HQm673/EiEPlj1QfOpiWHROUnSLYs7imM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qo24jcF9d3jAlpjW6sO/z+KJn4RJ3O8exYpS7FGo/u8JjKnDXcJPkF+pDHGJRdrVcD+223+GXl5pFKH1omJCs3zb4G/VYDJjCZNQK2NS/Jkw4yWAIjt4Ee+SCeOVWitRNqBxX81noDvcb4gvetYNTttZv0adUyDkY3Q05EmC3BQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KqsWfoOE; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42725f8a789so42915e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:04:27 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3684bea9728so3293549f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:04:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721747066; x=1722351866; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5EI7OMT8wzZUrRDcneWMkHrOQy15Kz2ZG+1nK4iJU6s=;
-        b=GFC6Uxh5VhU8TXAr1zBrcS1Hcb3bRtzTnwpZIvi37J+cG/DHmzay7UAT77QNubV7ub
-         TrKVdCybXMqtl6Z356c3+rHC8CceT1mJI/yrp4zf7ImfYHyVZqUcZC+1ySFToFB63QFu
-         4mBIKbr16+HyCPz5BtNeU2IlaWFMe+gJgHS/kh54N62wRBc+FKbOX9oUoQ1cSlLXXXaS
-         z62wxLVBps6bQ99yrkr2zyZB53Jdgr9Tb5FUeCk6rggE5zXmuGFRdEFm5zk/Vs3pdNn8
-         3DWFx/4EKNwDmwQqdtxR4aIjAr2eR1ewbCLlHimldRh4UrJzmXfO3l/BmqDzFe/BvkRr
-         m3Wg==
+        d=google.com; s=20230601; t=1721747092; x=1722351892; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7fDLpLWhI3bhX/1zNYsaTcZaVvzDKWENTn8dwHnt5k0=;
+        b=KqsWfoOEHwpoZBhWVT1d+47NOtNSOP6h2kpQHXqC3QDeBswrNohcwXhVx5KClyYLvs
+         KDuPVbzou8srlfo/8dwFkCjsnUqrDoaN9dQXRWBohuHURf9lpEBnKNWVw+i2qXL6BCbe
+         9dpALiuQzHn51fE1TWdw4LCeJNVq+tiIWUlwwoV3f4WTa51f7gc9c8Ci0dlnHzrhdFot
+         UidicTbFhelfAGz/NV8bEyo4POceMwRYkMyKoSLdFUWQplIN3KipbGepKeYZzDB0W4dL
+         2eBZrvZhpHTeN8zXoJDh3EDiPJhJMhlZY/bCI5m9pZ/GsCC1H3M/sviG0OmMqTBNEPKe
+         vigg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721747066; x=1722351866;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5EI7OMT8wzZUrRDcneWMkHrOQy15Kz2ZG+1nK4iJU6s=;
-        b=qyM1Mv7Td8ZYOXBJHPF1pfvuPB8geNjlO04leYay5E36Y042BZ6aR6V1RxYaoXTGed
-         JYPAPsMHzJzgye4VEHv5ZZGuxRGxcJhD2SBZstYymBC+pTW8Eyf5y+1D8pvCgc4Nj8yC
-         Nz8LEyMyknSDby4NqQVg9yezL9JLkAMS7iHMCQabEDWrp6pj/hnCLLkCUc4NctQ1JNWm
-         DmZkfLwq3lrzHJoHTJK9EAWFIWiGRDeKPELTNEix4XbgPK/gvk6paFDKG5js6BTs5Okp
-         LLtNd2uprd/KVYxDAhJPPwWDkalbdCugthSGrXvksFl6SKBVnRCcIhtf4XeY3UoMqG6o
-         aiNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUW5Nhu7D23MUpwLGoPRmxnEs1Oavjch0ROBPyLhJ7UHi3DgnkcJf2lLHkv1/IP1a1T2a9ks3Gsh1t9Tjxn6Fj/KpvaoQ9AF6DTjl9j
-X-Gm-Message-State: AOJu0Yy1/yY7j5hbd0lSXXcdSK4AYfZMBZHax1cpqQ5rdDh8lLl/nGSD
-	uReMnOE+BRu/vRI2ZWy4MoicsQ5iQddXTh0lM/uB8mcxDHc8J69WltFZrZT0znc02tgVKiTRit5
-	iub0X5Zw=
-X-Google-Smtp-Source: AGHT+IHjOntlahZUsysgrc3jB0agxSGVzop23IM0mpMgl6qJ4UpWatZ4rTprcN6Lfh9mBaw3J/nNcg==
-X-Received: by 2002:a05:600c:1c98:b0:426:66a0:6df6 with SMTP id 5b1f17b1804b1-427dba6e575mr4890835e9.0.1721747065281;
-        Tue, 23 Jul 2024 08:04:25 -0700 (PDT)
-Received: from localhost ([2a00:79e0:9d:4:59b4:7aff:4689:5b42])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3687868423bsm11798247f8f.14.2024.07.23.08.04.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 08:04:24 -0700 (PDT)
-From: Jann Horn <jannh@google.com>
-Date: Tue, 23 Jul 2024 17:03:56 +0200
-Subject: [PATCH] filelock: Fix fcntl/close race recovery compat path
+        d=1e100.net; s=20230601; t=1721747092; x=1722351892;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7fDLpLWhI3bhX/1zNYsaTcZaVvzDKWENTn8dwHnt5k0=;
+        b=HmW+7i7Ainz8ltR2vJHyjpLYos1FeBlwKR5atBM+9ec6ES/0soxsT1x7fb1db8EFes
+         S4XoHGB4HN08ksLqp/TxNF/VzLCVHIMWrhwSI5gSTzCtbSW+3kR3JAzt7dY90qEZBeiY
+         QB5vBWF/yMGxi+SeBErITm+5rMh2aNUljlKt2wRDSMDGs0j4+fFp7r4HSIcNtkFnIBXu
+         BYYBnIvcmMkK7+aydywYcFY6JAkSIaI0rENpLcy7O1lsrdtXK195SfZwGJ4c1MBrylQY
+         FJjQQse+saoZPk/t1UWGXdXM1yOLNQZEtKvUcq0xzuwvX30pVkd2D2w6rgJ/W/JXPKS4
+         6XmA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+KWdqouYv9CJxK88vs8ElATAJxdYg+E6DAdaHKnhEG5pWdWz5ABLkAxlYgDYDTYm8kCsCXVf8WWsNc0UW3NBTYtTm3HSwfpzs9xbh
+X-Gm-Message-State: AOJu0YxqNXnFQGffNAMOZQb23KyawZAJhoJQ3MAUvaUelahSfiNPUHyY
+	/0JjI9GaNrJZRY0sEvwlQY/holXKuEf/2alNuhQxIwJSGM+8APF1ZG84yUejn+iT193elkpJV5b
+	RBk2EXUXZCvEiwD7Mo54u+xEqbkthHj5i7K/M
+X-Google-Smtp-Source: AGHT+IGn/ROYNIhhGAwOKtA+EoK9/nAVYByn5CJh4yLPZB8FbZQynsJDHToZMNdq2XASnksxlFoxaKAWjK8MwqE3xRg=
+X-Received: by 2002:adf:fc0c:0:b0:368:714e:5a5e with SMTP id
+ ffacd0b85a97d-369debf8bbbmr2714091f8f.2.1721747092088; Tue, 23 Jul 2024
+ 08:04:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240723-fs-lock-recover-compatfix-v1-1-148096719529@google.com>
-X-B4-Tracking: v=1; b=H4sIAFvGn2YC/x2MSQqAMAwAvyI5G9BWEPyKeKgx1eBSSaUI4t8tH
- mdg5oHIKhyhKx5QThIlHBnqsgBa3DEzypQZTGWaqjUWfcQt0IrKFBIrUthPd3m5kbyh0Y22sVM
- NuT+Vs/7f/fC+H7r8AGprAAAA
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
- Alexander Aring <alex.aring@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@kernel.org, Jann Horn <jannh@google.com>
-X-Mailer: b4 0.15-dev
+References: <20240723-vma-v1-1-32ad5a0118ee@google.com> <Zp_DIEOj0PtNywmA@casper.infradead.org>
+In-Reply-To: <Zp_DIEOj0PtNywmA@casper.infradead.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 23 Jul 2024 17:04:40 +0200
+Message-ID: <CAH5fLghzRWH3MSb2bwbk8EEA--iaaL8GXBU9UHZGq0th_CCA9w@mail.gmail.com>
+Subject: Re: [PATCH] rust: mm: add abstractions for mm_struct and vm_area_struct
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When I wrote commit 3cad1bc01041 ("filelock: Remove locks reliably when
-fcntl/close race is detected"), I missed that there are two copies of the
-code I was patching: The normal version, and the version for 64-bit offsets
-on 32-bit kernels.
-Thanks to Greg KH for stumbling over this while doing the stable
-backport...
+On Tue, Jul 23, 2024 at 4:50=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Tue, Jul 23, 2024 at 02:32:03PM +0000, Alice Ryhl wrote:
+> > +// SAFETY: It is safe to call `mmdrop` on another thread than where `m=
+mgrab` was called.
+>
+> If I were reading the documentation, I might want to know if it's safe
+> to call in interrupt context (either soft or hard).  ie can mmdrop
+> sleep (if it turns out to be the last owner of the mm).
 
-Apply exactly the same fix to the compat path for 32-bit kernels.
+I'll add some information on that.
 
-Fixes: c293621bbf67 ("[PATCH] stale POSIX lock handling")
-Cc: stable@kernel.org
-Link: https://bugs.chromium.org/p/project-zero/issues/detail?id=2563
-Signed-off-by: Jann Horn <jannh@google.com>
----
- fs/locks.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+> > +/// A wrapper for the kernel's `struct vm_area_struct`.
+> > +///
+> > +/// It represents an area of virtual memory.
+> > +#[repr(transparent)]
+> > +pub struct Area {
+> > +    vma: Opaque<bindings::vm_area_struct>,
+> > +}
+>
+> That seems like a very generic name!  MMArea?  VMA?  Certainly when I'm
+> talking to people, I say VMA.  struct vm_area_struct is a terrible name
+> and I'd be happy to change it if we could stomach that churn.  If I were
+> naming it today, I'd want to call it struct mm_area.
 
-diff --git a/fs/locks.c b/fs/locks.c
-index bdd94c32256f..9afb16e0683f 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -2570,8 +2570,9 @@ int fcntl_setlk64(unsigned int fd, struct file *filp, unsigned int cmd,
- 	error = do_lock_file_wait(filp, cmd, file_lock);
- 
- 	/*
--	 * Attempt to detect a close/fcntl race and recover by releasing the
--	 * lock that was just acquired. There is no need to do that when we're
-+	 * Detect close/fcntl races and recover by zapping all POSIX locks
-+	 * associated with this file and our files_struct, just like on
-+	 * filp_flush(). There is no need to do that when we're
- 	 * unlocking though, or for OFD locks.
- 	 */
- 	if (!error && file_lock->c.flc_type != F_UNLCK &&
-@@ -2586,9 +2587,7 @@ int fcntl_setlk64(unsigned int fd, struct file *filp, unsigned int cmd,
- 		f = files_lookup_fd_locked(files, fd);
- 		spin_unlock(&files->file_lock);
- 		if (f != filp) {
--			file_lock->c.flc_type = F_UNLCK;
--			error = do_lock_file_wait(filp, cmd, file_lock);
--			WARN_ON_ONCE(error);
-+			locks_remove_posix(filp, files);
- 			error = -EBADF;
- 		}
- 	}
+Yeah, you're right. I should change it. Renaming the C struct seems
+like it would be a lot of work. For now, I'll rename it to VmArea to
+match C.
 
----
-base-commit: 66ebbdfdeb093e097399b1883390079cd4c3022b
-change-id: 20240723-fs-lock-recover-compatfix-cf2cbab343d1
--- 
-Jann Horn <jannh@google.com>
-
+Alice
 
