@@ -1,128 +1,100 @@
-Return-Path: <linux-kernel+bounces-260462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBAA093A99E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:08:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77E8D93A9A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DD96284302
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:08:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38DCD2841CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CBE51494A7;
-	Tue, 23 Jul 2024 23:08:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB27B1494B1;
+	Tue, 23 Jul 2024 23:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="V3oc6Ye0"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OPd6GJlZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E023A146A74;
-	Tue, 23 Jul 2024 23:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D7E148FE3;
+	Tue, 23 Jul 2024 23:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721776098; cv=none; b=TClPyngTR8oy8FJgo5AmWfQR7VSuN84iiR4miJnxz91c+PfDx4Ea3It01pp6KqWrPdDlalTnWI52/S88/guaTPRfrcOzyORDbSRfDb8M4JksYL2DLYg2lUmoldrk7Jb2MAetELWPaYovs1y/SWgpL/J9s1xyTKnFDAjCwuGIJfI=
+	t=1721776163; cv=none; b=MmsxMYQVbvdfzJTIw2P1utwrYBkh9WYJV4h8BEnpHARpNUP+n0tiDcug1fPm8rgXqsDMGslJmOsqAsfoV2QwvMdhNaTM+CpIC5T3jHtqfSU++Bnaa0SBamEamTJ0Ps0CaDyVl1u8ygFprzLbG2v8DEnbMPQKNKneuh/+MszqriY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721776098; c=relaxed/simple;
-	bh=OdMfQlfYhZ5SLvYpaNh9+7OjHMzPHE1X1rSqURuVDBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ftOk5jXBzG2hUDZapYHnnJa+M9n6e9LAl0VnEhKXQvH0g43JJpQP73zWpWFOJAzblHD+3DXhRBJvjJnTJBHxpacTsg9vvGzUu7ae998OrUdwow/CLryPJYaOotlGOvP2sQsbcfiRdDtjepqGx4XYnkpVQei6peafFyOxM+ip7Uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=V3oc6Ye0; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1721776095;
-	bh=n/S3l1boqq3k4TnjOqdsEXNGSpAQ+NVbiHS/5Gmu1Vo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=V3oc6Ye0oq9OPgmp++bTmA2Z04R9jJpHkyt0hqZqjmOWhpU14DU3ZjeOV2YpfhQ4v
-	 US+pGOxqktLZI/4A1XfQpK78uC94IBDfL1Do5DFIUomYVwS7F393ui/Z3XFaXEbMb0
-	 AujwrXr7GtCQMF8EZ62kKDCVBJy1GNP/3lEEutf8lLhFxBiApbqNtK+SrVaFZhvCt2
-	 aWYUGlTSUe74TdELa9mc1mljzg6H/INji+S6Mc/HKUKglGHIwKMNx4d6GcNHpc5AHC
-	 XXzSJotnXU1wlxlxell50K/FOxECorh9dT8teZqs6bkx4sUcHYrxVYKDdBC8p98nmf
-	 U0X4M+/i0BgRg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WTCVl1P1fz4wbr;
-	Wed, 24 Jul 2024 09:08:15 +1000 (AEST)
-Date: Wed, 24 Jul 2024 09:08:14 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Greg KH <greg@kroah.com>
-Cc: Mark Brown <broonie@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, Uwe
- =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
-Subject: Re: linux-next: manual merge of the driver-core tree with the reset
- tree
-Message-ID: <20240724090814.5c710581@canb.auug.org.au>
-In-Reply-To: <Znmufb9L78FCoSSS@sirena.org.uk>
-References: <Znmufb9L78FCoSSS@sirena.org.uk>
+	s=arc-20240116; t=1721776163; c=relaxed/simple;
+	bh=j2EVut8i0tCcYSWzo0DB380672dQ74PXM4Z5BJKw5Q8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gGZaiy0MwxFV8r+vB4H8zdoWuQFZSz4ogskNuWMyteavdZ6p/K7AjKVyhoV+rjDPiXoXJ9DVUqVxarhsRoBxiJHdGLOE8n4pnDzYJR6pd9pINQ6ZXGLf1zi3XuT2glVR+m8XBw6BYc/YYq8sPsM0t9iy5Nr/GETzIdsOpYkckUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OPd6GJlZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DAF9C4AF09;
+	Tue, 23 Jul 2024 23:09:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721776162;
+	bh=j2EVut8i0tCcYSWzo0DB380672dQ74PXM4Z5BJKw5Q8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OPd6GJlZ+8k0ARgi0N1puIpEMBIiUG+Q0DxEXuVAVcMml0KikUYKtkcC8jnJrt4Jt
+	 aq+p4xwEI7KyRWLM0+OFaV6301LEHRJObpM+Q473+jRc17E8Pc+blsjf74WrZ5UhRD
+	 Sgo4yM+DLoWeV4o8Mqu/yOGGOaE+GlvjBr9oAz51x/C3UUekDg1CcdeqUafK7wm21A
+	 LXyAVQCbUL14dHIa5zDQjqit1n8omxUmD7mYDSBFOn9kK46tcuns7uhgDeLo9kzRQ/
+	 hfY0kcPV4FHBwABKdChtNOnMQhcBF9ihklJ/VZ0dPS//tCN1fPXsFFN9HZkjuX9IDp
+	 6LZQ7ilKUlTug==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Alisa-Dariana Roman <alisa.roman@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Michael Hennerich <michael.hennerich@analog.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: iio: adc: ad7192: Fix 'single-channel' constraints
+Date: Tue, 23 Jul 2024 18:09:03 -0500
+Message-ID: <20240723230904.1299744-1-robh@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/smpSrVVWHMkUFXW8Jxph8hm";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/smpSrVVWHMkUFXW8Jxph8hm
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The 'single-channel' property is an uint32, not an array, so 'items' is
+an incorrect constraint. This didn't matter until dtschema recently
+changed how properties are decoded. This results in this warning:
 
-Hi Mark,
+Documentation/devicetree/bindings/iio/adc/adi,ad7192.example.dtb: adc@0: \
+  channel@1:single-channel: 1 is not of type 'array'
 
-On Mon, 24 Jun 2024 18:35:57 +0100 Mark Brown <broonie@kernel.org> wrote:
->
-> Today's linux-next merge of the driver-core tree got a conflict in:
->=20
->   drivers/reset/reset-meson-audio-arb.c
->=20
-> between commit:
->=20
->   0e8b3bca280a7 ("reset: meson-audio-arb: Use devm_clk_get_enabled()")
->=20
-> from the reset tree and commit:
->=20
->   b99e9c096148f ("reset: meson-audio-arb: Convert to platform remove call=
-back returning void")
->=20
-> from the driver-core tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> diff --cc drivers/reset/reset-meson-audio-arb.c
-> index 894ad9d37a665,8740f5f6abf80..0000000000000
-> --- a/drivers/reset/reset-meson-audio-arb.c
-> +++ b/drivers/reset/reset-meson-audio-arb.c
+Fixes: caf7b7632b8d ("dt-bindings: iio: adc: ad7192: Add AD7194 support")
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-This is now a conflict between the driver-core tree and Linus' tree.
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
+index a03da9489ed9..190889c7b62a 100644
+--- a/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
+@@ -120,9 +120,8 @@ patternProperties:
+         description:
+           Positive input can be connected to pins AIN1 to AIN16 by choosing the
+           appropriate value from 1 to 16. Negative input is connected to AINCOM.
+-        items:
+-          minimum: 1
+-          maximum: 16
++        minimum: 1
++        maximum: 16
+ 
+     oneOf:
+       - required:
+-- 
+2.43.0
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/smpSrVVWHMkUFXW8Jxph8hm
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmagN94ACgkQAVBC80lX
-0Gw4nwgAggrd8HOELz/MKxz08eAcKEMm8lNH2J3tK3ZcEW10l2kQkM9KTmH3PaP9
-GXwrYFePJsACmKFx+DW/W7piCIk8zp3DzsOpZEhme5DhIpicoM4syjgAFlCz7iK1
-ddtgEtaaZzLOAUFh95pJoF9NSOGvZKmvKxhuwMLvRKTkzyN++aGaQAn9aQFjx4is
-OsmaBylg3F4M6Wrtztqc6PZSJZ5UJTMGjsC5FLiArCGP90yhphucrZS0aLYqFtyZ
-kAPwyhFqRUdVbAKqKdTDm/RMLzhby/tOYLfc5zOLzVpSi9dRrxtndHEjWX9Ay1NH
-mZUV/suizSGaQbEm+Ycye0m2CmJyoQ==
-=ebCj
------END PGP SIGNATURE-----
-
---Sig_/smpSrVVWHMkUFXW8Jxph8hm--
 
