@@ -1,154 +1,133 @@
-Return-Path: <linux-kernel+bounces-259948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 921F893A057
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:58:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54C5193A05E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:04:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42458283619
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:58:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE9D21F22BAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498B01514EF;
-	Tue, 23 Jul 2024 11:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FF31514E0;
+	Tue, 23 Jul 2024 12:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lgBVQbAj"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DHGkUNrJ"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DEF1514D8
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C5017BD5;
+	Tue, 23 Jul 2024 12:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721735917; cv=none; b=HsuXn3ceoblt7Et2v8bEgmEWaULKMtJDLtjyjm7Ur2Si8QFhYkOI+utyPOSco5whrEs1tSVqbU7rkx2/86ZxC97li4G7YAgX4cDfkjWVR+MvIl95cqVOBbkUTKkS8tZdR3rEvYehDzFyii1MBW+sWRxgT/V4pyEgmQzjk9YaGZE=
+	t=1721736256; cv=none; b=qN3hAEW2ARcnpBwMzdfHcXL+2kpgwhbXWBbFBRD6jV1FqZv5m8zacw6S8cNC3k1Z8AV5XWN4td/K47KQfPY4KzMvEi0nhB648JmQuIidccv4m/Men1rGeQX1crRaOZX8IoVB/5UNx/7R5v7y0XbdPfnhc3TOgIKNj8S1PfNRwAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721735917; c=relaxed/simple;
-	bh=C1tz8K/u7VRu4jwZF1eRtTzAwuj9hXTHoeZsW7ZHnjw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dhaxv/47EOk8ZHqEDWoVSWOZoOoF7HotISL+AAvANBg4i3g0AGMnXkaAzN+8b3zVrTXs6g0hZHqzWzXWu1ARRubfuaCLJisjlzftNTQSJtB0pMFmVPQesQAyUcAtq17B6E/xZhyyDLXGgkHmytwiwx/05JuSJhjfrmZabm+UJXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lgBVQbAj; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a1337cfbb5so5402248a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 04:58:35 -0700 (PDT)
+	s=arc-20240116; t=1721736256; c=relaxed/simple;
+	bh=FAe5RBSeVUQvSoNMovSUxUr4BZQMUMsViBXF99Eg278=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hm71b/90zzQNjf177NTw/Ogd1XJBz4aoIqh8tnyC4SWuACe8fWIQv0sjmIODcMQUrWnU5LngGsoJwaLXEWBScxHUtxYs2YOb67y/52hdwuTHizFH1gKA67V07x05M0Rk1itkalmNRc0MoETLgk+WqoCuGj8FJoRbUaoQz8h+CQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DHGkUNrJ; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fd640a6454so4777545ad.3;
+        Tue, 23 Jul 2024 05:04:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721735914; x=1722340714; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=P+djReoRTIhBXyvCN8UfaYCI1awzWvkrD6U3A9THW/Q=;
-        b=lgBVQbAj89iEgiNC85CWg64GA+/2J4e6UOtiVR2zyPBBiM1r6seDDlPhPL+4wZxy6k
-         9MhPPb4g+7xfYwwn3SQS71aFB6wa6jELwM+7zXsEer+Zo0pEPKECsqXv8fuZmbnrguuV
-         JziblqEuFZ0LkUudcocsO8d6DRaa75S8JDTUlYutxvtzJvhBtCoMLeMggb8bta1nrXU+
-         Ru9YZRsKnHaK+bFqmDYYsrXZ84UE1JvTqxnlSW/+9c6Lst1otaTjlGn51VXnBzLBDUTZ
-         9glHxQHAb49mS8Ed/wdCd4ul0R/l+01Jv5VPDzKLzqg5Xx0AoCtYNJn1AGnWtyVwwGyk
-         wiMA==
+        d=gmail.com; s=20230601; t=1721736254; x=1722341054; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XBj9aeVGLx9lk0+gvee4j7l4tMQJNLmoyqkeXTYVawA=;
+        b=DHGkUNrJbXHCzO9XrpyibKyD3il+ej7n9fozYyQpYfUXHFhRaT7D8iHfmB0ZtJdQIU
+         Sn0uzLfJy/EGO/nd9vhf8nS32VJtCuMFGD+qNquCp8PBYx49/10jkF3bYLUUXcg+Uug5
+         dHOYN9KnQRaCxzKw6Rl2fzbfhhm37NsveU7HO0BTWDdH4NEnsJiFW1bw8yP5PglKGyqW
+         BPve79JnzwzGyrvDd1M2D42vonBMIP9NnXIzeYAymNO7YzObCyjjjf/VmgY/1Cf/lKcG
+         dk13QG+tUx6Dh733tcfArO74g1Nsu+z0n2Eo5BlFcD3Tlh3qqC45lY9tdWQmfsHFaN37
+         NClA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721735914; x=1722340714;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P+djReoRTIhBXyvCN8UfaYCI1awzWvkrD6U3A9THW/Q=;
-        b=bQwqQ25Q2lBO7S6eEcXvBlbV06hgRDhGzwENG8HEJh1N18GXIRAXAByhhr9ZTuayTN
-         klXbdUOZwBc/9Y43L+5slrLaLBHErsGCa3O+vAk5PZ4yorm9vgE35g24aJukVi7eacnv
-         wuP6M1oNXXYz8hys4lI/f/YpcS1XtLYTvbfsZ5sS6Q9x3QNCPxTeaCz7JAq5YreKlC0r
-         /BALUFkxzJ7GazgaELNSl7M9eXKXlZYZ9SKqA7ajnhKK2VjGGsdr3aE3Ql/iYf1Ie8nx
-         VZvY7YB2PAlIs5KRq+cy6+3ymFgZxkoDRq/tHkAfi4cQ1zEbTTG9YSUWu/vhm4YTLkN+
-         R4Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCXNFYNyFp3rx9BHW2XpgUnLjcL+gSXOPk4wsP6W0htbWW0fjBe+s9eVF7Z+S3OugEDKPUzsBSAibIJbkCzQnV4o2yDdPB1AuTTLcatF
-X-Gm-Message-State: AOJu0YwXyTPv2ECXLm8RFMZTt+UaO4PpvbEZ0tTqyMNTHuSn3GhNPAe1
-	q33c/NjKgEofWyRVKEFEq1UyfpLqvrsOUc2OefyO0DiMUeLzbLsH3ZOTT48Mcfk=
-X-Google-Smtp-Source: AGHT+IFGPFk3/DBxWgzuM2E00MW1mfvZYKIspK21ddEFkKQ9CsbeM3pj3Wy64tvPUlWKA6N3EvZHCw==
-X-Received: by 2002:a50:8d4b:0:b0:5a3:41cb:676a with SMTP id 4fb4d7f45d1cf-5a9438290famr1983315a12.27.1721735913896;
-        Tue, 23 Jul 2024 04:58:33 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30c7d38f7sm7479874a12.88.2024.07.23.04.58.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 04:58:32 -0700 (PDT)
-Message-ID: <3b00372c-0c81-4d0d-ac41-96020eef1580@linaro.org>
-Date: Tue, 23 Jul 2024 13:58:29 +0200
+        d=1e100.net; s=20230601; t=1721736254; x=1722341054;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XBj9aeVGLx9lk0+gvee4j7l4tMQJNLmoyqkeXTYVawA=;
+        b=keEYE8Tp6IRIIqQ3Mj2gav0+4zzR7IqxsoDU35Niu6+jLHKcDKB44/ZYIy9axuBwqk
+         YKMvI21OxPhspHe64NAiyriyfzp+TMyElyM+cwEprhnnzTrATdXvB+c9bkEEFQTXcyzk
+         A47STcb0Nxxl/LPU3Y0QbLG61KKwFHJO68vVpuGIWHefL8IND5CeAoWfZa9ZnT3a8sdS
+         ebgpIvtNhjWx6SWl2RG3MQgIVmmB3nVB1Y9QbyOuNIDzs1VnL9nw7cTe5INz+HzdYxEJ
+         mrwr2QVguynufIEKmWTshxPxOTSsjIjNG78qp9Jlt3kIWSsA5jlkMBQivumC60EBRD3d
+         I/PA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOxoTyBVxPX6VAAY1gCJBstF88NMqokOYkvpVP6DLmIIKmXdpHIqqBLiNur1M74tiHi4nGY4MqB3kKipTSDeMB6itHPB9NHdkT1OIDvKAEQeqOHdvkSYXPN7yu4MSMioey7F9zn5WqG0iAe3s=
+X-Gm-Message-State: AOJu0YwzCEx5ASLkfnq9N8+c7iy5sb4i1/+4lc6swTmjflDEtMvXbLTo
+	SsQvSX1BnZs9MuFwRM7CVo7DoQJykMqfktfSRBhcmxTDnN0LrRvu
+X-Google-Smtp-Source: AGHT+IFV1wzilscCcwyJqyFjDIjRJLIzHo/Nk8lJzUvjtc+tXd6K3q9sz6+HJaaZdgVsxqFfLxyz3g==
+X-Received: by 2002:a17:902:cec1:b0:1fd:9c2d:2f1b with SMTP id d9443c01a7336-1fd9c2d3180mr53822025ad.52.1721736253908;
+        Tue, 23 Jul 2024 05:04:13 -0700 (PDT)
+Received: from localhost.localdomain ([177.21.142.242])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70d1444b58dsm4979473b3a.18.2024.07.23.05.04.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 05:04:13 -0700 (PDT)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: miriam.rachel.korenblit@intel.com,
+	kvalo@kernel.org,
+	rafael.j.wysocki@intel.com,
+	daniel.lezcano@linaro.org,
+	johannes.berg@intel.com,
+	gregory.greenman@intel.com,
+	dmantipov@yandex.ru
+Cc: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH v4] iwlwifi: mvm: adding check if the thermal firmware is running
+Date: Tue, 23 Jul 2024 09:03:02 -0300
+Message-ID: <20240723120321.2537-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/9] dt-bindings: interconnect: qcom: msm8939: Fix
- example
-To: Adam Skladowski <a39.skl@gmail.com>
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Vladimir Lypak <vladimir.lypak@gmail.com>,
- Rajendra Nayak <quic_rjendra@quicinc.com>,
- Rohit Agarwal <quic_rohiagar@quicinc.com>,
- Danila Tikhonov <danila@jiaxyga.com>, Bjorn Andersson
- <andersson@kernel.org>, Stephan Gerhold <stephan.gerhold@kernkonzept.com>,
- Andrew Halaney <ahalaney@redhat.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Barnabas Czeman <barnabas.czeman@mainlining.org>,
- linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Abel Vesa <abel.vesa@linaro.org>, Sibi Sankar <quic_sibis@quicinc.com>
-References: <20240709102728.15349-1-a39.skl@gmail.com>
- <20240709102728.15349-8-a39.skl@gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240709102728.15349-8-a39.skl@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9.07.2024 12:22 PM, Adam Skladowski wrote:
-> For now example list snoc_mm as children of bimc which is obviously
-> not valid, drop bimc and move snoc_mm into snoc.
-> 
-> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
-> ---
+In the dmesg is showing the message "failed to read out thermal zone"
+as if the temperature read is failed by don't find the thermal zone.
 
-loool, thanks
+After researching and debugging, I see that this specific error is
+occurrenced because the thermal try read the temperature when is started,
+but the firmware is not running yet.
 
+For more legibiliti i change the tt.c for return EAGAIN when this was occurrence.
+After this change, in my computer I compile and install kernel in /boot
+and in my dmesg the message "failed to read out thermal zone" is not show
+any more.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+I would like to thanks for Rafael Wysocki <refael.j.wysocki@intel.com> ,
+Kalle Valo <kvalo@kernel.org> and Johannes Berg <johannes@sipsolutions.net>
+for your suggestions in my previous patch.
 
-Konrad
+Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+---
+ drivers/net/wireless/intel/iwlwifi/mvm/tt.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+index 8083c4b2ab6b..d1dd334b5049 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
+@@ -620,8 +620,12 @@ static int iwl_mvm_tzone_get_temp(struct thermal_zone_device *device,
+ 
+ 	mutex_lock(&mvm->mutex);
+ 
+-	if (!iwl_mvm_firmware_running(mvm) ||
+-	    mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
++	if (!iwl_mvm_firmware_running(mvm)) {
++		ret = -EAGAIN;
++		goto out;
++	}
++
++	if (mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
+ 		ret = -ENODATA;
+ 		goto out;
+ 	}
+-- 
+2.45.2
+
 
