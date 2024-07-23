@@ -1,173 +1,182 @@
-Return-Path: <linux-kernel+bounces-260141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0633393A3BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:27:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F1D793A3C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 878431F241DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:27:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44DE0285335
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF0B157494;
-	Tue, 23 Jul 2024 15:26:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7E8153810;
+	Tue, 23 Jul 2024 15:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CaOpnhxa"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="BY/uJW1j"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BEFC15747F
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 15:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E309A1386DF
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 15:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721748406; cv=none; b=srOPZ/0c97YW22PY9faGqJ1XJ9r6xfezce1QSSc8Ohnn2v59PdJKL9g2KI7/+gv4mZw6h8RtAZyZtIKMrjdM3jw+L25lXOPcc7akRnzz46rvaGde9i5ZDD0UcOctCWeHT3wDBvTn5AdANzL16KEPor+DrwUVsUsTiixnDiK6TPk=
+	t=1721748610; cv=none; b=avyDC6vPmuyQd+3g++oM9GfzsTiTA//mFDYVY4F8j1EyyH9mMB/y12W2RRqAWAE1yr04dTQVa0OJMZgZzLrYGbdJoxvdk21GGB23DjOabsbWjcSQ8cmy7yWmTiEbvRVHHqm5jXU5aRd2omC6LLb/7OSt+5Qn7n5SGyQzwk+c3nQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721748406; c=relaxed/simple;
-	bh=/GAzCoIpzcinpHppherQZNExMsxjrylvg0JO9ZwT0bo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aFQ/bUXaRKGfxVjtivtiD8sJslppVqeMDDStcH2qDaQrPCNvprFeXkLHWysbEXa6N9z1z9qtXH1vIHy19csFHAdMc6jU3DhxE2soh0E2ZhHeer02zVb4Qg/9NHckHhQn4Q2hi1ZRV84+WxruhM70wAlOAF5Go9TiXNjYOKHhrSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CaOpnhxa; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-427d2cc1c4eso40257335e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:26:43 -0700 (PDT)
+	s=arc-20240116; t=1721748610; c=relaxed/simple;
+	bh=78n0CA6Sch2qJqJKz+7NmOTfqyIFCxJ8DjlkzKp/aSg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BH8WpCiXiKUOyC8gGGFSDimF28WY6TT/erJE9PypDK/pCSBfuPNliqzcSwYREXccAipBnNx7Jt9OJGsZm5bBtCJErcSS/sNuEckNfSLEywmwnOqw4xeyGO3/Sxsp2G8uVrjb9RKHyIlJtE7Olrz2lGaSdB4FA1QSpXFr2lIm6YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=BY/uJW1j; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6b7a4668f1fso38431046d6.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:30:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721748402; x=1722353202; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6sJgSl3GAq4Vma3aTaXhJBsKRSa5G5hA7HsiKy1dx+4=;
-        b=CaOpnhxa4aCILPuBj2/pYWApPy/Qv1bULSvKdi0hGR9fCvYZrGwPUMc9E03fEZwFHo
-         jSm5//i2y7PnC6EZGppDSbN5JLnjqW5T4ndSWwqRvHEOIIrohKwvCSksn5W03VewdYr8
-         86HZZa7x0anqhNfvyS6RQ73lOlblvZZKQeLX56eaQYCE9UhI9t7prGHcqKyk1ydOZXdz
-         jkGJ3k/sXYGFIRFjdly7yiRBIfOrRBjxc8V0fAikcyIaHh4+06v8ARJl5CgJeoqeLpJF
-         3O8ZHDK4Kmdb5U0fcuCqgWXRoPY6zqtpFqCLgB1X2jNU9Z0J1OsUNBxzso299fsYKE8x
-         Bd8Q==
+        d=rowland.harvard.edu; s=google; t=1721748608; x=1722353408; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IEHcT8XxC0SlSjrExDMjr6SOkfXnLgP4pXm3ISl7TZk=;
+        b=BY/uJW1jhzB0CA0DPBFcz4mHTB3qZ4YRltt6f9eP7X0SXLgQUUeu33G2DU4AeLi7/j
+         gWU9GX/BxkE7kZ/xijZrLMv6eQZZ9RtwMEBa7SHs0aSvwuRlyFimvZZsUNpU/IyIrF0X
+         UNrQ3GB9tu1K1eu1BnUibBhgaJ2ZjcEccrXHQR8mVi7psCMrquXVMvCibYQFUeIBRpwL
+         kBtgwv7fP3a6QO+VaRt0GiIkkYrCsDN9DBXxyXIgjoQzeeSThwNWpzlhJXA/gyBaUxhx
+         ZqAL2IjZ5ll36md8WWLwd4X+QFMD7/bXnzizkfcygTVBfH1/qM9BBqmyX+YSlr3EOaz1
+         EUFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721748402; x=1722353202;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6sJgSl3GAq4Vma3aTaXhJBsKRSa5G5hA7HsiKy1dx+4=;
-        b=tdri74MxupXaWLJlFsTcAp2Ko+j1upVncbgFb080EORi3T+xp7WovfzBVsxsujIHqY
-         5VaBHZfbNeeRyR3SKaPzIdwIPACHnL2Vn0ikU09qRH9quSHwv+muKj5joRMelDtZgiAW
-         d9840pS0xFWDI5UsR4sK2tpwMgvOD1y7R/O0YTvWpeT466o49tkxPUhzgd39ZER05uV7
-         Ya7oEXBZkC29k/GzHjSpBw+WF/hPANplJsZuAzHWWU/uNiT6AXH9C3hItA73iwHDMJ9s
-         ikRYj6BLJXNJDd6xlmY8AKRiYxg/aPoKlwvkveKCCKtkBwvtNR+bPbAdtjtlPNV46zFh
-         4O6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWTuEs4uGD2718ezJs25FfC9px6dhgcSl1OLIn73Uv5JzuIJuUAgh4H6CwRlFPN/1RcA4dfXPJhk8dwPyAbBKPy6gWLHrztUUqsXK6e
-X-Gm-Message-State: AOJu0Ywj6enZJbWtJlvq3tPI2Ho6H7o4TU0lsGbdTlwo4/LIdliR5bdh
-	kWzHniNHuQ8Gx4pDHVz8oVTyuZR7CuUICU7GLcC/+ZeKZkCt6Ou00TevM8l0/Ck=
-X-Google-Smtp-Source: AGHT+IH704aplI1Gj4zi9mJCmtvatJ7BJmFbEsuJXSPD/J001YnpqT8iBJNqXv1HeeLf25Wnb5i4qw==
-X-Received: by 2002:a05:6000:156a:b0:364:3ba5:c5af with SMTP id ffacd0b85a97d-369dee68c16mr3078106f8f.61.1721748402116;
-        Tue, 23 Jul 2024 08:26:42 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3687868b24csm11809518f8f.25.2024.07.23.08.26.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 08:26:41 -0700 (PDT)
-Message-ID: <945e58b5-5012-45a8-933a-c1a192fd006e@linaro.org>
-Date: Tue, 23 Jul 2024 16:26:40 +0100
+        d=1e100.net; s=20230601; t=1721748608; x=1722353408;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IEHcT8XxC0SlSjrExDMjr6SOkfXnLgP4pXm3ISl7TZk=;
+        b=rsXXZB+XSuDJOvQrScjMPP3RvH7Bw5F/81SuLGZTI5kNhtns89dMeIwCgIv+HZUdRt
+         EiPrgQJ5HscsInqA3tourt6KhDMTqL5rpQD3tnQWKtQ6wbG+s/BgYpaMmBH7vS2UHiLZ
+         gY5BjOI1Nsx3JQmoaweYeccouyx7QzW2HXS46B1Sjr6l6yioesBIC+p9f88pdY/OqTVd
+         swHZGvQD6jxWcTdg4zonv8MxTDqezob+2ZPslTROX9NGQdec0aFyO+zCyX6IS++f83Da
+         +MBNq8Gv62A4tBnlO/pmFnLCmyMblBluP5eTq/72+txThqwudK15WFBDfZ447/xNfxTV
+         a2aw==
+X-Forwarded-Encrypted: i=1; AJvYcCX2hxGigoLUHvZaw6v+4s69Pnmh/kfSOrdZyHRrWX0F7XHjZysr8VunCBklAhBlhJ/GYVzLS8YWNjXXBFtIbwFOZTymUUG8NR1zwYgh
+X-Gm-Message-State: AOJu0Yw0Pu09P5+fOwoRsFxniW6jnG5+9N5sVC/45G4AYm8mOG6R1SUr
+	egUPKTv0uH/e6Xt3uEhPVgoNW9EmZvFqKua5H9gKKAnoPRy2nbqhraD4OMELfA==
+X-Google-Smtp-Source: AGHT+IHp+SZ/H2ADfIqNtjyRXjOZOuded9Ph9BpuZgfIh/X3AngR6/rj9BD6WtS8E3ul0LOOux17xA==
+X-Received: by 2002:a05:6214:3009:b0:6b7:ad32:3815 with SMTP id 6a1803df08f44-6b9610e3c60mr135237376d6.14.1721748607829;
+        Tue, 23 Jul 2024 08:30:07 -0700 (PDT)
+Received: from rowland.harvard.edu (iolanthe.rowland.org. [192.131.102.54])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b7acae1c93sm47820276d6.108.2024.07.23.08.30.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 08:30:07 -0700 (PDT)
+Date: Tue, 23 Jul 2024 11:30:04 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: syzbot <syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com>
+Cc: andriy.shevchenko@linux.intel.com, f.fainelli@gmail.com,
+	fancer.lancer@gmail.com, gregkh@linuxfoundation.org,
+	ilpo.jarvinen@linux.intel.com, jirislaby@kernel.org,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-usb@vger.kernel.org, marcello.bauer@9elements.com,
+	rafael@kernel.org, sylv@sylv.io, syzkaller-bugs@googlegroups.com,
+	tglx@linutronix.de
+Subject: Re: [syzbot] [usb?] INFO: task hung in uevent_show
+Message-ID: <ade15714-6aa3-4988-8b45-719fc9d74727@rowland.harvard.edu>
+References: <000000000000dd5b9f061ab3d7a4@google.com>
+ <0000000000006e5e08061dc2027e@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] perf script: Fix for `perf script +F metric` with
- leader sampling
-To: Ian Rogers <irogers@google.com>
-Cc: Andi Kleen <ak@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-References: <20240720074552.1915993-1-irogers@google.com>
- <20240720074552.1915993-2-irogers@google.com>
- <8c8da262-a398-41cc-9721-4e72e6b7e5fd@linaro.org>
- <CAP-5=fWwjJuHpTJDMtxKYGDa9Sjo-kHk099vBTW8N-6_GtMfMw@mail.gmail.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <CAP-5=fWwjJuHpTJDMtxKYGDa9Sjo-kHk099vBTW8N-6_GtMfMw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000006e5e08061dc2027e@google.com>
 
-
-
-On 23/07/2024 3:57 pm, Ian Rogers wrote:
-> On Tue, Jul 23, 2024 at 7:41 AM James Clark <james.clark@linaro.org> wrote:
->>
->>
->>
->> On 20/07/2024 8:45 am, Ian Rogers wrote:
->>> Andi Kleen reported a regression where `perf script +F metric` would
->>> crash. With this change the output is:
->>>
->>> ```
->>> $ perf record -a -e '{cycles,instructions}:S' perf bench mem memcpy
->>>
->>>         21.229620 GB/sec
->>>
->>>         15.751008 GB/sec
->>>
->>>         16.009221 GB/sec
->>> [ perf record: Woken up 1 times to write data ]
->>> [ perf record: Captured and wrote 1.945 MB perf.data (294 samples) ]
->>> $ perf --no-pager script -F +metric
->>>               perf 1912464 [000] 814503.473101:       6325       cycles:  ffffffff8548d64a native_write_msr+0xa ([kernel.kallsyms])
->>>               perf 1912464 [000] 814503.473101:   metric:    0.06  insn per cycle
->>>               perf 1912464 [000] 814503.473101:        351 instructions:  ffffffff8548d64a native_write_msr+0xa ([kernel.kallsyms])
->>>               perf 1912464 [000] 814503.473101:   metric:    0.03  insn per cycle
->>> ...
->>> ```
->>
->> For some reason I only get the metric: lines when I record with -a. I
->> noticed this because Andi's test doesn't use -a so it fails.
->>
->> I'm not sure if that's expected or it's related to your disclaimer below?
+On Sun, Jul 21, 2024 at 06:36:01AM -0700, syzbot wrote:
+> syzbot has bisected this issue to:
 > 
-> It is. When you don't do -a the cpu map just contains -1 and for some
-> reason it is busted. The whole indirections to arrays of arrays,
-> counts, stats, aggregations, with indices into various other arrays
-> and a lack of helpers. The code works for perf stat, but there is a
-> lot of complexity that I don't fully grok in that. Here I've tried to
-> kind of break down what the code is trying to do in the comments, but
-> the old code never did sample_read_group__for_each so was is broken
-> with leader sampling? Is the leader sampling pretending the read
-> counts are periods and calling process sample multiple times. Andi
-> likely knows this code better than me so I was hoping he could fix it
-> up. We may want to take the patches anyway in order to not have a
-> segv.
+> commit a7f3813e589fd8e2834720829a47b5eb914a9afe
+> Author: Marcello Sylvester Bauer <sylv@sylv.io>
+> Date:   Thu Apr 11 14:51:28 2024 +0000
 > 
-> Thanks,
-> Ian
+>     usb: gadget: dummy_hcd: Switch to hrtimer transfer scheduler
 > 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12d54f2d980000
+> start commit:   d35b2284e966 Add linux-next specific files for 20240607
+> git tree:       linux-next
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=11d54f2d980000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16d54f2d980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=d8bf5cd6bcca7343
+> dashboard link: https://syzkaller.appspot.com/bug?extid=edd9fe0d3a65b14588d5
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10905c26980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1122da8c980000
+> 
+> Reported-by: syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com
+> Fixes: a7f3813e589f ("usb: gadget: dummy_hcd: Switch to hrtimer transfer scheduler")
+> 
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
-Yeah I suppose it's strictly better now without the segfault. Could you 
-pull in the test and update it to add -a? At least then that behavior 
-will be locked down and we can extend it later without -a.
+Let's try again to see if Marcello's patch fixes the problem.  The first 
+try had a typo.
 
-I also tested Andi's V5 and still got the segfault.
+Alan Stern
 
->>>
->>> The change fixes perf script to update counts and thereby aggregate
->>> values which then get consumed by unchanged metric logic in the shadow
->>> stat output. Note, it would be preferential to switch to json metrics.
->>>
->>> Reported-by: Andi Kleen <ak@linux.intel.com>
->>> Closes: https://lore.kernel.org/linux-perf-users/20240713155443.1665378-1-ak@linux.intel.com/
->>> Fixes: 37cc8ad77cf8 ("perf metric: Directly use counts rather than saved_value")'
->>> Signed-off-by: Ian Rogers <irogers@google.com>
->>> ---
->>> The code isn't well tested nor does it support non-leader sampling
->>> reading of counts based on periods that seemed to present in the
->>> previous code. Sending out for the sake of discussion. Andi's changes
->>> added a test and that should certainly be added.
->>> ---
->>>    tools/perf/builtin-script.c | 114 +++++++++++++++++++++++++++++-------
->>>    1 file changed, 93 insertions(+), 21 deletions(-)
->>>
+#syz test: linux-next d35b2284e966
+
+--- a/drivers/usb/gadget/udc/dummy_hcd.c
++++ b/drivers/usb/gadget/udc/dummy_hcd.c
+@@ -1304,7 +1304,7 @@ static int dummy_urb_enqueue(
+ 
+ 	/* kick the scheduler, it'll do the rest */
+ 	if (!hrtimer_active(&dum_hcd->timer))
+-		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS), HRTIMER_MODE_REL);
++		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS), HRTIMER_MODE_REL_SOFT);
+ 
+  done:
+ 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
+@@ -1325,7 +1325,7 @@ static int dummy_urb_dequeue(struct usb_hcd *hcd, struct urb *urb, int status)
+ 	rc = usb_hcd_check_unlink_urb(hcd, urb, status);
+ 	if (!rc && dum_hcd->rh_state != DUMMY_RH_RUNNING &&
+ 			!list_empty(&dum_hcd->urbp_list))
+-		hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL);
++		hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
+ 
+ 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
+ 	return rc;
+@@ -1995,7 +1995,7 @@ static enum hrtimer_restart dummy_timer(struct hrtimer *t)
+ 		dum_hcd->udev = NULL;
+ 	} else if (dum_hcd->rh_state == DUMMY_RH_RUNNING) {
+ 		/* want a 1 msec delay here */
+-		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS), HRTIMER_MODE_REL);
++		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS), HRTIMER_MODE_REL_SOFT);
+ 	}
+ 
+ 	spin_unlock_irqrestore(&dum->lock, flags);
+@@ -2389,7 +2389,7 @@ static int dummy_bus_resume(struct usb_hcd *hcd)
+ 		dum_hcd->rh_state = DUMMY_RH_RUNNING;
+ 		set_link_state(dum_hcd);
+ 		if (!list_empty(&dum_hcd->urbp_list))
+-			hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL);
++			hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
+ 		hcd->state = HC_STATE_RUNNING;
+ 	}
+ 	spin_unlock_irq(&dum_hcd->dum->lock);
+@@ -2467,7 +2467,7 @@ static DEVICE_ATTR_RO(urbs);
+ 
+ static int dummy_start_ss(struct dummy_hcd *dum_hcd)
+ {
+-	hrtimer_init(&dum_hcd->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
++	hrtimer_init(&dum_hcd->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_SOFT);
+ 	dum_hcd->timer.function = dummy_timer;
+ 	dum_hcd->rh_state = DUMMY_RH_RUNNING;
+ 	dum_hcd->stream_en_ep = 0;
+@@ -2497,7 +2497,7 @@ static int dummy_start(struct usb_hcd *hcd)
+ 		return dummy_start_ss(dum_hcd);
+ 
+ 	spin_lock_init(&dum_hcd->dum->lock);
+-	hrtimer_init(&dum_hcd->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
++	hrtimer_init(&dum_hcd->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_SOFT);
+ 	dum_hcd->timer.function = dummy_timer;
+ 	dum_hcd->rh_state = DUMMY_RH_RUNNING;
+ 
+-- 
+2.45.2
+
 
