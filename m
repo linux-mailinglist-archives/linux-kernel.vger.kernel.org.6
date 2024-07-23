@@ -1,80 +1,66 @@
-Return-Path: <linux-kernel+bounces-259613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE3AD93998E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:03:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4222939B29
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 941CB281FE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 06:03:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64DD1286A30
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 06:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D750213D520;
-	Tue, 23 Jul 2024 06:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 814D314B077;
+	Tue, 23 Jul 2024 06:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C9+Zxc7r"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b="Yptz1zD/"
+Received: from lx20.hoststar.hosting (lx20.hoststar.hosting [168.119.41.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2A813A241;
-	Tue, 23 Jul 2024 06:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B3513CF85;
+	Tue, 23 Jul 2024 06:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.41.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721714628; cv=none; b=N5RKxaLlBHM4YJoB5gRECauqQ8ZuDA+9OLqq8cbLgK4l7XaFgcWkPbx+pTTBHOCemcpvcOeCALiwReb4wXLTPCJFeyvJhRYOKxlI0rryuti+WT2Pkf7AOy8LSq/WMrA6F2seXZcNUP0yjjBQ6BNRaOpYh8SAvXCemv0T5RV49Z8=
+	t=1721717485; cv=none; b=DvKvCjDDObCI2kA9c34OoI3pSd+uVDhEeQNWP9xIoGkUB/cdV0WRB2+jAS7MAyX3Fp215tYkGFcPbTnRoaILa2H7Zlt4A7jSg5/Yp0ZoW9Z208eJ7dctCl7x7t+QdjHbcqR1dPxjI9juutY4/s0K7kxoCbNmNj2mC4ZXDr331Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721714628; c=relaxed/simple;
-	bh=gwGMfakMSmmXIu2SuQ7DD1aUV9egyzbxf33dyORpkcQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lAMVwhxbLEMRwyBx+f/Me1kLE4miHZ571aFOXhl2fOZ9IQe3ZOMgHxxIPoEgHEN4VYyUY0suRKJbaQtbyykTu+V4dJmm6VBiPuUzCocdFvBJmXtra+Hb5QoZ7uftQfOTyRAKYndJTkee/pIXx7S9saNiWeTmiIvO1p0VT/Vaess=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C9+Zxc7r; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fc56fd4de1so3333065ad.0;
-        Mon, 22 Jul 2024 23:03:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721714626; x=1722319426; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=54T/UrOSVnJ9rISsin1qHr+L1d8cmHOyygXczypoES8=;
-        b=C9+Zxc7roVAttigf4nNd9IlBGYdQi7rsAUaz0UUQT7ESZHBXuEjU+jxTQ5IEo7EZ1P
-         dJL0z8wclnQva8DOEeSOOkvSrxCWwFqHlTbtw/0viC5eEE9qo2w3s3D9hwKvKlq59ODs
-         HpcP9Yl62GNTvpHYeFRkVHf6RjWTnyADqUrJ7Q868hQcik79glXP3tyt14ufRUHPWpXQ
-         hnprVF0+uM0YEErdmQ2AJZrQup7jv5mLD6FUP6sAr6hxkSIDOkh52U6mPnZI9KltabR1
-         shHL2UYYvUR507wOBEtc8ZTwi9KN33kvVgiI+wU3AezVyYBEIxZoU34ZwpNUrg8kjkUJ
-         hEbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721714626; x=1722319426;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=54T/UrOSVnJ9rISsin1qHr+L1d8cmHOyygXczypoES8=;
-        b=DiTMTlcOg/2Z3yJQyg4UJCCFM6pbrdSoPQLeVjtQ5qHd7tJSDbxqRao7cmc8ql50Vy
-         vpSNbpdIWyZ0AUs+F3Edcj4XuguRFNHBh+UnTmGBDMxTSKKgVct0ov6BRkn+F32EF1Kh
-         bYuhSu6rx4IVM/35rC23nuZ0iGmCF9ZP1Du3T4XwuD1l/NzGanT8ql7YwaTtE/ov5Vib
-         Q+3qCUzhB5VYKYayIq2Awh+32Saw4ZeY0REThM+hSVzYO9GTK/FqYdswUL/TJniHfIx7
-         LGaM1kc3WMT5yESR5LT7cTV1U/PxcIaqG/qq7ZZssXp0MBisAK/zQSLiwm9aGZGr1jsI
-         kWzA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSV6NOzo8CfWJsrekL2DX21dDnPQTd9yqwoOrhAImFsD7Rh8lswrQ3Ae3wSOUOG+p41ioIZRgaEL/8YtijT8hpaZ3optHwLPk3k/uvGDs6gFBQ5WvWSH9qWv0ycoGtudpofvlZmnEd9lA=
-X-Gm-Message-State: AOJu0YwGvlXdxl0KG083L2ignXO9ouHk0frenqan3wAII0hv3QC6aNQK
-	v4P1X0wuTFV+vBsYXpTDQ7tJNdfLRY0QJn4Fb1Mo6smzA5NEtFDkG60PlT+JZP8=
-X-Google-Smtp-Source: AGHT+IF5N9Hpjd9u7ffX60R/GPm9+eBUewVTteCh1raMCU9msqL1QfiaSt035qpW/Ns8EXNEz8UJ/A==
-X-Received: by 2002:a17:903:2a83:b0:1fa:1a78:b5a9 with SMTP id d9443c01a7336-1fdb94d1692mr20402295ad.3.1721714625795;
-        Mon, 22 Jul 2024 23:03:45 -0700 (PDT)
-Received: from Riyan.inspiron ([122.176.198.184])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f291f10sm65597795ad.103.2024.07.22.23.03.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 23:03:45 -0700 (PDT)
-From: Riyan Dhiman <riyandhiman14@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: dri-devel@lists.freedesktop.org,
-	linux-fbdev@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Riyan Dhiman <riyandhiman14@gmail.com>
-Subject: [PATCH] staging: fbtft: remove unnecessary braces in if statements and space before close parenthesis in function call
-Date: Tue, 23 Jul 2024 11:33:11 +0530
-Message-Id: <20240723060311.32043-1-riyandhiman14@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1721717485; c=relaxed/simple;
+	bh=hzm4zDypja5gz5Itp4dPQP3GWgVYqyypukzntSlys8k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=khTMetBGD03QS+77Al1sBVZLpOhM+jWCkB2ZB6ctz2VWBsnOBMZVyRtBbErs/dLCOTrm82Hs5bZ7X+ItPZa4fjr405hU3PXQeaeoaEMVC89t72IXNFiV8IBZlpXss0C6CGxHb+n1b6q5FyoMgUZdAxvb1scWexywcaG/tWMk/v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at; spf=pass smtp.mailfrom=emfend.at; dkim=pass (1024-bit key) header.d=emfend.at header.i=@emfend.at header.b=Yptz1zD/; arc=none smtp.client-ip=168.119.41.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emfend.at
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=emfend.at;
+	 s=mail; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:
+	To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=g/eLgGJborLiVboZJO/DPw/dEglaiSY/mbEUz91hDyw=; b=Yptz1zD/1a/yBelKDILByZsYDb
+	+c2Qk0o2skekmKL/7VPC6wMj3voimqse9pEtUyNCHTnwFT7pJ0dFRbXVbf3DoHEBrdA+yyr2MWPJ/
+	gRler5xstujk3R1EumGUkRdP6b+g0MFVwyr/shWeEeTE3d8e6qHpp0QkjURT9pqu6tRo=;
+Received: from 194-208-208-245.tele.net ([194.208.208.245]:52751 helo=localhost.localdomain)
+	by lx20.hoststar.hosting with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <matthias.fend@emfend.at>)
+	id 1sW8i0-007mSg-4d; Tue, 23 Jul 2024 08:09:12 +0200
+From: Matthias Fend <matthias.fend@emfend.at>
+To: Rui Miguel Silva <rmfrfs@gmail.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Purism Kernel Team <kernel@puri.sm>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: linux-media@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] media: imx-mipi-csis: avoid logging while holding spinlock
+Date: Tue, 23 Jul 2024 08:09:08 +0200
+Message-Id: <20240723060909.534584-1-matthias.fend@emfend.at>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,93 +68,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Spam-Score: 
+X-Spam-Bar: 
+X-Spam-Report: 
 
-Adhere to Linux kernel coding style.
+Refactor mipi_csis_log_counters() to prevent calling dev_info() while
+IRQs are disabled. This reduces crucial IRQs off time to a bare minimum.
 
-Reported by checkpatch:
-
-CHECK: Unnecessary parentheses around 'devcode != 0x0000'
-CHECK: Unnecessary parentheses around 'devcode != 0x9320'
-CHECK: Unnecessary parentheses around 'par->info->var.xres == 320'
-CHECK: Unnecessary parentheses around 'par->info->var.yres == 240'
-CHECK: Unnecessary parentheses around 'par->spi->bits_per_word == 8'
-CHECK: Unnecessary parentheses around '!txbuflen'
-CHECK: Unnecessary parentheses around 'bpp > 8'
-ERROR: space prohibited before that close parenthesis ')'
-
-Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+Signed-off-by: Matthias Fend <matthias.fend@emfend.at>
 ---
- drivers/staging/fbtft/fb_ili9320.c | 2 +-
- drivers/staging/fbtft/fb_ra8875.c  | 2 +-
- drivers/staging/fbtft/fbtft-bus.c  | 6 +++---
- drivers/staging/fbtft/fbtft-core.c | 2 +-
- 4 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/media/platform/nxp/imx-mipi-csis.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/fbtft/fb_ili9320.c b/drivers/staging/fbtft/fb_ili9320.c
-index 0be7c2d51548..409b54cc562e 100644
---- a/drivers/staging/fbtft/fb_ili9320.c
-+++ b/drivers/staging/fbtft/fb_ili9320.c
-@@ -37,7 +37,7 @@ static int init_display(struct fbtft_par *par)
- 	devcode = read_devicecode(par);
- 	fbtft_par_dbg(DEBUG_INIT_DISPLAY, par, "Device code: 0x%04X\n",
- 		      devcode);
--	if ((devcode != 0x0000) && (devcode != 0x9320))
-+	if (devcode != 0x0000 && devcode != 0x9320)
- 		dev_warn(par->info->device,
- 			 "Unrecognized Device code: 0x%04X (expected 0x9320)\n",
- 			devcode);
-diff --git a/drivers/staging/fbtft/fb_ra8875.c b/drivers/staging/fbtft/fb_ra8875.c
-index 398bdbf53c9a..ce305a0bea48 100644
---- a/drivers/staging/fbtft/fb_ra8875.c
-+++ b/drivers/staging/fbtft/fb_ra8875.c
-@@ -50,7 +50,7 @@ static int init_display(struct fbtft_par *par)
- 
- 	par->fbtftops.reset(par);
- 
--	if ((par->info->var.xres == 320) && (par->info->var.yres == 240)) {
-+	if (par->info->var.xres == 320 && par->info->var.yres == 240) {
- 		/* PLL clock frequency */
- 		write_reg(par, 0x88, 0x0A);
- 		write_reg(par, 0x89, 0x02);
-diff --git a/drivers/staging/fbtft/fbtft-bus.c b/drivers/staging/fbtft/fbtft-bus.c
-index 3d422bc11641..02d7dbd38678 100644
---- a/drivers/staging/fbtft/fbtft-bus.c
-+++ b/drivers/staging/fbtft/fbtft-bus.c
-@@ -62,9 +62,9 @@ out:									      \
- }                                                                             \
- EXPORT_SYMBOL(func);
- 
--define_fbtft_write_reg(fbtft_write_reg8_bus8, u8, u8, )
-+define_fbtft_write_reg(fbtft_write_reg8_bus8, u8, u8,)
- define_fbtft_write_reg(fbtft_write_reg16_bus8, __be16, u16, cpu_to_be16)
--define_fbtft_write_reg(fbtft_write_reg16_bus16, u16, u16, )
-+define_fbtft_write_reg(fbtft_write_reg16_bus16, u16, u16,)
- 
- void fbtft_write_reg8_bus9(struct fbtft_par *par, int len, ...)
+diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
+index f49b06978f14..0c34d316ed29 100644
+--- a/drivers/media/platform/nxp/imx-mipi-csis.c
++++ b/drivers/media/platform/nxp/imx-mipi-csis.c
+@@ -857,18 +857,21 @@ static void mipi_csis_log_counters(struct mipi_csis_device *csis, bool non_error
  {
-@@ -85,7 +85,7 @@ void fbtft_write_reg8_bus9(struct fbtft_par *par, int len, ...)
- 	if (len <= 0)
- 		return;
+ 	unsigned int num_events = non_errors ? MIPI_CSIS_NUM_EVENTS
+ 				: MIPI_CSIS_NUM_EVENTS - 8;
++	unsigned int counters[MIPI_CSIS_NUM_EVENTS];
+ 	unsigned long flags;
+ 	unsigned int i;
  
--	if (par->spi && (par->spi->bits_per_word == 8)) {
-+	if (par->spi && par->spi->bits_per_word == 8) {
- 		/* we're emulating 9-bit, pad start of buffer with no-ops
- 		 * (assuming here that zero is a no-op)
- 		 */
-diff --git a/drivers/staging/fbtft/fbtft-core.c b/drivers/staging/fbtft/fbtft-core.c
-index 8e2fd0c0fee2..53b104559502 100644
---- a/drivers/staging/fbtft/fbtft-core.c
-+++ b/drivers/staging/fbtft/fbtft-core.c
-@@ -666,7 +666,7 @@ struct fb_info *fbtft_framebuffer_alloc(struct fbtft_display *display,
- 		txbuflen = 0;
+ 	spin_lock_irqsave(&csis->slock, flags);
++	for (i = 0; i < num_events; ++i)
++		counters[i] =  csis->events[i].counter;
++	spin_unlock_irqrestore(&csis->slock, flags);
  
- #ifdef __LITTLE_ENDIAN
--	if ((!txbuflen) && (bpp > 8))
-+	if (!txbuflen && bpp > 8)
- 		txbuflen = PAGE_SIZE; /* need buffer for byteswapping */
- #endif
+ 	for (i = 0; i < num_events; ++i) {
+-		if (csis->events[i].counter > 0 || csis->debug.enable)
++		if (counters[i] > 0 || csis->debug.enable)
+ 			dev_info(csis->dev, "%s events: %d\n",
+ 				 csis->events[i].name,
+-				 csis->events[i].counter);
++				 counters[i]);
+ 	}
+-	spin_unlock_irqrestore(&csis->slock, flags);
+ }
  
+ static int mipi_csis_dump_regs(struct mipi_csis_device *csis)
 -- 
-2.39.2
+2.25.1
 
 
