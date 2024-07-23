@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-260293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C1B293A567
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:16:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EDF593A569
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA9B6B22540
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:16:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80A1F1C22248
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:17:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ACED15958A;
-	Tue, 23 Jul 2024 18:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F7915ECDB;
+	Tue, 23 Jul 2024 18:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QrqjLlOl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdTrNimT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EED41586F6;
-	Tue, 23 Jul 2024 18:12:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B10F158A32;
+	Tue, 23 Jul 2024 18:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721758367; cv=none; b=KTro6QS7SJzuxaO9lbRl0Y3TzUlKQAcSgKy9NiZNR4tC6GZ5sdnonNiQMEvF2Ldb6L0WxQPZEMTp4hJrZxpHgE+4NMxoxRUcT7ivbO2sC6MP8XZUruJxx6BxpHUUbCA4bximdAzMeieRMR5+P/9PsYZ9tpLmcIW9vnPYmJYfcL8=
+	t=1721758372; cv=none; b=d8zV1d20BL45PmAZ6Iax9g8HJ7rVfhOzNS18AN01UkCOi436IyOArcExSa5W+zzGP6dOeOwIqUh866RG0ze0Fgx3J844Ga0iH5e+NKR1+z1V/KhqvvDIpkAY4+/8uIPhbv1wxxjbkweejk5KR+c123G5BnY5H0VM/J5rCDko9wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721758367; c=relaxed/simple;
-	bh=hs6yx2vsssnsC1cMGPjQ8GCbMEe+TcUfgVzllRdmHcQ=;
+	s=arc-20240116; t=1721758372; c=relaxed/simple;
+	bh=ifLa6ui520OxD4tx6GpOL1mZtUOCjuqJJxFCxi3qo5o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jptD7DaayNgMmjbWnRqQ9vJaTkn1nQkw7HR2PbXH7fJThDHseaiL8F61rRRKN2Gp0Won+OTnYNs3wbXPPIXFQXt1qE3edBk1+PIn0L0CT5TWx+2PzCu+7vAmYQpG64XoehAmy7NxLlt3x+Yqe6tlvLT67s+2Zqy2cWi8a+7iRKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QrqjLlOl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01C23C4AF0F;
-	Tue, 23 Jul 2024 18:12:40 +0000 (UTC)
+	 MIME-Version; b=rIH1KdPu5iJambbGMnZ/eIt0uR+awNsAjuuJB+Etryb61ossl1YnGlsZGMgMzhoImOAQGb1ZnX3nBz9slD2jz8hsfZ71G026fgcVCUhzh6OLj63/tWTR4wXOIjYvK6kiUXTkYw46BByQKHQODEO4XZ7JLiF+p+YHqA00Y3k2Zr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hdTrNimT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BDDAC4AF09;
+	Tue, 23 Jul 2024 18:12:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721758366;
-	bh=hs6yx2vsssnsC1cMGPjQ8GCbMEe+TcUfgVzllRdmHcQ=;
+	s=k20201202; t=1721758371;
+	bh=ifLa6ui520OxD4tx6GpOL1mZtUOCjuqJJxFCxi3qo5o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QrqjLlOlUH7v2hvkeiyaOJgc8Oh7GHD2if+LolauVZpdSjXJUzYAuQSO2G/BzwM5a
-	 AiiIxDaMskwTxGJy7m1wRE3mRn+MgcsrMoFfCM2jX0p1VeXsMAdcuVKwrBcxbtAVap
-	 N8yVJHcsAAoTB1CKwwVVjKF9duYwYdIOfsGllMFjDQI0TlX/+Nvm54Os3pUOrmTdvp
-	 8QwWTfKrIcqQDSHMODvSnN7m7+O4chstkokwWJnPrzXHLHbSa4PcpOpxKw9Spm5ecv
-	 SK/gnFUPteAQ6WvAFwlrrE4SkuWjarVlw4ifOSDMcOzGALc0arYSU0kyzasYjAL0MR
-	 aSvxiwry37BOQ==
+	b=hdTrNimTX0/gfTHgSGZoFmyF1daiFhFp3RcVFXy3Z1FWilSHjnN5DFRMjhFSO6rbd
+	 qgu6sUkW92cLIqvrtJFtPWeF1TILjkgG42fMbLGKsBZSPcbXQBiM/t0QcJamXj5lY5
+	 wR8QhjcGGIUaBUSxDPcWTaXp8/EQ5aYE/eIIeBx6RcX4JNYqQwGeoz3pgtjD975Z3y
+	 L5fvLLI7EeXF1LtxDngf/2iwXpEeiKjBWktrSadsuMQFLf3XU6GzkSABFzV92OhF0o
+	 3qfWeDp9ONMjDc7tGt3Vmlc9VT509onYY9nqkJCQ11DguV42LBzkkPySGyQAeaIL+W
+	 OP4Xqx2ia0+sQ==
 From: Danilo Krummrich <dakr@kernel.org>
 To: ojeda@kernel.org,
 	alex.gaynor@gmail.com,
@@ -67,9 +67,9 @@ Cc: daniel.almeida@collabora.com,
 	rust-for-linux@vger.kernel.org,
 	linux-mm@kvack.org,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v2 20/23] rust: alloc: remove `GlobalAlloc` and `krealloc_aligned`
-Date: Tue, 23 Jul 2024 20:10:09 +0200
-Message-ID: <20240723181024.21168-21-dakr@kernel.org>
+Subject: [PATCH v2 21/23] rust: error: use `core::alloc::LayoutError`
+Date: Tue, 23 Jul 2024 20:10:10 +0200
+Message-ID: <20240723181024.21168-22-dakr@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240723181024.21168-1-dakr@kernel.org>
 References: <20240723181024.21168-1-dakr@kernel.org>
@@ -81,109 +81,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now that we have all the `Allocator`s and the kernel `Box` and `Vec`
-implementations in place, remove `GlobalAlloc` and `krealloc_aligned`.
+Use `core::alloc::LayoutError` instead of `alloc::alloc::LayoutError` in
+preparation to get rid of Rust's alloc crate.
 
 Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
- rust/kernel/alloc/allocator.rs | 63 ++--------------------------------
- 1 file changed, 2 insertions(+), 61 deletions(-)
+ rust/kernel/error.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
-index 1e53f149db96..fbee89ac3be4 100644
---- a/rust/kernel/alloc/allocator.rs
-+++ b/rust/kernel/alloc/allocator.rs
-@@ -2,8 +2,8 @@
+diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
+index 145f5c397009..2d012cc3881a 100644
+--- a/rust/kernel/error.rs
++++ b/rust/kernel/error.rs
+@@ -6,7 +6,7 @@
  
- //! Allocator support.
+ use crate::{alloc::AllocError, str::CStr};
  
--use super::{flags::*, Flags};
--use core::alloc::{GlobalAlloc, Layout};
-+use super::Flags;
-+use core::alloc::Layout;
- use core::ptr;
- use core::ptr::NonNull;
+-use alloc::alloc::LayoutError;
++use core::alloc::LayoutError;
  
-@@ -39,27 +39,6 @@ fn aligned_size(new_layout: Layout) -> usize {
-     layout.size()
- }
- 
--/// Calls `krealloc` with a proper size to alloc a new object.
--///
--/// # Safety
--///
--/// - `ptr` can be either null or a pointer which has been allocated by this allocator.
--/// - `new_layout` must have a non-zero size.
--pub(crate) unsafe fn krealloc_aligned(ptr: *mut u8, new_layout: Layout, flags: Flags) -> *mut u8 {
--    // SAFETY:
--    // - `ptr` is either null or a pointer returned from a previous `k{re}alloc()` by the
--    //   function safety requirement.
--    // - `size` is greater than 0 since it's from `layout.size()` (which cannot be zero according
--    //   to the function safety requirement)
--    unsafe {
--        bindings::krealloc(
--            ptr as *const core::ffi::c_void,
--            aligned_size(new_layout),
--            flags.0,
--        ) as *mut u8
--    }
--}
--
- struct ReallocFunc(
-     // INVARIANT: One of the following `krealloc`, `vrealloc`, `kvrealloc`.
-     unsafe extern "C" fn(*const core::ffi::c_void, usize, u32) -> *mut core::ffi::c_void,
-@@ -121,41 +100,6 @@ unsafe fn realloc(
-     }
- }
- 
--unsafe impl GlobalAlloc for Kmalloc {
--    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
--        // SAFETY: `ptr::null_mut()` is null and `layout` has a non-zero size by the function safety
--        // requirement.
--        unsafe { krealloc_aligned(ptr::null_mut(), layout, GFP_KERNEL) }
--    }
--
--    unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
--        unsafe {
--            bindings::kfree(ptr as *const core::ffi::c_void);
--        }
--    }
--
--    unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, new_size: usize) -> *mut u8 {
--        // SAFETY:
--        // - `new_size`, when rounded up to the nearest multiple of `layout.align()`, will not
--        //   overflow `isize` by the function safety requirement.
--        // - `layout.align()` is a proper alignment (i.e. not zero and must be a power of two).
--        let layout = unsafe { Layout::from_size_align_unchecked(new_size, layout.align()) };
--
--        // SAFETY:
--        // - `ptr` is either null or a pointer allocated by this allocator by the function safety
--        //   requirement.
--        // - the size of `layout` is not zero because `new_size` is not zero by the function safety
--        //   requirement.
--        unsafe { krealloc_aligned(ptr, layout, GFP_KERNEL) }
--    }
--
--    unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
--        // SAFETY: `ptr::null_mut()` is null and `layout` has a non-zero size by the function safety
--        // requirement.
--        unsafe { krealloc_aligned(ptr::null_mut(), layout, GFP_KERNEL | __GFP_ZERO) }
--    }
--}
--
- unsafe impl Allocator for Vmalloc {
-     unsafe fn realloc(
-         ptr: Option<NonNull<u8>>,
-@@ -184,9 +128,6 @@ unsafe fn realloc(
-     }
- }
- 
--#[global_allocator]
--static ALLOCATOR: Kmalloc = Kmalloc;
--
- // See <https://github.com/rust-lang/rust/pull/86844>.
- #[no_mangle]
- static __rust_no_alloc_shim_is_unstable: u8 = 0;
+ use core::fmt;
+ use core::num::TryFromIntError;
 -- 
 2.45.2
 
