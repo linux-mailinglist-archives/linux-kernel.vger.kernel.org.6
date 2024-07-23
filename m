@@ -1,95 +1,222 @@
-Return-Path: <linux-kernel+bounces-260347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C4493A79A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:13:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14B7E93A7A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:23:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78AD01C21BEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:13:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DAD91F2196B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:23:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B205513DDB8;
-	Tue, 23 Jul 2024 19:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38DE1422B4;
+	Tue, 23 Jul 2024 19:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZj9Qdok"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="Q7BEd20/"
+Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017E813C9D3;
-	Tue, 23 Jul 2024 19:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADFE13DDC6
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 19:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721761984; cv=none; b=Ryl3fWt2aQK6A4pySJpE/WMUTVj8y/w5NGONtmGSzvfj8xGmePx1+lhvVVC7MJZX+HixlJwU9DJ9+d+U9+wXl3BRj2nS59VSasGRapEf7v8rkmow0JJF3KfZdkjNTV0/ok3hPVpYXAeY/G2iimmQT2k+dVxlzVFEEEpOsDBxkOE=
+	t=1721762596; cv=none; b=PjmRNyUrWG0ksmlxudZaf6pw0dqVVKPifu85otTAVUG34Ol8q9+GsVhxMG/zFBh211u58aDKIQ3D9LGhOCGNgIUK8poqET4giGH0U2YB0EfnNNJDXiilBUcEP541D4pGpCZCDMXARo2mjfAXnWMX/k7tIGSuyF3C73iFRQ4s3FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721761984; c=relaxed/simple;
-	bh=MNrLXLTSWXiOAR2IGZ7ZEM7ged6ey/Xto2hXwJ3G1og=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AE0ju6jQASqV6+2JirkI00khVp/IsUvsvebZwf8/BvAuIB7O613YbLOT9SJlt+paeJ46I4wYPaDtLN6SIIQqW7rZXNdieev4pujPIcv27Mv7LJ0DNo4U6EIo6rt0EiHTCSyEV4+U7F+LZZe6oAnf0fXqTszOLytUiWG+wXnd19A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kZj9Qdok; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C974C4AF09;
-	Tue, 23 Jul 2024 19:13:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721761983;
-	bh=MNrLXLTSWXiOAR2IGZ7ZEM7ged6ey/Xto2hXwJ3G1og=;
-	h=From:To:Cc:Subject:Date:From;
-	b=kZj9QdokioCHBqu0yPYv5w7yuGuzBROeYs22qnpuPZ56UsopIxYl9tk82EmfpjJZS
-	 RdmalbxECgjdb9ixpV80QDd05hMLgW9xU5PMrCetRaKANji51lpe+OzoytTJB1XZDX
-	 tE+1D0BYWekHtEDaUAb1bmsMPE7lmYkC5qjPstiWCGfLWtjs0yEBt0OnXQqS3Z3u+b
-	 ezkUDMBIBiqvPCkffIOpHdsV1ES42ZdrEjPitmwJ3s2wq/zUtcPhZbzPMG4zOCJMqq
-	 ONC+aza0Uz0izIKwELrggar7H8vbS+BHz4k2bW95eDZ6LkcwwDRLWUjxL1wcbo8khR
-	 smwgnFVAXuq2g==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Gwenael Treuveur <gwenael.treuveur@foss.st.com>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>
-Subject: [GIT PULL] rpmsg updates for v6.11
-Date: Tue, 23 Jul 2024 12:17:49 -0700
-Message-ID: <20240723191750.3703388-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1721762596; c=relaxed/simple;
+	bh=GZZ6M5b6c2VD9Xbulyz0QyywfiKlBI8D0/GnMKmf/j8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iKK8dwA+FLayx4yE1ssTUodkXw8/dW+INqZJeD79WJZE8ZshovPsYtU2KcZJdicW9IXEyYGfPt/l0z3T86cdiXyCKxw62cZzO/3EJFBZHjMBMni9PgwcwPefcPGtTFSdoL0rG6woEZGIx5U9y18z+aEULpKY+4HiYa3spYxa78U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=Q7BEd20/; arc=none smtp.client-ip=209.85.161.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5ce74defe41so3200659eaf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 12:23:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1721762594; x=1722367394; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=GZZ6M5b6c2VD9Xbulyz0QyywfiKlBI8D0/GnMKmf/j8=;
+        b=Q7BEd20/GpRmgiunAF+127CB/MJmWOK1YbiMtjhmU4+BI3bOOyEibkyS29KQn7We0D
+         EzyQmPakRXCFvq2BiXeOQO6fOb7Hh84CcKtCZ3afqKC6T3+QsCic59aLv/p/JNs0mzv2
+         xcutrCdwmK0//t9KY6VljjTKTgl3pWK6CPtsVrRIAZIZzObHL/dNm6P3cMioLAOvQdcF
+         oCR4SwpH+MyugFL9d4ZltQrhWoY+OJfF+V93rJ5LYbd5rH0QSApNbS6/f8FQl1z5AoCE
+         0W3H2DXKciPWaAcSGZE81JQZnhFChc1/qGPK0swK49h+LKFoyrZNb+ArSWeWYwBqGOoC
+         ztLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721762594; x=1722367394;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GZZ6M5b6c2VD9Xbulyz0QyywfiKlBI8D0/GnMKmf/j8=;
+        b=ThVoz54YSfPNbBdybmL3JJdIyEHFDuxkEVPdHcDugIOqRRW0apgIl4EdJgO8loSJtE
+         miv43c+rOX9+iIF4u8FLscMDZCtCXnXinvvaFUZDn5TyJPJM+xLiSI5DZ0EMroVifshU
+         q0+VHKEpUZwbcV2ruVGu2VwEcWEvs3JgBm7xUgPvzU2xuS2taTIpkdK8So/jLb8N6rDI
+         BFeLV+BoQAK1+/vAPffLvPj6EfPoR9bgFDNZHQs7t646GeoMR5BmMuUI0CLsRT5C/c7/
+         cLOXJkwCfcSZciUQvfDu9uOcC7V2S6ssbsedxyLkFnZDGoqBPVEv2xMLVFDqgsTaEzRS
+         pY7g==
+X-Forwarded-Encrypted: i=1; AJvYcCXmIEqmXIUmZGCS+rMNoE49ka4z6AWamhhbJEwMBrj+TjYoL1nIghdw9a4FzWnGagbwpsjZwc1KRr7k/O10V/MGpZDPk1pf2Li+ysSh
+X-Gm-Message-State: AOJu0Yx2i1uCQdnv+2NKfkVJDub5e3FLRq1cet2nJyb3faheWtMCiZQB
+	54q7YEp0tcbahlIPyJ4xa35aCVWhzD03Gz10GbiA0OhZzpPJuKp8ZZf1MER4iUb2AszdRun5AB+
+	p
+X-Google-Smtp-Source: AGHT+IF+r6n7kgWHBgsPUbFEvrRcie15YJofR/I/57SS7RljubMqzpK090DZzv67JREIFGog192J5g==
+X-Received: by 2002:a4a:ee07:0:b0:5ce:adf8:291c with SMTP id 006d021491bc7-5d564f84dbfmr15403225eaf.3.1721762593696;
+        Tue, 23 Jul 2024 12:23:13 -0700 (PDT)
+Received: from nicolas-tpx395.lan ([2606:6d00:15:820c::580])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b9688748e6sm32520026d6.8.2024.07.23.12.23.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 12:23:12 -0700 (PDT)
+Message-ID: <f8d06bee1a2b71239b737b6a83e1a6734f75c36a.camel@ndufresne.ca>
+Subject: Re: [PATCH v4 0/2] Enumerate all pixels formats
+From: Nicolas Dufresne <nicolas@ndufresne.ca>
+To: Jonas Karlman <jonas@kwiboo.se>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+  mchehab@kernel.org, ezequiel@vanguardiasur.com.ar
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rockchip@lists.infradead.org, kernel@collabora.com
+Date: Tue, 23 Jul 2024 15:23:11 -0400
+In-Reply-To: <d060ec49-9d48-44a3-8f90-5cee5fe29b75@kwiboo.se>
+References: <20240717131430.159727-1-benjamin.gaignard@collabora.com>
+	 <07f62fbb-d1eb-41c3-86a8-13a082a8374f@xs4all.nl>
+	 <743e2589-c0df-461d-97d4-fafe78c334ea@collabora.com>
+	 <98f5cd5c-cb9c-45ca-a7c7-a546f525c393@xs4all.nl>
+	 <2eec786d-f2b6-4445-87f4-4b6d162a2d9a@collabora.com>
+	 <dc423e4144e1c9ea32f6adbaa8319e38f1443896.camel@ndufresne.ca>
+	 <d060ec49-9d48-44a3-8f90-5cee5fe29b75@kwiboo.se>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
+Hi,
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+Le vendredi 19 juillet 2024 =C3=A0 23:59 +0200, Jonas Karlman a =C3=A9crit=
+=C2=A0:
+> Hi,
+>=20
+> On 2024-07-19 17:36, Nicolas Dufresne wrote:
+> > Hi,
+> >=20
+> > Le vendredi 19 juillet 2024 =C3=A0 15:47 +0200, Benjamin Gaignard a =C3=
+=A9crit=C2=A0:
+> > > > What exactly is the problem you want to solve? A real-life problem,=
+ not a theoretical
+> > > > one :-)
+> > >=20
+> > > On real-life: on a board with 2 different stateless decoders being ab=
+le to detect the
+> > > one which can decode 10 bits bitstreams without testing all codec-dep=
+endent controls.
+> >=20
+> > That leans toward giving an answer for the selected bitstream format th=
+ough,
+> > since the same driver may do 10bit HEVC without 10bit AV1.
+> >=20
+> > For the use case, both Chromium and GStreamer have a need to categorize=
+d
+> > decoders so that we avoid trying to use decoder that can't do that task=
+. More
+> > platforms are getting multiple decoders, and we also need to take into =
+account
+> > the available software decoders.
+> >=20
+> > Just looking at the codec specific profile is insufficient since we nee=
+d two
+> > conditions to be met.
+> >=20
+> > 1. The driver must support 10bit for the specific CODEC (for most codec=
+ this is
+> > profile visible)
+> > 2. The produced 10bit color format must be supported by userspace
+> >=20
+> > In today's implementation, in order to test this, we'd need to simulate=
+ a 10bit
+> > header control, so that when enumerating the formats we get a list of 1=
+0bit
+> > (optionally 8bit too, since some decoder can downscale colors) and fina=
+lly
+> > verify that these pixel formats are know by userspace. This is not impo=
+ssible,
+> > but very tedious, this proposal we to try and make this easier.
+>=20
+> I have also been wondering what the use-case of this would be, and if it
+> is something to consider before a FFmpeg v4l2-request hwaccel submission.
+>=20
+> I am guessing GStreamer may need to decide what decoder to use prior to
+> bitstream parsing/decoding has started?
 
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+In GStreamer, the parsing is happening before the decoder. The parser gener=
+ates
+capabilities that are used during the decoder selection. Though, for perfor=
+mance
+reason (GStreamer is plugin based, and loading all the plugins all the time
+during playback is too slow), we generate static information about these
+decoders and cache the results. This information usually only contains
+profile/level and some min/max resolution when available. But being able to
+discard profile if (as an example) the produced 10bit pixel format is not
+supported by GStreamer is something we want in the long run. Its not essent=
+ial
+of course.
 
-are available in the Git repository at:
+We do that limitation in the plugger that we can't fallback after the first
+bitstream as been passed to the decoder, but this could in theory be resolv=
+ed
+and have nothing to do with this proposal. The proposal is just to help
+userspace code stay simple and relatively CODEC agnostic.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rpmsg-v6.11
+>=20
+> For my re-worked FFmpeg v4l2-request hwaccel series, should hit
+> ffmpeg-devel list any day now, we try to probe each video device one
+> by one trying to identify if it will be capable to decode current stream
+> into a known/supported capture format [1], this typically happen when
+> header for first slice/frame has been parsed and is used to let driver
+> select its preferred/optimal capture format. The first device where all
+> test passes will be used and if none works FFmpeg video players will
+> typically fallback to use software decoding.
+>=20
+> This type of probing may be a little bit limiting and depend too heavy
+> on the M2M Stateless Video Decoder Interface "It is suggested that the
+> driver chooses the preferred/optimal format for the current
+> configuration.".
+>=20
+> Would you suggest I change how this probing is happening to make some
+> more clever detection of what media+video device should be used for a
+> specific stream with help of this new flag?
 
-for you to fetch changes up to 36862eab884d997e182aad9163cc6ca953614a68:
+In general, there is only 1 or 2 decoder, so this process should be fast. I
+guess if we start seeing large array or decoder (e.g. array of PCIe acceler=
+ators
+or similar) that could become interesting to cache the information.
 
-  rpmsg: char: add missing MODULE_DESCRIPTION() macro (2024-06-10 11:11:59 -0600)
+I think the difference is that you have the full bitstream header available=
+ at
+the time you are to decide which decoder to use, I only have a abstract sum=
+mary
+in GStreamer. In short, you don't have to craft anything, which is nice.
 
-----------------------------------------------------------------
-rpmsg updates for v6.11
+Nicolas
 
-This corrects interrupt handling in the stm32 remoteproc driver when
-being attached to an already running remote processor.
-It fixes invalid kernel-doc and adds missing MODULE_DESCRIPTION() in the
-rpmsg char driver.
+>=20
+> [1] https://github.com/Kwiboo/FFmpeg/blob/v4l2request-2024-v2/libavcodec/=
+v4l2_request_probe.c#L373-L424
+>=20
+> Regards,
+> Jonas
+>=20
+> >=20
+> > Nicolas
+> >=20
+> >=20
+>=20
+> _______________________________________________
+> Kernel mailing list -- kernel@mailman.collabora.com
+> To unsubscribe send an email to kernel-leave@mailman.collabora.com
+> This list is managed by https://mailman.collabora.com
 
-----------------------------------------------------------------
-Arnaud Pouliquen (1):
-      rpmsg: char: Fix rpmsg_eptdev structure documentation
-
-Gwenael Treuveur (1):
-      remoteproc: stm32_rproc: Fix mailbox interrupts queuing
-
-Jeff Johnson (1):
-      rpmsg: char: add missing MODULE_DESCRIPTION() macro
-
- drivers/remoteproc/stm32_rproc.c | 2 +-
- drivers/rpmsg/rpmsg_char.c       | 5 +++--
- 2 files changed, 4 insertions(+), 3 deletions(-)
 
