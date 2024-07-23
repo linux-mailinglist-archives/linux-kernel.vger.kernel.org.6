@@ -1,215 +1,257 @@
-Return-Path: <linux-kernel+bounces-259541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B272E939813
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 03:53:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D326939816
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 03:55:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DBA5281CBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 01:53:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A41571F220C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 01:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1DF13A25B;
-	Tue, 23 Jul 2024 01:52:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FC113A243;
+	Tue, 23 Jul 2024 01:55:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZPiVGKIg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TW31LTpn"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2052.outbound.protection.outlook.com [40.107.244.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A054EC2
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 01:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721699572; cv=none; b=kaFFuXZ8hgrZZ2NU9xm6rjfSZ0BMuSrTSUvzmYcYkKYHkEZt8YLPIxeBcr+ZJu5q6VUl+dxbGOLUzeTYEs7SwnymMF5/mJ02FQ7G6ERQFTweOw5vLgbyqgfWPJRSoyDMjNfeI4MQt3eD0+Jw6cKOny0B+CpF3bCeW5G8FLm/ZpA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721699572; c=relaxed/simple;
-	bh=0OAP7yrfR/bxTdK47hEUxW4aUnVwJYFdSrSo5vQmC54=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XVoDLRzRouzST382Pd8Z1A2alQMjgikORYAkJyyow4K4EEn16xOZltZC25E+C1UMSXHHGDbOZ2GZRiB1nNxoTCfBTREp4xW0Zyb+A3voawIvWeivTRDXrofp2xXhSyeyOXBadWvhd+Fm4dw15ZSxb6pkxpD88bmJUvD/LV6a+HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZPiVGKIg; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721699569;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pJ7JFLuxpYIYah8YS0qjsxD8eAnofbzaLi2qDbDcUzo=;
-	b=ZPiVGKIgzjcI3JdndCipO7lypLt3A2dnO+Mv5iW5JQcVrqzVzGJnaW7SLLVMyp7AeFnFQu
-	LUHw2cxmSazw9Neu1eHYYj+5DShLLu1yML1ZIMHwoMqavyEqOiv/+kKYtcvHfzpLWOPmuP
-	qFRizV+vbJSHJZkvoU2bTSTeQHvNROA=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-350-E620LHmvOlSMPvXtumIeTQ-1; Mon, 22 Jul 2024 21:52:48 -0400
-X-MC-Unique: E620LHmvOlSMPvXtumIeTQ-1
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5a8b0832defso1540546a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 18:52:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721699567; x=1722304367;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pJ7JFLuxpYIYah8YS0qjsxD8eAnofbzaLi2qDbDcUzo=;
-        b=wybCFRc74g0G1V+HGZPdV7lLrZIjlZDBw7XhumGK66HDEZ+wDtBAJSKDJQOEz5yTSv
-         /23gvhfbWUUmpUe1u+TuA+tUK9N+QZw61PfD/wdiF4PWTwnJqnSEPU7Vkkjf0XfHcQs4
-         Agari95OW7PGh56KM9H+/KCnrBygB+IIUK+V3RVBtMfoRHHkLWmFaEdr6riaH774aPrv
-         hYOA9oXeCc2xsae3U0/NqSu2HkTtgGYxa8uFPssnZ0H2fKypkwtbavbHK/k41O2JIwWq
-         P13vkh4AHtut+xvhEi2A/dymuL5K43smbkuNUpI/ox5YjQOX05ym2nIAcRpkHWA478eG
-         G0Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQl5+Y5kd1llLMCbOTx+588yOmk6z02mGL0DHgiadbgDaukbQTxt+5IaSoNN+5snZvBXiky+wCX2skwbhGRIm4NnoyzMB1wAulSwJH
-X-Gm-Message-State: AOJu0Yxqt2Ht/IhzYoS834GkdcSsstlbWCTb2+w4Jj5VPcohzaKQ518R
-	1dCZzMsuReFQZI5yVddqcoNpW7qQ2cEBURTLy6kbPl9uuG14lo2inpSj1MwCeUwbXy2gbJDJJmz
-	dsMACh3dXZh/UFbWD8H2pldQfQ48PGeQWqm2ktj8J7+ZPuKceZMYk1ZVP/LJM7OfNqh0IBwbCp4
-	p4t8CuADVOE21fGnn9QSkotwEq8wk3LJ9Vt9m/
-X-Received: by 2002:a50:8e46:0:b0:5a1:5c0c:cbd6 with SMTP id 4fb4d7f45d1cf-5a99d304998mr515201a12.8.1721699567156;
-        Mon, 22 Jul 2024 18:52:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEpb4QBdHjRYWATG2kay1v6Ynq7TjEslzVYd7B8oglM/3KMtTIx8dJYYYdlwfGufvlJ22Nq4TvO++VYfJ/lO/I=
-X-Received: by 2002:a50:8e46:0:b0:5a1:5c0c:cbd6 with SMTP id
- 4fb4d7f45d1cf-5a99d304998mr515186a12.8.1721699566814; Mon, 22 Jul 2024
- 18:52:46 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10B4EC2
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 01:54:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721699700; cv=fail; b=YPM5DeJLtNcMihkbpyPbx64Sp2DE0AETuoVs8c6ewxhcCiAi4L0NDma1uCT/WnhSnNTq4YJfB4it5E4EH180qJMQTO+tDFml2U9mJwSN88pA1h2WsYrmFwxGt7ECz4coqFPPTm3YsoKEfcULtX7mX9Df0VLPKN+FDPCuQhYgr7A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721699700; c=relaxed/simple;
+	bh=L4Q8JxVScE6uqTitOo5NgU5WxojH2y0yGaS+yxqsTPg=;
+	h=Content-Type:Date:Message-Id:Subject:Cc:To:From:References:
+	 In-Reply-To:MIME-Version; b=ND8DTbTJCTcSsulDg8HBEXqKnKLhcFGfT8kMLi/I+mid9gL5LEqDDkuOAOhTK1YYp4GBZGpNdkEmr+wbnvxgDtheuZeW0BZFDTNv/yH9Op92hfXVBmDjTIFNidJekx/F5vNmFcfRxZkpCEY9qYZD4CbG4sK6AAnLFQ4pJfq3NI4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TW31LTpn; arc=fail smtp.client-ip=40.107.244.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RriBJQLgoLt7r4yF2MVGSr7GjtN4uBOnV7moNFdBDRtCRWvbCMU/Bb2tgvXSVFnk52pdEvJMTpRllcPdukklzhK4O8NrDfRcKuM9EN8s4ARYxzFiyvm2HO+MxyQqRMNVr88nFdAFaQEzxdrJUiXTmpV0HsFbpqGpDVX2knnVmDxsGhFk+B4nJv2TVS0F+6TNQqh+sSfmSn3AJydMCp4RdxOLEOy8mXXTao+rfsdiH1GTceMlANgNwYVtF8GS9mhpc9hXq68/nKMSwP7gSRlbt3tC39sJyTLE3zAVtGWKFrlvOI9amWRbnCYkEcZLPMdJuBOi9z0zxSBGIiKgLGQA8g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ifxzlXcJ/q4S6taU05LtLupRJCjuc8NIzdjvg7rtRSA=;
+ b=AvPNaUdpK4s2eL0GTtL6vr9XFDQAOwK8jKGI2LTrhms1sEMWTFXmlqJj5BTqIh3KLOQ5VE2EOh06A7A9JfxWjVsu6j0siGzkYfoE96odiaw8sPj6bsnwnqIRxdep0NL/rn23URbvcQhi0qWvZTWujr/mshPB9NGaiOR8H2kBYOJ/YscFSEXJVylXGfGrXtwmTRDCzWVE3uacvfN9B8StQCEvELJlsYn0sa5ir3zEICS4u5OYVxk7kIviCz58k5cVgMQ+RRCs31ivnaOvqSkZngGUMNxRzwd7idlJ+IKU1OE5L9FWOoWEylwLUzmQ2fug1byjznJHgTLLNSeWvHjjRw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ifxzlXcJ/q4S6taU05LtLupRJCjuc8NIzdjvg7rtRSA=;
+ b=TW31LTpnaakw4pCaeHtVve1xLxZaLqsNco3B4jty0vDGteOJ/QbLoVtQf26mnc6kGyJ6qOKbN5FjPbzC1UGw1v2qCGULibZx16snJmMRbHqIMTVyUHyR2cPuI66//OuPEv5gWErw6/vNAj04/GOIJI+Hesn0nhtW8NsnCrGvsQBqG4Js5tHYSKDscUI0wBlmbASNFhco8xtv2tJZb6ZRV2U1dhkEDmYfk1cCSqoPsU8Xb8ioeKhE7GMrYhyL0NfbGhd2dyYUWvfkk5vStMvOzFEvWX9QcrwpfbMJsEhZoPdWR+L0EXEQFb0Yg3vPPC8RaKbMSEUrgj/M0uBQl8KKew==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB5744.namprd12.prod.outlook.com (2603:10b6:8:73::18) by
+ SN7PR12MB8028.namprd12.prod.outlook.com (2603:10b6:806:341::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7784.18; Tue, 23 Jul 2024 01:54:54 +0000
+Received: from DS7PR12MB5744.namprd12.prod.outlook.com
+ ([fe80::f018:13a9:e165:6b7e]) by DS7PR12MB5744.namprd12.prod.outlook.com
+ ([fe80::f018:13a9:e165:6b7e%4]) with mapi id 15.20.7784.013; Tue, 23 Jul 2024
+ 01:54:53 +0000
+Content-Type: multipart/signed;
+ boundary=2e7af901c09513d7e8fbc35dde7a994c9763011067a6a171dc9ef663ed37;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Mon, 22 Jul 2024 21:54:51 -0400
+Message-Id: <D2WJLRHB9T9S.DRAUA25VKCBP@nvidia.com>
+Subject: Re: [PATCH v2 3/3] memory tiering: count PGPROMOTE_SUCCESS when mem
+ tiering is enabled.
+Cc: "David Hildenbrand" <david@redhat.com>, "Huang, Ying"
+ <ying.huang@intel.com>, "Baolin Wang" <baolin.wang@linux.alibaba.com>,
+ <linux-kernel@vger.kernel.org>
+To: "Kefeng Wang" <wangkefeng.wang@huawei.com>, "Andrew Morton"
+ <akpm@linux-foundation.org>, <linux-mm@kvack.org>
+From: "Zi Yan" <ziy@nvidia.com>
+X-Mailer: aerc 0.17.0
+References: <20240722172917.503370-1-ziy@nvidia.com>
+ <20240722172917.503370-3-ziy@nvidia.com>
+ <5230d72e-81fa-4ef1-b386-90bd3b06bf0e@huawei.com>
+In-Reply-To: <5230d72e-81fa-4ef1-b386-90bd3b06bf0e@huawei.com>
+X-ClientProxiedBy: BL0PR03CA0004.namprd03.prod.outlook.com
+ (2603:10b6:208:2d::17) To DS7PR12MB5744.namprd12.prod.outlook.com
+ (2603:10b6:8:73::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240722010625.1016854-1-lulu@redhat.com> <20240722010625.1016854-4-lulu@redhat.com>
- <CACGkMEvXk8_sXRtugePAMv8PM0qGU-su0eFUsFZ=-=_TjcGZNg@mail.gmail.com>
- <7a4d99e0f16cbe91000c3c780334a4c866904182.camel@nvidia.com>
- <CACLfguUR_hdJGDcjnmYY=qOXFiSnsBsXD5evTDZQi=K0RM4gZQ@mail.gmail.com>
- <CACLfguUWCY6MJkv+GuJ0W0t0Q0iX3fna+EjWxV5E=au9Oa5-aw@mail.gmail.com> <CACGkMEsapSx4Hk+2PcsenGzaBbJ2OKXde_onEb+8gZG9AMAX6A@mail.gmail.com>
-In-Reply-To: <CACGkMEsapSx4Hk+2PcsenGzaBbJ2OKXde_onEb+8gZG9AMAX6A@mail.gmail.com>
-From: Cindy Lu <lulu@redhat.com>
-Date: Tue, 23 Jul 2024 09:52:09 +0800
-Message-ID: <CACLfguXPiqrfpmLjuT20VEqn_Qi1Mg90GB8YDgOanerQy2X-5Q@mail.gmail.com>
-Subject: Re: [PATH v4 3/3] vdpa/mlx5: Add the support of set mac address
-To: Jason Wang <jasowang@redhat.com>
-Cc: Dragos Tatulea <dtatulea@nvidia.com>, "sgarzare@redhat.com" <sgarzare@redhat.com>, 
-	Parav Pandit <parav@nvidia.com>, "mst@redhat.com" <mst@redhat.com>, 
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB5744:EE_|SN7PR12MB8028:EE_
+X-MS-Office365-Filtering-Correlation-Id: eff5ced9-3160-40e5-4c74-08dcaaba7230
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZVB3UXkzUE55bGJONzJrdUFiU2gzNENDRUttNmU0OTNvZmJGT1J1RlFxSGkr?=
+ =?utf-8?B?YnVQc2Z3c0hpNG03VnhaT1BSSFZIVkRTTjhld0FLZTl2SWVRUDFETlBNbit5?=
+ =?utf-8?B?cHV5MnFEQkVNQVhzUWZlZ2s3cXZsVTg4SHpPWG1WV2I4NkRjRVFzbjZtcXZK?=
+ =?utf-8?B?YUhPVFRoVzQ1azB5T29qVXBPbFZHOGFOZUNncDAzcEs4eXJqQ0ZlNFc0Skta?=
+ =?utf-8?B?eU5NV3AzUjR2elRPeWRRYW1WYWNQMFlaQk5KcERJWmpxaEsxWUkydzl3REJt?=
+ =?utf-8?B?UHpZNFc1MUhPOW0yVTlZYVBiWG9uZHlOUjJYM2tOZWxCMCs1VEZtMGpwRWRK?=
+ =?utf-8?B?RXMvdnYzZGlrbFR5SThoV1lXeGxSd3IvaHcycU1vVDlHMEo3RXl0RlhOK3hC?=
+ =?utf-8?B?YUtxZ2ZPVTdGZHJmMzFRa040Vm95NWl5enBkR3FCTzVrV1QrQ1dOMVZuanEx?=
+ =?utf-8?B?ZlRhK01NWG8xOHlEWVRld0VsL3RiV2J2bEh1WTU2Q281blhlWWhpMUpOb1lo?=
+ =?utf-8?B?UXorU20yallnYjBWcXlKNzlHWUwyQTErYlF2SlZTR05sNmhJWU5QVGJJdkZM?=
+ =?utf-8?B?M3JkUUFwcVhZdFpybllUZ0dZbDdGK2dncEJnTWZabVRBaUMwVHFSbnlqTVRF?=
+ =?utf-8?B?VHkyYWw0bDdxd1lFTlBFbDQ4ZUs1QXBMRkFUMmgvbkVvdE14YkRaall2Mkd5?=
+ =?utf-8?B?YWk3YVNMK1lMK3RSakR5U3ZoZ25nOFBxdmpoZmxkcS9MbWx5S1FYN1dsWmt2?=
+ =?utf-8?B?Uk5OYTRRLzYzT0ZwRXpxODJxVDBGVlE5eFlFVEl6MDlvTEFjdE1kVHZjWWRj?=
+ =?utf-8?B?M1M3MDRsMTh2Sit4RjJkZ0pJY1ZKZm9NUUpEK3BORFBMcTVicG40a21Dbmt3?=
+ =?utf-8?B?OHAzR3pQUjRaaUkvelNncnM2NSthRlRMWnk3eXczQnpka0NuVjI1VGhiczlx?=
+ =?utf-8?B?RjVBZjJFU3IyeFpSVGJBUWl3OGhkaDdRNmN4bjNJMDdVK2FmbVpWUUtUZDBw?=
+ =?utf-8?B?ZmtEdDZ1bnllNVJveFpPU1FvZDczeHlNdE84UUh2TFNUbVBWdDBFYkpkL3o3?=
+ =?utf-8?B?UExrckR0S1U2WklYK3BGZWZBdzVweFFkRlNqbWtpbk1GRG51UGRHNVF5TWlL?=
+ =?utf-8?B?Y3JDVTJqckpFZzZIcU1hc283c25TNDVrMVF0OWx2SG5KNmhzcDNpRGJNd2x0?=
+ =?utf-8?B?YS9vRlJSNlBiekdhbUVRQWJ3MVZRSS93YzlSQXVZSkVxS0ZzMld1cXQrRllx?=
+ =?utf-8?B?cFVPNEJiUkYvaEhFcDNUVStZOC9aNmk5QmdiTk1UK0hFNEt6QldyMEgwZnBQ?=
+ =?utf-8?B?Lzg1M28ydkF2cGJ0Yzh5VnF2SmxMb2ZaeVo3emQ4Sk9KcHFwL0RJRDJ5U0Iw?=
+ =?utf-8?B?d2JERHhUdVNmSzdPY2c0SDdjR2lZYUl0L09MN3V4L2J5S1NBUEQ0aVBqbGxO?=
+ =?utf-8?B?UmcrTWNxNmZnZ2d0VmNWR2lmVktyMDlJS0RWM0huTnFlU0R5Q0RwaklPZTUw?=
+ =?utf-8?B?VFNoVXpuZGdpUlJCZFh0dnF1dTlYN1F4RngzQWpKTXZzdXRNbFR2alpQVXEw?=
+ =?utf-8?B?VE5SOXdIS1ZZcVNYMktpWkNSa1U4WFZzcjczcjNXK3dFeGpmRHRDbXoxR1lP?=
+ =?utf-8?B?K0Z4d1BjQXdNRE9QNTRIMDZ1TmVYYkRkcmYxZGJBMHowOWtqendHRk12dzA0?=
+ =?utf-8?B?VW4yd3FwRFBkVUh2b0drbUxubSs0SGJHQVE4cCtoZG05clVadXFObFJ6dGVE?=
+ =?utf-8?B?bk1WWlU1dlhVd0gwR2gyOTkrd3ZldUQrME0zYjN3WXVNeUROVjJ4dVRCUHFD?=
+ =?utf-8?B?aExPS2tYOTJaeVZVTzUyQT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB5744.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NXhnQURuT3BFWWNySDBUdnVXRFovc2dZVFNJRGdyT3ZCMlY3MnVvM2trS1Vr?=
+ =?utf-8?B?bFp0NGhBczNNdHlmQWJtekRGT2VCbkxlUk1kVmJlRjNtSWN3emxFTHVkTEFF?=
+ =?utf-8?B?aU4wSHBkQ3ByKzdBUkNETHJuckRiSzUxWVhYUi8vQkRYZDhSWGJwbnA5S2l6?=
+ =?utf-8?B?U1kvV1hYYnU5V1FRMGt3Qkh4MW9iZEoyTGp5Z3k0UHdlWUZCL3pSdFBrTkMz?=
+ =?utf-8?B?ZG9nMnYxd1BVWW1Qekg4SUtDQlJuY2xYazJQNlpwa2FNL2VzdWJJcDFFOGJw?=
+ =?utf-8?B?SzM3ZkdPQWM0RGUzZDdSWDZMaWo3YjFQMC9SSHY0N0RvNVBHaFV2YlhHcUww?=
+ =?utf-8?B?RlRyVEFja0tldy9hTnAyV0xLSDRYZm1zWldwTHlnNGVZTnlYaEt5YkpJcXZT?=
+ =?utf-8?B?N1RTaGZQMVNJcFY0bDhjOEdGRmdKTWJYNXZOTllUbDk0NlhpS0RWck5Gb1o1?=
+ =?utf-8?B?TENxbU5NQTQ2bVVFREpCVCtHcmxUR3ozMitFNUc2NHRRZGk5eStTNTl2dTRr?=
+ =?utf-8?B?cEtBdCt5c3ZKM3dXclcxWXlvQW1iZnJ5Tzc2Z0RObnVuT3h1NnlpREJzM0ZB?=
+ =?utf-8?B?aGRXcVBFbU4wZFltenpOMGo2KzkzSmVHczYwZFlzc2FHWkpXMHZWb2x0cmwz?=
+ =?utf-8?B?UVJ2VGJPRnU5MHllOXYvUXZIQUUzZVowR2o5UTA0SngzZjVJcnU0UzBvUjBX?=
+ =?utf-8?B?ZHF6MWNHd0xoVHA4QnpBN1VKRUVGeUxKVnRIbmRvVmtrbzZZb2NQaFdicmZC?=
+ =?utf-8?B?d21JeENzWHJtc0d0NFdPZkpTcXRSRmphRG8rT2w5ay8zUWlYSElCcmJkMkpC?=
+ =?utf-8?B?U0ZESWxZZE4wWDFyNWNXWFNpeXlzQXJXaVFhdjhIUDZJb1gwZWZtU0pSVVZi?=
+ =?utf-8?B?T2lqTUpIWjNiY0pCUkliZDFJTThrNEpJbHo3KzkvQlRXdWEyanZtZ0t6Qjgv?=
+ =?utf-8?B?MGZWYjgzV1g0eEljN0hidVJRY21FUlFXbjFpNzNhTVhSWVZIUWlhOEw4elY0?=
+ =?utf-8?B?MmQ2dkE1Ump3ZWxTT2NBYmhjdUZnTkZpa0hpSEVwSFh0YVZDR1kxQU1IRmRl?=
+ =?utf-8?B?OXpYcnRvWjlzcXh2YmpFcXpJaXNwSWJ6NmtyWlZIQ0hqeGpQUTRjSGMwbWd2?=
+ =?utf-8?B?Q3h0ZCtSb2lQcDdPRnhDWWIvZFZYdVY0TENZTm93WlpEejg5eStzV3BOQkZV?=
+ =?utf-8?B?d01WcW8zYmljbzBZLzZNUEgzajR2Wmo4RWhYZklNSU53c3dHYlhxK05rL3N0?=
+ =?utf-8?B?VitTTEJmN1VPRDVOKzRWSURlaEduMytiY1RmcUw3ckozYkdVMms4dHk3MktM?=
+ =?utf-8?B?NFRLTWU5cm9wL1NwSUFlMXlqOXlaRkdoSW9qOHYxSklQMEovQzlmaTNwODh5?=
+ =?utf-8?B?aW8ybEhBMDZHMy81aFYyeE5RbGM0dEhzM1dNTkhVbjJPNHZmeldJNUxUYU5R?=
+ =?utf-8?B?WG4zZElobkZHa3YxejZuSXU2dFV2L2taWVRsRjRMUXdvZC8wKzJNVk81STdM?=
+ =?utf-8?B?NlZZVjRGbDZ1a1R3dlJJVEEvY1lBeU14RGNBK0p1ekg0MTJtZUNBK0I3eHh4?=
+ =?utf-8?B?ajk3Zm1yVlB5aDJraGVEaE5seUd6dGt2cHZmOWhkL1doc1NnMHd3dlUzYVRp?=
+ =?utf-8?B?Z1ZqZHkyS3h1b2NWM3NoL0w0TXV5endkakVZQ3NhRGlONXMxRlRnV0lKL0VX?=
+ =?utf-8?B?ZlNKWFNlaGhqRzFObHllWHJ5b0l3Q2xPV1NpVmpTZkd0MS9ONEdxMkNZVDlj?=
+ =?utf-8?B?anFDSWNDam9wU29TcHMxVEFpQkNLbXNqeVBveUROQkVQYys4Q3hEQmkzeDRy?=
+ =?utf-8?B?cFg3bmpETGUyTjAvTm9FL0l3K1p2OWVBNTV2cFo0c2JBdTkxcDFobnhzRW9I?=
+ =?utf-8?B?UnV4Qm9xNEREc0Zpa0Z5UkRCSjZEQTdiTEpveWZPRXpBUXZFbm9TSWJlQU5D?=
+ =?utf-8?B?Nmo1bE1rV2hCZVd1MXNQcGdDeXQrL0lsRmNDZHVJNE9DRTgxVHg4WGFOMlRs?=
+ =?utf-8?B?eUFjOWQ2UGMybnlWOTVJNWNmcWxtRHhCWHRPeE1IdXhSNi9OTXhmaCtzN0d1?=
+ =?utf-8?B?NURJWjluT0Z5RXdTMGZvZjkvV1NIaVpQU3R3UHJ5dGR4eFFaNkx2aWpIdytw?=
+ =?utf-8?Q?76ugdE+szDXLq+I9vaxdZLeqk?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eff5ced9-3160-40e5-4c74-08dcaaba7230
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB5744.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2024 01:54:53.7204
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7cEkyQEZ0z6Na50KUV7wcWDI3NTjTujQho3wwFgXmN1dLn/PpWAydMq+9XM00+mb
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8028
+
+--2e7af901c09513d7e8fbc35dde7a994c9763011067a6a171dc9ef663ed37
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-On Tue, 23 Jul 2024 at 09:28, Jason Wang <jasowang@redhat.com> wrote:
+On Mon Jul 22, 2024 at 9:48 PM EDT, Kefeng Wang wrote:
 >
-> On Mon, Jul 22, 2024 at 10:48=E2=80=AFPM Cindy Lu <lulu@redhat.com> wrote=
-:
-> >
-> > On Mon, 22 Jul 2024 at 20:55, Cindy Lu <lulu@redhat.com> wrote:
-> > >
-> > > On Mon, 22 Jul 2024 at 17:45, Dragos Tatulea <dtatulea@nvidia.com> wr=
-ote:
-> > > >
-> > > > On Mon, 2024-07-22 at 15:48 +0800, Jason Wang wrote:
-> > > > > On Mon, Jul 22, 2024 at 9:06=E2=80=AFAM Cindy Lu <lulu@redhat.com=
-> wrote:
-> > > > > >
-> > > > > > Add the function to support setting the MAC address.
-> > > > > > For vdpa/mlx5, the function will use mlx5_mpfs_add_mac
-> > > > > > to set the mac address
-> > > > > >
-> > > > > > Tested in ConnectX-6 Dx device
-> > > > > >
-> > > > > > Signed-off-by: Cindy Lu <lulu@redhat.com>
-> > > > > > ---
-> > > > > >  drivers/vdpa/mlx5/net/mlx5_vnet.c | 25 +++++++++++++++++++++++=
-++
-> > > > > >  1 file changed, 25 insertions(+)
-> > > > > >
-> > > > > > diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/m=
-lx5/net/mlx5_vnet.c
-> > > > > > index ecfc16151d61..415b527a9c72 100644
-> > > > > > --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> > > > > > +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
-> > > > > > @@ -3785,10 +3785,35 @@ static void mlx5_vdpa_dev_del(struct vd=
-pa_mgmt_dev *v_mdev, struct vdpa_device *
-> > > > > >         destroy_workqueue(wq);
-> > > > > >         mgtdev->ndev =3D NULL;
-> > > > > >  }
-> > > > > > +static int mlx5_vdpa_set_attr(struct vdpa_mgmt_dev *v_mdev,
-> > > > > > +                             struct vdpa_device *dev,
-> > > > > > +                             const struct vdpa_dev_set_config =
-*add_config)
-> > > > > > +{
-> > > > > > +       struct mlx5_vdpa_dev *mvdev;
-> > > > > > +       struct mlx5_vdpa_net *ndev;
-> > > > > > +       struct mlx5_core_dev *mdev;
-> > > > > > +       struct virtio_net_config *config;
-> > > > > > +       struct mlx5_core_dev *pfmdev;
-> > > > Reverse xmas tree?
-> > > >
-> > > will fix this
-> > > > > > +       int err =3D -EOPNOTSUPP;
-> > > > > > +
-> > > > > > +       mvdev =3D to_mvdev(dev);
-> > > > > > +       ndev =3D to_mlx5_vdpa_ndev(mvdev);
-> > > > > > +       mdev =3D mvdev->mdev;
-> > > > > > +       config =3D &ndev->config;
-> > > > > > +
-> > > > You still need to take the ndev->reslock.
-> > > >
-> > > sure, will do
-> > > > > > +       if (add_config->mask & (1 << VDPA_ATTR_DEV_NET_CFG_MACA=
-DDR)) {
-> > > > > > +               pfmdev =3D pci_get_drvdata(pci_physfn(mdev->pde=
-v));
-> > > > > > +               err =3D mlx5_mpfs_add_mac(pfmdev, config->mac);
-> > > > > > +               if (!err)
-> > > > > > +                       memcpy(config->mac, add_config->net.mac=
-, ETH_ALEN);
-> > > > What is the expected behaviour when the device is in use?
-> > > >
-> > > if the err is 0 then copy the Mac address to config
-> > > will change this code to make it more clear
-> > > Thanks
-> > > Cindy
-> > sorry for the misunderstanding. The VDPA tool does not support
-> > changing the MAC address after the guest is loaded. I think I can add
-> > a check for VIRTIO_CONFIG_S_DRIVER_OK here?
 >
-> Still racy, and I think we probably don't worry about that case. It's
-> the fault of the mgmt layer not us.
+> On 2024/7/23 1:29, Zi Yan wrote:
+> > memory tiering can be enabled/disabled at runtime and
+> > sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING is used to c=
+heck
+> > it. In migrate_misplaced_folio(), the check is missing when
+> > PGPROMOTE_SUCCESS is incremented. Add the missing check.
+> >=20
+> > Reported-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> > Closes: https://lore.kernel.org/linux-mm/f4ae2c9c-fe40-4807-bdb2-64cf2d=
+716c1a@huawei.com/
+> > Fixes: 33024536bafd ("memory tiering: hot page selection with hint page=
+ fault latency")
+> > Signed-off-by: Zi Yan <ziy@nvidia.com>
 >
-> Thanks
+> Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 >
-Sure, Thanks Jason. will send a new version soon
-Thanks
-cindy
-> > Thanks
-> > cindy
-> > > > > > +       }
-> > > > > > +       return err;
-> > > > >
-> > > > > Similar to net simulator, how could be serialize the modification=
- to
-> > > > > mac address:
-> > > > >
-> > > > > 1) from vdpa tool
-> > > > > 2) via control virtqueue
-> > > > >
-> > > > > Thanks
-> > > > >
-> > > > > > +}
-> > > > > >
-> > > > > >  static const struct vdpa_mgmtdev_ops mdev_ops =3D {
-> > > > > >         .dev_add =3D mlx5_vdpa_dev_add,
-> > > > > >         .dev_del =3D mlx5_vdpa_dev_del,
-> > > > > > +       .dev_set_attr =3D mlx5_vdpa_set_attr,
-> > > > > >  };
-> > > > > >
-> > > > > >  static struct virtio_device_id id_table[] =3D {
-> > > > > > --
-> > > > > > 2.45.0
-> > > > > >
-> > > > >
-> > > > Thanks,
-> > > > Dragos
-> >
->
+Thanks.
 
+> > ---
+> >   mm/migrate.c | 4 +++-
+> >   1 file changed, 3 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/mm/migrate.c b/mm/migrate.c
+> > index bdbb5bb04c91..b819809da470 100644
+> > --- a/mm/migrate.c
+> > +++ b/mm/migrate.c
+> > @@ -2630,7 +2630,9 @@ int migrate_misplaced_folio(struct folio *folio, =
+struct vm_area_struct *vma,
+> >   		putback_movable_pages(&migratepages);
+> >   	if (nr_succeeded) {
+> >   		count_vm_numa_events(NUMA_PAGE_MIGRATE, nr_succeeded);
+> > -		if (!node_is_toptier(folio_nid(folio)) && node_is_toptier(node))
+> > +		if ((sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING)
+> > +		    && !node_is_toptier(folio_nid(folio))
+> > +		    && node_is_toptier(node))
+> >   			mod_node_page_state(pgdat, PGPROMOTE_SUCCESS,
+> >   					    nr_succeeded);
+>
+> The should be in advance of patch2, and change above to use=20
+> folio_has_cpupid() helper() too.
+
+It shares the same logic of !folio_has_cpupid() but it might be confusing t=
+o
+put !folio_has_cpupid(folio) && node_is_toptier(node) here. folio's
+cpupid has nothing to do with the stats here, thus I did not use the
+function.
+
+--=20
+Best Regards,
+Yan, Zi
+
+
+--2e7af901c09513d7e8fbc35dde7a994c9763011067a6a171dc9ef663ed37
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJDBAABCgAtFiEE6rR4j8RuQ2XmaZol4n+egRQHKFQFAmafDW0PHHppeUBudmlk
+aWEuY29tAAoJEOJ/noEUByhUW1MP/0Sv3Ov2XPHklC9e922UrQWO7OciJDyIBTF+
+OeFqhy/vP3ggtjDgAGEgJYKfORX92gMMF1SRWF1lDccp1wlZyGrX1C3AjQWwe0qQ
+hNCaz/WbbQLq7XNkGbCJubt7AWDL0svvtobPlWxN/rgQq8EpH238SBKLtgWyvkEZ
+FrJ+sJ3mx6YV0BEXEXoGZLIB/hCrkcakf6ATivzfqaWoFqZvFuh9xC/u8zvQ65xQ
+mvqFbM7AJjOISzaFJWu138nm0XUdjTJ7OMbiVLVqEfpwCUSdv++p7j7YIla+7K/d
+7fmndU4AyxDpeGKRUQ6eDjxvKn7hjpCytdrsoVGil/Vd5j6+1NQ4rOW/knvJUhZ6
+kIcjOlvSE6vf7g+16FG4GU2OtDHquFX6NnJig4fdOl/nROy9g5SAB+KiAJyu5TN+
+qQTK1ZoLCIwAhvvpsRuddWNl9//eVvijx18En3K4SCWoSh6C6P3TAtp2ODAkwxDT
+7u4IO5SDvCxkpHDRDGxKaRTOUX5KPcEqNPmbvubTCCecsHl5znx3CCN8WN38xqY/
+12XgG+lhobps/r5AvsapnalyZDoaOo0g1UWrcwRuV8d5OBEmbqK+5ULyVlc1hQOb
+OdL2KR4VvGOlBtwFQKaJrKLNOQ9fSPKnxMmMRpwWaxVGuMNZeRwozvFhnouyJ/3d
+saw2m8VZ
+=dZwq
+-----END PGP SIGNATURE-----
+
+--2e7af901c09513d7e8fbc35dde7a994c9763011067a6a171dc9ef663ed37--
 
