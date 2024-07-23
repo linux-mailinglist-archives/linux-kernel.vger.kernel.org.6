@@ -1,78 +1,110 @@
-Return-Path: <linux-kernel+bounces-260342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A392F93A78D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:03:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FFD093A78F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:06:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4ADC1C20C41
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:03:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 408901F231F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14D113DDDC;
-	Tue, 23 Jul 2024 19:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEBD13DDA7;
+	Tue, 23 Jul 2024 19:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MkOZ69tg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FWsaQANQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F96B13DBA4;
-	Tue, 23 Jul 2024 19:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7442713D8A6;
+	Tue, 23 Jul 2024 19:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721761426; cv=none; b=Bij+w+UHDCQzLpk/Vp1eK9yoW9sqESHTYCRU3/paGZrf4n31+BZssktTGYZhUS/r3czVhTYpbuv69h1SItocUbJ5KnGrN3QeffGqaMiGWbMBSy8xeI1wH+zX0+cWBCWqdTbZRqoIr3kFIr3ZTl/QypOdUv3T8g+etQYWlHNv6As=
+	t=1721761593; cv=none; b=Atsruf6JNKC7qTQQcUATcCwE8oO8+j3Ho1pLY83Kl6MGp5SM/PkItACbuRXqhwmPOYZR1kx7zSqijK8RvQ9+50w+1yMyN5B4iAITuokCWRGJMOqpg1LQTLby4MPmMidRsUpdC2npTV4wTOAAWaiRChtpNilVZKN3Nm3aPazZFLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721761426; c=relaxed/simple;
-	bh=LybILGvh50PjrvN7E4HwtbEPNWsoKdkuRaBz4Dms1sE=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=BxTVOhgR19rDDUdXVOWTfa/1lmitExfTbgEojAZd5yQkjZzE9okURj+yPeRp0s1zBWa5Xs2cqO3BeXNW32FBb+C+VJf0YBtVlsm099wyZd+zZRzZoMSt3sMH/JRaf3ygBarFbEcJGshJznqi3bBhI/WekgjhVdFM2WrSreppoEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MkOZ69tg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B9830C4AF0E;
-	Tue, 23 Jul 2024 19:03:45 +0000 (UTC)
+	s=arc-20240116; t=1721761593; c=relaxed/simple;
+	bh=xiYMNWn8JlLWS3DfL01faTKN/kkK4A4D49NBKXMEX0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZviS6NUrk6zW5f0N+NqKhZiSl4QeSU1Q01tjJBJebcvsZPpEklKtaz9xzZLphDWXV9NAbctSPGIb/fxeBg9i0BKamNJkBlFdieLVt/tPTFLO5iYiTrDX1w07DXQzouV2w72PNM1A63YV/JDlFjEvYOlTqfkEOVg66X2bguff8Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FWsaQANQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5272C4AF0A;
+	Tue, 23 Jul 2024 19:06:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721761425;
-	bh=LybILGvh50PjrvN7E4HwtbEPNWsoKdkuRaBz4Dms1sE=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=MkOZ69tgsVMYN2Ahyrt2UAo9pS9lVfaoI38v8l+DaiN3tXAeymakoXCpXXobtjzw8
-	 O7ontA5mCbHqff8a/G+yu7V3FNMqLiYEU7LZRXrRIKBQjj3SFK9cPG0dP0OlS7KBYx
-	 ROvc8SY8DgypDi8tzpu++6Now7wgyfqGSlr2Xa6SHBVtY1WV9UMQ361wcAeatvGfzB
-	 LoWlw7PhPCEyTnyX8/DOrd1HQdLGmVF9a7gCZUIZVZUrj7hSoFjgsay9EbwiZiNDvN
-	 eYxL2HZ8usA2C+vcvO56SgfLU0bd3YBDqy8ppWk6889n2faT3kSEKeOE9Hcq1bqALE
-	 oTeIhM/a32cqw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AA44DC43443;
-	Tue, 23 Jul 2024 19:03:45 +0000 (UTC)
-Subject: Re: [GIT PULL] livepatching for 6.11
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <Zp_QTDDsvyPtCgrl@pathway.suse.cz>
-References: <Zp_QTDDsvyPtCgrl@pathway.suse.cz>
-X-PR-Tracked-List-Id: <live-patching.vger.kernel.org>
-X-PR-Tracked-Message-Id: <Zp_QTDDsvyPtCgrl@pathway.suse.cz>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/livepatching/livepatching tags/livepatching-for-6.11
-X-PR-Tracked-Commit-Id: ea5377ec49f29baaf50cbffa986a8ae667b7eaff
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: d2d721e2eb1337c67f0c5bba303f8a013b622bed
-Message-Id: <172176142569.11519.7619428302013998165.pr-tracker-bot@kernel.org>
-Date: Tue, 23 Jul 2024 19:03:45 +0000
-To: Petr Mladek <pmladek@suse.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
+	s=k20201202; t=1721761593;
+	bh=xiYMNWn8JlLWS3DfL01faTKN/kkK4A4D49NBKXMEX0A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FWsaQANQXqgd9H/SEld413kB6v4lV5qlVuVVbYdLU8Mu4l82vIR6V9gkE8eX2RwYt
+	 eysRQw27UKGfmZECgtpQHn3d0kHXRwBD30A1di8iMPwjch0J4o8Ie2Ulqp3G8umPcI
+	 ZjygMxDx85X0IawV4aMjWd/EpvMMHrLH3BjUErXs4LsKXd5B+WzKo4FV7Edlx7F9Tb
+	 li/rxFgdxBjCs9Z9yU1UcOAVstFRbBei6RXXQdg12eDLZiCZivQfjWEyLkYZSMgLSV
+	 N/ItHiqka+KMHivM2nciZfChoizjSgxPsczHQhsDW3S08z9OBH7zFrMpQn04rt4iqb
+	 IbrMzqvz76FCw==
+Date: Tue, 23 Jul 2024 16:06:28 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Cc: jolsa@kernel.org, adrian.hunter@intel.com, irogers@google.com,
+	namhyung@kernel.org, segher@kernel.crashing.org,
+	christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	akanksha@linux.ibm.com, maddy@linux.ibm.com, kjain@linux.ibm.com,
+	hbathini@linux.ibm.com, disgoel@linux.vnet.ibm.com
+Subject: Re: [PATCH V8 03/15] tools/perf: Update TYPE_STATE_MAX_REGS to
+ include max of regs in powerpc
+Message-ID: <Zp__NN2SrLvqn423@x1>
+References: <20240718084358.72242-1-atrajeev@linux.vnet.ibm.com>
+ <20240718084358.72242-4-atrajeev@linux.vnet.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240718084358.72242-4-atrajeev@linux.vnet.ibm.com>
 
-The pull request you sent on Tue, 23 Jul 2024 17:46:20 +0200:
+On Thu, Jul 18, 2024 at 02:13:46PM +0530, Athira Rajeev wrote:
+> TYPE_STATE_MAX_REGS is arch-dependent. Currently this is defined
+> to be 16. While checking if reg is valid using has_reg_type,
+> max value is checked using TYPE_STATE_MAX_REGS value. Define
+> this conditionally for powerpc.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/livepatching/livepatching tags/livepatching-for-6.11
+So what would happen if I get a perf.data file on a powerpc system and
+then try to do data-type profiling on a x86 system?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/d2d721e2eb1337c67f0c5bba303f8a013b622bed
+I'm processing this now, but please consider fixing this up in some
+other fashion, I think we have support for collecting registers in a way
+that perf.data has all that is needed for us to print them in a cross
+arch way, no?
 
-Thank you!
+I see there is the FIXME there, ok.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+- Arnaldo
+ 
+> Reviewed-and-tested-by: Kajol Jain <kjain@linux.ibm.com>
+> Reviewed-by: Namhyung Kim <namhyung@kernel.org>
+> Signed-off-by: Athira Rajeev<atrajeev@linux.vnet.ibm.com>
+> ---
+>  tools/perf/util/annotate-data.h | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/tools/perf/util/annotate-data.h b/tools/perf/util/annotate-data.h
+> index 6fe8ee8b8410..992b7ce4bd11 100644
+> --- a/tools/perf/util/annotate-data.h
+> +++ b/tools/perf/util/annotate-data.h
+> @@ -189,7 +189,11 @@ struct type_state_stack {
+>  };
+>  
+>  /* FIXME: This should be arch-dependent */
+> +#ifdef __powerpc__
+> +#define TYPE_STATE_MAX_REGS  32
+> +#else
+>  #define TYPE_STATE_MAX_REGS  16
+> +#endif
+>  
+>  /*
+>   * State table to maintain type info in each register and stack location.
+> -- 
+> 2.43.0
 
