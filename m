@@ -1,59 +1,49 @@
-Return-Path: <linux-kernel+bounces-260134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3271893A3A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:16:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E46693A246
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:05:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63FFE1C208ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:16:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 995EE1C228CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82E915748B;
-	Tue, 23 Jul 2024 15:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="Jc+59R4l"
-Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B72D153BF7;
+	Tue, 23 Jul 2024 14:05:00 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F69E156F4A;
-	Tue, 23 Jul 2024 15:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB52D15358A;
+	Tue, 23 Jul 2024 14:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721747768; cv=none; b=Bnm/NCwn7j9k9KyWDvXiODMw1tYlHl4bCkuZb9gD4j7XPg8E02EW5P+lHptlsLO9KKAhMisxuVPP+8ayxJqre4pd3FHmVFRbAcdy/Ei6aX2eYkyE8qTVKzSiMSnAcNjgAJM7uEFpHTBUR+yeZ2L+btiop5tLq5BRGU3axtaoyd0=
+	t=1721743499; cv=none; b=JVTcxxwFVUGg0pcFbLG0K0MzX57UpaBv9zzZXFg9CLEuPLovy4FwkfQcyvwsLM9rjkM/8iMgF9RvcQQqf2PLGDUi0racGZcPqsHmC2dvyrTX+Njo8DpBk41xjpB99Mq9Dbf92PNEJTK19mDnfP7bRYtESo128FkOR05K/NlPXAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721747768; c=relaxed/simple;
-	bh=DglL+yKSA9KN976p/ubtMYhYXlblffIDIMvrc0TstjE=;
-	h=From:To:Cc:Date:Message-Id:In-Reply-To:References:MIME-Version:
-	 Subject; b=Bo8vyDq3G0G00XnWyvIaJ8TA031zpqV3QOzYr5Eo289/fh6zAeBfcb/Hgb78JRnXpEjrJIuIWd/8/DYGTGGxTg1qMk8o829ihD956HEMK4JxWDzOEy6BWOf9Q7b5BcAWGxKKqKwUw5u79gW/XYdBVcUHaL+UHvAMQLHOPYp3PFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=Jc+59R4l; arc=none smtp.client-ip=162.243.120.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
-	; s=x; h=Subject:Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Cc:To
-	:From:subject:date:message-id:reply-to;
-	bh=jEzEcA6LO6Ds17TgtrYBZmnbJOnPI9KzB4PLqF0+CEw=; b=Jc+59R4lMNOR/WzDqblbOTQbL6
-	6WcA7alXMXVDGxB6l59C4PKa8vR3e/fKgidtUSsSEDLV/6oCSh9c5MA9pWiu4/Ldtq1XfBjQ/Yi4v
-	0miFb2504zdR0//2t0ph5WgUd8sT3yxeDQjU1uqsU1246DZxHSjQcpSqyt5hIwzQ+jRU=;
-Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61]:36238 helo=pettiford.lan)
-	by mail.hugovil.com with esmtpa (Exim 4.92)
-	(envelope-from <hugo@hugovil.com>)
-	id 1sWGwJ-0003Y2-EJ; Tue, 23 Jul 2024 10:56:31 -0400
-From: Hugo Villeneuve <hugo@hugovil.com>
-To: gregkh@linuxfoundation.org,
-	jirislaby@kernel.org,
-	hvilleneuve@dimonoff.com,
-	jringle@gridpoint.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	hugo@hugovil.com,
-	stable@vger.kernel.org
-Date: Tue, 23 Jul 2024 08:53:01 -0400
-Message-Id: <20240723125302.1305372-3-hugo@hugovil.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240723125302.1305372-1-hugo@hugovil.com>
-References: <20240723125302.1305372-1-hugo@hugovil.com>
+	s=arc-20240116; t=1721743499; c=relaxed/simple;
+	bh=gpoIKz3CyyNATjADGveNp10VzH6Ry1z8FkbegxIvs8s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=noQ2r5CkZL9ZyUHTlgjJTq0j1chYVwgalJU7mj4jcKnR6+uikfGNzaGRNrZYVY7lthOnw+FPhmESguTUc/sHs0MOAurMVThdMTPQ3gu06MBO0WwyHzdOM3+BuIt4HtlY/Anj8r6LH8M6cdZPTlW1ucoFpMNDPQRPw21IsPEhz2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowABXPjl0uJ9mLTORAA--.33853S2;
+	Tue, 23 Jul 2024 22:04:43 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	make24@iscas.ac.cn,
+	liujunliang_ljl@163.com
+Cc: linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] USB2NET: SR9700: fix uninitialized variable use in sr_mdio_read
+Date: Tue, 23 Jul 2024 22:04:34 +0800
+Message-Id: <20240723140434.1330255-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,66 +51,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 184.161.19.61
-X-SA-Exim-Mail-From: hugo@hugovil.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-Subject: [PATCH 2/2] serial: sc16is7xx: fix invalid FIFO access with special register set
-X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
-X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
+X-CM-TRANSID:zQCowABXPjl0uJ9mLTORAA--.33853S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF15XFyrCr4kZr4DuF45Jrb_yoW8Jw1xpr
+	4fWa9YyrWUJa42v3ykX3ykW3WF9ws5WFy3Gay8Ww4fZrZ5JFn5C34FgFyUWw1UGrW5Aa4a
+	va1qyFW3Wa1FvaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x0JUQvtAUUUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+It could lead to error happen because the variable res is not updated if
+the call to sr_share_read_word returns an error. In this particular case
+error code was returned and res stayed uninitialized.
 
-When enabling access to the special register set, Receiver time-out and
-RHR interrupts can happen. In this case, the IRQ handler will try to read
-from the FIFO thru the RHR register at address 0x00, but address 0x00 is
-mapped to DLL register, resulting in erroneous FIFO reading.
+This can be avoided by checking the return value of sr_share_read_word
+and propagating the error if the read operation failed.
 
-Call graph example:
-    sc16is7xx_startup(): entry
-    sc16is7xx_ms_proc(): entry
-    sc16is7xx_set_termios(): entry
-    sc16is7xx_set_baud(): DLH/DLL = $009C --> access special register set
-    sc16is7xx_port_irq() entry            --> IIR is 0x0C
-    sc16is7xx_handle_rx() entry
-    sc16is7xx_fifo_read(): --> unable to access FIFO (RHR) because it is
-                               mapped to DLL (LCR=LCR_CONF_MODE_A)
-    sc16is7xx_set_baud(): exit --> Restore access to general register set
-
-Fix the problem by claiming the efr_lock mutex when accessing the Special
-register set.
-
-Fixes: dfeae619d781 ("serial: sc16is7xx")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Hugo Villeneuve <hvilleneuve@dimonoff.com>
+Fixes: c9b37458e956 ("USB2NET : SR9700 : One chip USB 1.1 USB2NET SR9700Device Driver Support")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- drivers/tty/serial/sc16is7xx.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/usb/sr9700.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/sc16is7xx.c b/drivers/tty/serial/sc16is7xx.c
-index 58696e05492c..b4c1798a1df2 100644
---- a/drivers/tty/serial/sc16is7xx.c
-+++ b/drivers/tty/serial/sc16is7xx.c
-@@ -592,6 +592,8 @@ static int sc16is7xx_set_baud(struct uart_port *port, int baud)
- 			      SC16IS7XX_MCR_CLKSEL_BIT,
- 			      prescaler == 1 ? 0 : SC16IS7XX_MCR_CLKSEL_BIT);
+diff --git a/drivers/net/usb/sr9700.c b/drivers/net/usb/sr9700.c
+index 0a662e42ed96..d5bc596f4521 100644
+--- a/drivers/net/usb/sr9700.c
++++ b/drivers/net/usb/sr9700.c
+@@ -179,6 +179,7 @@ static int sr_mdio_read(struct net_device *netdev, int phy_id, int loc)
+ 	struct usbnet *dev = netdev_priv(netdev);
+ 	__le16 res;
+ 	int rc = 0;
++	int err;
  
-+	mutex_lock(&one->efr_lock);
+ 	if (phy_id) {
+ 		netdev_dbg(netdev, "Only internal phy supported\n");
+@@ -193,7 +194,10 @@ static int sr_mdio_read(struct net_device *netdev, int phy_id, int loc)
+ 		if (value & NSR_LINKST)
+ 			rc = 1;
+ 	}
+-	sr_share_read_word(dev, 1, loc, &res);
++	err = sr_share_read_word(dev, 1, loc, &res);
++	if (err < 0)
++		return err;
 +
- 	/* Backup LCR and access special register set (DLL/DLH) */
- 	lcr = sc16is7xx_port_read(port, SC16IS7XX_LCR_REG);
- 	sc16is7xx_port_write(port, SC16IS7XX_LCR_REG,
-@@ -606,6 +608,8 @@ static int sc16is7xx_set_baud(struct uart_port *port, int baud)
- 	/* Restore LCR and access to general register set */
- 	sc16is7xx_port_write(port, SC16IS7XX_LCR_REG, lcr);
- 
-+	mutex_unlock(&one->efr_lock);
-+
- 	return DIV_ROUND_CLOSEST((clk / prescaler) / 16, div);
- }
- 
+ 	if (rc == 1)
+ 		res = le16_to_cpu(res) | BMSR_LSTATUS;
+ 	else
 -- 
-2.39.2
+2.25.1
 
 
