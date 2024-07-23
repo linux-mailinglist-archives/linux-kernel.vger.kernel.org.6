@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-259974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDC3E93A0B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:59:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DB8793A0B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:59:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E6102837D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:59:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE5352837F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8F3152527;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACCD915350B;
 	Tue, 23 Jul 2024 12:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EvM9r+ot"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VbOd6yJK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE41C15216A
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 12:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DF3152532;
+	Tue, 23 Jul 2024 12:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721739516; cv=none; b=vF7a8fIZlgVLpdlsIyg9w1okQe9if5lanmUwKzRMTtwP+RHeyru2jBh6UkwN0V4EmQtW0qytoYzrvIe8OI9eRF/GaV4cNoq7Bc6KbqdIpKlu41k8OlcJefbfQ68lRB+sBS8uju5FaaiCo2QU+WKLDO3MHfHfhxyRiQN1ubBsPJw=
+	t=1721739516; cv=none; b=GuoaL1x29CHy+7V9n81HptnzoGeeZMGNXx+8y/mk4UpJn4AEOVQrBJ8TR6LgiNfLYVCa4hD/XSk6YOFh51j0VrTUN03g51kkCaSwu53L8vCZNB2W4SaGYrB3a/h8t9/yXZLQOnXklyO9LCssTuVChkAdXjjbiLcnHNtKN0+xc/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721739516; c=relaxed/simple;
-	bh=MTx3Yhz4wCNFxt8epbAA+GjuRUdAILMPbUYRovO+OVc=;
+	bh=Tze2ALouysJNEmGp2FNtBakloN2kVqPKlYAXAJeH8Ow=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=dpvWQC43hgBjUbI7OrVy6I9vX+oajGZSqiPHbTrSxZf0ejdEXrnlPF+8X4Q7rgZYPnOu6P5Rw+4JAwD1s+a0vMeLyNe8+zBW1R2dkJiNzvxu/rQ2bjYR0vwI6NIsLCxgi1A7F36yd4v631PUs81Ct9lfNiMw9TvkiAalyIRh91c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EvM9r+ot; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 65238C4AF0A;
+	 In-Reply-To:To:Cc; b=kABFCpll9Zu3Dgp+cAfacPv8yXoidnFOO6mdqeQp2EL8LKPNhEFVujwRJQlqZjMaeqXiCXYHpBVAKzidlSVst9G+iHrZvTp5nLZf3mE9jT1AMaQV7jDcGvNElz3EWEEd0c6amyv+PU5ED1ozWlwCoVAEdALMQCXiWs4DQ+UmQ/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VbOd6yJK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 76694C4AF12;
 	Tue, 23 Jul 2024 12:58:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1721739516;
-	bh=MTx3Yhz4wCNFxt8epbAA+GjuRUdAILMPbUYRovO+OVc=;
+	bh=Tze2ALouysJNEmGp2FNtBakloN2kVqPKlYAXAJeH8Ow=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=EvM9r+ot/ByNtKDgPHhwxfEsiOgD4qLC6dq1qmja/+WdFIrl4xj66LA2lHHLu3A7s
-	 Vh1mpUIK0mz6uE3vha64vJ92/bKZZX99FT5T8j5I8RfCB569RIG2WmXhiAYZL3Ywse
-	 riEwoL1MFv3mLyyQx91gFKaImpaatwMSd8QA5HdO9hBsrpazm2/AWgNz1MZMJK0B+b
-	 uSZnpkq6SnE3lKwvxOiHhIVbNcnBa4O460CvlkdY7XX9+vxWiw/ZHD+D+U/2iuJEBM
-	 ykWieW3hr/pcDBet7rtdnUxPhV2XPOFVquB8ahQevZ6zA/uYhdQ7SMaOqxrHFcr0fb
-	 hotRk430gHSYw==
+	b=VbOd6yJKk0vLB+UClJR/+FCf1Ndh7/6ZjNuOgUEUGrl8lQm/vw8K+wOSHuiBJjwnO
+	 UFTwPY63vd2Q9U7erz44Ji/nLdMol9WS0Vtc26R+vdCK1zTUncu0E56wrnWm5eCxdp
+	 yXCnlU3mnnmEPDLU88A7h1lhS9WZlwZBwBag7a5wB6umDKB2CfV7E/tQsaH7Xcft16
+	 WuKGc2/aCDEh176HLdPdNmukyMAgIHr+L2w3IGzPY+6S0jc4OWItlJZBQqERVPCzht
+	 +BkNb+41HCOmpBWAlQ4RAG9fZqjDoEyuI+/80tJbESqF+xJgWe6EFv3xKieITcAFT5
+	 r2sEnX04TQK6w==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 55C55C4333D;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6933CC54BB2;
 	Tue, 23 Jul 2024 12:58:36 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,37 +51,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v1] RISC-V: hwprobe: sort EXT_KEY()s in hwprobe_isa_ext0()
- alphabetically
+Subject: Re: [PATCH bpf-next] riscv, bpf: Optimize stack usage of trampoline
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <172173951634.10883.1451787380987627929.git-patchwork-notify@kernel.org>
+ <172173951642.10883.11057688804753906770.git-patchwork-notify@kernel.org>
 Date: Tue, 23 Jul 2024 12:58:36 +0000
-References: <20240717-dedicate-squeamish-7e4ab54df58f@spud>
-In-Reply-To: <20240717-dedicate-squeamish-7e4ab54df58f@spud>
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-riscv@lists.infradead.org, conor.dooley@microchip.com,
- paul.walmsley@sifive.com, palmer@dabbelt.com, linux-kernel@vger.kernel.org
+References: <20240708114758.64414-1-puranjay@kernel.org>
+In-Reply-To: <20240708114758.64414-1-puranjay@kernel.org>
+To: Puranjay Mohan <puranjay@kernel.org>
+Cc: linux-riscv@lists.infradead.org, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@google.com, haoluo@google.com, jolsa@kernel.org, bjorn@kernel.org,
+ pulehui@huawei.com, puranjay12@gmail.com, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to riscv/linux.git (for-next)
-by Palmer Dabbelt <palmer@rivosinc.com>:
+by Daniel Borkmann <daniel@iogearbox.net>:
 
-On Wed, 17 Jul 2024 09:54:38 +0100 you wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
+On Mon,  8 Jul 2024 11:47:58 +0000 you wrote:
+> When BPF_TRAMP_F_CALL_ORIG is not set, stack space for passing arguments
+> on stack doesn't need to be reserved because the original function is
+> not called.
 > 
-> Currently the entries appear to be in a random order (although according
-> to Palmer he has tried to sort them by key value) which makes it harder
-> to find entries in a growing list, and more likely to have conflicts as
-> all patches are adding to the end of the list. Sort them alphabetically
-> instead.
+> Only reserve space for stacked arguments when BPF_TRAMP_F_CALL_ORIG is
+> set.
 > 
 > [...]
 
 Here is the summary with links:
-  - [v1] RISC-V: hwprobe: sort EXT_KEY()s in hwprobe_isa_ext0() alphabetically
-    https://git.kernel.org/riscv/c/3d8d459c8ba2
+  - [bpf-next] riscv, bpf: Optimize stack usage of trampoline
+    https://git.kernel.org/riscv/c/a5912c37faf7
 
 You are awesome, thank you!
 -- 
