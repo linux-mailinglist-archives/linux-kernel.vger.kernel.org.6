@@ -1,154 +1,196 @@
-Return-Path: <linux-kernel+bounces-259737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5A49939C76
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:19:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7C5E939C82
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91A56282DFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:19:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D93D280D07
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA0F14C587;
-	Tue, 23 Jul 2024 08:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B19214C584;
+	Tue, 23 Jul 2024 08:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gb/VJl5w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OsXB/5zR"
+Received: from mail-lf1-f74.google.com (mail-lf1-f74.google.com [209.85.167.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF85314B94C;
-	Tue, 23 Jul 2024 08:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A238F13C9D5
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721722750; cv=none; b=ORQBiJYKYoRag1pPa3jt3oUHSx+2jOQWdWJwP+fITa9jceyg5X/YfUXGnn8TRILK40icQTg6U5iEOpNYCxozjGhj0T/fOH3KsmwkPOpQCX87yx/VDb7lEGsmwI+lzJSpmIBVbuJXjTeJN/fjDiEJpCxBMW7dSGjJDSWuusGf+7k=
+	t=1721722975; cv=none; b=T5Qm/C0+DmXxCOdWcVooYZ/wemVccRdnEg2d/CbR1AS1lw7GbFA15DAhmg3F1Dkz5quYxfHcuefZluq81JV0LnSOD72J2XVM6eZH30nLANiCrfa/30fSFIYNsbktvTiDDQV8x02wT4oP9wL3DtUeWtPq2dVQk8oqcFH6x+44Y4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721722750; c=relaxed/simple;
-	bh=6e0Z0aaAvxxzijYS/k8qqEo9hPFUeuv/sn/KQKMbgUI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KLNXOZRNDG0EHVMMmDwB/B4NmRYqzKcPFScmV8muEFVU7xT40eUQawbTYALUklnsjFwP4z46rSNpc+cxrow2lyKehVtaPR0lI2OIa4kHbe9epXaT26KfFHlDcwobxzB6W6CccaB87Kxz/3VeEIirQ0ISqL0EKE26S2hcMDca6sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gb/VJl5w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F2CFC4AF0A;
-	Tue, 23 Jul 2024 08:19:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721722749;
-	bh=6e0Z0aaAvxxzijYS/k8qqEo9hPFUeuv/sn/KQKMbgUI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Gb/VJl5w+ctuVmoBVIwOTz+Jr0gmNClWvh/iF2ZSSTIyBlK6pG4f3/VsJXV3v4xO8
-	 BG92JiPGOqz2DX/Pkvi1eIIXmqHgaC/R61FyTb761kqzT9tFABbOeEvN2G+Eto87df
-	 Qfe9gWZhATv1A0RhwQSjJEz2WUGFVaWBKCzs1HmXtHjr4lkKOczzW5peKafYnl0ubD
-	 BZLGnjNDN7SFKg7LH6Z0lv+dG+sTsto5JzjYly+CJw1mZGYXKEWRn2RZE6islqdmI+
-	 RngBMIdjiSx13CB+H9An43fdJ1D4xyGLjPSUaqblbX1nr4G4HOOhr7KG85dpH3XJyh
-	 mMNZODpK3r+2A==
-Message-ID: <c9386ee6-77bb-49be-97cd-2b25ebb08472@kernel.org>
-Date: Tue, 23 Jul 2024 10:19:01 +0200
+	s=arc-20240116; t=1721722975; c=relaxed/simple;
+	bh=gO+wMa98KpOtz97bqT2YMqnZVUaR6iSWiIIQ8donbhc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=qL+68BusVGNJshIw9l9EaEA+LHAxjvb9OlYyrfyS5x0BCAlS/9oC5TeeJdtUra0XvymOYrM1ZuFcmX/KMpyqJUhdVY1IFw4vN9TkMbTTQum+6xn43GZ8YpXcQIb8qksHwP24o3FZuhmtUGZe3OK0u94knd0Y1gNXWMhwJ+eY8Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OsXB/5zR; arc=none smtp.client-ip=209.85.167.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-lf1-f74.google.com with SMTP id 2adb3069b0e04-52efc9f2080so2454426e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 01:22:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721722972; x=1722327772; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=G3DveBYTWAJnx7XdYizqRmZotehtZ2DxuY6C3RxIRdU=;
+        b=OsXB/5zRK7fdq6q7uh7U6cuod4EZmqr1XtTQZCZ525sGbXIzkPZGkmTjqPEUkB+JVF
+         gM1nl78ETD8EvhKpwf8DRZvuPEg/6qtf0M+cbZ00vtMjN9ELJNItffCpmTHgSEEtFV++
+         b2T/IEUqFH+BSJSwjSMxdnW4zkf1VgMpeBytJFz/Gouikebc/JbvvBeLff7U4Gh2LTBn
+         2qFiMA2sLzXdoCmyNRIkXaAF/qJnRYO3gXbwP2asJccXEl22FvDGZPFrN65VQERKahke
+         +8U+Iag6H9na52WqT2MJZISDL78/rA7A/YhSWAXiaPHRjTCG9hpZW7cfCit15EgdTui6
+         vOEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721722972; x=1722327772;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=G3DveBYTWAJnx7XdYizqRmZotehtZ2DxuY6C3RxIRdU=;
+        b=DtDJjO7sDTetGxosgPHR7oLllYwSP9acRwUugmZlns4KUr4K8MWlNsGUTJLR7vzQlH
+         f8i09IErsnNLws3cEaVREjiJhOm7Dj3x5GlKlLjaGu++uuI77nwQO55f7LME50ViIHaD
+         7xK5l84OHHAihR/NUIjiNP3PtqBRQUbySLg0vYMQ4e6LlSooRAOjE/oxdmkrYPLD5adm
+         BIQHE0QvahUdFJvbUFlvB4vHP73u8MjCw6PIq7mWgdF8rdjnYhlVm1D4iW43ULTSwoTF
+         DULujbP7hEqwyhhXtPaptwRpiw+VqP/YR58O4WDRDVkYL36M6yaP70FQ5oz8ndkzORhd
+         MkXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhRFpRfYXQ2Sgz66b68K1sSyYG4HDwCAXaSN5ITvUWubTjeHP2HEvzgNlGVqQY9OJHPMjKfpDIMC24WjNx/lRzKXGELQfVLwcPUU0X
+X-Gm-Message-State: AOJu0YziPCHt9NJD72IlAsu+CZESKqnrBRcZ7EGL3z9y1MVzqTAkHTNP
+	ECDltCWXonQWEvPKpPT1P9qapltwKk68AZyO4533whlwKCHcxDcZtBfZD/Vn8x9xR+FBJFEauEF
+	BPqGApCgfECHm3g==
+X-Google-Smtp-Source: AGHT+IFVkYWVOmHKCqfnB+1HrIPZZ4jGUzaHalitsXB3nRoJ2dKE5NvEOGJy5VBWzTAYz7//zspBBGg58Txs6wQ=
+X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
+ (user=aliceryhl job=sendgmr) by 2002:a05:6512:b14:b0:52f:357:4a38 with SMTP
+ id 2adb3069b0e04-52f03574b77mr7242e87.11.1721722971317; Tue, 23 Jul 2024
+ 01:22:51 -0700 (PDT)
+Date: Tue, 23 Jul 2024 08:22:01 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] ASoC: dt-bindings: qcom,sm8250: Add
- msm8953/msm8976-qdsp6-sndcard
-To: Adam Skladowski <a39.skl@gmail.com>
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, linux-arm-msm@vger.kernel.org,
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240722095147.3372-1-a39.skl@gmail.com>
- <20240722095147.3372-4-a39.skl@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240722095147.3372-4-a39.skl@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAClon2YC/1WMzQ7CIBAGX6XhLIalf+LJ9zAegG5bYgUDhmiav
+ rvbejA9bWbzzcwsYXSY2LmYWcTskgueoDwUzI7aD8hdR8ykkJWQEvjk/B07OunFZQ2N0kroqkN
+ GxjNi795b7XojHmkU4meLZ1i/vw6Vdp0MXHADtlZGtxpLcxlCGCY82vBgayjLv1yLZi9LklujQ JwqYRX0O3lZli8ct6go5AAAAA==
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3813; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=gO+wMa98KpOtz97bqT2YMqnZVUaR6iSWiIIQ8donbhc=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBmn2gzs3Z+jtx94W/68uOkFwbtbHfRxHgdFvSb9
+ FvoAnwsrh2JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZp9oMwAKCRAEWL7uWMY5
+ RrrbEAClecL++mNJtIWVwFz7MH0h3twoELhhIuKkUIGh+x4b4MQsm9AHRlX0z8579mbTXaweEa9
+ /HUtNF5s3Y54CMunYvcGOxmwi56lhYbD4wIOblunb9YrwXSE0qc7GrwJCwi3D5DUOEZYTEdKL0X
+ zJp6Ik3r1Ak7xDkMhgrJG88aaH0F3yxobXA3MHSW4ku1+XJB1X021UtzkZXd4UnEkv798c02doy
+ WXkYLcn/NoWZShFMRgmuhIp2jU/PKRF9u9bEAlZ0j57CkIyWDtGRHghzjUmfgF2OJwKioWZVsnx
+ i1GF/cqz/VKh2B9aCuJQ8KcOd3TocCHw2yXlOFCW0jPXeIV0KPmEWA8FeSubIV+rTHvcIQiE0je
+ hpjMj4KiGbz8xygr8EVwxCfZrRQjWsCdAW+dLyR+Arr8riTzCSettYHIdFvyEbKrMcEd6ZxrXFl
+ 7Ne1F3oT5csgMFETn5S5egEb7c6WCUBN7Zu3UjOP1oWaTKHS9XAP7jn1+JZwMGlmdi91Lrqh37f
+ UT34FVmXvqZq+H+emC+EmYYOAGq/UZUs1vTxr9YxUV667OW16BzUQVVMCL84uzxhLKQAuVcN92B
+ u1YIa9XjlZdEP7rad+OupX9Y61we1TROZWjfX6lrc55akstODm7gUMX9VSUWX99tigdE9TKwk7B 68dRghiXBYPMHRw==
+X-Mailer: b4 0.13-dev-26615
+Message-ID: <20240723-linked-list-v3-0-89db92c7dbf4@google.com>
+Subject: [PATCH v3 00/10] Add Rust linked list for reference counted values
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Coly Li <colyli@suse.de>, 
+	Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, 
+	Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>, 
+	Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 
-On 22/07/2024 11:51, Adam Skladowski wrote:
-> Document MSM8953/MSM8976 QDSP6 cards.
-> 
-> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
+This patchset contains a Rust implementation of a doubly-linked list for
+use with reference counted values. Linked lists are famously hard to
+implement in Rust [1] given the cyclic nature of the pointers, and
+indeed, this implementation uses unsafe to get around that.
 
-...
+Linked lists aren't great for cache locality reasons, but it can be hard
+to avoid them for cases where you need data structures that don't
+allocate. Most linked lists in Binder are for collections where order
+matters (usually stacks or queues). There are also a few lists that are
+just collections, but linked lists are only used for this purpose in
+cases where the linked list is cold and performance isn't that
+important. The linked list is chosen over Vec in this case so that I
+don't have to worry about reducing the capacity of the vector. (Our
+red/black trees are a much better place to look for improving cache
+locality of collections in Rust Binder, and the upcoming xarray bindings
+would help with that.)
 
-> +    then:
->        properties:
-> -        reg: false
-> -        reg-names: false
-> +        reg:
-> +          items:
-> +            - description: Microphone I/O mux register address
-> +            - description: Speaker I/O mux register address
-> +            - description: Quinary Mi2S I/O mux register address
-> +        reg-names:
-> +          items:
-> +            - const: mic-iomux
-> +            - const: spkr-iomux
-> +            - const: quin-iomux
-> +      required:
-> +        - compatible
-> +        - model
+Please see the Rust Binder RFC [2] for usage examples.
 
-Don't duplicate. It's already required.
+The linked lists are used all over Rust Binder, but some pointers for
+where to look for examples:
 
-> +        - reg
-> +        - reg-names
+[PATCH RFC 04/20] rust_binder: add work lists
+Implements the work lists that store heterogeneous items. Uses the
+various macros a bunch.
 
-And what happened with all other variants? Why do you affect them?
+[PATCH RFC 10/20] rust_binder: add death notifications
+Uses the cursor. Also has objects with multiple prev/next pointer pairs.
 
->  
->  additionalProperties: false
->  
+[PATCH RFC 15/20] rust_binder: add process freezing
+Uses the iterator with for loops.
+
+Link: https://rust-unofficial.github.io/too-many-lists/ [1]
+Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/ [2]
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Changes in v3:
+- Add `assert_pinned!` macro and use it to ensure that the field is
+  structurally pinned when using the tracked_by strategy.
+- Improve ListArcSafe docs.
+- Use From trait for UniqueArc->ListArc conversions.
+- Implement AsRef<Arc> for ListArc.
+- Improve safety documentation related to ListItem.
+- Improve invariants of List.
+- Other minor docs improvements.
+- Add Reviewed-by tags
+- Link to v2: https://lore.kernel.org/r/20240506-linked-list-v2-0-7b910840c91f@google.com
+
+Changes in v2:
+- Rebase on top of the new allocation APIs.
+- Implement Default for List.
+- `on_create_list_arc_from_unique` now takes `Pin<&mut Self>`
+- from_unique now calls from_pin_unique instead of the other way around
+- Add #[inline] markers.
+- Use build_assert in pair_from_unique.
+- Simplify transmute_from_arc
+- Make macros consistently use full paths.
+- Many improvements to safety comments.
+- Link to v1: https://lore.kernel.org/r/20240402-linked-list-v1-0-b1c59ba7ae3b@google.com
+
+---
+Alice Ryhl (9):
+      rust: list: add ListArc
+      rust: list: add tracking for ListArc
+      rust: list: add struct with prev/next pointers
+      rust: list: add macro for implementing ListItem
+      rust: list: add List
+      rust: list: add iterators
+      rust: list: add cursor
+      rust: list: support heterogeneous lists
+      rust: list: add ListArcField
+
+Benno Lossin (1):
+      rust: init: add `assert_pinned` macro
+
+ rust/kernel/init.rs                    |  67 ++++
+ rust/kernel/init/__internal.rs         |  29 ++
+ rust/kernel/lib.rs                     |   1 +
+ rust/kernel/list.rs                    | 685 +++++++++++++++++++++++++++++++++
+ rust/kernel/list/arc.rs                | 508 ++++++++++++++++++++++++
+ rust/kernel/list/arc_field.rs          |  96 +++++
+ rust/kernel/list/impl_list_item_mod.rs | 268 +++++++++++++
+ 7 files changed, 1654 insertions(+)
+---
+base-commit: b1263411112305acf2af728728591465becb45b0
+change-id: 20240221-linked-list-25169a90a4de
 
 Best regards,
-Krzysztof
+-- 
+Alice Ryhl <aliceryhl@google.com>
 
 
