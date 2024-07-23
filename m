@@ -1,168 +1,121 @@
-Return-Path: <linux-kernel+bounces-259509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14DD893976A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 02:21:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B089193976D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 02:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B05E8282451
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 00:21:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2AA61C219BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 00:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DCDC14F;
-	Tue, 23 Jul 2024 00:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB460D2FE;
+	Tue, 23 Jul 2024 00:21:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fPL6o1yZ"
-Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WPaM2lW7"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51791FBB;
-	Tue, 23 Jul 2024 00:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2332BE4D
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 00:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721694096; cv=none; b=JWDAIESSwlxO/cFEZkdbXjg9zJRXY/cvTCyFxnpNpCi/T+RZliknBIVoLSkH3RbkA06MSkGCUnnOs7ngggmecJtDYzGmbteifBtLA7jFTc0KIXZf93pfFg3OiNRjTGdD+sncUDcu6t1pHLuuA2u7hT/gVEuPNv0CyTXFKyw/+EY=
+	t=1721694115; cv=none; b=nDrhj8eOGZ+jSQsp0ZjlNhQ80THOhXaR9gmnrw9jW6D+AAAx3oJswZzl/pGQvz/tAzwzwcv0vcl5/8uC5UMlZUCs7v0YzUGND9hKYsj0NyiLRsHc4V9Hr43U2vmd//HwnDIHqAzpAgGwHqX2SU1iylypjyBCbUxBd9y+88zt1KM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721694096; c=relaxed/simple;
-	bh=veA7P7+OBvlyVBsvmKu9/+iczIcI3e56VhaEI6Wzny0=;
+	s=arc-20240116; t=1721694115; c=relaxed/simple;
+	bh=cqHdQlPpoKbKPcgf6ZB7Gm59b4GbsA84cAxgPk4M/fA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tr6eO2cP52UPHf2dk7kN5Nt3CgjQP5d8mxVvtbHgQgfrQC7wD5qTMk+sljigokoY7YjbYy9wApeqIaNznVWRtuUGSn3ehJbEk8CcJqqlQ+NVUjwDbVxyI+1Fx5Z0BafgJCLxDFrEqN13mY8Y5ODcE+dXJADU9/S5s1LewjgyrHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fPL6o1yZ; arc=none smtp.client-ip=209.85.218.67
+	 To:Cc:Content-Type; b=EF5zdVIjLBwiOAlclF7aWbWsuwkKGaY12eYgIl2dEUgIa3QG25biLjjwu43rKdJwX+FziohdOlbDpwZLRdFl18Nq/HmwWVQwI+StzLwLXYTrrTl8q/CbyxjUwRr6SENnkjlLWoEOz64HEdNSuC4mXTEd3ZGU/zNKlUzWtw++gzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WPaM2lW7; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-a77dc08db60so524430666b.1;
-        Mon, 22 Jul 2024 17:21:34 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5a1fcb611d9so4031220a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 17:21:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721694093; x=1722298893; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=veA7P7+OBvlyVBsvmKu9/+iczIcI3e56VhaEI6Wzny0=;
-        b=fPL6o1yZUcW6PvP569UT5+CFkg0kXlXhSn7FuxcFlhpBKx74jVbMJBTbLkpLLpkBMp
-         yArUKOJvs6V+6hTXeHO1zNhobCibbnugR8dAb2uLkhBKO8KT1T/FnaUBWB0ND24LBBvr
-         VOHvOVjb5FDXk4dLFPReOS9hzljxCPCJ9jYbB6vcbKknnxeaxJwutod+wg8oqmingp7r
-         7qFMll6Z5FT0fOIm6R+rPC5q1Y7AHF5jtLdGUeeyekc43xc5rOJAqD0D9cgXJgaJjgru
-         5dRXWq3I44RHPHuLxd5z+UhkN6qqOl5kh0GwoErISqlzNaGNiZPsCmH0ZwdVVsiZFacH
-         L1yg==
+        d=gmail.com; s=20230601; t=1721694112; x=1722298912; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WxdDwCRz7ozxZHtp57qu+Ykoq2klaLRa7AGSsUAt4yM=;
+        b=WPaM2lW7kCspB9zQVWeJkGNVDjMXU+vOsEPRECL6iwLXcV58+8/rZYs5WxatIOTCvS
+         vfeOCbuHaWNdHtcfQQ1bJKZrHThZUgDp+FopxQK483YzNJO+2w93WMLUWlxTYNBXZjYx
+         Er6HhGlZU0G0CI+2Q0ievh+xjfgYlpIilHYs9OSLkGXoweOMkY8bSbcxcrL0kFJyeJU9
+         R4K/GwQJTMJQW6XqFoSMxB7C4JQdow1TdwiJRusQfdnC5epGkiY2l3YNuHm+r/S+Km6m
+         gzMDZPwlu/ztVzC4MA3XXNdYRJToySBS7WbF/277SYQiz1l9RMwBZ2lYMbpnsCqydr+8
+         EHEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721694093; x=1722298893;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=veA7P7+OBvlyVBsvmKu9/+iczIcI3e56VhaEI6Wzny0=;
-        b=A8JmgQquUl17IkXoy0XRTOShoGtyVSqDG6Hu0PHuSvW/GoLqHF8fePhiwT31Y978ZV
-         DCukm4fNSTVuEe5u/2Y9eJkL4mNtgIuacUlURHsFyb9FpXGfa7SqpAM2hrQ9tbVQnvFG
-         DdyeN68z8m99yPWihNIFGWxxD1ER0CgaFpDISMLLZDxtFdh3vLCP35sI8QvRG7VB9734
-         nTHWCdwMCfgagnHiT0ZN6vDGLnK633iPWB9ukkiEce3D/B9d8+5t/14Vd/thzhoufi/3
-         ieAsC8tRHT6tJyCyye8jtjdkaFH6/QBtjKCGvHPy3fY2vNOhUQeVd7rfNlPn51ayCIGM
-         RFnA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLJpINDuEKoJ8Wgja+iXasBCfaEg0e3fc0K+xSzY3QjYcYA6siLVZpWmXCGFtNlPDjfp2EbBP93iC96caRKj7ySEN8V3O1xISLv3sIqdUfKVifO5dMS7ja50j8WrQI4qATuEDeQxOgGQaG7+csuVIvdtVccDz1aHDE
-X-Gm-Message-State: AOJu0YzHy7+JI5aSD41d94hNaaJ14ZiVB0IIEexPBdMK0Emmq0p7IEOr
-	zhMIy6Wnh8Qc/KXDcYuGPMz5CyWFFAxLgX7L2Vf8nRCNnkfdx5FZ6ayS8OAReyfdhW8BSnm24BR
-	HEpOik3oChoBtDI7aI3YzVdrhz5ksvgeG4k8=
-X-Google-Smtp-Source: AGHT+IFxAxH1tPNSB97YzHssXxr9T26eekc9/4/hRHbT8JXXy6ZE4xXd57onmd33G3yvnZWBudIUeR66/xuLk5iGAS0=
-X-Received: by 2002:a17:907:6d10:b0:a72:44d8:3051 with SMTP id
- a640c23a62f3a-a7a4c051a77mr642537466b.16.1721694092848; Mon, 22 Jul 2024
- 17:21:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721694112; x=1722298912;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WxdDwCRz7ozxZHtp57qu+Ykoq2klaLRa7AGSsUAt4yM=;
+        b=WWhJSF+/b/LrU5HyWhcKP3hDDzvDTqleqrfILlEc7HEq0O+A4mgPsLzBywKX0ncJWQ
+         2Zc42VP+UXpCk044tId73GP0ei4NUDZiz+wv8p3qBtJgk1FQem+QFDOrNdFQySfu3Onw
+         RSI0hmmcAEPmbY8XsJ5am7a8XjyQZHG98LTgZNaXQ2EFBFSs/u+/EhnpAgFKecU4OkRp
+         myjWfPywwuOPnpwtsSgEzKucHYftx5hEKQwVu+25VWu9bXOtSU8GaN/8aDQVj5h6UmgY
+         xCSClmu3dfj4vC/085fSnWCcQUt2VtKNB8f3t61/JSPJjfo9isFJ87L/Vw3/c7ELb6iD
+         VLYg==
+X-Forwarded-Encrypted: i=1; AJvYcCWpzH0fXNaHxRFqcFd3I9xdV/j6p6+mAPLT5liXuW7xX82+GJEccyzbCKxZP9nmBtBJwRqq0aMNQIy++JnnXuRZ9F7dIgHwadw/GBbx
+X-Gm-Message-State: AOJu0Yw2Ox0+LzTDCWZMdNV5fj9EITTnQB8QlvKV1II0xUpdBda+E9EU
+	0APaAlP+9Hwf6vOn+Ts2yc8z0fVkqjFniQzGozYcPbDnkU8CDFWUb4YvH2u1Hr1Ri6aWf/MB+Ky
+	Lgcam0v/sPnoO5pUAgd6kX/D2lTA=
+X-Google-Smtp-Source: AGHT+IEZvdBDCMwaoXYKZpcMa7a8A6QNTz7LHwDIsJw9zi/h7TsyJ/jr09fN3E4nOwt5sRiLXagUkoZieuL/S32CgrU=
+X-Received: by 2002:a50:a6ce:0:b0:5a1:bda1:3e23 with SMTP id
+ 4fb4d7f45d1cf-5a477e833e7mr5028885a12.14.1721694111704; Mon, 22 Jul 2024
+ 17:21:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <AM6PR03MB58488045E4D0FA6AEDC8BDE099A52@AM6PR03MB5848.eurprd03.prod.outlook.com>
- <AM6PR03MB58488FA2AC1D67328C26167399A52@AM6PR03MB5848.eurprd03.prod.outlook.com>
-In-Reply-To: <AM6PR03MB58488FA2AC1D67328C26167399A52@AM6PR03MB5848.eurprd03.prod.outlook.com>
-From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Date: Tue, 23 Jul 2024 02:20:56 +0200
-Message-ID: <CAP01T74pq7pozpMi_LJUA8wehjpATMR3oM4vj7HHxohBPb0LbA@mail.gmail.com>
-Subject: Re: [RFC PATCH bpf-next RESEND 03/16] bpf: Improve bpf kfuncs pointer
- arguments chain of trust
-To: Juntong Deng <juntong.deng@outlook.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com, 
-	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, 
-	haoluo@google.com, jolsa@kernel.org, andrii@kernel.org, avagin@gmail.com, 
-	snorcht@gmail.com, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20240714205009.3408298-1-dmitry.osipenko@collabora.com>
+In-Reply-To: <20240714205009.3408298-1-dmitry.osipenko@collabora.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Mon, 22 Jul 2024 17:21:39 -0700
+Message-ID: <CAF6AEGutuf_B7fHH-SzBSWC0=tUbCk2MtRo7qWbvGCrqMVTLYg@mail.gmail.com>
+Subject: Re: [PATCH v1] drm/virtio: Fix type of dma-fence context variable
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc: David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>, 
+	Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu <olvaffe@gmail.com>, 
+	Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, kernel@collabora.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 11 Jul 2024 at 13:26, Juntong Deng <juntong.deng@outlook.com> wrote:
+On Sun, Jul 14, 2024 at 1:50=E2=80=AFPM Dmitry Osipenko
+<dmitry.osipenko@collabora.com> wrote:
 >
-> Currently we have only three ways to get valid pointers:
+> Type of DMA fence context is u64. Fence-waiting code uses u32 for the
+> context variable, fix it.
 >
-> 1. Pointers which are passed as tracepoint or struct_ops
-> callback arguments.
->
-> 2. Pointers which were returned from a KF_ACQUIRE kfunc.
->
-> 3. Guaranteed valid nested pointers (e.g. using the
-> BTF_TYPE_SAFE_TRUSTED macro)
->
-> But this does not cover all cases and we cannot get valid
-> pointers to some objects, causing the chain of trust to be
-> broken (we cannot get a valid object pointer from another
-> valid object pointer).
->
-> The following are some examples of cases that are not covered:
->
-> 1. struct socket
-> There is no reference counting in a struct socket, the reference
-> counting is actually in the struct file, so it does not make sense
-> to use a combination of KF_ACQUIRE and KF_RELEASE to trick the
-> verifier to make the pointer to struct socket valid.
+> Fixes: e4812ab8e6b1 ("drm/virtio: Refactor and optimize job submission co=
+de path")
+> Cc: <stable@vger.kernel.org> # v6.4+
+> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 
-Yes, but the KF_OBTAIN like flag also needs to ensure that lifetime
-relationships are reflected in the verifier state.
-If we return a trusted pointer A using bpf_sock_from_file, but
-argument B it takes is later released, the verifier needs to ensure
-that the pointer A whose lifetime belongs to that pointer B also gets
-scrubbed.
+Reviewed-by: Rob Clark <robdclark@gmail.com>
 
->
-> 2. sk_write_queue in struct sock
-> sk_write_queue is a struct member in struct sock, not a pointer
-> member, so we cannot use the guaranteed valid nested pointer method
-> to get a valid pointer to sk_write_queue.
-
-I think Matt recently had a patch addressing this issue:
-https://lore.kernel.org/bpf/20240709210939.1544011-1-mattbobrowski@google.com/
-I believe that should resolve this one (as far as passing them into
-KF_TRUSTED_ARGS kfuncs is concerned atleast).
-
->
-> 3. The pointer returned by iterator next method
-> Currently we cannot pass the pointer returned by the iterator next
-> method as argument to the KF_TRUSTED_ARGS kfuncs, because the pointer
-> returned by the iterator next method is not "valid".
-
-This does sound ok though.
-
->
-> This patch adds the KF_OBTAIN flag to solve examples 1 and 2, for cases
-> where a valid pointer can be obtained without manipulating the reference
-> count. For KF_OBTAIN kfuncs, the arguments must be valid pointers.
-> KF_OBTAIN kfuncs guarantees that if the passed pointer argument is valid,
-> then the pointer returned by KF_OBTAIN kfuncs is also valid.
->
-> For example, bpf_socket_from_file() is KF_OBTAIN, and if the struct file
-> pointer passed in is valid (KF_ACQUIRE), then the struct socket pointer
-> returned is also valid. Another example, bpf_receive_queue_from_sock() is
-> KF_OBTAIN, and if the struct sock pointer passed in is valid, then the
-> sk_receive_queue pointer returned is also valid.
->
-> In addition, this patch sets the pointer returned by the iterator next
-> method to be valid. This is based on the fact that if the iterator is
-> implemented correctly, then the pointer returned from the iterator next
-> method should be valid. This does not make the NULL pointer valid.
-> If the iterator next method has the KF_RET_NULL flag, then the verifier
-> will ask the ebpf program to check the NULL pointer.
->
-> Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
 > ---
-
-I think you should look at bpf_tcp_sock helper (and others), which
-converts struct bpf_sock to bpf_tcp_sock. It also transfers the
-ref_obj_id into the return value to ensure ownership is reflected
-correctly regardless of the type. That pattern has a specific name
-(is_ptr_cast_function), but idk what to call this.
+>  drivers/gpu/drm/virtio/virtgpu_submit.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/virtio/virtgpu_submit.c b/drivers/gpu/drm/vi=
+rtio/virtgpu_submit.c
+> index 1c7c7f61a222..7d34cf83f5f2 100644
+> --- a/drivers/gpu/drm/virtio/virtgpu_submit.c
+> +++ b/drivers/gpu/drm/virtio/virtgpu_submit.c
+> @@ -48,7 +48,7 @@ struct virtio_gpu_submit {
+>  static int virtio_gpu_do_fence_wait(struct virtio_gpu_submit *submit,
+>                                     struct dma_fence *in_fence)
+>  {
+> -       u32 context =3D submit->fence_ctx + submit->ring_idx;
+> +       u64 context =3D submit->fence_ctx + submit->ring_idx;
+>
+>         if (dma_fence_match_context(in_fence, context))
+>                 return 0;
+> --
+> 2.45.2
+>
 
