@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-259849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7744D939E2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:48:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32BAE939E35
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95F51F2373D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:48:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D96EF281FF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F71214D2B2;
-	Tue, 23 Jul 2024 09:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28F814D432;
+	Tue, 23 Jul 2024 09:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jq+dTMu6"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2066.outbound.protection.outlook.com [40.107.95.66])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Z2qrl5yG"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010033.outbound.protection.outlook.com [52.101.69.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320DC22097;
-	Tue, 23 Jul 2024 09:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC3922097;
+	Tue, 23 Jul 2024 09:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.33
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721728093; cv=fail; b=A6oFhQAPsmT3J8gLmV4gn9hahqAS21NoXOLLpB77zvlk5rJ1WjDq6rPQ3MeSavczfT7RNluBTeCfiRJSbGgN/6Qe+CvTJfHfXefPAth00dFUiCAGky6kVpkfn9VF320ijPsLVHrz8hqxuN5ew45en9MyseYwNgd+PqEEM8PZoY4=
+	t=1721728132; cv=fail; b=qTVvSNl17BcGrx3EtK4kygLfMwwWqP/i6p4Ou6gINh3+MVCqwpHfufAqzmEDlBZxghk7YPApeK41TfCMUP7ecLkr/xAIJSZ2LVwlCR9GPnLUHevhcOJHYmRJngO2GTY8oJ0ysJzoISft7YkHFeLP+eJUDu0dULbC0qUQozmkNGk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721728093; c=relaxed/simple;
-	bh=NSHWN5e/Cj/evtcXHA3rt/6i5JmXMA2ODJlAxhh5JiI=;
+	s=arc-20240116; t=1721728132; c=relaxed/simple;
+	bh=uAuDFVH1R8yoi3MIB2drJTIGOssujSaXcE6BZ1axf/Q=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=IhIFeh3kZsvJIcH7sP+W9W2xKnIfwJcAEuqetEi5KHzZVU+mU+syfMfqZfCjG2wDTW+K4D/1zcCeivrFeMCPsxzZuiyT41amQUh5EOkLL70AVbv0PxQBh5yF6sKT84rrpGyNs0ijQPo9XSWBvRP78smTf4ifJdbwX0kHTDSVplg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=jq+dTMu6; arc=fail smtp.client-ip=40.107.95.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	 Content-Type:MIME-Version; b=fHmX7rMJU3tJzb1ACmgi0S3XORm4GR8jjCWBPwMrLnL8yEDGOb0oo92qKLrtU2fzTlERdWIVOWwP7j/LLAZzgLpBo2cLVxxWBLqnjCwSiIGOZHXuHZawuDcSKPNmQnmMd3nhVJPGixAFgmIgOZwtHkEVXFDMQBBFp1n9DRKHofo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=Z2qrl5yG; arc=fail smtp.client-ip=52.101.69.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Nh8dLNTzo6TDTKxsIy+vcvolv65aW8G+/9bbDQOWu9fU0WAGZr6suSCKj/2Vx79XIf2y78l67Cmi7IQgwJg1+bZuspbQT6bOo3bfQQaceruzzd38faAzQVLk8G4Npwt+ciEcWsGAjQA4UFxcQkQBU4NaHEzltvRl/OzAoe+DkIup9nFJ6pA3en3h5TORKirV4sB5EFjWwfahYI9MIyASMPNENbQyXMw1jiDT6MbZxevbGd927QVETvAIO099lmNfAzwSC5PsBwmwGSzMXiMUafD7iW0RsgDlAWP2o6Q553GR6dr7Ch/4m8y3Iy/srkWLtJHYc4Z+gLzAtQh0T6bbfg==
+ b=RpjvEEFHO1zoCeG5YMZ9L6kz5txsjO3aks/FyxLmh78myc30wSkm62vc2Ct9bk8ScN2fI6VmfN9AglcOe7xVuDGOsDf83FnMltTGMqZJRcAFdsklK1hlbRIYIbSkn8KJYeiES8VltwS9PaidzQ8bsg0QC25x+1EzhUKhwbmwHxGpRQmjz/V/k3GkVrp0MTP0RhZGc94gtLKVUEoA/YJx6OUPyIWFyvI79re9fH+S35bIwWFLWh7+7Rn5WYt0VHuMvubzYIQtnXrVJunmbuNV9v6aIB/RnIAKVmlZColvC8sPogZwKDp2+doOywWkQI6ScGuR4nAR5ZuSvQDUyfyKLw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=y2PaXDD+h6Rl8/F7+Lxz25Yrt1KrJ+Dp3EhwNTN3Ago=;
- b=JzoFYgXYwbAQGyR8LeXuFGGyoofDHjeFMYwdDbH2nCL0vMuXFnOlgYz3mlbm8i65dgmKHeT2xhF8dRJ38TqrvdDo6a4TF3pVt+jx1IbJmdmpn3QPe//pdQw+dsIqzry2e8qIuOVhH8/gP+wyn8ZVvOQOvoJYmsYP8rYNvcb1t90HNrbPRBnP5b7yMzNX8sXqcCxKME3W7f7R9whwTIO/83a6mMQ440TELCcKlh7GTWEkvxx6k7QH+K6dpFfNX784Nfj2gZ0p6VaSH8SPBGZPHa8cviwPupsU1+tAfQcCjj+7uxvLsYppmfR+DCawcwBp8X2puvj6TALcvHD7HuCBYA==
+ bh=LPPNh0CIuIc1+XX1YQ9hVZcJp6s7lBSIg5tKyLU/9Yw=;
+ b=lmv/7/tAUrTARD1Jx1r9CnCc9A2ts3e7ATFbLOolRIH9hQu62Yh+a58B7Nrdrob1Z7p1xyfv6+0vgkI7BZn37pD+hlnBUlLTeheSrhmwaucjFpK6vmivKoIMnPk/fBh3ntc2HM4K5kigo2KJtSfhUK9NdNQFJ8e9z0aHzZKuIEFtxFMduGpmxsQaNB+yOpvs8IZxLV5fJHpf4kHQNFuzEgr6mUy4sJYkd/ya3viGTh/vG/BD6kiFx3oyHnCrpq+4hQNsp40UbZuvMkJKt9LXpSqFwo+4CWG93i5ubEVoQUDl7NnFhH0dwrT2o522oOA80MJO2YUf4UzNnqaHqOmqqQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=y2PaXDD+h6Rl8/F7+Lxz25Yrt1KrJ+Dp3EhwNTN3Ago=;
- b=jq+dTMu6q2KD0GHKwZFOr7pKtkKQhVBCgBbbE+o+sxnM5KJgW6Y4OaLz0fcCzDDmDnl/PAdHCXoii+SDU8IOHG09VYQvk/qIj1Ju773mbjht3hqkSlFzYtlrEKsG7C/m310QSpt6kg9rBaEmv1DQQLzS93QJ5D0rLBV4Kh2tc98=
+ bh=LPPNh0CIuIc1+XX1YQ9hVZcJp6s7lBSIg5tKyLU/9Yw=;
+ b=Z2qrl5yGFIcQYnOVgZuoNZ6+hAge9db7V1+ltCNW19Xyq9C9lPk6xfLgmg5NHY4ejoatM5YILBi/WObzVjphAzYJexmOd+/UT9rT9+15ANT2e+BvijUE64xduIAoeEP/mLYdIVsKXAKUpRR8fmayttisY5y85lb0qfkfwKaB2B4=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5040.namprd12.prod.outlook.com (2603:10b6:5:38b::19)
- by CH3PR12MB9431.namprd12.prod.outlook.com (2603:10b6:610:1c1::7) with
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by GVXPR04MB9830.eurprd04.prod.outlook.com (2603:10a6:150:113::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16; Tue, 23 Jul
- 2024 09:48:08 +0000
-Received: from DM4PR12MB5040.namprd12.prod.outlook.com
- ([fe80::a3dc:7ea1:9cc7:ce0f]) by DM4PR12MB5040.namprd12.prod.outlook.com
- ([fe80::a3dc:7ea1:9cc7:ce0f%4]) with mapi id 15.20.7784.017; Tue, 23 Jul 2024
- 09:48:08 +0000
-Message-ID: <da9ccae0-504a-48d3-ade5-a16e53b4a9b5@amd.com>
-Date: Tue, 23 Jul 2024 15:17:58 +0530
+ 2024 09:48:46 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%2]) with mapi id 15.20.7784.017; Tue, 23 Jul 2024
+ 09:48:46 +0000
+Message-ID: <442c51f3-f675-4599-a0a3-654c0a4b756f@nxp.com>
+Date: Tue, 23 Jul 2024 17:49:07 +0800
 User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG] HID: amd_sfh (drivers/hid/amd-sfh-hid/): memory/page
- corruption
-To: Benjamin Tissoires <bentiss@kernel.org>,
- Chris Hixon <linux-kernel-bugs@hixontech.com>
-Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
- Jiri Kosina <jkosina@suse.com>, LKML <linux-kernel@vger.kernel.org>,
- Li Ma <li.ma@amd.com>, amd-gfx@lists.freedesktop.org,
- Alexander.Deucher@amd.com, yifan1.zhang@amd.com,
- linux-input@vger.kernel.org, Basavaraj Natikar <basavaraj.natikar@amd.com>
-References: <3b129b1f-8636-456a-80b4-0f6cce0eef63@hixontech.com>
- <ade43b5b-9b93-40a8-acbf-99df944b45f9@leemhuis.info>
- <11fdf362-8fa5-4d44-904b-c0c9867ebd07@amd.com>
- <f6162b22-c6c6-47d7-9bda-dd702fcc5b4b@hixontech.com>
- <kkenglf5lkvu2um3o44umdxaoeh5zgsaus73kauc6vwcqpnsfv@5i6xtjnxtb5c>
+Subject: Re: [PATCH v2 01/16] dt-bindings: display: imx: Add some i.MX8qxp
+ Display Controller processing units
+To: Rob Herring <robh@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+ p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
+ s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+ tglx@linutronix.de, vkoul@kernel.org, kishon@kernel.org,
+ aisheng.dong@nxp.com, agx@sigxcpu.org, francesco@dolcini.it, frank.li@nxp.com
+References: <20240712093243.2108456-1-victor.liu@nxp.com>
+ <20240712093243.2108456-2-victor.liu@nxp.com>
+ <20240722223814.GA183822-robh@kernel.org>
+From: Liu Ying <victor.liu@nxp.com>
 Content-Language: en-US
-From: Basavaraj Natikar <bnatikar@amd.com>
-In-Reply-To: <kkenglf5lkvu2um3o44umdxaoeh5zgsaus73kauc6vwcqpnsfv@5i6xtjnxtb5c>
+In-Reply-To: <20240722223814.GA183822-robh@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MA0PR01CA0099.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:af::7) To DM4PR12MB5040.namprd12.prod.outlook.com
- (2603:10b6:5:38b::19)
+X-ClientProxiedBy: SI2PR01CA0017.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::19) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,191 +87,294 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5040:EE_|CH3PR12MB9431:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2aaad658-90e0-4d9d-cc5c-08dcaafc8ec5
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|GVXPR04MB9830:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1c492439-bf07-4731-86ed-08dcaafca569
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?V0RSc0FNays2UnV4TGY0dzlTbzA5MXlLd0FiMzBCKzlQUjh2Z1VLbW91bGRh?=
- =?utf-8?B?ajhnZStXZHU0UnRrV05VU2RDNFA5eXFXd1BhRVYwQng2Z1VEeElBSjZCNFZl?=
- =?utf-8?B?VFJtN0NqaDYyTXp2SWEydWxHb1gybDQrMXFtTXd4UnlzVmRkS1dlQUh1SXov?=
- =?utf-8?B?dFFSWTRzbmUvb2xMcTVmcHhIOElZbkxCTVFBMFRVM3hjTlhjYlE1YWF6MTA0?=
- =?utf-8?B?MUR3TnlJMndocHg1cFlHbHIvOEFFc1VudC9mY1hQQUh0dGRBeU1obzQyT1Z6?=
- =?utf-8?B?cUlESHcyeFBOcUFXb2lHM3BhQWZ2bnAvdWQrVDV1MWxjZkk3VEdvZVhZM2xs?=
- =?utf-8?B?bmcxOFRYNlZCM2ZJNEtJblhGa3g4U2JOZjNmcytBMmExSk9CTkhINFNpVFYw?=
- =?utf-8?B?eUxBRW1obnZaTGdReTB3aVpjSDh4dmRMQ1ZUSlI2QVM1ajV3Z2R1M2RzZUx4?=
- =?utf-8?B?a0M0NWVHSGVjSUZXb2xrMndReEtSSmlkdzdpZlJ3eTlYQ1VjZk13OU1vYnhG?=
- =?utf-8?B?amtDemZzVlBRYk12NHlZN0NERUtnb3ByOE8yTXZXS25qQVplZnc0cFlDcDFi?=
- =?utf-8?B?ZDNIa3V4MUhNbFRRenZCWVdaZW16cVA2Qzhvb3Ruc2VKVFVpY21pcWdWSVhu?=
- =?utf-8?B?d3Nlbkc2RVJzM2hDdWhTajdyRzZFV3NwaHczQk5waGZ0WWY1UXgwNGNWUjhV?=
- =?utf-8?B?bjAvU1Y3ckMzeEJKRTFFNkMwaENLSjBrWUFPWElseDZJd1Y1NUl6bFVXYWtv?=
- =?utf-8?B?SGVzYm5uRTBESklUamxQeDhqMnoyQTQ5OHduNHNYZlFXRmtlbmg5MEwwbzcx?=
- =?utf-8?B?NWYwc1hPMU9GSCtGQ3poZlNQNkJIZHhrOHlNSlZ0aGtiSCtrYzVUSkVGMmg0?=
- =?utf-8?B?UHRMQTlzN0M2c2hIK0V4cHRERDhWMEZPWFdkWkMyQW1Xd0lJRnlJbFJibXkr?=
- =?utf-8?B?Z2YzL1RuNmcrdnIyU00zTFlHdVR5T240VjhTRUJKaHJDbnBucXJkWlNlekdv?=
- =?utf-8?B?NG1YeUtrYURSZnFhdXBPMnRXRXo4L1BYNmtUbkI5bnYvdHMzcmM0N1V4eGFu?=
- =?utf-8?B?cEVSaTJodzNjalpSOUdYK25vZWRlTjZxMEppRUlndTFaWUhsRkhIYW9yZWw0?=
- =?utf-8?B?N0x6MStUaGFzMW5rZ2kveWlkTGVSZnB1QnliNEJwdTZvMGptZGZNUFE1RXN1?=
- =?utf-8?B?OHlhUzEyUytqVU1LNDFxZUVCVmpNbWVWQnV5MTZkeGZONzNuYmdULzR0TkM1?=
- =?utf-8?B?Y3BwVUVmNDBYd3RnMXFnejhpMHhvN09hT2pYQ21EbUFwRGVNN0pNMkN3YXpa?=
- =?utf-8?B?QUtVTTMzWHdoMFJ3Ukw2Vk9iWjVtcFhNRStnclM4OXhwUmhxdkFvc09KNndQ?=
- =?utf-8?B?OEN0aG9XM0FhdlNpMUlpOXlqYS9jbDNnd2pjcFFidG8yRkdNMGsxejlCeHVO?=
- =?utf-8?B?YXdHb3lDNUR2VVZVTmZWNFhCdW9FdTlodUN4T1ZBWnV0UkFZWUZkQTNmMFVr?=
- =?utf-8?B?T3IvSTM2ZWl0UGorbjZwNmtFM3M0b1krYktxSWsxVnl5dWQ0QkM0dDlmOGRh?=
- =?utf-8?B?QXprRDc3bExSWnZWQ2M2K2tLVDdEU00vM2NJK1dmakRHZTVpclI2SFNuS3N4?=
- =?utf-8?B?VEdybFluWU1jekJteW9KUnJXanprb0ZPRmt3Q2hLc3A3QVVwTmE3aG45NWho?=
- =?utf-8?B?NzJDZWlpc0M1VVhaVHBGS3lPNm9NekhzUUo1b2xvNFlaQndocGR6Y2RPWWlI?=
- =?utf-8?Q?nlrm1dQ+eWB5SM0hHM=3D?=
+	=?utf-8?B?OU13V2VKbEZPNUREaEJHbEN1a0F5eDYvMi94K2tWVDFMN0NEYTc4S2llbHM0?=
+ =?utf-8?B?M0xyWXdMdElVQkkxTWhHaGd2OXJEcHJONmlQb09mRTBjbUZJcDZ1NnArNU82?=
+ =?utf-8?B?OFdHYktOTUhIWEFpejd4cjM5ZEs3WFZKTzN1TjZmVEN4WWYxTFZyVit5U0dH?=
+ =?utf-8?B?TXcrbVl1dlNrUVIvakhWVjhoanFsVVc4NENMRks3RGJ4UnhJRU1ZQWx3emoz?=
+ =?utf-8?B?eXNnOGJJUVFacVh0WEVOSU9IMFVNM1ZUK09MUnI3T3JBUUdLcG1yNUJGbk12?=
+ =?utf-8?B?WG1iV3k0NWFESUtZRjJ2OGZPREZEMGRoTUZBYmxoOU1jdUIvREUwZDU1aE5r?=
+ =?utf-8?B?SG1aKzVJMkMwQTlONWEvcXREanBSYlE0anlkWkJBdENzRmJIaWlONFM2aVBv?=
+ =?utf-8?B?cEtRN1JxRmlNLy9jQ04xT2o2ZjRRaEdRWEgzZ3JqSE1KbFM2aE1STkxMc2dI?=
+ =?utf-8?B?Zm4xMWRpVmRWQ1pDcHBBd3I0Ni9talhlTHpOUHhYT0dsK211d0pNTUpuMllR?=
+ =?utf-8?B?aVMzeVEzc2JWVVdGSmRxNTcyRFlkVEUra1Exa3Q2KzhpZkVHNWdjMml6T3FT?=
+ =?utf-8?B?ZHhtaXJ2REc0MzVqWVZHVkIyVUVaa3YvT0VZOHVaZ1U1M1lTc2p2ZlhvRGx6?=
+ =?utf-8?B?UTFOVi9tU0t1Z0c4UFB3ayttdlRKZGZxMFB0dng3NGpKWGRFK3NqaFk5RFh2?=
+ =?utf-8?B?WW0wWG1wWmFmVVFoVFJuNm9YVG9najJST2xwRzFQS1Jha2lXeGN6Qk9EL29x?=
+ =?utf-8?B?dVh2RE84RGh2ellEaXExS2s0aTZQNmxwU3VkSkNEVVZGUTZ1YzNPemRyY3Zv?=
+ =?utf-8?B?TmZGZ1pRNHljVzJGSXN3Um1kRHkxQ1lML0MrYzRuOEtBYlVjQjUxamVtYWdn?=
+ =?utf-8?B?ZHJrMGRRY0FUbldzdFVDSm85TnNNOHIvbWxnOUpsMUs5elFzdTdYUkY3Z0Rx?=
+ =?utf-8?B?cWluRk54c3QyL2pCTDJTSkpDWGR0ZUk4d2FMZ3ZWUzl2aElpUDBIOXRTR1Qz?=
+ =?utf-8?B?Rmd0SFQwamRkUldFTXNwSTBnWFpjMndVcmJuWmVGTEpLQUR3NUNmeGpNS2xp?=
+ =?utf-8?B?RWNoQ1I1R3IwQ2ttc09RR0ZtVE0vRS9hMEFOWHNDTkZzN1pzYTNjazBQTXBm?=
+ =?utf-8?B?cGZVREwvbUV2LzJmMWY3Nnhiclk3UmZPb0xERVNkSnJrSkdnNDlwVEswcUlp?=
+ =?utf-8?B?d1ErbXdtSXpyVDRPNFlXUC9WSjhFa050WkdXbGhLbDZWeG1KY2tIL2JkTERW?=
+ =?utf-8?B?VlRud0hXVVN5OCtrOWVqWndmOGNkRSt1SkR4bG85QmVzb3p6K056QmthMzl0?=
+ =?utf-8?B?ZUZMc0N3Y2ptSEdoejlWVC9JQnN2N0Fib2l1OG9mNXdVb054MmNlSmRWTWg4?=
+ =?utf-8?B?d1J6QmpCeHFxVXhCa0kwL2UxY2FyUHEwY2ZiMjFwZkJPaGZhMW1objNMUy9w?=
+ =?utf-8?B?Rnh1QkFlaXBKVGpxTkVGaHVKaENmUmcrRkhzUFFBaUZhMWdRU0xldHJ5cW1F?=
+ =?utf-8?B?c1BzTGN2YmJ0SFBFSEltNTJ4WmJoU1I3dVhsZ2lYd0x4S0pxUjM2QzhIZnBJ?=
+ =?utf-8?B?TkhLUDdTRnh3dlFKZ2o1Sy9kYUU1ZjRqK2l4MzV5MWNIRldJQ3pYd2YyWmUy?=
+ =?utf-8?B?SmhtWU5QUVI3K0FKeXJJUklZUlFzeTRzd1lLTHVyVWJVTkJYcUloc21vWDlJ?=
+ =?utf-8?B?MnVqamJHc2ZSVlpiRTZIb1pYbXJWNXRJUVQ0YkJuS2Zna1FodGd4L0phaU0r?=
+ =?utf-8?Q?yl19wcntUUL1y+xydo=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5040.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Z09wZVdvVXpqRjV3UE10N1hmUXlpVTVQY0RRMEZlSGd1ckdTTUxPUXNOK3hy?=
- =?utf-8?B?TmpsVGlHUmpUZWdTVUJ5ME5uRENITUE4aW1TaVRrWTRveVdKYUVxTEdTZ2d1?=
- =?utf-8?B?RWVwZjN3Q0RPUXBmLzNmbFdSN1lCeHZDcGRQb0o1NjJhTC9hTDVkNmFWYmNU?=
- =?utf-8?B?dXV5SVpmS21yZE5PMUROdDh5UUFXdExjNWVVbDlQdDFGNDJpcUV0d1NoLzNP?=
- =?utf-8?B?aTRtOE41Skhub1N0a2NNd3l4QjdyTEw1TUNIVVF5QVFVUXpuZ21JQ1duenQw?=
- =?utf-8?B?dkwxZnMrd0hLVVFmWk9jUUQxaEpGVWhxWllibCs3d1Zkdnd0M3NuNW0yYlRa?=
- =?utf-8?B?cEFpUnFvRnJQWnpmbmxWODNLMVZjQzlzbjZjT3poTWlRVnVOUHFqTC9ZSVBy?=
- =?utf-8?B?RnhSbjFtOW5URGY2Tm9EejZmNytZOWJ4REwyMWgzeUJpcnFsZWRTUGM2RklX?=
- =?utf-8?B?UEtCalExQStuR2lMSTJpajd3d203RHJXMEdrTVIxUTZhZWllQjlDOFJ2Wnly?=
- =?utf-8?B?OUI0MGg5bTJMNUcvQVQvdjQ3aUJSNGJRajhCQWFvMzZtc3I2bzdza0NFMUFu?=
- =?utf-8?B?em03enJySWtQSTRWd1VXRGRaekpoNWlKbzRJUTRNelYzZE5vaDFrTFgyYnpY?=
- =?utf-8?B?UXdhM0pwTnY4TmpCSGFqRktkeStRZXR2clVLZWVVS3NqOTRBM2ZxUURsU0t0?=
- =?utf-8?B?OCt3alF0WWdibE5VeUI4VFE5eGx1VVBrT2hEL0xXN2R6a3hPeVhkWllTelJj?=
- =?utf-8?B?d2U2bWo3bTBuWnk5Y1FQYisydmJRaFVZQ0RDayttWHBKRmRmZFNPTUczdHhW?=
- =?utf-8?B?ZEkyTVBWVFk0SHFtTjlqK25aVVN5ZzBsUEV0UVhjeXp2MkxlOFU3S1dLends?=
- =?utf-8?B?T0JCNjF5eUMxdkRobHQrYXoyWEFCZWp0RkZGYndwVjFxL3VrdHRnRExJVXpa?=
- =?utf-8?B?b2ZjcFFySkNmR09ZejhiR0pLbUNnT1llcnprWWtOejVYMFloYnFrejIyejl0?=
- =?utf-8?B?VjN4ZGs1akYzQ3d5NGozV2w4YUVxM05EaFRJU2hhaG9ILzZqNng3cDJQT0Vk?=
- =?utf-8?B?VDJ3MUQ5MmpVWGtLZVhxc3R3ZUNJckpvWFpveW1mNk9mYTV4N2wydTdiSklP?=
- =?utf-8?B?cUh4THZ6c2g2c3o3ckNGZGpzblZwRERsUTlTQmFueDFycE5WaktMY3RhK2Qv?=
- =?utf-8?B?N09nMy8raUFPN1FmYzJSQTlXcEdPbHJ0SlVBYUk1cGRsU25oTTFOeW9rVzIy?=
- =?utf-8?B?TjhsZTJPQmlHYW4yNjYrZUsrMmMwa2w0djIwK0VkZ2VZYjZTQWlvOUgyNXNt?=
- =?utf-8?B?bVVyS295WmI3MUhyS05Pc2lUaG9hNlBuMEk2T3lDV1JZeXRiNlpYN05KQnZk?=
- =?utf-8?B?YVpyLzUwU1czaWsvWnEyRS9ZaktYNkdCemdxSDBSQnIwUjZ4WHdVeHIvVUMr?=
- =?utf-8?B?M2ZhUXlLWDhOTm1PQUgxczdqQlRxWjdVb1M0WFArT3NqZHlQV0ozNVFzdStF?=
- =?utf-8?B?YWtjWEZPWFZJOU1HSmZlK1pVSjdDK1ExMWJhOXpISy9HSW9xTkdOMkZmYzIw?=
- =?utf-8?B?UGV2ZGxKOTE4bjVhY0ZkcmU0OEd2c2UrM0M3b1hRZVd4TDR1NXU1bzEwR2NZ?=
- =?utf-8?B?djhKR2d1NG9UeWh2NDZDS0RNYWRQZHgvR3pyZHdBM253L2dsdDNJY2pYdnQ0?=
- =?utf-8?B?YmxVbnd3blYwUExieHF3LzJIUVJ6R2ZWcER6TWoxZXgwbHBCZ2pOZm9zWERa?=
- =?utf-8?B?WWRWci9IdXZFeDJrRjRQUG5jVUNOdlBuT1hIcWFsSEJDOXlobGM2Q3BXbVNQ?=
- =?utf-8?B?bER5WloyUHNPYUxUTjhxV3p5YnpubUxXdzE4OXp3SldrcTdvN2s4dzdNZ0s2?=
- =?utf-8?B?K1lzMTBpa2k5YXd6MW5sb1BmSGlGdzErWTJRVnQ1VTQveDJxWXVKNU1vRGwv?=
- =?utf-8?B?QXBEZDVUOWJrNkU4RzBidStVcW5DWmdMSDdVZWM5UTgzbEFvNlJGVzZuWCt0?=
- =?utf-8?B?ZnN5OVBlV2xNV2s5eWl5UTRvVkJmVDlQYy8rdDJtM3RySjUwdkptSTJzTXFK?=
- =?utf-8?B?SVRObXkreE5IbmI5VHVKYTJoZGdtT0xHUDBKOTdGRmNVNjhidGhLS0pkd3dU?=
- =?utf-8?Q?CWRcwi7qyowmq9/MhSXhECG3f?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2aaad658-90e0-4d9d-cc5c-08dcaafc8ec5
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5040.namprd12.prod.outlook.com
+	=?utf-8?B?ZnJlR1VLbFFDNG9MU094c1hlZ09uazZ5eTRPVTVWWW9uZFdyK3k3NFJpZnFy?=
+ =?utf-8?B?UWpPQ09yMTEwRjllT05WTkIwaktyMllUSWd6dldYOXRhaFhya0VzaXErbXha?=
+ =?utf-8?B?Ykk3Sk50MGt2MkZWbld2UEJrbEJZbHZSQnNjbklZZFNIY29GNytmcVdVYmJJ?=
+ =?utf-8?B?R2hxdjlnSmZERHBMbVo5alFxeENJM1RuSGtiMGdHeEZYaW44Nkp1OHV1cnkz?=
+ =?utf-8?B?TkNPVnpGWUdlcGpWNkcwS0NyL1FERlRHemJRTU5zcUJHTkMvQ0RESjRUL0xV?=
+ =?utf-8?B?Ykp1NFBXb3hMWjg3VkJENThQS21MSkZlMFRqVnVoalhobXgzem1QYU13a1Q2?=
+ =?utf-8?B?Nm9icnRoT1ZtbC84NThOeDRPUkZjMnZHaWJ2aU5tWjBTcUdyc0w5VzJBc1VY?=
+ =?utf-8?B?amxDYmEzQlh3RWRsK1lLenVGd0d4cjRPcnp2TDNwOXFJQjlkbmJkK2ZCWHB4?=
+ =?utf-8?B?bjJ6c2puZ3lScGdGL2ZVN2tHRlFoYjQxaFNiTUYzeHdaK3JiQlBvY2NCU1dJ?=
+ =?utf-8?B?Y29aQnowRHU3UDRxQk9yLzVFWmN3MzQ1bUNWcFBKZ1BHYkFpNEp4VS9ESHFE?=
+ =?utf-8?B?WGFQWmxsSzEwUCtKSmoxd013UXZSSmRMRFBhWjNNaEFOb3ppaHJpMVFzRmNG?=
+ =?utf-8?B?aTd4NEhSaXJaKzFuS2FtV0RzckZ5REhWSVVzOVdlQXp0ajFWOGUvSFF5WkVY?=
+ =?utf-8?B?TFdJOHF2b2hwNFdURU5qbWVnSDlUVnhZS2FuSEJINzkxU2YyU2VrM2Jpc1lp?=
+ =?utf-8?B?bzJSWUR1cUdVN0FDbzdabGZMWEpGa0VIc2ZTWExXaE1yYUV1SVdUczIrczlI?=
+ =?utf-8?B?QlNzTitWV2JhZXlHM2NzL0xTbTFRRHhsMlhrWVdDbkkwR3JscCt4SUtXK24y?=
+ =?utf-8?B?aEVMRGFodnNkM1RpTVJwSzFWa1pjcXVEa3MxZUVnOWYzZ2NZaEpMVmFROFdW?=
+ =?utf-8?B?VExpeTBYZWRUUm9XR0NSRUlOd1gvWEl3SzdsSzZoTDF0TDdCQ3NZMEpJYnpx?=
+ =?utf-8?B?QVB4OGlmSUlHdTI2U0pGSFRFNkcyTkpJTVZ2RkdybnMxTC82Q3VRbVk0bXNU?=
+ =?utf-8?B?dDVXSGhKWGJsN1pqM29MYXI3TVRVNVFMWUV4cmlOY0lPOUlYaDNxSERhMGJ4?=
+ =?utf-8?B?c1U1SnhGcERXL1YzZVNpcWwwSDNQaXNuVTJHWUlyY0tqZ1RCdmZVY0w0aysx?=
+ =?utf-8?B?eFZLc1Z1UU5iRk9TUkFEM013aXF4MEx2am03MUNRVlJkZWVEdTM2VWU5L053?=
+ =?utf-8?B?aUNuTnBPaEh6d2Y0L0lJQTlpajROWXhuR1Y2d2ErY3RNcHc4M2p4dG1mMGl2?=
+ =?utf-8?B?bFlFcXVQOTVaOFVqcUJhZGFQMnVsNDlQMGEzTXlKUXpSUG10Yk9hQlpuNEND?=
+ =?utf-8?B?dmp4bDJ3MkNybi9tTHU3bDk4YWhGKzkrWm92b3NiNGJ2ZjhHbnlDZjM3cFZa?=
+ =?utf-8?B?QlBaMFdDcmdZVTFCeFZDd1drZXN5N3V4OGsra2lWTmVmT203SEtCK0RZaUhU?=
+ =?utf-8?B?UFJaUFJmY3IyWURJdG5VVE00dmpiYTJxelN1VHgvVkJDZWpwZzBwM3d5WDNH?=
+ =?utf-8?B?cE5ZbitUWk5WcDVOWnVmNlU0Q0VmdzVWdVlUa3JoQjQ1a3NhZkRUT3ZSMFh6?=
+ =?utf-8?B?N3pRSGhmdUZlNlJEWDZ0VDkwNE9hemR5ay9YbzdmRW9QS2ErbGlNMldVbFdG?=
+ =?utf-8?B?azhsWDR4a2IwNXRycGlhNFlkV0lVck1RS1V2SFFEMVR2V21lN056OWlKZ0Za?=
+ =?utf-8?B?em1lNmx2eGhGVC9jZ0Y4OVM1ck4zbWxWVG1abDVQSjNyWW5TOHdvV1paMjVS?=
+ =?utf-8?B?RlhlZzJyU3pYWi9EaDZ0MGMvWWxhY3R3MWZJWVBiSHF0ZGIyTzlQRTB4a1ZO?=
+ =?utf-8?B?Mm9GblFVMXlxVzZxUkFIcytJNWo2N3hDNVJSVXFQaFB5NU8xWHdOdUpad0pJ?=
+ =?utf-8?B?YzhFZERaKzBXdlE0eFVFM3pIUldEZ3Y5N1N3S29wQU14MU1XN1c0LzNDVVFS?=
+ =?utf-8?B?RVo0bjI0d3JaamJMRitwZlVTQXZEaU5jSGw5OFZWdmVvdE11cm5BaHFSRWxV?=
+ =?utf-8?B?b25qS29PYUUzSGhvSUM2alVDaWdSTFVmeTlSOTYyUEV3anRRN2FaQlJBMEY3?=
+ =?utf-8?Q?tt5Gxhjj7Fvmz1iUdUEWHJYfo?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c492439-bf07-4731-86ed-08dcaafca569
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2024 09:48:08.7296
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2024 09:48:46.5068
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: w2+uBOXyoobaQHjqrOaqBL8PV5e+qGzv8r0eg1/Cjn4vDkrWxrfK7DEZbhQk2PmtcejlmTmr3v4Xo39ISfnFqQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9431
+X-MS-Exchange-CrossTenant-UserPrincipalName: hyxOh1i93rSAN/2V4SWJunR9RTy5AJcjoh281MWDkLoJIGKCnPdqqA3o6zd4ahmpuBb96u3u/wbuKzhD8Flt5A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB9830
 
-
-On 7/22/2024 10:00 PM, Benjamin Tissoires wrote:
-> On Jul 21 2024, Chris Hixon wrote:
->> On 7/21/24 00:20, Basavaraj Natikar wrote:
+On 07/23/2024, Rob Herring wrote:
+> On Fri, Jul 12, 2024 at 05:32:28PM +0800, Liu Ying wrote:
+>> Freescale i.MX8qxp Display Controller is implemented as construction set of
+>> building blocks with unified concept and standardized interfaces.
 >>
->>> On 7/17/2024 4:51 PM, Linux regression tracking (Thorsten Leemhuis) wrote:
->>>> On 15.07.24 06:39, Chris Hixon wrote:
->>>>> System: HP ENVY x360 Convertible 15-ds1xxx; AMD Ryzen 7 4700U with
->>>>> Radeon Graphics
->>>>>
->>>>> Problem commits (introduced in v6.9-rc1):
->>>>> 6296562f30b1 HID: amd_sfh: Extend MP2 register access to SFH
->>>>> 2105e8e00da4 HID: amd_sfh: Improve boot time when SFH is available
->>>>>> It appears amd_sfh commits 6296562f30b1 and 2105e8e00da4 correlate with
->>>>> some form of memory/page corruption. 
->>>> Hi! From a quick search on lore it looks like Basavaraj Natikar who
->>>> authored those two commits is inactive since a few days. This is totally
->>>> fine, but given the nature of the problem slightly unfortunate. That's
->>>> why I'm trying to raise awareness to this report by adding the
->>>> subsystems maintainers, a few lists, and a few people to the list of
->>>> recipients that were involved in the submission of those two patches.
->>>> With a bit of luck somebody might be able to help out. Ciao, Thorsten
->>>>
->>>>> On my system, this typically
->>>>> presents itself as a page dump followed by BTRFS errors, usually
->>>>> involving "corrupt leaf" (see dmesg output below); often the BTRFS
->>>>> filesystem becomes read-only afterwards. Note that the underlying NVME
->>>>> disk seems fine, and the BTRFS filesystem does not actually appear to be
->>>>> corrupt when booted/checked from kernels without this bug (no BTRFS
->>>>> errors or I/O errors reported on non-problem kernels).
->>>>>
->>>>> I have no problems when I blacklist the amd_sfh module (any kernel
->>>>> version), or revert both commits 6296562f30b1 and 2105e8e00da4 (on
->>>>> stable, linux-6.9.y). I have no problems on any recent linux-mainline
->>>>> (v6.10{,-rc*}) when reverting these two commits (in addition to
->>>>> reverting 7902ec988a9a and 6856f079cd45 to successfully build the
->>>>> kernel). I have had no problems with any 6.6.y, v6.7.y, or v6.8.y version.
->>>>>
->>>>> It is curious BTRFS always seems involved, but problems go away with
->>>>> these amd_sfh commits reverted (or amd_afh disabled).
->>>>>
->>>>> Further notes:
->>>>>
->>>>> I have not specifically used the amd_sfh module for anything. As far
->>>>> I've been able to determine, my system has the "Sensor Fusion Hub" mp2
->>>>> chip, but has no supported sensors/sub-devices (or I need to do
->>>>> something to enable them), (or there is an error while detecting
->>>>> sensors?). All logs I've checked contain something like:
->>>>>
->>>>> Jul 09 04:14:37 arch kernel: pcie_mp2_amd 0000:04:00.7: enabling device
->>>>> (0000 -> 0002)
->>>>> Jul 09 04:15:07 arch kernel: pcie_mp2_amd 0000:04:00.7: Failed to
->>>>> discover, sensors not enabled is 0
->>>>> Jul 09 04:15:07 arch kernel: pcie_mp2_amd 0000:04:00.7:
->>>>> amd_sfh_hid_client_init failed err -95
->>>>>
->>>>> Excerpt from lshw:
->>>>>            *-generic:1 UNCLAIMED
->>>>>                 description: Signal processing controller
->>>>>                 product: Sensor Fusion Hub
->>>>>                 vendor: Advanced Micro Devices, Inc. [AMD]
->>>>>                 physical id: 0.7
->>>>>                 bus info: pci@0000:04:00.7
->>>>>                 version: 00
->>>>>                 width: 32 bits
->>>>>                 clock: 33MHz
->>>>>                 capabilities: pm pciexpress msi msix cap_list
->>>>>                 configuration: latency=0
->>>>>                 resources: memory:fe000000-fe0fffff
->>>>> memory:fe4cc000-fe4cdfff
->>> Could you please check with the latest version, including the patch below?
->>>
->>> https://lore.kernel.org/all/20240718111616.3012155-1-Basavaraj.Natikar@amd.com/
->>>
->>> Thanks,
->>> --
->>> Basavaraj
->>>
->> Hi,
+>> Document some processing units to support two display outputs.
 >>
->> Unfortunately, that patch doesn't fix the issue. I do get different crashes...
-> Thanks for the quick testing.
->
-> Basavaraj, was the patch from above an attempt at fixing that particular
-> regression or was it emerging from some other means?
->
-> In other words: should I apply the fix even if it's still not the
-> correct one for Chris?
+>> ConstFrame, ExtDst, FetchLayer, FetchWarp and LayerBlend processing units
+>> are in pixel engine.  FrameGen and TCon processing units are in display
+>> engine.
+>>
+>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+>> ---
+>> v2:
+>> * Drop fsl,dc-*-id DT properties. (Krzysztof)
+>> * Add port property to fsl,imx8qxp-dc-tcon.yaml. (Krzysztof)
+>> * Fix register range sizes in examples.
+>>
+>>  .../imx/fsl,imx8qxp-dc-constframe.yaml        |  44 ++++++
+>>  .../display/imx/fsl,imx8qxp-dc-extdst.yaml    |  72 ++++++++++
+>>  .../imx/fsl,imx8qxp-dc-fetchlayer.yaml        |  30 +++++
+>>  .../imx/fsl,imx8qxp-dc-fetchunit-common.yaml  | 125 ++++++++++++++++++
+>>  .../display/imx/fsl,imx8qxp-dc-fetchwarp.yaml |  30 +++++
+>>  .../display/imx/fsl,imx8qxp-dc-framegen.yaml  |  64 +++++++++
+>>  .../imx/fsl,imx8qxp-dc-layerblend.yaml        |  39 ++++++
+>>  .../display/imx/fsl,imx8qxp-dc-tcon.yaml      |  45 +++++++
+>>  8 files changed, 449 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-constframe.yaml
+>>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-extdst.yaml
+>>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-fetchlayer.yaml
+>>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-fetchunit-common.yaml
+>>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-fetchwarp.yaml
+>>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-framegen.yaml
+>>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-layerblend.yaml
+>>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-tcon.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-constframe.yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-constframe.yaml
+>> new file mode 100644
+>> index 000000000000..94f678563608
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-constframe.yaml
+>> @@ -0,0 +1,44 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/display/imx/fsl,imx8qxp-dc-constframe.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Freescale i.MX8qxp Display Controller Constant Frame
+>> +
+>> +description: |
+>> +  The Constant Frame unit is used instead of a Fetch unit where generation of
+>> +  constant color frames only is sufficient. This is the case for the background
+>> +  planes of content and safety streams in a Display Controller.
+>> +
+>> +  The color can be setup to any RGBA value.
+>> +
+>> +maintainers:
+>> +  - Liu Ying <victor.liu@nxp.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: fsl,imx8qxp-dc-constframe
+>> +
+>> +  reg:
+>> +    maxItems: 2
+>> +
+>> +  reg-names:
+>> +    items:
+>> +      - const: pec
+>> +      - const: cfg
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - reg-names
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    constframe@56180960 {
+>> +        compatible = "fsl,imx8qxp-dc-constframe";
+>> +        reg = <0x56180960 0xc>, <0x56184400 0x20>;
+>> +        reg-names = "pec", "cfg";
+>> +    };
+>> diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-extdst.yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-extdst.yaml
+>> new file mode 100644
+>> index 000000000000..dfc2d4f94f8e
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-extdst.yaml
+>> @@ -0,0 +1,72 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/display/imx/fsl,imx8qxp-dc-extdst.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Freescale i.MX8qxp Display Controller External Destination Interface
+>> +
+>> +description: |
+>> +  The External Destination unit is the interface between the internal pixel
+>> +  processing pipeline of the Pixel Engine, which is 30-bit RGB plus 8-bit Alpha,
+>> +  and a Display Engine.
+>> +
+>> +  It comprises the following built-in Gamma apply function.
+>> +
+>> +  +------X-----------------------+
+>> +  |      |          ExtDst Unit  |
+>> +  |      V                       |
+>> +  |  +-------+                   |
+>> +  |  | Gamma |                   |
+>> +  |  +-------+                   |
+>> +  |      |                       |
+>> +  |      V                       +
+>> +  +------X-----------------------+
+>> +
+>> +  The output format is 24-bit RGB plus 1-bit Alpha. Conversion from 10 to 8
+>> +  bits is done by LSBit truncation.  Alpha output bit is 1 for input 255, 0
+>> +  otherwise.
+>> +
+>> +maintainers:
+>> +  - Liu Ying <victor.liu@nxp.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: fsl,imx8qxp-dc-extdst
+>> +
+>> +  reg:
+>> +    maxItems: 2
+>> +
+>> +  reg-names:
+>> +    items:
+>> +      - const: pec
+>> +      - const: cfg
+>> +
+>> +  interrupts:
+>> +    maxItems: 3
+>> +
+>> +  interrupt-names:
+>> +    items:
+>> +      - const: shdload
+>> +      - const: framecomplete
+>> +      - const: seqcomplete
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - reg-names
+>> +  - interrupts
+>> +  - interrupt-names
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    extdst@56180980 {
+>> +        compatible = "fsl,imx8qxp-dc-extdst";
+>> +        reg = <0x56180980 0x1c>, <0x56184800 0x28>;
+>> +        reg-names = "pec", "cfg";
+>> +        interrupt-parent = <&dc0_intc>;
+>> +        interrupts = <3>, <4>, <5>;
+>> +        interrupt-names = "shdload", "framecomplete", "seqcomplete";
+>> +    };
+>> diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-fetchlayer.yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-fetchlayer.yaml
+>> new file mode 100644
+>> index 000000000000..804a3ea7419f
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-fetchlayer.yaml
+>> @@ -0,0 +1,30 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/display/imx/fsl,imx8qxp-dc-fetchlayer.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Freescale i.MX8qxp Display Controller Fetchlayer
+>> +
+>> +maintainers:
+>> +  - Liu Ying <victor.liu@nxp.com>
+>> +
+>> +allOf:
+>> +  - $ref: fsl,imx8qxp-dc-fetchunit-common.yaml#
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: fsl,imx8qxp-dc-fetchlayer
+> 
+> As the fetch units only differ by compatible, combine them and the 
+> common schema into 1 schema doc.
 
-yes Benjamin, Please apply fix and it looks like below crash is not related to amd_sfh driver.
+Ok, will combine all into fsl,imx8qxp-dc-fetchunit.yaml in v3
+if no objections.
 
-Thanks,
---
-Basavaraj
+> 
+> Rob
+> 
 
->
-> Cheers,
-> Benjamin
+-- 
+Regards,
+Liu Ying
 
 
