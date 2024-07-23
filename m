@@ -1,205 +1,198 @@
-Return-Path: <linux-kernel+bounces-259725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE64939C13
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:57:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 478F6939C31
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:03:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E8D91C21CF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:57:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2AC92831AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB73014AD3E;
-	Tue, 23 Jul 2024 07:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC29D14B95A;
+	Tue, 23 Jul 2024 08:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yjh1oq2O"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b="0PeeXPmc"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E0414B94E;
-	Tue, 23 Jul 2024 07:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685361C695
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721721458; cv=none; b=lrRNNtCfVKpSA01ND0OpW3r5jU5SGYnfNa3va0FG9p7Jdk2f1Fsz3VPQ/vbC5//SB+K9fqocJA27O18PZqctlzQFpW+Hl9ydMJrdgAXPyaUSbc+rxVEtiiMNS73kKQ2rl0z5tMENt8Ym/t65IDL/fq1XuhsUZ09xwXojFfQD3sk=
+	t=1721721809; cv=none; b=j3LkC/2R7pDyfQtJoH8agC6GdbShRnuNYYr96xHFFgDpwc48PGeHRFWLOgc3lNN7ImI0p42o+6uqYj3gLXjvvEYegV/uLVAZo3Dj+A2NC8LmosglWRtOg5t2BYMZFPGuVUhHpNHqdYvHMUT8cmjKBaE/GFSZoDi6UZyu6mfOIWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721721458; c=relaxed/simple;
-	bh=4YQQEgM48beD0I89wvKaYdWQiViVNNnTYxUTvi/MvkE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=faX4acdho1Wov1LwTRdvIWhQlY/IVXCGihecG2jfgksxJzx1/A/ilL4eKJLYdsAGEhrlV8EL/fw+grGq2ae0cYRtQpyGiWTiN3XE2h06yYvKFe5Z9FGY40fXq1WI8YPKXUDijY3St1C8+7rLGK+eZ6Qe3yrkCqj6qMTQ/5sAiV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yjh1oq2O; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a77d876273dso17422366b.0;
-        Tue, 23 Jul 2024 00:57:36 -0700 (PDT)
+	s=arc-20240116; t=1721721809; c=relaxed/simple;
+	bh=8ojZbUS1q5+D9/vnXSIo9SnMct9lNQJr8ipCQDmzI9w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m/ZtmvNuPz+CR+vY3u6bfh5CG4XVavy96d3TRYa2xducORb2k79T1mowsAJ9UwXDhOYfnewIsuqnlONg/JKtLXhfGdM3Q5mMV1so70yomydvPVPR1U6r88cFYFpcQHh83+mNbDPHXJPX+bJi3rOS6rTQX7m7JZY21bxtwQBva54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=none smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b=0PeeXPmc; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ursulin.net
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42793fc0a6dso37124395e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 01:03:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721721455; x=1722326255; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=aouVwhBJqE5k2WCDcGQ1Nex+dDn72kX8+hkE1LGZgE4=;
-        b=Yjh1oq2OXgUC6r2bWkjmrjyCZmVpszC8Mt5iltzyf3xj6b082Zr3vJLa+pVxsQ4ddo
-         rnZFiHDvUiselKURHpNr7Ceaz7uSTVIjSw8MewI8SuEvUzw8NcfNHNbkBXEXzt21DQhQ
-         7D8Pt5+BSTZ5nbtIk1LF71lV/gePwbvvnwq6SQykdFfB/IQ80FKNQgm492gkTg16fon+
-         kjqPe8woKm7AaqnCVTRRlTJvncLwf8m9NbTVfaBVfb1vmoOF+0JhVY5Q2BkkuSt6c1yE
-         cpu3XsAUbQegbp02m2i4CrAZjLXFgdtQGkFHiAGqbgo8W1Kb9hP+rY+9bRc4w0vDCJqK
-         RdXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721721455; x=1722326255;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=ursulin-net.20230601.gappssmtp.com; s=20230601; t=1721721807; x=1722326607; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=aouVwhBJqE5k2WCDcGQ1Nex+dDn72kX8+hkE1LGZgE4=;
-        b=VwSG8yfJCfBG8GfFb6GogX7DW8LuLS/Phc/icaIMEnR8tGMPM1p9GLCvliNrFnk/I5
-         kJoBoENluoRThcMDgC+PAVd1p9IQH9TSqcjK6gI3cPtamHc1mcUGaIrel7GtDcOT1AOU
-         cWufr2m4cgx3+w7XF1h16c72RXxCqbLfwmo/Fb8ZODJU4z43zaDku1mEfz3cRxxg6af+
-         PcBE0/5a52srpCcX3F+Z9kIU1PVcnEcEgw29qH9mlsfa6PVPqX0aaqiQma/fBZ6RMUIU
-         IXZUPIZztXszmMtXHy3B/MK7xIdBg2r2D8DqU7RumNF8XlVuUxTZtxn86CTKT0eEymML
-         am/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUlKlI7iADPL11KcIn0MToGlhk4Rfy+0HrB9dTi9Z30y9aEoT6xa4OfF611v4k5zMqYh7PlbT8BuPAZFK5fesLt5/jIDA4L0biXD3DW21WTvYw9gCqNdJDnTOWfDZQasXkhDv2IbQQLsGgqKBMjBBl/I25I9bU3UVHktTnslx0udybXjye8UlkaBT/U+yvM3qCGHAu1HAZgw17lryeaQg==
-X-Gm-Message-State: AOJu0YyemtVkSRcbry3yYWB9yCC+AT5ks2y2D4Xw2ERbAb4kl4nQcgfm
-	1WBKhWFAo73T3QASFuRrc3vpqIuhiKryeV2gjo0Y5Obbo2N1lOeW
-X-Google-Smtp-Source: AGHT+IGum/IV02rbBZD2V9qbrwOtzlm9OVdy3vyufKB1tHH+HTCkGwSqQDGtZxeoukpglfPat3NlsA==
-X-Received: by 2002:a05:6402:26cb:b0:5a1:71b2:e9bd with SMTP id 4fb4d7f45d1cf-5a47b7ab860mr9481593a12.34.1721721455293;
-        Tue, 23 Jul 2024 00:57:35 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a3228723bcsm7059341a12.48.2024.07.23.00.57.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 00:57:35 -0700 (PDT)
-Message-ID: <5b246e7628ea189be5f8430dac4cffde723b7907.camel@gmail.com>
-Subject: Re: [PATCH RFC v3 6/9] spi: axi-spi-engine: implement offload
- support
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>, 
- Jonathan Cameron
-	 <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno
- =?ISO-8859-1?Q?S=E1?=
-	 <nuno.sa@analog.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen
-	 <lars@metafoo.de>, David Jander <david@protonic.nl>, Martin Sperl
-	 <kernel@martin.sperl.org>, linux-spi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org
-Date: Tue, 23 Jul 2024 10:01:32 +0200
-In-Reply-To: <20240722-dlech-mainline-spi-engine-offload-2-v3-6-7420e45df69b@baylibre.com>
-References: 
-	<20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
-	 <20240722-dlech-mainline-spi-engine-offload-2-v3-6-7420e45df69b@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+        bh=Dwumg9sA0boBT9f1y3l+ocDrc52hbXSna/PURnFOFoA=;
+        b=0PeeXPmcpI5u6nvDk2dQPZrYi1K4ZrrxZ8L9AcNjhDH7rCitWX8vyIoQIccKB6M2vc
+         z3U9iNxPcovkcOs9sBoDA9VUhMGwroCKKu09duBNUyGMJg42n1s0rmS5zgTC10xMAUDM
+         swlvNtlF3hfsWK6OD/pNr+AkKUvxsPTS78WZYAIYw+fZFLmJZ9Znk/mrkTxxgJhNG6za
+         G76QWlorFfyE+AgvyBkA3UYV5oh4Pbf4mTgBfPa+vhA+jIfpOp7HEshpV5IIRilr+TFw
+         UHFxejDhA8+HdbqhnV1UsBEb2lzzI0OD6gRei2m08wB5LHWgqrYFK/IpJwGEV+Uja8Pc
+         Ok7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721721807; x=1722326607;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dwumg9sA0boBT9f1y3l+ocDrc52hbXSna/PURnFOFoA=;
+        b=SYH1dfDVj9aAF0g7zAID/VNp5qSVJIPqlp+xzhGXzRnfzKDSrlwi20aqfQ3e7gvUld
+         ggEkeRQl/+zlzT4qDnZIa+EUjV2/vU3eFhGics+Mx3vd8GY6Wj/5UrH1qKOaLEF6oO1h
+         m+UGL76jZoW51p91A6fUS3rmTvLfhphl/FcukAYbWzNpnLzm5V8Af9IH7WNVfIV2bNtF
+         Kp0506cNE0ZFC1yoX//3t9GC8TDn56xIoOo8PULthKogGdZ+E1xPRGyLDY1gsxdQybnj
+         +NGYjpzRNFhhpJSJS244bgfaCLaGwzF1Ofhn/qWFcObluj004iAmzG5RaILw+FibPFrx
+         1l2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXPGzmOvuOfvfF7BTiUmpPfXpY2bm09kHdCjKv9WU8Yb4quSL4YrsHMYjln+e68ZGkOKzEr1VKHkR27m8CpwI6XdaoJHgh3DjdLALDT
+X-Gm-Message-State: AOJu0YwqmGuptYa7uDduykb1nb1pYDfXAXPtL5aK0lVMDyUTDai1SPI2
+	dEX7bKctOkiq7Ao6q6n8pwPARZrd40aC/WL2I35dAVslXDNgq9Ao/ohqDFFxAoI=
+X-Google-Smtp-Source: AGHT+IFd81ca7GfKvPbphmZbXFfNfzwy4ltQarxCc2MSfiPQ4ODrZWwDsqbJzw6O/OEzKQoLvMv3qg==
+X-Received: by 2002:a05:600c:a07:b0:426:6416:aa73 with SMTP id 5b1f17b1804b1-427ecfe03fbmr13274895e9.12.1721721806759;
+        Tue, 23 Jul 2024 01:03:26 -0700 (PDT)
+Received: from [192.168.0.101] ([84.69.19.168])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d292077dsm190059625e9.0.2024.07.23.01.03.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jul 2024 01:03:26 -0700 (PDT)
+Message-ID: <be3871bd-fc25-482e-b4d4-91afc4d5b5a5@ursulin.net>
+Date: Tue, 23 Jul 2024 09:03:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/7] drm/i915/pmu: Lazy unregister
+To: Lucas De Marchi <lucas.demarchi@intel.com>,
+ intel-gfx@lists.freedesktop.org, linux-perf-users@vger.kernel.org
+Cc: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+ dri-devel@lists.freedesktop.org, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20240722210648.80892-1-lucas.demarchi@intel.com>
+ <20240722210648.80892-7-lucas.demarchi@intel.com>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tursulin@ursulin.net>
+In-Reply-To: <20240722210648.80892-7-lucas.demarchi@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2024-07-22 at 16:57 -0500, David Lechner wrote:
-> This implements SPI offload support for the AXI SPI Engine. Currently,
-> the hardware only supports triggering offload transfers with a hardware
-> trigger so attempting to use an offload message in the regular SPI
-> message queue will fail. Also, only allows streaming rx data to an
-> external sink, so attempts to use a rx_buf in the offload message will
-> fail.
->=20
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
+
+On 22/07/2024 22:06, Lucas De Marchi wrote:
+> Instead of calling perf_pmu_unregister() when unbinding, defer that to
+> the destruction of i915 object. Since perf itself holds a reference in
+> the event, this only happens when all events are gone, which guarantees
+> i915 is not unregistering the pmu with live events.
+> 
+> Previously, running the following sequence would crash the system after
+> ~2 tries:
+> 
+> 	1) bind device to i915
+> 	2) wait events to show up on sysfs
+> 	3) start perf  stat -I 1000 -e i915/rcs0-busy/
+> 	4) unbind driver
+> 	5) kill perf
+> 
+> Most of the time this crashes in perf_pmu_disable() while accessing the
+> percpu pmu_disable_count. This happens because perf_pmu_unregister()
+> destroys it with free_percpu(pmu->pmu_disable_count).
+> 
+> With a lazy unbind, the pmu is only unregistered after (5) as opposed to
+> after (4). The downside is that if a new bind operation is attempted for
+> the same device/driver without killing the perf process, i915 will fail
+> to register the pmu (but still load successfully). This seems better
+> than completely crashing the system.
+
+So effectively allows unbind to succeed without fully unbinding the 
+driver from the device? That sounds like a significant drawback and if 
+so, I wonder if a more complicated solution wouldn't be better after 
+all. Or is there precedence for allowing userspace keeping their paws on 
+unbound devices in this way?
+
+Regards,
+
+Tvrtko
+
+> 
+> Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
 > ---
->=20
-
-...
-
-
-I'm likely missing something but you already have:
-
-priv =3D &spi_engine->offload_priv[args[0]];
-
-which seems that from FW you already got the offload index you need. Can't =
-we
-just save that index in struct spi_device and use that directly in the othe=
-r
-operations? Saving the trouble to save the id string and having to always c=
-all=20
-spi_engine_get_offload()?
-
+>   drivers/gpu/drm/i915/i915_pmu.c | 24 +++++++++---------------
+>   1 file changed, 9 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/i915_pmu.c b/drivers/gpu/drm/i915/i915_pmu.c
+> index 8708f905f4f4..df53a8fe53ec 100644
+> --- a/drivers/gpu/drm/i915/i915_pmu.c
+> +++ b/drivers/gpu/drm/i915/i915_pmu.c
+> @@ -1158,18 +1158,21 @@ static void free_pmu(struct drm_device *dev, void *res)
+>   	struct i915_pmu *pmu = res;
+>   	struct drm_i915_private *i915 = pmu_to_i915(pmu);
+>   
+> +	perf_pmu_unregister(&pmu->base);
+>   	free_event_attributes(pmu);
+>   	kfree(pmu->base.attr_groups);
+>   	if (IS_DGFX(i915))
+>   		kfree(pmu->name);
 > +
->=20
-
-...
-
-> +}
-> +
-> +static void spi_engine_offload_unprepare(struct spi_device *spi, const c=
-har
-> *id)
-> +{
-> +	struct spi_controller *host =3D spi->controller;
-> +	struct spi_engine *spi_engine =3D spi_controller_get_devdata(host);
-> +	struct spi_engine_offload *priv;
-> +	unsigned int offload_num;
-> +
-> +	priv =3D spi_engine_get_offload(spi, id, &offload_num);
-> +	if (IS_ERR(priv)) {
-> +		dev_warn(&spi->dev, "failed match offload in unprepare\n");
-> +		return;
-> +	}
-> +
-> +	writel_relaxed(1, spi_engine->base +
-> SPI_ENGINE_REG_OFFLOAD_RESET(offload_num));
-> +	writel_relaxed(0, spi_engine->base +
-> SPI_ENGINE_REG_OFFLOAD_RESET(offload_num));
-> +
-> +	priv->prepared =3D false;
-> +}
-> +
-> +static int spi_engine_hw_trigger_mode_enable(struct spi_device *spi,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0 const char *id)
-> +{
-> +	struct spi_controller *host =3D spi->controller;
-> +	struct spi_engine *spi_engine =3D spi_controller_get_devdata(host);
-> +	struct spi_engine_offload *priv;
-> +	unsigned int offload_num, reg;
-> +
-> +	priv =3D spi_engine_get_offload(spi, id, &offload_num);
-> +	if (IS_ERR(priv))
-> +		return PTR_ERR(priv);
-> +
-> +	reg =3D readl_relaxed(spi_engine->base +
-> +			=C2=A0=C2=A0=C2=A0 SPI_ENGINE_REG_OFFLOAD_CTRL(offload_num));
-> +	reg |=3D SPI_ENGINE_OFFLOAD_CTRL_ENABLE;
-> +	writel_relaxed(reg, spi_engine->base +
-> +			=C2=A0=C2=A0=C2=A0 SPI_ENGINE_REG_OFFLOAD_CTRL(offload_num));
-> +
-> +	return 0;
-> +}
-> +
-> +static void spi_engine_hw_trigger_mode_disable(struct spi_device *spi,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const char *id)
-> +{
-> +	struct spi_controller *host =3D spi->controller;
-> +	struct spi_engine *spi_engine =3D spi_controller_get_devdata(host);
-> +	struct spi_engine_offload *priv;
-> +	unsigned int offload_num, reg;
-> +
-> +	priv =3D spi_engine_get_offload(spi, id, &offload_num);
-> +	if (IS_ERR(priv)) {
-> +		dev_warn(&spi->dev, "failed match offload in disable\n");
-> +		return;
-> +	}
-> +
-> +	reg =3D readl_relaxed(spi_engine->base +
-> +			=C2=A0=C2=A0=C2=A0 SPI_ENGINE_REG_OFFLOAD_CTRL(offload_num));
-> +	reg &=3D ~SPI_ENGINE_OFFLOAD_CTRL_ENABLE;
-> +	writel_relaxed(reg, spi_engine->base +
-> +			=C2=A0=C2=A0=C2=A0 SPI_ENGINE_REG_OFFLOAD_CTRL(offload_num));
-> +}
-> +
-
-I would expect for the enable/disable() operations to act on the trigger. I=
-n
-this case to enable/disable the clock...
-
-- Nuno S=C3=A1
-
+> +	/*
+> +	 * Make sure all currently running (but shortcut on pmu->closed) are
+> +	 * gone before proceeding with free'ing the pmu object embedded in i915.
+> +	 */
+> +	synchronize_rcu();
+>   }
+>   
+>   static int i915_pmu_cpu_online(unsigned int cpu, struct hlist_node *node)
+>   {
+> -	struct i915_pmu *pmu = hlist_entry_safe(node, typeof(*pmu), cpuhp.node);
+> -
+> -	GEM_BUG_ON(!pmu->base.event_init);
+> -
+>   	/* Select the first online CPU as a designated reader. */
+>   	if (cpumask_empty(&i915_pmu_cpumask))
+>   		cpumask_set_cpu(cpu, &i915_pmu_cpumask);
+> @@ -1182,8 +1185,6 @@ static int i915_pmu_cpu_offline(unsigned int cpu, struct hlist_node *node)
+>   	struct i915_pmu *pmu = hlist_entry_safe(node, typeof(*pmu), cpuhp.node);
+>   	unsigned int target = i915_pmu_target_cpu;
+>   
+> -	GEM_BUG_ON(!pmu->base.event_init);
+> -
+>   	/*
+>   	 * Unregistering an instance generates a CPU offline event which we must
+>   	 * ignore to avoid incorrectly modifying the shared i915_pmu_cpumask.
+> @@ -1337,21 +1338,14 @@ void i915_pmu_unregister(struct drm_i915_private *i915)
+>   {
+>   	struct i915_pmu *pmu = &i915->pmu;
+>   
+> -	if (!pmu->base.event_init)
+> -		return;
+> -
+>   	/*
+> -	 * "Disconnect" the PMU callbacks - since all are atomic synchronize_rcu
+> -	 * ensures all currently executing ones will have exited before we
+> -	 * proceed with unregistration.
+> +	 * "Disconnect" the PMU callbacks - unregistering the pmu will be done
+> +	 * later when all currently open events are gone
+>   	 */
+>   	pmu->closed = true;
+> -	synchronize_rcu();
+>   
+>   	hrtimer_cancel(&pmu->timer);
+> -
+>   	i915_pmu_unregister_cpuhp_state(pmu);
+> -	perf_pmu_unregister(&pmu->base);
+>   
+>   	pmu->base.event_init = NULL;
+>   }
 
