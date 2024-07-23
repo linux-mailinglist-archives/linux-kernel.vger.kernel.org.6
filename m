@@ -1,125 +1,80 @@
-Return-Path: <linux-kernel+bounces-259551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3821B93983F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 04:25:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B56D4939842
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 04:26:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7A802823E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 02:25:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E71F01C21A5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 02:26:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72BB13AD2A;
-	Tue, 23 Jul 2024 02:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A565C13AD37;
+	Tue, 23 Jul 2024 02:26:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="BoBP8GEq"
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wh/bDAUR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69714136E3E
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 02:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD18F14287;
+	Tue, 23 Jul 2024 02:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721701501; cv=none; b=SzRPeaG8A8D1Cu5L1j/0GqD1v+kSD4AuDDttBsws2K7D49iWp1S9kiBdxDb9h5g37AtzrIYMwb3nrULmVXEgw1mvmHgAhQcZiMgFl+M2HSRfg+g2gDcyAykeK9Sy5yf20CPPvX0C/6+xabJVY32xna+NwITFKcVMMn0ShrkiSK4=
+	t=1721701582; cv=none; b=WICZzgHxLJFey1oakVdGcB6Q8GAMTCCUTTDe0DEF93qob53g/Sr+Am+7czyapSyuKnkEAsuU1NIbx1zalXr58Q19JnMurylUw0tHuCRIJ1fICR97KOyuUxgWjZfXIZEcJuPOpGSpJt1UhGuHyrGYvdvoscX8rks8OFIb9VXEkXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721701501; c=relaxed/simple;
-	bh=bbMUkaxns8AHvRh8jYe2Eawi/NqWsk6vaShfYeAGqmI=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=orjKx9FCDfnBVB0GYBd4iMlZ3oT8icObVGYNk5wb4BhMnv/5yAAulDznC6we0J8N/H+Vrs7r/C8OKJC7SJmlGkUSEyAkfyYo16VRz17gF7kU/1fI2YtxdQBXkM3VerSao0iey+vLjDx4fD3w/XIqJTrhxNhsn8j2LGM4eiuPvGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com; spf=none smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=BoBP8GEq; arc=none smtp.client-ip=209.85.167.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=smartx.com
-Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3d9dbbaa731so2321517b6e.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 19:24:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1721701498; x=1722306298; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bbMUkaxns8AHvRh8jYe2Eawi/NqWsk6vaShfYeAGqmI=;
-        b=BoBP8GEq7h4mF1jvQADuA+2S+VkAjXrIBPtaRjVJTYlrbsB3gd7Kdfw8GgiYqz75C3
-         GPMzifm3tmH4wUtC3O3f0hTPMDyif+ZiJNLFZmfp0udVE3+Q71kyD5mqAsRVGrHVwruE
-         Y+Gvn2mTJ32GgxOKIUM1tO2NcsQiPaDVWwu68Uoh/IJ9PtqNJKGrVyoydiX627rM/8VR
-         ihWyabkdNQX7Q88coU4e++gLPoF6KJ65ppC/Qq8tyNwViTDBsed/AcVWoMxRMw3HyH4x
-         v19n/AouTtmjkKW253t2mnn1wL7CurnEW1lIgLZnPG0RHP+vbmF7lZCO5PFStCJ0cMMo
-         q3fA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721701498; x=1722306298;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bbMUkaxns8AHvRh8jYe2Eawi/NqWsk6vaShfYeAGqmI=;
-        b=Bxr9zzvfA8hswcp6mAZRagcvEXUiZ+U3YKiD9wWiKs6Vk6Vs4gJn2ofShi+bjMWm4Z
-         9vBV/Do3YP/l8XvR0L7gk/Kn6x8P9x4zvCOC5sr/PceQd0kFK9H0vZquTBnsP1eQP6HO
-         gBLPD+a4H16otS+oPnQzrCEznW+EnIRp1JXSCHiCpjgiEtxcYPqnfnMWCyBWm22s5nao
-         eOlf9Z0jLzgFeMb5C7Q3wUdAb0J21uOGt1oMOms5OQVn10os/FIk+9Y0rWYkED7NNaQt
-         mqGhVm6Ns3IjrzBdxlWG7Nqh06ma7Pjm/U+eJz7YTxtesPFIOQDaHKCipsJDhDZnPeXx
-         52Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCWriEFLIUuM/z9oDz72kcA87iwQJDxmlyc33z1X6gnKIl3tAA16zT3Ddhay1ohkOSUrLs5WIzs5Ya5jpPmcATT1c8S+J/+gj8s9NpwQ
-X-Gm-Message-State: AOJu0YwI2w+1xsoVRQ0adCkJ/2xAmD4JwooAP1JZSRm6DJo4KalNNKu+
-	/dURERNnu98d8HOK97DDCxZIyavWFLD+g+YzcblQcNhn2eScHfz/45JPgLt8m5M=
-X-Google-Smtp-Source: AGHT+IGKV0Jr707W/PYg3CdIghKKq9m4koiy0RQBiYd5g1IyKHEH5K5usjE4xPPwdEHv17Qb9PHfzg==
-X-Received: by 2002:a05:6808:14d3:b0:3da:a0a5:a254 with SMTP id 5614622812f47-3dae97c892emr7610424b6e.20.1721701497775;
-        Mon, 22 Jul 2024 19:24:57 -0700 (PDT)
-Received: from smtpclient.apple (vps-bd302c4a.vps.ovh.ca. [2402:1f00:8000:800::34b0])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a1a7b45af2sm2637967a12.3.2024.07.22.19.24.51
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Jul 2024 19:24:57 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1721701582; c=relaxed/simple;
+	bh=CvBnaUn52mQsjo7putJFlBA0OHXKCUh77DIwGSeIFDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JmojukqEsuEdZT7l4Zs4uAzEiYzSIV1g/3pininreIVO1diSAzRGAOOiTWjnAoIsnC6/gEF/8h98BpndvtAyBecwzwwlSZPTXRTL+Nzy4XRtt2huD/1hb15oacnh+B0K467CQb//jqINR2hY2dXj+xFXA8c4r+R20hFkYHMROHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wh/bDAUR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AD84C116B1;
+	Tue, 23 Jul 2024 02:26:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721701581;
+	bh=CvBnaUn52mQsjo7putJFlBA0OHXKCUh77DIwGSeIFDQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Wh/bDAURixcRQrQfIZOFV3X51sOAGG2pvqnFa+mFpzftqL7H/ayRXkAo1Lyq0mJJm
+	 rw6YVjtgIVMqxlmRF1/FfpZIB/NlBuMC5RnQNnJQ37yyRLZYym3Ut+Kc/HgI9oZ28F
+	 NSJciyiq3YGap+rRLnsxAQFVAU9+UxoqlV1gdOJz3LYXulTyblad0CmhB7lW8VHaXr
+	 QppfnlqJURWCkMleaOFJzqRrC0Ed5k2FYQ2U03qv57EGD2uRiYmyCqSurHaeSVSU8x
+	 cKYl7K2O0Aa10H/7rGBlbCqzy6zPIVpPQ+BJnfaKtovQdir5RTqOLzoxsRYOM+QS9x
+	 aSfGAid1vxRhg==
+Date: Mon, 22 Jul 2024 20:26:19 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Tomer Maimon <tmaimon77@gmail.com>
+Cc: yuenn@google.com, benjaminfair@google.com, venture@google.com,
+	avifishman70@gmail.com, joel@jms.id.au, openbmc@lists.ozlabs.org,
+	krzk+dt@kernel.org, devicetree@vger.kernel.org,
+	tali.perry1@gmail.com, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linus.walleij@linaro.org,
+	conor+dt@kernel.org
+Subject: Re: [PATCH v2 1/7] dt-bindings: pinctrl: npcm8xx: remove
+ non-existent groups and functions
+Message-ID: <172170157801.126503.9265506561761708567.robh@kernel.org>
+References: <20240716194008.3502068-1-tmaimon77@gmail.com>
+ <20240716194008.3502068-2-tmaimon77@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.300.101.1.3\))
-Subject: Re: [PATCH v3 0/2] scsi discard fix
-From: Li Feng <fengli@smartx.com>
-In-Reply-To: <55d9f47b-5833-4e3c-9e56-f56a30083607@kernel.dk>
-Date: Tue, 23 Jul 2024 10:24:36 +0800
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- Christoph Hellwig <hch@infradead.org>,
- Damien Le Moal <dlemoal@kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <DA41FB3C-D3DF-4219-B027-5E5A69D92F07@smartx.com>
-References: <20240718080751.313102-1-fengli@smartx.com>
- <c1b47037-4754-459f-9e8f-ae4debd3fcf2@kernel.dk>
- <yq1o76pdltx.fsf@ca-mkp.ca.oracle.com>
- <55d9f47b-5833-4e3c-9e56-f56a30083607@kernel.dk>
-To: Jens Axboe <axboe@kernel.dk>
-X-Mailer: Apple Mail (2.3731.300.101.1.3)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240716194008.3502068-2-tmaimon77@gmail.com>
 
-Hi Jens and Martin,
 
-Thank you.=20
-I was worried that you were too busy and forgot about these two patches.
+On Tue, 16 Jul 2024 22:40:02 +0300, Tomer Maimon wrote:
+> Remove non-existent smb4den and lpcclk groups and functions from Nuvoton
+> NPCM8XX Pin controller binding documentation.
+> 
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> ---
+>  .../pinctrl/nuvoton,npcm845-pinctrl.yaml      | 70 +++++++++----------
+>  1 file changed, 34 insertions(+), 36 deletions(-)
+> 
 
-> 2024=E5=B9=B47=E6=9C=8823=E6=97=A5 08:37=EF=BC=8CJens Axboe =
-<axboe@kernel.dk> =E5=86=99=E9=81=93=EF=BC=9A
->=20
-> On 7/22/24 5:55 PM, Martin K. Petersen wrote:
->>=20
->> Jens,
->>=20
->>> They can, but is there some dependency that means they should go
->>> through the block tree? Would seem more logical that Martin picked
->>> them up.
->>=20
->> I'll get to them. Busy with a couple of hardware-related regressions
->> right now.
->=20
-> All good, just wanted to ensure they weren't waiting on me, as the
-> cover letter seemed to indicate.
->=20
-> Thanks!
->=20
-> --=20
-> Jens Axboe
->=20
->=20
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
