@@ -1,84 +1,58 @@
-Return-Path: <linux-kernel+bounces-259949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C5193A05E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:04:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4203693A060
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:06:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE9D21F22BAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:04:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 591721C21BBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FF31514E0;
-	Tue, 23 Jul 2024 12:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DHGkUNrJ"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A06314F136;
+	Tue, 23 Jul 2024 12:06:42 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C5017BD5;
-	Tue, 23 Jul 2024 12:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A22217BD5
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 12:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721736256; cv=none; b=qN3hAEW2ARcnpBwMzdfHcXL+2kpgwhbXWBbFBRD6jV1FqZv5m8zacw6S8cNC3k1Z8AV5XWN4td/K47KQfPY4KzMvEi0nhB648JmQuIidccv4m/Men1rGeQX1crRaOZX8IoVB/5UNx/7R5v7y0XbdPfnhc3TOgIKNj8S1PfNRwAQ=
+	t=1721736401; cv=none; b=czVJAn/T3exHVZl/lc9Ayyo5Zm4/nEReBS57gxiHEm/sPNoF6ehXwRwVZpXda7eAMm6uhhCfNFimQIkPhWQm9WaaSq1jmvYFpZLYRGRAc6Q5Uc5kIyxVHnASvFOXynyTCmoCU3HyBzD7tymm+rO9IsfLQnOiHnECv6BD8kBUuOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721736256; c=relaxed/simple;
-	bh=FAe5RBSeVUQvSoNMovSUxUr4BZQMUMsViBXF99Eg278=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hm71b/90zzQNjf177NTw/Ogd1XJBz4aoIqh8tnyC4SWuACe8fWIQv0sjmIODcMQUrWnU5LngGsoJwaLXEWBScxHUtxYs2YOb67y/52hdwuTHizFH1gKA67V07x05M0Rk1itkalmNRc0MoETLgk+WqoCuGj8FJoRbUaoQz8h+CQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DHGkUNrJ; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fd640a6454so4777545ad.3;
-        Tue, 23 Jul 2024 05:04:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721736254; x=1722341054; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XBj9aeVGLx9lk0+gvee4j7l4tMQJNLmoyqkeXTYVawA=;
-        b=DHGkUNrJbXHCzO9XrpyibKyD3il+ej7n9fozYyQpYfUXHFhRaT7D8iHfmB0ZtJdQIU
-         Sn0uzLfJy/EGO/nd9vhf8nS32VJtCuMFGD+qNquCp8PBYx49/10jkF3bYLUUXcg+Uug5
-         dHOYN9KnQRaCxzKw6Rl2fzbfhhm37NsveU7HO0BTWDdH4NEnsJiFW1bw8yP5PglKGyqW
-         BPve79JnzwzGyrvDd1M2D42vonBMIP9NnXIzeYAymNO7YzObCyjjjf/VmgY/1Cf/lKcG
-         dk13QG+tUx6Dh733tcfArO74g1Nsu+z0n2Eo5BlFcD3Tlh3qqC45lY9tdWQmfsHFaN37
-         NClA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721736254; x=1722341054;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XBj9aeVGLx9lk0+gvee4j7l4tMQJNLmoyqkeXTYVawA=;
-        b=keEYE8Tp6IRIIqQ3Mj2gav0+4zzR7IqxsoDU35Niu6+jLHKcDKB44/ZYIy9axuBwqk
-         YKMvI21OxPhspHe64NAiyriyfzp+TMyElyM+cwEprhnnzTrATdXvB+c9bkEEFQTXcyzk
-         A47STcb0Nxxl/LPU3Y0QbLG61KKwFHJO68vVpuGIWHefL8IND5CeAoWfZa9ZnT3a8sdS
-         ebgpIvtNhjWx6SWl2RG3MQgIVmmB3nVB1Y9QbyOuNIDzs1VnL9nw7cTe5INz+HzdYxEJ
-         mrwr2QVguynufIEKmWTshxPxOTSsjIjNG78qp9Jlt3kIWSsA5jlkMBQivumC60EBRD3d
-         I/PA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOxoTyBVxPX6VAAY1gCJBstF88NMqokOYkvpVP6DLmIIKmXdpHIqqBLiNur1M74tiHi4nGY4MqB3kKipTSDeMB6itHPB9NHdkT1OIDvKAEQeqOHdvkSYXPN7yu4MSMioey7F9zn5WqG0iAe3s=
-X-Gm-Message-State: AOJu0YwzCEx5ASLkfnq9N8+c7iy5sb4i1/+4lc6swTmjflDEtMvXbLTo
-	SsQvSX1BnZs9MuFwRM7CVo7DoQJykMqfktfSRBhcmxTDnN0LrRvu
-X-Google-Smtp-Source: AGHT+IFV1wzilscCcwyJqyFjDIjRJLIzHo/Nk8lJzUvjtc+tXd6K3q9sz6+HJaaZdgVsxqFfLxyz3g==
-X-Received: by 2002:a17:902:cec1:b0:1fd:9c2d:2f1b with SMTP id d9443c01a7336-1fd9c2d3180mr53822025ad.52.1721736253908;
-        Tue, 23 Jul 2024 05:04:13 -0700 (PDT)
-Received: from localhost.localdomain ([177.21.142.242])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70d1444b58dsm4979473b3a.18.2024.07.23.05.04.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 05:04:13 -0700 (PDT)
-From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-To: miriam.rachel.korenblit@intel.com,
-	kvalo@kernel.org,
-	rafael.j.wysocki@intel.com,
-	daniel.lezcano@linaro.org,
-	johannes.berg@intel.com,
-	gregory.greenman@intel.com,
-	dmantipov@yandex.ru
-Cc: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
-	linux-wireless@vger.kernel.org,
+	s=arc-20240116; t=1721736401; c=relaxed/simple;
+	bh=dQW+XaBjZcaSi5cw5ZlJG0hhnvdE+hp8hLfo4nhh3WQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rd/X5BRwD3Jrtj8boe0NdUd0ux0c79A0Zd0gT2bw56Vs6eu+5AnTmMpwujXp0Ye5B14TYpuv4fHbvWnxe7MmtIQ6/YIHe1Gl9Wu7zUEaGDS/YK4CN29N46XuRDgR7p5IeGiN/JYourX/R1mSfB6Uf5nRA+j9jKxij0Ti8vtY/qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WSwpy0lkkz4f3lg5
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 20:06:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 9D7431A0568
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 20:06:31 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.67.175.61])
+	by APP3 (Coremail) with SMTP id _Ch0CgD3BFDBnJ9mckehAw--.19976S2;
+	Tue, 23 Jul 2024 20:06:31 +0800 (CST)
+From: Zheng Yejian <zhengyejian@huaweicloud.com>
+To: kees@kernel.org,
+	arnd@arndb.de,
+	ndesaulniers@google.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	ardb@kernel.org,
+	boqun.feng@gmail.com,
+	willy@infradead.org,
+	wedsonaf@google.com,
+	gary@garyguo.net
+Cc: zhengyejian@huaweicloud.com,
 	linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v4] iwlwifi: mvm: adding check if the thermal firmware is running
-Date: Tue, 23 Jul 2024 09:03:02 -0300
-Message-ID: <20240723120321.2537-1-trintaeoitogc@gmail.com>
-X-Mailer: git-send-email 2.45.2
+Subject: [PATCH] kallsyms: Fix wrong "big" kernel symbol type read from procfs
+Date: Tue, 23 Jul 2024 20:07:41 +0800
+Message-Id: <20240723120741.2448050-1-zhengyejian@huaweicloud.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,48 +60,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgD3BFDBnJ9mckehAw--.19976S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7AFW5KF4DAF15Jw45Ww1xXwb_yoW8Jw1xpF
+	4rJrWqvrn5Gw1j9348JFWUurWkGws7WrnxKw1DtrWfCF4DX34I9a4Iga4293WUtryxtFy0
+	vanakFW3t3WDAFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9F14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcS
+	sGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: x2kh0w51hmxt3q6k3tpzhluzxrxghudrp/
 
-In the dmesg is showing the message "failed to read out thermal zone"
-as if the temperature read is failed by don't find the thermal zone.
+After commit 73bbb94466fd ("kallsyms: support "big" kernel symbols"),
+ULEB128 was used to encode symbol name length. That is, for "big"
+kernel symbols of which name length is longer than 0x7f characters,
+the length info is encoded into 2 bytes.
 
-After researching and debugging, I see that this specific error is
-occurrenced because the thermal try read the temperature when is started,
-but the firmware is not running yet.
+kallsyms_get_symbol_type() expects to read the first char of the
+symbol name which indicates the symbol type. However, due to the
+"big" symbol case not being handled, the symbol type read from
+/proc/kallsyms may be wrong, so handle it properly.
 
-For more legibiliti i change the tt.c for return EAGAIN when this was occurrence.
-After this change, in my computer I compile and install kernel in /boot
-and in my dmesg the message "failed to read out thermal zone" is not show
-any more.
-
-I would like to thanks for Rafael Wysocki <refael.j.wysocki@intel.com> ,
-Kalle Valo <kvalo@kernel.org> and Johannes Berg <johannes@sipsolutions.net>
-for your suggestions in my previous patch.
-
-Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+Fixes: 73bbb94466fd ("kallsyms: support "big" kernel symbols")
+Signed-off-by: Zheng Yejian <zhengyejian@huaweicloud.com>
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/tt.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ kernel/kallsyms.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-index 8083c4b2ab6b..d1dd334b5049 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-@@ -620,8 +620,12 @@ static int iwl_mvm_tzone_get_temp(struct thermal_zone_device *device,
+diff --git a/kernel/kallsyms.c b/kernel/kallsyms.c
+index 98b9622d372e..5de692ac4c26 100644
+--- a/kernel/kallsyms.c
++++ b/kernel/kallsyms.c
+@@ -103,8 +103,11 @@ static char kallsyms_get_symbol_type(unsigned int off)
+ {
+ 	/*
+ 	 * Get just the first code, look it up in the token table,
+-	 * and return the first char from this token.
++	 * and return the first char from this token. If MSB of length
++	 * is 1, it is a "big" symbol, so needs an additional byte.
+ 	 */
++	if (kallsyms_names[off] & 0x80)
++		off++;
+ 	return kallsyms_token_table[kallsyms_token_index[kallsyms_names[off + 1]]];
+ }
  
- 	mutex_lock(&mvm->mutex);
- 
--	if (!iwl_mvm_firmware_running(mvm) ||
--	    mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
-+	if (!iwl_mvm_firmware_running(mvm)) {
-+		ret = -EAGAIN;
-+		goto out;
-+	}
-+
-+	if (mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
- 		ret = -ENODATA;
- 		goto out;
- 	}
 -- 
-2.45.2
+2.25.1
 
 
