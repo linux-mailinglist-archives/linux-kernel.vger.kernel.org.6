@@ -1,304 +1,97 @@
-Return-Path: <linux-kernel+bounces-259506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FE8D939750
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 02:06:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7B84939752
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 02:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F3F11F22537
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 00:06:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D938D1C21988
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 00:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A93DDD4;
-	Tue, 23 Jul 2024 00:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0D53SSAq"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8038A1FBB;
+	Tue, 23 Jul 2024 00:11:13 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFDC7E9;
-	Tue, 23 Jul 2024 00:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120417F;
+	Tue, 23 Jul 2024 00:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721693169; cv=none; b=J/RDs1Xmze5wCv/qhkZSL5arwREPvui5mM/y4lYxxukRfBU0+MwA+PWSPmHogp96iw6IfoPKgmE6JxELgc2b3sKXRozx2l3pOMvVmRRj8eJwd0F3NtFRBUugtcM/L5QOLgTF71zsjdtNH0hKdO+FrjbL0UjzDp8gtmLKS80xUyk=
+	t=1721693473; cv=none; b=hLfl4hM/Ol1MTGNRVIugVvXpGZXJJEH6TU8esj3ieZueTIBAk/MBW/sa6dVg0WIvTDIW42ATegmXhh4cAeilsuOvt+WtF66l+4R94hPnJeQ6C+uuesIfe+gQrd0k05IzEva2w2w99xqpuYBoMnZ8DFzF1jbq5RNXw6tMQg7WnIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721693169; c=relaxed/simple;
-	bh=0A4IpVFBmp9djlXN+WiONrLOUdftPDSyu/7GX3hvpF8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=die2xYPRmdPoVtr6eQTCbsI1FobtdxNBh5NtpRdTEvJEqlndLIgoNwTGIJzRSMVk056+/4UTumIJi0+goVeaM4827eoyaXnOU0aCbO0uQNapxKyA+urfbl9NVNaHlrYzLdYeQ+L5lplCbjO1GFaOGfR1gWsG+yr5cxDEu5VwbAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=0D53SSAq; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=msjjE3qaLLdfiq8Ndm0CCs+b8OCKacFYVUTfPDQPhR8=; b=0D53SSAqvCjz0/IKi2CxizMWNF
-	1i9zoR4qbe8KElItX+SMXkMpR2zEUOhcwdS5X9eqPOrgAzXJ0jVrzAmyJQFGrshGLs7jD07f0SGDM
-	5Pdxuf8B5XSM0e5stlFwcxE/IxJBa64WU+fPcmq2fMSFiaNnw7zDYs+47cRcxP4VRyvVioVke6v6S
-	ebNvTB/jDFG2ktG6kmDAp6wYShD04peoaB0neeNa4qHYvLOA8xYlilBxJRtOm96CYdmpORkBjShbx
-	rE60wA9ZTed6HvebxGgxIkwhT7i9os8AMDuVITK5VqRFRZ6WPj5kAi34shHN+e7lNMQq9TqDtutTG
-	LzeOmJ5w==;
-Received: from [64.141.80.140] (helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sW32d-0000000AvP7-1L13;
-	Tue, 23 Jul 2024 00:06:07 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Robin Murphy <robin.murphy@arm.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] dma-mapping: don't return errors from dma_set_max_seg_size
-Date: Mon, 22 Jul 2024 17:05:57 -0700
-Message-ID: <20240723000604.241443-4-hch@lst.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240723000604.241443-1-hch@lst.de>
-References: <20240723000604.241443-1-hch@lst.de>
+	s=arc-20240116; t=1721693473; c=relaxed/simple;
+	bh=MGKVCS0F4YI/ru64iTRyCUSnR5+KkP1YrDjKMBlfxjI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Li86+ItYx0ZJtV55Rovcs061sCQXazweTxl1v0+vGftmmd0p4ZrTdaPElCnDg5TQxikOAqALYcKDrS+CD+8cB/Zvb3qD5PCt9kNh1ks3quLyW8WAbIc9bsp2MiTXMYyStxR2K5ZoliFjodRSUVogrHeWyno3ydHbPXhDfzrrWvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C2A2C116B1;
+	Tue, 23 Jul 2024 00:11:11 +0000 (UTC)
+Date: Mon, 22 Jul 2024 20:11:25 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathias Krause <minipli@grsecurity.net>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Ajay Kaher
+ <ajay.kaher@broadcom.com>, Ilkka =?UTF-8?B?TmF1bGFww6TDpA==?=
+ <digirigawa@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, Al
+ Viro <viro@zeniv.linux.org.uk>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, regressions@leemhuis.info, Dan Carpenter
+ <dan.carpenter@linaro.org>
+Subject: Re: tracing: user events UAF crash report
+Message-ID: <20240722201125.3fa6314b@gandalf.local.home>
+In-Reply-To: <20240719204701.1605950-1-minipli@grsecurity.net>
+References: <20240719204701.1605950-1-minipli@grsecurity.net>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-If dev->dma_parms is not allocate that indicates a grave bug in the
-implementation of a DMA-capable bus.  There isn't much the driver can
-do in terms of error handling, so just warn and continue as DMA
-operations will fail anyway.
+On Fri, 19 Jul 2024 22:47:01 +0200
+Mathias Krause <minipli@grsecurity.net> wrote:
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- drivers/accel/qaic/qaic_drv.c                         |  4 +---
- drivers/dma/idma64.c                                  |  4 +---
- drivers/dma/pl330.c                                   |  5 +----
- drivers/dma/qcom/bam_dma.c                            |  6 +-----
- drivers/dma/sh/rcar-dmac.c                            |  4 +---
- drivers/dma/ste_dma40.c                               |  6 +-----
- drivers/gpu/drm/mediatek/mtk_drm_drv.c                |  6 +-----
- drivers/media/common/videobuf2/videobuf2-dma-contig.c |  3 +--
- drivers/media/pci/intel/ipu6/ipu6.c                   |  4 +---
- drivers/mmc/host/mmci_stm32_sdmmc.c                   |  3 ++-
- drivers/net/ethernet/microsoft/mana/gdma_main.c       |  6 +-----
- drivers/scsi/lpfc/lpfc_init.c                         |  7 +------
- include/linux/dma-mapping.h                           | 10 ++++------
- 13 files changed, 17 insertions(+), 51 deletions(-)
+> Subject: [PATCH] eventfs: Don't return NULL in eventfs_create_dir()
+> 
+> Commit 77a06c33a22d ("eventfs: Test for ei->is_freed when accessing
+> ei->dentry") added another check, testing if the parent was freed after
+> we released the mutex. If so, the function returns NULL. However, all
+> callers expect it to either return a valid pointer or an error pointer,
+> at least since commit 5264a2f4bb3b ("tracing: Fix a NULL vs IS_ERR() bug
+> in event_subsystem_dir()"). Returning NULL will therefore fail the error
+> condition check in the caller.
+> 
+> Fix this by substituting the NULL return value with a fitting error
+> pointer.
+> 
+> Fixes: 77a06c33a22d ("eventfs: Test for ei->is_freed when accessing ei->dentry")
+> Cc: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Mathias Krause <minipli@grsecurity.net>
 
-diff --git a/drivers/accel/qaic/qaic_drv.c b/drivers/accel/qaic/qaic_drv.c
-index 580b29ed190217..bf10156c334e71 100644
---- a/drivers/accel/qaic/qaic_drv.c
-+++ b/drivers/accel/qaic/qaic_drv.c
-@@ -447,9 +447,7 @@ static int init_pci(struct qaic_device *qdev, struct pci_dev *pdev)
- 	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
- 	if (ret)
- 		return ret;
--	ret = dma_set_max_seg_size(&pdev->dev, UINT_MAX);
--	if (ret)
--		return ret;
-+	dma_set_max_seg_size(&pdev->dev, UINT_MAX);
- 
- 	qdev->bar_0 = devm_ioremap_resource(&pdev->dev, &pdev->resource[0]);
- 	if (IS_ERR(qdev->bar_0))
-diff --git a/drivers/dma/idma64.c b/drivers/dma/idma64.c
-index e3505e56784b1a..1398814d8fbb63 100644
---- a/drivers/dma/idma64.c
-+++ b/drivers/dma/idma64.c
-@@ -598,9 +598,7 @@ static int idma64_probe(struct idma64_chip *chip)
- 
- 	idma64->dma.dev = chip->sysdev;
- 
--	ret = dma_set_max_seg_size(idma64->dma.dev, IDMA64C_CTLH_BLOCK_TS_MASK);
--	if (ret)
--		return ret;
-+	dma_set_max_seg_size(idma64->dma.dev, IDMA64C_CTLH_BLOCK_TS_MASK);
- 
- 	ret = dma_async_device_register(&idma64->dma);
- 	if (ret)
-diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-index 60c4de8dac1d2a..82a9fe88ad54c9 100644
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -3163,10 +3163,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
- 	 * This is the limit for transfers with a buswidth of 1, larger
- 	 * buswidths will have larger limits.
- 	 */
--	ret = dma_set_max_seg_size(&adev->dev, 1900800);
--	if (ret)
--		dev_err(&adev->dev, "unable to set the seg size\n");
--
-+	dma_set_max_seg_size(&adev->dev, 1900800);
- 
- 	init_pl330_debugfs(pl330);
- 	dev_info(&adev->dev,
-diff --git a/drivers/dma/qcom/bam_dma.c b/drivers/dma/qcom/bam_dma.c
-index 5e7d332731e0c1..368ffaa4003789 100644
---- a/drivers/dma/qcom/bam_dma.c
-+++ b/drivers/dma/qcom/bam_dma.c
-@@ -1325,11 +1325,7 @@ static int bam_dma_probe(struct platform_device *pdev)
- 
- 	/* set max dma segment size */
- 	bdev->common.dev = bdev->dev;
--	ret = dma_set_max_seg_size(bdev->common.dev, BAM_FIFO_SIZE);
--	if (ret) {
--		dev_err(bdev->dev, "cannot set maximum segment size\n");
--		goto err_bam_channel_exit;
--	}
-+	dma_set_max_seg_size(bdev->common.dev, BAM_FIFO_SIZE);
- 
- 	platform_set_drvdata(pdev, bdev);
- 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 40482cb73d798a..1094a2f821649c 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -1868,9 +1868,7 @@ static int rcar_dmac_probe(struct platform_device *pdev)
- 
- 	dmac->dev = &pdev->dev;
- 	platform_set_drvdata(pdev, dmac);
--	ret = dma_set_max_seg_size(dmac->dev, RCAR_DMATCR_MASK);
--	if (ret)
--		return ret;
-+	dma_set_max_seg_size(dmac->dev, RCAR_DMATCR_MASK);
- 
- 	ret = dma_set_mask_and_coherent(dmac->dev, DMA_BIT_MASK(40));
- 	if (ret)
-diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
-index 2c489299148eee..d52e1685aed53f 100644
---- a/drivers/dma/ste_dma40.c
-+++ b/drivers/dma/ste_dma40.c
-@@ -3632,11 +3632,7 @@ static int __init d40_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto destroy_cache;
- 
--	ret = dma_set_max_seg_size(base->dev, STEDMA40_MAX_SEG_SIZE);
--	if (ret) {
--		d40_err(dev, "Failed to set dma max seg size\n");
--		goto destroy_cache;
--	}
-+	dma_set_max_seg_size(base->dev, STEDMA40_MAX_SEG_SIZE);
- 
- 	d40_hw_init(base);
- 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index ae5c6ec24a1e61..91f9cc60c6716a 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -559,11 +559,7 @@ static int mtk_drm_kms_init(struct drm_device *drm)
- 	 * Configure the DMA segment size to make sure we get contiguous IOVA
- 	 * when importing PRIME buffers.
- 	 */
--	ret = dma_set_max_seg_size(dma_dev, UINT_MAX);
--	if (ret) {
--		dev_err(dma_dev, "Failed to set DMA segment size\n");
--		goto err_component_unbind;
--	}
-+	dma_set_max_seg_size(dma_dev, UINT_MAX);
- 
- 	ret = drm_vblank_init(drm, MAX_CRTC);
- 	if (ret < 0)
-diff --git a/drivers/media/common/videobuf2/videobuf2-dma-contig.c b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
-index 3d4fd4ef53107c..bb0b7fa67b539a 100644
---- a/drivers/media/common/videobuf2/videobuf2-dma-contig.c
-+++ b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
-@@ -854,8 +854,7 @@ int vb2_dma_contig_set_max_seg_size(struct device *dev, unsigned int size)
- 		return -ENODEV;
- 	}
- 	if (dma_get_max_seg_size(dev) < size)
--		return dma_set_max_seg_size(dev, size);
--
-+		dma_set_max_seg_size(dev, size);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(vb2_dma_contig_set_max_seg_size);
-diff --git a/drivers/media/pci/intel/ipu6/ipu6.c b/drivers/media/pci/intel/ipu6/ipu6.c
-index bbd646378ab3ed..83e70c692d957f 100644
---- a/drivers/media/pci/intel/ipu6/ipu6.c
-+++ b/drivers/media/pci/intel/ipu6/ipu6.c
-@@ -576,9 +576,7 @@ static int ipu6_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	if (ret)
- 		return dev_err_probe(dev, ret, "Failed to set DMA mask\n");
- 
--	ret = dma_set_max_seg_size(dev, UINT_MAX);
--	if (ret)
--		return dev_err_probe(dev, ret, "Failed to set max_seg_size\n");
-+	dma_set_max_seg_size(dev, UINT_MAX);
- 
- 	ret = ipu6_pci_config_setup(pdev, isp->hw_ver);
- 	if (ret)
-diff --git a/drivers/mmc/host/mmci_stm32_sdmmc.c b/drivers/mmc/host/mmci_stm32_sdmmc.c
-index f5da7f9baa52d4..9dc51859c2e51e 100644
---- a/drivers/mmc/host/mmci_stm32_sdmmc.c
-+++ b/drivers/mmc/host/mmci_stm32_sdmmc.c
-@@ -213,7 +213,8 @@ static int sdmmc_idma_setup(struct mmci_host *host)
- 		host->mmc->max_seg_size = host->mmc->max_req_size;
- 	}
- 
--	return dma_set_max_seg_size(dev, host->mmc->max_seg_size);
-+	dma_set_max_seg_size(dev, host->mmc->max_seg_size);
-+	return 0;
- }
- 
- static int sdmmc_idma_start(struct mmci_host *host, unsigned int *datactrl)
-diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-index ddb8f68d80a206..ca4ed58f1206dd 100644
---- a/drivers/net/ethernet/microsoft/mana/gdma_main.c
-+++ b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-@@ -1496,11 +1496,7 @@ static int mana_gd_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	if (err)
- 		goto release_region;
- 
--	err = dma_set_max_seg_size(&pdev->dev, UINT_MAX);
--	if (err) {
--		dev_err(&pdev->dev, "Failed to set dma device segment size\n");
--		goto release_region;
--	}
-+	dma_set_max_seg_size(&pdev->dev, UINT_MAX);
- 
- 	err = -ENOMEM;
- 	gc = vzalloc(sizeof(*gc));
-diff --git a/drivers/scsi/lpfc/lpfc_init.c b/drivers/scsi/lpfc/lpfc_init.c
-index e1dfa96c2a553a..50620918becd59 100644
---- a/drivers/scsi/lpfc/lpfc_init.c
-+++ b/drivers/scsi/lpfc/lpfc_init.c
-@@ -13861,12 +13861,7 @@ lpfc_get_sli4_parameters(struct lpfc_hba *phba, LPFC_MBOXQ_t *mboxq)
- 	if (sli4_params->sge_supp_len > LPFC_MAX_SGE_SIZE)
- 		sli4_params->sge_supp_len = LPFC_MAX_SGE_SIZE;
- 
--	rc = dma_set_max_seg_size(&phba->pcidev->dev, sli4_params->sge_supp_len);
--	if (unlikely(rc)) {
--		lpfc_printf_log(phba, KERN_INFO, LOG_INIT,
--				"6400 Can't set dma maximum segment size\n");
--		return rc;
--	}
-+	dma_set_max_seg_size(&phba->pcidev->dev, sli4_params->sge_supp_len);
- 
- 	/*
- 	 * Check whether the adapter supports an embedded copy of the
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index 6bd1333dbacb9b..1524da363734af 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -524,13 +524,11 @@ static inline unsigned int dma_get_max_seg_size(struct device *dev)
- 	return SZ_64K;
- }
- 
--static inline int dma_set_max_seg_size(struct device *dev, unsigned int size)
-+static inline void dma_set_max_seg_size(struct device *dev, unsigned int size)
- {
--	if (dev->dma_parms) {
--		dev->dma_parms->max_segment_size = size;
--		return 0;
--	}
--	return -EIO;
-+	if (WARN_ON_ONCE(!dev->dma_parms))
-+		return;
-+	dev->dma_parms->max_segment_size = size;
- }
- 
- static inline unsigned long dma_get_seg_boundary(struct device *dev)
--- 
-2.43.0
+This will not get into the workflow without being sent as a normal patch.
 
+Please send it and Cc those listed in MAINTAINERS (see get_maintainers.pl).
+
+-- Steve
+
+
+> ---
+>  fs/tracefs/event_inode.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/tracefs/event_inode.c b/fs/tracefs/event_inode.c
+> index 5d88c184f0fc..a9c28a1d5dc8 100644
+> --- a/fs/tracefs/event_inode.c
+> +++ b/fs/tracefs/event_inode.c
+> @@ -736,7 +736,7 @@ struct eventfs_inode *eventfs_create_dir(const char *name, struct eventfs_inode
+>  	/* Was the parent freed? */
+>  	if (list_empty(&ei->list)) {
+>  		cleanup_ei(ei);
+> -		ei = NULL;
+> +		ei = ERR_PTR(-EBUSY);
+>  	}
+>  	return ei;
 
