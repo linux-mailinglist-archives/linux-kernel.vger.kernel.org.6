@@ -1,312 +1,741 @@
-Return-Path: <linux-kernel+bounces-259699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E129939BB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:28:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C244939BBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 947BDB211AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:28:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9ACC6B21381
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66ED014AD3B;
-	Tue, 23 Jul 2024 07:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3216A13C836;
+	Tue, 23 Jul 2024 07:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="R+6ygTgQ";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="gx4/TCCB"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eooe7LSl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBA013C68A;
-	Tue, 23 Jul 2024 07:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=210.61.82.184
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721719685; cv=fail; b=GgkP4odoCgqt+ob1Wcy8gaAFXtUSa2+qqNG7taCyln7nbedupaBt2yZFzFdMtRsg2Fh3/u29gIzWDJRYVHEz5YC32YfDrvlJPdAacFG6M2eALkJMw73oj8oeOmoeXW1jJJr8MzWeHsHeJxAE/Ao2esECctbNVnc3A/naE+baliY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721719685; c=relaxed/simple;
-	bh=pQnJ6FM72D3DwleGVKbZ5U4Rl4SUvyqCBTN21U7jHF4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=m/5FBPJDWPv6Phxbx1YFo7Ed+BAo2GXszav9HNKXMin1CdH6lVjfd22le4euRKs4L0djAOa0iuE2fndM9/iIxljQjayq/4MRjZZlxOBESCyizlEqD9l0OdlqF7aNAb4ws78QXyE+EoC/SwxgKh2Y7e/YgSdLFXSQBrpig4aYAU8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=R+6ygTgQ; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=gx4/TCCB; arc=fail smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 12b70e1048c511ef87684b57767b52b1-20240723
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=pQnJ6FM72D3DwleGVKbZ5U4Rl4SUvyqCBTN21U7jHF4=;
-	b=R+6ygTgQuPVRDUIxKfyQECOxKKegLqZeWgaoqoY/mv7rtF1WUf+1nkdebRJJ7y2m87TBLAv7FWP4L/11ODl/5S/rWvoVeZj+sUGA72WHgGktm4nfULVO6yGr1oD5SI9BFrAPU3xHiZWq7ntk3hk4yT/ifnOuvwux/geTDhLKwLA=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:60dc053d-b84b-4639-b094-5e1bf2308c45,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:4101acd5-0d68-4615-a20f-01d7bd41f0bb,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 12b70e1048c511ef87684b57767b52b1-20240723
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw02.mediatek.com
-	(envelope-from <peter.wang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 987379495; Tue, 23 Jul 2024 15:27:53 +0800
-Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Tue, 23 Jul 2024 15:27:53 +0800
-Received: from HK2PR02CU002.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Tue, 23 Jul 2024 15:27:53 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hbM2BFNZw1ajKTrM3TCOS+niw0xb1ZCrE2APbquIwy06dBuNsHF6uaeCEdPNF/TkiI+e2VITe45JreTg3KY3WUJZmOLEy1E719Ax6ydXS34flqLlC+s/yoG3uJ7YIZ8tqBcs3kxgc9hAf7iF+0VlrxlFoJYeh97SxOiJWGpfmpYQlZ+VSgD/H5wBYPxxcxKbOmXudTGQLz6Dumqfoc94P6z6ZpeZ2B8kdq1QA8svMy0RNgFcJVNuKa1nZ//jXbivJNm9z5/VI5QjEoOyYykna0qwkEze1jB3IMskF9TWSN3oEE/ANoZZiSuB6BG0UA29tZPdqw5PAQ3cMRNhx0A/zw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pQnJ6FM72D3DwleGVKbZ5U4Rl4SUvyqCBTN21U7jHF4=;
- b=BYFZqmQVB6nNG0Zg02fabU5xroS7uoqANopq2PIAIez8mfgeJ+LFremlPxjaLHiGY9jSgapUHBO/TOtRRQ4Ef8P6/D9aqte6Qy6DU4Muy73XlWQK44fKIOVwSlXObbk5+peJS/TOVuqzZm0CaUEFui2a8aiZjCH3SjPaj5hg0E3BD7E3n4wzjzy45XMlAYnExNdyeDpqqfEkNm8e7B3Due1HagrBZ4Fy3qbYv2Hh6DBMlouQNDkv4OhML4uu9ubWYatykq5hX6m70FtikUPVGH2fXxTior3n8mivhh0Xbf7fWdlmyKHUSKWhoQ76NIYRtOWDeMyhYg1HR9QqzLocaQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pQnJ6FM72D3DwleGVKbZ5U4Rl4SUvyqCBTN21U7jHF4=;
- b=gx4/TCCBuYxGopBaTKq/w+nP7EtfxyWmnzHh8OW+5VayDOwQqEYqd5Y5MVS7WOIRLiwjPlZhTbwSpaxSVlAxQCLhYwtAzxRDHrCvMyalARl0DkPfTawLRmjWQ7jI57bs3xUuCfB8+ncxLckg4Zk8eIkGng7lsBKrrIz+8Y1obDg=
-Received: from PSAPR03MB5605.apcprd03.prod.outlook.com (2603:1096:301:66::6)
- by TYZPR03MB7182.apcprd03.prod.outlook.com (2603:1096:400:339::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20; Tue, 23 Jul
- 2024 07:27:49 +0000
-Received: from PSAPR03MB5605.apcprd03.prod.outlook.com
- ([fe80::3945:7dbc:62bd:c31c]) by PSAPR03MB5605.apcprd03.prod.outlook.com
- ([fe80::3945:7dbc:62bd:c31c%5]) with mapi id 15.20.7784.016; Tue, 23 Jul 2024
- 07:27:49 +0000
-From: =?utf-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>
-To: "quic_nguyenb@quicinc.com" <quic_nguyenb@quicinc.com>,
-	"quic_nitirawa@quicinc.com" <quic_nitirawa@quicinc.com>,
-	"avri.altman@wdc.com" <avri.altman@wdc.com>, "bvanassche@acm.org"
-	<bvanassche@acm.org>, "martin.petersen@oracle.com"
-	<martin.petersen@oracle.com>, "manivannan.sadhasivam@linaro.org"
-	<manivannan.sadhasivam@linaro.org>, "minwoo.im@samsung.com"
-	<minwoo.im@samsung.com>, "quic_cang@quicinc.com" <quic_cang@quicinc.com>,
-	"adrian.hunter@intel.com" <adrian.hunter@intel.com>
-CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"alim.akhtar@samsung.com" <alim.akhtar@samsung.com>, "jejb@linux.ibm.com"
-	<jejb@linux.ibm.com>, "beanhuo@micron.com" <beanhuo@micron.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"quic_mnaresh@quicinc.com" <quic_mnaresh@quicinc.com>
-Subject: Re: [PATCH v4 1/1] scsi: ufs: core: Support Updating UIC Command
- Timeout
-Thread-Topic: [PATCH v4 1/1] scsi: ufs: core: Support Updating UIC Command
- Timeout
-Thread-Index: AQHa2KgM9/zJPG/vaESladH9Cpts7bID8lIA
-Date: Tue, 23 Jul 2024 07:27:49 +0000
-Message-ID: <5370a13d48d42d952442040f71301acf30f9a5ff.camel@mediatek.com>
-References: <cover.1721261491.git.quic_nguyenb@quicinc.com>
-	 <44dc4790b53e2f8aa92568a9e13785e3bedd617d.1721261491.git.quic_nguyenb@quicinc.com>
-In-Reply-To: <44dc4790b53e2f8aa92568a9e13785e3bedd617d.1721261491.git.quic_nguyenb@quicinc.com>
-Accept-Language: zh-TW, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PSAPR03MB5605:EE_|TYZPR03MB7182:EE_
-x-ms-office365-filtering-correlation-id: f5409805-9bb5-4d1d-846a-08dcaae8f490
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?UC9rL1Z2eXl0WWhmUjZFd0JPd3V6SFYwaUhvTDdMS2ZESGl4d3BrRm1CekV4?=
- =?utf-8?B?Tk5xUjdlMkhCR094TmJocVh6WXk3cVp6UkUyVVhkQTJjZWJMdk9SVHE4eExQ?=
- =?utf-8?B?RHlvdmdYT1htL21wdW93dnh2M3VlR0lrUFpRN2JuZkFRRk5US1hUd3Y2cEs3?=
- =?utf-8?B?WFdjVkc1ME5ONXMwWEtoajVOSEZuVnlLQWVRd0Z2T1NpczdwQURCY3I5TVpQ?=
- =?utf-8?B?NmRkRm1QbDlYU01iejFyeXdrOFkyNmRYcXRTT2pSU3VQdndjOXIxbzlwcjlS?=
- =?utf-8?B?UlV2UWUrVUpXYzFXc3B3MCtRazZLcWFnN3B3SVJtb2ZucmVyOUVjQmFycVRo?=
- =?utf-8?B?VmF4Uk5QZUNiMExmdi9hYnVSVUMwd3huWUFtZXdDTkdLNThsOVEvMGhuTS9w?=
- =?utf-8?B?ODRhWTAvRTNsRVFSRHlPTGhEbENQdThROVEvczVKcURIZEhMWm9tU1lOZ3Rv?=
- =?utf-8?B?eVBBeDlXamZTd1Y0T1d4UEhzQ21lSnN2eXljUWNRdHk1blB2NExJdlFXaktz?=
- =?utf-8?B?SDE3MWQyRFFIUGp5ZkI2Mkt0K09DckpweEljSGNPaEc3MUoybHhoTkpXdXVN?=
- =?utf-8?B?WlFTMzVNc1lNT3QvVEFRMDRBdjV0MkZUcFppd3NydEY0ZHc0MklWZWlVazI3?=
- =?utf-8?B?QlV5NTVFTVpTNGc1dDNTV3c0c09GcmwrcThlbDd5bnJqdlBwSGR2TmhOMVJt?=
- =?utf-8?B?cnpOM0hTTG9GTXRISGVudHY0RXh1bDFJZnQyUG82K0RHZlhOcUtqNEhQRFpt?=
- =?utf-8?B?czh5MTd0Yy82elBYc2RuNk9OL1Q5YVR1NjQxVkZSVDBVVjlPeGJReUpsZGZV?=
- =?utf-8?B?UTFxTURmaHNjdi9nWDFzczgwTEwvS3IzRmdiQ0hzMEZyTTQvZmFsWkxhc3Fr?=
- =?utf-8?B?UTdLOTZXa0NWOXB1a2NKWGQ5OVNkQlFrM2R5anN0R3JkTXVsNFpIZnFPenAw?=
- =?utf-8?B?RFRqT2NIK1U2RWZaUTJqN205R210VjFTNFUyckVBZVlKakdnYTFRZnUzcm1R?=
- =?utf-8?B?dXFiaVcrcDNaalY5bWthajE5aE90cUM3VVlBdFZ2eTJobENNTFg2L2lzYWJz?=
- =?utf-8?B?N2JiVzlHaVR6Q1p4YlkyeGpjcDI0QThudjgzS3VnNURYamtKSVk2bnBlc2Fw?=
- =?utf-8?B?R3IvaWlhclF5NnJsODlKc3hXeEhoeWlxd2l2Q2VROUpUN1JDQ0xwWHREaGha?=
- =?utf-8?B?YXhobVV2bmpEMVBudVZIL2VrcFI5TVVnNnl5cERjNzNIZWRDYXZqVEtNN1Uz?=
- =?utf-8?B?YktxNGtlTkVRMVJxVkpRU0RwSXloUmtvcnVOSng2V3psVWlVNVpEMmo0bC9n?=
- =?utf-8?B?WG5MN0V4Z1JRV2FsZG0rb09kKzJKTUNrYUhqMUhaSWdtY0pRZWk1QWovczBL?=
- =?utf-8?B?WXp2eHlaYUViUWhKV0s3TnZ6bEl0V3pNblUxTVpMeE45a1FCbWQ5VmIyTm5k?=
- =?utf-8?B?ZklScE12VHpIRnRnT1hxcEl2SEZSL3VqRUhaU3AyRElYK3dDQ1A0MmJtZVpl?=
- =?utf-8?B?aEF3VzhBRk5TQkJBcjduWFdWR21Hc2ZEajRCeWpJOStYbGVkSmpjenVMeFBr?=
- =?utf-8?B?Q1ZSb05ZdXJpTHdRdVNDUTlpZDFnNEZyWnBUT09mZlNoSStVSHhKclJpSld1?=
- =?utf-8?B?UXR1cnE3ejhtLzZ6UHNtZXVZYlBpeW8ydXpEb0l0clVTbnRUN0o2Zi8yVjJO?=
- =?utf-8?B?bytPK2FMQlliaXZhallDRnNjOWljL0VUbGV1aksxTzdjS005MDdvVktUYnNN?=
- =?utf-8?B?VFI4a1JzdFlqSy9zTDZYMVR2R21BTUJYbjhnWk0wS3FTbWJGY1lmREhnRmxT?=
- =?utf-8?B?dkp0OW1VeDJzN3VGb3FTT2FiejV4RDFZRmczL2dRMnYxMGpyNU0xZWp0SmlL?=
- =?utf-8?B?VmFtSm9RQ2NQM3pHY2V5bmVHdXdicDNodzFaR0JhYi9jT1E9PQ==?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR03MB5605.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?bk44TVhZWG5uUHQ2TURvVzRXWFRKQ1oxVXVTMFlpOVBRUXV4ZmdGMTQwc1NV?=
- =?utf-8?B?T2RvcFFJZkYrVXRvU0lQWVBpWGZqU2owT1d4V0liRVlFaHNKTnA4QlYvRGxr?=
- =?utf-8?B?aDk5YS93aCtkWGJndkxnQTRiL3V0NEV5UExqNFFjWUU2bXhjRnlJbUJ2cnl1?=
- =?utf-8?B?VCtaaTI3MjFEZUh4R0VQU3RtZUd5OS9uL0hPSTZQWkEyeFMrWnhXT293N1Ey?=
- =?utf-8?B?NlFBYjdzelJ6UVNTbjU1S0FNaEdyOHJHMFhJVlJpeWpyOUsvemYvNUkwd25B?=
- =?utf-8?B?M3NaSVpBU0tHRUdiK3NHV1d2ZUtsQjA0TzhaZTVFLzErczNXWkh2eUhGVlJa?=
- =?utf-8?B?TUduelg1c1RUM21QdjBta0dDT3RUTXQwY3ZFYXBmYmRQaWd5WGxhNXNlQUIx?=
- =?utf-8?B?U013Z1dkRXIyTi9WTFk1QUpNc1V6SDcrV2IyZ0J5M0RlWklNZGZZcUZFaXZR?=
- =?utf-8?B?TGVWZ1BrVmQybkdjL3lsbzd3bktTTDdXZFo2SkppSndydkcvNFE4MkdtbGNp?=
- =?utf-8?B?V1NEaHNRUUljdE51TElrM3VnWVNSRHdVc2YySitXVmVUYytHODg1R0Rzc2s0?=
- =?utf-8?B?cmNoTmNINHZQZU5nWFFlY21qOURQZCswY0RrazZuZitLZFR6RnFsYXkrQ1d0?=
- =?utf-8?B?ck9DOUxCK2ZmOVYrYUthWnMvMklXMG5zMS9KZlIyM2U1L3NUOXlybWJrdjVG?=
- =?utf-8?B?clpxMmV6VjBST2FmQzVRNVlTU1crbFhpckI3UHQxZU5DZFJZMEZSdnV2ckdz?=
- =?utf-8?B?RnFEODFML2M4M1hIUFBjWG5XYXFPdVg4VnEyWnpTUi9MTXBDZENIaVJjd3NC?=
- =?utf-8?B?SDNDazluZEtieE1jeENsd241Z0hTUzZhYmZ3SWxDc1hRM1lZN1NaN2dvb2dO?=
- =?utf-8?B?ODNqVnhEZS9pUDZzQXIyQU52b3FjVmNpM3gwbVdCcGZqSFBrR0h5MjNaZ0dS?=
- =?utf-8?B?QnhOeFBKOWNYMUhPU2d3RklMRW9Lam1EODgvRVN6aTVMU1Q3WjF3ZHdMaUJw?=
- =?utf-8?B?M3VmL3MyNEs1a21kbGpjRFNybjZndjlCV1hJaHd0REczSS9Pa0FnS1NtYkNo?=
- =?utf-8?B?aVJPZ3BidlBXNG0xS1QzUWFVci9FRjNzZkNYY0xiV1g2blNIMkxrVm5NS2xW?=
- =?utf-8?B?S0NsQ1dYUk84b2N4a3ppeHlNMXpjVS9LR09OVmdSTGg1bExYUUNuU2NOOE45?=
- =?utf-8?B?NWhWUTJJVkJBZDFLSzU4cXpvQ09ESGIrdDVMVWlTME1WR3dBVFJ4UTFBZXJ0?=
- =?utf-8?B?a0RFeWdnZjM4bThUaW9SUldMSUVBbkV6TEQxYUFhQTh5RGJaQmh2WlR2dUZo?=
- =?utf-8?B?Q3FGUngxUnQyb0tRYzZUN0tpOHpBRW12emVjNXpkQmVsMW51ZWx2UURMbC9G?=
- =?utf-8?B?ckx2eFdnV2FLZFJ6QnVvQUlwK0xXdTh6VHBPdVBMa2FldXhsUUdhOHV0NG1G?=
- =?utf-8?B?QzMrdDAvVHc3WGlqZDZ3QXZ0WGg4VWV5bDJYT2hPeHNJbUl2d2VPV3JITTJx?=
- =?utf-8?B?dWVHRmJtbHRBRDBxRFJiNUxLVmdlRlhQUUxUclJpOUlXMFBZUnlwNkZEYjNM?=
- =?utf-8?B?SndpbDdUemxNdS9ob1ZxbnY2aWluWVdYSXZHL1JtV2ZteE84RncxV3p0Y0tv?=
- =?utf-8?B?NVZFWEtIdEFQMzNPNzZhVlEwM2JqNVIyOUxXTE5lQUUyQU5zeVhuUlJLeE43?=
- =?utf-8?B?SU9ZVEk4NHZydXdhZVovVHlWMmpiUG1FRXBDQ0k0K0dDSjFXRVFIWEJTMHlY?=
- =?utf-8?B?L082U25ydGFJL1VObXFwNi9STmxzWm5rdjMyVS94aHNRVUVMckNBSU8yRTlG?=
- =?utf-8?B?MGlic3l0bkFnNFI2a3QzYUo0a2kvTlhxR3kwYy9wNzJYMjloUGdzOVNqS3FD?=
- =?utf-8?B?SU9OaHdTUDhwZDM3RlhHdmIvOG1XV1NoUURGbFZQT0YydnM3ZWw1M0pwaU0w?=
- =?utf-8?B?RlJJbW5iakxaNWUvQ1NpdmxzQmRvTk9IWnorTlR0YWVzSzBYaHBmS2ltOTFM?=
- =?utf-8?B?cXA1dFpXQVU5aldhbGtvV3NrZytnSUxuaXVRYkhSNlJUY2wvcjVWODBhR2dO?=
- =?utf-8?B?aXVGemVId3dRelFIekJTdGE2Wk5COEJKcUgvTWllcG9LNnRKNUtpWktJM2dt?=
- =?utf-8?B?WndWdHJidUtUVmpSUEhYQ3h4NkdKelVVYXI2MjMxZnhtOGN5bi9oZTBiekR0?=
- =?utf-8?B?dlE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1DDCF9564D066544960883A390C57388@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5557F53A7;
+	Tue, 23 Jul 2024 07:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721719821; cv=none; b=JTbVA8OR41hDEG8+3xPiPbFha+hhiAQJc3NyWfeLfhJYsiZ9lBfPFwqAI/IIGSdagpjrVuj2X4c646s3c1T5p0u6sjpUmOnTFlmIoeZrUfwRIEKsBmSXNQVaRd5UNuWXw5nucW9pm58PkkMo96klaPejCAj4ON4e9kj5yWn6kZc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721719821; c=relaxed/simple;
+	bh=oLRekKmrrAAX4xr9cjmln8z+C59zD1nyYKyyYtJ4NZY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DnAXlKotrulEDkr91liYMQElPE0HKtBPhlW4AebG7H7KRv3h+MwDL0sd3oQy++4gppkiLL+9VyJzfY4N2Xv9p0QuKSZ5mr+cI197ac68OnxkqWJ5GeJiDsv502UtVyUkUCUvNmEHrNInXvDQ2tkMTjqVP7GSPswr0AGX2f7bQDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eooe7LSl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0B78C4AF09;
+	Tue, 23 Jul 2024 07:30:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721719821;
+	bh=oLRekKmrrAAX4xr9cjmln8z+C59zD1nyYKyyYtJ4NZY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Eooe7LSl9vXs81NiJlbTWmTgg7yJr0BQc0657RVanUWUBiPbsnEg4TZ/z9I2Wa58O
+	 Ho8eVNt7BrYZEtjGjyP+b/JadYw8EezfIZNnpm+Lh1ffBjMAA5pN1H0eWvjK5BefTI
+	 zCybSJvD9uMH3c6BaRUzV/IGuU4xd4eTzj3/znjEA6p0eUUNtjCRmo6Ahy1Gw6q59j
+	 BysmhgZLIDC95zGGz96t6kU6Wu5rqPapvvXY4eB8LiwqEyfn3g/yFz/BAtLep4q2wR
+	 GGn7EdB2ZcAU9FAS6ZQyfhA8HDkj6BhwaDpmhOOnPdFdml0l0HaLMyFGZ0NZcTU9Pw
+	 UK2/T7OJuFgyA==
+Received: by pali.im (Postfix)
+	id 95E206FE; Tue, 23 Jul 2024 09:30:16 +0200 (CEST)
+Date: Tue, 23 Jul 2024 09:30:16 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Andres Salomon <dilinger@queued.net>
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	Matthew Garrett <mjg59@srcf.ucam.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	linux-pm@vger.kernel.org, Dell.Client.Kernel@dell.com,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: Re: [PATCH] platform/x86:dell-laptop: Add knobs to change battery
+ charge settings
+Message-ID: <20240723073016.j4r72yeexcpj7qhj@pali>
+References: <20240720220606.1934df43@5400>
+ <20240721090238.wrei5nu6y3awujws@pali>
+ <20240721193716.3156050f@5400>
+ <20240721234037.nxthfeqdjl3z74oc@pali>
+ <20240721195851.76e2b220@5400>
+ <20240722071845.w7v23ixu5wujrpol@pali>
+ <20240722143432.35c356b1@5400>
+ <20240722184132.l6nibqkpna2wkszo@pali>
+ <20240722202504.jgz6tcc247mjxq4f@pali>
+ <20240723003610.765d28e4@5400>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PSAPR03MB5605.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5409805-9bb5-4d1d-846a-08dcaae8f490
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jul 2024 07:27:49.1842
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 4AI9cle7VVSqu/MwCUaxsfQuDtPLKfmFswhdmWV4MkTOGY1H8NCQvhHNDDwLreg9wfRinSepFMF0XvSqJRaIiA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB7182
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--18.875700-8.000000
-X-TMASE-MatchedRID: UWn79NfEZzbUL3YCMmnG4ia1MaKuob8PCJpCCsn6HCHBnyal/eRn3gzR
-	CsGHURLuwpcJm2NYlPAF6GY0Fb6yCp4tFtWKBvRpG5mg0pzqmX5ezmeoa8MJ8+ouc5Rcf1B0BIi
-	ptXNoj0aCukcfrdcoGcATk+O/i8f9Gf0D7RCus+wlAj6R+xEl2gzWiCCFQQMB4uxAgOavdLnHES
-	Ua8/SV+PbYZPZ20YJltPcdouA3AZ7dM4TtXgVTNKCGZWnaP2nJYKeVO7aMEHPfUZT83lbkEFJtv
-	0AtNsDWH5TnHYZFBIhGW/U1VijAOWdvGUEuKvScDko+EYiDQxE7r2Gtb9iBYc1BXOF9hjmy7iii
-	6/GaBajL7a7vhpw6CJGTpe1iiCJq0u+wqOGzSV1WdFebWIc3VsRB0bsfrpPIXzYxeQR1DvvsgFo
-	z9Cg/vthkqT1/eTr4cXo1jjTZA5B363OPlAo6zoi56+nYUORz
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--18.875700-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	6E2887C1C3427C106DA1922B8779D36B9DA82516997FBE2630062C56FDDE15852000:8
-X-MTK: N
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240723003610.765d28e4@5400>
+User-Agent: NeoMutt/20180716
 
-T24gV2VkLCAyMDI0LTA3LTE3IGF0IDE3OjE3IC0wNzAwLCBCYW8gRC4gTmd1eWVuIHdyb3RlOg0K
-PiAgCSANCj4gRXh0ZXJuYWwgZW1haWwgOiBQbGVhc2UgZG8gbm90IGNsaWNrIGxpbmtzIG9yIG9w
-ZW4gYXR0YWNobWVudHMgdW50aWwNCj4geW91IGhhdmUgdmVyaWZpZWQgdGhlIHNlbmRlciBvciB0
-aGUgY29udGVudC4NCj4gIFRoZSBkZWZhdWx0IFVJQyBjb21tYW5kIHRpbWVvdXQgc3RpbGwgcmVt
-YWlucyA1MDBtcy4NCj4gQWxsb3cgcGxhdGZvcm0gZHJpdmVycyB0byBvdmVycmlkZSB0aGUgVUlD
-IGNvbW1hbmQNCj4gdGltZW91dCBpZiBkZXNpcmVkLg0KPiANCj4gSW4gYSByZWFsIHByb2R1Y3Qs
-IHRoZSA1MDBtcyB0aW1lb3V0IHZhbHVlIGlzIHByb2JhYmx5IGdvb2QgZW5vdWdoLg0KPiBIb3dl
-dmVyLCBkdXJpbmcgdGhlIHByb2R1Y3QgZGV2ZWxvcG1lbnQgd2hlcmUgdGhlcmUgYXJlIGEgbG90
-IG9mDQo+IGxvZ2dpbmcgYW5kIGRlYnVnIG1lc3NhZ2VzIGJlaW5nIHByaW50ZWQgdG8gdGhlIHVh
-cnQgY29uc29sZSwNCj4gaW50ZXJydXB0IHN0YXJ2YXRpb25zIGhhcHBlbiBvY2Nhc2lvbmFsbHkg
-YmVjYXVzZSB0aGUgdWFydCBtYXkNCj4gcHJpbnQgbG9uZyBkZWJ1ZyBtZXNzYWdlcyBmcm9tIGRp
-ZmZlcmVudCBtb2R1bGVzIGluIHRoZSBzeXN0ZW0uDQo+IFdoaWxlIHByaW50aW5nLCB0aGUgdWFy
-dCBtYXkgaGF2ZSBpbnRlcnJ1cHRzIGRpc2FibGVkIGZvciBtb3JlDQo+IHRoYW4gNTAwbXMsIGNh
-dXNpbmcgVUlDIGNvbW1hbmQgdGltZW91dC4NCj4gVGhlIFVJQyBjb21tYW5kIHRpbWVvdXQgd291
-bGQgdHJpZ2dlciBtb3JlIHByaW50aW5nIGZyb20NCj4gdGhlIFVGUyBkcml2ZXIsIGFuZCBldmVu
-dHVhbGx5IGEgd2F0Y2hkb2cgdGltZW91dCBtYXkNCj4gb2NjdXIgdW5uZWNlc3NhcmlseS4NCj4g
-DQo+IEFkZCBzdXBwb3J0IGZvciBvdmVycmlkaW5nIHRoZSBVSUMgY29tbWFuZCB0aW1lb3V0IHZh
-bHVlDQo+IHdpdGggdGhlIG5ld2x5IGNyZWF0ZWQgdWljX2NtZF90aW1lb3V0IGtlcm5lbCBtb2R1
-bGUgcGFyYW1ldGVyLg0KPiBEZWZhdWx0IHZhbHVlIGlzIDUwMG1zLiBTdXBwb3J0ZWQgdmFsdWVz
-IHJhbmdlIGZyb20gNTAwbXMNCj4gdG8gMiBzZWNvbmRzLg0KPiANCj4gU2lnbmVkLW9mZi1ieTog
-QmFvIEQuIE5ndXllbiA8cXVpY19uZ3V5ZW5iQHF1aWNpbmMuY29tPg0KPiBTdWdnZXN0ZWQtYnk6
-IEJhcnQgVmFuIEFzc2NoZSA8YnZhbmFzc2NoZUBhY20ub3JnPg0KPiBSZXZpZXdlZC1ieTogQmFy
-dCBWYW4gQXNzY2hlIDxidmFuYXNzY2hlQGFjbS5vcmc+DQo+IC0tLQ0KPiAgZHJpdmVycy91ZnMv
-Y29yZS91ZnNoY2QuYyB8IDM3ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0N
-Cj4gIDEgZmlsZSBjaGFuZ2VkLCAzMiBpbnNlcnRpb25zKCspLCA1IGRlbGV0aW9ucygtKQ0KPiAN
-Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdWZzL2NvcmUvdWZzaGNkLmMgYi9kcml2ZXJzL3Vmcy9j
-b3JlL3Vmc2hjZC5jDQo+IGluZGV4IDIxNDI5ZWUuLmQ2NmRhMTMgMTAwNjQ0DQo+IC0tLSBhL2Ry
-aXZlcnMvdWZzL2NvcmUvdWZzaGNkLmMNCj4gKysrIGIvZHJpdmVycy91ZnMvY29yZS91ZnNoY2Qu
-Yw0KPiBAQCAtNTEsOCArNTEsMTAgQEANCj4gIA0KPiAgDQo+ICAvKiBVSUMgY29tbWFuZCB0aW1l
-b3V0LCB1bml0OiBtcyAqLw0KPiAtI2RlZmluZSBVSUNfQ01EX1RJTUVPVVQJNTAwDQo+IC0NCj4g
-K2VudW0gew0KPiArCVVJQ19DTURfVElNRU9VVF9ERUZBVUxUCT0gNTAwLA0KPiArCVVJQ19DTURf
-VElNRU9VVF9NQVgJPSAyMDAwLA0KPiArfTsNCj4gIC8qIE5PUCBPVVQgcmV0cmllcyB3YWl0aW5n
-IGZvciBOT1AgSU4gcmVzcG9uc2UgKi8NCj4gICNkZWZpbmUgTk9QX09VVF9SRVRSSUVTICAgIDEw
-DQo+ICAvKiBUaW1lb3V0IGFmdGVyIDUwIG1zZWNzIGlmIE5PUCBPVVQgaGFuZ3Mgd2l0aG91dCBy
-ZXNwb25zZSAqLw0KPiBAQCAtMTEzLDYgKzExNSwzMSBAQCBzdGF0aWMgYm9vbCBpc19tY3Ffc3Vw
-cG9ydGVkKHN0cnVjdCB1ZnNfaGJhDQo+ICpoYmEpDQo+ICBtb2R1bGVfcGFyYW0odXNlX21jcV9t
-b2RlLCBib29sLCAwNjQ0KTsNCj4gIE1PRFVMRV9QQVJNX0RFU0ModXNlX21jcV9tb2RlLCAiQ29u
-dHJvbCBNQ1EgbW9kZSBmb3IgY29udHJvbGxlcnMNCj4gc3RhcnRpbmcgZnJvbSBVRlNIQ0kgNC4w
-LiAxIC0gZW5hYmxlIE1DUSwgMCAtIGRpc2FibGUgTUNRLiBNQ1EgaXMNCj4gZW5hYmxlZCBieSBk
-ZWZhdWx0Iik7DQo+ICANCj4gK3N0YXRpYyB1bnNpZ25lZCBpbnQgdWljX2NtZF90aW1lb3V0ID0g
-VUlDX0NNRF9USU1FT1VUX0RFRkFVTFQ7DQo+ICsNCj4gK3N0YXRpYyBpbnQgdWljX2NtZF90aW1l
-b3V0X3NldChjb25zdCBjaGFyICp2YWwsIGNvbnN0IHN0cnVjdA0KPiBrZXJuZWxfcGFyYW0gKmtw
-KQ0KPiArew0KPiArCXVuc2lnbmVkIGludCBuOw0KPiArCWludCByZXQ7DQo+ICsNCj4gKwlyZXQg
-PSBrc3RydG91MzIodmFsLCAwLCAmbik7DQo+IA0KSGkgQmFvLA0KDQpuIHR5cGUgaXMgdW5zaWdu
-ZWQgaW50LCBzbyBpdCBzaG91bGQgYmUga3N0cnRvdWludD8gDQpBbHRob3VnaCB0aGV5IHNob3Vs
-ZCBiZSB0aGUgc2FtZS4NCg0KDQo+ICsJaWYgKHJldCAhPSAwIHx8IG4gPCBVSUNfQ01EX1RJTUVP
-VVRfREVGQVVMVCB8fCBuID4NCj4gVUlDX0NNRF9USU1FT1VUX01BWCkNCj4gKwkJcmV0dXJuIC1F
-SU5WQUw7DQo+ICsNCj4gKwl1aWNfY21kX3RpbWVvdXQgPSBuOw0KPiArDQo+ICsJcmV0dXJuIDA7
-DQo+IA0KDQpDb3VsZCBiZSBqdXN0IHVzZSB0aGlzIGxpbmUgaW5zdGVhZD8NCglyZXR1cm4NCnBh
-cmFtX3NldF91aW50X21pbm1heCh2YWwsIGtwLCBVSUNfQ01EX1RJTUVPVVRfREVGQVVMVCwNCgkJ
-DQoJCSAgICAgVUlDX0NNRF9USU1FT1VUX01BWCk7DQoNCkl0IHNob3VsZCBiZSBtb3JlIHNpbXBs
-ZS4NCg0KPiArfQ0KDQo+ICsNCj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3Qga2VybmVsX3BhcmFtX29w
-cyB1aWNfY21kX3RpbWVvdXRfb3BzID0gew0KPiArCS5zZXQgPSB1aWNfY21kX3RpbWVvdXRfc2V0
-LA0KPiArCS5nZXQgPSBwYXJhbV9nZXRfdWludCwNCj4gK307DQo+ICsNCj4gK21vZHVsZV9wYXJh
-bV9jYih1aWNfY21kX3RpbWVvdXQsICZ1aWNfY21kX3RpbWVvdXRfb3BzLA0KPiAmdWljX2NtZF90
-aW1lb3V0LCAwNjQ0KTsNCj4gK01PRFVMRV9QQVJNX0RFU0ModWljX2NtZF90aW1lb3V0LA0KPiAr
-CQkiVUZTIFVJQyBjb21tYW5kIHRpbWVvdXQgaW4gbWlsbGlzZWNvbmRzLiBEZWZhdWx0cyB0bw0K
-PiA1MDBtcy4gU3VwcG9ydGVkIHZhbHVlcyByYW5nZSBmcm9tIDUwMG1zIHRvIDIgc2Vjb25kcyBp
-bmNsdXNpdmVseSIpOw0KPiArDQo+ICAjZGVmaW5lIHVmc2hjZF90b2dnbGVfdnJlZyhfZGV2LCBf
-dnJlZywgX29uKQkJCQkNCj4gXA0KPiAgCSh7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA0KPiAgXA0KPiAgCQlpbnQNCj4gX3JldDsg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIFwNCj4gQEAgLTI0
-NjAsNyArMjQ4Nyw3IEBAIHN0YXRpYyBpbmxpbmUgYm9vbA0KPiB1ZnNoY2RfcmVhZHlfZm9yX3Vp
-Y19jbWQoc3RydWN0IHVmc19oYmEgKmhiYSkNCj4gIHsNCj4gIAl1MzIgdmFsOw0KPiAgCWludCBy
-ZXQgPSByZWFkX3BvbGxfdGltZW91dCh1ZnNoY2RfcmVhZGwsIHZhbCwgdmFsICYNCj4gVUlDX0NP
-TU1BTkRfUkVBRFksDQo+IC0JCQkJICAgIDUwMCwgVUlDX0NNRF9USU1FT1VUICogMTAwMCwgZmFs
-c2UsDQo+IGhiYSwNCj4gKwkJCQkgICAgNTAwLCB1aWNfY21kX3RpbWVvdXQgKiAxMDAwLCBmYWxz
-ZSwNCj4gaGJhLA0KPiAgCQkJCSAgICBSRUdfQ09OVFJPTExFUl9TVEFUVVMpOw0KPiAgCXJldHVy
-biByZXQgPT0gMDsNCj4gIH0NCj4gQEAgLTI1MjAsNyArMjU0Nyw3IEBAIHVmc2hjZF93YWl0X2Zv
-cl91aWNfY21kKHN0cnVjdCB1ZnNfaGJhICpoYmEsDQo+IHN0cnVjdCB1aWNfY29tbWFuZCAqdWlj
-X2NtZCkNCj4gIAlsb2NrZGVwX2Fzc2VydF9oZWxkKCZoYmEtPnVpY19jbWRfbXV0ZXgpOw0KPiAg
-DQo+ICAJaWYgKHdhaXRfZm9yX2NvbXBsZXRpb25fdGltZW91dCgmdWljX2NtZC0+ZG9uZSwNCj4g
-LQkJCQkJbXNlY3NfdG9famlmZmllcyhVSUNfQ01EX1RJTUVPVQ0KPiBUKSkpIHsNCj4gKwkJCQkJ
-bXNlY3NfdG9famlmZmllcyh1aWNfY21kX3RpbWVvdQ0KPiB0KSkpIHsNCj4gIAkJcmV0ID0gdWlj
-X2NtZC0+YXJndW1lbnQyICYgTUFTS19VSUNfQ09NTUFORF9SRVNVTFQ7DQo+ICAJfSBlbHNlIHsN
-Cj4gIAkJcmV0ID0gLUVUSU1FRE9VVDsNCj4gQEAgLTQyOTgsNyArNDMyNSw3IEBAIHN0YXRpYyBp
-bnQgdWZzaGNkX3VpY19wd3JfY3RybChzdHJ1Y3QgdWZzX2hiYQ0KPiAqaGJhLCBzdHJ1Y3QgdWlj
-X2NvbW1hbmQgKmNtZCkNCj4gIAl9DQo+ICANCj4gIAlpZiAoIXdhaXRfZm9yX2NvbXBsZXRpb25f
-dGltZW91dChoYmEtPnVpY19hc3luY19kb25lLA0KPiAtCQkJCQkgbXNlY3NfdG9famlmZmllcyhV
-SUNfQ01EX1RJTUVPDQo+IFVUKSkpIHsNCj4gKwkJCQkJIG1zZWNzX3RvX2ppZmZpZXModWljX2Nt
-ZF90aW1lbw0KPiB1dCkpKSB7DQo+ICAJCWRldl9lcnIoaGJhLT5kZXYsDQo+ICAJCQkicHdyIGN0
-cmwgY21kIDB4JXggd2l0aCBtb2RlIDB4JXggY29tcGxldGlvbg0KPiB0aW1lb3V0XG4iLA0KPiAg
-CQkJY21kLT5jb21tYW5kLCBjbWQtPmFyZ3VtZW50Myk7DQo+IC0tIA0KPiAyLjcuNA0KPiANCg==
+On Tuesday 23 July 2024 00:36:10 Andres Salomon wrote:
+> On Mon, 22 Jul 2024 22:25:04 +0200
+> Pali Rohár <pali@kernel.org> wrote:
+> 
+> > On Monday 22 July 2024 20:41:32 Pali Rohár wrote:
+> > > On Monday 22 July 2024 14:34:32 Andres Salomon wrote:  
+> > > > On Mon, 22 Jul 2024 09:18:45 +0200
+> > > > Pali Rohár <pali@kernel.org> wrote:
+> > > >   
+> > > > > On Sunday 21 July 2024 19:58:51 Andres Salomon wrote:  
+> > > > > > On Mon, 22 Jul 2024 01:40:37 +0200
+> > > > > > Pali Rohár <pali@kernel.org> wrote:
+> > > > > >     
+> > > > > > > On Sunday 21 July 2024 19:37:16 Andres Salomon wrote:    
+> > > > > > > > On Sun, 21 Jul 2024 11:02:38 +0200
+> > > > > > > > Pali Rohár <pali@kernel.org> wrote:
+> > > > > > > >       
+> > > > > > > > > On Saturday 20 July 2024 22:06:06 Andres Salomon wrote:      
+> > > > > > > > > > On Sat, 20 Jul 2024 11:55:07 +0200
+> > > > > > > > > > Pali Rohár <pali@kernel.org> wrote:
+> > > > > > > > > >         
+> > > > > > > > > > > On Saturday 20 July 2024 05:24:19 Andres Salomon wrote:        
+> > > > > > > > > > > > Thanks for the quick feedback! Responses below.
+> > > > > > > > > > > > 
+> > > > > > > > > > > > On Sat, 20 Jul 2024 10:40:19 +0200
+> > > > > > > > > > > > Pali Rohár <pali@kernel.org> wrote:
+> > > > > > > > > > > >           
+> > > > > > > > 
+> > > > > > > > [...]
+> > > > > > > >       
+> > > > > > > > > > > > > > +
+> > > > > > > > > > > > > > +static void __init dell_battery_init(struct device *dev)
+> > > > > > > > > > > > > > +{
+> > > > > > > > > > > > > > +	enum battery_charging_mode current_mode = DELL_BAT_MODE_NONE;
+> > > > > > > > > > > > > > +
+> > > > > > > > > > > > > > +	dell_battery_read_req(BAT_CUSTOM_MODE_TOKEN, (int *) &current_mode);
+> > > > > > > > > > > > > > +	if (current_mode != DELL_BAT_MODE_NONE) {            
+> > > > > > > > > > > > > 
+> > > > > > > > > > > > > I quite do not understand how is this code suppose to work.
+> > > > > > > > > > > > > 
+> > > > > > > > > > > > > Why is there mix of custom kernel enum battery_charging_mode and return
+> > > > > > > > > > > > > value from Dell's API?          
+> > > > > > > > > > > > 
+> > > > > > > > > > > > This is from the original patch from Dell; tbh, I'm not sure. It does
+> > > > > > > > > > > > work, though. That is, current_mode ends up holding the correct value
+> > > > > > > > > > > > based on what was previously set, even if the charging mode is set from
+> > > > > > > > > > > > the BIOS.
+> > > > > > > > > > > > 
+> > > > > > > > > > > > I just scanned through the libsmbios code to see what it's doing, and
+> > > > > > > > > > > > it appears to loop through every charging mode to check if its active.
+> > > > > > > > > > > > I'm not really sure that makes much more sense, so I'll try some more
+> > > > > > > > > > > > tests.          
+> > > > > > > > > > > 
+> > > > > > > > > > > Keyboard backlight code (kbd_get_first_active_token_bit) is doing also
+> > > > > > > > > > > this type scan. If I remember correctly, for every keyboard backlight
+> > > > > > > > > > > token we just know the boolean value - if the token is set or not.
+> > > > > > > > > > > 
+> > > > > > > > > > > It would really nice to see what (raw) value is returned by the
+> > > > > > > > > > > dell_battery_read_req(token) function for every battery token and for
+> > > > > > > > > > > every initial state.        
+> > > > > > > > > > 
+> > > > > > > > > > I checked this. The BIOS sets the mode value in every related token
+> > > > > > > > > > location. I'm still not really sure what libsmbios is doing, but the
+> > > > > > > > > > kernel code seems to arbitrarily choose one of the token locations
+> > > > > > > > > > to read from. This makes sense to me now.
+> > > > > > > > > > 
+> > > > > > > > > > In the BIOS when I set the mode to "ExpressCharge",
+> > > > > > > > > > this what I pulled for each token location:
+> > > > > > > > > > 
+> > > > > > > > > > [    5.704651] dell-laptop dell-laptop: BAT_CUSTOM_MODE_TOKEN value: 2
+> > > > > > > > > > [    5.707015] dell-laptop dell-laptop: BAT_PRI_AC_MODE_TOKEN value: 2
+> > > > > > > > > > [    5.709114] dell-laptop dell-laptop: BAT_ADAPTIVE_MODE_TOKEN value: 2
+> > > > > > > > > > [    5.711041] dell-laptop dell-laptop: BAT_STANDARD_MODE_TOKEN value: 2
+> > > > > > > > > > [    5.713705] dell-laptop dell-laptop: BAT_EXPRESS_MODE_TOKEN value: 2
+> > > > > > > > > > 
+> > > > > > > > > > Similar story when I set it to Custom (all were '5'), or Standard ('1').
+> > > > > > > > > > When I set it from linux as well, it changed all location values.        
+> > > > > > > > > 
+> > > > > > > > > Interesting... Anyway, I still think that the API could be similar to
+> > > > > > > > > what is used in keyboard backlight.
+> > > > > > > > > 
+> > > > > > > > > Could you please dump all information about each token? They are in
+> > > > > > > > > struct calling_interface_token returned by dell_smbios_find_token.
+> > > > > > > > > 
+> > > > > > > > > I'm interesting in tokenID, location and value.
+> > > > > > > > > 
+> > > > > > > > > Ideally to compare what is in token->value and then in buffer.output[1]
+> > > > > > > > > (in case dell_send_request does not fail).      
+> > > > > > > > 
+> > > > > > > > 
+> > > > > > > > Alright, here's what I see:
+> > > > > > > > 
+> > > > > > > > [    5.904775] dell_laptop: dell_battery_read_req: token requested: 0x343, tokenID=0x343, location=0x343, value=5
+> > > > > > > > [    5.908675] dell_laptop: dell_battery_read_req: buffer.output[1]=3
+> > > > > > > > [    5.908680] dell_laptop: dell_battery_init: BAT_CUSTOM_MODE_TOKEN value: 3
+> > > > > > > > [    5.908682] dell_laptop: dell_battery_read_req: token requested: 0x341, tokenID=0x341, location=0x341, value=3
+> > > > > > > > [    5.910922] dell_laptop: dell_battery_read_req: buffer.output[1]=3
+> > > > > > > > [    5.910926] dell_laptop: dell_battery_init: BAT_PRI_AC_MODE_TOKEN value: 3
+> > > > > > > > [    5.910928] dell_laptop: dell_battery_read_req: token requested: 0x342, tokenID=0x342, location=0x342, value=4
+> > > > > > > > [    5.913042] dell_laptop: dell_battery_read_req: buffer.output[1]=3
+> > > > > > > > [    5.913046] dell_laptop: dell_battery_init: BAT_ADAPTIVE_MODE_TOKEN value: 3
+> > > > > > > > [    5.913048] dell_laptop: dell_battery_read_req: token requested: 0x346, tokenID=0x346, location=0x346, value=1
+> > > > > > > > [    5.914996] dell_laptop: dell_battery_read_req: buffer.output[1]=3
+> > > > > > > > [    5.914999] dell_laptop: dell_battery_init: BAT_STANDARD_MODE_TOKEN value: 3
+> > > > > > > > [    5.915000] dell_laptop: dell_battery_read_req: token requested: 0x347, tokenID=0x347, location=0x347, value=2
+> > > > > > > > [    5.916723] dell_laptop: dell_battery_read_req: buffer.output[1]=3
+> > > > > > > > [    5.916724] dell_laptop: dell_battery_init: BAT_EXPRESS_MODE_TOKEN value: 3
+> > > > > > > > [    5.916725] dell_laptop: dell_battery_read_req: token requested: 0x349, tokenID=0x349, location=0x349, value=65535
+> > > > > > > > [    5.918727] dell_laptop: dell_battery_read_req: buffer.output[1]=65
+> > > > > > > > [    5.918731] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_START value: 65
+> > > > > > > > [    5.918734] dell_laptop: dell_battery_read_req: token requested: 0x34a, tokenID=0x34a, location=0x34a, value=65535
+> > > > > > > > [    5.920864] dell_laptop: dell_battery_read_req: buffer.output[1]=85
+> > > > > > > > [    5.920867] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_END value: 85      
+> > > > > > > 
+> > > > > > > Perfect. And can you check dumps when the mode is set to some other than BAT_PRI_AC_MODE_TOKEN?    
+> > > > > > 
+> > > > > > Here's Express:
+> > > > > > 
+> > > > > > [    5.880090] dell_laptop: dell_battery_read_req: token requested: 0x343, tokenID=0x343, location=0x343, value=5
+> > > > > > [    5.882011] dell_laptop: dell_battery_read_req: buffer.output[1]=2
+> > > > > > [    5.882014] dell_laptop: dell_battery_init: BAT_CUSTOM_MODE_TOKEN value: 2
+> > > > > > [    5.882016] dell_laptop: dell_battery_read_req: token requested: 0x341, tokenID=0x341, location=0x341, value=3
+> > > > > > [    5.894513] dell_laptop: dell_battery_read_req: buffer.output[1]=2
+> > > > > > [    5.894518] dell_laptop: dell_battery_init: BAT_PRI_AC_MODE_TOKEN value: 2
+> > > > > > [    5.894520] dell_laptop: dell_battery_read_req: token requested: 0x342, tokenID=0x342, location=0x342, value=4
+> > > > > > [    5.913870] dell_laptop: dell_battery_read_req: buffer.output[1]=2
+> > > > > > [    5.913874] dell_laptop: dell_battery_init: BAT_ADAPTIVE_MODE_TOKEN value: 2
+> > > > > > [    5.913875] dell_laptop: dell_battery_read_req: token requested: 0x346, tokenID=0x346, location=0x346, value=1
+> > > > > > [    5.915622] dell_laptop: dell_battery_read_req: buffer.output[1]=2
+> > > > > > [    5.915625] dell_laptop: dell_battery_init: BAT_STANDARD_MODE_TOKEN value: 2
+> > > > > > [    5.915626] dell_laptop: dell_battery_read_req: token requested: 0x347, tokenID=0x347, location=0x347, value=2
+> > > > > > [    5.917349] dell_laptop: dell_battery_read_req: buffer.output[1]=2
+> > > > > > [    5.917351] dell_laptop: dell_battery_init: BAT_EXPRESS_MODE_TOKEN value: 2
+> > > > > > [    5.917352] dell_laptop: dell_battery_read_req: token requested: 0x349, tokenID=0x349, location=0x349, value=65535
+> > > > > > [    5.919068] dell_laptop: dell_battery_read_req: buffer.output[1]=65
+> > > > > > [    5.919070] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_START value: 65
+> > > > > > [    5.919071] dell_laptop: dell_battery_read_req: token requested: 0x34a, tokenID=0x34a, location=0x34a, value=65535
+> > > > > > [    5.920780] dell_laptop: dell_battery_read_req: buffer.output[1]=85
+> > > > > > [    5.920782] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_END value: 85
+> > > > > > 
+> > > > > > And here's Adaptive:
+> > > > > > 
+> > > > > > [    5.945319] dell_laptop: dell_battery_read_req: token requested: 0x343, tokenID=0x343, location=0x343, value=5
+> > > > > > [    5.973685] dell_laptop: dell_battery_read_req: buffer.output[1]=4
+> > > > > > [    5.973690] dell_laptop: dell_battery_init: BAT_CUSTOM_MODE_TOKEN value: 4
+> > > > > > [    5.973692] dell_laptop: dell_battery_read_req: token requested: 0x341, tokenID=0x341, location=0x341, value=3
+> > > > > > [    5.976533] dell_laptop: dell_battery_read_req: buffer.output[1]=4
+> > > > > > [    5.976538] dell_laptop: dell_battery_init: BAT_PRI_AC_MODE_TOKEN value: 4
+> > > > > > [    5.976540] dell_laptop: dell_battery_read_req: token requested: 0x342, tokenID=0x342, location=0x342, value=4
+> > > > > > [    5.981013] dell_laptop: dell_battery_read_req: buffer.output[1]=4
+> > > > > > [    5.981018] dell_laptop: dell_battery_init: BAT_ADAPTIVE_MODE_TOKEN value: 4
+> > > > > > [    5.981020] dell_laptop: dell_battery_read_req: token requested: 0x346, tokenID=0x346, location=0x346, value=1
+> > > > > > [    5.983474] dell_laptop: dell_battery_read_req: buffer.output[1]=4
+> > > > > > [    5.983479] dell_laptop: dell_battery_init: BAT_STANDARD_MODE_TOKEN value: 4
+> > > > > > [    5.983481] dell_laptop: dell_battery_read_req: token requested: 0x347, tokenID=0x347, location=0x347, value=2
+> > > > > > [    5.985881] dell_laptop: dell_battery_read_req: buffer.output[1]=4
+> > > > > > [    5.985885] dell_laptop: dell_battery_init: BAT_EXPRESS_MODE_TOKEN value: 4
+> > > > > > [    5.985887] dell_laptop: dell_battery_read_req: token requested: 0x349, tokenID=0x349, location=0x349, value=65535
+> > > > > > [    5.988332] dell_laptop: dell_battery_read_req: buffer.output[1]=65
+> > > > > > [    5.988337] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_START value: 65
+> > > > > > [    5.988339] dell_laptop: dell_battery_read_req: token requested: 0x34a, tokenID=0x34a, location=0x34a, value=65535
+> > > > > > [    5.990769] dell_laptop: dell_battery_read_req: buffer.output[1]=85
+> > > > > > [    5.990774] dell_laptop: dell_battery_init: BAT_CUSTOM_CHARGE_END value: 85
+> > > > > > 
+> > > > > > 
+> > > > > > 
+> > > > > > -- 
+> > > > > > I'm available for contract & employment work, see:
+> > > > > > https://spindle.queued.net/~dilinger/resume-tech.pdf    
+> > > > > 
+> > > > > Nice! So it is exactly same as API of keyboard backlight tokens. Thanks.
+> > > > > 
+> > > > > In dell_battery_write_req function you can drop second "val" argument
+> > > > > and replace it by token->value. So the dell_fill_request call in that
+> > > > > function would look like:
+> > > > > 
+> > > > >     dell_fill_request(&buffer, token->location, token->value, 0, 0);  
+> > > > 
+> > > > 
+> > > > Well, except that we use dell_battery_write_req for writing the charge
+> > > > start/end values as well (in dell_battery_custom_set). Those can't be
+> > > > obtained from token->value.
+> > > > 
+> > > > We could have two separate functions for that, or set 'val' to a
+> > > > sentinel value (0) that, if detected, we set val=token->value. I'm
+> > > > still not really understanding the point, though.  
+> > > 
+> > > I think that two separate functions would be needed. One which set
+> > > battery mode (enum) and which set custom thresholds.
+> > >   
+> > > > > 
+> > > > > And then you can mimic the usage as it is done in keyboard backlight
+> > > > > functions (kbd_get_first_active_token_bit).
+> > > > > 
+> > > > > If you do not know what I mean then later (today or tomorrow) I can
+> > > > > write code example of the functionality.  
+> > > > 
+> > > > Sorry, I still don't understand what the goal is here. Is the goal to
+> > > > not pull from a random location to determine the current charging mode?
+> > > > Is the goal to determine what charging modes are currently supported
+> > > > (and if so, I don't see how)? Is the goal to avoid having the kernel
+> > > > hardcode a list of enums that the BIOS might have different values
+> > > > for? Is the goal to merge the keyboard backlight and battery setting
+> > > > functions?  
+> > > 
+> > > Avoid having the kernel hardcoded values for enums which SMBIOS
+> > > provides. Future (or maybe also older) modes may have different enum
+> > > values. So we should use what SMBIOS provides to us.
+> > > 
+> > > Also to determinate which charging modes are supported by the current HW
+> > > configuration. If BIOS does not support some mode or does not allow to
+> > > set some mode, kernel should not export this as supported option.
+> > > 
+> > > If you do not see how to do it, please give me some time, I will send
+> > > you an example. Going to look at it right now.
+> > > 
+> > > Merging keyboard backlight and battery code is bonus, not required.
+> > > But I thought that it would be easier to build a new code from common
+> > > blocks.  
+> > 
+> > Here is very quick & hacky example of what I mean (completely untested):
+> > 
+> > --- dell-laptop.c
+> > +++ dell-laptop.c
+> > @@ -353,6 +353,105 @@ static const struct dmi_system_id dell_q
+> >  	{ }
+> >  };
+> >  
+> > +static int dell_read_token_value(u16 tokenid, u32 *value)
+> > +{
+> > +	struct calling_interface_buffer buffer;
+> > +	struct calling_interface_token *token;
+> > +	int ret;
+> > +
+> > +	token = dell_smbios_find_token(tokenid);
+> > +	if (!token)
+> > +		return -ENODEV;
+> > +
+> > +	dell_fill_request(&buffer, token->location, 0, 0, 0);
+> > +	ret = dell_send_request(&buffer, CLASS_TOKEN_READ, SELECT_TOKEN_STD);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	*value = buffer.output[1];
+> > +	return 0;
+> > +}
+> > +
+> > +static int dell_write_token_value(u16 tokenid, u32 value)
+> > +{
+> > +	struct calling_interface_buffer buffer;
+> > +	struct calling_interface_token *token;
+> > +
+> > +	token = dell_smbios_find_token(type);
+> > +	if (!token)
+> > +		return -ENODEV;
+> > +
+> > +	dell_fill_request(&buffer, token->location, value, 0, 0);
+> > +	return dell_send_request(&buffer, CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
+> > +}
+> > +
+> 
+> I did things a bit differently here. I created a function
+> dell_send_request_by_token_loc() that is available to be reused by all
+> the code that sends packets to token->location. This is available for
+> kbd_{g,s}et_token_bit(), micmute_led_set(), and mute_led_set() to use,
+> but I'd rather do that in a separate patch.
+
+Ok, nice thing.
+
+> +static int dell_send_request_by_token_loc(struct calling_interface_buffer *buffer,
+> +                                         u16 class, u16 select, int type,
+> +                                         int val)
+> +{
+> +       struct calling_interface_token *token;
+> +
+> +       token = dell_smbios_find_token(type);
+> +       if (!token)
+> +               return -ENODEV;
+> +
+> +       if (val <= 0)
+
+I would be rather very careful here. Zero value can be valid value for
+some future call. It would be better to pass -1 or something like that.
+
+And IIRC dell_fill_request take u32 as val. So maybe it would be better
+to change "int val" to "u32 val" and interpret (u32)-1 as enum value
+from token->value?
+
+> +               val = token->value;
+> +
+> +       dell_fill_request(buffer, token->location, val, 0, 0);
+> +       return dell_send_request(buffer, class, select);
+> +}
+> +
+> +static int dell_battery_set_mode(const int type)
+> +{
+> +       struct calling_interface_buffer buffer;
+> +
+> +       /* 0 means use the value from the token */
+> +       return dell_send_request_by_token_loc(&buffer, CLASS_TOKEN_WRITE,
+> +                       SELECT_TOKEN_STD, type, 0);
+> +}
+> +
+> +static int dell_battery_read(const int type)
+> +{
+> +       struct calling_interface_buffer buffer;
+> +       int err;
+> +
+> +       err = dell_send_request_by_token_loc(&buffer, CLASS_TOKEN_READ,
+> +                       SELECT_TOKEN_STD, type, 0);
+> +       if (err)
+> +               return err;
+> +
+> +       return buffer.output[1];
+> +}
+> 
+> 
+> 
+> > +static int dell_is_enum_token_active(u16 tokenid)
+> > +{
+> > +	struct calling_interface_buffer buffer;
+> > +	struct calling_interface_token *token;
+> > +	int ret;
+> > +
+> > +	token = dell_smbios_find_token(tokenid);
+> > +	if (!token)
+> > +		return -EINVAL;
+> > +
+> > +	if (token->value == (u16)-1)
+> > +		return -EINVAL;
+> > +
+> > +	dell_fill_request(&buffer, token->location, 0, 0, 0);
+> > +	ret = dell_send_request(&buffer, CLASS_TOKEN_READ, SELECT_TOKEN_STD);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	return (buffer.output[1] == token->value);
+> > +}
+> > +
+> 
+> Okay, I incorporated this, but using the above helper functions:
+> 
+> +static bool dell_battery_mode_is_active(const int type)
+> +{
+> +       struct calling_interface_token *token;
+> +
+> +       token = dell_smbios_find_token(type);
+> +       if (!token)
+> +               return false;
+> +
+> +       return token->value == dell_battery_read(type);
+> +}
+> 
+> It will look up the token twice, but this only happens once on it
+> (and I'm realizing now that it can be marked __init).
+
+Ok. Anyway if you are touching kbd code, exactly same function would be
+required for it.
+
+> 
+> > +static int dell_activate_enum_token(u16 tokenid)
+> > +{
+> > +	struct calling_interface_buffer buffer;
+> > +	struct calling_interface_token *token;
+> > +	int ret;
+> > +
+> > +	token = dell_smbios_find_token(tokenid);
+> > +	if (!token)
+> > +		return -EINVAL;
+> > +
+> > +	if (token->value == (u16)-1)
+> > +		return -EINVAL;
+> > +
+> > +	dell_fill_request(&buffer, token->location, token->value, 0, 0);
+> > +	return dell_send_request(&buffer, CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
+> > +}
+> > +
+> > +static u32 dell_get_supported_enum_tokens(const u16 *tokenids, u32 count)
+> > +{
+> > +	u32 supported_mask = 0;
+> > +	u32 i;
+> > +
+> > +	for (i = 0; i < count; i++) {
+> > +		if (dell_smbios_find_token(tokenids[i]))
+> > +			supported_mask |= BIT(i);
+> > +	}
+> > +
+> > +	return supported_mask;
+> > +}
+> > +
+> > +static int dell_get_active_enum_token(const u16 *tokenids, u32 count, u32 supported_mask)
+> > +{
+> > +	int ret;
+> > +	u32 i;
+> > +
+> > +	for (i = 0; i < count; i++) {
+> > +		if (!(supported_mask & BIT(i)))
+> > +			continue;
+> > +		ret = dell_is_enum_token_active(tokenids[i]);
+> > +		if (ret == 1)
+> > +			return i;
+> > +	}
+> > +
+> > +	return -EINVAL;
+> > +}
+> 
+> 
+> Thanks, I incorporated and tested this code; though it only runs once
+> during init, because I'm keeping the battery_cur_mode variable (see
+> next section).
+> 
+> +static u32 __init battery_get_supported_modes(void)
+> +{
+> +       u32 modes = 0;
+> +       int i;
+> +
+> +       for (i = 0; i < ARRAY_SIZE(battery_modes); i++) {
+> +               if (dell_smbios_find_token(battery_modes[i].token))
+> +                       modes |= BIT(i);
+> +       }
+> +
+> +       return modes;
+> +}
+> +
+> +static int __init dell_battery_find_charging_mode(void)
+> +{
+> +       int i;
+> +
+> +       battery_supported_modes = battery_get_supported_modes();
+> +       for (i = 0; i < ARRAY_SIZE(battery_modes); i++) {
+> +               if (!(battery_supported_modes & BIT(i)))
+> +                       continue;
+> +               if (dell_battery_mode_is_active(battery_modes[i].token))
+> +                       return battery_modes[i].token;
+> +       }
+> +
+> +       return 0;
+> +}
+> 
+> 
+> 
+> > +
+> >  /*
+> >   * Derived from information in smbios-wireless-ctl:
+> >   *
+> > @@ -2183,6 +2282,144 @@ static struct led_classdev mute_led_cdev
+> >  	.default_trigger = "audio-mute",
+> >  };
+> >  
+> > +static const u16 battery_mode_tokens[] = {
+> > +	BAT_STANDARD_MODE_TOKEN,
+> > +	BAT_EXPRESS_MODE_TOKEN,
+> > +	BAT_PRI_AC_MODE_TOKEN,
+> > +	BAT_ADAPTIVE_MODE_TOKEN,
+> > +	BAT_CUSTOM_MODE_TOKEN,
+> > +};
+> > +
+> > +static const char * const battery_mode_names[] = {
+> > +	"standard",
+> > +	"express",
+> > +	"primarily_ac",
+> > +	"adaptive",
+> > +	"custom",
+> > +};
+> > +
+> > +static u32 battery_mode_token_mask;
+> > +
+> 
+> I merged the token and name lists. Also, is there any particular reason
+> you dropped the current mode, preferring to read it from SMBIOS every time
+> in the _show() callback?
+
+Yes, there is one important reason: You can change current mode from
+userspace. We had this problem also with other functionality in driver.
+So caching is not a good idea. There are/were enterprise Dell CCTK tools
+for managing configuration of Dell machines. And usage of these tools
+can break kernel driver.
+
+> +static const struct {
+> +       int token;
+> +       const char *label;
+> +} battery_modes[] = {
+> +       { BAT_STANDARD_MODE_TOKEN, "standard" },
+> +       { BAT_EXPRESS_MODE_TOKEN, "express" },
+> +       { BAT_PRI_AC_MODE_TOKEN, "primarily_ac" },
+> +       { BAT_ADAPTIVE_MODE_TOKEN, "adaptive" },
+> +       { BAT_CUSTOM_MODE_TOKEN, "custom" },
+> +};
+> +static u32 battery_supported_modes;
+> +static int battery_cur_mode;
+> +
+> 
+> 
+> 
+> > +static int dell_battery_read_custom_charge(u16 token)
+> > +{
+> > +	u32 value;
+> > +	int ret;
+> > +
+> > +	ret = dell_read_token_value(token, &value);
+> > +	if (ret)
+> > +		return ret;
+> > +	if (value > 100)
+> > +		return -EINVAL;
+> > +	return value;
+> > +}
+> > +
+> > +#define CHARGE_START_MIN	50
+> > +#define CHARGE_START_MAX	95
+> > +#define CHARGE_END_MIN		55
+> > +#define CHARGE_END_MAX		100
+> > +#define CHARGE_MIN_DIFF		5
+> > +
+> > +static int dell_battery_set_custom_charge_start(int val)
+> > +{
+> > +	int end;
+> > +
+> > +	if (val < CHARGE_START_MIN)
+> > +		val = CHARGE_START_MIN;
+> > +	else if (val > CHARGE_START_MAX)
+> > +		val = CHARGE_START_MAX;
+> > +
+> > +	end = dell_battery_get_custom_charge(BAT_CUSTOM_CHARGE_END);
+> > +	if (end < 0)
+> > +		return end;
+> > +
+> > +	if (end - val < CHARGE_MIN_DIFF)
+> > +		val = end - CHARGE_MIN_DIFF;
+> > +
+> > +	return dell_write_token_value(BAT_CUSTOM_CHARGE_START, val);
+> > +}
+> > +
+> > +static int dell_battery_set_custom_charge_end(int val)
+> > +{
+> > +	int start;
+> > +
+> > +	if (val < CHARGE_END_MIN)
+> > +		val = CHARGE_END_MIN;
+> > +	else if (val > CHARGE_END_MAX)
+> > +		val = CHARGE_END_MAX;
+> > +
+> > +	start = dell_battery_get_custom_charge(BAT_CUSTOM_CHARGE_START);
+> > +	if (start < 0)
+> > +		return start;
+> > +
+> > +	if (val - start < CHARGE_MIN_DIFF)
+> > +		val = start + CHARGE_MIN_DIFF;
+> > +
+> > +	return dell_write_token_value(BAT_CUSTOM_CHARGE_END, val);
+> > +}
+> > +
+> 
+> 
+> Good call, I split apart the start/end functions. It was originally
+> much smaller and grew over time.  :)
+> 
+> 
+> > +static ssize_t charge_type_show(struct device *dev,
+> > +				struct device_attribute *attr,
+> > +				char *buf)
+> > +{
+> > +	int active;
+> > +	ssize_t count;
+> > +
+> > +	active = dell_get_active_enum_token(battery_mode_tokens, ARRAY_SIZE(battery_mode_tokens), battery_mode_token_mask);
+> > +	if (active < 0)
+> > +		return ret;
+> > +
+> > +	for (count = 0, i = 0; i < ARRAY_SIZE(battery_mode_names); i++) {
+> > +		if (!(BIT(i) & battery_mode_token_mask))
+> > +			continue;
+> > +		count += sysfs_emit_at(buf, count, i == active ? "[%s] " : "%s ", battery_mode_names[mode]);
+> > +	}
+> > +
+> > +	/* convert the last space to a newline */
+> > +	/* battery_mode_names is non-empty and battery_mode_token_mask is non-zero, so count is also non-zero */
+> > +	count--;
+> > +	count += sysfs_emit_at(buf, count, "\n");
+> > +
+> > +	return count;
+> > +}
+> > +
+> 
+> Again, I personally prefer keeping the currently active charging mode
+> around as a variable:
+> 
+> 
+> +static ssize_t charge_type_show(struct device *dev,
+> +               struct device_attribute *attr,
+> +               char *buf)
+> +{
+> +       ssize_t count = 0;
+> +       int i;
+> +
+> +       for (i = 0; i < ARRAY_SIZE(battery_modes); i++) {
+> +               if (!(battery_supported_modes & BIT(i)))
+> +                       continue;
+> +
+> +               count += sysfs_emit_at(buf, count,
+> +                               battery_modes[i].token == battery_cur_mode ? "[%s] " : "%s ",
+> +                               battery_modes[i].label);
+> +       }
+> +
+> +       /* convert the last space to a newline */
+> +       if (count > 0)
+> +               count--;
+> +       count += sysfs_emit_at(buf, count, "\n");
+> +
+> +       return count;
+> +}
+> 
+> 
+> > +static ssize_t charge_type_store(struct device *dev,
+> > +				struct device_attribute *attr,
+> > +				const char *buf, size_t size)
+> > +{
+> > +	size_t i;
+> > +	int ret;
+> > +
+> > +	for (i = 0; i < ARRAY_SIZE(battery_mode_names); i++) {
+> > +		if (sysfs_streq(battery_mode_names[i], buf))
+> > +			break;
+> > +	}
+> > +
+> > +	if (i >= ARRAY_SIZE(battery_mode_names))
+> > +		return -EINVAL;
+> > +
+> > +	if (!(BIT(i) & battery_mode_token_mask))
+> > +		return -EINVAL;
+> > +
+> > +	ret = dell_activate_enum_token(battery_mode_tokens[i]);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	return size;
+> > +}
+> > +
+> > +static void __init dell_battery_init(struct device *dev)
+> > +{
+> > +	battery_mode_token_mask = dell_get_supported_enum_tokens(battery_mode_tokens, ARRAY_SIZE(battery_mode_tokens));
+> > +	if (battery_mode_token_mask != 0)
+> > +		battery_hook_register(&dell_battery_hook);
+> > +}
+> > +
+> > +static void __exit dell_battery_exit(void)
+> > +{
+> > +	if (battery_mode_token_mask != 0)
+> > +		battery_hook_unregister(&dell_battery_hook);
+> > +}
+> > +
+> >  static int __init dell_init(void)
+> >  {
+> >  	struct calling_interface_token *token;
+> 
+> 
+> Let me know your thoughts, and I can send a V2 patch if you're okay
+> with the code snippets I sent.
+> 
+> -- 
+> I'm available for contract & employment work, see:
+> https://spindle.queued.net/~dilinger/resume-tech.pdf
 
