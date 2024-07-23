@@ -1,166 +1,203 @@
-Return-Path: <linux-kernel+bounces-260307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A30993A607
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:31:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE5F293A594
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315562842BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:31:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AEB2283267
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4865158A03;
-	Tue, 23 Jul 2024 18:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA7215886B;
+	Tue, 23 Jul 2024 18:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Uqj5nVBU"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FN42yMv0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBB013D24D
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 18:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1072A1586CB;
+	Tue, 23 Jul 2024 18:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721759454; cv=none; b=WacIkJdaC3fLDHVur6zBZz2lG0Qt/q1js4dk2li7Rp+mfjZ3EuffNX9p+h03evJPVwD5uax7JYjrSSA4F3i1C8UnpZ2f59NX5UY5s07MPt72mqcpBgrmBhIEL87oqL5I6hrfjA+boLt75zaVyz3+0V6/t7T7OumcRe2z4N6heZo=
+	t=1721759156; cv=none; b=tqfW/vW2uNfivQjdiL9IFzS5nAH/DDaKLHlbASv/Bh5YgicnnXMRt/ZIFR0PXqxZoO68M1f3AKmF9DH+Rj3R/aTbLQLSmpD/arn2LxUgi2yqGqDniRmC1B0x4V2HEO8eTfiCzHmAc3hZG/25rQ9PkguBdXVW+J/vIcrJ5d509TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721759454; c=relaxed/simple;
-	bh=Pp3VZCk6dq4+5Vpj+kfpnKF3kGHUtiSO1r77QnLX328=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WSlhbGxFJk0uPwiiRYa5guESGc1qftGucV5suJ6exibRuInzZXvJGfCgkUwrI0WKoGQoF8xKIM2jYcZESKc+vPRmVO3vUGavdivfWTQtHKPP7bwJjxc2tjLi8EhQDmQlu3KIQq3EAsLS9r0KFii2uvBAJMZD8cKQigRcxhTlBzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Uqj5nVBU; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2eeb1ba0468so79413431fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:30:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1721759450; x=1722364250; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hbXsSOOY+gKi86u1NQNhucpEoLXztu3BNQ9K2X48C04=;
-        b=Uqj5nVBU7Bn/TNuydEGRewUhk6xYLTh7bh/+y/BedcKtRNX1sL0f3HIb5e6PvUNcIr
-         O72G47BuYMAClR2SaDrawb+rFR8z1PxgxrJUshYYo2ApixOmfkZXwk0s+eEf3lkzWtyE
-         QY4V+dYqGi8cBu5ctuePXlSTECFICtSq5iYOk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721759450; x=1722364250;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hbXsSOOY+gKi86u1NQNhucpEoLXztu3BNQ9K2X48C04=;
-        b=oEDphvntR/SHQHdbHWJkOOrpxQyQ3XXi6KGk87U7qgq93E9E+cXPRgw4hedqTaN2jJ
-         5NfgibfjM+KmLTk1qYYaY2erB8CSFUaCIonLs2vJLr7T98jjabwgJptIdz5jEXfsEymG
-         w4awNLlYOF1Y4tkFzu/Xa9n8J+/Lo4EUEbrR4xxcn28+xWvPpT19vU77FjlRuWUW82X/
-         eD4mAJrfmHv5VMbm/tXoSVzqPSpJdxeFUROGxwCEfJvHlw8jqK9YxfgSYtnO8UA6TkOP
-         e94JdAK1IGO22PrCAy00q00FjnJcqLXkfPY6mWnNc/R7pEHsWhejmA+GpyMBahaHTvbd
-         QSbg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+sG1EtQLcXHHuxJlq1J2hP3O8OqaiP56YRMn3ac4ubBzcCE55CLc6lvzo+qL8k3HbNijht1VF6w8t3Bh3dDGEAstTHBxXquZWMGgS
-X-Gm-Message-State: AOJu0YzU1Xx52GOUZQwEZVCiyC2KuU3z5dRhXbpbwt2LKpAGdhrj9qMh
-	ROefVvKxtw0UjrSGUcxdIU6KPSoaPifr0UT6QUHCLbJv3gaoNoDT2WD2/uXyAz36JVL4HPorjXk
-	wsyQ=
-X-Google-Smtp-Source: AGHT+IGUMCezrruOXOIdfIVHcA+p08MkKy7xt8AeEkZ1M02e2cSix1QfCZMNZT6XpkUIjii99BgRDQ==
-X-Received: by 2002:a05:6512:3ca1:b0:52e:9b92:4999 with SMTP id 2adb3069b0e04-52fcda17d15mr351212e87.2.1721759450486;
-        Tue, 23 Jul 2024 11:30:50 -0700 (PDT)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52f00f52ab3sm1060708e87.184.2024.07.23.11.30.48
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 11:30:49 -0700 (PDT)
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52f025bc147so3855340e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:30:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVLKrOydC8WIT7gIhr1M0QpmqRngCR3KcHIUr4+dGpIupF1+CfIIJ7rGtmdBllhMhFsxdjNZ8xSSTirTXOHLo4vTJBNLZt6XxyM9wf9
-X-Received: by 2002:a05:6512:3d26:b0:516:d219:3779 with SMTP id
- 2adb3069b0e04-52fcda6533cmr227963e87.58.1721759448531; Tue, 23 Jul 2024
- 11:30:48 -0700 (PDT)
+	s=arc-20240116; t=1721759156; c=relaxed/simple;
+	bh=x9z+uZAhMiXilQAQxen4cFx/yp8mqqLvfg7ImTRBxIs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=is9pWNFjEfRIl6/DTtKn/Ox7J98AdBBDG+yc4cWaak5A7+CHlgrf9Rgi0YP+EfK95c5Y3TC+raxC624I2Gc3wHZUtBq+SE/aO800qhohx23q5LgcIE05IK2YZPpK1r2aRbjzWOW1EWT6NSsUxmJT3RpAugCEjRn3VVUCqQ0/TKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FN42yMv0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3571C4AF09;
+	Tue, 23 Jul 2024 18:25:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721759155;
+	bh=x9z+uZAhMiXilQAQxen4cFx/yp8mqqLvfg7ImTRBxIs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FN42yMv0ejndL9iA9HGkMimmU71cfVL89mj8cvaumsBH9Od52CgOhe3iiiPprZrh/
+	 YW4mbKEGAFkaRLqUcrWPf9kPceBWwApPxoYyDZd3NGltTSPkAeMP7Zw8w9zYsK56p7
+	 njh7wJspRpW6k5HE2p0C7XYDYC4oWNZYWqylg6PeNvS81WEFaLDW+kEkHAZzUy1wa5
+	 OXQpcI4cjJ5dpkrZbDodsvCJPNG030YuXCdgdsKfVqgC+yy7QBbzCc9dmdVjPfI0H3
+	 CzFdvcUtV4AOz8GKOnCd4D/CRI1MDxW5Sjd3KnvR4N7+bynQupRrJRmK3gSMV5I2Li
+	 2BH2S4JCwMfgw==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Andrew Davis <afd@ti.com>,
+	Richard Maina <quic_rmaina@quicinc.com>,
+	Aleksandr Mishin <amishin@t-argos.ru>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chris Lew <quic_clew@quicinc.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Garrett Giordano <ggiordano@phytec.com>,
+	Hari Nagalla <hnagalla@ti.com>,
+	Jason Chen <Jason-ch.Chen@mediatek.com>,
+	=?UTF-8?q?N=C3=ADcolas=20F=20=2E=20R=20=2E=20A=20=2E=20Prado?= <nfraprado@collabora.com>,
+	Richard Genoud <richard.genoud@bootlin.com>,
+	Tanmay Shah <tanmay.shah@amd.com>
+Subject: [GIT PULL] remoteproc updates for v6.11
+Date: Tue, 23 Jul 2024 11:30:41 -0700
+Message-ID: <20240723183042.3696037-1-andersson@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240723171753.739971-1-adrian.ratiu@collabora.com>
-In-Reply-To: <20240723171753.739971-1-adrian.ratiu@collabora.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 23 Jul 2024 11:30:31 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiJL59WxvyHOuz2ChW+Vi1PTRKJ+w+9E8d1f4QZs9UFcg@mail.gmail.com>
-Message-ID: <CAHk-=wiJL59WxvyHOuz2ChW+Vi1PTRKJ+w+9E8d1f4QZs9UFcg@mail.gmail.com>
-Subject: Re: [PATCH] proc: add config & param to block forcing mem writes
-To: Adrian Ratiu <adrian.ratiu@collabora.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	kernel@collabora.com, gbiv@google.com, inglorion@google.com, 
-	ajordanr@google.com, Doug Anderson <dianders@chromium.org>, Jeff Xu <jeffxu@google.com>, 
-	Jann Horn <jannh@google.com>, Kees Cook <kees@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 23 Jul 2024 at 10:18, Adrian Ratiu <adrian.ratiu@collabora.com> wrote:
->
-> This adds a Kconfig option and boot param to allow removing
-> the FOLL_FORCE flag from /proc/pid/mem write calls because
-> it can be abused.
 
-Ack, this looks much simpler.
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
-That said, I think this can be prettied up some more:
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
 
-> +enum proc_mem_force_state {
-> +       PROC_MEM_FORCE_ALWAYS,
-> +       PROC_MEM_FORCE_PTRACE,
-> +       PROC_MEM_FORCE_NEVER
-> +};
-> +
-> +#if defined(CONFIG_PROC_MEM_ALWAYS_FORCE)
-> +static enum proc_mem_force_state proc_mem_force_override __ro_after_init = PROC_MEM_FORCE_ALWAYS;
-> +#elif defined(CONFIG_PROC_MEM_FORCE_PTRACE)
-> +static enum proc_mem_force_state proc_mem_force_override __ro_after_init = PROC_MEM_FORCE_PTRACE;
-> +#else
-> +static enum proc_mem_force_state proc_mem_force_override __ro_after_init = PROC_MEM_FORCE_NEVER;
-> +#endif
+are available in the Git repository at:
 
-I think instead of that forest of #if defined(), we can just do
+  https://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git tags/rproc-v6.11
 
-  enum proc_mem_force {
-        PROC_MEM_FORCE_ALWAYS,
-        PROC_MEM_FORCE_PTRACE,
-        PROC_MEM_FORCE_NEVER
-  };
+for you to fetch changes up to 19cb6058620620e68f1a9aed99393be5c3629db4:
 
-  static enum proc_mem_force proc_mem_force_override __ro_after_init =
-      IS_ENABLED(CONFIG_PROC_MEM_ALWAYS_FORCE) ? PROC_MEM_FORCE_ALWAYS :
-      IS_ENABLED(CONFIG_PROC_MEM_FORCE_PTRACE) ? PROC_MEM_FORCE_PTRACE :
-      PROC_MEM_FORCE_NEVER;
+  remoteproc: mediatek: Increase MT8188/MT8195 SCP core0 DRAM size (2024-07-08 09:57:16 -0600)
 
-I also really thought we had some parser helper for this pattern:
+----------------------------------------------------------------
+remoteproc updates for v6.11
 
-> +static int __init early_proc_mem_force_override(char *buf)
-> +{
-> +       if (!buf)
-> +               return -EINVAL;
-> +
-> +       if (strcmp(buf, "always") == 0) {
-> +               proc_mem_force_override = PROC_MEM_FORCE_ALWAYS;
- ....
+The maximum amount of DDR memory used by the Mediatek MT8188/MT8195 SCP
+is increased, to handle new use cases. Handling of optional L1TCM memory
+is made actually optional.
+An optimization is introduced to only clear the unused portion of IPI
+shared buffers, rather than the entire buffer before writing the
+message.
 
-but it turns out we only really "officially" have it for filesystem
-superblock parsing.
+Detection for IPC-only mode in the TI K3 DSP remoteproc driver is
+corrected. The loglevel of a debug print in the same is lowered from
+error.
 
-Oh well. We could do
+Support for attaching to an running remote processor is added to the
+Xilinx R5F.
 
-  #include <linux/fs_parser.h>
- ...
-  struct constant_table proc_mem_force_table[] {
-        { "ptrace", PROC_MEM_FORCE_PTRACE },
-        { "never", PROC_MEM_FORCE_NEVER },
-        { }
-  };
-  ...
-  proc_mem_force_override = lookup_constant(
-        proc_mem_force_table, buf, PROC_MEM_FORCE_NEVER);
+An in-kernel implementation of the Qualcomm "protected domain mapper"
+(aka service registry) service is introduced, to remove the dependency
+on a userspace implementation to detect when the battery monitor and USB
+Type-C port manager becomes available. This is then integrated with the
+Qualcomm remoteproc driver.
 
-but while that looks a bit prettier, the whole "fs_parser.h" thing is
-admittedly odd.
+The Qualcomm PAS remoteproc driver gains support for attempting to bust
+hwspinlocks held by the remote processor when it crashed/stopped.
 
-Anyway, I think the patch is ok, although I also happen to think it
-could be a bit prettier.
+The TI OMAP remoteproc driver is transitioned to use devres helpers for
+various forms of allocations.
 
-            Linus
+Parsing of memory-regions in the i.MX remoteproc driver is improved to
+avoid a NULL pointer dereference if the phandle reference is empty.
+of_node reference counting is corrected in the same.
+
+----------------------------------------------------------------
+Aleksandr Mishin (2):
+      remoteproc: imx_rproc: Skip over memory region when node value is NULL
+      remoteproc: imx_rproc: Fix refcount mistake in imx_rproc_addr_init
+
+Andrew Davis (3):
+      remoteproc: omap: Use devm_rproc_alloc() helper
+      remoteproc: omap: Use devm action to release reserved memory
+      remoteproc: omap: Use devm_rproc_add() helper
+
+AngeloGioacchino Del Regno (1):
+      remoteproc: mediatek: Zero out only remaining bytes of IPI buffer
+
+Bjorn Andersson (2):
+      Merge branch '20240529-hwspinlock-bust-v3-2-c8b924ffa5a2@quicinc.com' into rproc-next
+      Merge branch '20240622-qcom-pd-mapper-v9-0-a84ee3591c8e@linaro.org' of https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux into rproc-next
+
+Chris Lew (1):
+      soc: qcom: smem: Add qcom_smem_bust_hwspin_lock_by_host()
+
+Dmitry Baryshkov (6):
+      soc: qcom: pdr: protect locator_addr with the main mutex
+      soc: qcom: pdr: fix parsing of domains lists
+      soc: qcom: pdr: extract PDR message marshalling data
+      soc: qcom: add pd-mapper implementation
+      remoteproc: qcom: enable in-kernel PD mapper
+      remoteproc: qcom: select AUXILIARY_BUS
+
+Frank Li (1):
+      dt-bindings: remoteproc: imx_rproc: Add minItems for power-domain
+
+Garrett Giordano (1):
+      remoteproc: k3-dsp: Fix log levels where appropriate
+
+Hari Nagalla (1):
+      dt-bindings: remoteproc: k3-dsp: Correct optional sram properties for AM62A SoCs
+
+Jason Chen (1):
+      remoteproc: mediatek: Increase MT8188/MT8195 SCP core0 DRAM size
+
+Nícolas F. R. A. Prado (1):
+      remoteproc: mediatek: Don't attempt to remap l1tcm memory if missing
+
+Richard Genoud (1):
+      remoteproc: k3-r5: Fix IPC-only mode detection
+
+Richard Maina (3):
+      hwspinlock: Introduce hwspin_lock_bust()
+      hwspinlock: qcom: implement bust operation
+      remoteproc: qcom_q6v5_pas: Add hwspinlock bust on stop
+
+Tanmay Shah (1):
+      remoteproc: xlnx: Add attach detach support
+
+ .../bindings/remoteproc/fsl,imx-rproc.yaml         |  15 +
+ .../bindings/remoteproc/ti,k3-dsp-rproc.yaml       |  89 +--
+ Documentation/locking/hwspinlock.rst               |  11 +
+ drivers/hwspinlock/hwspinlock_core.c               |  28 +
+ drivers/hwspinlock/hwspinlock_internal.h           |   3 +
+ drivers/hwspinlock/qcom_hwspinlock.c               |  25 +
+ drivers/remoteproc/Kconfig                         |   1 +
+ drivers/remoteproc/imx_rproc.c                     |  10 +-
+ drivers/remoteproc/mtk_scp.c                       |  23 +-
+ drivers/remoteproc/omap_remoteproc.c               |  46 +-
+ drivers/remoteproc/qcom_common.c                   |  87 +++
+ drivers/remoteproc/qcom_common.h                   |  10 +
+ drivers/remoteproc/qcom_q6v5_adsp.c                |   3 +
+ drivers/remoteproc/qcom_q6v5_mss.c                 |   3 +
+ drivers/remoteproc/qcom_q6v5_pas.c                 |  14 +
+ drivers/remoteproc/qcom_q6v5_wcss.c                |   3 +
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c          |   2 +-
+ drivers/remoteproc/ti_k3_r5_remoteproc.c           |  13 +-
+ drivers/remoteproc/xlnx_r5_remoteproc.c            | 151 +++++
+ drivers/soc/qcom/Kconfig                           |  15 +
+ drivers/soc/qcom/Makefile                          |   2 +
+ drivers/soc/qcom/pdr_interface.c                   |   8 +-
+ drivers/soc/qcom/pdr_internal.h                    | 318 +---------
+ drivers/soc/qcom/qcom_pd_mapper.c                  | 677 +++++++++++++++++++++
+ drivers/soc/qcom/qcom_pdr_msg.c                    | 353 +++++++++++
+ drivers/soc/qcom/smem.c                            |  26 +
+ include/linux/hwspinlock.h                         |   6 +
+ include/linux/soc/qcom/smem.h                      |   2 +
+ 28 files changed, 1562 insertions(+), 382 deletions(-)
+ create mode 100644 drivers/soc/qcom/qcom_pd_mapper.c
+ create mode 100644 drivers/soc/qcom/qcom_pdr_msg.c
 
