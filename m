@@ -1,271 +1,233 @@
-Return-Path: <linux-kernel+bounces-260240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EB9093A4E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:20:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BEC193A4E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA207283DFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:20:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9B421F23BC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46DF158219;
-	Tue, 23 Jul 2024 17:20:19 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2740415821E;
+	Tue, 23 Jul 2024 17:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FkUwrS+M";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="rJsXsQZR"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC63157A74
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 17:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721755219; cv=none; b=MLjfbfxLygtiRwxgpdak1N5pndqag4MZK2w5fDyhwqOLcPoZY/8PxhtKWRjqw3ShMvNlBv8q0Xp3E3ZDNuUVpC09CTMWrQ12Pv8HaRf/kl/6u5KCzS0wJn0p3x9gzxIDI5YGHnd8jz5a7cxUqFf0vYKEKOHY+MQhdkrPUVoI3A0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721755219; c=relaxed/simple;
-	bh=ALzOvwDcXyrngBuUTiANEYPBoeafYpBhWEfp4sHbrfI=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JjZnNml/PVgkEsbV3V68+XuBKaLVHu7TKOLjrQZ8OPy6ttpHDh5X48VaO8uDri9a9mJ1W6mmsGaGBpg/dAUSWqHIgTtdtMGgxy44fuWCR7zSfJafcUE2ILZTWSsPx46tKpyb0CZmbas8kS6pyoexSVVum6DdkPcirQwv82AWNUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WT3kc6v7Wz6K6ps;
-	Wed, 24 Jul 2024 01:18:00 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 48D48140518;
-	Wed, 24 Jul 2024 01:20:08 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 23 Jul
- 2024 18:20:07 +0100
-Date: Tue, 23 Jul 2024 18:20:06 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>, <linuxarm@huawei.com>
-CC: <rafael.j.wysocki@intel.com>, <guohanjun@huawei.com>, <gshan@redhat.com>,
-	<miguel.luis@oracle.com>, <catalin.marinas@arm.com>, Linux List Kernel
- Mailing <linux-kernel@vger.kernel.org>, "Linux regressions mailing list"
-	<regressions@lists.linux.dev>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
-	<hpa@zytor.com>
-Subject: Re: 6.11/regression/bisected - The commit c1385c1f0ba3 caused a new
- possible recursive locking detected warning at computer boot.
-Message-ID: <20240723181728.000026b3@huawei.com>
-In-Reply-To: <20240723112456.000053b3@Huawei.com>
-References: <CABXGCsPvqBfL5hQDOARwfqasLRJ_eNPBbCngZ257HOe=xbWDkA@mail.gmail.com>
-	<20240723112456.000053b3@Huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955BA14C5A1;
+	Tue, 23 Jul 2024 17:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721755252; cv=fail; b=DSnPlkjk1ea87sVaFg/dncOIumXeit1qqeq0U4m8E7+JWsO+Jy8JOcX3ixNM6OjLnzGP/RMr7BDjC9JXoGpDwK0PakG1PLMlH+EqPWjzMfnrB7/tvFx+q5+lR3+27PeH1kVO82uQi91m2KOhCtg2tFRcq2blAztxKIlRYqKt2ug=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721755252; c=relaxed/simple;
+	bh=8kPMXtsmiN3+sTmh099wcvgnMRxcaYNxzecjJ2zWu/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=dSZH2XBwV0hE8i+APQuDPFAHSgiXUWxknfb+jOkgaKi8wvwgCz4xJOLBjluSjPJxhtE6qip1iXKTtPXl/hW/G9f4tEBA+nWd2wuDFv7xkSlZdj4srUpv+mlM+9FeP9qlOOA/P2NCtFzD+1zzj9UM5FBiOoX2u9feQWsS5nSsMOo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=FkUwrS+M; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=rJsXsQZR; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46NGQV4i023110;
+	Tue, 23 Jul 2024 17:20:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	date:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:mime-version; s=corp-2023-11-20; bh=8kPMXtsmiN3+sTm
+	h099wcvgnMRxcaYNxzecjJ2zWu/I=; b=FkUwrS+MvgRWZTus7ZkYUWXwr5s+qak
+	r5Gv2gK+LuNJobK6rgBO8/c9sKbOJtWnj8q3f1ry9z4LYHuCJ1IGrzS1sTUIbGFu
+	OdaVdHfktdgzWr7sLlLYILsWS2tAOanAypk9iCI3SmFFzNtub11vZAAO4g+JmeU5
+	92oC0llyMWg77Cw0QZKOY1U0JheKIIJJZXFH/oeS3QlKkD3kklaMtNJVXQ93+ktA
+	YfQauAW3lsA4QvMyKogLpJb89C8GxKMWDFsw4ShfEwm5FeUUbC4/Y+pUWsgnV1xw
+	5ZkEioC0tTK/L6jF+/zOzYN1y8aGb9fpY31Mk80zJxebnjtKljJWDVA==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40hft0f64c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 23 Jul 2024 17:20:24 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46NHIdV2040079;
+	Tue, 23 Jul 2024 17:20:22 GMT
+Received: from nam10-mw2-obe.outbound.protection.outlook.com (mail-mw2nam10lp2047.outbound.protection.outlook.com [104.47.55.47])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40h26mrhvw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 23 Jul 2024 17:20:22 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y2YgPL94TjBHxxlDv5sWHOVffPwnlKR+y/mHEr3OBwAJnc2lSweBakIfnImhYusA6SIL5wdcuOZ4SaDSNK7wATpEsag1VT/WailN++5siymCc3HOx9Akw3wUYiUHgcCFrsAmTQUoEk+T4WI2kKuo3v188Ta0xUh3T+rhkIsBGYt8i/m3NRg1wMHi3IJADAt9jGw8geBlUftmKlXtJAoRq5HUsdTI1ZfTDW+B5iMHDqvE9H7Nb60BsRHC2bqAOR+gMuew1oAZe7W5UC1BeHdW3QTs/HwVeSQ3bZF44OTFTbiYMG8/6kf3QwWyd1rp13Uin7XuRHJ7JBjEHxhAOdXuhg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8kPMXtsmiN3+sTmh099wcvgnMRxcaYNxzecjJ2zWu/I=;
+ b=YKhMxu6DHbnx+IS2+makRjPwGclLgZuLe1ea7qj66JfdEEQVfmMGiTzHSpVP158201ZkLzwlyjGpqLt24AlbKPJqBovkb9XG8sqIde8i9rfXyikH1AVNxL1b10pdCIB7nixuQxKeM/LpDxJGljTJJXL3Ss2LCxjf2iU4YBmopTU3OzodlI754XY6KR22rYtlpnqjryBhoYPeO5FTp2Hx6CpYT5b5OJPIfsqHiD8gEO3AUdfwRI+A2BlZIbwF87b5ed4kMoFgKF/X5JE+bRec2oYjTrY9Ha2Sy/XQeZPz6qFUe7yLtXk4TA9cXOGFUDgsHx4Epke/6o0VjATqItCKFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8kPMXtsmiN3+sTmh099wcvgnMRxcaYNxzecjJ2zWu/I=;
+ b=rJsXsQZRbJs2TT82yDz5uoXqLuDATKl0vH2KtxRIk2yltQl0qtdB2vO9MAy0p/A1TBV4XwlCfDfk8r6c5w87JFb2OOZ9lwxBQTvHYIRv4SWRTGxt4d//l6Te8WTSBXuQePw/IRAdDF+jjF/MOzOLv8zRrI5nYH6qtxrElTXdvr0=
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
+ by DM3PR10MB7911.namprd10.prod.outlook.com (2603:10b6:0:1e::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16; Tue, 23 Jul
+ 2024 17:20:19 +0000
+Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
+ ([fe80::4239:cf6f:9caa:940e%6]) with mapi id 15.20.7784.016; Tue, 23 Jul 2024
+ 17:20:19 +0000
+Date: Tue, 23 Jul 2024 18:20:14 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, SeongJae Park <sj@kernel.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>
+Subject: Re: [PATCH v3 0/7] Make core VMA operations internal and testable
+Message-ID: <c1c009dd-1ee3-4615-a8d1-b1971f22a814@lucifer.local>
+References: <cover.1721648367.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1721648367.git.lorenzo.stoakes@oracle.com>
+X-ClientProxiedBy: LO2P265CA0280.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a1::28) To SJ0PR10MB5613.namprd10.prod.outlook.com
+ (2603:10b6:a03:3d0::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|DM3PR10MB7911:EE_
+X-MS-Office365-Filtering-Correlation-Id: 01543917-4a6f-41cc-1e33-08dcab3bba20
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?d76ngoDScQxlyDJD9lSfd0fZ7JN9LnL5v2L7BIUqFUPEOAfNaJY47Hw0EEiH?=
+ =?us-ascii?Q?cXF5jCAqIkiNuP7RqsHIsFCVmlOEruEPjGrbLm5KMNwTvkLfcJG6L9v8JaV6?=
+ =?us-ascii?Q?EEpTG7rJBuu+5GV3ItVfoHdIuX0E0qyjs+B4LgHfOVcksYkcP7Y6l34YAeLz?=
+ =?us-ascii?Q?Gs8li1bFe/eTV9f0BKeTK9dQUZkGTEFbPo2hlb7ZwcRNT6kwWQTEF4YmOl2T?=
+ =?us-ascii?Q?8xSX4k+yHRMcAtB5yqW0bFEX0XeTyl63M9s7e2+pYPv32/SnONPEBTxdLEbA?=
+ =?us-ascii?Q?1QXswyzRSDQBINL0Ale1ypiVLZx/2RAf3WT3wdZSGV4FtfAgsSf2doKIl2rR?=
+ =?us-ascii?Q?KOR/2Jr6tjJsIcfHyFDB0cTob8Idr7c6MK51eZST45cX+CISsAdZs0bmbHHy?=
+ =?us-ascii?Q?SqNj8s93F3oHcLMZi5k134CryXIXYArKx/UtEkMEwj/wxAqTg0o8ctO+2jTN?=
+ =?us-ascii?Q?4jgce6mTAg86SRyg50huYfdDSmym78NfhIOYTRPRD4jAjCps/5zxlVSIVnt6?=
+ =?us-ascii?Q?NrnC6qWO5Cx0TWHWLZBIETUAyPYekImhJWI9Vr/6zgzl7xjoth5I9axEkaoP?=
+ =?us-ascii?Q?EXsQr7U4U6Mx3ef11C2azASOdmsqesORTh/Gkm+Szd0IgJcwjDwisF2KTfQU?=
+ =?us-ascii?Q?KYwTeL5uzW/UMLorNngHrVdyDcB4ziAQ6BagYa080YmFr/C7bikee4Fon+IJ?=
+ =?us-ascii?Q?frdVdEbYvRPRy3cfzzLpLo01dOq0hNKpP3/AiuCn9T8PRE/6JmLJ00WlcmB2?=
+ =?us-ascii?Q?Wjrzg2w15KGUNpvEJo9F1j6Gfm1e6NIJ/I8dYK5YgSYhxDWKEGf52fYKAHq9?=
+ =?us-ascii?Q?vPpaNRgZDJ5Dap0YZILcBopR0mHwV3qMRz3qPjBV/EIWQF/ZOrttJW+ri1dY?=
+ =?us-ascii?Q?dHIvf2/pfQJwGNC2gFrfKJeNQBfcOdWW22guFt7ZRfc7oTUxZSj0sevHOE4g?=
+ =?us-ascii?Q?lGrvZzshWjHPKP3j2HwK6jRE1cAqZPzmErGZOYotwS7rj6HgaEX63LSQmZn9?=
+ =?us-ascii?Q?FjmbSP8gxDf3aOZKA+GSR2Ux2eN9XClLxAAUzyONYldn1IeHUz/b2jFtdOeQ?=
+ =?us-ascii?Q?l6JtDV8oRPa+H2mTLM8eEebP/Qg3xk7QXUBzUMtRXmAi6X6vZrzzlBBfAQg1?=
+ =?us-ascii?Q?H75nARmPBVDn6x19lKVV9/1moClgMvGhZBjl9AAxfsfYGuE060o2KFBrAJ/6?=
+ =?us-ascii?Q?ZC/ptfqg+sjORuE3v/u9ULVNP61jV2mnq+1/uXO60zRZH+7ziyaQml6/2hYa?=
+ =?us-ascii?Q?JENPDlKx5HtmRQjQMmi9ApK6FGHkKv8Y7iVQ/2fZ+NYFKopHq4sYIzjzpnX6?=
+ =?us-ascii?Q?CWdcxEIYgjicj0Cp58Vci0HhwGDPw6GezHeTcVpxgssArw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?FxjQo6BhEGMuPOotcbmhUV5welsFl7K2Dm3e2lkcVdBEv9DBIAAZFySOrFRe?=
+ =?us-ascii?Q?xxdN7sWkPc8o25wU7yrNRpprcTxT1jPCueoCWzn6nfqMre8UdE08Ya031nNz?=
+ =?us-ascii?Q?rHrIjXebLqVsyeNj8hNeDJotcQCMhsF1itHnhq8B8EBhSOqRJyuwHvVZy+N6?=
+ =?us-ascii?Q?DafhijhmDD8m1aoMicAqrGQgMBPISzyprfJX9GDLgIuyzCAMTjA99el0lhp7?=
+ =?us-ascii?Q?CNetLCXUmATeGhxQMUzIvIyC6tg8NKhTOsSQ4ZEll2x5HyDAQ0UcOqaqrzia?=
+ =?us-ascii?Q?jvzVFb2/jFyvrGCywHYNaA76FigrfJITgbLH2pp44YxU6bClV1l+k/NLarqv?=
+ =?us-ascii?Q?Xo1+1/CADDskHcGHdN52U0MblizCCQGAqIZOMCzS6FZ5G+q4SNvZTYdq6LYT?=
+ =?us-ascii?Q?tJNSoZH6xvD+IkDNkRoe4u3wQXoyM5D7qXHytLW2hr3T5n4JQZYltSdijsBW?=
+ =?us-ascii?Q?2uMA5uZN3/KJfKYbrpwls99iOBXAnMvozidMbgx5IbDLJoxtgGcSJC5oPP7J?=
+ =?us-ascii?Q?cEa2ceGQeSJNCcw3kFFEonVCbBG6Rizyj7puo2nYQwjjZ6YCoupnFznwFls0?=
+ =?us-ascii?Q?Wj81f/SiRR7jP183eOjpew17aGPXDx/hlQu6r89Gs00E3gOqVdbJA2QdpLZG?=
+ =?us-ascii?Q?INh11l5uRQ6WNXjVy1vjY4bfQxTMi03TC1/sxMVrjvLxoQqZxJz5zlbtjYNm?=
+ =?us-ascii?Q?RLRJq2MXL3SfCiJ3l9mVsZ5uftz2Mbos47oX5//R21BR7xFk1xX2Owm7uwco?=
+ =?us-ascii?Q?q+Zhsdt6Kgp2tWbsAIR6M+RmMiuldbHgG1DQItDiKbx6z919NkZubtJk+NXm?=
+ =?us-ascii?Q?NvIhqdESwiiLTR0YJv/kVHLYes2j/4W5F5WLJgl3KGSisMNqCq/UzXbtLQ2u?=
+ =?us-ascii?Q?VVTJCICTdhfaRkNv0OeTpQ32vWp6ucVf7wbv+vT4dbdGrX9zUOM8ASRkHfQd?=
+ =?us-ascii?Q?vbY3Cn1WW/SPwsMX8jl5dHj4RsIAI4I9oTmRKSt/QaTPiwBosdLi16Nu0M16?=
+ =?us-ascii?Q?6KiZFjyXLJnvLndskJkjkWYYPaBnyn+jFbtQd1ld0GuCw6ve8sYX88YzhB0y?=
+ =?us-ascii?Q?gloP1Ziv+APBlUURpptHxZuzs89aHkzXg4P5YUP/fY0UHNfTo/csGnmZfhGc?=
+ =?us-ascii?Q?KUS8zlQNoPAazHytZ3CF/JU0bFaW5MAah+wguqq1NgiZ+WXqOi4htWUgUiPc?=
+ =?us-ascii?Q?GgjEm6y+tp06bvWUWm9I0hrsGJohTeHLZ+rixtirAirQUOma0XwBVxsxR5M+?=
+ =?us-ascii?Q?EQ2pXY4oyqYPoWBOBZlusXH3RSNKs88rOJidmkL3KZsgYtMYexLNhPv8JEaA?=
+ =?us-ascii?Q?7MM3Rqiy9hBe77tJZ+Ftu/K7+G0wzN6+K+9JHEsi1ow1uj0aKyAxzgh212OE?=
+ =?us-ascii?Q?P0kHfhhj2Y8oqor5lXvpZ3Rmvl/OGETepjGRrlYxFRCAVR9heEl84XDTvkBh?=
+ =?us-ascii?Q?CW2oD4VaUpFDm9lH8Xg3O8elalpWgvuAf8zFwb2lkwikmEUZOqWcqwgYjetH?=
+ =?us-ascii?Q?IJRGXNqrCSZmtDeua68JtT25uaAoh4EE5p3sAEEThv27Wa2A+mjNvIJHViBJ?=
+ =?us-ascii?Q?xQvVbIN5a7Gtyt7049JB3LspcOoqLgr+N9vm/BYVm/kd1z5kANLkwz9p8T8F?=
+ =?us-ascii?Q?Kg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	D36ku2yKMNq9GFN5rAV0AycxOX0kSvjmAk7dBRIac0D6b5FrW9kiuimfLX7TPKy/QvRWXsZcRoddWuUfdbq0b+BWs20GaDgmNTGCCR3V0xjuWAGmxaD4lRhEZN2cmkweFYCnTsYwVmEDIOqG8J8Ztxy27vjk7ehBPjnREEOQ9icYEBVcX6c0oCZAfO+RkO6snl3m6U2GIjTSugu+iV1NawK5cNnVHAnDl1iTlMZxG+kbhT9eqBehBGrrj6497WDrW2mXrX/eX5EGUhtb79D9U9hCrwPnZNwjIrOhmF/+v3sLQXgQ/8GOSE4S377zXQRYFMBf6sC/rOzLMqRLy1c/ab5GZrxoOepLYA3g/Tfdb9eyMbpSOyjbd01FVewT5yduXXNaHjMW9n+y+chUvuTUfuarXx6ek4Vj7lI4NIuW+tGojQ8rEGjQ8wjQ5vOqTgCXD8kwJ1/zLCl4erIgsgQbFH4MKYkPbtqvlITZCW6ERb4bU2niRZWD6/GTIyTMK/uQm0smJ1ExNOvSM0rroewxiAdkb/26NDVNUGCyioTXClaXCCi8zqLScdVBkw5J8mFcT+nKG3d8LjFyh/1FU9X6pQQ8CSnmYakcKSX/K26rrjo=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 01543917-4a6f-41cc-1e33-08dcab3bba20
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2024 17:20:19.4683
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: t2wafG+b2bgWjc4mTDlgSv/FGLpchH/jqsvXLEUuUW8AyyrbSHfCAOzsYfQ/hvxcL2Q27WJ86gWIaztR10eHHshZBKWg8YvF2Ujv+zBQmos=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR10MB7911
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-23_07,2024-07-23_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 bulkscore=0
+ suspectscore=0 malwarescore=0 adultscore=0 mlxlogscore=967 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2407230120
+X-Proofpoint-GUID: S2krt7OlaYjZCwo-cYTlGWm8z9zyhcww
+X-Proofpoint-ORIG-GUID: S2krt7OlaYjZCwo-cYTlGWm8z9zyhcww
 
-On Tue, 23 Jul 2024 11:24:56 +0100
-Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
+Hi Andrew,
 
-> On Tue, 23 Jul 2024 00:36:18 +0500
-> Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com> wrote:
-> 
-> > Hi,
-> > The first Fedora update to the 6.11 kernel
-> > (kernel-debug-6.11.0-0.rc0.20240716gitd67978318827.2.fc41.x86_64)
-> > brings a new warning: possible recursive locking detected.  
-> 
-> Hi Mikhail,
-> 
-> Thanks for the report.
-> 
-> This is an interesting corner and perhaps reflects a flawed
-> assumption we were making that for this path anything that can happen for an
-> initially present CPU can also happen for a hotplugged one. On the hotplugged
-> path the lock was always held and hence the static_key_enable() would
-> have failed.
-> 
-> I'm somewhat stumped on working out why this path couldn't happen
-> for a hotplugged CPU so why this is a new problem?
-> 
-> Maybe this is just a case of no one is providing _CPC for CPUs in virtual
-> machines so the path wasn't seen? QEMU doesn't generate ACPI tables with
-> _CPC today, so maybe that's it.
-> 
-> So maybe this is has revealed an existing latent  bug.  There have been
-> QEMU patches for _CPC in the past but never merged. I'll hack them
-> into an x86 virtual machine and see if we hit the same bug you have
-> here before and after the series.
-> 
-> Either way obviously we need to fix it for the current kernel (and maybe
-> backport the fix if I can verify it's a latent bug).  I'll get a test
-> setup running asap and see if I can replicate.
-> 
-> +CC x86 maintainers.
+SeongJae find a minor issue with some dud includes for non-x86
+architectures, could you apply the following fix-patch?
 
-It will take me a little longer to emulate a suitable setup to hit the
-AMD case on (I have it run on arm64 now, but no similar issue occurs)
+Thanks, Lorenzo
 
-Ultimately the problem is occurring in arch_init_invariance_cppc
-I note that the arm64 version of that topology_init_cpu_capacity_cppc
-delays some activity via a work queue specifically to avoid some
-locking issues.
+----8<----
+From 9a8e60c479a06201f00bce020798ae37158b862d Mon Sep 17 00:00:00 2001
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Date: Tue, 23 Jul 2024 18:11:48 +0100
+Subject: [PATCH] mm: drop inappropriate includes
 
-On AMD systems arch_init_invariance_cppc is defined
-as init_freq_invariance_cppc which calls amd_set_max_freq_ratio just
-once (there is a static bool) which in turn calls
-freq_invariance_set_perf_ratio() / freq_invariance_enable()
+As pointed out by SeongJae Park, these includes are not always available to
+all architectures and in actual fact are not required to be included here.
 
-Until I have a setup to test on I'm not going to draw firm conclusions
-but how much would it matter if we set that static key a bit late
-via a workqueue?  In the meantime go with a default value similar to
-that disable_freq_invariance_work sets (which is done via a workqueue).
+Drop them.
 
-The intel equivalent is called via an early_init() so not
-the hotplug path.
+Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+---
+ mm/vma_internal.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-Any hints on from people familiar with this code would be most
-welcome.  Whilst git suggests tglx touched these paths most recently that
-was in tidying them up to split the Intel and AMD paths.
+diff --git a/mm/vma_internal.h b/mm/vma_internal.h
+index e13e5950df78..14c24d5cb582 100644
+--- a/mm/vma_internal.h
++++ b/mm/vma_internal.h
+@@ -43,8 +43,6 @@
+ #include <linux/userfaultfd_k.h>
 
-Jonathan
+ #include <asm/current.h>
+-#include <asm/page_types.h>
+-#include <asm/pgtable_types.h>
+ #include <asm/tlb.h>
 
-
-
-> 
-> Thanks,
-> 
-> Jonathan
-> 
-> 
-> 
-> 
-> > The trace looks like:
-> > ACPI: button: Power Button [PWRF]
-> > 
-> > ============================================
-> > WARNING: possible recursive locking detected
-> > 6.11.0-0.rc0.20240716gitd67978318827.2.fc41.x86_64+debug #1 Not tainted
-> > --------------------------------------------
-> > cpuhp/0/22 is trying to acquire lock:
-> > ffffffffb7f9cb40 (cpu_hotplug_lock){++++}-{0:0}, at: static_key_enable+0x12/0x20
-> > 
-> > but task is already holding lock:
-> > ffffffffb7f9cb40 (cpu_hotplug_lock){++++}-{0:0}, at: cpuhp_thread_fun+0xcd/0x6f0
-> > 
-> > other info that might help us debug this:
-> >  Possible unsafe locking scenario:
-> > 
-> >        CPU0
-> >        ----
-> >   lock(cpu_hotplug_lock);
-> >   lock(cpu_hotplug_lock);
-> > 
-> >  *** DEADLOCK ***
-> > 
-> >  May be due to missing lock nesting notation
-> > 
-> > 3 locks held by cpuhp/0/22:
-> >  #0: ffffffffb7f9cb40 (cpu_hotplug_lock){++++}-{0:0}, at:
-> > cpuhp_thread_fun+0xcd/0x6f0
-> >  #1: ffffffffb7f9f2e0 (cpuhp_state-up){+.+.}-{0:0}, at:
-> > cpuhp_thread_fun+0xcd/0x6f0
-> >  #2: ffffffffb7f1d650 (freq_invariance_lock){+.+.}-{3:3}, at:
-> > init_freq_invariance_cppc+0xf4/0x1e0
-> > 
-> > stack backtrace:
-> > CPU: 0 PID: 22 Comm: cpuhp/0 Not tainted
-> > 6.11.0-0.rc0.20240716gitd67978318827.2.fc41.x86_64+debug #1
-> > Hardware name: ASUS System Product Name/ROG STRIX B650E-I GAMING WIFI,
-> > BIOS 2611 04/07/2024
-> > Call Trace:
-> >  <TASK>
-> >  dump_stack_lvl+0x84/0xd0
-> >  __lock_acquire+0x27e3/0x5c70
-> >  ? __pfx___lock_acquire+0x10/0x10
-> >  ? cppc_get_perf_caps+0x64f/0xf60
-> >  lock_acquire+0x1ae/0x540
-> >  ? static_key_enable+0x12/0x20
-> >  ? __pfx_lock_acquire+0x10/0x10
-> >  ? __pfx___might_resched+0x10/0x10
-> >  cpus_read_lock+0x40/0xe0
-> >  ? static_key_enable+0x12/0x20
-> >  static_key_enable+0x12/0x20
-> >  freq_invariance_enable+0x13/0x40
-> >  init_freq_invariance_cppc+0x17e/0x1e0
-> >  ? __pfx_init_freq_invariance_cppc+0x10/0x10
-> >  ? acpi_cppc_processor_probe+0x1046/0x2300
-> >  acpi_cppc_processor_probe+0x11ae/0x2300
-> >  ? _raw_spin_unlock_irqrestore+0x4f/0x80
-> >  ? __pfx_acpi_cppc_processor_probe+0x10/0x10
-> >  ? __pfx_acpi_scan_drop_device+0x10/0x10
-> >  ? acpi_fetch_acpi_dev+0x79/0xe0
-> >  ? __pfx_acpi_fetch_acpi_dev+0x10/0x10
-> >  ? __pfx_acpi_soft_cpu_online+0x10/0x10
-> >  acpi_soft_cpu_online+0x114/0x330
-> >  cpuhp_invoke_callback+0x2c7/0xa40
-> >  ? __pfx_lock_release+0x10/0x10
-> >  ? __pfx_lock_release+0x10/0x10
-> >  ? cpuhp_thread_fun+0xcd/0x6f0
-> >  cpuhp_thread_fun+0x33a/0x6f0
-> >  ? smpboot_thread_fn+0x56/0x930
-> >  smpboot_thread_fn+0x54b/0x930
-> >  ? __pfx_smpboot_thread_fn+0x10/0x10
-> >  ? __pfx_smpboot_thread_fn+0x10/0x10
-> >  kthread+0x2d2/0x3a0
-> >  ? _raw_spin_unlock_irq+0x28/0x60
-> >  ? __pfx_kthread+0x10/0x10
-> >  ret_from_fork+0x31/0x70
-> >  ? __pfx_kthread+0x10/0x10
-> >  ret_from_fork_asm+0x1a/0x30
-> >  </TASK>
-> > 
-> > Bisect is pointed to commit
-> > commit c1385c1f0ba3b80bd12f26c440612175088c664c (HEAD)
-> > Author: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > Date:   Wed May 29 14:34:28 2024 +0100
-> > 
-> >     ACPI: processor: Simplify initial onlining to use same path for
-> > cold and hotplug
-> > 
-> >     Separate code paths, combined with a flag set in acpi_processor.c to
-> >     indicate a struct acpi_processor was for a hotplugged CPU ensured that
-> >     per CPU data was only set up the first time that a CPU was initialized.
-> >     This appears to be unnecessary as the paths can be combined by letting
-> >     the online logic also handle any CPUs online at the time of driver load.
-> > 
-> >     Motivation for this change, beyond simplification, is that ARM64
-> >     virtual CPU HP uses the same code paths for hotplug and cold path in
-> >     acpi_processor.c so had no easy way to set the flag for hotplug only.
-> >     Removing this necessity will enable ARM64 vCPU HP to reuse the existing
-> >     code paths.
-> > 
-> >     Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >     Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
-> >     Tested-by: Miguel Luis <miguel.luis@oracle.com>
-> >     Reviewed-by: Gavin Shan <gshan@redhat.com>
-> >     Reviewed-by: Miguel Luis <miguel.luis@oracle.com>
-> >     Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> >     Link: https://lore.kernel.org/r/20240529133446.28446-2-Jonathan.Cameron@huawei.com
-> >     Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-> > 
-> >  drivers/acpi/acpi_processor.c   |  7 +++----
-> >  drivers/acpi/processor_driver.c | 43
-> > ++++++++++++-------------------------------
-> >  include/acpi/processor.h        |  2 +-
-> >  3 files changed, 16 insertions(+), 36 deletions(-)
-> > 
-> > And I can confirm that after reverting c1385c1f0ba3 the issue is gone.
-> > 
-> > I also attach here a full kernel log and build config.
-> > 
-> > My hardware specs: https://linux-hardware.org/?probe=c6de14f5b8
-> > 
-> > Jonathan, can you look into this, please?
-> >   
-> 
-
+ #include "internal.h"
+--
+2.45.2
 
