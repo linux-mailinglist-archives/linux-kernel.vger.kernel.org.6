@@ -1,132 +1,154 @@
-Return-Path: <linux-kernel+bounces-259568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D594939899
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 05:15:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9783C93989B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 05:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 017891F22024
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 03:15:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC2111F220AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 03:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B5213BC0C;
-	Tue, 23 Jul 2024 03:15:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8355013B7A6;
+	Tue, 23 Jul 2024 03:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H+L/wcWY"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DDVOko3j"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05901E4AE;
-	Tue, 23 Jul 2024 03:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C20E8814
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 03:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721704542; cv=none; b=Pu7hG/k2i2H0Cm8uMVbhTUqY59WmTZucOuL8+Uw70fPdSYuryHx33ZeBGYMrCr4dxV8hYXF/PymfItrVJBi4/sCOeWtw3xj1se4SgJrWlrwQrNjR14B0csRP8MTqPxObvH5V7HVQ13lBqCxLQZKvIAVwtiz28uNhUaPzTWcxDTM=
+	t=1721704696; cv=none; b=Gc74qB8tRfBE0cCOqG9/HK6toqzVH0HxXIxMR0yEiENH+YieV1shJWnWNKv8IKz2eWwhvFuHZ3cSb50k6EbPPaYmlDQPYQpOQlA8AubRl5rxk37v6VV/vCMrqZqj8mkrFop9pUeTmp+Yo16k7yNRFtZmKSmPvz7nLCRDlPF2S00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721704542; c=relaxed/simple;
-	bh=iSOFaeD86UGMPL4JJ3DmMtQNKs9kFCexcgKqQKNJsoc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PkWS2Tdr58TTmH0W0slepiPov31gek3QQwmBnTdukRZCULVKLM/D0a5E5JOYDlBosyhtoZKRbQNKOyT7vreLpkOQYOAKMlryw4AQi+gO4Cd5hI4R30LxSSa5q/GCWNYqpp7Lunz1eop9ZXJ+QkRaEjucxhM2AuQalhgrbl9aZ/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H+L/wcWY; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46MNNvTl016652;
-	Tue, 23 Jul 2024 03:15:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	JDK9Qa40SE2RbF1J8N6jdHGbtx3jxSOkp8qLxvqIbjc=; b=H+L/wcWYaB0J2Zc2
-	UkNNrOuqGpr/RdFc0FizS8sG2mbJjBNUxo2ZorNoOqT9BYKH//woSy50NAyBvOG5
-	zK8T+m+cG7Lck8/MeWX74VycwG2LY8uFjTgaeU8ixuQWxc4jLe0nTxXYkbp0HQf0
-	/wWJn1KWFKFhwVcWWxbtCWbsliAFIFIzBdrn2w9I15vZ7xES2hPuB50wVBHCFjEt
-	YIHt+bGQShKuAlAQmdk2+yt1ES8QPB404KCYwx1pRifWq14KqyniCQPGEDFxwogu
-	DpQIvfmtods7+lz+iaUpxCMhOA//HDsAdxjym0bFpGZpWNs/UPmBptOHX6/nKnhx
-	ACrHwQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g5m6wh03-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Jul 2024 03:15:34 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46N3FXiT031575
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Jul 2024 03:15:33 GMT
-Received: from [10.239.154.73] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 22 Jul
- 2024 20:15:28 -0700
-Message-ID: <b2c4d8da-780b-470d-87ee-263cafb050e8@quicinc.com>
-Date: Tue, 23 Jul 2024 11:15:26 +0800
+	s=arc-20240116; t=1721704696; c=relaxed/simple;
+	bh=UZvKV/N2MmpA7QaJlPL9o52SDXf1Cg5eic8FeDJGkSE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jVRPKUUsuTjydoqDE84n2kYueA6/IGlaCZsR8Rup/ad/yx/01H84bwLTJAgMTo6IaSHpyaEwEfAqWNLNMKvwg9/nkUjRbADba3ibeH7VcRCHzl0iOkaeo4ZNXSxLDUK6PJm1iNjkjIdLlRk3D3c43sbMX4zk+hiWDPJBQss+Sw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DDVOko3j; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721704695; x=1753240695;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UZvKV/N2MmpA7QaJlPL9o52SDXf1Cg5eic8FeDJGkSE=;
+  b=DDVOko3j+3O6/YhPIwlA2291qbF+ux/oEE8ZiE3n8kduMlL/xCmze+Qc
+   kCc5mA4acuGvoMsw00XspsUT7GB/3wa3sVdBbAjNuN5qcKizHNYv6QMWm
+   J9EnGYksZnZtm/ys8tv4ONE7r+cPuyXbdZHmsxGgjvAJ95r6gLXwMvzlB
+   Ms3TBZUtKf2q8FKp5g8nwe9HRkybUlF9j6u9HYN6VaL31cnXfLYGuRRp6
+   uyjJTabC4gcvxNMDwWDRWyGD6XNZ7dtf0KOfga6X6Am9jjEkYbrP/P8Vv
+   vYFvSPMC+zNRfAusmF42P1vzOikI3OJ3md2qJfkamCaiSYOIOV6DdAo9B
+   g==;
+X-CSE-ConnectionGUID: ctguzSnWREuUmQw0Lkbqgw==
+X-CSE-MsgGUID: BpzemhJVT9aHEIV15lH0lA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11141"; a="30693863"
+X-IronPort-AV: E=Sophos;i="6.09,229,1716274800"; 
+   d="scan'208";a="30693863"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 20:18:14 -0700
+X-CSE-ConnectionGUID: 7O0cQ0plTaG+4IIdNJDn0A==
+X-CSE-MsgGUID: Ogpr5fJoQ42xIxKBxBm2vw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,229,1716274800"; 
+   d="scan'208";a="82714322"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 22 Jul 2024 20:18:11 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sW62T-000lbA-0A;
+	Tue, 23 Jul 2024 03:18:09 +0000
+Date: Tue, 23 Jul 2024 11:18:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: John Ogness <john.ogness@linutronix.de>, Petr Mladek <pmladek@suse.com>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH printk v3 11/19] printk: nbcon: Rely on kthreads for
+ normal operation
+Message-ID: <202407231117.SngBfEcI-lkp@intel.com>
+References: <20240722171939.3349410-12-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3] leds: flash: leds-qcom-flash: limit LED current
- based on thermal condition
-To: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        Pavel Machek
-	<pavel@ucw.cz>, Lee Jones <lee@kernel.org>
-CC: <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "David
- Collins" <quic_collinsd@quicinc.com>,
-        Subbaraman Narayanamurthy
-	<quic_subbaram@quicinc.com>
-References: <20240705-qcom_flash_thermal_derating-v3-1-8e2e2783e3a6@quicinc.com>
-Content-Language: en-US
-From: Fenglin Wu <quic_fenglinw@quicinc.com>
-In-Reply-To: <20240705-qcom_flash_thermal_derating-v3-1-8e2e2783e3a6@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: f_v9o3rIQXJo7S6wc02iD-69h5dl3GTV
-X-Proofpoint-ORIG-GUID: f_v9o3rIQXJo7S6wc02iD-69h5dl3GTV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-22_18,2024-07-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- mlxlogscore=894 adultscore=0 bulkscore=0 mlxscore=0 spamscore=0
- priorityscore=1501 lowpriorityscore=0 clxscore=1011 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407230023
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240722171939.3349410-12-john.ogness@linutronix.de>
+
+Hi John,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on b18703ea7157f62f02eb0ceb11f6fa0138e90adc]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/John-Ogness/printk-nbcon-Clarify-nbcon_get_default_prio-context/20240723-015154
+base:   b18703ea7157f62f02eb0ceb11f6fa0138e90adc
+patch link:    https://lore.kernel.org/r/20240722171939.3349410-12-john.ogness%40linutronix.de
+patch subject: [PATCH printk v3 11/19] printk: nbcon: Rely on kthreads for normal operation
+config: x86_64-buildonly-randconfig-002-20240723 (https://download.01.org/0day-ci/archive/20240723/202407231117.SngBfEcI-lkp@intel.com/config)
+compiler: gcc-10 (Ubuntu 10.5.0-1ubuntu1) 10.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240723/202407231117.SngBfEcI-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407231117.SngBfEcI-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from kernel/printk/printk.c:62:
+   kernel/printk/internal.h: In function 'printk_get_console_flush_type':
+   kernel/printk/internal.h:219:26: error: implicit declaration of function 'is_printk_deferred'; did you mean '_printk_deferred'? [-Werror=implicit-function-declaration]
+     219 |    if (prefer_offload || is_printk_deferred())
+         |                          ^~~~~~~~~~~~~~~~~~
+         |                          _printk_deferred
+   kernel/printk/printk.c: In function 'resume_console':
+>> kernel/printk/printk.c:2706:3: error: implicit declaration of function 'nbcon_wake_kthreads'; did you mean 'irq_wake_thread'? [-Werror=implicit-function-declaration]
+    2706 |   nbcon_wake_kthreads();
+         |   ^~~~~~~~~~~~~~~~~~~
+         |   irq_wake_thread
+   cc1: some warnings being treated as errors
 
 
+vim +2706 kernel/printk/printk.c
 
-On 7/5/2024 3:55 PM, Fenglin Wu via B4 Relay wrote:
-> From: Fenglin Wu <quic_fenglinw@quicinc.com>
-> 
-> The flash module has status bits to indicate different thermal
-> conditions which are called as OTSTx. For each OTSTx status,
-> there is a recommended total flash current for all channels to
-> prevent the flash module entering into higher thermal level.
-> For example, the total flash current should be limited to 1000mA/500mA
-> respectively when the HW reaches the OTST1/OTST2 thermal level.
-> 
-> Signed-off-by: Fenglin Wu <quic_fenglinw@quicinc.com>
-> ---
-> Changes in v3:
-> - Fix coding style issues to address review comments in v2.
-> - Link to v2: https://lore.kernel.org/r/20240513-qcom_flash_thermal_derating-v2-1-e41a07d0eb83@quicinc.com
-> 
-> Changes in v2:
-> - Update thermal threshold level 2 register definition for mvflash_4ch_regs.
->      Mvflash_4ch module thermal threshold level 2 configuration register
->      offset is 0x78, not succeeding from thermal threshold level 1 register 0x7a.
->      Hence it is not appropriate to use REG_FIELD_ID to define thermal threshold
->      register fileds like mvflash_3ch. Update to use REG_FIELD instead.
-> - Link to v1: https://lore.kernel.org/r/20240509-qcom_flash_thermal_derating-v1-1-1d5e68e5d71c@quicinc.com
-> ---
+  2683	
+  2684	void resume_console(void)
+  2685	{
+  2686		struct console_flush_type ft;
+  2687		struct console *con;
+  2688	
+  2689		if (!console_suspend_enabled)
+  2690			return;
+  2691	
+  2692		console_list_lock();
+  2693		for_each_console(con)
+  2694			console_srcu_write_flags(con, con->flags & ~CON_SUSPENDED);
+  2695		console_list_unlock();
+  2696	
+  2697		/*
+  2698		 * Ensure that all SRCU list walks have completed. All printing
+  2699		 * contexts must be able to see they are no longer suspended so
+  2700		 * that they are guaranteed to wake up and resume printing.
+  2701		 */
+  2702		synchronize_srcu(&console_srcu);
+  2703	
+  2704		printk_get_console_flush_type(&ft, true);
+  2705		if (ft.nbcon_offload)
+> 2706			nbcon_wake_kthreads();
+  2707	
+  2708		pr_flush(1000, true);
+  2709	}
+  2710	
 
-Hi Jones,
-
-Can you help to review the change again when you are available?
-
-Fenglin
-> 
-> Best regards,
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
