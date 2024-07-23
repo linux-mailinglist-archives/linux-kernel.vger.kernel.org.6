@@ -1,162 +1,158 @@
-Return-Path: <linux-kernel+bounces-259574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3EA99398BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 05:39:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40AC49398B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 05:38:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C9C9B21B07
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 03:38:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91314B21AC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 03:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD61413B5B4;
-	Tue, 23 Jul 2024 03:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6D613C69C;
+	Tue, 23 Jul 2024 03:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gJ54VKtM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CPTBUqOo"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E2B2C9D
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 03:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4D42C9D;
+	Tue, 23 Jul 2024 03:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721705932; cv=none; b=u1UxfAbzi++3MQh4TLdlRTLeSHTPz6XSRerhA+bQfxAadznZ3MClZWLM1Yoap0dWWiBiZ+r5fsEwrKQV3I4fhaxioHDyFKlJQdpwdmaaT42AnA3wfDru2kiA61z1L8OUMc+bVoQRLmwE5civLDdxC5UcSkmw5er2UJfU5a4bnqU=
+	t=1721705882; cv=none; b=N22xfERxfcxMcZcYFd3R/V+sBsPivw6X9hzojzi6UJmAwRqS0cq7z0GHVDsWJnMsA3Ci3Ag07dzvs2OxOETToLtDOepp9yMa2KZqMeINPHARsdbEJU08U7hYWKyU4JaVc1NfBlSDL2uBWzbJPLLFb5G9QT+VSFoMBx+Qx3NBMJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721705932; c=relaxed/simple;
-	bh=1631P6e/mcs9hwEOVcOrQkreV28dqYK4PniggGBcbso=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=nKb/4kCTwfVfMMtCCRCX81NwzR/8IFL3GWR4SH6sI/K+tWP/TkrYZt8g5UJJXNItfjFObCMdqWoo6AY+B2y0OjauQPSogayZQKNGt/7+8vMIigDtVv70raKZl1Pam7CWdnkZaToWvj9if+/z0gRIMLDsVbUdyXhB4ORIb1H/qxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gJ54VKtM; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721705930; x=1753241930;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=1631P6e/mcs9hwEOVcOrQkreV28dqYK4PniggGBcbso=;
-  b=gJ54VKtMfCMAjBRPvp6X9/UgoKSlR9BiUbmuj6hOkXz8jVAiQ4whJ5XQ
-   nMANMTlt46eSyuQRYyK3Wc2R7a4hnCu6MdEXFPLUdjPAP9bhh2es43UIh
-   Wl09kMJ4NYi4XjmaEgn+7VT9s4NIlYrQiB2b+2Pso3UI8/gDVUX4l4kGk
-   kxyIpUiMtycirXd2B2zKw3ncgx+vWaFmSzqHIWWvwXeWuohagXz+tBIJb
-   04tJFaUVUKBs7Eoq961jo7qgNWh2jePbBp4NES0l7KpgqvmTh5zyM50+T
-   Fx0QhJReHln17swAeeA7L+yenhq4BRZUxbSfWBIwiUXcY2E6xkQCGAXm6
-   A==;
-X-CSE-ConnectionGUID: IB0K2bvlSnWMl+dXvZkSlA==
-X-CSE-MsgGUID: xqpLj4yfRsWtMSg+Q9Qosw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11141"; a="29895398"
-X-IronPort-AV: E=Sophos;i="6.09,229,1716274800"; 
-   d="scan'208";a="29895398"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 20:38:49 -0700
-X-CSE-ConnectionGUID: gDjPZIziQauDyW62ia0RZQ==
-X-CSE-MsgGUID: Ybl3aCNrQJKGv0QsZpBNuA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,229,1716274800"; 
-   d="scan'208";a="89553417"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 20:38:47 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Zhongkun He <hezhongkun.hzk@bytedance.com>
-Cc: peterz@infradead.org,  mgorman@suse.de,  linux-mm@kvack.org,
-  linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH] mm/numa_balancing: Fix the memory thrashing problem in
- the single-threaded process
-In-Reply-To: <20240722123320.2382992-1-hezhongkun.hzk@bytedance.com> (Zhongkun
-	He's message of "Mon, 22 Jul 2024 20:33:20 +0800")
-References: <20240722123320.2382992-1-hezhongkun.hzk@bytedance.com>
-Date: Tue, 23 Jul 2024 11:35:14 +0800
-Message-ID: <871q3kg4r1.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1721705882; c=relaxed/simple;
+	bh=av4nnq2UyFrGFqUgLcItP/04XGvmpJVv15UHd5UAA8I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dt4l7diE25eqN9LOkxstcsjZckKxdhOgZRs6ckgdrUefB5RDe5lZUvKDEBZ1lgHVdHOtNQM6M9cqnVazCooWM/iWQaiEKuBW6z/gcNb+ye4zP3z51t1mO3RaR1Hr+5wJLbS2t1ZeBwShht3RbtICW5cCVnd6GLrtyTAPWAd+bYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CPTBUqOo; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46MJNjwc014036;
+	Tue, 23 Jul 2024 03:37:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ZlgAt45pyKKvWtNr9nbveSfR/vxlIg0Z3D2jQe/f9PU=; b=CPTBUqOo07AbodG5
+	ERZrTUp10big1uYFflAXrCWrUSw/RKe9nSj6fwAQamcJaB8BVLy2/GOuV0ChtwlA
+	75hmyTLWdQqzoAUJtMCAO6dnLVWff4N8Ul8FxOeNk5wIb72zlwEqkUpqCHtjc8Bp
+	fVkUQDJ9DJv2yuinkW3wbCiR2YkArAalSXme6ySTeQoSIftoI/j82qNJQuhJdcwR
+	5ab8fAloyJdQpTqRjwPPZWDI6SWN639FjMnSFGLQmEWe9/Vq5EFdcbVHhcHOlz5P
+	clzS0srWYwLKEZY9sPYdc8wkTjcU39s2Pxhl30mFhFAMKng9DgDW0E2RmjtxVTyQ
+	mHdtOw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g5m6wjd2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Jul 2024 03:37:42 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46N3bekP004658
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Jul 2024 03:37:40 GMT
+Received: from [10.216.60.30] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 22 Jul
+ 2024 20:37:35 -0700
+Message-ID: <4662b4fb-8ef2-4a4b-adef-e862090defd7@quicinc.com>
+Date: Tue, 23 Jul 2024 09:07:32 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 2/4] PCI: qcom-ep: Add support for D-state change
+ notification
+To: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+        "Manivannan
+ Sadhasivam" <manivannan.sadhasivam@linaro.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+        Kishon Vijay Abraham I
+	<kishon@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet
+	<corbet@lwn.net>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>
+CC: <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <mhi@lists.linux.dev>, <quic_vbadigan@quicinc.com>,
+        <quic_ramkri@quicinc.com>, <quic_nitegupt@quicinc.com>,
+        <quic_skananth@quicinc.com>, <quic_parass@quicinc.com>,
+        Manivannan Sadhasivam
+	<mani@kernel.org>
+References: <20240710-dstate_notifier-v7-0-8d45d87b2b24@quicinc.com>
+ <20240710-dstate_notifier-v7-2-8d45d87b2b24@quicinc.com>
+Content-Language: en-US
+From: Yogesh Jadav <quic_yjadav@quicinc.com>
+In-Reply-To: <20240710-dstate_notifier-v7-2-8d45d87b2b24@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: t283ZWU0wXzkdRumSYbkiu-xLkwsxvHu
+X-Proofpoint-ORIG-GUID: t283ZWU0wXzkdRumSYbkiu-xLkwsxvHu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-22_18,2024-07-22_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ mlxlogscore=999 adultscore=0 bulkscore=0 mlxscore=0 spamscore=0
+ priorityscore=1501 lowpriorityscore=0 clxscore=1011 malwarescore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407230025
 
-Zhongkun He <hezhongkun.hzk@bytedance.com> writes:
 
-> I found a problem in my test machine that the memory of a process is
-> repeatedly migrated between two nodes and does not stop.
->
-> 1.Test step and the machines.
-> ------------
-> VM machine: 4 numa nodes and 10GB per node.
->
-> stress --vm 1 --vm-bytes 12g --vm-keep
->
-> The info of numa stat:
-> while :;do cat memory.numa_stat | grep -w anon;sleep 5;done
-> anon N0=98304 N1=0 N2=10250747904 N3=2634334208
-> anon N0=98304 N1=0 N2=10250747904 N3=2634334208
-> anon N0=98304 N1=0 N2=9937256448 N3=2947825664
-> anon N0=98304 N1=0 N2=8863514624 N3=4021567488
-> anon N0=98304 N1=0 N2=7789772800 N3=5095309312
-> anon N0=98304 N1=0 N2=6716030976 N3=6169051136
-> anon N0=98304 N1=0 N2=5642289152 N3=7242792960
-> anon N0=98304 N1=0 N2=5105442816 N3=7779639296
-> anon N0=98304 N1=0 N2=5105442816 N3=7779639296
-> anon N0=98304 N1=0 N2=4837007360 N3=8048074752
-> anon N0=98304 N1=0 N2=3763265536 N3=9121816576
-> anon N0=98304 N1=0 N2=2689523712 N3=10195558400
-> anon N0=98304 N1=0 N2=2515148800 N3=10369933312
-> anon N0=98304 N1=0 N2=2515148800 N3=10369933312
-> anon N0=98304 N1=0 N2=2515148800 N3=10369933312
-> anon N0=98304 N1=0 N2=3320455168 N3=9564626944
-> anon N0=98304 N1=0 N2=4394196992 N3=8490885120
-> anon N0=98304 N1=0 N2=5105442816 N3=7779639296
-> anon N0=98304 N1=0 N2=6174195712 N3=6710886400
-> anon N0=98304 N1=0 N2=7247937536 N3=5637144576
-> anon N0=98304 N1=0 N2=8321679360 N3=4563402752
-> anon N0=98304 N1=0 N2=9395421184 N3=3489660928
-> anon N0=98304 N1=0 N2=10247872512 N3=2637209600
-> anon N0=98304 N1=0 N2=10247872512 N3=2637209600
->
-> 2. Root cause:
-> Since commit 3e32158767b0 ("mm/mprotect.c: don't touch single threaded
-> PTEs which are on the right node")the PTE of local pages will not be
-> changed in change_pte_range() for single-threaded process, so no
-> page_faults information will be generated in do_numa_page(). If a
-> single-threaded process has memory on another node, it will
-> unconditionally migrate all of it's local memory to that node,
-> even if the remote node has only one page.
->
-> So, let's fix it. The memory of single-threaded process should follow
-> the cpu, not the numa faults info in order to avoid memory thrashing.
 
-Show the test results (numa stats) of the fixed kernel?
-
-> Signed-off-by: Zhongkun He <hezhongkun.hzk@bytedance.com>
+On 7/10/2024 4:38 PM, Krishna chaitanya chundru wrote:
+> Add support to pass D-state change notification to Endpoint
+> function driver.
+> Read perst value to determine if the link is in D3Cold/D3hot.
+> 
+> Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
+> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
 > ---
->  kernel/sched/fair.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 24dda708b699..d7cbbda568fb 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -2898,6 +2898,12 @@ static void task_numa_placement(struct task_struct *p)
->  		numa_group_count_active_nodes(ng);
->  		spin_unlock_irq(group_lock);
->  		max_nid = preferred_group_nid(p, max_nid);
-> +	} else if (atomic_read(&p->mm->mm_users) == 1) {
-> +		/*
-> +		 * The memory of a single-threaded process should
-> +		 * follow the CPU in order to avoid memory thrashing.
-> +		 */
-> +		max_nid = numa_node_id();
->  	}
->  
->  	if (max_faults) {
+>   drivers/pci/controller/dwc/pcie-qcom-ep.c | 8 +++++++-
+>   1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> index 236229f66c80..817fad805c51 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
+> @@ -648,6 +648,7 @@ static irqreturn_t qcom_pcie_ep_global_irq_thread(int irq, void *data)
+>   	struct device *dev = pci->dev;
+>   	u32 status = readl_relaxed(pcie_ep->parf + PARF_INT_ALL_STATUS);
+>   	u32 mask = readl_relaxed(pcie_ep->parf + PARF_INT_ALL_MASK);
+> +	pci_power_t state;
+>   	u32 dstate, val;
+>   
+>   	writel_relaxed(status, pcie_ep->parf + PARF_INT_ALL_CLEAR);
+> @@ -671,11 +672,16 @@ static irqreturn_t qcom_pcie_ep_global_irq_thread(int irq, void *data)
+>   		dstate = dw_pcie_readl_dbi(pci, DBI_CON_STATUS) &
+>   					   DBI_CON_STATUS_POWER_STATE_MASK;
+>   		dev_dbg(dev, "Received D%d state event\n", dstate);
+> -		if (dstate == 3) {
+> +		state = dstate;
+Can we use some meaningful name for variable "state" ? There is 
+different purpose of variable "state" and "dstate" which is not getting 
+reflected by looking variable names.
 
-The change looks reasonable for me, Thanks!
-
-Acked-by: "Huang, Ying" <ying.huang@intel.com>
-
---
-Best Regards,
-Huang, Ying
+- Yogesh
+> +		if (dstate == PCI_D3hot) {
+>   			val = readl_relaxed(pcie_ep->parf + PARF_PM_CTRL);
+>   			val |= PARF_PM_CTRL_REQ_EXIT_L1;
+>   			writel_relaxed(val, pcie_ep->parf + PARF_PM_CTRL);
+> +
+> +			if (gpiod_get_value(pcie_ep->reset))
+> +				state = PCI_D3cold;
+>   		}
+> +		pci_epc_dstate_notify(pci->ep.epc, state);
+>   	} else if (FIELD_GET(PARF_INT_ALL_LINK_UP, status)) {
+>   		dev_dbg(dev, "Received Linkup event. Enumeration complete!\n");
+>   		dw_pcie_ep_linkup(&pci->ep);
+> 
 
