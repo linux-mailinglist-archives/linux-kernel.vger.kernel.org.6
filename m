@@ -1,311 +1,160 @@
-Return-Path: <linux-kernel+bounces-260144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A20493A3C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:30:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C46293A3CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:35:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA12D1F2441C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:30:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F4811C2256F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452EC157467;
-	Tue, 23 Jul 2024 15:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7054155A52;
+	Tue, 23 Jul 2024 15:35:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dc5amIEI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gJ8J0w2b"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B7C1386DF;
-	Tue, 23 Jul 2024 15:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721748619; cv=fail; b=nGiSH/25Rpi4oCpWDep0eh5eIdxYZXOTFGb3v3P4m6pyGCru/kMRmu7TMlzf7lmjytAufukU6MvcZJmDFbv7U3lJOLxt72v9YeI7yijfqpHCrmNq8xzzsR7nrN69clMKXx4amEHzF7b6LNgiD6+zQ7pz0OfgNThhDz6cKYsuk2I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721748619; c=relaxed/simple;
-	bh=JiPfNsH+CTGyvePaCjqZ5PmfJZR6hM6wbiX4/g82lpk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=YXHOz1/xEoI2L5L5eilqdPVzyojl0YFWnY3Kc3m1g+V9Qq8b5Nob0iF9XjJZ/eWchIJgcB/RJOfZOha7zC4rtj77CuIM+ZIlS6QKDS3fwdDDBZiH6r2EeMpFIFj6g2qTvQoIQg51K2ISNjD0mJLNl1mtk91H6t6aYKbgJzazjXY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dc5amIEI; arc=fail smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721748617; x=1753284617;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=JiPfNsH+CTGyvePaCjqZ5PmfJZR6hM6wbiX4/g82lpk=;
-  b=dc5amIEIEkMwfB7vgadhlDuOkiMyc3up1NcW7IoirLHtv0zyAyic8rMC
-   uSvxqQPTtxOP1JN61ZHjqxzn6DaHitFEitT2AzTMos8YezHVbztaFXm/7
-   uLcUlQm6joVoXxCko7ZhgUQw9rQkCbPbobUCHjOdy28Wopd4Ihymbqs0L
-   x0ehff5MTSsLd4HS8R0wWWUbuY5KxIfhr00j7cVKAIhjipKhHtEnp/x+v
-   x7qYkKhf7Flrey/PXjAcCvH6NtVbuiby+aP8c2E/rwlNhrRwTYvWJW2ga
-   z6zwhqrYIljP/fM5AVo4rnE3hb0KZ9DZuJ2yHSnHhP106uhJ6vIISbYqT
-   w==;
-X-CSE-ConnectionGUID: HdlfvYDWSJGA0pkcICn97w==
-X-CSE-MsgGUID: KgiPGaLzQQu+I6HVY1kSOQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11142"; a="12667942"
-X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
-   d="scan'208";a="12667942"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2024 08:30:15 -0700
-X-CSE-ConnectionGUID: aM1vuRL2QBGq/8JH51YGbA==
-X-CSE-MsgGUID: ZFtfQDudS7GsXpTcgJKKVQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
-   d="scan'208";a="52139285"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 Jul 2024 08:30:15 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 23 Jul 2024 08:30:14 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 23 Jul 2024 08:30:14 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.169)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 23 Jul 2024 08:30:14 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rtc1MZPNNw5At16nWVNN8+fgiop9aIwsuGFK+BtgbL/Fk3vbzrCQrio6P+GhXFp/ypt5dc3gLqBECgNHo6wQejlnH5nOkOl9m7nsBUbxC1FhCSYcb1cTrElt6K/7ssCuxfiPFvyCpBmga55pMgognrOxf2EN7sW+QN5ZLIegsGr5BlkzPSffzC7aiD4bFUikAbeGSwpH7hly9gdXFRXKEkG7vPbwSsv2WKwfMiavGCRn6i9J6hvs3zM++w4c68/X0XVJTOQfxQG2vN8H/p1rIKs3nkpB8MPaBurDKl0Nsj/ZN8PCyksHxXQgeAclYD5PDvhUtg7gQgV/dU3jGt7IeQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rY1UdjOOwvwCg2fpWuaTCEIuwuinbKLGoBR0l9wxKwI=;
- b=xXuRJWEEvPovUjrnroIUqXUsnPI+eFgvkB0J1T26V+6GlYSaNxxyfsFK/2FBpVQMOzjkLA7+ZBRfmOZygaT8sii/lVHZ7YReWY0EW3uLdbODFTRXNP4epdkzh/Kt2cUpBQKsxzMNmAaH9ZaMyCJyTg9qv+SmkCxhdCX2m4jxO9qsPk6hCpJPDy3f6uhHlAnd8WCu7+fzv4+JPuFNiTTwYV27kd6AE/hCHlB111FoDj30cHLngRzubRBbR9Sp+UdcrEDP7eEz1xJvJMVMCzR3wvNoBsdgUEgqVI77CWbxQxSWR6gST2PwNDVyXQ/InF+JA9vB75Ae/cwVTorFmlH8nA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
- by DS0PR11MB7264.namprd11.prod.outlook.com (2603:10b6:8:13b::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20; Tue, 23 Jul
- 2024 15:30:11 +0000
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44%6]) with mapi id 15.20.7784.017; Tue, 23 Jul 2024
- 15:30:11 +0000
-Date: Tue, 23 Jul 2024 10:30:08 -0500
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: Tvrtko Ursulin <tursulin@ursulin.net>
-CC: <intel-gfx@lists.freedesktop.org>, <linux-perf-users@vger.kernel.org>,
-	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-	<dri-devel@lists.freedesktop.org>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 6/7] drm/i915/pmu: Lazy unregister
-Message-ID: <xsuzfv4rzb4c25sibt5gjskn7xyfwf33wgwaw4nkz5jlnvl2ke@ekur5xvhec3z>
-References: <20240722210648.80892-1-lucas.demarchi@intel.com>
- <20240722210648.80892-7-lucas.demarchi@intel.com>
- <be3871bd-fc25-482e-b4d4-91afc4d5b5a5@ursulin.net>
-Content-Type: text/plain; charset="us-ascii"; format=flowed
-Content-Disposition: inline
-In-Reply-To: <be3871bd-fc25-482e-b4d4-91afc4d5b5a5@ursulin.net>
-X-ClientProxiedBy: MW4PR03CA0239.namprd03.prod.outlook.com
- (2603:10b6:303:b9::34) To CY5PR11MB6139.namprd11.prod.outlook.com
- (2603:10b6:930:29::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1FE81534FB
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 15:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721748917; cv=none; b=V3IY5nYGMNCgxzWk14/xGMs0RaNAXOidApawSKq3KWyvZq1BnOdeokA1u1D/P+f8jDaCnHlwCb0BEudyvWO0rX1EOeqI4TbJSa53sLRpEbQdTUUbCUkJeDX4zQuU93iL3bYm8SeN1L23cqA4FuBopKSVIHL2ihRY+xYWlLvFDgo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721748917; c=relaxed/simple;
+	bh=g0kkbBzImF/tU5MvslL7HpZbOl0MYOVA4J8hm/SK4ww=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EJyuS6eqI37T3pGapfGviEqfzoPYRr5RcTF4S53Spkq52UZtEbLF9i6fOSYbiR8PRzHIZszaWjXqdqFq6yqtAtLdSHlPE5t/guIddqkh/O8c/ZA6b7dL5fzTyQEVnFVYWPa3gt+Ker2RhwNtQ/TlifMPSmvx3gmk2/FmeduUKrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gJ8J0w2b; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e03a17a50a9so6083480276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:35:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721748914; x=1722353714; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EEWtktvlhhKGtS7ypqK5XQEDZZZuM3sheGLw0Jcss8g=;
+        b=gJ8J0w2bz227pU3oD7aHhwhR4P05XSsLhM8StwJux/+yr3Lsmqs+9EEB/dY+yOXSO4
+         I0xLrNGqC38UN54zkS33RaiITnmAvELJiMDfdXKUIeH40+Wuc+U6zfoHqxUFsIpFRvfe
+         SOZ2oOgNNAhtb3eXPIStd4b7LgHduDy2mK18BT4DWv25G/GVY37L1518xkMOlaL6NUp2
+         bDdmrm7sjn9MkZFZ71AVcWl1UokG5k0gFWuSXO5hdFW47iG9aN/qBPk+pB6rGTKw8bih
+         GXJuU+Kc5LtWIYuNJlJBpNfpiAMZ2sLVXRMTa/eJ+yJoi5dS8hRhVn43fN8ZvIqJXmhG
+         LO/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721748914; x=1722353714;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EEWtktvlhhKGtS7ypqK5XQEDZZZuM3sheGLw0Jcss8g=;
+        b=oDioo84ORh65Fsyi9IsSO6z7CnewLslYPq53A5PyoaGvZhNuAef/QX87jfPo5buxDR
+         Kp1aO5jYbUlgvSCl1dTCDw28p4siVJ/qPjK4Tv9XlfyxJtoZM6vysoTDK3AkhpG2JR6p
+         ktHoDriWZNR6RC38YY3/zXUBb3eG5/H3JDe30sX1+vUkSoHvRBMa8Mcowg+iRksvFe14
+         IDINGm5j/pwV6NAYDguLIrdl9lVh+NplCEl0CVKclg8YM4e4bfskTJz3lKsvZU6ZMOX1
+         IwPb4VdMPVVWEW4qDYOTShyFyYkbAj3LIYDc0oAV2eUuqW2pmAyuxbTg8g/maQ3B6BRs
+         9YQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUabgmbUpW4bC17uO1mkKVgIbekEAKqlhGNbzdTTrlHUuNn+WBMSKLxu3Sm9U1UumDmO2pyLTzIidCxpyXFXlNm4arPt1Dbp8pfKilO
+X-Gm-Message-State: AOJu0Yw6DIz544fxnpqcHpvnPGd8x4BSsq6/iYE0MRwitBQYCeFkEybK
+	SH6nUA+AwfFX0+FCBVKB2Q2coCOoK3NoD+6lkhIyUoVrCjxYyukplHq8ShpACwUPPGwNznPHUJ4
+	kr+DcrPJzVwfeuRwibVftSoAvCcUS5ORT
+X-Google-Smtp-Source: AGHT+IGKMH+dcaVNTsXNK8AYPostkHDBYgQ96LvIvNO+U+bChlyoYXIqNBF1V99PHrygv64yqroC9k3m7sxxmR+hgYI=
+X-Received: by 2002:a05:6902:703:b0:e03:ab31:9aa6 with SMTP id
+ 3f1490d57ef6-e08701898c5mr14273091276.24.1721748914582; Tue, 23 Jul 2024
+ 08:35:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|DS0PR11MB7264:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1e4ef562-4117-41a5-6469-08dcab2c5755
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?gSQoOQGsCSzFPZmSVt8G7exCP0oGQLKfdkX0Z8rOS+FHZqO1pEv44Ahmr9DA?=
- =?us-ascii?Q?MR7DLh3LG46DrszI27O3mByI8BfMTrpB+sv+GRU9Ti/b6zs8LqeN0YP4/5ua?=
- =?us-ascii?Q?ve3/FsjrUyHPazOZbDRj5aCZiVtGSoVcKTfttrCqJaEG+Nj3iRNCSLMCjd5z?=
- =?us-ascii?Q?YBhST7sXGg6dNt688waNwds/2k9Ugz1/IFfKh3GbqK1+Kja1ABVTsSGrahvJ?=
- =?us-ascii?Q?u3FQAgBCOODDsVwLntxKCC85lXnHxsayoTSSaIN/fbCTTU5HI5fdWloX3rQ8?=
- =?us-ascii?Q?2IJG9ADdzryMUJln9pMaiyj4I6IhmJ5vmfJn4qXsTUcTf2kqLMlq+81C3Mbt?=
- =?us-ascii?Q?DRoQoMGZGokns+YhpKa3FoB8bNioxZolMCPMjvCQqkYvi6KXSLxhAjjYifns?=
- =?us-ascii?Q?teLTO5B/DeX3tGzgsAog5lZ4qwx3ZXJLUNaG039JtRcH2kBsOeZ2iErCKy2Z?=
- =?us-ascii?Q?O6BzS2w6nPrWTl3w7i2V+//LRlLoYTQVPTCxZgTbg3VGqh0s8KK6R4IH0uEm?=
- =?us-ascii?Q?pTDwTk038gQRnTkgvgBGsdTr3Ikxnp8yrwSgaJoxwQDIkiaZ9ns9jWPLpgU0?=
- =?us-ascii?Q?0bMv8uc+vML5T+GrigZMmQUi84Apx/1BccxrDio8NTK1VNktd3kEUh2GHVJx?=
- =?us-ascii?Q?TNkrpfoaJs9isH92bsYGeLt+qanFz80JrWBP5K1pfCS727NTAgRc9tfX12Jj?=
- =?us-ascii?Q?VCESnSdFLiaiRr66beCmanhHd9iXSiMVNHpwecTqRm9EDCgwf59v8xjvDDyL?=
- =?us-ascii?Q?jA0ncZFxpjWeSXsy7soX2ogvN/5MAp53VJCG6QnS1CJx2LXGgkX9mEGDGwqt?=
- =?us-ascii?Q?+l6bkAp4+WfVaAuktRkCWfQn+QVrIELkehQCcO/97zxcHA7hOrTldi1Ydlnc?=
- =?us-ascii?Q?MwNfK0inU8VN37IsTbOG43gGGQ/Q45gOmp8O6EiVpfTeJx3pQWUlrvYmnc9F?=
- =?us-ascii?Q?Pp8KOc0Ck3A/Pmyx9ZjL+pgNyNEjjFxxeF3adbLqQ0ewnbO+XeZf7SSKBozv?=
- =?us-ascii?Q?HUvAZ2fs2a8aYAplmkaly371HZ5B5NL+vrB30OXr/3nIipQhF6SmBte2nfy8?=
- =?us-ascii?Q?TKlhT06wQZkHWMqhiKGYAkFyFNcnJsAbCyxCbsfAGPdVoL07IQKDusJWhb28?=
- =?us-ascii?Q?CdbBRj6cpbi5cxJzeS9t7baG6eMheYm72YGSsKdxW1TfOi9PYRG4NotN3lyU?=
- =?us-ascii?Q?RqPrI67GVv9jyvxPJ31U/5zmvF/qAlnt+tApat0qhuxiXQESCU3IUHBgsO7L?=
- =?us-ascii?Q?8+PDXyATJS1jJMoOAu9xPd/oyz3Qr9IwU32hzjyuXNIb6hVeb+8nuGh5lSHu?=
- =?us-ascii?Q?QdeJclQfbU/PkisGYa0rEW4vN0hanEX1nSRdYHBxzvC/Rw=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?2J3iYM5BEI+/dRJlLDt92hgTyzqXjTFVhUIfm5tTlxGA21kZDG6Wl5xpGTZ2?=
- =?us-ascii?Q?z5+QYUFX+6FxP2tRAh5cxYNeoyMnx74WCyPZ0CkeNM2uM79KJP6ageUd+6Ld?=
- =?us-ascii?Q?xnMynFdd+33wp+huF0HgbfggRSDT5kFHcC5WcHiS7hOHn3nQcrrz5sPqViuZ?=
- =?us-ascii?Q?mjS02GcpQrR5LTFQkcWQRsmCqhTKE0T+EbhLcV3B/qUNvgOaIcREVHEtYgZD?=
- =?us-ascii?Q?28vq60BfqFts7Gk3qdqb388/R9gAwre7k/uuiASlDU/1fEhkr1Ob/Snxbmaq?=
- =?us-ascii?Q?bKUnMCFa5d8nZ7U16RM9h4H+mPdFF8EVeDG2cOzGKIOA2pd811DNMfYSMBUx?=
- =?us-ascii?Q?g8TLGn01gqC4cdyDxGfyS6j4LN2/X53UDekx7zd0dvj/u88S8qJK93v2vCWR?=
- =?us-ascii?Q?igathOL1Um56BK92VM+RnHs3B9ZMtxKTA55T/JRQEOC7mQcpYcI4xrnbx6sh?=
- =?us-ascii?Q?5oKC1q8e83ImG2h6umzg/dzp8xAnn3nm0HCHMu1TMTVDPrU1QXKDG+BWL38X?=
- =?us-ascii?Q?aumDlGlycOvXD2LA+1dBgULtCVx3xqi2bA5iWYNNZAGDlxhcp2fA37eeQ+Zx?=
- =?us-ascii?Q?5wkj72juw6AWdGtj00ho5KiywHWsIw5a8KN3I5jRhjLiCh2QTTvHGFNaxnr3?=
- =?us-ascii?Q?yNezxxV/HpBQTtdoBnKLbE/Tx/NCluTUAyYgl29LA+5ZiT4bInWR78FvYpvE?=
- =?us-ascii?Q?q5TWNqCb0GhorOBv8+6JzKroya9ePRDFyQq4ftzVdVJ0W5V8WShq7t8f3pab?=
- =?us-ascii?Q?aH7t0lAVQ07BIa9r5Njiv+EdR5ZLzsPaOkcVpnRrSstpAAg/zvtR3RAyZJdb?=
- =?us-ascii?Q?NwiCh6UnL4ZYpQuzSaEZSBJEar83m1ELJ9wo1ceHFJcPzIuIhucY5Dx4ipbZ?=
- =?us-ascii?Q?rOTys6+vNeFF6gV13N/DP5h+NWwWehhEFn7gvVb81ZS0c9HNsrlUu7GFdpwZ?=
- =?us-ascii?Q?hExr03l5danvPjLVatK3n/rIBwfyUipK1ayWp8Vrw+hw15nlQRjI0cENeNHW?=
- =?us-ascii?Q?Zs+blJSKoapqmNRFTgcKP3qE0ymdpT89F5b0Nc5H4PjqwZzyEJA8BjFaCMQB?=
- =?us-ascii?Q?Do8ssmiSgKI0Rxnemsr+S/BU3PXij7EDhwnGA8D1vxnu2mJfQedqHz5K2C4o?=
- =?us-ascii?Q?qc9xEKyvFIOeO/1H9BiWCDhmpQF1mvnwXtVGDPRMrKEdL13vr30LxaaX5/OQ?=
- =?us-ascii?Q?OmO6XApYhxOLXiguQv7Z7/ElbqhNE8u2pTOcq0nJwFu/SpnGgUiFJ4n32QKW?=
- =?us-ascii?Q?rFD/2abmZB5qpLT8yKzgGfAvClYuoBNJye5lP3cL/U2CosnCd4H+JGhrVZBr?=
- =?us-ascii?Q?glB7k7J06CAv6bqRD3poNnVV02RDsWbdDT/Rd84t0aoH8sahLL1zMnR6HEZ6?=
- =?us-ascii?Q?ds7Jk+MaCgpgf9uPnD8bpuGx7wM+mb9bCKGk0v4iPwGsxPU343N4AwbN6Vkb?=
- =?us-ascii?Q?hTBWEWHQEtlDH+aL13baUDtmU/zGx3K5YFc63/qCqB0wUc9ey2ANBGiBAD/U?=
- =?us-ascii?Q?ux5WDV+sR5JbVvSTcwUOYw8jEwJxLXe69L/zeaJoDssyiUmsaH1ry4YfpaCd?=
- =?us-ascii?Q?wdP8yzV7oib8VQJ37gf6t59OtC7MPsyTz+YtJSBsbdusL5rnNXoo1p6twyNU?=
- =?us-ascii?Q?7A=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e4ef562-4117-41a5-6469-08dcab2c5755
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2024 15:30:11.4257
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hiWBb0Po2u5gPLEwzTe/4EqyDsqax6iZmytwn9GE9uoNeYMPTG+ITFCd6PdHLkK/IxXayVVuKoGDrQ/T3cMffCfmz0zeRjiUtCfnG83EoAw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7264
-X-OriginatorOrg: intel.com
+References: <20240720044127.508042-1-flintglass@gmail.com> <20240720044127.508042-2-flintglass@gmail.com>
+ <CAKEwX=NGu_MM3bzT9eXAAJhvCvv+x4Qvf77=_RFD-M7zxKFriA@mail.gmail.com>
+In-Reply-To: <CAKEwX=NGu_MM3bzT9eXAAJhvCvv+x4Qvf77=_RFD-M7zxKFriA@mail.gmail.com>
+From: Takero Funaki <flintglass@gmail.com>
+Date: Wed, 24 Jul 2024 00:35:04 +0900
+Message-ID: <CAPpoddeGo3o4vWLYCwi2g0zs7RGi__QYuLBAVi1Y0gzP1X+7Gg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] mm: zswap: fix global shrinker memcg iteration
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 23, 2024 at 09:03:25AM GMT, Tvrtko Ursulin wrote:
+2024=E5=B9=B47=E6=9C=8823=E6=97=A5(=E7=81=AB) 6:39 Nhat Pham <nphamcs@gmail=
+.com>:
 >
->On 22/07/2024 22:06, Lucas De Marchi wrote:
->>Instead of calling perf_pmu_unregister() when unbinding, defer that to
->>the destruction of i915 object. Since perf itself holds a reference in
->>the event, this only happens when all events are gone, which guarantees
->>i915 is not unregistering the pmu with live events.
->>
->>Previously, running the following sequence would crash the system after
->>~2 tries:
->>
->>	1) bind device to i915
->>	2) wait events to show up on sysfs
->>	3) start perf  stat -I 1000 -e i915/rcs0-busy/
->>	4) unbind driver
->>	5) kill perf
->>
->>Most of the time this crashes in perf_pmu_disable() while accessing the
->>percpu pmu_disable_count. This happens because perf_pmu_unregister()
->>destroys it with free_percpu(pmu->pmu_disable_count).
->>
->>With a lazy unbind, the pmu is only unregistered after (5) as opposed to
->>after (4). The downside is that if a new bind operation is attempted for
->>the same device/driver without killing the perf process, i915 will fail
->>to register the pmu (but still load successfully). This seems better
->>than completely crashing the system.
+> On Fri, Jul 19, 2024 at 9:41=E2=80=AFPM Takero Funaki <flintglass@gmail.c=
+om> wrote:
+> >
+> > This patch fixes an issue where the zswap global shrinker stopped
+> > iterating through the memcg tree.
+> >
+> > The problem was that shrink_worker() would stop iterating when a memcg
+> > was being offlined and restart from the tree root.  Now, it properly
+> > handles the offline memcg and continues shrinking with the next memcg.
+> >
+> > To avoid holding refcount of offline memcg encountered during the memcg
+> > tree walking, shrink_worker() must continue iterating to release the
+> > offline memcg to ensure the next memcg stored in the cursor is online.
+> >
+> > The offline memcg cleaner has also been changed to avoid the same issue=
+.
+> > When the next memcg of the offlined memcg is also offline, the refcount
+> > stored in the iteration cursor was held until the next shrink_worker()
+> > run. The cleaner must release the offline memcg recursively.
+> >
+> > Fixes: a65b0e7607cc ("zswap: make shrinking memcg-aware")
+> > Signed-off-by: Takero Funaki <flintglass@gmail.com>
+> Hmm LGTM for the most part - a couple nits
+> [...]
+> > +                       zswap_next_shrink =3D mem_cgroup_iter(NULL,
+> > +                                       zswap_next_shrink, NULL);
+> nit: this can fit in a single line right? Looks like it's exactly 80 char=
+acters.
+
+Isn't that over 90 chars? But yes, we can reduce line breaks using
+memcg as temporary, like:
+-       if (zswap_next_shrink =3D=3D memcg)
+-               zswap_next_shrink =3D mem_cgroup_iter(NULL,
+zswap_next_shrink, NULL);
++       if (zswap_next_shrink =3D=3D memcg) {
++               do {
++                       memcg =3D mem_cgroup_iter(NULL, zswap_next_shrink, =
+NULL);
++                       zswap_next_shrink =3D memcg;
++               } while (memcg && !mem_cgroup_online(memcg));
+
+
+> [...]
+> > +                       zswap_next_shrink =3D mem_cgroup_iter(NULL,
+> > +                                               zswap_next_shrink, NULL=
+);
+> Same with this.
+> [...]
+> > +               /*
+> > +                * We verified the memcg is online and got an extra mem=
+cg
+> > +                * reference.  Our memcg might be offlined concurrently=
+ but the
+> > +                * respective offline cleaner must be waiting for our l=
+ock.
+> > +                */
+> >                 spin_unlock(&zswap_shrink_lock);
+> nit: can we remove this spin_unlock() call + the one within the `if
+> (!memcg)` block, and just do it unconditionally outside of if
+> (!memcg)? Looks like we are unlocking regardless of whether memcg is
+> null or not.
 >
->So effectively allows unbind to succeed without fully unbinding the 
->driver from the device? That sounds like a significant drawback and if 
->so, I wonder if a more complicated solution wouldn't be better after 
->all. Or is there precedence for allowing userspace keeping their paws 
->on unbound devices in this way?
-
-keeping the resources alive but "unplunged" while the hardware
-disappeared is a common thing to do... it's the whole point of the
-drmm-managed resource for example. If you bind the driver and then
-unbind it while userspace is holding a ref, next time you try to bind it
-will come up with a different card number. A similar thing that could be
-done is to adjust the name of the event - currently we add the mangled
-pci slot.
-
-That said, I agree a better approach would be to allow
-perf_pmu_unregister() to do its job even when there are open events. On
-top of that (or as a way to help achieve that), make perf core replace
-the callbacks with stubs when pmu is unregistered - that would even kill
-the need for i915's checks on pmu->closed (and fix the lack thereof in
-other drivers).
-
-It can be a can of worms though and may be pushed back by perf core
-maintainers, so it'd be good have their feedback.
-
-thanks
-Lucas De Marchi
-
+> memcg is a local variable, not protected by zswap_shrink_lock, so this
+> should be fine right?
 >
->Regards,
->
->Tvrtko
->
->>
->>Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
->>---
->>  drivers/gpu/drm/i915/i915_pmu.c | 24 +++++++++---------------
->>  1 file changed, 9 insertions(+), 15 deletions(-)
->>
->>diff --git a/drivers/gpu/drm/i915/i915_pmu.c b/drivers/gpu/drm/i915/i915_pmu.c
->>index 8708f905f4f4..df53a8fe53ec 100644
->>--- a/drivers/gpu/drm/i915/i915_pmu.c
->>+++ b/drivers/gpu/drm/i915/i915_pmu.c
->>@@ -1158,18 +1158,21 @@ static void free_pmu(struct drm_device *dev, void *res)
->>  	struct i915_pmu *pmu = res;
->>  	struct drm_i915_private *i915 = pmu_to_i915(pmu);
->>+	perf_pmu_unregister(&pmu->base);
->>  	free_event_attributes(pmu);
->>  	kfree(pmu->base.attr_groups);
->>  	if (IS_DGFX(i915))
->>  		kfree(pmu->name);
->>+
->>+	/*
->>+	 * Make sure all currently running (but shortcut on pmu->closed) are
->>+	 * gone before proceeding with free'ing the pmu object embedded in i915.
->>+	 */
->>+	synchronize_rcu();
->>  }
->>  static int i915_pmu_cpu_online(unsigned int cpu, struct hlist_node *node)
->>  {
->>-	struct i915_pmu *pmu = hlist_entry_safe(node, typeof(*pmu), cpuhp.node);
->>-
->>-	GEM_BUG_ON(!pmu->base.event_init);
->>-
->>  	/* Select the first online CPU as a designated reader. */
->>  	if (cpumask_empty(&i915_pmu_cpumask))
->>  		cpumask_set_cpu(cpu, &i915_pmu_cpumask);
->>@@ -1182,8 +1185,6 @@ static int i915_pmu_cpu_offline(unsigned int cpu, struct hlist_node *node)
->>  	struct i915_pmu *pmu = hlist_entry_safe(node, typeof(*pmu), cpuhp.node);
->>  	unsigned int target = i915_pmu_target_cpu;
->>-	GEM_BUG_ON(!pmu->base.event_init);
->>-
->>  	/*
->>  	 * Unregistering an instance generates a CPU offline event which we must
->>  	 * ignore to avoid incorrectly modifying the shared i915_pmu_cpumask.
->>@@ -1337,21 +1338,14 @@ void i915_pmu_unregister(struct drm_i915_private *i915)
->>  {
->>  	struct i915_pmu *pmu = &i915->pmu;
->>-	if (!pmu->base.event_init)
->>-		return;
->>-
->>  	/*
->>-	 * "Disconnect" the PMU callbacks - since all are atomic synchronize_rcu
->>-	 * ensures all currently executing ones will have exited before we
->>-	 * proceed with unregistration.
->>+	 * "Disconnect" the PMU callbacks - unregistering the pmu will be done
->>+	 * later when all currently open events are gone
->>  	 */
->>  	pmu->closed = true;
->>-	synchronize_rcu();
->>  	hrtimer_cancel(&pmu->timer);
->>-
->>  	i915_pmu_unregister_cpuhp_state(pmu);
->>-	perf_pmu_unregister(&pmu->base);
->>  	pmu->base.event_init = NULL;
->>  }
+> Otherwise:
+> Reviewed-by: Nhat Pham <nphamcs@gmail.com>
+
+Ah that's right. We no longer modify zswap_next_shrink in the if
+branches. Merging the two spin_unlock.
 
