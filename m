@@ -1,156 +1,163 @@
-Return-Path: <linux-kernel+bounces-259799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF924939D59
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:16:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B068B939D5C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:16:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EFE4283349
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:16:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2FCA1C21D57
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5C014C582;
-	Tue, 23 Jul 2024 09:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9524514D43E;
+	Tue, 23 Jul 2024 09:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bTYs/csg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="OE5TaDbs";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jPxibuab"
+Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EB9208B6
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 09:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D44914D2BD;
+	Tue, 23 Jul 2024 09:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721726148; cv=none; b=WMx1tPwR5TqK4ruX9OsQNRsIIZVcHNvn7qJM9QZDo7q21NFpYESNWw7Ze6i5Y1gHFRoXQswemIN1qdB2u7K0NUMwanh1YlbaE8wt/dOawn6v3P/6WSAoBAlqO1daS8X7cQllVYIg2QP5somsG6vpe3Tz7f/UB3pCvrzBCe/IbDU=
+	t=1721726157; cv=none; b=kKlYiUKXv2K9Y0NrG2Xl7ZtUP0ZxCIGRWDgA2BezLzT+ANvhNUW7HtVPSuEI3QSEFA+JLoL/bCPP1+yWyoZQpZzKOlr1DMCx1FZVKEg7aBrbvhL2pKGYCzrA3ScjU8kQZHYIfxe6baOYs00Ib25q8yD5xzzm/YHSwIEK/AvQeug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721726148; c=relaxed/simple;
-	bh=JKRazvoFIf/4bQMW4OxTf84GHZy/Gi963R+CIj248Lg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mzxLlQCSWgyjafmVLhBugyzTy92s4lMiktmoAX0x2BIt9cz79ZSeSrJgI2VekZF363IKqMczg2iOomtwxhKJoLnjhtQcoq4OxElYYCm8pLLRUyoBxnmlGftPeHinDuraM7alPoogmvVUCWzm4Bf0v/QIfKCU9CDaShX7d7HLOP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bTYs/csg; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721726145;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dn0oMV7bhyORjlIV9NNrpUbkRujXMXyPxUT7qs9yU/E=;
-	b=bTYs/csgSI1wjB8mqzdTEPfWSbxmENZGPpAR8rp6V5eWEi7+GFITy94YcXTvFen+5wuKjX
-	islImNAqezgI1k2S1G0zruLi/E/oa1aCxaCH7IeHylo29g/R817DNRpciGFkvn205b+33+
-	LxAkOSscROhbQy+4wnggO/X56fZ+lps=
-Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
- [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-90-rvU2neXnPoq9Z4Pr2GNLRA-1; Tue, 23 Jul 2024 05:15:42 -0400
-X-MC-Unique: rvU2neXnPoq9Z4Pr2GNLRA-1
-Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-66b3b4415c7so83831897b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 02:15:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721726142; x=1722330942;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dn0oMV7bhyORjlIV9NNrpUbkRujXMXyPxUT7qs9yU/E=;
-        b=HVZBSsWNASHWMTua5vjdCAjjCI5+E6mu41QCdZy+6aS8JRSXwhNhAV1AnqXSvsoX26
-         zF0nC8xJNEgMKUuMsy4EXhTx6nhoXqA7p/INuXBNkjFjP0ah/WonZXrwQBhWZp1KP/AJ
-         2f6my8hHV7oWsxlKe49UMzFeaKobHJUHsm9gxw5bAkAs7vQRSHdq5cejBzU8hTgwWS8n
-         HjAEJPATg7t57KOlnOWrfnTpIPs8RFpRIrSNpG2uWyoB3xIlgnulP0fhADLAooKvsQvw
-         wnnXPO93wZ9EnLYjnen2oGAJJcX8XCGzTjp28SvR0/lX64xejz0AicHAZuEf22qr0B2v
-         F7hw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgKYs/KwzvlZODhyuGnpamMgQeOx5rHyk/ix5P894jMMwuirLGVtgjJRoVUDPCzM6HFr3QK1gvSh+NuirEVk/G2OrtQvuZvF+HlTjp
-X-Gm-Message-State: AOJu0YyybBFXWZD4BrmTVT+tXb/FIJMmO9VrWQJC/Ab6jkrlaPCYQkhE
-	+7IUr7vLw27f0BW5sXXtMyXxgHC33Mn6qkLt0f29ZRcwYp0auRqnUt2XNXorjHIhRx7oPqiBadU
-	Qwyoq2vO/F9WzzD3vmsWvHN5S3X8+3ijKX399QOerGPursyTucsx7hUeMJhkqAQ==
-X-Received: by 2002:a81:eb01:0:b0:665:7184:fcd0 with SMTP id 00721157ae682-66e4c57cc07mr25524977b3.23.1721726142420;
-        Tue, 23 Jul 2024 02:15:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE4IiXmj2FuxzskFkC0utHW7AkKAtNEST/fURo/dZSMHzQSDCbMp7OLSFmaIo2lbAehtKKQ1w==
-X-Received: by 2002:a81:eb01:0:b0:665:7184:fcd0 with SMTP id 00721157ae682-66e4c57cc07mr25524867b3.23.1721726142107;
-        Tue, 23 Jul 2024 02:15:42 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.147.11])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b7ac9c35cdsm45486866d6.98.2024.07.23.02.15.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 02:15:41 -0700 (PDT)
-Date: Tue, 23 Jul 2024 11:15:37 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Wander Lairson Costa <wander@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	"open list:SCHEDULER" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] sched/deadline: Consolidate Timer Cancellation
-Message-ID: <Zp90uZSUPkLmluEo@jlelli-thinkpadt14gen4.remote.csb>
-References: <20240722132935.14426-1-wander@redhat.com>
- <20240722132935.14426-4-wander@redhat.com>
+	s=arc-20240116; t=1721726157; c=relaxed/simple;
+	bh=mROYaCllljLDe6KGxHnovReLJUhId6M0dmLIG9l0n0Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ayCwo+tRHPnniEXaOfsqZZXqwO3s7E9Kz6wDIUkjlH1kEvAPea9SGU5dseuCbkDLXdJ+bTULD4zK1+BBtezemu2SenkTIspDuCQdLWnRQjm1M/mK6Rjr+kOfT3L4O7fv2q16LorkaGUQcAh2YXsw5ZHMjgIOo8QS+dlKF0dNe0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=OE5TaDbs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jPxibuab; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 8FE8B11403DB;
+	Tue, 23 Jul 2024 05:15:54 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Tue, 23 Jul 2024 05:15:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm1; t=1721726154; x=1721812554; bh=tD
+	qMYLk9bvSzGB4EmLXkD24mybY+SdczVkc8SGPEb44=; b=OE5TaDbsaJ0dv3+rnd
+	aHwOimBlMGy+0kmbC8+x2nrm13rwZRIDDrTtoGvFN0eNrbnnITlxjD3DqDFv0h8M
+	VTowhflMyqvL59fJiHhSZb5fc0r49kIgnBnEKDE2Tb4qR4qsxaJUTTS3VD/T3f6m
+	JXuo8hOa0evvC2r468Sv881AD5/qWYAZD3Nl2OOMbQvZ6KePC5yhHdia3Qw6DboG
+	VjZRJCPlm7NNgfHBD2WuGtaA01pkuV+lRbn6cVwcbOP+ELk3eyO8zUPWTs1yfBsT
+	PQ04dCjHRPuPt9ssc6sOQYbL47o22NLl8uc1EEpouSKv6hOLhB17PDR3E1A+y0t0
+	z/MQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm3; t=1721726154; x=1721812554; bh=tDqMYLk9bvSzG
+	B4EmLXkD24mybY+SdczVkc8SGPEb44=; b=jPxibuabEJpcgYzDEf1fDBcNdeWdH
+	WDsLQbYLHSUKnEppzfABOOyc4u16WO3Ef9cAKwRj2ENkDRDDJz1CRCRyTjhGaOvU
+	umtlr8xyQU4wc+Argm8dPuOm+e7FErOmQxqrgqwCwyO6jlfIWYcfNkIdjbHxQ8Sd
+	g/uGr81et/38DzkVg9VactOT6MN75tByb5xPPhCJG1uJJsgX+LM2isa2TH3gJ0ZL
+	jK0uV+blDlRsBLqreWY+WPVXUf2V8TQWEmZHTmrkkKG+AfT6atNSP9PCM27Px5if
+	AtTsrtTOEL6iuAL9QEr7/c+TxgPQUN9QQkFr9J2Vvs/rbKfJUrrqGaIug==
+X-ME-Sender: <xms:ynSfZtq4fXBzjzBv8rpGUrOHppXNRzLJR17HUkRiW2YOH4GiV0kvbw>
+    <xme:ynSfZvqsiZbDYiULVM_NcKnuDn8wBK6D5KRb47oaq9mlbGcqyJ_pTAFkXMS8r4kON
+    -G3UrpfMVf0LAZoV4c>
+X-ME-Received: <xmr:ynSfZqOa3wME0Ke0ciBvOQyX2p8YPxfLyojqO2a3VkodWkEquGo2_eelXlhAE7Zir0c>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrheelgddufecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomheplfhirgiguhhn
+    ucgjrghnghcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmqeenucggtf
+    frrghtthgvrhhnpeffteeugeektdfgjeevuedvgffhgedtvdfghedugefhgeehteeuudeh
+    udevjeethfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmpdhnsggprhgtphhtthho
+    pedt
+X-ME-Proxy: <xmx:ynSfZo61SrhzKxsvWEPiLH28jSwoxonpBceqSBMdcJPRzsxggo8O8w>
+    <xmx:ynSfZs6lGFazHS_VS9E3DJP-6IzbVRpi2WoNlY8EYxmWeRT6L5ItyQ>
+    <xmx:ynSfZghJRMxHiDnYxxVZHu9Cjcb1gL5qEiAHqV5yzofbBgUsFNT0rw>
+    <xmx:ynSfZu7ZrQiaZflbo4LJdEYK1w8iy-LiM8YDhjRdCTWps7Ae21qCZw>
+    <xmx:ynSfZmSRd7omp1SFrWzOBEH1p_sMscpE4uWZ7ONzRHz8Rf7geINUM6qE>
+Feedback-ID: ifd894703:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 23 Jul 2024 05:15:51 -0400 (EDT)
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Date: Tue, 23 Jul 2024 17:15:44 +0800
+Subject: [PATCH] MIPS: Loongson64: Set timer mode in cpu-probe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240722132935.14426-4-wander@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240723-loongson-exttimer-v1-1-974bef8c2f88@flygoat.com>
+X-B4-Tracking: v=1; b=H4sIAL90n2YC/x3MQQqAIBBA0avErBPULKOrRAvLyQZKQyWC6O5Jy
+ 7f4/4GEkTDBUD0Q8aJEwReIuoJlM94hI1sMkkvFtWzYHoJ3KXiGd850YGRCzapHbWxrOyjdGXG
+ l+3+O0/t+FyovMmMAAAA=
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1810;
+ i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
+ bh=mROYaCllljLDe6KGxHnovReLJUhId6M0dmLIG9l0n0Q=;
+ b=owGbwMvMwCXmXMhTe71c8zDjabUkhrT5JccPX0q4anrDnd+rS4NbSdEunVU2c31PSSKvkZfhu
+ j0TL5R3lLIwiHExyIopsoQIKPVtaLy44PqDrD8wc1iZQIYwcHEKwETCPzIynLda4ezFki39vTZP
+ vzDtEHvtlo8H+9aHJrt2OLbNuPHmBcP/yODzyZanJK/I1uTMP/PveFoaZ+SUmtlxqfFLnvAHHbT
+ hAgA=
+X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
+ fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
 
-Hi Wander,
+Loongson64 C and G processors have EXTIMER feature which
+is conflicting with CP0 counter.
 
-Guess this might help yes, only a minor naming suggestion below.
+Although the processor resets in EXTIMER disabled & INTIMER
+enabled mode, which is compatible with MIPS CP0 compare, firmware
+may attempt to enable EXTIMER and interfere CP0 compare.
 
-On 22/07/24 10:29, Wander Lairson Costa wrote:
-> After commit b58652db66c9 ("sched/deadline: Fix task_struct reference
-> leak"), I identified additional calls to hrtimer_try_to_cancel that
-> might also require a dl_server check. It remains unclear whether this
-> omission was intentional or accidental in those contexts.
-> 
-> This patch consolidates the timer cancellation logic into dedicated
-> functions, ensuring consistent behavior across all calls.
-> Additionally, it reduces code duplication and improves overall code
-> cleanliness.
-> 
-> Note the use of the __always_inline keyword. In some instances, we
-> have a task_struct pointer, dereference the dl member, and then use
-> the container_of macro to retrieve the task_struct pointer again. By
-> inlining the code, the compiler can potentially optimize out this
-> redundant round trip.
-> 
-> Signed-off-by: Wander Lairson Costa <wander@redhat.com>
-> ---
->  kernel/sched/deadline.c | 44 ++++++++++++++++++++++++++---------------
->  1 file changed, 28 insertions(+), 16 deletions(-)
-> 
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index 908d5ce79425..8b0bbade2dcb 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -320,6 +320,29 @@ void sub_running_bw(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
->  		__sub_running_bw(dl_se->dl_bw, dl_rq);
->  }
->  
-> +static __always_inline
-> +void cancel_timer(struct sched_dl_entity *dl_se, struct hrtimer *timer)
-> +{
-> +	/*
-> +	 * If the timer callback was running (hrtimer_try_to_cancel == -1),
-> +	 * it will eventually call put_task_struct().
-> +	 */
-> +	if (hrtimer_try_to_cancel(timer) == 1 && !dl_server(dl_se))
-> +		put_task_struct(dl_task_of(dl_se));
-> +}
-> +
-> +static __always_inline
-> +void cancel_dl_timer(struct sched_dl_entity *dl_se)
+Set timer mode back to MIPS compatible mode to fix booting on
+systems with such firmware before we have an actual driver for
+EXTIMER.
 
-Maybe we could call the above cancel_replenish_timer
+Cc: stable@vger.kernel.org
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+---
+Please take this patch via fixes (or second 6.11 PR) tree so it can
+reach stable faster.
 
-> +{
-> +	cancel_timer(dl_se, &dl_se->dl_timer);
+Thansks!
+---
+ arch/mips/kernel/cpu-probe.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-and this one cancel_dl_timer?
+diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
+index bda7f193baab..af7412549e6e 100644
+--- a/arch/mips/kernel/cpu-probe.c
++++ b/arch/mips/kernel/cpu-probe.c
+@@ -1724,12 +1724,16 @@ static inline void cpu_probe_loongson(struct cpuinfo_mips *c, unsigned int cpu)
+ 		c->ases |= (MIPS_ASE_LOONGSON_MMI | MIPS_ASE_LOONGSON_CAM |
+ 			MIPS_ASE_LOONGSON_EXT | MIPS_ASE_LOONGSON_EXT2);
+ 		c->ases &= ~MIPS_ASE_VZ; /* VZ of Loongson-3A2000/3000 is incomplete */
++		change_c0_config6(LOONGSON_CONF6_EXTIMER | LOONGSON_CONF6_INTIMER,
++				  LOONGSON_CONF6_INTIMER);
+ 		break;
+ 	case PRID_IMP_LOONGSON_64G:
+ 		__cpu_name[cpu] = "ICT Loongson-3";
+ 		set_elf_platform(cpu, "loongson3a");
+ 		set_isa(c, MIPS_CPU_ISA_M64R2);
+ 		decode_cpucfg(c);
++		change_c0_config6(LOONGSON_CONF6_EXTIMER | LOONGSON_CONF6_INTIMER,
++				  LOONGSON_CONF6_INTIMER);
+ 		break;
+ 	default:
+ 		panic("Unknown Loongson Processor ID!");
 
-Best,
-Juri
+---
+base-commit: dee7f101b64219f512bb2f842227bd04c14efe30
+change-id: 20240723-loongson-exttimer-14b48e7ad5d6
+
+Best regards,
+-- 
+Jiaxun Yang <jiaxun.yang@flygoat.com>
 
 
