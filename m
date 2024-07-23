@@ -1,136 +1,206 @@
-Return-Path: <linux-kernel+bounces-259858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ED2D939E53
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:57:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8ADA939E55
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:57:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0B3F1C21FC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:56:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EF6228313D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC7814D6E4;
-	Tue, 23 Jul 2024 09:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A2F14D45E;
+	Tue, 23 Jul 2024 09:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W//7WzN8"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lMOyT6Sh"
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D690922EE8
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 09:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8AC14D2B2
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 09:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721728612; cv=none; b=iOi4P29QJ3sHvdDW5KhrHBaCur/p+78Ot/Z+zlCwlhQE5zqY0vxl6AXKd4M17lCHwZXXCWwSSsTeRbMUlJvSl35Agd7KYeLNxIc3C2O3Oza78fUgT6DOeDw32QzbHUwTwBrEC//KjGNeoArS+znQkYuQOuZkg/qBVUnIoAicWiM=
+	t=1721728636; cv=none; b=Oe//53iETyOCPDQuwQTrRk8NBgEtvH8s9wIeH4oNcaz2CiXwr/JRcRMEESVK+zHMO+nze38JUKqzo7xDZhlN5soZsuDpWx1vvykHFpAAn38z2J5MSEzP0/1RUQPwEj3wttbcGM06+Y1wLqHvJO3tsBCxyzwvqwWHg8RnS5qRpNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721728612; c=relaxed/simple;
-	bh=IGzLJ/cCMteo/EZCwnnZOuSwU+ln9rcjHMLrHfnLqmQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VPfCpAMyLF/dTFYe3o0zzU6eLlXpbrlAQHruxAdoP6P6qgPZNwAdhmNhwthsDuGUqdYuGYDdrshUr7SnJ9WiKBRYt/gLS0sD6S7HlNKyRntNUz8zuEAdXA5nvctgIDGmGv9fFcpeTbYvB18uTxgalbGWta/vknaX31XlCXIbqko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W//7WzN8; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5a2ffc34677so4371607a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 02:56:48 -0700 (PDT)
+	s=arc-20240116; t=1721728636; c=relaxed/simple;
+	bh=3hT7wdmOcOTNeFewjPFZrs1nK0GheTEQ/ofYbsvh8eE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Xh0J4A1yaX9tV7OR+NfHPmXBx4AgQJjkKsC9T6HJXGHnvD2RyHOXDaoSALKCq1qq9Euk3e0e/Gd8DkprGPOmtq5o5utJgsTcCBKwYfjCZm8sq9zBWJTgJ0Dsr9rOkyy58L3HPXoTaXD+817pNZmU0NC81sMKn8dAkQtTeH7tre0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lMOyT6Sh; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5ca9835db95so2771526eaf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 02:57:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721728607; x=1722333407; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=DwQZ6rkqaXK42cUn4tfuoBvmbqHZq9bJ0IAvWzU9q/o=;
-        b=W//7WzN8TzUqlp/hd1lXJrDcECyWFwZZWvRrDiAl4aMUBrvogqgOvL8ANU747Hb4mH
-         makdvlbP9hHXnOvnH6UejhgSmSE7Ne7rCUgZEeWfq2SRpVpEk8fhOiMxqyMkuxSWmHAm
-         CQa6vlj+aCNutbQua/B68oJquhQ0XbaoSV8CCOfcnKWJyczQS4mn9OnPNtm5Rn7sO6Qm
-         QXhwMdCXQwLpUUW71chVekWbIKUb144yKhLwK2/gHURIiXVbhG+i9C0ufyWJKaWgn1nW
-         68qgEEdncY48dR15t+pal0T7q0bscBhjYT2CC2DW7wiF/T01HCi/pN3sjZBgr3xdoIwf
-         C3MQ==
+        d=chromium.org; s=google; t=1721728632; x=1722333432; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OzyMEsbjxgELLAU9H3JVgtxZaYvLlmk6+peydwG5PAI=;
+        b=lMOyT6ShKA47tJT7xOmaoStkNX2P6wc6evD7WdT4eR6ii2xXpVit84oXNapP651Jb0
+         5INRHK1On7k9wb1TuMa4tPAXNJrJxTX4eQWND0CNh/pDXx/w+LC3gxfpeB2EQMCKE1NT
+         yPmYOLKSiltS2p83zvyyEOYUXFQsNLqiBZWtQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721728607; x=1722333407;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DwQZ6rkqaXK42cUn4tfuoBvmbqHZq9bJ0IAvWzU9q/o=;
-        b=kFmaQyNdAqEq9NOreXBdsXrYDmGt8Lj17kRY1bTjE5yFqr8Ny0IG/Ye7dh3KMbLEZr
-         OXQy2w63n10sDKzr2U2f/fbzw5UWbEWikMdA4yKC6d6OxQpEQcTdKYfrLB3aRFGioQwo
-         VyvOwaPrQstpsCD6h2VaaWkJPOnxVARJRQuGuz7uZbh6FVhRMZ9AvzPbYXBhMwzAq3sn
-         h8txkQeA2UEwoRVKpPS198q0yn6IpuJ8sY8mASKOzKlHpEryKEKV9xs+EJOL6HIgCsAR
-         LDoxQYm6+3C3fVXCRDCcgCDtm3gmjqu1iHAm5T1oqBYtmmJqTKl/IrQPDtK3e97HV1Jr
-         TEuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSkQEi38AnuLg/VaGqw7RjhTYufwVAK7QH0JTrdz2PpHu8IdpmWWxw4WPjOTvXT3SjOWo7zvpRnUEH5O0S7o6o6fnJ0OvthnW5CYr3
-X-Gm-Message-State: AOJu0Yw8ehiItMZQDKtBJ55XCMPkBNBVlmoKgmecCjZ0Mx/1B9iF0PxB
-	lVdp0Vkakrn3vac0BHKrljS6L3hrqR/des6diCDoHatW/fsOsggUWUFbzixw2F4=
-X-Google-Smtp-Source: AGHT+IFYd5Dohe2cteD7Pwi8FdGcXB7HiMTaFApR/yDRBF4jc+wklVC+ktnl+JDRfExtkN6t6iSM4w==
-X-Received: by 2002:a05:6402:350e:b0:5a3:8c9:3c1d with SMTP id 4fb4d7f45d1cf-5a479875a8fmr6404915a12.14.1721728606806;
-        Tue, 23 Jul 2024 02:56:46 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30c2f86d1sm7204794a12.73.2024.07.23.02.56.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 02:56:46 -0700 (PDT)
-Message-ID: <913ed537-d619-44d3-8d71-610c695fc01c@linaro.org>
-Date: Tue, 23 Jul 2024 11:56:44 +0200
+        d=1e100.net; s=20230601; t=1721728632; x=1722333432;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OzyMEsbjxgELLAU9H3JVgtxZaYvLlmk6+peydwG5PAI=;
+        b=JctPM+qwODnOvz0Vx1EBxs+hZ6Otn24mAyqirlyp3Kg6eQ4Az4/mXHo79WTptqfWsV
+         CexN5u3iFcC5VvCgUk6XfWXXjcAw+VsopGExsAdMjnmCAPjUvPCbuBdEi7vVsAXRd1ZC
+         AB84+Y+0uy2Y+JpSMzdPOiy7nDYzi32bMs79R3THGRIitattTCKqHrUmgdNXG9bEIO/8
+         dPlnYK7OJ/wTwQqeRxACrch1iYMyDMkdW7+jlg+Kpg7Y9pzNNun54C4IKy6R2mNX+kkh
+         Q7yOexOV3oUfXpbfQ8Facv3ZBMH1tPbYtiBPfDgQULLkSSllfzXKaSH4aNrKCyKLiaRp
+         Y3mw==
+X-Forwarded-Encrypted: i=1; AJvYcCUeKUJsUDs4rR67JEA7ib23/5BgAXfSaNI0ORAahwmdVzaCI9N/kFiQfcdh5IjP2KEOsKMe7JJabkCMmDCQAY6aPPGO37Ue9B/BFcZN
+X-Gm-Message-State: AOJu0YwRGQYqZKiJ39ffb+spx8ttLyWtzmJ2WUNWnv9XWdC4MUSZ7y5c
+	PE06wt7KaZE/kxgbll3jel36Sc8xUwAMIjAea0JO1zYTOKr7P9QVVBgZcftliw==
+X-Google-Smtp-Source: AGHT+IHDnnxHuI9E06J5YQVs42SxY8MGajBowmzWGUirw5K4mNGoo+X6VpjzSBMPCAM4HXho8gKsfg==
+X-Received: by 2002:a05:6358:3392:b0:1aa:a01a:23dc with SMTP id e5c5f4694b2df-1acc5b1f268mr1130147855d.15.1721728632189;
+        Tue, 23 Jul 2024 02:57:12 -0700 (PDT)
+Received: from yuanhsinte.c.googlers.com (46.165.189.35.bc.googleusercontent.com. [35.189.165.46])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-79f0f546147sm5999975a12.82.2024.07.23.02.57.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 02:57:11 -0700 (PDT)
+From: Hsin-Te Yuan <yuanhsinte@chromium.org>
+Date: Tue, 23 Jul 2024 09:56:50 +0000
+Subject: [PATCH] arm64: dts: mt8183: Add kukui-jacuzzi-cerise series boards
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc: qcom: llcc: Update configuration data for x1e80100
-To: Rajendra Nayak <quic_rjendra@quicinc.com>, andersson@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240723081542.1522249-1-quic_rjendra@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240723081542.1522249-1-quic_rjendra@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240723-jacuzzi_dt-v1-1-3e994a2b5e24@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAGF+n2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDcyNj3azE5NKqqsz4lBJdA7PkFIOktBRTEyMjJaCGgqLUtMwKsGHRsbW
+ 1AJmNJk1cAAAA
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Hsin-Te Yuan <yuanhsinte@chromium.org>
+X-Mailer: b4 0.15-dev-a9570
 
-On 23.07.2024 10:15 AM, Rajendra Nayak wrote:
-> Update the configuration table for x1e80100 with the latest recommendations
-> from the SCT table.
-> 
-> Signed-off-by: Rajendra Nayak <quic_rjendra@quicinc.com>
-> ---
+Cerise is known as ASUS Chromebook CZ1.
+Stern is known as ASUS Chromebook Flip CZ1.
 
-Boots and doesn't explode
+Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+---
+ .../dts/mediatek/mt8183-kukui-jacuzzi-cerise.dts   | 25 ++++++++++++++++
+ .../dts/mediatek/mt8183-kukui-jacuzzi-cerise.dtsi  | 21 +++++++++++++
+ .../dts/mediatek/mt8183-kukui-jacuzzi-stern.dts    | 35 ++++++++++++++++++++++
+ 3 files changed, 81 insertions(+)
 
-Tested-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cerise.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cerise.dts
+new file mode 100644
+index 000000000000..b4f4ed701253
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cerise.dts
+@@ -0,0 +1,25 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright 2021 Google LLC
++ */
++
++/dts-v1/;
++#include "mt8183-kukui-jacuzzi-cerise.dtsi"
++#include "mt8183-kukui-audio-da7219-rt1015p.dtsi"
++
++/ {
++	model = "Google cerise board";
++	compatible = "google,cerise-sku0", "google,cerise", "mediatek,mt8183";
++};
++
++&mt6358codec {
++	mediatek,dmic-mode = <1>; /* one-wire */
++};
++
++&touchscreen {
++	status = "disabled";
++};
++
++&qca_wifi {
++	qcom,ath10k-calibration-variant = "GO_CERISE";
++};
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cerise.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cerise.dtsi
+new file mode 100644
+index 000000000000..087a0ef33e13
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cerise.dtsi
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright 2021 Google LLC
++ */
++
++/dts-v1/;
++#include "mt8183-kukui-jacuzzi.dtsi"
++
++&cpu_thermal {
++	sustainable-power = <4500>; /* milliwatts */
++};
++
++&mmc1_pins_uhs {
++	pins-clk {
++		drive-strength = <MTK_DRIVE_6mA>;
++	};
++};
++
++&i2c2 {
++	i2c-scl-internal-delay-ns = <13200>;
++};
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-stern.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-stern.dts
+new file mode 100644
+index 000000000000..15e00feae3a9
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-stern.dts
+@@ -0,0 +1,35 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright 2021 Google LLC
++ */
++
++/dts-v1/;
++#include "mt8183-kukui-jacuzzi-cerise.dtsi"
++#include "mt8183-kukui-audio-da7219-rt1015p.dtsi"
++
++/ {
++	model = "Google stern board";
++	compatible = "google,cerise-sku1", "google,cerise", "mediatek,mt8183";
++};
++
++&mt6358codec {
++	mediatek,dmic-mode = <0>; /* two-wire */
++};
++
++&touchscreen {
++	status = "okay";
++
++	compatible = "hid-over-i2c";
++	reg = <0x10>;
++	interrupt-parent = <&pio>;
++	interrupts = <155 IRQ_TYPE_LEVEL_LOW>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&touchscreen_pins>;
++
++	post-power-on-delay-ms = <10>;
++	hid-descr-addr = <0x0001>;
++};
++
++&qca_wifi {
++	qcom,ath10k-calibration-variant = "GO_STERN";
++};
 
-Konrad
+---
+base-commit: 66ebbdfdeb093e097399b1883390079cd4c3022b
+change-id: 20240723-jacuzzi_dt-06cd0bfd5422
+
+Best regards,
+-- 
+Hsin-Te Yuan <yuanhsinte@chromium.org>
+
 
