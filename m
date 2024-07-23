@@ -1,178 +1,284 @@
-Return-Path: <linux-kernel+bounces-259683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95922939B83
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:11:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34EE4939B8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1625D1F22970
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:11:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80D5EB21D0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C8D14B950;
-	Tue, 23 Jul 2024 07:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06163142631;
+	Tue, 23 Jul 2024 07:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JyOQpiaJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z1hHj5rt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F13D14B07C
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E5042AB3;
+	Tue, 23 Jul 2024 07:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721718647; cv=none; b=n70T8XTAK1SIoq/z9EA4wHZ8S/dCmh4LECxvkoA1EaHXiteo34dbR/DKN40SMLvXLTM1L4yneliVTkEuSZu996UVgjw7VDU86BFvw78X+VnUL1SSTQ42SW62EQUXr5QONgQPBU5CkB+YafOuLePnyaoujDK1TVLr3mPoBD4qsfM=
+	t=1721718977; cv=none; b=TYGYU44dB+5x4hFn0hd0DtA/nK+JzCfrqB3Majq+2/2HiUOvw3xoO07syvln2XxQ4rL790HUfKAIjxUqy9jYMQ/iJrSgye5QRT7sjNOzBkKr4/DxKCTo9ClDRrZi7VKvJ0iZwfwRieWHrlo4y9D/P88jKmN8oCAy5dWRVy3F6To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721718647; c=relaxed/simple;
-	bh=u/QsKyttUCU09OB5lypgCukROiu0KDjYn/kne8MGZsg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tUXaMcvCefPHxnLY61X5lDvUkCamemwxbgULlV3f03pcSYe8FDgIBLfdD6i90MFJyqEc4Yq7XYDIiEUMG5Kdw4/6jI5OEM9J5rHOXeKyEJDHz3yvpkaRYtZ9rwkxKGn/g7XCM9iAFIEvYUHE7bWweIr/K1V/nX/oNwP8wu/4m7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JyOQpiaJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721718645;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YdPO/Vt26loGhN/7TbhKVqyyms9ZE6JlxaJFW/Mi4bc=;
-	b=JyOQpiaJNqmRnGut4aQpiTY5mTwGdh39SDA/vP0g5N3Q9S1/cEdC3jX7rA9/BhTdkgksN8
-	cmTeGlpQZAB2R31z8yNAboerqXkBacAYpIx+Vp2lkSS8JYQASAwSYkK6Ck2F9IXKMYNgGF
-	9FRX5j7FTgNPdPUO8c2KuHwsJ/Pb4hE=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-422-NxUWQI8GPx6Udv3-oRtnSA-1; Tue,
- 23 Jul 2024 03:10:39 -0400
-X-MC-Unique: NxUWQI8GPx6Udv3-oRtnSA-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E09B81955F43;
-	Tue, 23 Jul 2024 07:10:37 +0000 (UTC)
-Received: from alecto.usersys.redhat.com (unknown [10.45.224.129])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B85293000194;
-	Tue, 23 Jul 2024 07:10:34 +0000 (UTC)
-From: Artem Savkov <asavkov@redhat.com>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	bpf@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Artem Savkov <asavkov@redhat.com>
-Subject: [PATCH bpf-next v3] selftests/bpf: fix compilation failure when CONFIG_NET_FOU!=y
-Date: Tue, 23 Jul 2024 09:10:31 +0200
-Message-ID: <20240723071031.3389423-1-asavkov@redhat.com>
-In-Reply-To: <CAADnVQKE1Xmjhx3Xwdidmmn=BGzjgc89i+UMhHR7=6HupPQZSA@mail.gmail.com>
-References: <CAADnVQKE1Xmjhx3Xwdidmmn=BGzjgc89i+UMhHR7=6HupPQZSA@mail.gmail.com>
+	s=arc-20240116; t=1721718977; c=relaxed/simple;
+	bh=kpzV7nthwBXA7mKgX4S5GAgQ8jXABRTcXktATICJSt4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ciN9osv4eh5Pb46Vh33ZJIZIWryoOGcB6QYkol2xdgzqLTGbhhHR161EyRll5W/sOMqyB2QtMGnlSMU06DNTfTugx5jt5l52fKM0WGmjguXpSbLbjft/8PCLWXq7zKxONVxmikMjDnJRzlQhTU1U8toC3WZg0CzaXxDXodBsR9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z1hHj5rt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24A46C4AF0C;
+	Tue, 23 Jul 2024 07:16:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721718976;
+	bh=kpzV7nthwBXA7mKgX4S5GAgQ8jXABRTcXktATICJSt4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Z1hHj5rt6SNMY8Pr7YsLUsd8JHSmkYo/SkO6zHfdygnMp30yTXXDIpxRRlTPdkztv
+	 ZPUywsMc5DXlAl5/tem6DLLLH0qTpanCluO5fOCjaHJ2vesUkrgh6Oz+7OzCh3kWcm
+	 CovsPb5kjfE3OCItYhhDAdO0ArlXbZBwJsnsPjEd0HoPs37v5QctqP5oIvgdLwtArs
+	 BjvLfU+ITjJl2c+iHVfGvbdKLY5tl7STgN/5JR5XxdJqCXqWg5zO95+OQNicq2OMcO
+	 H6JMbW22nz8sSVg0MnrqMYJNFugNBg9gMdUEd/kB/TDnw0G0TVTlfi8qzgKmfsMZCW
+	 YY8oq+I5o1fMQ==
+Message-ID: <b75de7a9-09fe-4c53-8e73-a3dbfd6efa4d@kernel.org>
+Date: Tue, 23 Jul 2024 16:16:14 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] PCI: endpoint: Introduce 'get_bar' to map fixed
+ address BARs in EPC
+To: Rick Wertenbroek <rick.wertenbroek@gmail.com>
+Cc: rick.wertenbroek@heig-vd.ch, alberto.dassatti@heig-vd.ch,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>, Niklas Cassel <cassel@kernel.org>,
+ Frank Li <Frank.Li@nxp.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240719115741.3694893-1-rick.wertenbroek@gmail.com>
+ <20240719115741.3694893-2-rick.wertenbroek@gmail.com>
+ <b4256f7c-350b-4fba-ba49-a91ee463b8d7@kernel.org>
+ <CAAEEuhqCM08NLTkM+WFh88S45OP-mjbJUd+KPtu2tBA+fbJvpw@mail.gmail.com>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <CAAEEuhqCM08NLTkM+WFh88S45OP-mjbJUd+KPtu2tBA+fbJvpw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Without CONFIG_NET_FOU bpf selftests are unable to build because of
-missing definitions. Add ___local versions of struct bpf_fou_encap and
-enum bpf_fou_encap_type to fix the issue.
+On 7/23/24 16:06, Rick Wertenbroek wrote:
+> On Tue, Jul 23, 2024 at 2:03 AM Damien Le Moal <dlemoal@kernel.org> wrote:
+>>
+>> On 7/19/24 20:57, Rick Wertenbroek wrote:
+>>> The current mechanism for BARs is as follows: The endpoint function
+>>> allocates memory with 'pci_epf_alloc_space' which calls
+>>> 'dma_alloc_coherent' to allocate memory for the BAR and fills a
+>>> 'pci_epf_bar' structure with the physical address, virtual address,
+>>> size, BAR number and flags. This 'pci_epf_bar' structure is passed
+>>> to the endpoint controller driver through 'set_bar'. The endpoint
+>>> controller driver configures the actual endpoint to reroute PCI
+>>> read/write TLPs to the BAR memory space allocated.
+>>>
+>>> The problem with this is that not all PCI endpoint controllers can
+>>> be configured to reroute read/write TLPs to their BAR to a given
+>>> address in memory space. Some PCI endpoint controllers e.g., FPGA
+>>> IPs for Intel/Altera and AMD/Xilinx PCI endpoints. These controllers
+>>> come with pre-assigned memory for the BARs (e.g., in FPGA BRAM),
+>>> because of this the endpoint controller driver has no way to tell
+>>> these controllers to reroute the read/write TLPs to the memory
+>>> allocated by 'pci_epf_alloc_space' and no way to get access to the
+>>> memory pre-assigned to the BARs through the current API.
+>>>
+>>> Therefore, introduce 'get_bar' which allows to get access to a BAR
+>>> without calling 'pci_epf_alloc_space'. Controllers with pre-assigned
+>>> bars can therefore implement 'get_bar' which will assign the BAR
+>>> pyhsical address, virtual address through ioremap, size, and flags.
+>>>
+>>> PCI endpoint functions can query the endpoint controller through the
+>>> 'fixed_addr' boolean in the 'pci_epc_bar_desc' structure. Similarly
+>>> to the BAR type, fixed size or fixed 64-bit descriptions. With this
+>>> information they can either call 'pci_epf_alloc_space' and 'set_bar'
+>>> as is currently the case, or call the new 'get_bar'. Both will provide
+>>> a working, memory mapped BAR, that can be used in the endpoint
+>>> function.
+>>>
+>>> Signed-off-by: Rick Wertenbroek <rick.wertenbroek@gmail.com>
+>>> ---
+>>>  drivers/pci/endpoint/pci-epc-core.c | 37 +++++++++++++++++++++++++++++
+>>>  include/linux/pci-epc.h             |  7 ++++++
+>>>  2 files changed, 44 insertions(+)
+>>>
+>>> diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+>>> index 84309dfe0c68..fcef848876fe 100644
+>>> --- a/drivers/pci/endpoint/pci-epc-core.c
+>>> +++ b/drivers/pci/endpoint/pci-epc-core.c
+>>> @@ -544,6 +544,43 @@ int pci_epc_set_bar(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(pci_epc_set_bar);
+>>>
+>>> +/**
+>>> + * pci_epc_get_bar - get BAR configuration from a fixed address BAR
+>>> + * @epc: the EPC device on which BAR resides
+>>> + * @func_no: the physical endpoint function number in the EPC device
+>>> + * @vfunc_no: the virtual endpoint function number in the physical function
+>>> + * @bar: the BAR number to get
+>>> + * @epf_bar: the struct epf_bar to fill
+>>> + *
+>>> + * Invoke to get the configuration of the endpoint device fixed address BAR
+>>> + */
+>>> +int pci_epc_get_bar(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+>>> +                 enum pci_barno bar, struct pci_epf_bar *epf_bar)
+>>> +{
+>>> +     int ret;
+>>> +
+>>> +     if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions)
+>>> +             return -EINVAL;
+>>> +
+>>> +     if (vfunc_no > 0 && (!epc->max_vfs || vfunc_no > epc->max_vfs[func_no]))
+>>> +             return -EINVAL;
+>>> +
+>>> +     if (bar < 0 || bar >= PCI_STD_NUM_BARS)
+>>> +             return -EINVAL;
+>>> +
+>>> +     if (!epc->ops->get_bar)
+>>> +             return -EINVAL;
+>>> +
+>>> +     epf_bar->barno = bar;
+>>> +
+>>> +     mutex_lock(&epc->lock);
+>>> +     ret = epc->ops->get_bar(epc, func_no, vfunc_no, bar, epf_bar);
+>>> +     mutex_unlock(&epc->lock);
+>>> +
+>>> +     return ret;
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(pci_epc_get_bar);
+>>> +
+>>>  /**
+>>>   * pci_epc_write_header() - write standard configuration header
+>>>   * @epc: the EPC device to which the configuration header should be written
+>>> diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
+>>> index 85bdf2adb760..a5ea50dd49ba 100644
+>>> --- a/include/linux/pci-epc.h
+>>> +++ b/include/linux/pci-epc.h
+>>> @@ -37,6 +37,7 @@ pci_epc_interface_string(enum pci_epc_interface_type type)
+>>>   * @write_header: ops to populate configuration space header
+>>>   * @set_bar: ops to configure the BAR
+>>>   * @clear_bar: ops to reset the BAR
+>>> + * @get_bar: ops to get a fixed address BAR that cannot be set/cleared
+>>>   * @map_addr: ops to map CPU address to PCI address
+>>>   * @unmap_addr: ops to unmap CPU address and PCI address
+>>>   * @set_msi: ops to set the requested number of MSI interrupts in the MSI
+>>> @@ -61,6 +62,8 @@ struct pci_epc_ops {
+>>>                          struct pci_epf_bar *epf_bar);
+>>>       void    (*clear_bar)(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+>>>                            struct pci_epf_bar *epf_bar);
+>>> +     int     (*get_bar)(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+>>> +                        enum pci_barno, struct pci_epf_bar *epf_bar);
+>>>       int     (*map_addr)(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+>>>                           phys_addr_t addr, u64 pci_addr, size_t size);
+>>>       void    (*unmap_addr)(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+>>> @@ -163,6 +166,7 @@ enum pci_epc_bar_type {
+>>>   * struct pci_epc_bar_desc - hardware description for a BAR
+>>>   * @type: the type of the BAR
+>>>   * @fixed_size: the fixed size, only applicable if type is BAR_FIXED_MASK.
+>>> + * @fixed_addr: indicates that the BAR has a fixed address in memory map.
+>>>   * @only_64bit: if true, an EPF driver is not allowed to choose if this BAR
+>>>   *           should be configured as 32-bit or 64-bit, the EPF driver must
+>>>   *           configure this BAR as 64-bit. Additionally, the BAR succeeding
+>>> @@ -176,6 +180,7 @@ enum pci_epc_bar_type {
+>>>  struct pci_epc_bar_desc {
+>>>       enum pci_epc_bar_type type;
+>>>       u64 fixed_size;
+>>> +     bool fixed_addr;
+>>
+>> Why make this a bool instead of a 64-bits address ?
+>> If the controller sets this to a non-zero value, we will know it is a fixed
+>> address bar. And that can avoid adding the get_bar operations, no ?
+>>
+> 
+> The reason to use a bool is to force the use of 'get_bar', get_bar will fill
+> the 'pci_epf_bar' structure and memory map the BAR. This ensures the
+> 'pci_epf_bar' structure is filled correctly and usable, same as after a
+> 'pci_epf_alloc_space' operation. This also removes a burden to the
+> endpoint function (i.e., map the memory, handle errors, set the fields
+> of the structure etc.). This will likely avoid errors in the endpoint functions
+> as this code is quite sensitive and possibly controller specific (e.g.,
+> memremap for virtual controllers vs ioremap for real controllers). Also,
+> this code would be duplicated for each endpoint function, therefore I think
+> it is better to just call 'get_bar' instead of rewriting all corresponding lines
+> in each endpoint function (which would be very error prone).
+> 
+> There could also be other cases where the PCIe controller is behind a
+> specific bus and the BAR doesn't have a physical address and needs
+> to be accessed in a specific way. E.g., one could make a BAR accessible
+> via a serial interface in the FPGA (probably no one will do this, but it is
+> a possible architecture).
+> 
+> That's why I believe it is important to let the controller fill the
+> 'pci_epf_bar'
+> structure and do the necessary io/mem remapping internally.
 
-Signed-off-by: Artem Savkov <asavkov@redhat.com>
+OK. All fair points. I asked because I am not a fan of the code we end up
+needing in the epf, such as you have in the test driver changes in patch 2:
 
----
-v3: swith from using BPF_NO_KFUNC_PROTOTYPES to casting to keep kfunc
-prototype intact.
-
-v2: added BPF_NO_KFUNC_PROTOTYPES define to avoid issues when
-CONFIG_NET_FOU is set.
----
- .../selftests/bpf/progs/test_tunnel_kern.c    | 26 ++++++++++++++-----
- 1 file changed, 20 insertions(+), 6 deletions(-)
-
-diff --git a/tools/testing/selftests/bpf/progs/test_tunnel_kern.c b/tools/testing/selftests/bpf/progs/test_tunnel_kern.c
-index 3f5abcf3ff136..fcff3010d8a60 100644
---- a/tools/testing/selftests/bpf/progs/test_tunnel_kern.c
-+++ b/tools/testing/selftests/bpf/progs/test_tunnel_kern.c
-@@ -26,6 +26,18 @@
-  */
- #define ASSIGNED_ADDR_VETH1 0xac1001c8
- 
-+struct bpf_fou_encap___local {
-+       __be16 sport;
-+       __be16 dport;
-+};
++	if (!epc_features->bar[test_reg_bar].fixed_addr)
++		base = pci_epf_alloc_space(epf, test_reg_size, test_reg_bar,
++					   epc_features, PRIMARY_INTERFACE);
++	else {
++		ret = pci_epc_get_bar(epf->epc, epf->func_no, epf->vfunc_no,
++				      test_reg_bar, &epf->bar[test_reg_bar]);
++		if (ret < 0) {
++			dev_err(dev, "Failed to get fixed address BAR\n");
++			return ret;
++		}
++		base = epf->bar[test_reg_bar].addr;
++	}
 +
-+enum bpf_fou_encap_type___local {
-+       FOU_BPF_ENCAP_FOU___local,
-+       FOU_BPF_ENCAP_GUE___local,
-+};
-+
-+struct bpf_fou_encap;
-+
- int bpf_skb_set_fou_encap(struct __sk_buff *skb_ctx,
- 			  struct bpf_fou_encap *encap, int type) __ksym;
- int bpf_skb_get_fou_encap(struct __sk_buff *skb_ctx,
-@@ -745,7 +757,7 @@ SEC("tc")
- int ipip_gue_set_tunnel(struct __sk_buff *skb)
- {
- 	struct bpf_tunnel_key key = {};
--	struct bpf_fou_encap encap = {};
-+	struct bpf_fou_encap___local encap = {};
- 	void *data = (void *)(long)skb->data;
- 	struct iphdr *iph = data;
- 	void *data_end = (void *)(long)skb->data_end;
-@@ -769,7 +781,8 @@ int ipip_gue_set_tunnel(struct __sk_buff *skb)
- 	encap.sport = 0;
- 	encap.dport = bpf_htons(5555);
- 
--	ret = bpf_skb_set_fou_encap(skb, &encap, FOU_BPF_ENCAP_GUE);
-+	ret = bpf_skb_set_fou_encap(skb, (struct bpf_fou_encap *)&encap,
-+				    FOU_BPF_ENCAP_GUE___local);
- 	if (ret < 0) {
- 		log_err(ret);
- 		return TC_ACT_SHOT;
-@@ -782,7 +795,7 @@ SEC("tc")
- int ipip_fou_set_tunnel(struct __sk_buff *skb)
- {
- 	struct bpf_tunnel_key key = {};
--	struct bpf_fou_encap encap = {};
-+	struct bpf_fou_encap___local encap = {};
- 	void *data = (void *)(long)skb->data;
- 	struct iphdr *iph = data;
- 	void *data_end = (void *)(long)skb->data_end;
-@@ -806,7 +819,8 @@ int ipip_fou_set_tunnel(struct __sk_buff *skb)
- 	encap.sport = 0;
- 	encap.dport = bpf_htons(5555);
- 
--	ret = bpf_skb_set_fou_encap(skb, &encap, FOU_BPF_ENCAP_FOU);
-+	ret = bpf_skb_set_fou_encap(skb, (struct bpf_fou_encap *)&encap,
-+				    FOU_BPF_ENCAP_FOU___local);
- 	if (ret < 0) {
- 		log_err(ret);
- 		return TC_ACT_SHOT;
-@@ -820,7 +834,7 @@ int ipip_encap_get_tunnel(struct __sk_buff *skb)
- {
- 	int ret;
- 	struct bpf_tunnel_key key = {};
--	struct bpf_fou_encap encap = {};
-+	struct bpf_fou_encap___local encap = {};
- 
- 	ret = bpf_skb_get_tunnel_key(skb, &key, sizeof(key), 0);
- 	if (ret < 0) {
-@@ -828,7 +842,7 @@ int ipip_encap_get_tunnel(struct __sk_buff *skb)
- 		return TC_ACT_SHOT;
- 	}
- 
--	ret = bpf_skb_get_fou_encap(skb, &encap);
-+	ret = bpf_skb_get_fou_encap(skb, (struct bpf_fou_encap *)&encap);
- 	if (ret < 0) {
- 		log_err(ret);
- 		return TC_ACT_SHOT;
+
+It would be a lot nicer if we could have a single epf function that does the
+alloc space call OR the get bar called based on the type of the bar.
+
+I was thinking of something like:
+
+	base = pci_epf_alloc_bar(epf, &epf->bar[test_reg_bar], test_reg_size,
+				 PRIMARY_INTERFACE);
+
+(we do not need to pass the epc_features as we can get that through epf->epc)
+
+That would greatly simplify the epf driver code. And of course we need the
+reverse pci_epf_free_bar() which would call either pci_epf_free_space() or
+pci_epc_release_bar() for fixed address bars. This last function is needed
+either way I think so that we can have a clean teardown of the epc resources
+used for an epf.
+
+> 
+>>>       bool only_64bit;
+>>>  };
+>>>
+>>> @@ -238,6 +243,8 @@ int pci_epc_set_bar(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+>>>                   struct pci_epf_bar *epf_bar);
+>>>  void pci_epc_clear_bar(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+>>>                      struct pci_epf_bar *epf_bar);
+>>> +int pci_epc_get_bar(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+>>> +                 enum pci_barno, struct pci_epf_bar *epf_bar);
+>>>  int pci_epc_map_addr(struct pci_epc *epc, u8 func_no, u8 vfunc_no,
+>>>                    phys_addr_t phys_addr,
+>>>                    u64 pci_addr, size_t size);
+>>
+>> --
+>> Damien Le Moal
+>> Western Digital Research
+>>
+> 
+> Thank you for your insights.
+> Rick
+
 -- 
-2.45.2
+Damien Le Moal
+Western Digital Research
 
 
