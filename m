@@ -1,117 +1,206 @@
-Return-Path: <linux-kernel+bounces-259934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEBED93A01A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:40:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F2D293A01F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:43:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19E1D1C21C85
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:40:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B815028369F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB9941509BC;
-	Tue, 23 Jul 2024 11:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F3F1514D8;
+	Tue, 23 Jul 2024 11:43:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mkLk4Mfp"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Wdji15RC"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5FF41509BA
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FCD1509BC
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721734836; cv=none; b=nGODzU8X8YiDKXhULUaSIXAFaU1iXU63PjI6nymrOWXN1mkYAuaNiTT77ZspLt3AEOVUJjvssTutVTbTSw/rTnMgfNtXq8H6ALdWtK4YdAmWlnHvlj0M9d7KmrQvObR0sKo6ifZevxcZXQTzg6TYky5FwkWBPuBwgafEqObd9k8=
+	t=1721734987; cv=none; b=p8DlE9H3WLd39kqJEsfIgLC8GgWTSaT4kK5MRKIS8nti3xz2ol0h3e+d4RJs7+qbwECPXzg+3b3pmwHvuqMcAbUnMGQqgeEBIiqfVS+qDf5cVk9L8QAbhh3b6aWDmQtWUDHo3nCC8YBd+OqdyYvxCMSqhqVMrc4NLQ0qRdHFmbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721734836; c=relaxed/simple;
-	bh=W7OW3Ejgfp7G5j4icOUna0C6UGhzfYE5ZoNeOw3JMyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PL/FFplKqqqqCed+SevhWbAFP9Rwu9AnlJw5BHhC2aCIBfpKxT9wmyUf0Y64iJEkeXCBBmplwZWK1ok/9q4cIfcZhOFoVPUtgonx9raKnhfeDjWkIJSRzE089Ly90tdUmpkKw1ASnp43gopLIDwYOAuQ5H8O412CTOCjG5wiHgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mkLk4Mfp; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52fc4388a64so1536814e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 04:40:33 -0700 (PDT)
+	s=arc-20240116; t=1721734987; c=relaxed/simple;
+	bh=Xf46QnpBhycjA2we/oIW0DMdNBdrMmsoU3E+1uhd9Ns=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MB9ZQ808gNe5iJbiyjffvBTO8dJ2SIW8FS3+N05UuZVLif9XI6GP7oBMe+cvW2IY1VK4RIY7YwhjjF2ko5SRH1I/IjksRnj1bZCLnKzu94btFarD2C/PIEOUbdqr87hhikWC6zMYLvRIoWAna4LspuZXfnOtoTss72Uw0/GGfZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Wdji15RC; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fc65329979so4404145ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 04:43:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721734832; x=1722339632; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hjlt0t66AG+BzODJZGyLjit24PidKbfoYtsLZ8osE8U=;
-        b=mkLk4Mfpu++PmPspTzfAPROfQVTLJb4zyW8J5JDYdzz4HdmEWQEDsVJ4Uzv3e40u2l
-         cIQ2YJbz6mBuxV8AFeSFUxGIYIbTfKMXjqan1uU3O+O8KRjuFKn9LJiJgmMrzFn7Umyr
-         tRK0JXYvn4OKTW5olRIX4T+kKPsfPp4YW8eaYWTRO9VNKB3txk/jQHB8NN7bhnP5TVLS
-         fNpNCIbbNR/qt45HwfM6hGKcMwFr69tnTqGlHjr+mQQoyiXIlscPxeTgdlvHsSfpJfqg
-         5uSto9NVi9Hw+NBjdsZoAUyuJYOExnIr8QNoEoLaUOx25cZboXsrtWifnhy2aXJJyhFf
-         3m0g==
+        d=bytedance.com; s=google; t=1721734985; x=1722339785; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tVuVHmpEOyDlXd7HaBeqyXx5iXIfyPR5YAgjEFBWvCc=;
+        b=Wdji15RC/ZULCzben7UQmvrDJIi4+0LEIKEmN6gJulHwuq6FCMYxYp8ozg1ZGBaau0
+         UhiKKi3mHqwsjXn+s7oDw12/OGL4enCkfDMmp3EHvFMwtv8jANjlhvGFQSxWSlQnaVpb
+         TB4qkxY65fx6wfy9hPf1SmEVFALmYTLMGahURVkj7xmoL1pCNqYHCrHEGvm9s49KRvBh
+         kMqVXzVKKd+57iUXm7y+DDCUV4TXQkvcaMJOu21ulmtmNn3W9pt2lXf/lNW9HXZWm7/B
+         6nKjJGRx/FtfYTxpsPoKTv3UbQd46YPRVSqzB5KXtRW8kvbhhDbbQlEb8gicUNpBRdQr
+         6k+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721734832; x=1722339632;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hjlt0t66AG+BzODJZGyLjit24PidKbfoYtsLZ8osE8U=;
-        b=r7fEDqYg3irjK5GRPSGN1no/mJmdcajZPns80quZYu/taJ0mT3ZBNi1B8wpkoMgnd/
-         7nndK7XtPO8ki37z2VLpIiEck8TsZGKdE1HKSnZmOZnoS3WCaem1tyUNs5/zQa3Uf8O9
-         W0kkTVSvGaCW0q5/Gja+wcvNIfFWk2RINS4AL3lig4Tfd+RsGwNxrqtvj+Kl5uJd/pd6
-         EMrP4WER1cJoue21ChwBsMsaPrSCfiMIJh5Fn3zqikMAzsU+L4erR2nEzAFS3dm1PQf9
-         BNEaoBMYlsJs7YRx5npum5voOfn1Viz/gATbp40xvuIqKiVcXfeMs5dvrsUtoJTUQp5o
-         ZpFw==
-X-Forwarded-Encrypted: i=1; AJvYcCVp3+0oVogpaYiax6SNdxPCWErHkWflzG4uThe1GIgyusjrHo5kC1+vaIYF/RU/xMeEWtIALRgHeIu4U1Q0CS1jU+lzJ/tEjexCWlmn
-X-Gm-Message-State: AOJu0Yyoy4tT5stdSDau22j3R7Eu60eDQgFWdG53cf+BHoyinFpubeJD
-	s5vkKYhOAFYZkjH3JJ/Ekpo+T73liNecITjXx82IrGP0Dcr6GpQXGJhZQwdAGu0=
-X-Google-Smtp-Source: AGHT+IEbGSdRnrn1tMqSaQIsvU2xtF9ZvhQfnBkvrzoX6ZyDx0qPmdCjK7nDuJdNYROSEalcudqrEQ==
-X-Received: by 2002:a05:6512:b84:b0:52c:d645:eda7 with SMTP id 2adb3069b0e04-52fc4046b22mr2098202e87.18.1721734831905;
-        Tue, 23 Jul 2024 04:40:31 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52f0212c743sm881109e87.26.2024.07.23.04.40.31
+        d=1e100.net; s=20230601; t=1721734985; x=1722339785;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tVuVHmpEOyDlXd7HaBeqyXx5iXIfyPR5YAgjEFBWvCc=;
+        b=CtxBfbzmxC+MulxAu8n8FWaeUJELlzeKQXngHxXb6qfWQDqMQm+9h12jjmp5GcMOc4
+         /obuCxsz69f+b/E1b7qUgxRCB6dImBlMIqU51SiQ2M5IzzRf+ft6TTdG4z0vr0Do5+GI
+         4y+mCpiSbK6w5IZ6ZlH5TvXESidB23NEKtlVZJy1hx7gO/bmeXLwal7A6KAU4/zNdAip
+         RJCJ85B2oxzYG9Wrp92vcL+se0QVBDMsdOJbPuSb19eAHXgAn1b/BOhL67XSaol+hraJ
+         Bm/zFp8XSl7TjcKLmrbw3726gsFBuYveAWO7ipiL8Zs/sJ4/Z+unX2OFCI8GdxDgIofO
+         fanw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmiz5KlbjiWPxMV6aZGqwdN1+PyV0af1SNijnuZ5mHavJuuBdMsrwd5TvxaQqpAHYhwlH+VGQJYX4LKfNbW9c69uXmF9NPiz01LZnY
+X-Gm-Message-State: AOJu0YxZ1uwK06w9MUQwKk82mUhsvb6jDoCtV0N3lLFeFF5OoRD4oA3b
+	hFqC/yErdsfa2ikfG5SLAaZ4EyQq6SZ9OrQrb1XdHRskddCZsbmKh2sg85aUmAg=
+X-Google-Smtp-Source: AGHT+IGsSpy8FXekG1ZiCZiqGqueWiF59cWFqLfR7d6TRLockjaFi0LWa/vGfHBVQ5tgxu5cToKogg==
+X-Received: by 2002:a17:902:c204:b0:1fb:a2c0:53b4 with SMTP id d9443c01a7336-1fd74553f28mr79095475ad.18.1721734984822;
+        Tue, 23 Jul 2024 04:43:04 -0700 (PDT)
+Received: from n37-019-243.byted.org ([180.184.103.200])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f259dddsm72769195ad.61.2024.07.23.04.42.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 04:40:31 -0700 (PDT)
-Date: Tue, 23 Jul 2024 14:40:30 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	gregkh@linuxfoundation.org, konrad.dybcio@linaro.org, djakov@kernel.org, 
-	quic_wcheng@quicinc.com, quic_kathirav@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 4/5] clk: qcom: ipq5332: Use icc-clk for enabling NoC
- related clocks
-Message-ID: <tg6wzvgiv67gpf6cc3wwubrj7hmpj3tdzsxtkce5shwjhbw5lx@kxa3umil5q5g>
-References: <20240723090304.336428-1-quic_varada@quicinc.com>
- <20240723090304.336428-5-quic_varada@quicinc.com>
+        Tue, 23 Jul 2024 04:43:04 -0700 (PDT)
+From: Chuyi Zhou <zhouchuyi@bytedance.com>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com
+Cc: chengming.zhou@linux.dev,
+	linux-kernel@vger.kernel.org,
+	Chuyi Zhou <zhouchuyi@bytedance.com>
+Subject: [PATCH v3] sched/fair: Sync se's load_avg with cfs_rq in reweight_task
+Date: Tue, 23 Jul 2024 19:42:47 +0800
+Message-Id: <20240723114247.104848-1-zhouchuyi@bytedance.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240723090304.336428-5-quic_varada@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 23, 2024 at 02:33:03PM GMT, Varadarajan Narayanan wrote:
-> Use the icc-clk framework to enable few clocks to be able to
-> create paths and use the peripherals connected on those NoCs.
-> 
-> Remove CLK_IGNORE_UNUSED from gpll4_main as all consumers have
-> been identified.
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
-> v4: Remove CLK_IGNORE_UNUSED from gpll4_main
-> 
-> v3: Not taking Reviewed-by: Konrad as NAK-ed by Dmitry
->     Remove CLK_IGNORE_UNUSED -> CLK_IS_CRITICAL change and fix
->     that in a separate patch
-> ---
->  drivers/clk/qcom/gcc-ipq5332.c | 35 +++++++++++++++++++++++-----------
->  1 file changed, 24 insertions(+), 11 deletions(-)
-> 
+In reweight_task(), there are two situations:
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+1. The task was on_rq, then the task's load_avg is accurate because we
+synchronized it with cfs_rq through update_load_avg() in dequeue_task().
 
+2. The task is sleeping, its load_avg might not have been updated for some
+time, which can result in inaccurate dequeue_load_avg() in
+reweight_entity().
 
+This patch solves this by using sync_entity_load_avg() to synchronize the
+load_avg of se with cfs_rq before dequeue_load_avg() in reweight_entity().
+For tasks were on_rq, since we already update load_avg to accurate values
+in dequeue_task(), this change will not have other effects due to the short
+time interval between the two updates.
+
+Suggested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
+---
+Changes in v3:
+- use sync_entity_load_avg() rather than update_load_avg() to sync the
+sleeping task with its cfs_rq suggested by Dietmar.
+- Link t0 v2: https://lore.kernel.org/lkml/20240720051248.59608-1-zhouchuyi@bytedance.com/
+Changes in v2:
+- change the description in commit log.
+- use update_load_avg() in reweight_task() rather than in reweight_entity
+suggested by chengming.
+- Link to v1: https://lore.kernel.org/lkml/20240716150840.23061-1-zhouchuyi@bytedance.com/
+---
+ kernel/sched/fair.c | 43 ++++++++++++++++++++++++-------------------
+ 1 file changed, 24 insertions(+), 19 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 9057584ec06d..da3cdd86ab2e 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -3669,11 +3669,32 @@ dequeue_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ 	cfs_rq->avg.load_sum = max_t(u32, cfs_rq->avg.load_sum,
+ 					  cfs_rq->avg.load_avg * PELT_MIN_DIVIDER);
+ }
++
++static inline u64 cfs_rq_last_update_time(struct cfs_rq *cfs_rq)
++{
++	return u64_u32_load_copy(cfs_rq->avg.last_update_time,
++				 cfs_rq->last_update_time_copy);
++}
++
++/*
++ * Synchronize entity load avg of dequeued entity without locking
++ * the previous rq.
++ */
++static void sync_entity_load_avg(struct sched_entity *se)
++{
++	struct cfs_rq *cfs_rq = cfs_rq_of(se);
++	u64 last_update_time;
++
++	last_update_time = cfs_rq_last_update_time(cfs_rq);
++	__update_load_avg_blocked_se(last_update_time, se);
++}
++
+ #else
+ static inline void
+ enqueue_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se) { }
+ static inline void
+ dequeue_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se) { }
++static void sync_entity_load_avg(struct sched_entity *se) { }
+ #endif
+ 
+ static void reweight_eevdf(struct sched_entity *se, u64 avruntime,
+@@ -3795,7 +3816,9 @@ static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
+ 		if (!curr)
+ 			__dequeue_entity(cfs_rq, se);
+ 		update_load_sub(&cfs_rq->load, se->load.weight);
+-	}
++	} else if (entity_is_task(se))
++		sync_entity_load_avg(se);
++
+ 	dequeue_load_avg(cfs_rq, se);
+ 
+ 	if (se->on_rq) {
+@@ -4034,11 +4057,6 @@ static inline bool load_avg_is_decayed(struct sched_avg *sa)
+ 	return true;
+ }
+ 
+-static inline u64 cfs_rq_last_update_time(struct cfs_rq *cfs_rq)
+-{
+-	return u64_u32_load_copy(cfs_rq->avg.last_update_time,
+-				 cfs_rq->last_update_time_copy);
+-}
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ /*
+  * Because list_add_leaf_cfs_rq always places a child cfs_rq on the list
+@@ -4773,19 +4791,6 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+ 	}
+ }
+ 
+-/*
+- * Synchronize entity load avg of dequeued entity without locking
+- * the previous rq.
+- */
+-static void sync_entity_load_avg(struct sched_entity *se)
+-{
+-	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+-	u64 last_update_time;
+-
+-	last_update_time = cfs_rq_last_update_time(cfs_rq);
+-	__update_load_avg_blocked_se(last_update_time, se);
+-}
+-
+ /*
+  * Task first catches up with cfs_rq, and then subtract
+  * itself from the cfs_rq (task must be off the queue now).
 -- 
-With best wishes
-Dmitry
+2.20.1
+
 
