@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-259980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCCF493A0BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:00:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDC3E93A0B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:59:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 776EC283823
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:00:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E6102837D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8B0154BFE;
-	Tue, 23 Jul 2024 12:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8F3152527;
+	Tue, 23 Jul 2024 12:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eoLyfYrs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EvM9r+ot"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23426153582;
-	Tue, 23 Jul 2024 12:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE41C15216A
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 12:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721739518; cv=none; b=UCogVBd9UnX82FDGQ320z7H8xhbqiGsN45g5BwjS8+ImIkBu49cA9ZNHVidLBK4ChwgNqfwipbY3afEchB4UWZ4zH6ur7vIfyFOgeQ1umuDugfM0/dOg47DoC1VHvMOPjv/jrti3hZoxGkLMAZP3YVV7blXGFgSixWPvBTiAXxc=
+	t=1721739516; cv=none; b=vF7a8fIZlgVLpdlsIyg9w1okQe9if5lanmUwKzRMTtwP+RHeyru2jBh6UkwN0V4EmQtW0qytoYzrvIe8OI9eRF/GaV4cNoq7Bc6KbqdIpKlu41k8OlcJefbfQ68lRB+sBS8uju5FaaiCo2QU+WKLDO3MHfHfhxyRiQN1ubBsPJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721739518; c=relaxed/simple;
-	bh=kSeQcsb2Iy9mD89DI1W9T/W97Me0c16VuTNwoa3LxLA=;
+	s=arc-20240116; t=1721739516; c=relaxed/simple;
+	bh=MTx3Yhz4wCNFxt8epbAA+GjuRUdAILMPbUYRovO+OVc=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=RbRQQf9I8GRTsQq3ZslctnowvNrpFoshe8I4J36WHqGvTE5w3H1zUkcoBgAPO2ENGqPh2qQx3CCM4dIjo0xw8rNyE7e7CAi5NN/IoZTtczTZ7ohgKvi0+yxy5gWsB4T4zwOqt5Aj1fq3CZCJX2+EjtbZRGsIPFluGpXD4bsCGT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eoLyfYrs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8FEC1C4AF0E;
+	 In-Reply-To:To:Cc; b=dpvWQC43hgBjUbI7OrVy6I9vX+oajGZSqiPHbTrSxZf0ejdEXrnlPF+8X4Q7rgZYPnOu6P5Rw+4JAwD1s+a0vMeLyNe8+zBW1R2dkJiNzvxu/rQ2bjYR0vwI6NIsLCxgi1A7F36yd4v631PUs81Ct9lfNiMw9TvkiAalyIRh91c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EvM9r+ot; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 65238C4AF0A;
 	Tue, 23 Jul 2024 12:58:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721739517;
-	bh=kSeQcsb2Iy9mD89DI1W9T/W97Me0c16VuTNwoa3LxLA=;
+	s=k20201202; t=1721739516;
+	bh=MTx3Yhz4wCNFxt8epbAA+GjuRUdAILMPbUYRovO+OVc=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=eoLyfYrsPmZ4wJcbTOllWPiC4ezzKszwpMpeBouBczI4KxP78lbuw6Rm9QzzsnXfJ
-	 ncVEDyayw/Ji/3WF9egitc7fyjGxjysuPyy7C6Mp531OL04vpgKkoV08jqe9hSieAq
-	 3C0rmxGiPiE2rGpo7DVOMOIH3aDPhogS/Pl6C1QcYr4GvXiZXOt5iAeo1lALnHF+IO
-	 80zc5nX2Tr43BvuS1p7jaGcJ69OyXQVMz8VJsYki0rQg07xvbwQ+mH5OXPogvO2OiE
-	 wO0UJ5T3DkDkvWzPZjmDuVTTLZO/HOBbcD3OuL0/yBh2vk6XUFR7C5B6/oibDUV5OD
-	 9JWPx8Y1whATg==
+	b=EvM9r+ot/ByNtKDgPHhwxfEsiOgD4qLC6dq1qmja/+WdFIrl4xj66LA2lHHLu3A7s
+	 Vh1mpUIK0mz6uE3vha64vJ92/bKZZX99FT5T8j5I8RfCB569RIG2WmXhiAYZL3Ywse
+	 riEwoL1MFv3mLyyQx91gFKaImpaatwMSd8QA5HdO9hBsrpazm2/AWgNz1MZMJK0B+b
+	 uSZnpkq6SnE3lKwvxOiHhIVbNcnBa4O460CvlkdY7XX9+vxWiw/ZHD+D+U/2iuJEBM
+	 ykWieW3hr/pcDBet7rtdnUxPhV2XPOFVquB8ahQevZ6zA/uYhdQ7SMaOqxrHFcr0fb
+	 hotRk430gHSYw==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 86B28C43140;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 55C55C4333D;
 	Tue, 23 Jul 2024 12:58:36 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,45 +51,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2 0/3] Add the core reset for UARTs of StarFive JH7110
+Subject: Re: [PATCH v1] RISC-V: hwprobe: sort EXT_KEY()s in hwprobe_isa_ext0()
+ alphabetically
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <172173951654.10883.8693881019606490911.git-patchwork-notify@kernel.org>
+ <172173951634.10883.1451787380987627929.git-patchwork-notify@kernel.org>
 Date: Tue, 23 Jul 2024 12:58:36 +0000
-References: <20240604084729.57239-1-hal.feng@starfivetech.com>
-In-Reply-To: <20240604084729.57239-1-hal.feng@starfivetech.com>
-To: Hal Feng <hal.feng@starfivetech.com>
-Cc: linux-riscv@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
- gregkh@linuxfoundation.org, jirislaby@kernel.org,
- ilpo.jarvinen@linux.intel.com, p.zabel@pengutronix.de, conor+dt@kernel.org,
- palmer@dabbelt.com, paul.walmsley@sifive.com, aou@eecs.berkeley.edu,
- emil.renner.berthing@canonical.com, devicetree@vger.kernel.org,
- linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240717-dedicate-squeamish-7e4ab54df58f@spud>
+In-Reply-To: <20240717-dedicate-squeamish-7e4ab54df58f@spud>
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-riscv@lists.infradead.org, conor.dooley@microchip.com,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, linux-kernel@vger.kernel.org
 
 Hello:
 
-This series was applied to riscv/linux.git (for-next)
-by Greg Kroah-Hartman <gregkh@linuxfoundation.org>:
+This patch was applied to riscv/linux.git (for-next)
+by Palmer Dabbelt <palmer@rivosinc.com>:
 
-On Tue,  4 Jun 2024 16:47:26 +0800 you wrote:
-> The UART of StarFive JH7110 needs two reset signals (apb, core) to
-> initialize. This patch series adds the missing core reset.
+On Wed, 17 Jul 2024 09:54:38 +0100 you wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
 > 
-> Changes since v1:
-> - Set maxItems to 1 for resets from other platforms.
-> 
-> History:
-> v1: https://lore.kernel.org/all/20240517061713.95803-1-hal.feng@starfivetech.com/
+> Currently the entries appear to be in a random order (although according
+> to Palmer he has tried to sort them by key value) which makes it harder
+> to find entries in a growing list, and more likely to have conflicts as
+> all patches are adding to the end of the list. Sort them alphabetically
+> instead.
 > 
 > [...]
 
 Here is the summary with links:
-  - [v2,1/3] dt-bindings: serial: snps-dw-apb-uart: Add one more reset signal for StarFive JH7110 SoC
-    (no matching commit)
-  - [v2,2/3] serial: 8250_dw: Use reset array API to get resets
-    (no matching commit)
-  - [v2,3/3] riscv: dts: starfive: jh7110: Add the core reset and jh7110 compatible for uarts
-    https://git.kernel.org/riscv/c/4ed81d9dd75f
+  - [v1] RISC-V: hwprobe: sort EXT_KEY()s in hwprobe_isa_ext0() alphabetically
+    https://git.kernel.org/riscv/c/3d8d459c8ba2
 
 You are awesome, thank you!
 -- 
