@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-259564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B62D93987C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 04:57:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B20EE93987F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 04:58:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D6431C219AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 02:57:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E372B21DF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 02:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046EF13C838;
-	Tue, 23 Jul 2024 02:57:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 737F513B78A;
+	Tue, 23 Jul 2024 02:57:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQblG2MJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mcNy7B/z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4050713C3F5;
-	Tue, 23 Jul 2024 02:57:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE3713C818;
+	Tue, 23 Jul 2024 02:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721703455; cv=none; b=Ce5aY88KEFpJ3WjSo7loSHfBuT0WEIX3enNRcKnjYyM1ox9KLkEut/wnjTeIt6PREFWrID/8WLycvggf2Ow0yD1JeDZtYn+VAvYTaIeYnZPQwpCNpVDoqBQeHn+lFNah9NRGTFTVSsIWQqpx6IHTkYrl8uofbjqK2k81Ch0Q2yA=
+	t=1721703457; cv=none; b=fN1vopOFtjF34E8s0UBeNpB7z5S/cJbbYazqJ7mAyoJ6TbGlgiLgtK0xG7MBH2QU8oUvQImNok9hv515GXXmGaW1qIli0MNlyli1sORZJrKxL7mkgCMuDqvd785NHvCgnM4e+nh7ZADlKqGAJShpa3tGpj3bwRtEMUuYLKLZ8hQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721703455; c=relaxed/simple;
-	bh=vGxDLcEEHFuXQhdgWKrtDJj6QUt2MbPCLYOlbZ/a4lU=;
+	s=arc-20240116; t=1721703457; c=relaxed/simple;
+	bh=S/zDUoK/wOB3rI+BZgSAPwfa6YvcK/ZFEfSAjQA7fkw=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=Z0NF1o568g539wDj5leEFWBCszSWWaq+bNaVof+C/ao+mKmCo7XjpfgPb8EMsUafRNat8yqE3LN418UpvIezwm2QR48T3F6Ff0fOaX4E59peIlkapkGPsmmjSQ85JZVDzxtwtA0VnBOdX6UiWqN0+uaHbMMxAxKhYacph4fk1uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FQblG2MJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BF7DC116B1;
-	Tue, 23 Jul 2024 02:57:34 +0000 (UTC)
+	 Message-Id:Subject; b=UVJLk9B0u0Xs57Akg8Kp7pdtY9JBaKQxsqnuHdRoHI0JJY05zWST4sQZyPoxPSVjXSdWAFyo8GiuzQEz/vVSzsgdokF574/9goDtQ0KT8X38GDpRGpuyTfcuKNPpi47C32KdgZRNRIRasHuGl2NboWC7nQA6BPAcGQsdhglheiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mcNy7B/z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E264BC32782;
+	Tue, 23 Jul 2024 02:57:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721703454;
-	bh=vGxDLcEEHFuXQhdgWKrtDJj6QUt2MbPCLYOlbZ/a4lU=;
+	s=k20201202; t=1721703457;
+	bh=S/zDUoK/wOB3rI+BZgSAPwfa6YvcK/ZFEfSAjQA7fkw=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=FQblG2MJ1ehxCXzbDHLFnKddUQfb0wNenhoMROvMCRBMSNCtl+aFEXsSmRE6196ez
-	 qzboQWosk0MhB3lhNe0BuB163tBM0N/4gLNm/JERFnDgEuimNvOPzvKb646l3uKRI8
-	 xaqhyXmZHpIv7XacR9m+ErmtEA/igJSGotbaWR9UkC4FGyXPAT3Nr24sTbqNfg96hx
-	 3vtTXX6ANoZKVRU2DT9ykaZf4cgb+eYPEz1oV4GfyeWQa4CJNHu3DBWgtSuIDqEzzJ
-	 E3mcqEeLUxH3haRy7EONDNh4BsBGwF5EapipjbVZhS0qX0dCZn7o8tXY8Tx/5m1dtd
-	 v8M92xiP2v6+g==
-Date: Mon, 22 Jul 2024 20:57:32 -0600
+	b=mcNy7B/zTna23ZuGW3hu2uV2aX6ZzmjF+yDG/Ps07WonEgj876aF7xrL3AIaWhb5f
+	 sVebQLFRySpZs6Mr8V9MV+h+/lcX6KuijBZskrViVWdCihT1P6nhE9n9GwwPdFry8V
+	 SuuK52Uwfxrt+1HFAuPc/On5uO/ydPGJ3fUOmjSaoTb6a711+JHhgoxiH4vgl7Yu8e
+	 lpey7xTJL0t9X53QFh4rbNxMFLb+6zLKAuSbkLwWcceI26BjTlCXASkel4aaHrjjFA
+	 wiT6UTHXMkg/CI0cV3AZQdv0g02EUTLx1vQE1dbKzksiwWjJM+TakGH5FN9MgX6snL
+	 dn8v1YC9jI5gA==
+Date: Mon, 22 Jul 2024 20:57:35 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,45 +50,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Johan Hovold <johan@kernel.org>, 
+To: Josua Mayer <josua@solid-run.com>
+Cc: linux-arm-kernel@lists.infradead.org, 
+ Gregory Clement <gregory.clement@bootlin.com>, 
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, 
+ linux-phy@lists.infradead.org, Yazan Shhady <yazan.shhady@solid-run.com>, 
+ Konstantin Porotchkin <kostap@marvell.com>, devicetree@vger.kernel.org, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240719-topic-t14s_upstream-v1-0-d7d97fdebb28@linaro.org>
-References: <20240719-topic-t14s_upstream-v1-0-d7d97fdebb28@linaro.org>
-Message-Id: <172170324437.205162.5877409275020405960.robh@kernel.org>
-Subject: Re: [PATCH 0/3] ThinkPad T14s Gen 6 support
+ Kishon Vijay Abraham I <kishon@kernel.org>, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
+ Vinod Koul <vkoul@kernel.org>
+In-Reply-To: <20240720-a38x-utmi-phy-v3-0-4c16f9abdbdc@solid-run.com>
+References: <20240720-a38x-utmi-phy-v3-0-4c16f9abdbdc@solid-run.com>
+Message-Id: <172170324618.205229.14421004930608036629.robh@kernel.org>
+Subject: Re: [PATCH RFC v3 0/6] phy: mvebu-cp110-utmi: add support for
+ armada-380 utmi phys
 
 
-On Fri, 19 Jul 2024 22:16:35 +0200, Konrad Dybcio wrote:
-> As good as the other X1 laptops
+On Sat, 20 Jul 2024 16:19:17 +0200, Josua Mayer wrote:
+> Armada 380 has smilar USB-2.0 PHYs as CP-110 (Armada 8K).
 > 
-> See this page for more hw info:
+> Add support for Armada 380 to cp110 utmi phy driver, and enable it for
+> armada-388-clearfog boards.
 > 
-> https://www.lenovo.com/us/en/p/laptops/thinkpad/thinkpadt/lenovo-thinkpad-t14s-gen-6-(14-inch-snapdragon)/len101t0099
+> Additionally add a small bugfix for armada-388 clearfog:
+> Enable Clearfog Base M.2 connector for cellular modems with USB-2.0/3.0
+> interface.
+> This is not separated out to avoid future merge conflicts.
 > 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Signed-off-by: Josua Mayer <josua@solid-run.com>
 > ---
-> Konrad Dybcio (3):
->       dt-bindings: arm: qcom: Add Lenovo ThinkPad T14s Gen 6
->       firmware: qcom: scm: Allow QSEECOM on ThinkPad T14s
->       arm64: dts: qcom: Add X1E78100 ThinkPad T14s Gen 6
+> Changes in v3:
+> - updated bindings with additional comments, tested with dtbs_check:
+>   used anyOf for the newly-added optional regs
+> - added fix for clearfog base m.2 connector / enable third usb
+> - dropped unnecessary syscon node using invalid compatible
+>   (Reported-by: Krzysztof Kozlowski <krzk@kernel.org>)
+> - Link to v2: https://lore.kernel.org/r/20240716-a38x-utmi-phy-v2-0-dae3a9c6ca3e@solid-run.com
 > 
->  Documentation/devicetree/bindings/arm/qcom.yaml    |   6 +
->  arch/arm64/boot/dts/qcom/Makefile                  |   1 +
->  .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts     | 792 +++++++++++++++++++++
->  drivers/firmware/qcom/qcom_scm.c                   |   1 +
->  4 files changed, 800 insertions(+)
+> Changes in v2:
+> - add support for optional regs / make syscon use optional
+> - add device-tree changes for armada-388-clearfog
+> - attempted to fix warning reported by krobot (untested)
+> - tested on actual hardware
+> - drafted dt-bindings
+> - Link to v1: https://lore.kernel.org/r/20240715-a38x-utmi-phy-v1-0-d57250f53cf2@solid-run.com
+> 
 > ---
-> base-commit: 523b23f0bee3014a7a752c9bb9f5c54f0eddae88
-> change-id: 20240719-topic-t14s_upstream-e53fcd0ccd2a
+> Josua Mayer (6):
+>       arm: dts: marvell: armada-388-clearfog: enable third usb on m.2/mpcie
+>       arm: dts: marvell: armada-388-clearfog-base: add rfkill for m.2
+>       dt-bindings: phy: cp110-utmi-phy: add compatible string for armada-38x
+>       arm: dts: marvell: armada-38x: add description for usb phys
+>       phy: mvebu-cp110-utmi: add support for armada-380 utmi phys
+>       arm: dts: marvell: armada-388-clearfog: add description for usb phys
 > 
-> Best regards,
+>  .../phy/marvell,armada-cp110-utmi-phy.yaml         |  34 +++-
+>  .../boot/dts/marvell/armada-388-clearfog-base.dts  |  41 ++++
+>  arch/arm/boot/dts/marvell/armada-388-clearfog.dts  |   8 +
+>  arch/arm/boot/dts/marvell/armada-388-clearfog.dtsi |  30 ++-
+>  arch/arm/boot/dts/marvell/armada-38x.dtsi          |  24 +++
+>  drivers/phy/marvell/phy-mvebu-cp110-utmi.c         | 209 ++++++++++++++++-----
+>  6 files changed, 288 insertions(+), 58 deletions(-)
+> ---
+> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+> change-id: 20240715-a38x-utmi-phy-02e8059afe35
+> 
+> Sincerely,
 > --
-> Konrad Dybcio <konrad.dybcio@linaro.org>
+> Josua Mayer <josua@solid-run.com>
 > 
 > 
 > 
@@ -108,16 +139,20 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y qcom/x1e78100-lenovo-thinkpad-t14s.dtb' for 20240719-topic-t14s_upstream-v1-0-d7d97fdebb28@linaro.org:
+New warnings running 'make CHECK_DTBS=y marvell/armada-388-clearfog-base.dtb marvell/armada-388-clearfog.dtb' for 20240720-a38x-utmi-phy-v3-0-4c16f9abdbdc@solid-run.com:
 
-arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtb: domain-idle-states: cluster-sleep-0: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
-arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtb: domain-idle-states: cluster-sleep-1: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
-arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtb: pci@1bf8000: Unevaluated properties are not allowed ('vddpe-3v3-supply' was unexpected)
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtb: usb@a2f8800: interrupt-names: ['pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
-	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+arch/arm/boot/dts/marvell/armada-388-clearfog-base.dtb: usb@58000: phy-names:0: 'usb' was expected
+	from schema $id: http://devicetree.org/schemas/usb/generic-ehci.yaml#
+arch/arm/boot/dts/marvell/armada-388-clearfog.dtb: usb@58000: phy-names:0: 'usb' was expected
+	from schema $id: http://devicetree.org/schemas/usb/generic-ehci.yaml#
+arch/arm/boot/dts/marvell/armada-388-clearfog-base.dtb: usb3@f0000: Unevaluated properties are not allowed ('compatible', 'dr_mode', 'reg' were unexpected)
+	from schema $id: http://devicetree.org/schemas/usb/generic-xhci.yaml#
+arch/arm/boot/dts/marvell/armada-388-clearfog-base.dtb: usb3@f8000: Unevaluated properties are not allowed ('compatible', 'dr_mode', 'reg' were unexpected)
+	from schema $id: http://devicetree.org/schemas/usb/generic-xhci.yaml#
+arch/arm/boot/dts/marvell/armada-388-clearfog.dtb: usb3@f0000: Unevaluated properties are not allowed ('compatible', 'dr_mode', 'reg' were unexpected)
+	from schema $id: http://devicetree.org/schemas/usb/generic-xhci.yaml#
+arch/arm/boot/dts/marvell/armada-388-clearfog.dtb: usb3@f8000: Unevaluated properties are not allowed ('compatible', 'dr_mode', 'reg' were unexpected)
+	from schema $id: http://devicetree.org/schemas/usb/generic-xhci.yaml#
 
 
 
