@@ -1,369 +1,206 @@
-Return-Path: <linux-kernel+bounces-259619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C2B893999E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:23:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A89A69399A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:25:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FD531C21A28
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 06:23:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBF5E1C219EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 06:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F3513D62B;
-	Tue, 23 Jul 2024 06:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F74213D606;
+	Tue, 23 Jul 2024 06:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ITRf2ckN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ps302zRg"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A36713C3F2
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 06:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245C413957B
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 06:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721715780; cv=none; b=H4aGekr0UPyqJ4Czk1F+9CZzvKzXUa1Enfb2rcuOQsLpkx7Ex8PMm/pkmAHtTOuGOiNc2NJJkrh+ljomlX4b9QP4b5fe3jLDRSFDUNA0xB4bPzsTCdA/fiiP8nfWYlBuFSsoP7hXZwUw24rfk/xjEnykS/f9AkXW4EZ3Ys8ckbQ=
+	t=1721715894; cv=none; b=BgTZqv6+uz9602yyUtoP3Q1qJHemhbO61pem+ck6XFbIjoW2acW93Q9iyc1zpWc6KcRNKoRkU9MxEWo3HoFtt4hXgizCCJjfqM0039adOR+aoL2iC1WuzDmTFGzY8HBUo8AEB5AX2s0DEsUEUPWF4XtSHGTCQPgtvzWfQDkiyaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721715780; c=relaxed/simple;
-	bh=P92MH8B5c9jvC2bnTPtRev2aH6tP4Y8mmGyv/5o49CY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R7P8fs4ng8FnDub2giB74tvmCloQLsqo+poY+V4PNUz7uQdjkTGJA2VMDJ+v9vFAQBDWvlxfTsxDavZdi3IKKjzSVI/RoHHsiio633m4KL+elAuLAWx1XcF3nNTbrb146t6It/IIB0SmBPIsQRAoQATfjRSX2KB0/45uZaeHwjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ITRf2ckN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721715777;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hcTfow7Oo6i9Jk5NtqEjESkJCNqoSWX8VZs+T25c+9Y=;
-	b=ITRf2ckNV1dCCHxL7Ho7PYG886JN2kYSJ7wmy8EFv5ApgJ4njEYwDExxVBTLGKZtJnVBw/
-	ZnjMviRT3lVlVcR+mF9kECceTZevwYa04rUtWytxmVV00NygsqdRhzgjIK4PkO0KDMoXRS
-	b8cws2Kj/SGAw5mHdXJ32d+USPHnCAA=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-249-94EDY23COSa7SH-rIFJr8Q-1; Tue, 23 Jul 2024 02:22:55 -0400
-X-MC-Unique: 94EDY23COSa7SH-rIFJr8Q-1
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-1fc5e1ab396so3909645ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 23:22:54 -0700 (PDT)
+	s=arc-20240116; t=1721715894; c=relaxed/simple;
+	bh=RmN1rRSG3lwxqRwK69yWPotzbJMTuS9ursXBcLAI8R8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fR4Lqn7SNczk5F2kvJIw4FGLi8hGZYYgvXNYYxJgo97FmvGB0l+PCiht1zGvIeLYektHC2w6Otn9F0ObH2bFaCm9QAlvQXoB3nj01dL0Xx0J+cHVC/L1lnyUL1/xlI07SrG9h0sEmEOyVJkdXb/xYD8jv92YrILXR2aNyOwHj4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ps302zRg; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5a1fcb611d9so4198925a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 23:24:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721715891; x=1722320691; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PuZYvoWq8whgmpL1IFSnglW/V1EXZpX9C/pX5nqTQxs=;
+        b=Ps302zRgsNAIWC+q4lyzGl7qUrmx549VMneWI5u08c8NgRDhyISQv5mMHPTPdaPtHn
+         j5QpcXMpi7TwMHPTJecUNnAV1Vzj6RaOBGHcqbMK8S5g6VX9u+UzW/Iy9XDj3QT90ZSy
+         5QclUW1RGmx3RIQW9Fb1forCiGCPC1A5jf7hS8CawETggMVUki2Zl/GkFoJ9iXr2i3Bm
+         Xfce52O9gDR3twrwEdKKZgPwaJff2MvL71PV4DJnR/Xd1WdaWE+2MGDNgadJbahH3F2M
+         8SFe/hH8gKdmwSbUspydE1A8XwhSJ5C/DZ37O/zhuVD2uY38fuKyVlqy+j+e5wiMrw0/
+         xoxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721715774; x=1722320574;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hcTfow7Oo6i9Jk5NtqEjESkJCNqoSWX8VZs+T25c+9Y=;
-        b=iVuLXNUsUybhL0Og2LduQGtZMxrynm+h/6l344k3/Lpi+88b3Zu/OSpW8lL8gNt3v6
-         oUaQ9+vBkXlo72+8+n3IeSU85khmLa7OoeV7Rb4nQMKvxeMsuudYCgVJj+k/cXEYP/ZC
-         22h38KXdAJN+PcZb4HhRYUomQ3oS61bL+z9xX2mEmJKrQazi4j6Q2XF7pcYj3MLBKkOt
-         L0l6COa5iwdp7kY0Q1i1PPehrWIKpfJtltRqd/NAAOL5MLGingG8yU5CtLAjXQG737T/
-         vg0mWPsiXGjF1MBMYZBpvCue2JDvvXrr5dMk7KIrcSsQGELclOdeMc7CwsGf5lDyElT7
-         NkHg==
-X-Forwarded-Encrypted: i=1; AJvYcCXfhGC1ud6KnxAwJrZv1oHVPiQmBi98tow3N7x93sdRhNnO/QAsEwe9EGRw7AM88FO04ut7RCqtKq6nTHNjxlUtsTMVLfypqbclltsw
-X-Gm-Message-State: AOJu0YwU+anmW+TCWOFjcRPjdsBw9HqbRmoUohVWqaaGRV3wDWhwaFk2
-	D1u8Ihz21UD43R2MuVkmDlJ9Wm8Hd1NheGtyYsT2YInKuUwMFWP26xS4/1Q3wYmj36770m2atgb
-	cQDESd5oneKq/o6vpMyTyVIb9G2Gd1Fq/J6xLJ25lTgBWUm7IhE+GqKECJJ4d9Q==
-X-Received: by 2002:a17:902:d50e:b0:1fd:9420:1044 with SMTP id d9443c01a7336-1fdb5f68d70mr21438535ad.16.1721715774004;
-        Mon, 22 Jul 2024 23:22:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFPgJ2CXE7hNWQ1PFo9WoFtLesM4oKaP8B9Rc3wrzBKg8598MOU00D8FtaHIQZCy0PyD/104Q==
-X-Received: by 2002:a17:902:d50e:b0:1fd:9420:1044 with SMTP id d9443c01a7336-1fdb5f68d70mr21438325ad.16.1721715773498;
-        Mon, 22 Jul 2024 23:22:53 -0700 (PDT)
-Received: from [192.168.68.54] ([43.252.112.134])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f484267sm65736445ad.278.2024.07.22.23.22.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 22 Jul 2024 23:22:53 -0700 (PDT)
-Message-ID: <a119ad47-11b7-42e5-a1e2-2706660c93d9@redhat.com>
-Date: Tue, 23 Jul 2024 16:22:44 +1000
+        d=1e100.net; s=20230601; t=1721715891; x=1722320691;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PuZYvoWq8whgmpL1IFSnglW/V1EXZpX9C/pX5nqTQxs=;
+        b=SWJ0WRwBFTB0S7lWNe/UpEbQUk3QG2olDoW+JQnr0JMKKD8Weh4Jk3dXmFi0oBWrCI
+         aIHoADptp/kNWDhMO+OKMFCur3s6ax+sbGz8XgKa15kOS8v7zIhi7zdV3i3w5wLyXOK5
+         fESU6+C2jKFVeUZ2Apm98fT9APxj36SIZXL/Z1MLh+W7zsumEvBbO95N/bOU2LNlY4t0
+         Gr00zE3jxTb5PlIi2IphKEBG4Jv8WBO//u7l6r8mp30XWd+ipmgd6UQCXkHwkjGiCPpW
+         D16WtIg9fEDy30K/II650Amy1Yjo1Q4VvkIHpm9lUvrbbpR/wDIfORIDQvckewfGkL1/
+         Lopw==
+X-Forwarded-Encrypted: i=1; AJvYcCX1+EK6wzd6ALRpCWBtqrISiFTu0XrBMfHpdgeyscUXtayzsReFkjo9lqNEMxrkLWIzEjimHVPQ0Pi/w2cgvuzD9DNSHzAKMVm4T+KK
+X-Gm-Message-State: AOJu0YzBi8SzbvxV0e9YIWKzWQSjCQiJQw6trAvXHVR/+a2qBqnSaOmL
+	2D7D7jsLXa+o+K08ULZssKZjw8qeJUXc54VgC2NVApJ/BeMhyeXTaHNnBrSwlyjKYqS3zlo1NVn
+	NEPBHRZ0y2C0BTQA1cMqn06B9f+1TkQWIXX7B
+X-Google-Smtp-Source: AGHT+IGiQyOg6jtQNoklz56+z3NglFn5Y42p/i72Wp48qUQKGIwp/zuniQZ48JW9nBcy3wageNryev5duikJU+EPMvY=
+X-Received: by 2002:a17:907:7296:b0:a79:8149:966e with SMTP id
+ a640c23a62f3a-a7a4bfe6355mr623341266b.1.1721715890808; Mon, 22 Jul 2024
+ 23:24:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/15] arm64: rsi: Add RSI definitions
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-References: <20240701095505.165383-1-steven.price@arm.com>
- <20240701095505.165383-2-steven.price@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20240701095505.165383-2-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <a4e67f81-6946-47c0-907e-5431e7e01eb1@kernel.org>
+ <CAJD7tkYV3iwk-ZJcr_==V4e24yH-1NaCYFUL7wDaQEi8ZXqfqQ@mail.gmail.com>
+ <100caebf-c11c-45c9-b864-d8562e2a5ac5@kernel.org> <k3aiufe36mb2re3fyfzam4hqdeshvbqcashxiyb5grn7w2iz2s@2oeaei6klok3>
+ <5ccc693a-2142-489d-b3f1-426758883c1e@kernel.org> <iso3venoxgfdd6mtc6xatahxqqpev3ddl3sry72aoprpbavt5h@izhokjdp6ga6>
+ <CAJD7tkYWnT8bB8UjPPWa1eFvRY3G7RbiM_8cKrj+jhHz_6N_YA@mail.gmail.com>
+ <t5vnayr43kpi2nn7adjgbct4ijfganbowoubfcxynpewiixvei@7kprlv6ek7vd>
+ <CAJD7tkZV3PF7TR2HWxXxkhhS8oajOwX1VG7czdTQb8tRY9Jwpw@mail.gmail.com>
+ <x45wrx26boy2junfx6wzrfgdlvhvw6gji5grreadcrobs6jvhu@o5bn2hcpxul3> <ujfbtpvs6lpsuasz5dxvvcgyv2xorlhs2wjpjnpdyeicukwevx@2qj642cgn2ie>
+In-Reply-To: <ujfbtpvs6lpsuasz5dxvvcgyv2xorlhs2wjpjnpdyeicukwevx@2qj642cgn2ie>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Mon, 22 Jul 2024 23:24:14 -0700
+Message-ID: <CAJD7tkY1B9M6A8jHRuw4H8R95S9V4j_BkSQkDnr87_Tir+7VAA@mail.gmail.com>
+Subject: Re: [PATCH V7 1/2] cgroup/rstat: Avoid thundering herd problem by
+ kswapd across NUMA nodes
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Jesper Dangaard Brouer <hawk@kernel.org>, tj@kernel.org, cgroups@vger.kernel.org, 
+	hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com, 
+	kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/1/24 7:54 PM, Steven Price wrote:
-> From: Suzuki K Poulose <suzuki.poulose@arm.com>
-> 
-> The RMM (Realm Management Monitor) provides functionality that can be
-> accessed by a realm guest through SMC (Realm Services Interface) calls.
-> 
-> The SMC definitions are based on DEN0137[1] version A-eac5.
-> 
-> [1] https://developer.arm.com/documentation/den0137/latest
-> 
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Changes since v3:
->   * Drop invoke_rsi_fn_smc_with_res() function and call arm_smccc_smc()
->     directly instead.
->   * Rename header guard in rsi_smc.h to be consistent.
-> Changes since v2:
->   * Rename rsi_get_version() to rsi_request_version()
->   * Fix size/alignment of struct realm_config
-> ---
->   arch/arm64/include/asm/rsi_cmds.h |  38 ++++++++
->   arch/arm64/include/asm/rsi_smc.h  | 142 ++++++++++++++++++++++++++++++
->   2 files changed, 180 insertions(+)
->   create mode 100644 arch/arm64/include/asm/rsi_cmds.h
->   create mode 100644 arch/arm64/include/asm/rsi_smc.h
-> 
+On Mon, Jul 22, 2024 at 3:59=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
+v> wrote:
+>
+> On Mon, Jul 22, 2024 at 02:32:03PM GMT, Shakeel Butt wrote:
+> > On Mon, Jul 22, 2024 at 01:12:35PM GMT, Yosry Ahmed wrote:
+> > > On Mon, Jul 22, 2024 at 1:02=E2=80=AFPM Shakeel Butt <shakeel.butt@li=
+nux.dev> wrote:
+> > > >
+> > > > On Fri, Jul 19, 2024 at 09:52:17PM GMT, Yosry Ahmed wrote:
+> > > > > On Fri, Jul 19, 2024 at 3:48=E2=80=AFPM Shakeel Butt <shakeel.but=
+t@linux.dev> wrote:
+> > > > > >
+> > > > > > On Fri, Jul 19, 2024 at 09:54:41AM GMT, Jesper Dangaard Brouer =
+wrote:
+> > > > > > >
+> > > > > > >
+> > > > > > > On 19/07/2024 02.40, Shakeel Butt wrote:
+> > > > > > > > Hi Jesper,
+> > > > > > > >
+> > > > > > > > On Wed, Jul 17, 2024 at 06:36:28PM GMT, Jesper Dangaard Bro=
+uer wrote:
+> > > > > > > > >
+> > > > > > > > [...]
+> > > > > > > > >
+> > > > > > > > >
+> > > > > > > > > Looking at the production numbers for the time the lock i=
+s held for level 0:
+> > > > > > > > >
+> > > > > > > > > @locked_time_level[0]:
+> > > > > > > > > [4M, 8M)     623 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  =
+             |
+> > > > > > > > > [8M, 16M)    860 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=
+@@@@@@@@@@@@@|
+> > > > > > > > > [16M, 32M)   295 |@@@@@@@@@@@@@@@@@                      =
+             |
+> > > > > > > > > [32M, 64M)   275 |@@@@@@@@@@@@@@@@                       =
+             |
+> > > > > > > > >
+> > > > > > > >
+> > > > > > > > Is it possible to get the above histogram for other levels =
+as well?
+> > > > > > >
+> > > > > > > Data from other levels available in [1]:
+> > > > > > >  [1]
+> > > > > > > https://lore.kernel.org/all/8c123882-a5c5-409a-938b-cb5aec9b9=
+ab5@kernel.org/
+> > > > > > >
+> > > > > > > IMHO the data shows we will get most out of skipping level-0 =
+root-cgroup
+> > > > > > > flushes.
+> > > > > > >
+> > > > > >
+> > > > > > Thanks a lot of the data. Are all or most of these locked_time_=
+level[0]
+> > > > > > from kswapds? This just motivates me to strongly push the ratel=
+imited
+> > > > > > flush patch of mine (which would be orthogonal to your patch se=
+ries).
+> > > > >
+> > > > > Jesper and I were discussing a better ratelimiting approach, whet=
+her
+> > > > > it's measuring the time since the last flush, or only skipping if=
+ we
+> > > > > have a lot of flushes in a specific time frame (using __ratelimit=
+()).
+> > > > > I believe this would be better than the current memcg ratelimitin=
+g
+> > > > > approach, and we can remove the latter.
+> > > > >
+> > > > > WDYT?
+> > > >
+> > > > The last statement gives me the impression that you are trying to f=
+ix
+> > > > something that is not broken. The current ratelimiting users are ok=
+, the
+> > > > issue is with the sync flushers. Or maybe you are suggesting that t=
+he new
+> > > > ratelimiting will be used for all sync flushers and current ratelim=
+iting
+> > > > users and the new ratelimiting will make a good tradeoff between th=
+e
+> > > > accuracy and potential flush stall?
+> > >
+> > > The latter. Basically the idea is to have more informed and generic
+> > > ratelimiting logic in the core rstat flushing code (e.g. using
+> > > __ratelimit()), which would apply to ~all flushers*. Then, we ideally
+> > > wouldn't need mem_cgroup_flush_stats_ratelimited() at all.
+> > >
+> >
+> > I wonder if we really need a universal ratelimit. As you noted below
+> > there are cases where we want exact stats and then we know there are
+> > cases where accurate stats are not needed but they are very performance
+> > sensitive. Aiming to have a solution which will ignore such differences
+> > might be a futile effort.
+> >
+>
+> BTW I am not against it. If we can achieve this with minimal regression
+> and maintainence burden then it would be preferable.
 
-Some nits and questions like below.
+It is possible that it is a futile effort, but if it works, the memcg
+flushing interface will be much better and we don't have to evaluate
+whether ratelimiting is needed on a case-by-case basis.
 
-> diff --git a/arch/arm64/include/asm/rsi_cmds.h b/arch/arm64/include/asm/rsi_cmds.h
-> new file mode 100644
-> index 000000000000..89e907f3af0c
-> --- /dev/null
-> +++ b/arch/arm64/include/asm/rsi_cmds.h
-> @@ -0,0 +1,38 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (C) 2023 ARM Ltd.
-> + */
-> +
-> +#ifndef __ASM_RSI_CMDS_H
-> +#define __ASM_RSI_CMDS_H
-> +
-> +#include <linux/arm-smccc.h>
-> +
-> +#include <asm/rsi_smc.h>
-> +
-> +static inline unsigned long rsi_request_version(unsigned long req,
-> +						unsigned long *out_lower,
-> +						unsigned long *out_higher)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_smc(SMC_RSI_ABI_VERSION, req, 0, 0, 0, 0, 0, 0, &res);
-> +
-> +	if (out_lower)
-> +		*out_lower = res.a1;
-> +	if (out_higher)
-> +		*out_higher = res.a2;
-> +
-> +	return res.a0;
-> +}
-> +
-> +static inline unsigned long rsi_get_realm_config(struct realm_config *cfg)
-> +{
-> +	struct arm_smccc_res res;
-> +
-> +	arm_smccc_smc(SMC_RSI_REALM_CONFIG, virt_to_phys(cfg),
-> +		      0, 0, 0, 0, 0, 0, &res);
-> +	return res.a0;
-> +}
-> +
-> +#endif
+According to Jesper's data, allowing a flush every 50ms at most may be
+reasonable, which means we can ratelimit the flushes to 20 flushers
+per second or similar. I think on average, this should provide enough
+accuracy for most use cases, and it should also reduce flushes in the
+cases that Jesper presented.
 
-#endif /* __ASM_RSI_CMDS_H */
-
-> diff --git a/arch/arm64/include/asm/rsi_smc.h b/arch/arm64/include/asm/rsi_smc.h
-> new file mode 100644
-> index 000000000000..b3b3aff88f71
-> --- /dev/null
-> +++ b/arch/arm64/include/asm/rsi_smc.h
-> @@ -0,0 +1,142 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (C) 2023 ARM Ltd.
-> + */
-> +
-> +#ifndef __ASM_RSI_SMC_H_
-> +#define __ASM_RSI_SMC_H_
-> +
-> +/*
-> + * This file describes the Realm Services Interface (RSI) Application Binary
-> + * Interface (ABI) for SMC calls made from within the Realm to the RMM and
-> + * serviced by the RMM.
-> + */
-> +
-> +#define SMC_RSI_CALL_BASE		0xC4000000
-> +
-> +/*
-> + * The major version number of the RSI implementation.  Increase this whenever
-> + * the binary format or semantics of the SMC calls change.
-> + */
-> +#define RSI_ABI_VERSION_MAJOR		1
-> +
-> +/*
-> + * The minor version number of the RSI implementation.  Increase this when
-> + * a bug is fixed, or a feature is added without breaking binary compatibility.
-> + */
-> +#define RSI_ABI_VERSION_MINOR		0
-> +
-> +#define RSI_ABI_VERSION			((RSI_ABI_VERSION_MAJOR << 16) | \
-> +					 RSI_ABI_VERSION_MINOR)
-> +
-> +#define RSI_ABI_VERSION_GET_MAJOR(_version) ((_version) >> 16)
-> +#define RSI_ABI_VERSION_GET_MINOR(_version) ((_version) & 0xFFFF)
-> +
-> +#define RSI_SUCCESS			0
-> +#define RSI_ERROR_INPUT			1
-> +#define RSI_ERROR_STATE			2
-> +#define RSI_INCOMPLETE			3
-> +
-
-I think these return values are copied from tf-rmm/lib/smc/include/smc-rsi.h, but
-UL() prefix has been missed. It's still probably worthy to have it to indicate the
-width of the return values. Besides, it seems that RSI_ERROR_COUNT is also missed
-here.
-
-
-> +#define SMC_RSI_FID(_x)			(SMC_RSI_CALL_BASE + (_x))
-> +
-> +#define SMC_RSI_ABI_VERSION			SMC_RSI_FID(0x190)
-> +
-> +/*
-> + * arg1 == Challenge value, bytes:  0 -  7
-> + * arg2 == Challenge value, bytes:  7 - 15
-> + * arg3 == Challenge value, bytes: 16 - 23
-> + * arg4 == Challenge value, bytes: 24 - 31
-> + * arg5 == Challenge value, bytes: 32 - 39
-> + * arg6 == Challenge value, bytes: 40 - 47
-> + * arg7 == Challenge value, bytes: 48 - 55
-> + * arg8 == Challenge value, bytes: 56 - 63
-> + * ret0 == Status / error
-> + * ret1 == Upper bound of token size in bytes
-> + */
-> +#define SMC_RSI_ATTESTATION_TOKEN_INIT		SMC_RSI_FID(0x194)
-> +
-
-In tf-rmm/lib/smc/include/smc-rsi.h, it is SMC_RSI_ATTEST_TOKEN_INIT instead
-of SMC_RSI_ATTESTATION_TOKEN_INIT. The short description for all SMC calls have
-been dropped and I think they're worthy to be kept. At least, it helps readers
-to understand what the SMC call does. For this particular SMC call, the short
-description is something like below:
-
-/*
-  * Initialize the operation to retrieve an attestation token.
-  * :
-  */
-
-> +/*
-> + * arg1 == The IPA of token buffer
-> + * arg2 == Offset within the granule of the token buffer
-> + * arg3 == Size of the granule buffer
-> + * ret0 == Status / error
-> + * ret1 == Length of token bytes copied to the granule buffer
-> + */
-> +#define SMC_RSI_ATTESTATION_TOKEN_CONTINUE	SMC_RSI_FID(0x195)
-> +
-
-SMC_RSI_ATTEST_TOKEN_CONTINUE as defined in tf-rmm.
-
-> +/*
-> + * arg1  == Index, which measurements slot to extend
-> + * arg2  == Size of realm measurement in bytes, max 64 bytes
-> + * arg3  == Measurement value, bytes:  0 -  7
-> + * arg4  == Measurement value, bytes:  7 - 15
-> + * arg5  == Measurement value, bytes: 16 - 23
-> + * arg6  == Measurement value, bytes: 24 - 31
-> + * arg7  == Measurement value, bytes: 32 - 39
-> + * arg8  == Measurement value, bytes: 40 - 47
-> + * arg9  == Measurement value, bytes: 48 - 55
-> + * arg10 == Measurement value, bytes: 56 - 63
-> + * ret0  == Status / error
-> + */
-> +#define SMC_RSI_MEASUREMENT_EXTEND		SMC_RSI_FID(0x193)
-> +
-> +/*
-> + * arg1 == Index, which measurements slot to read
-> + * ret0 == Status / error
-> + * ret1 == Measurement value, bytes:  0 -  7
-> + * ret2 == Measurement value, bytes:  7 - 15
-> + * ret3 == Measurement value, bytes: 16 - 23
-> + * ret4 == Measurement value, bytes: 24 - 31
-> + * ret5 == Measurement value, bytes: 32 - 39
-> + * ret6 == Measurement value, bytes: 40 - 47
-> + * ret7 == Measurement value, bytes: 48 - 55
-> + * ret8 == Measurement value, bytes: 56 - 63
-> + */
-> +#define SMC_RSI_MEASUREMENT_READ		SMC_RSI_FID(0x192)
-> +
-
-The order of these SMC call definitions are sorted based on their corresponding
-function IDs. For example, SMC_RSI_MEASUREMENT_READ would be appearing prior to
-SMC_RSI_MEASUREMENT_EXTEND.
-
-> +#ifndef __ASSEMBLY__
-> +
-> +struct realm_config {
-> +	union {
-> +		struct {
-> +			unsigned long ipa_bits; /* Width of IPA in bits */
-> +			unsigned long hash_algo; /* Hash algorithm */
-> +		};
-> +		u8 pad[0x1000];
-> +	};
-> +} __aligned(0x1000);
-> +
-
-This describes the argument to SMC call RSI_REALM_CONFIG and its address needs to
-be aligned to 0x1000. Otherwise, RSI_ERROR_INPUT is returned. This maybe worthy
-a comment to explain it why we need 0x1000 alignment here.
-
-It seems the only 4KB page size (GRANULE_SIZE) is supported by tf-rmm at present.
-The fixed alignment (0x1000) becomes broken if tf-rmm is extended to support
-64KB in future. Maybe tf-rmm was designed to work with the minimal page size (4KB).
-
-> +#endif /* __ASSEMBLY__ */
-> +
-> +/*
-> + * arg1 == struct realm_config addr
-> + * ret0 == Status / error
-> + */
-> +#define SMC_RSI_REALM_CONFIG			SMC_RSI_FID(0x196)
-> +
-> +/*
-> + * arg1 == Base IPA address of target region
-> + * arg2 == Top of the region
-> + * arg3 == RIPAS value
-> + * arg4 == flags
-> + * ret0 == Status / error
-> + * ret1 == Top of modified IPA range
-> + */
-> +#define SMC_RSI_IPA_STATE_SET			SMC_RSI_FID(0x197)
-> +
-> +#define RSI_NO_CHANGE_DESTROYED			0
-> +#define RSI_CHANGE_DESTROYED			1
-> +
-> +/*
-> + * arg1 == IPA of target page
-> + * ret0 == Status / error
-> + * ret1 == RIPAS value
-> + */
-> +#define SMC_RSI_IPA_STATE_GET			SMC_RSI_FID(0x198)
-> +
-> +/*
-> + * arg1 == IPA of host call structure
-> + * ret0 == Status / error
-> + */
-> +#define SMC_RSI_HOST_CALL			SMC_RSI_FID(0x199)
-> +
-> +#endif /* __ASM_RSI_SMC_H_ */
-
-Thanks,
-Gavin
-
+It's probably worth a try, especially that it does not involve
+changing user visible ABIs so we can always go back to what we have
+today.
 
