@@ -1,122 +1,116 @@
-Return-Path: <linux-kernel+bounces-260316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C08293A69E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:37:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3072593A6A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0802B21628
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:37:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF3CD2820C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1517158A19;
-	Tue, 23 Jul 2024 18:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621E213C3F5;
+	Tue, 23 Jul 2024 18:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="owCTbr56"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lzfkyCuR"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D101581F4;
-	Tue, 23 Jul 2024 18:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D00158A07
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 18:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721759812; cv=none; b=ba4hOJb0vbSVL0XTOQalrSyy1aBhvCTs+07kTfqXbWXZiwT3e7sUsQV5HzFnw8rX+8gBrEowo3rlTkMn8gtjQFfR1dkZy2WOgMeuMD/35SJBcyh8t03zwiA86OFo34Wo1i2HA43FXYCmMSYL8+kmg/cYvXtLyO2aM5z4rUah0DM=
+	t=1721759815; cv=none; b=rqTkExvx+tNjbfMZb55m0J89A31Nj+bg1tA8Vto7eS1RQ5i6QT7ORm4HUoxYqZsRBBgH6JDL9o/id5gVLYn1u6vFPp5DmTsCBIoC/9l7MTX25yKO4FXkn3XwOe4eAkPuHa/BjEoti3n0cOvmcfNrkSWdozcpERz15wjamKor4yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721759812; c=relaxed/simple;
-	bh=SIVxWkbO0wjcTXPfnYIaCufvJb8pb/IqZz+RT3aymWI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sS1rHjv+wFCV4GEUCmsHXmtTQJ7TEM3LtrhwGgKZU2i7RziBu6wE2w06FU2hxQfUznwEJgIcHAP5+WTWE3k+KihaZpZCJXUKDQRTRDNABHcu77vlYiN6Aw9aPo6MPPRtDyZ8rjx6CuCMkD2r4wsB5u3J6QuBHp2zDyqiErIwPVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=owCTbr56; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46NHsPgS029348;
-	Tue, 23 Jul 2024 18:36:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	h5/bKrWgRM/Cf0eDMr8MDPwf4MYHoJumhmnawiiqn8g=; b=owCTbr56yd9Ombup
-	zDr7KC9beSgcZwX0IQidyFiy090W1hpdLCNNSpcLm4CJR5tz/9DOgbgSK+BvVGua
-	bEG0wrWkCZtW/SsUDqVfS6FhfXa1nARnvYFN+SUVF/bIXA275V/lanufwBTobK0o
-	TWwSI2q+vU6lfeFfehNXI6zaipC6I1G+2TKqvHMra2xxz3ibCrSMJM9TXfnhOzOV
-	n/eGjGu5siHO808kXPXh1tdRmbuBJSRU54PAVM/vOllhXFr3oUB13d/C0kYuA3qT
-	AMTO+7QjCmEDZ3KKJWhsecDd8v/vNM63zE6nkM1MIWal7fuQPvkWbFQfWSJ4xKJX
-	0e3wpQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g6h8ythx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Jul 2024 18:36:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46NIajxk029009
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Jul 2024 18:36:45 GMT
-Received: from [10.111.176.36] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 23 Jul
- 2024 11:36:42 -0700
-Message-ID: <36f5502c-a07f-4809-aa24-7f996afc0a88@quicinc.com>
-Date: Tue, 23 Jul 2024 11:36:41 -0700
+	s=arc-20240116; t=1721759815; c=relaxed/simple;
+	bh=wCjAe5rysnyPHTE32w/Il9C+QuDxWjSafUc9QGpJhDE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CQn0Llwjctx9OsqRPRFxIsF7qVSBHuCq2DC/wXYPAowQbR42QdFHvEuIjz3RCn9lJPcNoAfwVwM9KDf/e9aMpEOgwwnulyZh9ji4Po4ZeKLcEvmEo4HBpeXwciRMUk5cLwgqTTiKo+xzDvDNZldvH1ATJ4N6fqLMdg00ECbqsjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lzfkyCuR; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-708e75d8d7cso3338567a34.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:36:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721759812; x=1722364612; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=k+UFYRZSUcd9DOmvcNxoBDJyVG+xJwiw5jLRr8VEv+0=;
+        b=lzfkyCuRoMwFEPPToAps9A8OXa9eBj+yCwFIvxntR68Hrd33afxpl+7nCR2VaGdmhf
+         tzsrBi93tLOwfkzkL6oE5MAa7A1kNjl/TJhbgPQAxJFtPkO5Zboe/VeXrXxh6gcU8ddq
+         LbVRtGB6vSoCti7hTggSRL9p5lz5tfNNRLl3mDk0zvmCbOe9yZ1uoO8CQTgHVd5nq4zY
+         63T5qyMEWkp1sZMWAC2cV1yBkq5eHHG6kN7hQk1lZkdpyUC4WV8JCU2YMFEMTIvsgQFP
+         JsFg+uuEdsW5toyZnOEz6mQ77qITDNP6jCBPbgz0nuIShJEDOUmVnYPrtOIN+V1Z2IoI
+         VF6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721759812; x=1722364612;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k+UFYRZSUcd9DOmvcNxoBDJyVG+xJwiw5jLRr8VEv+0=;
+        b=RC2LtAICfDoceJLqZiRvdANn6A+oPAEB46Fm3uq1X/fLoRBBByGpQ7/IQB6IbYYxbU
+         MwN/n8De3qrucZc9nHzEfOuaGOldBiOYCkFbTJigawNCcmpTLipWkPWpbwXKWou4uCUg
+         b4Lo6eiVPfrkB+RkTAPUw57OiZRsXk+Rj2HeOviqqWPIXwDgFx2Zi4pd6zfnoAYm3T4k
+         EvLxmwHHPTzIwPYg2u98gcIUm87r3V+1f83t2YR2hcWS+OjthbvGqiPg7Rwc4KmSbjiD
+         tQaidJrvucLcpo3a2OaPY7qP333uW5yYKwWmaer1Rl91X9HL4hbuD/dwF2P93m6zBqnh
+         sUow==
+X-Forwarded-Encrypted: i=1; AJvYcCWBpVVweqN+PQVYqUzAgFTpoAPHf1a5OLFFhU9I9H8WRTdTbE1m+u6qROkDB/P2UoFIm4v9MgWZJXcFeWBfxODge3huJS0mqimAY3ix
+X-Gm-Message-State: AOJu0YzF9iUPanTdzqoxrzk+zhuKYV+uKinJvehP0YuL3jwpvKcbLWCU
+	/uNlCkzR4UfPH1u4K+84u42MLsfLp8MtR+hnvmsEnx17BtCuvpP/19ULRw6+wZA=
+X-Google-Smtp-Source: AGHT+IEE0rY9DlgVCA4eTLFv5LAFuDv0yqZEcQ2Yvr1s4IANSDqUYYNRsOGkILxVq+PW1Epg0/lx1A==
+X-Received: by 2002:a05:6830:7007:b0:703:5971:70a4 with SMTP id 46e09a7af769-709234bddc7mr781730a34.28.1721759811906;
+        Tue, 23 Jul 2024 11:36:51 -0700 (PDT)
+Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-708f6172f97sm2131109a34.54.2024.07.23.11.36.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 11:36:51 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	=?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+	linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] spi: axi-spi-engine: don't emit XFER_BITS for empty xfer
+Date: Tue, 23 Jul 2024 13:36:47 -0500
+Message-ID: <20240723-spi-axi-spi-engine-opt-bpw-v1-1-2625ba4c4387@baylibre.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dmaengine: qcom: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: Vinod Koul <vkoul@kernel.org>, Sinan Kaya <okaya@kernel.org>,
-        <kernel@quicinc.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-arm-msm@vger.kernel.org>,
-        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>
-References: <20240603-md-drivers-dma-qcom-v1-1-d1bd919352bf@quicinc.com>
- <171778244108.276050.8818140072679051239.b4-ty@kernel.org>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <171778244108.276050.8818140072679051239.b4-ty@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: tAW35PHAZfQW0w9h6R3-WQGWr2UCYKQ_
-X-Proofpoint-GUID: tAW35PHAZfQW0w9h6R3-WQGWr2UCYKQ_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-23_09,2024-07-23_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 mlxscore=0 malwarescore=0 phishscore=0 bulkscore=0
- mlxlogscore=999 suspectscore=0 lowpriorityscore=0 clxscore=1011
- impostorscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2407230129
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: b4 0.14.0
+Content-Transfer-Encoding: 8bit
 
-On 6/7/2024 10:47 AM, Vinod Koul wrote:
-> 
-> On Mon, 03 Jun 2024 10:06:42 -0700, Jeff Johnson wrote:
->> make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/qcom/hdma_mgmt.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/qcom/hdma.o
->>
->> Add the missing invocations of the MODULE_DESCRIPTION() macro, using
->> the descriptions from the associated Kconfig items.
->>
->> [...]
-> 
-> Applied, thanks!
-> 
-> [1/1] dmaengine: qcom: add missing MODULE_DESCRIPTION() macros
->       commit: 8e9d83d7228f663ef340ebb339eaffc677277bd4
-> 
+This adds a check on xfer->len to avoid emitting an XFER_BITS
+instruction for empty transfers in the AXI SPI Engine driver. This
+avoids unnecessary delays caused by executing an instruction that has
+no effect on the actual SPI transfer.
 
-Hi Vinod,
-I see this landed in linux-next, but is not currently in Linus' tree for 6.11.
-Will you be able to have this pulled during the merge window?
-I'm trying to eradicate all of these warnings before 6.11 rc-final.
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+ drivers/spi/spi-axi-spi-engine.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
-/jeff
+diff --git a/drivers/spi/spi-axi-spi-engine.c b/drivers/spi/spi-axi-spi-engine.c
+index 447e5a962dee..cb3fdcbca2be 100644
+--- a/drivers/spi/spi-axi-spi-engine.c
++++ b/drivers/spi/spi-axi-spi-engine.c
+@@ -258,7 +258,7 @@ static void spi_engine_compile_message(struct spi_message *msg, bool dry,
+ 					clk_div - 1));
+ 		}
+ 
+-		if (bits_per_word != xfer->bits_per_word) {
++		if (bits_per_word != xfer->bits_per_word && xfer->len) {
+ 			bits_per_word = xfer->bits_per_word;
+ 			spi_engine_program_add_cmd(p, dry,
+ 				SPI_ENGINE_CMD_WRITE(SPI_ENGINE_CMD_REG_XFER_BITS,
+
+---
+base-commit: 67e899c7df7dd8507ab61a2e71fe6c8299afd427
+change-id: 20240723-spi-axi-spi-engine-opt-bpw-e801253aa43a
 
 
