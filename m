@@ -1,281 +1,113 @@
-Return-Path: <linux-kernel+bounces-260012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D4F293A141
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:21:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46ED293A12B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 504032820AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:21:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 784371C22312
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62EFD15531A;
-	Tue, 23 Jul 2024 13:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488AC152DF7;
+	Tue, 23 Jul 2024 13:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="PCt33HSU"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013037.outbound.protection.outlook.com [52.101.67.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m7dIIVeW"
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F00155310;
-	Tue, 23 Jul 2024 13:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721740815; cv=fail; b=mfx8RcnS66UbVbDjGtnJrIYXiffeLhk6ZpcVzFQcY0133b1LAEDo0ZFGNs0jw/LHAdYPjdGNI2yke7YB1q5aNvhFEWQWFY83s3VS3BQ5jD0/MPA6w6B50ktetORZekEq7HnBp18wZfPHjBk0vRq0nVu7qqsmhpMzQz2Nit1pmn4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721740815; c=relaxed/simple;
-	bh=gO2mjjguCnlspKAgAp5/kj62pKS/cJBaAhDvBZl4lUI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=J+DLTYJ1CsWHt3Ri75G9eEvMJNFVpelIsp5861u1nNFUJpXUScmuB3IGZCduQGPBSZauWl8T5WbV3c93PuPxG7jPccKIRb1qxIex3jsQb7EeWZoq/5XeHbqfzPVCwri7NR1hXx258l23jqnZuXMCMKZwj2VJDqD81wJfo+fzh7I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=PCt33HSU; arc=fail smtp.client-ip=52.101.67.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VWxmIQxbwvyJ1VRSr8ghVN6PPppGUZ8TvRomGvGl0ZgKGi6ovWsvNleNkEOf5vxt6JSzqIxiUt5rGgKYzQ34004RrHFZ0bT/2XG6x0WwP6Rkd7f3dsg7xyhiDTe73hvfUHmibmFGL1a7ZGXxE9DDc41T8Fc9TPrlW3mVJYQgkQWDe02KMbirQyq2mtkJFn3yOMrzP5S1u1cfLDjCKhk4NIKg2A2u/8vTgBCrtmGhsQEa0NKHFZUxR2BBUAgGut9VrHXX/19BYOM5cQ9smiP9fy569qAwpIdS0UJwqjd8Xif7S25T/ZWiStLACcdVGB3b0/BbqeE88dYoBeXIKQCKjw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6egOWLKVhVFBVORRxktMQIkTrxVwpPnvW+W4Nj5dG9Q=;
- b=fa10DT5wJkuUi+bQ8GeAtvtXWdPlhpLrmudJcX2XrRwoFiBrjr9qe5ggmS5rg47pm92gYIOeM9JbQ4o8PINQ0OrmGGabILvV8rSxrtqKYGlHiwts1MRn1Kv4tAZ3K/GHlI5E1bZ8hYdj11XNFauNM3U3B7yFMh/tXpct153z0WJQ2SVvwTTJcCsr/FmKscqx2aplQgWqzqIM4m+Kf0NdwMv4wlhYIbsrV0/1Z1gi75/tP4u/96VbyVbBPgmeC87hOGS6fi0ESOJ7+y3l3JicnnB8gb9VkTkHVu4q6WM3/s7eJDpBuJlPj+44hX099pfoZNh7CzhyO5oyl6DEG/XVWQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6egOWLKVhVFBVORRxktMQIkTrxVwpPnvW+W4Nj5dG9Q=;
- b=PCt33HSUBkJIChCBnc1U1uFe2GNREm6kmAfc28BcA2Pi22b4O7TXOsK+9+IuV5/T7t2/w5L6Dntp29e0ChfoqjlBrmRAAhdwXvkOD0fOavILSK4PYRhVnbizp0XXQSfTc/a8I7XCPtzBAKXTjDfwkeNF9KfPYG7+fRFSiXiBFQk=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AM9PR04MB8487.eurprd04.prod.outlook.com (2603:10a6:20b:41a::6)
- by PR3PR04MB7258.eurprd04.prod.outlook.com (2603:10a6:102:80::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16; Tue, 23 Jul
- 2024 13:20:10 +0000
-Received: from AM9PR04MB8487.eurprd04.prod.outlook.com
- ([fe80::6d7a:8d2:f020:455]) by AM9PR04MB8487.eurprd04.prod.outlook.com
- ([fe80::6d7a:8d2:f020:455%5]) with mapi id 15.20.7784.013; Tue, 23 Jul 2024
- 13:20:10 +0000
-From: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Jacky Bai <ping.bai@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Chester Lin <chester62515@gmail.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
-	Radu Pirea <radu-nicolae.pirea@nxp.com>,
-	Florin Buica <florin.buica@nxp.com>
-Subject: [PATCH 3/3] pinctrl: s32cc: add update and overwrite options when setting pinconf
-Date: Tue, 23 Jul 2024 16:18:32 +0300
-Message-ID: <20240723131832.1171036-4-andrei.stefanescu@oss.nxp.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240723131832.1171036-1-andrei.stefanescu@oss.nxp.com>
-References: <20240723131832.1171036-1-andrei.stefanescu@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AS4PR09CA0016.eurprd09.prod.outlook.com
- (2603:10a6:20b:5d4::8) To AM9PR04MB8487.eurprd04.prod.outlook.com
- (2603:10a6:20b:41a::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39FBB14E2D0;
+	Tue, 23 Jul 2024 13:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721740735; cv=none; b=iDVRWVuA/EvbGQO7P5HFbduoKsBA4lvGVyr29X91iGtEORtG4JP0/R0k1yHivjegWB5lL+hQt8KRvrCJhgTAi9eLZpqsQfbAMGiJ+WYs9Fe5x7cEdaeYuR28FpBPmNivDPC6NvFpNuNicTGlg+3rapQd9AsjWFKqIFNhNnRFX1o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721740735; c=relaxed/simple;
+	bh=FXCVnslkbvUjXMTvoscIXVJqz5MQEnQ0U4ecleQBaa0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eskFYX3iRDuk7P+RA/dlDTKt4pxSAhgAOw5j7yIUJ/P2nDd16gw2E4T7fAEEHWceuRpjz3CIBv9dR5G5hSGixpCUi93Z5w/Ix49kNAENQuGYM6f+Ao6TJP3/vgpqVodMnyshT/iC2bv+aBU8T+zZuAoUBSNsrnO9dIgRGPyQCfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m7dIIVeW; arc=none smtp.client-ip=209.85.222.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-810177d1760so1636033241.2;
+        Tue, 23 Jul 2024 06:18:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721740733; x=1722345533; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WK24KeD1ySdvLMWAGjOGkopofHcSHfvFrGQgXSbSHvE=;
+        b=m7dIIVeWJrPtCP/MLCs43JqaPMRYGWDVXPAvnEa+gdlgDxYP7z4prc70gIN5wzRk/M
+         +eJGK6IMJtOgjuxHxu42hMUzEQ8DY+awjYzA5uPhkb2AIk3W9NQRNt7TuORt8B9TVyLB
+         nr7YOCsF/HO5Mc2cpzcgy5z7pavfN6DDnP0/M7nqKFpiacg35JRgju/NMLFkXWGlceeF
+         1/6XXaXJi8DU+gkte0Gt/FWvJB4BdDQ9oRqjB41D7k6VJdxElBZVxqawtiwWIywz806P
+         yuHLp7k6TKTj+q3w0m9Wc2WYxlfN1Cr0KU+DHyhwNmhy7U7SHYSjacpo2Q74O/+gmExC
+         m0Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721740733; x=1722345533;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WK24KeD1ySdvLMWAGjOGkopofHcSHfvFrGQgXSbSHvE=;
+        b=shz5idw6fTOVxAsGoyjLvVC324yg8UkzqPtkYLIfxmcm8sJq15W75klDdOcCLquz3S
+         IPSRAlXcokafybtWUBzLiTZxaPH+xTj7Pc6lME8lAZXpQARc8g9dzCIhE06qwS4SPbl1
+         CsPvdv/OAiZiC1yw95ijUmlxSwzQduphjHrSi2QZIuBfHMWH7OyPmOG6luPvz8hgUptj
+         v9i2CdjWuc/KgQgMwC0u/0a9g/H3HcjRXtrRKeRzg2xawoJETdq/jBki1YaNeHrN6eiO
+         6+4htiP2DAazT3jYriugcqg7uyZPVpYQYDIfF1OFmHB46XzsecImgcbsW0Jv0U6M+u4t
+         bMuw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZdcMeG4x//SjaVAxeR2gBTglkSGahfNaz5fT7bMKfc9jyT2s2YvhScmbGkKIUbfRW8HNgSW5HxVOM0j+7rFihE3fzvAhXQCgilX3fBaQYzHuh4IbyE4FEoUCJ+vTxWkYx3Y9Ow8DhhgV+hwtZtIsdiMeGtA7NeFtOf9QFzMjOY4H+UBkzOWQ=
+X-Gm-Message-State: AOJu0YxJuYa6Ya0OZp4UDKP1uEYqMF96XbfTpKORHDGarY7A740JkRgK
+	LffKgLYDC7w+Ja65J3v6EmabBewGMqn71nt7CRMhife6DEb7Gcog
+X-Google-Smtp-Source: AGHT+IGh0yf3Rbdo8yRwGnuHdTH11yr+2BstksyqIE2RcyJsdADWlTb7j6bXCE/ydkCeX8ChKx/rZg==
+X-Received: by 2002:a05:6122:2011:b0:4ef:5b2c:df41 with SMTP id 71dfb90a1353d-4f693778475mr3253090e0c.9.1721740733004;
+        Tue, 23 Jul 2024 06:18:53 -0700 (PDT)
+Received: from localhost (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-4f52a32a1besm784575e0c.23.2024.07.23.06.18.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 06:18:52 -0700 (PDT)
+From: David Hunter <david.hunter.linux@gmail.com>
+To: wim@linux-watchdog.org,
+	linux@roeck-us.net,
+	corbet@lwn.net,
+	linux-watchdog@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: David Hunter <david.hunter.linux@gmail.com>,
+	skhan@linuxfoundation.org,
+	javier.carrasco.cruz@gmail.com
+Subject: [PATCH] Capitalize Farenheit
+Date: Tue, 23 Jul 2024 09:18:49 -0400
+Message-Id: <20240723131849.264939-1-david.hunter.linux@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR04MB8487:EE_|PR3PR04MB7258:EE_
-X-MS-Office365-Filtering-Correlation-Id: 525944ba-cc69-4c3b-f036-08dcab1a2d95
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|366016|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SklSYTJ6bnRZdDE2c3czUVZFT1dqNTZaWWR5U1dMYlpPZ0VPcERwTk03N1ZH?=
- =?utf-8?B?d1htd00ycGtLTCtQZlViWEhyT3RydkZvTHdWQjNSN0pHNTl3RzFYSVRtT0Fp?=
- =?utf-8?B?NFg5R2Y3dmJFMk15cW1yNlBQdS8xcTM5REs4Vk5JSlRqK0hJNnFZM1AzVDg5?=
- =?utf-8?B?V3BsNnNDTTF4azdBUFN6WWVLVzhsZWt6VFdvT3NrR0U5bVZNVm8wMnptZXpr?=
- =?utf-8?B?T0ZrSldLaG1rcU05Y09uMnNrSjdYeDU2SEhaK2ZubzBEaVh3NEJjc0FTNWhp?=
- =?utf-8?B?TU5rU3k0QWUyeExIci9YTjdhNksvWCtVbXVUL2M4d1ZDcXVIQUtaNm15N2JE?=
- =?utf-8?B?Y3BMek40TXdaNFMzOEpNWmhxMUVFUGlObzh1WlhkSmNKeFV4M2U5WSt6OVlm?=
- =?utf-8?B?UEtrekZrUUlKVU9XMzk5VUFrT1JwMVNwOVAwRXJuUCtHTm1MMFl6Ni9jS3Q3?=
- =?utf-8?B?V0ZrZzFXZ1p5ejNaTFMxR21ROHpKSWlUVGlqQUtLaXhhUmRhTldaemY2bWQ4?=
- =?utf-8?B?b01KY1Z5WjNjQW5SeFZYZXZYdG5WSTBqdUpPejFHZ2hTQW1iNkhBbG43ZGd0?=
- =?utf-8?B?RjBQbmVDZEVIZ1hZdGlaYUFHVENiL251bkVUV2UxMjRPY2ZTYWJOWTRxeHBX?=
- =?utf-8?B?ZGFsa28vamxzRkJoSkpTYnFLaFZoNjJ2dmY3RDBVVzQwczdkNVpmcVJoaWRy?=
- =?utf-8?B?Umx6c0dPUXprbmxLSDFTMWhkTUxkRFBhWENSVzkycFhEZktvSjlOTndZRmlh?=
- =?utf-8?B?SFV0bnlpaXVpQ3BhSGQyY2hvL2xyY2F1M3hyOGtqYXlGRE82Sy93dFQzVzgx?=
- =?utf-8?B?a0VzNVhSOExlZTdnV1JuQlFvanhxY285ZGpyK0ZPbDNta3NWVjNHcC9Ta2E3?=
- =?utf-8?B?ZVdTVUZTNnRsSGF0cjA1ZGJIaVMzWENodVRnU04zSlZ1WWFtb2lnTTVHWU1j?=
- =?utf-8?B?Z1hQenBNWkxyZWxqdStLUFhsclVlamd5bkE1OWFWUThFTkdxLzRwc0tEYzR0?=
- =?utf-8?B?MWFTZkpSVkFzY3VhUU9BaHhQWnhCalRaR3JXa21ZV2RSMWZKRXBSUGY0OXh2?=
- =?utf-8?B?NVpoV09XN0pBUk9HeFZjcTloci9wcjZ2U202eU1QMUtyUFdZVzhsREdOTFNV?=
- =?utf-8?B?NTcyWGhjMTFxQnBMd2t2YzJwdHJzYUNod0VKUGNRaDFSczlJa0Y0dXVwU3hN?=
- =?utf-8?B?MG5LQ3FtSjFIRDNqZm1ubmZWcC9ic0o0SGNFczdZdjhncEJZOFpVZ21taGxl?=
- =?utf-8?B?d3M0NUdRV1JPM2VWZXRpOFIzNlVwb1BUWFpOVzZnQ2dGUzFwRVQ3Mk43R2pC?=
- =?utf-8?B?SExtT3JsbW15eFozSHZlQWI0WW5Ham5vcnFVclRidmI0WC93SkFEYjVjM2p6?=
- =?utf-8?B?YXVZdHBEa29PTzhEKzNKUG02THhYTHQvMDJDN1Y3VEtyWGVUSmpWU2MvMlZs?=
- =?utf-8?B?NGNTbnhJb2g2R1R2cHpTczNoRnFRdUpFREtSbzlVbmNRVnk4TTB0dGcxQUlw?=
- =?utf-8?B?bWIrZjlMZGZwN3FIbmx2d1FRd3ZvWWVaM3h0bmZQZTVJbTkzTWh6dnpNL3M3?=
- =?utf-8?B?cFZ1UlBYTXpCUkZhMXhYY2J1YndDdjBTUTNIVDBNbFphR1h5MDJJR1lISGdq?=
- =?utf-8?B?QVpaR1dXand3V2lNemRvQ2FkYVhKQVlhUk8yRG53THI3M2FLU0F1UlJGYVdw?=
- =?utf-8?B?RUFlaUhGeHVyeUY4a2VCcmRpOTYrOU9SVlpTbUlYaVdnTmRrVlRPZ2F2dFdp?=
- =?utf-8?B?VnFPUTVzcXFuOENsRVowY01JcU9COWREZHVCY1U4c0xHbFNpeEtBWXJRanFY?=
- =?utf-8?B?c2x6d2tTbWNwdnhnYXZmUHp1TVc2Ny9NeG95UDVKcmozVC9jVCtYa2JJSnAx?=
- =?utf-8?B?Y21KUk5DNkNYMEY2UkRpamRYNFgydE9iMmJQWXM0YU1taUE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8487.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NWs5L2tsaXh3UWJEVTFHNEs2aXVlSDlhb3prQTEzYkJONjdoRTVZNnc1bTNz?=
- =?utf-8?B?R0xTY1NVNksxUjFvZnIvN0s2MVZsWXY1TGs5cm9BRFJWZkRWYU9qUDhjZ21h?=
- =?utf-8?B?OHVWRThDWENITEFvNVhwQXNKVkJzOU1ObW1wNmNQV3FxSUowTlBESHhlWk1L?=
- =?utf-8?B?Nk4xTGJtMGFkcXIxYkZFY0lERm9tRGIwM095WkNsK3ozbmY0TnpyRlk0aXJD?=
- =?utf-8?B?bFMxNUhhamo0Q2FkaG1KRXM3cjZjYndGM0EwVEtqWlNWNnZUUzJBNGhDTHZ3?=
- =?utf-8?B?cVlLQStxY1BpeVZkVzRuNEVuOTd2NXdmS29rN2I0Y3YrVjIrRks4bkFjUWNk?=
- =?utf-8?B?NDFIdkRYSXA4ZERyZTg0RU5DTWJwdXEvcC9icnN4YVpOTENTMnZEWDM0L2R0?=
- =?utf-8?B?dEtVdERYeVN2czRaN0didEFudGsyUnJrY2cvbE1TOVR5QUJoTXNXQ21WdHhu?=
- =?utf-8?B?Z0hiYWJYT0MzUW5sT3JEQXpzMElQM1FGMGRqTjRjNjE1ZldLSjB6MG9NUm0y?=
- =?utf-8?B?QnlzalBVRXdlQ0dydDEwNDE3cFU5VDJsT2MyZzl1ek95Z2VjREp6d2FBT0R4?=
- =?utf-8?B?R2t4dnFhand0WDJxeVU5Q2tyWXpIcU5LN2kya2tZdHlQenVHaTB3d2R2b1lB?=
- =?utf-8?B?Rm1TRkRPd3M2ZS9Jdm5iMHdoNzFRZnp6YW94T2xsZlNDOU5PanRocU9oSjJj?=
- =?utf-8?B?SUN4a2oya2l6WUlxSWFmaldEbVBkeTlkZmFWT2tMekdnMDRHN2tBdmQxM0Jp?=
- =?utf-8?B?dFpnSURHMjNpaEN4SGo2aXZpVG83dk9JQmU5dlVoQVNTSHdOYzAzeDZYajRC?=
- =?utf-8?B?YVUzSWlBMVAxVmtZUjdrbG0raENNVEpUbDNmakR2SzdmRW9HUE5TUlhuUWhY?=
- =?utf-8?B?eUx2Zi9WT1h3a2N0dEFsdnFoZ3I4aCtxS0RGeFdKSU9VR0xjTXVvUUpOVEVK?=
- =?utf-8?B?LzlEbVI5RVRXSFNnZFF4TDRGeDltK0YrNkN4cXlwUHVKekxnNkFiNlpaK0tx?=
- =?utf-8?B?NWpBQUI2N0E4OGs4cCtGbXRsUGpZTlJ3MU4rN0dGa0NyT3IveGtRUThBbG0y?=
- =?utf-8?B?cVpSVEhKandGNmVXWWZyWURCZjZVdDJlSDhJd0V0RG01TFN6WnM0dFZSdktF?=
- =?utf-8?B?WXlJL2hTUE1LWmc4RGd6UG95U2VLdklaTWZnenRmeU1WeFVNR3hhdW56d21w?=
- =?utf-8?B?YU10VUp2WDJnR042VFpHZ29nSk5RQVJiSUZjWXY5N2hsR3cvVVJOYlZJQ3hu?=
- =?utf-8?B?MmxFMHJmbTR2MkIrbnZIV1BrQk9GNlBkaVNjQ1ZYdERCNXlXREFucy83bk5z?=
- =?utf-8?B?ZU5tYnUwOHg4VWl4UHRUcjNWWXVTOXlHME1FalNHNWx4OXhGeDgySnhtL2Ft?=
- =?utf-8?B?TFdIT1JvVURyWFlHVVVZWHNUYVFObHRiOXhMNVVwQU9jSFd6MGppOXRraUMx?=
- =?utf-8?B?ZzNhVys2YVBnU2JDZjBsZkhJMmszbHMyclgrVFAzcCtiN3NCazVGc1FIekFX?=
- =?utf-8?B?QjJTTzRRM29sd1pLUkR6ZTJOcWVHRFExVEk1WVRHRExPVXQ4NjBQZFMvazlP?=
- =?utf-8?B?SGJJR3hMbTRTVkVETml6bW9QZGUxbE4zUXJCVzkzQnlLM29IQmVQcFJNV1Vi?=
- =?utf-8?B?djQzam1qZ0d0aVgzMkRNVlZaWlBMR0JMOE5uRDZjVVo2ZWQ5bVBIc2lpWmlv?=
- =?utf-8?B?RmFmeFlvQXFuaWdia2EycW9uN3RKeVlndysyWWdkUzFTbm45RUxUUVZHTFBD?=
- =?utf-8?B?bjFLVmhlQUdBbVEwWkJRajhYRFQyVmQ5SUo5QlRGU1NuOW16Qm9kK2xsc21O?=
- =?utf-8?B?NWJxMmh2bWtzZUovYU1CejYrS0pERFNERWx0UVM3Ym1sSFArSVEydlVhWmJZ?=
- =?utf-8?B?bHFKNnNsWVA2NWl4eFVxQ0FGcDF3amZaN2lZVnVOMmNZUWRNNVYzTEhYR2lj?=
- =?utf-8?B?TkVJaHBNRUtPWUtrajdJektNVHpCSWhOeUhhRDdDcCtGaXJOYWh5N1VKWVBr?=
- =?utf-8?B?cGNOTTVjZ3FUb2MrTVFBTkFuN2JmWXJEbUVQVkRvdk1QajdLL01rRzZnZjQv?=
- =?utf-8?B?N1NlVFRyNFpibHh2QmZSRGxtekEyWFBGc3NyK1VIOHk4Y3pmYW0xRVQyLzJR?=
- =?utf-8?B?bE9PUlpHcEM2ZXViZzZNcXh5WnV6eGVkRGJnbkduSnpWY0NpVWtXaTZHNnhw?=
- =?utf-8?B?aGc9PQ==?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 525944ba-cc69-4c3b-f036-08dcab1a2d95
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8487.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2024 13:20:10.3729
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +Tf3dJshMKM/ooKQpmkaiEY5cL9zYk+bG2kBSY+N9eaR2aLr3VcKwl6XJlRnRhROoiY3XjRluaJpOdD4ZxoJjmpI+Qz2pgeiNMMQ27zDLM4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7258
+Content-Transfer-Encoding: 8bit
 
-The previous pinconf settings(made by the bootloader) need to be
-overwritten when configuring the pinctrl of a driver during the boot
-process.
+Not capitalizing "fahrenheit" is an extremely minor spelling mistake.
+This commit fixes that.
 
-Configuring the bias of a GPIO at runtime (e.g. pull-up) needs to
-preserve the other settings unaltered.
-
-This patch introduces changes to differentiate between the two cases.
-
-Signed-off-by: Radu Pirea <radu-nicolae.pirea@nxp.com>
-Signed-off-by: Florin Buica <florin.buica@nxp.com>
-Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
 ---
- drivers/pinctrl/nxp/pinctrl-s32cc.c | 30 ++++++++++++++++++++++-------
- 1 file changed, 23 insertions(+), 7 deletions(-)
+ Documentation/watchdog/watchdog-api.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/nxp/pinctrl-s32cc.c b/drivers/pinctrl/nxp/pinctrl-s32cc.c
-index 48d9d6df953f..9c730f2ca172 100644
---- a/drivers/pinctrl/nxp/pinctrl-s32cc.c
-+++ b/drivers/pinctrl/nxp/pinctrl-s32cc.c
-@@ -39,6 +39,11 @@
- #define S32_MSCR_ODE		BIT(20)
- #define S32_MSCR_OBE		BIT(21)
+diff --git a/Documentation/watchdog/watchdog-api.rst b/Documentation/watchdog/watchdog-api.rst
+index 800dcd7586f2..78e228c272cf 100644
+--- a/Documentation/watchdog/watchdog-api.rst
++++ b/Documentation/watchdog/watchdog-api.rst
+@@ -249,7 +249,7 @@ Note that not all devices support these two calls, and some only
+ support the GETBOOTSTATUS call.
  
-+enum s32_write_type {
-+	S32_PINCONF_UPDATE_ONLY,
-+	S32_PINCONF_OVERWRITE,
-+};
-+
- static struct regmap_config s32_regmap_config = {
- 	.reg_bits = 32,
- 	.val_bits = 32,
-@@ -557,10 +562,11 @@ static int s32_parse_pincfg(unsigned long pincfg, unsigned int *mask,
- 	return 0;
- }
+ Some drivers can measure the temperature using the GETTEMP ioctl.  The
+-returned value is the temperature in degrees fahrenheit::
++returned value is the temperature in degrees Fahrenheit::
  
--static int s32_pinconf_mscr_update(struct pinctrl_dev *pctldev,
-+static int s32_pinconf_mscr_write(struct pinctrl_dev *pctldev,
- 				   unsigned int pin_id,
- 				   unsigned long *configs,
--				   unsigned int num_configs)
-+				   unsigned int num_configs,
-+				   enum s32_write_type write_type)
- {
- 	struct s32_pinctrl *ipctl = pinctrl_dev_get_drvdata(pctldev);
- 	unsigned int config = 0, mask = 0;
-@@ -579,10 +585,20 @@ static int s32_pinconf_mscr_update(struct pinctrl_dev *pctldev,
- 			return ret;
- 	}
- 
-+	/* If the MSCR configuration has to be written,
-+	 * the SSS field should not be touched.
-+	 */
-+	if (write_type == S32_PINCONF_OVERWRITE)
-+		mask = (unsigned int)~S32_MSCR_SSS_MASK;
-+
- 	if (!config && !mask)
- 		return 0;
- 
--	dev_dbg(ipctl->dev, "update: pin %u cfg 0x%x\n", pin_id, config);
-+	if (write_type == S32_PINCONF_OVERWRITE)
-+		dev_dbg(ipctl->dev, "set: pin %u cfg 0x%x\n", pin_id, config);
-+	else
-+		dev_dbg(ipctl->dev, "update: pin %u cfg 0x%x\n", pin_id,
-+			config);
- 
- 	return s32_regmap_update(pctldev, pin_id, mask, config);
- }
-@@ -598,8 +614,8 @@ static int s32_pinconf_set(struct pinctrl_dev *pctldev,
- 			   unsigned int pin_id, unsigned long *configs,
- 			   unsigned int num_configs)
- {
--	return s32_pinconf_mscr_update(pctldev, pin_id, configs,
--				       num_configs);
-+	return s32_pinconf_mscr_write(pctldev, pin_id, configs,
-+				       num_configs, S32_PINCONF_UPDATE_ONLY);
- }
- 
- static int s32_pconf_group_set(struct pinctrl_dev *pctldev, unsigned int selector,
-@@ -612,8 +628,8 @@ static int s32_pconf_group_set(struct pinctrl_dev *pctldev, unsigned int selecto
- 
- 	grp = &info->groups[selector];
- 	for (i = 0; i < grp->data.npins; i++) {
--		ret = s32_pinconf_mscr_update(pctldev, grp->data.pins[i],
--					      configs, num_configs);
-+		ret = s32_pinconf_mscr_write(pctldev, grp->data.pins[i],
-+					      configs, num_configs, S32_PINCONF_OVERWRITE);
- 		if (ret)
- 			return ret;
- 	}
+     int temperature;
+     ioctl(fd, WDIOC_GETTEMP, &temperature);
 -- 
-2.45.2
+2.34.1
 
 
