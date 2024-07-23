@@ -1,158 +1,104 @@
-Return-Path: <linux-kernel+bounces-259573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40AC49398B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 05:38:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C7BC9398C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 05:54:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91314B21AC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 03:38:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDCD5B21AEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 03:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6D613C69C;
-	Tue, 23 Jul 2024 03:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CPTBUqOo"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B1F139D04;
+	Tue, 23 Jul 2024 03:54:25 +0000 (UTC)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4D42C9D;
-	Tue, 23 Jul 2024 03:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F8F13957B;
+	Tue, 23 Jul 2024 03:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721705882; cv=none; b=N22xfERxfcxMcZcYFd3R/V+sBsPivw6X9hzojzi6UJmAwRqS0cq7z0GHVDsWJnMsA3Ci3Ag07dzvs2OxOETToLtDOepp9yMa2KZqMeINPHARsdbEJU08U7hYWKyU4JaVc1NfBlSDL2uBWzbJPLLFb5G9QT+VSFoMBx+Qx3NBMJ0=
+	t=1721706865; cv=none; b=jsVcChl+8vNn22lKH5U/kMn8l815I2QUurB6PC0MrvFeBxsVYBinmsI8u1H01+d81j0RB8Rxbryd+SJm9a7ru3zY32xtjh/TZ1l5aZWEIAJZnxV8zKQE4EbfQtIIC93/KHSRc8wH1+O7XvXYkRQOdcJvKctNTUbILE3llmBsJLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721705882; c=relaxed/simple;
-	bh=av4nnq2UyFrGFqUgLcItP/04XGvmpJVv15UHd5UAA8I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dt4l7diE25eqN9LOkxstcsjZckKxdhOgZRs6ckgdrUefB5RDe5lZUvKDEBZ1lgHVdHOtNQM6M9cqnVazCooWM/iWQaiEKuBW6z/gcNb+ye4zP3z51t1mO3RaR1Hr+5wJLbS2t1ZeBwShht3RbtICW5cCVnd6GLrtyTAPWAd+bYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CPTBUqOo; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46MJNjwc014036;
-	Tue, 23 Jul 2024 03:37:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZlgAt45pyKKvWtNr9nbveSfR/vxlIg0Z3D2jQe/f9PU=; b=CPTBUqOo07AbodG5
-	ERZrTUp10big1uYFflAXrCWrUSw/RKe9nSj6fwAQamcJaB8BVLy2/GOuV0ChtwlA
-	75hmyTLWdQqzoAUJtMCAO6dnLVWff4N8Ul8FxOeNk5wIb72zlwEqkUpqCHtjc8Bp
-	fVkUQDJ9DJv2yuinkW3wbCiR2YkArAalSXme6ySTeQoSIftoI/j82qNJQuhJdcwR
-	5ab8fAloyJdQpTqRjwPPZWDI6SWN639FjMnSFGLQmEWe9/Vq5EFdcbVHhcHOlz5P
-	clzS0srWYwLKEZY9sPYdc8wkTjcU39s2Pxhl30mFhFAMKng9DgDW0E2RmjtxVTyQ
-	mHdtOw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g5m6wjd2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Jul 2024 03:37:42 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46N3bekP004658
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Jul 2024 03:37:40 GMT
-Received: from [10.216.60.30] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 22 Jul
- 2024 20:37:35 -0700
-Message-ID: <4662b4fb-8ef2-4a4b-adef-e862090defd7@quicinc.com>
-Date: Tue, 23 Jul 2024 09:07:32 +0530
+	s=arc-20240116; t=1721706865; c=relaxed/simple;
+	bh=2mfBfGvPkaBeH2hLbWeN6l9L0QxXvLWhmVsi1nmC0QY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dD0dLIrl7V1OkKpJ957A9Wvn+A51N9OgM0bFr4xj3x7vrdn6ee2b4QeCCipz3cD0utFDmf4Ms/y2UlDWzld0ZcQPgP09eXulPaSuQnL2uV0sx8LIfgX4uUdsbl5PAeKFvoD3KpNgH7k+te/eg2t7WJ7SlIlf8shNOZVR2CW0U0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52efaae7edfso2171577e87.2;
+        Mon, 22 Jul 2024 20:54:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721706856; x=1722311656;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2mfBfGvPkaBeH2hLbWeN6l9L0QxXvLWhmVsi1nmC0QY=;
+        b=I9ec7bsv8GJodDYi/xnA5k8lutOWWfo60qhaJIMygZhlhb/cOJ1aBMm1hcbEfIYs7Q
+         XPCI686hCVMRa6KTxWE5DUpVg3ME//+7T9iwAuhzowMaMJr70pIkN9aSO9sY+8XJp91I
+         izqj40e4eM8WVrxxpXaXnGxpKO/vHs5WtSDk9GGFPFvIb3zOhGdMHK73MhEoO1gszfAK
+         uytuoKPhgGh+1KVBKAgNBr8kFoOeJ7qyY5rVASe98FOB20tOzYNyhkPKNNPaSADSKVvM
+         Jyvuvs2ZPTCrZGHZbzY3jPvXFT8QPW4LR9/2C0YLGyV0UDe6UZz6N7WKgdLNw+hWZ5mK
+         0HCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVcspiBE8qYKPGN9IB1bYx8bBgaekfU41RR6rwk7vsB55Q/s9LM4swN6ivMODS+zWGHiqHznGy8G6CuwOzNrlAY/8mbbrdJNvc9NBEs2KSAeY9yVsUofmNPHwXe4Pm+AGpvrVid+FU35PbAoPfbMD/HZV5NMt6ZzUkydrydeJBdu0IWhniZ3u+BTHpYuaVnaDfQom/Dkh6fxiI0aWP6rvNyZ4AR9g==
+X-Gm-Message-State: AOJu0YzqUEiQWs8Q+JVy3sTrJHScTvVk7Fc5aA22XT3BjvxTQyInyxc1
+	GQ6L2y42i0L3/pl0WGys5sHSZNwj4HNVBpReO/WjnOWJAccOzhl8iJS2u2wb
+X-Google-Smtp-Source: AGHT+IEpgY52sXyXBs8UOnw2po47yLDH62/bZnwlCFB+BOMDHfONK9VEvqyQgBnkQQI53anO6BTnKg==
+X-Received: by 2002:a05:6512:a86:b0:52e:bf53:1c13 with SMTP id 2adb3069b0e04-52efb76d12fmr5606959e87.7.1721706855999;
+        Mon, 22 Jul 2024 20:54:15 -0700 (PDT)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ef556afb5sm1432670e87.180.2024.07.22.20.54.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jul 2024 20:54:15 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ef2c56da6cso19767731fa.1;
+        Mon, 22 Jul 2024 20:54:15 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVdRKgACqVlwShqgiV/z5YcnRpzNLMAMSOZ8ip4+KWncfkuIrtD0V5mlBKHGsjcBupiboSIvWbU6rW/EUJiEDLNpchR0hf5fqwwlcCQMQUpKt0PCitLCXU3dsneRHbQtwweygA/G/bZi5mN9W8RehRazuqmwl/sPAS0gP5Un1llTiAkyMuSMO+K1y1QQYgWF4qc7ntue448C1KeO/Ftkc1mkJNt6Q==
+X-Received: by 2002:a2e:bc0f:0:b0:2ef:296d:1dda with SMTP id
+ 38308e7fff4ca-2ef296d21bbmr48058911fa.1.1721706855131; Mon, 22 Jul 2024
+ 20:54:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/4] PCI: qcom-ep: Add support for D-state change
- notification
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-        "Manivannan
- Sadhasivam" <manivannan.sadhasivam@linaro.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
-        Kishon Vijay Abraham I
-	<kishon@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet
-	<corbet@lwn.net>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>
-CC: <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <mhi@lists.linux.dev>, <quic_vbadigan@quicinc.com>,
-        <quic_ramkri@quicinc.com>, <quic_nitegupt@quicinc.com>,
-        <quic_skananth@quicinc.com>, <quic_parass@quicinc.com>,
-        Manivannan Sadhasivam
-	<mani@kernel.org>
-References: <20240710-dstate_notifier-v7-0-8d45d87b2b24@quicinc.com>
- <20240710-dstate_notifier-v7-2-8d45d87b2b24@quicinc.com>
-Content-Language: en-US
-From: Yogesh Jadav <quic_yjadav@quicinc.com>
-In-Reply-To: <20240710-dstate_notifier-v7-2-8d45d87b2b24@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: t283ZWU0wXzkdRumSYbkiu-xLkwsxvHu
-X-Proofpoint-ORIG-GUID: t283ZWU0wXzkdRumSYbkiu-xLkwsxvHu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-22_18,2024-07-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- mlxlogscore=999 adultscore=0 bulkscore=0 mlxscore=0 spamscore=0
- priorityscore=1501 lowpriorityscore=0 clxscore=1011 malwarescore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407230025
+References: <20240722-xtheadvector-v6-0-c9af0130fa00@rivosinc.com> <20240722-xtheadvector-v6-3-c9af0130fa00@rivosinc.com>
+In-Reply-To: <20240722-xtheadvector-v6-3-c9af0130fa00@rivosinc.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 23 Jul 2024 11:54:02 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65WLShdZLBcKBUviHMWFOM4oZmwVHWzVqCfz2rKdnoWyA@mail.gmail.com>
+Message-ID: <CAGb2v65WLShdZLBcKBUviHMWFOM4oZmwVHWzVqCfz2rKdnoWyA@mail.gmail.com>
+Subject: Re: [PATCH v6 03/13] riscv: dts: allwinner: Add xtheadvector to the
+ D1/D1s devicetree
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Jisheng Zhang <jszhang@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Samuel Holland <samuel.holland@sifive.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, Guo Ren <guoren@kernel.org>, 
+	Evan Green <evan@rivosinc.com>, Andy Chiu <andy.chiu@sifive.com>, 
+	Jessica Clarke <jrtc27@jrtc27.com>, Andrew Jones <ajones@ventanamicro.com>, 
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jul 23, 2024 at 5:58=E2=80=AFAM Charlie Jenkins <charlie@rivosinc.c=
+om> wrote:
+>
+> The D1/D1s SoCs support xtheadvector so it can be included in the
+> devicetree. Also include vlenb for the cpu.
+>
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 
-On 7/10/2024 4:38 PM, Krishna chaitanya chundru wrote:
-> Add support to pass D-state change notification to Endpoint
-> function driver.
-> Read perst value to determine if the link is in D3Cold/D3hot.
-> 
-> Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> ---
->   drivers/pci/controller/dwc/pcie-qcom-ep.c | 8 +++++++-
->   1 file changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom-ep.c b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> index 236229f66c80..817fad805c51 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom-ep.c
-> @@ -648,6 +648,7 @@ static irqreturn_t qcom_pcie_ep_global_irq_thread(int irq, void *data)
->   	struct device *dev = pci->dev;
->   	u32 status = readl_relaxed(pcie_ep->parf + PARF_INT_ALL_STATUS);
->   	u32 mask = readl_relaxed(pcie_ep->parf + PARF_INT_ALL_MASK);
-> +	pci_power_t state;
->   	u32 dstate, val;
->   
->   	writel_relaxed(status, pcie_ep->parf + PARF_INT_ALL_CLEAR);
-> @@ -671,11 +672,16 @@ static irqreturn_t qcom_pcie_ep_global_irq_thread(int irq, void *data)
->   		dstate = dw_pcie_readl_dbi(pci, DBI_CON_STATUS) &
->   					   DBI_CON_STATUS_POWER_STATE_MASK;
->   		dev_dbg(dev, "Received D%d state event\n", dstate);
-> -		if (dstate == 3) {
-> +		state = dstate;
-Can we use some meaningful name for variable "state" ? There is 
-different purpose of variable "state" and "dstate" which is not getting 
-reflected by looking variable names.
-
-- Yogesh
-> +		if (dstate == PCI_D3hot) {
->   			val = readl_relaxed(pcie_ep->parf + PARF_PM_CTRL);
->   			val |= PARF_PM_CTRL_REQ_EXIT_L1;
->   			writel_relaxed(val, pcie_ep->parf + PARF_PM_CTRL);
-> +
-> +			if (gpiod_get_value(pcie_ep->reset))
-> +				state = PCI_D3cold;
->   		}
-> +		pci_epc_dstate_notify(pci->ep.epc, state);
->   	} else if (FIELD_GET(PARF_INT_ALL_LINK_UP, status)) {
->   		dev_dbg(dev, "Received Linkup event. Enumeration complete!\n");
->   		dw_pcie_ep_linkup(&pci->ep);
-> 
+Please take this with all the other patches.
 
