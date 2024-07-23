@@ -1,156 +1,105 @@
-Return-Path: <linux-kernel+bounces-259566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 894B6939880
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 04:58:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 892FF939893
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 05:08:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 390C41F219F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 02:58:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB90CB2152F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 03:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E11413D24E;
-	Tue, 23 Jul 2024 02:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6588A13C3D5;
+	Tue, 23 Jul 2024 03:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uc6c+F2c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D6EASUze"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC9513CFB6
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 02:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9692813A241;
+	Tue, 23 Jul 2024 03:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721703460; cv=none; b=F9BMpCPE/rOEt62O91Bl4EFJhn/fDSX5WP7CAg/mTgDiAHpy0VZHlshPQ89TM5/m6dcJGw06ewGRf8nmmAJIYUjkr2aoUq6f7g6g/cdZm6RUAYpZlBIIywLYd3yd/DlK7ZnG6Q1Runzvx6F9hLIMs6orRKsuE7ziLEBkcgH2qio=
+	t=1721704123; cv=none; b=XkzKqj4g9dG8zBHnv1xVD/hEsca26tMr+YSztkvTccJljZBLpgRzKho/V1W2xpIwvjJDEWz3n6oaewKOdHrtFAMW7+yug4UmgJgU/jmhXoflLQWfmKreJsIMF+QRY/vUrzg/39eQBuN8iEIGalLF95FOjeaLO6l35ZpRJ+AQ1VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721703460; c=relaxed/simple;
-	bh=/TRII93/10eFu+qM4B82YYGwGymPU+swqszXC+vxlQw=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=tXp6c1Isawowvlgq3AELivXAJ36I9Bwy7lH8Q87kNh+5V3x2mLfABtslgFQF+sSQ+2VTuKFnjW17o6PGxDIzc19bMflDBT3MmGLVJ8l07MWR9kI4ge5p+t2JbnR6OFBvihbUJwIpIPsbrWbnHx+sR1mEuWvxFRRW3LSKpAkBMf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uc6c+F2c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A10FC32782;
-	Tue, 23 Jul 2024 02:57:39 +0000 (UTC)
+	s=arc-20240116; t=1721704123; c=relaxed/simple;
+	bh=lCpxy95lx+Jjei/kZQBV3BIgkddjlRM1fYb5FYkdFxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ErZmjWHlnszfrvhYSxWVIM5seRudB1YOPyunRnYpuVlh2FSOnECzhcuCsySjHpSrqq4iIZdoCXuwvXr1e/Y1amzvhDbzr+68ThJ/nTi/6bzXOpwQKI9BoQQRjvQ/7t6F9y4jMu2ma8WkDHvK6OYQ4UqcNLxsC+W3PwhfrHECApQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D6EASUze; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3C70C116B1;
+	Tue, 23 Jul 2024 03:08:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721703460;
-	bh=/TRII93/10eFu+qM4B82YYGwGymPU+swqszXC+vxlQw=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=uc6c+F2chvE9bqzu1K2My/iiu22H5744okPF42KJb+wQ1AEnL4lR0/0ggPQrWEe41
-	 wv/XrBQAeBpW6y+nqNtWp0FkZxvMhdEsQrqaWjw3UUKkdFO3OsxsLG/gP14cUWixUV
-	 RIbVfQJGhFmOzJAfYub9QLYpSRv+P2lWcw7uTei7Jkr71CVHHN9t7eD5ykpAYdSbY0
-	 GZS30+8r3v1WqrxQZIMf9p3uzPvnetXjbqPVW8IQSJyj2B6D820riifnXZPLEG+lmn
-	 Dj7iOc82o1lp69vJTLhjCum+P8te6DP7tCW2tlEeIBDpl6EZp1MeTHANh4InPl+7p5
-	 x6lPms31MX4CQ==
-Date: Mon, 22 Jul 2024 20:57:37 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1721704123;
+	bh=lCpxy95lx+Jjei/kZQBV3BIgkddjlRM1fYb5FYkdFxg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D6EASUzeZCvDJcQWdoO2YAHDSFfg5YuzE+EgXygaqPKmt8Fex6G4OnKpatzquZGfk
+	 Z6E8R3o/A1L0LJDvll+Cm4xajkinXYSubPnrea/kXAvlc/mAKh3IBIjKB9zfi8aX3u
+	 YTKYqb2ErQ+zVmQJ4ppvxcYPSucJHeplJL16EF5gPoEegG3WtAbb2folVLxH0ya1ed
+	 zcRGJycFne07+BKbdJr9QYudB+tVFgdSaq4MVYHrhO8LeaFjsr9OglheKwwu5yXHmo
+	 qEfvoz6EMV5yO65xVKPDNIg2kAmJ9jfqATOiP17bY49AKTCWJ8zZx968+UJoTmf0Rr
+	 w7J3bB+JsFRRQ==
+Date: Mon, 22 Jul 2024 21:08:40 -0600
+From: Rob Herring <robh@kernel.org>
+To: Mateusz Majewski <m.majewski2@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH 6/6] dt-bindings: thermal: samsung,exynos: remove
+ outdated information on trip point count
+Message-ID: <20240723030840.GA226948-robh@kernel.org>
+References: <20240719120853.1924771-1-m.majewski2@samsung.com>
+ <CGME20240719120949eucas1p1b061c716ac55b4a79ba57c407c0b2d91@eucas1p1.samsung.com>
+ <20240719120853.1924771-7-m.majewski2@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: ukleinek@debian.org, linux-kernel@vger.kernel.org, 
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20240721173723.919961-1-heiko@sntech.de>
-References: <20240721173723.919961-1-heiko@sntech.de>
-Message-Id: <172170324698.205262.12290895401170418124.robh@kernel.org>
-Subject: Re: [PATCH v2 00/14] Expand available features on Qnap TS433
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240719120853.1924771-7-m.majewski2@samsung.com>
 
+On Fri, Jul 19, 2024 at 02:08:50PM +0200, Mateusz Majewski wrote:
+> This is not true as of commit 5314b1543787 ("thermal/drivers/exynos: Use
+> set_trips ops").
+> 
+> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
+> ---
+>  .../bindings/thermal/samsung,exynos-thermal.yaml           | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
+> index 4363ee625339..5a82764a4dbb 100644
+> --- a/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/samsung,exynos-thermal.yaml
+> @@ -40,11 +40,8 @@ properties:
+>    interrupts:
+>      description: |
+>        The Exynos TMU supports generating interrupts when reaching given
+> -      temperature thresholds. Number of supported thermal trip points depends
+> -      on the SoC (only first trip points defined in DT will be configured)::
+> -       - most of SoC: 4
+> -       - samsung,exynos5433-tmu: 8
+> -       - samsung,exynos7-tmu: 8
+> +      temperature thresholds. The trip points will be set dynamically in
+> +      runtime, which means there is no limit on the number of trip points.
 
-On Sun, 21 Jul 2024 19:37:09 +0200, Heiko Stuebner wrote:
-> Thanks to the nicely supported rk3568, the hardest part for adding things,
-> is to pull things from the vendor-kernel and translating them to mainline
-> standards.
-> 
-> This series allows the TS433 to use all 4 bays [0], wiggle some LEDs and
-> access devices connected to all 3 usb ports.
-> 
-> The device runs stable now and might be usable for actual usage.
-> 
-> There is still a todo-list though:
-> - the ethernet mac address for the realtek chip seems correct,
->   but the gmac0 interface currently uses a wrong one
-> - i2cdetect reports devices on i2c-1 on addresses 54,55,56,57
->   model_Q0B20_Q0B30_10_10.conf from the original rescue image labels them
->     VPD_MB = I2C:0x54, VPD_BP = I2C:0x56
->   the meaning currently being unknown. Some eeprom maybe?
-> - The regulator tree is slightly dubious. Everthing seems to follow rk3568
->   reference designs, but especially the regulator labeled vcc3v3_sd
->   seems to supply some PCIe functionality. So I guess the device's
->   schematics will look quite different than the regulators added to the
->   vendor devicetree.
-> - Quite a bit of functionality is provided by the MCU connected to uart0.
->   According to the model.conf there should be fan-control, a number of
->   additional LEDs (status,locate,usb?)
-> 
-> 
-> Thanks to Qnap engineers adding an easily accessible header for maskrom
-> mode on the board, replacing the bootloader is also quite a breeze. A
-> branch on top of today's u-boot master branch can be found on [1]. I'll
-> submit that code to u-boot once I can cherry-pick the dts patches.
-> 
-> 
-> changes in v2:
-> - add patches for tsadc, gpio-keys, cpu-supply, pmic, gpu and io-domains
-> 
-> 
-> [0] I only have two drives right now, but I tested both the internal
-> sata connector as well as the PCIe connected sata controller in different
-> combinations.
-> [1] https://github.com/mmind/u-boot-rockchip/tree/dev/qnap-ts433/v2024.07
-> 
-> 
-> Heiko Stuebner (14):
->   arm64: dts: rockchip: add PCIe supply regulator to Qnap-TS433
->   arm64: dts: rockchip: enable second PCIe controller on the Qnap-TS433
->   arm64: dts: rockchip: enable uart0 on Qnap-TS433
->   arm64: dts: rockchip: enable usb ports on Qnap-TS433
->   arm64: dts: rockchip: add stdout path on Qnap-TS433
->   arm64: dts: rockchip: enable sata1+2 on Qnap-TS433
->   arm64: dts: rockchip: add board-aliases for Qnap-TS433
->   arm64: dts: rockchip: add hdd leds to Qnap-TS433
->   arm64: dts: rockchip: enable the tsadc on the Qnap-TS433
->   arm64: dts: rockchip: add gpio-keys to Qnap-TS433
->   arm64: dts: rockchip: define cpu-supply on the Qnap-TS433
->   arm64: dts: rockchip: add missing pmic information on Qnap-TS433
->   arm64: dts: rockchip: enable gpu on Qnap-TS433
->   arm64: dts: rockchip: add 2 pmu_io_domain supplies for Qnap-TS433
-> 
->  .../boot/dts/rockchip/rk3568-qnap-ts433.dts   | 539 +++++++++++++++++-
->  1 file changed, 536 insertions(+), 3 deletions(-)
-> 
-> --
-> 2.39.2
-> 
-> 
-> 
+How can the hardware change how many trip points it supports?
 
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y rockchip/rk3568-qnap-ts433.dtb' for 20240721173723.919961-1-heiko@sntech.de:
-
-arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dtb: sata@fc400000: Unevaluated properties are not allowed ('power-domains' was unexpected)
-	from schema $id: http://devicetree.org/schemas/ata/rockchip,dwc-ahci.yaml#
-arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dtb: sata@fc800000: Unevaluated properties are not allowed ('power-domains' was unexpected)
-	from schema $id: http://devicetree.org/schemas/ata/rockchip,dwc-ahci.yaml#
-
-
-
-
-
+>      maxItems: 1
+>  
+>    reg:
+> -- 
+> 2.45.1
+> 
 
