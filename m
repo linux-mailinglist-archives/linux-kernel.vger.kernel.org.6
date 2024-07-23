@@ -1,96 +1,102 @@
-Return-Path: <linux-kernel+bounces-259968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC4E493A092
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:42:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0A5F93A097
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5161A28372D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:42:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97E68282B61
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B199D152511;
-	Tue, 23 Jul 2024 12:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0EF1514EF;
+	Tue, 23 Jul 2024 12:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="moGBIpDx"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E616914EC77
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 12:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.6
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jLQhEicG"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1C713D882
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 12:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721738537; cv=none; b=a0r1/CCFDBdYmWtUR5pkiIULsXS40vd3s8Ijh1tfA/Mr/67/W/OOMDhjgZQQQ6dGy9XIbcRO1A4EjOE+RbCQY0XJydGFlJkaul/pbk3Mx6KaEhgf3Oo9v9ZvKNBh2DcftW0R4hlOqDaT8b10+TKjNvJmVyWFkB2o39Q7rxp5keU=
+	t=1721738839; cv=none; b=cutXmZhbJSUI4wrA+/TrwYu72Kd1emCe23JOaACw365a1Lnc2U0BUuX6oTIWDbH+2m9JeGbpAEpTRaqeL9cV4hFjfMBYz8d4rsUjHFev/+y8Z/cAhBe7zfxkIjvQTqcBqLJnlyztxSstmCkwQnBqGZhMI6cRaZixyjKyEPkkPe8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721738537; c=relaxed/simple;
-	bh=ZMGTy6L5ameQtkF0U00DXCC0w5avqUDwOcTxgkwPhVg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OoCIqGM5WzE8u1PAn6gO+T9E3UwFFP5u6e5qUYQidLctHKCNgSX5z4apVvPB8jo3wyITrnEN//nLgZehLhhIaN25CgRqqX5cSw1/Jj+JPu5B6HIMYVzoCD6yTatx96wvtyvz+xKZRuVNouk58tzPgF45cBVr1f6S5cQk75gOKGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=moGBIpDx; arc=none smtp.client-ip=220.197.31.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=5hybL
-	gfjPzD38zj1PtzkVJO3sqnNe/5QU/Bs5Yqk2sA=; b=moGBIpDx0vUfH9an+rT7a
-	O4omCQKT6EW/u3FxGO26RcexPGMD4q2fIn7ZLEzWr7zaj+/T+NFYpJNupjVnHMBt
-	7XHOlBQUDpzf0V3+G/dfudgt1Py8odByi8i00gZeRcnEXmYuX55pgod3ukZE2w0/
-	vOx/v+tn8UkCpZRlD8xqA0=
-Received: from localhost.localdomain (unknown [113.247.46.246])
-	by gzga-smtp-mta-g1-3 (Coremail) with SMTP id _____wDn76NgpJ9mVkJbAg--.40445S2;
-	Tue, 23 Jul 2024 20:38:56 +0800 (CST)
-From: Bing Huang <huangbing775@126.com>
-To: peterz@infradead.org
-Cc: dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	brauner@kernel.org,
-	bristot@redhat.com,
-	bsegall@google.com,
-	juri.lelli@redhat.com,
-	linux-kernel@vger.kernel.org,
-	mgorman@suse.de,
-	mingo@redhat.com,
-	vincent.guittot@linaro.org
-Subject: [PATCH RESEND] sched/fair: Remove stale buddies comment for last and skip
-Date: Tue, 23 Jul 2024 20:38:56 +0800
-Message-Id: <20240723123856.3852-1-huangbing775@126.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1721738839; c=relaxed/simple;
+	bh=YEHgLym2+veongj2phCCEB8suXBp5Yuu9PdoQFXiQEI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z0WWb9FUfzWEAyjw0gVXlqVKSDzbfdMulrWMUBH7WGvWAfWoySR7cdlmCQmZula2A4ph8Ss0vqMArIML9TCiN++V9He0pNhf929/lVomFe9po9ZwOo8nhPJxnFghbb6ZpyYyYmRxnehdITWLXZx5ZR6nDsbDg3n7oSZravhY5p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jLQhEicG; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6b7a8cada97so24059676d6.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 05:47:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1721738837; x=1722343637; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cx5KF5sp0dGpt+UkFUhZxV/sTMJd4jMn+u8I+WkrEl8=;
+        b=jLQhEicGB8ojKzhyWae+5Pc8kSCsdLIHSmb7fMct7oXMsi4pGa26eybKKz4Vod52y2
+         iOdrUrVr+eMzQ/QLPoGdBRzs2LFdpKSb5DGFSNbea3uEcZez/w5stTl1S2fv89ZLzciL
+         Qt3m2TGmOtwgOH8R7+Ei26FtCF14CR/fVFMRo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721738837; x=1722343637;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Cx5KF5sp0dGpt+UkFUhZxV/sTMJd4jMn+u8I+WkrEl8=;
+        b=PNNXZskJIsGbbIXJSjYnpEcuyqyP3Jd6lLsy+dDuwnZ6bcRSm0DkhTK/VtcUmB81tE
+         PLNONs2y3Uu71ZYLmGfTd0TZuwaQWoO17AyCjMLmduWu8rI+zE5gIaGcjmrVxFkxhGun
+         5ySQ58bjHf6j1VGfBZp4U4PFE04gqSYIE6Xt9IDkW11euEF4xVTelQAD9p27zoqEZ98z
+         FRiuv4VOwD6htL814FUF2tkXsxJIBfmw5ecEpNgfzng5K2Gf9LCB5BLv6nArvubpozO5
+         vDrmkq+bakbpPPnEmFcRV6BGMKjUWSjnUX8rVsKalPF0aPYZSfYt/a2GGWOnhRzBN6xr
+         hOfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUkjrl7D3s9nlb772zbJUPBiUqti83LQo63PYIcT9CfAcyLd0gg6y0tC+AhXCRai4eVp+lwLi3c+4Ggtbov3fqCK2on3b5yBzJ2DKx
+X-Gm-Message-State: AOJu0Yxpmcmt4UE4CF0uYIjNgfsI6zjrJwdSjdyWWfavjt0gB8Dt4gNx
+	uweezlUrATJZipJlXnzjUHzLRdYZPPKR/MsoB8fkdOm6HYLOmKxOVuns7L1OH3OdpDTvOQij2sw
+	nWBIOtpJ13BaIEnR2Obo7jd5kT1tBqpAgsyaJ
+X-Google-Smtp-Source: AGHT+IH8KIrGbar8Gk0MjUCMNhFZfoCliFFLNO2aXE3mIqsfzJsBBRTqGdYennfWuzCRxew7Q6RAszahqV1ZHqMEZE4=
+X-Received: by 2002:a05:6214:224d:b0:6b5:4e07:2a55 with SMTP id
+ 6a1803df08f44-6b95a6dffbcmr170409306d6.29.1721738837011; Tue, 23 Jul 2024
+ 05:47:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDn76NgpJ9mVkJbAg--.40445S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrur4fKFW3AFW5Ww4DXw17trb_yoWDGFX_Cw
-	nYg3s5Gr10yr1agrW7Gw4fXr9Yqay8KFyrZ3Z8tFZ7t3WIqr98JF95CFyfWr93Gwn2kF4D
-	Grn3Was29F18GjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbuyI5UUUUU==
-X-CM-SenderInfo: xkxd0w5elqwlixv6ij2wof0z/1tbimhwlr2VLcpe2hgABs2
+References: <20240721133633.47721-1-lasse.collin@tukaani.org> <20240721133633.47721-16-lasse.collin@tukaani.org>
+In-Reply-To: <20240721133633.47721-16-lasse.collin@tukaani.org>
+From: Simon Glass <sjg@chromium.org>
+Date: Tue, 23 Jul 2024 13:47:05 +0100
+Message-ID: <CAFLszTifgP3n_S1Rd6TPdntoC0d3R4qs4akj=LQm+prSVWP2_g@mail.gmail.com>
+Subject: Re: [PATCH v2 15/16] arm64: boot: add Image.xz support
+To: Lasse Collin <lasse.collin@tukaani.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Sam James <sam@gentoo.org>, 
+	linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Jules Maselbas <jmaselbas@zdiv.net>, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Bing Huang <huangbing@kylinos.cn>
+On Sun, 21 Jul 2024 at 14:37, Lasse Collin <lasse.collin@tukaani.org> wrote:
+>
+> The Image.* targets existed for other compressors already. Bootloader
+> support is needed for decompression.
+>
+> This is for CONFIG_EFI_ZBOOT=n. With CONFIG_EFI_ZBOOT=y, XZ was already
+> available.
+>
+> Cc: Simon Glass <sjg@chromium.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Jules Maselbas <jmaselbas@zdiv.net>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Lasse Collin <lasse.collin@tukaani.org>
+> ---
+>  arch/arm64/boot/Makefile | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
 
-commit 5e963f2bd465 ("sched/fair: Commit to EEVDF") has removed last and
-skip. Modify the comment accordingly.
-
-Signed-off-by: Bing Huang <huangbing@kylinos.cn>
-Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
----
- kernel/sched/fair.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 41b58387023d..383582f87def 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5466,8 +5466,6 @@ set_next_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
-  * Pick the next process, keeping these things in mind, in this order:
-  * 1) keep things fair between processes/task groups
-  * 2) pick the "next" process, since someone really wants that to run
-- * 3) pick the "last" process, for cache locality
-- * 4) do not run the "skip" process, if something else is available
-  */
- static struct sched_entity *
- pick_next_entity(struct cfs_rq *cfs_rq)
--- 
-2.25.1
-
+Reviewed-by: Simon Glass <sjg@chromium.org>
 
