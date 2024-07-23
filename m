@@ -1,60 +1,62 @@
-Return-Path: <linux-kernel+bounces-260078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F5893A2AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:27:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C304D93A2B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88DEC1C225D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:27:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBC001C22C45
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DFD154452;
-	Tue, 23 Jul 2024 14:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZwzHsRL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73EA5154455;
+	Tue, 23 Jul 2024 14:28:41 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CAC153BC3;
-	Tue, 23 Jul 2024 14:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7406F14A4E7
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721744825; cv=none; b=E7OV+Pf0xMlBHWKY5+6VLBfv03qrHNm7bVSiUyvpioOrRpjxFngHgezMBwOfYJSskvrWD24mvHbJZA3IDkQE0rYRDjR4ZRpnlZq7/l3BFIKEkes6CkDHJN9fz4hCS2JfqMRk8ptr6n8ldp439E1AkzJ4pCeKPV8NJo8Z91jdeEg=
+	t=1721744920; cv=none; b=n2ya3W/Gzw//tORzhvs0a2eMDykeudaTC2QuunvJ4JXzbrzEcMtZvjlqmxWtGqXWBCYsIy8/t/QRZeKe/kuk2naanz8AX92VXC5W2hUUQ25dHS/g+B35r1Iv0TvlXFasaevCmAjRCTBy+DU2Mddd7bh2LW2m4WZGAyqOZPbOxVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721744825; c=relaxed/simple;
-	bh=7p8+QUIt/o5u9kcobf8xw9zEjNAujtG30pEU1dtAIu0=;
+	s=arc-20240116; t=1721744920; c=relaxed/simple;
+	bh=6T/L5bxZz2nawLXtFCkHwUzGg9UXP3OG/DekgRv9/6M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JzAe8BTuNAO0KMyVO2veT95tWk1pbQ/HHZBU2juMAyhc6xv0RRxPJGGSH4XoPnHQsBSxnTHy+iSmGwgoy+FqEFEwh7zNaMffVElAmclQ/ZQEXDsou44PQ0MSHADvBhQgxqBdPrDGhW3lz4tzzrb3n33Na1uq2DMaol26VPRSVfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MZwzHsRL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2CC2C4AF09;
-	Tue, 23 Jul 2024 14:27:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721744824;
-	bh=7p8+QUIt/o5u9kcobf8xw9zEjNAujtG30pEU1dtAIu0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MZwzHsRLgBcFTApi8VYobhEnIruupiECkA/aXNiWV5lFnGwlBh9UpA9Smrv2uxpY3
-	 LzOlvVh5y4CLiDtr+8fGDPtum1myziXesXU6w+nSNCUl0ynm1HPtQgRKjFUD/QW9O9
-	 u86RMjhh9IZXRtYsuBwm2q81wYO9dpKGqaox997/8bQacX3Xmm/5ZcHD/cYds4Rlb1
-	 GxldzerZCKY4TsGjoRlrozEyAcvqFt3mobQfC3lYdAtfkgPR0cgjFLRggBN+UIKxU/
-	 Jj0x0ql/gl4Ku7TicIRewQbjzJeZ7cOxcU2x7WiPiHDXuxeZYEalVDYK7+XcKhimQA
-	 Qa8YJp6+BVHEQ==
-Date: Tue, 23 Jul 2024 15:26:59 +0100
-From: Will Deacon <will@kernel.org>
-To: Dev Jain <dev.jain@arm.com>
-Cc: Remington Brasga <rbrasga@uci.edu>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Shuah Khan <shuah@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Anshuman.Khandual@arm.com, Mark Brown <broonie@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>
-Subject: Re: [PATCH] kselftest: missing arg in ptrace.c
-Message-ID: <20240723142659.GB26137@willie-the-truck>
-References: <20240712231730.2794-1-rbrasga@uci.edu>
- <f7383c8c-83f3-45da-a8c4-2cfcfa497936@arm.com>
- <20240718153410.GA21354@willie-the-truck>
+	 Content-Type:Content-Disposition:In-Reply-To; b=vC0VEGNH76iual2KfauuXM9P7i5HXk8cfcjZB3zf0OOdvlN1PW5q5/yf8NWeW/Shz6KieV5jcXU9zLrFZHmDsJ6bx5jRIloeUH82YpjSvhhR/E7Ipm+bEKfxGBTb983UgjNq2WUmXlqQkb5wBgKsh9SDmFjH55bRyLMlpxyVaLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sWGV9-0000Wv-Hs; Tue, 23 Jul 2024 16:28:27 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sWGV8-001dfw-HI; Tue, 23 Jul 2024 16:28:26 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1sWGV8-00DU4q-1L;
+	Tue, 23 Jul 2024 16:28:26 +0200
+Date: Tue, 23 Jul 2024 16:28:26 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Pankaj Gupta <pankaj.gupta@nxp.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Rob Herring <robh+dt@kernel.org>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 4/5] firmware: imx: add driver for NXP EdgeLock Enclave
+Message-ID: <Zp--Co8teXBO95QO@pengutronix.de>
+References: <20240722-imx-se-if-v6-0-ee26a87b824a@nxp.com>
+ <20240722-imx-se-if-v6-4-ee26a87b824a@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,48 +65,188 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240718153410.GA21354@willie-the-truck>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20240722-imx-se-if-v6-4-ee26a87b824a@nxp.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Jul 18, 2024 at 04:34:10PM +0100, Will Deacon wrote:
-> On Tue, Jul 16, 2024 at 09:49:12AM +0530, Dev Jain wrote:
-> > 
-> > On 7/13/24 04:47, Remington Brasga wrote:
-> > > The string passed to ksft_test_result_skip is missing the `type_name`
-> > > 
-> > > Signed-off-by: Remington Brasga <rbrasga@uci.edu>
-> > > ---
-> > > clang-tidy reported clang-diagnostic-format-insufficient-args warning
-> > > on this line, so I am fixing it.
-> > > 
-> > >   tools/testing/selftests/arm64/abi/ptrace.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/tools/testing/selftests/arm64/abi/ptrace.c b/tools/testing/selftests/arm64/abi/ptrace.c
-> > > index abe4d58d731d..6144f83f8ab4 100644
-> > > --- a/tools/testing/selftests/arm64/abi/ptrace.c
-> > > +++ b/tools/testing/selftests/arm64/abi/ptrace.c
-> > > @@ -156,7 +156,7 @@ static void test_hw_debug(pid_t child, int type, const char *type_name)
-> > >   		/* Zero is not currently architecturally valid */
-> > >   		ksft_test_result(arch, "%s_arch_set\n", type_name);
-> > >   	} else {
-> > > -		ksft_test_result_skip("%s_arch_set\n");
-> > > +		ksft_test_result_skip("%s_arch_set\n", type_name);
-> > >   	}
-> > >   }
-> > 
-> > Okay, I almost forgot that I had a patch fixing this as part of another series:
-> > https://lore.kernel.org/all/20240625122408.1439097-6-dev.jain@arm.com/
-> > If that is OK, Will, can you please pull that? Or should I send that as a
-> > separate patch?
+On Mon, Jul 22, 2024 at 10:21:39AM +0530, Pankaj Gupta wrote:
+> NXP hardware IP(s) for secure-enclaves like Edgelock Enclave(ELE),
+> are embedded in the SoC to support the features like HSM, SHE & V2X,
+> using message based communication interface.
 > 
-> I think Mark already suggested sending that separately:
+> The secure enclave FW communicates on a dedicated messaging unit(MU)
+> based interface(s) with application core, where kernel is running.
+> It exists on specific i.MX processors. e.g. i.MX8ULP, i.MX93.
 > 
->   | This should ideally be a separate patch, there's no overlap.
+> This patch adds the driver for communication interface to secure-enclave,
+> for exchanging messages with NXP secure enclave HW IP(s) like EdgeLock
+> Enclave (ELE) from Kernel-space, used by kernel management layers like
+> - DM-Crypt.
 > 
-> and he's right: it's best to keep fixes and features separate.
+> Signed-off-by: Pankaj Gupta <pankaj.gupta@nxp.com>
+> ---
+>  drivers/firmware/imx/Kconfig        |  12 +
+>  drivers/firmware/imx/Makefile       |   2 +
+>  drivers/firmware/imx/ele_base_msg.c | 274 +++++++++++++++++++
+>  drivers/firmware/imx/ele_base_msg.h |  95 +++++++
+>  drivers/firmware/imx/ele_common.c   | 264 ++++++++++++++++++
+>  drivers/firmware/imx/ele_common.h   |  44 +++
+>  drivers/firmware/imx/se_ctrl.c      | 528 ++++++++++++++++++++++++++++++++++++
+>  drivers/firmware/imx/se_ctrl.h      |  87 ++++++
+>  include/linux/firmware/imx/se_api.h |  14 +
+>  9 files changed, 1320 insertions(+)
+> 
+> diff --git a/drivers/firmware/imx/Kconfig b/drivers/firmware/imx/Kconfig
+> index 183613f82a11..0f6877a24f0b 100644
+> --- a/drivers/firmware/imx/Kconfig
+> +++ b/drivers/firmware/imx/Kconfig
+> @@ -22,3 +22,15 @@ config IMX_SCU
+>  
+>  	  This driver manages the IPC interface between host CPU and the
+>  	  SCU firmware running on M4.
+> +
+> +config IMX_SEC_ENCLAVE
+> +	tristate "i.MX Embedded Secure Enclave - EdgeLock Enclave Firmware driver."
+> +	depends on IMX_MBOX && ARCH_MXC && ARM64
+> +	default m if ARCH_MXC
+> +
+> +	help
+> +	  It is possible to use APIs exposed by the iMX Secure Enclave HW IP called:
+> +	  - EdgeLock Enclave Firmware (for i.MX8ULP, i.MX93),
+> +	    like base, HSM, V2X & SHE using the SAB protocol via the shared Messaging
+> +	    Unit. This driver exposes these interfaces via a set of file descriptors
+> +	    allowing to configure shared memory, send and receive messages.
+> diff --git a/drivers/firmware/imx/Makefile b/drivers/firmware/imx/Makefile
+> index 8f9f04a513a8..aa9033e0e9e3 100644
+> --- a/drivers/firmware/imx/Makefile
+> +++ b/drivers/firmware/imx/Makefile
+> @@ -1,3 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  obj-$(CONFIG_IMX_DSP)		+= imx-dsp.o
+>  obj-$(CONFIG_IMX_SCU)		+= imx-scu.o misc.o imx-scu-irq.o rm.o imx-scu-soc.o
+> +sec_enclave-objs		= se_ctrl.o ele_common.o ele_base_msg.o
+> +obj-${CONFIG_IMX_SEC_ENCLAVE}	+= sec_enclave.o
+> diff --git a/drivers/firmware/imx/ele_base_msg.c b/drivers/firmware/imx/ele_base_msg.c
+> new file mode 100644
+> index 000000000000..7f16184a8b10
+> --- /dev/null
+> +++ b/drivers/firmware/imx/ele_base_msg.c
+> @@ -0,0 +1,274 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright 2024 NXP
+> + */
+> +
+> +#include <linux/types.h>
+> +
+> +#include <linux/completion.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/genalloc.h>
+> +
+> +#include "ele_base_msg.h"
+> +#include "ele_common.h"
+> +
+> +int ele_get_info(struct device *dev, struct ele_dev_info *s_info)
 
-I didn't spot a patch from you, so I'm going to pick this one up instead.
+I still think it's a bad idea to use some arbitrary struct device * as
+context pointer here. Users will be confused which device is expected
+here and bad things happen in case it's the wrong one.
 
-Will
+You should rather implement some ele_get() function which returns some
+pointer to be used as a context pointer here.
+
+> +int ele_service_swap(struct device *dev,
+> +		     phys_addr_t addr,
+> +		     u32 addr_size, u16 flag)
+> +{
+> +	struct se_if_priv *priv = dev_get_drvdata(dev);
+> +	struct se_api_msg *tx_msg __free(kfree) = NULL;
+> +	struct se_api_msg *rx_msg __free(kfree) = NULL;
+> +	int ret = 0;
+> +
+> +	if (!priv) {
+> +		ret = -EINVAL;
+> +		goto exit;
+> +	}
+> +
+> +	tx_msg = kzalloc(ELE_SERVICE_SWAP_REQ_MSG_SZ, GFP_KERNEL);
+> +	if (!tx_msg) {
+> +		ret = -ENOMEM;
+> +		goto exit;
+> +	}
+> +
+> +	rx_msg = kzalloc(ELE_SERVICE_SWAP_RSP_MSG_SZ, GFP_KERNEL);
+> +	if (!rx_msg) {
+> +		ret = -ENOMEM;
+> +		goto exit;
+> +	}
+> +	priv->rx_msg_sz = ELE_SERVICE_SWAP_RSP_MSG_SZ;
+> +
+> +	ret = se_fill_cmd_msg_hdr(priv,
+> +				      (struct se_msg_hdr *)&tx_msg->header,
+> +				      ELE_SERVICE_SWAP_REQ,
+> +				      ELE_SERVICE_SWAP_REQ_MSG_SZ, true);
+> +	if (ret)
+> +		goto exit;
+> +
+> +	tx_msg->data[0] = flag;
+> +	tx_msg->data[1] = addr_size;
+> +	tx_msg->data[2] = ELE_NONE_VAL;
+> +	tx_msg->data[3] = lower_32_bits(addr);
+
+addr could be a 64bit address. Either handle this properly or return an
+error when addr doesn't fit into 32bit.
+
+> +int ele_fw_authenticate(struct device *dev, phys_addr_t addr)
+> +{
+> +	struct se_if_priv *priv = dev_get_drvdata(dev);
+> +	struct se_api_msg *tx_msg __free(kfree) = NULL;
+> +	struct se_api_msg *rx_msg __free(kfree) = NULL;
+> +	int ret = 0;
+> +
+> +	if (!priv) {
+> +		ret = -EINVAL;
+> +		goto exit;
+> +	}
+> +
+> +	tx_msg = kzalloc(ELE_FW_AUTH_REQ_SZ, GFP_KERNEL);
+> +	if (!tx_msg) {
+> +		ret = -ENOMEM;
+> +		goto exit;
+> +	}
+> +
+> +	rx_msg = kzalloc(ELE_FW_AUTH_RSP_MSG_SZ, GFP_KERNEL);
+> +	if (!rx_msg) {
+> +		ret = -ENOMEM;
+> +		goto exit;
+> +	}
+> +	priv->rx_msg_sz = ELE_FW_AUTH_RSP_MSG_SZ;
+> +
+> +	ret = se_fill_cmd_msg_hdr(priv,
+> +				  (struct se_msg_hdr *)&tx_msg->header,
+> +				  ELE_FW_AUTH_REQ,
+> +				  ELE_FW_AUTH_REQ_SZ,
+> +				  true);
+> +	if (ret)
+> +		goto exit;
+> +
+> +	tx_msg->data[1] = upper_32_bits(addr);
+> +	tx_msg->data[0] = lower_32_bits(addr);
+> +	tx_msg->data[2] = addr;
+
+Same here.
+
+Sascha
+
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
