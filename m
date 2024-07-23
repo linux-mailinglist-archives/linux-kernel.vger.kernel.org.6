@@ -1,159 +1,167 @@
-Return-Path: <linux-kernel+bounces-259691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFD34939BA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:18:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CF5F939BA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D33C81C21BA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:18:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E2CE1C21CA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097B814C583;
-	Tue, 23 Jul 2024 07:18:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97B713D609;
+	Tue, 23 Jul 2024 07:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uYKe3CCZ"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NmE5h9ck"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B9A14C581
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634B013C823
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721719092; cv=none; b=tSEoxzZQI/Ao7Kvu5GKKuPyhvdXwrzH6Aysy/qKHhUsCgykZvgvLzQLSVy0nUwm1VeHxz7wbPkRDJkc973AcY/5xs26vdPcLsF5IUBrpWbLUBg5ZoPG5phBHPTZunA4afyq4YpbcKZf7crmvKtLZFEPQJKlYtLHOowUDyY05zvg=
+	t=1721719223; cv=none; b=Hf3qOOKgR9r/aAMGa4txbYX81bI957JqwqwbhnwDKaLGgFgoTd//CiSdFiNDuxbSacw89FfWdcqNyth/ZMp3oE69uxJU5yH3Fn1FOQhNmoWd7voDm7y8r09z+C6TDH72iOK5o5eCm++z2d5SwQcgVEEMp5tWGsq0RWiFBqrnV8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721719092; c=relaxed/simple;
-	bh=/LE2UCByvaNfmC1k6jGWgCT2XG/4QfPshPkY6ea4FwA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=tFPldWSZyCYQ6Mihj92lf+gzErlrCPwqSctkhVQjo1MSX/Wo0juBR0uU8zH+eKoRYGtqJIJpMricx11Rk5jNwzNEn6V9klhU1lu+BSrJ/KEMesztHWD4LimB3yoQWmuG/HD5PB+q3v+Op5Zo5MBdv1D1N31jubDgyDt9oCgn1Gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uYKe3CCZ; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4257d5fc9b7so44503865e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 00:18:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721719089; x=1722323889; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ydCuwPfj0pEnlU6AaFBIoa0ru0Br3Df785ipYUCvBEY=;
-        b=uYKe3CCZQFq5/tb5KtUfjLEB6xLmgWmxIqF+RHh3X63ZKCeyDutflx1/z8Vy7KhY/U
-         jCzrVnXMYN2wezZA5Q/2xtuIBk8Z1o/lYacbwyUlLT0Pp/Q7sUftmNSSgz9qfScmv7GY
-         IOrhlD6cB+S+cPBg2hLY123lnX1ni7Si2IZR2eYcbWEndi7OPIJx9daXAZetd+GvzKmk
-         wVpqAZWCifq9sp939xDNifs4ETV/jpkBqTabOWkld/FxOV71hO7204bYnxFVOWO0XlV4
-         jKdUzg23ezsDUrBA3mKN96Gt4RsPDhE2xnoKz8nSY0wrzGS7V1P46GOg+pXH7dZw4vVr
-         d8yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721719089; x=1722323889;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ydCuwPfj0pEnlU6AaFBIoa0ru0Br3Df785ipYUCvBEY=;
-        b=p5p1sqaLoXR7m30CIzWfg0nyqrqclrC5nNxUsgqsfiM4uMpXJMCHDKgJkgbfXNYzTy
-         RTfQOFSLMslVQRW/GwblP4rEdw2GT1yJg0/d8zjM84jz0YYdI6n8c2+2NuzLvCyV3Qyz
-         YeUAUBR8Lpppgo0nVSSaHK30Av6Ipta/pK2XsX0/vmgqBsUhd86zZlTi9LF42ejRNB2T
-         duTLLkoRA/I6BrRJlpGoSVr/eAMLj8KwQvQuIjrz3I7h406ZbudeOWKduMlkltOA0b8o
-         EMKFJdUoj6UOi531a2LjuNHL2Qbu2FZsboyO5ZsPm7voObL/y1oxqsGBjTK80INQPr14
-         WcVg==
-X-Forwarded-Encrypted: i=1; AJvYcCV4kuDnKNMUiu0xll+JILaJjmZfRODRzXpehFA7Wb39wXPQkHGDn2/+qcNgpVJ95oFy7I+Zg3Z8CjtLYu9+ONpwCBFEc6a62qqqdy8g
-X-Gm-Message-State: AOJu0Ywkan3FKYFUfEQoiXhvKVgcLKaEMK8+G8mUP55W8YHxqgSrbuZw
-	nSjA95q6ESYodWTJvgUiH3dQBJo7HFFO0B79ahDqIN0wggmDppL41sQSaoP0gng=
-X-Google-Smtp-Source: AGHT+IELyNJ5MhVuAdHi2FQf/t2l5VCVjB4hpHHZgvCgFFNLWcDsIdKM0hpiiWJhF8fTDE9KCN0JPw==
-X-Received: by 2002:a05:600c:1c92:b0:426:5d4d:d759 with SMTP id 5b1f17b1804b1-427dc55ba36mr76696805e9.24.1721719088523;
-        Tue, 23 Jul 2024 00:18:08 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:f9d3:b429:5f14:dc9c? ([2a01:e0a:982:cbb0:f9d3:b429:5f14:dc9c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d6936e1esm158776455e9.44.2024.07.23.00.18.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 00:18:08 -0700 (PDT)
-Message-ID: <4c4f2d4a-c748-4158-bb30-a1c22d5a2a34@linaro.org>
-Date: Tue, 23 Jul 2024 09:18:07 +0200
+	s=arc-20240116; t=1721719223; c=relaxed/simple;
+	bh=ZXzGO5dmDeidd3BRiSnDakFqMveADiJcUiUiaXY7wX8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q2UjdVlQWt7M0Ew+mxVV+tytVXUWsiiB9xkqGVkw7hXSUONm0Ucr+5sr5DhXnENYHvMY0uT0NrT4juOLgLQiqfJYYMpAQxJon8aNaxyemAjqmFC1LLWT9dLWgmu6f7V/VCF1KEvqspoNiSIRXQbjQVwUlb65I2kPfEY1ktzgOZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NmE5h9ck; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721719220;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kxeEIWgw+QlKqllfZg7rnP4x9/FSOChR4+aHAj39Qi8=;
+	b=NmE5h9ckgQ71wGjXYeyrD5ppHll0PwuzSI/cJZS1NXulD58aBomiIS0jSr/slPzOZ/fkfw
+	5PQVSLmQrnLAAaz84qzz1o9nKbvVQ3Pnnir7E50WdDUY7oilFzZ33et5x386DdxNo+hX1b
+	WQR99URmFRegklC6dkpgAl9MRhCxM5A=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-455-4Nz8a46_NGWSK468nJ3Teg-1; Tue,
+ 23 Jul 2024 03:20:16 -0400
+X-MC-Unique: 4Nz8a46_NGWSK468nJ3Teg-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DD7C519560A2;
+	Tue, 23 Jul 2024 07:20:13 +0000 (UTC)
+Received: from virt-mtcollins-01.lab.eng.rdu2.redhat.com (virt-mtcollins-01.lab.eng.rdu2.redhat.com [10.8.1.196])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C54881955F40;
+	Tue, 23 Jul 2024 07:20:09 +0000 (UTC)
+From: Shaoqin Huang <shahuang@redhat.com>
+To: Oliver Upton <oliver.upton@linux.dev>,
+	Marc Zyngier <maz@kernel.org>,
+	kvmarm@lists.linux.dev,
+	Mark Brown <broonie@kernel.org>
+Cc: Eric Auger <eauger@redhat.com>,
+	Sebastian Ott <sebott@redhat.com>,
+	Cornelia Huck <cohuck@redhat.com>,
+	Shaoqin Huang <shahuang@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	James Morse <james.morse@arm.com>,
+	kvm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Zenghui Yu <yuzenghui@huawei.com>
+Subject: [PATCH v5 0/4] Allow userspace to change ID_AA64PFR1_EL1
+Date: Tue, 23 Jul 2024 03:19:59 -0400
+Message-Id: <20240723072004.1470688-1-shahuang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v3 6/6] arm64: dts: amlogic: a4: add ao secure node
-To: xianwei.zhao@amlogic.com, Kevin Hilman <khilman@baylibre.com>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240719-soc_info-v3-0-020a3b687c0c@amlogic.com>
- <20240719-soc_info-v3-6-020a3b687c0c@amlogic.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240719-soc_info-v3-6-020a3b687c0c@amlogic.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On 19/07/2024 10:08, Xianwei Zhao via B4 Relay wrote:
-> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> 
-> Add node for board info registers, which allows getting SoC family and
-> board revision.
-> 
-> For example, with MESON_GX_SOCINFO config enabled we can get the
-> following information for board with Amlogic A4 SoC:
-> soc soc0: Amlogic A4 (A113L2) Revision 40:b (1:1) Detected.
-> 
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-> ---
->   arch/arm64/boot/dts/amlogic/amlogic-a4-common.dtsi | 8 ++++++++
->   1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a4-common.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-a4-common.dtsi
-> index 496c3a2bcf25..54d7a2d56ef6 100644
-> --- a/arch/arm64/boot/dts/amlogic/amlogic-a4-common.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/amlogic-a4-common.dtsi
-> @@ -67,6 +67,14 @@ uart_b: serial@7a000 {
->   				clock-names = "xtal", "pclk", "baud";
->   				status = "disabled";
->   			};
-> +
-> +			sec_ao: ao-secure@10220 {
-> +				compatible = "amlogic,a4-ao-secure",
-> +					     "amlogic,meson-gx-ao-secure",
-> +					     "syscon";
-> +				reg = <0x0 0x10220 0x0 0x140>;
-> +				amlogic,has-chip-id;
-> +			};
->   		};
->   	};
->   };
-> 
+Hi guys,
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+This is another try to allow userspace to change ID_AA64PFR1_EL1, and we want to
+give userspace the ability to control the visible feature set for a VM, which
+could be used by userspace in such a way to transparently migrate VMs.
+
+The patch series have four part:
+
+The first patch disable those fields which KVM doesn't know how to handle, so
+KVM will only expose value 0 of those fields to the guest.
+
+The second patch check the FEAT_SSBS in guest IDREG instead of the cpu
+capability.
+
+The third patch allow userspace to change ID_AA64PFR1_EL1, it only advertise the
+fields known to KVM and leave others unadvertise.
+
+The fourth patch adds the kselftest to test if userspace can change the
+ID_AA64PFR1_EL1.
+
+Besides, I also noticed there is another patch [1] which try to make the
+ID_AA64PFR1_EL1 writable. This patch [1] is try to enable GCS on baremental, and
+add GCS support for the guest. What I understand is if we have GCS support on
+baremental, it will be clear to how to handle them in KVM. And same for other
+fields like NMI, THE, DF2, MTEX.. At that time, they can be writable.
+
+[1] [PATCH v9 13/39] KVM: arm64: Manage GCS registers for guests
+    https://lore.kernel.org/all/20240625-arm64-gcs-v9-13-0f634469b8f0@kernel.org/
+
+Changelog:
+----------
+v4 -> v5:
+  * Only advertise fields which KVM know how to handle to userspace, leave
+    others unadvertised.
+  * Add a new patch to check FEAT_SSBS in IDREG instead of cpu capability.
+  * Tweak the kselftest writable fields.
+  * Improve the commit message.
+
+v3 -> v4:
+  * Add a new patch to disable some feature which KVM doesn't know how to
+    handle in the register accessor.
+  * Handle all the fields in the register.
+  * Fixes a small cnt issue in kselftest.
+
+v2 -> v3:
+  * Give more description about why only part of the fields can be writable.
+  * Updated the writable mask by referring the latest ARM spec.
+
+v1 -> v2:
+  * Tackling the full register instead of single field.
+  * Changing the patch title and commit message.
+
+RFCv1 -> v1:
+  * Fix the compilation error.
+  * Delete the machine specific information and make the description more
+    generable.
+
+RFCv1: https://lore.kernel.org/all/20240612023553.127813-1-shahuang@redhat.com/
+v1: https://lore.kernel.org/all/20240617075131.1006173-1-shahuang@redhat.com/
+v2: https://lore.kernel.org/all/20240618063808.1040085-1-shahuang@redhat.com/
+v3: https://lore.kernel.org/all/20240628060454.1936886-2-shahuang@redhat.com/
+v4: https://lore.kernel.org/all/20240718035017.434996-1-shahuang@redhat.com/
+
+Shaoqin Huang (4):
+  KVM: arm64: Disable fields that KVM doesn't know how to handle in
+    ID_AA64PFR1_EL1
+  KVM: arm64: Use kvm_has_feat() to check if FEAT_SSBS is advertised to
+    the guest
+  KVM: arm64: Allow userspace to change ID_AA64PFR1_EL1
+  KVM: selftests: aarch64: Add writable test for ID_AA64PFR1_EL1
+
+ arch/arm64/kvm/hypercalls.c                   | 12 +++++-----
+ arch/arm64/kvm/sys_regs.c                     | 22 ++++++++++++++++++-
+ .../selftests/kvm/aarch64/set_id_regs.c       | 14 +++++++++---
+ 3 files changed, 38 insertions(+), 10 deletions(-)
+
+-- 
+2.40.1
+
 
