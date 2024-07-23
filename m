@@ -1,77 +1,55 @@
-Return-Path: <linux-kernel+bounces-260052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79AA093A23A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:03:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91BE393A39F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D860284732
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:03:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 477931F23BAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47F00154C12;
-	Tue, 23 Jul 2024 14:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3521B156F34;
+	Tue, 23 Jul 2024 15:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Th/rWI8t"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b="PyltflEA"
+Received: from mail.hugovil.com (mail.hugovil.com [162.243.120.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313CF153BF7;
-	Tue, 23 Jul 2024 14:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157C93D55D;
+	Tue, 23 Jul 2024 15:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.120.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721743366; cv=none; b=pdi++R/TcT9t9/zAq4BNeUx8kQij7bx4O1UeOQxmD+fc/dggwwAmLO9+dngXtDD9PrM2gPNBecjSE17x/MyisutEvtQQFvF2+72R0vG/tYf/Bf2c5g9UEtyDab2tu9vF2RIjcGgUdw63NwxyLltWKHDgLfX27MzE/GZ7Ab4846s=
+	t=1721747765; cv=none; b=qgwAesU4Pis4IXmMQ9DMigjMoXoDWKG+gb/ok2JUXhL6oaZFw/cDcHTvuRnvlRUgSx0vM0XMctf5DdDqzfYxBjqa0lrpCWFrk4//abr1g1UVnwguWiBmWJWT5aUKMDJrjiXNzkfllpAJzNxJ79aQnhDgpoJ12XGzhu0SW0e67vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721743366; c=relaxed/simple;
-	bh=RLt8jhrYw41hVzb8SoBJYba6QBbCi+6+Cpn6StTevts=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YxS5O/+hgMIhbD7NdbiUggZtNXMEY+5KJGGTT7QVfQDCOoaaSgK7rWIHTh2qxxny+y9NVxMb87SeDEMCjMREgvsBR9f9Kj/gEo43RkmH5+fE4AlpQi9l0/1nwZgpXH/Ky5GYotfF93cVuUihMjkPGhDiNGkiGR09SHEsHE47E/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Th/rWI8t; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721743365; x=1753279365;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=RLt8jhrYw41hVzb8SoBJYba6QBbCi+6+Cpn6StTevts=;
-  b=Th/rWI8tMcETBkNaZTz2XO0dxdUIKpObWmuXmrwQsYoxJ0LDkLJFWJ2z
-   7SyRBBuBtkDIjjcGcRDtA02pZWGr88nevVIxE3/+yx/x+Te6JD2bvdtvy
-   7eUv5dbQlz4XsDpFrOaLA32+ZliJDK6SpUu36kCsxIGQHFpULEHEtN4lG
-   Hl9SxkGwIQKDiOI1akbPCQX7DGwqK/jlloVhzl+0z+KIe6Xuw2cjyypAp
-   Kg5PIE4UfpycXPev+pG8dQa7uEj/4VpScc/LrUdo2JcWsUxCWhxcNIyC/
-   gcvgJVDi+nCTSX7DcN1FRuqLcGQWb3eFbzi6Lfw8YUyWOjMIsCcMzGz2Q
-   g==;
-X-CSE-ConnectionGUID: 515XpwlCT1OU5jjFxhSWEQ==
-X-CSE-MsgGUID: tUW3lqM8TnCmB+XMvSKqbA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11142"; a="19518136"
-X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
-   d="scan'208";a="19518136"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2024 07:02:34 -0700
-X-CSE-ConnectionGUID: w4PTbP8nRn+/HGz7RO8XAg==
-X-CSE-MsgGUID: psbCLC0bRyWW4Th96gDJgw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
-   d="scan'208";a="56546566"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
-  by fmviesa005.fm.intel.com with ESMTP; 23 Jul 2024 07:02:34 -0700
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: rafael@kernel.org,
-	daniel.lezcano@linaro.org,
-	rui.zhang@intel.com,
-	lukasz.luba@arm.com
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yijun.Shen@dell.com,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH 3/3] thermal: intel: int340x: Free MSI IRQ vectors on module exit
-Date: Tue, 23 Jul 2024 07:02:28 -0700
-Message-ID: <20240723140228.865919-4-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240723140228.865919-1-srinivas.pandruvada@linux.intel.com>
-References: <20240723140228.865919-1-srinivas.pandruvada@linux.intel.com>
+	s=arc-20240116; t=1721747765; c=relaxed/simple;
+	bh=wcmAco8bkzi70O9n+d6uvvToZXg1RK9zjr+X5LzojVw=;
+	h=From:To:Cc:Date:Message-Id:MIME-Version:Subject; b=mx/gmsH8dRbiXVSIVVEsfoTTldmhZKSLPJ0ya8x7yUbHEr2CXo/vCVMAHvc641yiqHj37Mqgagpxagj1hE/RfG5ItKun8lEUAl2yFrWl1JiJu5C4VwMLN635E4SbbDd5j8zpM9hqBTZwIfkczrf+JO2O3GyMiq4JJVgAs2Ae8Sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com; spf=pass smtp.mailfrom=hugovil.com; dkim=pass (1024-bit key) header.d=hugovil.com header.i=@hugovil.com header.b=PyltflEA; arc=none smtp.client-ip=162.243.120.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hugovil.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hugovil.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hugovil.com
+	; s=x; h=Subject:Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Cc:To
+	:From:subject:date:message-id:reply-to;
+	bh=Y2b2wyHe/Scg6YoHbNFbNDMijEkXHLcw9K/zw4LWlE0=; b=PyltflEAT72vIxHXC5uuoWyL6V
+	ZBr6/u3LuZkePxDFimN8cxHr0giBdTAVa9m9N83C8PUR6EiFSE9TS5AUMPFwqx5jAGOMKMdQlqdKZ
+	zknBIL07QMoikhnNlMShepd3HOfKKp3FxJ+pc75LVgfswC1GUhWmDxuZngI3iEFPBmas=;
+Received: from modemcable061.19-161-184.mc.videotron.ca ([184.161.19.61]:36238 helo=pettiford.lan)
+	by mail.hugovil.com with esmtpa (Exim 4.92)
+	(envelope-from <hugo@hugovil.com>)
+	id 1sWGwG-0003Y2-QS; Tue, 23 Jul 2024 10:56:29 -0400
+From: Hugo Villeneuve <hugo@hugovil.com>
+To: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	hvilleneuve@dimonoff.com,
+	jringle@gridpoint.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	hugo@hugovil.com
+Date: Tue, 23 Jul 2024 08:52:59 -0400
+Message-Id: <20240723125302.1305372-1-hugo@hugovil.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,31 +57,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 184.161.19.61
+X-SA-Exim-Mail-From: hugo@hugovil.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+Subject: [PATCH 0/2] serial: sc16is7xx: fix registers accesses and Tx FIFO corruption
+X-SA-Exim-Version: 4.2.1 (built Wed, 08 May 2019 21:11:16 +0000)
+X-SA-Exim-Scanned: Yes (on mail.hugovil.com)
 
-On module exit call proc_thermal_free_msi() to free vectors allocated by
-pci_alloc_irq_vectors().
+From: Hugo Villeneuve <hvilleneuve@dimonoff.com>
 
-Fixes: 7a9a8c5faf41 ("thermal: intel: int340x: Support MSI interrupt for Lunar Lake")
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- .../intel/int340x_thermal/processor_thermal_device_pci.c       | 3 +++
- 1 file changed, 3 insertions(+)
+Hello,
+this patch series fixes enhanced/special register set accesses and Tx
+FIFO corruption.
 
-diff --git a/drivers/thermal/intel/int340x_thermal/processor_thermal_device_pci.c b/drivers/thermal/intel/int340x_thermal/processor_thermal_device_pci.c
-index ff296626c498..006614921870 100644
---- a/drivers/thermal/intel/int340x_thermal/processor_thermal_device_pci.c
-+++ b/drivers/thermal/intel/int340x_thermal/processor_thermal_device_pci.c
-@@ -431,6 +431,9 @@ static void proc_thermal_pci_remove(struct pci_dev *pdev)
- 	proc_thermal_mmio_write(pci_info, PROC_THERMAL_MMIO_THRES_0, 0);
- 	proc_thermal_mmio_write(pci_info, PROC_THERMAL_MMIO_INT_ENABLE_0, 0);
- 
-+	if (msi_irq)
-+		proc_thermal_free_msi(pdev, pci_info);
-+
- 	thermal_zone_device_unregister(pci_info->tzone);
- 	proc_thermal_mmio_remove(pdev, pci_info->proc_priv);
- 	if (!pci_info->no_legacy)
+I have tested the changes on a custom board with two SC16IS752 DUART over
+a SPI interface using a Variscite IMX8MN NANO SOM. The four UARTs are
+configured in RS-485 mode.
+
+Thank you.
+
+Hugo Villeneuve (2):
+  serial: sc16is7xx: fix TX fifo corruption
+  serial: sc16is7xx: fix invalid FIFO access with special register set
+
+ drivers/tty/serial/sc16is7xx.c | 25 +++++++++++++++----------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
+
+
+base-commit: 933069701c1b507825b514317d4edd5d3fd9d417
 -- 
-2.45.0
+2.39.2
 
 
