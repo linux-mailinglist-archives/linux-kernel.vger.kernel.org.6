@@ -1,285 +1,178 @@
-Return-Path: <linux-kernel+bounces-259678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62F0B939B77
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:10:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95922939B83
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D51E11F22853
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:10:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1625D1F22970
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E43C14A614;
-	Tue, 23 Jul 2024 07:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C8D14B950;
+	Tue, 23 Jul 2024 07:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="KQbaIA0/"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JyOQpiaJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE5114A0AD
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F13D14B07C
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721718611; cv=none; b=aFfbWsz/uF75Un9dnf4RMiB8u+fBXIRWdhFp5LeFs4Hd5D7FruWdoRep8zmQSz99UV0GUAr4MAN0Fart4Fn4joJtT3znPcpgocu3q+KqG0nyeI6uBqZooHsPgYxeY5uEu6u6GsTQPlaFShbzLFPavFNd8iqJmC5QF/sujjGhuuM=
+	t=1721718647; cv=none; b=n70T8XTAK1SIoq/z9EA4wHZ8S/dCmh4LECxvkoA1EaHXiteo34dbR/DKN40SMLvXLTM1L4yneliVTkEuSZu996UVgjw7VDU86BFvw78X+VnUL1SSTQ42SW62EQUXr5QONgQPBU5CkB+YafOuLePnyaoujDK1TVLr3mPoBD4qsfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721718611; c=relaxed/simple;
-	bh=pDrcpwPThooXOhuo8yBT0CKcsbido5m6PcRHkzyYUr0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HAemNyJ911G39QLq3WjEa17JG81HAKxKLuthwKn9rELq5NkRCg6WC+aHoAsMA/z5e8fBSi389/G9mwL8fsgl0z+ulUzGB4ngKuk398F+IIN848Ady6PEJcKpp7ab62mvglaa0cHXB0ELFNxU1mGpve+pouniPxDGNMu3k08PI14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=KQbaIA0/; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a77e7420697so54376366b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 00:10:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1721718608; x=1722323408; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NbY9hIILRpQ3t2kLWFKU5JlJAqMsH+KZEUPDJfybT0Y=;
-        b=KQbaIA0/TEPMsD24OnRsEErGVV7S5gq++zOE9txhTZoHwCUuhDlCYlHZyEaHDA3l5q
-         qy/hYWQ2K9HxXvJtlJW1NlCmNCZZte+2TpSd3ltHk5nV8X///HLiNyeMxcN09MBmGO7e
-         Ue5q+pUbrPrG2yy+3MI4FTLICSIyJ0KDrasM4TTu/5/vSmf3iZk5mZva15VpCFItUScI
-         m3pfStWFTmk3imN6nCkT0NZTmMClc/EWDd457AxdhhSoDIg6o6LW9Tfe2Dp+sXIiWvrl
-         kDARsfWOuRT8GcfDKkMmXsNHZ/LUAF5a1aptUXTStuV+f1FAGddZ+P5BRuTqQ3z5Ltl6
-         IRzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721718608; x=1722323408;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NbY9hIILRpQ3t2kLWFKU5JlJAqMsH+KZEUPDJfybT0Y=;
-        b=mRq4VmEy28R2FzhwG6j1ogwhf6+cIcegzzlxauH5/Zp/iHo5Xs31wL9dAKjoomRy70
-         7JELBC19jej802Vy9R2Y1UTORzN7XOeX3Z0QxPfMzG165gUG9b/XJcw71fEE2//FTeis
-         stRxBJlDzzgx0xWd/4RHqrbljYdlijbAA4xYb5DFN++4AJ994sKHx1pWGk5xTimmKDuW
-         7ZNObkhoQlY9MoMQ5oUyFqVoGDHKBx+CMBedpfiZT2yuzrOj2Uh2UCLZNcyslswxSRWA
-         bQto9nCX04S4135v37KK7FqtzfXWLr4TijTSGH9vJ+KSxW5RemacmoRZ6tr1o23qcJr6
-         rHWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6IbWgGNuOjWjsOa4BZuLDxnKLGL+eM4vQYQ9L4XfjqVzer1zyhJfmeuQ5+v6P+UeHms2HXIthlf3b0uyr/gpqqqnLcdFC7PeqfCSB
-X-Gm-Message-State: AOJu0YzZDbyeA3Y6QMxNeJAuKWTeilWJEcDgBUczvNlQv6D1t2ETMCTZ
-	OiVQefYbTi4fWln5+rh0VQSQ2x5BLBmpSj9Whz1YeI/Fau/wdAv0kWwYzS2OQlkOSJugTarf0aS
-	3
-X-Google-Smtp-Source: AGHT+IE+F6g3SA1qf6FRpSztSzuggO/YnYuDsDxPqrtwq9kpss+HQL9yVbIZjttzYydPEUxBHj5Afg==
-X-Received: by 2002:a17:907:96a8:b0:a77:c364:c4ef with SMTP id a640c23a62f3a-a7a87c85d96mr158186366b.5.1721718607688;
-        Tue, 23 Jul 2024 00:10:07 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.75])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c94fc2esm497807966b.210.2024.07.23.00.10.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 00:10:07 -0700 (PDT)
-Message-ID: <f0439b5c-1b93-48f3-a130-e4e7ef06c862@tuxon.dev>
-Date: Tue, 23 Jul 2024 10:10:05 +0300
+	s=arc-20240116; t=1721718647; c=relaxed/simple;
+	bh=u/QsKyttUCU09OB5lypgCukROiu0KDjYn/kne8MGZsg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tUXaMcvCefPHxnLY61X5lDvUkCamemwxbgULlV3f03pcSYe8FDgIBLfdD6i90MFJyqEc4Yq7XYDIiEUMG5Kdw4/6jI5OEM9J5rHOXeKyEJDHz3yvpkaRYtZ9rwkxKGn/g7XCM9iAFIEvYUHE7bWweIr/K1V/nX/oNwP8wu/4m7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JyOQpiaJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721718645;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YdPO/Vt26loGhN/7TbhKVqyyms9ZE6JlxaJFW/Mi4bc=;
+	b=JyOQpiaJNqmRnGut4aQpiTY5mTwGdh39SDA/vP0g5N3Q9S1/cEdC3jX7rA9/BhTdkgksN8
+	cmTeGlpQZAB2R31z8yNAboerqXkBacAYpIx+Vp2lkSS8JYQASAwSYkK6Ck2F9IXKMYNgGF
+	9FRX5j7FTgNPdPUO8c2KuHwsJ/Pb4hE=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-422-NxUWQI8GPx6Udv3-oRtnSA-1; Tue,
+ 23 Jul 2024 03:10:39 -0400
+X-MC-Unique: NxUWQI8GPx6Udv3-oRtnSA-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E09B81955F43;
+	Tue, 23 Jul 2024 07:10:37 +0000 (UTC)
+Received: from alecto.usersys.redhat.com (unknown [10.45.224.129])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B85293000194;
+	Tue, 23 Jul 2024 07:10:34 +0000 (UTC)
+From: Artem Savkov <asavkov@redhat.com>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	bpf@vger.kernel.org,
+	netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Artem Savkov <asavkov@redhat.com>
+Subject: [PATCH bpf-next v3] selftests/bpf: fix compilation failure when CONFIG_NET_FOU!=y
+Date: Tue, 23 Jul 2024 09:10:31 +0200
+Message-ID: <20240723071031.3389423-1-asavkov@redhat.com>
+In-Reply-To: <CAADnVQKE1Xmjhx3Xwdidmmn=BGzjgc89i+UMhHR7=6HupPQZSA@mail.gmail.com>
+References: <CAADnVQKE1Xmjhx3Xwdidmmn=BGzjgc89i+UMhHR7=6HupPQZSA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/11] dt-bindings: mfd: renesas,r9a08g045-vbattb:
- Document VBATTB
-Content-Language: en-US
-To: Rob Herring <robh@kernel.org>
-Cc: lee@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- alexandre.belloni@bootlin.com, geert+renesas@glider.be,
- magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
- p.zabel@pengutronix.de, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com>
- <20240716103025.1198495-2-claudiu.beznea.uj@bp.renesas.com>
- <20240723021713.GA40385-robh@kernel.org>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240723021713.GA40385-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi, Rob,
+Without CONFIG_NET_FOU bpf selftests are unable to build because of
+missing definitions. Add ___local versions of struct bpf_fou_encap and
+enum bpf_fou_encap_type to fix the issue.
 
-On 23.07.2024 05:17, Rob Herring wrote:
-> On Tue, Jul 16, 2024 at 01:30:15PM +0300, Claudiu wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> The VBATTB IP of the Renesas RZ/G3S SoC controls the clock for RTC,
->> the tamper detector and a small general usage memory of 128B. Add
->> documentation for it.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v2:
->> - changed file name and compatible
->> - updated title, description sections
->> - added clock controller part documentation and drop dedicated file
->>   for it included in v1
->> - used items to describe interrupts, interrupt-names, clocks, clock-names,
->>   resets
->> - dropped node labels and status
->> - updated clock-names for clock controller to cope with the new
->>   logic on detecting the necessity to setup bypass
->>
->>  .../mfd/renesas,r9a08g045-vbattb.yaml         | 136 ++++++++++++++++++
->>  1 file changed, 136 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/mfd/renesas,r9a08g045-vbattb.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/mfd/renesas,r9a08g045-vbattb.yaml b/Documentation/devicetree/bindings/mfd/renesas,r9a08g045-vbattb.yaml
->> new file mode 100644
->> index 000000000000..30e4da65e2f6
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mfd/renesas,r9a08g045-vbattb.yaml
->> @@ -0,0 +1,136 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/mfd/renesas,r9a08g045-vbattb.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Renesas Battery Backup Function (VBATTB)
->> +
->> +description:
->> +  Renesas VBATTB is an always on powered module (backed by battery) which
->> +  controls the RTC clock (VBATTCLK), tamper detection logic and a small
->> +  general usage memory (128B).
->> +
->> +maintainers:
->> +  - Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> +
->> +properties:
->> +  compatible:
->> +    const: renesas,r9a08g045-vbattb
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  ranges: true
->> +
->> +  interrupts:
->> +    items:
->> +      - description: tamper detector interrupt
->> +
->> +  interrupt-names:
->> +    items:
->> +      - const: tampdi
-> 
-> Don't really need -names with only 1 entry.
-> 
->> +
->> +  clocks:
->> +    items:
->> +      - description: VBATTB module clock
->> +
->> +  clock-names:
->> +    items:
->> +      - const: bclk
->> +
->> +  power-domains:
->> +    maxItems: 1
->> +
->> +  resets:
->> +    items:
->> +      - description: VBATTB module reset
->> +
->> +  '#address-cells':
->> +    const: 2
->> +
->> +  '#size-cells':
->> +    const: 2
->> +
->> +patternProperties:
->> +  "^clock-controller@1c+$":
->> +    type: object
->> +    description: VBATTCLK clock
->> +
->> +    properties:
->> +      compatible:
->> +        const: renesas,r9a08g045-vbattb-clk
->> +
->> +      reg:
->> +        maxItems: 1
->> +
->> +      clocks:
->> +        items:
->> +          - description: input clock for VBATTCLK
->> +
->> +      clock-names:
->> +        description: |
->> +          Use xin if connected to an external crystal oscillator.
->> +          Use clkin if connected to an external hardware device generating the
->> +          clock.
->> +        enum:
->> +          - xin
->> +          - clkin
->> +
->> +      '#clock-cells':
->> +        const: 0
->> +
->> +      renesas,vbattb-load-nanofarads:
->> +        description: load capacitance of the on board xtal
->> +        $ref: /schemas/types.yaml#/definitions/uint32
->> +        enum: [ 4000, 7000, 9000, 12500 ]
->> +
->> +    required:
->> +      - compatible
->> +      - reg
->> +      - clocks
->> +      - clock-names
->> +      - '#clock-cells'
->> +      - renesas,vbattb-load-nanofarads
->> +
->> +    additionalProperties: false
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - interrupt-names
->> +  - clocks
->> +  - clock-names
->> +  - power-domains
->> +  - resets
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/r9a08g045-cpg.h>
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +
->> +    vbattb@1005c000 {
->> +        compatible = "renesas,r9a08g045-vbattb";
->> +        reg = <0x1005c000 0x1000>;
->> +        ranges = <0 0 0x1005c000 0 0x1000>;
->> +        interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
->> +        interrupt-names = "tampdi";
->> +        clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>;
->> +        clock-names = "bclk";
->> +        power-domains = <&cpg>;
->> +        resets = <&cpg R9A08G045_VBAT_BRESETN>;
->> +        #address-cells = <2>;
->> +        #size-cells = <2>;
->> +
->> +        clock-controller@1c {
->> +            compatible = "renesas,r9a08g045-vbattb-clk";
->> +            reg = <0 0x1c 0 0x10>;
->> +            clocks = <&vbattb_xtal>;
->> +            clock-names = "xin";
->> +            #clock-cells = <0>;
->> +            renesas,vbattb-load-nanofarads = <12500>;
->> +        };
-> 
-> Is this really a separate device?
+Signed-off-by: Artem Savkov <asavkov@redhat.com>
 
-It's not.
+---
+v3: swith from using BPF_NO_KFUNC_PROTOTYPES to casting to keep kfunc
+prototype intact.
 
-> Doesn't really look like it. This can 
-> all be moved to the parent node.
+v2: added BPF_NO_KFUNC_PROTOTYPES define to avoid issues when
+CONFIG_NET_FOU is set.
+---
+ .../selftests/bpf/progs/test_tunnel_kern.c    | 26 ++++++++++++++-----
+ 1 file changed, 20 insertions(+), 6 deletions(-)
 
-I'll move it to the parent node.
+diff --git a/tools/testing/selftests/bpf/progs/test_tunnel_kern.c b/tools/testing/selftests/bpf/progs/test_tunnel_kern.c
+index 3f5abcf3ff136..fcff3010d8a60 100644
+--- a/tools/testing/selftests/bpf/progs/test_tunnel_kern.c
++++ b/tools/testing/selftests/bpf/progs/test_tunnel_kern.c
+@@ -26,6 +26,18 @@
+  */
+ #define ASSIGNED_ADDR_VETH1 0xac1001c8
+ 
++struct bpf_fou_encap___local {
++       __be16 sport;
++       __be16 dport;
++};
++
++enum bpf_fou_encap_type___local {
++       FOU_BPF_ENCAP_FOU___local,
++       FOU_BPF_ENCAP_GUE___local,
++};
++
++struct bpf_fou_encap;
++
+ int bpf_skb_set_fou_encap(struct __sk_buff *skb_ctx,
+ 			  struct bpf_fou_encap *encap, int type) __ksym;
+ int bpf_skb_get_fou_encap(struct __sk_buff *skb_ctx,
+@@ -745,7 +757,7 @@ SEC("tc")
+ int ipip_gue_set_tunnel(struct __sk_buff *skb)
+ {
+ 	struct bpf_tunnel_key key = {};
+-	struct bpf_fou_encap encap = {};
++	struct bpf_fou_encap___local encap = {};
+ 	void *data = (void *)(long)skb->data;
+ 	struct iphdr *iph = data;
+ 	void *data_end = (void *)(long)skb->data_end;
+@@ -769,7 +781,8 @@ int ipip_gue_set_tunnel(struct __sk_buff *skb)
+ 	encap.sport = 0;
+ 	encap.dport = bpf_htons(5555);
+ 
+-	ret = bpf_skb_set_fou_encap(skb, &encap, FOU_BPF_ENCAP_GUE);
++	ret = bpf_skb_set_fou_encap(skb, (struct bpf_fou_encap *)&encap,
++				    FOU_BPF_ENCAP_GUE___local);
+ 	if (ret < 0) {
+ 		log_err(ret);
+ 		return TC_ACT_SHOT;
+@@ -782,7 +795,7 @@ SEC("tc")
+ int ipip_fou_set_tunnel(struct __sk_buff *skb)
+ {
+ 	struct bpf_tunnel_key key = {};
+-	struct bpf_fou_encap encap = {};
++	struct bpf_fou_encap___local encap = {};
+ 	void *data = (void *)(long)skb->data;
+ 	struct iphdr *iph = data;
+ 	void *data_end = (void *)(long)skb->data_end;
+@@ -806,7 +819,8 @@ int ipip_fou_set_tunnel(struct __sk_buff *skb)
+ 	encap.sport = 0;
+ 	encap.dport = bpf_htons(5555);
+ 
+-	ret = bpf_skb_set_fou_encap(skb, &encap, FOU_BPF_ENCAP_FOU);
++	ret = bpf_skb_set_fou_encap(skb, (struct bpf_fou_encap *)&encap,
++				    FOU_BPF_ENCAP_FOU___local);
+ 	if (ret < 0) {
+ 		log_err(ret);
+ 		return TC_ACT_SHOT;
+@@ -820,7 +834,7 @@ int ipip_encap_get_tunnel(struct __sk_buff *skb)
+ {
+ 	int ret;
+ 	struct bpf_tunnel_key key = {};
+-	struct bpf_fou_encap encap = {};
++	struct bpf_fou_encap___local encap = {};
+ 
+ 	ret = bpf_skb_get_tunnel_key(skb, &key, sizeof(key), 0);
+ 	if (ret < 0) {
+@@ -828,7 +842,7 @@ int ipip_encap_get_tunnel(struct __sk_buff *skb)
+ 		return TC_ACT_SHOT;
+ 	}
+ 
+-	ret = bpf_skb_get_fou_encap(skb, &encap);
++	ret = bpf_skb_get_fou_encap(skb, (struct bpf_fou_encap *)&encap);
+ 	if (ret < 0) {
+ 		log_err(ret);
+ 		return TC_ACT_SHOT;
+-- 
+2.45.2
 
-Thank you for your review,
-Claudiu Beznea
-
-> 
-> Rob
 
