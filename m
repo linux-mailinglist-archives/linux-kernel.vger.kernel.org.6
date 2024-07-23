@@ -1,141 +1,229 @@
-Return-Path: <linux-kernel+bounces-260233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19A4593A4C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:15:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24B6893A4C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7A121F2344F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:15:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47F571C22CBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:15:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A681581F4;
-	Tue, 23 Jul 2024 17:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A95D157E94;
+	Tue, 23 Jul 2024 17:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IghNziWP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GdEM7e6i"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA03215820C
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 17:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDBD14D431
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 17:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721754913; cv=none; b=HClPJ5VO73ckU0Ll8TmxFyr+qKFg3AUHXqUbBVIlkkDIAl8fALiu1RBOJz4DE01pLFCWZO3HN2ffgCVVteenHO1GoVNIhwm7vYb0yf+W9qVhsPDdcty/d3DEZtyO8bXZ8GQWJew7FQsdhLJu3FxcaJ2+WA4DUOMgFwbS75A8sP0=
+	t=1721754894; cv=none; b=l8iBPMCQ8EGTtOyl5QmtDeT4toG6D/GE+ZjTsITZTUNXCkTVqi/aXO4ItbJ/P9Ew8kv3Nd8AyGymcSJIE5zCZg2+Ky5O44kr9wQtNyUKPOFy0avqD5Sr9o/gVYvlhkrWEnEmIrKEN/K1ILXwrdzQTBTkdgifZyGleXH+IwxxDd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721754913; c=relaxed/simple;
-	bh=2QinIKl01BYviRchpWq/nNONs7eDAT1sG9Q27g5MtLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HLFcdfUpFssAGDkk/PwF6lgBEJZJ/lni3CGymP02ClYSU3ZwcNGn/4m6wxm9YdtXksUDPdGSd2/aXLJ7h63Z8F4CZ8tKFVwc89e8HxflJEMkozYg8WsDKiaNPeTjfdIXp8frkPuyJB7M3udQPaZSMg7KfcKTV4QrV2yFhnFSffU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IghNziWP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721754910;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=48En1slowwZTq+Dy/oIa0R4wANx/Eecm2csRiLHBo6U=;
-	b=IghNziWPWZDQIr698rXBNZKcCrAvhyfhjt+7b5fsjL0bomq4qj8jV23xbzCNEDCGVP5X+9
-	QjBXZRMs0LvH4Yn+x3mPOTFlZke3yP9+GhXDyuqoxa54R8exWOLhmlc6sGbEycjuijt/cC
-	E5F8PRowkQp/DSmK3mECEKejEsGR8kQ=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-442-hVtQla4sNLq_bwaQT9zOmA-1; Tue,
- 23 Jul 2024 13:15:04 -0400
-X-MC-Unique: hVtQla4sNLq_bwaQT9zOmA-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1BB2D1955D45;
-	Tue, 23 Jul 2024 17:15:01 +0000 (UTC)
-Received: from tpad.localdomain (unknown [10.96.133.4])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 77132195605A;
-	Tue, 23 Jul 2024 17:14:59 +0000 (UTC)
-Received: by tpad.localdomain (Postfix, from userid 1000)
-	id F2B23400DF27F; Tue, 23 Jul 2024 14:14:34 -0300 (-03)
-Date: Tue, 23 Jul 2024 14:14:34 -0300
-From: Marcelo Tosatti <mtosatti@redhat.com>
-To: Leonardo Bras <leobras@redhat.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v1 0/4] Introduce QPW for per-cpu operations
-Message-ID: <Zp/k+rJuVV+EcXqL@tpad>
-References: <20240622035815.569665-1-leobras@redhat.com>
+	s=arc-20240116; t=1721754894; c=relaxed/simple;
+	bh=6kghmSBFAgraNaL0cxB5ROvZv7AzQs2gkL1BpsTzI4k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LfLYUunxGyPfUewIj2J48kBjta4quSFHpoUeMDpX9va8ji19KB3uHORvaThzJkMc2YP30CH6XHjeMCJjOMxoBZDhDcTrqETqtNE1lqzAqrkSlSvfpQ8OZaMTTjVLnNMMY0EKs0lj3x8WxqsHxwSscXv4nfDLxP1vVjNgIzpSXlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GdEM7e6i; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-75cda3719efso661385a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 10:14:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721754892; x=1722359692; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6YR/sRwpB1CCsWUP+4Ph7FU7thUB0l4sYMzG0JevTYg=;
+        b=GdEM7e6iGVAo3zxG6o/PnDLcoanEFBdG2S6ZTtXg+1ZMV8MJV1xkF4EV0/XDBWFviq
+         spKr8CnGvhstqZP3NR6MUcUdu7Ac0qc0lOkxn9ZQCtxmwvSzekX6MhsjiV7rTJF5mYzo
+         x+rA+yxqp4vCFV3XpV6Z+2qyO85/A5z5DBb/wHxLmz4+LG5y/K2qQ+fJwMhE0hJMeFNg
+         6ZKC6/xs9SOHKv94xYxucdSokFN85UO3grRj3ahfesnA0OP7ewto7PQqk+4RDdLrDOJ5
+         Hq68x4/3QELP8Kkw5MDMZ12IJh0ncB8PxQhTo1kMVWS45EDT7qj9gsaUbaFLK+85SGlY
+         N/dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721754892; x=1722359692;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6YR/sRwpB1CCsWUP+4Ph7FU7thUB0l4sYMzG0JevTYg=;
+        b=ebhg2M3NF4+q9nOR4cSceY8hZalYp3ca5fy2Uqbn3lBQqUJ0FCAm0a2m128t0ieMqF
+         VyhWGNu9wSDhdkgXMhDqi3pNJ+Lbmhn/StyHr9hHk+hb42wiPDT9PDj10N2/SRoxLx4D
+         EEp1cFFKKzmr4GkESk9cLsIW7i4sK9xtlxDPGjLAwx2g7pIOsHN+KbnNiKIZH0TJgUQn
+         F1f4kYF+6a/ote/p6/iH6vuOZxjcVqTuK8uN9GsZYK/OhGKXe1H0VzAFiYJM5i2wEKic
+         0jLlQIeNXLo+fv220KSk5H3vKwaAajGVsQVnICaGUteKdXqrRGMNeN4l5fksZ2te96xO
+         HWxw==
+X-Forwarded-Encrypted: i=1; AJvYcCXGdIksBx/2HagHXF7I28QiruRUUFAiOw2kYD3vuRwzl6+gROE02t1wWBSV3iWQ793wIFJTYugITlNg0G6Pepsg4zq1Nw42KiNOFOJR
+X-Gm-Message-State: AOJu0Ywa16CQsudBfIU9F7w2QHCsClk9ZfSp1gOiaEiu83f2JFSZM89r
+	g+axOmsVsnwQFgCARBtKb6GHjjnAJFZPM/9AY+Nc6lVLuYMwQpwTlEG56YdTNE6dIZNRBxxoiPJ
+	uQKsCYBbh67JsCItVPXULDHcqoU8=
+X-Google-Smtp-Source: AGHT+IGOWJh0Vr3vgfLKwgbdET9Ih1+E4GAFHNnhf5BKkoe1va0SUJ3C95dZPt2LE3dvS9NDOXkvc202wsNZKJQrkB0=
+X-Received: by 2002:a17:90b:1e4d:b0:2c8:7897:eb46 with SMTP id
+ 98e67ed59e1d1-2cd274d48c6mr7012879a91.37.1721754892475; Tue, 23 Jul 2024
+ 10:14:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240622035815.569665-1-leobras@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+References: <20240616-amdgpu-edid-bios-v1-1-2874f212b365@weissschuh.net>
+ <ad78ada4-4e31-4994-845b-fe756b52a1ae@t-8ch.de> <CADnq5_OjRgMkqnsep_AtKxonhCxthZZCsv+eNERuGH4-fXw6Ww@mail.gmail.com>
+In-Reply-To: <CADnq5_OjRgMkqnsep_AtKxonhCxthZZCsv+eNERuGH4-fXw6Ww@mail.gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Tue, 23 Jul 2024 13:14:40 -0400
+Message-ID: <CADnq5_NU51=+QM5OC+Ut4ahU_b-64zCAaTKfLB1BKbZijutHCg@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu: convert bios_hardcoded_edid to drm_edid
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jun 22, 2024 at 12:58:08AM -0300, Leonardo Bras wrote:
-> The problem:
-> Some places in the kernel implement a parallel programming strategy
-> consisting on local_locks() for most of the work, and some rare remote
-> operations are scheduled on target cpu. This keeps cache bouncing low since
-> cacheline tends to be mostly local, and avoids the cost of locks in non-RT
-> kernels, even though the very few remote operations will be expensive due
-> to scheduling overhead.
-> 
-> On the other hand, for RT workloads this can represent a problem: getting
-> an important workload scheduled out to deal with remote requests is
-> sure to introduce unexpected deadline misses.
+On Tue, Jul 23, 2024 at 12:49=E2=80=AFPM Alex Deucher <alexdeucher@gmail.co=
+m> wrote:
+>
+> On Sun, Jun 16, 2024 at 2:32=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weis=
+sschuh.net> wrote:
+> >
+> > On 2024-06-16 11:12:03+0000, Thomas Wei=C3=9Fschuh wrote:
+> > > Instead of manually passing around 'struct edid *' and its size,
+> > > use 'struct drm_edid', which encapsulates a validated combination of
+> > > both.
+> > >
+> > > As the drm_edid_ can handle NULL gracefully, the explicit checks can =
+be
+> > > dropped.
+> > >
+> > > Also save a few characters by transforming '&array[0]' to the equival=
+ent
+> > > 'array' and using 'max_t(int, ...)' instead of manual casts.
+> > >
+> > > Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> > > ---
+> > > While this patch introduces a new user for drm_edid_raw(),
+> > > if amdgpu proper gets migrated to 'struct drm_edid', that usage will =
+go
+> > > away.
+> > >
+> > > This is only compile-tested.
+> > >
+> > > I have some more patches for the rest of amdgpu,
+> > > to move to 'struct drm_edid'.
+> > > This patch is a test-balloon for the general idea.
+> > >
+> > > The same can also be done for drm/radeon.
+> > > ---
+> > >  drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c |  6 +-----
+> > >  drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h       |  4 ++--
+> > >  drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c       |  2 +-
+> > >  drivers/gpu/drm/amd/amdgpu/atombios_encoders.c | 21 +++++++---------=
+-----
+> > >  drivers/gpu/drm/amd/amdgpu/dce_v10_0.c         |  2 +-
+> > >  drivers/gpu/drm/amd/amdgpu/dce_v11_0.c         |  2 +-
+> > >  drivers/gpu/drm/amd/amdgpu/dce_v6_0.c          |  2 +-
+> > >  drivers/gpu/drm/amd/amdgpu/dce_v8_0.c          |  2 +-
+> > >  8 files changed, 15 insertions(+), 26 deletions(-)
+> >
+> > <snip>
+> >
+> > > diff --git a/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c b/drivers=
+/gpu/drm/amd/amdgpu/atombios_encoders.c
+> > > index 25feab188dfe..90383094ed1e 100644
+> > > --- a/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c
+> > > +++ b/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c
+> > > @@ -2064,20 +2064,13 @@ amdgpu_atombios_encoder_get_lcd_info(struct a=
+mdgpu_encoder *encoder)
+> > >                               case LCD_FAKE_EDID_PATCH_RECORD_TYPE:
+> > >                                       fake_edid_record =3D (ATOM_FAKE=
+_EDID_PATCH_RECORD *)record;
+> > >                                       if (fake_edid_record->ucFakeEDI=
+DLength) {
+> > > -                                             struct edid *edid;
+> > > -                                             int edid_size =3D
+> > > -                                                     max((int)EDID_L=
+ENGTH, (int)fake_edid_record->ucFakeEDIDLength);
+> > > -                                             edid =3D kmalloc(edid_s=
+ize, GFP_KERNEL);
+> > > -                                             if (edid) {
+> > > -                                                     memcpy((u8 *)ed=
+id, (u8 *)&fake_edid_record->ucFakeEDIDString[0],
+> > > -                                                            fake_edi=
+d_record->ucFakeEDIDLength);
+> > > -
+> > > -                                                     if (drm_edid_is=
+_valid(edid)) {
+> > > -                                                             adev->m=
+ode_info.bios_hardcoded_edid =3D edid;
+> > > -                                                             adev->m=
+ode_info.bios_hardcoded_edid_size =3D edid_size;
+> > > -                                                     } else
+> > > -                                                             kfree(e=
+did);
+> > > -                                             }
+> > > +                                             const struct drm_edid *=
+edid;
+> > > +                                             edid =3D drm_edid_alloc=
+(fake_edid_record->ucFakeEDIDString,
+> > > +                                                                   m=
+ax_t(int, EDID_LENGTH, fake_edid_record->ucFakeEDIDLength));
+> > > +                                             if (drm_edid_valid(edid=
+))
+> > > +                                                     adev->mode_info=
+.bios_hardcoded_edid =3D edid;
+> > > +                                             else
+> > > +                                                     drm_edid_free(e=
+did);
+> >
+> > The old code here seems broken in general.
+> > In drivers/gpu/drm/amd/include/atombios.h the comment for ucFakeEDIDLen=
+gth says:
+> > (I expect the same field in the same struct for amdgpu to have the same=
+ semantics)
+> >
+> >     UCHAR ucFakeEDIDLength;       // =3D 128 means EDID length is 128 b=
+ytes, otherwise the EDID length =3D ucFakeEDIDLength*128
+> >
+> > So as soon as the EDID from the BIOS has extensions, only the first few
+> > bytes will be copied into the allocated memory. drm_edid_is_valid() wil=
+l
+> > then read the uninitialized memory and if the "extensions" field ends u=
+p
+> > non-zero it will happily "validate" past the allocated buffer.
+>
+> I guess the allocation should be changed to something like:
+> if (ucFakeEDIDLength =3D=3D 128)
+>     edid_size =3D ucFakeEDIDLength;
+> else
+>     edid_size =3D ucFakeEDIDLength * 128;
 
-Another hang with a busy polling workload (kernel update hangs on
-grub2-probe):
+The record size handling in atombios_encoders.c would also need to be fixed=
+.
 
-[342431.665417] INFO: task grub2-probe:24484 blocked for more than 622 seconds.
-[342431.665458]       Tainted: G        W      X  -------  ---  5.14.0-438.el9s.x86_64+rt #1
-[342431.665488] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[342431.665515] task:grub2-probe     state:D stack:0     pid:24484 ppid:24455  flags:0x00004002
-[342431.665523] Call Trace:
-[342431.665525]  <TASK>
-[342431.665527]  __schedule+0x22a/0x580
-[342431.665537]  schedule+0x30/0x80
-[342431.665539]  schedule_timeout+0x153/0x190
-[342431.665543]  ? preempt_schedule_thunk+0x16/0x30
-[342431.665548]  ? preempt_count_add+0x70/0xa0
-[342431.665554]  __wait_for_common+0x8b/0x1c0
-[342431.665557]  ? __pfx_schedule_timeout+0x10/0x10
-[342431.665560]  __flush_work.isra.0+0x15b/0x220
-[342431.665565]  ? __pfx_wq_barrier_func+0x10/0x10
-[342431.665570]  __lru_add_drain_all+0x17d/0x220
-[342431.665576]  invalidate_bdev+0x28/0x40
-[342431.665583]  blkdev_common_ioctl+0x714/0xa30
-[342431.665588]  ? bucket_table_alloc.isra.0+0x1/0x150
-[342431.665593]  ? cp_new_stat+0xbb/0x180
-[342431.665599]  blkdev_ioctl+0x112/0x270
-[342431.665603]  ? security_file_ioctl+0x2f/0x50
-[342431.665609]  __x64_sys_ioctl+0x87/0xc0
-[342431.665614]  do_syscall_64+0x5c/0xf0
-[342431.665619]  ? __ct_user_enter+0x89/0x130
-[342431.665623]  ? syscall_exit_to_user_mode+0x22/0x40
-[342431.665625]  ? do_syscall_64+0x6b/0xf0
-[342431.665627]  ? __ct_user_enter+0x89/0x130
-[342431.665629]  entry_SYSCALL_64_after_hwframe+0x6e/0x76
-[342431.665635] RIP: 0033:0x7f39856c757b
-[342431.665666] RSP: 002b:00007ffd9541c488 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-[342431.665670] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f39856c757b
-[342431.665673] RDX: 0000000000000000 RSI: 0000000000001261 RDI: 0000000000000005
-[342431.665674] RBP: 00007ffd9541c540 R08: 0000000000000003 R09: 006164732f766564
-[342431.665676] R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffd9543ca68
-[342431.665678] R13: 000055ea758a0708 R14: 000055ea759de338 R15: 00007f398586f000
+Alex
 
+>
+> That said, I don't know how many systems actually used this.  IIRC
+> this was only used in GPUs from 15-20 years ago.  No objections to the
+> patch in general.
+>
+> Alex
+>
+>
+> >
+> > The new code won't work either but at least it won't read uninitialized
+> > memory nor will it read past the buffer bounds.
+> >
+> > >                                       }
+> > >                                       record +=3D fake_edid_record->u=
+cFakeEDIDLength ?
+> > >                                                 struct_size(fake_edid=
+_record,
+> >
+> > <snip>
 
