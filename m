@@ -1,155 +1,313 @@
-Return-Path: <linux-kernel+bounces-259616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF7EF939995
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:16:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7071F939997
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:16:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D2E2B21B0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 06:16:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F13441F219D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 06:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246A313C813;
-	Tue, 23 Jul 2024 06:15:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E3ABE6C
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 06:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B147213D60A;
+	Tue, 23 Jul 2024 06:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EKuHhxvX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9ADA134B6
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 06:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721715358; cv=none; b=O16KDSMgG/rv4h/YUNTruvgh1eRx4+cufyohCA7oY7oD+d6jM3DcOEBCkFH55j3kap5UV01VO4XuZpb02z9mfwMOyZXZNT4KEVe+svYprgDHGtDaMEkth03eWxP772qERnH4uN/4AI+RfQiP+98lSLMkjeWzvvBgEvnkVV/gt04=
+	t=1721715406; cv=none; b=cEv3k9hBBEKtgMjeP/1LFHh8MP2xnUj2ecMoxrf/06JeARCaGvFDMYNpvm9j+0Qq7i0YF+qkoMKHYP3Gl2YNeIDYzYhZMT5pnnmKP9SN0ia962cLFm7jA4I6fXHYQN+cSYWVbEnPVTWiAK3XhI9LGVBee2MZPm8ae0GHfDSj88g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721715358; c=relaxed/simple;
-	bh=gAnFwDO9A9GzUbYVLZQgZF63joEkrNCbX7S+PwLJcig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oXJW78JXD3N9Kj+OMsMFMOXHbDF9yKtjaow3C28Yuq14TvoZatr0HBeozeWYGpbJCjpEc1JQBjrQFxdEb76D7uxdeDv9Vdyum1BBgE0tOOISRwC4j5EFxGfwQmkcYxt92PHIxt5Me95x5ok55yLK9yerQ0QWZfxcwI6eRrzWNzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5B872139F;
-	Mon, 22 Jul 2024 23:16:20 -0700 (PDT)
-Received: from [10.163.54.37] (unknown [10.163.54.37])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 619103F73F;
-	Mon, 22 Jul 2024 23:15:50 -0700 (PDT)
-Message-ID: <ea121294-eeaf-42b1-bc1c-186f4ea7be1d@arm.com>
-Date: Tue, 23 Jul 2024 11:45:46 +0530
+	s=arc-20240116; t=1721715406; c=relaxed/simple;
+	bh=TDAPJYlNNXL6/u9T+2aBYeR493uq1ZnAkIJCKgTpw+0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d8tpAGEGYPeF+SfaUB7qbgTbqcfd8ghd183QiuPeCo1EwwRFVA0uslnp5gzvXP5+JUVg0Hhi64qOQvsuXz5DZFLbbvb+lpCV4pgU/+7ILip2IExpiFIdEcn/v18PzjqQi7ZJmGNK7xkABWal0m5GDADFAK4OC/B9OFci0sDxePo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EKuHhxvX; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721715403;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GwretsHfxBM6reyjeplcxYx1DO8MB9d91mww/CN7l0Q=;
+	b=EKuHhxvXm7qwEWVJAUfd/bYWPJk0Xhxwus2VagFynm9rk2q34ICV4nqj3Afjer6zCOUQY2
+	mKrnCb1JpOTgYOtWJU6zZCY6kNR7SuMbX7H11vGk4/UXCPtJ/isfzQPGSbS8+squcnYLQd
+	tZAixCwix+NhypiiSw9tch4TVhJh2Pk=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-126-7L28WixZMaWBJI0dLuE4lA-1; Tue, 23 Jul 2024 02:16:42 -0400
+X-MC-Unique: 7L28WixZMaWBJI0dLuE4lA-1
+Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2ef3133ca88so14578311fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 23:16:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721715401; x=1722320201;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GwretsHfxBM6reyjeplcxYx1DO8MB9d91mww/CN7l0Q=;
+        b=SVUm3roUTFWHTUfjRNNvlBw0h75RX67d8IbJ0t7D77ca0TOFiPb2qJUETk8LwymYYT
+         cn7gdEi3xfF9QJhuub7ZSXYAtH76W5aKaBMxcLnQBG2wz4rNnHE86YinUied2T1TE8lS
+         jFCaUixID5jTw8hVopAbgR6XhtEz0atN5e3kANLApYC+Hqij7WTLIH9g/XumLEZRlnmq
+         w+rg5fyyD9905bpryOk5uYcaFdNpy04IP+r//n8dRE8pckmLBARRW3QtqYKK7dIfN9Tg
+         BmY93rQWnFO/QV6LYW4TPapnN6XcGl8S3SO6lna5yBXQlZSufTyxMzArASzT6FUGDLTh
+         1P7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXgIPgxcVEP8NAtWgYKnWsNm2PGNElL562bgvECltcSE0vjAqLGnKthOIMSy0dPHmHC0zmFI6CUsTOJAhZd2b13YpcLbpHLtlM8qkU8
+X-Gm-Message-State: AOJu0YxT3iYkDfV5WTC7gApiDnxZkuF1/spmOCnfRBkpbUemWxbPR3m3
+	p5VISfHJKAoDGzZmOfWhaBFqKRZoHcu+vuV99UdD6cpkLLO2AkLi0LjDiR2E2vR7fgi4k56VjWc
+	6wC2+18YX4IZ54NN2kwBGbWVWIisYwUOWbglW3Q+vfeyi43rgR3iiyn4ehKFQjuOo9oyUaOglP5
+	E1dBf56LzF87l5WQYEi3BywuUMqvHLMnxNiJX4
+X-Received: by 2002:a2e:95d6:0:b0:2ef:2608:2e47 with SMTP id 38308e7fff4ca-2ef26083b39mr46317561fa.13.1721715400674;
+        Mon, 22 Jul 2024 23:16:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHJf8UnmN3gB5DzdyjimO+vJJWP2Kg+yamwjyd++AXmIBiMCv8D5gFUtR7EDiNX3USoHnyIQWDJkbBJPW/Rm2g=
+X-Received: by 2002:a2e:95d6:0:b0:2ef:2608:2e47 with SMTP id
+ 38308e7fff4ca-2ef26083b39mr46317411fa.13.1721715400244; Mon, 22 Jul 2024
+ 23:16:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mm/numa_balancing: Fix the memory thrashing problem in
- the single-threaded process
-To: Zhongkun He <hezhongkun.hzk@bytedance.com>, peterz@infradead.org,
- mgorman@suse.de, ying.huang@intel.com
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, wuyun.abel@bytedance.com
-References: <20240723053250.3263125-1-hezhongkun.hzk@bytedance.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20240723053250.3263125-1-hezhongkun.hzk@bytedance.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240723054047.1059994-1-lulu@redhat.com> <20240723054047.1059994-2-lulu@redhat.com>
+ <CACGkMEuoYAkAxhZrZfyWpMV__eimDvNCWYogidC6qMpOVBh0aw@mail.gmail.com>
+In-Reply-To: <CACGkMEuoYAkAxhZrZfyWpMV__eimDvNCWYogidC6qMpOVBh0aw@mail.gmail.com>
+From: Cindy Lu <lulu@redhat.com>
+Date: Tue, 23 Jul 2024 14:16:02 +0800
+Message-ID: <CACLfguVAVsbRODBOXS9zX=tc-3xyCTYVas2XXLR+rpSLiPNC-g@mail.gmail.com>
+Subject: Re: [PATH v5 1/3] vdpa: support set mac address from vdpa tool
+To: Jason Wang <jasowang@redhat.com>
+Cc: dtatulea@nvidia.com, mst@redhat.com, parav@nvidia.com, sgarzare@redhat.com, 
+	netdev@vger.kernel.org, virtualization@lists.linux-foundation.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, 23 Jul 2024 at 14:01, Jason Wang <jasowang@redhat.com> wrote:
+>
+> On Tue, Jul 23, 2024 at 1:41=E2=80=AFPM Cindy Lu <lulu@redhat.com> wrote:
+> >
+> > Add new UAPI to support the mac address from vdpa tool
+> > Function vdpa_nl_cmd_dev_attr_set_doit() will get the
+> > new MAC address from the vdpa tool and then set it to the device.
+> >
+> > The usage is: vdpa dev set name vdpa_name mac **:**:**:**:**:**
+> >
+> > Here is example:
+> > root@L1# vdpa -jp dev config show vdpa0
+> > {
+> >     "config": {
+> >         "vdpa0": {
+> >             "mac": "82:4d:e9:5d:d7:e6",
+> >             "link ": "up",
+> >             "link_announce ": false,
+> >             "mtu": 1500
+> >         }
+> >     }
+> > }
+> >
+> > root@L1# vdpa dev set name vdpa0 mac 00:11:22:33:44:55
+> >
+> > root@L1# vdpa -jp dev config show vdpa0
+> > {
+> >     "config": {
+> >         "vdpa0": {
+> >             "mac": "00:11:22:33:44:55",
+> >             "link ": "up",
+> >             "link_announce ": false,
+> >             "mtu": 1500
+> >         }
+> >     }
+> > }
+> >
+> > Signed-off-by: Cindy Lu <lulu@redhat.com>
+> > ---
+> >  drivers/vdpa/vdpa.c       | 84 +++++++++++++++++++++++++++++++++++++++
+> >  include/linux/vdpa.h      |  9 +++++
+> >  include/uapi/linux/vdpa.h |  1 +
+> >  3 files changed, 94 insertions(+)
+> >
+> > diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
+> > index 8d391947eb8d..07d61ee62839 100644
+> > --- a/drivers/vdpa/vdpa.c
+> > +++ b/drivers/vdpa/vdpa.c
+> > @@ -1361,6 +1361,85 @@ static int vdpa_nl_cmd_dev_config_get_doit(struc=
+t sk_buff *skb, struct genl_info
+> >         return err;
+> >  }
+> >
+> > +static int vdpa_dev_net_device_attr_set(struct vdpa_device *vdev,
+> > +                                       struct genl_info *info)
+> > +{
+> > +       struct vdpa_dev_set_config set_config =3D {};
+> > +       const u8 *macaddr;
+> > +       struct vdpa_mgmt_dev *mdev =3D vdev->mdev;
+> > +       struct nlattr **nl_attrs =3D info->attrs;
+> > +       int err =3D -EINVAL;
+> > +
+> > +       if (!vdev->mdev)
+> > +               return -EINVAL;
+>
+> It looks like the caller has already done this check?
+>
+sure, will remove this
+> > +
+> > +       down_write(&vdev->cf_lock);
+> > +       if ((mdev->supported_features & BIT_ULL(VIRTIO_NET_F_MAC)) &&
+>
+> This is not a virtio feature, so I don't get why we need to check
+> VIRTIO_NET_F_MAC.
+>
+will remove this
+> > +           nl_attrs[VDPA_ATTR_DEV_NET_CFG_MACADDR]) {
+> > +               set_config.mask |=3D BIT_ULL(VDPA_ATTR_DEV_NET_CFG_MACA=
+DDR);
+> > +               macaddr =3D nla_data(nl_attrs[VDPA_ATTR_DEV_NET_CFG_MAC=
+ADDR]);
+> > +
+> > +               if (is_valid_ether_addr(macaddr)) {
+> > +                       memcpy(set_config.net.mac, macaddr, ETH_ALEN);
+> > +                       if (mdev->ops->dev_set_attr) {
+> > +                               err =3D mdev->ops->dev_set_attr(mdev, v=
+dev,
+> > +                                                             &set_conf=
+ig);
+> > +                       } else {
+> > +                               NL_SET_ERR_MSG_FMT_MOD(info->extack,
+> > +                                                      "device not supp=
+orted");
+>
+> "Device does not support setting mac address" ?
+>
+sure, will change this
+Thanks
+cindy
+> > +                       }
+> > +               } else {
+> > +                       NL_SET_ERR_MSG_FMT_MOD(info->extack,
+> > +                                              "Invalid MAC address");
+> > +               }
+> > +       }
+> > +       up_write(&vdev->cf_lock);
+> > +       return err;
+> > +}
+> > +static int vdpa_nl_cmd_dev_attr_set_doit(struct sk_buff *skb,
+> > +                                        struct genl_info *info)
+> > +{
+> > +       const char *name;
+> > +       int err =3D 0;
+> > +       struct device *dev;
+> > +       struct vdpa_device *vdev;
+> > +       u64 classes;
+> > +
+> > +       if (!info->attrs[VDPA_ATTR_DEV_NAME])
+> > +               return -EINVAL;
+> > +
+> > +       name =3D nla_data(info->attrs[VDPA_ATTR_DEV_NAME]);
+> > +
+> > +       down_write(&vdpa_dev_lock);
+> > +       dev =3D bus_find_device(&vdpa_bus, NULL, name, vdpa_name_match)=
+;
+> > +       if (!dev) {
+> > +               NL_SET_ERR_MSG_MOD(info->extack, "device not found");
+> > +               err =3D -ENODEV;
+> > +               goto dev_err;
+> > +       }
+> > +       vdev =3D container_of(dev, struct vdpa_device, dev);
+> > +       if (!vdev->mdev) {
+> > +               NL_SET_ERR_MSG_MOD(
+> > +                       info->extack,
+> > +                       "Fail to find the specified management device")=
+;
+> > +               err =3D -EINVAL;
+> > +               goto mdev_err;
+> > +       }
+> > +       classes =3D vdpa_mgmtdev_get_classes(vdev->mdev, NULL);
+> > +       if (classes & BIT_ULL(VIRTIO_ID_NET)) {
+> > +               err =3D vdpa_dev_net_device_attr_set(vdev, info);
+> > +       } else {
+> > +               NL_SET_ERR_MSG_FMT_MOD(info->extack, "%s device not sup=
+ported",
+> > +                                      name);
+> > +       }
+> > +
+> > +mdev_err:
+> > +       put_device(dev);
+> > +dev_err:
+> > +       up_write(&vdpa_dev_lock);
+> > +       return err;
+> > +}
+> > +
+> >  static int vdpa_dev_config_dump(struct device *dev, void *data)
+> >  {
+> >         struct vdpa_device *vdev =3D container_of(dev, struct vdpa_devi=
+ce, dev);
+> > @@ -1497,6 +1576,11 @@ static const struct genl_ops vdpa_nl_ops[] =3D {
+> >                 .doit =3D vdpa_nl_cmd_dev_stats_get_doit,
+> >                 .flags =3D GENL_ADMIN_PERM,
+> >         },
+> > +       {
+> > +               .cmd =3D VDPA_CMD_DEV_ATTR_SET,
+> > +               .doit =3D vdpa_nl_cmd_dev_attr_set_doit,
+> > +               .flags =3D GENL_ADMIN_PERM,
+> > +       },
+> >  };
+> >
+> >  static struct genl_family vdpa_nl_family __ro_after_init =3D {
+> > diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
+> > index 7977ca03ac7a..3511156c10db 100644
+> > --- a/include/linux/vdpa.h
+> > +++ b/include/linux/vdpa.h
+> > @@ -582,11 +582,20 @@ void vdpa_set_status(struct vdpa_device *vdev, u8=
+ status);
+> >   *          @dev: vdpa device to remove
+> >   *          Driver need to remove the specified device by calling
+> >   *          _vdpa_unregister_device().
+> > +  * @dev_set_attr: change a vdpa device's attr after it was create
+> > + *          @mdev: parent device to use for device
+> > + *          @dev: vdpa device structure
+> > + *          @config:Attributes to be set for the device.
+> > + *          The driver needs to check the mask of the structure and th=
+en set
+> > + *          the related information to the vdpa device. The driver mus=
+t return 0
+> > + *          if set successfully.
+> >   */
+> >  struct vdpa_mgmtdev_ops {
+> >         int (*dev_add)(struct vdpa_mgmt_dev *mdev, const char *name,
+> >                        const struct vdpa_dev_set_config *config);
+> >         void (*dev_del)(struct vdpa_mgmt_dev *mdev, struct vdpa_device =
+*dev);
+> > +       int (*dev_set_attr)(struct vdpa_mgmt_dev *mdev, struct vdpa_dev=
+ice *dev,
+> > +                           const struct vdpa_dev_set_config *config);
+> >  };
+> >
+> >  /**
+> > diff --git a/include/uapi/linux/vdpa.h b/include/uapi/linux/vdpa.h
+> > index 842bf1201ac4..71edf2c70cc3 100644
+> > --- a/include/uapi/linux/vdpa.h
+> > +++ b/include/uapi/linux/vdpa.h
+> > @@ -19,6 +19,7 @@ enum vdpa_command {
+> >         VDPA_CMD_DEV_GET,               /* can dump */
+> >         VDPA_CMD_DEV_CONFIG_GET,        /* can dump */
+> >         VDPA_CMD_DEV_VSTATS_GET,
+> > +       VDPA_CMD_DEV_ATTR_SET,
+> >  };
+> >
+> >  enum vdpa_attr {
+> > --
+> > 2.45.0
+> >
+>
+> Thanks
+>
 
-
-On 7/23/24 11:02, Zhongkun He wrote:
-> I found a problem in my test machine that the memory of a process is
-> repeatedly migrated between two nodes and does not stop.
-> 
-> 1.Test step and the machines.
-> ------------
-> VM machine: 4 numa nodes and 10GB per node.
-> 
-> stress --vm 1 --vm-bytes 12g --vm-keep
-> 
-> The info of numa stat:
-> while :;do cat memory.numa_stat | grep -w anon;sleep 5;done
-> anon N0=98304 N1=0 N2=10250747904 N3=2634334208
-> anon N0=98304 N1=0 N2=10250747904 N3=2634334208
-> anon N0=98304 N1=0 N2=9937256448 N3=2947825664
-> anon N0=98304 N1=0 N2=8863514624 N3=4021567488
-> anon N0=98304 N1=0 N2=7789772800 N3=5095309312
-> anon N0=98304 N1=0 N2=6716030976 N3=6169051136
-> anon N0=98304 N1=0 N2=5642289152 N3=7242792960
-> anon N0=98304 N1=0 N2=5105442816 N3=7779639296
-> anon N0=98304 N1=0 N2=5105442816 N3=7779639296
-> anon N0=98304 N1=0 N2=4837007360 N3=8048074752
-> anon N0=98304 N1=0 N2=3763265536 N3=9121816576
-> anon N0=98304 N1=0 N2=2689523712 N3=10195558400
-> anon N0=98304 N1=0 N2=2515148800 N3=10369933312
-> anon N0=98304 N1=0 N2=2515148800 N3=10369933312
-> anon N0=98304 N1=0 N2=2515148800 N3=10369933312
-> anon N0=98304 N1=0 N2=3320455168 N3=9564626944
-> anon N0=98304 N1=0 N2=4394196992 N3=8490885120
-> anon N0=98304 N1=0 N2=5105442816 N3=7779639296
-> anon N0=98304 N1=0 N2=6174195712 N3=6710886400
-> anon N0=98304 N1=0 N2=7247937536 N3=5637144576
-> anon N0=98304 N1=0 N2=8321679360 N3=4563402752
-> anon N0=98304 N1=0 N2=9395421184 N3=3489660928
-> anon N0=98304 N1=0 N2=10247872512 N3=2637209600
-> anon N0=98304 N1=0 N2=10247872512 N3=2637209600
-> 
-> 2. Root cause:
-> Since commit 3e32158767b0 ("mm/mprotect.c: don't touch single threaded
-> PTEs which are on the right node")the PTE of local pages will not be
-> changed in change_pte_range() for single-threaded process, so no
-> page_faults information will be generated in do_numa_page(). If a
-> single-threaded process has memory on another node, it will
-> unconditionally migrate all of it's local memory to that node,
-> even if the remote node has only one page.
-> 
-> So, let's fix it. The memory of single-threaded process should follow
-> the cpu, not the numa faults info in order to avoid memory thrashing.
-> 
-> After a long time of testing, there is no memory thrashing
-> from the beginning.
-> 
-> while :;do cat memory.numa_stat | grep -w anon;sleep 5;done
-> anon N0=2548117504 N1=10336903168 N2=139264 N3=0
-> anon N0=2548117504 N1=10336903168 N2=139264 N3=0
-> anon N0=2548117504 N1=10336903168 N2=139264 N3=0
-> anon N0=2548117504 N1=10336903168 N2=139264 N3=0
-> anon N0=2548117504 N1=10336903168 N2=139264 N3=0
-> anon N0=2548117504 N1=10336903168 N2=139264 N3=0
-> anon N0=2548117504 N1=10336903168 N2=139264 N3=0
-> anon N0=2548117504 N1=10336903168 N2=139264 N3=0
-> anon N0=2548117504 N1=10336903168 N2=139264 N3=0
-> anon N0=2548117504 N1=10336903168 N2=139264 N3=0
-> anon N0=2548117504 N1=10336903168 N2=139264 N3=0
-> anon N0=2548117504 N1=10336903168 N2=139264 N3=0
-> anon N0=2548117504 N1=10336903168 N2=139264 N3=0
-> anon N0=2548117504 N1=10336903168 N2=139264 N3=0
-> 
-> V1:
-> -- Add the test results (numa stats) from Ying's feedback
-> 
-> Signed-off-by: Zhongkun He <hezhongkun.hzk@bytedance.com>
-> Acked-by: "Huang, Ying" <ying.huang@intel.com>
-> ---
->  kernel/sched/fair.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 24dda708b699..d7cbbda568fb 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -2898,6 +2898,12 @@ static void task_numa_placement(struct task_struct *p)
->  		numa_group_count_active_nodes(ng);
->  		spin_unlock_irq(group_lock);
->  		max_nid = preferred_group_nid(p, max_nid);
-> +	} else if (atomic_read(&p->mm->mm_users) == 1) {
-> +		/*
-> +		 * The memory of a single-threaded process should
-> +		 * follow the CPU in order to avoid memory thrashing.
-> +		 */
-> +		max_nid = numa_node_id();
->  	}
->  
->  	if (max_faults) {
-
-This in fact makes sense for a single threaded process but just
-wondering could there be any other unwanted side effects ?
 
