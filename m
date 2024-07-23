@@ -1,143 +1,277 @@
-Return-Path: <linux-kernel+bounces-260096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 675CE93A2F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:41:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9443E93A307
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C23F1C20F31
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:41:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B73621C22787
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E91155749;
-	Tue, 23 Jul 2024 14:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB03B156242;
+	Tue, 23 Jul 2024 14:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UUlZ607y"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AWIqpL9c"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39735155325
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27535155C82
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721745701; cv=none; b=t/mTyXdYz/MGs7H2Nvs88C/iStJ2vJ4/0k+mxzH1xoleYNW/SUz4qrJFU+bPY9mwNYxz60SSoJfKNSwInsLB4cJNSadg6a4tB9e/7WdrfLODE1mqSBhI8uj8VMswm+1sUcf8sdo3pYOIFBovpEsZIG/j9jHdZl+8EU5JYNFcHSo=
+	t=1721745735; cv=none; b=qfmKAXRGPRZ35gc6X/YCY+Nntz+g3cnrePcQnEmd+xxkXEhmEf7fre+5uBUSnSASDHtOGh4X7ymVCXZEePUzmmzh0u8f//uX6skPuy9pVbFY8GWNYOohQEWLyKcl5xAhHaRoyqP06eP9VAVlbuuJagRnlR2FZpIqHa+BaiXkvC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721745701; c=relaxed/simple;
-	bh=NbEaiDQst4g8UDjxWI6M6LdJiePjTUEZujWHMsKuSZM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=nd+LtB/WXxWDqF//wcZnQuiW2jISP2vudX37zfri78XbSv2sfSEPdgRzkpbsXx+Z8Ge/0nI/JEloPvZCf/qPJ0A66kJWBMCaAu/rSk6EVBXW+eZcFPZzf/Ery9msQ28dtwHIQ59lUOBmqU6RF5jUXDyZZdVJSDq5enDWptkQsxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UUlZ607y; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-368526b1333so2390013f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:41:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721745697; x=1722350497; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=nIOexr2HK5dM1ecCil6EL5sbgVo35QTVfvVcIKxiQ/M=;
-        b=UUlZ607yV65uI8Gr6d01gvsaP+fqUHUjq7laCrSaeh+V4lggYCCEX5tLBvdqUeHNZd
-         q0JKbXiYtd4lg+DiYWSs/VxnOaoS8+OyNzVeJpkw/s6OMGVy6ksTNDgOfwHlIdIFfR8N
-         fA+O/pzfsrNmXZa+58q4rdZwNnkUt+qgjleAzQkVHj64qZ2iMi0TCSFaoYkb0GuMye/2
-         F2CDfIB2dl5rpIBIHiZ4NVgnK/zM76lkgmL+Z1e5CrDzBaErhu7T7xaSuPXGjS+K7+q1
-         unDMb0OGW74XXdAJaxKlY9CN5tleMhYXxjO6/3qGcMmu7/EV2EvZApq8VIgmRx9B5tcF
-         n0YA==
+	s=arc-20240116; t=1721745735; c=relaxed/simple;
+	bh=CHALTMCrX1vY5jlI9iPcWZs2oNv9LvUYT1e9X1sN7+0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dBfibGICaZuyA0TFT8ZK5s0UAC509RBsbCOvupXMfTqrexGMUfae4xOwHVXlXCopyWKCKwImdBa0HxuhlV2aY5LnEeTNYAJHg3Y/XwG2mNbpAgRsaYtDaWQRDMcgmRJd6EuOwKB0soG8x2yG0Fs34DZMFYRVaXfeMZgurSTWGNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AWIqpL9c; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721745733;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mbUg7e/tJ5pOz4Dg3u16mJqy+HPalD6htYuhg6ITzCM=;
+	b=AWIqpL9cXXnj996WN+Y6P8W5L9e3LIjB/rAbtAZEUOKekP/6Y/6pMBfDKcYrS6MlX8PtLQ
+	Rh1m/E6N/bNX09OOdXtdhv7kmx5KroJEimCosGMA4vu/CSMgFHHI273Uz0jjVlHDLazRUX
+	THxKKymtLYWL0Z9jn+163A16lxtr3Tk=
+Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com
+ [209.85.221.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-695-IzrtwM3SOPqcroTSEs2Lxg-1; Tue, 23 Jul 2024 10:42:09 -0400
+X-MC-Unique: IzrtwM3SOPqcroTSEs2Lxg-1
+Received: by mail-vk1-f198.google.com with SMTP id 71dfb90a1353d-4f519ea76e5so889879e0c.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:42:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721745697; x=1722350497;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nIOexr2HK5dM1ecCil6EL5sbgVo35QTVfvVcIKxiQ/M=;
-        b=OBx+BVgGpGkoxqMXyHKH37PLFq6/HZOJBFfX28iylkOK87L8mIOKVHlHlDpWz3YLo0
-         RN2fMY5K2v4Ny0Jt2Ff0x3TmO05XT+APvL5JlsfOqsW9WFqq4Lh8rHHr1IVNLGwM2YyR
-         cVJ1ULWZxhwLkrb4Y6hRDLBzz3EcBo1YEyLMDdygZ2wTPsqy14gDd4A9JZHwH+h5jSVT
-         jOUobaX9CP53w5aAuWbBS/cDCz3TXNsu7CjxpTdFJ6AsCEJMiM0nEIJyu9RtR4p3B2Mb
-         zgXN1U+nGV9L3D8uMtiCuIjgpD4TLO2o6td0wNVtiDWC5Po7gpCQB/R5iPVddbVvI9v0
-         TURA==
-X-Forwarded-Encrypted: i=1; AJvYcCXD5pqVZRirV2sBYCAyKomXE+gyMUlie2Mz2puJwL1grE23wjTDkK8XeG0LrdAb+f7smN6lQxdxu+orXpW9Q60on3tfp5L0/ej++BLy
-X-Gm-Message-State: AOJu0YwufNOLAUg7Z7PlVor9ZKttglwK+wHcK8CiZxaDh1OvtP31uX2i
-	G2CFSuLzro3pA/nDy8CcYpT0+rHZajmj/0R4FrtsMDeSowW2qE+n9vRPLhcCqJY=
-X-Google-Smtp-Source: AGHT+IFPo5g+XdIEqYzhL4PIJUoZJy8jgWDPHXQqC/+9lVWbvrAPNGr37qJ8eSbuaPLMzMxmKNtB/A==
-X-Received: by 2002:a05:6000:4021:b0:367:8f89:f7c9 with SMTP id ffacd0b85a97d-369e3f2f62bmr1803268f8f.33.1721745697448;
-        Tue, 23 Jul 2024 07:41:37 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-368787ebd50sm11670456f8f.93.2024.07.23.07.41.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 07:41:37 -0700 (PDT)
-Message-ID: <8c8da262-a398-41cc-9721-4e72e6b7e5fd@linaro.org>
-Date: Tue, 23 Jul 2024 15:41:35 +0100
+        d=1e100.net; s=20230601; t=1721745729; x=1722350529;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mbUg7e/tJ5pOz4Dg3u16mJqy+HPalD6htYuhg6ITzCM=;
+        b=iG8CXBco2sF00MF3tUYy7TeJAfx779N5aV0ZyiAslJUBMxNiH05+g/MleS8ZkRRRM/
+         A6o6PH5ZR661GX76YjLYtfVZyiY02CmNkLo1E14W70o5DuWZBg/1VpV1fWjDl68ai8km
+         /Gx48HhQbGnpPOna1ufVApo3gS7mkwnIdW1Vz3YGRrkxgftx/HeQO8DRxDW3gl713yk9
+         fIT+GS8669K0gbMexm64TrAes+vbY8tUI9CSZwJG4rUjsWwz8peBOchKYjPfggXPnQzA
+         5NT7Dp7g9sKiiOTBuCd5tQdFTItqITTQbJoR0ECOP7B4a3OEeKV/01s1z/hBpmGsGMRD
+         D1Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCXYX/1NC1fwdaVLnAMes1HkvTTt8nMOAXgypBqwRyNQ7BBgqjvwf/ZXKz188k0jvciInU1yZtADBTIrEinVMa9KHkOHSEwPg5wKfhjk
+X-Gm-Message-State: AOJu0Yyj9x93VHQoW5LFDjWfL4lJ/jUQZnP1EuEim9WadrNaswaRl+2I
+	VhijCMEg4tddejAChYtQiUGfmyBmiwht54JzdJUujVvMPV0XISd5RIlaHMKiCxD2UXSgDAfTJ0h
+	omw/mItyU6CQTsH9jxNS3K7U2eEY4dF0zz6aAV0YBuqyvWIvMXFWMuA4Zf5V+Yw==
+X-Received: by 2002:a05:6122:411b:b0:4f5:254e:e111 with SMTP id 71dfb90a1353d-4f5254ee847mr7882995e0c.7.1721745729277;
+        Tue, 23 Jul 2024 07:42:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGBLlNaASMpCBTCeROjh0z7+DMfFqI5ijim7b74MbzA0Jd6atMGmiEs2Wq/F8Wn5UYNq4Bt9g==
+X-Received: by 2002:a05:6122:411b:b0:4f5:254e:e111 with SMTP id 71dfb90a1353d-4f5254ee847mr7882948e0c.7.1721745728733;
+        Tue, 23 Jul 2024 07:42:08 -0700 (PDT)
+Received: from sgarzare-redhat (host-82-57-51-79.retail.telecomitalia.it. [82.57.51.79])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f9cd505d9sm45142171cf.58.2024.07.23.07.42.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 07:42:08 -0700 (PDT)
+Date: Tue, 23 Jul 2024 16:42:00 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Amery Hung <ameryhung@gmail.com>
+Cc: stefanha@redhat.com, mst@redhat.com, jasowang@redhat.com, 
+	xuanzhuo@linux.alibaba.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org, 
+	decui@microsoft.com, bryantan@vmware.com, vdasa@vmware.com, pv-drivers@vmware.com, 
+	dan.carpenter@linaro.org, simon.horman@corigine.com, oxffffaa@gmail.com, 
+	kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+	bpf@vger.kernel.org, bobby.eshleman@bytedance.com, jiang.wang@bytedance.com, 
+	amery.hung@bytedance.com, xiyou.wangcong@gmail.com
+Subject: Re: [RFC PATCH net-next v6 07/14] virtio/vsock: add common datagram
+ send path
+Message-ID: <bpb36dtlbs6osr5cudvwrbagt7bls3cllg35lsusrly5pxwe7o@kjphrbuc64ix>
+References: <20240710212555.1617795-1-amery.hung@bytedance.com>
+ <20240710212555.1617795-8-amery.hung@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] perf script: Fix for `perf script +F metric` with
- leader sampling
-To: Ian Rogers <irogers@google.com>, Andi Kleen <ak@linux.intel.com>
-References: <20240720074552.1915993-1-irogers@google.com>
- <20240720074552.1915993-2-irogers@google.com>
-Content-Language: en-US
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20240720074552.1915993-2-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20240710212555.1617795-8-amery.hung@bytedance.com>
+
+On Wed, Jul 10, 2024 at 09:25:48PM GMT, Amery Hung wrote:
+>From: Bobby Eshleman <bobby.eshleman@bytedance.com>
+>
+>This commit implements the common function
+>virtio_transport_dgram_enqueue for enqueueing datagrams. It does not add
+>usage in either vhost or virtio yet.
+>
+>Signed-off-by: Bobby Eshleman <bobby.eshleman@bytedance.com>
+>Signed-off-by: Amery Hung <amery.hung@bytedance.com>
+>---
+> include/linux/virtio_vsock.h            |  1 +
+> include/net/af_vsock.h                  |  2 +
+> net/vmw_vsock/af_vsock.c                |  2 +-
+> net/vmw_vsock/virtio_transport_common.c | 87 ++++++++++++++++++++++++-
+> 4 files changed, 90 insertions(+), 2 deletions(-)
+>
+>diff --git a/include/linux/virtio_vsock.h b/include/linux/virtio_vsock.h
+>index f749a066af46..4408749febd2 100644
+>--- a/include/linux/virtio_vsock.h
+>+++ b/include/linux/virtio_vsock.h
+>@@ -152,6 +152,7 @@ struct virtio_vsock_pkt_info {
+> 	u16 op;
+> 	u32 flags;
+> 	bool reply;
+>+	u8 remote_flags;
+> };
+>
+> struct virtio_transport {
+>diff --git a/include/net/af_vsock.h b/include/net/af_vsock.h
+>index 44db8f2c507d..6e97d344ac75 100644
+>--- a/include/net/af_vsock.h
+>+++ b/include/net/af_vsock.h
+>@@ -216,6 +216,8 @@ void vsock_for_each_connected_socket(struct vsock_transport *transport,
+> 				     void (*fn)(struct sock *sk));
+> int vsock_assign_transport(struct vsock_sock *vsk, struct vsock_sock *psk);
+> bool vsock_find_cid(unsigned int cid);
+>+const struct vsock_transport *vsock_dgram_lookup_transport(unsigned int cid,
+>+							   __u8 flags);
+
+Why __u8 and not just u8?
 
 
+>
+> struct vsock_skb_cb {
+> 	unsigned int src_cid;
+>diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+>index ab08cd81720e..f83b655fdbe9 100644
+>--- a/net/vmw_vsock/af_vsock.c
+>+++ b/net/vmw_vsock/af_vsock.c
+>@@ -487,7 +487,7 @@ vsock_connectible_lookup_transport(unsigned int cid, __u8 flags)
+> 	return transport;
+> }
+>
+>-static const struct vsock_transport *
+>+const struct vsock_transport *
+> vsock_dgram_lookup_transport(unsigned int cid, __u8 flags)
+> {
+> 	const struct vsock_transport *transport;
+>diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
+>index a1c76836d798..46cd1807f8e3 100644
+>--- a/net/vmw_vsock/virtio_transport_common.c
+>+++ b/net/vmw_vsock/virtio_transport_common.c
+>@@ -1040,13 +1040,98 @@ int virtio_transport_shutdown(struct vsock_sock *vsk, int mode)
+> }
+> EXPORT_SYMBOL_GPL(virtio_transport_shutdown);
+>
+>+static int virtio_transport_dgram_send_pkt_info(struct vsock_sock *vsk,
+>+						struct virtio_vsock_pkt_info *info)
+>+{
+>+	u32 src_cid, src_port, dst_cid, dst_port;
+>+	const struct vsock_transport *transport;
+>+	const struct virtio_transport *t_ops;
+>+	struct sock *sk = sk_vsock(vsk);
+>+	struct virtio_vsock_hdr *hdr;
+>+	struct sk_buff *skb;
+>+	void *payload;
+>+	int noblock = 0;
+>+	int err;
+>+
+>+	info->type = virtio_transport_get_type(sk_vsock(vsk));
+>+
+>+	if (info->pkt_len > VIRTIO_VSOCK_MAX_PKT_BUF_SIZE)
+>+		return -EMSGSIZE;
+>+
+>+	transport = vsock_dgram_lookup_transport(info->remote_cid, info->remote_flags);
 
-On 20/07/2024 8:45 am, Ian Rogers wrote:
-> Andi Kleen reported a regression where `perf script +F metric` would
-> crash. With this change the output is:
-> 
-> ```
-> $ perf record -a -e '{cycles,instructions}:S' perf bench mem memcpy
-> 
->        21.229620 GB/sec
-> 
->        15.751008 GB/sec
-> 
->        16.009221 GB/sec
-> [ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 1.945 MB perf.data (294 samples) ]
-> $ perf --no-pager script -F +metric
->              perf 1912464 [000] 814503.473101:       6325       cycles:  ffffffff8548d64a native_write_msr+0xa ([kernel.kallsyms])
->              perf 1912464 [000] 814503.473101:   metric:    0.06  insn per cycle
->              perf 1912464 [000] 814503.473101:        351 instructions:  ffffffff8548d64a native_write_msr+0xa ([kernel.kallsyms])
->              perf 1912464 [000] 814503.473101:   metric:    0.03  insn per cycle
-> ...
-> ```
+Can `transport` be null?
 
-For some reason I only get the metric: lines when I record with -a. I 
-noticed this because Andi's test doesn't use -a so it fails.
+I don't understand why we are calling vsock_dgram_lookup_transport()
+again. Didn't we already do that in vsock_dgram_sendmsg()?
 
-I'm not sure if that's expected or it's related to your disclaimer below?
+Also should we add a comment mentioning that we can't use
+virtio_transport_get_ops()? IIUC becuase the vsk can be not assigned
+to a specific transport, right?
 
-> 
-> The change fixes perf script to update counts and thereby aggregate
-> values which then get consumed by unchanged metric logic in the shadow
-> stat output. Note, it would be preferential to switch to json metrics.
-> 
-> Reported-by: Andi Kleen <ak@linux.intel.com>
-> Closes: https://lore.kernel.org/linux-perf-users/20240713155443.1665378-1-ak@linux.intel.com/
-> Fixes: 37cc8ad77cf8 ("perf metric: Directly use counts rather than saved_value")'
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
-> The code isn't well tested nor does it support non-leader sampling
-> reading of counts based on periods that seemed to present in the
-> previous code. Sending out for the sake of discussion. Andi's changes
-> added a test and that should certainly be added.
-> ---
->   tools/perf/builtin-script.c | 114 +++++++++++++++++++++++++++++-------
->   1 file changed, 93 insertions(+), 21 deletions(-)
-> 
+>+	t_ops = container_of(transport, struct virtio_transport, transport);
+>+	if (unlikely(!t_ops))
+>+		return -EFAULT;
+>+
+>+	if (info->msg)
+>+		noblock = info->msg->msg_flags & MSG_DONTWAIT;
+>+
+>+	/* Use sock_alloc_send_skb to throttle by sk_sndbuf. This helps avoid
+>+	 * triggering the OOM.
+>+	 */
+>+	skb = sock_alloc_send_skb(sk, info->pkt_len + VIRTIO_VSOCK_SKB_HEADROOM,
+>+				  noblock, &err);
+>+	if (!skb)
+>+		return err;
+>+
+>+	skb_reserve(skb, VIRTIO_VSOCK_SKB_HEADROOM);
+>+
+>+	src_cid = t_ops->transport.get_local_cid();
+>+	src_port = vsk->local_addr.svm_port;
+>+	dst_cid = info->remote_cid;
+>+	dst_port = info->remote_port;
+>+
+>+	hdr = virtio_vsock_hdr(skb);
+>+	hdr->type	= cpu_to_le16(info->type);
+>+	hdr->op		= cpu_to_le16(info->op);
+>+	hdr->src_cid	= cpu_to_le64(src_cid);
+>+	hdr->dst_cid	= cpu_to_le64(dst_cid);
+>+	hdr->src_port	= cpu_to_le32(src_port);
+>+	hdr->dst_port	= cpu_to_le32(dst_port);
+>+	hdr->flags	= cpu_to_le32(info->flags);
+>+	hdr->len	= cpu_to_le32(info->pkt_len);
+>+
+>+	if (info->msg && info->pkt_len > 0) {
+>+		payload = skb_put(skb, info->pkt_len);
+>+		err = memcpy_from_msg(payload, info->msg, info->pkt_len);
+>+		if (err)
+>+			goto out;
+>+	}
+>+
+>+	trace_virtio_transport_alloc_pkt(src_cid, src_port,
+>+					 dst_cid, dst_port,
+>+					 info->pkt_len,
+>+					 info->type,
+>+					 info->op,
+>+					 info->flags,
+>+					 false);
+>+
+>+	return t_ops->send_pkt(skb);
+>+out:
+>+	kfree_skb(skb);
+>+	return err;
+>+}
+>+
+> int
+> virtio_transport_dgram_enqueue(struct vsock_sock *vsk,
+> 			       struct sockaddr_vm *remote_addr,
+> 			       struct msghdr *msg,
+> 			       size_t dgram_len)
+> {
+>-	return -EOPNOTSUPP;
+>+	/* Here we are only using the info struct to retain style uniformity
+>+	 * and to ease future refactoring and merging.
+>+	 */
+>+	struct virtio_vsock_pkt_info info = {
+>+		.op = VIRTIO_VSOCK_OP_RW,
+>+		.remote_cid = remote_addr->svm_cid,
+>+		.remote_port = remote_addr->svm_port,
+>+		.remote_flags = remote_addr->svm_flags,
+>+		.msg = msg,
+>+		.vsk = vsk,
+>+		.pkt_len = dgram_len,
+>+	};
+>+
+>+	return virtio_transport_dgram_send_pkt_info(vsk, &info);
+> }
+> EXPORT_SYMBOL_GPL(virtio_transport_dgram_enqueue);
+>
+>-- 
+>2.20.1
+>
+
 
