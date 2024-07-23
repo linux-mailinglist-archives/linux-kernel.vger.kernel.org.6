@@ -1,225 +1,317 @@
-Return-Path: <linux-kernel+bounces-260328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30CFA93A765
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:48:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89D4293A769
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 520A91C225A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:48:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 192021F22DCB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:50:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8BE113D636;
-	Tue, 23 Jul 2024 18:48:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8404313D889;
+	Tue, 23 Jul 2024 18:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GNM9M6IB"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="FaCg/dhP"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF3C14286;
-	Tue, 23 Jul 2024 18:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D25749634
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 18:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721760509; cv=none; b=MlTSiuN5SXiEMn3EqjtH3RjSCOEZK6ss+aWDbkrr/mMn/xq+eWHjBgKbgAHt0rlL04+34JmOnuPAHhHTyHnxcxwN1bu3uwNgby7r4c5axNAoiFIaZR/rBllUg0kX05ac8nh5m8CDj+XRAkUqiZb8BLE/P6r1PavpxRL73cy5OsI=
+	t=1721760600; cv=none; b=OsFvO52y67B7H024hLJCXp354fWEFbJU2zsADtTNueE8h/chj8+gnJVFF5knB9OQvM3+UELroiITeO77mhavri1Nzah5Gf2iJi8bvP1bmTGakCGl/wYnTsblTWDS7WlE+M7qHO9sQTwNlIj9Mwjo+C+XvpK4V5iqFhNE/mwIOxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721760509; c=relaxed/simple;
-	bh=F+qGohd8YEEcowAlHHkXd1t/juxZhhjRxJYbb81wGQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aF+AnrL+pBUd9BawyOmLyuGoNVFANG+T34sr5LWxPPP+tESRCSdmar8gbCIR/I94gRrIUgS93rq4YfGzSXtdpwXIQggTYAmLmQTGhK5Bemd78/BLSVaxO2rJGY5Vc5HPf2K8jrYTkhwz562PhTru+J+Ui/vu+lDnvGn0VnxOSMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GNM9M6IB; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=V2H+VHX+vfAZGlPz7CUKL+rIgEnQgT0PSFIxQrJK6eg=; b=GNM9M6IBlT92e05ToKUxP1Uxtp
-	mFoZqDeKszma18jowUE0HYJZwW2pKvLYgw7N95LY7zk0z+6Z9MDu/z+QOq7zS4XDE2faKbb3XJNzt
-	RE2gAG8awfgI2rvide+Bok2XpsoWc5mns+vJdYj+cjJzHY00PnT6oXiKCCyt39o0gUog=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sWKYf-0035KV-Nk; Tue, 23 Jul 2024 20:48:21 +0200
-Date: Tue, 23 Jul 2024 20:48:21 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Cindy Lu <lulu@redhat.com>
-Cc: dtatulea@nvidia.com, mst@redhat.com, jasowang@redhat.com,
-	parav@nvidia.com, sgarzare@redhat.com, netdev@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATH v5 1/3] vdpa: support set mac address from vdpa tool
-Message-ID: <8ff8f8d8-1061-42a2-b238-82f685639115@lunn.ch>
-References: <20240723054047.1059994-1-lulu@redhat.com>
- <20240723054047.1059994-2-lulu@redhat.com>
+	s=arc-20240116; t=1721760600; c=relaxed/simple;
+	bh=ITeE+MGpm0/r5g1AdCSOsPBnAuQEB61HGM/2Nw0jvfw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PgcLNO2Guknz553J6tXHUEU5svaLC86CT3HCZu1tLmKsicZ2sv53RrRv2GDGiBVZDlKI8AGxvvcUV1FTdrlEwaSLe2sxeczwCtVYP6Nw2OV8hZw2pGBpdi3Gorgx5kKZoZ0GqNk/fN8MjJWQCOWVYzdckcdtbw46n9wjnCZ5NII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=FaCg/dhP; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52f042c15e3so141652e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:49:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1721760595; x=1722365395; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XLsApcPe5MtnKLOn1ElLl7H2RThdQUbmDswS0KX1YoI=;
+        b=FaCg/dhPOC+nJXje0osl608jVl8jsCUkHQI2i1EumSIP9Ino/DG5P/8oUETciziztN
+         q98iQqrhAw57xPQvCf42PL/FtVm5+LvK3igvb46IYqkwbnMy1fvR2BKCemh6odNUx4Vq
+         QEw3UpXOgOqN0OO5z23G4r9w2WH+5jrJLBcQI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721760595; x=1722365395;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XLsApcPe5MtnKLOn1ElLl7H2RThdQUbmDswS0KX1YoI=;
+        b=T8JQQ+sd9be4ax4MkCXrsugapZHcPIFawWtqkqIek0i0UXMS4Xm0HhgtrBUdro/iDr
+         6OYbk6kCs3SnEjylw6YUqSc7mohBgOuzPdbnevt2Fv66JBSminLFsh/wjOcSmMwS/aaj
+         CN0DoPWyKH5a/U3o9xzDSKCexUqhYmoJXfv5YB7bAoSVC7ct4kXXKpeCPWClLFGNTbps
+         BkOKW+Z3YE9sOR+6qJD5FO+lJHQRFBsH/tVGA7IMH4THOtQOaYgm8PEJHd8YA2ohmpcv
+         +/NNw/5C1lucVmIaHUE01dkSatAuVEKnv4iApCtUgb7oa0RqijuDtsRX7OpJp9x0fyYS
+         GtYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+WRlzij4h0HrAMOL3ECWweJdk4b6JEjVjdzq9zsRR8Sb2VGof0Ox44YzkBxDh2LfPombwgLOpgs+lSOt3n6L0GAfKbsXdKcd9x9o+
+X-Gm-Message-State: AOJu0Yxz7l4/VYM8IchhUWf7EY2x8xQRycxX0z7nCC6S1LsxGCK2s8wE
+	Nvc9tQyCd+Lut4MEo9GcV8WBThJY/Xm7FNV+++5/5ASiWjEtj4EjtleE4Cabh6HU/XLGMx+vduf
+	jueWbiYm74QUeI5d/b/hFyx5zlc3/eXssoEvn
+X-Google-Smtp-Source: AGHT+IFN8g3iXTryQ+8Uy3bO3xLLZU2m1O7PBXXthWW9Bm9iwL9Ou3dzuN//ywjE6lZdchAH6pT9z7ApP0Bg7vtI3MU=
+X-Received: by 2002:a05:6512:3f06:b0:52c:dc56:ce62 with SMTP id
+ 2adb3069b0e04-52fc66f0d20mr903091e87.12.1721760595167; Tue, 23 Jul 2024
+ 11:49:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240723054047.1059994-2-lulu@redhat.com>
+References: <20240716213131.6036-1-james.quinlan@broadcom.com>
+ <20240716213131.6036-2-james.quinlan@broadcom.com> <d20be2d3-4fdd-48ca-b73e-80e8157bd5b2@kernel.org>
+ <CA+-6iNwvShkUwgQ5iTqa53gX1RtOMcDACPOJtqKm6zWCXN6Rtg@mail.gmail.com> <8e260164-cce2-4153-9f9c-0330c76408ef@kernel.org>
+In-Reply-To: <8e260164-cce2-4153-9f9c-0330c76408ef@kernel.org>
+From: Jim Quinlan <james.quinlan@broadcom.com>
+Date: Tue, 23 Jul 2024 14:49:43 -0400
+Message-ID: <CA+-6iNy5U6XG-sSjoBH4pAhFhP4=KDcKRVbD3dXZdsM2WCkd-w@mail.gmail.com>
+Subject: Re: [PATCH v4 01/12] dt-bindings: PCI: Cleanup of brcmstb YAML and
+ add 7712 SoC
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+	Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>, 
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000b178ce061deea045"
 
-On Tue, Jul 23, 2024 at 01:39:20PM +0800, Cindy Lu wrote:
-> Add new UAPI to support the mac address from vdpa tool
-> Function vdpa_nl_cmd_dev_attr_set_doit() will get the
-> new MAC address from the vdpa tool and then set it to the device.
-> 
-> The usage is: vdpa dev set name vdpa_name mac **:**:**:**:**:**
-> 
-> Here is example:
-> root@L1# vdpa -jp dev config show vdpa0
-> {
->     "config": {
->         "vdpa0": {
->             "mac": "82:4d:e9:5d:d7:e6",
->             "link ": "up",
->             "link_announce ": false,
->             "mtu": 1500
->         }
->     }
-> }
-> 
-> root@L1# vdpa dev set name vdpa0 mac 00:11:22:33:44:55
-> 
-> root@L1# vdpa -jp dev config show vdpa0
-> {
->     "config": {
->         "vdpa0": {
->             "mac": "00:11:22:33:44:55",
->             "link ": "up",
->             "link_announce ": false,
->             "mtu": 1500
->         }
->     }
-> }
-> 
-> Signed-off-by: Cindy Lu <lulu@redhat.com>
-> ---
->  drivers/vdpa/vdpa.c       | 84 +++++++++++++++++++++++++++++++++++++++
->  include/linux/vdpa.h      |  9 +++++
->  include/uapi/linux/vdpa.h |  1 +
->  3 files changed, 94 insertions(+)
-> 
-> diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
-> index 8d391947eb8d..07d61ee62839 100644
-> --- a/drivers/vdpa/vdpa.c
-> +++ b/drivers/vdpa/vdpa.c
-> @@ -1361,6 +1361,85 @@ static int vdpa_nl_cmd_dev_config_get_doit(struct sk_buff *skb, struct genl_info
->  	return err;
->  }
->  
-> +static int vdpa_dev_net_device_attr_set(struct vdpa_device *vdev,
-> +					struct genl_info *info)
-> +{
-> +	struct vdpa_dev_set_config set_config = {};
-> +	const u8 *macaddr;
-> +	struct vdpa_mgmt_dev *mdev = vdev->mdev;
-> +	struct nlattr **nl_attrs = info->attrs;
-> +	int err = -EINVAL;
-> +
-> +	if (!vdev->mdev)
-> +		return -EINVAL;
-> +
-> +	down_write(&vdev->cf_lock);
-> +	if ((mdev->supported_features & BIT_ULL(VIRTIO_NET_F_MAC)) &&
-> +	    nl_attrs[VDPA_ATTR_DEV_NET_CFG_MACADDR]) {
-> +		set_config.mask |= BIT_ULL(VDPA_ATTR_DEV_NET_CFG_MACADDR);
-> +		macaddr = nla_data(nl_attrs[VDPA_ATTR_DEV_NET_CFG_MACADDR]);
-> +
-> +		if (is_valid_ether_addr(macaddr)) {
-> +			memcpy(set_config.net.mac, macaddr, ETH_ALEN);
-> +			if (mdev->ops->dev_set_attr) {
-> +				err = mdev->ops->dev_set_attr(mdev, vdev,
-> +							      &set_config);
-> +			} else {
-> +				NL_SET_ERR_MSG_FMT_MOD(info->extack,
-> +						       "device not supported");
-> +			}
-> +		} else {
-> +			NL_SET_ERR_MSG_FMT_MOD(info->extack,
-> +					       "Invalid MAC address");
-> +		}
-> +	}
-> +	up_write(&vdev->cf_lock);
-> +	return err;
-> +}
-> +static int vdpa_nl_cmd_dev_attr_set_doit(struct sk_buff *skb,
-> +					 struct genl_info *info)
-> +{
-> +	const char *name;
-> +	int err = 0;
-> +	struct device *dev;
-> +	struct vdpa_device *vdev;
-> +	u64 classes;
-> +
-> +	if (!info->attrs[VDPA_ATTR_DEV_NAME])
-> +		return -EINVAL;
-> +
-> +	name = nla_data(info->attrs[VDPA_ATTR_DEV_NAME]);
-> +
-> +	down_write(&vdpa_dev_lock);
-> +	dev = bus_find_device(&vdpa_bus, NULL, name, vdpa_name_match);
-> +	if (!dev) {
-> +		NL_SET_ERR_MSG_MOD(info->extack, "device not found");
-> +		err = -ENODEV;
-> +		goto dev_err;
-> +	}
-> +	vdev = container_of(dev, struct vdpa_device, dev);
-> +	if (!vdev->mdev) {
-> +		NL_SET_ERR_MSG_MOD(
-> +			info->extack,
-> +			"Fail to find the specified management device");
-> +		err = -EINVAL;
-> +		goto mdev_err;
-> +	}
-> +	classes = vdpa_mgmtdev_get_classes(vdev->mdev, NULL);
-> +	if (classes & BIT_ULL(VIRTIO_ID_NET)) {
-> +		err = vdpa_dev_net_device_attr_set(vdev, info);
-> +	} else {
-> +		NL_SET_ERR_MSG_FMT_MOD(info->extack, "%s device not supported",
-> +				       name);
-> +	}
-> +
-> +mdev_err:
-> +	put_device(dev);
-> +dev_err:
-> +	up_write(&vdpa_dev_lock);
-> +	return err;
-> +}
-> +
->  static int vdpa_dev_config_dump(struct device *dev, void *data)
->  {
->  	struct vdpa_device *vdev = container_of(dev, struct vdpa_device, dev);
-> @@ -1497,6 +1576,11 @@ static const struct genl_ops vdpa_nl_ops[] = {
->  		.doit = vdpa_nl_cmd_dev_stats_get_doit,
->  		.flags = GENL_ADMIN_PERM,
->  	},
-> +	{
-> +		.cmd = VDPA_CMD_DEV_ATTR_SET,
-> +		.doit = vdpa_nl_cmd_dev_attr_set_doit,
-> +		.flags = GENL_ADMIN_PERM,
-> +	},
->  };
->  
->  static struct genl_family vdpa_nl_family __ro_after_init = {
-> diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
-> index 7977ca03ac7a..3511156c10db 100644
-> --- a/include/linux/vdpa.h
-> +++ b/include/linux/vdpa.h
-> @@ -582,11 +582,20 @@ void vdpa_set_status(struct vdpa_device *vdev, u8 status);
->   *	     @dev: vdpa device to remove
->   *	     Driver need to remove the specified device by calling
->   *	     _vdpa_unregister_device().
-> +  * @dev_set_attr: change a vdpa device's attr after it was create
-> + *	     @mdev: parent device to use for device
+--000000000000b178ce061deea045
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The indentation looks a bit odd here.
+On Wed, Jul 17, 2024 at 9:30=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 17/07/2024 15:20, Jim Quinlan wrote:
+> > On Wed, Jul 17, 2024 at 2:51=E2=80=AFAM Krzysztof Kozlowski <krzk@kerne=
+l.org> wrote:
+> >>
+> >> On 16/07/2024 23:31, Jim Quinlan wrote:
+> >>> o Change order of the compatible strings to be alphabetical
+> >>>
+> >>> o Describe resets/reset-names before using them in rules
+> >>>
+> >>
+> >> <form letter>
+> >> This is a friendly reminder during the review process.
+> >>
+> >> It seems my or other reviewer's previous comments were not fully
+> >> addressed. Maybe the feedback got lost between the quotes, maybe you
+> >> just forgot to apply it. Please go back to the previous discussion and
+> >> either implement all requested changes or keep discussing them.
+> >>
+> >> Thank you.
+> >> </form letter>
+> >
+> > I'm sorry Krzysztof, but AFAICT I paid attention to all of your comment=
+s and
+> > tried to answer them as best as I could.  Please do not resort to a
+> > form letter; if
+> > you think I missed something(s) please oblige me and say what it is rat=
+her than
+> > having  me search for something that you know and I do not.
+>
+> I do not see your response at all to my comments on patch #2.
+>
+> >
+> >>
+> >>> o Add minItems/maxItems where needed.
+> >>>
+> >>> o Change maintainer: Nicolas has not been active for a while.  It als=
+o
+> >>>   makes sense for a Broadcom employee to be the maintainer as many of=
+ the
+> >>>   details are privy to Broadcom.
+> >>>
+> >>> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> >>> ---
+> >>>  .../bindings/pci/brcm,stb-pcie.yaml           | 26 ++++++++++++++---=
+--
+> >>>  1 file changed, 19 insertions(+), 7 deletions(-)
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml=
+ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> >>> index 11f8ea33240c..692f7ed7c98e 100644
+> >>> --- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> >>> +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> >>> @@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml=
+#
+> >>>  title: Brcmstb PCIe Host Controller
+> >>>
+> >>>  maintainers:
+> >>> -  - Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> >>> +  - Jim Quinlan <james.quinlan@broadcom.com>
+> >>>
+> >>>  properties:
+> >>>    compatible:
+> >>> @@ -16,11 +16,11 @@ properties:
+> >>>            - brcm,bcm2711-pcie # The Raspberry Pi 4
+> >>>            - brcm,bcm4908-pcie
+> >>>            - brcm,bcm7211-pcie # Broadcom STB version of RPi4
+> >>> -          - brcm,bcm7278-pcie # Broadcom 7278 Arm
+> >>>            - brcm,bcm7216-pcie # Broadcom 7216 Arm
+> >>> -          - brcm,bcm7445-pcie # Broadcom 7445 Arm
+> >>> +          - brcm,bcm7278-pcie # Broadcom 7278 Arm
+> >>>            - brcm,bcm7425-pcie # Broadcom 7425 MIPs
+> >>>            - brcm,bcm7435-pcie # Broadcom 7435 MIPs
+> >>> +          - brcm,bcm7445-pcie # Broadcom 7445 Arm
+> >>>
+> >>>    reg:
+> >>>      maxItems: 1
+> >>> @@ -95,6 +95,18 @@ properties:
+> >>>        minItems: 1
+> >>>        maxItems: 3
+> >>>
+> >>> +  resets:
+> >>> +    minItems: 1
+> >>> +    items:
+> >>> +      - description: reset for external PCIe PERST# signal # perst
+> >>> +      - description: reset for phy reset calibration       # rescal
+> >>> +
+> >>> +  reset-names:
+> >>> +    minItems: 1
+> >>> +    items:
+> >>> +      - const: perst
+> >>> +      - const: rescal
+> >>
+> >> There are no devices with two resets. Anyway, this does not match one =
+of
+> >> your variants which have first element as rescal.
+> >
+> > The 4908 chip exclusively uses the "perst" reset, and the  7216 chip
+> > exclusively uses the "rescal" reset.   The rest of the chips use zero
+> > resets.   All together, there are two resets.
+>
+> This is not enum, but a list. What you do mean overall two resets? You
+> have a chip which is both 4908 and 7216 at the same time? How is this
+> possible?
+>
+> >
+> > You are the one that wanted me to first list all resets at the top,
+> > and refer to them by the conditional rules.
+>
+> No, I wanted widest constraints at the top.
+Can you explain what you mean by "widest constraint"?  I did not see
+the word "wide" in any of the Linux YAML documentation.
 
-    Andrew
+>
+> My comment at v2 was already saying this:
+>
+> "This does not match what you have in conditional, so just keep min and
+> max Items here."
+>
+Okay, what I was referring to was your V1 response:
 
----
-pw-bot: cr
+"Fix the binding first - properties should be defined in top level
+"properties:" and then customized."
+
+I think this is correct but I have not been describing the
+reset/reset-names properties properly at the top level; i.e.  I have
+been giving a full list instead of using "oneOf".
+
+Regards,
+Jim Quinlan
+Broadcom STB/CM
+
+> and you have numerous examples in the code for this.
+>
+> Best regards,
+> Krzysztof
+>
+
+--000000000000b178ce061deea045
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
+uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
+BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
+VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
+z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
+b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
++R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
+AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
+75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
+AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
+AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
+MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCCkensSROmUAhbnwUmygmgFBGpU2Dus
+XDg89I0iOb5JSjAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA3
+MjMxODQ5NTVaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
+AgEwDQYJKoZIhvcNAQEBBQAEggEAaO63AjdO1ncFQmmasEfxaKJwAPVayZHaf/jYK6kbwmXDI0Xp
+EmLX3aOuNplfGXxJqf7pPEeIE/SvRUVKGeb+tMj2tLgGI6LaB65jMNrvioh5X8fRUE7O078Culo+
+kby6FFApxjEWSJKSxqM6GBp4jJrYU8SRm35QWvueZx1eXLSfQRyYhLgdikKO2/kechzJcEEJ4l+m
+E+K2ysS+m8Af4CtMBZ5OVeziW81NiHpUlJ5MCQqpTCrAuErrbk3fQI8/CvHALxlah60e29mRgPvG
+cQzpIie8SX+BKUltEo/DJ+yeKTJg341utnQTsTM8zi3C9xQMMBl2LdUwCQFIz611pw==
+--000000000000b178ce061deea045--
 
