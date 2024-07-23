@@ -1,87 +1,124 @@
-Return-Path: <linux-kernel+bounces-260351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C41C293A7AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:24:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E25BC93A7AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:28:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00D821C2239A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:24:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C0EF1F2373B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE90D1422CE;
-	Tue, 23 Jul 2024 19:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603811422D0;
+	Tue, 23 Jul 2024 19:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nmvUYNz3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QhAVCj9p"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E01813C3F5;
-	Tue, 23 Jul 2024 19:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC7B13D504;
+	Tue, 23 Jul 2024 19:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721762681; cv=none; b=dBLe6oSihYn6ICVYFVKY0oD9RQImTIjH72OmvEEXwDifouuqSOFSp1P0sSZ2Sq8b1bn3Tbv4zMjiEDgukpJ3/f820rADecf5EvdkxNZ5fnku/qOWperMCcS35/ihRhCCpirKaFEc4PWsRWgyiHy/TcGvsid0sFY6xtCnDZFJD7Y=
+	t=1721762889; cv=none; b=VSCc/Y0x5HagAc2gg1avPMZR3qCNwkCAycrELTN3x/F9ZPG0sL5VIxgJ4VooS5ARu/6Lhd+sm7s2HzvmTD8KpEsg8ObP+pIPKr9Gd+7cLxs/pEW0KiRrVB7I/Z9Iira6o5ox4xDmu0Br85kkiP068XthNrSzuj0HY9Z9edFyys8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721762681; c=relaxed/simple;
-	bh=2DRmsMG6kRZYBP6pQwNntBFkhKv/vMvD1XVjf+i6onU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GXyk81RkpckarqDkStqXpe6shL43dWQGNuwGZZ2LKW80UpmPLoQmwl8gj+m2UViw6VPnEWgIlMDWHQT+m3CpIqIKs+H08e6h1BHE/uAl0KGVEYCciA0msvTUv/fSFsbKqAw5c9Nz+hjcgRQ6weG/MXNTPgKW0ZH3yYQgT7JkbjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nmvUYNz3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C0E9C4AF0E;
-	Tue, 23 Jul 2024 19:24:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721762680;
-	bh=2DRmsMG6kRZYBP6pQwNntBFkhKv/vMvD1XVjf+i6onU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nmvUYNz3ONMuK2pG4a893R+elit1FD5m6kh1P896luOy5uwOzX8kZDrGQVNTyTnnR
-	 y7BpXGhUNhVO3ImibjUZ5DjhYqCIiysJx7NyXrRg81gThR+FA2gBV4nH/pF8reKv8R
-	 QpblgoYkzh14gnlr9uVsQSycwqV9qR1vObIsOYXmq0Am9Be7u2valoMpvILoY61i11
-	 14q6uz9e+OCzNzf8iCyxuZhQPFm1siJ/XEnkV2+PQYaA7lZjgU7RnSOZyNhX4YnZzb
-	 yfU2TwaeBdyr9INR4b/3GgBl2kpLFdSMn2/fAf9eswgvQOuCvXlYSPiLqMu1djtWZa
-	 zuw2r5+F3YLhQ==
-Date: Tue, 23 Jul 2024 13:24:39 -0600
-From: Rob Herring <robh@kernel.org>
-To: Mateusz Majewski <m.majewski2@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH 6/6] dt-bindings: thermal: samsung,exynos: remove
- outdated information on trip point count
-Message-ID: <20240723192439.GA986360-robh@kernel.org>
-References: <CGME20240723141723eucas1p18f5675128aa380857f4c854b5a851e34@eucas1p1.samsung.com>
- <20240723141715.374786-1-m.majewski2@samsung.com>
+	s=arc-20240116; t=1721762889; c=relaxed/simple;
+	bh=5+w+AZysCTrZdlIqx8wfi/ZXl62h8xJye72WKXHrhCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fJJPOQl/RryD3DA1d7h+QeCds4CqcGMgnxGCpk1AOcvwAOkzbTg64Y+ftGZu74zP2ULGRWTH7B6yuKCYZ2oHUb8LlhC6qu4Uqe32ijQ3h6bJsHSXZ/jwHRiSg993wOpkyZrM9Z3GaE+izlF33yCO0l1FP/5T4tMSECkk1UecvIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QhAVCj9p; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46NHljtH028604;
+	Tue, 23 Jul 2024 19:27:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	itMZ07g6+yYdInryZ6zDSaHasQO4XVp3UEUSFcvpIcs=; b=QhAVCj9pcj9C1/P4
+	+ylqVtue3bU2DYTLANpkK2rsTmJ2Hz/3bAwMuqKWZcIWIMj3ZIwyDIEkZUCbeyhJ
+	bun2H6vRK3ZePlcw9cW6MF3ebj2wY7CZ+mCnBgnSEsiwYV5fL+YxpyHN1xZNNswI
+	ukmsep/HS3IRYuDXRlqNcJ00nKqDSVkiaUU7ZkUqileOv5+ud8m6IQTLE79keVrp
+	6JDBWk6glw81tGEN+c0fu2G5d4mt9Mee8GpC2nAYS/uVO1+GB5e1vwUaHgVCyaOn
+	P1I92YK4paLYmGs9b/Q9rrbjsaQyh13TzQKt0WjqnNdusoeI5wyXAVWqUDmGhER4
+	KVtmtA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g5m7048q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Jul 2024 19:27:52 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46NJRpNR002333
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Jul 2024 19:27:51 GMT
+Received: from [192.168.143.77] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 23 Jul
+ 2024 12:27:51 -0700
+Message-ID: <00630839-6212-314f-f031-0b2b76c37150@quicinc.com>
+Date: Tue, 23 Jul 2024 12:27:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240723141715.374786-1-m.majewski2@samsung.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH v4 1/1] scsi: ufs: core: Support Updating UIC Command
+ Timeout
+To: =?UTF-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>,
+        "quic_nitirawa@quicinc.com" <quic_nitirawa@quicinc.com>,
+        "avri.altman@wdc.com" <avri.altman@wdc.com>,
+        "bvanassche@acm.org"
+	<bvanassche@acm.org>,
+        "martin.petersen@oracle.com"
+	<martin.petersen@oracle.com>,
+        "manivannan.sadhasivam@linaro.org"
+	<manivannan.sadhasivam@linaro.org>,
+        "minwoo.im@samsung.com"
+	<minwoo.im@samsung.com>,
+        "quic_cang@quicinc.com" <quic_cang@quicinc.com>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>
+CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
+        "jejb@linux.ibm.com"
+	<jejb@linux.ibm.com>,
+        "beanhuo@micron.com" <beanhuo@micron.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "quic_mnaresh@quicinc.com" <quic_mnaresh@quicinc.com>
+References: <cover.1721261491.git.quic_nguyenb@quicinc.com>
+ <44dc4790b53e2f8aa92568a9e13785e3bedd617d.1721261491.git.quic_nguyenb@quicinc.com>
+ <5370a13d48d42d952442040f71301acf30f9a5ff.camel@mediatek.com>
+Content-Language: en-US
+From: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>
+In-Reply-To: <5370a13d48d42d952442040f71301acf30f9a5ff.camel@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: jDKtVnCVt0h8rrLmVHXHU_37pLktm03B
+X-Proofpoint-ORIG-GUID: jDKtVnCVt0h8rrLmVHXHU_37pLktm03B
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-23_10,2024-07-23_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ mlxlogscore=999 adultscore=0 bulkscore=0 mlxscore=0 spamscore=0
+ priorityscore=1501 lowpriorityscore=0 clxscore=1011 malwarescore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407230135
 
-On Tue, Jul 23, 2024 at 04:17:14PM +0200, Mateusz Majewski wrote:
-> Hi :)
 > 
-> > > +      temperature thresholds. The trip points will be set dynamically in
-> > > +      runtime, which means there is no limit on the number of trip points.
-> > 
-> > How can the hardware change how many trip points it supports?
+> Could be just use this line instead?
+> 	return
+> param_set_uint_minmax(val, kp, UIC_CMD_TIMEOUT_DEFAULT,
+> 		
+> 		     UIC_CMD_TIMEOUT_MAX);
 > 
-> Would just removing the whole "The trip points..." sentence be ok? I see
-> how it is more confusing than helpful.
+> It should be more simple.
+Thank you Peter. Yes it would be cleaner. I will update the patch.
 
-If the old text had nothing to do with the h/w, then I suppose so. I 
-would have assumed the h/w supports some number of thresholds causing 
-some action whether an interrupt or some sort of shutdown.
-
-Rob
+Thanks, Bao
 
