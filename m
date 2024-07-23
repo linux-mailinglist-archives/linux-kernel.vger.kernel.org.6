@@ -1,121 +1,112 @@
-Return-Path: <linux-kernel+bounces-259712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D00E2939BE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:46:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B7FD939BE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 126F4B21B09
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:46:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1654CB22067
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6B114A4F5;
-	Tue, 23 Jul 2024 07:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F309714B955;
+	Tue, 23 Jul 2024 07:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="weDGzanL"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4ELEGbg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34E33D6A;
-	Tue, 23 Jul 2024 07:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D22414AD3E;
+	Tue, 23 Jul 2024 07:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721720758; cv=none; b=X3FD20G4NFat+0DczY2JuvablxfT/8AfbbTc48R9jY6FZiUg3fnp3ntxsrtV70KKb31JBXw/CNfIbSWnbzLncS+PPMUCBz6bV/7tOfeXklOUslRTwDWE+ndaqNAFWFI3Pu64S4ATCPVHJD5xXu5r9ad8Nm6J7qjKZX9NZKZkFGM=
+	t=1721720840; cv=none; b=kjvaVYN6xpCiJvxfzt84vJ04dU1qgxgHYX+OS5zEFtcIOJdAbu3BtpZDssW5B1wjec+4VidSEpACeMSCr0mwSqPLfdLOgDoRJIYKlaozuR1vZGOO3BOxIHSmr8gccrGEgQjj+HfT1ZWjT7/U6i/kwY/o/DhkhZRCr95miGggArs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721720758; c=relaxed/simple;
-	bh=ELz3uDA2quvFPtwWEBmP2HILXxTM8hmBC9VR15SpPQY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AYMItFFKLeGZAhzzjpXFvk6FL/wwBXAXGn5YlUAFBG7rk4CcOxYR+uw3SdrVsxz66/X/epXzP+SJzpG5ZxKY3SOp9gOYvqdnZ0hZfopr8UkRVD4jOEzdqgbcGnxUrulFYKio+9igKvzmaH3CacodKc0WCQQaT2uSTeZFcuYQGBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=weDGzanL; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721720733; x=1722325533; i=markus.elfring@web.de;
-	bh=ELz3uDA2quvFPtwWEBmP2HILXxTM8hmBC9VR15SpPQY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=weDGzanLevBbRVGBBybZSjuYFTUrW3dp+zOk/SrpGSDOF/cl8SVYU8V5qDyeVK3/
-	 gVckr7wAGF1MdRnJ7+uAbsxomC1NYg8WVqozGyHWWMZvFNpT5+h+0WEZiYBpdtSz4
-	 ia9PK9vS4IcRFsp3owslKJOI7xxDxwzV+bvAXFFSqtXzQ3+bTRwT7uHb1l7OBB1EJ
-	 yuLsLMNLxXGAwGFCumIcpcka+kxxwNUWkQXbalGxQtcoWcxMvMzV7bvvMyB89t+Tr
-	 CVMPB/hYCe4GFprzANTQJeGXiKpH5MfqYZJhOI+NtOg/hcr5YMCe31HN7duZZlED4
-	 wNHt5+wCtF+DaZLN7g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MP3CA-1sfxr72rls-00MYDj; Tue, 23
- Jul 2024 09:45:33 +0200
-Message-ID: <5b0b8757-17cd-4444-8ceb-2178f4091a26@web.de>
-Date: Tue, 23 Jul 2024 09:45:14 +0200
+	s=arc-20240116; t=1721720840; c=relaxed/simple;
+	bh=ohwuZOHbx1pyGTACmYGT8LdVk7iJcXF5WRCpTQ8WDq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=om6Zm3mdpaDr4/364dqF6ZEN5cssYSzJpH67e3caCprjaJBS+xUTK+X8Ln6P3VZGioygvRzVZE5ndFJqx77CSKwtoMoEYtdrspkEtt5I7DjUGJ38aneza4l/dxb/468xOXGjpzhX8RSMT16wVBWHzGJXwafl3jw2gSQmJ7IGxzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4ELEGbg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6652CC4AF09;
+	Tue, 23 Jul 2024 07:47:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721720839;
+	bh=ohwuZOHbx1pyGTACmYGT8LdVk7iJcXF5WRCpTQ8WDq4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I4ELEGbgUGgChPAotuYv0sgAIY2tNQ2RY13dtVxSeYz//rt00CgxX3TXcSiRa6JLU
+	 uYynEFC/+/tp+ApWv9YQ4UFTGn5zi0pQCBOoTLDYfQTau1fRyvKpSOLyeCcGMJBJrL
+	 uFoREXr8KCvir0zA+1OVXPBi3eM+vcJX7FDRq2kNPP+PAJe13ATFGwCNKmzMhNjzEa
+	 /DEr1w+NwLkz7pbfWaxHVIPm0EECxjOOLIX2DlNnPtphFwqWy0r/Lcw+MBubdlqhbQ
+	 gdspDcA774rM/5GHq9ksPhhR0uqNSz4cdpr6r/MSk4zus2bRPMZKpkp3uRhFPVs1fd
+	 W9BGl8ih7kHQQ==
+Date: Tue, 23 Jul 2024 09:47:15 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: 47 Mohit Pawar <mohitpawar@mitaoe.ac.in>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] Fixed: fs: file_table_c: Missing blank line warnings
+Message-ID: <20240723-kredit-bohrloch-2942d7c53f78@brauner>
+References: <20240713180612.126523-1-mohitpawar@mitaoe.ac.in>
+ <CAO-FDEOhDSxOw8jyxtdqhJP8-wz8QP+Veo0yGehXTM9F=4bsnA@mail.gmail.com>
+ <20240722163741.us3r3v5pe2d76azk@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v3] spi: ppc4xx: handle irq_of_parse_and_map() errors
-To: Mark Brown <broonie@kernel.org>, make24@iscas.ac.cn,
- linux-spi@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Josh Boyer <jwboyer@linux.vnet.ibm.com>, Stefan Roese <sr@denx.de>
-References: <20240722141822.1052370-1-make24@iscas.ac.cn>
- <bceb4055-e315-4c70-a682-228cb997f86c@web.de>
- <2dbd470c-80aa-45af-9324-0e81e1d9196c@sirena.org.uk>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <2dbd470c-80aa-45af-9324-0e81e1d9196c@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:SU6G0oa0W6MljftbcX0yyx7dYiTf4AgjbYLUjtZvtZGrpSr12Qm
- H7hvU0hactrBPS9plMPeXTIM3QntLIewJuR/RJKyL9Zv4wpoZORRTfSz1/joERaLjazs5nn
- HKXVkRtf4xh9ZJJqZek4JyrReWmMKMBhtLPzzo4kPs3rDMKDNYWmOmPIbjSMrgIarSrpCW/
- BCC+YyM49xjTzYXPyg3Dg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:2fWotyvO/vc=;tF+nq+YqHEjVlshPCiuq5dtBcAV
- dLP4DQlzjRqsV7wm6xYpR6tl5MW+jysnu9GcIZ1fYaTko2RAc/dFbyq7u7TtXsKCLhIRWboLT
- 36Dd1I0i0cDjptbxx6WsY6JZ7rG3to/K+rV6awmKh0hXctgkddcL6rub/Cyob3+v4xhctvxc5
- RTYG/Gzf/A9j3pLsYl/K4SC0OUg11HxkWDwZ4pJVoi10GgBCN+x8QWSgREMeVvl6+d5HiBX0R
- nNlCBUKEFQv2a7+2h1c+Ybx5rm+xBe/BNr3Kxk1ZKT5zLItXYDMwr1kvwnLqLYO3NOI/fv4oY
- RYOA2s5kbq5BT/ALs64avN/fLXCZU8qZMN/H0Ep/q+J8zjAzPR3eKPPNnaMUYYqi4vsiQOpjp
- Iwib2SZYnbArfmvBbVQjSjq1HKst5yKm+/6g1Vd3vFHN1JbyzkiaFhuftgqV9HLHIetjpSWu0
- 6lonO2BH19i3YB4mfMGfe9BnZ3D5fDAY+AfljDlMCCY2Iju4HEOOrKp1nYJ/bZfDPBR8Z3VMk
- QNJIfNa3wLbxB2HixpgLDKvjA9wTBMvQGtll/akKXxe6sZLp+AC4sk0DhWJeLJBkIYmAV6wHJ
- hxM0CE4TQUYXUwz3b5Pm0zht60/pYlNs9+s6pkLQXpyyUdERtkxNZX/C5tiwYrmrrN8bj86ZX
- VUYZA82+X6stviSPcn09/ai/j+3/jiTMQ1oMq27r7iiaZJyXd/3xbFnkd0WCeY+6QOdQ2Bb4v
- jSHneQZKl4GJ8ltDFeU1eF9nNNIA2LRSGoBaseMIVKvVjZGFiVlzvR4OaPPcq7rCHDm7nePPu
- rkdkWwq7rNJwSWDIX7KvKKCw==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240722163741.us3r3v5pe2d76azk@quack3>
 
->> =E2=80=A6
->>> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
->>
->> Will any contributors care more for rules also according to such inform=
-ation?
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/Documentation/process/submitting-patches.rst?h=3Dv6.10#n398
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/Documentation/process/researcher-guidelines.rst?h=3Dv6.10#n5
->
-> Feel free to ignore Markus,
+On Mon, Jul 22, 2024 at 06:37:41PM GMT, Jan Kara wrote:
+> On Mon 15-07-24 09:26:29, 47 Mohit Pawar wrote:
+> > From: Mohit0404 <mohitpawar@mitaoe.ac.in>
+> > 
+> > Fixed-
+> >         WARNING: Missing a blank line after declarations
+> >         WARNING: Missing a blank line after declarations
+> 
+> The patch is missing your Signed-off-by tag. Please add it. Also I'm not
+> sure how Christian sees these pure whitespace cleanups but in this case it
 
-May any contributors feel free also to reconsider such a hint?
+I'm personally pro such cleanups.
 
+> is probably at least a readability win so feel free to add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+> 								Honza
+> 
+> > ---
+> >  fs/file_table.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/fs/file_table.c b/fs/file_table.c
+> > index 4f03beed4737..9950293535e4 100644
+> > --- a/fs/file_table.c
+> > +++ b/fs/file_table.c
+> > @@ -136,6 +136,7 @@ static int __init init_fs_stat_sysctls(void)
+> >         register_sysctl_init("fs", fs_stat_sysctls);
+> >         if (IS_ENABLED(CONFIG_BINFMT_MISC)) {
+> >                 struct ctl_table_header *hdr;
+> > +
+> >                 hdr = register_sysctl_mount_point("fs/binfmt_misc");
+> >                 kmemleak_not_leak(hdr);
+> >         }
+> > @@ -384,6 +385,7 @@ struct file *alloc_file_clone(struct file *base, int
+> > flags,
+> >                                 const struct file_operations *fops)
+> >  {
+> >         struct file *f = alloc_file(&base->f_path, flags, fops);
+> > +
+> >         if (!IS_ERR(f)) {
 
-> he has a long history of sending unhelpful review comments
+I would then change that to:
 
-Will the chances ever grow to clarify the concrete items
-which you found questionable anyhow?
+struct file *f;
 
-
-> and continues to ignore repeated requests to stop.
-
-I would like to improve developments for selected software areas.
-Will communication challenges be adjusted accordingly?
-
-Regards,
-Markus
+f = alloc_file(&base->f_path, flags, fops);
+if (!IS_ERR(f)) {
 
