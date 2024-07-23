@@ -1,120 +1,292 @@
-Return-Path: <linux-kernel+bounces-259905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF9D939F88
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:15:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E254F939FBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D87391F23095
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:15:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 114D31C21E0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E881214E2FB;
-	Tue, 23 Jul 2024 11:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D9314F9FE;
+	Tue, 23 Jul 2024 11:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ShTUViwz"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yandex.com header.i=@yandex.com header.b="W/8PeQ5/"
+Received: from forward502d.mail.yandex.net (forward502d.mail.yandex.net [178.154.239.210])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56631B960
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E90414A4DA;
+	Tue, 23 Jul 2024 11:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721733332; cv=none; b=qJ4JT1pYticRkUsbMHyYFTx3A8VNI9rx2uKPp/yg7PgRpnUpSVEFmvysXXc/cy0mFP5iLekgIOw69U4SFg6PWiT6NVy2lbZbq8Pe7ef8HJnw+0p/aUzTWNIf12euoDzbA7s1SQoLVxl9vaDjXd92g4mRv7ALC+DEGn0cGLyC5es=
+	t=1721733826; cv=none; b=it1BRgGKRkQM94Y4ucE+3PZTUQT5WwhNbKHsOCoI5iYivPotmva1mulkJH9azQPnwZ2A8UmI6oi7h45TRXKy0Cg7EI3Mh0vEeNdoQ3s+ogYlc+NkHcxKzdRs2X8AzP54obYtU4Utg4Yz8kii+MAiiQLvSHJAks0CcOCVdmnkidw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721733332; c=relaxed/simple;
-	bh=K9wM4j8YlfFJqMQ5wQVlibqExzRm27i+9PimN/mfbt4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TaGzlOs0rsMFSDUxyVUGQnLvj4IW1qKqRfmRhC5pk17CcAIUONjS8yLKRWiPQ/1Vo1N9tJp4M+Eqw7ty/PjuVS5IH396E5pk21GfIELhmV75guGt8yke5sF7KXMR+njmSeZbkWdYI+4uI2Ap6Cgbv6Qm2YALhpBlkMFv3SGtCRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ShTUViwz; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-65f880c56b1so53955067b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 04:15:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721733330; x=1722338130; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rRFHDv0XLvI63BDNDAb/9+mEEITchZiLb03oqBqQ10E=;
-        b=ShTUViwzcaT3nUDoQfEXVjuNRlGkKzFU2xAgPXcFTVxooD3SW2KIyHOYz9VE+eMcOG
-         KvJwiR0awEaWTqC8RI02mQ90FR/TQ6X+q6WkJDMdh/UlSpVnsLNixYA6A+grJkCPMfDy
-         sbPOELn/d9icd4Fef392kxkVCELdXVYht4Bc2UQxL2Uiz/XmtXUcidJlGHt5eVQeUX0d
-         hoz5Cn5gqx+wQzEhApo3zw8JyoySOyMfaFtJh3UQDx8Vi4F1q5g3elCij+qfu60FtPBl
-         i8iLmKUbiq+qJG8XOMidBHF3lCoQpfUUIBZg3ZNfvX+0w4hxC0xPTD+qaT4E73IxbnKK
-         XKHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721733330; x=1722338130;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rRFHDv0XLvI63BDNDAb/9+mEEITchZiLb03oqBqQ10E=;
-        b=V6WlqFTkygWpmaAzTr03gc/s5qVAyN0Uf4bEeug6EYdyS45gcg4kdAxClsSkR8ygkq
-         0rsLE3czb/jmETGrVYxvSs1a3jEaO7QuQ5zkbiRGYpHm5KDj6Ej5rXSnUxlVSY4v8z15
-         8oOTwhhRELFxmLSzAf0SgSkoP1sBmfot/ynzL7p+a/wMV0ZONHdmF3j+uZzwVfGIugDP
-         YV9d7F0jLx69NO5RmkN+hu7CVRFyjImyB1xZsEfwcF+uMtm6ZTLNgKEsWohIhp9g7LMY
-         Oj4k9D4gefnXjFfFiYqKs/IcsbyL/myonbELyP3N4PHYokJJUPNvuLms115or+BQJ3aP
-         t2EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVduzZFZSg88polu9r8hEmnYu8bmOYyaKkLlyYXG72C00hjz568TdxID0fXvWCR4zJX87vSQIx4w012tyxfMKiXTOLxYIKeQyN/xLiR
-X-Gm-Message-State: AOJu0YwzX0Vfr30N0b4apAPdFc3fcqyzt5A5oFmg9+TVlpxHJ623w6q1
-	W7h3reAvK4XGArtBov3uW9jBMW1hXLw0AyV6HpJp8oSqhxFZhInukz4t5TJA0tDfH0apXy1Xs4n
-	gdCvJZodmYQqJENXaEka5Sc9gAfaTOvK4685+QA==
-X-Google-Smtp-Source: AGHT+IHm3baNo2+1Gq1+OTlkkgIdaB3nZkpHkAXBXv54my6/+osPfPlCcucGcfXK1L4Fhnq5gfd/w/33iqAfDwg6mrc=
-X-Received: by 2002:a81:c941:0:b0:650:a1cb:b122 with SMTP id
- 00721157ae682-66ad94ba0d2mr96488357b3.27.1721733329722; Tue, 23 Jul 2024
- 04:15:29 -0700 (PDT)
+	s=arc-20240116; t=1721733826; c=relaxed/simple;
+	bh=jRVtQ3BZO3bshrzxX70rszHGyrGeLPc84CE6qsh3gmY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dWGHcpgJPYjNpB/CwJ/auagIsWlca5OdTwvF1+CWxdxYFzO3oAePoo0JA7LwJKwS249vJR2u4dz5JuIV5jS5iWJ1IWY968LmLGBNsA82rNNw85RiWR38Ypp5s2yIOxErGIMgMyo+FanIOzaQKmjCM0HMhwGHsv/aCVM4Ls6YUVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.com; spf=pass smtp.mailfrom=yandex.com; dkim=pass (1024-bit key) header.d=yandex.com header.i=@yandex.com header.b=W/8PeQ5/; arc=none smtp.client-ip=178.154.239.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.com
+Received: from mail-nwsmtp-smtp-production-main-19.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-19.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:3143:0:640:c03:0])
+	by forward502d.mail.yandex.net (Yandex) with ESMTPS id F22BA60D14;
+	Tue, 23 Jul 2024 14:16:04 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-19.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 0GMbHe8MjOs0-nTBoCZiH;
+	Tue, 23 Jul 2024 14:16:03 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.com; s=mail;
+	t=1721733364; bh=hQGEU3zHiGtuAg5lw6tLccN2NCx3M597KI1h6UY8wsY=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=W/8PeQ5/NHRTycx3bkf14tAeDHhPk9jgFLzaTpYIRKidfHMdRj0KPp4w+srrLWdgt
+	 jM+ZR4Dw66Yb7FtqPkbTsHQKly7s09YR+touruhtarMOPa0dc+961nqIWnFYkFbneo
+	 odca78tAeet0wCgaLUCALf6V3D9/nrlgJ5R3GtEc=
+Authentication-Results: mail-nwsmtp-smtp-production-main-19.klg.yp-c.yandex.net; dkim=pass header.i=@yandex.com
+Message-ID: <ae3f574a-256f-4ced-a371-a26255024750@yandex.com>
+Date: Tue, 23 Jul 2024 13:16:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240722-miix630-support-v1-0-a6483cfe8674@linaro.org>
- <20240722-miix630-support-v1-3-a6483cfe8674@linaro.org> <3a257754-2118-4a7f-9753-f1a2392f9279@linaro.org>
- <CAA8EJppvwXEiNs-6orVMSkkjJu4nYY4ZNdshbB1sUM=z4ouYXg@mail.gmail.com>
-In-Reply-To: <CAA8EJppvwXEiNs-6orVMSkkjJu4nYY4ZNdshbB1sUM=z4ouYXg@mail.gmail.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 23 Jul 2024 14:15:19 +0300
-Message-ID: <CAA8EJppLz89YCpDvTxaVuRsdb_zvX+FMWi5s5nnmz9sOnf-LpA@mail.gmail.com>
-Subject: Re: [PATCH 3/4] arm64: dts: qcom: msm8998-lenovo-miix-630: enable
- VolumeUp button
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jeffrey Hugo <quic_jhugo@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/4] dt-bindings: media: Document bindings for HDMI RX
+ Controller
+To: Shreeya Patel <shreeya.patel@collabora.com>
+Cc: heiko@sntech.de, mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ p.zabel@pengutronix.de, jose.abreu@synopsys.com, nelson.costa@synopsys.com,
+ shawn.wen@rock-chips.com, nicolas.dufresne@collabora.com,
+ hverkuil@xs4all.nl, hverkuil-cisco@xs4all.nl, kernel@collabora.com,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org,
+ Dmitry Osipenko <dmitry.osipenko@collabora.com>
+References: <20240719124032.26852-1-shreeya.patel@collabora.com>
+ <20240719124032.26852-3-shreeya.patel@collabora.com>
+ <c926b73e-9ee7-4c4f-9c06-761929425468@yandex.com>
+ <3328a8-669e6400-1-609f7800@94177214>
+Content-Language: en-US
+From: Johan Jonker <jbx6244@yandex.com>
+In-Reply-To: <3328a8-669e6400-1-609f7800@94177214>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 23 Jul 2024 at 14:11, Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Tue, 23 Jul 2024 at 02:24, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
-> >
-> > On 22.07.2024 1:57 PM, Dmitry Baryshkov wrote:
-> > > Add gpio-keys device, responsible for a single button: Volume Up.
-> > >
-> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > ---
-> > >  .../boot/dts/qcom/msm8998-lenovo-miix-630.dts      | 25 ++++++++++++++++++++++
-> > >  1 file changed, 25 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/qcom/msm8998-lenovo-miix-630.dts b/arch/arm64/boot/dts/qcom/msm8998-lenovo-miix-630.dts
-> > > index f585bc8ba2ce..bca309ac0cb8 100644
-> > > --- a/arch/arm64/boot/dts/qcom/msm8998-lenovo-miix-630.dts
-> > > +++ b/arch/arm64/boot/dts/qcom/msm8998-lenovo-miix-630.dts
-> > > +
-> > > +             key-vol-up {
-> > > +                     label = "Volume Up";
-> > > +                     linux,code = <KEY_VOLUMEUP>;
-> > > +                     gpios = <&pm8998_gpios 6 GPIO_ACTIVE_LOW>;
-> >
-> > No debounce-interval?
->
-> Strangely enough, no. See existing defines.
 
-After more digging I see it being used. Let's use it too.
 
--- 
-With best wishes
-Dmitry
+On 7/22/24 15:53, Shreeya Patel wrote:
+> On Saturday, July 20, 2024 16:14 IST, Johan Jonker <jbx6244@yandex.com> wrote:
+> 
+> Hi Johan,
+> 
+>>
+>>
+>> On 7/19/24 14:40, Shreeya Patel wrote:
+>>> Document bindings for the Synopsys DesignWare HDMI RX Controller.
+>>>
+
+>>> Reviewed-by: Rob Herring <robh@kernel.org>
+>>> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+
+Remove to trigger a new review.
+
+>>> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+>>> ---
+>>>
+>>> Changes in v4 :-
+>>>   - No change
+>>>
+>>> Changes in v3 :-
+>>>   - Rename hdmirx_cma to hdmi_receiver_cma
+>>>   - Add a Reviewed-by tag
+>>>
+>>> Changes in v2 :-
+>>>   - Add a description for the hardware
+>>>   - Rename resets, vo1 grf and HPD properties
+>>>   - Add a proper description for grf and vo1-grf phandles
+>>>   - Rename the HDMI Input node name to hdmi-receiver
+>>>   - Improve the subject line
+>>>   - Include gpio header file in example to fix dt_binding_check failure
+>>>
+>>>  .../bindings/media/snps,dw-hdmi-rx.yaml       | 132 ++++++++++++++++++
+>>>  1 file changed, 132 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml b/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
+>>> new file mode 100644
+>>> index 000000000000..96ae1e2d2816
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
+>>> @@ -0,0 +1,132 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +# Device Tree bindings for Synopsys DesignWare HDMI RX Controller
+>>> +
+>>> +---
+>>> +$id: http://devicetree.org/schemas/media/snps,dw-hdmi-rx.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Synopsys DesignWare HDMI RX Controller
+>>> +
+>>> +maintainers:
+>>> +  - Shreeya Patel <shreeya.patel@collabora.com>
+>>> +
+>>> +description:
+>>> +  Synopsys DesignWare HDMI Input Controller preset on RK3588 SoCs
+>>> +  allowing devices to receive and decode high-resolution video streams
+>>> +  from external sources like media players, cameras, laptops, etc.
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    items:
+>>> +      - const: rockchip,rk3588-hdmirx-ctrler
+>>
+
+>>> +      - const: snps,dw-hdmi-rx
+
+remove
+
+>>
+>> 1: Compatible strings must be SoC orientated.
+>> 2: In Linux there's no priority in which string will probed first. 
+>> What's the point of having a fallback string when there's no common code, but instead only the first string is used?
+>>
+>> +static const struct of_device_id hdmirx_id[] = {
+>> +	{ .compatible = "rockchip,rk3588-hdmirx-ctrler" },
+>> +	{ },
+>> +};
+>>
+> 
+
+> We believe the HDMIRX driver can be used for the Synopsys IP on other SoCs
+> in the future, which is why we have added snps,dw-hdmi-rx as the fallback compatible.
+> Currently, we have tested the driver only on the RK3588 Rock5B, so we are using the
+> rockchip,rk3588-hdmirx-ctrler compatible in the driver instead of the fallback one.
+
+The rule that compatible strings (for internal SoC components) must be SoC orientated also applies to the fallback string. "snps,xxxx" does not refer to an independent SoC.
+Don't invent strings for devices that we don't know yet if it might or might not be compatible in the future.
+
+Johan
+
+> 
+> 
+> Thanks,
+> Shreeya Patel
+> 
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  interrupts:
+>>> +    maxItems: 3
+>>> +
+>>> +  interrupt-names:
+>>> +    items:
+>>> +      - const: cec
+>>> +      - const: hdmi
+>>> +      - const: dma
+>>> +
+>>> +  clocks:
+>>> +    maxItems: 7
+>>> +
+>>> +  clock-names:
+>>> +    items:
+>>> +      - const: aclk
+>>> +      - const: audio
+>>> +      - const: cr_para
+>>> +      - const: pclk
+>>> +      - const: ref
+>>> +      - const: hclk_s_hdmirx
+>>> +      - const: hclk_vo1
+>>> +
+>>> +  power-domains:
+>>> +    maxItems: 1
+>>> +
+>>> +  resets:
+>>> +    maxItems: 4
+>>> +
+>>> +  reset-names:
+>>> +    items:
+>>> +      - const: axi
+>>> +      - const: apb
+>>> +      - const: ref
+>>> +      - const: biu
+>>> +
+>>> +  memory-region:
+>>> +    maxItems: 1
+>>> +
+>>> +  hpd-gpios:
+>>> +    description: GPIO specifier for HPD.
+>>> +    maxItems: 1
+>>> +
+>>> +  rockchip,grf:
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>>> +    description:
+>>> +      The phandle of the syscon node for the general register file
+>>> +      containing HDMIRX PHY status bits.
+>>> +
+>>> +  rockchip,vo1-grf:
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>>> +    description:
+>>> +      The phandle of the syscon node for the Video Output GRF register
+>>> +      to enable EDID transfer through SDAIN and SCLIN.
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>> +  - interrupts
+>>> +  - interrupt-names
+>>> +  - clocks
+>>> +  - clock-names
+>>> +  - power-domains
+>>> +  - resets
+>>> +  - pinctrl-0
+>>> +  - hpd-gpios
+>>> +
+>>> +additionalProperties: false
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +    #include <dt-bindings/clock/rockchip,rk3588-cru.h>
+>>> +    #include <dt-bindings/gpio/gpio.h>
+>>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>>> +    #include <dt-bindings/power/rk3588-power.h>
+>>> +    #include <dt-bindings/reset/rockchip,rk3588-cru.h>
+>>> +    hdmi_receiver: hdmi-receiver@fdee0000 {
+
+>>> +      compatible = "rockchip,rk3588-hdmirx-ctrler", "snps,dw-hdmi-rx";
+
+      compatible = "rockchip,rk3588-hdmirx-ctrler";
+
+>>> +      reg = <0xfdee0000 0x6000>;
+>>> +      interrupts = <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH 0>,
+>>> +                   <GIC_SPI 436 IRQ_TYPE_LEVEL_HIGH 0>,
+>>> +                   <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH 0>;
+>>> +      interrupt-names = "cec", "hdmi", "dma";
+>>> +      clocks = <&cru ACLK_HDMIRX>,
+>>> +               <&cru CLK_HDMIRX_AUD>,
+>>> +               <&cru CLK_CR_PARA>,
+>>> +               <&cru PCLK_HDMIRX>,
+>>> +               <&cru CLK_HDMIRX_REF>,
+>>> +               <&cru PCLK_S_HDMIRX>,
+>>> +               <&cru HCLK_VO1>;
+>>> +      clock-names = "aclk",
+>>> +                    "audio",
+>>> +                    "cr_para",
+>>> +                    "pclk",
+>>> +                    "ref",
+>>> +                    "hclk_s_hdmirx",
+>>> +                    "hclk_vo1";
+>>> +      power-domains = <&power RK3588_PD_VO1>;
+>>> +      resets = <&cru SRST_A_HDMIRX>, <&cru SRST_P_HDMIRX>,
+>>> +               <&cru SRST_HDMIRX_REF>, <&cru SRST_A_HDMIRX_BIU>;
+>>> +      reset-names = "axi", "apb", "ref", "biu";
+>>> +      memory-region = <&hdmi_receiver_cma>;
+>>> +      pinctrl-0 = <&hdmim1_rx_cec &hdmim1_rx_hpdin &hdmim1_rx_scl &hdmim1_rx_sda &hdmirx_5v_detection>;
+>>> +      pinctrl-names = "default";
+>>> +      hpd-gpios = <&gpio1 22 GPIO_ACTIVE_LOW>;
+>>> +    };
+> 
 
