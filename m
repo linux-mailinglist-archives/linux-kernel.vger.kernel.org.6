@@ -1,133 +1,110 @@
-Return-Path: <linux-kernel+bounces-260173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3FDC93A421
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:04:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CD4293A422
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:05:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 307871F2328F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:04:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D81E1C22723
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F47B157A59;
-	Tue, 23 Jul 2024 16:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FOqphG6H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8C213B599;
-	Tue, 23 Jul 2024 16:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC5C157493;
+	Tue, 23 Jul 2024 16:05:20 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B5513B599;
+	Tue, 23 Jul 2024 16:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721750671; cv=none; b=JpvlXGG4Smya5pu86sHMpJKWBVL4z9728Ig04VTzl9sDakJ7atkf3dt3B67kOqBE//661xOpPtcp/7IQydGKow+rLnAZe+3jmvuQ6C5TVul+WD91tyIQPT01NtZxrCGFpekj86HTvZDR7H3wvY1Rerjy3PYhc8xzbdVA3GOOqjo=
+	t=1721750720; cv=none; b=MYKOAsvAvo+YNDAmN1c9O9HpKJA+ZTeiPVuMgjS7KUY0DNLrdJOjcirhn+s39k9G1SSVlQ1wRkkt9T7INmUA7nzANveI47wc4Lfpq+80JRgZUKn2RbqtiF79mA3ZI9HwQkJYStiMBL6T8By8LzJ0gby8aWA19JPcmOFJuqQc4vA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721750671; c=relaxed/simple;
-	bh=W/+fwuK1CNAAfIupAvdNDpGXw3AXSDiI3VRVBEBzu8E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jwt/W0sdlvrjVJwVhtt/FXUtnocVxwLH2b2EDBQF5yGEAQl/gMc8pbhnDrP5c+YHkYGfQSIsDHehltGk81eOH6c5wFBb5VZcOM6dvWXQAdfb67lpQYJxtBeP9iMO4Imy2akgM4bwBxZRTNs89T+HSTCYoPMuUHPpmIUJWfG2Gfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FOqphG6H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF8A1C4AF09;
-	Tue, 23 Jul 2024 16:04:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721750671;
-	bh=W/+fwuK1CNAAfIupAvdNDpGXw3AXSDiI3VRVBEBzu8E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FOqphG6HOCuTixwQcQs2fjwA/9NFC7QrHNjGwhIaGxyVvlj8WV8bSPo0km0+hJZOZ
-	 PPZPunccS1zR+DEcDXuuioers0KBGQOF7vIlFYWTM1EwwNP1XqCTEYyfizf4WRmIQ2
-	 1A1crfZiXkCbMOyaNPP0rwrSMRDhD90CK9gNidt5rzsRy4LzqFlQMokCVySxdkYNF2
-	 qO4NXzinLAEPSWMF8l5A66NJE/7jhse9NnPBH9Xx1ZtiLmYf84w6GT6WMqCgyIxqVB
-	 459IZv6cKBTpqg3XcGdh7eKvpOyEz32AJ4PqyFBSWbcs/XdTriGfKgJpTRnzRx49pF
-	 6rFOxePeCXeWg==
-Date: Tue, 23 Jul 2024 18:04:23 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: tj@kernel.org, dlemoal@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	festevam@gmail.com, linux-ide@vger.kernel.org,
-	stable@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, kernel@pengutronix.de
-Subject: Re: [PATCH v4 4/6] ata: ahci_imx: Add 32bits DMA limit for i.MX8QM
- AHCI SATA
-Message-ID: <Zp/Uh/mavwo+755Q@x1-carbon.lan>
-References: <1721367736-30156-1-git-send-email-hongxing.zhu@nxp.com>
- <1721367736-30156-5-git-send-email-hongxing.zhu@nxp.com>
+	s=arc-20240116; t=1721750720; c=relaxed/simple;
+	bh=XSB3cHZmX/mFVjU4AXw0EDtPAG2o8K+Z4DnBiMrAMws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ET1tHBjByAG6SLOxlqxq48pqaH2U+nAQtC39njBpK4/BOAfJ9nT2SQUBK9ZdyrrD6T0dgyA80lKH32qSbckVewzypQfnuKdYzDju+uR0TGGd96lGwfY1JocqeFyTqgF9NPmYn22JKGMmG1jMwwXIazlD0HF0xESW+8F62FWboRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E7A81007;
+	Tue, 23 Jul 2024 09:05:40 -0700 (PDT)
+Received: from [10.1.37.20] (PF4Q20KV.arm.com [10.1.37.20])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CEEAA3F73F;
+	Tue, 23 Jul 2024 09:05:12 -0700 (PDT)
+Message-ID: <7616d1dc-73e9-425e-9a62-1f3b20bec6e9@arm.com>
+Date: Tue, 23 Jul 2024 17:05:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1721367736-30156-5-git-send-email-hongxing.zhu@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf scripts python: cs-etm: Restore first sample log in
+ verbose mode
+To: James Clark <james.clark@linaro.org>, coresight@lists.linaro.org,
+ gankulkarni@os.amperecomputing.com, mike.leach@linaro.org,
+ suzuki.poulose@arm.com
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Ruidong Tian <tianruidong@linux.alibaba.com>,
+ Benjamin Gray <bgray@linux.ibm.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240723132858.12747-1-james.clark@linaro.org>
+Content-Language: en-US
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <20240723132858.12747-1-james.clark@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 19, 2024 at 01:42:14PM +0800, Richard Zhu wrote:
-> Since i.MX8QM AHCI SATA only has 32bits DMA capability.
-> Add 32bits DMA limit here.
+On 7/23/2024 2:28 PM, James Clark wrote:
 > 
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> The linked commit moved the early return on the first sample to before
+> the verbose log, so move the log earlier too. Now the first sample is
+> also logged and not skipped.
+> 
+> Fixes: 2d98dbb4c9c5 ("perf scripts python arm-cs-trace-disasm.py: Do not ignore disam first sample")
+> Signed-off-by: James Clark <james.clark@linaro.org>
+
+Reviewed-by: Leo Yan <leo.yan@arm.com>
+
 > ---
->  drivers/ata/ahci_imx.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  tools/perf/scripts/python/arm-cs-trace-disasm.py | 9 ++++-----
+>  1 file changed, 4 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/ata/ahci_imx.c b/drivers/ata/ahci_imx.c
-> index 4dd98368f8562..e94c0fdea2260 100644
-> --- a/drivers/ata/ahci_imx.c
-> +++ b/drivers/ata/ahci_imx.c
-> @@ -827,6 +827,9 @@ static const struct scsi_host_template ahci_platform_sht = {
->  
->  static int imx8_sata_probe(struct device *dev, struct imx_ahci_priv *imxpriv)
->  {
-> +	if (!(dev->bus_dma_limit))
-> +		dev->bus_dma_limit = DMA_BIT_MASK(32);
+> diff --git a/tools/perf/scripts/python/arm-cs-trace-disasm.py b/tools/perf/scripts/python/arm-cs-trace-disasm.py
+> index d973c2baed1c..7aff02d84ffb 100755
+> --- a/tools/perf/scripts/python/arm-cs-trace-disasm.py
+> +++ b/tools/perf/scripts/python/arm-cs-trace-disasm.py
+> @@ -192,17 +192,16 @@ def process_event(param_dict):
+>         ip = sample["ip"]
+>         addr = sample["addr"]
+> 
+> +       if (options.verbose == True):
+> +               print("Event type: %s" % name)
+> +               print_sample(sample)
 > +
->  	imxpriv->sata_phy = devm_phy_get(dev, "sata-phy");
->  	if (IS_ERR(imxpriv->sata_phy))
->  		return dev_err_probe(dev, PTR_ERR(imxpriv->sata_phy),
-> -- 
-> 2.37.1
+>         # Initialize CPU data if it's empty, and directly return back
+>         # if this is the first tracing event for this CPU.
+>         if (cpu_data.get(str(cpu) + 'addr') == None):
+>                 cpu_data[str(cpu) + 'addr'] = addr
+>                 return
 > 
-
-Why is this needed?
-
-ahci_imx.c calls ahci_platform_init_host(), which calls
-dma_coerce_mask_and_coherent():
-https://github.com/torvalds/linux/blob/v6.10/drivers/ata/libahci_platform.c#L750-L756
-
-Should this code perhaps look more like:
-https://github.com/torvalds/linux/blob/v6.10/drivers/ata/ahci.c#L1048-L1054
-
-where we set it to 64 or 32 bit explicitly.
-
-Does this solve your problem:
-diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform.c
-index 581704e61f28..fc86e2c8c42b 100644
---- a/drivers/ata/libahci_platform.c
-+++ b/drivers/ata/libahci_platform.c
-@@ -747,12 +747,11 @@ int ahci_platform_init_host(struct platform_device *pdev,
-                        ap->ops = &ata_dummy_port_ops;
-        }
- 
--       if (hpriv->cap & HOST_CAP_64) {
--               rc = dma_coerce_mask_and_coherent(dev, DMA_BIT_MASK(64));
--               if (rc) {
--                       dev_err(dev, "Failed to enable 64-bit DMA.\n");
--                       return rc;
--               }
-+       rc = dma_coerce_mask_and_coherent(dev,
-+                       DMA_BIT_MASK((hpriv->cap & HOST_CAP_64) ? 64 : 32));
-+       if (rc) {
-+               dev_err(dev, "DMA enable failed\n");
-+               return rc;
-        }
- 
-        rc = ahci_reset_controller(host);
-
-
-
-Kind regards,
-Niklas
+> -
+> -       if (options.verbose == True):
+> -               print("Event type: %s" % name)
+> -               print_sample(sample)
+> -
+>         # If cannot find dso so cannot dump assembler, bail out
+>         if (dso == '[unknown]'):
+>                 return
+> --
+> 2.34.1
+> 
 
