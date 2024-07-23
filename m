@@ -1,91 +1,86 @@
-Return-Path: <linux-kernel+bounces-259957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66E8A93A079
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:20:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4296193A07B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A98728268B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:20:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB8601F22E31
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7857C152524;
-	Tue, 23 Jul 2024 12:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E92152503;
+	Tue, 23 Jul 2024 12:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="CSJkRm+X"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b="wQb6taeN"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DD8152794
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 12:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917AA14AD17
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 12:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721737229; cv=none; b=GFeBzaTwnT7/LewPywwhKm83htdWbBVwYKbSXXKfkgWycyJjFmiJUq8kk5U0yl46hERf4vIlAIVKPdQW0JeBoNamfARpD6f/Bfde0Eh2AfjpcV036SOAc+lb/e/Avt4g45XcnfHAHopeFk7VjF+u2aERsZ3XkC3KRSiU+EmF+m0=
+	t=1721737529; cv=none; b=CDf7aFRqJnsrVNch8o8c9AkZkLDJE9/fF5n+t/8N7V7iSWACjv03Z/6pxP3wEom+F7sJNSS9+HwEknHSQYR+qt8DdgIM8IE537oWaXe4oXg6QlQsCCQYEILUS3ZVPS8zHJTbcFc18+1TAIO7vYRnm4LGGhWYspolwBBZJyAFi2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721737229; c=relaxed/simple;
-	bh=HLEaVpA6FMR4Zdz4p/Ldx5xmPCdzWU6LBAw32JR6Wds=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YcuewAtrJb0XBe2AE4HPlUE4vWaklRP5zXbi61XkrlZ9Pax3XQhJaXKmp0Ljcpw3HfP/UYxYyDna/0ZShK9Q0WCdnDyXnanC4TNSbzzZzAh95Ufz1JwYX8qggl/zqUlmNauKoSLiD7IHG7ioZ15wDGij6yfc96NuNdIOKBQ418c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=CSJkRm+X; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-381f24d6bc4so20987865ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 05:20:27 -0700 (PDT)
+	s=arc-20240116; t=1721737529; c=relaxed/simple;
+	bh=o41f5Tohm6RdJTQQRltIg3Tz4FTINsoa8D2H8tZmyJU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ja7eGWPY6ldbIoKSi3Jy57cQwcczdfwTwie5NqjtTkynwZbMo84nmgb0EshAm93v/dQN34FCCZUkIjIhUGPKW6lrI63BP5GR1dkN2z+NAZ1AR4KhGNOYCDcvk70qzTdMGnAZoeJBKYHMwXSckAMXgTBluzCLp6CvIqfIO1O7gGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net; spf=pass smtp.mailfrom=opensrcsec.com; dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b=wQb6taeN; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensrcsec.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5a156557029so4778897a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 05:25:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1721737227; x=1722342027; darn=vger.kernel.org;
+        d=grsecurity.net; s=grsec; t=1721737526; x=1722342326; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8h7HTJePMWnYKEcUNwoiJ3GWGK3w1qTCbVkfmacFufI=;
-        b=CSJkRm+XcjpF0C5aigFUh72SVw9D6hRs8KrUfDSMzxqCABnasGAM4k9j4YchF1Xjrx
-         UDQ/v2IDIObYDiz7xa9bbidosnwXEnAm6/xxTM21w7q4ZkR3K6Xefr2lobhT9xVUwr4P
-         n7knQYtPaaFdRna8w+IGlInrMqgqc3etytmBDcKwTYgwsUegsVtRjHftVQtq4CsS+5J/
-         +VAkoIFNVMncdFZLNq+jYXh6+h3C5lG65pAs7eq6nvoAezQLYB42FjsNLkaA4VwLGke+
-         wrK2ZTNoiavVgdjhAVxueSRETpi06MXxyV0qqvXcPWgHG2gIdmcdye8BkEnMoIFVElpj
-         3+1A==
+        bh=qWLWrwOfQQwvpb82Ri05DZJIfVLjHwkbuOCygTlxvVc=;
+        b=wQb6taeNGhcQl++VynHTY2Z+gnUvMC8gEb/oQqaGDizGX7jOx0XZcZvgkq9Ddnigy0
+         FD7OF00W5/hwG4SZNE/wzHp6Cb/1gMyo1aWyiKhLZlk6W7wyA2VIWOW4wp9Iq4FP2QVt
+         /uJpIsVPmnZm9sOyfXy8yX/zBjecZjuVHET4V7WRAgAQFq3cSZXXsj2Fg/s/8EjAtj6Y
+         effWQU2SvSFbFpmRW2z+DmcWYvAGZxX2V/5fwjbYqJE4Miemz5jJByk+ncm/P5w/DXtD
+         2DMb0XUJrk8jTqJm6M/Bzrex+adCitqabLa+8fE4HYgQs5sBEOhVa4Z4wWcHhIR+tp+L
+         Y2tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721737227; x=1722342027;
+        d=1e100.net; s=20230601; t=1721737526; x=1722342326;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8h7HTJePMWnYKEcUNwoiJ3GWGK3w1qTCbVkfmacFufI=;
-        b=LgBbpBX6NiRKUuv8/6P0K+WKU7lQqvzN9PBAahUhBWjgAWXJ+916liQYTIUY8oH7vs
-         HrOO7q5iwZT27/ppKpF0Rk+72TcAh03u6yeEGxo8g8VDKyIe+nPnG3nReibDT0xgAtLK
-         7eXnXSYlUQ3E1dUB5Yx+sv4nOjewfpd7MWzck/eczgLBU4tHA1cqw62b2G76yZd1+/30
-         RFNhIiT304StpAid6vAgyWgbM3ZXIT5oT4mOA5Slk5D6gx9h/B6rLWrLoRXx+6dlPk+x
-         6+3y/FOQlfj/iKV8aPwqdL/jtzEKRJzYZvPORY/ynUokkRTjY46opyLZU50fIfTHyEzL
-         odbw==
-X-Forwarded-Encrypted: i=1; AJvYcCVlFvFMfuJ5shfAu/AbZ9kSVFHrZ5zyYuL7s3jJ/XR8KTaZhWZlittY/e3DttKSIKwVXEW4tuxVXzSVJd8Di6w7JZa0Ucg5OPGq5Jex
-X-Gm-Message-State: AOJu0Yxxn3qIHm0EDaeMhEe5RvmkCWKpU49ZTxtBRQVGC0C7j3qOC8rA
-	trOw8fL7WzZMvG7TSLNL6U2GiIFssbMXtcA++lDizC9MNAI5P7T/CGhjYadjrWc=
-X-Google-Smtp-Source: AGHT+IEW+HLKQYO1fFhqy+DCa9vHKXQAm3ABYaD8lWXBFQ6H5h6ujyMJp6R/JdkP4omppo4DAsg/Wg==
-X-Received: by 2002:a92:c54e:0:b0:375:e93b:7c8c with SMTP id e9e14a558f8ab-399403c30b0mr126136105ab.12.1721737226824;
-        Tue, 23 Jul 2024 05:20:26 -0700 (PDT)
-Received: from YGFVJ29LDD.bytedance.net ([139.177.225.227])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70d2820a945sm3261466b3a.74.2024.07.23.05.20.22
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 23 Jul 2024 05:20:26 -0700 (PDT)
-From: Chuyi Zhou <zhouchuyi@bytedance.com>
-To: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com
-Cc: chengming.zhou@linux.dev,
+        bh=qWLWrwOfQQwvpb82Ri05DZJIfVLjHwkbuOCygTlxvVc=;
+        b=NS50ATsCM3KPLxMrJmZpOeu9RbaWJZYb5PR7cPGyb8h563U3O7R/gtcoukYfgKr1U2
+         02AvFCQGWg0bGqxsZjotGERdz5p4jA3acnZnF/cwxy92VDdzkHptUJxkdbT/LzkX3/IS
+         W0YqxRU/zUh910ZDES+Qgc1BYxQ+IfDF6p6Y9gPZVLDLAZ5IdtVxWqAmKiwT1mV5Pvxn
+         lf4JWwfFqSmNOdsj41nos6xo7h5ktUP+lsQQDnkGOaAUM27CINLzyj+RacTnYi/JCXxF
+         1bhgxVOcM4kezmb3t1gpZeh+N/lqPeYnxnnF2eDbnJ4YMg/C89sS6OZzlVTAtA8mIShz
+         S1GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxfyLRy/EeVLcmthAzGv0qEA+B8t8V47+aOWBtuXRAS42gTZA1o76l/vE9baMq8FwKveH91ZrFcgt6o2fpa/CTQhsal7uXjAYhDXvc
+X-Gm-Message-State: AOJu0YyVKoIbRm8JcRXjvzi6j7qifv8+VOnPQEu5kiRG/pTbo9VAgNG4
+	nEsQJs/oALK7ZcCsD34ZmxeEQEYtKYVCf4rotshj+08dNLJ+v3N6MCrU5LxBX9Q=
+X-Google-Smtp-Source: AGHT+IHejtfZTTOCdvtSWuiN4OnUD6qZPK+5w37awVBNIdpDWvpgnPPs3yN5J6y/7WYA5nZc5yqbcw==
+X-Received: by 2002:a05:6402:3507:b0:5a2:8802:8e10 with SMTP id 4fb4d7f45d1cf-5a478b64facmr5881011a12.8.1721737525753;
+        Tue, 23 Jul 2024 05:25:25 -0700 (PDT)
+Received: from nuc.fritz.box (p200300f6af04ba00bd1de83dc7c21243.dip0.t-ipconnect.de. [2003:f6:af04:ba00:bd1d:e83d:c7c2:1243])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30a4d6c17sm7489026a12.5.2024.07.23.05.25.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 05:25:25 -0700 (PDT)
+From: Mathias Krause <minipli@grsecurity.net>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathias Krause <minipli@grsecurity.net>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-trace-kernel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	joshdon@google.com,
-	Chuyi Zhou <zhouchuyi@bytedance.com>
-Subject: [PATCH v2 2/2] sched/core: Avoid unnecessary update in tg_set_cfs_bandwidth
-Date: Tue, 23 Jul 2024 20:20:06 +0800
-Message-Id: <20240723122006.47053-3-zhouchuyi@bytedance.com>
-X-Mailer: git-send-email 2.37.0 (Apple Git-136)
-In-Reply-To: <20240723122006.47053-1-zhouchuyi@bytedance.com>
-References: <20240723122006.47053-1-zhouchuyi@bytedance.com>
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Ajay Kaher <ajay.kaher@broadcom.com>
+Subject: [PATCH] eventfs: Don't return NULL in eventfs_create_dir()
+Date: Tue, 23 Jul 2024 14:25:21 +0200
+Message-ID: <20240723122522.2724-1-minipli@grsecurity.net>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240722201125.3fa6314b@gandalf.local.home>
+References: <20240722201125.3fa6314b@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,39 +89,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In the kubernetes production environment, we have observed a high
-frequency of writes to cpu.max, approximately every 2~4 seconds for each
-cgroup, with the same value being written each time. This can result in
-unnecessary overhead, especially on machines with a large number of CPUs
-and cgroups.
+Commit 77a06c33a22d ("eventfs: Test for ei->is_freed when accessing
+ei->dentry") added another check, testing if the parent was freed after
+we released the mutex. If so, the function returns NULL. However, all
+callers expect it to either return a valid pointer or an error pointer,
+at least since commit 5264a2f4bb3b ("tracing: Fix a NULL vs IS_ERR() bug
+in event_subsystem_dir()"). Returning NULL will therefore fail the error
+condition check in the caller.
 
-This is because kubelet and runc attempt to persist resource
-configurations through frequent updates with same value in this manner.
-While optimizations can be made to kubelet and runc to avoid such
-overhead(e.g. check the current value of cpu request/limit before writing
-to cpu.max), it is still worth to bail out from tg_set_cfs_bandwidth() if
-we attempt to update with the same value.
+Fix this by substituting the NULL return value with a fitting error
+pointer.
 
-Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
+Fixes: 77a06c33a22d ("eventfs: Test for ei->is_freed when accessing ei->dentry")
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+Reviewed-by: Ajay Kaher <ajay.kaher@broadcom.com>
+Signed-off-by: Mathias Krause <minipli@grsecurity.net>
 ---
- kernel/sched/core.c | 3 +++
- 1 file changed, 3 insertions(+)
+v2: send as a separate patch, picking up review tags from Dan and Ajay
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 7720d34bd71b..0cc564f45511 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -9090,6 +9090,9 @@ static int tg_set_cfs_bandwidth(struct task_group *tg, u64 period, u64 quota,
- 	guard(cpus_read_lock)();
- 	guard(mutex)(&cfs_constraints_mutex);
- 
-+	if (cfs_b->period == ns_to_ktime(period) && cfs_b->quota == quota && cfs_b->burst == burst)
-+		return 0;
-+
- 	ret = __cfs_schedulable(tg, period, quota);
- 	if (ret)
- 		return ret;
+ fs/tracefs/event_inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/tracefs/event_inode.c b/fs/tracefs/event_inode.c
+index 5d88c184f0fc..a9c28a1d5dc8 100644
+--- a/fs/tracefs/event_inode.c
++++ b/fs/tracefs/event_inode.c
+@@ -736,7 +736,7 @@ struct eventfs_inode *eventfs_create_dir(const char *name, struct eventfs_inode
+ 	/* Was the parent freed? */
+ 	if (list_empty(&ei->list)) {
+ 		cleanup_ei(ei);
+-		ei = NULL;
++		ei = ERR_PTR(-EBUSY);
+ 	}
+ 	return ei;
+ }
 -- 
-2.20.1
+2.43.0
 
 
