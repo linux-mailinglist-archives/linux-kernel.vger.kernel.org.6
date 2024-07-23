@@ -1,230 +1,215 @@
-Return-Path: <linux-kernel+bounces-260255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E186C93A509
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:37:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A8FE93A50C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:37:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CCC5284B17
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:37:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB58DB219B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65E2158DA0;
-	Tue, 23 Jul 2024 17:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0FE15887F;
+	Tue, 23 Jul 2024 17:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fyB/k90Q"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2088.outbound.protection.outlook.com [40.107.223.88])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NrDj3dKQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAAA158D92
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 17:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721756192; cv=fail; b=M8wqrd3K1ou+B4GwnYdBFqAOBlT9pmCvjDD54VU6xVnezVTWlzucN9QwJ1/yoDCp0Jhve+2spME6syU8c0SDSyUFdKSIbAIRZniOQ4Soqh1uUexnL9aQeMxHOo+Ew8o3m52G33EdpUll/jqY+auWPvOo8MHkvYtLE2YyU01yiH0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721756192; c=relaxed/simple;
-	bh=KkvhZJEEroH25uRQsVzKqseCzHDcrnzY4eMqimp9ycE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CKj74In3e8RvzfOjt/ZSRLwIx8JR8F6Fu5HTKkpOeMd7N9iC2z2ksJaSWbluceCqh8AwAZHPhRCadQNZMpXio+MlPsHgpETTc2yeMWPyQNgDaq0yTS5KYsRTIuqA+apK4Nd5h55dpLANYk5Tji9/hG6nmYOJ1iQXsJq2Fa0DJ9s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fyB/k90Q; arc=fail smtp.client-ip=40.107.223.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nw+tU1o6pFir7OK1tDQVtiG0MZ0GKSi+J7wCTq4/Lb97QPCuTwfcEKHgUzdY8S356zJUGnM/Sao2X6dBOyH2hVAc6mVw4U71FzNtKuDjqkzNcP28T1XwDAz0c2DdVMbCtAfRti8P2+H5W2FCCRywFubGQrDOwcUlZHfmTlzIAu12f0/jyeA12MQlXUdacTWS1SJiXmh2Rn09AfoD5HDtrz5mWoUYTxPUZhWz3BAShjZmV1DpaCUSQdWnV64IjHSxYE/79drG7g+rt8LdNBN7hAZnkxSGVEIZWGd+HwikecWhQYPFy0bPedWzalHL5iWd/V6UQuJ4Y6dZMR5TR02plQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZaiWfxwrVVegUP28PVwsewnIbKV5Ajon6azAXqQupMs=;
- b=fQR3tH41CnN/gHHv4khjuGBGQP4IwmWN8Ct5rgPKCOgpSRWlKPo7Qyx+wjmYKEXlFl0lxvqpNiPegwXIKk/RnVDfd4V/cKf7vhKqzHIkujmEpCHUTWIO0wEH0X4DDGbtmn6URNvFnJrDylk33ExH77uZi07tyiNgmK1S1CbGSI4phyu8WoLm9YVc87YqR6gvn8rPW8bHo5mN3Bmyvwmo29eMhbmit+m10hmqGlQaMFyRsYFXnaXqYm41dA3thtfIJHYZtR6Zav9xWjcpP1EPQlQM5ZsTxRhSqN2UFUfiCfIg7hWuqR08mDKoVcy+vWzd5PZXOBvPoAyiyPcVOhxZQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=bootlin.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZaiWfxwrVVegUP28PVwsewnIbKV5Ajon6azAXqQupMs=;
- b=fyB/k90QV9dGPd5LBhcb+aBX2of7lP6iq4xlg6DyQ0REQ4WKQ4406bqD1xPfLYXhKaKq+oUgqUwJbiUQHCCGY1lNO2puMAr3wrEpG0THI3SVQyvhnpiccEzOoN71VAdBbXP+n8U2LR1Oyc/aOa1pHaC3tqNW3E5rtQUmVFAA/cU=
-Received: from BN9PR03CA0457.namprd03.prod.outlook.com (2603:10b6:408:139::12)
- by SA3PR12MB9107.namprd12.prod.outlook.com (2603:10b6:806:381::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16; Tue, 23 Jul
- 2024 17:36:24 +0000
-Received: from BN1PEPF00005FFD.namprd05.prod.outlook.com
- (2603:10b6:408:139:cafe::43) by BN9PR03CA0457.outlook.office365.com
- (2603:10b6:408:139::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14 via Frontend
- Transport; Tue, 23 Jul 2024 17:36:24 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN1PEPF00005FFD.mail.protection.outlook.com (10.167.243.229) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7784.11 via Frontend Transport; Tue, 23 Jul 2024 17:36:24 +0000
-Received: from jatayu.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 23 Jul
- 2024 12:36:21 -0500
-From: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Jarkko Nikula
-	<jarkko.nikula@linux.intel.com>
-CC: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>, Krishnamoorthi M
-	<krishnamoorthi.m@amd.com>, <linux-i3c@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Subject: [PATCH 5/5] i3c: mipi-i3c-hci: Add a quirk to set Response buffer threshold
-Date: Tue, 23 Jul 2024 23:05:38 +0530
-Message-ID: <20240723173538.3493935-6-Shyam-sundar.S-k@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240723173538.3493935-1-Shyam-sundar.S-k@amd.com>
-References: <20240723173538.3493935-1-Shyam-sundar.S-k@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C3B13BC18
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 17:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721756230; cv=none; b=LfBjctwGa0M//M+DeqhotIhXQIZAn8VMcA3MuiXKd3aSsSTJrQsc0xWCmJcPjkMcdAAfyx2oQt8CH9HdcxGRAWv7QIGZfiPkwwu148kPXF0l/Pmk7Wjmgb4pdt+FW5RdrqRpR/cxhVBNGGtv+F3OFDqzLFL2yux5gwYXqkPkmZo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721756230; c=relaxed/simple;
+	bh=0J3Hj1ylmUyaV1u8t385LGAMrkCKxaGrovQLmzAzL3U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gwxqWOAf/x6k8f1Mp3XUA6JAbhQODwlnOVTXAp4Gsj36n65E7JG06B75KqSIFNRsQt1x+GjC02qaXTCoj+j/TYcBhbjSkxUuL8h7l0NfbI/Wm3uT40JE/LN+DR2b+9RN263YsT9plqH7T6a0vTlYQWcwr+wCDgBCv4+xHp0vBoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NrDj3dKQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721756228;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=62hebeWi0ITEck7nxNX/M2FORPR9UwBEqyQOUe6wmiU=;
+	b=NrDj3dKQSF+Tr0WbV82GD/lmzR9GYHXtxDZCjz3PdopizOweD89TUrq2XRrRblOpvkS+aV
+	1hGMIcD22rBCMYgP3cVuzIyDJssLj+6oAQv8M26qvZ8jsRDJ1c+YbJ3ZUMnVHdtbtyWnJb
+	OxyZMFkHVPZmi5Dl9NackVEKPyF0tQM=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-693-WEdmQWUONeWp5o8Pg6CoaQ-1; Tue, 23 Jul 2024 13:37:06 -0400
+X-MC-Unique: WEdmQWUONeWp5o8Pg6CoaQ-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4279418eb2bso39355635e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 10:37:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721756226; x=1722361026;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=62hebeWi0ITEck7nxNX/M2FORPR9UwBEqyQOUe6wmiU=;
+        b=dhAvApP0IQJE2GZ+JdJ4lACFgSZ1SGikSpphDZ1KIJ889JUTcI5nQNQCdmxTQvalb3
+         54rKSDp8RtaLIv6xAMAFcJnRcs1XvqeDOnIqT9WRaaZehPPsQfcJeNM9xUV56DOgz5xf
+         GpRdPbSgHMh1ajw71TlJphe0nrDOONJ8mmFDqJsSfhLk60NtV87IljlV+yJJmhzNOWid
+         vGiF1yQOqZa08Tnn5etsd/m1aRxq+sc1S1h+qIp71EqXsVQB09hyxG+R81EWXdGpor7/
+         gGMRYzlHaQYplgHKj2CXMWUh2iedIfYSlx54yl9XrqpMQR/7cbHdr7lNc/Z5gjlesqRK
+         0+jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUC56Y+nZzwumDMuqQvy7QqrRnlcmUqbDG9bJyBRXjSGtccfUH73263346qG0obmR4gMv3pp22NobDMRbUY6+d1LP+7kYv/pAXcPhFO
+X-Gm-Message-State: AOJu0Yzb0x711ds6vUCwzpvZaIpbyQ8JhOvGQfvn+IKG7SGD1rL0mEGL
+	Id/wP8p+3f/gXGOESlqEzmqaHlb6bKCzUWnA7ZCxIC3vhUv84Cfq7UYTJL6109020NbWBpMHlr/
+	9Usd/5M2VLynAGUZc7Jb0Q+DPGkO4RfaaOd/lgmmf4MFD+Zq2aEDkLoe+EO17PA==
+X-Received: by 2002:a05:600c:3ba3:b0:427:9dad:17df with SMTP id 5b1f17b1804b1-427f7ab5942mr1554075e9.12.1721756225622;
+        Tue, 23 Jul 2024 10:37:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEu4Z9BHtIQnMHKhtfj0ProRXQnQmU+cxSMg3r6++Fh71gX+i4zBosJDVEVYMfLkGee+hT4yw==
+X-Received: by 2002:a05:600c:3ba3:b0:427:9dad:17df with SMTP id 5b1f17b1804b1-427f7ab5942mr1553915e9.12.1721756225104;
+        Tue, 23 Jul 2024 10:37:05 -0700 (PDT)
+Received: from [192.168.3.141] (p5b0c6cd6.dip0.t-ipconnect.de. [91.12.108.214])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a3c0fasm213872765e9.7.2024.07.23.10.37.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jul 2024 10:37:04 -0700 (PDT)
+Message-ID: <6be6453a-15ce-4305-9a7c-a66e57564785@redhat.com>
+Date: Tue, 23 Jul 2024 19:37:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00005FFD:EE_|SA3PR12MB9107:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9d264888-4d9e-4d22-d84d-08dcab3df92b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Is7IKAUb/mBPBxXBBMjTtoVZKZ2QT0h/6hUvz15pGsXfBbWCPgARXVtwLfkv?=
- =?us-ascii?Q?XPWj/X9jCF9Ei+rbMJJuza9aFkoaEsH2v7brlRN6xKKC4ubV7mQF3YlIKaGw?=
- =?us-ascii?Q?K2EZLVYSu8rYK7zWTxbC38rw8js9DX1W6PwwlPhj3PuhSl+hp+qo2UFBw6DR?=
- =?us-ascii?Q?wEYX4HCPhL3IY6uJF3AzKgwppUyk0DbNhu6NurUW17EHyKsEAlfVz9G87snQ?=
- =?us-ascii?Q?hTPRQIJaVrKhY6HKQ6nifYrW4jhhrdS0E5sCiTVTdnAuhDsglsGcJpP8h0Li?=
- =?us-ascii?Q?SyNvS7CS3MfWAD1jmkkiZbrPSfR+ghpQqbxymGsHhFa502YOvF10leaGWCPu?=
- =?us-ascii?Q?S25cuKCZp53qD1ftQN4vvPS6dpr/EObRtAwDEf3dDef7uLYx6/S4GjP76K3u?=
- =?us-ascii?Q?PvsvBchhQ6Tn7vhnIj+Tu2HzKyaaA5soLhRINF6U22KwBu7YmVwDp4FLI5ma?=
- =?us-ascii?Q?u30/kCksHqJAiR/mPlnBkQ+PZfDn20QXTfd2mk6p8pcmQpyxdZ8p2s04pxtb?=
- =?us-ascii?Q?QTNhMfC0lfmjn5f0yFYl+W3quYw4a+/vU7cmVXtt/riQC6QcSpND7Ki7ggS2?=
- =?us-ascii?Q?QFKTqml9YqsMvfG4Vgc7LIT5mg94fPbH/rhQhm3u4D6QFsVmlm6rR1BxMvQ1?=
- =?us-ascii?Q?ouygDAjL4ZfdJu9HJMMt4nJGnlxKu4/1G3r1HUJ6DWjCqsY0jPvWTYzYKGeN?=
- =?us-ascii?Q?0OMkHJBGOPNXYS+zO0tnTR1Ccmwy2FOMUwghZe+KBfU6FRXibPId8aJONpn+?=
- =?us-ascii?Q?Qe5HuiInsI8FXZDO4heTYSq0K8HC8uOZpgAKTh4H1wr27AuXtFGXdVu2AdQl?=
- =?us-ascii?Q?iMeWqGM5DR2z4QdFEpCHk6wPxvhI6e9zYb63ArFvLSfoC7CyHYliobFtWuM2?=
- =?us-ascii?Q?yJOgYcSb96IyypqRrT2DU4t75gdRcTuMyVTDend+vISsesrjkqjg2z2aBIGe?=
- =?us-ascii?Q?3SaO31w6Ybgh6BMV5Aps42LuVXJkcRQsZPDwMWH1aXAC3p0tAiCspN5OgR05?=
- =?us-ascii?Q?EcXNbqCCoiRonzOrzr/GUtXfJ9OKP9pxetCtnIE5pkWdNoI713Whs+Ng9nfH?=
- =?us-ascii?Q?g5OTmq70+HgtfQe986bXPa4qvaBEK5pN4g5pQ+/g7hUjQg2hue/MU9Ix9ror?=
- =?us-ascii?Q?nsthS7q+uHRHtEmaFs/3t9Twp4OUppmmnnrZZGScLHmbhJJC7KRXg6kWXWfA?=
- =?us-ascii?Q?0yJ1El2M25czoTgPXFAXCbp3qzGPQK84uW2G12utiyRts0eZe5NN9o59QZMR?=
- =?us-ascii?Q?0mbgD9AAqxNXBoko6vPaj31h0zJuO/jZi2HtdiOZnQZfA7s7afL2nbIZjeD2?=
- =?us-ascii?Q?GhN3+tXzlhz2eio1bAc8JGHKTo2jyTVaqqNJh/jRn85FbzhDN0/ykaNP1uNp?=
- =?us-ascii?Q?+7+GpssXvjSahrpEFdNDy8oORlTvRXaxUvWfq1w8l+ohGv8xa79lBZ7pbvET?=
- =?us-ascii?Q?UVSykGu2eEk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2024 17:36:24.0741
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9d264888-4d9e-4d22-d84d-08dcab3df92b
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF00005FFD.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9107
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: fix maxnode for mbind(), set_mempolicy() and
+ migrate_pages()
+To: Jerome Glisse <jglisse@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240720173543.897972-1-jglisse@google.com>
+ <0c390494-e6ba-4cde-aace-cd726f2409a1@redhat.com>
+ <CAPTQFZSgNHEE0Ub17=kfF-W64bbfRc4wYijTkG==+XxfgcocOQ@mail.gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <CAPTQFZSgNHEE0Ub17=kfF-W64bbfRc4wYijTkG==+XxfgcocOQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The current driver sets the response buffer threshold value to 1
-(N+1, 2 DWORDS) in the QUEUE THRESHOLD register. However, the AMD
-I3C controller only generates interrupts when the response buffer
-threshold value is set to 0 (1 DWORD).
+On 23.07.24 18:33, Jerome Glisse wrote:
+> On Mon, 22 Jul 2024 at 06:09, David Hildenbrand <david@redhat.com> wrote:
+>>
+>> On 20.07.24 19:35, Jerome Glisse wrote:
+>>> Because maxnode bug there is no way to bind or migrate_pages to the
+>>> last node in multi-node NUMA system unless you lie about maxnodes
+>>> when making the mbind, set_mempolicy or migrate_pages syscall.
+>>>
+>>> Manpage for those syscall describe maxnodes as the number of bits in
+>>> the node bitmap ("bit mask of nodes containing up to maxnode bits").
+>>> Thus if maxnode is n then we expect to have a n bit(s) bitmap which
+>>> means that the mask of valid bits is ((1 << n) - 1). The get_nodes()
+>>> decrement lead to the mask being ((1 << (n - 1)) - 1).
+>>>
+>>> The three syscalls use a common helper get_nodes() and first things
+>>> this helper do is decrement maxnode by 1 which leads to using n-1 bits
+>>> in the provided mask of nodes (see get_bitmap() an helper function to
+>>> get_nodes()).
+>>>
+>>> The lead to two bugs, either the last node in the bitmap provided will
+>>> not be use in either of the three syscalls, or the syscalls will error
+>>> out and return EINVAL if the only bit set in the bitmap was the last
+>>> bit in the mask of nodes (which is ignored because of the bug and an
+>>> empty mask of nodes is an invalid argument).
+>>>
+>>> I am surprised this bug was never caught ... it has been in the kernel
+>>> since forever.
+>>
+>> Let's look at QEMU: backends/hostmem.c
+>>
+>>       /*
+>>        * We can have up to MAX_NODES nodes, but we need to pass maxnode+1
+>>        * as argument to mbind() due to an old Linux bug (feature?) which
+>>        * cuts off the last specified node. This means backend->host_nodes
+>>        * must have MAX_NODES+1 bits available.
+>>        */
+>>
+>> Which means that it's been known for a long time, and the workaround
+>> seems to be pretty easy.
+>>
+>> So I wonder if we rather want to update the documentation to match reality.
+> 
+> [Sorry resending as text ... gmail insanity]
+> 
+> I think it is kind of weird if we ask to supply maxnodes+1 to work
+> around the bug. If we apply this patch qemu would continue to work as
+> is while fixing users that were not aware of that bug. So I would say
+> applying this patch does more good. Long term qemu can drop its
+> workaround or keep it for backward compatibility with old kernel.
 
-Therefore, a quirk is added to set the response buffer threshold value
-to 0.
+Not really, unfortunately. The thing is that it requires a lot more 
+effort to sense support than simply pass maxnodes+1. So unless you know 
+exactly on which minimum kernel version your software runs (barely 
+happens), you will simply apply the workaround.
 
-Co-developed-by: Krishnamoorthi M <krishnamoorthi.m@amd.com>
-Signed-off-by: Krishnamoorthi M <krishnamoorthi.m@amd.com>
-Co-developed-by: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>
-Signed-off-by: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>
-Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
----
- drivers/i3c/master/mipi-i3c-hci/core.c       |  4 ++++
- drivers/i3c/master/mipi-i3c-hci/hci.h        |  2 ++
- drivers/i3c/master/mipi-i3c-hci/hci_quirks.c | 12 ++++++++++++
- 3 files changed, 18 insertions(+)
+I would assume that each and every sane user out there does that 
+already, judging that even that QEMU code is 10 years old (!).
 
-diff --git a/drivers/i3c/master/mipi-i3c-hci/core.c b/drivers/i3c/master/mipi-i3c-hci/core.c
-index 9fc142ca7532..2da00a5b590b 100644
---- a/drivers/i3c/master/mipi-i3c-hci/core.c
-+++ b/drivers/i3c/master/mipi-i3c-hci/core.c
-@@ -148,6 +148,10 @@ static int i3c_hci_bus_init(struct i3c_master_controller *m)
- 	if (ret)
- 		return ret;
- 
-+	/* Set RESP_BUF_THLD to 0(n) to get 1(n+1) response */
-+	if (hci->quirks & HCI_QUIRK_AMD_RESP_BUF_THLD)
-+		amd_set_resp_buf_thld(hci);
-+
- 	reg_set(HC_CONTROL, HC_CONTROL_BUS_ENABLE);
- 	DBG("HC_CONTROL = %#x", reg_read(HC_CONTROL));
- 
-diff --git a/drivers/i3c/master/mipi-i3c-hci/hci.h b/drivers/i3c/master/mipi-i3c-hci/hci.h
-index f4ec6dcb2ecf..07b90a68ec5e 100644
---- a/drivers/i3c/master/mipi-i3c-hci/hci.h
-+++ b/drivers/i3c/master/mipi-i3c-hci/hci.h
-@@ -141,6 +141,7 @@ struct i3c_hci_dev_data {
- #define HCI_QUIRK_RAW_CCC	BIT(1)	/* CCC framing must be explicit */
- #define HCI_QUIRK_AMD_PIO_MODE		BIT(2)  /* Set PIO mode for AMD platforms */
- #define HCI_QUIRK_AMD_OD_PP_TIMING	BIT(3)	/* Set OD and PP timings for AMD platforms */
-+#define HCI_QUIRK_AMD_RESP_BUF_THLD	BIT(4)	/* Set resp buf thld to 0 for AMD platforms */
- 
- 
- /* global functions */
-@@ -150,5 +151,6 @@ void mipi_i3c_hci_dct_index_reset(struct i3c_hci *hci);
- 
- void amd_i3c_hci_quirks_init(struct i3c_hci *hci);
- void amd_set_od_pp_timing(struct i3c_hci *hci);
-+void amd_set_resp_buf_thld(struct i3c_hci *hci);
- 
- #endif
-diff --git a/drivers/i3c/master/mipi-i3c-hci/hci_quirks.c b/drivers/i3c/master/mipi-i3c-hci/hci_quirks.c
-index 9d8c5eedc8cc..503c81c504f1 100644
---- a/drivers/i3c/master/mipi-i3c-hci/hci_quirks.c
-+++ b/drivers/i3c/master/mipi-i3c-hci/hci_quirks.c
-@@ -20,11 +20,14 @@
- #define AMD_SCL_I3C_OD_TIMING		0x00cf00cf
- #define AMD_SCL_I3C_PP_TIMING		0x00160016
- 
-+#define QUEUE_THLD_CTRL			0xD0
-+
- void amd_i3c_hci_quirks_init(struct i3c_hci *hci)
- {
- 	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
- 		hci->quirks |= HCI_QUIRK_AMD_PIO_MODE;
- 		hci->quirks |= HCI_QUIRK_AMD_OD_PP_TIMING;
-+		hci->quirks |= HCI_QUIRK_AMD_RESP_BUF_THLD;
- 	}
- }
- 
-@@ -39,3 +42,12 @@ void amd_set_od_pp_timing(struct i3c_hci *hci)
- 	data |= W0_MASK(18, 16);
- 	reg_write(HCI_SDA_HOLD_SWITCH_DLY_TIMING, data);
- }
-+
-+void amd_set_resp_buf_thld(struct i3c_hci *hci)
-+{
-+	u32 data;
-+
-+	data = reg_read(QUEUE_THLD_CTRL);
-+	data = data & ~W0_MASK(15, 8);
-+	reg_write(QUEUE_THLD_CTRL, data);
-+}
+In any case, we have to document that behavior that existed since the 
+very beginning. Because it would be even *worse* if someone would 
+develop against a new kernel and would get a bunch of bug reports when 
+running on literally every old kernel out there :)
+
+So my best guess is that long-term it will create more issues when we 
+change the behavior ... but in any case we have to update the man pages.
+
 -- 
-2.25.1
+Cheers,
+
+David / dhildenb
 
 
