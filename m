@@ -1,109 +1,128 @@
-Return-Path: <linux-kernel+bounces-260104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B810D93A31A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:44:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3354393A31E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA0FF1C22C56
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:44:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 629C81C22CB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F864155A34;
-	Tue, 23 Jul 2024 14:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F3C156962;
+	Tue, 23 Jul 2024 14:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wNLoBGfA"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fegGfuYU"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EA515573F
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F18156972
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721745890; cv=none; b=AAi1zfwwOPfwob1wi/Fu2oVCBIr4NQ9Y7alc8/uuCUj6bkqqDONTDRdnlHYFmCxSJL4skwXyLw89zlMDnlkisDUggpOceLt5KMzMILRYymSnTmcR0uIE2LGjzCQJz0OYDhWt+rbmBh7r7lz2CNd++hItniZ5k6cfb+EuXOmlKwE=
+	t=1721745996; cv=none; b=d7d8+zOHj0xrd4ho/ZdpbUQ0bxK6KkZsD5dugEBORJFO1Dq8GTpFCyvzZU9gmo5zSJ9q/m62g5b6t4byHzIrkgXCIOIXON8sFRf5ha8wBoWCHKwE/LJTKX9nM8iZj5/qNyVcZhOedVOl8o7KpJmPp443UQjJzMY2NwPbfZgwi3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721745890; c=relaxed/simple;
-	bh=/DhszLUQm78wMoJ8KfR7NpJ/TCjeTVmSlYGYshTQDR4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PR1yLszPYqpXWuuaJ3stXRh9JaKaCn7imC3WLh2CbuouVbbCNCR2gafATZ0XpfjdemuJbCxYar4ciwHdZmaeCPd/FYII2hTmwE9stpqzHTh92y7SdTttvbKcalpIGbBqUGJfjDT6ZVVxbvVxxqB22aok2UL2VE7Gdus4N4KU/gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wNLoBGfA; arc=none smtp.client-ip=209.85.128.176
+	s=arc-20240116; t=1721745996; c=relaxed/simple;
+	bh=YGzAFLg7/sOgkHlwOecxVa8CoxT3Tbo9FXcwKrYUf0o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jzchyolkM1r8ZzFKv6u2TJWEt4IzRKWwP/WUXSfLX51O/1YDwjuCfgfbNMBzRuBwoNBxR+yUGRczRQOFn5Vi3tSFzvJ55QjAE4MLDFEPsD7JZDM2Doo+sX7Wwote4oeksErYKVXv+pw7qzKuKNsBzFRwUfgZ8Y8uuh1B3wFFLYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fegGfuYU; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6678a45eaa3so53953357b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:44:49 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52f04150796so3129317e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:46:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721745888; x=1722350688; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/DhszLUQm78wMoJ8KfR7NpJ/TCjeTVmSlYGYshTQDR4=;
-        b=wNLoBGfADIe/jSTAwATqYvqBwNRF6FQQAzIXRfgsRxSE2HG+soZGkdnHP89cNSsVpk
-         y7mnNCGneMpwQmwDfANAu6ZwnHf+rdBUpb0/wRwae66U/xyvu1yf3J1/ahTziaYHrPOt
-         Kzy4bjq/bOyrGHr/n5HxAmh85T32b04M/J4+sPbeYEMALCEoO2Xgg9alk3Pzm6+4/YHk
-         LBJo58HtdvYGL7n6Im/jAfTuUC5wYWdTJVDc8N+k5EhUsYqoM3jmlR0LqeDrH8kU1CL0
-         AQ7qdUa3WWkT+LwUprQR80lFn1arsuaBHqHeE7q/gUmPJi9U0SkOz9QELTIkEWa4PTqA
-         AEnQ==
+        d=linaro.org; s=google; t=1721745993; x=1722350793; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Blz5ww9zpbNRbNfg1Tx/Vs1xK3UddL3Pf8Da6X8Ufco=;
+        b=fegGfuYUuV91lZgjzrbEiMpogkIqbldItbSRbEWGPrvqlmAA6ySvCT5zR+pa5NOW0s
+         Guf9HBQzYQT4Tf6oXP+aDPmZXdqk56FTfBGDY5rAqsqtPylrVwz7d7pmTjUYEyJZ/A89
+         e/mAEkS6u9rUSlJpwQPi1/Xc+EtS/eEaa1BBzq040PjzM96rht9Oj0/B1tX5zAtJVmB0
+         46RlntDefwYjjR1xN4xOnCT9cqE5xvhFhFIoSXn8X7V8KhvAgunWfe0fHhnKBYG6SzdD
+         w7KIL26f4WnfthfihmYCp9D9vLrFtJQfUoECFemHQFuB3/28vf9tP8U5idVXEYGhvgp3
+         HCvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721745888; x=1722350688;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/DhszLUQm78wMoJ8KfR7NpJ/TCjeTVmSlYGYshTQDR4=;
-        b=G2PFpd+gvNylRCHz4o+N1Kgcjm27leUAOh1TMdlI6Enlj9y1rh45gHchc2ouFgfkyp
-         JJdKTFek+mNxsDP33So5yxX013NwzoGfQ5N3vhd8eVmMEuug0qaFVz8PfNynDyP/pbPI
-         wZdpzrQIMF8l7eyCOg3wT0HxtCk8DLKUQCxWfJ+CLs3w4iTtuQP2Eda9R9nNga1FIP9n
-         6Bw0LqlIhILMXGOATbaEWeoxcVTEdYhXObHhN737QhLYM5aXxPJTWe64PMpUmKclAaXp
-         Spq96dHiUShZIo3/GYVTrFGwI7CGg0gDgFofvc/JYdg409PyLl1EqbIPoLLfO1CF746K
-         d91w==
-X-Forwarded-Encrypted: i=1; AJvYcCU8HXrlsDieCiVcZSFeYLDsuBBsc1U/w1HRJeC/BDGvfN6xfMIdUWtX4CyUyWL+lr2okEeJ0JdAiCBe4lyVXOQ0DNoONBszdL0quZNV
-X-Gm-Message-State: AOJu0Yw0rlBA9saWsu3GlwWi39ZP+p+i/f4bVSnyDeOXM8l9xLjijl40
-	WhE3AUCxPmDDoHSMWPeFuhtwcEneeZjQYQGNoi9X8OVf7IWgKUEy7lk5DOa8I+RtfGDdceVwBsE
-	Ugd8Nm1dG38zChxObeGDfTPRvZ9LvqycpVnJJEw5vX68oefwv
-X-Google-Smtp-Source: AGHT+IFGjfjFX/FJh03F1MKKrGFIVaAs0XDkGFgTDf72tmLxkemD7JLVTcN+JvnaLeLNBvOdMegKN1zpNtKOUb737uw=
-X-Received: by 2002:a05:690c:10c:b0:627:d23a:4505 with SMTP id
- 00721157ae682-66ad8309fcfmr141173287b3.3.1721745888405; Tue, 23 Jul 2024
- 07:44:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721745993; x=1722350793;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Blz5ww9zpbNRbNfg1Tx/Vs1xK3UddL3Pf8Da6X8Ufco=;
+        b=MABg0h0iyLgnD5K3V8WiL2wjaTu6BnhKwVYh3yObwGkQeGhXmk4aINGk8Xahfndml3
+         jFwm3BRFa6IRjflm1M+gpUO6hHbbci2Bj4juVRKyUTj9zrvGg4wcMbhChlKpPFMHhzjb
+         vi8OJlRgF10IkOIJ4bO+nurorkWzRde/jIv52mBepicqdxobMPxFT/CHCx+xUJpWLNCu
+         RPmsYxfYBPfL5HXX5S4OrQF9ZjjWea4de8xWd4+RPHjag5wgH7WQYt7rAdB0FZ/CLJf5
+         cmnapaZz7a66DjHhm8YFDSBYRAC4sE3RaVW7fvdhkLwUpr6VOCgCjDgeCHwvXVPcioQZ
+         Y6Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCWFO9uzzKc5B6oPUOmPa/IsHqbWozQKIemkva6c9tM7rM8qk9aEX1oF9LAisORWaFwbMRfKd9VgqcXS5XsNLR8NUqUpo54lSFzTq4l5
+X-Gm-Message-State: AOJu0Yzw97QD7lsA1FFki5QTqxN44rN4yw/gTLjdLIyBe2SE/LHQxbB9
+	WLoQgFsfs3jUyqqiLYGiffd3pmP7aV/hbq2vy+xt3qf4ubQbxdC+1pERWg8Xh4c=
+X-Google-Smtp-Source: AGHT+IEo7RlT5yI398EffxymVutocpoXGeDirrJ9joGNhamx3zavj82B21E0+ZR1gZi6YcUF99SpMg==
+X-Received: by 2002:ac2:4e07:0:b0:52e:eacd:bc05 with SMTP id 2adb3069b0e04-52fc40782efmr1972193e87.61.1721745992590;
+        Tue, 23 Jul 2024 07:46:32 -0700 (PDT)
+Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52f0415eb08sm774540e87.9.2024.07.23.07.46.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 07:46:32 -0700 (PDT)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Viresh Kumar <vireshk@kernel.org>,
+	Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] OPP: Re-work code to drop _opp_attach|detach_genpd()
+Date: Tue, 23 Jul 2024 16:46:06 +0200
+Message-Id: <20240723144610.564273-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240723141654eucas1p2deadd470e2ceda1601042dad4acfc17e@eucas1p2.samsung.com>
- <CAPLW+4m0xG5yHOT_ucGdrOhLZvjhga8caqHQZmVH6HHKUnBgkw@mail.gmail.com> <20240723141638.374742-1-m.majewski2@samsung.com>
-In-Reply-To: <20240723141638.374742-1-m.majewski2@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Tue, 23 Jul 2024 09:44:37 -0500
-Message-ID: <CAPLW+4nYfVytXnpDs02QQGms59dL+=pAv7NMNPK6Ymsemmi_cw@mail.gmail.com>
-Subject: Re: [PATCH 0/6] Add initial Exynos 850 support to the thermal driver
-To: Mateusz Majewski <m.majewski2@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 23, 2024 at 9:16=E2=80=AFAM Mateusz Majewski
-<m.majewski2@samsung.com> wrote:
->
-> Hi :)
->
-> > Thank you for the contribution! Did you by chance test it on any
-> > hardware, perhaps on E850-96 board? Just noticed there are no dts
-> > changes in this series (or as separate patches). If no -- I'll be glad
-> > to assist you on that, if you can share dts definitions for E850-96
-> > and the testing instructions with me.
->
-> I did test it on our copy of E850-96. I used this for testing:
->
+Note, this series is the next step beyond another genpd/OPP series [1] that was
+recently submitted (and still being discussed for merging). In other words to
+test this, that other series needs to be applied as the first step.
 
-Good to know, thanks for the detailed info, Mateusz! Just wanted to be
-sure it was tested properly and my help is not needed. Btw, I'm
-curious what is the reason for implementing TMU? Do you have some use
-cases where it's needed?
+This series converts the final users of _opp_attach|detach_genpd() to use
+dev_pm_domain_attach|detach_list(). Then the final patch drops the redundant
+code for _opp_attach|detach_genpd().
+
+Please help to test and review!
+
+Kind regards
+Ulf Hansson
+
+[1]
+https://lore.kernel.org/all/20240718234319.356451-1-ulf.hansson@linaro.org/
+
+Ulf Hansson (4):
+  drm/tegra: gr3d: Convert into dev_pm_domain_attach|detach_list()
+  media: venus: Use dev_pm_domain_attach|detach_list() for OPP PM domain
+  cpufreq: qcom-nvmem: Convert to dev_pm_domain_attach|detach_list()
+  OPP: Drop redundant _opp_attach|detach_genpd()
+
+ drivers/cpufreq/qcom-cpufreq-nvmem.c          | 79 +++++----------
+ drivers/gpu/drm/tegra/gr3d.c                  | 46 +++------
+ drivers/media/platform/qcom/venus/core.c      |  8 +-
+ drivers/media/platform/qcom/venus/core.h      |  6 +-
+ .../media/platform/qcom/venus/pm_helpers.c    | 31 ++----
+ drivers/opp/core.c                            | 96 +------------------
+ drivers/opp/opp.h                             |  3 +-
+ include/linux/pm_opp.h                        | 38 +-------
+ 8 files changed, 56 insertions(+), 251 deletions(-)
+
+-- 
+2.34.1
+
 
