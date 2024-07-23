@@ -1,116 +1,233 @@
-Return-Path: <linux-kernel+bounces-260317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3072593A6A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:37:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E79E93A6BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:38:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF3CD2820C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:37:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C06731F238BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621E213C3F5;
-	Tue, 23 Jul 2024 18:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA6B15887F;
+	Tue, 23 Jul 2024 18:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lzfkyCuR"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pobr9MNx"
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D00158A07
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 18:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6A3158215
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 18:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721759815; cv=none; b=rqTkExvx+tNjbfMZb55m0J89A31Nj+bg1tA8Vto7eS1RQ5i6QT7ORm4HUoxYqZsRBBgH6JDL9o/id5gVLYn1u6vFPp5DmTsCBIoC/9l7MTX25yKO4FXkn3XwOe4eAkPuHa/BjEoti3n0cOvmcfNrkSWdozcpERz15wjamKor4yk=
+	t=1721759893; cv=none; b=XS2b1d3A2AN8y/1yHnJQ52ZZyZGEKM7HcKoIryEFGDQOk12liBQLozm6N/DVlNwpsNCevKuN0yAici2I3D1okl5uqoeuSI7pjFdssvJkxOgIV161519gMn3R5+YjGz1s6NKI5m5Dod1rIelegct+E/SduYcsFjetDIls/HEBBOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721759815; c=relaxed/simple;
-	bh=wCjAe5rysnyPHTE32w/Il9C+QuDxWjSafUc9QGpJhDE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CQn0Llwjctx9OsqRPRFxIsF7qVSBHuCq2DC/wXYPAowQbR42QdFHvEuIjz3RCn9lJPcNoAfwVwM9KDf/e9aMpEOgwwnulyZh9ji4Po4ZeKLcEvmEo4HBpeXwciRMUk5cLwgqTTiKo+xzDvDNZldvH1ATJ4N6fqLMdg00ECbqsjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lzfkyCuR; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-708e75d8d7cso3338567a34.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:36:52 -0700 (PDT)
+	s=arc-20240116; t=1721759893; c=relaxed/simple;
+	bh=Ge3WxrotjNrzL00XKRfbP/uNGGHiypyVh6q5S9j+248=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MkwHCGdjB+lvAVsNTSNpMSkSHD0xAYMfzzenui7S76tuWDNgGtD2AJbHxxuJqVDIGTfAcQzhmW5jxiTqi98rADF+CQFo4rScMYubJRzMx4oOD5N3W1c128J8ClJcTDVzYPaRwVawtdEC3HeyGL7QwUU9o+mfREdblkxUyFpGa8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Pobr9MNx; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4929992a5e2so721600137.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:38:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721759812; x=1722364612; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=k+UFYRZSUcd9DOmvcNxoBDJyVG+xJwiw5jLRr8VEv+0=;
-        b=lzfkyCuRoMwFEPPToAps9A8OXa9eBj+yCwFIvxntR68Hrd33afxpl+7nCR2VaGdmhf
-         tzsrBi93tLOwfkzkL6oE5MAa7A1kNjl/TJhbgPQAxJFtPkO5Zboe/VeXrXxh6gcU8ddq
-         LbVRtGB6vSoCti7hTggSRL9p5lz5tfNNRLl3mDk0zvmCbOe9yZ1uoO8CQTgHVd5nq4zY
-         63T5qyMEWkp1sZMWAC2cV1yBkq5eHHG6kN7hQk1lZkdpyUC4WV8JCU2YMFEMTIvsgQFP
-         JsFg+uuEdsW5toyZnOEz6mQ77qITDNP6jCBPbgz0nuIShJEDOUmVnYPrtOIN+V1Z2IoI
-         VF6w==
+        d=linaro.org; s=google; t=1721759889; x=1722364689; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ipr0XcShgfcsyciYV8wkZgCrL02KTwzXnz9fJeg/Kzg=;
+        b=Pobr9MNxjrmXPixvA29418nVy7xXP0NBOmBBraSXf49UXu/KqLalRNoWlHuj+VELY8
+         jQvMSbqeB1CyZm3qOmebmvvPqVjZwxqHXok/7CjIm5fot0GFhVUYgQY1Dm4A0M6BB20r
+         w2KFgTamPAexK6nJUJ579eK5/k9JOr+I7QQIbHqushgErlu8IZfAHJhymsPIRR198jIX
+         VxK+GMtRue32UQedPkBgQCNbS6pEazfzauPkrIDvi3aNkidZ3tPHINtpSsQ98yr3AS/F
+         fj7+cwfH1ZhCoIed500+9yV+PVNmVW5uJm/uqchvFy2VUF60nGdd4dHr0MuFNkPuy1jA
+         j7ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721759812; x=1722364612;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k+UFYRZSUcd9DOmvcNxoBDJyVG+xJwiw5jLRr8VEv+0=;
-        b=RC2LtAICfDoceJLqZiRvdANn6A+oPAEB46Fm3uq1X/fLoRBBByGpQ7/IQB6IbYYxbU
-         MwN/n8De3qrucZc9nHzEfOuaGOldBiOYCkFbTJigawNCcmpTLipWkPWpbwXKWou4uCUg
-         b4Lo6eiVPfrkB+RkTAPUw57OiZRsXk+Rj2HeOviqqWPIXwDgFx2Zi4pd6zfnoAYm3T4k
-         EvLxmwHHPTzIwPYg2u98gcIUm87r3V+1f83t2YR2hcWS+OjthbvGqiPg7Rwc4KmSbjiD
-         tQaidJrvucLcpo3a2OaPY7qP333uW5yYKwWmaer1Rl91X9HL4hbuD/dwF2P93m6zBqnh
-         sUow==
-X-Forwarded-Encrypted: i=1; AJvYcCWBpVVweqN+PQVYqUzAgFTpoAPHf1a5OLFFhU9I9H8WRTdTbE1m+u6qROkDB/P2UoFIm4v9MgWZJXcFeWBfxODge3huJS0mqimAY3ix
-X-Gm-Message-State: AOJu0YzF9iUPanTdzqoxrzk+zhuKYV+uKinJvehP0YuL3jwpvKcbLWCU
-	/uNlCkzR4UfPH1u4K+84u42MLsfLp8MtR+hnvmsEnx17BtCuvpP/19ULRw6+wZA=
-X-Google-Smtp-Source: AGHT+IEE0rY9DlgVCA4eTLFv5LAFuDv0yqZEcQ2Yvr1s4IANSDqUYYNRsOGkILxVq+PW1Epg0/lx1A==
-X-Received: by 2002:a05:6830:7007:b0:703:5971:70a4 with SMTP id 46e09a7af769-709234bddc7mr781730a34.28.1721759811906;
-        Tue, 23 Jul 2024 11:36:51 -0700 (PDT)
-Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-708f6172f97sm2131109a34.54.2024.07.23.11.36.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 11:36:51 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	=?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
-	linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] spi: axi-spi-engine: don't emit XFER_BITS for empty xfer
-Date: Tue, 23 Jul 2024 13:36:47 -0500
-Message-ID: <20240723-spi-axi-spi-engine-opt-bpw-v1-1-2625ba4c4387@baylibre.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1721759889; x=1722364689;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ipr0XcShgfcsyciYV8wkZgCrL02KTwzXnz9fJeg/Kzg=;
+        b=q1tj2Kzpdu/KYKGF7k00hLOxZJ57Dc0j3AGT3qNyLXQKOWw1+gNgJmAsTyIE5wNpze
+         j7N8aZNaIrgr26TqYNeiIaCuRr915P/C5zLLYU5XcS9MG8DBGmaWlrYczw9/LCSm3Wo0
+         jamzIBN+/Ovb1i+tj0aSSccBF4iBFIqhqW984Vw3geQsJTVcugjldvHPiyMz3N14TLni
+         SZ0MMxqsQ8D5DiOQ3FrZf88+U2ZY3/YnZPCZOgbbYakBAkoInUH1nSRx3dGcob1a44v8
+         9Ov2squztiMYVoT4cRfpYTCNHUt0IFG2YqNej9RXtfuW0hvurX32S3PcWy/tnaH+LfPj
+         zs7A==
+X-Forwarded-Encrypted: i=1; AJvYcCU7/1EvfpZktPuSlXgPJjo4xQoBpImZ2a78xjQC66YnmTJol0QxNLyBRdd6EKcPJhZ5cSdgVLR6MDHsR3UDRVRCGugsnf5kamdKCHS5
+X-Gm-Message-State: AOJu0YyqDn1u2cMnSEgIHxvQrGCFvADufgInAED6pc5WpXtwMJssGkPs
+	+Xed4AWKALhM992GB5JBa4Q2fdydLfVrj9P4x+t6TDvwf8ABcDyBusbkxg1IKrDR9PqU0iWrPQJ
+	HtWhYGPvDf/EUqDohLeXk7HNbF6r0fNNJhcgy5g==
+X-Google-Smtp-Source: AGHT+IGjStf1+gKYAOcRXL39zVgs/kvEBXG3k+m9YVlM9M6yee3F29SJBU/geneXmlXSl3KAjzJKDaacNuqpOml7o7o=
+X-Received: by 2002:a05:6102:524c:b0:48f:95cd:e601 with SMTP id
+ ada2fe7eead31-49283f764a1mr7019041137.25.1721759889383; Tue, 23 Jul 2024
+ 11:38:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.14.0
-Content-Transfer-Encoding: 8bit
+References: <20240723122838.406690588@linuxfoundation.org>
+In-Reply-To: <20240723122838.406690588@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 24 Jul 2024 00:07:57 +0530
+Message-ID: <CA+G9fYs46y-MYAGFLMPuot1u_xu1Tm8y++MJ=f-sfBv485iw-g@mail.gmail.com>
+Subject: Re: [PATCH 6.10 00/11] 6.10.1-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This adds a check on xfer->len to avoid emitting an XFER_BITS
-instruction for empty transfers in the AXI SPI Engine driver. This
-avoids unnecessary delays caused by executing an instruction that has
-no effect on the actual SPI transfer.
+On Tue, 23 Jul 2024 at 17:59, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.10.1 release.
+> There are 11 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 25 Jul 2024 12:28:30 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.10.1-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.10.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- drivers/spi/spi-axi-spi-engine.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-diff --git a/drivers/spi/spi-axi-spi-engine.c b/drivers/spi/spi-axi-spi-engine.c
-index 447e5a962dee..cb3fdcbca2be 100644
---- a/drivers/spi/spi-axi-spi-engine.c
-+++ b/drivers/spi/spi-axi-spi-engine.c
-@@ -258,7 +258,7 @@ static void spi_engine_compile_message(struct spi_message *msg, bool dry,
- 					clk_div - 1));
- 		}
- 
--		if (bits_per_word != xfer->bits_per_word) {
-+		if (bits_per_word != xfer->bits_per_word && xfer->len) {
- 			bits_per_word = xfer->bits_per_word;
- 			spi_engine_program_add_cmd(p, dry,
- 				SPI_ENGINE_CMD_WRITE(SPI_ENGINE_CMD_REG_XFER_BITS,
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
----
-base-commit: 67e899c7df7dd8507ab61a2e71fe6c8299afd427
-change-id: 20240723-spi-axi-spi-engine-opt-bpw-e801253aa43a
+## Build
+* kernel: 6.10.1-rc2
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: e89ad42bf499062626c95bde62ab0b51d8d9e658
+* git describe: v6.10-12-ge89ad42bf499
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.10.y/build/v6.10=
+-12-ge89ad42bf499
 
+## Test Regressions (compared to v6.10)
+
+## Metric Regressions (compared to v6.10)
+
+## Test Fixes (compared to v6.10)
+
+## Metric Fixes (compared to v6.10)
+
+## Test result summary
+total: 197889, pass: 173134, fail: 2878, skip: 21877, xfail: 0
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 127 total, 127 passed, 0 failed
+* arm64: 36 total, 36 passed, 0 failed
+* i386: 27 total, 27 passed, 0 failed
+* mips: 24 total, 24 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 34 total, 34 passed, 0 failed
+* riscv: 17 total, 17 passed, 0 failed
+* s390: 12 total, 12 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 31 total, 31 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-smoketest
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
