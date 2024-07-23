@@ -1,154 +1,274 @@
-Return-Path: <linux-kernel+bounces-259988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F2C093A0E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:08:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C816C93A0E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9284B1C222AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:08:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 262E1B21C72
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3121B152799;
-	Tue, 23 Jul 2024 13:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E8915253F;
+	Tue, 23 Jul 2024 13:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="cHzY8bvy"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t39UAl7u"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4D6152196
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 13:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2447150981
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 13:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721740123; cv=none; b=KXLJvmWyO33hJ4hjf39XsFPMfHrj6coepi/17V4SrHnypLFXamkJHhamXxHKkIpkzJyenQP4H96Gid3GjgQ0DPI63O8cYyPka1YduBDTXi3qHMh9Zqu6HLN1mGmnWCGO+k7Eo+hotzp5AwfhZQiH25ygux8Cc1BY+nxmjLDy4Fg=
+	t=1721740242; cv=none; b=q9oRRy4NtZt2hB4XjVOjajFWHQxUAhyDzHiQnVosPAR7SaBc+qXqGDpkreE/izqCWh411i8ZqiS5KvBKhzbhBr3Ll+FEvR6GB1zBgbHvCAg5x0p+BxZZk7ZpMEPb90DA3ZIk/2AmYQVCc+n8Rw8lms8KVk2d+/HYu6e73dFdwcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721740123; c=relaxed/simple;
-	bh=anpGqlaJTd/4YOCYRdZXnrrSVEHn+JR0BCZ71ULmuWg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XgOsrs2mhgIOtBWRmHmE52xDLhf28FQRZPXZ+bJ9BqVpBfk0qbtSKTr8bMVn2KY15qT7aKcagW3ICzfWjdz/NhPOhY6HKUuPB8avvw1Ikaj0ZMW9h7Y4MXMtKEnDAXGn2BPqjOKjqJ+HjLupGQXmUc9uuiotRpEl/OXnZXdzxF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=cHzY8bvy; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-44931d9eda6so40994021cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 06:08:41 -0700 (PDT)
+	s=arc-20240116; t=1721740242; c=relaxed/simple;
+	bh=Sm3Zu/kkGyojoAGjP82oQQmjLeFSHyHNe6PyqpHkUJ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mJUijmMjryTyquNJHdEAOWB4oFyrzgNuFuoUlKQ+rDtB9mkekpqLw2SyD9mujM5kXhJkvSuYBALBf3mmYcCkQWzb0v87UvVPnWKvKRyw3tYA7tf1yKIlhsiUPoPc96qdZsVFu+5mWTThbJEkP9JnNj4djnt8U0+SD0wzUZ/Cwow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t39UAl7u; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-368557c9e93so2919012f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 06:10:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1721740120; x=1722344920; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+axTqVsfgDHJ4ABgdOvxQq1+BYfsc3vDRLQbJOeOOAo=;
-        b=cHzY8bvyVqpl0LW0PFjYaUURfjRlSxwe/6IG4/7+eN6fHiwP6LT5H/3eN3/dQvVZwN
-         wHgXN6+kp29/R7zuJaOLADMReVNwLohXIHG90Ql+3N5KL64cPR1qMRD7RiYHjTQH2OLr
-         o0/qSXlVhrBMh95GxoFAjAqIoru4fX6jpyv7+wCjGrE/icHH7RYS28apSruhI+pA7Ilk
-         eVe0cq8WcGvX0lDnEaUfp3HZ43160veL3vWzaBqaGeyZ6qtVHAOCTl1+e48hlfM/nVoI
-         ks+2agPbdnB/qz/jQt+J0DlHl2+NDzGdQ5Y1GTJS8hfGYsipeGC3ZjFpfvAypkXJwkEa
-         TgvA==
+        d=linaro.org; s=google; t=1721740239; x=1722345039; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wmnZGs9h8UXmQiX7cdmDYs2SqUBB+oH005eXrbrPLEE=;
+        b=t39UAl7ufPUXXy8IOT5cn7qSgzfk6Z7Cqt9V6e3THq17BnTjAlXAID7eo7gC8hYsRa
+         cv29+zp+as1I5A1WSWTf5QFJsxuyU8dq8R977//rb9U0S6QQnTKbtjXxJ+2HbeS0etPz
+         kWzxl1RT0mL54ff0WoyC81qusgOEg5gmsbydR0kR0twPUSsryX3d3nwJ+xrO0/1Py6gl
+         MuJTbfHoGDCARD6LEuwFzP9MTODdhb5oF2M0fJRktupiNJPeMrkc0vO7BmQqeGZVaA/o
+         j+/q/rqgQlF4t77FN2UEl/TVlsIoBeD58HFD+jL2FV+XyeoGj+1HtAW0LnefTyfgpxqB
+         pAjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721740120; x=1722344920;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+axTqVsfgDHJ4ABgdOvxQq1+BYfsc3vDRLQbJOeOOAo=;
-        b=UwdpBeFU7PQjxN3xvboGUzga99W3uSxKA3nOJA9bo2W9ACudLjd7k7lS4CXiq92vKK
-         NlRJ2qtR6uNdaG1pQepODdG/2JdBRWfjlWH5k3ldFmQqCGQcAnu0J10cloWaGbaw0J1h
-         1bhcWWPRmoiDt+JePxTBA/jByp6qTTkiOPp9EzM2xyu1e5tR08WTa3LZ8FqCgPx3itwn
-         LRskAsP7HPZAuVEyDHFiFiCXcT3VAxfihUR3SIgSvpKIt3qP+RKVLP8/Ce7JLOVwKsox
-         EntTT7EfjjEW5CXLeMF0xc2G2Je8tWgNoea2vBNkQbBoS+hB6o296QrFtIQHa5xROFJp
-         4bBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVY6iD5fHvwR+1KNQQ0L6Jts9SD/G/hWkovara3ieeJ3k2AiBbN8Wap2ayKw/hqpvkc/IydJSWXJxISfKgVSl7/tOq/Bad8bORqDpLv
-X-Gm-Message-State: AOJu0YwSaJNygdtnG952sfznzhVaf1hoX1Ug7YpvBD9RqoWXY3TEo+kU
-	e0yYcivDxaD5XuHIiJNTxPKyp6RAcrSKg4tg/lqZFAHG0brcyfCgXAQmisYLqSU=
-X-Google-Smtp-Source: AGHT+IFdiAXbdFdhLaoPZtxacfRA4jPBGSoBhjNyXiB95amXvNCVw1j1puDQQ+mYwJ3alK8exv17nA==
-X-Received: by 2002:a05:622a:ca:b0:43e:1231:1040 with SMTP id d75a77b69052e-44fc7fa8970mr35543231cf.20.1721740120332;
-        Tue, 23 Jul 2024 06:08:40 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f9cd3cfccsm44348711cf.54.2024.07.23.06.08.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 06:08:39 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sWFFv-003hHI-CL;
-	Tue, 23 Jul 2024 10:08:39 -0300
-Date: Tue, 23 Jul 2024 10:08:39 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Zong Li <zong.li@sifive.com>
-Cc: Tomasz Jeznach <tjeznach@rivosinc.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	Nick Kossifidis <mick@ics.forth.gr>,
-	Sebastien Boeuf <seb@rivosinc.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	iommu@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux@rivosinc.com,
-	Lu Baolu <baolu.lu@linux.intel.com>
-Subject: Re: [PATCH v8 7/7] iommu/riscv: Paging domain support
-Message-ID: <20240723130839.GL14050@ziepe.ca>
-References: <cover.1718388908.git.tjeznach@rivosinc.com>
- <bdd1e0547e01d012bf40c5e33b752e77c6663c90.1718388909.git.tjeznach@rivosinc.com>
- <CANXhq0rpX=+YZLfzLcBmHPUxBpo+xWPY9XaNkV0eQAX72KCFKw@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1721740239; x=1722345039;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wmnZGs9h8UXmQiX7cdmDYs2SqUBB+oH005eXrbrPLEE=;
+        b=ezd7hqL1kKgt6E34G1B3mz9igmTZF6d5KxdH5EKt+UeNyad4eHLeiw0EQy0Ax7dqHi
+         gXBdzdkc2Eyg3KOof3DKNlgkL+SXbwxNgNiquO+5s01HUq0ikBkE1UwgLUfpuiSVkq6U
+         4+s5c/s4ZSCQMY8lBtrNdSRQeY6EzfhX0YfLDlzC0wTKhWorMtBhmfdJ1N6MVAUFLvJI
+         X1BMkxkzbjiZNbGdU5d12YdrM2fu8uyPeuWMgekV0FD2bUA3YT74YDffi72Q5tFGu7uk
+         DMxbrm+Zaal3vmDosxEH+S/7ofW30RNdeVQNpWspMJIRqCm9G2kPgSYyQUaBsx+hDT0K
+         9zmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPjiP1kFmBAIRAOKFBNnA2nfg6JDA0kBLlRIdO/OWc4EiZpVgqS+Df1EV9mfXHnjJDLyDdH0EDmSVgGIiYiImPE9jvuTq/gxhH6SY/
+X-Gm-Message-State: AOJu0YxNudAoo/YP+URSmbRaRDpS0SyxYdlgLmwoSt3iOie4s2t+k3vJ
+	O0of5f1wEgMiG2url26ycoSjN2sBujePu9OTQIBodHMMUy7aZLaDFFb8B8wcows=
+X-Google-Smtp-Source: AGHT+IFEIrDDYHUd5kqrtaL6dqmOmODWqrqO516kkukbC9SSnNU8uiwDiG1oOsLBBFsiEZUmS981QQ==
+X-Received: by 2002:a5d:5744:0:b0:368:5b78:c92e with SMTP id ffacd0b85a97d-369bae136c6mr5853601f8f.24.1721740239109;
+        Tue, 23 Jul 2024 06:10:39 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d6936d62sm168482195e9.42.2024.07.23.06.10.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jul 2024 06:10:38 -0700 (PDT)
+Message-ID: <8f6f221b-4c9a-42e1-b8ce-1f492caee184@linaro.org>
+Date: Tue, 23 Jul 2024 14:10:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANXhq0rpX=+YZLfzLcBmHPUxBpo+xWPY9XaNkV0eQAX72KCFKw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf scripts python arm-cs-trace-disasm.py: Skip disasm
+ if address continuity is broken
+To: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ james.clark@arm.com, mike.leach@linaro.org, suzuki.poulose@arm.com,
+ Leo Yan <leo.yan@arm.com>
+Cc: acme@redhat.com, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ darren@os.amperecomputing.com, scclevenger@os.amperecomputing.com
+References: <20240719092619.274730-1-gankulkarni@os.amperecomputing.com>
+ <7302367c-311f-4655-9a83-3c4034c50086@linaro.org>
+ <6920de94-a9c8-47f4-840f-391d1ec85c0c@os.amperecomputing.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <6920de94-a9c8-47f4-840f-391d1ec85c0c@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 19, 2024 at 02:33:13PM +0800, Zong Li wrote:
 
-> > +static void riscv_iommu_free_paging_domain(struct iommu_domain *iommu_domain)
-> > +{
-> > +       struct riscv_iommu_domain *domain = iommu_domain_to_riscv(iommu_domain);
-> > +       const unsigned long pfn = virt_to_pfn(domain->pgd_root);
-> > +
-> > +       WARN_ON(!list_empty(&domain->bonds));
+
+On 22/07/2024 11:02 am, Ganapatrao Kulkarni wrote:
 > 
-> Hi Tomasz,
-> I recently hit the issue here when I removed a device. I think we need
-> to unlink the device's bond in domain before releasing domain.
-> Do you mind pick the following modification in this patch? Thanks.
+> Hi James,
 > 
-> diff --git a/drivers/iommu/riscv/iommu.c b/drivers/iommu/riscv/iommu.c
-> index 859cdd455576..f0707147e706 100644
-> --- a/drivers/iommu/riscv/iommu.c
-> +++ b/drivers/iommu/riscv/iommu.c
-> @@ -1541,6 +1541,8 @@ static void riscv_iommu_release_device(struct device *dev)
->  {
->         struct riscv_iommu_info *info = dev_iommu_priv_get(dev);
+> On 19-07-2024 08:09 pm, James Clark wrote:
+>>
+>>
+>> On 19/07/2024 10:26 am, Ganapatrao Kulkarni wrote:
+>>> To generate the instruction tracing, script uses 2 contiguous packets
+>>> address range. If there a continuity brake due to discontiguous branch
+>>> address, it is required to reset the tracing and start tracing with the
+>>> new set of contiguous packets.
+>>>
+>>> Adding change to identify the break and complete the remaining tracing
+>>> of current packets and restart tracing from new set of packets, if
+>>> continuity is established.
+>>>
+>>
+>> Hi Ganapatrao,
+>>
+>> Can you add a before and after example of what's changed to the commit 
+>> message? It wasn't immediately obvious to me if this is adding missing 
+>> output, or it was correcting the tail end of the output that was 
+>> previously wrong.
 > 
-> +       riscv_iommu_bond_unlink(info->domain, dev);
-> +
->         synchronize_rcu();
->         kfree(info);
->  }
+> It is adding tail end of the trace as well avoiding the segfault of the 
+> perf application. With out this change the perf segfaults with as below log
+> 
+> 
+> ./perf script --script=python:./scripts/python/arm-cs-trace-disasm.py -- 
+> -d objdump -k ../../vmlinux -v $* > dump
+> objdump: error: the stop address should be after the start address
+> Traceback (most recent call last):
+>    File "./scripts/python/arm-cs-trace-disasm.py", line 271, in 
+> process_event
+>      print_disam(dso_fname, dso_vm_start, start_addr, stop_addr)
+>    File "./scripts/python/arm-cs-trace-disasm.py", line 105, in print_disam
+>      for line in read_disam(dso_fname, dso_start, start_addr, stop_addr):
+>                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    File "./scripts/python/arm-cs-trace-disasm.py", line 99, in read_disam
+>      disasm_output = check_output(disasm).decode('utf-8').split('\n')
+>                      ^^^^^^^^^^^^^^^^^^^^
+>    File "/usr/lib64/python3.12/subprocess.py", line 466, in check_output
+>      return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+>             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>    File "/usr/lib64/python3.12/subprocess.py", line 571, in run
+>      raise CalledProcessError(retcode, process.args,
+> subprocess.CalledProcessError: Command '['objdump', '-d', '-z', 
+> '--start-address=0xffff80008125b758', 
+> '--stop-address=0xffff80008125a934', '../../vmlinux']' returned non-zero 
+> exit status 1.
+> Fatal Python error: handler_call_die: problem in Python trace event handler
+> Python runtime state: initialized
+> 
+> Current thread 0x0000ffffb05054e0 (most recent call first):
+>    <no Python frame>
+> 
+> Extension modules: perf_trace_context, systemd._journal, 
+> systemd._reader, systemd.id128, report._py3report, _dbus_bindings, 
+> problem._py3abrt (total: 7)
+> Aborted (core dumped)
+> 
+>>
+>>> Signed-off-by: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+>>> ---
+>>>   tools/perf/scripts/python/arm-cs-trace-disasm.py | 10 ++++++++++
+>>>   1 file changed, 10 insertions(+)
+>>>
+>>> diff --git a/tools/perf/scripts/python/arm-cs-trace-disasm.py 
+>>> b/tools/perf/scripts/python/arm-cs-trace-disasm.py
+>>> index d973c2baed1c..ad10cee2c35e 100755
+>>> --- a/tools/perf/scripts/python/arm-cs-trace-disasm.py
+>>> +++ b/tools/perf/scripts/python/arm-cs-trace-disasm.py
+>>> @@ -198,6 +198,10 @@ def process_event(param_dict):
+>>>           cpu_data[str(cpu) + 'addr'] = addr
+>>>           return
+>>> +    if (cpu_data.get(str(cpu) + 'ip') == None):
+>>> +        cpu_data[str(cpu) + 'ip'] = ip
+>>> +
+>>
+>> Do you need to write into the global cpu_data here? Doesn't it get 
+>> overwritten after you load it back into 'prev_ip'
+> 
+> No, the logic is same as holding the addr of previous packet.
+> Saving the previous packet saved ip in to prev_ip before overwriting 
+> with the current packet.
 
-That does not seem the right place to put that, or something else has
-gone wrong becuase:
+It's not exactly the same logic as holding the addr of the previous 
+sample. For addr, we return on the first None, with your change we now 
+"pretend" that the second one is also the previous one:
 
-> >  static const struct iommu_ops riscv_iommu_ops = {
-> > +       .pgsize_bitmap = SZ_4K,
-> >         .of_xlate = riscv_iommu_of_xlate,
-> >         .identity_domain = &riscv_iommu_identity_domain,
-> >         .blocked_domain = &riscv_iommu_blocking_domain,
-> >         .release_domain = &riscv_iommu_blocking_domain,
+   if (cpu_data.get(str(cpu) + 'addr') == None):
+	cpu_data[str(cpu) + 'addr'] = addr
+	return  <----------------------------sample 0 return
 
-The above use of release_domain will attach to the blocking domain
-prior to calling release_device and when doing so everything about any
-previous domain should have been fully cleaned up.
+   if (cpu_data.get(str(cpu) + 'ip') == None):
+   	cpu_data[str(cpu) + 'ip'] = ip <---- sample 1 save but no return
 
-So info->domain should be the blocking domain during release_device
-(if not that is another bug)
+Then for sample 1 'prev_ip' is actually now the 'current' IP:
 
-And attaching the blocking domain should have cleared the
-domain->bonds of any prior paging domain.
+   prev_ip = cpu_data[str(cpu) + 'ip']
 
-Jason
+This means that prev_ip is sometimes the previous sample's IP only 
+sometimes (samples following 1), otherwise it's the current IP. Does 
+your fix actually require this bit? Because we already save the 'real' 
+previous one:
+
+   cpu_data[str(cpu) + 'ip'] = stop_addr
+
+Also normally we save ip + 4 (stop_addr), where as you save ip. It's not 
+clear why there is no need to add the 4?
+
+
+>>
+>>    prev_ip = cpu_data[str(cpu) + 'ip']
+>>
+>>    ... then ...
+>>
+>>    # Record for previous sample packet
+>>    cpu_data[str(cpu) + 'addr'] = addr
+>>    cpu_data[str(cpu) + 'ip'] = stop_addr
+>>
+>> Would a local variable not accomplish the same thing?
+> 
+> No, We need global to hold the ip of previous packet.
+>>
+>>> +    prev_ip = cpu_data[str(cpu) + 'ip']
+>>>       if (options.verbose == True):
+>>>           print("Event type: %s" % name)
+>>> @@ -243,12 +247,18 @@ def process_event(param_dict):
+>>>       # Record for previous sample packet
+>>>       cpu_data[str(cpu) + 'addr'] = addr
+>>> +    cpu_data[str(cpu) + 'ip'] = stop_addr
+>>>       # Handle CS_ETM_TRACE_ON packet if start_addr=0 and stop_addr=4
+>>>       if (start_addr == 0 and stop_addr == 4):
+>>>           print("CPU%d: CS_ETM_TRACE_ON packet is inserted" % cpu)
+>>>           return
+>>> +    if (stop_addr < start_addr):
+>>> +        # Continuity of the Packets broken, set start_addr to previous
+>>> +        # packet ip to complete the remaining tracing of the address 
+>>> range.
+
+After looking a bit more I'm also not sure why stop_addr < start_addr 
+signifies a discontinuity. What if the discontinuity ends up with 
+stop_addr > start_addr? There's no reason it can't jump forwards as well 
+as backwards.
+
+Can you share the 3 samples from the --verbose output to the script that 
+cause the issue?
+
+I see discontinuities as having the branch source (ip) set to 0 which is 
+what we do at the start:
+
+    Sample = { cpu: 0000 addr: 0x0000ffffb807adac phys_addr: 
+0x0000000000000000 ip: 0x0000000000000000 pid: 28388 }
+
+Then the ending one has the branch target (addr) set to 0:
+
+   Sample = { cpu: 0000 addr: 0x0000000000000000 phys_addr: 
+0x0000000000000000 ip: 0x0000ffffb7eee168 pid: 28388 }
+
+
+And it doesn't hit objdump because of the range check:
+
+  Start address 0x0 is out of range ...
+
+So I don't see any missing disassembly or crashes for this.
+
+>>> +        start_addr = prev_ip
+>>> +
+>>>       if (start_addr < int(dso_start) or start_addr > int(dso_end)):
+>>>           print("Start address 0x%x is out of range [ 0x%x .. 0x%x ] 
+>>> for dso %s" % (start_addr, int(dso_start), int(dso_end), dso))
+>>>           return
+> 
+> Thanks,
+> Ganapat
 
