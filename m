@@ -1,92 +1,124 @@
-Return-Path: <linux-kernel+bounces-260361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF00E93A7D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:55:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A870793A7DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F08021C22380
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:55:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6474128412A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7D6142630;
-	Tue, 23 Jul 2024 19:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="AIOK8SgF"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3F2143897;
+	Tue, 23 Jul 2024 19:55:51 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602C11419A9;
-	Tue, 23 Jul 2024 19:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42241141987
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 19:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721764504; cv=none; b=iKI/QQhzbSqrJKcRf7ml5e+iFy575upsXXmzgWtiFDC1Sc337pMWD66/EGwOpY2MJF1nK+ZFeVB8kGxk+UOjDTfoqClLnNXxp9GuJmF4udBzS6kT+bXST0toLJlV6GyHnTLGJsJuLINkRN8GoYoHkNolr6arof480EIGfq0zLAg=
+	t=1721764551; cv=none; b=uOFn+cq+sU9GuGFJjK+cevZrWISascT98DxqyOtDsgB7qkY3T1FRWJLV7zXBd5+G0bXEo6xoZxs4e+MhGqEvPhVxNmqd/zvNG6aEl4dgiIOFVuxLUkxRzIU2NdCFVBQVGtqOU5Q1GJYeESqmldTRuDJAFdzH5rpFus9F4FasW7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721764504; c=relaxed/simple;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=MfdnIaOWjZbtwyg73Ms1Bt8sqr1mRvwyKG3rhoxB2oUg9qfXWDLWZpzjgSpgg3AaCm+AbTPugVrceXKUBrHpQTUjASb7uT75Qi/BKwzEt8Pw8O2Falq6O7mqZUz4KMmoHf/DxtXRVnOV3d7ihGbNYMrPC74ym9zX/yAQ3Qe9Luo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=AIOK8SgF; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1721764498; x=1722369298; i=rwarsow@gmx.de;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=AIOK8SgFk9loJcfLA7HSlKoJPTdGwZ1FfQsSmno2BqIzV6tNH1Lf8k1PaP2pFeXq
-	 vOznWp0cp5NfKWGdbHd9WctGH/HqRLM0JpMjI8c4/h9SYaoA0+1jY6tyNfs/lTeGm
-	 tTVc2t81G/KNskZgyL18C0jxZJ6H9uIv5oRGU36uniwDwkDl6yC1Xo0ZKMe/06a/x
-	 tXwC7SzGa5ZVngehNPb/HqO3yO8kCzO63zg7+W+lmF0aOi3JRQzH5GIduYSVV+KAv
-	 qKg+zwFgmNW3CTt/V4Xwwhec9gQKSonX/B1NcaIrNQRPEi9iH+tyWRdGI9vbVDhmi
-	 pImmHHFJpbpkqTASKg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.100.20] ([46.142.34.104]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MysVs-1sJv2u1PlK-00uWCD; Tue, 23
- Jul 2024 21:54:58 +0200
-Message-ID: <15b4b25e-e952-4757-8b65-4a085b5b061f@gmx.de>
-Date: Tue, 23 Jul 2024 21:54:57 +0200
+	s=arc-20240116; t=1721764551; c=relaxed/simple;
+	bh=u8SM0rH7i95R/WI+oU7QzK3ZPEOB1zEHzsWHlNNP0jA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jZcS+XaOMuMU927VQA9yzpGbztoVn9mSPT7ftwJn0IwlidSchabHOGh99ZHlv3t8yhes0Lx/RgrcOLXz2sF3AprhZ3zGQPaNJkgQoYYURqluh3xlz+GbEcyfLTwdQqnZabY1m3lYNTvKeTMnqTMa3eEvlY6O9oXjNsedTXOYopU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i5e860cd3.versanet.de ([94.134.12.211] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sWLbr-0005iD-Ph; Tue, 23 Jul 2024 21:55:43 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: heiko@sntech.de
+Cc: ukleinek@debian.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 00/14] Expand available features on Qnap TS433
+Date: Tue, 23 Jul 2024 21:55:24 +0200
+Message-Id: <20240723195538.1133436-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Ronald Warsow <rwarsow@gmx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Language: de-DE, en-US
-Subject: Re: [PATCH 6.9 000/163] 6.9.11-rc1 review
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:0DPSdAaPyNYDGZBN9MRUNU035Rl5TIEDoxaSPaCMEY5274ZDurH
- KykQ6YNvGDLMI3M7JfwH2nsp7U94NgFxNSANMefPm+rDCqYRzI1RQpG7hXOQKHHGebNIurb
- vHmHY5gGae1buVkcoJAAew+0jxIhlQ1eZ2XD5vh7wRNFdhMrSi6gR5cNphw/SPDWvlWQeZU
- AhI0DAOiiTOztIDPktDsw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:9WZZ/NSvjyg=;6iTAzxuprrdMT6H/kuVtMTUl79q
- 32nY5cFjrKeBOAoDp4LE6kGAyjafwsQiAzK0NO1ZQ7uCNceqxqS8ZNOGqnW6iRWDaEqx0ZPC+
- fzFARNp+08J8eigfF/oQ8ZavoN6+c58o9uWVfaTgqnx73iReRYaOIrzW1hsKQtU6OAWA9Hcpj
- o/4pDbi9YZ8Lb4Dkk+MXduOW5ZDKtMgIDdK86STxV4AUftwr1TZlNAR9AkIR7SJ3dE9AwVlFv
- 52YauWKn9P8rdRMKgnQ+7aAHH2SXFAUJsj2stfGgJu1yuuyf8roUQrCmCvPBOUdDS+0IEZzuO
- SnMT2ikzApWemyl+qdwzSMvGvCeO+6jtcGgXEY6Zn3IpAGxveCnWXAXLESxY/hYJWtDl6XeuU
- x8YzLwdHQRKy87AUrpzFjYv/RQJcFmduajVRGPpRnRyTSBejS4W4y53h97fq+/G315INHQs5+
- J3kOVC024kcJY6S0WwJxbNzpKk0MpC03xQNwHLH9NYT/xMNY9e86T/nz/WjWczhTNC5fDyMmu
- 1apJ60A6i1rfqUVSx7TVJcRJggDDPgyjBiNUc40yyJ/LsswdCxcr9G0ywXd3xn83TNnEe/lCu
- tp2HqeqwPUIZATqSet6j5yIWXtIMT7CGhUcUbfcRJEBdHdsc1RXoc4cUrAou3YQXSLeW4fqWZ
- mwTOGFqj0XTdn1PcTuVJUKZDwkQkhR9yHDK/sxUaTdaZr/OxNPfhUDcZmfbebRzl0rrW6DhCS
- GuIiCYglxrv/e3CQEx/YqHkDVrUc7Ne2rnvEsicdQSZf4bojvdnq5Ib8rOIYvVmQcGbmefFHF
- Ay5bF3rMW2TGjbrCNFoB5KsQ==
+Content-Transfer-Encoding: 8bit
 
-Hi Greg
+Thanks to the nicely supported rk3568, the hardest part for adding things,
+is to pull things from the vendor-kernel and translating them to mainline
+standards.
 
-no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
+This series allows the TS433 to use all 4 bays [0], wiggle some LEDs and
+access devices connected to all 3 usb ports.
 
-Thanks
+The device runs stable now and might be usable for actual usage.
 
-Tested-by: Ronald Warsow <rwarsow@gmx.de>
+There is still a todo-list though:
+- the ethernet mac address for the realtek chip seems correct,
+  but the gmac0 interface currently uses a wrong one
+- i2cdetect reports devices on i2c-1 on addresses 54,55,56,57
+  model_Q0B20_Q0B30_10_10.conf from the original rescue image labels them
+    VPD_MB = I2C:0x54, VPD_BP = I2C:0x56
+  the meaning currently being unknown. Some eeprom maybe?
+- The regulator tree is slightly dubious. Everthing seems to follow rk3568
+  reference designs, but especially the regulator labeled vcc3v3_sd
+  seems to supply some PCIe functionality. So I guess the device's
+  schematics will look quite different than the regulators added to the
+  vendor devicetree.
+- Quite a bit of functionality is provided by the MCU connected to uart0.
+  According to the model.conf there should be fan-control, a number of
+  additional LEDs (status,locate,usb?)
+
+
+Thanks to Qnap engineers adding an easily accessible header for maskrom
+mode on the board, replacing the bootloader is also quite a breeze. A
+branch on top of today's u-boot master branch can be found on [1]. I'll
+submit that code to u-boot once I can cherry-pick the dts patches.
+
+changes in v3:
+- fix the two regulator node-names, I noticed after sending v2
+- add Uwe's Tested-by tags
+- fold in some of Uwe's suggestions:
+  - remove some phandles
+  - more comments to explain what is connected where
+  - handle the two RTCs in the system, though not by hacking around
+    to disable the pmic-one, instead just make sure the real one
+    stays the first rtc
+changes in v2:
+- add patches for tsadc, gpio-keys, cpu-supply, pmic, gpu and io-domains
+
+
+[0] I only have two drives right now, but I tested both the internal
+sata connector as well as the PCIe connected sata controller in different
+combinations.
+[1] https://github.com/mmind/u-boot-rockchip/tree/dev/qnap-ts433/v2024.07
+
+Heiko Stuebner (14):
+  arm64: dts: rockchip: add PCIe supply regulator to Qnap-TS433
+  arm64: dts: rockchip: enable second PCIe controller on the Qnap-TS433
+  arm64: dts: rockchip: enable uart0 on Qnap-TS433
+  arm64: dts: rockchip: enable usb ports on Qnap-TS433
+  arm64: dts: rockchip: add stdout path on Qnap-TS433
+  arm64: dts: rockchip: enable sata1+2 on Qnap-TS433
+  arm64: dts: rockchip: add board-aliases for Qnap-TS433
+  arm64: dts: rockchip: add hdd leds to Qnap-TS433
+  arm64: dts: rockchip: enable the tsadc on the Qnap-TS433
+  arm64: dts: rockchip: add gpio-keys to Qnap-TS433
+  arm64: dts: rockchip: define cpu-supply on the Qnap-TS433
+  arm64: dts: rockchip: add missing pmic information on Qnap-TS433
+  arm64: dts: rockchip: enable gpu on Qnap-TS433
+  arm64: dts: rockchip: add 2 pmu_io_domain supplies for Qnap-TS433
+
+ .../boot/dts/rockchip/rk3568-qnap-ts433.dts   | 546 +++++++++++++++++-
+ 1 file changed, 543 insertions(+), 3 deletions(-)
+
+-- 
+2.39.2
 
 
