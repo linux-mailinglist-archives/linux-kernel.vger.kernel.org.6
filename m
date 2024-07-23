@@ -1,61 +1,103 @@
-Return-Path: <linux-kernel+bounces-259887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD30939EDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:42:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDBA9939EF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C5A81F22D86
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:42:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B364B21B63
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2026814EC79;
-	Tue, 23 Jul 2024 10:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D93514F117;
+	Tue, 23 Jul 2024 10:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uz/5htZm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fBffkZK5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uCayZSAN";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fBffkZK5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uCayZSAN"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B7314D711;
-	Tue, 23 Jul 2024 10:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6569513B2AF;
+	Tue, 23 Jul 2024 10:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721731345; cv=none; b=rZOKZ0Q+w6N6yjihLN3iyvxq8rJZbwgor0rbJC/voL7yfhCzUwyAYxVdQDJ2oumHTu6EwmhAo8Z2p+eP0HWZBBtGInONE4OBqbllXw/7tjkwdIKEXkzEAicBJxDJmCJtclEXCn3HVNBCU+U9craFe+mLTbZ5f+CmpFU9bsCHzJk=
+	t=1721731537; cv=none; b=NlephbDq/q+S0wsj7TvS3n6C4XQLuyJaoyc+ABFQBgQtLQzd8jhk3lCQP9nTC+YjLK6QoY9dCqgb53Cd7zLhs5qPDQiHFD7nBIYvTcc8wr5eYksai3qj7Q0h+eRlyP5lzGBIorYvGfKNcMxPNLuJTb96LjBFQMswUNaVADSIFUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721731345; c=relaxed/simple;
-	bh=4QoKm4L4N0dQCpl1EJWKuRlJU5EU8KSEXc0sJOpWP3c=;
+	s=arc-20240116; t=1721731537; c=relaxed/simple;
+	bh=DWhlLGIanZ4j3MMs4hd+KWqg00q1i6/6Gsln4/odfzM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IYanKxirr+7RTw4TVyFKCsuokwqoo3CkmWqd3F/9KnWya+g0NO0CfcZ+HFvW8DhGowwJgpGBJbE4y8jtZ516o112hDRM1cDtnpNtHlaZzTSvz3jeJWXZt8CG/g9Y376hHa+FnZBXjkKXomNdXwgnAe9GfJFEYInc7NFshm/Z0ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uz/5htZm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 791ACC4AF0A;
-	Tue, 23 Jul 2024 10:42:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721731344;
-	bh=4QoKm4L4N0dQCpl1EJWKuRlJU5EU8KSEXc0sJOpWP3c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uz/5htZmkRUJMT3OYtj0uhQSZ056sGgfASjVPhAm7EvpWMQkDFDuwx2ioWpabM0gm
-	 kcdEzvQtAvROOqLWqGtrPcaNzCRnzY6u/9yHSQTt1JRovkAgITxLB2Xok1ppc5XbMp
-	 ZspuumCY/cyfqebaUz/AXFkhKTHCxhvZb7DR9HjSFa2/h0qHuYJXpfhAKw5P+rZlVo
-	 +2x6pKsv93pJVSatHTgQm8md0hJJ+o7udYZAhJqyWV6tI4OUtiA6MQWCpnYVZbWyDh
-	 lC5h6pntLHo2nvDSwH0MNMMBSbGZWPzy1WBYprEqIpjdx/XqJABfiRRkfMl/x7k3wp
-	 0U+Nh/Ky35iJw==
-Date: Tue, 23 Jul 2024 12:42:17 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Michal Hocko <mhocko@suse.com>
-Cc: cl@linux.com, penberg@kernel.org, rientjes@google.com,
-	iamjoonsoo.kim@lge.com, akpm@linux-foundation.org, vbabka@suse.cz,
-	roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, urezki@gmail.com,
-	hch@infradead.org, kees@kernel.org, ojeda@kernel.org,
-	wedsonaf@gmail.com, mpe@ellerman.id.au, chandan.babu@oracle.com,
-	christian.koenig@amd.com, maz@kernel.org, oliver.upton@linux.dev,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] mm: kvmalloc: align kvrealloc() with krealloc()
-Message-ID: <Zp-JCWCPbDLkzRVw@pollux>
-References: <20240722163111.4766-1-dakr@kernel.org>
- <20240722163111.4766-3-dakr@kernel.org>
- <Zp9gtelmvzN5tfpS@tiehlicka>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MKmAg/QRtwiuD9FzEjE8aDqf6XcUmT5oJjzl6TAbLMZAGu6YyVjk5LDJLkENzz3dEWIQ/y51UteuDSNztCnvFSEg9ODGImymsA37KVyYBFMmHw7PhCwh6ZCKBRGfRiO/SvfbtlNI7MhbJsWDgtLUcLLsGCTR/6sdstcY3Ph88Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fBffkZK5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uCayZSAN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fBffkZK5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uCayZSAN; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 97FD81FBAB;
+	Tue, 23 Jul 2024 10:45:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721731533; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cpTj9H3Cph0NcEe/x66SqtYDsdXFXZLJ6qJmy6fhg2w=;
+	b=fBffkZK5cOHIEMEahbAImJakIlwC5QIfVOj/OYUERnz//rRCvaknoO+86PjGuiX/O0LMSP
+	mGo4oJXNQylKVDaV90K5W5mhQuXcH+ItJ4BCZpiQbHRdRXeHiwtlkRn6k7NVJjSgSBdf0m
+	lf+vtOa7/FSxbCZyvysoQxuYILSIKC0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721731533;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cpTj9H3Cph0NcEe/x66SqtYDsdXFXZLJ6qJmy6fhg2w=;
+	b=uCayZSANeEHv0QmN8QKzoNOrtCaRqz5kh0UzbYDk2/jUW65YQleZt8HwbBQihPDP6UzDJ9
+	HZBZunlZUp6secDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721731533; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cpTj9H3Cph0NcEe/x66SqtYDsdXFXZLJ6qJmy6fhg2w=;
+	b=fBffkZK5cOHIEMEahbAImJakIlwC5QIfVOj/OYUERnz//rRCvaknoO+86PjGuiX/O0LMSP
+	mGo4oJXNQylKVDaV90K5W5mhQuXcH+ItJ4BCZpiQbHRdRXeHiwtlkRn6k7NVJjSgSBdf0m
+	lf+vtOa7/FSxbCZyvysoQxuYILSIKC0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721731533;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cpTj9H3Cph0NcEe/x66SqtYDsdXFXZLJ6qJmy6fhg2w=;
+	b=uCayZSANeEHv0QmN8QKzoNOrtCaRqz5kh0UzbYDk2/jUW65YQleZt8HwbBQihPDP6UzDJ9
+	HZBZunlZUp6secDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 89BB613874;
+	Tue, 23 Jul 2024 10:45:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id pFmbIc2Jn2YWEwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 23 Jul 2024 10:45:33 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 4963EA08BD; Tue, 23 Jul 2024 12:45:33 +0200 (CEST)
+Date: Tue, 23 Jul 2024 12:45:33 +0200
+From: Jan Kara <jack@suse.cz>
+To: David Howells <dhowells@redhat.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Jeff Layton <jlayton@kernel.org>, Gao Xiang <xiang@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfs: Fix potential circular locking through setxattr()
+ and removexattr()
+Message-ID: <20240723104533.mznf3svde36w6izp@quack3>
+References: <2136178.1721725194@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,167 +106,160 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zp9gtelmvzN5tfpS@tiehlicka>
+In-Reply-To: <2136178.1721725194@warthog.procyon.org.uk>
+X-Spam-Score: -3.60
+X-Spamd-Result: default: False [-3.60 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Level: 
+X-Spam-Flag: NO
 
-On Tue, Jul 23, 2024 at 09:50:13AM +0200, Michal Hocko wrote:
-> On Mon 22-07-24 18:29:24, Danilo Krummrich wrote:
-> > Besides the obvious (and desired) difference between krealloc() and
-> > kvrealloc(), there is some inconsistency in their function signatures
-> > and behavior:
-> > 
-> >  - krealloc() frees the memory when the requested size is zero, whereas
-> >    kvrealloc() simply returns a pointer to the existing allocation.
-> > 
-> >  - krealloc() behaves like kmalloc() if a NULL pointer is passed, whereas
-> >    kvrealloc() does not accept a NULL pointer at all and, if passed,
-> >    would fault instead.
-> > 
-> >  - krealloc() is self-contained, whereas kvrealloc() relies on the caller
-> >    to provide the size of the previous allocation.
-> > 
-> > Inconsistent behavior throughout allocation APIs is error prone, hence make
-> > kvrealloc() behave like krealloc(), which seems superior in all mentioned
-> > aspects.
+On Tue 23-07-24 09:59:54, David Howells wrote:
+> When using cachefiles, lockdep may emit something similar to the circular
+> locking dependency notice below.  The problem appears to stem from the
+> following:
 > 
-> I completely agree with this. Fortunately the number of existing callers
-> is small and none of them really seem to depend on the current behavior
-> in that aspect.
->  
-> > Besides that, implementing kvrealloc() by making use of krealloc() and
-> > vrealloc() provides oppertunities to grow (and shrink) allocations more
-> > efficiently. For instance, vrealloc() can be optimized to allocate and
-> > map additional pages to grow the allocation or unmap and free unused
-> > pages to shrink the allocation.
+>  (1) Cachefiles manipulates xattrs on the files in its cache when called
+>      from ->writepages().
 > 
-> This seems like a change that is independent on the above and should be
-> a patch on its own.
-
-The optimizations you mean? Yes, I intend to do this in a separate series. For
-now, I put TODOs in vrealloc.
-
+>  (2) The setxattr() and removexattr() system call handlers get the name
+>      (and value) from userspace after taking the sb_writers lock, putting
+>      accesses of the vma->vm_lock and mm->mmap_lock inside of that.
 > 
-> [...]
+>  (3) The afs filesystem uses a per-inode lock to prevent multiple
+>      revalidation RPCs and in writeback vs truncate to prevent parallel
+>      operations from deadlocking against the server on one side and local
+>      page locks on the other.
 > 
-> > diff --git a/mm/util.c b/mm/util.c
-> > index bc488f0121a7..0ff5898cc6de 100644
-> > --- a/mm/util.c
-> > +++ b/mm/util.c
-> > @@ -608,6 +608,28 @@ unsigned long vm_mmap(struct file *file, unsigned long addr,
-> >  }
-> >  EXPORT_SYMBOL(vm_mmap);
-> >  
-> > +static gfp_t kmalloc_gfp_adjust(gfp_t flags, size_t size)
+> Fix this by moving the getting of the name and value in {get,remove}xattr()
+> outside of the sb_writers lock.  This also has the minor benefits that we
+> don't need to reget these in the event of a retry and we never try to take
+> the sb_writers lock in the event we can't pull the name and value into the
+> kernel.
+
+Well, it seems like you are trying to get rid of the dependency
+sb_writers->mmap_sem. But there are other places where this dependency is
+created, in particular write(2) path is a place where it would be very
+difficult to get rid of it (you take sb_writers, then do all the work
+preparing the write and then you copy user data into page cache which
+may require mmap_sem).
+
+But looking at the lockdep splat below:
+
+>  ======================================================
+>  WARNING: possible circular locking dependency detected
+>  6.10.0-build2+ #956 Not tainted
+>  ------------------------------------------------------
+>  fsstress/6050 is trying to acquire lock:
+>  ffff888138fd82f0 (mapping.invalidate_lock#3){++++}-{3:3}, at: filemap_fault+0x26e/0x8b0
 > 
-> This seems like a generally useful helper which it is not. I would call
-> it something like __kvmalloc_gfp_adjust or something similar so that it is
-> clear that this is just a helper to adjust gfp flag for slab allocator
-> path
-
-Christoph proposed this name, I think he wanted to encode the target of the
-flags, whereas you want to encode where the function is intended to be called
-from.
-
-When I originally named this thing, I had the same conflict - encoding both
-turns out clumsy - and came up with to_kmalloc_flags().
-
-Personally, I'd be fine with __kvmalloc_gfp_adjust() too.
-
+>  but task is already holding lock:
+>  ffff888113f26d18 (&vma->vm_lock->lock){++++}-{3:3}, at: lock_vma_under_rcu+0x165/0x250
 > 
-> [...]
-> > -void *kvrealloc_noprof(const void *p, size_t oldsize, size_t newsize, gfp_t flags)
-> > +/**
-> > + * kvrealloc - reallocate memory; contents remain unchanged
-> > + * @p: object to reallocate memory for
-> > + * @size: the size to reallocate
-> > + * @flags: the flags for the page level allocator
-> > + *
-> > + * The contents of the object pointed to are preserved up to the lesser of the
-> > + * new and old size (__GFP_ZERO flag is effectively ignored).
-> > + *
-> > + * If @p is %NULL, kvrealloc() behaves exactly like kvmalloc(). If @size is 0
-> > + * and @p is not a %NULL pointer, the object pointed to is freed.
-> > + *
-> > + * Return: pointer to the allocated memory or %NULL in case of error
-> > + */
-> > +void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
-> >  {
-> > -	void *newp;
-> > +	void *n;
-> > +
+>  which lock already depends on the new lock.
 > 
-> 	if (!size && p) {
-> 		kvfree(p);
-> 		return NULL;
-> 	}
+>  the existing dependency chain (in reverse order) is:
 > 
-> would make this code flow slightly easier to read because the freeing
-> path would be shared for all compbinations IMO.
-
-Personally, I like it without. For me the simplicity comes from directing things
-to either krealloc() or vrealloc(). But I'd be open to change it however.
-
+>  -> #4 (&vma->vm_lock->lock){++++}-{3:3}:
+>         __lock_acquire+0xaf0/0xd80
+>         lock_acquire.part.0+0x103/0x280
+>         down_write+0x3b/0x50
+>         vma_start_write+0x6b/0xa0
+>         vma_link+0xcc/0x140
+>         insert_vm_struct+0xb7/0xf0
+>         alloc_bprm+0x2c1/0x390
+>         kernel_execve+0x65/0x1a0
+>         call_usermodehelper_exec_async+0x14d/0x190
+>         ret_from_fork+0x24/0x40
+>         ret_from_fork_asm+0x1a/0x30
 > 
-> > +	if (is_vmalloc_addr(p))
-> > +		return vrealloc_noprof(p, size, flags);
-> > +
-> > +	n = krealloc_noprof(p, size, kmalloc_gfp_adjust(flags, size));
-> > +	if (!n) {
-> > +		/* We failed to krealloc(), fall back to kvmalloc(). */
-> > +		n = kvmalloc_noprof(size, flags);
+>  -> #3 (&mm->mmap_lock){++++}-{3:3}:
+>         __lock_acquire+0xaf0/0xd80
+>         lock_acquire.part.0+0x103/0x280
+>         __might_fault+0x7c/0xb0
+>         strncpy_from_user+0x25/0x160
+>         removexattr+0x7f/0x100
+>         __do_sys_fremovexattr+0x7e/0xb0
+>         do_syscall_64+0x9f/0x100
+>         entry_SYSCALL_64_after_hwframe+0x76/0x7e
 > 
-> Why don't you simply use vrealloc_noprof here?
+>  -> #2 (sb_writers#14){.+.+}-{0:0}:
+>         __lock_acquire+0xaf0/0xd80
+>         lock_acquire.part.0+0x103/0x280
+>         percpu_down_read+0x3c/0x90
+>         vfs_iocb_iter_write+0xe9/0x1d0
+>         __cachefiles_write+0x367/0x430
+>         cachefiles_issue_write+0x299/0x2f0
+>         netfs_advance_write+0x117/0x140
+>         netfs_write_folio.isra.0+0x5ca/0x6e0
+>         netfs_writepages+0x230/0x2f0
+>         afs_writepages+0x4d/0x70
+>         do_writepages+0x1e8/0x3e0
+>         filemap_fdatawrite_wbc+0x84/0xa0
+>         __filemap_fdatawrite_range+0xa8/0xf0
+>         file_write_and_wait_range+0x59/0x90
+>         afs_release+0x10f/0x270
+>         __fput+0x25f/0x3d0
+>         __do_sys_close+0x43/0x70
+>         do_syscall_64+0x9f/0x100
+>         entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-We could do that, but we'd also need to do the same checks kvmalloc() does, i.e.
+This is the problematic step - from quite deep in the locking chain holding
+invalidate_lock and having PG_Writeback set you suddently jump to very outer
+locking context grabbing sb_writers. Now AFAICT this is not a real deadlock
+problem because the locks are actually on different filesystems, just
+lockdep isn't able to see this. So I don't think you will get rid of these
+lockdep splats unless you somehow manage to convey to lockdep that there's
+the "upper" fs (AFS in this case) and the "lower" fs (the one behind
+cachefiles) and their locks are different.
 
-	/*
-	 * It doesn't really make sense to fallback to vmalloc for sub page
-	 * requests
-	 */
-	if (ret || size <= PAGE_SIZE)
-		return ret;
-
-	/* non-sleeping allocations are not supported by vmalloc */
-	if (!gfpflags_allow_blocking(flags))
-		return NULL;
-
-	/* Don't even allow crazy sizes */
-	if (unlikely(size > INT_MAX)) {
-		WARN_ON_ONCE(!(flags & __GFP_NOWARN));
-		return NULL;
-	}
-
-Does the kmalloc() retry through kvmalloc() hurt us enough to do that? This
-should only ever happen when we switch from a kmalloc buffer to a vmalloc
-buffer, which we only do once, we never switch back.
-
+>  -> #1 (&vnode->validate_lock){++++}-{3:3}:
+>         __lock_acquire+0xaf0/0xd80
+>         lock_acquire.part.0+0x103/0x280
+>         down_read+0x95/0x200
+>         afs_writepages+0x37/0x70
+>         do_writepages+0x1e8/0x3e0
+>         filemap_fdatawrite_wbc+0x84/0xa0
+>         filemap_invalidate_inode+0x167/0x1e0
+>         netfs_unbuffered_write_iter+0x1bd/0x2d0
+>         vfs_write+0x22e/0x320
+>         ksys_write+0xbc/0x130
+>         do_syscall_64+0x9f/0x100
+>         entry_SYSCALL_64_after_hwframe+0x76/0x7e
 > 
-> > +		if (!n)
-> > +			return NULL;
-> > +
-> > +		if (p) {
-> > +			/* We already know that `p` is not a vmalloc address. */
-> > +			memcpy(n, p, ksize(p));
-> > +			kfree(p);
-> > +		}
-> > +	}
-> >  
-> > -	if (oldsize >= newsize)
-> > -		return (void *)p;
-> > -	newp = kvmalloc_noprof(newsize, flags);
-> > -	if (!newp)
-> > -		return NULL;
-> > -	memcpy(newp, p, oldsize);
-> > -	kvfree(p);
-> > -	return newp;
-> > +	return n;
-> >  }
-> >  EXPORT_SYMBOL(kvrealloc_noprof);
-> >  
-> > -- 
-> > 2.45.2
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
-> 
+>  -> #0 (mapping.invalidate_lock#3){++++}-{3:3}:
+>         check_noncircular+0x119/0x160
+>         check_prev_add+0x195/0x430
+>         __lock_acquire+0xaf0/0xd80
+>         lock_acquire.part.0+0x103/0x280
+>         down_read+0x95/0x200
+>         filemap_fault+0x26e/0x8b0
+>         __do_fault+0x57/0xd0
+>         do_pte_missing+0x23b/0x320
+>         __handle_mm_fault+0x2d4/0x320
+>         handle_mm_fault+0x14f/0x260
+>         do_user_addr_fault+0x2a2/0x500
+>         exc_page_fault+0x71/0x90
+>         asm_exc_page_fault+0x22/0x30
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
