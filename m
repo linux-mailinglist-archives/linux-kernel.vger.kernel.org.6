@@ -1,92 +1,139 @@
-Return-Path: <linux-kernel+bounces-260325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F06A593A75D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:45:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31BC993A761
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:45:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 670A61F23BF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:45:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 625CC1C20A68
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848C413C9D3;
-	Tue, 23 Jul 2024 18:45:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63AB813DDDC;
+	Tue, 23 Jul 2024 18:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Wbolrxaj"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="opUwadBX"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4862E83F;
-	Tue, 23 Jul 2024 18:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600BA2E83F;
+	Tue, 23 Jul 2024 18:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721760321; cv=none; b=oLk2WvfRpNJ9EYJxRyn6Dxn/jn4cl158CMTT2g6lySShShom1iZafgqBb/XU5hGlO5uj9aIOzDh7PeTO4hEWpuEMUGbAGYPkzFD2qhlyaBrwieeGgbk3l5FRhZOLUZVefU+bRtFdqhFZCP0QGhPINpnYlMDFFsTVZ1uD3wY3Y4M=
+	t=1721760327; cv=none; b=tzMNKOX+cz9TTlqo6Amd6UDKCyXJMGkXZ95gR4tgJREkL5MMGywPtonsf2fsTpotT15/WZB4VSCob9eeHrKzMNv0eVJEEnaSA0+qVUcc5amaROP44rKbgDgPLlUqwn7YNXrdqyZ7V+QygW4eF13pDfzjn84l9hlYEtWZvsEK7II=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721760321; c=relaxed/simple;
-	bh=jnOBruHviiMeh3pNnPGssWCltycJrT40IYLXoFFlhlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OTX1Bs0I1Sjbq0MamquJndPXRAQ9Rw8tXNVgmorskqh1u//Q4hwZIBf+VBnV4aaEIP7VbZznyvEAxDjdgcm1IUl7I9+EepvFVqagyMcGY+2n2NutldD7RtdIjgZJNXD88pGRT2Yz+vYdrc42njhZpuS50KWDUxi+sBV6Huyemyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Wbolrxaj; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=olTVMxjXOsU8mUVMWV8+A1UMYa9QIDnG8q/CEGjAZw8=; b=Wbolrxaj2GFm7onLCwu2ynt2th
-	1wAHNlOmz85RQQApeumtJ9mX3dQt11FeraN0x9Tbw65kVFBcdrE/Uau24+4krpDw4+oHmfpnlETyd
-	8dDUTj7RLzdqmApTsOenP+GZ4mkTiTidGt7Ltj6bQyq2u85YOrFsk32FefV81ZEFzPP0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sWKVd-0035J8-6w; Tue, 23 Jul 2024 20:45:13 +0200
-Date: Tue, 23 Jul 2024 20:45:13 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Cindy Lu <lulu@redhat.com>
-Cc: dtatulea@nvidia.com, mst@redhat.com, jasowang@redhat.com,
-	parav@nvidia.com, sgarzare@redhat.com, netdev@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATH v5 0/3] vdpa: support set mac address from vdpa tool
-Message-ID: <66239ba4-d837-48da-aaba-528c6ab05ce9@lunn.ch>
-References: <20240723054047.1059994-1-lulu@redhat.com>
+	s=arc-20240116; t=1721760327; c=relaxed/simple;
+	bh=UrxWRPlMqpoWKZ2bExnCYyL4Z0PybRF7zzgPePLINCo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=scpWfT9XD1DqOniWyBAB+lYqDohmU+ynSr8Lq92WIJvYD0ktSHP+awaBbpAhqaePHT5l6haQzIJ3WTGi6BgweCAXMp43iHDLOV2q2kL9y89LtqSZ0xRusn6X+r8dWTcgJ2zrgrGPfYjsXOSKKIgudkv4J1lFD4bM0eVzH8CBT74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=opUwadBX; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46NAUdeW019032;
+	Tue, 23 Jul 2024 18:45:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gCCB1G6hlRvOVWfsLO+bg+iIDXZd0MGxhchi6Ypv1wY=; b=opUwadBXeU5mB+H3
+	LReIUOQtAog8dM2aE3Kviqtgh4NsLUcgPDH7HYG8ACYH8BGL/+5H940r7dgu2Ksr
+	yAnrVC5Ue9wTaWVVyelIWIyBegfl9KAVq/hoOBw+XoIxzxU0v7rtI6V2pY4TlSBG
+	bPcr3H8/ok8GtRlcOt/CAM6XjdlcXWdpxqn76Gcd0cXNqGD3Od8cVhDUk759EQuM
+	k1SzBA/DZr/YAUNrC2wazbA4DO6z6cXwYtEzbAfIOroKL35y+YoWiqVNOhO/cNWC
+	mwzemEtNlR1dtwaVWHts3Hlm8yu3G3PR8nbVre3CuqikYYBh3N8zlRIm3+dnACXz
+	2p668g==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g60jyr3r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Jul 2024 18:45:23 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46NIjMOM012077
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Jul 2024 18:45:22 GMT
+Received: from [10.111.176.36] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 23 Jul
+ 2024 11:45:22 -0700
+Message-ID: <d9e59c2d-bd31-4536-9a7b-64b2c071f50d@quicinc.com>
+Date: Tue, 23 Jul 2024 11:45:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240723054047.1059994-1-lulu@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] unicode: add MODULE_DESCRIPTION() macros
+Content-Language: en-US
+To: Gabriel Krisman Bertazi <gabriel@krisman.be>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240524-md-unicode-v1-1-e2727ce8574d@quicinc.com>
+ <87y17vng34.fsf@mailhost.krisman.be> <87v823npvl.fsf@mailhost.krisman.be>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <87v823npvl.fsf@mailhost.krisman.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: zz9er9Q2DBXDwk5k9hdK20aM6trT2ry8
+X-Proofpoint-GUID: zz9er9Q2DBXDwk5k9hdK20aM6trT2ry8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-23_09,2024-07-23_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ priorityscore=1501 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ mlxscore=0 suspectscore=0 phishscore=0 clxscore=1011 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407230130
 
-On Tue, Jul 23, 2024 at 01:39:19PM +0800, Cindy Lu wrote:
-> Add support for setting the MAC address using the VDPA tool.
-> This feature will allow setting the MAC address using the VDPA tool.
-> For example, in vdpa_sim_net, the implementation sets the MAC address
-> to the config space. However, for other drivers, they can implement their
-> own function, not limited to the config space.
+On 6/20/2024 4:41 PM, Gabriel Krisman Bertazi wrote:
 > 
-> Changelog v2
->  - Changed the function name to prevent misunderstanding
->  - Added check for blk device
->  - Addressed the comments
-> Changelog v3
->  - Split the function of the net device from vdpa_nl_cmd_dev_attr_set_doit
->  - Add a lock for the network device's dev_set_attr operation
->  - Address the comments
-> Changelog v4
->  - Address the comments
->  - Add a lock for the vdap_sim?_net device's dev_set_attr operation
-> Changelog v5
->  - Address the comments
+>> Jeff Johnson <quic_jjohnson@quicinc.com> writes:
+>>
+>>> Currently 'make W=1' reports:
+>>> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8data.o
+>>> WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8-selftest.o
+>>>
+>>> Add a MODULE_DESCRIPTION() to utf8-selftest.c and utf8data.c_shipped,
+>>> and update mkutf8data.c to add a MODULE_DESCRIPTION() to any future
+>>> generated utf8data file.
+>>>
+>>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>>> ---
+>>> Note that I verified that REGENERATE_UTF8DATA creates a file with
+>>> the correct MODULE_DESCRIPTION(), but that file has significantly
+>>> different contents than utf8data.c_shipped using the current:
+>>> https://www.unicode.org/Public/UNIDATA/UCD.zip
+>>
+>> Thanks for reporting this.  I'll investigate and definitely regenerate
+>> the file.
+> 
+> Now that I investigated it, I realized there is perhaps a
+> misunderstanding and not an issue. I just tried regenerating utf8data.c
+> and the file is byte-per-byte equal utf8data_shipped.c, so all is
+> good.
+> 
+> Considering the link you posted, I suspect you used the latest
+> unicode version and not version 12.1, which we support.  So there is no
+> surprise the files won't match.
+> 
+>> The patch is good, I'll apply it to the unicode code tree
+>> following the fix to the above issue.
+> 
+> Applied!
+> 
+> ty,
+> 
 
-This history is to help reviewers of previous versions know if there
-comments have been addressed. Just saying 'Address the comments' is
-not useful. Please give a one line summary of each of the comment
-which has been addressed, maybe including how it was addressed.
+Hi,
+I see this landed in linux-next, but is not currently in Linus' tree for 6.11.
+Will you be able to have this pulled during the merge window?
+I'm trying to eradicate all of these warnings before 6.11 rc-final.
 
-      Andrew
-
+Thanks!
+/jeff
 
