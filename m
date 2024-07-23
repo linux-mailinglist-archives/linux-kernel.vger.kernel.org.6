@@ -1,197 +1,154 @@
-Return-Path: <linux-kernel+bounces-259947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B88893A053
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:56:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 921F893A057
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4D301F229B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:56:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42458283619
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B2F152164;
-	Tue, 23 Jul 2024 11:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498B01514EF;
+	Tue, 23 Jul 2024 11:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vdo+68J3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lgBVQbAj"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2EE13D609;
-	Tue, 23 Jul 2024 11:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2DEF1514D8
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721735756; cv=none; b=jS/ev25pnXiY+cHWx3qDi5DZgTNy9kx1xidcK9ph6VgUnc6JwazS+KGdwvSUzZmHf3ww1ZuGOumWgv7WzPZ5vqaWIHfmbMdiyGjPED7nstGJYq6F2WeAkuMwcPrFdTtMSTAYnWPYI8F/bCnZjtTOaCuoZjyRY9xj4erCtcf+47s=
+	t=1721735917; cv=none; b=HsuXn3ceoblt7Et2v8bEgmEWaULKMtJDLtjyjm7Ur2Si8QFhYkOI+utyPOSco5whrEs1tSVqbU7rkx2/86ZxC97li4G7YAgX4cDfkjWVR+MvIl95cqVOBbkUTKkS8tZdR3rEvYehDzFyii1MBW+sWRxgT/V4pyEgmQzjk9YaGZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721735756; c=relaxed/simple;
-	bh=3TDEs0L944G71NhsWNCAYOPRVeh/85H8RUzJ/eqZfX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r4LPpy3BIOLiJomydW+YqRDoiiXGyxlbFrHf8ClalFyeRnDJG864gPk6MI3UIDtIwKSm95bqkH521207Fs5Kr/m4pGvtcnzIxWsAG70G4wUnVHKZhP13E+Uq5C7sVA+scVTWHa9AArGQhYJw9udyIdGh3c+DrX2OEeRe8a4sVaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vdo+68J3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 564EAC4AF09;
-	Tue, 23 Jul 2024 11:55:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721735755;
-	bh=3TDEs0L944G71NhsWNCAYOPRVeh/85H8RUzJ/eqZfX0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Vdo+68J3DaMhzDgACOCFCQYgb4dH4TUq4so9lG/BIYPd2R01tyAbu1E7uVlKhh+96
-	 h0/vLHzc1rvGJY7EKrASOiEd+ZqDYrKB4nJDFNJj9KzmeENBhuwd2fSP6q71XcHXZb
-	 HaN0+4d4ATov849Q2LE/bem+PSweTYDEU/ZqxjBeZKOPGh1BFXm95JmOXLl2Ixj3Bn
-	 pk6Q1py99Ytakn/VO+bJVfj0a0vDYjMNEByg+RztYiHLiv5Nds7aF6aGD2S8gND2at
-	 5ajVMYhWYi5L+n0z9suY8H5jvDbDnbdu7vmHZRlWBI8KNQgCrPb8YJeLLq1JaWBpVx
-	 NUazqDlkFFu3A==
-Date: Tue, 23 Jul 2024 13:55:48 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Michal Hocko <mhocko@suse.com>
-Cc: cl@linux.com, penberg@kernel.org, rientjes@google.com,
-	iamjoonsoo.kim@lge.com, akpm@linux-foundation.org, vbabka@suse.cz,
-	roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, urezki@gmail.com,
-	hch@infradead.org, kees@kernel.org, ojeda@kernel.org,
-	wedsonaf@gmail.com, mpe@ellerman.id.au, chandan.babu@oracle.com,
-	christian.koenig@amd.com, maz@kernel.org, oliver.upton@linux.dev,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] mm: kvmalloc: align kvrealloc() with krealloc()
-Message-ID: <Zp-aRJAIVI9B2pKb@pollux>
-References: <20240722163111.4766-1-dakr@kernel.org>
- <20240722163111.4766-3-dakr@kernel.org>
- <Zp9gtelmvzN5tfpS@tiehlicka>
- <Zp-JCWCPbDLkzRVw@pollux>
- <Zp-MMcf1xUgqtFGS@tiehlicka>
+	s=arc-20240116; t=1721735917; c=relaxed/simple;
+	bh=C1tz8K/u7VRu4jwZF1eRtTzAwuj9hXTHoeZsW7ZHnjw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dhaxv/47EOk8ZHqEDWoVSWOZoOoF7HotISL+AAvANBg4i3g0AGMnXkaAzN+8b3zVrTXs6g0hZHqzWzXWu1ARRubfuaCLJisjlzftNTQSJtB0pMFmVPQesQAyUcAtq17B6E/xZhyyDLXGgkHmytwiwx/05JuSJhjfrmZabm+UJXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lgBVQbAj; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a1337cfbb5so5402248a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 04:58:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721735914; x=1722340714; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=P+djReoRTIhBXyvCN8UfaYCI1awzWvkrD6U3A9THW/Q=;
+        b=lgBVQbAj89iEgiNC85CWg64GA+/2J4e6UOtiVR2zyPBBiM1r6seDDlPhPL+4wZxy6k
+         9MhPPb4g+7xfYwwn3SQS71aFB6wa6jELwM+7zXsEer+Zo0pEPKECsqXv8fuZmbnrguuV
+         JziblqEuFZ0LkUudcocsO8d6DRaa75S8JDTUlYutxvtzJvhBtCoMLeMggb8bta1nrXU+
+         Ru9YZRsKnHaK+bFqmDYYsrXZ84UE1JvTqxnlSW/+9c6Lst1otaTjlGn51VXnBzLBDUTZ
+         9glHxQHAb49mS8Ed/wdCd4ul0R/l+01Jv5VPDzKLzqg5Xx0AoCtYNJn1AGnWtyVwwGyk
+         wiMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721735914; x=1722340714;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P+djReoRTIhBXyvCN8UfaYCI1awzWvkrD6U3A9THW/Q=;
+        b=bQwqQ25Q2lBO7S6eEcXvBlbV06hgRDhGzwENG8HEJh1N18GXIRAXAByhhr9ZTuayTN
+         klXbdUOZwBc/9Y43L+5slrLaLBHErsGCa3O+vAk5PZ4yorm9vgE35g24aJukVi7eacnv
+         wuP6M1oNXXYz8hys4lI/f/YpcS1XtLYTvbfsZ5sS6Q9x3QNCPxTeaCz7JAq5YreKlC0r
+         /BALUFkxzJ7GazgaELNSl7M9eXKXlZYZ9SKqA7ajnhKK2VjGGsdr3aE3Ql/iYf1Ie8nx
+         VZvY7YB2PAlIs5KRq+cy6+3ymFgZxkoDRq/tHkAfi4cQ1zEbTTG9YSUWu/vhm4YTLkN+
+         R4Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCXNFYNyFp3rx9BHW2XpgUnLjcL+gSXOPk4wsP6W0htbWW0fjBe+s9eVF7Z+S3OugEDKPUzsBSAibIJbkCzQnV4o2yDdPB1AuTTLcatF
+X-Gm-Message-State: AOJu0YwXyTPv2ECXLm8RFMZTt+UaO4PpvbEZ0tTqyMNTHuSn3GhNPAe1
+	q33c/NjKgEofWyRVKEFEq1UyfpLqvrsOUc2OefyO0DiMUeLzbLsH3ZOTT48Mcfk=
+X-Google-Smtp-Source: AGHT+IFGPFk3/DBxWgzuM2E00MW1mfvZYKIspK21ddEFkKQ9CsbeM3pj3Wy64tvPUlWKA6N3EvZHCw==
+X-Received: by 2002:a50:8d4b:0:b0:5a3:41cb:676a with SMTP id 4fb4d7f45d1cf-5a9438290famr1983315a12.27.1721735913896;
+        Tue, 23 Jul 2024 04:58:33 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30c7d38f7sm7479874a12.88.2024.07.23.04.58.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jul 2024 04:58:32 -0700 (PDT)
+Message-ID: <3b00372c-0c81-4d0d-ac41-96020eef1580@linaro.org>
+Date: Tue, 23 Jul 2024 13:58:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zp-MMcf1xUgqtFGS@tiehlicka>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 7/9] dt-bindings: interconnect: qcom: msm8939: Fix
+ example
+To: Adam Skladowski <a39.skl@gmail.com>
+Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Vladimir Lypak <vladimir.lypak@gmail.com>,
+ Rajendra Nayak <quic_rjendra@quicinc.com>,
+ Rohit Agarwal <quic_rohiagar@quicinc.com>,
+ Danila Tikhonov <danila@jiaxyga.com>, Bjorn Andersson
+ <andersson@kernel.org>, Stephan Gerhold <stephan.gerhold@kernkonzept.com>,
+ Andrew Halaney <ahalaney@redhat.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Barnabas Czeman <barnabas.czeman@mainlining.org>,
+ linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Abel Vesa <abel.vesa@linaro.org>, Sibi Sankar <quic_sibis@quicinc.com>
+References: <20240709102728.15349-1-a39.skl@gmail.com>
+ <20240709102728.15349-8-a39.skl@gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240709102728.15349-8-a39.skl@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 23, 2024 at 12:55:45PM +0200, Michal Hocko wrote:
-> On Tue 23-07-24 12:42:17, Danilo Krummrich wrote:
-> > On Tue, Jul 23, 2024 at 09:50:13AM +0200, Michal Hocko wrote:
-> > > On Mon 22-07-24 18:29:24, Danilo Krummrich wrote:
-> [...]
-> > > > Besides that, implementing kvrealloc() by making use of krealloc() and
-> > > > vrealloc() provides oppertunities to grow (and shrink) allocations more
-> > > > efficiently. For instance, vrealloc() can be optimized to allocate and
-> > > > map additional pages to grow the allocation or unmap and free unused
-> > > > pages to shrink the allocation.
-> > > 
-> > > This seems like a change that is independent on the above and should be
-> > > a patch on its own.
-> > 
-> > The optimizations you mean? Yes, I intend to do this in a separate series. For
-> > now, I put TODOs in vrealloc.
+On 9.07.2024 12:22 PM, Adam Skladowski wrote:
+> For now example list snoc_mm as children of bimc which is obviously
+> not valid, drop bimc and move snoc_mm into snoc.
 > 
-> No I mean, that the change of the signature and semantic should be done along with
-> update to callers and the new implementation of the function itself
-> should be done in its own patch.
+> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
+> ---
 
-Sorry, it seems like you lost me a bit.
+loool, thanks
 
-There is one patch that implements vrealloc() and one patch that does the change
-of krealloc()'s signature, semantics and the corresponding update to the
-callers.
 
-Isn't that already what you ask for?
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-> 
-> [...]
-> > > > +void *kvrealloc_noprof(const void *p, size_t size, gfp_t flags)
-> > > >  {
-> > > > -	void *newp;
-> > > > +	void *n;
-> > > > +
-> > > 
-> > > 	if (!size && p) {
-> > > 		kvfree(p);
-> > > 		return NULL;
-> > > 	}
-> > > 
-> > > would make this code flow slightly easier to read because the freeing
-> > > path would be shared for all compbinations IMO.
-> > 
-> > Personally, I like it without. For me the simplicity comes from directing things
-> > to either krealloc() or vrealloc(). But I'd be open to change it however.
-> 
-> I would really prefer to have it there because it makes the follow up
-> code easier.
-
-I don't think it does (see below).
-
-Either way, I got notified that Andrew applied the patches to mm-unstable. How
-to proceed from there for further changes, if any?
-
-> 
-> > > > +	if (is_vmalloc_addr(p))
-> > > > +		return vrealloc_noprof(p, size, flags);
-> > > > +
-> > > > +	n = krealloc_noprof(p, size, kmalloc_gfp_adjust(flags, size));
-> > > > +	if (!n) {
-> > > > +		/* We failed to krealloc(), fall back to kvmalloc(). */
-> > > > +		n = kvmalloc_noprof(size, flags);
-> > > 
-> > > Why don't you simply use vrealloc_noprof here?
-> > 
-> > We could do that, but we'd also need to do the same checks kvmalloc() does, i.e.
-> > 
-> > 	/*
-> > 	 * It doesn't really make sense to fallback to vmalloc for sub page
-> > 	 * requests
-> > 	 */
-> > 	if (ret || size <= PAGE_SIZE)
-> > 		return ret;
-> 
-> With the early !size && p check we wouldn't right?
-
-I think that's unrelated. Your proposed early check checks for size == 0 to free
-and return early. Whereas this check bails out if we fail kmalloc() with
-size <= PAGE_SIZE, because a subsequent vmalloc() wouldn't make a lot of sense.
-
-> 
-> > 
-> > 	/* non-sleeping allocations are not supported by vmalloc */
-> > 	if (!gfpflags_allow_blocking(flags))
-> > 		return NULL;
-> > 
-> > 	/* Don't even allow crazy sizes */
-> > 	if (unlikely(size > INT_MAX)) {
-> > 		WARN_ON_ONCE(!(flags & __GFP_NOWARN));
-> > 		return NULL;
-> > 	}
-> 
-> I do not see why kvrealloc should have different set of constrains than
-> vrealloc in this regards.
-
-Those constraints come from kvmalloc() and hence should also apply for
-kvrealloc(). What you seem to question here is whether they should be moved from
-kvmalloc() to vmalloc() (and hence implicitly to vrealloc()).
-
-As for the gfpflags_allow_blocking() check, it seems like this one was suggested
-by you for kvmalloc() [1]. It seems that some people call kvmalloc() with
-GPF_ATOMIC (which seems a bit weird at a first glance, but maybe makes sense in
-some generic code paths). Hence, kvrealloc() must be able to handle it as well.
-
-As for the size > INT_MAX check, please see the discussion in commit
-0708a0afe291 ("mm: Consider __GFP_NOWARN flag for oversized kvmalloc() calls").
-
-But again, whether those checks should be moved to vmalloc() is probably a
-different topic.
-
-[1] https://lore.kernel.org/all/20220926151650.15293-1-fw@strlen.de/T/#u
-
-> 
-> > Does the kmalloc() retry through kvmalloc() hurt us enough to do that? This
-> > should only ever happen when we switch from a kmalloc buffer to a vmalloc
-> > buffer, which we only do once, we never switch back.
-> 
-> This is effectively open coding part of vrealloc without any good
-> reason. Please get rid of that.
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
-> 
+Konrad
 
