@@ -1,133 +1,115 @@
-Return-Path: <linux-kernel+bounces-259939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6375493A029
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:46:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 521D293A02D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9518D1C21C3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:46:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02D6B282149
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD9B15098E;
-	Tue, 23 Jul 2024 11:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1B51514DE;
+	Tue, 23 Jul 2024 11:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yElmIR5i"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ODCtjwm9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66A413D609
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE1313D609
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721735172; cv=none; b=TTxtb0bhpAMOa5LPGbeduhs7pVptsJu5KolsCwj2l7Kp/wlFQ2eUaK/ZqCsACxu8a3qQ5EQ8Po7AKbw1UVb7qRFtEhwMa38ixQWYmFDYV1uMTgOgGG/4QMzTsMfrfMoIrrXYENmrQqi8rorrWYmDE2HncFnetK9Q2vHDc6cIT04=
+	t=1721735368; cv=none; b=qpO0gvl/3YXUrjQXGGFM6dzAnP1g/wOZbSWbP9W1owLGfF54YOcXLJ8QjjpVXwIeX3aQRs2DgsWn/13n3AXD22Si2w+8y4MBPu4nb4H/fLlXZqv5YUrW6JxCLC6At63AASI0aXL2wccRtxvhPWZjG5THIkw4NOEhJ/1aK3+WVhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721735172; c=relaxed/simple;
-	bh=M5tjVdtGLE6ZhRpxAclw0H4aLNG85TmecfEaglE2mMU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DgaA4ds2BHyyHFv2IHRYXj7sPcaDpgHajb+GFoWyaiYOl+lZcfW2XzMBcG1AB7YiEWUieiOrzNkrJJvrYzEOtWcIXZiPuolx9IswTKWwiDFLiX9hnaNHZiG2E1ZxLT0KLPsilD5Z6qorsx8qS3JOHcpOdjsr5pQaDYHL3Q5arEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yElmIR5i; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-661369ff30aso46469217b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 04:46:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721735169; x=1722339969; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9J1nHOASn3flj0zt7AwDv5DGq2s4Mkvfg+lObtW6fk4=;
-        b=yElmIR5iufXUJkRbAbB+3tdViw2k2FSWmERBLicHa3aZCP6mvA31RF3LSqqugn7opI
-         Kibcu2fVvQARMjuQ1eOZ9DnTDB5ffB1c3BBjPooZEPVW6CjijTV+0nV7GX6lxmegZEzA
-         Gg6ixkpoXAtfc7iuiw8rVVdmQerggsv70XSoorDm9MXGLTAwZ4OoN87impVMJy+tkcj9
-         6sBZcBsF8mVRZPDDhonR3R8730e4Fifi8dygmMERoyCcclX2ev5hi2GrTuj5x+Om2DKb
-         78Uy79ShLka+Sb+XaT6VikddiJqE0iT4/2igHPD+yl3Zz0tEnClqkGwg6rCXoYxIN6Fk
-         s6CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721735169; x=1722339969;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9J1nHOASn3flj0zt7AwDv5DGq2s4Mkvfg+lObtW6fk4=;
-        b=Q3LQkC4pCGeVGQ/Sek3g0qt92vwutsGmV4BY6Rz4V91a5IJZ6BcXPntCACbqA6THS6
-         /60XGOLa9cmFle7xuu/tA+WfhcGiracPyn60C4tVjmPwCE8PZC/CCTxaoVK+ZxnmvWz3
-         R1qkztVFBV2Mv8M4zMM0vXPpngMhr3Uggtgs8GPfake2XcypjY6tb/mBT8chdiSnsHia
-         N4JHXl0ovrtzWnfuwNimRuFWn8tyv1x61BX+LKBHgknYpOx5M9UUIpOYvVCHPhHIXV07
-         qgAmrGacj/HgB52TWvbj24Ydq4rpeOD0V8FInAkWTZHgyeLOodKI6hvo1yz+MbKySCWn
-         4u5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWB+9uk2MFJ2SDlpZRw+kI0sqpZkvvaNwieOx9iPb1lQGBW3fu87XF4lzL7EJd6vwQ0qJ8H+ZtausJwG1dAU2OTGyNaWhwfbGdIRiaY
-X-Gm-Message-State: AOJu0YwRCtsvj+eZ7V5bajit3bW/UXwI1wNMPdJaR4V/BCFJoLY8lZLJ
-	L2eOc5ELCsZd6TwpSO1jRaEnBF38BUzPrYtD0bZ4p2HR6aq2lHx6JDog23wlTH2UzHp4z2l/0Hs
-	fLQsLhxW2xaUhKYoIh8a7/BY3xdih7uf4DQKWAQ==
-X-Google-Smtp-Source: AGHT+IGSYGEDmVnHeFsuTjlmIqz/4ONf12+6+8f3LKRIe2y+UOYqU4Ftt4o/BdIVEMd/OYTtRDd0xQtn8+Y5L3Jy2LU=
-X-Received: by 2002:a05:690c:3107:b0:64b:2cf2:391c with SMTP id
- 00721157ae682-66a641398e9mr106886647b3.18.1721735169615; Tue, 23 Jul 2024
- 04:46:09 -0700 (PDT)
+	s=arc-20240116; t=1721735368; c=relaxed/simple;
+	bh=2IzsPayJCnWS/dIbO4kd197KmAE14y6oomj9vNSuERA=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=GDA5yai67XnHMWdqOJNyS/Rpy+8/vk3SKg6RvXSYXBWmMVaKPBGzOInbKusfk67JmhoclAx/WaXMXdrAz4yEWnUysLaiZNyGPHVKTJ+FhvHZPgXBWZpValQ4SsDj3Qr4vEfB+fDAiEf9+I0bZkzdqZi9oE+2sfcXO+CSXTIf3uE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ODCtjwm9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721735365;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2ZZ7xf/f12+Tr6LA6vgO8m70M0xzWtORCsg5GqY5FWM=;
+	b=ODCtjwm9gwHU2DG2yc2F/btnk+QtJQtGI5wOOiDG5gnYpAgzSz1ncMOF825KsRhXvs8BYL
+	mbhSnX05oDqUUmR8SV71RnIt3VBQmquESsvNlg9nEv60Uh3ytJUkNMJeZbNkcwsCM7q+JI
+	xFKBYift9qH6GESEiwf+9WYuMuJNlDk=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-539-lzkINb5QNrO5cKrvekHW6Q-1; Tue,
+ 23 Jul 2024 07:49:22 -0400
+X-MC-Unique: lzkINb5QNrO5cKrvekHW6Q-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4387D19560B6;
+	Tue, 23 Jul 2024 11:49:20 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.39.194.104])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id AC9FB1955D45;
+	Tue, 23 Jul 2024 11:49:15 +0000 (UTC)
+From: Sergio Lopez <slp@redhat.com>
+To: gurchetansingh@chromium.org,
+	tzimmermann@suse.de,
+	mripard@kernel.org,
+	olvaffe@gmail.com,
+	kraxel@redhat.com,
+	daniel@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	airlied@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	dri-devel@lists.freedesktop.org,
+	Sergio Lopez <slp@redhat.com>
+Subject: [PATCH 0/2] drm/virtio: introduce the HOST_PAGE_SIZE feature
+Date: Tue, 23 Jul 2024 07:49:12 -0400
+Message-ID: <20240723114914.53677-1-slp@redhat.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240722-pmic-bindings-v1-0-555942b3c4e1@linaro.org>
- <20240722-pmic-bindings-v1-3-555942b3c4e1@linaro.org> <umsttn5qdjzg4cmgwya53la2sd57z3kxv5wo2b4nwme3jlthis@4vn3vwnlldkp>
- <df3bb042-1fb6-46ef-ad6f-1cbe0a380dd0@linaro.org>
-In-Reply-To: <df3bb042-1fb6-46ef-ad6f-1cbe0a380dd0@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 23 Jul 2024 14:45:58 +0300
-Message-ID: <CAA8EJpqEDqY79pFv_FUH43++BW1iUz3J6sozCEVNfQyQPBjCsw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] ARM: dts: qcom: pma8084: add pon node
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Rayyan Ansari <rayyan.ansari@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Tue, 23 Jul 2024 at 14:39, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->
-> On 23.07.2024 1:35 PM, Dmitry Baryshkov wrote:
-> > On Mon, Jul 22, 2024 at 12:47:57PM GMT, Rayyan Ansari wrote:
-> >> Wrap existing pwrkey node inside a pon node, to conform to dt schema.
-> >>
-> >> Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
-> >> ---
-> >>  arch/arm/boot/dts/qcom/pma8084.dtsi | 14 +++++++++-----
-> >>  1 file changed, 9 insertions(+), 5 deletions(-)
-> >>
-> >> diff --git a/arch/arm/boot/dts/qcom/pma8084.dtsi b/arch/arm/boot/dts/qcom/pma8084.dtsi
-> >> index 2985f4805b93..dbf7afcbfd8b 100644
-> >> --- a/arch/arm/boot/dts/qcom/pma8084.dtsi
-> >> +++ b/arch/arm/boot/dts/qcom/pma8084.dtsi
-> >> @@ -19,12 +19,16 @@ rtc@6000 {
-> >>                      interrupts = <0x0 0x61 0x1 IRQ_TYPE_EDGE_RISING>;
-> >>              };
-> >>
-> >> -            pwrkey@800 {
-> >> -                    compatible = "qcom,pm8941-pwrkey";
-> >> +            pon@800 {
-> >> +                    compatible = "qcom,pm8941-pon";
-> >>                      reg = <0x800>;
-> >> -                    interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
-> >> -                    debounce = <15625>;
-> >> -                    bias-pull-up;
-> >> +
-> >> +                    pwrkey {
-> >> +                            compatible = "qcom,pm8941-pwrkey";
-> >> +                            interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
-> >> +                            debounce = <15625>;
-> >> +                            bias-pull-up;
-> >> +                    };
-> >
-> > It might be worth adding the resin node too, see pm8941.dtsi
->
-> This is a cleanup series, adding features is another thing and it
-> would be nice if somebody could test it
+There's an incresing number of machines supporting multiple page sizes
+and on these machines the host and a guest can be running, each one,
+with a different page size.
 
-Agreed.
+For what pertains to virtio-gpu, this is not a problem if the page size
+of the guest happens to be bigger or equal than the host, but will
+potentially lead to failures in memory allocations and/or mappings
+otherwise.
 
+To improve this situation, we introduce here the HOST_PAGE_SIZE feature.
+This feature indicates that the host has an extended virtio_gpu_config
+structure that include it's own page size a new field.
+
+On the second commit, we also add a new param that can be read with
+VIRTGPU_GETPARAM by userspace applications running in the guest to
+obtain the host's page size and find out the right alignment to be used
+in shared memory allocations.
+
+Sergio Lopez (2):
+  drm/virtio: introduce the HOST_PAGE_SIZE feature
+  drm/virtio: add VIRTGPU_PARAM_HOST_PAGE_SIZE to params
+
+ drivers/gpu/drm/virtio/virtgpu_drv.c   |  1 +
+ drivers/gpu/drm/virtio/virtgpu_drv.h   |  2 ++
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c |  5 +++++
+ drivers/gpu/drm/virtio/virtgpu_kms.c   | 13 ++++++++++---
+ include/uapi/drm/virtgpu_drm.h         |  1 +
+ include/uapi/linux/virtio_gpu.h        |  5 +++++
+ 6 files changed, 24 insertions(+), 3 deletions(-)
 
 -- 
-With best wishes
-Dmitry
+2.45.2
+
 
