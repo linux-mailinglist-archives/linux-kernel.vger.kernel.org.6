@@ -1,226 +1,402 @@
-Return-Path: <linux-kernel+bounces-260243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67BCF93A4EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:26:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B238593A4F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BF3F1C20DD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:26:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D43DE1C2224A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC7515821A;
-	Tue, 23 Jul 2024 17:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EBE91586CD;
+	Tue, 23 Jul 2024 17:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gk8qmAvz"
-Received: from mail-pj1-f66.google.com (mail-pj1-f66.google.com [209.85.216.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="k9tefn7F"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2E715749C;
-	Tue, 23 Jul 2024 17:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84D814A4C9;
+	Tue, 23 Jul 2024 17:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721755594; cv=none; b=BSstwjHV9tazE1T8bmJhKwajKDFC/OrHN7Qr6qDdWxm5isWjuVHcVuwLMDC24cKWRn7dweNNO1G14mHfd2K1KDVvZkg59Y1l7mn1V70A1zHPU8qBUgwvDPwhVAFpq4DVm0wd7CslENGDLOaEmjCZ7qv0Gv7m+xJflepVae0VOJY=
+	t=1721755685; cv=none; b=Ed2vCef6itL9RzaB8ykeu+yX81SIaW6ljwNzX6ngF/qR+i2m9N9Wsb/D/bzG6iwphcQK+63cTgilBQSfJy3y3/42q3IZcgRj7lCz8T7ObxdG8hpestQ3XWelpqODQ0KazRpWklqmVWMHrYZ9TGBunThes+b50DmpAi6TRg4qYTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721755594; c=relaxed/simple;
-	bh=7lqeO9zi/ZPLQLjYKRu06yUs0Jen/eSzwXb6Rj/paTY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NVlnlv3fGl2wABkEdUekISeGF4CbkhohjBrnZ6DlfVAHAX7aNe6y5tJDryutAU2lmUbkOUiOMfN4uMn5X+RNpMXR6ky5xHpE7KN6u8tyAif9z+uEYZjFr9TU7gI7LiB159g83gr+k9aDf0xggWJ8/zs0lvDt+AC8PGCANRyZJIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gk8qmAvz; arc=none smtp.client-ip=209.85.216.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f66.google.com with SMTP id 98e67ed59e1d1-2cb6b247db0so614455a91.2;
-        Tue, 23 Jul 2024 10:26:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721755592; x=1722360392; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ttzMJVUPEVSPgz/kJQiGDgzHbnSKKQPBuNwmGBEWsJU=;
-        b=Gk8qmAvznuoWHP/KQ3allLDwEpoltNyCbcoMDf6hDqDpe9sLsjM+7NT1ew7imawI2q
-         LsLPJUQlPySGOSQzpSJHVxJsmakCeXcXZDqC/XR9Ty6eKSBn9aTwDHC5W+NDQSxtATkm
-         +jvumpghNGrT0U8wnoyvvLC25uMwCwBUFTnDQ6sSNE2Zzk4kDM12TIN+D8QW0N3V7dH5
-         DnGTyzzgQ0TrFG9HceNrnIBVuOHMbeA6tVUl1QB+P6yx8cMlsK6pQMzM40XAo6Yqrl/a
-         TPJKK8n7QB/WjwpM597DWEBmRmll8Pi0E64lN93pSnX18eZJwGIbJYxuDWYQEqbaKVjO
-         P2XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721755592; x=1722360392;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ttzMJVUPEVSPgz/kJQiGDgzHbnSKKQPBuNwmGBEWsJU=;
-        b=hoDks0Eh0LjGRcSysKkww0EsczjztSh+enCJX5POMCHuAvbUFTJy8LRTagFlIYzRZS
-         uD1ixahScJyzU7W8MFSQEWIeHyKreNxV4Bo8x2R7hMqlSt4yNgfHGJNGRr6zEPFbV3Xl
-         oZY2395GbFTkccTmy2henyVLA7T61hA8GnXN+BCMBPFSVoY2FVm5PC1fSjYPWeYz7u+r
-         6x6byJJXgBSgZYY6Z4Xw0VSgiNNjarwkUgibSNmDAPQtHsevmlLR2KAIT5HOr8yl8RVK
-         xOid60LOHM3tl6ihPIqli49Ibrh0fmmFyntuRRMKyY20YAmgXMPvHMVXAUyEmM0gSySI
-         d+nw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXxhS+eScB/NOOjOIPpc8g5AJ1+79RJlzmp7YFEq0B/3ICs/rSWuzYSdl72r0P5s9XgdwBlBYGh0PtQT0=@vger.kernel.org, AJvYcCX+ZtmXsFVLoBdCuKvsZXzT1VxN0hMaM4pMVcVxDUlWtpjvE0thOQpTtPdW0LbP/I0TBGewGQQWzuW0sBAJL27fng==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNHb5yhqHM2qi/5fs/8+11rVKHSNg/LiFLd4bxG4KHePkF5uoz
-	XLsYvAGcSk26fQkjiQVU3vPapQ9uNFhuB1z26LQwXa78OcMPskTN
-X-Google-Smtp-Source: AGHT+IFAVBRUp2zRWq3BgWOnjME8mVe5/WH6T3ywz3r6UnpX5+5S3t/eqwVhnKTuRrceVlseQdTNfA==
-X-Received: by 2002:a17:902:ce83:b0:1fb:43b5:8793 with SMTP id d9443c01a7336-1fd74603b9dmr90462885ad.6.1721755591637;
-        Tue, 23 Jul 2024 10:26:31 -0700 (PDT)
-Received: from [192.168.123.46] (pcd463246.netvigator.com. [203.218.253.246])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f470686sm77553615ad.264.2024.07.23.10.26.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 10:26:31 -0700 (PDT)
-Message-ID: <85253bf0-7222-4abb-a583-6c55f949e6bd@gmail.com>
-Date: Wed, 24 Jul 2024 01:26:14 +0800
+	s=arc-20240116; t=1721755685; c=relaxed/simple;
+	bh=C7a5QAJerYjhKY7LxrpBPWjQMG0nI462T4h+e+Z/zKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Da4SfT2JOwG+1xtA5tL3VeROJznPc0TYgKJc24ricY8Guk1A2kcqo+gtQtZdQTzhuK6zVVfs6W4wnAF3sm6e5mvqPpQLtAKjlEGJEgUl1kMQKz54YzlL5ax0fOagEsXQABFU6yHaRl+ZkyvuSJl/uavcEvi3WXu8q0mIdtpZ304=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=k9tefn7F; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721755681;
+	bh=C7a5QAJerYjhKY7LxrpBPWjQMG0nI462T4h+e+Z/zKQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k9tefn7FGTczAr6qskn0TAKIL3ojZ7NQBk3gGiyjJ5HwdR2cqktM0eSQvegRFcUus
+	 MAFEUA2BzS+K9oF45IC6b6H4KV41vu0S/zxQG3nler/pujabonjkspX60dZciSCp7e
+	 zN1bs1g9hLhVX+SsBR0OPSHt6bNVuNOA9AAG5En7uC9aRZohOyuQtsKpnyLV/TWnra
+	 MHb7O1EOuU4oqk+V1b4kBfrJVX760QgkEL0NKmRFMiTKo97Q1G8M+/N9CJrOcF38OK
+	 EK22DBrS/TIRnVJCcOB3H0VOyji5hpDJeERvpsLmPPSIQ34sV+mzsabnVUyzJCYeOb
+	 NfVpavxjsNT9A==
+Received: from mercury (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C17C837813AE;
+	Tue, 23 Jul 2024 17:28:01 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id 6EC80106097F; Tue, 23 Jul 2024 19:28:01 +0200 (CEST)
+Date: Tue, 23 Jul 2024 19:28:01 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Johan Jonker <jbx6244@yandex.com>
+Cc: Shreeya Patel <shreeya.patel@collabora.com>, heiko@sntech.de, 
+	mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
+	jose.abreu@synopsys.com, nelson.costa@synopsys.com, shawn.wen@rock-chips.com, 
+	nicolas.dufresne@collabora.com, hverkuil@xs4all.nl, hverkuil-cisco@xs4all.nl, 
+	kernel@collabora.com, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Subject: Re: [PATCH v4 2/4] dt-bindings: media: Document bindings for HDMI RX
+ Controller
+Message-ID: <6nzakkvpfodztxh6jnxlhknd7x7ni6agwpguxyqd6gcncedp53@vsk5mnaayfqs>
+References: <20240719124032.26852-1-shreeya.patel@collabora.com>
+ <20240719124032.26852-3-shreeya.patel@collabora.com>
+ <c926b73e-9ee7-4c4f-9c06-761929425468@yandex.com>
+ <3328a8-669e6400-1-609f7800@94177214>
+ <ae3f574a-256f-4ced-a371-a26255024750@yandex.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] perf archive: unpack to correct dir given by perf
-To: Michael Petlan <mpetlan@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, vmolnaro@redhat.com,
- peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- Yuan Tan <tanyuan@tinylab.org>
-References: <cover.1720372219.git.royenheart@gmail.com>
- <18fa10628f1e037753244b438b2a08b20d611135.1720372219.git.royenheart@gmail.com>
- <ZpCyf6ulH-8dRBu4@google.com>
- <f7d246d4-edae-4b4c-8b19-ad6fa66e8ea1@gmail.com>
- <alpine.LRH.2.20.2407161424070.11376@Diego>
-Content-Language: en-US
-From: Haoze Xie <royenheart@gmail.com>
-In-Reply-To: <alpine.LRH.2.20.2407161424070.11376@Diego>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="icvzpzs7h3iwodn3"
+Content-Disposition: inline
+In-Reply-To: <ae3f574a-256f-4ced-a371-a26255024750@yandex.com>
 
 
+--icvzpzs7h3iwodn3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-在 2024/7/16 20:29, Michael Petlan 写道:
-> On Tue, 16 Jul 2024, royenheart wrote:
->> On 2024/7/12 12:35, Namhyung Kim wrote:
->>> Hello,
->>>
->>> On Mon, Jul 08, 2024 at 02:04:31AM +0800, Haoze Xie wrote:
->>>> In perf-archive.sh, the code segment that defines 'PERF_BUILDID_DIR' is
->>>> advanced before 'unpack' operation for subsequent use, followed by a
->>>> 'mkdir' operation to ensure that the dir exists. Symbols in 'unpack' will
->>>> be extracted to correct dir given by perf.
->>>>
->>>> When '--unpack' param is appointed, the symbols are extracted to '~/.debug'
->>>> folder by default, without using 'PERF_BUILDID_DIR' given by perf. This
->>>> will cause perf to be unable to find the correct buildid's path when users
->>>> configured buildid.dir in 'perf config' or used '--buildid-dir' cli param,
->>>> since perf will read these params and put them in 'PERF_BUILDID_DIR' env.
->>>> 'perf script' and 'perf report' will use the env as the basis for buildid
->>>> indexing.
->>>
->>> Can you please add an example command line and the output for the error
->>> case?  It'd be helpful to understand the problem more intuitively.
->>>
->>>>
-> 
-> [...]
-> 
->>
->> I have two machines A and B, I use 'perf record' and 'perf archive' to get
->> a buildid archive 'perf.data.tar.bz2' on A: 
->>
->> $ perf record -a -g -- sleep 1
->> $ perf archive
->>
->> then I transfer 'perf.data' and its buildid archive to B. On machine B, I
->> use 'perf archive' to extract the buildid:
->>
->> $ perf archive --unpack
->> $   Found target file for unpacking: ./perf.data.tar.bz2
->> $   .build-id/d1/a727ab038085dbbb50e74c812e5a6e8502e8c7
->> $   ...
->>
->> But when I use 'perf script' to view hotspots, no function names are shown:
->>
->> $ perf script
->> $   No kallsyms or vmlinux with build-id 
->> $   251c1248b97a17df394058a189dffe381169ddcd was found
->> $   perf    1770 [000] 1022235.467607:          1 cycles:P: 
->> $           ffffffff8ae9ceb6 [unknown] ([kernel.kallsyms])
->> $           ffffffff8ae15af5 [unknown] ([kernel.kallsyms])
->> $           ffffffff8ae0f83b [unknown] ([kernel.kallsyms])
->> $   ......
->>
->> The problem is, I used 'perf config' to change buildid search path before:
->>
->> $ perf config --user buildid.dir=/usr/local/symbols
->> $ cat ~/.perfconfig
->> $   # this file is auto-generated.
->> $   [buildid]
->> $           dir = /usr/local/symbols
->>
-> 
-> Shouldn't then perf-archive just determine the directory from perf-config
-> without any additional env var?
-> 
->> But 'perf archive --unpack' just extract them to '~/.debug', which makes
->> perf can't found right path to search for buildid info. If I add
->> 'buildid-dir' param to replace buildid path defined in perfconfig, problem
->> can be solved temporarily:
->>
->> $ ./perf --buildid-dir ~/.debug script
->> $   perf    1770 [000] 1022235.467607:          1 cycles:P: 
->> $           ffffffff8ae9ceb6 native_write_msr+0x6 ([kernel.kallsyms])
->> $           ffffffff8ae15af5 intel_pmu_enable_all+0x15 ([kernel.kallsyms])
->> $           ffffffff8ae0f83b x86_pmu_enable+0x1ab ([kernel.kallsyms])
->>
->> The code that determines the buildid path is in the 
->> 'util/config.c:set_buildid_dir' function, which will generate
->> 'PERF_BUILDID_DIR' var.
-> 
-> As above, the var seems to be a duplicate to what is already stored in
-> perf-config...
-> 
->>
->>
-> 
-> Regards,
-> Michael
-> 
+Hi,
 
-Sorry for the delay, I read about the codes, in 'perf.c:main', it will call
-'perf_config' function at first, which will call 'config:set_buildid_dir'
-to set an env 'PERF_BUILDID_DIR' for external commands(including
-perf-archive). Codes are:
+On Tue, Jul 23, 2024 at 01:16:00PM GMT, Johan Jonker wrote:
+> On 7/22/24 15:53, Shreeya Patel wrote:
+> > On Saturday, July 20, 2024 16:14 IST, Johan Jonker <jbx6244@yandex.com>=
+ wrote:
+> >> On 7/19/24 14:40, Shreeya Patel wrote:
+> >>> Document bindings for the Synopsys DesignWare HDMI RX Controller.
+> >>>
+>=20
+> >>> Reviewed-by: Rob Herring <robh@kernel.org>
+> >>> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+>=20
+> Remove to trigger a new review.
 
-$ // perf.c
-$ int main(int argc, const char **argv) {
-$   // ...
-$   err = perf_config(perf_default_config, NULL);
-$   // ...
-$ }
-$
-$ ...
-$ // config.c
-$ void set_buildid_dir(const char *dir) {
-$   if (dir)
-$	    scnprintf(buildid_dir, MAXPATHLEN, "%s", dir);
-$
-$	/* default to $HOME/.debug */
-$	if (buildid_dir[0] == '\0') {
-$		char *home = getenv("HOME");
-$
-$		if (home) {
-$			snprintf(buildid_dir, MAXPATHLEN, "%s/%s",
-$				 home, DEBUG_CACHE_DIR);
-$		} else {
-$			strncpy(buildid_dir, DEBUG_CACHE_DIR, MAXPATHLEN-1);
-$		}
-$		buildid_dir[MAXPATHLEN-1] = '\0';
-$	}
-$	/* for communicating with external commands */
-$	setenv("PERF_BUILDID_DIR", buildid_dir, 1);
-$ }
+Rob and Dmitry both already reviewed the version with the fallback
+compatible. I don't think the rename of hdmirx_cma to hdmi_receiver_cma
+warrant a new review. Also FWIW:
 
-Or it will set to '${HOME}/.debug'('.debug' if ${HOME} not set).
-'--buildid_dir' param will override it. So perf has already read the config
-for us and set the 'PERF_BUILDID_DIR' env intentionally at first. I think
-it's ok to use the env for indicating where to extract.
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+
+> >>> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+> >>> ---
+> >>>
+> >>> Changes in v4 :-
+> >>>   - No change
+> >>>
+> >>> Changes in v3 :-
+> >>>   - Rename hdmirx_cma to hdmi_receiver_cma
+> >>>   - Add a Reviewed-by tag
+> >>>
+> >>> Changes in v2 :-
+> >>>   - Add a description for the hardware
+> >>>   - Rename resets, vo1 grf and HPD properties
+> >>>   - Add a proper description for grf and vo1-grf phandles
+> >>>   - Rename the HDMI Input node name to hdmi-receiver
+> >>>   - Improve the subject line
+> >>>   - Include gpio header file in example to fix dt_binding_check failu=
+re
+> >>>
+> >>>  .../bindings/media/snps,dw-hdmi-rx.yaml       | 132 ++++++++++++++++=
+++
+> >>>  1 file changed, 132 insertions(+)
+> >>>  create mode 100644 Documentation/devicetree/bindings/media/snps,dw-h=
+dmi-rx.yaml
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.=
+yaml b/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
+> >>> new file mode 100644
+> >>> index 000000000000..96ae1e2d2816
+> >>> --- /dev/null
+> >>> +++ b/Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
+> >>> @@ -0,0 +1,132 @@
+> >>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >>> +# Device Tree bindings for Synopsys DesignWare HDMI RX Controller
+> >>> +
+> >>> +---
+> >>> +$id: http://devicetree.org/schemas/media/snps,dw-hdmi-rx.yaml#
+> >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >>> +
+> >>> +title: Synopsys DesignWare HDMI RX Controller
+> >>> +
+> >>> +maintainers:
+> >>> +  - Shreeya Patel <shreeya.patel@collabora.com>
+> >>> +
+> >>> +description:
+> >>> +  Synopsys DesignWare HDMI Input Controller preset on RK3588 SoCs
+> >>> +  allowing devices to receive and decode high-resolution video strea=
+ms
+> >>> +  from external sources like media players, cameras, laptops, etc.
+> >>> +
+> >>> +properties:
+> >>> +  compatible:
+> >>> +    items:
+> >>> +      - const: rockchip,rk3588-hdmirx-ctrler
+> >>
+>=20
+> >>> +      - const: snps,dw-hdmi-rx
+>=20
+> remove
+>=20
+> >>
+> >> 1: Compatible strings must be SoC orientated.
+> >> 2: In Linux there's no priority in which string will probed first.=20
+> >> What's the point of having a fallback string when there's no common co=
+de, but instead only the first string is used?
+> >>
+> >> +static const struct of_device_id hdmirx_id[] =3D {
+> >> +	{ .compatible =3D "rockchip,rk3588-hdmirx-ctrler" },
+> >> +	{ },
+> >> +};
+> >>
+> >=20
+>=20
+> > We believe the HDMIRX driver can be used for the Synopsys IP on other S=
+oCs
+> > in the future, which is why we have added snps,dw-hdmi-rx as the fallba=
+ck compatible.
+> > Currently, we have tested the driver only on the RK3588 Rock5B, so we a=
+re using the
+> > rockchip,rk3588-hdmirx-ctrler compatible in the driver instead of the f=
+allback one.
+>=20
+> The rule that compatible strings (for internal SoC components)
+> must be SoC orientated also applies to the fallback string.
+> "snps,xxxx" does not refer to an independent SoC.=20
+
+Where did you learn that? Having non-SoC specific generic fallback
+compatibles is pretty much standard throughout the kernel. See for
+example these RK3588 DesignWare compatibles:
+
+Synopsys Serial Controller:
+    Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
+    compatible =3D "rockchip,rk3588-uart", "snps,dw-apb-uart";
+
+Synopsys USB3 Controller:
+    Documentation/devicetree/bindings/usb/rockchip,dwc3.yaml
+    compatible =3D "rockchip,rk3588-dwc3", "snps,dwc3";
+
+Synopsys Ethernet Controller:
+    Documentation/devicetree/bindings/net/snps,dwmac.yaml
+    compatible =3D "rockchip,rk3588-gmac", "snps,dwmac-4.20a";
+
+Synsopsys SATA Controller:
+    Documentation/devicetree/bindings/ata/rockchip,dwc-ahci.yaml
+    compatible =3D "rockchip,rk3588-dwc-ahci", "snps,dwc-ahci"
+
+It's also not specific to Synopsys (but RK3588 has a lot of Synopsys
+design incl. the HDMI-RX IP currently worked on by Shreeya). Here
+are some other examples:
+
+ARM Mali GPU:
+    Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
+    compatible =3D "rockchip,rk3588-mali", "arm,mali-valhall-csf";
+
+Generic EHCI:
+    Documentation/devicetree/bindings/usb/generic-ehci.yaml
+    compatible =3D "rockchip,rk3588-ehci", "generic-ehci";
+
+As you can see almost everything in RK3588 has a non SoC specific
+fallback :) It's also not a Rockchip/RK3588 specific thing, but
+I think you should be able to find enough references yourself by
+looking into the kernel's DTS files.
+
+> Don't invent strings for devices that we don't know yet if it
+> might or might not be compatible in the future.
+
+Right now it's a sensible assumption, that an operating system driver
+for this hardware (i.e. not necessarily the one submitted by Shreeya
+right now) can handle the Synopsys HDMI receiver hardware from different
+SoCs just like it is the case for other Synopsys IP.
+
+Whatever is being done now is set in stone, since DT is considered
+ABI. So without the fallback compatible being available in DT from
+the beginning we need to carry the RK3588 specific compatible in the
+kernel driver forever. OTOH if we add the generic one now, the kernel
+can switch to use the generic one at any point in time and ignore the
+RK3588 specific one.
+
+Greetings,
+
+-- Sebastian
+
+> Johan
+>=20
+> >=20
+> >=20
+> > Thanks,
+> > Shreeya Patel
+> >=20
+> >>> +
+> >>> +  reg:
+> >>> +    maxItems: 1
+> >>> +
+> >>> +  interrupts:
+> >>> +    maxItems: 3
+> >>> +
+> >>> +  interrupt-names:
+> >>> +    items:
+> >>> +      - const: cec
+> >>> +      - const: hdmi
+> >>> +      - const: dma
+> >>> +
+> >>> +  clocks:
+> >>> +    maxItems: 7
+> >>> +
+> >>> +  clock-names:
+> >>> +    items:
+> >>> +      - const: aclk
+> >>> +      - const: audio
+> >>> +      - const: cr_para
+> >>> +      - const: pclk
+> >>> +      - const: ref
+> >>> +      - const: hclk_s_hdmirx
+> >>> +      - const: hclk_vo1
+> >>> +
+> >>> +  power-domains:
+> >>> +    maxItems: 1
+> >>> +
+> >>> +  resets:
+> >>> +    maxItems: 4
+> >>> +
+> >>> +  reset-names:
+> >>> +    items:
+> >>> +      - const: axi
+> >>> +      - const: apb
+> >>> +      - const: ref
+> >>> +      - const: biu
+> >>> +
+> >>> +  memory-region:
+> >>> +    maxItems: 1
+> >>> +
+> >>> +  hpd-gpios:
+> >>> +    description: GPIO specifier for HPD.
+> >>> +    maxItems: 1
+> >>> +
+> >>> +  rockchip,grf:
+> >>> +    $ref: /schemas/types.yaml#/definitions/phandle
+> >>> +    description:
+> >>> +      The phandle of the syscon node for the general register file
+> >>> +      containing HDMIRX PHY status bits.
+> >>> +
+> >>> +  rockchip,vo1-grf:
+> >>> +    $ref: /schemas/types.yaml#/definitions/phandle
+> >>> +    description:
+> >>> +      The phandle of the syscon node for the Video Output GRF regist=
+er
+> >>> +      to enable EDID transfer through SDAIN and SCLIN.
+> >>> +
+> >>> +required:
+> >>> +  - compatible
+> >>> +  - reg
+> >>> +  - interrupts
+> >>> +  - interrupt-names
+> >>> +  - clocks
+> >>> +  - clock-names
+> >>> +  - power-domains
+> >>> +  - resets
+> >>> +  - pinctrl-0
+> >>> +  - hpd-gpios
+> >>> +
+> >>> +additionalProperties: false
+> >>> +
+> >>> +examples:
+> >>> +  - |
+> >>> +    #include <dt-bindings/clock/rockchip,rk3588-cru.h>
+> >>> +    #include <dt-bindings/gpio/gpio.h>
+> >>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> >>> +    #include <dt-bindings/interrupt-controller/irq.h>
+> >>> +    #include <dt-bindings/power/rk3588-power.h>
+> >>> +    #include <dt-bindings/reset/rockchip,rk3588-cru.h>
+> >>> +    hdmi_receiver: hdmi-receiver@fdee0000 {
+>=20
+> >>> +      compatible =3D "rockchip,rk3588-hdmirx-ctrler", "snps,dw-hdmi-=
+rx";
+>=20
+>       compatible =3D "rockchip,rk3588-hdmirx-ctrler";
+>=20
+> >>> +      reg =3D <0xfdee0000 0x6000>;
+> >>> +      interrupts =3D <GIC_SPI 177 IRQ_TYPE_LEVEL_HIGH 0>,
+> >>> +                   <GIC_SPI 436 IRQ_TYPE_LEVEL_HIGH 0>,
+> >>> +                   <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH 0>;
+> >>> +      interrupt-names =3D "cec", "hdmi", "dma";
+> >>> +      clocks =3D <&cru ACLK_HDMIRX>,
+> >>> +               <&cru CLK_HDMIRX_AUD>,
+> >>> +               <&cru CLK_CR_PARA>,
+> >>> +               <&cru PCLK_HDMIRX>,
+> >>> +               <&cru CLK_HDMIRX_REF>,
+> >>> +               <&cru PCLK_S_HDMIRX>,
+> >>> +               <&cru HCLK_VO1>;
+> >>> +      clock-names =3D "aclk",
+> >>> +                    "audio",
+> >>> +                    "cr_para",
+> >>> +                    "pclk",
+> >>> +                    "ref",
+> >>> +                    "hclk_s_hdmirx",
+> >>> +                    "hclk_vo1";
+> >>> +      power-domains =3D <&power RK3588_PD_VO1>;
+> >>> +      resets =3D <&cru SRST_A_HDMIRX>, <&cru SRST_P_HDMIRX>,
+> >>> +               <&cru SRST_HDMIRX_REF>, <&cru SRST_A_HDMIRX_BIU>;
+> >>> +      reset-names =3D "axi", "apb", "ref", "biu";
+> >>> +      memory-region =3D <&hdmi_receiver_cma>;
+> >>> +      pinctrl-0 =3D <&hdmim1_rx_cec &hdmim1_rx_hpdin &hdmim1_rx_scl =
+&hdmim1_rx_sda &hdmirx_5v_detection>;
+> >>> +      pinctrl-names =3D "default";
+> >>> +      hpd-gpios =3D <&gpio1 22 GPIO_ACTIVE_LOW>;
+> >>> +    };
+> >=20
+> _______________________________________________
+> Kernel mailing list -- kernel@mailman.collabora.com
+> To unsubscribe send an email to kernel-leave@mailman.collabora.com
+> This list is managed by https://mailman.collabora.com
+
+--icvzpzs7h3iwodn3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmaf6BoACgkQ2O7X88g7
++pppTQ//ZP1xsXwA2GF5EXfTNq2H83xsINqPzaqhD+6qleDRbb7SrmMIsv28I6Lv
+HwoDloGq89XDhGprbxx0NHlo3VLF2wzjqKg8QEi3EIeF9Oc526WiHJdJR1N8Gs6B
+MmZgdUL9y0QVjbQPJyXBQdUIF7tX33vlLKVe6s/ULflo+Oxtm7MHEfIwlwQU6dty
+GQB+32vnO//XxkAic6rS/GZj6MDhtKqnpPS451pTQOk2mCFCXb4geJQ8U2dojyOL
+W+YPsCkbnKcocFHw/zJkwP0vcevKRABvFnSSjLPQClE1F+k8pYa07mgmhT2wLuGB
+Duc2/TBeNvx2WysOE2Ut2juaaGgJ/onV0omOwlOc7bbzQFynN2laT4TU+L0eNK2V
+5Wyt0NpsHco4UN1/Qo5/hPOcqiVCFU9I+73eslTZFpahIyqTut232FIY9Fx1kVQF
+qSGZgGH32NzVdmwQ5gSSIPPmfYsu1rV2s+mLy1O3HKgk4hpyoIFy53w/XDlAZ186
+rNk803107tGpsymEAnoZvty7enTe4wCS+RVZ8rUM4lXB0UQ3ZEz7JMd/3zl/BD2+
+Bn5w8Ub2N3Z558xzSP0eQieQafs6f3d04FGltaSgye/NtQZicsy6uymudXKRBRqv
+F2RxsRRvtXoQ9NMjbW8BlxUb4/+MyOrZDYx+TjpZNFvezCqDdng=
+=WG6g
+-----END PGP SIGNATURE-----
+
+--icvzpzs7h3iwodn3--
 
