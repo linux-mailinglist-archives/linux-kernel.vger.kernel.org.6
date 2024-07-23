@@ -1,110 +1,96 @@
-Return-Path: <linux-kernel+bounces-260230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCCFC93A4BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:13:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5DFC93A4C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:14:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78835283A6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:13:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B00A1F212CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6851157E84;
-	Tue, 23 Jul 2024 17:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E02C1581F8;
+	Tue, 23 Jul 2024 17:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ucsEjwFA"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sikEBLSb"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6864814D431
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 17:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23B414D431;
+	Tue, 23 Jul 2024 17:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721754800; cv=none; b=WlTW1RYNhpX9KObXHyuEWAG+/oyipebFkndZ87s/MMMJeNNuOAPlxRLtdvXD34p+eSb3rfoAYOSN8CIlVxtMCqRwW/kFTVkNHcMKtRV67xhphtG6qjYcgZW3NsTwIZDvi0tw75vY8g9DFoLWBE6Ppo2mhAQfLBVuNQI8+BxCZj8=
+	t=1721754843; cv=none; b=TOKRd4fZy3hzvWhqSrnkBWo1w3WqLF87budNXr+IOBWeIWaaeeJq1CU7NDWkBXbg4pKhtsTbbgIoCcL9RYIgZerWXyqaPjz5Jt34KLHn+GuSt7sF866YWE1yXU8294kqW9kMqRkdCsiaUNVMRseW5/mnXtqHiDWji8Go40cDqJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721754800; c=relaxed/simple;
-	bh=4paGlhH/Aypyp/LG/X6ZYeFrNUMMuieVYmt0yYwo4EU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZSi6t/bmsXFarkwUKUOWK8gLvLAXXziuHORJR0YY51AXLIyqAGX6LpkCfRSbcU+rhuQRctgJGV77CRh3+WvoHLAYAxdf2Gu+3VnwdGDXYgwk7XYecpDRKYmQbu4PbdYvwYPEEEklBhG3IuOWXdwQVzHFhtuPAVaYnmqUQBfgtHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ucsEjwFA; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: akpm@linux-foundation.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721754792;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=dLz0vahepvw5FTvGG6yOrYP5EjiNPFCxxG6q6oBLdpU=;
-	b=ucsEjwFAYOrYRoJ7GRVx8yCm1LlZ02eTPQcczoBQmZE2jz3QVYdBG9QyfTVkOx94UItfzT
-	y57GDSTHLu/NOgjkCog7068lgkH9NwbmaT8/zweTTeu8RlF68+0m4fU9HHZME7KS6ZlYTV
-	kMFhy2HpE2xEjQhbRAfDdLQyQJBSUic=
-X-Envelope-To: shakeel.butt@linux.dev
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: mhocko@kernel.org
-X-Envelope-To: muchun.song@linux.dev
-X-Envelope-To: roman.gushchin@linux.dev
-X-Envelope-To: oliver.sang@intel.com
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	kernel test robot <oliver.sang@intel.com>
-Subject: [PATCH] mm: memcg: add cacheline padding after lruvec in mem_cgroup_per_node
-Date: Tue, 23 Jul 2024 17:12:44 +0000
-Message-ID: <20240723171244.747521-1-roman.gushchin@linux.dev>
+	s=arc-20240116; t=1721754843; c=relaxed/simple;
+	bh=GIngIWude+j/qr1OnbTt1GO6wFk2NXyz73HIaqvJeOM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=qr4HE9Dcvp4bWyCMFMRW6ZYI1DizHhGk6E+eNq90oR3hKABRWYiScyDHInSg8YB4E2Sz8fA0AtGNPxS8TuOoTT5mULmIbfVjYl9ULJ6kuBLd31zPc6+8qjK+VNyDwqeCNBK84sU6dht5QZs604mSopnu61N+YLgajMYfNa1I/r4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sikEBLSb; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=UO2d2kJ6zH5N1mKS5rOkIV3SiF3aSx7WorIRVLgkbP8=; b=sikEBLSb9Ay9GuOTqeVyQp0i0u
+	Zo3u1xKpAr5H9+4ruT8dq1HnU/Rgkbi6ZHDwhTUKbU6A3KGVn2byjynH5whNCKWG/XrgUIKVCJBVD
+	N2Rix8fAsTWF3L+PYf5YJ0Q7TnEIHSlex3K/KV+LJGxvLCx49QCTYArjLu8e+2PRnPT0AwSoOclnQ
+	qYAGHBF3bqV1V+6qWhV9BignH+DrrA3SfXBQQMXmg6dkqEaXyIvAeVKodWonMZixK64ZC3F6g5LGD
+	MWhNHrhzqf07Go4b7tYpSa1QTVKr9q4+i2FLRuTzKrO5ZYI9CEto1c9UQC0PCogJjJ7wH/6grqREt
+	OnZETrNA==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sWJ5N-0000000D6A1-0Q0s;
+	Tue, 23 Jul 2024 17:14:01 +0000
+Date: Tue, 23 Jul 2024 10:14:01 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-modules@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	jtornosm@redhat.com, lucas.demarchi@intel.com, mcgrof@kernel.org
+Subject: [GIT PULL] Modules changes for v6.11-rc1
+Message-ID: <Zp_k2XEViIlDavXX@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-Oliver Sand reported a performance regression caused by
-commit 98c9daf5ae6b ("mm: memcg: guard memcg1-specific members of struct
-mem_cgroup_per_node"), which puts some fields of the
-mem_cgroup_per_node structure under the CONFIG_MEMCG_V1 config option.
-Apparently it causes a false cache sharing between lruvec and
-lru_zone_size members of the structure. Fix it by adding an explicit
-padding after the lruvec member.
+The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
 
-Even though the padding is not required with CONFIG_MEMCG_V1 set,
-it seems like the introduced memory overhead is not significant
-enough to warrant another divergence in the mem_cgroup_per_node
-layout, so the padding is added unconditionally.
+  Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
 
-Fixes: 98c9daf5ae6b ("mm: memcg: guard memcg1-specific members of struct mem_cgroup_per_node")
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202407121335.31a10cb6-oliver.sang@intel.com
-Tested-by: Oliver Sang <oliver.sang@intel.com>
-Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
----
- include/linux/memcontrol.h | 1 +
- 1 file changed, 1 insertion(+)
+are available in the Git repository at:
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 7e2eb091049a..0e5bf25d324f 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -109,6 +109,7 @@ struct mem_cgroup_per_node {
- 
- 	/* Fields which get updated often at the end. */
- 	struct lruvec		lruvec;
-+	CACHELINE_PADDING(_pad2_);
- 	unsigned long		lru_zone_size[MAX_NR_ZONES][NR_LRU_LISTS];
- 	struct mem_cgroup_reclaim_iter	iter;
- };
--- 
-2.45.2.1089.g2a221341d9-goog
+  git://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/ tags/modules-6.11-rc1
 
+for you to fetch changes up to 61842868de13aa7fd7391c626e889f4d6f1450bf:
+
+  module: create weak dependecies (2024-06-30 18:57:20 -0700)
+
+----------------------------------------------------------------
+Modules changes for v6.11-rc1
+
+This is a super boring development cycle this time around for modules,
+there is only one patch in this pull request. The patch deals with a
+corner case set of dependencies which is not resolved today to ensure
+users get the modules they need on initramfs. Currently only one modules
+is known to exist which needs this, however this can grow to capture
+other corner cases likely escaped and not reported before. The kernel
+change is just a section update, the real work is done and merged
+already on upstream kmod.
+
+This has been on linux-next for 3 weeks now.
+
+----------------------------------------------------------------
+Jose Ignacio Tornos Martinez (1):
+      module: create weak dependecies
+
+ include/linux/module.h | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
