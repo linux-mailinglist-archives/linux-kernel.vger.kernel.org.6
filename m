@@ -1,80 +1,127 @@
-Return-Path: <linux-kernel+bounces-260263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D30193A522
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:52:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16CF793A525
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD9FB1C20B2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:52:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE3BF1F23507
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09297158206;
-	Tue, 23 Jul 2024 17:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pzv7MCOl"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE591586D5;
+	Tue, 23 Jul 2024 17:54:49 +0000 (UTC)
+Received: from mailscanner01.zoner.fi (mailscanner01.zoner.fi [84.34.166.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B948381B1
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 17:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B851C381B1;
+	Tue, 23 Jul 2024 17:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.34.166.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721757172; cv=none; b=O5PQDFgKOIcjTNywUfzy1ZWqifkucoAGkpyMnVR3GIRxQ+IzeuHEt/3DI+OuqoYwiCvSW8t4TPakcm+PiLB8qVxl0fgZoIJ26OXSl3qdUFa5KZw3ZO6aVUh2jZ+07FDTrLXU1VrSHWE84LhcRNC7APhfTGeQ5LvNk2GyeTpN+8Y=
+	t=1721757288; cv=none; b=TvqNyjzsrcqT9OjcqbB2DBmRIhAxwiPcj9rbbJcVJ1peZmM/w9Z0ez83I8qV2vfFSFN137706g/JFsJQP7aYETAR0A9cGslp0q5+4mn2IRm3OVKCQV7afv+NkHXpn1ph5xm+7OAlwcyd7vv5lOqi0qatHoJwaBjIDhlln8ORx6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721757172; c=relaxed/simple;
-	bh=mfoP2knn51sYFAt04IF9o4HdkHWPSVa7roiea8R3jwc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tf1yItryTM2BaN3NuZFYebLnav+CtI40dN6SNJF5OKmb0PGqhNn80+RVEjpxg20WzMIys0uEmwdMUuAb4UAqPXFLwRzxdYdvEJCS421atlvgZ0ODnZAkSTJRZXA4tDAoLxzcbGrE+5R6BNUnyq8RsINMZh+rr20QcTVplFuHX40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pzv7MCOl; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: songmuchun@bytedance.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721757167;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TZbuquas1x4ekbGGCHs5sl0uYWYOmkZYmxi5weGyLHg=;
-	b=pzv7MCOlKa3poeF9ON9PQQt6Jbxsr+ATv6w5NP7DoQTF/P1VHJQpdDot/z1yron/pqLvYZ
-	JdYBz/piBlBkq8sXfu23Wxx6J7UZXQ9Pkun7tZrbVUCnuUKudlbvMcEdRQYvlJWvGE62QJ
-	1jXS75c8pLk/OM1rZEemTcNAjLjyeJQ=
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: muchun.song@linux.dev
-X-Envelope-To: nphamcs@gmail.com
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Tue, 23 Jul 2024 10:52:42 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Muchun Song <songmuchun@bytedance.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, muchun.song@linux.dev, 
-	nphamcs@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: list_lru: fix UAF for memory cgroup
-Message-ID: <nrtjxxhblvuzkv6sytcjay7qr64jozdbp2klipoo2a4ddqe7dp@gufvv4uen76q>
-References: <20240718083607.42068-1-songmuchun@bytedance.com>
+	s=arc-20240116; t=1721757288; c=relaxed/simple;
+	bh=CEp0oM4Z++m3KlQz6EH9Q04PwiCQr86oynMqr/rUryU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ml+9H7ln3iHRkwCGxOMwidM8bLrSMWzBeq/3wOEz0se+Y0KNEQjszgqXLoKYw3S4o2o91O4RTrVhN3ULKH5Z2lALyecYWCq1aW8jm4TCq5pSLPsdr0vRZpc77oT9WIs/xB9zZp7zNroaoWQyzPLDK/Zg8ipr1xbeJdHKUD2tZ0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tukaani.org; spf=pass smtp.mailfrom=tukaani.org; arc=none smtp.client-ip=84.34.166.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tukaani.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tukaani.org
+Received: from www25.zoner.fi (www25.zoner.fi [84.34.147.45])
+	by mailscanner01.zoner.fi (Postfix) with ESMTPS id 71F794342E;
+	Tue, 23 Jul 2024 20:54:38 +0300 (EEST)
+Received: from mail.zoner.fi ([84.34.147.244])
+	by www25.zoner.fi with esmtp (Exim 4.97.1)
+	(envelope-from <lasse.collin@tukaani.org>)
+	id 1sWJid-0000000ACmB-0GIh;
+	Tue, 23 Jul 2024 20:54:38 +0300
+Date: Tue, 23 Jul 2024 20:54:37 +0300
+From: Lasse Collin <lasse.collin@tukaani.org>
+To: Jonathan Corbet <corbet@lwn.net>, Andrew Morton
+ <akpm@linux-foundation.org>
+Cc: Sam James <sam@gentoo.org>, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 08/16] docs: Add XZ_EXTERN to c_id_attributes
+Message-ID: <20240723205437.3c0664b0@kaneli>
+In-Reply-To: <87r0bms5da.fsf@trenco.lwn.net>
+References: <20240721133633.47721-1-lasse.collin@tukaani.org>
+	<20240721133633.47721-9-lasse.collin@tukaani.org>
+	<87r0bms5da.fsf@trenco.lwn.net>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240718083607.42068-1-songmuchun@bytedance.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 18, 2024 at 04:36:07PM GMT, Muchun Song wrote:
-> The mem_cgroup_from_slab_obj() is supposed to be called under rcu
-> lock or cgroup_mutex or others which could prevent returned memcg
-> from being freed. Fix it by adding missing rcu read lock.
-> 
-> Fixes: 0a97c01cd20bb ("list_lru: allow explicit memcg and NUMA node selection)
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+On 2024-07-21 Jonathan Corbet wrote:
+> I spent a little while trying to figure out why we need XZ_EXTERN at
+> all but lost in the #includes...
 
-Yup I noticed these as well while reviewing Kairui's patches.
+This is a good question. I looked at it and now I think that it's not
+actually needed. Thus, this patch to Documentation/conf.py should be
+dropped from this series, and I will submit a new patch to remove
+XZ_EXTERN.
 
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+Preboot code on several archs has "#define STATIC static", for example:
+
+    arch/x86/boot/compressed/misc.c
+    arch/arm/boot/compressed/decompress.c
+    arch/mips/boot/compressed/decompress.c
+    drivers/firmware/efi/libstub/zboot.c
+
+These files #include one of lib/decompress_*.c files. The STATIC macro
+is used to detect if the code is being built for preboot code instead
+of initramfs decompression. The STATIC macro is also used to make a few
+functions static in lib/decompress_*.c files (and also in
+lib/inflate.c).
+
+Note that even if STATIC isn't initially defined, the
+lib/decompress_*.c files have
+
+    #include <linux/decompress/mm.h>
+
+which will then "#define STATIC" (empty value).
+
+lib/decompress_unxz.c makes all XZ functions static in preboot code via
+the XZ_EXTERN macro. I'm not sure why I have done so. The commit
+message from 2009 in my upstream tree isn't very specific.
+
+STATIC is used also in lib/inflate.c to make functions static. However,
+that file *seems* to be used only on alpha and nios2; it's *not* used
+by lib/decompress_inflate.c which uses lib/zlib_inflate/inflate.c with
+its extern functions in preboot code. But lib/inflate.c might have made
+me think that there's a need to make functions static in some cases.
+
+lib/decompress_unzstd.c is newer. It doesn't attempt to make all
+functions static in preboot use.
+
+Omitting XZ_EXTERN doesn't produce any warnings or make any difference
+in x86 or ARM64 (CONFIG_EFI_ZBOOT=y) kernel sizes. (I'm ignoring a few
+dozen bytes of noise on ARM64 between repeated builds.)
+
+The boot code on PowerPC is special and it touches the XZ_EXTERN macro
+in its xz_config.h. Relevant files:
+
+    arch/powerpc/boot/xz_config.h
+    arch/powerpc/boot/decompress.c
+
+The "#undef XZ_EXTERN" can be confusing but in the end all XZ_EXTERN
+uses become "static" still. Comparing to zlib usage on PowerPC, it
+seems that decompressor functions aren't required to be static (zlib's
+files are pre-processed with a sed script but it doesn't make anything
+static). So, even without testing, it seems quite clear that removing
+XZ_EXTERN would be fine on PowerPC too.
+
+Thus, let's drop this patch to Documentation/conf.py, and I submit a
+patch to remove XZ_EXTERN.
+
+Thanks!
+
+-- 
+Lasse Collin
 
