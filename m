@@ -1,159 +1,182 @@
-Return-Path: <linux-kernel+bounces-259961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C8693A080
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:29:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2D2A93A084
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18901282FBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:29:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9431F1C22112
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4135915250F;
-	Tue, 23 Jul 2024 12:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6EF15250F;
+	Tue, 23 Jul 2024 12:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="lwnVNnef"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dUTCJAPQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QBCEry7W";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dUTCJAPQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QBCEry7W"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7917114AD17;
-	Tue, 23 Jul 2024 12:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE5542A96;
+	Tue, 23 Jul 2024 12:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721737736; cv=none; b=SGnzaco45x+BXH71GRQ026XC9Bl1flkl1beVSVyoqvbQgER1EgU89ZhNwO5mZOvdfV9GMTMDX7iS/j1xoP2UCiFs/pyPzrG+dM9znQCF6BwzUhWmHdl4CR652C4id0snpdHwPQL6IkdckA+Yu9GyIQK0yAuwosdXBgI8vssVTOQ=
+	t=1721737931; cv=none; b=AOUr5EkKBgo+RjlGakScH415MjgQCZBmx2+N4k6pVMkVC2zQaXZjIvxeiGyovhaom8uSMyaVXN12KDgGM7jCNcV8oYR8Z0gkLEjqtqYZ0qTHJNubN7FarTblQzcYzyQvsQGeYfDrVS3OQdhi+m4EWVFlnSoAtCUfjkeA3JzjKqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721737736; c=relaxed/simple;
-	bh=awSwb2cboI6RqbmY+PFcqfIX6SEr4n5iGukXM6aXalY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GTg5VmjH0wzVoRhKoFoF0ILftnBPmI9N13D79Vl5hQc07OhXeqAZuY9VFbNwc7pCWezbEIjBD6b4ZRO2EezBgaQaNZdKiXGpMAZfYAbxkTwDA3F3T1gpcnSBhPePQI//wT13zCO6uLfBabGGHddYKDZ5oj9yKjs/AaxxmUbPjuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=lwnVNnef; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76A50C4AF09;
-	Tue, 23 Jul 2024 12:28:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721737736;
-	bh=awSwb2cboI6RqbmY+PFcqfIX6SEr4n5iGukXM6aXalY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=lwnVNnefIrTL2KtFIWWEOSfniUcnhU+7QrZVSZ6Ee62qJyB7KzRneenMKmBMJLA6L
-	 zOeaCOs8bY2/aHQb0OjWvTiKcCL/zJ1ai2+UOHVCbZ8igUslc158dZVPpZR3lHVlAZ
-	 3d0xSFemGUMApDxwLIoz69sO7/nXClkpEM6lkCd4=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	allen.lkml@gmail.com,
-	broonie@kernel.org
-Subject: [PATCH 6.10 00/11] 6.10.1-rc2 review
-Date: Tue, 23 Jul 2024 14:28:51 +0200
-Message-ID: <20240723122838.406690588@linuxfoundation.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1721737931; c=relaxed/simple;
+	bh=rJBrIb6vzd1itvY6vM+pBG61XCfeuNKdxFiAnkGIae0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kEAo1K5Jvmp4TLA15I6AGoMV6o6QdxqX4VfxTvx3iDTpS/36A2AaXFgQ86cWaWLrtg6NV2nGcJ6Fs7TPD8P7MOg4uwxNYSb8RAoWbrPm21+U/eIc5w5iozxfyauIbR9U56eA1AiZT90ofDhAqEmZMJGC6zQLOnBOB5SKpuQ3Sa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dUTCJAPQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QBCEry7W; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dUTCJAPQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QBCEry7W; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 2F7421FCE6;
+	Tue, 23 Jul 2024 12:32:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721737927; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LE9ldY35I1sn/FbE1cCKXIvVB8Qf9PyCUf7w17jAGMw=;
+	b=dUTCJAPQ4wh3qbKoE4t90PezB2pEqYPULn39G0yZL4Fuo0F+/T96MxvS64dvrZ2uxqtdqA
+	VIbWLwnP01G+ruSVllUdS/hsqDRGG+555XfnWPRB8Jh23pBwIjfX41ld8YMBdJdvqmZuNB
+	Xd1efaIOe6FOFNjAwNqFbEGSdlrfVQI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721737927;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LE9ldY35I1sn/FbE1cCKXIvVB8Qf9PyCUf7w17jAGMw=;
+	b=QBCEry7WJfp/8HTaYiB5zcaARk/1Fpb1w/StNhoGsuM1ak+8BFgGdwthDrC+baF+NDQ5Xr
+	XiJINHZjW043ycDA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=dUTCJAPQ;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=QBCEry7W
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721737927; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LE9ldY35I1sn/FbE1cCKXIvVB8Qf9PyCUf7w17jAGMw=;
+	b=dUTCJAPQ4wh3qbKoE4t90PezB2pEqYPULn39G0yZL4Fuo0F+/T96MxvS64dvrZ2uxqtdqA
+	VIbWLwnP01G+ruSVllUdS/hsqDRGG+555XfnWPRB8Jh23pBwIjfX41ld8YMBdJdvqmZuNB
+	Xd1efaIOe6FOFNjAwNqFbEGSdlrfVQI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721737927;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LE9ldY35I1sn/FbE1cCKXIvVB8Qf9PyCUf7w17jAGMw=;
+	b=QBCEry7WJfp/8HTaYiB5zcaARk/1Fpb1w/StNhoGsuM1ak+8BFgGdwthDrC+baF+NDQ5Xr
+	XiJINHZjW043ycDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6D146137DF;
+	Tue, 23 Jul 2024 12:31:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 1zCYGqKin2YjFgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 23 Jul 2024 12:31:30 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id CCA69A08BD; Tue, 23 Jul 2024 14:32:02 +0200 (CEST)
+Date: Tue, 23 Jul 2024 14:32:02 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, David Howells <dhowells@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jeff Layton <jlayton@kernel.org>, Gao Xiang <xiang@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfs: Fix potential circular locking through setxattr()
+ and removexattr()
+Message-ID: <20240723123202.vu5tfzoblpib3nve@quack3>
+References: <2136178.1721725194@warthog.procyon.org.uk>
+ <20240723104533.mznf3svde36w6izp@quack3>
+ <20240723-aberkennen-unruhen-61570127dc6e@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.67
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.1-rc2.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.10.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.10.1-rc2
-X-KernelTest-Deadline: 2024-07-25T12:28+00:00
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240723-aberkennen-unruhen-61570127dc6e@brauner>
+X-Rspamd-Queue-Id: 2F7421FCE6
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.81 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -3.81
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spam-Level: 
 
-This is the start of the stable review cycle for the 6.10.1 release.
-There are 11 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+On Tue 23-07-24 13:11:51, Christian Brauner wrote:
+> On Tue, Jul 23, 2024 at 12:45:33PM GMT, Jan Kara wrote:
+> > On Tue 23-07-24 09:59:54, David Howells wrote:
+> > > When using cachefiles, lockdep may emit something similar to the circular
+> > > locking dependency notice below.  The problem appears to stem from the
+> > > following:
+> > > 
+> > >  (1) Cachefiles manipulates xattrs on the files in its cache when called
+> > >      from ->writepages().
+> > > 
+> > >  (2) The setxattr() and removexattr() system call handlers get the name
+> > >      (and value) from userspace after taking the sb_writers lock, putting
+> > >      accesses of the vma->vm_lock and mm->mmap_lock inside of that.
+> > > 
+> > >  (3) The afs filesystem uses a per-inode lock to prevent multiple
+> > >      revalidation RPCs and in writeback vs truncate to prevent parallel
+> > >      operations from deadlocking against the server on one side and local
+> > >      page locks on the other.
+> > > 
+> > > Fix this by moving the getting of the name and value in {get,remove}xattr()
+> > > outside of the sb_writers lock.  This also has the minor benefits that we
+> > > don't need to reget these in the event of a retry and we never try to take
+> > > the sb_writers lock in the event we can't pull the name and value into the
+> > > kernel.
+> > 
+> > Well, it seems like you are trying to get rid of the dependency
+> > sb_writers->mmap_sem. But there are other places where this dependency is
+> 
+> Independent of this issue, I think that moving the retrieval of name and
+> value out of the lock is a good thing. The commit message might need to
+> get reworded of course.
 
-Responses should be made by Thu, 25 Jul 2024 12:28:30 +0000.
-Anything received after that time might be too late.
+Oh, absolutely. I think the change itself makes sense, just it will not fix
+what David hopes to fix :)
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.1-rc2.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.10.1-rc2
-
-Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-    thermal: core: Allow thermal zones to tell the core to ignore them
-
-Pavel Begunkov <asml.silence@gmail.com>
-    io_uring: fix error pbuf checking
-
-Richard Fitzgerald <rf@opensource.cirrus.com>
-    ASoC: cs35l56: Limit Speaker Volume to +12dB maximum
-
-Richard Fitzgerald <rf@opensource.cirrus.com>
-    ASoC: cs35l56: Use header defines for Speaker Volume control definition
-
-Hao Ge <gehao@kylinos.cn>
-    tpm: Use auth only after NULL check in tpm_buf_check_hmac_response()
-
-David Howells <dhowells@redhat.com>
-    cifs: Fix setting of zero_point after DIO write
-
-David Howells <dhowells@redhat.com>
-    cifs: Fix server re-repick on subrequest retry
-
-Steve French <stfrench@microsoft.com>
-    cifs: fix noisy message on copy_file_range
-
-David Howells <dhowells@redhat.com>
-    cifs: Fix missing fscache invalidation
-
-David Howells <dhowells@redhat.com>
-    cifs: Fix missing error code set
-
-Kees Cook <kees@kernel.org>
-    ext4: use memtostr_pad() for s_volume_name
-
-
--------------
-
-Diffstat:
-
- Makefile                                    |  4 +--
- drivers/char/tpm/tpm2-sessions.c            |  5 +--
- drivers/net/wireless/intel/iwlwifi/mvm/tt.c |  7 +++-
- drivers/thermal/thermal_core.c              | 51 ++++++++++++++---------------
- drivers/thermal/thermal_core.h              |  3 ++
- drivers/thermal/thermal_helpers.c           |  2 ++
- fs/ext4/ext4.h                              |  2 +-
- fs/ext4/ioctl.c                             |  2 +-
- fs/smb/client/cifsfs.c                      |  2 +-
- fs/smb/client/file.c                        | 21 +++++++++---
- fs/smb/client/smb2pdu.c                     |  3 --
- include/sound/cs35l56.h                     |  2 +-
- io_uring/kbuf.c                             |  4 ++-
- sound/soc/codecs/cs35l56.c                  |  6 +++-
- 14 files changed, 69 insertions(+), 45 deletions(-)
-
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
