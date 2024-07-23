@@ -1,120 +1,190 @@
-Return-Path: <linux-kernel+bounces-260081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2AC793A2BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:29:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A20F93A2C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93A21283FC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:29:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 983051F23C30
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEB7154458;
-	Tue, 23 Jul 2024 14:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF87154BEB;
+	Tue, 23 Jul 2024 14:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="NlXQ6s9j"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="puhPB9tB"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B50137C35;
-	Tue, 23 Jul 2024 14:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A747D139D1A
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721744983; cv=none; b=Yqh/t3UdegaJ8S66By+hmmlosQDiq4uYbNr5rbm8XxWaVsdd0ZICc0RQkJx7w+ex03PSI6ST0ddB+9YMfPQNA6oY3pTPOuvUkGcyVRt2U1UJPrwdBMmHtNJRSo/g7z2zb3h1rseZvXVGLv91EqjvkyqMaUCB9DSjSzXLrhquMxs=
+	t=1721745026; cv=none; b=jH3ncY8uoY5zLo/OsCF9ckkwlsC1G10sKDiUY1/kCBYqjFUcnDmfujUarTeWkTQLLkBJCtZ1h0qx5bV/4NUBMs0g7qh/CbmYjRfFauMpUCTr/ccyt0P5XJXnOsNl3jQgq40+0vMsydDojpoOLn9HD2uqy8vPLaR/pJHlB3UcEhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721744983; c=relaxed/simple;
-	bh=Df5T8ekYlYlhVAs7eoHWEs5BY4/XAo2OkbzF/0m4JcY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tjh2RgKPoGvpfpJmdDtM98zxbRJpDJ1In2FsuHp0betlBr8AgrK5gcLbBiGq31cOXNpCMs9RcBEgHz2QoIyg6y7xJSCnvo6jid/862QLTZboror+fh4XxYkTA+EFwlSztskXbdlrhqNspQ9JQ90EfmYzBf3FmxtStdsvWVIEUQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=NlXQ6s9j; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46N4q37n006527;
-	Tue, 23 Jul 2024 09:29:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=PODMain02222019; bh=4up/RiundZ3XTKcm
-	R14Em4WUczTg1vdCrb4iDskupjY=; b=NlXQ6s9jZioibdi42M7mb+TokvfMhiFo
-	F7IEfM6Ql8X0HG2MxhvKYroKvsWsNXFOdNb8zP6ju40SwsDtVZoL8OTa9FXDAcvz
-	9s9gydAeGRmhZT+ylyBekI58qPVCZnEaEMATPGRYsZI8sDwoYyKDj+uEnpKecAKg
-	l1jMco8gWVdEZo7POeSysvfEEkMU6aOFd1R2llVHzWD6BP6DNCqteCl7wrEM+qXs
-	HJdxFQWE5divI7/YBVJ845oiJf/HnD2KoC1zJN1FX+9zljs3zZVGmgXSD4HDGPZn
-	0onO6GWB1z1V8HlEsTOEb5dQucrkuhxBXXIKy4ag76+Fz4OkBtVVgw==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 40gamx3dt1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Jul 2024 09:29:20 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 23 Jul
- 2024 15:29:18 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Tue, 23 Jul 2024 15:29:18 +0100
-Received: from ausswws10.ad.cirrus.com (ausswws10.ad.cirrus.com [141.131.147.77])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 09993820244;
-	Tue, 23 Jul 2024 14:29:16 +0000 (UTC)
-From: James Minor <jminor1@opensource.cirrus.com>
-To: <shubhrajyoti.datta@amd.com>, <gregkh@linuxfoundation.org>
-CC: <patches@opensource.cirrus.com>, <jirislaby@kernel.org>,
-        <michal.simek@amd.com>, <linux-serial@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        "James Minor" <jminor1@opensource.cirrus.com>
-Subject: [RFC PATCH] tty: xilinx_uartps: Fix break detection
-Date: Tue, 23 Jul 2024 14:28:58 +0000
-Message-ID: <20240723142858.2905083-1-jminor1@opensource.cirrus.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1721745026; c=relaxed/simple;
+	bh=svfSj6Nk6n0zhQYH7Wy4+W5jUzAOV7rXJ1iNGfkem4c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LVaZ3lgh9VlzC2D7nzLl2s1t0PB6il141xK/4kVPWu02bnluEYuyL6fuQagkDpiBuoXWZpsh1ckZSP9e0EOhXyiMRQMVIia4HJf77M9nZv1mk3gEfIRdlxPzWpt1ao3LvTkoap4o+ZLhqlJt8/l7ZDBKQTTLms8WngvwYQVE1fE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=puhPB9tB; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-708cf5138b6so4259679a34.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:30:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721745023; x=1722349823; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OZV45Yy1++QW4e1YcdMMQnnRx3UERVeaO/mbbi5Yem4=;
+        b=puhPB9tB6NkkOSTTdrYtDrxxNRywYX/q4g25fxa4Gahbcsw9YGKK8rMTet9ISm3ii8
+         EPiwngEr1nRDYydvP2XbuRZW48HsIIUXx2U1vlQxCUkT+XsOi+nHv+5vRp2NBerTJkxY
+         Fv0saQAPgxT8AVuWx+senPz3XKBigHmjuQhBupS0E8L7CCHRl++i6f+GZ0RnJ6gAgZxA
+         EwkqpKGBG90UHZOVhOA5/5puytYS2YSflXL5pmEzgVnsK5pHXxYB2ClEhoXtDA1dKVH5
+         4MEey+RB74VjddTOMexU0LVRuBqH3T14Gv9f8Rgb7m7/EajJdnOfDrOUomJtMt+E0qVM
+         g8KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721745023; x=1722349823;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OZV45Yy1++QW4e1YcdMMQnnRx3UERVeaO/mbbi5Yem4=;
+        b=RoRDTRDV08F5L2WSopbQ9o+gxNsbgZfWdAMo7xvJ6B5AwZSxEqyBn1vvz+KiZQKsid
+         AXawELWeZvHczZ1mSnWqKwVchk5492u+eaDQTXgbFMqOymvbe04eaRdXl0su1Dv3c5bz
+         naWmhPViEOv0V35fGJq3NihnMeRRr6IbstitRDFD6R2giNUfCoDM8l8UNRe3fv+Ggucl
+         hrRLe2f4ATKOQw0jFXaOUxGyXvuxLZlFjDpy1ZTlBO9b0MRMvzs9v/62QxE+J2rNxfwM
+         eugkNhKSUTKlXU1yHLAtH2/pyL1Cgr+jh9dd2RfyCNafEoEpqDdn5QP28dVF8r3JcwU8
+         n70A==
+X-Forwarded-Encrypted: i=1; AJvYcCV9dn1XkvI7mbsElyTPL6jklEkdHJC/1Y4KWu0wQG+eXj8SWUtx4cvB9mLI9zGhaz0zQH8+BZaltLHw8M6CAhMeAmrbC8cfyElT0Pr+
+X-Gm-Message-State: AOJu0YyS/Oq5N73nyG26QfwrosWV7/hrCCCPZoL0RPg5JMK7K72X53vV
+	a7ekZdC8RfGAwjsmu0yu8d4BdQhpowbXRNRmBBCqpihEzsIZWpN5b6Fo+h+xO0M=
+X-Google-Smtp-Source: AGHT+IHXJQexka10Cik2TwqAKaBqbdxs50cysaj9WK3NDXWHJ5wxuH0Yzam3MlSFSCE9fFrCbzaBUg==
+X-Received: by 2002:a05:6830:6182:b0:703:6ab8:1fd9 with SMTP id 46e09a7af769-7092342f5famr9474a34.1.1721745022753;
+        Tue, 23 Jul 2024 07:30:22 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-708f60d5bc6sm2028863a34.35.2024.07.23.07.30.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jul 2024 07:30:22 -0700 (PDT)
+Message-ID: <a0313f7a-39b0-4156-87f7-816e8666dea8@baylibre.com>
+Date: Tue, 23 Jul 2024 09:30:21 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v3 3/9] spi: add support for hardware triggered
+ offload
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, David Jander <david@protonic.nl>,
+ Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org
+References: <20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
+ <20240722-dlech-mainline-spi-engine-offload-2-v3-3-7420e45df69b@baylibre.com>
+ <34ff08ef8b550ff2979dc50204fad500b9bb41e3.camel@gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <34ff08ef8b550ff2979dc50204fad500b9bb41e3.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: k74a1duqDx8rTF8RE0pa5-7_2Pcn2Yfl
-X-Proofpoint-ORIG-GUID: k74a1duqDx8rTF8RE0pa5-7_2Pcn2Yfl
-X-Proofpoint-Spam-Reason: safe
 
-Commit b8a6c3b3d465 ("tty: xilinx_uartps: Fix the ignore_status")
-used read_status_mask to mask the isrstatus, even though the
-commit appears to be fixing the application of the
-ignore_status_mask.  This has a side effect of clearing any
-pending CDNS_UART_IXR_FRAMING bit, which in turn means that
-cdns_uart_handle_rx break detection will only process framing
-errors when parity is enabled (INPCK set via
-cdns_uart_set_termios).
+On 7/23/24 2:53 AM, Nuno Sá wrote:
+> On Mon, 2024-07-22 at 16:57 -0500, David Lechner wrote:
+>> This extends the SPI framework to support hardware triggered offloading.
+>> This allows an arbitrary hardware trigger to be used to start a SPI
+>> transfer that was previously set up with spi_offload_prepare().
+>>
+>> Since the hardware trigger can happen at any time, this means the SPI
+>> bus must be reserved for exclusive use as long as the hardware trigger
+>> is enabled. Since a hardware trigger could be enabled indefinitely,
+>> we can't use the existing spi_bus_lock() and spi_bus_unlock() functions,
+>> otherwise this could cause deadlocks. So we introduce a new flag so that
+>> any attempt to lock or use the bus will fail with -EBUSY as long as the
+>> hardware trigger is enabled.
+>>
+>> Peripheral drivers may need to control the trigger source as well. For
+>> this, we introduce a new spi_offload_hw_trigger_get_clk() function that
+>> can be used to get a clock trigger source. This is intended for used
+>> by ADC drivers that will use the clock to control the sample rate.
+>> Additional functions to get other types of trigger sources could be
+>> added in the future.
+>>
+>> Signed-off-by: David Lechner <dlechner@baylibre.com>
+>> ---
+>>
+>> TODO: Currently, spi_bus_lock() always returns 0, so none of the callers
+>> check the return value. All callers will need to be updated first before
+>> this can be merged.
+>>
+>> v3 changes:
+>> * renamed enable/disable functions to spi_offload_hw_trigger_*mode*_...
+>> * added spi_offload_hw_trigger_get_clk() function
+>> * fixed missing EXPORT_SYMBOL_GPL
+>>
+>> v2 changes:
+>>
+>> This is split out from "spi: add core support for controllers with
+>> offload capabilities".
+>>
+>> Mark suggested that the standard SPI APIs should be aware that the
+>> hardware trigger is enabled. So I've added some locking for this. Nuno
+>> suggested that this might be overly strict though, and that we should
+>> let each individual controller driver decide what to do. For our use
+>> case though, I think we generally are going to have a single peripheral
+>> on the SPI bus, so this seems like a reasonable starting place anyway.
+>> ---
+> 
+> How explicitly do we want to be about returning errors? It seems that if the
+> trigger is enabled we can't anything else on the controller/offload_engine so we
+> could very well just hold the controller lock when enabling the trigger and 
+> release it when disabling it. Pretty much the same behavior as spi_bus_lock()...
 
-Fix this by removing the extra isrstatus masking with
-read_status_mask, which still allows the ignore_status_mask to be
-applied.
+The problem I see with using spi_bus_lock() in it's current form is that
+SPI offload triggers could be enabled indefinitely. So any other devices
+on the bus that tried to use the bus and take the lock would essentially
+deadlock waiting for the offload user to release the lock. This is why
+I added the -BUSY return, to avoid this deadlock.
 
-Fixes: b8a6c3b3d465 ("tty: xilinx_uartps: Fix the ignore_status")
-Signed-off-by: James Minor <jminor1@opensource.cirrus.com>
----
+> 
+> ...
+> 
+>>
+>> +
+>> +/**
+>> + * spi_offload_hw_trigger_get_clk - Get the clock for the offload trigger
+>> + * @spi: SPI device
+>> + * @id: Function ID if SPI device uses more than one offload or NULL.
+>> + *
+>> + * The caller is responsible for calling clk_put() on the returned clock.
+>> + *
+>> + * Return: The clock for the offload trigger, or negative error code
+>> + */
+>> +static inline
+>> +struct clk *spi_offload_hw_trigger_get_clk(struct spi_device *spi, const char
+>> *id)
+>> +{
+>> +	struct spi_controller *ctlr = spi->controller;
+>> +
+>> +	if (!ctlr->offload_ops || !ctlr->offload_ops->hw_trigger_get_clk)
+>> +		return ERR_PTR(-EOPNOTSUPP);
+>> +
+>> +	return ctlr->offload_ops->hw_trigger_get_clk(spi, id);
+>> +}
+>>
+> 
+> It would be nice if we could have some kind of spi abstraction...
 
-The other alternative to this would be a straight revert of
-b8a6c3b3d465, since read_status_mask and ignore_status_mask are
-both applied in cnds_uart_handle_rx anyway.  Let me know the
-preference here and I will change accordingly.
+After reading your other replies, I think I understand what you mean here.
 
- drivers/tty/serial/xilinx_uartps.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index 2acfcea403ce..e9165ae3c2e8 100644
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -485,7 +485,6 @@ static irqreturn_t cdns_uart_isr(int irq, void *dev_id)
- 		isrstatus &= ~CDNS_UART_IXR_TXEMPTY;
- 	}
- 
--	isrstatus &= port->read_status_mask;
- 	isrstatus &= ~port->ignore_status_mask;
- 	/*
- 	 * Skip RX processing if RX is disabled as RXEMPTY will never be set
--- 
-2.34.1
+Are you thinking some kind of `struct spi_offload_trigger` that could be
+any kind of trigger (clk, gpio, etc.)?
 
 
