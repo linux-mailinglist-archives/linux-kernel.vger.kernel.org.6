@@ -1,150 +1,86 @@
-Return-Path: <linux-kernel+bounces-259766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E546D939CD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:36:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A6E7939CDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA2FC1C20D68
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:36:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C259B217A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B620514C5BA;
-	Tue, 23 Jul 2024 08:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 326E714C5A3;
+	Tue, 23 Jul 2024 08:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VFCAgjU2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eHQQ496o";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hvH/b/9M"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5BA14A0A4;
-	Tue, 23 Jul 2024 08:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB24614A0A4
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721723794; cv=none; b=kxKCUIzqxSP22TKR2XL5IFknHYqLh0DayBfoqSZtRgXUwWDMRYT0oPsp75/NONl47/p8N904OSnRnHhwwXAQUfFxJU4CrwQx/uvZf3WNH8uemv1XkrHQL8bXr5m4+A7HMbAL94qEQmqRoycXG4/bzUoFZ8nHLQey8OIbyamZPJY=
+	t=1721723967; cv=none; b=rS2uCBzXpOVEv1anLFji1UzigOYXlmV67TrXacNPh4iltGiVTat24KdM5z36mKAAGwRCJ8twrYdknUz0ldfQmKhJ7hB7gnPka1L4Nfaff5ZBOGtBB6pzNEbGFlLt3N04tX3z5dbcRi9uT3AiseK7GeGPzws+1Z968D0tetXsaUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721723794; c=relaxed/simple;
-	bh=bdT6WXZm8HMSNPpbUWhqRb25Qc2ZpMdIwQWjm0rmeZc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=rkihEJCOhASzs7h1ITPvl8Xmtqa6qR4Gbo97F8Amrhy8sRbAs23AGoVe2Xpg5cXW6tIb4FcUCUbiXPXB62c4Qd1xgPRNNMBSDGWI9nRzuc5i8TdO2Po4bYA+ZjfgHXcAiuXmd738pJ5pYLu6iQJ57PO0jUZPhZ5tJcLvspD9CHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VFCAgjU2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F7BCC4AF09;
-	Tue, 23 Jul 2024 08:36:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721723793;
-	bh=bdT6WXZm8HMSNPpbUWhqRb25Qc2ZpMdIwQWjm0rmeZc=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=VFCAgjU2CCrtWrmuu8FdY9bnqEjlELO5BjP+eN9w2cjoAHnlQEpF3I9bbQ8WEYmmF
-	 5yyu6SQJGQeIyVXXjRtHGQLDZuXmC5ERGIrczs6L1BPMZ/GMrN9c6De3rDovyBpOpL
-	 sJJDgne1rAVsSIFOZ1l/ayBA48IIgCmq/V/djcME2yJLFRRiJZvYz3UJt4euHTmfQT
-	 iZzvEFDKQmlj1MCWcE5CLdeSMrlIH/XrlkzyrysQ3gBWG/taCSTRDyspGI1Nsul7P5
-	 di8xyWENBqbl9wN0pCLes8ek0RJmFZPRM0PvrudaB0gZIrFZMyqMiwA3JGL6oINEH4
-	 GsdjYcs8f26vQ==
-Message-ID: <ea4436f1-1b85-4083-9807-98e814ba597e@kernel.org>
-Date: Tue, 23 Jul 2024 10:36:25 +0200
+	s=arc-20240116; t=1721723967; c=relaxed/simple;
+	bh=ipT0RnXjheg8iIbNcn4+g+FJIMKZoHPjHapnK77d5g8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PzTaX3b64eioJWj3z96LPmz21DZCpirlZt6mbXuu/iKVJIa5HURW55tEjhsntp3TIyWVP0Nzx7u5zrGR4NqVkUPXH+7vcD0w/wvZS5bet4nRKXo7WHFd5bLBSW1j1t2C/fjX4V5pe9Bc1YN1Nm6/ZaT+oyRZXNmPM4LHjppE/Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eHQQ496o; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hvH/b/9M; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1721723963;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/KYDfW1PS59cduUxwtRKA/m/Clwwf2eO1jg3HqbuLmM=;
+	b=eHQQ496o8RLHdYqnLtVO3c6eNySyhGM5fP4XhTtEIkhcSO67i4B8ziZOh1NwUJziv5VIUI
+	rY/akKKSD4stsyd6cCfWgE9L9BF5DkaBT47mUO5PnV153iZOtbZONAkaqgl03lzWE1L8K4
+	9y293xmF7xQma3xWqFVI/xYPnIfhhcUKz/mZy0HxOvjosieNwzCa8/Y4ihgbTZQBzUK2WR
+	YMce+yzy94Tfr7QTB5YFMVd6xmSRKzdGu7fVs6A+150cjVtK35zPBobYGHwI7pPxflfOHF
+	QjIeUkVaIvXGnBdvZkw6rIf0J5n1UsCgdchWbeeJCq2zWFryxGu01gz3M6pCXw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1721723963;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/KYDfW1PS59cduUxwtRKA/m/Clwwf2eO1jg3HqbuLmM=;
+	b=hvH/b/9MT7uzujqiO5QMdc0y81wSs7LvTrXT+EP4QE7D3ru2zxeE2iZIkcXzn55CRJMUkE
+	si4wnfg8GdRTWxBg==
+To: kernel test robot <lkp@intel.com>, Petr Mladek <pmladek@suse.com>
+Cc: oe-kbuild-all@lists.linux.dev, Sergey Senozhatsky
+ <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>, Thomas
+ Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH printk v3 07/19] printk: Add helpers for flush type logic
+In-Reply-To: <202407230936.FqviIH1q-lkp@intel.com>
+References: <20240722171939.3349410-8-john.ogness@linutronix.de>
+ <202407230936.FqviIH1q-lkp@intel.com>
+Date: Tue, 23 Jul 2024 10:45:23 +0206
+Message-ID: <87a5i8biys.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] ASoC: dt-bindings: qcom,sm8250: Add
- msm8953/msm8976-qdsp6-sndcard
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Adam Skladowski <a39.skl@gmail.com>
-Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, linux-arm-msm@vger.kernel.org,
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240722095147.3372-1-a39.skl@gmail.com>
- <20240722095147.3372-4-a39.skl@gmail.com>
- <c9386ee6-77bb-49be-97cd-2b25ebb08472@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <c9386ee6-77bb-49be-97cd-2b25ebb08472@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 23/07/2024 10:19, Krzysztof Kozlowski wrote:
-> On 22/07/2024 11:51, Adam Skladowski wrote:
->> Document MSM8953/MSM8976 QDSP6 cards.
->>
->> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
-> 
-> ...
-> 
->> +    then:
->>        properties:
->> -        reg: false
->> -        reg-names: false
->> +        reg:
->> +          items:
->> +            - description: Microphone I/O mux register address
->> +            - description: Speaker I/O mux register address
->> +            - description: Quinary Mi2S I/O mux register address
->> +        reg-names:
->> +          items:
->> +            - const: mic-iomux
->> +            - const: spkr-iomux
->> +            - const: quin-iomux
->> +      required:
->> +        - compatible
->> +        - model
-> 
-> Don't duplicate. It's already required.
+On 2024-07-23, kernel test robot <lkp@intel.com> wrote:
+>    In file included from kernel/printk/printk.c:61:
+>    kernel/printk/internal.h: In function 'printk_get_console_flush_type':
+>>> kernel/printk/internal.h:188:26: error: implicit declaration of function 'is_printk_deferred'; did you mean '_printk_deferred'? [-Werror=implicit-function-declaration]
+>      188 |    if (prefer_offload || is_printk_deferred())
+>          |                          ^~~~~~~~~~~~~~~~~~
+>          |                          _printk_deferred
 
-I suggest to rebase on top of my patch. Optionally, take it into your
-patchset.
+Thanks lkp.
 
-Best regards,
-Krzysztof
+I will wait for the feedback to this series before addressing this. The
+flush type macros may not land in mainline in this form anyway.
 
+John Ogness
 
