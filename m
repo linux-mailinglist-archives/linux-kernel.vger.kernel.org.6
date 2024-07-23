@@ -1,119 +1,466 @@
-Return-Path: <linux-kernel+bounces-259779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02790939D0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:59:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0AAA939D0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:00:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 346A01C21C42
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:59:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A70CB21E0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA82C14D296;
-	Tue, 23 Jul 2024 08:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE9014C5A3;
+	Tue, 23 Jul 2024 09:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="p9qxGzt3"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bL8cfUYd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1FE14AD3E;
-	Tue, 23 Jul 2024 08:59:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A8414B96D
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 09:00:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721725161; cv=none; b=ex0aBNg/NoAMW5AqP0XYQwsaQO8r6PkxAxCVMeEzTzOrCGsT43q7LPML216nTHosjnmwHDBYufXHhsNbR9b6qAsfJVfN4u49FywsRsdgEFu3YPeZpObO/2YWlX29H1rZnz3oHBPnCxDuE/EJ124ULNPY271TY8LV81MX1PPikNM=
+	t=1721725210; cv=none; b=npZjooLkN9aSrACqhJcZZllhTUDsz9POHXnTHo3v/nE8kepuhdXjjDMZpRHWi1CB2UAVeQrTG+jxbtPAiXyEemnoZFPFR9dLKVuYNmlLhJMdRHwrR6q/3EK4AZ2QLxcgfZLbfnOjL0AvVB1W0mzg5TLXpL72KapHPVWqgNJu+2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721725161; c=relaxed/simple;
-	bh=vuB9BvBovznV2C5TzKywXf/pl325gqX7cPXFdfLvaOg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RpWBZSGqpJm7c6aImDjAT0bYQl42BozUvBmcwoNy4eVnJBwjVcBOnOSE/wmOQ34u5TwN2AH8MzTnoRIcZuDeYiXhPGbyGdgYM+wDLhsv6A1kzxOmSM0CwIGK/ZZErp1EwS+KlJZfkPMkzUhvNexG4pKlhMegog7M7otmIdAZt0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=p9qxGzt3; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1721725158; x=1753261158;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vuB9BvBovznV2C5TzKywXf/pl325gqX7cPXFdfLvaOg=;
-  b=p9qxGzt3cqVKDiYi3/oZ5tYoGVYBz9Nxaux5IWGCKmuWisTbo76DFvyZ
-   V8fcyV8Gb5c5QZJjjupqsKH9dobAIG0pCws7w+OK9GHR7TLQAc3Wnq6Jd
-   0WX3OcRLnEbWz6MQepNQLONCZrLmWmAe/tt96FU7onl1Ao+N2MdBZt+AU
-   7QcXRMKU7iVCPTtBrBDh2JVc2qMyV76WA3frbWFEh2ssNIQVQedEGwfEp
-   n/VGv+zFX2qHgxZ4kSsLs8igYyId97aB5maVstE9+7ADt5qCVBZxfxt0a
-   zbzRn3Gs1pbE0jp4PzKHVxKz5AXRdMg/g2NxyXxxg4Hm1I/MQ6BVYcj9/
-   Q==;
-X-CSE-ConnectionGUID: RDjQsaNRTDa14ayDCi8WyQ==
-X-CSE-MsgGUID: DGp6JnEZQhSDYcZqLRRLZA==
-X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
-   d="asc'?scan'208";a="32331318"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 Jul 2024 01:59:17 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 23 Jul 2024 01:58:56 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Tue, 23 Jul 2024 01:58:54 -0700
-Date: Tue, 23 Jul 2024 09:58:30 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: David Lechner <dlechner@baylibre.com>
-CC: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Nuno =?iso-8859-1?Q?S=E1?=
-	<nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>, David Jander <david@protonic.nl>,
-	Martin Sperl <kernel@martin.sperl.org>, <linux-spi@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-iio@vger.kernel.org>
-Subject: Re: [PATCH RFC v3 0/9] spi: axi-spi-engine: add offload support
-Message-ID: <20240723-cabbie-opossum-6e551fe246f2@wendy>
-References: <20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
+	s=arc-20240116; t=1721725210; c=relaxed/simple;
+	bh=Js/h8iznIMOKL6zHZeMqaB9/LgT3uRk5SY2fdYBXhQQ=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=oAuo6gWDXg56OK4ZmkGaf+VSqx8WiNAgg6G5dSBxBX1yZly7URpEYTeUT8uBA+QS+z3xMMavEA6Px5lqqB+OkZ1f2IHcl77EZGCwkvVPFpaNu/iSF6EDaP9gHoJZA0krQFJMNWrYBx8d3FOx0off0w4ZbYPkMPVanPVWcjAFAIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bL8cfUYd; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721725207;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8ltHMdHYFgzTHmTSDOpVknq60bxF5gft0MPRVgKW40w=;
+	b=bL8cfUYdZC7u8CxScurBSjK2Xl7Xw+E8M++JzW7pA2Y9yYN1Bh09gleCkJxFxDQxQbS2go
+	V2K0Yt7r8nVebWF1GnF2/Fn5xe76sKrQfR99Su9LjTSkGNuKPCu+KXXCoWHmyu5InEFfAp
+	hDcCyeRBuETDtYgfPtikxW3rU8B7kWU=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-29-M4oE5xN3MI6ObU4qZXNsZQ-1; Tue,
+ 23 Jul 2024 05:00:02 -0400
+X-MC-Unique: M4oE5xN3MI6ObU4qZXNsZQ-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 20D6B1955F06;
+	Tue, 23 Jul 2024 09:00:00 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.216])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CA1AA19560B2;
+	Tue, 23 Jul 2024 08:59:55 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+    Christian Brauner <brauner@kernel.org>
+cc: dhowells@redhat.com, Jan Kara <jack@suse.cz>,
+    Jeff Layton <jlayton@kernel.org>, Gao Xiang <xiang@kernel.org>,
+    Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
+    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] vfs: Fix potential circular locking through setxattr() and removexattr()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="jAXlsA67pT68+om8"
-Content-Disposition: inline
-In-Reply-To: <20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
-
---jAXlsA67pT68+om8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2136177.1721725194.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
+Date: Tue, 23 Jul 2024 09:59:54 +0100
+Message-ID: <2136178.1721725194@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Mon, Jul 22, 2024 at 04:57:07PM -0500, David Lechner wrote:
-> There is a recap at the end of this cover letter for those not familiar
-> with the previous discussions. For those that are, we'll get right to
-> the changes since the last version.
->=20
-> In RFC v2, most of the discussion was around the DT bindings, so that
-> is what has mostly changed since then. I think we mostly settled on
-> what properties are needed and where they should go. There are probably
-> still some details to work out (see PATCH 5/9 for more discussion) but
-> I think we have the big-picture stuff figured out.
+When using cachefiles, lockdep may emit something similar to the circular
+locking dependency notice below.  The problem appears to stem from the
+following:
 
-Thanks for the updates. I'm on holiday until rc2, so it'll not be until
-then that I can really take a look at this. Figured I'd let you know
-rather than just ignore you...
+ (1) Cachefiles manipulates xattrs on the files in its cache when called
+     from ->writepages().
 
---jAXlsA67pT68+om8
-Content-Type: application/pgp-signature; name="signature.asc"
+ (2) The setxattr() and removexattr() system call handlers get the name
+     (and value) from userspace after taking the sb_writers lock, putting
+     accesses of the vma->vm_lock and mm->mmap_lock inside of that.
 
------BEGIN PGP SIGNATURE-----
+ (3) The afs filesystem uses a per-inode lock to prevent multiple
+     revalidation RPCs and in writeback vs truncate to prevent parallel
+     operations from deadlocking against the server on one side and local
+     page locks on the other.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZp9wtgAKCRB4tDGHoIJi
-0s45AP9fxybG2w4dniKJn5EQfbg7XWUzv0R5Hz9l8jkGqFRNfAEAkQTzWUaDvaud
-zdW3eay7nRJpxkBvMtV5Akz9ADBayA8=
-=nC48
------END PGP SIGNATURE-----
+Fix this by moving the getting of the name and value in {get,remove}xattr(=
+)
+outside of the sb_writers lock.  This also has the minor benefits that we
+don't need to reget these in the event of a retry and we never try to take
+the sb_writers lock in the event we can't pull the name and value into the
+kernel.
 
---jAXlsA67pT68+om8--
+Alternative approaches that might fix this include moving the dispatch of =
+a
+write to the cache off to a workqueue or trying to do without the
+validation lock in afs.  Note that this might also affect other filesystem=
+s
+that use netfslib and/or cachefiles.
+
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+ WARNING: possible circular locking dependency detected
+ 6.10.0-build2+ #956 Not tainted
+ ------------------------------------------------------
+ fsstress/6050 is trying to acquire lock:
+ ffff888138fd82f0 (mapping.invalidate_lock#3){++++}-{3:3}, at: filemap_fau=
+lt+0x26e/0x8b0
+
+ but task is already holding lock:
+ ffff888113f26d18 (&vma->vm_lock->lock){++++}-{3:3}, at: lock_vma_under_rc=
+u+0x165/0x250
+
+ which lock already depends on the new lock.
+
+ the existing dependency chain (in reverse order) is:
+
+ -> #4 (&vma->vm_lock->lock){++++}-{3:3}:
+        __lock_acquire+0xaf0/0xd80
+        lock_acquire.part.0+0x103/0x280
+        down_write+0x3b/0x50
+        vma_start_write+0x6b/0xa0
+        vma_link+0xcc/0x140
+        insert_vm_struct+0xb7/0xf0
+        alloc_bprm+0x2c1/0x390
+        kernel_execve+0x65/0x1a0
+        call_usermodehelper_exec_async+0x14d/0x190
+        ret_from_fork+0x24/0x40
+        ret_from_fork_asm+0x1a/0x30
+
+ -> #3 (&mm->mmap_lock){++++}-{3:3}:
+        __lock_acquire+0xaf0/0xd80
+        lock_acquire.part.0+0x103/0x280
+        __might_fault+0x7c/0xb0
+        strncpy_from_user+0x25/0x160
+        removexattr+0x7f/0x100
+        __do_sys_fremovexattr+0x7e/0xb0
+        do_syscall_64+0x9f/0x100
+        entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+ -> #2 (sb_writers#14){.+.+}-{0:0}:
+        __lock_acquire+0xaf0/0xd80
+        lock_acquire.part.0+0x103/0x280
+        percpu_down_read+0x3c/0x90
+        vfs_iocb_iter_write+0xe9/0x1d0
+        __cachefiles_write+0x367/0x430
+        cachefiles_issue_write+0x299/0x2f0
+        netfs_advance_write+0x117/0x140
+        netfs_write_folio.isra.0+0x5ca/0x6e0
+        netfs_writepages+0x230/0x2f0
+        afs_writepages+0x4d/0x70
+        do_writepages+0x1e8/0x3e0
+        filemap_fdatawrite_wbc+0x84/0xa0
+        __filemap_fdatawrite_range+0xa8/0xf0
+        file_write_and_wait_range+0x59/0x90
+        afs_release+0x10f/0x270
+        __fput+0x25f/0x3d0
+        __do_sys_close+0x43/0x70
+        do_syscall_64+0x9f/0x100
+        entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+ -> #1 (&vnode->validate_lock){++++}-{3:3}:
+        __lock_acquire+0xaf0/0xd80
+        lock_acquire.part.0+0x103/0x280
+        down_read+0x95/0x200
+        afs_writepages+0x37/0x70
+        do_writepages+0x1e8/0x3e0
+        filemap_fdatawrite_wbc+0x84/0xa0
+        filemap_invalidate_inode+0x167/0x1e0
+        netfs_unbuffered_write_iter+0x1bd/0x2d0
+        vfs_write+0x22e/0x320
+        ksys_write+0xbc/0x130
+        do_syscall_64+0x9f/0x100
+        entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+ -> #0 (mapping.invalidate_lock#3){++++}-{3:3}:
+        check_noncircular+0x119/0x160
+        check_prev_add+0x195/0x430
+        __lock_acquire+0xaf0/0xd80
+        lock_acquire.part.0+0x103/0x280
+        down_read+0x95/0x200
+        filemap_fault+0x26e/0x8b0
+        __do_fault+0x57/0xd0
+        do_pte_missing+0x23b/0x320
+        __handle_mm_fault+0x2d4/0x320
+        handle_mm_fault+0x14f/0x260
+        do_user_addr_fault+0x2a2/0x500
+        exc_page_fault+0x71/0x90
+        asm_exc_page_fault+0x22/0x30
+
+ other info that might help us debug this:
+
+ Chain exists of:
+   mapping.invalidate_lock#3 --> &mm->mmap_lock --> &vma->vm_lock->lock
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   rlock(&vma->vm_lock->lock);
+                                lock(&mm->mmap_lock);
+                                lock(&vma->vm_lock->lock);
+   rlock(mapping.invalidate_lock#3);
+
+  *** DEADLOCK ***
+
+ 1 lock held by fsstress/6050:
+  #0: ffff888113f26d18 (&vma->vm_lock->lock){++++}-{3:3}, at: lock_vma_und=
+er_rcu+0x165/0x250
+
+ stack backtrace:
+ CPU: 0 PID: 6050 Comm: fsstress Not tainted 6.10.0-build2+ #956
+ Hardware name: ASUS All Series/H97-PLUS, BIOS 2306 10/09/2014
+ Call Trace:
+  <TASK>
+  dump_stack_lvl+0x57/0x80
+  check_noncircular+0x119/0x160
+  ? queued_spin_lock_slowpath+0x4be/0x510
+  ? __pfx_check_noncircular+0x10/0x10
+  ? __pfx_queued_spin_lock_slowpath+0x10/0x10
+  ? mark_lock+0x47/0x160
+  ? init_chain_block+0x9c/0xc0
+  ? add_chain_block+0x84/0xf0
+  check_prev_add+0x195/0x430
+  __lock_acquire+0xaf0/0xd80
+  ? __pfx___lock_acquire+0x10/0x10
+  ? __lock_release.isra.0+0x13b/0x230
+  lock_acquire.part.0+0x103/0x280
+  ? filemap_fault+0x26e/0x8b0
+  ? __pfx_lock_acquire.part.0+0x10/0x10
+  ? rcu_is_watching+0x34/0x60
+  ? lock_acquire+0xd7/0x120
+  down_read+0x95/0x200
+  ? filemap_fault+0x26e/0x8b0
+  ? __pfx_down_read+0x10/0x10
+  ? __filemap_get_folio+0x25/0x1a0
+  filemap_fault+0x26e/0x8b0
+  ? __pfx_filemap_fault+0x10/0x10
+  ? find_held_lock+0x7c/0x90
+  ? __pfx___lock_release.isra.0+0x10/0x10
+  ? __pte_offset_map+0x99/0x110
+  __do_fault+0x57/0xd0
+  do_pte_missing+0x23b/0x320
+  __handle_mm_fault+0x2d4/0x320
+  ? __pfx___handle_mm_fault+0x10/0x10
+  handle_mm_fault+0x14f/0x260
+  do_user_addr_fault+0x2a2/0x500
+  exc_page_fault+0x71/0x90
+  asm_exc_page_fault+0x22/0x30
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Alexander Viro <viro@zeniv.linux.org.uk>
+cc: Christian Brauner <brauner@kernel.org>
+cc: Jan Kara <jack@suse.cz>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: Gao Xiang <xiang@kernel.org>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: netfs@lists.linux.dev
+cc: linux-erofs@lists.ozlabs.org
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/xattr.c |   88 ++++++++++++++++++++++++++++++++-----------------------=
+------
+ 1 file changed, 47 insertions(+), 41 deletions(-)
+
+diff --git a/fs/xattr.c b/fs/xattr.c
+index f8b643f91a98..ab46c5bd168f 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -630,10 +630,9 @@ int do_setxattr(struct mnt_idmap *idmap, struct dentr=
+y *dentry,
+ 			ctx->kvalue, ctx->size, ctx->flags);
+ }
+ =
+
+-static long
+-setxattr(struct mnt_idmap *idmap, struct dentry *d,
+-	const char __user *name, const void __user *value, size_t size,
+-	int flags)
++static int path_setxattr(const char __user *pathname,
++			 const char __user *name, const void __user *value,
++			 size_t size, int flags, unsigned int lookup_flags)
+ {
+ 	struct xattr_name kname;
+ 	struct xattr_ctx ctx =3D {
+@@ -643,33 +642,20 @@ setxattr(struct mnt_idmap *idmap, struct dentry *d,
+ 		.kname    =3D &kname,
+ 		.flags    =3D flags,
+ 	};
++	struct path path;
+ 	int error;
+ =
+
+ 	error =3D setxattr_copy(name, &ctx);
+ 	if (error)
+ 		return error;
+ =
+
+-	error =3D do_setxattr(idmap, d, &ctx);
+-
+-	kvfree(ctx.kvalue);
+-	return error;
+-}
+-
+-static int path_setxattr(const char __user *pathname,
+-			 const char __user *name, const void __user *value,
+-			 size_t size, int flags, unsigned int lookup_flags)
+-{
+-	struct path path;
+-	int error;
+-
+ retry:
+ 	error =3D user_path_at(AT_FDCWD, pathname, lookup_flags, &path);
+ 	if (error)
+-		return error;
++		goto out;
+ 	error =3D mnt_want_write(path.mnt);
+ 	if (!error) {
+-		error =3D setxattr(mnt_idmap(path.mnt), path.dentry, name,
+-				 value, size, flags);
++		error =3D do_setxattr(mnt_idmap(path.mnt), path.dentry, &ctx);
+ 		mnt_drop_write(path.mnt);
+ 	}
+ 	path_put(&path);
+@@ -677,6 +663,9 @@ static int path_setxattr(const char __user *pathname,
+ 		lookup_flags |=3D LOOKUP_REVAL;
+ 		goto retry;
+ 	}
++
++out:
++	kvfree(ctx.kvalue);
+ 	return error;
+ }
+ =
+
+@@ -697,19 +686,32 @@ SYSCALL_DEFINE5(lsetxattr, const char __user *, path=
+name,
+ SYSCALL_DEFINE5(fsetxattr, int, fd, const char __user *, name,
+ 		const void __user *,value, size_t, size, int, flags)
+ {
++	struct xattr_name kname;
++	struct xattr_ctx ctx =3D {
++		.cvalue   =3D value,
++		.kvalue   =3D NULL,
++		.size     =3D size,
++		.kname    =3D &kname,
++		.flags    =3D flags,
++	};
+ 	struct fd f =3D fdget(fd);
+-	int error =3D -EBADF;
++	int error;
+ =
+
+ 	if (!f.file)
+-		return error;
++		return -EBADF;
+ 	audit_file(f.file);
++	error =3D setxattr_copy(name, &ctx);
++	if (error)
++		goto out_f;
++
+ 	error =3D mnt_want_write_file(f.file);
+ 	if (!error) {
+-		error =3D setxattr(file_mnt_idmap(f.file),
+-				 f.file->f_path.dentry, name,
+-				 value, size, flags);
++		error =3D do_setxattr(file_mnt_idmap(f.file),
++				    f.file->f_path.dentry, &ctx);
+ 		mnt_drop_write_file(f.file);
+ 	}
++	kvfree(ctx.kvalue);
++out_f:
+ 	fdput(f);
+ 	return error;
+ }
+@@ -899,9 +901,17 @@ SYSCALL_DEFINE3(flistxattr, int, fd, char __user *, l=
+ist, size_t, size)
+  * Extended attribute REMOVE operations
+  */
+ static long
+-removexattr(struct mnt_idmap *idmap, struct dentry *d,
+-	    const char __user *name)
++removexattr(struct mnt_idmap *idmap, struct dentry *d, const char *name)
+ {
++	if (is_posix_acl_xattr(name))
++		return vfs_remove_acl(idmap, d, name);
++	return vfs_removexattr(idmap, d, name);
++}
++
++static int path_removexattr(const char __user *pathname,
++			    const char __user *name, unsigned int lookup_flags)
++{
++	struct path path;
+ 	int error;
+ 	char kname[XATTR_NAME_MAX + 1];
+ =
+
+@@ -910,25 +920,13 @@ removexattr(struct mnt_idmap *idmap, struct dentry *=
+d,
+ 		error =3D -ERANGE;
+ 	if (error < 0)
+ 		return error;
+-
+-	if (is_posix_acl_xattr(kname))
+-		return vfs_remove_acl(idmap, d, kname);
+-
+-	return vfs_removexattr(idmap, d, kname);
+-}
+-
+-static int path_removexattr(const char __user *pathname,
+-			    const char __user *name, unsigned int lookup_flags)
+-{
+-	struct path path;
+-	int error;
+ retry:
+ 	error =3D user_path_at(AT_FDCWD, pathname, lookup_flags, &path);
+ 	if (error)
+ 		return error;
+ 	error =3D mnt_want_write(path.mnt);
+ 	if (!error) {
+-		error =3D removexattr(mnt_idmap(path.mnt), path.dentry, name);
++		error =3D removexattr(mnt_idmap(path.mnt), path.dentry, kname);
+ 		mnt_drop_write(path.mnt);
+ 	}
+ 	path_put(&path);
+@@ -954,15 +952,23 @@ SYSCALL_DEFINE2(lremovexattr, const char __user *, p=
+athname,
+ SYSCALL_DEFINE2(fremovexattr, int, fd, const char __user *, name)
+ {
+ 	struct fd f =3D fdget(fd);
++	char kname[XATTR_NAME_MAX + 1];
+ 	int error =3D -EBADF;
+ =
+
+ 	if (!f.file)
+ 		return error;
+ 	audit_file(f.file);
++
++	error =3D strncpy_from_user(kname, name, sizeof(kname));
++	if (error =3D=3D 0 || error =3D=3D sizeof(kname))
++		error =3D -ERANGE;
++	if (error < 0)
++		return error;
++
+ 	error =3D mnt_want_write_file(f.file);
+ 	if (!error) {
+ 		error =3D removexattr(file_mnt_idmap(f.file),
+-				    f.file->f_path.dentry, name);
++				    f.file->f_path.dentry, kname);
+ 		mnt_drop_write_file(f.file);
+ 	}
+ 	fdput(f);
+
 
