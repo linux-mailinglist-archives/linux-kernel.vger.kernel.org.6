@@ -1,443 +1,170 @@
-Return-Path: <linux-kernel+bounces-259801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5BC6939D66
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:20:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AACFB939D6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D1A81F22BC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:20:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C93DE1C21C7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DACF14C583;
-	Tue, 23 Jul 2024 09:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAA5E14C5AE;
+	Tue, 23 Jul 2024 09:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w5NicG41"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qKrd29Id";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rIYQLz1F";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qKrd29Id";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rIYQLz1F"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86629208B6
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 09:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635E3208B6;
+	Tue, 23 Jul 2024 09:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721726418; cv=none; b=SStmki3/cksaC0OlM53C4FDcfSmp/twkeUcgma4T/b58giDEOBpSg7OX+ZraLcWiX8G4bIAuGZ8TZgrTN22iy7XQzuf46kBB8Qx0y1Q43C12qhAe9a+x1z5SEEetu1+Yx4sRfNSVIPghPSUPmvuo6ZBFcGZonW2x3y7ZVox0bWk=
+	t=1721726525; cv=none; b=L2eL6LiPcjibIVChIBt902tnqKV8/atU/dATMa+yCrkxJdr7YWNji1OG3KW0NA9G9mr29ONPKBJYLGRI80RjlsNrRb91d1yModI4iMHsPrTmxWQ69ClcDCNn8w7vuEHqPTmEbqb0m/HJ2VVjoZGX1a2MUJbBZLzCa20ZaqRwdQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721726418; c=relaxed/simple;
-	bh=vd1S0S4R6faJqS82aSi3DxtsxXoZ9n6f3a4hhMMeMgw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uUSiuZkOQ+52SDkwKnFs38MTr3ft/oI2kxir0xMIhYq++O5CnVindJ7lkV+5sBuYZDgdFKpZfeB/xWrqLF77PdGndnBv9n+BU7ynx8hmYbK+w9uBCAYktoNJHEiAbIFCo1n6pmoBtAgMlNZR5YdoQ98sM4zfUVxtX8SBgVI3npE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w5NicG41; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4272738eb9eso39442075e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 02:20:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721726415; x=1722331215; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=XeYDV5TDW4TbvqxhWxzkBYg//lQZE+u2Ilm183/T57k=;
-        b=w5NicG41jmTa6Y2d0KV7qeDBGnW+qZm3Un6QADFESfT60UqWwp3UQ3YKuIpMZfVa2P
-         xH3sV1OH3iwDtKXsV+gU+IVc9bdgqTHRvRMNNr/GqqaOzlskTkEtHdwa8yZQ2zhbLUgv
-         ApnqrevM7PA3OkUSDhpSV+wbFyl0z7elplMn39/raJ1zkYafZQ6pjSEJJ0cLS/TX65Ja
-         RO7zvn6LapAbCRbkVrXjsqTaH+5BuEFnbkK0nKZcn64Ceho5256+4g2tiWrv+tTst4IS
-         GlsOWA8GNCiWBmGtQ2IB6x1NUknx8p9sSy2tAdxQoyO+Fufbpp236b/x9N1GXoFvCB6L
-         8DLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721726415; x=1722331215;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XeYDV5TDW4TbvqxhWxzkBYg//lQZE+u2Ilm183/T57k=;
-        b=fKoxNw+PFyCTdsPAD9D4R0NGEqg00RfK7mSfxEBpT2DucOmhZ6N4fjFSM9buobJ8u1
-         R5jGrZopipc3MpKNUmlQ1vzA2ypctyYYmn4Kz+hHIMS7Wq3a551vO22fUJehl8BiMs7F
-         YhkdxoOoEBMg69QQtpT3AN26z1mxamqY6NJ92uih58SMLn/ogP/x8HCHgXEkqyRwJ+6S
-         Ap5ND6Ue+qhdUtwSwdf0dSCnQ2/BCdslT5//fMCSYP4MG0kwqxuHiyVGwYPiggLeXIge
-         qjM4Dq34ES/UOmWSW6jtX6zg4oBvWE2F1jwCBbSFN6ByqN9buezLMsonARuAEn8VL+mx
-         yxwg==
-X-Forwarded-Encrypted: i=1; AJvYcCWjVxZ6lN0slo/gFurX6yswderLFDqMJMaa+uDJdql5xjB4HE2qOQIqKL3kNROy2C61EXW2KzSkBcVQN/6Ue5PuBf/0hqvzJ2Q46gDy
-X-Gm-Message-State: AOJu0YzA7LIg5KOXz0Z/GQqj47Iew6JXvDDkMPWT4LAlpFS37yN8DNRV
-	F2Dxxm1riil5L1kBs+lDraea/59xZ/8eCrJ5gzcIzxCj2ZbdEws6UUwetyRBD64=
-X-Google-Smtp-Source: AGHT+IGaGM/zh7C4o7d9dZHFf5LRLE82JFhtgjU7Ngagi8TJvjn5onrtkMbI5qUwwqL7VKf8u6bM4Q==
-X-Received: by 2002:a05:600c:35c8:b0:426:5416:67e0 with SMTP id 5b1f17b1804b1-427ed06816amr16912975e9.31.1721726414708;
-        Tue, 23 Jul 2024 02:20:14 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a3c0fasm194972015e9.7.2024.07.23.02.20.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 02:20:14 -0700 (PDT)
-Message-ID: <2ab2130f-0fb6-4026-aa17-207182e6d4d9@linaro.org>
-Date: Tue, 23 Jul 2024 11:20:12 +0200
+	s=arc-20240116; t=1721726525; c=relaxed/simple;
+	bh=DEmamzG20cTeuQWM1KjnzQtCkudnGYamD96iRxyUuWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SMYQ0Uhf9rytpk/uQ9qDfRYmq9nRDl+AynX/IU0U3O4NhT/yKDZnwske7jw4BfaEHWprfSDV9bWOEBAjhDl5Z+Mwa87gLpXfZMuFDPR+OqA7PNJ0J/ACcm3mfNVK3+g5lb4WnuufFmCPI8t+8pIWVR487m+zhphzkZlXb1W6uXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qKrd29Id; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rIYQLz1F; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qKrd29Id; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rIYQLz1F; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 88382218EC;
+	Tue, 23 Jul 2024 09:22:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721726521; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E7AV0LYF3bz/EKMkYK4kYRuRBuSTAZsD68Mdlb9Reys=;
+	b=qKrd29Id6DSo0K/pphd1NEBQCyL+tILZRTrUv0Ih7j/WQTquGXnx9aRZub0FYBTYu4hnjA
+	HUaFWbKdgE32Qn/61E8NBh4Y0+ATgtRmNVNO3o27zRZb3hqaZOSQ3rsDuqHwfxhTkCJpoN
+	DTfI6NBat03QVfQgToM3dJqAN33jylw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721726521;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E7AV0LYF3bz/EKMkYK4kYRuRBuSTAZsD68Mdlb9Reys=;
+	b=rIYQLz1F/1GebmxIQDyCski7VlrfzibvJBMGit/9Y+JCrtnCKyqZhn9k7Sezvs+3kg5Qf3
+	akhnUa9eIN+ex3CQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721726521; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E7AV0LYF3bz/EKMkYK4kYRuRBuSTAZsD68Mdlb9Reys=;
+	b=qKrd29Id6DSo0K/pphd1NEBQCyL+tILZRTrUv0Ih7j/WQTquGXnx9aRZub0FYBTYu4hnjA
+	HUaFWbKdgE32Qn/61E8NBh4Y0+ATgtRmNVNO3o27zRZb3hqaZOSQ3rsDuqHwfxhTkCJpoN
+	DTfI6NBat03QVfQgToM3dJqAN33jylw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721726521;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E7AV0LYF3bz/EKMkYK4kYRuRBuSTAZsD68Mdlb9Reys=;
+	b=rIYQLz1F/1GebmxIQDyCski7VlrfzibvJBMGit/9Y+JCrtnCKyqZhn9k7Sezvs+3kg5Qf3
+	akhnUa9eIN+ex3CQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7D6701393E;
+	Tue, 23 Jul 2024 09:22:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id UE+YHjl2n2ateAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 23 Jul 2024 09:22:01 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 2BC85A08BD; Tue, 23 Jul 2024 11:22:01 +0200 (CEST)
+Date: Tue, 23 Jul 2024 11:22:01 +0200
+From: Jan Kara <jack@suse.cz>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
+	Jan Kara <jack@suse.cz>, Theodore Ts'o <tytso@mit.edu>,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH] jbd2: fix kernel-doc for j_transaction_overhead_buffers
+Message-ID: <20240723092201.cr6kxdjrdvmlbfga@quack3>
+References: <20240723051647.3053491-1-rdunlap@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] ARM: dts: aspeed: catalina: add Meta Catalina BMC
-To: Potin Lai <potin.lai.pt@gmail.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Patrick Williams <patrick@stwcx.xyz>
-Cc: Potin Lai <potin.lai@quantatw.com>, Cosmo Chou <cosmo.chou@quantatw.com>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20240722145857.2131100-1-potin.lai.pt@gmail.com>
- <20240722145857.2131100-3-potin.lai.pt@gmail.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240722145857.2131100-3-potin.lai.pt@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240723051647.3053491-1-rdunlap@infradead.org>
+X-Spam-Score: -0.60
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-0.60 / 50.00];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:email,infradead.org:email]
+X-Spam-Level: 
 
-On 22/07/2024 16:58, Potin Lai wrote:
-> From: Potin Lai <potin.lai@quantatw.com>
+On Mon 22-07-24 22:16:47, Randy Dunlap wrote:
+> Use the correct struct member name in the kernel-doc notation
+> to prevent a kernel-doc build warning.
 > 
-> Add linux device tree entry for Meta(Facebook) Catalina compute-tray
-> BMC using AT2600 SoC.
+> include/linux/jbd2.h:1303: warning: Function parameter or struct member 'j_transaction_overhead_buffers' not described in 'journal_s'
+> include/linux/jbd2.h:1303: warning: Excess struct member 'j_transaction_overhead' description in 'journal_s'
 > 
+> Fixes: e3a00a23781c ("jbd2: precompute number of transaction descriptor blocks")
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Closes: https://lore.kernel.org/linux-next/20240710182252.4c281445@canb.auug.org.au/
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 
-...
+Yeah, thanks and sorry for breaking the doc here. Feel free to add:
 
-> +		i2c45 = &imux45;
-> +		i2c46 = &imux46;
-> +		i2c47 = &imux47;
-> +		i2c48 = &imux48;
-> +		i2c49 = &imux49;
-> +		i2c50 = &imux50;
-> +		i2c51 = &imux51;
-> +		i2c52 = &imux52;
-> +		i2c53 = &imux53;
-> +		i2c54 = &imux54;
-> +		i2c55 = &imux55;
-> +	};
-> +
-> +	chosen {
-> +		bootargs = "console=ttyS4,57600n8";
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Preferred is to use stdout-path property.
+								Honza
 
-> +	};
-> +
-> +	memory@80000000 {
-> +		device_type = "memory";
-> +		reg = <0x80000000 0x80000000>;
-> +	};
-> +
-> +	iio-hwmon {
-> +		compatible = "iio-hwmon";
-> +		io-channels = <&adc0 0>, <&adc0 1>, <&adc0 2>, <&adc0 3>,
-> +			      <&adc0 4>, <&adc0 5>, <&adc0 6>, <&adc0 7>,
-> +			      <&adc1 2>;
-> +	};
-> +
-> +	spi1_gpio: spi1-gpio {
-> +		compatible = "spi-gpio";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		gpio-sck = <&gpio0 ASPEED_GPIO(Z, 3) GPIO_ACTIVE_HIGH>;
-> +		gpio-mosi = <&gpio0 ASPEED_GPIO(Z, 4) GPIO_ACTIVE_HIGH>;
-> +		gpio-miso = <&gpio0 ASPEED_GPIO(Z, 5) GPIO_ACTIVE_HIGH>;
-> +		num-chipselects = <1>;
-> +		cs-gpios = <&gpio0 ASPEED_GPIO(Z, 0) GPIO_ACTIVE_LOW>;
-> +
-> +		tpm@0 {
-> +			compatible = "infineon,slb9670", "tcg,tpm_tis-spi";
-> +			spi-max-frequency = <33000000>;
-> +			reg = <0>;
-> +		};
-> +	};
-> +
-> +	leds {
-> +		compatible = "gpio-leds";
-> +
-> +		led-0 {
-> +			label = "bmc_heartbeat_amber";
-> +			gpios = <&gpio0 ASPEED_GPIO(P, 7) GPIO_ACTIVE_LOW>;
-> +			linux,default-trigger = "heartbeat";
-> +		};
-> +
-> +		led-1 {
-> +			label = "fp_id_amber";
-> +			default-state = "off";
-> +			gpios = <&gpio0 ASPEED_GPIO(B, 5) GPIO_ACTIVE_HIGH>;
-> +		};
-> +
-> +		led-2 {
-> +			label = "bmc_ready_noled";
-> +			gpios = <&gpio0 ASPEED_GPIO(B, 3) (GPIO_ACTIVE_HIGH|GPIO_TRANSITORY)>;
-> +		};
-> +
-> +		led-3 {
-> +			label = "bmc_ready_cpld_noled";
-> +			gpios = <&gpio0 ASPEED_GPIO(P, 5) (GPIO_ACTIVE_HIGH|GPIO_TRANSITORY)>;
-> +		};
-> +	};
-> +};
-> +
-> +&uart1 {
-> +	status = "okay";
-> +};
-> +
-> +&uart3 {
-> +	status = "okay";
-> +};
-> +
-> +&uart4 {
-> +	status = "okay";
-> +};
-> +
-> +&uart5 {
-> +	status = "okay";
-> +};
-> +
-> +&mdio0 {
-> +	status = "okay";
-> +};
-> +
-> +//&mac0 {
-
-Please drop dead code or document why this is being commented out.
-
-> +//	status = "okay";
-> +//	phy-mode = "rmii";
-> +//	pinctrl-names = "default";
-> +//	pinctrl-0 = <&pinctrl_rgmii1_default>;
-> +//	fixed-link {
-> +//		speed = <1000>;
-> +//		full-duplex;
-> +//	};
-> +//};
-> +
-> +&mac3 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	//pinctrl-0 = <&pinctrl_rmii4_default>;
-
-Drop
-
-> +	pinctrl-0 = <&pinctrl_ncsi4_default>;
-> +	use-ncsi;
-> +	ncsi-ctrl,start-redo-probe;
-> +	ncsi-package = <1>;
-> +};
-> +
-> +&fmc {
-> +	status = "okay";
-> +	flash@0 {
-> +		status = "okay";
-> +		m25p,fast-read;
-> +		label = "bmc";
-> +		spi-max-frequency = <50000000>;
-> +#include "openbmc-flash-layout-128.dtsi"
-> +	};
-> +	flash@1 {
-> +		status = "okay";
-> +		m25p,fast-read;
-> +		label = "alt-bmc";
-> +		spi-max-frequency = <50000000>;
-> +	};
-> +};
-> +
-> +&i2c0 {
-> +	status = "okay";
-> +
-> +	i2c-mux@71 {
-> +		compatible = "nxp,pca9546";
-> +		reg = <0x71>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		imux24: i2c@0 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <0>;
-> +		};
-> +		imux25: i2c@1 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <1>;
-> +		};
-> +		imux26: i2c@2 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <2>;
-> +		};
-> +		imux27: i2c@3 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <3>;
-> +		};
-> +	};
-> +
-> +	i2c-mux@72 {
-> +		compatible = "nxp,pca9546";
-> +		reg = <0x72>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		imux28: i2c@0 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <0>;
-> +		};
-> +		imux29: i2c@1 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <1>;
-> +
-> +			// IO Mezz 0 IOEXP
-> +			pca9535_30_20: pca9535@20 {
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-
-> +				compatible = "nxp,pca9535";
-> +				reg = <0x20>;
-> +				gpio-controller;
-> +				#gpio-cells = <2>;
-> +			};
-> +
-> +			// IO Mezz 0 FRU EEPROM
-> +			eeprom@50 {
-> +				compatible = "atmel,24c64";
-> +				reg = <0x50>;
-> +			};
-> +		};
-> +		imux30: i2c@2 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <2>;
-> +		};
-> +		imux31: i2c@3 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <3>;
-> +		};
-> +	};
-> +
-> +	i2c-mux@73 {
-> +		compatible = "nxp,pca9546";
-> +		reg = <0x73>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		imux32: i2c@0 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <0>;
-> +		};
-> +		imux33: i2c@1 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <1>;
-> +
-> +			i2c-mux@70 {
-> +				compatible = "nxp,pca9548";
-> +				reg = <0x70>;
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				imux48: i2c@0 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <0>;
-> +				};
-> +				imux49: i2c@1 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <1>;
-> +				};
-> +				imux50: i2c@2 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <2>;
-> +				};
-> +				imux51: i2c@3 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <3>;
-> +				};
-> +				imux52: i2c@4 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <3>;
-> +				};
-> +				imux53: i2c@5 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <3>;
-> +				};
-> +				imux54: i2c@6 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <3>;
-> +				};
-> +				imux55: i2c@7 {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +					reg = <3>;
-> +
-> +					ina230@40 {
-
-Node names should be generic. See also an explanation and list of
-examples (not exhaustive) in DT specification:
-https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
-
-In other places as well.
-
-
-Best regards,
-Krzysztof
-
+> ---
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Theodore Ts'o <tytso@mit.edu>
+> Cc: linux-ext4@vger.kernel.org
+> 
+>  include/linux/jbd2.h |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff -- a/include/linux/jbd2.h b/include/linux/jbd2.h
+> --- a/include/linux/jbd2.h
+> +++ b/include/linux/jbd2.h
+> @@ -1086,7 +1086,7 @@ struct journal_s
+>  	int			j_revoke_records_per_block;
+>  
+>  	/**
+> -	 * @j_transaction_overhead:
+> +	 * @j_transaction_overhead_buffers:
+>  	 *
+>  	 * Number of blocks each transaction needs for its own bookkeeping
+>  	 */
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
