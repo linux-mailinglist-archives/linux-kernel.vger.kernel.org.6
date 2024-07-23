@@ -1,134 +1,97 @@
-Return-Path: <linux-kernel+bounces-260039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E7D093A1E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:46:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9B9893A1F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:50:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2453A1F22525
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:46:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75DAD2841BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:50:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63ED1152178;
-	Tue, 23 Jul 2024 13:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB84E1509A9;
+	Tue, 23 Jul 2024 13:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z1huXtjm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Oul8SF9y"
+Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AAE8F70;
-	Tue, 23 Jul 2024 13:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1BB8F70
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 13:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721742364; cv=none; b=bDcZwr0tiIzqOyeCT5EtTHPQMBTRHxSu3GFabhpdTRAGGd4pGWGkwn57sRN3emz0VD6OnH0rPc5XRrO0omyYJCfzWfXNIRteiobFA/mspKCEwbBrmZ9SIt7GHoWh7vJqeZ4Mlf4CmWdXvIpRar0wBhNUwCgAm3b8AQDsCGKgYdE=
+	t=1721742648; cv=none; b=qEde4nVJw4/CgaFRstpYZnTHScKf6UXhLLDBLBFT9DWhTi0b+spWSMubK7HNH0gr/BP3mRua+RO+kmb2UtPOiiVzr4zQjMO6dLX1xlqNZeaWgHPment2KxINT4Ez0Fb9JTmXJfXFmwC6D87NvBbInlCgK1LNAoxRuY1saztt9DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721742364; c=relaxed/simple;
-	bh=GJawiRDWacobpNsLTELbipOx4l8u61/Poa79VGwoK4g=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BEgXa/6PlNRoB0EEygfktyFIuJGExTnwwHuck17jo8rQvFIw6s4c4TGVxHX3U9MlOAk/TcFkZy3PBKbBNuS8iidk9vc95ja49R4/exJ4UXIi/dlsb+Mx3xPQnbhVUFRj2XLsPXD+BCMLqalgnTAfYkVzP9ynz9NPBNolpKH2XyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z1huXtjm; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721742361; x=1753278361;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=GJawiRDWacobpNsLTELbipOx4l8u61/Poa79VGwoK4g=;
-  b=Z1huXtjmLdxBaZx+NPC/bbwrw5kxdzqZjPOsuMk7MgjeWZXIsK2rVt2H
-   3gMQF3yCobT3tbFaI9RiCYj4Z4K8pdCBsNlxNOHBgCtmk0D6rmDpqBhHe
-   NJ+ImapRVJTl84rKAEhtH3F/e/eNayUXqE+8wrprdRvwO8xNwEi87EhBY
-   6MTcgnm//ZQCafGZxeYEr8lUCLfDQI6BKL74B6cJexoWU5SnEY+C2MZx3
-   AKpKYWu0rh1/v8qctHsysh/K6r2njc3VijpfvFGu+wN5arQT16ZecgqXV
-   OZbs9mfOudUNiuGFt9iU71zxt2WG0GQ1swCenu0mRKN4LrVP6DRAA9skv
-   Q==;
-X-CSE-ConnectionGUID: LssSXVvzT4aYGGayR6QPNA==
-X-CSE-MsgGUID: nncLJP2gSga02ogZ3rYuRg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11142"; a="36810246"
-X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
-   d="scan'208";a="36810246"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2024 06:46:00 -0700
-X-CSE-ConnectionGUID: YOBOcrmKRVaTsgZ21wdhpw==
-X-CSE-MsgGUID: u8/jMZjETKGQ2/IzyrueZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
-   d="scan'208";a="57083836"
-Received: from hrotuna-mobl2.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.100])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2024 06:45:58 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
- Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
- linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
- Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH 0/2] Make ELOG log and trace consistently with GHES
-Date: Tue, 23 Jul 2024 15:43:45 +0200
-Message-ID: <2737053.vuYhMxLoTh@fdefranc-mobl3>
-In-Reply-To: <20240527144356.246220-1-fabio.m.de.francesco@linux.intel.com>
-References: <20240527144356.246220-1-fabio.m.de.francesco@linux.intel.com>
+	s=arc-20240116; t=1721742648; c=relaxed/simple;
+	bh=tW6HsmQOjj7xPFL6XEyV/XE4WS5aT2bJPBoSRsPQ1xw=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=QxoVnNTHbFn0MtL0excHh/Bnjzs8H/0Nd/mPloitmNphBQa8g1yL+RbXI+xRHOmp2dxjRAhp5Wmh8QDhN/aXbNjRNbHl3U/DP9I6RTS6bvsJ7PwgyP8yBEX1n8IKSWQlCLYPtsfxdP+iRSFd/Bn0kR81OenDF/RYjH+O/qYpJ+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Oul8SF9y; arc=none smtp.client-ip=203.205.221.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1721742637; bh=gfegjeFnJsdVXr1kv41jgaCMDzrCuvT6UucD50J0yKc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=Oul8SF9yFIZRPupqIW29IkTNk2eCI5hQSfszN/whRL9igegC1b5iALbAUN+lU5XmJ
+	 rx0GLrRORkwZMaIUkdYryuQW8PftAagTScmZCWjsDYK9dvOiQSV7C/TBCjNBhOVv8z
+	 Bc7K/KArHtkYALvQo0QWHAX+nUNcD55CVfLAvfSQ=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id B0A38E1C; Tue, 23 Jul 2024 21:44:10 +0800
+X-QQ-mid: xmsmtpt1721742250toccw706f
+Message-ID: <tencent_A688921FDD9E5D95993ACFF58D87259B0D07@qq.com>
+X-QQ-XMAILINFO: MesT5uKpDagVV8yG3LJVEpP5hWMYZB1u239lEKc0U2cFrT5re3mp78cWO4k8is
+	 i7FvAlGUTrXM26E96fTcGZVjJ5eXdkwfVwg3A9paiPPIz+p2Ki7Fr1Z8NHb5eYl8CSHWJPq+/sJP
+	 xDqBa9fYBji2Lk1KHIw5o8UBhcyJbhFgStaL15gDQK1ixPQ9vKc86WTJckM0SMVf8SBeKoDVsiMt
+	 uQlKZMnsXmJMdsH/hGtVbTXjaPjhjAeoGJCyXcE+tEdiXmT31tviwAJHVNiRjA6ebMgIkX45BSqh
+	 PfYyOyuzlMJeVXcrCTmr5t0EFU7qSqVIjXAt93AB/Gnsz4/d8eunRGIR8WQThDczFtato0zXOrMN
+	 osIZsaehsTV7EdIDwojUOhd0tegmzB4TBHEsZsP6PeirT4a1Ckkz9W6GEdZSzmkhPyydOt+RCHPm
+	 uW1aD9mhJM2PZ6+ChLKBMpxl0KM/6co1wfui5zkjGc7aMZJYceQ7BYOVpNMK1WoMGduojEtDApeo
+	 xZ7qARoPCg6dCN9vNOs1xiaTI5GhK3F0ZtFIcQLrkmqGNfVobUA0N1RKzykS8SHoge+kiexOWXIp
+	 7mgv99rM/ecaKjHO6JwScok9Dr7uJjYinZRdVVrRSZ3SLXg2QZ2SMZD5ddM0EoOKUhn/jd+k56+X
+	 COGlkp/8MS+Ls5LuJ48qPV3u4MaIXQe7FmUMHFHvluXKlIeRVXqAfmo8MzWP5CQhU4vCJFUEYdUr
+	 /IZfeRZGCmhp3VwyIz8EUeCubk8M7tJfTRsZjnUnI8MXYnE40xRbA4PFseVGS1iBYA1iZ22YMFcL
+	 d9LarRKRUs9hMv462bWv/gdFR0GAAbz8YS9aWwzlU6sxEcgcFjnq16wNRdyNbpaFKgMeGttRWPzK
+	 ni9QSewLrVUTkhwomWF+he/oB0fWnrovncDeqPChqHfme+92aD90E=
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+784d0a1246a539975f05@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [rcu?] WARNING in rcu_note_context_switch (2)
+Date: Tue, 23 Jul 2024 21:44:10 +0800
+X-OQ-MSGID: <20240723134409.925075-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000d0e3b5061dc16993@google.com>
+References: <000000000000d0e3b5061dc16993@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Monday, May 27, 2024 4:43:39=E2=80=AFPM GMT+2 Fabio M. De Francesco wrot=
-e:
-> When Firmware First is enabled, BIOS handles errors first and then it
-> makes them available to the kernel via the Common Platform Error Record
-> (CPER) sections (UEFI 2.10 Appendix N). Linux parses the CPER sections
-> via one of two similar paths, either ELOG or GHES.
->=20
-> Currently, ELOG and GHES show some inconsistencies in how they print to
-> the kernel log as well as in how they report to userspace via trace
-> events.
->=20
-> Make the two mentioned paths act similarly for what relates to logging
-> and tracing.
+miss rcu read unlock
 
-Gentle ping.
-Thanks,
+#syz test: upstream 51835949dda3
 
-=46abio
-
-> --- Changes for v1 ---
->=20
-> 	- Drop the RFC prefix and restart from PATCH v1
-> 	- Drop patch 3/3 because a discussion on it has not yet been
-> 	  settled
-> 	- Drop namespacing in export of pci_print_aer while() (Dan)
-> 	- Don't use '#ifdef' in *.c files (Dan)
-> 	- Drop a reference on pdev after operation is complete (Dan)
-> 	- Don't log an error message if pdev is NULL (Dan)
->=20
-> --- Changes for RFC v2 ---
-> =09
-> 	- 0/3: rework the subject line and the letter.
->         - 1/3: no changes.
->         - 2/3: trace CPER PCIe Section only if CONFIG_ACPI_APEI_PCIEAER
->           is defined; the kernel test robot reported the use of two
->           undefined symbols because the test for the config option was
->           missing; rewrite the subject line and part of commit message.
->         - 3/3: no changes.
->=20
-> Fabio M. De Francesco (2):
->   ACPI: extlog: Trace CPER Non-standard Section Body
->   ACPI: extlog: Trace CPER PCI Express Error Section
->=20
->  drivers/acpi/acpi_extlog.c | 35 +++++++++++++++++++++++++++++++++++
->  drivers/pci/pcie/aer.c     |  2 +-
->  include/linux/aer.h        |  9 ++++++---
->  3 files changed, 42 insertions(+), 4 deletions(-)
->=20
->=20
-
-
-
+diff --git a/fs/nsfs.c b/fs/nsfs.c
+index a4a925dce331..e228d06f0949 100644
+--- a/fs/nsfs.c
++++ b/fs/nsfs.c
+@@ -188,8 +188,10 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
+ 			tsk = find_task_by_vpid(arg);
+ 		else
+ 			tsk = find_task_by_pid_ns(arg, pid_ns);
+-		if (!tsk)
++		if (!tsk) {
++			rcu_read_unlock();
+ 			break;
++		}
+ 
+ 		switch (ioctl) {
+ 		case NS_GET_PID_FROM_PIDNS:
 
 
