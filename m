@@ -1,97 +1,100 @@
-Return-Path: <linux-kernel+bounces-260042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9B9893A1F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:50:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48E1A93A1DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:44:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75DAD2841BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:50:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03AF4283E83
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB84E1509A9;
-	Tue, 23 Jul 2024 13:50:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B059F15359A;
+	Tue, 23 Jul 2024 13:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Oul8SF9y"
-Received: from out203-205-221-155.mail.qq.com (out203-205-221-155.mail.qq.com [203.205.221.155])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HlXjeGP1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1BB8F70
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 13:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F9D14D6EE;
+	Tue, 23 Jul 2024 13:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721742648; cv=none; b=qEde4nVJw4/CgaFRstpYZnTHScKf6UXhLLDBLBFT9DWhTi0b+spWSMubK7HNH0gr/BP3mRua+RO+kmb2UtPOiiVzr4zQjMO6dLX1xlqNZeaWgHPment2KxINT4Ez0Fb9JTmXJfXFmwC6D87NvBbInlCgK1LNAoxRuY1saztt9DM=
+	t=1721742289; cv=none; b=PcQnEf73jYJltZBcUF78JtkIlh5Dt4zicGXA/FAXojaxLcakDHeYq6kkyD2NdOpdzUbDlJrPUShboea2ruJAj1WeEgGscMBtGsJVeev+zQ3Kfwhw4ixiOO18HnX41eTYbRr9YY9TYGgOC4T/CFwu3Z0FVkm8Njc89EwestuYGTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721742648; c=relaxed/simple;
-	bh=tW6HsmQOjj7xPFL6XEyV/XE4WS5aT2bJPBoSRsPQ1xw=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=QxoVnNTHbFn0MtL0excHh/Bnjzs8H/0Nd/mPloitmNphBQa8g1yL+RbXI+xRHOmp2dxjRAhp5Wmh8QDhN/aXbNjRNbHl3U/DP9I6RTS6bvsJ7PwgyP8yBEX1n8IKSWQlCLYPtsfxdP+iRSFd/Bn0kR81OenDF/RYjH+O/qYpJ+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Oul8SF9y; arc=none smtp.client-ip=203.205.221.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1721742637; bh=gfegjeFnJsdVXr1kv41jgaCMDzrCuvT6UucD50J0yKc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Oul8SF9yFIZRPupqIW29IkTNk2eCI5hQSfszN/whRL9igegC1b5iALbAUN+lU5XmJ
-	 rx0GLrRORkwZMaIUkdYryuQW8PftAagTScmZCWjsDYK9dvOiQSV7C/TBCjNBhOVv8z
-	 Bc7K/KArHtkYALvQo0QWHAX+nUNcD55CVfLAvfSQ=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id B0A38E1C; Tue, 23 Jul 2024 21:44:10 +0800
-X-QQ-mid: xmsmtpt1721742250toccw706f
-Message-ID: <tencent_A688921FDD9E5D95993ACFF58D87259B0D07@qq.com>
-X-QQ-XMAILINFO: MesT5uKpDagVV8yG3LJVEpP5hWMYZB1u239lEKc0U2cFrT5re3mp78cWO4k8is
-	 i7FvAlGUTrXM26E96fTcGZVjJ5eXdkwfVwg3A9paiPPIz+p2Ki7Fr1Z8NHb5eYl8CSHWJPq+/sJP
-	 xDqBa9fYBji2Lk1KHIw5o8UBhcyJbhFgStaL15gDQK1ixPQ9vKc86WTJckM0SMVf8SBeKoDVsiMt
-	 uQlKZMnsXmJMdsH/hGtVbTXjaPjhjAeoGJCyXcE+tEdiXmT31tviwAJHVNiRjA6ebMgIkX45BSqh
-	 PfYyOyuzlMJeVXcrCTmr5t0EFU7qSqVIjXAt93AB/Gnsz4/d8eunRGIR8WQThDczFtato0zXOrMN
-	 osIZsaehsTV7EdIDwojUOhd0tegmzB4TBHEsZsP6PeirT4a1Ckkz9W6GEdZSzmkhPyydOt+RCHPm
-	 uW1aD9mhJM2PZ6+ChLKBMpxl0KM/6co1wfui5zkjGc7aMZJYceQ7BYOVpNMK1WoMGduojEtDApeo
-	 xZ7qARoPCg6dCN9vNOs1xiaTI5GhK3F0ZtFIcQLrkmqGNfVobUA0N1RKzykS8SHoge+kiexOWXIp
-	 7mgv99rM/ecaKjHO6JwScok9Dr7uJjYinZRdVVrRSZ3SLXg2QZ2SMZD5ddM0EoOKUhn/jd+k56+X
-	 COGlkp/8MS+Ls5LuJ48qPV3u4MaIXQe7FmUMHFHvluXKlIeRVXqAfmo8MzWP5CQhU4vCJFUEYdUr
-	 /IZfeRZGCmhp3VwyIz8EUeCubk8M7tJfTRsZjnUnI8MXYnE40xRbA4PFseVGS1iBYA1iZ22YMFcL
-	 d9LarRKRUs9hMv462bWv/gdFR0GAAbz8YS9aWwzlU6sxEcgcFjnq16wNRdyNbpaFKgMeGttRWPzK
-	 ni9QSewLrVUTkhwomWF+he/oB0fWnrovncDeqPChqHfme+92aD90E=
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+784d0a1246a539975f05@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [rcu?] WARNING in rcu_note_context_switch (2)
-Date: Tue, 23 Jul 2024 21:44:10 +0800
-X-OQ-MSGID: <20240723134409.925075-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000d0e3b5061dc16993@google.com>
-References: <000000000000d0e3b5061dc16993@google.com>
+	s=arc-20240116; t=1721742289; c=relaxed/simple;
+	bh=1l39LxJ0o9ueMh/5BoWtbV5B1HGV2nlUkhGauphkz5E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WVG1PnhNFcGCQUnwkCcAMPKnK8u4V24H4TlcQD8rw75mRXJB6HSUTXyIC/2LlhJOGY9JdCDODO6Zns6J2ktvi3M+4Ntg1QVAMQKUvDG8fJtz5dgwHAiI5a4/kncTjbKU9adpbJEQ+6GPMBDipwpJUUQmptEeHMX7S1oK4vs161E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HlXjeGP1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 145D2C4AF0A;
+	Tue, 23 Jul 2024 13:44:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1721742288;
+	bh=1l39LxJ0o9ueMh/5BoWtbV5B1HGV2nlUkhGauphkz5E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HlXjeGP14hG7imPL1cjrd2654qMBJvuf/slNtB0Q1LQsw3MGftnNYIfAZjdr8wvBo
+	 e8zuOiFQjkcZRqiu/Z2t8F8wy8aUYgPx78mkYTzAQ4SspCMaXclhUEhRnG+Ogcel3S
+	 nkGJ5jadQq8ZH0DoACqsl5T6mZ1kva6f+Lx6Hwko=
+Date: Tue, 23 Jul 2024 15:44:45 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: heikki.krogerus@linux.intel.com, dmitry.baryshkov@linaro.org,
+	bleung@chromium.org, utkarsh.h.patel@intel.com,
+	abhishekpandit@chromium.org, kyletso@google.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: typec: ucsi: Fix NULL pointer dereference in
+ ucsi_displayport_vdm()
+Message-ID: <2024072333-popcorn-detached-f399@gregkh>
+References: <20240723133230.1325392-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240723133230.1325392-1-make24@iscas.ac.cn>
 
-miss rcu read unlock
+On Tue, Jul 23, 2024 at 09:32:30PM +0800, Ma Ke wrote:
+> When dp->con->partner is an error, a NULL pointer dereference may occur.
+> Add a check for dp->con->partner to avoid dereferencing a NULL pointer.
+> 
+> Fixes: 372adf075a43 ("usb: typec: ucsi: Determine common SVDM Version")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+>  drivers/usb/typec/ucsi/displayport.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-#syz test: upstream 51835949dda3
+Hi,
 
-diff --git a/fs/nsfs.c b/fs/nsfs.c
-index a4a925dce331..e228d06f0949 100644
---- a/fs/nsfs.c
-+++ b/fs/nsfs.c
-@@ -188,8 +188,10 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
- 			tsk = find_task_by_vpid(arg);
- 		else
- 			tsk = find_task_by_pid_ns(arg, pid_ns);
--		if (!tsk)
-+		if (!tsk) {
-+			rcu_read_unlock();
- 			break;
-+		}
- 
- 		switch (ioctl) {
- 		case NS_GET_PID_FROM_PIDNS:
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
