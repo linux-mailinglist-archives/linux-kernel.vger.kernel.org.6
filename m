@@ -1,203 +1,138 @@
-Return-Path: <linux-kernel+bounces-259901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2A16939F78
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:12:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02A1E939F7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:12:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 866A228324D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:12:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 344111C2202F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF4414F9E1;
-	Tue, 23 Jul 2024 11:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3767714F9E4;
+	Tue, 23 Jul 2024 11:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uKckGtRr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HAeVsB6U"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A301F14D29C;
-	Tue, 23 Jul 2024 11:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E459A14F9D9
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721733117; cv=none; b=haMRBE9kTV/WBkVa3GJouS0iV0t73navl7ahmPwgK3eUTmnXSxNfLy+xnD58k9wBQ7qGjg7f5r8jkDJU3gCdfVS6RJVyH/LTOV2R3s3kSlevOyiM7NP645WvZFlsLhc3nCzDVHIaBROzDCSiOUtYeK8InJZA4idcK9/CNbKDPpM=
+	t=1721733132; cv=none; b=iyjc5abwCE2+zDr0rswR/AZQW/7leRM6YRhs5TUIQwKPV4HWAGoGUmN/EUSbuDehBZgRtBT8vrty5jwQHmjOlwMCER5fGavqeDALxoJysX6nOBA464DYIrERRf+eCWai3xXeyIyhLulep5Q3DYpe95j5VsbbUdSUuzFSNqDc4uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721733117; c=relaxed/simple;
-	bh=hJsVgyiAMBuc1PS9TnXUFps/ubUqO5CQMzsyJiAKdsk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d9gIeRR5wC08jzbz/H36ZpYRYpOO3T/6CNibv+kxWKZ6B0DpStYSD3ri2V7ZKl6mq0jEj7rd9I4xGaokSfuXNK0sND6Es65QmXyrjkicbh+F+GKzRsecLzXgQ34iuGEqDGacWolduRt4aRr75AmVNw+xDGvAT0vQttbgVICnUzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uKckGtRr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C32CC4AF0A;
-	Tue, 23 Jul 2024 11:11:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721733117;
-	bh=hJsVgyiAMBuc1PS9TnXUFps/ubUqO5CQMzsyJiAKdsk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uKckGtRrSme/gn5Qfp5RqmwSQlxnye+sJyNKMBm3FTCNEFwRQCjLNnMtXoylUl7qm
-	 RbPTWJTHmA3WEXdGtbxcS9OOAv5bXLirMw9wTewwQjFYZU1zizgRCd5ALAD/OKXmXF
-	 Q9rQ+qGtFfUIgqRxMypWcHehgotGdQeTOD6B2sIYSpp2+qOZ8ehK0BiOv/bbgxVkyr
-	 MrgcI+01BbJTY+C2q86YP6aHAMHryfjTnfT0F7V30eZ3UJ6m+pPsMxR0vKZJgs9AqI
-	 FXGKYkNxlm+UiuaY/vwXep4LKfihhjBJP8iakE2KK9mPyHei4wWXf8G5R7K+Iirqmk
-	 uQdOTFywO4zQQ==
-Date: Tue, 23 Jul 2024 13:11:51 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: David Howells <dhowells@redhat.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>, Gao Xiang <xiang@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev, linux-erofs@lists.ozlabs.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfs: Fix potential circular locking through setxattr()
- and removexattr()
-Message-ID: <20240723-aberkennen-unruhen-61570127dc6e@brauner>
-References: <2136178.1721725194@warthog.procyon.org.uk>
- <20240723104533.mznf3svde36w6izp@quack3>
+	s=arc-20240116; t=1721733132; c=relaxed/simple;
+	bh=IvzIW2clA3I7GZ4v4J56J8ja6IwCiuGy9Lu+qz6Lwgg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RPVlQ/u/YhkxehVRQ4sM2Hl1p5dKKJxKoB1LLSRgc1Pl8Btc/3PU6P2MicZu4SY7h3z9a8X3q0YP7i1gz4Mk0aYx/uX9VzA21+XkSAiVG0lM3IDacgbvHu4uJNVQSYIXRUedoRG2mkjkhi9m7MED9KVQZzPBJs3aRh1Q55W2FE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HAeVsB6U; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-66a1842b452so36098507b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 04:12:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721733130; x=1722337930; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=VY9kR9+u3xGnZyuvPfUJwJjyKQqZEzEIXFGJcOyXF/A=;
+        b=HAeVsB6UidUpRNiP3gzF9maf0b/iZHaEbQisFR31OJY3ZdLhIe4h42cYfkeSrTMD2C
+         EioCdv0zT7DwBefyplv5gMlbEjbrrThrzMOaw85mnGFXeb/rnOeEIKo0t90FcbMSi5n3
+         66CyABxcc3Z4yijmvqiW053d5cka6QDsnBrfHW4SlgJOjW1P0l5J5qh9rSYlcDWMAb3x
+         WXXN/z22SPY9HeGSSKAaAmw6fK4mm4AIhgS6bBwMwrZDGNxcB28ehygWU12dISY9sl9t
+         RmrNLYcEq++EG7vWsUTC3EWcrvRNaJlsDCijBHWlUlzWEb5878R0bKWvBBv3n+wAB61e
+         0TXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721733130; x=1722337930;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VY9kR9+u3xGnZyuvPfUJwJjyKQqZEzEIXFGJcOyXF/A=;
+        b=RtHK3OM2LB7MWCitsPO1SDCyVGT/zktTr9PzPGsJWdFNR+7OFZPz4lq3XDVU9ps0KU
+         bOw97uQJ5eSssUtXFo19PLBWw0IwoK4LJhU+4X9lUM8GVRltvWPfdQPC1D8wcr5h190g
+         Dtf0HJkvG8pK5PNrc/oJEucZ7zE5BzWRfK9sPhIWUW6OdiPmrZTjk2awV25/qEQFJnEZ
+         1uhmfdSmmrbTkWhWg+Ecb6xQ5qy4iMXx09ishDMipGiW8Y4687PKfoNAQTqx11SSoqDx
+         HvuFPq804xUCjlJt/DBBCwMwbEi1qjBIaRPtq1l+3rW6jYMDSXSRBSTubtGB550yOQWr
+         cmWg==
+X-Forwarded-Encrypted: i=1; AJvYcCV2LJOb/h2StlwSKdmVV7+eNRkVdlt7XwUWLwynKl/cKeTb9gf5BAKGpKMyuHMcYkY+ZI735fwqpi8+DTSvVMWRcIxJSkc6NGkND+Yy
+X-Gm-Message-State: AOJu0YxkGuMdkHAgwi7QeGfqJP0VXxrHCDqFiBNBEBdkmak+O1z2t5FZ
+	PVnH94Rz3GkQqY+VDqUddvt07V1xFK/HM+Q72wtC486HtnMKUTZYC6+uBtDggOwqTo0qGiCo8Km
+	WS0Li7qATC4CdK6zoAlmh/ZyKGdUCIHRIB0QZjQ==
+X-Google-Smtp-Source: AGHT+IFMnTFT7vPcY+Zxr0a0QqBAxxsVv2qmTLZ+m/AsVwQAEBYUMa+4mr/VFc2Y7CyYP17aKtDXJGa2I0EwFghD4fk=
+X-Received: by 2002:a05:690c:f94:b0:64a:5ff5:73ef with SMTP id
+ 00721157ae682-66a654aa5d7mr128979387b3.0.1721733129835; Tue, 23 Jul 2024
+ 04:12:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240723104533.mznf3svde36w6izp@quack3>
+References: <20240722-miix630-support-v1-0-a6483cfe8674@linaro.org>
+ <20240722-miix630-support-v1-3-a6483cfe8674@linaro.org> <3a257754-2118-4a7f-9753-f1a2392f9279@linaro.org>
+In-Reply-To: <3a257754-2118-4a7f-9753-f1a2392f9279@linaro.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 23 Jul 2024 14:11:58 +0300
+Message-ID: <CAA8EJppvwXEiNs-6orVMSkkjJu4nYY4ZNdshbB1sUM=z4ouYXg@mail.gmail.com>
+Subject: Re: [PATCH 3/4] arm64: dts: qcom: msm8998-lenovo-miix-630: enable
+ VolumeUp button
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jeffrey Hugo <quic_jhugo@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 23, 2024 at 12:45:33PM GMT, Jan Kara wrote:
-> On Tue 23-07-24 09:59:54, David Howells wrote:
-> > When using cachefiles, lockdep may emit something similar to the circular
-> > locking dependency notice below.  The problem appears to stem from the
-> > following:
-> > 
-> >  (1) Cachefiles manipulates xattrs on the files in its cache when called
-> >      from ->writepages().
-> > 
-> >  (2) The setxattr() and removexattr() system call handlers get the name
-> >      (and value) from userspace after taking the sb_writers lock, putting
-> >      accesses of the vma->vm_lock and mm->mmap_lock inside of that.
-> > 
-> >  (3) The afs filesystem uses a per-inode lock to prevent multiple
-> >      revalidation RPCs and in writeback vs truncate to prevent parallel
-> >      operations from deadlocking against the server on one side and local
-> >      page locks on the other.
-> > 
-> > Fix this by moving the getting of the name and value in {get,remove}xattr()
-> > outside of the sb_writers lock.  This also has the minor benefits that we
-> > don't need to reget these in the event of a retry and we never try to take
-> > the sb_writers lock in the event we can't pull the name and value into the
-> > kernel.
-> 
-> Well, it seems like you are trying to get rid of the dependency
-> sb_writers->mmap_sem. But there are other places where this dependency is
+On Tue, 23 Jul 2024 at 02:24, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>
+> On 22.07.2024 1:57 PM, Dmitry Baryshkov wrote:
+> > Add gpio-keys device, responsible for a single button: Volume Up.
+> >
+> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > ---
+> >  .../boot/dts/qcom/msm8998-lenovo-miix-630.dts      | 25 ++++++++++++++++++++++
+> >  1 file changed, 25 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/qcom/msm8998-lenovo-miix-630.dts b/arch/arm64/boot/dts/qcom/msm8998-lenovo-miix-630.dts
+> > index f585bc8ba2ce..bca309ac0cb8 100644
+> > --- a/arch/arm64/boot/dts/qcom/msm8998-lenovo-miix-630.dts
+> > +++ b/arch/arm64/boot/dts/qcom/msm8998-lenovo-miix-630.dts
+> > @@ -3,12 +3,27 @@
+> >
+> >  /dts-v1/;
+> >
+> > +#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+> >  #include "msm8998-clamshell.dtsi"
+> >
+> >  / {
+> >       model = "Lenovo Miix 630";
+> >       compatible = "lenovo,miix-630", "qcom,msm8998";
+> >       chassis-type = "convertible";
+> > +
+> > +     gpio-keys {
+> > +             compatible = "gpio-keys";
+> > +             autorepeat;
+> > +
+> > +             pinctrl-names = "default";
+> > +             pinctrl-0 = <&vol_up_pin_a>;
+>
+> property-n
+> property-names
+>
+> > +
+> > +             key-vol-up {
+> > +                     label = "Volume Up";
+> > +                     linux,code = <KEY_VOLUMEUP>;
+> > +                     gpios = <&pm8998_gpios 6 GPIO_ACTIVE_LOW>;
+>
+> No debounce-interval?
 
-Independent of this issue, I think that moving the retrieval of name and
-value out of the lock is a good thing. The commit message might need to
-get reworded of course.
+Strangely enough, no. See existing defines.
 
-> created, in particular write(2) path is a place where it would be very
-> difficult to get rid of it (you take sb_writers, then do all the work
-> preparing the write and then you copy user data into page cache which
-> may require mmap_sem).
-> 
-> But looking at the lockdep splat below:
-> 
-> >  ======================================================
-> >  WARNING: possible circular locking dependency detected
-> >  6.10.0-build2+ #956 Not tainted
-> >  ------------------------------------------------------
-> >  fsstress/6050 is trying to acquire lock:
-> >  ffff888138fd82f0 (mapping.invalidate_lock#3){++++}-{3:3}, at: filemap_fault+0x26e/0x8b0
-> > 
-> >  but task is already holding lock:
-> >  ffff888113f26d18 (&vma->vm_lock->lock){++++}-{3:3}, at: lock_vma_under_rcu+0x165/0x250
-> > 
-> >  which lock already depends on the new lock.
-> > 
-> >  the existing dependency chain (in reverse order) is:
-> > 
-> >  -> #4 (&vma->vm_lock->lock){++++}-{3:3}:
-> >         __lock_acquire+0xaf0/0xd80
-> >         lock_acquire.part.0+0x103/0x280
-> >         down_write+0x3b/0x50
-> >         vma_start_write+0x6b/0xa0
-> >         vma_link+0xcc/0x140
-> >         insert_vm_struct+0xb7/0xf0
-> >         alloc_bprm+0x2c1/0x390
-> >         kernel_execve+0x65/0x1a0
-> >         call_usermodehelper_exec_async+0x14d/0x190
-> >         ret_from_fork+0x24/0x40
-> >         ret_from_fork_asm+0x1a/0x30
-> > 
-> >  -> #3 (&mm->mmap_lock){++++}-{3:3}:
-> >         __lock_acquire+0xaf0/0xd80
-> >         lock_acquire.part.0+0x103/0x280
-> >         __might_fault+0x7c/0xb0
-> >         strncpy_from_user+0x25/0x160
-> >         removexattr+0x7f/0x100
-> >         __do_sys_fremovexattr+0x7e/0xb0
-> >         do_syscall_64+0x9f/0x100
-> >         entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > 
-> >  -> #2 (sb_writers#14){.+.+}-{0:0}:
-> >         __lock_acquire+0xaf0/0xd80
-> >         lock_acquire.part.0+0x103/0x280
-> >         percpu_down_read+0x3c/0x90
-> >         vfs_iocb_iter_write+0xe9/0x1d0
-> >         __cachefiles_write+0x367/0x430
-> >         cachefiles_issue_write+0x299/0x2f0
-> >         netfs_advance_write+0x117/0x140
-> >         netfs_write_folio.isra.0+0x5ca/0x6e0
-> >         netfs_writepages+0x230/0x2f0
-> >         afs_writepages+0x4d/0x70
-> >         do_writepages+0x1e8/0x3e0
-> >         filemap_fdatawrite_wbc+0x84/0xa0
-> >         __filemap_fdatawrite_range+0xa8/0xf0
-> >         file_write_and_wait_range+0x59/0x90
-> >         afs_release+0x10f/0x270
-> >         __fput+0x25f/0x3d0
-> >         __do_sys_close+0x43/0x70
-> >         do_syscall_64+0x9f/0x100
-> >         entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> 
-> This is the problematic step - from quite deep in the locking chain holding
-> invalidate_lock and having PG_Writeback set you suddently jump to very outer
-> locking context grabbing sb_writers. Now AFAICT this is not a real deadlock
-> problem because the locks are actually on different filesystems, just
-> lockdep isn't able to see this. So I don't think you will get rid of these
-> lockdep splats unless you somehow manage to convey to lockdep that there's
-> the "upper" fs (AFS in this case) and the "lower" fs (the one behind
-> cachefiles) and their locks are different.
-> 
-> >  -> #1 (&vnode->validate_lock){++++}-{3:3}:
-> >         __lock_acquire+0xaf0/0xd80
-> >         lock_acquire.part.0+0x103/0x280
-> >         down_read+0x95/0x200
-> >         afs_writepages+0x37/0x70
-> >         do_writepages+0x1e8/0x3e0
-> >         filemap_fdatawrite_wbc+0x84/0xa0
-> >         filemap_invalidate_inode+0x167/0x1e0
-> >         netfs_unbuffered_write_iter+0x1bd/0x2d0
-> >         vfs_write+0x22e/0x320
-> >         ksys_write+0xbc/0x130
-> >         do_syscall_64+0x9f/0x100
-> >         entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > 
-> >  -> #0 (mapping.invalidate_lock#3){++++}-{3:3}:
-> >         check_noncircular+0x119/0x160
-> >         check_prev_add+0x195/0x430
-> >         __lock_acquire+0xaf0/0xd80
-> >         lock_acquire.part.0+0x103/0x280
-> >         down_read+0x95/0x200
-> >         filemap_fault+0x26e/0x8b0
-> >         __do_fault+0x57/0xd0
-> >         do_pte_missing+0x23b/0x320
-> >         __handle_mm_fault+0x2d4/0x320
-> >         handle_mm_fault+0x14f/0x260
-> >         do_user_addr_fault+0x2a2/0x500
-> >         exc_page_fault+0x71/0x90
-> >         asm_exc_page_fault+0x22/0x30
-> 
-> 								Honza
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+
+
+-- 
+With best wishes
+Dmitry
 
