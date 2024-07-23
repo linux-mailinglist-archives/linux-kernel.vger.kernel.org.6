@@ -1,109 +1,152 @@
-Return-Path: <linux-kernel+bounces-259872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ADFA939E8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:05:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7022A939E8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C885B210F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:05:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ECAA282646
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203C814E2F9;
-	Tue, 23 Jul 2024 10:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43DDB14EC42;
+	Tue, 23 Jul 2024 10:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="AphzzP+s"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SFyx/5xB"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070A314D28F;
-	Tue, 23 Jul 2024 10:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E1213B5B9;
+	Tue, 23 Jul 2024 10:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721729093; cv=none; b=dpf84eVWxTcE/TWr13EziGWj4UfCjPa7+lA2WqgTf9VzRsitZgPYHdQq1DIZHn96pt4xvX2xplHmXEwMg6LZp/kqCxtb4KelXgPKSHB9UH11qzQ93KU3oPvzCRByILfBiC000XJxQp+PfmpBE8PENDQfCwAOH+I+htYMStrVWUs=
+	t=1721729136; cv=none; b=pepm5TF84w8FMjICrM9mAFzBz0+t3h51eGyatTzBsuXKa8qRBtpHZ+8a94qumRvVYh/13mGVQVfwwu35YogYe2KvLFTtEdhuD/7xs8qLQUqiz/RCWwHG8D6jcdoYf4WPEFqzbeEd406w+8DyTgREscLPnlTGeeA1steOo0joLkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721729093; c=relaxed/simple;
-	bh=+8I4TKsfEOavMjm8P/2ATDPszpj6Q9Jmp/XlpWDjeXs=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VeP0SI8q5wI+QBu1HvSMq0bb3qksXuI4vwMTcSxYx0xFLZRoE1G39Nzvs9L3sC5vONxqSa2uHdGJ0LCDjb43bqxfe+bGsuCvxcfoeQVfvS/uvUQqc5KDRXzYcn/8/TuEucI5uKIi5m1XypOiiAYz1l8Hs8EJrIYgv3kFhA+rK7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=AphzzP+s; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:References:Cc:To:Subject:From:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=pBRBtqKuHNX2rkdNL75agUq7iD+iQuYibTqU7iSRiVw=; t=1721729091;
-	x=1722161091; b=AphzzP+s3NWRyhCA1wl7VC+6IxtX3sKu0tyCMwloknbcCI90d7zBzh51I7ag8
-	aRkO1NduLCptzzTXc/KsG1CWzOUS2G8lWILezHnVdblamv9riBQmk7x0ILQrvwoQ2WzXrRMnl+rgP
-	JaeV47s59NKMXJuRe1F1eqqYf6gAnNTe8NkwRcKslMDTwUOpM1xbwMfJggUqx7xgPbNTRIwbqVch3
-	ipdp+IB91fapDd5ur9dYgD53hpsGVFKFMxRcsoCYyIrtfqJej5Hoa0/UVovwh8OZ9Uj4T9Rs/Iq6w
-	AkRQnxNShSPQvQlVaMBGyA5F/hdCpATZLCoRpTlHzJqhaU288g==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sWCNu-0004Kg-LG; Tue, 23 Jul 2024 12:04:42 +0200
-Message-ID: <108448f5-912f-4dac-bbba-19b1b58087b1@leemhuis.info>
-Date: Tue, 23 Jul 2024 12:04:41 +0200
+	s=arc-20240116; t=1721729136; c=relaxed/simple;
+	bh=ynqgtYab2q6TuXt70ZssfYpgFW6Zkqc80xP1uO6H1Vo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TZlboqHpsw2dE/YmeargPlgTwrKzlyH4qSiT2Tu2i/otrSRMWd4+8u+kIuzT6grdDr9lVp7mZ8dL1+/9UelPjuY8mH40YeK6QIdofCDETmxt5UmmtqE33Oa+GRwBk+VKSy7iOddgwgl3hRU+D8f5bgQ/Z/1k2Pil/OmJxSoyy8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SFyx/5xB; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46NA4vEi016652;
+	Tue, 23 Jul 2024 10:05:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=izDxB8a/43UJ3tm1l6jxwFFV
+	nVicb396qZJq3vyx73o=; b=SFyx/5xByLA1pFAToZHxgqzUw2HJFR1hzneGai2o
+	I2x5Eb4AiDkHSu9Lo9Js49SCpANCAHun6eZE9RABSfWYQx4E37qZILpssm+LKOZU
+	Ruh8nT3fsvE1B4+OCcQCmt5kPnZw0ZkspJFRPtRhnTvOA5Ig7AvTTYM1dPXSh6Sj
+	52GKJEng3OOErbYBCJX3krwKt4JIFzz3pEB9GHpGfJ7lzP/H/kZD1+S/BitwCP6P
+	JgrlnRHMhYSWP6TKs87T5ojstrbxTTHCu1WVS2RskcyTKlmqDf4wexlbbHgjEPKz
+	SmpZ/NjopyRDnIN0LSaxee2A6W10OMd4Rsa+fmViRbqhvA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g5m6xf2q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Jul 2024 10:05:30 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46NA5DpK026231
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Jul 2024 10:05:13 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 23 Jul 2024 03:05:09 -0700
+Date: Tue, 23 Jul 2024 15:35:05 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <gregkh@linuxfoundation.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <quic_wcheng@quicinc.com>,
+        <quic_kriskura@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: usb: qcom,dwc3: Update ipq5332
+ interrupt info
+Message-ID: <Zp+AUTAOqc6N7wUr@hu-varada-blr.qualcomm.com>
+References: <20240717094848.3536239-1-quic_varada@quicinc.com>
+ <fe83d463-b52a-44bc-b122-ed4fa4c20bf7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Thorsten Leemhuis <regressions@leemhuis.info>
-Subject: Re: Linux 6.10 regression resulting in a crash when using an ext4
- filesystem
-To: Greg KH <gregkh@linuxfoundation.org>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, "Artem S. Tashkinov"
- <aros@gmx.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-ext4@vger.kernel.org, xcreativ@gmail.com, madeisbaer@arcor.de,
- justinstitt@google.com, keescook@chromium.org,
- linux-hardening@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
- Kees Cook <kees@kernel.org>,
- Linux kernel regressions list <regressions@lists.linux.dev>
-References: <500f38b2-ad30-4161-8065-a10e53bf1b02@gmx.com>
- <20240722041924.GB103010@frogsfrogsfrogs>
- <BEEA84E0-1CF5-4F06-BC5C-A0F97240D76D@kernel.org>
- <20240723041136.GC3222663@mit.edu>
-Content-Language: en-US, de-DE
-In-Reply-To: <20240723041136.GC3222663@mit.edu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1721729091;1fc44743;
-X-HE-SMSGID: 1sWCNu-0004Kg-LG
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <fe83d463-b52a-44bc-b122-ed4fa4c20bf7@kernel.org>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: iQA_C9avujBm0XpzrnjPj-34Rdlg3bNG
+X-Proofpoint-ORIG-GUID: iQA_C9avujBm0XpzrnjPj-34Rdlg3bNG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-22_18,2024-07-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ mlxlogscore=930 adultscore=0 bulkscore=0 mlxscore=0 spamscore=0
+ priorityscore=1501 lowpriorityscore=0 clxscore=1015 malwarescore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407230075
 
-On 23.07.24 06:11, Theodore Ts'o wrote:
-> On Mon, Jul 22, 2024 at 12:06:59AM -0700, Kees Cook wrote:
->>> Is strscpy_pad appropriate if the @src parameter itself is a fixed
->>> length char[16] which isn't null terminated when the label itself is 16
->>> chars long?
->>
->> Nope; it needed memtostr_pad(). I sent the fix back at the end of May, but it only just recently landed:
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=be27cd64461c45a6088a91a04eba5cd44e1767ef
-> 
-> Yeah, sorry, I was on vacation for 3.5 weeks starting just before
-> Memorial day, and it took me a while to get caught up.  Unfortunately,
-> I missed the bug in the strncpy extirpation patch, and it was't
-> something that our regression tests caught.  (Sometimes, the
-> old/deprecated ways are just more reliable; all of ext4's strncpy()
-> calls were working and had been correct for decades.  :-P )
-> 
-> Anyway, Kees's bugfix is in Linus's tree, and it should be shortly be
-> making its way to -stable.
+On Thu, Jul 18, 2024 at 08:23:28AM +0200, Krzysztof Kozlowski wrote:
+> On 17/07/2024 11:48, Varadarajan Narayanan wrote:
+> > IPQ5332 has only three interrupts. Update the constraints
+> > to fix the following dt_binding_check errors.
+> >
+> > 	interrupt-names: ['pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
+> >
+> > Fixes: 53c6d854be4e ("dt-bindings: usb: dwc3: Clean up hs_phy_irq in binding")
+> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > ---
+> > v2: Fix patch version numbering. Incorrectly marked the first version as v0
+> >     Add interrupts and interrupt-names for ipq5332 instead of clubbing it with
+> >     qcom,x1e80100-dwc3
+> > ---
+> >  Documentation/devicetree/bindings/usb/qcom,dwc3.yaml | 8 +++++++-
+> >  1 file changed, 7 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+> > index 6c5f962bbcf9..5e5cc2175526 100644
+> > --- a/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+> > +++ b/Documentation/devicetree/bindings/usb/qcom,dwc3.yaml
+> > @@ -235,6 +235,13 @@ allOf:
+> >              - const: core
+> >              - const: sleep
+> >              - const: mock_utmi
+> > +        interrupts:
+> > +          maxItems: 3
+> > +        interrupt-names:
+> > +          items:
+> > +            - const: pwr_event
+> > +            - const: dp_hs_phy_irq
+> > +            - const: dm_hs_phy_irq
+>
+> Why are you duplicating interrupts for this variant? This is
+> qcom,ipq6018-dwc3, not 5332. Read carefully how the file is currently
+> organized - there is no entry which has clocks and interrupts at one
+> place. You are bringing inconsistency, why?
 
-Adding Greg and the stable list to the list of recipients: given that we
-already have two reports about trouble due to this[1] he might want to
-fast-track the fix (be27cd64461c45 ("ext4: use memtostr_pad() for
-s_volume_name")) to 6.10.y, as it's not queued yet -- at least afaics
-from looking at
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git/tree/
+Sorry, something got mixed up while rebasing.
+Have posted v3, please take a look.
 
-Ciao, Thorsten
+Thanks
+Varada
 
-[1] https://bugzilla.kernel.org/show_bug.cgi?id=219072 and
-https://bugzilla.kernel.org/show_bug.cgi?id=219078
+> >    - if:
+> >        properties:
+> > @@ -442,7 +449,6 @@ allOf:
+> >          compatible:
+> >            contains:
+> >              enum:
+> > -              - qcom,ipq5332-dwc3
+> >                - qcom,x1e80100-dwc3
+>
+> So now 5332 does not have any constraints.
+>
+> >      then:
+> >        properties:
 
