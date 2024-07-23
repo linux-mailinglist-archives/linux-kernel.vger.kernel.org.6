@@ -1,100 +1,152 @@
-Return-Path: <linux-kernel+bounces-260335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7AFD93A77B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:54:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED9B293A77E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EC81281A8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:54:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A27C21F2330E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491E713D8A6;
-	Tue, 23 Jul 2024 18:54:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 821F913D8A8;
+	Tue, 23 Jul 2024 18:55:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="euWl0Vrr"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="se89imST"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9614613C8EE
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 18:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF2613C8EE;
+	Tue, 23 Jul 2024 18:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721760866; cv=none; b=UKRjcE4dWP7RycrPP6VBrh4uJgnboIytCzv97l+Kk0ruvlF0lR0fsdT9o2QOA2zfIzq/FaecU7NrzdNscZkKye6FhLW1d+YCkusXk1vxoaeGRhoqo144eHEGVzQ1cKkPHExXNLAeaMyEugsO6AsXHQ4eCBLvjsl9phLacK4CDac=
+	t=1721760924; cv=none; b=HxsAwqfKHU7YHW4UGxgvz/IioAa/bbGEFU8aJabeUIqFTFQPE7+9oRieUQyWgVc+Y8SYFDmeZVTZn5gQrOR7LR5/ggkTSDqVv0SafLgHoNacT+Qx94eBhL344VoUXmUY6WIkWTTnetiG7MHZeU/AXEwx1VZrKqudJPBf3zAs7rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721760866; c=relaxed/simple;
-	bh=hBGmJFGudBcu7tftLyopZNa5ZHDvY0w16iin1mnABWI=;
+	s=arc-20240116; t=1721760924; c=relaxed/simple;
+	bh=m8tanHBnyb3um660m/Fiay8fgOwQGavPrK7RhkThkVo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IYluA7A6SXxZx5Xf6xqDbrLeob0cqDtoOVcwzpyuPGJOCemzq6GwsSXk8LqoLGAjBYihVeq896xZCjFnKzSA9megvAIU2bFA+JDJ8PXKIJh3pULYSOIu6aV1zyxZIZ4GLyMig2Er8bF4Co4/EnDIUJcTBiclXCbvfs8bRhUSAiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=euWl0Vrr; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a156557029so5281902a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:54:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721760862; x=1722365662; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o1PzO6HxZpKiR7Rz2aR5/ziuFXny/LO3qCWA5hi2tjQ=;
-        b=euWl0VrrWVyH9nailACpreqfyg2EtN9kGJoux2sRqQriqJPbocUGLwo9M2Bet3BBfJ
-         6D/8gZ+RwXgma2vmHFtsvwUIcCp7+1CpN9fLpsO4po8pMRY8dAnqqeJlgOtM+TxYV6Xw
-         cULO3UqO+RzhnkpIgVRhnFu3yI9NRKk7xfHH6qHEb130+WqGWWNXqKShqZ2S8NNAj0TD
-         fA3xau+hLjytAT6eY8X6GB1aeToIs8YpBJrSiJohnv2MqZYIQJOgto7sH37Ql12xnvwf
-         sWbscSVB+8CpD33UfhLNxb0GZJs1WZhL90M9fpjAQCIQYhUjr7zcUeXLkJ2AakUvP1XZ
-         6zaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721760862; x=1722365662;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o1PzO6HxZpKiR7Rz2aR5/ziuFXny/LO3qCWA5hi2tjQ=;
-        b=YMgj0Dw6ztQLqePsfaIDXwIQDWrkq+3w5jcoRz5yCc21OFX6Vq+62XNS3DC+hQK2US
-         Y/dQ1vJ5FMmceTq1y1hlRkJsVuX6/ByKy18k0FSLkU3w0d8DNBAs3om1Pb2DfqHW87CH
-         Nsxycp5QdvN0avXd7NPn3SpWdbgAuIFo5BVgA5o/0ZnO4Rv/YvNYWIZzZBc7nozWVf4m
-         2jViCRrLxUHa/y851uBm/pGRJYN9gwpXuqYa6vSxnWtU3DyNRmQf5hLkdiIBsdSR6/l6
-         9udO79CILDQjpXPfI9nQHtlksuiacop0wwlwwmi2anVKec1QCZLfANAH4dBTtEqNd4dU
-         Xkhg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvNIzZ4LFlMsK90mj93K8g568mS9/c1bl7nDxP2p70J8WYzsDsKeYSQ0yXiqGwJ+eJuYN0UJCX6IPebOUbR0RVCGDKL15RHdOALEIy
-X-Gm-Message-State: AOJu0YyM/OjuRw7bmRmViPyEhTcUenM+tieX4Bwm3Qeuj9sJjOxiGfAg
-	tWt5sg6SVm9fl7N5a3QzBmptTCN9q+zV890DQ6sLM+XjxfYOxRYoPb6NcaVbjbE=
-X-Google-Smtp-Source: AGHT+IFFlsbMiKpNZ6xTNTBTADEM6hScRq6FGfi8gHejzlkOcm3NDKRROYEkjF7TpTio3aaJeIWo1w==
-X-Received: by 2002:a17:907:d24:b0:a77:dbe2:31ff with SMTP id a640c23a62f3a-a7aabca8c83mr33269866b.66.1721760861984;
-        Tue, 23 Jul 2024 11:54:21 -0700 (PDT)
-Received: from localhost (109-81-94-157.rct.o2.cz. [109.81.94.157])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a953dec17sm104856066b.44.2024.07.23.11.54.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 11:54:21 -0700 (PDT)
-Date: Tue, 23 Jul 2024 20:54:21 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: cl@linux.com, penberg@kernel.org, rientjes@google.com,
-	iamjoonsoo.kim@lge.com, akpm@linux-foundation.org, vbabka@suse.cz,
-	roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, urezki@gmail.com,
-	hch@infradead.org, kees@kernel.org, ojeda@kernel.org,
-	wedsonaf@gmail.com, mpe@ellerman.id.au, chandan.babu@oracle.com,
-	christian.koenig@amd.com, maz@kernel.org, oliver.upton@linux.dev,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] Align kvrealloc() with krealloc()
-Message-ID: <Zp_8XVdxHLtf203L@tiehlicka>
-References: <20240722163111.4766-1-dakr@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bAT1yJ238tpHwC2bEZ7TcEyIYdmFCnLQ0WkX28sh12PJPxyQjLHX0SMN3+m3Jah3CSKMQX/Ak9SC3FPb4Vxh2mndubd+mkeMoWxFPwKdODizx+j6O3vBW6+t+5ncmcZULMy+AauGAWcgq4DV2pMLnSrjKN2tRQ+S2OEpV11wDb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=se89imST; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24C46C4AF0A;
+	Tue, 23 Jul 2024 18:55:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721760924;
+	bh=m8tanHBnyb3um660m/Fiay8fgOwQGavPrK7RhkThkVo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=se89imST6u7xu1WZpSLkDPr15gFfD+93NSJRdzfETxOBTqcckcLg5e2QtWu22CSYc
+	 lbhcmIUiY2kOvzlI0x8lZiaf6iYmkKwHdqqLN3iL6rgs+VAhZA3mzCC47PbF1rjuSZ
+	 q2FIkkAT4XOL5DLoCCuWkjmDW1k2Dzvgz/EKxkmzytQGveQGsBYJaLlleJVHsM9aB2
+	 Kn1Vm8bbiyrfu/tiZ4VN8pojgP/h/XJaF0miCkpkhpUQMz6Lpxz7pnf+SK6V5mrdZo
+	 o4oxJ6FgGN9lRkWcwlwGOU1IvY6VaupNQwJ/+J4Zj/MOGifo0YOud6H9oU605vIxib
+	 ISnyfkLTiPYDg==
+Date: Tue, 23 Jul 2024 13:55:20 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Abel Vesa <abel.vesa@linaro.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: Add X1E78100 ThinkPad T14s Gen 6
+Message-ID: <atjcj5qnetxilrnoom7xisqbl5yhq5ktg3jb7dfnkdnzbqblb5@qbkqupznvrua>
+References: <20240719-topic-t14s_upstream-v1-0-d7d97fdebb28@linaro.org>
+ <20240719-topic-t14s_upstream-v1-3-d7d97fdebb28@linaro.org>
+ <Zp055OR+OzSgiHhX@linaro.org>
+ <824edc08-f67f-4b2f-b4aa-da5df69b9df4@linaro.org>
+ <Zp4vghH5SK/rLEce@linaro.org>
+ <CAF6AEGszzRFiW16VzQQVF21U79uLcTNwwuGsHs98Zp_UGGTEBA@mail.gmail.com>
+ <4w4b5pjrrl7jnanx3uodsjxw4cfenc3i6tgmp6kblgn6gavn45@uu2milys4n2z>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240722163111.4766-1-dakr@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4w4b5pjrrl7jnanx3uodsjxw4cfenc3i6tgmp6kblgn6gavn45@uu2milys4n2z>
 
-To both patches:
-Acked-by: Michal Hocko <mhocko@suse.com>
+On Mon, Jul 22, 2024 at 07:03:43PM GMT, Dmitry Baryshkov wrote:
+> On Mon, Jul 22, 2024 at 08:00:19AM GMT, Rob Clark wrote:
+> > On Mon, Jul 22, 2024 at 3:11 AM Abel Vesa <abel.vesa@linaro.org> wrote:
+> > >
+> > > On 24-07-22 10:42:57, Konrad Dybcio wrote:
+> > > > On 21.07.2024 6:40 PM, Abel Vesa wrote:
+> > > > > On 24-07-19 22:16:38, Konrad Dybcio wrote:
+> > > > >> Add support for the aforementioned laptop. That includes:
+> > > > >>
+> > > > >> - input methods, incl. lid switch (keyboard needs the pdc
+> > > > >>   wakeup-parent removal hack..)
+> > > > >> - NVMe, WiFi
+> > > > >> - USB-C ports
+> > > > >> - GPU, display
+> > > > >> - DSPs
+> > > > >>
+> > > > >> Notably, the USB-A ports on the side are depenedent on the USB
+> > > > >> multiport controller making it upstream.
+> > > > >>
+> > > > >> At least one of the eDP panels used (non-touchscreen) identifies as
+> > > > >> BOE 0x0b66.
+> > > > >>
+> > > > >> See below for the hardware description from the OEM.
+> > > > >>
+> > > > >> Link: https://www.lenovo.com/us/en/p/laptops/thinkpad/thinkpadt/lenovo-thinkpad-t14s-gen-6-(14-inch-snapdragon)/len101t0099
+> > > > >> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> > > > >
+> > > > > Few comments below. Otherwise, LGTM.
+> > > > >
+> > > > > Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+> > > > >
+> > > > >> ---
+> > > > >>  arch/arm64/boot/dts/qcom/Makefile                  |   1 +
+> > > > >>  .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts     | 792 +++++++++++++++++++++
+> > > > >>  2 files changed, 793 insertions(+)
+> > > > >>
+> > > > >> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> > > > >> index 0e5c810304fb..734a05e04c4a 100644
+> > > > >> --- a/arch/arm64/boot/dts/qcom/Makefile
+> > > > >> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> > > > >> @@ -261,6 +261,7 @@ dtb-$(CONFIG_ARCH_QCOM)        += sm8650-hdk-display-card.dtb
+> > > > >>  dtb-$(CONFIG_ARCH_QCOM)   += sm8650-hdk.dtb
+> > > > >>  dtb-$(CONFIG_ARCH_QCOM)   += sm8650-mtp.dtb
+> > > > >>  dtb-$(CONFIG_ARCH_QCOM)   += sm8650-qrd.dtb
+> > > > >> +dtb-$(CONFIG_ARCH_QCOM)   += x1e78100-lenovo-thinkpad-t14s.dtb
+> > > > >>  dtb-$(CONFIG_ARCH_QCOM)   += x1e80100-asus-vivobook-s15.dtb
+> > > > >>  dtb-$(CONFIG_ARCH_QCOM)   += x1e80100-crd.dtb
+> > > > >>  dtb-$(CONFIG_ARCH_QCOM)   += x1e80100-lenovo-yoga-slim7x.dtb
+> > > > >> diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
+> > > > >
+> > > > > So what happens for SKUs of this model wil have x1e80100 ?
+> > > > >
+> > > > > Maybe we should stick to x1e80100 ?
+> > > >
+> > > > This one only ships with 78100
+> > > >
+> > >
+> > > Sure, but then in upstream we only have 80100. Plus, it is included in
+> > > this file as well.
+> > >
+> > > I don't know what's the right thing to do here. But I think it keeps
+> > > things more simple if we keep everything under the x1e80100 umbrella.
+> > 
+> > plus sticking to x1e80100 will avoid angering tab completion :-P
+> 
+> This is an old argument, with no clear answer. For some devices we
+> choose to use correct SoC name (sda660-inforce-ifc6560). For other we
+> didn't (sdm845-db845c, which really is SDA845). However for most of the
+> devices the goal is to be accurate (think about all the qcs vs qcm
+> stories). So my 2c. would go to x1e78100.
+> 
 
-Sorry, I was a bit dense today.
+I agree, x1e78100 follows the naming scheme we have agreed upon - for
+better or worse.
 
--- 
-Michal Hocko
-SUSE Labs
+Regards,
+Bjorn
+
+> -- 
+> With best wishes
+> Dmitry
 
