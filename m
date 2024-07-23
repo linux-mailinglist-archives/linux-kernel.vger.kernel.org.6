@@ -1,60 +1,58 @@
-Return-Path: <linux-kernel+bounces-260159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF8DC93A3F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:47:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BFB293A3F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C9E61C21E65
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:47:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56426281DA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FD45157A47;
-	Tue, 23 Jul 2024 15:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07676157E91;
+	Tue, 23 Jul 2024 15:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QvvySTao"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P7Gj3kXw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CEAB15748C
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 15:47:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D73C157A74
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 15:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721749625; cv=none; b=h45hQUnpqW+PQtuX+q1YoTT/TeT93q1y68D44HFj9aeZzYS2UEgZI/U/QWErra2tcJ46ZhGGzy6a3YzBVbpMvKufFsS1WPmefCiF5OV0Vr1KdpIaG05m5ZrINaLry7dX0KV7QBk13RlmQnYGfOkwtWNfQ7ueFR8smfr1QCdhF+k=
+	t=1721749627; cv=none; b=XIDIj8Ia1oO91O2zVjT58XiBf/93krLE8CLrNO90Q4Tw75NXaGiJ5n9TfC+KRQdrbMwZGXJyFgb94RIdAuc6UuYwR0yKh4pGIQ6lJKjht63pYbXgKIZw/KQxDIqBPpMkCmu6ClpMaZ5byhH3XpR6COfHqrruHJUTnAgkr2GbdJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721749625; c=relaxed/simple;
-	bh=87y0ZcSvXb9SA3kA4iK2xLw1zsrpzH8vfx3v3HTdx4o=;
+	s=arc-20240116; t=1721749627; c=relaxed/simple;
+	bh=QgL4SRJ15Uy7klGovV5PQE9jBMQGYBNBiX0F7BXEcJk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sDDq14lfTAVnMtUH6CyIafDU90e/wxzbNvFxLKDMdbHDa75JdGwUTl8OZZD7RAOiHlm+t5Qj/M8NUe5yYw7/1EQUZzM4aQh4zontILZObkkZMv9q5AC1W/aZDOPGeDWOYpQ4pp+FhO6xhGha2r9ncG3dGExVjrM+RcrrrS6Lbvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QvvySTao; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9ADC4C4AF0E;
-	Tue, 23 Jul 2024 15:47:03 +0000 (UTC)
+	 MIME-Version:Content-Type; b=XirxIgjIgFWRpt9ZFv56G7lYuMucnkYyNpinQt+Wmjg7wtWvsLxYNR3ktRohBB2gALpoXj/jtaEHnguUHoSwKxbcRiCNG6NAg5BOSB1hXBAWAqOKOJe+9ycN8q1vBf8JXyyfIdOyCNVbHroRD49BvEpekNnFsNz3uu/PyN5HaZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P7Gj3kXw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EBD7C4AF0A;
+	Tue, 23 Jul 2024 15:47:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721749625;
-	bh=87y0ZcSvXb9SA3kA4iK2xLw1zsrpzH8vfx3v3HTdx4o=;
+	s=k20201202; t=1721749626;
+	bh=QgL4SRJ15Uy7klGovV5PQE9jBMQGYBNBiX0F7BXEcJk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QvvySTaoEJOqI+DH30uX9v1KrOglpb4jsxgTSnD5Xg6Twd8hl0uiSZdGsIAXBJT8U
-	 RIiQ+9HsAe6E8/FqcIv6Loyt9tR4NYLCvoCprJcal159dgCEYThUntPLSQNfd8ep1E
-	 LR5PA3t5vziax0vc1hraWoXuRF3PBOasxMjt+GwDeEMHND4XpY+4oXiZVaX6X9k68q
-	 ++KvLRmkZu0VCWldxicHz+a/DuTLFPXR3OdqAmF+5vAy7nYiiPFy0L4Z3+MjPWCDhy
-	 mEvt4O8dMYtSZblKTIj7X5lkLH913BGtM/vjqec8RhWw6E2PZeQjNfTu8Ap05r6Ydm
-	 3tVBt4aqCSNhg==
+	b=P7Gj3kXwz+xz0ebI2sNFYZ5231qmg8Y+qMQIkAWkhN5Olyc8hW6dDZxfqs+LBq01n
+	 k/2/50ysPepHgWMtLkV3UQtKJQ/NXYR5cthR2mr1JSU96WSfPzMQkk2oPfGXKgxspj
+	 hZJJKSRVJzxs/MZPlmSrfiVFqbXuOEOOsqtuiD74z/2qxnzF/ErmUGXNaFQq7MDLO/
+	 RJu4MMVmc4rR0yixcjq3QveOJ3axmn/ifkqQzmXcKKQEo4/0Bjoe6Or9e0RWFM7zxQ
+	 MHUmFNMyuNABHfcQXPCX5zNWwXa3w3Dnq8Bf4U8p4X1sGRyAxpvIhqZfdVpgee+Xvq
+	 Wq6tJUd+0kMig==
 From: Will Deacon <will@kernel.org>
 To: Catalin Marinas <catalin.marinas@arm.com>,
 	linux-arm-kernel@lists.infradead.org,
-	Masahiro Yamada <masahiroy@kernel.org>
+	Fangrui Song <maskray@google.com>
 Cc: kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2] arm64: remove redundant 'if HAVE_ARCH_KASAN' in Kconfig
-Date: Tue, 23 Jul 2024 16:46:53 +0100
-Message-Id: <172174460679.278807.14772169296423125721.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64/vdso: Remove --hash-style=sysv
+Date: Tue, 23 Jul 2024 16:46:54 +0100
+Message-Id: <172174490407.279838.17045807844160700585.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20240715192843.2201439-1-masahiroy@kernel.org>
-References: <20240715192843.2201439-1-masahiroy@kernel.org>
+In-Reply-To: <20240718173423.1574395-1-maskray@google.com>
+References: <20240718173423.1574395-1-maskray@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,18 +62,21 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Tue, 16 Jul 2024 04:28:17 +0900, Masahiro Yamada wrote:
-> Since commit 0383808e4d99 ("arm64: kasan: Reduce minimum shadow
-> alignment and enable 5 level paging"), HAVE_ARCH_KASAN is always 'y'.
+On Thu, 18 Jul 2024 10:34:23 -0700, Fangrui Song wrote:
+> glibc added support for .gnu.hash in 2006 and .hash has been obsoleted
+> for more than one decade in many Linux distributions.  Using
+> --hash-style=sysv might imply unaddressed issues and confuse readers.
 > 
-> The condition 'if HAVE_ARCH_KASAN' is always met.
+> Just drop the option and rely on the linker default, which is likely
+> "both", or "gnu" when the distribution really wants to eliminate sysv
+> hash overhead.
 > 
-> 
+> [...]
 
 Applied to arm64 (for-next/core), thanks!
 
-[1/1] arm64: remove redundant 'if HAVE_ARCH_KASAN' in Kconfig
-      https://git.kernel.org/arm64/c/62e2397c2203
+[1/1] arm64/vdso: Remove --hash-style=sysv
+      https://git.kernel.org/arm64/c/48f6430505c0
 
 Cheers,
 -- 
