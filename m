@@ -1,163 +1,229 @@
-Return-Path: <linux-kernel+bounces-259800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B068B939D5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:16:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E554939D68
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2FCA1C21D57
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:16:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3E571F22AB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9524514D43E;
-	Tue, 23 Jul 2024 09:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A9814BFB4;
+	Tue, 23 Jul 2024 09:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="OE5TaDbs";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jPxibuab"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="bfnYSJt7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qX4ozGju"
 Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D44914D2BD;
-	Tue, 23 Jul 2024 09:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4E1208B6
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 09:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721726157; cv=none; b=kKlYiUKXv2K9Y0NrG2Xl7ZtUP0ZxCIGRWDgA2BezLzT+ANvhNUW7HtVPSuEI3QSEFA+JLoL/bCPP1+yWyoZQpZzKOlr1DMCx1FZVKEg7aBrbvhL2pKGYCzrA3ScjU8kQZHYIfxe6baOYs00Ib25q8yD5xzzm/YHSwIEK/AvQeug=
+	t=1721726427; cv=none; b=OR8adVoXaMPjTsyeN15+V34DsJ13/4MuBpUmZOGUO3NFaIgpmT9grmdYL/sbwfcdAFP+OgcDGt2nAW0+sLCbYAu3yKZzuSnyuiji9A8ftrX9bfPlWd05Bo/xlqWqS51NLwPcvUQnWWca9tr83iF1cLSvVgtGaEXfRJI7NPuQjsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721726157; c=relaxed/simple;
-	bh=mROYaCllljLDe6KGxHnovReLJUhId6M0dmLIG9l0n0Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ayCwo+tRHPnniEXaOfsqZZXqwO3s7E9Kz6wDIUkjlH1kEvAPea9SGU5dseuCbkDLXdJ+bTULD4zK1+BBtezemu2SenkTIspDuCQdLWnRQjm1M/mK6Rjr+kOfT3L4O7fv2q16LorkaGUQcAh2YXsw5ZHMjgIOo8QS+dlKF0dNe0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=OE5TaDbs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jPxibuab; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 8FE8B11403DB;
-	Tue, 23 Jul 2024 05:15:54 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Tue, 23 Jul 2024 05:15:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm1; t=1721726154; x=1721812554; bh=tD
-	qMYLk9bvSzGB4EmLXkD24mybY+SdczVkc8SGPEb44=; b=OE5TaDbsaJ0dv3+rnd
-	aHwOimBlMGy+0kmbC8+x2nrm13rwZRIDDrTtoGvFN0eNrbnnITlxjD3DqDFv0h8M
-	VTowhflMyqvL59fJiHhSZb5fc0r49kIgnBnEKDE2Tb4qR4qsxaJUTTS3VD/T3f6m
-	JXuo8hOa0evvC2r468Sv881AD5/qWYAZD3Nl2OOMbQvZ6KePC5yhHdia3Qw6DboG
-	VjZRJCPlm7NNgfHBD2WuGtaA01pkuV+lRbn6cVwcbOP+ELk3eyO8zUPWTs1yfBsT
-	PQ04dCjHRPuPt9ssc6sOQYbL47o22NLl8uc1EEpouSKv6hOLhB17PDR3E1A+y0t0
-	z/MQ==
+	s=arc-20240116; t=1721726427; c=relaxed/simple;
+	bh=pjbPLASmktH1brNQ7T+2e8HccsK78JkRS96zGdgcIVc=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=S6ccxfM3J9Ab5Jbl6rMtcA9elz5HMiv7RjUaUpTKw5egOIvcuQfd3Z+3/LJ7bBkldtJggVmcdL3VdslncGNTvgxN7+BJc+FMIdkNRNWN0GwqEjzfxjWEzHRSLGQzNxDKRMknsHx3l3jPSfk4SW8nqMn5wdv19nSAiHdm4OOYLAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=bfnYSJt7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qX4ozGju; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 3003E11403D9;
+	Tue, 23 Jul 2024 05:20:24 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Tue, 23 Jul 2024 05:20:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1721726424; x=1721812824; bh=ArmI+9Lypv
+	7lSLaM/gWraMfVqXyWVTNaY8nXPJ+yvQs=; b=bfnYSJt7H65pMucbCKSqznKS/g
+	EH+F0X3uPMZfBtQubm8v0+prSRqJk01VAZh1T0LYNmIQgnTmrujtPPWOQQaiFUpf
+	/SYi/0si/Yimqf/vocOGjvRCn/9MdgaHOfFHpNnUqtPKQJ296v8qfx7dPhFWQn78
+	CflLrFbn/kkVspbp1AsbGVvOevy0ynO1hRWSlkboakQXiFFztIuzLDFOyOWCv4ow
+	asZn6NpebyP+qBgOqhrqrloO+qyTMcWriBFe35nJRFc5frqdjGpC4XoOv4Y2NqIa
+	3kOE4JC1CttaOozE5I62OmAcIhZ8u1AQSy4uWHGcOofjrV+5iNIzfttd+4hw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-	:x-sasl-enc; s=fm3; t=1721726154; x=1721812554; bh=tDqMYLk9bvSzG
-	B4EmLXkD24mybY+SdczVkc8SGPEb44=; b=jPxibuabEJpcgYzDEf1fDBcNdeWdH
-	WDsLQbYLHSUKnEppzfABOOyc4u16WO3Ef9cAKwRj2ENkDRDDJz1CRCRyTjhGaOvU
-	umtlr8xyQU4wc+Argm8dPuOm+e7FErOmQxqrgqwCwyO6jlfIWYcfNkIdjbHxQ8Sd
-	g/uGr81et/38DzkVg9VactOT6MN75tByb5xPPhCJG1uJJsgX+LM2isa2TH3gJ0ZL
-	jK0uV+blDlRsBLqreWY+WPVXUf2V8TQWEmZHTmrkkKG+AfT6atNSP9PCM27Px5if
-	AtTsrtTOEL6iuAL9QEr7/c+TxgPQUN9QQkFr9J2Vvs/rbKfJUrrqGaIug==
-X-ME-Sender: <xms:ynSfZtq4fXBzjzBv8rpGUrOHppXNRzLJR17HUkRiW2YOH4GiV0kvbw>
-    <xme:ynSfZvqsiZbDYiULVM_NcKnuDn8wBK6D5KRb47oaq9mlbGcqyJ_pTAFkXMS8r4kON
-    -G3UrpfMVf0LAZoV4c>
-X-ME-Received: <xmr:ynSfZqOa3wME0Ke0ciBvOQyX2p8YPxfLyojqO2a3VkodWkEquGo2_eelXlhAE7Zir0c>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrheelgddufecutefuodetggdotefrodftvf
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1721726424; x=1721812824; bh=ArmI+9Lypv7lSLaM/gWraMfVqXyW
+	VTNaY8nXPJ+yvQs=; b=qX4ozGjusmbvB6RqfS4z19sayaVJZUyxKAocUuT8YldT
+	KCJwcMJwy0DZgAcMb5BKR2gHZpTmFhAKRWMQziFmuCYOnan22NNX7SYR//h8qBe6
+	BvHW4gEWxuafOrF8bzh6VFZP2KwUEJXj1jJHGgVl3YHRCEhwvDYxuiqnfn6FZhn6
+	2nJnCKKA7EnmZ1lxne+nTW3KOTiMXLG9b/OogYSk/AYRUJ1KmJTlVdmsSY4lKy7H
+	z9wDZ0EeHVhOpVXM39qH6b7HzW+UX4okqPLetL0dUkVnxhQU2hU5enXY/68J49Nc
+	bY3BZ8y4vWYcIHiT9nSwAXVbRw1nY0WmvZgdDbCcmA==
+X-ME-Sender: <xms:13WfZj8RLMZyk3rqeWcBdfG73QVT9flQM0FdFPumqaGndEppR5FsvA>
+    <xme:13WfZvsNTMjhVCEXo5C5GRzTZ-R0K5mKQkEI-aBs5EMLGL7b6MlojbhFE9W7nQYGI
+    xSX0RJmXnhrCQo0BLY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrheelgddugecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
     uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhfffugggtgffkvfevofesthejredtredtjeenucfhrhhomheplfhirgiguhhn
-    ucgjrghnghcuoehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmqeenucggtf
-    frrghtthgvrhhnpeffteeugeektdfgjeevuedvgffhgedtvdfghedugefhgeehteeuudeh
-    udevjeethfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmpdhnsggprhgtphhtthho
-    pedt
-X-ME-Proxy: <xmx:ynSfZo61SrhzKxsvWEPiLH28jSwoxonpBceqSBMdcJPRzsxggo8O8w>
-    <xmx:ynSfZs6lGFazHS_VS9E3DJP-6IzbVRpi2WoNlY8EYxmWeRT6L5ItyQ>
-    <xmx:ynSfZghJRMxHiDnYxxVZHu9Cjcb1gL5qEiAHqV5yzofbBgUsFNT0rw>
-    <xmx:ynSfZu7ZrQiaZflbo4LJdEYK1w8iy-LiM8YDhjRdCTWps7Ae21qCZw>
-    <xmx:ynSfZmSRd7omp1SFrWzOBEH1p_sMscpE4uWZ7ONzRHz8Rf7geINUM6qE>
-Feedback-ID: ifd894703:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 23 Jul 2024 05:15:51 -0400 (EDT)
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Date: Tue, 23 Jul 2024 17:15:44 +0800
-Subject: [PATCH] MIPS: Loongson64: Set timer mode in cpu-probe
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
+    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
+X-ME-Proxy: <xmx:13WfZhDOtSGdMuumGD0XtFjxcDTVR15dHdD1xDvvvH9_FWLM_4h4QA>
+    <xmx:13WfZveILs29-MahbjiGs2sTnaJWjlpdw_za--vV__0uvr5FZuHXVg>
+    <xmx:13WfZoP_1d0ckgyUKsdsR9X5a_KaKuU5bAlET-jH1iEGNJLTmg1i5w>
+    <xmx:13WfZhkZWF8X4VuDQUJyia6l-oa6f9I5rkhI9OZQoReGVK6bvOHwLw>
+    <xmx:2HWfZknYfOhTG-umzxe5DRUF4xuu8lQ2D_on14Jw45aXKJGZMvbeFhCs>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 66F27B6008D; Tue, 23 Jul 2024 05:20:23 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-582-g5a02f8850-fm-20240719.002-g5a02f885
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240723-loongson-exttimer-v1-1-974bef8c2f88@flygoat.com>
-X-B4-Tracking: v=1; b=H4sIAL90n2YC/x3MQQqAIBBA0avErBPULKOrRAvLyQZKQyWC6O5Jy
- 7f4/4GEkTDBUD0Q8aJEwReIuoJlM94hI1sMkkvFtWzYHoJ3KXiGd850YGRCzapHbWxrOyjdGXG
- l+3+O0/t+FyovMmMAAAA=
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1810;
- i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
- bh=mROYaCllljLDe6KGxHnovReLJUhId6M0dmLIG9l0n0Q=;
- b=owGbwMvMwCXmXMhTe71c8zDjabUkhrT5JccPX0q4anrDnd+rS4NbSdEunVU2c31PSSKvkZfhu
- j0TL5R3lLIwiHExyIopsoQIKPVtaLy44PqDrD8wc1iZQIYwcHEKwETCPzIynLda4ezFki39vTZP
- vzDtEHvtlo8H+9aHJrt2OLbNuPHmBcP/yODzyZanJK/I1uTMP/PveFoaZ+SUmtlxqfFLnvAHHbT
- hAgA=
-X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
- fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
+Message-Id: <4896ca15-ca23-4723-92e8-c824ee6a8923@app.fastmail.com>
+In-Reply-To: <20240722094226.21602-26-ysionneau@kalrayinc.com>
+References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
+ <20240722094226.21602-26-ysionneau@kalrayinc.com>
+Date: Tue, 23 Jul 2024 09:20:03 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Yann Sionneau" <ysionneau@kalrayinc.com>, linux-kernel@vger.kernel.org,
+ "Christian Brauner" <brauner@kernel.org>,
+ "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>
+Cc: "Jonathan Borne" <jborne@kalrayinc.com>,
+ "Julian Vetter" <jvetter@kalrayinc.com>,
+ "Clement Leger" <clement@clement-leger.fr>,
+ "Guillaume Thouvenin" <thouveng@gmail.com>,
+ "Julien Villette" <julien.villette@gmail.com>,
+ "Marius Gligor" <mgligor@kalrayinc.com>, linux-riscv@lists.infradead.org
+Subject: Re: [RFC PATCH v3 25/37] kvx: Add system call support
+Content-Type: text/plain
 
-Loongson64 C and G processors have EXTIMER feature which
-is conflicting with CP0 counter.
+On Mon, Jul 22, 2024, at 09:41, ysionneau@kalrayinc.com wrote:
 
-Although the processor resets in EXTIMER disabled & INTIMER
-enabled mode, which is compatible with MIPS CP0 compare, firmware
-may attempt to enable EXTIMER and interfere CP0 compare.
+> +/**
+> + * access_ok: - Checks if a user space pointer is valid
+> + * @addr: User space pointer to start of block to check
+> + * @size: Size of block to check
+> + *
+> + * Context: User context only.  This function may sleep.
+> + *
+> + * Checks if a pointer to a block of memory in user space is valid.
+> + *
+> + * Returns true (nonzero) if the memory block may be valid, false 
+> (zero)
+> + * if it is definitely invalid.
+> + *
+> + * Note that, depending on architecture, this function probably just
+> + * checks that the pointer is in the user space range - after calling
+> + * this function, memory access functions may still return -EFAULT.
+> + */
+> +#define access_ok(addr, size) ({					\
+> +	__chk_user_ptr(addr);						\
+> +	likely(__access_ok((addr), (size)));				\
+> +})
+> +
+> +#include <asm-generic/access_ok.h>
 
-Set timer mode back to MIPS compatible mode to fix booting on
-systems with such firmware before we have an actual driver for
-EXTIMER.
+You should not need a custom access_ok() function here, juse use
+the asm-generic version directly.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
----
-Please take this patch via fixes (or second 6.11 PR) tree so it can
-reach stable faster.
+> + * Copyright (C) 2017-2023 Kalray Inc.
+> + * Author(s): Clement Leger
+> + */
+> +
+> +#define __ARCH_WANT_SYS_CLONE
 
-Thansks!
----
- arch/mips/kernel/cpu-probe.c | 4 ++++
- 1 file changed, 4 insertions(+)
+I previously commented that you should remove
+__ARCH_WANT_NEW_STAT to match what we did for loongarch.
 
-diff --git a/arch/mips/kernel/cpu-probe.c b/arch/mips/kernel/cpu-probe.c
-index bda7f193baab..af7412549e6e 100644
---- a/arch/mips/kernel/cpu-probe.c
-+++ b/arch/mips/kernel/cpu-probe.c
-@@ -1724,12 +1724,16 @@ static inline void cpu_probe_loongson(struct cpuinfo_mips *c, unsigned int cpu)
- 		c->ases |= (MIPS_ASE_LOONGSON_MMI | MIPS_ASE_LOONGSON_CAM |
- 			MIPS_ASE_LOONGSON_EXT | MIPS_ASE_LOONGSON_EXT2);
- 		c->ases &= ~MIPS_ASE_VZ; /* VZ of Loongson-3A2000/3000 is incomplete */
-+		change_c0_config6(LOONGSON_CONF6_EXTIMER | LOONGSON_CONF6_INTIMER,
-+				  LOONGSON_CONF6_INTIMER);
- 		break;
- 	case PRID_IMP_LOONGSON_64G:
- 		__cpu_name[cpu] = "ICT Loongson-3";
- 		set_elf_platform(cpu, "loongson3a");
- 		set_isa(c, MIPS_CPU_ISA_M64R2);
- 		decode_cpucfg(c);
-+		change_c0_config6(LOONGSON_CONF6_EXTIMER | LOONGSON_CONF6_INTIMER,
-+				  LOONGSON_CONF6_INTIMER);
- 		break;
- 	default:
- 		panic("Unknown Loongson Processor ID!");
+After long discussion, we now put that back though, so you
+should probably do the same here. The way you do this is now
+different with the move to the common syscall.tbl format,
+and I think in the case of NEW_STAT this will change again
+since we now should't even need that conditional any more.
 
----
-base-commit: dee7f101b64219f512bb2f842227bd04c14efe30
-change-id: 20240723-loongson-exttimer-14b48e7ad5d6
+> +
+> +#define __ARCH_WANT_SYS_CLONE3
 
-Best regards,
--- 
-Jiaxun Yang <jiaxun.yang@flygoat.com>
+__ARCH_WANT_SYS_CLONE3 is now mandatory, and you can drop the
+select in 6.11.
 
+> +/* Additional KVX specific syscalls */
+> +#define __NR_cachectl (__NR_arch_specific_syscall)
+> +__SYSCALL(__NR_cachectl, sys_cachectl)
+
+This one should now go into scripts/syscall.tbl instead.
+
+> +SYSCALL_DEFINE4(cachectl, unsigned long, addr, unsigned long, len,
+> +		unsigned long, cache, unsigned long, flags)
+> +{
+> +	bool wb = !!(flags & CACHECTL_FLAG_OP_WB);
+> +	bool inval = !!(flags & CACHECTL_FLAG_OP_INVAL);
+> +
+> +	if (len == 0)
+> +		return 0;
+> +
+> +	/* Check for overflow */
+> +	if (addr + len < addr)
+> +		return -EFAULT;
+> +
+> +	if (cache != CACHECTL_CACHE_DCACHE)
+> +		return -EINVAL;
+> +
+> +	if ((flags & CACHECTL_FLAG_OP_MASK) == 0)
+> +		return -EINVAL;
+> +
+> +	if (flags & CACHECTL_FLAG_ADDR_PHYS) {
+> +		if (!IS_ENABLED(CONFIG_CACHECTL_UNSAFE_PHYS_OPERATIONS))
+> +			return -EINVAL;
+> +
+> +		if (!capable(CAP_SYS_ADMIN))
+> +			return -EPERM;
+> +
+> +		dcache_wb_inval_phys_range(addr, len, wb, inval);
+> +		return 0;
+> +	}
+> +
+> +	return dcache_wb_inval_virt_range(addr, len, wb, inval);
+> +}
+
+This syscall is different from apparently all other architectures
+that have a cache management call, in two ways:
+
+- The CONFIG_CACHECTL_UNSAFE_PHYS_OPERATIONS flag and the operation
+  behind it seems like a badly defined interface, I assume this is
+  a performance hack for a particular device driver, but it should
+  not really be done at the system call level. Ideally I think this
+  should be redesigned so it's never needed. If you do need it for
+  something, please make that a separate patch with a long explanation
+  about how it's used.
+
+- The other architectures tend to use sys_cacheflush() with
+  more or less standardized calling conventions. Could you
+  use the callong conventions from arch/{csky,parisc} instead?
+
+> +#include <linux/syscalls.h>
+> +
+> +#include <asm/syscalls.h>
+> +
+> +#undef __SYSCALL
+> +#define __SYSCALL(nr, call)[nr] = (call),
+> +
+> +void *sys_call_table[__NR_syscalls] = {
+> +	[0 ... __NR_syscalls - 1] = sys_ni_syscall,
+> +#include <asm/unistd.h>
+> +};
+
+This file will have to change in 6.11 as I replaced the
+uapi/asm-generic/unistd.h file with a generated version
+taking scripts/syscall.tbl as its input. Please copy the
+code from arch/loongarch.
+
+       Arnd
 
