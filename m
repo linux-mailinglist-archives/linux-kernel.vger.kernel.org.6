@@ -1,141 +1,220 @@
-Return-Path: <linux-kernel+bounces-259912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0745939FC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:26:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A715939FD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D11131C2203B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:26:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 109F12835DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:28:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C24F14F9FE;
-	Tue, 23 Jul 2024 11:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119A91509B4;
+	Tue, 23 Jul 2024 11:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W0rNvF7k"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="jwRyO1bx"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04088287A
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292F914D2B8;
+	Tue, 23 Jul 2024 11:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721734007; cv=none; b=VqyR/amNcD+ehEFH+fxILJAMrQl1ICUEL1zKjwnPzX2SofxMuk+R76cGsUmg6Va706Dr0GA5Pd1OhbZ4QwkxU1CysArI0GraHSEF1iFjxH0WqSHuln9GsJABMMbrTq2OhRjdcj9FuZBRChrxbmDUw13xlR8DeRSz5jKFuPAOcJI=
+	t=1721734107; cv=none; b=VOZaBcv1ynJ9NKa8H1zTM91oTxy389nandD4kYPvvS2cGWdokuVZ46SdbAXVFxB2Ky15otrEfhKwlXOqVoKgop76/vGFp/auVqRZVBbu9q9BShcfnRdIuR0FrFGr5ztBCA40zka/6rZNefsj4hJ6B7twHBMemOxSy2vww8oIoFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721734007; c=relaxed/simple;
-	bh=uukS8unNQTNfi7V08N60xATjdGjwpz7J49msdrRzOXs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o7z31a5RnV1S4nN6kzzxsoXFhHSB3pUMxb0wP/wpxXgSGDz9+5P9HRPQ4SjVSo6rRN8VezcponQslkO5gmHWiQuWxFY0LAiShhlLZi50K8hooeWnkumH7yLMHIAD8H+pCfFaoO7BbJK5wiy7UBhHrZJ51wq4MksxPGXv1b1FF/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W0rNvF7k; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a797c62565aso527249766b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 04:26:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721734004; x=1722338804; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=2eAKhPE9UpfacyjVC/NQVFaAz/fytRYw1JCu65Kd/6c=;
-        b=W0rNvF7k3VuEAiH2Dm+4G5FomGH1Iuz1p01wrW7p66LsQdNCZYFgHuPT2VultH6JAh
-         KkPfDJQw5lq7WSp92HLKkJLRjIVpU1pvbvnYSEM/Z0Zm52oLUE/uRqslgKgbeiRCclZC
-         CoavrB3bUZdEp8UmBp7m9CTRh/yU3hv2+BhMchV4zZxgq4fhhwJawNZb82ZXURxX9PHJ
-         Fb19+LEf32osmwLJsbZDlIIoB/GznMv6AO/UiKibnS05i8NkP7rtoyXB5daLK97u/7oZ
-         3o82ByC4bDMl+mzkcF1ncS0RH4xceJanpzewK/Au3dbz7SAceN0ZJlbywden6iXI2xBZ
-         5Tqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721734004; x=1722338804;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2eAKhPE9UpfacyjVC/NQVFaAz/fytRYw1JCu65Kd/6c=;
-        b=HGeGI0thly0gabsR41XeQgU/A6Cg7I/k9yqV6cKZ6z2E2S5ruevDYkTMGEkh4IEmMY
-         xw/CkWOzV2A7rJFgxxxemwZIt2RDZ6mAQLp/akF2GLMPXSpeHZLyETejbZbXYcqIU8ZY
-         NX3PTi+LY9n1Yzs+HHweXu5/AI4MEQKVSgVIPeedLYbBjxTpOGzymDIKGO6TdUCZRdjV
-         EoWc3JDTEOxH0JoKvMzYWAJGVfdYgSuQrLOwan266ley224ixr+U9KtmRZDpHXRegMWS
-         sU9CJ8JcB85Xnxvjz8bxSeQ7ajRFpt7jKsq6EvBE0ZQwDdtifPwnwt8bmCgclWeufjMj
-         lfmA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ3j9Q0/56tzxxdsnhbwTcr2plFzAMZxwNY9teaLtxIXiKDYtVFmZjOeY7HSB6V1oUKB/aNxQq/8FS7KRMjtaS0U4qUveKNRXd4DFs
-X-Gm-Message-State: AOJu0YzqujWJ3qZ6TfMLiJ9MqOsQ7dZc/SBSxVc4zYu1jURBQQeRVh+I
-	MjPKIMqDg+Y2eo4FX/NQliUL9YWB2b20qvX9CVgLmuCWkL2dgNyjWfDLf9Tyy+w=
-X-Google-Smtp-Source: AGHT+IGI1FInoieLydgmQj0ZqVuA70hO4yajq19rN9Ap9CNW68hXFzzROuzzrRKlflkpmokjGZgqHQ==
-X-Received: by 2002:a17:907:3e1e:b0:a7a:8e98:890d with SMTP id a640c23a62f3a-a7a8e988d1bmr166052766b.16.1721734004036;
-        Tue, 23 Jul 2024 04:26:44 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7aa2577f73sm27984766b.67.2024.07.23.04.26.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 04:26:43 -0700 (PDT)
-Message-ID: <78fe95b3-1892-401f-93b1-1aefd3e0e90c@linaro.org>
-Date: Tue, 23 Jul 2024 13:26:42 +0200
+	s=arc-20240116; t=1721734107; c=relaxed/simple;
+	bh=vp6Qm2xtofuMRY/ZHf1ElKLZgvlS6sgrB5W2isGgiGA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sW89nBRxZUQvvaNKEAZ9dX2bGZPEqagi8qX2g4EuQvWIfR15S4A6fr63YK37FwXg/zr1R2HZV+TQ+phs7fsVF9+2TPXP7AEI73eDrNz417UBJB0K8HlbT+Vn6MVGQoDex9K6O2QpXMNFCAXxycJCCkevNuf6qf8k8GcxtcyPBtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=jwRyO1bx; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1721734106; x=1753270106;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=vp6Qm2xtofuMRY/ZHf1ElKLZgvlS6sgrB5W2isGgiGA=;
+  b=jwRyO1bxeZZxDEng/bu+12Sr0N67JMGIJpVHm5JqQwhxlwUsar3M9PQk
+   CzIflHnayE1F5RZ7d2Sfpn+KqX5a6J+mNSBQAEQZmI3w7fzBdmQbMS7jE
+   qq7DMMH1l1S93CYCU+tT0zR4z7ZelQNBlXWNI/UBQRKmW5D2T8mJ9oMh0
+   sk/z5cuXfJSx53TyIN6FCG3LdUQ/dkPwnDYfjYTwjZp/VS0MtSE+ZBn5D
+   YkgbPyffKrVwQklOwZZfOdLHKQTVT4gnQsh328Miv9Z6OBee07z8nI4WA
+   Xo9wDjug6hwzUFgJyP7XEmyFJz7pScRTYle6BLBzOJE4hDS0ADhvpzThF
+   w==;
+X-CSE-ConnectionGUID: S6DrTYNTSQStcH62wvxgTw==
+X-CSE-MsgGUID: SDhomshkSKmseY4caTDADw==
+X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
+   d="scan'208";a="29574950"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 Jul 2024 04:28:19 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 23 Jul 2024 04:27:58 -0700
+Received: from wendy.microchip.com (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Tue, 23 Jul 2024 04:27:56 -0700
+From: Conor Dooley <conor.dooley@microchip.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <conor@kernel.org>, <conor.dooley@microchip.com>, Marc Zyngier
+	<maz@kernel.org>, Daire McNamara <daire.mcnamara@microchip.com>, "Linus
+ Walleij" <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	"Rob Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	"Thomas Gleixner" <tglx@linutronix.de>, Paul Walmsley
+	<paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+	<linux-riscv@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>
+Subject: [RFC v7 0/6] PolarFire SoC GPIO support
+Date: Tue, 23 Jul 2024 12:27:09 +0100
+Message-ID: <20240723-supervise-drown-d5d3b303e7fd@wendy>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] HID for 6.11
-To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: Benjamin Tissoires <bentiss@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Jiri Kosina <jikos@kernel.org>, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzk@kernel.org>
-References: <uirri5bsktq5pk2tu4gs2u22qimjcn7hi66ek6gbj65qyczfex@yjy4brkoixfv>
- <c52b7bf6-734b-49fd-96e3-e4cde406f4e0@linaro.org>
- <20240722-accomplished-delectable-kingfisher-cc89b9@lemur>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240722-accomplished-delectable-kingfisher-cc89b9@lemur>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6834; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=vp6Qm2xtofuMRY/ZHf1ElKLZgvlS6sgrB5W2isGgiGA=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGnzJ/fNCHQx9rnwhPFxbXTyg1PB1x4sKghIClc5zvpm3ZNH t5lmdJSyMIhxMMiKKbIk3u5rkVr/x2WHc89bmDmsTCBDGLg4BWAiSx4xMvx/y3RH1fzMlKNHzm30i6 nUf+rgv33Hz4QST0GLk8fuKLAyMiw+eyzW5GZxxYJ0q9rSG3dPrrpTebdQ1KN3yQ2Bz2sKpzMDAA==
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 22.07.2024 8:17 PM, Konstantin Ryabitsev wrote:
-> On Mon, Jul 22, 2024 at 02:46:39PM GMT, Konrad Dybcio wrote:
->> this commit broke b4 for everyone starting next-20240719, as it's
->> an empty cover letter with b4 tracking information
-> 
-> I just committed a change that ignores any cover letters not made by the user
-> themselves. This is not a perfect fix, but I believe it should help in such
-> situations.
+Hey all,
 
-This sounds very reasonable, thanks Konstantin
+Lewis is no longer at Microchip, so I've taken over the GPIO controller
+patchset that he had been working on prior to that:
+https://lore.kernel.org/linux-gpio/20220815120834.1562544-1-lewis.hanly@microchip.com/
 
-Konrad
+However, you'll note that I've got more than a GPIO controller patch in
+this series now. One thing that was wrong with Lewis' series was that it
+could only, depending on the iteration of the series, support GPIOs that
+had their interrupts muxed or GPIOs that had dedicated interrupts at the
+parent interrupt controller. I found that to be problematic, because the
+hardware itself always has a mix of muxed and dedicated interrupts and
+so there was always a controller rendered unusable for interrupts.
+
+I've attempted to fix this by remodelling how the interrupt hierarchy in
+the devicetree is described, with a mux added between the GPIO
+controllers and the platform's interrupt controller. This is a better
+match for the hardware, or more accurately *is* a match, and avoids the
+issues I pointed out here:
+https://lore.kernel.org/linux-gpio/23a69be6-96d3-1c28-f1aa-555e38ff991e@microchip.com/
+
+Stealing from the irqchip driver patch, here's some more information on
+the interrupt configuration on this SoC, for the 3 GPIO controllers:
+- GPIO controller 0 has 14 GPIOs
+- GPIO controller 1 has 24 GPIOs
+- GPIO controller 2 has 32 GPIOs
+
+All GPIOs are capable of generating interrupts, for a total of 70.
+There are only 41 interrupts available however, so a configurable mux is
+used to ensure all GPIOs can be used for interrupt generation. 38 of the
+41 interrupts are in what the documentation calls "direct mode", as they
+provide an exclusive connection from a GPIO to the PLIC. The 3 remaining
+interrupts are used to mux the interrupts which do not have an exclusive
+connection, one for each GPIO controller. A register is used to set this
+configuration of this mux, depending on how the "MSS Configurator"
+(FPGA configuration tool) has set things up. This is done by the
+platform's firmware, so access from Linux is read-only.
+
+The mux has a single register, where bits 0 to 13 mux between GPIO
+controller 1's 14 GPIOs and GPIO controller 2's first 14 GPIOs. The
+remaining bits mux between the first 18 GPIOs of controller 1 and the
+last 18 GPIOS of controller 2. If a bit in the mux's control register is
+set, the corresponding interrupt line for GPIO controller 0 or 1 will be
+put in "non-direct" mode. If cleared, GPIO controller 2's will.
+
+I'm downgrading the series to RFC status, and have not implemented
+feedback received on the GPIO controller itself (which was mostly about
+using regmap), because I would really like to hear from people on the
+interrupt side of things, in case a significant re-write of the driver
+is required. I've split the changes I made to the interrupt handling
+portions of the GPIO driver into a patch of their own to make that more
+obvious. Clearly that would need to be squashed, and any feedback
+implemented, before the driver would be acceptable.
+
+I previously enquired, a year ago when I actually wrote the irqchip
+driver, about how to implement this mux and tried to follow Marc's
+suggestions about how I should ago about doing so:
+https://lore.kernel.org/all/87wn11oo5o.wl-maz@kernel.org/
+
+Marc, I know you're no longer maintaining irqchip drivers, but I'd
+appreciate if you in particular could take a look and see whether I
+implemented your suggestions correctly - in particular the
+irq_domain_disconnect_hierarchy() stuff.
+
+My main issue with what I've conjured up here are that the hwirq number
+that I get when calling irqd_to_hwirq() in the mask/unmask callbacks
+in the gpio driver runs as far as 95, but each GPIO controller only can
+have up 32 interrupts, so there are % 32 operations done in those
+drivers to make the number a valid GPIO. In my naivety, I had expected
+that the hwirqs seen by the irq_chip in the GPIO controller driver would
+run from 0 to 31, but instead the hwirq numbers are that of the GPIO
+controller irq_chip's parent (so my new mux).
+
+I'm not sure if this sort of knowledge about how the parent works is
+acceptable to have in the GPIO controller driver, but more pertinently
+it screams "fundamental mistake" to me, and that my implementation of
+the alloc irq_domain_ops callback is just broken. Unfortunately, I have
+been unable to figure out a way to avoid that, while also (what I think
+is) correctly using the irq_domain_disconnect_hierarchy() stuff in
+the alloc callback.
+
+So yeah, is doing something along these lines acceptable, or if not,
+pointers as to how to resolve the problem would be highly appreciated.
+
+And there's also a nastly looking of_iomap() in the irqchip driver. I
+know this is unacceptable, some regions were described entirely
+incorrectly in the original devicetree for this SoC, and I'm trying
+to work on my problems one by one! Please ignore that for now.
+
+Cheers,
+Conor.
+
+CC: Marc Zyngier <maz@kernel.org>
+CC: Conor Dooley <conor.dooley@microchip.com>
+CC: Daire McNamara <daire.mcnamara@microchip.com>
+CC: Linus Walleij <linus.walleij@linaro.org>
+CC: Bartosz Golaszewski <brgl@bgdev.pl>
+CC: Rob Herring <robh@kernel.org>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Paul Walmsley <paul.walmsley@sifive.com>
+CC: Palmer Dabbelt <palmer@dabbelt.com>
+CC: linux-riscv@lists.infradead.org
+CC: linux-gpio@vger.kernel.org
+CC: devicetree@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+
+Conor Dooley (5):
+  dt-bindings: gpio: fix microchip,mpfs-gpio interrupt descriptions
+  dt-bindings: interrupt-controller: document PolarFire SoC's gpio
+    interrupt mux
+  irqchip: add mpfs gpio interrupt mux
+  gpio: mpfs: pass gpio line number as irq data
+  riscv: dts: microchip: update gpio interrupts to better match the SoC
+
+Lewis Hanly (1):
+  gpio: mpfs: add polarfire soc gpio support
+
+ .../bindings/gpio/microchip,mpfs-gpio.yaml    |  28 +-
+ .../microchip,mpfs-gpio-irq-mux.yaml          |  79 ++++
+ .../boot/dts/microchip/mpfs-icicle-kit.dts    |   8 -
+ arch/riscv/boot/dts/microchip/mpfs.dtsi       |  50 ++-
+ drivers/gpio/Kconfig                          |   7 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-mpfs.c                      | 349 ++++++++++++++++++
+ drivers/irqchip/Kconfig                       |  11 +
+ drivers/irqchip/Makefile                      |   1 +
+ drivers/irqchip/irq-mpfs-mux.c                | 333 +++++++++++++++++
+ 10 files changed, 840 insertions(+), 27 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/microchip,mpfs-gpio-irq-mux.yaml
+ create mode 100644 drivers/gpio/gpio-mpfs.c
+ create mode 100644 drivers/irqchip/irq-mpfs-mux.c
+
+-- 
+2.43.2
+
 
