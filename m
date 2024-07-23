@@ -1,231 +1,139 @@
-Return-Path: <linux-kernel+bounces-259926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51B4B939FF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:31:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B0C0939FDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 708AC1C2182E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:31:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBE0428374E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B96B1514E0;
-	Tue, 23 Jul 2024 11:28:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D4B15099A;
+	Tue, 23 Jul 2024 11:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="zwHqgf9u"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mFjlkaCn"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC401514C0;
-	Tue, 23 Jul 2024 11:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5071527A2
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721734131; cv=none; b=Y76TGB7H0voAH3apf7xJn7lsfbz8NyZcWpu0DjTzTIHWmP/a1JIsxbEcWDCFvisURZMfVBhtLsNm3eeZgHARW1skmmsf6VnvyXxH+edcJhZseaRDQQFPEl+DgEPwOxHsM3Es0juMp2/SDSOOErLhalLCn/3WOQZ5it4CtP/+7YA=
+	t=1721734115; cv=none; b=TDj8QJwjgEbNM5cITBMGMAiL3YONoYVRYPRi/kP+EDjj0RAo+6TloESCsM7NPGi3+NyYatERUUIUIEoZdrW+8nNJNkWMnWMUqWI2DRS4pa8XEPmDX76lHrNNyYg8ZODBxnorI2DOKOczRCuTNBwMfSDzegEnw+//WfvdRZC4Omg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721734131; c=relaxed/simple;
-	bh=0BnMHbAdBH79ScPTvVNbtezh5vCswpZdpOoIuQ4RzEE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qSDdu6EoZ+OOPt8bbgqdUEVZp281HDhRLJ1M1HQjOX2zBB/4ghneenSMW0fP+c3zrnoIPnAT1YHyqKQV71zrHZHUoEttyeW+fTpIsVZB/hE/ihLHxTFfEBWClfgUr0/KRF1RFNln/eKl0QrhIJbkDn150xDABBFAyn+/K/2led8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=zwHqgf9u; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1721734130; x=1753270130;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=0BnMHbAdBH79ScPTvVNbtezh5vCswpZdpOoIuQ4RzEE=;
-  b=zwHqgf9uOef8BKZyrBzU/K8FQIGXKQJrbpc7OhPviiHxitbc/RNIRdgS
-   9Yqw6K1QIVowthpM4Ua7NfR9tofhOo3n842gEENEIbmTL7HRYQ8Cj5ZtY
-   dOXFBafC8OGoG55j30OdHpphrYUYprRRtyBABKvv03lvDxghKMQ3D7VYr
-   5frVuEbz0U3lCewOPJVPC3iXnhfNQFZUlN/SIzZBRKNZLgIVJLqzPpfAn
-   3sWDHiUW7YTrzR9aUENfxsgnOUlZ6XL8KhylWg/umM1Ip4ZzIo2CycB9m
-   vxlX3niAGEmGQtjmldcw336OxvyUCXXaWv2JzQEWQRWYzlozcVmwWglqL
-   A==;
-X-CSE-ConnectionGUID: ogbmHU+kQ5yxZ4OX2mUEtQ==
-X-CSE-MsgGUID: Y70jeUQRQ8adVIWl7jhXaw==
-X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
-   d="scan'208";a="29574987"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 Jul 2024 04:28:49 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 23 Jul 2024 04:28:24 -0700
-Received: from wendy.microchip.com (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Tue, 23 Jul 2024 04:28:21 -0700
-From: Conor Dooley <conor.dooley@microchip.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <conor@kernel.org>, <conor.dooley@microchip.com>, Marc Zyngier
-	<maz@kernel.org>, Daire McNamara <daire.mcnamara@microchip.com>, "Linus
- Walleij" <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	"Rob Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	"Thomas Gleixner" <tglx@linutronix.de>, Paul Walmsley
-	<paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
-	<linux-riscv@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-Subject: [RFC v7 6/6] riscv: dts: microchip: update gpio interrupts to better match the SoC
-Date: Tue, 23 Jul 2024 12:27:15 +0100
-Message-ID: <20240723-framing-chaos-9f8e2df8889d@wendy>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20240723-supervise-drown-d5d3b303e7fd@wendy>
-References: <20240723-supervise-drown-d5d3b303e7fd@wendy>
+	s=arc-20240116; t=1721734115; c=relaxed/simple;
+	bh=km1DA5g3KVXCN+F2Dg3Ezc08F4KN1ROM5TKI1CK7wuY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BpeL5DjrVt56vCT7NsdEiJIzKPLdl6aY10MYxt3jc8ZNz7Yrm487U/NZyf1w9rX/ThRGKjOS+0HsuV6KET5VCFbEJMrNk4mAjZN4h4dvtO9ZFwp5ex7A9PlCbsutiWy9k21r2BstP7A3lTCTmXrURZuKgeoLJ2sO8ULQfdGdrv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mFjlkaCn; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52fc4388a64so1519196e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 04:28:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721734111; x=1722338911; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UmFGX+HyHF3oXY0EE8+l1weiOh3LRa7chte5tmASm88=;
+        b=mFjlkaCnQNUXKIrZlf/nGRXaaCXbAgcS3bHuoqaSYROMAlwS9jwbl+wmj6WeRzRwT5
+         cu9vZ85STFHGihgi1Ys9pFgzAlC/Nwv54P5VdEibHAAOcWANB9c8xz6FhKw1iZMxcrXr
+         /uCxC/POw19gbirdkHASduA7OHuzkc61ROU0Aj2nvBC0n2I5X59XHUNRXSpi1gsEXY3x
+         60LoiTxLb71W85GYvfg85Tw0hrpcyrh8lUXtiI9AkiGNYVcD1uocMVXe1nw7OXl0Lcvx
+         XXCEWcExIwF8lBr/a9oQ8ODs9EzSDOkcCT2nDG7mAksRTqBeRjfOmPlga3bhi6sluvRN
+         9y4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721734111; x=1722338911;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UmFGX+HyHF3oXY0EE8+l1weiOh3LRa7chte5tmASm88=;
+        b=Y8m9SL3JG8IFCqx+aN1INwZp0O/X6wzgM4fNsdwu0hP6E0Xjs0XFPk4oi7KR7TTlKF
+         I7EgIR8QWZQQ5EfkbT9XvmhlHY+ymOOFe5AeoUgg68skBPdd0FeCcx1r8XfEAkkslWAD
+         PsKJhIRLHtVjpsbC36Y3NOK4EZlGDxWnGq8KIOkkgCkwa3fO2VStT0t+3/eoMqyqYOPc
+         XzLazsTwCn4zMoRmjS2QmtA2i5ZIerf7XTB3DOrKqfFV1OulPa3smZKFC4f6PR9vHvi3
+         j8R2bv/Nhkpj92Y7KJwDpBlhyNNlYPa8VkkiwmLUGA8lPz8dkpeF+lsy8ilqPW7RnkkX
+         S9pA==
+X-Forwarded-Encrypted: i=1; AJvYcCWILiCeSvWSLbm+tMGmtVRoj20jCG1qNNevmWLN1HmiCYnnnGjZjmG027fCgdNJalXEg2c4MTKIe+PSIPed8sAsHwfxzNfCftFRrO6L
+X-Gm-Message-State: AOJu0YzVbKH89XAb3mUOdSMnd7i1rfBtly8VFLpZ9Wuy3hxca7bZ+Ndu
+	8BXDWx9mrDt9gJ3gm9fu/0W9pw7HfZnZ3uZDX1c623rtGXCmx3DuKsDUxf9Dr20=
+X-Google-Smtp-Source: AGHT+IHhoxIHvEVaSZQwXZVYbxULzev0zlPdJnJAoPTj9MVi/D59j3CfOfrRjOhuvv7b2HYfhpQ8iw==
+X-Received: by 2002:a05:6512:12ce:b0:52e:9b9e:2c14 with SMTP id 2adb3069b0e04-52fc407570amr1487366e87.60.1721734110829;
+        Tue, 23 Jul 2024 04:28:30 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52f01552b43sm950871e87.286.2024.07.23.04.28.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 04:28:30 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 0/5] arm64: dts: qcom: improve Lenovo Miix 630 support
+Date: Tue, 23 Jul 2024 14:28:27 +0300
+Message-Id: <20240723-miix630-support-v2-0-7d98f6047a17@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5034; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=0BnMHbAdBH79ScPTvVNbtezh5vCswpZdpOoIuQ4RzEE=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGnzJ0+c/rLzj6Ppc85Px9Je/mcOm3vjiVrjRbV1iqs22S4J sjB901HKwiDGwSArpsiSeLuvRWr9H5cdzj1vYeawMoEMYeDiFICJcJYw/C/J9V7+K11BZNH0Rcf1vT czOGzLV//19JlVpFygvVjf13BGhpOWzN8z95a/mrlzou3PjANBLCaiLZLJzdY+MxdZxjTo8AEA
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANuTn2YC/3WNQQ6CMBBFr0JmbU3pNAVdcQ/DotYCk2jbTJFgC
+ He3snf5XvLf3yB7Jp/hWm3AfqFMMRRQpwrcZMPoBT0Kg5JKy0Yp8SJaDUqR3ylFngXiHa1zaPF
+ ioKwS+4HWo3jrC0+U58if42Cpf/Z/a6mFFNboFt3gW9Po7knBcjxHHqHf9/0LDY7vr68AAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Jeffrey Hugo <quic_jhugo@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Kalle Valo <kvalo@kernel.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1415;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=km1DA5g3KVXCN+F2Dg3Ezc08F4KN1ROM5TKI1CK7wuY=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmn5PdZRscABrcpw+EBbQ7X7fveT6YXMpfzGWTI
+ 7Wdxm0VLx+JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZp+T3QAKCRCLPIo+Aiko
+ 1ULdCACqKAIrv9VG4QdG31INREbxjRnSTm7FqZdRlkeazd2rWNXAT7t+HLmBqLvUoqDzJMX1U5b
+ 3+6CSY6sxsoXntc7O1OE/ExOUOb8hXM/X1toUwJKl1BBTQ1NGUwCR5W8VdLs6KXcNkX1+q+AMn7
+ ApvSDy+Vm6fpCLwFtOR/ve4sbPgY0Kbir51KO1A8aRC4ZZRiMl0GOzFAPSDKdv+MsnubOejwQ/7
+ A9yF/qtqDnBXQ+7PL3IEyiUWmEnbUDhRcu21Hrdj4+P0acZqoKG7N0e2iam+EEbELMay9tArRh8
+ aYbEP860Ey/2kmGp4I//JF9anCY0i5wV+vfBZenxeLq2hgwx
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-There are 3 GPIO controllers on this SoC, of which:
-- GPIO controller 0 has 14 GPIOs
-- GPIO controller 1 has 24 GPIOs
-- GPIO controller 2 has 32 GPIOs
+Enable some low-hanging fruits growing on the Lenovo Miix 630 laptop,
+but not being enabled for some reason.
 
-All GPIOs are capable of generating interrupts, for a total of 70.
-There are only 41 IRQs available however, so a configurable mux is used to
-ensure all GPIOs can be used for interrupt generation.
-38 of the 41 interrupts are in what the documentation calls "direct mode",
-as they provide an exclusive connection from a GPIO to the PLIC.
-The 3 remaining interrupts are used to mux the interrupts which do not have
-a exclusive connection, one for each GPIO controller.
-Setting of the mux should be done by the platform's firmware at boot, based
-on the output of the "MSS Configurator" (FPGA configuration tool).
-
-The microchip,mpfs-gpio binding suffered greatly due to being written
-with a narrow minded view of the controller, and the interrupt bits
-ended up incorrect. It was mistakenly assumed that the interrupt
-configuration was set by platform firmware, based on the FPGA
-configuration, and that the GPIO DT nodes were the only way to really
-communicate interrupt configuration to software.
-
-Instead, the mux should be a device in its own right, and the GPIO
-controllers should be connected to it, rather than to the PLIC.
-Now that a binding exists for that mux, fix the inaccurate description
-of the interrupt controller hierarchy.
-
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- .../boot/dts/microchip/mpfs-icicle-kit.dts    |  8 ---
- arch/riscv/boot/dts/microchip/mpfs.dtsi       | 50 +++++++++++++++++--
- 2 files changed, 45 insertions(+), 13 deletions(-)
+Changes in v2:
+- Fixed touchscreen node name (Konrad)
+- Dropped unused label (Konrad)
+- Dropped wakeup-source for now (Konrad)
+- Dropped extra empty line in pinconf (Konrad)
+- Added debounce-interval to VolUp (Konrad)
+- Fixed pinctrl properties order (Konrad)
+- Added empty lines before status properties (Konrad)
+- Added linux,can-disable to VolUp
+- Added wifi calibration variant
+- Link to v1: https://lore.kernel.org/r/20240722-miix630-support-v1-0-a6483cfe8674@linaro.org
 
-diff --git a/arch/riscv/boot/dts/microchip/mpfs-icicle-kit.dts b/arch/riscv/boot/dts/microchip/mpfs-icicle-kit.dts
-index f80df225f72b4..7a9822d2a8819 100644
---- a/arch/riscv/boot/dts/microchip/mpfs-icicle-kit.dts
-+++ b/arch/riscv/boot/dts/microchip/mpfs-icicle-kit.dts
-@@ -83,14 +83,6 @@ &core_pwm0 {
- };
- 
- &gpio2 {
--	interrupts = <53>, <53>, <53>, <53>,
--		     <53>, <53>, <53>, <53>,
--		     <53>, <53>, <53>, <53>,
--		     <53>, <53>, <53>, <53>,
--		     <53>, <53>, <53>, <53>,
--		     <53>, <53>, <53>, <53>,
--		     <53>, <53>, <53>, <53>,
--		     <53>, <53>, <53>, <53>;
- 	status = "okay";
- };
- 
-diff --git a/arch/riscv/boot/dts/microchip/mpfs.dtsi b/arch/riscv/boot/dts/microchip/mpfs.dtsi
-index 9883ca3554c50..e31e0aacb943b 100644
---- a/arch/riscv/boot/dts/microchip/mpfs.dtsi
-+++ b/arch/riscv/boot/dts/microchip/mpfs.dtsi
-@@ -465,39 +465,79 @@ mac1: ethernet@20112000 {
- 			status = "disabled";
- 		};
- 
--		gpio0: gpio@20120000 {
--			compatible = "microchip,mpfs-gpio";
--			reg = <0x0 0x20120000 0x0 0x1000>;
-+		irqmux: interrupt-controller@20002054 {
-+			compatible = "microchip,mpfs-gpio-irq-mux";
-+			reg = <0x0 0x20002054 0x0 0x4>;
- 			interrupt-parent = <&plic>;
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
-+			interrupts = <13>, <14>, <15>, <16>,
-+				     <17>, <18>, <19>, <20>,
-+				     <21>, <22>, <23>, <24>,
-+				     <25>, <26>, <27>, <28>,
-+				     <29>, <30>, <31>, <32>,
-+				     <33>, <34>, <35>, <36>,
-+				     <37>, <38>, <39>, <40>,
-+				     <41>, <42>, <43>, <44>,
-+				     <45>, <46>, <47>, <48>,
-+				     <49>, <50>, <51>, <52>,
-+				     <53>;
-+		};
-+
-+		gpio0: gpio@20120000 {
-+			compatible = "microchip,mpfs-gpio";
-+			reg = <0x0 0x20120000 0x0 0x1000>;
-+			interrupt-parent = <&irqmux>;
-+			interrupt-controller;
-+			#interrupt-cells = <1>;
-+			interrupts = <0>, <1>, <2>, <3>,
-+				     <4>, <5>, <6>, <7>,
-+				     <8>, <9>, <10>, <11>,
-+				     <12>, <13>;
- 			clocks = <&clkcfg CLK_GPIO0>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			ngpios = <14>;
- 			status = "disabled";
- 		};
- 
- 		gpio1: gpio@20121000 {
- 			compatible = "microchip,mpfs-gpio";
- 			reg = <0x0 0x20121000 0x0 0x1000>;
--			interrupt-parent = <&plic>;
-+			interrupt-parent = <&irqmux>;
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
-+			interrupts = <32>, <33>, <34>, <35>,
-+				     <36>, <37>, <38>, <39>,
-+				     <40>, <41>, <42>, <43>,
-+				     <44>, <45>, <46>, <47>,
-+				     <48>, <49>, <50>, <51>,
-+				     <52>, <53>, <54>, <55>;
- 			clocks = <&clkcfg CLK_GPIO1>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			ngpios = <24>;
- 			status = "disabled";
- 		};
- 
- 		gpio2: gpio@20122000 {
- 			compatible = "microchip,mpfs-gpio";
- 			reg = <0x0 0x20122000 0x0 0x1000>;
--			interrupt-parent = <&plic>;
-+			interrupt-parent = <&irqmux>;
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
-+			interrupts = <64>, <65>, <66>, <67>,
-+				     <68>, <69>, <70>, <71>,
-+				     <72>, <73>, <74>, <75>,
-+				     <76>, <77>, <78>, <79>,
-+				     <80>, <81>, <82>, <83>,
-+				     <84>, <85>, <86>, <87>,
-+				     <88>, <89>, <90>, <91>,
-+				     <92>, <93>, <94>, <95>;
- 			clocks = <&clkcfg CLK_GPIO2>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
-+			ngpios = <32>;
- 			status = "disabled";
- 		};
- 
+---
+Dmitry Baryshkov (5):
+      arm64: dts: qcom: msm8998-lenovo-miix-630: enable touchscreen
+      arm64: dts: qcom: msm8998-lenovo-miix-630: enable aDSP and SLPI
+      arm64: dts: qcom: msm8998-lenovo-miix-630: enable VolumeUp button
+      arm64: dts: qcom: msm8998-clamshell: enable resin/VolDown
+      arm64: dts: qcom: msm8998-lenovo-miix-630: add WiFi calibration variant
+
+ arch/arm64/boot/dts/qcom/msm8998-clamshell.dtsi    |  6 ++
+ .../boot/dts/qcom/msm8998-lenovo-miix-630.dts      | 68 ++++++++++++++++++++++
+ 2 files changed, 74 insertions(+)
+---
+base-commit: 797012914d2d031430268fe512af0ccd7d8e46ef
+change-id: 20240722-miix630-support-33b3acc3a396
+
+Best regards,
 -- 
-2.43.2
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
