@@ -1,161 +1,310 @@
-Return-Path: <linux-kernel+bounces-260175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F58B93A424
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:05:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D31D93A428
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:07:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB7A0B2209F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:05:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C1D6B2308A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:07:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66CD157A5A;
-	Tue, 23 Jul 2024 16:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F01C157A72;
+	Tue, 23 Jul 2024 16:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="clnKmAvQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lcm/08Fj"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34675156C74;
-	Tue, 23 Jul 2024 16:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AD5156F4D;
+	Tue, 23 Jul 2024 16:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721750749; cv=none; b=B/FkvETtOAwANXJIz7sDEPQD6CKA/OkbKah0pUYtPeCCqbwXzmiK8slvfFziflTEBpApqsmsCrQM1MzjEKt6H7o5wF3cHYLL2sbDZaPHOHq/j+dqqpJzfdS0pAGMIwSOPaDPMAsMD/V6ZF3x1/vTQH32G4YSX8FV21okDnADZQ0=
+	t=1721750826; cv=none; b=TLBgcEvBYpUWrXYgJMwAoSfT6+5MJ2SauqhYoXO+f4P/9GmazSRRDnjusdzx48hH3qtNnH5OikbNxzSef1Sgr3wlVbTafnyqqgtv3tW0NQLq5cZVFS7gJID0w4Nvm1WnYsEk4qhHBZP1qGwGw2tJPLYlbst/hknPv1Y3w3RQYCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721750749; c=relaxed/simple;
-	bh=3KMdKirR+5uJeBNuZveA3AnyH88+bYKyW66Km+vghS8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RWtvKdODrL4BOAqj7S6133uGvgt1oU0l5n+CUAEAt4BBwUeU90MNtA0BPU+sdjeI9OqviadHIIi1+sUOpLsE5JMBwuQZ1aXsnAHTp+ty2jg6nwoT9Wg0b3N5ufvthYOqybFyBGt/uHM04mbeDMy2yGNDsBipZMhpEi8Jxn+z19k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=clnKmAvQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7680C4AF09;
-	Tue, 23 Jul 2024 16:05:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721750748;
-	bh=3KMdKirR+5uJeBNuZveA3AnyH88+bYKyW66Km+vghS8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=clnKmAvQOwXBe7A73/OF/NwP18wPGliYAOYYDSu2siqYSHC4x0hIlKiYIrsUUGY82
-	 M/Rug8d/gNl1EKBR3QKb8CdNwNGCvKc+n65cL0l1n1H4RFjT6RZinQN9s6TXSi+JY/
-	 7kbcFiQTgJMVsBEaP0hnZLxNDOLNosGo5ZxBFdMhKPvdjCNJAxQSXmy5hCQEjLcmj9
-	 dx9fqCH3Uh/uTj1/fGigXkEwc5ug1E9rxXj5lEExsgfuYD14xMDAZNZJz6u45WmsF5
-	 LoiKanwaKsCf1yW6mPY6PNfL0w4dwk2F7ilflop7GBlx76toS13qTwgFob3DhaOEl4
-	 c0btHCb5nx4sQ==
-Date: Tue, 23 Jul 2024 17:05:43 +0100
-From: Will Deacon <will@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Asahi Lina <lina@asahilina.net>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Catalin Marinas <catalin.marinas@arm.com>, ryan.roberts@arm.com,
-	mark.rutland@arm.com
-Subject: Re: LPA2 on non-LPA2 hardware broken with 16K pages
-Message-ID: <20240723160543.GA26546@willie-the-truck>
-References: <50360968-13fb-4e6f-8f52-1725b3177215@asahilina.net>
- <20240718131428.GA21243@willie-the-truck>
- <CAMj1kXFi0sRVMRNhMVEnYBrLT4DycPoDMUa9VkP8wqqdf59eeA@mail.gmail.com>
- <20240723145214.GA26403@willie-the-truck>
- <CAMj1kXEkHKtFKFS3ejeDsg1Q+2NY1JibzurzqgwVGqb+1=XrRg@mail.gmail.com>
+	s=arc-20240116; t=1721750826; c=relaxed/simple;
+	bh=e9EW7Nc+mZb16mvN+ebaUU/kC4zDknEwVmlDcy9SVuk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U7+yKoEDJMJrAgYtRCbRSKaCQcv+7s60+izegMpTX4Hr1VuzI1x8Lz7is8FewKZn1URb+sivJascf6vJsLz1+ZEvTABZqk1JWcZTC/Xz4mQnKyJrfltO3Q01Mj7JRgxkL3qAG1nD4nMTwY9KIjVvDG0GxYHq5T5SCNe5JUsEwnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lcm/08Fj; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e08724b2a08so3264045276.1;
+        Tue, 23 Jul 2024 09:07:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721750824; x=1722355624; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6whKPONxWpuod2UaAfqMj9j4YRdef/KUUH1KzMzXWQw=;
+        b=Lcm/08FjubgHXU7v2rjY5i8IhLk8kFNo99sgwbbypIG2D+EkOZrvkSLiZ9BTmtmMn1
+         Mao5BMUlQqj50q5LZ8cgwRnhLlCAY5W4YFOuHpOf/aj1nYyUQJy6uygAGFSnEpSBAd9i
+         XxVPOs39xN1FNDPJ2RsikO6AKIKBYrt9nywZ3UbBPBdX4+dF6xovd3sA5MX6+LtsaUYK
+         WAx1TLMuWIYhYVRpzLJLDAmolSqUVb1F1sqTUEW2RkNlRr47WY83Hj4lUNbunal5fpYX
+         8UR+QBCGRkjx9XyG9foj2dGJAcJJJqrNMv6SwUZsCWdGV6YdmPcY0VkoHdrj2TIcw4L3
+         r+Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721750824; x=1722355624;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6whKPONxWpuod2UaAfqMj9j4YRdef/KUUH1KzMzXWQw=;
+        b=dc8MfmPUYASsEI8TM3DRliQTPupUAtxDR8TxH0+M/PoSz71VGXkv1b93+hNep6SGEF
+         VtGnFB27Dc3oHHXMsGCtFw/oIhJ/B1Uei9vgMwBmv7F5QeBE1RsqduLmQ8viWwOGa9v4
+         vl2OCKx08pM3h7On+kl6ASthjTZ53GA6KxHPKIXGJ+vSlNI7fnscAw+3/R4blijjZ6PX
+         brXcZnsygV/LOlGvYIs2XBf7B97OsRkPnGnZGKKgBoKugCBqm0olp50WJRQrRa7m1VPU
+         IsRXD6fYTwx7u4oNgmwvc4kYy+w9Wv6TW79EyOyQxW58pne/WSjI3K1EbYOq54ADqJJW
+         Pzuw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0urt7LvdYkG+xZs8Ec138aGDltj9TF/SLz6stMHL5Unvz5UD2SnWtX47WwdKeQ5YclovOvZsYiu2RKM/sIY5ROhc8L00WeUhyLeF4AdqqSIEGCtlo//glFXYepec2b0f+bjNtQb07
+X-Gm-Message-State: AOJu0Ywwa3lzsg2YOP9SODWxocF/EjP8hz9vaaBd3Esc/zOgS1H60YQc
+	9kvuFUSBdXItvZQCkfBkzi+aOpfejEF1O831Y9+nJoh8ziWvVwVErX0wkG0uVZwmPsDTthCtw4Q
+	aYiD9jS+tFAHq2qUrmIcYCiqp4s4=
+X-Google-Smtp-Source: AGHT+IF1cItnDlJqIfIlEFkY8o7SJ9R4Itiszg3o01fP1prXMEJJpL2VxjYQqt6AZUJDpJsaZuvfEtYFqF3Gmaf6APw=
+X-Received: by 2002:a05:6902:2b8b:b0:e02:e12d:88c7 with SMTP id
+ 3f1490d57ef6-e0b098ccc0cmr349389276.51.1721750823603; Tue, 23 Jul 2024
+ 09:07:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXEkHKtFKFS3ejeDsg1Q+2NY1JibzurzqgwVGqb+1=XrRg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20240719115741.3694893-1-rick.wertenbroek@gmail.com>
+ <20240719115741.3694893-2-rick.wertenbroek@gmail.com> <Zp+6TU/nn/Ea6xqq@x1-carbon.lan>
+In-Reply-To: <Zp+6TU/nn/Ea6xqq@x1-carbon.lan>
+From: Rick Wertenbroek <rick.wertenbroek@gmail.com>
+Date: Tue, 23 Jul 2024 18:06:26 +0200
+Message-ID: <CAAEEuho08Taw3v2BeCjNDQZ0BRU0oweiLuOuhfrLd7PqAyzSCQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] PCI: endpoint: Introduce 'get_bar' to map fixed
+ address BARs in EPC
+To: Niklas Cassel <cassel@kernel.org>
+Cc: rick.wertenbroek@heig-vd.ch, alberto.dassatti@heig-vd.ch, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>, 
+	Damien Le Moal <dlemoal@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 23, 2024 at 05:02:15PM +0200, Ard Biesheuvel wrote:
-> On Tue, 23 Jul 2024 at 16:52, Will Deacon <will@kernel.org> wrote:
-> > On Fri, Jul 19, 2024 at 11:02:29AM -0700, Ard Biesheuvel wrote:
-> > > Thanks for the cc, and thanks to Lina for the excellent diagnosis -
-> > > this is really helpful.
-> > >
-> > > > diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> > > > index f8efbc128446..3afe624a39e1 100644
-> > > > --- a/arch/arm64/include/asm/pgtable.h
-> > > > +++ b/arch/arm64/include/asm/pgtable.h
-> > > > @@ -1065,6 +1065,13 @@ static inline bool pgtable_l5_enabled(void) { return false; }
-> > > >
-> > > >  #define p4d_offset_kimg(dir,addr)      ((p4d_t *)dir)
-> > > >
-> > > > +static inline
-> > > > +p4d_t *p4d_offset_lockless(pgd_t *pgdp, pgd_t pgd, unsigned long addr)
-> > >
-> > > This is in the wrong place, I think - we already define this for the
-> > > 5-level case (around line 1760).
+On Tue, Jul 23, 2024 at 4:17=E2=80=AFPM Niklas Cassel <cassel@kernel.org> w=
+rote:
+>
+> On Fri, Jul 19, 2024 at 01:57:38PM +0200, Rick Wertenbroek wrote:
+> > The current mechanism for BARs is as follows: The endpoint function
+> > allocates memory with 'pci_epf_alloc_space' which calls
+> > 'dma_alloc_coherent' to allocate memory for the BAR and fills a
+> > 'pci_epf_bar' structure with the physical address, virtual address,
+> > size, BAR number and flags. This 'pci_epf_bar' structure is passed
+> > to the endpoint controller driver through 'set_bar'. The endpoint
+> > controller driver configures the actual endpoint to reroute PCI
+> > read/write TLPs to the BAR memory space allocated.
 > >
-> > Hmm, I'm a bit confused. In my tree, we have one definition at line 1012,
-> > which is for the 5-level case (i.e. guarded by
-> > '#if CONFIG_PGTABLE_LEVELS > 4'). I'm adding a new one at line 1065,
-> > which puts it in the '#else' block and means we use an override instead
-> > of the problematic generic version when we're folding.
-> >
-> 
-> Indeed. I failed to spot from the context (which is there in the diff)
-> that this is in the else branch.
+> > The problem with this is that not all PCI endpoint controllers can
+> > be configured to reroute read/write TLPs to their BAR to a given
+> > address in memory space. Some PCI endpoint controllers e.g., FPGA
+> > IPs for Intel/Altera and AMD/Xilinx PCI endpoints. These controllers
+> > come with pre-assigned memory for the BARs (e.g., in FPGA BRAM),
+> > because of this the endpoint controller driver has no way to tell
+> > these controllers to reroute the read/write TLPs to the memory
+> > allocated by 'pci_epf_alloc_space' and no way to get access to the
+> > memory pre-assigned to the BARs through the current API.
+>
+> Looking at your series, it seems that you skip not only setting up the
+> PCI address to internal address translation, you also skip the whole
+> call to set_bar(). set_bar() takes a 'pci_epf_bar' struct, and configures
+> the hardware accordingly, that means setting the flags for the BARs,
+> configuring it as 32 or 64-bit etc.
 
-No worries.
+Thank you for the comments,
 
-> > > > +{
-> > >
-> > > We might add
-> > >
-> > > if (pgtable_l4_enabled())
-> > >     pgdp = &pgd;
-> > >
-> > > here to preserve the existing 'lockless' behavior when PUDs are not
-> > > folded.
-> >
-> > The code still needs to be 'lockless' for the 5-level case, so I don't
-> > think this is necessary.
-> 
-> The 5-level case is never handled here.
+This is not skipped, it is done in the new 'get_bar()' function,
+depending on the hardware the flags are either fixed, then they are
+set inside the 'get_bar()' function, either they are settable and we
+could use the ones that come from the 'pci_epf_bar' structure as an
+"in-out" parameter. This is dependent on the controller and will be
+set in 'get_bar'. The structure returned by 'get_bar' will be filled.
+It also means get_bar() will call ioremap() to set the virtual
+address, as well as the physical address.
 
-Urgh, yes, sorry. I've done a fantasticly bad job of explaining myself.
+>
+> I think you should still call set_bar(). Your PCIe EPC .set_bar() callbac=
+k
+> can then detect that the type is fixed address, and skip setting up the
+> internal address translation. (Although I can imagine someone in the
+> future might need a fixed internal address for the BAR, but they still
+> need to setup internal address translation.)
 
-> There is the 3-level case, where the runtime PUD folding needs the
-> actual address in order to recalculate the descriptor address using
-> the correct shift. In this case, we don't dereference the pointer
-> anyway so the 'lockless' thing doesn't matter (afaict)
-> 
-> In the 4-level case, we want to preserve the original behavior, where
-> pgd is not reloaded from pgdp. Setting pgdp to &pgd achieves that.
+That is why I suggested at first to have either the option to use
+'set_bar' (translate TLPs to the BAR address to the phys address from
+the pci_epf_bar struct) or 'get_bar' (because the translation of TLPs
+to BAR is fixed by hardware, and you want to fill the pci_epf_bar
+struct with the correct addresses), having both allows to choose the
+one adequate for the controller hardware based on features.
 
-Right. What I'm trying to get at is the case where we have folding. For
-example, with my patch applied, if we have 3 levels then the lockless
-GUP walk looks like:
+>
+> Maybe something like this:
+> diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
+> index 85bdf2adb760..50ad728b3b3e 100644
+> --- a/include/linux/pci-epc.h
+> +++ b/include/linux/pci-epc.h
+> @@ -151,18 +151,22 @@ struct pci_epc {
+>  /**
+>   * @BAR_PROGRAMMABLE: The BAR mask can be configured by the EPC.
+>   * @BAR_FIXED: The BAR mask is fixed by the hardware.
+> + * @BAR_FIXED_ADDR: The BAR mask and physical address is fixed by the ha=
+rdware.
+>   * @BAR_RESERVED: The BAR should not be touched by an EPF driver.
+>   */
+>  enum pci_epc_bar_type {
+>         BAR_PROGRAMMABLE =3D 0,
+>         BAR_FIXED,
+> +       BAR_FIXED_ADDR,
+>         BAR_RESERVED,
+>  };
+>
+>  /**
+>   * struct pci_epc_bar_desc - hardware description for a BAR
+>   * @type: the type of the BAR
+> - * @fixed_size: the fixed size, only applicable if type is BAR_FIXED_MAS=
+K.
+> + * @fixed_size: the fixed size, only applicable if type is BAR_FIXED or
+> + *             BAR_FIXED_ADDRESS.
+> + * @fixed_addr: the fixed address, only applicable if type is BAR_FIXED_=
+ADDRESS.
+>   * @only_64bit: if true, an EPF driver is not allowed to choose if this =
+BAR
+>   *             should be configured as 32-bit or 64-bit, the EPF driver =
+must
+>   *             configure this BAR as 64-bit. Additionally, the BAR succe=
+eding
+>
 
+Yes, this is very similar to what I suggested initially, with the enum
+type instead of a boolean, and we need the address for
+pci_epf_alloc_space to do the ioremap, which is not needed if done in
+pci_epc_get_bar because the EPC itself knows about the fixed address.
 
-pgd_t pgd = READ_ONCE(*pgdp);
+>
+> I know you are using a FPGA, but for e.g. DWC, you would simply
+> ignore:
+> https://github.com/torvalds/linux/blob/master/drivers/pci/controller/dwc/=
+pcie-designware-ep.c#L232-L234
+>
 
-p4dp = p4d_offset_lockless(pgdp, pgd, addr);
-	=> Returns pgdp
-p4d_t p4d = READ_ONCE(*p4dp);
+Yes, exactly. But that needs your change suggested below (if not the
+caller should not call 'pci_epf_alloc_space' before calling
+'pci_epc_set_bar' and 'pci_epc_set_bar' should still ioremap the fixed
+physical address to provide to get the virtual address and provide
+both in the 'pci_epf_bar' struct (which should not be pre-filled by
+pci_epf_alloc_space)).
 
-pudp = pud_offset_lockless(p4dp, p4d, addr);
-	=> Returns &p4d, which is again the pgdp
-pud_t pud = READ_ONCE(*pudp);
+>
+> Perhaps we even want the EPF drivers to keep calling pci_epf_alloc_space(=
+),
+> by doing something like:
+>
+> diff --git a/drivers/pci/endpoint/pci-epf-core.c b/drivers/pci/endpoint/p=
+ci-epf-core.c
+> index 323f2a60ab16..35f7a9b68006 100644
+> --- a/drivers/pci/endpoint/pci-epf-core.c
+> +++ b/drivers/pci/endpoint/pci-epf-core.c
+> @@ -273,7 +273,9 @@ void *pci_epf_alloc_space(struct pci_epf *epf, size_t=
+ size, enum pci_barno bar,
+>         if (size < 128)
+>                 size =3D 128;
+>
+> -       if (epc_features->bar[bar].type =3D=3D BAR_FIXED && bar_fixed_siz=
+e) {
+> +       if ((epc_features->bar[bar].type =3D=3D BAR_FIXED ||
+> +            epc_features->bar[bar].type =3D=3D BAR_FIXED_ADDR)
+> +           && bar_fixed_size) {
+>                 if (size > bar_fixed_size) {
+>                         dev_err(&epf->dev,
+>                                 "requested BAR size is larger than fixed =
+size\n");
+> @@ -296,10 +298,15 @@ void *pci_epf_alloc_space(struct pci_epf *epf, size=
+_t size, enum pci_barno bar,
+>         }
+>
+>         dev =3D epc->dev.parent;
+> -       space =3D dma_alloc_coherent(dev, size, &phys_addr, GFP_KERNEL);
+> -       if (!space) {
+> -               dev_err(dev, "failed to allocate mem space\n");
+> -               return NULL;
+> +       if (epc_features->bar[bar].type =3D=3D BAR_FIXED_ADDR) {
+> +               request_mem_region(...);
+> +               ioremap(...);
+> +       } else {
+> +               space =3D dma_alloc_coherent(dev, size, &phys_addr, GFP_K=
+ERNEL);
+> +               if (!space) {
+> +                       dev_err(dev, "failed to allocate mem space\n");
+> +                       return NULL;
+> +               }
+>         }
+>
+>         epf_bar[bar].phys_addr =3D phys_addr;
+>
+>
 
+This seems like a sane approach, I thought that because
+'pci_epf_alloc_space' was in the EPF part, the EPF may not have been
+linked yet to a controller, but here as the features are passed, they
+EPF section already knows about the EPC features, so it makes sense to
+to do the ioremap() here instead of in 'set/get_bar()'. This would
+also be compatible with the current API.
 
-So here we're reloading the same pointer multiple times and my argument
-is that if we need to add logic to avoid this for the
-pgtable_l4_enabled() case, then we have bigger problems.
+I really like this because it doesn't require a new function. Also it
+will not alloc/fill if it is a fixed BAR so less risk of errors when
+writing the endpoint function driver.
 
-> > Yes, we'll load the same entry multiple times,
-> > but it should be fine because they're in the context of a different
-> > (albeit folded) level.
-> >
-> 
-> I don't understand what you are saying here. Why is that fine?
+And I like passing the BAR fixed address in the features, it makes sense.
 
-I think it's fine because (a) the CPU guarantees same address
-read-after-read ordering and (b) We only evaluate the most recently read
-value. It would be a problem if we mixed data from different reads but,
-because the use is confined to that 'level', we don't end up doing that.
+>
+> I could also see some logic in the request_mem_region() and ioremap() cal=
+l
+> being in the EPC driver's set_bar() callback.
 
-Dunno, am I making any sense?
+My initial thought was that because it was really EPC dependent it
+would be in an EPC function, thus I suggested get_bar.
 
-Will
+>
+> But like you suggested in the other mail, the right thing is to merge
+> alloc_space() and set_bar() anyway. (Basically instead of where EPF drive=
+rs
+> currently call set_bar(), the should call alloc_and_set_bar() (or whateve=
+r)
+> instead.)
+>
+
+Yes, if we merge both, the code will need to be in the EPC code
+(because of the set_bar), and then the pci_epf_alloc_space (if needed)
+would be called internally in the EPC code and not in the endpoint
+function code.
+
+The only downside, as I said in my other mail, is the very niche case
+where the contents of a BAR should be moved and remain unchanged when
+rebinding a given endpoint function from one controller to another.
+But this is not expected in any endpoint function currently, and with
+the new changes, the endpoint could simply copy the BAR contents to a
+local buffer and then set the contents in the BAR of the new
+controller.
+Anyways, probably no one is moving live functions between controllers,
+and if needed it still can be done, so no problem here...
+
+>
+> Kind regards,
+> Niklas
+
+Thank you very much for your insights.
+I really like the approach of setting the type and fixed address in
+the features.
+
+By doing so we can then merge the alloc/set_bar functions and simplify
+the endpoint function drivers while at the same time support fixed
+address BARs.
+
+Best regards,
+Rick
 
