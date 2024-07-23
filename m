@@ -1,60 +1,83 @@
-Return-Path: <linux-kernel+bounces-260451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D92F293A970
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 00:44:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B165293A972
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 00:47:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BC911F22ADA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:44:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69CE4282FE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AB41494A4;
-	Tue, 23 Jul 2024 22:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60339148FE8;
+	Tue, 23 Jul 2024 22:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d4IDhQzr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i4y25xRP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2E31422AB;
-	Tue, 23 Jul 2024 22:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 465CE25760;
+	Tue, 23 Jul 2024 22:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721774651; cv=none; b=eDarMjdGPn+WEWCfrz9vTXK2dVD6YNTsySz6YwPPnukVZMQznSGU8TDP7BkjkKHyIhy27F7NXyXuDqF3qP6WkY7ocNqMmmXVvZaDR9MJBbWpkzuUrWTwj+rQqPEcNXu5/892Ows5S98cWhVBzni8GpkxR9V2xzQRQ7SFCmJz5EM=
+	t=1721774822; cv=none; b=BkIvRmo6APhSpih1qa0Yzzxe0ydod6glJlbAXnJpwok2UClnySix1H69RQppjxxEZ1zBVBO74jlHX5qf094RLiJrVBLLx5zuF+e1lnkMQtKk2WhTanFRaC13YXwDbIMdxz+j51bPFBkcAGmdSgn7jFr6Ze6Xu+QR9haQS79W+NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721774651; c=relaxed/simple;
-	bh=AQI883Cu7SaB5V4e/b8n1Uo6AlMO7QJgsxnRLVpSvMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=tEOIILnGnNX/FJg4mMx+apSyytezKcmnkl6AYJ+0ow2PO59GJc0QfphW3MSRTyPSV+CQq8850SUqBGaHtCduWfX6/wfbjbsf0CdMRH0XX8b8uN0kwDGlET5CXM1P0OVBa6EgklgS+fCw61Pm8STDXoTwvVEU5v/SxolMwSm+cgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d4IDhQzr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8981AC4AF0A;
-	Tue, 23 Jul 2024 22:44:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721774650;
-	bh=AQI883Cu7SaB5V4e/b8n1Uo6AlMO7QJgsxnRLVpSvMI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=d4IDhQzrA0CWCB5XyCIQoSnLdwyQUwg+hE2bGAJdsxkH6CuREP5ZfvjKLDC1ZHF4f
-	 auFYmN89jfk2+KA/BlzrarrmROYC/t1vvrWuWLUErXGQdj6ZluG2/sqrPYIvtXRV+K
-	 3AwpRF1B48turD0JM7y1VZ8PfP8s7ZQjvEI43WH0IY7ccXG7woHffVdXPSHT8G7rYx
-	 FIbAlf4qoCRhc6jnN3r6VWWGZKE2y1rPbAdNR5zcUFRNSokxWgsovm3OIb88bvPbDl
-	 qwgJgUlyn38DdFm9VvyYWEkwArqIXaytvMZOiar0TAzotXR2q9RW0LstKclDnAQo+7
-	 RCqOeHvbcFDIA==
-Date: Tue, 23 Jul 2024 17:44:08 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Wei Huang <wei.huang2@amd.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
-	Jonathan.Cameron@huawei.com, corbet@lwn.net, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	alex.williamson@redhat.com, gospo@broadcom.com,
-	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
-	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
-	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
-	vadim.fedorenko@linux.dev, horms@kernel.org, bagasdotme@gmail.com,
-	bhelgaas@google.com
-Subject: Re: [PATCH V3 04/10] PCI/TPH: Add pci=nostmode to force No ST Mode
-Message-ID: <20240723224408.GA779931@bhelgaas>
+	s=arc-20240116; t=1721774822; c=relaxed/simple;
+	bh=dl09buGlXJxjd9vfVzfVMrAdCdvLXfX2AOHwdw+scUQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P5LvrkIO1IVTbwdHdkHI5LYsqSRm1YIU6BYgX5USOXst5BcexshA9xP+Cj5YvpEpksE6ZHObWmrMv6TWhk/+6XchKpIdPHK42msHSQaB/NY+dDIzJmbbY+qZb4izP4qok2dhakpfWCp3p00IEafcSg5RJqFmQ2wh2zJpTw336WQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i4y25xRP; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721774820; x=1753310820;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=dl09buGlXJxjd9vfVzfVMrAdCdvLXfX2AOHwdw+scUQ=;
+  b=i4y25xRPoTV7tkFELyIrKza9YvzvNph1Pj52gexrdlDz+BSF5xq1CS5l
+   VAHN/iKMR17je7RdFt7u+NUsGYgaBvwQewrnhARyCLgdCFiMvV9xAy5UH
+   tsqsZoPbmt5P53hCsafHOOuA4Pu+hYhB2SRhhs38HKndOMBgFfeGIcpeb
+   u6W2ayRs62XAwZR0cpfPgrePfQd95QBOtxDnDSB322kkUbBhgfqNjtm4Y
+   MkWUfh56WLhmCyOKAtcuhFpzHpLWIQY34XuvkhtDoDi3hVe9NIKPxfx9b
+   xWbc7wugBUtkFXd+vN4zMzKB+2P7i9pVcxDxZdP38J4swK5WHzZUF7Ysa
+   A==;
+X-CSE-ConnectionGUID: ZvgipneIRMmdLmDO/xLdBA==
+X-CSE-MsgGUID: B66WqGKzStaTdUGIqyyUyg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11142"; a="19555282"
+X-IronPort-AV: E=Sophos;i="6.09,231,1716274800"; 
+   d="scan'208";a="19555282"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2024 15:46:59 -0700
+X-CSE-ConnectionGUID: C9dni4CPQI+dq/xQ9efZvw==
+X-CSE-MsgGUID: gu2NC/fGTvivYgAzJI8ALg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,231,1716274800"; 
+   d="scan'208";a="52613766"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 23 Jul 2024 15:46:55 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sWOHU-000mQS-0g;
+	Tue, 23 Jul 2024 22:46:52 +0000
+Date: Wed, 24 Jul 2024 06:46:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vignesh Balasubramanian <vigbalas@amd.com>,
+	linux-kernel@vger.kernel.org, linux-toolchains@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, mpe@ellerman.id.au,
+	npiggin@gmail.com, christophe.leroy@csgroup.eu,
+	aneesh.kumar@kernel.org, naveen.n.rao@linux.ibm.com,
+	ebiederm@xmission.com, keescook@chromium.org, x86@kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org, bpetkov@amd.com,
+	jinisusan.george@amd.com, matz@suse.de, binutils@sourceware.org,
+	jhb@freebsd.org, felix.willgerodt@intel.com, tglx@linutronix.de,
+	Vignesh Balasubramanian <vigbalas@amd.com>,
+	Borislav Petkov <bp@alien8.de>
+Subject: Re: [PATCH v4 1/1] x86/elf: Add a new .note section containing
+ xfeatures buffer layout info to x86 core files
+Message-ID: <202407240659.eRyEDmG1-lkp@intel.com>
+References: <20240723090454.8241-2-vigbalas@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,73 +86,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240717205511.2541693-5-wei.huang2@amd.com>
+In-Reply-To: <20240723090454.8241-2-vigbalas@amd.com>
 
-On Wed, Jul 17, 2024 at 03:55:05PM -0500, Wei Huang wrote:
-> When "No ST mode" is enabled, endpoint devices can generate TPH headers
-> but with all steering tags treated as zero. A steering tag of zero is
-> interpreted as "using the default policy" by the root complex. This is
-> essential to quantify the benefit of steering tags for some given
-> workloads.
+Hi Vignesh,
 
-Capitalize technical terms defined by spec.
+kernel test robot noticed the following build errors:
 
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -4656,6 +4656,7 @@
->  		norid		[S390] ignore the RID field and force use of
->  				one PCI domain per PCI function
->  		notph		[PCIE] Do not use PCIe TPH
-> +		nostmode	[PCIE] Force TPH to use No ST Mode
+[auto build test ERROR on kees/for-next/execve]
+[also build test ERROR on tip/x86/core kees/for-next/pstore kees/for-next/kspp linus/master v6.10 next-20240723]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Needs a little more context here about what this means.  Users won't
-know where to even look for "No ST Mode" unless they have a copy of
-the spec.
+url:    https://github.com/intel-lab-lkp/linux/commits/Vignesh-Balasubramanian/x86-elf-Add-a-new-note-section-containing-xfeatures-buffer-layout-info-to-x86-core-files/20240723-170946
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/execve
+patch link:    https://lore.kernel.org/r/20240723090454.8241-2-vigbalas%40amd.com
+patch subject: [PATCH v4 1/1] x86/elf: Add a new .note section containing xfeatures buffer layout info to x86 core files
+config: x86_64-buildonly-randconfig-005-20240724 (https://download.01.org/0day-ci/archive/20240724/202407240659.eRyEDmG1-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240724/202407240659.eRyEDmG1-lkp@intel.com/reproduce)
 
-> +++ b/drivers/pci/pci-driver.c
-> @@ -324,8 +324,13 @@ static long local_pci_probe(void *_ddi)
->  	pci_dev->driver = pci_drv;
->  	rc = pci_drv->probe(pci_dev, ddi->id);
->  	if (!rc) {
-> -		if (pci_tph_disabled())
-> +		if (pci_tph_disabled()) {
->  			pcie_tph_disable(pci_dev);
-> +			return rc;
-> +		}
-> +
-> +		if (pci_tph_nostmode())
-> +			pcie_tph_set_nostmode(pci_dev);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407240659.eRyEDmG1-lkp@intel.com/
 
-Same comment here; can we do this outside the probe() path somehow?
+All errors (new ones prefixed by >>):
 
->  		return rc;
->  	}
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 4cbfd5b53be8..8745ce1c4a9a 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -160,6 +160,9 @@ static bool pcie_ats_disabled;
->  /* If set, the PCIe TPH capability will not be used. */
->  static bool pcie_tph_disabled;
->  
-> +/* If TPH is enabled, "No ST Mode" will be enforced. */
-> +static bool pcie_tph_nostmode;
-> +
->  /* If set, the PCI config space of each device is printed during boot. */
->  bool pci_early_dump;
->  
-> @@ -175,6 +178,12 @@ bool pci_tph_disabled(void)
->  }
->  EXPORT_SYMBOL_GPL(pci_tph_disabled);
->  
-> +bool pci_tph_nostmode(void)
-> +{
-> +	return pcie_tph_nostmode;
-> +}
-> +EXPORT_SYMBOL_GPL(pci_tph_nostmode);
+   In file included from <built-in>:1:
+   ./usr/include/asm/elf.h:6:2: error: unknown type name 'u32'
+       6 |         u32 type;
+         |         ^
+   ./usr/include/asm/elf.h:7:2: error: unknown type name 'u32'
+       7 |         u32 size;
+         |         ^
+   ./usr/include/asm/elf.h:8:2: error: unknown type name 'u32'
+       8 |         u32 offset;
+         |         ^
+   ./usr/include/asm/elf.h:9:2: error: unknown type name 'u32'
+       9 |         u32 flags;
+         |         ^
+>> ./usr/include/asm/elf.h:12:16: error: static assertion failed due to requirement 'sizeof(struct x86_xfeat_component) % 4 == 0': x86_xfeat_component is not aligned
+      12 | _Static_assert(sizeof(struct x86_xfeat_component)%4 == 0, "x86_xfeat_component is not aligned");
+         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   ./usr/include/asm/elf.h:12:53: note: expression evaluates to '1 == 0'
+      12 | _Static_assert(sizeof(struct x86_xfeat_component)%4 == 0, "x86_xfeat_component is not aligned");
+         |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
+   5 errors generated.
 
-s/pci/pcie/
-
-Unexport unless it's useful for drivers.
-
-Bjorn
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
