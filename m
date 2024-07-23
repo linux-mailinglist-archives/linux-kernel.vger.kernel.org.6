@@ -1,112 +1,119 @@
-Return-Path: <linux-kernel+bounces-260453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8220993A976
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 00:49:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A98793A982
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 00:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C32D1F2270B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:49:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 451611F230D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:54:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BFF149003;
-	Tue, 23 Jul 2024 22:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A651494BC;
+	Tue, 23 Jul 2024 22:54:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dRGlt/ui"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K1w0Cg3Y"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B857628E8;
-	Tue, 23 Jul 2024 22:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62252149003;
+	Tue, 23 Jul 2024 22:54:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721774954; cv=none; b=Mb0DYM3zx9lmeO/gdpDehHWWNMd1vGZ6ph1Xe/E5lYY/9Tcxb5UEA0lTllSNUw5JbFbE2j3eqwQq+dVG30NnE7gkNkuoYfovEL4Sk6nrCkV6du7HcpNwV4xULQb7spQFqKhj2NMHkfyDjptRXqBNAdK5+8ojJ6aVSEDeDdy5L3c=
+	t=1721775270; cv=none; b=snfdZr8QUPJP8ib5VD4HlnMuOxM6yHI5rpMQxbjPAir67VPLaBFa4ubjFLsu/a/I+dvBQHcjnrueNOZzEExJtXjRB1rLrpcm4I1+SWRGvuUoo8ExkF2D0Jy9L0yVEL+6CqfWPpugrr1/ofF5b7UNmw1Ha/Mzjv/uzTc/D2dUYhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721774954; c=relaxed/simple;
-	bh=kfUDyN4oBaPcr5gpAgQf9lf05rKE46HWWZZzb9qPNuQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=GIy+GPfOOuTF9bzLKs4lcxiKReP4bJSUUyALpzJQqV5K0YS3bMrwyat4pAgPpt7qNecmjHjy72+euhj3+PYAchvrGOKXSfuiiSlTlxjqVINxsDBbEalej6lKE6D6iJjytVZe9LdSwWUOE8XDkKK3tWSn0dtvPdbcXcRDQu5QEv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=dRGlt/ui; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1721774944;
-	bh=VlUu3IpODUV/ZAtKdUMXAzyXBBgLWgqfNodC3YJ+3iU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=dRGlt/ui2tmTYzDMpBaUs3OaMJXPkiUsDYQ9wXD4YQZApxbAImiHMU7cLgw3bz136
-	 fYUgFYSCprB3k2DOFQmwKkBAJ8G4x+s9i68fyVtWo7KLOte0ekBx0E3nblh+zDZBlA
-	 J6DracxH9Bl0bA88qcYEHUXuXQVB/Xmc6uFurrVpxzp7jnlIjOhGDMFg1RUXSCOQLE
-	 4Cw/ZfcgI+ObknMkbxmHdLqGpmueOkeC2V8JbteUDh4I8bDBAEvBvpRqmUF+5/UQZf
-	 cLsgM9FpBRKtGeLhTecAxu6LRqCXuxzlQ3Rye9ktFmRLWTKK5ef/MgNSEB6KtoeWq0
-	 wBJgr5z7qXNbg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WTC4c3JBrz4wZx;
-	Wed, 24 Jul 2024 08:49:04 +1000 (AEST)
-Date: Wed, 24 Jul 2024 08:49:02 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the mm tree
-Message-ID: <20240724084902.0843304d@canb.auug.org.au>
+	s=arc-20240116; t=1721775270; c=relaxed/simple;
+	bh=1AjLTDbuhyesuT1YeSuYmfbEfq7w+4c503zcZIhhfTk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qscnz2R+urGyMITRwglhdM4hYzJY7OunRkxPV36VdtCecf2hSb6MjHQ+FE2udOho0u1/3ga9i/1ghlmfPGZsl2enorqSWpaO5KeBygwVycg4a9XPBsFZMW/mf+vU7LeHpbF90XFa/Ejb2RuhLiTxjiZ++pSK/05+RBGFBrYov/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K1w0Cg3Y; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6b79c27dd01so34065886d6.3;
+        Tue, 23 Jul 2024 15:54:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721775268; x=1722380068; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LWMntoosXb0dgJn0gpXmbDSjr5NrrVKbXCip5YcXW2c=;
+        b=K1w0Cg3Y8tKaVBIopHZEkg/eVW7l+ahFKweQRhLR/MxkOO5F82QGFUvI4B2e28ca3O
+         VMbAreWaFuwtLAxXHr+8S+2ZVXYA5P4O+KRjAMS7ktyBbpV2qxEMddkGIlwZcYke7FHV
+         txHAoh2JNGhC1GHj542meAN4TEkn0hgzmeCOmfkMHL/YKjAkiVj9+aQSPeNnvYpZAuk6
+         eW2jWw7dHxlvtZbswrF5LqJFmEmOkWYhJPWKK0/lqcjALeyXlsmMyA4n9Xoc69O/07jN
+         t/i1Zep/IVTmMncYGHX9TNngA2CssUTbiy90qatyYS0L7JSe9XIOObMY6Riiq1E09oDu
+         SbfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721775268; x=1722380068;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LWMntoosXb0dgJn0gpXmbDSjr5NrrVKbXCip5YcXW2c=;
+        b=weE+sAKs7693MitGtP6s+vEPsOAe5V0aLvaggA/obH3eVKtflnXaKvX+T9WO8eL597
+         L9cU7gxG23tvDLyKvluCjOLS3GH5/LYrLRvwQAKjbHGzmWdlm9HSU/Jd9oowyfpVFKq7
+         oAroWpFNTvk++Gh7F4qFCUUwraeCOThjom4M1Unh7+bWKaBDUsGYl+IEZmc0mHWyPyqP
+         2dFgQSpKTqH05c0b9kec/L2DiQUd/r3fn/kqXEZp0Qg8ZsJY9Q2QvtS2os3YACVuIJlt
+         YkCNb3r59KHzK5C0BF40O7z4KPn9fbq7BtAGECuLbjhSdwKCWLy4+oTpliGSTjRIebi/
+         aQNg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsnPZV7AT6HpolNBwTsEQDhgEx2ipakVzKiHk+wmEWpd+Q9PUqohptyMGoMgSwOOkkQrxSJ380N90Yr2s+JBuiUGYnguol9H309nzajuhJORDp6uY30mMCe5trhbIIyXC9fHT/
+X-Gm-Message-State: AOJu0YwBKaammAkHuOWYkSERGDHUCAX7PD4YBHW9fdp58jtk6a0Q0BkQ
+	4LF69QQxIrTp0dz5m/iEf09JUcFIpq2ks2QCi9/wmqeKdHsKplXZ
+X-Google-Smtp-Source: AGHT+IFiIruTHHXZAK76VBbvCdeRelJiq4cHOVQDT+BXtQr4+VOSTzm+Xj/KJddY40pYXnK5MCIOFQ==
+X-Received: by 2002:a05:6214:76b:b0:6b9:611f:eb32 with SMTP id 6a1803df08f44-6b98ed48304mr11465216d6.34.1721775268192;
+        Tue, 23 Jul 2024 15:54:28 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6b96e8bf456sm30388576d6.56.2024.07.23.15.54.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jul 2024 15:54:27 -0700 (PDT)
+Message-ID: <cd7b0b38-af8e-42f2-be5c-c57fd8e3937e@gmail.com>
+Date: Tue, 23 Jul 2024 15:54:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/.Ko6Qqmn._gBbh.nf_NcZaV";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.10 00/11] 6.10.1-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240723122838.406690588@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20240723122838.406690588@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/.Ko6Qqmn._gBbh.nf_NcZaV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 7/23/24 05:28, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.10.1 release.
+> There are 11 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 25 Jul 2024 12:28:30 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.1-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-Hi all,
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-After merging the mm tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
-In file included from mm/vma.c:7:
-mm/vma_internal.h:46:10: fatal error: asm/page_types.h: No such file or dir=
-ectory
-   46 | #include <asm/page_types.h>
-      |          ^~~~~~~~~~~~~~~~~~
-
-Caused by commit
-
-  b102945dd5b2 ("mm: move internal core VMA manipulation functions to own f=
-ile")
-
-from the mm-unstable branch of the mm tree.
-
-asm/page_types.h only exists for x86 ...
-
-I have dropped the mm tree until the end of the merge window.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/.Ko6Qqmn._gBbh.nf_NcZaV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmagM14ACgkQAVBC80lX
-0GydPwf+PcC0WiazNrGsMm6tTg7HcaeDrAyrGjpy6B3TxVx4VpsPRre+higOGFsj
-wSR7x7wVWPdMr9NVWFa5BLF3O6h1nWLY7Guq3aFMOB8c2moFufwYyoaSjYdXTagV
-3ocecDGYAsohDWpeTBflGlMBt6Fw/4AdemPXd6kCDl4RpvxKLRKGjI9PH4aewVDh
-kOnMAZzoqT0PJZFnUSWj5ENjvvP9+1dlTRJvBTHRQUkOk+U88BoqPDWAp96AloP5
-yAzRArRfA6/+l5GBDKIpz5vP9XOi88D2P5dkS5RoLjCW6heF98vq64aINMUng8Zb
-aO7c2SGPCQLisHVfmaSP5YjCfVb6BQ==
-=z2Dn
------END PGP SIGNATURE-----
-
---Sig_/.Ko6Qqmn._gBbh.nf_NcZaV--
 
