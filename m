@@ -1,166 +1,114 @@
-Return-Path: <linux-kernel+bounces-260458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2BE093A993
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:04:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A0BF93A994
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 849BB1F230D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:04:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D09031F22ED2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03304146D7E;
-	Tue, 23 Jul 2024 23:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5301494A2;
+	Tue, 23 Jul 2024 23:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="WQ89b02F"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EXzRlegH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F290A25760;
-	Tue, 23 Jul 2024 23:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA65047A64;
+	Tue, 23 Jul 2024 23:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721775856; cv=none; b=Dkv9RR8onJPEcZJnkxlK02DR83AIV57i4hX0QsbMK439SeGBUo9NFLAyInl/DlZ5yxirZDm1xoe5wdWZxnN3b9YWyO2n9xwutBrazzzHCdtsgK8W7vuN0OjiIPVIdJa5PsLNOmLtXiwkqqD6HnihGxqTfmiPQYSQLQkivevjniw=
+	t=1721775879; cv=none; b=nrpiP6ADZK5CqULI9ypbNcrL4wy+7HLHgsY55zmVffRMq9nbac/CHUyxibuoB1699GCAagMSufmxjj6pOz/78KsES8xytBlKbpMNwxLQwhhYC9q8UVq9BvqN3ufyq2LJL3p0xPDClFedKnRmmjWMq2VPp1NeCBSPe2EgRKaPXIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721775856; c=relaxed/simple;
-	bh=aJcKf1xTLSGK0ljbq7oi9P7WFJu5oCLkdrLODajfKGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PBhTQLm+2KwlhKfSg/JtvV8qJkxqV3aNXN3qIPsNro0yu4FeIN08TWMbwo7Hffkrih2oapPXqBjVPIRdd+qPoPIxZAOZ9DF7Fwn8sWu8WSx2DgA7Pm3brAjMMGFRwLglQuzm/61gjID8DL9Fmsx+x6tiRWg80kngy4KTZcRHDVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=WQ89b02F; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1721775851;
-	bh=2HDRKg72/VVm71wO8SE0qqTpqqliv/NUv2tMoD/LXHE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WQ89b02FdJfoCH6g90VycVkE5FUixUE6lPLCENrJKvSHU9FNzbkgFKJb2qAAbdWfx
-	 glMiLzjsa0z706wyPiEVm2/WgfHV5DRFdghkd6UfXWihSo8pRMK8Qa4KiNjl5HpfON
-	 3jz6QBcegNb2fwR7GTWxtmzo7KxTLBRYHH7GwOLray0FnIvROpsnB+BZ/UHEBleOGb
-	 tSLB+NB8zOF7dqnU47mWhXj/yXQaj9qgozgCzRplt3MV4JACahHmSsLwYEZaw7Ql9C
-	 xcYdMtlQyr3JQJJyNPRovh+Q0roq3dTBqFAy5rTJrqZK/9ER87Jj6PggswR3ipRWwr
-	 hMqjZcC5ocMfw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WTCQ128hNz4w2K;
-	Wed, 24 Jul 2024 09:04:09 +1000 (AEST)
-Date: Wed, 24 Jul 2024 09:04:08 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Greg KH <greg@kroah.com>
-Cc: Mark Brown <broonie@kernel.org>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <u.kleine-koenig@pengutronix.de>, Niklas =?UTF-8?B?U8O2ZGVybHVuZA==?=
- <niklas.soderlund+renesas@ragnatech.se>, Andrew Lunn <andrew@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Message-ID: <20240724090408.01435ce8@canb.auug.org.au>
-In-Reply-To: <Znm5qDrsqIY8VNTc@sirena.org.uk>
-References: <Znm5qDrsqIY8VNTc@sirena.org.uk>
+	s=arc-20240116; t=1721775879; c=relaxed/simple;
+	bh=V+HFxS6OxHeWHEqmERNoZYH4TokFIx1UF14I2CUeOqg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tju5YHjiNy3D44ORmq9U8t3Ci86awYilOUhcpkHDIydKXi9gime3RKLym7RewXRIa+py6mBhm7Wepa/8QIZVjWvAIOfBxU6PrZrobRrWKMXOeG263Ik/IOCJxk2oqNcgHeqFjp0LyBqwLmW/KQNtCl4M/iBQZIjnfUE68IW39G0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EXzRlegH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E16DC4AF0A;
+	Tue, 23 Jul 2024 23:04:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721775879;
+	bh=V+HFxS6OxHeWHEqmERNoZYH4TokFIx1UF14I2CUeOqg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EXzRlegHsrgxvPfI/CF//8u9Idqoy9RIGvo/3O1gOr1sjSt8bUlho60A0/zEINIyE
+	 PGDKAN18Ff3Hy6q4Lk5aGDAD2wyZX0SisfTFfIoPAdRhYkXLLbD/rDXxFGOJoRg7hl
+	 HVy1PtBYrVQ09tOPgbA3rCX3EHZL5HGseV9i8zFj6FvPUQwdxje1UH6qMHpLF1DHVs
+	 fVIPiRpwMg5XyW7CpjbJFQBokLmnYui07JN5Z1YqYZxvUgwYWNqR2GPK3HrnGkThG9
+	 9DaXyfRDFyelHMqvYO2X76K05t7fy+KOTP3aHWZDOB9AB4k2DHC56TYA2b6qKpTq0Y
+	 laguwrCLvLwxA==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [GIT PULL] perf-tools fixes for v6.11-rc1
+Date: Tue, 23 Jul 2024 16:04:36 -0700
+Message-ID: <20240723230436.1050616-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.45.2.1089.g2a221341d9-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/B6npodHhcfAc9Ov85lwAZYV";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/B6npodHhcfAc9Ov85lwAZYV
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Linus,
 
-Hi all,
+Please consider pulling the following changes in perf tools for v6.11.
 
-On Mon, 24 Jun 2024 19:23:36 +0100 Mark Brown <broonie@kernel.org> wrote:
->
-> After merging the driver-core tree, today's linux-next build
-> (x86_64 allmodconfig) failed like this:
->=20
-> /tmp/next/build/drivers/net/ethernet/renesas/rtsn.c:1381:27: error: initi=
-alization of 'void (*)(struct platform_device *)' from incompatible pointer=
- type 'int (*)(struct platform_device *)' [-Werror=3Dincompatible-pointer-t=
-ypes]
->  1381 |         .remove         =3D rtsn_remove,
->       |                           ^~~~~~~~~~~
-> /tmp/next/build/drivers/net/ethernet/renesas/rtsn.c:1381:27: note: (near =
-initialization for 'rtsn_driver.<anonymous>.remove')
->=20
-> Caused by commit
->=20
->   0edb555a65d1e ("platform: Make platform_driver::remove() return void")
->=20
-> interacting with
->=20
->   b0d3969d2b4db ("net: ethernet: rtsn: Add support for Renesas Ethernet-T=
-SN")
->=20
-> I have applied the below patch.
->=20
-> From 8f276c3b5b1be09214cbd5643dd4fe4b2e6c692f Mon Sep 17 00:00:00 2001
-> From: Mark Brown <broonie@kernel.org>
-> Date: Mon, 24 Jun 2024 19:02:24 +0100
-> Subject: [PATCH] net: ethernet: rtsn: Fix up for remove() coversion to re=
-turn
->  void
->=20
-> Fixes: 0edb555a65d1e ("platform: Make platform_driver::remove() return vo=
-id")
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  drivers/net/ethernet/renesas/rtsn.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->=20
-> diff --git a/drivers/net/ethernet/renesas/rtsn.c b/drivers/net/ethernet/r=
-enesas/rtsn.c
-> index ad69d47463cbd..5a6cc99e6b35a 100644
-> --- a/drivers/net/ethernet/renesas/rtsn.c
-> +++ b/drivers/net/ethernet/renesas/rtsn.c
-> @@ -1358,7 +1358,7 @@ static int rtsn_probe(struct platform_device *pdev)
->  	return ret;
->  }
-> =20
-> -static int rtsn_remove(struct platform_device *pdev)
-> +static void rtsn_remove(struct platform_device *pdev)
->  {
->  	struct rtsn_private *priv =3D platform_get_drvdata(pdev);
-> =20
-> @@ -1372,8 +1372,6 @@ static int rtsn_remove(struct platform_device *pdev)
->  	pm_runtime_disable(&pdev->dev);
-> =20
->  	free_netdev(priv->ndev);
-> -
-> -	return 0;
->  }
-> =20
->  static struct platform_driver rtsn_driver =3D {
-> --=20
-> 2.39.2
->=20
+Thanks,
+Namhyung
 
-This is now a conflict between the driver-core tree and Linus' tree.
 
---=20
-Cheers,
-Stephen Rothwell
+The following changes since commit 7a2fb5619cc1fb53cb8784154d5ef2bd99997436:
 
---Sig_/B6npodHhcfAc9Ov85lwAZYV
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+  perf trace: Fix iteration of syscall ids in syscalltbl->entries (2024-07-12 09:49:02 -0700)
 
------BEGIN PGP SIGNATURE-----
+are available in the Git repository at:
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmagNugACgkQAVBC80lX
-0Gwuhgf6Ag8fdqGKzcjaldpzvas2UmAzCwKHIg8DEnrQOEnWcFkcP0luB8169NO2
-6W33dHloXdN3fusUfwHWHD5SuXLuhlrDeM6Tfj5FS5vlsdwJZyW/Gq9lRKMRtuzY
-WrCbm87CB2X7uKL1MvwSkFB5Qe2rUbWooxIVkpyMGL9CZ0NOBmOiVWQUdFhMpL/H
-Af+gx+YSfIIzRvYlHB/4b+Xe4zfp+NvRCw1PxzwY7qBSHPWdfOlVuyoxqX2vgcR9
-loMvea/e4c9qprUnYKGCfqo1KdDmhmqgsCPnELngAq+ZtCXauktMkyu90tekSW1i
-celDkXkUtdCNZaHTmKRdD5kX/8v03w==
-=hB3g
------END PGP SIGNATURE-----
+  git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-fixes-for-v6.11-2024-07-23
 
---Sig_/B6npodHhcfAc9Ov85lwAZYV--
+for you to fetch changes up to 92717bc077892d1ce60fee07aee3a33f33909b85:
+
+  perf dso: Fix build when libunwind is enabled (2024-07-17 13:17:57 -0700)
+
+----------------------------------------------------------------
+perf tools fixes for v6.11
+
+Two fixes about building perf and other tools:
+
+* Fix breakage in tracing tools due to pkg-config for libtrace{event,fs}
+
+* Fix build of perf when libunwind is used
+
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+
+----------------------------------------------------------------
+Guilherme Amadio (5):
+      perf build: Warn if libtracefs is not found
+      tools: Make pkg-config dependency checks usable by other tools
+      tools/verification: Use pkg-config in lib_setup of Makefile.config
+      tools/rtla: Use pkg-config in lib_setup of Makefile.config
+      tools/latency: Use pkg-config in lib_setup of Makefile.config
+
+James Clark (1):
+      perf dso: Fix build when libunwind is enabled
+
+ tools/build/Makefile.feature             | 18 ++++++++++++++++++
+ tools/perf/Makefile.config               | 13 +++++--------
+ tools/perf/util/dso.c                    |  2 +-
+ tools/perf/util/dso.h                    |  5 +++++
+ tools/perf/util/unwind-libunwind-local.c |  2 +-
+ tools/tracing/latency/Makefile.config    |  3 ++-
+ tools/tracing/rtla/Makefile.config       |  3 ++-
+ tools/verification/rv/Makefile.config    |  3 ++-
+ 8 files changed, 36 insertions(+), 13 deletions(-)
 
