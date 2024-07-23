@@ -1,128 +1,166 @@
-Return-Path: <linux-kernel+bounces-260442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E70C993A946
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 00:25:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83AE393A94B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 00:26:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B1451F22630
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:25:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6A2F1C224ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD281149011;
-	Tue, 23 Jul 2024 22:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D50149001;
+	Tue, 23 Jul 2024 22:26:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sb4auE96"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jWKlxAlT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B4F1422AB;
-	Tue, 23 Jul 2024 22:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB9C1422AB;
+	Tue, 23 Jul 2024 22:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721773501; cv=none; b=cvNIsDWrE4iDyzS78KQbGf1Bb5HGHWTXqiRxUEbSWhES2BIhQnddufBhpZSBDn4t7qfN5hSgq+b7hizOkWHqD+zQrFCmJyWIyX/GOT0PYMt4rvlziMHyPfc3eCw5hc23qc+6GPVUxHunnN6T20i71cFtDOSzkHR873FZnDy2FK0=
+	t=1721773564; cv=none; b=JT29VyPKfuQnrNhT8aiapARQsdrBRcgM6rODL+DBx5S7BejWMDblQeNLoxpmZQTSh6kielH7Niz99Xfy50/N1qtDMc8CCIg8qLxn5xedfiVU8CZZOT18oEJhetTA2F2rdWp7QsmzwQ5OBaWehjX7eMaJf92h4NTqP+/H0NLBqPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721773501; c=relaxed/simple;
-	bh=ViQtFf4C97IjtVQAJCI22eGpWrUZSSX3Zptd3VqhktI=;
+	s=arc-20240116; t=1721773564; c=relaxed/simple;
+	bh=BhZgnSGXK8BXEFbXfI+VVvx3DEH0lCNYXTkyl825K3Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q/gsVnX3kfDZSIl6666HSO8PLt1+jYeeX5xf/Wu93KxoLQbsBcqUNSPLYH08Ruzw8wkqrsqXjvS00oRu0W8qoYYHqRvgEHuJy0UREmLPbzQZEKrLYTnHy1Iqwjg6v9VEQYTxbLx9DmNbs1JExTjvsI4M7PI4SPUXXF/W0mJTWR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sb4auE96; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721773498; x=1753309498;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ViQtFf4C97IjtVQAJCI22eGpWrUZSSX3Zptd3VqhktI=;
-  b=Sb4auE96xJXdkpnVbIl/PQOUV1cC3P9ilqD61dKrBpWbrqCQup7bQsOG
-   FdMbXZwfbrI530DIWJmMuqxIho+zOhPhOItOKusWeopB+PKXyM0bMV6Ch
-   zymHQimXjruSxn49CGhIvhTbZdlMFDVNBd3n1JfGcs0PxEQOMFhpAalxX
-   /fDAQQiFus9Q95vD3d27ekyCP3M0p2scwkbQdpxuegeHQaiJHID8eMZ3O
-   6qS5wT6bl5vbGgDM49AGxDE2AgbpCEO3GFZQndgcbu+J6eTApw2gJDs5l
-   igmgG6QAbQ0dQCvzpFUmxCnl4HarvNa3U/+5t/R7K6MxrnC8aqG82qNQd
-   g==;
-X-CSE-ConnectionGUID: 0g9rx9PZTJGN1o196Jwq7g==
-X-CSE-MsgGUID: 7VWNvgvCTq+YiggzGEynfw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11142"; a="30088129"
-X-IronPort-AV: E=Sophos;i="6.09,231,1716274800"; 
-   d="scan'208";a="30088129"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2024 15:24:58 -0700
-X-CSE-ConnectionGUID: 7X5r9o4GQ7eA/VcONYNQvQ==
-X-CSE-MsgGUID: pOxbvXMtRta4kwubr+gFnw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,231,1716274800"; 
-   d="scan'208";a="52094633"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 23 Jul 2024 15:24:53 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sWNwB-000mOu-1Y;
-	Tue, 23 Jul 2024 22:24:51 +0000
-Date: Wed, 24 Jul 2024 06:24:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Youling Tang <youling.tang@linux.dev>, Arnd Bergmann <arnd@arndb.de>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Chris Mason <chris.mason@fusionio.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	tytso@mit.edu, Andreas Dilger <adilger.kernel@dilger.ca>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-	Chao Yu <chao@kernel.org>, Christoph Hellwig <hch@infradead.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net, youling.tang@linux.dev,
-	Youling Tang <tangyouling@kylinos.cn>
-Subject: Re: [PATCH 2/4] btrfs: Use module_subinit{_noexit} and
- module_subeixt helper macros
-Message-ID: <202407240648.afyUbKEP-lkp@intel.com>
-References: <20240723083239.41533-3-youling.tang@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mImLZYbZDBhiHXrIVtm7wcqOP2s3vXr/NDgdER+tQ7mCZNIRGG2rEbaMri1osZ3Er+al+NyDybliBrfmC3s7iSX4HFCDPOp5i8KjH6+zpOgBg624NW8631x5fKBcsw+MLFQ2xcQHBnwRNZPuEqITmYPiL466CqI8izIhKlJ5NmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jWKlxAlT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 133B4C4AF09;
+	Tue, 23 Jul 2024 22:26:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721773564;
+	bh=BhZgnSGXK8BXEFbXfI+VVvx3DEH0lCNYXTkyl825K3Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jWKlxAlTnSofuPsl+O1bPfHxh0J2B7xakdNILB60bjSnxUjM08PcOfQ09OlJBJcI7
+	 UozqAakFcvVSnNESkfXCppd8Nf+higCA1XNquqxE2Xvj2p/+khxCxIhsS1FO0nLMq/
+	 quflLjduLEIUAxFB6dhDxkB8YchB9LWI/OtjFRkqRpTmRwYOJtsJRRtoqVnKyMlur6
+	 BWbNo99d0G2O1sfm8iVvnG8Z0kGkGJHvAIRKKKK5ttx0hBvLOwLgHzBV8SRaQDTnSw
+	 hYK54a9xGcdPwfcaviZJ+u8j7dO/ZVGtc6DOkMljxzWhi94xRE5XeuTAftuJfCCus3
+	 IqV7WKNtH7bTA==
+Date: Tue, 23 Jul 2024 15:26:03 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>, Dave Chinner <david@fromorbit.com>,
+	chandan.babu@oracle.com, dchinner@redhat.com,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
+	martin.petersen@oracle.com, Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v2 07/13] xfs: Introduce FORCEALIGN inode flag
+Message-ID: <20240723222603.GS612460@frogsfrogsfrogs>
+References: <20240705162450.3481169-1-john.g.garry@oracle.com>
+ <20240705162450.3481169-8-john.g.garry@oracle.com>
+ <20240711025958.GJ612460@frogsfrogsfrogs>
+ <ZpBouoiUpMgZtqMk@dread.disaster.area>
+ <0c502dd9-7108-4d5f-9337-16b3c0952c04@oracle.com>
+ <bdad6bae-3baf-41de-9359-39024dba3268@oracle.com>
+ <20240723144159.GB20891@lst.de>
+ <2fd991cc-8f29-47ce-a78a-c11c79d74e07@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240723083239.41533-3-youling.tang@linux.dev>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2fd991cc-8f29-47ce-a78a-c11c79d74e07@oracle.com>
 
-Hi Youling,
+On Tue, Jul 23, 2024 at 04:01:41PM +0100, John Garry wrote:
+> On 23/07/2024 15:42, Christoph Hellwig wrote:
+> > On Tue, Jul 23, 2024 at 11:11:28AM +0100, John Garry wrote:
+> > > I am looking at something like this to implement read-only for those inodes:
+> > 
+> > Yikes.  Treating individual inodes in a file systems as read-only
+> > is about the most confusing and harmful behavior we could do.
+> 
+> That was the suggestion which I was given earlier in this thread.
 
-kernel test robot noticed the following build warnings:
+Well, Christoph and I suggested failing the mount /earlier/ in this
+thread. ;)
 
-[auto build test WARNING on kdave/for-next]
-[also build test WARNING on linus/master next-20240723]
-[cannot apply to jaegeuk-f2fs/dev-test jaegeuk-f2fs/dev soc/for-next v6.10]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> > 
+> > Just treat it as any other rocompat feature please an mount the entire
+> > file system read-only if not supported.
+> > 
+> > Or even better let this wait a little, and work with Darrick to work
+> > on the rextsize > 1 reflіnk patches and just make the thing work.
+> 
+> I'll let Darrick comment on this.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Youling-Tang/module-Add-module_subinit-_noexit-and-module_subeixt-helper-macros/20240723-164434
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240723083239.41533-3-youling.tang%40linux.dev
-patch subject: [PATCH 2/4] btrfs: Use module_subinit{_noexit} and module_subeixt helper macros
-config: arm64-randconfig-004-20240724 (https://download.01.org/0day-ci/archive/20240724/202407240648.afyUbKEP-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240724/202407240648.afyUbKEP-lkp@intel.com/reproduce)
+COW with alloc_unit > fsblock is not currently possible, whether it's
+forcealign or rtreflink because COW must happen at allocation unit
+granularity.  Pure overwrites don't need all these twists and turns.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407240648.afyUbKEP-lkp@intel.com/
+1. For COW to work, each write/page_mkwrite must mark dirty every
+fsblock in the entire alloc unit.  Those fsblocks could be cached by
+multiple folios, which means (in iomap terms) dirtying each block in
+potentially multiple iomap_folio_state structures, as well as their
+folios.
 
-All warnings (new ones prefixed by >>):
+2. Similarly, writeback must then be able to issue IO in quantities that
+are aligned to allocation units.  IOWs, for every dirty region in the
+file, we'd have to find the folios for a given allocation unit, mark
+them all for writeback, and issue bios for however much we managed to
+do.  If it's not possible to grab a folio, then the entire allocation
+unit can't be written out, which implies that writeback can fail to
+fully clean folios.
 
->> aarch64-linux-ld: warning: orphan section `.subexitcall.exit' from `fs/btrfs/super.o' being placed in section `.subexitcall.exit'
->> aarch64-linux-ld: warning: orphan section `.subinitcall.init' from `fs/btrfs/super.o' being placed in section `.subinitcall.init'
->> aarch64-linux-ld: warning: orphan section `.subexitcall.exit' from `fs/btrfs/super.o' being placed in section `.subexitcall.exit'
->> aarch64-linux-ld: warning: orphan section `.subinitcall.init' from `fs/btrfs/super.o' being placed in section `.subinitcall.init'
->> aarch64-linux-ld: warning: orphan section `.subexitcall.exit' from `fs/btrfs/super.o' being placed in section `.subexitcall.exit'
->> aarch64-linux-ld: warning: orphan section `.subinitcall.init' from `fs/btrfs/super.o' being placed in section `.subinitcall.init'
+3. Alternately I suppose we could track the number of folios undergoing
+writeback for each allocation unit, issue the writeback ios whenever
+we're ready, and only remap the allocation unit when the number of
+folios undergoing writeback for that allocation unit reaches zero.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+If we could get the mapping_set_folio_order patch merged, then we could
+at least get partial support for power-of-two alloc_unit > fsblock
+configurations by setting the minimum folio order to log2(alloc_unit).
+For atomic writes this is probably a hard requirement because we must be
+able to submit one bio with one memory region.
+
+For everyone else this sucks because cranking up the min folio order
+reduces the flexibility that the page cache can have in finding cache
+memory... but until someone figures out how to make the batching work,
+there's not much progress to be made.
+
+For non power-of-two alloc_unit we can't just crank up the min folio
+order because there will always be misalignments somewhere; we need a
+full writeback batching implementation that can handle multiple folios
+per alloc unit and partial folio writeback.
+
+djwong-dev implements 1.  It partially handles 2 by enlarging the wbc
+range to be aligned to allocation units, but it doesn't guarantee that
+all the folios actually got tagged for the batch.  It can't do 3, which
+means that it's probably broken if you press it hard enough.
+
+Alternately we could disallow non power-of-two everywhere, which would
+make the accounting simpler but that's a regression against ye olde xfs
+which supports non power-of-two allocation units.
+
+rtreflink is nowhere near ready to go -- it's still in djwong-wtf behind
+metadata directories, rtgroups, realtime rmap, and (probably) hch's
+zns patches.
+
+> > > > So what about forcealign and RT?
+> > > 
+> > > Any opinion on this?
+> > 
+> > What about forcealign and RT?
+> 
+> In this series version I was mounting the whole FS as RO if
+> XFS_FEAT_FORCEALIGN and XFS_FEAT_REFLINK was found in the SB. And so very
+> different to how I was going to individual treat inodes which happen to be
+> forcealign and reflink, above.
+> 
+> So I was asking guidance when whether that approach (for RT and forcealign)
+> is sound.
+
+I reiterate: don't allow mounting of (forcealign && reflink) or
+(forcealign && rtextsize > 1) filesystems, and then you and I can work
+on figuring out the rest.
+
+--D
 
