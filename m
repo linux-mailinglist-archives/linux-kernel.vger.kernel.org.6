@@ -1,124 +1,211 @@
-Return-Path: <linux-kernel+bounces-260258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6446E93A514
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:40:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AF1293A515
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 955C61C226D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:40:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22B20281464
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D5215884F;
-	Tue, 23 Jul 2024 17:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5ACD158847;
+	Tue, 23 Jul 2024 17:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LosormX3"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VXLfas6f"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA52117BD5;
-	Tue, 23 Jul 2024 17:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B3217BD5;
+	Tue, 23 Jul 2024 17:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721756426; cv=none; b=ryKzkSKoDzUvwZ5YG96EZsekQ8eJ2HqeuZ308P3riGuqORtq5/QqRvuEcLOyzIWDP7EG14wQ8zwv7LypQEczBbZxOYjA7aE7Phqc5WqnHPkxAZbQA3vtlsaqpnNN1ihoWRWZYdFirRoAkEeJbArX1TXI9+aE+mMYPscyXLbmy3Y=
+	t=1721756447; cv=none; b=WpTiOhHaDxieyLUBkjiH5ML891ua1i9d22I+jRNLlaWQ0umvPJzbOAGe44L0j8sVlmXvP3HqwrqwBSzpdaIPH/IIv1eEqqHuQ9DXveNb71bgiUHnHVuf3jxY/P0obNTiP/PNT/4L9orCquIRg4kvYnQeozbl3wBRPcgRIpjte9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721756426; c=relaxed/simple;
-	bh=RSRCqxursOFG83xu24Rg/zY7XRMsTLA7GJR4OB5mqoo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bWN1IESPBxOcrPtUOD09t+KAGiQAfFzZZXdnvihNcKvT9f0+0qPPyg2+ejDoAPOx49CBeLT3WP0wLO7P71XtEBYSXD5Uu0/lxsppJwkPzxNrjMlQXApugSMfNpwsww52kXbL5mHEbyhoNzdl+x+oia69uF8fzZZgO1+svEZedWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LosormX3; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1721756447; c=relaxed/simple;
+	bh=iAhFHwAfL5fuXom8Xl8wXKrfmvfDT1wtrd7UrOMlzr4=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hkr24qprtyofn744/npJ+BBItkDOpMaE3q+1gUNP+24kH89D0gc/FirsljNQYqb4E8G3YcV6LJeU6KUgcNrwM3dbcALD8oFdog4jDMbsKlh7pm0eCzvB/nsO97s2xNITn9uBcpTOsUfuKZNoMBYnFcUD++lvo8aG9M7lD0TOXXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VXLfas6f; arc=none smtp.client-ip=209.85.128.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-427d2c8c632so41571815e9.2;
-        Tue, 23 Jul 2024 10:40:24 -0700 (PDT)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6659e81bc68so59707027b3.0;
+        Tue, 23 Jul 2024 10:40:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721756423; x=1722361223; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SLxwM2QcaETAwSelqwRu35+y1sReQfVO3Rz5RGIgoEg=;
-        b=LosormX3zTieUyApDwZmYhkCIeb7clQs+huAU+lH7UNTSNboKBpGc0gcfYPq8WEvEg
-         yyqIeVij7sUGUWsNuoOA+j8TavkkfhuFRMZx8/3Ami0EJrAcGNaX2u5yl6mDlWrkKseg
-         TjlJOwcvHPrs44svOgEOUzfm8BH2x/aGz++kK/W9i7nJi2AYta6b+BXA3vaLIEWa0kI2
-         st5QIiJkn6atzvX56HLiHmMmnMUL4gVMx1gpQxneOe5HoNuzgc/0QNgE5IK6copWapvl
-         z2scsiwybR9UDKo7kca7SaFr6ZDUM/U7teR9ubIjuj1UzD5G2NJyWAAaMRFZPtF1h2vz
-         3Y9A==
+        d=gmail.com; s=20230601; t=1721756444; x=1722361244; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IhI6EPi4oXw71sHltnEuSn7Gyx1xl7XCKJZ+6RMV9jQ=;
+        b=VXLfas6fuCnHmUGQXhCrMbRY0K8rahfnhLZh2xMokkFmOWQwHBOEE0Lo4bzyrhBhsA
+         wNhROvZ3N5oQiYaLf7yoCkkPS+rl0Qa0DFbdYm2VXOJA1AxT+wZXUngvTm334VBngTjx
+         9HNdkK2fhRyfRtJ4pJEWlrVMeX5QXrC1NjEwZoyAWaCh/wbqs7N4pWNVXyEJn26rgukv
+         1qGHaCBY/tgYP7TjbSIc2sJ9wTjVYYiBdTMJ0nkX9Xsgs6kun9B+1Z8kiMPyGFNUTe+r
+         P1dQd1/sPGKw6xtSnS1NQeFj/+YX9H+Tsx7WttHVaFCv6VAvNlgg8JhNYOdfsnwRjKQ+
+         9QBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721756423; x=1722361223;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SLxwM2QcaETAwSelqwRu35+y1sReQfVO3Rz5RGIgoEg=;
-        b=qOtHbciawzJEwEEmNfKg942elwHSqh07VV37ZM5KfYV2VWEszSfNfi46AzmpfvIZII
-         W/nKSgVWp7fmUUKu6QVccCiTz6vZ0+LDeiL2WXin0Yodk9kRju/wcJ5/tgKFHbfyW+qL
-         xEqH8xYh7Nl2sTA/ZAOfF3/qJagT1i2TiXSiowgQCSl+F2ILy1hApWqE5eDt6aCh6i+3
-         /RLnIHxao72O4H2kfIIUJtCU716pqW+CQ35zMrWwftjsL34RLytqZzKWrMg5gBFK8dZm
-         EpuK+mRlcMerXg2/HXtKRkp9PRAwoL6976DHB+IsPeAYy/T3TVfzkJ4XIBNTBe5GxBvg
-         XI+A==
-X-Forwarded-Encrypted: i=1; AJvYcCX17G24An8wHU8KU/c1duRbloUQMYY1T8ohMONV6MSB+d4E+WNEy1d2cKbHM3eFKjG16EWN2+UlGeBpImP7T+QvocrgUXYyFFM6GBLvGmhGuPozW9wh7Zyv1EzW/ZPlW5EjEDq9QwkCjAYkZMHeQW45THj+PnesfVDb0AYVUTXs08xi+g2B8/jT
-X-Gm-Message-State: AOJu0YxkwrFetEm+dYFZKxzdxplZFB53BlLiWvwL53FSPJ5BVbEC+QBx
-	b1ouwxCQag4mwP9sGgTtWGDQ09mkSewr2kqQzelO707rEH4AWjD8Jt4TEbyX
-X-Google-Smtp-Source: AGHT+IEaJUyuqn3nMKaYt3qxlDonCo2mG9R8c5t622wHjlD8nREtKHqgDlp+N7WPmsxY5xKcYNBSug==
-X-Received: by 2002:a05:600c:1d17:b0:426:68dd:bc92 with SMTP id 5b1f17b1804b1-427dc53b5eamr74009055e9.5.1721756422914;
-        Tue, 23 Jul 2024 10:40:22 -0700 (PDT)
-Received: from [192.168.0.101] (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-427d2a8e42bsm212157675e9.30.2024.07.23.10.40.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 10:40:22 -0700 (PDT)
-Message-ID: <f799b77b-ff17-4379-9b95-ab7d8ab521dc@gmail.com>
-Date: Tue, 23 Jul 2024 18:40:20 +0100
+        d=1e100.net; s=20230601; t=1721756444; x=1722361244;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IhI6EPi4oXw71sHltnEuSn7Gyx1xl7XCKJZ+6RMV9jQ=;
+        b=LnZ6tYzIgtsqdtWnYoLyZTuzS9deD/Hd7Z3X4cyPGI/S9/sE71V3NPEmz19yUqpbVR
+         XVu0W2yfw02qQ+Mbn6DfwoT4uwJMSCIiv2CNvGi6YayBQMdaX2BK+vHYi9CbDXD0G6A1
+         Zd3TCicfsxEi5xxVUXsiyZL10XXk7hDzOvFTzI3VaTrc92/2sZo5rgISllA+vxabIv7G
+         Yqg89b2CUlHu2JL4diO0Pfyo1212UoWIdeB5dKjrcAc46tOtm2QKNVpEBiPQio0UrE9z
+         GXAJzA+zQSrEGYV5mVj2bEDnE5ZAa4Mb9ZvJ4VrWHGRWnowAmR1ZQEyuHIWmuRmUgaYB
+         C5sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVktYc91Dvz2vh7cfqW1HocrM+Q46Ng5ipeY7HX0s30yMMUdtKsx/+yMu1pbWtIdTJ4JNFniU8YQvTJz9XLe9gkZ+P+5Oi3/VBfeGQIW/pVWm/vtBeYcvhH0cVWGYSip4QOyAvBPrUP
+X-Gm-Message-State: AOJu0YxkPc3Gx1koZLUuzp4Q4fugf3Br/luMML/xvXBoa/jkLXpE8brC
+	FIF/TU5B63y5+GXgsVOLA45RM8zJYTiVN2l16EuZ9sKp733x1ZwaeSXV1g==
+X-Google-Smtp-Source: AGHT+IGACdBoTy1BVLFKaFQQ/0K6tMcAW7xuOAF//wRFNkjiNoPJKybgi/skJ7VrgliR7uS7SOQ3+Q==
+X-Received: by 2002:a05:690c:397:b0:632:e098:a9e0 with SMTP id 00721157ae682-671f09defd1mr5981967b3.9.1721756444356;
+        Tue, 23 Jul 2024 10:40:44 -0700 (PDT)
+Received: from gpd ([50.205.20.42])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-669540c3957sm20786047b3.123.2024.07.23.10.40.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 10:40:44 -0700 (PDT)
+From: fan <nifan.cxl@gmail.com>
+X-Google-Original-From: fan <fan@gpd>
+Date: Tue, 23 Jul 2024 10:40:29 -0700
+To: Huang Ying <ying.huang@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alison Schofield <alison.schofield@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Bharata B Rao <bharata@amd.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>
+Subject: Re: [PATCH v3 2/3] cxl/region: Support to calculate memory tier
+ abstract distance
+Message-ID: <Zp_rDddyf5097Nwb@gpd>
+References: <20240618084639.1419629-1-ying.huang@intel.com>
+ <20240618084639.1419629-3-ying.huang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] iio: pressure: bmp280-core: Make read-only const
- array conversion_time_max static
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Vasileios Amoiridis <vassilisamir@gmail.com>, linux-iio@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240722151738.572913-1-colin.i.king@gmail.com>
- <20240722210111.49e66c4e@jic23-huawei>
- <abc73704-17c5-40c4-a92c-b69c571a006f@suswa.mountain>
-Content-Language: en-US
-From: "Colin King (gmail)" <colin.i.king@gmail.com>
-In-Reply-To: <abc73704-17c5-40c4-a92c-b69c571a006f@suswa.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618084639.1419629-3-ying.huang@intel.com>
 
-On 23/07/2024 18:04, Dan Carpenter wrote:
-> On Mon, Jul 22, 2024 at 09:01:11PM +0100, Jonathan Cameron wrote:
->> On Mon, 22 Jul 2024 16:17:38 +0100
->> Colin Ian King <colin.i.king@gmail.com> wrote:
->>
->>> Don't populate the read-only array conversion_time_max on the stack at
->>> run time, instead make it static.
->>>
->>> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
->>
->> I'm almost 100% the compiler can hoist this off the stack if it feels like
->> it but sure, it might not and adding the static keyword probably obliges
->> it to do so.
+On Tue, Jun 18, 2024 at 04:46:38PM +0800, Huang Ying wrote:
+> An abstract distance value must be assigned by the driver that makes
+> the memory available to the system. It reflects relative performance
+> and is used to place memory nodes backed by CXL regions in the appropriate
+> memory tiers allowing promotion/demotion within the existing memory tiering
+> mechanism.
 > 
-> You would wish the compiler would do this correctly, but it doesn't.
-> (Or it didn't the last time anyone checked).
-
- From what I understand, a const variable that's not static is either 
-put in register or on the stack since it's implicitly an auto variable, 
-hence it's populated with the initialization data at run time. Making it 
-static will populate it at compile time. Assuming anything else is 
-problematic.
-
-Colin
-
+> The abstract distance is calculated based on the memory access latency
+> and bandwidth of CXL regions.
 > 
-> regards,
-> dan carpenter
-> 
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> Acked-by: Dan Williams <dan.j.williams@intel.com>
+> Cc: Alison Schofield <alison.schofield@intel.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Bharata B Rao <bharata@amd.com>
+> Cc: Alistair Popple <apopple@nvidia.com>
+> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> Cc: Davidlohr Bueso <dave@stgolabs.net>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> ---
 
+Reviewed-by: Fan Ni <fan.ni@samsung.com>
+
+>  drivers/cxl/core/region.c | 27 +++++++++++++++++++++++++++
+>  drivers/cxl/cxl.h         |  2 ++
+>  2 files changed, 29 insertions(+)
+> 
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index 51aeef2c012c..dc15ceba7ab7 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/uuid.h>
+>  #include <linux/sort.h>
+>  #include <linux/idr.h>
+> +#include <linux/memory-tiers.h>
+>  #include <cxlmem.h>
+>  #include <cxl.h>
+>  #include "core.h"
+> @@ -2228,6 +2229,7 @@ static void unregister_region(void *_cxlr)
+>  	int i;
+>  
+>  	unregister_memory_notifier(&cxlr->memory_notifier);
+> +	unregister_mt_adistance_algorithm(&cxlr->adist_notifier);
+>  	device_del(&cxlr->dev);
+>  
+>  	/*
+> @@ -2340,6 +2342,27 @@ static int cxl_region_perf_attrs_callback(struct notifier_block *nb,
+>  	return NOTIFY_OK;
+>  }
+>  
+> +static int cxl_region_calculate_adistance(struct notifier_block *nb,
+> +					  unsigned long nid, void *data)
+> +{
+> +	struct cxl_region *cxlr = container_of(nb, struct cxl_region,
+> +					       adist_notifier);
+> +	struct access_coordinate *perf;
+> +	int *adist = data;
+> +	int region_nid;
+> +
+> +	region_nid = cxl_region_nid(cxlr);
+> +	if (nid != region_nid)
+> +		return NOTIFY_OK;
+> +
+> +	perf = &cxlr->coord[ACCESS_COORDINATE_CPU];
+> +
+> +	if (mt_perf_to_adistance(perf, adist))
+> +		return NOTIFY_OK;
+> +
+> +	return NOTIFY_STOP;
+> +}
+> +
+>  /**
+>   * devm_cxl_add_region - Adds a region to a decoder
+>   * @cxlrd: root decoder
+> @@ -2382,6 +2405,10 @@ static struct cxl_region *devm_cxl_add_region(struct cxl_root_decoder *cxlrd,
+>  	cxlr->memory_notifier.priority = CXL_CALLBACK_PRI;
+>  	register_memory_notifier(&cxlr->memory_notifier);
+>  
+> +	cxlr->adist_notifier.notifier_call = cxl_region_calculate_adistance;
+> +	cxlr->adist_notifier.priority = 100;
+> +	register_mt_adistance_algorithm(&cxlr->adist_notifier);
+> +
+>  	rc = devm_add_action_or_reset(port->uport_dev, unregister_region, cxlr);
+>  	if (rc)
+>  		return ERR_PTR(rc);
+> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+> index 603c0120cff8..f46252373159 100644
+> --- a/drivers/cxl/cxl.h
+> +++ b/drivers/cxl/cxl.h
+> @@ -522,6 +522,7 @@ struct cxl_region_params {
+>   * @params: active + config params for the region
+>   * @coord: QoS access coordinates for the region
+>   * @memory_notifier: notifier for setting the access coordinates to node
+> + * @adist_notifier: notifier for calculating the abstract distance of node
+>   */
+>  struct cxl_region {
+>  	struct device dev;
+> @@ -534,6 +535,7 @@ struct cxl_region {
+>  	struct cxl_region_params params;
+>  	struct access_coordinate coord[ACCESS_COORDINATE_MAX];
+>  	struct notifier_block memory_notifier;
+> +	struct notifier_block adist_notifier;
+>  };
+>  
+>  struct cxl_nvdimm_bridge {
+> -- 
+> 2.39.2
+> 
 
