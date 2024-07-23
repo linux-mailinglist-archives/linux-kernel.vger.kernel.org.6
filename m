@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-259688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73066939B9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:18:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC616939BA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:18:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9731F1C21CE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:18:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BC08B20F9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F2714B095;
-	Tue, 23 Jul 2024 07:18:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37FA014B965;
+	Tue, 23 Jul 2024 07:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O9zDqkDs"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m6cE2iac"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F0A14B07C
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A9E14B07C
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721719080; cv=none; b=tB75mRAn4/D9qO0WsouQ8OZWgPnZboW/H/ngxJBbGIIipnpfiTlgE55jmnjq6PT4Z/J9QHShYB8APrxvFaBv3G5iorttG5MhIXnhfHLiq2FxTQk0pGqIm51kvwhe0qIszVwg7sSDojRtq3fqM556s2DOfiBUrnXeTcj0jwsfq5U=
+	t=1721719086; cv=none; b=jA/Qj23/ESpewVr+jFmbwhwiKGh/yfnNTrkUHVeF7VvG8IWiD3CvDSB36fSt6KFgVtUCO9K2l+WuFJzCLTrDINCX9t6nm7Frn19yftFDMuuukFZqoxDIaLDIz+DkNweX9/qcu30dQclHpl0BGyhXsYSilfdULyWdH1+pUtBmY8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721719080; c=relaxed/simple;
-	bh=kTXeFfb/kpOjHH/Yh3U+bGVd+QoijcSNKRg1r58l2fA=;
+	s=arc-20240116; t=1721719086; c=relaxed/simple;
+	bh=puA3RiQHX641v3xuZp5S6TK0XFy/Mp+LyP2PdsWokW8=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=TW/mMgUZEbsZw/cT33yWsFhiLEy+Vd1a/wPU3F7nBJrPOcHQT/DvDf20W0zY/3dIW5tZlX/8kTEIjsr9MGhkqeflbUSs1HxhrCAel5oklpFlI2pmNcqExgHLidRM6lSJbYQaMueMAr5zRaLBwDisPB2yLpQDWL/sU+3SgVu9v+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=O9zDqkDs; arc=none smtp.client-ip=209.85.128.53
+	 In-Reply-To:Content-Type; b=s4hSxrpFkLHdnz4unsD1EpUFANg/mKlOw56xa84kk70zNP2jh4mTcNv7/vxStM2FQkE1D59QEG/4q4t6kFc20U+99gWKGNavpBDiu5F+aTgQdFDEstmvw4Op5Rqx+LsuWyiqDADyruT6AwndJpe/U1O+jZPnZf0TJLKnj8RTJio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m6cE2iac; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4266dc7591fso37034025e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 00:17:58 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4266ea6a488so44567725e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 00:18:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721719077; x=1722323877; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1721719083; x=1722323883; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=SEzKhKkmBYXTdhjYaBlSuqId8UatDTOuzDSqNIi2wrM=;
-        b=O9zDqkDsgkk2iZBQwh6AfclDEz39yqwSbqH8ToBvR+Gn7OBTpqOYEPaKvaJuIOa//w
-         /Fnh0DdfzQeblsnwN4sXih9oDXNOGaBLr8ylGICjPpjZRHcyolTKZEwqJLLaGLkIhkdH
-         Xo1zyx9axeNgQ1ivnPyNJ+zCOkGnziRHoYtzdQre7pbLPdJ+epH0wpZMZpp4FHBiM1jy
-         td5oofh5elwBMsEOBU3x81GyCa326wzheI6Lu869CEhDDGzwHEMH78g0wLbjLgWDmKDx
-         /wGH9s3SCeF7m9Fglnou0t6lUQPinmvW4aRotyE+3XJOfz5PFEJsHVIoU5ocS/Gp0XSp
-         VnRw==
+        bh=mcxIzNk1NcysMQw3Lkhzk9zPofUtDz/QMRqmXV8AkAM=;
+        b=m6cE2iacXJUs3nqPXPpbN97e0UscPJAtz45bU9fiBHK6YjvrymtYQ5KDc3PSx8+Hc3
+         1zwrtognDScv3VlMWSRwEBv5fCrAf3/YvupCKvyr+0ShalPef/wJCAXVYtMVfPNu6SUv
+         nCcTyTE4UvRKN2cd9ZKMGIz0DyuymMGf/RBhWRf1YdxaeZAl4ze7cT0EE6BT3cplWV8W
+         h9oZuZYPX3DNZ+dKyf6WIi5ILmZmSldefn4S+FYpHde+O5los6gWaPUUaOpzp1sUxMIZ
+         YRuJQzlbpi3ywAyPW+15HN2IaeStuyExsckf7At/58BH80KVEtpEy4HntloomBfjLLSg
+         Sv8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721719077; x=1722323877;
+        d=1e100.net; s=20230601; t=1721719083; x=1722323883;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=SEzKhKkmBYXTdhjYaBlSuqId8UatDTOuzDSqNIi2wrM=;
-        b=wQeWel7z8Thy5d56R9jAXKej1u9rb1pazsgGMVNKYxk6jxgxbAD6rPlPafoFWvHenn
-         LKaaOCdEG6yOanflLr4HBgp5KCKmUUCUwsPBmx7MIhnBj/XqCanCLincQnLtQluXUTW0
-         OHUUGlldHVxSa5ma4UVTEENDptL+ANbLctt4VOGBjGDd2cIOFJkVz0VbB7kyqbpid10V
-         1D0b3ZmIFtT673NRZvIr4XttYM/eoZJDSbSBIex1IDfAaI8bHaQe7TIVh2xemibXwdsF
-         wp4caPBtTbXoMgx6s91slPMVZ1thJxI7TU9pOnOhX1daLGU31iFn0nJZiifpYKvbp+QB
-         4R2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWYQMVzZqm65Ow2ojYj4JxelMtkxGqaMjooa0rObprEzOPYROeduATEDk4V6HlYTip+bQNgTkZcmflSh8Q5sf9f04tSL8pbm5rXAkTi
-X-Gm-Message-State: AOJu0YwaCAbF24Xahdvs6tYy3vMmeYgCh62VzFXn1fw3ZebgtyUeAfg6
-	0mKux1ccz0J2XlxgG6iRt0nIWxk2s4JXz/tO5vmUmgSO+cBV+YIlV3amVrXPHr8=
-X-Google-Smtp-Source: AGHT+IG5n+S9PIM/0u5fM2WVXGS+r2GwBeka2nKCjJ0cyEzqu/DQBNvtsgFCLCrhKI64ABkCE5H93A==
-X-Received: by 2002:a05:600c:3547:b0:426:6c70:dd9c with SMTP id 5b1f17b1804b1-427dc58f1f3mr60943655e9.31.1721719077311;
-        Tue, 23 Jul 2024 00:17:57 -0700 (PDT)
+        bh=mcxIzNk1NcysMQw3Lkhzk9zPofUtDz/QMRqmXV8AkAM=;
+        b=rlEqhATEzJzU2rzKI/bpu2fUY1wG/UMzJOc2Jb11lQY9xYxz2WQBiebKCRR30IzX+L
+         PksDd+ixUx9C2zeF7bbxqiVtbLsoQbBly7acSkk7BmYorwL6FooRv53MJn4zPOqIvMw6
+         7m+MWb5wZN1OjCNvXHs5GXJzwJ9gRfd49xYqfzjmiDYviW9Hbqz6Q1Y07nkOHnyAoqRA
+         9mfzD2WIvAhbTn8pleMkTsiWjq2VS5/3KaETUiBPqNFsV5RqigTyv7qwVksSdqzxoLxq
+         gJouFxnd3yugmyNIZ+JoQTg4eRodlZJ5o67viGyXmsnoLYJyxRjvWWhds33VsUd3v9DE
+         t8Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCWKOdTvwO+0/rnFqSeQVN5ZL8IE05/NyBTORA3HWa/fCVuFKADjn4YdfJDwgmE/N2FYiFXfKcez0tiIohL0EULhlkS8esjysE/IQtJb
+X-Gm-Message-State: AOJu0YzVPvSTu5gYACnPj72fSmjuzDeVA/PHPts3AGlJbywtx3JlWcqB
+	/+lWC2C8vPgPmbC0htVAc/jQCq7UNMyFN27OzkF3LNj9ihMiYv4uu/ZZYNiAVRc=
+X-Google-Smtp-Source: AGHT+IFFdTHuWg+LUsVr7z6qMgnlrrvqaYVs4iJtYB5jKxSr1QnXFxYn2sbe1HLkfWcOBQKhAJQEVg==
+X-Received: by 2002:a05:600c:4509:b0:426:6e9a:7a1e with SMTP id 5b1f17b1804b1-427dc56b84fmr68985125e9.35.1721719083049;
+        Tue, 23 Jul 2024 00:18:03 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:982:cbb0:f9d3:b429:5f14:dc9c? ([2a01:e0a:982:cbb0:f9d3:b429:5f14:dc9c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d6936e1esm158776455e9.44.2024.07.23.00.17.56
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d6936e1esm158776455e9.44.2024.07.23.00.18.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 00:17:56 -0700 (PDT)
-Message-ID: <e5dc20d1-3cd7-41ee-955d-f7ba4d80c607@linaro.org>
-Date: Tue, 23 Jul 2024 09:17:55 +0200
+        Tue, 23 Jul 2024 00:18:02 -0700 (PDT)
+Message-ID: <615b5cbf-48bd-464b-9d75-a3d9c5566819@linaro.org>
+Date: Tue, 23 Jul 2024 09:18:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,7 +79,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v3 4/6] arm64: dts: amlogic: c3: add ao secure node
+Subject: Re: [PATCH v3 5/6] arm64: dts: amlogic: t7: add ao secure node
 To: xianwei.zhao@amlogic.com, Kevin Hilman <khilman@baylibre.com>,
  Jerome Brunet <jbrunet@baylibre.com>,
  Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
@@ -88,7 +88,7 @@ To: xianwei.zhao@amlogic.com, Kevin Hilman <khilman@baylibre.com>,
 Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 References: <20240719-soc_info-v3-0-020a3b687c0c@amlogic.com>
- <20240719-soc_info-v3-4-020a3b687c0c@amlogic.com>
+ <20240719-soc_info-v3-5-020a3b687c0c@amlogic.com>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -115,7 +115,7 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20240719-soc_info-v3-4-020a3b687c0c@amlogic.com>
+In-Reply-To: <20240719-soc_info-v3-5-020a3b687c0c@amlogic.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -126,32 +126,33 @@ On 19/07/2024 10:08, Xianwei Zhao via B4 Relay wrote:
 > board revision.
 > 
 > For example, with MESON_GX_SOCINFO config enabled we can get the
-> following information for board with Amlogic C3 SoC:
-> soc soc0: Amlogic C3 (C308L) Revision 3d:a (1:1) Detected
+> following information for board with Amlogic T7 SoC:
+> soc soc0: Amlogic T7 (A311D2) Revision 36:c (1:1) Detected.
 > 
 > Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > ---
->   arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi | 7 +++++++
->   1 file changed, 7 insertions(+)
+>   arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi | 8 ++++++++
+>   1 file changed, 8 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
-> index f8fb060c49ae..c913dd409e64 100644
-> --- a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
-> @@ -129,6 +129,13 @@ uart_b: serial@7a000 {
->   				clock-names = "xtal", "pclk", "baud";
+> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi
+> index c23efc6c7ac0..ec743cad57db 100644
+> --- a/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/amlogic-t7.dtsi
+> @@ -194,6 +194,14 @@ uart_a: serial@78000 {
+>   				interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
+>   				status = "disabled";
 >   			};
->   
+> +
 > +			sec_ao: ao-secure@10220 {
-> +				compatible = "amlogic,c3-ao-secure",
+> +				compatible = "amlogic,t7-ao-secure",
 > +					     "amlogic,meson-gx-ao-secure",
 > +					     "syscon";
 > +				reg = <0x0 0x10220 0x0 0x140>;
 > +				amlogic,has-chip-id;
 > +			};
 >   		};
+>   
 >   	};
->   };
 > 
 
 Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
