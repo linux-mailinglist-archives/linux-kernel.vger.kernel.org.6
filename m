@@ -1,94 +1,90 @@
-Return-Path: <linux-kernel+bounces-259667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89D3A939B22
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:52:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DF88939B25
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 458B7285B54
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 06:52:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1B0F1F2298A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 06:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF9014D28E;
-	Tue, 23 Jul 2024 06:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D0A14D42C;
+	Tue, 23 Jul 2024 06:49:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="QZmzfd7d"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="sAaNEfTP"
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B757914A4E1
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 06:49:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D5014B972
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 06:49:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721717384; cv=none; b=Ac/Xkh+WvFzmYGvNE8Zf/XOGdqYBP+YiaDYNAKtmSEE2r1peJgmfHXajDCkW6rkiDOx+nKvka1d02Q2vjsGoY57Y5p/7GHYohzJu5VX/+cpARpaRsi6nz8IhjQBs8Coji7OR1cSB/2lVC5zsZxK+GJwDSIxNDK0ZIlzAkp3Bs10=
+	t=1721717385; cv=none; b=P8z7DmGZ5B1ZGQOQ3BqB08+mxFYlwTQIDnIbQQAjre5wXvZ5UdPObDiMk26qmJMyxvUJL3uYWS8hQNyW7zI2CzuyxAepmftn9RXdzWSVDnoSZDJXiMAeLqnB5BTNsdNfAbq+N6b/vhtTemeWO7kXY0aDpqNlb9YA2qD7Un/sZEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721717384; c=relaxed/simple;
-	bh=RXglqfeki+IhT0XnGlGY8olW3Nregu7ITMlr85haCz0=;
+	s=arc-20240116; t=1721717385; c=relaxed/simple;
+	bh=2ClJSGpQlOfadgc5A4aHxtJcDdzYIw2wdmVA6IeimOI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mi87ey8FVsBhz0wPypEC4b4F2u6FEdWcvQzL2tFVLaQAGbCzDg+t5CtqsgtFxSz898cGrBNx3vPw4bhZbpXVA87Pj4S0FI3Q2obAM9iis2nOG9zBwSemb4cB0FdSK1NhY9nKg27MZfuEhwqlUnUqZBexQ3RDGbCdSYvwouGUGsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=QZmzfd7d; arc=none smtp.client-ip=185.125.188.123
+	 MIME-Version; b=ONsXPLrTR62Dmx1qJMMoVk1AD6XxArr5Hp5lbSlD11cnCN28/8EpDU1fDl6lMhjevczTD69HtfQ+0ZOU6VlrlERAcPu3XOHA4iMQgOPr3TdV0NSz6BcuHAS3XPPo9UZqtkjJBn/hn3IXu/BrhePeV3s+q4vhtgVBVP04cviuHj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=sAaNEfTP; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id C06AD400E8
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 06:49:39 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id EA5AD401AC
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 06:49:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1721717379;
-	bh=SSby+veWhYFs/KPIxtuFQP9fWzklyucEzByPv4c+H1w=;
+	s=20210705; t=1721717381;
+	bh=p8WnU9klM9imNroT/ir5Cxun9HbZF+Zv15lDq/QcnHE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
 	 MIME-Version;
-	b=QZmzfd7dB0K8vSbyizDbW0rjiOZCmzKQDTD1DS/GKZn7AG4xAk4+d3g535VV4abbz
-	 ar3HW4NVPjvnOz/KGsXIgKxSammVFQ/gZvAe05PrQvJarHgI7lE31GkWK0QgL/9ZP+
-	 I2T57fHCzxg+GP69ZOgA8sMLSdE+c5tm6ZpFxB9tS4AZA48/hi5sg7qBwIxkDkJzmE
-	 IEezJ0S+HDr+B8+aoXzEGt4obRJWKtEkyBSBlLpJigktps1XwOfO9cMDjD8QYbM3ZK
-	 SicFBUn+YyQtoglb5OsICfmePMbv2tICdaqTS39pdXpUt8kFAQxt8CrSS98A0dq8t4
-	 hFdhb3jlihCJw==
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-6fd42bf4316so377513a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 23:49:39 -0700 (PDT)
+	b=sAaNEfTPngXFMsXzwBKH8RlOqLk6C6WZjYnTf+8NdUhMJ2uQEiu/+ajmfmWDTu0u8
+	 xAVBHrN3EMpsvLdJnwBYDKJBb7UQcCXkMPst+cIKbJHBOUNqfxxZziTTIYHdebCMqj
+	 kFgPWKNUFZr8kx5Uu2fJwb/kVQ+iDSK/RtGn8MFH8015UMsK0n7RE01p/tHmHUHVl7
+	 r6Bsq8clz59+i5Q3AJ8xwVTNAlfPxK8ZOqgUS3JzHhrELNFX+Ny4133PUdtdIUnwuL
+	 a6BMvwE0LKFVxfeCi0buQxSXBJ0TFh2MLi6B723NEv2ACJZlREX9ctKl5MfkwTKTtW
+	 Wu4LotgoJ2Mvg==
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2cd3bb0a9c7so2202095a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 23:49:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721717378; x=1722322178;
+        d=1e100.net; s=20230601; t=1721717380; x=1722322180;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SSby+veWhYFs/KPIxtuFQP9fWzklyucEzByPv4c+H1w=;
-        b=HdbcYMV7sjzRJ1XQKwyayQ1/ozIGJetXsMouXCIjOQKRvkAx9qSYVXPqtQhJx8mwVu
-         dzn/p8Q/8hEiDHRe+ocYlhE+56LJXv5Tw4ftBffDhRnmMC8gowi+92eKFIR3MDxllpMM
-         +ulXrJ/PCsLV4NX7BjLXA7l8ia/J8uZVEtz7vVAh7EJpxHRzk6Acv2U0kmrLYUnSLjtD
-         MztMLMh74Do3km0tvZ4cbPzF8jE3FV5Zlng5Vjq/sM7zK0pe77ia6LaLwWTHLRdc8cn7
-         lpLXvvuucV2xSM6Zgd3veVVSTLRP00J+pf2snrL6OEd/Z311cAZTuqDYQcTiXpqOW/So
-         ncZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWU09GflJS5x/vKqvFfWZed8xVRNQd6MrOE4BPVyGvwAoajh/IGH2jcxFMcbwvm4SXLzSV6obC009lQov/QO3Y9qe3i9jUtmECDFqtc
-X-Gm-Message-State: AOJu0YzLSai53pNn/GPC+xahu1Y8OJsn7MeZ2Z46lLff7uvApwNxoVB7
-	wT3B583oFivWaYBOZBWPQIIkgduJlF3sKmqiFB7kbQFJ3cjmK+R8pqdsZVELLA+M/XNSMo9RY0z
-	gl2kSbA4riezYgXVBUsnAU2AAizK1Qo4AMrXaj2Ut5GDoVj1BX9NN0i3qIDWx7NizTy/Kz84EGs
-	g50g==
-X-Received: by 2002:a05:6a20:6f04:b0:1c3:ff33:277e with SMTP id adf61e73a8af0-1c44f86c92cmr2110003637.32.1721717378098;
-        Mon, 22 Jul 2024 23:49:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGDabqAEkCpkyaJ7TFPUAZCurxHz2+fpzUWqrGvdUCtX2upCViYYzhYgk3ASQ8CzhkJfiBe6w==
-X-Received: by 2002:a05:6a20:6f04:b0:1c3:ff33:277e with SMTP id adf61e73a8af0-1c44f86c92cmr2109987637.32.1721717377759;
-        Mon, 22 Jul 2024 23:49:37 -0700 (PDT)
+        bh=p8WnU9klM9imNroT/ir5Cxun9HbZF+Zv15lDq/QcnHE=;
+        b=uH9lBKsZCTPshdOrZloO/I/N/8LFkQaUkHudAqSPUMtb4rkyEYrH/VJ9XZq0rdgyqH
+         va7/a4vBV/DDh8Lw00Xm6VdnMTqJg4oNxc6dq327DeZhX9pYXgIOKbIDN2w7gc4m3b0Q
+         1JrtxeCHP9uuM98FT5Hts488KwMmQSsYQMJBQhN0mqKwWF7/ZGHqmjzKYZmTIOyDW9zY
+         /5CtTPdFUR6i9cGqnDez0cya3maX5nplMHaYlcVvkW+F1rQ5W6vj488JP9TvfVQc7zYd
+         40zNumMbmen84g528FXAk7xjZP2IrbNZwurO1YahQqjdVtp8CNuiPMyXA5AzBylVfNGC
+         5R8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXY05JBtQsgetcOhVixJUWftfgalSIRWkG2ISKKIYkvpPaLOI7jN5EUUfDh2v8BUre1fKqsVa0OZr+nxLXP46l3JR3MTsOzRSkimWGM
+X-Gm-Message-State: AOJu0YxRtsjchXCkYiNkt44+ZgH8IFr2pR3lGOoRkDezzF6mQF1PBFQ9
+	4eiSfusGCl8It9CgGeNuuKs/gAr76FNYbySLifLxIH7oIXK0J7YJikCrgh4YWFXu5E4PVDXwHML
+	nJPz60rqgnvoNxwzNcZ7oGDuBw25piLDkrgY80zefIW2AnHQEVOhtqp2Hh4lo8pMxnNh6+Yky3E
+	DPvA==
+X-Received: by 2002:a17:90a:734b:b0:2c9:90f5:cfca with SMTP id 98e67ed59e1d1-2cd274dabb9mr4925269a91.42.1721717380517;
+        Mon, 22 Jul 2024 23:49:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEAsMwdXkeKQBJPyfug9/lQ1wFoE87H0ZOyB6iwoKjmcAasHQ62oHoidxTUkiX05wTzPVeRCA==
+X-Received: by 2002:a17:90a:734b:b0:2c9:90f5:cfca with SMTP id 98e67ed59e1d1-2cd274dabb9mr4925257a91.42.1721717380184;
+        Mon, 22 Jul 2024 23:49:40 -0700 (PDT)
 Received: from kylee-ThinkPad-E16-Gen-1.. ([122.147.171.160])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ccf7c5391bsm8354749a91.24.2024.07.22.23.49.35
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ccf7c5391bsm8354749a91.24.2024.07.22.23.49.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 23:49:37 -0700 (PDT)
+        Mon, 22 Jul 2024 23:49:40 -0700 (PDT)
 From: Kuan-Ying Lee <kuan-ying.lee@canonical.com>
 To: kuan-ying.lee@canonical.com,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Jan Kiszka <jan.kiszka@siemens.com>,
-	Kieran Bingham <kbingham@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Ian Kent <raven@themaw.net>,
-	Miklos Szeredi <mszeredi@redhat.com>
+	Kieran Bingham <kbingham@kernel.org>
 Cc: linux-mm@kvack.org,
-	stable@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/5] scripts/gdb: fix lx-mounts command error
-Date: Tue, 23 Jul 2024 14:48:59 +0800
-Message-Id: <20240723064902.124154-4-kuan-ying.lee@canonical.com>
+Subject: [PATCH v3 4/5] scripts/gdb: Add 'lx-stack_depot_lookup' command.
+Date: Tue, 23 Jul 2024 14:49:00 +0800
+Message-Id: <20240723064902.124154-5-kuan-ying.lee@canonical.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240723064902.124154-1-kuan-ying.lee@canonical.com>
 References: <20240723064902.124154-1-kuan-ying.lee@canonical.com>
@@ -100,46 +96,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-(gdb) lx-mounts
-      mount          super_block     devname pathname fstype options
-Python Exception <class 'gdb.error'>: There is no member named list.
-Error occurred in Python: There is no member named list.
+This command allows users to quickly retrieve a stacktrace
+using a handle obtained from a memory coredump.
 
-We encoutner the above issue after commit 2eea9ce4310d ("mounts: keep
-list of mounts in an rbtree"). The commit move a mount from list into
-rbtree.
+Example output:
+(gdb) lx-stack_depot_lookup 0x00c80300
+   0xffff8000807965b4 <kmem_cache_alloc_noprof+660>:    mov     x20, x0
+   0xffff800081a077d8 <kmem_cache_oob_alloc+76>:        mov     x1, x0
+   0xffff800081a079a0 <test_version_show+100>:  cbnz    w0, 0xffff800081a07968 <test_version_show+44>
+   0xffff800082f4a3fc <kobj_attr_show+60>:      ldr     x19, [sp, #16]
+   0xffff800080a0fb34 <sysfs_kf_seq_show+460>:  ldp     x3, x4, [sp, #96]
+   0xffff800080a0a550 <kernfs_seq_show+296>:    ldp     x19, x20, [sp, #16]
+   0xffff8000808e7b40 <seq_read_iter+836>:      mov     w5, w0
+   0xffff800080a0b8ac <kernfs_fop_read_iter+804>:       mov     x23, x0
+   0xffff800080914a48 <copy_splice_read+972>:   mov     x6, x0
+   0xffff8000809151c4 <do_splice_read+348>:     ldr     x21, [sp, #32]
 
-So we can instead use rbtree to iterate all mounts information.
-
-Fixes: 2eea9ce4310d ("mounts: keep list of mounts in an rbtree")
-Cc: <stable@vger.kernel.org>
 Signed-off-by: Kuan-Ying Lee <kuan-ying.lee@canonical.com>
 ---
- scripts/gdb/linux/proc.py | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ scripts/gdb/linux/stackdepot.py | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/scripts/gdb/linux/proc.py b/scripts/gdb/linux/proc.py
-index 43c687e7a69d..65dd1bd12964 100644
---- a/scripts/gdb/linux/proc.py
-+++ b/scripts/gdb/linux/proc.py
-@@ -18,6 +18,7 @@ from linux import utils
- from linux import tasks
- from linux import lists
- from linux import vfs
-+from linux import rbtree
- from struct import *
+diff --git a/scripts/gdb/linux/stackdepot.py b/scripts/gdb/linux/stackdepot.py
+index bb3a0f843931..37313a5a51a0 100644
+--- a/scripts/gdb/linux/stackdepot.py
++++ b/scripts/gdb/linux/stackdepot.py
+@@ -13,6 +13,13 @@ if constants.LX_CONFIG_STACKDEPOT:
+     stack_record_type = utils.CachedType('struct stack_record')
+     DEPOT_STACK_ALIGN = 4
  
- 
-@@ -172,8 +173,7 @@ values of that process namespace"""
-         gdb.write("{:^18} {:^15} {:>9} {} {} options\n".format(
-                   "mount", "super_block", "devname", "pathname", "fstype"))
- 
--        for mnt in lists.list_for_each_entry(namespace['list'],
--                                             mount_ptr_type, "mnt_list"):
-+        for mnt in rbtree.rb_inorder_for_each_entry(namespace['mounts'], mount_ptr_type, "mnt_node"):
-             devname = mnt['mnt_devname'].string()
-             devname = devname if devname else "none"
- 
++def help():
++    t = """Usage: lx-stack_depot_lookup [Hex handle value]
++    Example:
++        lx-stack_depot_lookup 0x00c80300\n"""
++    gdb.write("Unrecognized command\n")
++    raise gdb.GdbError(t)
++
+ def stack_depot_fetch(handle):
+     global DEPOT_STACK_ALIGN
+     global stack_record_type
+@@ -57,3 +64,23 @@ def stack_depot_print(handle):
+                 gdb.execute("x /i 0x%x" % (int(entries[i])))
+             except Exception as e:
+                 gdb.write("%s\n" % e)
++
++class StackDepotLookup(gdb.Command):
++    """Search backtrace by handle"""
++
++    def __init__(self):
++        if constants.LX_CONFIG_STACKDEPOT:
++            super(StackDepotLookup, self).__init__("lx-stack_depot_lookup", gdb.COMMAND_SUPPORT)
++
++    def invoke(self, args, from_tty):
++        if not constants.LX_CONFIG_STACKDEPOT:
++            raise gdb.GdbError('CONFIG_STACKDEPOT is not set')
++
++        argv = gdb.string_to_argv(args)
++        if len(argv) == 1:
++            handle = int(argv[0], 16)
++            stack_depot_print(gdb.Value(handle).cast(utils.get_uint_type()))
++        else:
++            help()
++
++StackDepotLookup()
 -- 
 2.34.1
 
