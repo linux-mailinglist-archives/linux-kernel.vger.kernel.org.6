@@ -1,226 +1,206 @@
-Return-Path: <linux-kernel+bounces-259528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57AC59397ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 03:29:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F3A89397EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 03:29:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B4E81C21A02
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 01:29:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B34731C219A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 01:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8985F137742;
-	Tue, 23 Jul 2024 01:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92ECD137748;
+	Tue, 23 Jul 2024 01:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cs6NL04t"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W9P3wt2H"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049CA1369AE;
-	Tue, 23 Jul 2024 01:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121741311A3
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 01:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721698137; cv=none; b=JmBXAfvsIdU9a5rn0NHAYJl84velw0Hb563SOogv+9q6qYStidPnN75k7fS+KLiVwkYn9kANOqIWoAAurySHeb8CwX/6bJ02t8nG7JF8Zd+BCev+yeyLPWHfdeEHpPJVLH7Dw01OB6BJGtMYtSNDIKh8H75+0cUHtJ/tniJR9Qk=
+	t=1721698129; cv=none; b=k52ZkV7FaSEvcWQIlUyg2QAM7HL/8puHNlglitDnPaaM1JOlbIZzX5iMNmwCgpk7Yum+CFLBzGKa4oxbI3xO6pLmlWrFqtUQZBd3x8CaHkux7MDHp8uhEPrY6bOVDkPoKFeIjazDZOfhX8zRYBp34UKJIrIi8SkDNyG8bLiJeFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721698137; c=relaxed/simple;
-	bh=VLL35boxqFuOc40XPfXlJjwMZlRdjvQpA8ziQfPKO5E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R+tl2ZnbG5duaCrTNrwcqfZlmEtBm1JCLNROby6Nb7BJqERVuSinwcqYm8s1ftvOtM8DoVlv4ggcftLB7d8PSX77f4cGpgK/CwSaEIl9cEp39nqUnk26ZwRkAFrjCZze38cNLSrU+uyObTV8b8owcykkTmwPy+hfuhVTuWXuxdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cs6NL04t; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4272738eb9eso36931235e9.3;
-        Mon, 22 Jul 2024 18:28:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721698134; x=1722302934; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0JpvM6gskhIkYk6iEhzrjUnhABg12qwE+NcmnGPaHaU=;
-        b=cs6NL04tYGP+UTf9Cr7s+AD5tNfJOV0E5uH25r7MBtjanEzsdlsRAb9dma4n4sDoNF
-         X08bKRV1r8E2oLRXBkAkxI+V4/CG9k7ufhFRO+HwGe3OYMzPftRJY6nWoBYDPTmVmNuQ
-         Hj8o1omGXxB3+23N35plTdLMgA3LEfo5A3vUL/lp5jfihwfBGL3dcg6GAJYQSpDfPv4B
-         7sQdfvyZ+LlgyqDdpLSA2HYbzGVHhJJLnuww58qaO+Js/1357RatCkiAf2t6E1dpNaPB
-         7b1qmUf5Ddn1/oZ1CTVQBGI8DbtKzMfrs/ysAp7kpR02ufJKGzV0ru2X0w7ZgSSJNAEY
-         ciOQ==
+	s=arc-20240116; t=1721698129; c=relaxed/simple;
+	bh=hmJv9NIRC+0TWcZWU6vysfnV1T9npK2Yd4rCz4I6KqI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jSwEPXRNqxRQqmhS4M85jMxBKFJlIPrhLJ4v5Dq5MsLUXr6tQ6gca9VdCoKjA1YeJ9TQIJ28JlKHmEnCfe3JaFFnX+5miTNxRbud87gR5CWhcoH/3GddAii3owLLpYw2oc91O/q5MgxOGv/czkmpRBGgHd4bky/CE7dIrsb+Ibk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W9P3wt2H; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721698125;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G2dPIatpVSHzVHBHYiz7SKefAqNEyf3yo6kuC1ZYdgc=;
+	b=W9P3wt2Hm+VT7ElAnw+V0i6/jI+3rr3+0xZyyJsSvxbqmTxfoGNgwCwzw4yAK86pQT/jBl
+	8hNejwQ0soNOjHLmCGoO4V0VZx5muskNj5xlLKG2MHBZfSxN3A5KnLq/L186SRuSJtQLEG
+	Fz3yugNbNS0UR48j/otD1qWCkMwE94U=
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
+ [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-690-vL2FDBr1MN2Ea3hQRJ1gOQ-1; Mon, 22 Jul 2024 21:28:43 -0400
+X-MC-Unique: vL2FDBr1MN2Ea3hQRJ1gOQ-1
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2c96e73c886so3945276a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 18:28:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721698134; x=1722302934;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1721698121; x=1722302921;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0JpvM6gskhIkYk6iEhzrjUnhABg12qwE+NcmnGPaHaU=;
-        b=HiSnEN/COBdnPlf66Z/Qs76LVb7L8bAkr68hBZf62Opor3LVAnofTexvtc4/D2rcAn
-         9H2RtoPuWc7POV2RqG/JcP468RHIOgfWZorYUTnX7qHFjPNYQ/1I5ZO4WxeM0VVGtbkN
-         MXzJhDlCKG2s+8Em+HvcVUifqHlFbE81pgsEhDIl+iMCnUNQDVnSx4834xr54WDjku5z
-         qF4s5PBoa7MYJuB+T4foyWP6QMAKKTBObnEUyrkMOJBu/G5fFajpTY94R7+gzCAVy/VL
-         beUeRIZ24a09PDmnB77QfMqAdm7vQ7uqB5Fu88AYSYQruPLPf+iWF9Fh0BI7vOKizzPV
-         vqBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUW1jiGvduMkyWslAg/R7ok+cTbSi1CybIs4mYn4FjJnCY8G3JBCUEESgEziY8BHt7p+9Jvd9pAF3hY8uIffOQSKYprbMx9cF05R0Xp8/0K5P+AWOXF7Dv4Rh6MrSJDom0YLyrAab8O
-X-Gm-Message-State: AOJu0YyODHcqnp04InJHnEb+WvOnnqMqR7HQrxVlK0ccPI+CRB+6nDqO
-	G7MTpp3YiCoBbOQ0GT39f0Apg3ZtO0Rzugiba1Ab9mrMSJPnn3UxzJ6Erg==
-X-Google-Smtp-Source: AGHT+IFJhpYdZ1TYDVvD5UDDmF+Iy8jQVDWtEy8GHnJDXw4rkaRFQqKQebTYHV3pM0whCnYhXUi/IQ==
-X-Received: by 2002:a05:6000:c49:b0:367:9522:5e6b with SMTP id ffacd0b85a97d-369dee4de69mr918088f8f.45.1721698133956;
-        Mon, 22 Jul 2024 18:28:53 -0700 (PDT)
-Received: from lenovo.teknoraver.net (net-93-66-31-10.cust.vodafonedsl.it. [93.66.31.10])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a8f3a47d2sm31435366b.81.2024.07.22.18.28.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 18:28:53 -0700 (PDT)
-From: technoboy85@gmail.com
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	bpf@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Matteo Croce <teknoraver@meta.com>
-Subject: [PATCH bpf-next v2 2/2] bpf: allow bpf_current_task_under_cgroup() with BPF_CGROUP_*
-Date: Tue, 23 Jul 2024 03:28:27 +0200
-Message-ID: <20240723012827.13280-3-technoboy85@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240723012827.13280-1-technoboy85@gmail.com>
-References: <20240723012827.13280-1-technoboy85@gmail.com>
+        bh=G2dPIatpVSHzVHBHYiz7SKefAqNEyf3yo6kuC1ZYdgc=;
+        b=uTBb49cwTYPAiC4UnPCF+qUp7r5i/uVfF3lZFqOIcL6Z8qZRRvNUy1sVc6Dn5O7FH1
+         e2FaiuBJ23593HoQ4S23+X8vu+4pE8f04uohS4kVYNm82CB1D2x5doCNeeJmpQiMaJWN
+         zG+BN6Im9w+SIgOXxP5c0J8ueCsnmm4m2lS/87KZzkik2G84ePm2hI+Lf1w4jhUTMSTq
+         m6zKl3m1TSfL2zb4W5Gc5ht5E5Wv5Vj2o38My/Va8uHLJYSKXP4BhQc4vsOfUsKJJudG
+         yGeNSMqRd1mU2BQlcEvZF1d+v2DdbbyfTItU794LuQmn57st0S+ZGmgJs8bEXfQzFUw/
+         9HPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWcEaLiB1PgI8cPDEIteAyg1ufZ5qr8BuXCFuzRZmMtS/1iH1ef8QFutEt3xIA9lRf+Cz4hPu+odbwXUg+E5Nqmop+HeiZ8g/gscz5t
+X-Gm-Message-State: AOJu0Yxt5wwo7BtawsXckU5f9BWu3I2UTsAw9Cz6bUeunf88YuUkMpuk
+	I8onBpBjO5ippTuUSL6T7UEucVApDI19EUQI83iKKX6nSiUf9hpo8r84QbtMtkkoX7AoD5UbgwW
+	VXDC4s2BL/GvH0IsdH3Hw1BOXDhjEHaQqKcMH14WieehonWJ1+TIpUMIduffG3++h1Wt7VnnzMl
+	M18CGlt13cn0Ojx9pewJrok6VAvl6NWJalN8RH69UPAT9+w2g=
+X-Received: by 2002:a17:90a:66cd:b0:2ca:a318:2729 with SMTP id 98e67ed59e1d1-2cd2751ca3cmr4555703a91.37.1721698121450;
+        Mon, 22 Jul 2024 18:28:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEm9l9yopQ8gKbnepufKwmhhZJViwYbJ+IaU9VHuP40/XlFCamg/GuB/7IU2kaDDEGgde0TY0jSAYiL6312qIo=
+X-Received: by 2002:a17:90a:66cd:b0:2ca:a318:2729 with SMTP id
+ 98e67ed59e1d1-2cd2751ca3cmr4555689a91.37.1721698120961; Mon, 22 Jul 2024
+ 18:28:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240722010625.1016854-1-lulu@redhat.com> <20240722010625.1016854-4-lulu@redhat.com>
+ <CACGkMEvXk8_sXRtugePAMv8PM0qGU-su0eFUsFZ=-=_TjcGZNg@mail.gmail.com>
+ <7a4d99e0f16cbe91000c3c780334a4c866904182.camel@nvidia.com>
+ <CACLfguUR_hdJGDcjnmYY=qOXFiSnsBsXD5evTDZQi=K0RM4gZQ@mail.gmail.com> <CACLfguUWCY6MJkv+GuJ0W0t0Q0iX3fna+EjWxV5E=au9Oa5-aw@mail.gmail.com>
+In-Reply-To: <CACLfguUWCY6MJkv+GuJ0W0t0Q0iX3fna+EjWxV5E=au9Oa5-aw@mail.gmail.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 23 Jul 2024 09:28:28 +0800
+Message-ID: <CACGkMEsapSx4Hk+2PcsenGzaBbJ2OKXde_onEb+8gZG9AMAX6A@mail.gmail.com>
+Subject: Re: [PATH v4 3/3] vdpa/mlx5: Add the support of set mac address
+To: Cindy Lu <lulu@redhat.com>
+Cc: Dragos Tatulea <dtatulea@nvidia.com>, "sgarzare@redhat.com" <sgarzare@redhat.com>, 
+	Parav Pandit <parav@nvidia.com>, "mst@redhat.com" <mst@redhat.com>, 
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Matteo Croce <teknoraver@meta.com>
+On Mon, Jul 22, 2024 at 10:48=E2=80=AFPM Cindy Lu <lulu@redhat.com> wrote:
+>
+> On Mon, 22 Jul 2024 at 20:55, Cindy Lu <lulu@redhat.com> wrote:
+> >
+> > On Mon, 22 Jul 2024 at 17:45, Dragos Tatulea <dtatulea@nvidia.com> wrot=
+e:
+> > >
+> > > On Mon, 2024-07-22 at 15:48 +0800, Jason Wang wrote:
+> > > > On Mon, Jul 22, 2024 at 9:06=E2=80=AFAM Cindy Lu <lulu@redhat.com> =
+wrote:
+> > > > >
+> > > > > Add the function to support setting the MAC address.
+> > > > > For vdpa/mlx5, the function will use mlx5_mpfs_add_mac
+> > > > > to set the mac address
+> > > > >
+> > > > > Tested in ConnectX-6 Dx device
+> > > > >
+> > > > > Signed-off-by: Cindy Lu <lulu@redhat.com>
+> > > > > ---
+> > > > >  drivers/vdpa/mlx5/net/mlx5_vnet.c | 25 +++++++++++++++++++++++++
+> > > > >  1 file changed, 25 insertions(+)
+> > > > >
+> > > > > diff --git a/drivers/vdpa/mlx5/net/mlx5_vnet.c b/drivers/vdpa/mlx=
+5/net/mlx5_vnet.c
+> > > > > index ecfc16151d61..415b527a9c72 100644
+> > > > > --- a/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> > > > > +++ b/drivers/vdpa/mlx5/net/mlx5_vnet.c
+> > > > > @@ -3785,10 +3785,35 @@ static void mlx5_vdpa_dev_del(struct vdpa=
+_mgmt_dev *v_mdev, struct vdpa_device *
+> > > > >         destroy_workqueue(wq);
+> > > > >         mgtdev->ndev =3D NULL;
+> > > > >  }
+> > > > > +static int mlx5_vdpa_set_attr(struct vdpa_mgmt_dev *v_mdev,
+> > > > > +                             struct vdpa_device *dev,
+> > > > > +                             const struct vdpa_dev_set_config *a=
+dd_config)
+> > > > > +{
+> > > > > +       struct mlx5_vdpa_dev *mvdev;
+> > > > > +       struct mlx5_vdpa_net *ndev;
+> > > > > +       struct mlx5_core_dev *mdev;
+> > > > > +       struct virtio_net_config *config;
+> > > > > +       struct mlx5_core_dev *pfmdev;
+> > > Reverse xmas tree?
+> > >
+> > will fix this
+> > > > > +       int err =3D -EOPNOTSUPP;
+> > > > > +
+> > > > > +       mvdev =3D to_mvdev(dev);
+> > > > > +       ndev =3D to_mlx5_vdpa_ndev(mvdev);
+> > > > > +       mdev =3D mvdev->mdev;
+> > > > > +       config =3D &ndev->config;
+> > > > > +
+> > > You still need to take the ndev->reslock.
+> > >
+> > sure, will do
+> > > > > +       if (add_config->mask & (1 << VDPA_ATTR_DEV_NET_CFG_MACADD=
+R)) {
+> > > > > +               pfmdev =3D pci_get_drvdata(pci_physfn(mdev->pdev)=
+);
+> > > > > +               err =3D mlx5_mpfs_add_mac(pfmdev, config->mac);
+> > > > > +               if (!err)
+> > > > > +                       memcpy(config->mac, add_config->net.mac, =
+ETH_ALEN);
+> > > What is the expected behaviour when the device is in use?
+> > >
+> > if the err is 0 then copy the Mac address to config
+> > will change this code to make it more clear
+> > Thanks
+> > Cindy
+> sorry for the misunderstanding. The VDPA tool does not support
+> changing the MAC address after the guest is loaded. I think I can add
+> a check for VIRTIO_CONFIG_S_DRIVER_OK here?
 
-The helper bpf_current_task_under_cgroup() currently is only allowed for
-tracing programs.
-Allow its usage also in the BPF_CGROUP_* program types.
-Move the code from kernel/trace/bpf_trace.c to kernel/bpf/helpers.c,
-so it compiles also without CONFIG_BPF_EVENTS.
+Still racy, and I think we probably don't worry about that case. It's
+the fault of the mgmt layer not us.
 
-This will be used in systemd-networkd to monitor the sysctl writes,
-and filter it's own writes from others:
-https://github.com/systemd/systemd/pull/32212
+Thanks
 
-Signed-off-by: Matteo Croce <teknoraver@meta.com>
----
- include/linux/bpf.h      |  1 +
- kernel/bpf/cgroup.c      |  2 ++
- kernel/bpf/helpers.c     | 23 +++++++++++++++++++++++
- kernel/trace/bpf_trace.c | 27 ++-------------------------
- 4 files changed, 28 insertions(+), 25 deletions(-)
-
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index 4f1d4a97b9d1..4000fd161dda 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -3188,6 +3188,7 @@ extern const struct bpf_func_proto bpf_sock_hash_update_proto;
- extern const struct bpf_func_proto bpf_get_current_cgroup_id_proto;
- extern const struct bpf_func_proto bpf_get_current_ancestor_cgroup_id_proto;
- extern const struct bpf_func_proto bpf_get_cgroup_classid_curr_proto;
-+extern const struct bpf_func_proto bpf_current_task_under_cgroup_proto;
- extern const struct bpf_func_proto bpf_msg_redirect_hash_proto;
- extern const struct bpf_func_proto bpf_msg_redirect_map_proto;
- extern const struct bpf_func_proto bpf_sk_redirect_hash_proto;
-diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
-index 8ba73042a239..e7113d700b87 100644
---- a/kernel/bpf/cgroup.c
-+++ b/kernel/bpf/cgroup.c
-@@ -2581,6 +2581,8 @@ cgroup_current_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	case BPF_FUNC_get_cgroup_classid:
- 		return &bpf_get_cgroup_classid_curr_proto;
- #endif
-+	case BPF_FUNC_current_task_under_cgroup:
-+		return &bpf_current_task_under_cgroup_proto;
- 	default:
- 		return NULL;
- 	}
-diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-index 23b782641077..eaa3ce14028a 100644
---- a/kernel/bpf/helpers.c
-+++ b/kernel/bpf/helpers.c
-@@ -2457,6 +2457,29 @@ __bpf_kfunc long bpf_task_under_cgroup(struct task_struct *task,
- 	return ret;
- }
- 
-+BPF_CALL_2(bpf_current_task_under_cgroup, struct bpf_map *, map, u32, idx)
-+{
-+	struct bpf_array *array = container_of(map, struct bpf_array, map);
-+	struct cgroup *cgrp;
-+
-+	if (unlikely(idx >= array->map.max_entries))
-+		return -E2BIG;
-+
-+	cgrp = READ_ONCE(array->ptrs[idx]);
-+	if (unlikely(!cgrp))
-+		return -EAGAIN;
-+
-+	return task_under_cgroup_hierarchy(current, cgrp);
-+}
-+
-+const struct bpf_func_proto bpf_current_task_under_cgroup_proto = {
-+	.func           = bpf_current_task_under_cgroup,
-+	.gpl_only       = false,
-+	.ret_type       = RET_INTEGER,
-+	.arg1_type      = ARG_CONST_MAP_PTR,
-+	.arg2_type      = ARG_ANYTHING,
-+};
-+
- /**
-  * bpf_task_get_cgroup1 - Acquires the associated cgroup of a task within a
-  * specific cgroup1 hierarchy. The cgroup1 hierarchy is identified by its
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index cd098846e251..ea5cdd122024 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -798,29 +798,6 @@ const struct bpf_func_proto bpf_task_pt_regs_proto = {
- 	.ret_btf_id	= &bpf_task_pt_regs_ids[0],
- };
- 
--BPF_CALL_2(bpf_current_task_under_cgroup, struct bpf_map *, map, u32, idx)
--{
--	struct bpf_array *array = container_of(map, struct bpf_array, map);
--	struct cgroup *cgrp;
--
--	if (unlikely(idx >= array->map.max_entries))
--		return -E2BIG;
--
--	cgrp = READ_ONCE(array->ptrs[idx]);
--	if (unlikely(!cgrp))
--		return -EAGAIN;
--
--	return task_under_cgroup_hierarchy(current, cgrp);
--}
--
--static const struct bpf_func_proto bpf_current_task_under_cgroup_proto = {
--	.func           = bpf_current_task_under_cgroup,
--	.gpl_only       = false,
--	.ret_type       = RET_INTEGER,
--	.arg1_type      = ARG_CONST_MAP_PTR,
--	.arg2_type      = ARG_ANYTHING,
--};
--
- struct send_signal_irq_work {
- 	struct irq_work irq_work;
- 	struct task_struct *task;
-@@ -1548,8 +1525,6 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_get_numa_node_id_proto;
- 	case BPF_FUNC_perf_event_read:
- 		return &bpf_perf_event_read_proto;
--	case BPF_FUNC_current_task_under_cgroup:
--		return &bpf_current_task_under_cgroup_proto;
- 	case BPF_FUNC_get_prandom_u32:
- 		return &bpf_get_prandom_u32_proto;
- 	case BPF_FUNC_probe_write_user:
-@@ -1578,6 +1553,8 @@ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 		return &bpf_cgrp_storage_get_proto;
- 	case BPF_FUNC_cgrp_storage_delete:
- 		return &bpf_cgrp_storage_delete_proto;
-+	case BPF_FUNC_current_task_under_cgroup:
-+		return &bpf_current_task_under_cgroup_proto;
- #endif
- 	case BPF_FUNC_send_signal:
- 		return &bpf_send_signal_proto;
--- 
-2.45.2
+> Thanks
+> cindy
+> > > > > +       }
+> > > > > +       return err;
+> > > >
+> > > > Similar to net simulator, how could be serialize the modification t=
+o
+> > > > mac address:
+> > > >
+> > > > 1) from vdpa tool
+> > > > 2) via control virtqueue
+> > > >
+> > > > Thanks
+> > > >
+> > > > > +}
+> > > > >
+> > > > >  static const struct vdpa_mgmtdev_ops mdev_ops =3D {
+> > > > >         .dev_add =3D mlx5_vdpa_dev_add,
+> > > > >         .dev_del =3D mlx5_vdpa_dev_del,
+> > > > > +       .dev_set_attr =3D mlx5_vdpa_set_attr,
+> > > > >  };
+> > > > >
+> > > > >  static struct virtio_device_id id_table[] =3D {
+> > > > > --
+> > > > > 2.45.0
+> > > > >
+> > > >
+> > > Thanks,
+> > > Dragos
+>
 
 
