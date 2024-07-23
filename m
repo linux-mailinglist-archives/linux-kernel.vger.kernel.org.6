@@ -1,120 +1,78 @@
-Return-Path: <linux-kernel+bounces-260220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C02393A4A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:04:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D035C93A4A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180F0284B29
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:04:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 649D2284B90
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0172156C74;
-	Tue, 23 Jul 2024 17:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F711586EE;
+	Tue, 23 Jul 2024 17:04:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uj7m7qOu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VkPZ3fws"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6A8157E61;
-	Tue, 23 Jul 2024 17:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3DD14A4C9
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 17:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721754277; cv=none; b=oKoBvjxcljIxptTSPvJlECzvFYbB1B6an2yB7hE64cy5Mm9tc+xQqIt9wKAondWTNLv9qcdmLY/BZwSm9qBT4Lf46kUFoYu/pLWNSz/p+SOfDpsk4BfbIahrTz8vflBNhdYYoZvMIGZ9ZUnz5D68lnqwnyAaBiEmuHq7JXm7NFs=
+	t=1721754289; cv=none; b=rSW2XsrdU61yrG+Eo7inAWUQyGEyOW4f7pCYH85t5iPXW7OpwWMpP8JZFljXhKzIIqxGwTq6ur5D0cli5TJvNcax/WA9prqWv/PkmC4O1/lQ8yd2qfAeQ5R9FzbaVT15qfTZF1+Ucx1IVpL4LnF8MX/hiVHLis0A3/8V1QLZqp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721754277; c=relaxed/simple;
-	bh=MxN/WLnGKf7av7xKNhhUY8LWbs931XIEUtFb3naxcy8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Lr4U7dp0U2t4huiOJjbmHUZFySYBv1cUGq4jyHFNCFS5a5lGgL+acvOU2iWK6B2GOYw3WwBTkUmdfgrF/e6EdGG/vP85dvmf2O8R51fuxKxDYfOB+LKl+j0KEupgHmlkWUbzB1NOXvhnKmIsUD/sCSYsM/N2dGcX0kHb3EyDHJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uj7m7qOu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAC6AC4AF0C;
-	Tue, 23 Jul 2024 17:04:36 +0000 (UTC)
+	s=arc-20240116; t=1721754289; c=relaxed/simple;
+	bh=c9PTkqL79X9Umrqdh+Bo1GOF1r7hj47eNw6X8ZB17/8=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Bms8ZTleTP8JNBL60JjfIL4YIqRrSWV3R5RmanQwjfXO7nVCSgIMc1vmQFzdlNpO2YOLJJkzh/2uARF7fmiOqsgWLz/Z41In/hvd5TfmNvWe4Q85m63TjdSlqKPNSVbAwrchBe7Qs9AENN/iyj29xdfbNO8L8VfNZR2aPFMRBzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VkPZ3fws; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A069CC4AF0A;
+	Tue, 23 Jul 2024 17:04:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721754276;
-	bh=MxN/WLnGKf7av7xKNhhUY8LWbs931XIEUtFb3naxcy8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uj7m7qOu4xOj8Dmv+70XOg6djEehnR/RzmwEBzrwoNA3f+V/k4hNZZMENVxjd5PyE
-	 EeshgK0umyb1rblPa5oL9TiUoo//GKKSmqZTlgiJfWm5Vw3ZhBbNZidjweLwQYXnoL
-	 F/UidCtbQHgbMsjqvCClQrl7lrZZNXImAL6VPiXz8MvZfrI8P0gmMgYkUVxKIoOhu5
-	 4CKcjbJMXhThtVUVyEg2l/9RkdWcHbiYPmI6QPILgLuF39WWNQG70ovt6m+kjoqENw
-	 aPjvtHxY232ky5BOkqa7JxXrrArZdAnV08N7gRKlAkDk8m10C2fsfVeAa/8pyTsnY9
-	 hdzPHX8HKXbjg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sWIwE-00Emgx-Bf;
-	Tue, 23 Jul 2024 18:04:34 +0100
-Date: Tue, 23 Jul 2024 18:04:34 +0100
-Message-ID: <86cyn42g65.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sebastian Ott <sebott@redhat.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 0/3] KVM: arm64: fix warnings in W=1 build
-In-Reply-To: <20240723101204.7356-1-sebott@redhat.com>
-References: <20240723101204.7356-1-sebott@redhat.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1721754289;
+	bh=c9PTkqL79X9Umrqdh+Bo1GOF1r7hj47eNw6X8ZB17/8=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=VkPZ3fwsKbz/89gVVa0On0IUWocaM1U6SoFkuuKwgs5SkAYfFAc9CiALLGyD2mtHz
+	 IxY1ztuxk6aKWmAVijRk+kWyrNGvslKmtjopiPx6CF9gQ5kY09cJZq+0EQGrkWFSaY
+	 +h9Lc0Jv6abmq9znV35mGWBSli4y98hVHlLwIkC1j0xB7lD7NMpif3CkNWljAUlzMx
+	 sA2rUP03kLQ7NVg3zAn786SywTdp9u8KOHhcx69Fnzj7ke5AdGonV37pmRgiS5PoZW
+	 xRP2/aAo9186b+9mhm4bpkJg0a+3mSSxKtfvm/DNwk23gBzgzKG+Jsv5lGUmhX3gqF
+	 W1XwHVzs84l3w==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 95790C43443;
+	Tue, 23 Jul 2024 17:04:49 +0000 (UTC)
+Subject: Re: [GIT PULL] hsi changes for hsi-6.11
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <g6m7rjparpj2iy27hgi347ctlf7qq7xyetonu2p5ylcwvzw7za@rjzn7mtxgjjq>
+References: <g6m7rjparpj2iy27hgi347ctlf7qq7xyetonu2p5ylcwvzw7za@rjzn7mtxgjjq>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <g6m7rjparpj2iy27hgi347ctlf7qq7xyetonu2p5ylcwvzw7za@rjzn7mtxgjjq>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-hsi.git tags/hsi-for-6.11
+X-PR-Tracked-Commit-Id: f02cfe6950479b04fb75cf8424a852af7c50d3ad
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: c5d2be66705c5ebec8a691707ab427d937c91b7a
+Message-Id: <172175428960.5236.18141204084743219416.pr-tracker-bot@kernel.org>
+Date: Tue, 23 Jul 2024 17:04:49 +0000
+To: Sebastian Reichel <sre@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: sebott@redhat.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org, yuzenghui@huawei.com, mark.rutland@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, 23 Jul 2024 11:12:01 +0100,
-Sebastian Ott <sebott@redhat.com> wrote:
-> 
-> Building arch/arm64/kvm/ with W=1 spills out a lot of warnings. When
-> changing stuff I try to use as much tooling as possible to make sure
-> that I don't screw up - having a clean baseline imho helps with that.
-> 
-> With the first 2 patches applied make W=1 arch/arm64/kvm/ runs without
-> warnings for me (fedora userspace, upstream linux after kvm merge).
-> Patch 3 gets rid of sparse lock warnings in arch/arm64/kvm/vgic/.
-> 
-> Patch 1 now just adds -Wno-override-init to the cflags of the affected
-> files. Alternatives would be to add this to the whole subdir or
-> reintroduce the flag for higher warn levels..
-> 
-> Sebastian Ott (3):
->   KVM: arm64: fix override-init warnings in W=1 builds
->   KVM: arm64: fix kdoc warnings in W=1 builds
->   KVM: arm64: vgic: fix unexpected unlock sparse warnings
-> 
->  arch/arm64/kvm/Makefile          |  3 +++
->  arch/arm64/kvm/arm.c             |  1 +
->  arch/arm64/kvm/hyp/nvhe/Makefile |  2 ++
->  arch/arm64/kvm/hyp/vhe/Makefile  |  2 ++
->  arch/arm64/kvm/vgic/vgic-irqfd.c |  7 ++++---
->  arch/arm64/kvm/vgic/vgic-its.c   | 18 +++++++++++-------
->  arch/arm64/kvm/vgic/vgic-v3.c    |  2 +-
->  arch/arm64/kvm/vgic/vgic.c       |  2 +-
->  arch/arm64/kvm/vgic/vgic.h       |  2 +-
->  9 files changed, 26 insertions(+), 13 deletions(-)
+The pull request you sent on Mon, 22 Jul 2024 23:10:06 +0200:
 
-For the series, and assuming we take this in 6.11::
+> https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-hsi.git tags/hsi-for-6.11
 
-Reviewed-by: Marc Zyngier <maz@kernel.org>
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/c5d2be66705c5ebec8a691707ab427d937c91b7a
 
-	M.
+Thank you!
 
 -- 
-Without deviation from the norm, progress is not possible.
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
