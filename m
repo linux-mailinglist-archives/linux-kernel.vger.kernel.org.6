@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-260273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 547F293A547
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:11:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9EA393A548
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:11:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4866B227A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:11:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69BE8284095
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14E5158D61;
-	Tue, 23 Jul 2024 18:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684FC158869;
+	Tue, 23 Jul 2024 18:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G6jovfZm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pV5PaiY/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC304158851;
-	Tue, 23 Jul 2024 18:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A4F158D89;
+	Tue, 23 Jul 2024 18:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721758265; cv=none; b=nC9mqAhnM3w5jt8Pv2Ol3C3IAFh8kz0dGOg4yK3Ruh8ttg/VZgGGmcmNTLefT8FgN8EaniC3MVn5YTAmIVeqfb3BtaMNT/Fjj6259/h9opnNOx14EUHxG10ImHplXrWNH3ZleyU/jVEjl6tH7lwmzcq8Q0oCFQyE0ixrFS6fayc=
+	t=1721758270; cv=none; b=OMiMUkIxs0H5qXv4VC+dUzZhqmnJOzMVbkD9/kPu5eLrgXlwcVzj4l/JCQD4jo2Y4aoQQeDuMFyCdKPeKqMik6a+vzkbBnmSQXjfIU+ZeKOrAOHUxrLgH6D/RPwRn89Vu7BmELXrG1fWs3oQynKVkJPLdsqCAPpisvDQuvVf8NY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721758265; c=relaxed/simple;
-	bh=EF5TVGHtjh4ZWyprrgf/Kmvg5Hex1RNnX1bjJzrWn+g=;
+	s=arc-20240116; t=1721758270; c=relaxed/simple;
+	bh=aW/HcnaSGCL2MNKjQfZpCrQAc7Fxs7Kovj68XjWpzPo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tDtigKdDaLk1OwoqVq2s98Axe2oAleYZ3XPZTJhPHlm50wnHlC6WmEc5O8tKtyb0M0vGYIGKgD80q5ac5kzZidEjUJXEO4L8qhfhTgLBAyc7akcbiKc2f76G9U71E6a0dlUKrRhU5/LkgjeaAJt3ui1AzIhlphDkBgoUyq4ItJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G6jovfZm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59F59C4AF0B;
-	Tue, 23 Jul 2024 18:10:59 +0000 (UTC)
+	 MIME-Version; b=NrCerJ4bjHyY1yTDUxNVEZUkW+PcMruupOxdy31LHtl729TP329xwiEkjf2lGAwTopxaURffAnJarBiD2vTd+AlKK53CdTcmY+rVyuqJerkAxelbwFuOkJ7k0oAtKAQT4XgDTzqyTAyAa/WrwS/0FG2gtNMjksTiR2RWVrENUII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pV5PaiY/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEC38C4AF11;
+	Tue, 23 Jul 2024 18:11:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721758264;
-	bh=EF5TVGHtjh4ZWyprrgf/Kmvg5Hex1RNnX1bjJzrWn+g=;
+	s=k20201202; t=1721758270;
+	bh=aW/HcnaSGCL2MNKjQfZpCrQAc7Fxs7Kovj68XjWpzPo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=G6jovfZmXmWU2u+CRVnM/WkrcdUz8kYHbBGAcB9lI6dbRqsuZp2V0ciRIaazVMLjy
-	 h8xvO988V8AjJvelD6vG/yuVh9BMRh1mA9kRWBQd8FqeHurCI46aZHyjv41Ycz3PSM
-	 1eqKfbB6b7PdalMqqALZsnr3nuT4kIz29Dz0lX3jN3RW9frxXIICZgEQVNjKxiBo27
-	 8Zhd9Y37MKGAHnXc9NI1sKCoTiQArx70KB19Q0NqLtw+SQUHP8xeCjV+vqfqXXBVIk
-	 5Wq+ITwkanPAzm9XMDqxtswIgIak5p4Uq8ZiXnN8NEkaHYJ6SxCsrfVvpnybX7ZV9Y
-	 L1NIl3l8yVmEw==
+	b=pV5PaiY/63emituIHzEnCO4VEz5GBfDbCAwoMiSL7V6F2fKJYGO3Ayta7xK+BINIo
+	 ++51BxK7YS8+MqjyMdAiqWw3C4CHDV03TvVfp/djhbhMXimXjwKUXgKvBCG6+vMcuh
+	 XO7IrMkvHarKPe7FVVOdV5+epZ2974/DV75/rf/HBqBO2RI9Hz32cijHnkVlOwiSyB
+	 z68SncMnBkPvYgKFP4ymd9QDQlI/2EmevlcqVdqHThKTi/TFFqVYchGFtSOaPUtEcV
+	 /o7P6GDKwKWe1fIh1d5nMfeArdPSUAS6sp5sDmSLHHCykw5l8SEQNHk4Rz22zrF4+A
+	 jtX5QvdKRjr9A==
 From: Danilo Krummrich <dakr@kernel.org>
 To: ojeda@kernel.org,
 	alex.gaynor@gmail.com,
@@ -67,9 +67,9 @@ Cc: daniel.almeida@collabora.com,
 	rust-for-linux@vger.kernel.org,
 	linux-mm@kvack.org,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v2 02/23] rust: alloc: separate `aligned_size` from `krealloc_aligned`
-Date: Tue, 23 Jul 2024 20:09:51 +0200
-Message-ID: <20240723181024.21168-3-dakr@kernel.org>
+Subject: [PATCH v2 03/23] rust: alloc: rename `KernelAllocator` to `Kmalloc`
+Date: Tue, 23 Jul 2024 20:09:52 +0200
+Message-ID: <20240723181024.21168-4-dakr@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240723181024.21168-1-dakr@kernel.org>
 References: <20240723181024.21168-1-dakr@kernel.org>
@@ -81,65 +81,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Separate `aligned_size` from `krealloc_aligned`.
-
-Subsequent patches implement `Allocator` derivates, such as `Kmalloc`,
-that require `aligned_size` and replace the original `krealloc_aligned`.
+Subsequent patches implement `Vmalloc` and `KVmalloc` allocators, hence
+align `KernelAllocator` to this naming scheme.
 
 Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
- rust/kernel/alloc/allocator.rs | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
+ rust/kernel/alloc/allocator.rs | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/allocator.rs
-index e6ea601f38c6..6e133780a4a1 100644
+index 6e133780a4a1..10774c51ae26 100644
 --- a/rust/kernel/alloc/allocator.rs
 +++ b/rust/kernel/alloc/allocator.rs
-@@ -8,27 +8,35 @@
+@@ -6,7 +6,7 @@
+ use core::alloc::{GlobalAlloc, Layout};
+ use core::ptr;
  
- struct KernelAllocator;
+-struct KernelAllocator;
++struct Kmalloc;
  
--/// Calls `krealloc` with a proper size to alloc a new object aligned to `new_layout`'s alignment.
--///
--/// # Safety
--///
--/// - `ptr` can be either null or a pointer which has been allocated by this allocator.
--/// - `new_layout` must have a non-zero size.
--pub(crate) unsafe fn krealloc_aligned(ptr: *mut u8, new_layout: Layout, flags: Flags) -> *mut u8 {
-+fn aligned_size(new_layout: Layout) -> usize {
+ fn aligned_size(new_layout: Layout) -> usize {
      // Customized layouts from `Layout::from_size_align()` can have size < align, so pad first.
-     let layout = new_layout.pad_to_align();
- 
-     // Note that `layout.size()` (after padding) is guaranteed to be a multiple of `layout.align()`
-     // which together with the slab guarantees means the `krealloc` will return a properly aligned
-     // object (see comments in `kmalloc()` for more information).
--    let size = layout.size();
-+    layout.size()
-+}
- 
-+/// Calls `krealloc` with a proper size to alloc a new object aligned to `new_layout`'s alignment.
-+///
-+/// # Safety
-+///
-+/// - `ptr` can be either null or a pointer which has been allocated by this allocator.
-+/// - `new_layout` must have a non-zero size.
-+pub(crate) unsafe fn krealloc_aligned(ptr: *mut u8, new_layout: Layout, flags: Flags) -> *mut u8 {
-     // SAFETY:
-     // - `ptr` is either null or a pointer returned from a previous `k{re}alloc()` by the
-     //   function safety requirement.
-     // - `size` is greater than 0 since it's from `layout.size()` (which cannot be zero according
-     //   to the function safety requirement)
--    unsafe { bindings::krealloc(ptr as *const core::ffi::c_void, size, flags.0) as *mut u8 }
-+    unsafe {
-+        bindings::krealloc(
-+            ptr as *const core::ffi::c_void,
-+            aligned_size(new_layout),
-+            flags.0,
-+        ) as *mut u8
-+    }
+@@ -39,7 +39,7 @@ pub(crate) unsafe fn krealloc_aligned(ptr: *mut u8, new_layout: Layout, flags: F
+     }
  }
  
- unsafe impl GlobalAlloc for KernelAllocator {
+-unsafe impl GlobalAlloc for KernelAllocator {
++unsafe impl GlobalAlloc for Kmalloc {
+     unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+         // SAFETY: `ptr::null_mut()` is null and `layout` has a non-zero size by the function safety
+         // requirement.
+@@ -75,7 +75,7 @@ unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
+ }
+ 
+ #[global_allocator]
+-static ALLOCATOR: KernelAllocator = KernelAllocator;
++static ALLOCATOR: Kmalloc = Kmalloc;
+ 
+ // See <https://github.com/rust-lang/rust/pull/86844>.
+ #[no_mangle]
 -- 
 2.45.2
 
