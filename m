@@ -1,123 +1,109 @@
-Return-Path: <linux-kernel+bounces-259796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D13E2939D54
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:14:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E04F7939D58
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D1ED283452
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:14:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A9A1B22397
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA1114D2A0;
-	Tue, 23 Jul 2024 09:14:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B0F22EE8;
+	Tue, 23 Jul 2024 09:15:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XKljCd7Q"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MCkgNb9G"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD13C14BFB4
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 09:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FAE208B6
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 09:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721726085; cv=none; b=LyHEowwmGs+lnfOGl9nHoAYS45qm54TT4khur4qwl7tWQDaRkFXPEz9pG52/28CHAdCz7wv6KHETuJuQNRFj5TRxU+kN41f0mt9TonYaA7Bg9M/yLFWKeSVhzcra821W42dP/cez/tfoemf1txzgxvt00cG8Vo3/PMiphUjTWOI=
+	t=1721726140; cv=none; b=guT+RGCPcgZQ5+bI0gycK7rS9UFNrmgGC67yMLizlhk+y4A1qlVyLIvewcaPsxBZPC+qy2AuSMH1DnNgMyRIOpxomgAM5KCoWZ052LLG3JCf3Brb85WWKz77BLvyTg6LLHxodXK3AMMQdRNQVyeTI2gNRzXMNDn0vAnCgE2ZO6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721726085; c=relaxed/simple;
-	bh=nUN3FWKPF4lxcMW0eNtynse9ROflNRGORRaQ45QqoqU=;
+	s=arc-20240116; t=1721726140; c=relaxed/simple;
+	bh=UeoKgLuiGBLt7clh3EHbFnak0jUQWM6xKW91Vn0DzZo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lay07pG5SS/BngYoKOzlwLNmP1Pti+sF+Nd0moN0VT0g8xH7kKCqrqqbrlV9mEHwqbYb40yIQsjg/MFavuJtV2VJnHMdDemEs7/UQqWCEiKz2pKWiSEDaMUddt85t29bqqXpbBWW9L5y1RY1uP5iTqeNst0k/8uqIkXmjFC4xKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XKljCd7Q; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-66ca5e8cc51so23417247b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 02:14:43 -0700 (PDT)
+	 To:Cc:Content-Type; b=tEL5R7lFGM0jQHVqEs0+rGUs3Xnq/lVkmNtRPi6COCSz/pYghVFuh4L3iTZi5A6+P9KoR/rzxka00qu8ceVHz4cV6hEp+1sKg8nPJ+lm0tNLomNPsMD1jSRY0e1h4eaErMQ6wPLtAyeBfue22EoUZ3obc0kuSqOkFImxWvJjFu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MCkgNb9G; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3683329f787so2783477f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 02:15:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721726083; x=1722330883; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=do76fn9eVUpHN8Ddkeci0hwMk6DMn3ti88cC7rkfzQc=;
-        b=XKljCd7QjGfKHnBgUEFsWG/hiYddjTvFPp8N8jPZMNd0GU6H8OUQZBRyspbCaiJe4n
-         Hhmrd1/UaCJp4vyufJNTiwjgfAHk726xpgqr8s4ix3a+wF1qWbMqMCgOWqwnBEeS0lIn
-         OE/pCbuu6+e8W9akhjGb2DtYG/xdm9jpHBXwyD0cDEmu2veuVMhKPwVP4tfs5E9TdLiv
-         YOFRDE5cTFw941Mg6+nrSDGcDTIcRlYFk9UrKTA0uRbKZDchDGTxaQjA6shKl5qvlpVd
-         yZuXWw7k4MQCP3RVsBH4Jlp0qfLoONp2cfkK6olNyoIgR5BXZB+/riBq0j2PJBRM3xQc
-         LOOg==
+        d=google.com; s=20230601; t=1721726138; x=1722330938; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UeoKgLuiGBLt7clh3EHbFnak0jUQWM6xKW91Vn0DzZo=;
+        b=MCkgNb9GvlNP7SwwpwsrRzRKVoRODTqiKoU4EFSO9KA9l6iIaIqiIRXhAKw0j5K6L8
+         0CkGFEJa5WYF69k86jNciLGbMI8jon4zn620z68PEelcoRynx7gZnRgDKPxhSojXZc3u
+         DGzrz67jJosGqESBI/Y2/us601mIdHSJadrtVgVcIGjzHB31bDH+AslMlRaQt9eBxyfs
+         0YrGXCPmVJ8EBcclr4d73co8fK6BLJaPJMAui+nmqYnFyZ+ht1XT7spJmua9rx7pK/AB
+         evojlAWRzymb2MP5yc/OKRdj3KENk/AZ7QB39WHqPY8NvzCWJ4aRkkbAC/+8hpNZAwnE
+         C1TQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721726083; x=1722330883;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=do76fn9eVUpHN8Ddkeci0hwMk6DMn3ti88cC7rkfzQc=;
-        b=vVct7oQj62NPJsGvmI0nR0sGsCHeWi0uN3G3QMjo+Y20DwETETrg4zgh+R4gRkJtqf
-         5sJLbBculAATWAKc4jyNRnPwAJMTyMNHJ2UgY9kTQ9iOvc4w4g40EN35v/PnK/vGoFVg
-         AdGTJp2XM0QQgVadcbO8jKt9dQwGeYUtg9J2ZBj10jA2c/QVN86cj33uYjqIXZFd9YV/
-         hO3Y/v0BCk+dbTgE6AbefouzlOLfMRbMXNwwRTxLYY4WWzPgl6ynjCWzNB0YoLMvlFsh
-         yjGGjuQC2GMj/uSGLRIsDlXpt9KNqNUN2Y6enDyf/2GjdYRVD25ojWHlEwWLywxKZmJe
-         IJHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9WOAviUip95ip5++ED0015xMfIrjrocrfFToTaVkwIxi/iVtYLjIt+z6+Ixh1+VUP7VUT7/VyPrRvGPFGP8jkcEb6pfEDL26EwDib
-X-Gm-Message-State: AOJu0Yx87M/G4cIQY94loIawhj1vccgHnUq+77sboOfP8HykCJhc71BQ
-	0uZdJoiDzS/ac4h2mZlwSty5H+YU3f7S+S8vJCqI3reoRPOyTFvvrO5ZmdbpzJppvYYAoC3PmRz
-	r8qUioGGkONT2SYQ4UN/TwnqOEfoZCXRpcmTPbA==
-X-Google-Smtp-Source: AGHT+IGDii57wttIhsWjllJQ0f567FJtrDS2mTN6cewKhchy/2c2bk7UMoqEAJRDMLDDuOfO1ytaXqNPjebbxFrr08M=
-X-Received: by 2002:a05:690c:288a:b0:627:a917:76b1 with SMTP id
- 00721157ae682-66a65e652d0mr117703277b3.44.1721726082779; Tue, 23 Jul 2024
- 02:14:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721726138; x=1722330938;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UeoKgLuiGBLt7clh3EHbFnak0jUQWM6xKW91Vn0DzZo=;
+        b=tRS1a7ZV7sidniHXQDKilMOImGsYRfVN3+hZNs76MlwZh0Em2DJrY2arFL5sxRSXye
+         WQzZHj4e+jKUYHFHwKksg0LPONXgQNQewnvrLIz3Bl6SUtYmPN3TbgW6yckbLizylq1D
+         Rf3lWvHPKfY+SgyNq0XXEuDvw3nlo572pBMIsrNuqzy8Y9cvQofCPDFdgV86F0pspZGe
+         PxKRWTTWoV4CEWvpLIoT9ubb3E38ho8IBj8Agl9Yy29xCHTKntnvZA1HLEcAxqDFSUj8
+         HF6M067UCWPGkQemIXRtWBN/+KDiuyk+zx5HCXJH5lFcm6M8u+yXCF6VFZGltq30dNtj
+         N7QA==
+X-Forwarded-Encrypted: i=1; AJvYcCX8b6W8YNrcRiziuvyC7ECzw9iZza9U/auB3ghFVFCfscspNhYOc112FKr1HsEfGbMf4Mmp2SPAc7W8TzETV9sAjarR5Bd9T+xkBhoi
+X-Gm-Message-State: AOJu0Yy+X3+IzXqh2+6VRI8yl8TSUFj93/dcJqP3H5wvpHAL0ZwZ6+mh
+	DcSG0KXFjDnLsVwh/2EGKn4WtOEBXGXLTfzoNyWWg5YrSTZg7Jbv/0UX5FxFUoecq87C4oXcXv6
+	8TcszMddAR+BtRr9qqIBt/D2rdXJ5CfqDZN4c
+X-Google-Smtp-Source: AGHT+IHA9MnCfP0s2Vkd21JStygGnWcgLAvV7aVLxLyDLsv453hcAk/4iObIjQRQq648iR/A4OVxND2W0CGkZHxBhTA=
+X-Received: by 2002:adf:e6c9:0:b0:369:b7e3:4983 with SMTP id
+ ffacd0b85a97d-369bae01bdemr6548783f8f.1.1721726137514; Tue, 23 Jul 2024
+ 02:15:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240722080200.3530850-1-quic_ekangupt@quicinc.com>
- <20240722080200.3530850-3-quic_ekangupt@quicinc.com> <cr6xv4tsk23sjynnucve4366fwvffgq3rjnbkpxhzdfeiktwtr@ydrp3mduapui>
- <be9ffb28-3ad7-4537-bf80-45ea43f97374@quicinc.com>
-In-Reply-To: <be9ffb28-3ad7-4537-bf80-45ea43f97374@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 23 Jul 2024 12:14:31 +0300
-Message-ID: <CAA8EJpo=mXS43Mhp15Z6fRtLc+__+PmQ7yrOaOQKW-_R1sgbTQ@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] misc: fastrpc: Increase unsigned PD initmem size
-To: Ekansh Gupta <quic_ekangupt@quicinc.com>
-Cc: srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, 
-	gregkh@linuxfoundation.org, quic_bkumar@quicinc.com, 
-	linux-kernel@vger.kernel.org, quic_chennak@quicinc.com, 
-	dri-devel@lists.freedesktop.org, arnd@arndb.de, stable <stable@kernel.org>
+References: <20240711-b4-rbtree-v6-0-14bef1a8cdba@google.com> <20240711-b4-rbtree-v6-1-14bef1a8cdba@google.com>
+In-Reply-To: <20240711-b4-rbtree-v6-1-14bef1a8cdba@google.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 23 Jul 2024 11:15:25 +0200
+Message-ID: <CAH5fLggtbe0kjA-Wz4mi66MCLLczaC0MfyAc9S3xw6tQfoXw4Q@mail.gmail.com>
+Subject: Re: [PATCH v6 1/6] rust: kernel: add `drop_contents` to `BoxExt`
+To: Matt Gilbride <mattgilbride@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Christian Brauner <brauner@kernel.org>, Rob Landley <rob@landley.net>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Michel Lespinasse <michel@lespinasse.org>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 23 Jul 2024 at 07:36, Ekansh Gupta <quic_ekangupt@quicinc.com> wrote:
+On Thu, Jul 11, 2024 at 6:21=E2=80=AFPM Matt Gilbride <mattgilbride@google.=
+com> wrote:
 >
+> From: Benno Lossin <benno.lossin@proton.me>
 >
+> Sometimes (see [1]) it is necessary to drop the value inside of a
+> `Box<T>`, but retain the allocation. For example to reuse the allocation
+> in the future.
+> Introduce a new function `drop_contents` that turns a `Box<T>` into
+> `Box<MaybeUninit<T>>` by dropping the value.
 >
-> On 7/22/2024 2:04 PM, Dmitry Baryshkov wrote:
-> > On Mon, Jul 22, 2024 at 01:32:00PM GMT, Ekansh Gupta wrote:
-> >> For unsigned PD offloading requirement, additional memory is required
-> >> because of additional static heap initialization. Without this
-> >> additional memory, PD initialization would fail. Increase the initmem
-> >> size by 2MB for unsigned PD initmem buffer allocation. Any additional
-> >> memory sent to DSP during PD init is used as the PD heap.
-> > From the previous commit message I had the feeling that DSP can request
-> > more memory if required. Currently you are stating that PD init would
-> > fail if it doesn't have enough mem.
->
-> DSP PD can request for memory only for PD heap and that too once the PD
-> initialization is complete.
+> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+> Link: https://lore.kernel.org/rust-for-linux/20240418-b4-rbtree-v3-5-323e=
+134390ce@google.com/ [1]
 
-This should be a part of the (previous?) commit message.  Also what is
-the difference between static heap vs PD heap?
-
->
-> >
-> >> Fixes: 7f1f481263c3 ("misc: fastrpc: check before loading process to the DSP")
-> >> Cc: stable <stable@kernel.org>
-> >> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
-> >> ---
-> >>  drivers/misc/fastrpc.c | 8 ++++++++
-> >>  1 file changed, 8 insertions(+)
-> >>
->
-
-
--- 
-With best wishes
-Dmitry
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
