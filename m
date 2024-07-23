@@ -1,124 +1,166 @@
-Return-Path: <linux-kernel+bounces-259869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FE3B939E84
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:03:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC885939E86
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F4802824C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:03:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D1C21F21DA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8A414D70C;
-	Tue, 23 Jul 2024 10:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED72414EC42;
+	Tue, 23 Jul 2024 10:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JgC/bTLa"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GYsDgD7z"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6B114F11E;
-	Tue, 23 Jul 2024 10:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7EAD14E2EA;
+	Tue, 23 Jul 2024 10:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721728991; cv=none; b=ZUzBGZGMzyTeGpJI9JPHOybnkLNsmQiggC5sDP+Q6viE89c13u1fkI1zFR0BSmleh/DVDy2NVCu40aN8bdpz/5Nyyl7dUX96VgrUTwTkfXtw4AURkFQXNXXhnz5TMMRDkqWdI/5Kbv87RnhkCuRstMD4xPiWNPBipgtUxXG5lsI=
+	t=1721729018; cv=none; b=J7tB0gmxZLEOZYWAu1jdKmJKDQ82mgddugp/VbsaY4IJ/IQe2/oocCg4sCIeCyNb6p1o465C1x9dahp6NaHsX+00qwY8rZOJ0CG1HZah+5c+BgZnrD12yvEJL2+zzxyNOcClqyiDP46hoxNRkVjRpZIkmp6LH3X3kWpZpQi1aLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721728991; c=relaxed/simple;
-	bh=SosdU2G/Xh9kvu0xcZe4aQ0S93fmxEoXTYUTQVT3cXI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fFKNi+YCI21Gt7uE0C53onuce4IbFo8Jt8S6bPLOiHVdQroq+OvK9a0W+R/j/C9BLMDMQ5TX8chDqUZW3FP6NvgmHZUFbdbWOGVTfaqiA8YRVGI3V+ipWAYXjcMBAuRtIxkCwuwaSTieVbFtrJSJUFkios/8Rf68O2debVmCj1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JgC/bTLa; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46N9hKsX027150;
-	Tue, 23 Jul 2024 10:03:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	TpPEujo2KUlK1ERv9sX3ckusqZqTLQZPcqitdssjvVM=; b=JgC/bTLa8riIZaxz
-	5ABOvmgciziglNg0o5iARqxn+T4iAwZ5bj/Po7gkgW/ePK/8BI9FX/yObT9HXbTl
-	don8Zio1W7ou6T+OyhhFUtO0hjRHenUfuDDeW3lk+OKFppeD40+IZKeVwkmdYjfi
-	M14rGNbKWCkFXVlKP0VAb0xnb+FrXR9xjQBMm8JIIfL7A+p7LbGaWSei+zbtOwsa
-	Gk8C/w8uyPAXPQDUNGj4rlodRjmAIVAfEup+qxVjbcgRBKXeyXdlv4nlP7Iik41+
-	Fu31lHsrV+0VsffCnUmeamkdwWHKc2Zk9+56Gr4McKoVqLSuA/o87TT3msrPGDd5
-	86/SxA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g4jgxc68-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Jul 2024 10:03:05 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46NA34Xt027176
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Jul 2024 10:03:04 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 23 Jul 2024 03:03:00 -0700
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: <gregkh@linuxfoundation.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <quic_wcheng@quicinc.com>,
-        <quic_kriskura@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Varadarajan Narayanan <quic_varada@quicinc.com>
-Subject: [PATCH v3 2/2] arm64: dts: qcom: ipq5332: Fix interrupt trigger type for usb
-Date: Tue, 23 Jul 2024 15:31:51 +0530
-Message-ID: <20240723100151.402300-3-quic_varada@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240723100151.402300-1-quic_varada@quicinc.com>
-References: <20240723100151.402300-1-quic_varada@quicinc.com>
+	s=arc-20240116; t=1721729018; c=relaxed/simple;
+	bh=nStvir8hkCrV3IUTf7FjED2i3x9SkrQAgyKbZdsWLB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZgdisYhZq3cNIeGjy5N2whk+GzJfsV8x9IX0C0c6cNI+2k3AoPMcDexu+8FxGY3wqWxNBCiF+6dOIo1F9kmiuDEJ4yLEHlLxwWIdOBsmaOivI1qhJqMLxTB0Nf+dkg6Zbxh3as7yLin3yNHBwSy076NBDMV7kt+lLPRAIhWr1eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GYsDgD7z; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721729014;
+	bh=nStvir8hkCrV3IUTf7FjED2i3x9SkrQAgyKbZdsWLB4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GYsDgD7zhTQZ+wzraKbfv6YKBeZyLb467Dt+kQCK7N36MumCxN30Npvxr8uladhc3
+	 PZnnVTIVlhoyGAB8uAug/Yhi1uh0KpJcwDT5JVCl7+L3G+VZGBXph4rcyfoX1jn2cA
+	 G0mvzrk9UAzZq6b0CQIMxSpou5LRxNphoTY28/PtzbZQ5HM3eiVs/ViZHWAwejiFV7
+	 iHmdsxLdHUnrazDXNB1llVvgdxBOMGuPQ7q0LIjqSP1xGMqBa3ECh5Brjd5WYkLLwv
+	 43s0UtLbMDh/pdT4H9aMFPc/zqjMBGeEkYMyaPuTCH+g8GciS4Lk6rY0CMw6Vvq2MU
+	 Ei7SXYq4mYT9Q==
+Received: from localhost (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sebastianfricke)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 9B3AA3781167;
+	Tue, 23 Jul 2024 10:03:34 +0000 (UTC)
+Date: Tue, 23 Jul 2024 12:03:33 +0200
+From: Sebastian Fricke <sebastian.fricke@collabora.com>
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+Cc: mchehab@kernel.org, ezequiel@vanguardiasur.com.ar,
+	hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	kernel@collabora.com
+Subject: Re: [PATCH v5 3/3] media: verisilicon: Use V4L2_FMT_FLAG_ENUM_ALL
+ flag
+Message-ID: <20240723100333.gf2ih3kbjllq7xmb@basti-XPS-13-9310>
+References: <20240722150523.149667-1-benjamin.gaignard@collabora.com>
+ <20240722150523.149667-4-benjamin.gaignard@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: L2A_beTn15Dc4ciz0Io_MU5A2f0BVP4o
-X-Proofpoint-GUID: L2A_beTn15Dc4ciz0Io_MU5A2f0BVP4o
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-22_18,2024-07-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- malwarescore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0
- priorityscore=1501 phishscore=0 spamscore=0 bulkscore=0 mlxlogscore=551
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407230074
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20240722150523.149667-4-benjamin.gaignard@collabora.com>
 
-Trigger type is incorrectly specified as IRQ_TYPE_EDGE_BOTH
-instead of IRQ_TYPE_LEVEL_HIGH. This trigger type is not
-supported for SPIs and results in probe failure with -EINVAL.
+Hey Benjamin,
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Fixes: 927173bf8a0e ("arm64: dts: qcom: Add missing interrupts for qcs404/ipq5332")
-Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
----
- arch/arm64/boot/dts/qcom/ipq5332.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 22.07.2024 17:05, Benjamin Gaignard wrote:
+>By adding support of V4L2_FMT_FLAG_ENUM_ALL flag into the driver
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-index 7e8f9d578382..71328b223531 100644
---- a/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-@@ -322,8 +322,8 @@ usb: usb@8af8800 {
- 			reg = <0x08af8800 0x400>;
- 
- 			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
--				     <GIC_SPI 53 IRQ_TYPE_EDGE_BOTH>,
--				     <GIC_SPI 52 IRQ_TYPE_EDGE_BOTH>;
-+				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "pwr_event",
- 					  "dp_hs_phy_irq",
- 					  "dm_hs_phy_irq";
--- 
-2.34.1
+s/support of/support for the/
 
+>we allowing userspce applications to discover all possible
+
+Either:
+s/we allowing/we allow/
+or
+s/we allowing/we are allowing/
+are correct.
+
+s/userspce/userspace/
+
+>pixel formats of the hardware block. This way userspace can decide
+>of which decoder to use given the support pixel formats.
+
+s/of which/which/
+
+s/support/supported/
+
+>
+>Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+>---
+> .../media/platform/verisilicon/hantro_v4l2.c    | 17 ++++++++++++-----
+> 1 file changed, 12 insertions(+), 5 deletions(-)
+>
+>diff --git a/drivers/media/platform/verisilicon/hantro_v4l2.c b/drivers/media/platform/verisilicon/hantro_v4l2.c
+>index df6f2536263b..77f024aaa22d 100644
+>--- a/drivers/media/platform/verisilicon/hantro_v4l2.c
+>+++ b/drivers/media/platform/verisilicon/hantro_v4l2.c
+>@@ -201,7 +201,14 @@ static int vidioc_enum_fmt(struct file *file, void *priv,
+> 	struct hantro_ctx *ctx = fh_to_ctx(priv);
+> 	const struct hantro_fmt *fmt, *formats;
+> 	unsigned int num_fmts, i, j = 0;
+>-	bool skip_mode_none;
+>+	bool skip_mode_none, enum_all_formats;
+>+	u32 index = f->index & ~V4L2_FMT_FLAG_ENUM_ALL;
+
+As described in the previous patch, I think this operation will turn out
+to be very common, so maybe we can add a macro for that.
+
+>+
+>+	/*
+>+	 * If V4L2_FMT_FLAG_ENUM_ALL flag is set, we want to enumerate all
+
+s/If/If the/
+
+>+	 * hardware supported pixels formats
+
+s/pixels/pixel/
+
+Greetings,
+Sebastian
+
+>+	 */
+>+	enum_all_formats = !!(f->index & V4L2_FMT_FLAG_ENUM_ALL);
+>
+> 	/*
+> 	 * When dealing with an encoder:
+>@@ -222,9 +229,9 @@ static int vidioc_enum_fmt(struct file *file, void *priv,
+>
+> 		if (skip_mode_none == mode_none)
+> 			continue;
+>-		if (!hantro_check_depth_match(fmt, ctx->bit_depth))
+>+		if (!hantro_check_depth_match(fmt, ctx->bit_depth) && !enum_all_formats)
+> 			continue;
+>-		if (j == f->index) {
+>+		if (j == index) {
+> 			f->pixelformat = fmt->fourcc;
+> 			return 0;
+> 		}
+>@@ -242,9 +249,9 @@ static int vidioc_enum_fmt(struct file *file, void *priv,
+> 	for (i = 0; i < num_fmts; i++) {
+> 		fmt = &formats[i];
+>
+>-		if (!hantro_check_depth_match(fmt, ctx->bit_depth))
+>+		if (!hantro_check_depth_match(fmt, ctx->bit_depth) && !enum_all_formats)
+> 			continue;
+>-		if (j == f->index) {
+>+		if (j == index) {
+> 			f->pixelformat = fmt->fourcc;
+> 			return 0;
+> 		}
+>-- 
+>2.43.0
+>
+>_______________________________________________
+>Kernel mailing list -- kernel@mailman.collabora.com
+>To unsubscribe send an email to kernel-leave@mailman.collabora.com
+>This list is managed by https://mailman.collabora.com
 
