@@ -1,110 +1,148 @@
-Return-Path: <linux-kernel+bounces-260147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5663893A3D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:40:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBA3F93A3D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:40:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18860284C15
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:40:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 090C61C22D64
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6CF157464;
-	Tue, 23 Jul 2024 15:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB7815749E;
+	Tue, 23 Jul 2024 15:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GiE/JttS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZI2pMRUd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBA41534FB;
-	Tue, 23 Jul 2024 15:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865FF157485;
+	Tue, 23 Jul 2024 15:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721749202; cv=none; b=lIbm9WGkhuEhoUDHvP1S7OsJmoguRUbbFtCEnSFfgl/uIleltMHxpx3cJkJp8IQT+WazidMfFa6zLOnHLpklFW4j2y4XJwlIAySk5dYl440MiENnAatX/nyFDqz1qNx++Ak1zZ67TaoBy+q7ZRFTUxVrvU/pxHTQY2m7RtAIlHI=
+	t=1721749206; cv=none; b=Xowl3gmUJyHXxYdB/oUMN2pN4bSrBKJXTM1yLPyYrsXSlmlfpjY65xPVcNOhVQUgxipPf+XVfg1LVlEjEq4o0xfR48xO+ywp0YT0MfodQ7e/ECOJqkJ0ItOYu2jZElpodu/Bu+iqlVvIfYF/0jO3awJU2QJuWWnYxle/WCZDVeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721749202; c=relaxed/simple;
-	bh=ZQVQzf9r28aDpEKrXlhIlP8/jK54AYdOy4xRX9yrTEs=;
+	s=arc-20240116; t=1721749206; c=relaxed/simple;
+	bh=pdNtJGZOwdwwwqNEnYAKscd6b0OBbgp4ThhTP20dDB0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z5y2Mwfrjcj9KG+RAm5W8XKtjJpLIE1ls+9EP18jZoKLtOTUx8lJuuVZ2MpTYkVc++IBIXd2SI0/+amowCOJFSJehy93rf9siqZ1yNsJZrAMw9x2OzlcJJNB03Ta8+nYb9hRVuOcyiamFdJP93vEts/eNNXo0aNZDvZxXcX0heU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GiE/JttS; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721749200; x=1753285200;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZQVQzf9r28aDpEKrXlhIlP8/jK54AYdOy4xRX9yrTEs=;
-  b=GiE/JttS2y1XwI4/NJqsxsWyLd36P/bUh/kft2Sw8CTvy5ETCirrZG0Y
-   dHuWxh9F10OM6dyDRPCMxPynpXR8SHBeX21eXhJteUptbNj7JDS8NkwhI
-   NaYhzc7OkmqCp1rAMle4YFRtbQFdEyKt2SXVIUm8lYr/mWjzRMYwa/RcT
-   P16d5fIvdNlwmPcb2GqFZ9BSVA2mkxK+BV8KF/L5Mde4zZZv0jn+XHuvC
-   mrX5ppnT6n7i979majfHwXMcQs/9FXXL3mPYtFhvJYkFAnFbwgykqFg4n
-   7xqkRtfD56qZcPz//6laGZydtryf10e/CdK74JhubkcljfAkdAw40y82Y
-   Q==;
-X-CSE-ConnectionGUID: h0h7fkJ0SgCYzgLclyHmIA==
-X-CSE-MsgGUID: 0HsghiIEQGilr2WGnDKgGQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11142"; a="19509892"
-X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
-   d="scan'208";a="19509892"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2024 08:40:00 -0700
-X-CSE-ConnectionGUID: 8ygkNfRXSu+8/LIfLnQktA==
-X-CSE-MsgGUID: ks+GLq57QIaturWdhwmzQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
-   d="scan'208";a="52876585"
-Received: from tassilo.jf.intel.com (HELO tassilo) ([10.54.38.190])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2024 08:40:00 -0700
-Date: Tue, 23 Jul 2024 08:39:58 -0700
-From: Andi Kleen <ak@linux.intel.com>
-To: James Clark <james.clark@linaro.org>
-Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Subject: Re: [PATCH v1 2/2] perf script: Fix for `perf script +F metric` with
- leader sampling
-Message-ID: <Zp_Ozo_Iyu1sgL9h@tassilo>
-References: <20240720074552.1915993-1-irogers@google.com>
- <20240720074552.1915993-2-irogers@google.com>
- <8c8da262-a398-41cc-9721-4e72e6b7e5fd@linaro.org>
- <CAP-5=fWwjJuHpTJDMtxKYGDa9Sjo-kHk099vBTW8N-6_GtMfMw@mail.gmail.com>
- <945e58b5-5012-45a8-933a-c1a192fd006e@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n3X7QLU3Cuoqpve3+1yOhHPa+Su26BCQz8FkeWm6oKWIiutcUqGLV9n4AJktuKVZKST/7RJ1nQzYWW1EQMYMBLF9wyQL5XRdyjGbONrHn/oHHduGSbcnxS4mAztRVuXXw2EyRYYIY6Zk2GU4d+XVUGHVZBvqR60B6r+fDI6NPPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZI2pMRUd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B804C4AF09;
+	Tue, 23 Jul 2024 15:40:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721749206;
+	bh=pdNtJGZOwdwwwqNEnYAKscd6b0OBbgp4ThhTP20dDB0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZI2pMRUdwA+zyoldntdMG/Q+22peaYEb1xHj/FTwbOYtN+hPclD84DmDewKnAR6Me
+	 y1IC3r8TN2GlBfOr3KNfqAw2n0BGZMgSPTXUz9sJqXF7Q+dEQgj0YMPn83wyWx05qF
+	 HoSk9wzWreurnU2i2Pz7ogV/6PwhE6rjdX1fseXQ1ryhgNCoU2dP1D7gI7jwMLx9lC
+	 K4agbpg5yFH2oXettcjO/kfD40jrRoPR5mvsb6yvnvm5LSzLiALWlpPonmr6uETWIg
+	 Gf5HUwk3EUWL1S7DyMj2BOYfkGWUSt1l/Btv7HJt8eyhnurWY4rOywytkSkRRCF4Dv
+	 NokieRmfKx3MQ==
+Date: Tue, 23 Jul 2024 17:40:00 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jeff Layton <jlayton@kernel.org>, Gao Xiang <xiang@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev, linux-erofs@lists.ozlabs.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfs: Fix potential circular locking through setxattr()
+ and removexattr()
+Message-ID: <20240723-fracksausen-absehbar-033713f1e9b5@brauner>
+References: <20240723104533.mznf3svde36w6izp@quack3>
+ <2136178.1721725194@warthog.procyon.org.uk>
+ <2147168.1721743066@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <945e58b5-5012-45a8-933a-c1a192fd006e@linaro.org>
+In-Reply-To: <2147168.1721743066@warthog.procyon.org.uk>
 
-> Yeah I suppose it's strictly better now without the segfault. Could you pull
-> in the test and update it to add -a? At least then that behavior will be
-> locked down and we can extend it later without -a.
+On Tue, Jul 23, 2024 at 02:57:46PM GMT, David Howells wrote:
+> Jan Kara <jack@suse.cz> wrote:
+> 
+> > Well, it seems like you are trying to get rid of the dependency
+> > sb_writers->mmap_sem. But there are other places where this dependency is
+> > created, in particular write(2) path is a place where it would be very
+> > difficult to get rid of it (you take sb_writers, then do all the work
+> > preparing the write and then you copy user data into page cache which
+> > may require mmap_sem).
+> >
+> > ...
+> > 
+> > This is the problematic step - from quite deep in the locking chain holding
+> > invalidate_lock and having PG_Writeback set you suddently jump to very outer
+> > locking context grabbing sb_writers. Now AFAICT this is not a real deadlock
+> > problem because the locks are actually on different filesystems, just
+> > lockdep isn't able to see this. So I don't think you will get rid of these
+> > lockdep splats unless you somehow manage to convey to lockdep that there's
+> > the "upper" fs (AFS in this case) and the "lower" fs (the one behind
+> > cachefiles) and their locks are different.
+> 
+> I'm not sure you're correct about that.  If you look at the lockdep splat:
+> 
+> >  -> #2 (sb_writers#14){.+.+}-{0:0}:
+> 
+> The sb_writers lock is "personalised" to the filesystem type (the "#14"
+> annotation) which is set here:
+> 
+> 	for (i = 0; i < SB_FREEZE_LEVELS; i++) {
+> 		if (__percpu_init_rwsem(&s->s_writers.rw_sem[i],
+> 					sb_writers_name[i],
+> 					&type->s_writers_key[i]))  <----
+> 			goto fail;
+> 	}
+> 
+> in fs/super.c.
+> 
+> I think the problem is (1) that on one side, you've got, say, sys_setxattr()
+> taking an sb_writers lock and then accessing a userspace buffer, which (a) may
+> take mm->mmap_lock and vma->vm_lock and (b) may cause reading or writeback
+> from the netfs-based filesystem via an mmapped xattr name buffer].
+> 
+> Then (2) on the other side, you have a read or a write to the network
+> filesystem through netfslib which may invoke the cache, which may require
+> cachefiles to check the xattr on the cache file and maybe set/remove it -
+> which requires the sb_writers lock on the cache filesystem.
+> 
+> So if ->read_folio(), ->readahead() or ->writepages() can ever be called with
+> mm->mmap_lock or vma->vm_lock held, netfslib may call down to cachefiles and
+> ultimately, it should[*] then take the sb_writers lock on the backing
+> filesystem to perform xattr manipulation.
+> 
+> [*] I say "should" because at the moment cachefiles calls vfs_set/removexattr
+>     functions which *don't* take this lock (which is a bug).  Is this an error
+>     on the part of vfs_set/removexattr()?  Should they take this lock
+>     analogously with vfs_truncate() and vfs_iocb_iter_write()?
 
-Ian's patch really implements completely new functionality (supporting
-metrics over multiple groups). It isn't a regression fix, but completely
-redesigns the old "single group" feature.
+It's not bug per se. We have a few vfs_*() functions that don't take
+write access iirc. The reason often is that e.g., callers like overlayfs
+call vfs_*() helpers in various locations where write access to the
+underlying and overlayfs layer is taken some time before calling into
+vs_*() helper (see ovl_do_setxattr() during various copy up operation
+iirc.).
 
-> I also tested Andi's V5 and still got the segfault.
+Fwiw, I suspect that e.g., ecryptfs doesn't claim write access at all to
+the underlying filesystem - not just xattrs.
 
-Yes the earlier versions worked, but they broke perf stat report.
-I think the right short term fix is to use V3 or so, but with a
-check that perf stat report isn't used.
+(What would probably be good is if we could add lockdep asserts so that
+we get warnings about missing locks taken.)
 
-Then perhaps the new functionality of multiple groups can be considered
-over it.
-
--Andi
+> 
+> However, as it doesn't it manages to construct a locking chain via the
+> mapping.invalidate_lock, the afs vnode->validate_lock and something in execve
+> that I don't exactly follow.
+> 
+> 
+> I wonder if this is might be deadlockable by a multithreaded process (ie. so
+> they share the mm locks) where one thread is writing to a cached file whilst
+> another thread is trying to set/remove the xattr on that file.
+> 
+> David
+> 
 
