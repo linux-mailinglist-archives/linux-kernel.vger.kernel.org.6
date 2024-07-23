@@ -1,149 +1,148 @@
-Return-Path: <linux-kernel+bounces-260260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF61C93A51A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:43:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E91793A51C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:49:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC9841C21C0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:43:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9B05283DF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2DB15885D;
-	Tue, 23 Jul 2024 17:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33A4158201;
+	Tue, 23 Jul 2024 17:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W4N3Rwnm"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lDWF8sbx"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BC014B06A
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 17:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07671381B1;
+	Tue, 23 Jul 2024 17:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721756590; cv=none; b=KM/OblDVEjZBTHOOBd8JZ2piSjU+LBLlfJIOnMfzeCi+FFbckNBUs5rHbcajbeAbkWkn8siDntFoMG6wGsgMy+YrmDiQtbs8bjeGzqRxgl/+UkAQwub1DAgKJm1C8vtADDRuOSkOJVcJIaTGuRi1cIozlggxbsq1nyxDpw/CC0k=
+	t=1721756976; cv=none; b=USnFbIF0aBZWHR5BA+fL6LykPxLo45j7MlEQbh1z3QigHaytZRC9o5fHQSo2MLWKQ+kdV2bk2Gfuo8TLMGKsQ63/2YX0oS55rUPc0AnlKhpsh9E9wL74XW5jedAl6Z8y1nAnPmgGmHx7UyvG5NmNiiveysGItZ2E4wcxIcJ2HWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721756590; c=relaxed/simple;
-	bh=4mdUalOlsy9P5vA/8RYcYPOEWoP6ivUf6tPlW9y5P7E=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZjvhR03dRXqrtIlKB4ECFNSEKh1WFy5i/aYCqUQ6LVIJvFiwdWf/CzWdnJXzHaQ/26HZcDhLfZsIJbteBOW5l3ENhXJbeNObjCinnOf0LSGb+7ATD8GO3esS65ggj9q98NQ1t+Amc8F3iUaZ/NqXdMucfVaWOyWUycc/Y2EUpDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W4N3Rwnm; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e08763cb7abso7450874276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 10:43:08 -0700 (PDT)
+	s=arc-20240116; t=1721756976; c=relaxed/simple;
+	bh=ukXSgZlZzqNl2Shk56zE2uJF2BQgmxvy6tlluHspA78=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=alDeyAn4eTNLCcMwiX99F30DozoLb7oCl9vFqmuk90JEGJwtOVDvYfgws8E1b5WvHFmOkBYGZbNbM0BO7MJ+nbI4ulfmvdMMP4Dq6Me0xl1mzSggatW2dn1qXZqZyWpyrUQE+y23Qzvuv62bZ0J75ecCsboo7mfB2xt+wcV9S0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lDWF8sbx; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e0875778facso3333997276.3;
+        Tue, 23 Jul 2024 10:49:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721756588; x=1722361388; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Is3f4F92kT3CL4s+JNC6IxKgl0i62l2bDM3yWOWMdY=;
-        b=W4N3RwnmA47CGQe29u8ZAaz+arAtAGMmkJAplCUYA+XmsJKP0fyKUGVKrUl4QaoP+K
-         G4kVA8bJ8Izzz6KtcOALoYVB1A8/hY3aFdfetDhaNAfIha3wzGrvDoJg48tG6oZKbx0h
-         pqdc95WKeUtYPS4S2mnCYJm+ldrcyC60mUJNIMoOVImMy6w4CaTZm3IDyV6PKe91DTiV
-         yuvbx+DcxDic7bCuL3Ir39fsCsbBxiYdbMfJTZgwCtN4b7O5VLylLeqTMNkZW7VOxsz0
-         iEbecO91T1MjAbzh7n/P3Cb2vcniZZhimFNKBG8NyRApNj9MeysoSOzBAjgqzHIg8eOJ
-         IB9Q==
+        d=gmail.com; s=20230601; t=1721756973; x=1722361773; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ANWw5uNeyRqUnyFj0bwffCAjqYWhMwE6a/JHlQCsG5w=;
+        b=lDWF8sbxytXW/YPADHKs53GeLU7iSGBri3UT01ek+7qhsPyel4/7j5FV5o4B40JMTt
+         xPqPH2gz2Kv6f59ILc88NPDkOmomo6tEW7PIGRSIknWZTYWTYmuuBx6WPSP303t/cUCI
+         WnbyUn4QKK4w7sFDU+S3amp0U83I2RhUw1sSaknO8cSrcq9lzoUszeu76BE97eZ3HjRp
+         Sz6EtCZZ7qodADYaLge2/xpl2Hts0Ol8ZSWK+aTtADRmv8K3sBKqiqDgyayvd9bNFY9j
+         wKALL/j+yNIydBJ+LK+q3016CHg4qGruLFA0cfMS78/EiOIoCLrAiDJQzZdc3qXhh4A1
+         ciwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721756588; x=1722361388;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Is3f4F92kT3CL4s+JNC6IxKgl0i62l2bDM3yWOWMdY=;
-        b=EE57FjXcUsXSQGGmmZpLP4aq8plZBSB7KpDeOtqx7IjbjQ9CsuVVRF5AERnUofHkYc
-         BCV/CvRglCDQSP+m/zjH3nSBFG9gP/Yg+C/PrtRVy60tW6lr61XZeQ7yg6wKjfBqNCzH
-         omoJ/MpCYrN1SDqGsDW1THtVjJcGJ8dHdMojMdudRl1Ez1KXPUGso2gL/qOlCqmNg3TS
-         euyE6rHeNk2mqpM5L9Qdkz5+FYtvBHQrKp5kjIaYO1cpC8HBVRnFvNq0WoXQ/QpzqmFI
-         waj9AQ54C7zke1oUbGBSNAeU+ZWf/nsDcJSndIPDCyblDkrrAC0vQHtS6WjIYsbn2i81
-         3ayA==
-X-Forwarded-Encrypted: i=1; AJvYcCUzYtjLeGRMbregTSyQDnRiQCpvsGsuJCpblzA68q8Bwq3Db6nyPfCx9ysHNxqfwNGjlvWlgFrUGP3xa5ADQJi5uROOKOYqth6RD+a8
-X-Gm-Message-State: AOJu0YzG5dSvRpcWiX6EZqZRFjrDkmVQkM/8UIFOzfa7DoKlObp6sByF
-	JqF1ts67WGuSR57QOLRF/AFbDdgLrKer7kNsrYLxtV8sGP/Qm7hkcHqEDansT477fhDdDwUshXx
-	JbA==
-X-Google-Smtp-Source: AGHT+IFvWTvkxh/8wZolKLout5nuIQllMTJ9nuOEEvuAnBECkmYcOlc8Uh4/6YEZ0e2ShXUyneM12WR04iA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:1104:b0:e05:6532:166 with SMTP id
- 3f1490d57ef6-e0b096929a7mr1239276.1.1721756587996; Tue, 23 Jul 2024 10:43:07
- -0700 (PDT)
-Date: Tue, 23 Jul 2024 10:43:00 -0700
-In-Reply-To: <Zp/C5IlwfzC5DCsl@chao-email>
+        d=1e100.net; s=20230601; t=1721756973; x=1722361773;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ANWw5uNeyRqUnyFj0bwffCAjqYWhMwE6a/JHlQCsG5w=;
+        b=KXJjWreRKcHtAgcIuFQqeLaxsS+G59NyMJ5U/AJiWg4UfPb9hHSxJRpFDZqhnCTk8O
+         YMJCG1tvDFjalyVXsMlHM+FH7JVaKfQxN4101V/1m/cxDyxoeZkavWx0hRBNOyTYlctf
+         iXm54ZCULKbmz/EXjzhNIxVYZ2eECFGJrTddatsKjBHk88FnHpOD6FFBqk+HfWgd3WvW
+         vlRlxmzO+j6lucBXs537R6llCJiCXDTH5vyVSxGpboT6KCMyp2dUva/Yv2mQ/lP604en
+         V4hqWT3fiCLuax60DZkX/anEygX2M0tgSIE31zi0LmjwzOzeZzVumQC/4xQD56nmEeH0
+         EOew==
+X-Forwarded-Encrypted: i=1; AJvYcCVSOrZcSs79w3GyDLUg6TSLOq58aGO3erZCk1kHRTBrW1TxYBbI+dICfP8C3v5NAoeuD2cOWtC8zkZVpciSfvASAc4qvMbfsyRtPbrweCPYVNvcbBGn4sY2hrOW7GotgFToRE/MmwJ2
+X-Gm-Message-State: AOJu0Yz+ydFWit8H90wDlkd/RIc+EgjYBN3YiWQKczuH7Ec7d6B96G/U
+	r8/gyGtUI7nP/1jLE+6wZK9xFF5MfaE0gd1BbQOBJOdJwuMKccUWaGrY1w==
+X-Google-Smtp-Source: AGHT+IEETxrwz681WygXsuHTtpOPDiZXhAZdhe6NRhewySnnyu3I/1tQHPi9s6okYskK/Sx0bVbP5w==
+X-Received: by 2002:a05:6902:2b87:b0:e05:fc94:4e30 with SMTP id 3f1490d57ef6-e0b098c31d6mr617290276.47.1721756972950;
+        Tue, 23 Jul 2024 10:49:32 -0700 (PDT)
+Received: from gpd ([50.205.20.42])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e0860ae9c1asm1942108276.50.2024.07.23.10.49.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 10:49:32 -0700 (PDT)
+From: fan <nifan.cxl@gmail.com>
+X-Google-Original-From: fan <fan@gpd>
+Date: Tue, 23 Jul 2024 10:49:30 -0700
+To: Huang Ying <ying.huang@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alison Schofield <alison.schofield@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Bharata B Rao <bharata@amd.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>
+Subject: Re: [PATCH v3 3/3] cxl/region: Simplify cxl_region_nid()
+Message-ID: <Zp_tKpLvjvSBgIB6@gpd>
+References: <20240618084639.1419629-1-ying.huang@intel.com>
+ <20240618084639.1419629-4-ying.huang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240720000138.3027780-1-seanjc@google.com> <20240720000138.3027780-7-seanjc@google.com>
- <Zp/C5IlwfzC5DCsl@chao-email>
-Message-ID: <Zp_rpCjJmEiFU4BI@google.com>
-Subject: Re: [PATCH 6/6] KVM: nVMX: Detect nested posted interrupt NV at
- nested VM-Exit injection
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Zeng Guang <guang.zeng@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618084639.1419629-4-ying.huang@intel.com>
 
-On Tue, Jul 23, 2024, Chao Gao wrote:
-> On Fri, Jul 19, 2024 at 05:01:38PM -0700, Sean Christopherson wrote:
-> >When synthensizing a nested VM-Exit due to an external interrupt, pend a
-> >nested posted interrupt if the external interrupt vector matches L2's PI
-> >notification vector, i.e. if the interrupt is a PI notification for L2.
-> >This fixes a bug where KVM will incorrectly inject VM-Exit instead of
-> >processing nested posted interrupt when IPI virtualization is enabled.
-> >
-> >Per the SDM, detection of the notification vector doesn't occur until the
-> >interrupt is acknowledge and deliver to the CPU core.
-> >
-> >  If the external-interrupt exiting VM-execution control is 1, any unmasked
-> >  external interrupt causes a VM exit (see Section 26.2). If the "process
-> >  posted interrupts" VM-execution control is also 1, this behavior is
-> >  changed and the processor handles an external interrupt as follows:
-> >
-> >    1. The local APIC is acknowledged; this provides the processor core
-> >       with an interrupt vector, called here the physical vector.
-> >    2. If the physical vector equals the posted-interrupt notification
-> >       vector, the logical processor continues to the next step. Otherwise,
-> >       a VM exit occurs as it would normally due to an external interrupt;
-> >       the vector is saved in the VM-exit interruption-information field.
-> >
-> >For the most part, KVM has avoided problems because a PI NV for L2 that
-> >arrives will L2 is active will be processed by hardware, and KVM checks
-> >for a pending notification vector during nested VM-Enter.
+On Tue, Jun 18, 2024 at 04:46:39PM +0800, Huang Ying wrote:
+> The node ID of the region can be gotten via resource start address
+> directly.  This simplifies the implementation of cxl_region_nid().
 > 
-> With this series in place, I wonder if we can remove the check for a pending
-> notification vector during nested VM-Enter.
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> Suggested-by: Alison Schofield <alison.schofield@intel.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Bharata B Rao <bharata@amd.com>
+> Cc: Alistair Popple <apopple@nvidia.com>
+> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> Cc: Davidlohr Bueso <dave@stgolabs.net>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> ---
+>  drivers/cxl/core/region.c | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
 > 
-> 	/* Emulate processing of posted interrupts on VM-Enter. */
-> 	if (nested_cpu_has_posted_intr(vmcs12) &&
-> 	    kvm_apic_has_interrupt(vcpu) == vmx->nested.posted_intr_nv) {
-> 		vmx->nested.pi_pending = true;
-> 		kvm_make_request(KVM_REQ_EVENT, vcpu);
-> 		kvm_apic_clear_irr(vcpu, vmx->nested.posted_intr_nv);
-> 	}
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index dc15ceba7ab7..605efe3562c6 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -2309,15 +2309,13 @@ static bool cxl_region_update_coordinates(struct cxl_region *cxlr, int nid)
+>  static int cxl_region_nid(struct cxl_region *cxlr)
+>  {
+>  	struct cxl_region_params *p = &cxlr->params;
+> -	struct cxl_endpoint_decoder *cxled;
+> -	struct cxl_decoder *cxld;
+> +	struct resource *res;
+>  
+>  	guard(rwsem_read)(&cxl_region_rwsem);
+> -	cxled = p->targets[0];
+> -	if (!cxled)
+> +        res = p->res;
+> +	if (!res)
+>  		return NUMA_NO_NODE;
+> -	cxld = &cxled->cxld;
+> -	return phys_to_target_node(cxld->hpa_range.start);
+> +	return phys_to_target_node(res->start);
+>  }
+>  
+>  static int cxl_region_perf_attrs_callback(struct notifier_block *nb,
+> -- 
+> 2.39.2
 > 
-> I believe the check is arguably incorrect because:
-> 
-> 1. nested_vmx_run() may set pi_pending and clear the IRR bit of the notification
-> vector, but this doesn't guarantee that vmx_complete_nested_posted_interrupt()
-> will be called later in vmx_check_nested_events(). This could lead to partial
-> posted interrupt processing, where the IRR bit is cleared but PIR isn't copied
-> into VIRR. This might confuse L1 since, from L1's perspective, posted interrupt
-> processing should be atomic. Per the SDM, the logical processor performs
-> posted-interrupt processing "in an uninterruptible manner".
 
-vmx_deliver_nested_posted_interrupt() is also broken in this regard.  I don't see
-a sane way to handle that though, at least not without completely losing the value
-of posted interrupts.  Ooh, maybe we could call vmx_complete_nested_posted_interrupt()
-from nested_vmx_vmexit()?  That is a little scary, but probably worth trying?
+Reviewed-by: Fan Ni <fan.ni@samsung.com>
 
-> 2. The check doesn't respect event priority. For example, if a higher-priority
-> event (preemption timer exit or NMI-window exit) causes an immediate nested
-> VM-exit, the notification vector should remain pending after the nested VM-exit.
-
-Ah, right, because block_nested_events would be true due to the pending nested
-VM-Enter, which would ensure KVM enters L2 and trips NMI/IRQ window exiting.
-
-The downside is that removing that code would regress performance for the more
-common case (no NMI/IRQ window), as KVM would need to complete the nested
-VM-Enter before consuming the IRQ, i.e. would need to do a VM-Enter and force a
-VM-Exit.  But as you say, that's the architecturally correct behavior.
 
