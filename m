@@ -1,96 +1,185 @@
-Return-Path: <linux-kernel+bounces-259973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D17E93A0AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:58:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFD0A93A08A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:37:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAE6A2837C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:58:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 321B21F230FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0AD152527;
-	Tue, 23 Jul 2024 12:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E74815219E;
+	Tue, 23 Jul 2024 12:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="QK3ks9qY"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.7])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 944B326AD3
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 12:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.7
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n76fygKG"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1427381B1
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 12:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721739507; cv=none; b=MLGsqC619wpZz4hwAQkxqTZYenJb0QpMw7kc+enw5A8FkoCRNy4mj51mE79QKr+ouddmoqwVRiTPQJXAP+8CQ2q1v6B1zTDI+SlPtSgZmlVEGQQDnBNqa5304qHlZG92/vKcqzohmp5A8J20nz8POfh0nLEaoeFP818M/BWMqHE=
+	t=1721738234; cv=none; b=eIoHYmXrclXkzv2/xiaEPsh1ye9mh6qN0dGfdcAYa6d9/KW9R65NehA2RJScFTEe7s3UOVpIrl/DUNgIEco9wjJ9og/0ntMX6d57AWSD5is4TFdklJ2H7MMuCCtUSf5muA0OwmtnusjDym854Q7T9fCeYsFMRkfzgdJAXgup8Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721739507; c=relaxed/simple;
-	bh=GkgzyLap7vbKK/2M61n5+NUkEkSTVPiSEk6iQHTmri8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rdt5HeIwTlb2Zz8Avcohv72AhUY0P4dWy7cMNXQ6cBJL4eVp07LyRD308CJQLJwdzMgs9zqceBT2AcNjKntKFi6TNteIQTCqp5PaylRuau16Ar3p0VgiPoNOBJtfbgBOcM8XzHCiz+oL1WWm9cGXjAxfdwmRUlTngDWJ2zaMp0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=QK3ks9qY; arc=none smtp.client-ip=220.197.31.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=9Jeb5
-	e74J4dPt7FF4MpjSKrhHRkLkwzpjDHXDqU1Wdw=; b=QK3ks9qY2lBZGvCby/J5p
-	CirDq0q4Kqjl9Z5TNTOs7QZoep+sJ1mYcXqMKzgy8LTuncoZn+RMp5/BLiq6uWhs
-	HKonhPYagQzxwVKjac+5NYvnf/djVLFpTD/0hV/MQsiYYz3rTeRK43eE1c6OQa3X
-	Rn6rk/uPTrE9NSzf2irdlI=
-Received: from localhost.localdomain (unknown [113.247.46.246])
-	by gzga-smtp-mta-g1-4 (Coremail) with SMTP id _____wC3bnzBo59mpGXsAA--.27660S2;
-	Tue, 23 Jul 2024 20:36:18 +0800 (CST)
-From: Bing Huang <huangbing775@126.com>
-To: peterz@infradead.org
-Cc: dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	brauner@kernel.org,
-	bristot@redhat.com,
-	bsegall@google.com,
-	juri.lelli@redhat.com,
-	linux-kernel@vger.kernel.org,
-	mgorman@suse.de,
-	mingo@redhat.com,
-	vincent.guittot@linaro.org
-Subject: [PATCH] sched/fair: Remove sg_lb_stats forward declaration
-Date: Tue, 23 Jul 2024 20:36:17 +0800
-Message-Id: <20240723123617.3493-1-huangbing775@126.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1721738234; c=relaxed/simple;
+	bh=QTQImLo9rFpB1tHfY+kDtBW/jVdWzRo2shcpC9Oegsw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DFxgoeWg1ZQS9MynvjFCdB/apfkuIRX36vxyNDanzFJCJ0Jc1lroEt4XLaeRR/eahFN3C07OgLc7lvLJB+QSZTZrMiSfWOv9s/IstOvUSydvSBxX4Mkwc7zX08nGf50UUST7lj5S2tELlhn9KfeP/cAtGpMwEjfWy0pQTze6w88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n76fygKG; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-7035d5eec5aso2735131a34.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 05:37:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721738231; x=1722343031; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1PK/7EFDuzvwfgAoJnV5Sv6CmA0hzzCT8PA3TVv11TQ=;
+        b=n76fygKGFEH7OK5HYp152fHil/DtQXLX7AWKl+oYc0znpOx69XRral59LbuxOKUvxG
+         h+q0Om8t2E8wrPNwEprfYTa08olk4LED4xZ+/XK3aVraFFC0pZOhA3e8iyUMol8NDAsB
+         P1AQkIreyiHmjbq4qJGeuFcz0lZk0QpEhV6MI1Qbi+tiNd2q3x+n8Fo2o91u0VmbmxNd
+         U0pia2iM1stMpSzRE/Ge6rIqAaAPB3aOZ3ODRsHEW4XOUfEOcaFoGfq5SQn4MOFXCM9T
+         nEmEu10aUKCxzP3b7cpRakvS6FejYUL5UIoreVjDccptDMwNKnBgG4GE1Qf4wUJ5SGXu
+         FgzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721738231; x=1722343031;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1PK/7EFDuzvwfgAoJnV5Sv6CmA0hzzCT8PA3TVv11TQ=;
+        b=hOHQZR+XSpy5Tc6EXhgTqn6bpxsT6oG3fmHnQLFSFrmjDpjtbq/qReXbtE1r8C+lLb
+         98NSj9gbdpiDBs23E4j0N5Sz33PIRSheAYyX7BL2iL+9DyEESfrEhZuz3U2WX0iqGKlq
+         lM6Lr1G2TQ8cUZ7IXFHts9kKOWaizR/mM+uIwiTRLtNOljeF+IUjF4v+wkDV94f+mXsM
+         Om5zZ06KqM1sN/bO6s+kfPk4UNxuSV/HfhI40LGfXUIkuSu/vcepRR8Y2IRuNrum+ibF
+         L4xbaaWo33b/Ia6pki3l/9fYEs3p53Ud/9sTf7ncE75HOOpl1xuyjfenBdDT9R/JAMzh
+         4mRw==
+X-Forwarded-Encrypted: i=1; AJvYcCViBWboxqufRhWf1QWS9/1Iug0Wv4Gke2DDVwsbbfWrGuzS0Nm9LpE2hQDTpEHIb8GtsFLDsS7Rz3CvE2OYQA+/CfK1z9hPLmnq53eu
+X-Gm-Message-State: AOJu0YyLvxdZwR3u0Y+TVbzHp9mB6s85M0hVMuKgtMb3H4+YfO1MGcZ3
+	RJW2Bc2vEHkLSc/B9HbcJv4Co9VOUgpbv3xHSRggSkwRgTOPQYKyNzVuzbw10W1Ei1D/alK7KPD
+	HH+iT+Ja7lvKKqDk4BQcVmtv5BeuHyT0LClPv9w==
+X-Google-Smtp-Source: AGHT+IGnQkB4dy1+XaxZaGC5cn9k/k/gqgs8XKEYWBSg3ze2AGNRxBxtP0Z90SRSbaXxF6TSdzpnrlfaIXPF8JuG5cY=
+X-Received: by 2002:a05:6870:fb8e:b0:260:e83b:cc13 with SMTP id
+ 586e51a60fabf-261214e4a6cmr10019744fac.28.1721738230798; Tue, 23 Jul 2024
+ 05:37:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wC3bnzBo59mpGXsAA--.27660S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7JFWxtr18urW8Zw1Uur47XFb_yoWxArg_Cw
-	4kCws3Kayjyr1Y9a93C3yIqryrta48Ka40kwnFvrW8A34qvr93Jr95CF1fCr9xWrn7Gan8
-	JrnxWF1vvr10gjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUU9NVPUUUUU==
-X-CM-SenderInfo: xkxd0w5elqwlixv6ij2wof0z/1tbi6AQlr2VLcn0UkAAAsD
+References: <20240722101202.26915-1-james.clark@linaro.org> <20240722101202.26915-8-james.clark@linaro.org>
+In-Reply-To: <20240722101202.26915-8-james.clark@linaro.org>
+From: Mike Leach <mike.leach@linaro.org>
+Date: Tue, 23 Jul 2024 13:36:59 +0100
+Message-ID: <CAJ9a7VgPLpx3K9GVydDWhWSxLfsmeXEXntqA60S6ot12Kcefjw@mail.gmail.com>
+Subject: Re: [PATCH v6 07/17] perf: cs-etm: Print queue number in raw trace dump
+To: James Clark <james.clark@linaro.org>
+Cc: coresight@lists.linaro.org, suzuki.poulose@arm.com, 
+	gankulkarni@os.amperecomputing.com, leo.yan@linux.dev, 
+	anshuman.khandual@arm.com, James Clark <james.clark@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Bing Huang <huangbing@kylinos.cn>
+On Mon, 22 Jul 2024 at 11:13, James Clark <james.clark@linaro.org> wrote:
+>
+> From: James Clark <james.clark@arm.com>
+>
+> Now that we have overlapping trace IDs it's also useful to know what the
+> queue number is to be able to distinguish the source of the trace so
+> print it inline. Hide it behind the -v option because it might not be
+> obvious to users what the queue number is.
+>
+> Signed-off-by: James Clark <james.clark@arm.com>
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> ---
+>  tools/perf/util/cs-etm-decoder/cs-etm-decoder.c |  4 ++--
+>  tools/perf/util/cs-etm-decoder/cs-etm-decoder.h |  2 +-
+>  tools/perf/util/cs-etm.c                        | 13 ++++++++++---
+>  3 files changed, 13 insertions(+), 6 deletions(-)
+>
+> diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> index d49c3e9c7c21..b78ef0262135 100644
+> --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> @@ -41,7 +41,7 @@ const u32 INSTR_PER_NS = 10;
+>
+>  struct cs_etm_decoder {
+>         void *data;
+> -       void (*packet_printer)(const char *msg);
+> +       void (*packet_printer)(const char *msg, void *data);
+>         bool suppress_printing;
+>         dcd_tree_handle_t dcd_tree;
+>         cs_etm_mem_cb_type mem_access;
+> @@ -202,7 +202,7 @@ static void cs_etm_decoder__print_str_cb(const void *p_context,
+>         const struct cs_etm_decoder *decoder = p_context;
+>
+>         if (p_context && str_len && !decoder->suppress_printing)
+> -               decoder->packet_printer(msg);
+> +               decoder->packet_printer(msg, decoder->data);
+>  }
+>
+>  static int
+> diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+> index 272c2efe78ee..12c782fa6db2 100644
+> --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+> +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.h
+> @@ -60,7 +60,7 @@ struct cs_etm_trace_params {
+>
+>  struct cs_etm_decoder_params {
+>         int operation;
+> -       void (*packet_printer)(const char *msg);
+> +       void (*packet_printer)(const char *msg, void *data);
+>         cs_etm_mem_cb_type mem_acc_cb;
+>         bool formatted;
+>         bool fsyncs;
+> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+> index b11b0cae608e..6298a5c7a651 100644
+> --- a/tools/perf/util/cs-etm.c
+> +++ b/tools/perf/util/cs-etm.c
+> @@ -762,15 +762,22 @@ static void cs_etm__packet_swap(struct cs_etm_auxtrace *etm,
+>         }
+>  }
+>
+> -static void cs_etm__packet_dump(const char *pkt_string)
+> +static void cs_etm__packet_dump(const char *pkt_string, void *data)
+>  {
+>         const char *color = PERF_COLOR_BLUE;
+>         int len = strlen(pkt_string);
+> +       struct cs_etm_queue *etmq = data;
+> +       char queue_nr[64];
+> +
+> +       if (verbose)
+> +               snprintf(queue_nr, sizeof(queue_nr), "Qnr:%d; ", etmq->queue_nr);
+> +       else
+> +               queue_nr[0] = '\0';
+>
+>         if (len && (pkt_string[len-1] == '\n'))
+> -               color_fprintf(stdout, color, "  %s", pkt_string);
+> +               color_fprintf(stdout, color, "  %s%s", queue_nr, pkt_string);
+>         else
+> -               color_fprintf(stdout, color, "  %s\n", pkt_string);
+> +               color_fprintf(stdout, color, "  %s%s\n", queue_nr, pkt_string);
+>
+>         fflush(stdout);
+>  }
+> --
+> 2.34.1
+>
 
-struct sg_lb_stats has already been declared previously,
-so there is no need for a forward declaration
+Reviewed-by: Mike Leach <mike.leach@linaro.org>
 
-Signed-off-by: Bing Huang <huangbing@kylinos.cn>
----
- kernel/sched/fair.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 41b58387023d..5a94769f1f2d 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -10203,9 +10203,6 @@ static inline enum fbq_type fbq_classify_rq(struct rq *rq)
- }
- #endif /* CONFIG_NUMA_BALANCING */
- 
--
--struct sg_lb_stats;
--
- /*
-  * task_running_on_cpu - return 1 if @p is running on @cpu.
-  */
 -- 
-2.25.1
-
+Mike Leach
+Principal Engineer, ARM Ltd.
+Manchester Design Centre. UK
 
