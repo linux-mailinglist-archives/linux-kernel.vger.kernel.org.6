@@ -1,120 +1,105 @@
-Return-Path: <linux-kernel+bounces-259903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F24939F7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:13:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 554D7939F84
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 927C828339B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:13:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F39A61F230A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FFE14F9E4;
-	Tue, 23 Jul 2024 11:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB8C114F9F1;
+	Tue, 23 Jul 2024 11:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GjN/OuZG"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SqSU6k2S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103B914F9CB;
-	Tue, 23 Jul 2024 11:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D438914F9CB;
+	Tue, 23 Jul 2024 11:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721733216; cv=none; b=O9ishY0XUFa3up7vZqgepSQue+D8GfRlqd28dxelzSYpDqTF/R9W0x7B9So0gMwE3odnXVy4ux5kwSubfyZ5TIien7WcfzKFokPIy71DLJEt1iQPSdrwvYZ2wzfUX02Yl/v706gHIt3lbx5HOICZcZjyv1sZD0rx2CBEzrltPjM=
+	t=1721733299; cv=none; b=M8E0Gn7PNQ3xaXxeWmhafxp04oWjOtLfQMaL60hKnVFuI6Jsmpb+Y4+eFDwv1humIb2ObW5wrz0UaAkDmEdbm0sb8tTiwd1FqjwoWwJCYfz0hSSQS5P/kUgs6iaEYmAozaWNl2MvGKxtD8eyt+wVG/pAHfDXvvs01qN0qm9MBpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721733216; c=relaxed/simple;
-	bh=/VP364EB4ts+jEbJ8tPULy9KkrE7/dWdaq9sLnzMBh4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CKwzuYah3olYMrXYmzCZ6caXNDlIgRrljaA/+aocN+huZiRCGyYqGVZi+sta86Sprgiz9dyJ7edXGkenWKbcQqwxCJSZBm4YG+jRcKewyp6Oz3iLvjUmiYko579ShDOG+fYN0G3LzqZpv22alAZURR8ZXeu8D15v9StOmYmwjKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GjN/OuZG; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-427d2c8c632so38250215e9.2;
-        Tue, 23 Jul 2024 04:13:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721733213; x=1722338013; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=StDxslIq6LIFif2h0qWipzvfrvRcZo7bNP0JTSLo/Vg=;
-        b=GjN/OuZGqCyoAFjD1HriGXeMV6I2JKwRAEMSQVCu3MMQ6HSxT5BTzYx4kGAM9gqwfD
-         QAx5dRaDEpV1KfTHTUc9/m/zxEoYcrWv0dfy9aWJbkzE/SOgmucBYy46bOUfDd5N2S7V
-         HC2h0IChm8sFHgilfTdEFP1hgUtTwihNH4yO4XyMVA/iUoO7jKqq+60rPhsYIuQ8gUlP
-         iQzx6Od8sh+bXjqMD7DIWZWW5RLgW0PgEiXXq79us7TJsw7wHPEF2mjh1lUEFZU1iNhC
-         ZZjn5GcVPyPbjggn9WonxFKLBMlf1lc9LHB6XBbNQu7cTBEnX6rm6fSNijgsi7jIptPd
-         6KUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721733213; x=1722338013;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=StDxslIq6LIFif2h0qWipzvfrvRcZo7bNP0JTSLo/Vg=;
-        b=SVX8q+nVkSjtcSEZoSNnfPWxmasQCgAkZULYqU7BL2b/6S3CiDkhLxNM1xRS5cAzo7
-         i+v9KgFxEuEqYO1LbV3TUZrn0503dlUagVQT7bGWWxZNvfr0N/Bw+myDdb7fbYeH9DpH
-         uQ1abydKvMR5RTI5grUL2wNBfn7VQYD/BCVwVqIvpugb9yJev2KoiAk4aljMtoIiY8lj
-         +Nf0YueYLA4pGBrPj5Ay4P59nu4V55n26yBQ6slm/UcXwQOqY9oiC+kZIyiS9jV03E1M
-         al4NoZMDyMB2sSP6bFwRvQtFCsF5YUlkGvpHpHD6xGk16YulCgXGWqCVNdiaQiNSYxKh
-         MPEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxf6BGZXS1QTFE0zWoZHNInNSlWlhqm6aFs6Kf9F/IHexH9g0hC6i5rSFO+7ZowOjfC5FtjiLnv+d8ASPyq5ilAoa5MPsQSoEe93cS7aW2nj7BIxQmtW6eleJtq0dQ22KOwGDaECIy
-X-Gm-Message-State: AOJu0Yw4YJCNWGckaDNzqm4/LLU9lwgDpeoYwmExaaeJhGH/IPpEfQTI
-	+xERXHBpjPBHrO/J81MOxeCA20BtC4kjuiFJFfIPrzAjyLxfq+tOGg0TZ4E4lMQ=
-X-Google-Smtp-Source: AGHT+IFVGqHVEGhXOKM9KTyvp9ZeJZrbyJDneGqDpt7a+fSOwiM+Zc1V7mpA7ynh2FDJaMhdkYIRSg==
-X-Received: by 2002:a05:600c:3c88:b0:426:6e93:4ad0 with SMTP id 5b1f17b1804b1-427deff7426mr52495205e9.17.1721733213033;
-        Tue, 23 Jul 2024 04:13:33 -0700 (PDT)
-Received: from HYB-hhAwRlzzMZb.ad.analog.com ([5.2.194.157])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36878811bedsm11266597f8f.117.2024.07.23.04.13.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 04:13:32 -0700 (PDT)
-From: Dumitru Ceclan <mitrutzceclan@gmail.com>
-X-Google-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
-To: mitrutzceclan@gmail.com
-Cc: jic23@kernel.org,
-	dlechner@baylibre.com,
-	dumitru.ceclan@analog.com,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: adc: ad7173: Fix incorrect compatible string
-Date: Tue, 23 Jul 2024 14:13:22 +0300
-Message-ID: <20240723111322.324947-1-dumitru.ceclan@analog.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1721733299; c=relaxed/simple;
+	bh=WmIIb63NsWfWxILqxLi9S9QW8rRdWBhtaZWpRjACBnU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=keHDV9RxZZmFkpNW8+hfNfNy8LGyWToIaNuYLcKGUDI1vdD6UGdXfV8wrYmAHuoCG8r1Z3y8mf7dHce2G9imujTfUR7RR5lWQoIISiO4Oj2BnyKQT4l/qZvkgZknK1bYY6yMI3wyDzlO/NLekUprcAx0Y902IUHzMRZXGPzSjoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SqSU6k2S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10B9CC4AF0A;
+	Tue, 23 Jul 2024 11:14:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1721733298;
+	bh=WmIIb63NsWfWxILqxLi9S9QW8rRdWBhtaZWpRjACBnU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SqSU6k2SS8x6viaHXayT+6nzk8F+1CUTb/GhHMOpFlB5PvzX1m8oXGjWN3Pd5ebkd
+	 OaUVwaX/Hb2PprfSJvgyiyXDdUtmD8q2QOGWJtxweHWQXZW3bl4/DDT1JNMkGLoYL1
+	 UkksdNlGJsIajFjjyl7dpL5hIPht2fiHWVs6h/og=
+Date: Tue, 23 Jul 2024 13:14:54 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Thorsten Leemhuis <regressions@leemhuis.info>
+Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	"Artem S. Tashkinov" <aros@gmx.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-ext4@vger.kernel.org, xcreativ@gmail.com, madeisbaer@arcor.de,
+	justinstitt@google.com, keescook@chromium.org,
+	linux-hardening@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+	Kees Cook <kees@kernel.org>,
+	Linux kernel regressions list <regressions@lists.linux.dev>
+Subject: Re: Linux 6.10 regression resulting in a crash when using an ext4
+ filesystem
+Message-ID: <2024072320-angled-irritate-2dd5@gregkh>
+References: <500f38b2-ad30-4161-8065-a10e53bf1b02@gmx.com>
+ <20240722041924.GB103010@frogsfrogsfrogs>
+ <BEEA84E0-1CF5-4F06-BC5C-A0F97240D76D@kernel.org>
+ <20240723041136.GC3222663@mit.edu>
+ <108448f5-912f-4dac-bbba-19b1b58087b1@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <108448f5-912f-4dac-bbba-19b1b58087b1@leemhuis.info>
 
-Wrong compatible strings are used for AD411x devices.
-Fix by adding the missing "adi," prefix.
+On Tue, Jul 23, 2024 at 12:04:41PM +0200, Thorsten Leemhuis wrote:
+> On 23.07.24 06:11, Theodore Ts'o wrote:
+> > On Mon, Jul 22, 2024 at 12:06:59AM -0700, Kees Cook wrote:
+> >>> Is strscpy_pad appropriate if the @src parameter itself is a fixed
+> >>> length char[16] which isn't null terminated when the label itself is 16
+> >>> chars long?
+> >>
+> >> Nope; it needed memtostr_pad(). I sent the fix back at the end of May, but it only just recently landed:
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=be27cd64461c45a6088a91a04eba5cd44e1767ef
+> > 
+> > Yeah, sorry, I was on vacation for 3.5 weeks starting just before
+> > Memorial day, and it took me a while to get caught up.  Unfortunately,
+> > I missed the bug in the strncpy extirpation patch, and it was't
+> > something that our regression tests caught.  (Sometimes, the
+> > old/deprecated ways are just more reliable; all of ext4's strncpy()
+> > calls were working and had been correct for decades.  :-P )
+> > 
+> > Anyway, Kees's bugfix is in Linus's tree, and it should be shortly be
+> > making its way to -stable.
+> 
+> Adding Greg and the stable list to the list of recipients: given that we
+> already have two reports about trouble due to this[1] he might want to
+> fast-track the fix (be27cd64461c45 ("ext4: use memtostr_pad() for
+> s_volume_name")) to 6.10.y, as it's not queued yet -- at least afaics
+> from looking at
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git/tree/
 
-Fixes: 13d12e3ad12d ("iio: adc: ad7173: Add support for AD411x devices")
-Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
----
- drivers/iio/adc/ad7173.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Now queued up.  And as it was not explicitly marked for stable
+inclusion, thank you for asking for it to be added.
 
-diff --git a/drivers/iio/adc/ad7173.c b/drivers/iio/adc/ad7173.c
-index 9544bf7142ad..a854f2d30174 100644
---- a/drivers/iio/adc/ad7173.c
-+++ b/drivers/iio/adc/ad7173.c
-@@ -1435,11 +1435,11 @@ static int ad7173_probe(struct spi_device *spi)
- }
- 
- static const struct of_device_id ad7173_of_match[] = {
--	{ .compatible = "ad4111",	.data = &ad4111_device_info },
--	{ .compatible = "ad4112",	.data = &ad4112_device_info },
--	{ .compatible = "ad4114",	.data = &ad4114_device_info },
--	{ .compatible = "ad4115",	.data = &ad4115_device_info },
--	{ .compatible = "ad4116",	.data = &ad4116_device_info },
-+	{ .compatible = "adi,ad4111",	.data = &ad4111_device_info },
-+	{ .compatible = "adi,ad4112",	.data = &ad4112_device_info },
-+	{ .compatible = "adi,ad4114",	.data = &ad4114_device_info },
-+	{ .compatible = "adi,ad4115",	.data = &ad4115_device_info },
-+	{ .compatible = "adi,ad4116",	.data = &ad4116_device_info },
- 	{ .compatible = "adi,ad7172-2", .data = &ad7172_2_device_info },
- 	{ .compatible = "adi,ad7172-4", .data = &ad7172_4_device_info },
- 	{ .compatible = "adi,ad7173-8", .data = &ad7173_8_device_info },
--- 
-2.43.0
+I'll go push out a 6.10.1-rc1 in a short bit with this important fix.
 
+thanks,
+
+greg k-h
 
