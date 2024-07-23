@@ -1,119 +1,141 @@
-Return-Path: <linux-kernel+bounces-260454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A98793A982
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 00:54:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 520DE93A98B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 00:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 451611F230D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:54:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A6F71C22975
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A651494BC;
-	Tue, 23 Jul 2024 22:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5214B1494CB;
+	Tue, 23 Jul 2024 22:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K1w0Cg3Y"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="s1MvwVS5"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62252149003;
-	Tue, 23 Jul 2024 22:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5378A148FF2;
+	Tue, 23 Jul 2024 22:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721775270; cv=none; b=snfdZr8QUPJP8ib5VD4HlnMuOxM6yHI5rpMQxbjPAir67VPLaBFa4ubjFLsu/a/I+dvBQHcjnrueNOZzEExJtXjRB1rLrpcm4I1+SWRGvuUoo8ExkF2D0Jy9L0yVEL+6CqfWPpugrr1/ofF5b7UNmw1Ha/Mzjv/uzTc/D2dUYhM=
+	t=1721775447; cv=none; b=Wh7wwMiAcOwe++GM8OXUxB7/a7cWcy3suuJuuSxrsNcbC2PxN2iUFbAVZ4/Uhagn/jsf3We/B0eU/+zEIPU6wdfidtkyLopGRp0fH0lvW/qjGEoBwIFlkE1KVbgBEiJPJ+HiL9ddMRiXU3C7HUtw6p7fAhM+XFtSU2t4b3UwO4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721775270; c=relaxed/simple;
-	bh=1AjLTDbuhyesuT1YeSuYmfbEfq7w+4c503zcZIhhfTk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qscnz2R+urGyMITRwglhdM4hYzJY7OunRkxPV36VdtCecf2hSb6MjHQ+FE2udOho0u1/3ga9i/1ghlmfPGZsl2enorqSWpaO5KeBygwVycg4a9XPBsFZMW/mf+vU7LeHpbF90XFa/Ejb2RuhLiTxjiZ++pSK/05+RBGFBrYov/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K1w0Cg3Y; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6b79c27dd01so34065886d6.3;
-        Tue, 23 Jul 2024 15:54:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721775268; x=1722380068; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LWMntoosXb0dgJn0gpXmbDSjr5NrrVKbXCip5YcXW2c=;
-        b=K1w0Cg3Y8tKaVBIopHZEkg/eVW7l+ahFKweQRhLR/MxkOO5F82QGFUvI4B2e28ca3O
-         VMbAreWaFuwtLAxXHr+8S+2ZVXYA5P4O+KRjAMS7ktyBbpV2qxEMddkGIlwZcYke7FHV
-         txHAoh2JNGhC1GHj542meAN4TEkn0hgzmeCOmfkMHL/YKjAkiVj9+aQSPeNnvYpZAuk6
-         eW2jWw7dHxlvtZbswrF5LqJFmEmOkWYhJPWKK0/lqcjALeyXlsmMyA4n9Xoc69O/07jN
-         t/i1Zep/IVTmMncYGHX9TNngA2CssUTbiy90qatyYS0L7JSe9XIOObMY6Riiq1E09oDu
-         SbfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721775268; x=1722380068;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LWMntoosXb0dgJn0gpXmbDSjr5NrrVKbXCip5YcXW2c=;
-        b=weE+sAKs7693MitGtP6s+vEPsOAe5V0aLvaggA/obH3eVKtflnXaKvX+T9WO8eL597
-         L9cU7gxG23tvDLyKvluCjOLS3GH5/LYrLRvwQAKjbHGzmWdlm9HSU/Jd9oowyfpVFKq7
-         oAroWpFNTvk++Gh7F4qFCUUwraeCOThjom4M1Unh7+bWKaBDUsGYl+IEZmc0mHWyPyqP
-         2dFgQSpKTqH05c0b9kec/L2DiQUd/r3fn/kqXEZp0Qg8ZsJY9Q2QvtS2os3YACVuIJlt
-         YkCNb3r59KHzK5C0BF40O7z4KPn9fbq7BtAGECuLbjhSdwKCWLy4+oTpliGSTjRIebi/
-         aQNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsnPZV7AT6HpolNBwTsEQDhgEx2ipakVzKiHk+wmEWpd+Q9PUqohptyMGoMgSwOOkkQrxSJ380N90Yr2s+JBuiUGYnguol9H309nzajuhJORDp6uY30mMCe5trhbIIyXC9fHT/
-X-Gm-Message-State: AOJu0YwBKaammAkHuOWYkSERGDHUCAX7PD4YBHW9fdp58jtk6a0Q0BkQ
-	4LF69QQxIrTp0dz5m/iEf09JUcFIpq2ks2QCi9/wmqeKdHsKplXZ
-X-Google-Smtp-Source: AGHT+IFiIruTHHXZAK76VBbvCdeRelJiq4cHOVQDT+BXtQr4+VOSTzm+Xj/KJddY40pYXnK5MCIOFQ==
-X-Received: by 2002:a05:6214:76b:b0:6b9:611f:eb32 with SMTP id 6a1803df08f44-6b98ed48304mr11465216d6.34.1721775268192;
-        Tue, 23 Jul 2024 15:54:28 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6b96e8bf456sm30388576d6.56.2024.07.23.15.54.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 15:54:27 -0700 (PDT)
-Message-ID: <cd7b0b38-af8e-42f2-be5c-c57fd8e3937e@gmail.com>
-Date: Tue, 23 Jul 2024 15:54:22 -0700
+	s=arc-20240116; t=1721775447; c=relaxed/simple;
+	bh=sLFnEf8FCEW52W4JrcmZ54DArvFRGMZLouOTXLZ5Tx4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sxC0yqPczA9AQRAZwgc6nhw/GJCSKY/+YiE0J8l5dc/HyeBNLkYxoJLyumomY9nr3jTx8OvmyfQ8xL6FPAG0yGeRP4wbCZGu6jSqmccqDDSbEUHs2Sw8voBgz5aeJM7mIB3wq1ng3prJd0uX/9z8qCvty/QuxK529Fpjvg39HhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=s1MvwVS5; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1721775443;
+	bh=bdWZ9D4MLaroeEn9jFtSa6y2bi33y5X4PH4qemLd2dc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=s1MvwVS5g1/kCMWyZzPE/izz+sFAlRrvVHEQsBkIkeBR6U/b+HFiH5qdSQQZJJ1Dz
+	 QT0HCp68Mi9P0S4QEmd2ydxtCTidvm8JzCz4fpkal3isdlURX/UddKCXV9b8Dv56Po
+	 IjP6q0OdjpMyZhB3Mrnz3m3/5e1Dck51Sr0UDKKK6QrVISMGZ/lsOts0eOt7yds0lS
+	 FhJD8ZMJ1shzK/OmCa2UG7Mh+lCbF+YvfkPil40PLzpbcYLtyRRj8w3vnJtfG7dHjF
+	 KIxgYHt2HiWU28PVmMbq2wLnDqeeAIRFbgJFES9TVrjfB+e7oESA/cyiCvgWoZwp8n
+	 aq03HE/C66r5Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WTCGB0dq4z4wZx;
+	Wed, 24 Jul 2024 08:57:22 +1000 (AEST)
+Date: Wed, 24 Jul 2024 08:57:21 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
+ <u.kleine-koenig@pengutronix.de>
+Subject: Re: linux-next: manual merge of the driver-core tree with the mm
+ tree
+Message-ID: <20240724085721.7fac67d8@canb.auug.org.au>
+In-Reply-To: <20240612123640.68ae0310@canb.auug.org.au>
+References: <20240612123640.68ae0310@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.10 00/11] 6.10.1-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240723122838.406690588@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240723122838.406690588@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/+4wmcYvXfWX4xBv_TBB=SOc";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 7/23/24 05:28, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.1 release.
-> There are 11 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 25 Jul 2024 12:28:30 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.1-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+--Sig_/+4wmcYvXfWX4xBv_TBB=SOc
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Hi all,
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+On Wed, 12 Jun 2024 12:36:40 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>=20
+> Today's linux-next merge of the driver-core tree got a conflict in:
+>=20
+>   drivers/fsi/fsi-occ.c
+>=20
+> between commit:
+>=20
+>   2d2bf1e680a9 ("fsi: occ: remove usage of the deprecated ida_simple_xx()=
+ API")
+>=20
+> from the mm-nonmm-unstable branch of the mm tree and commit:
+>=20
+>   29f102dbb11f ("fsi: occ: Convert to platform remove callback returning =
+void")
+>=20
+> from the driver-core tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> diff --cc drivers/fsi/fsi-occ.c
+> index f7157c1d77d8,21d2666c4195..000000000000
+> --- a/drivers/fsi/fsi-occ.c
+> +++ b/drivers/fsi/fsi-occ.c
+> @@@ -718,9 -719,7 +718,7 @@@ static void occ_remove(struct platform_
+>   	else
+>   		device_for_each_child(&pdev->dev, NULL, occ_unregister_of_child);
+>  =20
+>  -	ida_simple_remove(&occ_ida, occ->idx);
+>  +	ida_free(&occ_ida, occ->idx);
+> -=20
+> - 	return 0;
+>   }
+>  =20
+>   static const struct of_device_id occ_match[] =3D {
 
+This conflict is now between the driver-core tree and Linus tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/+4wmcYvXfWX4xBv_TBB=SOc
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmagNVEACgkQAVBC80lX
+0GwkeAgApIODkph1k9PWYD21JRIPGi7/+atAkXXWJ3NEV6qxDButvdXv75lbvf7N
+VacQRmjrp4atdgssnSzI6axngh7rfgaThmTJz3sBLOOTDfmvZm6neFdCS0Mwem/b
+fBGPUubf2enHiHmvzOVhGCMELrzST60qUTe5wL/NA8iwCOwN3VUn55tuRBXVqPEt
+sTQP6OHSXnw2UgWW54z7kuoAPVykG7IZLt1kq+DY/5wasa15Mti0nb2N1gMddgZX
+yJ37hgAnmO3FYxR59rA5vPp3yd1kwe8tv7xfX0rDR5NBivWBA2Z6OTNjtJkAzeVo
+77NZo+NCPjBq11LXloFSa7Xi2yVMCA==
+=/Yhi
+-----END PGP SIGNATURE-----
+
+--Sig_/+4wmcYvXfWX4xBv_TBB=SOc--
 
