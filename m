@@ -1,122 +1,148 @@
-Return-Path: <linux-kernel+bounces-259790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 586F3939D41
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:09:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D3215939D43
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:10:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 010941F22919
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:09:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E04D1F2281A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B276614D28F;
-	Tue, 23 Jul 2024 09:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8AEA14C5AE;
+	Tue, 23 Jul 2024 09:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i5al03cT"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M2pLG0mD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A88288D1;
-	Tue, 23 Jul 2024 09:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E5D288D1;
+	Tue, 23 Jul 2024 09:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721725756; cv=none; b=DQXSRD8cJPUqMNCECIdHvn4LKgSqwwrD6oILzQCZnHJtsY7SnwAhR2iF5PMlqc6z4jcFrWkD705bZnhc/SLvRGVaLqBXELCyvHnocLX7zLRbfqEZhbv3I4NyDAD+lrbueaOD7Pa9BfDDiPW/3R4fPxJ6CV2y8oFyZx+zAtyoaMc=
+	t=1721725802; cv=none; b=lUq9KUV59TaLWMaX4fZxLGyqQMO0pKpSh3UH43tPRMMx0CC2SJLgnmYeYAZMpUjv2fUpjeXDXNvGSTUok1nHrvdUe/KXlxQ8uDRHPn2L2nu9hjmPsxd956L3iHE1m1Ah70Vj4KWeTiX6hexldaaEarhQ5BMFkJMUWXDMu4CSGEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721725756; c=relaxed/simple;
-	bh=zxajH175eSZkZBY8hvbs9Q0MP4UlDAvRm8qrsEommjI=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=fnY6HmUGWJqzAu89o9mVB+MF8aUROlnDlrLpiXMGDfpawQKCdaCHvlefqM8cIgKNXuEBIYZA62JmvWUrl72qDtcfICtXAPylx/n1R+BiqzvRB2zOd6kyFeQiDnuapgFlwm90S6/EVH0Xtk4PP2Fglj+zw9/6u9p0IdFfPfWUYes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i5al03cT; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-367940c57ddso2713462f8f.3;
-        Tue, 23 Jul 2024 02:09:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721725753; x=1722330553; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cq5uI6yFCXe1RvkWE4wqaWmyGophhncZr7AfcVO6w7c=;
-        b=i5al03cT55GY8Jk1IVN51rTdVh+xl3WdS9lcwf4o7m1u+Mk1UUVquaF0+dPr4q4LoV
-         Z4RcWkbTdG8QCyrb2BK2Ll3nEFM+otTQhpnPareRIC5K+JWlcWyqfvskGUgvBLOkAWMF
-         Kzf0AJWX1wQXWKHyoYo9p5Udex3JZMu+kPvTaFbX3FeD/IqR1jvXtQM1da29NPORRX6p
-         mrAMoEFG1ITWkLEySxp0daM700zjahcFOHpswZfeerq3QLosldm/TFCB9mDzccWfiFZy
-         /IkjQhItTPDwhUEfosicmpk1bAspm7J+QLAZwIrTdkIrMmLBZxk97dFwUp8MPMEmEtXn
-         SHxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721725753; x=1722330553;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Cq5uI6yFCXe1RvkWE4wqaWmyGophhncZr7AfcVO6w7c=;
-        b=t9RHTS7fD6qohox63iBmX5tgqz4g/Z6iNHtM7X2dkibpu/cbUhZsgDzOnvmuVZ64oD
-         bIZUb/Ngw0Y584hzYEp0AFo4A2adTJLBiegVTEmi13OnL5L9+Z+oAnQUF56Jic0oYiTx
-         CL8JUqvKHGyEBG+b459tWeGRSMuCatU57nPA3MOuajDcPyACHS7LWIgk9+8pVrhk0rT8
-         BokShp8C2PzB7dzp1O5VLB7EV7Cr1xzfCvL7qbTOJXnUvjO0n2G1HVvW8iHSQ9eJhwXq
-         b4aXntlXon7LzgpeThM2gbO96EiccLTMD67hVnm4zrOQdPEF7xfjQ6z3Y4YXxyTwncvP
-         gvmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU60w3F5Trzx32/+SIe0kn8yGPIROCivTY022SEyxVMRqY1ZINRHyaRiLdU461eKqu373hMykzPciPsgi/xi7xwlt60y5HFiJU4WVNBPgTHjPeUxWS2uo80Ytw5JlkISNpWAW6fmNbL5QRNQ/hMWaqjzgMWeoGHbOFqGN1AFRb/pKKcrw==
-X-Gm-Message-State: AOJu0YwTVu00R0+JVnaVqN17OtXfIK+KFAUJ5n9qf/0+sHmpZwQ2jRcY
-	CuIx6pr5lNf5gETsSfI057OVkN1dtE3qkTrcguTrN9g3zSWGsZqa
-X-Google-Smtp-Source: AGHT+IFlo/rixZejMPA8WXyI01tOP9s64luIcQhd8jz1vK+q1tKwXPSxztIQFD0U1T+9HnfjcOoZKg==
-X-Received: by 2002:adf:e6c9:0:b0:369:b7e3:4983 with SMTP id ffacd0b85a97d-369bae01bdemr6535785f8f.1.1721725752529;
-        Tue, 23 Jul 2024 02:09:12 -0700 (PDT)
-Received: from localhost (host-82-58-19-206.retail.telecomitalia.it. [82.58.19.206])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-368787cec6bsm10876331f8f.71.2024.07.23.02.09.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 02:09:12 -0700 (PDT)
-Date: Tue, 23 Jul 2024 11:09:11 +0200
-From: Matteo Martelli <matteomartelli3@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, 
- Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Marius Cristea <marius.cristea@microchip.com>, 
- linux-iio@vger.kernel.org, 
- devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-Message-ID: <669f733746811_7023703c@njaxe.notmuch>
-In-Reply-To: <20240722210716.09ca4223@jic23-huawei>
-References: <20240722-iio-pac1921-v3-0-05dc9916cb33@gmail.com>
- <20240722-iio-pac1921-v3-2-05dc9916cb33@gmail.com>
- <20240722210716.09ca4223@jic23-huawei>
-Subject: Re: [PATCH v3 2/3] iio: ABI: generalize shunt_resistor attribute
+	s=arc-20240116; t=1721725802; c=relaxed/simple;
+	bh=GUUm9SKdRyPJTlfF5XVO3Y0D5mrSIAzlwLYe2VuSGmk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dEC+y4uLgrZEEzmStPqjNlCo8AOPvKzGjXq2InCFqEqbXJrW1WJ8LCReysHQLPRQabdwRwFguTg3lMWb90WF8P0YZiHYFn7xhiQN3szfXPHAOotIgu6aKasj7j5Rg3akWsuA1Mbn2RnHXO5FKFY1hFPRFcFTBwWBOYbb2Z2ISXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M2pLG0mD; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721725800; x=1753261800;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=GUUm9SKdRyPJTlfF5XVO3Y0D5mrSIAzlwLYe2VuSGmk=;
+  b=M2pLG0mDPdszr6wPVoYAcW2iBR49yWjNuY+Vl/kjkTnEzwS+eCQBgowt
+   o5cobcdqSNTHFKZBnIE2ey974ISQajS7xaalqBG0pfclvKm6gCNDboFhf
+   OxmMgW4GiFpJfokkJNpkdfTWd+fHwtAPwlfUpJMB6IoDb+yJ+oMappJvB
+   Yobfg3I1wzgmatPl7b4bfCyFvbSSpAqzeKC/A+QpT6orE8zjRwnzm6rR1
+   eMeaH/ZfaNM5rNLVPwMxCoQBg2BLpVl4uqmCw7LDpfI9DvSOGPVDCgSJy
+   Qz5UA66mkBmSHC3biQC58xXCKxFzCQw+ZeAlpZDfQJ754hJ8SWXbV9hxY
+   Q==;
+X-CSE-ConnectionGUID: Gp43p1SlSM2851nl5BTNiQ==
+X-CSE-MsgGUID: Kb8fyaA+T+6kP5JAOQEeEg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11141"; a="19488017"
+X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
+   d="scan'208";a="19488017"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2024 02:09:59 -0700
+X-CSE-ConnectionGUID: f55IJ0ZORHiJGO3vm5OjHQ==
+X-CSE-MsgGUID: Vt2JV7n6TqWgHV/eVj+m/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
+   d="scan'208";a="52172573"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.94.249.84])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2024 02:09:52 -0700
+Message-ID: <cb2433e2-d6a3-4d70-9b88-0047a9dd01d2@intel.com>
+Date: Tue, 23 Jul 2024 12:09:46 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V9 06/13] perf tools: Enable evsel__is_aux_event() to work
+ for S390_CPUMSF
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Thomas Richter <tmricht@linux.ibm.com>,
+ Hendrik Brueckner <brueckner@linux.ibm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+ coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ Yicong Yang <yangyicong@hisilicon.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Will Deacon
+ <will@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Ian Rogers <irogers@google.com>, Andi Kleen <ak@linux.intel.com>,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Leo Yan <leo.yan@arm.com>, Peter Zijlstra <peterz@infradead.org>
+References: <20240715160712.127117-1-adrian.hunter@intel.com>
+ <20240715160712.127117-7-adrian.hunter@intel.com>
+ <dbfae024-c7ce-4311-9f7b-419aacc7e7d9@arm.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <dbfae024-c7ce-4311-9f7b-419aacc7e7d9@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Jonathan Cameron wrote:
-> On Mon, 22 Jul 2024 12:03:19 +0200
-> Matteo Martelli <matteomartelli3@gmail.com> wrote:
+On 23/07/24 11:26, Leo Yan wrote:
+> On 7/15/2024 5:07 PM, Adrian Hunter wrote:
+>>
+>> evsel__is_aux_event() identifies AUX area tracing selected events.
+>>
+>> S390_CPUMSF uses a raw event type (PERF_TYPE_RAW - refer
+>> s390_cpumsf_evsel_is_auxtrace()) not a PMU type value that could be checked
+>> in evsel__is_aux_event(). However it sets needs_auxtrace_mmap (refer
+>> auxtrace_record__init()), so check that first.
+>>
+>> Currently, the features that use evsel__is_aux_event() are used only by
+>> Intel PT, but that may change in the future.
+>>
+>> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+>> Acked-by: Ian Rogers <irogers@google.com>
+>> Reviewed-by: Andi Kleen <ak@linux.intel.com>
 > 
-> > Move ABI documentation for custom shunt resistor attributes into the
-> > generic iio documentation file. Exception for pac1934: leave it
-> > untouched since it does not comply with common iio ABI generalization.
-> > 
-> > Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
-> This stands on it's own even if the driver needs a minor tweak or two yet.
-> Hence in the interests of not having to remember I've read it before,
-> I've queued this patch up;
-> 
-> 
-> Applied to the testing branch of iio.git. That will be rebased on rc1 once
-> available and pushed out as togreg for linux-next to pick it up.
-> 
-> Thanks,
-> 
-> Jonathan
-> 
-Thanks Jonathan, should I remove this commit from next version of this patch
-series or should I keep posting it?
+> Reviewed-by: Leo Yan <leo.yan@arm.com>
 
-Best regards,
-Matteo
+Namhyung, could we get patches 5 and 6 from this series
+applied?  They are independent and Leo's new patch set is
+dependent on patch 5.
+
+> 
+>> ---
+>>  tools/perf/util/pmu.c | 6 +++++-
+>>  1 file changed, 5 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+>> index 986166bc7c78..0b38c51bd6eb 100644
+>> --- a/tools/perf/util/pmu.c
+>> +++ b/tools/perf/util/pmu.c
+>> @@ -1199,8 +1199,12 @@ void perf_pmu__warn_invalid_formats(struct perf_pmu *pmu)
+>>
+>>  bool evsel__is_aux_event(const struct evsel *evsel)
+>>  {
+>> -       struct perf_pmu *pmu = evsel__find_pmu(evsel);
+>> +       struct perf_pmu *pmu;
+>>
+>> +       if (evsel->needs_auxtrace_mmap)
+>> +               return true;
+>> +
+>> +       pmu = evsel__find_pmu(evsel);
+>>         return pmu && pmu->auxtrace;
+>>  }
+>>
+>> --
+>> 2.34.1
+>>
+>>
+
 
