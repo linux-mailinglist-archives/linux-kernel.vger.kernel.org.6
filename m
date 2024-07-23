@@ -1,230 +1,154 @@
-Return-Path: <linux-kernel+bounces-260180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F30FB93A433
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:13:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B8693A435
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:18:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A81AE283CAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:13:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E6D51F235A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28DA157E62;
-	Tue, 23 Jul 2024 16:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFFD15749A;
+	Tue, 23 Jul 2024 16:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YWA4Ej3o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="INgrZ5G3"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1263D156F40;
-	Tue, 23 Jul 2024 16:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA38314D2B8
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 16:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721751179; cv=none; b=FrRDJExMaDUa8WNXU0JNO/ycpGAuudjSdRM8uFnxuK5fZp6bmGGTjQ/GrM64ztVwa7m5jOkP5O9/8o9HrHnZFDlzZEHYy82zJpI3fJci1hBe0dsk8V+4EeHZoQKsylcasHIcLVgPDyEOfBFVU4trUvC+VXnuUAMykR9ZSxe6S1E=
+	t=1721751475; cv=none; b=FZIppRBho9BNOIs1Em+WMjxzJcMusXqFaWrxLXjbhaCcOuW/Rk06mUr/DdsrZMuvkerXjq74a5s0T3aXF6tRP4EnsjfzyTiAO/OiRVgny/a52ifiv2+Rz4kxbrN5034PDL9VDBgGviRHEMLuAqML7o0nKT67h1RTXIoRQc9GfWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721751179; c=relaxed/simple;
-	bh=RCY/QKWXLvXlxWiYxx3GP8JxTLcTW8WXv93dS1Ctx7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DX7pSmETeM+jTSeC++nbXFPmk5c6pqFwBiP2EHVYQsF2g0BTPCOzg42ENkGr9b/ZTNDpHrhhH0VKlAOvF+YIRKiqhblAZLDzo7ZJRzdALKO/2+ak4GM296phXKcbg2Ct819/bkJstVo9uhlRP+FRq1HLZzrzbXn2hN8AUuXGups=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YWA4Ej3o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FA29C4AF09;
-	Tue, 23 Jul 2024 16:12:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721751178;
-	bh=RCY/QKWXLvXlxWiYxx3GP8JxTLcTW8WXv93dS1Ctx7g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YWA4Ej3os8mtDAsmYe/LCG8wJnvGiFeZa4b1kfZOWCuOWnh/WHr+z4FpvBYY8LIKx
-	 lFciV5+P2+vwFTUUua0tq/PE3fle4fhj88M0yk16j5arljzvmakxIAhPvweCJ/haTy
-	 ZXBAJqloV5Tr39siLNC2nOWUUL8QzYV1vilrlAmMli0n6QOzMJcdW9em29FPUAGynw
-	 eyPVIIJsr6+SpXN0QOSzw4ixJgAF2ZYcJUjX320RvF0lhVb2ccHDmd7c6yjRDfT/c2
-	 SYDqe6NYYEwUD+d0v4zMigpv7IB7y7a520AvXYUzovUVpJBUWa8ShpNyBZYzPTVDZc
-	 k8zn+ZbH/rxgA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sWI8I-000000002Vl-0umG;
-	Tue, 23 Jul 2024 18:12:58 +0200
-Date: Tue, 23 Jul 2024 18:12:58 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Corentin Labbe <clabbe@baylibre.com>, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	david@ixit.cz
-Subject: Re: [PATCH 1/1 v7] usb: serial: add support for CH348
-Message-ID: <Zp_WiocH4D14mEA7@hovoldconsulting.com>
-References: <20240507131522.3546113-1-clabbe@baylibre.com>
- <20240507131522.3546113-2-clabbe@baylibre.com>
- <Zp5q5V_OnLAdvBrU@hovoldconsulting.com>
- <CAFBinCC9ftXxkyoiY=3ia6UubTeG-cHXa40ddd7WMNUhvVjr+g@mail.gmail.com>
+	s=arc-20240116; t=1721751475; c=relaxed/simple;
+	bh=pRoaIDicTrBMV9Y8Wv8cr1leg4UK4r11oJkILZ4HRMU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OOGOuoCjyF0+yQb3XpO7Uq4tXMgzKI8XfLRg04Alcz9h3Chau7bYZEAay9Mw5XV3V2BkNVSYUX2bE0E1QEvGHD04YguTd/WsRd/cy2gxhaCUMsyskrwmCFREVV9B2YpC4G9JKcQGLzOuk00pvtDZpoGkR3jVa0hFtSD0B+3hv2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=INgrZ5G3; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-7fb4ac767c7so25851339f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 09:17:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1721751473; x=1722356273; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WckdgsdVKcnunHrXHx3KQ06hIGXGwaXg2AXB5/rozpI=;
+        b=INgrZ5G3MlqZPolW3fZmc/ZD8lCzUs19XEKaW3sLba54zG6u+NZL/LOlGoky5nTiXi
+         BEpx6C3Mns+v9WNkksY5Rwb0u0H5YQxVbmQc+dNM8Gf99NcZ5W0ugmQ5tKT4iT//Bzkk
+         oi78Xto9/eajIXQRWUX+kXOtGnb0WZ7y9cpPU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721751473; x=1722356273;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WckdgsdVKcnunHrXHx3KQ06hIGXGwaXg2AXB5/rozpI=;
+        b=tTzIp2+AQnt4L/mr4qt+VO7Mf4VrSH9e7B32s8cH+zD50N/HDiZwQOGpV8JcdH5KNZ
+         iZjxPiqclI7kykdwPOlJqHnZzCcULfYtO8AHnAEZSsvGECZ6d2MXLWVVRgnidRX3YDG2
+         gquRb8DphNWCfWHBeUg9Lmnedj8w6QgRNm5XAZc7aCDZQ8xVYVfhOZbwiDKM/v/Sh66q
+         NMvkW47WsmQv9p3IgxuCXx7X3hy+2YN7OJYatjQXZ1P502+0Cycre1MwxJfGhjgKNvGL
+         0GXvyESwNTrTc+hZrOHjB+K1R/aeYtivCKI82qpOKlVTn843qHQ+TgfDJ7B+TiHdraHk
+         vwyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhYnB9Wc9mkpRouU3bt6JH5K+BJyq390cbwg3n+hbk4KleM0IlzgzK8przkF+M/cBXZBJ2fIzBCfkt7dQ5oLuMBo5qC25n/Xj4DrU7
+X-Gm-Message-State: AOJu0YxTYZoG0nBNNztn31rnbh6Q0f+/DlkKhy6J/WeyQW9YYZnNyOBB
+	WkQVub5pHI33oKNoJkuYJlUUKFm+NOCxJxVAn1cccBfTLZVDBfX/4FXls6nWfPCM7iCjSX2/qva
+	h
+X-Google-Smtp-Source: AGHT+IHBJf66ztYfZNCfxnbGx4Z5m41bRmi5L58frY1Jq39oLN0lrAUqTLUc3qwaGE+1ZaBYXDKjOA==
+X-Received: by 2002:a5e:c746:0:b0:7eb:2c45:4688 with SMTP id ca18e2360f4ac-81aa70732d9mr633081739f.2.1721751472896;
+        Tue, 23 Jul 2024 09:17:52 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c276c03bb6sm447490173.93.2024.07.23.09.17.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jul 2024 09:17:52 -0700 (PDT)
+Message-ID: <9009f4df-ca7e-4961-97e4-446afc4e87d2@linuxfoundation.org>
+Date: Tue, 23 Jul 2024 10:17:51 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: ksft: Track skipped tests when finishing the
+ test suite
+To: Laura Nao <laura.nao@collabora.com>, shuah@kernel.org,
+ nfraprado@collabora.com
+Cc: gregkh@linuxfoundation.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@collabora.com,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240722154319.619944-1-laura.nao@collabora.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240722154319.619944-1-laura.nao@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFBinCC9ftXxkyoiY=3ia6UubTeG-cHXa40ddd7WMNUhvVjr+g@mail.gmail.com>
 
-On Mon, Jul 22, 2024 at 11:22:32PM +0200, Martin Blumenstingl wrote:
-
-> On Mon, Jul 22, 2024 at 4:21 PM Johan Hovold <johan@kernel.org> wrote:
-> > On Tue, May 07, 2024 at 01:15:22PM +0000, Corentin Labbe wrote:
-
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * USB serial driver for USB to Octal UARTs chip ch348.
-> > > + *
-> > > + * Copyright (C) 2022 Corentin Labbe <clabbe@baylibre.com>
-> >
-> > Do you need to include any copyrights from the vendor driver? It looks
-> > like at least some of the code below was copied from somewhere (but
-> > perhaps not that much).
-
-> If you - or someone else - have any advice on this I'd be happy to go with that!
-
-If you copy code directly (even if you clean it up after) you should
-include it, but not necessarily if you just use it for reference for the
-protocol.
-
-It doesn't hurt mentioning anyway when you add the reference to the
-vendor driver, for example:
-
-	Based on the XXX driver:
-
-		https://...
-
-	Copyright YYY
-
-> > > +     u8 reg_iir;
-> > > +     union {
-> > > +             u8 lsr_signal;
-> > > +             u8 modem_signal;
-> > > +             u8 init_data[10];
-> >
-> > This init_data field is never used and looks a bit odd. What is it used
-> > for?
-> I think the firmware is sending back the configuration that was
-> applied (see ch348_set_termios())
+On 7/22/24 09:43, Laura Nao wrote:
+> Consider skipped tests in addition to passed tests when evaluating the
+> overall result of the test suite in the finished() helper.
 > 
-> > You mentioned that that the modem lines are not yet used either.
+> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+> ---
+>   tools/testing/selftests/kselftest/ksft.py | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/kselftest/ksft.py b/tools/testing/selftests/kselftest/ksft.py
+> index cd89fb2bc10e..bf215790a89d 100644
+> --- a/tools/testing/selftests/kselftest/ksft.py
+> +++ b/tools/testing/selftests/kselftest/ksft.py
+> @@ -70,7 +70,7 @@ def test_result(condition, description=""):
+>   
+>   
+>   def finished():
+> -    if ksft_cnt["pass"] == ksft_num_tests:
+> +    if ksft_cnt["pass"] + ksft_cnt["skip"] == ksft_num_tests:
+>           exit_code = KSFT_PASS
 
-> My understanding is: we neither use init_data nor modem_signal in the
-> driver so let's drop them for now (and add them back when they're
-> actually needed).
+Laura and Nícolas,
 
-I think it's ok to keep, as reference. You do dump this data later even
-if you don't currently use this union I noticed.
+I saw both your emails explaining how this fixes the problem in
+a previous patch.
 
-> > > +static int ch348_write(struct tty_struct *tty, struct usb_serial_port *port,
-> > > +                    const unsigned char *buf, int count)
-> > > +{
-> > > +     struct ch348 *ch348 = usb_get_serial_data(port->serial);
-> > > +     struct ch348_port *ch348_port = &ch348->ports[port->port_number];
-> > > +     int ret, max_tx_size;
-> > > +
-> > > +     if (tty_get_baud_rate(tty) < 9600 && count >= 128)
-> >
-> > You don't hold the termios lock here so this needs to be handled
-> > differently. Perhaps you can set a flag in set_termios if this is
-> > really needed.
-> >
-> > > +             /*
-> > > +              * Writing larger buffers can take longer than the hardware
-> > > +              * allows before discarding the write buffer. Limit the
-> > > +              * transfer size in such cases.
-> > > +              * These values have been found by empirical testing.
-> > > +              */
-> > > +             max_tx_size = 128;
-> >
-> > Can you elaborate on you findings here? According to the vendor homepage
-> > this device has a 1024 byte TX fifo per port. Are you really saying that
-> > for some reason you can only fill it with 128 b when the line speed is
-> > below 9600?
+However looks like you haven't see my response about the implications
+of the exit_code = KSFT_PASS when tests are skipped.
 
-> For slow speeds I never receive the "Transmitter holding register
-> empty" interrupt/signal when using the full TX buffer.
-> It's not that the interrupt/signal is late - it just never arrives.
-> I don't know why that is (whether the firmware tries to keep things
-> "fair" for other ports, ...) though.
+if ksft_cnt["pass"] + ksft_cnt["skip"] == ksft_num_tests:
+>           exit_code = KSFT_PASS
 
-Perhaps you can run some isolated experiments if you haven't already.
-Submitting just a single URB with say 128, 512 or 1024 bytes of data and
-see when/if you ever receive a transmitter holding empty interrupt.
+Let me reiterate in case you missed it:
 
-How does the vendor driver handle this? Does it really wait for the THRE
-interrupt before submitting more data?
+There is a reason why you don't want to mark all tests passed
+when there are several skips.Skips are an indication that
+there are several tests and/or test cases that couldn't not
+be run because of unmet dependencies. This condition needs
+to be investigated to see if there are any config options
+that could be enabled to get a better coverage.
 
-You could try increasing the buffer size to 2k and see how much is
-received on the other end if you submit one URB (e.g. does the hardware
-just drop the last 1k of data when the device fifo is full).
- 
-> > > +     else
-> > > +             /*
-> > > +             * Only ingest as many bytes as we can transfer with one URB at
-> > > +             * a time. Once an URB has been written we need to wait for the
-> > > +             * R_II_B2 status event before we are allowed to send more data.
-> >
-> > As I mentioned above R_II_B2 appears to be the transfer holding register
-> > empty flag in IIR. So you write one endpoint size worth of data and then
-> > wait for all of it to be processed on the device before sending more.
-> >
-> > How big is the endpoint (please post lsusb -v)?
+Including skips to determine pass gives a false sense security
+that all is well when it isn't.
 
->        wMaxPacketSize     0x0200  1x 512 bytes
+So it is incorrect to set the exit code to KSFT_PASS when there
+are skipped tests.
 
-> > > +             * If we ingest more data then usb_serial_generic_write() will
-> > > +             * internally try to process as much data as possible with any
-> > > +             * number of URBs without giving us the chance to wait in
-> > > +             * between transfers.
-> >
-> > If the hardware really works this way, then perhaps you should not use
-> > the generic write implementation. Just maintain a single urb per port
-> > and don't submit it until the device fifo is empty.
++    if ksft_cnt["pass"] + ksft_cnt["skip"] == ksft_num_tests:
 
-> I tried to avoid having to copy & paste (which then also means having
-> to maintain it down the line) most of the generic write
-> implementation.
-> This whole dance with waiting for the "Transmitter holding register
-> empty" by the way was the reason why parts of the transmit buffer got
-> lost, see the report from Nicolas in v6 [1]
 
-I understand, but the generic implementation is not a good fit here as
-it actively tries to make sure the device buffers are always full (e.g.
-by using two URBs back-to-back).
+>       else:
+>           exit_code = KSFT_FAIL
 
-If you can't find a way to make the hardware behave properly then a
-custom implementation using a single URBs is preferable over trying
-to limit the generic implementation like you did here. Perhaps bits can
-be reused anyway (e.g. chars_in_buffer if you use the write fifo).
+The logic here seems to not take into account when you have a
+conditions where you have a mixed results of passed tests,
+skipped tests, and failed tests.
 
-> > > +static struct usb_serial_driver ch348_device = {
-> > > +     .driver = {
-> > > +             .owner = THIS_MODULE,
-> > > +             .name = "ch348",
-> > > +     },
-> > > +     .id_table =             ch348_ids,
-> > > +     .num_ports =            CH348_MAXPORT,
-> > > +     .num_bulk_in =          1,
-> > > +     .num_bulk_out =         1,
-> >
-> > Set both of these to 2 so that core verifies that you have all four
-> > endpoints.
+Please revisit and figure out how to address this and report
+the status correctly.
 
-> I will have to test this because I thought that:
-> - using 2 here makes usb-serial allocate an URB as well and by default
-> assign it to the first and second port
-> - usb-serial should not touch the second bulk in / bulk out endpoint
-> (as they're entirely vendor / chip specific)
+thanks,
+-- Shuah
 
-Setting these two should make core make sure that the endpoints exist,
-and by default they will be assigned to the first and second port, but
-you can override that calc_num_endpoints() (as you already do).
 
-For the second IN EP, you could even let core allocate the URB and use
-that instead of doing so manually (e.g. by submitting yourself or using
-the generic read implementation as mxuport does).
-
-Johan
 
