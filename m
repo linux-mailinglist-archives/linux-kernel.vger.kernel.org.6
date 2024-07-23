@@ -1,163 +1,159 @@
-Return-Path: <linux-kernel+bounces-259960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A80993A07E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:28:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C8693A080
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CD411C21C32
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:28:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18901282FBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:29:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26D7152504;
-	Tue, 23 Jul 2024 12:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4135915250F;
+	Tue, 23 Jul 2024 12:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iVfI2FtL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="lwnVNnef"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE2C15098E
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 12:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7917114AD17;
+	Tue, 23 Jul 2024 12:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721737704; cv=none; b=hCIUt1tc74Sz/3UFiqvOk7aR8V7ZKtrpIwsfg09qWKl57DtUnONS2iIMDj7wo0qtx4oenUQUdcutHjt1VC10u0pWVhzAKChZg+gLz8AUyogAEJoIaknoOQLHBEQh8xTJOx/Po5g7PLmnBRv++asja6TI185CqiUuVuXN/nd4BCo=
+	t=1721737736; cv=none; b=SGnzaco45x+BXH71GRQ026XC9Bl1flkl1beVSVyoqvbQgER1EgU89ZhNwO5mZOvdfV9GMTMDX7iS/j1xoP2UCiFs/pyPzrG+dM9znQCF6BwzUhWmHdl4CR652C4id0snpdHwPQL6IkdckA+Yu9GyIQK0yAuwosdXBgI8vssVTOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721737704; c=relaxed/simple;
-	bh=+OP+/ndJDII/1ayRoWz4iTLmBd3NkR1YyAKF8OhvSAA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sY/O3jLKBu5WjGFEoduRrhd2HLZxhAgyXyUbpyOnGhyTfl0erPSlFLCdKLugVwGgbs3UgpOecwH+w5ypAnkRCJUBtlGk3etL9/D5+ZNVBAP2U2rUBRdLyfg6c/261I1k1Vyfdqx7BIGlLcT83MHFxLVsQGnxa48Uzy0fKW2vZsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iVfI2FtL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721737701;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=s22VzHRAIIyGxM1MC7MpBdBMABP437dIk/ekhiiTtmM=;
-	b=iVfI2FtLgToNRyeJZeMulyj4Q1t0lycRQKALMycfcqSHh2DRaLELRPXJ2aryEmWZu+XqDQ
-	6LMRhTkIdsbsDs+z7fstfgbz43mDWXdbg5I6glOsuu2m6KjHeS/Yi8NMDik2JiQ/kcXN1S
-	cwgtv4jnZIJPGF4erGETs3a6xx4XcD8=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-596-wKDUPbUwO9SC1FhNFwXGAw-1; Tue, 23 Jul 2024 08:28:20 -0400
-X-MC-Unique: wKDUPbUwO9SC1FhNFwXGAw-1
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4466e46a93cso72668291cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 05:28:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721737699; x=1722342499;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s22VzHRAIIyGxM1MC7MpBdBMABP437dIk/ekhiiTtmM=;
-        b=r+HnMwAMbDGKKrygj/BccEuBdjyf3lMoanQps1NR47oxSVk+avtE4+yxMAXCLtaNOj
-         UP9uwSkVjWoYcf+RkfQbdZKmjwHuAQEhgj6qp7XV/bhrTzjqX7RKzL6r0Vwtpul6pMHr
-         i/AzpHgk4ps1CQ3n/V3eIAOuyqxga3Cn6xZLI6KwkcTH8WBKTB2e+cli0rCPLgiO7nUx
-         qdpQWm2DsOV4V5jULULNEGLJbfZNDzFjCVToT2eTi665NVUHM0z85OwcXOWD4WcLP+p/
-         fRD4Usl1DgayBPbj/W5l2JOoiyKqKcfoLBA64QcPMYP9CsFj40hF7msPniQNpyUaO9uA
-         z27Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU+qCKSFrDxGANMxhnZaTeEGkjLyd8R8wAUBIadPiJl9v0n/2OLX/dge7PPjGVzlykd5fk2Tbol1zWrJdb0C9RbG5jtlo+J0DXJ31K2
-X-Gm-Message-State: AOJu0YxSa31A8XboC7Dp9a56iXAdy3eGYI/bWPLmXs2tnjxsRXJeV8tb
-	nXnM2Uf4zAnSnHxV8N8vpCQeBug/ktdRJOMcGa7Nr87U9K5bbZHEH1A+LJcZ5C415TdddhMoWXj
-	9XVruoFOBWDbdBjSo3eoTe5vT4ApgNKxpC7N6D5hQFfTB+poXB7+e09698kcLlfkKc3qYW/7iS/
-	jfxsfpQRtOpg8n+mhMDNlur5T/gcRwVzSfBED9
-X-Received: by 2002:ac8:58d3:0:b0:44f:8870:185f with SMTP id d75a77b69052e-44fc55a2fd0mr31224841cf.61.1721737699223;
-        Tue, 23 Jul 2024 05:28:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IElPggadun/vYrfy1t67bLcizkunGZ00byACDrIH3iQhE9dAQHC3FHrGwZvPan1S3vx4vhJe32woPulBhj0ZsY=
-X-Received: by 2002:ac8:58d3:0:b0:44f:8870:185f with SMTP id
- d75a77b69052e-44fc55a2fd0mr31224591cf.61.1721737698908; Tue, 23 Jul 2024
- 05:28:18 -0700 (PDT)
+	s=arc-20240116; t=1721737736; c=relaxed/simple;
+	bh=awSwb2cboI6RqbmY+PFcqfIX6SEr4n5iGukXM6aXalY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GTg5VmjH0wzVoRhKoFoF0ILftnBPmI9N13D79Vl5hQc07OhXeqAZuY9VFbNwc7pCWezbEIjBD6b4ZRO2EezBgaQaNZdKiXGpMAZfYAbxkTwDA3F3T1gpcnSBhPePQI//wT13zCO6uLfBabGGHddYKDZ5oj9yKjs/AaxxmUbPjuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=lwnVNnef; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76A50C4AF09;
+	Tue, 23 Jul 2024 12:28:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1721737736;
+	bh=awSwb2cboI6RqbmY+PFcqfIX6SEr4n5iGukXM6aXalY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lwnVNnefIrTL2KtFIWWEOSfniUcnhU+7QrZVSZ6Ee62qJyB7KzRneenMKmBMJLA6L
+	 zOeaCOs8bY2/aHQb0OjWvTiKcCL/zJ1ai2+UOHVCbZ8igUslc158dZVPpZR3lHVlAZ
+	 3d0xSFemGUMApDxwLIoz69sO7/nXClkpEM6lkCd4=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	allen.lkml@gmail.com,
+	broonie@kernel.org
+Subject: [PATCH 6.10 00/11] 6.10.1-rc2 review
+Date: Tue, 23 Jul 2024 14:28:51 +0200
+Message-ID: <20240723122838.406690588@linuxfoundation.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240722132935.14426-1-wander@redhat.com> <20240722132935.14426-2-wander@redhat.com>
- <Zp9uzXUwbJOpuwsv@jlelli-thinkpadt14gen4.remote.csb>
-In-Reply-To: <Zp9uzXUwbJOpuwsv@jlelli-thinkpadt14gen4.remote.csb>
-From: Wander Lairson Costa <wander@redhat.com>
-Date: Tue, 23 Jul 2024 09:28:07 -0300
-Message-ID: <CAAq0SU=c7vCq0honu=GpvLY=sL3xQHZ2N_=TmB23P=d4OXBcBQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] sched/deadline: Fix warning in migrate_enable for
- boosted tasks
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, "open list:SCHEDULER" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.1-rc2.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-6.10.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 6.10.1-rc2
+X-KernelTest-Deadline: 2024-07-25T12:28+00:00
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 23, 2024 at 5:50=E2=80=AFAM Juri Lelli <juri.lelli@redhat.com> =
-wrote:
->
-> Hi Wander,
->
-> On 22/07/24 10:29, Wander Lairson Costa wrote:
-> > When running the following command:
-> >
-> > while true; do
-> >     stress-ng --cyclic 30 --timeout 30s --minimize --quiet
-> > done
-> >
-> > a warning is eventually triggered:
-> >
-> > WARNING: CPU: 43 PID: 2848 at kernel/sched/deadline.c:794
-> > setup_new_dl_entity+0x13e/0x180
-> > ...
-> > Call Trace:
-> >  <TASK>
-> >  ? show_trace_log_lvl+0x1c4/0x2df
-> >  ? enqueue_dl_entity+0x631/0x6e0
-> >  ? setup_new_dl_entity+0x13e/0x180
-> >  ? __warn+0x7e/0xd0
-> >  ? report_bug+0x11a/0x1a0
-> >  ? handle_bug+0x3c/0x70
-> >  ? exc_invalid_op+0x14/0x70
-> >  ? asm_exc_invalid_op+0x16/0x20
-> >  enqueue_dl_entity+0x631/0x6e0
-> >  enqueue_task_dl+0x7d/0x120
-> >  __do_set_cpus_allowed+0xe3/0x280
-> >  __set_cpus_allowed_ptr_locked+0x140/0x1d0
-> >  __set_cpus_allowed_ptr+0x54/0xa0
-> >  migrate_enable+0x7e/0x150
-> >  rt_spin_unlock+0x1c/0x90
-> >  group_send_sig_info+0xf7/0x1a0
-> >  ? kill_pid_info+0x1f/0x1d0
-> >  kill_pid_info+0x78/0x1d0
-> >  kill_proc_info+0x5b/0x110
-> >  __x64_sys_kill+0x93/0xc0
-> >  do_syscall_64+0x5c/0xf0
-> >  entry_SYSCALL_64_after_hwframe+0x6e/0x76
-> >  RIP: 0033:0x7f0dab31f92b
-> >
-> > This warning occurs because set_cpus_allowed dequeues and enqueues task=
-s
-> > with the ENQUEUE_RESTORE flag set. If the task is boosted, the warning
-> > is triggered. A boosted task already had its parameters set by
-> > rt_mutex_setprio, and a new call to setup_new_dl_entity is unnecessary,
-> > hence the WARN_ON call.
-> >
-> > Check if we are requeueing a boosted task and avoid calling
-> > setup_new_dl_entity if that's the case.
-> >
-> > Signed-off-by: Wander Lairson Costa <wander@redhat.com>
-> > Fixes: 2279f540ea7d ("sched/deadline: Fix priority inheritance with mul=
-tiple scheduling classes")
->
-> I believe your fix makes sense to me. I only wonder if however it
-> actually fixes 295d6d5e37360 ("sched/deadline: Fix switching to
-> -deadline") instead of the change you reference above?
->
+This is the start of the stable review cycle for the 6.10.1 release.
+There are 11 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-That makes more sense, thanks.
+Responses should be made by Thu, 25 Jul 2024 12:28:30 +0000.
+Anything received after that time might be too late.
 
-> Thanks,
-> Juri
->
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.1-rc2.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
+and the diffstat can be found below.
+
+thanks,
+
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 6.10.1-rc2
+
+Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+    thermal: core: Allow thermal zones to tell the core to ignore them
+
+Pavel Begunkov <asml.silence@gmail.com>
+    io_uring: fix error pbuf checking
+
+Richard Fitzgerald <rf@opensource.cirrus.com>
+    ASoC: cs35l56: Limit Speaker Volume to +12dB maximum
+
+Richard Fitzgerald <rf@opensource.cirrus.com>
+    ASoC: cs35l56: Use header defines for Speaker Volume control definition
+
+Hao Ge <gehao@kylinos.cn>
+    tpm: Use auth only after NULL check in tpm_buf_check_hmac_response()
+
+David Howells <dhowells@redhat.com>
+    cifs: Fix setting of zero_point after DIO write
+
+David Howells <dhowells@redhat.com>
+    cifs: Fix server re-repick on subrequest retry
+
+Steve French <stfrench@microsoft.com>
+    cifs: fix noisy message on copy_file_range
+
+David Howells <dhowells@redhat.com>
+    cifs: Fix missing fscache invalidation
+
+David Howells <dhowells@redhat.com>
+    cifs: Fix missing error code set
+
+Kees Cook <kees@kernel.org>
+    ext4: use memtostr_pad() for s_volume_name
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                    |  4 +--
+ drivers/char/tpm/tpm2-sessions.c            |  5 +--
+ drivers/net/wireless/intel/iwlwifi/mvm/tt.c |  7 +++-
+ drivers/thermal/thermal_core.c              | 51 ++++++++++++++---------------
+ drivers/thermal/thermal_core.h              |  3 ++
+ drivers/thermal/thermal_helpers.c           |  2 ++
+ fs/ext4/ext4.h                              |  2 +-
+ fs/ext4/ioctl.c                             |  2 +-
+ fs/smb/client/cifsfs.c                      |  2 +-
+ fs/smb/client/file.c                        | 21 +++++++++---
+ fs/smb/client/smb2pdu.c                     |  3 --
+ include/sound/cs35l56.h                     |  2 +-
+ io_uring/kbuf.c                             |  4 ++-
+ sound/soc/codecs/cs35l56.c                  |  6 +++-
+ 14 files changed, 69 insertions(+), 45 deletions(-)
+
 
 
