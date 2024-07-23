@@ -1,127 +1,119 @@
-Return-Path: <linux-kernel+bounces-259778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E97939D04
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:56:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02790939D0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:59:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 604031F22B65
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:56:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 346A01C21C42
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:59:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C579A14C5A7;
-	Tue, 23 Jul 2024 08:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA82C14D296;
+	Tue, 23 Jul 2024 08:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="AggePin9";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Y4SAfn9/"
-Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="p9qxGzt3"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85484DDDC
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1FE14AD3E;
+	Tue, 23 Jul 2024 08:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721724959; cv=none; b=lfsARX3ylflktSw/QfoYpiR8lDp3ixuuhR4hsWZn004K5Sg69z4gGxyAhv3pFKVGIkkUxvFyFT2M8/hPxWfE1+gIckE61Zbw0WTmW+hd8XbZP5wXT+5k0UXabBBR95Fh6jIIepj37d93CBTjk2Pof6MosaJynA3GZ6Q5TG9116E=
+	t=1721725161; cv=none; b=ex0aBNg/NoAMW5AqP0XYQwsaQO8r6PkxAxCVMeEzTzOrCGsT43q7LPML216nTHosjnmwHDBYufXHhsNbR9b6qAsfJVfN4u49FywsRsdgEFu3YPeZpObO/2YWlX29H1rZnz3oHBPnCxDuE/EJ124ULNPY271TY8LV81MX1PPikNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721724959; c=relaxed/simple;
-	bh=iT2o+3iGgzCh9nHcu5sC7KrN+lp4tflywhi0biic3QY=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=DPRqqjLO/SSH47zkaJQ98gIXVkFKwfXQCSh5eZ9iiEc1lRu49IkNMXuVY4WO/PA1eAoaAM3NBK/gxSl/OXhW9icpEw68+4/h9sZyRYpecT71+Yam4twt+o8SwQrrEHvZyhBzfgKTQQT9Cf+hKwUHPn6PawnOa6l7paObEc5HTJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=AggePin9; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Y4SAfn9/; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 8344611403CB;
-	Tue, 23 Jul 2024 04:55:56 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Tue, 23 Jul 2024 04:55:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1721724956; x=1721811356; bh=FyL5MTIimQ
-	AM4wyC/Yjwd3fu3EluAHXlPeNmcE64ZIE=; b=AggePin9Hlu8yv9Z7NIlhR1VmN
-	6qnKWWM8LvoMFUWOFQEkAQeTyczNLhvSrKxt95Li8xN0BFnHrai916Mm34YQmqmT
-	QhS2g69VcbJtTq9EiY1YBL02GOIB+tSmrzlQegWJSMeH3WWA+ZKGhcVP/pXUMu9q
-	x9BrfdvwxBZTempMMjQjrmoP3Cy8WIfT43C7irabPl1nCAX8KaoBN7Rf/XxgWKLS
-	L8VovqqWGn2ggTfv/zeowjN0xP6SS12EXiIJe03q9lNswp9glJYA9H+GjDHZJLNM
-	pYL4KZrnhPxGaeFUgzGF051S9aTnQNVplk8HG8tq66NYM8SaDSKzJe8Qy01w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1721724956; x=1721811356; bh=FyL5MTIimQAM4wyC/Yjwd3fu3Elu
-	AHXlPeNmcE64ZIE=; b=Y4SAfn9/2FoWLrGZL0eZcHGUcOF/6yNzflrE3zytKwHD
-	YHhN8PreNpt/4ezxNrvOogR/E1/dpxWi0II/fU8l/JLOy3suzs7+zl8iTmzOyMbC
-	YToJp9IzJkP/mZwdEQouZxxMGEi+vsY8cq1FGYYXp2UxP5YFSUZRKtaTRv/i35ps
-	RG4NXcQkctbhACX63azUF8M2lsTQkrRXYfwOBdCguEibZmt8fZuNgmMD8sjK9g+p
-	H1y4ju0OquL4vFc9Kg73Xue3m2qVR36ecEDuj9jyeEdWX6IcDqJtmmGMPeX2w/Kq
-	u2Fmc0xMFpDzgwBMI3rin/ivyRzY9vEimwWofoqwLw==
-X-ME-Sender: <xms:HHCfZkODXvRENkJeTOD069Zz0q7ufoOvdiZzy5Jm-fn2yLMayfxHhA>
-    <xme:HHCfZq8x5lmA2LG0J6VvfbCjz_nKRaGLYp0bsdnLPyBVTq2erHV0EzBg4hQ5YKS0S
-    2dK34Zv-ON4z1RKMH4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrheelgddtlecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
-    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
-X-ME-Proxy: <xmx:HHCfZrS5Wp6Lz2UoQBFXLPT-sld6cSNQeordywGjt83DJJ1KLdBkqg>
-    <xmx:HHCfZss1TH7BXWuqFK7sYZX9EHHRawcVr4oPKTi3Ohoq4E6zid3AJA>
-    <xmx:HHCfZscNLxxc6TFntmHn2UiRCjLNAcC8psINKrNlC-UT-4phEdXzBg>
-    <xmx:HHCfZg1ExAwHg37FdjvDgfjYKVbhxaSbmkoMJxTau4AaewK3YUzxjA>
-    <xmx:HHCfZg1017p9-8nHu4nDgpyVWJu6QhA-ijsq2Sx9EGI737y0EE7L2mRH>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 22206B6008D; Tue, 23 Jul 2024 04:55:56 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-582-g5a02f8850-fm-20240719.002-g5a02f885
+	s=arc-20240116; t=1721725161; c=relaxed/simple;
+	bh=vuB9BvBovznV2C5TzKywXf/pl325gqX7cPXFdfLvaOg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RpWBZSGqpJm7c6aImDjAT0bYQl42BozUvBmcwoNy4eVnJBwjVcBOnOSE/wmOQ34u5TwN2AH8MzTnoRIcZuDeYiXhPGbyGdgYM+wDLhsv6A1kzxOmSM0CwIGK/ZZErp1EwS+KlJZfkPMkzUhvNexG4pKlhMegog7M7otmIdAZt0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=p9qxGzt3; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1721725158; x=1753261158;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vuB9BvBovznV2C5TzKywXf/pl325gqX7cPXFdfLvaOg=;
+  b=p9qxGzt3cqVKDiYi3/oZ5tYoGVYBz9Nxaux5IWGCKmuWisTbo76DFvyZ
+   V8fcyV8Gb5c5QZJjjupqsKH9dobAIG0pCws7w+OK9GHR7TLQAc3Wnq6Jd
+   0WX3OcRLnEbWz6MQepNQLONCZrLmWmAe/tt96FU7onl1Ao+N2MdBZt+AU
+   7QcXRMKU7iVCPTtBrBDh2JVc2qMyV76WA3frbWFEh2ssNIQVQedEGwfEp
+   n/VGv+zFX2qHgxZ4kSsLs8igYyId97aB5maVstE9+7ADt5qCVBZxfxt0a
+   zbzRn3Gs1pbE0jp4PzKHVxKz5AXRdMg/g2NxyXxxg4Hm1I/MQ6BVYcj9/
+   Q==;
+X-CSE-ConnectionGUID: RDjQsaNRTDa14ayDCi8WyQ==
+X-CSE-MsgGUID: DGp6JnEZQhSDYcZqLRRLZA==
+X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
+   d="asc'?scan'208";a="32331318"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 Jul 2024 01:59:17 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 23 Jul 2024 01:58:56 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex02.mchp-main.com (10.10.85.144)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Tue, 23 Jul 2024 01:58:54 -0700
+Date: Tue, 23 Jul 2024 09:58:30 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: David Lechner <dlechner@baylibre.com>
+CC: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Nuno =?iso-8859-1?Q?S=E1?=
+	<nuno.sa@analog.com>, Michael Hennerich <Michael.Hennerich@analog.com>,
+	Lars-Peter Clausen <lars@metafoo.de>, David Jander <david@protonic.nl>,
+	Martin Sperl <kernel@martin.sperl.org>, <linux-spi@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-iio@vger.kernel.org>
+Subject: Re: [PATCH RFC v3 0/9] spi: axi-spi-engine: add offload support
+Message-ID: <20240723-cabbie-opossum-6e551fe246f2@wendy>
+References: <20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <50aed87d-a844-46f8-8adc-e0661e42a1a9@app.fastmail.com>
-In-Reply-To: <20240722094226.21602-32-ysionneau@kalrayinc.com>
-References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
- <20240722094226.21602-32-ysionneau@kalrayinc.com>
-Date: Tue, 23 Jul 2024 08:55:34 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Yann Sionneau" <ysionneau@kalrayinc.com>, linux-kernel@vger.kernel.org
-Cc: "Jonathan Borne" <jborne@kalrayinc.com>,
- "Julian Vetter" <jvetter@kalrayinc.com>,
- "Ashley Lesdalons" <alesdalons@kalrayinc.com>,
- "Benjamin Mugnier" <mugnier.benjamin@gmail.com>,
- "Clement Leger" <clement@clement-leger.fr>,
- "Guillaume Thouvenin" <thouveng@gmail.com>,
- "Jules Maselbas" <jmaselbas@zdiv.net>, "Samuel Jones" <sjones@kalrayinc.com>,
- "Thomas Costis" <thcostis@gmail.com>,
- "Vincent Chardon" <vincent.chardon@elsys-design.com>
-Subject: Re: [RFC PATCH v3 31/37] kvx: Add kvx default config file
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="jAXlsA67pT68+om8"
+Content-Disposition: inline
+In-Reply-To: <20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
 
-On Mon, Jul 22, 2024, at 09:41, ysionneau@kalrayinc.com wrote:
-> From: Yann Sionneau <ysionneau@kalrayinc.com>
->
-> Add a default config file for kvx based Coolidge SoC.
+--jAXlsA67pT68+om8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I found only two very minor things I would change:
+On Mon, Jul 22, 2024 at 04:57:07PM -0500, David Lechner wrote:
+> There is a recap at the end of this cover letter for those not familiar
+> with the previous discussions. For those that are, we'll get right to
+> the changes since the last version.
+>=20
+> In RFC v2, most of the discussion was around the DT bindings, so that
+> is what has mostly changed since then. I think we mostly settled on
+> what properties are needed and where they should go. There are probably
+> still some details to work out (see PATCH 5/9 for more discussion) but
+> I think we have the big-picture stuff figured out.
 
-> @@ -0,0 +1,130 @@
-> +CONFIG_DEFAULT_HOSTNAME="KVXlinux"
+Thanks for the updates. I'm on holiday until rc2, so it'll not be until
+then that I can really take a look at this. Figured I'd let you know
+rather than just ignore you...
 
-Not needed
+--jAXlsA67pT68+om8
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +CONFIG_CONSOLE_LOGLEVEL_DEFAULT=15
-> +CONFIG_MESSAGE_LOGLEVEL_DEFAULT=7
-> +CONFIG_PANIC_TIMEOUT=-1
-> +CONFIG_BLK_DEV_INITRD=y
+-----BEGIN PGP SIGNATURE-----
 
-Should use initramfs instead of initrd
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZp9wtgAKCRB4tDGHoIJi
+0s45AP9fxybG2w4dniKJn5EQfbg7XWUzv0R5Hz9l8jkGqFRNfAEAkQTzWUaDvaud
+zdW3eay7nRJpxkBvMtV5Akz9ADBayA8=
+=nC48
+-----END PGP SIGNATURE-----
 
-      Arnd
+--jAXlsA67pT68+om8--
 
