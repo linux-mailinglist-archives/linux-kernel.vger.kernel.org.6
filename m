@@ -1,119 +1,148 @@
-Return-Path: <linux-kernel+bounces-260116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6419193A33C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:52:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 774CE93A33E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FD78284C16
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:52:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDC781F22D0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C86155C90;
-	Tue, 23 Jul 2024 14:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3AB7156C63;
+	Tue, 23 Jul 2024 14:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N1E6tJUE"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hwc+93ye"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03368153BE3
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D0D155CAB;
+	Tue, 23 Jul 2024 14:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721746324; cv=none; b=piYkWvEkj7gtcQ3z++uzbGLYHPv6TMr1Coh3M3ILLrws7bTIX7IEAvED0Aw7KJsC/0W4c6a6fFNSemzTgSxwTiM7Ou9t++8MMT6uJEjtKX1UE2zRizdKAHzGaM7u3YuHCUsTrRPzP5DEZdmowHPnXC1t70F5db4NTqzFOXhB60w=
+	t=1721746340; cv=none; b=USUoFjbmrXbDYJvFwtE3aFVFMcKmZzDYFE12a+WacZiac4qEr6GG7ufw1Z/vD8ENTWkTVyeXMluM1JCfykPqBCiZRlqEi8pZLEr3JJL0I01VA9qoD6T9SWB0IbIDST98V3v/MvI5fEl+6Mtd2WbeDWabxN//x3sg1+tZ6UaBhNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721746324; c=relaxed/simple;
-	bh=2BXRuhNjs+Co9wLYEOxSxxGquWpSDN79Re2KWJsmqjU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t+11C/3ADSyY4GfCWNMjh1yL3n4h1DHKLb3RHls8BBPAVlRw4/ZPhlPQPZfZD4291Gkz6In+a5begA8MJrpgWrNLRxGS7AlWsqshKEdkgb2ZiO1VYn82iApK46lW70wcKyV0ABTqGj84Sgc0Jn1jKYIg8JWChViG7EBtiQiUt+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N1E6tJUE; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6659e81bc68so57776427b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:52:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721746322; x=1722351122; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2BXRuhNjs+Co9wLYEOxSxxGquWpSDN79Re2KWJsmqjU=;
-        b=N1E6tJUEKY/skZErHhf8gzlkEBrluMxXMiWfke5AvrpyzV7YK2Q8wr8XZ3WLEA/qed
-         JVn/eJOLl+QAFlRleGJnM+T9+9Th0QfHa53RUVHDA0YwKZiaxv7L6XN6HPA89hVnMQqt
-         fJrPRswZDBkrgN6VCOij7giX8e/y8WXkaHzVTl0UTn2RcfzU3dhRGjO8y2zQqxSyfbC4
-         bZeirOJwu1Uk2/LuRTG9UKp/XA/gufruBPXKeIpuPy1Uoha+rD/mzVmldTB47wkgJzTh
-         11TYEzNz5BrVH10n03UTJ3ZhNfT2uDX8miPrZoTN9Ctse1tBhMw2z3IF3B28LDN8qdIb
-         BB6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721746322; x=1722351122;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2BXRuhNjs+Co9wLYEOxSxxGquWpSDN79Re2KWJsmqjU=;
-        b=QW0s7QzHGyUMoFFCKyS9dLA4hogX1My1+5z+5+hL+CYKfGTijT2tw2Yv9vZTnBDcDU
-         bVS89Gmkdu0fWi8ji3vrhiut+4mu5KN7++nBA6g51XycC2mH1B4wyiBxc2PzHl5H4qkF
-         6RGYhhboptjZJfCA53nVNi7RM/ePj9tEDTucinWOmjXJ/+sYsJIJi46ivRgZVxKdhEyE
-         ogqzIgp+7OQZ5AqONWtANA9pvm3nd/tE9Lr/glBv5k9J9emWMWt+qe1Q2BaD0YZB7QNg
-         cwy4zSeiB96JTzr/4Atpq89k1fC5rV89tjixiIS9zaP/1RV07+k9SIQ2FQAz1QPX74iV
-         qUmw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJP+x3k0r/2mVxqwzSqD4gKSMo4qnEIg/EKs+HjXCi/Kgz1TjZTswfpIPreDM3NuPXUOOm40gxuWg/pcFYhgEuGWLExxBWDhYzTjM6
-X-Gm-Message-State: AOJu0YwC6++X99bR31CAyiJMVZVeVh5nrokW274S0vECpRZYDCJnbDFM
-	JRt2hVIGJJq1bLxlsbQ9KBB9DbBIYbqHCJIM0s7pH6MpnslNxCzSRJfbIoZKe7aao+SEuOvoyrD
-	SRFJmXgQG+QCe+i+4EDgXxSB1r/H30rZCPaZa2g==
-X-Google-Smtp-Source: AGHT+IFlCYWvugkp/0qD48zXiVq5n8nEZGFk6f2+A30UMKsCFyXnu4uqalzH8462eajzoCxDB7GJwx/vhyVo840NBpk=
-X-Received: by 2002:a81:d101:0:b0:627:a757:cdfa with SMTP id
- 00721157ae682-66ada1fc200mr104933947b3.38.1721746321994; Tue, 23 Jul 2024
- 07:52:01 -0700 (PDT)
+	s=arc-20240116; t=1721746340; c=relaxed/simple;
+	bh=VmnqdqKrCSERHIJ0PvMmGjnUHXIweS/FQWmsghwZbII=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HNJt3+3VbF2R/jOPDfPeQAAvX8wjT0SxWdvbv00BsdlKtxd1NsutoHDJzvXoZNu1OIG/5F9T8XYZOESeqIjgh+CVlMxMK8dF4nRm3HA+ODENBRf6MnBu/u2kGl/5gcS34bzWUfZ92R4r2xBgnK+NNNKdm2mnUE2nchqPtgtOZps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hwc+93ye; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5473C4AF0C;
+	Tue, 23 Jul 2024 14:52:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721746339;
+	bh=VmnqdqKrCSERHIJ0PvMmGjnUHXIweS/FQWmsghwZbII=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Hwc+93yeX5UV1/+k3tTab46N7ZDq0h3tDis+AbYCW6zO6s6Kg5YYCT8hj7fx/RSqz
+	 L0vpArbLio8Hti2WaRX3QCvv5YZnNj693B6ndRzJcvHmeC+IX68eWTWeJvwt442hOo
+	 vwQCx/Yf014Q8KvMr7YcwSBhmjBr3YG/saAwRXxq7oZxRS3h0eltbmQK6ISJtid53X
+	 lAv3nm5Zm/vlBGodG3xpLV9M0Mjxo9YES4kh/nIS+dEjM1Y/ak5CwEz1q4iXxH3KrQ
+	 bav3DJHKd88Zcz0BjQnFfnKGyniHTO6ArU5UOsvtFtKh9PSGsbQQcvlQ5iOOOn6W6q
+	 vDDPdW0E+3FJQ==
+Date: Tue, 23 Jul 2024 15:52:14 +0100
+From: Will Deacon <will@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Asahi Lina <lina@asahilina.net>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>, ryan.roberts@arm.com,
+	mark.rutland@arm.com
+Subject: Re: LPA2 on non-LPA2 hardware broken with 16K pages
+Message-ID: <20240723145214.GA26403@willie-the-truck>
+References: <50360968-13fb-4e6f-8f52-1725b3177215@asahilina.net>
+ <20240718131428.GA21243@willie-the-truck>
+ <CAMj1kXFi0sRVMRNhMVEnYBrLT4DycPoDMUa9VkP8wqqdf59eeA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240723141714eucas1p1de8e11114883d4dadbffec2a102f92fc@eucas1p1.samsung.com>
- <CAPLW+4=NnmSNp30mm04-38j8r9Uy2MUbq28Ua7=aT13uo=NH=Q@mail.gmail.com> <20240723141707.374772-1-m.majewski2@samsung.com>
-In-Reply-To: <20240723141707.374772-1-m.majewski2@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Tue, 23 Jul 2024 09:51:51 -0500
-Message-ID: <CAPLW+4nVY4sJtFp56A271pEqd0n1ZuQKY0JeUbPcWDW6FNY7fg@mail.gmail.com>
-Subject: Re: [PATCH 3/6] drivers/thermal/exynos: check IS_ERR(data->clk) consistently
-To: Mateusz Majewski <m.majewski2@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXFi0sRVMRNhMVEnYBrLT4DycPoDMUa9VkP8wqqdf59eeA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Tue, Jul 23, 2024 at 9:17=E2=80=AFAM Mateusz Majewski
-<m.majewski2@samsung.com> wrote:
->
-> > Also, if it's only optional for Exynos850 (and not optional for other
-> > chips), maybe it would be a good idea to use *_optional_* API only for
-> > Exynos850 case, so that the driver's behavior for those chips stays
-> > unchanged.
->
-> Probably should just set the clock to NULL in case of 850 then?
->
+Hey Ard,
 
-Ah, you are right, there is not much sense in doing both. I guess the
-canonical way to do that (please check the drivers I referenced) -- is
-not to check the chip, but just run devm_clk_get_optional(), which
-sets the clock to NULL in case it's missing in dts. Less code this
-way. And while at it, maybe consider reducing the code even more by
-using devm_clk_get_optional_prepared().
+On Fri, Jul 19, 2024 at 11:02:29AM -0700, Ard Biesheuvel wrote:
+> Thanks for the cc, and thanks to Lina for the excellent diagnosis -
+> this is really helpful.
+> 
+> > diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> > index f8efbc128446..3afe624a39e1 100644
+> > --- a/arch/arm64/include/asm/pgtable.h
+> > +++ b/arch/arm64/include/asm/pgtable.h
+> > @@ -1065,6 +1065,13 @@ static inline bool pgtable_l5_enabled(void) { return false; }
+> >
+> >  #define p4d_offset_kimg(dir,addr)      ((p4d_t *)dir)
+> >
+> > +static inline
+> > +p4d_t *p4d_offset_lockless(pgd_t *pgdp, pgd_t pgd, unsigned long addr)
+> 
+> This is in the wrong place, I think - we already define this for the
+> 5-level case (around line 1760).
 
-> > Btw, from the downstream kernel code [1] I can see that the only TMU
-> > clock present in Exynos850 is
-> > GOUT_BLK_PERI_UID_BUSIF_TMU_IPCLKPORT_PCLK (which I was able to
-> > confirm in TRM). But it's not enabled in clk-exynos850.c driver right
-> > now. Do you want me by chance to send the patch adding it?
->
-> Would be very grateful :) If nothing else, it would be useful for
-> testing.
+Hmm, I'm a bit confused. In my tree, we have one definition at line 1012,
+which is for the 5-level case (i.e. guarded by
+'#if CONFIG_PGTABLE_LEVELS > 4'). I'm adding a new one at line 1065,
+which puts it in the '#else' block and means we use an override instead
+of the problematic generic version when we're folding.
 
-Cool, will try to do that soon!
+> We'll need to introduce another version for the 4-level case, so
+> perhaps, to reduce the risk of confusion, we might define it as
+> 
+> static inline
+> p4d_t *p4d_offset_lockless_folded(pgd_t *pgdp, pgd_t pgd, unsigned long addr)
+> {
+> ...
+> }
+> #ifdef __PAGETABLE_P4D_FOLDED
+> #define p4d_offset_lockless p4d_offset_lockless_folded
+> #endif
+
+Renaming will definitely make this easier on the eye, so I'll do that.
+I don't think I need the 'ifdef' though.
+
+> > +{
+> 
+> We might add
+> 
+> if (pgtable_l4_enabled())
+>     pgdp = &pgd;
+> 
+> here to preserve the existing 'lockless' behavior when PUDs are not
+> folded.
+
+The code still needs to be 'lockless' for the 5-level case, so I don't
+think this is necessary. Yes, we'll load the same entry multiple times,
+but it should be fine because they're in the context of a different
+(albeit folded) level.
+
+> > +       return p4d_offset(pgdp, addr);
+> > +}
+> > +#define p4d_offset_lockless p4d_offset_lockless
+> > +
+> >  #endif  /* CONFIG_PGTABLE_LEVELS > 4 */
+> >
+> 
+> I suggest we also add something like the below so we can catch these
+> issues more easily
+> 
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -874,9 +874,26 @@ static inline phys_addr_t p4d_page_paddr(p4d_t p4d)
+> 
+>  static inline pud_t *p4d_to_folded_pud(p4d_t *p4dp, unsigned long addr)
+>  {
+> +       /*
+> +        * The transformation below does not work correctly for descriptors
+> +        * copied to the stack.
+> +        */
+> +       VM_WARN_ON((u64)p4dp >= VMALLOC_START && !__is_kernel((u64)p4dp));
+
+Hmm, this is a bit coarse. Does it work properly with the fixmap?
+
+Will
 
