@@ -1,188 +1,129 @@
-Return-Path: <linux-kernel+bounces-260137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5B4D93A3B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:24:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CA4F93A3B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:24:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63C00284BFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:23:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ED97284BFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B4A157469;
-	Tue, 23 Jul 2024 15:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B55F157468;
+	Tue, 23 Jul 2024 15:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o9dN8cXq"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kJ/F1kSY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424C9154BE3
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 15:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A073D55D;
+	Tue, 23 Jul 2024 15:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721748229; cv=none; b=RSTjOgNKc5GNTUHWgfszrxF8GjRLkNInwux2NfsuGmjIy+h01yxesE89sMoFQ6bFw/vDlsbuaLBUx0NIz5unb7Hk+BNDFYdbnpDKlic/vgMM71Sk+6k3/InhMaxZsdmEaD8BJ23WwngkQS5CJMft7s4/ak7oQ8JOHLEmZe6U23k=
+	t=1721748288; cv=none; b=JSE2xSiLS33dh55LnsXjenEkNq/OJJvlAnbd6+bY7B522bQj/pe+ETkPMCLTgdeXgWGj90SYUY4Yx1MMWHf779CQHPOhTP4V19DtJ/sF813mWltn1TfZND1vqsSKul2n425jMcem7Uh5C/tMKYdg4b9kf4Gs4r+LmsfY0r4DjYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721748229; c=relaxed/simple;
-	bh=9a1m8wCw15p882FhgcOXJOX77YRxNGDibajWEZXzWeM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X6iDuBJCNBhahCBjIBp+WgI8myW+N5FyA7ocdlTrvsdV7xKb9CVmni0neqZIIESazNQwRWyBfj1OSkkjyugH2IPHY51yy/ra95iNazxVrakKI+6yZwpyLlUXKvPYFvqHtbzYV664hOk/iBjy4t6/3ZFuZvPax4f+p+xuhEgyTqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o9dN8cXq; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-643f3130ed1so56135647b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:23:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721748227; x=1722353027; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QmjktW+fy8V0urjYafMHY3WUuL7GfZ0ePI4CjTduJBY=;
-        b=o9dN8cXqCy5OTESuTSiJ/RYVgTDh6U+j79QlcdGzJgY0fhb6kC1jO5paz+0etJwpIy
-         v4X1Ig7uQPDTYbv6mb3rA/817S5DRyjHiq83hUA+Fspwvw8KfISXmaW9y3cj82vglYRH
-         so4bwZNumbrMvHX7IqmClMQB2k4YRsptkEn+Xwe1dtWMqM14yjG5m3eRcriZOS6pTOtS
-         PvLgTd1zvuNnitCUTj199NHR7JMIy7QmjGlXvYd9IbIWYtcIrkR5WI039wIngu8N0k26
-         Zf27uvZEEi3yvIeW1TZX/jEh+NLQmlxvoHcOrE1TBAq3/8+qoW4aDeKhztbfLVcAyxcQ
-         oWIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721748227; x=1722353027;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QmjktW+fy8V0urjYafMHY3WUuL7GfZ0ePI4CjTduJBY=;
-        b=mG9iDo3C4m2YyeVU2P1nfr23R8UnPVp1JoXQ7suZmcuviwNV12ZwlitwBGs205W1pL
-         CNmnl3FKZ0zr400J4e7KVIZG2KUHUu/i3XqhREax3NE+R2knAFW+DmtL+E3l06dsBPY9
-         4bx7fFn/LzCU5BCFowUIopLlFVwXdVzCNOobZdJMvsQXr718TIiV69r7HtVc4tLd+AlN
-         d3/ZGqXG7H6qrbWNXyaGXsmlfxjkPOuYvbIs0r5qbehTDdQ+r9bZJKjf8Bz9hhUE9EiY
-         bOtRltzwNSvQ7vwYAzOWI8SfEZtcBNRqUT0fHTbpnnFOASPZ1u2q+WQM4MlWUCc4GSJp
-         G0zg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+26aw9a6RsgdfuSbJEG9sfaMLMOFMOfuQuLzb4P50cqyuhCjEaEj+Ts77Cuggci/MunNJ5EtvY6L0IwciUW8dj49cAhtikmNGKjgF
-X-Gm-Message-State: AOJu0Yzovibp5RNNMfu3Fft06RjYY/iNYl44xdltRI885u7ErA6iGSYd
-	cp0Qkuu9PCHu51u17JGiyQKXezhFLjdD5GLsrZf6ubt5BfLNgl7vPZKpS1LGzJ3dnCas1oIVuMk
-	hnCXu+Ho/dpQcNSH52YelccD9Hasjj5nfmEC6+g==
-X-Google-Smtp-Source: AGHT+IFNhYPefrkyhvZ5EiwckdgofM6l9C3j+l80SPqYeQxgCB1HTAyW3/snR2cX8yS7q1mpdKGAE7N7Tba1WvQLuX4=
-X-Received: by 2002:a05:690c:2886:b0:65f:86a2:b4c5 with SMTP id
- 00721157ae682-66ada72f761mr103148437b3.31.1721748227226; Tue, 23 Jul 2024
- 08:23:47 -0700 (PDT)
+	s=arc-20240116; t=1721748288; c=relaxed/simple;
+	bh=dohcu7uOihTyTEi4nFcjN51ggUN5yjixHpV42IvzYhg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QiVqwHflXAWaWeB6k5TETby+VTPNBH8MCqWyIQS1m8Bo2lxLhnjxlZc9XGdynaPJptzEJn44KFuNSNHDK2ep0jGtoPAov6SaE+W/j5CWoXxZKWw9K/LLLdbVNRRYXSvLwm7L+Wxp7SOpWGjb/dW/4Ys4ty+Xkl7qf8oomvLeGGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kJ/F1kSY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D61B5C4AF0A;
+	Tue, 23 Jul 2024 15:24:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721748287;
+	bh=dohcu7uOihTyTEi4nFcjN51ggUN5yjixHpV42IvzYhg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kJ/F1kSY4yfVfn5e8MhSvH15MpkDjKAyU6GK3apBCi2J4S8m5DSLfjcd9xDYG23ai
+	 1QElkbqNQdjpWZ6N+APzgsvKTrLs4R47JJBQzTuUTwFldfouNOU7ancgmTACr6TLMH
+	 JU5IYcOx7p/PcStGqKVvX5AZ1HplhCdEXPH9LBuP9vgrhn75RWvtFjd5BWU4+5SdrV
+	 YQth2LyuHUVxWzxIMFibp/YiHgtWHofXZYdmD3M39joWaK9p8cKIWNbvtl0oxk/ohr
+	 HH89Q1lZ1DWYXo4I4Qu2ZyFtQ8uN0LcPh+Q421ziRXnOQKKoBlhiEXka9A9fzSIr7U
+	 3c89m4M5Hb8YA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sWHNe-000000000KM-2fqO;
+	Tue, 23 Jul 2024 17:24:47 +0200
+Date: Tue, 23 Jul 2024 17:24:46 +0200
+From: Johan Hovold <johan@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH 0/7] arm64: dts: qcom: x1e80100: PCIe fixes and CRD modem
+ support
+Message-ID: <Zp_LPixNnh-2Fy5N@hovoldconsulting.com>
+References: <20240719131722.8343-1-johan+linaro@kernel.org>
+ <172170324360.205121.298903694803259916.robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240723141705eucas1p1bbe72a6d543031a41efdbe81d1b03ac3@eucas1p1.samsung.com>
- <CAPLW+4n6XB3fm8KQA=6_2z8ay9pDPtu-VFgAaW5imZkRH2ywkg@mail.gmail.com> <20240723141658.374755-1-m.majewski2@samsung.com>
-In-Reply-To: <20240723141658.374755-1-m.majewski2@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Tue, 23 Jul 2024 10:23:36 -0500
-Message-ID: <CAPLW+4katjgDUS+e4+iYt+Cz_pKizLFUxqV4KGnbQ5ekAq9Mvw@mail.gmail.com>
-Subject: Re: [PATCH 5/6] drivers/thermal/exynos: add initial Exynos 850 support
-To: Mateusz Majewski <m.majewski2@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <172170324360.205121.298903694803259916.robh@kernel.org>
 
-On Tue, Jul 23, 2024 at 9:17=E2=80=AFAM Mateusz Majewski
-<m.majewski2@samsung.com> wrote:
->
-> > Do you know what are the possible implications of not using ACPM? As I
-> > understand, ACPM is a Samsung's downstream framework which uses APM
-> > (Active Power Management) IP block internally to act as an IPC
-> > mechanism, which makes it possible to offload any PM related
-> > operations (which might get quite heavy, if we are to belive the TRM
-> > description of APM) from CPU to APM. I'm not against the direct
-> > registers access based implementation (in fact, I'm not sure how that
-> > APM/ACPM thing can be implemented in upstreamable way and if it's
-> > worth it at all). Just curious if we understand what we are
-> > potentially missing out, and if at some point we'll be forced to
-> > implement that ACPM thing anyway (for something else)?
->
-> Not sure honestly. The downstream v4.10 driver does many operations on
-> registers anyway...?
->
-> > Not sure if that's true, as already discussed in my comments for the
-> > previous patches. Looks like one clock is still needed, which is the
-> > PCLK bus clock (to interface registers) which might simultaneously act
-> > as an operating (functional) clock.
->
-> The code seems to be working correctly without this clock, both register
-> reads and writes. Maybe the support for extra sensors, which I couldn't
-> get to work, would require this clock?
->
+On Mon, Jul 22, 2024 at 08:57:30PM -0600, Rob Herring wrote:
+> On Fri, 19 Jul 2024 15:17:15 +0200, Johan Hovold wrote:
+> > This series fixes some issues with the current x1e80100 PCIe support,
+> > adds the PCIe5 nodes and enables the modem on the CRD.
+> > 
+> > The fixes should go into 6.11, but the modem support depends on them so
+> > I decided to send everything in one series.
 
-Chances are that clock was enabled by the bootloader for us (or it's
-just enabled by default) and it just keeps running. If that's so, I'd
-say it must be described in dts and controlled by the driver. Because
-otherwise it might get disabled at any point in future, e.g. kernel
-may disable it during startup as an unused clock (when it's added to
-the clock driver), etc. Let me enable that clock for you, and then you
-can use /sys/kernel/debug/clk/ files to disable it manually and see if
-it actually affects TMU driver.
+> > Johan Hovold (7):
+> >   arm64: dts: qcom: x1e80100-crd: fix PCIe4 PHY supply
+> >   arm64: dts: qcom: x1e80100: fix PCIe domain numbers
+> >   arm64: dts: qcom: x1e80100-crd: fix up PCIe6a pinctrl node
+> >   arm64: dts: qcom: x1e80100-crd: disable PCIe6A perst pull down
+> >   arm64: dts: qcom: x1e80100-crd: fix missing PCIe4 gpios
+> >   arm64: dts: qcom: x1e80100: add PCIe5 nodes
+> >   arm64: dts: qcom: x1e80100-crd: enable SDX65 modem
+> > 
+> >  arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 110 +++++++++++++++++--
+> >  arch/arm64/boot/dts/qcom/x1e80100.dtsi    | 125 +++++++++++++++++++++-
+> >  2 files changed, 224 insertions(+), 11 deletions(-)
 
-> > Exynos850 TRM says AVG_CONTROL offset is 0x38, and 0x58 is actually
-> > for THRESHOLD0_TEMP_RISE3_2 register.
->
-> Thank you so much! Will fix in v2. Though writing to the right place
-> doesn't seem to change much in practice, probably just means that the
-> correct mode is being used.
->
-> > Something seems off to me here. How come the shift value for EXYNOS7
-> > case is 8, but the mask is actually 9 bits long? Does it mean the
-> > first error field is 8 bits long, and the second error field is 9 bits
-> > long for EXYNOS7? I don't have the Exynos7 manual, so it's just a
-> > hunch. But if it's true, maybe this shift value has to be added in
-> > your [PATCH 2/6] to fix Exynos7 case?
->
-> I did not really want to mess with Exynos7 code, as we don't have an
-> Exynos7 board sadly. Honestly I feel like I should drop the 2/6 patch
-> completely and only modify the code to run on 850 correctly.
->
+> My bot found new DTB warnings on the .dts files added or changed in this
+> series.
 
-It feels like there is an error for Exynos7 case there. Take a look at
-this commit:
+> New warnings running 'make CHECK_DTBS=y qcom/x1e80100-crd.dtb' for 20240719131722.8343-1-johan+linaro@kernel.org:
+> 
+> arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: pci@1c00000: Unevaluated properties are not allowed ('vddpe-3v3-supply' was unexpected)
+> 	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
 
-    aef27b658b43 ("thermal: exynos: use sanitize_temp_error() in
-exynos7_tmu_initialize()")
+I was surprised about this as this property is already used by this DT
+in the upcoming 6.11-rc1 (for the NVMe).
 
-I think that commit just forgets to update the shift value for Exynos7
-properly. This code:
+I found this thread were Abel tried to add the property to the new
+dedicated x1e80100 schema, but received some push back:
 
-    data->temp_error1 =3D trim_info & tmu_temp_mask;
-    data->temp_error2 =3D ((trim_info >> EXYNOS_TRIMINFO_85_SHIFT) &
-                EXYNOS_TMU_TEMP_MASK);
+	https://lore.kernel.org/lkml/20240604235806.GA1903493-robh@kernel.org/
 
-in case of Exynos7 becomes:
+Looking at the back story for this, the alternate name 'vpcie3v3' has
+been used by some non-Qualcomm controllers since 2016, while Qualcomm DT
+has been using 'vddpe-3v3' since 2018. And it's been clearly documented
+as part of the bindings the whole time.
 
-    data->temp_error1 =3D trim_info & 0x1ff;    // mask =3D 9 bits
-    data->temp_error2 =3D (trim_info >> 8) & 0xff;
+Earlier this year, 'vddpe-3v3' was incorrectly removed from the Qualcomm
+binding, which results in a checker warnings for a bunch old Qualcomm
+DTs. I've just sent a patch to restore this Qualcomm name here:
 
-it contradicts itself, because it takes 9 rightmost bits for error1,
-and then uses 1 of those bits for error2 too. It's obvious that if 9
-bits are already used for error1, then for error2 it has to be shifted
-by 9 bits, not 8.
+	https://lore.kernel.org/lkml/20240723151328.684-1-johan+linaro@kernel.org/
 
-That's why I think your patch 2/6 is legit and useful on its own, and
-it's actually a good catch on your part! But the shift value has to be
-fixed as well (for Exynos7). It's not ideal you don't have the
-hardware to test it, but it just screams *bug* to me :) Also, maybe we
-can ask someone who has Exynos7 hardware to test it for us?
+If we want to replace the Qualcomm specific name with the alternate name
+then this would need to be done by deprecating the current name, while
+adding backward compatibility support for the old name to the driver.
+I'm not sure anyone cares enough about this inconsistency to actually
+pursue this.
 
-> > Also, just an idea: those values (and other similar values) could be
-> > pre-calculated somewhere during the probe, stored in some struct (e.g.
-> > _variant or _chip) and then just used here.
->
-> sanitize_temp_error is only called one per probe and once per resume, so
-> probably little to gain?
->
-
-Sure, it was just a minor suggestion to make the code look more linear
-so to speak. It can be totally skipped.
-
-> Will also do all other.
+Johan
 
