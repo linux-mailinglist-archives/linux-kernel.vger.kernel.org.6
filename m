@@ -1,79 +1,74 @@
-Return-Path: <linux-kernel+bounces-259731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6611939C48
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:10:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6039D939C4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E668E1C21EFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:10:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 843C21C21E50
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E2914BF97;
-	Tue, 23 Jul 2024 08:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DADA14BF9B;
+	Tue, 23 Jul 2024 08:12:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wf0uUh4R"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vt9Y7TAP"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1334213D537
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E52313D537;
+	Tue, 23 Jul 2024 08:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721722229; cv=none; b=PxW5FdppUvpJhOo5T9cYANz7FbTeCJmdrnU0dELgVctgDB1Ixxkixe4sOXylUDALqO3Ke5QpCKQpvRvBJktGEpiphyG7CH9PnZyM6Gkpw4dSWWtupnC9H0DQfag2wGlgP63XEyMKOJK6lhYe5u52LHDazcII7cjgqPOolaTb1VA=
+	t=1721722340; cv=none; b=ui7TYrAWTxGWD22znytFwBJ93T2zXdpNX7CpmrgzN2nc9pLRKIOGmpoJZe8i1994xcHSSJ3hJmRDnLurTNoT237yBQu7KObI7JN6l4vnk1Stk3UzHCvQmdWc7xJxNuvoMWAYLFBFC5fIpM37gQR+GA32XBODU8aGcmOfc42bNiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721722229; c=relaxed/simple;
-	bh=fr95nzY+lzdUkWWatT97wPFAB2Gx9SYE2jl+ZxB5dKc=;
+	s=arc-20240116; t=1721722340; c=relaxed/simple;
+	bh=Nci5shqAtW9z0JkmjWOgIm73ZkR48ZhIoecaqh1v3o8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YPgRKgVApNPUhRdKf3FXbf3872Fbag0yR8q+BbDjQNCC3BoFLrF2Rf42I9d+PrYGBfNN923Pzjg4EQUg+6NIfN+cO9ufXJZKgkbkDHJy05MNqjzgBJztS17JDNNbY6zYj0crzop7F2fhK2jEaYsBcJadr3hp+VAPWzqKg8uHDXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wf0uUh4R; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721722227;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wmxfs8F2px2yhrVgIx5UvLCzYzlb0R0xZ5URWUC/7Rg=;
-	b=Wf0uUh4RIo0VmF7A7wtoPmFIHZ2h1b+5ehrOo1bVVX+DhdNI+sAS6hnF6vYojmVE0q2oNF
-	3jy2Y1FyhNvl1JyZer3NXmdQ+3iLvV+JHAnR+yRT1TS37luiP2qpVqy/dY2xyzJ5GKgg3K
-	g9Kf75Nr6H7c9CFVqxs6MJKm2iQMNBI=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-172-yFXtK0m1PQWkm8E9AHyNFw-1; Tue, 23 Jul 2024 04:10:19 -0400
-X-MC-Unique: yFXtK0m1PQWkm8E9AHyNFw-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3684636eb06so631124f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 01:10:19 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=qJn1sEPdLQ3p5yYAMjYKkeEEYx0CcnboF4AYcbguwpXh0zliKG8MZYUgnoMQJi3tW3mabENAanoBoC4Frut5Tod2vChTL5qBqNPrx0xGl/X/hjMqdkQtjU7rPN1QfXLLdJMp/gitoA1JguzSjoaecbI7maMkgCiJ64YAGpE72qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vt9Y7TAP; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4266fd395eeso37237855e9.3;
+        Tue, 23 Jul 2024 01:12:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721722337; x=1722327137; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=CM4w3yMUgJIqK5vukbkmgWzrmH9HIfj5GBxrPyujkoo=;
+        b=Vt9Y7TAPHO42cdP9kuxgEHNLIZ18qHVH1S4Te6ITcrEjOdNSWVhDfQurmtvvQ7tQtA
+         9kGr1PQygh4djm8RATwwsEM9MDhxXfSRp9tNjOFsVI3fmL1kqxIaUxMN1ieQg97qY4ky
+         V5BRFPxO3ofS6Y6D4ifOFz1yDVQ4jLtzZqXbgXiy2kGWWIGX5O0RxH3b1AV6GTNnMMMB
+         JQ04SXLNyLVTWhdGrBxWPx87y8tlDiTV6HApXglhzLR3xqcVUnK1u+iQAkfK8xHXApDZ
+         8pm35yk/M4W2z70Il2bCqVyguCqp68mewiSqSGmx01wWk8tjt56A2nk+mdcaJdkwZK73
+         RjpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721722218; x=1722327018;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wmxfs8F2px2yhrVgIx5UvLCzYzlb0R0xZ5URWUC/7Rg=;
-        b=iTtcDssFlDk1+s//8nVM4LU27DfMIgcaEi/TmLbPvoVorTXUTVfQM5wU29Bpi9VMYS
-         CfzsVWN/RBqjJooE5zWPaaqj3kijA4YlQNoxz525V7dW0mhdN7ZAULxVLz3Ez2c4GZ2U
-         ssxRujx9r3SsCBQGullri6hi+xJ0OzmlrbOnYyKvWqaGGtfAGWRkFRCQdX0xvOtQlxUe
-         4nbgMxqM+L70yOy5/Boil4/pFX6XFV46sEabYEih0lBj47zQ7gOMbBjJ7T/QJGY1otNo
-         /TAaCgWqp6jz+TX2F82R95yiL234ufQEpEjGxcn+DqpeWrr+4R4jQmFiJ7agbIUP1SdN
-         C0Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCX1jXzwTbfLbnFmO0yHGlBmN/r6F031B5CddsDdgAMRy4x4ov3uI5hrEDmxnfe39T8Q+UDNfFcJbRNlvnxwkiPsY17GAk5CJbpYZJiT
-X-Gm-Message-State: AOJu0Yx/rCfWQ7F/BrW/wi3O27yDhFtheUrQzzcCR0Yc5KSd2h0XzZAo
-	yXcv3wWWeApLyOs4TLH20JJOra2eSuvxUT7vXY2y8fymt6chuisEi+5HbUs93MWq4F9kZuL1H9/
-	S/WAAQi1Zc3IW0DnycFgunzBpJ0CJNAIRvlldTk6uvygMdXxJyEnrdscMbsICsA==
-X-Received: by 2002:a05:600c:4f4b:b0:427:9f71:16ba with SMTP id 5b1f17b1804b1-427daa927f5mr42550135e9.5.1721722218496;
-        Tue, 23 Jul 2024 01:10:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFjCo1aNAhjviULscGaL8sACLt8gU7d795r1dvnXHXwpUiu5iTQoVlYIXQzwkKwd8V2YJAIQg==
-X-Received: by 2002:a05:600c:4f4b:b0:427:9f71:16ba with SMTP id 5b1f17b1804b1-427daa927f5mr42550025e9.5.1721722218027;
-        Tue, 23 Jul 2024 01:10:18 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:173f:4f10::f71? ([2a0d:3344:173f:4f10::f71])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-368787cece3sm10602003f8f.69.2024.07.23.01.10.16
+        d=1e100.net; s=20230601; t=1721722337; x=1722327137;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CM4w3yMUgJIqK5vukbkmgWzrmH9HIfj5GBxrPyujkoo=;
+        b=lTWsGBzo2YwTv4JWO33D/2iXXhrIKtFp0AJHbLXGL3rmsA2q6/t7AYk7kN6L3Hd1oZ
+         srfrLBL8aw+LhmOVwIxMDcQKIF6sKQnWs4d3Mf7DN62Cz8EM8NramVrXAu+4cllm+nWu
+         3MOt8xhb9Hu7zxo5kGm3c+5A0YCppSG33+XlJdfDOyK9arlCbW+MaJMS20yYe2mAQX+I
+         t6K22XTXSlZcIYE5fSosg2YQQOVMoECFAZjjWiIExDnjbaRrTx7W3fPZHNJ+bTuUNLdD
+         ECb6IAyh2dpqRjFoHyj2vK3HJ4ZiKAiq4OvAslQInwek8aWaLjiWDjA1NBiDJXinFmpa
+         TJvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZX6txbcQ8z2Fzh6znWozu4Bag3RoZj7+xkGnkKrdp5yPyynZpYkAE+fD9OJg+vP+yVDHiV3YUW+ywLHZgdN+3Fh2dJ9Z/9Gj6H6YNu5wh0zeSuftj8ofqqSEPHFfmLNtHIq6oQ+1t+UkZEiBxsXMKLyHLJztsSPGw5SmrbAZjIA==
+X-Gm-Message-State: AOJu0YzgIhYO2xO8E3/eQVtIzUzggygvcAkgk93pOXthJ5H3SrIkVfPk
+	mwfNZ8vn8tPmpXBPV65FcpijzcI6ZtJHIpAyqlIydLMT/5qdG2Qb2GLi2A==
+X-Google-Smtp-Source: AGHT+IGJE1wZqeFHBiyy+ylY8S4SnHpUlSQBmitgx5l16e03ZYBnGsY5VZLmBRk8/HwaYXIe1VT/jg==
+X-Received: by 2002:a05:600c:4f8e:b0:427:98b4:624b with SMTP id 5b1f17b1804b1-427df7aa65bmr52889685e9.24.1721722337240;
+        Tue, 23 Jul 2024 01:12:17 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-427d2a53ccfsm186865295e9.11.2024.07.23.01.12.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 01:10:17 -0700 (PDT)
-Message-ID: <a2f181c3-92d7-4874-b402-50a54b6d289c@redhat.com>
-Date: Tue, 23 Jul 2024 10:10:15 +0200
+        Tue, 23 Jul 2024 01:12:16 -0700 (PDT)
+Message-ID: <7ae04ef2-bbd2-4e62-bf66-e61f64b12579@gmail.com>
+Date: Tue, 23 Jul 2024 10:12:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,45 +76,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2 0/2] tcp: restrict crossed SYN specific actions to
- SYN-ACK
-To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>,
- Neal Cardwell <ncardwell@google.com>
-Cc: netdev@vger.kernel.org, mptcp@lists.linux.dev,
- linux-kernel@vger.kernel.org, Jerry Chu <hkchu@google.com>,
- Jakub Kicinski <kuba@kernel.org>, David Ahern <dsahern@kernel.org>,
- Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>,
- Kuniyuki Iwashima <kuniyu@amazon.com>
-References: <20240718-upstream-net-next-20240716-tcp-3rd-ack-consume-sk_socket-v2-0-d653f85639f6@kernel.org>
+Subject: Re: [PATCH v2] arm64: dts: qcom: sa8775p: Mark APPS and PCIe SMMUs as
+ DMA coherent
+To: Qingqing Zhou <quic_qqzhou@quicinc.com>, andersson@kernel.org,
+ konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, ahalaney@redhat.com, manivannan.sadhasivam@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20240723075948.9545-1-quic_qqzhou@quicinc.com>
+From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20240718-upstream-net-next-20240716-tcp-3rd-ack-consume-sk_socket-v2-0-d653f85639f6@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=k.kozlowski.k@gmail.com; keydata=
+ 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
+ IS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240723075948.9545-1-quic_qqzhou@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 7/18/24 12:33, Matthieu Baerts (NGI0) wrote:
-> A recent commit in TCP affects TFO and MPTCP in some cases. The first
-> patch fixes that.
+On 23/07/2024 09:59, Qingqing Zhou wrote:
+> The SMMUs on sa8775p are cache-coherent. GPU SMMU is marked as such,
+> mark the APPS and PCIe ones as well.
 > 
-> The second one applies the same fix to another crossed SYN specific
-> action just before.
+> Fixes: 603f96d4c9d0 ("arm64: dts: qcom: add initial support for qcom sa8775p-ride")
+> Fixes: 2dba7a613a6e ("arm64: dts: qcom: sa8775p: add the pcie smmu node")
 > 
-> These two fixes simply restrict what should be done only for crossed SYN
-> cases to packets with SYN-ACK flags.
-> 
-> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> ---
-> Changes in v2:
-> - Patch 1/2 has a simpler and generic check (Kuniyuki), and an updated
->    comment.
-> - New patch 2/2: a related fix
-> - Link to v1: https://lore.kernel.org/r/20240716-upstream-net-next-20240716-tcp-3rd-ack-consume-sk_socket-v1-1-4e61d0b79233@kernel.org
 
-Re-adding Neal for awareness. It would be great if this could go through 
-some packetdrill testing,
+For the future: there is never, never a line break between tags.
 
-Thanks!
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-Paolo
+Best regards,
+Krzysztof
 
 
