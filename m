@@ -1,78 +1,160 @@
-Return-Path: <linux-kernel+bounces-260444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D372B93A94D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 00:27:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB11193A954
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 00:28:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 110C71C22471
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:27:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58B37B210A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F62E148FED;
-	Tue, 23 Jul 2024 22:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED36149006;
+	Tue, 23 Jul 2024 22:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Du8I+pFk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="heXVl6jS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E751428F0
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 22:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC271487D1;
+	Tue, 23 Jul 2024 22:28:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721773613; cv=none; b=nVwZ+K7t8v8UeD6jhtmoApdTENWMPQQTK1TeC4mkJhNjcVSjZA9lE1ZfM47cW0Zgb+B2LHQGYx3U0K0vjrH6/0+DC1FgYPOQiLKreJdx8dQwBohCdXzLY+gpIn5rlJka5f4afz+M0237Aerl5vJzt98s/I+33YmmmgC7C8a1DCI=
+	t=1721773703; cv=none; b=KQEbNPZ+t5nvX0z+AVnOp8op+ilR6CqY/MIHDHKygBfGUDz1sXOt73gZvKusOoSKgFixjn9kjx7DhcxnymTocq7WcD/6qbOnss2fm6IUGINSj8FzUiqx/qKfMauNyXPEC6u3QgjGSbGdqPbIuaQfjKXyX3udEVRQXQHJfP8KgcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721773613; c=relaxed/simple;
-	bh=qZ8wkkdS1/6f9bjx9ZaeHKYGJN0LmsRm2iUhVulcDDs=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=WUsv5mkEA4OHCQv8jTUTx+iNxXAPoZpEco2F8gTj3OwoJD1QmM+iGKRFsmcWbyd/lPn/M2lLwSNilwpSbqJGZgagezuu95PyYFsrGVc1b0dFVh974EO0Pj5/4LXs8pXLGSLNTgUBu2hLN67ZOqq0onh2B9o+/i/tf5Kz3txROTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Du8I+pFk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7B84FC4AF09;
-	Tue, 23 Jul 2024 22:26:53 +0000 (UTC)
+	s=arc-20240116; t=1721773703; c=relaxed/simple;
+	bh=vhEw1nDBqH/khMJ/eiR0TLM75/0lf2uUyUBKQewwZzU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=VE+Sp+Nuit0KqVnjlUebGwFWd9a6e1vCIZ2rHQkw8wMjSOdtl/wzM18yPdU8Jx50aUct5zcnzeSnxU9ZlBxXf5b1I9Myy3oim+d6v2pQKeh9ezr1nk73XURe6YtB489hhmSfzEouXgGdu4CzUU8xdtPfEUE3BpQOQq+eQM4kZlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=heXVl6jS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E30B6C4AF09;
+	Tue, 23 Jul 2024 22:28:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721773613;
-	bh=qZ8wkkdS1/6f9bjx9ZaeHKYGJN0LmsRm2iUhVulcDDs=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=Du8I+pFk543uRMNWBeZx56BYuFcDEE8TazJ8DlhKXWeUwI1VM3cJmaPUvQuFP4ePY
-	 M+DgaxgyPXF/tJVjZHinkTY8Qzo3W0TD7wD7VW8rRVaVaC357vQgKE1jIUxWWtpEUL
-	 pRxaQVZ+SUyfOqvx35z/X8s2AzqyWyFbRMo/KNtUpbfDA8JIA42q9i7Ge9kHQGLJ4C
-	 nnY+Q+dafVMVBJcgtdujF42N9wMCRrV6bzcWC2BbzREAnlJhNNTdvQufBa4b7mYwYr
-	 5J5bQODehIsavCNIG/PF0uZZbeYB89L5i2Tsa4D5wGirw4zFf/dqSKKzo9h/dOb2b1
-	 DUMqPRf4m198A==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 72A16C43443;
-	Tue, 23 Jul 2024 22:26:53 +0000 (UTC)
-Subject: Re: [GIT PULL] jfs updates for v6.11
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <4a4e7343-3af8-499f-8a7c-544848a71f14@oracle.com>
-References: <4a4e7343-3af8-499f-8a7c-544848a71f14@oracle.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <4a4e7343-3af8-499f-8a7c-544848a71f14@oracle.com>
-X-PR-Tracked-Remote: git@github.com:kleikamp/linux-shaggy.git tags/jfs-6.11
-X-PR-Tracked-Commit-Id: d0fa70aca54c8643248e89061da23752506ec0d4
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 371c141464b8312ee4a298fad6d17ee26654b7d6
-Message-Id: <172177361345.759.5687463486651349295.pr-tracker-bot@kernel.org>
-Date: Tue, 23 Jul 2024 22:26:53 +0000
-To: Dave Kleikamp <dave.kleikamp@oracle.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, "jfs-discussion@lists.sourceforge.net" <jfs-discussion@lists.sourceforge.net>
+	s=k20201202; t=1721773703;
+	bh=vhEw1nDBqH/khMJ/eiR0TLM75/0lf2uUyUBKQewwZzU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=heXVl6jS3m6TjPTuu8hwCG9LkYNSXM2Vl+bdRnNixEdHam4wSIDvUKVUtS9QRHsVE
+	 /acPNsL/YlvJHcs6A9uiZ4p/nFZXJSNLszvMBSdTo/wEP4KH0i8ba++af1IxNPdSJ0
+	 5SWi+wH/xzlCNGHmKPBVuqxZc6Waz2zSbgmdyqMiRDqvNZl93hMiLDccgmNUp1qATa
+	 +hciYBamwxKMgNjH9su6B/PMOvXZw5pTYT5P/kX3qw0dNd4VSZjR5jy9PfYMTtmq9s
+	 Gi7U/8Psqg9nhlMbMP1gPr0DigaqX6FzRke/Ssnwi8+zKH7Jr7mKOjLecmluADIVTy
+	 CXK2VYmLiBmxg==
+Date: Tue, 23 Jul 2024 17:28:21 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Wei Huang <wei.huang2@amd.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
+	Jonathan.Cameron@huawei.com, corbet@lwn.net, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	alex.williamson@redhat.com, gospo@broadcom.com,
+	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
+	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
+	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
+	vadim.fedorenko@linux.dev, horms@kernel.org, bagasdotme@gmail.com,
+	bhelgaas@google.com
+Subject: Re: [PATCH V3 05/10] PCI/TPH: Introduce API to check interrupt
+ vector mode support
+Message-ID: <20240723222821.GA779373@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240717205511.2541693-6-wei.huang2@amd.com>
 
-The pull request you sent on Mon, 22 Jul 2024 15:08:00 -0500:
+On Wed, Jul 17, 2024 at 03:55:06PM -0500, Wei Huang wrote:
+> Add an API function to allow endpoint device drivers to check
+> if the interrupt vector mode is allowed. If allowed, drivers
+> can proceed with updating ST tags.
 
-> git@github.com:kleikamp/linux-shaggy.git tags/jfs-6.11
+Wrap commit log to fill 75 columns
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/371c141464b8312ee4a298fad6d17ee26654b7d6
+Wrap code/comments to fit in 80.
 
-Thank you!
+Here and below, capitalize technical terms defined in spec ("Interrupt
+Vector Mode", "Steering Tag").
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> Co-developed-by: Eric Van Tassell <Eric.VanTassell@amd.com>
+> Signed-off-by: Eric Van Tassell <Eric.VanTassell@amd.com>
+> Signed-off-by: Wei Huang <wei.huang2@amd.com>
+> Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
+> Reviewed-by: Somnath Kotur <somnath.kotur@broadcom.com>
+> Reviewed-by: Andy Gospodarek <andrew.gospodarek@broadcom.com>
+> ---
+>  drivers/pci/pcie/tph.c  | 29 +++++++++++++++++++++++++++++
+>  include/linux/pci-tph.h |  3 +++
+>  2 files changed, 32 insertions(+)
+> 
+> diff --git a/drivers/pci/pcie/tph.c b/drivers/pci/pcie/tph.c
+> index fb8e2f920712..7183370b0977 100644
+> --- a/drivers/pci/pcie/tph.c
+> +++ b/drivers/pci/pcie/tph.c
+> @@ -39,6 +39,17 @@ static void set_ctrl_reg_req_en(struct pci_dev *pdev, u8 req_type)
+>  	pci_write_config_dword(pdev, pdev->tph_cap + PCI_TPH_CTRL, reg_val);
+>  }
+>  
+> +static bool int_vec_mode_supported(struct pci_dev *pdev)
+> +{
+> +	u32 reg_val;
+> +	u8 mode;
+> +
+> +	pci_read_config_dword(pdev, pdev->tph_cap + PCI_TPH_CAP, &reg_val);
+> +	mode = FIELD_GET(PCI_TPH_CAP_INT_VEC, reg_val);
+> +
+> +	return !!mode;
+> +}
+> +
+>  void pcie_tph_set_nostmode(struct pci_dev *pdev)
+>  {
+>  	if (!pdev->tph_cap)
+> @@ -60,3 +71,21 @@ void pcie_tph_init(struct pci_dev *pdev)
+>  {
+>  	pdev->tph_cap = pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_TPH);
+>  }
+> +
+> +/**
+> + * pcie_tph_intr_vec_supported() - Check if interrupt vector mode supported for dev
+> + * @pdev: pci device
+> + *
+> + * Return:
+> + *        true : intr vector mode supported
+> + *        false: intr vector mode not supported
+> + */
+> +bool pcie_tph_intr_vec_supported(struct pci_dev *pdev)
+> +{
+> +	if (!pdev->tph_cap || pci_tph_disabled() || !pdev->msix_enabled ||
+> +	    !int_vec_mode_supported(pdev))
+> +		return false;
+
+IMO the int_vec_mode_supported() helper is overkill and could be
+inlined here.  The other booleans can be checked first.
+
+> +
+> +	return true;
+> +}
+> +EXPORT_SYMBOL(pcie_tph_intr_vec_supported);
+> diff --git a/include/linux/pci-tph.h b/include/linux/pci-tph.h
+> index 8fce3969277c..854677651d81 100644
+> --- a/include/linux/pci-tph.h
+> +++ b/include/linux/pci-tph.h
+> @@ -12,9 +12,12 @@
+>  #ifdef CONFIG_PCIE_TPH
+>  void pcie_tph_disable(struct pci_dev *dev);
+>  void pcie_tph_set_nostmode(struct pci_dev *dev);
+> +bool pcie_tph_intr_vec_supported(struct pci_dev *dev);
+>  #else
+>  static inline void pcie_tph_disable(struct pci_dev *dev) {}
+>  static inline void pcie_tph_set_nostmode(struct pci_dev *dev) {}
+> +static inline bool pcie_tph_intr_vec_supported(struct pci_dev *dev)
+> +{ return false; }
+>  #endif
+>  
+>  #endif /* LINUX_PCI_TPH_H */
+> -- 
+> 2.45.1
+> 
 
