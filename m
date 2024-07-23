@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-259875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3537F939E9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:12:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A1C5939E9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D61181F22BF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:12:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BD891F22E6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD84214EC40;
-	Tue, 23 Jul 2024 10:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9962014EC57;
+	Tue, 23 Jul 2024 10:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d6nuuylg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PdQknqTH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9FA14E2F1
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 10:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0A514EC47
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 10:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721729535; cv=none; b=FyBJw+IQzjOHHUsXxxOEzFGWK1OO9O2hMJk/+CWG6vyACTmO5c9HXHvucUXpXnEfC8Ix0nywUAsVpjf8AynWpKR0DypDqRCDtHwp4xu1j2DIwE6BTkbO8ya//P2meO/giNEh1yYqWf5goOm+ayNs5nrTgwjbg3+L7Fw0KVpx1uo=
+	t=1721729537; cv=none; b=eec+T6tZcECMgr+pzUo0CVoeSpXLlseg1qUrhB3xZCFeYJGKnwuoLMwJka/x1g75pRMIExYytRSkQfX5MnMMRI3wn3HgkuUgBdRoyZvYVAJxhLeGgoaMvM0LAQbyghpWRvlUP2q2Bak11QUzltXnCfGlVFH/upnNE2oGC4M7iQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721729535; c=relaxed/simple;
-	bh=tIH8+pIIMMdAuQFVddSnwAJv1MQB2deGmxLg6GqUWmg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nvRmEUkLDIsmXX/zq8qnJYCt/twEjLdBeP2+LdCjdhAwEoWFwPVLn+9DMHW++zR9W9rsppbYF9qmxgRJoaFqMelPcOIsEaceSm3XHPDHbscpRtUlzdJflcWcBycc6jDCLnLvrgvh/b6SerCqF6J3RYAd1I5ITYJSISMUg3Kkh3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d6nuuylg; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1721729537; c=relaxed/simple;
+	bh=itl1BX28HKdGQXXxJvtLtVN7uHwH3jOcmXGakq6ld9k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=sqpB+vDfZzFfp4EO0kiCMfHHz1bTKhLUTEe+g4ggajSPjXps15s5BpeJIKuFuUx9dFSmFtnOia/UBGT962d3TFwSDWuteQzNRpOFdcxweffGK+/jP5srJUnptRrbb35J7dnQhhZdxFx+mNT9hyO74Fm2w7Na5p27GGaEi02fbmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PdQknqTH; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721729532;
+	s=mimecast20190719; t=1721729535;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=8cUp6hq8Rf9yICEw+ij+wA/0ySScqHZkH2/Mn4b/iJI=;
-	b=d6nuuylguXgOw1g7vPn2meI3vPAWm+SbxzePObXMapYawc6pQRC8Qdfe3xLbYy9yP6SOtX
-	K8Lks03AAHzV7qjWiLCsCi69XKkHPymmu5N7jjZkR3l9wU4dFxM2ew7IRXeNOUGXiVpL0b
-	M4gZ9uEIYAJ4lUyIWCc/EZDF5eKeoAg=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Xzuyk5RPlpL9t0A/8o4faeOblpZCzvEu932Ng83fGMs=;
+	b=PdQknqTH1zFPPyUaaBuikFqwxy2g2vL4DJIVfY7MXBatmP88pWXYFl2zJ6/YxEqGy7f7ye
+	aCebBd/Jt/OF29w2WjwHNijmW6lFfkphoLs7or/XET/rd8aPAiu+TLh/ZZ3Z539Ts8bKun
+	yRkeFxTuXlDIUSB823oYCbWcpp9gt7Y=
 Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
  [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-88-fExBWAg_PoaH-k49CrosMA-1; Tue, 23 Jul 2024 06:12:10 -0400
-X-MC-Unique: fExBWAg_PoaH-k49CrosMA-1
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-79f04b04fa7so792046985a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 03:12:10 -0700 (PDT)
+ us-mta-101-EoCeDWnVN56TGYZDwjzBsA-1; Tue, 23 Jul 2024 06:12:13 -0400
+X-MC-Unique: EoCeDWnVN56TGYZDwjzBsA-1
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-79f19f19b11so743201385a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 03:12:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721729530; x=1722334330;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8cUp6hq8Rf9yICEw+ij+wA/0ySScqHZkH2/Mn4b/iJI=;
-        b=uBQF6oxtIAZZZKE+0cmPegdHeFaR7mD+dB/SKsSFB9DdNV7Dp3TFugky4se7+yGZG0
-         NHKl/uoR3+OovQdmAecaMGUg2LbUGbVKbxYVTPjs9Rv2R7Z7Ok/O3BZrv2DvCKU1vM6u
-         LI7f/CVotkYF2R+gjS+HHemlsWZaFXlH0acGAf21pJGJ7Rowyn7cawNLnpWtm65NmuCq
-         fLND+3MtzbCD9+NnT3nFiQ0hazkP1h1SydDwvL1aNoS3C9K/E7CdSRwfpvcGG24r2aGw
-         J2gi1YcMAupYG9V1Rs2wN1340HWezBeixGXornRPtnQlKpzxPRjbeMUbzT9KtIGlEl3n
-         DgEw==
-X-Forwarded-Encrypted: i=1; AJvYcCWYiBxrbnmvs/GbRKjPuBxPVvFs/jLvpxWu2Lwug201ubsz7WGcyQfiWnP0B8Lk+Cz1ivjumCgwLFUdVX5nTe6Q69Q7yG3I0gwY+4/T
-X-Gm-Message-State: AOJu0YyJkYCvlLGbfBU1OcHYURtdRw+5j5bfYdGbw43Jk/HWhDQs24pH
-	t7PUwxNwZXRXVlKa1TTpLPLlOttU+fE33zoDkfyc0RtSdYR3p+nx3+tMRGsWTz63jvY1CubUWZ8
-	h6LlGr6LPI1E+GrXUyB98hG6oZ9tTtxj/GyDzhA0KQUAuCvNcHbV9fZ5d6JLalQ==
-X-Received: by 2002:a05:620a:29d5:b0:79e:ff47:3307 with SMTP id af79cd13be357-7a1a130a702mr1465270585a.8.1721729530135;
-        Tue, 23 Jul 2024 03:12:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFyt0QS1IKTLLjiIiYvN5IywSbQLXxQfkNLU8SejKutptyLr0Xnp/x8tl4jKx3X5B48LdDkqQ==
-X-Received: by 2002:a05:620a:29d5:b0:79e:ff47:3307 with SMTP id af79cd13be357-7a1a130a702mr1465268685a.8.1721729529791;
-        Tue, 23 Jul 2024 03:12:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721729533; x=1722334333;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Xzuyk5RPlpL9t0A/8o4faeOblpZCzvEu932Ng83fGMs=;
+        b=MDvtWjEe2YumGu/A+tCAnethXq9Y6ZvGgX+eiWKsVI/BtU8oP1E5Tnba5+KnB5M3Kh
+         Io9wHauq7AEhLXsjJLOyF58xYliZ2eWbJLn+yqdsOyTHJV/0MWWTmR/s3EqTiC9wbAjj
+         wNvWfQz+MfUWrvf5NCmfY2uIivxNoDDCBNtRcFMWc+W6fVqllWWfLw2WEjw3nO0GqS6u
+         mjkCk9pauePfweb19glBRdTjft8IctIdSkpHywILWOwOyIMYbhYOpFTw6D6IbkPNZlVo
+         ic3mdGLm1TnmmbQHVzt42BWlFWh6jwS/n9pRpJ+pErUCsnFBlP596pK4/UIipmeFUJVB
+         VWlg==
+X-Forwarded-Encrypted: i=1; AJvYcCXnv9pUvKv0itgkUH+6uh4GTGo6b+ytUWd1sAByc87O1k6TNHt+tEjX9FAVmShRXUNIKvZ5m0lhLQC715ImZhh25OkU7CyqmuWffO7d
+X-Gm-Message-State: AOJu0YyqZyRUuCEMtOREjX4rVqX8XMQQaAwKDQGo+aTnEcuRFXssAgLL
+	Nya5KsCLX4X1JuY26C8QpBDnYuDYPLrY6Ty/uDpGxEBC5yKcH0KhtJYaArIT0IWcpI3NgxriU8P
+	+/4Yithap0dUeqIVICsnxdysTCVoijT7SQwEJLN0zU2/I/orNT5g/opQJnczptQ==
+X-Received: by 2002:a05:620a:394a:b0:79f:16c8:b04a with SMTP id af79cd13be357-7a1c06bc41fmr275051585a.26.1721729533205;
+        Tue, 23 Jul 2024 03:12:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHvx7LA7H50ASsJ8L06HMjDMhwLdP2mNIndsn8L+inHJpH2PTr3YecDjb7uZQ/0eEz1EtS9Fw==
+X-Received: by 2002:a05:620a:394a:b0:79f:16c8:b04a with SMTP id af79cd13be357-7a1c06bc41fmr275049785a.26.1721729532879;
+        Tue, 23 Jul 2024 03:12:12 -0700 (PDT)
 Received: from rh.redhat.com (p200300c93f45e50062e5f8c654844c9a.dip0.t-ipconnect.de. [2003:c9:3f45:e500:62e5:f8c6:5484:4c9a])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1990063f2sm463780085a.64.2024.07.23.03.12.07
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1990063f2sm463780085a.64.2024.07.23.03.12.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 03:12:09 -0700 (PDT)
+        Tue, 23 Jul 2024 03:12:12 -0700 (PDT)
 From: Sebastian Ott <sebott@redhat.com>
 To: linux-arm-kernel@lists.infradead.org,
 	kvmarm@lists.linux.dev,
@@ -82,10 +84,12 @@ Cc: Marc Zyngier <maz@kernel.org>,
 	Will Deacon <will@kernel.org>,
 	Zenghui Yu <yuzenghui@huawei.com>,
 	Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 0/3] KVM: arm64: fix warnings in W=1 build
-Date: Tue, 23 Jul 2024 12:12:01 +0200
-Message-ID: <20240723101204.7356-1-sebott@redhat.com>
+Subject: [PATCH v2 1/3] KVM: arm64: fix override-init warnings in W=1 builds
+Date: Tue, 23 Jul 2024 12:12:02 +0200
+Message-ID: <20240723101204.7356-2-sebott@redhat.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240723101204.7356-1-sebott@redhat.com>
+References: <20240723101204.7356-1-sebott@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,34 +98,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Building arch/arm64/kvm/ with W=1 spills out a lot of warnings. When
-changing stuff I try to use as much tooling as possible to make sure
-that I don't screw up - having a clean baseline imho helps with that.
+Add -Wno-override-init to the build flags for sys_regs.c,
+handle_exit.c, and switch.c to fix warnings like the following:
 
-With the first 2 patches applied make W=1 arch/arm64/kvm/ runs without
-warnings for me (fedora userspace, upstream linux after kvm merge).
-Patch 3 gets rid of sparse lock warnings in arch/arm64/kvm/vgic/.
+arch/arm64/kvm/hyp/vhe/switch.c:271:43: warning: initialized field overwritten [-Woverride-init]
+  271 |         [ESR_ELx_EC_CP15_32]            = kvm_hyp_handle_cp15_32,
+      |
 
-Patch 1 now just adds -Wno-override-init to the cflags of the affected
-files. Alternatives would be to add this to the whole subdir or
-reintroduce the flag for higher warn levels..
+Signed-off-by: Sebastian Ott <sebott@redhat.com>
+---
+ arch/arm64/kvm/Makefile          | 3 +++
+ arch/arm64/kvm/hyp/nvhe/Makefile | 2 ++
+ arch/arm64/kvm/hyp/vhe/Makefile  | 2 ++
+ 3 files changed, 7 insertions(+)
 
-Sebastian Ott (3):
-  KVM: arm64: fix override-init warnings in W=1 builds
-  KVM: arm64: fix kdoc warnings in W=1 builds
-  KVM: arm64: vgic: fix unexpected unlock sparse warnings
-
- arch/arm64/kvm/Makefile          |  3 +++
- arch/arm64/kvm/arm.c             |  1 +
- arch/arm64/kvm/hyp/nvhe/Makefile |  2 ++
- arch/arm64/kvm/hyp/vhe/Makefile  |  2 ++
- arch/arm64/kvm/vgic/vgic-irqfd.c |  7 ++++---
- arch/arm64/kvm/vgic/vgic-its.c   | 18 +++++++++++-------
- arch/arm64/kvm/vgic/vgic-v3.c    |  2 +-
- arch/arm64/kvm/vgic/vgic.c       |  2 +-
- arch/arm64/kvm/vgic/vgic.h       |  2 +-
- 9 files changed, 26 insertions(+), 13 deletions(-)
-
+diff --git a/arch/arm64/kvm/Makefile b/arch/arm64/kvm/Makefile
+index a6497228c5a8..86a629aaf0a1 100644
+--- a/arch/arm64/kvm/Makefile
++++ b/arch/arm64/kvm/Makefile
+@@ -10,6 +10,9 @@ include $(srctree)/virt/kvm/Makefile.kvm
+ obj-$(CONFIG_KVM) += kvm.o
+ obj-$(CONFIG_KVM) += hyp/
+ 
++CFLAGS_sys_regs.o += -Wno-override-init
++CFLAGS_handle_exit.o += -Wno-override-init
++
+ kvm-y += arm.o mmu.o mmio.o psci.o hypercalls.o pvtime.o \
+ 	 inject_fault.o va_layout.o handle_exit.o \
+ 	 guest.o debug.o reset.o sys_regs.o stacktrace.o \
+diff --git a/arch/arm64/kvm/hyp/nvhe/Makefile b/arch/arm64/kvm/hyp/nvhe/Makefile
+index 782b34b004be..b43426a493df 100644
+--- a/arch/arm64/kvm/hyp/nvhe/Makefile
++++ b/arch/arm64/kvm/hyp/nvhe/Makefile
+@@ -20,6 +20,8 @@ HOST_EXTRACFLAGS += -I$(objtree)/include
+ lib-objs := clear_page.o copy_page.o memcpy.o memset.o
+ lib-objs := $(addprefix ../../../lib/, $(lib-objs))
+ 
++CFLAGS_switch.nvhe.o += -Wno-override-init
++
+ hyp-obj-y := timer-sr.o sysreg-sr.o debug-sr.o switch.o tlb.o hyp-init.o host.o \
+ 	 hyp-main.o hyp-smp.o psci-relay.o early_alloc.o page_alloc.o \
+ 	 cache.o setup.o mm.o mem_protect.o sys_regs.o pkvm.o stacktrace.o ffa.o
+diff --git a/arch/arm64/kvm/hyp/vhe/Makefile b/arch/arm64/kvm/hyp/vhe/Makefile
+index 3b9e5464b5b3..afc4aed9231a 100644
+--- a/arch/arm64/kvm/hyp/vhe/Makefile
++++ b/arch/arm64/kvm/hyp/vhe/Makefile
+@@ -6,6 +6,8 @@
+ asflags-y := -D__KVM_VHE_HYPERVISOR__
+ ccflags-y := -D__KVM_VHE_HYPERVISOR__
+ 
++CFLAGS_switch.o += -Wno-override-init
++
+ obj-y := timer-sr.o sysreg-sr.o debug-sr.o switch.o tlb.o
+ obj-y += ../vgic-v3-sr.o ../aarch32.o ../vgic-v2-cpuif-proxy.o ../entry.o \
+ 	 ../fpsimd.o ../hyp-entry.o ../exception.o
 -- 
 2.42.0
 
