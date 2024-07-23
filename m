@@ -1,79 +1,208 @@
-Return-Path: <linux-kernel+bounces-260396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10C4A93A85A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:53:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96E4593A85C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0B5C283BFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:53:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2E401C227C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0849B143897;
-	Tue, 23 Jul 2024 20:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE1E14389C;
+	Tue, 23 Jul 2024 20:54:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NMJJ7LXv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b="mxLocVfX"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B35C13D898;
-	Tue, 23 Jul 2024 20:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE6A13D898
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 20:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721767999; cv=none; b=TKmIk37nklbpEDfu+cMtIfzEqr6d2WuSQ5SvnwKZ5Qrjj4SJ/pG3a5fm3qbbzs5CIIcmsMCrFb6wxfLIP/bRN3X9mEotMw4tWPNdRbYJqQJKfUrVQEvKIa3wOseqv45LuwVIcQoAR/oIQ4ocKDXubXEWRzlb4/iaYBngnZJ6MEI=
+	t=1721768095; cv=none; b=FxJ6nQPFPyRyafXcpbrMMhAbCiDVncJEPh1hdIkpADj1D0lb6AJcKD0hTTlfVWwhHnMJTc1FhgG99whC+nzCGI7nBJcGXN1idpyz8mDwwnD1k4oJbf5UC/4jhsHTUxEGQi8tzfcdZP6vDGkVJ67jGQHais9KV6iUnBnaj81OtXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721767999; c=relaxed/simple;
-	bh=nLXdX0nZvGK+p3et0VwEd4XC8lb38FAt3i9erKTxxS8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LRkppFn5WHIsqSDLcsRSbCP4XC2P2M/t9/9QLy2eKfaIiTwLGe7dlj2CFzDVuLncqsRbWQKiAR5XFZZr3bBW+mfypNEsoLdVxRAXsO9i0H0T+WpTxUp8Iic14MXRwof55XSp0gli0OEEJhNR+/Z1ZB78ThiHoVzx4farwyXEE/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NMJJ7LXv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1EEEC4AF09;
-	Tue, 23 Jul 2024 20:53:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721767998;
-	bh=nLXdX0nZvGK+p3et0VwEd4XC8lb38FAt3i9erKTxxS8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NMJJ7LXvzvRYLy62fiNDBZOb8ieaaDFgJ/ZQJL/cuyaVy3fhkBnxNLhr//6evZR4K
-	 R3BxlJnACtSCyW8ybmfXUL7u74/tPkOEtJx64IUvbmugnMLJo10FvrFrlEHdRCXpcm
-	 HkAhM0hktcnHb4JpqQInrfYT/UFNuVmfsCtsDaDxzdg1yax02U4WoHp0zrO2OhanPp
-	 DA8A2Hdlb7VElZzcHDGC3UQvQf0jSgeAOfipiwEYlVnh1O9fP3YnqlYwYOA1xFwvUO
-	 1RBfKxkKBcA+CsO9dmt0Zk/Gvtmhpodc92/wZqoY3aZL8d6ShRFbCJvnNj56HMKIlI
-	 CLvhdKP4G18vw==
-From: Kees Cook <kees@kernel.org>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: Kees Cook <kees@kernel.org>,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gcc-plugins: randstruct: Remove GCC 4.7 or newer requirement
-Date: Tue, 23 Jul 2024 13:53:14 -0700
-Message-Id: <172176799122.928945.8670359661478965472.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240723165332.1947-1-thorsten.blum@toblux.com>
-References: <20240723165332.1947-1-thorsten.blum@toblux.com>
+	s=arc-20240116; t=1721768095; c=relaxed/simple;
+	bh=c3dJCxNCMuvmNluI2NbiwjAxlTld8R1ci3G2AZApap8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hNXjb9ZjV60912Mi9qiJXRrvDmUpNEyCC68FTGizUb4BEaUqyewjK6QJcgVi4kX3g+9+0HXMOHFU1qQ/GCv4j5Ro/7qvuAZ9QDBcjF7Mq1lri3KCVN1RBMygMK5bbvbAw78MJDgB2N1/Ox7SJCFh3ohChe4tcYO/8QcKwmzV+lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net; spf=pass smtp.mailfrom=opensrcsec.com; dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b=mxLocVfX; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensrcsec.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a309d1a788so5291864a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 13:54:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=grsecurity.net; s=grsec; t=1721768092; x=1722372892; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=0C5KvvCKRFRHGyXQ0+xgCLiKx4jBjXnWC42JoYTxDRM=;
+        b=mxLocVfXwaJxVyhse8Z3hD7E4Bu/Fndwki4cvuTqLjJUAT28+3TwfFxwZTWOGhVtD7
+         jWvIDh1LIJx7ZwPnp/TGbJJ3ouQ5tddPR/eN/OYSRegkDRbKVFH2RJvrFldxjPMxqSSR
+         Bn0vfaDKUxcLFfD2HMemGsmo3ssQQ8LsPT4vqjOCOplNaMV9jdTTj9B0U8fnedi78U3i
+         K21ntKLrWUlSV2Ja6I5+D3Kbqn0YWoHIZqO3ox/lYzsGfNVkpoygVqI0iO5QTJMNPwjU
+         kFydnuFrHBJfcivkUjgrJOlKBokkAfvMsQm0u+w+X6EqGLjtQcG2w116BXjXicBmzT6p
+         sv6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721768092; x=1722372892;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0C5KvvCKRFRHGyXQ0+xgCLiKx4jBjXnWC42JoYTxDRM=;
+        b=ZHYAr8ZxwUo3Vk5KiPwXqjZUcyNkQlfr+OTeAxvCubXAIIJfJ96cVrNbNdXmyGqaz9
+         usNyK6jZYuotJp7CGjzGrGFAa27uMEJWp9Z3t/ykwF1Ycw2MSvmeurU479ZPxljK/hEP
+         AyN+fTFXJSXHbFnI+BfFlvPIyr6MCH3Dr8qKscYr6tH8EeB7ECndVCsHYqPzhkebcAkf
+         Hup840ncHthiekpxeULXIlvgEY5ZeBop+vwt6NPxXJsPt0UQoxIL2l07wzV2GpWgo+JG
+         c6XirDTj5TqgYpP5I/23GWIr8ejibTXwy3/sM4Y+rBMA+J6ezyHcOEF4jmZ6dpMMioIW
+         g+cw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnJJZ22j3/WMs/wpXwLAaAhNAC+ZVYI2zusArRcTfIbx6PRwJecHfyIhAqwBXQKoMbCXu9GzYLQVkoS0ZO/Uq7GEBPAB2pmsKHdwhw
+X-Gm-Message-State: AOJu0YyzbpViBEVWFA3LY12WtcHtyewZpj+CJzgjy0O0RYj5KXPXZLzI
+	WxdyjQzcw3BZ5gpb8Y2DJwOfubPaPS68DTxcmTewtVzc/unZFdgo1xnuwqX+8Hg=
+X-Google-Smtp-Source: AGHT+IHynNSHyiGdoWpM/KpuEMOPO9NWXApR3ESELw9oE4siucbrVU7Vr6SSMFDZbdHuyjkpVjXyEg==
+X-Received: by 2002:a17:906:d550:b0:a77:f65d:39ff with SMTP id a640c23a62f3a-a7a8847a636mr320365966b.53.1721768092203;
+        Tue, 23 Jul 2024 13:54:52 -0700 (PDT)
+Received: from ?IPV6:2003:f6:af04:ba00:683d:7717:ab42:e94? (p200300f6af04ba00683d7717ab420e94.dip0.t-ipconnect.de. [2003:f6:af04:ba00:683d:7717:ab42:e94])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7aa8d8d0cesm38200066b.138.2024.07.23.13.54.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jul 2024 13:54:51 -0700 (PDT)
+Message-ID: <10dd9e0f-fb2d-4667-8fba-171040690055@grsecurity.net>
+Date: Tue, 23 Jul 2024 22:54:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: tracing: user events UAF crash report
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Ajay Kaher <ajay.kaher@broadcom.com>, =?UTF-8?Q?Ilkka_Naulap=C3=A4=C3=A4?=
+ <digirigawa@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, regressions@leemhuis.info,
+ Dan Carpenter <dan.carpenter@linaro.org>
+References: <20240719204701.1605950-1-minipli@grsecurity.net>
+ <20240723104348.645bf027@gandalf.local.home>
+Content-Language: en-US, de-DE
+From: Mathias Krause <minipli@grsecurity.net>
+Autocrypt: addr=minipli@grsecurity.net; keydata=
+ xsDNBF4u6F8BDAC1kCIyATzlCiDBMrbHoxLywJSUJT9pTbH9MIQIUW8K1m2Ney7a0MTKWQXp
+ 64/YTQNzekOmta1eZFQ3jqv+iSzfPR/xrDrOKSPrw710nVLC8WL993DrCfG9tm4z3faBPHjp
+ zfXBIOuVxObXqhFGvH12vUAAgbPvCp9wwynS1QD6RNUNjnnAxh3SNMxLJbMofyyq5bWK/FVX
+ 897HLrg9bs12d9b48DkzAQYxcRUNfL9VZlKq1fRbMY9jAhXTV6lcgKxGEJAVqXqOxN8DgZdU
+ aj7sMH8GKf3zqYLDvndTDgqqmQe/RF/hAYO+pg7yY1UXpXRlVWcWP7swp8OnfwcJ+PiuNc7E
+ gyK2QEY3z5luqFfyQ7308bsawvQcFjiwg+0aPgWawJ422WG8bILV5ylC8y6xqYUeSKv/KTM1
+ 4zq2vq3Wow63Cd/qyWo6S4IVaEdfdGKVkUFn6FihJD/GxnDJkYJThwBYJpFAqJLj7FtDEiFz
+ LXAkv0VBedKwHeBaOAVH6QEAEQEAAc0nTWF0aGlhcyBLcmF1c2UgPG1pbmlwbGlAZ3JzZWN1
+ cml0eS5uZXQ+wsERBBMBCgA7AhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEEd7J359B9
+ wKgGsB94J4hPxYYBGYYFAmBbH/cCGQEACgkQJ4hPxYYBGYaX/gv/WYhaehD88XjpEO+yC6x7
+ bNWQbk7ea+m82fU2x/x6A9L4DN/BXIxqlONzk3ehvW3wt1hcHeF43q1M/z6IthtxSRi059RO
+ SarzX3xfXC1pc5YMgCozgE0VRkxH4KXcijLyFFjanXe0HzlnmpIJB6zTT2jgI70q0FvbRpgc
+ rs3VKSFb+yud17KSSN/ir1W2LZPK6er6actK03L92A+jaw+F8fJ9kJZfhWDbXNtEE0+94bMa
+ cdDWTaZfy6XJviO3ymVe3vBnSDakVE0HwLyIKvfAEok+YzuSYm1Nbd2T0UxgSUZHYlrUUH0y
+ tVxjEFyA+iJRSdm0rbAvzpwau5FOgxRQDa9GXH6ie6/ke2EuZc3STNS6EBciJm1qJ7xb2DTf
+ SNyOiWdvop+eQZoznJJte931pxkRaGwV+JXDM10jGTfyV7KT9751xdn6b6QjQANTgNnGP3qs
+ TO5oU3KukRHgDcivzp6CWb0X/WtKy0Y/54bTJvI0e5KsAz/0iwH19IB0vpYLzsDNBF4u6F8B
+ DADwcu4TPgD5aRHLuyGtNUdhP9fqhXxUBA7MMeQIY1kLYshkleBpuOpgTO/ikkQiFdg13yIv
+ q69q/feicsjaveIEe7hUI9lbWcB9HKgVXW3SCLXBMjhCGCNLsWQsw26gRxDy62UXRCTCT3iR
+ qHP82dxPdNwXuOFG7IzoGBMm3vZbBeKn0pYYWz2MbTeyRHn+ZubNHqM0cv5gh0FWsQxrg1ss
+ pnhcd+qgoynfuWAhrPD2YtNB7s1Vyfk3OzmL7DkSDI4+SzS56cnl9Q4mmnsVh9eyae74pv5w
+ kJXy3grazD1lLp+Fq60Iilc09FtWKOg/2JlGD6ZreSnECLrawMPTnHQZEIBHx/VLsoyCFMmO
+ 5P6gU0a9sQWG3F2MLwjnQ5yDPS4IRvLB0aCu+zRfx6mz1zYbcVToVxQqWsz2HTqlP2ZE5cdy
+ BGrQZUkKkNH7oQYXAQyZh42WJo6UFesaRAPc3KCOCFAsDXz19cc9l6uvHnSo/OAazf/RKtTE
+ 0xGB6mQN34UAEQEAAcLA9gQYAQoAIAIbDBYhBHeyd+fQfcCoBrAfeCeIT8WGARmGBQJeORkW
+ AAoJECeIT8WGARmGXtgL/jM4NXaPxaIptPG6XnVWxhAocjk4GyoUx14nhqxHmFi84DmHUpMz
+ 8P0AEACQ8eJb3MwfkGIiauoBLGMX2NroXcBQTi8gwT/4u4Gsmtv6P27Isn0hrY7hu7AfgvnK
+ owfBV796EQo4i26ZgfSPng6w7hzCR+6V2ypdzdW8xXZlvA1D+gLHr1VGFA/ZCXvVcN1lQvIo
+ S9yXo17bgy+/Xxi2YZGXf9AZ9C+g/EvPgmKrUPuKi7ATNqloBaN7S2UBJH6nhv618bsPgPqR
+ SV11brVF8s5yMiG67WsogYl/gC2XCj5qDVjQhs1uGgSc9LLVdiKHaTMuft5gSR9hS5sMb/cL
+ zz3lozuC5nsm1nIbY62mR25Kikx7N6uL7TAZQWazURzVRe1xq2MqcF+18JTDdjzn53PEbg7L
+ VeNDGqQ5lJk+rATW2VAy8zasP2/aqCPmSjlCogC6vgCot9mj+lmMkRUxspxCHDEms13K41tH
+ RzDVkdgPJkL/NFTKZHo5foFXNi89kA==
+In-Reply-To: <20240723104348.645bf027@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 23 Jul 2024 18:53:31 +0200, Thorsten Blum wrote:
-> Since the kernel currently requires GCC 5.1 as a minimum, remove the
-> unnecessary GCC version >= 4.7 check.
+On 23.07.24 16:43, Steven Rostedt wrote:
+> On Fri, 19 Jul 2024 22:47:01 +0200
+> Mathias Krause <minipli@grsecurity.net> wrote:
 > 
+>> Beside the obvious bug, I noticed the following (not fixing the issue,
+>> tho):
+>>
+>> diff --git a/fs/tracefs/event_inode.c b/fs/tracefs/event_inode.c
+>> index 5d88c184f0fc..687ad0a26458 100644
+>> --- a/fs/tracefs/event_inode.c
+>> +++ b/fs/tracefs/event_inode.c
+>> @@ -112,7 +112,7 @@ static void release_ei(struct kref *ref)
+>>  			entry->release(entry->name, ei->data);
+>>  	}
+>>  
+>> -	call_rcu(&ei->rcu, free_ei_rcu);
+>> +	call_srcu(&eventfs_srcu, &ei->rcu, free_ei_rcu);
+>>  }
 > 
+> This should be fixed too. Care to send a patch for this as well?
 
-Applied to for-linus/hardening, thanks!
+Sure, will do.
 
-[1/1] gcc-plugins: randstruct: Remove GCC 4.7 or newer requirement
-      https://git.kernel.org/kees/c/f3e65520c0b7
+> 
+> It use to need RCU but then everything was switched over to SRCU. This was
+> just leftover.
 
-Take care,
+SRCU usage came up with commit 63940449555e ("eventfs: Implement eventfs
+lookup, read, open functions") and following, was further extended just
+to get almost completely nuked by [1] earlier this year.
 
--- 
-Kees Cook
+[1]
+https://lore.kernel.org/linux-trace-kernel/20240131184918.945345370@goodmis.org/
 
+> 
+>>  
+>>  static inline void put_ei(struct eventfs_inode *ei)
+>> @@ -735,7 +735,9 @@ struct eventfs_inode *eventfs_create_dir(const char *name, struct eventfs_inode
+>>  
+>>  	/* Was the parent freed? */
+>>  	if (list_empty(&ei->list)) {
+>> +		mutex_lock(&eventfs_mutex);
+>>  		cleanup_ei(ei);
+>> +		mutex_unlock(&eventfs_mutex);
+> 
+> Why do you think this is needed? The ei is not on the list and has not been
+> made visible. It was just allocated but the parent it was going to be
+> attached to is about to be freed.
+
+I have no strong understanding of the code, just reading into what the
+context told me the rules should be, which would be on one hand the
+following comment...:
+
+/*
+ * The eventfs_inode (ei) itself is protected by SRCU. It is released from
+ * its parent's list and will have is_freed set (under eventfs_mutex).
+ * After the SRCU grace period is over and the last dput() is called
+ * the ei is freed.
+ */
+
+...and on the other the common pattern, mostly complying to the rule of
+first taking the eventfs_mutex, then checking 'is_freed' for a given ei
+-- supposedly implying, it can only be set under that very same mutex.
+
+As cleanup_ei() is just a glorified free_ei() which sets ei->is_freed to
+1, I was implying the lack of taking eventfs_mutex is a bug. But looking
+further for the precondition, getting 'ei' unchained again after it was
+put to the parent's children list, I can find eventfs_remove_rec() which
+is only ever called under eventfs_mutex and does:
+
+    list_del(&ei->list);
+    free_ei(ei);
+
+So you're right and I wasn't paying close enough attention and got
+mislead by cleanup_ei() also setting ei->is_freed. But as it should
+already be 1 at that point, no bug here.
+
+Thanks,
+Mathias
 
