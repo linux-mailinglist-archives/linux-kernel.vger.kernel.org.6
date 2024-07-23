@@ -1,239 +1,93 @@
-Return-Path: <linux-kernel+bounces-260150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 513D893A3DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:42:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 261A793A3DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07DC82846CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:42:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4D991F243AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7F2155A52;
-	Tue, 23 Jul 2024 15:42:06 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5CF157484;
+	Tue, 23 Jul 2024 15:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mRqYsb8j"
+Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469BA156F2B
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 15:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D030815575E
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 15:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721749325; cv=none; b=P3L0sE4Eph6VK2bIymPa45p5yHKtOkKQ8bLzVcZD7CCARBEFAX90/zS8MVhe2Zruu82AnK0Fmuc2YSrQg1E02UGk4VdyhcmeDOHfZBT3FIP+jkBH77ZEV9rhe8sialuiUBeH7cZKhpXls9fSkL27N0uant+CYC3TrFrnaQX1P4w=
+	t=1721749457; cv=none; b=lS5BLDcWSjLxqo2IIYcDvQdkCACGM54GEIkpCzEk7BcDn3bD5XY7dIxlXwgWdyJd6ARBJuqbFPiTZaSZ6z5TS0iBw/kqUg6v8ZX2IY6qGnqRNoAw8yypSm7iXDUCN+msyxsddLP3+jl8xrm89vAtj1NjRt8zkl9P5LerqujZfAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721749325; c=relaxed/simple;
-	bh=vgGUOAu1hM8cAUi1Yk89H9HvzpWdTHnPsnFWLr28x4o=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=VwF/mqYOtDi/Ts0emQFcAdI0Y4lVYvACz2N8EIuneHlK2LfBVAQ4MHlojiSlJkFvpmK6gYIbBb2tZkHnQU0Qg/jb/C0QGdDCekCAXyibHD4OuNWTIHs4NTcvkRywL2MZ1EnBgiR1+KGJnTTEoFcRONVAF0aU8X8sRPug8FolzZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-8152f0c4e1bso1011016839f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:42:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721749323; x=1722354123;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WIuN6aqEu/2huV+UStekB4/p29gsX+QzKifHumVqvsE=;
-        b=H2S2DjTkkPh1kP3ZXICvPPtpjUahjJM6ufWnyFy9WeDgh2s5oZLliPasmmcsoCzdpJ
-         36adGEVK/tJe4iJpIdmhK2ZJxkyQgV2otDqOMKIEbXVz3UD2jI1+x/4CIADRNNnGg9ky
-         Jb2/84h4uqZ5jOVRnvcP8h652oSe4rbI7HDEwhWU0RoDFr0nBhfmyx4zC34y5TTIewsJ
-         Tuz544iKC5AkGOhra/1GONDcldLTAAmcOZzAlL5CQ6ZDzLHyYNpZQFkbJOQ3zCL27hxP
-         xdY3N+viQkk7gGje/3aZ0gPt5R9ncTOhXCZRLDmlH1lqmQlsHdvIIa+iYJN0OHcOkBI6
-         nDjA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7tqbG4Jdjn6h6uujXepUK3Z7d/sRAdGEPFC2MMOKYo9g9v0sw06SAqJ4y7NWd3qmjvp5VLJ7fUMofINb0hzaAZ0nmlKl4oOtGIMGh
-X-Gm-Message-State: AOJu0YxHYu1Kp6hDJ3fvrliONyEsxo4/2ZYXdlr9mPy7rYdY3rsGExRW
-	aRYcNpNDrnUYarEIJzPS/30tk0hcVoPdJYxqAJ0t3CnUhQL1s4rZDAJwi9KzvZ7byfX2yspc8Az
-	X0uYyTQP9NDJqUuBgPBiBvq2gcnTzXD9StQMYJOzvrTHjNrQDjJQgygY=
-X-Google-Smtp-Source: AGHT+IHRBUpdL7UD26IZcxq131aPVyCWXlzn2J2917ZwDIByMP5VySbVLLdE9xHaoWyVJj2tfu3htXH6j2VSIgIJ0E8bG8KbTezB
+	s=arc-20240116; t=1721749457; c=relaxed/simple;
+	bh=DQV4xd0rpQfQHtXJmu/WkAyKkA1AwGqrlkSgbIPWt3k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rYdh+YK7g0j61E2n4KrBbKd4ezIueJKwrkPHyz+qW7Qy2Z0q/OeTWs+O5pQ6gh83qmwjT3vCvS5CUw9xnr7mulbgieCllDfgzrI3Ln/sKvrptwy/PQLJK7BEC6+ENEw1YUscGv/lTRGhsgjuWvuPk6M2n43xy3OoUKBZQ2NDkM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mRqYsb8j; arc=none smtp.client-ip=95.215.58.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: tytso@mit.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721749453;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=lBf+hdVHh1tA2foRJ8dZy87IKb8tdrjOQhBj2FgXZFE=;
+	b=mRqYsb8jz9PPTqLnRe6vFKS/8R8iybrrxC0pLULUr6FtCA1bVPWSo98siJy3d1EXgfa3Vd
+	cOiolhMAldK0HffH8hGU6ytVP+Y+CZN+iqF51fy3/wQEjKsjJ1cgGNoKz0J0bNug1S2tfv
+	daPf10+DSOzpiQsCaIs+fX4igmmoFnI=
+X-Envelope-To: adilger@dilger.ca
+X-Envelope-To: jack@suse.cz
+X-Envelope-To: harshadshirwadkar@gmail.com
+X-Envelope-To: linux-ext4@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: luis.henriques@linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>
+To: Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger@dilger.ca>,
+	Jan Kara <jack@suse.cz>,
+	Harshad Shirwadkar <harshadshirwadkar@gmail.com>
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Luis Henriques (SUSE)" <luis.henriques@linux.dev>
+Subject: [PATCH 0/4] ext4: fix incorrect tid assumptions
+Date: Tue, 23 Jul 2024 16:43:58 +0100
+Message-ID: <20240723154402.21125-1-luis.henriques@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:9817:b0:4c0:9a05:44d0 with SMTP id
- 8926c6da1cb9f-4c28a09919fmr3435173.1.1721749323454; Tue, 23 Jul 2024 08:42:03
- -0700 (PDT)
-Date: Tue, 23 Jul 2024 08:42:03 -0700
-In-Reply-To: <ade15714-6aa3-4988-8b45-719fc9d74727@rowland.harvard.edu>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d12fee061dec0042@google.com>
-Subject: Re: [syzbot] [usb?] INFO: task hung in uevent_show
-From: syzbot <syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com>
-To: andriy.shevchenko@linux.intel.com, f.fainelli@gmail.com, 
-	fancer.lancer@gmail.com, gregkh@linuxfoundation.org, 
-	ilpo.jarvinen@linux.intel.com, jirislaby@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	linux-usb@vger.kernel.org, marcello.bauer@9elements.com, rafael@kernel.org, 
-	stern@rowland.harvard.edu, sylv@sylv.io, syzkaller-bugs@googlegroups.com, 
-	tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
+As discussed here [1], there are a few places in ext4 and jbd2 code where it
+is assumed that a tid of '0' is not valid.  Which isn't true.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-INFO: task hung in uevent_show
+This small patchset tries to fix (hopefully!) all these places.  Jan Kara
+had already identified the functions that needed to be fixed.  I believe
+that the only other issue is the handling of sbi->s_fc_ineligible_tid.
 
-INFO: task udevd:4562 blocked for more than 143 seconds.
-      Not tainted 6.10.0-rc2-next-20240607-syzkaller-dirty #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:udevd           state:D stack:27128 pid:4562  tgid:4562  ppid:2403   flags:0x00000002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5192 [inline]
- __schedule+0xca6/0x2f50 kernel/sched/core.c:6529
- __schedule_loop kernel/sched/core.c:6606 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6621
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x5b8/0x9c0 kernel/locking/mutex.c:752
- device_lock include/linux/device.h:1009 [inline]
- uevent_show+0x188/0x3b0 drivers/base/core.c:2743
- dev_attr_show+0x53/0xe0 drivers/base/core.c:2437
- sysfs_kf_seq_show+0x23e/0x410 fs/sysfs/file.c:59
- seq_read_iter+0x4fa/0x12c0 fs/seq_file.c:230
- kernfs_fop_read_iter+0x41a/0x590 fs/kernfs/file.c:279
- new_sync_read fs/read_write.c:395 [inline]
- vfs_read+0x869/0xbd0 fs/read_write.c:476
- ksys_read+0x12f/0x260 fs/read_write.c:619
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7546015b6a
-RSP: 002b:00007ffc5026dbf8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: ffffffffffffffda RBX: 000055873fe1dfa0 RCX: 00007f7546015b6a
-RDX: 0000000000001000 RSI: 000055873fe2b950 RDI: 0000000000000008
-RBP: 000055873fe1dfa0 R08: 0000000000000008 R09: 0000000000000000
-R10: 000000000000010f R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000003fff R14: 00007ffc5026e0d8 R15: 000000000000000a
- </TASK>
+Each patch in this series fixes a single function; the last one also fixes
+the sbi->s_fc_ineligible_tid handling.
 
-Showing all locks held in the system:
-5 locks held by kworker/0:1/9:
-1 lock held by khungtaskd/30:
- #0: ffffffff886b4c20 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
- #0: ffffffff886b4c20 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
- #0: ffffffff886b4c20 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x75/0x340 kernel/locking/lockdep.c:6689
-2 locks held by getty/2461:
- #0: ffff88810e7a50a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
- #1: ffffc900000432f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0xfc8/0x1490 drivers/tty/n_tty.c:2211
-4 locks held by udevd/4562:
- #0: ffff888119d570a0 (&p->lock){+.+.}-{3:3}, at: seq_read_iter+0xde/0x12c0 fs/seq_file.c:182
- #1: ffff888116049488 (&of->mutex){+.+.}-{3:3}, at: kernfs_seq_start+0x4d/0x240 fs/kernfs/file.c:154
- #2: ffff88810ef83b48 (kn->active){.+.+}-{0:0}, at: kernfs_seq_start+0x71/0x240 fs/kernfs/file.c:155
- #3: ffff8881042f2190 (&dev->mutex){....}-{3:3}, at: device_lock include/linux/device.h:1009 [inline]
- #3: ffff8881042f2190 (&dev->mutex){....}-{3:3}, at: uevent_show+0x188/0x3b0 drivers/base/core.c:2743
+[1] https://lore.kernel.org/all/20240716095201.o7kkrhfdy2bps3rw@quack3/
 
-=============================================
+Luis Henriques (SUSE) (4):
+  ext4: fix incorrect tid assumption in ext4_wait_for_tail_page_commit()
+  ext4: fix incorrect tid assumption in __jbd2_log_wait_for_space()
+  ext4: fix incorrect tid assumption in
+    jbd2_journal_shrink_checkpoint_list()
+  ext4: fix incorrect tid assumption in ext4_fc_mark_ineligible()
 
-NMI backtrace for cpu 1
-CPU: 1 PID: 30 Comm: khungtaskd Not tainted 6.10.0-rc2-next-20240607-syzkaller-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:91 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:117
- nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xf86/0x1240 kernel/hung_task.c:379
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:144
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 9 Comm: kworker/0:1 Not tainted 6.10.0-rc2-next-20240607-syzkaller-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Workqueue: usb_hub_wq hub_event
-RIP: 0010:unwind_next_frame+0x5de/0x23a0 arch/x86/kernel/unwind_orc.c:505
-Code: 6c 24 05 48 b8 00 00 00 00 00 fc ff df 4c 89 ea 48 c1 ea 03 0f b6 04 02 4c 89 ea 83 e2 07 38 d0 7f 08 84 c0 0f 85 71 18 00 00 <45> 0f b6 74 24 05 31 ff 41 83 e6 07 44 89 f6 e8 2e 45 3e 00 45 84
-RSP: 0018:ffffc9000009e490 EFLAGS: 00000246
-RAX: 0000000000000000 RBX: ffffc9000009e510 RCX: ffffffff81151bc4
-RDX: 0000000000000001 RSI: ffffffff81152c52 RDI: 0000000000000006
-RBP: 0000000000000001 R08: 0000000000000006 R09: ffffffff81a5ce53
-R10: ffffffff81a5ce45 R11: 0000000000000005 R12: ffffffff8a1e1764
-R13: ffffffff8a1e1769 R14: 00000000000278ef R15: ffffc9000009e545
-FS:  0000000000000000(0000) GS:ffff8881f6400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fbd876d8de0 CR3: 00000001151aa000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
- </NMI>
- <TASK>
- arch_stack_walk+0x100/0x170 arch/x86/kernel/stacktrace.c:25
- stack_trace_save+0x95/0xd0 kernel/stacktrace.c:122
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
- __kasan_kmalloc+0x8f/0xa0 mm/kasan/common.c:387
- kmalloc_noprof include/linux/slab.h:660 [inline]
- dummy_urb_enqueue+0x8d/0x8a0 drivers/usb/gadget/udc/dummy_hcd.c:1271
- usb_hcd_submit_urb+0x2d1/0x2090 drivers/usb/core/hcd.c:1533
- usb_submit_urb+0x87c/0x1730 drivers/usb/core/urb.c:581
- usb_start_wait_urb+0x103/0x4c0 drivers/usb/core/message.c:59
- usb_internal_control_msg drivers/usb/core/message.c:103 [inline]
- usb_control_msg+0x327/0x4b0 drivers/usb/core/message.c:154
- _usbctrl_vendorreq_sync+0xc6/0x1f0 drivers/net/wireless/realtek/rtlwifi/usb.c:42
- _usb_read_sync+0x11d/0x190 drivers/net/wireless/realtek/rtlwifi/usb.c:75
- rtl_read_dword drivers/net/wireless/realtek/rtlwifi/wifi.h:2911 [inline]
- read_efuse_byte+0x612/0x910 drivers/net/wireless/realtek/rtlwifi/efuse.c:182
- read_efuse+0x9a7/0xd60 drivers/net/wireless/realtek/rtlwifi/efuse.c:282
- efuse_read_all_map drivers/net/wireless/realtek/rtlwifi/efuse.c:648 [inline]
- rtl_efuse_shadow_map_update+0x23b/0x2b0 drivers/net/wireless/realtek/rtlwifi/efuse.c:494
- rtl_get_hwinfo+0xdb/0x880 drivers/net/wireless/realtek/rtlwifi/efuse.c:1224
- _rtl92cu_read_adapter_info drivers/net/wireless/realtek/rtlwifi/rtl8192cu/hw.c:334 [inline]
- rtl92cu_read_eeprom_info+0x2bc/0x2730 drivers/net/wireless/realtek/rtlwifi/rtl8192cu/hw.c:411
- rtl_usb_probe+0x915/0x24d0 drivers/net/wireless/realtek/rtlwifi/usb.c:1011
- usb_probe_interface+0x309/0x9d0 drivers/usb/core/driver.c:399
- call_driver_probe drivers/base/dd.c:578 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:656
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:798
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:828
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:956
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:457
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1028
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:532
- device_add+0x114b/0x1a70 drivers/base/core.c:3679
- usb_set_configuration+0x10cb/0x1c50 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:254
- usb_probe_device+0xec/0x3e0 drivers/usb/core/driver.c:294
- call_driver_probe drivers/base/dd.c:578 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:656
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:798
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:828
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:956
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:457
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1028
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:532
- device_add+0x114b/0x1a70 drivers/base/core.c:3679
- usb_new_device+0xd90/0x1a10 drivers/usb/core/hub.c:2651
- hub_port_connect drivers/usb/core/hub.c:5521 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x2e66/0x4f50 drivers/usb/core/hub.c:5903
- process_one_work+0x9fb/0x1b60 kernel/workqueue.c:3248
- process_scheduled_works kernel/workqueue.c:3329 [inline]
- worker_thread+0x6c8/0xf30 kernel/workqueue.c:3409
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:144
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
-Tested on:
-
-commit:         d35b2284 Add linux-next specific files for 20240607
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=163368a1980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=39f353a8458f74bb
-dashboard link: https://syzkaller.appspot.com/bug?extid=edd9fe0d3a65b14588d5
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14750a19980000
+ fs/ext4/fast_commit.c | 15 +++++++++++----
+ fs/ext4/inode.c       | 10 ++++++----
+ fs/jbd2/checkpoint.c  | 15 +++++++++++----
+ 3 files changed, 28 insertions(+), 12 deletions(-)
 
 
