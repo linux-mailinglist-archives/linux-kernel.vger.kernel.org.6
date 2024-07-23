@@ -1,70 +1,89 @@
-Return-Path: <linux-kernel+bounces-260417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAFD593A8A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:23:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2334193A8A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:24:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F2E9B22900
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:23:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6C4128356D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C6B14430D;
-	Tue, 23 Jul 2024 21:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6FB9145352;
+	Tue, 23 Jul 2024 21:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DicJMZHY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6921A13DDDB;
-	Tue, 23 Jul 2024 21:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B4F142E83;
+	Tue, 23 Jul 2024 21:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721769803; cv=none; b=ZgSkPHGCjWZy3V3KDqN3F0lIJ++SOca9mc1EZu3wE6Q5vBW15Rd77d23oK3KHnJT5qzKtqnFhmWlr/5oX/Q9TC7D8FejIxazZ5fqTLylWl2fIGFJYEnQ3LEaVbcX9NleY5oXwTkTT92TmSCJNYSRylaviHX4J8OXn2La67xCLbc=
+	t=1721769840; cv=none; b=IjSQqoWspCePAPU1ld5X0iBbJcy+mrJklHCBDv9jDKtsQEwkcAyPI8lw5DK4GwZypeBiM1lxci65zwohGM6UGvmMXCrgVTblG2XlPsS7va+mmI+yyzfFxEZr5k3Jk/anR6JEQ2KGLolLWgXjD6X3XMy9A8sDMqSLe2jmFmd8ayQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721769803; c=relaxed/simple;
-	bh=2SAWRssX8A/4xbiIP7zHne2YDpWVCC2yjhgyZeNTbBg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MtyL2fQx9pELVrkNfa6g3ODBW/UXeJcrU2JV6WemahUgdQtXYLp63H3qoEM627cEoPQbr53N1IulyTzBQSK9BKCufT/upCOoRg4ve/QfvY2przICrsrC4YGkA47/B+zdXTqoNK4MAlOHZYvnQWNZ1hCwQsLOvGzAGcZpUbzBV9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 192F6C4AF09;
-	Tue, 23 Jul 2024 21:23:21 +0000 (UTC)
-Date: Tue, 23 Jul 2024 17:23:20 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Mathias Krause <minipli@grsecurity.net>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ajay Kaher <ajay.kaher@broadcom.com>, Linus
- Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] eventfs: Use SRCU for freeing eventfs_inodes
-Message-ID: <20240723172320.4e36d9d5@rorschach.local.home>
-In-Reply-To: <20240723210755.8970-1-minipli@grsecurity.net>
-References: <20240723104348.645bf027@gandalf.local.home>
-	<20240723210755.8970-1-minipli@grsecurity.net>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721769840; c=relaxed/simple;
+	bh=P9pr3+m7t3wp6988hnLFFKmyPOf+kz6tG11Ln4YfwpY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p73g5vbGCUFVfxPa39wBb8YDNfbV6vLKhL9P53CMmtNEmN0dXQTvi+9BfwuNSSN7QfNM1yOzCs3Tb52kY/FY3IOxSqmBNChOXiB/kxfWvPb9l6J6Vp7lzTL8L9vG8K6tU9gUYkrbsprm/Jro0FCvpwoNfveojD0PReNUJuwKkwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DicJMZHY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8864AC4AF09;
+	Tue, 23 Jul 2024 21:23:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721769839;
+	bh=P9pr3+m7t3wp6988hnLFFKmyPOf+kz6tG11Ln4YfwpY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DicJMZHY7CQqLkXZzq5e7D9FUoNGkx/RFZBusN6tlOYQGx7twHJEk8MGa8NroQFiI
+	 0y10xqvPAz6xJFTP6awQTjCsq/n8HfjBBUxlFWXlJSNWU1ReauVHqTWzBIfKOCYKMu
+	 7ly0cAqAZ9THtJU2hHtEULMIhdMhGUxyFIoyxKpokPqDxqMvER+fHCi5WCOVadMUhg
+	 56JrS0snC9oDgUgeHL/xc1JNDC3lNsgkgJO/vzYRI17lpiHq1+LYXAYYfAAGOLVUFw
+	 ucZGqCxu0zjCqfB/e0rd7y/2eoaMhE5Ci3/wxZhgiXbEVUXMSLFf0RQ1BiOE4P9mGB
+	 jYQF8DFTzq46g==
+Date: Tue, 23 Jul 2024 16:23:58 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Shresth Prasad <shresthprasad7@gmail.com>
+Cc: vkoul@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org,
+	andrew@lunn.ch, dmaengine@vger.kernel.org,
+	javier.carrasco.cruz@gmail.com, skhan@linuxfoundation.org,
+	conor+dt@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] dt-bindings: dma: mv-xor-v2: Convert to dtschema
+Message-ID: <172176983632.1127918.8468061614483310922.robh@kernel.org>
+References: <20240723095518.9364-2-shresthprasad7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240723095518.9364-2-shresthprasad7@gmail.com>
 
-On Tue, 23 Jul 2024 23:07:53 +0200
-Mathias Krause <minipli@grsecurity.net> wrote:
 
-> To mirror the SRCU lock held in eventfs_iterate() when iterating over
-> eventfs inodes, use call_srcu() to free them too.
+On Tue, 23 Jul 2024 15:25:19 +0530, Shresth Prasad wrote:
+> Convert txt bindings of Marvell XOR v2 engines to dtschema to allow
+> for validation.
 > 
-> This was accidentally(?) degraded to RCU in commit 43aa6f97c2d0
-> ("eventfs: Get rid of dentry pointers without refcounts").
+> Also add missing property `dma-coherent` as `drivers/dma/mv_xor_v2.c`
+> calls various dma-coherent memory functions.
+> 
+> Signed-off-by: Shresth Prasad <shresthprasad7@gmail.com>
+> ---
+> Changes in v3:
+>     - Change maintainer
+>     - Simplify binding by removing `if:` block
+> 
+> Tested against `marvell/armada-7040-db.dtb`, `marvell/armada-7040-mochabin.dtb`
+> and `marvell/armada-8080-db.dtb`
+> ---
+>  .../bindings/dma/marvell,xor-v2.yaml          | 61 +++++++++++++++++++
+>  .../devicetree/bindings/dma/mv-xor-v2.txt     | 28 ---------
+>  2 files changed, 61 insertions(+), 28 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/dma/marvell,xor-v2.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/dma/mv-xor-v2.txt
+> 
 
-Yeah, I missed that. Linus cleaned up the code code quite a bit, but
-missed the subtleties of the RCU clean ups. I should have caught that
-in my review.
-
-Thanks for sending this.
-
--- Steve
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
