@@ -1,87 +1,272 @@
-Return-Path: <linux-kernel+bounces-260375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE6FA93A7E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:58:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3009E93A7E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:57:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8368284FCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:58:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAA30282EBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD22E143C79;
-	Tue, 23 Jul 2024 19:56:40 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E61C14901F;
+	Tue, 23 Jul 2024 19:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jyAvZC5I"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF981143C65
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 19:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953FE1428EA
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 19:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721764600; cv=none; b=SZClH5b6WrRcule7DWlw82A+oQquWSXcLqZ3FbnMYZmyLi/3//LIMt6bMz6pdPgOMcaotoTU59oWeYjwo2I+4FHR2k3HnUcibLyHRO4Ah1MghgD8iex1UHMawZG45x1gbjUjGsGK3E9cc/cYeb4itohpgfjxB6UUdb/id83bSa4=
+	t=1721764552; cv=none; b=S/panKXB3fJJh1iPCbzeG7unBPi8q9JdR4P5YO7NBsfe/dZMpL6ltYUIL7lksvxVuh4rE7C//CImPc2yXU1wcgP9sa7gyDEDKXfHlY6kWTP7lRRPBE2UfU6us7hpTdfnj+ZJD/6J1VbWnm4AKPewXwDp5xRaNP20L5qBS7sgtug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721764600; c=relaxed/simple;
-	bh=2/8e8iZJOWh6+x6a5YNsJ8TkxIsAfgwwFktgsQ5SlgU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PZjAbh2LNryKjFUCg1av2Rhun6rKHr37W2Qp0WxakeVqhVVktW5p7K+HqmowGEPE89la2Fk8Ve2KA58m/nJkiYQ06jMO1suYfVWtcDOkZv544mQjRRK7lpcFjPoNXPeFvnnR5fUYSVdHB0lC7tkhde9t6auFKIUs4itbidztqzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e860cd3.versanet.de ([94.134.12.211] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sWLbv-0005iD-Iq; Tue, 23 Jul 2024 21:55:47 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: heiko@sntech.de
-Cc: ukleinek@debian.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 13/14] arm64: dts: rockchip: enable gpu on Qnap-TS433
-Date: Tue, 23 Jul 2024 21:55:37 +0200
-Message-Id: <20240723195538.1133436-14-heiko@sntech.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240723195538.1133436-1-heiko@sntech.de>
-References: <20240723195538.1133436-1-heiko@sntech.de>
+	s=arc-20240116; t=1721764552; c=relaxed/simple;
+	bh=N/VSqw2RCaG6rK52saYhgy4CiAO1VKN8Pn9v0JbVZx0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lVvkbMQgrCc0zqDZYc00qQpL/ERIO5GvglkW4Ezdr2e0+3TlvHQk0mUu8zZ+/m9+WTPbz8MAZzYs5OvIsIsuoIj2LRn0HADYIR+5/Dtdl9m4kHQL/LbYYyr9tOfLxRurcxXvDUXKfnBAHwNt1s6uZUxZ5LrZkLBAjjScfS1WXas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jyAvZC5I; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e0871f82ff8so3589984276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 12:55:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721764549; x=1722369349; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AE6e5fzPeKFIlBMmG5gJlxWybIkbfxBFCodCMXGx1jQ=;
+        b=jyAvZC5II/8jS5GrwWV/OMSe6jDIqq99mrfbXhHfmnhuc+NUKYqEIa6+x+IcOPTGvX
+         9DCi6jx3ori/nBWph05tJtqg/VZHFtZPSLylopBtwbGkQveZOp1ASBnxLOOqto29/g3/
+         f57ukFazOQ3NtTl8JLU71AAsQG3j2nGPV2aqTpHUWmeut28MiSi5cRY8jIBv/twxP0jV
+         xmq/jvxlNqwI4oWn6u9ESXcKc76TQJFg/ALVisxarLo/uiVPDUQpuY+6H4MQWAU6cCm6
+         9+QRTy7CWTFKj6Q9a0rsaL4YPwuzTfwOB8Hqh8WK/j7LE4Jx6FwNmcCDZeCgfGol3jCS
+         psCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721764549; x=1722369349;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AE6e5fzPeKFIlBMmG5gJlxWybIkbfxBFCodCMXGx1jQ=;
+        b=HdTCewbostcgTbX/+M7Yp+XaZ0a/9GvgjFP1JTA7EUwrbm6i7peTzlYgBhcIpJK7LR
+         gLFP+h5A1M9WpNVca+B+2bE5CTevq1NRq3X/0n5Ze0EYTH19d+UPMlL0JyBmyEo7J95v
+         fGQcaOIani5yvwXMymPNMWPkLZPSWRAtiFtKyMBU0jE5qbnEvCf18eGBtuPbEPI99kIh
+         HUzgiq4tiIaRj+6AKjjk6QkHPxfwHVTEkXleT3InIACaWo0xbrH7UaUcnVvSJYDNfKJr
+         Sam8XluckZlq5deydb/CvyeC1E67MBs095Jy8WAIPtQINfTrFLek15LhvDEuwgNd3tyT
+         2SyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXEqT5C5YLQt2DoE4dCeSS+MFPYb+eiwnpVFzunwy26e1fKXntE697xqEzbvD47JD323Wr2aaPVSwZ/T6/UcADmNAXIzMtbtCLn7klp
+X-Gm-Message-State: AOJu0YxYaeFyjsi1TsQDE1BT9bYkfqleIUpmz5u9UZP9D3lz2gjoUbwM
+	D0Rv1KbHysMHfbRAFFsRB+DtL/6gNabfQRtc7Io/aT3nXgyJlfgz0kOZ3bBB1nPaQcWngVAs7El
+	zNtcfnMocXWtLmQgZCvGnK/v6D6KhTgZWAi9A
+X-Google-Smtp-Source: AGHT+IFVIQx8k5pKeQbxna0tg4qcoy/15wSfpoaLxbaPj5khP8+jMjSrXVK0+kifV00saP01V2Gg6z43TEQy033MIoY=
+X-Received: by 2002:a05:6902:2d05:b0:e03:a70d:c12e with SMTP id
+ 3f1490d57ef6-e087017fdd3mr13368632276.15.1721764549380; Tue, 23 Jul 2024
+ 12:55:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20231212204647.2170650-1-sagis@google.com> <20231212204647.2170650-2-sagis@google.com>
+ <516247d2-7ba8-4b3e-8325-8c6dd89b929e@linux.intel.com>
+In-Reply-To: <516247d2-7ba8-4b3e-8325-8c6dd89b929e@linux.intel.com>
+From: Sagi Shahar <sagis@google.com>
+Date: Tue, 23 Jul 2024 14:55:37 -0500
+Message-ID: <CAAhR5DH9UJ+fFbePPbKsdUiyk63dhE6-f-uazu-s60dPe_Rfrg@mail.gmail.com>
+Subject: Re: [RFC PATCH v5 01/29] KVM: selftests: Add function to allow
+ one-to-one GVA to GPA mappings
+To: Binbin Wu <binbin.wu@linux.intel.com>
+Cc: linux-kselftest@vger.kernel.org, Ackerley Tng <ackerleytng@google.com>, 
+	Erdem Aktas <erdemaktas@google.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
+	Ryan Afranji <afranji@google.com>, Sean Christopherson <seanjc@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, Peter Gonda <pgonda@google.com>, 
+	Haibo Xu <haibo1.xu@intel.com>, Chao Peng <chao.p.peng@linux.intel.com>, 
+	Vishal Annapurve <vannapurve@google.com>, Roger Wang <runanwang@google.com>, 
+	Vipin Sharma <vipinsh@google.com>, jmattson@google.com, dmatlack@google.com, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The TS433 doesn't provide display output, but the gpu nevertheless can be
-used for compute tasks for example.
+On Tue, Feb 20, 2024 at 7:43=E2=80=AFPM Binbin Wu <binbin.wu@linux.intel.co=
+m> wrote:
+>
+>
+>
+> On 12/13/2023 4:46 AM, Sagi Shahar wrote:
+> > From: Ackerley Tng <ackerleytng@google.com>
+> >
+> > One-to-one GVA to GPA mappings can be used in the guest to set up boot
+> > sequences during which paging is enabled, hence requiring a transition
+> > from using physical to virtual addresses in consecutive instructions.
+> >
+> > Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> > Signed-off-by: Ryan Afranji <afranji@google.com>
+> > Signed-off-by: Sagi Shahar <sagis@google.com>
+> > ---
+> >   .../selftests/kvm/include/kvm_util_base.h     |  2 +
+> >   tools/testing/selftests/kvm/lib/kvm_util.c    | 63 ++++++++++++++++--=
+-
+> >   2 files changed, 55 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/tools/testing/selftests/kvm/include/kvm_util_base.h b/tool=
+s/testing/selftests/kvm/include/kvm_util_base.h
+> > index 1426e88ebdc7..c2e5c5f25dfc 100644
+> > --- a/tools/testing/selftests/kvm/include/kvm_util_base.h
+> > +++ b/tools/testing/selftests/kvm/include/kvm_util_base.h
+> > @@ -564,6 +564,8 @@ vm_vaddr_t vm_vaddr_alloc(struct kvm_vm *vm, size_t=
+ sz, vm_vaddr_t vaddr_min);
+> >   vm_vaddr_t __vm_vaddr_alloc(struct kvm_vm *vm, size_t sz, vm_vaddr_t =
+vaddr_min,
+> >                           enum kvm_mem_region_type type);
+> >   vm_vaddr_t vm_vaddr_alloc_shared(struct kvm_vm *vm, size_t sz, vm_vad=
+dr_t vaddr_min);
+> > +vm_vaddr_t vm_vaddr_alloc_1to1(struct kvm_vm *vm, size_t sz,
+> > +                            vm_vaddr_t vaddr_min, uint32_t data_memslo=
+t);
+> >   vm_vaddr_t vm_vaddr_alloc_pages(struct kvm_vm *vm, int nr_pages);
+> >   vm_vaddr_t __vm_vaddr_alloc_page(struct kvm_vm *vm,
+> >                                enum kvm_mem_region_type type);
+> > diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing=
+/selftests/kvm/lib/kvm_util.c
+> > index febc63d7a46b..4f1ae0f1eef0 100644
+> > --- a/tools/testing/selftests/kvm/lib/kvm_util.c
+> > +++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+> > @@ -1388,17 +1388,37 @@ vm_vaddr_t vm_vaddr_unused_gap(struct kvm_vm *v=
+m, size_t sz,
+> >       return pgidx_start * vm->page_size;
+> >   }
+> >
+> > +/*
+> > + * VM Virtual Address Allocate Shared/Encrypted
+> > + *
+> > + * Input Args:
+> > + *   vm - Virtual Machine
+> > + *   sz - Size in bytes
+> > + *   vaddr_min - Minimum starting virtual address
+> > + *   paddr_min - Minimum starting physical address
+> > + *   data_memslot - memslot number to allocate in
+> > + *   encrypt - Whether the region should be handled as encrypted
+> > + *
+> > + * Output Args: None
+> > + *
+> > + * Return:
+> > + *   Starting guest virtual address
+> > + *
+> > + * Allocates at least sz bytes within the virtual address space of the=
+ vm
+> > + * given by vm.  The allocated bytes are mapped to a virtual address >=
+=3D
+> > + * the address given by vaddr_min.  Note that each allocation uses a
+> > + * a unique set of pages, with the minimum real allocation being at le=
+ast
+> > + * a page.
+> > + */
+> >   static vm_vaddr_t ____vm_vaddr_alloc(struct kvm_vm *vm, size_t sz,
+> > -                                  vm_vaddr_t vaddr_min,
+> > -                                  enum kvm_mem_region_type type,
+> > -                                  bool encrypt)
+> > +                                  vm_vaddr_t vaddr_min, vm_paddr_t pad=
+dr_min,
+> > +                                  uint32_t data_memslot, bool encrypt)
+> >   {
+> >       uint64_t pages =3D (sz >> vm->page_shift) + ((sz % vm->page_size)=
+ !=3D 0);
+> >
+> >       virt_pgd_alloc(vm);
+> > -     vm_paddr_t paddr =3D _vm_phy_pages_alloc(vm, pages,
+> > -                                           KVM_UTIL_MIN_PFN * vm->page=
+_size,
+> > -                                           vm->memslots[type], encrypt=
+);
+> > +     vm_paddr_t paddr =3D _vm_phy_pages_alloc(vm, pages, paddr_min,
+> > +                                            data_memslot, encrypt);
+> >
+> >       /*
+> >        * Find an unused range of virtual page addresses of at least
+> > @@ -1408,8 +1428,7 @@ static vm_vaddr_t ____vm_vaddr_alloc(struct kvm_v=
+m *vm, size_t sz,
+> >
+> >       /* Map the virtual pages. */
+> >       for (vm_vaddr_t vaddr =3D vaddr_start; pages > 0;
+> > -             pages--, vaddr +=3D vm->page_size, paddr +=3D vm->page_si=
+ze) {
+> > -
+> > +          pages--, vaddr +=3D vm->page_size, paddr +=3D vm->page_size)=
+ {
+> >               virt_pg_map(vm, vaddr, paddr);
+> >
+> >               sparsebit_set(vm->vpages_mapped, vaddr >> vm->page_shift)=
+;
+> > @@ -1421,12 +1440,16 @@ static vm_vaddr_t ____vm_vaddr_alloc(struct kvm=
+_vm *vm, size_t sz,
+> >   vm_vaddr_t __vm_vaddr_alloc(struct kvm_vm *vm, size_t sz, vm_vaddr_t =
+vaddr_min,
+> >                           enum kvm_mem_region_type type)
+> >   {
+> > -     return ____vm_vaddr_alloc(vm, sz, vaddr_min, type, vm->protected)=
+;
+> > +     return ____vm_vaddr_alloc(vm, sz, vaddr_min,
+> > +                               KVM_UTIL_MIN_PFN * vm->page_size,
+> > +                               vm->memslots[type], vm->protected);
+> >   }
+> >
+> >   vm_vaddr_t vm_vaddr_alloc_shared(struct kvm_vm *vm, size_t sz, vm_vad=
+dr_t vaddr_min)
+> >   {
+> > -     return ____vm_vaddr_alloc(vm, sz, vaddr_min, MEM_REGION_TEST_DATA=
+, false);
+> > +     return ____vm_vaddr_alloc(vm, sz, vaddr_min,
+> > +                               KVM_UTIL_MIN_PFN * vm->page_size,
+> > +                               vm->memslots[MEM_REGION_TEST_DATA], fal=
+se);
+> >   }
+> >
+> >   /*
+> > @@ -1453,6 +1476,26 @@ vm_vaddr_t vm_vaddr_alloc(struct kvm_vm *vm, siz=
+e_t sz, vm_vaddr_t vaddr_min)
+> >       return __vm_vaddr_alloc(vm, sz, vaddr_min, MEM_REGION_TEST_DATA);
+> >   }
+> >
+> > +/**
+> > + * Allocate memory in @vm of size @sz in memslot with id @data_memslot=
+,
+> > + * beginning with the desired address of @vaddr_min.
+> > + *
+> > + * If there isn't enough memory at @vaddr_min, find the next possible =
+address
+> > + * that can meet the requested size in the given memslot.
+> > + *
+> > + * Return the address where the memory is allocated.
+> > + */
+> > +vm_vaddr_t vm_vaddr_alloc_1to1(struct kvm_vm *vm, size_t sz,
+> > +                            vm_vaddr_t vaddr_min, uint32_t data_memslo=
+t)
+> > +{
+> > +     vm_vaddr_t gva =3D ____vm_vaddr_alloc(vm, sz, vaddr_min,
+> > +                                         (vm_paddr_t)vaddr_min, data_m=
+emslot,
+> > +                                         vm->protected);
+> > +     TEST_ASSERT_EQ(gva, addr_gva2gpa(vm, gva));
+>
+> How can this be guaranteed?
+> For ____vm_vaddr_alloc(), generically there is no enforcement about the
+> identity of virtual and physical address.
 
-So there is no reason not to enable it.
-
-Tested-by: Uwe Kleine-König <ukleinek@debian.org>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts b/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
-index b807da6e85015..9a0cb69c3cfa0 100644
---- a/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3568-qnap-ts433.dts
-@@ -210,6 +210,11 @@ &gmac0_rgmii_clk
- 	status = "okay";
- };
- 
-+&gpu {
-+	mali-supply = <&vdd_gpu>;
-+	status = "okay";
-+};
-+
- &i2c0 {
- 	status = "okay";
- 
--- 
-2.39.2
-
+The problem is that if the allocation won't be 1-to-1 the tests won't
+work. So we figured it's better to fail early.
+The way this is used in practice generally guarantees that the mapping
+can be 1-to-1 since we create these mappings at an early stage.
+>
+> > +
+> > +     return gva;
+> > +}
+> > +
+> >   /*
+> >    * VM Virtual Address Allocate Pages
+> >    *
+>
+>
 
