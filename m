@@ -1,71 +1,86 @@
-Return-Path: <linux-kernel+bounces-260238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 392DE93A4D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:18:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0591093A4DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A8261C221AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:18:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF0022847E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA5D1586C1;
-	Tue, 23 Jul 2024 17:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01A71586C8;
+	Tue, 23 Jul 2024 17:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="zSP9jq8u"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T5hiqh9S"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311D114C5A1;
-	Tue, 23 Jul 2024 17:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55A214C5A1;
+	Tue, 23 Jul 2024 17:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721755102; cv=none; b=EYZCH9fD3XV6VYtCb7WPl/pumDS7F+D+55wmjV74gzcb/0u8Jxl0JCSfDTD3dxW7xALWqjVdVIKAwlW0zDs9nuxyowCeQnizgQbZTotZfcsz2d4cadrULNBXugm9l032ENy5x+eSA6qDVCnQ1R3Rv1cYV1g5vxuM7bMpmCglZ4U=
+	t=1721755148; cv=none; b=XYiKZKC4EhlaDDbgm5fLo9cxF+P1E1jhoLMBGigsao1J4qZAnMab7cVqbqMLTNHcJ9Js0lUBVSWsHlLAXDLWCn/5czD0fFWDPkTb4s3bHiVPAJsH9dMqx//w52jvUjy82G7TZvUqh+jbDn3zW5Y66CtW98zXQY0+CUD0GJrGpxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721755102; c=relaxed/simple;
-	bh=DbhrmL0C4tQ5GXXI65BQshJiPvMP6gqNXYkIW18wC4A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GFzQJLL7iYMjh4XsSpwFu7QAMa3sEhiKyL7PxSM2lTZWHBJJqfryIQjs5IyNCorpFerA6jE6GYzU8WDFzEYTrEpUvbAP0zB7kdrF2uq8PhErsfvbxtYMgHjNmralvOY2ScIDN0j/d7ddQpTnsFFE+AAM7RmBqQ/eNn/6QxnY5ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=zSP9jq8u; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721755095;
-	bh=DbhrmL0C4tQ5GXXI65BQshJiPvMP6gqNXYkIW18wC4A=;
-	h=From:To:Cc:Subject:Date:From;
-	b=zSP9jq8uzYVkAXnLnOi1p2cRctsaYPkVIXX1Fwiz+VlyJp+HA1aYkr9FxisRb7k6T
-	 KXNc0+An8xkCq8OvkQWlnlu8jKj1DoHu4re978HAsF5go2MOrbpFubf0p64saUCA1u
-	 WHSiXs8zlgEIyVcf6AlMhp1Ts3jeKTcwmDD0bsFeuqhfMg47vmWpYiYOQBBulom368
-	 0OKFnDqP7eaXnARdMYlWcxMbaRDJjWWmBgzLW5ngHZQOlddAYyl7WyjJEfVMaECUA4
-	 r4LLwDauNziHnO7E2jreecg+HyK1bFqNjVwIxYlWUSEz6AKBYbG9oP8opZSaIUfYkG
-	 Eul2Lh54X+PGA==
-Received: from gentoo.ratioveremundo.com (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: aratiu)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 63667378206B;
-	Tue, 23 Jul 2024 17:18:14 +0000 (UTC)
-From: Adrian Ratiu <adrian.ratiu@collabora.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-security-module@vger.kernel.org,
+	s=arc-20240116; t=1721755148; c=relaxed/simple;
+	bh=9s5Vi5MZuDidTPxO2XHs1LBSd+mG/mBJsPBCN5ZhRso=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HzeaeaGueSpasEqola23ooc8cj62VuivPudlML8eUIxIm+MQ/Z+z8lB/NX3l+eXAoQjAwi1qWPBoRoAHWVxuYhLk30+7EG0+9x0SSwBUOk4iyS9OCgUxantzyKvXZ/gq5yIZ59dNaZwlFRayUfCc37aIb4PwaFhwsYhIIvAqwm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T5hiqh9S; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7a23fbb372dso782742a12.0;
+        Tue, 23 Jul 2024 10:19:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721755146; x=1722359946; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7PESp8ToMvs18L2DY1lc9MxMw8bEbHV0v8oTGSy6LMk=;
+        b=T5hiqh9ShUZdjARLEpaMLZcI65gRZZ7cAWTcKSNxRQtbIDMTSmqYXvLq1nGuBSR0qI
+         OvHU7/59GYlVs11OPnG1pCxlOloy05ghAXPpjzC4zuR5aALPCdzNxtysEa1NMzYg79/E
+         MEzZOyYa4G9OweW7/k/o3gQSLP51vqI7SlXQBzujzWblYSD/SLDTns7HInZ40I/cpgCB
+         mHywl6qvd3zEsPcPj1BVsFgX1XVwtt4oB0p5xmf6ZxbHf45jmLn4UM6bcrWOCC83aoP8
+         eN+xZekbQ7mEy/btXRxswJo/UhSF3TUwLK4LjuGZaFn61jwjePhJNm79kOBWd2lYs+U/
+         em0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721755146; x=1722359946;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7PESp8ToMvs18L2DY1lc9MxMw8bEbHV0v8oTGSy6LMk=;
+        b=QA45ICRLk8T3bf9v0JD4NFodasYqd/r9t5phXHgBNHheR51/cUSr8Qbn0apZw28yvq
+         INy9e507XX200xnxss2LLL/LOkKewrqaSpMGqtXlRg6kUl+PH3pECVkHuTcxqYq66y+P
+         oCohW/brPdXkUqNdFsPlRFUcuPECEndi9qowLEFaoaiCjzeZ7r3kKSp4gT4EBUyjOsHa
+         wbof0e6fm4OGMGoB3R3a5IUv2Pt/WYugppOLB4+pOI2fwRxoT3NqWWqxiEMa7mr3IQqe
+         7DFy+DWN9wqDAu2qqfRei3VwV38J/W6SJi+whBsmTN8kgsCZUuZVmtoF/pfzh0gN4bXb
+         0BTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXz6CoTpb1FvciJFXFTec4VaA6o2y9ZjFkzOtfYhWELn5bm+wPDxOtuGUOVhgNOtBCF+HWk7SZRhczfQPneU0iMuv8BaKZa+ca8Tw9dloauT8sS1kFwTK+L4+rwI1XOh8u435OGR0Oy26ZYB5mQqbNW7pYDv+PfPtv+yCa
+X-Gm-Message-State: AOJu0YwZI+K6JgZRXs/6amygpbtzFhgsixP4IlpWGG2JwN7B5beK0STv
+	iRiq8jSiAudpIriVtrsOEbpsE/fe4rCqBL4RbgpK7mvxxuTse+yB
+X-Google-Smtp-Source: AGHT+IH/x0EB2OW34wSIoGSpIBNCX6QxTmCPilyFpkTLbvSMOGQPUxFAfFsR5aZVR1HBIrLkMPEiAA==
+X-Received: by 2002:a17:90a:7841:b0:2c9:75c6:32dc with SMTP id 98e67ed59e1d1-2cd85c25249mr3762641a91.1.1721755146006;
+        Tue, 23 Jul 2024 10:19:06 -0700 (PDT)
+Received: from localhost.localdomain ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cb76a5fc6csm10705800a91.0.2024.07.23.10.19.02
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 23 Jul 2024 10:19:05 -0700 (PDT)
+From: Yunseong Kim <yskelg@gmail.com>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: linux-bluetooth@vger.kernel.org,
+	netdev@vger.kernel.org,
+	stable@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	kernel@collabora.com,
-	gbiv@google.com,
-	inglorion@google.com,
-	ajordanr@google.com,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	Doug Anderson <dianders@chromium.org>,
-	Jeff Xu <jeffxu@google.com>,
-	Jann Horn <jannh@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH] proc: add config & param to block forcing mem writes
-Date: Tue, 23 Jul 2024 20:17:53 +0300
-Message-ID: <20240723171753.739971-1-adrian.ratiu@collabora.com>
-X-Mailer: git-send-email 2.44.2
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH] Bluetooth: hci_core: fix suspicious RCU usage in hci_conn_drop()
+Date: Wed, 24 Jul 2024 02:17:57 +0900
+Message-ID: <20240723171756.13755-2-yskelg@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,181 +89,104 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This adds a Kconfig option and boot param to allow removing
-the FOLL_FORCE flag from /proc/pid/mem write calls because
-it can be abused.
+Protection from the queuing operation is achieved with an RCU read lock
+to avoid calling 'queue_delayed_work()' after 'cancel_delayed_work()',
+but this does not apply to 'hci_conn_drop()'.
 
-The traditional forcing behavior is kept as default because
-it can break GDB and some other use cases.
+commit deee93d13d38 ("Bluetooth: use hdev->workqueue when queuing
+ hdev->{cmd,ncmd}_timer works")
 
-Previously we tried a more sophisticated approach allowing
-distributions to fine-tune /proc/pid/mem behavior, however
-that got NAK-ed by Linus [1], who prefers this simpler
-approach with semantics also easier to understand for users.
+The situation described raises concerns about suspicious RCU usage in a
+corrupted context.
 
-Link: https://lore.kernel.org/lkml/CAHk-=wiGWLChxYmUA5HrT5aopZrB7_2VTa0NLZcxORgkUe5tEQ@mail.gmail.com/ [1]
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Jeff Xu <jeffxu@google.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Kees Cook <kees@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+CPU 1                   CPU 2
+ hci_dev_do_reset()
+  synchronize_rcu()      hci_conn_drop()
+  drain_workqueue()       <-- no RCU read protection during queuing. -->
+                           queue_delayed_work()
+
+It displays a warning message like the following
+
+Bluetooth: hci0: unexpected cc 0x0c38 length: 249 > 2
+=============================
+WARNING: suspicious RCU usage
+6.10.0-rc6-01340-gf14c0bb78769 #5 Not tainted
+-----------------------------
+net/mac80211/util.c:4000 RCU-list traversed in non-reader section!!
+
+other info that might help us debug this:
+
+rcu_scheduler_active = 2, debug_locks = 1
+2 locks held by syz-executor/798:
+ #0: ffff800089a3de50 (rtnl_mutex){+.+.}-{4:4},
+    at: rtnl_lock+0x28/0x40 net/core/rtnetlink.c:79
+
+stack backtrace:
+CPU: 0 PID: 798 Comm: syz-executor Not tainted
+  6.10.0-rc6-01340-gf14c0bb78769 #5
+Hardware name: linux,dummy-virt (DT)
+Call trace:
+ dump_backtrace.part.0+0x1b8/0x1d0 arch/arm64/kernel/stacktrace.c:317
+ dump_backtrace arch/arm64/kernel/stacktrace.c:323 [inline]
+ show_stack+0x34/0x50 arch/arm64/kernel/stacktrace.c:324
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xf0/0x170 lib/dump_stack.c:114
+ dump_stack+0x20/0x30 lib/dump_stack.c:123
+ lockdep_rcu_suspicious+0x204/0x2f8 kernel/locking/lockdep.c:6712
+ ieee80211_check_combinations+0x71c/0x828 [mac80211]
+ ieee80211_check_concurrent_iface+0x494/0x700 [mac80211]
+ ieee80211_open+0x140/0x238 [mac80211]
+ __dev_open+0x270/0x498 net/core/dev.c:1474
+ __dev_change_flags+0x47c/0x610 net/core/dev.c:8837
+ dev_change_flags+0x98/0x170 net/core/dev.c:8909
+ devinet_ioctl+0xdf0/0x18d0 net/ipv4/devinet.c:1177
+ inet_ioctl+0x34c/0x388 net/ipv4/af_inet.c:1003
+ sock_do_ioctl+0xe4/0x240 net/socket.c:1222
+ sock_ioctl+0x4cc/0x740 net/socket.c:1341
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __arm64_sys_ioctl+0x184/0x218 fs/ioctl.c:893
+ __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
+ invoke_syscall+0x90/0x2e8 arch/arm64/kernel/syscall.c:48
+ el0_svc_common.constprop.0+0x200/0x2a8 arch/arm64/kernel/syscall.c:131
+ el0_svc+0x48/0xc0 arch/arm64/kernel/entry-common.c:712
+ el0t_64_sync_handler+0x120/0x130 arch/arm64/kernel/entry-common.c:730
+ el0t_64_sync+0x190/0x198 arch/arm64/kernel/entry.S:598
+
+This patch attempts to fix that issue with the same convention.
+
+Cc: stable@vger.kernel.org # v6.1+
+Fixes: deee93d13d38 ("Bluetooth: use hdev->workqueue when queuing hdev->
+{cmd,ncmd}_timer works")
+Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+Tested-by: Yunseong Kim <yskelg@gmail.com>
+Signed-off-by: Yunseong Kim <yskelg@gmail.com>
 ---
- .../admin-guide/kernel-parameters.txt         | 10 ++++
- fs/proc/base.c                                | 58 ++++++++++++++++++-
- security/Kconfig                              | 32 ++++++++++
- 3 files changed, 99 insertions(+), 1 deletion(-)
+ include/net/bluetooth/hci_core.h | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index c1134ad5f06d..793301f360ec 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4791,6 +4791,16 @@
- 	printk.time=	Show timing data prefixed to each printk message line
- 			Format: <bool>  (1/Y/y=enable, 0/N/n=disable)
+diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci_core.h
+index 31020891fc68..111509dc1a23 100644
+--- a/include/net/bluetooth/hci_core.h
++++ b/include/net/bluetooth/hci_core.h
+@@ -1572,8 +1572,13 @@ static inline void hci_conn_drop(struct hci_conn *conn)
+ 		}
  
-+	proc_mem.force_override= [KNL]
-+			Format: {always | ptrace | never}
-+			Traditionally /proc/pid/mem allows users to override memory
-+			permissions. This allows people to limit that.
-+			Can be one of:
-+			- 'always' traditional behavior always allows mem overrides.
-+			- 'ptrace' only allow for active ptracers.
-+			- 'never'  never allow mem permission overrides.
-+			If not specified, default is always.
+ 		cancel_delayed_work(&conn->disc_work);
+-		queue_delayed_work(conn->hdev->workqueue,
+-				   &conn->disc_work, timeo);
 +
- 	processor.max_cstate=	[HW,ACPI]
- 			Limit processor to maximum C-state
- 			max_cstate=9 overrides any DMI blacklist limit.
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 72a1acd03675..5ef14ba953a2 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -117,6 +117,40 @@
- static u8 nlink_tid __ro_after_init;
- static u8 nlink_tgid __ro_after_init;
- 
-+enum proc_mem_force_state {
-+	PROC_MEM_FORCE_ALWAYS,
-+	PROC_MEM_FORCE_PTRACE,
-+	PROC_MEM_FORCE_NEVER
-+};
-+
-+#if defined(CONFIG_PROC_MEM_ALWAYS_FORCE)
-+static enum proc_mem_force_state proc_mem_force_override __ro_after_init = PROC_MEM_FORCE_ALWAYS;
-+#elif defined(CONFIG_PROC_MEM_FORCE_PTRACE)
-+static enum proc_mem_force_state proc_mem_force_override __ro_after_init = PROC_MEM_FORCE_PTRACE;
-+#else
-+static enum proc_mem_force_state proc_mem_force_override __ro_after_init = PROC_MEM_FORCE_NEVER;
-+#endif
-+
-+static int __init early_proc_mem_force_override(char *buf)
-+{
-+	if (!buf)
-+		return -EINVAL;
-+
-+	if (strcmp(buf, "always") == 0) {
-+		proc_mem_force_override = PROC_MEM_FORCE_ALWAYS;
-+	} else if (strcmp(buf, "ptrace") == 0) {
-+		proc_mem_force_override = PROC_MEM_FORCE_PTRACE;
-+	} else if (strcmp(buf, "never") == 0) {
-+		proc_mem_force_override = PROC_MEM_FORCE_NEVER;
-+	} else {
-+		pr_warn("proc_mem.force_override: ignoring unknown option '%s'\n", buf);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+early_param("proc_mem.force_override", early_proc_mem_force_override);
-+
- struct pid_entry {
- 	const char *name;
- 	unsigned int len;
-@@ -835,6 +869,26 @@ static int mem_open(struct inode *inode, struct file *file)
- 	return ret;
++		rcu_read_lock();
++		if (!hci_dev_test_flag(conn->hdev, HCI_CMD_DRAIN_WORKQUEUE)) {
++			queue_delayed_work(conn->hdev->workqueue,
++							   &conn->disc_work, timeo);
++		}
++		rcu_read_unlock();
+ 	}
  }
  
-+static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
-+{
-+	switch (proc_mem_force_override) {
-+	case PROC_MEM_FORCE_NEVER:
-+		return false;
-+	case PROC_MEM_FORCE_PTRACE: {
-+		bool ptrace_active = false;
-+		struct task_struct *task = get_proc_task(file_inode(file));
-+
-+		if (task) {
-+			ptrace_active = task->ptrace && task->mm == mm && task->parent == current;
-+			put_task_struct(task);
-+		}
-+		return ptrace_active;
-+	}
-+	default:
-+		return true;
-+	}
-+}
-+
- static ssize_t mem_rw(struct file *file, char __user *buf,
- 			size_t count, loff_t *ppos, int write)
- {
-@@ -855,7 +909,9 @@ static ssize_t mem_rw(struct file *file, char __user *buf,
- 	if (!mmget_not_zero(mm))
- 		goto free;
- 
--	flags = FOLL_FORCE | (write ? FOLL_WRITE : 0);
-+	flags = write ? FOLL_WRITE : 0;
-+	if (proc_mem_foll_force(file, mm))
-+		flags |= FOLL_FORCE;
- 
- 	while (count > 0) {
- 		size_t this_len = min_t(size_t, count, PAGE_SIZE);
-diff --git a/security/Kconfig b/security/Kconfig
-index 412e76f1575d..a93c1a9b7c28 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -19,6 +19,38 @@ config SECURITY_DMESG_RESTRICT
- 
- 	  If you are unsure how to answer this question, answer N.
- 
-+choice
-+	prompt "Allow /proc/pid/mem access override"
-+	default PROC_MEM_ALWAYS_FORCE
-+	help
-+	  Traditionally /proc/pid/mem allows users to override memory
-+	  permissions for users like ptrace, assuming they have ptrace
-+	  capability.
-+
-+	  This allows people to limit that - either never override, or
-+	  require actual active ptrace attachment.
-+
-+	  Defaults to the traditional behavior (for now)
-+
-+config PROC_MEM_ALWAYS_FORCE
-+	bool "Traditional /proc/pid/mem behavior"
-+	help
-+	  This allows /proc/pid/mem accesses to override memory mapping
-+	  permissions if you have ptrace access rights.
-+
-+config PROC_MEM_FORCE_PTRACE
-+	bool "Require active ptrace() use for access override"
-+	help
-+	  This allows /proc/pid/mem accesses to override memory mapping
-+	  permissions for active ptracers like gdb.
-+
-+config PROC_MEM_NO_FORCE
-+	bool "Never"
-+	help
-+	  Never override memory mapping permissions
-+
-+endchoice
-+
- config SECURITY
- 	bool "Enable different security models"
- 	depends on SYSFS
 -- 
-2.44.2
+2.45.2
 
 
