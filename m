@@ -1,65 +1,89 @@
-Return-Path: <linux-kernel+bounces-260114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E3C593A335
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:50:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC05893A336
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4898D284545
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:50:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BFBDB2426A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69C7156C49;
-	Tue, 23 Jul 2024 14:50:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D53E13B599;
+	Tue, 23 Jul 2024 14:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iM51JkRe"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="YXzleEDs"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6347156F21;
-	Tue, 23 Jul 2024 14:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF821156C72
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721746221; cv=none; b=S89aR5V9it6mGQl13VTReuZ6l5OA9fgpXOLNtev6+Ro+VkYXZwyVIPkaXbeFvZdfqTHZUd2DztFYkEkEyXMmioqu7VN5Hi/NslLHXfE5Mu38h35EfPeXbMFiHEnlzAeZab5ZUd6zCodmkQEMHtca3QnW36dHlq58eVVvRcRtaQY=
+	t=1721746234; cv=none; b=gzatVBSZzDTf1BuY0IK8S13eNBYLLd+wIXgUtlrY73mnVP4cwf4LtokmaDaI1AZMIW8NY87SW/vnMzI6drsSBi+4cEz7sZ2fMMA6v/7zQFBjf44zYAqId9i4gJCpi/L4jbZS0l0Jxr0aV0kyP6k2eWIdEGxU3Y3nKjx8pKJMWO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721746221; c=relaxed/simple;
-	bh=JbFRFZR+rTdk5D5OdQPv9NbhNeONFHjpg/SS8MMWpeU=;
+	s=arc-20240116; t=1721746234; c=relaxed/simple;
+	bh=Kb5NJNrq1tXYwAFQccq2XyaIJ0jDceX3+10qvJtuDtI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p/3Bi7RSRHGeyjwgek3dFpYwrhbRN1j/OpH3tc6rduEjRUeHPn5+ZMrTVaN3KsQDqVwSJmIAFerQav9d69FHm4IuCqcQhRnEV/00rz0KuRhK/eHUG85yiqAMt0pzFhAX4sTg9BJgc+7prhPZML/7GlmDVL41Fo0PlVV3y/Z7eWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iM51JkRe; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jYWVnpw0/I8x56Kco6vA/ZpE9Ty7o70/Ja2C3Pi/lJI=; b=iM51JkReSoz3OjbOTIJFF8ELeE
-	KC0SaGCqdZSoW4Kd00KCcHD0VPEQtZRUATO38BuYSwL3MtaGW23wxEMOQGxvl/+r/PzI/KNwLDdYG
-	FmmurlUrzqnyjvWFY+O7RrataQ1UOmupaML6s9ZXllZ5ez72yg+4sqbMVUoBc+X2reG8B6ktVbv+t
-	2n3q0qBO5yHLcnon5aLNLD1+EkqIXK0zZwbvm4nlXKSwQqwKN4gB5rDNbyY7PwsVPEWgM/B4+UDip
-	uQIrS5JGyfV5Uq3HFfcQGhJ8/zEDwc8m2cG0j2MpC4ZAz7TFAqjbNhpoK5jFhfnpql6wQHe3C87v4
-	EE1rM+Eg==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sWGq8-00000006yW4-2hq3;
-	Tue, 23 Jul 2024 14:50:08 +0000
-Date: Tue, 23 Jul 2024 15:50:08 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=PE64AtRAumikFF4auRlpcpSRqd/TkcSEOIE9a2zb+6Ap8FIdTcBJ6bVjn6xBQiySUHQCG7L1Y6geiJGspueA3iw9zQeRuTexrSe+j7bzCIRL2YvqcSWsajBW9T28snxKIIpKSXSysYcqjycTkMptlpLgRId+zh6LVC/BPrqQYmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=YXzleEDs; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e05ecb3dbf6so5417837276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:50:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1721746232; x=1722351032; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IUDQDkdWLmyDd8onjNy+ZW06VmBfzLOoZpzptDXN9wU=;
+        b=YXzleEDsE2jE1Qbw7g1mEN1OFEAd80EVbOvic4UAtnYuef/sLTY+dnVqDivLJDojdV
+         Ig85Ww3KE15NzaEUTEYfpuYXd18Do+FAgz2Xy/QwVTRZmzjpdkI3xKwhYXCBVSklzE2X
+         kOxwr353ew6/dD9lt5Wzz7kiuqVsRKa+OITTPPbnXp8WKblHuGo0Q+m1XHMraSURBW1Q
+         uEzCAaQa+zT/2ZN0h2eX+Es2xxJopu2zBPUF/94PTUwOUTneeA56AJ4Y/9J8lR3wroV5
+         S/ZNQX6uBZxXbsz7Zo6SxDj+MWljFrHJRm8ks0wmDBaopkEg+KwBT9jv6jyvTh2uWJyM
+         gddw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721746232; x=1722351032;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IUDQDkdWLmyDd8onjNy+ZW06VmBfzLOoZpzptDXN9wU=;
+        b=mI77VWrASYX8DD6zy2LVNAo4jN20Af3Fnc6SH8h/L1Sd7zDfaXJJJCJ1xC/oLWBtrb
+         Lj/1pYpCHYM+CliRHz4eidkYZXjVXA2PUhH1x9jX99MB0sip0SRYr7MfNoBY5bJT43Yt
+         rn3Ko4VfoCgANQ+oC4zPhchvCLviONEYqOokod9c3QDQZ3a4UnW6zV4rBPZgHJJrJLyh
+         XGBcHOJ0wINvQOxTmjmUU785UUdQMnoLcOo7pmyul3c3jsKrUuP3nyf9RaM3c1FrtnyW
+         QrrHUKHYNFwcYRI1IRNvWttOPWSCk12YQdBilZOz6gu7aL0n4OKyMFrij6a/nRESfqZR
+         N0uw==
+X-Forwarded-Encrypted: i=1; AJvYcCXr/ghKadgrKNj9+Oq37SMDkv/r5AX251CRrSlE+nW2So5aWk+lg+76gp6aoGDz00XD4c2bjvh1aiGgPCWX6sWgpAiwBjc+uK7+rel5
+X-Gm-Message-State: AOJu0Yzsb54hRSXtDUnJxG/VAmE6ccObiyhlo0bHiD14U5tQWxgVPeJy
+	YXe8gt8eLanV+dRRgMPfSXge8P3YlhOf0rxXPWNYUdIjF9nN+3JesCE0zDnSRAs=
+X-Google-Smtp-Source: AGHT+IHLfNRZJV2zPo6ahJW6piWzOpYhIOrEWiTfSMlQH6SvuQOGoZaaz51/4d4J+c4TG14W35pJow==
+X-Received: by 2002:a05:6902:2511:b0:e05:fc91:8940 with SMTP id 3f1490d57ef6-e0870181352mr12957269276.22.1721746231888;
+        Tue, 23 Jul 2024 07:50:31 -0700 (PDT)
+Received: from devbig133.nha1.facebook.com (fwdproxy-nha-113.fbsv.net. [2a03:2880:25ff:71::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e087ca677a1sm1220770276.27.2024.07.23.07.50.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 07:50:31 -0700 (PDT)
+Date: Tue, 23 Jul 2024 07:50:30 -0700
+From: Gregory Price <gourry@gourry.net>
+To: Huang Ying <ying.huang@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alison Schofield <alison.schofield@intel.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH] rust: mm: add abstractions for mm_struct and
- vm_area_struct
-Message-ID: <Zp_DIEOj0PtNywmA@casper.infradead.org>
-References: <20240723-vma-v1-1-32ad5a0118ee@google.com>
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Bharata B Rao <bharata@amd.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>
+Subject: Re: [PATCH v3 3/3] cxl/region: Simplify cxl_region_nid()
+Message-ID: <Zp/DNhIP543wx9u2@devbig133.nha1.facebook.com>
+References: <20240618084639.1419629-1-ying.huang@intel.com>
+ <20240618084639.1419629-4-ying.huang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,26 +92,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240723-vma-v1-1-32ad5a0118ee@google.com>
+In-Reply-To: <20240618084639.1419629-4-ying.huang@intel.com>
 
-On Tue, Jul 23, 2024 at 02:32:03PM +0000, Alice Ryhl wrote:
-> +// SAFETY: It is safe to call `mmdrop` on another thread than where `mmgrab` was called.
+On Tue, Jun 18, 2024 at 04:46:39PM +0800, Huang Ying wrote:
+> The node ID of the region can be gotten via resource start address
+> directly.  This simplifies the implementation of cxl_region_nid().
+> 
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> Suggested-by: Alison Schofield <alison.schofield@intel.com>
 
-If I were reading the documentation, I might want to know if it's safe
-to call in interrupt context (either soft or hard).  ie can mmdrop
-sleep (if it turns out to be the last owner of the mm).
-
-> +/// A wrapper for the kernel's `struct vm_area_struct`.
-> +///
-> +/// It represents an area of virtual memory.
-> +#[repr(transparent)]
-> +pub struct Area {
-> +    vma: Opaque<bindings::vm_area_struct>,
-> +}
-
-That seems like a very generic name!  MMArea?  VMA?  Certainly when I'm
-talking to people, I say VMA.  struct vm_area_struct is a terrible name
-and I'd be happy to change it if we could stomach that churn.  If I were
-naming it today, I'd want to call it struct mm_area.
-
+Reviewed-by: Gregory Price <gourry@gourry.net>
 
