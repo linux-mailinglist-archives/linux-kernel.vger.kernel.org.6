@@ -1,161 +1,126 @@
-Return-Path: <linux-kernel+bounces-259584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 409C29398E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 06:35:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E663E939900
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 06:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3862282AF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 04:35:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 240E01C21A46
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 04:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF9013C677;
-	Tue, 23 Jul 2024 04:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FD713C67F;
+	Tue, 23 Jul 2024 04:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="N4fmJBx3"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZZsplcYC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C3C137748;
-	Tue, 23 Jul 2024 04:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D79428E8;
+	Tue, 23 Jul 2024 04:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721709332; cv=none; b=ogZS3enQ+Pu1rYit69UEQGd76Qy1GxGnhHMenoWjJpbQeXjEauFf8/lbYgFSQom/8DXBeKlzrOEHUZ+gwfGyh5VCjQP2nvZvGqdkvVHeFnobxLrulD3sFLbattAHjJUvHjXS45iK2LOLHydeM0HlZ8jWngGu+PBElOwP+W0P/2Q=
+	t=1721710449; cv=none; b=UJqZAY6+9PWqIM4C9oOmGFS/xT4TTCXeu/unXGWRPl/yDZnpLA7gM2rdTxGLSgbCsTmoDXIdADa1ECaJ91WSSDkC0UeQvQ6m995RcwMkE9/RSI85d58q1E0sIlEoxgFBoUqaZravlsJb7WSnpGxykLMZzOT/Tk4vUOkucIrkdMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721709332; c=relaxed/simple;
-	bh=4PCnwlxv2IxobXi6IociNJjbhyUgDkSbmoWcpbXEluE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gY5csb54merrmzNWxx2n2WhAZRJLF2UDnDTDpWVPJ6tfqxQE71y8FnycBE4vd/qrIc7DIiC6tER6RnWBio0odGEdAA2exsvqUXlnXFIw4gNGaRh8KDlOdoxiNp/wAf12JzD1nzJotQtUYNjqavxdYY9YE58dZ4ewq7kh7kewXJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=N4fmJBx3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46N15edS014619;
-	Tue, 23 Jul 2024 04:35:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WDBOdvaDBBAOOl/2O7Zpqnim6uzIu49cIrw4RZRzxgA=; b=N4fmJBx3e4DOkrlV
-	l6892miZH1I3rNhrrx5K6isSXEHQwW58RNIK3ZyJqcG2Iyp6h6mMlHWmXFNnN1yx
-	L2X/Ow/Elz2pcNurBTKnnfHH5dMpT5230GbEKJ+hu1mNg8+zMvdH1cJh62bU6ED9
-	ZmXioE48XZ9aGYU96zY+wPoWn6yTv/2StKn47vgb+lCPMFfoRChF4QGlaOwoMVKz
-	UpxWKWYrp+kxNO+Z6OyL1wjQOH99i6FY2WmN4kpvcvspWkKegGAj47vZaAo/GCuW
-	fhwZMwv04XUCI39oFWfjRduUSiqtjLcujFTR+INKx8tCt+rn5L5QfdwL6wSYvlCG
-	he+qxg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g60jwdp5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Jul 2024 04:35:05 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46N4Z4Y1010496
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Jul 2024 04:35:04 GMT
-Received: from [10.204.65.49] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 22 Jul
- 2024 21:35:00 -0700
-Message-ID: <63c52fd2-9f31-418b-8c6c-4c91f7c69fd3@quicinc.com>
-Date: Tue, 23 Jul 2024 10:04:57 +0530
+	s=arc-20240116; t=1721710449; c=relaxed/simple;
+	bh=JG2uTvuHOTSEiYBaoN+6HbN2i7+PPxkKQbrGanmbEA0=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dLtdihHsgGHFlWyprhh5jiBEH/wvilV3znwKFo1zqOMi7ELB6RnC5k/sZmCJl8eX9sjNQAKXpW56/Hb+9J4oPUYjs1vOqUkzSm03UArMmXQWz00gNxJi82D3hkBVM6kSjQFVIFu2TTZFU8M1KYe7zgnq2sgue0z8XcQax8P08XU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZZsplcYC; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721710447; x=1753246447;
+  h=date:message-id:from:to:cc:subject:in-reply-to:
+   references:mime-version;
+  bh=JG2uTvuHOTSEiYBaoN+6HbN2i7+PPxkKQbrGanmbEA0=;
+  b=ZZsplcYC5KqDEt+KXpBriLJWbVmAiCVVNnBL8JXcAkn/3vwhhix93dWE
+   A+/bvDNGIUkG4PYfGSWITlLmEMyJV5dIkzycTGLyVGwGS/9MQpkm3QW4T
+   JvsoSbllKkKxhXpBeE7vT/9KNKyKBznhkPJy1wmhMQ06J9dMAoy+t0xfZ
+   x1dU7zaSCp/PK0Aq2LxYUOqxU1p01e/KQzbgReY2IoonXAJ9hKcQ0b7ia
+   Yr4m2PtKo07Q0J7kY3z36BKW7lKTOn/GPfdoP1zSi7IId+einaHTz+440
+   0Nus9jzJAKhMMgsa9VTU+Y1nIaq9hdMnAyeX987vkOpqCqu3qdiOvwCNy
+   Q==;
+X-CSE-ConnectionGUID: hNbiXDa5SkuBTB27x6AnRw==
+X-CSE-MsgGUID: /Nm158nbQZSU92ef8i6mWQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11141"; a="30699438"
+X-IronPort-AV: E=Sophos;i="6.09,229,1716274800"; 
+   d="scan'208";a="30699438"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 21:54:07 -0700
+X-CSE-ConnectionGUID: nvoczLzaSuu5iY0KO25QYQ==
+X-CSE-MsgGUID: 2PlpN+mpTSeS/pftXHIaCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,229,1716274800"; 
+   d="scan'208";a="57219890"
+Received: from dmprieto-mobl1.amr.corp.intel.com (HELO adixit-arch.intel.com) ([10.125.48.92])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 21:54:06 -0700
+Date: Mon, 22 Jul 2024 21:35:45 -0700
+Message-ID: <878qxsd8ta.wl-ashutosh.dixit@intel.com>
+From: "Dixit, Ashutosh" <ashutosh.dixit@intel.com>
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: intel-gfx@lists.freedesktop.org,
+	linux-perf-users@vger.kernel.org,
+	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+	dri-devel@lists.freedesktop.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] drm/i915/pmu: Use event_to_pmu()
+In-Reply-To: <20240722210648.80892-4-lucas.demarchi@intel.com>
+References: <20240722210648.80892-1-lucas.demarchi@intel.com>
+	<20240722210648.80892-4-lucas.demarchi@intel.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL-LB/10.8 EasyPG/1.0.0
+ Emacs/29.4 (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/2] misc: fastrpc: Define a new initmem size for user
- PD
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <quic_bkumar@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <quic_chennak@quicinc.com>,
-        <dri-devel@lists.freedesktop.org>, <arnd@arndb.de>,
-        stable
-	<stable@kernel.org>
-References: <20240722080200.3530850-1-quic_ekangupt@quicinc.com>
- <20240722080200.3530850-2-quic_ekangupt@quicinc.com>
- <ydp5ntlresenovs6qaqt7wdaleuruubem5hajbfadkratfsiam@wjn33ymp4gyc>
-From: Ekansh Gupta <quic_ekangupt@quicinc.com>
-In-Reply-To: <ydp5ntlresenovs6qaqt7wdaleuruubem5hajbfadkratfsiam@wjn33ymp4gyc>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: xndY1KExMuqOgTmHjd6nsi5ZQMAQRyh0
-X-Proofpoint-GUID: xndY1KExMuqOgTmHjd6nsi5ZQMAQRyh0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-22_18,2024-07-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- priorityscore=1501 bulkscore=0 impostorscore=0 lowpriorityscore=0
- mlxscore=0 suspectscore=0 phishscore=0 clxscore=1015 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407230031
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 
+On Mon, 22 Jul 2024 14:06:44 -0700, Lucas De Marchi wrote:
+>
+> i915 pointer is not needed in this function and all the others simply
+> calculate the i915_pmu container based on the event->pmu. Follow the
+> same logic as in other functions.
 
-
-On 7/22/2024 2:02 PM, Dmitry Baryshkov wrote:
-> On Mon, Jul 22, 2024 at 01:31:59PM GMT, Ekansh Gupta wrote:
->> For user PD initialization, initmem is allocated and sent to DSP for
->> initial memory requirements like shell loading. The size of this memory
->> is decided based on the shell size that is passed by the user space.
->> With the current implementation, a minimum of 2MB is always allocated
->> for initmem even if the size passed by user is less than that. For this
->> a MACRO is being used which is intended for shell size bound check.
->> This minimum size of 2MB is not recommended as the PD will have very
->> less memory for heap and will have to request HLOS again for memory.
->> Define a new macro for initmem minimum length of 3MB.
->>
->> Fixes: d73f71c7c6ee ("misc: fastrpc: Add support for create remote init process")
->> Cc: stable <stable@kernel.org>
->> Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
->> ---
->>  drivers/misc/fastrpc.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
->> index a7a2bcedb37e..a3a5b745936e 100644
->> --- a/drivers/misc/fastrpc.c
->> +++ b/drivers/misc/fastrpc.c
->> @@ -39,6 +39,7 @@
->>  #define FASTRPC_DSP_UTILITIES_HANDLE	2
->>  #define FASTRPC_CTXID_MASK (0xFF0)
->>  #define INIT_FILELEN_MAX (2 * 1024 * 1024)
->> +#define FASTRPC_INITLEN_MIN (3 * 1024 * 1024)
-> So, what is the difference between INIT_FILELEN_MAX and
-> FASTRPC_INITLEN_MIN?
-
-INIT_FILELEN_MAX is the maximum shell size that can be passed by user.
-FASTRPC_INITLEN_MIN is the minimum initmem length for PD.
+Reviewed-by: Ashutosh Dixit <ashutosh.dixit@intel.com>
 
 >
->>  #define INIT_FILE_NAMELEN_MAX (128)
->>  #define FASTRPC_DEVICE_NAME	"fastrpc"
->>  
->> @@ -1410,7 +1411,7 @@ static int fastrpc_init_create_process(struct fastrpc_user *fl,
->>  			goto err;
->>  	}
->>  
->> -	memlen = ALIGN(max(INIT_FILELEN_MAX, (int)init.filelen * 4),
->> +	memlen = ALIGN(max(FASTRPC_INITLEN_MIN, (int)init.filelen * 4),
-> BTW: why is the code multiplying filelen by 4? Nothing in the source
-> code suggests that filelen is in u32 words, so I'd assume it's measured
-> in bytes.
-
-The passed filelen is actually the size of fastrpc shell. This size is not sufficient for the user
-PD initialization. The 4x of filelen gives the approx. needed memory for signed PD initialization.
-Yes, filelen is measured in bytes.
-
+> Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
+> ---
+>  drivers/gpu/drm/i915/i915_pmu.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 >
->>  		       1024 * 1024);
->>  	err = fastrpc_buf_alloc(fl, fl->sctx->dev, memlen,
->>  				&imem);
->> -- 
->> 2.34.1
->>
-
+> diff --git a/drivers/gpu/drm/i915/i915_pmu.c b/drivers/gpu/drm/i915/i915_pmu.c
+> index cb5f6471ec6e..3a8bd11b87e7 100644
+> --- a/drivers/gpu/drm/i915/i915_pmu.c
+> +++ b/drivers/gpu/drm/i915/i915_pmu.c
+> @@ -820,15 +820,14 @@ static void i915_pmu_event_start(struct perf_event *event, int flags)
+>
+>  static void i915_pmu_event_stop(struct perf_event *event, int flags)
+>  {
+> -	struct drm_i915_private *i915 =
+> -		container_of(event->pmu, typeof(*i915), pmu.base);
+> -	struct i915_pmu *pmu = &i915->pmu;
+> +	struct i915_pmu *pmu = event_to_pmu(event);
+>
+>	if (pmu->closed)
+>		goto out;
+>
+>	if (flags & PERF_EF_UPDATE)
+>		i915_pmu_event_read(event);
+> +
+>	i915_pmu_disable(event);
+>
+>  out:
+> --
+> 2.43.0
+>
 
