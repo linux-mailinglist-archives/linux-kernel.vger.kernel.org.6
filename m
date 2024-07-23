@@ -1,237 +1,339 @@
-Return-Path: <linux-kernel+bounces-259705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96B2B939BCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:33:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1794E939BC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 262301F21BB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:33:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFAF5280FDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2A114B092;
-	Tue, 23 Jul 2024 07:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFFA13D28A;
+	Tue, 23 Jul 2024 07:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iRrIKm5K"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ii6p1hZz"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BB213B5A6;
-	Tue, 23 Jul 2024 07:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721720012; cv=fail; b=Y/cdbOEcN5QX9/yHwwIqLzpVqmKe2xRwoDM/PiVa37q2TE1m7h5m1QOiTmmvel01sCzZibN941GbtYeIFJGcZ3hPtQi8IYK2wwOb8lIXcM7eynQy5AIej4K23SePl33zsw5gKWxuOlst5fuUkroChChmwIWvX3PbDF09+LTTGa4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721720012; c=relaxed/simple;
-	bh=Hex9szuY7HnoHC0gM3CW5z/Mznvd3mtNbI6eQUUOKdI=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=A5VmAGgqjkFaktwNsyy4LQJSE2DESoge+Dq0+2c0MGX18k6JcpevLs/VwmyrF+16U4NOx3heExX9CAR0eAPSBLT/G2Dn3ejg5CF7s+nI4NFIKUXxzrGJZQmzt0EkZoR1gZiEUokBgox+7X4O2w0boG36JvWCLa2wR0MG3mLArss=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iRrIKm5K; arc=fail smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721720010; x=1753256010;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=Hex9szuY7HnoHC0gM3CW5z/Mznvd3mtNbI6eQUUOKdI=;
-  b=iRrIKm5KdUoJyF7wuVvlwqTEl6FDijkvsNVzwusPgGHujgxHOcIDPbs8
-   f53JkagDAmXsh3yCyIu5v1AYzJDHcHyx98JRGRbqx6t5k281Kj4OJYZY4
-   OwTh5feylnbfDSX4tere2Qwd5z9GuhSAHVfXZSPCDQTcrSqVcQBgg8ogL
-   a+HVg7dXxzH8SZx69+OxZ4oAZsn48pPQCZR680ONYJnRk+vuQkA72qYjj
-   KDs+7wWOEukAMnlzxBnmgc8RmCnt4D9zC+/aNa65rxN1RhFf4QeI9DlJe
-   3zTlXAs4L0b5bSKZz1z+B1uqYf/Km+2o/QxeJjJkHqEZ/qIzNAxq/j5nO
-   A==;
-X-CSE-ConnectionGUID: 3v+U4Sw7SjKTfu9BHhpInQ==
-X-CSE-MsgGUID: eMHEPilaR26CoHMvU+D6aQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11141"; a="19028796"
-X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
-   d="scan'208";a="19028796"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2024 00:33:30 -0700
-X-CSE-ConnectionGUID: t/BCmM3cR7OAnFI7QLEdTg==
-X-CSE-MsgGUID: OfdAANTiReKWC/KAh8mLqQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
-   d="scan'208";a="52890995"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa008.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 Jul 2024 00:33:30 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 23 Jul 2024 00:33:29 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 23 Jul 2024 00:33:28 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 23 Jul 2024 00:33:28 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.172)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 23 Jul 2024 00:33:28 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R4ZfdgSrXbZiZG7Qu7+gy3/HwTDp99wlJOr1JZE5UecMegbp/v1KOvo3Uxdhk/kKWmhEoUkhYUoHadRk4hoeVjwz2K1wAyA5OVtgMQeOdtPU/TRLFJ4OeSXG1VFrz5HFEk4vq71pgPqmFbny4cx4Zd+n0ymnBx+D40xqle8aHgoloH+DP4xlxE56sUw57mgfywSWuyyZTOD6ai+puZSBL6U2dn802HxCjME29/pagd1u1DL5FQgMaeZCH5Gqv8ALV31cBA56bT+ssn3sYNmoaxlLtoBHVMw60SkeWtUxxV3gCmN2Z1gkUvrebFADEI/p1ODUO1PvjM5icOZLXXNCiw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0WLhlUHF8oRpAS/s73nKSwIKwPvPIlKpn6CHHjJdzHE=;
- b=ryjxGwmKU9YD81M5GdpKuz4aqt+DJCBS5x4hJ9MjGSNn6ZmwTGEtBcfLBM+dqpyAuhxRKzftQ/gE3dog2gyY1Y/NbQtk2iO03SOuVHgSFmzcxsrTATg7MAaOc2tQt1kJG+LyBkGxGWhIHpKzfKGRR6bMiGuB9Ja3rTO5fOp/iqc4oPIDykfzkneNSoRmtnfxx/iTkulTgoQNNB8VmTc8Rmqd40kEjMj6zRtGTLYTZ4bBzeHji2zCg0xs7Pbep5iunZrDKthQi7fuYF0U8Vzi4XakFh58jCDywadbQr1yJYsueSRuA4IOrkQp426O/ZFV3h/tlI7XaqAvUx2MuqK13g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SA1PR11MB5803.namprd11.prod.outlook.com (2603:10b6:806:23e::8)
- by SA2PR11MB5113.namprd11.prod.outlook.com (2603:10b6:806:113::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20; Tue, 23 Jul
- 2024 07:33:26 +0000
-Received: from SA1PR11MB5803.namprd11.prod.outlook.com
- ([fe80::e976:5d63:d66e:7f9a]) by SA1PR11MB5803.namprd11.prod.outlook.com
- ([fe80::e976:5d63:d66e:7f9a%4]) with mapi id 15.20.7762.027; Tue, 23 Jul 2024
- 07:33:26 +0000
-Message-ID: <c979896c-f281-4d05-bda1-4d172597b69f@intel.com>
-Date: Tue, 23 Jul 2024 10:33:19 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Intel-wired-lan] [PATCH net 1/1] igc: Fix double reset adapter
- triggered from a single taprio cmd
-To: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>, "David S . Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jesse Brandeburg
-	<jesse.brandeburg@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>
-CC: <netdev@vger.kernel.org>, <intel-wired-lan@lists.osuosl.org>,
-	<linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-References: <20240625082656.2702440-1-faizal.abdul.rahim@linux.intel.com>
-Content-Language: en-US
-From: Mor Bar-Gabay <morx.bar.gabay@intel.com>
-In-Reply-To: <20240625082656.2702440-1-faizal.abdul.rahim@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TL2P290CA0010.ISRP290.PROD.OUTLOOK.COM (2603:1096:950:2::8)
- To SA1PR11MB5803.namprd11.prod.outlook.com (2603:10b6:806:23e::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03E313C9A3;
+	Tue, 23 Jul 2024 07:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721719914; cv=none; b=Vy7DJ8pbzgGHERU05+d71AQjJtpQiscSiXS5t74r1rOtzo/YNomweEbRG7mgB5bHi66fmP26fgoos5PrQLnZVnqMKL5fbchgeE50pz0jM5YA1b9IF9CWJNiAwXXF1DJMz16hPcQKSXoA8g1j1m9HSnP1MFrYIIZUwR22kddaCW4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721719914; c=relaxed/simple;
+	bh=UohvSeBwyrr5yKLCUk8rF8JhQ/M2MmDBOhyLHQ/KLOQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=vEebcW7ET7FDaPSjV5bBdB2Y8U6YYZdXyY3jClRNAgzrS7kGECQAPIlPxU2x8Qg+6A1iQBeCPOP5hzrTnESsVZCK8NBQfzzVK0EvBu4Vde4MJwmXBGGrk7Gl06af0/5LdFA5obkV1e4L28Exjorf9wN6yPskJuSQjGTNxE/woWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ii6p1hZz; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ef248ab2aeso39765851fa.0;
+        Tue, 23 Jul 2024 00:31:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721719910; x=1722324710; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=S8OpMIM8zPG8UTttbR7UeAoGfnG3+0y+abp6BXVUgH0=;
+        b=ii6p1hZz0uNaCbvDXzCj5yI+UaHa4g4AUQFdv1UsxRGGqG6OP3mhrooJcM+/OCK9lN
+         vce+qjTSs9Kne1TxsSQhQUlCMAJVEimq8PISxLh6c/joZ9cspp0qtWARYO+uM9RfTKvc
+         j2PcuYHWBItP+dKlUJsbfd+WnfoERZ3VcjGHh8PWSGCGXblQyxu26x6ogon6u0/rCwhm
+         PvcF1/L+75e9n5+QpD5+RlhBNXRysAgpn5MO1PLx9IDAWemj1ZfR/BgDXyHoruG6ht5T
+         Fu830x/noJ1hEv2bCENnFbXfqseW5mGCm3FZQ5Q5UdoczXza4fkt9IuRK01MoMUK2Ss/
+         Bd9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721719910; x=1722324710;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S8OpMIM8zPG8UTttbR7UeAoGfnG3+0y+abp6BXVUgH0=;
+        b=u4R6Ba5ybNdi9G62chXghCKCAtI0VIg0BveJnAHOhMn8iSKyWlmTZXcZxdhHjWOkZ+
+         4pOi0+n80fhyfpw0FICnlhX5lnxwqEwEdnZZCBCsj3TFrwUe6OsGtZPCjrU8fp1UfjjC
+         lBWDSQp/K3xcfvi7eNyEIknXrMTZylg7NfNSd+XTuLPhzhwbqIp1+ENI/kefpfsCObJK
+         fhbHZnKCWNX813lSdYqyZXMpgf0vP5zoy/swN/VVZ/wN2nIoSbtssZfU9AQ87BMHHwZu
+         w6bNpH+zgw7BKjmF5EdcXbZX70DVHtnOCOyUeIvvMtUYPTUF9WVFHew8P2Dzcjc3IF1U
+         25SA==
+X-Forwarded-Encrypted: i=1; AJvYcCVEPg1DCVg+zCCKzn/dTKn8CmbGyAvIyrs7x5rHGAA0J/u+wJSe99embQzXPe/1ssXMJoHZ2E+3wx1qNswmh+3AD0D3Xbtvqut2vvnToGjZ8jeYLNWnX76nsurjs44BAdrucwSPlli0c/QosBgejGQZ7uJJY3HKV5hu7Ftp+14MZIxjAKDO101T0DunGm8JcAw/0r3XjkeH9OlvYYm7kg==
+X-Gm-Message-State: AOJu0YzDIdaPdou2cvG9uxW4QOwSpRheeEiS3szKhDmZ6PbEY9WiOFqW
+	J3ikerWdUzkQy6Xj+SJd9YEyyFQHopjtwl2uu6Rp/FfKFSrW8zqu
+X-Google-Smtp-Source: AGHT+IGcozbYkl92FBIC7Hg0sePjuRwqr2c3Fwc8sA30LZiKQKPH8Ap7+SyPt29k59IDgOcL1icaTQ==
+X-Received: by 2002:a2e:a406:0:b0:2ef:2012:eecf with SMTP id 38308e7fff4ca-2ef2012efd6mr65768641fa.26.1721719909441;
+        Tue, 23 Jul 2024 00:31:49 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30aaa2d48sm7109526a12.32.2024.07.23.00.31.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 00:31:49 -0700 (PDT)
+Message-ID: <75511e8371f7ffea1ed84a784231f3dc51363842.camel@gmail.com>
+Subject: Re: [PATCH RFC v3 0/9] spi: axi-spi-engine: add offload support
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>, 
+ Jonathan Cameron
+	 <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno
+ =?ISO-8859-1?Q?S=E1?=
+	 <nuno.sa@analog.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen
+	 <lars@metafoo.de>, David Jander <david@protonic.nl>, Martin Sperl
+	 <kernel@martin.sperl.org>, linux-spi@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org
+Date: Tue, 23 Jul 2024 09:35:46 +0200
+In-Reply-To: <20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
+References: 
+	<20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB5803:EE_|SA2PR11MB5113:EE_
-X-MS-Office365-Filtering-Correlation-Id: 041df91d-cfa0-40b1-89e9-08dcaae9bd61
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?Q2ltcDY5MXVlWXVOT1hDZ0pmV2EySit6dW5RWVlTS1FoMkdKSnlmSUhsY3ZB?=
- =?utf-8?B?YmZpSG1HMGJQMFRCZHIyeGhKdFI3WUVyTkpGZFB1b1hCVkw1QkVRR3p2WTFJ?=
- =?utf-8?B?eTI2YXhiZFJMdlhycWdKYkYzaURYL0RWZU9KcEZyRlM0TDFKWnhyMzZsaW0z?=
- =?utf-8?B?M1c5c0sxVmh1YWM4NzdyZ2g2ZmpwRHBlNXE2eElKc0pKVDZOT3JjTk9JV3RG?=
- =?utf-8?B?NVJTbDhwd21nbkp0SElNVDBWTjRMNE9RS0FWZU1UOW9ueVVoVmV3NktEdGJy?=
- =?utf-8?B?dVJ6WjFZUmgrSGZpUUZsU1hGdGJzdk1xUHNjbC9VSzV5T01NVVY2Qk9CR0ZV?=
- =?utf-8?B?eEt3VGtnSkkwT0hZeDY0QkphbTNvWi80dElyenFmM1NTM1JnRS9taDV6VWQ5?=
- =?utf-8?B?ZXFSYTlYMWp3WHpuM2hyRlNLZ3c3RGpMeFNrM0x0SXJueUh1RlJJdnpxY3JF?=
- =?utf-8?B?SzNxN0drYWM5d3FOYWZRSTRzamZMYlM0RnlnNnFKN2xmWFozMEVXNWp5VitH?=
- =?utf-8?B?bEVkdXFTa3pXQUdUcGFoNEd0MERHZVhMcTBwU0ErRUlSV2FYdzgwdk1ZNHFK?=
- =?utf-8?B?Q1pJUFZEc1BGdEhQVFNneHNjeU90SmwzcXByaXViNDBvYTNCZ2U3OWhFYU5l?=
- =?utf-8?B?QVBMb2FYR203QllGK0h2dWtKSG9tNlNLM3pYNURWaGk3WlA4OXNHb1ZCaUhI?=
- =?utf-8?B?V1FrdXRGalN2cmJsVWhRN2E2ZmE2cFJKS3Z0YjNLak9SWFh5UjA0N3lKVkYr?=
- =?utf-8?B?OFZ4VDhNRE9hRFFTK3pHSk53a3M0WWh1NWJkZllXU2o4ZFRzSEJJZlhaY1dE?=
- =?utf-8?B?Sm8rOGc2TjU0cGU1MG91OG0vTnZPM01kY1dvQWVvOUV6eDkrUjZlTUo4dEoy?=
- =?utf-8?B?d0dRdmRuU25tVXViTkdoY1FQMUQrZ3hwV1BrZkw3clR6akF4eGlsaEFpWit1?=
- =?utf-8?B?WE0yRVQxQm1ZWG5iUkVKN2hSaUd2T0F1VEM0ZTd5Q0h3N25jTjd1bEJkeERP?=
- =?utf-8?B?akxBVWFJTThlcERjbmVQWnZMYVAxM05nTEFVZ3IzODY1NGxGSE1DU3lsaUpz?=
- =?utf-8?B?TEphY2pZeHRBUXpKdGdRY0VwOFF1NEdTMXE0QVlpYk1IL1ZmSklXN1FVejNR?=
- =?utf-8?B?dEtMQWI3R3d3MG5DS3Z6RHhzQ216RlM4WFB0TndURHV3UThad2RRU2NqdUFZ?=
- =?utf-8?B?cktldy9teXRodkpwOUpLODIzSlNQZ1RDNUx3WWhyQkZIM2NneGFHSUhQTzlz?=
- =?utf-8?B?dG8rNzVRUFNJOHJHcHBNQWhPZHg3aTZtMVdsWHhMRm50K2cxd3VuclRpQWdV?=
- =?utf-8?B?R0FkSDRNMmpPaGhqMEVHUGJZOE56TzdqMVhtb3R5Y1gvYTV2VWMvZ1Q4WjVk?=
- =?utf-8?B?SVJBRmNKc3dwbWtlb2xOUkQ4TXdibUo1dVNnaDBmenNzQ0g4dEhYOFlLTWtK?=
- =?utf-8?B?Rm9pUzBlWEFLVTNRMm9uSVBWKzh6NWNpZ0R0MkwyVmFpekdUVVhKMkl4bnNX?=
- =?utf-8?B?TGZORUhOOEdYZ0xMUnNaUERiNmJOOG5qZU1rTzdyRXFLSW54R3ZiTENCK2Zt?=
- =?utf-8?B?WUpnbyt4cm1PRDdLZkRNU3MrckhyNDhBMTJ2TlMrTGl2TmxNUXI3VG1qR3FQ?=
- =?utf-8?B?bHdaRFZ5YzZvQ3NLaVYzOWdWQUUwclBGdHN1dEVVVHRrekVBMUZYSTZsd09H?=
- =?utf-8?B?NXhzakc4c21GaERqYTVUZndsWC9BSHhiMDllVFhvNlUwdm1wSFBVdXJkWHFC?=
- =?utf-8?B?S0V0UEJiQnM5YjEzT1lpYzc4U2NERWdtck9ubVh1ZVJUNWZtdjF0clpJUDlM?=
- =?utf-8?B?RjVPclMxVEtYTXZITDhjUT09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB5803.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dnVIRzdsbkNuYTlTUlVoRTVzMEphbzk4SGE2a3QwVGhUbFdvRm9pUUF4WUtv?=
- =?utf-8?B?bEF0YXFwaUpNVjJVa2JZR2I0akw2YTVPTHFSNGZlUkZndGZBdEk4aXpMVTlr?=
- =?utf-8?B?QjBqaGRBN2pmQWRQZHJQWG5WQVY1Z1VyYjNDVFlxaGFzOVY4ZlRaaURrWVU5?=
- =?utf-8?B?YkQ4Qk1wTTZ6VEZVNlZvU1RXckl0cHU4SkxJdjcxNllESVpGejJjekp3ZGkw?=
- =?utf-8?B?UG9QZi91QXgxdjhxdDNxNHMrMmZEeStiQTl2RzV2SnNaVFhHaVo4ZGFOY3d0?=
- =?utf-8?B?cnEvSEVCVEpsaHcwbVBVQkhhMU1hTWppM2Nvc1Z4WktQMkY3T1FZWTRCTGY5?=
- =?utf-8?B?emtQTWZRdm1XYXo1VUR2UW5hK1QwM0NCeTMzTW9hMktzVWpzL096a29abFkw?=
- =?utf-8?B?c2R1VWZNV1VhZVZFOGxDdnNHMVVpN2VWSVl0WFBKV005RDltYXhEWjR6QjU3?=
- =?utf-8?B?UEM4Q0VMWWx1YlJpYVFCNndvZEtyZjhGTkNUQThEK0RweDRheXRZQ29JVitN?=
- =?utf-8?B?QW1DMk4vUzRsK2djZitmS3ExYnk0SkZxVkUwVnA3YjZqOHlNTlhvSmNXQm9p?=
- =?utf-8?B?cWMvbHVvYkk4SlRBM3p5L1RhdUtyRXRWSytBdDI1YzRMUkRtMUxsb1hRTEhS?=
- =?utf-8?B?UENNbzgzR3l3RjdNN3UxZ1I2Rmo5RHRrUnhNMVY5SEJhdG9mWUU0dmxVVVcx?=
- =?utf-8?B?OFZ6Z3BKOWFsdFJvV3FWUGJORmVhUkRNNmpqTmYzajdXeDZlNWh3NExOT24x?=
- =?utf-8?B?ZmVhQWpOcG5NK0hSbktjRWVkY2lDMStLK1hlVm8ycVA5ZGFTeGtpMm5uRzhp?=
- =?utf-8?B?bWh0UVBHYmxUVDkzREVIbW42K0pldmQzOFEwdDJxOXNWOTRVbFN6WGNJL1Fj?=
- =?utf-8?B?OC91RjVSb2ZrYlNibmMrOW1rMXJKemJaRnBXQ2xrb3REdGpwKzY3czMyWDRC?=
- =?utf-8?B?S0I0cURuamlnMGtmMS9kMm9SL2Z1WGtHbWdGRmxvK3VzMWcvSko5cjBWMjhj?=
- =?utf-8?B?YndiQmhlS1dJWGwwSWRmQmNMNWFWc1BCTVNLdDNhL20xT3J3d2ZCUHRWTUpK?=
- =?utf-8?B?czhtRWhmTWQ2aTQwc00vRlZkZUVLTU1UcDVjT0pSb2hlenQ3SElsalpXRURt?=
- =?utf-8?B?cXJGTkpuMFE0U01yTmNFbVhDSUtYeExZcW5SZVlycm5mVHJNNmlMQ2RhekVZ?=
- =?utf-8?B?enJ6cWpGbTYvZTFnVVN4NXB6MG82UklCYmxsdVFiVDRaUGtobncrZUdndFBM?=
- =?utf-8?B?UEl0YkdwTjdIdXZ4dUJPYjMzV2toV3FPTXMrdXAwdjZCM2dsUnFEc1RFR1VS?=
- =?utf-8?B?ZDNwK05mczA5WmdBNVN4QWZZdzZDazd6bW5MZ3JreGdiV2RtbExscTRHeW1R?=
- =?utf-8?B?WjZreXk2OGphejFlTDQycjlia2RIdnNSVmUzb1JUcE0rWXFtMFU3Y2Q2N0Yz?=
- =?utf-8?B?bTQ0NFI2bHQ3THZVMG5tcVFIZVlFMzBVSE1TbW9qamczT1BWK0ZvSGpiQlha?=
- =?utf-8?B?bTVOYVBzUVdIZHYwelpnN2FJemNtdElwcmdxRUxsVHVidnZZTklBRUNzcitl?=
- =?utf-8?B?VExNYk1wa05KaW1GVW1BS2J1Z1RjRDBiQnA2MTJld0Q3NnljeGhBUERwYi9N?=
- =?utf-8?B?Vk9rUGZJZlBtZm04bGlDQ25KYi9zVHhlVm1lVkI3ZDROOVRMczF3Y2RmdTV5?=
- =?utf-8?B?cFJSejNvekNlUndmRDFvQnFjRnVwYms0Wis1K0UzaUp2Z1l1b1Q4Yk5HRXJ2?=
- =?utf-8?B?bm0ybnZrWTltekFxTGIvakRQaXA1YjR4dlAzVUl1VmRnNFBJYXZINWw1bjRz?=
- =?utf-8?B?UWloNGorVU5nMjZ5a3hsT2lQUk93bFYzM1JEeFBvN2J6ZnhPWklGYXErUWI1?=
- =?utf-8?B?alNaNFVNaEVJSmRsR1RFa3U1OUZYd29tYzJMelllYkk4Qm9aRHZybVBJUjhC?=
- =?utf-8?B?QU5JWFFkQVNDSUUwVWgzZ1B6R09tUmpsY3FSbHk4NlFJQWlTbVhsUE5uZjls?=
- =?utf-8?B?OUFoWGgyUWd4ZGYyalBBdGY0aFI5alQwbXpWUU9Bb2ZaUTc5and5MjlGeDJ3?=
- =?utf-8?B?WUNVU0ZNdDN1akd3ejJyN1d1OFFXNFdnZHNndWFWN1JxcWFqRHlZR3JVamlL?=
- =?utf-8?B?cUt3cTJkQkptZjk3SHViZk5WbFRxbHBuS3JKTEZBZlN1L0ZMVVQyMDd1bVd5?=
- =?utf-8?B?R3c9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 041df91d-cfa0-40b1-89e9-08dcaae9bd61
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB5803.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2024 07:33:26.3570
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RJ7Hj/r92F8beZRJ/BW1dVXV9R7rVivx6u9VufGFTCOjqDLyx5FUexfZACnKaAsaPPCA2IPqjoKfwGZLbvSw2AVIVpmenLco6iuu4qB/1cg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5113
-X-OriginatorOrg: intel.com
 
-On 25/06/2024 11:26, Faizal Rahim wrote:
-> Following the implementation of "igc: Add TransmissionOverrun counter"
-> patch, when a taprio command is triggered by user, igc processes two
-> commands: TAPRIO_CMD_REPLACE followed by TAPRIO_CMD_STATS. However, both
-> commands unconditionally pass through igc_tsn_offload_apply() which
-> evaluates and triggers reset adapter. The double reset causes issues in
-> the calculation of adapter->qbv_count in igc.
-> 
-> TAPRIO_CMD_REPLACE command is expected to reset the adapter since it
-> activates qbv. It's unexpected for TAPRIO_CMD_STATS to do the same
-> because it doesn't configure any driver-specific TSN settings. So, the
-> evaluation in igc_tsn_offload_apply() isn't needed for TAPRIO_CMD_STATS.
-> 
-> To address this, commands parsing are relocated to
-> igc_tsn_enable_qbv_scheduling(). Commands that don't require an adapter
-> reset will exit after processing, thus avoiding igc_tsn_offload_apply().
-> 
-> Fixes: d3750076d464 ("igc: Add TransmissionOverrun counter")
-> Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
-> Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-> Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+Hi David,
+
+On Mon, 2024-07-22 at 16:57 -0500, David Lechner wrote:
+> There is a recap at the end of this cover letter for those not familiar
+> with the previous discussions. For those that are, we'll get right to
+> the changes since the last version.
+>=20
+> In RFC v2, most of the discussion was around the DT bindings, so that
+> is what has mostly changed since then. I think we mostly settled on
+> what properties are needed and where they should go. There are probably
+> still some details to work out (see PATCH 5/9 for more discussion) but
+> I think we have the big-picture stuff figured out.
+>=20
+> Here is the actual devicetree used for testing to show how it all
+> comes together:
+>=20
+> 	trigger_clk: adc-trigger-clock {
+> 		compatible =3D "pwm-clock";
+> 		#clock-cells =3D <0>;
+> 		#trigger-source-cells =3D <0>;
+> 		pwms =3D <&adc_trigger 0 10000>;
+> 	};
+>=20
+> 	...
+>=20
+> 	axi_spi_engine_0: spi@44a00000 {
+> 		compatible =3D "adi,axi-spi-engine-1.00.a";
+> 		reg =3D <0x44a00000 0x1000>;
+> 		interrupt-parent =3D <&intc>;
+> 		interrupts =3D <0 56 IRQ_TYPE_LEVEL_HIGH>;
+> 		clocks =3D <&clkc 15>, <&spi_clk>;
+> 		clock-names =3D "s_axi_aclk", "spi_clk";
+>=20
+> 		/* offload-specific properties */
+> 		#spi-offload-cells =3D <1>;
+> 		dmas =3D <&rx_dma 0>;
+> 		dma-names =3D "offload0-rx";
+> 		trigger-sources =3D <&trigger_clk>;
+>=20
+> 		#address-cells =3D <1>;
+> 		#size-cells =3D <0>;
+>=20
+> 		ad7986: adc@0 {
+> 			compatible =3D "adi,ad7986";
+> 			reg =3D <0>;
+> 			spi-max-frequency =3D <111111111>; /* 9 ns period */
+> 			adi,spi-mode =3D "single";
+> 			avdd-supply =3D <&eval_u12>;
+> 			dvdd-supply =3D <&eval_u12>;
+> 			vio-supply =3D <&eval_u3>;
+> 			bvdd-supply =3D <&eval_u10>;
+> 			ref-supply =3D <&eval_u5>;
+> 			turbo-gpios =3D <&gpio0 87 GPIO_ACTIVE_HIGH>;
+>=20
+> 			spi-offloads =3D <&axi_spi_engine_0 0>;
+> 		};
+> 	};
+>=20
+> A working branch complete with extra hacks can be found at [1].
+>=20
+> Also, I took a detour looking into what it would take to get Martin
+> Sperl's Raspberry Pi DMA offload proof-of-concept [2] updated to work
+> with this. This way we could have a second user to help guide the
+> design process. Given all of the SPI hardware quirks on that platform
+> and the unsolved technical issues, like how to get accurate time delays
+> and how to work around the 32-bit DMA word limitation, it would be more
+> work than I have time for (at least without someone sponsoring the work).
+>=20
+> [1]: https://github.com/dlech/linux/tree/axi-spi-engine-offload-v3
+> [2]:
+> https://github.com/msperl/spi-bcm2835/blob/refactor_dmachain_for_prepared=
+_messages/spi-bcm2835dma.c
+>=20
 > ---
->   drivers/net/ethernet/intel/igc/igc_main.c | 33 ++++++++++++-----------
->   1 file changed, 17 insertions(+), 16 deletions(-)
-> 
-Tested-by: Mor Bar-Gabay <morx.bar.gabay@intel.com>
+> Changes in v3:
+> - See individual patches for more detailed changes.
+> - Reworked DT bindings to have things physically connected to the SPI
+> =C2=A0 controller be properties of the SPI controller and use more
+> =C2=A0 conventional provider/consumer properties.
+> - Added more SPI APIs for peripheral drivers to use to get auxillary
+> =C2=A0 offload resources, like triggers.
+> - Link to v2:
+> https://lore.kernel.org/r/20240510-dlech-mainline-spi-engine-offload-2-v2=
+-0-8707a870c435@baylibre.com
+>=20
+> ---
+>=20
+> As a recap, here is the background and end goal of this series:
+>=20
+> The AXI SPI Engine is a SPI controller that has the ability to record a
+> series of SPI transactions and then play them back using a hardware
+> trigger. This allows operations to be performed, repeating many times,
+> without any CPU intervention. This is needed for achieving high data
+> rates (millions of samples per second) from ADCs and DACs that are
+> connected via a SPI bus.
+>=20
+> The offload hardware interface consists of a trigger input and a data
+> output for the RX data. These are connected to other hardware external
+> to the SPI controller.
+>=20
+> To record one or more transactions, commands and TX data are written
+> to memories in the controller (RX buffer is not used since RX data gets
+> streamed to an external sink). This sequence of transactions can then be
+> played back when the trigger input is asserted.
+>=20
+> This series includes core SPI support along with the first SPI
+> controller (AXI SPI Engine) and SPI peripheral (AD7944 ADC) that use
+> them. This enables capturing analog data at 2 million samples per
+> second.
+>=20
+> The hardware setup looks like this:
+>=20
+> +-------------------------------+=C2=A0=C2=A0 +------------------+
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ |
+> > =C2=A0SOC/FPGA=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=
+=A0 |=C2=A0 AD7944 ADC=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+> > =C2=A0+---------------------+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=
+=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+> > =C2=A0| AXI SPI Engine=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+> > =C2=A0|=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 SPI Bus =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D SPI Bus=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+> > =C2=A0|=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+> > =C2=A0|=C2=A0 +---------------+=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+> > =C2=A0|=C2=A0 | Offload 0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 |=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 +------------------+
+> > =C2=A0|=C2=A0 |=C2=A0=C2=A0 RX DATA OUT > > > >=C2=A0=C2=A0 |
+> > =C2=A0|=C2=A0 |=C2=A0=C2=A0=C2=A0 TRIGGER IN < < <=C2=A0 v=C2=A0 |
+> > =C2=A0|=C2=A0 +---------------+=C2=A0 | ^ v=C2=A0 |
+> > =C2=A0+---------------------+ ^ v=C2=A0 |
+> > =C2=A0| AXI PWM=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 | ^ v=C2=A0 |
+> > =C2=A0|=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CH0 > ^ v=C2=A0 |
+> > =C2=A0+---------------------+=C2=A0=C2=A0 v=C2=A0 |
+> > =C2=A0| AXI DMA=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 v=C2=A0 |
+> > =C2=A0|=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 CH0 < < <=C2=A0 |
+> > =C2=A0+---------------------+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |
+> +-------------------------------+
+>=20
+> To: Mark Brown <broonie@kernel.org>
+> To: Jonathan Cameron <jic23@kernel.org>
+> To: Rob Herring <robh@kernel.org>
+> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> To: Conor Dooley <conor+dt@kernel.org>
+> To: Nuno S=C3=A1 <nuno.sa@analog.com>
+> Cc: Michael Hennerich <Michael.Hennerich@analog.com>
+> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> Cc: David Jander <david@protonic.nl>
+> Cc: Martin Sperl <kernel@martin.sperl.org>
+> Cc:=C2=A0 <linux-spi@vger.kernel.org>
+> Cc:=C2=A0 <devicetree@vger.kernel.org>
+> Cc:=C2=A0 <linux-kernel@vger.kernel.org>
+> Cc:=C2=A0 <linux-iio@vger.kernel.org>
+>=20
+> ---
+>=20
+
+I think there are things that we need to better figure but things are impro=
+ving
+IMO :)
+
+I'm only doing a very superficial review since I need to better look at the
+patches...
+
+But one thing that I do want to mention is a scenario (another funny one...=
+)
+that I've discussing and that might be a reality. Something like:
+
++-------------------------------+    +------------------+
+|                               |    |                  |
+|  SOC/FPGA            =C2=A0        |    |   ADC            |
+|                               |    |                  |
+|	+---------------+       |    |                  |
+|       |  SPI PS Zynq  |=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D SPI Bus=
+         |
+|	+---------------+	|    |	                |
+|                               |    |                  |
+|  +---------------------+      |    |                  |
+|  | AXI SPI Engine      |      |    |                  |
+|  |                 v=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D DATA=
+ Bus         |
+|  | =C2=A0               v   |      |    |                  |
+|  |   +---------------+ |      |    |                  |
+|  |  | Offload 0     |  |      |    +------------------+
+|  |  |   RX DATA OUT |  |      |
+|  |  |    TRIGGER IN |  |      |
+|  |  +---------------+  |      |
+|                               |
++-------------------------------+
+
+From the above, the spi controller for typical register access/configuratio=
+n is
+not the spi_enigine and the offload core is pretty much only used for strea=
+ming
+data. So I think your current approach would not work with this usecase. In=
+ your
+first RFC you had something overly complicated (IMHO) but you already had a
+concept that maybe it's worth looking at again. I mean having a spi_offload
+object that could describe it and more importantly have a provider/consumer
+logic where a spi consumer (or maybe even something else?) can get()/put() =
+an
+offload object to stream data.
+
+I know, I did said that I did not liked for spi consumers to have to explic=
+itly
+call something like spi_offload_get() but I guess I have been proved wrong =
+:).
+We can also try to be smart about it as an explicit get is only needed (lik=
+ely)
+in the above scenario (or maybe we can even do it directly in the spi core
+during spi_probe()). Or maybe it's not worth it to play smart and just let
+consumers do it (that's the typical pattern anyways).
+
+Having said the above, I still think your current proposal for triggers and
+getting DMA streams is valid for the above usecase.
+
+FWIW, I'm also trying to understand with the HW guys why the hell can't we =
+just
+use the spi_engine controller for everything. But the whole discussion is
+already showing us that we may need more flexibility.
+
+Thanks!
+- Nuno S=C3=A1
 
