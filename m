@@ -1,372 +1,163 @@
-Return-Path: <linux-kernel+bounces-260206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 891BA93A47F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:42:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6248293A480
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:45:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9CF72849D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:42:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC5331F2385B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E521581F8;
-	Tue, 23 Jul 2024 16:42:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE601581E3;
+	Tue, 23 Jul 2024 16:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H/tvOMpa"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLoIxZVa"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4626156F3A
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 16:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110A6157467
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 16:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721752959; cv=none; b=Qk1xYDb3rnW1hqAg96o7raLcvFg8QwHcGTX/DEwD42H222fc9he3uxW4WrAeZ5xFQcXOjIBDOEU3s3XOAuUPQsFMrAWn8O4VklO8brEqxyK/l2fvRfCFIG10U9E04Rer8Tx9RcUFW5vV1bFB/TJKNzDdClK85VoITwYGKXxhNrc=
+	t=1721753097; cv=none; b=NEowqG6nd4iZ70tt9lAn9jpWo0KCWvLzBQidhJPkMLyY4Br4mpBMQ5jY17MWjLB5FIT5q/GXJgKFSY54C4syyVEKLP2wbtK7/yucdiTAZvtdx2F71JkmH1UVXC4I2N7jEUxCz2umfi5zzQAHoPxNCOUHOB3sPMIIBF1WS6Bk1Ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721752959; c=relaxed/simple;
-	bh=8+9nOcXVKsjItQ3q2o1xz0E/8W2ANuTroVpe5CFk/cw=;
+	s=arc-20240116; t=1721753097; c=relaxed/simple;
+	bh=NNvLWdFKg/+T/LGq8qPmN78u+zlvgEZMxDTpbvsSDek=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e2cGwF/PQAvn1B8ulWziMhPJaF8Mk/Pd1LMOKK8iu0nQz+L/4VWGrn09SjtCpFSGuO1V66IsW7PzGdPH7M3rWdMw2dXQ/eAIhMvoC98DhBD1LLT4+EMG5HYCOpw5sgu7OrfuLcV3GdScx2BhJq+BuqcbSGUabAscXJVZe4b8FVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H/tvOMpa; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5a18a5dbb23so71a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 09:42:37 -0700 (PDT)
+	 To:Cc:Content-Type; b=ox0DFGR2WBWAXd5x+Uja2GWx0L9kpMvSSyfZQabqmu3RPplOd4XvBjJ0QUGRgEP1K1M0UTrA5F7W48OkJcm0lSaF4FNVkk5gexG6dVtd0JVdg+Pyi/OTRFd1exPZMuayhkB05DxOc3YCf8Zf+IYZvVUu9sxIkrd++ZzSaLE056k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLoIxZVa; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dff17fd97b3so5362954276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 09:44:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721752956; x=1722357756; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1721753095; x=1722357895; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XMgrUZYhZ291PCb07pbCFMhXLROzuLP5cMbjUbcyg/c=;
-        b=H/tvOMpavxruawC7GNuFDdysBFxGdd37Dg/tHFsKhPwvgOtpVdTBnmIBwx2e1wmJXU
-         evqSYLY6EvcE1w4p80U34/3FCH714rYUALulFsWh5mzqgiEferFGG7WFg24ryiTX25HE
-         b72ViwAap+DPnVUwTYdMowSyK9tAawmqDGv7wQ3ZqBIdjhkjNbMx1nwmiy537+k5U1af
-         FcVzOmFCzl2ltjqeTprD4CrfeVToNDwdb2BDX/gVIpN9ErudA+6e4qr4rWTm5+o6Gek/
-         Xny+dD+DqhBRyxd8Am5RyyuAFdASHrtNdmcOKj/F56z/O6fawi+HAYuKYmI4o3LeP9wT
-         yUmg==
+        bh=PuWmgIHPZDsK15BuOy78U3m2lb9tQNShwei52QgqB8o=;
+        b=kLoIxZVa+IczvfZumAul3TDNZOKW5PUAF9cmkS90iwpsu8iiivc33g9xWz0qjwgogS
+         UjtZHC9hd9PZB0l/2kwhw/mxUdQoVzyS4vMKu2LDYQU9nt88TxVww0H4bPc/tSM459SK
+         C5BHpvRRJrPZtlbWe5YliOD6DG3/3/hr6kABDI1YfbtOP22AjVhMWL5y6IkVPeyQlC1A
+         IsKz0P65dABRUTqWhZLCrxAUjowkCqVt0LmG0tO8CjZWAVwSWx6riBb+Yoe/gJT+aRh6
+         Hj3vlnB5tGovMPGyTGsOFaSPH8XHYHJVfhy2n5rJNcJt+wogO9eUHNBv7zPFvDiIMXLz
+         x0Mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721752956; x=1722357756;
+        d=1e100.net; s=20230601; t=1721753095; x=1722357895;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XMgrUZYhZ291PCb07pbCFMhXLROzuLP5cMbjUbcyg/c=;
-        b=QSyBQTsF7aDg4hcvAKyBI68BtBClLoBPYWigTJGG11mMTPx1L1KcNW6dx8pEvE/qa3
-         6xGDKLNrZSQ09bc9qMMIp7XSuqpdmW05Qh7JpFGYzv73jlWa8hG36zTNIhHXipBgk8Ng
-         o9i6UdZn0J1MIgyWxRJjQvDV/AbuIOLYrmGRtnXr0Sa1ctUH7eOXj2Z4q3xr0nccAeqP
-         ewACRtArMLNGEYSORJWBalBq/3nHdBA5E+6GjtdFDgmLq5mlOZmILmdGnrLs9c55++ft
-         9Ka9l2aVDh8sFuxuyM8KW69lfLlxxAlPK38LmX8KILzO0TdnrrIUmD7iocPBqy6tRh/L
-         MzCA==
-X-Forwarded-Encrypted: i=1; AJvYcCWiJhQiqMnZ93U4P7pbjUVAwCwnif0ri7cwrFo3qapPpszDMlJOQRyewd3Fr8HgoJxsJHEi/USZ1XOZc0YHcnZc5HGUOeNSk7nXZi6x
-X-Gm-Message-State: AOJu0YxpsLasmZtaHU2vP+dFNc7sZUCbrgVZWzHoxyehUqs7wlVeCCTH
-	PyLopnTzHAFIKim/oE2OmArRUL54SmVdT/ASlanH96yhDlzXJA1Zkxzlav63v33mEbLbbAMKxci
-	RMSMkyNJV5mF0z6tLRo3LxIkIpJaj3cX67AXP
-X-Google-Smtp-Source: AGHT+IGcuYGTEY2zkTAtoxiNPuK40FrcisAWLBI2aeeYJc1FQnsJqQnlNJ01lTiqGeQf+LAaIya7+C4ntELJwfZMxUQ=
-X-Received: by 2002:a05:6402:13c2:b0:57c:c5e2:2c37 with SMTP id
- 4fb4d7f45d1cf-5aacb8e3ef4mr467a12.3.1721752955552; Tue, 23 Jul 2024 09:42:35
- -0700 (PDT)
+        bh=PuWmgIHPZDsK15BuOy78U3m2lb9tQNShwei52QgqB8o=;
+        b=rfFEnLEgj3ao06I2lG0np2YXXBjn+gLy2kS34FOkaVDWtJY6sisfFrnT0yBbXUOoX9
+         sI6rI5hFmsf0CpjJouMCfgxqYiR7e5x1TfIFPYxthJAGPX7J/IuGf5RRMtp7Etetr0tk
+         5keOEa5SMHyR59SXkwWJ5ZDgitgpWZMIX6AOPHOjDu5yHCOXLCzUFCPVWaYMh9tBNcbv
+         JQ0Ec17QwxhihmK+GMxwJBYNL0slayZ9C8Tt6IydNZ52hBxxwpe1JIeV2lsLNuRJerdf
+         F5A9S0RWLTLKTISqmlwo4YDYa0RzCnwMgcT+87XgKS76/RkjJNq2z9pwoosjK6pOdPxz
+         OKaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbn7gQT9zu7vN14QdsbGLG44jDq8OO+4a16QfH++5FNqjDlpi0yb88OiJMlajyORMkGVmy+lvOhtfXOW053LJQ+wkF2aKplR+7KOha
+X-Gm-Message-State: AOJu0YwZ+tYeActX1wxtKQhOmfZefWpAJyfoa2M6Up1AGF9BnNLn0Wou
+	RTd2aeCLlKhGYVXkxrAqW5bb7GNtFP18pDy/0azNwFx6L65Rat5a+aCs2MWwTZiEsEvP7uqy4ws
+	FuKmixuElQOrHqoEb95dFZ1b8Wt0=
+X-Google-Smtp-Source: AGHT+IE+LG/KOyQucZr3AjVxnzA0WaThXyO3Mfyu1xXcvXnr5BgGcOfOxWqa2fjDt1cVGCebVOrUD3TyxUNcpUHahXw=
+X-Received: by 2002:a05:6902:1b88:b0:e08:918d:7f9b with SMTP id
+ 3f1490d57ef6-e08918d8221mr8389731276.50.1721753094994; Tue, 23 Jul 2024
+ 09:44:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240718-upstream-net-next-20240716-tcp-3rd-ack-consume-sk_socket-v2-0-d653f85639f6@kernel.org>
- <20240718-upstream-net-next-20240716-tcp-3rd-ack-consume-sk_socket-v2-1-d653f85639f6@kernel.org>
- <CANn89iJNa+UqZrONT0tTgN+MjnFZJQQ8zuH=nG+3XRRMjK9TfA@mail.gmail.com>
- <2583642a-cc5f-4765-856d-4340adcecf33@kernel.org> <CANn89iKP4y7iMHxsy67o13Eair+tDquGPBr=kS41zPbKz+_0iQ@mail.gmail.com>
- <4558399b-002b-40ff-8d9b-ac7bf13b3d2e@kernel.org>
-In-Reply-To: <4558399b-002b-40ff-8d9b-ac7bf13b3d2e@kernel.org>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 23 Jul 2024 18:42:24 +0200
-Message-ID: <CANn89iLozLAj67ipRMAmepYG0eq82e+FcriPjXyzXn_np9xX2w@mail.gmail.com>
-Subject: Re: [PATCH net v2 1/2] tcp: process the 3rd ACK with sk_socket for TFO/MPTCP
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, netdev@vger.kernel.org, mptcp@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Neal Cardwell <ncardwell@google.com>
+References: <20240720044127.508042-1-flintglass@gmail.com> <20240720044127.508042-3-flintglass@gmail.com>
+ <CAKEwX=NCm9t9Y6z8bWQ788_wnhQsGN0frroTabNpHStxGnJOqw@mail.gmail.com>
+In-Reply-To: <CAKEwX=NCm9t9Y6z8bWQ788_wnhQsGN0frroTabNpHStxGnJOqw@mail.gmail.com>
+From: Takero Funaki <flintglass@gmail.com>
+Date: Wed, 24 Jul 2024 01:44:44 +0900
+Message-ID: <CAPpodddd2SAVj3JmDHOz+xdaAc4nPT49_yHqnPCtcFSWqJk1=A@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] mm: zswap: fix global shrinker error handling logic
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 23, 2024 at 6:08=E2=80=AFPM Matthieu Baerts <matttbe@kernel.org=
-> wrote:
+2024=E5=B9=B47=E6=9C=8823=E6=97=A5(=E7=81=AB) 6:51 Nhat Pham <nphamcs@gmail=
+.com>:
 >
-> Hi Eric,
+> On Fri, Jul 19, 2024 at 9:41=E2=80=AFPM Takero Funaki <flintglass@gmail.c=
+om> wrote:
+> >
+> > This patch fixes zswap global shrinker that did not shrink zpool as
+> > expected.
+> >
+> > The issue it addresses is that `shrink_worker()` did not distinguish
+> > between unexpected errors and expected error codes that should be
+> > skipped, such as when there is no stored page in a memcg. This led to
+> > the shrinking process being aborted on the expected error codes.
 >
-> On 23/07/2024 17:38, Eric Dumazet wrote:
-> > On Tue, Jul 23, 2024 at 4:58=E2=80=AFPM Matthieu Baerts <matttbe@kernel=
-.org> wrote:
-> >>
-> >> Hi Eric,
-> >>
-> >> +cc Neal
-> >> -cc Jerry (NoSuchUser)
-> >>
-> >> On 23/07/2024 16:37, Eric Dumazet wrote:
-> >>> On Thu, Jul 18, 2024 at 12:34=E2=80=AFPM Matthieu Baerts (NGI0)
-> >>> <matttbe@kernel.org> wrote:
-> >>>>
-> >>>> The 'Fixes' commit recently changed the behaviour of TCP by skipping=
- the
-> >>>> processing of the 3rd ACK when a sk->sk_socket is set. The goal was =
-to
-> >>>> skip tcp_ack_snd_check() in tcp_rcv_state_process() not to send an
-> >>>> unnecessary ACK in case of simultaneous connect(). Unfortunately, th=
-at
-> >>>> had an impact on TFO and MPTCP.
-> >>>>
-> >>>> I started to look at the impact on MPTCP, because the MPTCP CI found
-> >>>> some issues with the MPTCP Packetdrill tests [1]. Then Paolo suggest=
-ed
-> >>>> me to look at the impact on TFO with "plain" TCP.
-> >>>>
-> >>>> For MPTCP, when receiving the 3rd ACK of a request adding a new path
-> >>>> (MP_JOIN), sk->sk_socket will be set, and point to the MPTCP sock th=
-at
-> >>>> has been created when the MPTCP connection got established before wi=
-th
-> >>>> the first path. The newly added 'goto' will then skip the processing=
- of
-> >>>> the segment text (step 7) and not go through tcp_data_queue() where =
-the
-> >>>> MPTCP options are validated, and some actions are triggered, e.g.
-> >>>> sending the MPJ 4th ACK [2] as demonstrated by the new errors when
-> >>>> running a packetdrill test [3] establishing a second subflow.
-> >>>>
-> >>>> This doesn't fully break MPTCP, mainly the 4th MPJ ACK that will be
-> >>>> delayed. Still, we don't want to have this behaviour as it delays th=
-e
-> >>>> switch to the fully established mode, and invalid MPTCP options in t=
-his
-> >>>> 3rd ACK will not be caught any more. This modification also affects =
-the
-> >>>> MPTCP + TFO feature as well, and being the reason why the selftests
-> >>>> started to be unstable the last few days [4].
-> >>>>
-> >>>> For TFO, the existing 'basic-cookie-not-reqd' test [5] was no longer
-> >>>> passing: if the 3rd ACK contains data, and the connection is accept(=
-)ed
-> >>>> before receiving them, these data would no longer be processed, and =
-thus
-> >>>> not ACKed.
-> >>>>
-> >>>> One last thing about MPTCP, in case of simultaneous connect(), a
-> >>>> fallback to TCP will be done, which seems fine:
-> >>>>
-> >>>>   `../common/defaults.sh`
-> >>>>
-> >>>>    0 socket(..., SOCK_STREAM|SOCK_NONBLOCK, IPPROTO_MPTCP) =3D 3
-> >>>>   +0 connect(3, ..., ...) =3D -1 EINPROGRESS (Operation now in progr=
-ess)
-> >>>>
-> >>>>   +0 > S  0:0(0)                 <mss 1460, sackOK, TS val 100 ecr 0=
-,   nop, wscale 8, mpcapable v1 flags[flag_h] nokey>
-> >>>>   +0 < S  0:0(0) win 1000        <mss 1460, sackOK, TS val 407 ecr 0=
-,   nop, wscale 8, mpcapable v1 flags[flag_h] nokey>
-> >>>>   +0 > S. 0:0(0) ack 1           <mss 1460, sackOK, TS val 330 ecr 0=
-,   nop, wscale 8, mpcapable v1 flags[flag_h] nokey>
-> >>>>   +0 < S. 0:0(0) ack 1 win 65535 <mss 1460, sackOK, TS val 700 ecr 1=
-00, nop, wscale 8, mpcapable v1 flags[flag_h] key[skey=3D2]>
-> >>>>
-> >>>>   +0 write(3, ..., 100) =3D 100
-> >>>>   +0 >  . 1:1(0)     ack 1 <nop, nop, TS val 845707014 ecr 700, nop,=
- nop, sack 0:1>
-> >>>>   +0 > P. 1:101(100) ack 1 <nop, nop, TS val 845958933 ecr 700>
-> >>>>
-> >>>> Simultaneous SYN-data crossing is also not supported by TFO, see [6]=
-.
-> >>>>
-> >>>> Link: https://github.com/multipath-tcp/mptcp_net-next/actions/runs/9=
-936227696 [1]
-> >>>> Link: https://datatracker.ietf.org/doc/html/rfc8684#fig_tokens [2]
-> >>>> Link: https://github.com/multipath-tcp/packetdrill/blob/mptcp-net-ne=
-xt/gtests/net/mptcp/syscalls/accept.pkt#L28 [3]
-> >>>> Link: https://netdev.bots.linux.dev/contest.html?executor=3Dvmksft-m=
-ptcp-dbg&test=3Dmptcp-connect-sh [4]
-> >>>> Link: https://github.com/google/packetdrill/blob/master/gtests/net/t=
-cp/fastopen/server/basic-cookie-not-reqd.pkt#L21 [5]
-> >>>> Link: https://github.com/google/packetdrill/blob/master/gtests/net/t=
-cp/fastopen/client/simultaneous-fast-open.pkt [6]
-> >>>> Fixes: 23e89e8ee7be ("tcp: Don't drop SYN+ACK for simultaneous conne=
-ct().")
-> >>>> Suggested-by: Paolo Abeni <pabeni@redhat.com>
-> >>>> Suggested-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-> >>>> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> >>>> ---
-> >>>> Notes:
-> >>>>  - We could also drop this 'goto consume', and send the unnecessary =
-ACK
-> >>>>    in this simultaneous connect case, which doesn't seem to be a "re=
-al"
-> >>>>    case, more something for fuzzers. But that's not what the RFC 929=
-3
-> >>>>    recommends to do.
-> >>>>  - v2:
-> >>>>    - Check if the SYN bit is set instead of looking for TFO and MPTC=
-P
-> >>>>      specific attributes, as suggested by Kuniyuki.
-> >>>>    - Updated the comment above
-> >>>>    - Please note that the v2 has been sent mainly to satisfy the CI =
-(to
-> >>>>      be able to catch new bugs with MPTCP), and because the suggesti=
-on
-> >>>>      from Kuniyuki looks better. It has not been sent to urge TCP
-> >>>>      maintainers to review it quicker than it should, please take yo=
-ur
-> >>>>      time and enjoy netdev.conf :)
-> >>>> ---
-> >>>>  net/ipv4/tcp_input.c | 7 ++++++-
-> >>>>  1 file changed, 6 insertions(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-> >>>> index ff9ab3d01ced..bfe1bc69dc3e 100644
-> >>>> --- a/net/ipv4/tcp_input.c
-> >>>> +++ b/net/ipv4/tcp_input.c
-> >>>> @@ -6820,7 +6820,12 @@ tcp_rcv_state_process(struct sock *sk, struct=
- sk_buff *skb)
-> >>>>                 if (sk->sk_shutdown & SEND_SHUTDOWN)
-> >>>>                         tcp_shutdown(sk, SEND_SHUTDOWN);
-> >>>>
-> >>>> -               if (sk->sk_socket)
-> >>>> +               /* For crossed SYN cases, not to send an unnecessary=
- ACK.
-> >>>> +                * Note that sk->sk_socket can be assigned in other =
-cases, e.g.
-> >>>> +                * with TFO (if accept()'ed before the 3rd ACK) and =
-MPTCP (MPJ:
-> >>>> +                * sk_socket is the parent MPTCP sock).
-> >>>> +                */
-> >>>> +               if (sk->sk_socket && th->syn)
-> >>>>                         goto consume;
-> >>>
-> >>> I think we should simply remove this part completely, because we
-> >>> should send an ack anyway.
-> >>
-> >> Thank you for having looked, and ran the full packetdrill test suite!
-> >>
-> >>>
-> >>> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-> >>> index ff9ab3d01ced89570903d3a9f649a637c5e07a90..91357d4713182078debd7=
-46a224046cba80ea3ce
-> >>> 100644
-> >>> --- a/net/ipv4/tcp_input.c
-> >>> +++ b/net/ipv4/tcp_input.c
-> >>> @@ -6820,8 +6820,6 @@ tcp_rcv_state_process(struct sock *sk, struct
-> >>> sk_buff *skb)
-> >>>                 if (sk->sk_shutdown & SEND_SHUTDOWN)
-> >>>                         tcp_shutdown(sk, SEND_SHUTDOWN);
-> >>>
-> >>> -               if (sk->sk_socket)
-> >>> -                       goto consume;
-> >>>                 break;
-> >>>
-> >>>         case TCP_FIN_WAIT1: {
-> >>>
-> >>>
-> >>> I have a failing packetdrill test after  Kuniyuki  patch :
-> >>>
-> >>>
-> >>>
-> >>> //
-> >>> // Test the simultaneous open scenario that both end sends
-> >>> // SYN/data. Although we don't support that the connection should
-> >>> // still be established.
-> >>> //
-> >>> `../../common/defaults.sh
-> >>>  ../../common/set_sysctls.py /proc/sys/net/ipv4/tcp_timestamps=3D0`
-> >>>
-> >>> // Cache warmup: send a Fast Open cookie request
-> >>>     0 socket(..., SOCK_STREAM, IPPROTO_TCP) =3D 3
-> >>>    +0 fcntl(3, F_SETFL, O_RDWR|O_NONBLOCK) =3D 0
-> >>>    +0 sendto(3, ..., 0, MSG_FASTOPEN, ..., ...) =3D -1 EINPROGRESS
-> >>> (Operation is now in progress)
-> >>>    +0 > S 0:0(0) <mss 1460,nop,nop,sackOK,nop,wscale 8,FO,nop,nop>
-> >>>  +.01 < S. 123:123(0) ack 1 win 14600 <mss
-> >>> 1460,nop,nop,sackOK,nop,wscale 6,FO abcd1234,nop,nop>
-> >>>    +0 > . 1:1(0) ack 1
-> >>>  +.01 close(3) =3D 0
-> >>>    +0 > F. 1:1(0) ack 1
-> >>>  +.01 < F. 1:1(0) ack 2 win 92
-> >>>    +0 > .  2:2(0) ack 2
-> >>>
-> >>>
-> >>> //
-> >>> // Test: simulatenous fast open
-> >>> //
-> >>>  +.01 socket(..., SOCK_STREAM, IPPROTO_TCP) =3D 4
-> >>>    +0 fcntl(4, F_SETFL, O_RDWR|O_NONBLOCK) =3D 0
-> >>>    +0 sendto(4, ..., 1000, MSG_FASTOPEN, ..., ...) =3D 1000
-> >>>    +0 > S 0:1000(1000) <mss 1460,nop,nop,sackOK,nop,wscale 8,FO
-> >>> abcd1234,nop,nop>
-> >>> // Simul. SYN-data crossing: we don't support that yet so ack only re=
-mote ISN
-> >>> +.005 < S 1234:1734(500) win 14600 <mss 1040,nop,nop,sackOK,nop,wscal=
-e
-> >>> 6,FO 87654321,nop,nop>
-> >>>    +0 > S. 0:0(0) ack 1235 <mss 1460,nop,nop,sackOK,nop,wscale 8>
-> >>>
-> >>> // SYN data is never retried.
-> >>> +.045 < S. 1234:1234(0) ack 1001 win 14600 <mss
-> >>> 940,nop,nop,sackOK,nop,wscale 6,FO 12345678,nop,nop>
-> >>>    +0 > . 1001:1001(0) ack 1
-> >>
-> >> I recently sent a PR -- already applied -- to Neal to remove this line=
-:
-> >>
-> >>   https://github.com/google/packetdrill/pull/86
-> >>
-> >> I thought it was the intension of Kuniyuki's patch not to send this AC=
-K
-> >> in this case to follow the RFC 9293's recommendation. This TFO test
-> >> looks a bit similar to the example from Kuniyuki's patch:
-> >>
-> >>
-> >> --------------- 8< ---------------
-> >>  0 socket(..., SOCK_STREAM|SOCK_NONBLOCK, IPPROTO_TCP) =3D 3
-> >> +0 connect(3, ..., ...) =3D -1 EINPROGRESS (Operation now in progress)
-> >>
-> >> +0 > S  0:0(0) <mss 1460,sackOK,TS val 1000 ecr 0,nop,wscale 8>
-> >> +0 < S  0:0(0) win 1000 <mss 1000>
-> >> +0 > S. 0:0(0) ack 1 <mss 1460,sackOK,TS val 3308134035 ecr 0,nop,wsca=
-le 8>
-> >> +0 < S. 0:0(0) ack 1 win 1000
-> >>
-> >>   /* No ACK here */
-> >>
-> >> +0 write(3, ..., 100) =3D 100
-> >> +0 > P. 1:101(100) ack 1
-> >> --------------- 8< ---------------
-> >>
-> >>
-> >>
-> >> But maybe here that should be different for TFO?
-> >>
-> >> For my case with MPTCP (and TFO), it is fine to drop this 'goto consum=
-e'
-> >> but I don't know how "strict" we want to be regarding the RFC and this
-> >> marginal case.
-> >
-> > Problem of this 'goto consume' is that we are not properly sending a
-> > DUPACK in this case.
-> >
-> >  +.01 socket(..., SOCK_STREAM, IPPROTO_TCP) =3D 4
-> >    +0 fcntl(4, F_SETFL, O_RDWR|O_NONBLOCK) =3D 0
-> >    +0 sendto(4, ..., 1000, MSG_FASTOPEN, ..., ...) =3D 1000
-> >    +0 > S 0:1000(1000) <mss 1460,nop,nop,sackOK,nop,wscale 8,FO
-> > abcd1234,nop,nop>
-> > // Simul. SYN-data crossing: we don't support that yet so ack only remo=
-te ISN
-> > +.005 < S 1234:1734(500) win 14600 <mss 1040,nop,nop,sackOK,nop,wscale
-> > 6,FO 87654321,nop,nop>
-> >    +0 > S. 0:0(0) ack 1235 <mss 1460,nop,nop,sackOK,nop,wscale 8>
-> >
-> > +.045 < S. 1234:1234(0) ack 1001 win 14600 <mss
-> > 940,nop,nop,sackOK,nop,wscale 6,FO 12345678,nop,nop>
-> >    +0 > . 1001:1001(0) ack 1 <nop,nop,sack 0:1>  // See here
+> The code itself seems reasonable to me, but may I ask you to document
+> (as a comment) all the expected v.s unexpected cases? i.e when do we
+> increment (or not increment) the failure counter?
 >
-> I'm sorry, but is it normal to have 'ack 1' with 'sack 0:1' here?
 
-It is normal, because the SYN was already received/processed.
+In addition to changes in the commit log suggested by Yosry,
+adding some comments specifying what memcg is (not) candidates for
+writeback, and what should be a failure.
 
-sack 0:1 represents this SYN sequence.
+-       /* global reclaim will select cgroup in a round-robin fashion.
++       /*
++        * Global reclaim will select cgroup in a round-robin fashion from =
+all
++        * online memcgs, but memcgs that have no pages in zswap and
++        * writeback-disabled memcgs (memory.zswap.writeback=3D0) are not
++        * candidates for shrinking.
++        *
++        * Shrinking will be aborted if we encounter the following
++        * MAX_RECLAIM_RETRIES times:
++        * - No writeback-candidate memcgs found in a memcg tree walk.
++        * - Shrinking a writeback-candidate memcg failed.
+         *
+         * We save iteration cursor memcg into zswap_next_shrink,
+         * which can be modified by the offline memcg cleaner
+
+and, the reasons to (not) increment the progress:
+
+@@ -1387,10 +1407,20 @@ static void shrink_worker(struct work_struct *w)
+                /* drop the extra reference */
+                mem_cgroup_put(memcg);
+
+-               if (ret =3D=3D -EINVAL)
+-                       break;
++               /*
++                * There are no writeback-candidate pages in the memcg.
++                * This is not an issue as long as we can find another memc=
+g
++                * with pages in zswap. Skip this without incrementing prog=
+ress
++                * and failures.
++                */
++               if (ret =3D=3D -ENOENT)
++                       continue;
++
+                if (ret && ++failures =3D=3D MAX_RECLAIM_RETRIES)
+                        break;
++
++               /* completed writeback or incremented failures */
++               ++progress;
+ resched:
+
+
+> My understanding is, we only increment the failure counter if we fail
+> to reclaim from a selected memcg that is non-empty and
+> writeback-enabled, or if we go a full tree walk without making any
+> progress. Is this correct?
+>
+
+Yes, that's the expected behavior.
+Please let me know if there is more appropriate wording.
+
+Thanks.
 
