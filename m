@@ -1,68 +1,69 @@
-Return-Path: <linux-kernel+bounces-259622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7045B9399AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:26:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 014719399AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:26:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A09AD1C2182B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 06:26:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B082C282304
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 06:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABE813D60F;
-	Tue, 23 Jul 2024 06:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC42013DDB9;
+	Tue, 23 Jul 2024 06:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="iujPVvwx"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b="rvrcS7Cp"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E2613957B
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 06:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A48BC13D8A6
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 06:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721715988; cv=none; b=l7l+7nzvYkKtHcmnO0O+FQDfFCBnDdvdYKr3Qm6xs5mdfFUxjV+fFaEyV79NdWgA4ChP3Vuuh9feTrjXfoZ0RfOXsNQGShhDzdy++RAcifTpd86C63mMWAsqet8wlJZmqYvsDTd9/atI3BiGyQQ5I096M/1ppAURFnti56xp+9Q=
+	t=1721715993; cv=none; b=McATKdf8b/KYkFj9Fj8eCuokmzHwhJPmP+hRty3CVQ73yLxQf0eAZeGblzVnxY/kwV1GIF217O437tL2LGdk5riAfs/drwh7spUL18Sm1tDFcRP1NCpCEQwvIkZvO1ZpavjII+VbsFL0zd6PSq9msaP1JuPyxnvS8xa1i6OBdDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721715988; c=relaxed/simple;
-	bh=4HXsOMwTno0opK/7LHK4ZwGkW+q70QUTzcbDMN46rlw=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=mTiPvQkYnlLhPbd+8oig9G5BAQVU3df1QtThE0RB2ckUeQE1eatCC9RpFrWLKMOjy14D04ektjcaqCuhqCYwm65AvNyntcPsTDRav8bWNOWLuVpCpZzF7o7hqf9GWREc3ixz7pM+eV1ttM/VR2W8oMbawevdNh/MMlwRmZvxG0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=iujPVvwx; arc=none smtp.client-ip=209.85.215.182
+	s=arc-20240116; t=1721715993; c=relaxed/simple;
+	bh=sPvIUhcfxQrn/1WC2FAzQI+ObrcduHZ/wkF5+Fgq014=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=U/Kq6w2/gvEytz0ce36S1JjK+ZxN1VZTHYC1m6zQFdSuUkBzXWfDScb52951booRw6aSHws2R1oNCd7ZOp6QpfRSGWtkN2TSj6WeK++KAg6vB2ogKvMzmoDNopVA7K+IhdHcNwLt/R2wK0wSeyte/Y4vWqcnvc0BBuPYxWMl/cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=huaqin-corp-partner-google-com.20230601.gappssmtp.com header.i=@huaqin-corp-partner-google-com.20230601.gappssmtp.com header.b=rvrcS7Cp; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7a0e8b76813so210505a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 23:26:26 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d1d6369acso1413785b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 23:26:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1721715985; x=1722320785; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v6SsFIYWxstbmDRzW1IT5LqdPqdbJ83bJMDp+89ci+w=;
-        b=iujPVvwxPkh2kHCEZ6M9ef26yvlvs14xMqxB5BJTyvrrQnf6sz7JwWeuNzgqv+vYg5
-         X1PruYEKXRqzQAH+10ZlyR9UR3dZOPkGWM9qij8b4/YiPB6bCqKmsciB0xKEJCZW8CVc
-         ASa3hEqmo+5Qmpiy6juE095H0xMwbjHIiNhsow35595q9TCDypJLPc8W2vZZTOYZyMGr
-         Ls1S6hYttpSd5cwpdsK5JI2YW5LgPWkwzGTwMQ49xuxBCulkGJSc4tdLz3SKewMg2eyB
-         Ni20s9mui5u08KVPDhFeEIK5qDt2EGH/j7M53fNKWhTojZKQ3kvyM8YOpS9o0PC7APCZ
-         yIEA==
+        d=huaqin-corp-partner-google-com.20230601.gappssmtp.com; s=20230601; t=1721715990; x=1722320790; darn=vger.kernel.org;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Gkiwi2HblLWIRJEo+ICl77dLaAlbyjAEjVCFsYMguCg=;
+        b=rvrcS7CpvC6SX661YwFE658PsgJB5sp10JvE4DwJCwY89k2I1Pj+gLdS7LgwrUNoFT
+         vI+76ClIxm7T27BSrwdyRb+5gVqTPUZhlt+1p3ht0+DZCns/UOR9cfdctiYE+vU26IH/
+         fl2oojjsO0RIZOei29D+kxTIWiv6hcgZ70e1s4zdlGCInAt86qCWe8bofhxp4Gcav/HG
+         +2hQnNe1QkUC4NCJJzada202A7a5zWGTcVQEm6FCtUU4e8A52XG6t8eLclyZSQ2d7Ww4
+         4xZQ1iI6e5g1qjc754DqEgISKHfGnj5s6xvJ6v6JTE3sVpp4i/eexvlcvyO+4FkwFQO2
+         lwhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721715985; x=1722320785;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v6SsFIYWxstbmDRzW1IT5LqdPqdbJ83bJMDp+89ci+w=;
-        b=Jj22yxzJ5125Ocd5furHPnodK+a1UITe2lSzNcyUvMdJVE0VWeTeBPX2P6wfdsHTYf
-         pnYMG6kHTgzdSnke+yGLn1OUhNhSA/SwX09Szyhq0kSh1fNO+VI6/q1MFWeEBXISCp9w
-         eF182P2vH/JIzoECdaaEnW0k7pvV6gTwFAospAWVUN1JLdPz7NMDxMNXrWFLVWoqymj/
-         BIjtFR7q/VwD/N360acnVttvgAIrssKrDMtgUev/QyPXMfdcp8bI+t9rVc+YRViuZgET
-         uZ5ZzVwLno3tZsWULuSxZGA1sTAs9gKimWXAoNzFrAmwyMe2Gk8qv/GGV0KYBUwm42T5
-         t/tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUH6Z7jwX5Gux2eyANoFzPqBp2b1s8N7oHLrZiDlyIg5T71GBfizpxXSGnrQMi2Gl85tAohIru+hBJ8LHeje0zPL8bzW5KD28CirE+T
-X-Gm-Message-State: AOJu0Yy53oxrVEVlGALNDKT3E4FCP4K4de1+AJ1PeqvgOmEbu4P9OQmW
-	PT+Ey7sH1eup+jFeju/rZkJA+7tqaj2Z2KX1dCl69IRpiP3ZIALgfB4TSoQ9zsY=
-X-Google-Smtp-Source: AGHT+IFMaHyHBNYiozxEEWli2Jwj4FXXP7MQxh6eCefMVJIrwf06PEaQ158LGZWjwEceHa+RuEv7OQ==
-X-Received: by 2002:a05:6a20:918d:b0:1c0:f5c1:8083 with SMTP id adf61e73a8af0-1c428681001mr13305601637.41.1721715985602;
-        Mon, 22 Jul 2024 23:26:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721715990; x=1722320790;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gkiwi2HblLWIRJEo+ICl77dLaAlbyjAEjVCFsYMguCg=;
+        b=XjVZuNA9eHCFy/0Kt2W49GQvtKAVyVmqBYcApwq36aS3KXzCjIndydmlKDCdY8Wsxg
+         j0tSKsco6azMKXsg64bmTbRrOjeDeLg9VYsNN1LYAxb2pKYN17f/BCjnkU80JOFghG4w
+         TcQqwLZwgkatMDIDrnBzyXafdeqQPCEmvonJ2KvXiXOYcCl5m7yw+aZCgh8RStq4H8Jx
+         Y5EFjJ2Jdgh4CdVIWwEQ5mtJpSYQ+FXs5+FH2eLp0w5iQuBkuRWSyJiHoaYG/8qY7MFW
+         SVdw1Sma8XO6xMO86cLv9YIPqLOXZxhblk/4SyIsy6e37U0b87uVgoPvTSPBkTGbgcRN
+         pSew==
+X-Forwarded-Encrypted: i=1; AJvYcCWpND5oJg2F8E1hsmlop0mmob16CYU5r2CLhRkhIznfawm87iAtEE9VMUvJf0L1cv9g8YLzFJiyElLrT09nGFpXojbDsHPP1OBYLYBV
+X-Gm-Message-State: AOJu0YwladB0y7IXutn2xW0xWX0XcgJOcZDF7+n2lY6fUTqOZaoqjQa8
+	nXvGoRj/+lHKHjGWBhSndLU7JqlydDnP5U8KM08lydYgVHMjojr/5TEp21ACdIDq3vlShkmE+Kj
+	m6Kg=
+X-Google-Smtp-Source: AGHT+IEMEYV49A/7sN13fNs7QtDLUZ+KsEivgaXNWoeS2uNGXFKSc3HIPXHBpH2cEqizv54RUEDbdg==
+X-Received: by 2002:a17:902:d509:b0:1fc:4acb:3670 with SMTP id d9443c01a7336-1fdb95128e9mr16250375ad.12.1721715990126;
+        Mon, 22 Jul 2024 23:26:30 -0700 (PDT)
 Received: from lvzhaoxiong-KLVC-WXX9.huaqin.com ([116.66.212.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f25ab47sm66351465ad.45.2024.07.22.23.26.22
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f25ab47sm66351465ad.45.2024.07.22.23.26.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 23:26:25 -0700 (PDT)
+        Mon, 22 Jul 2024 23:26:29 -0700 (PDT)
 From: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
 To: neil.armstrong@linaro.org,
 	quic_jesszhan@quicinc.com,
@@ -78,10 +79,12 @@ Cc: dri-devel@lists.freedesktop.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Subject: [PATCH v4 0/2] Modify the method of obtaining porch parameters
-Date: Tue, 23 Jul 2024 14:26:13 +0800
-Message-Id: <20240723062615.14796-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+Subject: [PATCH v4 1/2] drm/panel: boe-th101mb31ig002 : Fix the way to get porch parameters
+Date: Tue, 23 Jul 2024 14:26:14 +0800
+Message-Id: <20240723062615.14796-2-lvzhaoxiong@huaqin.corp-partner.google.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20240723062615.14796-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+References: <20240723062615.14796-1-lvzhaoxiong@huaqin.corp-partner.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,32 +95,48 @@ The current driver can only obtain the porch parameters
 of boe-th101mb31ig002. Modify it to obtain the porch
 parameters of the panel currently being used.
 
-Also switch to the drm_connector_helper_get_modes_fixed() function 
-to get the porch parameters.
-
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+---
 Changes between V4 and V3:
-- PATCH 1/2: No changes.
-- PATCH 2/2: Modify the return value.
-- Link to v3: https://lore.kernel.org/all/20240722092428.24499-1-lvzhaoxiong@huaqin.corp-partner.google.com/
+-  1. No changes.
+v3: https://lore.kernel.org/all/20240722092428.24499-2-lvzhaoxiong@huaqin.corp-partner.google.com/
 
 Changes between V3 and V2:
-- PATCH 1/2: No changes.
-- PATCH 2/2: Keep bpc settings and drm_connector_set_panel_orientation() function.
-- Link to v2: https://lore.kernel.org/all/20240716121112.14435-1-lvzhaoxiong@huaqin.corp-partner.google.com/
+-  1. No changes.
+v2: https://lore.kernel.org/all/20240716121112.14435-2-lvzhaoxiong@huaqin.corp-partner.google.com/
 
 Changes between V2 and V1:
-- PATCH 1/2: No changes.
-- PATCH 2/2: Switch to the drm_connector_helper_get_modes_fixed().
-- Link to v1: https://lore.kernel.org/all/20240715031845.6687-1-lvzhaoxiong@huaqin.corp-partner.google.com/
+-  1. No changes, Modify the commit information format.
+v1: https://lore.kernel.org/all/20240715031845.6687-2-lvzhaoxiong@huaqin.corp-partner.google.com/
+---
+ drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-Zhaoxiong Lv (2):
-  drm/panel: boe-th101mb31ig002 : Fix the way to get porch parameters
-  drm/panel: boe-th101mb31ig002 : using
-    drm_connector_helper_get_modes_fixed()
-
- .../drm/panel/panel-boe-th101mb31ig002-28a.c  | 22 +++----------------
- 1 file changed, 3 insertions(+), 19 deletions(-)
-
+diff --git a/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c b/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
+index b55cf80c5522..d4e4abd103bb 100644
+--- a/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
++++ b/drivers/gpu/drm/panel/panel-boe-th101mb31ig002-28a.c
+@@ -312,15 +312,14 @@ static int boe_th101mb31ig002_get_modes(struct drm_panel *panel,
+ 	struct boe_th101mb31ig002 *ctx = container_of(panel,
+ 						      struct boe_th101mb31ig002,
+ 						      panel);
++	const struct drm_display_mode *desc_mode = ctx->desc->modes;
+ 	struct drm_display_mode *mode;
+ 
+-	mode = drm_mode_duplicate(connector->dev,
+-				  &boe_th101mb31ig002_default_mode);
++	mode = drm_mode_duplicate(connector->dev, desc_mode);
+ 	if (!mode) {
+ 		dev_err(panel->dev, "Failed to add mode %ux%u@%u\n",
+-			boe_th101mb31ig002_default_mode.hdisplay,
+-			boe_th101mb31ig002_default_mode.vdisplay,
+-			drm_mode_vrefresh(&boe_th101mb31ig002_default_mode));
++			desc_mode->hdisplay, desc_mode->vdisplay,
++			drm_mode_vrefresh(desc_mode));
+ 		return -ENOMEM;
+ 	}
+ 
 -- 
 2.17.1
 
