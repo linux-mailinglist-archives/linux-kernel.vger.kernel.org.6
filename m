@@ -1,230 +1,111 @@
-Return-Path: <linux-kernel+bounces-260213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AA9893A493
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:51:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96DC093A498
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:54:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45DF8284A0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:51:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4598428428E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E2E1581E3;
-	Tue, 23 Jul 2024 16:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C031581E2;
+	Tue, 23 Jul 2024 16:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="YgckCY06"
-Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="B5R/5gLG"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA0C157A68
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 16:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84D0157A7C
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 16:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721753454; cv=none; b=MGHGr0wSHgOOVAYGfjkmuUgANWf1cjajcBxn6g/Vk9jtPtevTNjkm1fYC6AuKEwPvPqU+qMGPcw5BV+Z1FfsMhVWvksIG69afcbE2SgFHji20uJEg8doxotbf+8U7URm0DEkMt8ukF/xLiV5eFynThw0mTQyWHuwNrDQTyGR96Y=
+	t=1721753661; cv=none; b=izzYtEQTwk5jtcksUWIwa4woim1Stf5/ATXez5nxkk5XejJ5Ggpf0zVd+y54gOP+1XgmEj+MjJ6pgmlgOcl+5LpvU5/KrqFE0xJKFfXBxrhVqhzUMeFJf3fCtk/G6m19C/LieaREKb6crBr15l8D02SKh7p63xIJ9LPi2p9We0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721753454; c=relaxed/simple;
-	bh=+ppp43Ig0Ybxm6TsC99DBorr9/fIy3Ir+ExxDkm5Lz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FgvSeY+eL/9S4ICBYbkwrZ//fsisVNhf+ll0OIVXFISLyv2dKLbHy3CjxNz+/VpLRmV98SEvFemtIsX/eyAUZ44dJHslJuf5/Dstk4OvzW3FHVGyZpkpSmJiXeMTsZ+SJefWwVXW4jUBjP06HJAX5lNDv9ew58e37MucuGtWxos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=YgckCY06; arc=none smtp.client-ip=83.166.143.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WT37C4Jhzz6Lk;
-	Tue, 23 Jul 2024 18:50:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1721753447;
-	bh=Brq8CGE6n5AxIP1M9IXyLvKdJ9qyGO3tn/GoLw2aeQ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YgckCY06kG5xbq1fwZwWKX7pSwKx3RWRLdRhOa6T2Z+wPDUEi1xx2dsY7oJjZJDl/
-	 Jfhm2eGtnR1X376HqvkY4VaVN8V/7MYvMpqMm683gLJSmj3J3iL0a/yyW9dCOXlBOU
-	 uadIWcuu6TwAvHjnVXdYOCdmLANF0/uzR7E44eOA=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WT37B4JB4zGll;
-	Tue, 23 Jul 2024 18:50:46 +0200 (CEST)
-Date: Tue, 23 Jul 2024 18:50:43 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Paul Moore <paul@paul-moore.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Jeff Xu <jeffxu@google.com>, Kees Cook <keescook@chromium.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Shervin Oloumi <enlightened@chromium.org>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/3] Use socket's Landlock domain
-Message-ID: <20240723.Bee3bah1caim@digikod.net>
-References: <20240719150618.197991-1-mic@digikod.net>
- <Zp-q9zxmCmGjR2-N@google.com>
+	s=arc-20240116; t=1721753661; c=relaxed/simple;
+	bh=EqmoXx9ANo44HduyygKOKQ9h/PuYmQB0faEDVLlWrU4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cwXftIfAzJMweifPg6nJ5udz5+/QyqF66exH3pPc84axvogqEVv99orD+Q9ck12jIv6N4lO1LRMQjXFihMRcHnt2F/BBOTPXm3lehv5soZbqKoToX/yKP344MfRnnxUtCPU3a4D9KxZ2tJvJtdLW+MPQRUsco2Gq8b+uCUKTIrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=B5R/5gLG; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4266ea6a488so50302435e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 09:54:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1721753658; x=1722358458; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ec19jJGfGnBIYVJTGlviXly/zWfA2esrkPo5x5OJnq0=;
+        b=B5R/5gLGOcGjmEcAuVGEJn7OcLmFxNTstKzEl/MiuRR+BTl/tVifs59tkOBALUgfr0
+         +r7aY3NDlTKzngyIcaUnV7nh7tmh2AnC/3VulAkWuPsCEXBUboZOXF4LYwehlHzGaT/i
+         l35d1Y8flB/92AgiVZ9OvY+rqGuFFrkNleH/bjWtH439nUqDj28x/mRIla9Q55mnmjJP
+         Rz/4yUETQHCQMAv10JDDy2b0f/vcac26c+zzS9NbCwU4VZYThXXgSCUdE5ycg2NdK0Qh
+         YPGB8vT7nSa7vOPOAN7dH/bR7N0OwnzNM/OvJTbh5JgwgsZdvdOnasnxwRZ9hv1/fynF
+         aVJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721753658; x=1722358458;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ec19jJGfGnBIYVJTGlviXly/zWfA2esrkPo5x5OJnq0=;
+        b=Qcl+ZKkhL7qnn672g9X+2X9nnWNGekSdiBReUzLedoTOrgFZScRsIwqyBOuSWYapRg
+         mGyC+irqn4ji5bmfpBmFcJYsZGf8WX30AdNj/kS2fmyVkTDl2VTFiqUmWGgIisZgtsio
+         wxlzBpqbXz24COfEMV7SN0CaMhkO95q4Ru5BLOjlqmnZ/3GfMfWOGWWlPz+XAKU+ZuHR
+         /Wq1Pfol32A25+k3GnF/rNTvcPsL8eVpkElp5aD7ZmVKSwsCszB3vnnt6EpB8k2a/On/
+         s4Zq5Zby6o4XxnrmRmwrJUsGIQ/vVDXtmGOTkBsX/LBxu1ECyWwES820ZMPMqWJtPeXx
+         hGhw==
+X-Forwarded-Encrypted: i=1; AJvYcCVj+aGA2aZXi7zSkuz8z21/JGERTJGNort9YTmXJ7chFJLhBDhkataG6kS+6tXVF5DTsclSuljdRdjSx9ftJUngqZXB4eDMNvLD+6Kk
+X-Gm-Message-State: AOJu0YyWfheRIQV6823HDSDVLR/6ByGR+IMKnU6SDYwfhMvdm1G/FfMZ
+	5JjkTS/aO5pFugeLaDgaNwM3YFDpiDIchoIhZLXAhPIHhh/YGVY4uqbB28O4qW2YdYesmF0JQEd
+	g
+X-Google-Smtp-Source: AGHT+IE8FjLzbMDmFIu1l0FGepGi7un4GubrWRXa08UU0tOJSgIX3H10cJdAw1PsPSBh6SaicfBxTw==
+X-Received: by 2002:a05:600c:b9a:b0:426:5b44:2be7 with SMTP id 5b1f17b1804b1-427f7abaf92mr998335e9.10.1721753657738;
+        Tue, 23 Jul 2024 09:54:17 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-82-135-80-26.dynamic.mnet-online.de. [82.135.80.26])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427df79bf64sm126909345e9.5.2024.07.23.09.54.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 09:54:17 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: kees@kernel.org
+Cc: linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] gcc-plugins: randstruct: Remove GCC 4.7 or newer requirement
+Date: Tue, 23 Jul 2024 18:53:31 +0200
+Message-ID: <20240723165332.1947-1-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zp-q9zxmCmGjR2-N@google.com>
-X-Infomaniak-Routing: alpha
 
-On Tue, Jul 23, 2024 at 03:07:53PM +0200, Günther Noack wrote:
-> Hello Mickaël!
-> 
-> On Fri, Jul 19, 2024 at 05:06:15PM +0200, Mickaël Salaün wrote:
-> > While the current approach works, I think we should change the way
-> > Landlock restricts network actions.  Because this feature is relatively
-> > new, we can still fix this inconsistency.  In a nutshell, let's follow a
-> > more capability-based model.  Please let me know what you think.
-> 
-> Thanks for sending the patch.  The implementation with ->f_cred is much simpler
-> than I had thought it would be.  Some higher level questions:
-> 
->  * I assume that the plan is to backport this as a fix to older kernels that
->    already have the feature?  (Otherwise, we would potentially have backwards
->    compatibility issues.)
+Since the kernel currently requires GCC 5.1 as a minimum, remove the
+unnecessary GCC version >= 4.7 check.
 
-Correct, if this patch is merged it must be backported too, but there
-might be better alternatives, or we might just stick to the initial
-approach.
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ scripts/gcc-plugins/randomize_layout_plugin.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-> 
->  * I believe it clashes a little bit with the TCP server example [1],
->    which I found a useful use case for the TCP connect/bind and socket
->    restriction features.
+diff --git a/scripts/gcc-plugins/randomize_layout_plugin.c b/scripts/gcc-plugins/randomize_layout_plugin.c
+index 746ff2d272f2..5694df3da2e9 100644
+--- a/scripts/gcc-plugins/randomize_layout_plugin.c
++++ b/scripts/gcc-plugins/randomize_layout_plugin.c
+@@ -19,10 +19,6 @@
+ #include "gcc-common.h"
+ #include "randomize_layout_seed.h"
+ 
+-#if BUILDING_GCC_MAJOR < 4 || (BUILDING_GCC_MAJOR == 4 && BUILDING_GCC_MINOR < 7)
+-#error "The RANDSTRUCT plugin requires GCC 4.7 or newer."
+-#endif
+-
+ #define ORIG_TYPE_NAME(node) \
+ 	(TYPE_NAME(TYPE_MAIN_VARIANT(node)) != NULL_TREE ? ((const unsigned char *)IDENTIFIER_POINTER(TYPE_NAME(TYPE_MAIN_VARIANT(node)))) : (const unsigned char *)"anonymous")
+ 
+-- 
+2.45.2
 
-Indeed, because the socket is created before the sandboxing, the socket
-could be reused to bind (or connect) to other ports.  This is a good
-example of why using current's instead of socket's credentials may be
-less surprising.  From my point of view, the main issue is that a socket
-can be reconfigured.
-
-> 
->  * accept(2) on a passive (listen-mode) socket will give you a new socket FD
->    -- does that new socket inherit its f_cred from the server socket,
->    or does it inherit its f_cred from the thread?
-
-According to sock_alloc_file(), the newly created socket inherits the
-caller's credentials, which is similar to a call to openat2(2) with a
-directory file descriptor.
-
-> 
-> Regarding the TCP server example, the current implementation is *very* simple,
-> and does the following steps:
-> 
->  1. create socket with socket(2)
->  2. bind(2) the socket to the desired port
->  3. enforce a Landlock ruleset that disables all networking features
->     (TCP bind, TCP connect and socket creation with the new patch set)
->  4. listen(2) on the socket
->  5. go into the accept(2) loop
-> 
-> With the old behaviour, step 3 is going to affect the existing passive socket:
-> It will not be possible any more to bind(2) that passive socket to another port.
-> 
-> With the new behaviour (after your patch), step 3 does *not* affect the existing
-> socket, and the server socket can be reused to bind(2) to other ports.
-> 
-> Or, in other words: If the relevant domain is tied to the socket at creation
-> time, that means that a future client connection which takes over the process
-> might be able to use that socket's Landlock domain, which potentially grants
-> more permissions than the thread's domain
-
-Yes, that's why it might be more risky, but I wanted to have this
-discussion.  Whatever the outcome, it should be explained in
-Documentation/security/landlock.rst
-
-One thing to keep in mind and that contrary to other LSMs, Landlock,
-like seccomp, enables processes to (only) drop privileges, and this is
-done by the process itself (not at execve time).  This was also one
-argument for the initial approach.
-
-A thing that bothered me was related to the restrictions of sockets,
-especially with the WIP scoping feature.  Datagram (unix) sockets could
-work before sandboxing, and suddenly become broken after sandboxing
-(because the security check would be done at send time instead of
-connect time).  This kind of issue should be identified quite early and
-easily though.
-
-However, there is still an inconsistency between connected stream
-sockets and datagram sockets.  From a security point of view, this looks
-like a good thing though.
-
-> 
-> I think it would be nice if a use case like in the TCP server example would
-> still be possible with Landlock; there are multiple ways to reach that:
-> 
->  - We could enforce two layers of Landlock rules, one before socket creation
->    that restricts bind(2) to a given port, and one after socket creation that
->    restricts other bind(2), create(2) and socket(2) operations.
-> 
->    Drawbacks:
-> 
->    - One Landlock layer more, and needs to add a Landlock rule:
->      This is a bit more complicated to implement.
-
-Right, I think it's too complex for users.
-
->    - The bind(2) restriction on the socket is still only per port *number*,
->      but it is still possible to bind with that port number on different IP
->      addresses.
-
-Good point.  That's another argument for the initial approach and the
-way you sandboxed the example: dropping the *_TCP access rights, it is
-not possible to rebind or reconnect a socket (to another address).
-
-Actually, I'm not sure if using the socket's credential would not
-confuse users to understand why an access is denied (or allowed).
-
-> 
->  - Alternatively, I wish we could just lock the passive server socket in, so
->    that it can't be made to reconnect anywhere else.  After all, the socket
->    disassociation with connect(2) with AF_UNSPEC seems to be a somewhat obscure
->    and seldomly used feature - if we could just disallow that operation, we
->    could ensure that this socket gets reused for such a nefarious purpose.
-
-We could also add a new "scope" for socket reconfiguration of sockets
-created by a parent or sibling domain, similar to the ptrace
-restrictions.
-
-> 
->    It would still require two nested Landlock rulesets to make the TCP server
->    example work, but they would be a bit simpler than in the alternative above.
-> 
->  - There are probably more alternatives...?
-> 
-> What do you think?
-
-I see other alternatives:
-
-- We could have a new ruleset's attribute to specify if network
-  restrictions should apply on the caller or the socket.  That might be
-  confusing for users though.
-
-- We could just stick to the initial approach and add new access rights
-  (denied by default, similar to FS_REFER) that will only apply to newly
-  created sockets.  This is close to the previous alternative but more
-  explicit. Both use cases could then be used, with a default secure
-  approach (i.e. the initial one).  However, we need to have a clear
-  rationale for the WIP scoping restrictions: should the caller or the
-  socket be checked as the client?
-
-- We could extend the current approach and check both the caller's
-  credential and the socket's credential.  This could be confusing to
-  users though.
-
-- We could have a new fcntl(2) command to (securely) transition a file
-  descriptor's credential to the caller's one (e.g. approved by
-  ptrace_may_access).  That could be generic to all Linux access control
-  systems.
-
-- According to a new ruleset's attribute, we could revalidate (at use
-  time) file descriptors not opened by the caller's Landlock domain, but
-  users would have to be explicit (e.g. stdio issue). And how to handle
-  partially allowed accesses?
-
-> 
-> —Günther
-> 
-> [1] https://wiki.gnoack.org/LandlockTcpServerExample
-> 
 
