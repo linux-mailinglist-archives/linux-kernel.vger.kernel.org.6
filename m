@@ -1,51 +1,43 @@
-Return-Path: <linux-kernel+bounces-259716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 607CF939BE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:48:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B91E6939BEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:48:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 920791C21B53
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:48:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB3D71C219E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A2BA14B07A;
-	Tue, 23 Jul 2024 07:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1j8CuDuL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A715F3D6A;
-	Tue, 23 Jul 2024 07:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFFF14B94F;
+	Tue, 23 Jul 2024 07:48:27 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8EA3D6A;
+	Tue, 23 Jul 2024 07:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721720886; cv=none; b=EoLv2o5N2SoefmR5MlxUgZLQU7/Z8yAgLvmylr1OxX7pMmhyucVY474MphltzdFNQbv4Tl5ZfH/DhCvl4XdxFHiamq5Day/SdoJeu+YjRPxG2fr0aw6UOdylTTX7evIHyUbijuYazcIvQACNmhFq0m1SA7G8qe62LE+J5rJvvgE=
+	t=1721720906; cv=none; b=KrKWCHqn/9f/pS8nYbrWOqJjgbU9+QzXIut2u0tZQWesPAgJaCtaoWyXZIKWjk+ecCa/0SXbXflai6m/TgUSbREuUqb8jfS16S0yjX0s6D+QiAnKuYLvmlOrQi77Qv+f+IpKVZwazsNV+Q9Zjpr5kL9b+sqmZOz925uloVJEuIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721720886; c=relaxed/simple;
-	bh=lw5BRIxdZhgSbYdabgpVUzM7vRVd60aH0Xo/ulGphnc=;
+	s=arc-20240116; t=1721720906; c=relaxed/simple;
+	bh=vbvgwD+cGbGHd6xsCHsLBoTVpmyEcO3/PjQfo+PH4Do=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sAMif2kFE6pH7jd2FJWg6U9bR8OgciPc4eq2ou48D3BYyOMJlV7J/R1CzyT1gHfKUv0Hvu8+ZRxOKxA2pC8liugSP5yyuP/uls9IWMGXrmrnq5QT9SL+argz70BacFRjMF+lvZ/ytt52Fh9quljIgYMTqWNHwzzrSUCqRt68Xbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1j8CuDuL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDF8EC4AF0B;
-	Tue, 23 Jul 2024 07:48:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721720886;
-	bh=lw5BRIxdZhgSbYdabgpVUzM7vRVd60aH0Xo/ulGphnc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=1j8CuDuLBCvrEKyKmZvbO6ICKZIPAUFOnZFt3yobWZ2bweTJqDRehoV44rt+n1YrN
-	 lQASGTkETcMNk1ip7Nx6HIw9KMDJ4SrKHcgYfN8J8T4odePto3vsOI1z+G+9vhdH9t
-	 nhFd4tNi+LnVi/uEzzsnrfDdQ2iriMFRmf1qts9k=
-Date: Tue, 23 Jul 2024 09:48:03 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Steven Davis <goldside000@outlook.com>
-Cc: christian.gromm@microchip.com, parthiban.veerasooran@microchip.com,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] Capitalized "c" to "C" and changed "expect" to
- "expected"
-Message-ID: <2024072344-ripeness-ablaze-43bf@gregkh>
-References: <SJ2P223MB1026B72D6CED70A91E8E55CCF7A82@SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q0V9DMT8VQa/WQU8plzBlahFJqeRvNp8F0tTYuo0TmFLp/o9jsB7UOP6RRtWn5mVb3jgUnQPq5L2zst+tMYnr1PHjS2uWF80H3uTvc40n+CCHii8A94/PPBVgNKZYEEcKs8TFSFjIVpXFSWEAAlIZssI+Ls2P3aYZgeuZ6Nb/A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1sWAFu-0003M0-00; Tue, 23 Jul 2024 09:48:18 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 93450C0899; Tue, 23 Jul 2024 09:48:08 +0200 (CEST)
+Date: Tue, 23 Jul 2024 09:48:08 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mips: sibyte: add missing MODULE_DESCRIPTION() macro
+Message-ID: <Zp9gOOUp3ZWXY/B8@alpha.franken.de>
+References: <20240718-md-mips-arch-mips-sibyte-common-v1-1-49b29b0555eb@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,28 +46,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <SJ2P223MB1026B72D6CED70A91E8E55CCF7A82@SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM>
+In-Reply-To: <20240718-md-mips-arch-mips-sibyte-common-v1-1-49b29b0555eb@quicinc.com>
 
-On Mon, Jul 22, 2024 at 12:59:44PM -0400, Steven Davis wrote:
-> This patch makes three error messages in the driver easier to read by capitalizing the first letters properly.
+On Thu, Jul 18, 2024 at 04:17:52PM -0700, Jeff Johnson wrote:
+> Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
+> description is missing"), a module without a MODULE_DESCRIPTION() will
+> result in a warning with make W=1. The following warning is being
+> observed when ARCH=mips and CONFIG_SIBYTE_TBPROF=m:
+> 
+> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/mips/sibyte/common/sb_tbprof.o
+> 
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+> I'm trying to fix all of these issues in 6.11, so please take this
+> through your "for current" path instead of your "for next" path. If
+> you don't have a "for current" path, Greg KH has indicated he'll pick
+> up the stragglers before the 6.11 rc-final.
+> ---
+>  arch/mips/sibyte/common/sb_tbprof.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/mips/sibyte/common/sb_tbprof.c b/arch/mips/sibyte/common/sb_tbprof.c
+> index af5333986900..149a9151bc0b 100644
+> --- a/arch/mips/sibyte/common/sb_tbprof.c
+> +++ b/arch/mips/sibyte/common/sb_tbprof.c
+> @@ -589,4 +589,5 @@ module_exit(sbprof_tb_cleanup);
+>  
+>  MODULE_ALIAS_CHARDEV_MAJOR(SBPROF_TB_MAJOR);
+>  MODULE_AUTHOR("Ralf Baechle <ralf@linux-mips.org>");
+> +MODULE_DESCRIPTION("Support for ZBbus profiling");
+>  MODULE_LICENSE("GPL");
+> 
+> ---
+> base-commit: 51835949dda3783d4639cfa74ce13a3c9829de00
+> change-id: 20240718-md-mips-arch-mips-sibyte-common-7c51d90b31f2
 
-Please wrap your changelog text at 72 characters, checkpatch should have
-caught this, right?
+applied to mips-next.
 
-> For example, "channel already linked" became "Channel already linked".
-> In addition, "expect" becomes "expected", as you would typically find in an error message.
+Thomas.
 
-When you have "in addition" that usually means you should split this up
-into different changes, rigth?
-
-> This patch is necessary for improving user experience and the kernel's quality.
-
-This isn't a quality thing, it's a "spelling fixes are nice" thing.
-
-Also, please fix up the subject line to match those that have been made
-to this file in the past with the correct prefix.
-
-thanks,
-
-greg k-h
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
