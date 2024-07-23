@@ -1,119 +1,161 @@
-Return-Path: <linux-kernel+bounces-260423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CD8093A8B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:30:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D11B293A8C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:32:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BA9A2833D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:30:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 884F72836AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:32:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597C9144309;
-	Tue, 23 Jul 2024 21:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EBE146A68;
+	Tue, 23 Jul 2024 21:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XsVn6C9a"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l2EaSC36"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D0C13D503;
-	Tue, 23 Jul 2024 21:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CFD1448FB;
+	Tue, 23 Jul 2024 21:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721770234; cv=none; b=KRYiq6IPspsN1o1XtgSyCpQVc9Mk7cy5sCVB9W+S4FHBXyZMqJFGI9/tLFxM+LOKAUq1ud6rMVQbfsopyWcC6yDl3Eq+7lSw9DzIZsggr9J+TgcOYU/4Yblna2wbLYeEa2HnPIlEpz0uupnPv+M0jSjEf2FocrOCx55bspdLqdI=
+	t=1721770319; cv=none; b=lMFprOqEe2p6RxAzIjPz08UKc639Y5zEg46Szh6mL7v+9xvE05RurRpGvNhQa/0yYrkw7V65qQQGpyDy2jxdWpvw8ulPdUyeTcuCO5L114tWvgyfGHHjyIHq0ehnfXV/58fOKXPW2iHJsqFiPnkAtPsKFHSq/G0URy2AqZAP4eI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721770234; c=relaxed/simple;
-	bh=fJdNLJeK498HpfUGwQRCMcC+1DgcJHW82eyWYubI50c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KJNoCb3z5dWbJqhzP07BCRUjOtXEjR64IINunEJlYihglpVOsyqWSDa+4wAb9qnAGFFOjplgBo8jNSW956rD2wbxlpOZEeO0b20liNs/KH9HixOODeqdA8aUrGVex2i5sFhNxy4fWJ+5Jho6lsCvLKnTM21de+sICCXE8H5Vytk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XsVn6C9a; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7a1be7b5d70so211864a12.0;
-        Tue, 23 Jul 2024 14:30:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721770233; x=1722375033; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=o4de4vuoAzGU+SJJd8nCBnpgurzTAF1hcwQExoCwyjo=;
-        b=XsVn6C9athTJVcSw93ftE9/qa1iC56Xgd7fFVgzcWR6tZGUEZ0qJLwnir46wjZpgfC
-         pYbR+Bs3/9Xd4q2HxqVCzPRr7DNj5LZpdFYeYeREW7iGwlibYcyrJpr8zdGrB4FOROws
-         mNrgVaRqDMvk8ibWp0l8rMf4zVz+rjYQ+NHEkiDNa64N6fnLCWxYK9DzHMljOlQkPdaT
-         5NwiGRZb9g/xiYWTXPeh4bOnIyRVAu4i//fDSJaJk2I3ynOlkHAR3E6ay5Jci9tk9nuO
-         r1iTsFK/9n42hf300vnO7z7MfqJ6WyxEda+elVZWfWrKfhA7jxGHcNoH2asDy8LNqJ3d
-         KbGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721770233; x=1722375033;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o4de4vuoAzGU+SJJd8nCBnpgurzTAF1hcwQExoCwyjo=;
-        b=xK9MVdw243lLwCgi9f1QoPpfZId/ggeIx8fvahbDOiWkSy1xJXLY/cHe5bGQot8K+7
-         GJgRcCMfpIpl+s3DFGSvlKG5hn7miPvpqYiyGdoc4H9/6nfYYnVK3OJrtjdDpOkxPVwa
-         L6VNUO9uUolZJt0MQJxJ0gStAoTUPsqG+1JW0Wyl4h8i+bEveUG10/VUH/fFBowBOGep
-         ik10ZJEW5A6eVkG6Xt8FVQtWNMbCQcOTZNs9p2eCDPT8ys5yHhkHThEdYROYyFXh72IN
-         AUz59qgv73GwDdhncO0CkveNR4QRHZmqAp6WnNt6gf4HGKzu3PNcqMo885uzllpfDacy
-         ndKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlHNKK00QWR2FuTypnY2bIVDzE+LQW8It3RCYjZzr2NntFkezTY+0FsTN0xBNoRCQA/6dKtI+hyhYODFZugR3Akzibl08oj6lBmIBqFblJq9JyLDMmdFy1i6nRoYDTx14+5tZT
-X-Gm-Message-State: AOJu0Yw/0JJk4jG2f+lC9RsmhuOjVr2RXC/ZulYHO3VfMK46Fmzfaod/
-	FaJDqATFZgcug8aH6fCwHyCh+O1/umJS7tUrIWeCkQVI7fuvxYV0
-X-Google-Smtp-Source: AGHT+IEZPydGcXkIKzmVjkgsWjzY/dfGnczk3SL53btNvASl3GMszGma1sYiHacdObWCOH0ZwWZltA==
-X-Received: by 2002:a17:90b:1d91:b0:2ab:8324:1b47 with SMTP id 98e67ed59e1d1-2cd8d10a8b4mr5452982a91.15.1721770232546;
-        Tue, 23 Jul 2024 14:30:32 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2cdb73d8897sm67669a91.17.2024.07.23.14.30.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 14:30:32 -0700 (PDT)
-Message-ID: <ded16d98-696c-4481-894d-1ebdc1a019c6@gmail.com>
-Date: Tue, 23 Jul 2024 14:30:26 -0700
+	s=arc-20240116; t=1721770319; c=relaxed/simple;
+	bh=emqRXC4zbFB95UYh4yI6o+bUQDFgG7kIbVNfc6B+a/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n08AnS2aKp9TraaFr5myujPvq+ycHp3o9D2r1iw0pUT4OAwWG/V6ro3x8ORXPxJ4Li72WlgUN4at41a3P9L6s1S6dxw5/I/UZUXfMy4ZZSuYZTNJpns3NRl8t/je+/0NFk+ls8ie+LBHuq3ZIfADMs0IXyZhk2r5Kf8U2x7Ch4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l2EaSC36; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721770318; x=1753306318;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=emqRXC4zbFB95UYh4yI6o+bUQDFgG7kIbVNfc6B+a/s=;
+  b=l2EaSC36CRwYuclgheLeevXoDE+QVyVpaGWkU3FnYLlfKlPupB6ist5P
+   +cHFa6pBW252JZb8ju+8KI7SYUIX8qWhlfIqBOlSG2EuDG+XsNUgY+7GA
+   WmE/gJNyTWlNLrds+J1aYmIRCWCFsU1hm7r6950+54LLOpdCCVjghGy1C
+   pcutx0GI44SYrlejtSNOhOHV2eJNyJXkVzpSa2SsykzyEDKk0zNhg0Dwp
+   h+geDXw+XD4JTjqqZV1j7+XTN3y2RwfsaKGqHBwATUIPGt07QILnj4eUB
+   FeF7HIf8a/sWgcw5iqKwwtbK8ZqFd3BzyKx19dXqbGcXDEb3YJ6i4hAgp
+   A==;
+X-CSE-ConnectionGUID: Wem086CXToe0WtaOamq3jw==
+X-CSE-MsgGUID: pMst6wNeR5advhlE2Dj9Cg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11142"; a="41946561"
+X-IronPort-AV: E=Sophos;i="6.09,231,1716274800"; 
+   d="scan'208";a="41946561"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2024 14:31:58 -0700
+X-CSE-ConnectionGUID: 9PnZNZK5ROSFsJZBagkOvg==
+X-CSE-MsgGUID: nknNECQjS+WNfr/mbbyZBg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,231,1716274800"; 
+   d="scan'208";a="52598208"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 23 Jul 2024 14:31:53 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sWN6s-000mN4-1a;
+	Tue, 23 Jul 2024 21:31:50 +0000
+Date: Wed, 24 Jul 2024 05:31:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: Youling Tang <youling.tang@linux.dev>, Arnd Bergmann <arnd@arndb.de>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Chris Mason <chris.mason@fusionio.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	tytso@mit.edu, Andreas Dilger <adilger.kernel@dilger.ca>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+	Chao Yu <chao@kernel.org>, Christoph Hellwig <hch@infradead.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net, youling.tang@linux.dev,
+	Youling Tang <tangyouling@kylinos.cn>
+Subject: Re: [PATCH 4/4] f2fs: Use module_{subinit, subeixt} helper macros
+Message-ID: <202407240502.xqotqBQ1-lkp@intel.com>
+References: <20240723083239.41533-5-youling.tang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.9 000/163] 6.9.11-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240723180143.461739294@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240723180143.461739294@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240723083239.41533-5-youling.tang@linux.dev>
 
-On 7/23/24 11:22, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.9.11 release.
-> There are 163 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 25 Jul 2024 18:01:03 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.11-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hi Youling,
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+kernel test robot noticed the following build warnings:
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+[auto build test WARNING on kdave/for-next]
+[also build test WARNING on linus/master next-20240723]
+[cannot apply to jaegeuk-f2fs/dev-test jaegeuk-f2fs/dev soc/for-next v6.10]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Youling-Tang/module-Add-module_subinit-_noexit-and-module_subeixt-helper-macros/20240723-164434
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-next
+patch link:    https://lore.kernel.org/r/20240723083239.41533-5-youling.tang%40linux.dev
+patch subject: [PATCH 4/4] f2fs: Use module_{subinit, subeixt} helper macros
+config: arm64-randconfig-002-20240724 (https://download.01.org/0day-ci/archive/20240724/202407240502.xqotqBQ1-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240724/202407240502.xqotqBQ1-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407240502.xqotqBQ1-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from fs/f2fs/dir.c:13:
+   fs/f2fs/f2fs.h: In function 'f2fs_create_root_stats':
+>> fs/f2fs/f2fs.h:4131:1: warning: no return statement in function returning non-void [-Wreturn-type]
+    4131 | static inline int __init f2fs_create_root_stats(void) { }
+         | ^~~~~~
+--
+   In file included from fs/f2fs/data.c:25:
+   fs/f2fs/f2fs.h: In function 'f2fs_create_root_stats':
+>> fs/f2fs/f2fs.h:4131:1: warning: no return statement in function returning non-void [-Wreturn-type]
+    4131 | static inline int __init f2fs_create_root_stats(void) { }
+         | ^~~~~~
+   fs/f2fs/data.c: In function 'f2fs_mpage_readpages':
+   fs/f2fs/data.c:2373:17: warning: variable 'index' set but not used [-Wunused-but-set-variable]
+    2373 |         pgoff_t index;
+         |                 ^~~~~
+--
+   aarch64-linux-ld: warning: orphan section `.subexitcall.exit' from `fs/ext4/super.o' being placed in section `.subexitcall.exit'
+   aarch64-linux-ld: warning: orphan section `.subinitcall.init' from `fs/ext4/super.o' being placed in section `.subinitcall.init'
+>> aarch64-linux-ld: warning: orphan section `.subexitcall.exit' from `fs/f2fs/super.o' being placed in section `.subexitcall.exit'
+>> aarch64-linux-ld: warning: orphan section `.subinitcall.init' from `fs/f2fs/super.o' being placed in section `.subinitcall.init'
+   aarch64-linux-ld: warning: orphan section `.subexitcall.exit' from `fs/ext4/super.o' being placed in section `.subexitcall.exit'
+   aarch64-linux-ld: warning: orphan section `.subinitcall.init' from `fs/ext4/super.o' being placed in section `.subinitcall.init'
+>> aarch64-linux-ld: warning: orphan section `.subexitcall.exit' from `fs/f2fs/super.o' being placed in section `.subexitcall.exit'
+>> aarch64-linux-ld: warning: orphan section `.subinitcall.init' from `fs/f2fs/super.o' being placed in section `.subinitcall.init'
+   aarch64-linux-ld: warning: orphan section `.subexitcall.exit' from `fs/ext4/super.o' being placed in section `.subexitcall.exit'
+   aarch64-linux-ld: warning: orphan section `.subinitcall.init' from `fs/ext4/super.o' being placed in section `.subinitcall.init'
+>> aarch64-linux-ld: warning: orphan section `.subexitcall.exit' from `fs/f2fs/super.o' being placed in section `.subexitcall.exit'
+>> aarch64-linux-ld: warning: orphan section `.subinitcall.init' from `fs/f2fs/super.o' being placed in section `.subinitcall.init'
+
+
+vim +4131 fs/f2fs/f2fs.h
+
+  4128	
+  4129	static inline int f2fs_build_stats(struct f2fs_sb_info *sbi) { return 0; }
+  4130	static inline void f2fs_destroy_stats(struct f2fs_sb_info *sbi) { }
+> 4131	static inline int __init f2fs_create_root_stats(void) { }
+  4132	static inline void f2fs_destroy_root_stats(void) { }
+  4133	static inline void f2fs_update_sit_info(struct f2fs_sb_info *sbi) {}
+  4134	#endif
+  4135	
+
 -- 
-Florian
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
