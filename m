@@ -1,144 +1,710 @@
-Return-Path: <linux-kernel+bounces-259937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DF1293A022
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:43:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE52F93A024
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:44:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C39A71F22D99
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:43:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 858C82837D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F23AA152196;
-	Tue, 23 Jul 2024 11:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509431514D8;
+	Tue, 23 Jul 2024 11:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oBN1Q6Mv"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ngn.tf header.i=@ngn.tf header.b="IquBMwPh"
+Received: from mail.ngn.tf (ngn.tf [193.106.196.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896181509BF
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A7E14E2D0;
+	Tue, 23 Jul 2024 11:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.106.196.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721734989; cv=none; b=Ff9LfhtgeR1GZRWuNZyZbBehbiKlpc9E3isboYq1/BislNYaRmaEvpMPvosaznXoHYHkihnNZKc6EsbVCftKpCXDAB4gTlEHGpcN5i8ZpRRUqYzclAkq9KH/wRAeW8ZRCXDYb4yqyQRtVoD+6+wtIne5o5+mWMoDkvlCPnHys8M=
+	t=1721735067; cv=none; b=lfxui8C1FzW0a1vZw0l96QNdFFt3LZkUeVzPgU9ENZLD/wFK/eV5aQXs9LUAA7OnoZRyatuPBdrR6toZohg7I89UuZssrjjSdc8hGFZCJiLpBCKI6Pe0eR0AC6ThIYb7Nne2mLKpoRIFV905H8YekH3S0kl8zOVBitRPtPD8gu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721734989; c=relaxed/simple;
-	bh=EQ/2R7CnVW/41ExqLPRynM0nz+7yZlIbAonf2Xv02oo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ors5rs+0D20NO+oOupsck4B37Y5b4sRTPx6QbwQ8E/SyZ8kOHPn31HE4ImLfIENO8j+rUtZPugcVYoRFMmIjKmNb8uHmu7GW0Vz94nTC4b9w3ffmKmnA46+vOfPWsNLavBaXRSna52ue3lHuYahVKbYY6ayQasy6qGWtI9pgbjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oBN1Q6Mv; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52efdf02d13so4143013e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 04:43:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721734986; x=1722339786; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=qNV4SPVYDOJceI4uC3ZSm5CO3Vjxa/pP9tGu0hDGYdY=;
-        b=oBN1Q6MvExdMGNdjZZZLRnTzq5qkuMEXT5zn3eMPLWoPdJ6AmmWQeCmflUg6g6tHzz
-         eCmr3Wgqc8kx0lN85vgyxhEPc9YUUgiOt7ZQ9ZqhUCkepho0cb80XMIITmlh/JwwPg4v
-         90IbXlnBen1H4c5o47wh2Db8A4nGewcI38di7E3070L5fMLYCSmCsP8cudDcmSIGE0uN
-         +NFW3EDpGoWU1lVCZUeAf81yFiJyCyravY6LTx72xidwdd6L6iCi1J00DUenf2s+2aWA
-         4ro+L7OXsfngQ+/PY+LQa3q9boSVT5y+waT1wyHud+ppYrBcTbz96qhyXTSoYN3OxgJD
-         FRWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721734986; x=1722339786;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qNV4SPVYDOJceI4uC3ZSm5CO3Vjxa/pP9tGu0hDGYdY=;
-        b=wD+BFmaU9A4Nm22MAmYFZHIEuD0DOemi2T09q6moMQPA3YsMQ1d36daPzWe9n/db9a
-         YTcw9VjV4072VGvwTKXjYjkEEEUx0ppCod4/JbfHn/EZzDtdJzILW54nLnbnCCm9iMbW
-         0M/8YqJwzq/6wd+Z+jMoCRuAkFotAQpMklj5lUpT0VpBiK6D7aCJpEfm9pNNX2hdXec3
-         NtHm6Mji9UqV9odSolAdFdflyPQyKZzzRCTogXawWPDa0yqeBUq0qY+SvY4ALIHo6ipZ
-         ImxTh0eZ2RkQlnVIhCXGBwXxgNPjXqShvsJpwz6hEF3V+4zda5GE7txEjcT+wWUjVSKJ
-         ujSw==
-X-Forwarded-Encrypted: i=1; AJvYcCULqQoiBcV061AB5b3ctNjyDAUvg8PQAksgKbS7+FCG32EQPFpoMQtrFm+y7V2Ziy5/kIbDree5zOpMiE9vWkPkQpLcHF4LNE1ef6Be
-X-Gm-Message-State: AOJu0Yxsls4fyHpr3HjsDMQeNWXIqu7agt5RUDnbRFubIujMpwTKkYp4
-	l+4vQxQjis+L3WcYAeR8DA+JUK6dnPflDP9MiDWKR5gRSDDR9OE4cdDp9J4QfWYPNuCOwHycwrn
-	D
-X-Google-Smtp-Source: AGHT+IEs86rn39NavrG9rTs1cLDHFEyL54PTpu6BMueyoszMj29d5ZTv9gviYSc6SBIrVyLamlVaHw==
-X-Received: by 2002:a05:6512:1585:b0:52e:7df0:9a78 with SMTP id 2adb3069b0e04-52efb7498d0mr8442174e87.32.1721734985348;
-        Tue, 23 Jul 2024 04:43:05 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c91caabsm541615166b.143.2024.07.23.04.43.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 04:43:04 -0700 (PDT)
-Message-ID: <080a6fc8-72f6-4922-9237-31d5f80928de@linaro.org>
-Date: Tue, 23 Jul 2024 13:43:03 +0200
+	s=arc-20240116; t=1721735067; c=relaxed/simple;
+	bh=MuGpbGlqMTnCNalZLHhEj7pgM4+IhQV2flzRNOEBnS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=QnI71MVvTzMNvK6/Mi+5ePuBrYhXtLwgc+PQVfMoOzoRvNEGghSpItR8S0wp2w1iCxPTnUnwPYRfPr8RRgOxK93a/yJs/ADdZwZhzPfItvEbOy5u43F/sGBRKKjcDjKTPYSrN13tuVr1Pk+ITfFO4gdxXousnxeqvmcYD76apjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ngn.tf; spf=pass smtp.mailfrom=ngn.tf; dkim=pass (2048-bit key) header.d=ngn.tf header.i=@ngn.tf header.b=IquBMwPh; arc=none smtp.client-ip=193.106.196.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ngn.tf
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ngn.tf
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ngn.tf; s=mail;
+	t=1721735056; bh=MuGpbGlqMTnCNalZLHhEj7pgM4+IhQV2flzRNOEBnS0=;
+	h=From:To:Cc:Subject;
+	b=IquBMwPhyg1NBRlZoJ8RHT4ybZoff5SUlHgc+uZbC5pZKebffBaUDzxkniIa5ZZt1
+	 qdo3K0LiiEaeFzO3frzjcmvDv5guQ/rohOiQHCpUwbbLYxw7Zj5x6UJiryzyeRhSb3
+	 RarniEySpm4rl5IDim5TH61a7DEWcCOy41anquLcabcuk02Jw70Wyt2j5SIdFfluje
+	 Ui3wqDLPW6SK9U1hMMM/G0bNEsjbwu7hsUYvRJhfJA0Fj7y5YQMfy/waHv2uKyHDUD
+	 pwZCd02+vWB+PjTI7mDB/sVI1Y2Gqcfiy2ysEhyfHP02cs5Yjaruq/PWoAFNBGd7q2
+	 SUykxdJAd2oiQ==
+Date: Tue, 23 Jul 2024 14:43:25 +0300
+From: ngn <ngn@ngn.tf>
+To: Bjorn Helgaas <bhelgaas@google.com>, Nam Cao <namcao@linutronix.de>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] PCI: shpchp: Remove hpc_ops
+Message-ID: <Zp-XXVW4hlcMASEc@archbtw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/5] arm64: dts: qcom: msm8998-lenovo-miix-630: add
- WiFi calibration variant
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Jeffrey Hugo <quic_jhugo@quicinc.com>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Kalle Valo <kvalo@kernel.org>
-References: <20240723-miix630-support-v2-0-7d98f6047a17@linaro.org>
- <20240723-miix630-support-v2-5-7d98f6047a17@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240723-miix630-support-v2-5-7d98f6047a17@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 23.07.2024 1:28 PM, Dmitry Baryshkov wrote:
-> As most other board Miix uses board-id = 0xff, so define calibration
-> variant to distinguish it from other devices with the same chip_id.
-> 
-> qmi chip_id 0x30214 chip_family 0x4001 board_id 0xff soc_id 0x40010002
-> 
-> Cc: Kalle Valo <kvalo@kernel.org>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
+Remove the hpc_ops struct from shpchp. This struct is unnecessary as
+no other hotplug controller implements it. A similar thing has already
+been done in pciehp with commit 82a9e79ef132 ("PCI: pciehp: remove hpc_ops")
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Signed-off-by: ngn <ngn@ngn.tf>
+---
+Changes in v2:
+- Fix a few typos
+- Remove hpc_ops from the slot and the controller struct
 
-Konrad
+Changes in v3:
+- Update the commit message according to the Bjorn's response
+- Remove the related task from the TODO file
+
+ drivers/pci/hotplug/TODO          |  5 --
+ drivers/pci/hotplug/shpchp.h      | 38 +++++++--------
+ drivers/pci/hotplug/shpchp_core.c | 15 +++---
+ drivers/pci/hotplug/shpchp_ctrl.c | 79 +++++++++++++++----------------
+ drivers/pci/hotplug/shpchp_hpc.c  | 63 ++++++++----------------
+ 5 files changed, 82 insertions(+), 118 deletions(-)
+
+diff --git a/drivers/pci/hotplug/TODO b/drivers/pci/hotplug/TODO
+index 9d428b0ea524..92e6e20e8595 100644
+--- a/drivers/pci/hotplug/TODO
++++ b/drivers/pci/hotplug/TODO
+@@ -51,11 +51,6 @@ ibmphp:
+ 
+ shpchp:
+ 
+-* There is only a single implementation of struct hpc_ops.  Can the struct be
+-  removed and its functions invoked directly?  This has already been done in
+-  pciehp with commit 82a9e79ef132 ("PCI: pciehp: remove hpc_ops").  Clarify
+-  if there was a specific reason not to apply the same change to shpchp.
+-
+ * The hardirq handler shpc_isr() queues events on a workqueue.  It can be
+   simplified by converting it to threaded IRQ handling.  Use pciehp as a
+   template.
+diff --git a/drivers/pci/hotplug/shpchp.h b/drivers/pci/hotplug/shpchp.h
+index 3a97f455336e..f0e2d2d54d71 100644
+--- a/drivers/pci/hotplug/shpchp.h
++++ b/drivers/pci/hotplug/shpchp.h
+@@ -72,7 +72,6 @@ struct slot {
+ 	u8 latch_save;
+ 	u8 pwr_save;
+ 	struct controller *ctrl;
+-	const struct hpc_ops *hpc_ops;
+ 	struct hotplug_slot hotplug_slot;
+ 	struct list_head	slot_list;
+ 	struct delayed_work work;	/* work for button event */
+@@ -94,7 +93,6 @@ struct controller {
+ 	int slot_num_inc;		/* 1 or -1 */
+ 	struct pci_dev *pci_dev;
+ 	struct list_head slot_list;
+-	const struct hpc_ops *hpc_ops;
+ 	wait_queue_head_t queue;	/* sleep & wake process */
+ 	u8 slot_device_offset;
+ 	u32 pcix_misc2_reg;	/* for amd pogo errata */
+@@ -300,24 +298,22 @@ static inline void amd_pogo_errata_restore_misc_reg(struct slot *p_slot)
+ 	pci_write_config_dword(p_slot->ctrl->pci_dev, PCIX_MISCII_OFFSET, pcix_misc2_temp);
+ }
+ 
+-struct hpc_ops {
+-	int (*power_on_slot)(struct slot *slot);
+-	int (*slot_enable)(struct slot *slot);
+-	int (*slot_disable)(struct slot *slot);
+-	int (*set_bus_speed_mode)(struct slot *slot, enum pci_bus_speed speed);
+-	int (*get_power_status)(struct slot *slot, u8 *status);
+-	int (*get_attention_status)(struct slot *slot, u8 *status);
+-	int (*set_attention_status)(struct slot *slot, u8 status);
+-	int (*get_latch_status)(struct slot *slot, u8 *status);
+-	int (*get_adapter_status)(struct slot *slot, u8 *status);
+-	int (*get_adapter_speed)(struct slot *slot, enum pci_bus_speed *speed);
+-	int (*get_prog_int)(struct slot *slot, u8 *prog_int);
+-	int (*query_power_fault)(struct slot *slot);
+-	void (*green_led_on)(struct slot *slot);
+-	void (*green_led_off)(struct slot *slot);
+-	void (*green_led_blink)(struct slot *slot);
+-	void (*release_ctlr)(struct controller *ctrl);
+-	int (*check_cmd_status)(struct controller *ctrl);
+-};
++int shpchp_power_on_slot(struct slot *slot);
++int shpchp_slot_enable(struct slot *slot);
++int shpchp_slot_disable(struct slot *slot);
++int shpchp_set_bus_speed_mode(struct slot *slot, enum pci_bus_speed speed);
++int shpchp_get_power_status(struct slot *slot, u8 *status);
++int shpchp_get_attention_status(struct slot *slot, u8 *status);
++int shpchp_set_attention_status(struct slot *slot, u8 status);
++int shpchp_get_latch_status(struct slot *slot, u8 *status);
++int shpchp_get_adapter_status(struct slot *slot, u8 *status);
++int shpchp_get_adapter_speed(struct slot *slot, enum pci_bus_speed *speed);
++int shpchp_get_prog_int(struct slot *slot, u8 *prog_int);
++int shpchp_query_power_fault(struct slot *slot);
++void shpchp_green_led_on(struct slot *slot);
++void shpchp_green_led_off(struct slot *slot);
++void shpchp_green_led_blink(struct slot *slot);
++void shpchp_release_ctlr(struct controller *ctrl);
++int shpchp_check_cmd_status(struct controller *ctrl);
+ 
+ #endif				/* _SHPCHP_H */
+diff --git a/drivers/pci/hotplug/shpchp_core.c b/drivers/pci/hotplug/shpchp_core.c
+index 56c7795ed890..a92e28b72908 100644
+--- a/drivers/pci/hotplug/shpchp_core.c
++++ b/drivers/pci/hotplug/shpchp_core.c
+@@ -81,7 +81,6 @@ static int init_slots(struct controller *ctrl)
+ 		slot->ctrl = ctrl;
+ 		slot->bus = ctrl->pci_dev->subordinate->number;
+ 		slot->device = ctrl->slot_device_offset + i;
+-		slot->hpc_ops = ctrl->hpc_ops;
+ 		slot->number = ctrl->first_slot + (ctrl->slot_num_inc * i);
+ 
+ 		slot->wq = alloc_workqueue("shpchp-%d", 0, 0, slot->number);
+@@ -150,7 +149,7 @@ static int set_attention_status(struct hotplug_slot *hotplug_slot, u8 status)
+ 		 __func__, slot_name(slot));
+ 
+ 	slot->attention_save = status;
+-	slot->hpc_ops->set_attention_status(slot, status);
++	shpchp_set_attention_status(slot, status);
+ 
+ 	return 0;
+ }
+@@ -183,7 +182,7 @@ static int get_power_status(struct hotplug_slot *hotplug_slot, u8 *value)
+ 	ctrl_dbg(slot->ctrl, "%s: physical_slot = %s\n",
+ 		 __func__, slot_name(slot));
+ 
+-	retval = slot->hpc_ops->get_power_status(slot, value);
++	retval = shpchp_get_power_status(slot, value);
+ 	if (retval < 0)
+ 		*value = slot->pwr_save;
+ 
+@@ -198,7 +197,7 @@ static int get_attention_status(struct hotplug_slot *hotplug_slot, u8 *value)
+ 	ctrl_dbg(slot->ctrl, "%s: physical_slot = %s\n",
+ 		 __func__, slot_name(slot));
+ 
+-	retval = slot->hpc_ops->get_attention_status(slot, value);
++	retval = shpchp_get_attention_status(slot, value);
+ 	if (retval < 0)
+ 		*value = slot->attention_save;
+ 
+@@ -213,7 +212,7 @@ static int get_latch_status(struct hotplug_slot *hotplug_slot, u8 *value)
+ 	ctrl_dbg(slot->ctrl, "%s: physical_slot = %s\n",
+ 		 __func__, slot_name(slot));
+ 
+-	retval = slot->hpc_ops->get_latch_status(slot, value);
++	retval = shpchp_get_latch_status(slot, value);
+ 	if (retval < 0)
+ 		*value = slot->latch_save;
+ 
+@@ -228,7 +227,7 @@ static int get_adapter_status(struct hotplug_slot *hotplug_slot, u8 *value)
+ 	ctrl_dbg(slot->ctrl, "%s: physical_slot = %s\n",
+ 		 __func__, slot_name(slot));
+ 
+-	retval = slot->hpc_ops->get_adapter_status(slot, value);
++	retval = shpchp_get_adapter_status(slot, value);
+ 	if (retval < 0)
+ 		*value = slot->presence_save;
+ 
+@@ -293,7 +292,7 @@ static int shpc_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ err_cleanup_slots:
+ 	cleanup_slots(ctrl);
+ err_out_release_ctlr:
+-	ctrl->hpc_ops->release_ctlr(ctrl);
++	shpchp_release_ctlr(ctrl);
+ err_out_free_ctrl:
+ 	kfree(ctrl);
+ err_out_none:
+@@ -306,7 +305,7 @@ static void shpc_remove(struct pci_dev *dev)
+ 
+ 	dev->shpc_managed = 0;
+ 	shpchp_remove_ctrl_files(ctrl);
+-	ctrl->hpc_ops->release_ctlr(ctrl);
++	shpchp_release_ctlr(ctrl);
+ 	kfree(ctrl);
+ }
+ 
+diff --git a/drivers/pci/hotplug/shpchp_ctrl.c b/drivers/pci/hotplug/shpchp_ctrl.c
+index 6a6705e0cf17..e6c6f23bae27 100644
+--- a/drivers/pci/hotplug/shpchp_ctrl.c
++++ b/drivers/pci/hotplug/shpchp_ctrl.c
+@@ -51,7 +51,7 @@ u8 shpchp_handle_attention_button(u8 hp_slot, struct controller *ctrl)
+ 	ctrl_dbg(ctrl, "Attention button interrupt received\n");
+ 
+ 	p_slot = shpchp_find_slot(ctrl, hp_slot + ctrl->slot_device_offset);
+-	p_slot->hpc_ops->get_adapter_status(p_slot, &(p_slot->presence_save));
++	shpchp_get_adapter_status(p_slot, &p_slot->presence_save);
+ 
+ 	/*
+ 	 *  Button pressed - See if need to TAKE ACTION!!!
+@@ -75,8 +75,8 @@ u8 shpchp_handle_switch_change(u8 hp_slot, struct controller *ctrl)
+ 	ctrl_dbg(ctrl, "Switch interrupt received\n");
+ 
+ 	p_slot = shpchp_find_slot(ctrl, hp_slot + ctrl->slot_device_offset);
+-	p_slot->hpc_ops->get_adapter_status(p_slot, &(p_slot->presence_save));
+-	p_slot->hpc_ops->get_latch_status(p_slot, &getstatus);
++	shpchp_get_adapter_status(p_slot, &p_slot->presence_save);
++	shpchp_get_latch_status(p_slot, &getstatus);
+ 	ctrl_dbg(ctrl, "Card present %x Power status %x\n",
+ 		 p_slot->presence_save, p_slot->pwr_save);
+ 
+@@ -116,7 +116,7 @@ u8 shpchp_handle_presence_change(u8 hp_slot, struct controller *ctrl)
+ 	/*
+ 	 * Save the presence state
+ 	 */
+-	p_slot->hpc_ops->get_adapter_status(p_slot, &(p_slot->presence_save));
++	shpchp_get_adapter_status(p_slot, &p_slot->presence_save);
+ 	if (p_slot->presence_save) {
+ 		/*
+ 		 * Card Present
+@@ -148,7 +148,7 @@ u8 shpchp_handle_power_fault(u8 hp_slot, struct controller *ctrl)
+ 
+ 	p_slot = shpchp_find_slot(ctrl, hp_slot + ctrl->slot_device_offset);
+ 
+-	if (!(p_slot->hpc_ops->query_power_fault(p_slot))) {
++	if (!(shpchp_query_power_fault(p_slot))) {
+ 		/*
+ 		 * Power fault Cleared
+ 		 */
+@@ -181,7 +181,7 @@ static int change_bus_speed(struct controller *ctrl, struct slot *p_slot,
+ 	int rc = 0;
+ 
+ 	ctrl_dbg(ctrl, "Change speed to %d\n", speed);
+-	rc = p_slot->hpc_ops->set_bus_speed_mode(p_slot, speed);
++	rc = shpchp_set_bus_speed_mode(p_slot, speed);
+ 	if (rc) {
+ 		ctrl_err(ctrl, "%s: Issue of set bus speed mode command failed\n",
+ 			 __func__);
+@@ -241,14 +241,14 @@ static int board_added(struct slot *p_slot)
+ 		 __func__, p_slot->device, ctrl->slot_device_offset, hp_slot);
+ 
+ 	/* Power on slot without connecting to bus */
+-	rc = p_slot->hpc_ops->power_on_slot(p_slot);
++	rc = shpchp_power_on_slot(p_slot);
+ 	if (rc) {
+ 		ctrl_err(ctrl, "Failed to power on slot\n");
+ 		return -1;
+ 	}
+ 
+ 	if ((ctrl->pci_dev->vendor == 0x8086) && (ctrl->pci_dev->device == 0x0332)) {
+-		rc = p_slot->hpc_ops->set_bus_speed_mode(p_slot, PCI_SPEED_33MHz);
++		rc = shpchp_set_bus_speed_mode(p_slot, PCI_SPEED_33MHz);
+ 		if (rc) {
+ 			ctrl_err(ctrl, "%s: Issue of set bus speed mode command failed\n",
+ 				 __func__);
+@@ -256,14 +256,14 @@ static int board_added(struct slot *p_slot)
+ 		}
+ 
+ 		/* turn on board, blink green LED, turn off Amber LED */
+-		rc = p_slot->hpc_ops->slot_enable(p_slot);
++		rc = shpchp_slot_enable(p_slot);
+ 		if (rc) {
+ 			ctrl_err(ctrl, "Issue of Slot Enable command failed\n");
+ 			return rc;
+ 		}
+ 	}
+ 
+-	rc = p_slot->hpc_ops->get_adapter_speed(p_slot, &asp);
++	rc = shpchp_get_adapter_speed(p_slot, &asp);
+ 	if (rc) {
+ 		ctrl_err(ctrl, "Can't get adapter speed or bus mode mismatch\n");
+ 		return WRONG_BUS_FREQUENCY;
+@@ -285,7 +285,7 @@ static int board_added(struct slot *p_slot)
+ 		return rc;
+ 
+ 	/* turn on board, blink green LED, turn off Amber LED */
+-	rc = p_slot->hpc_ops->slot_enable(p_slot);
++	rc = shpchp_slot_enable(p_slot);
+ 	if (rc) {
+ 		ctrl_err(ctrl, "Issue of Slot Enable command failed\n");
+ 		return rc;
+@@ -313,13 +313,13 @@ static int board_added(struct slot *p_slot)
+ 	p_slot->is_a_board = 0x01;
+ 	p_slot->pwr_save = 1;
+ 
+-	p_slot->hpc_ops->green_led_on(p_slot);
++	shpchp_green_led_on(p_slot);
+ 
+ 	return 0;
+ 
+ err_exit:
+ 	/* turn off slot, turn on Amber LED, turn off Green LED */
+-	rc = p_slot->hpc_ops->slot_disable(p_slot);
++	rc = shpchp_slot_disable(p_slot);
+ 	if (rc) {
+ 		ctrl_err(ctrl, "%s: Issue of Slot Disable command failed\n",
+ 			 __func__);
+@@ -352,14 +352,14 @@ static int remove_board(struct slot *p_slot)
+ 		p_slot->status = 0x01;
+ 
+ 	/* turn off slot, turn on Amber LED, turn off Green LED */
+-	rc = p_slot->hpc_ops->slot_disable(p_slot);
++	rc = shpchp_slot_disable(p_slot);
+ 	if (rc) {
+ 		ctrl_err(ctrl, "%s: Issue of Slot Disable command failed\n",
+ 			 __func__);
+ 		return rc;
+ 	}
+ 
+-	rc = p_slot->hpc_ops->set_attention_status(p_slot, 0);
++	rc = shpchp_set_attention_status(p_slot, 0);
+ 	if (rc) {
+ 		ctrl_err(ctrl, "Issue of Set Attention command failed\n");
+ 		return rc;
+@@ -401,7 +401,7 @@ static void shpchp_pushbutton_thread(struct work_struct *work)
+ 	case POWERON_STATE:
+ 		mutex_unlock(&p_slot->lock);
+ 		if (shpchp_enable_slot(p_slot))
+-			p_slot->hpc_ops->green_led_off(p_slot);
++			shpchp_green_led_off(p_slot);
+ 		mutex_lock(&p_slot->lock);
+ 		p_slot->state = STATIC_STATE;
+ 		break;
+@@ -446,10 +446,10 @@ void shpchp_queue_pushbutton_work(struct work_struct *work)
+ 
+ static void update_slot_info(struct slot *slot)
+ {
+-	slot->hpc_ops->get_power_status(slot, &slot->pwr_save);
+-	slot->hpc_ops->get_attention_status(slot, &slot->attention_save);
+-	slot->hpc_ops->get_latch_status(slot, &slot->latch_save);
+-	slot->hpc_ops->get_adapter_status(slot, &slot->presence_save);
++	shpchp_get_power_status(slot, &slot->pwr_save);
++	shpchp_get_attention_status(slot, &slot->attention_save);
++	shpchp_get_latch_status(slot, &slot->latch_save);
++	shpchp_get_adapter_status(slot, &slot->presence_save);
+ }
+ 
+ /*
+@@ -462,7 +462,7 @@ static void handle_button_press_event(struct slot *p_slot)
+ 
+ 	switch (p_slot->state) {
+ 	case STATIC_STATE:
+-		p_slot->hpc_ops->get_power_status(p_slot, &getstatus);
++		shpchp_get_power_status(p_slot, &getstatus);
+ 		if (getstatus) {
+ 			p_slot->state = BLINKINGOFF_STATE;
+ 			ctrl_info(ctrl, "PCI slot #%s - powering off due to button press\n",
+@@ -473,8 +473,8 @@ static void handle_button_press_event(struct slot *p_slot)
+ 				  slot_name(p_slot));
+ 		}
+ 		/* blink green LED and turn off amber */
+-		p_slot->hpc_ops->green_led_blink(p_slot);
+-		p_slot->hpc_ops->set_attention_status(p_slot, 0);
++		shpchp_green_led_blink(p_slot);
++		shpchp_set_attention_status(p_slot, 0);
+ 
+ 		queue_delayed_work(p_slot->wq, &p_slot->work, 5*HZ);
+ 		break;
+@@ -489,10 +489,10 @@ static void handle_button_press_event(struct slot *p_slot)
+ 			  slot_name(p_slot));
+ 		cancel_delayed_work(&p_slot->work);
+ 		if (p_slot->state == BLINKINGOFF_STATE)
+-			p_slot->hpc_ops->green_led_on(p_slot);
++			shpchp_green_led_on(p_slot);
+ 		else
+-			p_slot->hpc_ops->green_led_off(p_slot);
+-		p_slot->hpc_ops->set_attention_status(p_slot, 0);
++			shpchp_green_led_off(p_slot);
++		shpchp_set_attention_status(p_slot, 0);
+ 		ctrl_info(ctrl, "PCI slot #%s - action canceled due to button press\n",
+ 			  slot_name(p_slot));
+ 		p_slot->state = STATIC_STATE;
+@@ -526,8 +526,8 @@ static void interrupt_event_handler(struct work_struct *work)
+ 		break;
+ 	case INT_POWER_FAULT:
+ 		ctrl_dbg(p_slot->ctrl, "%s: Power fault\n", __func__);
+-		p_slot->hpc_ops->set_attention_status(p_slot, 1);
+-		p_slot->hpc_ops->green_led_off(p_slot);
++		shpchp_set_attention_status(p_slot, 1);
++		shpchp_green_led_off(p_slot);
+ 		break;
+ 	default:
+ 		update_slot_info(p_slot);
+@@ -547,17 +547,17 @@ static int shpchp_enable_slot (struct slot *p_slot)
+ 
+ 	/* Check to see if (latch closed, card present, power off) */
+ 	mutex_lock(&p_slot->ctrl->crit_sect);
+-	rc = p_slot->hpc_ops->get_adapter_status(p_slot, &getstatus);
++	rc = shpchp_get_adapter_status(p_slot, &getstatus);
+ 	if (rc || !getstatus) {
+ 		ctrl_info(ctrl, "No adapter on slot(%s)\n", slot_name(p_slot));
+ 		goto out;
+ 	}
+-	rc = p_slot->hpc_ops->get_latch_status(p_slot, &getstatus);
++	rc = shpchp_get_latch_status(p_slot, &getstatus);
+ 	if (rc || getstatus) {
+ 		ctrl_info(ctrl, "Latch open on slot(%s)\n", slot_name(p_slot));
+ 		goto out;
+ 	}
+-	rc = p_slot->hpc_ops->get_power_status(p_slot, &getstatus);
++	rc = shpchp_get_power_status(p_slot, &getstatus);
+ 	if (rc || getstatus) {
+ 		ctrl_info(ctrl, "Already enabled on slot(%s)\n",
+ 			  slot_name(p_slot));
+@@ -567,10 +567,10 @@ static int shpchp_enable_slot (struct slot *p_slot)
+ 	p_slot->is_a_board = 1;
+ 
+ 	/* We have to save the presence info for these slots */
+-	p_slot->hpc_ops->get_adapter_status(p_slot, &(p_slot->presence_save));
+-	p_slot->hpc_ops->get_power_status(p_slot, &(p_slot->pwr_save));
++	shpchp_get_adapter_status(p_slot, &p_slot->presence_save);
++	shpchp_get_power_status(p_slot, &p_slot->pwr_save);
+ 	ctrl_dbg(ctrl, "%s: p_slot->pwr_save %x\n", __func__, p_slot->pwr_save);
+-	p_slot->hpc_ops->get_latch_status(p_slot, &getstatus);
++	shpchp_get_latch_status(p_slot, &getstatus);
+ 
+ 	if ((p_slot->ctrl->pci_dev->vendor == PCI_VENDOR_ID_AMD &&
+ 	     p_slot->ctrl->pci_dev->device == PCI_DEVICE_ID_AMD_POGO_7458)
+@@ -584,9 +584,8 @@ static int shpchp_enable_slot (struct slot *p_slot)
+ 		retval = board_added(p_slot);
+ 
+ 	if (retval) {
+-		p_slot->hpc_ops->get_adapter_status(p_slot,
+-				&(p_slot->presence_save));
+-		p_slot->hpc_ops->get_latch_status(p_slot, &getstatus);
++		shpchp_get_adapter_status(p_slot, &p_slot->presence_save);
++		shpchp_get_latch_status(p_slot, &getstatus);
+ 	}
+ 
+ 	update_slot_info(p_slot);
+@@ -608,17 +607,17 @@ static int shpchp_disable_slot (struct slot *p_slot)
+ 	/* Check to see if (latch closed, card present, power on) */
+ 	mutex_lock(&p_slot->ctrl->crit_sect);
+ 
+-	rc = p_slot->hpc_ops->get_adapter_status(p_slot, &getstatus);
++	rc = shpchp_get_adapter_status(p_slot, &getstatus);
+ 	if (rc || !getstatus) {
+ 		ctrl_info(ctrl, "No adapter on slot(%s)\n", slot_name(p_slot));
+ 		goto out;
+ 	}
+-	rc = p_slot->hpc_ops->get_latch_status(p_slot, &getstatus);
++	rc = shpchp_get_latch_status(p_slot, &getstatus);
+ 	if (rc || getstatus) {
+ 		ctrl_info(ctrl, "Latch open on slot(%s)\n", slot_name(p_slot));
+ 		goto out;
+ 	}
+-	rc = p_slot->hpc_ops->get_power_status(p_slot, &getstatus);
++	rc = shpchp_get_power_status(p_slot, &getstatus);
+ 	if (rc || !getstatus) {
+ 		ctrl_info(ctrl, "Already disabled on slot(%s)\n",
+ 			  slot_name(p_slot));
+diff --git a/drivers/pci/hotplug/shpchp_hpc.c b/drivers/pci/hotplug/shpchp_hpc.c
+index 48e4daefc44a..012b9e3fe5b0 100644
+--- a/drivers/pci/hotplug/shpchp_hpc.c
++++ b/drivers/pci/hotplug/shpchp_hpc.c
+@@ -167,7 +167,6 @@
+ 
+ static irqreturn_t shpc_isr(int irq, void *dev_id);
+ static void start_int_poll_timer(struct controller *ctrl, int sec);
+-static int hpc_check_cmd_status(struct controller *ctrl);
+ 
+ static inline u8 shpc_readb(struct controller *ctrl, int reg)
+ {
+@@ -317,7 +316,7 @@ static int shpc_write_cmd(struct slot *slot, u8 t_slot, u8 cmd)
+ 	if (retval)
+ 		goto out;
+ 
+-	cmd_status = hpc_check_cmd_status(slot->ctrl);
++	cmd_status = shpchp_check_cmd_status(slot->ctrl);
+ 	if (cmd_status) {
+ 		ctrl_err(ctrl, "Failed to issued command 0x%x (error code = %d)\n",
+ 			 cmd, cmd_status);
+@@ -328,7 +327,7 @@ static int shpc_write_cmd(struct slot *slot, u8 t_slot, u8 cmd)
+ 	return retval;
+ }
+ 
+-static int hpc_check_cmd_status(struct controller *ctrl)
++int shpchp_check_cmd_status(struct controller *ctrl)
+ {
+ 	int retval = 0;
+ 	u16 cmd_status = shpc_readw(ctrl, CMD_STATUS) & 0x000F;
+@@ -357,7 +356,7 @@ static int hpc_check_cmd_status(struct controller *ctrl)
+ }
+ 
+ 
+-static int hpc_get_attention_status(struct slot *slot, u8 *status)
++int shpchp_get_attention_status(struct slot *slot, u8 *status)
+ {
+ 	struct controller *ctrl = slot->ctrl;
+ 	u32 slot_reg = shpc_readl(ctrl, SLOT_REG(slot->hp_slot));
+@@ -381,7 +380,7 @@ static int hpc_get_attention_status(struct slot *slot, u8 *status)
+ 	return 0;
+ }
+ 
+-static int hpc_get_power_status(struct slot *slot, u8 *status)
++int shpchp_get_power_status(struct slot *slot, u8 *status)
+ {
+ 	struct controller *ctrl = slot->ctrl;
+ 	u32 slot_reg = shpc_readl(ctrl, SLOT_REG(slot->hp_slot));
+@@ -406,7 +405,7 @@ static int hpc_get_power_status(struct slot *slot, u8 *status)
+ }
+ 
+ 
+-static int hpc_get_latch_status(struct slot *slot, u8 *status)
++int shpchp_get_latch_status(struct slot *slot, u8 *status)
+ {
+ 	struct controller *ctrl = slot->ctrl;
+ 	u32 slot_reg = shpc_readl(ctrl, SLOT_REG(slot->hp_slot));
+@@ -416,7 +415,7 @@ static int hpc_get_latch_status(struct slot *slot, u8 *status)
+ 	return 0;
+ }
+ 
+-static int hpc_get_adapter_status(struct slot *slot, u8 *status)
++int shpchp_get_adapter_status(struct slot *slot, u8 *status)
+ {
+ 	struct controller *ctrl = slot->ctrl;
+ 	u32 slot_reg = shpc_readl(ctrl, SLOT_REG(slot->hp_slot));
+@@ -427,7 +426,7 @@ static int hpc_get_adapter_status(struct slot *slot, u8 *status)
+ 	return 0;
+ }
+ 
+-static int hpc_get_prog_int(struct slot *slot, u8 *prog_int)
++int shpchp_get_prog_int(struct slot *slot, u8 *prog_int)
+ {
+ 	struct controller *ctrl = slot->ctrl;
+ 
+@@ -436,7 +435,7 @@ static int hpc_get_prog_int(struct slot *slot, u8 *prog_int)
+ 	return 0;
+ }
+ 
+-static int hpc_get_adapter_speed(struct slot *slot, enum pci_bus_speed *value)
++int shpchp_get_adapter_speed(struct slot *slot, enum pci_bus_speed *value)
+ {
+ 	int retval = 0;
+ 	struct controller *ctrl = slot->ctrl;
+@@ -444,7 +443,7 @@ static int hpc_get_adapter_speed(struct slot *slot, enum pci_bus_speed *value)
+ 	u8 m66_cap  = !!(slot_reg & MHZ66_CAP);
+ 	u8 pi, pcix_cap;
+ 
+-	retval = hpc_get_prog_int(slot, &pi);
++	retval = shpchp_get_prog_int(slot, &pi);
+ 	if (retval)
+ 		return retval;
+ 
+@@ -489,7 +488,7 @@ static int hpc_get_adapter_speed(struct slot *slot, enum pci_bus_speed *value)
+ 	return retval;
+ }
+ 
+-static int hpc_query_power_fault(struct slot *slot)
++int shpchp_query_power_fault(struct slot *slot)
+ {
+ 	struct controller *ctrl = slot->ctrl;
+ 	u32 slot_reg = shpc_readl(ctrl, SLOT_REG(slot->hp_slot));
+@@ -498,7 +497,7 @@ static int hpc_query_power_fault(struct slot *slot)
+ 	return !(slot_reg & POWER_FAULT);
+ }
+ 
+-static int hpc_set_attention_status(struct slot *slot, u8 value)
++int shpchp_set_attention_status(struct slot *slot, u8 value)
+ {
+ 	u8 slot_cmd = 0;
+ 
+@@ -520,22 +519,22 @@ static int hpc_set_attention_status(struct slot *slot, u8 value)
+ }
+ 
+ 
+-static void hpc_set_green_led_on(struct slot *slot)
++void shpchp_green_led_on(struct slot *slot)
+ {
+ 	shpc_write_cmd(slot, slot->hp_slot, SET_PWR_ON);
+ }
+ 
+-static void hpc_set_green_led_off(struct slot *slot)
++void shpchp_green_led_off(struct slot *slot)
+ {
+ 	shpc_write_cmd(slot, slot->hp_slot, SET_PWR_OFF);
+ }
+ 
+-static void hpc_set_green_led_blink(struct slot *slot)
++void shpchp_green_led_blink(struct slot *slot)
+ {
+ 	shpc_write_cmd(slot, slot->hp_slot, SET_PWR_BLINK);
+ }
+ 
+-static void hpc_release_ctlr(struct controller *ctrl)
++void shpchp_release_ctlr(struct controller *ctrl)
+ {
+ 	int i;
+ 	u32 slot_reg, serr_int;
+@@ -575,7 +574,7 @@ static void hpc_release_ctlr(struct controller *ctrl)
+ 	release_mem_region(ctrl->mmio_base, ctrl->mmio_size);
+ }
+ 
+-static int hpc_power_on_slot(struct slot *slot)
++int shpchp_power_on_slot(struct slot *slot)
+ {
+ 	int retval;
+ 
+@@ -586,7 +585,7 @@ static int hpc_power_on_slot(struct slot *slot)
+ 	return retval;
+ }
+ 
+-static int hpc_slot_enable(struct slot *slot)
++int shpchp_slot_enable(struct slot *slot)
+ {
+ 	int retval;
+ 
+@@ -599,7 +598,7 @@ static int hpc_slot_enable(struct slot *slot)
+ 	return retval;
+ }
+ 
+-static int hpc_slot_disable(struct slot *slot)
++int shpchp_slot_disable(struct slot *slot)
+ {
+ 	int retval;
+ 
+@@ -681,7 +680,7 @@ static int shpc_get_cur_bus_speed(struct controller *ctrl)
+ }
+ 
+ 
+-static int hpc_set_bus_speed_mode(struct slot *slot, enum pci_bus_speed value)
++int shpchp_set_bus_speed_mode(struct slot *slot, enum pci_bus_speed value)
+ {
+ 	int retval;
+ 	struct controller *ctrl = slot->ctrl;
+@@ -871,28 +870,6 @@ static int shpc_get_max_bus_speed(struct controller *ctrl)
+ 	return retval;
+ }
+ 
+-static const struct hpc_ops shpchp_hpc_ops = {
+-	.power_on_slot			= hpc_power_on_slot,
+-	.slot_enable			= hpc_slot_enable,
+-	.slot_disable			= hpc_slot_disable,
+-	.set_bus_speed_mode		= hpc_set_bus_speed_mode,
+-	.set_attention_status	= hpc_set_attention_status,
+-	.get_power_status		= hpc_get_power_status,
+-	.get_attention_status	= hpc_get_attention_status,
+-	.get_latch_status		= hpc_get_latch_status,
+-	.get_adapter_status		= hpc_get_adapter_status,
+-
+-	.get_adapter_speed		= hpc_get_adapter_speed,
+-	.get_prog_int			= hpc_get_prog_int,
+-
+-	.query_power_fault		= hpc_query_power_fault,
+-	.green_led_on			= hpc_set_green_led_on,
+-	.green_led_off			= hpc_set_green_led_off,
+-	.green_led_blink		= hpc_set_green_led_blink,
+-
+-	.release_ctlr			= hpc_release_ctlr,
+-};
+-
+ int shpc_init(struct controller *ctrl, struct pci_dev *pdev)
+ {
+ 	int rc = -1, num_slots = 0;
+@@ -978,8 +955,6 @@ int shpc_init(struct controller *ctrl, struct pci_dev *pdev)
+ 	/* Setup wait queue */
+ 	init_waitqueue_head(&ctrl->queue);
+ 
+-	ctrl->hpc_ops = &shpchp_hpc_ops;
+-
+ 	/* Return PCI Controller Info */
+ 	slot_config = shpc_readl(ctrl, SLOT_CONFIG);
+ 	ctrl->slot_device_offset = (slot_config & FIRST_DEV_NUM) >> 8;
+-- 
+2.45.2
+
 
