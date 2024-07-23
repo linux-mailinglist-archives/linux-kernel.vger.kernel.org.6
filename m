@@ -1,260 +1,251 @@
-Return-Path: <linux-kernel+bounces-260402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D74493A871
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:03:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC27F93A873
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 278CD2835DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:03:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE9E01C228AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E0E13E3F3;
-	Tue, 23 Jul 2024 21:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4FC14387C;
+	Tue, 23 Jul 2024 21:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="DCQDNVxn"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aWVzfyFF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A4B143C65
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 21:03:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59AF313D538
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 21:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721768628; cv=none; b=dp3NlssdNyL+df9mAVAdbi7KT2aNfBLpqTJfaoSmwn5WXN729skUcSAZI9uRqO/6tQWgbQD4OC7fIbkTQCC7wxr+yZA4fZ7xar+uGoLHMtqzY+Cv2f4etiHKVz0Vbgxuq8MUF840lvkAP9sJJBJo4tPBMQiAzEye2NjW51iEgBQ=
+	t=1721768658; cv=none; b=bJaPrnv7X4bzLKMYp5msxs+2YG+KVyAsuKv2xGF4dUuiwVWMPZPB8S1xuvF9legVeMUKkJoBV33WBDXKrWTRLle1VHEc8mWmu0MgmSF3GUmWytIq3g4iSwyYe5OGiMXZwW+B7ywQ7VaU9TGWOriiJ2Vaterjd9LLmmq0qsrT028=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721768628; c=relaxed/simple;
-	bh=6C2MWR4RR0rPNZad+OfvbHg/XwU8hAasChKWM7UJ7SU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VUHx319IYD4d1eNBIIrTvMZk4jcfhw6NNKRmuHwdmRHC8kRjSh0RspP/i8DSa1WqVD1gplkpz7c0sMvu27IXqa7SKNTcK6aL9fMWn5Ye88FDtcU3/x4ExQk2HlI8XB3dI/2UM+3MaA+CHDUgIo9tBOP0m+gh/e2YDAMGenfIpQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=DCQDNVxn; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52ea2b6a9f5so5789621e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:03:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1721768623; x=1722373423; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kN87wKxosiMaAxVeBYimYWiW8+5M2/nMLY/S805ZGSU=;
-        b=DCQDNVxnWGqKxIzFLR+iTwWObjFaO0lJ6cfBvq61YyFGIoQAy0Z/fZmZ17INHkW4a1
-         gTBzhjmtiNRX06SY6P8hbX6BPaXXGToJBndUTMPkcGtl1wIWCmWJpzYOZFqv/0Ikj2l4
-         W7Ns1fgTLveqdtW35RntsUN92GT6+jQpi+MM0=
+	s=arc-20240116; t=1721768658; c=relaxed/simple;
+	bh=ByJ50gM2kVPVymv6FrYRFVV3V1JgaiK2qoeSbb51xT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RVLJ60BvvWAVpcasepnDSr2PqKuQ4c2SdPRc1wH7CGd6IfGvqCrxwFnVExlo0y9v8cr3xvkTeeWn34fCtNNNZROP84wmEPh6u7UYrU8fXc371MIArInvXRCXRQYnDdHWvaF5DjUg1IymwvR7jedWRAe86t5zUuO/A6IZ033FkCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aWVzfyFF; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721768655;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AgNOjwKnUy48py4Ld6sAQndZB5vwc59GpzRjxep5jN4=;
+	b=aWVzfyFFHr/nmOX2FAnIedkWXnTeKC6cPDGT0xBiIitdPruecUFy2bMt7OMAGtKR0EPw0t
+	O+Brgr2E7RKyXCrlZzNJW8MylKXXMjXCQnEwVeuPk+9PfvCqFWcbwNKbPQA+MyGM9v3Q2T
+	+K0x4/GB8jDYCyGwI6Wa0bsGaGfbZFE=
+Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com
+ [209.85.167.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-244-LSSX9G--M16q4oqvMDze5w-1; Tue, 23 Jul 2024 17:04:13 -0400
+X-MC-Unique: LSSX9G--M16q4oqvMDze5w-1
+Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-3d92e5d767aso1048339b6e.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:04:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721768623; x=1722373423;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kN87wKxosiMaAxVeBYimYWiW8+5M2/nMLY/S805ZGSU=;
-        b=QXkX88Jej9KbiJ4fA6wM6/uRpO1XSQhXvyrbLy85YRDRDltl4khkLECYa236V/oXYv
-         rMAhlaksAoirqm1Ut4LPg90IjWcwvtB3gEDy7FbYnCY6rViOZV94XjbtTvs9v6U1VozN
-         ZA9ityiYYcPr1TGyQ5HAJ342zdAlNJVwWyCA3guN+DaYu4pIlqMRpS6jrsXpnNFfMcVu
-         qP5XIFS7QlH8PhQYQdlTfIJILPQwcae3x/N0ocjmJd/588/yoc0YaKbWZmL5JzkQuNVr
-         wzY8ADy9JWal2dlOpB3diBIGiW455YJhzClxlJj8NVxnoloN4dm9QUqkb3y6K+FunbZ5
-         cjxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4FjzO4aISVgPlhowZkTFKvoeHH+2aOY3x3XKQLQ24L5XN/CcUik18A4fZ0M+b+QhRUVO566igtUCTaDd6Wo9Txf3yKHHnO6D98bfs
-X-Gm-Message-State: AOJu0YxDbeQgnMdnzfrtz0ua92aT6zIOgrjf1s0yTVna0zk4jQ7u1plS
-	at2BlA9/jAlRtP8ZBSYaCNb1HQgRpy0CJB5ieAodxOXHUwv1jo8lWsFLbBAmgdhPR+jEpveaTf5
-	Shl0sM0InftV+m1eRJ5sdWcTKllnr6ZO7VZ0S
-X-Google-Smtp-Source: AGHT+IF2YESUaT4U9zfhW4PHULqDHHwL71TYsQOTQV3E8VApOY6meN7c7BvHYj3tKpsqlntuftSJjtki08IDyDOQzJc=
-X-Received: by 2002:ac2:4c49:0:b0:52c:dbc6:8eb0 with SMTP id
- 2adb3069b0e04-52fceff3cd6mr61797e87.21.1721768622898; Tue, 23 Jul 2024
- 14:03:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721768653; x=1722373453;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AgNOjwKnUy48py4Ld6sAQndZB5vwc59GpzRjxep5jN4=;
+        b=szucVW4j/YgtxagW2RL0tnh5wz2uwAFK/CYOoe7HKpIPkxw30lh1z0hinn//wTr82d
+         +CxaChTEHd2k4R4QnOvXxuIE/WTTpp6z1DJ59zKLRHZYZ+sSyIU1BsRodnHkCpxr0YAX
+         d6McYqBifnr6gwGZV9bdtrdcPMbcppfBWUq+p6FJWoMjxopU7QrIo12hmZW6yVNBuogd
+         hDyUFNEx3SMfV88PKM3TToNeDUhs3LD4kkHeNhp6T5RVQnZWWHs3yHu9Sph8N2f/vGiA
+         dd+HBqEhtXWIZ8jJt85onr81mAaxop0hKa2vKc9u0d1wC8/+GqB4l3N82yXwwPx5e0Fu
+         aZJg==
+X-Gm-Message-State: AOJu0YwC7HIcsYniKY4iPcI9u25R0kmTolyA1jduS8BfgOs8n+O8oyfE
+	KLHzidKDYWRTauusms/t4K40RyJgw90OJgOb65/kN8SGd6i5oq9doXnS5uZUvayHptdWxAZ5baz
+	ur0XigR+nq+W9PXIZUCAfXU0J98NujPt/PC91DYN1Y7wA22hTEZoFUkPwC4ah8g==
+X-Received: by 2002:a9d:6043:0:b0:703:78ff:1e1 with SMTP id 46e09a7af769-708fd973bc0mr6593339a34.0.1721768653030;
+        Tue, 23 Jul 2024 14:04:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEhxM1GaXKORyXEI48pMqHK/HKFQ8d349p1Ngql0yZkrT6ZS6/TU4RH6kRMVcENNPnDcnR0BQ==
+X-Received: by 2002:a9d:6043:0:b0:703:78ff:1e1 with SMTP id 46e09a7af769-708fd973bc0mr6593320a34.0.1721768652631;
+        Tue, 23 Jul 2024 14:04:12 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a19905a721sm515082185a.93.2024.07.23.14.04.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 14:04:11 -0700 (PDT)
+Date: Tue, 23 Jul 2024 17:04:08 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Oscar Salvador <osalvador@suse.de>, linux-s390@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Michal Hocko <mhocko@kernel.org>, linux-riscv@lists.infradead.org,
+	sparclinux@vger.kernel.org,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Jason Gunthorpe <jgg@nvidia.com>, x86@kernel.org,
+	Alistair Popple <apopple@nvidia.com>, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Hugh Dickins <hughd@google.com>,
+	Axel Rasmussen <axelrasmussen@google.com>
+Subject: Re: [PATCH RFC 0/6] mm: THP-agnostic refactor on huge mappings
+Message-ID: <ZqAayNSDf_6cfziw@x1n>
+References: <20240717220219.3743374-1-peterx@redhat.com>
+ <cf36725d-c197-4c07-8998-d34711335fdb@redhat.com>
+ <Zp57ZLk2IQoHOI7u@x1n>
+ <cfe94481-233a-421c-b607-08517588de6c@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240716213131.6036-1-james.quinlan@broadcom.com>
- <20240716213131.6036-3-james.quinlan@broadcom.com> <e8b34f9e-5286-44aa-8bb8-88e5ff5c8255@kernel.org>
-In-Reply-To: <e8b34f9e-5286-44aa-8bb8-88e5ff5c8255@kernel.org>
-From: Jim Quinlan <james.quinlan@broadcom.com>
-Date: Tue, 23 Jul 2024 17:03:30 -0400
-Message-ID: <CA+-6iNxuJQEKA_BfLiaG6FfJJdsjV1u+Lv5Knna1KhnMX=Meew@mail.gmail.com>
-Subject: Re: [PATCH v4 02/12] dt-bindings: PCI: brcmstb: Add 7712 SoC description
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-	Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>, 
-	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000002f9e80061df07ffd"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cfe94481-233a-421c-b607-08517588de6c@redhat.com>
 
---0000000000002f9e80061df07ffd
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jul 23, 2024 at 10:18:37AM +0200, David Hildenbrand wrote:
+> On 22.07.24 17:31, Peter Xu wrote:
+> > On Mon, Jul 22, 2024 at 03:29:43PM +0200, David Hildenbrand wrote:
+> > > On 18.07.24 00:02, Peter Xu wrote:
+> > > > This is an RFC series, so not yet for merging.  Please don't be scared by
+> > > > the code changes: most of them are code movements only.
+> > > > 
+> > > > This series is based on the dax mprotect fix series here (while that one is
+> > > > based on mm-unstable):
+> > > > 
+> > > >     [PATCH v3 0/8] mm/mprotect: Fix dax puds
+> > > >     https://lore.kernel.org/r/20240715192142.3241557-1-peterx@redhat.com
+> > > > 
+> > > > Overview
+> > > > ========
+> > > > 
+> > > > This series doesn't provide any feature change.  The only goal of this
+> > > > series is to start decoupling two ideas: "THP" and "huge mapping".  We
+> > > > already started with having PGTABLE_HAS_HUGE_LEAVES config option, and this
+> > > > one extends that idea into the code.
+> > > > 
+> > > > The issue is that we have so many functions that only compile with
+> > > > CONFIG_THP=on, even though they're about huge mappings, and huge mapping is
+> > > > a pretty common concept, which can apply to many things besides THPs
+> > > > nowadays.  The major THP file is mm/huge_memory.c as of now.
+> > > > 
+> > > > The first example of such huge mapping users will be hugetlb.  We lived
+> > > > until now with no problem simply because Linux almost duplicated all the
+> > > > logics there in the "THP" files into hugetlb APIs.  If we want to get rid
+> > > > of hugetlb specific APIs and paths, this _might_ be the first thing we want
+> > > > to do, because we want to be able to e.g., zapping a hugetlb pmd entry even
+> > > > if !CONFIG_THP.
+> > > > 
+> > > > Then consider other things like dax / pfnmaps.  Dax can depend on THP, then
+> > > > it'll naturally be able to use pmd/pud helpers, that's okay.  However is it
+> > > > a must?  Do we also want to have every new pmd/pud mappings in the future
+> > > > to depend on THP (like PFNMAP)?  My answer is no, but I'm open to opinions.
+> > > > 
+> > > > If anyone agrees with me that "huge mapping" (aka, PMD/PUD mappings that
+> > > > are larger than PAGE_SIZE) is a more generic concept than THP, then I think
+> > > > at some point we need to move the generic code out of THP code into a
+> > > > common code base.
+> > > > 
+> > > > This is what this series does as a start.
+> > > 
+> > > Hi Peter!
+> > > 
+> > >  From a quick glimpse, patch #1-#4 do make sense independent of patch #5.
+> > > 
+> > > I am not so sure about all of the code movement in patch #5. If large folios
+> > > are the future, then likely huge_memory.c should simply be the home for all
+> > > that logic.
+> > > 
+> > > Maybe the goal should better be to compile huge_memory.c not only for THP,
+> > > but also for other use cases that require that logic, and fence off all THP
+> > > specific stuff using #ifdef?
+> > > 
+> > > Not sure, though. But a lot of this code movements/churn might be avoidable.
+> > 
+> > I'm fine using ifdefs in the current fine, but IMHO it's a matter of
+> > whether we want to keep huge_memory.c growing into even larger file, and
+> > keep all large folio logics only in that file.  Currently it's ~4000 LOCs.
+> 
+> Depends on "how much" for sure. huge_memory.c is currently on place 12 of
+> the biggest files in mm/. So there might not be immediate cause for action
+> ... just yet :) [guess which file is on #2 :) ]
 
-On Wed, Jul 17, 2024 at 2:53=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 16/07/2024 23:31, Jim Quinlan wrote:
-> > This adds the description for the 7712 SoC, a Broadcom
-> > STB sibling chip of the RPi 5.  Two new reset controllers
-> > are described.
-> >
-> > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> > ---
-> >  .../bindings/pci/brcm,stb-pcie.yaml           | 26 +++++++++++++++++++
-> >  1 file changed, 26 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml b=
-/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-> > index 692f7ed7c98e..90683a0df2c5 100644
-> > --- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-> > +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-> > @@ -21,6 +21,7 @@ properties:
-> >            - brcm,bcm7425-pcie # Broadcom 7425 MIPs
-> >            - brcm,bcm7435-pcie # Broadcom 7435 MIPs
-> >            - brcm,bcm7445-pcie # Broadcom 7445 Arm
-> > +          - brcm,bcm7712-pcie # Broadcom STB sibling of Rpi 5
-> >
-> >    reg:
-> >      maxItems: 1
-> > @@ -100,12 +101,16 @@ properties:
-> >      items:
-> >        - description: reset for external PCIe PERST# signal # perst
-> >        - description: reset for phy reset calibration       # rescal
-> > +      - description: reset for PCIe/CPU bus bridge         # bridge
-> > +      - description: reset for soft PCIe core reset        # swinit
-> >
-> >    reset-names:
-> >      minItems: 1
-> >      items:
-> >        - const: perst
-> >        - const: rescal
-> > +      - const: bridge
-> > +      - const: swinit
->
-> This does not match at all what you have in allOf:if:then section.
->
-> >
-> >  required:
-> >    - compatible
-> > @@ -159,6 +164,27 @@ allOf:
-> >          - resets
-> >          - reset-names
-> >
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: brcm,bcm7712-pcie
-> > +    then:
-> > +      properties:
-> > +        resets:
-> > +          minItems: 3
-> > +          maxItems: 3
-> > +
-> > +        reset-names:
-> > +          items:
-> > +            - const: rescal
->
-> Look - here it is rescal. Before you said it must be perst.
->
-> https://elixir.bootlin.com/linux/v6.8/source/Documentation/devicetree/bin=
-dings/ufs/qcom,ufs.yaml#L132
+7821, hugetlb.c  
+7602, vmscan.c          
+7275, slub.c       
+7072, page_alloc.c
+6673, memory.c     
+5402, memcontrol.c 
+5239, shmem.c   
+5155, vmalloc.c      
+4419, filemap.c       
+4060, mmap.c       
+3882, huge_memory.c
 
-Hello Krzysztof,
+IMHO a split is normally better than keeping everything in one file, but
+yeah I'd confess THP file isn't that bad comparing to others..  And I'm
+definitely surprised it's even out of top ten.
 
-The difference between my commits and the above example is that the
-above example has no "desc" line(s) to describe the clocks  -- How
-would you add this?  Or are you okay with (a) no description or (b)
-using a "#comment..." next to the clock's name?
+> 
+> > 
+> > Nornally I don't see this as much of a "code churn" category, because it
+> > doesn't changes the code itself but only move things.  I personally also
+> > prefer without code churns, but only in the case where there'll be tiny
+> > little functional changes here and there without real benefit.
+> > 
+> > It's pretty unavoidable to me when one file grows too large and we'll need
+> > to split, and in this case git doesn't have a good way to track such
+> > movement..
+> 
+> Yes, that's what I mean.
+> 
+> I've been recently thinking if we should pursue a different direction:
+> 
+> Just as we recently relocated most follow_huge_* stuff into gup.c, likely we
+> should rather look into moving copy_huge_pmd, change_huge_pmd, copy_huge_pmd
+> ... into the files where they logically belong to.
+> 
+> In madvise.c, we've been doing that in some places already: For
+> madvise_cold_or_pageout_pte_range() we inline the code, but not for
+> madvise_free_huge_pmd().
+> 
+> pmd_trans_huge() would already compile to a NOP without
+> CONFIG_TRANSPARENT_HUGEPAGE, but to make that code avoid most
+> CONFIG_TRANSPARENT_HUGEPAGE, we'd need a couple more function stubs to make
+> the compiler happy while still being able to compile that code out when not
+> required.
 
-Regards,
-Jim Quinlan
-Broadcom STB/CM
->
-> Best regards,
-> Krzysztof
->
+Right, I had a patch does exactly that, where it's called pmd_is_leaf(),
+for example, but taking CONFIG_* into account.
 
---0000000000002f9e80061df07ffd
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+I remember I had some issue with that, e.g. I used to see pmd_trans_huge()
+(when !THP) can optimize some path but pmd_is_leaf() didn't do the same job
+even if all configs were off.  But that's another story and I didn't yet
+dig deeper.  Could be something small but overlooked.
 
-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
-mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
-uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
-BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
-VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
-z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
-b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
-+R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
-AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
-75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
-AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
-AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
-MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCC9+lLIFB28bUxNyMcf2uePwjFYN1Mu
-ilaAKib5RCgKezAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA3
-MjMyMTAzNDNaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
-AgEwDQYJKoZIhvcNAQEBBQAEggEAHFjnGh33MGLqDquh85F3C/DhbqYT0st+LtTzXP3kT7a4MBZO
-YR1L4Ih3EOi/IHAeiFIa6wZbvqQSIcGpssjGCYosGNP/EIPbW17KluvFzCrm+iDQrNaYWKjwbDoG
-Rp4wqr2ldgdyoxvOkIBs6JpkEeQ5Z87h89kG4nNqFSbgCtE4FlHy3tFpaWVZ0B/dzdxo5ERokOGZ
-RDkzC1TZvpDdcJ81vyxJj09YXXyiP/B5HNYKVll1WQjoqn5piLn1/FF9tDEb7x5y8dgFhO4ChE6g
-fROERbuWni42Chnp6mrAaN9U14MJqvDkln7V8PjCir6hIEbynbT3G8P/MnvhAivMvg==
---0000000000002f9e80061df07ffd--
+> 
+> The idea would be that e.g., pmd_leaf() would return "false" at compile time
+> if no active configuration (THP, HUGETLB, ...) would be active. So we could
+> just use pmd_leaf() similar to pmd_trans_huge() in relevant code and have
+> the compiler optimize it all out without putting it into separate files.
+> 
+> That means, large folios and PMD/PUD mappings will become "more common" and
+> better integrated, without the need to jump between files.
+> 
+> Just some thought about an alternative that would make sense to me.
+
+Yeah comments are always welcomed, thanks.
+
+So I suppose maybe it would be easier for now that I make the pfnmap branch
+depending on THP. It looks to me something like this may still take some
+time to consolidate.  When it's light enough, maybe it can be a few initial
+patches on top of a hugetlb series that can start to use this.  Maybe
+that'll at least make the patches easier to review.
+
+Thanks,
+
+-- 
+Peter Xu
+
 
