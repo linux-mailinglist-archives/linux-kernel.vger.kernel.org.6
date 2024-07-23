@@ -1,141 +1,209 @@
-Return-Path: <linux-kernel+bounces-260270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79C7193A540
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:05:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC5093A545
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:11:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AEE51F233F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:05:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 418C3B21B60
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0D41586E7;
-	Tue, 23 Jul 2024 18:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7992E158862;
+	Tue, 23 Jul 2024 18:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TLKx7f9v"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mgmy56LJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199D013B5B4
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 18:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E38013B5B4;
+	Tue, 23 Jul 2024 18:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721757921; cv=none; b=jjUVoqOdGsE1MWtmkyBAq5UMOzQaVkBmFc2Y2dy5LwTUyNPuN40eEkK7/hJzBKFzH97uqmXlrC6I8ir93GyR0BwvTBtASCOXaqAShJP0nuOKM5j0/oMcq2ctEvmnXakhFreSczpQe8iloRn1rSWKOmdtpIkRO+2ubKcoAPqkTIk=
+	t=1721758253; cv=none; b=rFM5p/TLtJMSoMDqP6GTEDrMD4h7EMk+aSqo3laZs0Xz5f6e8D4bV1qNB7uqLjmjRBzjpS4IuKfGOmR+COIJrsodUjRPqMwtkaU+TJYemoqF4GD/DIl4ZFfU4ORfgs4Ip4R03zh9iiCRIWnmFWy8gkboXaJG+PZcihiNOSNV3Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721757921; c=relaxed/simple;
-	bh=p16Kl+/h6SFb3QdRQaiGCT82C2IdSvh1iZgreJNmEEE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EWAoZnXsx78DP5lW0LEfZo8EGtBe6jxyzrYl6bxyiFaWfmeuH1OVnFsyaUu0u+ceMlT+HHu1XPJAY9W7d0kfWqgKToMy1wmb5g4TuRHZKss0fcfyw8U85DJQVogMwcFSR9CZ8aJuHA3udKJxxpGr5O/yNmaXCoOQkZho9DnQQiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TLKx7f9v; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a77ec5d3b0dso19031566b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:05:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1721757917; x=1722362717; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hsGKAY1d9cfwS3hv7NQu8xmVyigzJFwKRal6P2bPrxY=;
-        b=TLKx7f9vaEtBVchMKuCNSUC2F3YP2XgIxp5Ek+TfhyW1xTsxT9DTF23I+WJYbOj47I
-         rjoG2Jw2zKTgYfQpI3Z7QGck8OJot0jsyXLsuGhiQVIPnyaYtzKGJSHNRAmN0tGQpd7K
-         1R9Rc1m3NQW30xezxGaoIJlZsc8viD6mJ4HgU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721757917; x=1722362717;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hsGKAY1d9cfwS3hv7NQu8xmVyigzJFwKRal6P2bPrxY=;
-        b=Px0Z/CsYZYKaTVMXSYX9Wq02eigCz1oPCuY0ynvcQh/+jDzwDWla/p2kAEApxgC4pT
-         S5+9a4i9M5Bj8r6/J8wV/ILVzAjV6K0zTXndBMyvwRrk7PelnKR42cDa4Rslmrn1GLGK
-         x+jkx7kj77f2uzvwIwXy7+fcimOOfdshZBKwXZgBiJbNXxzTD3oUt4rTKb9pizaxX7cb
-         FyLwUmfZlhTaZbgyRyrgsjRoWQlFpVcmlVYTcLwBenTeYfverEU6e0JdJ8u0nlUKn+Wa
-         zQIerW+mpu1Zw1OAk8XbOqYupff97W/ZgT4iVCQ51s2R0LqjQL0lcyJVtqk4z+lVP0ZW
-         sMcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWfDqr9tigl+ToG1FFLMFAvlrINGgW+oFNlX+MWoMU/QpMlXHHD2lg5RefFqKb1KyigYCHuWN45Ye7fRD1YL8Q5ZgPOBT1ViISf9WN
-X-Gm-Message-State: AOJu0Yx8QGYZ2qKLVwWlv8002NpVd0JZZ9tv9n/d/2KPVRTqLt8w9Tb9
-	pqTqKVUrFMlpq2aigjW+usmxXb/8JUfncqXI0JiD5/wpnlTEcFrSqHniwohpMs1pW3wUpfCKn+z
-	1Ac4=
-X-Google-Smtp-Source: AGHT+IGigB8fFtTfopkogVMa4VllFihqkcjjS3/clveH9+CJ/xWQlDvDjQHi5RI0hgQAU6sNXHJYyw==
-X-Received: by 2002:a17:907:3ea8:b0:a7a:a33e:47b5 with SMTP id a640c23a62f3a-a7aa33e4e31mr137821066b.69.1721757917086;
-        Tue, 23 Jul 2024 11:05:17 -0700 (PDT)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c95111fsm565152066b.216.2024.07.23.11.05.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 11:05:15 -0700 (PDT)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5a3458bf7cfso5138337a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:05:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX5V3r0RHO+/EmSYazSY+JrnQRXyHRAt1fEuj2XhWNe2U28s0XCqiSxaw59LhEiGCzESz5Zn8a3MvUzNq7i3DzCzWPDE5sOfFR68R38
-X-Received: by 2002:a50:bb04:0:b0:5a3:d140:1a39 with SMTP id
- 4fb4d7f45d1cf-5a479879b3fmr6428692a12.1.1721757915396; Tue, 23 Jul 2024
- 11:05:15 -0700 (PDT)
+	s=arc-20240116; t=1721758253; c=relaxed/simple;
+	bh=ki5xi3wh309ewAEmvFrHMp8ZsNfUwPpdMts9frlaya8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c/5djHt5ooPu5fD/YJ6EV1ljcYKdhLoPSesNYGX8CNquvDeJWyxZl4r1UY8Kpfy8P3OMLMYsigIDRarkHVGljlh3VPxR4AbEa3dBOrhjZOkP1JIUMM9/czrbhdk3w5ujz85jQAlXgxjDbLitLxfr76uvd5DdyVgnNlBFqXZsAPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mgmy56LJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13310C4AF09;
+	Tue, 23 Jul 2024 18:10:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721758253;
+	bh=ki5xi3wh309ewAEmvFrHMp8ZsNfUwPpdMts9frlaya8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mgmy56LJp97CUmhcB329aE9XUHwKBkmDtwij09R2LbuKlj+gBKG9zIFzHZkdsoZXL
+	 JUcsnCBgpliWD6Hj9VoQJ/+yJiZylAmIykvtzIXbVvjt9XET5mdGBibKSMAqns783F
+	 LnpxzQFZTzZBqgjwp4maGofG0exKc/6gn+P9Il2kIVpy4DBOl5fkwgSZ87jd2c3Bxu
+	 OkVvoyNVQflbtb9F3jfLC3Dn6Wub+l9TWALhoV1AskwZH0TXohxSarBNnLcSO8s1on
+	 6yt+g/C7txLZD0BKH5V6FDkTP4Kzn+p4UUAvlXP/+jT2eQKuXEEYcIT+A5nJQCDNyt
+	 lhZu9ySAcoCbw==
+From: Danilo Krummrich <dakr@kernel.org>
+To: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	wedsonaf@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@samsung.com,
+	aliceryhl@google.com,
+	akpm@linux-foundation.org
+Cc: daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com,
+	boris.brezillon@collabora.com,
+	lina@asahilina.net,
+	mcanal@igalia.com,
+	zhiw@nvidia.com,
+	acurrid@nvidia.com,
+	cjia@nvidia.com,
+	jhubbard@nvidia.com,
+	airlied@redhat.com,
+	ajanulgu@redhat.com,
+	lyude@redhat.com,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-mm@kvack.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH v2 00/23] Generic `Allocator` support for Rust
+Date: Tue, 23 Jul 2024 20:09:49 +0200
+Message-ID: <20240723181024.21168-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zp-_7R49fIHgIhaq@pathway.suse.cz>
-In-Reply-To: <Zp-_7R49fIHgIhaq@pathway.suse.cz>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 23 Jul 2024 11:04:58 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whU_woFnFN-3Jv2hNCmwLg_fkrT42AWwxm-=Ha5BmNX4w@mail.gmail.com>
-Message-ID: <CAHk-=whU_woFnFN-3Jv2hNCmwLg_fkrT42AWwxm-=Ha5BmNX4w@mail.gmail.com>
-Subject: Re: [GIT PULL] printk for 6.11
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	John Ogness <john.ogness@linutronix.de>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>, Jan Kara <jack@suse.cz>, 
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Tue, 23 Jul 2024 at 07:38, Petr Mladek <pmladek@suse.com> wrote:
->
->   - In an emergency section, directly from nbcon_cpu_emergency_exit()
->     or nbcon_cpu_emergency_flush(). It allows to see the messages
->     when the system is in an unexpected state and might not be
->     able to continue properly.
->
->     The messages are flushed at the end of the emergency section
->     to allow storing the full log (backtrace) first.
+Hi,
 
-What? No.
+This patch series adds generic kernel allocator support for Rust, which so far
+is limited to `kmalloc` allocations.
 
-One of the historically problematic situations is when a recursive
-oops or a deadlock occurs *during* the first oops.
+In order to abstain from (re-)adding unstable Rust features to the kernel, this
+patch series does not extend the `Allocator` trait from Rust's `alloc` crate,
+nor does it extend the `BoxExt` and `VecExt` extensions.
 
-The "recursive oops" may be simple to sort out by forcing a flush at
-that point, in that hopefully the machine is "alive", but what about
-random deadlocks or other situations where the printk machinery simply
-is never ever entered again?
+Instead, this series introduces a kernel specific `Allocator` trait, which is
+implemented by the `Kmalloc`, `Vmalloc` and `KVmalloc` allocators, also
+implemented in the context of this series.
 
-And we most definitely have had exactly that happen due to the call
-trace code etc.
+As a consequence we need our own kernel `Box<T, A>` and `Vec<T, A>` types.
+Additionally, this series adds the following type aliases:
 
-At that point, it's ok if the machine is dead (this is obviously a
-very catastrophic situation - nobody should worry about how to
-continue), but it's really important that the first problem report
-makes it out.
+```
+pub type KBox<T> = Box<T, Kmalloc>;
+pub type VBox<T> = Box<T, Vmalloc>;
+pub type KVBox<T> = Box<T, KVmalloc>;
 
-The whole notion of "to allow storing the full log (backtrace) first"
-is completely crazy. It's entirely secondary whether you have a full
-log or not, when the primary goal MUST BE that you have any output at
-all!
 
-How can this have _continued_ to be unclear, when it was my one hard
-requirement for this whole thing from day one? My *ONE* requirement
-has always been that the printk code ALWAYS does its absolute best to
-print out problem reports.
+pub type KVec<T> = Vec<T, Kmalloc>;
+pub type VVec<T> = Vec<T, Vmalloc>;
+pub type KVVec<T> = Vec<T, KVmalloc>;
+```
 
-Because when an oops happen, all other rules go out the window.
+With that, we can start using the kernel `Box` and `Vec` types throughout the
+tree and remove the now obolete extensions `BoxExt` and `VecExt`.
 
-We no longer care about "what pretty printouts", and we should strive
-to always try to just get at least *some* basic print out. The kernel
-is known to not be in a great state, and maybe the printout will fail
-due to where the problem happened, but the kernel NEEDS TO TRY.
+For a final cleanup, this series removes the last minor dependencies to Rust's
+`alloc` crate and removes it from the entire kernel build.
 
-           Linus
+The series ensures not to break the `rusttest` make target by implementing the
+`allocator_test` module providing a stub implementation for all kernel
+`Allocator`s.
+
+This patch series passes all KUnit tests, including the ones added by this
+series. Additionally, the tests were run with `kmemleak` and `KASAN` enabled,
+without any issues.
+
+This series is based in [1], which just hit -mm/mm-unstable, and is also
+available in [2].
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=mm/krealloc
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/mm
+
+Changes in v2:
+  - preserve `impl GlobalAlloc for Kmalloc` and remove it at the end (Benno)
+  - remove `&self` parameter from all `Allocator` functions (Benno)
+  - various documentation fixes for `Allocator` (Benno)
+  - use `NonNull<u8>` for `Allocator::free` and `Option<NonNull<u8>>` for
+    `Allocator::realloc` (Benno)
+  - fix leak of `IntoIter` in `Vec::collect` (Boqun)
+  - always realloc (try to shrink) in `Vec::collect`, it's up the the
+    `Allocator` to provide a heuristic whether it makes sense to actually shrink
+  - rename `KBox<T, A>` -> `Box<T, A>` and `KVec<T, A>` -> `Vec<T, A>` and
+    provide type aliases `KBox<T>`, `VBox<T>`, `KVBox<T>`, etc.
+    - This allows for much cleaner code and, in combination with removing
+      `&self` parameters from `Allocator`s, gets us rid of the need for
+      `Box::new` and `Box::new_alloc` and all other "_alloc" postfixed
+      functions.
+    - Before: `KBox::new_alloc(foo, Vmalloc)?`
+    - After:  `VBox::new(foo)?`, which resolves to
+              `Box::<Foo,  Vmalloc>::new(foo)?;
+
+Danilo Krummrich (23):
+  rust: alloc: add `Allocator` trait
+  rust: alloc: separate `aligned_size` from `krealloc_aligned`
+  rust: alloc: rename `KernelAllocator` to `Kmalloc`
+  rust: alloc: implement `Allocator` for `Kmalloc`
+  rust: alloc: add module `allocator_test`
+  rust: alloc: implement `Vmalloc` allocator
+  rust: alloc: implement `KVmalloc` allocator
+  rust: types: implement `Unique<T>`
+  rust: alloc: implement kernel `Box`
+  rust: treewide: switch to our kernel `Box` type
+  rust: alloc: remove `BoxExt` extension
+  rust: alloc: add `Box` to prelude
+  rust: alloc: import kernel `Box` type in types.rs
+  rust: alloc: implement kernel `Vec` type
+  rust: alloc: implement `IntoIterator` for `Vec`
+  rust: alloc: implement `collect` for `IntoIter`
+  rust: treewide: switch to the kernel `Vec` type
+  rust: alloc: remove `VecExt` extension
+  rust: alloc: add `Vec` to prelude
+  rust: alloc: remove `GlobalAlloc` and `krealloc_aligned`
+  rust: error: use `core::alloc::LayoutError`
+  rust: str: test: replace `alloc::format`
+  kbuild: rust: remove the `alloc` crate
+
+ rust/Makefile                       |  44 +-
+ rust/exports.c                      |   1 -
+ rust/helpers.c                      |  15 +
+ rust/kernel/alloc.rs                |  99 +++-
+ rust/kernel/alloc/allocator.rs      | 147 +++--
+ rust/kernel/alloc/allocator_test.rs |  23 +
+ rust/kernel/alloc/box_ext.rs        |  56 --
+ rust/kernel/alloc/kbox.rs           | 344 ++++++++++++
+ rust/kernel/alloc/kvec.rs           | 831 ++++++++++++++++++++++++++++
+ rust/kernel/alloc/vec_ext.rs        | 185 -------
+ rust/kernel/error.rs                |   2 +-
+ rust/kernel/init.rs                 |  49 +-
+ rust/kernel/init/__internal.rs      |   2 +-
+ rust/kernel/lib.rs                  |   1 -
+ rust/kernel/prelude.rs              |   5 +-
+ rust/kernel/str.rs                  |  78 ++-
+ rust/kernel/sync/arc.rs             |  17 +-
+ rust/kernel/sync/condvar.rs         |   4 +-
+ rust/kernel/sync/lock/mutex.rs      |   2 +-
+ rust/kernel/sync/lock/spinlock.rs   |   2 +-
+ rust/kernel/sync/locked_by.rs       |   2 +-
+ rust/kernel/types.rs                | 192 ++++++-
+ rust/kernel/workqueue.rs            |  20 +-
+ samples/rust/rust_minimal.rs        |   4 +-
+ scripts/Makefile.build              |   7 +-
+ 25 files changed, 1713 insertions(+), 419 deletions(-)
+ create mode 100644 rust/kernel/alloc/allocator_test.rs
+ delete mode 100644 rust/kernel/alloc/box_ext.rs
+ create mode 100644 rust/kernel/alloc/kbox.rs
+ create mode 100644 rust/kernel/alloc/kvec.rs
+ delete mode 100644 rust/kernel/alloc/vec_ext.rs
+
+
+base-commit: d270beaca6818349b2aed7e6034b800a777087cc
+-- 
+2.45.2
+
 
