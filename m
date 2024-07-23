@@ -1,156 +1,165 @@
-Return-Path: <linux-kernel+bounces-260120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5735493A34F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:57:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B58D893A354
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:57:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09713281677
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:57:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA53A1C22570
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:57:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB6E156F27;
-	Tue, 23 Jul 2024 14:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED18156F27;
+	Tue, 23 Jul 2024 14:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YSLftenO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fVp7hrQo"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DBD155C90;
-	Tue, 23 Jul 2024 14:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B753156C70
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721746645; cv=none; b=bOz1l2cJgN8Go7gvzJHQ2bp3M5T+3UFEJNBQyVm7uxcMoJhugybc29hylU0+iIraH27N2qmHA0MsqucwzSobVdJoF4lUp1r99jDBtPxFLpSbMaXa3ToD/x8yuYofH5uH6E3pXTb32PsSqW4vxuPKmvX4CJ35X2cNYtNir08VriU=
+	t=1721746663; cv=none; b=MgOACopXJqudTX2gJOvOr3PaILSz5DGppNyC/SnuPs7dihQjEdO8B7YrqhIcFfDYKPNEoANONkJN2Ia1T32hJ2OrfCZC6YG5mKH04wpON12yrUlgZ10GPShJthn96UMaCMQjPzR4J8NYgg2cpvA7RwKLTiUfeQAcu/0ztvV65Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721746645; c=relaxed/simple;
-	bh=CxtIUBMzzr2w+K2I2D4M8354T5IN/ABD8NK10UHApp0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AB9a6OhNUS57eYpQ1YagVv9/sDs2rlSvOXKsI8mUPvt6Ou78iiHpiu5UhEnDR0B3spfhFxn1047yaomu9oAPmtuvg4b7eEu7ycQpfY3T3Oeuowg7QI9Ssut0gOUCnwg2PlmAsiXsB1rkEey7LI+3KOfsnK5ZOvhnf/Gq2FIZIdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YSLftenO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A965C4AF0A;
-	Tue, 23 Jul 2024 14:57:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721746644;
-	bh=CxtIUBMzzr2w+K2I2D4M8354T5IN/ABD8NK10UHApp0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YSLftenOdrczL/7QBLcELkifl+UHirpWBtKTfkdN8vy4e28GiBNsbUe/cwiX7hl7L
-	 uwLZuKLyUtwWm5wVk9t93V+SYu0khk/EbhhG2MP8bAz6MUx/rXMAsf55s9G8MdbZsx
-	 MOjmZD2Hjb7zNcRHfROjaE9PZE1VK30+vsye1TYeVz2e8qZg4Y/PXp4bdgU/S25NSi
-	 DY009uzlrsqTZ+BhqyNaEd6yJDnWOfgGaI5jy0v+YapL5FFnPebIN0KIFwckgYDrek
-	 3np34scfefjUVtOGgSuSvd8tNkOWmdIZWnHY88Ja43GI2p+5GFnBTHfQhl4zOncFA5
-	 2DiqHgElkZvFw==
-Message-ID: <1ae43212-2131-41f2-9042-7711efdcfa18@kernel.org>
-Date: Tue, 23 Jul 2024 16:57:17 +0200
+	s=arc-20240116; t=1721746663; c=relaxed/simple;
+	bh=iEhm9/9xLKg6GaZQCc+MM9yVFxWsVzlmo5ZoEYVZUmk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lN8p9BVaRrspmJyp5/TtTtC8pjbR1QM0XSeO7w35Co6GBJNGsu/q9FFqJxiFxoagyMDFby7r5FKoOBzb0GYNnyQH6MpoDKoRnzdy619LeemWM7Y9qkE7d6GRjH+23YcBqHuvoEEgXbkdgbbq1g2rnuR8Nz28B+O9mNiXPreST5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fVp7hrQo; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-398b599593eso134735ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:57:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721746661; x=1722351461; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yOO8rTGxuXP8p8sxBPSAP2u2AgeXwG2nl1LkN5RKC9U=;
+        b=fVp7hrQopELTQq/PY7dFe8u9HUQj4CqV8O9ASJG4vWq6yIE7sa15CFXFw16L7gOVLz
+         p8189J+0h9iOEO0ePIQ/OSXV2b0a/bPe96SOxNn8oec7190t3unfmmwH3/Kl6GjdjBxM
+         sLePT8Dqgu1B2GlMuDlahnuUWcBCOZsdhm9OkYt50lvmPn7RYdVEeIZ+ILArYH3xWmWH
+         bxMgzjmJw2G2yQDiJ4x4cMSOEcfA4tUNwYjuF7IxnRnjsPLjyWLyHa72mlqJvsCpdfKv
+         /KlnrpRxdrlkt2C1YzbsKVzO8u1CCZ0bEz2ug5y5rQQvvVN4k9KDCKlGCH96reoPfKNm
+         bB9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721746661; x=1722351461;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yOO8rTGxuXP8p8sxBPSAP2u2AgeXwG2nl1LkN5RKC9U=;
+        b=nJaOFHOYovgKnIyL3RWue6ImE6zr+PpfRJ8Ogj2es5N5VgC6VWu4AK2hhgZBsQmZn0
+         cPoFiJiFzkr8d6Xsfm2dHfZec+yAv0Z3nZtoLDCfDs2waJtnIx5xWaGKHxyRgqzO2rZ8
+         DpEMqPPUrJyAGxZQpK5fsM3H9/rqnkb6KRWRAJUUvwww3J0HUd2YUyv1qkjGQEko16A3
+         XSv5x2OSgVYRwVr60BXYfQuNPE0UJ76BfuingJwLt+0sbrq+u+vsDs47hj/NmFouuK8X
+         G8DyDtjJpjnCx7bCHwQ+W3d2ii9B4p0Jwh9DjB0O0lb2wzYUCtN024UW4oNK1D6cG3P9
+         A4Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCX4KJUB7VKx5RgSF4ewzYsQ5qCleySZ1JCUXAPnHn461RwhinEdG4HegG3K34+/ei9mPobyKVMjvu29OzekboaD6vIw5LNZv9sVo1W7
+X-Gm-Message-State: AOJu0YyT4TbSDMCreLC1drLSg83kwYCqIzJqMlAPsZTeX7JEnxiElQmB
+	Ath+pHunPF6aktdSt+ot+Pz1ZexUUk8ebgLKgxTt6Je7kFcAJEK6Rrp/rDBzaLAWRSZwgCxMQ1h
+	c3ZNxsLq6bFKpFAUopasO+ydPvSoKoBB3u7SF
+X-Google-Smtp-Source: AGHT+IH/RpMY9dkipDwHt7eC8aSysGJbBXGF2Ss3iyuxo9ET10fPeoN4bU+sC777ajTWlkewT5mGlhe9GeTDLraUxjs=
+X-Received: by 2002:a05:6e02:388f:b0:375:d7d7:bfc with SMTP id
+ e9e14a558f8ab-39942180057mr7732145ab.27.1721746661348; Tue, 23 Jul 2024
+ 07:57:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: s32g: add the pinctrl node
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
- Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>,
- Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- NXP S32 Linux Team <s32@nxp.com>
-References: <20240723123720.1088067-1-andrei.stefanescu@oss.nxp.com>
- <b4985dc2-73e5-4917-9015-f891938c8880@kernel.org>
- <87c53abf-080e-4e70-b5e2-b38ef9443983@oss.nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <87c53abf-080e-4e70-b5e2-b38ef9443983@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240720074552.1915993-1-irogers@google.com> <20240720074552.1915993-2-irogers@google.com>
+ <8c8da262-a398-41cc-9721-4e72e6b7e5fd@linaro.org>
+In-Reply-To: <8c8da262-a398-41cc-9721-4e72e6b7e5fd@linaro.org>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 23 Jul 2024 07:57:29 -0700
+Message-ID: <CAP-5=fWwjJuHpTJDMtxKYGDa9Sjo-kHk099vBTW8N-6_GtMfMw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] perf script: Fix for `perf script +F metric` with
+ leader sampling
+To: James Clark <james.clark@linaro.org>
+Cc: Andi Kleen <ak@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 23/07/2024 15:56, Andrei Stefanescu wrote:
-> Hi Krzysztof,
-> 
-> Thank you for the prompt review!
-> 
-> On 23/07/2024 16:38, Krzysztof Kozlowski wrote:
->> On 23/07/2024 14:37, Andrei Stefanescu wrote:
->>> +			status = "okay";
->>
->> Where did you disable it?
-> 
-> It isn't disabled anywhere.
+On Tue, Jul 23, 2024 at 7:41=E2=80=AFAM James Clark <james.clark@linaro.org=
+> wrote:
+>
+>
+>
+> On 20/07/2024 8:45 am, Ian Rogers wrote:
+> > Andi Kleen reported a regression where `perf script +F metric` would
+> > crash. With this change the output is:
+> >
+> > ```
+> > $ perf record -a -e '{cycles,instructions}:S' perf bench mem memcpy
+> >
+> >        21.229620 GB/sec
+> >
+> >        15.751008 GB/sec
+> >
+> >        16.009221 GB/sec
+> > [ perf record: Woken up 1 times to write data ]
+> > [ perf record: Captured and wrote 1.945 MB perf.data (294 samples) ]
+> > $ perf --no-pager script -F +metric
+> >              perf 1912464 [000] 814503.473101:       6325       cycles:=
+  ffffffff8548d64a native_write_msr+0xa ([kernel.kallsyms])
+> >              perf 1912464 [000] 814503.473101:   metric:    0.06  insn =
+per cycle
+> >              perf 1912464 [000] 814503.473101:        351 instructions:=
+  ffffffff8548d64a native_write_msr+0xa ([kernel.kallsyms])
+> >              perf 1912464 [000] 814503.473101:   metric:    0.03  insn =
+per cycle
+> > ...
+> > ```
+>
+> For some reason I only get the metric: lines when I record with -a. I
+> noticed this because Andi's test doesn't use -a so it fails.
+>
+> I'm not sure if that's expected or it's related to your disclaimer below?
 
-Then what is the point of enabling if it is not disabled?
+It is. When you don't do -a the cpu map just contains -1 and for some
+reason it is busted. The whole indirections to arrays of arrays,
+counts, stats, aggregations, with indices into various other arrays
+and a lack of helpers. The code works for perf stat, but there is a
+lot of complexity that I don't fully grok in that. Here I've tried to
+kind of break down what the code is trying to do in the comments, but
+the old code never did sample_read_group__for_each so was is broken
+with leader sampling? Is the leader sampling pretending the read
+counts are periods and calling process sample multiple times. Andi
+likely knows this code better than me so I was hoping he could fix it
+up. We may want to take the patches anyway in order to not have a
+segv.
 
-> I thought we should always have it enabled since most of the
-> other drivers will rely on it. Should I add it here disabled and enable it in the
-> board specific .dts files (in this case: s32g399a-rdb3.dts, s32g274a-rdb2.dts and
-> s32g274a-evb.dts)?
+Thanks,
+Ian
 
-No. I think coding style covers it, please read it.
-
-> 
->>
->>> +
->>> +			jtag_pins: jtag_pins {
->>
->> Underscores are not allowed. Please follow DTS coding style. The
->> mainline one, not NXP coding style. Several other places here have also
->> issues, so be sure you read if carefully.
-> 
-> Thank you! I will send a V2 with  "jtag_pins: jtag-pins {" and
-> all the other subnodes renamed to "jtag-grp*".
-
-Well, fix also other coding style violations...
-
-
-
-Best regards,
-Krzysztof
-
+> >
+> > The change fixes perf script to update counts and thereby aggregate
+> > values which then get consumed by unchanged metric logic in the shadow
+> > stat output. Note, it would be preferential to switch to json metrics.
+> >
+> > Reported-by: Andi Kleen <ak@linux.intel.com>
+> > Closes: https://lore.kernel.org/linux-perf-users/20240713155443.1665378=
+-1-ak@linux.intel.com/
+> > Fixes: 37cc8ad77cf8 ("perf metric: Directly use counts rather than save=
+d_value")'
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> > The code isn't well tested nor does it support non-leader sampling
+> > reading of counts based on periods that seemed to present in the
+> > previous code. Sending out for the sake of discussion. Andi's changes
+> > added a test and that should certainly be added.
+> > ---
+> >   tools/perf/builtin-script.c | 114 +++++++++++++++++++++++++++++------=
+-
+> >   1 file changed, 93 insertions(+), 21 deletions(-)
+> >
 
