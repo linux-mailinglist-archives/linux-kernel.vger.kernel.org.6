@@ -1,76 +1,107 @@
-Return-Path: <linux-kernel+bounces-260247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C32C893A4F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:31:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ACB493A4FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:32:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71FC61F22909
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:31:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30469283CAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF01157A48;
-	Tue, 23 Jul 2024 17:31:49 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6253015884A;
+	Tue, 23 Jul 2024 17:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OYdIrLMy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079481E522
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 17:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA9713BC18;
+	Tue, 23 Jul 2024 17:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721755909; cv=none; b=JdybYylLwQ3i9EjkComDJVXasoaKQJnVLPwPXWR9TQs+pA5BBZfCeo76g8+Vz+5yMjq2koO1u50Aw20B0Ul98y8HmPumKCLDSxXJmnE5jcvrCjc+/RQGHqZgCGxlZNm4F/md6fkCaxQu0x6L4BGKN1foOS9fr5HI9Ea22R4QxTU=
+	t=1721755952; cv=none; b=Tea7gtIGTCTToQX4I5Z/Q6xwW7yBov4xoroxq07NFozJR8iQ3O5rYXVTwJcS5xzUPYmTdt+4wUn6KdYTF9VTDdtQvZ1WcKn7MRnI8g4yGZm7uXtawHHGXRy/Ld/OIH4u8g6JkocN43JJVfBa4qI/vXvOa5rki6FQoaKLJk+g7VM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721755909; c=relaxed/simple;
-	bh=owk4g2otJ0Q7bo0nzbZd25kaJTzD/DMigYqW9dPCAYk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=IL58RIh0WkZjjSq7aTqrbeH0mcc/vcWoj6UsBWN3pVsAx6flK+zI4LkdYIoZCCYzdsVa0Fo465OdM6jkUQB9/CdxW5aO+bUTZZgkgn4odnYyxlnv+uZZ7fKWRq1tNa0fawgS657EgfEvpy/N1h+oyIvyFniOxMIjR6AA52VCWZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8041a66f2ebso908977939f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 10:31:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721755907; x=1722360707;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=owk4g2otJ0Q7bo0nzbZd25kaJTzD/DMigYqW9dPCAYk=;
-        b=pKz5qz6F56Om2lbB1giiYEqMqLJUpNLCqJv8OZECstc8N3VPuh0m0up3IuCBpRzKA1
-         IxjZ9tzW4LqrR/YgRLto6tGRb8zvT9NxE9oOiMvcgTPcVJBawl2X/hOvYa7tUYlGYxiW
-         hqj8XqUs734d6XdYQAN21uTWRIG2AV1KkSy/x93YxnpMDu7Uw4T0PHGMZHH7wwFSJ2zd
-         /iYhw6YT8b6NrHISuLagSTfPp2Ah7gPx0gqWyEa1Zvwe13hB/stVeaO5SHhUpECWNhhy
-         3wPw/fVy8ROXd0EIxeRSXPJdfgXv5OABLeSpLC3wZQ5uUpaIrZHBVwaWCfMwqDS9Mw2Z
-         zsfg==
-X-Gm-Message-State: AOJu0YxgGGSazIjTNWP/e802pjlBjFOoOGhBOKzbvrasS9Uhph1SxAPa
-	y6p0d/ZXKJ4sV6l7DPwyveMVThLvy+c+27FlYReR+La6hasGN/6D9aqSgX8/UdDFzDvqz5JtMjY
-	yX70KzHr0aDJgg1t7Co9H0MNYD+bR9LSobrtmNnzxe1TyhkLbtgWzGp4=
-X-Google-Smtp-Source: AGHT+IGgva7BrNAntRRVgOypao/6E6gGk+KP4wvH0gh6YNkpquUijpORLbCP9IAZCWOfPWNwW4fxxU3FPxqlpVA5JryMEF1wIXCj
+	s=arc-20240116; t=1721755952; c=relaxed/simple;
+	bh=VeKv1mdM4b2Az2hwXIufGbGyrkqjcYonv0q7odEaJbU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i1hbkSbew2HGTNxUTMAzKlTeLjj9kW+aGZn45371q9F11DOFgbf6CDmDRGuaSy/Hvqcaot81xfh/uSnoH4zKnQp2gZdqNvQavxcV0RLv5Td/RkaGW6CWVxOh41wt+nlVes8csRp6JSW2JcMR9R32mU1Kz8bBkb/d9jDRQLXlPOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OYdIrLMy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B792AC4AF0A;
+	Tue, 23 Jul 2024 17:32:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1721755952;
+	bh=VeKv1mdM4b2Az2hwXIufGbGyrkqjcYonv0q7odEaJbU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OYdIrLMyfCk4J6Tu7KzRzullXgcO5GzZ+dgXmbi+rYKn3AcYr7ZGg8/URI+9ktb39
+	 ryxQMQx/FgIRi7W/z84MQSJsAqiJEaGacoIX8G3z1pd76e7xKrfZ9ayHqvHs/3beJw
+	 3tzlHkssxFZgvyRLlC551eHA508kuzd3ZzcbVNJg=
+Date: Tue, 23 Jul 2024 19:32:29 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, liujunliang_ljl@163.com,
+	linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] USB2NET: SR9700: fix uninitialized variable use in
+ sr_mdio_read
+Message-ID: <2024072305-dinner-prize-bb82@gregkh>
+References: <20240723140434.1330255-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2bd1:b0:803:85e8:c40b with SMTP id
- ca18e2360f4ac-81f6d23e0e2mr470639f.3.1721755907224; Tue, 23 Jul 2024 10:31:47
- -0700 (PDT)
-Date: Tue, 23 Jul 2024 10:31:47 -0700
-In-Reply-To: <000000000000c396f805ef112fd3@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003d8bad061ded8998@google.com>
-Subject: Re: [syzbot] hfx: Initialize directory subfolders in hfsplus_mknod
-From: syzbot <syzbot+fdedff847a0e5e84c39f@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240723140434.1330255-1-make24@iscas.ac.cn>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Tue, Jul 23, 2024 at 10:04:34PM +0800, Ma Ke wrote:
+> It could lead to error happen because the variable res is not updated if
+> the call to sr_share_read_word returns an error. In this particular case
+> error code was returned and res stayed uninitialized.
+> 
+> This can be avoided by checking the return value of sr_share_read_word
+> and propagating the error if the read operation failed.
+> 
+> Fixes: c9b37458e956 ("USB2NET : SR9700 : One chip USB 1.1 USB2NET SR9700Device Driver Support")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 
-***
+You forgot to document how you found this problem.
 
-Subject: hfx: Initialize directory subfolders in hfsplus_mknod
-Author: simeddon@gmail.com
+> ---
+>  drivers/net/usb/sr9700.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 
-#syz test
+Hi,
+
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
