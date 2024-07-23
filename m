@@ -1,180 +1,146 @@
-Return-Path: <linux-kernel+bounces-260218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2312593A4A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:01:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F66093A4A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97938B22F9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:01:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A2E41C22039
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:04:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA45157E94;
-	Tue, 23 Jul 2024 17:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D+ODue+w"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34671581F4;
+	Tue, 23 Jul 2024 17:04:08 +0000 (UTC)
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6C114D431;
-	Tue, 23 Jul 2024 17:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D340514D431;
+	Tue, 23 Jul 2024 17:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721754052; cv=none; b=bEjAV3ozkrUi747TzLz2taScGpzhPTmi82ftXubUSfs7dhSoawU62arPR1oohY4PY4VH17K+JkOMJyiKVvIffnzE3WTs/lWQJoZfIo0yJgcOGLVrDgXDVnhpzk6zGusYxrs22xJJE1gkUg5fVwHx8PxQUOmFyQ2FLrU8qvxSXI0=
+	t=1721754248; cv=none; b=Q5gVy827t8PxAqdwhZHrwM/aEpQN2SrzrzUqEUqZt/4UgMcc3/OV5dSxvv8PNLAuDO0aaQOH1+rg0CoZJQZzm768lnR4s90PkrhfEfWg164MG17bfAA1EJU0hh4DBVhC0/Poo9RDmx80qlZT+7T00WIVdPCTczTYpS+1dFeIZdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721754052; c=relaxed/simple;
-	bh=iFGHrRa1AJpd3vUksRvo9/chRGhjVJipRgmSeu6mZTw=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ChMxPQZg77UnGd5axxkb5lZ2KiMzHIym0tb1Ugl+9JgI6TBmXTpSDfz/C+B+PlmlPQGEhP5hxCmBeTAZ7O2PR7yo0VDaSsO2lYd8qBmmuyeQY1UQu6QI5opPUpGP558Q+3uHMMyNhsVNTDcvumkdcOWSvh5YBFoi17bu3S241Ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D+ODue+w; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1721754248; c=relaxed/simple;
+	bh=6+fkscHQNgKGVGb6qvOlCMO1VnaLS8Gb+rc0NXhVRXE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UnRMpEtP92hXFfxXlWG4tiB3+AwIMr7fwwwPi0xO2vwHCKw1LHEbO1S/Su2MEuRoD7Z2c/Pv4kDE5P1mJr2MCAhBKfClfY7K4Tqk9me9GnHOlrHdP88a8t1GB82/lamcd4rBjPUcTd9JtfGyNc2FuyIwYakPdRkVcqbnVih/9W8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=alum.mit.edu; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=alum.mit.edu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e0857a11862so5257968276.1;
-        Tue, 23 Jul 2024 10:00:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721754049; x=1722358849; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aWJZVKsTjOlmkxuJxxuw1YxCmrjhrUkB6LnBXgLWtjU=;
-        b=D+ODue+wegHlM7RD45zpH4PKzHXhzhM/yTuTPRTsDd28DMm1kHPprLP1gqEQyvFpP8
-         HCXE7eesleK9GrRZmdGKLEOz+tpQLeb4jdBC5dH2+nclpQEd3GAgDrJz3TuKqrC/YH9Y
-         XH3U+raRuvEtr+uG0eJlV6ohB00663EeIOiwcLPPVAOnnTnw6nMIu9YEYYebUMMdU+Z3
-         dV7ucwZ6cBThCoU2kPwTiKaZ3KwPooRqiQ75y9Datqth4xFr0JliuEb7nc12RIw191so
-         Cgm42J/9m1SiuPjepZYaPl5cXaA6xTjSF5Egsguz9LxrWDLIwVdqYtuEqk10VPqPw0OB
-         zstQ==
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-70448cae1e0so3083222a34.3;
+        Tue, 23 Jul 2024 10:04:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721754049; x=1722358849;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aWJZVKsTjOlmkxuJxxuw1YxCmrjhrUkB6LnBXgLWtjU=;
-        b=lE/x3tx8oZqnEED1GXyzMVKBF1U+J2ns2+tjh1mdW5+TWe23nCmNMqTUgFPoMDrMAf
-         9xJK5xUbPIoUAAxnRdV/HY3ytZX6TGD9GED6w9r5Do1NsRaNRP5gb7xc156gjDnxFMGh
-         QOXo0RcxfhgW1soCtTpSm1cgGzAx3xCRASkmiiVXFwvTmQAcHat6nUiMs5Vp1+EDohKu
-         ukmzh2ahx/zkCHBFBRnph23bGUud9M8SykxLGPfgZ4FhXvdb+WK53O90jcHhYhak825I
-         wBv/wic3J+HUmellqGf4aK/veCOBny36i8wyZlb/EEkY6OFBzPMxkl5ZKe53TnE1BHjL
-         m5yA==
-X-Forwarded-Encrypted: i=1; AJvYcCUujfNJb/mzGImc903vejBYd1dFpUywxYEESrnXdZcML+zGVOb0Mxmlxk3/4dYfKP8g62pzqVrzMcFmhb2CnMEA0VzLFBm1r+G/gkHexnR/WnvWlQFYtQr52IzoX1pLeqfniV50/53x
-X-Gm-Message-State: AOJu0Yxgon8d1xar/THi5os565Fk8yJhhA169/H/2Eg+10fkiIxjo24B
-	6Vxv6D+9uV8p8nSnPtmU1YEuF8OkKR61oUZlpTitjwVSCQFTF/zR
-X-Google-Smtp-Source: AGHT+IGIjD6wNy3JDyYcWxCKOqG4sXHYKOI4GVAHxO1DR0/dqcCY+wqTyan38FlrIecnroLRmveF6w==
-X-Received: by 2002:a25:d086:0:b0:e02:50f2:784d with SMTP id 3f1490d57ef6-e0b0972a64amr572746276.21.1721754042357;
-        Tue, 23 Jul 2024 10:00:42 -0700 (PDT)
-Received: from gpd ([50.205.20.42])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e086096a347sm1944336276.1.2024.07.23.10.00.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 10:00:42 -0700 (PDT)
-From: fan <nifan.cxl@gmail.com>
-X-Google-Original-From: fan <fan@gpd>
-Date: Tue, 23 Jul 2024 10:00:15 -0700
-To: Huang Ying <ying.huang@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alison Schofield <alison.schofield@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Bharata B Rao <bharata@amd.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>
-Subject: Re: [PATCH v3 1/3] cxl/region: Fix a race condition in memory
- hotplug notifier
-Message-ID: <Zp_hn8ExJEXeVGtb@gpd>
-References: <20240618084639.1419629-1-ying.huang@intel.com>
- <20240618084639.1419629-2-ying.huang@intel.com>
+        d=1e100.net; s=20230601; t=1721754246; x=1722359046;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=02xnxBX9SHHmM6dl/yiHqxrkZEzkCA7F2H6qwPrp+Fw=;
+        b=nip4dt0b+CiEnyG/Z4Rq/upEIyitNV4a+P1A4sx/jsyCdFHrcZXFkE/NHyfritVkRz
+         6wqBH5YNEfzNkicme/XmeBm3pmUu4ueHzvIv+BW2CCXp3DvhKMfVwizuI3k6P3SbIjwo
+         fk8THQYr5uaLDr+WP4Cy1yEA/qyZha4GWKlz8+z1OmLMPQw0BNbsVVw5XPfsGO3e0PIY
+         gmdjoLCHajGxLcGFbKCajojqmXY3lVNVPJUvaEQTbTYHxN2TLDH/MkV/3iY9iA7nEoa/
+         cp9v/G0h8X34OCUlHpyGaK5ZHsX1aD83D23azJ/7p7xnditoasw0PI+Of2Dhz+7+lHAm
+         VFnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3J3UBiLteoIDQptmhZQjAV8pKUQDbi2LyN88b+KWkKV1DOpjaTRl5ZkCZqTAQTfBNNVnyWbUHXXYOB8ysSHrrwfE5knviiJ2JjRPXvS61R28qJRskS5xYNhac/PAwuplKXpXmigLsLFdhCzuC
+X-Gm-Message-State: AOJu0YyMGXA5GDerfQAT3b4FOY7PwZyFb1g01i4Y8GqD6Q5P/P7eJd3R
+	tXEyPvZfiMwM5HE/G7X7zKtAVczL8iaqxd9GQRKCwMTsL1BzBCKAVtw5pFtHN4kEo7Vbn4fD9Y8
+	1WMUonxi+I/fQq+aovF+SX6HNOms=
+X-Google-Smtp-Source: AGHT+IHEX97DGXPMq/CzCwVHEuhMRWmstcgLm9QWYKkHmuYX3IYZck/qXxuiBB5Ck1P7O8YAFNAoIm3C8bt8PAfyiV0=
+X-Received: by 2002:a05:6830:498d:b0:708:f88a:e3e7 with SMTP id
+ 46e09a7af769-709009f09f2mr14914971a34.34.1721754245650; Tue, 23 Jul 2024
+ 10:04:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618084639.1419629-2-ying.huang@intel.com>
+References: <cb21950b-286b-4630-9052-cff9e7e56337@web.de> <CAKb7Uvj513trzg9bVGrjcQ8CfO4anCq7e9mgbD0eZKh=zNLy=Q@mail.gmail.com>
+ <147bde68-2b66-4e0c-890d-30571a99eee1@wanadoo.fr>
+In-Reply-To: <147bde68-2b66-4e0c-890d-30571a99eee1@wanadoo.fr>
+From: Ilia Mirkin <imirkin@alum.mit.edu>
+Date: Tue, 23 Jul 2024 13:03:54 -0400
+Message-ID: <CAKb7UvjE-xLBpV637qQ8DG7odnoLvaPgBK5QRThiGYZF_tgwFg@mail.gmail.com>
+Subject: Re: [PATCH] drm/nouveau/debugfs: Simplify character output in nouveau_debugfs_vbios_image()
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	kernel-janitors@vger.kernel.org, Daniel Vetter <daniel@ffwll.ch>, 
+	Danilo Krummrich <dakr@redhat.com>, David Airlie <airlied@gmail.com>, Karol Herbst <kherbst@redhat.com>, 
+	Lyude Paul <lyude@redhat.com>, LKML <linux-kernel@vger.kernel.org>, 
+	Markus Elfring <Markus.Elfring@web.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 18, 2024 at 04:46:37PM +0800, Huang Ying wrote:
-> In the memory hotplug notifier function of the CXL region,
-> cxl_region_perf_attrs_callback(), the node ID is obtained by checking
-> the host address range of the region. However, the address range
-> information is not available when the region is registered in
-> devm_cxl_add_region(). Additionally, this information may be removed
-> or added under the protection of cxl_region_rwsem during runtime. If
-> the memory notifier is called for nodes other than that backed by the
-> region, a race condition may occur, potentially leading to a NULL
-> dereference or an invalid address range.
-> 
-> The race condition is addressed by checking the availability of the
-> address range information under the protection of cxl_region_rwsem. To
-> enhance code readability and use guard(), the relevant code has been
-> moved into a newly added function: cxl_region_nid().
-> 
-> Fixes: 067353a46d8c ("cxl/region: Add memory hotplug notifier for cxl region")
-> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Alison Schofield <alison.schofield@intel.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Cc: Bharata B Rao <bharata@amd.com>
-> Cc: Alistair Popple <apopple@nvidia.com>
-> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> Cc: Davidlohr Bueso <dave@stgolabs.net>
-> Cc: Vishal Verma <vishal.l.verma@intel.com>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> ---
+On Tue, Jul 23, 2024 at 12:58=E2=80=AFPM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+>
+> Le 15/07/2024 =C3=A0 15:15, Ilia Mirkin a =C3=A9crit :
+> > On Mon, Jul 15, 2024 at 7:49=E2=80=AFAM Markus Elfring <Markus.Elfring@=
+web.de> wrote:
+> >>
+> >> From: Markus Elfring <elfring@users.sourceforge.net>
+> >> Date: Mon, 15 Jul 2024 13:36:54 +0200
+> >>
+> >> Single characters should be put into a sequence.
+> >> Thus use the corresponding function =E2=80=9Cseq_putc=E2=80=9D for one=
+ selected call.
+> >>
+> >> This issue was transformed by using the Coccinelle software.
+> >>
+> >> Suggested-by: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+> >> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> >> ---
+> >>   drivers/gpu/drm/nouveau/nouveau_debugfs.c | 2 +-
+> >>   1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/nouveau/nouveau_debugfs.c b/drivers/gpu/d=
+rm/nouveau/nouveau_debugfs.c
+> >> index e83db051e851..931b62097366 100644
+> >> --- a/drivers/gpu/drm/nouveau/nouveau_debugfs.c
+> >> +++ b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
+> >> @@ -42,7 +42,7 @@ nouveau_debugfs_vbios_image(struct seq_file *m, void=
+ *data)
+> >>          int i;
+> >>
+> >>          for (i =3D 0; i < drm->vbios.length; i++)
+> >> -               seq_printf(m, "%c", drm->vbios.data[i]);
+> >> +               seq_putc(m, drm->vbios.data[i]);
+> >
+> > Is there some reason this whole thing isn't just
+> >
+> > seq_write(m, drm->vbios.data, drm->vbios.length)
+>
+> Hi,
+>
+> I don't know if my answer is relevant or not here but:
+>         for () seq_putc();      =3D=3D> will fill 'm' with everything tha=
+t fits in
+> and
+>         seq_write()             =3D=3D> is all or nothing. So if 'm' is t=
+oo small, then
+> nothing will be appended.
+>
+> I've not looked at the calling tree, but I would expect 'm' to be able
+> to have PAGE_SIZE chars, so most probably 4096.
+>
+> And having gpu + "vbios.rom", I would expect it to be bigger than 4096.
+>
+> If I'm correct, then changing for seq_write() would just show... nothing.
+>
+>
+> I don't know if it can happen., but testing should be easy enough to
+> figure it out.
 
-Reviewed-by: Fan Ni <fan.ni@samsung.com>
+The vbios can definitely be much much larger than 4k. But it does
+currently work as-is, i.e. you don't just get the first 4k, you get
+everything. So I think there's some internal resizing/extension/etc
+going on.
 
->  drivers/cxl/core/region.c | 19 +++++++++++++++----
->  1 file changed, 15 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 3c2b6144be23..51aeef2c012c 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -2304,14 +2304,25 @@ static bool cxl_region_update_coordinates(struct cxl_region *cxlr, int nid)
->  	return true;
->  }
->  
-> +static int cxl_region_nid(struct cxl_region *cxlr)
-> +{
-> +	struct cxl_region_params *p = &cxlr->params;
-> +	struct cxl_endpoint_decoder *cxled;
-> +	struct cxl_decoder *cxld;
-> +
-> +	guard(rwsem_read)(&cxl_region_rwsem);
-> +	cxled = p->targets[0];
-> +	if (!cxled)
-> +		return NUMA_NO_NODE;
-> +	cxld = &cxled->cxld;
-> +	return phys_to_target_node(cxld->hpa_range.start);
-> +}
-> +
->  static int cxl_region_perf_attrs_callback(struct notifier_block *nb,
->  					  unsigned long action, void *arg)
->  {
->  	struct cxl_region *cxlr = container_of(nb, struct cxl_region,
->  					       memory_notifier);
-> -	struct cxl_region_params *p = &cxlr->params;
-> -	struct cxl_endpoint_decoder *cxled = p->targets[0];
-> -	struct cxl_decoder *cxld = &cxled->cxld;
->  	struct memory_notify *mnb = arg;
->  	int nid = mnb->status_change_nid;
->  	int region_nid;
-> @@ -2319,7 +2330,7 @@ static int cxl_region_perf_attrs_callback(struct notifier_block *nb,
->  	if (nid == NUMA_NO_NODE || action != MEM_ONLINE)
->  		return NOTIFY_DONE;
->  
-> -	region_nid = phys_to_target_node(cxld->hpa_range.start);
-> +	region_nid = cxl_region_nid(cxlr);
->  	if (nid != region_nid)
->  		return NOTIFY_DONE;
->  
-> -- 
-> 2.39.2
-> 
+But I totally agree -- testing required here. Not sure if the author
+has done that.
+
+Cheers,
+
+  -ilia
 
