@@ -1,139 +1,144 @@
-Return-Path: <linux-kernel+bounces-259696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBD0D939BAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:21:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6198939BB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:22:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41F8EB21184
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:21:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DF2E280EE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF69314C582;
-	Tue, 23 Jul 2024 07:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CxBJ4Own"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B151314B07A;
+	Tue, 23 Jul 2024 07:22:14 +0000 (UTC)
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3F214AD3B
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B24513C68A;
+	Tue, 23 Jul 2024 07:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721719236; cv=none; b=fS9JENBKaNcloGpivtAi5vChkoFDucZP/yXJwI6d/Db7JH/yTwxuknVKdrAil5e30B/9N2oCu4Uelh7qa7A25DoEJmMui+16m86U5ett0oX1aw5EFKfEw7U/1fb1czENcQTeFGGaZGBxQZ49PCMEMEwp4qNeEhVQoBFMI/TQK+A=
+	t=1721719334; cv=none; b=VvYo7oWaEkCB2kIDh/9ruOAcQF65KOQGNtAzI42ehm2JNc3LVg6rxIep8uNMpDjR7BpVLaNMwUV3GuEB7jcquxDF2JzpHVGwOmlUHwVfNR87UcHxDzaTQXLDG7DthBu5sRmw/hXimJSpDgSp5RZIe9wRx7aSUDvCJCLqpIWodlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721719236; c=relaxed/simple;
-	bh=prDDhKIlMIRta80NECG7OzBrK8DGXuKAvYw3fn7wXBI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TkJrqK1ECH/xnfL+V8mPTYn/f8uQmTJSl2xN6NKPsptvLgVEPUTXoT1ZIO8kUOTJGCtYTFSqgcKJoYHACPd/wK1h32//ketwYBcRWdRWJ9uMkjx2AqNs1bcUZfMhKMCvds+MhH8sCWWOYcfv0j2/fMAcjHaYdfMQRiDc9YpuL4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CxBJ4Own; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721719233;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JPNml0PuZXZj/S/HDDcCDyBph9Cq/9OVLZWZYXw++O4=;
-	b=CxBJ4OwnGIIipvmravJdVNxDcegnrBzxDQaqznZLU5gdx/qtO8maKu9aiW6sgZ0qZmodkE
-	ei66vhtxLmptUnC2qtSFjdZOZp0Es6DbKLtqlPbGuIwZf/8imcDZ7TByIkUrGLj0/DSZWQ
-	ETulSevGmYSzcvzAnWiDGaS+ahUhDQs=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-448-qNj3PcM7NSCGG7t0oo0flg-1; Tue,
- 23 Jul 2024 03:20:27 -0400
-X-MC-Unique: qNj3PcM7NSCGG7t0oo0flg-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 844C51956048;
-	Tue, 23 Jul 2024 07:20:25 +0000 (UTC)
-Received: from virt-mtcollins-01.lab.eng.rdu2.redhat.com (virt-mtcollins-01.lab.eng.rdu2.redhat.com [10.8.1.196])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id DE7FD1955F40;
-	Tue, 23 Jul 2024 07:20:22 +0000 (UTC)
-From: Shaoqin Huang <shahuang@redhat.com>
-To: Oliver Upton <oliver.upton@linux.dev>,
-	Marc Zyngier <maz@kernel.org>,
-	kvmarm@lists.linux.dev,
-	Mark Brown <broonie@kernel.org>
-Cc: Eric Auger <eauger@redhat.com>,
-	Sebastian Ott <sebott@redhat.com>,
-	Cornelia Huck <cohuck@redhat.com>,
-	Shaoqin Huang <shahuang@redhat.com>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 4/4] KVM: selftests: aarch64: Add writable test for ID_AA64PFR1_EL1
-Date: Tue, 23 Jul 2024 03:20:03 -0400
-Message-Id: <20240723072004.1470688-5-shahuang@redhat.com>
-In-Reply-To: <20240723072004.1470688-1-shahuang@redhat.com>
-References: <20240723072004.1470688-1-shahuang@redhat.com>
+	s=arc-20240116; t=1721719334; c=relaxed/simple;
+	bh=yZpum7RI2rSFJ32h7kQ5YDh1/k+uXdhnbV3adDGmyec=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LU8AHHPhGNstHRHTA9Wul5ctZxHhZbdoF8u6o6OwqxAX2pw80t35Q1lPXnjmKi/+xKpMJcQhlxevXWhEVkHrqidT6W6JRHiTvKFGqXJUF0vO5YyYpDwtLiYlV2gYNH8TKZRVLu9pkZFTrXvf7/ZbOsuUUy10jndAWspmLCCGp/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-66ca536621cso20293787b3.3;
+        Tue, 23 Jul 2024 00:22:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721719328; x=1722324128;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mTdZefJGssY1b1nFywR6a45rF6PMOv6hEJZw7jG+AFM=;
+        b=gVK9RZDkzgRcpSoePuUSquCNJgA9uU87ZAGER0vn7aZG2xwLcDg8BqHiyTSnyf0bYt
+         bv0yXBTvi/dVuuWiW7Z7YZkFUCmJi8oiJSLWvhPRIWYBAi2iTB0svlDz/drXKNKRWqrH
+         xnNcbAtxjnp9RMs/2p3Y/wp5dnY3pGF9aSVegHxROrceNWDL0mgcNV240gbA5JWKEII6
+         bI6qHKveqAYvrnvU8EzIS8jbAa69XM7Nrww0VHizMVg+oEptCPkn6L02NxD9INWXVW+e
+         QDbtDNrkRpmiLFI7lNY5KaRUniV055aMpENnHnEiQD8gQppBixdUhmx+j0qYgcUZJaUH
+         9B0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVaDJ7nfBf9VMUXPgzaEN+1hXvBBGImDdw6FYIQxjlTHyDFq17bakdDYdjx6Grxl5TG+cDdqcQE8Se0MK5c/SIK0f/IJ/O5C/uBHF2FTzJFjQTAuWbLwYK1d14VIKJbEanoJEHiePZDD39FUVFNT8N/YEjoz38Q/u66Gsr10O1filI8DmCjNf1vd7ly617S9u6RMSeIuCtR0nnA9A==
+X-Gm-Message-State: AOJu0YyHbMXm4pXW4ohnyimRjBu3WKQXDxXfmxtFX4D9ocpr+X/cj1jK
+	BWbyZLILMt5rUJbHnhvOh4WGYo4+ty+dN71ZcMl6+UyZVoSlsdfgyFVpUzpG
+X-Google-Smtp-Source: AGHT+IH1ZQ1jGv0iZJjUNbP2rA/3hGPOiLe5y/jfgulRZ1GCFgQL8+3+6iNnBjGv9AjXradJQrTcYA==
+X-Received: by 2002:a05:690c:108:b0:65f:8973:31a2 with SMTP id 00721157ae682-66e4bdbd22fmr29764037b3.13.1721719328645;
+        Tue, 23 Jul 2024 00:22:08 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-66952940dcasm19267387b3.74.2024.07.23.00.22.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jul 2024 00:22:08 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-65fe1239f12so43108227b3.0;
+        Tue, 23 Jul 2024 00:22:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUIFFn2GnhLIXt6eSJELVlLO6i4UOnoNVNcOqMwMiwTXmwU9/noTL9fCicKBj0fnnQNi6cAzKNQ1XgXMeTWWEnF0UWSQQkQ0aFWDspssnh1S75KhQ2rS3ob0Sh3zERJLEYhm5St9x9rsr4I59naedhEPxuj1S06lCxjyq1WApKsWAlIrLbwyYiRNmIkFXFuqzU7QOyvm65LTqd2Hg==
+X-Received: by 2002:a05:690c:408f:b0:630:f6b0:6c3d with SMTP id
+ 00721157ae682-66e4c57cc12mr19744927b3.23.1721719326975; Tue, 23 Jul 2024
+ 00:22:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <20240627091137.370572-1-herve.codina@bootlin.com> <20240627091137.370572-3-herve.codina@bootlin.com>
+In-Reply-To: <20240627091137.370572-3-herve.codina@bootlin.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 23 Jul 2024 09:21:54 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVeAK-2xRzf=kSO5Z9JGR7VTz=vEDHBW5190cctUNFj-g@mail.gmail.com>
+Message-ID: <CAMuHMdVeAK-2xRzf=kSO5Z9JGR7VTz=vEDHBW5190cctUNFj-g@mail.gmail.com>
+Subject: Re: [PATCH v3 2/7] reset: mchp: sparx5: Remove dependencies and allow
+ building as a module
+To: Herve Codina <herve.codina@bootlin.com>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Simon Horman <horms@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Lee Jones <lee@kernel.org>, Arnd Bergmann <arnd@arndb.de>, UNGLinuxDriver@microchip.com, 
+	Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Lars Povlsen <lars.povlsen@microchip.com>, 
+	Steen Hegelund <Steen.Hegelund@microchip.com>, Daniel Machon <daniel.machon@microchip.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Horatiu Vultur <horatiu.vultur@microchip.com>, Andrew Lunn <andrew@lunn.ch>, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	Allan Nielsen <allan.nielsen@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add writable test for the ID_AA64PFR1_EL1 register.
+Hi Herv=C3=A9 and Cl=C3=A9ment,
 
-Signed-off-by: Shaoqin Huang <shahuang@redhat.com>
----
- tools/testing/selftests/kvm/aarch64/set_id_regs.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+On Thu, Jun 27, 2024 at 11:13=E2=80=AFAM Herve Codina <herve.codina@bootlin=
+.com> wrote:
+> From: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
+>
+> The sparx5 reset controller depends on the SPARX5 architecture or the
+> LAN966x SoC.
+>
+> This reset controller can be used by the LAN966x PCI device and so it
+> needs to be available on all architectures.
+> Also the LAN966x PCI device driver can be built as a module and this
+> reset controller driver has no reason to be a builtin driver in that
+> case.
+>
+> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <clement.leger@bootlin.com>
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 
-diff --git a/tools/testing/selftests/kvm/aarch64/set_id_regs.c b/tools/testing/selftests/kvm/aarch64/set_id_regs.c
-index a7de39fa2a0a..04e237a371f2 100644
---- a/tools/testing/selftests/kvm/aarch64/set_id_regs.c
-+++ b/tools/testing/selftests/kvm/aarch64/set_id_regs.c
-@@ -133,6 +133,13 @@ static const struct reg_ftr_bits ftr_id_aa64pfr0_el1[] = {
- 	REG_FTR_END,
- };
- 
-+static const struct reg_ftr_bits ftr_id_aa64pfr1_el1[] = {
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64PFR1_EL1, CSV2_frac, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64PFR1_EL1, SSBS, ID_AA64PFR1_EL1_SSBS_NI),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64PFR1_EL1, BT, 0),
-+	REG_FTR_END,
-+};
-+
- static const struct reg_ftr_bits ftr_id_aa64mmfr0_el1[] = {
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, ECV, 0),
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, EXS, 0),
-@@ -199,6 +206,7 @@ static struct test_feature_reg test_regs[] = {
- 	TEST_REG(SYS_ID_AA64ISAR1_EL1, ftr_id_aa64isar1_el1),
- 	TEST_REG(SYS_ID_AA64ISAR2_EL1, ftr_id_aa64isar2_el1),
- 	TEST_REG(SYS_ID_AA64PFR0_EL1, ftr_id_aa64pfr0_el1),
-+	TEST_REG(SYS_ID_AA64PFR1_EL1, ftr_id_aa64pfr1_el1),
- 	TEST_REG(SYS_ID_AA64MMFR0_EL1, ftr_id_aa64mmfr0_el1),
- 	TEST_REG(SYS_ID_AA64MMFR1_EL1, ftr_id_aa64mmfr1_el1),
- 	TEST_REG(SYS_ID_AA64MMFR2_EL1, ftr_id_aa64mmfr2_el1),
-@@ -551,9 +559,9 @@ int main(void)
- 	test_cnt = ARRAY_SIZE(ftr_id_aa64dfr0_el1) + ARRAY_SIZE(ftr_id_dfr0_el1) +
- 		   ARRAY_SIZE(ftr_id_aa64isar0_el1) + ARRAY_SIZE(ftr_id_aa64isar1_el1) +
- 		   ARRAY_SIZE(ftr_id_aa64isar2_el1) + ARRAY_SIZE(ftr_id_aa64pfr0_el1) +
--		   ARRAY_SIZE(ftr_id_aa64mmfr0_el1) + ARRAY_SIZE(ftr_id_aa64mmfr1_el1) +
--		   ARRAY_SIZE(ftr_id_aa64mmfr2_el1) + ARRAY_SIZE(ftr_id_aa64zfr0_el1) -
--		   ARRAY_SIZE(test_regs) + 2;
-+		   ARRAY_SIZE(ftr_id_aa64pfr1_el1) + ARRAY_SIZE(ftr_id_aa64mmfr0_el1) +
-+		   ARRAY_SIZE(ftr_id_aa64mmfr1_el1) + ARRAY_SIZE(ftr_id_aa64mmfr2_el1) +
-+		   ARRAY_SIZE(ftr_id_aa64zfr0_el1) - ARRAY_SIZE(test_regs) + 2;
- 
- 	ksft_set_plan(test_cnt);
- 
--- 
-2.40.1
+Thanks for your patch!
 
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -124,8 +124,7 @@ config RESET_LPC18XX
+>           This enables the reset controller driver for NXP LPC18xx/43xx S=
+oCs.
+>
+>  config RESET_MCHP_SPARX5
+> -       bool "Microchip Sparx5 reset driver"
+> -       depends on ARCH_SPARX5 || SOC_LAN966 || COMPILE_TEST
+> +       tristate "Microchip Sparx5 reset driver"
+
+This opens up the question to everyone, so I'd rather add a dependency
+on MFD_LAN966X_PCI.
+
+>         default y if SPARX5_SWITCH
+>         select MFD_SYSCON
+>         help
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
