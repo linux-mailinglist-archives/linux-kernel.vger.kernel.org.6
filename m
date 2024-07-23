@@ -1,88 +1,89 @@
-Return-Path: <linux-kernel+bounces-259765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FAD6939CD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:34:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61B4A939CC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 735371C21BE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:34:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180D92821E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B6514F102;
-	Tue, 23 Jul 2024 08:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC42D14D443;
+	Tue, 23 Jul 2024 08:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="N70Hycgd"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TYnD7YS3"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8429114D2B2
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:33:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E17614C586
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721723608; cv=none; b=XB+DPUmw+ETmCygERG6AKl617CqkPNdAeWRrLuNHPju+HZBEsQl14rrgtNtF0FVwsxFbFmnpoWRAz4F3F1w/JBClgHws0Z26+jE0qahaNXjXDkW2+FLz5U8tCmIs3HCD/uViDiX8vqgcy0aUcgAI+LY9uA2iP0WEtOYjyyiPx50=
+	t=1721723589; cv=none; b=NZtS7h8hB3h0051ea2Wl4ZNFjYpNpoV+anXcDGNUST/DwQhjhatqdq5Z/VwugdfAGFQ128G5n/1IO/1VuKtVfNZb9LG6m3rXcYeWxW3g9IIIjZRbJukdWHk0O7ekqugX5ztueCCh3ls/01Br3RB/NAg7r7DW7pdz5FOk81D7T90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721723608; c=relaxed/simple;
-	bh=8qpU8QvLN6vXVX/x53G5eEe50VLRRBnIA+358suYNzQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hP8Vof/SwnlHU5ZcAnZ2TvLOHIEDT/iDyA5RP8tzJ9Qih+OJOemoFDoVUMTQ5/xDGTIRNeb/2lZ6/FaYKEJYWzHFqO1M9/dlAxN6PFw7B37bppdb8PzHYVQhPPfZebHXi09CcCIVkL0PxTuqXmwEAELWy4gFhUMto/OXON6hqZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=N70Hycgd; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: arnd@arndb.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721723604;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Cje3Y5ms0q2wZZ3qNUkIwaPZ+RsvLH8H4iju91pzTbQ=;
-	b=N70HycgdIR3ibRzffZLSSKoDwX0DMnfVNAP+94kP0Xckzmrh1ehHKiU2DX7lqmSsF2JTQ5
-	aW8Lczzik40cmq6WMH0uY9KDoAMZ73kYcxd03FbPixjXXddnWVkoK9zAL6DSsO07vAiecE
-	XydOC3tGCZiWKDPxNjOO63qsWY0TBFg=
-X-Envelope-To: mcgrof@kernel.org
-X-Envelope-To: clm@fb.com
-X-Envelope-To: josef@toxicpanda.com
-X-Envelope-To: dsterba@suse.com
-X-Envelope-To: tytso@mit.edu
-X-Envelope-To: adilger.kernel@dilger.ca
-X-Envelope-To: jaegeuk@kernel.org
-X-Envelope-To: chao@kernel.org
-X-Envelope-To: hch@infradead.org
-X-Envelope-To: linux-arch@vger.kernel.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-X-Envelope-To: linux-modules@vger.kernel.org
-X-Envelope-To: linux-btrfs@vger.kernel.org
-X-Envelope-To: linux-ext4@vger.kernel.org
-X-Envelope-To: linux-f2fs-devel@lists.sourceforge.net
-X-Envelope-To: youling.tang@linux.dev
-X-Envelope-To: tangyouling@kylinos.cn
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Youling Tang <youling.tang@linux.dev>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	tytso@mit.edu,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>,
-	Christoph Hellwig <hch@infradead.org>
-Cc: linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-modules@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	youling.tang@linux.dev,
-	Youling Tang <tangyouling@kylinos.cn>
-Subject: [PATCH 4/4] f2fs: Use module_{subinit, subeixt} helper macros
-Date: Tue, 23 Jul 2024 16:32:39 +0800
-Message-Id: <20240723083239.41533-5-youling.tang@linux.dev>
-In-Reply-To: <20240723083239.41533-1-youling.tang@linux.dev>
-References: <20240723083239.41533-1-youling.tang@linux.dev>
+	s=arc-20240116; t=1721723589; c=relaxed/simple;
+	bh=b8CoiMb5iphdulrbGF9IbDlgJakpNPEN+MYJHrdNTPY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LOKNEaxmUMuJQ79PFm/781ur4QgcFg7GgmC0CGAOfzIb42S7QoKC6SaghXsvSyX+C93UAXByD/ski6SL4xwGuJ8s2mL22o+ueQClHgvdi6hSUW4WzPwVKK54Zwbrfp1Zk2T3UKSy/i5PoDfqzCUxqLR9mlpUQ8sxtnT1gEGlxPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TYnD7YS3; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4266ea6a488so45201955e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 01:33:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721723585; x=1722328385; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1t+iNJUM6/WeeHxpFiE1OIXXIHbHfdlbLYRP84zH2DY=;
+        b=TYnD7YS3YXDtTFBLWcmGOetaDhbvhAkRuiKJ9fG5gY6HHYfQOx/RVRAMGeIE7FvSac
+         tWnqQ1jV2TN9xVL8Vmw5Prt7wzRP5zs1/g/t809gFZUDhs7vTDyoOy4fQDlONSDHVxOX
+         dfvvpQymKHjedY9nvTxlCbrG3Lr7vA5IJW4PCSXzFve7aDc/YNd/PfedUS0w4IreVGqy
+         WGl1XQNRYr3pCN5Y7sld8WYoPCnq/WMdffaz+l6UyNPq8mhD0Tlv07EFx70BpdJcQyn6
+         RDRgOtHUFYlQLIzpQjRXvSQPaYnlcHNBWWjVpbDNEHE3PyY/4dsNSSkWt/d8FTKkTQ9K
+         znIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721723585; x=1722328385;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1t+iNJUM6/WeeHxpFiE1OIXXIHbHfdlbLYRP84zH2DY=;
+        b=eA1VE+hyfhBSJTfxBJl9iPMLqUkzY1iWOnxh/Jo69sxTkMkaSzl7AxH5Vz6SD66iJ/
+         p1s/gZ1dHdwPsgo5zONDE+zi2S0x0NSYpnUfG1j82WYP6kMt6ychqoUx2e31YF/UuPCV
+         GOuGP7ggFsVjVi1gPHT8V1jCNQ//Qy+xT0GaRNGbAKCEvx5w897ks7sqmw9SALfhbZnC
+         AWPuo3Ih7cKQ3PW6kRSm3ucgNxR/vEYo5qY+e9NRTsDcrDix8crO6ks3zOc34FSO2qg3
+         ReZ14ES7AMH/PxmTgbXNvfLLrVHqgMK+W9rSieUc7lRKYyljXQbJ2aoz3jMzIwRUHd2a
+         ULaw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvchA1YC9EVS7rZRYDVBH7S3XjHBxG3+NH1lzyB9gVeobfyXOMEfky80kIoPzUul6fYtB86yZ0K3soiXb+CVqqJneTz6vWTJ4GOoGN
+X-Gm-Message-State: AOJu0YzBYoJhS/pH3luM67bZdvlLQveeLCwk5u5Fxvj2+ISOTgzjxegc
+	MPyoTblFhhtaJiafcgz+9xAu5vQz7i9qLPVlCxk2utDN7ykXZNfWAKNUb66WBvM=
+X-Google-Smtp-Source: AGHT+IFr4CpzZyMvq6++T1fapTLZpMDNxT4jkNAHhBZudp0bJTnJiQ+DtD4LUAMj0LUFlA1zfq8k6Q==
+X-Received: by 2002:a05:600c:1912:b0:427:d8f2:33b with SMTP id 5b1f17b1804b1-427dc529086mr88754665e9.20.1721723585395;
+        Tue, 23 Jul 2024 01:33:05 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d68fa171sm162857735e9.1.2024.07.23.01.33.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 01:33:04 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Banajit Goswami <bgoswami@quicinc.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Stephan Gerhold <stephan@gerhold.net>,
+	alsa-devel@alsa-project.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Adam Skladowski <a39.skl@gmail.com>
+Subject: [PATCH] ASoC: dt-bindings: qcom,apq8016-sbc-sndcard: move to separate binding
+Date: Tue, 23 Jul 2024 10:33:00 +0200
+Message-ID: <20240723083300.35605-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,221 +91,400 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-From: Youling Tang <tangyouling@kylinos.cn>
+The APQ8016 SBC and MSM8916 QDSP6 sound cards are a bit different from
+others: they have additional IO muxing address space and pin control.
+Move them to separate schema, so the original qcom,sm8250.yaml will be
+easier to manage.  New schema is going to grow for other platforms
+having more of IO muxing address spaces.
 
-Use module_{subinit, subinit} to ensure that modules init and exit
-are in sequence and to simplify the code.
-
-Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
+Cc: Adam Skladowski <a39.skl@gmail.com>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- fs/f2fs/debug.c |   3 +-
- fs/f2fs/f2fs.h  |   4 +-
- fs/f2fs/super.c | 139 +++++++++++-------------------------------------
- 3 files changed, 36 insertions(+), 110 deletions(-)
+ .../sound/qcom,apq8016-sbc-sndcard.yaml       | 205 ++++++++++++++++++
+ .../bindings/sound/qcom,sm8250.yaml           | 137 ------------
+ 2 files changed, 205 insertions(+), 137 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.yaml
 
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index 8b0e1e71b667..c08ecf807066 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -727,7 +727,7 @@ void f2fs_destroy_stats(struct f2fs_sb_info *sbi)
- 	kfree(si);
- }
- 
--void __init f2fs_create_root_stats(void)
-+int __init f2fs_create_root_stats(void)
- {
- #ifdef CONFIG_DEBUG_FS
- 	f2fs_debugfs_root = debugfs_create_dir("f2fs", NULL);
-@@ -735,6 +735,7 @@ void __init f2fs_create_root_stats(void)
- 	debugfs_create_file("status", 0444, f2fs_debugfs_root, NULL,
- 			    &stat_fops);
- #endif
-+	return 0;
- }
- 
- void f2fs_destroy_root_stats(void)
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 8a9d910aa552..b2909383bcd9 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4100,7 +4100,7 @@ static inline struct f2fs_stat_info *F2FS_STAT(struct f2fs_sb_info *sbi)
- 
- int f2fs_build_stats(struct f2fs_sb_info *sbi);
- void f2fs_destroy_stats(struct f2fs_sb_info *sbi);
--void __init f2fs_create_root_stats(void);
-+int __init f2fs_create_root_stats(void);
- void f2fs_destroy_root_stats(void);
- void f2fs_update_sit_info(struct f2fs_sb_info *sbi);
- #else
-@@ -4142,7 +4142,7 @@ void f2fs_update_sit_info(struct f2fs_sb_info *sbi);
- 
- static inline int f2fs_build_stats(struct f2fs_sb_info *sbi) { return 0; }
- static inline void f2fs_destroy_stats(struct f2fs_sb_info *sbi) { }
--static inline void __init f2fs_create_root_stats(void) { }
-+static inline int __init f2fs_create_root_stats(void) { }
- static inline void f2fs_destroy_root_stats(void) { }
- static inline void f2fs_update_sit_info(struct f2fs_sb_info *sbi) {}
- #endif
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index df4cf31f93df..162ec1005b22 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -4940,120 +4940,45 @@ static void destroy_inodecache(void)
- 	kmem_cache_destroy(f2fs_inode_cachep);
- }
- 
--static int __init init_f2fs_fs(void)
-+static int register_f2fs(void)
- {
--	int err;
-+	return register_filesystem(&f2fs_fs_type);
-+}
- 
--	err = init_inodecache();
--	if (err)
--		goto fail;
--	err = f2fs_create_node_manager_caches();
--	if (err)
--		goto free_inodecache;
--	err = f2fs_create_segment_manager_caches();
--	if (err)
--		goto free_node_manager_caches;
--	err = f2fs_create_checkpoint_caches();
--	if (err)
--		goto free_segment_manager_caches;
--	err = f2fs_create_recovery_cache();
--	if (err)
--		goto free_checkpoint_caches;
--	err = f2fs_create_extent_cache();
--	if (err)
--		goto free_recovery_cache;
--	err = f2fs_create_garbage_collection_cache();
--	if (err)
--		goto free_extent_cache;
--	err = f2fs_init_sysfs();
--	if (err)
--		goto free_garbage_collection_cache;
--	err = f2fs_init_shrinker();
--	if (err)
--		goto free_sysfs;
--	err = register_filesystem(&f2fs_fs_type);
--	if (err)
--		goto free_shrinker;
--	f2fs_create_root_stats();
--	err = f2fs_init_post_read_processing();
--	if (err)
--		goto free_root_stats;
--	err = f2fs_init_iostat_processing();
--	if (err)
--		goto free_post_read;
--	err = f2fs_init_bio_entry_cache();
--	if (err)
--		goto free_iostat;
--	err = f2fs_init_bioset();
--	if (err)
--		goto free_bio_entry_cache;
--	err = f2fs_init_compress_mempool();
--	if (err)
--		goto free_bioset;
--	err = f2fs_init_compress_cache();
--	if (err)
--		goto free_compress_mempool;
--	err = f2fs_create_casefold_cache();
--	if (err)
--		goto free_compress_cache;
--	return 0;
--free_compress_cache:
--	f2fs_destroy_compress_cache();
--free_compress_mempool:
--	f2fs_destroy_compress_mempool();
--free_bioset:
--	f2fs_destroy_bioset();
--free_bio_entry_cache:
--	f2fs_destroy_bio_entry_cache();
--free_iostat:
--	f2fs_destroy_iostat_processing();
--free_post_read:
--	f2fs_destroy_post_read_processing();
--free_root_stats:
--	f2fs_destroy_root_stats();
-+static void unregister_f2fs(void)
-+{
- 	unregister_filesystem(&f2fs_fs_type);
--free_shrinker:
--	f2fs_exit_shrinker();
--free_sysfs:
--	f2fs_exit_sysfs();
--free_garbage_collection_cache:
--	f2fs_destroy_garbage_collection_cache();
--free_extent_cache:
--	f2fs_destroy_extent_cache();
--free_recovery_cache:
--	f2fs_destroy_recovery_cache();
--free_checkpoint_caches:
--	f2fs_destroy_checkpoint_caches();
--free_segment_manager_caches:
--	f2fs_destroy_segment_manager_caches();
--free_node_manager_caches:
--	f2fs_destroy_node_manager_caches();
--free_inodecache:
--	destroy_inodecache();
--fail:
--	return err;
- }
- 
-+static struct subexitcall_rollback rollback;
+diff --git a/Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.yaml b/Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.yaml
+new file mode 100644
+index 000000000000..6ad451549036
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.yaml
+@@ -0,0 +1,205 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/qcom,apq8016-sbc-sndcard.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- static void __exit exit_f2fs_fs(void)
- {
--	f2fs_destroy_casefold_cache();
--	f2fs_destroy_compress_cache();
--	f2fs_destroy_compress_mempool();
--	f2fs_destroy_bioset();
--	f2fs_destroy_bio_entry_cache();
--	f2fs_destroy_iostat_processing();
--	f2fs_destroy_post_read_processing();
--	f2fs_destroy_root_stats();
--	unregister_filesystem(&f2fs_fs_type);
--	f2fs_exit_shrinker();
--	f2fs_exit_sysfs();
--	f2fs_destroy_garbage_collection_cache();
--	f2fs_destroy_extent_cache();
--	f2fs_destroy_recovery_cache();
--	f2fs_destroy_checkpoint_caches();
--	f2fs_destroy_segment_manager_caches();
--	f2fs_destroy_node_manager_caches();
--	destroy_inodecache();
-+	module_subexit(&rollback);
-+}
++title: Qualcomm APQ8016 and similar sound cards
 +
-+static int __init init_f2fs_fs(void)
-+{
-+	module_subinit(init_inodecache, destroy_inodecache, &rollback);
-+	module_subinit(f2fs_create_node_manager_caches, f2fs_destroy_node_manager_caches, &rollback);
-+	module_subinit(f2fs_create_segment_manager_caches, f2fs_destroy_segment_manager_caches, &rollback);
-+	module_subinit(f2fs_create_checkpoint_caches, f2fs_destroy_checkpoint_caches, &rollback);
-+	module_subinit(f2fs_create_recovery_cache, f2fs_destroy_recovery_cache, &rollback);
-+	module_subinit(f2fs_create_extent_cache, f2fs_destroy_extent_cache, &rollback);
-+	module_subinit(f2fs_create_garbage_collection_cache, f2fs_destroy_garbage_collection_cache, &rollback);
-+	module_subinit(f2fs_init_sysfs, f2fs_exit_sysfs, &rollback);
-+	module_subinit(f2fs_init_shrinker, f2fs_exit_shrinker, &rollback);
-+	module_subinit(register_f2fs, unregister_f2fs, &rollback);
-+	module_subinit(f2fs_create_root_stats, f2fs_destroy_root_stats, &rollback);
-+	module_subinit(f2fs_init_post_read_processing, f2fs_destroy_post_read_processing, &rollback);
-+	module_subinit(f2fs_init_iostat_processing, f2fs_destroy_iostat_processing, &rollback);
-+	module_subinit(f2fs_init_bio_entry_cache, f2fs_destroy_bio_entry_cache, &rollback);
-+	module_subinit(f2fs_init_bioset, f2fs_destroy_bioset, &rollback);
-+	module_subinit(f2fs_init_compress_mempool, f2fs_destroy_compress_mempool, &rollback);
-+	module_subinit(f2fs_init_compress_cache, f2fs_destroy_compress_cache, &rollback);
-+	module_subinit(f2fs_create_casefold_cache, f2fs_destroy_casefold_cache, &rollback);
++maintainers:
++  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
++  - Stephan Gerhold <stephan@gerhold.net>
 +
-+	return 0;
- }
++properties:
++  compatible:
++    enum:
++      - qcom,apq8016-sbc-sndcard
++      - qcom,msm8916-qdsp6-sndcard
++
++  reg:
++    items:
++      - description: Microphone I/O mux register address
++      - description: Speaker I/O mux register address
++
++  reg-names:
++    items:
++      - const: mic-iomux
++      - const: spkr-iomux
++
++  audio-routing:
++    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
++    description:
++      A list of the connections between audio components. Each entry is a
++      pair of strings, the first being the connection's sink, the second
++      being the connection's source. Valid names could be power supplies,
++      MicBias of codec and the jacks on the board.
++
++  aux-devs:
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++    description: |
++      List of phandles pointing to auxiliary devices, such
++      as amplifiers, to be added to the sound card.
++
++  model:
++    $ref: /schemas/types.yaml#/definitions/string
++    description: User visible long sound card name
++
++  pin-switches:
++    description: List of widget names for which pin switches should be created.
++    $ref: /schemas/types.yaml#/definitions/string-array
++
++  widgets:
++    description: User specified audio sound widgets.
++    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
++
++patternProperties:
++  ".*-dai-link$":
++    description:
++      Each subnode represents a dai link. Subnodes of each dai links would be
++      cpu/codec dais.
++
++    type: object
++
++    properties:
++      link-name:
++        description: Indicates dai-link name and PCM stream name.
++        $ref: /schemas/types.yaml#/definitions/string
++        maxItems: 1
++
++      cpu:
++        description: Holds subnode which indicates cpu dai.
++        type: object
++        additionalProperties: false
++
++        properties:
++          sound-dai:
++            maxItems: 1
++
++      platform:
++        description: Holds subnode which indicates platform dai.
++        type: object
++        additionalProperties: false
++
++        properties:
++          sound-dai:
++            maxItems: 1
++
++      codec:
++        description: Holds subnode which indicates codec dai.
++        type: object
++        additionalProperties: false
++
++        properties:
++          sound-dai:
++            minItems: 1
++            maxItems: 8
++
++    required:
++      - link-name
++      - cpu
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - model
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/sound/qcom,lpass.h>
++    sound@7702000 {
++        compatible = "qcom,apq8016-sbc-sndcard";
++        reg = <0x07702000 0x4>, <0x07702004 0x4>;
++        reg-names = "mic-iomux", "spkr-iomux";
++
++        model = "DB410c";
++        audio-routing =
++            "AMIC2", "MIC BIAS Internal2",
++            "AMIC3", "MIC BIAS External1";
++
++        pinctrl-0 = <&cdc_pdm_lines_act &ext_sec_tlmm_lines_act &ext_mclk_tlmm_lines_act>;
++        pinctrl-1 = <&cdc_pdm_lines_sus &ext_sec_tlmm_lines_sus &ext_mclk_tlmm_lines_sus>;
++        pinctrl-names = "default", "sleep";
++
++        quaternary-dai-link {
++            link-name = "ADV7533";
++            cpu {
++                sound-dai = <&lpass MI2S_QUATERNARY>;
++            };
++            codec {
++                sound-dai = <&adv_bridge 0>;
++            };
++        };
++
++        primary-dai-link {
++            link-name = "WCD";
++            cpu {
++                sound-dai = <&lpass MI2S_PRIMARY>;
++            };
++            codec {
++                sound-dai = <&lpass_codec 0>, <&wcd_codec 0>;
++            };
++        };
++
++        tertiary-dai-link {
++            link-name = "WCD-Capture";
++            cpu {
++                sound-dai = <&lpass MI2S_TERTIARY>;
++            };
++            codec {
++                sound-dai = <&lpass_codec 1>, <&wcd_codec 1>;
++            };
++        };
++    };
++
++  - |
++    #include <dt-bindings/sound/qcom,q6afe.h>
++    #include <dt-bindings/sound/qcom,q6asm.h>
++    sound@7702000 {
++        compatible = "qcom,msm8916-qdsp6-sndcard";
++        reg = <0x07702000 0x4>, <0x07702004 0x4>;
++        reg-names = "mic-iomux", "spkr-iomux";
++
++        model = "msm8916";
++        widgets =
++            "Speaker", "Speaker",
++            "Headphone", "Headphones";
++        pin-switches = "Speaker";
++        audio-routing =
++            "Speaker", "Speaker Amp OUT",
++            "Speaker Amp IN", "HPH_R",
++            "Headphones", "HPH_L",
++            "Headphones", "HPH_R",
++            "AMIC1", "MIC BIAS Internal1",
++            "AMIC2", "MIC BIAS Internal2",
++            "AMIC3", "MIC BIAS Internal3";
++        aux-devs = <&speaker_amp>;
++
++        pinctrl-names = "default", "sleep";
++        pinctrl-0 = <&cdc_pdm_lines_act>;
++        pinctrl-1 = <&cdc_pdm_lines_sus>;
++
++        mm1-dai-link {
++            link-name = "MultiMedia1";
++            cpu {
++                sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA1>;
++            };
++        };
++
++        primary-dai-link {
++            link-name = "Primary MI2S";
++            cpu {
++                sound-dai = <&q6afedai PRIMARY_MI2S_RX>;
++            };
++            platform {
++                sound-dai = <&q6routing>;
++            };
++            codec {
++                sound-dai = <&lpass_codec 0>, <&wcd_codec 0>;
++            };
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+index c9076dcd44c1..1d3acdc0c733 100644
+--- a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
++++ b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
+@@ -27,9 +27,7 @@ properties:
+               - qcom,sm8650-sndcard
+           - const: qcom,sm8450-sndcard
+       - enum:
+-          - qcom,apq8016-sbc-sndcard
+           - qcom,apq8096-sndcard
+-          - qcom,msm8916-qdsp6-sndcard
+           - qcom,qcm6490-idp-sndcard
+           - qcom,qcs6490-rb3gen2-sndcard
+           - qcom,qrb5165-rb5-sndcard
+@@ -58,18 +56,6 @@ properties:
+     $ref: /schemas/types.yaml#/definitions/string
+     description: User visible long sound card name
  
- module_init(init_f2fs_fs)
+-  pin-switches:
+-    description: List of widget names for which pin switches should be created.
+-    $ref: /schemas/types.yaml#/definitions/string-array
+-
+-  widgets:
+-    description: User specified audio sound widgets.
+-    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+-
+-  # Only valid for some compatibles (see allOf if below)
+-  reg: true
+-  reg-names: true
+-
+ patternProperties:
+   ".*-dai-link$":
+     description:
+@@ -122,34 +108,6 @@ required:
+   - compatible
+   - model
+ 
+-allOf:
+-  - if:
+-      properties:
+-        compatible:
+-          contains:
+-            enum:
+-              - qcom,apq8016-sbc-sndcard
+-              - qcom,msm8916-qdsp6-sndcard
+-    then:
+-      properties:
+-        reg:
+-          items:
+-            - description: Microphone I/O mux register address
+-            - description: Speaker I/O mux register address
+-        reg-names:
+-          items:
+-            - const: mic-iomux
+-            - const: spkr-iomux
+-      required:
+-        - compatible
+-        - model
+-        - reg
+-        - reg-names
+-    else:
+-      properties:
+-        reg: false
+-        reg-names: false
+-
+ additionalProperties: false
+ 
+ examples:
+@@ -231,98 +189,3 @@ examples:
+             };
+         };
+     };
+-
+-  - |
+-    #include <dt-bindings/sound/qcom,lpass.h>
+-    sound@7702000 {
+-        compatible = "qcom,apq8016-sbc-sndcard";
+-        reg = <0x07702000 0x4>, <0x07702004 0x4>;
+-        reg-names = "mic-iomux", "spkr-iomux";
+-
+-        model = "DB410c";
+-        audio-routing =
+-            "AMIC2", "MIC BIAS Internal2",
+-            "AMIC3", "MIC BIAS External1";
+-
+-        pinctrl-0 = <&cdc_pdm_lines_act &ext_sec_tlmm_lines_act &ext_mclk_tlmm_lines_act>;
+-        pinctrl-1 = <&cdc_pdm_lines_sus &ext_sec_tlmm_lines_sus &ext_mclk_tlmm_lines_sus>;
+-        pinctrl-names = "default", "sleep";
+-
+-        quaternary-dai-link {
+-            link-name = "ADV7533";
+-            cpu {
+-                sound-dai = <&lpass MI2S_QUATERNARY>;
+-            };
+-            codec {
+-                sound-dai = <&adv_bridge 0>;
+-            };
+-        };
+-
+-        primary-dai-link {
+-            link-name = "WCD";
+-            cpu {
+-                sound-dai = <&lpass MI2S_PRIMARY>;
+-            };
+-            codec {
+-                sound-dai = <&lpass_codec 0>, <&wcd_codec 0>;
+-            };
+-        };
+-
+-        tertiary-dai-link {
+-            link-name = "WCD-Capture";
+-            cpu {
+-                sound-dai = <&lpass MI2S_TERTIARY>;
+-            };
+-            codec {
+-                sound-dai = <&lpass_codec 1>, <&wcd_codec 1>;
+-            };
+-        };
+-    };
+-
+-  - |
+-    #include <dt-bindings/sound/qcom,q6afe.h>
+-    #include <dt-bindings/sound/qcom,q6asm.h>
+-    sound@7702000 {
+-        compatible = "qcom,msm8916-qdsp6-sndcard";
+-        reg = <0x07702000 0x4>, <0x07702004 0x4>;
+-        reg-names = "mic-iomux", "spkr-iomux";
+-
+-        model = "msm8916";
+-        widgets =
+-            "Speaker", "Speaker",
+-            "Headphone", "Headphones";
+-        pin-switches = "Speaker";
+-        audio-routing =
+-            "Speaker", "Speaker Amp OUT",
+-            "Speaker Amp IN", "HPH_R",
+-            "Headphones", "HPH_L",
+-            "Headphones", "HPH_R",
+-            "AMIC1", "MIC BIAS Internal1",
+-            "AMIC2", "MIC BIAS Internal2",
+-            "AMIC3", "MIC BIAS Internal3";
+-        aux-devs = <&speaker_amp>;
+-
+-        pinctrl-names = "default", "sleep";
+-        pinctrl-0 = <&cdc_pdm_lines_act>;
+-        pinctrl-1 = <&cdc_pdm_lines_sus>;
+-
+-        mm1-dai-link {
+-            link-name = "MultiMedia1";
+-            cpu {
+-                sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA1>;
+-            };
+-        };
+-
+-        primary-dai-link {
+-            link-name = "Primary MI2S";
+-            cpu {
+-                sound-dai = <&q6afedai PRIMARY_MI2S_RX>;
+-            };
+-            platform {
+-                sound-dai = <&q6routing>;
+-            };
+-            codec {
+-                sound-dai = <&lpass_codec 0>, <&wcd_codec 0>;
+-            };
+-        };
+-    };
 -- 
-2.34.1
+2.43.0
 
 
