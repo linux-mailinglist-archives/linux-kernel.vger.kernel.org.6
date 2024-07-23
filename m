@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-260289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2813993A563
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:15:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 762D193A564
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2D62281CBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:15:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B850B21121
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8181315CD77;
-	Tue, 23 Jul 2024 18:12:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E1D158DD9;
+	Tue, 23 Jul 2024 18:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6wl7t6V"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RV28c3//"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B286015CD60;
-	Tue, 23 Jul 2024 18:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FFF158A04;
+	Tue, 23 Jul 2024 18:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721758343; cv=none; b=G9dgZgmjo0Mc8JcHKhGLZFaEZiCkS/yJ6wP69VFHt6o/Rh67f6n9+ik66IMiTiqvcxxU/FWYyzZoz4MLSmq88r0xkFpOLwKDrwV27Vc/kFTvVgMT0FV1JQC1NGqTRDMYqBntdcQz5kbsfh+J1VhOE1GJoA0xjLLS4M9wxARPcU4=
+	t=1721758349; cv=none; b=Zz4S0d5+sJUPKPwyTJFjLs3mJ00iyH4t+PBTzXjc/mWeCm9KF4OzCdNHwDo75/VKJhLotWjEohwNj1xJi/o/x5Q9ZqNSADOHtOMCKHsSgoXzJavYzggpDnWlahaQ4yvQCOSo0jVVtJyNOrYnKaFLXTEeKfHCDvkK4Jnk8y++KfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721758343; c=relaxed/simple;
-	bh=ycTccZRzwhnWmuZYl2yN5kvt/i9Cmr0VW9EfC/7UA54=;
+	s=arc-20240116; t=1721758349; c=relaxed/simple;
+	bh=ZR4Fo+HZj9co1hH1bISCrg/JiIevl/irl2SNGK/8Ii4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JeYBZ2WWJ5vTOwPP0ubuv0WtFJ6SV1TKnwUy45qxjPqDszysVyzclp+gUHgfLbI6xRwux2LT8z5FV7e1v1eZ17m+KvM2U9HPcPr9Pa4r/Fpzu3JZM+gOqIbBIbR1v0+YmepYv+JxP1lcVy5hvkioooAjTfIPoR7ltcJLRuUZitA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6wl7t6V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65FCAC4AF0E;
-	Tue, 23 Jul 2024 18:12:18 +0000 (UTC)
+	 MIME-Version; b=AJgSvJzkvPkXm0VR5NKhY5fLoNxOiREKt51naF9650i5BqQcRJsX+/t1nbG/s2wsPnppqb2GAGS3IAWQXoJq4bReICLusb+ZFOpVHw8GTAK+4v2SZx37NFwbHeSeOV/1+c1hTknGt/yCaLSmppdYOvdw7y2My6IrNtUfaTsHXp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RV28c3//; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 124D9C4AF0A;
+	Tue, 23 Jul 2024 18:12:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721758343;
-	bh=ycTccZRzwhnWmuZYl2yN5kvt/i9Cmr0VW9EfC/7UA54=;
+	s=k20201202; t=1721758349;
+	bh=ZR4Fo+HZj9co1hH1bISCrg/JiIevl/irl2SNGK/8Ii4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=b6wl7t6Vnx/yEyZvnuZI8xejX+EMDqYiC6oixtqi/wC6OK3zAe8IYO6hbfIV8Ma17
-	 RLaPGrXo7rmTxgNQsHHTld9g3PEBCvQv37hOE6l4eGRycKf3zDA6Ds91DfzKciIRJa
-	 xrJISI+8CpDkcJvGGqsiv2f8NIOZoQaebEQGdV8TPKFui73DeJNhn/C0DdSKZD+W1N
-	 EWZuuocRtFqpv8tzGfD4nbDUCqzsDaPU0a8cpGlp1G6UQn08G1EvnJDiAkj/QNDeRa
-	 4r+Y1p3whwd4s+LMBVGqd0ARazU1VyOY7jVc6P2Sel5BoUB+gK/Nn+ud9PeO7QF458
-	 d5aCwheSsNJqw==
+	b=RV28c3//uLcAxuxyQ4q2PzPazVc7pkV/uDYzo584ecF2wHHFrQu1m5aYbduVs8IXV
+	 3a9VimG5b8laP5/9+vN/6hKebRM5UOo85EsqOvFtKaKCWD6oSv78iUsKjGz0tvxyOz
+	 7jRFR5awXL0QQTpgcB7UbgMw4rjF9FmpijHFYBCFSEKqVGenxjo2296lW9rSQxf+bm
+	 n/hwej7dKn+JCDtCXjKInZEjFJeal1gEigVrHxw86rZP18+xeMk8EYmH9T/EzdiQuS
+	 4ErY6STPAia77ZCcEkMs2vB764hDJWzWGznqPy4VgOjoLgE2tJtsAMPqJU2XtMZ7Bd
+	 zmaR24IdxV2sg==
 From: Danilo Krummrich <dakr@kernel.org>
 To: ojeda@kernel.org,
 	alex.gaynor@gmail.com,
@@ -67,9 +67,9 @@ Cc: daniel.almeida@collabora.com,
 	rust-for-linux@vger.kernel.org,
 	linux-mm@kvack.org,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v2 16/23] rust: alloc: implement `collect` for `IntoIter`
-Date: Tue, 23 Jul 2024 20:10:05 +0200
-Message-ID: <20240723181024.21168-17-dakr@kernel.org>
+Subject: [PATCH v2 17/23] rust: treewide: switch to the kernel `Vec` type
+Date: Tue, 23 Jul 2024 20:10:06 +0200
+Message-ID: <20240723181024.21168-18-dakr@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240723181024.21168-1-dakr@kernel.org>
 References: <20240723181024.21168-1-dakr@kernel.org>
@@ -81,126 +81,110 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently, we can't implement `FromIterator`. There are a couple of
-issues with this trait in the kernel, namely:
-
-  - Rust's specialization feature is unstable. This prevents us to
-    optimze for the special case where `I::IntoIter` equals `Vec`'s
-    `IntoIter` type.
-  - We also can't use `I::IntoIter`'s type ID either to work around this,
-    since `FromIterator` doesn't require this type to be `'static`.
-  - `FromIterator::from_iter` does return `Self` instead of
-    `Result<Self, AllocError>`, hence we can't properly handle allocation
-    failures.
-  - Neither `Iterator::collect` nor `FromIterator::from_iter` can handle
-    additional allocation flags.
-
-Instead, provide `IntoIter::collect`, such that we can at least convert
-`IntoIter` into a `Vec` again.
+Now that we got the kernel `Vec` in place, convert all existing `Vec`
+users to make use of it.
 
 Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
- rust/kernel/alloc/kvec.rs | 80 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 79 insertions(+), 1 deletion(-)
+ rust/kernel/str.rs            | 12 +++++-------
+ rust/kernel/sync/locked_by.rs |  2 +-
+ rust/kernel/types.rs          |  2 +-
+ samples/rust/rust_minimal.rs  |  4 ++--
+ 4 files changed, 9 insertions(+), 11 deletions(-)
 
-diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-index fbfb755b252d..5c317931e14c 100644
---- a/rust/kernel/alloc/kvec.rs
-+++ b/rust/kernel/alloc/kvec.rs
-@@ -2,7 +2,7 @@
+diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+index bb8d4f41475b..0b6ffbade521 100644
+--- a/rust/kernel/str.rs
++++ b/rust/kernel/str.rs
+@@ -2,8 +2,7 @@
  
- //! Implementation of [`Vec`].
+ //! String representations.
  
--use super::{AllocError, Allocator, Flags};
-+use super::{flags::*, AllocError, Allocator, Flags};
- use crate::types::Unique;
- use core::{
-     fmt,
-@@ -633,6 +633,84 @@ impl<T, A> IntoIter<T, A>
-     fn as_raw_mut_slice(&mut self) -> *mut [T] {
-         ptr::slice_from_raw_parts_mut(self.ptr, self.len)
-     }
-+
-+    fn into_raw_parts(self) -> (*mut T, NonNull<T>, usize, usize) {
-+        let me = ManuallyDrop::new(self);
-+        let ptr = me.ptr;
-+        let buf = me.buf;
-+        let len = me.len;
-+        let cap = me.cap;
-+        (ptr, buf, len, cap)
-+    }
-+
-+    /// Same as `Iterator::collect` but specialized for `Vec`'s `IntoIter`.
-+    ///
-+    /// Currently, we can't implement `FromIterator`. There are a couple of issues with this trait
-+    /// in the kernel, namely:
-+    ///
-+    /// - Rust's specialization feature is unstable. This prevents us to optimze for the special
-+    ///   case where `I::IntoIter` equals `Vec`'s `IntoIter` type.
-+    /// - We also can't use `I::IntoIter`'s type ID either to work around this, since `FromIterator`
-+    ///   doesn't require this type to be `'static`.
-+    /// - `FromIterator::from_iter` does return `Self` instead of `Result<Self, AllocError>`, hence
-+    ///   we can't properly handle allocation failures.
-+    /// - Neither `Iterator::collect` nor `FromIterator::from_iter` can handle additional allocation
-+    ///   flags.
-+    ///
-+    /// Instead, provide `IntoIter::collect`, such that we can at least convert a `IntoIter` into a
-+    /// `Vec` again.
-+    ///
-+    /// Note that `IntoIter::collect` doesn't require `Flags`, since it re-uses the existing backing
-+    /// buffer. However, this backing buffer may be shrunk to the actual count of elements.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// let v = kernel::kvec![1, 2, 3]?;
-+    /// let mut it = v.into_iter();
-+    ///
-+    /// assert_eq!(it.next(), Some(1));
-+    ///
-+    /// let v = it.collect();
-+    /// assert_eq!(v, [2, 3]);
-+    ///
-+    /// # Ok::<(), Error>(())
-+    /// ```
-+    pub fn collect(self) -> Vec<T, A> {
-+        let (mut ptr, buf, len, mut cap) = self.into_raw_parts();
-+        let has_advanced = ptr != buf.as_ptr();
-+
-+        if has_advanced {
-+            // SAFETY: Copy the contents we have advanced to at the beginning of the buffer.
-+            // `ptr` is guaranteed to be between `buf` and `buf.add(cap)` and `ptr.add(len)` is
-+            // guaranteed to be smaller than `buf.add(cap)`.
-+            unsafe { ptr::copy(ptr, buf.as_ptr(), len) };
-+            ptr = buf.as_ptr();
-+        }
-+
-+        // This can never fail, `len` is guaranteed to be smaller than `cap`.
-+        let layout = core::alloc::Layout::array::<T>(len).unwrap();
-+
-+        // SAFETY: `buf` points to the start of the backing buffer and `len` is guaranteed to be
-+        // smaller than `cap`. Depending on `alloc` this operation may shrink the buffer or leaves
-+        // it as it is.
-+        ptr = match unsafe { A::realloc(Some(buf.cast()), layout, GFP_KERNEL) } {
-+            // If we fail to shrink, which likely can't even happen, continue with the existing
-+            // buffer.
-+            Err(_) => ptr,
-+            Ok(ptr) => {
-+                cap = len;
-+                ptr.as_ptr().cast()
-+            }
-+        };
-+
-+        // SAFETY: If the iterator has been advanced, the advanced elements have been copied to
-+        // the beginning of the buffer and `len` has been adjusted accordingly. `ptr` is guaranteed
-+        // to point to the start of the backing buffer. `cap` is either the original capacity or,
-+        // after shrinking the buffer, equal to `len`. `alloc` is guaranteed to be unchanged since
-+        // `into_iter` has been called on the original `Vec`.
-+        unsafe { Vec::from_raw_parts(ptr, len, cap) }
-+    }
+-use crate::alloc::{flags::*, vec_ext::VecExt, AllocError};
+-use alloc::vec::Vec;
++use crate::alloc::{flags::*, AllocError, KVec};
+ use core::fmt::{self, Write};
+ use core::ops::{self, Deref, DerefMut, Index};
+ 
+@@ -790,7 +789,7 @@ fn write_str(&mut self, s: &str) -> fmt::Result {
+ /// assert_eq!(s.is_ok(), false);
+ /// ```
+ pub struct CString {
+-    buf: Vec<u8>,
++    buf: KVec<u8>,
  }
  
- impl<T, A> Iterator for IntoIter<T, A>
+ impl CString {
+@@ -803,7 +802,7 @@ pub fn try_from_fmt(args: fmt::Arguments<'_>) -> Result<Self, Error> {
+         let size = f.bytes_written();
+ 
+         // Allocate a vector with the required number of bytes, and write to it.
+-        let mut buf = <Vec<_> as VecExt<_>>::with_capacity(size, GFP_KERNEL)?;
++        let mut buf = KVec::with_capacity(size, GFP_KERNEL)?;
+         // SAFETY: The buffer stored in `buf` is at least of size `size` and is valid for writes.
+         let mut f = unsafe { Formatter::from_buffer(buf.as_mut_ptr(), size) };
+         f.write_fmt(args)?;
+@@ -850,10 +849,9 @@ impl<'a> TryFrom<&'a CStr> for CString {
+     type Error = AllocError;
+ 
+     fn try_from(cstr: &'a CStr) -> Result<CString, AllocError> {
+-        let mut buf = Vec::new();
++        let mut buf = KVec::new();
+ 
+-        <Vec<_> as VecExt<_>>::extend_from_slice(&mut buf, cstr.as_bytes_with_nul(), GFP_KERNEL)
+-            .map_err(|_| AllocError)?;
++        KVec::extend_from_slice(&mut buf, cstr.as_bytes_with_nul(), GFP_KERNEL)?;
+ 
+         // INVARIANT: The `CStr` and `CString` types have the same invariants for
+         // the string data, and we copied it over without changes.
+diff --git a/rust/kernel/sync/locked_by.rs b/rust/kernel/sync/locked_by.rs
+index babc731bd5f6..b94517231fcc 100644
+--- a/rust/kernel/sync/locked_by.rs
++++ b/rust/kernel/sync/locked_by.rs
+@@ -43,7 +43,7 @@
+ /// struct InnerDirectory {
+ ///     /// The sum of the bytes used by all files.
+ ///     bytes_used: u64,
+-///     _files: Vec<File>,
++///     _files: KVec<File>,
+ /// }
+ ///
+ /// struct Directory {
+diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+index ee0063a20d89..05521403ed2c 100644
+--- a/rust/kernel/types.rs
++++ b/rust/kernel/types.rs
+@@ -158,7 +158,7 @@ unsafe fn from_foreign(_: *const core::ffi::c_void) -> Self {}
+ /// # use kernel::types::ScopeGuard;
+ /// fn example3(arg: bool) -> Result {
+ ///     let mut vec =
+-///         ScopeGuard::new_with_data(Vec::new(), |v| pr_info!("vec had {} elements\n", v.len()));
++///         ScopeGuard::new_with_data(KVec::new(), |v| pr_info!("vec had {} elements\n", v.len()));
+ ///
+ ///     vec.push(10u8, GFP_KERNEL)?;
+ ///     if arg {
+diff --git a/samples/rust/rust_minimal.rs b/samples/rust/rust_minimal.rs
+index 2a9eaab62d1c..4aaf117bf8e3 100644
+--- a/samples/rust/rust_minimal.rs
++++ b/samples/rust/rust_minimal.rs
+@@ -13,7 +13,7 @@
+ }
+ 
+ struct RustMinimal {
+-    numbers: Vec<i32>,
++    numbers: KVec<i32>,
+ }
+ 
+ impl kernel::Module for RustMinimal {
+@@ -21,7 +21,7 @@ fn init(_module: &'static ThisModule) -> Result<Self> {
+         pr_info!("Rust minimal sample (init)\n");
+         pr_info!("Am I built-in? {}\n", !cfg!(MODULE));
+ 
+-        let mut numbers = Vec::new();
++        let mut numbers = KVec::new();
+         numbers.push(72, GFP_KERNEL)?;
+         numbers.push(108, GFP_KERNEL)?;
+         numbers.push(200, GFP_KERNEL)?;
 -- 
 2.45.2
 
