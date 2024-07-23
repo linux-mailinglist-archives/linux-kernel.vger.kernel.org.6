@@ -1,185 +1,146 @@
-Return-Path: <linux-kernel+bounces-259719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83D9F939BF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:50:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66AEA939C0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4731BB21576
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:50:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00987B21DC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 569DF14BFB4;
-	Tue, 23 Jul 2024 07:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6935714B94F;
+	Tue, 23 Jul 2024 07:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hIPwfBjH"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1TADBwdx"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D9014B96D;
-	Tue, 23 Jul 2024 07:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022FE36130
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721720996; cv=none; b=K+lrc4dfXvJ8SwjERehpRBQagDTwhZ1CoN8RJE+NZ/DI/ieSheyMGp6OqtZV7JbHx48wDhDTrO7KG7r9OsU996Jj+ErlPpmHV1buZQ2ob1uo+6y6jpUHLOXPu4gqb+8zT9gTSXyYfgJro/jttdMLEwhP4gQrjWcuTYEDDRzqW9E=
+	t=1721721415; cv=none; b=ATGEwbR2P58H8TEQSSxBjSJfR5hFWdhAuEZ/kSX0h5JvWFGIctZhmWVU4O28tbR9zcCL3CQiATCQZp6caNUjphoHHo1tQUOPQwc4FQhNMbRbe7AQrioXYKz6jvSyGiOgXugh7bXyev0XekkG6GR6z3YMINvdFY7RniQz99sR/8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721720996; c=relaxed/simple;
-	bh=OJ1Lx420+3XCr9wQXYtWQ1EfQYvMybmo8RnuHaRC5F4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=n0nudkGYmpZiA3dD/9t2BA64jTmfq+RvpDLA6kwoij/idLycBW0rfofUS5wXOviM9dQfvqJ2NCIEK4S+T1xinQtlH+3HW5/bRSNBt1fsnc0jnHEseFmhBWNk80H7tf6uB+gxkft6WELzxAsvjbnSRU9mZ4rAfwJhp8M/MyTvuNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hIPwfBjH; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a77c1658c68so560185366b.0;
-        Tue, 23 Jul 2024 00:49:54 -0700 (PDT)
+	s=arc-20240116; t=1721721415; c=relaxed/simple;
+	bh=GztInIMhpwal4uCTespY8mGyrf4cWd+h3YKbdtXteZQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=octRRXJ624C6qfSrZ/vAm6qopeZSJOvQTmeaQ6qTbkADrj7DBYdCfRqM8eDB8ej3MdVAmnBaTX4GdfHVY0mJiIIE6VTsvkq0szMTmuVGJM91Wrasc85PyagLHUaG27yRKHiuqCNdnmlyT8KrEQLi1w3t+i3Wu9ZZJJUxzj5oiT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1TADBwdx; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52fc14aa5f5so1689e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 00:56:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721720993; x=1722325793; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1IpYYMxxShf6RYVCcuCFgZb/pH86vZOBQuiBP+GbtnQ=;
-        b=hIPwfBjHeCIOB5O8TlrY1Llqwn8/uEMrkqYFg1kjTfeOg2fLLAd67X9Cq4bNfCB/dQ
-         dliVdAPXzjNuBNBc/Ov9WlQpnQn33sxMo5DNzfxzk+3DPLkQgvYtbOGM5Y3K0z8Vw1Ex
-         wYXH+0Wec1FDBad3nsCCd7DfiTLc7h/DiN3jYvSGrG38LBx1J4VNtzRZczSv/nsrwe7M
-         mQfcOYfDi2u/d1Ab5uGsM+IPWk1v1z/bKuJyRQ7ov6DuUAfo1ypZM8Ysnvtih1sEmoCI
-         pWU7DBX+ipP1oL+Imi7/VF/KTjAdE3vLkz+KU7iAjxFMLBx1ePXCdf4eKJOG8mLMgqGX
-         faQQ==
+        d=google.com; s=20230601; t=1721721412; x=1722326212; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1GR/uOEg6eBIIHTSjN+mU57G2H8hU3EN0wvpjh4VCBE=;
+        b=1TADBwdxw6WHr+VhUNI4TKoXHiXzUy2NCBuPaNxbL1G8pQ+QR7f/Mf7nY0LDciv6K+
+         WnN/+O0WFH67JQFwUN/aW/QG6QDaiwUT2flxbD4gsD6pyzZC7Yafss+QRuSuv+zh6TMI
+         f9Ed5NhzxjeopuqfiKm2JRMHam3Iel98Es4/zR37ZE3Gh6zEf9BJG7uoTcCzCsv/e5KU
+         x+6l2uDWYD1fVS4Wd+EGfWM26935wK9YJ0P1dLllRmIiqna/2LXsobtEX2n6MaVrK2RE
+         ypYlGC1HCNngeLKPXnfC2liIEos0dsJIFLj2N924hQEe/dT9OgsqKT9jIEe6BB1FC1Sy
+         xjDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721720993; x=1722325793;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1IpYYMxxShf6RYVCcuCFgZb/pH86vZOBQuiBP+GbtnQ=;
-        b=uX+o6NLRrhcRn0MO1TiR7KnoqsVce7A35xLxP6BqNda/dgSXRFv8a8PRzPsrKVCzQi
-         2JgOYm0KIVWpny3HY3wa1s5TqMmM+RYQ+b1gGYmThGgo//aUpvg53UQ1Jn0xLqrtOGL8
-         nwxH2RX8EYox9KEkAInHXZlLJw2vQ9Wb/qqlUoieOBK5YpRGvRmrcPh7qifqitp7RNFK
-         wmfRlHiDB9bimryVmVcjU3/ml5dqGidR0EFyMWnutcKqyCcEpKYoRXnDkAz/A9/S+wb+
-         lumvnXQqMk9oPBQzYEcw2A5AWqQspWlKE1D0nWw8GCC4cFXJrfGHcVfSgf71Ffo4EpNx
-         4eiw==
-X-Forwarded-Encrypted: i=1; AJvYcCV282UuopS9sDo/VUry1X4u0gbCYDcgUyeH32v0B5w17/vhtj1I4LsrPhEeG8+sfZdKHzceDMmmWtPoCq3d7AtckVXDYkBBSW+uf5RgSMf1Y4qjgebqAArgnfu1iH93Roamv49aQWlc7w0gSeywQQ9m/8j0lEGjPlK3UKnI+pIJ8v4vi+lMvb3AJkqHZFgUZ8BJ64MRcVrBQwxS4HK8bQ==
-X-Gm-Message-State: AOJu0YwDQiEsJNJrpC4AfQzDGF0PfX5bAAdWbIRqKjYX1+Vlk1jcJY5f
-	xqSDR67CAOCY54dwPIyM8gMYE2q3kkoQMvxMhrERWTdc2BZiaZQA
-X-Google-Smtp-Source: AGHT+IEVKxcytWZbuj8LykRy0FgifScZhpE9BEtX4YEZKRgZhhrDmjPXCFDpeMajYwqknlC0nVNSKg==
-X-Received: by 2002:a17:907:9802:b0:a77:c8f8:f9d0 with SMTP id a640c23a62f3a-a7a88478687mr167355766b.44.1721720992848;
-        Tue, 23 Jul 2024 00:49:52 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c7b6622sm510949566b.50.2024.07.23.00.49.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 00:49:52 -0700 (PDT)
-Message-ID: <34ff08ef8b550ff2979dc50204fad500b9bb41e3.camel@gmail.com>
-Subject: Re: [PATCH RFC v3 3/9] spi: add support for hardware triggered
- offload
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>, 
- Jonathan Cameron
-	 <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno
- =?ISO-8859-1?Q?S=E1?=
-	 <nuno.sa@analog.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen
-	 <lars@metafoo.de>, David Jander <david@protonic.nl>, Martin Sperl
-	 <kernel@martin.sperl.org>, linux-spi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org
-Date: Tue, 23 Jul 2024 09:53:50 +0200
-In-Reply-To: <20240722-dlech-mainline-spi-engine-offload-2-v3-3-7420e45df69b@baylibre.com>
-References: 
-	<20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
-	 <20240722-dlech-mainline-spi-engine-offload-2-v3-3-7420e45df69b@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+        d=1e100.net; s=20230601; t=1721721412; x=1722326212;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1GR/uOEg6eBIIHTSjN+mU57G2H8hU3EN0wvpjh4VCBE=;
+        b=QPG8qESMjKt5LeLnu1jBr2oBtlGJkaYpLL3SnhxWLj12cKhMgX8MOYCUX2FHL5BRy6
+         N5AyYIIOk+JPD04hhgOpx9kNvh6ZD6kmjJo1F5zFOmfHm6HVqGrlAOHDqPx1+xmKQc3q
+         NUskhKTyGCkmxdE9v1P1Fpd1b/9TF2grl46P81Kym6e7js+R0EBLz6PQNyJZxZpdF4ZS
+         Ce9ltoLty8mLFGryo5zo99qt1ZCC6xi3cphkedNpPoQxuc2tbBoEZn/Kc/qL0eydDwxC
+         m6VjdRWpstwg+SQEoFM0Wwu7EV833vXSt2PUNeBPP+JTFnudu6Ssb+/bfHpVbzvRzK3D
+         Hwvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUznbyuxhOrDnyT8KeL9TDBKSBYRmjfcJx0rcM4sJSdJkcLlbCmE5df7VpaibhtId78q8eaWMJKbjUpDovu0n6GocQqQcdLZ2yLuyR0
+X-Gm-Message-State: AOJu0YyaFTxpcYpZ4LbQEA73BRYhP7KyhxmDGZ5VjgNrVVLewqjA/AU9
+	9u5Htqbhqa4+kPay6Id7gM+zzxF/oWSFDW3zvTh8Gyoc5FoCyAhWGOI0reyMJkWiOP7SzUmYspS
+	ntCSTC6R+bUJPwA7bfiiZ/nNMN9nh+UcrrqYY
+X-Google-Smtp-Source: AGHT+IEsJ0U2aPAMB8nGkLErXNJERzT0LGcb+DjEDexXYysAF7ANmfr0OQk3jYSlfR5yTHQMnw8D59nZVIwF/W8NcGs=
+X-Received: by 2002:a05:6512:6c7:b0:52c:ea5c:fb8c with SMTP id
+ 2adb3069b0e04-52efa181580mr249357e87.2.1721721411790; Tue, 23 Jul 2024
+ 00:56:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240722223726.194658-1-andrey.konovalov@linux.dev>
+In-Reply-To: <20240722223726.194658-1-andrey.konovalov@linux.dev>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 23 Jul 2024 09:56:39 +0200
+Message-ID: <CACT4Y+bA9mMmU1ZvNB2OgoDZ0jDBvFH38FQmxCKee7L_TNpvXQ@mail.gmail.com>
+Subject: Re: [PATCH] kcov: don't instrument lib/find_bit.c
+To: andrey.konovalov@linux.dev
+Cc: Andrew Morton <akpm@linux-foundation.org>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Aleksandr Nogikh <nogikh@google.com>, Marco Elver <elver@google.com>, 
+	Alexander Potapenko <glider@google.com>, kasan-dev@googlegroups.com, linux-mm@kvack.org, 
+	Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 2024-07-22 at 16:57 -0500, David Lechner wrote:
-> This extends the SPI framework to support hardware triggered offloading.
-> This allows an arbitrary hardware trigger to be used to start a SPI
-> transfer that was previously set up with spi_offload_prepare().
->=20
-> Since the hardware trigger can happen at any time, this means the SPI
-> bus must be reserved for exclusive use as long as the hardware trigger
-> is enabled. Since a hardware trigger could be enabled indefinitely,
-> we can't use the existing spi_bus_lock() and spi_bus_unlock() functions,
-> otherwise this could cause deadlocks. So we introduce a new flag so that
-> any attempt to lock or use the bus will fail with -EBUSY as long as the
-> hardware trigger is enabled.
->=20
-> Peripheral drivers may need to control the trigger source as well. For
-> this, we introduce a new spi_offload_hw_trigger_get_clk() function that
-> can be used to get a clock trigger source. This is intended for used
-> by ADC drivers that will use the clock to control the sample rate.
-> Additional functions to get other types of trigger sources could be
-> added in the future.
->=20
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
+On Tue, 23 Jul 2024 at 00:37, <andrey.konovalov@linux.dev> wrote:
+>
+> From: Andrey Konovalov <andreyknvl@gmail.com>
+>
+> This file produces large amounts of flaky coverage not useful for the
+> KCOV's intended use case (guiding the fuzzing process).
+>
+> Signed-off-by: Andrey Konovalov <andreyknvl@gmail.com>
+
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+
 > ---
->=20
-> TODO: Currently, spi_bus_lock() always returns 0, so none of the callers
-> check the return value. All callers will need to be updated first before
-> this can be merged.
->=20
-> v3 changes:
-> * renamed enable/disable functions to spi_offload_hw_trigger_*mode*_...
-> * added spi_offload_hw_trigger_get_clk() function
-> * fixed missing EXPORT_SYMBOL_GPL
->=20
-> v2 changes:
->=20
-> This is split out from "spi: add core support for controllers with
-> offload capabilities".
->=20
-> Mark suggested that the standard SPI APIs should be aware that the
-> hardware trigger is enabled. So I've added some locking for this. Nuno
-> suggested that this might be overly strict though, and that we should
-> let each individual controller driver decide what to do. For our use
-> case though, I think we generally are going to have a single peripheral
-> on the SPI bus, so this seems like a reasonable starting place anyway.
+>
+> I noticed this while running one of the syzkaller's programs.
+>
+> In one run of the program, the number of KCOV entries amounts to ~300k,
+> with the top ones:
+>
+>  117285 /home/user/src/lib/find_bit.c:137 (discriminator 10)
+>  116752 /home/user/src/lib/find_bit.c:137 (discriminator 3)
+>    2455 /home/user/src/lib/vsprintf.c:2559
+>    2033 /home/user/src/fs/kernfs/dir.c:317
+>    1662 /home/user/src/fs/kernfs/kernfs-internal.h:72
+>    ...
+>
+> In another run (that triggers exactly the same behavior in the kernel),
+> the amount of entries drops to ~110k:
+>
+>    7141 /home/user/src/lib/find_bit.c:137 (discriminator 10)
+>    7110 /home/user/src/lib/find_bit.c:137 (discriminator 3)
+>    2455 /home/user/src/lib/vsprintf.c:2559
+>    2033 /home/user/src/fs/kernfs/dir.c:317
+>    1662 /home/user/src/fs/kernfs/kernfs-internal.h:72
+>     ...
+>
+> With this patch applied, the amount of KCOV entries for the same program
+> remains somewhat stable at ~100k.
 > ---
-
-How explicitly do we want to be about returning errors? It seems that if th=
-e
-trigger is enabled we can't anything else on the controller/offload_engine =
-so we
-could very well just hold the controller lock when enabling the trigger and=
-=20
-release it when disabling it. Pretty much the same behavior as spi_bus_lock=
-()...
-
-...
-
->=20
-> +
-> +/**
-> + * spi_offload_hw_trigger_get_clk - Get the clock for the offload trigge=
-r
-> + * @spi: SPI device
-> + * @id: Function ID if SPI device uses more than one offload or NULL.
-> + *
-> + * The caller is responsible for calling clk_put() on the returned clock=
-.
-> + *
-> + * Return: The clock for the offload trigger, or negative error code
-> + */
-> +static inline
-> +struct clk *spi_offload_hw_trigger_get_clk(struct spi_device *spi, const=
- char
-> *id)
-> +{
-> +	struct spi_controller *ctlr =3D spi->controller;
-> +
-> +	if (!ctlr->offload_ops || !ctlr->offload_ops->hw_trigger_get_clk)
-> +		return ERR_PTR(-EOPNOTSUPP);
-> +
-> +	return ctlr->offload_ops->hw_trigger_get_clk(spi, id);
-> +}
->=20
-
-It would be nice if we could have some kind of spi abstraction...
-
-- Nuno S=C3=A1
+>  lib/Makefile | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/lib/Makefile b/lib/Makefile
+> index 322bb127b4dc..0fde1c360f32 100644
+> --- a/lib/Makefile
+> +++ b/lib/Makefile
+> @@ -14,6 +14,7 @@ KCOV_INSTRUMENT_list_debug.o := n
+>  KCOV_INSTRUMENT_debugobjects.o := n
+>  KCOV_INSTRUMENT_dynamic_debug.o := n
+>  KCOV_INSTRUMENT_fault-inject.o := n
+> +KCOV_INSTRUMENT_find_bit.o := n
+>
+>  # string.o implements standard library functions like memset/memcpy etc.
+>  # Use -ffreestanding to ensure that the compiler does not try to "optimize"
+> --
+> 2.25.1
+>
+> --
+> You received this message because you are subscribed to the Google Groups "kasan-dev" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/20240722223726.194658-1-andrey.konovalov%40linux.dev.
 
