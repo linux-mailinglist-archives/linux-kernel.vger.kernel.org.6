@@ -1,80 +1,62 @@
-Return-Path: <linux-kernel+bounces-260301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C27BC93A584
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:25:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B57C193A5B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EF42282F29
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:25:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E73151C22188
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF3B1581EB;
-	Tue, 23 Jul 2024 18:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE644158A07;
+	Tue, 23 Jul 2024 18:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OnQ0Dnby"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="moUdw95I"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BEF91586CB
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 18:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D866B157A4F;
+	Tue, 23 Jul 2024 18:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721759097; cv=none; b=jU63dofHVApOyQGWcfcsLuaBN2AAD+Ko+F/zAiirbiCm4w3wUEuK0i2LY/IKQdTi5y5ZGZ8bj9aDiu+Cc9i1K2iRdvo9FQJbie9cEp8R9ueqzAr2sUN3AqHsFskeswt5WkCmDJTtMv/UTmREnNbfazmGEGEA7qvRnvNClfDf7MY=
+	t=1721759252; cv=none; b=csDVtHbI+ElB7Kk4C84WHYN6WUUl2hiKw5ZsAYjrkzWiZ0ydHH3O6yRSTqK9Q4sQsRLD1xQnNz32Z/9X7f2rk3jH6+d9RkmQpBxFIsqm86JBj21nJ7HcCFM/79TxUUTTkh4Q0zN1XRhxaFpLtRwapiGrUE9MbLXYGejcBfhUd1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721759097; c=relaxed/simple;
-	bh=z4klGlA66rZwp0B0TEsP74siGqi9zdcPyuDjYgQCAcY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=SL3/P84+0bKdRa3INIeFFD+2AmNPdsHCkwfR4dX4BYe+cmkpMHUfUUZexccz4N1YXCsaaodvZ9b7KvjbQimiSHhmawxtfzysMniPbLRw6qF6ufjTGnQn6f5hxoh3n1hOoFS2XNrXZ62e/POhAsIyBU+y/lUw3/vTXvj8A1HbQ+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OnQ0Dnby; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721759094;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=mlSldsjWGkt137rHxqPtPFE0Ch/bG3EUj3dygNmEleA=;
-	b=OnQ0Dnby7ZkD7DUBzGe4ZLwiXPAB1UNfZ95jmD5ZpIBeX/dGBF9tvVMsg28Eack9z1DEzr
-	BZ55M7RGuiVXMC00e6j/PsYW9mmaJQcih2DxuJKdfxhn3yxIMBrXrl706c5/hSfcqdAvMq
-	xwwlnm+2N9e3XmvZSVMI1m0TLx7b3Ec=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-615-jZMsveuwNTOgOb3_k3pd0Q-1; Tue, 23 Jul 2024 14:24:53 -0400
-X-MC-Unique: jZMsveuwNTOgOb3_k3pd0Q-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4265d3bf59dso41610905e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:24:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721759092; x=1722363892;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=mlSldsjWGkt137rHxqPtPFE0Ch/bG3EUj3dygNmEleA=;
-        b=NvCdwfm1+Q8t7cKFt+c2VaJHx9sAdBvXLj2frlOjA73byoM85TdDux/93es066ZeEb
-         d0/e03DRYCaIJg8c0gqoR31mCi9+9xUqjGz7/zFLP35W4hHeZXC9MamZf7bTavWhtkGb
-         xDVKcmaK92YluPGeXx4haJQ0Pi4fb+LpsF4ZsCCqvw2vrBecW+EZOgdzPIVUFDE245oh
-         BHdfg/oTe7QZgTdgm2Ycb7OJxhvGn9aJ8RECOmok4BrstRAdcuadjL8vSw6CsGBXMTtZ
-         YnV/5FmGp8RkEzkJ12JD9XjMrXZ8RGWxgnNj41bxECS9eXD7tGQTOyEuJ5HlcJPd7M6N
-         TbEw==
-X-Forwarded-Encrypted: i=1; AJvYcCXozxcktZIt3V+E+xAnX/EaI4V/fuIDy5xU+QYZKSGKJYLqCRG++3yI8WUV6E6BS7Z/wSThjh0CZXeXm89N3io1O6c2kwaBtmR/3zG5
-X-Gm-Message-State: AOJu0YxPWDz3azV0Y7ZHgheNvPPVkhhtJb63v36jfNv2BH1chg2knAEe
-	InyJ6XHzvkz4qle+PJK0lFxGKyjMZ/ZhSpE+2N2bdyjJOQq+q03zc2FhhUkbM9np0TK1ZvmgYj3
-	CFWu1LcuO4eOqGC9zz03S1BMKSlkPCzNJcl+YjIc5VPhQp3dVYPPwnBbQS+lnMQ==
-X-Received: by 2002:a05:600c:1c13:b0:426:5ef5:bcb1 with SMTP id 5b1f17b1804b1-427f7a15278mr2493765e9.6.1721759091949;
-        Tue, 23 Jul 2024 11:24:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHq7GXtYAKFTz+qGMMS1RUEa8XcH1p15cy6QfGw/2Plhyb1cls798ESEkmZL12VE1vSOh74Nw==
-X-Received: by 2002:a05:600c:1c13:b0:426:5ef5:bcb1 with SMTP id 5b1f17b1804b1-427f7a15278mr2493625e9.6.1721759091497;
-        Tue, 23 Jul 2024 11:24:51 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c72f:ed00:9dc2:1adb:d133:4434? (p200300cbc72fed009dc21adbd1334434.dip0.t-ipconnect.de. [2003:cb:c72f:ed00:9dc2:1adb:d133:4434])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d6901781sm182893445e9.14.2024.07.23.11.24.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 11:24:51 -0700 (PDT)
-Message-ID: <f8661706-0ae5-46e6-a30a-5c32159cfc96@redhat.com>
-Date: Tue, 23 Jul 2024 20:24:49 +0200
+	s=arc-20240116; t=1721759252; c=relaxed/simple;
+	bh=7HK/DMMkgTcwkTdzzH3kdsFcEBaz2rUtURvULSG77QA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qKW5ZA3Yu7SJXtDGhGEKGlnpeZA7Y/Kk3FFfSJ6Y1uCgjQduRpoyG7PFQGisU89o+Pq9DZCpe2k6z3115d2kaWI5iGs9EobSadIVwlZXyT1YhAuCtTafoxMTKvX2RHJyg6IQR8AzXp11egS/g9KWNMxIEHESDa4QCVR4JwfGQ5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=moUdw95I; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46N9wYKb004696;
+	Tue, 23 Jul 2024 18:27:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Fw30OEhuHwCRjgbtq5C9lGL+3YIoOYO6hiSFpsN8Jms=; b=moUdw95IBax6Mzle
+	uobuNjz82NHceGOBdzLqvWoxLdUyJLuzZiRsBBZchSNPN1NwbnZ9azeXkzM3dmnl
+	u9RkDGwT6vcvKfPIjyftAAv4Q5L+pWXoyxOsAoQnGhD/f+sgCKWJv2dLKChldowL
+	swl3HPw016tOAH+vsjfYZqYy0ZI7YM9+xR7rJPf97VDI5MfOZco019lNDtIf20+x
+	0QQGTxHcygzi51yUTu/rYDZewqeO3b+OPL0r3EImZuu9ENL2l9WNsWzpTxD5H5+x
+	zQB/Gftpl/qXU1BMetxsEIPVF4jvyfDK96VouqLFNheRkm1E4g9AgtX0saDUUqTX
+	ee6/kg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g6djyqv3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Jul 2024 18:27:07 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46NIR654026949
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Jul 2024 18:27:06 GMT
+Received: from [10.111.176.36] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 23 Jul
+ 2024 11:27:06 -0700
+Message-ID: <13e24ef9-f2e5-478b-8854-0e33a2c497b3@quicinc.com>
+Date: Tue, 23 Jul 2024 11:27:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,156 +64,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: fix maxnode for mbind(), set_mempolicy() and
- migrate_pages()
-From: David Hildenbrand <david@redhat.com>
-To: Jerome Glisse <jglisse@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- Andi Kleen <ak@linux.intel.com>
-References: <20240720173543.897972-1-jglisse@google.com>
- <0c390494-e6ba-4cde-aace-cd726f2409a1@redhat.com>
- <CAPTQFZSgNHEE0Ub17=kfF-W64bbfRc4wYijTkG==+XxfgcocOQ@mail.gmail.com>
- <6be6453a-15ce-4305-9a7c-a66e57564785@redhat.com>
+Subject: Re: [PATCH] clk: imx: add missing MODULE_DESCRIPTION() macros
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <6be6453a-15ce-4305-9a7c-a66e57564785@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Abel Vesa <abel.vesa@linaro.org>, Abel Vesa <abelvesa@kernel.org>,
+        Peng
+ Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen
+ Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer
+	<s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>
+CC: <linux-clk@vger.kernel.org>, <imx@lists.linux.dev>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240602-md-clk-imx-v1-1-5c6d240f6fab@quicinc.com>
+ <171923430571.3352368.17603224359381270285.b4-ty@linaro.org>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <171923430571.3352368.17603224359381270285.b4-ty@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: F0V6ygj9nRYO0KsyfgvjBakyfc_-5ZuP
+X-Proofpoint-ORIG-GUID: F0V6ygj9nRYO0KsyfgvjBakyfc_-5ZuP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-23_09,2024-07-23_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1011 suspectscore=0 impostorscore=0 phishscore=0 mlxlogscore=999
+ malwarescore=0 spamscore=0 adultscore=0 bulkscore=0 mlxscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407230127
 
-On 23.07.24 19:37, David Hildenbrand wrote:
-> On 23.07.24 18:33, Jerome Glisse wrote:
->> On Mon, 22 Jul 2024 at 06:09, David Hildenbrand <david@redhat.com> wrote:
->>>
->>> On 20.07.24 19:35, Jerome Glisse wrote:
->>>> Because maxnode bug there is no way to bind or migrate_pages to the
->>>> last node in multi-node NUMA system unless you lie about maxnodes
->>>> when making the mbind, set_mempolicy or migrate_pages syscall.
->>>>
->>>> Manpage for those syscall describe maxnodes as the number of bits in
->>>> the node bitmap ("bit mask of nodes containing up to maxnode bits").
->>>> Thus if maxnode is n then we expect to have a n bit(s) bitmap which
->>>> means that the mask of valid bits is ((1 << n) - 1). The get_nodes()
->>>> decrement lead to the mask being ((1 << (n - 1)) - 1).
->>>>
->>>> The three syscalls use a common helper get_nodes() and first things
->>>> this helper do is decrement maxnode by 1 which leads to using n-1 bits
->>>> in the provided mask of nodes (see get_bitmap() an helper function to
->>>> get_nodes()).
->>>>
->>>> The lead to two bugs, either the last node in the bitmap provided will
->>>> not be use in either of the three syscalls, or the syscalls will error
->>>> out and return EINVAL if the only bit set in the bitmap was the last
->>>> bit in the mask of nodes (which is ignored because of the bug and an
->>>> empty mask of nodes is an invalid argument).
->>>>
->>>> I am surprised this bug was never caught ... it has been in the kernel
->>>> since forever.
->>>
->>> Let's look at QEMU: backends/hostmem.c
->>>
->>>        /*
->>>         * We can have up to MAX_NODES nodes, but we need to pass maxnode+1
->>>         * as argument to mbind() due to an old Linux bug (feature?) which
->>>         * cuts off the last specified node. This means backend->host_nodes
->>>         * must have MAX_NODES+1 bits available.
->>>         */
->>>
->>> Which means that it's been known for a long time, and the workaround
->>> seems to be pretty easy.
->>>
->>> So I wonder if we rather want to update the documentation to match reality.
+On 6/24/2024 6:05 AM, Abel Vesa wrote:
+> 
+> On Sun, 02 Jun 2024 08:59:17 -0700, Jeff Johnson wrote:
+>> make allmodconfig && make W=1 C=1 reports:
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/imx/mxc-clk.o
+>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/imx/clk-imxrt1050.o
 >>
->> [Sorry resending as text ... gmail insanity]
+>> Add the missing invocations of the MODULE_DESCRIPTION() macro.
 >>
->> I think it is kind of weird if we ask to supply maxnodes+1 to work
->> around the bug. If we apply this patch qemu would continue to work as
->> is while fixing users that were not aware of that bug. So I would say
->> applying this patch does more good. Long term qemu can drop its
->> workaround or keep it for backward compatibility with old kernel.
+>>
+>> [...]
 > 
-> Not really, unfortunately. The thing is that it requires a lot more
-> effort to sense support than simply pass maxnodes+1. So unless you know
-> exactly on which minimum kernel version your software runs (barely
-> happens), you will simply apply the workaround.
+> Applied, thanks!
 > 
-> I would assume that each and every sane user out there does that
-> already, judging that even that QEMU code is 10 years old (!).
-> 
-> In any case, we have to document that behavior that existed since the
-> very beginning. Because it would be even *worse* if someone would
-> develop against a new kernel and would get a bunch of bug reports when
-> running on literally every old kernel out there :)
-> 
-> So my best guess is that long-term it will create more issues when we
-> change the behavior ... but in any case we have to update the man pages.
+> [1/1] clk: imx: add missing MODULE_DESCRIPTION() macros
+>       commit: 1919d77a9591aa692c8de11540ffc0e7d18eabb4
 
-I'll add a pointer to a discussion from 20 (!) year ago [1].
 
-The conclusion [2] / request from Andi there was that N65 is the right 
-thing to do, and we (re)added the --maxnode. This was when this code was 
-introduced.
+Hi Abel,
+I see this landed in linux-next, but is not currently in Linus' tree for 6.11.
+Will you be able to have this pulled during the merge window?
+I'm trying to eradicate all of these warnings before 6.11 rc-final.
 
-Assuming MAX_NODES is 128, we have to pass in 129 -- one more than the 
-number of bits.
-
-So the man page might be actively misleading (unless I misinterpret it): 
-"nodemask points to a bit mask of nodes containing up to maxnode bits. 
-The bit mask size is rounded to the next multiple of sizeof(unsigned 
-long), but the kernel will use bits only up to maxnode."
-
-That documentation should be fixed.
-
-[1] https://lkml.indiana.edu/hypermail/linux/kernel/0409.1/1538.html
-[2] https://lkml.indiana.edu/hypermail/linux/kernel/0409.1/1569.html
-
--- 
-Cheers,
-
-David / dhildenb
-
+Thanks!
+/jeff
 
