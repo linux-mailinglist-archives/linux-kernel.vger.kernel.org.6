@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-260026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA60393A1B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:38:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEDC193A1B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:39:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72DB6283E62
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:38:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FF9E1F22D7E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:39:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA24C153569;
-	Tue, 23 Jul 2024 13:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A20515351C;
+	Tue, 23 Jul 2024 13:39:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PrVL/cCU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="cWXCKqgX"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12B9208A0;
-	Tue, 23 Jul 2024 13:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1A8208A0
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 13:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721741931; cv=none; b=Y6g6Dt2ibRswAPK/ZiUezoFSq2IlVHox9EuRmDoUFKWOZH9YIohSSmmHE5m4rEa2bzJ4abqIArOFDS3vTCWKTrGW3YA219FRtHEWxvKv5z69DjPV12BGJolmn3cLNOMeHJY0sknsb8MIoRPY/04+ZG7SSYsau/wSjfyl/yiWRcg=
+	t=1721741939; cv=none; b=LveJQpMZcPfT/dznd2f9rLS2+pWZLky1y77OqsTovDQN8MuCtDRxcxrTTYXyk39bdr06PBK7jvqJf7EMo6K9A6Y+xRUn52dTt5UI0Ah1S6UySRmDpUH+/PCtwyW9VrLK9qXqLekHf6lIHHQfai87U1hkmx+ieS4nff/Mn0D4eb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721741931; c=relaxed/simple;
-	bh=uRi1AB8AqowQcd8KFLY8MHr892jj9UIN2dVki7R4XPo=;
+	s=arc-20240116; t=1721741939; c=relaxed/simple;
+	bh=8MEcbrpEYT3seR0+A+mnGF5FSnnA2FLWJBXqxH7NDt8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fXG51FWlDvJNHPAdsdabi0DO44duiInua6UQLCenq0g02LSfrpQ8VUGaMEz9Bu5QkkWGxqjYmCSrEpVHRxfDmAFKeo+rK9BE0Q30cOGIG2QLt8AZoz4F0OSZk90guVZBsllby2MUfxJ4V2wty83ccmdEvtRsyFY/pBr7iYyW56Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PrVL/cCU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE5B9C4AF0A;
-	Tue, 23 Jul 2024 13:38:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721741931;
-	bh=uRi1AB8AqowQcd8KFLY8MHr892jj9UIN2dVki7R4XPo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PrVL/cCUkPWwTIi6EZiA+2lkQqW+CDe7Cvni74Yqhugp1Oe2219SIAjsQA6ZT2UUH
-	 mDs5mEcvWPnYQakl0PhoV2csCBcyyVXTFPh1Cet255dyW0UtxbNyidM+7UXaHziYjP
-	 yEjlo7LDaF29KqpY8gE7bv01w5gO0TXi5yaBr+bq8UxZcmxjEMQbumr+rPPkZ0aMdg
-	 CHnhJqUkBQ1WDJXpj/kBDFt4PkIGBs8PH5TBhI+Bm9Y1eGKLDtFGDXVqJaRWIvfg/V
-	 CUL88N6LvOvxMscbWyxrUvPBzrLHcPk/cr76vAMaeQVUwm7tQ2AIEtMYKP5vpSulxw
-	 Bt1wKsgBc3AFQ==
-Message-ID: <b4985dc2-73e5-4917-9015-f891938c8880@kernel.org>
-Date: Tue, 23 Jul 2024 15:38:44 +0200
+	 In-Reply-To:Content-Type; b=kl/ZdWZxO3O/6HRB1TyUcxRyfADHqGIJkpQauNJCE3tM98RmpjZw4uIySQri1j4e4RWdBnvgTlZeYbJZLaBowddafldb/JUmedXAiW6j6kaPmS1RGGlqVcIei44TwXZ9G8cJn/CF2TOGXBOVv7g3r/dRdZ9Dhyvd2zk94ICP7dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=cWXCKqgX; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2cb50bcabd1so2976434a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 06:38:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1721741936; x=1722346736; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yusSAvRfd/ioZ+bDOVdXvZOOrr/DXwdWhxWzOGauvYU=;
+        b=cWXCKqgX2H1MLLVe0HQXzWu8vNEqn2uv48Ardktv/Xe7Lley+NcnA7DWxt2jzl6cA7
+         HTXTTv/Bq7/f04iORqWjy33PJr8vFzU1IwdVBMpibUGrqM0msyoSgThGEJ/kb40Zg7Fe
+         C5TnrAQ2MdBCzPnh9FcYZ3snrSjJsYcD3nI3QKgHYkrzBeviritT07PeQQqfdMdR86P1
+         INySjnw71sXkCuHtXH5joObec3aYfR1DElNCScpPSg5s7CLCm54lwwswHvObcXIiMy3Q
+         KLp597zkO7/dIr2AVw+hFQAfyQ9F7L9XBouNlEtQJwzVeJwd3l4H0JiAuGE4qw8zlIu+
+         22FA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721741936; x=1722346736;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yusSAvRfd/ioZ+bDOVdXvZOOrr/DXwdWhxWzOGauvYU=;
+        b=QtMPC2aUoH0aswwK/S+8VKF9a4nd6ht7ovu5seB4Nu3rmuDiFzhSnfk4Kk3fc1hxBo
+         0CkaHs3i1sMclnVS8rZui/gqIRdEKjKBZtyErg7ENik2RbVWuq3YwA1opzT3s0vVTHbJ
+         z7/r6Xkyem6mTHJ0TA9V2nJrS7NkJ+JE8s5aY0HqO9IAOClq710xrsfwcbJEdaFLJr4T
+         c5fRQ/2LmyWHiMf4JRmCmp2G2SneWhMoKcfyy/8AqQUBkRLxycr41/rIAL3u74kJQwfT
+         tGJ47Pp/kFZrSsGXQwRnqbnKh2gXJISzUtBfCBNIXc1Dc5HfJ1Ci2BU5OpaBAF+bZF2D
+         oMZw==
+X-Forwarded-Encrypted: i=1; AJvYcCXcV47cP7IJGbhFS9Ffch/m4HWbaA/oMGB2HN0Rl6YUnSNkX12e2VV6ggAJflvhohxvobhioVS1GalLp6ZesZDaQC5GKzjy4C+L2YOf
+X-Gm-Message-State: AOJu0YxtMYVGkNOnomlDEqAGMdKryaPiUN2wkj3TtOXMHUJZ1hBuAw6h
+	qKOB/DHbqZeGSjxymWfjLiw6zXaNS15isqkrWWF6yTg5a2sTbrxsmJD71/b7o04=
+X-Google-Smtp-Source: AGHT+IH8sMffgQYvkVWYv0CcnvOJkibmRKNAI0zUHLWKAAHTz6w9PjLw+JR4PLpsYysPOFoDg1f8eg==
+X-Received: by 2002:a17:90b:120c:b0:2c9:9fdf:f72e with SMTP id 98e67ed59e1d1-2cd27431338mr6227037a91.26.1721741936481;
+        Tue, 23 Jul 2024 06:38:56 -0700 (PDT)
+Received: from [10.254.218.171] ([139.177.225.240])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f29d806sm74197365ad.105.2024.07.23.06.38.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jul 2024 06:38:55 -0700 (PDT)
+Message-ID: <e3a75483-d3f7-4963-9332-4893d22463ad@bytedance.com>
+Date: Tue, 23 Jul 2024 21:38:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,114 +75,103 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: s32g: add the pinctrl node
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
- Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>,
- Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- NXP S32 Linux Team <s32@nxp.com>
-References: <20240723123720.1088067-1-andrei.stefanescu@oss.nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v1] mm/numa_balancing: Fix the memory thrashing problem in
+ the single-threaded process
+To: Zhongkun He <hezhongkun.hzk@bytedance.com>, peterz@infradead.org,
+ mgorman@suse.de, ying.huang@intel.com
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20240723053250.3263125-1-hezhongkun.hzk@bytedance.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240723123720.1088067-1-andrei.stefanescu@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
+From: Abel Wu <wuyun.abel@bytedance.com>
+In-Reply-To: <20240723053250.3263125-1-hezhongkun.hzk@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 23/07/2024 14:37, Andrei Stefanescu wrote:
-> Add the pinctrl node in the device tree in order to enable the
-> S32G2/S32G3 pinctrl driver to probe.
+Hi Zhongkun,
+
+On 7/23/24 1:32 PM, Zhongkun He Wrote:
+> I found a problem in my test machine that the memory of a process is
+> repeatedly migrated between two nodes and does not stop.
 > 
-> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-> ---
->  arch/arm64/boot/dts/freescale/s32g2.dtsi | 51 +++++++++++++++++++++++
->  arch/arm64/boot/dts/freescale/s32g3.dtsi | 53 +++++++++++++++++++++++-
->  2 files changed, 103 insertions(+), 1 deletion(-)
+> 1.Test step and the machines.
+> ------------
+> VM machine: 4 numa nodes and 10GB per node.
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/s32g2.dtsi b/arch/arm64/boot/dts/freescale/s32g2.dtsi
-> index fc19ae2e8d3b..b31f6857640b 100644
-> --- a/arch/arm64/boot/dts/freescale/s32g2.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/s32g2.dtsi
-> @@ -159,5 +159,56 @@ gic: interrupt-controller@50800000 {
->  			interrupt-controller;
->  			#interrupt-cells = <3>;
->  		};
-> +
-> +		pinctrl: pinctrl@4009c240 {
-> +			compatible = "nxp,s32g2-siul2-pinctrl";
-> +				/* MSCR0-MSCR101 registers on siul2_0 */
-> +			reg = <0x4009c240 0x198>,
-> +				/* MSCR112-MSCR122 registers on siul2_1 */
-> +			      <0x44010400 0x2c>,
-> +				/* MSCR144-MSCR190 registers on siul2_1 */
-> +			      <0x44010480 0xbc>,
-> +				/* IMCR0-IMCR83 registers on siul2_0 */
-> +			      <0x4009ca40 0x150>,
-> +				/* IMCR119-IMCR397 registers on siul2_1 */
-> +			      <0x44010c1c 0x45c>,
-> +				/* IMCR430-IMCR495 registers on siul2_1 */
-> +			      <0x440110f8 0x108>;
-> +			status = "okay";
+> stress --vm 1 --vm-bytes 12g --vm-keep
+> 
+> The info of numa stat:
+> while :;do cat memory.numa_stat | grep -w anon;sleep 5;done
+> anon N0=98304 N1=0 N2=10250747904 N3=2634334208
 
-Where did you disable it?
+I am curious what was the exact reason made the worker migrated
+to N3? And later...
 
-> +
-> +			jtag_pins: jtag_pins {
+> anon N0=98304 N1=0 N2=10250747904 N3=2634334208
+> anon N0=98304 N1=0 N2=9937256448 N3=2947825664
+> anon N0=98304 N1=0 N2=8863514624 N3=4021567488
+> anon N0=98304 N1=0 N2=7789772800 N3=5095309312
+> anon N0=98304 N1=0 N2=6716030976 N3=6169051136
+> anon N0=98304 N1=0 N2=5642289152 N3=7242792960
+> anon N0=98304 N1=0 N2=5105442816 N3=7779639296
+> anon N0=98304 N1=0 N2=5105442816 N3=7779639296
+> anon N0=98304 N1=0 N2=4837007360 N3=8048074752
+> anon N0=98304 N1=0 N2=3763265536 N3=9121816576
+> anon N0=98304 N1=0 N2=2689523712 N3=10195558400
+> anon N0=98304 N1=0 N2=2515148800 N3=10369933312
+> anon N0=98304 N1=0 N2=2515148800 N3=10369933312
+> anon N0=98304 N1=0 N2=2515148800 N3=10369933312
 
-Underscores are not allowed. Please follow DTS coding style. The
-mainline one, not NXP coding style. Several other places here have also
-issues, so be sure you read if carefully.
+.. why it was moved back to N2?
 
->  	timer {
+> anon N0=98304 N1=0 N2=3320455168 N3=9564626944
+> anon N0=98304 N1=0 N2=4394196992 N3=8490885120
+> anon N0=98304 N1=0 N2=5105442816 N3=7779639296
+> anon N0=98304 N1=0 N2=6174195712 N3=6710886400
+> anon N0=98304 N1=0 N2=7247937536 N3=5637144576
+> anon N0=98304 N1=0 N2=8321679360 N3=4563402752
+> anon N0=98304 N1=0 N2=9395421184 N3=3489660928
+> anon N0=98304 N1=0 N2=10247872512 N3=2637209600
+> anon N0=98304 N1=0 N2=10247872512 N3=2637209600
+> 
+> 2. Root cause:
+> Since commit 3e32158767b0 ("mm/mprotect.c: don't touch single threaded
+> PTEs which are on the right node")the PTE of local pages will not be
+> changed in change_pte_range() for single-threaded process, so no
+> page_faults information will be generated in do_numa_page(). If a
+> single-threaded process has memory on another node, it will
+> unconditionally migrate all of it's local memory to that node,
+> even if the remote node has only one page.
 
-Best regards,
-Krzysztof
+IIUC the remote pages will be moved to the node where the worker
+is running since local (private) PTEs are not set to protnone and
+won't be faulted on.
 
+> 
+> So, let's fix it. The memory of single-threaded process should follow
+> the cpu, not the numa faults info in order to avoid memory thrashing.
+
+Don't forget the 'Fixes' tag for bugfix patches :)
+
+> 
+> ...> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 24dda708b699..d7cbbda568fb 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -2898,6 +2898,12 @@ static void task_numa_placement(struct task_struct *p)
+>   		numa_group_count_active_nodes(ng);
+>   		spin_unlock_irq(group_lock);
+>   		max_nid = preferred_group_nid(p, max_nid);
+> +	} else if (atomic_read(&p->mm->mm_users) == 1) {
+> +		/*
+> +		 * The memory of a single-threaded process should
+> +		 * follow the CPU in order to avoid memory thrashing.
+> +		 */
+> +		max_nid = numa_node_id();
+>   	}
+>   
+>   	if (max_faults) {
+
+Since you don't want to respect the faults info, can we simply
+skip task placement?
 
