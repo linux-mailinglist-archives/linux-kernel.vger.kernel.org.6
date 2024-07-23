@@ -1,149 +1,137 @@
-Return-Path: <linux-kernel+bounces-260201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25EEC93A472
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:33:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 545B293A474
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3F0F28377F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:33:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86C8B1C2256B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2E6158862;
-	Tue, 23 Jul 2024 16:33:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73FFA1581F7;
+	Tue, 23 Jul 2024 16:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TqdYegSz"
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zyXkJ5TT"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817E8156F5B
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 16:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8DB155C90
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 16:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721752396; cv=none; b=VpXBosCqKbJnM6qU4/Xe8lJ4ESkOs9P9AXml6zjm5TwZyFXFQ1Lrw0xJEZdyQSmtp0xnxztiZQp/URGzq30LYp38hehEEdnEbdvei1bdjGOcw6t3gOdAaGZzbnwB/w/Vo/nYK+edvzuix+hCnMBUqOCguofFxVXkMFi54K9ES3w=
+	t=1721752439; cv=none; b=YqwBWgSGmtd64/QtGTFq15v4MyZV+Q/v69PgcCjLhfqHoTNWB+A+FPCWnJJ45qw7dj0HwWYco1eQWP1ETLYQcZvIz3vdFnwc0KPMZfA9TtYQVqR1c9Jwvmr5roaNV8XJEyFj+GfQlHOvPh/hKiHyUEYEnerPTcev65/vMh/Yn1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721752396; c=relaxed/simple;
-	bh=p+vDVT3sVxbC5O6pG5Jqdi2C8YJpba39Vmv1jbtymgs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JJSYJa+d0uYQ2MqdX6hXqqV6kis7bzPxwx9WUtcVcf5Ph/PQZWLvlvDDJ6eSGdSI/CljgusnG6DB7Eu6vdr3x1HE0X2YM8DTHfaw21CKDSplczqM2wXidbgDyGvfVtqpO1MaeaFFbf2G3EHNIqoKPIuZ+kbaHhviNTMynlwu8BI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TqdYegSz; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-260e8c98cc2so3021511fac.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 09:33:13 -0700 (PDT)
+	s=arc-20240116; t=1721752439; c=relaxed/simple;
+	bh=Ac+1VCyIhu31OwQRN6Dne5zrLfVI8B/dVNnBpI0/dsg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aKz9ArW+NNWQTC+AJV+4pUPsJlzJvVdo/wJdkgYqpYQWxfeQWoNxcs1+tFtHB3hbkovRloWecgzqQoHkcqMrJDgFnJ125xVChVtbDcsfYJi8uko3xXzlRs5iHI6kwQxmwRDjXNp/nYskNl1sS/+pcRhJbbZjKVuYY49act+YM6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zyXkJ5TT; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so18481a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 09:33:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721752392; x=1722357192; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1721752436; x=1722357236; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PdY3KgxTtiJXPxjyXybVLM1uY/tucI7CySN4GBUoBCg=;
-        b=TqdYegSzbYbk88OUdBArdqqpctG+narpZzuLXm5J/n8Qa0+e/lAi/D4OWW6apBXEww
-         zIGLvlcKWmmMHmQMUUj5yrv5IGGi6yJDPhkNtwf53mXxbsHI0htiY9ObkrLhdvADB8bV
-         7VtyqlyNIiokkdocZrZsxVJ0R7an7hXIEqehoSeTnw4GPIg+aOAXl1Aki6e1IcUP7BNp
-         9vGkXysmMPZzSJaryQe20ZSpnmXfi8K6MZSxzzh2ABR8vmGNYRwbXB0jrG6jYCJXpRMw
-         APzrKIOdtMtQeggdXKEhXo422ShrTGFjUSkAvcHGp27nM0bwGRc84Cj8zC3G8R2RrbcZ
-         BI3A==
+        bh=iiHSaiFwYnxeXJNiC6ft2n6E6HnZA5O/Rg0VZMt8MPE=;
+        b=zyXkJ5TTSZZH2tNdQZ9I/k9S1wiAbhr0NKTbzJCkXo3Iq3NKu0Vvbg4o8KEgeLjnSy
+         msqAEuHPRzTVj0rlTr4FP4P8Jbi7CskHIklTGxDzNWPpNs+HzorkJVYW6Uw7xMbBv9BF
+         B2ZC3Bs0VQtvEXfrUnwZAllh+RonoksunmK75wAz2wv8xWa4B3WWGocwlybZlV6C1kZ8
+         i6FANX2OYe1kAQ/MjTbNlzMSwyRYiiwGekpktFd5SUklZ5j0XhC7aOQg5PLu0CqiN52r
+         8cM6o+63i5e+hfywypF/xcHLfFqkmsRPfJ9+qokdHYJEEUi/V2UHAt9tbVSr5woAu97t
+         OSAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721752392; x=1722357192;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1721752436; x=1722357236;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PdY3KgxTtiJXPxjyXybVLM1uY/tucI7CySN4GBUoBCg=;
-        b=kuflloFHfzESMlE3ijK87PNXfeaD4RmTNEgcdTyOnPw8gCT/90UvhLrPX2dYwAxkbh
-         IZUE7uzGGDNQctTh2naYQPquXEpDXOIRrwiISc+lyhd9YmQvG9rAPjIgrPJhSx3+BtgG
-         gjpL/zW0N73lYyAmN1Ol/PPtPq/WozyVfN6TbXbjJlPp7zWeys0yMFtEkccIpJgIgSz9
-         WJhP8TRrNHLYxOWyVUvZ/Rmh5xdUtnU42aMq4NNFbSz05fGuCmA04NS1sl/qxD0Zq8ay
-         iHybZiC/uu6aSqUgFmbiEVb3yiJxDwoQ8zFoXEm70hH5uGuAKlNQ9z6NZaOcVrNjQxIl
-         19sw==
-X-Forwarded-Encrypted: i=1; AJvYcCXCFku8IbrOi4uBjGtRcuA0UFUso7M4UJAenaLsnyj7uAVUlXUrgU2pOQyr3vSHeNesS9Cpd2TKuC7BVKC0RslCBp5NA2SAgJsX3eaN
-X-Gm-Message-State: AOJu0Yw9uZWo7HxBCP7ju74VZVxYykoo2TbYCx8of3vDrBXUrSYfaZQR
-	MTjOq4TuSzYid+hG1goRk8ex+vVg585zwGlwtzhfTlWHhXEJtCtfsZo+VrzGLEM=
-X-Google-Smtp-Source: AGHT+IEPaVMzHCT8IN1kBlhYBPMyRD/ur/7HPDJtgHd3pnd2Iz+exktN3oy/a1T2KPvG2IeXeQZ6zg==
-X-Received: by 2002:a05:6870:4205:b0:261:f30:fda3 with SMTP id 586e51a60fabf-2638df3318amr10459852fac.21.1721752392424;
-        Tue, 23 Jul 2024 09:33:12 -0700 (PDT)
-Received: from localhost ([136.62.192.75])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2610c7ce708sm2199570fac.25.2024.07.23.09.33.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 09:33:12 -0700 (PDT)
-From: Sam Protsenko <semen.protsenko@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Mateusz Majewski <m.majewski2@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 2/2] clk: samsung: exynos850: Add TMU clock
-Date: Tue, 23 Jul 2024 11:33:11 -0500
-Message-Id: <20240723163311.28654-2-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240723163311.28654-1-semen.protsenko@linaro.org>
-References: <20240723163311.28654-1-semen.protsenko@linaro.org>
+        bh=iiHSaiFwYnxeXJNiC6ft2n6E6HnZA5O/Rg0VZMt8MPE=;
+        b=nAgQFgYyusBIEZDTEmxcAhdIn9kKVPE48frIBOMWqJ8PTUhCeSrIDr4vxA7WTrum1o
+         emz2znol+7zuVuXmnRZqDtzoXoSsukhx0863WWIYiy+3UJLPMUIYsUYjjDjrEh/hz8Fm
+         5beRJL9YuSvFOXfnZWqB7bRRnMdpdXfF7RxhaVFM+VbAw97wMRVOQGRdJW6n2dlJfvSr
+         5ogwmCoOKUivkvy7o8iBEgNDGFbmz5a9SNHcAvGZga0QPh3OIEqu9N3zx2PkCoTBs9VF
+         cl7JdrXRP5zunmC4flEZWTJ5Bgr6ijPDQRlAGt8KiZWFNeWfeAGCA69dECAyNaSXEjY9
+         kozg==
+X-Forwarded-Encrypted: i=1; AJvYcCVW5B5jMHWb9/gU9n+F1szO5Hl7/sWcWTsww7VtCgNWuVLm4NdwyAYQHfNtvrSO87FcnF8dyOuZ8tyf1Q5hLOvYs+IVhSxG5Eiyyi34
+X-Gm-Message-State: AOJu0YzOeiMbkwsY06qzTmnUk9NSIQKm+Fj7sBMVcgvb2hOBA4IUzU50
+	YLGzXIjLemWz39Nt4M6/f6+7IpO5n67rJaktDjoVr+R1GmfoDFaAYKMZHE9uRvGgT/YKDt7zRWI
+	bRUDoJA+xhaK+eQq559IIQMrSrm07vBDgbEHq
+X-Google-Smtp-Source: AGHT+IFkcnxlwSrfASAm2b5oqxdiNNK+NxUsk7wv3nDfPHaSyqG2E4MLZ+C7g0N20H/g2abqr2ueJJZjIFXzbC4wLao=
+X-Received: by 2002:a05:6402:2747:b0:59e:9fb1:a0dc with SMTP id
+ 4fb4d7f45d1cf-5a456a628aemr729704a12.6.1721752435997; Tue, 23 Jul 2024
+ 09:33:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240720173543.897972-1-jglisse@google.com> <0c390494-e6ba-4cde-aace-cd726f2409a1@redhat.com>
+In-Reply-To: <0c390494-e6ba-4cde-aace-cd726f2409a1@redhat.com>
+From: Jerome Glisse <jglisse@google.com>
+Date: Tue, 23 Jul 2024 09:33:44 -0700
+Message-ID: <CAPTQFZSgNHEE0Ub17=kfF-W64bbfRc4wYijTkG==+XxfgcocOQ@mail.gmail.com>
+Subject: Re: [PATCH] mm: fix maxnode for mbind(), set_mempolicy() and migrate_pages()
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add TMU PCLK clock in CMU_PERI unit. It acts simultaneously as an
-interface clock (to access TMU registers) and an operating clock which
-makes TMU IP-core functional.
+On Mon, 22 Jul 2024 at 06:09, David Hildenbrand <david@redhat.com> wrote:
+>
+> On 20.07.24 19:35, Jerome Glisse wrote:
+> > Because maxnode bug there is no way to bind or migrate_pages to the
+> > last node in multi-node NUMA system unless you lie about maxnodes
+> > when making the mbind, set_mempolicy or migrate_pages syscall.
+> >
+> > Manpage for those syscall describe maxnodes as the number of bits in
+> > the node bitmap ("bit mask of nodes containing up to maxnode bits").
+> > Thus if maxnode is n then we expect to have a n bit(s) bitmap which
+> > means that the mask of valid bits is ((1 << n) - 1). The get_nodes()
+> > decrement lead to the mask being ((1 << (n - 1)) - 1).
+> >
+> > The three syscalls use a common helper get_nodes() and first things
+> > this helper do is decrement maxnode by 1 which leads to using n-1 bits
+> > in the provided mask of nodes (see get_bitmap() an helper function to
+> > get_nodes()).
+> >
+> > The lead to two bugs, either the last node in the bitmap provided will
+> > not be use in either of the three syscalls, or the syscalls will error
+> > out and return EINVAL if the only bit set in the bitmap was the last
+> > bit in the mask of nodes (which is ignored because of the bug and an
+> > empty mask of nodes is an invalid argument).
+> >
+> > I am surprised this bug was never caught ... it has been in the kernel
+> > since forever.
+>
+> Let's look at QEMU: backends/hostmem.c
+>
+>      /*
+>       * We can have up to MAX_NODES nodes, but we need to pass maxnode+1
+>       * as argument to mbind() due to an old Linux bug (feature?) which
+>       * cuts off the last specified node. This means backend->host_nodes
+>       * must have MAX_NODES+1 bits available.
+>       */
+>
+> Which means that it's been known for a long time, and the workaround
+> seems to be pretty easy.
+>
+> So I wonder if we rather want to update the documentation to match realit=
+y.
 
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
----
- drivers/clk/samsung/clk-exynos850.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+[Sorry resending as text ... gmail insanity]
 
-diff --git a/drivers/clk/samsung/clk-exynos850.c b/drivers/clk/samsung/clk-exynos850.c
-index 6215471c4ac6..e00e213b1201 100644
---- a/drivers/clk/samsung/clk-exynos850.c
-+++ b/drivers/clk/samsung/clk-exynos850.c
-@@ -28,7 +28,7 @@
- #define CLKS_NR_HSI			(CLK_GOUT_HSI_CMU_HSI_PCLK + 1)
- #define CLKS_NR_IS			(CLK_GOUT_IS_SYSREG_PCLK + 1)
- #define CLKS_NR_MFCMSCL			(CLK_GOUT_MFCMSCL_SYSREG_PCLK + 1)
--#define CLKS_NR_PERI			(CLK_GOUT_WDT1_PCLK + 1)
-+#define CLKS_NR_PERI			(CLK_GOUT_BUSIF_TMU_PCLK + 1)
- #define CLKS_NR_CORE			(CLK_GOUT_SPDMA_CORE_ACLK + 1)
- #define CLKS_NR_DPU			(CLK_GOUT_DPU_SYSREG_PCLK + 1)
- 
-@@ -1921,6 +1921,7 @@ static const struct samsung_cmu_info mfcmscl_cmu_info __initconst = {
- #define CLK_CON_GAT_GATE_CLK_PERI_HSI2C_0	0x200c
- #define CLK_CON_GAT_GATE_CLK_PERI_HSI2C_1	0x2010
- #define CLK_CON_GAT_GATE_CLK_PERI_HSI2C_2	0x2014
-+#define CLK_CON_GAT_GOUT_PERI_BUSIF_TMU_PCLK	0x2018
- #define CLK_CON_GAT_GOUT_PERI_GPIO_PERI_PCLK	0x2020
- #define CLK_CON_GAT_GOUT_PERI_HSI2C_0_IPCLK	0x2024
- #define CLK_CON_GAT_GOUT_PERI_HSI2C_0_PCLK	0x2028
-@@ -1957,6 +1958,7 @@ static const unsigned long peri_clk_regs[] __initconst = {
- 	CLK_CON_GAT_GATE_CLK_PERI_HSI2C_0,
- 	CLK_CON_GAT_GATE_CLK_PERI_HSI2C_1,
- 	CLK_CON_GAT_GATE_CLK_PERI_HSI2C_2,
-+	CLK_CON_GAT_GOUT_PERI_BUSIF_TMU_PCLK,
- 	CLK_CON_GAT_GOUT_PERI_GPIO_PERI_PCLK,
- 	CLK_CON_GAT_GOUT_PERI_HSI2C_0_IPCLK,
- 	CLK_CON_GAT_GOUT_PERI_HSI2C_0_PCLK,
-@@ -2068,6 +2070,9 @@ static const struct samsung_gate_clock peri_gate_clks[] __initconst = {
- 	GATE(CLK_GOUT_GPIO_PERI_PCLK, "gout_gpio_peri_pclk",
- 	     "mout_peri_bus_user",
- 	     CLK_CON_GAT_GOUT_PERI_GPIO_PERI_PCLK, 21, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_GOUT_BUSIF_TMU_PCLK, "gout_busif_tmu_pclk",
-+	     "mout_peri_bus_user",
-+	     CLK_CON_GAT_GOUT_PERI_BUSIF_TMU_PCLK, 21, 0, 0),
- };
- 
- static const struct samsung_cmu_info peri_cmu_info __initconst = {
--- 
-2.39.2
+I think it is kind of weird if we ask to supply maxnodes+1 to work
+around the bug. If we apply this patch qemu would continue to work as
+is while fixing users that were not aware of that bug. So I would say
+applying this patch does more good. Long term qemu can drop its
+workaround or keep it for backward compatibility with old kernel.
 
+Thank you,
+J=C3=A9r=C3=B4me
 
