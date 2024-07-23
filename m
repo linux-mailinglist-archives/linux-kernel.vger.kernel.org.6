@@ -1,75 +1,76 @@
-Return-Path: <linux-kernel+bounces-259685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B812B939B96
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:16:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03793939B9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:18:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E727282F21
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:16:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B46DA282385
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 07:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3C114A4D6;
-	Tue, 23 Jul 2024 07:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA21A142631;
+	Tue, 23 Jul 2024 07:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cvx98APM"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PPRoaNpp"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C75F13C3D6
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1AC13C68A
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721718998; cv=none; b=j8m+zrPTL503P4VF5mtjaMEe7rCdaL581rRQulMkfbZOjTL+S4SCDA9XJVk574c07BfM33MG1Vz+bU52Ud1AVIDIKJOF8U9JeOCeXHeqL+Aj8jVAqm4Dj/aa8hG8uevjKlLZs49Pbs8sLi3kAUpUogl0SnHyLjoqJreuScT7tFs=
+	t=1721719076; cv=none; b=BFgOVp0cO6/2R6EBbTdwUEeVWvucLflXcsv2D7bHr6hW9DdvaeTwrHseNtxfpTNVJvu2/g6ZqAuZPVARfbzQRXvltWDqnfCF+WsJ4OBTRhiW9RoTYRXFDHUXj9AHsgsO84rTrGxXlLilsSLPIQ79BZ1/R6xCz3i8YnAtN4dJ/yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721718998; c=relaxed/simple;
-	bh=55f9gzZ3xg3DLxoDmzBHAgc6dkit/Wge8rACVtjoBF8=;
+	s=arc-20240116; t=1721719076; c=relaxed/simple;
+	bh=5ZpyWgR3MWOeedjCIZVTQAe0tbxKYhEg4lb71T+w6Ck=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RzsHG/u4jSEy4ru5JfFfPYzX0uFaJdkYgWRMMDuTI4dTqCtthdW7tdhyu+WXP/Y15hnQkmKBbDz+JLcZlWKWAm96UvFQH0w/raPMWh16KbqYCO9PWHiHKHFFH32TAkpmkobSoRLIt0+p8ml5NN3ZBUpMH7ph3t4vfptVLNzJxks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cvx98APM; arc=none smtp.client-ip=209.85.128.46
+	 In-Reply-To:Content-Type; b=lQU7m3N0+nYHj9F3Y8UGWCTi2WC5MPnwpbXWPEAWmRjQXz4jMZmnsLmMZuyOZKfLJNifUyNwkhFzNDy//E94CXMm2vMov9Rc3C41U276U3Q66Nc9TMosAfeDQodTZ3/MpTtBI/+6lAzzumcl4oBobyxLHPAjAvSbPZnA/Xbkbzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PPRoaNpp; arc=none smtp.client-ip=209.85.208.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42797bcfc77so38445665e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 00:16:36 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ef2d7d8854so21244951fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 00:17:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721718995; x=1722323795; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1721719072; x=1722323872; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=c8+z1hzRqPPRvxreD5f+LLq696wigaoWrNTEWZo7r6M=;
-        b=cvx98APMFQkmtA0W60Qgn2dJId3mcQdeweelGPPvqNOm/Oqf8Dp2tBltXDsZSTIFP1
-         LYi+2kR0WcuPtxE8Q39JI5rAJSEWBvrOqSZVL6CPgbGWkfz3AzjPtKKChKUjr1/Sy/sN
-         Wiz8I/wNTtPojarAhwsHHPek0EUuG3j40jxmI7CfSJVRukCf3RjDKNaQSA7JseuIg7kN
-         +CIPgilCUAQffQgl4rEvNaBcpZJ/mMjqJC+nBIptFosj/HzKWvZpddkjupVigEFC9EOv
-         UVQm0h516ETva5Uz4gsxSa4qz3cxMDP5LEY/iZJ+gEs//9bBLbN6mp34v+FAkwQuH1RH
-         3ZWA==
+        bh=umMVmI8IKdHl++O7se9W/HW6MwPFPWF32KbYepYLJFs=;
+        b=PPRoaNpplVmd1b79wltf4Rjs4/zXT/W5/UzTs1X42Jnnt/BjmqNBWGZFfBJHPpe4z1
+         2p/pH6cW6lW1dnxlkdo4I0Pifu6wmRoOcuSD4RTVmTNUy+XMtovDNi2HLscKeFxzmqtN
+         5RyBTBi8vAYioYCpyBfdpZINEvgMl69ehOhy6fFir3gMGjMFqFi57WcH8tTfEAQF5+Hw
+         hnLUPhWVCygiRQgv6Ki1CGjSveQxO1ZUQQNlWX7zD5TWygx/StGCDdgq6kJQFKkH4qGw
+         Wdww6Do9KMEPho2wuhtRdvIwKgWrXJ03L3ldN0GnKSrZbCRPvLO5nbbYtRe6NhwZwrWI
+         nnQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721718995; x=1722323795;
+        d=1e100.net; s=20230601; t=1721719072; x=1722323872;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=c8+z1hzRqPPRvxreD5f+LLq696wigaoWrNTEWZo7r6M=;
-        b=YrzxJxzGE8Ry93K3CNBi6LvJQo8VZh0Orovry5Jk75s9kWvmameF59E8fG9XD6K49J
-         fH/6nzFe/QG8CPIbe25uE/z//N5qVLwP/2Iqvu8TQibUw1xeej5zMEU8C/lXD7+s3vtE
-         77nPWyWQrvnajJQIDTxmlzO2nJ2Dqsk5ntlS/0xqqDp16ncFJRhLv6mDHsklr27S/IO4
-         298hkuh/GsxLqNzJE7j0MntqIS+5Z4xiVWZ0JTDgl7EUi+3yaIKLH7lnST2D+imKt4UG
-         QUAx0nctu5S5Nx2qNqUvkC+T5An5AnSjI7b/JNymM/JzAhSVoUmqnPA+jzDrwiR2BtGD
-         3I4w==
-X-Forwarded-Encrypted: i=1; AJvYcCU2mq6zkJGhB8QCLAI5y98D3F8TzuwUHsuprTRquMqTrRTs0W+YrNTxUmk3mHmgaFBT24xfTnoiC10/2ltX+PxPn+M8fiSiELugPy/B
-X-Gm-Message-State: AOJu0Yyive+69IHFwSPjfMuD7/szu2dv3bK58eZ7bZzy2fstCAQTTjyy
-	ubceTNNG6Tkq2JEjTa0xkRiLJSk9rQY6LtHQ8yNwGJJHa9PiCrlYPXl8hfevEwA=
-X-Google-Smtp-Source: AGHT+IG5VufI8pqRrLSqh+8rndOpIB3ocF60gG2oVIkHsjs5kqH3um83dyn6qiiPjAfzqwGfRkOfzw==
-X-Received: by 2002:a05:600c:384d:b0:426:5d0d:a2c9 with SMTP id 5b1f17b1804b1-427dc522895mr67647995e9.10.1721718995075;
-        Tue, 23 Jul 2024 00:16:35 -0700 (PDT)
+        bh=umMVmI8IKdHl++O7se9W/HW6MwPFPWF32KbYepYLJFs=;
+        b=Wmnljrjs0zz0zPPPEe3s1sGF2b4lYH9yIEl4Ih66NVSaeYiv+8O0gzcKVF6dNLexh0
+         4bdTop/IJmTe/NvCmK3Qm08yQ9w3oKCZS54sG2PkL13HiQIT55gDj6dvb2Yd3H+Dj7mi
+         E2UgBQLbMyykUdFsuXqY7DF8+w+tyWveK09U4GXA4HU35U08NH6K+gTql7DCGY4GBAkl
+         A0nEsKTPietsHwTuGPX+wOa/HT6OQzOakSZBX8zOw+IPrGYxm3vCyc3zulrF3kVLtcec
+         ai3Fr/NNgU9K5EqVKWBaHiP2mJTEZ2hC4/V3aMk9L8p6ppl7UuIlkQTGcJahIAS3lfwC
+         2JtA==
+X-Forwarded-Encrypted: i=1; AJvYcCXXklUUMDU7Xd3uvbgxoy4r5MU2y3RVOzcmpsxGG04w2LCBNWZHiyZSKqOrxzl9PiXWHvVosxu4FWeF9OM9SsaL5QC2Jth7ceQltUQp
+X-Gm-Message-State: AOJu0Yyood1919r5KQ28Z28V5JteAVeuOutCrgsMXNNRcaIHZ2mytuXb
+	ou8qodrAbl1tNrMC+pDvjOABFS3bJp0mV04qTITx8JqnEEHfvMqG1GaCdOweuIa+VtSdapxIXj8
+	m
+X-Google-Smtp-Source: AGHT+IG2SjecpItKKr40kabohOsS8hWl2Ojj6C41sM04HkJaWcPeBeHkQlWCBgjh/tu0HMdUlmzTWA==
+X-Received: by 2002:a2e:a162:0:b0:2ee:84af:dfc4 with SMTP id 38308e7fff4ca-2f01ead8ff8mr12996171fa.43.1721719072168;
+        Tue, 23 Jul 2024 00:17:52 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:982:cbb0:f9d3:b429:5f14:dc9c? ([2a01:e0a:982:cbb0:f9d3:b429:5f14:dc9c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a5c564sm183341265e9.14.2024.07.23.00.16.34
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d6936e1esm158776455e9.44.2024.07.23.00.17.51
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 00:16:34 -0700 (PDT)
-Message-ID: <4f48f5ea-4247-401f-8d4c-0ddffe696bf8@linaro.org>
-Date: Tue, 23 Jul 2024 09:16:33 +0200
+        Tue, 23 Jul 2024 00:17:51 -0700 (PDT)
+Message-ID: <86b71a8a-2b8a-4130-9bd7-bb63658093f7@linaro.org>
+Date: Tue, 23 Jul 2024 09:17:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,17 +80,16 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 2/2] drm/panel: add BOE tv101wum-ll2 panel driver
-To: Jessica Zhang <quic_jesszhan@quicinc.com>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+Subject: Re: [PATCH v3 3/6] arm64: dts: amlogic: s4: add ao secure node
+To: xianwei.zhao@amlogic.com, Kevin Hilman <khilman@baylibre.com>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Douglas Anderson <dianders@chromium.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240709-topic-sdm450-upstream-tbx605f-panel-v1-0-af473397835d@linaro.org>
- <20240709-topic-sdm450-upstream-tbx605f-panel-v1-2-af473397835d@linaro.org>
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240719-soc_info-v3-0-020a3b687c0c@amlogic.com>
+ <20240719-soc_info-v3-3-020a3b687c0c@amlogic.com>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -116,29 +116,45 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20240709-topic-sdm450-upstream-tbx605f-panel-v1-2-af473397835d@linaro.org>
+In-Reply-To: <20240719-soc_info-v3-3-020a3b687c0c@amlogic.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi Jessica, Doug,
-
-On 09/07/2024 15:05, Neil Armstrong wrote:
-> Add support for the 1200x1920 BOE TV101WUM-LL2 DSI Display Panel found
-> in the Lenovo Smart Tab M10 tablet. The controller is unknown.
-
-Could you review this patch ?
-
-Thanks !
-Neil
-
+On 19/07/2024 10:08, Xianwei Zhao via B4 Relay wrote:
+> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Add node for board info registers, which allows getting SoC family and
+> board revision.
+> 
+> For example, with MESON_GX_SOCINFO config enabled we can get the
+> following information for board with Amlogic S4 SoC:
+> soc soc0: Amlogic S4 (S805X2) Revision 37:a (2:1) Detecte
+> 
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > ---
->   drivers/gpu/drm/panel/Kconfig                  |   9 +
->   drivers/gpu/drm/panel/Makefile                 |   1 +
->   drivers/gpu/drm/panel/panel-boe-tv101wum-ll2.c | 240 +++++++++++++++++++++++++
->   3 files changed, 250 insertions(+)
->
+>   arch/arm64/boot/dts/amlogic/meson-s4.dtsi | 8 ++++++++
+>   1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+> index c11c947fa18c..957577d986c0 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-s4.dtsi
+> @@ -763,6 +763,14 @@ reset: reset-controller@2000 {
+>   				#reset-cells = <1>;
+>   			};
+>   
+> +			sec_ao: ao-secure@10220 {
+> +				compatible = "amlogic,s4-ao-secure",
+> +					     "amlogic,meson-gx-ao-secure",
+> +					     "syscon";
+> +				reg = <0x0 0x10220 0x0 0x140>;
+> +				amlogic,has-chip-id;
+> +			};
+> +
+>   			ir: ir@84040 {
+>   				compatible = "amlogic,meson-s4-ir";
+>   				reg = <0x0 0x84040 0x0 0x30>;
+> 
 
-<snip>
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
