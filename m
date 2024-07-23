@@ -1,123 +1,182 @@
-Return-Path: <linux-kernel+bounces-259571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4526493989E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 05:24:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53B6E9398A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 05:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E8ED1C21997
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 03:24:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7162E1C219B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 03:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9E113B7A6;
-	Tue, 23 Jul 2024 03:24:32 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3294213B5B4;
+	Tue, 23 Jul 2024 03:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VNTDBx/u"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659908814
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 03:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742DB134407
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 03:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721705071; cv=none; b=s84LIsEagg70ZaxvHUWi5BiSFTlGIefIo5jFTbFzQQbG/j1tNvsw8HQnjvgcwM6oPCFAjPKdQJtGV2TffItiQr2BrRi1eJKqsvQ9obHoSBhoKWHseToSWc5XIV6YTJSe3oyUNkLdMZcmsOndnzaCS7fAa7u6zBUaT0LNeO4CVXw=
+	t=1721705417; cv=none; b=gAjvgaTGM0ocMNDxF69luuBQN0zGSjH3gQBfPC7LnEKrSQIeJcPmkngWnKNGKVi8EIrwWYfg3NuT5nvylYDtzBGoXlVOs9di4kpIZNt4cuTaCBmZbfw7CacYFdzPVzCNO0dfHqjncYaZGlGERtsQGW0kU8JuBTKaYy7l1SM6LLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721705071; c=relaxed/simple;
-	bh=pFbZu7g5LK4uzJKW80QH1xzfsjytBNX9LPtMxhmJ5xU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YUnZV6MLbNt+uMTPvUYXVxjEcS7STItZnjI7kLtKPdcYzQO77n+yxcOvpmnCoHIlGBm0KyixZ+q8zG08ir8N5Kq0H0cgV273H2KmHg+h0cJqmMoOeFfRHMYDTKj1nzwUIZlYl33Tc1Tx+m0c9o8N9shLi9LJ9nPdL6NmBDxR0AU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4WSj7h2QvBz1X4fJ;
-	Tue, 23 Jul 2024 11:20:00 +0800 (CST)
-Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
-	by mail.maildlp.com (Postfix) with ESMTPS id 62D14180028;
-	Tue, 23 Jul 2024 11:24:24 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 23 Jul 2024 11:24:23 +0800
-Message-ID: <d31b0226-6013-4152-af4b-1526146eb179@huawei.com>
-Date: Tue, 23 Jul 2024 11:24:23 +0800
+	s=arc-20240116; t=1721705417; c=relaxed/simple;
+	bh=nLnwoI7YeS9ALlvLqh0epIkBFGQRYQaAvU2pGkV1qB0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OVSCd9hiyBIeoDKiB3DpO7t6VvPehtGYGgUI1XnZStaSP7FAysT7wgPLqeNoUmx/x5xGH3+vGp4LZiDyOtixEzwYvvc/YkyiZouZz5Y0Ypxh8XYMSd1hf0wf6sEuwF4W5vpBcvkFRgahCZa+H0bfCsYEcKjPuv0VfK6Xnv2ALnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VNTDBx/u; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721705415; x=1753241415;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nLnwoI7YeS9ALlvLqh0epIkBFGQRYQaAvU2pGkV1qB0=;
+  b=VNTDBx/uNXwK0gef8+S35SeKo30ndEOFYCQCjYRYPVh/aABZVj1hv1oo
+   KMWfMxvYXBIihPTK2oYkRpo/eET2v3/ovUrOT9uiX8niEuFAuRajqTgcD
+   KXiOL7nxx4bPBVLIZh/9TG6n3IyCXQv8UOco+M2DkZclevJZStCsRftRg
+   5VyPi68X61BGd3HRykhkXis55XO7kjSPKvKyotvakEdoMRwDtjv/sjjQq
+   8x7vbJOZ7fDGBigHz9LPLTIGdAfa3MHlmuVvzWW/4mQq5Miw9w6hZ9YUH
+   IQy9HgE2wpl49Z4ego9cTkpVO+ykAu2S2RdzhlpF2UMyixGa++8qVPjeQ
+   A==;
+X-CSE-ConnectionGUID: Pgu9V2MGRxSVXAqjwK6Uyw==
+X-CSE-MsgGUID: SKWhGpnLTmWOHk02M4xvjw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11141"; a="19433689"
+X-IronPort-AV: E=Sophos;i="6.09,229,1716274800"; 
+   d="scan'208";a="19433689"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jul 2024 20:30:15 -0700
+X-CSE-ConnectionGUID: nSvWO+nXRZCdt6ilpccYyQ==
+X-CSE-MsgGUID: g8CC6jAvQ9Gjqc+Oi9Un+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,229,1716274800"; 
+   d="scan'208";a="83108108"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 22 Jul 2024 20:30:12 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sW6E6-000lbo-1g;
+	Tue, 23 Jul 2024 03:30:10 +0000
+Date: Tue, 23 Jul 2024 11:29:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: John Ogness <john.ogness@linutronix.de>, Petr Mladek <pmladek@suse.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH printk v3 07/19] printk: Add helpers for flush type logic
+Message-ID: <202407231135.jtSVw3hi-lkp@intel.com>
+References: <20240722171939.3349410-8-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] memory tiering: count PGPROMOTE_SUCCESS when mem
- tiering is enabled.
-Content-Language: en-US
-To: Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>,
-	<linux-mm@kvack.org>
-CC: David Hildenbrand <david@redhat.com>, "Huang, Ying"
-	<ying.huang@intel.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
-	<linux-kernel@vger.kernel.org>
-References: <20240722172917.503370-1-ziy@nvidia.com>
- <20240722172917.503370-3-ziy@nvidia.com>
- <5230d72e-81fa-4ef1-b386-90bd3b06bf0e@huawei.com>
- <D2WJLRHB9T9S.DRAUA25VKCBP@nvidia.com>
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <D2WJLRHB9T9S.DRAUA25VKCBP@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf100008.china.huawei.com (7.185.36.138)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240722171939.3349410-8-john.ogness@linutronix.de>
+
+Hi John,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on b18703ea7157f62f02eb0ceb11f6fa0138e90adc]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/John-Ogness/printk-nbcon-Clarify-nbcon_get_default_prio-context/20240723-015154
+base:   b18703ea7157f62f02eb0ceb11f6fa0138e90adc
+patch link:    https://lore.kernel.org/r/20240722171939.3349410-8-john.ogness%40linutronix.de
+patch subject: [PATCH printk v3 07/19] printk: Add helpers for flush type logic
+config: arm-randconfig-004-20240723 (https://download.01.org/0day-ci/archive/20240723/202407231135.jtSVw3hi-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project ad154281230d83ee551e12d5be48bb956ef47ed3)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240723/202407231135.jtSVw3hi-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407231135.jtSVw3hi-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from kernel/printk/printk.c:23:
+   In file included from include/linux/mm.h:2253:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from kernel/printk/printk.c:61:
+>> kernel/printk/internal.h:188:26: error: call to undeclared function 'is_printk_deferred'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     188 |                         if (prefer_offload || is_printk_deferred())
+         |                                               ^
+   kernel/printk/internal.h:188:26: note: did you mean '_printk_deferred'?
+   include/linux/printk.h:218:5: note: '_printk_deferred' declared here
+     218 | int _printk_deferred(const char *s, ...)
+         |     ^
+   In file included from kernel/printk/printk.c:61:
+   kernel/printk/internal.h:237:8: error: call to undeclared function 'is_printk_deferred'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     237 |                         if (is_printk_deferred())
+         |                             ^
+   1 warning and 2 errors generated.
 
 
+vim +/is_printk_deferred +188 kernel/printk/internal.h
 
-On 2024/7/23 9:54, Zi Yan wrote:
-> On Mon Jul 22, 2024 at 9:48 PM EDT, Kefeng Wang wrote:
->>
->>
->> On 2024/7/23 1:29, Zi Yan wrote:
->>> memory tiering can be enabled/disabled at runtime and
->>> sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING is used to check
->>> it. In migrate_misplaced_folio(), the check is missing when
->>> PGPROMOTE_SUCCESS is incremented. Add the missing check.
->>>
->>> Reported-by: Kefeng Wang <wangkefeng.wang@huawei.com>
->>> Closes: https://lore.kernel.org/linux-mm/f4ae2c9c-fe40-4807-bdb2-64cf2d716c1a@huawei.com/
->>> Fixes: 33024536bafd ("memory tiering: hot page selection with hint page fault latency")
->>> Signed-off-by: Zi Yan <ziy@nvidia.com>
->>
->> Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
->>
-> Thanks.
-> 
->>> ---
->>>    mm/migrate.c | 4 +++-
->>>    1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/mm/migrate.c b/mm/migrate.c
->>> index bdbb5bb04c91..b819809da470 100644
->>> --- a/mm/migrate.c
->>> +++ b/mm/migrate.c
->>> @@ -2630,7 +2630,9 @@ int migrate_misplaced_folio(struct folio *folio, struct vm_area_struct *vma,
->>>    		putback_movable_pages(&migratepages);
->>>    	if (nr_succeeded) {
->>>    		count_vm_numa_events(NUMA_PAGE_MIGRATE, nr_succeeded);
->>> -		if (!node_is_toptier(folio_nid(folio)) && node_is_toptier(node))
->>> +		if ((sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING)
->>> +		    && !node_is_toptier(folio_nid(folio))
->>> +		    && node_is_toptier(node))
->>>    			mod_node_page_state(pgdat, PGPROMOTE_SUCCESS,
->>>    					    nr_succeeded);
->>
->> The should be in advance of patch2, and change above to use
->> folio_has_cpupid() helper() too.
-> 
-> It shares the same logic of !folio_has_cpupid() but it might be confusing to
-> put !folio_has_cpupid(folio) && node_is_toptier(node) here. folio's
-> cpupid has nothing to do with the stats here, thus I did not use the
-> function.
+   172	
+   173	/*
+   174	 * Decide while console flushing methods are to be used. Used
+   175	 * for all flushing except when flushing from emergency state.
+   176	 *
+   177	 * Set @prefer_offload to true if the context is only interested in
+   178	 * offloading. Then offloading types will be set instead of direct,
+   179	 * if appropriate.
+   180	 */
+   181	static inline void printk_get_console_flush_type(struct console_flush_type *ft, bool prefer_offload)
+   182	{
+   183		memset(ft, 0, sizeof(*ft));
+   184	
+   185		switch (nbcon_get_default_prio()) {
+   186		case NBCON_PRIO_NORMAL:
+   187			if (have_legacy_console || have_boot_console) {
+ > 188				if (prefer_offload || is_printk_deferred())
+   189					ft->legacy_offload = true;
+   190				else
+   191					ft->legacy_direct = true;
+   192			}
+   193	
+   194			if (have_nbcon_console && !have_boot_console)
+   195				ft->nbcon_atomic = true;
+   196			break;
+   197	
+   198		case NBCON_PRIO_EMERGENCY:
+   199			/*
+   200			 * Skip. The consoles will be flushed when exiting emergency
+   201			 * state. See printk_get_emergency_console_flush_type().
+   202			 */
+   203			break;
+   204	
+   205		case NBCON_PRIO_PANIC:
+   206			if (have_nbcon_console && !have_boot_console)
+   207				ft->nbcon_atomic = true;
+   208	
+   209			/*
+   210			 * In panic, if nbcon atomic printing occurs, the legacy
+   211			 * consoles must remain silent until explicitly allowed.
+   212			 */
+   213			if (legacy_allow_panic_sync || !ft->nbcon_atomic)
+   214				ft->legacy_direct = true;
+   215			break;
+   216	
+   217		default:
+   218			WARN_ON_ONCE(1);
+   219			break;
+   220		}
+   221	}
+   222	
 
-If folio don't include access time, we do migrate it but it isn't a 
-promotion, so don't count it, other comments?
-
-PS: Could we rename folio_has_cpupid() to folio_has_access_time(), even 
-without memory_tiering, we still have cpupid in folio, right?
-> 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
