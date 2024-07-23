@@ -1,297 +1,235 @@
-Return-Path: <linux-kernel+bounces-260005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB33493A12F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:20:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BABC193A1F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 649E8280A67
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:20:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 397E71F237B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F560152E1D;
-	Tue, 23 Jul 2024 13:19:51 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2AA153569;
+	Tue, 23 Jul 2024 13:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="AzEZm7Ae"
+Received: from out187-20.us.a.mail.aliyun.com (out187-20.us.a.mail.aliyun.com [47.90.187.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF3B14E2D0;
-	Tue, 23 Jul 2024 13:19:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F378F70;
+	Tue, 23 Jul 2024 13:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.187.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721740790; cv=none; b=XvqAmRsth1Y3aQhtcvG7ltqjlWZSd0i4l6Xd/2U4yZ0iZW36efu6YcsclO6rTOFqIimb08znesWb+a1vsZkglU68HBNbjRluOKhC/aEmk+Zct/t5OCiglrKxzUfa6Au3SE3v8q6csJ1XUiMSJEpvbf2nLN428etcJMCkWVKW1Lg=
+	t=1721742678; cv=none; b=MYZvAWNqM0LWSIswx3+FUoXvX9BeGJq4gPGbvELqGt0pKv6cBtLRuhVj2qnJGb2FF5GQt1dA4rTs87Wk4d3zuHPO7+fYZhHYMmtUpZT7lA24xaL//7v2rsZKN1A9ZUrh8eWw5kbKt3MlSjadxxWDfXHEkQ/PSPwMUdvli2Gt4RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721740790; c=relaxed/simple;
-	bh=zl6zSPEBXbpkSORWIW46uub+HDKFTK1TCAEyNhxAi1I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=orCBp1/flTIHYV+i9clLud3DF9lPY9Xx9eqZ6psf8anvn1BT2OKkEZSxnr1vzTBGy4TykhDmxamiOrmicik6gXmzHcE9rmWpEeXChE8XQgFD+rnE96xG6SPndtbGrYnNeq/+Wy5IDUJ9oUtCDxynyWIPo5XOM1Hjc6Gw/qWRAxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WSyLw1wslzQmbK;
-	Tue, 23 Jul 2024 21:15:36 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7EA3C180102;
-	Tue, 23 Jul 2024 21:19:46 +0800 (CST)
-Received: from [10.67.120.129] (10.67.120.129) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 23 Jul 2024 21:19:46 +0800
-Message-ID: <5a0e12c1-0e98-426a-ab4d-50de2b09f36f@huawei.com>
-Date: Tue, 23 Jul 2024 21:19:46 +0800
+	s=arc-20240116; t=1721742678; c=relaxed/simple;
+	bh=Ky2Zko+wHRdleQq8zIUXC9P800ciLsF5ZoFhcO3nu2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PUO+dJj04TbYgSkXhHHEqD+pYrpQ+zmR3ltS81CP3dQ5SLCq26l/yw5nS6H3OhMXQrbMuRbqVmX6vkzxpaIkVx9xTcY7aVu0QRAx1Uo1AXAxPQWnYC1qyLOGkbWkFoRBfkWAOEA6KZOpNuAYYOt8P5KaUfH0kYH7IPqx8ViVYRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=AzEZm7Ae; arc=none smtp.client-ip=47.90.187.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=antgroup.com; s=default;
+	t=1721742660; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=vCE01r08TqBO/rkkhma9XyaLno6uRIgtUtNxelheW40=;
+	b=AzEZm7Ae/omvA26wBxYIo08NU7bw4bomIPu2PtaaKVa4bx/umvjvaLPEvWdzRT/fr8Mn4P2Qd3Ra1QDJMhNGCVzVgzz9y276yQu7gpf6Ng7u8S4aui1YwWH6ff2VmmppScR+UtU4lch6gg04N2ddcfzVgXROjwGq0UlJTFC81aI=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R331e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033070021168;MF=houwenlong.hwl@antgroup.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---.YXQIh60_1721740804;
+Received: from localhost(mailfrom:houwenlong.hwl@antgroup.com fp:SMTPD_---.YXQIh60_1721740804)
+          by smtp.aliyun-inc.com;
+          Tue, 23 Jul 2024 21:20:05 +0800
+Date: Tue, 23 Jul 2024 21:20:04 +0800
+From: "Hou Wenlong" <houwenlong.hwl@antgroup.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jim Mattson <jmattson@google.com>
+Subject: Re: [PATCH] KVM: nVMX: Honor userspace MSR filter lists for nested
+ VM-Enter/VM-Exit
+Message-ID: <20240723132004.GA67088@k08j02272.eu95sqa>
+References: <20240722235922.3351122-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v11 08/14] mm: page_frag: some minor refactoring before
- adding new API
-To: Alexander Duyck <alexander.duyck@gmail.com>
-CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Andrew Morton
-	<akpm@linux-foundation.org>, <linux-mm@kvack.org>
-References: <20240719093338.55117-1-linyunsheng@huawei.com>
- <20240719093338.55117-9-linyunsheng@huawei.com>
- <dbf876b000158aed8380d6ac3a3f6e8dd40ace7b.camel@gmail.com>
- <fdc778be-907a-49bd-bf10-086f45716181@huawei.com>
- <CAKgT0UeQ9gwYo7qttak0UgXC9+kunO2gedm_yjtPiMk4VJp9yQ@mail.gmail.com>
-Content-Language: en-US
-From: Yunsheng Lin <linyunsheng@huawei.com>
-In-Reply-To: <CAKgT0UeQ9gwYo7qttak0UgXC9+kunO2gedm_yjtPiMk4VJp9yQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240722235922.3351122-1-seanjc@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On 2024/7/22 23:32, Alexander Duyck wrote:
-> On Mon, Jul 22, 2024 at 5:55 AM Yunsheng Lin <linyunsheng@huawei.com> wrote:
->>
->> On 2024/7/22 7:40, Alexander H Duyck wrote:
->>> On Fri, 2024-07-19 at 17:33 +0800, Yunsheng Lin wrote:
->>>> Refactor common codes from __page_frag_alloc_va_align()
->>>> to __page_frag_cache_refill(), so that the new API can
->>>> make use of them.
->>>>
->>>> CC: Alexander Duyck <alexander.duyck@gmail.com>
->>>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
->>>> ---
->>>>  include/linux/page_frag_cache.h |  2 +-
->>>>  mm/page_frag_cache.c            | 93 +++++++++++++++++----------------
->>>>  2 files changed, 49 insertions(+), 46 deletions(-)
->>>>
->>>> diff --git a/include/linux/page_frag_cache.h b/include/linux/page_frag_cache.h
->>>> index 12a16f8e8ad0..5aa45de7a9a5 100644
->>>> --- a/include/linux/page_frag_cache.h
->>>> +++ b/include/linux/page_frag_cache.h
->>>> @@ -50,7 +50,7 @@ static inline void *encoded_page_address(unsigned long encoded_va)
->>>>
->>>>  static inline void page_frag_cache_init(struct page_frag_cache *nc)
->>>>  {
->>>> -    nc->encoded_va = 0;
->>>> +    memset(nc, 0, sizeof(*nc));
->>>>  }
->>>>
->>>
->>> I do not like requiring the entire structure to be reset as a part of
->>> init. If encoded_va is 0 then we have reset the page and the flags.
->>> There shouldn't be anything else we need to reset as remaining and bias
->>> will be reset when we reallocate.
->>
->> The argument is about aoviding one checking for fast path by doing the
->> memset in the slow path, which you might already know accroding to your
->> comment in previous version.
->>
->> It is just sometimes hard to understand your preference for maintainability
->> over performance here as sometimes your comment seems to perfer performance
->> over maintainability, like the LEA trick you mentioned and offset count-down
->> before this patchset. It would be good to be more consistent about this,
->> otherwise it is sometimes confusing when doing the refactoring.
+On Tue, Jul 23, 2024 at 07:59:22AM +0800, Sean Christopherson wrote:
+> Synthesize a consistency check VM-Exit (VM-Enter) or VM-Abort (VM-Exit) if
+> L1 attempts to load/store an MSR via the VMCS MSR lists that userspace has
+> disallowed access to via an MSR filter.  Intel already disallows including
+> a handful of "special" MSRs in the VMCS lists, so denying access isn't
+> completely without precedent.
 > 
-> The use of a negative offset is arguably more maintainable in my mind
-> rather than being a performance trick. Essentially if you use the
-> negative value you can just mask off the upper bits and it is the
-> offset in the page. As such it is actually easier for me to read
-> versus "remaining" which is an offset from the end of the page.
-> Assuming you read the offset in hex anyway.
-
-Reading the above doesn't seems maintainable to me:(
-
+> More importantly, the behavior is well-defined _and_ can be communicated
+> the end user, e.g. to the customer that owns a VM running as L1 on top of
+> KVM.  On the other hand, ignoring userspace MSR filters is all but
+> guaranteed to result in unexpected behavior as the access will hit KVM's
+> internal state, which is likely not up-to-date.
 > 
->>>
->>>>  static inline bool page_frag_cache_is_pfmemalloc(struct page_frag_cache *nc)
->>>> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
->>>> index 7928e5d50711..d9c9cad17af7 100644
->>>> --- a/mm/page_frag_cache.c
->>>> +++ b/mm/page_frag_cache.c
->>>> @@ -19,6 +19,28 @@
->>>>  #include <linux/page_frag_cache.h>
->>>>  #include "internal.h"
->>>>
->>>> +static struct page *__page_frag_cache_recharge(struct page_frag_cache *nc)
->>>> +{
->>>> +    unsigned long encoded_va = nc->encoded_va;
->>>> +    struct page *page;
->>>> +
->>>> +    page = virt_to_page((void *)encoded_va);
->>>> +    if (!page_ref_sub_and_test(page, nc->pagecnt_bias))
->>>> +            return NULL;
->>>> +
->>>> +    if (unlikely(encoded_page_pfmemalloc(encoded_va))) {
->>>> +            VM_BUG_ON(compound_order(page) !=
->>>> +                      encoded_page_order(encoded_va));
->>>> +            free_unref_page(page, encoded_page_order(encoded_va));
->>>> +            return NULL;
->>>> +    }
->>>> +
->>>> +    /* OK, page count is 0, we can safely set it */
->>>> +    set_page_count(page, PAGE_FRAG_CACHE_MAX_SIZE + 1);
->>>> +
->>>> +    return page;
->>>> +}
->>>> +
->>>>  static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
->>>>                                           gfp_t gfp_mask)
->>>>  {
->>>> @@ -26,6 +48,14 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
->>>>      struct page *page = NULL;
->>>>      gfp_t gfp = gfp_mask;
->>>>
->>>> +    if (likely(nc->encoded_va)) {
->>>> +            page = __page_frag_cache_recharge(nc);
->>>> +            if (page) {
->>>> +                    order = encoded_page_order(nc->encoded_va);
->>>> +                    goto out;
->>>> +            }
->>>> +    }
->>>> +
->>>
->>> This code has no business here. This is refill, you just dropped
->>> recharge in here which will make a complete mess of the ordering and be
->>> confusing to say the least.
->>>
->>> The expectation was that if we are calling this function it is going to
->>> overwrite the virtual address to NULL on failure so we discard the old
->>> page if there is one present. This changes that behaviour. What you
->>> effectively did is made __page_frag_cache_refill into the recharge
->>> function.
->>
->> The idea is to reuse the below for both __page_frag_cache_refill() and
->> __page_frag_cache_recharge(), which seems to be about maintainability
->> to not having duplicated code. If there is a better idea to avoid that
->> duplicated code while keeping the old behaviour, I am happy to change
->> it.
->>
->>         /* reset page count bias and remaining to start of new frag */
->>         nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
->>         nc->remaining = PAGE_SIZE << order;
->>
+> Unlike KVM-internal accesses, instruction emulation, and dedicated VMCS
+> fields, the MSRs in the VMCS load/store lists are 100% guest controlled,
+> thus making it all but impossible to reason about the correctness of
+> ignoring the MSR filter.  And if userspace *really* wants to deny access
+> to MSRs via the aforementioned scenarios, userspace can hide the
+> associated feature from the guest, e.g. by disabling the PMU to prevent
+> accessing PERF_GLOBAL_CTRL via its VMCS field.  But for the MSR lists, KVM
+> is blindly processing MSRs; the  MSR filters are the _only_ way for
+> userspace to deny access.
 > 
-> The only piece that is really reused here is the pagecnt_bias
-> assignment. What is obfuscated away is that the order is gotten
-> through one of two paths. Really order isn't order here it is size.
-> Which should have been fetched already. What you end up doing with
-> this change is duplicating a bunch of code throughout the function.
-> You end up having to fetch size multiple times multiple ways. here you
-> are generating it with order. Then you have to turn around and get it
-> again at the start of the function, and again after calling this
-> function in order to pull it back out.
-
-I am assuming you would like to reserve old behavior as below?
-
-	if(!encoded_va) {
-refill:
-		__page_frag_cache_refill()
-	}
-
-
-	if(remaining < fragsz) {
-		if(!__page_frag_cache_recharge())
-			goto refill;
-	}
-
-As we are adding new APIs, are we expecting new APIs also duplicate
-the above pattern?
-
+> This partially reverts commit ac8d6cad3c7b ("KVM: x86: Only do MSR
+> filtering when access MSR by rdmsr/wrmsr").
 > 
->>>
->>>>  #if (PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE)
->>>>      gfp_mask = (gfp_mask & ~__GFP_DIRECT_RECLAIM) |  __GFP_COMP |
->>>>                 __GFP_NOWARN | __GFP_NORETRY | __GFP_NOMEMALLOC;
->>>> @@ -35,7 +65,7 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
->>>>      if (unlikely(!page)) {
->>>>              page = alloc_pages_node(NUMA_NO_NODE, gfp, 0);
->>>>              if (unlikely(!page)) {
->>>> -                    nc->encoded_va = 0;
->>>> +                    memset(nc, 0, sizeof(*nc));
->>>>                      return NULL;
->>>>              }
->>>>
->>>
->>> The memset will take a few more instructions than the existing code
->>> did. I would prefer to keep this as is if at all possible.
->>
->> It will not take more instructions for arm64 as it has 'stp' instruction for
->> __HAVE_ARCH_MEMSET is set.
->> There is something similar for x64?
+> Cc: Hou Wenlong <houwenlong.hwl@antgroup.com>
+> Cc: Jim Mattson <jmattson@google.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
 > 
-> The x64 does not last I knew without getting into the SSE/AVX type
-> stuff. This becomes two seperate 8B store instructions.
-
-I can check later when I get hold of a x64 server.
-But doesn't it make sense to have one extra 8B store instructions in slow path
-to avoid a checking in fast path?
-
+> I found this by inspection when backporting Hou's change to an internal kernel.
+> I don't love piggybacking Intel's "you can't touch these special MSRs" behavior,
+> but ignoring the userspace MSR filters is far worse IMO.  E.g. if userspace is
+> denying access to an MSR in order to reduce KVM's attack surface, letting L1
+> sneak in reads/writes through VM-Enter/VM-Exit completely circumvents the
+> filters.
 > 
->>>
->>>> @@ -45,6 +75,16 @@ static struct page *__page_frag_cache_refill(struct page_frag_cache *nc,
->>>>      nc->encoded_va = encode_aligned_va(page_address(page), order,
->>>>                                         page_is_pfmemalloc(page));
->>>>
->>>> +    /* Even if we own the page, we do not use atomic_set().
->>>> +     * This would break get_page_unless_zero() users.
->>>> +     */
->>>> +    page_ref_add(page, PAGE_FRAG_CACHE_MAX_SIZE);
->>>> +
->>>> +out:
->>>> +    /* reset page count bias and remaining to start of new frag */
->>>> +    nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
->>>> +    nc->remaining = PAGE_SIZE << order;
->>>> +
->>>>      return page;
->>>>  }
->>>>
->>>
->>> Why bother returning a page at all? It doesn't seem like you don't use
->>> it anymore. It looks like the use cases you have for it in patch 11/12
->>> all appear to be broken from what I can tell as you are adding page as
->>> a variable when we don't need to be passing internal details to the
->>> callers of the function when just a simple error return code would do.
->>
->> It would be good to be more specific about the 'broken' part here.
+>  Documentation/virt/kvm/api.rst  | 19 ++++++++++++++++---
+>  arch/x86/include/asm/kvm_host.h |  2 ++
+>  arch/x86/kvm/vmx/nested.c       | 12 ++++++------
+>  arch/x86/kvm/x86.c              |  6 ++++--
+>  4 files changed, 28 insertions(+), 11 deletions(-)
 > 
-> We are passing internals to the caller. Basically this is generally
-> frowned upon for many implementations of things as the general idea is
-> that the internal page we are using should be a pseudo-private value.
+> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+> index 8e5dad80b337..e6b1e42186f3 100644
+> --- a/Documentation/virt/kvm/api.rst
+> +++ b/Documentation/virt/kvm/api.rst
+> @@ -4226,9 +4226,22 @@ filtering. In that mode, ``KVM_MSR_FILTER_DEFAULT_DENY`` is invalid and causes
+>  an error.
+>  
+>  .. warning::
+> -   MSR accesses as part of nested VM-Enter/VM-Exit are not filtered.
+> -   This includes both writes to individual VMCS fields and reads/writes
+> -   through the MSR lists pointed to by the VMCS.
+> +   MSR accesses that are side effects of instruction execution (emulated or
+> +   native) are not filtered as hardware does not honor MSR bitmaps outside of
+> +   RDMSR and WRMSR, and KVM mimics that behavior when emulating instructions
+> +   to avoid pointless divergence from hardware.  E.g. RDPID reads MSR_TSC_AUX,
+> +   SYSENTER reads the SYSENTER MSRs, etc.
+> +
+> +   MSRs that are loaded/stored via dedicated VMCS fields are not filtered as
+> +   part of VM-Enter/VM-Exit emulation.
+> +
+> +   MSRs that are loaded/store via VMX's load/store lists _are_ filtered as part
+> +   of VM-Enter/VM-Exit emulation.  If an MSR access is denied on VM-Enter, KVM
+> +   synthesizes a consistency check VM-Exit(EXIT_REASON_MSR_LOAD_FAIL).  If an
+> +   MSR access is denied on VM-Exit, KVM synthesizes a VM-Abort.  In short, KVM
+> +   extends Intel's architectural list of MSRs that cannot be loaded/saved via
+> +   the VM-Enter/VM-Exit MSR list.  It is platform owner's responsibility to
+> +   to communicate any such restrictions to their end users.
+>
+Do we also need to modify the statement before this warning? Since
+the behaviour is different from RDMSR/WRMSR emulation case.
 
-It is implementation detail and it is about avoid calling virt_to_page()
-as mentioned below, I am not sure why it is referred as 'broken', it would
-be better to provide more doc about why it is bad idea here, as using
-'pseudo-private ' wording doesn't seems to justify the 'broken' part here.
+```
+if an MSR access is denied by userspace the resulting KVM behavior depends on
+whether or not KVM_CAP_X86_USER_SPACE_MSR's KVM_MSR_EXIT_REASON_FILTER is
+enabled.  If KVM_MSR_EXIT_REASON_FILTER is enabled, KVM will exit to userspace
+on denied accesses, i.e. userspace effectively intercepts the MSR access.
+```
 
-> I understand that you have one or two callers that need it for the use
-> cases you have in patches 11/12, but it also seems like you are just
-> passing it regardless. For example I noticed in a few cases you added
-> the page pointer in 12 to handle the return value, but then just used
-> it to check for NULL. My thought would be that rather than returning
-> the page here you would be better off just returning 0 or an error and
-> then doing the virt_to_page translation for all the cases where the
-> page is actually needed since you have to go that route for a cached
-> page anyway.
-
-Yes, it is about aovid calling virt_to_page() as much as possible.
-
-
+>     x2APIC MSR accesses cannot be filtered (KVM silently ignores filters that
+>     cover any x2APIC MSRs).
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 950a03e0181e..94d0bedc42ee 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -2059,6 +2059,8 @@ void kvm_prepare_emulation_failure_exit(struct kvm_vcpu *vcpu);
+>  
+>  void kvm_enable_efer_bits(u64);
+>  bool kvm_valid_efer(struct kvm_vcpu *vcpu, u64 efer);
+> +int kvm_get_msr_with_filter(struct kvm_vcpu *vcpu, u32 index, u64 *data);
+> +int kvm_set_msr_with_filter(struct kvm_vcpu *vcpu, u32 index, u64 data);
+>  int __kvm_get_msr(struct kvm_vcpu *vcpu, u32 index, u64 *data, bool host_initiated);
+>  int kvm_get_msr(struct kvm_vcpu *vcpu, u32 index, u64 *data);
+>  int kvm_set_msr(struct kvm_vcpu *vcpu, u32 index, u64 data);
+> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+> index 2392a7ef254d..674f7089cc44 100644
+> --- a/arch/x86/kvm/vmx/nested.c
+> +++ b/arch/x86/kvm/vmx/nested.c
+> @@ -981,7 +981,7 @@ static u32 nested_vmx_load_msr(struct kvm_vcpu *vcpu, u64 gpa, u32 count)
+>  				__func__, i, e.index, e.reserved);
+>  			goto fail;
+>  		}
+> -		if (kvm_set_msr(vcpu, e.index, e.value)) {
+> +		if (kvm_set_msr_with_filter(vcpu, e.index, e.value)) {
+>  			pr_debug_ratelimited(
+>  				"%s cannot write MSR (%u, 0x%x, 0x%llx)\n",
+>  				__func__, i, e.index, e.value);
+> @@ -1017,7 +1017,7 @@ static bool nested_vmx_get_vmexit_msr_value(struct kvm_vcpu *vcpu,
+>  		}
+>  	}
+>  
+> -	if (kvm_get_msr(vcpu, msr_index, data)) {
+> +	if (kvm_get_msr_with_filter(vcpu, msr_index, data)) {
+>  		pr_debug_ratelimited("%s cannot read MSR (0x%x)\n", __func__,
+>  			msr_index);
+>  		return false;
+> @@ -1112,9 +1112,9 @@ static void prepare_vmx_msr_autostore_list(struct kvm_vcpu *vcpu,
+>  			/*
+>  			 * Emulated VMEntry does not fail here.  Instead a less
+>  			 * accurate value will be returned by
+> -			 * nested_vmx_get_vmexit_msr_value() using kvm_get_msr()
+> -			 * instead of reading the value from the vmcs02 VMExit
+> -			 * MSR-store area.
+> +			 * nested_vmx_get_vmexit_msr_value() by reading KVM's
+> +			 * internal MSR state instead of reading the value from
+> +			 * the vmcs02 VMExit MSR-store area.
+>  			 */
+>  			pr_warn_ratelimited(
+>  				"Not enough msr entries in msr_autostore.  Can't add msr %x\n",
+> @@ -4806,7 +4806,7 @@ static void nested_vmx_restore_host_state(struct kvm_vcpu *vcpu)
+>  				goto vmabort;
+>  			}
+>  
+> -			if (kvm_set_msr(vcpu, h.index, h.value)) {
+> +			if (kvm_set_msr_with_filter(vcpu, h.index, h.value)) {
+>  				pr_debug_ratelimited(
+>  					"%s WRMSR failed (%u, 0x%x, 0x%llx)\n",
+>  					__func__, j, h.index, h.value);
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index af6c8cf6a37a..7b3659a05c27 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -1942,19 +1942,21 @@ static int kvm_get_msr_ignored_check(struct kvm_vcpu *vcpu,
+>  	return ret;
+>  }
+>  
+> -static int kvm_get_msr_with_filter(struct kvm_vcpu *vcpu, u32 index, u64 *data)
+> +int kvm_get_msr_with_filter(struct kvm_vcpu *vcpu, u32 index, u64 *data)
+>  {
+>  	if (!kvm_msr_allowed(vcpu, index, KVM_MSR_FILTER_READ))
+>  		return KVM_MSR_RET_FILTERED;
+>  	return kvm_get_msr_ignored_check(vcpu, index, data, false);
+>  }
+> +EXPORT_SYMBOL_GPL(kvm_get_msr_with_filter);
+>  
+> -static int kvm_set_msr_with_filter(struct kvm_vcpu *vcpu, u32 index, u64 data)
+> +int kvm_set_msr_with_filter(struct kvm_vcpu *vcpu, u32 index, u64 data)
+>  {
+>  	if (!kvm_msr_allowed(vcpu, index, KVM_MSR_FILTER_WRITE))
+>  		return KVM_MSR_RET_FILTERED;
+>  	return kvm_set_msr_ignored_check(vcpu, index, data, false);
+>  }
+> +EXPORT_SYMBOL_GPL(kvm_set_msr_with_filter);
+>  
+>  int kvm_get_msr(struct kvm_vcpu *vcpu, u32 index, u64 *data)
+>  {
+> 
+> base-commit: 332d2c1d713e232e163386c35a3ba0c1b90df83f
+> -- 
+> 2.45.2.1089.g2a221341d9-goog
 
