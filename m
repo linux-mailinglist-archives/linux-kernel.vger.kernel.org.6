@@ -1,201 +1,170 @@
-Return-Path: <linux-kernel+bounces-260190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DF1F93A459
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:24:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5328593A45C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C148D1C22935
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:24:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C56F41F234DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29909157E87;
-	Tue, 23 Jul 2024 16:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F939157E87;
+	Tue, 23 Jul 2024 16:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b="Jwv7AFz3"
-Received: from mail.marcansoft.com (marcansoft.com [212.63.210.85])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="XdG4KrpI"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12olkn2071.outbound.protection.outlook.com [40.92.23.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55525157A4F
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 16:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.63.210.85
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721751877; cv=none; b=bTww2nWglZD3w3mKaNWTfQ5jxPNew4mgpYMEHkP49SH7b03/b4N1TpMLl7TmkOztrGCvJ5fuqbbdvBDIJXX/Z/KwDMzjzQuqWNuRBIgoHE6yEZcSZ4krfi4bOlKlhMlaK196XqsuncBQB78QYiax2HwDdsUhofAJbon6k1ozwLY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721751877; c=relaxed/simple;
-	bh=wvLwwzYrHhNMEY0a2RER3JTiGWI4BVmIq+FIHkHnZzI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XxPUlrmR1q6VEZzTXsJF2dyuAjYJ8Kx62gaOFxHsnc9z9CyHyq5KTR51WNBmjSXv9hcywDP8bmmkfYpKzn2K6TUJxpFokplQUJez4fdDjBXGu277OFX/gxlzdmXHSMNjD5XepWynPGIC89GPtmabF1d33Kjpkjc+AQNcYDH4C/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=marcan.st; spf=pass smtp.mailfrom=marcan.st; dkim=pass (2048-bit key) header.d=marcan.st header.i=@marcan.st header.b=Jwv7AFz3; arc=none smtp.client-ip=212.63.210.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=marcan.st
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marcan.st
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: marcan@marcan.st)
-	by mail.marcansoft.com (Postfix) with ESMTPSA id 28D5041E57;
-	Tue, 23 Jul 2024 16:24:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=marcan.st; s=default;
-	t=1721751866; bh=wvLwwzYrHhNMEY0a2RER3JTiGWI4BVmIq+FIHkHnZzI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=Jwv7AFz316hnUeeBX5Gao/DhsQt99fmbZIit8dDUoQQDFPbc2OqXIVkeIwcIveSgD
-	 /rg4W8/EHcZ2aNQaf5OhIu1np7rYKkqXo5eraxsUS9AMUOtecpHl4z4HOs3nix8fg3
-	 VOU6e+r8z+c8Fep0DNhP0rSkDHJsr+wNhGjZ/RR70eM+ESWFobpALauntv5E0yeOWV
-	 pYhhNxSZduOMB6xk9u3UBWqjIIWEZImJD5X8tfqcMfhOHTD+pvIzQDFNIUMpwxqoYt
-	 bMeP3oPIPCVzCqwZNEa2CsBR3IqNIgVICIAq3E+a6/X/IGip2x6GgZV4lTAFESTdDX
-	 ylyDr02FCHz/g==
-Message-ID: <dbf17fa6-1af6-467b-8b3d-dca8476dc785@marcan.st>
-Date: Wed, 24 Jul 2024 01:24:23 +0900
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD22114C5B0
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 16:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.23.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721751953; cv=fail; b=O/a5pmhN2328DMbdNNJ43yqjCpd4sVqtSZ1v4ETk3X6Y88HNuXdWDYac7BQNYUP6YrYG0AOyh8tbS9eC2TqM0BZXO8B5cJtKDaTJSYG62RGgUO9vz4+dBbzFrJc2a14Drnp7FdwDkAMU6POmO3aUFfFwNH/vgavvkfwB7KHIxXM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721751953; c=relaxed/simple;
+	bh=suZNAJyPrugvrOAajQeUUZN+Os5Sqz//EIbj8NjI8tw=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=DItl5W6tmCKSwchtGZXz9mwYgan/u3NbgFUcsIrTc55ASQEzPpzRwz4FmelyBpac47j/kGbtX4GL1uDlUwPVZxjMuIRLEWikvGfSE+0dwgURpkEm4QkrOMBXfARanCf7AQWlQqdUN3ld6cFoA24IpKWR1Lrl41NFiJ57oWiBlCo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=XdG4KrpI; arc=fail smtp.client-ip=40.92.23.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dqL7jRNIaXVxG0Hq7JYC3LuElxzOvDaz6AWy4A5XWs5e6cr2yvEgbfFby+Mz9Hb2mSJy37TzLEroz56TJNZS8RVowI91fNkGxQ6ggCh6OZqqn8yDPh5cSi5xWaDoTJPl8dsITmTPhbiQrLx+D5dKKAkJOYAv8Gd0p1wK5ltEc1w9BGOf/AGoaRW1xn+UBia+SuC0tNP60M3auTgHX4UfJl82jE9DobB5hkUA8x8Mx0aXveIUM0o542H6jhLuRSjZnplIokdVyewUHB4gN0lfSHE1NPssJIkD6XdfYA36NpKvxoBa13JtRWmvnOtfAqA9DmIxYQGj3G/yo5HndqZxIA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cgXQ1QsSRoujttvQpiuwpEVBhPDnW1BO/hgnk4qz+Rk=;
+ b=lHPqqvJejgY6zigqM23dDVcm4kIzc3UAUUPDf/Yh49Cfalp3Phw3+kH7VpjeVpJ9UIHj8MoD94ePh3hNK41Xhq5ZbRz4Q/qL4Dy1hIfh8uWDnMM2twelBC69X5sos3JJgbth/FpJ2h4XR/lWmXqvcHp/vTFemTTkj1QcbXiWxHGPmiAG1/Qk9CkcQfSoCBUlablTbP5z0BWzxj7k7m/GutV3BwjRhgevhY346UT/+97/6A+JdvK5n9HByvoO8yJ+3Gs30WcUVzCGatHqUXJAF4plYnM8U4An/vBZpN11mlGgUJpyM2EB+IvK2B60+RxM/ppeUurKoNO3W217m7EkFg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cgXQ1QsSRoujttvQpiuwpEVBhPDnW1BO/hgnk4qz+Rk=;
+ b=XdG4KrpI1PwYnaa9t6NRfUPwe8pclgKJBHrqi6ioltJ8oHOaRb7VYslGd+wkt+vFb5/KO232U+2PmwOqNRm4bUoTAu8t413dOXR+XS9rP8y0gDzgGHC1JRiWdY+GTJBuwhqKUyeYBj+LaeQAchhbe+rt8uFJpB2Za8pgh+Ix6wZDzAVqB2qUY21NmC06YKxNxr5WD6xtZG7ppAv87/PxdOEAWK5jaTolgjSjLgr+T9/vAzToUZg/jZwYY6YJouRLSLDNgOu878cJCore/K68oEaBabjUdct05Ytv39FgNrj8tMhH3Hk+mLwNLyHsQ/MSteS36FU88zksTxkFbaOqxw==
+Received: from SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM (2603:10b6:a03:570::8)
+ by IA1P223MB0522.NAMP223.PROD.OUTLOOK.COM (2603:10b6:208:3ea::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14; Tue, 23 Jul
+ 2024 16:25:48 +0000
+Received: from SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
+ ([fe80::b5cd:c37a:bd3e:e3fd]) by SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
+ ([fe80::b5cd:c37a:bd3e:e3fd%2]) with mapi id 15.20.7762.030; Tue, 23 Jul 2024
+ 16:25:48 +0000
+From: Steven Davis <goldside000@outlook.com>
+To: gregkh@linuxfoundation.org,
+	christian.gromm@microchip.com,
+	parthiban.veerasooran@microchip.com
+Cc: linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Steven Davis <goldside000@outlook.com>
+Subject: [PATCH v4] staging: most: video: Fixed minor capitalization and grammatical issues
+Date: Tue, 23 Jul 2024 12:24:49 -0400
+Message-ID:
+ <SJ2P223MB1026A75E582B79FCD0DB1C9BF7A92@SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM>
+X-Mailer: git-send-email 2.45.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [kLw+Yxiqk4V/O7UJQGJE7bcKGrhjwr+H]
+X-ClientProxiedBy: MN2PR04CA0010.namprd04.prod.outlook.com
+ (2603:10b6:208:d4::23) To SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:a03:570::8)
+X-Microsoft-Original-Message-ID:
+ <20240723162449.1456-1-goldside000@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] drivers/perf: apple_m1: fix affinity table for event
- 0x96 and 0x9b
-To: Will Deacon <will@kernel.org>, Yangyu Chen <cyy@cyyself.name>
-Cc: Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org,
- Mark Rutland <mark.rutland@arm.com>, Janne Grunau <j@jannau.net>,
- Asahi Lina <lina@asahilina.net>, asahi@lists.linux.dev,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <tencent_7B71486CE305DF8AE084B6BB6313EE550C06@qq.com>
- <20240701140148.GE2250@willie-the-truck> <87cynxp52o.wl-maz@kernel.org>
- <87bk3hp3z7.wl-maz@kernel.org>
- <tencent_371517268623E4A61194EF4C70497BDC5105@qq.com>
- <8634oshxhj.wl-maz@kernel.org> <20240702121340.GB3542@willie-the-truck>
- <tencent_A6F18ECEB80131BA21638D187C6782F6DA08@qq.com>
- <20240708120026.GC11771@willie-the-truck>
-From: Hector Martin <marcan@marcan.st>
-Content-Language: en-US
-In-Reply-To: <20240708120026.GC11771@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2P223MB1026:EE_|IA1P223MB0522:EE_
+X-MS-Office365-Filtering-Correlation-Id: 64ae9294-6771-4fff-a9fb-08dcab341c3c
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199028|19110799003|8060799006|440099028|3412199025|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	RyG9Xm3yzTzhHa1gI15TPDlaXv8fVoMDfFyNcB8kiHOLzP3iSiYYLCU+pyhONI63mWIoH+cRBRzF99yztrjjO6RwlJ7IImbAC2guh8RasIyabxYEb538SY6VQUv1C9Vitwf94qSzEQYWDcWdIbUhLXtlCey2UCDYwYAOrZYdkXy2zs+TQMC5g4ZpSelGHx+mkZC+n0VOgndv9ElTy7Qs9pgSck3vplpNq5TCqbRN98RrjVexfB963Oj34EtUzqsi24v1PYzDJLfqxEZuQMbK0WvNSFVJeHBmIrmhhz/OUDmeizKRYakCSQ38XgLGXcGUxUsbtqJ+hSGiauz7fbYsqXoYArkWyizIzaOgKxM57HL956Wt2cLPscm295/Bl6iARo23wUq1agvzgL2PQTiMoUzWY8vI8Slx3hD/VpLYiQ1IOY+U/t6fGytuBEKZna5sp7BlN3tVUDIi78HeEOwTFTX6QXbPGjAjID/HFGxMVUNgTODz5bOCtFgnnyPuMhhQVzYka9XDF/zFJuMdEZ873nwFDH72bCnV+WFKB+oaMdeEknhs0pV02gPUyaFcyKLAQvIixHhMkU1syXAsTUStNrbF7fsWKzbsO1zyMIWicBOR1WMGvzK1z2+vJBIY0pCltqdjk2fc3v0+/uyGXSOy2Ncsst7U25dQvUSNB+yRTHQfrHnogkKoUKgfTM7XzkP3
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?VSjXTRhGpwmLWoMp4d3cYfS2BEUYM+L6mOpBCRBRWn1Rd+1g7Jqov9/uzDBC?=
+ =?us-ascii?Q?ImJYLq26qi9tc1kW1f1QMaGHszhPhPKYEcZZXbJKFs0qwWezPJUTrKP70XrO?=
+ =?us-ascii?Q?lXNHsHjd8sLrOh9yBtoIj6IgqMiotaAw2FAMZXknlS/WAG32GBrQxPhgL36P?=
+ =?us-ascii?Q?ZeF7A8aFMqyZ0P+XVKGSObD8J8WTEhtJGGzbQBmlTqsoGk1TUFaQUx+4J9lH?=
+ =?us-ascii?Q?a7yUgjHHPaCWwyEoBqFDQpvg5pJU0Z42jdPTVYksJAjcN+W4ZiXwI+jgtJ6G?=
+ =?us-ascii?Q?TqMR7VliU69O4OvtM2pohBH9U6tORlPkg+PnRup78LGk7TpgJ6IRSXs0NT4P?=
+ =?us-ascii?Q?Ntr7xBZfriCSw8Sg7+EUWx86LOlb67I0olQZSMwWxVhiwhUgEL/+KfPEjrGD?=
+ =?us-ascii?Q?l+vKBdWRXkCgrqddIzmRA3zuEVuXXZlVmQhYFPOC6pu2UlqE9XN4hiE5Hu7K?=
+ =?us-ascii?Q?2wOAduh4ClqvdHPCFqNbzO3hmLux045e91cNgdRog3KO5++ktHeoapR1cRQt?=
+ =?us-ascii?Q?Lib/WM2Svs8XJ1cofae0UmwS6AC15O7MQhk17Alng+ZjLjq/yV3rSp14Q9UG?=
+ =?us-ascii?Q?XCWN5ndfz/jb9pIGdni5jVz89cXt54BQu28Vwy18C5O36w5QCfIdauRFmgwk?=
+ =?us-ascii?Q?qOJCe+l4dB/+rZ12NaKy4yVsZ4JF4yVk1CQpWRcWrdJXYes78naPqmjCbSRN?=
+ =?us-ascii?Q?7FEpGKEkkjru+Zyb5ZnlVkvmkKm+f3dehGodINZ1lnFlCMIxEXzd1+mmmFVJ?=
+ =?us-ascii?Q?ZJHGe8IsubIzeNChhG4FQF3nR0dUjE1uIjSQDsRE1dKKHxCIEZpwo2SsaYJ4?=
+ =?us-ascii?Q?Caht4GuCbn1zd2V16z7HCF1J7WAJM126ytvaQ3dxsoj6cc1Bw51IMEC8EfSz?=
+ =?us-ascii?Q?A+FTLtW1ysGaBmO4WmZ/U7/hAsLSfktrsYcViWoNWlZJymSvwLQVc4C8P9gY?=
+ =?us-ascii?Q?tz9v4WeUIdTb4bVbZ4FYj+7rVpCEEE+aajCiCGxy3mqy0lwhslCmJFfKgBSc?=
+ =?us-ascii?Q?9FZbFd083BidhZ3WkzgS6nAgKSzfkxg2fK7a92m/IUfdMmAxcQgm5SWpXGrW?=
+ =?us-ascii?Q?mXkNCAB37BIflk/mkAlfpMSvXo8APDIfyVVI1dJNU+RNIU3p255hhxsQVKVq?=
+ =?us-ascii?Q?M0eRO+k00P1eJqsP3cxvRs1uvjQKIn2qHuzASnjkkK6l14SDq12qb9UgzHiM?=
+ =?us-ascii?Q?/WKKEUXMsu6EbDkrW2doIF/ax6j50E1wl8cwPc3DdAW+ghQe8f/+rK5C3Aw?=
+ =?us-ascii?Q?=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 64ae9294-6771-4fff-a9fb-08dcab341c3c
+X-MS-Exchange-CrossTenant-AuthSource: SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2024 16:25:48.2806
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1P223MB0522
 
+This patch makes three error messages in the driver easier to read by
+capitalizing the first letters properly.
+For example, "channel already linked" becomes "Channel already linked", and
+"expect" becomes "expected", as you would typically 
+find in an error message.
+This patch improves user experience by making the errors clearer.
 
+Signed-off-by: Steven Davis <goldside000@outlook.com>
+---
+V1 -> V2: Added a patch description
+V2 -> V3: Changed subject line, removed apology from patch 
+description, added change log
 
-On 2024/07/08 21:00, Will Deacon wrote:
-> On Tue, Jul 02, 2024 at 08:43:16PM +0800, Yangyu Chen wrote:
->>
->>
->>> On Jul 2, 2024, at 20:13, Will Deacon <will@kernel.org> wrote:
->>>
->>> On Tue, Jul 02, 2024 at 11:58:00AM +0100, Marc Zyngier wrote:
->>>> On Tue, 02 Jul 2024 11:22:21 +0100,
->>>> Yangyu Chen <cyy@cyyself.name> wrote:
->>>>>
->>>>>> Yangyu, can you please clarify how you came to the conclusion that
->>>>>> these events didn't count anywhere other than counter 7?
->>>>>>
->>>>>
->>>>> IIRC, I came across some web page that says events 0x96 and 0x9b
->>>>> can only be installed on counter 7 to count Apple AMX, but I can't
->>>>> find the page now. Since AMX is not usable in Linux, I don't know
->>>>> if this will affect some other instructions that are usable in
->>>>> Linux.
->>>>
->>>> As you said, AMX cannot be used with Linux, and that's unlikely to
->>>> ever change. But when it comes to the standard ARM ISA, we can only
->>>> witness counters 5,6 and 7 being incremented with at the exact same
->>>> rate.
->>>>
->>>> So reading between the lines, what I understand is that AMX
->>>> instructions would only have their effects counted in counter 7 for
->>>> these events, while other instructions would be counted in all 3
->>>> counters.
->>>>
->>>> By extension, such behaviour could be applied to SME on HW that
->>>> supports it (wild guess).
->>>>
->>>>> There are some other reasons, but I can't say in public.
->>>>
->>>> Fair enough, I'm not asking for the disclosure of anything that isn't
->>>> public (the least I know, the better).
->>>>
->>>>> Even though I can't find the actual usage, I think using count 7
->>>>> only for these 2 events is safer. If this reason is insufficient,
->>>>> we can ignore this patch until we find other evidence that this
->>>>> affinity affects some instructions usable in Linux.
->>>>
->>>> I honestly don't mind.
->>>>
->>>> The whole thing is a black box, and is more useful as an interrupt
->>>> generator than an actual PMU, due to the lack of freely available
->>>> documentation. If the PMU maintainers want to merge this, I won't
->>>> oppose it.
->>>
->>> I'd rather leave the code as-is than tweak specific counters based on
->>> a combination of guesswork and partial information.
->>>
->>> Of course, if somebody who knows better wants to fix up all of the
->>> mappings (because this surely isn't the only corner-case), then we can
->>> take that. But at least what we have today has _some_ sort of consistent
->>> rationale behind it.
->>
->> Actually, anyone who has macOS software can learn the whole affinity
->> table of PMU. The detailed information can be extracted from a plist
->> file stored in the macOS root filesystem. I also provide that script
->> [1] to extract this information.
->>
->> However, I can't directly use this information for legal concerns.
->> Would this be acceptable if the information I provide matches Apple's
->> information? I can't say whether it matches or not in public. I can
->> only say we can easily find someone who uploaded this file to the
->> internet.
->>
->> [1] https://github.com/cyyself/m1-pmu-gen
-> 
-> I can't say I feel hugely comfortable with this, so I'll leave the code
-> as-is unless a patch shows up fixing all the events.
-> 
-> Thanks for the reply, though. You've clearly spent a bunch of effort on
-> this and it's a pity we can't easily apply your results to the driver :/
-> 
-> Will
-> 
+ drivers/staging/most/video/video.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Putting on my "reverse engineering hardware for over a decade" hat on:
-Facts about hardware are not copyrightable. If they were, our entire
-effort would be legally questionable to begin with (as would all Linux
-porting efforts to undocumented hardware).
+diff --git a/drivers/staging/most/video/video.c b/drivers/staging/most/video/video.c
+index 6254a5df2502..2b3cdb1ce140 100644
+--- a/drivers/staging/most/video/video.c
++++ b/drivers/staging/most/video/video.c
+@@ -454,18 +454,18 @@ static int comp_probe_channel(struct most_interface *iface, int channel_idx,
+ 	struct most_video_dev *mdev = get_comp_dev(iface, channel_idx);
+ 
+ 	if (mdev) {
+-		pr_err("channel already linked\n");
++		pr_err("Channel already linked\n");
+ 		return -EEXIST;
+ 	}
+ 
+ 	if (ccfg->direction != MOST_CH_RX) {
+-		pr_err("wrong direction, expect rx\n");
++		pr_err("Wrong direction, expected rx\n");
+ 		return -EINVAL;
+ 	}
+ 
+ 	if (ccfg->data_type != MOST_CH_SYNC &&
+ 	    ccfg->data_type != MOST_CH_ISOC) {
+-		pr_err("wrong channel type, expect sync or isoc\n");
++		pr_err("Wrong channel type, expected sync or isoc\n");
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.45.2
 
-Data files can be, but if the information contained within them is
-purely non-copyrightable (as an affinity mapping for PMU events would
-be), then it is entirely legal and acceptable to use that information to
-create a patch, as long as the information itself was legitimately
-obtained (which it can be for any macOS user, which by extension means
-any owner of an AS Mac since macOS is implicitly licensed).
-
-In other words, if you have macOS, and you run those scripts and
-generate some patches for Linux that add the event definitions and
-mappings, then it would not cause any copyright infringement concerns
-for the Linux kernel side and they can be licensed GPLv2.
-
-I have acquaintances who have consulted lawyers about this issue and am
-very confident in this interpretation. More specifically, I'm told there
-is legal advice that hardware register names are not copyrightable
-(which goes beyond pure hardware facts as there is some freedom to
-choose naming schemes). PMU event names are analogous here.
-
-The big no-nos are ripping and redistributing files from macOS verbatim
-(when that is necessary, we treat it as firmware and already have a
-process in place to avoid redistribution, e.g. what we do for camera
-sensor calibration blobs, but that is not the case here), using
-*leaked/stolen* information (not legitimately obtained, e.g. actual
-internal documentation that was stolen), and potentially
-decompiling/reverse engineering actual executable code (things get very
-complicated in this case, but it is not impossible to do legally).
-
-For more details, we have a page on our copyright policy for the Asahi
-project and how to avoid running into legal issues:
-https://asahilinux.org/copyright/
-
-TL;DR I would not have any copyright concerns about submission of a
-patch adding all the PMU definitions (general event names and affinity
-mappings).
-
-- Hector
 
