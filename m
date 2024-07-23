@@ -1,123 +1,194 @@
-Return-Path: <linux-kernel+bounces-259744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DD4A939C8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:24:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1317F939C95
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:26:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE8B81C21ED2
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:24:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 374991C20A8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24C814EC47;
-	Tue, 23 Jul 2024 08:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0374014BFB0;
+	Tue, 23 Jul 2024 08:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lscL5nMK"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="IVplmemt";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZznuY/ke"
+Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11A114E2CC
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF3B8814
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721722988; cv=none; b=rDSnE+XoWfEIQL6pW0Set9uY5t6TMJgfh3o8ZUW+bVRJL+wffG53GztgL0sH/UffUBhaY+9HXa6YzotYtfga+j39ZZhA7Q0To9nSeV1BQNO6xjkY+Q+B3NR0YLtwWeZj4kyVUJowCERdMWJnx5Yn9lOggIORCL5WMkZtxS7OfR8=
+	t=1721723190; cv=none; b=NF6XkGLw0edeUHj46QIkEUenI84m8M30nYswQpU2WKIJ9hcNeNOUI4TJgpiRVdoA9vxy7hmTxJxL/FextjJXOfNCYfOynTHyl44afaEicKFb0mibx44TH389OeI7D1w8lM7eFDNSVu9iU1uo8nDVrlu9Bift8PF+AFBDhOV0kYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721722988; c=relaxed/simple;
-	bh=yiD1Yvi1ZE9QNvroZdUc1EcHgOWM7mxmMWLED8Vy1ts=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YQF5aZ51Kmz5P2kgmmLuTKdTcLaSjW/bIYT/uAHsN7dezKZ9P9PezHdVwPmBI0SrQu1tRoMUAvHip5BGI0SPUJLtGDUTrXkfoHYQI+u95hbENDz6RU3TlS624r0DSMvIBTydbpzwEGfeq06NFhOr78s1H5dL7h2i6kwaDUBpjBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lscL5nMK; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fc692abba4so4161165ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 01:23:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721722986; x=1722327786; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GQRavVjrAVA/k1fD3x96f9wCcknVkCt9b/ogig2zTSQ=;
-        b=lscL5nMKFGnGvksHVlouMr2GwaRtaBoCyfAaDECLNK4AiriNLeCdrgSFYobPnsxUzF
-         6KlYVFUnO1sz8syTLQ8TXRl+j8x5+CxscOAXepBMxJ1/0qV/vo65F2I9nvKQ0he2JyYo
-         5zGz+9hUu5WqhVCAOUWZKDbwbQl+zYMMWWCAxuZtQaMMQyVD4EMjFy9rw9WTamTubLKo
-         TiUFHJivKsOXEFJ2L7xeGA00f0kWdy399Zk6w5YXza6vjd0XdnHijbO4wKfGL4plhSpt
-         q71v9ODeGwMEQ0iVvNssgWajVBbfloQXGvtMwi8jONTHcgK2GZGcK5iFmdfTVSc28HH1
-         xjPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721722986; x=1722327786;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GQRavVjrAVA/k1fD3x96f9wCcknVkCt9b/ogig2zTSQ=;
-        b=ZRs0acKHLtcIDy5TJ2rD68lXwexH5U+EvLr5b0WbIN0tLQ8Le1J8uNwkPQ7GOhyqC7
-         7D+ZjFb7cBCYD0V5FpyqHF3vDnq2L1CBQmQFdG2XTr1JFztFB3sM07IYx3KtKU7QqNkw
-         uCKtggbPH5hM5EpM10t3rGsI8SRYSjicnVcFvU6eb+4ohz+p0LpMP4QpoROaGce4PIMB
-         FWAE0EUw1/I9QaKMh2y095wPuKVZRK7nPsBQILjJvbthDu9G/SOAS+sBEQ7lfRUP7pI5
-         DofGomGeoykXhHq0shZ1+k9Ic+u3UCo4aOJMNwRcYWF1FzEwrRyFJC1Fr3kleBaWciD2
-         y5IA==
-X-Forwarded-Encrypted: i=1; AJvYcCW1TDXB20sGYXdDmJ8T2e1m5nVYJZgvEuO7ViSO4WQP/NiHmgNwLPfdTQnbgzUdH33xG73ThpavMiM1tc2UjrgfZFo80+GF3+Qfkrhg
-X-Gm-Message-State: AOJu0YzOtyw2FGBXKpfzDN50qcXfzUdQG4eZ+GX8l2uTOsNdltXbIxtC
-	3W6DJI+9LisUL05noW5dgBg9DS8C2aHn3OFpfUBcgdgXmpW3M/q4bXrJNdDSFSo=
-X-Google-Smtp-Source: AGHT+IE3SkgRs2aAwGEYJvvZ8DOocvL0c1mLCviVpZrLrYMDwLE14oS1NHUWcTOkKb5cr0jYDal9aA==
-X-Received: by 2002:a17:90a:d711:b0:2c8:820:71c4 with SMTP id 98e67ed59e1d1-2cd274a8b13mr5370453a91.29.1721722986119;
-        Tue, 23 Jul 2024 01:23:06 -0700 (PDT)
-Received: from [192.168.255.10] (23.105.223.42.16clouds.com. [23.105.223.42])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cb7754a888sm9530824a91.57.2024.07.23.01.23.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 01:23:05 -0700 (PDT)
-Message-ID: <bd36db00-5464-4eb5-adb1-0ddfd3be1cfa@gmail.com>
-Date: Tue, 23 Jul 2024 16:23:00 +0800
+	s=arc-20240116; t=1721723190; c=relaxed/simple;
+	bh=uHOgyREunONN2WdKSyUBPYZn556t7dgT2zt8n2XiOdY=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=TlvVHBCVrJvdQ0bZk3vMCJvVlyiOhHu742x5OzvseL6ytlj8eXVj1XSZxC3m00dIJNpTT8oEwJCJ8DiNQ3Fq6+RYGV8qYShOUDvhgZAkU+Tp9zB3mNInDlihT86uWjJWefxmUW2eyJ1cCuMeq/vQ2F8yW4tJ6TEdnmr3k/0N+24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=IVplmemt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZznuY/ke; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id ED885138065F;
+	Tue, 23 Jul 2024 04:26:26 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Tue, 23 Jul 2024 04:26:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1721723186; x=1721809586; bh=dCLULAf5DM
+	7KzrcLKJGqnXGq/p9IlqRjE7J/CfCWQcA=; b=IVplmemtYH4igdUBMKBz0D0Xhy
+	5U2292lf9fzg6Yec44mX/7kCXYnKCvfaYY3NcrUgrMjK4auUsn2VoEd0zK5ah626
+	JOT1+Iw5la+XUsOVz/XQRgB/fPFR+G6QxylZ59DSuS6asbFajrOfkPVIbOvHVfzg
+	BqE6ne2SUTBASblTh0vvJAPFkeAxqhdsst2vgetcCprytFLT0CTSEekI9d/QwhVK
+	cyIC+xiswBJ0AW+KjJv83UHKa6xuBxlkJ2Gq+cxeXbtXcLo8CzXHXk8qRERv7c33
+	C2Hi0xygIAxef0rn4aRU58EDOQXBixTbjTj/R4nEJz34ZjOKWJEi5vQy9YHw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1721723186; x=1721809586; bh=dCLULAf5DM7KzrcLKJGqnXGq/p9I
+	lqRjE7J/CfCWQcA=; b=ZznuY/keabxLarcJQ3rRT/7wWHs7xNmiBtrrvEIWU+00
+	IsZR3NWzWhHq2HDkJ5TieS3I0BxrUrIXPdwSjnoMaWLYxRMVImSLMxBSXWCQTk9v
+	Co1zP8Ndd27WYK7av2gm2BcF8RCTfMTa4FIl62+rznoJw5LHOFtvZjLu5jtKh5Ku
+	LtULML878njmHRJDz1Gqk+cISt+U8x/wbQcStOjZKXXY69fER5SzQ6wId/uVGaEx
+	ZI6E1eS6wll0hE0z0ioxntC0i5AeHa4ef8nC0Rd6QOFmCg1jo9ksjibA5E5ZmYLc
+	4DGV4DZP5TuaOXl3nsYTd2eGi/jojBRoqh+U1vwCTA==
+X-ME-Sender: <xms:MmmfZvK8s7eRPTwl3XzgY4LfQWZtCZi9bizrpcRIXmOoIK3Ae1_7cA>
+    <xme:MmmfZjL7Vgaf0bc_okwA7sqtlTDlh3FEqmTuXrRL1DrXFoWOkUEzlhIl-fNbLihXi
+    C6zq2n5v2eTkLhI5tQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrheelgddtfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
+    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
+X-ME-Proxy: <xmx:MmmfZns4ML4_oMTgJ388MFn-y0aX8zuwJ-Dx4MgjulAOT20qsMfjpQ>
+    <xmx:MmmfZob6jU360GpO48Nmqk4OB7x7lF75IiIa2Vm2iso6JhURDjrmlA>
+    <xmx:MmmfZmbTU_j70lGUDlpnNvGPNukHdEh2eRRhHKL0LSx8VsJiisq1Zg>
+    <xmx:MmmfZsBCjeLTja8LfEnOPLWwC3Wm1d7J6kIpzHOjQ-w0lEhnT_4cyA>
+    <xmx:MmmfZiRb-etryviwu_V3yh7ofR8nIEZDfBXPkyQqXUrl_A_5kMS-MjOp>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 4F2FAB6008D; Tue, 23 Jul 2024 04:26:26 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-582-g5a02f8850-fm-20240719.002-g5a02f885
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [alexshi:mmunstable2] 934c05f8c5:
- BUG:unable_to_handle_page_fault_for_address
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: Alex Shi <alexs@kernel.org>, oe-lkp@lists.linux.dev, lkp@intel.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <202407221607.49138a71-oliver.sang@intel.com>
- <a634bf58-9195-4c6f-b3d8-468d47e71033@gmail.com>
- <Zp8h/ZZTQ0lwmcJa@xsang-OptiPlex-9020>
-Content-Language: en-US
-From: Alex Shi <seakeel@gmail.com>
-In-Reply-To: <Zp8h/ZZTQ0lwmcJa@xsang-OptiPlex-9020>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-Id: <2ce07fbb-03b2-4096-bd76-e7546e20a33c@app.fastmail.com>
+In-Reply-To: <20240722094226.21602-16-ysionneau@kalrayinc.com>
+References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
+ <20240722094226.21602-16-ysionneau@kalrayinc.com>
+Date: Tue, 23 Jul 2024 10:26:05 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Yann Sionneau" <ysionneau@kalrayinc.com>, linux-kernel@vger.kernel.org,
+ "Will Deacon" <will@kernel.org>, "Peter Zijlstra" <peterz@infradead.org>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Mark Rutland" <mark.rutland@arm.com>,
+ "Yury Norov" <yury.norov@gmail.com>,
+ "Rasmus Villemoes" <linux@rasmusvillemoes.dk>
+Cc: "Jonathan Borne" <jborne@kalrayinc.com>,
+ "Julian Vetter" <jvetter@kalrayinc.com>,
+ "Clement Leger" <clement@clement-leger.fr>,
+ "Jules Maselbas" <jmaselbas@zdiv.net>,
+ "Julien Villette" <julien.villette@gmail.com>
+Subject: Re: [RFC PATCH v3 15/37] kvx: Add atomic/locking headers
+Content-Type: text/plain
 
+On Mon, Jul 22, 2024, at 11:41, ysionneau@kalrayinc.com wrote:
 
+> +#define ATOMIC64_RETURN_OP(op, c_op)					\
+> +static inline long arch_atomic64_##op##_return(long i, atomic64_t *v)	\
+> +{									\
+> +	long new, old, ret;						\
+> +									\
+> +	do {								\
+> +		old = arch_atomic64_read(v);				\
+> +		new = old c_op i;					\
+> +		ret = arch_cmpxchg(&v->counter, old, new);		\
+> +	} while (ret != old);						\
+> +									\
+> +	return new;							\
+> +}
+> +
+> +#define ATOMIC64_OP(op, c_op)						\
+> +static inline void arch_atomic64_##op(long i, atomic64_t *v)		\
+> +{									\
+> +	long new, old, ret;						\
+> +									\
+> +	do {								\
+> +		old = arch_atomic64_read(v);				\
+> +		new = old c_op i;					\
+> +		ret = arch_cmpxchg(&v->counter, old, new);		\
+> +	} while (ret != old);						\
+> +}
 
-On 7/23/24 11:22 AM, Oliver Sang wrote:
-> hi, Alex,
-> 
-> On Tue, Jul 23, 2024 at 09:58:25AM +0800, Alex Shi wrote:
->>
->> On 7/23/24 9:05 AM, kernel test robot wrote:
->>> hi, Alex Shi,
->>>
->>> we noticed there is a mmunstable3 branch now, but there is no same title patch
->>> there. not sure if this report is still useful, below report just FYI.
->> Hi Oliver,
->>
->> Thanks a lot for your testing and founding on my unreleased code branch!
->> The problem should be resolved on my latest code yesterday.
->> But multiple archs maybe still are fragile in the branch. Are there bootable in virtual machine, like arm, s390, etc?
-> we did boot test in vm, but only for x86_64 or i386.
-> 
-> you may notice we also send another report
-> "[alexshi:mmunstable3] [mm/memory]  f6ba7ce983: kernel_BUG_at_mm/page_alloc.c"
+These don't look like they are ideal because you have a loop
+around arch_cmpxchg(), which is built up from a loop itself.
 
-this problem was fixed too. Anyway thanks a lot notice me of this.
+You may want to change these to be expressed in terms of the
+compiler intrinsics directly.
 
-> 
-> for both commit, we made some further check and cofirmed they cannot boot
-> successfully on both vm/bm, again, we only test x86_64/i386 for now.
+> +#ifndef _ASM_KVX_BARRIER_H
+> +#define _ASM_KVX_BARRIER_H
+> +
+> +/* fence is sufficient to guarantee write ordering */
+> +#define mb()	__builtin_kvx_fence()
+> +
+> +#include <asm-generic/barrier.h>
 
-Thanks a lot for the info!
+mb() is a fairly strong barrier itself and gets used
+as a fallback for all weaker barriers (read-only,
+write-only, dma-only, smp-only). Have you checked
+if any of them can be less than than
+__builtin_kvx_fence(), e.g. a compiler-only barrier(),
+like the SMP barriers on x86?
 
-Alex
+> +
+> +#include <asm/cmpxchg.h>
+> +
+> +static inline int fls(int x)
+> +{
+> +	return 32 - __builtin_kvx_clzw(x);
+> +}
+> +
+> +static inline int fls64(__u64 x)
+> +{
+> +	return 64 - __builtin_kvx_clzd(x);
+> +}
+
+The generic fallback for these uses __builtin_clz().
+
+If that produces the same output as the kvx specific
+intrintrinsics, you can just remove the above and
+use the generic versions.
+
+> +static __always_inline unsigned long __cmpxchg(unsigned long old,
+> +					       unsigned long new,
+> +					       volatile void *ptr, int size)
+> +{
+> +	switch (size) {
+> +	case 4:
+> +		return __cmpxchg_u32(old, new, ptr);
+> +	case 8:
+> +		return __cmpxchg_u64(old, new, ptr);
+> +	default:
+> +		return __cmpxchg_called_with_bad_pointer();
+> +	}
+> +}
+
+With linux-6.11 you now also need to provide a single-byte
+cmpxchg(). You can use cmpxchg_emu_u8() or provide a more
+efficient custom one based on the 32/64-bit versions instead.
+
+      Arnd
 
