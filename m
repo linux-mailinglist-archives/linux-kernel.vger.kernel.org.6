@@ -1,101 +1,174 @@
-Return-Path: <linux-kernel+bounces-260477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A81393AA00
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:48:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FC4293AA02
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22AB61F2292F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:48:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17393282E72
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C63149C46;
-	Tue, 23 Jul 2024 23:48:20 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D164149C6E;
+	Tue, 23 Jul 2024 23:49:06 +0000 (UTC)
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4441428E5
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 23:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B551428E5;
+	Tue, 23 Jul 2024 23:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721778500; cv=none; b=R8pA5vQktIlmbjIq9WJLrVl3NS6ejU2WHIN8NEufuJDO5JYrNtgiSOxPg7N8qr+wIV2KYprGMMmRZSPXxIYLdw9sgPzwj23e8tCInp9i4LTdVP/X8mAyR7SZEgxVvUxGNUC308gMuKYkPOj3LktYF414zh9Wz4Q+bAXv0JH2E58=
+	t=1721778545; cv=none; b=pUvJ3cI+7vgC+vHeFIiq6KerP9VGFBmTsDrlkrHZ5ZsbIQpR3V5yQg4DAQrpJ6Pl1u1v0UtiJBVOnqaCOIY+whoLcxzwVibHUO/YFSjcIKCZSGy3D9ijV2gIOAeNWc93hGXRXI62jPONViQmvpRxqSbAUnsUg6XUwis3gKZH/a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721778500; c=relaxed/simple;
-	bh=zaU6vsVY9SWz+yx6JEdIByAGb7PCniy7XaEDleWnXXw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=jFjkY6u6mDi0Wzp9SR7UibnXu+D0/XILPtuUQQ5JOvPHbzgDjh43ukWQ20RsmTY7VfFj9zA+l8xJuSs+wwhnJIzin06KrfcEUeWBiccDSxMVGG8T5P89J0o/2pE/RHo+Wn6XgtYoVRhGnlCMVzR5Pf27Ib4GpjXeJGregSk/i7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-806199616d0so964519639f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 16:48:18 -0700 (PDT)
+	s=arc-20240116; t=1721778545; c=relaxed/simple;
+	bh=eiKPaDJVI8thbirsTj9moPAtpHQhk5vhl9tlBHetZg8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZS6dddSTySJf1gaXpckpj3fF1GqrzyGzPfFwVedZkevHbpVcAg0vtzDs7Kfk/ZSssOErPVfiyciD6eX0Nejva/k1UiiSZb9gYBjbVk85vwzc0l4zSgAfkBO3TVbpznCZJKuUN/HVs0Jzy+kwZRrzhamM9DlrAIDBuHYB2blxkXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2cb56c2c30eso247127a91.1;
+        Tue, 23 Jul 2024 16:49:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721778498; x=1722383298;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X4w1yneflfz++ErvtAHzMq2rvhurcJbTA5ZAKzfYTX0=;
-        b=ersajlklFPNgMLcpvyE6uoG/NdU01ya8aB9Ypg6L8TNwdEPtEPQA7IrhvV8FgVDYw7
-         R/D3MnW3EoogyEVNOwhtQY4XeF880L5PAXOTKm1fk9NH+v16uR9knFTdt6ilbwTnR3xA
-         92+MGL5JHfQJwhOdVAyWdla0d96HkWObj/aYUAeYJkD+ci8fm6WaV8okLKjyYjoHwnDD
-         UhXZwMpEkSZ4V7/La7KgD208dEjVwWAlT1DBG/l/hOPVIYPdDF89D0qnZFkeYLt9EulN
-         AYRnnvllP5IvsYRhVR7tDUQ39cjzeAFT1qt1ooJc/d4obDcnnDpLxolpPtsfWTYcXL8w
-         4Uhw==
-X-Gm-Message-State: AOJu0Yzsck7tmKwXAcSksSJBNm33kLRtrWsjf0E1hDykOegF0xZ1bJ0F
-	bkiqBJXYaTcIXi5qfofra1P8DBk2ah9NnAauQ3EM/d//50UfzTMMj8+XhoGTszrTwJrKHGRk5dd
-	KXAlpx2A7sf/Sb6rKGiBVYsEh00uMF6AmZKfOABVp8Fpg16/q0lgph10=
-X-Google-Smtp-Source: AGHT+IG+NveKxBkt5WZ4XNaxLZDohksUd304I0vGyA8alGEYz/IHBJoozWtU9LdHHnw6iVVHsKoJ+BrAInTe3ave6cicIkM6ACYd
+        d=1e100.net; s=20230601; t=1721778543; x=1722383343;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=780s1sloRo3IdLarrsTsBd2s1gD1Kv22T8WvzKSt8os=;
+        b=ii/O/u/42ndqO2GwydtIX3gRnENFxaCIz1aeC0j4BAoJPL7a/0CVz49ceaiYkJaspu
+         Tz8wCNA/3FDCLXAL41YlPb4hHHQg3iZpIVEuax/LwbR6vzRyM64SOR2u3SheIOxLKe6G
+         ArbjGcofiYmSgufDXC7I8vbB+1sXRSNY6UwZrWtSQpKYW06BfAwKcgz4RtEwbXPpH36K
+         NgaUFrLl8DtAbzo1r1sWFeR/CEZ06e96wz8SBkNQ/4DhKDL2RPhZO0DIMn+K1tR2LXSV
+         w/ik+s4KLKPVDw9yQlbsvyf7RERv7d6UkNv6mIfZ6eDawnq1FnkE2ownDx4ePt+Bsh2z
+         B9cA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWFosvdj1TaJNEmCBdX2/iCHw4nEiRqhp6WyAsMO5GxDJN+6O54Ek4eqpB01TYP2HaFCO3M2LIlBkQjznSh5s/kRpbAaXNDIpUbMKs4rjBxcUEVA+PEmI/3jVow7w98L6srl/wLhYDqDOhui2quFseHulO7+Uefj/yYkMZnM9LeFd20g==
+X-Gm-Message-State: AOJu0Ywa6iDifwjSvDVIKoUtZdN9Wv1BGuxnA+wOo2lcPJW5p2FQBh1D
+	LdGE82d+obZItvszsrVUJ/fUWhwVYos3DCYLKCS/o7BMsvm/dG3ieHGrzlTIdmHcah1Fr3nCxCF
+	2sKMo1Js49gGGMx47MEKJrF+zv1k=
+X-Google-Smtp-Source: AGHT+IGdtAur4DGnenUkt7vmFCXHfRn8bdNsNj+zwg5QMRyVb6UQ1FmJcE0kIkHeUurc1jYSAUhgS42w/Unm2kSvCqE=
+X-Received: by 2002:a17:90b:3841:b0:2c8:8bf8:4e24 with SMTP id
+ 98e67ed59e1d1-2cdb93bcc00mr343439a91.8.1721778543299; Tue, 23 Jul 2024
+ 16:49:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a5e:9812:0:b0:804:bfc0:382e with SMTP id
- ca18e2360f4ac-81aa7cf6b47mr10385839f.4.1721778497406; Tue, 23 Jul 2024
- 16:48:17 -0700 (PDT)
-Date: Tue, 23 Jul 2024 16:48:17 -0700
-In-Reply-To: <00000000000078baec06178e6601@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b85b3a061df2cbd0@google.com>
-Subject: Re: [syzbot] [PATCH] bcachefs: WARNING in bch2_trans_srcu_unlock
-From: syzbot <syzbot+1e515cab343dbe5aa38a@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20240703223035.2024586-1-namhyung@kernel.org>
+In-Reply-To: <20240703223035.2024586-1-namhyung@kernel.org>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Tue, 23 Jul 2024 16:48:51 -0700
+Message-ID: <CAM9d7cidaC5ZCjpaF=HuDza_W4HtzRp--LA48iEy8jSznS0EmA@mail.gmail.com>
+Subject: Re: [PATCHSET v3 0/8] perf record: Use a pinned BPF program for filter
+To: Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
+	KP Singh <kpsingh@kernel.org>, Song Liu <song@kernel.org>, bpf@vger.kernel.org, 
+	Stephane Eranian <eranian@google.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Ping!
 
-***
-
-Subject: [PATCH] bcachefs: WARNING in bch2_trans_srcu_unlock
-Author: cam.alvarez.i@gmail.com
-
-#syz test
-
-bch2_extent_fallocate should not return -BCH_ERR_transaction_restart_nested when there are no buckets available.
-Returning -BCH_ERR_transaction_restart_nested causes the sector allocation to retry even if there's no space available.
-
-Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
----
- fs/bcachefs/io_misc.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/fs/bcachefs/io_misc.c b/fs/bcachefs/io_misc.c
-index 82f9170dab3f..b5b92ef030df 100644
---- a/fs/bcachefs/io_misc.c
-+++ b/fs/bcachefs/io_misc.c
-@@ -90,8 +90,6 @@ int bch2_extent_fallocate(struct btree_trans *trans,
- 				opts.data_replicas,
- 				opts.data_replicas,
- 				BCH_WATERMARK_normal, 0, &cl, &wp);
--		if (bch2_err_matches(ret, BCH_ERR_operation_blocked))
--			ret = -BCH_ERR_transaction_restart_nested;
- 		if (ret)
- 			goto err;
- 
--- 
-2.34.1
-
+On Wed, Jul 3, 2024 at 3:30=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> w=
+rote:
+>
+> Hello,
+>
+> This is to support the unprivileged BPF filter for profiling per-task eve=
+nts.
+> Until now only root (or any user with CAP_BPF) can use the filter and we
+> cannot add a new unprivileged BPF program types.  After talking with the =
+BPF
+> folks at LSF/MM/BPF 2024, I was told that this is the way to go.  Finally=
+ I
+> managed to make it working with pinned BPF objects. :)
+>
+> v3 changes)
+>  * rebased onto latest perf-tools-next
+>
+> v2 changes)
+>  * rebased onto Ian's UID/GID (non-sample data based) filter term change
+>  * support separate lost counts for each use case
+>  * update the test case to allow normal users (if supported)
+>
+>
+> This only supports the per-task mode for normal users and root still uses
+> its own instance of the same BPF program - not shared with other users.
+> But it requires the one-time setup (by root) before using it by normal us=
+ers
+> like below.
+>
+>   $ sudo perf record --setup-filter pin
+>
+> This will load the BPF program and maps and pin them in the BPF-fs.  Then
+> normal users can use the filter.
+>
+>   $ perf record -o- -e cycles:u --filter 'period < 10000' perf test -w no=
+ploop | perf script -i-
+>   [ perf record: Woken up 1 times to write data ]
+>   [ perf record: Captured and wrote 0.011 MB - ]
+>         perf  759982 448227.214189:          1 cycles:u:      7f153719f4d=
+0 _start+0x0 (/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+>         perf  759982 448227.214195:          1 cycles:u:      7f153719f4d=
+0 _start+0x0 (/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+>         perf  759982 448227.214196:          7 cycles:u:      7f153719f4d=
+0 _start+0x0 (/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+>         perf  759982 448227.214196:        223 cycles:u:      7f153719f4d=
+0 _start+0x0 (/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2)
+>         perf  759982 448227.214198:       9475 cycles:u:  ffffffff8ee012a=
+0 [unknown] ([unknown])
+>         perf  759982 448227.548608:          1 cycles:u:      559a9f03c81=
+c noploop+0x5c (/home/namhyung/linux/tools/perf/perf)
+>         perf  759982 448227.548611:          1 cycles:u:      559a9f03c81=
+c noploop+0x5c (/home/namhyung/linux/tools/perf/perf)
+>         perf  759982 448227.548612:         12 cycles:u:      559a9f03c81=
+c noploop+0x5c (/home/namhyung/linux/tools/perf/perf)
+>         perf  759982 448227.548613:        466 cycles:u:      559a9f03c81=
+c noploop+0x5c (/home/namhyung/linux/tools/perf/perf)
+>
+> It's also possible to unload (and unpin, of course) using this command:
+>
+>   $ sudo perf record --setup-filter unpin
+>
+> The code is avaiable in 'perf/pinned-filter-v3' branch at
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
+>
+> Thanks,
+> Namhyung
+>
+>
+> Namhyung Kim (8):
+>   perf bpf-filter: Make filters map a single entry hashmap
+>   perf bpf-filter: Pass 'target' to perf_bpf_filter__prepare()
+>   perf bpf-filter: Split per-task filter use case
+>   perf bpf-filter: Support pin/unpin BPF object
+>   perf bpf-filter: Support separate lost counts for each filter
+>   perf record: Fix a potential error handling issue
+>   perf record: Add --setup-filter option
+>   perf test: Update sample filtering test
+>
+>  tools/perf/Documentation/perf-record.txt     |   5 +
+>  tools/perf/builtin-record.c                  |  23 +-
+>  tools/perf/builtin-stat.c                    |   2 +-
+>  tools/perf/builtin-top.c                     |   2 +-
+>  tools/perf/builtin-trace.c                   |   2 +-
+>  tools/perf/tests/shell/record_bpf_filter.sh  |  13 +-
+>  tools/perf/util/bpf-filter.c                 | 406 +++++++++++++++++--
+>  tools/perf/util/bpf-filter.h                 |  19 +-
+>  tools/perf/util/bpf_skel/sample-filter.h     |   2 +
+>  tools/perf/util/bpf_skel/sample_filter.bpf.c |  75 +++-
+>  tools/perf/util/evlist.c                     |   5 +-
+>  tools/perf/util/evlist.h                     |   4 +-
+>  12 files changed, 483 insertions(+), 75 deletions(-)
+>
+> --
+> 2.45.2.803.g4e1b14247a-goog
+>
+>
 
