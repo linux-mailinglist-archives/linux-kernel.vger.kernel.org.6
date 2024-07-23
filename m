@@ -1,92 +1,85 @@
-Return-Path: <linux-kernel+bounces-260108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A74193A324
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:47:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9B0793A31C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:46:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBC301F22904
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:47:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE11F1C22C25
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D17156F55;
-	Tue, 23 Jul 2024 14:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF35156993;
+	Tue, 23 Jul 2024 14:46:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v16j/tJY"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dvHnG7iD"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A7615697A
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1926E13B599
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721745999; cv=none; b=cIItwnfIVLCF4wNRLYRgjsiJAp2qmadDPXL3Hr/yiizNk0/Zff2P88NPPPbOn8zHP+UuT410jswy1CcBS72/hLbITp0ePzCEdyaihuCE7kLB/L39dmKiPyDNzjsAYjc/VNCHLwwz3+mtqNXGfjcLRD3Rxm45vTQSciolVVgXkxY=
+	t=1721745975; cv=none; b=h+4b9+91RKBlxfoZ/nv+4i5mdcuI5IBlJVuvnZ9bY4MsbbVWVh0QGv5Es87Kayc2UKhwXAfPQE3Ry379f3wzRpBTEYSlV2pM9j2xCaqNMyO73dnE5488Hrsx8aLxgDF+Zl5cktqCrO096tcw1pPk8g5S27CD1fdQpIjtYRm8hmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721745999; c=relaxed/simple;
-	bh=G1bdc1Bbc1w5rYBE7Tc2f+lHBc5gkXwukaXyrq0t8+c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=B0BBCALCCYzNOEjkwu8gNJnufYXtsT9uXpqj7DEW7tJuf1zVMGJ7cLaEl+tRslhiImLBNyEwsIv5XHVuymQqWDdxaZRloZN+CpAf3ztSlGSShmkElz1JLFs+tQmtcfbWuBv99JmVYxYhPXiK+q29S2DbCQP7cSXPHMyEHoPemsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=v16j/tJY; arc=none smtp.client-ip=209.85.167.51
+	s=arc-20240116; t=1721745975; c=relaxed/simple;
+	bh=f4nFfrVFsoZlAw2TqgkIjPVPxb5PG9oafUyuaGzF2hc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vw7NdgKq5w7E/iBl4ahDYBkhqtliAUc6bS8U+TKJdc7Ki3t/IBjW0hYdYN9Q9BH0nOUz2xCNrO7L0oDFEENLUVl+gDHEzNh9TbXBlgvcv/05p2pHx19tLUdhNDFcTSZXligK0gH9rRWyApENqioiJ8nljAcVC8X5vVO9gnsGf60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dvHnG7iD; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52f04c1e58eso2954230e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:46:35 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5a1fcb611baso4758656a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:46:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721745994; x=1722350794; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SMvMejcYTJIM4KIVqv1c9N6HVUpji/79NTaho6YiZqU=;
-        b=v16j/tJYy846EjQGBTisf6koyNavGBk0U9LTqoxVFznPcGNliMDzFfVA2pNvP7xxHJ
-         7ruRYZRnqhueSuzXNCEw0fPMcm96WdCeslCb8MQT6mztmT0gqoqie5UtGqDC1/yG/KPK
-         qsigbKXMleH2k7gUKeut/JATSW7Rq3USugbcWBbvwuEmLHqhVYwTGzLMfOS/Ckpq/hdL
-         iem5Cz5HqLJgT2N5b4UEXu732uxhfXi7acK+0IHMPTx+Fub0u6XIeYvHQgYEpniwfNMu
-         fGxkpMbSYhUtbyg7nMt8wdgXxndYYZ5Ik3ZJhTIxBa5JXXkA2VOvwz7T3rfd1vD0ao/B
-         2MbA==
+        d=linaro.org; s=google; t=1721745971; x=1722350771; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TGhe5Ex1bPFfV1vlOFlhgJUy/23nt8E3XkBUwt2fp5w=;
+        b=dvHnG7iDG0W79pgxSUvSrwTmGOtdbod+NXVXJ27rz1cMklfqe9tTvFOl3jZJ86g0ym
+         GwQFmJL7s09OO1xc+qlaEwVFvWZaKkvnvT/W4Kmbl9lnqWW+q0KBqXdMTevvwxGpFBHL
+         N56SDcYAC4a3WwSoEVGt7Y21QE6AelrfgRO6PE3RaOh7wTA7NaresmHAFC1zmzkKfN9L
+         PA34EeWE28N//UtzTvsrVSLn16GxlZtmwthGLKAgD05iSoJUxqCq92iacjEj9tR0aQoc
+         T2XJti/S/n+ryjzMHXCQ0rf0bqI6lPv1XlbQYPaMi8xcHrdEyCqAgg46Cp/eigfyY5Gr
+         Sq5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721745994; x=1722350794;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SMvMejcYTJIM4KIVqv1c9N6HVUpji/79NTaho6YiZqU=;
-        b=ZQDNSGJJN+n88doCA75FzIkv0kaU+GlEDVR/Fu1VbpTvn1L+fZpKTyCX3MWEyt0Ee/
-         AK/xQ84gSJwBwVIqbLILNDtxMbIfsXWJeMhmPcXLfj9HPWneijW8vlmkMvHiRHM3fm/r
-         Z4WQTi66pc8DdHV9JpdkyDXy+s28YP1qUVGnHRhJqqGry6lllfZc+Qb6TtJzmQdRcagf
-         j8w+MQ2S+DtAb8XDS/lE8LAQuf4Ur43y3qiHFgVHsJM7b+HATsFwC35R61Ss+Sc/Uwc0
-         cZ1Z/f/Gg9ri2qfBg4lMVCS5jJcXTt2UyOxmM4t5DA7RjjeTuM0Dn7yCGx7uulb3q07y
-         jutQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0BmAJyQ0XURPh/dPaDHWy69cEVEMlpTi1TPam2dmALpxd/7V5DroMUgAwUBWFlOEFr3YDiu70moaxcfmfohfPeMFMw4cvqoS6HfPO
-X-Gm-Message-State: AOJu0YzsuqSHyA0e7SGzjiFBURgiggz7Jo0GSbI2lxsSMs9ZtLyjgIXJ
-	H+Bjvk71NtDOq1UnWWZkIcVpsb5KiPp8e4eK+0ECG9uFSyUw2XlyxLw1OcO0nyk=
-X-Google-Smtp-Source: AGHT+IEZ1h6MbPLjULEjFJKo9gP06D2/tDoy9HevGDIpR9mHTnvQPTceARptLwA/k582cDSpVdzfpQ==
-X-Received: by 2002:a05:6512:4008:b0:52e:fada:f002 with SMTP id 2adb3069b0e04-52efb5223cemr8834295e87.10.1721745994036;
-        Tue, 23 Jul 2024 07:46:34 -0700 (PDT)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52f0415eb08sm774540e87.9.2024.07.23.07.46.32
+        d=1e100.net; s=20230601; t=1721745971; x=1722350771;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TGhe5Ex1bPFfV1vlOFlhgJUy/23nt8E3XkBUwt2fp5w=;
+        b=lddBmubrcXWvlF/9x07/kUCPYuiiOAYymiuGnNlTQqq9kK5pg+Tq+6c35S8qOhAF2L
+         QsHW/HjD24gnrlovzrlj8vkn9VSUPxQGxqRRwjaWTnhhlEeW43Ks4Xg9JWANTdeEbpgu
+         4PNOrBkje+XaT/L8y4NyGC6ApCa1F+8i2bNcCVcM/wpqtecUqQxOzL8G+YAqco8URWNc
+         iHsMn+NRi3hwMLpCyPF3mKIiep/iAjN7arb7aCvJTToPGCXaQ/3BIbRluIqCMsBAAusL
+         gWMDcoI+C3HpcSR2exBCn19dIz35AkD0naM7RoG5sXKVYM1Ny9pryu2TAlWdCOLunwrC
+         P71A==
+X-Forwarded-Encrypted: i=1; AJvYcCUM61gDAtj/n/4Hemlh0DoSYUPvxNyvkpr0ES4Si5X8cnpvfnntSkmZ4KrK7v+wOI4rj9zouxnM8+9tY5vz9ZGjBLc9l/KQ0wWV1BSf
+X-Gm-Message-State: AOJu0YzMBaLAop1BgqTbHulxXv2aIsJMMgRXmenM1nf9X3pzmfS2FTzk
+	6xIVH1/UpbqHBxKIS2IgwBE5qzLfsvAtus4OlvExhXoa/4oqksFLTLGjTGOPLn0=
+X-Google-Smtp-Source: AGHT+IE6FPRxaRZAelP7XYoRe2kh2fF3fU2NbulOmAczM715i/eTYrmwCoGSdVXZHnXFZX+KM1NhGg==
+X-Received: by 2002:a50:a6ce:0:b0:57d:2659:9141 with SMTP id 4fb4d7f45d1cf-5a47b0e7da1mr5752175a12.24.1721745971395;
+        Tue, 23 Jul 2024 07:46:11 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30c2f88a5sm7592422a12.77.2024.07.23.07.46.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 07:46:33 -0700 (PDT)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Viresh Kumar <vireshk@kernel.org>,
-	Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: [PATCH 1/4] drm/tegra: gr3d: Convert into dev_pm_domain_attach|detach_list()
+        Tue, 23 Jul 2024 07:46:10 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Banajit Goswami <bgoswami@quicinc.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	alsa-devel@alsa-project.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] ASoC: codecs: lpass-wsa-macro: Do not hard-code dai in VI mixer
 Date: Tue, 23 Jul 2024 16:46:07 +0200
-Message-Id: <20240723144610.564273-2-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240723144610.564273-1-ulf.hansson@linaro.org>
-References: <20240723144610.564273-1-ulf.hansson@linaro.org>
+Message-ID: <20240723144607.123240-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,117 +88,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Rather than hooking up the PM domains through devm_pm_opp_attach_genpd()
-and manage the device-link, let's avoid the boilerplate-code by converting
-into dev_pm_domain_attach|detach_list.
+The wsa_macro_vi_feed_mixer_put() callback for setting VI feedback mixer
+value could be used for different DAIs (planned in the future CPS DAI),
+so make the code a bit more generic by using DAI ID from widget->shift,
+instead of hard-coding it.  The get() callback already follows such
+convention.
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/gpu/drm/tegra/gr3d.c | 46 ++++++++++--------------------------
- 1 file changed, 13 insertions(+), 33 deletions(-)
+ sound/soc/codecs/lpass-wsa-macro.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/gr3d.c b/drivers/gpu/drm/tegra/gr3d.c
-index 00c8564520e7..4de1ea0fc7c0 100644
---- a/drivers/gpu/drm/tegra/gr3d.c
-+++ b/drivers/gpu/drm/tegra/gr3d.c
-@@ -46,6 +46,7 @@ struct gr3d {
- 	unsigned int nclocks;
- 	struct reset_control_bulk_data resets[RST_GR3D_MAX];
- 	unsigned int nresets;
-+	struct dev_pm_domain_list *pd_list;
+diff --git a/sound/soc/codecs/lpass-wsa-macro.c b/sound/soc/codecs/lpass-wsa-macro.c
+index 8351f0974e6a..4158657914fb 100644
+--- a/sound/soc/codecs/lpass-wsa-macro.c
++++ b/sound/soc/codecs/lpass-wsa-macro.c
+@@ -2296,36 +2296,37 @@ static int wsa_macro_vi_feed_mixer_put(struct snd_kcontrol *kcontrol,
+ 	struct wsa_macro *wsa = snd_soc_component_get_drvdata(component);
+ 	u32 enable = ucontrol->value.integer.value[0];
+ 	u32 spk_tx_id = mixer->shift;
++	u32 dai_id = widget->shift;
  
- 	DECLARE_BITMAP(addr_regs, GR3D_NUM_REGS);
- };
-@@ -369,18 +370,12 @@ static int gr3d_power_up_legacy_domain(struct device *dev, const char *name,
- 	return 0;
- }
- 
--static void gr3d_del_link(void *link)
--{
--	device_link_del(link);
--}
--
- static int gr3d_init_power(struct device *dev, struct gr3d *gr3d)
- {
--	static const char * const opp_genpd_names[] = { "3d0", "3d1", NULL };
--	const u32 link_flags = DL_FLAG_STATELESS | DL_FLAG_PM_RUNTIME;
--	struct device **opp_virt_devs, *pd_dev;
--	struct device_link *link;
--	unsigned int i;
-+	struct dev_pm_domain_attach_data pd_data = {
-+		.pd_names = (const char *[]) { "3d0", "3d1" },
-+		.num_pd_names = 2,
-+	};
- 	int err;
- 
- 	err = of_count_phandle_with_args(dev->of_node, "power-domains",
-@@ -414,29 +409,10 @@ static int gr3d_init_power(struct device *dev, struct gr3d *gr3d)
- 	if (dev->pm_domain)
- 		return 0;
- 
--	err = devm_pm_opp_attach_genpd(dev, opp_genpd_names, &opp_virt_devs);
--	if (err)
-+	err = dev_pm_domain_attach_list(dev, &pd_data, &gr3d->pd_list);
-+	if (err < 0)
- 		return err;
- 
--	for (i = 0; opp_genpd_names[i]; i++) {
--		pd_dev = opp_virt_devs[i];
--		if (!pd_dev) {
--			dev_err(dev, "failed to get %s power domain\n",
--				opp_genpd_names[i]);
--			return -EINVAL;
--		}
--
--		link = device_link_add(dev, pd_dev, link_flags);
--		if (!link) {
--			dev_err(dev, "failed to link to %s\n", dev_name(pd_dev));
--			return -EINVAL;
--		}
--
--		err = devm_add_action_or_reset(dev, gr3d_del_link, link);
--		if (err)
--			return err;
--	}
--
- 	return 0;
- }
- 
-@@ -527,13 +503,13 @@ static int gr3d_probe(struct platform_device *pdev)
- 
- 	err = devm_tegra_core_dev_init_opp_table_common(&pdev->dev);
- 	if (err)
--		return err;
-+		goto err;
- 
- 	err = host1x_client_register(&gr3d->client.base);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to register host1x client: %d\n",
- 			err);
--		return err;
-+		goto err;
+ 	if (enable) {
+ 		if (spk_tx_id == WSA_MACRO_TX0 &&
+ 			!test_bit(WSA_MACRO_TX0,
+-				&wsa->active_ch_mask[WSA_MACRO_AIF_VI])) {
++				&wsa->active_ch_mask[dai_id])) {
+ 			set_bit(WSA_MACRO_TX0,
+-				&wsa->active_ch_mask[WSA_MACRO_AIF_VI]);
+-			wsa->active_ch_cnt[WSA_MACRO_AIF_VI]++;
++				&wsa->active_ch_mask[dai_id]);
++			wsa->active_ch_cnt[dai_id]++;
+ 		}
+ 		if (spk_tx_id == WSA_MACRO_TX1 &&
+ 			!test_bit(WSA_MACRO_TX1,
+-				&wsa->active_ch_mask[WSA_MACRO_AIF_VI])) {
++				&wsa->active_ch_mask[dai_id])) {
+ 			set_bit(WSA_MACRO_TX1,
+-				&wsa->active_ch_mask[WSA_MACRO_AIF_VI]);
+-			wsa->active_ch_cnt[WSA_MACRO_AIF_VI]++;
++				&wsa->active_ch_mask[dai_id]);
++			wsa->active_ch_cnt[dai_id]++;
+ 		}
+ 	} else {
+ 		if (spk_tx_id == WSA_MACRO_TX0 &&
+ 			test_bit(WSA_MACRO_TX0,
+-				&wsa->active_ch_mask[WSA_MACRO_AIF_VI])) {
++				&wsa->active_ch_mask[dai_id])) {
+ 			clear_bit(WSA_MACRO_TX0,
+-				&wsa->active_ch_mask[WSA_MACRO_AIF_VI]);
+-			wsa->active_ch_cnt[WSA_MACRO_AIF_VI]--;
++				&wsa->active_ch_mask[dai_id]);
++			wsa->active_ch_cnt[dai_id]--;
+ 		}
+ 		if (spk_tx_id == WSA_MACRO_TX1 &&
+ 			test_bit(WSA_MACRO_TX1,
+-				&wsa->active_ch_mask[WSA_MACRO_AIF_VI])) {
++				&wsa->active_ch_mask[dai_id])) {
+ 			clear_bit(WSA_MACRO_TX1,
+-				&wsa->active_ch_mask[WSA_MACRO_AIF_VI]);
+-			wsa->active_ch_cnt[WSA_MACRO_AIF_VI]--;
++				&wsa->active_ch_mask[dai_id]);
++			wsa->active_ch_cnt[dai_id]--;
+ 		}
  	}
- 
- 	/* initialize address register map */
-@@ -541,6 +517,9 @@ static int gr3d_probe(struct platform_device *pdev)
- 		set_bit(gr3d_addr_regs[i], gr3d->addr_regs);
- 
- 	return 0;
-+err:
-+	dev_pm_domain_detach_list(gr3d->pd_list);
-+	return err;
- }
- 
- static void gr3d_remove(struct platform_device *pdev)
-@@ -549,6 +528,7 @@ static void gr3d_remove(struct platform_device *pdev)
- 
- 	pm_runtime_disable(&pdev->dev);
- 	host1x_client_unregister(&gr3d->client.base);
-+	dev_pm_domain_detach_list(gr3d->pd_list);
- }
- 
- static int __maybe_unused gr3d_runtime_suspend(struct device *dev)
+ 	snd_soc_dapm_mixer_update_power(widget->dapm, kcontrol, enable, NULL);
 -- 
-2.34.1
+2.43.0
 
 
