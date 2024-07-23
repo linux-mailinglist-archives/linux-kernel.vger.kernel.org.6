@@ -1,114 +1,269 @@
-Return-Path: <linux-kernel+bounces-260439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E9393A91C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 00:20:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 430C793A920
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 00:22:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7EDA1C224C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:20:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66A5C1C22471
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D641148301;
-	Tue, 23 Jul 2024 22:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCAB91487F9;
+	Tue, 23 Jul 2024 22:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wwhqugws"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d2vaU5DY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D200C143879;
-	Tue, 23 Jul 2024 22:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025DB1DDD6;
+	Tue, 23 Jul 2024 22:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721773240; cv=none; b=pEjVinJClYEewk6DrPruCVfdLrXnLuOp8cyTFlN6i8TzHLM9ZgbmAVin8UWZfqCpp5bH0yEy7iSSCAtds9SVIsAO8sdfsxvQUryeZSF4NjN8hRdTEAeiPdfsq5YvUSa/w7D1rCECmyR3WsRRI9uJwzIWjbXpUTT29FHu8svFKUE=
+	t=1721773353; cv=none; b=dhbvL4/M/EwronNEgppu16olBbzjLqdeVxCgyzGj4Sb1P6AwSy7hKvniaGLytBq16p7gAQi2+JdJ6oOvor27gpZ6/swBAZvE10QcZxd6I9n+h9g9O2dC+zmgm4Ec0SZgHGN4ImHMXtzaPpwz8iNc9T0S1uqziVaMjtGZh287DiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721773240; c=relaxed/simple;
-	bh=PhiCGI+0lDmU9VS6dUAiwV/J0u9+jwn3moE1mGNrvpQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HqByYwgxBgipW1VvNREcX8W0RMNj9NC26IF4aQtZ/IMhfnkk/0P4SZ7MPt2QXZLwXZHxB1IiLQraU/sOu8NryXZt/16pQOiM6tss+fd8kV0cF6H/bHOFeQty2og4EwKidoDMO2VgiKtwpatmlZe+C4g8tFczeOg5da8ymziqvBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wwhqugws; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4266edee10cso40505905e9.2;
-        Tue, 23 Jul 2024 15:20:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721773237; x=1722378037; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PhiCGI+0lDmU9VS6dUAiwV/J0u9+jwn3moE1mGNrvpQ=;
-        b=Wwhqugws7KDrpyhOKWWjv7cUuIICKN3bgu8GQELKkssyl/HoM8U1Ds1lFwlyjrwaKr
-         N2TuAMAh4AV5m6oc5JyJBbPdI5bQnHr0otvYkSfRsBQj/N6t961nQDuZasOVRuWCdunp
-         fpdUDGY7IO3UbiGVoj9ah2Jo2w1UUVMHsGc7MdajWSsUSiO+LnK1Lkr/w5Gaa4wNxIv3
-         24W6Ye2jVeUERYQ5YSenu+pkCpYkiPsq5hmOObJ73KJBfFk7FztwtsPJ6n3Sk7S9bmIX
-         CybDEIWGdGtq52CHBgpGw3FW9t1GAncX0jpk1Z99WtoQHXVFKA+WEdoEp9pTH7MQ20tx
-         TTpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721773237; x=1722378037;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PhiCGI+0lDmU9VS6dUAiwV/J0u9+jwn3moE1mGNrvpQ=;
-        b=tPaakldFKBEyMb+DK/ZWvw/11lNTcCeEcDcoaw/ko2ScGTIVFVINauZHavQx6Hg2Tt
-         Zod/JKA3Bkf87SIg6yubtWJC2Hbf0vUI+6tLwDpSvnh/1/rE5P5qHVlO9ak3iI9TTUSD
-         Fj0I4Zc2VMBOPMPkL91zZMgdfaL4cqrpZcjol4IsxppAW0k/EC400a0rg2MWAfivTE2j
-         nGrho4pA9PQGib+ypCxB59Tt7mJGennuwNjuWx2bglcChKIO/WRNrFSe8hXFuFYIeR9v
-         q779TfwW0N1iUqmPypEZh/fuFbhVc2IoctR3w0Y5ba1lrMg4srBUd1xsPKp95JizRBE7
-         SnKg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+I9gAADCvML2B0xTn1skpDWfSPY1pmAIWdrIdCFYE/aSrqecOItZbXxdmeiYSG9qOKsj8O/0XgbXjMmZDmJK4MZ13hbbJuDZLD8wojldWyIN7bIctqE27ouKeDM8ZvjP44AhHOWG98PTLN6iP
-X-Gm-Message-State: AOJu0Yy6BP8S8bPqo69B08UeM9rC5ZFOIjRU6ORituX3hO/Ffe30P3AJ
-	lgsnp92JDZqAoIX1QswqzycRfIO0EKz2xdgwdt30I0etTLOltJjkyrWTvTzVpXuQOGzR7AWANlE
-	EbZk7qtK5y4ZtAnsHkmBrNs/gEK8=
-X-Google-Smtp-Source: AGHT+IG0VqeACNNp75xPFIsOP06VyHtdPzXgXp9EVPC8LjE+ce4xQq68nuZDpbQzIrjdK+Lwmyu5YW5gToacP2SXhKE=
-X-Received: by 2002:a05:600c:19ce:b0:427:dac4:d36 with SMTP id
- 5b1f17b1804b1-427f954287emr1330255e9.7.1721773236693; Tue, 23 Jul 2024
- 15:20:36 -0700 (PDT)
+	s=arc-20240116; t=1721773353; c=relaxed/simple;
+	bh=QcBPciMEEglSS9n38UzLJ7yUmdEkQ+0xU3UWCPIbcJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=IcaojyQbM92Y750hpOz+/0tR8sVuDKsCWHRLeh/Fz5AQJmiWJAV0EiQ0P/F8ZUf6jQX9Qq9L9/tabro5fhF0Sy+ikyicZm+NLN72Q4jFwVtnxg3aF49ne9wgRgDBVCAZjLx2RqbPQV6pqxkn2Xm3/AwaRbzWPN34RXcw1D2AhTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d2vaU5DY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21A19C4AF0A;
+	Tue, 23 Jul 2024 22:22:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721773352;
+	bh=QcBPciMEEglSS9n38UzLJ7yUmdEkQ+0xU3UWCPIbcJE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=d2vaU5DYRNG3/ujzG2Lh9oaDL+cbPXoMlZ4dQpCGRZcElPGZKojhfIWcLMQ5+NRkq
+	 o378jrN3zQ2cd1dOTA2NyVaWrXE14PK/RP5sPlIrOZ2fH3ZmR/lj4XVCArxWigNZ9o
+	 6WAkjw9Mye34IcgOgNqXPUmycqrSXhnWWUEai0WyVREa6S+oXcbP+nLBka+pzYMGnS
+	 luAezrQkoRUzte/dI4WIi5liKNry5u40Ypr2lcH5z2g+808/Uj8F8NDC9B48cztNkd
+	 Ro5Q8K62LKn4qBVjkB43Bo24Utt1Mu8xbWhAuErdVt9ZaZmH1vTNlNmqRVzn1Rcsvs
+	 MXqz5VPRHlNVQ==
+Date: Tue, 23 Jul 2024 17:22:29 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Wei Huang <wei.huang2@amd.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
+	Jonathan.Cameron@huawei.com, corbet@lwn.net, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	alex.williamson@redhat.com, gospo@broadcom.com,
+	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
+	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
+	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
+	vadim.fedorenko@linux.dev, horms@kernel.org, bagasdotme@gmail.com,
+	bhelgaas@google.com
+Subject: Re: [PATCH V3 06/10] PCI/TPH: Introduce API to retrieve TPH steering
+ tags from ACPI
+Message-ID: <20240723222229.GA759742@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202407231547.389c0ad2-oliver.sang@intel.com>
-In-Reply-To: <202407231547.389c0ad2-oliver.sang@intel.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Wed, 24 Jul 2024 00:20:25 +0200
-Message-ID: <CA+fCnZd2G5Zm4tcW1qTEHrzDAM=K6apCSftYKgLMETJ4FBGNAA@mail.gmail.com>
-Subject: Re: [linus:master] [kasan, fortify] 2e577732e8: BUG:KASAN:global-out-of-bounds_in_usb_copy_descriptors
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Erhard Furtner <erhard_f@mailbox.org>, 
-	Nico Pache <npache@redhat.com>, Marco Elver <elver@google.com>, 
-	Alexander Potapenko <glider@google.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-	Daniel Axtens <dja@axtens.net>, Dmitry Vyukov <dvyukov@google.com>, linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240717205511.2541693-7-wei.huang2@amd.com>
 
-On Tue, Jul 23, 2024 at 10:51=E2=80=AFAM kernel test robot
-<oliver.sang@intel.com> wrote:
->
-> Hello,
->
-> we noticed this is a fix commit, however, we don't have enough knowledge =
-to
-> determine if new KASAN issue is expected actually after this fix.
-> so we just made this report FYI what we observed in our tests.
->
->
-> kernel test robot noticed "BUG:KASAN:global-out-of-bounds_in_usb_copy_des=
-criptors" on:
->
-> commit: 2e577732e8d28b9183df701fb90cb7943aa4ed16 ("kasan, fortify: proper=
-ly rename memintrinsics")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+On Wed, Jul 17, 2024 at 03:55:07PM -0500, Wei Huang wrote:
+> Add an API function to allow endpoint device drivers to retrieve
+> steering tags for a specific cpu_uid. This is achieved by invoking
+> ACPI _DSM on device's root port.
 
-Hi,
+s/an API function/<name of function>/
 
-Yes, that patch might uncover new bugs that previously were not
-detectable. There's still a chance that something is wrong with KASAN
-and it reports a false positive, but most likely, this report is a
-real issue.
+Also include function name in subject line.
 
-Thank you!
+> + * The st_info struct defines the steering tag returned by the firmware _DSM
+> + * method defined in PCI Firmware Spec r3.3, sect 4.6.15 "_DSM to Query Cache
+> + * Locality TPH Features"
+
+I don't know what I'm missing, but my copy of the r3.3 spec, dated Jan
+20, 2021, doesn't have sec 4.6.15.
+
+> +static u16 tph_extract_tag(enum tph_mem_type mem_type, u8 req_type,
+> +			   union st_info *st_tag)
+> +{
+> +	switch (req_type) {
+> +	case PCI_TPH_REQ_TPH_ONLY: /* 8 bit tags */
+> +		switch (mem_type) {
+> +		case TPH_MEM_TYPE_VM:
+> +			if (st_tag->vm_st_valid)
+> +				return st_tag->vm_st;
+> +			break;
+> +		case TPH_MEM_TYPE_PM:
+> +			if (st_tag->pm_st_valid)
+> +				return st_tag->pm_st;
+> +			break;
+> +		}
+> +		break;
+> +	case PCI_TPH_REQ_EXT_TPH: /* 16 bit tags */
+> +		switch (mem_type) {
+> +		case TPH_MEM_TYPE_VM:
+> +			if (st_tag->vm_xst_valid)
+> +				return st_tag->vm_xst;
+> +			break;
+> +		case TPH_MEM_TYPE_PM:
+> +			if (st_tag->pm_xst_valid)
+> +				return st_tag->pm_xst;
+> +			break;
+> +		}
+> +		break;
+> +	default:
+> +		pr_err("invalid steering tag in ACPI _DSM\n");
+
+Needs to mention a specific device.
+
+> +static acpi_status tph_invoke_dsm(acpi_handle handle, u32 cpu_uid, u8 ph,
+> +				  u8 target_type, bool cache_ref_valid,
+> +				  u64 cache_ref, union st_info *st_out)
+
+IMO you can omit ph, target_type, cache_ref_valid, etc until you have
+a need for them.  I don't see the point of parameters that always have
+the same constant values.
+
+> +{
+> +	union acpi_object arg3[3], in_obj, *out_obj;
+> +
+> +	if (!acpi_check_dsm(handle, &pci_acpi_dsm_guid, 7, BIT(TPH_ST_DSM_FUNC_INDEX)))
+
+Wrap the code and comments in this file to fit in 80 columns instead
+of 85 or whatever you used.  Lines longer than 80 are OK for printf
+strings but pointless for comments, etc.
+
+> +		return AE_ERROR;
+> +
+> +	/* DWORD: feature ID (0 for processor cache ST query) */
+> +	arg3[0].integer.type = ACPI_TYPE_INTEGER;
+> +	arg3[0].integer.value = 0;
+> +
+> +	/* DWORD: target UID */
+> +	arg3[1].integer.type = ACPI_TYPE_INTEGER;
+> +	arg3[1].integer.value = cpu_uid;
+> +
+> +	/* QWORD: properties */
+> +	arg3[2].integer.type = ACPI_TYPE_INTEGER;
+> +	arg3[2].integer.value = ph & 3;
+> +	arg3[2].integer.value |= (target_type & 1) << 2;
+> +	arg3[2].integer.value |= (cache_ref_valid & 1) << 3;
+> +	arg3[2].integer.value |= (cache_ref << 32);
+> +
+> +	in_obj.type = ACPI_TYPE_PACKAGE;
+> +	in_obj.package.count = ARRAY_SIZE(arg3);
+> +	in_obj.package.elements = arg3;
+> +
+> +	out_obj = acpi_evaluate_dsm(handle, &pci_acpi_dsm_guid, 7,
+> +				    TPH_ST_DSM_FUNC_INDEX, &in_obj);
+> +
+> +	if (!out_obj)
+> +		return AE_ERROR;
+> +
+> +	if (out_obj->type != ACPI_TYPE_BUFFER) {
+> +		ACPI_FREE(out_obj);
+> +		return AE_ERROR;
+> +	}
+> +
+> +	st_out->value = *((u64 *)(out_obj->buffer.pointer));
+> +
+> +	ACPI_FREE(out_obj);
+> +
+> +	return AE_OK;
+> +}
+> +
+>  /* Update the ST Mode Select field of TPH Control Register */
+>  static void set_ctrl_reg_mode_sel(struct pci_dev *pdev, u8 st_mode)
+>  {
+> @@ -89,3 +210,44 @@ bool pcie_tph_intr_vec_supported(struct pci_dev *pdev)
+>  	return true;
+>  }
+>  EXPORT_SYMBOL(pcie_tph_intr_vec_supported);
+> +
+> +/**
+> + * pcie_tph_get_st_from_acpi() - Retrieve steering tag for a specific CPU
+> + * using platform ACPI _DSM
+
+1) TPH and Steering Tags are not ACPI-specific, even though the only
+current mechanism to learn the tags happens to be an ACPI _DSM, so I
+think we should omit "acpi" from the name drivers use.
+
+2) The spec doesn't restrict Steering Tags to be for a CPU; it says
+"processing resource such as a host processor or system cache
+hierarchy ..."  But obviously this interface only comprehends an ACPI
+CPU ID.  Maybe the function name should include "cpu".
+
+3) Nobody outside the file calls this yet, so it should probably be
+static (and removed from the doc) until a driver needs it.
+
+> + * @pdev: pci device
+> + * @cpu_acpi_uid: the acpi cpu_uid.
+> + * @mem_type: memory type (vram, nvram)
+> + * @req_type: request type (disable, tph, extended tph)
+> + * @tag: steering tag return value
+> + *
+> + * Return: 0 if success, otherwise errno
+> + */
+> +int pcie_tph_get_st_from_acpi(struct pci_dev *pdev, unsigned int cpu_acpi_uid,
+> +			      enum tph_mem_type mem_type, u8 req_type,
+> +			      u16 *tag)
+> +{
+> +	struct pci_dev *rp;
+> +	acpi_handle rp_acpi_handle;
+> +	union st_info info;
+> +
+> +	if (!pdev->tph_cap)
+> +		return -ENODEV;
+> +
+> +	/* find ACPI handler for device's root port */
+
+Superfluous comments since the code is obvious.  And this finds a
+"handle", not a "handler" :)
+
+> +	rp = pcie_find_root_port(pdev);
+> +	if (!rp || !rp->bus || !rp->bus->bridge)
+> +		return -ENODEV;
+> +	rp_acpi_handle = ACPI_HANDLE(rp->bus->bridge);
+> +
+> +	/* invoke _DSM to extract tag value */
+> +	if (tph_invoke_dsm(rp_acpi_handle, cpu_acpi_uid, 0, 0, false, 0, &info) != AE_OK) {
+> +		*tag = 0;
+> +		return -EINVAL;
+> +	}
+> +
+> +	*tag = tph_extract_tag(mem_type, req_type, &info);
+> +	pci_dbg(pdev, "%s: cpu=%d tag=%d\n", __func__, cpu_acpi_uid, *tag);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(pcie_tph_get_st_from_acpi);
+> diff --git a/include/linux/pci-tph.h b/include/linux/pci-tph.h
+> index 854677651d81..b12a592f3d49 100644
+> --- a/include/linux/pci-tph.h
+> +++ b/include/linux/pci-tph.h
+> @@ -9,15 +9,27 @@
+>  #ifndef LINUX_PCI_TPH_H
+>  #define LINUX_PCI_TPH_H
+>  
+> +enum tph_mem_type {
+> +	TPH_MEM_TYPE_VM,	/* volatile memory type */
+> +	TPH_MEM_TYPE_PM		/* persistent memory type */
+
+Where does this come from?  I don't see "vram" or "volatile" used in
+the PCIe spec in this context.  Maybe this is from the PCI Firmware
+spec?
+
+> +static inline int pcie_tph_get_st_from_acpi(struct pci_dev *dev, unsigned int cpu_acpi_uid,
+> +					    enum tph_mem_type tag_type, u8 req_enable,
+> +					    u16 *tag)
+> +{ return false; }
+
+"false" is not "int".
+
+Apparently you want to return "success" in this case, when
+CONFIG_PCIE_TPH is not enabled?  I suggested leaving this non-exported
+for now, which would mean removing this altogether.  But if/when we do
+export it, I think maybe it should return error so a caller doesn't
+assume it succeeded, since *tag will be garbage.
+
+Bjorn
 
