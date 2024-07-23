@@ -1,179 +1,246 @@
-Return-Path: <linux-kernel+bounces-260429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D1E93A8D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:47:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9F2C93A7F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:04:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20FFEB21F6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:47:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25A3BB22869
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E88146A68;
-	Tue, 23 Jul 2024 21:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425D4142E83;
+	Tue, 23 Jul 2024 20:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MvVDBFWx";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EnqrR8br";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MvVDBFWx";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EnqrR8br"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="CxY+elzb"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0DF8143C63;
-	Tue, 23 Jul 2024 21:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668ED13DDD8
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 20:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721771239; cv=none; b=PvdE10TgsCLOzZ8SGfRqU3D5DhxQ6WY2M4nkgh8KC+3OHaFNTMe5pdEboFFj3DA65giC+22N3AwQtBqSsGmPclMYrCNZtCDmhu7zCEWnKneG9I5qmoX8UEG155/c3v/K34DM9WdBCn1WjKqYzTuuhxJazDxH0L/E7EZX5O12oEc=
+	t=1721765081; cv=none; b=FzTtfeziqrTEn1XNlyrRZVb3RfSf7F0aC2sQdf/5i1quR6ysGxNLV/dNHzYlL6KU7JhYzH5R8nhHo24sFgQxTvf2IyIs7xDv7hzLS24UMRS3sWF+Ht1ErOFW1BtbklG04jDT7yNdyl+OneRHbPD3Dczr3UGBh5l/a+CBMReE/Og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721771239; c=relaxed/simple;
-	bh=qJpSDf001uPC+i6s07gErslq6MFzol67hVMny6D9g4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pLCARy8v+sXrbzIek7s7xS0QHR3aa3YUIZIZouNtwCk0qeqT6Dk9M9KAw0Hp6FL8mVCX5SKCF6rQrLRNrJ4Au0l18J3hkJsKe6EolQ9/fmhOgcEerhXVFvOLvRtpozLdHgXPFhbh7Mz/QmYFkNIpHVu8rAFhUUP2EE4pIReawz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MvVDBFWx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EnqrR8br; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MvVDBFWx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EnqrR8br; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8753C21AF9;
-	Tue, 23 Jul 2024 21:47:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721771233; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KpHcZwTJx2XsG9I5Zbrs4QADhHKv8JRyCztbBfSL5dU=;
-	b=MvVDBFWx8TP0Aw1w7Plsn7VZRZjB6ToX2pWntC9kYuOAG2+AgHA7RczvZZAC8pwlNNfxcd
-	MrNjUG5KmgxsymPs9ioBUFsaZyIabYqSVot/4ozkvBK+Q3Wj0pgXfIF/dJFjcqQZEavjxn
-	aga8dD5qgnUaoG31DDfWYmqQePcQgow=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721771233;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KpHcZwTJx2XsG9I5Zbrs4QADhHKv8JRyCztbBfSL5dU=;
-	b=EnqrR8br+BjFqzxIiJJKZcDrdDbacIFPywX/la6d3y1+PSx70T6x5PfnbNVPd4ZD7r4fdY
-	AZxAQA5owXe4hUDQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=MvVDBFWx;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=EnqrR8br
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721771233; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KpHcZwTJx2XsG9I5Zbrs4QADhHKv8JRyCztbBfSL5dU=;
-	b=MvVDBFWx8TP0Aw1w7Plsn7VZRZjB6ToX2pWntC9kYuOAG2+AgHA7RczvZZAC8pwlNNfxcd
-	MrNjUG5KmgxsymPs9ioBUFsaZyIabYqSVot/4ozkvBK+Q3Wj0pgXfIF/dJFjcqQZEavjxn
-	aga8dD5qgnUaoG31DDfWYmqQePcQgow=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721771233;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KpHcZwTJx2XsG9I5Zbrs4QADhHKv8JRyCztbBfSL5dU=;
-	b=EnqrR8br+BjFqzxIiJJKZcDrdDbacIFPywX/la6d3y1+PSx70T6x5PfnbNVPd4ZD7r4fdY
-	AZxAQA5owXe4hUDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6F0131377F;
-	Tue, 23 Jul 2024 21:47:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Eo2tGuEkoGY+QAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 23 Jul 2024 21:47:13 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A56B7A08C6; Tue, 23 Jul 2024 14:57:10 +0200 (CEST)
-Date: Tue, 23 Jul 2024 14:57:10 +0200
-From: Jan Kara <jack@suse.cz>
-To: David Howells <dhowells@redhat.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Jeff Layton <jlayton@kernel.org>, Gao Xiang <xiang@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfs: Fix potential circular locking through setxattr()
- and removexattr()
-Message-ID: <20240723125710.mtnfaycuvdi4dpdy@quack3>
-References: <2136178.1721725194@warthog.procyon.org.uk>
+	s=arc-20240116; t=1721765081; c=relaxed/simple;
+	bh=6okmN9u6g0YzEvUOMVo2qECWxsyJwW83+0wG5FuRGho=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=qeOdojLhL/wEWzu9WqUqhty3KCB4EHYMHH5IbYXKhmL40ughNdV5bs+Pqu7vKy4M1NRroStZWQt86XuF2YO5TsH7kB7KA1SYJjPi+SpE1QwmhuxqzR1hzNFJgaJAIoo+IrjL1FSCxBffgh+pHRCa/4yCBTxCZ/rJ2qcGkFbg3Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=CxY+elzb; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7a9cf7d3f3so121447066b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 13:04:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1721765077; x=1722369877; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aiy3vXnbgGkz9PmoVK9WFoCSTDARahNVFjTn/3fjxMk=;
+        b=CxY+elzbvV7MHhh7s86xRosX5jPTWNbiMHYb7ctiqslipFEIvtfVipQAjHRnNHadky
+         W3uP3SppCFypRTtLW81OAsnZUScH6jsbnzAHKPddb1U+IdNJnRFgrfaordqeyBknnzr5
+         Gto9ye+qRXoE6OD7+R59Fv5g01261u0yJ5Iuc1VOc4GonrWjfxSRO/HSL0o5RrJ11zmY
+         ekebo9Zrbx60ag5JeppY4GZogz/BvgwFvxfdqfdS5R2IvGpWh8H0eomzkZn/blsZn30g
+         nWmwQKqFCe5kVLxjNHcZDYzYVD6N6cKIQNRgI1yr0n4SihFq9zQ9bBCmHFp+KcAcbj07
+         itkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721765077; x=1722369877;
+        h=content-transfer-encoding:mime-version:message-id:date:user-agent
+         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=aiy3vXnbgGkz9PmoVK9WFoCSTDARahNVFjTn/3fjxMk=;
+        b=H9x9dz4invx2qEnZ73+mJWinT+L0AMCfSsY2OjmIkcAvDo9zpzmrl5ardTbzIn1BZN
+         GVEQg+fk/lrPfz9JnYoyuW4OgMecedlcwh8OsePgHQ68LaOSFSiup2TWzM9K+DaCPwIe
+         pRRh6xgBJZQFO+JQ0MYLnyg6M781L945QmzWXK+fSpArQHIWXWgkvPm1u1pbB3q3OZBL
+         ZT2LWZGEBfnjLKp2OYS+pVVKzbcOrx7tbYmD+KloCtOrm1OP1qcXfXs42h16CUBFlZzH
+         pwsKpSe1QDgiCxFksQ94PpALvJkcsge1gEoAAdoZGnfrD5egVurRn2i6Hi/XZh3FCxUg
+         nSXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVj1gdGP8x+5CXljNMLWeNHFVYMcvZEWYMVfL8Xxq9I/aq+ybDFcx+iQIc3fH7dL7QLeDyVIJe8dqBID9ZKqx63qNb5BEO39KWSfc+7
+X-Gm-Message-State: AOJu0YwE+skg81rKEI615s9knmKf08N92LcCuVpkhEBaeYIf5uTIuLIh
+	FeMVLvGlcBTtkR1glU2YKhyl9PjH098E364okttijxEsrW+9DXWMcKCQcdsQ1Rs=
+X-Google-Smtp-Source: AGHT+IHnuN6mlUjEqavFEeco2LD67qtvChZarrNGARbx17Z56kANRU6SoHNPIyFGEa4JVjtmMYQglQ==
+X-Received: by 2002:a17:907:9444:b0:a72:5967:b3a with SMTP id a640c23a62f3a-a7a4c0113a1mr780118966b.22.1721765077538;
+        Tue, 23 Jul 2024 13:04:37 -0700 (PDT)
+Received: from cloudflare.com ([2a09:bac5:5063:2387::38a:4c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7aaee13d39sm7380166b.218.2024.07.23.13.04.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 13:04:36 -0700 (PDT)
+From: Jakub Sitnicki <jakub@cloudflare.com>
+To: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
+Cc: syzbot <syzbot+e15b7e15b8a751a91d9a@syzkaller.appspotmail.com>,
+  davem@davemloft.net,  dsahern@kernel.org,  kuba@kernel.org,
+  linux-kernel@vger.kernel.org,  netdev@vger.kernel.org,
+  soheil@google.com,  syzkaller-bugs@googlegroups.com,  willemb@google.com,
+  kernel-team@cloudflare.com
+Subject: Re: [syzbot] [net?] WARNING in skb_warn_bad_offload (5)
+In-Reply-To: <87o76t6urw.fsf@cloudflare.com> (Jakub Sitnicki's message of
+	"Fri, 19 Jul 2024 21:34:11 +0200")
+References: <000000000000e1609a061d5330ce@google.com>
+	<5e4905d7-32e1-4359-9720-a32330aec424@redhat.com>
+	<87wmll7i9n.fsf@cloudflare.com>
+	<CANn89iKa8fyD2s1VdHJ2SQAUUzm-iPEXoKOGF6wvuqxofC4Frw@mail.gmail.com>
+	<87o76t6urw.fsf@cloudflare.com>
+User-Agent: mu4e 1.12.4; emacs 29.1
+Date: Tue, 23 Jul 2024 22:04:35 +0200
+Message-ID: <877cdbdgdo.fsf@cloudflare.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2136178.1721725194@warthog.procyon.org.uk>
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 8753C21AF9
-X-Spam-Score: -3.81
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.81 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Regarding the contents of the change itself:
+On Fri, Jul 19, 2024 at 09:34 PM +02, Jakub Sitnicki wrote:
+> On Tue, Jul 16, 2024 at 07:54 AM -07, Eric Dumazet wrote:
+>> On Tue, Jul 16, 2024 at 3:17=E2=80=AFAM Jakub Sitnicki <jakub@cloudflare=
+.com> wrote:
+>>>
+>>> On Tue, Jul 16, 2024 at 12:04 PM +02, Paolo Abeni wrote:
+>>> > On 7/16/24 03:23, syzbot wrote:
+>>> >> syzbot found the following issue on:
+>>> >> HEAD commit:    80ab5445da62 Merge tag 'wireless-next-2024-07-11' of=
+ git:/..
+>>> >> git tree:       net-next
+>>> >> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D175fb821=
+980000
+>>> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D2dbcdd86=
+41c4638f
+>>> >> dashboard link: https://syzkaller.appspot.com/bug?extid=3De15b7e15b8=
+a751a91d9a
+>>> >> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils fo=
+r Debian) 2.40
+>>> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D172bf5=
+66980000
+>>> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D12fff535=
+980000
+>>> >> Downloadable assets:
+>>> >> disk image: https://storage.googleapis.com/syzbot-assets/184da3869c3=
+0/disk-80ab5445.raw.xz
+>>> >> vmlinux: https://storage.googleapis.com/syzbot-assets/85bfe9b60f21/v=
+mlinux-80ab5445.xz
+>>> >> kernel image: https://storage.googleapis.com/syzbot-assets/06064623a=
+948/bzImage-80ab5445.xz
+>>> >> The issue was bisected to:
+>>> >> commit 10154dbded6d6a2fecaebdfda206609de0f121a9
+>>> >> Author: Jakub Sitnicki <jakub@cloudflare.com>
+>>> >> Date:   Wed Jun 26 17:51:26 2024 +0000
+>>> >>      udp: Allow GSO transmit from devices with no checksum offload
+>>> >> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D142cc=
+bed980000
+>>> >> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D162cc=
+bed980000
+>>> >> console output: https://syzkaller.appspot.com/x/log.txt?x=3D122ccbed=
+980000
+>>> >> IMPORTANT: if you fix the issue, please add the following tag to the=
+ commit:
+>>> >> Reported-by: syzbot+e15b7e15b8a751a91d9a@syzkaller.appspotmail.com
+>>> >> Fixes: 10154dbded6d ("udp: Allow GSO transmit from devices with no c=
+hecksum offload")
+>>> >> skb frag:     00000080: 62 3f 77 e4 0e 82 0d 2f 85 cc 44 ea 25 5a 99=
+ 76
+>>> >> skb frag:     00000090: f2 53
+>>> >> ------------[ cut here ]------------
+>>> >> ip6tnl0: caps=3D(0x00000006401d7869, 0x00000006401d7869)
+>>> >> WARNING: CPU: 0 PID: 5112 at net/core/dev.c:3293 skb_warn_bad_offloa=
+d+0x166/0x1a0 net/core/dev.c:3291
+>>> >> Modules linked in:
+>>> >> CPU: 0 PID: 5112 Comm: syz-executor391 Not tainted 6.10.0-rc7-syzkal=
+ler-01603-g80ab5445da62 #0
+>>> >> Hardware name: Google Google Compute Engine/Google Compute Engine, B=
+IOS Google 06/07/2024
+>>> >> RIP: 0010:skb_warn_bad_offload+0x166/0x1a0 net/core/dev.c:3291
+>>> >> Code: e8 5f 94 a3 f8 49 8b 04 24 48 8d 88 a0 03 00 00 48 85 c0 48 0f=
+ 44 cd 48 c7 c7 00 cc c5 8c 4c 89 f6 48 89 da e8 fb 92 ff f7 90 <0f> 0b 90 =
+90 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc 44 89 f9
+>>> >> RSP: 0018:ffffc900034bedc8 EFLAGS: 00010246
+>>> >> RAX: 7d287cad4185da00 RBX: ffff888040cdc0b8 RCX: ffff888023d1bc00
+>>> >> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+>>> >> RBP: ffffffff8cc5cbc0 R08: ffffffff815857b2 R09: fffffbfff1c39994
+>>> >> R10: dffffc0000000000 R11: fffffbfff1c39994 R12: ffff888022880518
+>>> >> R13: dffffc0000000000 R14: ffff888040cdc130 R15: ffff888040cdc130
+>>> >> FS:  000055556e9e9380(0000) GS:ffff8880b9400000(0000) knlGS:00000000=
+00000000
+>>> >> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>> >> CR2: 0000000020001180 CR3: 000000007c876000 CR4: 00000000003506f0
+>>> >> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>> >> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>> >> Call Trace:
+>>> >>   <TASK>
+>>> >>   __skb_gso_segment+0x3be/0x4c0 net/core/gso.c:127
+>>> >>   skb_gso_segment include/net/gso.h:83 [inline]
+>>> >>   validate_xmit_skb+0x585/0x1120 net/core/dev.c:3661
+>>> >>   __dev_queue_xmit+0x17a4/0x3e90 net/core/dev.c:4415
+>>> >>   neigh_output include/net/neighbour.h:542 [inline]
+>>> >>   ip6_finish_output2+0xffa/0x1680 net/ipv6/ip6_output.c:137
+>>> >>   ip6_finish_output+0x41e/0x810 net/ipv6/ip6_output.c:222
+>>> >>   ip6_send_skb+0x112/0x230 net/ipv6/ip6_output.c:1958
+>>> >>   udp_v6_send_skb+0xbf5/0x1870 net/ipv6/udp.c:1292
+>>> >>   udpv6_sendmsg+0x23b3/0x3270 net/ipv6/udp.c:1588
+>>> >>   sock_sendmsg_nosec net/socket.c:730 [inline]
+>>> >>   __sock_sendmsg+0xef/0x270 net/socket.c:745
+>>> >>   ____sys_sendmsg+0x525/0x7d0 net/socket.c:2585
+>>> >>   ___sys_sendmsg net/socket.c:2639 [inline]
+>>> >>   __sys_sendmmsg+0x3b2/0x740 net/socket.c:2725
+>>> >>   __do_sys_sendmmsg net/socket.c:2754 [inline]
+>>> >>   __se_sys_sendmmsg net/socket.c:2751 [inline]
+>>> >>   __x64_sys_sendmmsg+0xa0/0xb0 net/socket.c:2751
+>>> >>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>>> >>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>>> >>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>> >> RIP: 0033:0x7f04f688fe89
+>>> >> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 01 1a 00 00 90 48 89 f8 48=
+ 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 =
+f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+>>> >> RSP: 002b:00007ffeebc526e8 EFLAGS: 00000246 ORIG_RAX: 00000000000001=
+33
+>>> >> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f04f688fe89
+>>> >> RDX: 0000000000000001 RSI: 0000000020003cc0 RDI: 0000000000000003
+>>> >> RBP: 00000000000f4240 R08: 0000000000000000 R09: 0000000000000001
+>>> >> R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffeebc52740
+>>> >> R13: 00007f04f68dd406 R14: 0000000000000003 R15: 00007ffeebc52720
+>>> >>   </TASK>
+>>> >
+>>> > Looking at the console log, the the relevant GSO packet is an UFO one=
+ with
+>>> > CSUM_NONE. commit 10154dbded6d6a2fecaebdfda206609de0f121a9 only adjus=
+t the skb
+>>> > csum for USO packets. @Jakub S. could you please have a look?
+>>>
+>>> Will do. Thanks for the hint.
+>>
+>> The trigger for the bug is the following :
+>>
+>> setsockopt(3, SOL_IPV6, IPV6_HOPOPTS,
+>> "\0\3\0\0\0\0\0\0\5\2\0\0\0\1\0\302\4\200\0\0\0\5\2\0\6\302\4\0\0\0\1\30=
+2"...,
+>> 40) =3D 0
+>>
+>> Some random IPV6_HOPTS, with multiple IPV6_TLV_JUMBO options
+>>
+>> Non GSO path sends a malformed packet just fine, but GSO complains loudl=
+y.
+>>
+>> (flowlabel 0x754ca, hlim 64, next-header Options (0) payload length:
+>> 186) localhost > localhost: HBH
+>> (pad1)(pad1)(pad1)(pad1)(pad1)(pad1)(rtalert: 0x0000)
+>> (pad1)(padn)(jumbo: 2147483648 - payload len !=3D 0) (rtalert: 0x0006)
+>> (jumbo: 1 - already seen)  [|hbhopt]
+>
+> Thank you for the hint. Extracted a reproducer. Fix will follow.
 
-On Tue 23-07-24 09:59:54, David Howells wrote:
-> @@ -954,15 +952,23 @@ SYSCALL_DEFINE2(lremovexattr, const char __user *, pathname,
->  SYSCALL_DEFINE2(fremovexattr, int, fd, const char __user *, name)
->  {
->  	struct fd f = fdget(fd);
-> +	char kname[XATTR_NAME_MAX + 1];
->  	int error = -EBADF;
->  
->  	if (!f.file)
->  		return error;
->  	audit_file(f.file);
-> +
-> +	error = strncpy_from_user(kname, name, sizeof(kname));
-> +	if (error == 0 || error == sizeof(kname))
-> +		error = -ERANGE;
-> +	if (error < 0)
-> +		return error;
+Thanks for the patience.
 
-Missing fdput() here.
+I've got a fix to propose which pulls the gso_skb->ip_summed tweak added
+to __udp_gso_segment() in commit 10154dbded6d ("udp: Allow GSO transmit
+from devices with no checksum offload") from gso/udp code up to the udp
+layer (udp[_v6]_send_skb()).
 
-> +
->  	error = mnt_want_write_file(f.file);
->  	if (!error) {
->  		error = removexattr(file_mnt_idmap(f.file),
-> -				    f.file->f_path.dentry, name);
-> +				    f.file->f_path.dentry, kname);
->  		mnt_drop_write_file(f.file);
->  	}
->  	fdput(f);
+This warning can also be triggered for an ipv4 tunnel by turning off
+csum offload (ethtool -K $tnl tx-checksum-ip-generic off). Will extend
+udpgso.sh test to cover both v4 and v6.
 
-Otherwise the patch looks good to me.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+[...]
 
