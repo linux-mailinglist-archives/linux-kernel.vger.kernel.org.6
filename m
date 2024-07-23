@@ -1,227 +1,139 @@
-Return-Path: <linux-kernel+bounces-260208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0144793A484
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:47:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17E2B93A490
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:50:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DADF1F23D38
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:47:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49CFB1C22868
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F061581EB;
-	Tue, 23 Jul 2024 16:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0C1157E9F;
+	Tue, 23 Jul 2024 16:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HKIt7X2k"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GJg+wZi2"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EB8213B287
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 16:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1585413B287;
+	Tue, 23 Jul 2024 16:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721753267; cv=none; b=EWr8mZbQP+EIcZCJN+PVs8m/CQ7Rh5Bxbs7YYwMMxQkuB4R3cRXdFFzj8Q1VB/p8Q4hgRTONkew942pNN4t4rtkE3AUKo74a/nriwYsGmQBLEkcPURjkViiJ3hIxcX9Llk1DNdL36AO6obuD2j5mRRU48RT1MLGOlcNKQ55aZfY=
+	t=1721753402; cv=none; b=aLYprKwK5tmgbmn0thGIjyIAg9qoXShEV/cKfOMpCvlfDyXUGohKgEwzUmGG2PbhyotG7FmE/46TE4MjjwgLy8N+yGsNfwSLk39C4R5jjhsv74IQJQa9lGDL5+2POttbBmGdultaNQzXHa4waUZBTWdp8O5SULgVPT7e99fvLSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721753267; c=relaxed/simple;
-	bh=ovjQM5lG4ilTC+5F6TXGapRv5ns+z+SS4q+0grG1X+g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W2n6kUiFdEkuQdeZTEw9cBfW4zTTwY6fY0XoBSRFj3pLntEfcJVrNmXj5pR1gOchHNJRFGvH5JfPrFEJHmiHAY/aaLRQJ/M4UlqHe1P7j3/JGviwo1Smu31NIWrIPiqHQTtZkWz2X0I8UIjOLE85rQ1GO6plRksHTJz9FrLA+wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HKIt7X2k; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-65cd720cee2so58413437b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 09:47:45 -0700 (PDT)
+	s=arc-20240116; t=1721753402; c=relaxed/simple;
+	bh=bgRzib7ffK4t/fOJONVPwKLTPYzLnXKhHikn+D5UNbk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=C2H5Bfy6UYfGTreqkVz217jOmuO/RzuuZ3Qa1/0juJHYdReC1S9CjI33F/HBGrBDauaJ7fBwOeCiu0P0fw/OWOdr69cNNPQ37tZDnx3p4Bn+5aDKSYNObrZ+ywH2G3yKaCqy0AQQJqDKuCnq4WuJR3QXdA4MRnp5YO5lCua0ulk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GJg+wZi2; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4266edee10cso38498705e9.2;
+        Tue, 23 Jul 2024 09:50:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721753265; x=1722358065; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=74HzxpSV7URZ5ukXyWUxMZBvB74HaX9SH0zHZjqujBk=;
-        b=HKIt7X2kV20DKkFXix5pBj/bCISABpeab4X1Z0VcLOSFe4sDIBnD7XP0ijUNT/bZQ5
-         dUPQIIuw71iEaAfXV6zA7DDWxoFIkzJD1+Hd6krdUhKZVMV5ypBzhU4MWGULqyPXDKnf
-         PQNKLbUvsJ/BSqFPiwxiokWoUMpPFIeZKHpgxMeneeX9LXD8/fGZSCbTEsB6XNzwVtZa
-         Hu6ONyKcRfD0pYOU1ZAXt0rxFTDokOf+zIUYiRWyCpPSX49k7zSEIKZ6n1KdeLrnPQXA
-         oYtG9nW2oM2i9QZ6y7IqUI/bqAanhZ2y/7oj8jMIxGMKa7J84YIzOu2fhwds83Ot3pip
-         J3/A==
+        d=gmail.com; s=20230601; t=1721753399; x=1722358199; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CIXjbVlMzQ/E74zkKkld+Uu+AAnVMwiLGvKXFp+BrOw=;
+        b=GJg+wZi2ZpT/hjngbuqMks6r2lUX5Jj3u1qpUe/tDNbczrjnsn1Dy5JLsFgFHqnBZR
+         ajI2Qu1dZ4AsJOXcqakWe9QoB7FAbD4WHMjkxrPLoUCv8i6tU9YZZF2CwXkL8zxr4DoD
+         2SGREfZCaIfrbsVAOLqs7JItEvcJRYyygmnZ/gg/1HDFxzSvVbyYwCtZqphhhhFCfrTE
+         QPnl+nLjhrw8SNX3/qs8uzuXBGtohKCt2JGk3lxlDcb8TYg9ezv8XEh/9hbskpBXjCN0
+         9M3xDhrYXQdDINo3ZUfjEclF1zrWK+y7NZV+tKD40kpiHYtVpJEgq1I3IPetMvl9el9o
+         7VqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721753265; x=1722358065;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=74HzxpSV7URZ5ukXyWUxMZBvB74HaX9SH0zHZjqujBk=;
-        b=PWJfC97ud8zmAnUvMo6XBAIW6cDvjz7hBtkRZOU2/HMQpVjy4EYWvp9MnZg2fnQYiB
-         CcGdYPd75IHqipFTuikWWoHr+VPsrp+2NCtdiIuKZP7auCkgXwbIJTjrYANoZGfiCwqF
-         rvLDDmO9OffNRTECLOkzeZ6EtHobxM3DYqiTz1s433JY/+LVH0vY0erp3EnTZqjhI09o
-         eEBHfn8QhfEmHr1Kl8DC6Qa1+OwB31tpH6DqtNHTaGF4ymAOToZgHeGNjIsArbnGtaec
-         KNO6TRDTmI5Dr0jQwm26mFNexmW9KtB0EcdKooITMcka5nXGdVqRjA+49aUt+3tW4Cn4
-         WxQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUksD0dmwgy5coZfzhujDj5obZlGRzlFwXKw3bboBC3mLR9OlIeuKF9idG5lWxkSD0Z1pLBiHD+q1O1AKlML/ubbJvgOfqqoYqgYoeP
-X-Gm-Message-State: AOJu0YzketEv6FUKr5Oyx1//OmqS4ssW2BEKYAcvtzlTvm5JUvglUnBd
-	jmSfGCCdoJ3ajyO22BSav12aZjC91Qe7DcYHXzw8KS5MlKOkaUJlxlZd1H1cEo8OJIp0cLpeosK
-	qbxfeqEOkzHV04DgAAc9jYokvTtNuIQaG9Lq0vg==
-X-Google-Smtp-Source: AGHT+IFNCdB6xhMgLIV6tTLbw7Kn49YzikMa5JepY3lzP+CVyBBnh+TeXodzPmrKVu+S0JqtiErgjD3DEMvkHBiHMwo=
-X-Received: by 2002:a05:690c:dc7:b0:65b:a403:9eba with SMTP id
- 00721157ae682-671f1098ee3mr3962687b3.11.1721753265081; Tue, 23 Jul 2024
- 09:47:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721753399; x=1722358199;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CIXjbVlMzQ/E74zkKkld+Uu+AAnVMwiLGvKXFp+BrOw=;
+        b=fpLNKf4NrNwxVLELkAu+WM//M1l6t7Ket1AHyxDkIVgPcVfIjwXnyT+TJamYHDTiDm
+         Yl8HXVXU6kA5blYMMY98xOnbdQLq7WFaAz/0c84C/rw4HCBCNSdIGJl0IlfRgxO8SLFe
+         6qNqSanvmbaqo1SU8+8UoNfMEwCPPSNE/n3Mg34iQlJBfTyhU1yeM211RVPF6yLFbKoQ
+         EJkufPZJDvj5SyGdHJ28icChUg7OKrJlFXEhgNNwuyWAUt6AyNaUQCGgvurp72scWYAi
+         5fuIPOmMhQts5gGM1IHuLary6XDo7MgINO59TkZSt4zFdDwMhChIWIr072CqXc0y26JH
+         YAYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWeBfvvTlJNuhRLx7nCSV/1ip4NOUScb1vp+VIG4H8IiNG9Ufw4g5Wx7aoqKk25qxfxjCKMYHXb03amhSFjKEykeEXZQS05lRwI9dfCZyaXQRKIlTRTOStiPo3xywZ8XE3ERRdrxkPAig==
+X-Gm-Message-State: AOJu0YyKs1ANO6bq4Q6GV+/HfyEY5l6fk+dVaDA0xavkzjz+h7Wp886R
+	36tyXQJsf/U/de0ac2RabjAZFYmMxbGan4Jl5OtZhaK2Y10fQXBN
+X-Google-Smtp-Source: AGHT+IF5fAiKkcWS/KCYN1ZlTrAf5xl/dy8U8HtPAw0W8wO8y4qK0TOw3HRz/WQ1BqGJGDbRpL7KuA==
+X-Received: by 2002:a05:600c:5103:b0:426:6b47:290b with SMTP id 5b1f17b1804b1-427daa61cb4mr71062635e9.28.1721753399207;
+        Tue, 23 Jul 2024 09:49:59 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a8e42bsm210617315e9.30.2024.07.23.09.49.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 09:49:58 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] pinctrl: renesas: rzg2l: Return -EINVAL if the pin doesn't support PIN_CFG_OEN
+Date: Tue, 23 Jul 2024 17:47:44 +0100
+Message-Id: <20240723164744.505233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240723141705eucas1p1bbe72a6d543031a41efdbe81d1b03ac3@eucas1p1.samsung.com>
- <CAPLW+4n6XB3fm8KQA=6_2z8ay9pDPtu-VFgAaW5imZkRH2ywkg@mail.gmail.com>
- <20240723141658.374755-1-m.majewski2@samsung.com> <CAPLW+4katjgDUS+e4+iYt+Cz_pKizLFUxqV4KGnbQ5ekAq9Mvw@mail.gmail.com>
-In-Reply-To: <CAPLW+4katjgDUS+e4+iYt+Cz_pKizLFUxqV4KGnbQ5ekAq9Mvw@mail.gmail.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Tue, 23 Jul 2024 11:47:34 -0500
-Message-ID: <CAPLW+4nfEjP4FDjRJORyyKk46x4VfFAcMuK88jXUT_LJoP1N_g@mail.gmail.com>
-Subject: Re: [PATCH 5/6] drivers/thermal/exynos: add initial Exynos 850 support
-To: Mateusz Majewski <m.majewski2@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 23, 2024 at 10:23=E2=80=AFAM Sam Protsenko
-<semen.protsenko@linaro.org> wrote:
->
-> On Tue, Jul 23, 2024 at 9:17=E2=80=AFAM Mateusz Majewski
-> <m.majewski2@samsung.com> wrote:
-> >
-> > > Do you know what are the possible implications of not using ACPM? As =
-I
-> > > understand, ACPM is a Samsung's downstream framework which uses APM
-> > > (Active Power Management) IP block internally to act as an IPC
-> > > mechanism, which makes it possible to offload any PM related
-> > > operations (which might get quite heavy, if we are to belive the TRM
-> > > description of APM) from CPU to APM. I'm not against the direct
-> > > registers access based implementation (in fact, I'm not sure how that
-> > > APM/ACPM thing can be implemented in upstreamable way and if it's
-> > > worth it at all). Just curious if we understand what we are
-> > > potentially missing out, and if at some point we'll be forced to
-> > > implement that ACPM thing anyway (for something else)?
-> >
-> > Not sure honestly. The downstream v4.10 driver does many operations on
-> > registers anyway...?
-> >
-> > > Not sure if that's true, as already discussed in my comments for the
-> > > previous patches. Looks like one clock is still needed, which is the
-> > > PCLK bus clock (to interface registers) which might simultaneously ac=
-t
-> > > as an operating (functional) clock.
-> >
-> > The code seems to be working correctly without this clock, both registe=
-r
-> > reads and writes. Maybe the support for extra sensors, which I couldn't
-> > get to work, would require this clock?
-> >
->
-> Chances are that clock was enabled by the bootloader for us (or it's
-> just enabled by default) and it just keeps running. If that's so, I'd
-> say it must be described in dts and controlled by the driver. Because
-> otherwise it might get disabled at any point in future, e.g. kernel
-> may disable it during startup as an unused clock (when it's added to
-> the clock driver), etc. Let me enable that clock for you, and then you
-> can use /sys/kernel/debug/clk/ files to disable it manually and see if
-> it actually affects TMU driver.
->
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Yeah, that clock is definitely needed. Just submitted the series [1]
-adding it, which makes the kernel stuck on startup when your series is
-applied. To fix that I added next lines to the TMU node in dts:
+Update the rzg2l_pinctrl_pinconf_get() function to return -EINVAL for
+PIN_CONFIG_OUTPUT_ENABLE config if the pin doesn't support the PIN_CFG_OEN
+configuration.
 
-8<-------------------------------------------------------------------------=
--->8
-     tmuctrl_0: tmu@10070000 {
-         compatible =3D "samsung,exynos850-tmu";
-         reg =3D <0x10070000 0x800>;
-         interrupts =3D <GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH>;
-+        clock-names =3D "tmu_apbif";
-+        clocks =3D <&cmu_peri CLK_GOUT_BUSIF_TMU_PCLK>;
-         #thermal-sensor-cells =3D <0>;
-    };
-8<-------------------------------------------------------------------------=
--->8
+-EINVAL is a valid error when dumping the pin configurations. Returning
+-EOPNOTSUPP for a pin that does not support PIN_CFG_OEN resulted in the
+message 'ERROR READING CONFIG SETTING 16' being printed during dumping
+pinconf-pins.
 
-Please rework your patches to account for that required clock. Alas
-the TMU dts changes can't be submitted until my series [1] is applied.
-But you can still apply my series locally, and I think the driver and
-bindings changes don't depend on that clock, so it should be ok to
-send those
+For consistency do similar change in rzg2l_pinctrl_pinconf_set() for
+PIN_CONFIG_OUTPUT_ENABLE config.
 
-Thanks!
+Fixes: a9024a323af2 ("pinctrl: renesas: rzg2l: Clean up and refactor OEN read/write functions")
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-[1] https://lore.kernel.org/linux-samsung-soc/20240723163311.28654-2-semen.=
-protsenko@linaro.org/T/#mf28e4aab0111b95479ef632bc1979dff93d28cc7
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index 632180570b70..3ef20f2fa88e 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -1261,7 +1261,9 @@ static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
+ 		break;
+ 
+ 	case PIN_CONFIG_OUTPUT_ENABLE:
+-		if (!pctrl->data->oen_read || !(cfg & PIN_CFG_OEN))
++		if (!(cfg & PIN_CFG_OEN))
++			return -EINVAL;
++		if (!pctrl->data->oen_read)
+ 			return -EOPNOTSUPP;
+ 		arg = pctrl->data->oen_read(pctrl, _pin);
+ 		if (!arg)
+@@ -1402,7 +1404,9 @@ static int rzg2l_pinctrl_pinconf_set(struct pinctrl_dev *pctldev,
+ 
+ 		case PIN_CONFIG_OUTPUT_ENABLE:
+ 			arg = pinconf_to_config_argument(_configs[i]);
+-			if (!pctrl->data->oen_write || !(cfg & PIN_CFG_OEN))
++			if (!(cfg & PIN_CFG_OEN))
++				return -EINVAL;
++			if (!pctrl->data->oen_write)
+ 				return -EOPNOTSUPP;
+ 			ret = pctrl->data->oen_write(pctrl, _pin, !!arg);
+ 			if (ret)
+-- 
+2.34.1
 
-> > > Exynos850 TRM says AVG_CONTROL offset is 0x38, and 0x58 is actually
-> > > for THRESHOLD0_TEMP_RISE3_2 register.
-> >
-> > Thank you so much! Will fix in v2. Though writing to the right place
-> > doesn't seem to change much in practice, probably just means that the
-> > correct mode is being used.
-> >
-> > > Something seems off to me here. How come the shift value for EXYNOS7
-> > > case is 8, but the mask is actually 9 bits long? Does it mean the
-> > > first error field is 8 bits long, and the second error field is 9 bit=
-s
-> > > long for EXYNOS7? I don't have the Exynos7 manual, so it's just a
-> > > hunch. But if it's true, maybe this shift value has to be added in
-> > > your [PATCH 2/6] to fix Exynos7 case?
-> >
-> > I did not really want to mess with Exynos7 code, as we don't have an
-> > Exynos7 board sadly. Honestly I feel like I should drop the 2/6 patch
-> > completely and only modify the code to run on 850 correctly.
-> >
->
-> It feels like there is an error for Exynos7 case there. Take a look at
-> this commit:
->
->     aef27b658b43 ("thermal: exynos: use sanitize_temp_error() in
-> exynos7_tmu_initialize()")
->
-> I think that commit just forgets to update the shift value for Exynos7
-> properly. This code:
->
->     data->temp_error1 =3D trim_info & tmu_temp_mask;
->     data->temp_error2 =3D ((trim_info >> EXYNOS_TRIMINFO_85_SHIFT) &
->                 EXYNOS_TMU_TEMP_MASK);
->
-> in case of Exynos7 becomes:
->
->     data->temp_error1 =3D trim_info & 0x1ff;    // mask =3D 9 bits
->     data->temp_error2 =3D (trim_info >> 8) & 0xff;
->
-> it contradicts itself, because it takes 9 rightmost bits for error1,
-> and then uses 1 of those bits for error2 too. It's obvious that if 9
-> bits are already used for error1, then for error2 it has to be shifted
-> by 9 bits, not 8.
->
-> That's why I think your patch 2/6 is legit and useful on its own, and
-> it's actually a good catch on your part! But the shift value has to be
-> fixed as well (for Exynos7). It's not ideal you don't have the
-> hardware to test it, but it just screams *bug* to me :) Also, maybe we
-> can ask someone who has Exynos7 hardware to test it for us?
->
-> > > Also, just an idea: those values (and other similar values) could be
-> > > pre-calculated somewhere during the probe, stored in some struct (e.g=
-.
-> > > _variant or _chip) and then just used here.
-> >
-> > sanitize_temp_error is only called one per probe and once per resume, s=
-o
-> > probably little to gain?
-> >
->
-> Sure, it was just a minor suggestion to make the code look more linear
-> so to speak. It can be totally skipped.
->
-> > Will also do all other.
 
