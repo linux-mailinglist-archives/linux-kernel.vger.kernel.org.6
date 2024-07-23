@@ -1,239 +1,441 @@
-Return-Path: <linux-kernel+bounces-260386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB8493A81A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:40:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DD5893A823
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:40:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B40C3B22422
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:40:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D15011F235FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF75113F01A;
-	Tue, 23 Jul 2024 20:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8422114387F;
+	Tue, 23 Jul 2024 20:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="MCfnyQEp"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2085.outbound.protection.outlook.com [40.107.20.85])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="aDkERYYt"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C92613C9CB;
-	Tue, 23 Jul 2024 20:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721767200; cv=fail; b=Gx08BLMfWQrw/MvHwRqHZM9FrpCEm/hBPiin+P6la3MBgTYsBaqalHlg2c4rpXHaFcW1Hgb73aFuhYbQ3g5eQU8C0v11CykHvM0HQDgG0Esn3rd5h52MgiP0GorSz4onru6/C+1cDmAAFtNLAHqvWsOsq1e28UPLugNk9FWZKaA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721767200; c=relaxed/simple;
-	bh=7I4SXQhbrLTTqNVkRlS177yJZrjtZM8/iAOekO1DQo4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=LzbbaxYEkkAnCpaCID2WXXqiQiLdZ4zMNEGJ111EWKIpD7OSRdej/pQvbFFvEQ0s91g/Fee563ZpxO4kLswNsuOdDDVS+vEmUmJ0a2W3qTvRe+J4hs9+rkJNpg5LEhlopfgbO3p5m3RcfG5s/dRwVeRq4AWQdMO09dLNqc08GwI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=MCfnyQEp; arc=fail smtp.client-ip=40.107.20.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jVzqZqpDu81t8nMy/yEKMu8pMwggfi2C27xodeEWLDFr8MKAVVVXHkO0yWs9db90NSbi6BFbY6Kh4TucDoyn7FkrH/wtNv6/mPc8h7LbFeYqWW7dfvXwEEVGeQYORo6cSvof+ISf2PX8xCzmED6D1G6MdWvlqFhiiSMfZxIi4nE1GBqYS3sJJNO8XukvmTfIxMjpwGe5tv+2OiD3YAXOa9Xqduc/J105FamofvRTbRsSxFgbzN5c8om/mv1+P6Kclz686zHnVs70nupIhyLSFafnMicGR54UB1OTHHz2iRGn17G1SANUwbvtUqIlVwy6wjCKGwGtAzhsNYQa9045cQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Bm1GFrFAQ7U0L6a32VlotoTgIKupd0hGH/EEjVKMCjY=;
- b=vp6BhCf8GiL058Opej0zzOFKBn/SaEfoSyYsLovSa1yq/CQbgJikAQigPxxOOGn20YjmwR/53Z3CWO8fFGrd9sa/dWj9ErfGw/NRc29MUax9/0wGkb4WI1KW+XmI2rpGfx9ElPMBd8MOV3GTMHsJbpfZqcqDx7UlgzYOdolLFJV8PY4xU+Vrpne3hUVL0+TmcdVGcjkOsfNYqQ5f5P0aF3D8wAMJQ7QEVgINO0rZ5PvaoSLqUNquCwE7t709wrV9Dw/TU1pnkzLmg4t49b9JI4+76MglBudfMOMF4lvJtJrA9bwnZgFW9L8AFVYlJ6yEsfsQpD0MX43gsUm+0mAzaA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Bm1GFrFAQ7U0L6a32VlotoTgIKupd0hGH/EEjVKMCjY=;
- b=MCfnyQEpf8xJd53p+YuX8uAO0C80B8sT6FgvIf9lOG+jG9TinO/QpwC0dkP0UxeRTtsQdHKlqTNNaYseCYFdU7dqdjFg+SDOr+OwsuEPPJ5YVEEeWyPW/zK3ZsORAQ76NI4dwhAwSuKLBxXAAcppKkG+Okj6goYUHkPXkcbQFX8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DBBPR04MB7692.eurprd04.prod.outlook.com (2603:10a6:10:1f6::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20; Tue, 23 Jul
- 2024 20:39:55 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.7784.017; Tue, 23 Jul 2024
- 20:39:55 +0000
-Date: Tue, 23 Jul 2024 16:39:40 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, shawnguo@kernel.org, l.stach@pengutronix.de,
-	devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de, imx@lists.linux.dev
-Subject: Re: [PATCH v1 1/4] dt-bindings: imx6q-pcie: Add reg-name "dbi2" and
- "atu" for i.MX8M PCIe Endpoint
-Message-ID: <ZqAU6Yqq7182T5Nz@lizhi-Precision-Tower-5810>
-References: <1721634979-1726-1-git-send-email-hongxing.zhu@nxp.com>
- <1721634979-1726-2-git-send-email-hongxing.zhu@nxp.com>
- <20240722-displace-amusable-a884352e0ff9@spud>
- <Zp7FYRaXM4NNO0oM@lizhi-Precision-Tower-5810>
- <20240723-spinning-wikipedia-525130c48dcd@spud>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240723-spinning-wikipedia-525130c48dcd@spud>
-X-ClientProxiedBy: SJ0PR03CA0262.namprd03.prod.outlook.com
- (2603:10b6:a03:3a0::27) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF08813F01A;
+	Tue, 23 Jul 2024 20:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721767229; cv=none; b=ZAcfpDszErRYWI+yXqtry1rsp0V8Fs5C9DSPlhwajdedAFZHkWxifGubxyrwivQhwhL/LPf/pVmr5mmDEcN3RK6APR0lU4WsVH/XJvFUIz9A6dQhpYM2gJVME/4a/Z/j94XaczTDGGw3P8tAzp6v0wUnVBrZWBt1qwfEoqzhxtU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721767229; c=relaxed/simple;
+	bh=yoFyewJj8Int5lFvWdtKzMZN/XGpq/r5CA+82aDN4mw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SwZFxL6H+r8ePai1V0YSbmRxGjzRYVmzkqfDrnXYxMJMcKA1cPi2AlnC674CfEMHMfxrlSzFZra0gVuJ8OA2zGwvHU/BaZ2wOAbo/x3DcuWv+XbgjtuXIvPXdTaRVbw6QGXbpNWGSSBf7yfsEiFCnW6CF713Glyu+uPV9Z85q4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=aDkERYYt; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id B40A81C0082; Tue, 23 Jul 2024 22:40:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1721767222;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B2lmDziFDG1E3p7WXaQzsGVZaJLIhUDMeOm4Q/kkov4=;
+	b=aDkERYYtSquWM8b0tbPVSelMQpEHXVvIlJZNncTa/baHMTgY84w2fQZZO4XUI8dninlXP8
+	AOup+FW5GpJL+eJkDKZSnQIqD7csWQP7IHLmG8hlgBSTsC9gZvx9eMwlmWaFAnBV054Nwc
+	xZs2NeRbDV603butZK8QX+b1Sap5Ubc=
+Date: Tue, 23 Jul 2024 22:40:22 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Pekka Paalanen <pekka.paalanen@haloniitty.fi>
+Cc: Werner Sembach <wse@tuxedocomputers.com>,
+	Hans de Goede <hdegoede@redhat.com>, Lee Jones <lee@kernel.org>,
+	jikos@kernel.org, linux-kernel@vger.kernel.org,
+	Jelle van der Waa <jelle@vdwaa.nl>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	linux-input@vger.kernel.org, ojeda@kernel.org,
+	linux-leds@vger.kernel.org
+Subject: Keybaords with arrays of RGB LEDs was Re: Future handling of complex
+ RGB devices on Linux v2
+Message-ID: <ZqAVNmyFOEmR0Ilr@duo.ucw.cz>
+References: <9851a06d-956e-4b57-be63-e10ff1fce8b4@tuxedocomputers.com>
+ <1bc6d6f0-a13d-4148-80cb-9c13dec7ed32@redhat.com>
+ <b70b2ea8-abfd-4d41-b336-3e34e5bdb8c6@tuxedocomputers.com>
+ <477d30ee-247e-47e6-bc74-515fd87fdc13@redhat.com>
+ <e21a7d87-3059-4a51-af04-1062dac977d2@tuxedocomputers.com>
+ <247b5dcd-fda8-45a7-9896-eabc46568281@tuxedocomputers.com>
+ <ZdZ2kMASawJ9wdZj@duo.ucw.cz>
+ <20240222110457.71618f27@eldfell>
+ <ZdeGiMf2npmzJidU@duo.ucw.cz>
+ <20240223105328.38d3f8da@eldfell>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DBBPR04MB7692:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0233c5bc-9e15-4be9-d6d8-08dcab579c7e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|7416014|52116014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bgzV4xFYlH7uXaYdEOdHN9T3uweeoXg/GWmA/d7V0H116dl1+UKIqLdcbFuD?=
- =?us-ascii?Q?4EAgJG4e0XJ99n+6Nr8jG15+PG3FRvz1h+bWNLC68lSG/twt0rpnDuZ5zy3k?=
- =?us-ascii?Q?ioErt5ahGsx4DtUbbKnZtipFSv8irGxLkqvB/8pBB8m4UjxsA9fP04EXwyFT?=
- =?us-ascii?Q?4ju6C0m+H/7/xGOWlSCeL1G1FKIW+ZfAqWR6/WvySGKomW0s8YAJsacB55/Y?=
- =?us-ascii?Q?OX33z1ZQLAYJPcfxJuQB8uSCMEPHH7AdKPmuIlCJTLnbERvWVDydtw4DUKwR?=
- =?us-ascii?Q?Fl+UwSKNCkoCCZvxrROtnF3gqk1IXMw7F3bwk9WyQZwT+YE9y8fde9voE/Zq?=
- =?us-ascii?Q?h4wHjRf658ICoIR3Xt0ZeKBggLHmUwo/M56WitvtlBhZwhM4g1Y+Gzhcre4F?=
- =?us-ascii?Q?uAOaU95LOPz7jmQYLasWDKpVGp9sPnIqpQgmPhVFjWG1oUD+xwsWGWnU5jMn?=
- =?us-ascii?Q?YiRFgdWUGqtV203A11r3rcydaSwa7MxWGEVXrASujgNlFHcoqoaUl/XSNmKN?=
- =?us-ascii?Q?JuGauXRlUaFKAhhXWnrA6GB83LJmdBAqRkuZCIXsln1pQJlFohlbZjK8XVxd?=
- =?us-ascii?Q?J9ECaYX77VRw9YWkDVD2LxViAkK0Wk3MOkYDCCYsfj0nfB6ZA7YfRJPLJSeX?=
- =?us-ascii?Q?TO+iNYxAgEi8BtMf6GAauGr2Fb2KLifqyTzc5MbDXagMGcn/wo2VzMB8NOLx?=
- =?us-ascii?Q?ooehX35SSsOMpGGWuDebDp1F93klRAOarTB+mBO9Dxf+cDg+q29+1BpAN53q?=
- =?us-ascii?Q?Tjci4tMIf0L9PuScM7+Iwi634e+39w1NXs+TXJsrrf9gI+JFsf1I7EMQEBMy?=
- =?us-ascii?Q?96JbOCLzOlywuO9nR9JHzKUDl34wKhXKYI9DbQWft6VSxsru81LM3aPM+63n?=
- =?us-ascii?Q?QlvBCg3gUqUTR+zhaaxGP7PUowPKKLfqmtye9YW5Q1mtTt/zGYeT9Vja3okG?=
- =?us-ascii?Q?7LlebaBC918Mo0GtCV8Y6AuHjJkOyHb7wY+2UJw3kF8VkX4r181HqOMNXY6W?=
- =?us-ascii?Q?aVETgOsEkIyjbo4KQJWXUeAJdEAu0ek9HlKHx9lmu8bMXz2usbaXh5n5+Vdy?=
- =?us-ascii?Q?1AN/VxL048gK2Z69dfdS45A1bXp+oCZm2rnswBExCS8CB3vf3evV9FzbLM+g?=
- =?us-ascii?Q?2MDJCwA0Vadgi2RsHD6oi3LOnDHc2sA3DgXuC+JSRH9PhjM+5Dr20Ev7nmec?=
- =?us-ascii?Q?ve5Qn2ugeOz+7/Es4bitgSni5GyPMooBgvl64xI7IFskvv9ng0Mb2UuZ3nQO?=
- =?us-ascii?Q?nj9P4AfhLdimsOezqFyQNzMkUOjGu2FP5Yd0SaIbCTksEuF4Da6dQYb8h+6F?=
- =?us-ascii?Q?DI0SYkYyIBqTrxuCEv0iNllwybT+OjbVdjSnOrLlAeRjtBxUSG2Nslk2JdnV?=
- =?us-ascii?Q?EFL++xT0rzb1yPu7QKsE0uP5uuvLActBpvyvKy5hjCSBdhvgRg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?MdyRcCnjGAlbfnV73aRRKd+FRuPu1XkG3qArPsVifvJX4lfsSTBfSlNyOK4O?=
- =?us-ascii?Q?QIEdl8NKoX0K+/69d7eW+2FkRPC2fGs8C8L5wWiFZ7uujBRGbczgYnP9Gezz?=
- =?us-ascii?Q?JZs2iYpwt9wENES51Bgz4EmPU5I0PtNmZD14zEX4Y1uuxFrq0wsD932vmFu/?=
- =?us-ascii?Q?l0dj31HdQBcPIO3gGh9hipntXK/ucOfw6a6oejOaFRCtKdvYp/+lxHDlQEgz?=
- =?us-ascii?Q?iIZHYzZnKREZLQn+fla7LsPX25kxmgLyuvzcVP6tl3KZXf3i3U7hxpHMnupW?=
- =?us-ascii?Q?TEXVhkW/ICM3IdI9LHWyw2xdUaPe/vJBrS7V3Gs8g4VUoyhnaGqkqAgzMkcj?=
- =?us-ascii?Q?BCqgh1T1NYhFxbtxvVekBkHiofUVPUfA3dCtScz8/h+Wj8kQNk5Ce0QyH1GY?=
- =?us-ascii?Q?RNYf/pVlp7fEXyT4jgKicqt89bunx+fsAa4xTdTzIRetFkuzYCFr4FVe6v2M?=
- =?us-ascii?Q?7dcefZoZfQFpai0DDqKAq+1koUyQvNfkjHipK/wj2qSZIpyGHvRplrudunoC?=
- =?us-ascii?Q?whcHfgxNtxWX1XO/+TELLmCS0PEg/hxLRw9W0L9DAUQIe2i9RBVcczS+Zxtb?=
- =?us-ascii?Q?03egn8bV8duC/i8Obq60BKroO+9ux3339o0yPv1fxM/bA9UeSMlt1YIFP6d3?=
- =?us-ascii?Q?J4jGhAtRebKtwjoBihQfwAyc9RJ94KfDpZiAWeWe7fWCEwjkme8VnC6LVbxm?=
- =?us-ascii?Q?zxbxH5PrmEQDnmE4iV2eDrxxija3YBYwttFn4Q5hx9a2rjncVMsSKcN9azGS?=
- =?us-ascii?Q?vSKLL5fSFiwwsvUnzwZEXAtBG3bXrP/GlTECI6GS3RdLN90bRhaTxLMBFcpZ?=
- =?us-ascii?Q?kw1qhATuewXlT7oTPvbJ1hPISA0G9IxHioTAxnK9OBu4+FZMRVJAR9v3GvUh?=
- =?us-ascii?Q?AIaX4OSbAe2qRABnSsi3kCcBNPY9FeTbEP2v95Dtj4Oun1apwY0HTl2UVEUn?=
- =?us-ascii?Q?wnCS5/daQ3aKKWZ2RrnwyBtvJsd1w+lPfIZyPnShmtcC+DKbbHYUDHJ6ER6E?=
- =?us-ascii?Q?M126UHbCTRM7U6O2KVeEHHQxxcztAle1dtyzwOHVSHHNmQZYIp4PdC8kr4uj?=
- =?us-ascii?Q?NsTOTOdOnUtMqSO15Uo8dsgUU9LpjetWsB4qhsyO5eWitOQveILa2ohybjuS?=
- =?us-ascii?Q?X5JEywLtZYo/l0M2YvShV7gi0Ab0xLb8GPrO2Uit2zobB4rgSYK8AHYzGApi?=
- =?us-ascii?Q?YmWVLo1AMy/wR24t1/lGQgCoRwH75Cmt1JUg4D8eOOWN0It60mv8X324kJJc?=
- =?us-ascii?Q?te/jdCj5YUYr35z4HUqaB9iQ2Ta4+/GM/aKI1NduIGdztSmbYmGyB+uoM9ua?=
- =?us-ascii?Q?i/IUY2TDt+hwe7lae7hX1ePRrqIFXgGWuqWZToQvRSuZRFJOESniVh72iCQY?=
- =?us-ascii?Q?EPcH3wyMKnYppVMnqvQRLu3YtrzKhYzRGc/XuFQjFLBPB/Hk9u/ojgjNx4pe?=
- =?us-ascii?Q?wcO+D4zBVpMRmXIy76CC68MSp1ua6ART5/LO/zpBQleVI1r3K/2BKKTCitae?=
- =?us-ascii?Q?AtKoFdthPYIVWKzWazk47A4IK2O1OVXiwRxZ/ZaEVlYkt2KM5idod3gDZ3w5?=
- =?us-ascii?Q?dZj6KapKfBWFKraPYUw=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0233c5bc-9e15-4be9-d6d8-08dcab579c7e
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2024 20:39:55.7312
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OEzDelJQy5+++ZjmRdVNSqxUtP5tslFP6FuTbYpWKMkxHLvMooNmBil3AiIEBCkeTmVmb6QiwmRSYRj45GfUmw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7692
-
-On Tue, Jul 23, 2024 at 03:35:11PM +0100, Conor Dooley wrote:
-> On Mon, Jul 22, 2024 at 04:47:29PM -0400, Frank Li wrote:
-> > On Mon, Jul 22, 2024 at 05:37:14PM +0100, Conor Dooley wrote:
-> > > On Mon, Jul 22, 2024 at 03:56:16PM +0800, Richard Zhu wrote:
-> > > > Add reg-name: "dbi2", "atu" for i.MX8M PCIe Endpoint.
-> > > > 
-> > > > Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> > > > ---
-> > > >  .../devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml  | 13 +++++++++----
-> > > >  1 file changed, 9 insertions(+), 4 deletions(-)
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
-> > > > index a06f75df8458..309e8953dc91 100644
-> > > > --- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
-> > > > +++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
-> > > > @@ -65,11 +65,13 @@ allOf:
-> > > >      then:
-> > > >        properties:
-> > > >          reg:
-> > > > -          minItems: 2
-> > > > -          maxItems: 2
-> > > > +          minItems: 4
-> > > > +          maxItems: 4
-> > > >          reg-names:
-> > > >            items:
-> > > >              - const: dbi
-> > > > +            - const: dbi2
-> > > > +            - const: atu
-> > > 
-> > > New properties in the middle of the list is potentially an ABI break.
-> > > Why not add them at the end?
-> > 
-> > Because it ref to snps,dw-pcie-ep.yaml, which already defined the reg
-> > name orders.
-> 
-> Are you sure that it defines an order for reg? If it did, it would not
-> allow what you already have in this binding. The order is actually
-> defined in this file.
-
-Sorry, I missed oneOf in snps,dw-pcie-ep.yaml. You are right.
-
-Frank
-
-> 
-> > we using reg-names to get reg resource, I don't think it break
-> > the ABI. Driver already auto detect both 'dbi2' or no 'dbi2' case.
-> 
-> Linux's might, another might not. I don't see any point in breaking the
-> ABI when you can just put the entries at the end of he list and have no
-> problems at all.
-> 
-> Thanks,
-> Conor.
-> 
-> > > >              - const: addr_space
-> > > >  
-> > > >    - if:
-> > > > @@ -129,8 +131,11 @@ examples:
-> > > >  
-> > > >      pcie_ep: pcie-ep@33800000 {
-> > > >        compatible = "fsl,imx8mp-pcie-ep";
-> > > > -      reg = <0x33800000 0x000400000>, <0x18000000 0x08000000>;
-> > > > -      reg-names = "dbi", "addr_space";
-> > > > +      reg = <0x33800000 0x100000>,
-> > > > +            <0x33900000 0x100000>,
-> > > > +            <0x33b00000 0x100000>,
-> > > > +            <0x18000000 0x8000000>;
-> > > > +      reg-names = "dbi", "dbi2", "atu", "addr_space";
-> > > >        clocks = <&clk IMX8MP_CLK_HSIO_ROOT>,
-> > > >                 <&clk IMX8MP_CLK_HSIO_AXI>,
-> > > >                 <&clk IMX8MP_CLK_PCIE_ROOT>;
-> > > > -- 
-> > > > 2.37.1
-> > > > 
-> > 
-> > 
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="xGaUGIAiUu9bGTpI"
+Content-Disposition: inline
+In-Reply-To: <20240223105328.38d3f8da@eldfell>
 
 
+--xGaUGIAiUu9bGTpI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+So... I got two gaming keyboards. One is totally unusable (and it
+looks LEDs are not controllable from the host), and the second one is
+=2E. HyperX Elite RGB. Needs 2 USB connections, very buggy, probably
+needs repair, and I'd not recomend it to anyone. But that one seems to
+be usable for RGB keyboard development.
+
+(Unusable one is
+https://www.trust.com/en/product/23651-gxt-835-azor-illuminated-gaming-keyb=
+oard
+Usable one is
+0951:16be Kingston Technology HyperX Alloy Elite RGB
+)
+
+First step is to create some kind of driver, I believe. And I did
+that, userland version works quite good, and I started hacking kernel
+one. Version is below, and help would be welcome. Especially if
+someone knows how to do the probing right (it binds 3 times, log
+below). What is worse, loading this driver kills keyboard
+functionality -- input is no longer possible. Is there simple way to
+keep that functionality?
+
+Best regards,
+								Pavel
+
+[ 9880.950973] input: HyperX Alloy Elite RGB HyperX Alloy Elite RGB System =
+Control as /devices/p
+ci0000:00/0000:00:1d.0/usb1/1-1/1-1:1.2/0003:0951:16BE.0045/input/input216
+[ 9881.009994] input: HyperX Alloy Elite RGB HyperX Alloy Elite RGB Consume=
+r Control as /devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1:1.2/0003:0951:16=
+BE.0045/input/input217
+[ 9881.013758] input: HyperX Alloy Elite RGB HyperX Alloy Elite RGB Keyboar=
+d as /devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1:1.2/0003:0951:16BE.0045/=
+input/input219
+[ 9881.014528] hid-generic 0003:0951:16BE.0045: input,hiddev96,hidraw2: USB=
+ HID v1.11 Mouse [HyperX Alloy Elite RGB HyperX Alloy Elite RGB] on usb-000=
+0:00:1d.0-1/input2
+[ 9886.017646] input: HyperX Alloy Elite RGB HyperX Alloy Elite RGB as /dev=
+ices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1:1.0/0003:0951:16BE.0043/input/inp=
+ut221
+[ 9886.218066] hx 0003:0951:16BE.0043: input,hidraw0: USB HID v1.11 Keyboar=
+d [HyperX Alloy Elite RGB HyperX Alloy Elite RGB] on usb-0000:00:1d.0-1/inp=
+ut0
+[ 9886.218088] Have device.
+=2E..
+[ 9899.399088] input: HyperX Alloy Elite RGB HyperX Alloy Elite RGB as /dev=
+ices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1:1.1/0003:0951:16BE.0044/input/inp=
+ut222
+[ 9899.537173] hx 0003:0951:16BE.0044: input,hidraw1: USB HID v1.11 Keyboar=
+d [HyperX Alloy Elite RGB HyperX Alloy Elite RGB] on usb-0000:00:1d.0-1/inp=
+ut1
+[ 9899.537194] Have device.
+=2E..
+[ 9912.691800] input: HyperX Alloy Elite RGB HyperX Alloy Elite RGB as /dev=
+ices/pci0000:00/0000:
+00:1d.0/usb1/1-1/1-1:1.2/0003:0951:16BE.0045/input/input223
+[ 9912.751478] hx 0003:0951:16BE.0045: input,hiddev96,hidraw2: USB HID v1.1=
+1 Mouse [HyperX Alloy
+ Elite RGB HyperX Alloy Elite RGB] on usb-0000:00:1d.0-1/input2
+[ 9912.751502] Have device.
+
+
+// SPDX-License-Identifier: GPL-2.0-or-later
+/*
+ */
+
+#include <linux/device.h>
+#include <linux/input.h>
+#include <linux/hid.h>
+#include <linux/module.h>
+#include <linux/slab.h>
+#include <linux/hid-roccat.h>
+#include <linux/usb.h>
+
+struct hx_device {};
+
+static unsigned char keys[] =3D {
+	0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x=
+14,
+	0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x20, 0x21, 0x=
+22,
+	0x23, 0x24, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x=
+30,
+	0x31, 0x32, 0x33, 0x34, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3E, 0x3F, 0x=
+41,
+	0x44, 0x45, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x51, 0x54, 0x=
+55,
+	0x58, 0x59, 0x5A, 0x5B, 0x5C, 0x5E, 0x5F, 0x61, 0x64, 0x65, 0x68, 0x69, 0x=
+6A,
+	0x6B, 0x6C, 0x6E, 0x6F, 0x74, 0x75, 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x=
+7E,
+	0x7F, 0x81, 0x84, 0x85, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x=
+91,
+	0x94, 0x95 };
+
+struct hid_device *one_hdev;
+
+static int set_direct_color(struct hid_device *hdev, int color, int val)
+{
+	const int s =3D 264;
+	unsigned char *buf =3D kmalloc(s, GFP_KERNEL);
+	int i, ret;
+
+	/* Zero out buffer */
+	memset(buf, 0x00, s);
+
+	/* Set up Direct packet */
+	for (i =3D 0; i < sizeof(keys)/sizeof(keys[0]); i++) {
+		buf[keys[i]] =3D val;
+	}
+
+	buf[0x00] =3D 0x07;
+	buf[0x01] =3D 0x16; // HYPERX_ALLOY_ELITE_PACKET_ID_DIRECT
+	buf[0x02] =3D color; // HYPERX_ALLOY_ELITE_COLOR_CHANNEL_GREEN
+	buf[0x03] =3D 0xA0;
+
+	ret =3D hid_hw_power(hdev, PM_HINT_FULLON);
+	if (ret) {
+		hid_err(hdev, "Failed to power on HID device\n");
+		return ret;
+	}
+
+	// ioctl(3, HIDIOCSFEATURE(264), 0xbfce5974) =3D 264
+	// -> hidraw_send_report(file, user_arg, len, HID_FEATURE_REPORT);
+	//
+	printk(KERN_INFO "Set feature report -- direct\n");
+	i =3D hid_hw_raw_request(hdev, buf[0], buf, s, HID_FEATURE_REPORT, HID_REQ=
+_SET_REPORT);
+	printk("raw: %d, einval %d, eagain %d\n", i, -EINVAL, -EAGAIN);
+	msleep(100);
+	return 0;
+}
+
+#define SIZE 128
+const int real_size =3D SIZE;
+
+static ssize_t hx_sysfs_read(struct file *fp, struct kobject *kobj,
+			       struct bin_attribute * b,
+			      char *buf, loff_t off, size_t count)
+{
+	struct device *dev =3D kobj_to_dev(kobj);
+	struct hx_device *hx =3D hid_get_drvdata(dev_get_drvdata(dev));
+	struct usb_device *usb_dev =3D interface_to_usbdev(to_usb_interface(dev));
+	int retval;
+
+	if (off >=3D real_size)
+		return 0;
+
+	if (off !=3D 0 || count !=3D real_size)
+		return -EINVAL;
+=09
+	printk("read\n");
+	set_direct_color(one_hdev, 2, 0xff);
+
+	return retval ? retval : real_size;
+}
+
+static ssize_t hx_sysfs_write(struct file *fp, struct kobject *kobj,
+			       struct bin_attribute * b,
+		void const *buf, loff_t off, size_t count)
+{
+	struct device *dev =3D kobj_to_dev(kobj);
+	struct hx_device *hx =3D hid_get_drvdata(dev_get_drvdata(dev));
+	struct usb_device *usb_dev =3D interface_to_usbdev(to_usb_interface(dev));
+	int retval;
+
+	if (off !=3D 0 || count !=3D real_size)
+		return -EINVAL;
+
+	printk("Write\n");
+
+	return retval ? retval : real_size;
+}
+
+static struct bin_attribute hx_control_attr =3D { \
+  .attr =3D { .name =3D "thingy", .mode =3D 0660 },		\
+	.size =3D SIZE, \
+	.read =3D hx_sysfs_read, \
+};
+
+static int hx_create_sysfs_attributes(struct usb_interface *intf)
+{
+  return sysfs_create_bin_file(&intf->dev.kobj, &hx_control_attr);
+}
+
+static void hx_remove_sysfs_attributes(struct usb_interface *intf)
+{
+  sysfs_remove_bin_file(&intf->dev.kobj, &hx_control_attr);
+}
+
+static int hx_init_hx_device_struct(struct usb_device *usb_dev,
+		struct hx_device *hx)
+{
+	//mutex_init(&hx->hx_lock);
+	return 0;
+}
+
+static int hx_init_specials(struct hid_device *hdev)
+{
+	struct usb_interface *intf =3D to_usb_interface(hdev->dev.parent);
+	struct usb_device *usb_dev =3D interface_to_usbdev(intf);
+	struct hx_device *hx;
+	int retval;
+
+	hx =3D kzalloc(sizeof(*hx), GFP_KERNEL);
+	if (!hx) {
+		hid_err(hdev, "can't alloc device descriptor\n");
+		return -ENOMEM;
+	}
+	hid_set_drvdata(hdev, hx);
+
+	retval =3D hx_create_sysfs_attributes(intf);
+	if (retval) {
+		hid_err(hdev, "cannot create sysfs files\n");
+		goto exit;
+	}
+
+	return 0;
+exit:
+	kfree(hx);
+	return retval;
+}
+
+static void hx_remove_specials(struct hid_device *hdev)
+{
+	struct usb_interface *intf =3D to_usb_interface(hdev->dev.parent);
+	struct hx_device *hx;
+
+	hx_remove_sysfs_attributes(intf);
+
+	hx =3D hid_get_drvdata(hdev);
+	kfree(hx);
+}
+
+static int num;
+
+static int hx_probe(struct hid_device *hdev,
+		const struct hid_device_id *id)
+{
+	int retval;
+
+	if (!hid_is_usb(hdev))
+		return -EINVAL;
+
+	if (++num !=3D 2)
+		return -EINVAL;
+
+	retval =3D hid_parse(hdev);
+	if (retval) {
+		hid_err(hdev, "parse failed\n");
+		goto exit;
+	}
+
+	retval =3D hid_hw_start(hdev, HID_CONNECT_DEFAULT);
+	if (retval) {
+		hid_err(hdev, "hw start failed\n");
+		goto exit;
+	}
+
+	printk("Have device.\n");
+
+	if (!hid_is_usb(hdev)) {
+		printk("Not an usb?\n");
+	}
+
+	{
+		struct usb_interface *interface =3D to_usb_interface(hdev->dev.parent);
+		struct usb_device *dev =3D interface_to_usbdev(interface);
+		struct usb_host_interface *iface_desc;
+		struct usb_endpoint_descriptor *endpoint;
+		char manufacturer[128];
+		char product[128];
+
+		// Retrieve manufacturer string
+		retval =3D usb_string(dev, dev->descriptor.iManufacturer, manufacturer, s=
+izeof(manufacturer));
+		if (retval > 0)
+			printk(KERN_INFO "Manufacturer: %s\n", manufacturer);
+		else
+			printk(KERN_ERR "Failed to get manufacturer string\n");
+
+		// Retrieve product string
+		retval =3D usb_string(dev, dev->descriptor.iProduct, product, sizeof(prod=
+uct));
+		if (retval > 0)
+			printk(KERN_INFO "Product: %s\n", product);
+		else
+			printk(KERN_ERR "Failed to get product string\n");
+
+	}
+
+	retval =3D hx_init_specials(hdev);
+	if (retval) {
+		hid_err(hdev, "couldn't install mouse\n");
+		goto exit_stop;
+	}
+
+	// Example call to set_direct_color function
+	for (int i=3D0; i<20; i++) {
+		set_direct_color(hdev, 0x01, 0); // Example values
+		set_direct_color(hdev, 0x02, 0); // Example values
+		set_direct_color(hdev, 0x03, 0); // Example values
+		set_direct_color(hdev, 0x01, 0xFF); // Example values
+		set_direct_color(hdev, 0x02, 0xFF); // Example values
+		set_direct_color(hdev, 0x03, 0xFF); // Example values
+	}
+	one_hdev =3D hdev;
+	return 0;
+
+exit_stop:
+	hid_hw_stop(hdev);
+exit:
+	return retval;
+}
+
+static void hx_remove(struct hid_device *hdev)
+{
+	hx_remove_specials(hdev);
+	hid_hw_stop(hdev);
+}
+
+static const struct hid_device_id hx_devices[] =3D {
+	{ HID_USB_DEVICE(0x0951, 0x16be) },
+	{ }
+};
+
+MODULE_DEVICE_TABLE(hid, hx_devices);
+
+static struct hid_driver hx_driver =3D {
+	.name =3D "hx",
+	.id_table =3D hx_devices,
+	.probe =3D hx_probe,
+	.remove =3D hx_remove
+};
+module_hid_driver(hx_driver);
+
+MODULE_AUTHOR("Pavel Machek");
+MODULE_DESCRIPTION("USB HyperX elite backlight driver");
+MODULE_LICENSE("GPL v2");
+
+
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
+
+--xGaUGIAiUu9bGTpI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZqAVNgAKCRAw5/Bqldv6
+8vNZAJ9mm9swPzCB8WhiJQ8Vz27+2W/IgwCeN8iIbsvN79M16ZDXh9gsM7p7aSA=
+=g3Jk
+-----END PGP SIGNATURE-----
+
+--xGaUGIAiUu9bGTpI--
 
