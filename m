@@ -1,214 +1,230 @@
-Return-Path: <linux-kernel+bounces-260211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A8693A48D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:49:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AA9893A493
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:51:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2E59283E3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:49:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45DF8284A0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03030157E82;
-	Tue, 23 Jul 2024 16:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E2E1581E3;
+	Tue, 23 Jul 2024 16:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NrDv3uok"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="YgckCY06"
+Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88ED213B287
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 16:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA0C157A68
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 16:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721753371; cv=none; b=ntHH8o2KT0n0o/D3TmrpIZ2Mq2S88gAzb1VIEicgDXdKnAetU7r9WJx8hHdhNSnSGSnonLIhdwHAN4Ji0LGA3xQn0xHOXPrWCVVL997QSoz2nderGFWsKMiKTg7B3RK0W8xkWdGZ2E6VnIhHiQa4c7kZfv4whBNRsSDvpSoxwy4=
+	t=1721753454; cv=none; b=MGHGr0wSHgOOVAYGfjkmuUgANWf1cjajcBxn6g/Vk9jtPtevTNjkm1fYC6AuKEwPvPqU+qMGPcw5BV+Z1FfsMhVWvksIG69afcbE2SgFHji20uJEg8doxotbf+8U7URm0DEkMt8ukF/xLiV5eFynThw0mTQyWHuwNrDQTyGR96Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721753371; c=relaxed/simple;
-	bh=+W99CfqxoObYCuvVve/zHvc+NNu72hnwerRBRBU6VdU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AY1keot+2aXarmP10mluRlIlFQ5Uu5piyfeeINNC0xa3xCA/v0ZYokZSSVnhu/pOXvbyWu5afx0ValgGpNro1Fwb8i5HG1bbh//+3A6ep9P/71MEUSf96YlqaMrbEx0j+DozP3qpolluFlu4XX2GUFj6vEId1zIN2MLeiVl0kJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NrDv3uok; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7a115c427f1so595506a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 09:49:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721753369; x=1722358169; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IMmHjYZaR62eDvty50K2NRQt0UbFsIJ7pK7TgLOXdII=;
-        b=NrDv3uokw245ln7ulm5/4rNyuXln+GIF3U1G9nK0inNxNIn0gcJJYBHFhd0gQxgENQ
-         L5HAtVERq2Ao0AZUSCorhDnN1XNzCKzDrtqG+wRfYsQstmyxE9/L1+g/JhzJcbgWfXoY
-         2cHeUUVJNk/Dzcnx+FH+z4d0oc/t8b2yL+xJqe2C8dxgS+CzehxEiiIjwWwMBzVcXdTM
-         qd/BJH+FA3D7Mk/7lAAfEZ3sNxkMnUhjxblWWC9hV5tGc2fxdt9ARjCHqxld4ChDRNV2
-         grhp7O6gj5iHTJv4wkO6ATCo/6SBmVKgYTjsPZ8gRlJopWZt2LPrOc1kMJxSJIyaVmIX
-         1z8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721753369; x=1722358169;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IMmHjYZaR62eDvty50K2NRQt0UbFsIJ7pK7TgLOXdII=;
-        b=S3pNjwR+lPJGqZN6brKB9omfFnDGCD9R/6/XzqHzyN1YB7ryBoGW0IF2BgeR6OMO+l
-         tPTk9Wu2ywBKOxgka3y4a+3qpbTW9t+8dz/eEjn9iefbzjHi/w1hlm6fsWjrUpF5D+WL
-         3dr1y0biNIbXYN0olimvaCh78CDmD7Xp9iVc/c6nS4biWNJPjxa1NOCKVnyYHUvgI+HW
-         qnx3igubmXftLLqBBAdFcByHuvTPHnHHigb5Zl+qHUjdCKHxpdcqzMJWmsVfeQUKoEZN
-         JNfDm6ha8lZEscxmiBJs2MXquV1ZAtOBVd9fQO0uW6XaYe+a/NYw8jAIDSp3pC5VOpVc
-         pzUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWE2qp+mEO1srYTy3eGut0Z/QMljy4CTJntCJ9boQuAkjOJ94ErjiZoK7JpuELhlxieljDKPZmjqOHs705Ai4x4Q9oyP0msMr4DjueM
-X-Gm-Message-State: AOJu0YyIsuWwmzr4EkrbNr1dZMfPGQhd4an+2jb54YmrFVLpDNfy/7nI
-	xwKmumIrfKGQksJRV6PeGRKulDW7Qg5P9FbQbLhQYLk7OwevsT98JHS1YqCYSJtrZPVYtUrYGaO
-	pLMVIFjXr61E5xZTYUnarUWvIJ3k=
-X-Google-Smtp-Source: AGHT+IE8JQBZvhS2e9eniMpbuWyekU8wcVXNlUi2GDa0myv7hS4wlZavVHKcmrE30IzEvkK6/tLYZObBbfVH90jq+Zg=
-X-Received: by 2002:a17:90a:c20d:b0:2cb:4c4f:3280 with SMTP id
- 98e67ed59e1d1-2cdaf5585b1mr259536a91.26.1721753368766; Tue, 23 Jul 2024
- 09:49:28 -0700 (PDT)
+	s=arc-20240116; t=1721753454; c=relaxed/simple;
+	bh=+ppp43Ig0Ybxm6TsC99DBorr9/fIy3Ir+ExxDkm5Lz8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FgvSeY+eL/9S4ICBYbkwrZ//fsisVNhf+ll0OIVXFISLyv2dKLbHy3CjxNz+/VpLRmV98SEvFemtIsX/eyAUZ44dJHslJuf5/Dstk4OvzW3FHVGyZpkpSmJiXeMTsZ+SJefWwVXW4jUBjP06HJAX5lNDv9ew58e37MucuGtWxos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=YgckCY06; arc=none smtp.client-ip=83.166.143.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WT37C4Jhzz6Lk;
+	Tue, 23 Jul 2024 18:50:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1721753447;
+	bh=Brq8CGE6n5AxIP1M9IXyLvKdJ9qyGO3tn/GoLw2aeQ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YgckCY06kG5xbq1fwZwWKX7pSwKx3RWRLdRhOa6T2Z+wPDUEi1xx2dsY7oJjZJDl/
+	 Jfhm2eGtnR1X376HqvkY4VaVN8V/7MYvMpqMm683gLJSmj3J3iL0a/yyW9dCOXlBOU
+	 uadIWcuu6TwAvHjnVXdYOCdmLANF0/uzR7E44eOA=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WT37B4JB4zGll;
+	Tue, 23 Jul 2024 18:50:46 +0200 (CEST)
+Date: Tue, 23 Jul 2024 18:50:43 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Paul Moore <paul@paul-moore.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Jeff Xu <jeffxu@google.com>, Kees Cook <keescook@chromium.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Shervin Oloumi <enlightened@chromium.org>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/3] Use socket's Landlock domain
+Message-ID: <20240723.Bee3bah1caim@digikod.net>
+References: <20240719150618.197991-1-mic@digikod.net>
+ <Zp-q9zxmCmGjR2-N@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240616-amdgpu-edid-bios-v1-1-2874f212b365@weissschuh.net> <ad78ada4-4e31-4994-845b-fe756b52a1ae@t-8ch.de>
-In-Reply-To: <ad78ada4-4e31-4994-845b-fe756b52a1ae@t-8ch.de>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Tue, 23 Jul 2024 12:49:17 -0400
-Message-ID: <CADnq5_OjRgMkqnsep_AtKxonhCxthZZCsv+eNERuGH4-fXw6Ww@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdgpu: convert bios_hardcoded_edid to drm_edid
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zp-q9zxmCmGjR2-N@google.com>
+X-Infomaniak-Routing: alpha
 
-On Sun, Jun 16, 2024 at 2:32=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weisss=
-chuh.net> wrote:
->
-> On 2024-06-16 11:12:03+0000, Thomas Wei=C3=9Fschuh wrote:
-> > Instead of manually passing around 'struct edid *' and its size,
-> > use 'struct drm_edid', which encapsulates a validated combination of
-> > both.
-> >
-> > As the drm_edid_ can handle NULL gracefully, the explicit checks can be
-> > dropped.
-> >
-> > Also save a few characters by transforming '&array[0]' to the equivalen=
-t
-> > 'array' and using 'max_t(int, ...)' instead of manual casts.
-> >
-> > Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> > ---
-> > While this patch introduces a new user for drm_edid_raw(),
-> > if amdgpu proper gets migrated to 'struct drm_edid', that usage will go
-> > away.
-> >
-> > This is only compile-tested.
-> >
-> > I have some more patches for the rest of amdgpu,
-> > to move to 'struct drm_edid'.
-> > This patch is a test-balloon for the general idea.
-> >
-> > The same can also be done for drm/radeon.
-> > ---
-> >  drivers/gpu/drm/amd/amdgpu/amdgpu_connectors.c |  6 +-----
-> >  drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h       |  4 ++--
-> >  drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c       |  2 +-
-> >  drivers/gpu/drm/amd/amdgpu/atombios_encoders.c | 21 +++++++-----------=
----
-> >  drivers/gpu/drm/amd/amdgpu/dce_v10_0.c         |  2 +-
-> >  drivers/gpu/drm/amd/amdgpu/dce_v11_0.c         |  2 +-
-> >  drivers/gpu/drm/amd/amdgpu/dce_v6_0.c          |  2 +-
-> >  drivers/gpu/drm/amd/amdgpu/dce_v8_0.c          |  2 +-
-> >  8 files changed, 15 insertions(+), 26 deletions(-)
->
-> <snip>
->
-> > diff --git a/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c b/drivers/g=
-pu/drm/amd/amdgpu/atombios_encoders.c
-> > index 25feab188dfe..90383094ed1e 100644
-> > --- a/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c
-> > +++ b/drivers/gpu/drm/amd/amdgpu/atombios_encoders.c
-> > @@ -2064,20 +2064,13 @@ amdgpu_atombios_encoder_get_lcd_info(struct amd=
-gpu_encoder *encoder)
-> >                               case LCD_FAKE_EDID_PATCH_RECORD_TYPE:
-> >                                       fake_edid_record =3D (ATOM_FAKE_E=
-DID_PATCH_RECORD *)record;
-> >                                       if (fake_edid_record->ucFakeEDIDL=
-ength) {
-> > -                                             struct edid *edid;
-> > -                                             int edid_size =3D
-> > -                                                     max((int)EDID_LEN=
-GTH, (int)fake_edid_record->ucFakeEDIDLength);
-> > -                                             edid =3D kmalloc(edid_siz=
-e, GFP_KERNEL);
-> > -                                             if (edid) {
-> > -                                                     memcpy((u8 *)edid=
-, (u8 *)&fake_edid_record->ucFakeEDIDString[0],
-> > -                                                            fake_edid_=
-record->ucFakeEDIDLength);
-> > -
-> > -                                                     if (drm_edid_is_v=
-alid(edid)) {
-> > -                                                             adev->mod=
-e_info.bios_hardcoded_edid =3D edid;
-> > -                                                             adev->mod=
-e_info.bios_hardcoded_edid_size =3D edid_size;
-> > -                                                     } else
-> > -                                                             kfree(edi=
-d);
-> > -                                             }
-> > +                                             const struct drm_edid *ed=
-id;
-> > +                                             edid =3D drm_edid_alloc(f=
-ake_edid_record->ucFakeEDIDString,
-> > +                                                                   max=
-_t(int, EDID_LENGTH, fake_edid_record->ucFakeEDIDLength));
-> > +                                             if (drm_edid_valid(edid))
-> > +                                                     adev->mode_info.b=
-ios_hardcoded_edid =3D edid;
-> > +                                             else
-> > +                                                     drm_edid_free(edi=
-d);
->
-> The old code here seems broken in general.
-> In drivers/gpu/drm/amd/include/atombios.h the comment for ucFakeEDIDLengt=
-h says:
-> (I expect the same field in the same struct for amdgpu to have the same s=
-emantics)
->
->     UCHAR ucFakeEDIDLength;       // =3D 128 means EDID length is 128 byt=
-es, otherwise the EDID length =3D ucFakeEDIDLength*128
->
-> So as soon as the EDID from the BIOS has extensions, only the first few
-> bytes will be copied into the allocated memory. drm_edid_is_valid() will
-> then read the uninitialized memory and if the "extensions" field ends up
-> non-zero it will happily "validate" past the allocated buffer.
+On Tue, Jul 23, 2024 at 03:07:53PM +0200, Günther Noack wrote:
+> Hello Mickaël!
+> 
+> On Fri, Jul 19, 2024 at 05:06:15PM +0200, Mickaël Salaün wrote:
+> > While the current approach works, I think we should change the way
+> > Landlock restricts network actions.  Because this feature is relatively
+> > new, we can still fix this inconsistency.  In a nutshell, let's follow a
+> > more capability-based model.  Please let me know what you think.
+> 
+> Thanks for sending the patch.  The implementation with ->f_cred is much simpler
+> than I had thought it would be.  Some higher level questions:
+> 
+>  * I assume that the plan is to backport this as a fix to older kernels that
+>    already have the feature?  (Otherwise, we would potentially have backwards
+>    compatibility issues.)
 
-I guess the allocation should be changed to something like:
-if (ucFakeEDIDLength =3D=3D 128)
-    edid_size =3D ucFakeEDIDLength;
-else
-    edid_size =3D ucFakeEDIDLength * 128;
+Correct, if this patch is merged it must be backported too, but there
+might be better alternatives, or we might just stick to the initial
+approach.
 
-That said, I don't know how many systems actually used this.  IIRC
-this was only used in GPUs from 15-20 years ago.  No objections to the
-patch in general.
+> 
+>  * I believe it clashes a little bit with the TCP server example [1],
+>    which I found a useful use case for the TCP connect/bind and socket
+>    restriction features.
 
-Alex
+Indeed, because the socket is created before the sandboxing, the socket
+could be reused to bind (or connect) to other ports.  This is a good
+example of why using current's instead of socket's credentials may be
+less surprising.  From my point of view, the main issue is that a socket
+can be reconfigured.
 
+> 
+>  * accept(2) on a passive (listen-mode) socket will give you a new socket FD
+>    -- does that new socket inherit its f_cred from the server socket,
+>    or does it inherit its f_cred from the thread?
 
->
-> The new code won't work either but at least it won't read uninitialized
-> memory nor will it read past the buffer bounds.
->
-> >                                       }
-> >                                       record +=3D fake_edid_record->ucF=
-akeEDIDLength ?
-> >                                                 struct_size(fake_edid_r=
-ecord,
->
-> <snip>
+According to sock_alloc_file(), the newly created socket inherits the
+caller's credentials, which is similar to a call to openat2(2) with a
+directory file descriptor.
+
+> 
+> Regarding the TCP server example, the current implementation is *very* simple,
+> and does the following steps:
+> 
+>  1. create socket with socket(2)
+>  2. bind(2) the socket to the desired port
+>  3. enforce a Landlock ruleset that disables all networking features
+>     (TCP bind, TCP connect and socket creation with the new patch set)
+>  4. listen(2) on the socket
+>  5. go into the accept(2) loop
+> 
+> With the old behaviour, step 3 is going to affect the existing passive socket:
+> It will not be possible any more to bind(2) that passive socket to another port.
+> 
+> With the new behaviour (after your patch), step 3 does *not* affect the existing
+> socket, and the server socket can be reused to bind(2) to other ports.
+> 
+> Or, in other words: If the relevant domain is tied to the socket at creation
+> time, that means that a future client connection which takes over the process
+> might be able to use that socket's Landlock domain, which potentially grants
+> more permissions than the thread's domain
+
+Yes, that's why it might be more risky, but I wanted to have this
+discussion.  Whatever the outcome, it should be explained in
+Documentation/security/landlock.rst
+
+One thing to keep in mind and that contrary to other LSMs, Landlock,
+like seccomp, enables processes to (only) drop privileges, and this is
+done by the process itself (not at execve time).  This was also one
+argument for the initial approach.
+
+A thing that bothered me was related to the restrictions of sockets,
+especially with the WIP scoping feature.  Datagram (unix) sockets could
+work before sandboxing, and suddenly become broken after sandboxing
+(because the security check would be done at send time instead of
+connect time).  This kind of issue should be identified quite early and
+easily though.
+
+However, there is still an inconsistency between connected stream
+sockets and datagram sockets.  From a security point of view, this looks
+like a good thing though.
+
+> 
+> I think it would be nice if a use case like in the TCP server example would
+> still be possible with Landlock; there are multiple ways to reach that:
+> 
+>  - We could enforce two layers of Landlock rules, one before socket creation
+>    that restricts bind(2) to a given port, and one after socket creation that
+>    restricts other bind(2), create(2) and socket(2) operations.
+> 
+>    Drawbacks:
+> 
+>    - One Landlock layer more, and needs to add a Landlock rule:
+>      This is a bit more complicated to implement.
+
+Right, I think it's too complex for users.
+
+>    - The bind(2) restriction on the socket is still only per port *number*,
+>      but it is still possible to bind with that port number on different IP
+>      addresses.
+
+Good point.  That's another argument for the initial approach and the
+way you sandboxed the example: dropping the *_TCP access rights, it is
+not possible to rebind or reconnect a socket (to another address).
+
+Actually, I'm not sure if using the socket's credential would not
+confuse users to understand why an access is denied (or allowed).
+
+> 
+>  - Alternatively, I wish we could just lock the passive server socket in, so
+>    that it can't be made to reconnect anywhere else.  After all, the socket
+>    disassociation with connect(2) with AF_UNSPEC seems to be a somewhat obscure
+>    and seldomly used feature - if we could just disallow that operation, we
+>    could ensure that this socket gets reused for such a nefarious purpose.
+
+We could also add a new "scope" for socket reconfiguration of sockets
+created by a parent or sibling domain, similar to the ptrace
+restrictions.
+
+> 
+>    It would still require two nested Landlock rulesets to make the TCP server
+>    example work, but they would be a bit simpler than in the alternative above.
+> 
+>  - There are probably more alternatives...?
+> 
+> What do you think?
+
+I see other alternatives:
+
+- We could have a new ruleset's attribute to specify if network
+  restrictions should apply on the caller or the socket.  That might be
+  confusing for users though.
+
+- We could just stick to the initial approach and add new access rights
+  (denied by default, similar to FS_REFER) that will only apply to newly
+  created sockets.  This is close to the previous alternative but more
+  explicit. Both use cases could then be used, with a default secure
+  approach (i.e. the initial one).  However, we need to have a clear
+  rationale for the WIP scoping restrictions: should the caller or the
+  socket be checked as the client?
+
+- We could extend the current approach and check both the caller's
+  credential and the socket's credential.  This could be confusing to
+  users though.
+
+- We could have a new fcntl(2) command to (securely) transition a file
+  descriptor's credential to the caller's one (e.g. approved by
+  ptrace_may_access).  That could be generic to all Linux access control
+  systems.
+
+- According to a new ruleset's attribute, we could revalidate (at use
+  time) file descriptors not opened by the caller's Landlock domain, but
+  users would have to be explicit (e.g. stdio issue). And how to handle
+  partially allowed accesses?
+
+> 
+> —Günther
+> 
+> [1] https://wiki.gnoack.org/LandlockTcpServerExample
+> 
 
