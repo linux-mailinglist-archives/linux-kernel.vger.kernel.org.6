@@ -1,124 +1,109 @@
-Return-Path: <linux-kernel+bounces-260310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0964A93A646
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:33:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8931493A64D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:34:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEA9E281414
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:33:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED608B2327B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:34:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A3D158879;
-	Tue, 23 Jul 2024 18:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8EDD158A22;
+	Tue, 23 Jul 2024 18:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MhHQ4nMx"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YJ6TjiRh"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F95014C5B0;
-	Tue, 23 Jul 2024 18:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFD913D896
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 18:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721759619; cv=none; b=Y6b7/c7okPKkMuYpTP+kLoy9YQt3x9shQLhoIU9Ob059NknrdMyztWYWbtQmyZ8gfxAZ7+O42i/8iLd7aF619+eaTySicwuGavfeIsxWOk39shUbB6DRGY3bQpAPB2izgAA/yNHOzc0Ui/q/bj5ljhbSl7C+4YKCbWxJ8Z8CS/8=
+	t=1721759635; cv=none; b=kmvRzQspMVP1rmV1YyfzovcpG0V3sFLEJvsNugMIfbB0as9dYlna9o3bivcEY9qDwxPFzVUky2I6PJKCx5/h4t6nJK/sGNawHO77bdCqwsr7nXs/ovnagFoPDoBwWXHX7+bLFUJLQfaGQLYuPGNwzjcqBUEllbLBSqC+KYjnsuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721759619; c=relaxed/simple;
-	bh=Zt6h0sSFWXf716K7FyfqURABtaGF3lQYqJwb+KROOVA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=e1iDuwf8sROEZrYULJ4ODwWIQeqOkEwQpdS8z7eWjep3FPClNgaRRTrf9BSwSB/YW2q5+1jYlRLUG36pd6NSZrBihJg9EdEhxr+1qdNO39z6YwUScShkRdvZN+V8GguXDHxhNdiozUpYtfNuR1EmtVmF00ziR9uupm0BQSbbWWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MhHQ4nMx; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46NAlUOn010761;
-	Tue, 23 Jul 2024 18:33:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+vGyP9XB+BTIgLebgzrrFiGAtttyG4jmomT4tH2mPDQ=; b=MhHQ4nMxtuRz1SEW
-	sUMqRvjuX3J7vqJhZWTxohVYbp5PxgLs7YanSM+eWcZOdeGBDqs/RqqKCBUqSyPl
-	sLU4+jRXKV6zj/lZTSs5K+S+0OuINkCajwTUFomGFpllanGwUsRPktxWv1z6YE26
-	PmkeoVZhjtofSu5cR3fKf6N+5QHvrPi7THrgJi4ANLiNpVHVVAbk15QFt3ncJCTV
-	i+yBPqaELKof9RvYXPfyMbDh5GiAbZesV1EIzC/lEY2l9WJY+lKlgVQswzYMcSvM
-	SANQLBqHeMM9c/3J2RZChzx5VlvVvbEeukTL8HYCmSKM2ZzkUtcQUGlvZtzykC4J
-	APPQIw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40gurtpjvj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Jul 2024 18:33:32 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46NIXVaf025177
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Jul 2024 18:33:31 GMT
-Received: from [10.111.176.36] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 23 Jul
- 2024 11:33:31 -0700
-Message-ID: <012dec02-8d19-4873-a3c8-915322639e39@quicinc.com>
-Date: Tue, 23 Jul 2024 11:33:30 -0700
+	s=arc-20240116; t=1721759635; c=relaxed/simple;
+	bh=NFq/ekDOEm1BCUiEQxAbPVsS7vv5PxDQqveu1WlBUdQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uc/kUYyguLALdUn21xR+kYVEkOzhq5xG0It0ljQUIxHM9O3BiM/WZwt0mw4mvy8qW2TqUBS3X5RLCwlHJ66aEpC/hgVk9+bkC8267tfI2CPQQD3YYVI+F0ALuLfwHFafFauFzWVnchMnYmmrv4E2quyDCWCyG9niC3LgFXT9ElU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=YJ6TjiRh; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5a2ffc3447fso5172957a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:33:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1721759631; x=1722364431; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jVlnyN0btPbYCcHbH0TkKobCqtHm6zMls3/CNbNfk/I=;
+        b=YJ6TjiRhFssJkGpH6v+xkifhxaj5ysktR5U3rOcLwfA2zRbdx0j9/b18LlEd8nor/p
+         lotahvolBuUeRPNH8KUfHw6O5oisgn82xcdRoCBnKfwQN1liPl2SJL44DzpUFv3DuP1o
+         o6U3s2EDjyNjZrFpxM7hP3SZz7JOPf4FCXjpY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721759631; x=1722364431;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jVlnyN0btPbYCcHbH0TkKobCqtHm6zMls3/CNbNfk/I=;
+        b=PzD8cs0Zcd7yyFK65Zm+4Ol/IxKT9Tvc3QiZEtNb5Qdj6XMDfakdB9d2YHD+OzFVvD
+         AHdLxHQQl6zV8/p4+IWfm3xLm+89VHvSNfYgxaeF83B7KFLjVy7ngSZO/d9SLK4bqtXs
+         SbyjobwRFFRTsjbfNWMooRCmeUP2hKqquKfU9jYjyF7M7h1CxTH+4kscu1ih406Udzcc
+         cD4s/dbRjAO8rTHqVp84fG+vRw0sd7c+C+yW8flZoNZkALCFX3APdDSBucF4GufLQHXZ
+         zfyW8IR8TNrLHJ2IbTOgqu7x4QHPDYh0LkrCsjPud9KfCFxtodC0o8oPSxOsrq9kQnZz
+         OHcg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkRlucott2X2FEodWSKop0cA65ebg1FJ1xWeDnHxH3UnejERjecPmYUssWHsL7+DzdOX2lxe8uh9999u2dlmvjmO00sSfweHtYjWv3
+X-Gm-Message-State: AOJu0Yzbu34LOjPz48G8bwUZzQmvNZyzAseXbIUl00W5Lm4bxyPRnCbg
+	xHgO8rAOlGvB+6Yl/Isnjm7VwGe0ysunfbB5VLMiJLyVR+AOEzuE8tlyIgd2rtABaACQKJm7No9
+	vCXJyvQ==
+X-Google-Smtp-Source: AGHT+IG5+F3bPQFaIqhsBaiZEXNjUNMRkYIhfQGqMVrEcCNQR9VVBfktkEj4DalbZNa6Edd+m/OmZg==
+X-Received: by 2002:a17:907:3f0a:b0:a7a:a138:dbc5 with SMTP id a640c23a62f3a-a7aa138e2e2mr175220666b.65.1721759631475;
+        Tue, 23 Jul 2024 11:33:51 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a9ee292cfsm82941266b.54.2024.07.23.11.33.51
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jul 2024 11:33:51 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a2a90243c9so4768734a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:33:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVU/MLksBeuDfLYCDRdIqGp7MjfI3Q/tiwveRwF3r+jlMm6IYkFsidsX/gwwWZIi3jzHr9N+NeODa3AQJq5p3kkPhdz93ydX5r+0ZUK
+X-Received: by 2002:a05:6402:26c2:b0:5a3:f5c6:7cd9 with SMTP id
+ 4fb4d7f45d1cf-5a47a61f330mr9178333a12.26.1721759630852; Tue, 23 Jul 2024
+ 11:33:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dmaengine: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: Vinod Koul <vkoul@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>,
-        Dave
- Jiang <dave.jiang@intel.com>,
-        Peter Ujfalusi <peter.ujfalusi@gmail.com>
-CC: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>
-References: <20240606-md-drivers-dma-v2-1-0770dfdf74dd@quicinc.com>
- <171778242916.276050.11535562159320987467.b4-ty@kernel.org>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <171778242916.276050.11535562159320987467.b4-ty@kernel.org>
+References: <20240723171753.739971-1-adrian.ratiu@collabora.com> <CAHk-=wiJL59WxvyHOuz2ChW+Vi1PTRKJ+w+9E8d1f4QZs9UFcg@mail.gmail.com>
+In-Reply-To: <CAHk-=wiJL59WxvyHOuz2ChW+Vi1PTRKJ+w+9E8d1f4QZs9UFcg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 23 Jul 2024 11:33:34 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiU8igSGkycZ1e8+6-NF9obbbt1aZXYwd0ONzXnHsBgHA@mail.gmail.com>
+Message-ID: <CAHk-=wiU8igSGkycZ1e8+6-NF9obbbt1aZXYwd0ONzXnHsBgHA@mail.gmail.com>
+Subject: Re: [PATCH] proc: add config & param to block forcing mem writes
+To: Adrian Ratiu <adrian.ratiu@collabora.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	kernel@collabora.com, gbiv@google.com, inglorion@google.com, 
+	ajordanr@google.com, Doug Anderson <dianders@chromium.org>, Jeff Xu <jeffxu@google.com>, 
+	Jann Horn <jannh@google.com>, Kees Cook <kees@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 2ERdlMHC0ZLAOq2ilydcwT9j12eQFewi
-X-Proofpoint-ORIG-GUID: 2ERdlMHC0ZLAOq2ilydcwT9j12eQFewi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-23_09,2024-07-23_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxscore=0
- phishscore=0 adultscore=0 priorityscore=1501 suspectscore=0
- lowpriorityscore=0 bulkscore=0 spamscore=0 impostorscore=0 mlxlogscore=999
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407230129
 
-On 6/7/2024 10:47 AM, Vinod Koul wrote:
-> 
-> On Thu, 06 Jun 2024 13:00:01 -0700, Jeff Johnson wrote:
->> make allmodconfig && make W=1 C=1 reports:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/idxd/idxd.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/ti/omap-dma.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/dmatest.o
->> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/ioat/ioatdma.o
->>
->> Add the missing invocations of the MODULE_DESCRIPTION() macro.
->>
->> [...]
-> 
-> Applied, thanks!
-> 
-> [1/1] dmaengine: add missing MODULE_DESCRIPTION() macros
->       commit: 6e2fb806e08d46cbeb96c1000ef531a92d3b2e9a
-> 
-> Best regards,
+On Tue, 23 Jul 2024 at 11:30, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> but while that looks a bit prettier, the whole "fs_parser.h" thing is
+> admittedly odd.
 
-Hi,
-I see this landed in linux-next, but is not currently in Linus' tree for 6.11.
-Will you be able to have this pulled during the merge window?
-I'm trying to eradicate all of these warnings before 6.11 rc-final.
+.. don't get me wrong - /proc obviously *is* a filesystem, but in this
+context it's a boot command line parameter, not a mount option.
 
-Thanks!
-/jeff
+The "constant_table" thing obviously does work outside of mount
+options too, it's just that it's documented and used in the context of
+the mount API.
+
+                  Linus
 
