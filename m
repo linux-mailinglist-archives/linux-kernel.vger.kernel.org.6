@@ -1,182 +1,311 @@
-Return-Path: <linux-kernel+bounces-260143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F1D793A3C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:30:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A20493A3C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44DE0285335
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:30:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA12D1F2441C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7E8153810;
-	Tue, 23 Jul 2024 15:30:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452EC157467;
+	Tue, 23 Jul 2024 15:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="BY/uJW1j"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dc5amIEI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E309A1386DF
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 15:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721748610; cv=none; b=avyDC6vPmuyQd+3g++oM9GfzsTiTA//mFDYVY4F8j1EyyH9mMB/y12W2RRqAWAE1yr04dTQVa0OJMZgZzLrYGbdJoxvdk21GGB23DjOabsbWjcSQ8cmy7yWmTiEbvRVHHqm5jXU5aRd2omC6LLb/7OSt+5Qn7n5SGyQzwk+c3nQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721748610; c=relaxed/simple;
-	bh=78n0CA6Sch2qJqJKz+7NmOTfqyIFCxJ8DjlkzKp/aSg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BH8WpCiXiKUOyC8gGGFSDimF28WY6TT/erJE9PypDK/pCSBfuPNliqzcSwYREXccAipBnNx7Jt9OJGsZm5bBtCJErcSS/sNuEckNfSLEywmwnOqw4xeyGO3/Sxsp2G8uVrjb9RKHyIlJtE7Olrz2lGaSdB4FA1QSpXFr2lIm6YQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=BY/uJW1j; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6b7a4668f1fso38431046d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:30:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1721748608; x=1722353408; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IEHcT8XxC0SlSjrExDMjr6SOkfXnLgP4pXm3ISl7TZk=;
-        b=BY/uJW1jhzB0CA0DPBFcz4mHTB3qZ4YRltt6f9eP7X0SXLgQUUeu33G2DU4AeLi7/j
-         gWU9GX/BxkE7kZ/xijZrLMv6eQZZ9RtwMEBa7SHs0aSvwuRlyFimvZZsUNpU/IyIrF0X
-         UNrQ3GB9tu1K1eu1BnUibBhgaJ2ZjcEccrXHQR8mVi7psCMrquXVMvCibYQFUeIBRpwL
-         kBtgwv7fP3a6QO+VaRt0GiIkkYrCsDN9DBXxyXIgjoQzeeSThwNWpzlhJXA/gyBaUxhx
-         ZqAL2IjZ5ll36md8WWLwd4X+QFMD7/bXnzizkfcygTVBfH1/qM9BBqmyX+YSlr3EOaz1
-         EUFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721748608; x=1722353408;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IEHcT8XxC0SlSjrExDMjr6SOkfXnLgP4pXm3ISl7TZk=;
-        b=rsXXZB+XSuDJOvQrScjMPP3RvH7Bw5F/81SuLGZTI5kNhtns89dMeIwCgIv+HZUdRt
-         EiPrgQJ5HscsInqA3tourt6KhDMTqL5rpQD3tnQWKtQ6wbG+s/BgYpaMmBH7vS2UHiLZ
-         gY5BjOI1Nsx3JQmoaweYeccouyx7QzW2HXS46B1Sjr6l6yioesBIC+p9f88pdY/OqTVd
-         swHZGvQD6jxWcTdg4zonv8MxTDqezob+2ZPslTROX9NGQdec0aFyO+zCyX6IS++f83Da
-         +MBNq8Gv62A4tBnlO/pmFnLCmyMblBluP5eTq/72+txThqwudK15WFBDfZ447/xNfxTV
-         a2aw==
-X-Forwarded-Encrypted: i=1; AJvYcCX2hxGigoLUHvZaw6v+4s69Pnmh/kfSOrdZyHRrWX0F7XHjZysr8VunCBklAhBlhJ/GYVzLS8YWNjXXBFtIbwFOZTymUUG8NR1zwYgh
-X-Gm-Message-State: AOJu0Yw0Pu09P5+fOwoRsFxniW6jnG5+9N5sVC/45G4AYm8mOG6R1SUr
-	egUPKTv0uH/e6Xt3uEhPVgoNW9EmZvFqKua5H9gKKAnoPRy2nbqhraD4OMELfA==
-X-Google-Smtp-Source: AGHT+IHp+SZ/H2ADfIqNtjyRXjOZOuded9Ph9BpuZgfIh/X3AngR6/rj9BD6WtS8E3ul0LOOux17xA==
-X-Received: by 2002:a05:6214:3009:b0:6b7:ad32:3815 with SMTP id 6a1803df08f44-6b9610e3c60mr135237376d6.14.1721748607829;
-        Tue, 23 Jul 2024 08:30:07 -0700 (PDT)
-Received: from rowland.harvard.edu (iolanthe.rowland.org. [192.131.102.54])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b7acae1c93sm47820276d6.108.2024.07.23.08.30.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 08:30:07 -0700 (PDT)
-Date: Tue, 23 Jul 2024 11:30:04 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: syzbot <syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com>
-Cc: andriy.shevchenko@linux.intel.com, f.fainelli@gmail.com,
-	fancer.lancer@gmail.com, gregkh@linuxfoundation.org,
-	ilpo.jarvinen@linux.intel.com, jirislaby@kernel.org,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-usb@vger.kernel.org, marcello.bauer@9elements.com,
-	rafael@kernel.org, sylv@sylv.io, syzkaller-bugs@googlegroups.com,
-	tglx@linutronix.de
-Subject: Re: [syzbot] [usb?] INFO: task hung in uevent_show
-Message-ID: <ade15714-6aa3-4988-8b45-719fc9d74727@rowland.harvard.edu>
-References: <000000000000dd5b9f061ab3d7a4@google.com>
- <0000000000006e5e08061dc2027e@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B7C1386DF;
+	Tue, 23 Jul 2024 15:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721748619; cv=fail; b=nGiSH/25Rpi4oCpWDep0eh5eIdxYZXOTFGb3v3P4m6pyGCru/kMRmu7TMlzf7lmjytAufukU6MvcZJmDFbv7U3lJOLxt72v9YeI7yijfqpHCrmNq8xzzsR7nrN69clMKXx4amEHzF7b6LNgiD6+zQ7pz0OfgNThhDz6cKYsuk2I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721748619; c=relaxed/simple;
+	bh=JiPfNsH+CTGyvePaCjqZ5PmfJZR6hM6wbiX4/g82lpk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=YXHOz1/xEoI2L5L5eilqdPVzyojl0YFWnY3Kc3m1g+V9Qq8b5Nob0iF9XjJZ/eWchIJgcB/RJOfZOha7zC4rtj77CuIM+ZIlS6QKDS3fwdDDBZiH6r2EeMpFIFj6g2qTvQoIQg51K2ISNjD0mJLNl1mtk91H6t6aYKbgJzazjXY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dc5amIEI; arc=fail smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721748617; x=1753284617;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=JiPfNsH+CTGyvePaCjqZ5PmfJZR6hM6wbiX4/g82lpk=;
+  b=dc5amIEIEkMwfB7vgadhlDuOkiMyc3up1NcW7IoirLHtv0zyAyic8rMC
+   uSvxqQPTtxOP1JN61ZHjqxzn6DaHitFEitT2AzTMos8YezHVbztaFXm/7
+   uLcUlQm6joVoXxCko7ZhgUQw9rQkCbPbobUCHjOdy28Wopd4Ihymbqs0L
+   x0ehff5MTSsLd4HS8R0wWWUbuY5KxIfhr00j7cVKAIhjipKhHtEnp/x+v
+   x7qYkKhf7Flrey/PXjAcCvH6NtVbuiby+aP8c2E/rwlNhrRwTYvWJW2ga
+   z6zwhqrYIljP/fM5AVo4rnE3hb0KZ9DZuJ2yHSnHhP106uhJ6vIISbYqT
+   w==;
+X-CSE-ConnectionGUID: HdlfvYDWSJGA0pkcICn97w==
+X-CSE-MsgGUID: KgiPGaLzQQu+I6HVY1kSOQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11142"; a="12667942"
+X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
+   d="scan'208";a="12667942"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2024 08:30:15 -0700
+X-CSE-ConnectionGUID: aM1vuRL2QBGq/8JH51YGbA==
+X-CSE-MsgGUID: ZFtfQDudS7GsXpTcgJKKVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
+   d="scan'208";a="52139285"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 Jul 2024 08:30:15 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 23 Jul 2024 08:30:14 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 23 Jul 2024 08:30:14 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.169)
+ by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 23 Jul 2024 08:30:14 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rtc1MZPNNw5At16nWVNN8+fgiop9aIwsuGFK+BtgbL/Fk3vbzrCQrio6P+GhXFp/ypt5dc3gLqBECgNHo6wQejlnH5nOkOl9m7nsBUbxC1FhCSYcb1cTrElt6K/7ssCuxfiPFvyCpBmga55pMgognrOxf2EN7sW+QN5ZLIegsGr5BlkzPSffzC7aiD4bFUikAbeGSwpH7hly9gdXFRXKEkG7vPbwSsv2WKwfMiavGCRn6i9J6hvs3zM++w4c68/X0XVJTOQfxQG2vN8H/p1rIKs3nkpB8MPaBurDKl0Nsj/ZN8PCyksHxXQgeAclYD5PDvhUtg7gQgV/dU3jGt7IeQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rY1UdjOOwvwCg2fpWuaTCEIuwuinbKLGoBR0l9wxKwI=;
+ b=xXuRJWEEvPovUjrnroIUqXUsnPI+eFgvkB0J1T26V+6GlYSaNxxyfsFK/2FBpVQMOzjkLA7+ZBRfmOZygaT8sii/lVHZ7YReWY0EW3uLdbODFTRXNP4epdkzh/Kt2cUpBQKsxzMNmAaH9ZaMyCJyTg9qv+SmkCxhdCX2m4jxO9qsPk6hCpJPDy3f6uhHlAnd8WCu7+fzv4+JPuFNiTTwYV27kd6AE/hCHlB111FoDj30cHLngRzubRBbR9Sp+UdcrEDP7eEz1xJvJMVMCzR3wvNoBsdgUEgqVI77CWbxQxSWR6gST2PwNDVyXQ/InF+JA9vB75Ae/cwVTorFmlH8nA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
+ by DS0PR11MB7264.namprd11.prod.outlook.com (2603:10b6:8:13b::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20; Tue, 23 Jul
+ 2024 15:30:11 +0000
+Received: from CY5PR11MB6139.namprd11.prod.outlook.com
+ ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
+ ([fe80::7141:316f:77a0:9c44%6]) with mapi id 15.20.7784.017; Tue, 23 Jul 2024
+ 15:30:11 +0000
+Date: Tue, 23 Jul 2024 10:30:08 -0500
+From: Lucas De Marchi <lucas.demarchi@intel.com>
+To: Tvrtko Ursulin <tursulin@ursulin.net>
+CC: <intel-gfx@lists.freedesktop.org>, <linux-perf-users@vger.kernel.org>,
+	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+	<dri-devel@lists.freedesktop.org>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6/7] drm/i915/pmu: Lazy unregister
+Message-ID: <xsuzfv4rzb4c25sibt5gjskn7xyfwf33wgwaw4nkz5jlnvl2ke@ekur5xvhec3z>
+References: <20240722210648.80892-1-lucas.demarchi@intel.com>
+ <20240722210648.80892-7-lucas.demarchi@intel.com>
+ <be3871bd-fc25-482e-b4d4-91afc4d5b5a5@ursulin.net>
+Content-Type: text/plain; charset="us-ascii"; format=flowed
+Content-Disposition: inline
+In-Reply-To: <be3871bd-fc25-482e-b4d4-91afc4d5b5a5@ursulin.net>
+X-ClientProxiedBy: MW4PR03CA0239.namprd03.prod.outlook.com
+ (2603:10b6:303:b9::34) To CY5PR11MB6139.namprd11.prod.outlook.com
+ (2603:10b6:930:29::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000006e5e08061dc2027e@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|DS0PR11MB7264:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1e4ef562-4117-41a5-6469-08dcab2c5755
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?gSQoOQGsCSzFPZmSVt8G7exCP0oGQLKfdkX0Z8rOS+FHZqO1pEv44Ahmr9DA?=
+ =?us-ascii?Q?MR7DLh3LG46DrszI27O3mByI8BfMTrpB+sv+GRU9Ti/b6zs8LqeN0YP4/5ua?=
+ =?us-ascii?Q?ve3/FsjrUyHPazOZbDRj5aCZiVtGSoVcKTfttrCqJaEG+Nj3iRNCSLMCjd5z?=
+ =?us-ascii?Q?YBhST7sXGg6dNt688waNwds/2k9Ugz1/IFfKh3GbqK1+Kja1ABVTsSGrahvJ?=
+ =?us-ascii?Q?u3FQAgBCOODDsVwLntxKCC85lXnHxsayoTSSaIN/fbCTTU5HI5fdWloX3rQ8?=
+ =?us-ascii?Q?2IJG9ADdzryMUJln9pMaiyj4I6IhmJ5vmfJn4qXsTUcTf2kqLMlq+81C3Mbt?=
+ =?us-ascii?Q?DRoQoMGZGokns+YhpKa3FoB8bNioxZolMCPMjvCQqkYvi6KXSLxhAjjYifns?=
+ =?us-ascii?Q?teLTO5B/DeX3tGzgsAog5lZ4qwx3ZXJLUNaG039JtRcH2kBsOeZ2iErCKy2Z?=
+ =?us-ascii?Q?O6BzS2w6nPrWTl3w7i2V+//LRlLoYTQVPTCxZgTbg3VGqh0s8KK6R4IH0uEm?=
+ =?us-ascii?Q?pTDwTk038gQRnTkgvgBGsdTr3Ikxnp8yrwSgaJoxwQDIkiaZ9ns9jWPLpgU0?=
+ =?us-ascii?Q?0bMv8uc+vML5T+GrigZMmQUi84Apx/1BccxrDio8NTK1VNktd3kEUh2GHVJx?=
+ =?us-ascii?Q?TNkrpfoaJs9isH92bsYGeLt+qanFz80JrWBP5K1pfCS727NTAgRc9tfX12Jj?=
+ =?us-ascii?Q?VCESnSdFLiaiRr66beCmanhHd9iXSiMVNHpwecTqRm9EDCgwf59v8xjvDDyL?=
+ =?us-ascii?Q?jA0ncZFxpjWeSXsy7soX2ogvN/5MAp53VJCG6QnS1CJx2LXGgkX9mEGDGwqt?=
+ =?us-ascii?Q?+l6bkAp4+WfVaAuktRkCWfQn+QVrIELkehQCcO/97zxcHA7hOrTldi1Ydlnc?=
+ =?us-ascii?Q?MwNfK0inU8VN37IsTbOG43gGGQ/Q45gOmp8O6EiVpfTeJx3pQWUlrvYmnc9F?=
+ =?us-ascii?Q?Pp8KOc0Ck3A/Pmyx9ZjL+pgNyNEjjFxxeF3adbLqQ0ewnbO+XeZf7SSKBozv?=
+ =?us-ascii?Q?HUvAZ2fs2a8aYAplmkaly371HZ5B5NL+vrB30OXr/3nIipQhF6SmBte2nfy8?=
+ =?us-ascii?Q?TKlhT06wQZkHWMqhiKGYAkFyFNcnJsAbCyxCbsfAGPdVoL07IQKDusJWhb28?=
+ =?us-ascii?Q?CdbBRj6cpbi5cxJzeS9t7baG6eMheYm72YGSsKdxW1TfOi9PYRG4NotN3lyU?=
+ =?us-ascii?Q?RqPrI67GVv9jyvxPJ31U/5zmvF/qAlnt+tApat0qhuxiXQESCU3IUHBgsO7L?=
+ =?us-ascii?Q?8+PDXyATJS1jJMoOAu9xPd/oyz3Qr9IwU32hzjyuXNIb6hVeb+8nuGh5lSHu?=
+ =?us-ascii?Q?QdeJclQfbU/PkisGYa0rEW4vN0hanEX1nSRdYHBxzvC/Rw=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?2J3iYM5BEI+/dRJlLDt92hgTyzqXjTFVhUIfm5tTlxGA21kZDG6Wl5xpGTZ2?=
+ =?us-ascii?Q?z5+QYUFX+6FxP2tRAh5cxYNeoyMnx74WCyPZ0CkeNM2uM79KJP6ageUd+6Ld?=
+ =?us-ascii?Q?xnMynFdd+33wp+huF0HgbfggRSDT5kFHcC5WcHiS7hOHn3nQcrrz5sPqViuZ?=
+ =?us-ascii?Q?mjS02GcpQrR5LTFQkcWQRsmCqhTKE0T+EbhLcV3B/qUNvgOaIcREVHEtYgZD?=
+ =?us-ascii?Q?28vq60BfqFts7Gk3qdqb388/R9gAwre7k/uuiASlDU/1fEhkr1Ob/Snxbmaq?=
+ =?us-ascii?Q?bKUnMCFa5d8nZ7U16RM9h4H+mPdFF8EVeDG2cOzGKIOA2pd811DNMfYSMBUx?=
+ =?us-ascii?Q?g8TLGn01gqC4cdyDxGfyS6j4LN2/X53UDekx7zd0dvj/u88S8qJK93v2vCWR?=
+ =?us-ascii?Q?igathOL1Um56BK92VM+RnHs3B9ZMtxKTA55T/JRQEOC7mQcpYcI4xrnbx6sh?=
+ =?us-ascii?Q?5oKC1q8e83ImG2h6umzg/dzp8xAnn3nm0HCHMu1TMTVDPrU1QXKDG+BWL38X?=
+ =?us-ascii?Q?aumDlGlycOvXD2LA+1dBgULtCVx3xqi2bA5iWYNNZAGDlxhcp2fA37eeQ+Zx?=
+ =?us-ascii?Q?5wkj72juw6AWdGtj00ho5KiywHWsIw5a8KN3I5jRhjLiCh2QTTvHGFNaxnr3?=
+ =?us-ascii?Q?yNezxxV/HpBQTtdoBnKLbE/Tx/NCluTUAyYgl29LA+5ZiT4bInWR78FvYpvE?=
+ =?us-ascii?Q?q5TWNqCb0GhorOBv8+6JzKroya9ePRDFyQq4ftzVdVJ0W5V8WShq7t8f3pab?=
+ =?us-ascii?Q?aH7t0lAVQ07BIa9r5Njiv+EdR5ZLzsPaOkcVpnRrSstpAAg/zvtR3RAyZJdb?=
+ =?us-ascii?Q?NwiCh6UnL4ZYpQuzSaEZSBJEar83m1ELJ9wo1ceHFJcPzIuIhucY5Dx4ipbZ?=
+ =?us-ascii?Q?rOTys6+vNeFF6gV13N/DP5h+NWwWehhEFn7gvVb81ZS0c9HNsrlUu7GFdpwZ?=
+ =?us-ascii?Q?hExr03l5danvPjLVatK3n/rIBwfyUipK1ayWp8Vrw+hw15nlQRjI0cENeNHW?=
+ =?us-ascii?Q?Zs+blJSKoapqmNRFTgcKP3qE0ymdpT89F5b0Nc5H4PjqwZzyEJA8BjFaCMQB?=
+ =?us-ascii?Q?Do8ssmiSgKI0Rxnemsr+S/BU3PXij7EDhwnGA8D1vxnu2mJfQedqHz5K2C4o?=
+ =?us-ascii?Q?qc9xEKyvFIOeO/1H9BiWCDhmpQF1mvnwXtVGDPRMrKEdL13vr30LxaaX5/OQ?=
+ =?us-ascii?Q?OmO6XApYhxOLXiguQv7Z7/ElbqhNE8u2pTOcq0nJwFu/SpnGgUiFJ4n32QKW?=
+ =?us-ascii?Q?rFD/2abmZB5qpLT8yKzgGfAvClYuoBNJye5lP3cL/U2CosnCd4H+JGhrVZBr?=
+ =?us-ascii?Q?glB7k7J06CAv6bqRD3poNnVV02RDsWbdDT/Rd84t0aoH8sahLL1zMnR6HEZ6?=
+ =?us-ascii?Q?ds7Jk+MaCgpgf9uPnD8bpuGx7wM+mb9bCKGk0v4iPwGsxPU343N4AwbN6Vkb?=
+ =?us-ascii?Q?hTBWEWHQEtlDH+aL13baUDtmU/zGx3K5YFc63/qCqB0wUc9ey2ANBGiBAD/U?=
+ =?us-ascii?Q?ux5WDV+sR5JbVvSTcwUOYw8jEwJxLXe69L/zeaJoDssyiUmsaH1ry4YfpaCd?=
+ =?us-ascii?Q?wdP8yzV7oib8VQJ37gf6t59OtC7MPsyTz+YtJSBsbdusL5rnNXoo1p6twyNU?=
+ =?us-ascii?Q?7A=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e4ef562-4117-41a5-6469-08dcab2c5755
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2024 15:30:11.4257
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hiWBb0Po2u5gPLEwzTe/4EqyDsqax6iZmytwn9GE9uoNeYMPTG+ITFCd6PdHLkK/IxXayVVuKoGDrQ/T3cMffCfmz0zeRjiUtCfnG83EoAw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7264
+X-OriginatorOrg: intel.com
 
-On Sun, Jul 21, 2024 at 06:36:01AM -0700, syzbot wrote:
-> syzbot has bisected this issue to:
-> 
-> commit a7f3813e589fd8e2834720829a47b5eb914a9afe
-> Author: Marcello Sylvester Bauer <sylv@sylv.io>
-> Date:   Thu Apr 11 14:51:28 2024 +0000
-> 
->     usb: gadget: dummy_hcd: Switch to hrtimer transfer scheduler
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12d54f2d980000
-> start commit:   d35b2284e966 Add linux-next specific files for 20240607
-> git tree:       linux-next
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=11d54f2d980000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16d54f2d980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d8bf5cd6bcca7343
-> dashboard link: https://syzkaller.appspot.com/bug?extid=edd9fe0d3a65b14588d5
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10905c26980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1122da8c980000
-> 
-> Reported-by: syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com
-> Fixes: a7f3813e589f ("usb: gadget: dummy_hcd: Switch to hrtimer transfer scheduler")
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+On Tue, Jul 23, 2024 at 09:03:25AM GMT, Tvrtko Ursulin wrote:
+>
+>On 22/07/2024 22:06, Lucas De Marchi wrote:
+>>Instead of calling perf_pmu_unregister() when unbinding, defer that to
+>>the destruction of i915 object. Since perf itself holds a reference in
+>>the event, this only happens when all events are gone, which guarantees
+>>i915 is not unregistering the pmu with live events.
+>>
+>>Previously, running the following sequence would crash the system after
+>>~2 tries:
+>>
+>>	1) bind device to i915
+>>	2) wait events to show up on sysfs
+>>	3) start perf  stat -I 1000 -e i915/rcs0-busy/
+>>	4) unbind driver
+>>	5) kill perf
+>>
+>>Most of the time this crashes in perf_pmu_disable() while accessing the
+>>percpu pmu_disable_count. This happens because perf_pmu_unregister()
+>>destroys it with free_percpu(pmu->pmu_disable_count).
+>>
+>>With a lazy unbind, the pmu is only unregistered after (5) as opposed to
+>>after (4). The downside is that if a new bind operation is attempted for
+>>the same device/driver without killing the perf process, i915 will fail
+>>to register the pmu (but still load successfully). This seems better
+>>than completely crashing the system.
+>
+>So effectively allows unbind to succeed without fully unbinding the 
+>driver from the device? That sounds like a significant drawback and if 
+>so, I wonder if a more complicated solution wouldn't be better after 
+>all. Or is there precedence for allowing userspace keeping their paws 
+>on unbound devices in this way?
 
-Let's try again to see if Marcello's patch fixes the problem.  The first 
-try had a typo.
+keeping the resources alive but "unplunged" while the hardware
+disappeared is a common thing to do... it's the whole point of the
+drmm-managed resource for example. If you bind the driver and then
+unbind it while userspace is holding a ref, next time you try to bind it
+will come up with a different card number. A similar thing that could be
+done is to adjust the name of the event - currently we add the mangled
+pci slot.
 
-Alan Stern
+That said, I agree a better approach would be to allow
+perf_pmu_unregister() to do its job even when there are open events. On
+top of that (or as a way to help achieve that), make perf core replace
+the callbacks with stubs when pmu is unregistered - that would even kill
+the need for i915's checks on pmu->closed (and fix the lack thereof in
+other drivers).
 
-#syz test: linux-next d35b2284e966
+It can be a can of worms though and may be pushed back by perf core
+maintainers, so it'd be good have their feedback.
 
---- a/drivers/usb/gadget/udc/dummy_hcd.c
-+++ b/drivers/usb/gadget/udc/dummy_hcd.c
-@@ -1304,7 +1304,7 @@ static int dummy_urb_enqueue(
- 
- 	/* kick the scheduler, it'll do the rest */
- 	if (!hrtimer_active(&dum_hcd->timer))
--		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS), HRTIMER_MODE_REL);
-+		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS), HRTIMER_MODE_REL_SOFT);
- 
-  done:
- 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
-@@ -1325,7 +1325,7 @@ static int dummy_urb_dequeue(struct usb_hcd *hcd, struct urb *urb, int status)
- 	rc = usb_hcd_check_unlink_urb(hcd, urb, status);
- 	if (!rc && dum_hcd->rh_state != DUMMY_RH_RUNNING &&
- 			!list_empty(&dum_hcd->urbp_list))
--		hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL);
-+		hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
- 
- 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
- 	return rc;
-@@ -1995,7 +1995,7 @@ static enum hrtimer_restart dummy_timer(struct hrtimer *t)
- 		dum_hcd->udev = NULL;
- 	} else if (dum_hcd->rh_state == DUMMY_RH_RUNNING) {
- 		/* want a 1 msec delay here */
--		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS), HRTIMER_MODE_REL);
-+		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS), HRTIMER_MODE_REL_SOFT);
- 	}
- 
- 	spin_unlock_irqrestore(&dum->lock, flags);
-@@ -2389,7 +2389,7 @@ static int dummy_bus_resume(struct usb_hcd *hcd)
- 		dum_hcd->rh_state = DUMMY_RH_RUNNING;
- 		set_link_state(dum_hcd);
- 		if (!list_empty(&dum_hcd->urbp_list))
--			hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL);
-+			hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
- 		hcd->state = HC_STATE_RUNNING;
- 	}
- 	spin_unlock_irq(&dum_hcd->dum->lock);
-@@ -2467,7 +2467,7 @@ static DEVICE_ATTR_RO(urbs);
- 
- static int dummy_start_ss(struct dummy_hcd *dum_hcd)
- {
--	hrtimer_init(&dum_hcd->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-+	hrtimer_init(&dum_hcd->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_SOFT);
- 	dum_hcd->timer.function = dummy_timer;
- 	dum_hcd->rh_state = DUMMY_RH_RUNNING;
- 	dum_hcd->stream_en_ep = 0;
-@@ -2497,7 +2497,7 @@ static int dummy_start(struct usb_hcd *hcd)
- 		return dummy_start_ss(dum_hcd);
- 
- 	spin_lock_init(&dum_hcd->dum->lock);
--	hrtimer_init(&dum_hcd->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-+	hrtimer_init(&dum_hcd->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_SOFT);
- 	dum_hcd->timer.function = dummy_timer;
- 	dum_hcd->rh_state = DUMMY_RH_RUNNING;
- 
--- 
-2.45.2
+thanks
+Lucas De Marchi
 
+>
+>Regards,
+>
+>Tvrtko
+>
+>>
+>>Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
+>>---
+>>  drivers/gpu/drm/i915/i915_pmu.c | 24 +++++++++---------------
+>>  1 file changed, 9 insertions(+), 15 deletions(-)
+>>
+>>diff --git a/drivers/gpu/drm/i915/i915_pmu.c b/drivers/gpu/drm/i915/i915_pmu.c
+>>index 8708f905f4f4..df53a8fe53ec 100644
+>>--- a/drivers/gpu/drm/i915/i915_pmu.c
+>>+++ b/drivers/gpu/drm/i915/i915_pmu.c
+>>@@ -1158,18 +1158,21 @@ static void free_pmu(struct drm_device *dev, void *res)
+>>  	struct i915_pmu *pmu = res;
+>>  	struct drm_i915_private *i915 = pmu_to_i915(pmu);
+>>+	perf_pmu_unregister(&pmu->base);
+>>  	free_event_attributes(pmu);
+>>  	kfree(pmu->base.attr_groups);
+>>  	if (IS_DGFX(i915))
+>>  		kfree(pmu->name);
+>>+
+>>+	/*
+>>+	 * Make sure all currently running (but shortcut on pmu->closed) are
+>>+	 * gone before proceeding with free'ing the pmu object embedded in i915.
+>>+	 */
+>>+	synchronize_rcu();
+>>  }
+>>  static int i915_pmu_cpu_online(unsigned int cpu, struct hlist_node *node)
+>>  {
+>>-	struct i915_pmu *pmu = hlist_entry_safe(node, typeof(*pmu), cpuhp.node);
+>>-
+>>-	GEM_BUG_ON(!pmu->base.event_init);
+>>-
+>>  	/* Select the first online CPU as a designated reader. */
+>>  	if (cpumask_empty(&i915_pmu_cpumask))
+>>  		cpumask_set_cpu(cpu, &i915_pmu_cpumask);
+>>@@ -1182,8 +1185,6 @@ static int i915_pmu_cpu_offline(unsigned int cpu, struct hlist_node *node)
+>>  	struct i915_pmu *pmu = hlist_entry_safe(node, typeof(*pmu), cpuhp.node);
+>>  	unsigned int target = i915_pmu_target_cpu;
+>>-	GEM_BUG_ON(!pmu->base.event_init);
+>>-
+>>  	/*
+>>  	 * Unregistering an instance generates a CPU offline event which we must
+>>  	 * ignore to avoid incorrectly modifying the shared i915_pmu_cpumask.
+>>@@ -1337,21 +1338,14 @@ void i915_pmu_unregister(struct drm_i915_private *i915)
+>>  {
+>>  	struct i915_pmu *pmu = &i915->pmu;
+>>-	if (!pmu->base.event_init)
+>>-		return;
+>>-
+>>  	/*
+>>-	 * "Disconnect" the PMU callbacks - since all are atomic synchronize_rcu
+>>-	 * ensures all currently executing ones will have exited before we
+>>-	 * proceed with unregistration.
+>>+	 * "Disconnect" the PMU callbacks - unregistering the pmu will be done
+>>+	 * later when all currently open events are gone
+>>  	 */
+>>  	pmu->closed = true;
+>>-	synchronize_rcu();
+>>  	hrtimer_cancel(&pmu->timer);
+>>-
+>>  	i915_pmu_unregister_cpuhp_state(pmu);
+>>-	perf_pmu_unregister(&pmu->base);
+>>  	pmu->base.event_init = NULL;
+>>  }
 
