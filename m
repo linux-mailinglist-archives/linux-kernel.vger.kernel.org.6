@@ -1,153 +1,112 @@
-Return-Path: <linux-kernel+bounces-260132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BBE593A39B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:15:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 609DF93A394
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:15:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47EDF284899
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:15:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9B71B223B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92BA2157464;
-	Tue, 23 Jul 2024 15:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2AE156F34;
+	Tue, 23 Jul 2024 15:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qw4HxPt3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eLapEhgL"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AE33D55D;
-	Tue, 23 Jul 2024 15:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA31D15445E;
+	Tue, 23 Jul 2024 15:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721747721; cv=none; b=F/4nqPqSU7BBETymL/EnNYQTHJgg2Y24l1CjeHMxVdQM0r0ZR4IZMQPDYK/UifaTo5Q1/y1Xve386A4d8UZB49DaQrcpcTL5nIb4VxrNjmRb42r5ELwbAIzNe0CQPqUkQ5OLof0jRR4ZCn8Vzu6dHoPFp+zRDa+9KcayIyHftPE=
+	t=1721747690; cv=none; b=e5dg3csDuU22VEs3leJd7VVgaB0SYp97OKTB0ypLww6SW3LM9PbKDLn/X8jDjPf59z+sESD7y3dqsLRmu8YtvCMafOiLI1B3sqVqbT5srouWsacXSrRi1CmEPH7njEHyxybjFWOZE62xRW/FoOBJ5ua643LvOnQfY5+v/qo6n5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721747721; c=relaxed/simple;
-	bh=ol9JsVUnRtg4oc6OjI3SRRYJtqUxFY8FVh6ck81PLJg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rC1dODBcVQCTygLUTa1iGAMbZPBnqtSxXXFSCjzlAH8voK89ED84g9Y0MliwtRVxGaV2ttZwohQHZ5FCA1pup6h9pCgq8nYaI4ZhLakjOQmP/jFcvnWS/vbccITa/YAjoS8PV5GgQkg+UW9lW16dJlnOA9YOZygJywAyOR4OPk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qw4HxPt3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F94FC4AF09;
-	Tue, 23 Jul 2024 15:15:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721747721;
-	bh=ol9JsVUnRtg4oc6OjI3SRRYJtqUxFY8FVh6ck81PLJg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Qw4HxPt3jZRflwxFHdqJIxfBYds5uGaRBGRpyHsM7uazwqHY9bGrQMTucacb9lR1j
-	 d+m4VL0URHPeIboa0n57AGoFeReH9C3HWmj5DWUay5pW15qOcMxv3XtLbDr+IQ8pPI
-	 jyr60qj9YF8O/kiOboxHLl04k1i9gJwVOP6cR5wCyPLYG0HKZ3CLM52LUvKPx3TOs0
-	 Qu/g6wwdblzgN4W9cuVjD617aQpecdeoADPnk4UOuMFqtVU5gyBBi9IfeNj1dv9iUd
-	 B5KDV2jx1NComhR5NWO1HyfbRJ4q+aUDPDS9GT0Lov21RlgCUHCsdPY3yu0Z/Ia7+Q
-	 fhDmIT5tP/0sw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1sWHEW-000000000CV-1yBN;
-	Tue, 23 Jul 2024 17:15:21 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH] dt-bindings: PCI: qcom: Allow 'vddpe-3v3-supply' again
-Date: Tue, 23 Jul 2024 17:13:28 +0200
-Message-ID: <20240723151328.684-1-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.44.2
+	s=arc-20240116; t=1721747690; c=relaxed/simple;
+	bh=Cq67rOMLvvxvMkMeTU2TSWpFfXHa040dLmsPdMkfreo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SitaSSN/uQyFZ7p3AxHZ/e/3RlVjFRTg8H9kPPJVSBZ89MFax+UpYNeJCnvi36ZuFB2ZxZ7+FjljpCbNAF9pn5yFwbg952acO6SBkf5wBqwUjb5tICtmLc7VvtIYFn2ESpdjrD8i/gRrjW37G0N6j+hJefr6SRgs3XkYu9DYbuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eLapEhgL; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=VTgL5ge11jBWnXDpOUwdP8RTW1RcdJWmSf5FeYaWObU=; b=eLapEhgLQwOvy/aRkTlLU3y5KO
+	G6h5VIcP+h/85L2oglrmVT45vXtTIhS6PId3E52cLWcfyGRcQNNo1l44YhFn1P44TKHfZumSdp2BH
+	zPpaLsqNA7E6Fv3kubjqiSgcjlLL3OXmlt575Uy7QL6Ut5cVyBQdjCJON+wXixV2cTcHX4j2p2ncm
+	BYi5+NGrY1kaPKitajqxzebVrIbJzahyXjCvbqUXhIiGXBvMyUySyewz03YMgnjopUlc5KH5DiEp3
+	hVtgZH0dvaQkU8onQ51IE3hcrqMj7tHE6hKXCvu9ElQsAOE24FbKbBFq8UBfFFYChklZPqmn6IcXk
+	iHZK5JOw==;
+Received: from [50.53.4.147] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sWHDx-0000000CqyF-2IxX;
+	Tue, 23 Jul 2024 15:14:45 +0000
+Message-ID: <63e6c29d-3335-46f4-b296-4c7856abcb35@infradead.org>
+Date: Tue, 23 Jul 2024 08:14:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Capitalize Farenheit
+To: Guenter Roeck <linux@roeck-us.net>,
+ David Hunter <david.hunter.linux@gmail.com>, wim@linux-watchdog.org,
+ corbet@lwn.net, linux-watchdog@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com
+References: <20240723131849.264939-1-david.hunter.linux@gmail.com>
+ <2de779a1-be76-4aab-8440-9b01a2cc22ce@roeck-us.net>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <2de779a1-be76-4aab-8440-9b01a2cc22ce@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Commit 756485bfbb85 ("dt-bindings: PCI: qcom,pcie-sc7280: Move SC7280 to
-dedicated schema") incorrectly removed 'vddpe-3v3-supply' from the
-bindings, which results in DT checker warnings like:
 
-	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-dora.dtb: pcie@600000: Unevaluated properties are not allowed ('vddpe-3v3-supply' was unexpected)
-        from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
 
-Note that this property has been part of the Qualcomm PCIe bindings
-since 2018 and would need to be deprecated rather than simply removed if
-there is a desire to replace it with 'vpcie3v3' which is used for some
-non-Qualcomm controllers.
+On 7/23/24 6:57 AM, Guenter Roeck wrote:
+> On 7/23/24 06:18, David Hunter wrote:
+>> Not capitalizing "fahrenheit" is an extremely minor spelling mistake.
+>> This commit fixes that.
+>>
+> 
+> Please at least follow guidelines for submitting patches, specifically
+> 
+> "Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
+>  instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
+>  to do frotz", as if you are giving orders to the codebase to change
+>  its behaviour.
+> "
+> 
+> Guenter
+> 
 
-Fixes: 756485bfbb85 ("dt-bindings: PCI: qcom,pcie-sc7280: Move SC7280 to dedicated schema")
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml   | 3 +++
- Documentation/devicetree/bindings/pci/qcom,pcie-sc7280.yaml   | 3 ---
- Documentation/devicetree/bindings/pci/qcom,pcie-sc8280xp.yaml | 3 ---
- Documentation/devicetree/bindings/pci/qcom,pcie.yaml          | 3 +++
- 4 files changed, 6 insertions(+), 6 deletions(-)
+Also, please spell it correctly in the $Subject.
 
-diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
-index 0a39bbfcb28b..2b6f5a171f20 100644
---- a/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
-+++ b/Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml
-@@ -78,6 +78,9 @@ properties:
-     description: GPIO controlled connection to WAKE# signal
-     maxItems: 1
- 
-+  vddpe-3v3-supply:
-+    description: PCIe endpoint power supply
-+
- required:
-   - reg
-   - reg-names
-diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-sc7280.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-sc7280.yaml
-index 634da24ec3ed..7ed46a929d73 100644
---- a/Documentation/devicetree/bindings/pci/qcom,pcie-sc7280.yaml
-+++ b/Documentation/devicetree/bindings/pci/qcom,pcie-sc7280.yaml
-@@ -66,9 +66,6 @@ properties:
-     items:
-       - const: pci
- 
--  vddpe-3v3-supply:
--    description: PCIe endpoint power supply
--
- allOf:
-   - $ref: qcom,pcie-common.yaml#
- 
-diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-sc8280xp.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-sc8280xp.yaml
-index 25c9f13ae977..15ba2385eb73 100644
---- a/Documentation/devicetree/bindings/pci/qcom,pcie-sc8280xp.yaml
-+++ b/Documentation/devicetree/bindings/pci/qcom,pcie-sc8280xp.yaml
-@@ -58,9 +58,6 @@ properties:
-     items:
-       - const: pci
- 
--  vddpe-3v3-supply:
--    description: A phandle to the PCIe endpoint power supply
--
- required:
-   - interconnects
-   - interconnect-names
-diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-index f867746b1ae5..ffabbac57fc1 100644
---- a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-+++ b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-@@ -91,6 +91,9 @@ properties:
-   vdda_refclk-supply:
-     description: A phandle to the core analog power supply for IC which generates reference clock
- 
-+  vddpe-3v3-supply:
-+    description: A phandle to the PCIe endpoint power supply
-+
-   phys:
-     maxItems: 1
- 
+>> Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+>> ---
+>>   Documentation/watchdog/watchdog-api.rst | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/watchdog/watchdog-api.rst b/Documentation/watchdog/watchdog-api.rst
+>> index 800dcd7586f2..78e228c272cf 100644
+>> --- a/Documentation/watchdog/watchdog-api.rst
+>> +++ b/Documentation/watchdog/watchdog-api.rst
+>> @@ -249,7 +249,7 @@ Note that not all devices support these two calls, and some only
+>>   support the GETBOOTSTATUS call.
+>>     Some drivers can measure the temperature using the GETTEMP ioctl.  The
+>> -returned value is the temperature in degrees fahrenheit::
+>> +returned value is the temperature in degrees Fahrenheit::
+>>         int temperature;
+>>       ioctl(fd, WDIOC_GETTEMP, &temperature);
+> 
+> 
+
 -- 
-2.44.2
-
+~Randy
 
