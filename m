@@ -1,183 +1,136 @@
-Return-Path: <linux-kernel+bounces-259781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C47939D12
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:00:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCEA6939D19
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 446A31F228EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:00:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3569DB2221D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAFFB14C58C;
-	Tue, 23 Jul 2024 09:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7131B14D2A8;
+	Tue, 23 Jul 2024 09:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="rOhQ3otY"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PvXmxeZK"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D6DDDDC;
-	Tue, 23 Jul 2024 09:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308DD13B2AF;
+	Tue, 23 Jul 2024 09:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721725237; cv=none; b=mNeaQIwamfwrQn9Z8A+84UGvafNIR65677K67XbN5xm19frbp5hjnTfZtL3YSM47BtmtHdtFh+KSdCpEPIwrytzZO+Mm2RMGMXs8ZvMZqwZWytYSKnhXXH3/oNnSo09yjpfiRwa5McJbXSWWBWeqetbS+aMxlpPWqOZvQ85WNYU=
+	t=1721725419; cv=none; b=pjWtU6fNUErMAe24qQIk1yOXoiRDZ/mCAeqz/6uBnYpfDsO7/Sl9TeTlYXhRxmoJel8LME5uZQSSiPfz5Ffe53dnKN+K/CriQGcBm/JiQ16wSIavoRsI3YOw88hBbgra3gK7N+OHJt7RFTJPgZYLQUpk3FSdFLH1O77A/4VLfjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721725237; c=relaxed/simple;
-	bh=jfLE9tpnZChXcVn8NYHzUuHrYd/r/GTpbk7NGi3GtOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YOnoCkGa9Sm2hCSDQAn3opfSmQfOyPJCHRnw4DTjJSA2LUcabh0QQP2bcQdRdCWExz0gyP/xOdyShklGoOFRmLrF3CkACMz6h4NgJ/f15PLgHO7Yt06znKTCKLo2CcJc2k8OyUeNovCf9kkM9XlULqhQzl3w/5GBJOgTRv/qLhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=rOhQ3otY; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721725233;
-	bh=jfLE9tpnZChXcVn8NYHzUuHrYd/r/GTpbk7NGi3GtOY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rOhQ3otYyKYfJ8hOJSPsZ9L3itr87QK9ScTyIpWs5hSVTiTao5b2E9JzzHSkqMIXk
-	 lxd+aQdaZy0IQvOwPq8KEa0X1Vsc33MgjI0GkJCUgomnlXuudyqcyJyd6lk8uYlg+p
-	 Ygx99gDG+Bgrw2rzQWn0gZv3OmvR4vR3hC2qJxO12L+aavT4p1Pyrtx0la2iu0uahh
-	 FNpjGGBtNNMTDDhOGuFLZeR8oR4wQa0dW/Dogs64djjxSQqF6xrg7j7OxUtq7iZIo5
-	 SwlRzYbSeJdUh+clBGd0jSOY6CA65wBGSh5EnbNxaNYxs1tic+HNM8CUkq++aWkc5B
-	 q9mW+nReEUYcw==
-Received: from localhost (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sebastianfricke)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 49EF13780EC6;
-	Tue, 23 Jul 2024 09:00:33 +0000 (UTC)
-Date: Tue, 23 Jul 2024 11:00:32 +0200
-From: Sebastian Fricke <sebastian.fricke@collabora.com>
-To: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-Cc: mchehab@kernel.org, ezequiel@vanguardiasur.com.ar,
-	hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-	kernel@collabora.com
-Subject: Re: [PATCH v5 1/3] media: videodev2: Add flag to unconditionnaly
- enumerate pixels formats
-Message-ID: <20240723090032.x24ezk5vgihaf6z3@basti-XPS-13-9310>
-References: <20240722150523.149667-1-benjamin.gaignard@collabora.com>
- <20240722150523.149667-2-benjamin.gaignard@collabora.com>
+	s=arc-20240116; t=1721725419; c=relaxed/simple;
+	bh=IKDGW+S1M4rIGjWSyUzdgq3EqCJJHUgPhJCnriCxPNM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PQPEl7VD6WPDGG3Cmf7Q5He9/rJxbgOuEspHty6IaaWel2U+vQZR+JK8ubVcEK8PBZaa1H8di1C7mVy8BZZ0c2zKma5zuPN89PWSV/nXcONdmWKVCYTGZH+UvKgyMxnUszHDd8XQaznQkpLjLqSzQq0EiWRjNXA/LzaNN53GD7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PvXmxeZK; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46N1qb75009577;
+	Tue, 23 Jul 2024 09:03:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=s4vojYXQW1c42hLl+9O/4V
+	8X2J5pFmtzAFiQxNZveXY=; b=PvXmxeZKKMVAWWI++VDe644bE8MZhRtJ1wMAC5
+	dk1EIVSVyVnINS9Bh5eGyjCQbAk5yDP/GQJgdMuSQ01FUzsdT5yKMgfgCv1HBeoE
+	/Q+vnVhuBXAHF11ALs/Ue9weZHuqJuV3k9/9KYLwLnZMY1WxvXEHrqj28ERxuQib
+	rxWfz5COVqcDIIr8ekBMA0P2mAINRHTN2Vo3xRz6827IGWVGDnXrRaV8EJJ1IIjC
+	qUMTwMbF+PI26TdaiW2GLq7F95Gc4OAN2gN9XmMPFo7eJX7/u93DdvZIkk24VTkb
+	H1OI3eBDT9nj7Z0aKOlX3rmgrc3xsPF/MjcNe3So+DjegDGw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g60jx1bp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Jul 2024 09:03:31 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46N93Uc1007366
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Jul 2024 09:03:30 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 23 Jul 2024 02:03:24 -0700
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <gregkh@linuxfoundation.org>, <konrad.dybcio@linaro.org>,
+        <djakov@kernel.org>, <quic_wcheng@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+CC: Varadarajan Narayanan <quic_varada@quicinc.com>
+Subject: [PATCH v4 0/5] Add interconnect driver for IPQ5332 SoC
+Date: Tue, 23 Jul 2024 14:32:59 +0530
+Message-ID: <20240723090304.336428-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20240722150523.149667-2-benjamin.gaignard@collabora.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: m7w9_XRbnz9pq9ySm6dEjvdax0bzGqc0
+X-Proofpoint-GUID: m7w9_XRbnz9pq9ySm6dEjvdax0bzGqc0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-22_18,2024-07-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=712
+ priorityscore=1501 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ mlxscore=0 suspectscore=0 phishscore=0 clxscore=1015 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407230067
 
-Hey Benjamin,
+Enable icc-clk based interconnect driver for IPQ5332. This is
+similar to IPQ9574's icc-clk based driver.
 
-in the subject line:
+dt_bindings_check and dtbs_check passed.
 
-s/unconditionnaly enumerate pixels/unconditionally enumerate pixel/
+Ensured that icc_sync_state is called and relevant clocks are
+disabled.
 
-On 22.07.2024 17:05, Benjamin Gaignard wrote:
->When the index field is ORed with V4L2_FMT_FLAG_ENUM_ALL the driver
+v4: Add Reviewed-By for the first patch
+    Move the gpll4_main change to next patch as suggested in review
 
-s/is ORed with/is set with/ (same meaning but a lot less confusing)
+v3: Not taking Reviewed-By: Krzysztof, due to minor change in file
 
->will ignore any configuration and enumerate all the possible formats.
->Drivers which do not support this flag yet always return an EINVAL
+    Add 'clk: qcom: ipq5332: Register gcc_qdss_tsctr_clk_src' to fix
+    gpll4_main's CLK_IGNORE_UNUSED issue.
 
-s/yet always/yet, always/
+v2: Removed dependency as it is merged
+    dt-bindings update to accommodate USB clock names change
+    Use icc-clk for USB also
 
->error code.
->
->Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
->---
->changes in version 5:
->- Reset the proposal to follow Hans's advices
->- Add new flag to be used with index field.
->
-> .../userspace-api/media/v4l/vidioc-enum-fmt.rst      | 12 +++++++++++-
-> .../userspace-api/media/videodev2.h.rst.exceptions   |  1 +
-> include/uapi/linux/videodev2.h                       |  3 +++
-> 3 files changed, 15 insertions(+), 1 deletion(-)
->
->diff --git a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
->index 3adb3d205531..12e1e65e6a71 100644
->--- a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
->+++ b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
->@@ -85,7 +85,11 @@ the ``mbus_code`` field is handled differently:
->     * - __u32
->       - ``index``
->       - Number of the format in the enumeration, set by the application.
->-	This is in no way related to the ``pixelformat`` field.
->+        This is in no way related to the ``pixelformat`` field. When the
->+        index is ORed with V4L2_FMT_FLAG_ENUM_ALL the driver will ignore
+v1:
+Dependency:
+[1] https://lore.kernel.org/linux-arm-msm/20240430064214.2030013-1-quic_varada@quicinc.com/
 
-s/ORed/set/ (same as above)
 
->+        any configuration and enumerate all the possible formats. Drivers
->+        which do not support this flag yet always return an ``EINVAL``
+Varadarajan Narayanan (5):
+  dt-bindings: interconnect: Add Qualcomm IPQ5332 support
+  dt-bindings: usb: qcom,dwc3: Update ipq5332 clock details
+  clk: qcom: ipq5332: Register gcc_qdss_tsctr_clk_src
+  clk: qcom: ipq5332: Use icc-clk for enabling NoC related clocks
+  arm64: dts: qcom: ipq5332: Add icc provider ability to gcc
 
-s/yet always/yet, always/
+ .../bindings/clock/qcom,ipq5332-gcc.yaml      |  2 +
+ .../devicetree/bindings/usb/qcom,dwc3.yaml    | 17 ++++++-
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi         |  7 ++-
+ drivers/clk/qcom/gcc-ipq5332.c                | 36 ++++++++++-----
+ .../dt-bindings/interconnect/qcom,ipq5332.h   | 46 +++++++++++++++++++
+ 5 files changed, 94 insertions(+), 14 deletions(-)
+ create mode 100644 include/dt-bindings/interconnect/qcom,ipq5332.h
 
->+        error code.
->     * - __u32
->       - ``type``
->       - Type of the data stream, set by the application. Only these types
->@@ -234,6 +238,12 @@ the ``mbus_code`` field is handled differently:
-> 	valid. The buffer consists of ``height`` lines, each having ``width``
-> 	Data Units of data and the offset (in bytes) between the beginning of
-> 	each two consecutive lines is ``bytesperline``.
->+    * - ``V4L2_FMT_FLAG_ENUM_ALL``
->+      - 0x80000000
->+      - When the applications ORs ``index`` with ``V4L2_FMT_FLAG_ENUM_ALL`` flag
+-- 
+2.34.1
 
-s/applications/application/
-s/ORs/sets/
-
->+        the driver enumerates all the possible pixel formats without taking care
->+        of any already set configuration. Drivers which do not support this flag
->+        yet always return ``EINVAL``.
-
-s/yet always/yet, always/
-
->
-> Return Value
-> ============
->diff --git a/Documentation/userspace-api/media/videodev2.h.rst.exceptions b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
->index bdc628e8c1d6..8dc10a500fc6 100644
->--- a/Documentation/userspace-api/media/videodev2.h.rst.exceptions
->+++ b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
->@@ -216,6 +216,7 @@ replace define V4L2_FMT_FLAG_CSC_YCBCR_ENC fmtdesc-flags
-> replace define V4L2_FMT_FLAG_CSC_HSV_ENC fmtdesc-flags
-> replace define V4L2_FMT_FLAG_CSC_QUANTIZATION fmtdesc-flags
-> replace define V4L2_FMT_FLAG_META_LINE_BASED fmtdesc-flags
->+replace define V4L2_FMT_FLAG_ENUM_ALL fmtdesc-flags
->
-> # V4L2 timecode types
-> replace define V4L2_TC_TYPE_24FPS timecode-type
->diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
->index 4e91362da6da..3d11f91273a1 100644
->--- a/include/uapi/linux/videodev2.h
->+++ b/include/uapi/linux/videodev2.h
->@@ -904,6 +904,9 @@ struct v4l2_fmtdesc {
-> #define V4L2_FMT_FLAG_CSC_QUANTIZATION		0x0100
-> #define V4L2_FMT_FLAG_META_LINE_BASED		0x0200
->
->+/*  Format description flag, to be ORed with the index */
-
-s/ORed/set/
-
-Regards,
-Sebastian
-
->+#define V4L2_FMT_FLAG_ENUM_ALL			0x80000000
->+
-> 	/* Frame Size and frame rate enumeration */
-> /*
->  *	F R A M E   S I Z E   E N U M E R A T I O N
->-- 
->2.43.0
->
->_______________________________________________
->Kernel mailing list -- kernel@mailman.collabora.com
->To unsubscribe send an email to kernel-leave@mailman.collabora.com
->This list is managed by https://mailman.collabora.com
 
