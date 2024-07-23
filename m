@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-259880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3633F939EA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:14:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F22F939EA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54A7C1C22040
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:14:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88C74282EE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7212414EC44;
-	Tue, 23 Jul 2024 10:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B154214E2C0;
+	Tue, 23 Jul 2024 10:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dhJFhM/y"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dKGt9Xca"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D946314BF98
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 10:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A6A3D6A
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 10:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721729692; cv=none; b=sETpIp9hGkNAzmJQ62jqcggB3NilK8D19/om3eAfXIciP2E3SrxpZoJVhPs9+v0w3nxnIROhDe2YlFlM5TXvrLQV0BuTgl+y2ShYywVaUGo33qv2zXllXkgun0jPG72FZ3BEpXTwtLyJc1jntD8RuXoxeBaE53RYXFpHoIuSHaQ=
+	t=1721729883; cv=none; b=abiu6wl8TMeHf28FOaea9cV5XcdHwMqCwxzt/9LSGhyYFHpkP73y0Nj3+RcrfD9oQdIhjnPk2obt8YQX0d0lVdAy83oYuRps0GGmPKDUgXnzN7Ijdrn1x5a4nhAXbXORkMB63bsUWb8NgPQFyfOnvxBS1x8NICAH5zxXeleZESg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721729692; c=relaxed/simple;
-	bh=o1PBCFurvor02xw1Jr9yFx4YhULShAR9tXsLCZPFcVU=;
+	s=arc-20240116; t=1721729883; c=relaxed/simple;
+	bh=im09KjtOWQwHSVYo+FG41z4PGKxXi8KOicaWFK7K7Wo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EFAiJ9BxP3SlhGQ6bb7gS6ghWhIJ/ehvDnT+s8hxWqnx6jvbOEBz0Jz1oIp2Cm2bqZ6VQL3jEzJc2bvMDCITWesepCIKyOYEBz54ozZGkNUXOfaVALYgRrNTaLceDd6aT9mp048uh7h/U8YBBX2jGZDktHhwJZP06u7KUY9tegA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dhJFhM/y; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=RavrXMBK9gcMRRQ8ibKCz98I0yFKVLt3pQWsBe5za1bvazcFWQlchbx/OcjjqM/fRR1kMM36zHx8/6cHeGMKe4gGB9o7iT5P1nJwx6sSodJdGqIEZSBxUr8ZiKtamb6xSQLXZZO5VbdT2RouxEcUffs9979JPaLy1DCI6EvRW7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dKGt9Xca; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721729689;
+	s=mimecast20190719; t=1721729881;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XlFxZ+XlkpR4+j6b6lDCxwV3tYEU5UHjvLxc8Lst/vo=;
-	b=dhJFhM/yWJbVgMBYuSk8Ln7xMaPLf+BNYphFrpAwUKSPn8XKqLrPVXxofEV9bgDl71VIbJ
-	RHgEpgXIGulzhYFwpb9u/PqA+jrGXwOAo3awdJPkr6BrIS8m0oz53Ip684IXe1KXOn07VR
-	l2seIlKaxqzeMGozji3uIARJTwMWI50=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=3j4Y7GKdDQsDIXrm9FcVVcCOdvIkQaL9wqx7KuVIzeY=;
+	b=dKGt9XcaPbSkJ07MRNauOC7ZYq4yToQ6NKwmRRwcIR0rD5z6j03RRPcUt/mVU5x3XKjEm+
+	buXXRlfMnKOXasXkiOEVwp63ctxEMtwXPZiC8RtAgpRjGGgsSpwDgxMQ4asoM56OODIJmO
+	o3bdiAlCFh0JB5PGYShlUIJAX4VXpNA=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-94-i-aMQbnLMNqBQ-siiCJK6g-1; Tue, 23 Jul 2024 06:14:48 -0400
-X-MC-Unique: i-aMQbnLMNqBQ-siiCJK6g-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4265464ddc9so23773655e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 03:14:48 -0700 (PDT)
+ us-mta-358-skkVWJQQNXWIyr_qL9eN-g-1; Tue, 23 Jul 2024 06:18:00 -0400
+X-MC-Unique: skkVWJQQNXWIyr_qL9eN-g-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-36831873b39so2943161f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 03:17:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721729687; x=1722334487;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XlFxZ+XlkpR4+j6b6lDCxwV3tYEU5UHjvLxc8Lst/vo=;
-        b=ZAlSJ+Z6ubwjcrE2zRcJIUO8nSa/O3SUaTHu4aqOKyguty9uwlCadtLovhfmuhgebu
-         xb/hEO6BKk7fGzdaf7Vv1Ma1D2qO+/jw0ymichjKNifBpFmoeBQXOIjG02HTL7Io7+FI
-         ClSCxa3wVicLbHbzj/UTUCzQANzoYkT2cFyy6r6r3aHl/soRGffwlF+phlMHPous1eyO
-         f6OFy8Emc7z7OnECBgaChWaMmf/xYo+mU0pfCizyvPpASdqH2FLk4/UIOhcc3ntp+gdA
-         p8m4cKvgNPtlbjwRYyU13+fasaIxKPLFLPHpIMBNJs3WvJ4VPcbR5V1TMjfCy+p/s/Jy
-         MNuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBPgRhiH4jA3jTYdgpYLhxbM4y2f7YW+khPE9HhwNFGHQ3KoF87T013VBTfn2q8MunPQvzR4CyMOOk+L+QY/a2ukra4Uy8VhBfgnxu
-X-Gm-Message-State: AOJu0Yx0bDQu3LXRrFivCKXufujBgpTgZ7QO4GpoM8ne1sAbQHCo7sgh
-	LqSTiNalnmJ/xsO0/5K0kzFOxwM6s82H6ekFH8kRrjxDr/3esnGQOjnDyj+L9oSwDJJu/wiIyco
-	vzyNXtNfOI9QPPFyDixNucMtE3MPWCSrlPCb0PFKTiOgD1CWz0b1/HurndCqEsA==
-X-Received: by 2002:a05:600c:3583:b0:427:abfd:4432 with SMTP id 5b1f17b1804b1-427ef3a885emr11669875e9.12.1721729687158;
-        Tue, 23 Jul 2024 03:14:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHHoBse6L8kdIBGmNij8ozd1MUp8F0t6d3W6q/68QdWE15CCDvEAXBZx3wnDH0cQAASoS0VLA==
-X-Received: by 2002:a05:600c:3583:b0:427:abfd:4432 with SMTP id 5b1f17b1804b1-427ef3a885emr11669755e9.12.1721729686762;
-        Tue, 23 Jul 2024 03:14:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721729879; x=1722334679;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3j4Y7GKdDQsDIXrm9FcVVcCOdvIkQaL9wqx7KuVIzeY=;
+        b=ZYB2BrmafRapfWePhf1sTzalFL6jg+DSZFREwywBVFIQbmyN5+ZY+f2b++M1tx/yoR
+         GbvrDsb4TzPb90Pr9w1diouu6JB1Ndn9nQUjwReiCxWuNhgdPEeSKECiZrvj7ypS3Yd3
+         YBiLKxL9XMFUukaUfuY9xr5FfdM0KSnCrNe/wY5T8M+ntPp14tEursKmRa9KoBnRo7wP
+         5xoHgq195LOvnkl4V7MWg1E4oG/ifLNIvzPaLlD7niZcJEJ7jgni8mVnb/KVuSfIaU3P
+         1UErTgRnXp3FpZ+H+ypgfV5tch6sXcA+QYQgN0wXYupSOu5B3S5fD54TlXB6IQLUEF7z
+         aoiA==
+X-Forwarded-Encrypted: i=1; AJvYcCXpFgG0gKm6mUQh4ds/XxKUYgR9uhv/vR6W0i7xi603AJy0E4fTFj11yU89Y7zw6XU8pJbY5zGAo8swLM8dc5uGls5eOeKEpUz62w8C
+X-Gm-Message-State: AOJu0YxqpReQyNBeiuogcdaNEynnttezJyU1BHOy9DJgg7SksfIwpA1e
+	RIF4/CvCkGi7NBnTsfjCbqBh+wWckoqWE4QHFBAJ4HYNtNP3qja+ImdrCF7xTMebfoS9V6TLWjZ
+	F94DLjhaQO085Nbr7N97Gs5O0TCeFuOS2++KGFTFYAQhXNVCrRZuvZb51am3twg==
+X-Received: by 2002:a05:6000:154d:b0:368:4e2e:7596 with SMTP id ffacd0b85a97d-369dec1e50cmr2642401f8f.37.1721729878630;
+        Tue, 23 Jul 2024 03:17:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGrm3AC2cxKkpu+sq3Ii9RJOUIHoGm2gLG+gxaEGBnjakrqS9oWSEElkQVsp6V9nna9hmn6Tg==
+X-Received: by 2002:a05:6000:154d:b0:368:4e2e:7596 with SMTP id ffacd0b85a97d-369dec1e50cmr2642373f8f.37.1721729878146;
+        Tue, 23 Jul 2024 03:17:58 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c72f:ed00:9dc2:1adb:d133:4434? (p200300cbc72fed009dc21adbd1334434.dip0.t-ipconnect.de. [2003:cb:c72f:ed00:9dc2:1adb:d133:4434])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d68fa0a6sm167944555e9.9.2024.07.23.03.14.45
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-368787cf182sm11120465f8f.82.2024.07.23.03.17.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 03:14:45 -0700 (PDT)
-Message-ID: <3d9ea6fd-03f4-4fd5-8407-2201e8ba5010@redhat.com>
-Date: Tue, 23 Jul 2024 12:14:44 +0200
+        Tue, 23 Jul 2024 03:17:57 -0700 (PDT)
+Message-ID: <1621fcbd-38b5-46a8-8b68-911f2920d52e@redhat.com>
+Date: Tue, 23 Jul 2024 12:17:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,17 +82,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] memory tiering: introduce folio_has_cpupid() check
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- "Huang, Ying" <ying.huang@intel.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] memory tiering: count PGPROMOTE_SUCCESS when mem
+ tiering is enabled.
+To: Kefeng Wang <wangkefeng.wang@huawei.com>, Zi Yan <ziy@nvidia.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Cc: "Huang, Ying" <ying.huang@intel.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, linux-kernel@vger.kernel.org
 References: <20240722172917.503370-1-ziy@nvidia.com>
- <20240722172917.503370-2-ziy@nvidia.com>
- <6effd690-3cf2-46bc-8061-2d19922ad4fa@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
+ <20240722172917.503370-3-ziy@nvidia.com>
+ <5230d72e-81fa-4ef1-b386-90bd3b06bf0e@huawei.com>
+ <D2WJLRHB9T9S.DRAUA25VKCBP@nvidia.com>
+ <d31b0226-6013-4152-af4b-1526146eb179@huawei.com>
 Content-Language: en-US
+From: David Hildenbrand <david@redhat.com>
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
  dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
@@ -138,29 +140,67 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <6effd690-3cf2-46bc-8061-2d19922ad4fa@lucifer.local>
+In-Reply-To: <d31b0226-6013-4152-af4b-1526146eb179@huawei.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+On 23.07.24 05:24, Kefeng Wang wrote:
 > 
-> The static version of folio_has_cpupid() is defined in include/linux/mm.h
-> if !CONFIG_NUMA_BALANCING but you define the function in memory-tiers.c
-> unconditionally, a file that is compiled predicated on CONFIG_NUMA.
 > 
-> So a config with !CONFIG_NUMA_BALANCING but CONFIG_NUMA set results in a
-> compilation error (I just hit it this morning in mm-unstable).
+> On 2024/7/23 9:54, Zi Yan wrote:
+>> On Mon Jul 22, 2024 at 9:48 PM EDT, Kefeng Wang wrote:
+>>>
+>>>
+>>> On 2024/7/23 1:29, Zi Yan wrote:
+>>>> memory tiering can be enabled/disabled at runtime and
+>>>> sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING is used to check
+>>>> it. In migrate_misplaced_folio(), the check is missing when
+>>>> PGPROMOTE_SUCCESS is incremented. Add the missing check.
+>>>>
+>>>> Reported-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+>>>> Closes: https://lore.kernel.org/linux-mm/f4ae2c9c-fe40-4807-bdb2-64cf2d716c1a@huawei.com/
+>>>> Fixes: 33024536bafd ("memory tiering: hot page selection with hint page fault latency")
+>>>> Signed-off-by: Zi Yan <ziy@nvidia.com>
+>>>
+>>> Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+>>>
+>> Thanks.
+>>
+>>>> ---
+>>>>     mm/migrate.c | 4 +++-
+>>>>     1 file changed, 3 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/mm/migrate.c b/mm/migrate.c
+>>>> index bdbb5bb04c91..b819809da470 100644
+>>>> --- a/mm/migrate.c
+>>>> +++ b/mm/migrate.c
+>>>> @@ -2630,7 +2630,9 @@ int migrate_misplaced_folio(struct folio *folio, struct vm_area_struct *vma,
+>>>>     		putback_movable_pages(&migratepages);
+>>>>     	if (nr_succeeded) {
+>>>>     		count_vm_numa_events(NUMA_PAGE_MIGRATE, nr_succeeded);
+>>>> -		if (!node_is_toptier(folio_nid(folio)) && node_is_toptier(node))
+>>>> +		if ((sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING)
+>>>> +		    && !node_is_toptier(folio_nid(folio))
+>>>> +		    && node_is_toptier(node))
+>>>>     			mod_node_page_state(pgdat, PGPROMOTE_SUCCESS,
+>>>>     					    nr_succeeded);
+>>>
+>>> The should be in advance of patch2, and change above to use
+>>> folio_has_cpupid() helper() too.
+>>
+>> It shares the same logic of !folio_has_cpupid() but it might be confusing to
+>> put !folio_has_cpupid(folio) && node_is_toptier(node) here. folio's
+>> cpupid has nothing to do with the stats here, thus I did not use the
+>> function.
 > 
-> A minimal fix for this is to wrap the declaration in:
+> If folio don't include access time, we do migrate it but it isn't a
+> promotion, so don't count it, other comments?
 > 
-> #ifdef CONFIG_NUMA_BALANCING
-> ...
-> #endif
-> 
-> I've tried this locally and it resolves the issue.
+> PS: Could we rename folio_has_cpupid() to folio_has_access_time(), even
+> without memory_tiering, we still have cpupid in folio, right?
 
-Agreed, with that
-
-Acked-by: David Hildenbrand <david@redhat.com>
+Maybe call it "folio_use_cpupid()" or sth like that? The "has" is a bit 
+misleading, because the folio has a cpuid in any case, no?
 
 -- 
 Cheers,
