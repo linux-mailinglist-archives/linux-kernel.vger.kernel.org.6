@@ -1,146 +1,131 @@
-Return-Path: <linux-kernel+bounces-259896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E90D3939F3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:02:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66305939F3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 212761C2202B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:02:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23C542836BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD4E14EC40;
-	Tue, 23 Jul 2024 11:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A9E14D2B8;
+	Tue, 23 Jul 2024 11:02:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="Bjft/Xh+";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="jzRwxecS"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mGAeHdqD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD4B14A0AE;
-	Tue, 23 Jul 2024 11:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FC714D29C;
+	Tue, 23 Jul 2024 11:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721732525; cv=none; b=HJIsGJJ/3miR4/OU+/cz5JxFtaKW7Q0Uva9P+LQu7QO4oXzYlsRm/p4aphvhSwOksmvb60KIKe/hrqNg8UlkJgCZWCEQIBSHEL3ylXbRiZQR2fA1eC/3DHh32dz2vrAK5iV9yE69foScnvyuR7P+fJdlUx7WYOkClAQgOV65gzM=
+	t=1721732541; cv=none; b=bgjWIU1YePZRTD+FhIRziu6YdtzVOfl4HqN4989nzc6xuIsL4s1v4AONq/c646Bk2kqNtxF5uJchgteWKZKHIwseyZCOj4aCegZJbnBDzWa9STwzgdjY/MAUzbu4hpRcAV6BecpUVuXBRQA8alwtX4UhlJe7WvPlpnfNdcOeA9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721732525; c=relaxed/simple;
-	bh=4tNi646ZnGWQWhHkZKMdb8W2R2nlTsC+jvBRyDnSsno=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JG6f+giTv01h+c6oyNpNpkcdNlZPMkEdlsv1S6l3h4DsGIvxWT9AL6Ncyh60K/mCOmDj/thIUYb4pHqRC+JA2uhmCtMVN4fa9Mk6AU1tYriPRDVELepT6AhcxWdRaTLPOJaUTsXhSOMegEJF6bQI2E2gvOJ4GiSLER3LFYl2NHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=Bjft/Xh+; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=jzRwxecS reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1721732521; x=1753268521;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=nhT72udXBVJSVN8T6HDpzXoKuiv7mterFLwXgGAx04A=;
-  b=Bjft/Xh+CYKtKFZxfGM2tdun8NdH8WKf1iUxGQjyfKtY1BpEoaBiPx6y
-   T0IdVCjYojNNXQQwh0jXBIs2lnc59MHg/EcB+NpZaR5gmH16mjENIdY0S
-   9AvOYFv4p+5vMkUx+IocTJMiBWSB1iMaZjR4MahIom7yuF/vvrVlE/4ly
-   tfnd2HQkFmFyGBBUHn0y62iw2Fbls32GYVuO4gv+5n9KbfDr17aiSF8cp
-   PwcWHhTk0RJ3PT8MsLjzZo6wh9GTqOmEABCLWKipX+I+xl/60LBc61eoL
-   SyCrWcAPdTc7txyrtHA0PRDQBZ7MavtO4luIp0E5Ys4NmXDDcMyziSGdx
-   A==;
-X-CSE-ConnectionGUID: KtMHRtnkSFaOQmbB5DPW2A==
-X-CSE-MsgGUID: qiiMoHtNTxy7/f70otF4nA==
-X-IronPort-AV: E=Sophos;i="6.09,230,1716242400"; 
-   d="scan'208";a="38035062"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 23 Jul 2024 13:01:51 +0200
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 81D6E163353;
-	Tue, 23 Jul 2024 13:01:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1721732510; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=nhT72udXBVJSVN8T6HDpzXoKuiv7mterFLwXgGAx04A=;
-	b=jzRwxecSDYEJzc/MvrF/ZOZUhTqaxFyY5KfxAR7qK6rqk6BZDhAfQFHr4dANvF8PZTjSqr
-	EvQXH1e8IPFgJtVU6fjz2YMwvjyy6SrqifOs/eKNAr8VSkEBDGG+2Qh+tv62/kVrNCusOA
-	dDesio11taawWV6SuOjfGzFmagPu+KRGPD6LLRhhupWj9nDIdUKN9t17aakjQZMaGCvWSD
-	I9uqDVNp1tezIuyY83yuIcuRPC/xL29lBA5RnSjsqXIRFrx0Xa99OANymbtLCqcqaf+Y1b
-	WSGbxorHp9InPb/RsnrXzpRJ/joqy1cQzHsr8YuLhnVPMR2btvV+mpWx4CIG9w==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	linux@ew.tq-group.com,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] arm64: dts: imx8mm-tqma8mqml-mba8mx: Increase frequency for i2c busses
-Date: Tue, 23 Jul 2024 13:01:46 +0200
-Message-Id: <20240723110146.3133155-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1721732541; c=relaxed/simple;
+	bh=p0GRCpVksJ+qBGAZZfSbR84vomacnFC5Ws/0pumUa5g=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tVfKvdrN86rK5Y9Ie+fx84UseDHv2BCP02cS8te84gvG5M1jOBOS3BCHPqoEZdmke7aGKxVA9Fm/yn3SflTH4sI0txbZ4Z6rtP27wvSVVwj9lD3oYV4hwewsG4eaq0GTk6MZuLB2P2DOLHYbPrywmLDYtE38+J96QiB+u9vStb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mGAeHdqD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6720C4AF0A;
+	Tue, 23 Jul 2024 11:02:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721732540;
+	bh=p0GRCpVksJ+qBGAZZfSbR84vomacnFC5Ws/0pumUa5g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mGAeHdqDdiCR1B0dvdgxko4IplTPR7+x1Qns0nABxXBOxmYSX/aUs8xhH4jG/RTDz
+	 ZTSmnJNCyDeqFwauzymtWk3LlTctWVGmcNFSJaTVi0caG2xSCailkAfYkOfR/627Co
+	 WRbwtP7kdi7t4mnPtA3oA33xWWuy2KLmzMDpqVGzRIcye9jCqklW/ZJ4eJz7kIzrN5
+	 Wm5ECqlzwgjqjTB3nOPkmfYntuoUdGIyJ2kpnAhu4XUAcI6dIm0a5VJBIRsOTFJiR+
+	 U5BooW6oPWDccDp3CY3yVd8vn6LW9nkZGHavft0b1ri9ztODRVGDpusIVN8PYJO8xo
+	 SDTJ8oJwlDMwg==
+Received: from [65.209.37.2] (helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sWDHc-00Eh82-Vb;
+	Tue, 23 Jul 2024 12:02:17 +0100
+Date: Tue, 23 Jul 2024 12:02:15 +0100
+Message-ID: <8734o05q2w.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Fixes tags need some work in the tip tree
+In-Reply-To: <20240722083153.24896521@canb.auug.org.au>
+References: <20240722083153.24896521@canb.auug.org.au>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 65.209.37.2
+X-SA-Exim-Rcpt-To: sfr@canb.auug.org.au, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com, peterz@infradead.org, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-100kHz is only needed for the USB Hub TUSB8041. But as this device is not
-connected by default, the speed can be increased.
-The other busses don't have any 100kHz only devices attached.
+On Sun, 21 Jul 2024 23:31:53 +0100,
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> 
+> Hi all,
+> 
+> In commit
+> 
+>   c9b4f313f6b8 ("irqchip/gic-v3-its: Correctly fish out the DID for platform MSI")
+> 
+> Fixes tag
+> 
+>   Fixes: 80b63cc1cc146 ("irqchip/gic-v3-its: Switch platform MSI to MSI parent")
+> 
+> has these problem(s):
+> 
+>   - Target SHA1 does not exist
+> 
+> Maybe you meant
+> 
+> Fixes: 7f2baef05d6a ("irqchip/gic-v3-its: Switch platform MSI to MSI parent")
+> 
+> In commit
+> 
+>   99d7fbf8f813 ("irqchip/gic-v3-its: Correctly honor the RID remapping")
+> 
+> Fixes tag
+> 
+>   Fixes: 6adb35ff43a16 ("irqchip/gic-v3-its: Provide MSI parent for PCI/MSI[-X]")
+> 
+> has these problem(s):
+> 
+>   - Target SHA1 does not exist
+> 
+> Maybe you meant
+> 
+> Fixes: b5712bf89b4b ("irqchip/gic-v3-its: Provide MSI parent for PCI/MSI[-X]")
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
- arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml.dtsi | 1 -
- arch/arm64/boot/dts/freescale/mba8mx.dtsi           | 7 +++++--
- 2 files changed, 5 insertions(+), 3 deletions(-)
+Odd.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml.dtsi b/arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml.dtsi
-index ca0205b9019e6..8f58c84e14c8e 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml.dtsi
-@@ -83,7 +83,6 @@ &gpu_3d {
- };
- 
- &i2c1 {
--	clock-frequency = <100000>;
- 	pinctrl-names = "default", "gpio";
- 	pinctrl-0 = <&pinctrl_i2c1>;
- 	pinctrl-1 = <&pinctrl_i2c1_gpio>;
-diff --git a/arch/arm64/boot/dts/freescale/mba8mx.dtsi b/arch/arm64/boot/dts/freescale/mba8mx.dtsi
-index 815241526a0d3..520702a465a40 100644
---- a/arch/arm64/boot/dts/freescale/mba8mx.dtsi
-+++ b/arch/arm64/boot/dts/freescale/mba8mx.dtsi
-@@ -237,7 +237,6 @@ expander1: gpio@24 {
- };
- 
- &i2c2 {
--	clock-frequency = <100000>;
- 	pinctrl-names = "default", "gpio";
- 	pinctrl-0 = <&pinctrl_i2c2>;
- 	pinctrl-1 = <&pinctrl_i2c2_gpio>;
-@@ -258,6 +257,11 @@ sensor1: temperator-sensor@1f {
- 		reg = <0x1f>;
- 	};
- 
-+	/*
-+	 * TUSB8041 is at 0x41, but not connected by default
-+	 * Note: TUSB8041 only supports 100 kHz!
-+	 */
-+
- 	eeprom3: eeprom@57 {
- 		compatible = "nxp,se97b", "atmel,24c02";
- 		reg = <0x57>;
-@@ -274,7 +278,6 @@ pcieclk: clk@68 {
- };
- 
- &i2c3 {
--	clock-frequency = <100000>;
- 	pinctrl-names = "default", "gpio";
- 	pinctrl-0 = <&pinctrl_i2c3>;
- 	pinctrl-1 = <&pinctrl_i2c3_gpio>;
+The SHA1 in the commit messages do match the Thomas' devmsi-arm-v4-2
+tag as of last Thursday. I guess the patches have been rebased on top
+of tip branch and not merged.
+
+The whole thing is now in Linus tree, so it is too late to do anything
+about it, unfortunately.
+
+Thanks for the heads up though.
+
+	M.
+
 -- 
-2.34.1
-
+Without deviation from the norm, progress is not possible.
 
