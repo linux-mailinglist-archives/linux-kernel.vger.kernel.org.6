@@ -1,96 +1,97 @@
-Return-Path: <linux-kernel+bounces-260086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27A6A93A2D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:34:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59F9093A2D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 596D51C2286C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:34:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F2411F24554
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623DF1552EE;
-	Tue, 23 Jul 2024 14:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8863154C07;
+	Tue, 23 Jul 2024 14:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LlGImzz7"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="lobA4oBk"
+Received: from forward502d.mail.yandex.net (forward502d.mail.yandex.net [178.154.239.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E72214C59A;
-	Tue, 23 Jul 2024 14:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467CF14C59A;
+	Tue, 23 Jul 2024 14:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721745236; cv=none; b=jbSWCLA5C+4tqAQ3augvP2dYIT8FTgw6azhYi9+5MOBGv36UxtkIWj0M1TfF5aG+3SFRQRaVhgg/p6UM4NOpPNO5Bq9fjlW7S1xsixZlNfyouTDxSqV92eUIHW6q1hvEw+NmH8oon9nWWu5YYvs6UB22jxNHBYMdT+iAChDre5s=
+	t=1721745273; cv=none; b=YzguhVRdY5lZSnvJEBZhVb4P9f6gqIpNHTwXQ6ovcbSex/7WAr/wgjGsYlqiJKswNTjBJYJdxkzu+JH3coM7wW2QZnF1XAF2T/F7oOilrrGbYtqpTLeaRT83x/+lxS+ykaIUrxYFg/fPAtouXCalmj6DWv35rMHGLjG49m3z52U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721745236; c=relaxed/simple;
-	bh=NMu75Y301zEMrIr2IRooBUWNRfFIuij7M6H0IP31dhA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rg5EBMxGhE3r4BIr17CGdsqGeqGMe+jVuicDgjnI1VLvFvZgrNDiVWfruNn4KVMOMCE+KBwvxpiI07FxEaXKrPyIqnocP6+la0FRsRTYxaQ6p9YKkjn6Rc+UOk6pqUCGPz/Z86rc0f88BJ4qhWdveXf6KVt55+r5izTTyR4TI3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LlGImzz7; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=zGob8cqOMQFMd6ZJ7aKelgl8bYUnwmxgqspoHZfsBx0=; b=LlGImzz7gLD4aCmwv8k4A0e1DZ
-	9GPGExELQMb2KbFmKQ+PVeYYxd+u3UDPu2eFN5slv6eWCOFjXC4eQv3mVkP9Lp2d2MNtl1O+afP09
-	XG4BbGox2nxhz11YruHX++g9dEN3hIXRBUrmLw4jTiE4t0Ol2b9R1vqXGaOGR0qVt9Hogrell65hH
-	zXMwfVspCNgUQnTfpCAkGokZP7Oca/Qb5Jo2DQMo0jZD8u27maea1kaAWaWTK7Fsc5SauwsDTCrQ5
-	AEkl44+PaDhnyrKcbbS2YHSwU947HsWksD1v28wQD+UEAjWaTY3TczmHsi3L6MxjLU6HTpkDwCLdl
-	9iITSJsQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sWGaC-0000000CjEg-3FBu;
-	Tue, 23 Jul 2024 14:33:40 +0000
-Date: Tue, 23 Jul 2024 07:33:40 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Youling Tang <youling.tang@linux.dev>
-Cc: Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
-	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, tytso@mit.edu,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	Christoph Hellwig <hch@infradead.org>, linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	Youling Tang <tangyouling@kylinos.cn>
-Subject: Re: [PATCH 1/4] module: Add module_subinit{_noexit} and
- module_subeixt helper macros
-Message-ID: <Zp-_RDk5n5431yyh@infradead.org>
-References: <20240723083239.41533-1-youling.tang@linux.dev>
- <20240723083239.41533-2-youling.tang@linux.dev>
+	s=arc-20240116; t=1721745273; c=relaxed/simple;
+	bh=81/N/W2gmSrkiOGEsPxz7YSfijdVtBZZK+odEhvg1GI=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ecLypayuVaV/ykkPQB6gIfXbiJj70e4AUefcT4nuSMzGQSd3f0G+FPt3NBK26dJilY7n0+JOpb6wxw61ylAb5T9YiAYP2RMONugUZe2SDtTUPNXhacy0376///3K/1p+apWBQULNSWH18QgFCgeJ/iqFSdS4S2fIAxcufszXFpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=lobA4oBk; arc=none smtp.client-ip=178.154.239.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-35.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-35.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:2345:0:640:1ce6:0])
+	by forward502d.mail.yandex.net (Yandex) with ESMTPS id E00516102E;
+	Tue, 23 Jul 2024 17:34:25 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-35.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id OYPYjC0iw4Y0-oKTbNDYO;
+	Tue, 23 Jul 2024 17:34:25 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1721745265; bh=81/N/W2gmSrkiOGEsPxz7YSfijdVtBZZK+odEhvg1GI=;
+	h=In-Reply-To:Date:References:To:From:Subject:Message-ID;
+	b=lobA4oBk4U9rt85SDGqMozOuyARY3SjW1/DfboVgttP5iruOM7+M3WKKSS3k0hFBK
+	 jSMFwFRj5PkVXFOr9GBC8eTpHXJovjNZdHs0AYaNvp/V2wTv8Aln4SoBF3dCN7Kk8D
+	 fkgGuWEqcMbjtMjC9+1QR6di/6F73+DJrJno88Mg=
+Authentication-Results: mail-nwsmtp-smtp-production-main-35.klg.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <c396092e5c7698254a1ca7818f81178b5c1ee70d.camel@yandex.ru>
+Subject: Re: Lockup of (raid5 or raid6) + vdo after taking out a disk under
+ load
+From: Konstantin Kharlamov <Hi-Angel@yandex.ru>
+To: Yu Kuai <yukuai1@huaweicloud.com>, Song Liu <song@kernel.org>, 
+ linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "yangerkun@huawei.com" <yangerkun@huawei.com>, "yukuai (C)"
+ <yukuai3@huawei.com>
+Date: Tue, 23 Jul 2024 17:34:24 +0300
+In-Reply-To: <57241c91337e8fc3257b6d4a35c273af59875eff.camel@yandex.ru>
+References: <a6d068a26a90057fb3cdaa59f9d57a2af41a6b22.camel@yandex.ru>
+	 <1f879e67-4d64-4df0-5817-360d84ff8b89@huaweicloud.com>
+	 <29d69e586e628ef2e5f2fd7b9fe4e7062ff36ccf.camel@yandex.ru>
+	 <517243f0-77c5-9d67-a399-78c449f6afc6@huaweicloud.com>
+	 <810a319b846c7e16d85a7f52667d04252a9d0703.camel@yandex.ru>
+	 <9c60881e-d28f-d8d5-099c-b9678bd69db9@huaweicloud.com>
+	 <57241c91337e8fc3257b6d4a35c273af59875eff.camel@yandex.ru>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240723083239.41533-2-youling.tang@linux.dev>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Jul 23, 2024 at 04:32:36PM +0800, Youling Tang wrote:
-> Providing module_subinit{_noexit} and module_subeixt helps macros ensure
-> that modules init/exit match their order, while also simplifying the code.
-> 
-> The three macros are defined as follows:
-> - module_subinit(initfn, exitfn,rollback)
-> - module_subinit_noexit(initfn, rollback)
-> - module_subexit(rollback)
-> 
-> `initfn` is the initialization function and `exitfn` is the corresponding
-> exit function.
+On Mon, 2024-07-22 at 20:56 +0300, Konstantin Kharlamov wrote:
+> On Mon, 2024-07-15 at 09:56 +0800, Yu Kuai wrote:
+> > Line number will be helpful.
+>=20
+> So, after tinkering with building scripts I managed to build modules
+> with debug symbols (not the kernel itself but should be good enough),
+> but for some reason kernel doesn't show line numbers in stacktraces.
+> No idea what could be causing it
 
-I find the interface a little confusing.  What I would have expected
-is to:
+FTR, getting a kernel with debug info doesn't seem to be on the
+horizon. I tried researching into that and apparently kernel has
+`bindeb-pkg` target that we're using to build the kernel, and it
+unconditionally strips it (similarly to deb-pkg and srcdeb-pkg targets,
+at scripts/Makefile.package:121). I found a few places in code where I
+removed the stripping and replaced `strip` to `false` to make sure I
+get an error if something else tries to do that, but at this point I'm
+stuck with kernel succeeding the build, but leaving missing binaries
+behind.
 
- - have the module_subinit call at file scope instead of in the
-   module_init helper, similar to module_init/module_exit
- - thus keep the rollback state explicitly in the module structure or
-   similar so that the driver itself doesn't need to care about at
-   all, and thus remove the need for the module_subexit call.
+I might try digging into why installing `-dbg` package doesn't make
+lines appear in stacktraces, but I presume it would take some time.
 
+Meanwhile, as far as raid456 driver concerned, I can decode it manually
+by feeding stacktrace offsets to gdb.
 
