@@ -1,266 +1,246 @@
-Return-Path: <linux-kernel+bounces-260030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CC0E93A1BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:41:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE54093A1C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:42:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 816CA1F2358E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:41:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF8511C22384
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4ADB15358F;
-	Tue, 23 Jul 2024 13:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4920153803;
+	Tue, 23 Jul 2024 13:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PBSLDkha"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="YovPReyO"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B24C208A0;
-	Tue, 23 Jul 2024 13:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721742088; cv=none; b=I2vYNdQHQHL9uMluw5+mLVD7tU1yBAlCwqsoPfxpvYwnft6DVUMNkdJcMpdx5qFDwHTy2JvR+2lWBtqTCqLcPipzeP1MgAKuwACnnnfLo3FKTS2qiB47xaMyUHOKGwqJWKEvANWdrVL234gOB3Deu5E+T7nOD0wg55LqCAToxPA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721742088; c=relaxed/simple;
-	bh=rGiZce2UvS0TxDn7bviX8P2aUovlh43UO19YvUxtOBI=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=aKh8GY+MGAehuZMTAJgAvBKvfHnXftjlB6NnQGRpav7tBo6ViJKwxNWDheD+71ZTJ3Tsto9Clr+DBt22R77RF3Fq+rjq89V2Eb6yGtj+99bLFe7kbNsPJ5yg6icVu4rsr2v/bywW1lwFv+T8KGaZzVnW29u7ONbNjFP2FCc+e1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PBSLDkha; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721742084;
-	bh=rGiZce2UvS0TxDn7bviX8P2aUovlh43UO19YvUxtOBI=;
-	h=Subject:From:In-Reply-To:Date:Cc:References:To:From;
-	b=PBSLDkhacll3Cwsx/LZ0H9ehcHmWds+/elFRpMuHuHfL67zY8GNHUX2/cSeJCWOHF
-	 OqJqxCrB02qW6oe3L8UGSh9qp7fG3t9B8OwBw46loqYPnVMIC1sOJPr8IVKWU8UjGl
-	 qrG/0mui960dEE/k6WdB+qGAxSS/nPGwW2oDg8mFhkwBI59Ime7cnKOztAfMXzS8kB
-	 Nebbcd2xrx7vgapJuY//H3+5ZYI00cp86drNDHB3A0e0AaTWwwdsR3A7Su65Xhns8A
-	 ObwTNVLohMGM1x304g6r0ics1rd1CXGQOaMnEjz+j2Ua1swO3hzYX1Vc0Y/V+d44K0
-	 It9ZUUKZ1usxw==
-Received: from smtpclient.apple (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: dwlsalmeida)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id AA867378143B;
-	Tue, 23 Jul 2024 13:41:21 +0000 (UTC)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADE415357D;
+	Tue, 23 Jul 2024 13:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.132.182.106
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721742104; cv=fail; b=K8KXtSrtWYhpUmGl24wV6bogrJB8AyFm7tRJpO+SLo7naC6pvN8FfLUB96SvHkz/X5dtDAMplC/Uq/0nGcm0OEAdX3VwyvF1X/EkQwtpKsJbxlUdcgF+N0FC42l6+yhjIPRZzsaiMT/YsjC1+wj1O0vzaDEBkMbEtCmswraeDCo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721742104; c=relaxed/simple;
+	bh=hRxyzNBpVrhg3F1Zd/W2TqpQCJLgadJOJWNXfy49/t8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=QKdSLdMtkZ2NBPPUEnPyZ/PeZN7SslNq3dBacIRdyKdhXAudzX1PMJwJNwp+V9qwRr9kNVfQqHWYFREFzCuRXKI47nnba0JeVOLOjuj0Q3J96dD9KoG28pr4AQGSX3J2UWa7kA2grF5UhMzZlFKCpecdJOpJJM1GLAJ967p5Y5w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=st.com; spf=pass smtp.mailfrom=st.com; dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b=YovPReyO; arc=fail smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46NBcpQs032422;
+	Tue, 23 Jul 2024 15:41:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	STMicroelectronics; bh=hRxyzNBpVrhg3F1Zd/W2TqpQCJLgadJOJWNXfy49/
+	t8=; b=YovPReyO/CQVZgkCCvHBrLmb+Eif08tn9il/FtTqMyo/5r4MI33B4hgSR
+	HiA+T1F/EOxpuv9yOe3t1qQC1KSRcNmzHJcBCKXLnDgS7o5Tp1l6PW1WocznE8BC
+	LyH4DgsAuywYU6IZzDYrro4hzWbGGbDXVtVwn8+d8xZRM2i6+wb051Lz853kBihT
+	SNi4P6tBxo65rWjYkfeQ5PUTuJQHM3TSt8Uw9FiyqP3huDAbcHN5B2KOyPe55oHX
+	WZlbiGwCKvtCGcEGbGfVszUiIQBdYH6Y8mRESt4jfPR/VEV0tkGRvtkTusOOO0nW
+	xkR1b0Tl3TZt96PdRKzspSpMFI81Q==
+Received: from eur03-am7-obe.outbound.protection.outlook.com (mail-am7eur03lp2233.outbound.protection.outlook.com [104.47.51.233])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 40g4jxjkcj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Jul 2024 15:41:21 +0200 (MEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VYI8mh/TMzX6PgOJ95F0mcPoRCwDPnfeU2tC+gHtgZU5z2HxAXEmqQvN1JuyZFTfvMAvzhS/5E00l34LRXB2o42JdbJj+ZEY1HsndL6KURtf9lN4uh8XL7tDWmQ73y4xFd4PAkFzyD8UMkad4iMxcBC+5Ew+rsmj6EF0bizdag4kvXTi+Y7894IwM7v/zgadIkwhgNGXgPYSHRLZ1jetNdk+lOkKG9fQ2/v+v8/oilVC9hqe+9pwqY+v91MWx2TH0Yc0Ncn8/nl3bp+5VL+0B2moJER4q6ZycoyVPV/CqsIJkoucycDQ8EvZImd6tFuT6QKGG29bjmnYvCjEWJDCCQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hRxyzNBpVrhg3F1Zd/W2TqpQCJLgadJOJWNXfy49/t8=;
+ b=bKNJBBi/OknwMaliEJGDrbrSp9RxTFwCHqL3qe0PQx/bsAlGLg9iO9wNsUcKBrfhjc19HkxpPuD6Qx3SWa9uTWc/hqhsQHrTdQRa8zuSYH9gfc4cMolKRV4hOs8pGmGZOxc9mEgSUv5fD+NkCTqYW6hR4xDEj81E4BrpXb3HD42n6aiJHSfFVXE7fLFfFzcgZ9sV9tDKreBYCK0WUi4o2fdlM3nX/pFNDrHJg2ZA4cm9To8hOPJsV6104WbvaI0H7QfVsWy/AX5N2tA2E0AZ2c0jPxLE1U/oYVKDmvHn+OIP84nU4fgue9qjYIDHwuP4gjCXpbgHav0xmNuxQv1iUw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=st.com; dmarc=pass action=none header.from=st.com; dkim=pass
+ header.d=st.com; arc=none
+Received: from PAXPR10MB4687.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:157::13)
+ by DU0PR10MB6827.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:47e::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.18; Tue, 23 Jul
+ 2024 13:41:19 +0000
+Received: from PAXPR10MB4687.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::6004:1d1:46c2:e67c]) by PAXPR10MB4687.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::6004:1d1:46c2:e67c%6]) with mapi id 15.20.7784.017; Tue, 23 Jul 2024
+ 13:41:19 +0000
+From: Etienne CARRIERE <etienne.carriere@st.com>
+To: Peng Fan <peng.fan@nxp.com>, Cristian Marussi <cristian.marussi@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>,
+        "arm-scmi@vger.kernel.org"
+	<arm-scmi@vger.kernel.org>
+CC: "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
+        "james.quinlan@broadcom.com" <james.quinlan@broadcom.com>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "vincent.guittot@linaro.org"
+	<vincent.guittot@linaro.org>,
+        "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+        "michal.simek@amd.com" <michal.simek@amd.com>,
+        "quic_sibis@quicinc.com"
+	<quic_sibis@quicinc.com>,
+        "quic_nkela@quicinc.com" <quic_nkela@quicinc.com>,
+        "ptosi@google.com" <ptosi@google.com>,
+        "dan.carpenter@linaro.org"
+	<dan.carpenter@linaro.org>,
+        "souvik.chakravarty@arm.com"
+	<souvik.chakravarty@arm.com>
+Subject: Re: [PATCH v2 2/8] firmware: arm_scmi: Introduce packet handling
+ helpers
+Thread-Topic: [PATCH v2 2/8] firmware: arm_scmi: Introduce packet handling
+ helpers
+Thread-Index: AQHa0u8hQ9C+JDoCxk2oyJ4kGi0AkbHxWG+AgBK9WUs=
+Date: Tue, 23 Jul 2024 13:41:19 +0000
+Message-ID:
+ <PAXPR10MB4687B2FCCA6E59CAEF769713FDA92@PAXPR10MB4687.EURPRD10.PROD.OUTLOOK.COM>
+References: <20240710173153.4060457-1-cristian.marussi@arm.com>
+ <20240710173153.4060457-3-cristian.marussi@arm.com>
+ <PAXPR04MB8459E1ED6375ECE89C8471AE88A52@PAXPR04MB8459.eurprd04.prod.outlook.com>
+In-Reply-To:
+ <PAXPR04MB8459E1ED6375ECE89C8471AE88A52@PAXPR04MB8459.eurprd04.prod.outlook.com>
+Accept-Language: en-US, fr-FR
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_cf8c7287-838c-46dd-b281-b1140229e67a_Enabled=True;MSIP_Label_cf8c7287-838c-46dd-b281-b1140229e67a_SiteId=75e027c9-20d5-47d5-b82f-77d7cd041e8f;MSIP_Label_cf8c7287-838c-46dd-b281-b1140229e67a_SetDate=2024-07-23T13:41:18.915Z;MSIP_Label_cf8c7287-838c-46dd-b281-b1140229e67a_Name=None
+ (Unclassified);MSIP_Label_cf8c7287-838c-46dd-b281-b1140229e67a_ContentBits=0;MSIP_Label_cf8c7287-838c-46dd-b281-b1140229e67a_Method=Standard;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR10MB4687:EE_|DU0PR10MB6827:EE_
+x-ms-office365-filtering-correlation-id: 6b590741-3a00-4056-84f6-08dcab1d21fd
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?s6I6OQ1P9INB4vINX+SZ5E2hy+QarVraoWxZWNnRTmYuv/fpmcoecCs1kP?=
+ =?iso-8859-1?Q?GzCenVTLqyz+WE2loo5jfd2tNHfq2I3QI3eWIhuVUIrvmj1UVSqW8uvP9x?=
+ =?iso-8859-1?Q?A1njmnukcI458vGDOBmqnLW1rnnLxNJLAIWHXVikuLbdJRIlI+6mkj3C88?=
+ =?iso-8859-1?Q?1ofvcsN2d2DyaiswoAqFViy4m4lAv037qJfSYGnHH8dii/Kjmu/t/w0S21?=
+ =?iso-8859-1?Q?TOI4BBBNRvEm2yCJGXdXwW2ZaXQ0Y4l9RanVYpIem1O2S95OxwuIu7zxeq?=
+ =?iso-8859-1?Q?RNLLom4J5rb5Zs5X8CTe8Y8lJjSALgbmt/vzUU8sgCpCYIwjcQNdromIzm?=
+ =?iso-8859-1?Q?c2lma6BYLtwAUfVhjb3WVHFE/MWVWAd5oztNsKm7Q3j6YPHRbknB4P4fsd?=
+ =?iso-8859-1?Q?Tu6u3s/GCJxLOe+mBWgRh5ZwVrnKJcAaFCEBQ4e6FjY4iFge0Nw87L9Zuv?=
+ =?iso-8859-1?Q?LmD3PnNUbbyq135S7zvM6yHboRj5JxZqh/6Bl6ttVGSBrUgKxGYH+gZhYh?=
+ =?iso-8859-1?Q?H2eVQqWYSWuRwEdvseicQwEy+GlKN835iNlycXnGTnZB2hzSe8kARsZtLD?=
+ =?iso-8859-1?Q?6YKdtfk067GV0l5v8CmphyFPfiepYeNidfOk5i26GVgl2Bk1OCKmMkUo40?=
+ =?iso-8859-1?Q?Docm4AmXoaZQDErm39MHZZhR2I4pTnSqw6vMffDIjqqKjnYm4MENAB8s4V?=
+ =?iso-8859-1?Q?S5JrOlFckVi8d/A/gpqudMK2yXpywPd1cGoUiuL/ZObmdmaB8TwA+05zcc?=
+ =?iso-8859-1?Q?SFn+pm6X9hpaRlSHM4wSnnzYsrDfArLPVLDVXLK2eLSKIqz3BhQdy/x1Gq?=
+ =?iso-8859-1?Q?iNRbt+5OhPRNResn8eYT99BoedzdOiFbzr3Xo7Q33ChoWupanRLgAAEo2E?=
+ =?iso-8859-1?Q?RLnnAUeqhtLj37DFMbJhlZTcInvE5SfrhWyoqlu5kkUdOr6lQOAleN8W7Q?=
+ =?iso-8859-1?Q?0pFSDtAlM5C4AVDGkGIm5c5CTx5Iz24iFVgp+5He5xt13xSVzOsRgw/Uh7?=
+ =?iso-8859-1?Q?x50EA0ZnVfmKJd0mr4891Hz4izWT1I3jpJ9a9cbG6SzBarOEPdN/VaaqIw?=
+ =?iso-8859-1?Q?Oi/lePB3v54UIBSoO1n0SRY2FDZc8gzDRiiC1YLJ0pORSaBnY4J7H+r+sH?=
+ =?iso-8859-1?Q?p32vagwCzyGBQbAdt90vf/976NSTJ1X0n5eqrkbVTcQ4SwFdVEnvwRkzO1?=
+ =?iso-8859-1?Q?Z/m4AdsBOpYcNBCiQw0fQDy10qDPXdLIm0hgsjmrzMMyZrZ+apt8VDfNHi?=
+ =?iso-8859-1?Q?W1e6BK7UvcQvm2R/6hHpQB4iiF6sQZS9GJjQH7uyicTlHtf6p4H51RTF8T?=
+ =?iso-8859-1?Q?3NkN0PuaRECmrTe04N+GfBbMkGDCGZOjcsEu0hZmsRdruBj3v8B2uyMwRI?=
+ =?iso-8859-1?Q?iAFWispf2o1kd3Q7pRsNgWOl3r0RnkxGqJITlVUqMT9E0yNykVc0DKp1Kv?=
+ =?iso-8859-1?Q?uaggxygSZwAovWSbuFvgM48xbEySjaXCilf9eQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR10MB4687.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?EeNhObxa862zd2K84yT+GJu70o7/yU53AfoCNN3/N8m/BIDaKQoHygSWpp?=
+ =?iso-8859-1?Q?XrR2T+3+E6ufJwq4gon9XOyEu938bj49yUdyYgPIp6JeP84XBt7rBLCjBu?=
+ =?iso-8859-1?Q?RL+u+xp+/HbgMyW33zkayn68AY+U2sJ2ZOFw6jl/j5UBmzjIA3nyt6t85t?=
+ =?iso-8859-1?Q?By4uQM9SFoC6B3CiB54aDMNE5kzC+ZjI6mFbRDhZfa7+7Tf3QrrQ+j5h/h?=
+ =?iso-8859-1?Q?DnwBmw1yersoRA+p1Xg1QIHAVwhzwta7onwZ1EKhCzM/i8d3G1yxrtWFZ7?=
+ =?iso-8859-1?Q?WeTie/aGVioz4FVJl/RYQB9Cbf2uL3dyD3E/v5J0nS/Gjv9GiXWVNJmPTN?=
+ =?iso-8859-1?Q?EU1fF6Ff/Ipv05hFa92SG9MNq7HgDXeJek/7frEx51XQH+adFCPTEA8gUr?=
+ =?iso-8859-1?Q?izgP6rm9Uigb1UtTRII0PIV1LRISjVSv2D4++EDGi4cF8py7PSAU/lFlb1?=
+ =?iso-8859-1?Q?G6BShU55wbfOJehTmBx5cezDnsg10zfQgIffA+3bkcwKxIHwGlUxkGXuhC?=
+ =?iso-8859-1?Q?38CAP7Khv0Hie3f9F1CYKCqgj9+2QRUXWVjN3OxRvXlee6uZgGtbwjSrJU?=
+ =?iso-8859-1?Q?K/p2hDs6dlwhmC4FG4xFgzrRvwm52IGWKRBKDNVZ0l7Ttr7qJ9joercnNi?=
+ =?iso-8859-1?Q?XQJAdoj/GXorHvR/K26d1PQDKq9X+nPh2FEoJxYcEx8QCrWNKMzGu99pGY?=
+ =?iso-8859-1?Q?wcO9wTwqx6OUr672akeZHipYUyjMnNVn2UVSyVznpU5rF4GuXpXGCAZ2Op?=
+ =?iso-8859-1?Q?lH0jYypeGIb94hq9bZNWW/U+f4QehX9cyxxKkAoCKn+cgS5/Vj+mcNY6qp?=
+ =?iso-8859-1?Q?nSuHIUTJHJVgEN9J57ujs4hndl/IXjcPUrJ7v+ut417/sJnDiOVNqic31X?=
+ =?iso-8859-1?Q?BbVaxX/nCjnd/VjjvmyiDURH7EQRxEM0UXODNhOUi1UICR66ONMsWwE5IA?=
+ =?iso-8859-1?Q?jn9Zrrzr6IorQVUy12nYeZGYj3qPl+/ZbdeaD46m/P1VEA1hGhtKP3/z82?=
+ =?iso-8859-1?Q?Y3c8l7VQfPcz0rcCnopdAWKEhPnL7mnA/1Kj59vB2HnwQp41wr/Thw5Ge2?=
+ =?iso-8859-1?Q?drkSZf6QaIBNdMI66sqDEe/laVb41eZgwXnGWw08zgTgCmgVYAsMkPgvKW?=
+ =?iso-8859-1?Q?0Bx2WNC6wLkwYK+lllsKQ7Ecqo2lZ+KfC1+v6xqMkIwR24FXLFY96qJUnn?=
+ =?iso-8859-1?Q?64z60NhFeEjzdFxUIxdJkI36DPBTimvqXK9bZ3xjCbC4yIFGGsvz34iW0s?=
+ =?iso-8859-1?Q?uIl9DFYFMwIrada3caeW+lZyoqFv9HDxplhG5ySCEi5kaaiDbjR+9nUCa0?=
+ =?iso-8859-1?Q?8DEp6Z707kxK/d/lWpM7ysDTLQtgXcBRajJ7zT4tcgjlGuhHKiXD2pl9Po?=
+ =?iso-8859-1?Q?Lh1M4jceQDLWyVan9BjrD5vyYrKoj73C9+4pJL8fCCcdJ4M02hXDDpu6Iz?=
+ =?iso-8859-1?Q?kq8akHf/iTcS12bPAli9HJr9e8pptYnFT871kYzIIrWA+xuSNEJuceSsTT?=
+ =?iso-8859-1?Q?xQaeb2qQYxb+Su9uvzzerc0g7NskjjdQY6GgnTorB4naUfEKgX7EEKH5W2?=
+ =?iso-8859-1?Q?q2dWPSQQyOXOYltcu1D/P7kO/o7WQv4gzl6kVML2e6o8GCJa6MXHDygUY5?=
+ =?iso-8859-1?Q?Eqxy1gpI7hFd06iaUneiLjgrlVXlcs/Cyk?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [RFC PATCH] drm: panthor: add dev_coredumpv support
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <CAH5fLghWQQfrKWFr+vd0B4YjxKwEd+pMV5zeiTCnRtX3_1oRYQ@mail.gmail.com>
-Date: Tue, 23 Jul 2024 10:41:08 -0300
-Cc: Wedson Almeida Filho <wedsonaf@gmail.com>,
- Miguel Ojeda <ojeda@kernel.org>,
- Danilo Krummrich <dakr@redhat.com>,
- lyude@redhat.com,
- robh@kernel.org,
- lina@asahilina.net,
- mcanal@igalia.com,
- airlied@gmail.com,
- rust-for-linux@vger.kernel.org,
- dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <4A1B4B2C-7FAB-4656-90AE-B30DC636349E@collabora.com>
-References: <20240710225011.275153-1-daniel.almeida@collabora.com>
- <CAH5fLghWQQfrKWFr+vd0B4YjxKwEd+pMV5zeiTCnRtX3_1oRYQ@mail.gmail.com>
-To: Alice Ryhl <aliceryhl@google.com>
-X-Mailer: Apple Mail (2.3774.600.62)
+MIME-Version: 1.0
+X-OriginatorOrg: ST.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR10MB4687.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6b590741-3a00-4056-84f6-08dcab1d21fd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Jul 2024 13:41:19.2183
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 75e027c9-20d5-47d5-b82f-77d7cd041e8f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: U1mvs6wl3UQJWOuZ8TAMI9mwfXUUZIwR87yCKJ5YjqHTAzf8uTDkXBuPcta+uaoPKLTiOhAgL4QxIbMrtlGvbQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR10MB6827
+X-Proofpoint-ORIG-GUID: GZCvirrSfONTLcElZ9BBLkb80gcxyaAB
+X-Proofpoint-GUID: GZCvirrSfONTLcElZ9BBLkb80gcxyaAB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-23_03,2024-07-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 bulkscore=0 adultscore=0
+ lowpriorityscore=0 spamscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
+ malwarescore=0 suspectscore=0 impostorscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2407230098
 
-Hi Alice, thanks for the review!
-
-
->> +        fn alloc_mem(&mut self, size: usize) -> Option<*mut u8> {
->> +            assert!(size % 8 =3D=3D 0, "Allocation size must be =
-8-byte aligned");
->> +            if isize::try_from(size).unwrap() =3D=3D isize::MAX {
->> +                return None;
->> +            } else if self.pos + size > self.capacity {
->> +                kernel::pr_debug!("DumpAllocator out of memory");
->> +                None
->> +            } else {
->> +                let offset =3D self.pos;
->> +                self.pos +=3D size;
->> +
->> +                // Safety: we know that this is a valid allocation, =
-so
->> +                // dereferencing is safe. We don't ever return two =
-pointers to
->> +                // the same address, so we adhere to the aliasing =
-rules. We make
->> +                // sure that the memory is zero-initialized before =
-being handed
->> +                // out (this happens when the allocator is first =
-created) and we
->> +                // enforce a 8 byte alignment rule.
->> +                Some(unsafe { self.mem.as_ptr().offset(offset as =
-isize) as *mut u8 })
->> +            }
->> +        }
->> +
->> +        pub(crate) fn alloc<T>(&mut self) -> Option<&mut T> {
->> +            let mem =3D self.alloc_mem(core::mem::size_of::<T>())? =
-as *mut T;
->> +            // Safety: we uphold safety guarantees in alloc_mem(), =
-so this is
->> +            // safe to dereference.
->=20
-> This code doesn't properly handle when T requires a large alignment.
->=20
-
-Can you expand a bit on this? IIRC the alignment of a structure/enum =
-will be dictated=20
-by the field with the largest alignment requirement, right? Given that =
-the largest primitive
-allowed in the kernel is u64/i64, shouldn=E2=80=99t this suffice, e.g.:
-
- +            assert!(size % 8 =3D=3D 0, "Allocation size must be 8-byte =
-aligned");
-
-
->> +            Some(unsafe { &mut *mem })
->> +        }
->> +
->> +        pub(crate) fn alloc_bytes(&mut self, num_bytes: usize) -> =
-Option<&mut [u8]> {
->> +            let mem =3D self.alloc_mem(num_bytes)?;
->> +
->> +            // Safety: we uphold safety guarantees in alloc_mem(), =
-so this is
->> +            // safe to build a slice
->> +            Some(unsafe { core::slice::from_raw_parts_mut(mem, =
-num_bytes) })
->> +        }
->=20
-> Using references for functions that allocate is generally wrong.
-> References imply that you don't have ownership of the memory, but
-> allocator functions would normally return ownership of the allocation.
-> As-is, the code seems to leak these allocations.
-
-All the memory must be given to dev_coredumpv(), which will then take
-ownership.  dev_coredumpv() will free all the memory, so there should be =
-no
-leaks here.
-
-I=E2=80=99ve switched to KVec in v2, so that will also cover the error =
-paths,
-which do leak in this version, sadly.
-
-As-is, all the memory is pre-allocated as a single chunk. When space is =
-carved
-for a given T, a &mut is returned so that the data can be written =
-in-place at
-the right spot in said chunk.
-
-Not only there shouldn=E2=80=99t be any leaks, but I can actually decode =
-this from
-userspace.
-
-I agree that this pattern isn=E2=80=99t usual, but I don=E2=80=99t see =
-anything
-incorrect. Maybe I missed something?
-
->=20
->> +        pub(crate) fn alloc_header(&mut self, ty: HeaderType, =
-data_size: u32) -> &mut Header {
->> +            let hdr: &mut Header =3D self.alloc().unwrap();
->> +            hdr.magic =3D MAGIC;
->> +            hdr.ty =3D ty;
->> +            hdr.header_size =3D core::mem::size_of::<Header>() as =
-u32;
->> +            hdr.data_size =3D data_size;
->> +            hdr
->> +        }
->> +
->> +        pub(crate) fn is_end(&self) -> bool {
->> +            self.pos =3D=3D self.capacity
->> +        }
->> +
->> +        pub(crate) fn dump(self) -> (NonNull<core::ffi::c_void>, =
-usize) {
->> +            (self.mem, self.capacity)
->> +        }
->> +    }
->> +}
->> +
->> +fn dump_registers(alloc: &mut DumpAllocator, args: &DumpArgs) {
->> +    let sz =3D core::mem::size_of_val(&REGISTERS);
->> +    alloc.alloc_header(HeaderType::Registers, =
-sz.try_into().unwrap());
->> +
->> +    for reg in &REGISTERS {
->> +        let dumped_reg: &mut RegisterDump =3D =
-alloc.alloc().unwrap();
->> +        dumped_reg.register =3D *reg;
->> +        dumped_reg.value =3D reg.read(args.reg_base_addr);
->> +    }
->> +}
->> +
->> +fn dump_bo(alloc: &mut DumpAllocator, bo: &mut =
-bindings::drm_gem_object) {
->> +    let mut map =3D bindings::iosys_map::default();
->> +
->> +    // Safety: we trust the kernel to provide a valid BO.
->> +    let ret =3D unsafe { bindings::drm_gem_vmap_unlocked(bo, &mut =
-map as _) };
->> +    if ret !=3D 0 {
->> +        pr_warn!("Failed to map BO");
->> +        return;
->> +    }
->> +
->> +    let sz =3D bo.size;
->> +
->> +    // Safety: we know that the vaddr is valid and we know the BO =
-size.
->> +    let mapped_bo: &mut [u8] =3D
->> +        unsafe { =
-core::slice::from_raw_parts_mut(map.__bindgen_anon_1.vaddr as *mut _, =
-sz) };
->=20
-> You don't write to this memory, so I would avoid the mutable =
-reference.
->=20
->> +    alloc.alloc_header(HeaderType::Vm, sz as u32);
->> +
->> +    let bo_data =3D alloc.alloc_bytes(sz).unwrap();
->> +    bo_data.copy_from_slice(&mapped_bo[..]);
->> +
->> +    // Safety: BO is valid and was previously mapped.
->> +    unsafe { bindings::drm_gem_vunmap_unlocked(bo, &mut map as _) };
->=20
-> You don't need `as _` here. You can just pass a mutable reference and
-> Rust will automatically cast it to raw pointer.
->=20
->> +}
->> +
->> +/// Dumps the current state of the GPU to a file
->> +///
->> +/// # Safety
->> +///
->> +/// `Args` must be aligned and non-null.
->> +/// All fields of `DumpArgs` must be valid.
->> +#[no_mangle]
->> +pub(crate) extern "C" fn panthor_core_dump(args: *const DumpArgs) -> =
-core::ffi::c_int {
->> +    assert!(!args.is_null());
->> +    // Safety: we checked whether the pointer was null. It is =
-assumed to be
->> +    // aligned as per the safety requirements.
->> +    let args =3D unsafe { &*args };
->=20
-> Creating a reference requires that it isn't dangling, so the safety
-> requirements should require that.
->=20
-> Also, panthor_core_dump should be unsafe.
->=20
-
+Hi,=0A=
+=0A=
+On=A0Thursday, July 11, 2024, Peng Fan wrote:=0A=
+> > Subject: [PATCH v2 2/8] firmware: arm_scmi: Introduce packet=0A=
+> > handling helpers=0A=
+> >=0A=
+> > Introduce a pair of structures initialized to contain all the existing=
+=0A=
+> > packet handling helpers, both for transports based on shared memory=0A=
+> > and messages.=0A=
+> >=0A=
+> > No functional change.=0A=
+> >=0A=
+> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>=0A=
+> > ---=0A=
+> > v1 --> v2=0A=
+> > - fixed commit message=0A=
+> > ---=0A=
+> ......=0A=
+> =0A=
+> > d33a704e5814..f4ba38afe0bb 100644=0A=
+> > --- a/drivers/firmware/arm_scmi/msg.c=0A=
+> > +++ b/drivers/firmware/arm_scmi/msg.c=0A=
+> > @@ -4,8 +4,8 @@=0A=
+> >=A0=A0 *=0A=
+> >=A0=A0 * Derived from shm.c.=0A=
+> >=A0=A0 *=0A=
+> > - * Copyright (C) 2019-2021 ARM Ltd.=0A=
+> > - * Copyright (C) 2020-2021 OpenSynergy GmbH=0A=
+> > + * Copyright (C) 2019-2024 ARM Ltd.=0A=
+> > + * Copyright (C) 2020-2024 OpenSynergy GmbH=0A=
+> =0A=
+> Nitpick: OpenSynergy year should be kept unchanged?=0A=
+=0A=
+I agree. Copyright dates on original non-Arm contributors should=0A=
+not be changed, here and in patch 5/8, 6/8 and 7/8.=0A=
+=0A=
+> =0A=
+> Otherwise looks good:=0A=
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>=
 
