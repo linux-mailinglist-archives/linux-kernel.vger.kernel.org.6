@@ -1,137 +1,116 @@
-Return-Path: <linux-kernel+bounces-259735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48183939C6E
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:18:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB20F939C86
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 098F5282C76
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:18:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D65A282F30
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12C3214BFB0;
-	Tue, 23 Jul 2024 08:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF44414D28F;
+	Tue, 23 Jul 2024 08:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MFlaBSiM"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DgiJpQUs"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94F18814;
-	Tue, 23 Jul 2024 08:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260D014C581
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721722698; cv=none; b=MpqKiNpsaL/Tr0wVmLjP/HkgScdMWmpyb6QWup4ly2D8kU/8eA6ChmpJTs89vbH5cibv4U5i1qdRMN5bLOCLBkc3G56peWRHL3aWmnBU/60I54sepmqzGnZmpx8gBOgiNRFda7gVC+bbfS8eAAXM+Pk5H+BhqKsrChGLR9TCO20=
+	t=1721722978; cv=none; b=qpFm8hdNKDFeav59JiTZIdOYasn5YJNzNtLxiCsbEruwcvba9oCK3A2yEY9HfhvzbY38HT7YE6DMNiYSzKagS3WTUK2U0np8TDE2giZlSr5JnQtdXwDdo9fmJSLIDCOWGa44pb8R0zB149LdwJEyQwjBB+5kYm79CaPLpu+1aAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721722698; c=relaxed/simple;
-	bh=u7E64LWQHQVWAPK7DvBwdI1vf99nlz1Uva9cDir2Hw0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ObRm0SM+pB9UghQuu7kkzu2PGMVmoFpsb39OND1ioWDkYjM6/qZyvqrGAvSgcWCT1E0xD6dkexNAim2ml22nQIceTBPSXSwphE4GqYG8mL0+FDf8zkKsY+CISDodLjW7qG6UOSkv6CQDbKHCr1gUAXAAq0giNgkB484LOOdz7c4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MFlaBSiM; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5a20de39cfbso4507270a12.1;
-        Tue, 23 Jul 2024 01:18:16 -0700 (PDT)
+	s=arc-20240116; t=1721722978; c=relaxed/simple;
+	bh=bULiKcYtzRzlX0GiORBKSEHwonRwDFkZZ43sE1qZNew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Coy1VM9mvvWDNuMzGfAZ4EhiSr0CY7RuvrkztxKT+it48QgsPfp70XYS8gf3rgGItQeudgBnoTj6Z4KfXyGjzIS51EgMIGWlkyKGSVbD3bqQy7pX+sHN+IOvDMZD9vXUEzp8+eNXvzy90MNPtNJEeAn4wjMJA7QT/AOXHHekk3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DgiJpQUs; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso13111a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 01:22:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721722695; x=1722327495; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=aomYwYHkUj9PIRAd01rbd7wfWXGOwCJ1e5XZ9LIok/0=;
-        b=MFlaBSiMoOYQEB/TbrTuQ6u6GVeJlrGksv6LLhvsxVWFKUtJgDL4preNsWOujpgP0A
-         WTPCIn5BeEq5eW7DudmXIPvANcrWA0QFjt5Ns7aHXgIK8uKoynl3m84tLZzffH3G7889
-         hjv1iWYHbd5jBkO+NR1gzDUIuhlufDXeerbrr+xUhuVcM+OhIv06UnbVROHGITPj4x6J
-         LFE5aTG7vlcxNfKnx56a6R2Yv5HqqUIMd77xqAqjqMcunN1NWl9ia23EFnNjDLAQEbZv
-         H89/XDgE4Se/QBQQggUklFAI0q6uLz/3JlyUbOlCvon8rcc7HUZoVfivLm8LXUVCFmG0
-         +zaA==
+        d=google.com; s=20230601; t=1721722974; x=1722327774; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SHzffdK1t29wgBUTlrheqQc/1FBrMdd1f0Xh1Fa/cyc=;
+        b=DgiJpQUsHE6NgbimQXwzS8asrD0p7Sq1+4Vv+n8V6S7jxPgxatBpA/kMmSYj4TA1IN
+         ECVgmajKP2rWl5Ahj6474oRkE5GS/n/e8MTeEp9Xr/n13r+4AqL6r9yczVUS9Ld9FGYg
+         XpNFpY4KW1FYAsmr0fXku8FQFgNpLHgIIBmJSJVz/U7/enLukBB/cQZt/0D3xzneD1Gs
+         f5Na+E0L2/rTdeCZPkZvXZfAdvxKUlbBeww/lmIqNl+/VRyI2zn/fhcm6W+AMWJVJOeW
+         DqeSZc7jwxausTBHA5zRtvHSOcz/w4VxHhnslladpO/qWHZ1KTW+BxoUnBQDiHNEqAPR
+         VMVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721722695; x=1722327495;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aomYwYHkUj9PIRAd01rbd7wfWXGOwCJ1e5XZ9LIok/0=;
-        b=imrWUcAqIV4vp1rUFi4r+MAkJ5e3m85TMusW6Q8cUvWauBFSX1A+4krn9RRuHr9VoW
-         AvoolRF8I1quhkZuxA0B2MCM12wawlJUsBX90FCmaFxd94OKppGSIP0oiMIwO6rHX4QL
-         djd1yByJOeozzzue4CyjjVX17TI00MSmFwp9Ph3rzHC6wd1nFKkbUpFhBGXIw0woT7gP
-         vQW5MvCg3IUdGSGibA+euVv4cRH3fwJnm5CvHbGvcx4jqPkWp0zZkzuOW6VZfZWHq/A7
-         mRvKVpbYA0gz9X5y1miSKsvQOSDQGTcFCOMDhTPk4jFAceru4s5hHmt7k5bStOzqzjPn
-         c/hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW93iDYOkNhPtXxs98G9JAIRbVz9ip2yFCZmwNBGIim9XgH3qBGOXohc34Hf2lT63s4KqztT74aq7pBIRcuxPvFOl3dsF7H7lGEv6G9fFX6+8qFnRg4eXIrTYXtzPmzdZfQJH4jEr9YUKgUZJMqrMRnhn7KprB2f73NGpWQ153kLBfPl1R4yT7H/Vjur53ycTW04Q1ui4aqGUlcopSkuQ==
-X-Gm-Message-State: AOJu0YwtmvGjSiqNCDnyxeWrW6381Sy+MkYlFE/s22NgvIEsbGXjN5u0
-	J6PeRbSPlO1Ol1fI4HQn71hm42ekdIoZTh0FUhsugkYiC27uzbM9YoDjkUji
-X-Google-Smtp-Source: AGHT+IFklgcj9RMewfqoRTiDzrQB8v9waGUGNso+QDgdI3GEz3JLuAWPW3wPxn2P1BM2UQpfPFM06A==
-X-Received: by 2002:a50:d681:0:b0:58c:ccc1:17f7 with SMTP id 4fb4d7f45d1cf-5a3eee84bb0mr6341358a12.15.1721722694828;
-        Tue, 23 Jul 2024 01:18:14 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a7535f402fsm3363982a12.93.2024.07.23.01.18.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 01:18:14 -0700 (PDT)
-Message-ID: <04f44d9dcfe67ffc71a7999dcc11b892ff1c61dd.camel@gmail.com>
-Subject: Re: [PATCH RFC v3 9/9] iio: adc: ad7944: add support for SPI offload
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>, 
- Jonathan Cameron
-	 <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno
- =?ISO-8859-1?Q?S=E1?=
-	 <nuno.sa@analog.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen
-	 <lars@metafoo.de>, David Jander <david@protonic.nl>, Martin Sperl
-	 <kernel@martin.sperl.org>, linux-spi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org
-Date: Tue, 23 Jul 2024 10:22:12 +0200
-In-Reply-To: <20240722-dlech-mainline-spi-engine-offload-2-v3-9-7420e45df69b@baylibre.com>
-References: 
-	<20240722-dlech-mainline-spi-engine-offload-2-v3-0-7420e45df69b@baylibre.com>
-	 <20240722-dlech-mainline-spi-engine-offload-2-v3-9-7420e45df69b@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+        d=1e100.net; s=20230601; t=1721722974; x=1722327774;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SHzffdK1t29wgBUTlrheqQc/1FBrMdd1f0Xh1Fa/cyc=;
+        b=DVUnf+LUgviElYG7+4sBnb14hAvTLBN5ilX9Ek2nZdC6E/RFQQbsLmvKtrSwQ970ZR
+         q+af9Ivud/KqWvhkTUXdUSO8QCDg8z2/reRV8eXO6RqQMmJKlMGB2Gp23ieaoimneNWx
+         BRQNohnwyDQ+6zcKyndIarpzr3OVkDa9KOwestd9/l8WPt8rq/DmVmexxPhx3txuWR68
+         i6jHCAjVokieSAsc6zhxtitOtMlUa5loBxPMMGZNDPUeNMjfZF2Zff/eKxZEudT0VdKd
+         BZAoJVz3owseEzjwE0wdq9HBNaQ5nwtwxeo6ilwufX6E6Auff7IKHQnrEIHneaNsP1t0
+         8+RA==
+X-Forwarded-Encrypted: i=1; AJvYcCUqDlfBMngRijxysHMG43VZAe5NSQnG2NQOotwSfSiEpnHty1ZeJYSe6xSueXl9njdEgpAEDniPTbvRJMakElhsPjWL6wxcv+LLrFEF
+X-Gm-Message-State: AOJu0Yw4Zly1/IUbxvVp+Iz90cnIVqOD5zggjqsj78MO//YtrMLxQWAf
+	pSzk5bZMECYz3Az+62UwCPFXbbM77n42mIMkruSoVdXB9mDat9UJCK6mlx1qqpmI5Pe2YwPwQ+O
+	oP/mg43oGy8UfmCJbASt/9vA6xeCW+szco9YX
+X-Google-Smtp-Source: AGHT+IFloeNOLjx98DobvZlaIXggAhKgmTEsQyFXl+zDVn0YHqOhg/R7X7Lh2OPbveWF/8Lg8FOnw+q/voxghpl33uk=
+X-Received: by 2002:a05:6402:34d6:b0:57d:436b:68d6 with SMTP id
+ 4fb4d7f45d1cf-5a4a9300bddmr484291a12.7.1721722974127; Tue, 23 Jul 2024
+ 01:22:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240718-upstream-net-next-20240716-tcp-3rd-ack-consume-sk_socket-v2-0-d653f85639f6@kernel.org>
+ <a2f181c3-92d7-4874-b402-50a54b6d289c@redhat.com>
+In-Reply-To: <a2f181c3-92d7-4874-b402-50a54b6d289c@redhat.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 23 Jul 2024 01:22:40 -0700
+Message-ID: <CANn89iJ+sBaa3hbPceGytu+pj6u9z7+YQ_G6eL1S4sYMfPVQmw@mail.gmail.com>
+Subject: Re: [PATCH net v2 0/2] tcp: restrict crossed SYN specific actions to SYN-ACK
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, Neal Cardwell <ncardwell@google.com>, netdev@vger.kernel.org, 
+	mptcp@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Jerry Chu <hkchu@google.com>, Jakub Kicinski <kuba@kernel.org>, David Ahern <dsahern@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Kuniyuki Iwashima <kuniyu@amazon.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2024-07-22 at 16:57 -0500, David Lechner wrote:
-> This adds support for SPI offload to the ad7944 driver. This allows
-> reading data at the max sample rate of 2.5 MSPS.
->=20
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
->=20
+On Tue, Jul 23, 2024 at 1:10=E2=80=AFAM Paolo Abeni <pabeni@redhat.com> wro=
+te:
+>
+> On 7/18/24 12:33, Matthieu Baerts (NGI0) wrote:
+> > A recent commit in TCP affects TFO and MPTCP in some cases. The first
+> > patch fixes that.
+> >
+> > The second one applies the same fix to another crossed SYN specific
+> > action just before.
+> >
+> > These two fixes simply restrict what should be done only for crossed SY=
+N
+> > cases to packets with SYN-ACK flags.
+> >
+> > Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> > ---
+> > Changes in v2:
+> > - Patch 1/2 has a simpler and generic check (Kuniyuki), and an updated
+> >    comment.
+> > - New patch 2/2: a related fix
+> > - Link to v1: https://lore.kernel.org/r/20240716-upstream-net-next-2024=
+0716-tcp-3rd-ack-consume-sk_socket-v1-1-4e61d0b79233@kernel.org
+>
+> Re-adding Neal for awareness. It would be great if this could go through
+> some packetdrill testing,
+>
 
-...
-
-> +static void ad7944_put_clk_trigger(void *p)
-> +{
-> +	clk_put(p);
-> +}
-> +
-
-I think this means we may still need to improve the API a bit. This asymmet=
-ric
-handling is (to me) and indicator that something is not very well from a de=
-sign
-perspective. What I mean is that if you get the clock through spi I would a=
-lso
-expect to put() it through SPI. Now that I think about it that's also true =
-for
-the DMA channel handling but in there things are a bit more complicated.
-
-I mean, at least you're making this explicit in the docs so maybe it's
-acceptable. But it stills feels strange to me that the place where the reso=
-urces
-are requested and bound too is not the same one responsible for releasing t=
-hem.
-
-If we go with the provider/consumer approach and having a properly refcount=
-ed
-spi_offload object I think we may be able to do it from the offload object
-context. Maybe not worth it though... Not sure tbh.
-
-
-- Nuno S=C3=A1
+I am back in France, let me see what I can do.
 
