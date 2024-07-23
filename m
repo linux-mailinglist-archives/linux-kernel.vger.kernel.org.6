@@ -1,182 +1,186 @@
-Return-Path: <linux-kernel+bounces-259908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42A4F939FA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:19:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DD48939FBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:24:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BBEB28370B
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:19:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C7201C21F01
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F12DC14F9EB;
-	Tue, 23 Jul 2024 11:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B994C14F9F5;
+	Tue, 23 Jul 2024 11:23:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZictSF9m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tdib58zJ"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371B714F9CC;
-	Tue, 23 Jul 2024 11:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7200150996
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721733581; cv=none; b=e/s2vuprF8dWY5ZZoh4vjikj2tq81TSmQeszyOS8PBq+UnxdKN3HpnlAOA8VQef53y6xjRK5sOnvf2BCET3QQWjPQ5Ppmcg84jG2Nxcvrx0hSP30aDVtPKEG6lAcCVSfHYUTQqrKxZ/IXMavCBWiO9eWsDJrSJqfDebx2bU8Nmk=
+	t=1721733832; cv=none; b=c9VovRxxt4RGIhvpM8gLGkp/q/7ABpwJ+b+WzucK11U6WYcreaq0uOPV0Yr+f/qek0u9PPnS2fiElUHmMiT9q7tMJQIXD49vR56DDOEN9pbKl4CPO3B83FUt4GRUqPS+mCyVcjPFXqiTIKGLQIOVNPNgtZvonLYFW3ubScObOQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721733581; c=relaxed/simple;
-	bh=/jEI1MKJ0mWcSvRjO2sJxNIZYvVJgUJMB2cCEbTTn5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LgP7eD+Vy+V5Zcs0d6Y4OKFLQeBxxVjgDvdNBAhOM7X887zif4ytU/ePSoKdsw/VMXESzeGUHqEPsGHTlSUgo47PcXEch8YrbcKFFF7yp9Nl1DGVSoGMpLbtTcSl9/Zn2VWqut1CsYQd5IDEqo/PuD/5LVkCtfMAKucpHjLqOj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZictSF9m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C58CC4AF0A;
-	Tue, 23 Jul 2024 11:19:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721733580;
-	bh=/jEI1MKJ0mWcSvRjO2sJxNIZYvVJgUJMB2cCEbTTn5A=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ZictSF9mRRyE2dmFeH3WP1Rqow5R6DYMRh4Cow+xT4+c+DGDrI1Xg/vaiANSR8cE3
-	 lrtJTgz5/eAHRvwzGguT546lcpf/0mF3v3jXg2BCmRhiWYhN2bv7fEAHqItbXD1387
-	 NJg61lgLY3CJvQcWjVQKdb8UuWJsYZawujobw+AVWidbqbibmBDCI2uH0ycqz+kTtB
-	 NsYpCyb+sR5yGVmMW7TCENFp847QZtTGZh57D6IrEL/mWn1SrNaV9tkaOyR3aGKHDx
-	 Djy+rewofXqKDsD2SqPHEIF5hnne0sxvN/owyHvdEzv+UEl5txLkr6z9OZQ9vMebro
-	 tNFIQlISvps9w==
-Date: Tue, 23 Jul 2024 13:19:36 +0200
-From: Wolfram Sang <wsa@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: [PULL REQUEST] i2c-for-6.11-rc1-second-batch
-Message-ID: <Zp-RyGae1M0Q9gqH@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
+	s=arc-20240116; t=1721733832; c=relaxed/simple;
+	bh=YCkIsq7P3F+rPZiQ0NDIGx5OElJOJHk9YxJhzHKHOBA=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=WSSdxi9imIShk6Expf6nDx0GWyXq9Gk5r/aiHkxJqz+FUdDZ7NW5dHlIRr/+1evOkOj11Qg3CPfmiUxLaiHUuhdbMcsvbw2bAKksxLeyphveZ2KdgZNwmYTX4cBLzdr0t8meteF+6ns/sLNjeLzUVE7pH3HxOBDKDodXJo1k+TI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tdib58zJ; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: vbabka@suse.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721733827;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pdyx0cEZKRWZ4DGe2mzzuU7N0CPsV2wlwnR893l3nCM=;
+	b=tdib58zJTPNXUU8cyKFo6+QDxc/o+0e4wa6pTJbHkVZLTqUzfH5Mon7yKK9mVd3UluOZ36
+	5DPnxLtVbiFT+nIvr+wkp1/UMPWMhiAltPGMuYPBjxKt/X5qOX+/wVFAWVxXn6nkWqp/0l
+	puyq7Opyh7UjeRdigyWZz4ZlkuTFPyI=
+X-Envelope-To: songmuchun@bytedance.com
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: nphamcs@gmail.com
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: mhocko@kernel.org
+X-Envelope-To: roman.gushchin@linux.dev
+X-Envelope-To: shakeel.butt@linux.dev
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qz7dd/UTaslIo8U4"
-Content-Disposition: inline
-
-
---qz7dd/UTaslIo8U4
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [PATCH] mm: list_lru: fix UAF for memory cgroup
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Muchun Song <muchun.song@linux.dev>
+In-Reply-To: <E0A7CC1A-B02C-4210-A1DF-0600E027D5D0@linux.dev>
+Date: Tue, 23 Jul 2024 19:23:02 +0800
+Cc: Muchun Song <songmuchun@bytedance.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>,
+ Nhat Pham <nphamcs@gmail.com>,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ LKML <linux-kernel@vger.kernel.org>,
+ Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ shakeel.butt@linux.dev
 Content-Transfer-Encoding: quoted-printable
-
-The following changes since commit 8e5c0abfa02d85b9cd2419567ad2d73ed8fe4b74:
-
-  Merge tag 'input-for-v6.11-rc0' of git://git.kernel.org/pub/scm/linux/ker=
-nel/git/dtor/input (2024-07-19 16:51:39 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-=
-6.11-rc1-second-batch
-
-for you to fetch changes up to 385ac870bdd531348de123d6790626ccd7827f69:
-
-  i2c: header: improve kdoc for i2c_algorithm (2024-07-20 15:45:27 +0200)
-
-----------------------------------------------------------------
-I2C for 6.11-rc1 second batch
-
-The I2C core has two header documentation updates to be applied as the
-dependecies are in now.
-
-The I2C host drivers add some patches which nearly fell through the
-cracks, namely:
-
-Added descriptions in the DTS for the Qualcomm SM8650 and SM8550
-Camera Control Interface (CCI).
-
-Added support for the "settle-time-us" property, which allows the
-gpio-mux device to switch from one bus to another with a configurable
-delay. The time can be set in the DTS. The latest change also includes
-file sorting.
-
-Fixed slot numbering in the SMBus framework to prevent failures
-when more than 8 slots are occupied. It now enforces a a maximum
-of 8 slots to be used. This ensures that the Intel PIIX4 device
-can register the SPDs correctly without failure, even if other
-slots are populated but not used.
-
-----------------------------------------------------------------
-Bastien Curutchet (3):
-      dt-bindings: i2c: mux-gpio: Add 'settle-time-us' property
-      i2c: mux: gpio: Re-order #include to match alphabetic order
-      i2c: mux: gpio: Add support for the 'settle-time-us' property
-
-Thomas Wei=C3=9Fschuh (2):
-      i2c: smbus: remove i801 assumptions from SPD probing
-      i2c: piix4: Register SPDs
-
-Vladimir Zapolskiy (2):
-      dt-bindings: i2c: qcom-cci: Document sm8550 compatible
-      dt-bindings: i2c: qcom-cci: Document sm8650 compatible
-
-Wolfram Sang (3):
-      Merge tag 'i2c-host-6.11-part-2' of git://git.kernel.org/pub/scm/linu=
-x/kernel/git/andi.shyti/linux into i2c/for-mergewindow
-      i2c: header: remove unneeded stuff regarding i2c_algorithm
-      i2c: header: improve kdoc for i2c_algorithm
+Message-Id: <1E56E5B4-7003-4EF4-98F7-C1FC30B2DE1D@linux.dev>
+References: <65b7d88b-af4f-4869-9322-e38910abce6d@suse.cz>
+ <E0A7CC1A-B02C-4210-A1DF-0600E027D5D0@linux.dev>
+To: Vlastimil Babka <vbabka@suse.cz>
+X-Migadu-Flow: FLOW_OUT
 
 
-with much appreciated quality assurance from
-----------------------------------------------------------------
-Andi Shyti (3):
-      (Rev.) i2c: mux: gpio: Add support for the 'settle-time-us' property
-      (Rev.) i2c: mux: gpio: Re-order #include to match alphabetic order
-      (Rev.) dt-bindings: i2c: mux-gpio: Add 'settle-time-us' property
 
-Guenter Roeck (2):
-      (Rev.) i2c: piix4: Register SPDs
-      (Test) i2c: piix4: Register SPDs
+> On Jul 18, 2024, at 19:20, Muchun Song <muchun.song@linux.dev> wrote:
+>=20
+>=20
+>=20
+>> On Jul 18, 2024, at 18:30, Vlastimil Babka <vbabka@suse.cz> wrote:
+>>=20
+>> =EF=BB=BFOn 7/18/24 10:36 AM, Muchun Song wrote:
+>>> The mem_cgroup_from_slab_obj() is supposed to be called under rcu
+>>> lock or cgroup_mutex or others which could prevent returned memcg
+>>> from being freed. Fix it by adding missing rcu read lock.
+>>=20
+>> Was the UAF ever observed, or is this due to code review?
+>=20
+> Just code review.
+>=20
+> Thanks.
+>=20
+>> Should there be some lockdep_assert somwhere?
+>>=20
+>=20
+> It=E2=80=99s a good option to improve this. Maybe =
+mem_cgroup_from_slab_obj() is a good place.
 
-Heiner Kallweit (1):
-      (Rev.) i2c: smbus: remove i801 assumptions from SPD probing
+I added it to obj_cgroup_memcg() [1]. And CC memory cgroup maintainers =
+to this thread.
 
-Krzysztof Kozlowski (3):
-      (Rev.) dt-bindings: i2c: mux-gpio: Add 'settle-time-us' property
-      (Rev.) dt-bindings: i2c: qcom-cci: Document sm8650 compatible
-      (Rev.) dt-bindings: i2c: qcom-cci: Document sm8550 compatible
 
- .../devicetree/bindings/i2c/i2c-mux-gpio.yaml       |  3 +++
- .../devicetree/bindings/i2c/qcom,i2c-cci.yaml       | 20 +++++++++++++++++=
-+++
- drivers/i2c/busses/Kconfig                          |  1 +
- drivers/i2c/busses/i2c-piix4.c                      |  9 +++++++++
- drivers/i2c/i2c-smbus.c                             | 15 ++++-----------
- drivers/i2c/muxes/i2c-mux-gpio.c                    | 14 ++++++++++----
- include/linux/i2c.h                                 | 21 +++++++----------=
-----
- include/linux/platform_data/i2c-mux-gpio.h          |  2 ++
- 8 files changed, 56 insertions(+), 29 deletions(-)
+[1] =
+https://lore.kernel.org/linux-mm/20859F67-A80C-4FD0-990C-40C70905E55B@linu=
+x.dev/T/
 
---qz7dd/UTaslIo8U4
-Content-Type: application/pgp-signature; name="signature.asc"
+>=20
+>>> Fixes: 0a97c01cd20bb ("list_lru: allow explicit memcg and NUMA node =
+selection)
+>>> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+>>> ---
+>>> mm/list_lru.c | 24 ++++++++++++++++++------
+>>> 1 file changed, 18 insertions(+), 6 deletions(-)
+>>>=20
+>>> diff --git a/mm/list_lru.c b/mm/list_lru.c
+>>> index 3fd64736bc458..225da0778a3be 100644
+>>> --- a/mm/list_lru.c
+>>> +++ b/mm/list_lru.c
+>>> @@ -85,6 +85,7 @@ list_lru_from_memcg_idx(struct list_lru *lru, int =
+nid, int idx)
+>>> }
+>>> #endif /* CONFIG_MEMCG_KMEM */
+>>>=20
+>>> +/* The caller must ensure the memcg lifetime. */
+>>> bool list_lru_add(struct list_lru *lru, struct list_head *item, int =
+nid,
+>>>           struct mem_cgroup *memcg)
+>>> {
+>>> @@ -109,14 +110,20 @@ EXPORT_SYMBOL_GPL(list_lru_add);
+>>>=20
+>>> bool list_lru_add_obj(struct list_lru *lru, struct list_head *item)
+>>> {
+>>> +    bool ret;
+>>>   int nid =3D page_to_nid(virt_to_page(item));
+>>> -    struct mem_cgroup *memcg =3D list_lru_memcg_aware(lru) ?
+>>> -        mem_cgroup_from_slab_obj(item) : NULL;
+>>> +    struct mem_cgroup *memcg;
+>>>=20
+>>> -    return list_lru_add(lru, item, nid, memcg);
+>>> +    rcu_read_lock();
+>>> +    memcg =3D list_lru_memcg_aware(lru) ? =
+mem_cgroup_from_slab_obj(item) : NULL;
+>>> +    ret =3D list_lru_add(lru, item, nid, memcg);
+>>> +    rcu_read_unlock();
+>>> +
+>>> +    return ret;
+>>> }
+>>> EXPORT_SYMBOL_GPL(list_lru_add_obj);
+>>>=20
+>>> +/* The caller must ensure the memcg lifetime. */
+>>> bool list_lru_del(struct list_lru *lru, struct list_head *item, int =
+nid,
+>>>           struct mem_cgroup *memcg)
+>>> {
+>>> @@ -139,11 +146,16 @@ EXPORT_SYMBOL_GPL(list_lru_del);
+>>>=20
+>>> bool list_lru_del_obj(struct list_lru *lru, struct list_head *item)
+>>> {
+>>> +    bool ret;
+>>>   int nid =3D page_to_nid(virt_to_page(item));
+>>> -    struct mem_cgroup *memcg =3D list_lru_memcg_aware(lru) ?
+>>> -        mem_cgroup_from_slab_obj(item) : NULL;
+>>> +    struct mem_cgroup *memcg;
+>>>=20
+>>> -    return list_lru_del(lru, item, nid, memcg);
+>>> +    rcu_read_lock();
+>>> +    memcg =3D list_lru_memcg_aware(lru) ? =
+mem_cgroup_from_slab_obj(item) : NULL;
+>>> +    ret =3D list_lru_del(lru, item, nid, memcg);
+>>> +    rcu_read_unlock();
+>>> +
+>>> +    return ret;
+>>> }
+>>> EXPORT_SYMBOL_GPL(list_lru_del_obj);
+>>>=20
+>>=20
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmafkcgACgkQFA3kzBSg
-KbZa3w//RFl0P8gWFR3hdS6fbKK0aVnhjQT3fsM44qD2PqTAaYHWAq/0iHRLyXtb
-GJnEGOU1BEgPwxGlnnleeUe2odHEQPxwFDEhmCedaylFe94FaDv3x5V/G+FmWjCC
-7UhANR6X/1Ff+iuj1kPh2IxzsDTmx0FMX064QykxW2SxAZH76PWjFIqS+XvpBu32
-pb0LkwNms6NbmVDTzlLiQc1RHok9D2nKHYJsXQo8+FqcikvDNgCiyXJndusAgVJY
-n5F0wX7/r6ZX2eOzxxlnapVONZGQJWRkat7YiD2qSVA0Xvri3rTYisjtVGu6t7EI
-/9PRrJsin18Z78WPuFQKFLwMGaNqMWoW1sMgjG+bU3bgqfILSyCat/PsoGZs7UtQ
-Hnfh19WSMOXScjMSL988WYXBjydMtESUtnR0tPEF2xQwIb1TTwS3HugSe+0Un+bT
-PoIXWWAW3HGE3ZZLh0x019ylSnf8SRr/qd1JphWqOCwaSlG6g1sdKp6v9mgEHE4N
-j6B1wekVrWuO9etU7GcNXCpwLxqaNtSMkqNeqYFsiKLvOcBWbgS5skxwejbkdwRm
-yLMvxmuptVgfZ+4PYUGaaRJ9z4P6/sst5TIRXaRwIENovYT3xs8x3lKOGKgSaEiE
-Xu6wUaM9qHuaQhgbb/ROT1d4kB1h0xTGzNEU213/QEvuhvOg+D8=
-=qCWM
------END PGP SIGNATURE-----
-
---qz7dd/UTaslIo8U4--
 
