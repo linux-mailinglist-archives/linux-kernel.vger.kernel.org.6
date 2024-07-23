@@ -1,110 +1,114 @@
-Return-Path: <linux-kernel+bounces-259561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3CE293986F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 04:54:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19497939871
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 04:55:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D87AB21C94
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 02:54:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE840282AF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 02:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBAC13B5A9;
-	Tue, 23 Jul 2024 02:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBC813B7A1;
+	Tue, 23 Jul 2024 02:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lJ0PDWT9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ow9kfqcZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15662F32;
-	Tue, 23 Jul 2024 02:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383C72F32;
+	Tue, 23 Jul 2024 02:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721703235; cv=none; b=rojOfhUZtoA/HNzADtoxAgfIEv1zsVFslnty+fVykXrlOkCBc24M6mP2PW0yeC9FQfaVOW+xs6N0ASIo87pt0tgY7aVf8Z9i56JjRMlgMCOipzdgryl/iPmzdTXyqsMrZ4larzBgI71oBVaYUD82L/8U7u3zkprqfzEpftFUMZc=
+	t=1721703314; cv=none; b=K9y5IvDl0NLmOPzQN+qYdwndyo0O4Z7qlZ36twj3SOL1ZSTyyEK7arcPiU5dVek5W013BvULvmwHTfl4zs0ZJ9CkpoXrIdXHFNZu8FN7H+/9CCInBjWAJPHFRVGYVhLCjAvQWLJbi9XXmUvH8jL/Xi7SF46E+aVwkmplzXes+5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721703235; c=relaxed/simple;
-	bh=mGtWKysuUWTpJmO0vGq+fr7tw12kxzMkz57MGDuNNVw=;
+	s=arc-20240116; t=1721703314; c=relaxed/simple;
+	bh=r5Lkl9j3yYg2QYkDT2TRuuo/egzDRxDmqxTZO5LurjE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qleBOZtxw1ICKk3638xHSvPOkvoe5rpFSlE3cZhmFc0i7VdObUKjhQQH5XFkDw9Pc5ybInMgX3T7j3WF+XgeAwZEY+RDZFFwcmOL9t5+3GMl10yhtmTGZ2ysf6tBYa8mMhtrMzE0EngpU5UwfNPKGOn/p6EC/2O6Tz7/k/0rLHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lJ0PDWT9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A823C4AF0E;
-	Tue, 23 Jul 2024 02:53:54 +0000 (UTC)
+	 To:Cc:Content-Type; b=Ql/leSrvYPPyT+qAWXVxVuRQ+xGn4khEFo4aoco//uv2EwKqRtafgGGKWTNMFRVdVJIY8x7/uL3ink5E/IzIrd8elymwp99FdlJ+EkeBoKwPcTCFVuiXJMGXNxSJdp78Tp6UDRuCZhfkB3a/cEGiF0IMxAvldAYX0NsA8Xk+MuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ow9kfqcZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEA8EC4AF0F;
+	Tue, 23 Jul 2024 02:55:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721703234;
-	bh=mGtWKysuUWTpJmO0vGq+fr7tw12kxzMkz57MGDuNNVw=;
+	s=k20201202; t=1721703313;
+	bh=r5Lkl9j3yYg2QYkDT2TRuuo/egzDRxDmqxTZO5LurjE=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lJ0PDWT9WJnhDCJyPkEbZGh7LdWvb0/AYuM7v3I0LRGP4eQKKFDGG1DNEzLhMf6+r
-	 UZDQpCKHdRm88bhKYan8uVMwqelVDa/d1/WUC4aEDLMHJI2lmeS5WRopXZXTq0RUc2
-	 FDmHfHTMBq6N8RU+Mf5Biz4mOmxzAf19rEKZfu2uXyJuOGJUQzysydWx3lqRjWp7wV
-	 5SEVh95w29U7wgL2rDyIzybUcOnjdfi19mvx0uwwcIS8U+72WUgWdBwbw725kYVSUF
-	 ATYx0zF3bUlr1FZjo34WnkJWRHInkmiAd3EnVHhhah0o0/ltSN3ddcgUCYbCneEPFn
-	 Eff8TwvMPhqQg==
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a1c49632deso4465856a12.2;
-        Mon, 22 Jul 2024 19:53:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVjJ2HC0pL+rBXNoonIMSsGGUtXjfog6W1n/Qi0z+Sf8wsNFgDjowhwuNj39y1z3X53cUBhRArj9FFzW6emAz14L5+6ST+vzwQgr6iPRwS4QVOsh0p7QKfkWhfJlIKnzwtaCRzMb98o5w==
-X-Gm-Message-State: AOJu0YzyrTts7W+obeo8N2FjQy/fSwekYghGWO++02n+2tlr/u23c4kh
-	NxS05yWHOlTaYnQUuOfcmywl8w690FotuSpi6XQMVNDyhcPiyoJmz7R5nzIbi1AB5wmRgTQ+ODY
-	9cuTzJbQ8upN66FLpxgCLgPnv3lI=
-X-Google-Smtp-Source: AGHT+IHIhw7+SWNwrgCM4TUPmphBy1vlVAh0ebdtuMkoTGohzqzDCvWDAqZluZI9pPDAaMBXs7IYAk7gEvqgTpVbGbY=
-X-Received: by 2002:a05:6402:520d:b0:58f:748f:9dca with SMTP id
- 4fb4d7f45d1cf-5a477694f25mr6433188a12.1.1721703233086; Mon, 22 Jul 2024
- 19:53:53 -0700 (PDT)
+	b=Ow9kfqcZmSumYdrLkrtcndoTHZUPe2tajWdsSU+1mNaXPXi1Pzp+HoFHpxJ1UmrFk
+	 JoUN6O5ZqX+LYvqxVCB/7Qu8ScLdHTXwTl6eXuFsSNqOiVmPvuV64Qikw9sq6K2Z1Y
+	 V3FoV2P96jGKziDmyVF08fdsUPjAJjcA8OOb5GUXaPLN+0X5u0sAPcDbmUNU6Cyxb7
+	 7XAAsXxy1L5ksKYVn+2svSb5ETa6lXAjx37nJOVAmuASpu4SquKr7hrIt/nn8xjsya
+	 dwP+YRSR7qWe5zcttyAFdDPpKKUXpI1JXl1UTeO8H5pJTgJiFkSiHLD+29aViW/fLZ
+	 c1H8C7Pe7Um0Q==
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5a2ffc34722so1150986a12.0;
+        Mon, 22 Jul 2024 19:55:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVIeVPEewRjFRctsJsnBCaBKW4tETlydvvm1GDtJ2ECFW96RaVdVRrkJRtZfU+wI5up1xcxAQrEadprXVQegJh/AOqKQm3oGlP1G6FM3b6Qt8jQHJfMD6uxFLHi+mbg3c9k
+X-Gm-Message-State: AOJu0Yz4b8sPXXz/9CTX7PSYcaDKv1xgSLWbOhuj/vVXW5mah/zm4ctd
+	DPsoaPasqO5yeElcPApg1AAdTYfzSXGJoM6Nwe7hG+HwDwM/s7LwuyD+oQszwsJpOld1ARd0qiu
+	WwM6438b4rzm095eBRYaLJsrP/ak=
+X-Google-Smtp-Source: AGHT+IGqqU2ONkKWwep0vC+pn7i7fB0FIRv7XrVoM2pXjMr3n2EucMyLpYljZbVnu1O8EX67qlWSob5H9bd4zyAKpxA=
+X-Received: by 2002:a50:8706:0:b0:57d:3df:ba2d with SMTP id
+ 4fb4d7f45d1cf-5a99ca4d46cmr713090a12.2.1721703312488; Mon, 22 Jul 2024
+ 19:55:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240714-loongson64-cevt-r4k-v1-1-98afed7260aa@flygoat.com>
- <e68b7f44-8a3c-4963-8d95-be8747bf9a61@app.fastmail.com> <ZplQxmWwujQkBU5w@alpha.franken.de>
-In-Reply-To: <ZplQxmWwujQkBU5w@alpha.franken.de>
+References: <09A6BAA84F3EF573+20240722102624.293359-1-wangyuli@uniontech.com> <3bf88ffb-c57b-a881-5a7a-78567e048ae2@loongson.cn>
+In-Reply-To: <3bf88ffb-c57b-a881-5a7a-78567e048ae2@loongson.cn>
 From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 23 Jul 2024 10:53:40 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5gosuRFU8y1uLP6RmAGG9FTMK7ezhBuzeT9i5mkY8C=A@mail.gmail.com>
-Message-ID: <CAAhV-H5gosuRFU8y1uLP6RmAGG9FTMK7ezhBuzeT9i5mkY8C=A@mail.gmail.com>
-Subject: Re: [PATCH] MIPS: Loongson64: Switch to SYNC_R4K
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, 
-	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, linux-kernel@vger.kernel.org
+Date: Tue, 23 Jul 2024 10:55:00 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H7N8J-F4FRLZmSY4=uHo2DhG_pB-zMHCeGuSpx22_SGCQ@mail.gmail.com>
+Message-ID: <CAAhV-H7N8J-F4FRLZmSY4=uHo2DhG_pB-zMHCeGuSpx22_SGCQ@mail.gmail.com>
+Subject: Re: [PATCH] KVM: Loongarch: remove unnecessary definition of KVM_PRIVATE_MEM_SLOTS
+To: maobibo <maobibo@loongson.cn>
+Cc: WangYuli <wangyuli@uniontech.com>, zhaotianrui@loongson.cn, kernel@xen0n.name, 
+	kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	pbonzini@redhat.com, chao.p.peng@linux.intel.com, 
+	Wentao Guan <guanwentao@uniontech.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+Queued, thanks.
 
-On Fri, Jul 19, 2024 at 1:29=E2=80=AFAM Thomas Bogendoerfer
-<tsbogend@alpha.franken.de> wrote:
+On Tue, Jul 23, 2024 at 9:30=E2=80=AFAM maobibo <maobibo@loongson.cn> wrote=
+:
 >
-> On Thu, Jul 18, 2024 at 03:34:30PM +0800, Jiaxun Yang wrote:
-> >
-> >
-> > =E5=9C=A82024=E5=B9=B47=E6=9C=8814=E6=97=A5=E4=B8=83=E6=9C=88 =E4=B8=8A=
-=E5=8D=8810:41=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
-> > > Nowadays SYNC_R4K is performing better than Loongson64's
-> > > custom sync mechanism.
-> > >
-> > > Switch to SYNC_R4K to improve performance and reduce code
-> > > duplication.
-> > >
-> > > Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
-> > > ---
-> > > Last minute for 6.11 :-)
-> >
-> > Hi Thomas,
-> >
-> > Could you please apply this to 6.11 PR, or 6.11 fixes?
-> >
-> > This is technically a left over of previous clock source series, and it=
- does help
-> > on preventing random RCU stall for multi-node Loongson-3 systems.
 >
-> if Huacai is ok with it, I'll add it to a second PR for 6.11.
 >
-> Thomas.
+> On 2024/7/22 =E4=B8=8B=E5=8D=886:26, WangYuli wrote:
+> > "KVM_PRIVATE_MEM_SLOTS" is renamed as "KVM_INTERNAL_MEM_SLOTS".
+> >
+> > KVM_PRIVATE_MEM_SLOTS defaults to zero, so it is not necessary to
+> > define it in Loongarch's asm/kvm_host.h.
+> >
+> > Link: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/=
+commit/?id=3Dbdd1c37a315bc50ab14066c4852bc8dcf070451e
+> > Link: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/=
+commit/?id=3Db075450868dbc0950f0942617f222eeb989cad10
+> > Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+> > Signed-off-by: WangYuli <wangyuli@uniontech.com>
+> > ---
+> >   arch/loongarch/include/asm/kvm_host.h | 2 --
+> >   1 file changed, 2 deletions(-)
+> >
+> > diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/inc=
+lude/asm/kvm_host.h
+> > index fe38f98eeff8..ce3d36a890aa 100644
+> > --- a/arch/loongarch/include/asm/kvm_host.h
+> > +++ b/arch/loongarch/include/asm/kvm_host.h
+> > @@ -26,8 +26,6 @@
+> >
+> >   #define KVM_MAX_VCPUS                       256
+> >   #define KVM_MAX_CPUCFG_REGS         21
+> > -/* memory slots that does not exposed to userspace */
+> > -#define KVM_PRIVATE_MEM_SLOTS                0
+> >
+> >   #define KVM_HALT_POLL_NS_DEFAULT    500000
+> >   #define KVM_REQ_TLB_FLUSH_GPA               KVM_ARCH_REQ(0)
+> >
+> Reviewed-by: Bibo Mao <maobibo@loongson.cn>
 >
-> --
-> Crap can work. Given enough thrust pigs will fly, but it's not necessaril=
-y a
-> good idea.                                                [ RFC1925, 2.3 =
-]
 
