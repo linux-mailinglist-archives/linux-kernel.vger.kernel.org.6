@@ -1,166 +1,78 @@
-Return-Path: <linux-kernel+bounces-260443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83AE393A94B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 00:26:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CF1693A94E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 00:27:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6A2F1C224ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:26:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C3EEB218A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D50149001;
-	Tue, 23 Jul 2024 22:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEE3149001;
+	Tue, 23 Jul 2024 22:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jWKlxAlT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MzQhbo4B"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB9C1422AB;
-	Tue, 23 Jul 2024 22:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F951487F9
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 22:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721773564; cv=none; b=JT29VyPKfuQnrNhT8aiapARQsdrBRcgM6rODL+DBx5S7BejWMDblQeNLoxpmZQTSh6kielH7Niz99Xfy50/N1qtDMc8CCIg8qLxn5xedfiVU8CZZOT18oEJhetTA2F2rdWp7QsmzwQ5OBaWehjX7eMaJf92h4NTqP+/H0NLBqPM=
+	t=1721773613; cv=none; b=WwO573CWkKD2n7EgIZrrMXouE3GFiAQjPi/meYzXi2YIi9+vg2xW6DssjELe4DXGEGlGWomAW+KSTy48GoEHzJMPjpJ/g+/d9ZAP2ZXF3SM5gC2BKgYI60tlHYgTJHrADx2SDQ/uKTEpTAhHFdatumM5XvUJCIZ2xI3DImDpP4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721773564; c=relaxed/simple;
-	bh=BhZgnSGXK8BXEFbXfI+VVvx3DEH0lCNYXTkyl825K3Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mImLZYbZDBhiHXrIVtm7wcqOP2s3vXr/NDgdER+tQ7mCZNIRGG2rEbaMri1osZ3Er+al+NyDybliBrfmC3s7iSX4HFCDPOp5i8KjH6+zpOgBg624NW8631x5fKBcsw+MLFQ2xcQHBnwRNZPuEqITmYPiL466CqI8izIhKlJ5NmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jWKlxAlT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 133B4C4AF09;
-	Tue, 23 Jul 2024 22:26:04 +0000 (UTC)
+	s=arc-20240116; t=1721773613; c=relaxed/simple;
+	bh=fULLGUDLIeNFvBBZga9l8thWsOiKQb2dvOik5/OIF+8=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=A9O6c2VG9jg1QTPuYBgMmw/gEgerhUWabR/MQ4XSYvsQhba6jvsPEXi74Waa7l0zjAww+LT1q/UpIzPGSQqsFIycipIoGlTqI40Gzh0PbWKPAqFjE5wctmTWrWRoPjWFrfCIfOJCAqwIhU+eFgzpOJwU9Z+OGYoN2sd+Xq6FDyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MzQhbo4B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B93A0C4AF0A;
+	Tue, 23 Jul 2024 22:26:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721773564;
-	bh=BhZgnSGXK8BXEFbXfI+VVvx3DEH0lCNYXTkyl825K3Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jWKlxAlTnSofuPsl+O1bPfHxh0J2B7xakdNILB60bjSnxUjM08PcOfQ09OlJBJcI7
-	 UozqAakFcvVSnNESkfXCppd8Nf+higCA1XNquqxE2Xvj2p/+khxCxIhsS1FO0nLMq/
-	 quflLjduLEIUAxFB6dhDxkB8YchB9LWI/OtjFRkqRpTmRwYOJtsJRRtoqVnKyMlur6
-	 BWbNo99d0G2O1sfm8iVvnG8Z0kGkGJHvAIRKKKK5ttx0hBvLOwLgHzBV8SRaQDTnSw
-	 hYK54a9xGcdPwfcaviZJ+u8j7dO/ZVGtc6DOkMljxzWhi94xRE5XeuTAftuJfCCus3
-	 IqV7WKNtH7bTA==
-Date: Tue, 23 Jul 2024 15:26:03 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>, Dave Chinner <david@fromorbit.com>,
-	chandan.babu@oracle.com, dchinner@redhat.com,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, catherine.hoang@oracle.com,
-	martin.petersen@oracle.com, Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v2 07/13] xfs: Introduce FORCEALIGN inode flag
-Message-ID: <20240723222603.GS612460@frogsfrogsfrogs>
-References: <20240705162450.3481169-1-john.g.garry@oracle.com>
- <20240705162450.3481169-8-john.g.garry@oracle.com>
- <20240711025958.GJ612460@frogsfrogsfrogs>
- <ZpBouoiUpMgZtqMk@dread.disaster.area>
- <0c502dd9-7108-4d5f-9337-16b3c0952c04@oracle.com>
- <bdad6bae-3baf-41de-9359-39024dba3268@oracle.com>
- <20240723144159.GB20891@lst.de>
- <2fd991cc-8f29-47ce-a78a-c11c79d74e07@oracle.com>
+	s=k20201202; t=1721773613;
+	bh=fULLGUDLIeNFvBBZga9l8thWsOiKQb2dvOik5/OIF+8=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=MzQhbo4B+oeyjz5d4pJn5rYePGwmg+cGou4LiiBufrEvi5+JH0ZJWP3bjrJhxkSkQ
+	 vMMkeOdgJs5Ioyn6F/FBNqKwBlvSaVNPZba33uusPKomufezMGm6r7PdAul6xpcSV0
+	 OMVk+Y7Xq4/08GezLSYmu10oJffUVqCvtus/+0JOkmLHAGrBxy4LRfDluWjUMVTv35
+	 fFaOdTD/qBale7YckLAieDrZgs/qMLgfb0HTpaoPdZxveVJPkOpshZ3p9eKlULOVgX
+	 Kn99Kf36tvyUUoRLlDpou8oWZBOyq+0IfKali6gF/K1CAkL2xhDBznc+nZeSncP2Kq
+	 XSw57TNf9YFjA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B0A84C43443;
+	Tue, 23 Jul 2024 22:26:53 +0000 (UTC)
+Subject: Re: [GIT PULL] f2fs update for 6.11-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <ZqAZZAmghKIaBAkJ@google.com>
+References: <ZqAZZAmghKIaBAkJ@google.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <ZqAZZAmghKIaBAkJ@google.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-6.11-rc1
+X-PR-Tracked-Commit-Id: bed6b0317441d82c32506750ccd868d83850e6f4
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 5ad7ff8738b8bd238ca899df08badb1f61bcc39e
+Message-Id: <172177361371.759.11999095889182184443.pr-tracker-bot@kernel.org>
+Date: Tue, 23 Jul 2024 22:26:53 +0000
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2fd991cc-8f29-47ce-a78a-c11c79d74e07@oracle.com>
 
-On Tue, Jul 23, 2024 at 04:01:41PM +0100, John Garry wrote:
-> On 23/07/2024 15:42, Christoph Hellwig wrote:
-> > On Tue, Jul 23, 2024 at 11:11:28AM +0100, John Garry wrote:
-> > > I am looking at something like this to implement read-only for those inodes:
-> > 
-> > Yikes.  Treating individual inodes in a file systems as read-only
-> > is about the most confusing and harmful behavior we could do.
-> 
-> That was the suggestion which I was given earlier in this thread.
+The pull request you sent on Tue, 23 Jul 2024 20:58:12 +0000:
 
-Well, Christoph and I suggested failing the mount /earlier/ in this
-thread. ;)
+> git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-6.11-rc1
 
-> > 
-> > Just treat it as any other rocompat feature please an mount the entire
-> > file system read-only if not supported.
-> > 
-> > Or even better let this wait a little, and work with Darrick to work
-> > on the rextsize > 1 reflіnk patches and just make the thing work.
-> 
-> I'll let Darrick comment on this.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/5ad7ff8738b8bd238ca899df08badb1f61bcc39e
 
-COW with alloc_unit > fsblock is not currently possible, whether it's
-forcealign or rtreflink because COW must happen at allocation unit
-granularity.  Pure overwrites don't need all these twists and turns.
+Thank you!
 
-1. For COW to work, each write/page_mkwrite must mark dirty every
-fsblock in the entire alloc unit.  Those fsblocks could be cached by
-multiple folios, which means (in iomap terms) dirtying each block in
-potentially multiple iomap_folio_state structures, as well as their
-folios.
-
-2. Similarly, writeback must then be able to issue IO in quantities that
-are aligned to allocation units.  IOWs, for every dirty region in the
-file, we'd have to find the folios for a given allocation unit, mark
-them all for writeback, and issue bios for however much we managed to
-do.  If it's not possible to grab a folio, then the entire allocation
-unit can't be written out, which implies that writeback can fail to
-fully clean folios.
-
-3. Alternately I suppose we could track the number of folios undergoing
-writeback for each allocation unit, issue the writeback ios whenever
-we're ready, and only remap the allocation unit when the number of
-folios undergoing writeback for that allocation unit reaches zero.
-
-If we could get the mapping_set_folio_order patch merged, then we could
-at least get partial support for power-of-two alloc_unit > fsblock
-configurations by setting the minimum folio order to log2(alloc_unit).
-For atomic writes this is probably a hard requirement because we must be
-able to submit one bio with one memory region.
-
-For everyone else this sucks because cranking up the min folio order
-reduces the flexibility that the page cache can have in finding cache
-memory... but until someone figures out how to make the batching work,
-there's not much progress to be made.
-
-For non power-of-two alloc_unit we can't just crank up the min folio
-order because there will always be misalignments somewhere; we need a
-full writeback batching implementation that can handle multiple folios
-per alloc unit and partial folio writeback.
-
-djwong-dev implements 1.  It partially handles 2 by enlarging the wbc
-range to be aligned to allocation units, but it doesn't guarantee that
-all the folios actually got tagged for the batch.  It can't do 3, which
-means that it's probably broken if you press it hard enough.
-
-Alternately we could disallow non power-of-two everywhere, which would
-make the accounting simpler but that's a regression against ye olde xfs
-which supports non power-of-two allocation units.
-
-rtreflink is nowhere near ready to go -- it's still in djwong-wtf behind
-metadata directories, rtgroups, realtime rmap, and (probably) hch's
-zns patches.
-
-> > > > So what about forcealign and RT?
-> > > 
-> > > Any opinion on this?
-> > 
-> > What about forcealign and RT?
-> 
-> In this series version I was mounting the whole FS as RO if
-> XFS_FEAT_FORCEALIGN and XFS_FEAT_REFLINK was found in the SB. And so very
-> different to how I was going to individual treat inodes which happen to be
-> forcealign and reflink, above.
-> 
-> So I was asking guidance when whether that approach (for RT and forcealign)
-> is sound.
-
-I reiterate: don't allow mounting of (forcealign && reflink) or
-(forcealign && rtextsize > 1) filesystems, and then you and I can work
-on figuring out the rest.
-
---D
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
