@@ -1,205 +1,118 @@
-Return-Path: <linux-kernel+bounces-260215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B8B293A49C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:58:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7407493A4A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADF431C2285F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:58:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B9D81C227AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:00:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABE81581F4;
-	Tue, 23 Jul 2024 16:58:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADCDF1581E4;
+	Tue, 23 Jul 2024 17:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PizVxo1o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H3wwsIMb"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B62B5137748;
-	Tue, 23 Jul 2024 16:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D77156F54;
+	Tue, 23 Jul 2024 17:00:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721753909; cv=none; b=K73k6FCP2+F+NUysTJ3SCPtzdQMhlX1ahEuTy/2Nj0+GwFlfcQe4PWQ42/Vf3x8juOzVAe+38FHauv9ekZJ1159csPiPY0l0vH/a99WV/RTbUgLTLB/mDWjgMM28q1HcUo8xSLPUCgXIbqZBqoRBpFWcGqTDDwWOya44HdfzsHk=
+	t=1721754017; cv=none; b=gcY2URCtpZNIMb0PwtAqNKwXfyrimhFVB2kvj/MeDbNvRWT7DItFxG6NBBJBfztn7OuQ9XVNb5lXM/4IP+mc3UytClDPLlsi732T9qITn+fRwSor8hRGLFJFAqzod/1+Xj0tlKJfOqwfqB1LklpUaECye6uKXBBWO49LLVdbinQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721753909; c=relaxed/simple;
-	bh=Sqs/0quIp3Pa11UvNTzT7w+Q8ZTby6g4NE3CHsEZAl4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aSigzfgDlX5GsTviFbeu8yUqXTbQ6UfC8h2og7xrYZBjxsr90+8WqNLlPwlzYhu8BpGZE4z7ioD47fuYTvpi0Mmxwkow9Ri988CosOfET16JlVBSXFcOtCrrfw+WcNdZv+vAe+Lv4zmai1z8VgAoFYdZXGyXogsZBrWftNvufDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PizVxo1o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9B48C4AF09;
-	Tue, 23 Jul 2024 16:58:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721753909;
-	bh=Sqs/0quIp3Pa11UvNTzT7w+Q8ZTby6g4NE3CHsEZAl4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PizVxo1oR2M8aKRGi2wOJgA4mAsf5CbqST3vugX2h0rqCuMeiaaCSx8xC1fpV9HEe
-	 DGbtr2BY9p77OoiW+VImy8DX/QF2Hgru7aRZa5IhJG2OECUM7HdF+kYbRrGh2s6FZH
-	 reEVHGWTRZLtmxEb1/amXltuFsKc8nIsXle1TwlNUx/jO6qgT7ahee2WTMX4x5idcz
-	 ZBsh4mT54/hU0zLqr8y7IooaOv+cq1bWaw5tDLZJH8f2tXJFj8ni2GPxmDmiTWP4V2
-	 N8XOoLmriui7NjecJDPiyWXWyz80XTtNpqKX2X3uiUtLqncMwex6dASfnZu/CpENta
-	 5rJyhTfBf3doA==
-From: SeongJae Park <sj@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Matthew Wilcox <willy@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <kees@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Brendan Higgins <brendanhiggins@google.com>,
-	David Gow <davidgow@google.com>,
-	Rae Moar <rmoar@google.com>
-Subject: Re: [PATCH v3 4/7] mm: move internal core VMA manipulation functions to own file
-Date: Tue, 23 Jul 2024 09:58:25 -0700
-Message-Id: <20240723165825.196416-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <36667fcc4fcf9e6341239a4eb0e15f6143cdc5c2.1721648367.git.lorenzo.stoakes@oracle.com>
-References: 
+	s=arc-20240116; t=1721754017; c=relaxed/simple;
+	bh=4GrRylsdB0mp1TqIwIq6Dg6WHxP0uXAxjk5b6WquL4w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HlCqq01aQWoz8bGuztx05U9sPqDvIDQONyKTLzGmI1h58CeUTXhZto/gxuvTB5XdygvYHMHThG2Sgu9QBq+6t+KS5DE0N264J9ubCXdGBXZyV6tbmDPYCJuvcWAXV6l7u+GeJUPyQbxA1KJVx/nPXUT1JJuT70JV7y4LsWVuy3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H3wwsIMb; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46N9q4bj009144;
+	Tue, 23 Jul 2024 16:59:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4GrRylsdB0mp1TqIwIq6Dg6WHxP0uXAxjk5b6WquL4w=; b=H3wwsIMbYsYqj0Qo
+	rEtGlyRqE85r74yLqTF40pwk7fniFilkcyN5yJDfK4ExzJeEVMMywQpftKQSPQac
+	dp84bixfeScjU/wiZ3b/lbuGpZCWcVH5Tb26DYn3PvG6eYB6t/luG5NJzQc/SCUw
+	x5mY1ZhJxCREHaxmGhgt++sgI/IYuiHq9DB3GztawNydknkYgwvvXtdYIeMaNjX0
+	2CI9P/531H2fxMY4IEykuCY0h0ozHt0B+LOqZZ1AgifeEQ0FmrIs0KsAGsbQJWYl
+	/ydB+2mnlxbuxVhjyPX4B+1xsLCpgeJsFKdXIV9C6GGG7597alxWrMNVblHm1R0D
+	++n0mw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g487fm8h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Jul 2024 16:59:55 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46NGxreD027379
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Jul 2024 16:59:53 GMT
+Received: from [10.110.73.223] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 23 Jul
+ 2024 09:59:50 -0700
+Message-ID: <5ea6b07e-7583-45f6-afd1-05f2856bea27@quicinc.com>
+Date: Tue, 23 Jul 2024 09:59:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-Hi Lorenzo,
-
-On Mon, 22 Jul 2024 12:50:22 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
-
-> This patch introduces vma.c and moves internal core VMA manipulation
-> functions to this file from mmap.c.
-> 
-> This allows us to isolate VMA functionality in a single place such that we
-> can create userspace testing code that invokes this functionality in an
-> environment where we can implement simple unit tests of core functionality.
-> 
-> This patch ensures that core VMA functionality is explicitly marked as such
-> by its presence in mm/vma.h.
-> 
-> It also places the header includes required by vma.c in vma_internal.h,
-> which is simply imported by vma.c. This makes the VMA functionality
-> testable, as userland testing code can simply stub out functionality
-> as required.
-> 
-> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> ---
->  include/linux/mm.h |   35 -
->  mm/Makefile        |    2 +-
->  mm/internal.h      |  236 +-----
->  mm/mmap.c          | 1980 +++-----------------------------------------
->  mm/mmu_notifier.c  |    2 +
->  mm/vma.c           | 1766 +++++++++++++++++++++++++++++++++++++++
->  mm/vma.h           |  364 ++++++++
->  mm/vma_internal.h  |   52 ++
->  8 files changed, 2294 insertions(+), 2143 deletions(-)
->  create mode 100644 mm/vma.c
->  create mode 100644 mm/vma.h
->  create mode 100644 mm/vma_internal.h
-> 
-[...]
-> diff --git a/mm/vma_internal.h b/mm/vma_internal.h
-> new file mode 100644
-> index 000000000000..e13e5950df78
-> --- /dev/null
-> +++ b/mm/vma_internal.h
-> @@ -0,0 +1,52 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +/*
-> + * vma_internal.h
-> + *
-> + * Headers required by vma.c, which can be substituted accordingly when testing
-> + * VMA functionality.
-> + */
-> +
-> +#ifndef __MM_VMA_INTERNAL_H
-> +#define __MM_VMA_INTERNAL_H
-> +
-[...]
-> +#include <asm/current.h>
-> +#include <asm/page_types.h>
-> +#include <asm/pgtable_types.h>
-
-I found the latest mm-unstable fails build for arm64 and kunit (tenically
-speaking, UM) with errors including below.  And 'git bisect' points this patch.
-
-From arm64 build:
-      CC      mm/vma.o
-    In file included from /mm/vma.c:7:
-    /mm/vma_internal.h:46:10: fatal error: asm/page_types.h: No such file or directory
-       46 | #include <asm/page_types.h>
-          |          ^~~~~~~~~~~~~~~~~~
-    compilation terminated.
-
-From kunit build:
-
-    $ ./tools/testing/kunit/kunit.py build
-    [...]
-    $ make ARCH=um O=.kunit --jobs=36
-    ERROR:root:../lib/iomap.c:156:5: warning: no previous prototype for ‘ioread64_lo_hi’ [-Wmissing-prototypes]
-      156 | u64 ioread64_lo_hi(const void __iomem *addr)
-          |     ^~~~~~~~~~~~~~
-    ../lib/iomap.c:163:5: warning: no previous prototype for ‘ioread64_hi_lo’ [-Wmissing-prototypes]
-      163 | u64 ioread64_hi_lo(const void __iomem *addr)
-          |     ^~~~~~~~~~~~~~
-    ../lib/iomap.c:170:5: warning: no previous prototype for ‘ioread64be_lo_hi’ [-Wmissing-prototypes]
-      170 | u64 ioread64be_lo_hi(const void __iomem *addr)
-          |     ^~~~~~~~~~~~~~~~
-    ../lib/iomap.c:178:5: warning: no previous prototype for ‘ioread64be_hi_lo’ [-Wmissing-prototypes]
-      178 | u64 ioread64be_hi_lo(const void __iomem *addr)
-          |     ^~~~~~~~~~~~~~~~
-    ../lib/iomap.c:264:6: warning: no previous prototype for ‘iowrite64_lo_hi’ [-Wmissing-prototypes]
-      264 | void iowrite64_lo_hi(u64 val, void __iomem *addr)
-          |      ^~~~~~~~~~~~~~~
-    ../lib/iomap.c:272:6: warning: no previous prototype for ‘iowrite64_hi_lo’ [-Wmissing-prototypes]
-      272 | void iowrite64_hi_lo(u64 val, void __iomem *addr)
-          |      ^~~~~~~~~~~~~~~
-    ../lib/iomap.c:280:6: warning: no previous prototype for ‘iowrite64be_lo_hi’ [-Wmissing-prototypes]
-      280 | void iowrite64be_lo_hi(u64 val, void __iomem *addr)
-          |      ^~~~~~~~~~~~~~~~~
-    ../lib/iomap.c:288:6: warning: no previous prototype for ‘iowrite64be_hi_lo’ [-Wmissing-prototypes]
-      288 | void iowrite64be_hi_lo(u64 val, void __iomem *addr)
-          |      ^~~~~~~~~~~~~~~~~
-    In file included from ../mm/vma_internal.h:46,
-                     from ../mm/vma.c:7:
-
-Maybe the above two #include need to be removed or protected for some configs?
-I confirmed simply removing the two lines as below makes at least kunit, arm64,
-and my x86_64 builds happy, but would like to hear your thoughts.
-
-"""
-diff --git a/mm/vma_internal.h b/mm/vma_internal.h
-index e13e5950df78..14c24d5cb582 100644
---- a/mm/vma_internal.h
-+++ b/mm/vma_internal.h
-@@ -43,8 +43,6 @@
- #include <linux/userfaultfd_k.h>
-
- #include <asm/current.h>
--#include <asm/page_types.h>
--#include <asm/pgtable_types.h>
- #include <asm/tlb.h>
-
- #include "internal.h"
-"""
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] sh: Restructure setup code to reserve memory regions
+ earlier
+To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        <ysato@users.sourceforge.jp>, <dalias@libc.org>
+CC: <linux-sh@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <robh+dt@kernel.org>, <kernel@quicinc.com>
+References: <20240711214438.3920702-1-quic_obabatun@quicinc.com>
+ <a68b7cd0e3b143f023414feca279deb768d43575.camel@physik.fu-berlin.de>
+ <121b8077-bc6d-42a3-8ec2-c792e84bd947@quicinc.com>
+ <831887db73d9eafc50940315ed44139107bd5f2a.camel@physik.fu-berlin.de>
+ <636943c1-6e32-4dd1-abdd-5a110e9aa07c@quicinc.com>
+ <d12de025cfb71bcf2a86aa54251aac20f16d32b7.camel@physik.fu-berlin.de>
+Content-Language: en-US
+From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+In-Reply-To: <d12de025cfb71bcf2a86aa54251aac20f16d32b7.camel@physik.fu-berlin.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: iMk1Q4DWqact0PwbnYfnVZng_N2Sbp4s
+X-Proofpoint-GUID: iMk1Q4DWqact0PwbnYfnVZng_N2Sbp4s
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-23_05,2024-07-23_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ suspectscore=0 phishscore=0 priorityscore=1501 mlxlogscore=560
+ malwarescore=0 adultscore=0 impostorscore=0 clxscore=1015
+ lowpriorityscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2407230117
 
 
-Thanks,
-SJ
+On 7/23/2024 12:57 AM, John Paul Adrian Glaubitz wrote:
+> Hi Oreluwa,
+>
+> On Wed, 2024-07-17 at 19:22 -0700, Oreoluwa Babatunde wrote:
+>> Thanks for your feedback and for working with me on this.
+>> I have uploaded a new version here:
+>> https://lore.kernel.org/all/20240718021822.1545976-1-quic_obabatun@quicinc.com/
+>>
+>> Please let me know if this properly addresses your comments.
+> Thanks. I'll have another look this week, including testing.
+>
+> But I have decided to send the pull request to Linus for v6.11 now,
+> so I don't have to hurry with the review.
+>
+> Adrian
+ack.
 
-[...]
+Thank you!
 
