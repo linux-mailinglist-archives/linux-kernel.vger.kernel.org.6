@@ -1,105 +1,122 @@
-Return-Path: <linux-kernel+bounces-260430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B29A293A8D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:47:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D50393A8D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB7211C229AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:47:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EBD01C2267B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E481487CD;
-	Tue, 23 Jul 2024 21:47:22 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DED145B34;
+	Tue, 23 Jul 2024 21:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="F2WGeDs/"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2256145FE9;
-	Tue, 23 Jul 2024 21:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D84143C63
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 21:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721771241; cv=none; b=aj+InhCZL6hRT+CQ6cG1hHbqBxvAnI2AHZB2vKR/XGGJ5N1KH6bMLIw/eg548fpGpTW8KlxTsQHVoOlivw2tcVAsCMUoU3qzp5b0aBfP7+klSAqz/nVQHZQ8zRZxDIAW5pBqnPSYP7nk2ofJBzSttX0He8qqjmRff2H/cphuSwA=
+	t=1721771367; cv=none; b=eOpc182O6pRxKeBo3R7mgu33BNazzA5MrWhgvh+QC4Rniph1Rwjqw1lRCU/HhyzE+wuWXLE2lbwV2Y3xoKoZZcgCbRtaC/+jkH3WSP4SkSpj6NSpLOb6G7EEm/D04T7hGECIClveYzLuuYeRQIQ0krUowH7MT7gjrUinAQSe/zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721771241; c=relaxed/simple;
-	bh=xZjrLs8+I+Uxd2mYhKfa05Mbl8pflv30J5AQqjx1YxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Om1gu/oqoWQBWo55TyGQ7k7HwWcdS9elFPqf0Y7mzQ2UOjhPg2fzTnx/mzB6M9gAzQxkh2sOh49+syrdWfVVjxuCuXvZkkkOGMbW+Qx+aWqkS1RwkRVaWiasztbQdImCfLFHvNgTTHa4lDXTom4jCmZnsURMrWNEUDs+Lqx9jEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sWNLh-000000004Ah-3eHt;
-	Tue, 23 Jul 2024 21:47:09 +0000
-Date: Tue, 23 Jul 2024 22:47:00 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
-	Mark Lee <Mark-MC.Lee@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH net] net: ethernet: mtk_eth_soc: drop clocks unused by
- Ethernet driver
-Message-ID: <ZqAk1NW4_E9SRjUO@makrotopia.org>
-References: <38559102c729a811dc8a85f6c7cee07228cffd3e.1721739769.git.daniel@makrotopia.org>
- <125775a6-42f2-4294-9593-518ad6c852f7@lunn.ch>
+	s=arc-20240116; t=1721771367; c=relaxed/simple;
+	bh=tuer9m0mKhQDkVcfZ8kLcPt66+D93aJTgEJaTNWyVuw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sXjzjnTXa+YkWWN3efxDKFG/R7OeYjv6HIQr3vJsvofAfhnt98Yz+y20TSNr8wOxkwHOrHU/uYEGL6bvbqSLFiEJi21i5SHq4wwiwcbXqgX5iNUhoeYN8n0ENTYM64I8kw3waJmUA28OFZtcUjKntT77LtnyMvZy21SxSG46jGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=F2WGeDs/; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52f01ec08d6so3863955e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:49:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1721771363; x=1722376163; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bjAE1c0pKk54yZBK3el2XKNqcN4ZjHoabxTHGF/u9Pk=;
+        b=F2WGeDs//7crFtOYkm6rtPlFK+Ox1hSav2SxNq7eIjzMopCxRsqgVgNkQb41Zzi+Yw
+         xgLxFy1Hzte2Y3gbrVW8ArbKPMI2j1YIO4SO9Fvs44eTq15pDgNVeF2VDK1eDTmVC3BG
+         qVjYfAm61qWdjHNC5W9IJZGGTcTLLhrANye7M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721771363; x=1722376163;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bjAE1c0pKk54yZBK3el2XKNqcN4ZjHoabxTHGF/u9Pk=;
+        b=qiwkLu8y/g+Z7M5S4PaQ9gPcEY/Mm7yxejVV+2ALwsf00E5VP93lqDctyEEy3rvWIi
+         4hwYzD5sy4+ywYgLe2tKRo0AxMJdzKfcfi4COd+SYRum/Lycog9SU47cCJQlRsBdAHp0
+         BEEWj5WZRQneNOyVemrfSRjmaArBCjybT+xHV4K9RQvj7k18BK/pbl/fDS5L/orr+Fxb
+         8BBuCGQS8VCB15Fa8Dkxqyjicl6AMuAFZvUpxUWCyi5nLD5JBnorqQvzKO64rUHtDhKR
+         XV6QWzttU6JbzcLZ5QjwDnk5yJou+MogbeZW0Ah/JB35EEtOxRkNfhbsZKRo9doJTIWO
+         RUyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGydekxbzK+ZRGf31wh6ddPjV71RtLeU5GOvJ2qEORWIshUwCex9DhMt6xTGB+wM3nMeSRun6w2jCbGCfSZlROLSbCqvdeG+DMSmpQ
+X-Gm-Message-State: AOJu0YwuaPh7S1yKFW0sKIlX6WFmNMjP2O+ZhVf2BI3Iu6/6Ddeyl73K
+	9q3689XZ4XZ9vNzgGjhJK3PvabRxhofbmXBjh7bxt3E/5ahWqYQ0GEn8KljpNEppb/xjOpMTJDd
+	1PfgY7w==
+X-Google-Smtp-Source: AGHT+IHR3tVKQo6bKYe+34plFpwZVfjY1/Zl2gFnPd91nJ2CphBSz3ppeKomOmEGgdTR1VnqBh5bgA==
+X-Received: by 2002:a05:6512:6cf:b0:52e:767a:ada3 with SMTP id 2adb3069b0e04-52fc406f8bdmr3272901e87.47.1721771363297;
+        Tue, 23 Jul 2024 14:49:23 -0700 (PDT)
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a59be83c69sm4702363a12.58.2024.07.23.14.49.22
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jul 2024 14:49:22 -0700 (PDT)
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-58b0beaf703so5010019a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:49:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXR6h4Rjag0TnKtUbun3xmmEbDJ3rcqbwEwtMnf59HPr7u9PaghYk2r8jR9DQmOwShCwK7nF3d8ZYJKpc6d0dQqVVk1dt9kBjYATrK5
+X-Received: by 2002:a50:c050:0:b0:57c:9d54:67db with SMTP id
+ 4fb4d7f45d1cf-5a3eee849b2mr8538235a12.9.1721771362225; Tue, 23 Jul 2024
+ 14:49:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <125775a6-42f2-4294-9593-518ad6c852f7@lunn.ch>
+References: <CAK7LNATbZgv6JNzSXznOm47oNUXku430-taoK4iE1G0YcBy4Lw@mail.gmail.com>
+In-Reply-To: <CAK7LNATbZgv6JNzSXznOm47oNUXku430-taoK4iE1G0YcBy4Lw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 23 Jul 2024 14:49:05 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiF3yeWehcvqY-4X7WNb8n4yw_5t0H1CpEpKi7JMjaMfw@mail.gmail.com>
+Message-ID: <CAHk-=wiF3yeWehcvqY-4X7WNb8n4yw_5t0H1CpEpKi7JMjaMfw@mail.gmail.com>
+Subject: Re: [GIT PULL] Kbuild updates for v6.11-rc1
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Andrew,
+On Tue, 23 Jul 2024 at 12:44, Masahiro Yamada <masahiroy@kernel.org> wrote:
+>
+> You will get a merge conflict in scripts/Makefile.lib
 
-On Tue, Jul 23, 2024 at 08:35:16PM +0200, Andrew Lunn wrote:
-> On Tue, Jul 23, 2024 at 02:04:02PM +0100, Daniel Golle wrote:
-> > Clocks for SerDes and PHY are going to be handled by standalone drivers
-> > for each of those hardware components. Drop them from the Ethernet driver.
-> 
-> Please could you explain in more details how this does not break
-> backwards compatibility. Should there also be a depends on, to ensure
-> the new driver is loaded? Will old DT blobs still work?
+So the merge conflict certainly wasn't too bad, but I really don't
+love the complex  fdtoverlay command duplication.
 
-At this stage the Ethernet driver only supports the first MAC which
-is hard-wired to the built-in DSA switch.
-The clocks which are being removed for this patch are responsible for
-the for the SerDes PCS and PHYs used for the 2nd and 3rd MAC which
-are anyway not yet supported.
+Strangely enough, there's a simplification for the DT_CHECK_CMD case
+(used only once), but not for this creation case (now duplicate).
 
-Those clocks are basically a left-over from the implementation found in
-MediaTek's SDK which does all that inside the Ethernet driver and using
-lots of syscon regmaps to access the various parts of the SoC.
+I didn't do it as part of the merge, but may I suggest adding something like
 
-This has been deemed unsuitable for inclusion in upstream Linux[1] and I
-was asked to implement standalone PHY, CLK and PCS drivers instead,
-which is obviously more clean and also results in the device tree being
-more understandable.
+  DT_CREATE_CMD = $(objtree)/scripts/dtc/fdtoverlay -i $(filter %.dtb
+%.dtbo, $^) -o
 
-By now, a CLK driver and a PHY driver (PHY as in drivers/phy, not
-drivers/net/phy) has landed in upstream Linux([2], [3]), I'm currently
-finalizing the PCS drivers which are going to be in charge of handling
-the clocks which are now going to be removed from the Ethernet driver.
+and then using
 
-tl;dr: The clocks were added by mistake and features of the SoC using
-them are up to now unsupported by vanilla Linux.
+   $(DT_CREATE_CMD) $@
 
-[1]: https://patchwork.kernel.org/comment/25517462/
+to pair up with the existing "$(DT_CHECK_CMD) $@" logic?
 
-[2]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=4b4719437d85f0173d344f2c76fa1a5b7f7d184b
+Or something along those lines?
 
-[3]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ac4aa9dbc702329c447d968325b055af84ae1b59
+(And no, I didn't check whether maybe the argument order for the
+'fdtoverlay' script might matter, or something like that - I don't
+think it does, but I did *not* test the above suggestion or really try
+to think about it deeply, just mostly a reaction against the command
+duplication particularly when there is now a comment about the
+subtlety of the arguments)
+
+             Linus
 
