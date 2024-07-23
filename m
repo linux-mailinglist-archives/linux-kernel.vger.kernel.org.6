@@ -1,150 +1,151 @@
-Return-Path: <linux-kernel+bounces-260405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E0193A87F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:07:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 087F393A87E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:07:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E66581C22A21
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:07:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8717B284363
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA3E14373A;
-	Tue, 23 Jul 2024 21:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gd7NHDNQ"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2B6143C6B;
+	Tue, 23 Jul 2024 21:07:23 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C349140384
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 21:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DE7140384
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 21:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721768854; cv=none; b=hPws5rS27xRAcrrmwCmfMfawVceWuH9RhBUXy9+wsNG0JLb1CmMuTwiSRoGon3V2Oy73PXxOsb7XXsJC8Ylo9lgOHRq36Qph0yd0jBX2eUG0jWc/MliUiMMQxm0edB3klBajwEAu05+5BBoGEPitiDR+b/pjID/7eKyb5hiodtA=
+	t=1721768843; cv=none; b=a4k8d836KaHO902NfgloydhDe65IBWY7QBPB4c8wQKCc4AEJoDStaw2IF74+bedDjpUowCiiYOf3/LbwtCkVwPn+3SkoDEVpWeeI05vNd/olbzfRAEF7/nh3CE5X12hTowHsGPHHX7UHssXpNmSNAVmhQsWrCPrMwIRmhQuF+Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721768854; c=relaxed/simple;
-	bh=F7iLMW3rJLqXlZUzeoBPhqh75CjXvVXCPj8M/vQCtuk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZajKhZnzKO5VsnshOJwvN33TwuyUwS1ciPU33etB5WdHvOVA8CPMctUQsoPEu6W5tp4aGmNofofH2GGpM6pQIMqWm5Jq6rl4WUsFnXPX49FZaPULj5E39TGbFYwnBN0dckER8r7nH0gbDJtwCd7B4MUE+rpsvVFWk6wD3eYqjOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gd7NHDNQ; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52fc14d6689so2391210e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:07:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1721768850; x=1722373650; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=echzYBfPOzOcg9v7iQfcS5oYmvkbZgxPwE2bf82ps3o=;
-        b=gd7NHDNQcji3UEnQMsviRDUFiRJOd6ml0g8KCc8NckzPzGZlExIrpWeGx9ihTCbvo1
-         1C5HmfeKsh1uy3BtWcmztyvR5XUxCJBIJi09beL4vWmubC+XNeYT6vgu2WRUPmdlKj0d
-         C+6V5ETmmUM8Z+uCtgvY4+GYEJqZ1npA0aA7Q=
+	s=arc-20240116; t=1721768843; c=relaxed/simple;
+	bh=685U6xRrk9Niks7TMgxDEgbUAvN4igfvtzi3ttrZAVc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HOR10aLLXV2BRuHJtydO4ZTqxM1rB/O1nl6xzWHiLMIuZawVy+Ut2ZPAgxCqSc8aVS8Wylq56sIIt89icKQ00lzFGOUoAXTdQoYReBiFYrAkLNdAxd91qlRObBWiVOH6TRMQGUQ9nTuhy6MQNrXYDIphJ3P9/R8ujs4R3o1MP/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-396fa3fe46cso94049205ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:07:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721768850; x=1722373650;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=echzYBfPOzOcg9v7iQfcS5oYmvkbZgxPwE2bf82ps3o=;
-        b=XFPtNLjpOlwQmrbpZoYYRlpuIvZSYYtHWhlEdqk3FQWJemxnN5RXFFyEXfrAVI4Nqw
-         vOAdt995Op6gteyIt7iAnDK2bYOa70uMEYlqdyGZZRbdtfMBneqcsbwR6LBiu4pc6M3H
-         1Cf16bZsOZdXHATfNihK7Ghc29tL83EWLRMsHNFNmhMh/72tHOEiD8ZkuPuCB385+VTd
-         ituH6guX3s+kUMM4tAMlabgB4J5gLIi722MpjKxje4lOX19Y7NQull4ljPB+kpw4Q9kd
-         KoVogTX7fBOH0LPi0XF0gWKDoGdIOTXYLYkBRdqvWyBua3dtHpCNisxXbvOUqsXYRtWY
-         uY5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVJR4f+nXlggoTPs9/Cj/3+Ogw+bIA1wCMRCK+bnLJPtOEbe5+yyePnEAhv1SuABEoFxMCTNMP4kigESbweCdl2Hrz1X+I4LPgLSIfG
-X-Gm-Message-State: AOJu0YzgSo3rJKqxO/FufRy92saP9NQMjklpi2pxa2XApGX4sS9Q51cC
-	KIv7wYvG5/GnnXDkGAHWx25RIvIBtFmmYojE0edEdMY9PjsAC3Hmrdz9k+72jFgHrk2X6ttOIg1
-	HzrTC5g==
-X-Google-Smtp-Source: AGHT+IE3t2dSHNiyQdtY7NDy8pSsxcwDRNX4+RdRdJxwXTXAPjEjakJQb2i52f7WPjdgzBdncSWa4A==
-X-Received: by 2002:a05:6512:1323:b0:52d:215b:9028 with SMTP id 2adb3069b0e04-52efb86de9dmr6571050e87.60.1721768850187;
-        Tue, 23 Jul 2024 14:07:30 -0700 (PDT)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fc2cb0ca5sm567836e87.292.2024.07.23.14.07.29
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 14:07:29 -0700 (PDT)
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ef2c56d9dcso30971891fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:07:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV9kaEK9KYRfQ9y+mA8yKlQOsUuGGg3kovZcgO0paTL6Am5JI+eSOd450dNn1ACLjryWFJbDCA/5vGEVoccqGXYLWfVJFeKhjUhJb5O
-X-Received: by 2002:a05:651c:50d:b0:2ef:17f7:6e1d with SMTP id
- 38308e7fff4ca-2ef17f76f31mr89418101fa.4.1721768848674; Tue, 23 Jul 2024
- 14:07:28 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721768841; x=1722373641;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oKV5entdyuyqCkhse82tfmI5Y8Iw8p8fgLMn5aF7LYY=;
+        b=kNjOyksdAHOeR7SPo0kP+JrJwzByzvsJM5dCbtclAWVRCSK2zdnbaXqbrvK9y3ctnA
+         biaRvdk0Wo+gMPtUOgCl/pZGFEuBUU5OF4uvZGjprs0gH9lQpC611kHF9rFVwlgoa8fG
+         wp7m+YcO8ZQcb+3/i4Bx71rumK69uBN2DPFwiOdjDFqBah3/En4tH82/0JVNI3taw+oG
+         9GSvu0w8dr6zVyL698xWsYiu2A4+I4tp0z+G23EhCOaQKr7uAU1j0EmUamZcdGtqnfRQ
+         eRFgEHpWnk6twwLIp+51rKuBBDKA8RIa3cPCifA/YdeHwYkSBwOHKkuKLL08psUUhbz2
+         SB4w==
+X-Forwarded-Encrypted: i=1; AJvYcCVCN02nu0dj9pfKRGmLvDtWkIWCI1UPxtCxEC0tKLWdYNjE4wg6wfEDaWqT79EoLXC76irN8Kp/u40SbdVGPghtOg9So+pcjoEXCFrp
+X-Gm-Message-State: AOJu0YyLbywg9b/5Wh3gckiFbLsLaj+RwE+u7fe1g/+WNMknz3WU9Z1y
+	9EL4hnegmpcaf/lLa9PeGUrqAMIHqggei3ASugXd4l6RCA6qwpnc5tTTlSpRbx1Qux8HPrC+9sk
+	r0kCNCuJCZicH8ICMXGcXT1Srt2c5X7t3+6Lxm6bhu2fghFm/DDoxabg=
+X-Google-Smtp-Source: AGHT+IGOq8EnuxF1rGOzUtWxHbKmi2JXzjtZG9okOXvtLB9HPN2u675AX7s7VarmG0LWlBdKGL89eD3FO0hynT/rZyGv80d7trby
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zp-_7R49fIHgIhaq@pathway.suse.cz> <CAHk-=whU_woFnFN-3Jv2hNCmwLg_fkrT42AWwxm-=Ha5BmNX4w@mail.gmail.com>
- <87ed7jvo2c.fsf@jogness.linutronix.de>
-In-Reply-To: <87ed7jvo2c.fsf@jogness.linutronix.de>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 23 Jul 2024 14:07:12 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh+cxX2Sxc6RPBKkgYO67o2mdVfW6sQNMYc_x2QoP4LOQ@mail.gmail.com>
-Message-ID: <CAHk-=wh+cxX2Sxc6RPBKkgYO67o2mdVfW6sQNMYc_x2QoP4LOQ@mail.gmail.com>
-Subject: Re: [GIT PULL] printk for 6.11
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>, Jan Kara <jack@suse.cz>, 
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6e02:1d82:b0:382:feb2:2117 with SMTP id
+ e9e14a558f8ab-398e8b665f5mr4955245ab.6.1721768841150; Tue, 23 Jul 2024
+ 14:07:21 -0700 (PDT)
+Date: Tue, 23 Jul 2024 14:07:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000029981d061df08c8d@google.com>
+Subject: [syzbot] [bluetooth?] KMSAN: uninit-value in hci_rx_work
+From: syzbot <syzbot+6ea290ba76d8c1eb1ac2@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 23 Jul 2024 at 13:41, John Ogness <john.ogness@linutronix.de> wrote:
->
-> Petr's pull request provides the functionality for a CPU to call
-> printk() during emergencies so that each line only goes into the
-> buffer. We also include a function to perform the flush at any time. As
-> the series is implemented now, that flush happens after the warning is
-> completely stored into the buffer. In cases where there is lots of data
-> in the warning (such as in RCU stalls or lockdep splats), the flush
-> happens after significant parts of the warning.
+Hello,
 
-I really think the flushing needs to be *way* more aggressive for any
-oops. The "flush at end" is not even remotely sane.
+syzbot found the following issue on:
 
-Some amount of buffering can make sense, eg when printing out the
-regular register state over a few lines, there certainly shouldn't be
-anything there that can cause problems.
+HEAD commit:    2c9b3512402e Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12628cad980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6bfb33a8ad10458f
+dashboard link: https://syzkaller.appspot.com/bug?extid=6ea290ba76d8c1eb1ac2
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
-Let me pick a very specific example of a common thing:
+Unfortunately, I don't have any reproducer for this issue yet.
 
-   int __die(const char *str, struct pt_regs *regs, long err)
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/9593db3ad921/disk-2c9b3512.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/77c4ed0c2bb7/vmlinux-2c9b3512.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b1e492f9354b/bzImage-2c9b3512.xz
 
-in arch/x86/kernel/dumpstack.c.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6ea290ba76d8c1eb1ac2@syzkaller.appspotmail.com
 
-Look, do I expect problems in "__die_header()"? No.
+=====================================================
+BUG: KMSAN: uninit-value in hci_scodata_packet net/bluetooth/hci_core.c:3835 [inline]
+BUG: KMSAN: uninit-value in hci_rx_work+0x10a8/0x1130 net/bluetooth/hci_core.c:4039
+ hci_scodata_packet net/bluetooth/hci_core.c:3835 [inline]
+ hci_rx_work+0x10a8/0x1130 net/bluetooth/hci_core.c:4039
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
+ worker_thread+0xea5/0x1520 kernel/workqueue.c:3390
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-But the *moment* you call "notify_die()", you are now calling random
-debug code. The register state NEEDS TO HAVE BEEN FLUSHED before this
-point.
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3985 [inline]
+ slab_alloc_node mm/slub.c:4028 [inline]
+ kmem_cache_alloc_node_noprof+0x6bf/0xb80 mm/slub.c:4071
+ kmalloc_reserve+0x13d/0x4a0 net/core/skbuff.c:583
+ __alloc_skb+0x363/0x7b0 net/core/skbuff.c:674
+ alloc_skb include/linux/skbuff.h:1320 [inline]
+ bt_skb_alloc include/net/bluetooth/bluetooth.h:493 [inline]
+ vhci_get_user drivers/bluetooth/hci_vhci.c:489 [inline]
+ vhci_write+0x128/0x910 drivers/bluetooth/hci_vhci.c:609
+ new_sync_write fs/read_write.c:497 [inline]
+ vfs_write+0xb2f/0x1550 fs/read_write.c:590
+ ksys_write+0x20f/0x4c0 fs/read_write.c:643
+ __do_sys_write fs/read_write.c:655 [inline]
+ __se_sys_write fs/read_write.c:652 [inline]
+ __ia32_sys_write+0x91/0xe0 fs/read_write.c:652
+ ia32_sys_call+0x2e34/0x40d0 arch/x86/include/generated/asm/syscalls_32.h:5
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0xb0/0x110 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x38/0x80 arch/x86/entry/common.c:411
+ do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:449
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
 
-This is not something I'm willing to debate. Some of the most painful
-debugging sessions I have *EVER* had have been due to "debug code that
-failed".
+CPU: 1 PID: 5058 Comm: kworker/u9:6 Not tainted 6.10.0-syzkaller-11185-g2c9b3512402e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Workqueue: hci3 hci_rx_work
+=====================================================
 
-Are these things rare? Yes they are. Very. Thankfully.
 
-But the scars left behind by things like "buggy kgdb hook meant that
-oops printout never happened at all when kgdb wasn't even enabled" and
-having wasted literally *days* on something that would have been
-obvious had the oops printout just happened means that I'm very much
-in the "once bitten, twice shy" camp.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-So that's why I absolutely *ABOHOR* that code in "oops_begin()" that
-stops printouts until "oops_end()". It's *EXACTLY* the wrong thing to
-do if there's some problem in the middle.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-And yes, those problems have happened. Again - rarely, but it's *so*
-painful when they do, that I refuse to pull something that I consider
-to be this broken.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-And yes, I'm convinced we have many other situations where a problem
-during printout will silence things (the obvious one being locking
-issues with the printing itself). But I refuse to have that silence be
-an integral part of the die() code.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-                 Linus
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
