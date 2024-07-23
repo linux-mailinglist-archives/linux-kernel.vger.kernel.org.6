@@ -1,314 +1,790 @@
-Return-Path: <linux-kernel+bounces-260299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D32D293A577
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:21:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B065393A6C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 513411F233D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:21:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66163282EBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 18:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69FE9158859;
-	Tue, 23 Jul 2024 18:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C362F158A22;
+	Tue, 23 Jul 2024 18:38:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="D+EMST08"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2061.outbound.protection.outlook.com [40.107.94.61])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mchrcel1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AFF155351;
-	Tue, 23 Jul 2024 18:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721758891; cv=fail; b=WxoiYYQNK0uv0UKFh19vH0X7rDk3RdJsx/H40Vd6/TmcwBG+oJ+ZwoY9cxjKT1YLRCbtY9BgOERQvT4FSZLhscne9WmFeq2c7Dk38Q0ltHbNjJJdsXZ+nddRwUzz9sa83vauCh+Wb29aTVd4lQvi1lkzHYHRfocY3iyieK7Nc8o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721758891; c=relaxed/simple;
-	bh=WjD24YJaEZVfq1FIFcntdlfXP+2LvxW/sRQM8ta7i/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=k3z7UB/FbNqXraEVAs3BfP5PglNqHgH5MT4VjiwCmygh67LWSEd48Qgv44SHeM+a38dGdRsdzBNLj1fTbfo0ZO6Mat0c5LINpmb4SYB8lU8B58iE/3b2YuZkdqHK7POsMBENcrMhgZyUqtLBuh5w3HYY9ychoQgE9aPCuIUfJdM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=D+EMST08; arc=fail smtp.client-ip=40.107.94.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K8GYGID3vF4ntTeHGXOz2D568iJ3rKxqirF2B0gimJlcd9gGVvau8EAc9XfLtb6AgYL+Ze5fK/CgjyF1rS2NWFVxe+RbnDzbrLKlz7g+uVfWQkWL8BxsM//kAU0CkAKK70tefWA5SUcgqhYYTbiI3KmyhG1omiFhJve2oMhyz540baot366bkHaTJH1t6sciZb3ENE8c1X7raddUEZC8Uszmf89fBNOke3cHlHb6gmd7V4TNZXmZxspbEL1VjP17aCyyUJzK5kMKt+CtD/o355jKGI6syt142djScw7KN5SMkTG/gM2LUgZJqyklxFBuhergBUtTBzb0ZqH9Dwp3rQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hJ+WRIwCzwLTCmsYetl2Ees2baVZl0Z2KGJCpT2KcoI=;
- b=IB21Yek8HpaYI7AcDXKwGseCctTJ+lS1tLRJ8eflqExhC/APT491TOqPACTcA38vhX6eXdk1qtTEpZ5LNsJ+cu93sntcKe1hLvkn+pqVeVFJtVPO/CWOM/9gWnOSALNwlq0kRTPHG9C3ImDWi1HdB7H6luQ856SDXt773J98iUfJ4cz1hX+vYQzz6ROS2YUw8asaX4X6+yZJK/SF5dwZr1vd3YMi7SY8i+qQmt6OTG4NKrRXph8qr5fHoJW5TbfNnIXrsh0KVm3AlVjoApCIKywbJVRyBK19g4cZAAyMVckSPuSRlTWIVFgctwrGIBcIfdCZgziXTF7cxcXtnOXQLg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hJ+WRIwCzwLTCmsYetl2Ees2baVZl0Z2KGJCpT2KcoI=;
- b=D+EMST08KF6pA7W0w6QUQb8uD7KfOb1cvG3B6dbo59KGNgd0lNZiuu0i+ryAYv/KGESCeiIKShema3v2VPy90phmAmEqBjwClJlLItnIok4CA/s9K2eFoT9r9sr2GhcjmsbJyVA/AKpq1v29tlvtBiCC8c8FHDpstZo2F5LqoqU=
-Received: from MW4PR03CA0042.namprd03.prod.outlook.com (2603:10b6:303:8e::17)
- by SJ0PR12MB5676.namprd12.prod.outlook.com (2603:10b6:a03:42e::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.19; Tue, 23 Jul
- 2024 18:21:26 +0000
-Received: from CO1PEPF000044FC.namprd21.prod.outlook.com
- (2603:10b6:303:8e:cafe::58) by MW4PR03CA0042.outlook.office365.com
- (2603:10b6:303:8e::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14 via Frontend
- Transport; Tue, 23 Jul 2024 18:21:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- CO1PEPF000044FC.mail.protection.outlook.com (10.167.241.202) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7784.5 via Frontend Transport; Tue, 23 Jul 2024 18:21:26 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 23 Jul
- 2024 13:21:25 -0500
-Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Tue, 23 Jul 2024 13:21:24 -0500
-Message-ID: <a8d2e310-9446-6cfa-fe00-4ef83cdb6590@amd.com>
-Date: Tue, 23 Jul 2024 11:21:24 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B30F1586F5;
+	Tue, 23 Jul 2024 18:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721759914; cv=none; b=j8Mygy6MS8s/LoqchOWgxg6mXe03PWzky6JTwME32ZwawlslrAYi6bka+0xIiUHYlbbCSBLCqXTM3PA9T0Sdj1lvPQ/E0ACH3TtBYY7tGntOQfkcCVv+vETS6acxSHBNqSIBNVGAjr2C9jVRVsr8YCt1994F0Z1O/Je27xrE2KQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721759914; c=relaxed/simple;
+	bh=JrRHj10OOwcZ3yz2Z79o5VvdGt9beasiFWzviahbBis=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JSjHC87e5YxtAOpAHhHInVGsxG7g2dpNjpoUGFk5Ty4hAB5P7dZevp2k+5dpC17CFuZ0slloowDQLyK3OV+KzD6KQDvunLpn7plYuLf3PBSMQY5pMXwyQOB3IXijtD8IJ56L531g0P5/5dNluFcyuwkfcv9+zktBXt9dh7ZsL6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mchrcel1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 232A8C4AF09;
+	Tue, 23 Jul 2024 18:38:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1721759913;
+	bh=JrRHj10OOwcZ3yz2Z79o5VvdGt9beasiFWzviahbBis=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mchrcel14WBzgFMr5tOfBuvO0V8VFTRSCsp8ohdj9lybFd26mIuaIivF/p6egL2OI
+	 PaKc2teyzd4w90OuDJ0c6yLZiVFbmXZbbLxtPn5O7nH8HymR8rnPy9o9MOiHCNNblm
+	 bqKHyxm9+drfP5w4u+YwUBoGl7hjEQLxl2a4FrDk=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	allen.lkml@gmail.com,
+	broonie@kernel.org
+Subject: [PATCH 6.9 000/163] 6.9.11-rc1 review
+Date: Tue, 23 Jul 2024 20:22:09 +0200
+Message-ID: <20240723180143.461739294@linuxfoundation.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v2] PCI: Fix crash during pci_dev hot-unplug on pseries
- KVM guest
-Content-Language: en-US
-To: Rob Herring <robh@kernel.org>
-CC: Amit Machhiwal <amachhiw@linux.ibm.com>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <kvm-ppc@vger.kernel.org>, Bjorn Helgaas
-	<bhelgaas@google.com>, Saravana Kannan <saravanak@google.com>, Vaibhav Jain
-	<vaibhav@linux.ibm.com>, Nicholas Piggin <npiggin@gmail.com>, Michael
- Ellerman <mpe@ellerman.id.au>, Vaidyanathan Srinivasan
-	<svaidy@linux.ibm.com>, Kowshik Jois B S <kowsjois@linux.ibm.com>, Lukas
- Wunner <lukas@wunner.de>
-References: <20240715080726.2496198-1-amachhiw@linux.ibm.com>
- <CAL_JsqKKkcXDJ2nz98WNCvsSFzzc3dVXVnxMCntFXsCP=MeKsA@mail.gmail.com>
- <a6c92c73-13fb-8e9c-29de-1437654c3880@amd.com>
- <20240723162107.GA501469-robh@kernel.org>
-From: Lizhi Hou <lizhi.hou@amd.com>
-In-Reply-To: <20240723162107.GA501469-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.11-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-6.9.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 6.9.11-rc1
+X-KernelTest-Deadline: 2024-07-25T18:01+00:00
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Received-SPF: None (SATLEXMB03.amd.com: lizhi.hou@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000044FC:EE_|SJ0PR12MB5676:EE_
-X-MS-Office365-Filtering-Correlation-Id: 24de94cd-bb2d-4a91-e016-08dcab4443ef
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?c0dlWWZUQkV0U3VRK0JYUlQ2QVV5b2o4YzF0VTBlaVVxNHZTbFczQmYxRzFv?=
- =?utf-8?B?VlFHQU1FaXhnL3RuMmVHS282d1BodWp5L05kaTd2b3lZQ2hjODFsUjNBblM0?=
- =?utf-8?B?Uk1FU054a2Z3Z0RLbWxFa2MwT0Y5MTdmMXg5ckpDYVpSTE5DUGh1WmVYaDNM?=
- =?utf-8?B?NFgyMHdvU1F0d3NDZmFpd2luTUNJdG8vNUpxMmpMbmZzUjdDcUkzSnkxeUtX?=
- =?utf-8?B?bS8rMUJXa3BLMGhQU1NoU1dnL1p1R25OQ05pVWNpdXVUUWxZelF3NCsrbmhV?=
- =?utf-8?B?VEZFWW1KWTFIR1NTZXRCenZBZEVDaG1sekFCUUhxeTFoZTBvTm5wYy9wS1Z5?=
- =?utf-8?B?REovV0haU20vOWVDL2FVSnQ2c0lCbFdzOVZBZVA3NFB4ZmJEZ1NHckJKaml0?=
- =?utf-8?B?M01haU5vU2JHT1YrdHZiZXFCZFVxUWRiZ1NsV2p0UUpTME5xdjl2akN6SHov?=
- =?utf-8?B?QXRXdEdwSUhBUVpJemJDeENRN1hGa1BDWmliUkVobVBHdGxydTJtSlpnTkZW?=
- =?utf-8?B?WkVMcUduQ3ovVVpmQjZxdnZJYWRXSHp6ZUlqMUxtSGF6NnBkVDNaVEJ4L0hI?=
- =?utf-8?B?THNMZ2gzVFFUVi9Cd0I4R1d0TXIzOHR4NWVGMkNLRHVVTzFvYmVTSkVXT094?=
- =?utf-8?B?eWRxM2pMVVRZZm8vem5DMFAwWmp3UFNFTTBXMnlrVVRFQkdUVnZSUFJsbXp1?=
- =?utf-8?B?T1FObVJkTmllU2QzYTBpN25wSFpUeWdVdjQrZXcvcWJONnVsanVvWHJaa1lu?=
- =?utf-8?B?cVRINkw2cXN6TFd0MjM2WWlhdXBlNmY1VXdOTVl0ZTJKL2NDZDdsVVNPT25a?=
- =?utf-8?B?TzZhZXFTdjBQWVhNOW9WTmVUT3NsUk5vVVlCZ01QTEVUR1d1c05uZlNlOUlH?=
- =?utf-8?B?WHJ3WU9XSzMzY1ZudWJhaUNsYTVrQnV1c0dtSTlXWlBqU0w5YThSVkt5dFdF?=
- =?utf-8?B?alUxeitYNGNvS1pZUm1Db2hDS0g2R0J2SDQ1bk1nQlVvNUpmVjlqTEoreG41?=
- =?utf-8?B?VnVRZ09Uanp1VUMxbDZQSXhyTGVuWENpRlBBanZES3JVeC9WMFcwSmtjenN6?=
- =?utf-8?B?ZWlXanBnSVNyUlRiSm9mYVcwWVFzTUlqZi9Bbk5WTCtPc0tBR2NCaVZENGJS?=
- =?utf-8?B?clJ0d3A1emZRUDFBQmlCMHJRTkFwS2xETDBHc0owUi9mV1daYVBVT1ZXY0gr?=
- =?utf-8?B?by9hSzFwV0k4cTc3TEx1ZWw4bW9NTlMyOStnNDFIMmF0aHBDd3BydGNMUWh0?=
- =?utf-8?B?RGR2bG1tcGtzQ0JQMlV4MTZpMkt4MHJoUWt4M1JSV0s1UVB6Q3lTeEo5U3Ji?=
- =?utf-8?B?dWxtZW8weGhyWU1KWjcwaGFkQ3MzdkxFczZtRjZqZm9xVUkzRkZTYXJsU2NL?=
- =?utf-8?B?bm1ZYnBxZHppbkMwUTVrZk1WMWk1S3NLTVEvOVIwOWlldmFIbGhXMXJFWXN4?=
- =?utf-8?B?RzYwdXZYd3g2aHpHZXFUVVZZVXN3a2FGbDZndjhJYzhPZkJOK25pZHByQjZ0?=
- =?utf-8?B?ZnBTRFhjb2xXTDV2Y29CSGVFRHJJZ1FVdC9ZcVZtMnRCdzArOThGZ1BpZlVa?=
- =?utf-8?B?NDF3aXdxSk05VFV5ODYycnliN3ZqcWhkWlVNWUdCbjE0cCtWT1ZkVXNwSTFo?=
- =?utf-8?B?bzN5cll2TEFaUFh6U29GMVdpSldhRERTaWVET1YrTUNwMXZLRm5tWEVxZ2Na?=
- =?utf-8?B?bHV0TWZsd05LVEkwekI2WFZZaGRhTHVGbk41bDBpMkJRa3FoemtoMEU5RGVX?=
- =?utf-8?B?VGxYTUE0ZytHZ1ZzVHk3Z0hzeXJlcXZBR0FDc1p1YWlDazhjSGFRaXp6VGs5?=
- =?utf-8?B?MlJaUVpKRUdUSDdYeGVTM3NFT1N1T2ZVRmpLMTA0Y0FER3EyQXc3bzlubTlq?=
- =?utf-8?B?aGR0aFl1TTZpVnU0R1RFZEltNzVEQ2k1YzZNRnY5WFcxNlE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2024 18:21:26.3968
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 24de94cd-bb2d-4a91-e016-08dcab4443ef
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000044FC.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB5676
+
+This is the start of the stable review cycle for the 6.9.11 release.
+There are 163 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
+
+Responses should be made by Thu, 25 Jul 2024 18:01:03 +0000.
+Anything received after that time might be too late.
+
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.11-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
+and the diffstat can be found below.
+
+thanks,
+
+greg k-h
+
+-------------
+Pseudo-Shortlog of commits:
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 6.9.11-rc1
+
+Baokun Li <libaokun1@huawei.com>
+    cachefiles: fix slab-use-after-free in cachefiles_withdraw_cookie()
+
+Baokun Li <libaokun1@huawei.com>
+    cachefiles: fix slab-use-after-free in fscache_withdraw_volume()
+
+Baokun Li <libaokun1@huawei.com>
+    netfs, fscache: export fscache_put_volume() and add fscache_try_get_volume()
+
+Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+    wifi: iwlwifi: mvm: don't wake up rx_sync_waitq upon RFKILL
+
+Johannes Berg <johannes.berg@intel.com>
+    wifi: mac80211: disable softirqs for queued frame handling
+
+Johannes Berg <johannes.berg@intel.com>
+    wifi: cfg80211: wext: set ssids=NULL for passive scans
+
+Marc Zyngier <maz@kernel.org>
+    of/irq: Disable "interrupt-map" parsing for PASEMI Nemo
+
+Dmitry Savin <envelsavinds@gmail.com>
+    ALSA: hda: cs35l41: Fix swapped l/r audio channels for Lenovo ThinBook 13x Gen4
+
+Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+    Bluetooth: L2CAP: Fix deadlock
+
+Yang Shi <yang@os.amperecomputing.com>
+    mm: page_ref: remove folio_try_get_rcu()
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: hda: Use imply for suggesting CONFIG_SERIAL_MULTI_INSTANTIATE
+
+David Lechner <dlechner@baylibre.com>
+    spi: mux: set ctlr->bits_per_word_mask
+
+Daniel Borkmann <daniel@iogearbox.net>
+    selftests/bpf: Extend tcx tests to cover late tcx_entry release
+
+Edward Adam Davis <eadavis@qq.com>
+    hfsplus: fix uninit-value in copy_name
+
+John Hubbard <jhubbard@nvidia.com>
+    selftests/vDSO: fix clang build errors and warnings
+
+John Hubbard <jhubbard@nvidia.com>
+    selftest/timerns: fix clang build failures for abs() calls
+
+Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+    ASoC: SOF: Intel: hda-pcm: Limit the maximum number of periods by MAX_BDL_ENTRIES
+
+Namjae Jeon <linkinjeon@kernel.org>
+    ksmbd: return FILE_DEVICE_DISK instead of super magic
+
+Bastien Curutchet <bastien.curutchet@bootlin.com>
+    spi: davinci: Unset POWERDOWN bit when releasing resources
+
+Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+    spi: imx: Don't expect DMA for i.MX{25,35,50,51,53} cspi devices
+
+Puranjay Mohan <puranjay@kernel.org>
+    riscv: stacktrace: fix usage of ftrace_graph_ret_addr()
+
+Samuel Holland <samuel.holland@sifive.com>
+    drivers/perf: riscv: Reset the counter to hpmevent mapping while starting cpus
+
+Daniel Gabay <daniel.gabay@intel.com>
+    wifi: iwlwifi: properly set WIPHY_FLAG_SUPPORTS_EXT_KEK_KCK
+
+Christian Brauner <brauner@kernel.org>
+    fs: better handle deep ancestor chains in is_subdir()
+
+Filipe Manana <fdmanana@suse.com>
+    btrfs: fix uninitialized return value in the ref-verify tool
+
+Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
+    drm/radeon: check bo_va->bo is non-NULL before using it
+
+Roman Li <Roman.Li@amd.com>
+    drm/amd/display: Fix array-index-out-of-bounds in dml2/FCLKChangeSupport
+
+Fangzhi Zuo <Jerry.Zuo@amd.com>
+    drm/amd/display: Update efficiency bandwidth for dcn351
+
+Tom Chung <chiahsuan.chung@amd.com>
+    drm/amd/display: Fix refresh rate range for some panel
+
+Alvin Lee <alvin.lee2@amd.com>
+    drm/amd/display: Account for cursor prefetch BW in DML1 mode support
+
+Tom Chung <chiahsuan.chung@amd.com>
+    drm/amd/display: Add refresh rate range check
+
+Gao Xiang <xiang@kernel.org>
+    erofs: ensure m_llen is reset to 0 if metadata is invalid
+
+Edward Adam Davis <eadavis@qq.com>
+    bluetooth/l2cap: sync sock recv cb and release
+
+Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+    Bluetooth: btnxpuart: Enable Power Save feature on startup
+
+Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+    Bluetooth: hci_core: cancel all works upon hci_unregister_dev()
+
+Mark-PK Tsai <mark-pk.tsai@mediatek.com>
+    tee: optee: ffa: Fix missing-field-initializers warning
+
+Xingui Yang <yangxingui@huawei.com>
+    scsi: libsas: Fix exp-attached device scan after probe failure scanned in again after probe failed
+
+Ganesh Goudar <ganeshgr@linux.ibm.com>
+    powerpc/eeh: avoid possible crash when edev->pdev changes
+
+Anjali K <anjalik@linux.ibm.com>
+    powerpc/pseries: Whitelist dtl slub object for copying to userspace
+
+Yunshui Jiang <jiangyunshui@kylinos.cn>
+    net: mac802154: Fix racy device stats updates by DEV_STATS_INC() and DEV_STATS_ADD()
+
+Gabor Juhos <j4g8y7@gmail.com>
+    clk: qcom: apss-ipq-pll: remove 'config_ctl_hi_val' from Stromer pll configs
+
+Daniele Palmas <dnlplm@gmail.com>
+    net: usb: qmi_wwan: add Telit FN912 compositions
+
+Vyacheslav Frantsishko <itmymaill@gmail.com>
+    ASoC: amd: yc: Fix non-functional mic on ASUS M5602RA
+
+Li Ma <li.ma@amd.com>
+    drm/amd/swsmu: add MALL init support workaround for smu_v14_0_1
+
+Shengjiu Wang <shengjiu.wang@nxp.com>
+    ALSA: dmaengine_pcm: terminate dmaengine before synchronize
+
+Aivaz Latypov <reichaivaz@gmail.com>
+    ALSA: hda/relatek: Enable Mute LED on HP Laptop 15-gw0xxx
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: PCM: Allow resume only for suspended streams
+
+Nick Child <nnac123@linux.ibm.com>
+    ibmvnic: Add tx check to prevent skb leak
+
+Filipe Manana <fdmanana@suse.com>
+    btrfs: qgroup: fix quota root leak after quota disable failure
+
+Qu Wenruo <wqu@suse.com>
+    btrfs: scrub: handle RST lookup error correctly
+
+Armin Wolf <W_Armin@gmx.de>
+    platform/x86: lg-laptop: Use ACPI device handle when evaluating WMAB/WMBB
+
+Armin Wolf <W_Armin@gmx.de>
+    platform/x86: lg-laptop: Change ACPI device id
+
+Armin Wolf <W_Armin@gmx.de>
+    platform/x86: lg-laptop: Remove LGEX0815 hotkey handling
+
+Armin Wolf <W_Armin@gmx.de>
+    platform/x86: wireless-hotkey: Add support for LG Airplane Button
+
+Chen Ni <nichen@iscas.ac.cn>
+    platform/mellanox: nvsw-sn2201: Add check for platform_device_add_resources
+
+Heiko Carstens <hca@linux.ibm.com>
+    s390/sclp: Fix sclp_init() cleanup on failure
+
+Ratheesh Kannoth <rkannoth@marvell.com>
+    octeontx2-pf: Fix coverity and klockwork issues in octeon PF driver
+
+Ian Ray <ian.ray@gehealthcare.com>
+    gpio: pca953x: fix pca953x_irq_bus_sync_unlock race
+
+Aryan Srivastava <aryan.srivastava@alliedtelesis.co.nz>
+    net: mvpp2: fill-in dev_port attribute
+
+Chen Ni <nichen@iscas.ac.cn>
+    can: kvaser_usb: fix return value for hif_usb_send_regout
+
+Alexander Stein <alexander.stein@ew.tq-group.com>
+    Input: ads7846 - use spi_device_id table
+
+Boyang Yu <yuboyang@dapustor.com>
+    nvme: fix NVME_NS_DEAC may incorrectly identifying the disk as EXT_LBA.
+
+Richard Fitzgerald <rf@opensource.cirrus.com>
+    ASoC: cs35l56: Disconnect ASP1 TX sources when ASP1 DAI is hooked up
+
+Jack Yu <jack.yu@realtek.com>
+    ASoC: rt722-sdca-sdw: add debounce time for type detection
+
+Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
+    ASoC: SOF: sof-audio: Skip unprepare for in-use widgets on error rollback
+
+Primoz Fiser <primoz.fiser@norik.com>
+    ASoC: ti: omap-hdmi: Fix too long driver name
+
+Jai Luthra <j-luthra@ti.com>
+    ASoC: ti: davinci-mcasp: Set min period size using FIFO config
+
+Jai Luthra <j-luthra@ti.com>
+    ALSA: dmaengine: Synchronize dma channel after drop()
+
+Thomas GENTY <tomlohave@gmail.com>
+    bytcr_rt5640 : inverse jack detect for Archos 101 cesium
+
+Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
+    ASoC: topology: Do not assign fields that are already set
+
+Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
+    ASoC: Intel: avs: Fix route override
+
+Amadeusz Sławiński <amadeuszx.slawinski@linux.intel.com>
+    ASoC: topology: Fix references to freed memory
+
+Luke D. Jones <luke@ljones.dev>
+    Input: xpad - add support for ASUS ROG RAIKIRI PRO
+
+Zhang Yi <zhangyi@everest-semi.com>
+    ASoC: codecs: ES8326: Solve headphone detection issue
+
+Jack Yu <jack.yu@realtek.com>
+    ASoC: rt722-sdca-sdw: add silence detection register as volatile
+
+Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+    Input: i8042 - add Ayaneo Kun to i8042 quirk table
+
+Jonathan Denose <jdenose@google.com>
+    Input: elantech - fix touchpad state on resume for Lenovo N24
+
+Tejun Heo <tj@kernel.org>
+    workqueue: Refactor worker ID formatting and make wq_worker_comm() use full ID string
+
+Kent Overstreet <kent.overstreet@linux.dev>
+    closures: Change BUG_ON() to WARN_ON()
+
+Arnd Bergmann <arnd@arndb.de>
+    mips: fix compat_sys_lseek syscall
+
+Simon Trimmer <simont@opensource.cirrus.com>
+    ALSA: hda: cs35l56: Select SERIAL_MULTI_INSTANTIATE
+
+Likun Gao <Likun.Gao@amd.com>
+    drm/amdgpu: init TA fw for psp v14
+
+Paul Hsieh <paul.hsieh@amd.com>
+    drm/amd/display: change dram_clock_latency to 34us for dcn35
+
+Daniel Miess <daniel.miess@amd.com>
+    drm/amd/display: Change dram_clock_latency to 34us for dcn351
+
+Harish Kasiviswanathan <Harish.Kasiviswanathan@amd.com>
+    drm/amdgpu: Indicate CU havest info to CP
+
+Adrian Moreno <amorenoz@redhat.com>
+    selftests: openvswitch: Set value to nla flags.
+
+Linus Torvalds <torvalds@linux-foundation.org>
+    cpumask: limit FORCE_NR_CPUS to just the UP case
+
+Patrice Chotard <patrice.chotard@foss.st.com>
+    spi: Fix OCTAL mode support
+
+Kailang Yang <kailang@realtek.com>
+    ALSA: hda/realtek: Add more codec ID to no shutup pins list
+
+Alexey Makhalov <alexey.makhalov@broadcom.com>
+    drm/vmwgfx: Fix missing HYPERVISOR_GUEST dependency
+
+Michael Ellerman <mpe@ellerman.id.au>
+    KVM: PPC: Book3S HV: Prevent UAF in kvm_spapr_tce_attach_iommu_group()
+
+Kenton Groombridge <concord@gentoo.org>
+    wifi: mac80211: Avoid address calculations via out of bounds array indexing
+
+Stefan Binding <sbinding@opensource.cirrus.com>
+    ALSA: hda/realtek: Support Lenovo Thinkbook 13x Gen 4
+
+Stefan Binding <sbinding@opensource.cirrus.com>
+    ALSA: hda/realtek: Support Lenovo Thinkbook 16P Gen 5
+
+Stefan Binding <sbinding@opensource.cirrus.com>
+    ALSA: hda: cs35l41: Support Lenovo Thinkbook 13x Gen 4
+
+Stefan Binding <sbinding@opensource.cirrus.com>
+    ALSA: hda: cs35l41: Support Lenovo Thinkbook 16P Gen 5
+
+Dmitry Antipov <dmantipov@yandex.ru>
+    wifi: cfg80211: wext: add extra SIOCSIWSCAN data check
+
+Simon Trimmer <simont@opensource.cirrus.com>
+    ALSA: hda: cs35l56: Fix lifecycle of codec pointer
+
+Cyril Hrubis <chrubis@suse.cz>
+    loop: Disable fallocate() zero and discard if not supported
+
+Alex Williamson <alex.williamson@redhat.com>
+    vfio/pci: Insert full vma on mmap'd MMIO fault
+
+Daniel Wagner <dwagner@suse.de>
+    nvmet: always initialize cqe.result
+
+Chunguang Xu <chunguang.xu@shopee.com>
+    nvme: avoid double free special payload
+
+Douglas Anderson <dianders@chromium.org>
+    drm/mediatek: Call drm_atomic_helper_shutdown() at shutdown time
+
+Douglas Anderson <dianders@chromium.org>
+    drm: renesas: shmobile: Call drm_atomic_helper_shutdown() at shutdown time
+
+Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+    drm: panel-orientation-quirks: Add quirk for Aya Neo KUN
+
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+    drm/exynos: dp: drop driver owner initialization
+
+Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+    iomap: Fix iomap_adjust_read_range for plen calculation
+
+Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+    parport: amiga: Mark driver struct with __refdata to prevent section mismatch
+
+Alexander Usyskin <alexander.usyskin@intel.com>
+    mei: demote client disconnect warning on suspend to debug
+
+Alex Williamson <alex.williamson@redhat.com>
+    vfio/pci: Use unmap_mapping_range()
+
+Alex Williamson <alex.williamson@redhat.com>
+    vfio: Create vfio_fs_type with inode per device
+
+Yuntao Wang <yuntao.wang@linux.dev>
+    fs/file: fix the check in find_next_fd()
+
+Baokun Li <libaokun1@huawei.com>
+    cachefiles: make on-demand read killable
+
+Zizhi Wo <wozizhi@huawei.com>
+    cachefiles: Set object to close if ondemand_id < 0 in copen
+
+Baokun Li <libaokun1@huawei.com>
+    cachefiles: add consistency check for copen/cread
+
+Scott Mayhew <smayhew@redhat.com>
+    nfs: don't invalidate dentries on transient errors
+
+Jan Kara <jack@suse.cz>
+    nfs: Avoid flushing many pages with NFS_FILE_SYNC
+
+Sagi Grimberg <sagi@grimberg.me>
+    nfs: propagate readlink errors in nfs_symlink_filler
+
+Dmitry Mastykin <mastichi@gmail.com>
+    NFSv4: Fix memory leak in nfs4_set_security_label
+
+Louis Dalibard <ontake@ontake.dev>
+    HID: Ignore battery for ELAN touchscreens 2F2C and 4116
+
+Aseda Aboagye <aaboagye@chromium.org>
+    input: Add support for "Do Not Disturb"
+
+Aseda Aboagye <aaboagye@chromium.org>
+    input: Add event code for accessibility key
+
+Masahiro Yamada <masahiroy@kernel.org>
+    kconfig: remove wrong expr_trans_bool()
+
+Masahiro Yamada <masahiroy@kernel.org>
+    kconfig: gconf: give a proper initial state to the Save button
+
+Andreas Hindborg <a.hindborg@samsung.com>
+    null_blk: fix validation of block size
+
+Tasos Sahanidis <tasos@tasossah.com>
+    drm/amdgpu/pptable: Fix UBSAN array-index-out-of-bounds
+
+Wei Li <liwei391@huawei.com>
+    arm64: armv8_deprecated: Fix warning in isndep cpuhp starting process
+
+Hagar Hemdan <hagarhem@amazon.com>
+    io_uring: fix possible deadlock in io_register_iowq_max_workers()
+
+Eric Dumazet <edumazet@google.com>
+    ila: block BH in ila_output()
+
+Eric Dumazet <edumazet@google.com>
+    net: ipv6: rpl_iptunnel: block BH in rpl_output() and rpl_input()
+
+Suma Hegde <suma.hegde@amd.com>
+    platform/x86/amd/hsmp: Check HSMP support on AMD family of processors
+
+Hans de Goede <hdegoede@redhat.com>
+    Input: silead - Always support 10 fingers
+
+Huacai Chen <chenhuacai@kernel.org>
+    LoongArch: Fix GMAC's phy-mode definitions in dts
+
+Chunguang Xu <chunguang.xu@shopee.com>
+    nvme-fabrics: use reserved tag for reg read/write command
+
+Rob Herring (Arm) <robh@kernel.org>
+    of/irq: Factor out parsing of interrupt-map parent phandle+args from of_irq_parse_raw()
+
+John Hubbard <jhubbard@nvidia.com>
+    selftests/futex: pass _GNU_SOURCE without a value to the compiler
+
+Michael Ellerman <mpe@ellerman.id.au>
+    selftests/overlayfs: Fix build error on ppc64
+
+Michael Ellerman <mpe@ellerman.id.au>
+    selftests/openat2: Fix build warnings on ppc64
+
+Michael Ellerman <mpe@ellerman.id.au>
+    selftests: cachestat: Fix build warnings on ppc64
+
+Dmitry Antipov <dmantipov@yandex.ru>
+    wifi: mac80211: fix UBSAN noise in ieee80211_prep_hw_scan()
+
+Ilan Peer <ilan.peer@intel.com>
+    wifi: iwlwifi: mvm: Fix scan abort handling with HW rfkill
+
+Ayala Beker <ayala.beker@intel.com>
+    wifi: iwlwifi: mvm: properly set 6 GHz channel direct probe option
+
+Johannes Berg <johannes.berg@intel.com>
+    wifi: iwlwifi: mvm: handle BA session teardown in RF-kill
+
+Yedidya Benshimol <yedidya.ben.shimol@intel.com>
+    wifi: iwlwifi: mvm: Handle BIGTK cipher in kek_kck cmd
+
+Benjamin Berg <benjamin.berg@intel.com>
+    wifi: iwlwifi: mvm: remove stale STA link data during restart
+
+Yedidya Benshimol <yedidya.ben.shimol@intel.com>
+    wifi: iwlwifi: mvm: d3: fix WoWLAN command version lookup
+
+Johannes Berg <johannes.berg@intel.com>
+    wifi: cfg80211: fix 6 GHz scan request building
+
+Johannes Berg <johannes.berg@intel.com>
+    wifi: mac80211: handle tasklet frames before stopping
+
+Johannes Berg <johannes.berg@intel.com>
+    wifi: mac80211: apply mcast rate only if interface is up
+
+Nicolas Escande <nico.escande@gmail.com>
+    wifi: mac80211: mesh: init nonpeer_pm to active by default in mesh sdata
+
+Thomas Weißschuh <linux@weissschuh.net>
+    ACPI: AC: Properly notify powermanagement core about changes
+
+Andy Shevchenko <andy.shevchenko@gmail.com>
+    PNP: Hide pnp_bus_type from the non-PNP code
+
+Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+    tools/power/cpupower: Fix Pstate frequency reporting on AMD Family 1Ah CPUs
+
+Filipe Manana <fdmanana@suse.com>
+    btrfs: ensure fast fsync waits for ordered extents after a write failure
+
+Armin Wolf <W_Armin@gmx.de>
+    ACPI: EC: Avoid returning AE_OK on errors in address space handler
+
+Armin Wolf <W_Armin@gmx.de>
+    ACPI: EC: Abort address space access upon error
+
+Nathan Chancellor <nathan@kernel.org>
+    efi/libstub: zboot.lds: Discard .discard sections
+
+Saurav Kashyap <skashyap@marvell.com>
+    scsi: qedf: Set qed_slowpath_params to zero before use
+
+Saurav Kashyap <skashyap@marvell.com>
+    scsi: qedf: Wait for stag work during unload
+
+Saurav Kashyap <skashyap@marvell.com>
+    scsi: qedf: Don't process stag work during unload and recovery
+
+Justin Stitt <justinstitt@google.com>
+    scsi: sr: Fix unintentional arithmetic wraparound
+
+Martin Wilck <martin.wilck@suse.com>
+    scsi: core: alua: I/O errors for ALUA state transitions
+
+Steve French <stfrench@microsoft.com>
+    cifs: fix noisy message on copy_file_range
 
 
-On 7/23/24 09:21, Rob Herring wrote:
-> On Mon, Jul 15, 2024 at 01:52:30PM -0700, Lizhi Hou wrote:
->> On 7/15/24 11:55, Rob Herring wrote:
->>> On Mon, Jul 15, 2024 at 2:08 AM Amit Machhiwal <amachhiw@linux.ibm.com> wrote:
->>>> With CONFIG_PCI_DYNAMIC_OF_NODES [1], a hot-plug and hot-unplug sequence
->>>> of a PCI device attached to a PCI-bridge causes following kernel Oops on
->>>> a pseries KVM guest:
->>>>
->>>>    RTAS: event: 2, Type: Hotplug Event (229), Severity: 1
->>>>    Kernel attempted to read user page (10ec00000048) - exploit attempt? (uid: 0)
->>>>    BUG: Unable to handle kernel data access on read at 0x10ec00000048
->>>>    Faulting instruction address: 0xc0000000012d8728
->>>>    Oops: Kernel access of bad area, sig: 11 [#1]
->>>>    LE PAGE_SIZE=64K MMU=Radix SMP NR_CPUS=2048 NUMA pSeries
->>>> <snip>
->>>>    NIP [c0000000012d8728] __of_changeset_entry_invert+0x10/0x1ac
->>>>    LR [c0000000012da7f0] __of_changeset_revert_entries+0x98/0x180
->>>>    Call Trace:
->>>>    [c00000000bcc3970] [c0000000012daa60] of_changeset_revert+0x58/0xd8
->>>>    [c00000000bcc39c0] [c000000000d0ed78] of_pci_remove_node+0x74/0xb0
->>>>    [c00000000bcc39f0] [c000000000cdcfe0] pci_stop_bus_device+0xf4/0x138
->>>>    [c00000000bcc3a30] [c000000000cdd140] pci_stop_and_remove_bus_device_locked+0x34/0x64
->>>>    [c00000000bcc3a60] [c000000000cf3780] remove_store+0xf0/0x108
->>>>    [c00000000bcc3ab0] [c000000000e89e04] dev_attr_store+0x34/0x78
->>>>    [c00000000bcc3ad0] [c0000000007f8dd4] sysfs_kf_write+0x70/0xa4
->>>>    [c00000000bcc3af0] [c0000000007f7248] kernfs_fop_write_iter+0x1d0/0x2e0
->>>>    [c00000000bcc3b40] [c0000000006c9b08] vfs_write+0x27c/0x558
->>>>    [c00000000bcc3bf0] [c0000000006ca168] ksys_write+0x90/0x170
->>>>    [c00000000bcc3c40] [c000000000033248] system_call_exception+0xf8/0x290
->>>>    [c00000000bcc3e50] [c00000000000d05c] system_call_vectored_common+0x15c/0x2ec
->>>> <snip>
->>>>
->>>> A git bisect pointed this regression to be introduced via [1] that added
->>>> a mechanism to create device tree nodes for parent PCI bridges when a
->>>> PCI device is hot-plugged.
->>>>
->>>> The Oops is caused when `pci_stop_dev()` tries to remove a non-existing
->>>> device-tree node associated with the pci_dev that was earlier
->>>> hot-plugged and was attached under a pci-bridge. The PCI dev header
->>>> `dev->hdr_type` being 0, results a conditional check done with
->>>> `pci_is_bridge()` into false. Consequently, a call to
->>>> `of_pci_make_dev_node()` to create a device node is never made. When at
->>>> a later point in time, in the device node removal path, a memcpy is
->>>> attempted in `__of_changeset_entry_invert()`; since the device node was
->>>> never created, results in an Oops due to kernel read access to a bad
->>>> address.
->>>>
->>>> To fix this issue, the patch updates `of_changeset_create_node()` to
->>>> allocate a new node only when the device node doesn't exist and init it
->>>> in case it does already. Also, introduce `of_pci_free_node()` to be
->>>> called to only revert and destroy the changeset device node that was
->>>> created via a call to `of_changeset_create_node()`.
->>>>
->>>> [1] commit 407d1a51921e ("PCI: Create device tree node for bridge")
->>>>
->>>> Fixes: 407d1a51921e ("PCI: Create device tree node for bridge")
->>>> Reported-by: Kowshik Jois B S <kowsjois@linux.ibm.com>
->>>> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
->>>> Signed-off-by: Amit Machhiwal <amachhiw@linux.ibm.com>
->>>> ---
->>>> Changes since v1:
->>>>       * Included Lizhi's suggested changes on V1
->>>>       * Fixed below two warnings from Lizhi's changes and rearranged the cleanup
->>>>         part a bit in `of_pci_make_dev_node`
->>>>           drivers/pci/of.c:611:6: warning: no previous prototype for ‘of_pci_free_node’ [-Wmissing-prototypes]
->>>>             611 | void of_pci_free_node(struct device_node *np)
->>>>                 |      ^~~~~~~~~~~~~~~~
->>>>           drivers/pci/of.c: In function ‘of_pci_make_dev_node’:
->>>>           drivers/pci/of.c:696:1: warning: label ‘out_destroy_cset’ defined but not used [-Wunused-label]
->>>>             696 | out_destroy_cset:
->>>>                 | ^~~~~~~~~~~~~~~~
->>>>       * V1: https://lore.kernel.org/all/20240703141634.2974589-1-amachhiw@linux.ibm.com/
->>>>
->>>>    drivers/of/dynamic.c  | 16 ++++++++++++----
->>>>    drivers/of/unittest.c |  2 +-
->>>>    drivers/pci/bus.c     |  3 +--
->>>>    drivers/pci/of.c      | 39 ++++++++++++++++++++++++++-------------
->>>>    drivers/pci/pci.h     |  2 ++
->>>>    include/linux/of.h    |  1 +
->>>>    6 files changed, 43 insertions(+), 20 deletions(-)
->>>>
->>>> diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
->>>> index dda6092e6d3a..9bba5e82a384 100644
->>>> --- a/drivers/of/dynamic.c
->>>> +++ b/drivers/of/dynamic.c
->>>> @@ -492,21 +492,29 @@ struct device_node *__of_node_dup(const struct device_node *np,
->>>>     * a given changeset.
->>>>     *
->>>>     * @ocs: Pointer to changeset
->>>> + * @np: Pointer to device node. If null, allocate a new node. If not, init an
->>>> + *     existing one.
->>>>     * @parent: Pointer to parent device node
->>>>     * @full_name: Node full name
->>>>     *
->>>>     * Return: Pointer to the created device node or NULL in case of an error.
->>>>     */
->>>>    struct device_node *of_changeset_create_node(struct of_changeset *ocs,
->>>> +                                            struct device_node *np,
->>>>                                                struct device_node *parent,
->>>>                                                const char *full_name)
->>>>    {
->>>> -       struct device_node *np;
->>>>           int ret;
->>>>
->>>> -       np = __of_node_dup(NULL, full_name);
->>>> -       if (!np)
->>>> -               return NULL;
->>>> +       if (!np) {
->>>> +               np = __of_node_dup(NULL, full_name);
->>>> +               if (!np)
->>>> +                       return NULL;
->>>> +       } else {
->>>> +               of_node_set_flag(np, OF_DYNAMIC);
->>>> +               of_node_set_flag(np, OF_DETACHED);
->>> Are we going to rename the function to
->>> of_changeset_create_or_maybe_modify_node()? No. The functions here are
->>> very clear in that they allocate new objects and don't reuse what's
->>> passed in.
->> Ok. How about keeping of_changeset_create_node unchanged.
->>
->> Instead, call kzalloc(), of_node_init() and of_changeset_attach_node()
->>
->> in of_pci_make_dev_node() directly.
->>
->> A similar example is dlpar_parse_cc_node().
->>
->>
->> Does this sound better?
-> No, because really that code should be re-written using of_changeset
-> API.
->
-> My suggestion is add a data pointer to struct of_changeset and then set
-> that to something to know the data ptr is a changeset and is your
-> changeset.
+-------------
 
-I do not fully understand the point. I think the issue is that we do not 
-know if a given of_node is created by of_pci_make_dev_node(), correct?
+Diffstat:
 
-of_node->data can point to anything. And we do not know if it points a 
-cset or not.  Do you mean to add a flag (e.g. OF_PCI_DYNAMIC) to 
-indicate of_node->data points to cset?
+ Documentation/cdrom/cdrom-standard.rst             |   4 +-
+ Makefile                                           |   4 +-
+ arch/arm64/kernel/armv8_deprecated.c               |   3 +
+ arch/loongarch/boot/dts/loongson-2k0500-ref.dts    |   4 +-
+ arch/loongarch/boot/dts/loongson-2k1000-ref.dts    |   4 +-
+ arch/loongarch/boot/dts/loongson-2k2000-ref.dts    |   2 +-
+ arch/mips/kernel/syscalls/syscall_o32.tbl          |   2 +-
+ arch/powerpc/kernel/eeh_pe.c                       |   7 +-
+ arch/powerpc/kvm/book3s_64_vio.c                   |  18 +-
+ arch/powerpc/platforms/pseries/setup.c             |   4 +-
+ arch/riscv/kernel/stacktrace.c                     |   3 +-
+ drivers/acpi/ac.c                                  |   4 +-
+ drivers/acpi/ec.c                                  |   9 +-
+ drivers/acpi/sbs.c                                 |   4 +-
+ drivers/block/loop.c                               |  23 ++
+ drivers/block/null_blk/main.c                      |   4 +-
+ drivers/bluetooth/btnxpuart.c                      |   2 +-
+ drivers/clk/qcom/apss-ipq-pll.c                    |   2 -
+ drivers/firmware/efi/libstub/zboot.lds             |   1 +
+ drivers/gpio/gpio-pca953x.c                        |   2 +
+ drivers/gpu/drm/amd/amdgpu/gfx_v9_4_3.c            |  15 +-
+ drivers/gpu/drm/amd/amdgpu/psp_v14_0.c             |   5 +
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  52 +++-
+ .../amd/display/dc/dml/dcn32/display_mode_vba_32.c |   3 +
+ .../gpu/drm/amd/display/dc/dml/dcn35/dcn35_fpu.c   |   2 +-
+ .../gpu/drm/amd/display/dc/dml/dcn351/dcn351_fpu.c |   2 +-
+ .../amd/display/dc/dml2/dml2_translation_helper.c  |   1 +
+ drivers/gpu/drm/amd/display/dc/dml2/dml2_utils.c   |   2 +-
+ drivers/gpu/drm/amd/include/pptable.h              |  91 +++----
+ drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c          |  13 +
+ drivers/gpu/drm/amd/pm/swsmu/inc/amdgpu_smu.h      |   5 +
+ .../amd/pm/swsmu/inc/pmfw_if/smu_v14_0_0_ppsmc.h   |   4 +-
+ drivers/gpu/drm/amd/pm/swsmu/inc/smu_types.h       |   4 +-
+ .../gpu/drm/amd/pm/swsmu/smu14/smu_v14_0_0_ppt.c   |  73 ++++++
+ drivers/gpu/drm/drm_panel_orientation_quirks.c     |   6 +
+ drivers/gpu/drm/exynos/exynos_dp.c                 |   1 -
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c             |   8 +
+ drivers/gpu/drm/radeon/radeon_gem.c                |   2 +-
+ drivers/gpu/drm/renesas/shmobile/shmob_drm_drv.c   |   8 +
+ drivers/gpu/drm/vmwgfx/Kconfig                     |   2 +-
+ drivers/hid/hid-debug.c                            |   2 +
+ drivers/hid/hid-ids.h                              |   2 +
+ drivers/hid/hid-input.c                            |  13 +
+ drivers/input/joystick/xpad.c                      |   1 +
+ drivers/input/mouse/elantech.c                     |  31 +++
+ drivers/input/serio/i8042-acpipnpio.h              |  18 +-
+ drivers/input/touchscreen/ads7846.c                |  12 +-
+ drivers/input/touchscreen/silead.c                 |  19 +-
+ drivers/misc/mei/main.c                            |   2 +-
+ drivers/net/can/usb/kvaser_usb/kvaser_usb_core.c   |   2 +-
+ drivers/net/ethernet/ibm/ibmvnic.c                 |  12 +
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c    |   1 +
+ .../ethernet/marvell/octeontx2/nic/otx2_common.c   |  10 +-
+ .../net/ethernet/marvell/octeontx2/nic/otx2_reg.h  |  55 ++--
+ .../net/ethernet/marvell/octeontx2/nic/otx2_txrx.c |   2 +-
+ drivers/net/ethernet/marvell/octeontx2/nic/qos.c   |   3 +-
+ drivers/net/usb/qmi_wwan.c                         |   2 +
+ drivers/net/wireless/intel/iwlwifi/mvm/d3.c        |  16 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/mac80211.c  |  47 +++-
+ drivers/net/wireless/intel/iwlwifi/mvm/mld-sta.c   |  13 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/ops.c       |   6 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/scan.c      |   8 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/sta.c       |  12 +-
+ drivers/net/wireless/intel/iwlwifi/mvm/sta.h       |   5 +
+ drivers/nvme/host/core.c                           |   1 +
+ drivers/nvme/host/fabrics.c                        |   6 +-
+ drivers/nvme/host/nvme.h                           |   2 +-
+ drivers/nvme/target/core.c                         |   1 +
+ drivers/nvme/target/fabrics-cmd-auth.c             |   3 -
+ drivers/nvme/target/fabrics-cmd.c                  |   6 -
+ drivers/of/irq.c                                   | 143 ++++++-----
+ drivers/of/of_private.h                            |   3 +
+ drivers/parport/parport_amiga.c                    |   8 +-
+ drivers/perf/riscv_pmu_sbi.c                       |   2 +-
+ drivers/platform/mellanox/nvsw-sn2201.c            |   5 +-
+ drivers/platform/x86/amd/hsmp.c                    |  50 +++-
+ drivers/platform/x86/lg-laptop.c                   |  89 +++----
+ drivers/platform/x86/wireless-hotkey.c             |   2 +
+ drivers/pnp/base.h                                 |   1 +
+ drivers/s390/char/sclp.c                           |   1 +
+ drivers/scsi/device_handler/scsi_dh_alua.c         |  31 ++-
+ drivers/scsi/libsas/sas_internal.h                 |  14 ++
+ drivers/scsi/qedf/qedf.h                           |   1 +
+ drivers/scsi/qedf/qedf_main.c                      |  47 +++-
+ drivers/scsi/sr.h                                  |   2 +-
+ drivers/scsi/sr_ioctl.c                            |   5 +-
+ drivers/spi/spi-davinci.c                          |   6 +
+ drivers/spi/spi-imx.c                              |   2 +-
+ drivers/spi/spi-mux.c                              |   1 +
+ drivers/spi/spi.c                                  |   6 +-
+ drivers/tee/optee/ffa_abi.c                        |  12 +-
+ drivers/vfio/device_cdev.c                         |   7 +
+ drivers/vfio/group.c                               |   7 +
+ drivers/vfio/pci/vfio_pci_core.c                   | 277 +++++----------------
+ drivers/vfio/vfio_main.c                           |  44 ++++
+ fs/btrfs/btrfs_inode.h                             |  10 +
+ fs/btrfs/file.c                                    |  16 ++
+ fs/btrfs/ordered-data.c                            |  31 +++
+ fs/btrfs/qgroup.c                                  |   4 +-
+ fs/btrfs/ref-verify.c                              |   9 +-
+ fs/btrfs/scrub.c                                   |  26 +-
+ fs/cachefiles/cache.c                              |  45 +++-
+ fs/cachefiles/ondemand.c                           |  74 ++++--
+ fs/cachefiles/volume.c                             |   1 -
+ fs/dcache.c                                        |  31 ++-
+ fs/erofs/zmap.c                                    |   2 +
+ fs/file.c                                          |   4 +-
+ fs/hfsplus/xattr.c                                 |   2 +-
+ fs/iomap/buffered-io.c                             |   3 +-
+ fs/netfs/buffered_write.c                          |   4 +-
+ fs/netfs/fscache_volume.c                          |  14 ++
+ fs/netfs/internal.h                                |   2 -
+ fs/nfs/dir.c                                       |  27 +-
+ fs/nfs/nfs4proc.c                                  |   1 +
+ fs/nfs/pagelist.c                                  |   5 +
+ fs/nfs/symlink.c                                   |   2 +-
+ fs/smb/client/cifsfs.c                             |   2 +-
+ fs/smb/client/file.c                               |   4 +-
+ fs/smb/common/smb2pdu.h                            |  34 +++
+ fs/smb/server/smb2pdu.c                            |   9 +-
+ include/linux/cdrom.h                              |   2 +-
+ include/linux/fscache-cache.h                      |   6 +
+ include/linux/page_ref.h                           |  49 +---
+ include/linux/pnp.h                                |   2 -
+ include/linux/spi/spi.h                            |   5 +-
+ include/linux/vfio.h                               |   1 +
+ include/linux/vfio_pci_core.h                      |   2 -
+ include/net/bluetooth/hci_sync.h                   |   2 +
+ include/sound/dmaengine_pcm.h                      |   1 +
+ include/trace/events/fscache.h                     |   4 +
+ include/uapi/linux/input-event-codes.h             |   2 +
+ io_uring/register.c                                |   4 +
+ kernel/workqueue.c                                 |  51 ++--
+ lib/Kconfig                                        |   8 +-
+ lib/closure.c                                      |  10 +-
+ mm/filemap.c                                       |  10 +-
+ mm/gup.c                                           |   2 +-
+ net/bluetooth/hci_core.c                           |  76 ++----
+ net/bluetooth/hci_sync.c                           |  13 +
+ net/bluetooth/l2cap_core.c                         |   3 +
+ net/bluetooth/l2cap_sock.c                         |  14 +-
+ net/ipv6/ila/ila_lwt.c                             |   7 +-
+ net/ipv6/rpl_iptunnel.c                            |  14 +-
+ net/mac80211/cfg.c                                 |   5 +-
+ net/mac80211/ieee80211_i.h                         |   2 +
+ net/mac80211/main.c                                |  11 +-
+ net/mac80211/mesh.c                                |   1 +
+ net/mac80211/scan.c                                |  31 ++-
+ net/mac80211/util.c                                |   4 +
+ net/mac802154/tx.c                                 |   8 +-
+ net/wireless/rdev-ops.h                            |   6 +-
+ net/wireless/scan.c                                |  59 +++--
+ scripts/kconfig/expr.c                             |  29 ---
+ scripts/kconfig/expr.h                             |   1 -
+ scripts/kconfig/gconf.c                            |   3 +-
+ scripts/kconfig/menu.c                             |   2 -
+ sound/core/pcm_dmaengine.c                         |  22 ++
+ sound/core/pcm_native.c                            |   2 +
+ sound/pci/hda/Kconfig                              |   2 +
+ sound/pci/hda/cs35l41_hda_property.c               |   8 +
+ sound/pci/hda/cs35l56_hda.c                        |   5 +
+ sound/pci/hda/patch_realtek.c                      |   9 +
+ sound/soc/amd/yc/acp6x-mach.c                      |   7 +
+ sound/soc/codecs/cs35l56-shared.c                  |   4 +
+ sound/soc/codecs/es8326.c                          |   8 +-
+ sound/soc/codecs/rt722-sdca-sdw.c                  |   4 +-
+ sound/soc/intel/avs/topology.c                     |  19 +-
+ sound/soc/intel/boards/bytcr_rt5640.c              |  11 +
+ sound/soc/soc-generic-dmaengine-pcm.c              |   8 +
+ sound/soc/soc-topology.c                           |  29 ++-
+ sound/soc/sof/intel/hda-pcm.c                      |   6 +
+ sound/soc/sof/sof-audio.c                          |   2 +-
+ sound/soc/ti/davinci-mcasp.c                       |   9 +-
+ sound/soc/ti/omap-hdmi.c                           |   6 +-
+ tools/power/cpupower/utils/helpers/amd.c           |  26 +-
+ tools/testing/selftests/bpf/config                 |   3 +
+ tools/testing/selftests/bpf/prog_tests/tc_links.c  |  61 +++++
+ tools/testing/selftests/cachestat/test_cachestat.c |   1 +
+ .../selftests/filesystems/overlayfs/dev_in_maps.c  |   1 +
+ tools/testing/selftests/futex/functional/Makefile  |   2 +-
+ .../testing/selftests/net/openvswitch/ovs-dpctl.py |   2 +-
+ tools/testing/selftests/openat2/openat2_test.c     |   1 +
+ tools/testing/selftests/timens/exec.c              |   6 +-
+ tools/testing/selftests/timens/timer.c             |   2 +-
+ tools/testing/selftests/timens/timerfd.c           |   2 +-
+ tools/testing/selftests/timens/vfork_exec.c        |   4 +-
+ tools/testing/selftests/vDSO/parse_vdso.c          |  16 +-
+ .../selftests/vDSO/vdso_standalone_test_x86.c      |  18 +-
+ 188 files changed, 1718 insertions(+), 884 deletions(-)
 
-I probably misunderstood. Could you explain more?
 
-
-Thanks,
-
-Lizhi
-
->
-> Rob
 
