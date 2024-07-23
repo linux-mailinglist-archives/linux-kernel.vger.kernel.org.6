@@ -1,251 +1,150 @@
-Return-Path: <linux-kernel+bounces-260403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC27F93A873
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:04:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2E0193A87F
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE9E01C228AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:04:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E66581C22A21
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4FC14387C;
-	Tue, 23 Jul 2024 21:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA3E14373A;
+	Tue, 23 Jul 2024 21:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aWVzfyFF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gd7NHDNQ"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59AF313D538
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 21:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C349140384
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 21:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721768658; cv=none; b=bJaPrnv7X4bzLKMYp5msxs+2YG+KVyAsuKv2xGF4dUuiwVWMPZPB8S1xuvF9legVeMUKkJoBV33WBDXKrWTRLle1VHEc8mWmu0MgmSF3GUmWytIq3g4iSwyYe5OGiMXZwW+B7ywQ7VaU9TGWOriiJ2Vaterjd9LLmmq0qsrT028=
+	t=1721768854; cv=none; b=hPws5rS27xRAcrrmwCmfMfawVceWuH9RhBUXy9+wsNG0JLb1CmMuTwiSRoGon3V2Oy73PXxOsb7XXsJC8Ylo9lgOHRq36Qph0yd0jBX2eUG0jWc/MliUiMMQxm0edB3klBajwEAu05+5BBoGEPitiDR+b/pjID/7eKyb5hiodtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721768658; c=relaxed/simple;
-	bh=ByJ50gM2kVPVymv6FrYRFVV3V1JgaiK2qoeSbb51xT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RVLJ60BvvWAVpcasepnDSr2PqKuQ4c2SdPRc1wH7CGd6IfGvqCrxwFnVExlo0y9v8cr3xvkTeeWn34fCtNNNZROP84wmEPh6u7UYrU8fXc371MIArInvXRCXRQYnDdHWvaF5DjUg1IymwvR7jedWRAe86t5zUuO/A6IZ033FkCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aWVzfyFF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721768655;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AgNOjwKnUy48py4Ld6sAQndZB5vwc59GpzRjxep5jN4=;
-	b=aWVzfyFFHr/nmOX2FAnIedkWXnTeKC6cPDGT0xBiIitdPruecUFy2bMt7OMAGtKR0EPw0t
-	O+Brgr2E7RKyXCrlZzNJW8MylKXXMjXCQnEwVeuPk+9PfvCqFWcbwNKbPQA+MyGM9v3Q2T
-	+K0x4/GB8jDYCyGwI6Wa0bsGaGfbZFE=
-Received: from mail-oi1-f198.google.com (mail-oi1-f198.google.com
- [209.85.167.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-244-LSSX9G--M16q4oqvMDze5w-1; Tue, 23 Jul 2024 17:04:13 -0400
-X-MC-Unique: LSSX9G--M16q4oqvMDze5w-1
-Received: by mail-oi1-f198.google.com with SMTP id 5614622812f47-3d92e5d767aso1048339b6e.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:04:13 -0700 (PDT)
+	s=arc-20240116; t=1721768854; c=relaxed/simple;
+	bh=F7iLMW3rJLqXlZUzeoBPhqh75CjXvVXCPj8M/vQCtuk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZajKhZnzKO5VsnshOJwvN33TwuyUwS1ciPU33etB5WdHvOVA8CPMctUQsoPEu6W5tp4aGmNofofH2GGpM6pQIMqWm5Jq6rl4WUsFnXPX49FZaPULj5E39TGbFYwnBN0dckER8r7nH0gbDJtwCd7B4MUE+rpsvVFWk6wD3eYqjOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gd7NHDNQ; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52fc14d6689so2391210e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:07:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1721768850; x=1722373650; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=echzYBfPOzOcg9v7iQfcS5oYmvkbZgxPwE2bf82ps3o=;
+        b=gd7NHDNQcji3UEnQMsviRDUFiRJOd6ml0g8KCc8NckzPzGZlExIrpWeGx9ihTCbvo1
+         1C5HmfeKsh1uy3BtWcmztyvR5XUxCJBIJi09beL4vWmubC+XNeYT6vgu2WRUPmdlKj0d
+         C+6V5ETmmUM8Z+uCtgvY4+GYEJqZ1npA0aA7Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721768653; x=1722373453;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AgNOjwKnUy48py4Ld6sAQndZB5vwc59GpzRjxep5jN4=;
-        b=szucVW4j/YgtxagW2RL0tnh5wz2uwAFK/CYOoe7HKpIPkxw30lh1z0hinn//wTr82d
-         +CxaChTEHd2k4R4QnOvXxuIE/WTTpp6z1DJ59zKLRHZYZ+sSyIU1BsRodnHkCpxr0YAX
-         d6McYqBifnr6gwGZV9bdtrdcPMbcppfBWUq+p6FJWoMjxopU7QrIo12hmZW6yVNBuogd
-         hDyUFNEx3SMfV88PKM3TToNeDUhs3LD4kkHeNhp6T5RVQnZWWHs3yHu9Sph8N2f/vGiA
-         dd+HBqEhtXWIZ8jJt85onr81mAaxop0hKa2vKc9u0d1wC8/+GqB4l3N82yXwwPx5e0Fu
-         aZJg==
-X-Gm-Message-State: AOJu0YwC7HIcsYniKY4iPcI9u25R0kmTolyA1jduS8BfgOs8n+O8oyfE
-	KLHzidKDYWRTauusms/t4K40RyJgw90OJgOb65/kN8SGd6i5oq9doXnS5uZUvayHptdWxAZ5baz
-	ur0XigR+nq+W9PXIZUCAfXU0J98NujPt/PC91DYN1Y7wA22hTEZoFUkPwC4ah8g==
-X-Received: by 2002:a9d:6043:0:b0:703:78ff:1e1 with SMTP id 46e09a7af769-708fd973bc0mr6593339a34.0.1721768653030;
-        Tue, 23 Jul 2024 14:04:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEhxM1GaXKORyXEI48pMqHK/HKFQ8d349p1Ngql0yZkrT6ZS6/TU4RH6kRMVcENNPnDcnR0BQ==
-X-Received: by 2002:a9d:6043:0:b0:703:78ff:1e1 with SMTP id 46e09a7af769-708fd973bc0mr6593320a34.0.1721768652631;
-        Tue, 23 Jul 2024 14:04:12 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a19905a721sm515082185a.93.2024.07.23.14.04.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 14:04:11 -0700 (PDT)
-Date: Tue, 23 Jul 2024 17:04:08 -0400
-From: Peter Xu <peterx@redhat.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Oscar Salvador <osalvador@suse.de>, linux-s390@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Michal Hocko <mhocko@kernel.org>, linux-riscv@lists.infradead.org,
-	sparclinux@vger.kernel.org,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Jason Gunthorpe <jgg@nvidia.com>, x86@kernel.org,
-	Alistair Popple <apopple@nvidia.com>, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Hugh Dickins <hughd@google.com>,
-	Axel Rasmussen <axelrasmussen@google.com>
-Subject: Re: [PATCH RFC 0/6] mm: THP-agnostic refactor on huge mappings
-Message-ID: <ZqAayNSDf_6cfziw@x1n>
-References: <20240717220219.3743374-1-peterx@redhat.com>
- <cf36725d-c197-4c07-8998-d34711335fdb@redhat.com>
- <Zp57ZLk2IQoHOI7u@x1n>
- <cfe94481-233a-421c-b607-08517588de6c@redhat.com>
+        d=1e100.net; s=20230601; t=1721768850; x=1722373650;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=echzYBfPOzOcg9v7iQfcS5oYmvkbZgxPwE2bf82ps3o=;
+        b=XFPtNLjpOlwQmrbpZoYYRlpuIvZSYYtHWhlEdqk3FQWJemxnN5RXFFyEXfrAVI4Nqw
+         vOAdt995Op6gteyIt7iAnDK2bYOa70uMEYlqdyGZZRbdtfMBneqcsbwR6LBiu4pc6M3H
+         1Cf16bZsOZdXHATfNihK7Ghc29tL83EWLRMsHNFNmhMh/72tHOEiD8ZkuPuCB385+VTd
+         ituH6guX3s+kUMM4tAMlabgB4J5gLIi722MpjKxje4lOX19Y7NQull4ljPB+kpw4Q9kd
+         KoVogTX7fBOH0LPi0XF0gWKDoGdIOTXYLYkBRdqvWyBua3dtHpCNisxXbvOUqsXYRtWY
+         uY5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVJR4f+nXlggoTPs9/Cj/3+Ogw+bIA1wCMRCK+bnLJPtOEbe5+yyePnEAhv1SuABEoFxMCTNMP4kigESbweCdl2Hrz1X+I4LPgLSIfG
+X-Gm-Message-State: AOJu0YzgSo3rJKqxO/FufRy92saP9NQMjklpi2pxa2XApGX4sS9Q51cC
+	KIv7wYvG5/GnnXDkGAHWx25RIvIBtFmmYojE0edEdMY9PjsAC3Hmrdz9k+72jFgHrk2X6ttOIg1
+	HzrTC5g==
+X-Google-Smtp-Source: AGHT+IE3t2dSHNiyQdtY7NDy8pSsxcwDRNX4+RdRdJxwXTXAPjEjakJQb2i52f7WPjdgzBdncSWa4A==
+X-Received: by 2002:a05:6512:1323:b0:52d:215b:9028 with SMTP id 2adb3069b0e04-52efb86de9dmr6571050e87.60.1721768850187;
+        Tue, 23 Jul 2024 14:07:30 -0700 (PDT)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fc2cb0ca5sm567836e87.292.2024.07.23.14.07.29
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jul 2024 14:07:29 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ef2c56d9dcso30971891fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:07:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV9kaEK9KYRfQ9y+mA8yKlQOsUuGGg3kovZcgO0paTL6Am5JI+eSOd450dNn1ACLjryWFJbDCA/5vGEVoccqGXYLWfVJFeKhjUhJb5O
+X-Received: by 2002:a05:651c:50d:b0:2ef:17f7:6e1d with SMTP id
+ 38308e7fff4ca-2ef17f76f31mr89418101fa.4.1721768848674; Tue, 23 Jul 2024
+ 14:07:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cfe94481-233a-421c-b607-08517588de6c@redhat.com>
+References: <Zp-_7R49fIHgIhaq@pathway.suse.cz> <CAHk-=whU_woFnFN-3Jv2hNCmwLg_fkrT42AWwxm-=Ha5BmNX4w@mail.gmail.com>
+ <87ed7jvo2c.fsf@jogness.linutronix.de>
+In-Reply-To: <87ed7jvo2c.fsf@jogness.linutronix.de>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 23 Jul 2024 14:07:12 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh+cxX2Sxc6RPBKkgYO67o2mdVfW6sQNMYc_x2QoP4LOQ@mail.gmail.com>
+Message-ID: <CAHk-=wh+cxX2Sxc6RPBKkgYO67o2mdVfW6sQNMYc_x2QoP4LOQ@mail.gmail.com>
+Subject: Re: [GIT PULL] printk for 6.11
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>, Jan Kara <jack@suse.cz>, 
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 23, 2024 at 10:18:37AM +0200, David Hildenbrand wrote:
-> On 22.07.24 17:31, Peter Xu wrote:
-> > On Mon, Jul 22, 2024 at 03:29:43PM +0200, David Hildenbrand wrote:
-> > > On 18.07.24 00:02, Peter Xu wrote:
-> > > > This is an RFC series, so not yet for merging.  Please don't be scared by
-> > > > the code changes: most of them are code movements only.
-> > > > 
-> > > > This series is based on the dax mprotect fix series here (while that one is
-> > > > based on mm-unstable):
-> > > > 
-> > > >     [PATCH v3 0/8] mm/mprotect: Fix dax puds
-> > > >     https://lore.kernel.org/r/20240715192142.3241557-1-peterx@redhat.com
-> > > > 
-> > > > Overview
-> > > > ========
-> > > > 
-> > > > This series doesn't provide any feature change.  The only goal of this
-> > > > series is to start decoupling two ideas: "THP" and "huge mapping".  We
-> > > > already started with having PGTABLE_HAS_HUGE_LEAVES config option, and this
-> > > > one extends that idea into the code.
-> > > > 
-> > > > The issue is that we have so many functions that only compile with
-> > > > CONFIG_THP=on, even though they're about huge mappings, and huge mapping is
-> > > > a pretty common concept, which can apply to many things besides THPs
-> > > > nowadays.  The major THP file is mm/huge_memory.c as of now.
-> > > > 
-> > > > The first example of such huge mapping users will be hugetlb.  We lived
-> > > > until now with no problem simply because Linux almost duplicated all the
-> > > > logics there in the "THP" files into hugetlb APIs.  If we want to get rid
-> > > > of hugetlb specific APIs and paths, this _might_ be the first thing we want
-> > > > to do, because we want to be able to e.g., zapping a hugetlb pmd entry even
-> > > > if !CONFIG_THP.
-> > > > 
-> > > > Then consider other things like dax / pfnmaps.  Dax can depend on THP, then
-> > > > it'll naturally be able to use pmd/pud helpers, that's okay.  However is it
-> > > > a must?  Do we also want to have every new pmd/pud mappings in the future
-> > > > to depend on THP (like PFNMAP)?  My answer is no, but I'm open to opinions.
-> > > > 
-> > > > If anyone agrees with me that "huge mapping" (aka, PMD/PUD mappings that
-> > > > are larger than PAGE_SIZE) is a more generic concept than THP, then I think
-> > > > at some point we need to move the generic code out of THP code into a
-> > > > common code base.
-> > > > 
-> > > > This is what this series does as a start.
-> > > 
-> > > Hi Peter!
-> > > 
-> > >  From a quick glimpse, patch #1-#4 do make sense independent of patch #5.
-> > > 
-> > > I am not so sure about all of the code movement in patch #5. If large folios
-> > > are the future, then likely huge_memory.c should simply be the home for all
-> > > that logic.
-> > > 
-> > > Maybe the goal should better be to compile huge_memory.c not only for THP,
-> > > but also for other use cases that require that logic, and fence off all THP
-> > > specific stuff using #ifdef?
-> > > 
-> > > Not sure, though. But a lot of this code movements/churn might be avoidable.
-> > 
-> > I'm fine using ifdefs in the current fine, but IMHO it's a matter of
-> > whether we want to keep huge_memory.c growing into even larger file, and
-> > keep all large folio logics only in that file.  Currently it's ~4000 LOCs.
-> 
-> Depends on "how much" for sure. huge_memory.c is currently on place 12 of
-> the biggest files in mm/. So there might not be immediate cause for action
-> ... just yet :) [guess which file is on #2 :) ]
+On Tue, 23 Jul 2024 at 13:41, John Ogness <john.ogness@linutronix.de> wrote:
+>
+> Petr's pull request provides the functionality for a CPU to call
+> printk() during emergencies so that each line only goes into the
+> buffer. We also include a function to perform the flush at any time. As
+> the series is implemented now, that flush happens after the warning is
+> completely stored into the buffer. In cases where there is lots of data
+> in the warning (such as in RCU stalls or lockdep splats), the flush
+> happens after significant parts of the warning.
 
-7821, hugetlb.c  
-7602, vmscan.c          
-7275, slub.c       
-7072, page_alloc.c
-6673, memory.c     
-5402, memcontrol.c 
-5239, shmem.c   
-5155, vmalloc.c      
-4419, filemap.c       
-4060, mmap.c       
-3882, huge_memory.c
+I really think the flushing needs to be *way* more aggressive for any
+oops. The "flush at end" is not even remotely sane.
 
-IMHO a split is normally better than keeping everything in one file, but
-yeah I'd confess THP file isn't that bad comparing to others..  And I'm
-definitely surprised it's even out of top ten.
+Some amount of buffering can make sense, eg when printing out the
+regular register state over a few lines, there certainly shouldn't be
+anything there that can cause problems.
 
-> 
-> > 
-> > Nornally I don't see this as much of a "code churn" category, because it
-> > doesn't changes the code itself but only move things.  I personally also
-> > prefer without code churns, but only in the case where there'll be tiny
-> > little functional changes here and there without real benefit.
-> > 
-> > It's pretty unavoidable to me when one file grows too large and we'll need
-> > to split, and in this case git doesn't have a good way to track such
-> > movement..
-> 
-> Yes, that's what I mean.
-> 
-> I've been recently thinking if we should pursue a different direction:
-> 
-> Just as we recently relocated most follow_huge_* stuff into gup.c, likely we
-> should rather look into moving copy_huge_pmd, change_huge_pmd, copy_huge_pmd
-> ... into the files where they logically belong to.
-> 
-> In madvise.c, we've been doing that in some places already: For
-> madvise_cold_or_pageout_pte_range() we inline the code, but not for
-> madvise_free_huge_pmd().
-> 
-> pmd_trans_huge() would already compile to a NOP without
-> CONFIG_TRANSPARENT_HUGEPAGE, but to make that code avoid most
-> CONFIG_TRANSPARENT_HUGEPAGE, we'd need a couple more function stubs to make
-> the compiler happy while still being able to compile that code out when not
-> required.
+Let me pick a very specific example of a common thing:
 
-Right, I had a patch does exactly that, where it's called pmd_is_leaf(),
-for example, but taking CONFIG_* into account.
+   int __die(const char *str, struct pt_regs *regs, long err)
 
-I remember I had some issue with that, e.g. I used to see pmd_trans_huge()
-(when !THP) can optimize some path but pmd_is_leaf() didn't do the same job
-even if all configs were off.  But that's another story and I didn't yet
-dig deeper.  Could be something small but overlooked.
+in arch/x86/kernel/dumpstack.c.
 
-> 
-> The idea would be that e.g., pmd_leaf() would return "false" at compile time
-> if no active configuration (THP, HUGETLB, ...) would be active. So we could
-> just use pmd_leaf() similar to pmd_trans_huge() in relevant code and have
-> the compiler optimize it all out without putting it into separate files.
-> 
-> That means, large folios and PMD/PUD mappings will become "more common" and
-> better integrated, without the need to jump between files.
-> 
-> Just some thought about an alternative that would make sense to me.
+Look, do I expect problems in "__die_header()"? No.
 
-Yeah comments are always welcomed, thanks.
+But the *moment* you call "notify_die()", you are now calling random
+debug code. The register state NEEDS TO HAVE BEEN FLUSHED before this
+point.
 
-So I suppose maybe it would be easier for now that I make the pfnmap branch
-depending on THP. It looks to me something like this may still take some
-time to consolidate.  When it's light enough, maybe it can be a few initial
-patches on top of a hugetlb series that can start to use this.  Maybe
-that'll at least make the patches easier to review.
+This is not something I'm willing to debate. Some of the most painful
+debugging sessions I have *EVER* had have been due to "debug code that
+failed".
 
-Thanks,
+Are these things rare? Yes they are. Very. Thankfully.
 
--- 
-Peter Xu
+But the scars left behind by things like "buggy kgdb hook meant that
+oops printout never happened at all when kgdb wasn't even enabled" and
+having wasted literally *days* on something that would have been
+obvious had the oops printout just happened means that I'm very much
+in the "once bitten, twice shy" camp.
 
+So that's why I absolutely *ABOHOR* that code in "oops_begin()" that
+stops printouts until "oops_end()". It's *EXACTLY* the wrong thing to
+do if there's some problem in the middle.
+
+And yes, those problems have happened. Again - rarely, but it's *so*
+painful when they do, that I refuse to pull something that I consider
+to be this broken.
+
+And yes, I'm convinced we have many other situations where a problem
+during printout will silence things (the obvious one being locking
+issues with the printing itself). But I refuse to have that silence be
+an integral part of the die() code.
+
+                 Linus
 
