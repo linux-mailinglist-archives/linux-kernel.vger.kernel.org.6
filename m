@@ -1,158 +1,131 @@
-Return-Path: <linux-kernel+bounces-259773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 655F5939CFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:51:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3711B939CF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:51:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5BF0282844
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:51:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7BCF1F22376
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435F914C5A3;
-	Tue, 23 Jul 2024 08:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8EC14BF89;
+	Tue, 23 Jul 2024 08:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VzvELRXH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="fSW6PSDT";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BkPNhz88"
+Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0CA1DDDC
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BC91370
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721724676; cv=none; b=T9ZpXUDu9/i/zb81CA+t0ijxjI+YDrlRsIJxOZvrJJFZDvlAF5SQ6mhkyY2IikkZiS0FGOZSMogowFFHntT83NdoCknhDaVpiWmrknd8n45IoPK9UP1Fg3FTcsG92n0VMRq97uakeF9B530S4beysJF4SaOavZaBs7Y39hiGsDg=
+	t=1721724659; cv=none; b=Fbp0PTGZQtHMBOWBc37tpZmKAOF3V7Z4+wTIgbM0SukTehu4sYqrIqGauMIcnaR/wK4UeGXMMoSgouR0Yp8cwYiKAwFkXybCNwZmesnfaM4aykH6s9WZWceO/IPcthRfmZ3XyZMO+m0rRQ8ICPckHJhd3qTn9YVHGR6bARad/h0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721724676; c=relaxed/simple;
-	bh=QuSt6B6kzEKTZfKHkVdmo7hwn8phjl+T48W87+wmF8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b+FsdYe1TorpOpQAZNh27CO1d/UrCdEstli7nWYCJRyuysTZNyGnyt2iMBRUHqGqnbvhIE2nJ3lnFQVrOuUhE4nbMBdwQxKogAo1a7xLO7YlJy/lK6c2AnAPfykpCDRc+1wZXW2o30FNKPdos58/bkrEkpnMbF8zPHfaPPzvDQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VzvELRXH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721724672;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XbO198UeBpGnMCQfzSOZVL6WBSEYJ6mYl66ERaEPV4s=;
-	b=VzvELRXHLXHenXCrdNIMmitCWpRQV03F+65flC8fsI5KMZshQy5KEhGuQMZsvgnIcvAiVN
-	ll9VaWYwQJUYBhlBmLyZjqgFCXhynkJdxdVCfdb661TNrGQ4cCpr6ceaDCBU5q6M2hLXxB
-	t+ZhogoE9lelP25GRM4WycDSCdo2Nn0=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-45-vremut5uN2uPOCGBwKUrJw-1; Tue, 23 Jul 2024 04:50:27 -0400
-X-MC-Unique: vremut5uN2uPOCGBwKUrJw-1
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-79efed0e796so966157185a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 01:50:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721724626; x=1722329426;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XbO198UeBpGnMCQfzSOZVL6WBSEYJ6mYl66ERaEPV4s=;
-        b=U9b1uCRkGsXHG0s4wTrPMqLfxsccNcJjJWqGQz2XK3BEylQfSe/zh+kpRZ+bE+VHJe
-         MIN1GWT5vaC64kSk3jHdRhiwPmT3fF3TDjf2ZsRuHrq/s9rdAkGxcFb3veOEl+BvrJSA
-         vMbgsGqmXxv+Bndj7K4NidTO0Zuurf/N7xfEGNp+XMjKQUfaDEWpFui1jxwEuTUbeIfC
-         rX2Z8AwYdQqgEEEoKvV4DnGyEXki6sJfzHRe6Y2BEadZWYc+ZobinXG4ZzdPfjTER8fg
-         Wur9M//Txey0Gieta4jOAHYrJ1uJv1F7rr+GecOs7pyamY3gBB51BOHLYVaE3+5J+OVy
-         bRNg==
-X-Forwarded-Encrypted: i=1; AJvYcCXWi0Fi8pfm4YwhShkeMYpkxf+WkrSb4IwGylzdXBUl2IxRF9P+E6m7DrcLNkf4EiA1/+Fn2rjfKz89fkBq3/IqQaODTt7jxpsBVgB2
-X-Gm-Message-State: AOJu0YwsGjCstTTlgHCcorypzQAEUYO9xRyDwg7AOu2dIWNTcZig9vBL
-	QJAnF3FxitjMfwVSTaViDMQhVgj1U6pU9rDRjOMvmA9tSr2hOmVKhUTez094SrNlk28XaxTDVQD
-	4klsAbkHeq8hS/w987PHQxQw9ecX2kW5RejidGoolKBbjTu+EQtYGBGVwcKXQZA==
-X-Received: by 2002:a05:620a:258c:b0:79d:554d:731f with SMTP id af79cd13be357-7a1c2f7a5c3mr200368885a.29.1721724626412;
-        Tue, 23 Jul 2024 01:50:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGhdCv2zyLBW2MPFzcEt5RuedOMCGTU5EbDG4xwsuhayOt6swlOH697xhnSfXmhCPk2Xg+IFA==
-X-Received: by 2002:a05:620a:258c:b0:79d:554d:731f with SMTP id af79cd13be357-7a1c2f7a5c3mr200366885a.29.1721724626072;
-        Tue, 23 Jul 2024 01:50:26 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.147.11])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a198faaff2sm458653685a.27.2024.07.23.01.50.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 01:50:25 -0700 (PDT)
-Date: Tue, 23 Jul 2024 10:50:21 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Wander Lairson Costa <wander@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	"open list:SCHEDULER" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] sched/deadline: Fix warning in migrate_enable for
- boosted tasks
-Message-ID: <Zp9uzXUwbJOpuwsv@jlelli-thinkpadt14gen4.remote.csb>
-References: <20240722132935.14426-1-wander@redhat.com>
- <20240722132935.14426-2-wander@redhat.com>
+	s=arc-20240116; t=1721724659; c=relaxed/simple;
+	bh=vVfjWaNJVC6L4VVYOr+oPqcRu5lp3pzb/A5yoHKgEgI=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=Lu1haWCpkmALzWiU5Duo8CShVy1WfrAs3ND3+v4LdOAPhOXy3KOpfC33z/x0anhHEfSkgRt+boJh02F9FshO8yaHclsxFE6a9yT8YRqCYCwFZ1bHNLLomuUnHQGp4ltCuxb6zQsrp57fEi8nNjQpXVfDdoLcV4Cpx/t786bqRgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=fSW6PSDT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BkPNhz88; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id C2BE013806EF;
+	Tue, 23 Jul 2024 04:50:56 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Tue, 23 Jul 2024 04:50:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1721724656; x=1721811056; bh=jlsSg4sLcx
+	ok5/E5Mpj5ECh+kmcnLpkuuWWCHaLS/l0=; b=fSW6PSDTcOhQXBT8oKtfQP3yl/
+	Uz5gZTK0MjOmEC4p6QWsul5bAdlmXM2HUP5vZNuFv1Jd+vkW4EfwzZ/ICCYeVZRH
+	FEIjxFmJN12U+/gmV0ZpUeZm89yA4NYMbjkDWuaf6KyX9UOR9PqAAfjI2A7bEUAb
+	83lxMdigthm9V9l+vOB7Vf8h5VEej4SLqR9yfxmwhdApyLJ0EJG45PKZS5HzYjSW
+	Imm/kRPieqKPfSsj1t1Egw4RDSzl2YFwJBmArAdPFQtWJC+nJaQIKK6ldnS5/Y15
+	AvSIIKNDHOUoQMsLycRgewS8+lrm99p/GoaF9L4JQqHzfP471+NHZhrXB7ag==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1721724656; x=1721811056; bh=jlsSg4sLcxok5/E5Mpj5ECh+kmcn
+	LpkuuWWCHaLS/l0=; b=BkPNhz88m8QqYzsn7rgBxAcx4krTybDQtFUe02nHmG/i
+	mvWwBLeBC3ceHpkP+ixctgmHnmSOoB4Z+CTUyD8KJfGj+cnQe6bYmb8nY6cA6ml0
+	NTZjxpJH8KFmulgexgjkY0dFahOO7lNR0zkjfSz87pyQQgBEBDbgtVEXRGGHSn3F
+	JPVPXfEsIpYlxLKKGnGTdZAGU/1X9jSTVpRWxa4p8J0UHtOVsmhguLvW1cK80pT4
+	W8G4fvo755ScdzjJHHIcurz73qv+IJEeHIA2LaNBgSu5A5xOQ+QpmC1sqyKDvfa5
+	3lHc44a6/lWRSnUSSYbbR4w8w4vg1TOTrQZ4YlaYYA==
+X-ME-Sender: <xms:8G6fZqsFHgGTCBJMaRnDr5E0X4Y9H0-pjhFXouaMHQYyxmZJ1HhDsQ>
+    <xme:8G6fZvcnej4UYG60RSzwFRJH0_MAL9roMsxpdY_4eXntYAKM8QgBKszZ83hReMfeG
+    X4Hk7i4tkN9pdyXbJ0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrheelgddtkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
+    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
+X-ME-Proxy: <xmx:8G6fZlxG_1q4XN4hy-HFTIBCkaCOb-9fyvkQLja0iu2tpwBpkLii1w>
+    <xmx:8G6fZlMJmwEpb-IUX_nyrJToB72jeLmqsLNsYFJZwzLr-Ai4o9eZQw>
+    <xmx:8G6fZq9OK8gfVk8fooo2_uFXrnY2BUar46H2AXNMw3XZKaTAUtr8rA>
+    <xmx:8G6fZtVWXO86S4JDY7aRoOepixmlXjROId61o36zvbr-B-sXpflgoA>
+    <xmx:8G6fZqwrlOHOQEeNyaNR7K9bZDGUG9C9MSqnwybXdWLOCZpR_dzuRAQk>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 96381B6008D; Tue, 23 Jul 2024 04:50:56 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-582-g5a02f8850-fm-20240719.002-g5a02f885
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240722132935.14426-2-wander@redhat.com>
+Message-Id: <4436aef8-3947-4923-96ee-47516e63e5bb@app.fastmail.com>
+In-Reply-To: <20240722094226.21602-29-ysionneau@kalrayinc.com>
+References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
+ <20240722094226.21602-29-ysionneau@kalrayinc.com>
+Date: Tue, 23 Jul 2024 08:50:21 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Yann Sionneau" <ysionneau@kalrayinc.com>, linux-kernel@vger.kernel.org
+Cc: "Jonathan Borne" <jborne@kalrayinc.com>,
+ "Julian Vetter" <jvetter@kalrayinc.com>,
+ "Clement Leger" <clement@clement-leger.fr>,
+ "Guillaume Thouvenin" <thouveng@gmail.com>,
+ "Julien Villette" <julien.villette@gmail.com>
+Subject: Re: [RFC PATCH v3 28/37] kvx: Add misc common routines
+Content-Type: text/plain
 
-Hi Wander,
+On Mon, Jul 22, 2024, at 09:41, ysionneau@kalrayinc.com wrote:
 
-On 22/07/24 10:29, Wander Lairson Costa wrote:
-> When running the following command:
-> 
-> while true; do
->     stress-ng --cyclic 30 --timeout 30s --minimize --quiet
-> done
-> 
-> a warning is eventually triggered:
-> 
-> WARNING: CPU: 43 PID: 2848 at kernel/sched/deadline.c:794
-> setup_new_dl_entity+0x13e/0x180
-> ...
-> Call Trace:
->  <TASK>
->  ? show_trace_log_lvl+0x1c4/0x2df
->  ? enqueue_dl_entity+0x631/0x6e0
->  ? setup_new_dl_entity+0x13e/0x180
->  ? __warn+0x7e/0xd0
->  ? report_bug+0x11a/0x1a0
->  ? handle_bug+0x3c/0x70
->  ? exc_invalid_op+0x14/0x70
->  ? asm_exc_invalid_op+0x16/0x20
->  enqueue_dl_entity+0x631/0x6e0
->  enqueue_task_dl+0x7d/0x120
->  __do_set_cpus_allowed+0xe3/0x280
->  __set_cpus_allowed_ptr_locked+0x140/0x1d0
->  __set_cpus_allowed_ptr+0x54/0xa0
->  migrate_enable+0x7e/0x150
->  rt_spin_unlock+0x1c/0x90
->  group_send_sig_info+0xf7/0x1a0
->  ? kill_pid_info+0x1f/0x1d0
->  kill_pid_info+0x78/0x1d0
->  kill_proc_info+0x5b/0x110
->  __x64_sys_kill+0x93/0xc0
->  do_syscall_64+0x5c/0xf0
->  entry_SYSCALL_64_after_hwframe+0x6e/0x76
->  RIP: 0033:0x7f0dab31f92b
-> 
-> This warning occurs because set_cpus_allowed dequeues and enqueues tasks
-> with the ENQUEUE_RESTORE flag set. If the task is boosted, the warning
-> is triggered. A boosted task already had its parameters set by
-> rt_mutex_setprio, and a new call to setup_new_dl_entity is unnecessary,
-> hence the WARN_ON call.
-> 
-> Check if we are requeueing a boosted task and avoid calling
-> setup_new_dl_entity if that's the case.
-> 
-> Signed-off-by: Wander Lairson Costa <wander@redhat.com>
-> Fixes: 2279f540ea7d ("sched/deadline: Fix priority inheritance with multiple scheduling classes")
+> +/*
+> + * Copy data from IO memory space to "real" memory space.
+> + */
+> +void __memcpy_fromio(void *to, const volatile void __iomem *from, size_t count)
+> +{
+> +	while (count && !IS_ALIGNED((unsigned long)from, 8)) {
+> +		*(u8 *)to = __raw_readb(from);
+> +		from++;
+> +		to++;
+> +		count--;
+> +	}
+> +
+> +	while (count >= 8) {
+> +		*(u64 *)to = __raw_readq(from);
+> +		from += 8;
+> +		to += 8;
+> +		count -= 8;
+> +	}
 
-I believe your fix makes sense to me. I only wonder if however it
-actually fixes 295d6d5e37360 ("sched/deadline: Fix switching to
--deadline") instead of the change you reference above?
+I see this entire file is largely identical to the corresponding
+one from arm64, loongarch and (mostly) csky. Can you instead
+combine the existing ones into a copy in lib/ and use that?
 
-Thanks,
-Juri
+This would be a good thing to send before the rest of your series.
 
+      Arnd
 
