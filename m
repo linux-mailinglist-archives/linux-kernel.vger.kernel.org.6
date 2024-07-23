@@ -1,255 +1,131 @@
-Return-Path: <linux-kernel+bounces-260072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9199693A299
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:21:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D0A93A295
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 415B12842B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:21:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4E861C22C1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F12DD154448;
-	Tue, 23 Jul 2024 14:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3C615442F;
+	Tue, 23 Jul 2024 14:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cg/aGMAI"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dt/xtDZC"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677E715252E;
-	Tue, 23 Jul 2024 14:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421A6152534
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721744495; cv=none; b=pZY6ZIy1EJ7LpC+JF67PZFnJaMFxuwBbvXOB9PHHeCYbLMxggsbJg5k71wFxa9YVkefaYLM/pMzHAprrahPv3hgS0g53VfXglHqSpUjUYZzhFaYQu6D41NW054b1mW7jhTDnSkOqiuJkfk6azbK5OPDDC5Pjm0etzEl5UtzJh2c=
+	t=1721744486; cv=none; b=QSAuN4i2LI7ouXc/RtzHfIleHUspq5vbnty74LhYWUi5SrnMY5mdk16+uhk5hK1OIjXg92FHcGvKKmd0Q0MqkU7jV70mxlCdY7aPFsfT7DzPY1tiXLF/JLHeORV9TU3kMP/4p19z1pJeZhZuCuY+cXVVo9eocD1Ku41+1+VtNqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721744495; c=relaxed/simple;
-	bh=/+vh5Izzq6t7XO0n7bUh6HgctsHMqpaChg3gDNKgH1o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TlmMQjR8AW8jrvC67uJBLgge2+qvmuK9I6a1M47sv31SZeyFtEMzr3hp7OFKQ9IXXWR9Q7zxfBT2gNTcNPF9XtyBiDKm70GpDbXdH5aMW5y3UQBQQqojGN3O889QGbbOEswJA63rf59j5hXXWzDPspKQft1gbAe/qfyqDcA4FJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cg/aGMAI; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52efc60a6e6so4416802e87.1;
-        Tue, 23 Jul 2024 07:21:33 -0700 (PDT)
+	s=arc-20240116; t=1721744486; c=relaxed/simple;
+	bh=DNGKRnq6yefqDwFq4dLFSptbWIrv/56iYPZ/WODQ1aI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eakbZRsw41cuBjkHLSuK2UstV3ATXV0ZaCbPs3ve+Y+oHLEA3nHo7fElqP1f0btRSpfFJNrRALT2MIqWTHNpk0WVlfCAPbyaRqSwYLmQeqF0yeb0O/0tmFRInN/LuQV9ND1xSdTGyD8/kjZAkKwlrxG19/ZLUTM65aTU1BuPkas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dt/xtDZC; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52f025ab3a7so3587008e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:21:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721744492; x=1722349292; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FYMdjIba5GVjSk5LLCgsucuwd1uTMo/SWZKsqPwbIS0=;
-        b=cg/aGMAIpVhGmWeSuTzpomt2cPlobwDJH9VYJydNAPIll+hol7fbUflc/66SChgrUB
-         UVmsBtRn0zpf9A5Cy85ALYDwMBJtN2DvKf80cF74pwptqDlYZkra54VWsxAQKSA6F75H
-         kJZgxDRsJKfXqqf9c8VEV960QAaJ7SHO/INPVSBqFcQvdQZv5pl3wAQaXKpgVebaMDt2
-         8bp/oJ4PpN8odS5TvO6eq22gdP85ilcRCBJXJ+T4uvuaXNluMsqm7DQoslW3PPImyNHZ
-         xTMyLalIRcuRY61l46TsIYF6bnXWGnkWDoz7Uzak51FHfurYLzMbeCdQX3T9sTrhKdIO
-         O7Mw==
+        d=linaro.org; s=google; t=1721744482; x=1722349282; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yBuLRu+sHV1exWh6bc0Ae4uSAoiJuU9OudmglQ3Nm9M=;
+        b=Dt/xtDZC1T8TmUocqyRdmEvNZJb0i7He/RaLEhTk3gkfOOWIwAJIM/meuFsgrKcdQM
+         1IXfViZ6BIOvfkNEqDPgbDIVT45KbWmuB57+3MQaN4hmob0ROC9jmyy86w26frchD35/
+         i5a5wKBf7s55kAMk/dgelxlArcS9FwzdDeZC+SXisQ6igDN9mYc0OAjkp5Y1JCmdl8MH
+         fdYLj/peGVqCtkvwdJ0FLjcX5j7WDTS9hSWbjJNnBM6UwoF4NBYxMV/no6h/CtGRws2j
+         wTjvlHTYcGq4bk6dBQOVKCVT01klBka+nQoBYYRHSb802+XX5UHLnn+fLt0nVwxE7TGZ
+         oHKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721744492; x=1722349292;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FYMdjIba5GVjSk5LLCgsucuwd1uTMo/SWZKsqPwbIS0=;
-        b=vDZx1HsrzkVP0L2TBeHfFLECIIsPwQTDfx5lpnQAFi7Gu54h/HROM5bomIID203And
-         tlrTHI0/K71bkuMsFz/tRKYMjWnsatBv0T2zVhBNWhtmey78vAKdgm7KkLX0PjK0MLEB
-         qE990z1XlPypOq7e81czEnAj+1C7enWBjY3CpOq9t0HNsh8EA4b7vwAYGnHsSQvog+ys
-         MgdtCjtLuDiQ0EDSJvSK4sSpDoDAjI+Z9AZ+Om9hq5EhRxvxSkNkda7nqgOD9wH/Vf7F
-         4ls8SLW6J3J/24qViKAH2kKF9VnOhORTZarZYbGwucNSXREL2NqyK9QCJLpg9ePvr1S8
-         1www==
-X-Forwarded-Encrypted: i=1; AJvYcCWsQmufzfDOyItzk3jHwJWrjescozz2r03uzSBTRQtfNbPA0xeGhmJ2HoixH1uDt4125w0dqZrKKf/sDKeKjewLprn2+aszBhPTfRVsIOtXIn5I0QsBz1JF66YF+ZtjjQEYrbC91bRZcw==
-X-Gm-Message-State: AOJu0YwEY8Iq5+5D0Qe5ZhJt0R5/WNip6JwBMq1Sso8vlEJBX4XI1OeF
-	KxP30l5E9vmhIcjpvBtVSKGFE4dQL1CXSoD962E8/zu3egR/mm87gnuDbsE34RgwTDBKZEkq911
-	pfMaD3JoVlRzehUC6cOEBTSpJoho=
-X-Google-Smtp-Source: AGHT+IHHK4zzI0FK6dtJOc4sOSTKvTpBc8BrSaSqFkRUk7Pli2OGk28Gtofg4RA96R38FMJpb/0BtPOqBp98J0CCXQw=
-X-Received: by 2002:a05:6512:a86:b0:52e:969c:db83 with SMTP id
- 2adb3069b0e04-52efb53b775mr6049905e87.17.1721744490858; Tue, 23 Jul 2024
- 07:21:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721744482; x=1722349282;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yBuLRu+sHV1exWh6bc0Ae4uSAoiJuU9OudmglQ3Nm9M=;
+        b=HbV9yKjJ3v/iVUt0C2KxVbpDyympbpdADoJVH7nCS9ijhHNYU/c0bsTugZgSDPC06m
+         KJwWwfJunLZeUaW8XkyDOkhEnLnQfTT/16CrK6VjcmzQ/WvJa/S0JLOeUsUrQT2VGCbz
+         nhAHmIA4Kdy2D54mlKS3JSDZddcLkrNB1y4KmN5nla7KaC9oSKd/Pp5YMtgXVwiKd0qz
+         0Lm/MbW27oLUYfrOKpgztJWenl6TPDtP6ShmHULD+yT3gGSHm3yoXuxLh09XVUcKRnsf
+         GrC4rpm0GIfrMZSTA8wjI6sumUrQkPze6/p569eWK6xMV15e4v3qT8ZqqbnYM5OoXY6+
+         6ENA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7lQOhmJERW3j9d/w6UrE46UswYfTcHDjkMRdkeojB8+IJ8ov0++e8u4Qv739WEnJdRfRwDEuSPbgpSJIUd7BkfSMx15IlDisxSQXl
+X-Gm-Message-State: AOJu0Yw2XvVV7vN6RPfOkZoULybUlrrqofZGcDtoG5R0yjdzdbwXFoC9
+	iareoXz1sscVXeciNHLNcti7Mx7iqEpLIX5bmRiMbnw8Y9d/PriH0EHcajUzIlw=
+X-Google-Smtp-Source: AGHT+IFxHwfhLi/9n7Rf6nSVfmpgHMm3WiEWbHO874AANBpqTHNp5aTg7Ckn1tENldoqD+expnN1yA==
+X-Received: by 2002:a05:6512:1281:b0:52f:214:79b0 with SMTP id 2adb3069b0e04-52f02147b57mr5060911e87.13.1721744482286;
+        Tue, 23 Jul 2024 07:21:22 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ef553c8c6sm1616527e87.76.2024.07.23.07.21.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 07:21:21 -0700 (PDT)
+Date: Tue, 23 Jul 2024 17:21:20 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org, 
+	utkarsh.h.patel@intel.com, abhishekpandit@chromium.org, andriy.shevchenko@linux.intel.com, 
+	kyletso@google.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] usb: typec: ucsi: Fix NULL pointer dereference in
+ ucsi_displayport_vdm()
+Message-ID: <pva5d2tl2zxeaugahq7rih6o2w64pr5kuu2yyhdvcb264t3uyf@42whgfttylzb>
+References: <20240723141344.1331641-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1718268003.git.haibo1.xu@intel.com> <65dbad1fda08a32922c44886e4581e49b4a2fecc.1718268003.git.haibo1.xu@intel.com>
- <20240723-23811cc47f7863d12b6a78e8@orel>
-In-Reply-To: <20240723-23811cc47f7863d12b6a78e8@orel>
-From: Haibo Xu <xiaobo55x@gmail.com>
-Date: Tue, 23 Jul 2024 22:21:19 +0800
-Message-ID: <CAJve8omO0DwQEO+KEjhJFn=uYNAyZNYsnQieETocRzwb0RTGiA@mail.gmail.com>
-Subject: Re: [PATCH v4 1/4] ACPI: RISCV: Add NUMA support based on SRAT and SLIT
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Haibo Xu <haibo1.xu@intel.com>, sunilvl@ventanamicro.com, arnd@arndb.de, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Conor Dooley <conor.dooley@microchip.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Anup Patel <anup@brainfault.org>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Baoquan He <bhe@redhat.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	Zong Li <zong.li@sifive.com>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
-	Alexandre Ghiti <alexghiti@rivosinc.com>, Chen Jiahao <chenjiahao16@huawei.com>, 
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, James Morse <james.morse@arm.com>, 
-	Evan Green <evan@rivosinc.com>, Zhao Ke <ke.zhao@shingroup.cn>, 
-	Thomas Gleixner <tglx@linutronix.de>, Andy Chiu <andy.chiu@sifive.com>, Marc Zyngier <maz@kernel.org>, 
-	Tony Luck <tony.luck@intel.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	Alison Schofield <alison.schofield@intel.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Robert Richter <rrichter@amd.com>, 
-	Yuntao Wang <ytcoode@gmail.com>, Dave Jiang <dave.jiang@intel.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-riscv@lists.infradead.org, 
-	linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240723141344.1331641-1-make24@iscas.ac.cn>
 
-On Tue, Jul 23, 2024 at 9:30=E2=80=AFPM Andrew Jones <ajones@ventanamicro.c=
-om> wrote:
->
-> On Thu, Jun 13, 2024 at 04:54:33PM GMT, Haibo Xu wrote:
-> > Add acpi_numa.c file to enable parse NUMA information from
-> > ACPI SRAT and SLIT tables. SRAT table provide CPUs(Hart) and
-> > memory nodes to proximity domain mapping, while SLIT table
-> > provide the distance metrics between proximity domains.
-> >
-> > Signed-off-by: Haibo Xu <haibo1.xu@intel.com>
-> > Reviewed-by: Sunil V L <sunilvl@ventanamicro.com>
-> > ---
-> >  arch/riscv/include/asm/acpi.h |  15 +++-
-> >  arch/riscv/kernel/Makefile    |   1 +
-> >  arch/riscv/kernel/acpi.c      |   5 --
-> >  arch/riscv/kernel/acpi_numa.c | 131 ++++++++++++++++++++++++++++++++++
-> >  arch/riscv/kernel/setup.c     |   4 +-
-> >  arch/riscv/kernel/smpboot.c   |   2 -
-> >  include/linux/acpi.h          |   6 ++
-> >  7 files changed, 154 insertions(+), 10 deletions(-)
-> >  create mode 100644 arch/riscv/kernel/acpi_numa.c
-> >
-> > diff --git a/arch/riscv/include/asm/acpi.h b/arch/riscv/include/asm/acp=
-i.h
-> > index 7dad0cf9d701..e0a1f84404f3 100644
-> > --- a/arch/riscv/include/asm/acpi.h
-> > +++ b/arch/riscv/include/asm/acpi.h
-> > @@ -61,11 +61,14 @@ static inline void arch_fix_phys_package_id(int num=
-, u32 slot) { }
-> >
-> >  void acpi_init_rintc_map(void);
-> >  struct acpi_madt_rintc *acpi_cpu_get_madt_rintc(int cpu);
-> > -u32 get_acpi_id_for_cpu(int cpu);
-> > +static inline u32 get_acpi_id_for_cpu(int cpu)
-> > +{
-> > +     return acpi_cpu_get_madt_rintc(cpu)->uid;
-> > +}
-> > +
-> >  int acpi_get_riscv_isa(struct acpi_table_header *table,
-> >                      unsigned int cpu, const char **isa);
-> >
-> > -static inline int acpi_numa_get_nid(unsigned int cpu) { return NUMA_NO=
-_NODE; }
-> >  void acpi_get_cbo_block_size(struct acpi_table_header *table, u32 *cbo=
-m_size,
-> >                            u32 *cboz_size, u32 *cbop_size);
-> >  #else
-> > @@ -87,4 +90,12 @@ static inline void acpi_get_cbo_block_size(struct ac=
-pi_table_header *table,
-> >
-> >  #endif /* CONFIG_ACPI */
-> >
-> > +#ifdef CONFIG_ACPI_NUMA
-> > +int acpi_numa_get_nid(unsigned int cpu);
-> > +void acpi_map_cpus_to_nodes(void);
-> > +#else
-> > +static inline int acpi_numa_get_nid(unsigned int cpu) { return NUMA_NO=
-_NODE; }
-> > +static inline void acpi_map_cpus_to_nodes(void) { }
-> > +#endif /* CONFIG_ACPI_NUMA */
-> > +
-> >  #endif /*_ASM_ACPI_H*/
-> > diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
-> > index 5b243d46f4b1..1e2afec141b5 100644
-> > --- a/arch/riscv/kernel/Makefile
-> > +++ b/arch/riscv/kernel/Makefile
-> > @@ -110,3 +110,4 @@ obj-$(CONFIG_COMPAT)              +=3D compat_vdso/
-> >
-> >  obj-$(CONFIG_64BIT)          +=3D pi/
-> >  obj-$(CONFIG_ACPI)           +=3D acpi.o
-> > +obj-$(CONFIG_ACPI_NUMA)      +=3D acpi_numa.o
-> > diff --git a/arch/riscv/kernel/acpi.c b/arch/riscv/kernel/acpi.c
-> > index e619edc8b0cc..040bdbfea2b4 100644
-> > --- a/arch/riscv/kernel/acpi.c
-> > +++ b/arch/riscv/kernel/acpi.c
-> > @@ -191,11 +191,6 @@ struct acpi_madt_rintc *acpi_cpu_get_madt_rintc(in=
-t cpu)
-> >       return &cpu_madt_rintc[cpu];
-> >  }
-> >
-> > -u32 get_acpi_id_for_cpu(int cpu)
-> > -{
-> > -     return acpi_cpu_get_madt_rintc(cpu)->uid;
-> > -}
-> > -
-> >  /*
-> >   * __acpi_map_table() will be called before paging_init(), so early_io=
-remap()
-> >   * or early_memremap() should be called here to for ACPI table mapping=
-.
-> > diff --git a/arch/riscv/kernel/acpi_numa.c b/arch/riscv/kernel/acpi_num=
-a.c
-> > new file mode 100644
-> > index 000000000000..0231482d6946
-> > --- /dev/null
-> > +++ b/arch/riscv/kernel/acpi_numa.c
-> > @@ -0,0 +1,131 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * ACPI 6.6 based NUMA setup for RISCV
-> > + * Lots of code was borrowed from arch/arm64/kernel/acpi_numa.c
-> > + *
-> > + * Copyright 2004 Andi Kleen, SuSE Labs.
-> > + * Copyright (C) 2013-2016, Linaro Ltd.
-> > + *           Author: Hanjun Guo <hanjun.guo@linaro.org>
-> > + * Copyright (C) 2024 Intel Corporation.
-> > + *
-> > + * Reads the ACPI SRAT table to figure out what memory belongs to whic=
-h CPUs.
-> > + *
-> > + * Called from acpi_numa_init while reading the SRAT and SLIT tables.
-> > + * Assumes all memory regions belonging to a single proximity domain
-> > + * are in one chunk. Holes between them will be included in the node.
-> > + */
-> > +
-> > +#define pr_fmt(fmt) "ACPI: NUMA: " fmt
-> > +
-> > +#include <linux/acpi.h>
-> > +#include <linux/bitmap.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/mm.h>
-> > +#include <linux/memblock.h>
-> > +#include <linux/mmzone.h>
-> > +#include <linux/module.h>
-> > +#include <linux/topology.h>
-> > +
-> > +#include <asm/numa.h>
-> > +
-> > +static int acpi_early_node_map[NR_CPUS] __initdata =3D { NUMA_NO_NODE =
-};
->
-> This only sets acpi_early_node_map[0] to NUMA_NO_NODE. Assuming we want
-> to ensure all of them are initialized to NUMA_NO_NODE, then we need
->
-> static int acpi_early_node_map[NR_CPUS] __initdata =3D { [0 ... NR_CPUS -=
- 1] =3D NUMA_NO_NODE };
->
+On Tue, Jul 23, 2024 at 10:13:44PM GMT, Ma Ke wrote:
+> When dp->con->partner is an error, a NULL pointer dereference may occur.
+> Add a check for dp->con->partner to avoid dereferencing a NULL pointer.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 372adf075a43 ("usb: typec: ucsi: Determine common SVDM Version")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+> Changes in v2:
+> - added Cc stable line;
+> - fixed a typo.
+> ---
+>  drivers/usb/typec/ucsi/displayport.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/usb/typec/ucsi/displayport.c b/drivers/usb/typec/ucsi/displayport.c
+> index 420af5139c70..ecc706e0800d 100644
+> --- a/drivers/usb/typec/ucsi/displayport.c
+> +++ b/drivers/usb/typec/ucsi/displayport.c
+> @@ -222,6 +222,8 @@ static int ucsi_displayport_vdm(struct typec_altmode *alt,
+>  	switch (cmd_type) {
+>  	case CMDT_INIT:
+>  		if (PD_VDO_SVDM_VER(header) < svdm_version) {
+> +			if (IS_ERR_OR_NULL(dp->con->partner))
 
-Good catch! Thanks!
+Usually IS_ERR_OR_NULL is one of the red flags. It is either IS_ERR or
+NULL, but not both.
 
-@Palmer Dabbelt
-I noticed this series had been merged to riscv/linux.git (for-next),
-could you help include the above change from Drew?
-Or shall I send out a new series?
+Also could you please describe the path how we can end up here without a
+proper dp->con->partner.
 
-Regards,
-Haibo
+> +				break;
+>  			typec_partner_set_svdm_version(dp->con->partner, PD_VDO_SVDM_VER(header));
+>  			svdm_version = PD_VDO_SVDM_VER(header);
+>  		}
+> -- 
+> 2.25.1
+> 
 
-> Thanks,
-> drew
+-- 
+With best wishes
+Dmitry
 
