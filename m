@@ -1,124 +1,96 @@
-Return-Path: <linux-kernel+bounces-260084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EA9E93A2C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:32:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27A6A93A2D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B09DC1C226CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:32:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 596D51C2286C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF05154BFE;
-	Tue, 23 Jul 2024 14:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623DF1552EE;
+	Tue, 23 Jul 2024 14:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sPN1AZ3V"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LlGImzz7"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27ACE139D1A
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E72214C59A;
+	Tue, 23 Jul 2024 14:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721745167; cv=none; b=oZNbUzZE+dy+SGe0WDM3XfAwOnhr2P0ry/3EIofNXzKib3Q1++8ZloHX1fJM8z7K32Z4N/aPjKi73WLxpezYmxe1I0xEsaS0LEWrdJbMwcP8UpZtDe/IuF9JjdS2kOHltB/odrdTF81VbU5fy5lOKT3gzxXowTYG1pNDEzm0d5I=
+	t=1721745236; cv=none; b=jbSWCLA5C+4tqAQ3augvP2dYIT8FTgw6azhYi9+5MOBGv36UxtkIWj0M1TfF5aG+3SFRQRaVhgg/p6UM4NOpPNO5Bq9fjlW7S1xsixZlNfyouTDxSqV92eUIHW6q1hvEw+NmH8oon9nWWu5YYvs6UB22jxNHBYMdT+iAChDre5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721745167; c=relaxed/simple;
-	bh=M8QPdNoErhvseqN1OJfQLnvZ1KG36wzCI2ty/tnPpuI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V6YY8uk1Kr6BsCc6bjU6OAFM7F+j28/6r2ITtCgOeEQWcnuB/4GlyavACtugHftfhFlPFN5WrNrp2r5fBtglhGq5EYdgE9rWxQIXBsHmgE2kEHkz9pqGQNXZP23cn3IAOFvhIFegHT2UDI6DZx1VmoGz1MHFOYxIA+Cj4F+nrnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sPN1AZ3V; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a869e3e9dfso17558a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:32:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721745164; x=1722349964; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N/3luC+b74oek9g0LUsZq7rzlOWeW8aiRXZj5lINnDU=;
-        b=sPN1AZ3Vbsk5hcuPqFEpKZAh5F5mb6ok4ZoCTgMgl7Vid0Wdv3mAahWMm1oMS5+ht5
-         tZGHGDKsm4d38bMuvXCM2ywwhnMNc2+BXYJpzQ8F6/o/k4/EloJa3tlYMZb4bpv/jsVo
-         DQbhYgsEmGyUdh3KK6MGAJLjWGwsN+EfS0NusDDpCIW0cquKepJ2G0sVj4s/gitXRgjq
-         aU5+ROcyZN/4Va2knTO2k58WQfJMJ0sWLMffaocCH4o8Brd8nDrTKJKAJjn3avrdAasu
-         iC/dXog4Fx9Vf88Bny8mNwvfjd+69j8JI8YDP7SHVq2tSqDYO9AHFm1f/g9BjJ9eMwTX
-         snlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721745164; x=1722349964;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N/3luC+b74oek9g0LUsZq7rzlOWeW8aiRXZj5lINnDU=;
-        b=K0uMnqrR1Qbo0xRlRecvqfXszZokyc+uY9qBNCsj2Q33chskztus6OUGQMu8WJBiPV
-         /XFsATNXQuvxE4owytORkRc5J6HrYz5AANnUhWYBmomB+LqfPBci+MBflLw8FocH3z1c
-         H8EEcVo0nAJUYCJ42IDeejIZIoCl+jHsCDxrTFNSYAv5ZHRn8oL/C6PWmIkKiO/5qE3P
-         79Rx+Mz/3jPzGjDpnlQ8olWBM46uBzYakOIxLWl4qW87Afu6IYxujnWjgnYFnuXnY9zN
-         MfW7meD2vMDLDLdMU2KK3roTlLaLcwTR5qXjpzbOn3LO2iZMW4rBANhDjg9u6m3Z3LoC
-         CAGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVAG2B2J9AZ1tmX2DCNefGvewR5SWT337LGHDGb/ZPfnorAlpegtPV03OJ0/N9/tgjKvMHtUiUFJ3Yzep3PwV0ylCJevdyC9BV0k3a5
-X-Gm-Message-State: AOJu0YzbqYJSG6OnaR+5L/b8Zb2LKOthzZFkWQiVAD076BuVRRyyNDXk
-	l8e2td4OjJW+E2lzh/no3qHcND2JPRs3be9lVTeinlkB6pea5FA1s5H3HORKH2v3UG5eJio2d7R
-	xKjroYsvToeXGbSTKA9c9aHe6a617fi2PZWZz
-X-Google-Smtp-Source: AGHT+IHryeGRcNZLCDA8qms03eeDbKTz45Mz5TYFlQKLM2GscLleFt9jBQNlP1av7H7byqMt6vKBSbp+d8N3aZr3M4I=
-X-Received: by 2002:a05:6402:5254:b0:57c:b712:47b5 with SMTP id
- 4fb4d7f45d1cf-5a456a63b69mr546528a12.4.1721745164063; Tue, 23 Jul 2024
- 07:32:44 -0700 (PDT)
+	s=arc-20240116; t=1721745236; c=relaxed/simple;
+	bh=NMu75Y301zEMrIr2IRooBUWNRfFIuij7M6H0IP31dhA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rg5EBMxGhE3r4BIr17CGdsqGeqGMe+jVuicDgjnI1VLvFvZgrNDiVWfruNn4KVMOMCE+KBwvxpiI07FxEaXKrPyIqnocP6+la0FRsRTYxaQ6p9YKkjn6Rc+UOk6pqUCGPz/Z86rc0f88BJ4qhWdveXf6KVt55+r5izTTyR4TI3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LlGImzz7; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=zGob8cqOMQFMd6ZJ7aKelgl8bYUnwmxgqspoHZfsBx0=; b=LlGImzz7gLD4aCmwv8k4A0e1DZ
+	9GPGExELQMb2KbFmKQ+PVeYYxd+u3UDPu2eFN5slv6eWCOFjXC4eQv3mVkP9Lp2d2MNtl1O+afP09
+	XG4BbGox2nxhz11YruHX++g9dEN3hIXRBUrmLw4jTiE4t0Ol2b9R1vqXGaOGR0qVt9Hogrell65hH
+	zXMwfVspCNgUQnTfpCAkGokZP7Oca/Qb5Jo2DQMo0jZD8u27maea1kaAWaWTK7Fsc5SauwsDTCrQ5
+	AEkl44+PaDhnyrKcbbS2YHSwU947HsWksD1v28wQD+UEAjWaTY3TczmHsi3L6MxjLU6HTpkDwCLdl
+	9iITSJsQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sWGaC-0000000CjEg-3FBu;
+	Tue, 23 Jul 2024 14:33:40 +0000
+Date: Tue, 23 Jul 2024 07:33:40 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Youling Tang <youling.tang@linux.dev>
+Cc: Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
+	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, tytso@mit.edu,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+	Christoph Hellwig <hch@infradead.org>, linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	Youling Tang <tangyouling@kylinos.cn>
+Subject: Re: [PATCH 1/4] module: Add module_subinit{_noexit} and
+ module_subeixt helper macros
+Message-ID: <Zp-_RDk5n5431yyh@infradead.org>
+References: <20240723083239.41533-1-youling.tang@linux.dev>
+ <20240723083239.41533-2-youling.tang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240718-upstream-net-next-20240716-tcp-3rd-ack-consume-sk_socket-v2-0-d653f85639f6@kernel.org>
- <20240718-upstream-net-next-20240716-tcp-3rd-ack-consume-sk_socket-v2-2-d653f85639f6@kernel.org>
-In-Reply-To: <20240718-upstream-net-next-20240716-tcp-3rd-ack-consume-sk_socket-v2-2-d653f85639f6@kernel.org>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 23 Jul 2024 16:32:29 +0200
-Message-ID: <CANn89iKOa8YKYjz4jVN0R+3qCpcALTAJ_8W+pd+022jAMT+Zjw@mail.gmail.com>
-Subject: Re: [PATCH net v2 2/2] tcp: limit wake-up for crossed SYN cases to SYN-ACK
-To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Jerry Chu <hkchu@google.com>, netdev@vger.kernel.org, 
-	mptcp@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240723083239.41533-2-youling.tang@linux.dev>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, Jul 18, 2024 at 12:34=E2=80=AFPM Matthieu Baerts (NGI0)
-<matttbe@kernel.org> wrote:
->
-> sk->sk_socket will be assigned in case of marginal crossed SYN, but also
-> in other cases, e.g.
->
->  - With TCP Fast Open, if the connection got accept()'ed before
->    receiving the 3rd ACK ;
->
->  - With MPTCP, when accepting additional subflows to an existing MPTCP
->    connection.
->
-> In these cases, the switch to TCP_ESTABLISHED is done when receiving the
-> 3rd ACK, without the SYN flag then.
->
-> To properly restrict the wake-up to crossed SYN cases, it is then
-> required to also limit the check to packets containing the SYN-ACK
-> flags.
->
-> While at it, also update the attached comment: sk->sk_sleep has been
-> removed in 2010, and replaced by sk->sk_wq in commit 43815482370c ("net:
-> sock_def_readable() and friends RCU conversion").
->
-> Fixes: 168a8f58059a ("tcp: TCP Fast Open Server - main code path")
-> Suggested-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> ---
-> Notes:
->  - The above 'Fixes' tag should correspond to the commit introducing the
->    possibility to have sk->sk_socket being set there in other cases than
->    the crossed SYN one. But I might have missed other cases. Maybe
->    1da177e4c3f4 ("Linux-2.6.12-rc2") might be safer? On the other hand,
->    I don't think this wake-up was causing any visible issue, apart from
->    not being needed.
+On Tue, Jul 23, 2024 at 04:32:36PM +0800, Youling Tang wrote:
+> Providing module_subinit{_noexit} and module_subeixt helps macros ensure
+> that modules init/exit match their order, while also simplifying the code.
+> 
+> The three macros are defined as follows:
+> - module_subinit(initfn, exitfn,rollback)
+> - module_subinit_noexit(initfn, rollback)
+> - module_subexit(rollback)
+> 
+> `initfn` is the initialization function and `exitfn` is the corresponding
+> exit function.
 
-This seems a net-next candidate to me ?
+I find the interface a little confusing.  What I would have expected
+is to:
+
+ - have the module_subinit call at file scope instead of in the
+   module_init helper, similar to module_init/module_exit
+ - thus keep the rollback state explicitly in the module structure or
+   similar so that the driver itself doesn't need to care about at
+   all, and thus remove the need for the module_subexit call.
+
 
