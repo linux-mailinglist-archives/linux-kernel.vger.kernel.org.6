@@ -1,73 +1,39 @@
-Return-Path: <linux-kernel+bounces-260389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BA2293A841
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:45:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 937F893A844
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D4E11C22307
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:45:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23A961F233F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F165F143872;
-	Tue, 23 Jul 2024 20:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="glL3xSfy"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3EE813C9CB;
-	Tue, 23 Jul 2024 20:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE4B142905;
+	Tue, 23 Jul 2024 20:47:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA6A2E634
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 20:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721767494; cv=none; b=tW4/Hpp38dJtw6hWWQ5sOxU7zOKqBhCjBs6xKJrIoAHtAsnji8nOlIMFAjFRAsn76kySY2JjKXLQ/UtNfFE1N2EXOQi77X/zExNSWf5Icxwy6wDiJenZ79zRgduaXEBp/zPAfH1s2xncuJiFI/HngmWObyqHw0X1LEePXJfyU0A=
+	t=1721767649; cv=none; b=cv5P7LdXTOP9fdAFLMaisA43tmwE1LB+SapDwzu8ZmQ0Dq8GYwQvjSZlYcVI9XDub5rQnXSH4iYqnSBmNcEuasx+W2V8Nars03zOwz0WYa1jCQIHymDkXLytEfFLr4H1Y2xEw1RmWgkfifDyKk+BE5NAbTIUkJChNilglaqN2dU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721767494; c=relaxed/simple;
-	bh=5eGxl2dz4vagX8F8KIWwj901p3USwXNj6Oe/yHWUyE0=;
+	s=arc-20240116; t=1721767649; c=relaxed/simple;
+	bh=es8Nr9/DwaxSsBnWKsrVSBsl1/go9e5pcTtl0tFjmtY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J1w4y7nbyEeiaOg7rzikg9W63U630lfQzHKTuLcDuSmLc7KjzjNeBn7BM4m3Y3qTtZkePgY+3dfv4zNJ22yNucd87sA0gWjL2RlXx53LkxgmhPzpZxdTrxJCZPGj8TFUPVpy4K6M/N8KthH6+scee6xUfOt2a5trE4jYF9ke0Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=glL3xSfy; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70d23caf8ddso2176866b3a.0;
-        Tue, 23 Jul 2024 13:44:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721767492; x=1722372292; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=47bKS4H+6Sl2dCqP9QIWi+FcafRquOMBAIrVbdQQ23Q=;
-        b=glL3xSfyd+NcJeqsnP0e7JmXXXzQq1qH4QRb2TGIREL1JW+riJ0lTOGyNs1Ntai5B+
-         DlHWFHUlr28KfM8gTBRtVRTDpJsnGDHQ59g3bMPlAZiU14tKjmX6fhebBPiCLDkQEMO5
-         0r9lLGaubXFXoWtWFPmtCEHN00v+SxTL2epvFNEcYJ0ddeh9RGomNuDyQllzIPr17yCE
-         qmiWbwaoiMSu1hY8fp/eLu751iLDuHQPG9jm9DOiT3xUEb6fFMmIQJ/MPdDm93l1cdvH
-         OUxPaBHdVQ4YI2RnShI4pWkNQ/oEZhRfy64FolVNrdUwXOvf2qKHfRVPKPBclQNPQybm
-         4SjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721767492; x=1722372292;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=47bKS4H+6Sl2dCqP9QIWi+FcafRquOMBAIrVbdQQ23Q=;
-        b=PpmdyE8mWG7LdkjIOwG3H81fiJvl7j2jrPYOm+HH8Ga200XlFpiRLzEQmEE9uJka+z
-         O7E/lfoYNJuoPQQCp+EGVeYBrBG4DU73SQqq/N0a4A2pK9k9gx41eykVxVLTpq9H5qsM
-         OGGNdFV493CJngbxRVYSB6GIydHNFtja534tTcWRlJ/oWwwRxP/RBhE0zJNC4YecwgKP
-         +xJA8RTu9Lwp6k9zK6Ts+QFig5gjwS4DZptRZBJTznBpz6gURssit19ZChQfhi0i1x9m
-         eUm5/BbKfNz5j8yZXKRjv/h/piqObMeFVkNFHn+FMz0/GKEkmtrzijYcgfY7ld5HbjEX
-         G7gA==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ+T4u512s3AqAb2KAQ53ErJZ0UQ5gKNefYUer1dnbnLPdrgnJ3c2BbJ4y9t+RTPlkjJnXTPlRhr9Uh4oaMZPTwqko1qfOS22nFoGZs6bsgiQK0Q/7jK0iWA8tKOTRSYAtZnSa
-X-Gm-Message-State: AOJu0Yx1GmxtvicQ4ZXcF3q76zNzTALuULF/zRUegbfq/DLCXgytx9xO
-	hZUkjTlVSEEZpdILAeInQ8l4zOG65h1ChpDP+owZwJMkxSaNl7sC
-X-Google-Smtp-Source: AGHT+IHIJ455lRhRF3pWGaiD6x9nAZcg8iqAXoATWKTb2IYqoh9OGgkLZ1hnZEjpooDN2H3LP4qGnQ==
-X-Received: by 2002:a05:6a00:2da2:b0:70c:f1fa:d7a3 with SMTP id d2e1a72fcca58-70e9968fb9dmr1185952b3a.12.1721767492105;
-        Tue, 23 Jul 2024 13:44:52 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70d241803fdsm4228166b3a.220.2024.07.23.13.44.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 13:44:51 -0700 (PDT)
-Message-ID: <6b6244e7-6592-4611-a3d1-67ac30dc24b8@gmail.com>
-Date: Tue, 23 Jul 2024 13:44:44 -0700
+	 In-Reply-To:Content-Type; b=ZLkg6tGkCsprs3C7RONr6cPNZW85F75XMLnEuyVol4sRNd2bvwlGvfd8+z0apuKGTZ5MSv4qYgW0z2AHnU2hyxwf6x3VY1CuqlkE+370CKhqwfAXDmmS1taRGwVkpwE434BxefoDEZF9HO3u4/RRKJ2xCoKsMxcU0lkXhksE6Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8FCEE139F;
+	Tue, 23 Jul 2024 13:47:51 -0700 (PDT)
+Received: from [192.168.178.110] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8CE9E3F73F;
+	Tue, 23 Jul 2024 13:47:24 -0700 (PDT)
+Message-ID: <d4ac0022-5ba4-44b9-ac09-4530a18b0974@arm.com>
+Date: Tue, 23 Jul 2024 22:47:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,45 +41,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 000/105] 6.1.101-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240723180402.490567226@linuxfoundation.org>
+Subject: Re: [PATCH v3] sched/fair: Remove cfs_rq::nr_spread_over and
+ cfs_rq::exec_clock
+To: Chuyi Zhou <zhouchuyi@bytedance.com>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ rostedt@goodmis.org, bsegall@google.com
+Cc: chengming.zhou@linux.dev, linux-kernel@vger.kernel.org,
+ Vishal Chourasia <vishalc@linux.ibm.com>,
+ K Prateek Nayak <kprateek.nayak@amd.com>
+References: <20240720031928.406540-1-zhouchuyi@bytedance.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
 Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240723180402.490567226@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20240720031928.406540-1-zhouchuyi@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 7/23/24 11:22, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.101 release.
-> There are 105 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 20/07/2024 05:19, Chuyi Zhou wrote:
+> nr_spread_over tracks the number of instances where the difference
+> between a scheduling entity's virtual runtime and the minimum virtual
+> runtime in the runqueue exceeds three times the scheduler latency,
+> indicating significant disparity in task scheduling.
+> Commit 5e963f2bd465 ("sched/fair: Commit to EEVDF") removed its usage.
 > 
-> Responses should be made by Thu, 25 Jul 2024 18:03:27 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.101-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+> cfs_rq->exec_clock was used to account for time spent executing tasks.
+> Commit 5d69eca542ee ("sched: Unify runtime accounting across classes")
+> removed its usage.
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+I was under the impression this commit removed
+'schedstat_add(cfs_rq->exec_clock, delta_exec)' from update_curr() by
+mistake?
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+That's why I sent out this patch back in May:
+
+https://lkml.kernel.org/r/20240503104605.1871571-1-dietmar.eggemann@arm.com
+
+to add it back.
 
 
