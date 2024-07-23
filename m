@@ -1,208 +1,157 @@
-Return-Path: <linux-kernel+bounces-260397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96E4593A85C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:55:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63B8F93A85E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2E401C227C9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:55:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AEFB283BD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE1E14389C;
-	Tue, 23 Jul 2024 20:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b="mxLocVfX"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECCE143C5D;
+	Tue, 23 Jul 2024 20:55:24 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE6A13D898
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 20:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688CE14388E
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 20:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721768095; cv=none; b=FxJ6nQPFPyRyafXcpbrMMhAbCiDVncJEPh1hdIkpADj1D0lb6AJcKD0hTTlfVWwhHnMJTc1FhgG99whC+nzCGI7nBJcGXN1idpyz8mDwwnD1k4oJbf5UC/4jhsHTUxEGQi8tzfcdZP6vDGkVJ67jGQHais9KV6iUnBnaj81OtXY=
+	t=1721768123; cv=none; b=A+nV+LeQ+WKzfcBlipdWIQVNkQYUEC/qMgcYIY53uq+61Q14z/39gyZ177xNp5VxnpUoB3zorJXPw8SoTaZWxWo5mjEoBUsaB1826K1E8PD+UR98nCKDBZuKOFi7e5EKqBYRaAEba3BDuEJpv0mHhl4pwI+LxTg2bvMsRKzN0JI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721768095; c=relaxed/simple;
-	bh=c3dJCxNCMuvmNluI2NbiwjAxlTld8R1ci3G2AZApap8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hNXjb9ZjV60912Mi9qiJXRrvDmUpNEyCC68FTGizUb4BEaUqyewjK6QJcgVi4kX3g+9+0HXMOHFU1qQ/GCv4j5Ro/7qvuAZ9QDBcjF7Mq1lri3KCVN1RBMygMK5bbvbAw78MJDgB2N1/Ox7SJCFh3ohChe4tcYO/8QcKwmzV+lI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net; spf=pass smtp.mailfrom=opensrcsec.com; dkim=pass (2048-bit key) header.d=grsecurity.net header.i=@grsecurity.net header.b=mxLocVfX; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=grsecurity.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensrcsec.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a309d1a788so5291864a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 13:54:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=grsecurity.net; s=grsec; t=1721768092; x=1722372892; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=0C5KvvCKRFRHGyXQ0+xgCLiKx4jBjXnWC42JoYTxDRM=;
-        b=mxLocVfXwaJxVyhse8Z3hD7E4Bu/Fndwki4cvuTqLjJUAT28+3TwfFxwZTWOGhVtD7
-         jWvIDh1LIJx7ZwPnp/TGbJJ3ouQ5tddPR/eN/OYSRegkDRbKVFH2RJvrFldxjPMxqSSR
-         Bn0vfaDKUxcLFfD2HMemGsmo3ssQQ8LsPT4vqjOCOplNaMV9jdTTj9B0U8fnedi78U3i
-         K21ntKLrWUlSV2Ja6I5+D3Kbqn0YWoHIZqO3ox/lYzsGfNVkpoygVqI0iO5QTJMNPwjU
-         kFydnuFrHBJfcivkUjgrJOlKBokkAfvMsQm0u+w+X6EqGLjtQcG2w116BXjXicBmzT6p
-         sv6A==
+	s=arc-20240116; t=1721768123; c=relaxed/simple;
+	bh=HsvLOBK2mmBYGRBmpFlLUyt7LeOW6RHsU4k1nmmlNts=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=sBjJ38zHBHmzYyDYvmQrYbBGLXFR+msIXThjIcLyyX8BneCqcMoQl/638f9Qp/3Lhz6dJD5XAwQrYwo6iQfc8/2+5WxxuBoAgEFoPBOVkLLsV7ceUSAAunEfI4/bKl+18+a6nyJWHmmIBaVH+H0L2uCleuCWim11mGAhBpmxJ2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7fba8d323f9so989270639f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 13:55:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721768092; x=1722372892;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0C5KvvCKRFRHGyXQ0+xgCLiKx4jBjXnWC42JoYTxDRM=;
-        b=ZHYAr8ZxwUo3Vk5KiPwXqjZUcyNkQlfr+OTeAxvCubXAIIJfJ96cVrNbNdXmyGqaz9
-         usNyK6jZYuotJp7CGjzGrGFAa27uMEJWp9Z3t/ykwF1Ycw2MSvmeurU479ZPxljK/hEP
-         AyN+fTFXJSXHbFnI+BfFlvPIyr6MCH3Dr8qKscYr6tH8EeB7ECndVCsHYqPzhkebcAkf
-         Hup840ncHthiekpxeULXIlvgEY5ZeBop+vwt6NPxXJsPt0UQoxIL2l07wzV2GpWgo+JG
-         c6XirDTj5TqgYpP5I/23GWIr8ejibTXwy3/sM4Y+rBMA+J6ezyHcOEF4jmZ6dpMMioIW
-         g+cw==
-X-Forwarded-Encrypted: i=1; AJvYcCUnJJZ22j3/WMs/wpXwLAaAhNAC+ZVYI2zusArRcTfIbx6PRwJecHfyIhAqwBXQKoMbCXu9GzYLQVkoS0ZO/Uq7GEBPAB2pmsKHdwhw
-X-Gm-Message-State: AOJu0YyzbpViBEVWFA3LY12WtcHtyewZpj+CJzgjy0O0RYj5KXPXZLzI
-	WxdyjQzcw3BZ5gpb8Y2DJwOfubPaPS68DTxcmTewtVzc/unZFdgo1xnuwqX+8Hg=
-X-Google-Smtp-Source: AGHT+IHynNSHyiGdoWpM/KpuEMOPO9NWXApR3ESELw9oE4siucbrVU7Vr6SSMFDZbdHuyjkpVjXyEg==
-X-Received: by 2002:a17:906:d550:b0:a77:f65d:39ff with SMTP id a640c23a62f3a-a7a8847a636mr320365966b.53.1721768092203;
-        Tue, 23 Jul 2024 13:54:52 -0700 (PDT)
-Received: from ?IPV6:2003:f6:af04:ba00:683d:7717:ab42:e94? (p200300f6af04ba00683d7717ab420e94.dip0.t-ipconnect.de. [2003:f6:af04:ba00:683d:7717:ab42:e94])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7aa8d8d0cesm38200066b.138.2024.07.23.13.54.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 13:54:51 -0700 (PDT)
-Message-ID: <10dd9e0f-fb2d-4667-8fba-171040690055@grsecurity.net>
-Date: Tue, 23 Jul 2024 22:54:49 +0200
+        d=1e100.net; s=20230601; t=1721768121; x=1722372921;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=W7lAaSmTNN0zGRBsnkxpsKhL9bI5flt6hDAwqoPeP9k=;
+        b=GbD26MEXAAR6jxp+6Htf2ZizjAdXBHQJg0t0jwCnzHSKDk/SvXm55HwLtZXhBQLjUB
+         OLmeCheVIeE+bPrAVNqHYL1TTJNDFk56frh3vH4NQ6MmGtTlgvGWDBUDjBQDGkgc+Hq5
+         73DCQZ1U4pTH4NYoAjngFOtQ2i9nGe7IbqhSHDuYfEuES9c2uiLBa+Tr3Bz3KtBXxKbk
+         C/zuh6rf+9dP3tAShD9jVmi+EcZe7Ktdjy/s4tPRXRzYZVnHgkaFO/+tBZXUyS4mtRf6
+         gaMY0WBjvNL01tfk/BWR8RFOdMn+I4RaCwaJEQ6zupM+ectAG8nLyxPfbRQ+W9PyUNzt
+         s4DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVKzAlULqnF0roiP8Otoo7ZBjVAhO7McueKHyDENwG6d1uL/KVOs4tv7E5esVXI/ik2poVR9YizV04q0mRdD/eJCNi1NZaxdb/sIOEh
+X-Gm-Message-State: AOJu0YzVrHKm/UGt81cOwNQVky1Vyt6Vo1yzPjJgiywHIxYt9LPL168a
+	Z9yT0jepS4ncm49Y4PUvEtdHF7W4tilPfDvhoDO8pRYGpbbZeCLCwWaOxdiK+f4a7AWjZ73pFHr
+	cBO2T/mn6KtUJk+MKCmmTcu9fOb+G0ZuQ6F2j6WstSzLjerxRtgNinUA=
+X-Google-Smtp-Source: AGHT+IFuOkIyph15440mIkcaG0bPanLLP25Z8ciLSRv8Wx8X9eoXXhFesMOet9ez3rMCy9HG3yYEEvQzZp87wmHYmyJmg/w4AQma
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: tracing: user events UAF crash report
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Ajay Kaher <ajay.kaher@broadcom.com>, =?UTF-8?Q?Ilkka_Naulap=C3=A4=C3=A4?=
- <digirigawa@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>,
- Al Viro <viro@zeniv.linux.org.uk>, linux-trace-kernel@vger.kernel.org,
- linux-kernel@vger.kernel.org, regressions@leemhuis.info,
- Dan Carpenter <dan.carpenter@linaro.org>
-References: <20240719204701.1605950-1-minipli@grsecurity.net>
- <20240723104348.645bf027@gandalf.local.home>
-Content-Language: en-US, de-DE
-From: Mathias Krause <minipli@grsecurity.net>
-Autocrypt: addr=minipli@grsecurity.net; keydata=
- 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
- RzDVkdgPJkL/NFTKZHo5foFXNi89kA==
-In-Reply-To: <20240723104348.645bf027@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:8507:b0:4b7:c9b5:6765 with SMTP id
+ 8926c6da1cb9f-4c28a4de736mr64162173.5.1721768121544; Tue, 23 Jul 2024
+ 13:55:21 -0700 (PDT)
+Date: Tue, 23 Jul 2024 13:55:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000045457e061df061c3@google.com>
+Subject: [syzbot] [usb?] KMSAN: kernel-infoleak in raw_ioctl (2)
+From: syzbot <syzbot+17ca2339e34a1d863aad@syzkaller.appspotmail.com>
+To: andreyknvl@gmail.com, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 23.07.24 16:43, Steven Rostedt wrote:
-> On Fri, 19 Jul 2024 22:47:01 +0200
-> Mathias Krause <minipli@grsecurity.net> wrote:
-> 
->> Beside the obvious bug, I noticed the following (not fixing the issue,
->> tho):
->>
->> diff --git a/fs/tracefs/event_inode.c b/fs/tracefs/event_inode.c
->> index 5d88c184f0fc..687ad0a26458 100644
->> --- a/fs/tracefs/event_inode.c
->> +++ b/fs/tracefs/event_inode.c
->> @@ -112,7 +112,7 @@ static void release_ei(struct kref *ref)
->>  			entry->release(entry->name, ei->data);
->>  	}
->>  
->> -	call_rcu(&ei->rcu, free_ei_rcu);
->> +	call_srcu(&eventfs_srcu, &ei->rcu, free_ei_rcu);
->>  }
-> 
-> This should be fixed too. Care to send a patch for this as well?
+Hello,
 
-Sure, will do.
+syzbot found the following issue on:
 
-> 
-> It use to need RCU but then everything was switched over to SRCU. This was
-> just leftover.
+HEAD commit:    2c9b3512402e Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1197b6b5980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6bfb33a8ad10458f
+dashboard link: https://syzkaller.appspot.com/bug?extid=17ca2339e34a1d863aad
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1626b995980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1572eb21980000
 
-SRCU usage came up with commit 63940449555e ("eventfs: Implement eventfs
-lookup, read, open functions") and following, was further extended just
-to get almost completely nuked by [1] earlier this year.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f8543636ba6c/disk-2c9b3512.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/403c612b7ac5/vmlinux-2c9b3512.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/88dc686d170a/bzImage-2c9b3512.xz
 
-[1]
-https://lore.kernel.org/linux-trace-kernel/20240131184918.945345370@goodmis.org/
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+17ca2339e34a1d863aad@syzkaller.appspotmail.com
 
-> 
->>  
->>  static inline void put_ei(struct eventfs_inode *ei)
->> @@ -735,7 +735,9 @@ struct eventfs_inode *eventfs_create_dir(const char *name, struct eventfs_inode
->>  
->>  	/* Was the parent freed? */
->>  	if (list_empty(&ei->list)) {
->> +		mutex_lock(&eventfs_mutex);
->>  		cleanup_ei(ei);
->> +		mutex_unlock(&eventfs_mutex);
-> 
-> Why do you think this is needed? The ei is not on the list and has not been
-> made visible. It was just allocated but the parent it was going to be
-> attached to is about to be freed.
+=====================================================
+BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+BUG: KMSAN: kernel-infoleak in _copy_to_user+0xbc/0x110 lib/usercopy.c:45
+ instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+ _copy_to_user+0xbc/0x110 lib/usercopy.c:45
+ copy_to_user include/linux/uaccess.h:191 [inline]
+ raw_ioctl_ep0_read drivers/usb/gadget/legacy/raw_gadget.c:786 [inline]
+ raw_ioctl+0x3d2e/0x5440 drivers/usb/gadget/legacy/raw_gadget.c:1315
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0x261/0x450 fs/ioctl.c:893
+ __x64_sys_ioctl+0x96/0xe0 fs/ioctl.c:893
+ x64_sys_call+0x1a06/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:17
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-I have no strong understanding of the code, just reading into what the
-context told me the rules should be, which would be on one hand the
-following comment...:
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3985 [inline]
+ slab_alloc_node mm/slub.c:4028 [inline]
+ __do_kmalloc_node mm/slub.c:4148 [inline]
+ __kmalloc_noprof+0x661/0xf30 mm/slub.c:4161
+ kmalloc_noprof include/linux/slab.h:685 [inline]
+ raw_alloc_io_data drivers/usb/gadget/legacy/raw_gadget.c:675 [inline]
+ raw_ioctl_ep0_read drivers/usb/gadget/legacy/raw_gadget.c:778 [inline]
+ raw_ioctl+0x3bcb/0x5440 drivers/usb/gadget/legacy/raw_gadget.c:1315
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0x261/0x450 fs/ioctl.c:893
+ __x64_sys_ioctl+0x96/0xe0 fs/ioctl.c:893
+ x64_sys_call+0x1a06/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:17
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-/*
- * The eventfs_inode (ei) itself is protected by SRCU. It is released from
- * its parent's list and will have is_freed set (under eventfs_mutex).
- * After the SRCU grace period is over and the last dput() is called
- * the ei is freed.
- */
+Bytes 0-4095 of 4096 are uninitialized
+Memory access of size 4096 starts at ffff888116edb000
+Data copied to user address 00007ffefdca74d8
 
-...and on the other the common pattern, mostly complying to the rule of
-first taking the eventfs_mutex, then checking 'is_freed' for a given ei
--- supposedly implying, it can only be set under that very same mutex.
+CPU: 0 PID: 5057 Comm: syz-executor289 Not tainted 6.10.0-syzkaller-11185-g2c9b3512402e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+=====================================================
 
-As cleanup_ei() is just a glorified free_ei() which sets ei->is_freed to
-1, I was implying the lack of taking eventfs_mutex is a bug. But looking
-further for the precondition, getting 'ei' unchained again after it was
-put to the parent's children list, I can find eventfs_remove_rec() which
-is only ever called under eventfs_mutex and does:
 
-    list_del(&ei->list);
-    free_ei(ei);
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-So you're right and I wasn't paying close enough attention and got
-mislead by cleanup_ei() also setting ei->is_freed. But as it should
-already be 1 at that point, no bug here.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Thanks,
-Mathias
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
