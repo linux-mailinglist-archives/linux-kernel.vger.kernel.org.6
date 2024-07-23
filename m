@@ -1,490 +1,198 @@
-Return-Path: <linux-kernel+bounces-259761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61B4A939CC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:33:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D2DF939CC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:33:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180D92821E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:33:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5ECD1F2212C
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC42D14D443;
-	Tue, 23 Jul 2024 08:33:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50B114D6F1;
+	Tue, 23 Jul 2024 08:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TYnD7YS3"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uym/xQN0"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E17614C586
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C6B14D428
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:33:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721723589; cv=none; b=NZtS7h8hB3h0051ea2Wl4ZNFjYpNpoV+anXcDGNUST/DwQhjhatqdq5Z/VwugdfAGFQ128G5n/1IO/1VuKtVfNZb9LG6m3rXcYeWxW3g9IIIjZRbJukdWHk0O7ekqugX5ztueCCh3ls/01Br3RB/NAg7r7DW7pdz5FOk81D7T90=
+	t=1721723592; cv=none; b=BlD8VpcfAFV8BS7NkGocIF8KUtiKwSxlNrPDCqcieLKqJR6n/MFAHVfSLp7lL6xBNsKAeCDX6bI64ib5Kc5PKiBY49AX8Uafa7XuHZmTTBTzxgPaXegoRiGnEzdni/FR9beR4PfNZJZz8jkgCUbiCBNYnwGKoY/2zhTCs+JWg8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721723589; c=relaxed/simple;
-	bh=b8CoiMb5iphdulrbGF9IbDlgJakpNPEN+MYJHrdNTPY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LOKNEaxmUMuJQ79PFm/781ur4QgcFg7GgmC0CGAOfzIb42S7QoKC6SaghXsvSyX+C93UAXByD/ski6SL4xwGuJ8s2mL22o+ueQClHgvdi6hSUW4WzPwVKK54Zwbrfp1Zk2T3UKSy/i5PoDfqzCUxqLR9mlpUQ8sxtnT1gEGlxPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TYnD7YS3; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4266ea6a488so45201955e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 01:33:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721723585; x=1722328385; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1t+iNJUM6/WeeHxpFiE1OIXXIHbHfdlbLYRP84zH2DY=;
-        b=TYnD7YS3YXDtTFBLWcmGOetaDhbvhAkRuiKJ9fG5gY6HHYfQOx/RVRAMGeIE7FvSac
-         tWnqQ1jV2TN9xVL8Vmw5Prt7wzRP5zs1/g/t809gFZUDhs7vTDyoOy4fQDlONSDHVxOX
-         dfvvpQymKHjedY9nvTxlCbrG3Lr7vA5IJW4PCSXzFve7aDc/YNd/PfedUS0w4IreVGqy
-         WGl1XQNRYr3pCN5Y7sld8WYoPCnq/WMdffaz+l6UyNPq8mhD0Tlv07EFx70BpdJcQyn6
-         RDRgOtHUFYlQLIzpQjRXvSQPaYnlcHNBWWjVpbDNEHE3PyY/4dsNSSkWt/d8FTKkTQ9K
-         znIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721723585; x=1722328385;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1t+iNJUM6/WeeHxpFiE1OIXXIHbHfdlbLYRP84zH2DY=;
-        b=eA1VE+hyfhBSJTfxBJl9iPMLqUkzY1iWOnxh/Jo69sxTkMkaSzl7AxH5Vz6SD66iJ/
-         p1s/gZ1dHdwPsgo5zONDE+zi2S0x0NSYpnUfG1j82WYP6kMt6ychqoUx2e31YF/UuPCV
-         GOuGP7ggFsVjVi1gPHT8V1jCNQ//Qy+xT0GaRNGbAKCEvx5w897ks7sqmw9SALfhbZnC
-         AWPuo3Ih7cKQ3PW6kRSm3ucgNxR/vEYo5qY+e9NRTsDcrDix8crO6ks3zOc34FSO2qg3
-         ReZ14ES7AMH/PxmTgbXNvfLLrVHqgMK+W9rSieUc7lRKYyljXQbJ2aoz3jMzIwRUHd2a
-         ULaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvchA1YC9EVS7rZRYDVBH7S3XjHBxG3+NH1lzyB9gVeobfyXOMEfky80kIoPzUul6fYtB86yZ0K3soiXb+CVqqJneTz6vWTJ4GOoGN
-X-Gm-Message-State: AOJu0YzBYoJhS/pH3luM67bZdvlLQveeLCwk5u5Fxvj2+ISOTgzjxegc
-	MPyoTblFhhtaJiafcgz+9xAu5vQz7i9qLPVlCxk2utDN7ykXZNfWAKNUb66WBvM=
-X-Google-Smtp-Source: AGHT+IFr4CpzZyMvq6++T1fapTLZpMDNxT4jkNAHhBZudp0bJTnJiQ+DtD4LUAMj0LUFlA1zfq8k6Q==
-X-Received: by 2002:a05:600c:1912:b0:427:d8f2:33b with SMTP id 5b1f17b1804b1-427dc529086mr88754665e9.20.1721723585395;
-        Tue, 23 Jul 2024 01:33:05 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d68fa171sm162857735e9.1.2024.07.23.01.33.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 01:33:04 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Banajit Goswami <bgoswami@quicinc.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Stephan Gerhold <stephan@gerhold.net>,
-	alsa-devel@alsa-project.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Adam Skladowski <a39.skl@gmail.com>
-Subject: [PATCH] ASoC: dt-bindings: qcom,apq8016-sbc-sndcard: move to separate binding
-Date: Tue, 23 Jul 2024 10:33:00 +0200
-Message-ID: <20240723083300.35605-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1721723592; c=relaxed/simple;
+	bh=I+W78kJ7h3fxyDld8rmmYXDoPsduCUAq1iTS1HPMIJU=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=iG+9JoTV2zkt59gSK9PjDrsN/4WMxyqm0OJMGYGh/l8Ev6mgOquFZ/dfueM3erNR9EQ9DEgAzLT7ToJB2iMfSxjGr/RY3yKI5t1I1i69wtTLhDeThJthCBPTpuoH6i4yIf93LQ0MxD5fGZSHoLZJUmh4waRrIXWvM6JlHwb9NS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=uym/xQN0; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240723083307euoutp01c1f796842ec84af09888c661a734ab83~kynsvrwLw0341203412euoutp01f
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:33:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240723083307euoutp01c1f796842ec84af09888c661a734ab83~kynsvrwLw0341203412euoutp01f
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1721723588;
+	bh=ZA1hebOFxLLkZ36onYR7qXf9hAnWg2HrzbqXfPPdnBQ=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=uym/xQN0rVTevyslC4aSDB3GOgladnf8nI0evX2CoGlan/OpR6VhdNsbEC5VNnkwD
+	 S4MPcL8F2Zlgi1kjSKZk2/5U8xApdi+W5aETf71/FyeWKALSuW9kI/BzdLBdeEtgyz
+	 DMAJMZbcg4Z4Ti2+KzoIQAPaGaj8431+vp6O1qcU=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240723083307eucas1p2461d808d8ac3f103bd451287992ab9ae~kynsliDJA0266202662eucas1p26;
+	Tue, 23 Jul 2024 08:33:07 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id D8.BB.09624.3CA6F966; Tue, 23
+	Jul 2024 09:33:07 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240723083307eucas1p2171f64272c8e07865402467bae99229e~kynsNYUnS1584815848eucas1p2i;
+	Tue, 23 Jul 2024 08:33:07 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240723083307eusmtrp198a2ad087cc0210312e987e7caeda1e7~kynsMbUA60202302023eusmtrp1-;
+	Tue, 23 Jul 2024 08:33:07 +0000 (GMT)
+X-AuditID: cbfec7f2-c11ff70000002598-7c-669f6ac3c12e
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id E9.B1.09010.3CA6F966; Tue, 23
+	Jul 2024 09:33:07 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240723083307eusmtip1c613fa8f09c284eecfdd458eb42a74ad~kynr940jU3020130201eusmtip1q;
+	Tue, 23 Jul 2024 08:33:07 +0000 (GMT)
+Received: from localhost (106.210.248.226) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Tue, 23 Jul 2024 09:33:06 +0100
+Date: Tue, 23 Jul 2024 10:33:02 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+CC: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] sysctl: treewide: constify the ctl_table argument of
+ proc_handlers
+Message-ID: <20240723083302.pp74ontnqujknt6q@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <8a48b4d3-94ca-4a42-bf59-c340d7316603@t-8ch.de>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjleLIzCtJLcpLzFFi42LZduznOd3DWfPTDO5d1LWYs34Nm8W6t+dZ
+	LS7vmsNm8fvHMyaLGxOeMjqwemxa1cnmcWLGbxaPz5vkPPq7j7EHsERx2aSk5mSWpRbp2yVw
+	Zex8/oWpYJpoxd7+dawNjIcEuhg5OSQETCT+PT3L2sXIxSEksIJRonnnHSYI5wujxOSnj6Ey
+	nxkl5r9ZzA7TcqH/KlTVckaJ35NWsYEkwKpe/bKASGxllHj07xxQgoODRUBVYtPWcpAaNgEd
+	ifNv7jCD2CICNhIrv31mB6lnFpjEKLHh/DVWkISwQIzE+f4tYEW8Ag4SP6euZoewBSVOznzC
+	AmIzC+hJ3Jg6BWw+s4C0xPJ/HBBheYnmrbOZQcKcQPMbp+pA3KwscW/THmYIu1bi1JZbTBD2
+	Ew6JbX+EIGwXiV9nLkHFhSVeHd8C9a+MxOnJPSwgZ0oITGaU2P/vAzuEs5pRYlnjV6gOa4mW
+	K0+gOhwlFt9oYwc5QkKAT+LGW0GI2/gkJm2bzgwR5pXoaBOawKgyC8ljs5A8NgvhsVlIHlvA
+	yLKKUTy1tDg3PbXYMC+1XK84Mbe4NC9dLzk/dxMjMMmc/nf80w7Gua8+6h1iZOJgPMQowcGs
+	JML75NXcNCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8qinyqUIC6YklqdmpqQWpRTBZJg5OqQam
+	0r+VkrueuAlWPZzC4eJ8nusrv/iLpqWcs9/fWSua8mHphTe1357XW5RMLJvd/acqpNR7ehJz
+	6WGB9HfFS6ozt0lVyFb9XvjzvfAW359t3hNDVCX3WMqs+TD9lH/gkcdWi78sKb3pwPNvBn9p
+	WYDrDZfq1xp7ZJ0ebC3cek1NfpGJt9q8v6kprcGPUw5raWsub7WdLh0b1/14ln9TH6Oj2EHd
+	qfIOpyWa5e6xCxQFvPMSz3z3KdPbiNPS9/E3jwPWyV6FnE2Pp1Xvy+cMSmXzeKP+yM3lxNmD
+	wXzeUZylpWekpm8227W5cX/SBxULj+n/Ox4IcdXdPP/1b9PPZJ7+pi3p3X9v2zVe+ftyZZMS
+	S3FGoqEWc1FxIgBgeaq+oQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOIsWRmVeSWpSXmKPExsVy+t/xu7qHs+anGZzvFbKYs34Nm8W6t+dZ
+	LS7vmsNm8fvHMyaLGxOeMjqwemxa1cnmcWLGbxaPz5vkPPq7j7EHsETp2RTll5akKmTkF5fY
+	KkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXoZex8/oWpYJpoxd7+dawNjIcE
+	uhg5OSQETCQu9F9l6mLk4hASWMoosXrKR0aIhIzExi9XWSFsYYk/17rYQGwhgY+MEp/uJ0I0
+	bGWUeLlhI1A3BweLgKrEpq3lIDVsAjoS59/cYQaxRQRsJFZ++8wOUs8sMIlRYtqZw2ALhAVi
+	JM73bwEr4hVwkPg5dTU7xNDbzBI7Fm5mhUgISpyc+YQFxGYW0JO4MXUKG8gyZgFpieX/OCDC
+	8hLNW2czg4Q5gZY1TtWBuFlZ4t6mPcwQdq3E57/PGCcwisxCMnQWkqGzEIbOQjJ0ASPLKkaR
+	1NLi3PTcYiO94sTc4tK8dL3k/NxNjMAY3Hbs55YdjCtffdQ7xMjEwXiIUYKDWUmE98mruWlC
+	vCmJlVWpRfnxRaU5qcWHGE2BITSRWUo0OR+YBPJK4g3NDEwNTcwsDUwtzYyVxHk9CzoShQTS
+	E0tSs1NTC1KLYPqYODilGpicthzbHzwzX1qjfMacbQ9UDx1s0Tp/7qrq0TK9K6Gfajqa1kSc
+	KtxVOfmYis1x/oUWNptEzDqnTf3BntsnvMV+09+HRz1f/LGMdl79Nl1we8sH68SWzB3h8zK+
+	LDG+9WIl58qX7Jf+ndp+oJtfLu6VBhe3yWLPOx5VG/OYHfe2OoQnG6S3TFtgqv14oYnSFWOR
+	dbe1dkryrEp4G5pvsUBN6VOfu4v+bAvtkLN7lZ32d+if1WNcFZ421bvFY/ukOXO+BpXc//Hh
+	kY0Jl1b7o3M2kbUrHC3MVzA+EiqO0q9nUdO5tSml8nTdplXHtdbJTLR/vHFxFIN3upTswvl/
+	uL0rZA+udlP5tdn51zo2d38lluKMREMt5qLiRAAAtAyHSgMAAA==
+X-CMS-MailID: 20240723083307eucas1p2171f64272c8e07865402467bae99229e
+X-Msg-Generator: CA
+X-RootMTR: 20240619100941eucas1p25d522dca3b74c899434b97b0c0dc78a0
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240619100941eucas1p25d522dca3b74c899434b97b0c0dc78a0
+References: <CGME20240619100941eucas1p25d522dca3b74c899434b97b0c0dc78a0@eucas1p2.samsung.com>
+	<20240619-sysctl-const-handler-v2-1-e36d00707097@weissschuh.net>
+	<20240715202319.mccb6jlsa6dkynap@joelS2.panther.com>
+	<f7489470-b0da-406b-a8dd-0ae7aaeceec8@t-8ch.de>
+	<20240716152705.juet6srejwq5o6je@joelS2.panther.com>
+	<cdf0831f-f9af-4aa7-a3a0-970efeec1def@t-8ch.de>
+	<20240717195748.fe5ttokbibcsw2ca@joelS2.panther.com>
+	<8a48b4d3-94ca-4a42-bf59-c340d7316603@t-8ch.de>
 
-The APQ8016 SBC and MSM8916 QDSP6 sound cards are a bit different from
-others: they have additional IO muxing address space and pin control.
-Move them to separate schema, so the original qcom,sm8250.yaml will be
-easier to manage.  New schema is going to grow for other platforms
-having more of IO muxing address spaces.
+On Mon, Jul 22, 2024 at 09:41:36AM +0200, Thomas Weißschuh wrote:
+> Hi Joel,
+> 
+> On 2024-07-17 21:57:48+0000, Joel Granados wrote:
+> > On Wed, Jul 17, 2024 at 05:26:44PM +0200, Thomas Weißschuh wrote:
+> > > On 2024-07-16 17:27:05+0000, Joel Granados wrote:
+> > > > On Mon, Jul 15, 2024 at 10:58:10PM +0200, Thomas Weißschuh wrote:
+> > > > > On 2024-07-15 22:23:19+0000, Joel Granados wrote:
+> > > > ...
+> > > > > > The merge window is now open. I want to send this patch on the Wednesday
+> > > > > > of next week (jul 24).
+> > > 
+> > > <snip>
+> > > 
+> > > > > > 2. Does it still apply cleanly against the latest master branch?
+> > > > > 
+> > > > > Not against mainline master, but against next-20240715.
+> > > > > To apply cleanly (and compile) on mainline master it still requires the
+> > > > > net/ and sysctl trees to be merged.
+> > > > > Otherwise some modified functions are missing, leading to (trivial) merge
+> > > > > conflicts or the preparation commits are missing, leading to compilation
+> > > > > errors.
+> > > > 
+> > > > Understood. I have just sent Linus the changes for sysctl-next, so those
+> > > > should land in master soon (baring any issues with the pull request).
+> > > > 
+> > > > These [1] and [2] are the two series in net-dev that are the deps for
+> > > > the constification treewide patch. Once these two go into mainline, then
+> > > > we are good to go. Right?
+> > > 
+> > > Right, but...
+> > > 
+> > > It turns out the preparation patch for mm/hugetlb.c [0] is also still
+> > > missing. I missed it in all the errors triggered in net/.
+> > > But as far as I can see this patch will be part of Andrew's PR for mm.
+> > 
+> > Thx for the heads up, I'll Add that one to my radar of things that need
+> > to be in master before we send the PR to Linus. Will check these three
+> > dependencies on Wednesday next week and send your V2 [3] if I see that
+> > it applies cleanly.
+> 
+> All dependency PRs (sysctl, net, mm) are now merged.
+> My compilation tests all succeed now.
+Great. I'll push this up to Linus tomorrow as planned.
+Thx for the heads up.
 
-Cc: Adam Skladowski <a39.skl@gmail.com>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../sound/qcom,apq8016-sbc-sndcard.yaml       | 205 ++++++++++++++++++
- .../bindings/sound/qcom,sm8250.yaml           | 137 ------------
- 2 files changed, 205 insertions(+), 137 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.yaml
+> 
+> > > <snip>
+> > > 
+> > > [0] https://lore.kernel.org/lkml/20240518-sysctl-const-handler-hugetlb-v1-1-47e34e2871b2@weissschuh.net/
+> > > 
+> > > > [1] net: constify ctl_table arguments of utility functions
+> > > >     https://patchwork.kernel.org/project/netdevbpf/list/?series=856252&state=%2A&archive=both
+> > > > [2] bpf: constify member bpf_sysctl_kern::table
+> > > >     https://patchwork.kernel.org/project/netdevbpf/list/?series=854191&state=*
+> > 
+> > [3] https://lore.kernel.org/20240619-sysctl-const-handler-v2-1-e36d00707097@weissschuh.net
 
-diff --git a/Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.yaml b/Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.yaml
-new file mode 100644
-index 000000000000..6ad451549036
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/qcom,apq8016-sbc-sndcard.yaml
-@@ -0,0 +1,205 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/qcom,apq8016-sbc-sndcard.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm APQ8016 and similar sound cards
-+
-+maintainers:
-+  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-+  - Stephan Gerhold <stephan@gerhold.net>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,apq8016-sbc-sndcard
-+      - qcom,msm8916-qdsp6-sndcard
-+
-+  reg:
-+    items:
-+      - description: Microphone I/O mux register address
-+      - description: Speaker I/O mux register address
-+
-+  reg-names:
-+    items:
-+      - const: mic-iomux
-+      - const: spkr-iomux
-+
-+  audio-routing:
-+    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
-+    description:
-+      A list of the connections between audio components. Each entry is a
-+      pair of strings, the first being the connection's sink, the second
-+      being the connection's source. Valid names could be power supplies,
-+      MicBias of codec and the jacks on the board.
-+
-+  aux-devs:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    description: |
-+      List of phandles pointing to auxiliary devices, such
-+      as amplifiers, to be added to the sound card.
-+
-+  model:
-+    $ref: /schemas/types.yaml#/definitions/string
-+    description: User visible long sound card name
-+
-+  pin-switches:
-+    description: List of widget names for which pin switches should be created.
-+    $ref: /schemas/types.yaml#/definitions/string-array
-+
-+  widgets:
-+    description: User specified audio sound widgets.
-+    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
-+
-+patternProperties:
-+  ".*-dai-link$":
-+    description:
-+      Each subnode represents a dai link. Subnodes of each dai links would be
-+      cpu/codec dais.
-+
-+    type: object
-+
-+    properties:
-+      link-name:
-+        description: Indicates dai-link name and PCM stream name.
-+        $ref: /schemas/types.yaml#/definitions/string
-+        maxItems: 1
-+
-+      cpu:
-+        description: Holds subnode which indicates cpu dai.
-+        type: object
-+        additionalProperties: false
-+
-+        properties:
-+          sound-dai:
-+            maxItems: 1
-+
-+      platform:
-+        description: Holds subnode which indicates platform dai.
-+        type: object
-+        additionalProperties: false
-+
-+        properties:
-+          sound-dai:
-+            maxItems: 1
-+
-+      codec:
-+        description: Holds subnode which indicates codec dai.
-+        type: object
-+        additionalProperties: false
-+
-+        properties:
-+          sound-dai:
-+            minItems: 1
-+            maxItems: 8
-+
-+    required:
-+      - link-name
-+      - cpu
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - model
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/sound/qcom,lpass.h>
-+    sound@7702000 {
-+        compatible = "qcom,apq8016-sbc-sndcard";
-+        reg = <0x07702000 0x4>, <0x07702004 0x4>;
-+        reg-names = "mic-iomux", "spkr-iomux";
-+
-+        model = "DB410c";
-+        audio-routing =
-+            "AMIC2", "MIC BIAS Internal2",
-+            "AMIC3", "MIC BIAS External1";
-+
-+        pinctrl-0 = <&cdc_pdm_lines_act &ext_sec_tlmm_lines_act &ext_mclk_tlmm_lines_act>;
-+        pinctrl-1 = <&cdc_pdm_lines_sus &ext_sec_tlmm_lines_sus &ext_mclk_tlmm_lines_sus>;
-+        pinctrl-names = "default", "sleep";
-+
-+        quaternary-dai-link {
-+            link-name = "ADV7533";
-+            cpu {
-+                sound-dai = <&lpass MI2S_QUATERNARY>;
-+            };
-+            codec {
-+                sound-dai = <&adv_bridge 0>;
-+            };
-+        };
-+
-+        primary-dai-link {
-+            link-name = "WCD";
-+            cpu {
-+                sound-dai = <&lpass MI2S_PRIMARY>;
-+            };
-+            codec {
-+                sound-dai = <&lpass_codec 0>, <&wcd_codec 0>;
-+            };
-+        };
-+
-+        tertiary-dai-link {
-+            link-name = "WCD-Capture";
-+            cpu {
-+                sound-dai = <&lpass MI2S_TERTIARY>;
-+            };
-+            codec {
-+                sound-dai = <&lpass_codec 1>, <&wcd_codec 1>;
-+            };
-+        };
-+    };
-+
-+  - |
-+    #include <dt-bindings/sound/qcom,q6afe.h>
-+    #include <dt-bindings/sound/qcom,q6asm.h>
-+    sound@7702000 {
-+        compatible = "qcom,msm8916-qdsp6-sndcard";
-+        reg = <0x07702000 0x4>, <0x07702004 0x4>;
-+        reg-names = "mic-iomux", "spkr-iomux";
-+
-+        model = "msm8916";
-+        widgets =
-+            "Speaker", "Speaker",
-+            "Headphone", "Headphones";
-+        pin-switches = "Speaker";
-+        audio-routing =
-+            "Speaker", "Speaker Amp OUT",
-+            "Speaker Amp IN", "HPH_R",
-+            "Headphones", "HPH_L",
-+            "Headphones", "HPH_R",
-+            "AMIC1", "MIC BIAS Internal1",
-+            "AMIC2", "MIC BIAS Internal2",
-+            "AMIC3", "MIC BIAS Internal3";
-+        aux-devs = <&speaker_amp>;
-+
-+        pinctrl-names = "default", "sleep";
-+        pinctrl-0 = <&cdc_pdm_lines_act>;
-+        pinctrl-1 = <&cdc_pdm_lines_sus>;
-+
-+        mm1-dai-link {
-+            link-name = "MultiMedia1";
-+            cpu {
-+                sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA1>;
-+            };
-+        };
-+
-+        primary-dai-link {
-+            link-name = "Primary MI2S";
-+            cpu {
-+                sound-dai = <&q6afedai PRIMARY_MI2S_RX>;
-+            };
-+            platform {
-+                sound-dai = <&q6routing>;
-+            };
-+            codec {
-+                sound-dai = <&lpass_codec 0>, <&wcd_codec 0>;
-+            };
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
-index c9076dcd44c1..1d3acdc0c733 100644
---- a/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
-+++ b/Documentation/devicetree/bindings/sound/qcom,sm8250.yaml
-@@ -27,9 +27,7 @@ properties:
-               - qcom,sm8650-sndcard
-           - const: qcom,sm8450-sndcard
-       - enum:
--          - qcom,apq8016-sbc-sndcard
-           - qcom,apq8096-sndcard
--          - qcom,msm8916-qdsp6-sndcard
-           - qcom,qcm6490-idp-sndcard
-           - qcom,qcs6490-rb3gen2-sndcard
-           - qcom,qrb5165-rb5-sndcard
-@@ -58,18 +56,6 @@ properties:
-     $ref: /schemas/types.yaml#/definitions/string
-     description: User visible long sound card name
- 
--  pin-switches:
--    description: List of widget names for which pin switches should be created.
--    $ref: /schemas/types.yaml#/definitions/string-array
--
--  widgets:
--    description: User specified audio sound widgets.
--    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
--
--  # Only valid for some compatibles (see allOf if below)
--  reg: true
--  reg-names: true
--
- patternProperties:
-   ".*-dai-link$":
-     description:
-@@ -122,34 +108,6 @@ required:
-   - compatible
-   - model
- 
--allOf:
--  - if:
--      properties:
--        compatible:
--          contains:
--            enum:
--              - qcom,apq8016-sbc-sndcard
--              - qcom,msm8916-qdsp6-sndcard
--    then:
--      properties:
--        reg:
--          items:
--            - description: Microphone I/O mux register address
--            - description: Speaker I/O mux register address
--        reg-names:
--          items:
--            - const: mic-iomux
--            - const: spkr-iomux
--      required:
--        - compatible
--        - model
--        - reg
--        - reg-names
--    else:
--      properties:
--        reg: false
--        reg-names: false
--
- additionalProperties: false
- 
- examples:
-@@ -231,98 +189,3 @@ examples:
-             };
-         };
-     };
--
--  - |
--    #include <dt-bindings/sound/qcom,lpass.h>
--    sound@7702000 {
--        compatible = "qcom,apq8016-sbc-sndcard";
--        reg = <0x07702000 0x4>, <0x07702004 0x4>;
--        reg-names = "mic-iomux", "spkr-iomux";
--
--        model = "DB410c";
--        audio-routing =
--            "AMIC2", "MIC BIAS Internal2",
--            "AMIC3", "MIC BIAS External1";
--
--        pinctrl-0 = <&cdc_pdm_lines_act &ext_sec_tlmm_lines_act &ext_mclk_tlmm_lines_act>;
--        pinctrl-1 = <&cdc_pdm_lines_sus &ext_sec_tlmm_lines_sus &ext_mclk_tlmm_lines_sus>;
--        pinctrl-names = "default", "sleep";
--
--        quaternary-dai-link {
--            link-name = "ADV7533";
--            cpu {
--                sound-dai = <&lpass MI2S_QUATERNARY>;
--            };
--            codec {
--                sound-dai = <&adv_bridge 0>;
--            };
--        };
--
--        primary-dai-link {
--            link-name = "WCD";
--            cpu {
--                sound-dai = <&lpass MI2S_PRIMARY>;
--            };
--            codec {
--                sound-dai = <&lpass_codec 0>, <&wcd_codec 0>;
--            };
--        };
--
--        tertiary-dai-link {
--            link-name = "WCD-Capture";
--            cpu {
--                sound-dai = <&lpass MI2S_TERTIARY>;
--            };
--            codec {
--                sound-dai = <&lpass_codec 1>, <&wcd_codec 1>;
--            };
--        };
--    };
--
--  - |
--    #include <dt-bindings/sound/qcom,q6afe.h>
--    #include <dt-bindings/sound/qcom,q6asm.h>
--    sound@7702000 {
--        compatible = "qcom,msm8916-qdsp6-sndcard";
--        reg = <0x07702000 0x4>, <0x07702004 0x4>;
--        reg-names = "mic-iomux", "spkr-iomux";
--
--        model = "msm8916";
--        widgets =
--            "Speaker", "Speaker",
--            "Headphone", "Headphones";
--        pin-switches = "Speaker";
--        audio-routing =
--            "Speaker", "Speaker Amp OUT",
--            "Speaker Amp IN", "HPH_R",
--            "Headphones", "HPH_L",
--            "Headphones", "HPH_R",
--            "AMIC1", "MIC BIAS Internal1",
--            "AMIC2", "MIC BIAS Internal2",
--            "AMIC3", "MIC BIAS Internal3";
--        aux-devs = <&speaker_amp>;
--
--        pinctrl-names = "default", "sleep";
--        pinctrl-0 = <&cdc_pdm_lines_act>;
--        pinctrl-1 = <&cdc_pdm_lines_sus>;
--
--        mm1-dai-link {
--            link-name = "MultiMedia1";
--            cpu {
--                sound-dai = <&q6asmdai MSM_FRONTEND_DAI_MULTIMEDIA1>;
--            };
--        };
--
--        primary-dai-link {
--            link-name = "Primary MI2S";
--            cpu {
--                sound-dai = <&q6afedai PRIMARY_MI2S_RX>;
--            };
--            platform {
--                sound-dai = <&q6routing>;
--            };
--            codec {
--                sound-dai = <&lpass_codec 0>, <&wcd_codec 0>;
--            };
--        };
--    };
+Best
 -- 
-2.43.0
 
+Joel Granados
 
