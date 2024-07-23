@@ -1,80 +1,152 @@
-Return-Path: <linux-kernel+bounces-259535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02C5E939803
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 03:44:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E80BB939806
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 03:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F19E81C21A44
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 01:43:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2586C1C219E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 01:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64E1139CE3;
-	Tue, 23 Jul 2024 01:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PVTXrXJ0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E702D136E3F;
-	Tue, 23 Jul 2024 01:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA90139597;
+	Tue, 23 Jul 2024 01:44:39 +0000 (UTC)
+Received: from wangsu.com (unknown [180.101.34.75])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297D01332A1;
+	Tue, 23 Jul 2024 01:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.101.34.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721699030; cv=none; b=pQzWglqJg7CYv1r+WkRj2pxmbknqQF/L2cKc7zkbxeoGb9HfAUD333c9LDZMO8PSjNHxHj6mqMfURGxjGmv5RFA7G54dmz5T7hFMDeWTiE3/kL6U9nr1BOzKzSiqjo83G3d5XlTZMKJMVG2/nk2b/5mMCCsBKE98c+ZuSS/FBEM=
+	t=1721699079; cv=none; b=kPH+GS/dQWOh5noCeCSuboYukAcqutnIr4fxEfFCoUX9ki9Cz58hTfV3cO6kqoQmzM/e+GMU6TZRxVy5wmZHxOT68jEBkiOcXii8QwRNnz2P89VGm8YriHHq3rPkQRhBN8sO5a8wnBvgsEBBwzj7jW8FVBkISzwiQ1J2YMk1FMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721699030; c=relaxed/simple;
-	bh=uLE4/Kk/lWZmHiZavjPUPKJ4gYq6j64EmWnd8S2dSew=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ZIyV1HaMPVSg5cUQ/S7SRnG8GgwA7P2K/WUXlr7PdsbSTbiVT4HsIOZkOhNOpp7qdw6VLSkT6QEWzoDWA000BYy8CseBXxiolJlbcGl0YZWKeAMgDzdgFvVrRuUPVhmjcOAxrwTJLnjn7onLg/kmylkoGLkqFQ7ar1ni9+S/e+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=PVTXrXJ0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9A4DC116B1;
-	Tue, 23 Jul 2024 01:43:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1721699029;
-	bh=uLE4/Kk/lWZmHiZavjPUPKJ4gYq6j64EmWnd8S2dSew=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PVTXrXJ0noRS7iTqzd+vPAnX0VHUg2MDw3tsmuDzh9F7od1olKPkNiUtapKIHv3WW
-	 3Mr7XTwhNkRmuyaJwdSjzpY7+lS9raO/zWCTZ4Uiby3NGcUG6NBeI9bQRsxhsaZ2Hr
-	 7RrlQ+LBwT8c0S+Hdi+4JqJqFnDc/nilJ6pCgxow=
-Date: Mon, 22 Jul 2024 18:43:48 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: cl@linux.com, penberg@kernel.org, rientjes@google.com,
- iamjoonsoo.kim@lge.com, vbabka@suse.cz, roman.gushchin@linux.dev,
- 42.hyeyoo@gmail.com, urezki@gmail.com, hch@infradead.org, kees@kernel.org,
- ojeda@kernel.org, wedsonaf@gmail.com, mhocko@kernel.org,
- mpe@ellerman.id.au, chandan.babu@oracle.com, christian.koenig@amd.com,
- maz@kernel.org, oliver.upton@linux.dev, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] mm: kvmalloc: align kvrealloc() with krealloc()
-Message-Id: <20240722184348.3df3b433c8f49f123e1c8d9e@linux-foundation.org>
-In-Reply-To: <20240722163111.4766-3-dakr@kernel.org>
-References: <20240722163111.4766-1-dakr@kernel.org>
-	<20240722163111.4766-3-dakr@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721699079; c=relaxed/simple;
+	bh=muZ9ONjlh7hbqiCTkWd3lag6SvzxaC+A8vVThMWZ7Y0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gKN3yUT1Z1BLoQkiibsMw6qjiqcLZ8B25KWh4UP2UxXiLEZRETfB9m+dpyeeR3SSZzTw31Qur+4IBi1rmfuujJXPZiJi1nCQsQ3rdW0jhXMHfND5r4w1znXppJPwWCCJZL347WMzBUOu8vFQjxG5+I4B5OWNCXefFiuJhIUtqk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wangsu.com; spf=pass smtp.mailfrom=wangsu.com; arc=none smtp.client-ip=180.101.34.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wangsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wangsu.com
+Received: from [10.8.148.37] (unknown [59.61.78.234])
+	by app2 (Coremail) with SMTP id SyJltAC3d5DnCp9mSxPaAA--.36658S2;
+	Tue, 23 Jul 2024 09:44:08 +0800 (CST)
+Message-ID: <f5fa9571-0c9a-8466-b43b-59468b5a1a2b@wangsu.com>
+Date: Tue, 23 Jul 2024 09:44:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH] bpf: fix excessively checking for elem_flags in batch
+ update mode
+Content-Language: en-US
+To: Hou Tao <houtao@huaweicloud.com>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yonghong.song@linux.dev, Brian Vazquez <brianvv@google.com>,
+ Daniel Borkmann <daniel@iogearbox.net>, ast@kernel.org
+References: <cde62a6c-384a-5bdd-fe64-3f3d999c3825@wangsu.com>
+ <7d351341-fefe-a40f-f62a-d9505432d056@iogearbox.net>
+ <c26a1373-c206-51b3-406a-83f3adddbdd5@huaweicloud.com>
+From: Lin Feng <linf@wangsu.com>
+In-Reply-To: <c26a1373-c206-51b3-406a-83f3adddbdd5@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:SyJltAC3d5DnCp9mSxPaAA--.36658S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGw15WFWkGF4DAry8Jr4xJFb_yoW5Wr1rpF
+	Z5JFW7GrWjgw18Zw4Iq3s7KFy0yr45tw15ZFn5try3Ar9FkryFgF10qFya9F1aqr4fGF4j
+	vay7KF9avw18ZaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvCb7Iv0xC_tr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
+	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
+	v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
+	6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4
+	CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0EF7xvrVAajcxG14v2
+	6r1j6r4UMcIj6x8ErcxFaVAv8VW8GwAv7VCY1x0262k0Y48FwI0_GcC_XcWlOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc2xSY4AK67AK
+	6w4l42xK82IYc2Ij64vIr41l42xK82IY6x8ErcxFaVAv8VW8GwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7IUjfb15UUUUU==
+X-CM-SenderInfo: holqwq5zdqw23xof0z/
 
-On Mon, 22 Jul 2024 18:29:24 +0200 Danilo Krummrich <dakr@kernel.org> wrote:
+Hi Tao,
 
-> Besides the obvious (and desired) difference between krealloc() and
-> kvrealloc(), there is some inconsistency in their function signatures
-> and behavior:
+See below please,
+
+On 7/23/24 09:21, Hou Tao wrote:
+> Hi,
 > 
->  - krealloc() frees the memory when the requested size is zero, whereas
->    kvrealloc() simply returns a pointer to the existing allocation.
+> On 7/20/2024 12:22 AM, Daniel Borkmann wrote:
+>> On 7/17/24 1:15 PM, Lin Feng wrote:
+>>> Currently generic_map_update_batch will reject all valid command
+>>> flags for
+>>> BPF_MAP_UPDATE_ELEM other than BPF_F_LOCK, which is overkill, map
+>>> updating
+>>> semantic does allow specify BPF_NOEXIST or BPF_EXIST even for batching
+>>> update.
+>>>
+>>> Signed-off-by: Lin Feng <linf@wangsu.com>
+>>
+>> [ +Hou/Brian ]
+>>
+>> Please also add a BPF selftest along with this extension which
+>> exercises the
+>> batch update and validates the behavior for the various flags which
+>> are now enabled.
+> 
+> Agreed. There are already some batched map operation tests in
+> tools/testing/selftests/bpf/map_tests/htab_map_batch_ops.c, I think
+> extending the test cases in the file will be fine.
+>> Also, please discuss the semantics in the commit msg.. errors due to
+>> BPF_EXIST and
+>> BPF_NOEXIST will cause bpf_map_update_value() to fail and then break
+>> the loop. It's
+>> probably fine given batch.count (cp) will be propagated back to user
+>> space to tell
+>> how many elements could actually get updated.
+> 
+> It seems that the initial commit aa2e93b8e58e ("bpf: Add generic support
+> for update and delete batch ops") only enabled BPF_F_LOCK for
+> BPF_MAP_UPDATE_BATCH, but the document commit 0cb804547927 ("bpf:
+> Document BPF_MAP_*_BATCH syscall commands for BPF_MAP_UPDATE_BATCH
+> considered both BPF_NOEXIST and BPF_EXIST are valid. The
+> bpf_map_update_batch() API in libbpf also considered both BPF_NOEXIST
+> and BPF_EXIST are valid, but we just never test it before.
 
-The old kvrealloc() behavior actually sounds somewhat useful.  You've
-checked that no existing sites were relying on this?
+I did notice the conflict between those two commits, besides the already
+supported update flags in single-update mode, the latter patch says "both
+BPF_NOEXIST and BPF_EXIST are valid", so here came this patch.
 
-And that all existing kvrealloc() callers were (incorrectly) checking
-for NULL?  Seems that way.
+And thank you again for your detailed analysis, so I need to extend the 
+testsuits and confirm this one wouldn't break any exsiting ones, I will
+resend them batch in next version.
+
+Have a nice day,
+linfeng
+
+>>
+>>> ---
+>>>   kernel/bpf/syscall.c | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+>>> index 869265852d51..d85361f9a9b8 100644
+>>> --- a/kernel/bpf/syscall.c
+>>> +++ b/kernel/bpf/syscall.c
+>>> @@ -1852,7 +1852,7 @@ int generic_map_update_batch(struct bpf_map
+>>> *map, struct file *map_file,
+>>>       void *key, *value;
+>>>       int err = 0;
+>>>   -    if (attr->batch.elem_flags & ~BPF_F_LOCK)
+>>> +    if ((attr->batch.elem_flags & ~BPF_F_LOCK) > BPF_EXIST)
+>>>           return -EINVAL;
+>>>         if ((attr->batch.elem_flags & BPF_F_LOCK) &&
+>>>
+>>
+>> .
+> 
 
 
