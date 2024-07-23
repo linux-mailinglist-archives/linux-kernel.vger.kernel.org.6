@@ -1,380 +1,197 @@
-Return-Path: <linux-kernel+bounces-259850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32BAE939E35
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:49:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 021F9939E38
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D96EF281FF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:49:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADB8D1F21CF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28F814D432;
-	Tue, 23 Jul 2024 09:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6826914D451;
+	Tue, 23 Jul 2024 09:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Z2qrl5yG"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010033.outbound.protection.outlook.com [52.101.69.33])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FhYSjz1S"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC3922097;
-	Tue, 23 Jul 2024 09:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.33
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721728132; cv=fail; b=qTVvSNl17BcGrx3EtK4kygLfMwwWqP/i6p4Ou6gINh3+MVCqwpHfufAqzmEDlBZxghk7YPApeK41TfCMUP7ecLkr/xAIJSZ2LVwlCR9GPnLUHevhcOJHYmRJngO2GTY8oJ0ysJzoISft7YkHFeLP+eJUDu0dULbC0qUQozmkNGk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721728132; c=relaxed/simple;
-	bh=uAuDFVH1R8yoi3MIB2drJTIGOssujSaXcE6BZ1axf/Q=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=fHmX7rMJU3tJzb1ACmgi0S3XORm4GR8jjCWBPwMrLnL8yEDGOb0oo92qKLrtU2fzTlERdWIVOWwP7j/LLAZzgLpBo2cLVxxWBLqnjCwSiIGOZHXuHZawuDcSKPNmQnmMd3nhVJPGixAFgmIgOZwtHkEVXFDMQBBFp1n9DRKHofo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=Z2qrl5yG; arc=fail smtp.client-ip=52.101.69.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RpjvEEFHO1zoCeG5YMZ9L6kz5txsjO3aks/FyxLmh78myc30wSkm62vc2Ct9bk8ScN2fI6VmfN9AglcOe7xVuDGOsDf83FnMltTGMqZJRcAFdsklK1hlbRIYIbSkn8KJYeiES8VltwS9PaidzQ8bsg0QC25x+1EzhUKhwbmwHxGpRQmjz/V/k3GkVrp0MTP0RhZGc94gtLKVUEoA/YJx6OUPyIWFyvI79re9fH+S35bIwWFLWh7+7Rn5WYt0VHuMvubzYIQtnXrVJunmbuNV9v6aIB/RnIAKVmlZColvC8sPogZwKDp2+doOywWkQI6ScGuR4nAR5ZuSvQDUyfyKLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LPPNh0CIuIc1+XX1YQ9hVZcJp6s7lBSIg5tKyLU/9Yw=;
- b=lmv/7/tAUrTARD1Jx1r9CnCc9A2ts3e7ATFbLOolRIH9hQu62Yh+a58B7Nrdrob1Z7p1xyfv6+0vgkI7BZn37pD+hlnBUlLTeheSrhmwaucjFpK6vmivKoIMnPk/fBh3ntc2HM4K5kigo2KJtSfhUK9NdNQFJ8e9z0aHzZKuIEFtxFMduGpmxsQaNB+yOpvs8IZxLV5fJHpf4kHQNFuzEgr6mUy4sJYkd/ya3viGTh/vG/BD6kiFx3oyHnCrpq+4hQNsp40UbZuvMkJKt9LXpSqFwo+4CWG93i5ubEVoQUDl7NnFhH0dwrT2o522oOA80MJO2YUf4UzNnqaHqOmqqQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LPPNh0CIuIc1+XX1YQ9hVZcJp6s7lBSIg5tKyLU/9Yw=;
- b=Z2qrl5yGFIcQYnOVgZuoNZ6+hAge9db7V1+ltCNW19Xyq9C9lPk6xfLgmg5NHY4ejoatM5YILBi/WObzVjphAzYJexmOd+/UT9rT9+15ANT2e+BvijUE64xduIAoeEP/mLYdIVsKXAKUpRR8fmayttisY5y85lb0qfkfwKaB2B4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by GVXPR04MB9830.eurprd04.prod.outlook.com (2603:10a6:150:113::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16; Tue, 23 Jul
- 2024 09:48:46 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%2]) with mapi id 15.20.7784.017; Tue, 23 Jul 2024
- 09:48:46 +0000
-Message-ID: <442c51f3-f675-4599-a0a3-654c0a4b756f@nxp.com>
-Date: Tue, 23 Jul 2024 17:49:07 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/16] dt-bindings: display: imx: Add some i.MX8qxp
- Display Controller processing units
-To: Rob Herring <robh@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- p.zabel@pengutronix.de, airlied@gmail.com, daniel@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
- s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
- tglx@linutronix.de, vkoul@kernel.org, kishon@kernel.org,
- aisheng.dong@nxp.com, agx@sigxcpu.org, francesco@dolcini.it, frank.li@nxp.com
-References: <20240712093243.2108456-1-victor.liu@nxp.com>
- <20240712093243.2108456-2-victor.liu@nxp.com>
- <20240722223814.GA183822-robh@kernel.org>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <20240722223814.GA183822-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-X-ClientProxiedBy: SI2PR01CA0017.apcprd01.prod.exchangelabs.com
- (2603:1096:4:191::19) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9C722097;
+	Tue, 23 Jul 2024 09:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721728158; cv=none; b=ZnfixS/j1T0PmMGU4/gsGt6cpTq9MBEDe2nZth1v/emQrlGt8NHjCtA3Cod0LT4imE0YubIgrzX1WFoB14zLaGrf9N2SazjLiPlz+W1UgsRWbHOHQI5a37p/H6MsPrlz5BDcglQrqpnWfX5sJFaiivLXKk1yUlgNceKo90takR8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721728158; c=relaxed/simple;
+	bh=LBspR0RbbvdyB9NgEAS7Jm6rYf6aPZu2TWqo0xRIwac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QqI3r2IN7RqPPDuWr8MlUbCfCgSBbz1GOnwsvems/YguOprWyXsZ/Kkf6g7Wx2Pvy0kIzbdw1MqzmWOw7iBfhkQLqRjIJa5SmRAxMGguAqijGJHKOugTr4mnjgStl+9YnspBgpHY3NYh7KtHi3XjLfcDyat4KkPM0Vhpl64BiBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FhYSjz1S; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721728155;
+	bh=LBspR0RbbvdyB9NgEAS7Jm6rYf6aPZu2TWqo0xRIwac=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FhYSjz1SVPnHMkaNadaN/f0VP8GyKwI9mdowhp7isv5O9yewojPP23aVbCtzT7bRv
+	 edhWFV79GnbgMx95dOzgsyuAQN73hMbKItTzYKmN+ShHWM7HLjCmjMJ07Yf0u/Akle
+	 nKifgbASm1JesU0OKYDx6rIyQ//OwDQeIYqVpZliJUDPbYtcs+DucbbJzHQY+boEKO
+	 MQp7bHcg59oJwivAyYBsnmNhGvLOI2710jaJ8ly62Cty6mWza+1wt56+EQHeK0FPuu
+	 m5iOTfwygm1AAYjhFdGeuiSLPwxhEjLNx5uNWvu1+WRYpSVIqkjdntfdY6ZXZrXucE
+	 jdWKOI3IrUnyA==
+Received: from localhost (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sebastianfricke)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E7A153781167;
+	Tue, 23 Jul 2024 09:49:14 +0000 (UTC)
+Date: Tue, 23 Jul 2024 11:49:13 +0200
+From: Sebastian Fricke <sebastian.fricke@collabora.com>
+To: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+Cc: mchehab@kernel.org, ezequiel@vanguardiasur.com.ar,
+	hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	kernel@collabora.com
+Subject: Re: [PATCH v5 2/3] media: test-drivers: Use V4L2_FMT_FLAG_ENUM_ALL
+ flag
+Message-ID: <20240723094913.4zuywzqsthvkowlv@basti-XPS-13-9310>
+References: <20240722150523.149667-1-benjamin.gaignard@collabora.com>
+ <20240722150523.149667-3-benjamin.gaignard@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|GVXPR04MB9830:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1c492439-bf07-4731-86ed-08dcaafca569
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OU13V2VKbEZPNUREaEJHbEN1a0F5eDYvMi94K2tWVDFMN0NEYTc4S2llbHM0?=
- =?utf-8?B?M0xyWXdMdElVQkkxTWhHaGd2OXJEcHJONmlQb09mRTBjbUZJcDZ1NnArNU82?=
- =?utf-8?B?OFdHYktOTUhIWEFpejd4cjM5ZEs3WFZKTzN1TjZmVEN4WWYxTFZyVit5U0dH?=
- =?utf-8?B?TXcrbVl1dlNrUVIvakhWVjhoanFsVVc4NENMRks3RGJ4UnhJRU1ZQWx3emoz?=
- =?utf-8?B?eXNnOGJJUVFacVh0WEVOSU9IMFVNM1ZUK09MUnI3T3JBUUdLcG1yNUJGbk12?=
- =?utf-8?B?WG1iV3k0NWFESUtZRjJ2OGZPREZEMGRoTUZBYmxoOU1jdUIvREUwZDU1aE5r?=
- =?utf-8?B?SG1aKzVJMkMwQTlONWEvcXREanBSYlE0anlkWkJBdENzRmJIaWlONFM2aVBv?=
- =?utf-8?B?cEtRN1JxRmlNLy9jQ04xT2o2ZjRRaEdRWEgzZ3JqSE1KbFM2aE1STkxMc2dI?=
- =?utf-8?B?Zm4xMWRpVmRWQ1pDcHBBd3I0Ni9talhlTHpOUHhYT0dsK211d0pNTUpuMllR?=
- =?utf-8?B?aVMzeVEzc2JWVVdGSmRxNTcyRFlkVEUra1Exa3Q2KzhpZkVHNWdjMml6T3FT?=
- =?utf-8?B?ZHhtaXJ2REc0MzVqWVZHVkIyVUVaa3YvT0VZOHVaZ1U1M1lTc2p2ZlhvRGx6?=
- =?utf-8?B?UTFOVi9tU0t1Z0c4UFB3ayttdlRKZGZxMFB0dng3NGpKWGRFK3NqaFk5RFh2?=
- =?utf-8?B?WW0wWG1wWmFmVVFoVFJuNm9YVG9najJST2xwRzFQS1Jha2lXeGN6Qk9EL29x?=
- =?utf-8?B?dVh2RE84RGh2ellEaXExS2s0aTZQNmxwU3VkSkNEVVZGUTZ1YzNPemRyY3Zv?=
- =?utf-8?B?TmZGZ1pRNHljVzJGSXN3Um1kRHkxQ1lML0MrYzRuOEtBYlVjQjUxamVtYWdn?=
- =?utf-8?B?ZHJrMGRRY0FUbldzdFVDSm85TnNNOHIvbWxnOUpsMUs5elFzdTdYUkY3Z0Rx?=
- =?utf-8?B?cWluRk54c3QyL2pCTDJTSkpDWGR0ZUk4d2FMZ3ZWUzl2aElpUDBIOXRTR1Qz?=
- =?utf-8?B?Rmd0SFQwamRkUldFTXNwSTBnWFpjMndVcmJuWmVGTEpLQUR3NUNmeGpNS2xp?=
- =?utf-8?B?RWNoQ1I1R3IwQ2ttc09RR0ZtVE0vRS9hMEFOWHNDTkZzN1pzYTNjazBQTXBm?=
- =?utf-8?B?cGZVREwvbUV2LzJmMWY3Nnhiclk3UmZPb0xERVNkSnJrSkdnNDlwVEswcUlp?=
- =?utf-8?B?d1ErbXdtSXpyVDRPNFlXUC9WSjhFa050WkdXbGhLbDZWeG1KY2tIL2JkTERW?=
- =?utf-8?B?VlRud0hXVVN5OCtrOWVqWndmOGNkRSt1SkR4bG85QmVzb3p6K056QmthMzl0?=
- =?utf-8?B?ZUZMc0N3Y2ptSEdoejlWVC9JQnN2N0Fib2l1OG9mNXdVb054MmNlSmRWTWg4?=
- =?utf-8?B?d1J6QmpCeHFxVXhCa0kwL2UxY2FyUHEwY2ZiMjFwZkJPaGZhMW1objNMUy9w?=
- =?utf-8?B?Rnh1QkFlaXBKVGpxTkVGaHVKaENmUmcrRkhzUFFBaUZhMWdRU0xldHJ5cW1F?=
- =?utf-8?B?c1BzTGN2YmJ0SFBFSEltNTJ4WmJoU1I3dVhsZ2lYd0x4S0pxUjM2QzhIZnBJ?=
- =?utf-8?B?TkhLUDdTRnh3dlFKZ2o1Sy9kYUU1ZjRqK2l4MzV5MWNIRldJQ3pYd2YyWmUy?=
- =?utf-8?B?SmhtWU5QUVI3K0FKeXJJUklZUlFzeTRzd1lLTHVyVWJVTkJYcUloc21vWDlJ?=
- =?utf-8?B?MnVqamJHc2ZSVlpiRTZIb1pYbXJWNXRJUVQ0YkJuS2Zna1FodGd4L0phaU0r?=
- =?utf-8?Q?yl19wcntUUL1y+xydo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZnJlR1VLbFFDNG9MU094c1hlZ09uazZ5eTRPVTVWWW9uZFdyK3k3NFJpZnFy?=
- =?utf-8?B?UWpPQ09yMTEwRjllT05WTkIwaktyMllUSWd6dldYOXRhaFhya0VzaXErbXha?=
- =?utf-8?B?Ykk3Sk50MGt2MkZWbld2UEJrbEJZbHZSQnNjbklZZFNIY29GNytmcVdVYmJJ?=
- =?utf-8?B?R2hxdjlnSmZERHBMbVo5alFxeENJM1RuSGtiMGdHeEZYaW44Nkp1OHV1cnkz?=
- =?utf-8?B?TkNPVnpGWUdlcGpWNkcwS0NyL1FERlRHemJRTU5zcUJHTkMvQ0RESjRUL0xV?=
- =?utf-8?B?Ykp1NFBXb3hMWjg3VkJENThQS21MSkZlMFRqVnVoalhobXgzem1QYU13a1Q2?=
- =?utf-8?B?Nm9icnRoT1ZtbC84NThOeDRPUkZjMnZHaWJ2aU5tWjBTcUdyc0w5VzJBc1VY?=
- =?utf-8?B?amxDYmEzQlh3RWRsK1lLenVGd0d4cjRPcnp2TDNwOXFJQjlkbmJkK2ZCWHB4?=
- =?utf-8?B?bjJ6c2puZ3lScGdGL2ZVN2tHRlFoYjQxaFNiTUYzeHdaK3JiQlBvY2NCU1dJ?=
- =?utf-8?B?Y29aQnowRHU3UDRxQk9yLzVFWmN3MzQ1bUNWcFBKZ1BHYkFpNEp4VS9ESHFE?=
- =?utf-8?B?WGFQWmxsSzEwUCtKSmoxd013UXZSSmRMRFBhWjNNaEFOb3ppaHJpMVFzRmNG?=
- =?utf-8?B?aTd4NEhSaXJaKzFuS2FtV0RzckZ5REhWSVVzOVdlQXp0ajFWOGUvSFF5WkVY?=
- =?utf-8?B?TFdJOHF2b2hwNFdURU5qbWVnSDlUVnhZS2FuSEJINzkxU2YyU2VrM2Jpc1lp?=
- =?utf-8?B?bzJSWUR1cUdVN0FDbzdabGZMWEpGa0VIc2ZTWExXaE1yYUV1SVdUczIrczlI?=
- =?utf-8?B?QlNzTitWV2JhZXlHM2NzL0xTbTFRRHhsMlhrWVdDbkkwR3JscCt4SUtXK24y?=
- =?utf-8?B?aEVMRGFodnNkM1RpTVJwSzFWa1pjcXVEa3MxZUVnOWYzZ2NZaEpMVmFROFdW?=
- =?utf-8?B?VExpeTBYZWRUUm9XR0NSRUlOd1gvWEl3SzdsSzZoTDF0TDdCQ3NZMEpJYnpx?=
- =?utf-8?B?QVB4OGlmSUlHdTI2U0pGSFRFNkcyTkpJTVZ2RkdybnMxTC82Q3VRbVk0bXNU?=
- =?utf-8?B?dDVXSGhKWGJsN1pqM29MYXI3TVRVNVFMWUV4cmlOY0lPOUlYaDNxSERhMGJ4?=
- =?utf-8?B?c1U1SnhGcERXL1YzZVNpcWwwSDNQaXNuVTJHWUlyY0tqZ1RCdmZVY0w0aysx?=
- =?utf-8?B?eFZLc1Z1UU5iRk9TUkFEM013aXF4MEx2am03MUNRVlJkZWVEdTM2VWU5L053?=
- =?utf-8?B?aUNuTnBPaEh6d2Y0L0lJQTlpajROWXhuR1Y2d2ErY3RNcHc4M2p4dG1mMGl2?=
- =?utf-8?B?bFlFcXVQOTVaOFVqcUJhZGFQMnVsNDlQMGEzTXlKUXpSUG10Yk9hQlpuNEND?=
- =?utf-8?B?dmp4bDJ3MkNybi9tTHU3bDk4YWhGKzkrWm92b3NiNGJ2ZjhHbnlDZjM3cFZa?=
- =?utf-8?B?QlBaMFdDcmdZVTFCeFZDd1drZXN5N3V4OGsra2lWTmVmT203SEtCK0RZaUhU?=
- =?utf-8?B?UFJaUFJmY3IyWURJdG5VVE00dmpiYTJxelN1VHgvVkJDZWpwZzBwM3d5WDNH?=
- =?utf-8?B?cE5ZbitUWk5WcDVOWnVmNlU0Q0VmdzVWdVlUa3JoQjQ1a3NhZkRUT3ZSMFh6?=
- =?utf-8?B?N3pRSGhmdUZlNlJEWDZ0VDkwNE9hemR5ay9YbzdmRW9QS2ErbGlNMldVbFdG?=
- =?utf-8?B?azhsWDR4a2IwNXRycGlhNFlkV0lVck1RS1V2SFFEMVR2V21lN056OWlKZ0Za?=
- =?utf-8?B?em1lNmx2eGhGVC9jZ0Y4OVM1ck4zbWxWVG1abDVQSjNyWW5TOHdvV1paMjVS?=
- =?utf-8?B?RlhlZzJyU3pYWi9EaDZ0MGMvWWxhY3R3MWZJWVBiSHF0ZGIyTzlQRTB4a1ZO?=
- =?utf-8?B?Mm9GblFVMXlxVzZxUkFIcytJNWo2N3hDNVJSVXFQaFB5NU8xWHdOdUpad0pJ?=
- =?utf-8?B?YzhFZERaKzBXdlE0eFVFM3pIUldEZ3Y5N1N3S29wQU14MU1XN1c0LzNDVVFS?=
- =?utf-8?B?RVo0bjI0d3JaamJMRitwZlVTQXZEaU5jSGw5OFZWdmVvdE11cm5BaHFSRWxV?=
- =?utf-8?B?b25qS29PYUUzSGhvSUM2alVDaWdSTFVmeTlSOTYyUEV3anRRN2FaQlJBMEY3?=
- =?utf-8?Q?tt5Gxhjj7Fvmz1iUdUEWHJYfo?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1c492439-bf07-4731-86ed-08dcaafca569
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2024 09:48:46.5068
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hyxOh1i93rSAN/2V4SWJunR9RTy5AJcjoh281MWDkLoJIGKCnPdqqA3o6zd4ahmpuBb96u3u/wbuKzhD8Flt5A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB9830
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20240722150523.149667-3-benjamin.gaignard@collabora.com>
 
-On 07/23/2024, Rob Herring wrote:
-> On Fri, Jul 12, 2024 at 05:32:28PM +0800, Liu Ying wrote:
->> Freescale i.MX8qxp Display Controller is implemented as construction set of
->> building blocks with unified concept and standardized interfaces.
->>
->> Document some processing units to support two display outputs.
->>
->> ConstFrame, ExtDst, FetchLayer, FetchWarp and LayerBlend processing units
->> are in pixel engine.  FrameGen and TCon processing units are in display
->> engine.
->>
->> Signed-off-by: Liu Ying <victor.liu@nxp.com>
->> ---
->> v2:
->> * Drop fsl,dc-*-id DT properties. (Krzysztof)
->> * Add port property to fsl,imx8qxp-dc-tcon.yaml. (Krzysztof)
->> * Fix register range sizes in examples.
->>
->>  .../imx/fsl,imx8qxp-dc-constframe.yaml        |  44 ++++++
->>  .../display/imx/fsl,imx8qxp-dc-extdst.yaml    |  72 ++++++++++
->>  .../imx/fsl,imx8qxp-dc-fetchlayer.yaml        |  30 +++++
->>  .../imx/fsl,imx8qxp-dc-fetchunit-common.yaml  | 125 ++++++++++++++++++
->>  .../display/imx/fsl,imx8qxp-dc-fetchwarp.yaml |  30 +++++
->>  .../display/imx/fsl,imx8qxp-dc-framegen.yaml  |  64 +++++++++
->>  .../imx/fsl,imx8qxp-dc-layerblend.yaml        |  39 ++++++
->>  .../display/imx/fsl,imx8qxp-dc-tcon.yaml      |  45 +++++++
->>  8 files changed, 449 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-constframe.yaml
->>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-extdst.yaml
->>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-fetchlayer.yaml
->>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-fetchunit-common.yaml
->>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-fetchwarp.yaml
->>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-framegen.yaml
->>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-layerblend.yaml
->>  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-tcon.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-constframe.yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-constframe.yaml
->> new file mode 100644
->> index 000000000000..94f678563608
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-constframe.yaml
->> @@ -0,0 +1,44 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/display/imx/fsl,imx8qxp-dc-constframe.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Freescale i.MX8qxp Display Controller Constant Frame
->> +
->> +description: |
->> +  The Constant Frame unit is used instead of a Fetch unit where generation of
->> +  constant color frames only is sufficient. This is the case for the background
->> +  planes of content and safety streams in a Display Controller.
->> +
->> +  The color can be setup to any RGBA value.
->> +
->> +maintainers:
->> +  - Liu Ying <victor.liu@nxp.com>
->> +
->> +properties:
->> +  compatible:
->> +    const: fsl,imx8qxp-dc-constframe
->> +
->> +  reg:
->> +    maxItems: 2
->> +
->> +  reg-names:
->> +    items:
->> +      - const: pec
->> +      - const: cfg
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - reg-names
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    constframe@56180960 {
->> +        compatible = "fsl,imx8qxp-dc-constframe";
->> +        reg = <0x56180960 0xc>, <0x56184400 0x20>;
->> +        reg-names = "pec", "cfg";
->> +    };
->> diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-extdst.yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-extdst.yaml
->> new file mode 100644
->> index 000000000000..dfc2d4f94f8e
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-extdst.yaml
->> @@ -0,0 +1,72 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/display/imx/fsl,imx8qxp-dc-extdst.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Freescale i.MX8qxp Display Controller External Destination Interface
->> +
->> +description: |
->> +  The External Destination unit is the interface between the internal pixel
->> +  processing pipeline of the Pixel Engine, which is 30-bit RGB plus 8-bit Alpha,
->> +  and a Display Engine.
->> +
->> +  It comprises the following built-in Gamma apply function.
->> +
->> +  +------X-----------------------+
->> +  |      |          ExtDst Unit  |
->> +  |      V                       |
->> +  |  +-------+                   |
->> +  |  | Gamma |                   |
->> +  |  +-------+                   |
->> +  |      |                       |
->> +  |      V                       +
->> +  +------X-----------------------+
->> +
->> +  The output format is 24-bit RGB plus 1-bit Alpha. Conversion from 10 to 8
->> +  bits is done by LSBit truncation.  Alpha output bit is 1 for input 255, 0
->> +  otherwise.
->> +
->> +maintainers:
->> +  - Liu Ying <victor.liu@nxp.com>
->> +
->> +properties:
->> +  compatible:
->> +    const: fsl,imx8qxp-dc-extdst
->> +
->> +  reg:
->> +    maxItems: 2
->> +
->> +  reg-names:
->> +    items:
->> +      - const: pec
->> +      - const: cfg
->> +
->> +  interrupts:
->> +    maxItems: 3
->> +
->> +  interrupt-names:
->> +    items:
->> +      - const: shdload
->> +      - const: framecomplete
->> +      - const: seqcomplete
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - reg-names
->> +  - interrupts
->> +  - interrupt-names
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    extdst@56180980 {
->> +        compatible = "fsl,imx8qxp-dc-extdst";
->> +        reg = <0x56180980 0x1c>, <0x56184800 0x28>;
->> +        reg-names = "pec", "cfg";
->> +        interrupt-parent = <&dc0_intc>;
->> +        interrupts = <3>, <4>, <5>;
->> +        interrupt-names = "shdload", "framecomplete", "seqcomplete";
->> +    };
->> diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-fetchlayer.yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-fetchlayer.yaml
->> new file mode 100644
->> index 000000000000..804a3ea7419f
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/display/imx/fsl,imx8qxp-dc-fetchlayer.yaml
->> @@ -0,0 +1,30 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/display/imx/fsl,imx8qxp-dc-fetchlayer.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Freescale i.MX8qxp Display Controller Fetchlayer
->> +
->> +maintainers:
->> +  - Liu Ying <victor.liu@nxp.com>
->> +
->> +allOf:
->> +  - $ref: fsl,imx8qxp-dc-fetchunit-common.yaml#
->> +
->> +properties:
->> +  compatible:
->> +    const: fsl,imx8qxp-dc-fetchlayer
-> 
-> As the fetch units only differ by compatible, combine them and the 
-> common schema into 1 schema doc.
+Hey Benjamin,
 
-Ok, will combine all into fsl,imx8qxp-dc-fetchunit.yaml in v3
-if no objections.
+On 22.07.2024 17:05, Benjamin Gaignard wrote:
+>Since V4L2_FMT_FLAG_ENUM_ALL flag mostly targeting stateless
 
-> 
-> Rob
-> 
+s/Since/Since the/
+s/targeting/targets/
 
--- 
+>decoder pixel formats enumeration, update vicodec visl test
+
+s/pixel formats/pixel-format/
+
+>drivers to use it.
+
+s/drivers/driver/
+
+The rest below basically just strips the flag from every use-case of the
+index, before using it.
+
+I wonder couldn't we implement a macro for this, as I believe this will
+have to be done in a lot of places, something like:
+
+/*
+  * Drivers can support an enumeration of all formats, by ORing the
+  * V4L2_FMT_FLAG_ENUM_ALL flag into the index field.
+  * In order to use the index field, strip the flag first.
+  *
+  * See vidioc-enum-fmt.rst documentation for more details.
+  */
+#define STRIP_ENUM_ALL_FLAG(index) \
+   index & ~V4L2_FMT_FLAG_ENUM_ALL
+
+And then use it like this:
+
+u32 index = STRIP_ENUM_ALL_FLAG(f->index);
+
+If we define this in a common header, then every driver can easily
+utilize it and you have built-in documentation.
+
+What do you think?
+
 Regards,
-Liu Ying
+Sebastian
 
+>
+>Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+>---
+> drivers/media/test-drivers/vicodec/vicodec-core.c |  7 ++++---
+> drivers/media/test-drivers/visl/visl-video.c      | 11 +++++++----
+> 2 files changed, 11 insertions(+), 7 deletions(-)
+>
+>diff --git a/drivers/media/test-drivers/vicodec/vicodec-core.c b/drivers/media/test-drivers/vicodec/vicodec-core.c
+>index 3e011fe62ae1..1b4cd8ddd7c2 100644
+>--- a/drivers/media/test-drivers/vicodec/vicodec-core.c
+>+++ b/drivers/media/test-drivers/vicodec/vicodec-core.c
+>@@ -706,6 +706,7 @@ static int enum_fmt(struct v4l2_fmtdesc *f, struct vicodec_ctx *ctx,
+> 		    bool is_out)
+> {
+> 	bool is_uncomp = (ctx->is_enc && is_out) || (!ctx->is_enc && !is_out);
+>+	u32 index = f->index & ~V4L2_FMT_FLAG_ENUM_ALL;
+>
+> 	if (V4L2_TYPE_IS_MULTIPLANAR(f->type) && !multiplanar)
+> 		return -EINVAL;
+>@@ -718,18 +719,18 @@ static int enum_fmt(struct v4l2_fmtdesc *f, struct vicodec_ctx *ctx,
+>
+> 		if (ctx->is_enc ||
+> 		    !vb2_is_streaming(&ctx->fh.m2m_ctx->cap_q_ctx.q))
+>-			info = v4l2_fwht_get_pixfmt(f->index);
+>+			info = v4l2_fwht_get_pixfmt(index);
+> 		else
+> 			info = v4l2_fwht_find_nth_fmt(info->width_div,
+> 						     info->height_div,
+> 						     info->components_num,
+> 						     info->pixenc,
+>-						     f->index);
+>+						     index);
+> 		if (!info)
+> 			return -EINVAL;
+> 		f->pixelformat = info->id;
+> 	} else {
+>-		if (f->index)
+>+		if (index)
+> 			return -EINVAL;
+> 		f->pixelformat = ctx->is_stateless ?
+> 			V4L2_PIX_FMT_FWHT_STATELESS : V4L2_PIX_FMT_FWHT;
+>diff --git a/drivers/media/test-drivers/visl/visl-video.c b/drivers/media/test-drivers/visl/visl-video.c
+>index f8d970319764..c5f3e13b4198 100644
+>--- a/drivers/media/test-drivers/visl/visl-video.c
+>+++ b/drivers/media/test-drivers/visl/visl-video.c
+>@@ -341,21 +341,24 @@ static int visl_enum_fmt_vid_cap(struct file *file, void *priv,
+> 				 struct v4l2_fmtdesc *f)
+> {
+> 	struct visl_ctx *ctx = visl_file_to_ctx(file);
+>+	u32 index = f->index & ~V4L2_FMT_FLAG_ENUM_ALL;
+>
+>-	if (f->index >= ctx->coded_format_desc->num_decoded_fmts)
+>+	if (index >= ctx->coded_format_desc->num_decoded_fmts)
+> 		return -EINVAL;
+>
+>-	f->pixelformat = ctx->coded_format_desc->decoded_fmts[f->index];
+>+	f->pixelformat = ctx->coded_format_desc->decoded_fmts[index];
+> 	return 0;
+> }
+>
+> static int visl_enum_fmt_vid_out(struct file *file, void *priv,
+> 				 struct v4l2_fmtdesc *f)
+> {
+>-	if (f->index >= ARRAY_SIZE(visl_coded_fmts))
+>+	u32 index = f->index & ~V4L2_FMT_FLAG_ENUM_ALL;
+>+
+>+	if (index >= ARRAY_SIZE(visl_coded_fmts))
+> 		return -EINVAL;
+>
+>-	f->pixelformat = visl_coded_fmts[f->index].pixelformat;
+>+	f->pixelformat = visl_coded_fmts[index].pixelformat;
+> 	return 0;
+> }
+>
+>-- 
+>2.43.0
+>
+>_______________________________________________
+>Kernel mailing list -- kernel@mailman.collabora.com
+>To unsubscribe send an email to kernel-leave@mailman.collabora.com
+>This list is managed by https://mailman.collabora.com
 
