@@ -1,121 +1,203 @@
-Return-Path: <linux-kernel+bounces-259900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71601939F55
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:05:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2A16939F78
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 187991F230AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:05:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 866A228324D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9261F14F11C;
-	Tue, 23 Jul 2024 11:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF4414F9E1;
+	Tue, 23 Jul 2024 11:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rjvanq9E"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uKckGtRr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3960F14D456
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 11:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A301F14D29C;
+	Tue, 23 Jul 2024 11:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721732739; cv=none; b=j+abWLcslaJTDQ+5X2ubcFcVC0h/Rn7UxktTidFPcznwoT2YvUg6tHs0sDNXV0wIugwWCFpn4FE1VrRJ5AhhyMDG2QRyF+T4qpivFRIfuUt9fjcEfkpnXFZ9ozBmxJoBhXG2BO5OYjqK2s+GeENNHwDj3WDOR4Emr8dkmju21YI=
+	t=1721733117; cv=none; b=haMRBE9kTV/WBkVa3GJouS0iV0t73navl7ahmPwgK3eUTmnXSxNfLy+xnD58k9wBQ7qGjg7f5r8jkDJU3gCdfVS6RJVyH/LTOV2R3s3kSlevOyiM7NP645WvZFlsLhc3nCzDVHIaBROzDCSiOUtYeK8InJZA4idcK9/CNbKDPpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721732739; c=relaxed/simple;
-	bh=7XXeSul7UB9LBGW7UFEWmEvnnhBGYXJidgRwX+irI1U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QqvF28ttyC56urTDRGDgyyurfdoBnFhdrey37usisky4PbPed8gNREpeLzLOnGy5aI1Pvc3KjydS8RtcX0FErSasOfiE21YRldJOU7o3oFuPWsc/jkW0aREQmjR6A/8Ijv49HDmrPUl8d/F5ljjkAIs4ySCClZv6pOLibvXIHKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rjvanq9E; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721732737;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A3j4jPgv6Hs0fzu6rXE2M7orTiihZ3jZ0T7426KJgLA=;
-	b=Rjvanq9EvszONB8ofF9OXh4j9hyob7/i6tfVK4Dixd6rKiNbvvkra2fgOBLvF/HG4gv02w
-	gy9UXQxArMcIs6wamwx3iyO5VupjMeRinqo5d0l7SdhklvVXUkC9QN/czxYN+nBVJHuA8L
-	C9GZFNX3tG0rs46qOCZL54+6opVnamM=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-663-P_KuDDnPM4i4wDkLOgiIAw-1; Tue, 23 Jul 2024 07:05:35 -0400
-X-MC-Unique: P_KuDDnPM4i4wDkLOgiIAw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-427d4b0d412so2557425e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 04:05:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721732734; x=1722337534;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A3j4jPgv6Hs0fzu6rXE2M7orTiihZ3jZ0T7426KJgLA=;
-        b=hzYXFDy2jnX96nz5AXRigbnImB2WsWMVdtGcd0T4xWRdjWar32gc4WN5yRw7oZCrCU
-         COKuYg1kiOT0D2taZQlwPwH3tTwIpcEuY19LFcd+2j08Nv8eIym7tvj+JnLKCzCP3ZeA
-         5zoR1/VuzottdabZm56dWxhgARqfqTelJDSNrt7RSvkSZl8E5XZFpOcgtiR9C5tZNKKU
-         YObv3AnILgYK9+EQq/Bo43PbV5qw67CmWDbmG7Zlq+2GjCCRtci0EZAkGw8sDt1Kph9M
-         gmnm3JFqoOKEY5VvmmSJckAwTEHuuFiM8iehq2ePvKx9gLIl5XE+FcX8T7OE7knt8MZz
-         aozg==
-X-Gm-Message-State: AOJu0YxCUUcijdAKqfbYn2bZdTrB1aD1vUeZZXpzqvts6ViRHGio2b31
-	/vlqJ+sLIyWfP6KvAK548422T/P47ECd2VSuIj9QUFkIhF2i9hFa5il+n1KNA28OxKGC2dZ9/Sd
-	DMSTEKjCkywCxStAxLkDsMEM1RW73n/Bk00Z38Po5ztTIAvOtMaS5MRwvSQRDcg==
-X-Received: by 2002:a05:600c:3c97:b0:425:7ac6:96f9 with SMTP id 5b1f17b1804b1-427da9ad357mr45399635e9.0.1721732734661;
-        Tue, 23 Jul 2024 04:05:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGtWCl8LDKZyp3574p+r9uVIoAK1epDaa1iQUNezXTrhZGqQRyRF8Ml82x3u3sW7wHj6udkMg==
-X-Received: by 2002:a05:600c:3c97:b0:425:7ac6:96f9 with SMTP id 5b1f17b1804b1-427da9ad357mr45399415e9.0.1721732734229;
-        Tue, 23 Jul 2024 04:05:34 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:173f:4f10::f71? ([2a0d:3344:173f:4f10::f71])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a6fd5fsm194076715e9.22.2024.07.23.04.05.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 04:05:33 -0700 (PDT)
-Message-ID: <0f2ef152-0fbf-492f-a334-89bb700721a2@redhat.com>
-Date: Tue, 23 Jul 2024 13:05:32 +0200
+	s=arc-20240116; t=1721733117; c=relaxed/simple;
+	bh=hJsVgyiAMBuc1PS9TnXUFps/ubUqO5CQMzsyJiAKdsk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d9gIeRR5wC08jzbz/H36ZpYRYpOO3T/6CNibv+kxWKZ6B0DpStYSD3ri2V7ZKl6mq0jEj7rd9I4xGaokSfuXNK0sND6Es65QmXyrjkicbh+F+GKzRsecLzXgQ34iuGEqDGacWolduRt4aRr75AmVNw+xDGvAT0vQttbgVICnUzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uKckGtRr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C32CC4AF0A;
+	Tue, 23 Jul 2024 11:11:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721733117;
+	bh=hJsVgyiAMBuc1PS9TnXUFps/ubUqO5CQMzsyJiAKdsk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uKckGtRrSme/gn5Qfp5RqmwSQlxnye+sJyNKMBm3FTCNEFwRQCjLNnMtXoylUl7qm
+	 RbPTWJTHmA3WEXdGtbxcS9OOAv5bXLirMw9wTewwQjFYZU1zizgRCd5ALAD/OKXmXF
+	 Q9rQ+qGtFfUIgqRxMypWcHehgotGdQeTOD6B2sIYSpp2+qOZ8ehK0BiOv/bbgxVkyr
+	 MrgcI+01BbJTY+C2q86YP6aHAMHryfjTnfT0F7V30eZ3UJ6m+pPsMxR0vKZJgs9AqI
+	 FXGKYkNxlm+UiuaY/vwXep4LKfihhjBJP8iakE2KK9mPyHei4wWXf8G5R7K+Iirqmk
+	 uQdOTFywO4zQQ==
+Date: Tue, 23 Jul 2024 13:11:51 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: David Howells <dhowells@redhat.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>, Gao Xiang <xiang@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev, linux-erofs@lists.ozlabs.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfs: Fix potential circular locking through setxattr()
+ and removexattr()
+Message-ID: <20240723-aberkennen-unruhen-61570127dc6e@brauner>
+References: <2136178.1721725194@warthog.procyon.org.uk>
+ <20240723104533.mznf3svde36w6izp@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: wangxun: use net_prefetch to simplify logic
-To: Simon Horman <horms@kernel.org>, Joe Damato <jdamato@fastly.com>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- Jiawen Wu <jiawenwu@trustnetic.com>, Mengyuan Lou
- <mengyuanlou@net-swift.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Duanqiang Wen <duanqiangwen@net-swift.com>
-References: <20240722190815.402355-1-jdamato@fastly.com>
- <20240723072618.GA6652@kernel.org>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20240723072618.GA6652@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240723104533.mznf3svde36w6izp@quack3>
 
-
-
-On 7/23/24 09:26, Simon Horman wrote:
-> On Mon, Jul 22, 2024 at 07:08:13PM +0000, Joe Damato wrote:
->> Use net_prefetch to remove #ifdef and simplify prefetch logic. This
->> follows the pattern introduced in a previous commit f468f21b7af0 ("net:
->> Take common prefetch code structure into a function"), which replaced
->> the same logic in all existing drivers at that time.
->>
->> Fixes: 3c47e8ae113a ("net: libwx: Support to receive packets in NAPI")
->> Signed-off-by: Joe Damato <jdamato@fastly.com>
+On Tue, Jul 23, 2024 at 12:45:33PM GMT, Jan Kara wrote:
+> On Tue 23-07-24 09:59:54, David Howells wrote:
+> > When using cachefiles, lockdep may emit something similar to the circular
+> > locking dependency notice below.  The problem appears to stem from the
+> > following:
+> > 
+> >  (1) Cachefiles manipulates xattrs on the files in its cache when called
+> >      from ->writepages().
+> > 
+> >  (2) The setxattr() and removexattr() system call handlers get the name
+> >      (and value) from userspace after taking the sb_writers lock, putting
+> >      accesses of the vma->vm_lock and mm->mmap_lock inside of that.
+> > 
+> >  (3) The afs filesystem uses a per-inode lock to prevent multiple
+> >      revalidation RPCs and in writeback vs truncate to prevent parallel
+> >      operations from deadlocking against the server on one side and local
+> >      page locks on the other.
+> > 
+> > Fix this by moving the getting of the name and value in {get,remove}xattr()
+> > outside of the sb_writers lock.  This also has the minor benefits that we
+> > don't need to reget these in the event of a retry and we never try to take
+> > the sb_writers lock in the event we can't pull the name and value into the
+> > kernel.
 > 
-> Hi Joe,
+> Well, it seems like you are trying to get rid of the dependency
+> sb_writers->mmap_sem. But there are other places where this dependency is
+
+Independent of this issue, I think that moving the retrieval of name and
+value out of the lock is a good thing. The commit message might need to
+get reworded of course.
+
+> created, in particular write(2) path is a place where it would be very
+> difficult to get rid of it (you take sb_writers, then do all the work
+> preparing the write and then you copy user data into page cache which
+> may require mmap_sem).
 > 
-> I would lean more towards this being a clean-up than a fix
-> (for net-next when it reopens, without a Fixes tag).
-
-Same feeling here, please repost for net-next after the merge window.
-
-Thanks!
-
-Paolo
-
+> But looking at the lockdep splat below:
+> 
+> >  ======================================================
+> >  WARNING: possible circular locking dependency detected
+> >  6.10.0-build2+ #956 Not tainted
+> >  ------------------------------------------------------
+> >  fsstress/6050 is trying to acquire lock:
+> >  ffff888138fd82f0 (mapping.invalidate_lock#3){++++}-{3:3}, at: filemap_fault+0x26e/0x8b0
+> > 
+> >  but task is already holding lock:
+> >  ffff888113f26d18 (&vma->vm_lock->lock){++++}-{3:3}, at: lock_vma_under_rcu+0x165/0x250
+> > 
+> >  which lock already depends on the new lock.
+> > 
+> >  the existing dependency chain (in reverse order) is:
+> > 
+> >  -> #4 (&vma->vm_lock->lock){++++}-{3:3}:
+> >         __lock_acquire+0xaf0/0xd80
+> >         lock_acquire.part.0+0x103/0x280
+> >         down_write+0x3b/0x50
+> >         vma_start_write+0x6b/0xa0
+> >         vma_link+0xcc/0x140
+> >         insert_vm_struct+0xb7/0xf0
+> >         alloc_bprm+0x2c1/0x390
+> >         kernel_execve+0x65/0x1a0
+> >         call_usermodehelper_exec_async+0x14d/0x190
+> >         ret_from_fork+0x24/0x40
+> >         ret_from_fork_asm+0x1a/0x30
+> > 
+> >  -> #3 (&mm->mmap_lock){++++}-{3:3}:
+> >         __lock_acquire+0xaf0/0xd80
+> >         lock_acquire.part.0+0x103/0x280
+> >         __might_fault+0x7c/0xb0
+> >         strncpy_from_user+0x25/0x160
+> >         removexattr+0x7f/0x100
+> >         __do_sys_fremovexattr+0x7e/0xb0
+> >         do_syscall_64+0x9f/0x100
+> >         entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > 
+> >  -> #2 (sb_writers#14){.+.+}-{0:0}:
+> >         __lock_acquire+0xaf0/0xd80
+> >         lock_acquire.part.0+0x103/0x280
+> >         percpu_down_read+0x3c/0x90
+> >         vfs_iocb_iter_write+0xe9/0x1d0
+> >         __cachefiles_write+0x367/0x430
+> >         cachefiles_issue_write+0x299/0x2f0
+> >         netfs_advance_write+0x117/0x140
+> >         netfs_write_folio.isra.0+0x5ca/0x6e0
+> >         netfs_writepages+0x230/0x2f0
+> >         afs_writepages+0x4d/0x70
+> >         do_writepages+0x1e8/0x3e0
+> >         filemap_fdatawrite_wbc+0x84/0xa0
+> >         __filemap_fdatawrite_range+0xa8/0xf0
+> >         file_write_and_wait_range+0x59/0x90
+> >         afs_release+0x10f/0x270
+> >         __fput+0x25f/0x3d0
+> >         __do_sys_close+0x43/0x70
+> >         do_syscall_64+0x9f/0x100
+> >         entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> This is the problematic step - from quite deep in the locking chain holding
+> invalidate_lock and having PG_Writeback set you suddently jump to very outer
+> locking context grabbing sb_writers. Now AFAICT this is not a real deadlock
+> problem because the locks are actually on different filesystems, just
+> lockdep isn't able to see this. So I don't think you will get rid of these
+> lockdep splats unless you somehow manage to convey to lockdep that there's
+> the "upper" fs (AFS in this case) and the "lower" fs (the one behind
+> cachefiles) and their locks are different.
+> 
+> >  -> #1 (&vnode->validate_lock){++++}-{3:3}:
+> >         __lock_acquire+0xaf0/0xd80
+> >         lock_acquire.part.0+0x103/0x280
+> >         down_read+0x95/0x200
+> >         afs_writepages+0x37/0x70
+> >         do_writepages+0x1e8/0x3e0
+> >         filemap_fdatawrite_wbc+0x84/0xa0
+> >         filemap_invalidate_inode+0x167/0x1e0
+> >         netfs_unbuffered_write_iter+0x1bd/0x2d0
+> >         vfs_write+0x22e/0x320
+> >         ksys_write+0xbc/0x130
+> >         do_syscall_64+0x9f/0x100
+> >         entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > 
+> >  -> #0 (mapping.invalidate_lock#3){++++}-{3:3}:
+> >         check_noncircular+0x119/0x160
+> >         check_prev_add+0x195/0x430
+> >         __lock_acquire+0xaf0/0xd80
+> >         lock_acquire.part.0+0x103/0x280
+> >         down_read+0x95/0x200
+> >         filemap_fault+0x26e/0x8b0
+> >         __do_fault+0x57/0xd0
+> >         do_pte_missing+0x23b/0x320
+> >         __handle_mm_fault+0x2d4/0x320
+> >         handle_mm_fault+0x14f/0x260
+> >         do_user_addr_fault+0x2a2/0x500
+> >         exc_page_fault+0x71/0x90
+> >         asm_exc_page_fault+0x22/0x30
+> 
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
