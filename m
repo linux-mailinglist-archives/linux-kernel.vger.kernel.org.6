@@ -1,79 +1,47 @@
-Return-Path: <linux-kernel+bounces-259736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC00E939C73
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:18:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5A49939C76
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:19:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A375B22462
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:18:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91A56282DFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648BA14BF87;
-	Tue, 23 Jul 2024 08:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA0F14C587;
+	Tue, 23 Jul 2024 08:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SY+vCyBi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gb/VJl5w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B587B14B094
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF85314B94C;
+	Tue, 23 Jul 2024 08:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721722726; cv=none; b=V/GcFFZNi2+RyDKbXzfP94gpVkE4eaG+eqbakDCAOdJHXzGFEQeTYCqdDFPvF5pDoK5e5uZYclyod9mqNnwjEpA9GyAMF1DLo7Zwe9/O/6QBC1ILov7N2ppJGxmwMy6Kp3oC3N4TtbtSmAqNwOryExgEMkj0orbo40kGlsfbRW8=
+	t=1721722750; cv=none; b=ORQBiJYKYoRag1pPa3jt3oUHSx+2jOQWdWJwP+fITa9jceyg5X/YfUXGnn8TRILK40icQTg6U5iEOpNYCxozjGhj0T/fOH3KsmwkPOpQCX87yx/VDb7lEGsmwI+lzJSpmIBVbuJXjTeJN/fjDiEJpCxBMW7dSGjJDSWuusGf+7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721722726; c=relaxed/simple;
-	bh=bnFMoGFb07kIGX5LAwpWZiq3O3gxYqjfvQVlPJDFhi8=;
+	s=arc-20240116; t=1721722750; c=relaxed/simple;
+	bh=6e0Z0aaAvxxzijYS/k8qqEo9hPFUeuv/sn/KQKMbgUI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HvhcZwpBiHcfbrAih8eK4oqK8WB3jUsJ4+PhfVZnS2QcrUyFfNSLsFydoCF6BxAMjE+UCNZ5fZTvadKUinvrXhDHDe0YR/lFKj1imbewg57C3St6t5QAyAXcqLjDNY1JJTfbc676Vpmk4ZDU8/LgaaB7As4iwp89Mwhc9Pc9Zv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SY+vCyBi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721722723;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=e7cAW2e9eTq2PNCKhGWDYhlkj3Xk8nGIpFjirqjv88A=;
-	b=SY+vCyBih68++XuOfZuju/LUfNt2eutuAzy/Zlp4wihmtXW+0uz5mX2czAgIiaoc4tV1Vn
-	9d0bJj6luD3qRjcinecFYR9AvM6GPNMigmkky/ApOqqQQlYfEWT64TKUlDxXA0I+dCL9My
-	exBp0QOwP+dbUeVtdZnxI2ov90UbZa0=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-156-kRkwcBJRMCOLZS_QOMbTHA-1; Tue, 23 Jul 2024 04:18:41 -0400
-X-MC-Unique: kRkwcBJRMCOLZS_QOMbTHA-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42725ef39e2so37503785e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 01:18:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721722720; x=1722327520;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=e7cAW2e9eTq2PNCKhGWDYhlkj3Xk8nGIpFjirqjv88A=;
-        b=HmRxnec8AKquCRuQrrd8Xi9/2Pty9PjJ4P606enMiUPztG8TUw9TrFj+wpVDHBuMLI
-         WaHGc7Jio46x38AL84zPUoT3q9hpYlSdVOvJeCjRIgMsS+ViaFAryIdFMYSzYdOhBzk6
-         VPTYH2XnYubSxfsr5pVrMcQv5begqBqpMK+7KlY2PkSG9XLMElJGQH81TG4vCRyHv39y
-         99jHEjEwj19YrLrgnuIu07qQpYUKyqtAQH0M4Fx8TqPTaTGF7BKkuq1Biurl6du0RoxW
-         1q2KdDvt45jWZ90hYHKfpXT9mBCdkHbPOQbsoBLWgjm03S2owMMeUJq+TLKXo4YwAaYK
-         BQ0g==
-X-Gm-Message-State: AOJu0YyaVlkPKc3LDJoOO3SuUG8hDSiB4gz5248z3pT8b69GoOPhrnQ9
-	x1Fjr/AAnNTenFTJYT15eTDC7H3z7urLgoenO/Zp5VNf9uUQiIAbfPDcOadlsF8xmiUMcqawnc7
-	5RZzkV6+IMoVi93QiegF3H7mlJLOrK11VN7GHl3Fd/WR+qz4xVIA5HHHnDLAf3g==
-X-Received: by 2002:a05:600c:500f:b0:426:6326:4cec with SMTP id 5b1f17b1804b1-427df7a7828mr59110115e9.29.1721722720310;
-        Tue, 23 Jul 2024 01:18:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFUWHnl+IF1Uo0ddKTvKJTZa1BJHPgCl9dGzav/h00NQB9OiTQfs5h5kD6cvqR3xzQXjLrG9w==
-X-Received: by 2002:a05:600c:500f:b0:426:6326:4cec with SMTP id 5b1f17b1804b1-427df7a7828mr59109795e9.29.1721722719834;
-        Tue, 23 Jul 2024 01:18:39 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c72f:ed00:9dc2:1adb:d133:4434? (p200300cbc72fed009dc21adbd1334434.dip0.t-ipconnect.de. [2003:cb:c72f:ed00:9dc2:1adb:d133:4434])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d6929827sm160330615e9.34.2024.07.23.01.18.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 01:18:39 -0700 (PDT)
-Message-ID: <cfe94481-233a-421c-b607-08517588de6c@redhat.com>
-Date: Tue, 23 Jul 2024 10:18:37 +0200
+	 In-Reply-To:Content-Type; b=KLNXOZRNDG0EHVMMmDwB/B4NmRYqzKcPFScmV8muEFVU7xT40eUQawbTYALUklnsjFwP4z46rSNpc+cxrow2lyKehVtaPR0lI2OIa4kHbe9epXaT26KfFHlDcwobxzB6W6CccaB87Kxz/3VeEIirQ0ISqL0EKE26S2hcMDca6sc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gb/VJl5w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F2CFC4AF0A;
+	Tue, 23 Jul 2024 08:19:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721722749;
+	bh=6e0Z0aaAvxxzijYS/k8qqEo9hPFUeuv/sn/KQKMbgUI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Gb/VJl5w+ctuVmoBVIwOTz+Jr0gmNClWvh/iF2ZSSTIyBlK6pG4f3/VsJXV3v4xO8
+	 BG92JiPGOqz2DX/Pkvi1eIIXmqHgaC/R61FyTb761kqzT9tFABbOeEvN2G+Eto87df
+	 Qfe9gWZhATv1A0RhwQSjJEz2WUGFVaWBKCzs1HmXtHjr4lkKOczzW5peKafYnl0ubD
+	 BZLGnjNDN7SFKg7LH6Z0lv+dG+sTsto5JzjYly+CJw1mZGYXKEWRn2RZE6islqdmI+
+	 RngBMIdjiSx13CB+H9An43fdJ1D4xyGLjPSUaqblbX1nr4G4HOOhr7KG85dpH3XJyh
+	 mMNZODpK3r+2A==
+Message-ID: <c9386ee6-77bb-49be-97cd-2b25ebb08472@kernel.org>
+Date: Tue, 23 Jul 2024 10:19:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,192 +49,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 0/6] mm: THP-agnostic refactor on huge mappings
-To: Peter Xu <peterx@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Vlastimil Babka <vbabka@suse.cz>, Oscar Salvador <osalvador@suse.de>,
- linux-s390@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>, Dan Williams
- <dan.j.williams@intel.com>, Michal Hocko <mhocko@kernel.org>,
- linux-riscv@lists.infradead.org, sparclinux@vger.kernel.org,
- Alex Williamson <alex.williamson@redhat.com>,
- Jason Gunthorpe <jgg@nvidia.com>, x86@kernel.org,
- Alistair Popple <apopple@nvidia.com>, linuxppc-dev@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org, Ryan Roberts <ryan.roberts@arm.com>,
- Hugh Dickins <hughd@google.com>, Axel Rasmussen <axelrasmussen@google.com>
-References: <20240717220219.3743374-1-peterx@redhat.com>
- <cf36725d-c197-4c07-8998-d34711335fdb@redhat.com> <Zp57ZLk2IQoHOI7u@x1n>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 3/4] ASoC: dt-bindings: qcom,sm8250: Add
+ msm8953/msm8976-qdsp6-sndcard
+To: Adam Skladowski <a39.skl@gmail.com>
+Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, linux-arm-msm@vger.kernel.org,
+ alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240722095147.3372-1-a39.skl@gmail.com>
+ <20240722095147.3372-4-a39.skl@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Zp57ZLk2IQoHOI7u@x1n>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240722095147.3372-4-a39.skl@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22.07.24 17:31, Peter Xu wrote:
-> On Mon, Jul 22, 2024 at 03:29:43PM +0200, David Hildenbrand wrote:
->> On 18.07.24 00:02, Peter Xu wrote:
->>> This is an RFC series, so not yet for merging.  Please don't be scared by
->>> the code changes: most of them are code movements only.
->>>
->>> This series is based on the dax mprotect fix series here (while that one is
->>> based on mm-unstable):
->>>
->>>     [PATCH v3 0/8] mm/mprotect: Fix dax puds
->>>     https://lore.kernel.org/r/20240715192142.3241557-1-peterx@redhat.com
->>>
->>> Overview
->>> ========
->>>
->>> This series doesn't provide any feature change.  The only goal of this
->>> series is to start decoupling two ideas: "THP" and "huge mapping".  We
->>> already started with having PGTABLE_HAS_HUGE_LEAVES config option, and this
->>> one extends that idea into the code.
->>>
->>> The issue is that we have so many functions that only compile with
->>> CONFIG_THP=on, even though they're about huge mappings, and huge mapping is
->>> a pretty common concept, which can apply to many things besides THPs
->>> nowadays.  The major THP file is mm/huge_memory.c as of now.
->>>
->>> The first example of such huge mapping users will be hugetlb.  We lived
->>> until now with no problem simply because Linux almost duplicated all the
->>> logics there in the "THP" files into hugetlb APIs.  If we want to get rid
->>> of hugetlb specific APIs and paths, this _might_ be the first thing we want
->>> to do, because we want to be able to e.g., zapping a hugetlb pmd entry even
->>> if !CONFIG_THP.
->>>
->>> Then consider other things like dax / pfnmaps.  Dax can depend on THP, then
->>> it'll naturally be able to use pmd/pud helpers, that's okay.  However is it
->>> a must?  Do we also want to have every new pmd/pud mappings in the future
->>> to depend on THP (like PFNMAP)?  My answer is no, but I'm open to opinions.
->>>
->>> If anyone agrees with me that "huge mapping" (aka, PMD/PUD mappings that
->>> are larger than PAGE_SIZE) is a more generic concept than THP, then I think
->>> at some point we need to move the generic code out of THP code into a
->>> common code base.
->>>
->>> This is what this series does as a start.
->>
->> Hi Peter!
->>
->>  From a quick glimpse, patch #1-#4 do make sense independent of patch #5.
->>
->> I am not so sure about all of the code movement in patch #5. If large folios
->> are the future, then likely huge_memory.c should simply be the home for all
->> that logic.
->>
->> Maybe the goal should better be to compile huge_memory.c not only for THP,
->> but also for other use cases that require that logic, and fence off all THP
->> specific stuff using #ifdef?
->>
->> Not sure, though. But a lot of this code movements/churn might be avoidable.
+On 22/07/2024 11:51, Adam Skladowski wrote:
+> Document MSM8953/MSM8976 QDSP6 cards.
 > 
-> I'm fine using ifdefs in the current fine, but IMHO it's a matter of
-> whether we want to keep huge_memory.c growing into even larger file, and
-> keep all large folio logics only in that file.  Currently it's ~4000 LOCs.
+> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
 
-Depends on "how much" for sure. huge_memory.c is currently on place 12 
-of the biggest files in mm/. So there might not be immediate cause for 
-action ... just yet :) [guess which file is on #2 :) ]
+...
 
-> 
-> Nornally I don't see this as much of a "code churn" category, because it
-> doesn't changes the code itself but only move things.  I personally also
-> prefer without code churns, but only in the case where there'll be tiny
-> little functional changes here and there without real benefit.
-> 
-> It's pretty unavoidable to me when one file grows too large and we'll need
-> to split, and in this case git doesn't have a good way to track such
-> movement..
+> +    then:
+>        properties:
+> -        reg: false
+> -        reg-names: false
+> +        reg:
+> +          items:
+> +            - description: Microphone I/O mux register address
+> +            - description: Speaker I/O mux register address
+> +            - description: Quinary Mi2S I/O mux register address
+> +        reg-names:
+> +          items:
+> +            - const: mic-iomux
+> +            - const: spkr-iomux
+> +            - const: quin-iomux
+> +      required:
+> +        - compatible
+> +        - model
 
-Yes, that's what I mean.
+Don't duplicate. It's already required.
 
-I've been recently thinking if we should pursue a different direction:
+> +        - reg
+> +        - reg-names
 
-Just as we recently relocated most follow_huge_* stuff into gup.c, 
-likely we should rather look into moving copy_huge_pmd, change_huge_pmd, 
-copy_huge_pmd ... into the files where they logically belong to.
+And what happened with all other variants? Why do you affect them?
 
-In madvise.c, we've been doing that in some places already: For 
-madvise_cold_or_pageout_pte_range() we inline the code, but not for 
-madvise_free_huge_pmd().
+>  
+>  additionalProperties: false
+>  
 
-pmd_trans_huge() would already compile to a NOP without 
-CONFIG_TRANSPARENT_HUGEPAGE, but to make that code avoid most 
-CONFIG_TRANSPARENT_HUGEPAGE, we'd need a couple more function stubs to 
-make the compiler happy while still being able to compile that code out 
-when not required.
-
-The idea would be that e.g., pmd_leaf() would return "false" at compile 
-time if no active configuration (THP, HUGETLB, ...) would be active. So 
-we could just use pmd_leaf() similar to pmd_trans_huge() in relevant 
-code and have the compiler optimize it all out without putting it into 
-separate files.
-
-That means, large folios and PMD/PUD mappings will become "more common" 
-and better integrated, without the need to jump between files.
-
-Just some thought about an alternative that would make sense to me.
-
-> 
-> Irrelevant of this, just to mention I think there's still one option that I
-> at least can make the huge pfnmap depends on THP again which shouldn't be a
-> huge deal (I don't have any use case that needs huge pfnmap but disable
-> THP, anyway..), so this series isn't an immediate concern to me for that
-> route.  But for a hugetlb rework this might be something we need to do,
-> because we simplly can't make CONFIG_HUGETLB rely on CONFIG_THP..
-
-Yes, likely. FSDAX went a similar direction and called that FSDAX thing 
-a "THP" whereby it really doesn't have anything in common with a THP, 
-besides being partially mappable -- IMHO.
-
--- 
-Cheers,
-
-David / dhildenb
+Best regards,
+Krzysztof
 
 
