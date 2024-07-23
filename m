@@ -1,350 +1,258 @@
-Return-Path: <linux-kernel+bounces-259629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7666D9399C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:32:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 440BA9399D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 08:37:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 022721F2260F
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 06:32:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66D281C21AAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 06:37:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224B114AD02;
-	Tue, 23 Jul 2024 06:32:11 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BEF14A0B2;
+	Tue, 23 Jul 2024 06:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="amopwLWg"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10F313C8F9;
-	Tue, 23 Jul 2024 06:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C189913CF85
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 06:37:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721716330; cv=none; b=q6NR2CN8/I3X2UQ/0ZTkRasmLRwhzgicVw7PFCE0PwpIJhjYH8hNCyBDNpBMD8WqZj4RquYbcl68M8M7q6C80eJaydZ8X8ZrvFpmVx70lA6p4hg/LUOQqjDMbBblFXdQZK5OEjzZcyfhxTaWyBgII9d47VZE7RV+Z/YfkBX17pY=
+	t=1721716667; cv=none; b=iy5dwdSDfTBRBXRoPed5SHgtIE0nbuZeEWoEf6srh1A+B0dPRM3EA+caJOgxAEZLZ+GDmmjsQ6BkZtxsEp9si4vvnQZ1ShWlbrL3yPq0rhdORUdCHGuBgd2rMpRJPBvTYXJ/oie0SSJLIhZim9KLORuN6jQFyXdhRNMtnzn6Jjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721716330; c=relaxed/simple;
-	bh=5cGJToLxMVX7rT0OWUoOXanxJBRHKsYsfRfzUURgNtE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pqlHRVSn34sgC/nE50eRC1p30JqYpUjLvKJbDK9mJW7ooF7/uwOBxPuYySMwh7eAMfhi6LcsJwXnB8rkvdUGYBZdGtCio2V1/RwLKYNTyucu21VjEfNAADqWp0hPdjkel4s31hVTAfFqfjUwJxuZJOHGHZ0IGmDreLpv5YYkgkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WSnP55gp0z4f3jZ8;
-	Tue, 23 Jul 2024 14:31:53 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 0C4941A0568;
-	Tue, 23 Jul 2024 14:32:02 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.67.175.61])
-	by APP2 (Coremail) with SMTP id Syh0CgA34wpOTp9mjImuAw--.48686S7;
-	Tue, 23 Jul 2024 14:32:01 +0800 (CST)
-From: Zheng Yejian <zhengyejian@huaweicloud.com>
-To: masahiroy@kernel.org,
-	peterz@infradead.org,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mark.rutland@arm.com,
-	mpe@ellerman.id.au,
-	npiggin@gmail.com,
-	christophe.leroy@csgroup.eu,
-	naveen.n.rao@linux.ibm.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	mcgrof@kernel.org,
-	mathieu.desnoyers@efficios.com,
-	nathan@kernel.org,
-	nicolas@fjasle.eu,
-	ojeda@kernel.org,
-	akpm@linux-foundation.org,
-	surenb@google.com,
-	pasha.tatashin@soleen.com,
-	kent.overstreet@linux.dev,
-	james.clark@arm.com,
-	jpoimboe@kernel.org
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-modules@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	bpf@vger.kernel.org,
-	zhengyejian@huaweicloud.com
-Subject: [PATCH v2 5/5] ftrace: Revert the FTRACE_MCOUNT_MAX_OFFSET workaround
-Date: Tue, 23 Jul 2024 14:32:58 +0800
-Message-Id: <20240723063258.2240610-6-zhengyejian@huaweicloud.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240723063258.2240610-1-zhengyejian@huaweicloud.com>
-References: <20240723063258.2240610-1-zhengyejian@huaweicloud.com>
+	s=arc-20240116; t=1721716667; c=relaxed/simple;
+	bh=e8bxs5WbWyMB3Y3HCBkJfqp4U0cmWzCad7DB6o7E2B8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BFbMQRmMRPew/z5gufEvSUgCLsbGjgt/G/ufbhYup1Wv6yjwVlRrIdjHvgbnTJb3EqgSpT/z1tF6Akty27FpK9Bld9ynJeVpFkKucBFZBZkBMSQNDBMpmzfYRhx49y3MaqyGvj+7lRrfbAuAMACduAmS7H2NJYzKa7t2zpkRoxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=amopwLWg; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52efd530a4eso3867228e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 22 Jul 2024 23:37:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721716664; x=1722321464; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+JhJHh75+vxBq5JCUMaHvgyTNnvrnILojlvhWSODNXw=;
+        b=amopwLWg2L3vnypqKRsB4R22ABXxcu9jsqhmfDpsXVf5oA/srQrw8onvTSMjKDqY2a
+         8mMm+ktPe8p+P9E9d6POGQ7goOfRx5rEpbiyt5WxaEyQd3js5lyD7FeYlVqMKuZ5Kjyf
+         JhcHwdh159eW7lqTDWw9FYQWtazM2GPYP5tbNshinSqpHruahPIpRkjVs985RDzk6Vln
+         AqfjNJ7y1BqBcsEp2xkFpT0l1XhhS8c8u+4GALD6zSeMzPCeBT8IPKdUT9G7fYQ4/BRQ
+         vnCaYCi4WQSrneNa4wjcW5TX/1BLSpyIINjG5CXZNZc9x4+0jBdaGPA4/jkBgrevcGmp
+         Ha7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721716664; x=1722321464;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+JhJHh75+vxBq5JCUMaHvgyTNnvrnILojlvhWSODNXw=;
+        b=HSTwmGFh7QnWHWGXQKJGu0D6r4buMmf1UtPTwuPAF4a73RqrA3BlAEx2WuzsRIBuLf
+         eaXx2rc4/x8oUZlE9JOvQPZpVBh0nK6wclgFLoiE7//psbg8v9Jn357jmYI+JHGHX/rZ
+         3SW823fgs7yLx3qGwOwydFmWcTJlA6FzapokkvN670xadMEIlvXZbuyLElzP5Ln/4l2w
+         5GtoO4X89KgwslPQ5zABoUAAMNSTVKXZF45riC/Ybxcxgkg/hB2lmzAw9A5Aj8IF4ncq
+         wXr4M0q13WHwTYbZuTTe0timoWdQRRav/MTtsnUqDh2oTI7m4MN7qce8+ya8s9As0G+K
+         5cWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXnUuJUhfG1zWkrFvmNwDMWmDquPiK9UPd6T/UztCEE3u+w5fVoeLUy+P+ug4r87mBOWA4bDKRP2z6krGIK+DC13fEpi00roiJKThP7
+X-Gm-Message-State: AOJu0YzvCaYXj2CrFRN5wbcViDSf124w7FJ34tj24vuZRG3VbmPsoRa3
+	dV8EPBbPFsmK9O55F0vkdWOTvPk7w8Y60zYdeSta8PEomNAkbWAtaViQ3bJ5AjRhB6vwf8Indnp
+	SIcWybqmn12S4HED6Dt3ghwIwEMOZNxPyXMZR
+X-Google-Smtp-Source: AGHT+IEglEMjRzjhhYHSEdin5PjH0xkG3h0wSeij+jDfu8mT5OD4uln4LREkccdyh0rDty08M9nEqEdDf759cyKIQe0=
+X-Received: by 2002:a05:6512:ba1:b0:52e:f95c:8b with SMTP id
+ 2adb3069b0e04-52fc4046329mr1466050e87.16.1721716663405; Mon, 22 Jul 2024
+ 23:37:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgA34wpOTp9mjImuAw--.48686S7
-X-Coremail-Antispam: 1UD129KBjvJXoWxKFy7Cw17Zw1kCFy7CF4kWFg_yoW3GFWfpF
-	ZIya1qgrW7CF4jga9Fgr1DCFyakrn0kryaq3yDG34FywnYqr4j9F92yrWqvr97JrWkCa4f
-	XFW7ZrW2yFnxZ3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr1j6r
-	xdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0D
-	M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjx
-	v20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
-	F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2
-	IY04v7MxkF7I0En4kS14v26rWY6Fy7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY
-	6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
-	CEb7AF67AKxVWrXVW8Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF
-	4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBI
-	daVFxhVjvjDU0xZFpf9x0pR4E__UUUUU=
-X-CM-SenderInfo: x2kh0w51hmxt3q6k3tpzhluzxrxghudrp/
+References: <20240720044127.508042-1-flintglass@gmail.com> <20240720044127.508042-2-flintglass@gmail.com>
+In-Reply-To: <20240720044127.508042-2-flintglass@gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Mon, 22 Jul 2024 23:37:07 -0700
+Message-ID: <CAJD7tkbf0Sc6Q3KyFzG8jRB3Z0D3iiBYiXkjkCix3gy=PctZyQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] mm: zswap: fix global shrinker memcg iteration
+To: Takero Funaki <flintglass@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-After patch titled "ftrace: Skip invalid __fentry__ in
-ftrace_process_locs()", __fentry__ locations in overridden weak function
-have been checked and skipped, then all records in ftrace_pages are
-valid, the FTRACE_MCOUNT_MAX_OFFSET workaround can be reverted, include:
- 1. commit b39181f7c690 ("ftrace: Add FTRACE_MCOUNT_MAX_OFFSET to avoid
-    adding weak function")
- 2. commit 7af82ff90a2b ("powerpc/ftrace: Ignore weak functions")
- 3. commit f6834c8c59a8 ("powerpc/ftrace: Fix dropping weak symbols with
-    older toolchains")
+On Fri, Jul 19, 2024 at 9:41=E2=80=AFPM Takero Funaki <flintglass@gmail.com=
+> wrote:
+>
+> This patch fixes an issue where the zswap global shrinker stopped
+> iterating through the memcg tree.
+>
+> The problem was that shrink_worker() would stop iterating when a memcg
+> was being offlined and restart from the tree root.  Now, it properly
+> handles the offline memcg and continues shrinking with the next memcg.
 
-Signed-off-by: Zheng Yejian <zhengyejian@huaweicloud.com>
----
- arch/powerpc/include/asm/ftrace.h |   7 --
- arch/x86/include/asm/ftrace.h     |   7 --
- kernel/trace/ftrace.c             | 141 +-----------------------------
- 3 files changed, 2 insertions(+), 153 deletions(-)
+It is probably worth explicitly calling out that before this change,
+the shrinker would stop considering an offline memcg as a failure and
+stop after hitting 16 failures, but after this change, a failure is
+hitting the end of the tree. This means that cgroup trees with a lot
+of offline cgroups will now observe significantly higher zswap
+writeback activity.
 
-diff --git a/arch/powerpc/include/asm/ftrace.h b/arch/powerpc/include/asm/ftrace.h
-index 559560286e6d..328cf55acfb7 100644
---- a/arch/powerpc/include/asm/ftrace.h
-+++ b/arch/powerpc/include/asm/ftrace.h
-@@ -8,13 +8,6 @@
- #define MCOUNT_ADDR		((unsigned long)(_mcount))
- #define MCOUNT_INSN_SIZE	4 /* sizeof mcount call */
- 
--/* Ignore unused weak functions which will have larger offsets */
--#if defined(CONFIG_MPROFILE_KERNEL) || defined(CONFIG_ARCH_USING_PATCHABLE_FUNCTION_ENTRY)
--#define FTRACE_MCOUNT_MAX_OFFSET	16
--#elif defined(CONFIG_PPC32)
--#define FTRACE_MCOUNT_MAX_OFFSET	8
--#endif
--
- #ifndef __ASSEMBLY__
- extern void _mcount(void);
- 
-diff --git a/arch/x86/include/asm/ftrace.h b/arch/x86/include/asm/ftrace.h
-index 0152a81d9b4a..6a3a4a8830dc 100644
---- a/arch/x86/include/asm/ftrace.h
-+++ b/arch/x86/include/asm/ftrace.h
-@@ -9,13 +9,6 @@
- # define MCOUNT_ADDR		((unsigned long)(__fentry__))
- #define MCOUNT_INSN_SIZE	5 /* sizeof mcount call */
- 
--/* Ignore unused weak functions which will have non zero offsets */
--#ifdef CONFIG_HAVE_FENTRY
--# include <asm/ibt.h>
--/* Add offset for endbr64 if IBT enabled */
--# define FTRACE_MCOUNT_MAX_OFFSET	ENDBR_INSN_SIZE
--#endif
--
- #ifdef CONFIG_DYNAMIC_FTRACE
- #define ARCH_SUPPORTS_FTRACE_OPS 1
- #endif
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 6947be8801d9..37510c591498 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -49,8 +49,6 @@
- #define FTRACE_NOCLEAR_FLAGS	(FTRACE_FL_DISABLED | FTRACE_FL_TOUCHED | \
- 				 FTRACE_FL_MODIFIED)
- 
--#define FTRACE_INVALID_FUNCTION		"__ftrace_invalid_address__"
--
- #define FTRACE_WARN_ON(cond)			\
- 	({					\
- 		int ___r = cond;		\
-@@ -4208,105 +4206,6 @@ static void add_trampoline_func(struct seq_file *m, struct ftrace_ops *ops,
- 		seq_printf(m, " ->%pS", ptr);
- }
- 
--#ifdef FTRACE_MCOUNT_MAX_OFFSET
--/*
-- * Weak functions can still have an mcount/fentry that is saved in
-- * the __mcount_loc section. These can be detected by having a
-- * symbol offset of greater than FTRACE_MCOUNT_MAX_OFFSET, as the
-- * symbol found by kallsyms is not the function that the mcount/fentry
-- * is part of. The offset is much greater in these cases.
-- *
-- * Test the record to make sure that the ip points to a valid kallsyms
-- * and if not, mark it disabled.
-- */
--static int test_for_valid_rec(struct dyn_ftrace *rec)
--{
--	char str[KSYM_SYMBOL_LEN];
--	unsigned long offset;
--	const char *ret;
--
--	ret = kallsyms_lookup(rec->ip, NULL, &offset, NULL, str);
--
--	/* Weak functions can cause invalid addresses */
--	if (!ret || offset > FTRACE_MCOUNT_MAX_OFFSET) {
--		rec->flags |= FTRACE_FL_DISABLED;
--		return 0;
--	}
--	return 1;
--}
--
--static struct workqueue_struct *ftrace_check_wq __initdata;
--static struct work_struct ftrace_check_work __initdata;
--
--/*
-- * Scan all the mcount/fentry entries to make sure they are valid.
-- */
--static __init void ftrace_check_work_func(struct work_struct *work)
--{
--	struct ftrace_page *pg;
--	struct dyn_ftrace *rec;
--
--	mutex_lock(&ftrace_lock);
--	do_for_each_ftrace_rec(pg, rec) {
--		test_for_valid_rec(rec);
--	} while_for_each_ftrace_rec();
--	mutex_unlock(&ftrace_lock);
--}
--
--static int __init ftrace_check_for_weak_functions(void)
--{
--	INIT_WORK(&ftrace_check_work, ftrace_check_work_func);
--
--	ftrace_check_wq = alloc_workqueue("ftrace_check_wq", WQ_UNBOUND, 0);
--
--	queue_work(ftrace_check_wq, &ftrace_check_work);
--	return 0;
--}
--
--static int __init ftrace_check_sync(void)
--{
--	/* Make sure the ftrace_check updates are finished */
--	if (ftrace_check_wq)
--		destroy_workqueue(ftrace_check_wq);
--	return 0;
--}
--
--late_initcall_sync(ftrace_check_sync);
--subsys_initcall(ftrace_check_for_weak_functions);
--
--static int print_rec(struct seq_file *m, unsigned long ip)
--{
--	unsigned long offset;
--	char str[KSYM_SYMBOL_LEN];
--	char *modname;
--	const char *ret;
--
--	ret = kallsyms_lookup(ip, NULL, &offset, &modname, str);
--	/* Weak functions can cause invalid addresses */
--	if (!ret || offset > FTRACE_MCOUNT_MAX_OFFSET) {
--		snprintf(str, KSYM_SYMBOL_LEN, "%s_%ld",
--			 FTRACE_INVALID_FUNCTION, offset);
--		ret = NULL;
--	}
--
--	seq_puts(m, str);
--	if (modname)
--		seq_printf(m, " [%s]", modname);
--	return ret == NULL ? -1 : 0;
--}
--#else
--static inline int test_for_valid_rec(struct dyn_ftrace *rec)
--{
--	return 1;
--}
--
--static inline int print_rec(struct seq_file *m, unsigned long ip)
--{
--	seq_printf(m, "%ps", (void *)ip);
--	return 0;
--}
--#endif
--
- static int t_show(struct seq_file *m, void *v)
- {
- 	struct ftrace_iterator *iter = m->private;
-@@ -4334,13 +4233,7 @@ static int t_show(struct seq_file *m, void *v)
- 	if (iter->flags & FTRACE_ITER_ADDRS)
- 		seq_printf(m, "%lx ", rec->ip);
- 
--	if (print_rec(m, rec->ip)) {
--		/* This should only happen when a rec is disabled */
--		WARN_ON_ONCE(!(rec->flags & FTRACE_FL_DISABLED));
--		seq_putc(m, '\n');
--		return 0;
--	}
--
-+	seq_printf(m, "%ps", (void *)rec->ip);
- 	if (iter->flags & (FTRACE_ITER_ENABLED | FTRACE_ITER_TOUCHED)) {
- 		struct ftrace_ops *ops;
- 
-@@ -4720,24 +4613,6 @@ add_rec_by_index(struct ftrace_hash *hash, struct ftrace_glob *func_g,
- 	return 0;
- }
- 
--#ifdef FTRACE_MCOUNT_MAX_OFFSET
--static int lookup_ip(unsigned long ip, char **modname, char *str)
--{
--	unsigned long offset;
--
--	kallsyms_lookup(ip, NULL, &offset, modname, str);
--	if (offset > FTRACE_MCOUNT_MAX_OFFSET)
--		return -1;
--	return 0;
--}
--#else
--static int lookup_ip(unsigned long ip, char **modname, char *str)
--{
--	kallsyms_lookup(ip, NULL, NULL, modname, str);
--	return 0;
--}
--#endif
--
- static int
- ftrace_match_record(struct dyn_ftrace *rec, struct ftrace_glob *func_g,
- 		struct ftrace_glob *mod_g, int exclude_mod)
-@@ -4745,12 +4620,7 @@ ftrace_match_record(struct dyn_ftrace *rec, struct ftrace_glob *func_g,
- 	char str[KSYM_SYMBOL_LEN];
- 	char *modname;
- 
--	if (lookup_ip(rec->ip, &modname, str)) {
--		/* This should only happen when a rec is disabled */
--		WARN_ON_ONCE(system_state == SYSTEM_RUNNING &&
--			     !(rec->flags & FTRACE_FL_DISABLED));
--		return 0;
--	}
-+	kallsyms_lookup(rec->ip, NULL, NULL, &modname, str);
- 
- 	if (mod_g) {
- 		int mod_matches = (modname) ? ftrace_match(modname, mod_g) : 0;
-@@ -7399,13 +7269,6 @@ void ftrace_module_enable(struct module *mod)
- 		if (!within_module(rec->ip, mod))
- 			break;
- 
--		/* Weak functions should still be ignored */
--		if (!test_for_valid_rec(rec)) {
--			/* Clear all other flags. Should not be enabled anyway */
--			rec->flags = FTRACE_FL_DISABLED;
--			continue;
--		}
--
- 		cnt = 0;
- 
- 		/*
--- 
-2.25.1
+Similarly, in the next patch commit log, please explicitly call out
+the expected behavioral change, that hitting an empty memcg or
+reaching the end of a tree is no longer considered a failure if there
+is progress, which means that trees with a few cgroups using zswap
+will now observe significantly higher zswap writeback activity.
 
+>
+> To avoid holding refcount of offline memcg encountered during the memcg
+> tree walking, shrink_worker() must continue iterating to release the
+> offline memcg to ensure the next memcg stored in the cursor is online.
+>
+> The offline memcg cleaner has also been changed to avoid the same issue.
+> When the next memcg of the offlined memcg is also offline, the refcount
+> stored in the iteration cursor was held until the next shrink_worker()
+> run. The cleaner must release the offline memcg recursively.
+>
+> Fixes: a65b0e7607cc ("zswap: make shrinking memcg-aware")
+> Signed-off-by: Takero Funaki <flintglass@gmail.com>
+> ---
+>  mm/zswap.c | 77 +++++++++++++++++++++++++++++++++++++++---------------
+>  1 file changed, 56 insertions(+), 21 deletions(-)
+>
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index a50e2986cd2f..6528668c9af3 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -775,12 +775,33 @@ void zswap_folio_swapin(struct folio *folio)
+>         }
+>  }
+>
+> +/*
+> + * This function should be called when a memcg is being offlined.
+> + *
+> + * Since the global shrinker shrink_worker() may hold a reference
+> + * of the memcg, we must check and release the reference in
+> + * zswap_next_shrink.
+> + *
+> + * shrink_worker() must handle the case where this function releases
+> + * the reference of memcg being shrunk.
+> + */
+>  void zswap_memcg_offline_cleanup(struct mem_cgroup *memcg)
+>  {
+>         /* lock out zswap shrinker walking memcg tree */
+>         spin_lock(&zswap_shrink_lock);
+> -       if (zswap_next_shrink =3D=3D memcg)
+> -               zswap_next_shrink =3D mem_cgroup_iter(NULL, zswap_next_sh=
+rink, NULL);
+> +       if (zswap_next_shrink =3D=3D memcg) {
+> +               do {
+> +                       zswap_next_shrink =3D mem_cgroup_iter(NULL,
+> +                                       zswap_next_shrink, NULL);
+> +               } while (zswap_next_shrink &&
+> +                               !mem_cgroup_online(zswap_next_shrink));
+> +               /*
+> +                * We verified the next memcg is online.  Even if the nex=
+t
+> +                * memcg is being offlined here, another cleaner must be
+> +                * waiting for our lock.  We can leave the online memcg
+> +                * reference.
+> +                */
+> +       }
+>         spin_unlock(&zswap_shrink_lock);
+>  }
+>
+> @@ -1319,18 +1340,38 @@ static void shrink_worker(struct work_struct *w)
+>         /* Reclaim down to the accept threshold */
+>         thr =3D zswap_accept_thr_pages();
+>
+> -       /* global reclaim will select cgroup in a round-robin fashion. */
+> +       /* global reclaim will select cgroup in a round-robin fashion.
+> +        *
+> +        * We save iteration cursor memcg into zswap_next_shrink,
+> +        * which can be modified by the offline memcg cleaner
+> +        * zswap_memcg_offline_cleanup().
+> +        *
+> +        * Since the offline cleaner is called only once, we cannot leave=
+ an
+> +        * offline memcg reference in zswap_next_shrink.
+> +        * We can rely on the cleaner only if we get online memcg under l=
+ock.
+> +        *
+> +        * If we get an offline memcg, we cannot determine if the cleaner=
+ has
+> +        * already been called or will be called later. We must put back =
+the
+> +        * reference before returning from this function. Otherwise, the
+> +        * offline memcg left in zswap_next_shrink will hold the referenc=
+e
+> +        * until the next run of shrink_worker().
+> +        */
+>         do {
+>                 spin_lock(&zswap_shrink_lock);
+> -               zswap_next_shrink =3D mem_cgroup_iter(NULL, zswap_next_sh=
+rink, NULL);
+> -               memcg =3D zswap_next_shrink;
+>
+>                 /*
+> -                * We need to retry if we have gone through a full round =
+trip, or if we
+> -                * got an offline memcg (or else we risk undoing the effe=
+ct of the
+> -                * zswap memcg offlining cleanup callback). This is not c=
+atastrophic
+> -                * per se, but it will keep the now offlined memcg hostag=
+e for a while.
+> -                *
+> +                * Start shrinking from the next memcg after zswap_next_s=
+hrink.
+> +                * When the offline cleaner has already advanced the curs=
+or,
+> +                * advancing the cursor here overlooks one memcg, but thi=
+s
+> +                * should be negligibly rare.
+> +                */
+> +               do {
+> +                       zswap_next_shrink =3D mem_cgroup_iter(NULL,
+> +                                               zswap_next_shrink, NULL);
+> +                       memcg =3D zswap_next_shrink;
+> +               } while (memcg && !mem_cgroup_tryget_online(memcg));
+> +
+> +               /*
+>                  * Note that if we got an online memcg, we will keep the =
+extra
+>                  * reference in case the original reference obtained by m=
+em_cgroup_iter
+>                  * is dropped by the zswap memcg offlining callback, ensu=
+ring that the
+> @@ -1344,17 +1385,11 @@ static void shrink_worker(struct work_struct *w)
+>                         goto resched;
+>                 }
+>
+> -               if (!mem_cgroup_tryget_online(memcg)) {
+> -                       /* drop the reference from mem_cgroup_iter() */
+> -                       mem_cgroup_iter_break(NULL, memcg);
+> -                       zswap_next_shrink =3D NULL;
+> -                       spin_unlock(&zswap_shrink_lock);
+> -
+> -                       if (++failures =3D=3D MAX_RECLAIM_RETRIES)
+> -                               break;
+> -
+> -                       goto resched;
+> -               }
+> +               /*
+> +                * We verified the memcg is online and got an extra memcg
+> +                * reference.  Our memcg might be offlined concurrently b=
+ut the
+> +                * respective offline cleaner must be waiting for our loc=
+k.
+> +                */
+>                 spin_unlock(&zswap_shrink_lock);
+>
+>                 ret =3D shrink_memcg(memcg);
+> --
+> 2.43.0
+>
 
