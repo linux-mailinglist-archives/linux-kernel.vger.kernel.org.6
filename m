@@ -1,301 +1,161 @@
-Return-Path: <linux-kernel+bounces-260101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27FD093A30C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:43:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD4A993A30B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D75F42855FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:43:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5334628549E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53368155A5C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CED155A55;
 	Tue, 23 Jul 2024 14:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D0UG7h8z"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GVI+B9R4"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC0B155753
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B393F15574F
 	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721745772; cv=none; b=oR3G87UNw1XpNoI460KpsxKGPod2hCn1FGRYAOO4yh9AsRnZJj5Q93i+BsCJSTe+kfLMPm9ZcsItMA3grx+JMmaLhBy8jtbsa45vrmBKDXGBwms/iVU+GkGhJICmWY4QPjs25sHwUDVZ17ABpJg3Ay0QNyGWcF3/K/IfarxcZ9Q=
+	t=1721745772; cv=none; b=W0eCxGbp51SJPVM00x6Zp7yZBls4lE1GCxgU0cccKtmZsZyK62dtKSO2vJMMop5lpCQNGZA6EUA4586nVi544rtu/17stS+PuC1xF61W94g1UI7quOMvK7490lfuN97gGw8P6OZmIlnRViSbLNDS1UvPxZRqcOy5ijyzwCnUs6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721745772; c=relaxed/simple;
-	bh=qZhTX/IgIUg6BT0VgZ6WczKfnOo25gAfQcqh/GYy3ug=;
+	bh=lG9RgmXhJCtvO6wgicdAyd9RWNSZCUZjg/dXD55cEl4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MTk5AAA/qfS/qzQTl/AwxriE/YBP1p6r/TOz3kzqz+A8bDfQ6oBX3kuKBiTIQ0jYpDKrZ9v9+AjvLyHK5gAPZp7cXWiahn03SpzR8KAud48k7YWJ0CUlxdhWZMnpEeFtnZ1liwjhTsGeHhTsZu8SLWHi/KT1M6UADTcJM5q8N5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D0UG7h8z; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=LfWBmQ6Lx8m+kJI+JIjJ1/yw0lfR/zsZAWdV7olinEUW2KtYaTaMIOTN7bpCxKAREjLXG/vSvqAgatqGCKDMU6pmghOinJcUSEtzQaZzriBBO7dj4uEaDIq14FSVOVCkLL0h57uO9w08KXihjF9/zFclJE6uk0b7fAxuRyM3j9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GVI+B9R4; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
 	s=mimecast20190719; t=1721745769;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=kigYZguNz00xoX93FOHHu8yNXn/AsLuk79NqjKnJxAU=;
-	b=D0UG7h8zrIVKUjvkYs5zhtbu+Vh6WvOK/ZIlrq2ym7SdVy95+uVUylcEY/xIOF4T+F8TyX
-	r/2a4JXt3nXKL0RADzjob7RqvH49qfgEy+rKpYHNWdwazWyOJqtCeoJuKTjFjAPKcz9kOP
-	UKyLpVbQ03iM7gDTdEX+30yMCaPrzF4=
+	bh=YaUPHOqEAQapPEeUY+Q1djoiy+ILMGQR6AKUvhzDaEQ=;
+	b=GVI+B9R4I4DducevUyMW0pH7FnEpOhagQ2orIo4u3h3TudvRyRnEL57iQ5OpwyGP6gYBR7
+	Slh6emPeCt5gvqBEJiEmS0KGIS3SA1i4uX8bdM/7VeOMtLUdGDuUA9eCjxofACreeWGNlj
+	hETqX8BWq1lU9pfPG7LN07jDSclqpsI=
 Received: from mail-vs1-f69.google.com (mail-vs1-f69.google.com
  [209.85.217.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-498-LgqC2P8sNgu0QPUhPTF0Eg-1; Tue, 23 Jul 2024 10:42:48 -0400
-X-MC-Unique: LgqC2P8sNgu0QPUhPTF0Eg-1
-Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-49290261e75so219792137.2
+ us-mta-78-OV63WwCgMMKyPzbF3E4Lew-1; Tue, 23 Jul 2024 10:42:48 -0400
+X-MC-Unique: OV63WwCgMMKyPzbF3E4Lew-1
+Received: by mail-vs1-f69.google.com with SMTP id ada2fe7eead31-4929b9c17feso1455535137.3
         for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:42:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1721745768; x=1722350568;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kigYZguNz00xoX93FOHHu8yNXn/AsLuk79NqjKnJxAU=;
-        b=CKBCXBQzVGtZ9HULyP5CwSfl2X4hJqRicw1FISRRoFxRTD56/GbGNJC95saQpPu7ED
-         ajCTtP/mDJ/DaVpRVmGePxs2/BqFuOmxTLTmbqbSkHdOKqLu2/PvBMWhGiyBEkywR9L7
-         oAhWsIO0R7fpdFy9es5cPvOxLsA1BByxWefphzNwoBCdX5kgEbq88fbGdhCdPhxLf/z7
-         hx2agTEQuX6BJRUchH0Sbhng6a2L74Rn1R2/F89+XO5E6T9dP1/3eRhwDoP2TSfVAy3/
-         9QVUlsv9NLnB4Pn306e5Q5N2SruuSVE0CGnoNIPzFrG9Zkb+YhwhEvgvBTt7XL7ctLFO
-         0Y0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXBcdVh+duS8+qlC1nMRlDt+k91ZKwGuBGssDSOzr+gz5BfJu1TbQeu4p24O+Z5htH7xhrBD8WO9ZRxjqOJBOTVWrxZa25EaDVQkvfV
-X-Gm-Message-State: AOJu0YxgpNfzbjU+7h0HCtIEdmGhAGcCN+7g01TA605ppThmj7kbhq+0
-	2PXq89DZtwwfflgBEF9z/45xAq8D23Ofk1Lrdwax6jJO5r4xy5IB7sRN/Hn2x/yMadfZBUwvaEn
-	73T5V7nggz3yMEjbnxRaH8zyXHKxRfL3EFXKsNw1YsT5OUw1CT+oi2q2hSx0trg==
-X-Received: by 2002:a05:6102:2b9b:b0:493:bc65:5a79 with SMTP id ada2fe7eead31-493bc656634mr1342075137.12.1721745767771;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YaUPHOqEAQapPEeUY+Q1djoiy+ILMGQR6AKUvhzDaEQ=;
+        b=vZkIuMVfk0a/HtPTy0etUkKOU9ieZupojl8wpFbx7fFPHiMpI4LtbIPEDI+Z/+FrlI
+         FghEXf4FBvAAoIMZZcJo1j8KB4BOrh2QokztPE4m9L3CSLGZFEU+KZroZBC6vNV11yNB
+         k5XPbKDPX8oX+ucZ2CniW0w0QTWWu0IZCk08SrolFVfOIVAcf3qDEIufcGb8VSIBj2rQ
+         p3NgMdzvCY8w6sNp4MtLYBRZalfyE+aNwGs9GBDTq2reyrlsxIrjbshmqnnxyqjvtQj6
+         Q9+4QX11vj+JsISVP3rn2iPyvw2TMKZ4sfwYGmOkM9Zku8Vi7hsdlSnFvEb6YuzGm7MI
+         CQog==
+X-Forwarded-Encrypted: i=1; AJvYcCWXaftzSQPVZIZDWZmoJbaGF41dk9WPovWWb03IZrYWhRBMkBlGF4/v8RK4XFnFergQh90hiJnFij5YnlEaSANe1xbkk+j/iBhItMf1
+X-Gm-Message-State: AOJu0YwVFy8bjdXULjPEaTmzsiY/xeoqNF9a2NxQR+OLA+B4ZsdVfVL7
+	Kx93+hgbvv4vMyP0Qy2KG9i8gBvsJxayTmqYsS0QPb3py+2lx501fBko0ViwOHnJxaciL5u+ME3
+	rVM70Cfd5zBOpgybgc0K5UDx1BKA/VaF+fK8hWojqlNl0AMYKohG/Z5XTcuK6XQ==
+X-Received: by 2002:a05:6102:3e05:b0:493:bf9b:166 with SMTP id ada2fe7eead31-493bf9b0a8amr734259137.3.1721745767886;
         Tue, 23 Jul 2024 07:42:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEvA8ILvkRXBvaTkEfGkpX8GjLXDaXC7zxeV7o84Dn/7uFv11tWUxV/m81omp3h3MPctGhVsg==
-X-Received: by 2002:a05:6102:2b9b:b0:493:bc65:5a79 with SMTP id ada2fe7eead31-493bc656634mr1342024137.12.1721745767284;
+X-Google-Smtp-Source: AGHT+IGygu+Nm1cQMiKKAvl1NMqK1pXN5NRVdqJNMgbBevF+bvsBpo508L5dgA/qZFOan0h65HogJA==
+X-Received: by 2002:a05:6102:3e05:b0:493:bf9b:166 with SMTP id ada2fe7eead31-493bf9b0a8amr734231137.3.1721745767531;
         Tue, 23 Jul 2024 07:42:47 -0700 (PDT)
-Received: from sgarzare-redhat (host-82-57-51-79.retail.telecomitalia.it. [82.57.51.79])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a19905a721sm485491585a.93.2024.07.23.07.42.43
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.147.11])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a198faea7asm486936485a.19.2024.07.23.07.42.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 07:42:46 -0700 (PDT)
-Date: Tue, 23 Jul 2024 16:42:41 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Amery Hung <ameryhung@gmail.com>
-Cc: stefanha@redhat.com, mst@redhat.com, jasowang@redhat.com, 
-	xuanzhuo@linux.alibaba.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org, 
-	decui@microsoft.com, bryantan@vmware.com, vdasa@vmware.com, pv-drivers@vmware.com, 
-	dan.carpenter@linaro.org, simon.horman@corigine.com, oxffffaa@gmail.com, 
-	kvm@vger.kernel.org, virtualization@lists.linux-foundation.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org, 
-	bpf@vger.kernel.org, bobby.eshleman@bytedance.com, jiang.wang@bytedance.com, 
-	amery.hung@bytedance.com, xiyou.wangcong@gmail.com
-Subject: Re: [RFC PATCH net-next v6 09/14] virtio/vsock: add common datagram
- recv path
-Message-ID: <ldyfzp5k2qmhlydflu7biz6bcrekothacitzgbmw2k264zwuxh@hmgoku5kgghp>
-References: <20240710212555.1617795-1-amery.hung@bytedance.com>
- <20240710212555.1617795-10-amery.hung@bytedance.com>
+        Tue, 23 Jul 2024 07:42:47 -0700 (PDT)
+Date: Tue, 23 Jul 2024 16:42:42 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Wander Lairson Costa <wander@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	"open list:SCHEDULER" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] sched/deadline: avoid redundant check for boosted
+ task
+Message-ID: <Zp_BYrWoGADj5gwa@jlelli-thinkpadt14gen4.remote.csb>
+References: <20240722132935.14426-1-wander@redhat.com>
+ <20240722132935.14426-3-wander@redhat.com>
+ <Zp9v8gJ8nqyLkL1m@jlelli-thinkpadt14gen4.remote.csb>
+ <CAAq0SU=s+UMZWXBfHWG4tPCM5VM35T6B0i+JcimbRXm0Q+ZvJA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240710212555.1617795-10-amery.hung@bytedance.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAq0SU=s+UMZWXBfHWG4tPCM5VM35T6B0i+JcimbRXm0Q+ZvJA@mail.gmail.com>
 
-On Wed, Jul 10, 2024 at 09:25:50PM GMT, Amery Hung wrote:
->From: Bobby Eshleman <bobby.eshleman@bytedance.com>
->
->This commit adds the common datagram receive functionality for virtio
->transports. It does not add the vhost/virtio users of that
->functionality.
->
->This functionality includes:
->- changes to the virtio_transport_recv_pkt() path for finding the
->  bound socket receiver for incoming packets
->- virtio_transport_recv_pkt() saves the source cid and port to the
->  control buffer for recvmsg() to initialize sockaddr_vm structure
->  when using datagram
->
->Signed-off-by: Bobby Eshleman <bobby.eshleman@bytedance.com>
->Signed-off-by: Amery Hung <amery.hung@bytedance.com>
->---
-> net/vmw_vsock/virtio_transport_common.c | 79 +++++++++++++++++++++----
-> 1 file changed, 66 insertions(+), 13 deletions(-)
->
->diff --git a/net/vmw_vsock/virtio_transport_common.c b/net/vmw_vsock/virtio_transport_common.c
->index 46cd1807f8e3..a571b575fde9 100644
->--- a/net/vmw_vsock/virtio_transport_common.c
->+++ b/net/vmw_vsock/virtio_transport_common.c
->@@ -235,7 +235,9 @@ EXPORT_SYMBOL_GPL(virtio_transport_deliver_tap_pkt);
->
-> static u16 virtio_transport_get_type(struct sock *sk)
-> {
->-	if (sk->sk_type == SOCK_STREAM)
->+	if (sk->sk_type == SOCK_DGRAM)
->+		return VIRTIO_VSOCK_TYPE_DGRAM;
->+	else if (sk->sk_type == SOCK_STREAM)
-> 		return VIRTIO_VSOCK_TYPE_STREAM;
-> 	else
-> 		return VIRTIO_VSOCK_TYPE_SEQPACKET;
->@@ -1422,6 +1424,33 @@ virtio_transport_recv_enqueue(struct vsock_sock *vsk,
-> 		kfree_skb(skb);
-> }
->
->+static void
->+virtio_transport_dgram_kfree_skb(struct sk_buff *skb, int err)
->+{
->+	if (err == -ENOMEM)
->+		kfree_skb_reason(skb, SKB_DROP_REASON_SOCKET_RCVBUFF);
->+	else if (err == -ENOBUFS)
->+		kfree_skb_reason(skb, SKB_DROP_REASON_PROTO_MEM);
->+	else
->+		kfree_skb(skb);
->+}
->+
->+/* This function takes ownership of the skb.
->+ *
->+ * It either places the skb on the sk_receive_queue or frees it.
->+ */
->+static void
->+virtio_transport_recv_dgram(struct sock *sk, struct sk_buff *skb)
->+{
->+	int err;
->+
->+	err = sock_queue_rcv_skb(sk, skb);
->+	if (err) {
->+		virtio_transport_dgram_kfree_skb(skb, err);
->+		return;
->+	}
->+}
->+
-> static int
-> virtio_transport_recv_connected(struct sock *sk,
-> 				struct sk_buff *skb)
->@@ -1591,7 +1620,8 @@ virtio_transport_recv_listen(struct sock *sk, struct sk_buff *skb,
-> static bool virtio_transport_valid_type(u16 type)
-> {
-> 	return (type == VIRTIO_VSOCK_TYPE_STREAM) ||
->-	       (type == VIRTIO_VSOCK_TYPE_SEQPACKET);
->+	       (type == VIRTIO_VSOCK_TYPE_SEQPACKET) ||
->+	       (type == VIRTIO_VSOCK_TYPE_DGRAM);
-> }
->
-> /* We are under the virtio-vsock's vsock->rx_lock or vhost-vsock's vq->mutex
->@@ -1601,44 +1631,57 @@ void virtio_transport_recv_pkt(struct virtio_transport *t,
-> 			       struct sk_buff *skb)
-> {
-> 	struct virtio_vsock_hdr *hdr = virtio_vsock_hdr(skb);
->+	struct vsock_skb_cb *vsock_cb;
+On 23/07/24 09:27, Wander Lairson Costa wrote:
+> On Tue, Jul 23, 2024 at 5:55 AM Juri Lelli <juri.lelli@redhat.com> wrote:
+> >
+> > Hi Wander,
+> >
+> > On 22/07/24 10:29, Wander Lairson Costa wrote:
+> > > enqueue_dl_entity only calls setup_new_dl_entity if the task is not
+> > > boosted, so the WARN_ON check is unnecessary.
+> > >
+> > > Signed-off-by: Wander Lairson Costa <wander@redhat.com>
+> > > ---
+> > >  kernel/sched/deadline.c | 11 ++++++++---
+> > >  1 file changed, 8 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> > > index 312e8fa7ce94..908d5ce79425 100644
+> > > --- a/kernel/sched/deadline.c
+> > > +++ b/kernel/sched/deadline.c
+> > > @@ -785,12 +785,11 @@ static inline void replenish_dl_new_period(struct sched_dl_entity *dl_se,
+> > >   * one, and to (try to!) reconcile itself with its own scheduling
+> > >   * parameters.
+> > >   */
+> > > -static inline void setup_new_dl_entity(struct sched_dl_entity *dl_se)
+> > > +static inline void __setup_new_dl_entity(struct sched_dl_entity *dl_se)
+> > >  {
+> > >       struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
+> > >       struct rq *rq = rq_of_dl_rq(dl_rq);
+> > >
+> > > -     WARN_ON(is_dl_boosted(dl_se));
+> > >       WARN_ON(dl_time_before(rq_clock(rq), dl_se->deadline));
+> > >
+> > >       /*
+> > > @@ -809,6 +808,12 @@ static inline void setup_new_dl_entity(struct sched_dl_entity *dl_se)
+> > >       replenish_dl_new_period(dl_se, rq);
+> > >  }
+> > >
+> > > +static inline void setup_new_dl_entity(struct sched_dl_entity *dl_se)
+> > > +{
+> > > +     WARN_ON(is_dl_boosted(dl_se));
+> > > +     __setup_new_dl_entity(dl_se);
+> > > +}
+> > > +
+> >
+> > So, the other call path is from dl_server_start() and for this we know
+> > the entity is not boosted either. We could probably just remove the
+> > WARN_ON w/o the additional wrapper function. That said, considering it's
+> > not fast path, I wonder if we actually want to leave the WARN_ON where
+> > it is, so that we can catch potential future erroneous usages?
+> >
+> 
+> Yeah, if you feel the patch is not worth it, I am more in favor of
+> dropping the patch than removing the WARN_ON.
 
-This can be defined in the block where it's used.
-
-> 	struct sockaddr_vm src, dst;
-> 	struct vsock_sock *vsk;
-> 	struct sock *sk;
-> 	bool space_available;
->+	u16 type;
->
-> 	vsock_addr_init(&src, le64_to_cpu(hdr->src_cid),
-> 			le32_to_cpu(hdr->src_port));
-> 	vsock_addr_init(&dst, le64_to_cpu(hdr->dst_cid),
-> 			le32_to_cpu(hdr->dst_port));
->
->+	type = le16_to_cpu(hdr->type);
->+
-> 	trace_virtio_transport_recv_pkt(src.svm_cid, src.svm_port,
-> 					dst.svm_cid, dst.svm_port,
-> 					le32_to_cpu(hdr->len),
->-					le16_to_cpu(hdr->type),
->+					type,
-> 					le16_to_cpu(hdr->op),
-> 					le32_to_cpu(hdr->flags),
-> 					le32_to_cpu(hdr->buf_alloc),
-> 					le32_to_cpu(hdr->fwd_cnt));
->
->-	if (!virtio_transport_valid_type(le16_to_cpu(hdr->type))) {
->+	if (!virtio_transport_valid_type(type)) {
-> 		(void)virtio_transport_reset_no_sock(t, skb);
-> 		goto free_pkt;
-> 	}
->
->-	/* The socket must be in connected or bound table
->-	 * otherwise send reset back
->+	/* For stream/seqpacket, the socket must be in connected or bound table
->+	 * otherwise send reset back.
->+	 *
->+	 * For datagrams, no reset is sent back.
-> 	 */
-> 	sk = vsock_find_connected_socket(&src, &dst);
-> 	if (!sk) {
->-		sk = vsock_find_bound_socket(&dst);
->-		if (!sk) {
->-			(void)virtio_transport_reset_no_sock(t, skb);
->-			goto free_pkt;
->+		if (type == VIRTIO_VSOCK_TYPE_DGRAM) {
->+			sk = vsock_find_bound_dgram_socket(&dst);
->+			if (!sk)
->+				goto free_pkt;
->+		} else {
->+			sk = vsock_find_bound_socket(&dst);
->+			if (!sk) {
->+				(void)virtio_transport_reset_no_sock(t, skb);
->+				goto free_pkt;
->+			}
-> 		}
-> 	}
->
->-	if (virtio_transport_get_type(sk) != le16_to_cpu(hdr->type)) {
->-		(void)virtio_transport_reset_no_sock(t, skb);
->+	if (virtio_transport_get_type(sk) != type) {
->+		if (type != VIRTIO_VSOCK_TYPE_DGRAM)
->+			(void)virtio_transport_reset_no_sock(t, skb);
-> 		sock_put(sk);
-> 		goto free_pkt;
-> 	}
->@@ -1654,12 +1697,21 @@ void virtio_transport_recv_pkt(struct virtio_transport *t,
->
-> 	/* Check if sk has been closed before lock_sock */
-> 	if (sock_flag(sk, SOCK_DONE)) {
->-		(void)virtio_transport_reset_no_sock(t, skb);
->+		if (type != VIRTIO_VSOCK_TYPE_DGRAM)
->+			(void)virtio_transport_reset_no_sock(t, skb);
-> 		release_sock(sk);
-> 		sock_put(sk);
-> 		goto free_pkt;
-> 	}
->
->+	if (sk->sk_type == SOCK_DGRAM) {
->+		vsock_cb = vsock_skb_cb(skb);
->+		vsock_cb->src_cid = src.svm_cid;
->+		vsock_cb->src_port = src.svm_port;
->+		virtio_transport_recv_dgram(sk, skb);
-
-
-What about adding an API that transports can use to hide this?
-
-I mean something that hide vsock_cb creation and queue packet in the 
-socket receive queue. I'd also not expose vsock_skb_cb in an header, but 
-I'd handle it internally in af_vsock.c. So I'd just expose API to 
-queue/dequeue them.
-
-Also why VMCI is using sk_receive_skb(), while we are using 
-sock_queue_rcv_skb()?
+Think we can drop it yes.
 
 Thanks,
-Stefano
-
->+		goto out;
->+	}
->+
-> 	space_available = virtio_transport_space_update(sk, skb);
->
-> 	/* Update CID in case it has changed after a transport reset event */
->@@ -1691,6 +1743,7 @@ void virtio_transport_recv_pkt(struct virtio_transport *t,
-> 		break;
-> 	}
->
->+out:
-> 	release_sock(sk);
->
-> 	/* Release refcnt obtained when we fetched this socket out of the
->-- 
->2.20.1
->
+Juri
 
 
