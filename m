@@ -1,181 +1,142 @@
-Return-Path: <linux-kernel+bounces-260124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D31393A370
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:02:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A23693A376
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:04:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B8191C227D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:02:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CFFB1C2268E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5C5154BE3;
-	Tue, 23 Jul 2024 15:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBC1156F34;
+	Tue, 23 Jul 2024 15:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f2oNYfiU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GFC6Uxh5"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C62BE13B599
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 15:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E2F154BE8
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 15:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721746949; cv=none; b=WxhL3vIfu5KJqUnK1PQO5SiZl3YszKDE6+mjkn/y0cAm22+aumMqhZodW3IfF69h1R7qolptWPHjLryq3C4SIUNLjf03ohESn/ONbk+oYbrehNP+8R469wGOoqVn1qPfiHb8dihBaNSKT1y8s9g6Ib8uh4opVvwrRW2yp7wrf9c=
+	t=1721747070; cv=none; b=pDSajK8MdcliRwttEr4kQJ/l2kGB1UaLwcfDHa1bO2k8sFEftcYssoV2EMjCl0ZSbjCSiTi1HkaRYffM0uHJ9F4Y22ZdJ69hqp/dpuSkaF5+y/yvkhEWVTxapqv0gSVCowLswy7G3pNgveJDRIjhS5sFtJngwm8T6l9TitVP/cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721746949; c=relaxed/simple;
-	bh=xb2br442o0CzRVEGoDDCnvZdYGa/Zy7goBOWiolJR/0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K9sHfNnGhfblH5XjNyeq7yfZg1aK5gmI4+TU2zdKyoyRr5O3jWmeSu/ByuGSeFm5LujKshytj0acFKEWpkpyg9Ot2826gtUlEo5ATV/q29bmair8K7VUg/mEL+r53nSTq8TWfi1m6Qf1z71SKmNgLqkmbCWoSO5fDaeDRbVxwSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f2oNYfiU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 660DAC4AF11
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 15:02:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721746949;
-	bh=xb2br442o0CzRVEGoDDCnvZdYGa/Zy7goBOWiolJR/0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=f2oNYfiUjEB+9IAi4WC+t7UZyHm+fQH/uzO/M1VeLiu5MPJVIv1GSZyHTYDVqLSiy
-	 B9ybHoLD78ZSgXyQ+aLLjXe2wfpK4ajcKpNHbjZBP+1BHTQ07ph/nrcx9JJzD+1uHL
-	 Mtp8xfgd9VlEujKpRtWSxPI6FXB5YD1YZE/nVZqrmJ4Ah1GkRwkAr1yW2Jk3iAEMhX
-	 9f6R4+fY2T56uKkkBp+subo/mUpMiZ5ysH9V9dScLUJ/3vNz699m9zns5wAGirMrXN
-	 NK3k0MmcY3dbdHlpOHBBBqTezTeewl2rjXPEyHBNwndRHEFEEXUoYjdWDngwtlMWp4
-	 iyRiY/jN0FPeQ==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ef2cb7d562so32012771fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:02:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU2awm2xf+9hYwDpzkNWFf2xOHU9fQZ24pGgTeJYgmSyXxePlEo/NdtoRg++hyYhdRQON8g9UI+nxzDKyyinZLwyQA8OHzaKcXFQ+YT
-X-Gm-Message-State: AOJu0YwCU5Hz9Io7z/xRysFXat6qt+lHhfZaoLWvzz8LodJyyHBXzVLB
-	iLY/bGPZPoUkrxEg5mW6l2PZwJut2u6q1xoJf9mL1QEuFRQUmaJgBU3DfGFsp95p/Opll8/Fz1s
-	LkN2Opxyl84GVn30a9/JNNxhziXM=
-X-Google-Smtp-Source: AGHT+IFhuDrUuAIaLprKGCMnkYvkdJ7xMDPkYihA099ElTqnhewJF7rPpzY+SAsjsnx51wHA9zO5EDGDguIS8RDugZI=
-X-Received: by 2002:a05:651c:1a2c:b0:2ef:2b56:36a9 with SMTP id
- 38308e7fff4ca-2ef2b563725mr68364231fa.16.1721746947037; Tue, 23 Jul 2024
- 08:02:27 -0700 (PDT)
+	s=arc-20240116; t=1721747070; c=relaxed/simple;
+	bh=zjPGRyyEZDMLmGkK31czDaTVI5gnoHj+/QGaesuptL8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=b52rOEqANP7UEdBMH4WgCHb5bYWzNO0kGJVLtsdP2V8kXW4GTvmoyP+dxbf0f+wPb6HVOpajLqy0Xc55pxi/lLkGYqK7PvXTfnNKCnpq2Q3AnfsfG/pgrl/xRScPBjJHY6y0w3hk5ilfOOpzNKIsAMd/4xMY+ZZgc1fiUmlcRLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GFC6Uxh5; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42725f8a789so42915e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 08:04:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721747066; x=1722351866; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5EI7OMT8wzZUrRDcneWMkHrOQy15Kz2ZG+1nK4iJU6s=;
+        b=GFC6Uxh5VhU8TXAr1zBrcS1Hcb3bRtzTnwpZIvi37J+cG/DHmzay7UAT77QNubV7ub
+         TrKVdCybXMqtl6Z356c3+rHC8CceT1mJI/yrp4zf7ImfYHyVZqUcZC+1ySFToFB63QFu
+         4mBIKbr16+HyCPz5BtNeU2IlaWFMe+gJgHS/kh54N62wRBc+FKbOX9oUoQ1cSlLXXXaS
+         z62wxLVBps6bQ99yrkr2zyZB53Jdgr9Tb5FUeCk6rggE5zXmuGFRdEFm5zk/Vs3pdNn8
+         3DWFx/4EKNwDmwQqdtxR4aIjAr2eR1ewbCLlHimldRh4UrJzmXfO3l/BmqDzFe/BvkRr
+         m3Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721747066; x=1722351866;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5EI7OMT8wzZUrRDcneWMkHrOQy15Kz2ZG+1nK4iJU6s=;
+        b=qyM1Mv7Td8ZYOXBJHPF1pfvuPB8geNjlO04leYay5E36Y042BZ6aR6V1RxYaoXTGed
+         JYPAPsMHzJzgye4VEHv5ZZGuxRGxcJhD2SBZstYymBC+pTW8Eyf5y+1D8pvCgc4Nj8yC
+         Nz8LEyMyknSDby4NqQVg9yezL9JLkAMS7iHMCQabEDWrp6pj/hnCLLkCUc4NctQ1JNWm
+         DmZkfLwq3lrzHJoHTJK9EAWFIWiGRDeKPELTNEix4XbgPK/gvk6paFDKG5js6BTs5Okp
+         LLtNd2uprd/KVYxDAhJPPwWDkalbdCugthSGrXvksFl6SKBVnRCcIhtf4XeY3UoMqG6o
+         aiNA==
+X-Forwarded-Encrypted: i=1; AJvYcCUW5Nhu7D23MUpwLGoPRmxnEs1Oavjch0ROBPyLhJ7UHi3DgnkcJf2lLHkv1/IP1a1T2a9ks3Gsh1t9Tjxn6Fj/KpvaoQ9AF6DTjl9j
+X-Gm-Message-State: AOJu0Yy1/yY7j5hbd0lSXXcdSK4AYfZMBZHax1cpqQ5rdDh8lLl/nGSD
+	uReMnOE+BRu/vRI2ZWy4MoicsQ5iQddXTh0lM/uB8mcxDHc8J69WltFZrZT0znc02tgVKiTRit5
+	iub0X5Zw=
+X-Google-Smtp-Source: AGHT+IHjOntlahZUsysgrc3jB0agxSGVzop23IM0mpMgl6qJ4UpWatZ4rTprcN6Lfh9mBaw3J/nNcg==
+X-Received: by 2002:a05:600c:1c98:b0:426:66a0:6df6 with SMTP id 5b1f17b1804b1-427dba6e575mr4890835e9.0.1721747065281;
+        Tue, 23 Jul 2024 08:04:25 -0700 (PDT)
+Received: from localhost ([2a00:79e0:9d:4:59b4:7aff:4689:5b42])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3687868423bsm11798247f8f.14.2024.07.23.08.04.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 08:04:24 -0700 (PDT)
+From: Jann Horn <jannh@google.com>
+Date: Tue, 23 Jul 2024 17:03:56 +0200
+Subject: [PATCH] filelock: Fix fcntl/close race recovery compat path
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <50360968-13fb-4e6f-8f52-1725b3177215@asahilina.net>
- <20240718131428.GA21243@willie-the-truck> <CAMj1kXFi0sRVMRNhMVEnYBrLT4DycPoDMUa9VkP8wqqdf59eeA@mail.gmail.com>
- <20240723145214.GA26403@willie-the-truck>
-In-Reply-To: <20240723145214.GA26403@willie-the-truck>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Tue, 23 Jul 2024 17:02:15 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEkHKtFKFS3ejeDsg1Q+2NY1JibzurzqgwVGqb+1=XrRg@mail.gmail.com>
-Message-ID: <CAMj1kXEkHKtFKFS3ejeDsg1Q+2NY1JibzurzqgwVGqb+1=XrRg@mail.gmail.com>
-Subject: Re: LPA2 on non-LPA2 hardware broken with 16K pages
-To: Will Deacon <will@kernel.org>
-Cc: Asahi Lina <lina@asahilina.net>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	Catalin Marinas <catalin.marinas@arm.com>, ryan.roberts@arm.com, mark.rutland@arm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240723-fs-lock-recover-compatfix-v1-1-148096719529@google.com>
+X-B4-Tracking: v=1; b=H4sIAFvGn2YC/x2MSQqAMAwAvyI5G9BWEPyKeKgx1eBSSaUI4t8tH
+ mdg5oHIKhyhKx5QThIlHBnqsgBa3DEzypQZTGWaqjUWfcQt0IrKFBIrUthPd3m5kbyh0Y22sVM
+ NuT+Vs/7f/fC+H7r8AGprAAAA
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Jeff Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
+ Alexander Aring <alex.aring@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@kernel.org, Jann Horn <jannh@google.com>
+X-Mailer: b4 0.15-dev
 
-On Tue, 23 Jul 2024 at 16:52, Will Deacon <will@kernel.org> wrote:
->
-> Hey Ard,
->
-> On Fri, Jul 19, 2024 at 11:02:29AM -0700, Ard Biesheuvel wrote:
-> > Thanks for the cc, and thanks to Lina for the excellent diagnosis -
-> > this is really helpful.
-> >
-> > > diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> > > index f8efbc128446..3afe624a39e1 100644
-> > > --- a/arch/arm64/include/asm/pgtable.h
-> > > +++ b/arch/arm64/include/asm/pgtable.h
-> > > @@ -1065,6 +1065,13 @@ static inline bool pgtable_l5_enabled(void) { return false; }
-> > >
-> > >  #define p4d_offset_kimg(dir,addr)      ((p4d_t *)dir)
-> > >
-> > > +static inline
-> > > +p4d_t *p4d_offset_lockless(pgd_t *pgdp, pgd_t pgd, unsigned long addr)
-> >
-> > This is in the wrong place, I think - we already define this for the
-> > 5-level case (around line 1760).
->
-> Hmm, I'm a bit confused. In my tree, we have one definition at line 1012,
-> which is for the 5-level case (i.e. guarded by
-> '#if CONFIG_PGTABLE_LEVELS > 4'). I'm adding a new one at line 1065,
-> which puts it in the '#else' block and means we use an override instead
-> of the problematic generic version when we're folding.
->
+When I wrote commit 3cad1bc01041 ("filelock: Remove locks reliably when
+fcntl/close race is detected"), I missed that there are two copies of the
+code I was patching: The normal version, and the version for 64-bit offsets
+on 32-bit kernels.
+Thanks to Greg KH for stumbling over this while doing the stable
+backport...
 
-Indeed. I failed to spot from the context (which is there in the diff)
-that this is in the else branch.
+Apply exactly the same fix to the compat path for 32-bit kernels.
 
-> > We'll need to introduce another version for the 4-level case, so
-> > perhaps, to reduce the risk of confusion, we might define it as
-> >
-> > static inline
-> > p4d_t *p4d_offset_lockless_folded(pgd_t *pgdp, pgd_t pgd, unsigned long addr)
-> > {
-> > ...
-> > }
-> > #ifdef __PAGETABLE_P4D_FOLDED
-> > #define p4d_offset_lockless p4d_offset_lockless_folded
-> > #endif
->
-> Renaming will definitely make this easier on the eye, so I'll do that.
-> I don't think I need the 'ifdef' though.
->
+Fixes: c293621bbf67 ("[PATCH] stale POSIX lock handling")
+Cc: stable@kernel.org
+Link: https://bugs.chromium.org/p/project-zero/issues/detail?id=2563
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+ fs/locks.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-Indeed.
+diff --git a/fs/locks.c b/fs/locks.c
+index bdd94c32256f..9afb16e0683f 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -2570,8 +2570,9 @@ int fcntl_setlk64(unsigned int fd, struct file *filp, unsigned int cmd,
+ 	error = do_lock_file_wait(filp, cmd, file_lock);
+ 
+ 	/*
+-	 * Attempt to detect a close/fcntl race and recover by releasing the
+-	 * lock that was just acquired. There is no need to do that when we're
++	 * Detect close/fcntl races and recover by zapping all POSIX locks
++	 * associated with this file and our files_struct, just like on
++	 * filp_flush(). There is no need to do that when we're
+ 	 * unlocking though, or for OFD locks.
+ 	 */
+ 	if (!error && file_lock->c.flc_type != F_UNLCK &&
+@@ -2586,9 +2587,7 @@ int fcntl_setlk64(unsigned int fd, struct file *filp, unsigned int cmd,
+ 		f = files_lookup_fd_locked(files, fd);
+ 		spin_unlock(&files->file_lock);
+ 		if (f != filp) {
+-			file_lock->c.flc_type = F_UNLCK;
+-			error = do_lock_file_wait(filp, cmd, file_lock);
+-			WARN_ON_ONCE(error);
++			locks_remove_posix(filp, files);
+ 			error = -EBADF;
+ 		}
+ 	}
 
-> > > +{
-> >
-> > We might add
-> >
-> > if (pgtable_l4_enabled())
-> >     pgdp = &pgd;
-> >
-> > here to preserve the existing 'lockless' behavior when PUDs are not
-> > folded.
->
-> The code still needs to be 'lockless' for the 5-level case, so I don't
-> think this is necessary.
+---
+base-commit: 66ebbdfdeb093e097399b1883390079cd4c3022b
+change-id: 20240723-fs-lock-recover-compatfix-cf2cbab343d1
+-- 
+Jann Horn <jannh@google.com>
 
-The 5-level case is never handled here.
-
-There is the 3-level case, where the runtime PUD folding needs the
-actual address in order to recalculate the descriptor address using
-the correct shift. In this case, we don't dereference the pointer
-anyway so the 'lockless' thing doesn't matter (afaict)
-
-In the 4-level case, we want to preserve the original behavior, where
-pgd is not reloaded from pgdp. Setting pgdp to &pgd achieves that.
-
-> Yes, we'll load the same entry multiple times,
-> but it should be fine because they're in the context of a different
-> (albeit folded) level.
->
-
-I don't understand what you are saying here. Why is that fine?
-
-> > > +       return p4d_offset(pgdp, addr);
-> > > +}
-> > > +#define p4d_offset_lockless p4d_offset_lockless
-> > > +
-> > >  #endif  /* CONFIG_PGTABLE_LEVELS > 4 */
-> > >
-> >
-> > I suggest we also add something like the below so we can catch these
-> > issues more easily
-> >
-> > --- a/arch/arm64/include/asm/pgtable.h
-> > +++ b/arch/arm64/include/asm/pgtable.h
-> > @@ -874,9 +874,26 @@ static inline phys_addr_t p4d_page_paddr(p4d_t p4d)
-> >
-> >  static inline pud_t *p4d_to_folded_pud(p4d_t *p4dp, unsigned long addr)
-> >  {
-> > +       /*
-> > +        * The transformation below does not work correctly for descriptors
-> > +        * copied to the stack.
-> > +        */
-> > +       VM_WARN_ON((u64)p4dp >= VMALLOC_START && !__is_kernel((u64)p4dp));
->
-> Hmm, this is a bit coarse. Does it work properly with the fixmap?
->
-
-Good point. I did some boot tests with this but I'm not sure if it is
-100% safe with the fixmap.
 
