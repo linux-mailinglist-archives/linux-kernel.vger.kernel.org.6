@@ -1,109 +1,156 @@
-Return-Path: <linux-kernel+bounces-259798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E04F7939D58
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:15:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF924939D59
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A9A1B22397
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:15:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EFE4283349
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B0F22EE8;
-	Tue, 23 Jul 2024 09:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A5C014C582;
+	Tue, 23 Jul 2024 09:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MCkgNb9G"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bTYs/csg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FAE208B6
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 09:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EB9208B6
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 09:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721726140; cv=none; b=guT+RGCPcgZQ5+bI0gycK7rS9UFNrmgGC67yMLizlhk+y4A1qlVyLIvewcaPsxBZPC+qy2AuSMH1DnNgMyRIOpxomgAM5KCoWZ052LLG3JCf3Brb85WWKz77BLvyTg6LLHxodXK3AMMQdRNQVyeTI2gNRzXMNDn0vAnCgE2ZO6k=
+	t=1721726148; cv=none; b=WMx1tPwR5TqK4ruX9OsQNRsIIZVcHNvn7qJM9QZDo7q21NFpYESNWw7Ze6i5Y1gHFRoXQswemIN1qdB2u7K0NUMwanh1YlbaE8wt/dOawn6v3P/6WSAoBAlqO1daS8X7cQllVYIg2QP5somsG6vpe3Tz7f/UB3pCvrzBCe/IbDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721726140; c=relaxed/simple;
-	bh=UeoKgLuiGBLt7clh3EHbFnak0jUQWM6xKW91Vn0DzZo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tEL5R7lFGM0jQHVqEs0+rGUs3Xnq/lVkmNtRPi6COCSz/pYghVFuh4L3iTZi5A6+P9KoR/rzxka00qu8ceVHz4cV6hEp+1sKg8nPJ+lm0tNLomNPsMD1jSRY0e1h4eaErMQ6wPLtAyeBfue22EoUZ3obc0kuSqOkFImxWvJjFu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MCkgNb9G; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3683329f787so2783477f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 02:15:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721726138; x=1722330938; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UeoKgLuiGBLt7clh3EHbFnak0jUQWM6xKW91Vn0DzZo=;
-        b=MCkgNb9GvlNP7SwwpwsrRzRKVoRODTqiKoU4EFSO9KA9l6iIaIqiIRXhAKw0j5K6L8
-         0CkGFEJa5WYF69k86jNciLGbMI8jon4zn620z68PEelcoRynx7gZnRgDKPxhSojXZc3u
-         DGzrz67jJosGqESBI/Y2/us601mIdHSJadrtVgVcIGjzHB31bDH+AslMlRaQt9eBxyfs
-         0YrGXCPmVJ8EBcclr4d73co8fK6BLJaPJMAui+nmqYnFyZ+ht1XT7spJmua9rx7pK/AB
-         evojlAWRzymb2MP5yc/OKRdj3KENk/AZ7QB39WHqPY8NvzCWJ4aRkkbAC/+8hpNZAwnE
-         C1TQ==
+	s=arc-20240116; t=1721726148; c=relaxed/simple;
+	bh=JKRazvoFIf/4bQMW4OxTf84GHZy/Gi963R+CIj248Lg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mzxLlQCSWgyjafmVLhBugyzTy92s4lMiktmoAX0x2BIt9cz79ZSeSrJgI2VekZF363IKqMczg2iOomtwxhKJoLnjhtQcoq4OxElYYCm8pLLRUyoBxnmlGftPeHinDuraM7alPoogmvVUCWzm4Bf0v/QIfKCU9CDaShX7d7HLOP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bTYs/csg; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721726145;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dn0oMV7bhyORjlIV9NNrpUbkRujXMXyPxUT7qs9yU/E=;
+	b=bTYs/csgSI1wjB8mqzdTEPfWSbxmENZGPpAR8rp6V5eWEi7+GFITy94YcXTvFen+5wuKjX
+	islImNAqezgI1k2S1G0zruLi/E/oa1aCxaCH7IeHylo29g/R817DNRpciGFkvn205b+33+
+	LxAkOSscROhbQy+4wnggO/X56fZ+lps=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-90-rvU2neXnPoq9Z4Pr2GNLRA-1; Tue, 23 Jul 2024 05:15:42 -0400
+X-MC-Unique: rvU2neXnPoq9Z4Pr2GNLRA-1
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-66b3b4415c7so83831897b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 02:15:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721726138; x=1722330938;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UeoKgLuiGBLt7clh3EHbFnak0jUQWM6xKW91Vn0DzZo=;
-        b=tRS1a7ZV7sidniHXQDKilMOImGsYRfVN3+hZNs76MlwZh0Em2DJrY2arFL5sxRSXye
-         WQzZHj4e+jKUYHFHwKksg0LPONXgQNQewnvrLIz3Bl6SUtYmPN3TbgW6yckbLizylq1D
-         Rf3lWvHPKfY+SgyNq0XXEuDvw3nlo572pBMIsrNuqzy8Y9cvQofCPDFdgV86F0pspZGe
-         PxKRWTTWoV4CEWvpLIoT9ubb3E38ho8IBj8Agl9Yy29xCHTKntnvZA1HLEcAxqDFSUj8
-         HF6M067UCWPGkQemIXRtWBN/+KDiuyk+zx5HCXJH5lFcm6M8u+yXCF6VFZGltq30dNtj
-         N7QA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8b6W8YNrcRiziuvyC7ECzw9iZza9U/auB3ghFVFCfscspNhYOc112FKr1HsEfGbMf4Mmp2SPAc7W8TzETV9sAjarR5Bd9T+xkBhoi
-X-Gm-Message-State: AOJu0Yy+X3+IzXqh2+6VRI8yl8TSUFj93/dcJqP3H5wvpHAL0ZwZ6+mh
-	DcSG0KXFjDnLsVwh/2EGKn4WtOEBXGXLTfzoNyWWg5YrSTZg7Jbv/0UX5FxFUoecq87C4oXcXv6
-	8TcszMddAR+BtRr9qqIBt/D2rdXJ5CfqDZN4c
-X-Google-Smtp-Source: AGHT+IHA9MnCfP0s2Vkd21JStygGnWcgLAvV7aVLxLyDLsv453hcAk/4iObIjQRQq648iR/A4OVxND2W0CGkZHxBhTA=
-X-Received: by 2002:adf:e6c9:0:b0:369:b7e3:4983 with SMTP id
- ffacd0b85a97d-369bae01bdemr6548783f8f.1.1721726137514; Tue, 23 Jul 2024
- 02:15:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721726142; x=1722330942;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dn0oMV7bhyORjlIV9NNrpUbkRujXMXyPxUT7qs9yU/E=;
+        b=HVZBSsWNASHWMTua5vjdCAjjCI5+E6mu41QCdZy+6aS8JRSXwhNhAV1AnqXSvsoX26
+         zF0nC8xJNEgMKUuMsy4EXhTx6nhoXqA7p/INuXBNkjFjP0ah/WonZXrwQBhWZp1KP/AJ
+         2f6my8hHV7oWsxlKe49UMzFeaKobHJUHsm9gxw5bAkAs7vQRSHdq5cejBzU8hTgwWS8n
+         HjAEJPATg7t57KOlnOWrfnTpIPs8RFpRIrSNpG2uWyoB3xIlgnulP0fhADLAooKvsQvw
+         wnnXPO93wZ9EnLYjnen2oGAJJcX8XCGzTjp28SvR0/lX64xejz0AicHAZuEf22qr0B2v
+         F7hw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgKYs/KwzvlZODhyuGnpamMgQeOx5rHyk/ix5P894jMMwuirLGVtgjJRoVUDPCzM6HFr3QK1gvSh+NuirEVk/G2OrtQvuZvF+HlTjp
+X-Gm-Message-State: AOJu0YyybBFXWZD4BrmTVT+tXb/FIJMmO9VrWQJC/Ab6jkrlaPCYQkhE
+	+7IUr7vLw27f0BW5sXXtMyXxgHC33Mn6qkLt0f29ZRcwYp0auRqnUt2XNXorjHIhRx7oPqiBadU
+	Qwyoq2vO/F9WzzD3vmsWvHN5S3X8+3ijKX399QOerGPursyTucsx7hUeMJhkqAQ==
+X-Received: by 2002:a81:eb01:0:b0:665:7184:fcd0 with SMTP id 00721157ae682-66e4c57cc07mr25524977b3.23.1721726142420;
+        Tue, 23 Jul 2024 02:15:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE4IiXmj2FuxzskFkC0utHW7AkKAtNEST/fURo/dZSMHzQSDCbMp7OLSFmaIo2lbAehtKKQ1w==
+X-Received: by 2002:a81:eb01:0:b0:665:7184:fcd0 with SMTP id 00721157ae682-66e4c57cc07mr25524867b3.23.1721726142107;
+        Tue, 23 Jul 2024 02:15:42 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.147.11])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b7ac9c35cdsm45486866d6.98.2024.07.23.02.15.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 02:15:41 -0700 (PDT)
+Date: Tue, 23 Jul 2024 11:15:37 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Wander Lairson Costa <wander@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	"open list:SCHEDULER" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] sched/deadline: Consolidate Timer Cancellation
+Message-ID: <Zp90uZSUPkLmluEo@jlelli-thinkpadt14gen4.remote.csb>
+References: <20240722132935.14426-1-wander@redhat.com>
+ <20240722132935.14426-4-wander@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711-b4-rbtree-v6-0-14bef1a8cdba@google.com> <20240711-b4-rbtree-v6-1-14bef1a8cdba@google.com>
-In-Reply-To: <20240711-b4-rbtree-v6-1-14bef1a8cdba@google.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 23 Jul 2024 11:15:25 +0200
-Message-ID: <CAH5fLggtbe0kjA-Wz4mi66MCLLczaC0MfyAc9S3xw6tQfoXw4Q@mail.gmail.com>
-Subject: Re: [PATCH v6 1/6] rust: kernel: add `drop_contents` to `BoxExt`
-To: Matt Gilbride <mattgilbride@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Christian Brauner <brauner@kernel.org>, Rob Landley <rob@landley.net>, 
-	Davidlohr Bueso <dave@stgolabs.net>, Michel Lespinasse <michel@lespinasse.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240722132935.14426-4-wander@redhat.com>
 
-On Thu, Jul 11, 2024 at 6:21=E2=80=AFPM Matt Gilbride <mattgilbride@google.=
-com> wrote:
->
-> From: Benno Lossin <benno.lossin@proton.me>
->
-> Sometimes (see [1]) it is necessary to drop the value inside of a
-> `Box<T>`, but retain the allocation. For example to reuse the allocation
-> in the future.
-> Introduce a new function `drop_contents` that turns a `Box<T>` into
-> `Box<MaybeUninit<T>>` by dropping the value.
->
-> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
-> Link: https://lore.kernel.org/rust-for-linux/20240418-b4-rbtree-v3-5-323e=
-134390ce@google.com/ [1]
+Hi Wander,
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Guess this might help yes, only a minor naming suggestion below.
+
+On 22/07/24 10:29, Wander Lairson Costa wrote:
+> After commit b58652db66c9 ("sched/deadline: Fix task_struct reference
+> leak"), I identified additional calls to hrtimer_try_to_cancel that
+> might also require a dl_server check. It remains unclear whether this
+> omission was intentional or accidental in those contexts.
+> 
+> This patch consolidates the timer cancellation logic into dedicated
+> functions, ensuring consistent behavior across all calls.
+> Additionally, it reduces code duplication and improves overall code
+> cleanliness.
+> 
+> Note the use of the __always_inline keyword. In some instances, we
+> have a task_struct pointer, dereference the dl member, and then use
+> the container_of macro to retrieve the task_struct pointer again. By
+> inlining the code, the compiler can potentially optimize out this
+> redundant round trip.
+> 
+> Signed-off-by: Wander Lairson Costa <wander@redhat.com>
+> ---
+>  kernel/sched/deadline.c | 44 ++++++++++++++++++++++++++---------------
+>  1 file changed, 28 insertions(+), 16 deletions(-)
+> 
+> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> index 908d5ce79425..8b0bbade2dcb 100644
+> --- a/kernel/sched/deadline.c
+> +++ b/kernel/sched/deadline.c
+> @@ -320,6 +320,29 @@ void sub_running_bw(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
+>  		__sub_running_bw(dl_se->dl_bw, dl_rq);
+>  }
+>  
+> +static __always_inline
+> +void cancel_timer(struct sched_dl_entity *dl_se, struct hrtimer *timer)
+> +{
+> +	/*
+> +	 * If the timer callback was running (hrtimer_try_to_cancel == -1),
+> +	 * it will eventually call put_task_struct().
+> +	 */
+> +	if (hrtimer_try_to_cancel(timer) == 1 && !dl_server(dl_se))
+> +		put_task_struct(dl_task_of(dl_se));
+> +}
+> +
+> +static __always_inline
+> +void cancel_dl_timer(struct sched_dl_entity *dl_se)
+
+Maybe we could call the above cancel_replenish_timer
+
+> +{
+> +	cancel_timer(dl_se, &dl_se->dl_timer);
+
+and this one cancel_dl_timer?
+
+Best,
+Juri
+
 
