@@ -1,127 +1,224 @@
-Return-Path: <linux-kernel+bounces-260264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16CF793A525
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:54:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FFB493A528
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE3BF1F23507
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:54:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FCE01F233F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE591586D5;
-	Tue, 23 Jul 2024 17:54:49 +0000 (UTC)
-Received: from mailscanner01.zoner.fi (mailscanner01.zoner.fi [84.34.166.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9081586FE;
+	Tue, 23 Jul 2024 17:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HthFAbE2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B851C381B1;
-	Tue, 23 Jul 2024 17:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.34.166.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C5AF381B1;
+	Tue, 23 Jul 2024 17:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721757288; cv=none; b=TvqNyjzsrcqT9OjcqbB2DBmRIhAxwiPcj9rbbJcVJ1peZmM/w9Z0ez83I8qV2vfFSFN137706g/JFsJQP7aYETAR0A9cGslp0q5+4mn2IRm3OVKCQV7afv+NkHXpn1ph5xm+7OAlwcyd7vv5lOqi0qatHoJwaBjIDhlln8ORx6M=
+	t=1721757386; cv=none; b=PFZmLbxJS+qzUfJuxl6rZjAGyuUt4CN2gIAE4XfuO3PhAN0l6YXzEZBS/MDbnlnjmFsSnr1/AzteUrvBaqvC/nojvfpGVB3+FNI7lOmx+q2Tz4kkTku3I/qy9J+l0DTS0eoengNMt1MtqHN3YpY9RTZK6c2b3arUpzXsqW72A3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721757288; c=relaxed/simple;
-	bh=CEp0oM4Z++m3KlQz6EH9Q04PwiCQr86oynMqr/rUryU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ml+9H7ln3iHRkwCGxOMwidM8bLrSMWzBeq/3wOEz0se+Y0KNEQjszgqXLoKYw3S4o2o91O4RTrVhN3ULKH5Z2lALyecYWCq1aW8jm4TCq5pSLPsdr0vRZpc77oT9WIs/xB9zZp7zNroaoWQyzPLDK/Zg8ipr1xbeJdHKUD2tZ0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tukaani.org; spf=pass smtp.mailfrom=tukaani.org; arc=none smtp.client-ip=84.34.166.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tukaani.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tukaani.org
-Received: from www25.zoner.fi (www25.zoner.fi [84.34.147.45])
-	by mailscanner01.zoner.fi (Postfix) with ESMTPS id 71F794342E;
-	Tue, 23 Jul 2024 20:54:38 +0300 (EEST)
-Received: from mail.zoner.fi ([84.34.147.244])
-	by www25.zoner.fi with esmtp (Exim 4.97.1)
-	(envelope-from <lasse.collin@tukaani.org>)
-	id 1sWJid-0000000ACmB-0GIh;
-	Tue, 23 Jul 2024 20:54:38 +0300
-Date: Tue, 23 Jul 2024 20:54:37 +0300
-From: Lasse Collin <lasse.collin@tukaani.org>
-To: Jonathan Corbet <corbet@lwn.net>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Sam James <sam@gentoo.org>, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 08/16] docs: Add XZ_EXTERN to c_id_attributes
-Message-ID: <20240723205437.3c0664b0@kaneli>
-In-Reply-To: <87r0bms5da.fsf@trenco.lwn.net>
-References: <20240721133633.47721-1-lasse.collin@tukaani.org>
-	<20240721133633.47721-9-lasse.collin@tukaani.org>
-	<87r0bms5da.fsf@trenco.lwn.net>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721757386; c=relaxed/simple;
+	bh=lI27AGHSNiEg23GogeEx/hdKprk9OzcyxtP42lFjVLo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mbuqyEsgmBU/QrBmi5sxXMhdPzKNDsSW86We3GO+fkKzZFJew2FbA+3TvFtWs2q3EtA0YYonaT3aSv2sQ30j3gsLoYdSpv0MUALX1PJZFc+Ec7Z5pCZBjTyac24xgBDpHWfBP0EJSflpVsjbRhtrprX+iUX7rnJAfhATrXKTrFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HthFAbE2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3560BC4AF0A;
+	Tue, 23 Jul 2024 17:56:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721757386;
+	bh=lI27AGHSNiEg23GogeEx/hdKprk9OzcyxtP42lFjVLo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HthFAbE2P6nQ5UjgNk9WHNTD0AtXThl8hFI9mD2GZamcjuPfM4cf8/fEFNyNsuxOM
+	 Poh3AiihsfS4mplFeVaIWwiLosMsVc2IxojQjR1z4snu2puIOcKVHEvI6ZyIhTJ0Za
+	 3rPsProkPmncJJxysOVvHhkpxZC98bKXdossZB3rroW2/ewWpuxTpaz/HVXUeFrNqb
+	 Ttk3a+62SFuaxoEVOnUU7y11RwzKNHQRXFGZ85IWb6iJh6hWzx4yYBWzg55mSgNRnW
+	 P7qMNXLBVYD5S4I8wcBeCAYtE6Ui8c+4LcoiBfiIBrd33eVp6fhePs6IWl29+j/+ag
+	 eY5JbKjwO9/9w==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sWJkO-00Enco-6b;
+	Tue, 23 Jul 2024 18:56:24 +0100
+Date: Tue, 23 Jul 2024 18:56:23 +0100
+Message-ID: <86bk2o2drs.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Zhou Wang <wangzhou1@hisilicon.com>
+Cc: <kvmarm@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Nianyao
+ Tang <tangnianyao@huawei.com>
+Subject: Re: [PATCH 3/3] irqchip/gic-v4: Make sure a VPE is locked when VMAPP is issued
+In-Reply-To: <4b05e4fe-0906-102f-5697-eec7ee222bef@hisilicon.com>
+References: <20240705093155.871070-1-maz@kernel.org>
+	<20240705093155.871070-4-maz@kernel.org>
+	<2c9489cc-d276-7c52-5d52-7f234fdc726e@hisilicon.com>
+	<86h6cl39ff.wl-maz@kernel.org>
+	<4b05e4fe-0906-102f-5697-eec7ee222bef@hisilicon.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: wangzhou1@hisilicon.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, tglx@linutronix.de, tangnianyao@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 2024-07-21 Jonathan Corbet wrote:
-> I spent a little while trying to figure out why we need XZ_EXTERN at
-> all but lost in the #includes...
+On Tue, 23 Jul 2024 02:51:32 +0100,
+Zhou Wang <wangzhou1@hisilicon.com> wrote:
+>=20
+> On 2024/7/19 19:31, Marc Zyngier wrote:
+> > On Fri, 19 Jul 2024 10:42:02 +0100,
+> > Zhou Wang <wangzhou1@hisilicon.com> wrote:
+> >>
+> >> On 2024/7/5 17:31, Marc Zyngier wrote:
+> >>> In order to make sure that vpe->col_idx is correctly sampled
+> >>> when a VMAPP command is issued, we must hold the lock for the
+> >>> VPE. This is now possible since the introduction of the per-VM
+> >>> vmapp_lock, which can be taken before vpe_lock in the locking
+> >>> order.
+> >>>
+> >>> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> >>> ---
+> >>>  drivers/irqchip/irq-gic-v3-its.c | 8 ++++++--
+> >>>  1 file changed, 6 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-g=
+ic-v3-its.c
+> >>> index b52d60097cad5..951ec140bcea2 100644
+> >>> --- a/drivers/irqchip/irq-gic-v3-its.c
+> >>> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> >>> @@ -1810,7 +1810,9 @@ static void its_map_vm(struct its_node *its, st=
+ruct its_vm *vm)
+> >>>  		for (i =3D 0; i < vm->nr_vpes; i++) {
+> >>>  			struct its_vpe *vpe =3D vm->vpes[i];
+> >>> =20
+> >>> -			its_send_vmapp(its, vpe, true);
+> >>> +			scoped_guard(raw_spinlock, &vpe->vpe_lock)
+> >>> +				its_send_vmapp(its, vpe, true);
+> >>> +
+> >>>  			its_send_vinvall(its, vpe);
+> >>>  		}
+> >>>  	}
+> >>> @@ -1827,8 +1829,10 @@ static void its_unmap_vm(struct its_node *its,=
+ struct its_vm *vm)
+> >>>  	if (!--vm->vlpi_count[its->list_nr]) {
+> >>>  		int i;
+> >>> =20
+> >>> -		for (i =3D 0; i < vm->nr_vpes; i++)
+> >>> +		for (i =3D 0; i < vm->nr_vpes; i++) {
+> >>> +			guard(raw_spinlock)(&vm->vpes[i]->vpe_lock);
+> >>>  			its_send_vmapp(its, vm->vpes[i], false);
+> >>> +		}
+> >>>  	}
+> >>>  }
+> >>> =20
+> >>
+> >> Hi Marc,
+> >>
+> >> It looks like there is ABBA deadlock after applying this series:
+> >>
+> >> In its_map_vm: vmapp_lock -> vpe_lock
+> >> In its_vpe_set_affinity: vpe_to_cpuid_lock(vpe_lock) -> its_send_vmovp=
+(vmapp_lock)
+> >>
+> >> Any idea about this?
+> >=20
+> > Hmmm, well spotted. That's an annoying one.
+> >=20
+> > Can you give the below hack a go? I've only lightly tested it, as my
+> > D05 box is on its last leg (it is literally falling apart) and I don't
+> > have any other GICv4.x box to test on.
+> >=20
+> > Thanks,
+> >=20
+> > 	M.
+> >=20
+> > diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic=
+-v3-its.c
+> > index 951ec140bcea2..b88c6011c8771 100644
+> > --- a/drivers/irqchip/irq-gic-v3-its.c
+> > +++ b/drivers/irqchip/irq-gic-v3-its.c
+> > @@ -1328,12 +1328,6 @@ static void its_send_vmovp(struct its_vpe *vpe)
+> >  		return;
+> >  	}
+> > =20
+> > -	/*
+> > -	 * Protect against concurrent updates of the mapping state on
+> > -	 * individual VMs.
+> > -	 */
+> > -	guard(raw_spinlock_irqsave)(&vpe->its_vm->vmapp_lock);
+> > -
+> >  	/*
+> >  	 * Yet another marvel of the architecture. If using the
+> >  	 * its_list "feature", we need to make sure that all ITSs
+> > @@ -3808,7 +3802,7 @@ static int its_vpe_set_affinity(struct irq_data *=
+d,
+> >  	struct its_vpe *vpe =3D irq_data_get_irq_chip_data(d);
+> >  	unsigned int from, cpu =3D nr_cpu_ids;
+> >  	struct cpumask *table_mask;
+> > -	unsigned long flags;
+> > +	unsigned long flags, vmapp_flags;
+> > =20
+> >  	/*
+> >  	 * Changing affinity is mega expensive, so let's be as lazy as
+> > @@ -3822,7 +3816,14 @@ static int its_vpe_set_affinity(struct irq_data =
+*d,
+> >  	 * protect us, and that we must ensure nobody samples vpe->col_idx
+> >  	 * during the update, hence the lock below which must also be
+> >  	 * taken on any vLPI handling path that evaluates vpe->col_idx.
+> > +	 *
+> > +	 * Finally, we must protect ourselves against concurrent
+> > +	 * updates of the mapping state on this VM should the ITS list
+> > +	 * be in use.
+> >  	 */
+> > +	if (its_list_map)
+> > +		raw_spin_lock_irqsave(&vpe->its_vm->vmapp_lock, vmapp_flags);
+> > +
+> >  	from =3D vpe_to_cpuid_lock(vpe, &flags);
+> >  	table_mask =3D gic_data_rdist_cpu(from)->vpe_table_mask;
+> > =20
+> > @@ -3852,6 +3853,9 @@ static int its_vpe_set_affinity(struct irq_data *=
+d,
+> >  	irq_data_update_effective_affinity(d, cpumask_of(cpu));
+> >  	vpe_to_cpuid_unlock(vpe, flags);
+> > =20
+> > +	if (its_list_map)
+> > +		raw_spin_unlock_irqrestore(&vpe->its_vm->vmapp_lock, vmapp_flags);
+> > +
+> >  	return IRQ_SET_MASK_OK_DONE;
+> >  }
+> >
+>=20
+> Hi Marc=EF=BC=8C
+>=20
+> We add above code to do test again. Now it is OK.
 
-This is a good question. I looked at it and now I think that it's not
-actually needed. Thus, this patch to Documentation/conf.py should be
-dropped from this series, and I will submit a new patch to remove
-XZ_EXTERN.
+Great, thanks for giving it a go. I have just posted an actual patch
+(with the exact same change) at [1]. It would be good if you could
+give it a Tested-by: tag.
 
-Preboot code on several archs has "#define STATIC static", for example:
+Thanks,
 
-    arch/x86/boot/compressed/misc.c
-    arch/arm/boot/compressed/decompress.c
-    arch/mips/boot/compressed/decompress.c
-    drivers/firmware/efi/libstub/zboot.c
+	M.
 
-These files #include one of lib/decompress_*.c files. The STATIC macro
-is used to detect if the code is being built for preboot code instead
-of initramfs decompression. The STATIC macro is also used to make a few
-functions static in lib/decompress_*.c files (and also in
-lib/inflate.c).
+[1] https://lore.kernel.org/r/20240723175203.3193882-1-maz@kernel.org
 
-Note that even if STATIC isn't initially defined, the
-lib/decompress_*.c files have
-
-    #include <linux/decompress/mm.h>
-
-which will then "#define STATIC" (empty value).
-
-lib/decompress_unxz.c makes all XZ functions static in preboot code via
-the XZ_EXTERN macro. I'm not sure why I have done so. The commit
-message from 2009 in my upstream tree isn't very specific.
-
-STATIC is used also in lib/inflate.c to make functions static. However,
-that file *seems* to be used only on alpha and nios2; it's *not* used
-by lib/decompress_inflate.c which uses lib/zlib_inflate/inflate.c with
-its extern functions in preboot code. But lib/inflate.c might have made
-me think that there's a need to make functions static in some cases.
-
-lib/decompress_unzstd.c is newer. It doesn't attempt to make all
-functions static in preboot use.
-
-Omitting XZ_EXTERN doesn't produce any warnings or make any difference
-in x86 or ARM64 (CONFIG_EFI_ZBOOT=y) kernel sizes. (I'm ignoring a few
-dozen bytes of noise on ARM64 between repeated builds.)
-
-The boot code on PowerPC is special and it touches the XZ_EXTERN macro
-in its xz_config.h. Relevant files:
-
-    arch/powerpc/boot/xz_config.h
-    arch/powerpc/boot/decompress.c
-
-The "#undef XZ_EXTERN" can be confusing but in the end all XZ_EXTERN
-uses become "static" still. Comparing to zlib usage on PowerPC, it
-seems that decompressor functions aren't required to be static (zlib's
-files are pre-processed with a sed script but it doesn't make anything
-static). So, even without testing, it seems quite clear that removing
-XZ_EXTERN would be fine on PowerPC too.
-
-Thus, let's drop this patch to Documentation/conf.py, and I submit a
-patch to remove XZ_EXTERN.
-
-Thanks!
-
--- 
-Lasse Collin
+--=20
+Without deviation from the norm, progress is not possible.
 
