@@ -1,83 +1,162 @@
-Return-Path: <linux-kernel+bounces-260024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A974D93A1AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:37:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA60393A1B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:38:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D27851C223F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:37:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72DB6283E62
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3F1153804;
-	Tue, 23 Jul 2024 13:37:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA24C153569;
+	Tue, 23 Jul 2024 13:38:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nlYrEs+C"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PrVL/cCU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A13D208A0;
-	Tue, 23 Jul 2024 13:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12B9208A0;
+	Tue, 23 Jul 2024 13:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721741831; cv=none; b=ZrH+Vw2O/Qc5up6BiRDsaBW0MLPti9MHHdNM6bWcicff0BPHd+U/oJdtztIZvmTR6v69VriMRKR5Y3lVuIE76bpEwXwcnBlWu3kN8HJxCPV8keBZXa3BUpo1TZt3Dy8UggFfg6LSaI+CkPEvfH+paqODTAf+5DAXtR3OhBmro30=
+	t=1721741931; cv=none; b=Y6g6Dt2ibRswAPK/ZiUezoFSq2IlVHox9EuRmDoUFKWOZH9YIohSSmmHE5m4rEa2bzJ4abqIArOFDS3vTCWKTrGW3YA219FRtHEWxvKv5z69DjPV12BGJolmn3cLNOMeHJY0sknsb8MIoRPY/04+ZG7SSYsau/wSjfyl/yiWRcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721741831; c=relaxed/simple;
-	bh=5t0Khf/IjSWvffPIkr/PEt4jzqjCx4H/OB6GTH3EtOE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DU5UlF6Rm0DIb3RQin9EEDyLFEs34QOu4LNBUwBxyoBivqSU59d2eBu8Ry+yT387qlv2bCOVBWVXXXowp6FlY4x5BH2lOD5zVnKS/wtGvBScsByrJBuNwb30NmTlm3ZTSOVRCyirdK8t0ZTuZ1mLtOPd+IBaEHc/qKq7lYa5c0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nlYrEs+C; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=cQRHyNXL3w6huhz8TyiMZxjBFclafzptvvSA+EclITA=; b=nlYrEs+CwE5yOSVXh8sNf1Tey8
-	g4FuX77+0cv7nVi6DJhB7mo3aIluINkKkpPDmOKZJtF2gVtcXx4EyruLqot5CnPgx8ClkO8NAl38I
-	vk4ly1n/XTQ/xcgrclVU5KVi5g+Ld0zWFY3w0f8yig2YpsdeECGPBbcajHkeBk0wFSrz08f+Ez5xS
-	D5xKE+IYVy0tdqTvH3QJPIkjwMvbt7/6Y2aM+naoqUjeFqSHENpKXEVBIFZcIasWsy2PsHgeP6Bgl
-	ubj2B6Biye9mBU7oyBe6202b+0H+COUNZDWoOtrzW1IAT2BtlnTRyp4nOleGNjbe1pjVV7SAYG9E7
-	njlPGo9g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sWFhP-0000000CZQi-0A45;
-	Tue, 23 Jul 2024 13:37:03 +0000
-Date: Tue, 23 Jul 2024 06:37:03 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Youling Tang <youling.tang@linux.dev>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, tytso@mit.edu,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
-	linux-modules@vger.kernel.org
-Subject: Re: [PATCH 0/3] Add {init, exit}_sequence_fs() helper function
-Message-ID: <Zp-x_zm7Jp1FBol5@infradead.org>
-References: <20240711074859.366088-1-youling.tang@linux.dev>
- <Zo-XMrK6luarjfqZ@infradead.org>
- <b58e6f36-9a13-488a-85d2-913dd758f89b@linux.dev>
+	s=arc-20240116; t=1721741931; c=relaxed/simple;
+	bh=uRi1AB8AqowQcd8KFLY8MHr892jj9UIN2dVki7R4XPo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fXG51FWlDvJNHPAdsdabi0DO44duiInua6UQLCenq0g02LSfrpQ8VUGaMEz9Bu5QkkWGxqjYmCSrEpVHRxfDmAFKeo+rK9BE0Q30cOGIG2QLt8AZoz4F0OSZk90guVZBsllby2MUfxJ4V2wty83ccmdEvtRsyFY/pBr7iYyW56Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PrVL/cCU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE5B9C4AF0A;
+	Tue, 23 Jul 2024 13:38:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721741931;
+	bh=uRi1AB8AqowQcd8KFLY8MHr892jj9UIN2dVki7R4XPo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PrVL/cCUkPWwTIi6EZiA+2lkQqW+CDe7Cvni74Yqhugp1Oe2219SIAjsQA6ZT2UUH
+	 mDs5mEcvWPnYQakl0PhoV2csCBcyyVXTFPh1Cet255dyW0UtxbNyidM+7UXaHziYjP
+	 yEjlo7LDaF29KqpY8gE7bv01w5gO0TXi5yaBr+bq8UxZcmxjEMQbumr+rPPkZ0aMdg
+	 CHnhJqUkBQ1WDJXpj/kBDFt4PkIGBs8PH5TBhI+Bm9Y1eGKLDtFGDXVqJaRWIvfg/V
+	 CUL88N6LvOvxMscbWyxrUvPBzrLHcPk/cr76vAMaeQVUwm7tQ2AIEtMYKP5vpSulxw
+	 Bt1wKsgBc3AFQ==
+Message-ID: <b4985dc2-73e5-4917-9015-f891938c8880@kernel.org>
+Date: Tue, 23 Jul 2024 15:38:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b58e6f36-9a13-488a-85d2-913dd758f89b@linux.dev>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: s32g: add the pinctrl node
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
+ Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>,
+ Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ NXP S32 Linux Team <s32@nxp.com>
+References: <20240723123720.1088067-1-andrei.stefanescu@oss.nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20240723123720.1088067-1-andrei.stefanescu@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 23, 2024 at 04:44:14PM +0800, Youling Tang wrote:
-> Thanks for your suggestion,  I re-implemented it using section mode,
-> and the new patch set [1] has been sent.
+On 23/07/2024 14:37, Andrei Stefanescu wrote:
+> Add the pinctrl node in the device tree in order to enable the
+> S32G2/S32G3 pinctrl driver to probe.
+> 
+> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/s32g2.dtsi | 51 +++++++++++++++++++++++
+>  arch/arm64/boot/dts/freescale/s32g3.dtsi | 53 +++++++++++++++++++++++-
+>  2 files changed, 103 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/s32g2.dtsi b/arch/arm64/boot/dts/freescale/s32g2.dtsi
+> index fc19ae2e8d3b..b31f6857640b 100644
+> --- a/arch/arm64/boot/dts/freescale/s32g2.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/s32g2.dtsi
+> @@ -159,5 +159,56 @@ gic: interrupt-controller@50800000 {
+>  			interrupt-controller;
+>  			#interrupt-cells = <3>;
+>  		};
+> +
+> +		pinctrl: pinctrl@4009c240 {
+> +			compatible = "nxp,s32g2-siul2-pinctrl";
+> +				/* MSCR0-MSCR101 registers on siul2_0 */
+> +			reg = <0x4009c240 0x198>,
+> +				/* MSCR112-MSCR122 registers on siul2_1 */
+> +			      <0x44010400 0x2c>,
+> +				/* MSCR144-MSCR190 registers on siul2_1 */
+> +			      <0x44010480 0xbc>,
+> +				/* IMCR0-IMCR83 registers on siul2_0 */
+> +			      <0x4009ca40 0x150>,
+> +				/* IMCR119-IMCR397 registers on siul2_1 */
+> +			      <0x44010c1c 0x45c>,
+> +				/* IMCR430-IMCR495 registers on siul2_1 */
+> +			      <0x440110f8 0x108>;
+> +			status = "okay";
 
-Nice!  I'll review it.
+Where did you disable it?
+
+> +
+> +			jtag_pins: jtag_pins {
+
+Underscores are not allowed. Please follow DTS coding style. The
+mainline one, not NXP coding style. Several other places here have also
+issues, so be sure you read if carefully.
+
+>  	timer {
+
+Best regards,
+Krzysztof
 
 
