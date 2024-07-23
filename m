@@ -1,148 +1,141 @@
-Return-Path: <linux-kernel+bounces-260261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E91793A51C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:49:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E999E93A521
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:52:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9B05283DF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:49:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A484C283F33
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33A4158201;
-	Tue, 23 Jul 2024 17:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD162158206;
+	Tue, 23 Jul 2024 17:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lDWF8sbx"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Slsn31Z3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07671381B1;
-	Tue, 23 Jul 2024 17:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF5F7381B1
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 17:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721756976; cv=none; b=USnFbIF0aBZWHR5BA+fL6LykPxLo45j7MlEQbh1z3QigHaytZRC9o5fHQSo2MLWKQ+kdV2bk2Gfuo8TLMGKsQ63/2YX0oS55rUPc0AnlKhpsh9E9wL74XW5jedAl6Z8y1nAnPmgGmHx7UyvG5NmNiiveysGItZ2E4wcxIcJ2HWU=
+	t=1721757132; cv=none; b=jkfAijt/H6vja7EDZGCcOeAZU5lRR/Ks7igBwzzIukUwJ6WcPDqATkHm+T7vAPMKEXNZKEMNnoTxJElCQKUtaHMB6eGt9SVHEnLLmSZS77L7n1wh5v4+Nf3fUtPegnJSkwhTCJunfMpa1U2f5xUNSjWj/zKrzd5stz3euJ5sWyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721756976; c=relaxed/simple;
-	bh=ukXSgZlZzqNl2Shk56zE2uJF2BQgmxvy6tlluHspA78=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=alDeyAn4eTNLCcMwiX99F30DozoLb7oCl9vFqmuk90JEGJwtOVDvYfgws8E1b5WvHFmOkBYGZbNbM0BO7MJ+nbI4ulfmvdMMP4Dq6Me0xl1mzSggatW2dn1qXZqZyWpyrUQE+y23Qzvuv62bZ0J75ecCsboo7mfB2xt+wcV9S0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lDWF8sbx; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e0875778facso3333997276.3;
-        Tue, 23 Jul 2024 10:49:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721756973; x=1722361773; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ANWw5uNeyRqUnyFj0bwffCAjqYWhMwE6a/JHlQCsG5w=;
-        b=lDWF8sbxytXW/YPADHKs53GeLU7iSGBri3UT01ek+7qhsPyel4/7j5FV5o4B40JMTt
-         xPqPH2gz2Kv6f59ILc88NPDkOmomo6tEW7PIGRSIknWZTYWTYmuuBx6WPSP303t/cUCI
-         WnbyUn4QKK4w7sFDU+S3amp0U83I2RhUw1sSaknO8cSrcq9lzoUszeu76BE97eZ3HjRp
-         Sz6EtCZZ7qodADYaLge2/xpl2Hts0Ol8ZSWK+aTtADRmv8K3sBKqiqDgyayvd9bNFY9j
-         wKALL/j+yNIydBJ+LK+q3016CHg4qGruLFA0cfMS78/EiOIoCLrAiDJQzZdc3qXhh4A1
-         ciwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721756973; x=1722361773;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ANWw5uNeyRqUnyFj0bwffCAjqYWhMwE6a/JHlQCsG5w=;
-        b=KXJjWreRKcHtAgcIuFQqeLaxsS+G59NyMJ5U/AJiWg4UfPb9hHSxJRpFDZqhnCTk8O
-         YMJCG1tvDFjalyVXsMlHM+FH7JVaKfQxN4101V/1m/cxDyxoeZkavWx0hRBNOyTYlctf
-         iXm54ZCULKbmz/EXjzhNIxVYZ2eECFGJrTddatsKjBHk88FnHpOD6FFBqk+HfWgd3WvW
-         vlRlxmzO+j6lucBXs537R6llCJiCXDTH5vyVSxGpboT6KCMyp2dUva/Yv2mQ/lP604en
-         V4hqWT3fiCLuax60DZkX/anEygX2M0tgSIE31zi0LmjwzOzeZzVumQC/4xQD56nmEeH0
-         EOew==
-X-Forwarded-Encrypted: i=1; AJvYcCVSOrZcSs79w3GyDLUg6TSLOq58aGO3erZCk1kHRTBrW1TxYBbI+dICfP8C3v5NAoeuD2cOWtC8zkZVpciSfvASAc4qvMbfsyRtPbrweCPYVNvcbBGn4sY2hrOW7GotgFToRE/MmwJ2
-X-Gm-Message-State: AOJu0Yz+ydFWit8H90wDlkd/RIc+EgjYBN3YiWQKczuH7Ec7d6B96G/U
-	r8/gyGtUI7nP/1jLE+6wZK9xFF5MfaE0gd1BbQOBJOdJwuMKccUWaGrY1w==
-X-Google-Smtp-Source: AGHT+IEETxrwz681WygXsuHTtpOPDiZXhAZdhe6NRhewySnnyu3I/1tQHPi9s6okYskK/Sx0bVbP5w==
-X-Received: by 2002:a05:6902:2b87:b0:e05:fc94:4e30 with SMTP id 3f1490d57ef6-e0b098c31d6mr617290276.47.1721756972950;
-        Tue, 23 Jul 2024 10:49:32 -0700 (PDT)
-Received: from gpd ([50.205.20.42])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e0860ae9c1asm1942108276.50.2024.07.23.10.49.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 10:49:32 -0700 (PDT)
-From: fan <nifan.cxl@gmail.com>
-X-Google-Original-From: fan <fan@gpd>
-Date: Tue, 23 Jul 2024 10:49:30 -0700
-To: Huang Ying <ying.huang@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alison Schofield <alison.schofield@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Bharata B Rao <bharata@amd.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>
-Subject: Re: [PATCH v3 3/3] cxl/region: Simplify cxl_region_nid()
-Message-ID: <Zp_tKpLvjvSBgIB6@gpd>
-References: <20240618084639.1419629-1-ying.huang@intel.com>
- <20240618084639.1419629-4-ying.huang@intel.com>
+	s=arc-20240116; t=1721757132; c=relaxed/simple;
+	bh=5Vid5ceHiFFWZuNy4oItL9vBhbm1P/wz2ZcWpglh3NI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jH16B4S69qdu9uF0BzvDLslkiZwsfdriH6dnaFqqiqu0k0FiSydWWioIu+ba8mHNpcWyS+PUuMbZHfE1GJZyQM3FTJso8Yzqi3yE27k+E/82IuRMG2j7tScCj5J+IjqxtIHvMcueFjggTlxqlRq1HgK52LTji3o1BMn+nCmFV4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Slsn31Z3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0D78C4AF0A;
+	Tue, 23 Jul 2024 17:52:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721757131;
+	bh=5Vid5ceHiFFWZuNy4oItL9vBhbm1P/wz2ZcWpglh3NI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Slsn31Z3HS1rCiq7noZ/fe9lMibmtTs8AxDQ1S7O5AzClrE9Ik9qvUZDwsuHi4Ddu
+	 Q2VzE098efUYrUDs+aLZ+DM/fft7PnWCFkSzNmnfN5rz54fN+hk5/Fl+nF25oFDe+6
+	 f9dTPLDEebgoZvJCgJSWZU6ZQUqsj9VFg29OrPSbCaXeN/5e973374K/MeX9+VCX0X
+	 xNCPcvY4F5UxjMdBWDb+fT8d9v9q5C2y7EdVpt+CYHO00hL78JfQgAGZ1Z021krgMn
+	 ThYGz7NabeIdGlGIi29HwY2DD71Cu1GY+xqMDMzjrt4rb9jySCaay4U0ZKQXgNOhii
+	 iK+DT+7X3XW4A==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sWJgH-00EnZ4-Ue;
+	Tue, 23 Jul 2024 18:52:10 +0100
+From: Marc Zyngier <maz@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Zhou Wang <wangzhou1@hisilicon.com>
+Subject: [PATCH] irqchip/gic-v4: Fix ordering between vmapp and vpe locks
+Date: Tue, 23 Jul 2024 18:52:03 +0100
+Message-Id: <20240723175203.3193882-1-maz@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618084639.1419629-4-ying.huang@intel.com>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tglx@linutronix.de, wangzhou1@hisilicon.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Jun 18, 2024 at 04:46:39PM +0800, Huang Ying wrote:
-> The node ID of the region can be gotten via resource start address
-> directly.  This simplifies the implementation of cxl_region_nid().
-> 
-> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-> Suggested-by: Alison Schofield <alison.schofield@intel.com>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Cc: Dave Jiang <dave.jiang@intel.com>
-> Cc: Bharata B Rao <bharata@amd.com>
-> Cc: Alistair Popple <apopple@nvidia.com>
-> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> Cc: Davidlohr Bueso <dave@stgolabs.net>
-> Cc: Vishal Verma <vishal.l.verma@intel.com>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> ---
->  drivers/cxl/core/region.c | 10 ++++------
->  1 file changed, 4 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index dc15ceba7ab7..605efe3562c6 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -2309,15 +2309,13 @@ static bool cxl_region_update_coordinates(struct cxl_region *cxlr, int nid)
->  static int cxl_region_nid(struct cxl_region *cxlr)
->  {
->  	struct cxl_region_params *p = &cxlr->params;
-> -	struct cxl_endpoint_decoder *cxled;
-> -	struct cxl_decoder *cxld;
-> +	struct resource *res;
->  
->  	guard(rwsem_read)(&cxl_region_rwsem);
-> -	cxled = p->targets[0];
-> -	if (!cxled)
-> +        res = p->res;
-> +	if (!res)
->  		return NUMA_NO_NODE;
-> -	cxld = &cxled->cxld;
-> -	return phys_to_target_node(cxld->hpa_range.start);
-> +	return phys_to_target_node(res->start);
->  }
->  
->  static int cxl_region_perf_attrs_callback(struct notifier_block *nb,
-> -- 
-> 2.39.2
-> 
+The (recently established) lock ordering mandates that the per-VM
+vmapp_lock is acquired before we take the per-VPE lock.
 
-Reviewed-by: Fan Ni <fan.ni@samsung.com>
+As it turns out, its_vpe_set_affinity() takes the VPE lock, and
+then calls into its_send_vmovp(), which itself takes the vmapp
+lock. Obviously, this isn't what we want.
+
+As its_send_vmovp() is only called from its_vpe_set_affinity(),
+hoist the vmapp locking from the former into the latter, restoring
+the expected order.
+
+Fixes: f0eb154c39471 ("irqchip/gic-v4: Substitute vmovp_lock for a per-VM lock")
+Reported-by: Zhou Wang <wangzhou1@hisilicon.com>
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+---
+ drivers/irqchip/irq-gic-v3-its.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index 951ec140bcea2..b88c6011c8771 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -1328,12 +1328,6 @@ static void its_send_vmovp(struct its_vpe *vpe)
+ 		return;
+ 	}
+ 
+-	/*
+-	 * Protect against concurrent updates of the mapping state on
+-	 * individual VMs.
+-	 */
+-	guard(raw_spinlock_irqsave)(&vpe->its_vm->vmapp_lock);
+-
+ 	/*
+ 	 * Yet another marvel of the architecture. If using the
+ 	 * its_list "feature", we need to make sure that all ITSs
+@@ -3808,7 +3802,7 @@ static int its_vpe_set_affinity(struct irq_data *d,
+ 	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
+ 	unsigned int from, cpu = nr_cpu_ids;
+ 	struct cpumask *table_mask;
+-	unsigned long flags;
++	unsigned long flags, vmapp_flags;
+ 
+ 	/*
+ 	 * Changing affinity is mega expensive, so let's be as lazy as
+@@ -3822,7 +3816,14 @@ static int its_vpe_set_affinity(struct irq_data *d,
+ 	 * protect us, and that we must ensure nobody samples vpe->col_idx
+ 	 * during the update, hence the lock below which must also be
+ 	 * taken on any vLPI handling path that evaluates vpe->col_idx.
++	 *
++	 * Finally, we must protect ourselves against concurrent
++	 * updates of the mapping state on this VM should the ITS list
++	 * be in use.
+ 	 */
++	if (its_list_map)
++		raw_spin_lock_irqsave(&vpe->its_vm->vmapp_lock, vmapp_flags);
++
+ 	from = vpe_to_cpuid_lock(vpe, &flags);
+ 	table_mask = gic_data_rdist_cpu(from)->vpe_table_mask;
+ 
+@@ -3852,6 +3853,9 @@ static int its_vpe_set_affinity(struct irq_data *d,
+ 	irq_data_update_effective_affinity(d, cpumask_of(cpu));
+ 	vpe_to_cpuid_unlock(vpe, flags);
+ 
++	if (its_list_map)
++		raw_spin_unlock_irqrestore(&vpe->its_vm->vmapp_lock, vmapp_flags);
++
+ 	return IRQ_SET_MASK_OK_DONE;
+ }
+ 
+-- 
+2.39.2
 
 
