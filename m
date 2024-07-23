@@ -1,111 +1,140 @@
-Return-Path: <linux-kernel+bounces-260055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D5093A24C
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:05:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16FBA93A24E
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3E87284EDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:05:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99930285255
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7F0154426;
-	Tue, 23 Jul 2024 14:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D3CC153BE8;
+	Tue, 23 Jul 2024 14:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cn05/Yz9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UiLG2loR"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E25153BF6;
-	Tue, 23 Jul 2024 14:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A8715383D;
+	Tue, 23 Jul 2024 14:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721743543; cv=none; b=sQIpaKSKMJ4euJvcDLt9uPBu4lveP6+mDlfojtuqOfQ+w2sLsCPbKmJlbCKl9/4AGEkNgc3BZAiux7RYfJPI6WLssWY2Xman/onhqevgJdXFfxqym97I6QzmxlrKZ8lYFFMJXcF4fmZVfXaHFRb4P0/mN4CCk95hl2/YgRToi7c=
+	t=1721743576; cv=none; b=DYCjuGdKN4pQcnyquSCP58JJ3kz3naRAV12gZ5yZPWPJ6IzqSErhJBrbrqQaJHuhseBOrm7qPSRAobPdwemYuyLYzdIBzezl3dDJGzI5+v3v0w/oPNCDaWL1O3U4rkTq5WJrzJrStZN5QmqDhIcmlOaZGsAd3kCQ0Z2zF6OMyD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721743543; c=relaxed/simple;
-	bh=rjtW1y2WGr38Vg1HMk17S2csjHOfKrRlV1/oyXILjDE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XoA28khKnw7iuu929mqTMYbCy9BwhBM1HCfGZfsRs6A5msc+NoC3FJjhvITVQMHd83zh3GWTEByJGLLUoUzbOQyMJ1QWQj1hu3xjqVZaWblII7KKtXI0+QSqI+M8NyxAI8gjxIenuBUh78/sQd1NUofoI37tlPDabjCZDD461kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cn05/Yz9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8CF4C4AF09;
-	Tue, 23 Jul 2024 14:05:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721743542;
-	bh=rjtW1y2WGr38Vg1HMk17S2csjHOfKrRlV1/oyXILjDE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cn05/Yz9p8b5OVCGE7RNDHYQVykxYphCvQ8IHIKMczMDfOG3wW2ApUC8tsDEPwTD0
-	 tJy0PB6N597mC6WmAVD3AtI1eb/DyITIPzt3HNYjE9KYzmLPXb04tAJEV8gsnqCLm+
-	 uVvVeA+kxxJW0UyCPKt2KyhL/HdnYqtgp39IhsYcUrsjSD+Evx1t4Ic3AyJ39135cU
-	 44aRmXBG0GI/ykA6uiUywmZlHpOBksE372AzAh5SDG/DjKzcjawGpUzGlCukbNBFQV
-	 QvPSId9lPQ0LeUvvzzT0sD4O20uOpdk+fHiu94ldEGmuhb7obUM+ENZHyVc/GVujM9
-	 gRzj3WQ7xIhag==
-Date: Tue, 23 Jul 2024 16:05:36 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Rick Wertenbroek <rick.wertenbroek@gmail.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>, rick.wertenbroek@heig-vd.ch,
-	alberto.dassatti@heig-vd.ch,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Frank Li <Frank.Li@nxp.com>,
-	Lars-Peter Clausen <lars@metafoo.de>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] PCI: endpoint: Introduce 'get_bar' to map fixed
- address BARs in EPC
-Message-ID: <Zp+4sDfopSiAdWt/@x1-carbon.lan>
-References: <20240719115741.3694893-1-rick.wertenbroek@gmail.com>
- <20240719115741.3694893-2-rick.wertenbroek@gmail.com>
- <b4256f7c-350b-4fba-ba49-a91ee463b8d7@kernel.org>
- <CAAEEuhqCM08NLTkM+WFh88S45OP-mjbJUd+KPtu2tBA+fbJvpw@mail.gmail.com>
- <b75de7a9-09fe-4c53-8e73-a3dbfd6efa4d@kernel.org>
- <CAAEEuhq1JLo+Lyhah6EGSTPZRbeEUFmbUehYXY1dA1f0KUwvrQ@mail.gmail.com>
+	s=arc-20240116; t=1721743576; c=relaxed/simple;
+	bh=5LfyikNmc6t2ubKu/NIbF+5AkfKO3WK3yLfCxk7MCGY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C91eMNuBhU04S62BEIyGnQM71pQgNt5o4Zu+ruDLhmmIJPpuATQhhGl7GkRtkxqORzhuWexQ4cIpnjNda6RgIniHYkcY8R4ifbAP9ojlJE8sPF3+FQs/+2YlA4vTLarzpbMhgBwxvm/dVVzOWzgc0LM/matofWnpZOgzT7AX9Q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UiLG2loR; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721743573;
+	bh=5LfyikNmc6t2ubKu/NIbF+5AkfKO3WK3yLfCxk7MCGY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=UiLG2loR9Vj0x0LT4vx7G+zWRuz/2/Xi5iElgWwWPqIEKVowPDVth1NpXs6gTjdrH
+	 +8nrg6JUDRpjeGcq1t4A5EGcqpBfpc3hcRx0xTNim0pCNYMVh4psLNcnap/En1CT02
+	 Cz9LCSGYfNIPmyL+YtgtivQbL67t8Fva6rDissrKTIOGd2pBxuN4wBTk7WcqRHK698
+	 iD0jlAu4Sd0RYe8ciwziQB2Jw7nFyX618mFSQpN/2Bwm+7+ZRC04C7kL1Y4Qb+JaEu
+	 gXgklK/IoednBHhlnzzlkLahesWrL/Hw9nXsVjgcOWz+lA2otC0pSrourqEGFyZkdn
+	 aSCw3puYNuxyQ==
+Received: from localhost.localdomain (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laura.nao)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B3B44378143B;
+	Tue, 23 Jul 2024 14:06:11 +0000 (UTC)
+From: Laura Nao <laura.nao@collabora.com>
+To: nfraprado@collabora.com
+Cc: gregkh@linuxfoundation.org,
+	kernel@collabora.com,
+	laura.nao@collabora.com,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	shuah@kernel.org,
+	skhan@linuxfoundation.org
+Subject: Re: [PATCH] selftests: ksft: Track skipped tests when finishing the test suite
+Date: Tue, 23 Jul 2024 16:06:22 +0200
+Message-Id: <20240723140622.100847-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <b558e9dd-3c09-44a2-923d-afe7bc2a7e97@notapiano>
+References: <b558e9dd-3c09-44a2-923d-afe7bc2a7e97@notapiano>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAEEuhq1JLo+Lyhah6EGSTPZRbeEUFmbUehYXY1dA1f0KUwvrQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 23, 2024 at 09:41:14AM +0200, Rick Wertenbroek wrote:
+On 7/22/24 20:51, Nícolas F. R. A. Prado wrote:
+> On Mon, Jul 22, 2024 at 11:32:35AM -0600, Shuah Khan wrote:
+>> On 7/22/24 09:43, Laura Nao wrote:
+>>> Consider skipped tests in addition to passed tests when evaluating the
+>>> overall result of the test suite in the finished() helper.
+>>>
+>>> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+>>> ---
+>>>    tools/testing/selftests/kselftest/ksft.py | 2 +-
+>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/tools/testing/selftests/kselftest/ksft.py b/tools/testing/selftests/kselftest/ksft.py
+>>> index cd89fb2bc10e..bf215790a89d 100644
+>>> --- a/tools/testing/selftests/kselftest/ksft.py
+>>> +++ b/tools/testing/selftests/kselftest/ksft.py
+>>> @@ -70,7 +70,7 @@ def test_result(condition, description=""):
+>>>    def finished():
+>>> -    if ksft_cnt["pass"] == ksft_num_tests:
+>>> +    if ksft_cnt["pass"] + ksft_cnt["skip"] == ksft_num_tests:
+>>
+>> Please don't. Counting skips in pass or fail isn't accurate
+>> reporting. skips need to be reported as skips.
 > 
-> Interesting. I like this approach, this would also make it possible to
-> combine the current 'pci_epf_alloc_space' and 'pci_epc_set_bar' into a
-> single function which would simplify the endpoint functions.
+> Hi Shuah,
 > 
-> The reason why it is separate now is so that 'pci_epf_alloc_space' can
-> be called before the endpoint function is bound to a controller, and
-> therefore the BAR memory can be filled and prepared before bind() is
-> called. Merging 'pci_epf_alloc_bar' with 'pci_epc_set_bar' into a
-> 'pci_epc_alloc_bar' (epc because it is dependent on the endpoint
-> controller and prior to be bound to a specific controller we don't
-> know if we need to allocate locally or remap) would make it impossible
-> to access the BAR prior to be bound to a controller (because the
-> function 'pci_epc_alloc_bar' would fail without a specific
-> controller). I don't think this is a problem as an unbound endpoint
-> function is kind of useless on its own, but this means the BAR memory
-> could only be allocated/remapped/accessed once the endpoint is bound
-> to a controller.
+> this won't change the skip count, just allow a test suite that has a mix of pass
+> and skip results to exit with code 0. That's the same behavior as the C
+> ksft_finished() helper in kselftest.h:
+> 
+> #define ksft_finished()			\
+> 	ksft_exit(ksft_plan ==		\
+> 		  ksft_cnt.ksft_pass +	\
+> 		  ksft_cnt.ksft_xfail +	\
+> 		  ksft_cnt.ksft_xskip)
+> 
 
-Back when I was looking it to this, I came to the conclusion:
-"The proper place is to allocate them when receiving PERST,
-but not all drivers have a PERST handler."
+Correct, this patch aligns the behavior of the python helper with both 
+the existing C and bash counterparts (ksft_finished() and 
+ktap_finished() respectively).
 
-However, since:
-https://github.com/torvalds/linux/commit/a01e7214bef904723d26d293eb17586078610379
+> It was my oversight to not do the same in the python helper.
+> 
+> Laura,
+> 
+> I consider this fixing an incorrect behavior, so I'd add this tag:
+> 
+> Fixes: dacf1d7a78bf ("kselftest: Add test to verify probe of devices from discoverable buses")
+> 
+> I think the message is good as is, but maybe it could have mentioned that this
+> matches the behavior of the C helper, just to make the point above clearer.
+> 
+> Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> 
+> And just a note for the maintainers, this patch depends on "kselftest: Move ksft
+> helper module to common directory"
+> https://lore.kernel.org/all/20240705-dev-err-log-selftest-v2-2-163b9cd7b3c1@collabora.com/
+> which was picked through the usb tree but is queued for 6.11-rc1.
+> 
 
-All EPF drivers should get a epc_init event, either directly when the EPC
-driver is loaded, or when PERST# is asserted.
+Right, thanks!
 
-So I definitely agree that it makes sense for all EPF function drivers to do
-both alloc_space() + set_bar() is a single call, now when that is possible.
+Shuah, please let me know if you have any other concerns with this patch.
 
-This will simplify a lot of PCIe endpoint code considerably.
+Best,
 
-
-Kind regards,
-Niklas
+Laura
 
