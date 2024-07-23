@@ -1,225 +1,195 @@
-Return-Path: <linux-kernel+bounces-260421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA0493A8AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:27:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED1C293A8B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 880711C22C40
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:27:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52982B21BA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E50145A0F;
-	Tue, 23 Jul 2024 21:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301D014430D;
+	Tue, 23 Jul 2024 21:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="qqr2Dvsq"
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="JfALzp6p"
+Received: from ewsoutbound.kpnmail.nl (ewsoutbound.kpnmail.nl [195.121.94.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAF4142E83;
-	Tue, 23 Jul 2024 21:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4781448CD
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 21:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.121.94.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721770035; cv=none; b=K8kpjBjcYcU8qUJ8E8dq59ZrNSN/Ft2PLSQzqzavq0wn3IV3VJQ16oRl0ve7o6NhGGsYEv4+j/XVpL+hjprjTHQUM+ZW+7d4poSct26DBVpE8UG1O9k74ztFq2qiizbJTR1G/bW9kighPwUrZTdcNu/8+SQSY6XY8Va0MkimpFw=
+	t=1721770181; cv=none; b=Ftpt/X2xWOOeO80qHOlhGzVitKrwlHiCrYlrYBecfD7vrIoneHkQ4cH3SQOhHkTrHPuXE7Ro1rRoXJB8Agiewm0MWk9j283qmnyAohc7i/Jw2BmEy1WHGyCCX20JWooBcF4Hg+6ZKKsKPtfwr1cDYsCS/gMAv58yIiYZZugLhA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721770035; c=relaxed/simple;
-	bh=tuFWmiGk/I2Yi8+LTB49yUHSxSVFD1tz1PmYJWRFT3g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rEYBjYFwiam7m1LWZupfLzh5rSBFwfd02ma3mU+3EDkw8i75YZzEqZklXH28LeIqqQGLjR8xL3cE+hGNSOxgRrFcA1PH20tNqXaAPsy21okY36A4f5fKyZv6vs9X3rTSKFTAas0heoRe4f+8gj182oDZ5UOoU5zUqcAV3MiUXvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=qqr2Dvsq; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1721770181; c=relaxed/simple;
+	bh=BF+/ulIrf3NeCJiog2h20GMJf2Iy1ETSW2T66ZJGjME=;
+	h=Date:Message-Id:From:To:Cc:In-Reply-To:Subject:References:
+	 MIME-version:Content-type; b=S0rh2Ce0ZYAWkgXNqTuPQB4iJz0elUHGsefzV0kkASbkEbyleACP9tGtosV+CtvbVil/O4g3jATr+x8kHSEADoj8C0RFaHjsEWQarqnFrGsk0CNrYR1f2ymv1nZJSiZ91Hu8CukpMf0DaR63+SvcAvPytkTF4cTmCR1SRvXDWfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xs4all.nl; spf=pass smtp.mailfrom=xs4all.nl; dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b=JfALzp6p; arc=none smtp.client-ip=195.121.94.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xs4all.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xs4all.nl
+X-KPN-MessageId: 811f0f83-493a-11ef-82de-005056999439
+Received: from smtp.kpnmail.nl (unknown [10.31.155.5])
+	by ewsoutbound.so.kpn.org (Halon) with ESMTPS
+	id 811f0f83-493a-11ef-82de-005056999439;
+	Tue, 23 Jul 2024 23:28:29 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1721770034; x=1753306034;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=cmq4hBWrNdZRnsjHT7Lr2kHH/xLLGpsyBTdbcfBBp4o=;
-  b=qqr2Dvsqtfjun+c3wRsMsy+RCjyqMvAKx5Etj+T6tfqHxYeeJnLYu+S3
-   011WNjXpLwOgd2IrD3pIgbuUE0foWOnpIOGmORljCFb6Fxak6iemzxJu3
-   E6Wt5sPtSFoke3GOUtfC7x1RW+cpcGNfz/cO91Yq+4PuH/VMho/PKn21A
-   s=;
-X-IronPort-AV: E=Sophos;i="6.09,231,1716249600"; 
-   d="scan'208";a="108913194"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2024 21:27:12 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [10.0.7.35:40218]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.25.189:2525] with esmtp (Farcaster)
- id 4761187b-f00c-46b5-9d20-3413fab75dcd; Tue, 23 Jul 2024 21:27:11 +0000 (UTC)
-X-Farcaster-Flow-ID: 4761187b-f00c-46b5-9d20-3413fab75dcd
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 23 Jul 2024 21:27:11 +0000
-Received: from 88665a182662.ant.amazon.com (10.88.135.114) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Tue, 23 Jul 2024 21:27:08 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <edumazet@google.com>
-CC: <davem@davemloft.net>, <dsahern@kernel.org>, <kuba@kernel.org>,
-	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>, <matttbe@kernel.org>,
-	<mptcp@lists.linux.dev>, <ncardwell@google.com>, <netdev@vger.kernel.org>,
-	<pabeni@redhat.com>
-Subject: Re: [PATCH net v2 1/2] tcp: process the 3rd ACK with sk_socket for TFO/MPTCP
-Date: Tue, 23 Jul 2024 14:27:00 -0700
-Message-ID: <20240723212700.60244-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <CANn89iKP4y7iMHxsy67o13Eair+tDquGPBr=kS41zPbKz+_0iQ@mail.gmail.com>
-References: <CANn89iKP4y7iMHxsy67o13Eair+tDquGPBr=kS41zPbKz+_0iQ@mail.gmail.com>
+	d=xs4all.nl; s=xs4all01;
+	h=content-type:mime-version:subject:to:from:message-id:date;
+	bh=0Vu3ze/keYxRxKLu9/o8MA7JBuEEGG0nnCZ6m2Ca/BE=;
+	b=JfALzp6pwJFMDARBjSIhLcyzs4xIjLZvXQpnho3rdiQN2ObxL7eqioUfeycz5htFAhANu3Hu4BjuP
+	 XLjFBENk4wESky4UOmkpgBGcXtoC1UpCv5si2a+bgiJy+2hNGelFxsMmC/Z8kKquXNNtF+w9UU+Fyj
+	 7McS6eJ4zAo2piAj7kB4YcxjaI9S3ZCeMdOGFe8xMW6UPuaLo8beWnIEK9rmr3mURMGL/2nRrH2IaF
+	 LLH3061KVr5rpskKMnatUABNUlbBvdXsxsRQj+HTNOgl1HTfjNDvWPqTRDgtl4xkvqtRTi59UZKFBg
+	 wshYN+xFc+V7Z0T4LNLvyzhyUw0C2Ow==
+X-KPN-MID: 33|bUp06XSWQnrEBN55lO1qBC9x4Uc0xl+AcSyeFSd/65/Pah0/ZOBj+m/lsWSpDa6
+ zIGSWOq69yQPfzj/fTx8dXXxNKao3mW6aIO3WUqAciHQ=
+X-KPN-VerifiedSender: Yes
+X-CMASSUN: 33|7RYISMR0KnNiBzoURgc3uB0yGr9DLm4q2ufUhOoThkw/fuguBejmHhc87wx3qwm
+ ZlHDlYg/XT/Ocb3Hh2MHRAg==
+Received: from bloch.sibelius.xs4all.nl (80-61-163-207.fixed.kpn.net [80.61.163.207])
+	by smtp.xs4all.nl (Halon) with ESMTPSA
+	id 807a771e-493a-11ef-912a-00505699b758;
+	Tue, 23 Jul 2024 23:28:29 +0200 (CEST)
+Date: Tue, 23 Jul 2024 23:28:28 +0200
+Message-Id: <87o76ng5mr.fsf@bloch.sibelius.xs4all.nl>
+From: Mark Kettenis <mark.kettenis@xs4all.nl>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: dmitry.baryshkov@linaro.org, robdclark@gmail.com,
+	abel.vesa@linaro.org, konrad.dybcio@linaro.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	marijn.suijten@somainline.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	johan@kernel.org, patrick@openbsd.org
+In-Reply-To: <atjcj5qnetxilrnoom7xisqbl5yhq5ktg3jb7dfnkdnzbqblb5@qbkqupznvrua>
+	(message from Bjorn Andersson on Tue, 23 Jul 2024 13:55:20 -0500)
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: Add X1E78100 ThinkPad T14s Gen 6
+References: <20240719-topic-t14s_upstream-v1-0-d7d97fdebb28@linaro.org>
+ <20240719-topic-t14s_upstream-v1-3-d7d97fdebb28@linaro.org>
+ <Zp055OR+OzSgiHhX@linaro.org>
+ <824edc08-f67f-4b2f-b4aa-da5df69b9df4@linaro.org>
+ <Zp4vghH5SK/rLEce@linaro.org>
+ <CAF6AEGszzRFiW16VzQQVF21U79uLcTNwwuGsHs98Zp_UGGTEBA@mail.gmail.com>
+ <4w4b5pjrrl7jnanx3uodsjxw4cfenc3i6tgmp6kblgn6gavn45@uu2milys4n2z> <atjcj5qnetxilrnoom7xisqbl5yhq5ktg3jb7dfnkdnzbqblb5@qbkqupznvrua>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-version: 1.0
+Content-type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D043UWA003.ant.amazon.com (10.13.139.31) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 23 Jul 2024 17:38:27 +0200
-[...]
-> > > //
-> > > // Test the simultaneous open scenario that both end sends
-> > > // SYN/data. Although we don't support that the connection should
-> > > // still be established.
-> > > //
-> > > `../../common/defaults.sh
-> > >  ../../common/set_sysctls.py /proc/sys/net/ipv4/tcp_timestamps=0`
-> > >
-> > > // Cache warmup: send a Fast Open cookie request
-> > >     0 socket(..., SOCK_STREAM, IPPROTO_TCP) = 3
-> > >    +0 fcntl(3, F_SETFL, O_RDWR|O_NONBLOCK) = 0
-> > >    +0 sendto(3, ..., 0, MSG_FASTOPEN, ..., ...) = -1 EINPROGRESS
-> > > (Operation is now in progress)
-> > >    +0 > S 0:0(0) <mss 1460,nop,nop,sackOK,nop,wscale 8,FO,nop,nop>
-> > >  +.01 < S. 123:123(0) ack 1 win 14600 <mss
-> > > 1460,nop,nop,sackOK,nop,wscale 6,FO abcd1234,nop,nop>
-> > >    +0 > . 1:1(0) ack 1
-> > >  +.01 close(3) = 0
-> > >    +0 > F. 1:1(0) ack 1
-> > >  +.01 < F. 1:1(0) ack 2 win 92
-> > >    +0 > .  2:2(0) ack 2
-> > >
-> > >
-> > > //
-> > > // Test: simulatenous fast open
-> > > //
-> > >  +.01 socket(..., SOCK_STREAM, IPPROTO_TCP) = 4
-> > >    +0 fcntl(4, F_SETFL, O_RDWR|O_NONBLOCK) = 0
-> > >    +0 sendto(4, ..., 1000, MSG_FASTOPEN, ..., ...) = 1000
-> > >    +0 > S 0:1000(1000) <mss 1460,nop,nop,sackOK,nop,wscale 8,FO
-> > > abcd1234,nop,nop>
-> > > // Simul. SYN-data crossing: we don't support that yet so ack only remote ISN
-> > > +.005 < S 1234:1734(500) win 14600 <mss 1040,nop,nop,sackOK,nop,wscale
-> > > 6,FO 87654321,nop,nop>
-> > >    +0 > S. 0:0(0) ack 1235 <mss 1460,nop,nop,sackOK,nop,wscale 8>
-> > >
-> > > // SYN data is never retried.
-> > > +.045 < S. 1234:1234(0) ack 1001 win 14600 <mss
-> > > 940,nop,nop,sackOK,nop,wscale 6,FO 12345678,nop,nop>
-> > >    +0 > . 1001:1001(0) ack 1
-> >
-> > I recently sent a PR -- already applied -- to Neal to remove this line:
-> >
-> >   https://github.com/google/packetdrill/pull/86
-> >
-> > I thought it was the intension of Kuniyuki's patch not to send this ACK
-> > in this case to follow the RFC 9293's recommendation. This TFO test
-> > looks a bit similar to the example from Kuniyuki's patch:
-> >
-> >
-> > --------------- 8< ---------------
-> >  0 socket(..., SOCK_STREAM|SOCK_NONBLOCK, IPPROTO_TCP) = 3
-> > +0 connect(3, ..., ...) = -1 EINPROGRESS (Operation now in progress)
-> >
-> > +0 > S  0:0(0) <mss 1460,sackOK,TS val 1000 ecr 0,nop,wscale 8>
-> > +0 < S  0:0(0) win 1000 <mss 1000>
-> > +0 > S. 0:0(0) ack 1 <mss 1460,sackOK,TS val 3308134035 ecr 0,nop,wscale 8>
-> > +0 < S. 0:0(0) ack 1 win 1000
-> >
-> >   /* No ACK here */
-> >
-> > +0 write(3, ..., 100) = 100
-> > +0 > P. 1:101(100) ack 1
-> > --------------- 8< ---------------
-> >
-> >
-> >
-> > But maybe here that should be different for TFO?
-> >
-> > For my case with MPTCP (and TFO), it is fine to drop this 'goto consume'
-> > but I don't know how "strict" we want to be regarding the RFC and this
-> > marginal case.
+> Date: Tue, 23 Jul 2024 13:55:20 -0500
+> From: Bjorn Andersson <andersson@kernel.org>
 > 
-> Problem of this 'goto consume' is that we are not properly sending a
-> DUPACK in this case.
+> On Mon, Jul 22, 2024 at 07:03:43PM GMT, Dmitry Baryshkov wrote:
+> > On Mon, Jul 22, 2024 at 08:00:19AM GMT, Rob Clark wrote:
+> > > On Mon, Jul 22, 2024 at 3:11 AM Abel Vesa <abel.vesa@linaro.org> wrote:
+> > > >
+> > > > On 24-07-22 10:42:57, Konrad Dybcio wrote:
+> > > > > On 21.07.2024 6:40 PM, Abel Vesa wrote:
+> > > > > > On 24-07-19 22:16:38, Konrad Dybcio wrote:
+> > > > > >> Add support for the aforementioned laptop. That includes:
+> > > > > >>
+> > > > > >> - input methods, incl. lid switch (keyboard needs the pdc
+> > > > > >>   wakeup-parent removal hack..)
+> > > > > >> - NVMe, WiFi
+> > > > > >> - USB-C ports
+> > > > > >> - GPU, display
+> > > > > >> - DSPs
+> > > > > >>
+> > > > > >> Notably, the USB-A ports on the side are depenedent on the USB
+> > > > > >> multiport controller making it upstream.
+> > > > > >>
+> > > > > >> At least one of the eDP panels used (non-touchscreen) identifies as
+> > > > > >> BOE 0x0b66.
+> > > > > >>
+> > > > > >> See below for the hardware description from the OEM.
+> > > > > >>
+> > > > > >> Link: https://www.lenovo.com/us/en/p/laptops/thinkpad/thinkpadt/lenovo-thinkpad-t14s-gen-6-(14-inch-snapdragon)/len101t0099
+> > > > > >> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> > > > > >
+> > > > > > Few comments below. Otherwise, LGTM.
+> > > > > >
+> > > > > > Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+> > > > > >
+> > > > > >> ---
+> > > > > >>  arch/arm64/boot/dts/qcom/Makefile                  |   1 +
+> > > > > >>  .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts     | 792 +++++++++++++++++++++
+> > > > > >>  2 files changed, 793 insertions(+)
+> > > > > >>
+> > > > > >> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> > > > > >> index 0e5c810304fb..734a05e04c4a 100644
+> > > > > >> --- a/arch/arm64/boot/dts/qcom/Makefile
+> > > > > >> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> > > > > >> @@ -261,6 +261,7 @@ dtb-$(CONFIG_ARCH_QCOM)        += sm8650-hdk-display-card.dtb
+> > > > > >>  dtb-$(CONFIG_ARCH_QCOM)   += sm8650-hdk.dtb
+> > > > > >>  dtb-$(CONFIG_ARCH_QCOM)   += sm8650-mtp.dtb
+> > > > > >>  dtb-$(CONFIG_ARCH_QCOM)   += sm8650-qrd.dtb
+> > > > > >> +dtb-$(CONFIG_ARCH_QCOM)   += x1e78100-lenovo-thinkpad-t14s.dtb
+> > > > > >>  dtb-$(CONFIG_ARCH_QCOM)   += x1e80100-asus-vivobook-s15.dtb
+> > > > > >>  dtb-$(CONFIG_ARCH_QCOM)   += x1e80100-crd.dtb
+> > > > > >>  dtb-$(CONFIG_ARCH_QCOM)   += x1e80100-lenovo-yoga-slim7x.dtb
+> > > > > >> diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
+> > > > > >
+> > > > > > So what happens for SKUs of this model wil have x1e80100 ?
+> > > > > >
+> > > > > > Maybe we should stick to x1e80100 ?
+> > > > >
+> > > > > This one only ships with 78100
+> > > > >
+> > > >
+> > > > Sure, but then in upstream we only have 80100. Plus, it is included in
+> > > > this file as well.
+> > > >
+> > > > I don't know what's the right thing to do here. But I think it keeps
+> > > > things more simple if we keep everything under the x1e80100 umbrella.
+> > > 
+> > > plus sticking to x1e80100 will avoid angering tab completion :-P
+> > 
+> > This is an old argument, with no clear answer. For some devices we
+> > choose to use correct SoC name (sda660-inforce-ifc6560). For other we
+> > didn't (sdm845-db845c, which really is SDA845). However for most of the
+> > devices the goal is to be accurate (think about all the qcs vs qcm
+> > stories). So my 2c. would go to x1e78100.
+> > 
 > 
->  +.01 socket(..., SOCK_STREAM, IPPROTO_TCP) = 4
->    +0 fcntl(4, F_SETFL, O_RDWR|O_NONBLOCK) = 0
->    +0 sendto(4, ..., 1000, MSG_FASTOPEN, ..., ...) = 1000
->    +0 > S 0:1000(1000) <mss 1460,nop,nop,sackOK,nop,wscale 8,FO
-> abcd1234,nop,nop>
-> // Simul. SYN-data crossing: we don't support that yet so ack only remote ISN
-> +.005 < S 1234:1734(500) win 14600 <mss 1040,nop,nop,sackOK,nop,wscale
-> 6,FO 87654321,nop,nop>
->    +0 > S. 0:0(0) ack 1235 <mss 1460,nop,nop,sackOK,nop,wscale 8>
+> I agree, x1e78100 follows the naming scheme we have agreed upon - for
+> better or worse.
+
+So should the device trees for the Asus Vivobook S15 and the Lenovo
+Yoga Slim 7x be renamed then?  Since those also (only) ship with
+X1E-78-100 variants of the SoC.
+
+There is supposed to be a variant of the Vivobook with the X1P-64-100
+(I haven't seen it actually for sale yet).  Since that one has only 10
+CPU cores, should that one gets its own device tree?  That may not be
+possible.  I have a strong suspicion that all the variants are just
+binned versions of the same SoC, where the X1P just has two of the
+cores disabled.  If Qualcomm, like Apple, attempts to increase the
+yield by binning SoCs with broken or badly performing cores as X1P it
+might be a lottery which of the 12 cores get disabled.
+
+And for the vendors that do offer models with different X1E variants,
+are there going to multiple device trees, one for each variant?
+
+I'm asking because on OpenBSD we load the device trees in our
+bootloader and map SMBIOS vendor and product names to a device tree
+name.  So a consistent naming scheme for the device trees is
+desirable.
+
+Thanks,
+
+Mark
+
+> Regards,
+> Bjorn
 > 
-> +.045 < S. 1234:1234(0) ack 1001 win 14600 <mss
-> 940,nop,nop,sackOK,nop,wscale 6,FO 12345678,nop,nop>
->    +0 > . 1001:1001(0) ack 1 <nop,nop,sack 0:1>  // See here
+> > -- 
+> > With best wishes
+> > Dmitry
 > 
-> Not sending a dupack seems wrong and could hurt.
-
-I think the situation where we should send ACK after simultaneous
-SYN+ACK would be:
-
----8<---
- +.01 socket(..., SOCK_STREAM, IPPROTO_TCP) = 4
-   +0 fcntl(4, F_SETFL, O_RDWR|O_NONBLOCK) = 0
-   +0 sendto(4, ..., 1000, MSG_FASTOPEN, ..., ...) = 1000
-   +0 > S 0:1000(1000) <mss 1440,nop,nop,sackOK,nop,wscale 8,FO abcd1234,nop,nop>
-// Simul. SYN-data crossing: we don't support that yet so ack only remote ISN
-+.005 < S 1234:1734(500) win 14400 <mss 1040,nop,nop,sackOK,nop,wscale 6,FO 87654321,nop,nop>
-   +0 > S. 0:0(0) ack 1235 <mss 1440,nop,nop,sackOK,nop,wscale 8>
-
-// SYN data is not ACKed too.
-+.045 < S. 1234:1234(0) ack 1 win 14400 <mss 940,nop,nop,sackOK,nop,wscale 6,FO 12345678,nop,nop>
-
-   +0 > . 1:1001(1000) ack 1
----8<---
-
-When the first data in SYN is not ACKed, it must be retransmitted,
-and it can be done just after SYN+ACK is received, which is skipped
-by 'goto consume'.
-
-Retransmitting data in SYN is not supported though.
-
----8<---
-sendto syscall: 1721769223.194675
-outbound sniffed packet:  0.040288 S 833802090:833803090(1000) win 65535 <mss 1440,nop,nop,sackOK,nop,wscale 8,FO abcd1234,nop,nop>
-inbound injected packet:  0.045323 S 1234:1734(500) win 14400 <mss 1040,nop,nop,sackOK,nop,wscale 6,FO 87654321,nop,nop>
-outbound sniffed packet:  0.045355 S. 833802090:833802090(0) ack 1235 win 65535 <mss 1440,nop,nop,sackOK,nop,wscale 8>
-inbound injected packet:  0.090429 S. 1234:1234(0) ack 833802091 win 14400 <mss 940,nop,nop,sackOK,nop,wscale 6,FO 12345678,nop,nop>
-outbound sniffed packet:  0.090460 . 833803091:833803091(0) ack 1235 win 1052 
-outbound sniffed packet:  1.051776 S. 833802090:833802090(0) ack 1235 win 65535 <mss 1440,nop,nop,sackOK,nop,wscale 8>
-simul2.pkt:38: error handling packet: live packet field tcp_data_offset: expected: 5 (0x5) vs actual: 8 (0x8)
-   script packet:  0.090462 . 1:1001(1000) ack 1 
-actual #0 packet:  0.090460 . 1001:1001(0) ack 1 win 1052 
-actual #1 packet:  1.051776 S. 0:0(0) ack 1235 win 65535 <mss 1440,nop,nop,sackOK,nop,wscale 8>
----8<---
-
-Except the case, I think the dupack is not needed in theory.
-
-But I understand the dupack could help the other quickly retransmit the
-not-yet-ACKed data in SYN instead of waiting for a timer as expected in
-the comment.
-
----8<---
-// The other end retries
-  +.1 < P. 1:501(500) ack 1000 win 257
----8<---
 
