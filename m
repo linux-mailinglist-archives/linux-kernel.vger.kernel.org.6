@@ -1,236 +1,250 @@
-Return-Path: <linux-kernel+bounces-259882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A717939EB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:25:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF3E9939EBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:29:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4C001F22FBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:25:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0F24282F66
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D80114E2F9;
-	Tue, 23 Jul 2024 10:25:05 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA6414EC43;
+	Tue, 23 Jul 2024 10:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BiT79zMI"
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1716D14C5A4
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 10:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F348B14C5A4;
+	Tue, 23 Jul 2024 10:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721730304; cv=none; b=jaavB2WkSZ/MiTx4wjB/BB4GDNHOsjrx939pr/GRfmZIeu/CVbyJOq2gXvziKgTfhGFIdRqXmVuHmTADJYtL+BzkG8EZHKXEbZrYiaL1XWwqJB1n8ZjxIF0RzxnhANgmMHlYA81Lv0ffaIWSBea3QIDn4QA4fkWXrpnSyUOvD+Q=
+	t=1721730538; cv=none; b=a0jgGFsWJTExklou4vEqwiwaCsTMgysDXPYqvWfHAgIdt9BLcRO5BGjzzKdXi0ZMtHk8lsbGDtY8Qd7oILgR0+H5f8RGlujjJ9aqgHKBKpCP8HzyFkAcn+bH3fbG54+unZ+mZ4TZ7fhzrf7d62GEQiQkmPSMzC0CJyrt18BImds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721730304; c=relaxed/simple;
-	bh=IxRF8A09nLsXRC72rWOFqg3Zjdlr70yxL1AEHccECww=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=deL4vrQJnbm1FEJ/k+ta+zGaeOYvcgKbxYuV/QXffSb5/nJIcNZtvllVd2vxu2KJ+d9702+r75jA4crjWD6KJjLD/cKjbYumlXRLayEewPD0n7iEBbDkMDYwzr6fyN6bU+BMTDNlV6GFXM87M6Sr422gm1oNGn0zrfv37lg4sr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WStWH5CQ6z6DB3m;
-	Tue, 23 Jul 2024 18:22:35 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id A4E95140A35;
-	Tue, 23 Jul 2024 18:24:58 +0800 (CST)
-Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 23 Jul
- 2024 11:24:57 +0100
-Date: Tue, 23 Jul 2024 11:24:56 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-CC: <rafael.j.wysocki@intel.com>, <guohanjun@huawei.com>, <gshan@redhat.com>,
-	<miguel.luis@oracle.com>, <catalin.marinas@arm.com>, Linux List Kernel
- Mailing <linux-kernel@vger.kernel.org>, Linux regressions mailing list
-	<regressions@lists.linux.dev>, <linuxarm@huawei.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: 6.11/regression/bisected - The commit c1385c1f0ba3 caused a new
- possible recursive locking detected warning at computer boot.
-Message-ID: <20240723112456.000053b3@Huawei.com>
-In-Reply-To: <CABXGCsPvqBfL5hQDOARwfqasLRJ_eNPBbCngZ257HOe=xbWDkA@mail.gmail.com>
-References: <CABXGCsPvqBfL5hQDOARwfqasLRJ_eNPBbCngZ257HOe=xbWDkA@mail.gmail.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1721730538; c=relaxed/simple;
+	bh=NMKTzAxYtED7lsK+4pQXB99GoVnYcbnAPWwlvySACH8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iX+/i0HCyre7yR2TPQ0X/msUUKUYaQuztH3y4cd+mXOn+GZ6t5UROs7wOB1R/wi5SvJ6A9bwL5f/SXAy8lzX7zjjA0r1Fg/1j/2Bd//IRDTv8BrDMSJTcikytlMTFXdKCgN/ocKbUfopDScTgUzCOsoZG3eW/ZPGJPDepP1wHek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BiT79zMI; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-66108213e88so53080687b3.1;
+        Tue, 23 Jul 2024 03:28:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721730536; x=1722335336; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1A9IFWbYCk8Y3UmFUkrvkC/KXCME07HqnuVMqN+IZFQ=;
+        b=BiT79zMIJdfmUfQ2zbxNGgX8tk2enpYvvDIS6ZHj/GcedN4Y5Q2EpNDBCLeZdk8vOt
+         zFOySNlzOlBQWpgmZ+cuedKMl6y+6oGIzl7MWOjjfdznG/siyDfzOdupm+p1efbgG75t
+         IV2hJH6clR1soUPd1de/XJvi2LErLnMdJlghBHYFf5yF5D3E0eKfYkgy/Px7Zgbky0dF
+         3kJMsQoJZHrGLdm0SBplsLRIpDxoz2sOZL0jJYUGPcV5GDoiLu+DZnkDOjFCGirGhGAH
+         sQbYfRNpnNIyzMxwT9bv/85+QS367612P+GGUgS/vpweMddzdoE3NpS+1UlRmfAlUV/v
+         knXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721730536; x=1722335336;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1A9IFWbYCk8Y3UmFUkrvkC/KXCME07HqnuVMqN+IZFQ=;
+        b=EsgIaqjnKs1UURtkAx9DLGBSDOF8SHLLZJRqsBgMQgDNnTFvNiD8oxiGZr9A9bSV0H
+         UDODtb248/l6I04xjXom3MUDKF7GSs9o/c3sjET3i6ugrTlf0xHCGtz/40tUz33ohR3O
+         frCpuNMynggI1IAEC4BjvZw9UdD0NRTGDhOcmwywQ+FQr/MomNS493jQn61EMw3bMb/p
+         yjE86w9CHTd9Grcv7sSYEtUH/OARktmlHFOeZco9VMHnajzOtSgfnB8zBjj6F39zmgkS
+         ymAzfBMyKpdjdghK9hAFTSWrm/go3RiVXkeWrI3jH4fagMVdb+BewKh1G6F72XLg2RUR
+         bU6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVJDwrLF/zb6BTnIWzvUKPfc8HXJwIYhaNogomrNvLKqlIzHSIiS7qS/mmjARdLfge5QNZFlDIhk9gfgZedCU2PNvh4M67SEtbN1ELQjaABclsqe1RBCH0r945JV8IvVABDyfzlcMogKc3C3i6H
+X-Gm-Message-State: AOJu0YxmDi13Ga0+V7qBZJXQXG4LKLdmA7zeez6LZ4Guy0G2v1k+Dxu1
+	DudaTQM78U53vCjo/T5ukxlNXNOspH3Og6EggzGt6wPdSvYjAWFm8Yul8YPv
+X-Google-Smtp-Source: AGHT+IGEOsaXBKy9PASLfOHFdNFWCjaIIDmZYq1VkEvZMDWvqI1THwT6GaIWbH/anRHo2wVGB27baQ==
+X-Received: by 2002:a05:690c:3301:b0:64b:2a73:f050 with SMTP id 00721157ae682-66ad8ec4979mr99195527b3.23.1721730535902;
+        Tue, 23 Jul 2024 03:28:55 -0700 (PDT)
+Received: from [127.0.1.1] ([2607:fea8:bad7:5400:b8b3:54ee:8692:b1f9])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b968f85975sm28039526d6.16.2024.07.23.03.28.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 03:28:55 -0700 (PDT)
+From: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
+Date: Tue, 23 Jul 2024 06:28:43 -0400
+Subject: [PATCH v3] selftest: acct: Add selftest for the acct() syscall
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Message-Id: <20240723-kselftest-acct-syscall-v3-1-16f332498a9e@gmail.com>
+X-B4-Tracking: v=1; b=H4sIANqFn2YC/4XNTQ7CIBCG4as0rMXAoFRdeQ/jgp9pS6StAUJsm
+ t5d2lU3xuX7JfPMTCIGh5HcqpkEzC66cSghDhUxnRpapM6WJsDgxCQAfUX0TcKYqDIm0ThFo7y
+ nYK+sqaWUmiMpx++Ajfts8ONZunMxjWHa/mS+rn/JzCmnFmqmzxovVtT3tlfOH83Yk5XMsGME+
+ 8lAYbRgWiMoeTV2zyzL8gWM4CG3AwEAAA==
+To: Shuah Khan <shuah@kernel.org>
+Cc: javiercarrascocruz@gmail.com, linux-kernel@vger.kernel.org, 
+ linux-kselftest@vger.kernel.org, 
+ Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
+X-Mailer: b4 0.14-dev-0bd45
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1721730534; l=4199;
+ i=abdulrasaqolawani@gmail.com; s=20240613; h=from:subject:message-id;
+ bh=NMKTzAxYtED7lsK+4pQXB99GoVnYcbnAPWwlvySACH8=;
+ b=LDbIC61Q5DV3J1RHCyS+FbVpW5yvC5tza0NByoRSt0U3R5nD50mxGklEY5C9A6cD/gsNjBXbU
+ c4VYrPWZP/iAfsWSIHVUJvapAJjnYxx5o86DqvYGtegR7GAjuD4UWdF
+X-Developer-Key: i=abdulrasaqolawani@gmail.com; a=ed25519;
+ pk=cUqfinPW5pkopFB8ShBc0ZTNgYvSW5ZTa8aLIFPGp/w=
 
-On Tue, 23 Jul 2024 00:36:18 +0500
-Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com> wrote:
+The acct() system call enables or disables process accounting.
+If accounting is turned on, records for each terminating process
+are appended to a specified filename as it terminates. An argument of NULL
+causes accounting to be turned off.
 
-> Hi,
-> The first Fedora update to the 6.11 kernel
-> (kernel-debug-6.11.0-0.rc0.20240716gitd67978318827.2.fc41.x86_64)
-> brings a new warning: possible recursive locking detected.
+This patch will add a test for the acct() syscall.
 
-Hi Mikhail,
+Signed-off-by: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
+---
+Changes in v3:
+- Add geteuid to check if test is ran as root.
+- Simplify error conditions for acct function.
+- Remove unecessary messages.
+- Add more informative messages. 
+- Update commit message.
+- Add error test case for file creation failure.
+- Link to v2: https://lore.kernel.org/r/20240630-kselftest-acct-syscall-v2-1-b30bbe2a69cd@gmail.com
 
-Thanks for the report.
+Changes in v2:
+Add testcases to test error conditions.
+Add kselftest function for reporting results.
 
-This is an interesting corner and perhaps reflects a flawed
-assumption we were making that for this path anything that can happen for an
-initially present CPU can also happen for a hotplugged one. On the hotplugged
-path the lock was always held and hence the static_key_enable() would
-have failed.
+- Link to v1: https://lore.kernel.org/r/20240622-kselftest-acct-syscall-v1-1-d270b5be8d37@gmail.com
+---
+ tools/testing/selftests/Makefile            |  1 +
+ tools/testing/selftests/acct/.gitignore     |  3 ++
+ tools/testing/selftests/acct/Makefile       |  4 ++
+ tools/testing/selftests/acct/acct_syscall.c | 78 +++++++++++++++++++++++++++++
+ 4 files changed, 86 insertions(+)
 
-I'm somewhat stumped on working out why this path couldn't happen
-for a hotplugged CPU so why this is a new problem?
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index 9039f3709aff..45a58ef5ad92 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -1,4 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
++TARGETS += acct
+ TARGETS += alsa
+ TARGETS += amd-pstate
+ TARGETS += arm64
+diff --git a/tools/testing/selftests/acct/.gitignore b/tools/testing/selftests/acct/.gitignore
+new file mode 100644
+index 000000000000..7e78aac19038
+--- /dev/null
++++ b/tools/testing/selftests/acct/.gitignore
+@@ -0,0 +1,3 @@
++acct_syscall
++config
++process_log
+\ No newline at end of file
+diff --git a/tools/testing/selftests/acct/Makefile b/tools/testing/selftests/acct/Makefile
+new file mode 100644
+index 000000000000..ff3e238c5634
+--- /dev/null
++++ b/tools/testing/selftests/acct/Makefile
+@@ -0,0 +1,4 @@
++TEST_GEN_PROGS := acct_syscall
++CFLAGS += -Wall
++
++include ../lib.mk
+\ No newline at end of file
+diff --git a/tools/testing/selftests/acct/acct_syscall.c b/tools/testing/selftests/acct/acct_syscall.c
+new file mode 100644
+index 000000000000..e44e8fe1f4a3
+--- /dev/null
++++ b/tools/testing/selftests/acct/acct_syscall.c
+@@ -0,0 +1,78 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/* kselftest for acct() system call
++ *  The acct() system call enables or disables process accounting.
++ */
++
++#include <stdio.h>
++#include <errno.h>
++#include <string.h>
++#include <sys/wait.h>
++
++#include "../kselftest.h"
++
++int main(void)
++{
++	char filename[] = "process_log";
++	FILE *fp;
++	pid_t child_pid;
++	int sz;
++
++	// Setting up kselftest framework
++	ksft_print_header();
++	ksft_set_plan(1);
++
++	// Check if test is run a root
++	if (geteuid()) {
++		ksft_test_result_skip("This test needs root to run!\n");
++		return 1;
++	}
++
++	// Create file to log closed processes
++	fp = fopen(filename, "w");
++
++	if (!fp) {
++		ksft_test_result_error("%s.\n", strerror(errno));
++		ksft_finished();
++		return 1;
++	}
++
++	acct(filename);
++
++	// Handle error conditions
++	if (errno) {
++		ksft_test_result_error("%s.\n", strerror(errno));
++		fclose(fp);
++		ksft_finished();
++		return 1;
++	}
++
++	// Create child process and wait for it to terminate.
++
++	child_pid = fork();
++
++	if (child_pid < 0) {
++		ksft_test_result_error("Creating a child process to log failed\n");
++		acct(NULL);
++		return 1;
++	} else if (child_pid > 0) {
++		wait(NULL);
++		fseek(fp, 0L, SEEK_END);
++		sz = ftell(fp);
++
++		acct(NULL);
++
++		if (sz <= 0) {
++			ksft_test_result_fail("Terminated child process not logged\n");
++			ksft_exit_fail();
++			return 1;
++		}
++
++		ksft_test_result_pass("Successfully logged terminated process.\n");
++		fclose(fp);
++		ksft_exit_pass();
++		return 0;
++	}
++
++	return 1;
++}
 
-Maybe this is just a case of no one is providing _CPC for CPUs in virtual
-machines so the path wasn't seen? QEMU doesn't generate ACPI tables with
-_CPC today, so maybe that's it.
+---
+base-commit: 50736169ecc8387247fe6a00932852ce7b057083
+change-id: 20240622-kselftest-acct-syscall-2d90f7666b1e
 
-So maybe this is has revealed an existing latent  bug.  There have been
-QEMU patches for _CPC in the past but never merged. I'll hack them
-into an x86 virtual machine and see if we hit the same bug you have
-here before and after the series.
-
-Either way obviously we need to fix it for the current kernel (and maybe
-backport the fix if I can verify it's a latent bug).  I'll get a test
-setup running asap and see if I can replicate.
-
-+CC x86 maintainers.
-
-Thanks,
-
-Jonathan
-
-
-
-
-> The trace looks like:
-> ACPI: button: Power Button [PWRF]
-> 
-> ============================================
-> WARNING: possible recursive locking detected
-> 6.11.0-0.rc0.20240716gitd67978318827.2.fc41.x86_64+debug #1 Not tainted
-> --------------------------------------------
-> cpuhp/0/22 is trying to acquire lock:
-> ffffffffb7f9cb40 (cpu_hotplug_lock){++++}-{0:0}, at: static_key_enable+0x12/0x20
-> 
-> but task is already holding lock:
-> ffffffffb7f9cb40 (cpu_hotplug_lock){++++}-{0:0}, at: cpuhp_thread_fun+0xcd/0x6f0
-> 
-> other info that might help us debug this:
->  Possible unsafe locking scenario:
-> 
->        CPU0
->        ----
->   lock(cpu_hotplug_lock);
->   lock(cpu_hotplug_lock);
-> 
->  *** DEADLOCK ***
-> 
->  May be due to missing lock nesting notation
-> 
-> 3 locks held by cpuhp/0/22:
->  #0: ffffffffb7f9cb40 (cpu_hotplug_lock){++++}-{0:0}, at:
-> cpuhp_thread_fun+0xcd/0x6f0
->  #1: ffffffffb7f9f2e0 (cpuhp_state-up){+.+.}-{0:0}, at:
-> cpuhp_thread_fun+0xcd/0x6f0
->  #2: ffffffffb7f1d650 (freq_invariance_lock){+.+.}-{3:3}, at:
-> init_freq_invariance_cppc+0xf4/0x1e0
-> 
-> stack backtrace:
-> CPU: 0 PID: 22 Comm: cpuhp/0 Not tainted
-> 6.11.0-0.rc0.20240716gitd67978318827.2.fc41.x86_64+debug #1
-> Hardware name: ASUS System Product Name/ROG STRIX B650E-I GAMING WIFI,
-> BIOS 2611 04/07/2024
-> Call Trace:
->  <TASK>
->  dump_stack_lvl+0x84/0xd0
->  __lock_acquire+0x27e3/0x5c70
->  ? __pfx___lock_acquire+0x10/0x10
->  ? cppc_get_perf_caps+0x64f/0xf60
->  lock_acquire+0x1ae/0x540
->  ? static_key_enable+0x12/0x20
->  ? __pfx_lock_acquire+0x10/0x10
->  ? __pfx___might_resched+0x10/0x10
->  cpus_read_lock+0x40/0xe0
->  ? static_key_enable+0x12/0x20
->  static_key_enable+0x12/0x20
->  freq_invariance_enable+0x13/0x40
->  init_freq_invariance_cppc+0x17e/0x1e0
->  ? __pfx_init_freq_invariance_cppc+0x10/0x10
->  ? acpi_cppc_processor_probe+0x1046/0x2300
->  acpi_cppc_processor_probe+0x11ae/0x2300
->  ? _raw_spin_unlock_irqrestore+0x4f/0x80
->  ? __pfx_acpi_cppc_processor_probe+0x10/0x10
->  ? __pfx_acpi_scan_drop_device+0x10/0x10
->  ? acpi_fetch_acpi_dev+0x79/0xe0
->  ? __pfx_acpi_fetch_acpi_dev+0x10/0x10
->  ? __pfx_acpi_soft_cpu_online+0x10/0x10
->  acpi_soft_cpu_online+0x114/0x330
->  cpuhp_invoke_callback+0x2c7/0xa40
->  ? __pfx_lock_release+0x10/0x10
->  ? __pfx_lock_release+0x10/0x10
->  ? cpuhp_thread_fun+0xcd/0x6f0
->  cpuhp_thread_fun+0x33a/0x6f0
->  ? smpboot_thread_fn+0x56/0x930
->  smpboot_thread_fn+0x54b/0x930
->  ? __pfx_smpboot_thread_fn+0x10/0x10
->  ? __pfx_smpboot_thread_fn+0x10/0x10
->  kthread+0x2d2/0x3a0
->  ? _raw_spin_unlock_irq+0x28/0x60
->  ? __pfx_kthread+0x10/0x10
->  ret_from_fork+0x31/0x70
->  ? __pfx_kthread+0x10/0x10
->  ret_from_fork_asm+0x1a/0x30
->  </TASK>
-> 
-> Bisect is pointed to commit
-> commit c1385c1f0ba3b80bd12f26c440612175088c664c (HEAD)
-> Author: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Date:   Wed May 29 14:34:28 2024 +0100
-> 
->     ACPI: processor: Simplify initial onlining to use same path for
-> cold and hotplug
-> 
->     Separate code paths, combined with a flag set in acpi_processor.c to
->     indicate a struct acpi_processor was for a hotplugged CPU ensured that
->     per CPU data was only set up the first time that a CPU was initialized.
->     This appears to be unnecessary as the paths can be combined by letting
->     the online logic also handle any CPUs online at the time of driver load.
-> 
->     Motivation for this change, beyond simplification, is that ARM64
->     virtual CPU HP uses the same code paths for hotplug and cold path in
->     acpi_processor.c so had no easy way to set the flag for hotplug only.
->     Removing this necessity will enable ARM64 vCPU HP to reuse the existing
->     code paths.
-> 
->     Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->     Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
->     Tested-by: Miguel Luis <miguel.luis@oracle.com>
->     Reviewed-by: Gavin Shan <gshan@redhat.com>
->     Reviewed-by: Miguel Luis <miguel.luis@oracle.com>
->     Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
->     Link: https://lore.kernel.org/r/20240529133446.28446-2-Jonathan.Cameron@huawei.com
->     Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-> 
->  drivers/acpi/acpi_processor.c   |  7 +++----
->  drivers/acpi/processor_driver.c | 43
-> ++++++++++++-------------------------------
->  include/acpi/processor.h        |  2 +-
->  3 files changed, 16 insertions(+), 36 deletions(-)
-> 
-> And I can confirm that after reverting c1385c1f0ba3 the issue is gone.
-> 
-> I also attach here a full kernel log and build config.
-> 
-> My hardware specs: https://linux-hardware.org/?probe=c6de14f5b8
-> 
-> Jonathan, can you look into this, please?
-> 
+Best regards,
+-- 
+Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
 
 
