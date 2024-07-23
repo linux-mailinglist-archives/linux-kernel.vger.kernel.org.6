@@ -1,277 +1,220 @@
-Return-Path: <linux-kernel+bounces-260045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DFD493A20D
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:53:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51EA793A216
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 15:56:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D92C0283FA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:53:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 747951C22623
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 13:56:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C8E153BF0;
-	Tue, 23 Jul 2024 13:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E7C153810;
+	Tue, 23 Jul 2024 13:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F0IgMIvB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="N3tfdbfT"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011001.outbound.protection.outlook.com [52.101.65.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3386315380D;
-	Tue, 23 Jul 2024 13:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721742792; cv=none; b=M1jROSDBRI8LQ7Ca3CHa5hE0l2fBsZs52s8mYC9X9gnHhxg3dXpfbwonuE97J+idxOdOeLL0g/6Q9Z6ImkHU+joL4RMgk2VtrcyUnbCJismM+HDkJK/nvNXGLwKk5sbKpXMmexEDasqSZ549aKquGTC5gBxqVRKxZYCh+8Hok7E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721742792; c=relaxed/simple;
-	bh=9eIWzhU6PHUeZcWjbzL9hcWDlD4iJH3dlG5ZDJi3+yI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SaszaKOtqBAjtmMj9MpBnZpIkhvv8Flwmw1KJvkAq8K8WGByUG0yzWWjvbWrngBuEV32j1GFNmgVFSqKSUtngDPQ9Ue+3qBG1bDU0JJKaqRU8DHXc4IMrdBDHSU17fSRF7fZOi0zOt6NW133+L39CScYqdPMBHnYNU+oXMKmxQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F0IgMIvB; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721742790; x=1753278790;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9eIWzhU6PHUeZcWjbzL9hcWDlD4iJH3dlG5ZDJi3+yI=;
-  b=F0IgMIvBMgTTBMdbnprQUp5DaXWh6FEi9efAg9DI+euLK09hxr2cVD5Q
-   tEoKpBgFj8gZFUh/omxtIUksC5yzQhIlKqGEGYU5Dt7hzjjwRousOtMrp
-   HDhGcc+Fr+w4+0assZfzU5wvQ2ioKDgGWbrGiPQHs6mg7RFryd+zWADXz
-   I759AHNus27P2b/PvQZQZ0yhzHc064t9hPLfZDmv2AO+mVburL3v6lkKo
-   kffv6hYZR3/nBx76rxBtD654w9tunvRrzcI2+1HWB+4MXMvJof2U/HmBM
-   9U6htFQHpJoCsGBIS1KJhatth3/Otb757Nfgg10Lc8yLkeYrltkzfxuCc
-   g==;
-X-CSE-ConnectionGUID: +UIr3BZET+mMhrWhhzDAzg==
-X-CSE-MsgGUID: /5KZz38HSK2UbO9tjtCf8w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11142"; a="44791310"
-X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
-   d="scan'208";a="44791310"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2024 06:53:10 -0700
-X-CSE-ConnectionGUID: LNctsrrjTcmE1nFGbnMeWA==
-X-CSE-MsgGUID: MZMeXLF1SF6STUXCCbCX9Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
-   d="scan'208";a="57085378"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa005.jf.intel.com with ESMTP; 23 Jul 2024 06:53:07 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 8C119178; Tue, 23 Jul 2024 16:53:05 +0300 (EEST)
-Date: Tue, 23 Jul 2024 16:53:05 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, "Borislav Petkov (AMD)" <bp@alien8.de>, 
-	Mel Gorman <mgorman@suse.de>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Jianxiong Gao <jxgao@google.com>, stable@vger.kernel.org
-Subject: Re: [PATCH] mm: Fix endless reclaim on machines with unaccepted
- memory.
-Message-ID: <mdsrik4ryedfe62hnhokejq7botphyvodydcvsbcrdsmwufv7w@oasahvgppsbd>
-References: <20240716130013.1997325-1-kirill.shutemov@linux.intel.com>
- <ZpdwcOv9WiILZNvz@tiehlicka>
- <xtcmz6b66wayqxzfio4funmrja7ezgmp3mvudjodt5xfx64rot@s6whj735oimb>
- <Zpez1rkIQzVWxi7q@tiehlicka>
- <brjw4kb3x4wohs4a6y5lqxr6a5zlz3m45hiyyyht5mgrqcryk7@m7mdyojo4h6a>
- <564ff8e4-42c9-4a00-8799-eaa1bef9c338@suse.cz>
- <dili5kn3xjjzamwmyxjgdkf5vvh6sqftm7qk4f2vbxuizfzlb2@xrtxlvlqaos5>
- <Zp-aIfs3DNhAVBmO@tiehlicka>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0324B15099C;
+	Tue, 23 Jul 2024 13:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.1
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721743008; cv=fail; b=ATug1Q4b0BEIfFPqxVqTgp46wtfbpUWbYhTKSJUMyEDYgNaA6dI4z18B7lDqKe7rxqtMoc6jECS5Jb3I1MNoiITOHjULNXLG0PKnXEgyKta3EMIbYyrSB4x7DIn9fkEAsMU9SZGAqn79VOOaj90dRsSijGb4ltkowXk1MPmatZg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721743008; c=relaxed/simple;
+	bh=20/djNjOSG+p686R+mo666CfgDpoOeTouSa6uYLOM+I=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=bl+WPkNyVlAcYrRLDG6sSPG6B/xf3wE3EhIxn0aa1LA9B6NDSYEBJZw6ylBBavvEKVsyT6dTykZbJa+Jm39miIJDsEkWQvfM8uf1fdRxgYFXm9neYAYxSHaeaJcSHfDDGbPZA3tE1lh3ulAiA+VMfEEj1aVw7FYdCgOSd76I5c4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=N3tfdbfT; arc=fail smtp.client-ip=52.101.65.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=q6ov6bFBzi3SPQ6GCyvBt/gcZGGjQTGrS18r7Kheud7Wnz7Xt/cBgFOlORCffs8x+YjOeC/ixyGWZiSwYVRmuMLzXpF5iV/mue9kHf10rGuo24LwcLFz07N1k15lNCEljHVW+ghCJQyY9YB3BN9/4RkC5erXWbeKJCYFMMOVjCh1yqMajic4aKyZA5gsFsp8nc3bskwK1QuYJUwiB7yrJG7/yFBs9bZG5Zj7UawfR5l57CktbwlZxdW5HeDSrJ17LKHfZlqzoH8isYTLdJWbTqZXeK7dwMu23u4MFK01HgKQVzZrzPu761a81PT3oKszvIJaFEnvmUHBiYSGSAxAkQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YVA8geJotX+g2RihaKvclY/9L1qrWDPk45B+UCRrlBc=;
+ b=L4s7K1jXpHjyrt0eK5en4ja0t3n0cbzVl8r6RO4+I6Ok5ac7AQZQZdBM+RY+4W3L/hgjYy6feimsEAXUdW0h8T8VBo6B80N7KJEElu9qmxherL4yd9MFFuIE/acB4yU41ND0FcIyKepnpIraot3WT7ce8+gholpY589EGbDiOSFlmYm/cJYaVp49MFaGC7nloCQJkRVA9B3NpEkEzhR7kZm7PHTkZ/ovEpsz0cAOBdsZ5XYf5VSzQtwogudB0iLZ4HMjJXBfuWGmQ/z3CdvIvu77T1b5d3OKxh+Ve/1P9UEUfOrdiTCtSoikBDaNCeOLjX3zgLHAiFKq8VUse0X5Nw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YVA8geJotX+g2RihaKvclY/9L1qrWDPk45B+UCRrlBc=;
+ b=N3tfdbfT4J1Eu9SSMLJ5+oUjSspsMVkv2ns/mbc35kIdjTZYTlBrvdjbci4ING2mjWCJY1lMAb3PtprX/JZbT803vJJNVXwkd0TL4ssl+hTu3nUQtwlJAq9Lf1QKrLtO8svIDszQE0x+PmFoZ1b8G1aJc487zW1zjBlTscM/yBs=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AM9PR04MB8487.eurprd04.prod.outlook.com (2603:10a6:20b:41a::6)
+ by DBBPR04MB7611.eurprd04.prod.outlook.com (2603:10a6:10:1f4::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16; Tue, 23 Jul
+ 2024 13:56:43 +0000
+Received: from AM9PR04MB8487.eurprd04.prod.outlook.com
+ ([fe80::6d7a:8d2:f020:455]) by AM9PR04MB8487.eurprd04.prod.outlook.com
+ ([fe80::6d7a:8d2:f020:455%5]) with mapi id 15.20.7784.013; Tue, 23 Jul 2024
+ 13:56:42 +0000
+Message-ID: <87c53abf-080e-4e70-b5e2-b38ef9443983@oss.nxp.com>
+Date: Tue, 23 Jul 2024 16:56:32 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: s32g: add the pinctrl node
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>,
+ Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ NXP S32 Linux Team <s32@nxp.com>
+References: <20240723123720.1088067-1-andrei.stefanescu@oss.nxp.com>
+ <b4985dc2-73e5-4917-9015-f891938c8880@kernel.org>
+Content-Language: en-US
+From: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+In-Reply-To: <b4985dc2-73e5-4917-9015-f891938c8880@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AS4P191CA0016.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5d9::11) To AM9PR04MB8487.eurprd04.prod.outlook.com
+ (2603:10a6:20b:41a::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zp-aIfs3DNhAVBmO@tiehlicka>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM9PR04MB8487:EE_|DBBPR04MB7611:EE_
+X-MS-Office365-Filtering-Correlation-Id: c3ee00b9-d3f6-4f89-1503-08dcab1f479c
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aTJyY25CdU1OanlaY1FsS2VpMnlGRHJUMXBqaWRyZlRKTlBKS1JYSVdoamd6?=
+ =?utf-8?B?ZW5acmtMV2d5eXh3OS9JQlIxMHB6MEFVTUpaY0RsYkpiUVVyVEhDTUdMd0VB?=
+ =?utf-8?B?TkwwTVRsNFUvTVpqdWlqeW1DSEkxQVByazJvWExucFRZTmJ3Z1JRajIvYnFY?=
+ =?utf-8?B?aDJKOGdYeDlVMVJ5anhhWUxZS0trRHJBOTJZeE96VUN1dVJUQ2ZsdnNIUUx1?=
+ =?utf-8?B?dy9GeFBDLzM3UXpiUmw3VVN0cnpXazRFQlYxWkNDN0JZRTN0ZVNKZktGYXZE?=
+ =?utf-8?B?cUtsaCszbTc5YU93QzA3Y2x6TmNUb1pFZ3lLd244QVVRdWNNRE5VajRiV2g1?=
+ =?utf-8?B?VXY4OVdWdnh6WXU0RTJPSDByRVpYM2Z6bUhPWDNlMC8xaGZZcnlyOGFReG4x?=
+ =?utf-8?B?enFzQ0ZDbEhpdC9TZVhMV0JPeWkrYi9rVnBrMGFDYUc2U1BhM1h3WVJCMmpn?=
+ =?utf-8?B?eXl4VXJBekg4U1BTUlN0T0MrcjRRcmRoV1dmdldHQlN5T1p3cW5jZktzcVkv?=
+ =?utf-8?B?VHhvanZCQXVHOVplbDVNaVBvekRnSUYya3JhQ1QwUGNQbjJVZmJUK25YMG15?=
+ =?utf-8?B?ODJYR1VFNFBWN3dFblprdVY0NjJJVG1pTEw2aWsvYVRkNlA1NVgxZGRKdkFO?=
+ =?utf-8?B?ZEd3bExEanQvVGd1RzhpWnVvczlSVllRdTMwaWhuWlJSK3lLMVoxcDltVWxu?=
+ =?utf-8?B?NkM4amJxNGcxUHh6cTVxdkJ5ZXdsVzdacUg4R0pNYVl6VXNlWnlTR0Q3Ukpl?=
+ =?utf-8?B?bXYzZFNjVnByM1U5bEhIbHFoVDhVcnM4WG5TZzIyMWV3TFp0MGt4ZzZVV2NG?=
+ =?utf-8?B?ZFFxR0MzT21lamVLUHA2MUREWFZXR0c4NVFHL2RwNnhEUDE0eWtrNkZCQ1ll?=
+ =?utf-8?B?NGhuYS9FMGVjSFpLRzF2cmQ0R0F4T2FyMWhNOVRxZmpUUzYwS2xkNGpXdVNX?=
+ =?utf-8?B?Vml5VW5KWURUK1BkR1NvUlJWUXlrUXpCRStCNnFyU0J4UUh0N3ZYT0YrTEgr?=
+ =?utf-8?B?TlVSSlVqdnFiWDNSMllCS0lMc1VOby94TVZ5WUJjdy8vQThQVUpMT0NpU0JE?=
+ =?utf-8?B?S0xhdmxjNE5UbTRVNElLMDlrSnIybzc3bHpZOFg0M09EcDJDaVhCdjdRVDVQ?=
+ =?utf-8?B?T2hEVVRFZkV4Z08xbVZIL0tUV3BnVGlxTzZoQ29UdVlpVEd5N2w1aS9ESy9m?=
+ =?utf-8?B?WDAwSDJWMEtmUVhFSDVVd3EvYXY3VXdETi94aHFwMHBKYisyS3VCMGRudEhX?=
+ =?utf-8?B?NFV2aUFlVVFBdEx0R0U1N0NUbUloQ3dTZkYyOE5DT2ZBVHVDNUxOKzVJci9N?=
+ =?utf-8?B?MDBBbStUdGlsejlOZUIxWGVMS1FIN3UvRDVTSktjTVBwME5WUmFhdHc0WEg4?=
+ =?utf-8?B?V0hadktQZURTQWFZUnhoQnZIOGdJM0JHamxJbG90T3lHeWxSUWNuRjRwT0Rr?=
+ =?utf-8?B?Yy9LaUhoUVQ1UG5wV1VVMGlFQnNlbTBCNUR5WDZKRTZDeTRsbDZpcW05LzFx?=
+ =?utf-8?B?S0g0K1FFeGZkQWt6QmVPQlZXaElPcThTTzNpT2FJalErYS9UdUo4WTBLT0ND?=
+ =?utf-8?B?Z000SWxNa010UTZrS2xBRFNYdGI0eDhnaG4wR0NRZWZxc2Q2QmZEWHlaTFhK?=
+ =?utf-8?B?b2dnNHhPb2VtUi9rVUs5bjIzR3VsOFlpNEVvVnhQcmtCclZlYzNRcVIwUjlC?=
+ =?utf-8?B?TGpQT0hJR2xueTlUMUgrRUNUTlhneEozdWI0dVJMVlZhR0g3MVlRYXVwRldS?=
+ =?utf-8?B?MHJiaW85RC9qMEVHaFE3Szg0aU5xbHM3aXVsSmQ5NEZEOXBtbzc1dzZrbC95?=
+ =?utf-8?B?QlJ5QWQrYnhLYXQrSldKcFZGREpwcXFmbGo0TmVEaFZPakpMZ0FNVTNWR0l1?=
+ =?utf-8?Q?ta93qqiDHB0BH?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8487.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OWRYMVlJZXd0d3pMS2NmNmx6TGRRVTlrY1FER0hJbkFHQXl5bHUrckFjUzA2?=
+ =?utf-8?B?UGlONDJaNE15U2xRaGdyRVM3d1UrY0VveE55bmoyamJ1U2tXeFpzWVpQZXAy?=
+ =?utf-8?B?cDRBY0xPZStLLzMvVU1hSW0xUVhyUS9KRWVXSm5KS296TkVYTmR4N0lyMjM4?=
+ =?utf-8?B?RFVDbE9yb0hxWm5oNllQaStjL1dtT0VHNW9MSlNpYnNYMXVsdzVEVlF4QTY2?=
+ =?utf-8?B?K3h5a3lQQVVaaXhtQlpYWU5XY2xaei8zVkRyS1NjdkVFUDMvRFVvWndJSnVO?=
+ =?utf-8?B?OHZKVHdNa3lwR2pBMnRMQjFLNUVBSWE1U2ZTR0IycFVjSUZmanR1V21QdHpS?=
+ =?utf-8?B?YjRzTUdGbVhpWEFFWXVTeks2TTFKUnJ1UmpCc3lXVzJRa1hPN2VycS9xUy9D?=
+ =?utf-8?B?dUQ1elNIZzBab2o2TTBuQW8xTTF4bWw3eVZFSGpSb1FpWFBPNDRHeGtUUlZr?=
+ =?utf-8?B?VHlrNk1JNEtFZCtQN1RqZWN4MmRvb1VIYmd5T2VMUVJMencreWU1RDN6NnBB?=
+ =?utf-8?B?TmI3RWEyWmRwdzhzVVd2S0xvS2p0MzBFdlhEUkNSV1BGK1dJckdtMDNia1Rl?=
+ =?utf-8?B?R1puUzI2UHdGZlBrK01NUnJKT2ZWcWIvSnd4dzFFRXRTQll1amUvNHl1SFp1?=
+ =?utf-8?B?MGpnQXg1NWVqeisvcE5Xc2pQODFYRlRkK054ZkFydGRJREticHdDZ3AwUVVU?=
+ =?utf-8?B?ajJRZVh5SEVpcm5UbkNueXpETmdhZW1xYTRLR2VUMUpxbURlazNDSU1ZNDlX?=
+ =?utf-8?B?c0hLamJLQlJwUGV0dHVRbHpOck8rVXdoSjk5ZzN2YjR2VEdZRVUrTXdDdWQx?=
+ =?utf-8?B?Q0R6aFQzRzNjRXlTOGc0dmFpZGtQdlp2UnI1R1NOeW93NWdmUDVFMzBnY0VY?=
+ =?utf-8?B?TkdMNUMwcWo1M2ZaeTlZRHR6V0FXWEhQUzFBK1N2Uis2TnJKbWllNkxRU0No?=
+ =?utf-8?B?UEtQWDBScVJ1L0FxbDJDZjE5ZEtRU3Y3RXgrWUl4Y1J0YTc0SFRkODRQYjR4?=
+ =?utf-8?B?NVhZN1ZFa0hQUnNyOUZkZy9GUDY5UDRaK21WZmg2MGxhL0c1ZTg3d1B3dm9x?=
+ =?utf-8?B?WnhNdjNQenF0eE9OTjZUMEVCdnJ2QnR5UmovdDVyczNrRTNVejBKbFdobEVm?=
+ =?utf-8?B?YWdVbC9LMUZkY21kSlR2SXZ4RW5vTm9RQmdiRWpXdTc5cWpOMGFXWG1ucGw3?=
+ =?utf-8?B?czJuVHVNc1Y4SzZ0dk5zWSsrWVpLSHNOdFk5MGt1NGp5L01NZWsxbWNLNlRs?=
+ =?utf-8?B?YURFYk1yTkRZOXY2eDhrSjRidHFudUNMV1lHTFRxV2FUOUo1ZWxHMHFDVWZH?=
+ =?utf-8?B?TVVYT3h6c0UvRjJGeFU3ZkRpakJLVFVxaXpRRFNLVnNPdk42RGR2alpXbkxq?=
+ =?utf-8?B?MVNtem0yMDdGZUxMWnNKdEJPTGg3M3dJeStKZFR0bDRpSFBnZHJjbVdDNTd2?=
+ =?utf-8?B?MTFKOGx5V2J1SkE2WHFyOFl3QUIwanpCN0cwUUQwWU9HMW1NZHdrY0dHeHFz?=
+ =?utf-8?B?Vkp6bkd0RUkvT1lFNUp2NVpwa3ZiMXJ4ZG1EQ29pcDdkVWdwMDRaUFllOUxW?=
+ =?utf-8?B?aTV5azJmcGxXZnJuZ0RsVFd1VkI0cGt1MUd6MXA0YXdwV3NEUzVXdVN2UlJR?=
+ =?utf-8?B?bWFmOCtRdHJvZFJHL0VxSWMxQTNqbDlzeTd1ZjZ6LzdtUzRKNklySldkaHRm?=
+ =?utf-8?B?MHF0OVkxZm5URVBuQUN6aytqQTZPZmJXT1RKVFEzSjdBOEtLZnRiNElyelp2?=
+ =?utf-8?B?TzdqRXgvNDBHR1N6YUViNUJYUmVLZmRWcVJXL0tGVnk0UjJSdkN4d3hJMDk5?=
+ =?utf-8?B?ZEQxdHBMMzc3bEFkTDZMK2dPbm1RMk9FdDg4NTA5TUxMSHAxT29SZ0NFUzJv?=
+ =?utf-8?B?b2s3dGxTMGFxRlpwajVjRk1LMFRFTERreG5BSWh1OXNCRzlTLzVPVzBwK2V3?=
+ =?utf-8?B?QmtEcHJaOThVcjQ1QTFUQkdPV3E1eThITzBHang0UDMrVyt5aVhQV0wwQTJC?=
+ =?utf-8?B?NE9ucWVjaVdFNHI0eHVIbTAyZ0JhMktDbmRPSXFWQjNINGN0SVhsWGZxRUI3?=
+ =?utf-8?B?K1NLbU1pQURQMkJ6MDI5MzRvZk04YkNXQ0JjOEhoYSt5NUsyUWhWa2piSFRQ?=
+ =?utf-8?B?VFBWVG9iV2JzaGdkclQzaTdGNUhuNktadjFwaEVKbFZya0VrRzdLS01LamhG?=
+ =?utf-8?B?amc9PQ==?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c3ee00b9-d3f6-4f89-1503-08dcab1f479c
+X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8487.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Jul 2024 13:56:42.7888
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 15LDJEuVGWL/BKU4eacJpU08D6AVchBG60X4u66aW2To2nzYu/Kif9JMy48coNXS+xypMwvOrbLd9FFKyHpQ9YEq5FukiDwBtrUIf8+mVSI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB7611
 
-On Tue, Jul 23, 2024 at 01:55:13PM +0200, Michal Hocko wrote:
-> On Tue 23-07-24 12:49:41, Kirill A. Shutemov wrote:
-> > On Tue, Jul 23, 2024 at 09:30:27AM +0200, Vlastimil Babka wrote:
-> [...]
-> > > Although just removing the lazy accept mode would be much more appealing
-> > > solution than this :)
-> > 
-> > :P
-> > 
-> > Not really an option for big VMs. It might add many minutes to boot time.
+Hi Krzysztof,
+
+Thank you for the prompt review!
+
+On 23/07/2024 16:38, Krzysztof Kozlowski wrote:
+> On 23/07/2024 14:37, Andrei Stefanescu wrote:
+>> +			status = "okay";
 > 
-> Well a huge part of that can be done in the background so the boot
-> doesn't really have to wait for all of it. If we really have to start
-> playing whack-a-mole to plug all the potential ways to trigger reclaim
-> imbalance I think it is fair to re-evaluate how much lazy should the
-> initialization really be.
+> Where did you disable it?
 
-One other option I see is to treat unaccepted memory as free, so
-watermarks would not fail if we have unaccepted memory. No spinning in
-kswapd in this case.
+It isn't disabled anywhere. I thought we should always have it enabled since most of the
+other drivers will rely on it. Should I add it here disabled and enable it in the
+board specific .dts files (in this case: s32g399a-rdb3.dts, s32g274a-rdb2.dts and
+s32g274a-evb.dts)?
 
-Only get_page_from_freelist() and __alloc_pages_bulk() is aware about
-unaccepted memory.
+> 
+>> +
+>> +			jtag_pins: jtag_pins {
+> 
+> Underscores are not allowed. Please follow DTS coding style. The
+> mainline one, not NXP coding style. Several other places here have also
+> issues, so be sure you read if carefully.
 
-The quick patch below shows the idea.
+Thank you! I will send a V2 with  "jtag_pins: jtag-pins {" and
+all the other subnodes renamed to "jtag-grp*".
 
-I am not sure how it would affect __isolate_free_page() callers. IIUC,
-they expect to see pages on free lists, but might not find them there
-in this scenario because they are not accepted yet.
-I need to look closer at this.
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index c11b7cde81ef..5e0bdfbe2f1f 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -667,6 +667,7 @@ enum zone_watermarks {
- #define min_wmark_pages(z) (z->_watermark[WMARK_MIN] + z->watermark_boost)
- #define low_wmark_pages(z) (z->_watermark[WMARK_LOW] + z->watermark_boost)
- #define high_wmark_pages(z) (z->_watermark[WMARK_HIGH] + z->watermark_boost)
-+#define promo_wmark_pages(z) (z->_watermark[WMARK_PROMO] + z->watermark_boost)
- #define wmark_pages(z, i) (z->_watermark[i] + z->watermark_boost)
- 
- /*
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 14d39f34d336..254bfe29eaf1 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -304,7 +304,7 @@ EXPORT_SYMBOL(nr_online_nodes);
- 
- static bool page_contains_unaccepted(struct page *page, unsigned int order);
- static void accept_page(struct page *page, unsigned int order);
--static bool try_to_accept_memory(struct zone *zone, unsigned int order);
-+static bool cond_accept_memory(struct zone *zone, unsigned int order);
- static inline bool has_unaccepted_memory(void);
- static bool __free_unaccepted(struct page *page);
- 
-@@ -2947,9 +2947,6 @@ static inline long __zone_watermark_unusable_free(struct zone *z,
- 	if (!(alloc_flags & ALLOC_CMA))
- 		unusable_free += zone_page_state(z, NR_FREE_CMA_PAGES);
- #endif
--#ifdef CONFIG_UNACCEPTED_MEMORY
--	unusable_free += zone_page_state(z, NR_UNACCEPTED);
--#endif
- 
- 	return unusable_free;
- }
-@@ -3243,6 +3240,8 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
- 			}
- 		}
- 
-+		cond_accept_memory(zone, order);
-+
- 		/*
- 		 * Detect whether the number of free pages is below high
- 		 * watermark.  If so, we will decrease pcp->high and free
-@@ -3268,10 +3267,8 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
- 				       gfp_mask)) {
- 			int ret;
- 
--			if (has_unaccepted_memory()) {
--				if (try_to_accept_memory(zone, order))
--					goto try_this_zone;
--			}
-+			if (cond_accept_memory(zone, order))
-+				goto try_this_zone;
- 
- #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
- 			/*
-@@ -3325,10 +3322,8 @@ get_page_from_freelist(gfp_t gfp_mask, unsigned int order, int alloc_flags,
- 
- 			return page;
- 		} else {
--			if (has_unaccepted_memory()) {
--				if (try_to_accept_memory(zone, order))
--					goto try_this_zone;
--			}
-+			if (cond_accept_memory(zone, order))
-+				goto try_this_zone;
- 
- #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
- 			/* Try again if zone has deferred pages */
-@@ -4456,12 +4451,25 @@ unsigned long __alloc_pages_bulk(gfp_t gfp, int preferred_nid,
- 			goto failed;
- 		}
- 
-+		cond_accept_memory(zone, 0);
-+retry_this_zone:
- 		mark = wmark_pages(zone, alloc_flags & ALLOC_WMARK_MASK) + nr_pages;
- 		if (zone_watermark_fast(zone, 0,  mark,
- 				zonelist_zone_idx(ac.preferred_zoneref),
- 				alloc_flags, gfp)) {
- 			break;
- 		}
-+
-+		if (cond_accept_memory(zone, 0))
-+			goto retry_this_zone;
-+
-+#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-+		/* Try again if zone has deferred pages */
-+		if (deferred_pages_enabled()) {
-+			if (_deferred_grow_zone(zone, 0))
-+				goto retry_this_zone;
-+		}
-+#endif
- 	}
- 
- 	/*
-@@ -6833,9 +6841,6 @@ static bool try_to_accept_memory_one(struct zone *zone)
- 	struct page *page;
- 	bool last;
- 
--	if (list_empty(&zone->unaccepted_pages))
--		return false;
--
- 	spin_lock_irqsave(&zone->lock, flags);
- 	page = list_first_entry_or_null(&zone->unaccepted_pages,
- 					struct page, lru);
-@@ -6861,23 +6866,29 @@ static bool try_to_accept_memory_one(struct zone *zone)
- 	return true;
- }
- 
--static bool try_to_accept_memory(struct zone *zone, unsigned int order)
-+static bool cond_accept_memory(struct zone *zone, unsigned int order)
- {
- 	long to_accept;
- 	int ret = false;
- 
--	/* How much to accept to get to high watermark? */
--	to_accept = high_wmark_pages(zone) -
--		    (zone_page_state(zone, NR_FREE_PAGES) -
--		    __zone_watermark_unusable_free(zone, order, 0));
-+	if (!has_unaccepted_memory())
-+		return false;
- 
--	/* Accept at least one page */
--	do {
-+	if (list_empty(&zone->unaccepted_pages))
-+		return false;
-+
-+	/* How much to accept to get to high watermark? */
-+	to_accept = promo_wmark_pages(zone) -
-+		    (zone_page_state(zone, NR_FREE_PAGES) -
-+		    __zone_watermark_unusable_free(zone, order, 0) -
-+		    zone_page_state(zone, NR_UNACCEPTED));
-+
-+	while (to_accept > 0) {
- 		if (!try_to_accept_memory_one(zone))
- 			break;
- 		ret = true;
- 		to_accept -= MAX_ORDER_NR_PAGES;
--	} while (to_accept > 0);
-+	}
- 
- 	return ret;
- }
-@@ -6920,7 +6931,7 @@ static void accept_page(struct page *page, unsigned int order)
- {
- }
- 
--static bool try_to_accept_memory(struct zone *zone, unsigned int order)
-+static bool cond_ccept_memory(struct zone *zone, unsigned int order)
- {
- 	return false;
- }
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+> 
+>>  	timer {
+> 
+> Best regards,
+> Krzysztof
+> 
+
+Best regards,
+Andrei
 
