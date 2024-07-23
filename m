@@ -1,118 +1,180 @@
-Return-Path: <linux-kernel+bounces-260217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7407493A4A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:00:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2312593A4A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B9D81C227AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:00:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97938B22F9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 17:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADCDF1581E4;
-	Tue, 23 Jul 2024 17:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA45157E94;
+	Tue, 23 Jul 2024 17:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H3wwsIMb"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D+ODue+w"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D77156F54;
-	Tue, 23 Jul 2024 17:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6C114D431;
+	Tue, 23 Jul 2024 17:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721754017; cv=none; b=gcY2URCtpZNIMb0PwtAqNKwXfyrimhFVB2kvj/MeDbNvRWT7DItFxG6NBBJBfztn7OuQ9XVNb5lXM/4IP+mc3UytClDPLlsi732T9qITn+fRwSor8hRGLFJFAqzod/1+Xj0tlKJfOqwfqB1LklpUaECye6uKXBBWO49LLVdbinQ=
+	t=1721754052; cv=none; b=bEjAV3ozkrUi747TzLz2taScGpzhPTmi82ftXubUSfs7dhSoawU62arPR1oohY4PY4VH17K+JkOMJyiKVvIffnzE3WTs/lWQJoZfIo0yJgcOGLVrDgXDVnhpzk6zGusYxrs22xJJE1gkUg5fVwHx8PxQUOmFyQ2FLrU8qvxSXI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721754017; c=relaxed/simple;
-	bh=4GrRylsdB0mp1TqIwIq6Dg6WHxP0uXAxjk5b6WquL4w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HlCqq01aQWoz8bGuztx05U9sPqDvIDQONyKTLzGmI1h58CeUTXhZto/gxuvTB5XdygvYHMHThG2Sgu9QBq+6t+KS5DE0N264J9ubCXdGBXZyV6tbmDPYCJuvcWAXV6l7u+GeJUPyQbxA1KJVx/nPXUT1JJuT70JV7y4LsWVuy3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H3wwsIMb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46N9q4bj009144;
-	Tue, 23 Jul 2024 16:59:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4GrRylsdB0mp1TqIwIq6Dg6WHxP0uXAxjk5b6WquL4w=; b=H3wwsIMbYsYqj0Qo
-	rEtGlyRqE85r74yLqTF40pwk7fniFilkcyN5yJDfK4ExzJeEVMMywQpftKQSPQac
-	dp84bixfeScjU/wiZ3b/lbuGpZCWcVH5Tb26DYn3PvG6eYB6t/luG5NJzQc/SCUw
-	x5mY1ZhJxCREHaxmGhgt++sgI/IYuiHq9DB3GztawNydknkYgwvvXtdYIeMaNjX0
-	2CI9P/531H2fxMY4IEykuCY0h0ozHt0B+LOqZZ1AgifeEQ0FmrIs0KsAGsbQJWYl
-	/ydB+2mnlxbuxVhjyPX4B+1xsLCpgeJsFKdXIV9C6GGG7597alxWrMNVblHm1R0D
-	++n0mw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g487fm8h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Jul 2024 16:59:55 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46NGxreD027379
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Jul 2024 16:59:53 GMT
-Received: from [10.110.73.223] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 23 Jul
- 2024 09:59:50 -0700
-Message-ID: <5ea6b07e-7583-45f6-afd1-05f2856bea27@quicinc.com>
-Date: Tue, 23 Jul 2024 09:59:44 -0700
+	s=arc-20240116; t=1721754052; c=relaxed/simple;
+	bh=iFGHrRa1AJpd3vUksRvo9/chRGhjVJipRgmSeu6mZTw=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ChMxPQZg77UnGd5axxkb5lZ2KiMzHIym0tb1Ugl+9JgI6TBmXTpSDfz/C+B+PlmlPQGEhP5hxCmBeTAZ7O2PR7yo0VDaSsO2lYd8qBmmuyeQY1UQu6QI5opPUpGP558Q+3uHMMyNhsVNTDcvumkdcOWSvh5YBFoi17bu3S241Ck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D+ODue+w; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e0857a11862so5257968276.1;
+        Tue, 23 Jul 2024 10:00:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721754049; x=1722358849; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aWJZVKsTjOlmkxuJxxuw1YxCmrjhrUkB6LnBXgLWtjU=;
+        b=D+ODue+wegHlM7RD45zpH4PKzHXhzhM/yTuTPRTsDd28DMm1kHPprLP1gqEQyvFpP8
+         HCXE7eesleK9GrRZmdGKLEOz+tpQLeb4jdBC5dH2+nclpQEd3GAgDrJz3TuKqrC/YH9Y
+         XH3U+raRuvEtr+uG0eJlV6ohB00663EeIOiwcLPPVAOnnTnw6nMIu9YEYYebUMMdU+Z3
+         dV7ucwZ6cBThCoU2kPwTiKaZ3KwPooRqiQ75y9Datqth4xFr0JliuEb7nc12RIw191so
+         Cgm42J/9m1SiuPjepZYaPl5cXaA6xTjSF5Egsguz9LxrWDLIwVdqYtuEqk10VPqPw0OB
+         zstQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721754049; x=1722358849;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aWJZVKsTjOlmkxuJxxuw1YxCmrjhrUkB6LnBXgLWtjU=;
+        b=lE/x3tx8oZqnEED1GXyzMVKBF1U+J2ns2+tjh1mdW5+TWe23nCmNMqTUgFPoMDrMAf
+         9xJK5xUbPIoUAAxnRdV/HY3ytZX6TGD9GED6w9r5Do1NsRaNRP5gb7xc156gjDnxFMGh
+         QOXo0RcxfhgW1soCtTpSm1cgGzAx3xCRASkmiiVXFwvTmQAcHat6nUiMs5Vp1+EDohKu
+         ukmzh2ahx/zkCHBFBRnph23bGUud9M8SykxLGPfgZ4FhXvdb+WK53O90jcHhYhak825I
+         wBv/wic3J+HUmellqGf4aK/veCOBny36i8wyZlb/EEkY6OFBzPMxkl5ZKe53TnE1BHjL
+         m5yA==
+X-Forwarded-Encrypted: i=1; AJvYcCUujfNJb/mzGImc903vejBYd1dFpUywxYEESrnXdZcML+zGVOb0Mxmlxk3/4dYfKP8g62pzqVrzMcFmhb2CnMEA0VzLFBm1r+G/gkHexnR/WnvWlQFYtQr52IzoX1pLeqfniV50/53x
+X-Gm-Message-State: AOJu0Yxgon8d1xar/THi5os565Fk8yJhhA169/H/2Eg+10fkiIxjo24B
+	6Vxv6D+9uV8p8nSnPtmU1YEuF8OkKR61oUZlpTitjwVSCQFTF/zR
+X-Google-Smtp-Source: AGHT+IGIjD6wNy3JDyYcWxCKOqG4sXHYKOI4GVAHxO1DR0/dqcCY+wqTyan38FlrIecnroLRmveF6w==
+X-Received: by 2002:a25:d086:0:b0:e02:50f2:784d with SMTP id 3f1490d57ef6-e0b0972a64amr572746276.21.1721754042357;
+        Tue, 23 Jul 2024 10:00:42 -0700 (PDT)
+Received: from gpd ([50.205.20.42])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e086096a347sm1944336276.1.2024.07.23.10.00.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 10:00:42 -0700 (PDT)
+From: fan <nifan.cxl@gmail.com>
+X-Google-Original-From: fan <fan@gpd>
+Date: Tue, 23 Jul 2024 10:00:15 -0700
+To: Huang Ying <ying.huang@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alison Schofield <alison.schofield@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Bharata B Rao <bharata@amd.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>
+Subject: Re: [PATCH v3 1/3] cxl/region: Fix a race condition in memory
+ hotplug notifier
+Message-ID: <Zp_hn8ExJEXeVGtb@gpd>
+References: <20240618084639.1419629-1-ying.huang@intel.com>
+ <20240618084639.1419629-2-ying.huang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] sh: Restructure setup code to reserve memory regions
- earlier
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        <ysato@users.sourceforge.jp>, <dalias@libc.org>
-CC: <linux-sh@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <robh+dt@kernel.org>, <kernel@quicinc.com>
-References: <20240711214438.3920702-1-quic_obabatun@quicinc.com>
- <a68b7cd0e3b143f023414feca279deb768d43575.camel@physik.fu-berlin.de>
- <121b8077-bc6d-42a3-8ec2-c792e84bd947@quicinc.com>
- <831887db73d9eafc50940315ed44139107bd5f2a.camel@physik.fu-berlin.de>
- <636943c1-6e32-4dd1-abdd-5a110e9aa07c@quicinc.com>
- <d12de025cfb71bcf2a86aa54251aac20f16d32b7.camel@physik.fu-berlin.de>
-Content-Language: en-US
-From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-In-Reply-To: <d12de025cfb71bcf2a86aa54251aac20f16d32b7.camel@physik.fu-berlin.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: iMk1Q4DWqact0PwbnYfnVZng_N2Sbp4s
-X-Proofpoint-GUID: iMk1Q4DWqact0PwbnYfnVZng_N2Sbp4s
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-23_05,2024-07-23_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 mlxlogscore=560
- malwarescore=0 adultscore=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2407230117
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618084639.1419629-2-ying.huang@intel.com>
 
+On Tue, Jun 18, 2024 at 04:46:37PM +0800, Huang Ying wrote:
+> In the memory hotplug notifier function of the CXL region,
+> cxl_region_perf_attrs_callback(), the node ID is obtained by checking
+> the host address range of the region. However, the address range
+> information is not available when the region is registered in
+> devm_cxl_add_region(). Additionally, this information may be removed
+> or added under the protection of cxl_region_rwsem during runtime. If
+> the memory notifier is called for nodes other than that backed by the
+> region, a race condition may occur, potentially leading to a NULL
+> dereference or an invalid address range.
+> 
+> The race condition is addressed by checking the availability of the
+> address range information under the protection of cxl_region_rwsem. To
+> enhance code readability and use guard(), the relevant code has been
+> moved into a newly added function: cxl_region_nid().
+> 
+> Fixes: 067353a46d8c ("cxl/region: Add memory hotplug notifier for cxl region")
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Alison Schofield <alison.schofield@intel.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Bharata B Rao <bharata@amd.com>
+> Cc: Alistair Popple <apopple@nvidia.com>
+> Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+> Cc: Davidlohr Bueso <dave@stgolabs.net>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> ---
 
-On 7/23/2024 12:57 AM, John Paul Adrian Glaubitz wrote:
-> Hi Oreluwa,
->
-> On Wed, 2024-07-17 at 19:22 -0700, Oreoluwa Babatunde wrote:
->> Thanks for your feedback and for working with me on this.
->> I have uploaded a new version here:
->> https://lore.kernel.org/all/20240718021822.1545976-1-quic_obabatun@quicinc.com/
->>
->> Please let me know if this properly addresses your comments.
-> Thanks. I'll have another look this week, including testing.
->
-> But I have decided to send the pull request to Linus for v6.11 now,
-> so I don't have to hurry with the review.
->
-> Adrian
-ack.
+Reviewed-by: Fan Ni <fan.ni@samsung.com>
 
-Thank you!
+>  drivers/cxl/core/region.c | 19 +++++++++++++++----
+>  1 file changed, 15 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index 3c2b6144be23..51aeef2c012c 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -2304,14 +2304,25 @@ static bool cxl_region_update_coordinates(struct cxl_region *cxlr, int nid)
+>  	return true;
+>  }
+>  
+> +static int cxl_region_nid(struct cxl_region *cxlr)
+> +{
+> +	struct cxl_region_params *p = &cxlr->params;
+> +	struct cxl_endpoint_decoder *cxled;
+> +	struct cxl_decoder *cxld;
+> +
+> +	guard(rwsem_read)(&cxl_region_rwsem);
+> +	cxled = p->targets[0];
+> +	if (!cxled)
+> +		return NUMA_NO_NODE;
+> +	cxld = &cxled->cxld;
+> +	return phys_to_target_node(cxld->hpa_range.start);
+> +}
+> +
+>  static int cxl_region_perf_attrs_callback(struct notifier_block *nb,
+>  					  unsigned long action, void *arg)
+>  {
+>  	struct cxl_region *cxlr = container_of(nb, struct cxl_region,
+>  					       memory_notifier);
+> -	struct cxl_region_params *p = &cxlr->params;
+> -	struct cxl_endpoint_decoder *cxled = p->targets[0];
+> -	struct cxl_decoder *cxld = &cxled->cxld;
+>  	struct memory_notify *mnb = arg;
+>  	int nid = mnb->status_change_nid;
+>  	int region_nid;
+> @@ -2319,7 +2330,7 @@ static int cxl_region_perf_attrs_callback(struct notifier_block *nb,
+>  	if (nid == NUMA_NO_NODE || action != MEM_ONLINE)
+>  		return NOTIFY_DONE;
+>  
+> -	region_nid = phys_to_target_node(cxld->hpa_range.start);
+> +	region_nid = cxl_region_nid(cxlr);
+>  	if (nid != region_nid)
+>  		return NOTIFY_DONE;
+>  
+> -- 
+> 2.39.2
+> 
 
