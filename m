@@ -1,441 +1,160 @@
-Return-Path: <linux-kernel+bounces-260387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DD5893A823
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:40:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 260B293A82D
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 22:41:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D15011F235FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:40:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADD33282D67
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 20:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8422114387F;
-	Tue, 23 Jul 2024 20:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1F3143894;
+	Tue, 23 Jul 2024 20:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="aDkERYYt"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D/ZaQoTh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JNhwd2/a"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF08813F01A;
-	Tue, 23 Jul 2024 20:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B6B142633
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 20:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721767229; cv=none; b=ZAcfpDszErRYWI+yXqtry1rsp0V8Fs5C9DSPlhwajdedAFZHkWxifGubxyrwivQhwhL/LPf/pVmr5mmDEcN3RK6APR0lU4WsVH/XJvFUIz9A6dQhpYM2gJVME/4a/Z/j94XaczTDGGw3P8tAzp6v0wUnVBrZWBt1qwfEoqzhxtU=
+	t=1721767285; cv=none; b=NdL3Sz2jFx72sgE96uYRN0XKSHMioY+3sIPtHq58auDSN25ITnj5Qo66M8UN6m8Tou7cM/0KqA71oc/V21FfAu1XfYhnJwClwlDT6kKNb/fI1zMuWoze/vMLyAo2CcywwqFf8n3iJWGJZLvCFVupgPvyiLv+tM60P3EH6GWAvzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721767229; c=relaxed/simple;
-	bh=yoFyewJj8Int5lFvWdtKzMZN/XGpq/r5CA+82aDN4mw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SwZFxL6H+r8ePai1V0YSbmRxGjzRYVmzkqfDrnXYxMJMcKA1cPi2AlnC674CfEMHMfxrlSzFZra0gVuJ8OA2zGwvHU/BaZ2wOAbo/x3DcuWv+XbgjtuXIvPXdTaRVbw6QGXbpNWGSSBf7yfsEiFCnW6CF713Glyu+uPV9Z85q4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=aDkERYYt; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id B40A81C0082; Tue, 23 Jul 2024 22:40:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1721767222;
+	s=arc-20240116; t=1721767285; c=relaxed/simple;
+	bh=09875ZYhZWNX38sEsbubKgqKVwYQRxZdzw456QKdBck=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=TDXfiVkPC4N6Rk0aVigWx6P7DdbuUOPMtLWG2G53DX+RVASdP38PAmYPS2zRrNUHtmXlWLNq6j4bwioMQ1GNK2lAwu96s2flkxTnm0q+peKWta3fFT+KqWkNzirmWQc8/aEXb2ZptNgLTZtqJ3knw9/ERdfN5VXUeJS/+/DRbqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D/ZaQoTh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JNhwd2/a; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1721767275;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=B2lmDziFDG1E3p7WXaQzsGVZaJLIhUDMeOm4Q/kkov4=;
-	b=aDkERYYtSquWM8b0tbPVSelMQpEHXVvIlJZNncTa/baHMTgY84w2fQZZO4XUI8dninlXP8
-	AOup+FW5GpJL+eJkDKZSnQIqD7csWQP7IHLmG8hlgBSTsC9gZvx9eMwlmWaFAnBV054Nwc
-	xZs2NeRbDV603butZK8QX+b1Sap5Ubc=
-Date: Tue, 23 Jul 2024 22:40:22 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Pekka Paalanen <pekka.paalanen@haloniitty.fi>
-Cc: Werner Sembach <wse@tuxedocomputers.com>,
-	Hans de Goede <hdegoede@redhat.com>, Lee Jones <lee@kernel.org>,
-	jikos@kernel.org, linux-kernel@vger.kernel.org,
-	Jelle van der Waa <jelle@vdwaa.nl>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	linux-input@vger.kernel.org, ojeda@kernel.org,
-	linux-leds@vger.kernel.org
-Subject: Keybaords with arrays of RGB LEDs was Re: Future handling of complex
- RGB devices on Linux v2
-Message-ID: <ZqAVNmyFOEmR0Ilr@duo.ucw.cz>
-References: <9851a06d-956e-4b57-be63-e10ff1fce8b4@tuxedocomputers.com>
- <1bc6d6f0-a13d-4148-80cb-9c13dec7ed32@redhat.com>
- <b70b2ea8-abfd-4d41-b336-3e34e5bdb8c6@tuxedocomputers.com>
- <477d30ee-247e-47e6-bc74-515fd87fdc13@redhat.com>
- <e21a7d87-3059-4a51-af04-1062dac977d2@tuxedocomputers.com>
- <247b5dcd-fda8-45a7-9896-eabc46568281@tuxedocomputers.com>
- <ZdZ2kMASawJ9wdZj@duo.ucw.cz>
- <20240222110457.71618f27@eldfell>
- <ZdeGiMf2npmzJidU@duo.ucw.cz>
- <20240223105328.38d3f8da@eldfell>
+	bh=nd0ICeGjjJKtXJ1DuunfJsbYX2PpYmpHsGXgmAbF31w=;
+	b=D/ZaQoThSC3pISUOWBZbJMdz+BzxtaknoOPvV/dLY8L2bmlYgAFEPPrksuuP9ytKsQfbel
+	hg4Lyf0Z5FX2mcb5N0rfO6Lgt2LXo054fqkFJBZyj03IDByAo00TYpBGMGHTPTd/B8E3y9
+	eLBRbri++qZSrK7Rd9NSUAU8CAW1ei/ZHdpn/AccrOrbYR5fd8YY+tLIsX18Deuk9qiDqz
+	8SSz7/KOtHkdroR9r/RmRPLSsQYvEq5DK70vJXl6zSxNVYRpRKnbJHZOhaZA75Djcs8C+H
+	zL0gnEnT9agyBKhgiufVzBopvGLk8qcSvCWlLOqxzRzFKyJ79fHNhTGv5gSywA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1721767275;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nd0ICeGjjJKtXJ1DuunfJsbYX2PpYmpHsGXgmAbF31w=;
+	b=JNhwd2/ahhizMegAZH3x7whvgzTdhNCu1bc4CUF+nLL0xrTKNruqyVechxmeMn4l98Hubd
+	l8pdCVn82fA/BCCA==
+To: Linus Torvalds <torvalds@linux-foundation.org>, Petr Mladek
+ <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Rasmus Villemoes
+ <linux@rasmusvillemoes.dk>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>, Jan Kara
+ <jack@suse.cz>, Peter Zijlstra <peterz@infradead.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] printk for 6.11
+In-Reply-To: <CAHk-=whU_woFnFN-3Jv2hNCmwLg_fkrT42AWwxm-=Ha5BmNX4w@mail.gmail.com>
+References: <Zp-_7R49fIHgIhaq@pathway.suse.cz>
+ <CAHk-=whU_woFnFN-3Jv2hNCmwLg_fkrT42AWwxm-=Ha5BmNX4w@mail.gmail.com>
+Date: Tue, 23 Jul 2024 22:47:15 +0206
+Message-ID: <87ed7jvo2c.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="xGaUGIAiUu9bGTpI"
-Content-Disposition: inline
-In-Reply-To: <20240223105328.38d3f8da@eldfell>
-
-
---xGaUGIAiUu9bGTpI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-So... I got two gaming keyboards. One is totally unusable (and it
-looks LEDs are not controllable from the host), and the second one is
-=2E. HyperX Elite RGB. Needs 2 USB connections, very buggy, probably
-needs repair, and I'd not recomend it to anyone. But that one seems to
-be usable for RGB keyboard development.
-
-(Unusable one is
-https://www.trust.com/en/product/23651-gxt-835-azor-illuminated-gaming-keyb=
-oard
-Usable one is
-0951:16be Kingston Technology HyperX Alloy Elite RGB
-)
-
-First step is to create some kind of driver, I believe. And I did
-that, userland version works quite good, and I started hacking kernel
-one. Version is below, and help would be welcome. Especially if
-someone knows how to do the probing right (it binds 3 times, log
-below). What is worse, loading this driver kills keyboard
-functionality -- input is no longer possible. Is there simple way to
-keep that functionality?
-
-Best regards,
-								Pavel
-
-[ 9880.950973] input: HyperX Alloy Elite RGB HyperX Alloy Elite RGB System =
-Control as /devices/p
-ci0000:00/0000:00:1d.0/usb1/1-1/1-1:1.2/0003:0951:16BE.0045/input/input216
-[ 9881.009994] input: HyperX Alloy Elite RGB HyperX Alloy Elite RGB Consume=
-r Control as /devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1:1.2/0003:0951:16=
-BE.0045/input/input217
-[ 9881.013758] input: HyperX Alloy Elite RGB HyperX Alloy Elite RGB Keyboar=
-d as /devices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1:1.2/0003:0951:16BE.0045/=
-input/input219
-[ 9881.014528] hid-generic 0003:0951:16BE.0045: input,hiddev96,hidraw2: USB=
- HID v1.11 Mouse [HyperX Alloy Elite RGB HyperX Alloy Elite RGB] on usb-000=
-0:00:1d.0-1/input2
-[ 9886.017646] input: HyperX Alloy Elite RGB HyperX Alloy Elite RGB as /dev=
-ices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1:1.0/0003:0951:16BE.0043/input/inp=
-ut221
-[ 9886.218066] hx 0003:0951:16BE.0043: input,hidraw0: USB HID v1.11 Keyboar=
-d [HyperX Alloy Elite RGB HyperX Alloy Elite RGB] on usb-0000:00:1d.0-1/inp=
-ut0
-[ 9886.218088] Have device.
-=2E..
-[ 9899.399088] input: HyperX Alloy Elite RGB HyperX Alloy Elite RGB as /dev=
-ices/pci0000:00/0000:00:1d.0/usb1/1-1/1-1:1.1/0003:0951:16BE.0044/input/inp=
-ut222
-[ 9899.537173] hx 0003:0951:16BE.0044: input,hidraw1: USB HID v1.11 Keyboar=
-d [HyperX Alloy Elite RGB HyperX Alloy Elite RGB] on usb-0000:00:1d.0-1/inp=
-ut1
-[ 9899.537194] Have device.
-=2E..
-[ 9912.691800] input: HyperX Alloy Elite RGB HyperX Alloy Elite RGB as /dev=
-ices/pci0000:00/0000:
-00:1d.0/usb1/1-1/1-1:1.2/0003:0951:16BE.0045/input/input223
-[ 9912.751478] hx 0003:0951:16BE.0045: input,hiddev96,hidraw2: USB HID v1.1=
-1 Mouse [HyperX Alloy
- Elite RGB HyperX Alloy Elite RGB] on usb-0000:00:1d.0-1/input2
-[ 9912.751502] Have device.
-
-
-// SPDX-License-Identifier: GPL-2.0-or-later
-/*
- */
-
-#include <linux/device.h>
-#include <linux/input.h>
-#include <linux/hid.h>
-#include <linux/module.h>
-#include <linux/slab.h>
-#include <linux/hid-roccat.h>
-#include <linux/usb.h>
-
-struct hx_device {};
-
-static unsigned char keys[] =3D {
-	0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x=
-14,
-	0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x20, 0x21, 0x=
-22,
-	0x23, 0x24, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x=
-30,
-	0x31, 0x32, 0x33, 0x34, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3E, 0x3F, 0x=
-41,
-	0x44, 0x45, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x51, 0x54, 0x=
-55,
-	0x58, 0x59, 0x5A, 0x5B, 0x5C, 0x5E, 0x5F, 0x61, 0x64, 0x65, 0x68, 0x69, 0x=
-6A,
-	0x6B, 0x6C, 0x6E, 0x6F, 0x74, 0x75, 0x78, 0x79, 0x7A, 0x7B, 0x7C, 0x7D, 0x=
-7E,
-	0x7F, 0x81, 0x84, 0x85, 0x88, 0x89, 0x8A, 0x8B, 0x8C, 0x8D, 0x8E, 0x8F, 0x=
-91,
-	0x94, 0x95 };
-
-struct hid_device *one_hdev;
-
-static int set_direct_color(struct hid_device *hdev, int color, int val)
-{
-	const int s =3D 264;
-	unsigned char *buf =3D kmalloc(s, GFP_KERNEL);
-	int i, ret;
-
-	/* Zero out buffer */
-	memset(buf, 0x00, s);
-
-	/* Set up Direct packet */
-	for (i =3D 0; i < sizeof(keys)/sizeof(keys[0]); i++) {
-		buf[keys[i]] =3D val;
-	}
-
-	buf[0x00] =3D 0x07;
-	buf[0x01] =3D 0x16; // HYPERX_ALLOY_ELITE_PACKET_ID_DIRECT
-	buf[0x02] =3D color; // HYPERX_ALLOY_ELITE_COLOR_CHANNEL_GREEN
-	buf[0x03] =3D 0xA0;
-
-	ret =3D hid_hw_power(hdev, PM_HINT_FULLON);
-	if (ret) {
-		hid_err(hdev, "Failed to power on HID device\n");
-		return ret;
-	}
-
-	// ioctl(3, HIDIOCSFEATURE(264), 0xbfce5974) =3D 264
-	// -> hidraw_send_report(file, user_arg, len, HID_FEATURE_REPORT);
-	//
-	printk(KERN_INFO "Set feature report -- direct\n");
-	i =3D hid_hw_raw_request(hdev, buf[0], buf, s, HID_FEATURE_REPORT, HID_REQ=
-_SET_REPORT);
-	printk("raw: %d, einval %d, eagain %d\n", i, -EINVAL, -EAGAIN);
-	msleep(100);
-	return 0;
-}
-
-#define SIZE 128
-const int real_size =3D SIZE;
-
-static ssize_t hx_sysfs_read(struct file *fp, struct kobject *kobj,
-			       struct bin_attribute * b,
-			      char *buf, loff_t off, size_t count)
-{
-	struct device *dev =3D kobj_to_dev(kobj);
-	struct hx_device *hx =3D hid_get_drvdata(dev_get_drvdata(dev));
-	struct usb_device *usb_dev =3D interface_to_usbdev(to_usb_interface(dev));
-	int retval;
-
-	if (off >=3D real_size)
-		return 0;
-
-	if (off !=3D 0 || count !=3D real_size)
-		return -EINVAL;
-=09
-	printk("read\n");
-	set_direct_color(one_hdev, 2, 0xff);
-
-	return retval ? retval : real_size;
-}
-
-static ssize_t hx_sysfs_write(struct file *fp, struct kobject *kobj,
-			       struct bin_attribute * b,
-		void const *buf, loff_t off, size_t count)
-{
-	struct device *dev =3D kobj_to_dev(kobj);
-	struct hx_device *hx =3D hid_get_drvdata(dev_get_drvdata(dev));
-	struct usb_device *usb_dev =3D interface_to_usbdev(to_usb_interface(dev));
-	int retval;
-
-	if (off !=3D 0 || count !=3D real_size)
-		return -EINVAL;
-
-	printk("Write\n");
-
-	return retval ? retval : real_size;
-}
-
-static struct bin_attribute hx_control_attr =3D { \
-  .attr =3D { .name =3D "thingy", .mode =3D 0660 },		\
-	.size =3D SIZE, \
-	.read =3D hx_sysfs_read, \
-};
-
-static int hx_create_sysfs_attributes(struct usb_interface *intf)
-{
-  return sysfs_create_bin_file(&intf->dev.kobj, &hx_control_attr);
-}
-
-static void hx_remove_sysfs_attributes(struct usb_interface *intf)
-{
-  sysfs_remove_bin_file(&intf->dev.kobj, &hx_control_attr);
-}
-
-static int hx_init_hx_device_struct(struct usb_device *usb_dev,
-		struct hx_device *hx)
-{
-	//mutex_init(&hx->hx_lock);
-	return 0;
-}
-
-static int hx_init_specials(struct hid_device *hdev)
-{
-	struct usb_interface *intf =3D to_usb_interface(hdev->dev.parent);
-	struct usb_device *usb_dev =3D interface_to_usbdev(intf);
-	struct hx_device *hx;
-	int retval;
-
-	hx =3D kzalloc(sizeof(*hx), GFP_KERNEL);
-	if (!hx) {
-		hid_err(hdev, "can't alloc device descriptor\n");
-		return -ENOMEM;
-	}
-	hid_set_drvdata(hdev, hx);
-
-	retval =3D hx_create_sysfs_attributes(intf);
-	if (retval) {
-		hid_err(hdev, "cannot create sysfs files\n");
-		goto exit;
-	}
-
-	return 0;
-exit:
-	kfree(hx);
-	return retval;
-}
-
-static void hx_remove_specials(struct hid_device *hdev)
-{
-	struct usb_interface *intf =3D to_usb_interface(hdev->dev.parent);
-	struct hx_device *hx;
-
-	hx_remove_sysfs_attributes(intf);
-
-	hx =3D hid_get_drvdata(hdev);
-	kfree(hx);
-}
-
-static int num;
-
-static int hx_probe(struct hid_device *hdev,
-		const struct hid_device_id *id)
-{
-	int retval;
-
-	if (!hid_is_usb(hdev))
-		return -EINVAL;
-
-	if (++num !=3D 2)
-		return -EINVAL;
-
-	retval =3D hid_parse(hdev);
-	if (retval) {
-		hid_err(hdev, "parse failed\n");
-		goto exit;
-	}
-
-	retval =3D hid_hw_start(hdev, HID_CONNECT_DEFAULT);
-	if (retval) {
-		hid_err(hdev, "hw start failed\n");
-		goto exit;
-	}
-
-	printk("Have device.\n");
-
-	if (!hid_is_usb(hdev)) {
-		printk("Not an usb?\n");
-	}
-
-	{
-		struct usb_interface *interface =3D to_usb_interface(hdev->dev.parent);
-		struct usb_device *dev =3D interface_to_usbdev(interface);
-		struct usb_host_interface *iface_desc;
-		struct usb_endpoint_descriptor *endpoint;
-		char manufacturer[128];
-		char product[128];
-
-		// Retrieve manufacturer string
-		retval =3D usb_string(dev, dev->descriptor.iManufacturer, manufacturer, s=
-izeof(manufacturer));
-		if (retval > 0)
-			printk(KERN_INFO "Manufacturer: %s\n", manufacturer);
-		else
-			printk(KERN_ERR "Failed to get manufacturer string\n");
-
-		// Retrieve product string
-		retval =3D usb_string(dev, dev->descriptor.iProduct, product, sizeof(prod=
-uct));
-		if (retval > 0)
-			printk(KERN_INFO "Product: %s\n", product);
-		else
-			printk(KERN_ERR "Failed to get product string\n");
-
-	}
-
-	retval =3D hx_init_specials(hdev);
-	if (retval) {
-		hid_err(hdev, "couldn't install mouse\n");
-		goto exit_stop;
-	}
-
-	// Example call to set_direct_color function
-	for (int i=3D0; i<20; i++) {
-		set_direct_color(hdev, 0x01, 0); // Example values
-		set_direct_color(hdev, 0x02, 0); // Example values
-		set_direct_color(hdev, 0x03, 0); // Example values
-		set_direct_color(hdev, 0x01, 0xFF); // Example values
-		set_direct_color(hdev, 0x02, 0xFF); // Example values
-		set_direct_color(hdev, 0x03, 0xFF); // Example values
-	}
-	one_hdev =3D hdev;
-	return 0;
-
-exit_stop:
-	hid_hw_stop(hdev);
-exit:
-	return retval;
-}
-
-static void hx_remove(struct hid_device *hdev)
-{
-	hx_remove_specials(hdev);
-	hid_hw_stop(hdev);
-}
-
-static const struct hid_device_id hx_devices[] =3D {
-	{ HID_USB_DEVICE(0x0951, 0x16be) },
-	{ }
-};
-
-MODULE_DEVICE_TABLE(hid, hx_devices);
-
-static struct hid_driver hx_driver =3D {
-	.name =3D "hx",
-	.id_table =3D hx_devices,
-	.probe =3D hx_probe,
-	.remove =3D hx_remove
-};
-module_hid_driver(hx_driver);
-
-MODULE_AUTHOR("Pavel Machek");
-MODULE_DESCRIPTION("USB HyperX elite backlight driver");
-MODULE_LICENSE("GPL v2");
-
-
---=20
-People of Russia, stop Putin before his war on Ukraine escalates.
-
---xGaUGIAiUu9bGTpI
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZqAVNgAKCRAw5/Bqldv6
-8vNZAJ9mm9swPzCB8WhiJQ8Vz27+2W/IgwCeN8iIbsvN79M16ZDXh9gsM7p7aSA=
-=g3Jk
------END PGP SIGNATURE-----
-
---xGaUGIAiUu9bGTpI--
+Content-Type: text/plain
+
+Hi Linus,
+
+On 2024-07-23, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>>   - In an emergency section, directly from nbcon_cpu_emergency_exit()
+>>     or nbcon_cpu_emergency_flush(). It allows to see the messages
+>>     when the system is in an unexpected state and might not be
+>>     able to continue properly.
+>>
+>>     The messages are flushed at the end of the emergency section
+>>     to allow storing the full log (backtrace) first.
+>
+> What? No.
+>
+> One of the historically problematic situations is when a recursive
+> oops or a deadlock occurs *during* the first oops.
+>
+> The "recursive oops" may be simple to sort out by forcing a flush at
+> that point, in that hopefully the machine is "alive", but what about
+> random deadlocks or other situations where the printk machinery simply
+> is never ever entered again?
+>
+> And we most definitely have had exactly that happen due to the call
+> trace code etc.
+>
+> At that point, it's ok if the machine is dead (this is obviously a
+> very catastrophic situation - nobody should worry about how to
+> continue), but it's really important that the first problem report
+> makes it out.
+>
+> The whole notion of "to allow storing the full log (backtrace) first"
+> is completely crazy. It's entirely secondary whether you have a full
+> log or not, when the primary goal MUST BE that you have any output at
+> all!
+>
+> How can this have _continued_ to be unclear, when it was my one hard
+> requirement for this whole thing from day one? My *ONE* requirement
+> has always been that the printk code ALWAYS does its absolute best to
+> print out problem reports.
+>
+> Because when an oops happen, all other rules go out the window.
+>
+> We no longer care about "what pretty printouts", and we should strive
+> to always try to just get at least *some* basic print out. The kernel
+> is known to not be in a great state, and maybe the printout will fail
+> due to where the problem happened, but the kernel NEEDS TO TRY.
+
+As the primary author, I would like to clarify the motivation.
+
+During LPC2022 at the printk proof-of-concept demonstration is where
+this requirement came from. The second point in my summary [0] of that
+meeting stated the new requirement.
+
+The requirement came about because during the demonstration we
+accidentally hit a situation where a warning backtrace could not be seen
+because while trying to print the warning, a panic was hit. In the end
+we could see the panic, but not the original warning. At that meeting we
+genrally agreed that it would be better to at least get the backtrace
+into the buffer before entering the complex machinery of pushing out the
+backlog to consoles. Then, if a panic occurs while printing, the warning
+is already in the buffer and will be flushed out ahead of any panic
+messages. That discussion is available online [1] (starting at 56:20).
+
+In your response [2] to my summary email, you mentioned that we could
+tweak how much is buffered as well as possibly changing the print order
+to get the important stuff out first. But it all relied on the ability
+to get things into the buffer first without requiring each individual
+printk() to synchronously push out the backlog to all consoles.
+
+Petr's pull request provides the functionality for a CPU to call
+printk() during emergencies so that each line only goes into the
+buffer. We also include a function to perform the flush at any time. As
+the series is implemented now, that flush happens after the warning is
+completely stored into the buffer. In cases where there is lots of data
+in the warning (such as in RCU stalls or lockdep splats), the flush
+happens after significant parts of the warning.
+
+John Ogness
+
+[0] https://lore.kernel.org/lkml/875yheqh6v.fsf@jogness.linutronix.de
+
+[1] https://www.youtube.com/watch?v=TVhNcKQvzxI (from 56:20)
+
+[2] https://lore.kernel.org/lkml/CAHk-=wieXPMGEm7E=Sz2utzZdW1d=9hJBwGYAaAipxnMXr0Hvg@mail.gmail.com
 
