@@ -1,277 +1,217 @@
-Return-Path: <linux-kernel+bounces-260090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8A2793A2E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:38:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A7E893A2E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 16:38:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24BAFB217E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:38:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18D2C1F24583
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 14:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F04155740;
-	Tue, 23 Jul 2024 14:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B209D154455;
+	Tue, 23 Jul 2024 14:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qb5XzUPN"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fHD7deP5"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9FD139D1A
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4D6139D1A
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 14:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721745494; cv=none; b=dwNfIWhXgL6mplaDbZRhl6QOutrQcbLnddfuyU20XxnpyXI2/50nnFlGZkqlqWJ1TksUqCUfHd47RaKuPnzs6pXcBK5wK/xchYg/1JCthk7Z97fu6FeCg/tRHuLWSwie1in7wny7AaGShhLCkNCv4Qh2PjFzESNlZPgEcjYuniw=
+	t=1721745504; cv=none; b=pn40IgMKjIHV50sphoez9W1dYXMw/wSyXWKrQDmj1XncuAIC7EjsqIA4wr4zZ3OtNySh3pJtxdj1gZikRE24KRDnPLzazPwJxBrT1ryRVEfUEp5xqOk59lB1k2e9DEFFz+gejSHU8dhIycspa1TuTOpX9p3Fe70DU72yyWDhxzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721745494; c=relaxed/simple;
-	bh=ff/CkTO/SkIimAhtYkfktjm2JYhVwuqVIfiA0JD5iQM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GwkQ1wyd2zIwgpjPi/SgObYtT7RaCvioEwFeLmyjcxsnyFRWhntpBM/gUvFCxqudgLPC1PCltlS4DLyMbhcRQo7HUdGO2AcXvIhBRTpFv7LfkXKSDpt8xYGtbFnbBHq8OOpXjGU5k0ArCTMg8jx8zU/n7Vt4FlKR3cKmqfXeI7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qb5XzUPN; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so15341a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:38:12 -0700 (PDT)
+	s=arc-20240116; t=1721745504; c=relaxed/simple;
+	bh=UkiSE396ePQGzDozftjIjyhqALc4Ne+Ieift/3jKifg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=uqVwYGy+hgJ179nZgven/WxEvDJKEf+oy3fp90vvD9xR2Ns2EvaJoS7FX1i/t6jg5V8MyFiF9PO3iLuyhTJ6E96lmV9pyVAI0DDSmYG8CTX5zdizCGme37ORJ433ghHRo6LmTcRf37wf3TLc/HyGkD8yWXCaYz9g51DUukdzTfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fHD7deP5; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52efd855adbso4124757e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 07:38:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721745491; x=1722350291; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ykd4q8hKlp7Yud9vXA9/ALvMC3wTdvW89xFIM92u8u0=;
-        b=qb5XzUPNOU5nYRgM5Ue/ihnyuQq9siqEUFX2knZmHqV1nN6spubJAyczzinM+naazb
-         2/yExK+sOD3N1Hd4SbVYyyA8Q4WG7up29Xnio4g6FbK3C5fItDZWiqT/ea9lEWeRe4bl
-         8aRLRG8i1pTu9WY7d0HPpPeZQDVmxO8COZSw7+3s74PENU5EUpKJTbEGc3r6tlcLs/Hg
-         yIGHw44YC6mXlU4uOrjRyeRIyXL0sw4wCGNZztzcxx8+G9z3jUGVNBU5XsZG4xDcaYCQ
-         u1Qv5ks+P5sFbj6lKwCGQBKzAppGiPr3DLfcUd5/M63PlLM3ByIM7mUzBpcVwlCVITrr
-         K3bA==
+        d=suse.com; s=google; t=1721745500; x=1722350300; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jg+jcQZKkeo38dU9kmt0SGXm4qBb0d76OYWNA0jUc+s=;
+        b=fHD7deP50clLmyes6kmDwW8JUIyp5WtJYt6kqDLFt5qTJe9T8eDKnsl7uIh5U0WZhh
+         PHpCK7KFlLDUKMsqkM00VMXFKRV4XmDwQ8J8vIMnkAdefZXD12W9x5Vwj1jeo4LD0NSi
+         YBpSq3HSOUA5OzeJWrsNiRgvZNVJp1U7igdYNpKuG93s0vf2zjJ+4lO/5W7MGsKqc0os
+         VXDaxNt0ZyLqcHsQufpXM8RKZOrV0ed4JZ9e0EiLKmIijLo2miQVM9PAt8F5LDhbk5iD
+         XDWyBvInSEFejgtzfQuS+IMHY6CwZ6HxmXv6LvK/7Wk77eYrHLTdbYv432n7ZycRZRXR
+         dEQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721745491; x=1722350291;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ykd4q8hKlp7Yud9vXA9/ALvMC3wTdvW89xFIM92u8u0=;
-        b=B4qykmjf0JaH1n4NIADsSoPilP9IMWm0yYc534XTmpceB8NSmGgQtNsLu0WfPS9cQ8
-         3VIowMoiZ2cU7qobXWcQty9uTSJNfD5tYiFkyMmBEJjvPXVim+a85ACj+UjwGaxbhqUm
-         EPgGGJhyz3mVgJWq9MErjDyppK6PEtGc48X5EU/aA55jmss2HHGBosikx0FNLlXiDTi+
-         Z8Tm+Iu1JtGPDMnrUW3m0e3C+KDaU2IFleHhJmfuL+R7Agpw8fEJ2wLZ0KPabbhe30Uk
-         6D5/tfi8+Uce5DfKZCPFHsqQKgz49sAO22X0B3Rn5egqW+3eJYLc2LdzDO4LJF4+dc3E
-         eB3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVKF0GA5hKUOTLbcFioaLbm8+iJAnDkU94SQ1zBCXJ70n3OP0Lu7whieBNtw3CbS2k3Gypzy6rum+2gglSiO+CuqcsCAXghzfkvrN0c
-X-Gm-Message-State: AOJu0Yy1NjZbVlkbmWn4WjviyUPsCEO2EIyEfPt1yQX8byI1n8O7Xuo+
-	D+fXDuFfnpE8q+bGAovZ+92yTWOqfsedTfu/PT88S6Vzz+toU/xgC2g8M4t5+587LK1t8MW0+0J
-	udS+6l0q8Ng5vAuCaSe1FFdV2xK6e7Kq+KhDb
-X-Google-Smtp-Source: AGHT+IGwoVmZuNo0bxnzbHW9EyaVLe/rGxfRwlLABQDaghnJkzA63EuN7jns0D+cHfzTWZM07Q7eRFBHoQHeKElPA6Y=
-X-Received: by 2002:a05:6402:27c6:b0:5a1:4658:cb98 with SMTP id
- 4fb4d7f45d1cf-5a44fe634f7mr576743a12.0.1721745490199; Tue, 23 Jul 2024
- 07:38:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721745500; x=1722350300;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jg+jcQZKkeo38dU9kmt0SGXm4qBb0d76OYWNA0jUc+s=;
+        b=Vn5tkQGBo9uzRo1NNNh056yM1aWoLjQ9RAY9Tvt69KieT39kEteYZ+x9I2TynyuftT
+         fDwQsmbWJy+C32SDP+MuzjvusjtKdhFa9DiValSbaohxrQrfHD4eb/Rq6OJzfbJvKGSf
+         +mjjWv7N9fZZWmZ+44a3ZbKdSTkzIfe8tmHbSpTUGECJn1QavGLcHwfzGU+hnd74EkDA
+         MhGyrIhzksU1YQcbzBKJAlDgdW54dkH0wByh6+7d5fGZ1ENGud+WUxFsrPF7kLCyKZzt
+         TYpCQ1ULbtHQ0XxrM/cEEAsqkrtj3qSf0QBhaWZryxztgvxO/LqeeKoeayWZO6iVm2E0
+         ICzw==
+X-Forwarded-Encrypted: i=1; AJvYcCXoXLxefQMQZNrcUxXLEqOxG2BsViHE5pq1iGolkpcTjYfVd2LA4AvRqQUwX4AD9Z/IP85UtCZghXi8amOZ5m+iYNSZU9hmj7GFFsg2
+X-Gm-Message-State: AOJu0Yw6rocRojf34PJZMpBjfa6+ds9q7kDhKtU8lieK6/gZ4aBOCfPc
+	+KJZaJqndvbbQrp5qS3qQHGEpqxpfFCgRo7wJTJLalW93aErBkTPikhF4JSshIs=
+X-Google-Smtp-Source: AGHT+IFBmGzfAhsfiD5pOAgos6yWdCop7BhHF9ssBVZM4QDA++J0IpGoWZxLeYDeHAquRAF7v8yqug==
+X-Received: by 2002:a05:6512:3b95:b0:52e:a68a:6076 with SMTP id 2adb3069b0e04-52fc40739bamr2220959e87.49.1721745500302;
+        Tue, 23 Jul 2024 07:38:20 -0700 (PDT)
+Received: from pathway.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c922d81sm548885366b.160.2024.07.23.07.38.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 07:38:20 -0700 (PDT)
+Date: Tue, 23 Jul 2024 16:38:18 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>, Jan Kara <jack@suse.cz>,
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] printk for 6.11
+Message-ID: <Zp-_7R49fIHgIhaq@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240718-upstream-net-next-20240716-tcp-3rd-ack-consume-sk_socket-v2-0-d653f85639f6@kernel.org>
- <20240718-upstream-net-next-20240716-tcp-3rd-ack-consume-sk_socket-v2-1-d653f85639f6@kernel.org>
-In-Reply-To: <20240718-upstream-net-next-20240716-tcp-3rd-ack-consume-sk_socket-v2-1-d653f85639f6@kernel.org>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 23 Jul 2024 16:37:59 +0200
-Message-ID: <CANn89iJNa+UqZrONT0tTgN+MjnFZJQQ8zuH=nG+3XRRMjK9TfA@mail.gmail.com>
-Subject: Re: [PATCH net v2 1/2] tcp: process the 3rd ACK with sk_socket for TFO/MPTCP
-To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Jerry Chu <hkchu@google.com>, netdev@vger.kernel.org, 
-	mptcp@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, Jul 18, 2024 at 12:34=E2=80=AFPM Matthieu Baerts (NGI0)
-<matttbe@kernel.org> wrote:
->
-> The 'Fixes' commit recently changed the behaviour of TCP by skipping the
-> processing of the 3rd ACK when a sk->sk_socket is set. The goal was to
-> skip tcp_ack_snd_check() in tcp_rcv_state_process() not to send an
-> unnecessary ACK in case of simultaneous connect(). Unfortunately, that
-> had an impact on TFO and MPTCP.
->
-> I started to look at the impact on MPTCP, because the MPTCP CI found
-> some issues with the MPTCP Packetdrill tests [1]. Then Paolo suggested
-> me to look at the impact on TFO with "plain" TCP.
->
-> For MPTCP, when receiving the 3rd ACK of a request adding a new path
-> (MP_JOIN), sk->sk_socket will be set, and point to the MPTCP sock that
-> has been created when the MPTCP connection got established before with
-> the first path. The newly added 'goto' will then skip the processing of
-> the segment text (step 7) and not go through tcp_data_queue() where the
-> MPTCP options are validated, and some actions are triggered, e.g.
-> sending the MPJ 4th ACK [2] as demonstrated by the new errors when
-> running a packetdrill test [3] establishing a second subflow.
->
-> This doesn't fully break MPTCP, mainly the 4th MPJ ACK that will be
-> delayed. Still, we don't want to have this behaviour as it delays the
-> switch to the fully established mode, and invalid MPTCP options in this
-> 3rd ACK will not be caught any more. This modification also affects the
-> MPTCP + TFO feature as well, and being the reason why the selftests
-> started to be unstable the last few days [4].
->
-> For TFO, the existing 'basic-cookie-not-reqd' test [5] was no longer
-> passing: if the 3rd ACK contains data, and the connection is accept()ed
-> before receiving them, these data would no longer be processed, and thus
-> not ACKed.
->
-> One last thing about MPTCP, in case of simultaneous connect(), a
-> fallback to TCP will be done, which seems fine:
->
->   `../common/defaults.sh`
->
->    0 socket(..., SOCK_STREAM|SOCK_NONBLOCK, IPPROTO_MPTCP) =3D 3
->   +0 connect(3, ..., ...) =3D -1 EINPROGRESS (Operation now in progress)
->
->   +0 > S  0:0(0)                 <mss 1460, sackOK, TS val 100 ecr 0,   n=
-op, wscale 8, mpcapable v1 flags[flag_h] nokey>
->   +0 < S  0:0(0) win 1000        <mss 1460, sackOK, TS val 407 ecr 0,   n=
-op, wscale 8, mpcapable v1 flags[flag_h] nokey>
->   +0 > S. 0:0(0) ack 1           <mss 1460, sackOK, TS val 330 ecr 0,   n=
-op, wscale 8, mpcapable v1 flags[flag_h] nokey>
->   +0 < S. 0:0(0) ack 1 win 65535 <mss 1460, sackOK, TS val 700 ecr 100, n=
-op, wscale 8, mpcapable v1 flags[flag_h] key[skey=3D2]>
->
->   +0 write(3, ..., 100) =3D 100
->   +0 >  . 1:1(0)     ack 1 <nop, nop, TS val 845707014 ecr 700, nop, nop,=
- sack 0:1>
->   +0 > P. 1:101(100) ack 1 <nop, nop, TS val 845958933 ecr 700>
->
-> Simultaneous SYN-data crossing is also not supported by TFO, see [6].
->
-> Link: https://github.com/multipath-tcp/mptcp_net-next/actions/runs/993622=
-7696 [1]
-> Link: https://datatracker.ietf.org/doc/html/rfc8684#fig_tokens [2]
-> Link: https://github.com/multipath-tcp/packetdrill/blob/mptcp-net-next/gt=
-ests/net/mptcp/syscalls/accept.pkt#L28 [3]
-> Link: https://netdev.bots.linux.dev/contest.html?executor=3Dvmksft-mptcp-=
-dbg&test=3Dmptcp-connect-sh [4]
-> Link: https://github.com/google/packetdrill/blob/master/gtests/net/tcp/fa=
-stopen/server/basic-cookie-not-reqd.pkt#L21 [5]
-> Link: https://github.com/google/packetdrill/blob/master/gtests/net/tcp/fa=
-stopen/client/simultaneous-fast-open.pkt [6]
-> Fixes: 23e89e8ee7be ("tcp: Don't drop SYN+ACK for simultaneous connect().=
-")
-> Suggested-by: Paolo Abeni <pabeni@redhat.com>
-> Suggested-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> ---
-> Notes:
->  - We could also drop this 'goto consume', and send the unnecessary ACK
->    in this simultaneous connect case, which doesn't seem to be a "real"
->    case, more something for fuzzers. But that's not what the RFC 9293
->    recommends to do.
->  - v2:
->    - Check if the SYN bit is set instead of looking for TFO and MPTCP
->      specific attributes, as suggested by Kuniyuki.
->    - Updated the comment above
->    - Please note that the v2 has been sent mainly to satisfy the CI (to
->      be able to catch new bugs with MPTCP), and because the suggestion
->      from Kuniyuki looks better. It has not been sent to urge TCP
->      maintainers to review it quicker than it should, please take your
->      time and enjoy netdev.conf :)
-> ---
->  net/ipv4/tcp_input.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
->
-> diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-> index ff9ab3d01ced..bfe1bc69dc3e 100644
-> --- a/net/ipv4/tcp_input.c
-> +++ b/net/ipv4/tcp_input.c
-> @@ -6820,7 +6820,12 @@ tcp_rcv_state_process(struct sock *sk, struct sk_b=
-uff *skb)
->                 if (sk->sk_shutdown & SEND_SHUTDOWN)
->                         tcp_shutdown(sk, SEND_SHUTDOWN);
->
-> -               if (sk->sk_socket)
-> +               /* For crossed SYN cases, not to send an unnecessary ACK.
-> +                * Note that sk->sk_socket can be assigned in other cases=
-, e.g.
-> +                * with TFO (if accept()'ed before the 3rd ACK) and MPTCP=
- (MPJ:
-> +                * sk_socket is the parent MPTCP sock).
-> +                */
-> +               if (sk->sk_socket && th->syn)
->                         goto consume;
+Hi Linus,
 
-I think we should simply remove this part completely, because we
-should send an ack anyway.
+please pull the latest printk changes from
 
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index ff9ab3d01ced89570903d3a9f649a637c5e07a90..91357d4713182078debd746a224=
-046cba80ea3ce
-100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -6820,8 +6820,6 @@ tcp_rcv_state_process(struct sock *sk, struct
-sk_buff *skb)
-                if (sk->sk_shutdown & SEND_SHUTDOWN)
-                        tcp_shutdown(sk, SEND_SHUTDOWN);
+  git://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git tags/printk-for-6.11
 
--               if (sk->sk_socket)
--                       goto consume;
-                break;
+===========================================
 
-        case TCP_FIN_WAIT1: {
+Next preparation step for introducing printk kthreads. This part
+wires up flushing consoles via con->write_atomic() callback.
 
+The write_atomic() callback can be used for flushing nbcon consoles
+in any context. It is needed when the console could not be reliably
+flushed using the printk kthread. Namely, it is used:
 
-I have a failing packetdrill test after  Kuniyuki  patch :
+  - During the early boot, from the legacy loop in console_unlock().
+    It allows to see the messages before processes (kthreads) could
+    get started.
 
+    Note that it must be used as long as there is a boot console
+    registered. The console_lock() serializes accesses to the same
+    HW port between the early and normal console driver.
 
+  - In an emergency section, directly from nbcon_cpu_emergency_exit()
+    or nbcon_cpu_emergency_flush(). It allows to see the messages
+    when the system is in an unexpected state and might not be
+    able to continue properly.
 
-//
-// Test the simultaneous open scenario that both end sends
-// SYN/data. Although we don't support that the connection should
-// still be established.
-//
-`../../common/defaults.sh
- ../../common/set_sysctls.py /proc/sys/net/ipv4/tcp_timestamps=3D0`
+    The messages are flushed at the end of the emergency section
+    to allow storing the full log (backtrace) first. It helps to
+    see it even when other CPUs add messages in parallel. The flush()
+    API is used to explicitly flush parts of longer logs which might
+    not fit into the buffer or might cause a softlockup.
 
-// Cache warmup: send a Fast Open cookie request
-    0 socket(..., SOCK_STREAM, IPPROTO_TCP) =3D 3
-   +0 fcntl(3, F_SETFL, O_RDWR|O_NONBLOCK) =3D 0
-   +0 sendto(3, ..., 0, MSG_FASTOPEN, ..., ...) =3D -1 EINPROGRESS
-(Operation is now in progress)
-   +0 > S 0:0(0) <mss 1460,nop,nop,sackOK,nop,wscale 8,FO,nop,nop>
- +.01 < S. 123:123(0) ack 1 win 14600 <mss
-1460,nop,nop,sackOK,nop,wscale 6,FO abcd1234,nop,nop>
-   +0 > . 1:1(0) ack 1
- +.01 close(3) =3D 0
-   +0 > F. 1:1(0) ack 1
- +.01 < F. 1:1(0) ack 2 win 92
-   +0 > .  2:2(0) ack 2
+    The emergency section is used for WARN(), Oops, RCU stall,
+    and lockdep reports.
 
+  - In panic(), directly from printk() on the panic-CPU. Note that
+    other CPUs are not allowed to add new messages at this point.
 
-//
-// Test: simulatenous fast open
-//
- +.01 socket(..., SOCK_STREAM, IPPROTO_TCP) =3D 4
-   +0 fcntl(4, F_SETFL, O_RDWR|O_NONBLOCK) =3D 0
-   +0 sendto(4, ..., 1000, MSG_FASTOPEN, ..., ...) =3D 1000
-   +0 > S 0:1000(1000) <mss 1460,nop,nop,sackOK,nop,wscale 8,FO
-abcd1234,nop,nop>
-// Simul. SYN-data crossing: we don't support that yet so ack only remote I=
-SN
-+.005 < S 1234:1734(500) win 14600 <mss 1040,nop,nop,sackOK,nop,wscale
-6,FO 87654321,nop,nop>
-   +0 > S. 0:0(0) ack 1235 <mss 1460,nop,nop,sackOK,nop,wscale 8>
+There is also a new uart_port_lock() API in serial_core.h. It allows to
+take port->lock and also acquire the nbcon console context when
+the particular port gets registered as a console.
 
-// SYN data is never retried.
-+.045 < S. 1234:1234(0) ack 1001 win 14600 <mss
-940,nop,nop,sackOK,nop,wscale 6,FO 12345678,nop,nop>
-   +0 > . 1001:1001(0) ack 1
-// The other end retries
-  +.1 < P. 1:501(500) ack 1000 win 257
-   +0 > . 1001:1001(0) ack 501
-   +0 read(4, ..., 4096) =3D 500
-   +0 close(4) =3D 0
-   +0 > F. 1001:1001(0) ack 501
- +.05 < F. 501:501(0) ack 1002 win 257
-   +0 > . 1002:1002(0) ack 502
+The port->lock serializes code for non-printing activities, for example,
+for writing or setting the port speed. The nbcon context allows to
+serialize the access in emergency or panic situations where the classic
+spin lock (port->lock) could cause a deadlock. Note that the nbcon
+context allows a safe takeover in the middle of a printed message.
 
-`/tmp/sysctl_restore_${PPID}.sh`
+IMPORTANT: The changes do not affect the behavior of legacy consoles,
+    except for two situations:
+
+  - Legacy consoles are not longer flushed directly from printk()
+    in emergency sections. The flush is done on exit from
+    the emergency section or by nbcon_cpu_emergency_flush().
+    The motivation is the same as for nbcon consoles.
+
+  - Legacy consoles are not longer flushed directly from printk()
+    in panic() when crash dump is created and a nbcon console
+    is registered. They could create a deadlock in compare with
+    nbcon consoles.
+
+----------------------------------------------------------------
+Jeff Johnson (1):
+      vsprintf: add missing MODULE_DESCRIPTION() macro
+
+John Ogness (25):
+      printk: Add notation to console_srcu locking
+      printk: nbcon: Remove return value for write_atomic()
+      printk: nbcon: Add detailed doc for write_atomic()
+      printk: nbcon: Add callbacks to synchronize with driver
+      printk: nbcon: Use driver synchronization while (un)registering
+      serial: core: Provide low-level functions to lock port
+      serial: core: Introduce wrapper to set @uart_port->cons
+      console: Improve console_srcu_read_flags() comments
+      nbcon: Add API to acquire context for non-printing operations
+      serial: core: Implement processing in port->lock wrapper
+      printk: nbcon: Do not rely on proxy headers
+      printk: Make console_is_usable() available to nbcon
+      printk: Let console_is_usable() handle nbcon
+      printk: Add @flags argument for console_is_usable()
+      printk: nbcon: Add helper to assign priority based on CPU state
+      printk: Track registered boot consoles
+      printk: nbcon: Use nbcon consoles in console_flush_all()
+      printk: nbcon: Add unsafe flushing on panic
+      printk: Avoid console_lock dance if no legacy or boot consoles
+      printk: Track nbcon consoles
+      printk: Coordinate direct printing in panic
+      panic: Mark emergency section in oops
+      rcu: Mark emergency sections in rcu stalls
+      lockdep: Mark emergency sections in lockdep splats
+      printk: nbcon: do not require migration disabled for nbcon_get_cpu_emergency_nesting()
+
+Petr Mladek (2):
+      printk: Properly deal with nbcon consoles on seq init
+      Merge branch 'rework/write-atomic' into for-linus
+
+Sebastian Andrzej Siewior (1):
+      printk: Check printk_deferred_enter()/_exit() usage
+
+Sreenath Vijayan (1):
+      printk: Rename console_replay_all() and update context
+
+Thomas Gleixner (3):
+      printk: nbcon: Provide function to flush using write_atomic()
+      printk: nbcon: Implement emergency sections
+      panic: Mark emergency section in warn
+
+ drivers/tty/serial/8250/8250_core.c |   6 +-
+ drivers/tty/serial/amba-pl011.c     |   2 +-
+ drivers/tty/serial/serial_core.c    |  16 +-
+ drivers/tty/sysrq.c                 |   2 +-
+ include/linux/console.h             | 112 ++++++--
+ include/linux/printk.h              |  37 ++-
+ include/linux/serial_core.h         | 117 +++++++-
+ kernel/locking/lockdep.c            |  84 +++++-
+ kernel/panic.c                      |   9 +
+ kernel/printk/internal.h            |  73 ++++-
+ kernel/printk/nbcon.c               | 513 ++++++++++++++++++++++++++++++++++--
+ kernel/printk/printk.c              | 313 ++++++++++++++++------
+ kernel/printk/printk_ringbuffer.h   |   2 +
+ kernel/printk/printk_safe.c         |  23 +-
+ kernel/rcu/tree_exp.h               |   9 +
+ kernel/rcu/tree_stall.h             |  11 +
+ lib/test_printf.c                   |   1 +
+ lib/test_scanf.c                    |   1 +
+ 18 files changed, 1194 insertions(+), 137 deletions(-)
 
