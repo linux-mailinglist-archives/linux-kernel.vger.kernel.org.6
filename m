@@ -1,267 +1,370 @@
-Return-Path: <linux-kernel+bounces-260355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B552293A7BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:34:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33F1193A7BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 21:44:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E68851C22633
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:34:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE44C283DCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 19:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C491422CC;
-	Tue, 23 Jul 2024 19:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98F2142624;
+	Tue, 23 Jul 2024 19:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iMJxIuwW"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UMRHJkNx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C645913D628
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 19:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDD513D628;
+	Tue, 23 Jul 2024 19:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721763257; cv=none; b=M9mZFKclYwpbo25aTMiT4eXr0gqmGESzrACSTJ4Y85nuI+vsnX6jhfFeoIoMqV+I2QK7xj8y3lD4MsOkxGTHQ4fyvo1DC+mkRPsoPQLmTgK0Ru7vOzz3uE59THNpX6y4+YKU6tGuOCOtMcmYZBNYaWXtdZ/lbFR4STmQA1hyS6g=
+	t=1721763884; cv=none; b=Lb9tIEx+nboAZiYFzFmB3DHw09CPu01F4bnMJ58hUT2RPHHAHuKZ7eAVPrADSGAyuW5IzDAfA4tlaDNm28m4P4goWhXO71FNGiL+d1q+X1XEtjPi/CRo3C/GxzEb4xvDZnheyy4jr+4b6efmCQg6A7xnnuPHkpxhNStlR6phRtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721763257; c=relaxed/simple;
-	bh=z8FgQvecvtNHGieM2KnvwOh/LbU5Hgk7Qe0Yf+O57bA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nsnb3D6qvZ0Fyd5CP7xOV/I4UeoW/L/t6TgYycEn9bqTgmd1KeKLDo+2ya3GHfRwvtErpfxaSTqEVfnjDHVsd5yUcMDgeGBbXFUdO9F4L7iucC84VJ6Gnzf4VbSieQDjy/5JR4LrXI4WrG7YWWBVrbUwNcsp1IZezVYDuDOSmjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iMJxIuwW; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70d1a74a43bso1794990b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 12:34:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721763255; x=1722368055; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0MQsN4CntdndYNDyxb/mylMwtOD4tugKzH3GvbqW5dc=;
-        b=iMJxIuwWMREJmHCqiFSdYYPt/cl4l7ERGFpLBrt2peiA3FWzSfkGrObW2oyfFyMtxZ
-         R0BUUNC0x2FuG/i3kgSJvVE5Hve3KzzLNdSWJvZmyFjsqP6JzF0dZMvdX7jJM2cDo39G
-         mc2zDXNFUEcGnepmsERGytNVV9zvDdOHaLCy14KoTOSeCU5hPmEVnIxS2JsubdpvKPx5
-         hTDyS/CBcd+svh+eGbvLcoqL0xN/+TLXFrjZ8hABD6E3RtREkd+6B3yx+6LdnPGwcZxR
-         hvFI3O5x5gGu8JyF12FoRGrS+r1meCcgmpJr87cWAwwJ0hInCTRSj5BHZa1rciPlavAx
-         DYLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721763255; x=1722368055;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0MQsN4CntdndYNDyxb/mylMwtOD4tugKzH3GvbqW5dc=;
-        b=S3W/3z+UeP4ya4pmEGFrQVkqCfoych3Yks9AMvWKxeSyFvO2aumC5hfoMtKI2ZOlP8
-         Y23dJo8vxhnLag84Qzj4wjwRiZUkK7hi/+f1/e9YeiVtOKZ6tSZNd6VxMvvWcPPadAHA
-         Uyehx1/RAlaaQUqS66u8qkPYXTaoqDp00iObA6cowERg38qdVvPD/hh7M0DgGLJrmXV5
-         qXy+9OPgNbfx3iKjB/2dCpbShKvwdqFsSM6joI0PiCW2LzZnDYs2YIG+4HUGPNaiz5Gn
-         Fq5L+I0znd4DuUqt/V4YEB5geX01WuFbEKzTDlA3wou7h1WMM2Rh0w4tqju9RBx0FXBX
-         L0pA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcqIDVSx9S+sbW2oeOZLC+/x7kCS8RJOb4HGyLbymio4MoiED68FjslS7on3GCEepq4dz1oQ+3j5SFkm0ffErNHYizEGnx3rJNpkN2
-X-Gm-Message-State: AOJu0YyHbA5Ry8bDFEYGfQs23cHO9k/VR+caslVBq3ztZWlLZOq2rAu1
-	RBNL3zMGy5lpA9VucfNHoVVo6hZEMQLMTHdks30rPj8BWl7GyZ6/
-X-Google-Smtp-Source: AGHT+IEAiqxNxysHAOGE6NTaRjbYhqeC/dl3azrrWGpZ55ZUVQjSaMud2u/lDJ9Yj1xTm+OftxRr5w==
-X-Received: by 2002:a05:6a21:910c:b0:1c0:f4b9:f7fd with SMTP id adf61e73a8af0-1c45e5959fdmr1067348637.4.1721763254941;
-        Tue, 23 Jul 2024 12:34:14 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ccf808f082sm9445503a91.44.2024.07.23.12.34.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 12:34:14 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 23 Jul 2024 09:34:13 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
-	Ingo Molnar <mingo@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [GIT PULL] sched_ext: Initial pull request for v6.11
-Message-ID: <ZqAFtfSijJ-KMVHo@slm.duckdns.org>
-References: <ZpWjbCQPtuUcvo8r@slm.duckdns.org>
- <20240723163358.GM26750@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1721763884; c=relaxed/simple;
+	bh=NZPmwx9zHNHao+9I+jeqDdDmRqjZJBybf9j7OA7CvSM=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Zz2dPvh8OTQnaApKZIlS6C1Ad/JwKzUsrlyZxtbFNM/UO+tdzK9seMngjRuFtJhjBH1VXV91xj6FvAOtQys2d0hRNmMLvqPea6PZzUsdpU/ffgKIvJL2gBdtQApuCG8iHYhYza/wXIyuf+gfR1cwmEkepWBPy/rllDVj6h/QhBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UMRHJkNx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18353C4AF0A;
+	Tue, 23 Jul 2024 19:44:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721763884;
+	bh=NZPmwx9zHNHao+9I+jeqDdDmRqjZJBybf9j7OA7CvSM=;
+	h=From:Date:Subject:To:Cc:From;
+	b=UMRHJkNxQBBFJiGxxNfWBDsa6DlLZqlRw4QOrIrX3Ddq+rlTJOXKPMU1C5tqC33fD
+	 6ZGcwPWlhLVKxBtVBJslUJKaeF3kVh4Lw5Qqs4px+TsAvpJdITiO+HPwLmVFBX5Ne2
+	 QFI1wgJ0sP4JtZbbsEMSOCzpS62ZdN+MMCretwNDUS5DeWw+ARGuFFWXvYHTcPrcxa
+	 +0n8+IHfv1bjpJlgkuLfa1tqWm5UA8TFL+5cEvPloxD81ZUdIwxuCuZEIf83rR/S9t
+	 N1cvyzGYHZW5xpXvIlLMh9ar7AJTVUx4EpJLLsxdvilw9ApALzmFLgIgEDJzDV1H9O
+	 RqgL5NRk6dqjQ==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ef2c56da6cso28379731fa.1;
+        Tue, 23 Jul 2024 12:44:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW0QkgwKRHktkVv9CLrYQ1EcbRxDtwBYqdFLr2GViWcS1jzOAiZddwRLwwuxCfEjojUxgOvVcGYDfDDrKySE6j3bfCoxk2XjPUSPRnl
+X-Gm-Message-State: AOJu0YwCKhj+6QGjvELgD3J3OicPPeTJm9O4v1Pkb+V3kcuUSb5ShA0X
+	2Li2bUIPrQ/UV/tPE2ScL/HYPPdCUkMIBwq69l63OmdEswPHnriw5+Ydt8xS0YXFNH5mUxVCwMH
+	5ChiwQYo5CsDksJPDJl0jafHabms=
+X-Google-Smtp-Source: AGHT+IHsx8NQ92WXFtFm/EntXaO6XfThBXsCF/ZIbdZLOIBhnlnnKPPU+cBZbfYo1vP//NaL5Xi3Yya0upg3yrpTd4c=
+X-Received: by 2002:a2e:a41c:0:b0:2ee:494c:c3d3 with SMTP id
+ 38308e7fff4ca-2ef16847a34mr81457881fa.43.1721763882725; Tue, 23 Jul 2024
+ 12:44:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240723163358.GM26750@noisy.programming.kicks-ass.net>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 24 Jul 2024 04:44:06 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATbZgv6JNzSXznOm47oNUXku430-taoK4iE1G0YcBy4Lw@mail.gmail.com>
+Message-ID: <CAK7LNATbZgv6JNzSXznOm47oNUXku430-taoK4iE1G0YcBy4Lw@mail.gmail.com>
+Subject: [GIT PULL] Kbuild updates for v6.11-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello, Peter.
+Hello Linus,
 
-On Tue, Jul 23, 2024 at 06:33:58PM +0200, Peter Zijlstra wrote:
-> >  	/*
-> > -	 * If there are no DL,RR/FIFO tasks, there must only be CFS tasks left;
-> > -	 * if there's more than one we need the tick for involuntary
-> > -	 * preemption.
-> > +	 * If there are no DL,RR/FIFO tasks, there must only be CFS or SCX tasks
-> > +	 * left. For CFS, if there's more than one we need the tick for
-> > +	 * involuntary preemption. For SCX, ask.
-> >  	 */
-> > -	if (rq->nr_running > 1)
-> > +	if (!scx_switched_all() && rq->nr_running > 1)
-> > +		return false;
-> > +
-> > +	if (scx_enabled() && !scx_can_stop_tick(rq))
-> >  		return false;
-> >  
-> 
-> Doesn't that boil down to something like:
-> 
-> 	if (scx_switched_all())
-> 		return scx_can_stop_tick(rq);
->
-> 	if (rq->nr_running > 1)
-> 		return false;
+Please pull Kbuild updates for v6.11-rc1
 
-Yeah, given that rq->nr_running == 1 && partial enabling condition is
-unlikely to matter and can easily lead to misdetermination by the BPF
-scheduler, the suggested code is better and cleaner. I'll update.
 
-> > @@ -5773,7 +5827,19 @@ static void put_prev_task_balance(struct rq *rq, struct task_struct *prev,
-> >  				  struct rq_flags *rf)
-> >  {
-> >  #ifdef CONFIG_SMP
-> > +	const struct sched_class *start_class = prev->sched_class;
-> >  	const struct sched_class *class;
-> > +
-> > +#ifdef CONFIG_SCHED_CLASS_EXT
-> > +	/*
-> > +	 * SCX requires a balance() call before every pick_next_task() including
-> > +	 * when waking up from SCHED_IDLE. If @start_class is below SCX, start
-> > +	 * from SCX instead.
-> > +	 */
-> > +	if (sched_class_above(&ext_sched_class, start_class))
-> > +		start_class = &ext_sched_class;
-> 
-> 	if (scx_enabled() && ...)
-> 
-> ?
 
-Will add.
 
-> > @@ -5782,7 +5848,7 @@ static void put_prev_task_balance(struct rq *rq, struct task_struct *prev,
-> >  	 * We can terminate the balance pass as soon as we know there is
-> >  	 * a runnable task of @class priority or higher.
-> >  	 */
-> > -	for_class_range(class, prev->sched_class, &idle_sched_class) {
-> > +	for_active_class_range(class, start_class, &idle_sched_class) {
-> >  		if (class->balance(rq, prev, rf))
-> >  			break;
-> 
-> Don't you need fixing balance_fair() here? It has:
-> 
->   if (rq->nr_running)
->     return 1;
-> 
-> Which would return true and terminate the iteration even if there are
-> only scx tasks left.
+You will get a merge conflict in scripts/Makefile.lib
 
-Right, that will lead to issues in partial mode. I think it hasn't been
-noticed because tasks were being consumed through otherwise empty CPUs. Will
-fix.
+It is a conflict between the following two commits:
+ 49636c5680b977d8a39263c6c8db6061c427346e
+ 712aba5543b88996bc4682086471076fbf048927
 
-...
-> > +	for_each_active_class(class) {
-> >  		p = class->pick_next_task(rq);
-> > -		if (p)
-> > +		if (p) {
-> > +			const struct sched_class *prev_class = prev->sched_class;
-> > +
-> > +			if (class != prev_class && prev_class->switch_class)
-> > +				prev_class->switch_class(rq, p);
-> >  			return p;
-> > +		}
-> >  	}
-> 
-> So I really don't like this one.. at the very least it would need a comment
-> explaining why it only needs calling here and not every time a put_prev_task()
-> and set_next_task() pair cross a class boundary -- which would be the
-> consistent thing to do.
-> 
-> Now, IIRC, you need a class call that indicates you're about to loose the CPU
-> so that you can kick the task to another CPU or somesuch. And last time I got
-> it backwards and suggested adding an argument to pick_next_task(), but what
-> about put_prev_task()?
->
-> Can't we universally push put_prev_task() after the pick loop? Then we get
-> something like:
+The resolution exists in linux-next.
 
-Yeah, the problem with put_prev_task() was that it was before the next task
-was picked, so we couldn't know what the next class should be.
 
-> 	next = pick_task();
-> 	if (next != prev) {
-> 		put_prev_task(rq, prev, next->class != prev->class);
-> 		set_next_task(rq, next);
-> 	}
-> 
-> I have patches for most of this for fair (in my eevdf queue), and I
-> think the others are doable, after all, this is more or less what we do
-> for SCHED_CORE already.
-> 
->   /me went off hacking for a bit
-> 
-> I've done this; find the results at: queue.git sched/prep
-> 
-> I've also rebased the sched_ext tree on top of that with the below delta, which
-> you can find at: queue.git sched/scx
+Thank you.
 
-Hmm... took a brief look, but I think I'm missing something. Doesn't
-put_prev_task() need to take place before pick_task() so that the previously
-running task can be considered when pick_task() is picking the next task to
-run?
 
-> This led me to discover that you're passing the task of the other class into
-> the bpf stuff -- I don't think that is a sane thing to do. You get preempted,
-> it doesn't matter from which higher class or by which specific task, a policy
-> must not care about that. So I kinda bodged it, but I really think this should
-> be taken out.
 
-At least for visibility, I think it makes sense. One can attach extra BPF
-progs to track the preemption events but it can be useful for the scheduler
-itself to be able to colllect when and why it's getting preempted. Also, in
-a more controlled environments, which RT task is preempting the task can be
-a, while not always reliable, useful hint in whether it'd be better to
-bounce to another CPU right away or not. That said, we can drop it e.g. if
-it makes implementation unnecessarily complicated.
 
-> I also found you have some terrible !SMP hack in there, which I've
-> broken, I've disabled it for now. This needs a proper fix, and not
-> something ugly like you did.
 
-Yeah, this came up before. On UP, SCX either needs to call the balance
-callback as that's where the whole dispatch logic is called from (which
-makes sense for it as dispatching often involves balancing operations), or
-SCX itself needs to call it directly in a matching sequence. Just enabling
-balance callback on UP && SCX would be the cleanest.
+The following changes since commit 256abd8e550ce977b728be79a74e1729438b4948=
+:
 
-> Anyway, it seems to build, boot and pass the sched_ext selftest:
-> 
-> PASSED:  21
-> SKIPPED: 0
-> FAILED:  0
-> 
-> (albeit with a fair amount of console noise -- is that expected?)
+  Linux 6.10-rc7 (2024-07-07 14:23:46 -0700)
 
-Yeah, the selftests trigger a lot of error conditions so that's expected.
+are available in the Git repository at:
 
-> Also, why does that thing hard depend on DEBUG_BTF? (at least having
-> that option enabled no longer explodes build times like it used to)
+  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
+tags/kbuild-v6.11
 
-That's necessary for building the schedulers, at least, I think. We didn't
-have that earlier and people were getting confused.
+for you to fetch changes up to 13c239a2c088e91e453d26517b562c9a116444fa:
 
-> Also should we /CONFIG_SCHED_CLASS_EXT/CONFIG_SCHED_BPF/ ? Then
-> something like: grep BPF foo-build/.config
-> more easily shows what's what.
+  kbuild: doc: gcc to CC change (2024-07-24 01:18:25 +0900)
 
-I don't know. isn't that too inconsistent with other classes, and down the
-line, maybe there may be BPF related additions to scheduler?
+----------------------------------------------------------------
+Kbuild updates for v6.11
 
-Thanks.
+ - Remove tristate choice support from Kconfig
 
--- 
-tejun
+ - Stop using the PROVIDE() directive in the linker script
+
+ - Reduce the number of links for the combination of CONFIG_DEBUG_INFO_BTF
+   and CONFIG_KALLSYMS
+
+ - Enable the warning for symbol reference to .exit.* sections by default
+
+ - Fix warnings in RPM package builds
+
+ - Improve scripts/make_fit.py to generate a FIT image with separate base
+   DTB and overlays
+
+ - Improve choice value calculation in Kconfig
+
+ - Fix conditional prompt behavior in choice in Kconfig
+
+ - Remove support for the uncommon EMAIL environment variable in Debian
+   package builds
+
+ - Remove support for the uncommon "name <email>" form for the DEBEMAIL
+   environment variable
+
+ - Raise the minimum supported GNU Make version to 4.0
+
+ - Remove stale code for the absolute kallsyms
+
+ - Move header files commonly used for host programs to scripts/include/
+
+ - Introduce the pacman-pkg target to generate a pacman package used in
+   Arch Linux
+
+ - Clean up Kconfig
+
+----------------------------------------------------------------
+Chen-Yu Tsai (1):
+      scripts/make_fit: Support decomposing DTBs
+
+HONG Yifan (1):
+      kconfig: recursive checks drop file/lineno
+
+Ivan Davydov (1):
+      kbuild: doc: gcc to CC change
+
+Jann Horn (1):
+      kallsyms: get rid of code for absolute kallsyms
+
+Masahiro Yamada (55):
+      initramfs: shorten cmd_initfs in usr/Makefile
+      kconfig: qconf: remove initial call to conf_changed()
+      kconfig: gconf: remove unnecessary forward declarations
+      kconfig: gconf: move conf_changed() definition up
+      kconfig: pass new conf_changed value to the callback
+      kconfig: remove tristate choice support
+      kconfig: refactor conf_set_all_new_symbols() to reduce indentation le=
+vel
+      kconfig: refactor conf_write_defconfig() to reduce indentation level
+      kbuild: refactor variables in scripts/link-vmlinux.sh
+      kbuild: remove PROVIDE() for kallsyms symbols
+      kbuild: merge temporary vmlinux for BTF and kallsyms
+      kconfig: add -e and -u options to *conf-cfg.sh scripts
+      kconfig: remove unneeded code in expr_compare_type()
+      kconfig: add fallthrough comments to expr_compare_type()
+      kconfig: introduce choice_set_value() helper
+      kconfig: remember the current choice while parsing the choice block
+      kbuild: move init/build-version to scripts/
+      kconfig: import list_move(_tail) and list_for_each_entry_reverse macr=
+os
+      kconfig: refactor choice value calculation
+      kconfig: remove sym_get_choice_value()
+      kconfig: remove conf_unsaved in conf_read_simple()
+      kconfig: change sym_choice_default() to take the choice menu
+      kconfig: use menu_list_for_each_sym() in sym_choice_default()
+      kconfig: remove expr_list_for_each_sym() macro
+      kconfig: use sym_get_choice_menu() in sym_check_print_recursive()
+      kconfig: use sym_get_choice_menu() in sym_check_choice_deps()
+      kconfig: use sym_get_choice_menu() in sym_check_deps()
+      kconfig: remove P_CHOICE property
+      kconfig: remove E_LIST expression type
+      treewide: change conditional prompt for choices to 'depends on'
+      kconfig: fix conditional prompt behavior for choice
+      kconfig: improve error message for dependency between choice members
+      kconfig: improve error message for recursive dependency in choice
+      kconfig: refactor error messages in sym_check_print_recursive()
+      kbuild: deb-pkg: remove support for EMAIL environment variable
+      kbuild: deb-pkg: remove support for "name <email>" form for DEBEMAIL
+      kbuild: package: add -e and -u options to some shell scripts
+      kbuild: avoid build error when single DTB is turned into composite DT=
+B
+      kbuild: raise the minimum GNU Make requirement to 4.0
+      modpost: remove self-definitions of R_ARM_* macros
+      modpost: rename R_ARM_THM_CALL to R_ARM_THM_PC22
+      kbuild: deb-pkg: use default string when variable is unset or null
+      kconfig: call expr_eliminate_yn() at least once in expr_eliminate_dup=
+s()
+      kconfig: add const qualifiers to several function arguments
+      kconfig: remove SYMBOL_CHOICEVAL flag
+      kconfig: remove 'e1' and 'e2' macros from expression deduplication
+      kbuild: clean up scripts/remove-stale-files
+      Makefile: add comment to discourage tools/* addition for kernel build=
+s
+      kbuild: move some helper headers from scripts/kconfig/ to scripts/inc=
+lude/
+      modpost: use generic macros for hash table implementation
+      kallsyms: avoid repeated calculation of array size for markers
+      kallsyms: use \t instead of a tab in printf()
+      kallsyms: add more original symbol type/name in comment lines
+      kallsyms: unify seq and start_pos fields of struct sym_entry
+      kallsyms: change sym_entry::percpu_absolute to bool type
+
+Rafael Aquini (2):
+      kbuild: rpm-pkg: make sure to have versioned 'Obsoletes' for kernel.s=
+pec
+      kbuild: rpm-pkg: introduce a simple changelog section for kernel.spec
+
+Thomas Wei=C3=9Fschuh (1):
+      kbuild: add script and target to generate pacman package
+
+Uwe Kleine-K=C3=B6nig (1):
+      modpost: Enable section warning from *driver to .exit.text
+
+Zhang Bingwu (2):
+      kbuild: Abort make on install failures
+      kbuild: Create INSTALL_PATH directory if it does not exist
+
+ .gitignore                                                    |   6 +
+ Documentation/kbuild/kconfig-language.rst                     |  11 +-
+ Documentation/kbuild/makefiles.rst                            |   6 +-
+ Documentation/process/changes.rst                             |   4 +-
+ MAINTAINERS                                                   |   8 +
+ Makefile                                                      |  36 ++--
+ arch/arm/Kconfig                                              |   6 +-
+ arch/arm/boot/install.sh                                      |   2 +
+ arch/arm64/Kconfig                                            |   3 +-
+ arch/arm64/boot/install.sh                                    |   2 +
+ arch/m68k/install.sh                                          |   2 +
+ arch/mips/Kconfig                                             |   6 +-
+ arch/nios2/boot/install.sh                                    |   2 +
+ arch/parisc/install.sh                                        |   2 +
+ arch/powerpc/Kconfig                                          |   3 +-
+ arch/riscv/Kconfig                                            |   3 +-
+ arch/riscv/boot/install.sh                                    |   2 +
+ arch/s390/boot/install.sh                                     |   2 +
+ arch/sparc/boot/install.sh                                    |   2 +
+ arch/x86/boot/install.sh                                      |   2 +
+ fs/jffs2/Kconfig                                              |   3 +-
+ include/asm-generic/vmlinux.lds.h                             |  19 --
+ init/Kconfig                                                  |  18 --
+ init/Makefile                                                 |   2 +-
+ kernel/kallsyms.c                                             |   5 +-
+ kernel/kallsyms_internal.h                                    |   6 -
+ kernel/vmcore_info.c                                          |   4 -
+ scripts/Kbuild.include                                        |   2 +-
+ scripts/Makefile.lib                                          |   7 +-
+ scripts/Makefile.package                                      |  14 ++
+ {init =3D> scripts}/build-version                               |   0
+ scripts/{kconfig =3D> include}/array_size.h                     |   0
+ scripts/{kconfig =3D> include}/hashtable.h                      |   0
+ scripts/{kconfig =3D> include}/list.h                           |  53 ++++=
+++
+ scripts/{kconfig =3D> include}/list_types.h                     |   0
+ scripts/install.sh                                            |   4 +
+ scripts/kallsyms.c                                            | 125
+++++++-------
+ scripts/kconfig/conf.c                                        | 238
+++++++++++--------------
+ scripts/kconfig/confdata.c                                    | 127
+++++---------
+ scripts/kconfig/expr.c                                        | 128
+++++++-------
+ scripts/kconfig/expr.h                                        |  29 ++-
+ scripts/kconfig/gconf-cfg.sh                                  |   2 +
+ scripts/kconfig/gconf.c                                       |  26 ++-
+ scripts/kconfig/internal.h                                    |   2 +-
+ scripts/kconfig/lkc.h                                         |  34 ++--
+ scripts/kconfig/lkc_proto.h                                   |  16 +-
+ scripts/kconfig/mconf-cfg.sh                                  |   2 +
+ scripts/kconfig/mconf.c                                       |  38 ++--
+ scripts/kconfig/menu.c                                        | 111
+++----------
+ scripts/kconfig/mnconf-common.c                               |   2 +-
+ scripts/kconfig/mnconf-common.h                               |   2 +
+ scripts/kconfig/nconf-cfg.sh                                  |   2 +
+ scripts/kconfig/nconf.c                                       |  38 ++--
+ scripts/kconfig/parser.y                                      |  45 ++---
+ scripts/kconfig/preprocess.c                                  |   4 +-
+ scripts/kconfig/qconf-cfg.sh                                  |   2 +
+ scripts/kconfig/qconf.cc                                      |  20 +--
+ scripts/kconfig/qconf.h                                       |   2 +-
+ scripts/kconfig/symbol.c                                      | 369
+++++++++++++++++++++------------------
+ scripts/kconfig/tests/choice/Kconfig                          |  17 --
+ scripts/kconfig/tests/choice/__init__.py                      |  10 --
+ scripts/kconfig/tests/choice/alldef_expected_config           |   3 -
+ scripts/kconfig/tests/choice/allmod_expected_config           |   3 -
+ scripts/kconfig/tests/choice/allno_expected_config            |   3 -
+ scripts/kconfig/tests/choice/allyes_expected_config           |   3 -
+ scripts/kconfig/tests/choice/oldask0_expected_stdout          |   4 -
+ scripts/kconfig/tests/choice/oldask1_config                   |   1 -
+ scripts/kconfig/tests/choice/oldask1_expected_stdout          |   9 -
+ scripts/kconfig/tests/choice_value_with_m_dep/Kconfig         |  21 ---
+ scripts/kconfig/tests/choice_value_with_m_dep/__init__.py     |  16 --
+ scripts/kconfig/tests/choice_value_with_m_dep/config          |   2 -
+ scripts/kconfig/tests/choice_value_with_m_dep/expected_config |   3 -
+ scripts/kconfig/tests/choice_value_with_m_dep/expected_stdout |   4 -
+ scripts/kconfig/tests/err_recursive_dep/expected_stderr       |  36 ++--
+ scripts/kconfig/tests/inter_choice/Kconfig                    |  25 ---
+ scripts/kconfig/tests/inter_choice/__init__.py                |  15 --
+ scripts/kconfig/tests/inter_choice/defconfig                  |   1 -
+ scripts/kconfig/tests/inter_choice/expected_config            |   4 -
+ scripts/kconfig/util.c                                        |   4 +-
+ scripts/link-vmlinux.sh                                       | 105 ++++++=
+-----
+ scripts/make_fit.py                                           |  86 ++++++=
+---
+ scripts/mod/list.h                                            | 213
+----------------------
+ scripts/mod/modpost.c                                         |  67 +-----=
+-
+ scripts/mod/modpost.h                                         |   2 +-
+ scripts/package/PKGBUILD                                      | 108 ++++++=
++++++
+ scripts/package/builddeb                                      |   2 +-
+ scripts/package/buildtar                                      |   2 +-
+ scripts/package/gen-diff-patch                                |   2 +
+ scripts/package/install-extmod-build                          |   5 +-
+ scripts/package/kernel.spec                                   |   2 +-
+ scripts/package/mkdebian                                      |  44 ++---
+ scripts/package/mkspec                                        |  27 ++-
+ scripts/remove-stale-files                                    |  18 --
+ tools/perf/tests/vmlinux-kallsyms.c                           |   1 -
+ usr/Makefile                                                  |   4 +-
+ 95 files changed, 1016 insertions(+), 1467 deletions(-)
+ rename {init =3D> scripts}/build-version (100%)
+ rename scripts/{kconfig =3D> include}/array_size.h (100%)
+ rename scripts/{kconfig =3D> include}/hashtable.h (100%)
+ rename scripts/{kconfig =3D> include}/list.h (81%)
+ rename scripts/{kconfig =3D> include}/list_types.h (100%)
+ delete mode 100644 scripts/kconfig/tests/choice/oldask1_config
+ delete mode 100644 scripts/kconfig/tests/choice/oldask1_expected_stdout
+ delete mode 100644 scripts/kconfig/tests/choice_value_with_m_dep/Kconfig
+ delete mode 100644 scripts/kconfig/tests/choice_value_with_m_dep/__init__.=
+py
+ delete mode 100644 scripts/kconfig/tests/choice_value_with_m_dep/config
+ delete mode 100644
+scripts/kconfig/tests/choice_value_with_m_dep/expected_config
+ delete mode 100644
+scripts/kconfig/tests/choice_value_with_m_dep/expected_stdout
+ delete mode 100644 scripts/kconfig/tests/inter_choice/Kconfig
+ delete mode 100644 scripts/kconfig/tests/inter_choice/__init__.py
+ delete mode 100644 scripts/kconfig/tests/inter_choice/defconfig
+ delete mode 100644 scripts/kconfig/tests/inter_choice/expected_config
+ delete mode 100644 scripts/mod/list.h
+ create mode 100644 scripts/package/PKGBUILD
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
