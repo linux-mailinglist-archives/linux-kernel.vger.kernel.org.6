@@ -1,210 +1,236 @@
-Return-Path: <linux-kernel+bounces-259881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F22F939EA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:18:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A717939EB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 12:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88C74282EE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:18:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4C001F22FBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 10:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B154214E2C0;
-	Tue, 23 Jul 2024 10:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dKGt9Xca"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D80114E2F9;
+	Tue, 23 Jul 2024 10:25:05 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A6A3D6A
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 10:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1716D14C5A4
+	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 10:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721729883; cv=none; b=abiu6wl8TMeHf28FOaea9cV5XcdHwMqCwxzt/9LSGhyYFHpkP73y0Nj3+RcrfD9oQdIhjnPk2obt8YQX0d0lVdAy83oYuRps0GGmPKDUgXnzN7Ijdrn1x5a4nhAXbXORkMB63bsUWb8NgPQFyfOnvxBS1x8NICAH5zxXeleZESg=
+	t=1721730304; cv=none; b=jaavB2WkSZ/MiTx4wjB/BB4GDNHOsjrx939pr/GRfmZIeu/CVbyJOq2gXvziKgTfhGFIdRqXmVuHmTADJYtL+BzkG8EZHKXEbZrYiaL1XWwqJB1n8ZjxIF0RzxnhANgmMHlYA81Lv0ffaIWSBea3QIDn4QA4fkWXrpnSyUOvD+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721729883; c=relaxed/simple;
-	bh=im09KjtOWQwHSVYo+FG41z4PGKxXi8KOicaWFK7K7Wo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RavrXMBK9gcMRRQ8ibKCz98I0yFKVLt3pQWsBe5za1bvazcFWQlchbx/OcjjqM/fRR1kMM36zHx8/6cHeGMKe4gGB9o7iT5P1nJwx6sSodJdGqIEZSBxUr8ZiKtamb6xSQLXZZO5VbdT2RouxEcUffs9979JPaLy1DCI6EvRW7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dKGt9Xca; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721729881;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3j4Y7GKdDQsDIXrm9FcVVcCOdvIkQaL9wqx7KuVIzeY=;
-	b=dKGt9XcaPbSkJ07MRNauOC7ZYq4yToQ6NKwmRRwcIR0rD5z6j03RRPcUt/mVU5x3XKjEm+
-	buXXRlfMnKOXasXkiOEVwp63ctxEMtwXPZiC8RtAgpRjGGgsSpwDgxMQ4asoM56OODIJmO
-	o3bdiAlCFh0JB5PGYShlUIJAX4VXpNA=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-358-skkVWJQQNXWIyr_qL9eN-g-1; Tue, 23 Jul 2024 06:18:00 -0400
-X-MC-Unique: skkVWJQQNXWIyr_qL9eN-g-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-36831873b39so2943161f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 03:17:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721729879; x=1722334679;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3j4Y7GKdDQsDIXrm9FcVVcCOdvIkQaL9wqx7KuVIzeY=;
-        b=ZYB2BrmafRapfWePhf1sTzalFL6jg+DSZFREwywBVFIQbmyN5+ZY+f2b++M1tx/yoR
-         GbvrDsb4TzPb90Pr9w1diouu6JB1Ndn9nQUjwReiCxWuNhgdPEeSKECiZrvj7ypS3Yd3
-         YBiLKxL9XMFUukaUfuY9xr5FfdM0KSnCrNe/wY5T8M+ntPp14tEursKmRa9KoBnRo7wP
-         5xoHgq195LOvnkl4V7MWg1E4oG/ifLNIvzPaLlD7niZcJEJ7jgni8mVnb/KVuSfIaU3P
-         1UErTgRnXp3FpZ+H+ypgfV5tch6sXcA+QYQgN0wXYupSOu5B3S5fD54TlXB6IQLUEF7z
-         aoiA==
-X-Forwarded-Encrypted: i=1; AJvYcCXpFgG0gKm6mUQh4ds/XxKUYgR9uhv/vR6W0i7xi603AJy0E4fTFj11yU89Y7zw6XU8pJbY5zGAo8swLM8dc5uGls5eOeKEpUz62w8C
-X-Gm-Message-State: AOJu0YxqpReQyNBeiuogcdaNEynnttezJyU1BHOy9DJgg7SksfIwpA1e
-	RIF4/CvCkGi7NBnTsfjCbqBh+wWckoqWE4QHFBAJ4HYNtNP3qja+ImdrCF7xTMebfoS9V6TLWjZ
-	F94DLjhaQO085Nbr7N97Gs5O0TCeFuOS2++KGFTFYAQhXNVCrRZuvZb51am3twg==
-X-Received: by 2002:a05:6000:154d:b0:368:4e2e:7596 with SMTP id ffacd0b85a97d-369dec1e50cmr2642401f8f.37.1721729878630;
-        Tue, 23 Jul 2024 03:17:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGrm3AC2cxKkpu+sq3Ii9RJOUIHoGm2gLG+gxaEGBnjakrqS9oWSEElkQVsp6V9nna9hmn6Tg==
-X-Received: by 2002:a05:6000:154d:b0:368:4e2e:7596 with SMTP id ffacd0b85a97d-369dec1e50cmr2642373f8f.37.1721729878146;
-        Tue, 23 Jul 2024 03:17:58 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c72f:ed00:9dc2:1adb:d133:4434? (p200300cbc72fed009dc21adbd1334434.dip0.t-ipconnect.de. [2003:cb:c72f:ed00:9dc2:1adb:d133:4434])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-368787cf182sm11120465f8f.82.2024.07.23.03.17.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 03:17:57 -0700 (PDT)
-Message-ID: <1621fcbd-38b5-46a8-8b68-911f2920d52e@redhat.com>
-Date: Tue, 23 Jul 2024 12:17:56 +0200
+	s=arc-20240116; t=1721730304; c=relaxed/simple;
+	bh=IxRF8A09nLsXRC72rWOFqg3Zjdlr70yxL1AEHccECww=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=deL4vrQJnbm1FEJ/k+ta+zGaeOYvcgKbxYuV/QXffSb5/nJIcNZtvllVd2vxu2KJ+d9702+r75jA4crjWD6KJjLD/cKjbYumlXRLayEewPD0n7iEBbDkMDYwzr6fyN6bU+BMTDNlV6GFXM87M6Sr422gm1oNGn0zrfv37lg4sr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WStWH5CQ6z6DB3m;
+	Tue, 23 Jul 2024 18:22:35 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id A4E95140A35;
+	Tue, 23 Jul 2024 18:24:58 +0800 (CST)
+Received: from localhost (10.203.174.77) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 23 Jul
+ 2024 11:24:57 +0100
+Date: Tue, 23 Jul 2024 11:24:56 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+CC: <rafael.j.wysocki@intel.com>, <guohanjun@huawei.com>, <gshan@redhat.com>,
+	<miguel.luis@oracle.com>, <catalin.marinas@arm.com>, Linux List Kernel
+ Mailing <linux-kernel@vger.kernel.org>, Linux regressions mailing list
+	<regressions@lists.linux.dev>, <linuxarm@huawei.com>, Thomas Gleixner
+	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: 6.11/regression/bisected - The commit c1385c1f0ba3 caused a new
+ possible recursive locking detected warning at computer boot.
+Message-ID: <20240723112456.000053b3@Huawei.com>
+In-Reply-To: <CABXGCsPvqBfL5hQDOARwfqasLRJ_eNPBbCngZ257HOe=xbWDkA@mail.gmail.com>
+References: <CABXGCsPvqBfL5hQDOARwfqasLRJ_eNPBbCngZ257HOe=xbWDkA@mail.gmail.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] memory tiering: count PGPROMOTE_SUCCESS when mem
- tiering is enabled.
-To: Kefeng Wang <wangkefeng.wang@huawei.com>, Zi Yan <ziy@nvidia.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc: "Huang, Ying" <ying.huang@intel.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, linux-kernel@vger.kernel.org
-References: <20240722172917.503370-1-ziy@nvidia.com>
- <20240722172917.503370-3-ziy@nvidia.com>
- <5230d72e-81fa-4ef1-b386-90bd3b06bf0e@huawei.com>
- <D2WJLRHB9T9S.DRAUA25VKCBP@nvidia.com>
- <d31b0226-6013-4152-af4b-1526146eb179@huawei.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <d31b0226-6013-4152-af4b-1526146eb179@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On 23.07.24 05:24, Kefeng Wang wrote:
-> 
-> 
-> On 2024/7/23 9:54, Zi Yan wrote:
->> On Mon Jul 22, 2024 at 9:48 PM EDT, Kefeng Wang wrote:
->>>
->>>
->>> On 2024/7/23 1:29, Zi Yan wrote:
->>>> memory tiering can be enabled/disabled at runtime and
->>>> sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING is used to check
->>>> it. In migrate_misplaced_folio(), the check is missing when
->>>> PGPROMOTE_SUCCESS is incremented. Add the missing check.
->>>>
->>>> Reported-by: Kefeng Wang <wangkefeng.wang@huawei.com>
->>>> Closes: https://lore.kernel.org/linux-mm/f4ae2c9c-fe40-4807-bdb2-64cf2d716c1a@huawei.com/
->>>> Fixes: 33024536bafd ("memory tiering: hot page selection with hint page fault latency")
->>>> Signed-off-by: Zi Yan <ziy@nvidia.com>
->>>
->>> Reviewed-by: Kefeng Wang <wangkefeng.wang@huawei.com>
->>>
->> Thanks.
->>
->>>> ---
->>>>     mm/migrate.c | 4 +++-
->>>>     1 file changed, 3 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/mm/migrate.c b/mm/migrate.c
->>>> index bdbb5bb04c91..b819809da470 100644
->>>> --- a/mm/migrate.c
->>>> +++ b/mm/migrate.c
->>>> @@ -2630,7 +2630,9 @@ int migrate_misplaced_folio(struct folio *folio, struct vm_area_struct *vma,
->>>>     		putback_movable_pages(&migratepages);
->>>>     	if (nr_succeeded) {
->>>>     		count_vm_numa_events(NUMA_PAGE_MIGRATE, nr_succeeded);
->>>> -		if (!node_is_toptier(folio_nid(folio)) && node_is_toptier(node))
->>>> +		if ((sysctl_numa_balancing_mode & NUMA_BALANCING_MEMORY_TIERING)
->>>> +		    && !node_is_toptier(folio_nid(folio))
->>>> +		    && node_is_toptier(node))
->>>>     			mod_node_page_state(pgdat, PGPROMOTE_SUCCESS,
->>>>     					    nr_succeeded);
->>>
->>> The should be in advance of patch2, and change above to use
->>> folio_has_cpupid() helper() too.
->>
->> It shares the same logic of !folio_has_cpupid() but it might be confusing to
->> put !folio_has_cpupid(folio) && node_is_toptier(node) here. folio's
->> cpupid has nothing to do with the stats here, thus I did not use the
->> function.
-> 
-> If folio don't include access time, we do migrate it but it isn't a
-> promotion, so don't count it, other comments?
-> 
-> PS: Could we rename folio_has_cpupid() to folio_has_access_time(), even
-> without memory_tiering, we still have cpupid in folio, right?
+On Tue, 23 Jul 2024 00:36:18 +0500
+Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com> wrote:
 
-Maybe call it "folio_use_cpupid()" or sth like that? The "has" is a bit 
-misleading, because the folio has a cpuid in any case, no?
+> Hi,
+> The first Fedora update to the 6.11 kernel
+> (kernel-debug-6.11.0-0.rc0.20240716gitd67978318827.2.fc41.x86_64)
+> brings a new warning: possible recursive locking detected.
 
--- 
-Cheers,
+Hi Mikhail,
 
-David / dhildenb
+Thanks for the report.
+
+This is an interesting corner and perhaps reflects a flawed
+assumption we were making that for this path anything that can happen for an
+initially present CPU can also happen for a hotplugged one. On the hotplugged
+path the lock was always held and hence the static_key_enable() would
+have failed.
+
+I'm somewhat stumped on working out why this path couldn't happen
+for a hotplugged CPU so why this is a new problem?
+
+Maybe this is just a case of no one is providing _CPC for CPUs in virtual
+machines so the path wasn't seen? QEMU doesn't generate ACPI tables with
+_CPC today, so maybe that's it.
+
+So maybe this is has revealed an existing latent  bug.  There have been
+QEMU patches for _CPC in the past but never merged. I'll hack them
+into an x86 virtual machine and see if we hit the same bug you have
+here before and after the series.
+
+Either way obviously we need to fix it for the current kernel (and maybe
+backport the fix if I can verify it's a latent bug).  I'll get a test
+setup running asap and see if I can replicate.
+
++CC x86 maintainers.
+
+Thanks,
+
+Jonathan
+
+
+
+
+> The trace looks like:
+> ACPI: button: Power Button [PWRF]
+> 
+> ============================================
+> WARNING: possible recursive locking detected
+> 6.11.0-0.rc0.20240716gitd67978318827.2.fc41.x86_64+debug #1 Not tainted
+> --------------------------------------------
+> cpuhp/0/22 is trying to acquire lock:
+> ffffffffb7f9cb40 (cpu_hotplug_lock){++++}-{0:0}, at: static_key_enable+0x12/0x20
+> 
+> but task is already holding lock:
+> ffffffffb7f9cb40 (cpu_hotplug_lock){++++}-{0:0}, at: cpuhp_thread_fun+0xcd/0x6f0
+> 
+> other info that might help us debug this:
+>  Possible unsafe locking scenario:
+> 
+>        CPU0
+>        ----
+>   lock(cpu_hotplug_lock);
+>   lock(cpu_hotplug_lock);
+> 
+>  *** DEADLOCK ***
+> 
+>  May be due to missing lock nesting notation
+> 
+> 3 locks held by cpuhp/0/22:
+>  #0: ffffffffb7f9cb40 (cpu_hotplug_lock){++++}-{0:0}, at:
+> cpuhp_thread_fun+0xcd/0x6f0
+>  #1: ffffffffb7f9f2e0 (cpuhp_state-up){+.+.}-{0:0}, at:
+> cpuhp_thread_fun+0xcd/0x6f0
+>  #2: ffffffffb7f1d650 (freq_invariance_lock){+.+.}-{3:3}, at:
+> init_freq_invariance_cppc+0xf4/0x1e0
+> 
+> stack backtrace:
+> CPU: 0 PID: 22 Comm: cpuhp/0 Not tainted
+> 6.11.0-0.rc0.20240716gitd67978318827.2.fc41.x86_64+debug #1
+> Hardware name: ASUS System Product Name/ROG STRIX B650E-I GAMING WIFI,
+> BIOS 2611 04/07/2024
+> Call Trace:
+>  <TASK>
+>  dump_stack_lvl+0x84/0xd0
+>  __lock_acquire+0x27e3/0x5c70
+>  ? __pfx___lock_acquire+0x10/0x10
+>  ? cppc_get_perf_caps+0x64f/0xf60
+>  lock_acquire+0x1ae/0x540
+>  ? static_key_enable+0x12/0x20
+>  ? __pfx_lock_acquire+0x10/0x10
+>  ? __pfx___might_resched+0x10/0x10
+>  cpus_read_lock+0x40/0xe0
+>  ? static_key_enable+0x12/0x20
+>  static_key_enable+0x12/0x20
+>  freq_invariance_enable+0x13/0x40
+>  init_freq_invariance_cppc+0x17e/0x1e0
+>  ? __pfx_init_freq_invariance_cppc+0x10/0x10
+>  ? acpi_cppc_processor_probe+0x1046/0x2300
+>  acpi_cppc_processor_probe+0x11ae/0x2300
+>  ? _raw_spin_unlock_irqrestore+0x4f/0x80
+>  ? __pfx_acpi_cppc_processor_probe+0x10/0x10
+>  ? __pfx_acpi_scan_drop_device+0x10/0x10
+>  ? acpi_fetch_acpi_dev+0x79/0xe0
+>  ? __pfx_acpi_fetch_acpi_dev+0x10/0x10
+>  ? __pfx_acpi_soft_cpu_online+0x10/0x10
+>  acpi_soft_cpu_online+0x114/0x330
+>  cpuhp_invoke_callback+0x2c7/0xa40
+>  ? __pfx_lock_release+0x10/0x10
+>  ? __pfx_lock_release+0x10/0x10
+>  ? cpuhp_thread_fun+0xcd/0x6f0
+>  cpuhp_thread_fun+0x33a/0x6f0
+>  ? smpboot_thread_fn+0x56/0x930
+>  smpboot_thread_fn+0x54b/0x930
+>  ? __pfx_smpboot_thread_fn+0x10/0x10
+>  ? __pfx_smpboot_thread_fn+0x10/0x10
+>  kthread+0x2d2/0x3a0
+>  ? _raw_spin_unlock_irq+0x28/0x60
+>  ? __pfx_kthread+0x10/0x10
+>  ret_from_fork+0x31/0x70
+>  ? __pfx_kthread+0x10/0x10
+>  ret_from_fork_asm+0x1a/0x30
+>  </TASK>
+> 
+> Bisect is pointed to commit
+> commit c1385c1f0ba3b80bd12f26c440612175088c664c (HEAD)
+> Author: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Date:   Wed May 29 14:34:28 2024 +0100
+> 
+>     ACPI: processor: Simplify initial onlining to use same path for
+> cold and hotplug
+> 
+>     Separate code paths, combined with a flag set in acpi_processor.c to
+>     indicate a struct acpi_processor was for a hotplugged CPU ensured that
+>     per CPU data was only set up the first time that a CPU was initialized.
+>     This appears to be unnecessary as the paths can be combined by letting
+>     the online logic also handle any CPUs online at the time of driver load.
+> 
+>     Motivation for this change, beyond simplification, is that ARM64
+>     virtual CPU HP uses the same code paths for hotplug and cold path in
+>     acpi_processor.c so had no easy way to set the flag for hotplug only.
+>     Removing this necessity will enable ARM64 vCPU HP to reuse the existing
+>     code paths.
+> 
+>     Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>     Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
+>     Tested-by: Miguel Luis <miguel.luis@oracle.com>
+>     Reviewed-by: Gavin Shan <gshan@redhat.com>
+>     Reviewed-by: Miguel Luis <miguel.luis@oracle.com>
+>     Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>     Link: https://lore.kernel.org/r/20240529133446.28446-2-Jonathan.Cameron@huawei.com
+>     Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+> 
+>  drivers/acpi/acpi_processor.c   |  7 +++----
+>  drivers/acpi/processor_driver.c | 43
+> ++++++++++++-------------------------------
+>  include/acpi/processor.h        |  2 +-
+>  3 files changed, 16 insertions(+), 36 deletions(-)
+> 
+> And I can confirm that after reverting c1385c1f0ba3 the issue is gone.
+> 
+> I also attach here a full kernel log and build config.
+> 
+> My hardware specs: https://linux-hardware.org/?probe=c6de14f5b8
+> 
+> Jonathan, can you look into this, please?
+> 
 
 
