@@ -1,142 +1,205 @@
-Return-Path: <linux-kernel+bounces-259852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-259853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80183939E39
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:49:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3E5B939E3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 11:50:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 275241F218B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:49:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57973282083
+	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 09:50:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43CB214D435;
-	Tue, 23 Jul 2024 09:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F8914D435;
+	Tue, 23 Jul 2024 09:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iL7wkTfV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nligh5b3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7B014C5BD
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 09:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D585014B94E;
+	Tue, 23 Jul 2024 09:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721728181; cv=none; b=LC4MEbWaSUkp8ymblV09tmUTXvcg9xbRLBREjZWkrkHYc6zS/hvNr3AcnJCwL6+49VgyP+a5IGrZHWkiyY2+dfz4SvVMMMjO96xLBqwiHmP90/3AxjeF5Qxqsj8fWwNZDiSqAR54m8GoZQHA5S2GcQS/5DFSh9nYJPg5Y99Mg24=
+	t=1721728188; cv=none; b=AZ3mV/I8mSTBJ9noTMFZ0svxeNfGAtWgR0gb4HfMYRWrIPIi1m4mZ9X2WgMYjw11zKUTF7vZIUeLMLap2mIX/lwPnBNiPcxBwGL79XOlhC8HqTgOCaMNra3EpFgIM9W5lmSOREEGD+eR8S0vJ/+cwmmhgNpl/su/cG8MWuRE1CM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721728181; c=relaxed/simple;
-	bh=JDGXIr+0gl3av57yXr72yYr1CLkdmerO6ZKmva4pkYw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s17VJLQbhVLxNVA3tH4y0SKQVzL1z+xVPtZb9s1Nc0EkCAsZNf5JFMeI5S55IEfHqqXWo7CBbXQdHlJFW8q8lfUgobXUlLJwDeC6B3Dpn2tWA06Mhi3FL6NaOh4F5WCXlQV/XPi3Z19T1bmk5JR9/CFxLAzQtVO4EYerAGz92pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iL7wkTfV; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721728178;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vTUKsuAlDi0iSYRC+we38+DtQsnQSdSQdS20sVQC7cY=;
-	b=iL7wkTfVNGFNgnYAGyf4wToaQC0FL7Fq3eW8ylMTf+sqCbvnolthnEZ62cyUwzEf0xHA88
-	9av3EQMlk5rdPtd56EQWsJk3p+qVXEWg8VPoEatEGWt6txJT03Z/g1b/bVFKOL8M0a8USp
-	3p8lHAUKFbVoASIvYaCW+1E+GfwM6mg=
-Received: from mail-oo1-f72.google.com (mail-oo1-f72.google.com
- [209.85.161.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-457-AHDCPxD0NmOPvv7KtSXNbg-1; Tue, 23 Jul 2024 05:49:36 -0400
-X-MC-Unique: AHDCPxD0NmOPvv7KtSXNbg-1
-Received: by mail-oo1-f72.google.com with SMTP id 006d021491bc7-5ce5595efcdso4325759eaf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 02:49:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721728175; x=1722332975;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vTUKsuAlDi0iSYRC+we38+DtQsnQSdSQdS20sVQC7cY=;
-        b=YARy569DFiJcl5IPMWyDsSzbCvV6aQMH9X6H3dYq4unOrbNCGzhGQFAcIn7JUyl40h
-         N2ShFelePiLbAK3y3LL0iN2LIylg6yXsKEuiNY38rOONVw+MUsf5gV/Z4r9ksnyDYRKG
-         eSApPkcXXH1MPPDe6mnRMaS6SgeCRbVvkrXFPC81YJgunrHqmjdlCG3dvw5hc3mydQZp
-         HfFhi6qKvA52alp+gMV9VnsIDenFWHbRuMs6O5VHsXUcKIwFPdlXOC+DgBy2ZP9fbelL
-         ey5K5F6p827Nyo5JVB7/YD+l3cuRn2bcb1a/ds9zbudlhucWGhJtKlD7KFXnBSVUoCrO
-         8Ayw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIqvG1dVYCL5PTwPEfUi2SBENvDtV/5WbLTYUIXYDOLr7HeCFHOCcvAyxUfJG+/uW6DqVcOSlPcYS9zKKzqakrDuFbhmIFUaoYfg77
-X-Gm-Message-State: AOJu0Yx8a1TJHKfD9fjlNUr0C1wNahE1gR+Ezf9Wm2ztepAMKpvw85Fx
-	Vyx/asebkJj8ONZwLsjxpEbn7160j9zwVFAeh4+oU2xgRxkRsY2+ZuaOh98+0wkI9+Kl20IH2Pf
-	h4s2e/HZ3A6ZGfSKUoTDLBd3CzywK4V7E4HPD14yn2zraP6JMtkGShCPRCR7Vtru1z+q8w64QOo
-	hFp5go+MGHVgPCBds/qxb3g+4m0pevflgISOZj
-X-Received: by 2002:a05:6820:1f0f:b0:5d5:6699:2c9b with SMTP id 006d021491bc7-5d5669930eemr13369703eaf.7.1721728175677;
-        Tue, 23 Jul 2024 02:49:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHHJeYmoto4XfYkVaB8eVl5Rfnz6Zc7Zo5wuLRY713Uc0WXbr7Z9z8IthtfHXxldZAL02rgTLcuhfhVDsnxcrU=
-X-Received: by 2002:a05:6820:1f0f:b0:5d5:6699:2c9b with SMTP id
- 006d021491bc7-5d5669930eemr13369695eaf.7.1721728175401; Tue, 23 Jul 2024
- 02:49:35 -0700 (PDT)
+	s=arc-20240116; t=1721728188; c=relaxed/simple;
+	bh=J7B57AhsYu2mlW6Prap8g6w5QYT11RX/aKaEuAJH0jg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VivEg27niFZtcC0iHeG/zQhLcOCAt1F8FQ+nWsHXvntr3mUm7FFhI66OXF0Qf+h9jk40sInvuRw9f62RvLf4Io8G8jzv6NPnqsxdtjZyo/Ty8UY3PKbwP73j+VZw+PMviX24a2I9KrACzISpfrF7LUinXG1qkDMZ4F8/P/QHqTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nligh5b3; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721728187; x=1753264187;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=J7B57AhsYu2mlW6Prap8g6w5QYT11RX/aKaEuAJH0jg=;
+  b=nligh5b33MPcgfOHFGQ/5Rv86Esy+9PDgrc+d1Rhxfdr6lR4dnA1trDa
+   yM5tKRJYoTj9wYMYSXVUt28g7oPjH5gTx5sbI9WQf0zkpoTGj215Gm69h
+   nslIC686iDceb4f+yc+GDZrxc5ww1/UYiZZ6E4DcLVsWqA+2nKEG8B9i6
+   /esxG5K74zzbhYB/6Ot1FwOL1gsWCuZkNkWzd+Lp2sgvnAoDMWD+tTr3O
+   wz9bmaW2qVmxoqUMeuy5riB6vylevAswPZM/r2507GAgVPsn/fa+oqjnO
+   LhT/rwzZyqhouraR6qHnRfIREKSsrWeJTj3GqCMkKlPf3ijc7sG2/Isrl
+   w==;
+X-CSE-ConnectionGUID: cOrCzIKqTbacxXJtJX65Rg==
+X-CSE-MsgGUID: 6uWo/WKhRQ2nws774q7h9A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11141"; a="23144342"
+X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
+   d="scan'208";a="23144342"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2024 02:49:46 -0700
+X-CSE-ConnectionGUID: +hxMdSabT9iOXv0AKysMLw==
+X-CSE-MsgGUID: 8UC81fLbQTCbkfSv8LEFig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,230,1716274800"; 
+   d="scan'208";a="56480785"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 23 Jul 2024 02:49:42 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 6C554178; Tue, 23 Jul 2024 12:49:41 +0300 (EEST)
+Date: Tue, 23 Jul 2024 12:49:41 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Michal Hocko <mhocko@suse.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, "Borislav Petkov (AMD)" <bp@alien8.de>, 
+	Mel Gorman <mgorman@suse.de>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Jianxiong Gao <jxgao@google.com>, stable@vger.kernel.org
+Subject: Re: [PATCH] mm: Fix endless reclaim on machines with unaccepted
+ memory.
+Message-ID: <dili5kn3xjjzamwmyxjgdkf5vvh6sqftm7qk4f2vbxuizfzlb2@xrtxlvlqaos5>
+References: <20240716130013.1997325-1-kirill.shutemov@linux.intel.com>
+ <ZpdwcOv9WiILZNvz@tiehlicka>
+ <xtcmz6b66wayqxzfio4funmrja7ezgmp3mvudjodt5xfx64rot@s6whj735oimb>
+ <Zpez1rkIQzVWxi7q@tiehlicka>
+ <brjw4kb3x4wohs4a6y5lqxr6a5zlz3m45hiyyyht5mgrqcryk7@m7mdyojo4h6a>
+ <564ff8e4-42c9-4a00-8799-eaa1bef9c338@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230725110622.129361-1-ptyadav@amazon.de>
-In-Reply-To: <20230725110622.129361-1-ptyadav@amazon.de>
-From: Maurizio Lombardi <mlombard@redhat.com>
-Date: Tue, 23 Jul 2024 11:49:24 +0200
-Message-ID: <CAFL455=O23ci6GCzdnJr8DmyVSXAD=ctmj4AEk=XfSSLjbUQYA@mail.gmail.com>
-Subject: Re: [PATCH] nvme-pci: do not set the NUMA node of device if it has none
-To: Pratyush Yadav <ptyadav@amazon.de>
-Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, 
-	Sagi Grimberg <sagi@grimberg.me>, linux-nvme@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <564ff8e4-42c9-4a00-8799-eaa1bef9c338@suse.cz>
 
-=C3=BAt 25. 7. 2023 v 13:07 odes=C3=ADlatel Pratyush Yadav <ptyadav@amazon.=
-de> napsal:
->
-> If a device has no NUMA node information associated with it, the driver
-> puts the device in node first_memory_node (say node 0). As a side
-> effect, this gives an indication to userspace IRQ balancing programs
-> that the device is in node 0 so they prefer CPUs in node 0 to handle the
-> IRQs associated with the queues. For example, irqbalance will only let
-> CPUs in node 0 handle the interrupts. This reduces random access
-> performance on CPUs in node 1 since the interrupt for command completion
-> will fire on node 0.
->
-> For example, AWS EC2's i3.16xlarge instance does not expose NUMA
-> information for the NVMe devices. This means all NVMe devices have
-> NUMA_NO_NODE by default. Without this patch, random 4k read performance
-> measured via fio on CPUs from node 1 (around 165k IOPS) is almost 50%
-> less than CPUs from node 0 (around 315k IOPS). With this patch, CPUs on
-> both nodes get similar performance (around 315k IOPS).
->
-> Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
-> ---
->  drivers/nvme/host/pci.c | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> index baf69af7ea78e..f5ba2d7102eae 100644
-> --- a/drivers/nvme/host/pci.c
-> +++ b/drivers/nvme/host/pci.c
-> @@ -2916,9 +2916,6 @@ static struct nvme_dev *nvme_pci_alloc_dev(struct p=
-ci_dev *pdev,
->         struct nvme_dev *dev;
->         int ret =3D -ENOMEM;
->
-> -       if (node =3D=3D NUMA_NO_NODE)
-> -               set_dev_node(&pdev->dev, first_memory_node);
-> -
->         dev =3D kzalloc_node(sizeof(*dev), GFP_KERNEL, node);
->         if (!dev)
->                 return ERR_PTR(-ENOMEM);
-> --
+On Tue, Jul 23, 2024 at 09:30:27AM +0200, Vlastimil Babka wrote:
+> On 7/22/24 4:07 PM, Kirill A. Shutemov wrote:
+> > On Wed, Jul 17, 2024 at 02:06:46PM +0200, Michal Hocko wrote:
+> >> Please try to investigate this further. The patch as is looks rather
+> >> questionable to me TBH. Spilling unaccepted memory into the reclaim
+> >> seems like something we should avoid if possible as this is something
+> > 
+> > Okay, I believe I have a better understanding of the situation:
+> > 
+> > - __alloc_pages_bulk() takes pages from the free list without accepting
+> >   more memory. This can cause number of free pages to fall below the
+> >   watermark.
+> > 
+> >   This issue can be resolved by accepting more memory in
+> >   __alloc_pages_bulk() if the watermark check fails.
+> > 
+> >   The problem is not only related to unallocated memory. I think the
+> >   deferred page initialization mechanism could result in premature OOM if
+> >   __alloc_pages_bulk() allocates pages faster than deferred page
+> >   initialization can add them to the free lists. However, this scenario is
+> >   unlikely.
+> > 
+> > - There is nothing that compels the kernel to accept more memory after the
+> >   watermarks have been calculated in __setup_per_zone_wmarks(). This can
+> >   put us under the watermark.
+> > 
+> >   This issue can be resolved by accepting memory up to the watermark after
+> >   the watermarks have been initialized.
+> > 
+> > - Once kswapd is started, it will begin spinning if we are below the
+> >   watermark and there is no memory that can be reclaimed. Once the above
+> >   problems are fixed, the issue will be resolved.
+> > 
+> > - The kernel needs to accept memory up to the PROMO watermark. This will
+> >   prevent unaccepted memory from interfering with NUMA balancing.
+> 
+> So do we still assume all memory is eventually accepted and it's just a
+> initialization phase thing? And the only reason we don't do everything in a
+> kthread like the deferred struct page init, is to spread out some potential
+> contention on the host side?
+> 
+> If yes, do we need NUMA balancing even to be already active during that phase?
 
-FYI, we have received bug reports because of this patch.
-All single numa nodes like a VMware guest or a system set to interleaved mo=
-de
-will now see -1 as the numa_node attribute.
+No, there is nothing that requires guests to accept all of the memory. If
+the working set of a workload within the guest only requires a portion of
+the memory, the rest will remain unallocated and available to the host for
+other tasks.
 
-Apparently, some applications like Lightbits do not expect to see -1.
+I think accepting memory up to the PROMO watermark would not hurt
+anybody.
 
-Maurizio
+> > The patch below addresses the issues I listed earlier. It is not yet ready
+> > for application. Please see the issues listed below.
+> > 
+> > Andrew, please drop the current patch.
+> > 
+> > There are a few more things I am worried about:
+> > 
+> > - The current get_page_from_freelist() and patched __alloc_pages_bulk()
+> >   only try to accept memory if the requested (alloc_flags & ALLOC_WMARK_MASK)
+> >   watermark check fails. For example, if a requested allocation with
+> >   ALLOC_WMARK_MIN is called, we will not try to accept more memory, which
+> >   could potentially put us under the high/promo watermark and cause the
+> >   following kswapd start to get us into an endless loop.
+> > 
+> >   Do we want to make memory acceptance in these paths independent of
+> >   alloc_flags?
+> 
+> Hm ALLOC_WMARK_MIN will proceed, but with a watermark below the low
+> watermark will still wake up kswapd, right? Isn't that another scenario
+> where kswapd can start spinning?
 
+Yes, that is the concern.
+
+> > - __isolate_free_page() removes a page from the free list without
+> >   accepting new memory. The function is called with the zone lock taken.
+> >   It is bad idea to accept memory while holding the zone lock, but
+> >   the alternative of pushing the accept to the caller is not much better.
+> > 
+> >   I have not observed any issues caused by __isolate_free_page() in
+> >   practice, but there is no reason why it couldn't potentially cause
+> >   problems.
+> >  
+> > - The function take_pages_off_buddy() also removes pages from the free
+> >   list without accepting new memory. Unlike the function
+> >   __isolate_free_page(), it is called without the zone lock being held, so
+> >   we can accept memory there. I believe we should do so.
+> > 
+> > I understand why adding unaccepted memory handling into the reclaim path
+> > is questionable. However, it may be the best way to handle cases like
+> > __isolate_free_page() and possibly others in the future that directly take
+> > memory from free lists.
+> 
+> Yes seems it might be not that bad solution, otherwise it could be hopeless
+> whack-a-mole to prevent all corner cases where reclaim can be triggered
+> without accepting memory first.
+> 
+> Although just removing the lazy accept mode would be much more appealing
+> solution than this :)
+
+:P
+
+Not really an option for big VMs. It might add many minutes to boot time.
+
+> > Any thoughts?
+> 
+> Wonder if deferred struct page init has many of the same problems, i.e. with
+> __isolate_free_page() and take_pages_off_buddy(), and if not, why?
+
+Even if deferred struct page init would trigger reclaim, kswapd will not
+spin forever. The background thread will add more free memory, so forward
+progress is guaranteed. And deferred struct page init is done before init
+starts.
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
