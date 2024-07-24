@@ -1,404 +1,203 @@
-Return-Path: <linux-kernel+bounces-261058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 692E093B243
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:08:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 662DD93B269
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A90B1C224F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:08:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B36C282457
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB854158D75;
-	Wed, 24 Jul 2024 14:08:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CAC61591E0;
+	Wed, 24 Jul 2024 14:10:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qmANyIPg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c4gTwJPW"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6521591FC;
-	Wed, 24 Jul 2024 14:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341C7DDC5
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721830095; cv=none; b=j5OI8WMoRSx72hkEn2XAZMVRQzvQvAiFLrO3uxGynlN2yv6ZbMvBHFhSNjUp6eGcXPyfX2tsqPByMWIWGbIDYMuz/vcrvSXXSjw2w7mOlbP/lsiRxj8cKNclWzfu+20omMXq6mS0SdLiv160Iwk6KrOfSxDbFGkiNo9MNz4p9/M=
+	t=1721830217; cv=none; b=SkC80dCv3RehZD+if7gihMFgAfUY5GESB+DusndQwgvhtNEmOZ2vJx+z0rKQoz/eIZRANMXQtFgoutczCpvyWOIsKCMg02I2ME8hU3MNTNn7/17nbYf0b/o9+MPBYqeoQNFBbCJIG4H7ZfXPqTXq6lTK3OJ8uN+wPRO4tFepaVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721830095; c=relaxed/simple;
-	bh=QmQE3RANXAxwAPFq3hm3fsYTfUNnvB67NIGWJNKqD5M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=plx6WlYeOOVnVu61TZXNmsmdXiFfiUBK1F6TgeDxfrYvn0AX3hXr/RHODrAyi30v4iLpWqs1OFg/t0qxnrnnQlpRJHILZomLat0OjYw4q0vf6CC8i9y8/b3B/Cl2gEMrexE4rYtQTcPmESFCVpSG7zfC727r/OCQBvMyijThSl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qmANyIPg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6081C32781;
-	Wed, 24 Jul 2024 14:08:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721830094;
-	bh=QmQE3RANXAxwAPFq3hm3fsYTfUNnvB67NIGWJNKqD5M=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qmANyIPgH5FTA0r5hXz5M2QWdfj6T8k3NslfhXbXSs47eAydKpvdCw8sZzy2ctuZ9
-	 2slgG5RSND+V9tyYDyeX6xjl2JMxikGPJ9qkc7jGORiNHXbgkccMOf7xWTaBC7S8Bb
-	 /eD8UQy+WyYj0SFWyssQz67FEg5cQftghrxy1Tho=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	torvalds@linux-foundation.org,
-	stable@vger.kernel.org
-Cc: lwn@lwn.net,
-	jslaby@suse.cz,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: Linux 6.10.1
-Date: Wed, 24 Jul 2024 16:08:01 +0200
-Message-ID: <2024072401-facecloth-partly-ecc8@gregkh>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <2024072401-barmaid-profusely-6d62@gregkh>
-References: <2024072401-barmaid-profusely-6d62@gregkh>
+	s=arc-20240116; t=1721830217; c=relaxed/simple;
+	bh=bQ66+SsmOkp4FfJAE3qwpS9H2kE3nhkswugvFsE26zU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TA3Elw/AEsqBm0lMVYCS9tSrATfU+wykKyLxEaJdsoxtTpTHSZMgGt3q9OxTCMugnvmRgyoA6Kkn9B76WmZffH51HqlGR4A+xkhjcSdpfwrm/Ychyblrz+q62HK4T0OOhbhn9WDAJAmFadAYxrRQlkFYNLGjF8EU1/d7LnVM5ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c4gTwJPW; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fd66cddd07so17176155ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:10:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721830215; x=1722435015; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=hvjqD7swXLIXWuSmMXHVgPpzmpB1cUWaSgkw1M36cKs=;
+        b=c4gTwJPWymuuKecIwgPz3AuZEykTZkYGZnIoZExEOJRb6SEmey0Tii9SpHxNrLpwl3
+         hsFv5OVeAtxKfox9bPplQUA8aHkgKvpsh62Q7VV3/CNtViuatztdhWJfGjGHQ/yHeFJo
+         0HX6OosEbTbSPeQVwz7UUhqPjPfhaFL7uWf2s4mGRRuz1mgBB9H4oPNP46uH7dj2+uhT
+         ronJCbNNK+gvFoKXTKSAco5SnBqHuKbiTn8kMZXfxr08jk2braE0mxrx4Z385VU5CfrN
+         rbqB2SNqiJn/qik8yOitk0w/1p+Y4kuPjxoHvcm/4ZDzTM6LueFlmod9FDPFtzcGlvxC
+         ZyNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721830215; x=1722435015;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hvjqD7swXLIXWuSmMXHVgPpzmpB1cUWaSgkw1M36cKs=;
+        b=PNIJTJtEfgT//G84nSScIXMoUMGU6OmEo92Euj81nW1+9NMsdJugkag4HPK7RIpqml
+         G9FzLCUM1KgTtde5tneGZ2v8GX0npc1lklNEOBNGLfQoQsklI4YzYuSQg4mVdbDZWoc/
+         NU3IA/sdKF2IvIAFpgGXdEQ/ByfH7Sz2YAaac7zI1XguksNDFcvvSYf4BsGUJJd9AtcB
+         h/UA7dUM7yOUytMvNLcN+iPWnM2kWwf1AiJKtgyjAc0avOqbq4IEIEZRHbN5kimO8xfg
+         g/3S5p2fzwswlfQKcyBiyXpa/vuedhAZbVvKvumD0fr76HqavVjc4NjU1csXIclFsASs
+         h6rg==
+X-Forwarded-Encrypted: i=1; AJvYcCVPAZzjZupKGpCyluqNpCtVZKqR67ZZ6PEm6aEhdsTUdSNl5f3e7PaSQipUSXzZgVVQj+RIgXWTwcgA2V/Mj8i7xwU2QLO0g9Yl4Qzc
+X-Gm-Message-State: AOJu0YyJRGilZvmlKjb7ZCPlc3jD25k8v2P6ef1EZR+Zms+nsRN/cVr/
+	I4KiZHiPrxRglxiP7hdAH14oBNI1X6JY7sXZRTnxpq9oJYA4xPXjCCsxQZNHSw==
+X-Google-Smtp-Source: AGHT+IEoUP6NUSEW4jgaZi/xERIdHEdgC0MhnYneK7cZJ4vc3A7QarO7M6AJ9jWlyTlwGFhNHH9trQ==
+X-Received: by 2002:a17:902:8549:b0:1fd:6d6d:68e4 with SMTP id d9443c01a7336-1fdd559aef0mr21243895ad.57.1721830215494;
+        Wed, 24 Jul 2024 07:10:15 -0700 (PDT)
+Received: from thinkpad ([103.244.168.26])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f31d2bbsm94453065ad.132.2024.07.24.07.10.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 07:10:15 -0700 (PDT)
+Date: Wed, 24 Jul 2024 19:40:11 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
+Cc: jingoohan1@gmail.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	quic_mrana@quicinc.com
+Subject: Re: [PATCH v3 2/2] PCI: qcom: Avoid DBI and ATU register space
+ mirror to BAR/MMIO region
+Message-ID: <20240724141011.GF3349@thinkpad>
+References: <20240724022719.2868490-1-quic_pyarlaga@quicinc.com>
+ <20240724022719.2868490-3-quic_pyarlaga@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240724022719.2868490-3-quic_pyarlaga@quicinc.com>
 
-diff --git a/Makefile b/Makefile
-index 3d10e3aadeda..9ae12a6c0ece 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- VERSION = 6
- PATCHLEVEL = 10
--SUBLEVEL = 0
-+SUBLEVEL = 1
- EXTRAVERSION =
- NAME = Baby Opossum Posse
- 
-diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
-index 2281d55df545..d3521aadd43e 100644
---- a/drivers/char/tpm/tpm2-sessions.c
-+++ b/drivers/char/tpm/tpm2-sessions.c
-@@ -746,15 +746,16 @@ int tpm_buf_check_hmac_response(struct tpm_chip *chip, struct tpm_buf *buf,
- 	struct tpm2_auth *auth = chip->auth;
- 	off_t offset_s, offset_p;
- 	u8 rphash[SHA256_DIGEST_SIZE];
--	u32 attrs;
-+	u32 attrs, cc;
- 	struct sha256_state sctx;
- 	u16 tag = be16_to_cpu(head->tag);
--	u32 cc = be32_to_cpu(auth->ordinal);
- 	int parm_len, len, i, handles;
- 
- 	if (!auth)
- 		return rc;
- 
-+	cc = be32_to_cpu(auth->ordinal);
-+
- 	if (auth->session >= TPM_HEADER_SIZE) {
- 		WARN(1, "tpm session not filled correctly\n");
- 		goto out;
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-index 61a4638d1be2..237cb1ef7975 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-@@ -622,7 +622,12 @@ static int iwl_mvm_tzone_get_temp(struct thermal_zone_device *device,
- 
- 	if (!iwl_mvm_firmware_running(mvm) ||
- 	    mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
--		ret = -ENODATA;
-+		/*
-+		 * Tell the core that there is no valid temperature value to
-+		 * return, but it need not worry about this.
-+		 */
-+		*temperature = THERMAL_TEMP_INVALID;
-+		ret = 0;
- 		goto out;
- 	}
- 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index ecc748d15eb7..4e7fec406ee5 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -300,8 +300,6 @@ static void monitor_thermal_zone(struct thermal_zone_device *tz)
- 		thermal_zone_device_set_polling(tz, tz->passive_delay_jiffies);
- 	else if (tz->polling_delay_jiffies)
- 		thermal_zone_device_set_polling(tz, tz->polling_delay_jiffies);
--	else if (tz->temperature == THERMAL_TEMP_INVALID)
--		thermal_zone_device_set_polling(tz, msecs_to_jiffies(THERMAL_RECHECK_DELAY_MS));
- }
- 
- static struct thermal_governor *thermal_get_tz_governor(struct thermal_zone_device *tz)
-@@ -382,7 +380,7 @@ static void handle_thermal_trip(struct thermal_zone_device *tz,
- 	td->threshold = trip->temperature;
- 
- 	if (tz->last_temperature >= old_threshold &&
--	    tz->last_temperature != THERMAL_TEMP_INVALID) {
-+	    tz->last_temperature != THERMAL_TEMP_INIT) {
- 		/*
- 		 * Mitigation is under way, so it needs to stop if the zone
- 		 * temperature falls below the low temperature of the trip.
-@@ -417,27 +415,6 @@ static void handle_thermal_trip(struct thermal_zone_device *tz,
- 	}
- }
- 
--static void update_temperature(struct thermal_zone_device *tz)
--{
--	int temp, ret;
--
--	ret = __thermal_zone_get_temp(tz, &temp);
--	if (ret) {
--		if (ret != -EAGAIN)
--			dev_warn(&tz->device,
--				 "failed to read out thermal zone (%d)\n",
--				 ret);
--		return;
--	}
--
--	tz->last_temperature = tz->temperature;
--	tz->temperature = temp;
--
--	trace_thermal_temperature(tz);
--
--	thermal_genl_sampling_temp(tz->id, temp);
--}
--
- static void thermal_zone_device_check(struct work_struct *work)
- {
- 	struct thermal_zone_device *tz = container_of(work, struct
-@@ -452,7 +429,7 @@ static void thermal_zone_device_init(struct thermal_zone_device *tz)
- 
- 	INIT_DELAYED_WORK(&tz->poll_queue, thermal_zone_device_check);
- 
--	tz->temperature = THERMAL_TEMP_INVALID;
-+	tz->temperature = THERMAL_TEMP_INIT;
- 	tz->passive = 0;
- 	tz->prev_low_trip = -INT_MAX;
- 	tz->prev_high_trip = INT_MAX;
-@@ -501,6 +478,7 @@ void __thermal_zone_device_update(struct thermal_zone_device *tz,
- 	struct thermal_trip_desc *td;
- 	LIST_HEAD(way_down_list);
- 	LIST_HEAD(way_up_list);
-+	int temp, ret;
- 
- 	if (tz->suspended)
- 		return;
-@@ -508,10 +486,29 @@ void __thermal_zone_device_update(struct thermal_zone_device *tz,
- 	if (!thermal_zone_device_is_enabled(tz))
- 		return;
- 
--	update_temperature(tz);
-+	ret = __thermal_zone_get_temp(tz, &temp);
-+	if (ret) {
-+		if (ret != -EAGAIN)
-+			dev_info(&tz->device, "Temperature check failed (%d)\n", ret);
- 
--	if (tz->temperature == THERMAL_TEMP_INVALID)
-+		thermal_zone_device_set_polling(tz, msecs_to_jiffies(THERMAL_RECHECK_DELAY_MS));
-+		return;
-+	} else if (temp <= THERMAL_TEMP_INVALID) {
-+		/*
-+		 * Special case: No valid temperature value is available, but
-+		 * the zone owner does not want the core to do anything about
-+		 * it.  Continue regular zone polling if needed, so that this
-+		 * function can be called again, but skip everything else.
-+		 */
- 		goto monitor;
-+	}
-+
-+	tz->last_temperature = tz->temperature;
-+	tz->temperature = temp;
-+
-+	trace_thermal_temperature(tz);
-+
-+	thermal_genl_sampling_temp(tz->id, temp);
- 
- 	__thermal_zone_set_trips(tz);
- 
-diff --git a/drivers/thermal/thermal_core.h b/drivers/thermal/thermal_core.h
-index 94eeb4011a48..5afd541d54b0 100644
---- a/drivers/thermal/thermal_core.h
-+++ b/drivers/thermal/thermal_core.h
-@@ -133,6 +133,9 @@ struct thermal_zone_device {
- 	struct thermal_trip_desc trips[] __counted_by(num_trips);
- };
- 
-+/* Initial thermal zone temperature. */
-+#define THERMAL_TEMP_INIT	INT_MIN
-+
- /*
-  * Default delay after a failing thermal zone temperature check before
-  * attempting to check it again.
-diff --git a/drivers/thermal/thermal_helpers.c b/drivers/thermal/thermal_helpers.c
-index d9f4e26ec125..36f872b840ba 100644
---- a/drivers/thermal/thermal_helpers.c
-+++ b/drivers/thermal/thermal_helpers.c
-@@ -140,6 +140,8 @@ int thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp)
- 	}
- 
- 	ret = __thermal_zone_get_temp(tz, temp);
-+	if (!ret && *temp <= THERMAL_TEMP_INVALID)
-+		ret = -ENODATA;
- 
- unlock:
- 	mutex_unlock(&tz->lock);
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 983dad8c07ec..efed7f09876d 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1347,7 +1347,7 @@ struct ext4_super_block {
- /*60*/	__le32	s_feature_incompat;	/* incompatible feature set */
- 	__le32	s_feature_ro_compat;	/* readonly-compatible feature set */
- /*68*/	__u8	s_uuid[16];		/* 128-bit uuid for volume */
--/*78*/	char	s_volume_name[EXT4_LABEL_MAX];	/* volume name */
-+/*78*/	char	s_volume_name[EXT4_LABEL_MAX] __nonstring; /* volume name */
- /*88*/	char	s_last_mounted[64] __nonstring;	/* directory where last mounted */
- /*C8*/	__le32	s_algorithm_usage_bitmap; /* For compression */
- 	/*
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index dab7acd49709..e8bf5972dd47 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -1151,7 +1151,7 @@ static int ext4_ioctl_getlabel(struct ext4_sb_info *sbi, char __user *user_label
- 	BUILD_BUG_ON(EXT4_LABEL_MAX >= FSLABEL_MAX);
- 
- 	lock_buffer(sbi->s_sbh);
--	strscpy_pad(label, sbi->s_es->s_volume_name);
-+	memtostr_pad(label, sbi->s_es->s_volume_name);
- 	unlock_buffer(sbi->s_sbh);
- 
- 	if (copy_to_user(user_label, label, sizeof(label)))
-diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-index 6397fdefd876..c92937bed133 100644
---- a/fs/smb/client/cifsfs.c
-+++ b/fs/smb/client/cifsfs.c
-@@ -1359,7 +1359,7 @@ ssize_t cifs_file_copychunk_range(unsigned int xid,
- 	target_tcon = tlink_tcon(smb_file_target->tlink);
- 
- 	if (src_tcon->ses != target_tcon->ses) {
--		cifs_dbg(VFS, "source and target of copy not on same server\n");
-+		cifs_dbg(FYI, "source and target of copy not on same server\n");
- 		goto out;
- 	}
- 
-diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-index 1374635e89fa..04ec1b9737a8 100644
---- a/fs/smb/client/file.c
-+++ b/fs/smb/client/file.c
-@@ -123,6 +123,11 @@ static void cifs_issue_write(struct netfs_io_subrequest *subreq)
- 	goto out;
- }
- 
-+static void cifs_netfs_invalidate_cache(struct netfs_io_request *wreq)
-+{
-+	cifs_invalidate_cache(wreq->inode, 0);
-+}
-+
- /*
-  * Split the read up according to how many credits we can get for each piece.
-  * It's okay to sleep here if we need to wait for more credit to become
-@@ -307,6 +312,7 @@ const struct netfs_request_ops cifs_req_ops = {
- 	.begin_writeback	= cifs_begin_writeback,
- 	.prepare_write		= cifs_prepare_write,
- 	.issue_write		= cifs_issue_write,
-+	.invalidate_cache	= cifs_netfs_invalidate_cache,
- };
- 
- /*
-@@ -2358,13 +2364,18 @@ void cifs_write_subrequest_terminated(struct cifs_io_subrequest *wdata, ssize_t
- 				      bool was_async)
- {
- 	struct netfs_io_request *wreq = wdata->rreq;
--	loff_t new_server_eof;
-+	struct netfs_inode *ictx = netfs_inode(wreq->inode);
-+	loff_t wrend;
- 
- 	if (result > 0) {
--		new_server_eof = wdata->subreq.start + wdata->subreq.transferred + result;
-+		wrend = wdata->subreq.start + wdata->subreq.transferred + result;
- 
--		if (new_server_eof > netfs_inode(wreq->inode)->remote_i_size)
--			netfs_resize_file(netfs_inode(wreq->inode), new_server_eof, true);
-+		if (wrend > ictx->zero_point &&
-+		    (wdata->rreq->origin == NETFS_UNBUFFERED_WRITE ||
-+		     wdata->rreq->origin == NETFS_DIO_WRITE))
-+			ictx->zero_point = wrend;
-+		if (wrend > ictx->remote_i_size)
-+			netfs_resize_file(ictx, wrend, true);
- 	}
- 
- 	netfs_write_subrequest_terminated(&wdata->subreq, result, was_async);
-@@ -2877,6 +2888,7 @@ cifs_strict_readv(struct kiocb *iocb, struct iov_iter *to)
- 		rc = netfs_start_io_direct(inode);
- 		if (rc < 0)
- 			goto out;
-+		rc = -EACCES;
- 		down_read(&cinode->lock_sem);
- 		if (!cifs_find_lock_conflict(
- 			    cfile, iocb->ki_pos, iov_iter_count(to),
-@@ -2889,6 +2901,7 @@ cifs_strict_readv(struct kiocb *iocb, struct iov_iter *to)
- 		rc = netfs_start_io_read(inode);
- 		if (rc < 0)
- 			goto out;
-+		rc = -EACCES;
- 		down_read(&cinode->lock_sem);
- 		if (!cifs_find_lock_conflict(
- 			    cfile, iocb->ki_pos, iov_iter_count(to),
-diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
-index 2ae2dbb6202b..bb84a89e5905 100644
---- a/fs/smb/client/smb2pdu.c
-+++ b/fs/smb/client/smb2pdu.c
-@@ -4859,9 +4859,6 @@ smb2_async_writev(struct cifs_io_subrequest *wdata)
- 	struct cifs_io_parms *io_parms = NULL;
- 	int credit_request;
- 
--	if (!wdata->server || test_bit(NETFS_SREQ_RETRYING, &wdata->subreq.flags))
--		server = wdata->server = cifs_pick_channel(tcon->ses);
--
- 	/*
- 	 * in future we may get cifs_io_parms passed in from the caller,
- 	 * but for now we construct it here...
-diff --git a/include/sound/cs35l56.h b/include/sound/cs35l56.h
-index 1a3c6f66f620..dc627ebf01df 100644
---- a/include/sound/cs35l56.h
-+++ b/include/sound/cs35l56.h
-@@ -209,7 +209,7 @@
- 
- /* CS35L56_MAIN_RENDER_USER_VOLUME */
- #define CS35L56_MAIN_RENDER_USER_VOLUME_MIN		-400
--#define CS35L56_MAIN_RENDER_USER_VOLUME_MAX		400
-+#define CS35L56_MAIN_RENDER_USER_VOLUME_MAX		48
- #define CS35L56_MAIN_RENDER_USER_VOLUME_MASK		0x0000FFC0
- #define CS35L56_MAIN_RENDER_USER_VOLUME_SHIFT		6
- #define CS35L56_MAIN_RENDER_USER_VOLUME_SIGNBIT		9
-diff --git a/io_uring/kbuf.c b/io_uring/kbuf.c
-index d2945c9c812b..c95dc1736dd9 100644
---- a/io_uring/kbuf.c
-+++ b/io_uring/kbuf.c
-@@ -657,8 +657,10 @@ static int io_alloc_pbuf_ring(struct io_ring_ctx *ctx,
- 	ring_size = reg->ring_entries * sizeof(struct io_uring_buf_ring);
- 
- 	bl->buf_ring = io_pages_map(&bl->buf_pages, &bl->buf_nr_pages, ring_size);
--	if (!bl->buf_ring)
-+	if (IS_ERR(bl->buf_ring)) {
-+		bl->buf_ring = NULL;
- 		return -ENOMEM;
-+	}
- 
- 	bl->is_buf_ring = 1;
- 	bl->is_mmap = 1;
-diff --git a/sound/soc/codecs/cs35l56.c b/sound/soc/codecs/cs35l56.c
-index 758dfdf9d3ea..7f2f2f8c13fa 100644
---- a/sound/soc/codecs/cs35l56.c
-+++ b/sound/soc/codecs/cs35l56.c
-@@ -196,7 +196,11 @@ static const struct snd_kcontrol_new cs35l56_controls[] = {
- 		       cs35l56_dspwait_get_volsw, cs35l56_dspwait_put_volsw),
- 	SOC_SINGLE_S_EXT_TLV("Speaker Volume",
- 			     CS35L56_MAIN_RENDER_USER_VOLUME,
--			     6, -400, 400, 9, 0,
-+			     CS35L56_MAIN_RENDER_USER_VOLUME_SHIFT,
-+			     CS35L56_MAIN_RENDER_USER_VOLUME_MIN,
-+			     CS35L56_MAIN_RENDER_USER_VOLUME_MAX,
-+			     CS35L56_MAIN_RENDER_USER_VOLUME_SIGNBIT,
-+			     0,
- 			     cs35l56_dspwait_get_volsw,
- 			     cs35l56_dspwait_put_volsw,
- 			     vol_tlv),
+Subject:
+
+PCI: qcom: Disable mirroring of DBI and iATU register space in BAR/MMIO region
+
+On Tue, Jul 23, 2024 at 07:27:19PM -0700, Prudhvi Yarlagadda wrote:
+> PARF hardware block which is a wrapper on top of DWC PCIe controller
+> mirrors the DBI and ATU register space. It uses PARF_SLV_ADDR_SPACE_SIZE
+> register to get the size of the memory block to be mirrored and uses
+> PARF_DBI_BASE_ADDR, PARF_ATU_BASE_ADDR registers to determine the base
+> address of DBI and ATU space inside the memory block that is being
+> mirrored.
+> 
+> When a memory region which is located above the SLV_ADDR_SPACE_SIZE
+> boundary is used for BAR region then there could be an overlap of DBI and
+> ATU address space that is getting mirrored and the BAR region. This
+> results in DBI and ATU address space contents getting updated when a PCIe
+> function driver tries updating the BAR/MMIO memory region. Reference
+> memory map of the PCIe memory region with DBI and ATU address space
+> overlapping BAR region is as below.
+> 
+>                         |---------------|
+>                         |               |
+>                         |               |
+>         ------- --------|---------------|
+>            |       |    |---------------|
+>            |       |    |       DBI     |
+>            |       |    |---------------|---->DBI_BASE_ADDR
+>            |       |    |               |
+>            |       |    |               |
+>            |    PCIe    |               |---->2*SLV_ADDR_SPACE_SIZE
+>            |    BAR/MMIO|---------------|
+>            |    Region  |       ATU     |
+>            |       |    |---------------|---->ATU_BASE_ADDR
+>            |       |    |               |
+>         PCIe       |    |---------------|
+>         Memory     |    |       DBI     |
+>         Region     |    |---------------|---->DBI_BASE_ADDR
+>            |       |    |               |
+>            |    --------|               |
+>            |            |               |---->SLV_ADDR_SPACE_SIZE
+>            |            |---------------|
+>            |            |       ATU     |
+>            |            |---------------|---->ATU_BASE_ADDR
+>            |            |               |
+>            |            |---------------|
+>            |            |       DBI     |
+>            |            |---------------|---->DBI_BASE_ADDR
+>            |            |               |
+>            |            |               |
+>         ----------------|---------------|
+>                         |               |
+>                         |               |
+>                         |               |
+>                         |---------------|
+> 
+> Currently memory region beyond the SLV_ADDR_SPACE_SIZE boundary is not
+> used for BAR region which is why the above mentioned issue is not
+> encountered. This issue is discovered as part of internal testing when we
+> tried moving the BAR region beyond the SLV_ADDR_SPACE_SIZE boundary. Hence
+> we are trying to fix this.
+> 
+> As PARF hardware block mirrors DBI and ATU register space after every
+> PARF_SLV_ADDR_SPACE_SIZE (default 0x1000000) boundary multiple, write
+> U32_MAX (all 0xFF's) to PARF_SLV_ADDR_SPACE_SIZE register to avoid
+> mirroring DBI and ATU to BAR/MMIO region. Write the physical base address
+> of DBI and ATU register blocks to PARF_DBI_BASE_ADDR (default 0x0) and
+> PARF_ATU_BASE_ADDR (default 0x1000) respectively to make sure DBI and ATU
+> blocks are at expected memory locations.
+> 
+> The register offsets PARF_DBI_BASE_ADDR_V2, PARF_SLV_ADDR_SPACE_SIZE_V2
+> and PARF_ATU_BASE_ADDR are applicable for platforms that use PARF
+
+There is no 'PARF Qcom IP', just 'Qcom IP'. Here and below.
+
+> Qcom IP rev 1.9.0, 2.7.0 and 2.9.0. PARF_DBI_BASE_ADDR_V2 and
+> PARF_SLV_ADDR_SPACE_SIZE_V2 are applicable for PARF Qcom IP rev 2.3.3.
+> PARF_DBI_BASE_ADDR and PARF_SLV_ADDR_SPACE_SIZE are applicable for PARF
+> Qcom IP rev 1.0.0, 2.3.2 and 2.4.0. Updating the init()/post_init()
+
+Use imperative tone in commit message. s/Updating/Update
+
+> functions of the respective PARF versions to program applicable
+> PARF_DBI_BASE_ADDR, PARF_SLV_ADDR_SPACE_SIZE and PARF_ATU_BASE_ADDR
+> register offsets. And remove the unused SLV_ADDR_SPACE_SZ macro.
+> 
+> Signed-off-by: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
+> Reviewed-by: Mayank Rana <quic_mrana@quicinc.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 62 +++++++++++++++++++-------
+>  1 file changed, 45 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 0180edf3310e..6976efb8e2f0 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -45,6 +45,7 @@
+>  #define PARF_PHY_REFCLK				0x4c
+>  #define PARF_CONFIG_BITS			0x50
+>  #define PARF_DBI_BASE_ADDR			0x168
+> +#define PARF_SLV_ADDR_SPACE_SIZE		0x16C
+
+Use lowercase for hex.
+
+Rest LGTM! With above mentioned changes,
+
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
