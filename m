@@ -1,96 +1,174 @@
-Return-Path: <linux-kernel+bounces-261142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61D5C93B31D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:52:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC2D93B322
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDD6DB2674C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:52:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69DF21F22A91
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E6315B963;
-	Wed, 24 Jul 2024 14:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4C815F3E1;
+	Wed, 24 Jul 2024 14:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="FmEhpE6o"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wf9jxroh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 740E31598E9;
-	Wed, 24 Jul 2024 14:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9EE715B12F;
+	Wed, 24 Jul 2024 14:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721832639; cv=none; b=FAhj8BFv+xhL7ACZmBaa3jXHff3d7aurDFhQdaWNRSAFiIs3SmK/XEVZPJ/ou6OpDFlTZkhvUOwzryRNmzQRCsWEdaRClcMo7HpyZAHZ58GBG2SCGO8FUUjoIKOJeyS8IE5R0G2yAjLW1E8fZ2kP7xG6NTdoIGVrJd+iO1ahNEs=
+	t=1721832663; cv=none; b=KWp/lw6mXpNp+uVBYiNKlM+lp25GJBrRJv1Krxl1LTqReQh8yqR8hNq7VBm36WLJibVd0wm6TNeM4PBX2tVZpLnBT6euMlbAwV7B6HzlL9pSOfeY94jq1PvCf0aIKOCwadMSDw9TTdVFGOsQsp0nm3zvzintVz8SjW7OZNZ7PKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721832639; c=relaxed/simple;
-	bh=jOGTzTdQVB5/qbIe7ofKpdZ/PWJW/4td8jdzzKGPwaI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GLu2ulYU1UNOQ356tQz8ZYMkUegpAi8mvc7t0knBRM0/Wla+JsKelhPp0HeKVUKlBaZlU42lorHPMQJN2D4oVB/Tvn6Nyz/yNXv8aRrNOsZnoDSu4leB5b+nb0UADfm56HcqhbOwV4pfuDtMKfMXjUk0X+1fJ6Dcfdr3G8AbMCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=FmEhpE6o; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WTcPz18kpzlgVnf;
-	Wed, 24 Jul 2024 14:50:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1721832629; x=1724424630; bh=Zl17srkXpDy2Cr34v6tLu3GN
-	MAVzui7YC4ec6xNe5wY=; b=FmEhpE6oBUFmxciYre+qsYsBXxE2xAWuJL6D9oJk
-	hSifrUf3UNsTF4qRQs4KZCN5vGq7fl6jwSJTGA6GLkceT/q7k57zOEgneJiEq67p
-	HeeFgXighhGGbgNM+Tn0eUy6sfhC+kJBQk5q8xkNYJkL9tPl3Oa261w5xLNtF2Pz
-	xRyjAZsWJbuuqFCXyAo9mCmtoLLdVMc6oOrSa47KlXhm7w2RMmFzDsV60RGTfTSj
-	L9RdMcf5m7evoPf6rX8yDHc9GiyoKxfzVkXMCy5F30vYKlYTTOpVXrdGtdDCloO6
-	5bYk338naZluk12gHrid45+kQlTvzjXF/BDbnneoRpLpnw==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id yDu4CgvRXDRw; Wed, 24 Jul 2024 14:50:29 +0000 (UTC)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WTcPw3CCVzlgTGW;
-	Wed, 24 Jul 2024 14:50:28 +0000 (UTC)
-Message-ID: <74654397-dc74-41ec-b527-f1bf634fb509@acm.org>
-Date: Wed, 24 Jul 2024 07:50:27 -0700
+	s=arc-20240116; t=1721832663; c=relaxed/simple;
+	bh=bjLDQzZfw4xW/reuySijNClaossK1D/OHY9Pjl913No=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=endQeQre1xcVbgLEbAbF+1paDMSyTEmYWT9N3N8Qvtt2FjEW7Ee7pO1gmyuN7FEI85E3zy33qR+3yYQzBkCbbhqp76QG+YMZe01fkHiQLKh6fEGXlBDyUoxZEgMUC/+EEJd8uRCVjGO0QLx86kHcXVjceeVLOJw3eqOGVoUwMV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wf9jxroh; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721832662; x=1753368662;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=bjLDQzZfw4xW/reuySijNClaossK1D/OHY9Pjl913No=;
+  b=Wf9jxrohphuzNVwhKZrsJZdcmQdr5Vsv964002ef7rxvFCV98+2CJXqw
+   gQOrauVuBnZLHQuXzf+CYZRVOSn4nqmU71hWYHXgyx/W8c3S/UUsRRa/k
+   w0ClLL6FJgmom/RL4n6JAJzrejp8RnXknL8+H9ZOpzi8CCz7MPX9zQa/o
+   iEFRdM7Jw2sdOWXD1zf+OdVPJFZfo7LOZEjAtMw/r6db6tKPZLUAAvMvF
+   PdCsS1M3LbY5KHXEYUmG2V+5v/1f7bIeeL0MuQV+lHyg89AmlcUvOB2sy
+   M8RMyzI9yQ/gk7jqfHwmyISxGhhe/hvAWamuIAu2rKh/ZJ6tWzMbNWFLD
+   w==;
+X-CSE-ConnectionGUID: e9H7offXQRSWaABksVQh0g==
+X-CSE-MsgGUID: SWPm4ahjRVe/UO/t1rPghw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11143"; a="19653044"
+X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
+   d="scan'208";a="19653044"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 07:51:01 -0700
+X-CSE-ConnectionGUID: oYO7cn40Q9y3SmfvsC+BEg==
+X-CSE-MsgGUID: lCg1yNbCQ5uQghJ7uOOqsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
+   d="scan'208";a="83218555"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.197])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 07:50:57 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com,
+ make24@iscas.ac.cn, mripard@kernel.org, noralf@tronnes.org,
+ sam@ravnborg.org, stable@vger.kernel.org, tzimmermann@suse.de
+Subject: Re: [PATCH v3] drm/client: fix null pointer dereference in
+ drm_client_modeset_probe
+In-Reply-To: <20240724105535.1524294-1-make24@iscas.ac.cn>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <87ikwvf6ol.fsf@intel.com>
+ <20240724105535.1524294-1-make24@iscas.ac.cn>
+Date: Wed, 24 Jul 2024 17:50:52 +0300
+Message-ID: <87jzhakfn7.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [bvanassche:block-for-next] [sbitmap] e992c326a3:
- BUG:workqueue_lockup-pool
-To: YangYang <yang.yang@vivo.com>, kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org
-References: <202407241556.b0171c94-lkp@intel.com>
- <a32c39f1-ff9d-4a57-9d6b-063adf53602c@vivo.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <a32c39f1-ff9d-4a57-9d6b-063adf53602c@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 7/24/24 2:29 AM, YangYang wrote:
-> The patch in above branch is different from:
-> https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=for-next&id=72d04bdcf3f7d7e07d82f9757946f68802a7270a
-> 
-> return (READ_ONCE(map->word) & word_mask) == word_mask;
-> should be
-> return (READ_ONCE(map->word) & word_mask) != word_mask;
+On Wed, 24 Jul 2024, Ma Ke <make24@iscas.ac.cn> wrote:
+> On Wed, 24 Jul 2024, Jani Nikula <jani.nikula@linux.intel.com> wrote:
+>> On Wed, 24 Jul 2024, Ma Ke <make24@iscas.ac.cn> wrote:
+>> > In drm_client_modeset_probe(), the return value of drm_mode_duplicate() is
+>> > assigned to modeset->mode, which will lead to a possible NULL pointer
+>> > dereference on failure of drm_mode_duplicate(). Add a check to avoid npd.
+>> >
+>> > Cc: stable@vger.kernel.org
+>> > Fixes: cf13909aee05 ("drm/fb-helper: Move out modeset config code")
+>> > Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+>> > ---
+>> > Changes in v3:
+>> > - modified patch as suggestions, returned error directly when failing to 
+>> > get modeset->mode.
+>> 
+>> This is not what I suggested, and you can't just return here either.
+>> 
+>> BR,
+>> Jani.
+>> 
+>
+> I have carefully read through your comments. Based on your comments on the 
+> patchs I submitted, I am uncertain about the appropriate course of action 
+> following the return value check(whether to continue or to return directly,
+> as both are common approaches in dealing with function drm_mode_duplicate()
+> in Linux kernel, and such handling has received 'acked-by' in similar 
+> vulnerabilities). Could you provide some advice on this matter? Certainly, 
+> adding a return value check is essential, the reasons for which have been 
+> detailed in the vulnerability description. I am looking forward to your 
+> guidance and response. Thank you!
 
-Hi Yang,
+Everything depends on the context. You can't just go ahead and do the
+same thing everywhere. If you handle errors, even the highly unlikely
+ones such as this one, you better do it properly.
 
-Thanks for having taken a look. That branch should not have been
-published so I deleted it.
+If you continue here, you'll still leave modeset->mode NULL. And you
+don't propagate the error. Something else is going to hit the issue
+soon.
 
-Thanks,
+If you return directly, you'll leave holding a few locks, and leaking
+memory.
 
-Bart.
+There's already some error handling in the function, in the same loop
+even. Set ret = -ENOMEM and break.
+
+(However, you could still argue there's an existing problem in the error
+handling in that all modeset->connectors aren't put and cleaned up.)
+
+
+BR,
+Jani.
+
+
+
+
+
+
+
+>
+> Best regards,
+>
+> Ma Ke
+>
+>> 
+>> > Changes in v2:
+>> > - added the recipient's email address, due to the prolonged absence of a 
+>> > response from the recipients.
+>> > - added Cc stable.
+>> > ---
+>> >  drivers/gpu/drm/drm_client_modeset.c | 3 +++
+>> >  1 file changed, 3 insertions(+)
+>> >
+>> > diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
+>> > index 31af5cf37a09..750b8dce0f90 100644
+>> > --- a/drivers/gpu/drm/drm_client_modeset.c
+>> > +++ b/drivers/gpu/drm/drm_client_modeset.c
+>> > @@ -880,6 +880,9 @@ int drm_client_modeset_probe(struct drm_client_dev *client, unsigned int width,
+>> >  
+>> >  			kfree(modeset->mode);
+>> >  			modeset->mode = drm_mode_duplicate(dev, mode);
+>> > +			if (!modeset->mode)
+>> > +				return 0;
+>> > +
+>> >  			drm_connector_get(connector);
+>> >  			modeset->connectors[modeset->num_connectors++] = connector;
+>> >  			modeset->x = offset->x;
+>> 
+>> -- 
+>> Jani Nikula, Intel
+
+-- 
+Jani Nikula, Intel
 
