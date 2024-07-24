@@ -1,143 +1,121 @@
-Return-Path: <linux-kernel+bounces-261235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B9C93B48B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:09:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23E0193B48E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:09:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4CA5B21692
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:09:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 510371C239EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DF315D5DA;
-	Wed, 24 Jul 2024 16:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB10615E5BB;
+	Wed, 24 Jul 2024 16:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gyXEaU+5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wP40oO2d"
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3B51BF38;
-	Wed, 24 Jul 2024 16:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C1715CD41
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 16:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721837368; cv=none; b=DwKroXfr+rQM+OEDailuc+qYhkP0GxlOItIx6rw8X8BbndxnB3lWLMYUSXvGE0JXAUzi6K6SPa55DcPQy2hAJ7UsK0Bi4GpIJZ3fJEijoDJVheAdSrsFNMRqH0O5ckWIsCnh4jZfwmXbc6wOfXxY/Xgii9BCzzXDqMfNga8I2P4=
+	t=1721837389; cv=none; b=PT9PLs/wF7+3GRC2wccZwcVhh5sjDckzbzE3IkzFuJnlfKPl1N885/4e1U8puhCn1P8aBZt27tzn8VyBOMTocmCXP/UwDgBMyBpqQ2lgsXiYaxtWXD4xyYcDs8TXMLSWcg9kiP8HFqYnt1j5W++FIkQFR6exazKJ/6Q1ftap9D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721837368; c=relaxed/simple;
-	bh=Ae1TsuJM82AmyqCbGZaDDn2GLp1+nwcKq7q33PCnJzk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YgR7P4Esfg+Cygq9RVSWi2adMHgzRvTvltnMVOGeE36wIbvl1c1q8UDdozGiW6rodWhIrAa254ZS5LIUhdRrAjGD4E8u/E/jJ/ntBy4Jy/ibkIzdYynVY4UL57VFMmeEdtkOgzBDYfM7OOYhN00DcVl1dA+WWrrT4O7BHx2+wg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gyXEaU+5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 232AFC32781;
-	Wed, 24 Jul 2024 16:09:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721837368;
-	bh=Ae1TsuJM82AmyqCbGZaDDn2GLp1+nwcKq7q33PCnJzk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gyXEaU+5/JxxDzD5YBxEvKhA+gdmfy4WWpy8E/V25vh4SXGNhazZV3e4fFbQ6n+Rb
-	 TJbrsqH6n+KpxCPHMBh+pkzG3lKrnQyy4gBih+3X1qnMjPS/BgGQJHpfPc9JTKS+Hj
-	 j+sX7SKplORBZ/TZSS5xyEaabj9+zVtKEJUXwE1lz5JkESj80iNqhAWtMP4WtST+IM
-	 7bXT8jVIev7aKaSEbyw0lXLyjmEKC0efEd7hm+EMb2Q0XlyrfwJu2G7kMcQmzGsQt+
-	 WHY5Ou4lJHma1Zc2/0pQMCmu9M82LYn7rrr8W/kSD6eAQBSYP6dbZz9YdEgz8LyAjv
-	 1eZqzC8xFfJHg==
-Message-ID: <3ee9644d-ac10-495b-ac7c-fa034f27d27a@kernel.org>
-Date: Wed, 24 Jul 2024 18:09:19 +0200
+	s=arc-20240116; t=1721837389; c=relaxed/simple;
+	bh=irBx30ZH81Fx6HQI9IkJBrgeBdvBm9pERG4FSMQxMC8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=UnCofS6hhsOME8uSLGWwV8XjT0dGoxHend5AuIekzQgAZyyS6Cix51K8Gu7Y4Yx55lXbJxD1eBFU6WaCLh40ldywhq82gab/B1YUoDzCg7NHEyQeBaldJ8PHaSnn/2SR64SzZeY4yfBBx1IatuWjUP848p1pyWbOkji2S8zaoJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wP40oO2d; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5c791729c36so3765eaf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 09:09:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721837386; x=1722442186; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h1PBLgIHK487Z50PNrv9ADUF0TlVhgZyaxmIow0sPp4=;
+        b=wP40oO2dBS+rjR249dRQfWx3BLWseJVbRKHlmZDoZNNgA3PmgBDWGL0KPs5p3GMdIJ
+         0JxTlp7O1RdTlyVqDaBaG4hlpVlmZPCvrFYDZCWBaF9kVlS/Y11y6dyRBmxWooIY/T3S
+         uLDfNqMA6VME/yyhPNod3SGKn3jSGNU6VwtLNYHAy2Ipgtei6pnbqRl5aO9JFKmCjbzE
+         oS4/Jom9JqXor9QpwyBG2EcMpNSNU5SoYSqrIu7/+Dot9NRLwZ/Z/NXIDdf3uFD89sjV
+         FDr5wFd9oDQ36mp8fadEnPVMmc4ZwJme8Gh7rDTMPvmfHssN7XsysRq92PJa+Qm4D2Od
+         suXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721837386; x=1722442186;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h1PBLgIHK487Z50PNrv9ADUF0TlVhgZyaxmIow0sPp4=;
+        b=rFWtrwZMWfZOnq+j4ZQ1W1X2ShNRSUq0qsGDeGdL47VAVBYOElUkK7RrJ8gFgTUGtq
+         Ilmma1JSmAWat5M7MGsyqFJ0p09ZvAfpcB/Ny3hSk9jGMQGmFamarJsa060lpOOXuP6f
+         DsTYZeH2FUixZOqKuwXobLVxq/eb5px27R8ido4bhoIdRDgd+wBeXAKdk9QHYDuR+NsZ
+         Rmn9ZNPE/jyz4hgsI8c9P98tpFlHCKYKi7TGWx50Nahn2Vz4wTOonjkYPUhRaDLMkfGx
+         m8fDvZ7kqzES+2x1aHKFyAbnM0DMeB5wgNyF6XOu8kjrXYDbRfJOv8VG3i7mXcoIDAi9
+         GyPA==
+X-Forwarded-Encrypted: i=1; AJvYcCVwdzDA/l5EY36yapLZVklJdNVs7NzIu+wsofNAmZm9BXGGFETee4F4O4jAAOJOPK/VKSD/liF9NijatM0WaNpZ4O4lWEELJddBGr/l
+X-Gm-Message-State: AOJu0YwsZMcSIFM6swVa2d8mXfVhCYI8cIBTUCyWDgzc6c7V+ozvT0e1
+	2J6QpjgiyzF8nd8ttSTLPakTwxyEYdAv/VY9lBr4KdE186loiL+Q71dr3GyH9oMjhiT5l/T7opu
+	Rps8=
+X-Google-Smtp-Source: AGHT+IHFom7KvpfbYKrPK/1mGnzI+CArrRK1rhoQT2jftUr92K4IlDd8GEMZkPh8yOdOvyQOSkETJg==
+X-Received: by 2002:a05:6820:200e:b0:5ba:f20c:3629 with SMTP id 006d021491bc7-5d5add05fd4mr387041eaf.4.1721837386161;
+        Wed, 24 Jul 2024 09:09:46 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:23ae:46cb:84b6:1002])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5d59f07e534sm364151eaf.43.2024.07.24.09.09.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 09:09:45 -0700 (PDT)
+Date: Wed, 24 Jul 2024 11:09:43 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Tom Zanussi <tom.zanussi@linux.intel.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] crypto: iaa - Fix potential use after free bug
+Message-ID: <e049271f-41f2-4d04-ac69-80186f2eecd9@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/3] dt-bindings: iio: adc: add a7779 doc
-To: Ramona Alexandra Nechita <ramona.nechita@analog.com>,
- linux-iio@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Cosmin Tanislav <cosmin.tanislav@analog.com>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Nuno Sa <nuno.sa@analog.com>, Marcelo Schmitt <marcelo.schmitt@analog.com>,
- Marius Cristea <marius.cristea@microchip.com>,
- Mike Looijmans <mike.looijmans@topic.nl>, Liam Beguin
- <liambeguin@gmail.com>, Ivan Mikhaylov <fr0st61te@gmail.com>,
- Marcus Folkesson <marcus.folkesson@gmail.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240724155517.12470-1-ramona.nechita@analog.com>
- <20240724155517.12470-3-ramona.nechita@analog.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240724155517.12470-3-ramona.nechita@analog.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On 24/07/2024 17:54, Ramona Alexandra Nechita wrote:
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
+The free_device_compression_mode(iaa_device, device_mode) function frees
+"device_mode" but it iss passed to iaa_compression_modes[i]->free() a few
+lines later resulting in a use after free.
 
-<form letter>
-This is a friendly reminder during the review process.
+The good news is that, so far as I can tell, nothing implements the
+->free() function and the use after free happens in dead code.  But, with
+this fix, when something does implement it, we'll be ready.  :)
 
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
+Fixes: b190447e0fa3 ("crypto: iaa - Add compression mode management along with fixed mode")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/crypto/intel/iaa/iaa_crypto_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thank you.
-</form letter>
-
-Best regards,
-Krzysztof
+diff --git a/drivers/crypto/intel/iaa/iaa_crypto_main.c b/drivers/crypto/intel/iaa/iaa_crypto_main.c
+index e810d286ee8c..237f87000070 100644
+--- a/drivers/crypto/intel/iaa/iaa_crypto_main.c
++++ b/drivers/crypto/intel/iaa/iaa_crypto_main.c
+@@ -495,10 +495,10 @@ static void remove_device_compression_modes(struct iaa_device *iaa_device)
+ 		if (!device_mode)
+ 			continue;
+ 
+-		free_device_compression_mode(iaa_device, device_mode);
+-		iaa_device->compression_modes[i] = NULL;
+ 		if (iaa_compression_modes[i]->free)
+ 			iaa_compression_modes[i]->free(device_mode);
++		free_device_compression_mode(iaa_device, device_mode);
++		iaa_device->compression_modes[i] = NULL;
+ 	}
+ }
+ 
+-- 
+2.43.0
 
 
