@@ -1,86 +1,167 @@
-Return-Path: <linux-kernel+bounces-261092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C60893B2B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:33:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E433B93B2BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 268CBB2360F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:33:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20CA31C23853
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38DCD158DC1;
-	Wed, 24 Jul 2024 14:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="s1PSxEML"
-Received: from mail-40130.protonmail.ch (mail-40130.protonmail.ch [185.70.40.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8244E158D8F;
+	Wed, 24 Jul 2024 14:33:56 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B011E50F;
-	Wed, 24 Jul 2024 14:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADB12D030
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721831597; cv=none; b=tvxvXa3z/AZflDHtQ29L1X11A/9PHuDxzX5TS0rQPSCQoM27HxEVKiv25S5Y9Ak9ECCG3wyIpnMAz1pLMn/8ucHIyMPV3KNxi/CM5mSeU4Wj2UU6hr6aRFNN0LIci++anPffsFnMhH11xdYznBKZbFsxpne3j+4dbzXJa5w7PSM=
+	t=1721831636; cv=none; b=L494222RoD1yP96sGal2a+6TSjdzwSRc3XLHbcw3QdzZKOuk0KZiZHDa66TWhbgQ/k4TokL75TmKT9thuV2N0p60uofZneyKNx9qV1dVSd3cI40G2wn/y0ouE9WxbFeorzbaIfisz7ztfaQYY2nkof8oxy6Hlzv6dsydqgbcHXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721831597; c=relaxed/simple;
-	bh=EnV5UsbxFBuNVgZ1fpn8eYGK4awmnWIVIQgpXSfVkV0=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=BC9L1HmmguU5isbCvpBnhuoKCbeRwBN+Uqj9KG6LUZ5QCH52ZNG2d9wTBOg/A9ZURYTPe7ln1KY1D5h8oBBwlO9zLYzmrYEbRe1S7kxDgLWf6WQ+4CfUyQupKnOaQSAQRow6c747ncjA4pq+520jOvuSx0XamwY99+7O9nuOm+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=s1PSxEML; arc=none smtp.client-ip=185.70.40.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1721831587; x=1722090787;
-	bh=EnV5UsbxFBuNVgZ1fpn8eYGK4awmnWIVIQgpXSfVkV0=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=s1PSxEMLCUvD6LF6DhbIib4nvaLF4ys6htTI9rPzgNoP6H9ClMqo2JTfHlUi+iSHe
-	 URxXe7lCloK5sME4oukdwyS+ZQcYgtlg+jBAO2fyuRtUWEVXVwBNW2YPXvB+hH5b2t
-	 y7s84TsRJQkuH78ztwjKdwpak5qqZQcRSDdcNNeTfnxKLP5njuYW50aKk7eY3wcyOk
-	 ODXu0/tD9MKuV9ywm0LHojnG12+781MGPskrei9xEbeR19iBSf/2LDwn+oD9uVQSG5
-	 odN9sTtWC7vsoCApKn/LzpswP4DAXK9qbqWk3M0DcYMaDVtXuWJSKyEYXTUmDVF437
-	 Gcyy3+4BPucTw==
-Date: Wed, 24 Jul 2024 14:32:51 +0000
-To: linux-kernel@vger.kernel.org
-From: Raymond Hackley <raymondhackley@protonmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, Nikita Travkin <nikita@trvn.ru>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
-Subject: [PATCH] arm64: dts: qcom: msm8916-samsung-fortuna: Add touch keys
-Message-ID: <20240724143230.3804-1-raymondhackley@protonmail.com>
-Feedback-ID: 49437091:user:proton
-X-Pm-Message-ID: aff0725e9f024821dc25699dbfd266db4bd634eb
+	s=arc-20240116; t=1721831636; c=relaxed/simple;
+	bh=jLnKvSZlPOAnSOf1fn/4TEqyIhl6sYZr0GkcFdPm6IY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=YDJZynY4eUOwrybIDW6fmMBJ2793Z5Ict1+Uz59g30ye+B9FL+sXQYw+IS1vsLgUWzByvixnZSNE5zaq2pQD+Q4TGLVdo8Cy9vR+OCZkYrEhZFD4nxj1cReCnRiDo3OCkDkIGJfwz/8vvxtdKcT4SZ/+X0PdDq4oyN8FsyLs1pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-310-eKrR_BFuOPKLqYqDBV76gg-1; Wed, 24 Jul 2024 15:33:51 +0100
+X-MC-Unique: eKrR_BFuOPKLqYqDBV76gg-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 24 Jul
+ 2024 15:33:11 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Wed, 24 Jul 2024 15:33:11 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>, "'Linus
+ Torvalds'" <torvalds@linuxfoundation.org>
+CC: "'Matthew Wilcox (Oracle)'" <willy@infradead.org>, 'Christoph Hellwig'
+	<hch@infradead.org>, 'Andrew Morton' <akpm@linux-foundation.org>, "'Andy
+ Shevchenko'" <andriy.shevchenko@linux.intel.com>, 'Dan Carpenter'
+	<dan.carpenter@linaro.org>, 'Arnd Bergmann' <arnd@kernel.org>,
+	"'Jason@zx2c4.com'" <Jason@zx2c4.com>, "'hch@infradead.org'"
+	<hch@infradead.org>, "'pedro.falcato@gmail.com'" <pedro.falcato@gmail.com>,
+	'Mateusz Guzik' <mjguzik@gmail.com>, "'linux-mm@kvack.org'"
+	<linux-mm@kvack.org>
+Subject: [PATCH 7/7] minmax: minmax: Add __types_ok3() and optimise defines
+ with 3 arguments
+Thread-Topic: [PATCH 7/7] minmax: minmax: Add __types_ok3() and optimise
+ defines with 3 arguments
+Thread-Index: Adrd1nwhwSRYGwj9RxiIgqAQhw9FiA==
+Date: Wed, 24 Jul 2024 14:33:11 +0000
+Message-ID: <3484b7fcd2c74655bd685e5a7030c284@AcuMS.aculab.com>
+References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
+In-Reply-To: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Touch keys feature on fortuna phones are provided by Zinitix touchscreen.
-Add property linux,keycodes to enable touch keys.
+min3() and max3() were added to optimise nested min(x, min(y, z))
+sequences, bit only moved where the expansion was requiested.
 
-Signed-off-by: Raymond Hackley <raymondhackley@protonmail.com>
+Add a separate implementation for 3 argument calls.
+These are never required to generate constant expressiions to
+remove that logic.
+
+Signed-off-by: David Laight <david.laight@aculab.com>
 ---
- arch/arm64/boot/dts/qcom/msm8916-samsung-fortuna-common.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ include/linux/minmax.h | 25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916-samsung-fortuna-common.dtsi b=
-/arch/arm64/boot/dts/qcom/msm8916-samsung-fortuna-common.dtsi
-index 81b3e0760154f..7a7e99b015d9b 100644
---- a/arch/arm64/boot/dts/qcom/msm8916-samsung-fortuna-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916-samsung-fortuna-common.dtsi
-@@ -262,6 +262,8 @@ touchscreen: touchscreen@20 {
+diff --git a/include/linux/minmax.h b/include/linux/minmax.h
+index 2fb63efbeb0e..4bbc82c589cf 100644
+--- a/include/linux/minmax.h
++++ b/include/linux/minmax.h
+@@ -38,6 +38,11 @@
+ =09((__is_ok_signed(x) && __is_ok_signed(y)) ||=09\
+ =09 (__is_ok_unsigned(x) && __is_ok_unsigned(y)))
 =20
- =09=09pinctrl-0 =3D <&tsp_int_default>;
- =09=09pinctrl-names =3D "default";
++/* Check three values for min3(), max3() and clamp() */
++#define __types_ok3(x, y, z)=09=09=09=09=09=09=09\
++=09((__is_ok_signed(x) && __is_ok_signed(y) && __is_ok_signed(z)) ||=09\
++=09 (__is_ok_unsigned(x) && __is_ok_unsigned(y) && __is_ok_unsigned(z)))
 +
-+=09=09linux,keycodes =3D <KEY_APPSELECT KEY_BACK>;
- =09};
- };
+ #define __cmp_op_min <
+ #define __cmp_op_max >
 =20
+@@ -90,13 +95,24 @@
+  */
+ #define umax(x, y)=09__careful_cmp(max, __zero_extend(x), __zero_extend(y)=
+)
+=20
++#define __cmp_once3(op, x, y, z, uniq) ({=09\
++=09typeof(x) __x_##uniq =3D (x);=09=09\
++=09typeof(x) __y_##uniq =3D (y);=09=09\
++=09typeof(x) __z_##uniq =3D (z);=09=09\
++=09__cmp(op, __cmp(op, __x_##uniq, __y_##uniq), __z_##uniq); })
++
++#define __careful_cmp3(op, x, y, z, uniq) ({=09=09=09=09\
++=09static_assert(__types_ok3(x, y, z),=09=09=09=09\
++=09=09#op "3(" #x ", " #y ", " #z ") signedness error");=09\
++=09__cmp_once3(op, x, y, z, uniq); })
++
+ /**
+  * min3 - return minimum of three values
+  * @x: first value
+  * @y: second value
+  * @z: third value
+  */
+-#define min3(x, y, z) min((typeof(x))min(x, y), z)
++#define min3(x, y, z) __careful_cmp3(min, x, y, z, __COUNTER__)
+=20
+ /**
+  * max3 - return maximum of three values
+@@ -104,7 +120,7 @@
+  * @y: second value
+  * @z: third value
+  */
+-#define max3(x, y, z) max((typeof(x))max(x, y), z)
++#define max3(x, y, z) __careful_cmp3(max, x, y, z, __COUNTER__)
+=20
+ /**
+  * min_t - return minimum of two values, using the specified type
+@@ -139,10 +155,9 @@
+ =09typeof(val) unique_val =3D (val);=09=09=09=09=09=09\
+ =09typeof(lo) unique_lo =3D (lo);=09=09=09=09=09=09\
+ =09typeof(hi) unique_hi =3D (hi);=09=09=09=09=09=09\
+-=09_Static_assert(__if_constexpr((lo) <=3D (hi), (lo) <=3D (hi), true),=09=
+=09\
++=09_Static_assert(__if_constexpr((lo) <=3D (hi), (lo) <=3D (hi), true),=09=
+\
+ =09=09"clamp() low limit " #lo " greater than high limit " #hi);=09\
+-=09_Static_assert(__types_ok(val, lo), "clamp() 'lo' signedness error");=
+=09\
+-=09_Static_assert(__types_ok(val, hi), "clamp() 'hi' signedness error");=
+=09\
++=09_Static_assert(__types_ok3(val, lo, hi), "clamp() signedness error");=
+=09\
+ =09__clamp(unique_val, unique_lo, unique_hi); })
+=20
+ #define __careful_clamp(val, lo, hi) ({=09=09=09=09=09\
 --=20
-2.39.2
+2.17.1
 
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
 
