@@ -1,537 +1,232 @@
-Return-Path: <linux-kernel+bounces-261550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B39793B8C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 23:41:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8090593B8C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 23:42:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2FB8B250B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:40:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AB811C215E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FDE513C807;
-	Wed, 24 Jul 2024 21:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D89513C691;
+	Wed, 24 Jul 2024 21:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="r5J+uoIP"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eONtllEg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8431B134DE;
-	Wed, 24 Jul 2024 21:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9B6139D13
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 21:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721857249; cv=none; b=E2w22v1p2FTCtqk0cbO6VUTsmEMwy6FEQedV4rkGd0lhOU8Bs5owEm7cc7T2aVhhlEC7R/Lx8eLsM7gEFFno3Jfra+4mpDceu1AMhIxFvGe209lLL2jxXlSoaJ8k1GPGCR8hp50Ge5UGxTgNVRyVBoYds8GmzxrVzQiM54L43as=
+	t=1721857363; cv=none; b=uZXIjnFWwwqvM6fbcfCyAYmX+Aqws377Jw/FZpTp7ngXObPqUvaP+bjgizjyhbPqVtavd+pixhiVp1anwrSs3mXWMqW0gLbAtdkLdTHAQky/98HRodGzwOLPuTow+vh3BhGOSs0X3O9u9Qfao5M03nN77j5C0lP9JpmstQIbtB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721857249; c=relaxed/simple;
-	bh=KLkBXKWN3Xo1+VCP4LbzIF5m/qy0hXW32uXWVmTNOzU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hJJzXGn9G+V5spTfWs0h8DHHCaDCkB60pmD2KjMjMawNEHs79Rh7CUr1TyazvhKsHRLshiw97KtYiI8hRCZYfUVvAkuiV+7B/dYHHh+Ysw+laiiR2oHwbyFyAs3TZwpeD+4vDmTx2KC8PmrhuLudcHt7SGuE8+midcWuT7l79KQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=r5J+uoIP; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721857245;
-	bh=KLkBXKWN3Xo1+VCP4LbzIF5m/qy0hXW32uXWVmTNOzU=;
-	h=From:Date:Subject:To:Cc:From;
-	b=r5J+uoIPWdJQ2kfk+IUSRhy0/1Zfky+jo56/S2Ti3y+4csBlV3yO5bliZF/v864ka
-	 DklXwTf03RUPoxwW0QQoffbpd3XWCyMrkt6HvUic3QrN9NuJhrp5aDGSB0RVLuzQ5y
-	 gurb/KQHxIvKwDdZWB8g8RXxdxpF1wFMpn5q/4fwcxTq3GPSs1QaW/ZPF7FQUMk8of
-	 0AVPRn35uNjUUXzbhoAoffT0egTruafMMqBmq5JbB6v09yCXhD6M0p1gmZG6rax6Mu
-	 2jlgR8UK290mShkqpQoqpUUPf/mc+H3J3vVG26O6ETdx/df/mrektR8f/sI4lCOW4X
-	 PhNJrEtwHEPZQ==
-Received: from [192.168.1.251] (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id EDD4E3780520;
-	Wed, 24 Jul 2024 21:40:42 +0000 (UTC)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Wed, 24 Jul 2024 17:40:00 -0400
-Subject: [PATCH RFC] kselftest: devices: Add test to detect missing devices
+	s=arc-20240116; t=1721857363; c=relaxed/simple;
+	bh=eQ6sAvGvP9kAWKJJFpBq5NN0fv0rKdXUvf1c8GfdVC8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iSQq0WPPBxMsTl4JQ0WB58X6nevxee+m2WM/G5OyxPEOkoMwe6opiea6mwNtCBIqFcGQSiTM1ea8Qxb4U03nx/sMxukkMs3Dp8KE67JKAdx0yzlxeE0N2VsJmh9y25gNtdZh7Y7FphECoMm0fQHY5WDU3Mun8L8kdF7FnfFupNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eONtllEg; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721857362; x=1753393362;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=eQ6sAvGvP9kAWKJJFpBq5NN0fv0rKdXUvf1c8GfdVC8=;
+  b=eONtllEglQy53/rfPnw+zzvSndlL/cUpeVZbIdAZwPGYwnrU0PFbJVAe
+   1Szp82eAcLMOgAvbrGxz+FmYsY/4dDTlFr8OKz0wiBHwt7mo22ek+A0gK
+   JCXM2tLJqrQbB6F30LHeQq5BdEGg7vbXlWy7iW3PX+fzADTAMAa7Hc/AN
+   LwdSEwpPYk5kHfJEMktoqF7iJbz/oh1FEx9gyzd5fvc1Pium5UQXX/ptW
+   hrtI9wIRl3JoaYnoD6+wwq01K/SqrGeN9+YnTIL8r9cVsxDNh7Hohe/+L
+   S1lQHIj43Z0h8B0EQy1CPHTYUdPbUNiYUzqiGZVVZcTqTjgrJvkJrguQm
+   g==;
+X-CSE-ConnectionGUID: g5m07qsOT7Gr6wNehMPQqw==
+X-CSE-MsgGUID: Gp+I3+gDQZyAXLRRjN25lA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11143"; a="12698100"
+X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
+   d="scan'208";a="12698100"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 14:42:41 -0700
+X-CSE-ConnectionGUID: g9gogmCMRMuznydU/dGl8A==
+X-CSE-MsgGUID: CSvgythYQ86prZydRaha9Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
+   d="scan'208";a="57271218"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 24 Jul 2024 14:42:39 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sWjkq-000nSi-1V;
+	Wed, 24 Jul 2024 21:42:36 +0000
+Date: Thu, 25 Jul 2024 05:41:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	LKML <linux-kernel@vger.kernel.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>
+Subject: Re: [PATCH 2/2] mm: Remove PG_error
+Message-ID: <202407250522.sImVfZXf-lkp@intel.com>
+References: <20240724010550.1755992-3-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240724-kselftest-dev-exist-v1-1-9bc21aa761b5@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAK90oWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDcyMT3ezi1Jy0ktTiEt2U1DLd1IpMICspyTApOc3CwsTM1EQJqLOgKDU
- tswJsarRSkJuzUmxtLQDLQt8LagAAAA==
-To: Shuah Khan <shuah@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Bird, Tim" <Tim.Bird@sony.com>, Laura Nao <laura.nao@collabora.com>, 
- Saravana Kannan <saravanak@google.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- kernel@collabora.com, kernelci@lists.linux.dev, 
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.14.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240724010550.1755992-3-willy@infradead.org>
 
-Introduce a new test to identify regressions causing devices to go
-missing on the system.
+Hi Matthew,
 
-For each bus and class on the system the test checks the number of
-devices present against a reference file, which needs to have been
-generated by the program at a previous point on a known-good kernel, and
-if there are missing devices they are reported.
+kernel test robot noticed the following build errors:
 
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
-Hi,
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on linux/master linus/master v6.10 next-20240724]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Key points about this test:
-* Goal: Identify regressions causing devices to go missing on the system
-* Focus:
-  * Ease of maintenance: the reference file is generated programatically
-  * Minimum of false-positives: the script makes as few assumptions as possible
-    about the stability of device identifiers to ensure renames/refactors don't
-    trigger false-positives
-* How it works: For each bus and class on the system the test checks the number
-  of devices present against a reference file, which needs to have been
-  generated by the program at a previous point on a known-good kernel, and if
-  there are missing devices they are reported.
-* Comparison to other tests: It might be possible(*) to replace the discoverable
-  devices test [1] with this. The benefits of this test is that it's easier
-  to setup and maintain and has wider coverage of devices.
+url:    https://github.com/intel-lab-lkp/linux/commits/Matthew-Wilcox-Oracle/fs-Remove-calls-to-set-and-clear-the-folio-error-flag/20240724-111138
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20240724010550.1755992-3-willy%40infradead.org
+patch subject: [PATCH 2/2] mm: Remove PG_error
+config: s390-allnoconfig (https://download.01.org/0day-ci/archive/20240725/202407250522.sImVfZXf-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project ad154281230d83ee551e12d5be48bb956ef47ed3)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240725/202407250522.sImVfZXf-lkp@intel.com/reproduce)
 
-Additional detail:
-* Having more devices on the running system than the reference does not cause a
-  failure, but a warning is printed in that case to suggest that the reference
-  be updated.
-* Missing devices are detected per bus/class based on the number of devices.
-  When the test fails, the known metadata for each of the expected and detected
-  devices is printed and some simple similitarity comparison is done to suggest
-  the devices that are the most likely to be missing.
-* The proposed place to store the generated reference files is the
-  'platform-test-parameters' repository in KernelCI [2].
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407250522.sImVfZXf-lkp@intel.com/
 
-Example output: This is an example of a failing test case when one of the two
-devices in the nvmem bus went missing:
+All errors (new ones prefixed by >>):
 
-  # Missing devices for subsystem 'nvmem': 1 (Expected 2, found 1)
-  # =================
-  # Devices expected:
-  #
-  #   uevent:
-  #     OF_NAME=efuse
-  #     OF_FULLNAME=/soc/efuse@11c10000
-  #     OF_COMPATIBLE_0=mediatek,mt8195-efuse
-  #     OF_COMPATIBLE_1=mediatek,efuse
-  #     OF_COMPATIBLE_N=2
-  #
-  #   uevent:
-  #     OF_NAME=flash
-  #     OF_FULLNAME=/soc/spi@1132c000/flash@0
-  #     OF_COMPATIBLE_0=jedec,spi-nor
-  #     OF_COMPATIBLE_N=1
-  #
-  # -----------------
-  # Devices found:
-  #
-  #   uevent:
-  #     OF_NAME=efuse
-  #     OF_FULLNAME=/soc/efuse@11c10000
-  #     OF_COMPATIBLE_0=mediatek,mt8195-efuse
-  #     OF_COMPATIBLE_1=mediatek,efuse
-  #     OF_COMPATIBLE_N=2
-  #
-  # -----------------
-  # Devices missing (best guess):
-  #
-  #   uevent:
-  #     OF_NAME=flash
-  #     OF_FULLNAME=/soc/spi@1132c000/flash@0
-  #     OF_COMPATIBLE_0=jedec,spi-nor
-  #     OF_COMPATIBLE_N=1
-  #
-  # =================
-  not ok 19 bus.nvmem
+   In file included from mm/debug.c:10:
+   In file included from include/linux/mm.h:2206:
+   include/linux/vmstat.h:498:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     498 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from mm/debug.c:18:
+   In file included from mm/internal.h:13:
+   include/linux/mm_inline.h:47:41: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      47 |         __mod_lruvec_state(lruvec, NR_LRU_BASE + lru, nr_pages);
+         |                                    ~~~~~~~~~~~ ^ ~~~
+   include/linux/mm_inline.h:49:22: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+      49 |                                 NR_ZONE_LRU_BASE + lru, nr_pages);
+         |                                 ~~~~~~~~~~~~~~~~ ^ ~~~
+>> mm/debug.c:35:2: error: use of undeclared identifier 'PG_error'; did you mean 'ma_error'?
+      35 |         __def_pageflag_names,
+         |         ^
+   include/trace/events/mmflags.h:103:2: note: expanded from macro '__def_pageflag_names'
+     103 |         DEF_PAGEFLAG_NAME(error),                                       \
+         |         ^
+   include/trace/events/mmflags.h:98:44: note: expanded from macro 'DEF_PAGEFLAG_NAME'
+      98 | #define DEF_PAGEFLAG_NAME(_name) { 1UL <<  PG_##_name, __stringify(_name) }
+         |                                            ^
+   <scratch space>:35:1: note: expanded from here
+      35 | PG_error
+         | ^
+   include/linux/maple_tree.h:383:2: note: 'ma_error' declared here
+     383 |         ma_error,
+         |         ^
+   3 warnings and 1 error generated.
+--
+   In file included from fs/proc/page.c:2:
+   In file included from include/linux/memblock.h:12:
+   In file included from include/linux/mm.h:2206:
+   include/linux/vmstat.h:498:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     498 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from fs/proc/page.c:2:
+   In file included from include/linux/memblock.h:13:
+   In file included from arch/s390/include/asm/dma.h:5:
+   In file included from include/linux/io.h:14:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
+     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
+         |                                                      ^
+   In file included from fs/proc/page.c:2:
+   In file included from include/linux/memblock.h:13:
+   In file included from arch/s390/include/asm/dma.h:5:
+   In file included from include/linux/io.h:14:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
+         |                                                           ^
+   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
+     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
+         |                                                      ^
+   In file included from fs/proc/page.c:2:
+   In file included from include/linux/memblock.h:13:
+   In file included from arch/s390/include/asm/dma.h:5:
+   In file included from include/linux/io.h:14:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     693 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     701 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     709 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     718 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     727 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     736 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+>> fs/proc/page.c:185:35: error: use of undeclared identifier 'PG_error'; did you mean 'ma_error'?
+     185 |         u |= kpf_copy_bit(k, KPF_ERROR,         PG_error);
+         |                                                 ^~~~~~~~
+         |                                                 ma_error
+   include/linux/maple_tree.h:383:2: note: 'ma_error' declared here
+     383 |         ma_error,
+         |         ^
+   13 warnings and 1 error generated.
 
-Example of how the data for these devices is encoded in the reference file:
 
-  bus:
-  ...
-    nvmem:
-      count: 2
-      devices:
-      - info:
-          uevent: 'OF_NAME=efuse
-  
-            OF_FULLNAME=/soc/efuse@11c10000
-  
-            OF_COMPATIBLE_0=mediatek,mt8195-efuse
-  
-            OF_COMPATIBLE_1=mediatek,efuse
-  
-            OF_COMPATIBLE_N=2
-  
-            '
-      - info:
-          uevent: 'OF_NAME=flash
-  
-            OF_FULLNAME=/soc/spi@1132c000/flash@0
-  
-            OF_COMPATIBLE_0=jedec,spi-nor
-  
-            OF_COMPATIBLE_N=1
-  
-            '
+vim +35 mm/debug.c
 
-(Full reference file: http://0x0.st/Xp60.yaml;)
+7cd12b4abfd2f8f Vlastimil Babka 2016-03-15  33  
+edf14cdbf9a0e5a Vlastimil Babka 2016-03-15  34  const struct trace_print_flags pageflag_names[] = {
+edf14cdbf9a0e5a Vlastimil Babka 2016-03-15 @35  	__def_pageflag_names,
+edf14cdbf9a0e5a Vlastimil Babka 2016-03-15  36  	{0, NULL}
+edf14cdbf9a0e5a Vlastimil Babka 2016-03-15  37  };
+edf14cdbf9a0e5a Vlastimil Babka 2016-03-15  38  
 
-Caveat: Relying only on the count of devices in a subsystem makes the test
-susceptible to false-negatives eg. if a device goes missing and another in the
-same subsystem is added the count will be the same so this regression won't be
-reported. In order to avoid this we may include properties that must match
-individual devices, but we must be very careful (and it's why I haven't done it)
-since matching against properties that aren't guaranteed to be stable will
-introduce false-positives (ie. detecting false regressions) due to eventual
-renames.
-
-Some things to improve in the near future / gather feedback on:
-* (*): Currently this test only checks for the existence of devices. We could
-  extend it to also encode into the reference which devices are bound to drivers
-  to be able to completely replace the discoverable devices probe kselftest [1].
-* Expanding identifying properties: Currently the properties that are stored
-  (when present) in the reference for each device to be used for identification
-  in the result output are uevent, device/uevent, firmware_node/uevent and name.
-  Suggestions of others properties to add are welcome.
-* Adding more filtering to reduce noise:
-  * Ignoring buses/classes: Currently the devlink class is ignored by the test
-    since it seems like a kernel internal detail that userspace doesn't actually
-    care about. We should add others that are similar.
-  * Ignoring non-devices: There can be entries in /sys/class/ that aren't
-    devices. For now we're filtering down to only symlinks, but there might be a
-    better way.
-* As mentioned in the caveat section above we may want to add actual matching
-  of devices based on properties to avoid false-negatives if we identify
-  suitable properties.
-* It would be nice to have an option in the program to compare a newer reference
-  to an older one to make it easier for the user to see the differences and
-  decide if the new reference is ok.
-* Since the reference file is not supposed to be manually edited, JSON might be
-  a better choice than YAML since it is included in the python standard library.
-
-Let me know your thoughts.
-
-Thanks,
-Nícolas
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/testing/selftests/devices/probe/test_discoverable_devices.py?id=0debb20c5c812f8750c20c3406bc94a1e8ea4742
-[2] https://github.com/kernelci/platform-test-parameters
----
- tools/testing/selftests/Makefile               |   1 +
- tools/testing/selftests/devices/exist/Makefile |   3 +
- tools/testing/selftests/devices/exist/exist.py | 268 +++++++++++++++++++++++++
- 3 files changed, 272 insertions(+)
-
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index bc8fe9e8f7f2..9c49b5ec5bef 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -14,6 +14,7 @@ TARGETS += cpufreq
- TARGETS += cpu-hotplug
- TARGETS += damon
- TARGETS += devices/error_logs
-+TARGETS += devices/exist
- TARGETS += devices/probe
- TARGETS += dmabuf-heaps
- TARGETS += drivers/dma-buf
-diff --git a/tools/testing/selftests/devices/exist/Makefile b/tools/testing/selftests/devices/exist/Makefile
-new file mode 100644
-index 000000000000..3075cac32092
---- /dev/null
-+++ b/tools/testing/selftests/devices/exist/Makefile
-@@ -0,0 +1,3 @@
-+TEST_PROGS := exist.py
-+
-+include ../../lib.mk
-diff --git a/tools/testing/selftests/devices/exist/exist.py b/tools/testing/selftests/devices/exist/exist.py
-new file mode 100755
-index 000000000000..8241b2fabc8e
---- /dev/null
-+++ b/tools/testing/selftests/devices/exist/exist.py
-@@ -0,0 +1,268 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0
-+# Copyright (c) 2024 Collabora Ltd
-+
-+# * Goal: Identify regressions causing devices to go missing on the system
-+# * Focus:
-+#   * Ease of maintenance: the reference file is generated programatically
-+#   * Minimum of false-positives: the script makes as few assumptions as
-+#     possible about the stability of device identifiers to ensure
-+#     renames/refactors don't trigger false-positives
-+# * How it works: For each bus and class on the system the test checks the
-+#   number of devices present against a reference file, which needs to have been
-+#   generated by the program at a previous point on a known-good kernel, and if
-+#   there are missing devices they are reported.
-+
-+import os
-+import sys
-+import argparse
-+
-+import yaml
-+
-+# Allow ksft module to be imported from different directory
-+this_dir = os.path.dirname(os.path.realpath(__file__))
-+sys.path.append(os.path.join(this_dir, "../../kselftest/"))
-+
-+import ksft
-+
-+
-+def generate_devs_obj():
-+    obj = {}
-+
-+    device_sources = [
-+        {
-+            "base_dir": "/sys/class",
-+            "add_path": "",
-+            "key_name": "class",
-+            "ignored": ["devlink"],
-+        },
-+        {
-+            "base_dir": "/sys/bus",
-+            "add_path": "devices",
-+            "key_name": "bus",
-+            "ignored": [],
-+        },
-+    ]
-+
-+    properties = sorted(["uevent", "device/uevent", "firmware_node/uevent", "name"])
-+
-+    for source in device_sources:
-+        source_subsystems = {}
-+        for subsystem in sorted(os.listdir(source["base_dir"])):
-+            if subsystem in source["ignored"]:
-+                continue
-+
-+            devs_path = os.path.join(source["base_dir"], subsystem, source["add_path"])
-+            dev_dirs = [dev for dev in os.scandir(devs_path) if dev.is_symlink()]
-+            devs_data = []
-+            for dev_dir in dev_dirs:
-+                dev_path = os.path.join(devs_path, dev_dir)
-+                dev_data = {"info": {}}
-+                for prop in properties:
-+                    if os.path.isfile(os.path.join(dev_path, prop)):
-+                        with open(os.path.join(dev_path, prop)) as f:
-+                            dev_data["info"][prop] = f.read()
-+                devs_data.append(dev_data)
-+            if len(dev_dirs):
-+                source_subsystems[subsystem] = {
-+                    "count": len(dev_dirs),
-+                    "devices": devs_data,
-+                }
-+        obj[source["key_name"]] = source_subsystems
-+
-+    return obj
-+
-+
-+def commented(s):
-+    return s.replace("\n", "\n# ")
-+
-+
-+def indented(s, n):
-+    return " " * n + s.replace("\n", "\n" + " " * n)
-+
-+
-+def stripped(s):
-+    return s.strip("\n")
-+
-+
-+def devices_difference(dev1, dev2):
-+    difference = 0
-+
-+    for prop in dev1["info"].keys():
-+        for l1, l2 in zip(
-+            dev1["info"].get(prop, "").split("\n"),
-+            dev2["info"].get(prop, "").split("\n"),
-+        ):
-+            if l1 != l2:
-+                difference += 1
-+    return difference
-+
-+
-+def guess_missing_devices(cur_devs_subsystem, ref_devs_subsystem):
-+    # Detect what devices on the current system are the most similar to devices
-+    # on the reference one by one until the leftovers are the most dissimilar
-+    # devices and therefore most likely the missing ones.
-+    found_count = cur_devs_subsystem["count"]
-+    expected_count = ref_devs_subsystem["count"]
-+    missing_count = found_count - expected_count
-+
-+    diffs = []
-+    for cur_d in cur_devs_subsystem["devices"]:
-+        for ref_d in ref_devs_subsystem["devices"]:
-+            diffs.append((devices_difference(cur_d, ref_d), cur_d, ref_d))
-+
-+    diffs.sort(key=lambda x: x[0])
-+
-+    assigned_ref_devs = []
-+    assigned_cur_devs = []
-+    for diff in diffs:
-+        if len(assigned_ref_devs) >= expected_count - missing_count:
-+            break
-+        if diff[1] in assigned_cur_devs or diff[2] in assigned_ref_devs:
-+            continue
-+        assigned_cur_devs.append(diff[1])
-+        assigned_ref_devs.append(diff[2])
-+
-+    missing_devices = []
-+    for d in ref_devs_subsystem["devices"]:
-+        if d not in assigned_ref_devs:
-+            missing_devices.append(d)
-+
-+    return missing_devices
-+
-+
-+def dump_devices_info(cur_devs_subsystem, ref_devs_subsystem):
-+    def dump_device_info(dev):
-+        for name, val in dev["info"].items():
-+            ksft.print_msg(indented(name + ":", 2))
-+            val = stripped(val)
-+            if val:
-+                ksft.print_msg(commented(indented(val, 4)))
-+        ksft.print_msg("")
-+
-+    ksft.print_msg("=================")
-+    ksft.print_msg("Devices expected:")
-+    ksft.print_msg("")
-+    for d in ref_devs_subsystem["devices"]:
-+        dump_device_info(d)
-+    ksft.print_msg("-----------------")
-+    ksft.print_msg("Devices found:")
-+    ksft.print_msg("")
-+    for d in cur_devs_subsystem["devices"]:
-+        dump_device_info(d)
-+    ksft.print_msg("-----------------")
-+    ksft.print_msg("Devices missing (best guess):")
-+    ksft.print_msg("")
-+    missing_devices = guess_missing_devices(cur_devs_subsystem, ref_devs_subsystem)
-+    for d in missing_devices:
-+        dump_device_info(d)
-+    ksft.print_msg("=================")
-+
-+
-+def run_test(ref_filename):
-+    ksft.print_msg(f"Using reference file: {ref_filename}")
-+
-+    with open(ref_filename) as f:
-+        ref_devs_obj = yaml.safe_load(f)
-+
-+    num_tests = 0
-+    for dev_source in ref_devs_obj.values():
-+        num_tests += len(dev_source)
-+    ksft.set_plan(num_tests)
-+
-+    cur_devs_obj = generate_devs_obj()
-+
-+    reference_outdated = False
-+
-+    for source, ref_devs_source_obj in ref_devs_obj.items():
-+        for subsystem, ref_devs_subsystem_obj in ref_devs_source_obj.items():
-+            test_name = f"{source}.{subsystem}"
-+            if not (
-+                cur_devs_obj.get(source) and cur_devs_obj.get(source).get(subsystem)
-+            ):
-+                ksft.print_msg(f"Device subsystem '{subsystem}' missing")
-+                ksft.test_result_fail(test_name)
-+                continue
-+            cur_devs_subsystem_obj = cur_devs_obj[source][subsystem]
-+
-+            found_count = cur_devs_subsystem_obj["count"]
-+            expected_count = ref_devs_subsystem_obj["count"]
-+            if found_count < expected_count:
-+                ksft.print_msg(
-+                    f"Missing devices for subsystem '{subsystem}': {expected_count - found_count} (Expected {expected_count}, found {found_count})"
-+                )
-+                dump_devices_info(cur_devs_subsystem_obj, ref_devs_subsystem_obj)
-+                ksft.test_result_fail(test_name)
-+            else:
-+                ksft.test_result_pass(test_name)
-+                if found_count > expected_count:
-+                    reference_outdated = True
-+
-+        if len(cur_devs_obj[source]) > len(ref_devs_source_obj):
-+            reference_outdated = True
-+
-+    if reference_outdated:
-+        ksft.print_msg(
-+            "Warning: The current system contains more devices and/or subsystems than the reference. Updating the reference is recommended."
-+        )
-+
-+
-+def get_possible_ref_filenames():
-+    filenames = []
-+
-+    dt_board_compatible_file = "/proc/device-tree/compatible"
-+    if os.path.exists(dt_board_compatible_file):
-+        with open(dt_board_compatible_file) as f:
-+            for line in f:
-+                compatibles = [compat for compat in line.split("\0") if compat]
-+                filenames.extend(compatibles)
-+    else:
-+        dmi_id_dir = "/sys/devices/virtual/dmi/id"
-+        vendor_dmi_file = os.path.join(dmi_id_dir, "sys_vendor")
-+        product_dmi_file = os.path.join(dmi_id_dir, "product_name")
-+
-+        with open(vendor_dmi_file) as f:
-+            vendor = f.read().replace("\n", "")
-+        with open(product_dmi_file) as f:
-+            product = f.read().replace("\n", "")
-+
-+        filenames = [vendor + "," + product]
-+
-+    return filenames
-+
-+
-+def get_ref_filename(ref_dir):
-+    chosen_ref_filename = ""
-+    full_ref_paths = [os.path.join(ref_dir, f + ".yaml") for f in get_possible_ref_filenames()]
-+    for path in full_ref_paths:
-+        if os.path.exists(path):
-+            chosen_ref_filename = path
-+            break
-+
-+    if not chosen_ref_filename:
-+        tried_paths = ",".join(["'" + p + "'" for p in full_ref_paths])
-+        ksft.print_msg(f"No matching reference file found (tried {tried_paths})")
-+        ksft.exit_fail()
-+
-+    return chosen_ref_filename
-+
-+
-+parser = argparse.ArgumentParser()
-+parser.add_argument(
-+    "--reference-dir", default=".", help="Directory containing the reference files"
-+)
-+parser.add_argument("--generate-reference", action="store_true", help="Generate a reference file with the devices on the running system")
-+args = parser.parse_args()
-+
-+if args.generate_reference:
-+    print(f"# Kernel version: {os.uname().release}")
-+    print(yaml.dump(generate_devs_obj()))
-+    sys.exit(0)
-+
-+ksft.print_header()
-+
-+ref_filename = get_ref_filename(args.reference_dir)
-+
-+run_test(ref_filename)
-+
-+ksft.finished()
-
----
-base-commit: 73399b58e5e5a1b28a04baf42e321cfcfc663c2f
-change-id: 20240724-kselftest-dev-exist-bb1bcf884654
-
-Best regards,
 -- 
-Nícolas F. R. A. Prado <nfraprado@collabora.com>
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
