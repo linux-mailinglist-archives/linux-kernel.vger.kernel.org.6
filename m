@@ -1,132 +1,278 @@
-Return-Path: <linux-kernel+bounces-261340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5554793B610
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:38:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0D6293B612
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:39:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A2161F21C88
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:38:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F64D285F1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:39:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB0215FA9E;
-	Wed, 24 Jul 2024 17:38:33 +0000 (UTC)
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7131BF38;
+	Wed, 24 Jul 2024 17:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lfim2WLP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D517200DE
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 17:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C235200DE
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 17:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721842712; cv=none; b=Ubbsboa1+BvC/TMTup7rdcOTQkO16D+WD/jGPitjj0D9usPAuwxtBPEfH1+Y0JiWy1MCdAnRHkuLAeYZqH7R5WVviMLTy2mlGNahYvuZILjeADDdd0k6Fc0r5YQ1ithlvF4ArjOxYsoas1L5qHF1SXnfJsPZI7tqljHCw/hgMBU=
+	t=1721842761; cv=none; b=KwwmrRBZ2DlbHMTjEkGcQMkfCgNTwlkHDxljHxZhpMI7tBJP3KkU5S7BLCIWXMFq08bwGExEtSmV/Nbo+johzxhVT6rpW4Gk/kTS3CPnhjFa0qfB9pXclAi0fRxyKQdF9/qdPtx3zf9ie69GYdF6dbqE1ioZWaESRVqLIQ+CEUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721842712; c=relaxed/simple;
-	bh=Rirg2ICU3jTfnQ4ZgkPaRwnI9/HuF34OkOU5FLVMUWI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kxHSDCMKLb7oYUykBaX4PkKP7DJ9e6tFLzw8vBINNFPod3tEqYOIara+gLdcVFHrZruA1ooPvM6cWP4kUyzMgMTasmZdyIXof7mH44NH6kg5t0DCeD95vwzN4G1byhLoh63TnGtq5XOdvkGKaRRNLhLV8vYR0+PHgq4w9gDLQiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6b7aed340daso511246d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 10:38:30 -0700 (PDT)
+	s=arc-20240116; t=1721842761; c=relaxed/simple;
+	bh=GRdjAc3VsILw9XDHYkEiVLhYXXXCzAg/tHf7whVGWX8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mHJIJK1ezuw8GBW5xTXN5Xp+AcpjsIyd9aYstErhbWtn3LQlvGDjFpm6R6hWWBKexljoq4HZvQKvdB4KBC7Swe/CiVjl0ZQaWj6ZQLkFL1hN2HJOO6s2tAMxWYibw+rJLuaatioMvjNKtwXZMcppXCkPla3HtPHSeLjeVfFHw6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lfim2WLP; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721842758;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+eFTD9RxFljRpcjf1JSYJIwvkQ/3f7UzqFNR7mCwEKo=;
+	b=Lfim2WLPl2XwfbtFeoeJxYQnPnQYi04HMMSpbdrDhiDAvRWoca63erd6af6rAf0051kqDr
+	BkZSwaPd+QKlDxadRm3EI74RFIeojKlwqFrYy+AFVU41lclZft7she0etLABMxT6EJN6lm
+	AhY2CIkyW2Z3CzP7DvwwR/T4D6lEjdk=
+Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
+ [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-497-ms9URuBfORqXvXQLj6qwpQ-1; Wed, 24 Jul 2024 13:39:16 -0400
+X-MC-Unique: ms9URuBfORqXvXQLj6qwpQ-1
+Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-66c0f57549fso1497227b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 10:39:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721842710; x=1722447510;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OxB+01Z3h5Smk6Z0I6GRZa4EoMycQj8TkjK07oFMkVk=;
-        b=syY3RtaTpALMMsAamL290bxjd2W562zJcgEUmj/QO0RT7GjFeDJxRfG1pXlDo4NWW3
-         o2xNiiDtDp6W0+8tA4t4Jf5NZ6uRuo0QKOWelv33V72uWLsrb7dyjL5kwKp5VTu9zxmD
-         /QXKpaGXvOVbSaR5nQehrXzOsuDUFwaVOaC1xXyyO7gGaoK6PwKNmf6kDUdUQRXhPiE9
-         zxzxseGxhfPd7Nq0pn9Uc3KjdJTdBm9YAKIWEOOOUeAYiLJs2Zvvhm5VK6k3DZ2+Iavw
-         7YsXthTAO1YU+P6ljJ4yoh6Tgrq76hLHRUmNWcJOlsm+CBpHelo13Q6appq0sdqp9eje
-         VHNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWa8JDqhH6dgbGylaHnBRPnJwAaZEUFTw0onYDcnBWDKZh7aoC8Y8C+k+/pnbbuq0luGpEgpLibu9ls2WU+aSK4Qqf3+MDJ7CaYyEyt
-X-Gm-Message-State: AOJu0Yygd2l2MBnDXvFZJIt+3XjzGVj8BOjtfFprzP9yAuAZHzE458ud
-	k2shiEcOGZAejSBcwMKTAOcwRSYRWcFjm0GKF4JUBg57vgCnF6Qe
-X-Google-Smtp-Source: AGHT+IEHJIWEI3jYB3uOny0/O/03ghk2T3UvDpf3FYtsH6bJoHEFdfpqzJM8m5a5wK6SeiPBLqVEhA==
-X-Received: by 2002:ad4:4ea3:0:b0:6b5:65ab:e860 with SMTP id 6a1803df08f44-6bb3ca14968mr4571116d6.20.1721842710132;
-        Wed, 24 Jul 2024 10:38:30 -0700 (PDT)
-Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b9625f84d0sm46449586d6.45.2024.07.24.10.38.29
+        d=1e100.net; s=20230601; t=1721842756; x=1722447556;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+eFTD9RxFljRpcjf1JSYJIwvkQ/3f7UzqFNR7mCwEKo=;
+        b=RZ/rWWzy08O9EEFuFIZ3LT5zlBdno72zpMMuk3V2xzbYYoO2+bSfTeaM9fQzkKqanp
+         07hrg8PhUD0Bw73UlRhngmfGcmR6lBQDZCKjSBdw8cxUTXxiv1aOCo5ZuKM9i9m+TquG
+         gtqHoB+BFKVo4we3fHuIq1La7thgBDaNqSCQoYUKNGD8JeqcBAenoemnpyaELMLdSSNj
+         6di5fL0r7vLZWHjKGWST0Yj6c+ib/IdUtqPGGZ3XHWOtpid8RpImJa4t78Myf9VXzikN
+         IbQdlMXr6R6lRfStPpcWSjYp8DFwVGssT0XAmSJhyZXqDjE70ONTfFowWDyCCebRFq4l
+         nbog==
+X-Forwarded-Encrypted: i=1; AJvYcCVlSGac+++AGbvHN5qhRIwv2w1GMu19vKq40RdIYr+LWcqBxDZTt4kmxQ7cDyg+JFWETYDtVIlTozurJGrKK6s1E8j3fLYBzk6L03Jl
+X-Gm-Message-State: AOJu0YxgaAYavJswTQRmMYzKH8t3mnolYDOaD7JiE0TXP9vQvp6HzJBS
+	GNoRZRuwSAlmneUXss8vDO12zDqnjlRUM8rDXudsKc3FCESSfH1kDFN2hgADsuW8XQjFhEVdJVL
+	8lgCgSMZjY08dNw2M56c+lIDCLs5+wErC2umf+bD/Ql2YEhcEZNvd4qU3UL+fKw==
+X-Received: by 2002:a05:690c:dcb:b0:63b:c16e:a457 with SMTP id 00721157ae682-675113b3311mr1952797b3.13.1721842756221;
+        Wed, 24 Jul 2024 10:39:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHf+YzBmxpv4LrWZ1vF+zwvrLn4UI6L34Ko6NUj4uCkLt6ppq1BwXMyVp0k79eiiNx9VZTncw==
+X-Received: by 2002:a05:690c:dcb:b0:63b:c16e:a457 with SMTP id 00721157ae682-675113b3311mr1952537b3.13.1721842755873;
+        Wed, 24 Jul 2024 10:39:15 -0700 (PDT)
+Received: from starship ([2607:fea8:fc01:7b7f:6adb:55ff:feaa:b156])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b7acb0f114sm58408146d6.146.2024.07.24.10.39.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 10:38:29 -0700 (PDT)
-Date: Wed, 24 Jul 2024 12:38:27 -0500
-From: David Vernet <void@manifault.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Tejun Heo <tj@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [GIT PULL] sched_ext: Initial pull request for v6.11
-Message-ID: <20240724173827.GA281347@maniforge>
-References: <ZpWjbCQPtuUcvo8r@slm.duckdns.org>
- <20240723163358.GM26750@noisy.programming.kicks-ass.net>
- <ZqAFtfSijJ-KMVHo@slm.duckdns.org>
- <20240724085221.GO26750@noisy.programming.kicks-ass.net>
+        Wed, 24 Jul 2024 10:39:15 -0700 (PDT)
+Message-ID: <13e19a40bbf0531c92ace210b43e2cbf5056ef16.camel@redhat.com>
+Subject: Re: [PATCH v2 19/49] KVM: x86: Add a macro to init CPUID features
+ that ignore host kernel support
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov
+ <vkuznets@redhat.com>,  kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Hou Wenlong <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Binbin Wu
+ <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>,
+ Robert Hoo <robert.hoo.linux@gmail.com>
+Date: Wed, 24 Jul 2024 13:39:13 -0400
+In-Reply-To: <ZoxRr9P85f03w0vk@google.com>
+References: <20240517173926.965351-1-seanjc@google.com>
+	 <20240517173926.965351-20-seanjc@google.com>
+	 <2a4052ba67970ce41e79deb0a0931bb54e2c2a86.camel@redhat.com>
+	 <ZoxRr9P85f03w0vk@google.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="0hVpz++H0BDlulKU"
-Content-Disposition: inline
-In-Reply-To: <20240724085221.GO26750@noisy.programming.kicks-ass.net>
-User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
+Content-Transfer-Encoding: 7bit
+
+On Mon, 2024-07-08 at 13:53 -0700, Sean Christopherson wrote:
+> On Thu, Jul 04, 2024, Maxim Levitsky wrote:
+> > On Fri, 2024-05-17 at 10:38 -0700, Sean Christopherson wrote:
+> > > Add a macro for use in kvm_set_cpu_caps() to automagically initialize
+> > > features that KVM wants to support based solely on the CPU's capabilities,
+> > > e.g. KVM advertises LA57 support if it's available in hardware, even if
+> > > the host kernel isn't utilizing 57-bit virtual addresses.
+> > > 
+> > > Take advantage of the fact that kvm_cpu_cap_mask() adjusts kvm_cpu_caps
+> > > based on raw CPUID, i.e. will clear features bits that aren't supported in
+> > > hardware, and simply force-set the capability before applying the mask.
+> > > 
+> > > Abusing kvm_cpu_cap_set() is a borderline evil shenanigan, but doing so
+> > > avoid extra CPUID lookups, and a future commit will harden the entire
+> > > family of *F() macros to assert (at compile time) that every feature being
+> > > allowed is part of the capability word being processed, i.e. using a macro
+> > > will bring more advantages in the future.
+> > 
+> > Could you explain what do you mean by "extra CPUID lookups"?
+> 
+> cpuid_ecx(7) incurs a CPUID to read the raw info, on top of the CPUID that is
+> executed by kvm_cpu_cap_init() (kvm_cpu_cap_mask() as of this patch).  Obviously
+> not a big deal, but it's an extra VM-Exit when running as a VM.
+> 
+> > > +/*
+> > > + * Raw Feature - For features that KVM supports based purely on raw host CPUID,
+> > > + * i.e. that KVM virtualizes even if the host kernel doesn't use the feature.
+> > > + * Simply force set the feature in KVM's capabilities, raw CPUID support will
+> > > + * be factored in by kvm_cpu_cap_mask().
+> > > + */
+> > > +#define RAW_F(name)						\
+> > > +({								\
+> > > +	kvm_cpu_cap_set(X86_FEATURE_##name);			\
+> > > +	F(name);						\
+> > > +})
+> > > +
+> > >  /*
+> > >   * Magic value used by KVM when querying userspace-provided CPUID entries and
+> > >   * doesn't care about the CPIUD index because the index of the function in
+> > > @@ -682,15 +694,12 @@ void kvm_set_cpu_caps(void)
+> > >  		F(AVX512VL));
+> > >  
+> > >  	kvm_cpu_cap_mask(CPUID_7_ECX,
+> > > -		F(AVX512VBMI) | F(LA57) | F(PKU) | 0 /*OSPKE*/ | F(RDPID) |
+> > > +		F(AVX512VBMI) | RAW_F(LA57) | F(PKU) | 0 /*OSPKE*/ | F(RDPID) |
+> > >  		F(AVX512_VPOPCNTDQ) | F(UMIP) | F(AVX512_VBMI2) | F(GFNI) |
+> > >  		F(VAES) | F(VPCLMULQDQ) | F(AVX512_VNNI) | F(AVX512_BITALG) |
+> > >  		F(CLDEMOTE) | F(MOVDIRI) | F(MOVDIR64B) | 0 /*WAITPKG*/ |
+> > >  		F(SGX_LC) | F(BUS_LOCK_DETECT)
+> > >  	);
+> > > -	/* Set LA57 based on hardware capability. */
+> > > -	if (cpuid_ecx(7) & F(LA57))
+> > > -		kvm_cpu_cap_set(X86_FEATURE_LA57);
+> > >  
+> > >  	/*
+> > >  	 * PKU not yet implemented for shadow paging and requires OSPKE
+> > 
+> > Putting a function call into a macro which evaluates into a bitmask is
+> > somewhat misleading, but let it be...
+> > 
+> > IMHO in long term, it might be better to rip the whole huge 'or'ed mess, and replace
+> > it with a list of statements, along with comments for all unusual cases.
+> 
+> As in something like this?
+> 
+> 	kvm_cpu_cap_init(AVX512VBMI);
+> 	kvm_cpu_cap_init_raw(LA57);
+> 	kvm_cpu_cap_init(PKU);
+> 	...
+> 	kvm_cpu_cap_init(BUS_LOCK_DETECT);
+> 
+> 	kvm_cpu_cap_init_aliased(CPUID_8000_0001_EDX, FPU);
+> 
+> 	...
+> 
+> 	kvm_cpu_cap_init_scattered(CPUID_12_EAX, SGX1);
+> 	kvm_cpu_cap_init_scattered(CPUID_12_EAX, SGX2);
+> 	kvm_cpu_cap_init_scattered(CPUID_12_EAX, SGX_EDECCSSA);
+> 
+> The tricky parts are incorporating raw CPUID into the masking and handling features
+> that KVM _doesn't_ support.  For raw CPUID, we could simply do CPUID every time, or
+> pre-fill an array to avoid hundreds of CPUIDs that are largely redudant.
+
+In terms of performance, again this code is run once per kvm module load, so even
+if it does something truly gross performance wise, it's not a problem, even if run
+nested.
+
+> 
+> But I don't see a way to mask off unsupported features without losing the
+> compile-time protections that the current code provides.  And even if we took a
+> big hammer approach, e.g. finalized masking for all words at the very end, we'd
+> still need to carry state across each statement, i.e. we'd still need the bitwise-OR
+> and mask  behavior, it would just be buried in helpers/macros.
+
+Can you elaborate on this?
+
+For example let's say this:
 
 
---0hVpz++H0BDlulKU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+	kvm_cpu_cap_init(CPUID_7_0_EBX,
+		F(FSGSBASE) | EMUL_F(TSC_ADJUST) | F(SGX) | F(BMI1) | F(HLE) |
+		F(AVX2) | F(FDP_EXCPTN_ONLY) | F(SMEP) | F(BMI2) | F(ERMS) |
+		F(INVPCID) | F(RTM) | F(ZERO_FCS_FDS) | 0 /*MPX*/ |
+		F(AVX512F) | F(AVX512DQ) | F(RDSEED) | F(ADX) | F(SMAP) |
+		F(AVX512IFMA) | F(CLFLUSHOPT) | F(CLWB) | 0 /*INTEL_PT*/ |
+		F(AVX512PF) | F(AVX512ER) | F(AVX512CD) | F(SHA_NI) |
+		F(AVX512BW) | F(AVX512VL));
 
-On Wed, Jul 24, 2024 at 10:52:21AM +0200, Peter Zijlstra wrote:
 
-[...]
 
-> > > Also, why does that thing hard depend on DEBUG_BTF? (at least having
-> > > that option enabled no longer explodes build times like it used to)
-> >=20
-> > That's necessary for building the schedulers, at least, I think. We did=
-n't
-> > have that earlier and people were getting confused.
->=20
-> It's what made it difficult for me to even build this stuff, simple
-> things like:
->=20
->   cd foo-build; ../scipts/config --enable CONFIG_SCHED_CLASS_EXT; cd -
->=20
-> don't work (nor error out on the lack of dependencies), and my build
-> scripts were force disabling the BTF crud -- and thus silently also the
-> scx thing.
->=20
-> It looks like I can change my builds scripts, because the reason I did
-> that was that BTF made the build times explode and that is no longer the
-> case.
+This will be replaced with:
 
-Yeah so to clarify the situation here -- BTF is a hard requirement for
-sched_ext because BPF requires it in order to call kfuncs [0] (note that
-the APIs have changed significantly since that article was written). The
-reason it's required, among other things, is so that the verifier can
-check that a BPF prog is safely invoking a kernel function with the
-proper types.
+kvm_cpu_cap_clear_all(CPUID_7_0_EBX);
 
-[0]: https://lwn.net/Articles/856005/
+kvm_cpu_cap_init(FSGSBASE);
+kvm_cpu_cap_init(TSC_ADJUST, CAP_EMULATED);
+..
+kvm_cpu_cap_init(AVX512VL);
 
---0hVpz++H0BDlulKU
-Content-Type: application/pgp-signature; name="signature.asc"
+Then each 'kvm_cpu_cap_init' will opt-in to set a bit if supported in host cpuid, or
+always opt-in for emulated features, etc....
 
------BEGIN PGP SIGNATURE-----
+Host CPUID can indeed be cached, if extra host cpuid queries cause too slow (e.g 1 second) delay
+when nested.
 
-iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZqE8EwAKCRBZ5LhpZcTz
-ZCqOAP9LiaxIMZ+n824HtZp0/SDiV1zApJQsEIY13FiJcanHtQD/TMLZ4Rsz5gTS
-/HuQWhjmw2P8YLcA9gqsomZlxnBZzQ0=
-=GIVF
------END PGP SIGNATURE-----
 
---0hVpz++H0BDlulKU--
+
+> 
+> I suspect the generated code will be larger, but I doubt that will actually be
+> problematic.  
+
+Yes, 100% agree.
+
+
+> The written code will also be more verbose (roughly 4x since we
+> tend to squeeze 4 features per line)
+
+It will be about as long as the list of macros in the cpufeatures.h, where
+all features are nicely ordered by cpuid leaves.
+
+In this case I consider verbose long code to be an improvement.
+
+IMHO the OR'ed mask of macros is just too terse, hard to parse.
+It was borderline OK, before this patch series because it only
+contained features, but now it also contains various modifiers,
+IMHO it's just hard to notice that EMUL_F at that corner...
+
+
+> , and it will be harder to ensure initialization
+> of features in a given word are all co-located.
+
+Actually co-location won't be needed.
+
+We can first copy the caps from boot_cpu_data,
+then zero all the leaves that we initialize ourselves.
+
+After that we can initialize opt-in features in any order - it will still be sorted
+by CPUID leaves but even if the order is broken (e.g due to cherry-pick or something),
+it won't cause any issues.
+
+
+> 
+> I definitely don't hate the idea, but I don't think it will be a clear "win" either.
+> Unless someone feels strongly about pursuing this approach, I'll add to the "things
+> to explore later" list.
+> 
+
+Please do consider this, I am almost sure that whoever will need to read this code later (could be you...),
+will thank you.
+
+
+Best regards,
+	Maxim Levitsky
+
+
+
 
