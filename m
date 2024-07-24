@@ -1,47 +1,70 @@
-Return-Path: <linux-kernel+bounces-261164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3112493B37E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:20:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D219693B380
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E72B4283C1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:20:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CA481F22493
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7409815B122;
-	Wed, 24 Jul 2024 15:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAE615B54C;
+	Wed, 24 Jul 2024 15:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="foq0aGZe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dG3GE7Ql"
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B52D29E;
-	Wed, 24 Jul 2024 15:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF97383AB
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 15:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721834415; cv=none; b=D5r+uEcgeJSfpkuhf7r3StpWglny+Zpuz7aTdYJRSZuc6LmfhM0I/FZEeNJdaXKscIaOBAZbFgMeF2D5/JhW5ONaeIVL1+zkt3zlDzRfc4eDPomhPAs5hG0dgVGPqpnBgoCzUrhnvreTrZwEJB+v2jTecIOw4jaLKRPk7HuNnOw=
+	t=1721834422; cv=none; b=tSWP5fy6vmQLY10gdkFKdLavAWNnza4kHMJ0b1MWWxnWTwRw9TUORxh/p4+AsHaNCItKjIPa/YVjmfC6Lfq4WFUDh+5iYlPc60wmRZB5ijXc8bOq3G62ckT5iSZEWd6TFYu4gHblSDRrI9Yf4rWbSEHL7zkr3ZRYA5Vme+xxv4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721834415; c=relaxed/simple;
-	bh=qeXLUpoZGsZRPbAT3HnF46SuxY7YTRrZMXLruO62MZ4=;
+	s=arc-20240116; t=1721834422; c=relaxed/simple;
+	bh=hOiV8755ngc0sIs6g41+2/lS4DWadZVscPT7P0F62i0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Me19OrlCEfYzutpeWH/QfKoGTItNx7KbFeKIpDZJfRZjrvgxWj2QRKSRE5jPm62cWre9Z3/0LqyH0kjXxRdJVcJoZyy6CFR2QGMDbK/dCPZgJVWS0uKLn1UFSPJizzJfyZUyM7WHqYaD0NGsUBec7j8EaZDlfTvGBvUaj927CKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=foq0aGZe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D6D3C32781;
-	Wed, 24 Jul 2024 15:20:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721834415;
-	bh=qeXLUpoZGsZRPbAT3HnF46SuxY7YTRrZMXLruO62MZ4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=foq0aGZehOfXyqCf95kJdLCejTjAEe6euW8dlRJJ7u9hGgh36hPbajH3m3Suml4LV
-	 z61gO5OonvF224YmrWKT1dYlX1XAI9bZezjUI1jfVVqUwY0zGPvG/kP8ttPu6VOokS
-	 JxfEX1hGt9bq1tbyACJJi4J+fCwrXPziPYtniQ+HUUSWstnFvwG4x7L15Ec36jyO5u
-	 itQ87DTpaNObbcl+W8KnQuLwyng0WIngITLq/J4qvh6TScZSsWmTPYSS3OxKkAOvwq
-	 lpFkpGr8FTJXHPniV87OFfsML7dm5u2ppm6NkzcnH964YfzNxuIKgVNohknyOXu2jw
-	 rGxJomXCH6pPw==
-Message-ID: <610dc6fa-6681-4c9e-bffb-ef6d299dd169@kernel.org>
-Date: Wed, 24 Jul 2024 17:20:09 +0200
+	 In-Reply-To:Content-Type; b=s4d/iBQSWfs42l2zZQFozwjRem6wfxDNH+avUv4bhQAbwls/hRu0U080jqGm+A7AJaObqRf3D44qXU25mr+JnnQ01r9MDc/Cthl58lmR3i1MLz9RiMtd6xAVeRUkYBDbt4UZZaZK+SP8C5GA0d3kVzPPkSL2BVXJ3gIR28bSpzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dG3GE7Ql; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-7fb3529622dso38973539f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 08:20:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1721834420; x=1722439220; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=82dy9mZKo2zcgFYmuz7GnMY2lJ2OItmiPUYNnGgMWCU=;
+        b=dG3GE7QlVuEd5GiRPfZdKcRZfX5MpSRk11Ze7azF6aCpiuMITFktuKSDcTgT9yVad4
+         uQqSb4p6nZaV2rryJ2ec5gUhivfiKc/Q4ayKvmj+oCTSF4Uv351LcbhS9zM63LBQTa0t
+         iSFNxq/8sTFg+B4t747PCB6kq/TSIqfzp/WDo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721834420; x=1722439220;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=82dy9mZKo2zcgFYmuz7GnMY2lJ2OItmiPUYNnGgMWCU=;
+        b=k75leJh8efPQ13CIa/BLRtf0lF+nLxD0LRY5j1X0BIGxOkFH0G3ljqLUWFQ1Sqt9hK
+         IExwLSC29BJ6Xw40pcoMJV15AexAoYmIDivKBUO/m6EmB74GJxphlzon/noIaSOZiq0p
+         cTtkpF/Tc5g+NyO/PpENbfqtlaa0fmkiAHsQP6f2j4nqPtVnDdME/vHbW9QBn2wf0Oz1
+         vsXuZHAO+OrN7U7MG+1Y4NK0RpUEzkMuUviHGB+8+W0eaBtvYX99CYvXrRJnzEwwkJnd
+         U+gmhuzqaoMqafd1fOrIBTBzXtb/KxxmG36BmnIB6TDYR6R0XuRkU3qcgBjXofLX4/In
+         cCXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEn0jgED7KMmB654YxLCgGEntZzyJjyh9AnMW5Z/wLB1LJpq+FiE65SefbWTF1cTzN4J5jKPT1rl6eTeU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTscUrLBfnUAEChNtvMbk8YZuj9AmbKoI26t+spMTGs7z9o8jm
+	Dt5zyg/fWXpQW4VijSveQlVEMC7tSfffc4CvYHtSALZgChqaCRDYOHB0ICDXygg=
+X-Google-Smtp-Source: AGHT+IFlqZ25PE52Kwlz1STx1vDkygQoeHCGfiy+yguaY9+XTj2Eb/g0CwlJmwsN+B8v0pn4jmldEg==
+X-Received: by 2002:a5d:9396:0:b0:7f9:444e:4918 with SMTP id ca18e2360f4ac-81f7be6a8f2mr11152539f.2.1721834419757;
+        Wed, 24 Jul 2024 08:20:19 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-81f715eeb73sm53776039f.38.2024.07.24.08.20.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Jul 2024 08:20:19 -0700 (PDT)
+Message-ID: <35b1fe1b-d062-4fce-9b9f-a74c84466f00@linuxfoundation.org>
+Date: Wed, 24 Jul 2024 09:20:18 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,139 +72,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: kmem: add lockdep assertion to obj_cgroup_memcg
+Subject: Re: [PATCH 6.6 000/129] 6.6.42-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240723180404.759900207@linuxfoundation.org>
 Content-Language: en-US
-To: Muchun Song <songmuchun@bytedance.com>, hannes@cmpxchg.org,
- mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
- muchun.song@linux.dev, akpm@linux-foundation.org
-Cc: cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20240724095307.81264-1-songmuchun@bytedance.com>
-From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-In-Reply-To: <20240724095307.81264-1-songmuchun@bytedance.com>
-Content-Type: text/plain; charset=UTF-8
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240723180404.759900207@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 7/24/24 11:53 AM, Muchun Song wrote:
-> The obj_cgroup_memcg() is supposed to safe to prevent the returned
-> memory cgroup from being freed only when the caller is holding the
-> rcu read lock or objcg_lock or cgroup_mutex. It is very easy to
-> ignore thoes conditions when users call some upper APIs which call
-> obj_cgroup_memcg() internally like mem_cgroup_from_slab_obj() (See
-> the link below). So it is better to add lockdep assertion to
-> obj_cgroup_memcg() to find those issues ASAP.
+On 7/23/24 12:22, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.42 release.
+> There are 129 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Because there is no user of obj_cgroup_memcg() holding objcg_lock
-> to make the returned memory cgroup safe, do not add objcg_lock
-> assertion (We should export objcg_lock if we really want to do).
-> Additionally, this is some internal implementation detail of memcg
-> and should not be accessible outside memcg code.
+> Responses should be made by Thu, 25 Jul 2024 18:03:23 +0000.
+> Anything received after that time might be too late.
 > 
-> Some users like __mem_cgroup_uncharge() do not care the lifetime
-> of the returned memory cgroup, which just want to know if the
-> folio is charged to a memory cgroup, therefore, they do not need
-> to hold the needed locks. In which case, introduce a new helper
-> folio_memcg_charged() to do this. Compare it to folio_memcg(), it
-> could eliminate a memory access of objcg->memcg for kmem, actually,
-> a really small gain.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.42-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
 > 
-> Link: https://lore.kernel.org/all/20240718083607.42068-1-songmuchun@bytedance.com/
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> ---
-> v2:
->  - Remove mention of objcg_lock in obj_cgroup_memcg()(Shakeel Butt).
+> thanks,
 > 
->  include/linux/memcontrol.h | 20 +++++++++++++++++---
->  mm/memcontrol.c            |  6 +++---
->  2 files changed, 20 insertions(+), 6 deletions(-)
+> greg k-h
 > 
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index fc94879db4dff..742351945f683 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -360,11 +360,11 @@ static inline bool folio_memcg_kmem(struct folio *folio);
->   * After the initialization objcg->memcg is always pointing at
->   * a valid memcg, but can be atomically swapped to the parent memcg.
->   *
-> - * The caller must ensure that the returned memcg won't be released:
-> - * e.g. acquire the rcu_read_lock or css_set_lock.
-> + * The caller must ensure that the returned memcg won't be released.
->   */
->  static inline struct mem_cgroup *obj_cgroup_memcg(struct obj_cgroup *objcg)
->  {
-> +	WARN_ON_ONCE(!rcu_read_lock_held() && !lockdep_is_held(&cgroup_mutex));
 
-Maybe lockdep_assert_once() would be a better fit?
+Compiled and booted on my test system. No dmesg regressions.
 
->  	return READ_ONCE(objcg->memcg);
->  }
->  
-> @@ -438,6 +438,19 @@ static inline struct mem_cgroup *folio_memcg(struct folio *folio)
->  	return __folio_memcg(folio);
->  }
->  
-> +/*
-> + * folio_memcg_charged - If a folio is charged to a memory cgroup.
-> + * @folio: Pointer to the folio.
-> + *
-> + * Returns true if folio is charged to a memory cgroup, otherwise returns false.
-> + */
-> +static inline bool folio_memcg_charged(struct folio *folio)
-> +{
-> +	if (folio_memcg_kmem(folio))
-> +		return __folio_objcg(folio) != NULL;
-> +	return __folio_memcg(folio) != NULL;
-> +}
-> +
->  /**
->   * folio_memcg_rcu - Locklessly get the memory cgroup associated with a folio.
->   * @folio: Pointer to the folio.
-> @@ -454,7 +467,6 @@ static inline struct mem_cgroup *folio_memcg_rcu(struct folio *folio)
->  	unsigned long memcg_data = READ_ONCE(folio->memcg_data);
->  
->  	VM_BUG_ON_FOLIO(folio_test_slab(folio), folio);
-> -	WARN_ON_ONCE(!rcu_read_lock_held());
->  
->  	if (memcg_data & MEMCG_DATA_KMEM) {
->  		struct obj_cgroup *objcg;
-> @@ -463,6 +475,8 @@ static inline struct mem_cgroup *folio_memcg_rcu(struct folio *folio)
->  		return obj_cgroup_memcg(objcg);
->  	}
->  
-> +	WARN_ON_ONCE(!rcu_read_lock_held());
-> +
->  	return (struct mem_cgroup *)(memcg_data & ~OBJEXTS_FLAGS_MASK);
->  }
->  
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 622d4544edd24..3da0284573857 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -2366,7 +2366,7 @@ void mem_cgroup_cancel_charge(struct mem_cgroup *memcg, unsigned int nr_pages)
->  
->  static void commit_charge(struct folio *folio, struct mem_cgroup *memcg)
->  {
-> -	VM_BUG_ON_FOLIO(folio_memcg(folio), folio);
-> +	VM_BUG_ON_FOLIO(folio_memcg_charged(folio), folio);
->  	/*
->  	 * Any of the following ensures page's memcg stability:
->  	 *
-> @@ -4617,7 +4617,7 @@ void __mem_cgroup_uncharge(struct folio *folio)
->  	struct uncharge_gather ug;
->  
->  	/* Don't touch folio->lru of any random page, pre-check: */
-> -	if (!folio_memcg(folio))
-> +	if (!folio_memcg_charged(folio))
->  		return;
->  
->  	uncharge_gather_clear(&ug);
-> @@ -4662,7 +4662,7 @@ void mem_cgroup_replace_folio(struct folio *old, struct folio *new)
->  		return;
->  
->  	/* Page cache replacement: new folio already charged? */
-> -	if (folio_memcg(new))
-> +	if (folio_memcg_charged(new))
->  		return;
->  
->  	memcg = folio_memcg(old);
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
+thanks,
+-- Shuah
 
