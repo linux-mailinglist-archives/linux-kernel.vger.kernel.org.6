@@ -1,154 +1,217 @@
-Return-Path: <linux-kernel+bounces-261061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DFB093B26E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:11:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 010A293B27E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:12:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E7CE1C237B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:11:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9579285361
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB474158A26;
-	Wed, 24 Jul 2024 14:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EFB115A84D;
+	Wed, 24 Jul 2024 14:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="JQy6XQfu"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XYGJd4Mw"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C575159209
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1528A613D;
+	Wed, 24 Jul 2024 14:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721830254; cv=none; b=a1QXkXjzdpZjQgcH/21LWB8CWj6zIsluwALdlP8GjaGBQOnGq6Se1FzR2i6mmXdzj/DbeBGFGgblzeIySz+ujeNwqQrEPbhUZse6CCVhYH/303kLpcTLRHSM0Bm7ur82AO+QEgcCHrykjUUjycJguyE/xOeFUyR34l7c45yEEts=
+	t=1721830313; cv=none; b=iF0ROX+ZoiXBNUXo6Ba4GR6zCU7263721jE3jUhoqnBFf1tFZc1h7iIF0dv9EvY2Roy2+blMF+D1xn/gAGtR+IzFA7hFoAEoWLOBdYGe9fS9d27FtTRnU4pyLTysT45oWL9rJGygEIrPFEp1lprk1hqTRgoWNzpz3SduIe0EQX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721830254; c=relaxed/simple;
-	bh=WCJyBobz6smTbmKlx36emfO2oVXSkOoGiLvQctDNI5M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NTmahulmBQNjFPSkKz5wm3R1bMKF66rfrSG0DKViTnxBAYoKqRQ/IS4aUxMPcDV88CLeHdPWyCuY3YSIe1k+kkDArLDWr4BoC/KWhjHI8BOLEGpL697S6DOjr5o9dkj922UOR/cHbTLfbIg5VNQBEibxs66G5lgWUoLT85SjTxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=JQy6XQfu; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6b5d3113168so39126556d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:10:52 -0700 (PDT)
+	s=arc-20240116; t=1721830313; c=relaxed/simple;
+	bh=2VH/lDRbPN4RINJJZ5hFdT7nrCTOneMqyfk6RFrnmxk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lgoo3/JnMxNTshqbxaduYG0KswXtAHk6yBTqh+KBCK96CpMvO/mvgHUwieEMwKwh7rxYQjJnmL4WSnNAsJbP8gNq86eEgHZCFd9VUN13hqTvDjejdbux7aTGEzKRhNY5jcLddABqvjG/PyeoGoAFVLPW2dejRixTaDA2HsWUk7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XYGJd4Mw; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-595856e2336so1710012a12.1;
+        Wed, 24 Jul 2024 07:11:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1721830251; x=1722435051; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vycBET30X6TjGJ5PxFXWeaVz1FTniAKOujocO4/MY08=;
-        b=JQy6XQfuPgOtRijMsXOHkDzVLSjHYHANRoaj0NU6A/7AMW2PFHpCITrMnqCWs/2OrB
-         Jt6aCGBuGJR90KvtZm64YXKot57k3cNIgepQHWGVay9KDYTJoWtICFRcacZm33vWPq4q
-         JwhW8T4a6EObAZh2Ixo+Bqk9k6NqwkkPF5RSZKxPOWaBI0WLXpWnOqBHUzM439atQ/7I
-         XlcmHP4G1AsV6G3AzclkrFSPJNUSOVMRIi+uW6LD6W4Uy1zd73ocKH1SEqm+8xU/z/LL
-         t7wnphmTdsC8ffUjVyentszi7bkl8XacqikhV/NovSZKO3vSbzIS0t0g3Tf4+ynnhuCU
-         7dHg==
+        d=gmail.com; s=20230601; t=1721830310; x=1722435110; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lgUOovEPki3yBEx+HU/YvZISoKa1Q0srqrZyf9xBznA=;
+        b=XYGJd4MwHTywVVp5oBH5bu9spsUAnyZ/+z/oKlLODDDYYF4jgqpGMBbuYUFm3JBMYS
+         ZV3WcaXSMqY2ZiTCJhH65MGWnci/GTJNFPtK54l0s8azXmxDNi2Y168cKO7B8i4NeGD4
+         N7RQtXbXdAnr8b0xGf6+Aa3GHkor083omgSYeIOq4Jgl7hTtmwnoJ26YfRAcQoiDXUXS
+         PFEEXRZgZSp7LfRTV2rt6JzW9Yku8TiF02f0vvPgdORWtVd+ftmSTl5LJv3sFHtoxqbx
+         ZfRqWh4i49Zw0p0iI8/f8fLmH1hAakwutKwbDplEhl88fmZ6jzmU+jd7Y+sEOCaGaYbB
+         O3QA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721830251; x=1722435051;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vycBET30X6TjGJ5PxFXWeaVz1FTniAKOujocO4/MY08=;
-        b=n3OD+nBXXaWQAOwx144T4PHliBi31nYHMOBK//8CmmppU617ndswZGOvAn5OysNLZN
-         9Y08mzdq3+H/DVGbwkLs3g9pINoAev3JOwSht6ESpqxiMuepl4mlpDHxTW0ij9BRxS9c
-         6CLypf0wYszmmqx5BZyjm0uWYD2TiPZZzWTOL+C3kSGXhRknBkKZCFJznpxIMYEyFBmo
-         gcjuVpiBXXsPqfKbZk4L76tByi0l05EkYRKUthEsupCkBjCHO2g+FSXFWQr6CQOX/oQ1
-         DSj3CVN/Dvmsrf53fCnc/fbnMx9LO9O8SI43CXWtFRBIB0vJukdvSG3IqzgagXeH0p3v
-         rzsw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTKLHkewpOwU2U/eQkt+XXco1WggtWPjDW1BRZXgqXHClArCKqUKR+Mg8l/DVByTrh/ADZONWTna4MvEux7W+s2iu1B1gTt9HbWF3X
-X-Gm-Message-State: AOJu0YyeZEGg0J/Gu4nuz/Wf5PelhlGRVL1BQQ2S8ce0GhvqjHkWGV0C
-	DC93g9ms5nOfi76mkxZim13AKHJJ3lJ6QhDmvc2W5yV9SQq9ldql+wKOyQB+fQ==
-X-Google-Smtp-Source: AGHT+IGM3RVQIsmIhKHe+YhNWt5+A1vmr9zp7TqkJna6ypfgkB+6E1J84W5dnHC4XkQwB87beI4ukQ==
-X-Received: by 2002:a05:6214:40e:b0:6b7:a1be:a76a with SMTP id 6a1803df08f44-6b9907f5f34mr24105356d6.57.1721830251109;
-        Wed, 24 Jul 2024 07:10:51 -0700 (PDT)
-Received: from rowland.harvard.edu (iolanthe.rowland.org. [192.131.102.54])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b7ac7f15c6sm57372646d6.68.2024.07.24.07.10.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 07:10:50 -0700 (PDT)
-Date: Wed, 24 Jul 2024 10:10:48 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	David Brownell <david-b@pacbell.net>,
-	Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Greg Kroah-Hartman <gregkh@suse.de>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] USB: core: hub_port_reset: Remove extra 40 ms reset
- recovery time
-Message-ID: <c7c299e7-605c-4bd6-afad-dfbfe266aa7e@rowland.harvard.edu>
-References: <20240724111524.25441-1-pmenzel@molgen.mpg.de>
+        d=1e100.net; s=20230601; t=1721830310; x=1722435110;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lgUOovEPki3yBEx+HU/YvZISoKa1Q0srqrZyf9xBznA=;
+        b=sb1Jxx94I+43CwNESYbToMm3YcCf9fdUbh+7nBE7hPsqdri8H5Rx6zhINkQThIHxpG
+         bbd5ToJqYY+BQ8fpFRzOkeH0ow41GaGB1jlwO4ogpy8C7k6vz6qDFbPJPLHuSO6GC6P8
+         8l+1fP+qah4XCV2xxB10xOjSbF/35d6Dl4WwfJtCcFcnm9uGHi6vOwLSszIM3zCWimPx
+         IywRpQxNUtWNI2295sWRNynHlrZzcluIJsmfnEGGcH61SpU3AgOemOREyzHn0/b/RzHN
+         mp/cxYHX0Ai9O9j8rlCgrRBF3oLokHySRi27xNp5DZsUKQeWSY3vdPh3B7gQf5enZ5KW
+         fJ4w==
+X-Forwarded-Encrypted: i=1; AJvYcCVDgNCrU1umi43UTA6baTrl4Dk2yGds24bxpjjrktLeEbVZjwoh2QoM8twuNjO8X7GMHsNO/JOK5sFZIeXqc7fYoySk7tD5WtJmpfJxWUg9PkNAOIOanKbmTM0ArYTvgW7D1CJ7CQb02LCFdmtN73SJPNh/LCVg2Z/Y4jmvQyacYH9zMDB461g3gVSM/nIMQnyZBm7l7Fr1ysOgw0ZwyJ7c/ngaIahlXC0yCn1T/A4oNWVQ6ECxWwziPRYToqIvrIQjCBO9js87P57mJnSzdqmswf+5sSzRLL2M0Bq9fmaUTuabejpahy+2XJbwi+cRV5LOft0UOUfam58CwIT+vR8/GAkKW0M/ZPyk/aEMFEeTfJMzxiXUFyClwnEZidCS6dyz+lCM5gxGseKIGc3H4YQtW15pk780a0nwAe5E/Nn7PClCsHKiqgZcKjrIjdt++K+wHXe+6m/3ITlfmdBqupMPZ36JohqX+HzRM6Zjiw==
+X-Gm-Message-State: AOJu0Yyg98PnVgrqEgFP+TaVBItjZhrkDJjTX6jWOmucoUd8F0FRZoQw
+	dKRHS3v9W3LtMqwUa5caIO7EmBr982dkQAXTq+NNZ3Uli+3nEksmUuT11SJe4NA/52DtUEZ654t
+	YHWZmXeZofrlFsB0TY5BefXhgw58=
+X-Google-Smtp-Source: AGHT+IG/1TrYzfuz6s4kFpxFSpAieWqNsCB9Wez//cHoFLQxMdVPOa+ue/JHVhn9Ez2PRYWu7hG701fjzbR8kwC+GR4=
+X-Received: by 2002:a05:6402:2788:b0:58c:77b4:404b with SMTP id
+ 4fb4d7f45d1cf-5ab1b167270mr2342309a12.15.1721830310221; Wed, 24 Jul 2024
+ 07:11:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240724111524.25441-1-pmenzel@molgen.mpg.de>
+References: <20240628003253.1694510-1-almasrymina@google.com>
+ <20240628003253.1694510-4-almasrymina@google.com> <CAMArcTUqqxam+BPwGExOFOLVi3t=dwA-5sSagKC5dndv07GDLQ@mail.gmail.com>
+ <CAHS8izNS5jZjPfc-sARbHV7mzqzH+UhHfAtCTKRRTfSAdhY4Cw@mail.gmail.com>
+ <CAMArcTUdCxOBYGF3vpbq=eBvqZfnc44KBaQTN7H-wqdUxZdziw@mail.gmail.com> <CAHS8izMTGgZ+4fOKegUDLqAoxrdVEb+nqjQEt8bP0WLBV=FfrQ@mail.gmail.com>
+In-Reply-To: <CAHS8izMTGgZ+4fOKegUDLqAoxrdVEb+nqjQEt8bP0WLBV=FfrQ@mail.gmail.com>
+From: Taehee Yoo <ap420073@gmail.com>
+Date: Wed, 24 Jul 2024 23:11:38 +0900
+Message-ID: <CAMArcTUC2q-SEcc4FP8Rnz8goroXj52FWThX4O4C2R1uPW_VHQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v15 03/14] netdev: support binding dma-buf to netdevice
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
+	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
+	Nikolay Aleksandrov <razor@blackwall.org>, Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
+	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
+	Praveen Kaligineedi <pkaligineedi@google.com>, Willem de Bruijn <willemb@google.com>, 
+	Kaiyuan Zhang <kaiyuanz@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 24, 2024 at 01:15:23PM +0200, Paul Menzel wrote:
-> This basically reverts commit b789696af8b4102b7cc26dec30c2c51ce51ee18b
-> ("[PATCH] USB: relax usbcore reset timings") from 2005.
-> 
-> This adds unneeded 40 ms during resume from suspend on a majority of
+On Wed, Jul 24, 2024 at 6:49=E2=80=AFAM Mina Almasry <almasrymina@google.co=
+m> wrote:
+>
+> On Tue, Jul 9, 2024 at 8:37=E2=80=AFAM Taehee Yoo <ap420073@gmail.com> wr=
+ote:
+> ...
+> > Reproducer:
+> > ./ncdevmem -f <interface name> -l -p 5201 -v 7 -t 0 -q 2 &
+> > sleep 10
+> > modprobe -rv bnxt_en
+> > killall ncdevmem
+> >
+> > I think it's a devmemTCP core bug so this issue would be reproduced
+> > with other drivers.
+>
+> Sorry for the late reply. I was out at netdev.
+>
+> I'm also having trouble reproducing this, not because the bug doesn't
+> exist, but quirks with my test setup that I need to figure out. AFAICT
+> this diff should fix the issue. If you have time to confirm, let me
+> know if it doesn't work for you. It should apply on top of v16:
+>
+> commit 795b8ff01906d ("fix for release issue")
+> Author: Mina Almasry <almasrymina@google.com>
+> Date:   Tue Jul 23 00:18:23 2024 +0000
+>
+>     fix for release issue
+>
+>     Change-Id: Ib45a0aa6cba2918db5f7ba535414ffa860911fa4
+>
+>
+>
+> diff --git a/include/net/devmem.h b/include/net/devmem.h
+> index 51b25ba193c96..df52526bb516a 100644
+> --- a/include/net/devmem.h
+> +++ b/include/net/devmem.h
+> @@ -68,6 +68,9 @@ net_devmem_bind_dmabuf(struct net_device *dev,
+> unsigned int dmabuf_fd);
+>  void net_devmem_unbind_dmabuf(struct net_devmem_dmabuf_binding *binding)=
+;
+>  int net_devmem_bind_dmabuf_to_queue(struct net_device *dev, u32 rxq_idx,
+>                                     struct net_devmem_dmabuf_binding *bin=
+ding);
+> +
+> +void dev_dmabuf_uninstall(struct net_device *dev);
+> +
+>  struct net_iov *
+>  net_devmem_alloc_dmabuf(struct net_devmem_dmabuf_binding *binding);
+>  void net_devmem_free_dmabuf(struct net_iov *ppiov);
+> diff --git a/net/core/dev.c b/net/core/dev.c
+> index 5882ddc3f8592..7be084e4936e4 100644
+> --- a/net/core/dev.c
+> +++ b/net/core/dev.c
+> @@ -11320,6 +11320,7 @@ void unregister_netdevice_many_notify(struct
+> list_head *head,
+>                 dev_tcx_uninstall(dev);
+>                 dev_xdp_uninstall(dev);
+>                 bpf_dev_bound_netdev_unregister(dev);
+> +               dev_dmabuf_uninstall(dev);
+>
+>                 netdev_offload_xstats_disable_all(dev);
+>
+> diff --git a/net/core/devmem.c b/net/core/devmem.c
+> index e75057ecfa6de..227bcb1070ec0 100644
+> --- a/net/core/devmem.c
+> +++ b/net/core/devmem.c
+> @@ -362,4 +362,20 @@ bool mp_dmabuf_devmem_release_page(struct
+> page_pool *pool, netmem_ref netmem)
+>         return false;
+>  }
+>
+> +void dev_dmabuf_uninstall(struct net_device *dev)
+> +{
+> +       unsigned int i, count =3D dev->num_rx_queues;
+> +       struct net_devmem_dmabuf_binding *binding;
+> +       struct netdev_rx_queue *rxq;
+> +       unsigned long xa_idx;
+> +
+> +       for (i =3D 0; i < count; i++) {
+> +               binding =3D dev->_rx[i].mp_params.mp_priv;
+> +               if (binding)
+> +                       xa_for_each(&binding->bound_rxqs, xa_idx, rxq)
+> +                               if (rxq =3D=3D &dev->_rx[i])
+> +                                       xa_erase(&binding->bound_rxqs, xa=
+_idx);
+> +       }
+> +}
+> +
+>  #endif
+>
 
-Wrong.  It adds 40 ms to the recovery time from a port reset -- see the 
-commit's title.  Suspend and resume do not in general involve port 
-resets (although sometimes they do).
+I tested this patch and it works well.
+Thanks a lot for this work!
 
-> devices, where it’s not needed, like the Dell XPS 13 9360/0596KF, BIOS
-> 2.21.0 06/02/2022 with
+Thanks a lot!
+Taehee Yoo
 
-> The commit messages unfortunately does not list the devices needing this.
-> Should they surface again, these should be added to the quirk list for
-> USB_QUIRK_HUB_SLOW_RESET.
-
-This quirk applies to hubs that need extra time when one of their ports 
-gets reset.  However, it seems likely that the patch you are reverting 
-was meant to help the device attached to the port, not the hub itself.  
-Which would mean that the adding hubs to the quirk list won't help 
-unless every hub is added -- in which case there's no point reverting 
-the patch.
-
-Furthermore, should any of these bad hubs or devices still be in use, 
-your change would cause them to stop working reliably.  It would be a 
-regression.
-
-A better approach would be to add a sysfs boolean attribute to the hub 
-driver to enable the 40-ms reset-recovery delay, and make it default to 
-True.  Then people who don't need the delay could disable it from 
-userspace, say by a udev rule.
-
-Alan Stern
-
-> Fixes: b789696af8b4 ("[PATCH] USB: relax usbcore reset timings")
-> Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Cc: David Brownell <david-b@pacbell.net>
-> Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
-> ---
->  drivers/usb/core/hub.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-> index 4b93c0bd1d4b..487d5fe60f0c 100644
-> --- a/drivers/usb/core/hub.c
-> +++ b/drivers/usb/core/hub.c
-> @@ -3110,7 +3110,7 @@ static int hub_port_reset(struct usb_hub *hub, int port1,
->  			usleep_range(10000, 12000);
->  		else {
->  			/* TRSTRCY = 10 ms; plus some extra */
-> -			reset_recovery_time = 10 + 40;
-> +			reset_recovery_time = 10;
->  
->  			/* Hub needs extra delay after resetting its port. */
->  			if (hub->hdev->quirks & USB_QUIRK_HUB_SLOW_RESET)
-> -- 
-> 2.45.2
-> 
-> 
+> --
+> Thanks,
+> Mina
 
