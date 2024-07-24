@@ -1,79 +1,84 @@
-Return-Path: <linux-kernel+bounces-261430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7013C93B739
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:12:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30FAA93B740
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D8521C23A49
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:12:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D84A61F22433
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3889C16B3B8;
-	Wed, 24 Jul 2024 19:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F409B16C692;
+	Wed, 24 Jul 2024 19:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MbyDURut"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="IM4WzLF6"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FF652F6F;
-	Wed, 24 Jul 2024 19:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815C0161915
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 19:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721848339; cv=none; b=nJNTtIAa0MgbH40OgJUxBf3NGmiZc265dgYtiL0hPM95QSMWeETbO1Il8e/sUHgW1DrdQmj/4nNyakqTX1tyx/1/R1z3dQpOk5Mrqwg8xUfCg/IvZXhNVwrZe7mGtAsxAZngdvf/8N9r/L0jmRyM4TCAvVYpVR2p301NGOiX/pw=
+	t=1721848406; cv=none; b=GhoVtsjbjyo6tbzpf4/1V1TTwHJepxsghFo2iX6ILqbr4Sp6PAMzIW1WnUKSG/Mw+x/s3VGQxLlLT5ABWMK9EZPEkaMtrrWP739ELGke6LLI9GtwU+8Bd5V+y7QO1ikhpeSvW0v8+hYtnGFzhcCNlp7ogdTnQ68cM9pAYptRvXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721848339; c=relaxed/simple;
-	bh=qskHKITXkXN6ZSf1yUvLt2Gm1+dd/1MmkpCdaXVlEYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A+Sbli4UxJ+siP/ucch5w3MKm9X4odK+4TSCE1q6apEF0lf+BR1CQBBbC3woNNkjoPvPwW2U7LzMZALCoBuN5CnvBtIJWDU0sAuxF/ZQ4Wy0RDFGbriKSTc/LO+V2Lwf7F8ZdV+voHZ+AUTKMqx9UxOPdquz+qLcXLbJ23eWst8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MbyDURut; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8888BC32781;
-	Wed, 24 Jul 2024 19:12:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721848339;
-	bh=qskHKITXkXN6ZSf1yUvLt2Gm1+dd/1MmkpCdaXVlEYU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MbyDURutnAMJwHUXyBBs2ZSiwhsipHdOxle+g4JrqX+8AaeQ/xaaeRvQUSYXRPvfH
-	 +6abebMoRD5DKfCniwnraH6cRpc4QUHeVFCFD/ZPcUDCiIHrRoOzYcaRiUXoWoe48d
-	 DizUCF6hxzEfAXjgyvg7ZlpWR7zEn+SieQUrS7vdgJm9dTWzVTC4cRxEHbjpbkwhSb
-	 S7hk1PqcWDYLtRKuFw2Ej7KExJE0IVNkL1UmQWL4lo6jMFu5QwEEDOkLhHMsNT7Lzb
-	 hCoDJ9wAQSy61GkDWFsopBOkzsWubEU5et1UoDjoNNN06llEj8VbPzSP+Uj3briA+8
-	 O17pwAPL2LnBQ==
-Date: Wed, 24 Jul 2024 20:12:15 +0100
-From: Simon Horman <horms@kernel.org>
-To: linux@treblig.org
-Cc: pabeni@redhat.com, edumazet@google.com, dsahern@kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kennetkl@ifi.uio.no
-Subject: Re: [PATCH] net/tcp: Expand goo.gl link
-Message-ID: <20240724191215.GJ97837@kernel.org>
-References: <20240724172508.73466-1-linux@treblig.org>
+	s=arc-20240116; t=1721848406; c=relaxed/simple;
+	bh=wODsILdydAWyTmURycOlaz/DUnsABuavn1/8cgcYgtI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=u4Qs52mCSqhQwq2xNr7wffgBM5gnnkb1H0kboQfk+yfg2sCR6YBg4hINQUUFx/gzMN7RgGcL2i3DxFjgXyp440hTWMphQnC0JxnJ+luxUUd0C2WVaJ0ci4JUp7M/O9hNZMzgE1loh+SzyrJQZiyZt1PX61M1fqXRDaCuh78dOf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=IM4WzLF6; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1721848396; x=1722107596;
+	bh=yROuNhhOiZXiesuXRINKmwCmOfQ2t0VJpy13JCepD18=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=IM4WzLF6B5uE3dxiAPg8LKmkGf2baCHAvm6m3zLJ8FDEQjWEMrn8FyzKvcmmjfJ6f
+	 pJzUxNUCpG0PgnDiONtHHe1h4ZB275jV/Z+ly7xl57jNmIE4+sjyYlFNmQZBUkjauV
+	 Vsq+33aempb0fKxeoAwa2Sus/Cn6OlXL9n9qApq+1oa2L9Pm+vurtz1ciAV7uhqojQ
+	 eySUNtC7upXmnvwDYwzxYlQo6FoTOKLxaLmtVAk4wcToaGV0ld5EDlgX5gPQ9iGN6T
+	 kJWZ/kyung+cuAd6fiOYC6NTDAOVoY2uvfy9TjYqI5+r0WW3BjHX1akZ6pKoaPU6MQ
+	 ynKsgqmA3407w==
+Date: Wed, 24 Jul 2024 19:13:08 +0000
+To: Greg KH <greg@kroah.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Jonathan Corbet <corbet@lwn.net>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [RFC PATCH 1/5] doc: rust: create safety standard
+Message-ID: <59ebc5f2-7d58-49f5-83f1-c954705f3953@proton.me>
+In-Reply-To: <2024071845-neuron-figure-2e26@gregkh>
+References: <20240717221133.459589-1-benno.lossin@proton.me> <20240717221133.459589-2-benno.lossin@proton.me> <2024071845-neuron-figure-2e26@gregkh>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: be907ebcc070349e238c381528938ba589d3fe6b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240724172508.73466-1-linux@treblig.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 24, 2024 at 06:25:08PM +0100, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> The goo.gl URL shortener is deprecated and is due to stop
-> expanding existing links in 2025.
-> 
-> Expand the link in Kconfig.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+On 18.07.24 06:45, Greg KH wrote:
+> On Wed, Jul 17, 2024 at 10:12:29PM +0000, Benno Lossin wrote:
+>> +Because unsoundness issues have the potential for allowing safe code to=
+ experience UB, they are
+>> +treated similarly to actual bugs with UB. Their fixes should also be in=
+cluded in the  stable tree.
+>=20
+> Odd extra space before "stable".
+>=20
+> Also, link to the stable kernel rules here when you reference "stable
+> tree"?  That will explain what you mean here.
 
-Both the motivation and updated link look correct to me.
-I also checked that there is no other usage of goo.gl in this file.
+Sure will add it, do you mean Documentation/process/stable-kernel-rules.rst=
+?
+Or a different file?
 
-Not sure if this should be for net or net-next.
-But regardless this looks good to me.
+---
+Cheers,
+Benno
 
-Reviewed-by: Simon Horman <horms@kernel.org>
 
