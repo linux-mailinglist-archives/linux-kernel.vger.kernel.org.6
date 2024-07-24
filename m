@@ -1,247 +1,147 @@
-Return-Path: <linux-kernel+bounces-261106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AD1893B2EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:44:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAFB493B2EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:44:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D7F1B23802
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:44:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44596B244FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDA61591F3;
-	Wed, 24 Jul 2024 14:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697BE15ADB1;
+	Wed, 24 Jul 2024 14:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WnaysIr0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="1Mpj0540"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4670F1CAA1
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E260715AADB
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721832247; cv=none; b=Ohc62+vhRad6PTmBd70Oa61qZeYPmumuiJWZMz1UBnJ633eS662nchY/lvAiUwFkhBP2+yBxkptx9ZCbI9kTkire4NwogJ/JsTfMPN2YRvmuvrT8FOhMgTBrO3Y+8o406Dz1WJBbPMBqliUFhKA75y04wMi8kdhS+vNUTZy+wDc=
+	t=1721832280; cv=none; b=cwkDNjM0AawUssZMPZtlpwyWOP8PFN1pmdSaRWkVMo9TWsgzfOVD78Svt9brbR7GsuqpuqYoirmvABHuGoC51Elk7g59yAgnYHb+m/eRrJDwWE53psNkABJIokXsk4Q+HzpPSKjPGzVrLsbyRno2HEmVKAi7Lp7r+5AYTDoEbe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721832247; c=relaxed/simple;
-	bh=lOc6GcA/Z1rVuWCMtRiGU7ChW8toc0BUgpRKF7/FIIM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Bx1KN70xKOjRq+QbiXyue20ysX8u2yuKgg41nZtAMdCljVZf55CzexgyPwI1XYhMe4OdxBuM5O+d6XUprpQ1uMgm93Z6hj68r+yHziA8Q33WViWwF61XYxyipccfv4uI2DJtEDPI2QopTpLiNWshcxCUqto8iCRz+yx3wBUhwUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WnaysIr0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721832244;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PtgNm1pOLMsP8Qszrl0K7VKeER149ylQU0rUWgeGkEo=;
-	b=WnaysIr0B9P26NZeMvKqNqPpeFyr1PMF28JDYUvTswJ3RtMPcrU2pOhYGrvGccbtSQFLh0
-	h2MoY46KNbEViMua/6+zdBKibBxHhFNd3qxZmViEa/9oQQkZgKha+FbSWdjwpIjUMUUkWO
-	Tsvdb1D+afwbseCXNty46KrD5ATTYt4=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-356-AlUV7HcQOnyKmmCqt0iIVw-1; Wed, 24 Jul 2024 10:44:02 -0400
-X-MC-Unique: AlUV7HcQOnyKmmCqt0iIVw-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-36857dd6913so3682273f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:44:02 -0700 (PDT)
+	s=arc-20240116; t=1721832280; c=relaxed/simple;
+	bh=I7uEM51teCjbnW06i2qR8KgS0bs+PSUG3g2oBc/vI6s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BgG8CCBfV5tLS5iMnQn8eu74VEH0SgLfjxY2IcsQ/nZlyqSlHoNgneYrzhFQ88P/gdxKIWHuROpVBwvHUpvEpgQiz9nTyji5LxgbltHhCqNlUiJFcQM11bYQqx4fL150yieX2i3tGXSDRlEeDE5yvjim1QUaM0V3z5Kp6PAX2PI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=1Mpj0540; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-447e57103d5so28384231cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:44:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1721832278; x=1722437078; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tD7q4blbll5tYjt9Gzyptna4uuXTsnpRgsFbRh6J6zc=;
+        b=1Mpj0540i5yIEKtPgvq2hayPz0iimrph5yjJzwGeHTlxKhizkZZti6llWBHTRoOOhU
+         j2CIai0MK/A6/04ATHuS4z1CqJPbaOoXNOARievilOna1nxJzZaT2jiNxk0KY/kkjqqG
+         aRSlYk5Ta88x2i5LOjYfUHlndfXFvsqVIXhwY2Rt622sn0bDygMqNkx9ECmGKhQ0LNho
+         qFx+md/Z+ua9EnA3M2WUU9Ts56hvQB4VcfnlawLsKPdduPCZ+VI6p4i9URuf6HvGyCoP
+         fmP0JWzkUlaPvrFKzrHET7w5Uwpo8GGm4NQg7M8t7ybabv2Ve5f1dTXDZDZP75VIR9K3
+         4jUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721832242; x=1722437042;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PtgNm1pOLMsP8Qszrl0K7VKeER149ylQU0rUWgeGkEo=;
-        b=bbAk6hPvIdQgPL14x7/iWwi2oLbzPzHj9suWw4vuEafoZQPLnVCWOg+AZgoCIPU2tr
-         aPJ+DTQBNeVxZQpj7mD9/1I2R5rRKEyEMSO+vY/erkvnZjjpQxIRILUESGU0hi6Ivnj+
-         0QY/sRXSGRA3EotUrcmKs3AImGJCbk9MclpanxXXaaP10/TX4gm4prvQA7ww5DWlOwlA
-         JSq1G+XdHnZDJ3unQcnnUZP4kJyUGKQ4GvosuyBjmiiDxSUY8eCVW2oqzhjzUF/00dy3
-         rmXx6wO6pykHpCPNhQbJuz0Qdyti8tdLGJJFbl8n7xaaS74DFIJ2y5MN2+vZPYtIhM2s
-         eCoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTKOvh78zp/LC41dCjLYGoMfNFW6WA/ocwHIG+G6cvbO3+QneOj+668beeQnuGUsypwZIeXyJ1veFsEYbJlpxqOBn/YoQ2mtTp/ySj
-X-Gm-Message-State: AOJu0Yw8tOha79djJUI991JFRtMbR94ESvX+VJ0UV2Dj5+1M8CawuEPt
-	unD1avxedOdjPB7KPHk3+vk9vx4wftbdmEpKpVVvT1eIE68+JCZUJeVhEG2UV2FpEVfmxHiDVqs
-	dEj1i7fD9I8MK9ED2/CsEJmJ7OWh1qSr9VmVt/wgOyUqSY5V+bRlCUe4vyOdv2g==
-X-Received: by 2002:a5d:58fa:0:b0:368:3f60:8725 with SMTP id ffacd0b85a97d-369dec1e5d2mr4259520f8f.39.1721832241556;
-        Wed, 24 Jul 2024 07:44:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEHbt1Ya9CZQ8TcF7aODRLLParNCtw3ChacXtuHqFCqCgnkFaSHw2MfwC9jTM+m9E2ZRynujw==
-X-Received: by 2002:a5d:58fa:0:b0:368:3f60:8725 with SMTP id ffacd0b85a97d-369dec1e5d2mr4259492f8f.39.1721832241079;
-        Wed, 24 Jul 2024 07:44:01 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36878694833sm14522088f8f.55.2024.07.24.07.44.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 07:44:00 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id CFC2914733D9; Wed, 24 Jul 2024 16:43:59 +0200 (CEST)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: syzbot <syzbot+c226757eb784a9da3e8b@syzkaller.appspotmail.com>,
- andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
- daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com,
- edumazet@google.com, haoluo@google.com, john.fastabend@gmail.com,
- jolsa@kernel.org, kpsingh@kernel.org, kuba@kernel.org,
- linux-kernel@vger.kernel.org, martin.lau@linux.dev,
- netdev@vger.kernel.org, pabeni@redhat.com, sdf@fomichev.me,
- song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Subject: Re: [syzbot] [bpf?] [net?] general protection fault in __cpu_map_flush
-In-Reply-To: <000000000000048a4b061dfcd02a@google.com>
-References: <000000000000048a4b061dfcd02a@google.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Wed, 24 Jul 2024 16:43:59 +0200
-Message-ID: <871q3iq28g.fsf@toke.dk>
+        d=1e100.net; s=20230601; t=1721832278; x=1722437078;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tD7q4blbll5tYjt9Gzyptna4uuXTsnpRgsFbRh6J6zc=;
+        b=ocpBgPiDy8xI6hV77/9Y74o5xVXl4kcyEBD5w/T8IEL71JhU1mASDG5M712QdW2tep
+         JXM1wpLKCJ5r2dWo2ei1yMBha1HUj6FLa8srOGuTsHsIIb+PpLJCKYQ0h5bjJrr1rst8
+         /HyNEloeMvBOla5OwV04n0d2Ch7zJ7hrlokL+UMqrZHbIrliDrPIYHHWybx78cnpiPNg
+         bocFfJ2hJmJY4z4qrJMb9a7p5QR9U70lqA3Mdv4k2dkVQVmy5F2wIcmqe8yDkx0TDTqA
+         UvsVp/NOFEDvYSAGAgrIguaoS9ul/x7hq+Okgcyts3ls397QWUiTkTGS8y9N1zZ30Edp
+         bJZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVYjLkpH1CxqJ+wiqR8XNa6nE7S2atfN/0Q6btHEz0tHqs8+WIgGpzI43oiAFEvjvUb7MRvdaiQCON8/ITufy9oC75rgmifarVpJakY
+X-Gm-Message-State: AOJu0YyxE0Yf1gRwmYF8Sqj87W/RZDPTaXsAk+dUzhKXvCKzquhWignZ
+	hMvj4Okav8jTOQsyn0pT+muIqwxE/8UWeoxkbX6Tn8VWjsblu/VuldQteRHZJx7srbBLT9+t70D
+	sYBEelcGx/gG1Go4I7K9ZuquobunmHAnR4L4BIg==
+X-Google-Smtp-Source: AGHT+IFOo5v2gCv2PX+RdUyGaQBAua2+I57mJ1JpmFBMQL4D5cDPDjygDA0gX9IstRVpbEb/VqTA8cw+o2bGmAR1xJE=
+X-Received: by 2002:a05:622a:1446:b0:447:d87e:7873 with SMTP id
+ d75a77b69052e-44fa538f761mr162011641cf.64.1721832277575; Wed, 24 Jul 2024
+ 07:44:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240718202611.1695164-1-pasha.tatashin@soleen.com> <20240723234600.d05817293ec1eb2d4ad87be7@linux-foundation.org>
+In-Reply-To: <20240723234600.d05817293ec1eb2d4ad87be7@linux-foundation.org>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 24 Jul 2024 10:43:59 -0400
+Message-ID: <CA+CK2bB2fiAGHpD5dsSdxCgPjx7OBra5K8Vn_a4wytPa2U6UjA@mail.gmail.com>
+Subject: Re: [PATCH v4] vmstat: Kernel stack usage histogram
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: jpoimboe@kernel.org, kent.overstreet@linux.dev, peterz@infradead.org, 
+	nphamcs@gmail.com, cerasuolodomenico@gmail.com, surenb@google.com, 
+	lizhijian@fujitsu.com, willy@infradead.org, shakeel.butt@linux.dev, 
+	vbabka@suse.cz, ziy@nvidia.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Sebastian
-
-The syzbot splat below shows up in recent -next kernels which
-sorta-kinda wags its finger suggestively at the bpf_net_ctx_get()
-changes. There's one for __dev_flush() as well:
-https://lore.kernel.org/r/0000000000009d1d0a061d91b803@google.com
-
-Care to take a look? :)
-
-Thanks!
-
--Toke
-
-
-syzbot <syzbot+c226757eb784a9da3e8b@syzkaller.appspotmail.com> writes:
-
-> syzbot has found a reproducer for the following issue on:
+On Wed, Jul 24, 2024 at 2:46=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
 >
-> HEAD commit:    9ec6ec93f2c1 Add linux-next specific files for 20240724
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10e71ca1980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=83e9d0906fa0e2bd
-> dashboard link: https://syzkaller.appspot.com/bug?extid=c226757eb784a9da3e8b
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17c0f8e3980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=151b9919980000
+> On Thu, 18 Jul 2024 20:26:11 +0000 Pasha Tatashin <pasha.tatashin@soleen.=
+com> wrote:
 >
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/c0ab2da24b1f/disk-9ec6ec93.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/da6faf16185f/vmlinux-9ec6ec93.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/1ad900571155/bzImage-9ec6ec93.xz
+> > As part of the dynamic kernel stack project, we need to know the amount
+> > of data that can be saved by reducing the default kernel stack size [1]=
+.
+> >
+> > Provide a kernel stack usage histogram to aid in optimizing kernel stac=
+k
+> > sizes and minimizing memory waste in large-scale environments. The
+> > histogram divides stack usage into power-of-two buckets and reports the
+> > results in /proc/vmstat. This information is especially valuable in
+> > environments with millions of machines, where even small optimizations
+> > can have a significant impact.
 >
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+c226757eb784a9da3e8b@syzkaller.appspotmail.com
+> x86_64 allmodconfig:
 >
-> Oops: general protection fault, probably for non-canonical address 0xe3fffb24002e6fe6: 0000 [#1] PREEMPT SMP KASAN PTI
-> KASAN: maybe wild-memory-access in range [0x1ffff92001737f30-0x1ffff92001737f37]
-> CPU: 1 UID: 0 PID: 11878 Comm: syz-executor412 Not tainted 6.10.0-next-20240724-syzkaller #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-> RIP: 0010:__cpu_map_flush+0x42/0xd0
-> Code: e8 13 8c d6 ff 4c 89 f0 48 c1 e8 03 42 80 3c 38 00 74 08 4c 89 f7 e8 4d 12 3e 00 49 8b 1e 4c 39 f3 74 77 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 2f 12 3e 00 4c 8b 23 48 8d 7b c0
-> RSP: 0018:ffffc90000a18b10 EFLAGS: 00010202
-> RAX: 03ffff24002e6fe6 RBX: 1ffff92001737f30 RCX: ffff888074dc8000
-> RDX: 0000000080000101 RSI: 0000000000000010 RDI: ffffc9000b9bf800
-> RBP: dffffc0000000000 R08: ffffffff896d3b5a R09: 1ffffffff1f5f375
-> R10: dffffc0000000000 R11: fffffbfff1f5f376 R12: ffffc9000b9bf800
-> R13: ffffc9000b9bf820 R14: ffffc9000b9bf800 R15: dffffc0000000000
-> FS:  0000555592677380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fd44da640f0 CR3: 000000001ea68000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <IRQ>
->  xdp_do_check_flushed+0x136/0x240 net/core/filter.c:4304
->  __napi_poll+0xe4/0x490 net/core/dev.c:6774
->  napi_poll net/core/dev.c:6840 [inline]
->  net_rx_action+0x89b/0x1240 net/core/dev.c:6962
->  handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
->  __do_softirq kernel/softirq.c:588 [inline]
->  invoke_softirq kernel/softirq.c:428 [inline]
->  __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
->  irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
->  common_interrupt+0xaa/0xd0 arch/x86/kernel/irq.c:278
->  </IRQ>
->  <TASK>
->  asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
-> RIP: 0010:check_kcov_mode kernel/kcov.c:184 [inline]
-> RIP: 0010:__sanitizer_cov_trace_pc+0x37/0x70 kernel/kcov.c:207
-> Code: 40 d7 03 00 65 8b 15 10 0c 70 7e f7 c2 00 01 ff 00 74 11 f7 c2 00 01 00 00 74 35 83 b9 1c 16 00 00 00 74 2c 8b 91 f8 15 00 00 <83> fa 02 75 21 48 8b 91 00 16 00 00 48 8b 32 48 8d 7e 01 8b 89 fc
-> RSP: 0018:ffffc9000b9bf8a0 EFLAGS: 00000246
-> RAX: ffffffff81410dcc RBX: 0000000000000000 RCX: ffff888074dc8000
-> RDX: 0000000000000000 RSI: ffffffff8b942412 RDI: ffffffff8b942328
-> RBP: 1ffff92001737f30 R08: ffffffff81410c60 R09: ffffc9000b9bfa70
-> R10: 0000000000000003 R11: ffffffff817f7030 R12: ffffffff90294810
-> R13: dffffc0000000000 R14: 1ffff92001737f30 R15: ffffffff90d0fbd4
->  unwind_next_frame+0x67c/0x2a00 arch/x86/kernel/unwind_orc.c:495
->  arch_stack_walk+0x151/0x1b0 arch/x86/kernel/stacktrace.c:25
->  stack_trace_save+0x118/0x1d0 kernel/stacktrace.c:122
->  kasan_save_stack mm/kasan/common.c:47 [inline]
->  kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
->  kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
->  poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
->  __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
->  kasan_slab_free include/linux/kasan.h:184 [inline]
->  slab_free_hook mm/slub.c:2252 [inline]
->  slab_free mm/slub.c:4473 [inline]
->  kmem_cache_free+0x145/0x350 mm/slub.c:4548
->  __dentry_kill+0x497/0x630 fs/dcache.c:629
->  dput+0x19f/0x2b0 fs/dcache.c:852
->  __fput+0x5f8/0x8a0 fs/file_table.c:430
->  __do_sys_close fs/open.c:1566 [inline]
->  __se_sys_close fs/open.c:1551 [inline]
->  __x64_sys_close+0x7f/0x110 fs/open.c:1551
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fd44d9ed9c0
-> Code: ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 80 3d e1 76 07 00 00 74 17 b8 03 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 48 c3 0f 1f 80 00 00 00 00 48 83 ec 18 89 7c
-> RSP: 002b:00007fff7a1e95b8 EFLAGS: 00000202 ORIG_RAX: 0000000000000003
-> RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00007fd44d9ed9c0
-> RDX: 0000000000000e80 RSI: 0000000020000100 RDI: 0000000000000004
-> RBP: 00007fff7a1e9600 R08: 00007fff7a1e95e0 R09: 00007fff7a1e95e0
-> R10: 00007fff7a1e95e0 R11: 0000000000000202 R12: 0000000000000000
-> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:__cpu_map_flush+0x42/0xd0
-> Code: e8 13 8c d6 ff 4c 89 f0 48 c1 e8 03 42 80 3c 38 00 74 08 4c 89 f7 e8 4d 12 3e 00 49 8b 1e 4c 39 f3 74 77 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 2f 12 3e 00 4c 8b 23 48 8d 7b c0
-> RSP: 0018:ffffc90000a18b10 EFLAGS: 00010202
-> RAX: 03ffff24002e6fe6 RBX: 1ffff92001737f30 RCX: ffff888074dc8000
-> RDX: 0000000080000101 RSI: 0000000000000010 RDI: ffffc9000b9bf800
-> RBP: dffffc0000000000 R08: ffffffff896d3b5a R09: 1ffffffff1f5f375
-> R10: dffffc0000000000 R11: fffffbfff1f5f376 R12: ffffc9000b9bf800
-> R13: ffffc9000b9bf820 R14: ffffc9000b9bf800 R15: dffffc0000000000
-> FS:  0000555592677380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fd44da640f0 CR3: 000000001ea68000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> ----------------
-> Code disassembly (best guess):
->    0:	e8 13 8c d6 ff       	call   0xffd68c18
->    5:	4c 89 f0             	mov    %r14,%rax
->    8:	48 c1 e8 03          	shr    $0x3,%rax
->    c:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1)
->   11:	74 08                	je     0x1b
->   13:	4c 89 f7             	mov    %r14,%rdi
->   16:	e8 4d 12 3e 00       	call   0x3e1268
->   1b:	49 8b 1e             	mov    (%r14),%rbx
->   1e:	4c 39 f3             	cmp    %r14,%rbx
->   21:	74 77                	je     0x9a
->   23:	48 89 d8             	mov    %rbx,%rax
->   26:	48 c1 e8 03          	shr    $0x3,%rax
-> * 2a:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1) <-- trapping instruction
->   2f:	74 08                	je     0x39
->   31:	48 89 df             	mov    %rbx,%rdi
->   34:	e8 2f 12 3e 00       	call   0x3e1268
->   39:	4c 8b 23             	mov    (%rbx),%r12
->   3c:	48 8d 7b c0          	lea    -0x40(%rbx),%rdi
+> In file included from <command-line>:
+> In function 'init_memcg_events',
+>     inlined from 'mem_cgroup_css_alloc' at mm/memcontrol.c:3616:3:
+> ././include/linux/compiler_types.h:510:45: error: call to '__compiletime_=
+assert_2305' declared with attribute error: BUILD_BUG_ON failed: NR_VM_EVEN=
+T_ITEMS >=3D S8_MAX
+>   510 |         _compiletime_assert(condition, msg, __compiletime_assert_=
+, __COUNTER__)
+>       |                                             ^
+> ././include/linux/compiler_types.h:491:25: note: in definition of macro '=
+__compiletime_assert'
+>   491 |                         prefix ## suffix();                      =
+       \
+>       |                         ^~~~~~
+> ././include/linux/compiler_types.h:510:9: note: in expansion of macro '_c=
+ompiletime_assert'
+>   510 |         _compiletime_assert(condition, msg, __compiletime_assert_=
+, __COUNTER__)
+>       |         ^~~~~~~~~~~~~~~~~~~
+> ./include/linux/build_bug.h:39:37: note: in expansion of macro 'compileti=
+me_assert'
+>    39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), m=
+sg)
+>       |                                     ^~~~~~~~~~~~~~~~~~
+> ./include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_=
+ON_MSG'
+>    50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #cond=
+ition)
+>       |         ^~~~~~~~~~~~~~~~
+> mm/memcontrol.c:444:9: note: in expansion of macro 'BUILD_BUG_ON'
+>   444 |         BUILD_BUG_ON(NR_VM_EVENT_ITEMS >=3D S8_MAX);
+>       |         ^~~~~~~~~~~~
 >
->
-> ---
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
+> This looks legitimate - is it time to switch to int16_t?
 
+I am looking into this, and will also uninline stack_not_used() and
+kstack_histogram() as discussed earlier in the thread.
+
+Pasha
 
