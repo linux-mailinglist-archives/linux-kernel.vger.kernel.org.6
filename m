@@ -1,107 +1,82 @@
-Return-Path: <linux-kernel+bounces-261141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 428C793B31B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:52:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFC0B93B23A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00293281FD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:52:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A397B1F2223C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A9815ECEF;
-	Wed, 24 Jul 2024 14:48:43 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761C6158D82;
+	Wed, 24 Jul 2024 14:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="U0BD7lY/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7377415ADB1;
-	Wed, 24 Jul 2024 14:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1B9DDC5
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721832523; cv=none; b=pI2EvqdbYeddi/laMUewOjLJa7oSOJvNusmmAGo4gn+eS13esAkxuPxkl7D9p1SdG5VhUSu3XtypqAt7WDbeIeFESUpSaQ+F8ysy3iZcXVLQ6vnsjz2AWgjI8XtONXyL9kzNlW9aPrKgLlGn/sGDRIbi79erh8ynCD2+Mi+HUdQ=
+	t=1721829993; cv=none; b=DS8zz2hjVe/bxVkTJatccbG4s+S0CgfuNm67rPvZb2zovNN7q7mEpGUBAFPnsAuP2iHYgBM9HdySiW3JPwp06JePxCDDreyeOtMljZU2CqdmjJd8djGfWB+eraq0D8V5X8gsEECxM+E2itpKgGMZXxx2Z9bik26L6bbIPSUgCaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721832523; c=relaxed/simple;
-	bh=T+ulhWIm7OxdPfrllI5IXV7d4dNrirUImH8j6eguePc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bITDCMIScibV6YiCy2uTtdDGSPssXD0Q464rWnSz1K84NG3nDA2FZLPYmTIh8Idit8oFjOK98ODCIhqWLvKiZs7H7rBxtd1eFc2NUin6mye4kfoFYSiQspra1dQICLzZPQvylVoLdMDjD2dOBirzHGs3/Mtc1gZgarM27xHmbQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id 4C731809A6;
-	Wed, 24 Jul 2024 13:30:34 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf04.hostedemail.com (Postfix) with ESMTPA id BB66C20033;
-	Wed, 24 Jul 2024 13:30:30 +0000 (UTC)
-Message-ID: <7a1be8c1f49fc6356a0a79591af3c3de8d4675ec.camel@perches.com>
-Subject: Re: [PATCH] scripts: add macro_checker script to check unused
- parameters in macros
-From: Joe Perches <joe@perches.com>
-To: Julian Sun <sunjunchao2870@gmail.com>, linux-wireless@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc: jack@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk, 
- masahiroy@kernel.org, akpm@linux-foundation.org, n.schier@avm.de,
- ojeda@kernel.org,  djwong@kernel.org, kvalo@kernel.org
-Date: Wed, 24 Jul 2024 06:30:29 -0700
-In-Reply-To: <20240723091154.52458-1-sunjunchao2870@gmail.com>
-References: <20240723091154.52458-1-sunjunchao2870@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+	s=arc-20240116; t=1721829993; c=relaxed/simple;
+	bh=jHjk0GJT5v0G3dJaLKw2zFuqElE2VIdsiBJHhbtd0cc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fe9ier+XhUu1juc91PtU1TiFTPEx3SEBZcpHpOXtP00Vw4Rgdg4kt3WWzbV5+wDtJOjl2ihSrWwWle8QhBmwyOxG59KSTLqGv8/i1mI5h6mQdgYTqOsJ11a+zfQLiKmj2EkntWZvV5F4jnLtdXnXpW1GUkfwO9JnGNLxoKXAX9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=U0BD7lY/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE1BDC32786;
+	Wed, 24 Jul 2024 14:06:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1721829993;
+	bh=jHjk0GJT5v0G3dJaLKw2zFuqElE2VIdsiBJHhbtd0cc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U0BD7lY/ECxZSSjLfaBV67J6N1rMlHChbnl2jsD/eKAG1kwhPAV0sBgY49z7lpCQw
+	 cGQFEiv59S64cMcJ130O/zDWkaJGD4Flv7IXj+DL8FAzZFVuj68bvsdpCFM/DQQsBx
+	 B82EevEV6jhqAsJJq9baUfd7Y6p4gOIWmkNa7f9Q=
+Date: Wed, 24 Jul 2024 16:06:30 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
+	Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH v2] driver core: bus: Return -EIO instead of 0 when
+ show/store invalid bus attribute
+Message-ID: <2024072418-vitalize-resurface-1d40@gregkh>
+References: <20240724-bus_fix-v2-1-5adbafc698fb@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: BB66C20033
-X-Rspamd-Server: rspamout06
-X-Stat-Signature: dygo7hh9suumde5wq6rx4q5om1rufokh
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1/fvNBWSgMGUWhLnXnfZzVKwnFzTAH8G7s=
-X-HE-Tag: 1721827830-563549
-X-HE-Meta: U2FsdGVkX195GkyrA4sk36qOW5p+w2HDp4R4rLq+fgSm/KoyU+MGiJ7hUrzOpvOGY3lLi99STFrXjT7Yh9jfGBlrXw/v8yXiSxhuxfxxweywk3d/wtnp8b1dZklK1941vVH1OtYE1G0NxZUvGeWeLfTiReZR+E/n5I5hxpZ00gefJU74Fl+xN0GInipTgceXpQ7XbEPfGjtrEuEQVuvB1xbJTWO16cEB6Lx3LgSJpUgS5bF4AQGxJCQkch22PNVstu3KNOicTAKE0IL/XLcSCLlwfGuwsuRZslwjV6WzXqkitig4Gm3PYgeJ10tXMd2uqCdXJSqMWADC0NRdZsaHAqiBa9Eml8E30jaLqNmXtuMhaFpGmiLaSZKK/Lj1TR/zGbGQ+4Jk0kndbpsG3u+ILxXye3qlSbaOsQm4rowdxG8=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240724-bus_fix-v2-1-5adbafc698fb@quicinc.com>
 
-On Tue, 2024-07-23 at 05:11 -0400, Julian Sun wrote:
-> Hi,
->=20
-> Recently, I saw a patch[1] on the ext4 mailing list regarding
-> the correction of a macro definition error. Jan mentioned
-> that "The bug in the macro is a really nasty trap...".
-> Because existing compilers are unable to detect
-> unused parameters in macro definitions. This inspired me
-> to write a script to check for unused parameters in
-> macro definitions and to run it.
->=20
+On Wed, Jul 24, 2024 at 09:54:48PM +0800, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> 
+> Return -EIO instead of 0 for below erroneous bus attribute operations:
+>  - read a bus attribute without show().
+>  - write a bus attribute without store().
+> 
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+> Changes in v2:
+> - Correct commit messages and add inline comments
+> - The following commit have similar change
+>   Commit: 4a0c20bf8c0f ("[PATCH] sysfs: (driver/base) if show/store is missing return -EIO")
+> - Link to v1: https://lore.kernel.org/r/20240723-bus_fix-v1-1-175f926805dc@quicinc.com
+> ---
+>  drivers/base/bus.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 
-checkpatch has a similar test:
+Again, how was this tested?
 
-https://lkml.kernel.org/r/20240507032757.146386-3-21cnbao@gmail.com
+thanks,
 
-$ git log --format=3Demail -1 b1be5844c1a0124a49a30a20a189d0a53aa10578
-From b1be5844c1a0124a49a30a20a189d0a53aa10578 Mon Sep 17 00:00:00 2001
-From: Xining Xu <mac.xxn@outlook.com>
-Date: Tue, 7 May 2024 15:27:57 +1200
-Subject: [PATCH] scripts: checkpatch: check unused parameters for
- function-like macro
-
-If function-like macros do not utilize a parameter, it might result in a
-build warning.  In our coding style guidelines, we advocate for utilizing
-static inline functions to replace such macros.  This patch verifies
-compliance with the new rule.
-
-For a macro such as the one below,
-
- #define test(a) do { } while (0)
-
-The test result is as follows.
-
- WARNING: Argument 'a' is not used in function-like macro
- #21: FILE: mm/init-mm.c:20:
- +#define test(a) do { } while (0)
-
- total: 0 errors, 1 warnings, 8 lines checked
-
-Link: https://lkml.kernel.org/r/20240507032757.146386-3-21cnbao@gmail.com
-
+greg k-h
 
