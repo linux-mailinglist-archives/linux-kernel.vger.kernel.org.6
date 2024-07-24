@@ -1,179 +1,177 @@
-Return-Path: <linux-kernel+bounces-261268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E6C093B4F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:26:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94BFA93B4F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:26:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2F911F21C93
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:26:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5026E2822AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934A815ECE6;
-	Wed, 24 Jul 2024 16:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E9C15ECE3;
+	Wed, 24 Jul 2024 16:26:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="uEaY0P7x"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="bnhWfj/3"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46C615B541
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 16:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F1E15B541;
+	Wed, 24 Jul 2024 16:26:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721838361; cv=none; b=B8BO4k/XHnL0K/sPX6BeOBUsTwsqJCL6IdZlzRnyrxSEJgk6C0eCX4xLzZ2AP1VFUxg7AIvekZvz7+39yVRou6Jwvv8EkTdgVutgpGxaYSj3e0fbpEfM4Jw8FnlYfuJxNkXZ5uDHgDL9qPv9Hzhxf6nJiRkWcfS0JQIvo557yqo=
+	t=1721838401; cv=none; b=XrZi3YsekuYwvVp9XV4vrk1r+ZYun4jCaJ7IiXot/BrvC57ItRg5h8vwr9seYX0LnDGUrh+yrPaPiTl4Zfv1kGV8mM5hrrFDA3V3f6kRiy/thsZ8/01Po2xgTuTuMRuuFXeSbtfnLCM++YQjl7fZG4MPlkGtClpzbAkMq3bxdeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721838361; c=relaxed/simple;
-	bh=AOGywo1iikFtBJXxpD5YsZIJ95hrAtPqukdcsVWqRio=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h4hAampvsuRhpzqFClQJxOG0JN6XIpriRqvTCTgMzwKhM+cG1r8cVc1rkxegH2/9jqMdtd8UoOXUHogL7W9Ct/wnzOBl8Q14cKHEyqNcjlQ6MenzSumIUZzGB0v/ei3M49ejw+xOAlHozhrGExts7Mx0VEjtP0S50+XPOHK+hDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=uEaY0P7x; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2cd2f89825fso7301a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 09:25:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1721838358; x=1722443158; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=47rZGXNA+VPEE0h3H688PSCY3FqtCg4+Z4f3yZO4MI8=;
-        b=uEaY0P7xKtxJv/2X5WVnb0r4cJo6uzU5SP2RS1RC5gJDKUjzYnzwcCROyUhdYpemlN
-         MHoLdgRA78Ouewg6F09kaWLVllomyAE0lYzHMSM9GfN1JxZFfIKF5/JV/BmxkaUItF9w
-         LWReSf5RfH8ZBSedO/xX/23U5SkdypbA3sXd1FPKDjz73Mrc7FMNQFzr33iobtbMOTdy
-         tP4w4OWQ2qtq4jex34B4KlkCCXhuSC22pk72qZZaoL4adJoTtAXmsXcZJMuzIInAKx3i
-         cwrmldhYINE+XEXfQhqWCLlrc40PD8ZpYAZEbxySh4YgYaOeOjanozPKCI1Hv+x+Uxea
-         HD2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721838358; x=1722443158;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=47rZGXNA+VPEE0h3H688PSCY3FqtCg4+Z4f3yZO4MI8=;
-        b=YILxLk4mM8uAAfoSYzvj6Q4H8Sy4s7u5UhXc3Rvo/BslVPegFFUXDvEW802TRMGXB1
-         POtp7JRsaAeS7ES1BqgqyzbNEJuSObyvoRbauXycHy6TvNyL1ArHN7JXj2WlAswe/ouj
-         n14Q/zA6Akp3xe5uN2cDxk0cf32GwxMiPgLra6kNcaLc4zm7soaAPuirgXnXFQkUXRTf
-         xBwxrf6qax6Hiy0v5VDaJxtL7idtIBUioJpVrcYy/CN3U3Mdr7VrfhaLIoNEQ22ukXzc
-         r92oVH67TjQN4WtAYsDyUfi3EXrF+6Dmu71ClVpEcfBVhUz/hc6iYTKMfIfSaZdVHB61
-         Z9PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUuwhAHF3NnwqLCnPwot/zlgvVgPgu2dLWNfdL7RVfsdb6Enl/FamLvNDdwETKPp0spuWTw09F4Q6ob0BClTC1fVzvRYbW/Wq6EK3kb
-X-Gm-Message-State: AOJu0Yw4i0J7YyvBlT+36fK3UySpTdy8YL44q5HlOXP2nl3zKTIb0H3r
-	I/o5CRgXR2EPB2IYRVj7b6tCtXehLUjsLZIADwXcdFdXY5U3Q/mdWFmytIk01T/gArMsIj8mOFS
-	X
-X-Google-Smtp-Source: AGHT+IG37fSFaVfTdXtnEFGMTuetughKI1Zmm7Q9idfHFeWury0GvTkEpAx1HaZz6lMROu30tv4oTg==
-X-Received: by 2002:a17:90b:388d:b0:2c9:7616:dec7 with SMTP id 98e67ed59e1d1-2cf23770687mr13999a91.6.1721838357984;
-        Wed, 24 Jul 2024 09:25:57 -0700 (PDT)
-Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb746f9a0sm1858462a91.38.2024.07.24.09.25.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 09:25:57 -0700 (PDT)
-Date: Wed, 24 Jul 2024 09:25:55 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: <jiang.kun2@zte.com.cn>
-Cc: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
- <pabeni@redhat.com>, <corbet@lwn.net>, <dsahern@kernel.org>,
- <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <fan.yu9@zte.com.cn>,
- <xu.xin16@zte.com.cn>, <zhang.yunkai@zte.com.cn>, <tu.qiang35@zte.com.cn>,
- <he.peilin@zte.com.cn>, <yang.yang29@zte.com.cn>
-Subject: Re: [PATCH] net: Provide sysctl to tune local port range to IANA  
- specification
-Message-ID: <20240724092555.3ecc2538@hermes.local>
-In-Reply-To: <202407241403542217WOxM8U3ABv-nWZT068xe@zte.com.cn>
-References: <202407241403542217WOxM8U3ABv-nWZT068xe@zte.com.cn>
+	s=arc-20240116; t=1721838401; c=relaxed/simple;
+	bh=gw5eNTpYyICyV2ZAaR6ILrhPsmOiUD9keu+vfCnHVug=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tOKA7jbH5tJsdpDT8SVKTLBRzaRvLjOg6eolvIB7i9wU5WQHVAT8z2c8+fEkOyhpx3feeyyCX+mrjeQae1sc3Ha7Bqgcw+ZJ5N01n8J0uGRRZwZzbipcZlzwHqfmim5cSTi1mHZo+pj7EPogj0MaWyLjbVE7Z9uS9ki7mR8iQ64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=bnhWfj/3; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721838373; x=1722443173; i=markus.elfring@web.de;
+	bh=jv050NYEaUlTQ0MHuhRqFv2sefEFwbh0qOm4pfChTRE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=bnhWfj/3KVRbHR6niYHkHEvsErhLh7JPjiIkuRox3UwXmQNBA87C+o+L///7WADb
+	 zrLZfhgi0XNUJTGJ6tgOu8TnIohotszL7SPYEn12LVMG6vLJ2Cfp4GJj+q8MS7rYJ
+	 Insyh46U8YHrpXM5hLFcyX+7jXjc8lgRSaOlgctOHOrmR7JRY21huJxdr0D1QEAz3
+	 w8RzChTo9cJUxSSZPoA/7dQwQQvfoDwT9IlRwV10MjeHItOGB0UzjzlsoJW7naNch
+	 /rfHHsEgEZCVmKpQrHPApf686YSBewdPBA4SPUZDNOUUp+MuydCLPkKEqU/dcEahk
+	 Hl1QKeBi5RbbmuFZ7A==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mmhjm-1rqPpr2PcU-00eQzD; Wed, 24
+ Jul 2024 18:26:13 +0200
+Message-ID: <09fe8c54-a936-4cf1-a252-211af58e6303@web.de>
+Date: Wed, 24 Jul 2024 18:26:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v4] tools/bpf: Fix the wrong format specifier
+To: Quentin Monnet <qmo@kernel.org>, Zhu Jun <zhujun2@cmss.chinamobile.com>,
+ bpf@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Eduard Zingerman
+ <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Yonghong Song <yonghong.song@linux.dev>
+References: <20240724111120.11625-1-zhujun2@cmss.chinamobile.com>
+ <8c33ec2d-0a92-4409-96b0-f492a57a77ce@web.de>
+ <db58f8bd-1ac6-45fc-a402-065d234d5161@kernel.org>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <db58f8bd-1ac6-45fc-a402-065d234d5161@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:I8QSY7VF+lj2VXhyO489fuNPCcy3Oo8CM+bAmUg7vWDN/SGxbv9
+ hYInnJic08rO0DKY98OPxQqiGuifi2+OLcUH33j3kbFHxzkZfC8WVKJ6KIuHCPkq1+Vu3TJ
+ iyCavUqnMv8TgmYLogr8Lw45BuAvvEdd3Lod0tNJLMvFDV9jxPJ+6a+LqOED5VK7Wiv6YFM
+ 8WOwVflwH7jizrksIk81g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:OWEhhC0IJ3Q=;kpdOQIYRSSUbsAvFSO5Mj/LIs6u
+ G2I+hNhuPvwq9dCWw+spdVkkN5NIh/HaVw21UCXxu5BlSpgsxs2u3sSnwg7TNG1fX1UHh+Wd7
+ GgdulsnYChGKWyY8EAa9Gh8Jl56nDMvFaZMBsN4+MZjJWETgW+e3rnzJsIb7C/5mzEw+93c1f
+ 7pIko2bDGG0ETys54AF/dCaZ5+X0g23XVHGZUyI7V1sL+XFG9oyzRtbIyMjTfUF5dvG+ODHKm
+ HQvezG9EfL7HgNZdkGLCs9si7zkiEFjVUjlbxjR8InFMdM9witQ6Pcsc9CW08cego+zVO/Jee
+ 8FtzEWKuEb+YUdRRlQX7d3yRqjjO1j0MX7JUiEN+JhuHK5VWUOtbX8J0PdK8TXZPBcNDF/WCo
+ 7kyB4JFY4Qvhv1zKjh5Coo3dHEaoY5+dDhTS2TJj2XYe6H7EY2eGgwT116KB1+MKl6FzGeX5H
+ KgeZuxGfoXLadt7z//p7SuQe3ISth3qswCTFz+QFes6cY1UKT1lKC5KXkbOdYmj/PEn3LJnNO
+ IkEGZln4Kbjyzp6B5p36faWkgqFaKljPiYmxpp/HHJM8MKfqAJYWNk2NaICZQQjs6tLjnT5bb
+ VlfIUdzuYEyyrHA67MrZfw9CEA3wouegGcuZQ+srWK2r/diBp9wmADp0YqyOkEDaIPT7dWrkv
+ eYNBXSYhyx5PrwUp4ZN7kAjgaoVEL1vODrfwKDZ4X9VT9JIl7NJ7X467NVFuEi+mPt3QXLpEG
+ FrYVGRdtR9sWj9GQVWGfealuWf8GMB0lqgvy2LvLoWms3EXR7Gqz2SjtvyFW7p2X10E/hPfeH
+ +OF7mphXWeTji8R+mSVbyrzw==
 
-On Wed, 24 Jul 2024 14:03:54 +0800 (CST)
-<jiang.kun2@zte.com.cn> wrote:
+>>> The format specifier of "unsigned int" in printf() should be "%u", not
+>>> "%d".
+>>
+>> * Please improve the change description with imperative wordings.
+>>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
+ee/Documentation/process/submitting-patches.rst?h=3Dv6.10#n94
+>
+> The wording is fine.
 
-> From: Fan Yu <fan.yu9@zte.com.cn>
-> 
-> The Importance of Following IANA Standards
-> ========================================
-> IANA specifies User ports as 1024-49151, and it just so happens
-> that my application uses port 33060 (reserved for MySQL Database Extended),
-> which conflicts with the Linux default dynamic port range (32768-60999)[1].
-> 
-> In fact, IANA assigns numbers in port range from 32768 to 49151,
-> which is uniformly accepted by the industry. To do this,
-> it is necessary for the kernel to follow the IANA specification.
-> 
-> Drawbacks of existing implementations
-> ========================================
-> In past discussions, follow the IANA specification by modifying the
-> system defaults has been discouraged, which would greatly affect
-> existing users[2].
-> 
-> Theoretically, this can be done by tuning net.ipv4.local_port_range,
-> but there are inconveniences such as:
-> (1) For cloud-native scenarios, each container is expected to follow
-> the IANA specification uniformly, so it is necessary to do sysctl
-> configuration in each container individually, which increases the user's
-> resource management costs.
-> (2) For new applications, since sysctl(net.ipv4.local_port_range) is
-> isolated across namespaces, the container cannot inherit the host's value,
-> so after startup, it remains at the kernel default value of 32768-60999,
-> which reduces the ease of use of the system.
-> 
-> Solution
-> ========================================
-> In order to maintain compatibility, we provide a sysctl interface in
-> host namespace, which makes it easy to tune local port range to
-> IANA specification.
-> 
-> When ip_local_port_range_use_iana=1, the local port range of all network
-> namespaces is tuned to IANA specification (49152-60999), and IANA
-> specification is also used for newly created network namespaces. Therefore,
-> each container does not need to do sysctl settings separately, which
-> improves the convenience of configuration.
-> When ip_local_port_range_use_iana=0, the local port range of all network
-> namespaces are tuned to the original kernel defaults (32768-60999).
-> For example:
-> 	# cat /proc/sys/net/ipv4/ip_local_port_range 
-> 	32768   60999
-> 	# echo 1 > /proc/sys/net/ipv4/ip_local_port_range_use_iana
-> 	# cat /proc/sys/net/ipv4/ip_local_port_range 
-> 	49152   60999
-> 
-> 	# unshare -n
-> 	# cat /proc/sys/net/ipv4/ip_local_port_range 
-> 	49152   60999
-> 
-> Notes
-> ========================================
-> The lower value(49152), consistent with IANA dynamic port lower limit.
-> The upper limit value(60999), which differs from the IANA dynamic upper
-> limit due to the fact that Linux will use 61000-65535 as masquarading/NAT,
-> but this does not conflict with the IANA specification[3].
-> 
-> Note that following the above specification reduces the number of ephemeral
-> ports by half, increasing the risk of port exhaustion[2].
-> 
-> [1]:https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.txt
-> [2]:https://lore.kernel.org/all/bf42f6fd-cd06-02d6-d7b6-233a0602c437@gmail.com/
-> [3]:https://lore.kernel.org/all/20070512210830.514c7709@the-village.bc.nu/
-> 
-> Co-developed-by: Kun Jiang <jiang.kun2@zte.com.cn>
-> Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
-> Signed-off-by: Kun Jiang <jiang.kun2@zte.com.cn>
-> Reviewed-by: xu xin <xu.xin16@zte.com.cn>
-> Reviewed-by: Yunkai Zhang <zhang.yunkai@zte.com.cn>
-> Reviewed-by: Qiang Tu <tu.qiang35@zte.com.cn>
-> Reviewed-by: Peilin He<he.peilin@zte.com.cn>
-> Cc: Yang Yang <yang.yang29@zte.com.cn>
-> ---
+I find it improvable.
 
-Yet another NAK
 
-Rather than buggy and verbose new sysctl, why not just allow setting
-the port range you want through existing sysctls?
+> The commit subject does use imperative.
 
-You can configure this through existing sysctl files and startup in your distro.
+Yes.
+
+The requirement for =E2=80=9Cimperative mood=E2=80=9D affects mostly the c=
+ommit message,
+doesn't it?
+
+
+>> =E2=80=A6
+>>> ---
+>>> Changes:
+>> =E2=80=A6
+>>> v4:
+>>> Thanks! But unsigned seems relevant here, =E2=80=A6
+>>
+>> Please adjust the representation of information from a patch review by =
+Quentin Monnet.
+>> https://lore.kernel.org/linux-kernel/2d6875dd-6050-4f57-9a6d-9168634aa6=
+c4@kernel.org/
+>> https://lkml.org/lkml/2024/7/24/378
+>
+>
+> I'm not sure what you mean here.
+
+Should quoted information be marked better anyhow in version descriptions?
+
+
+
+> I'm not sure what you mean here. This part won't be kept in the commit
+> description anyway.
+>
+> Zhu, for future patches I'd recommend keeping the history above the
+> comment delimiter (so that it makes it into the final patch description)=
+,
+=E2=80=A6
+
+Please reconsider such a suggestion once more.
+
+
+>> =E2=80=A6
+>>> +++ b/tools/bpf/bpftool/xlated_dumper.c
+>>> @@ -349,7 +349,7 @@ void dump_xlated_plain(struct dump_data *dd, void =
+*buf, unsigned int len,
+>>>
+>>>  		double_insn =3D insn[i].code =3D=3D (BPF_LD | BPF_IMM | BPF_DW);
+>>>
+>>> -		printf("% 4d: ", i);
+>>> +		printf("%4u: ", i);
+>>>  		print_bpf_insn(&cbs, insn + i, true);
+>> =E2=80=A6
+>>
+>> How do you think about to care more also for the return value from such=
+ a function call?
+>> https://wiki.sei.cmu.edu/confluence/display/c/ERR33-C.+Detect+and+handl=
+e+standard+library+errors
+>
+> Apologies, I'm afraid I don't understand what you're asking here, can
+> you please rephrase?
+
+Various source code analysis tools can point further programming concerns =
+out
+for some implementation details.
+https://cwe.mitre.org/data/definitions/252.html
+
+How will development interests evolve further?
+
+Regards,
+Markus
 
