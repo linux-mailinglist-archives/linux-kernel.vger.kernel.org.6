@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-261367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D641593B66B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:05:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7271F93B672
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:06:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 614DCB23851
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:05:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 034E1B2440E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 321491607A1;
-	Wed, 24 Jul 2024 18:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32C816DC0B;
+	Wed, 24 Jul 2024 18:05:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GI+afRb2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FMrFDwwf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC0915CD62;
-	Wed, 24 Jul 2024 18:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2745616D9A4;
+	Wed, 24 Jul 2024 18:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721844315; cv=none; b=d73nmoLIAteiwwcF4+xRkW7Y8Subd0x94fiJJ3KaXg1XBoZibV+UkofbZhGv9eg1+zMfyKfS4m8843U3QuOEKIE3jhhRj2yAj9lGXmha8EAIcz76QMdg6UiCaAKIXQHBUTSFEhsoy1zh1UeVDx1/qNEQ1f82y21zVhazslixw0E=
+	t=1721844327; cv=none; b=lomnBNUtccLtbE6lGp5ZNJMUj8/2/gFWy2Oqx8MJuiyffV7qHhtUjgXTy9gAHWjoLNsa5UPZc6llOKOqVKwYfcR2ao66mhcHwlpYrQ/by+MLkhzbJ/Ce+iXSY0REY42jteiBcoZRxs+M4VE/m2mft/MKz29qbEytIUtA25Desy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721844315; c=relaxed/simple;
-	bh=2R+HgnqbyVWT0FppJlvgkf85G43/EWzvledLcz5Q410=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q9U9lx89Bdw7xXQmeDeZeBHgkz0Z3xE+R21YDXF5fxvscLsdzj8O16Fec7r2erDSsb+N5QxOJT+amtFCMwVWPfnBLFhD+FSjgrue44LjP4Qqz7Nn2YRiWEOKGarhvQXX2CBd/O8/RVpPAUTFtBPxesjWhsGXmM/eXhEbygcFrWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GI+afRb2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 176BBC32781;
-	Wed, 24 Jul 2024 18:05:13 +0000 (UTC)
+	s=arc-20240116; t=1721844327; c=relaxed/simple;
+	bh=UdgZiT7A9il+QprsMyU3VdpT957eeuVrd1d0/Tm9wF0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Y4s61AQFMIbWs+CEyx9mAHEKeNNSwl+ljWouC8yvDjRrIKGHQKYrXZqlhU687rfRduOX0SbAZMZ21qzOfpfgDrcyA/sLc0riSKcG/FcSckmvd+3pekAJd1zxhDcI/AGSExv9so9TzN2WdSVKev0lXnRwxXHqWBMUPsT55S7JK54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FMrFDwwf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C40CC4AF13;
+	Wed, 24 Jul 2024 18:05:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721844315;
-	bh=2R+HgnqbyVWT0FppJlvgkf85G43/EWzvledLcz5Q410=;
-	h=From:To:Cc:Subject:Date:From;
-	b=GI+afRb2SOArOWiu5SYcNYtVU037R/Dfsz9MfHdiNUCIeQIJUvJOghT/92LUAA2HR
-	 6hl/itGE3ZrnhdysfXzfRSoAPj8K0susn7VI5A3Xhd8iTjtQKvCB7pSJ16aGth1fMp
-	 YEOdvjMvz8URkHus7SlqJrUI1Y63584xotP3hZJa1XaSfiku+V8WOghlGlkFhIGFqP
-	 ytjUSTL0smCfHMQ7flqlTnwB0jbnVzrJneJcPuOSd7fW2lSB0WpR0UQuclYAefTje3
-	 5mpWwBOMlqmF0KWqT7q92ZZTTPEkjaR/4rFX0un5KEJp2p6oicLel0V0yE/NVm/QTA
-	 o/6dBSmikN0DQ==
+	s=k20201202; t=1721844326;
+	bh=UdgZiT7A9il+QprsMyU3VdpT957eeuVrd1d0/Tm9wF0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=FMrFDwwfueGXFL0AwbTzF5YEujYk43UPNZACM5I5l3RC2BIo6FTHdXq0f5BuODj5F
+	 vmaI1o6jtACnkZKX9fzMOKWoiWvaetO7BBJeQJUzMzb8PBjRtuwk3V7dHHjJLzCBYt
+	 eiwitUECZw5rkLn8x7kjDrN0hCF3Nbn++wTze+4OSgqHuU04F4Hn7rdcTyQ932GyeM
+	 69T1K4TBuQMILd8cpLsC1fgVs5ubo32P/Hn+J59VnsWzjpmbxN9rNauvtWmvF8fhFh
+	 EsK7M9NHDpIz1Q95cgVGVmOWiNxe1L4Jg2fOaQFgjkikTt/4xGSUwZlT9j8Ug+qw0F
+	 XgZv/LJf6G1EA==
 From: Leon Romanovsky <leon@kernel.org>
 To: Christoph Hellwig <hch@lst.de>,
 	Robin Murphy <robin.murphy@arm.com>,
@@ -51,10 +52,12 @@ Cc: Leon Romanovsky <leonro@nvidia.com>,
 	iommu@lists.linux.dev,
 	Jason Gunthorpe <jgg@nvidia.com>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH v4 0/2] DMA IOMMU static calls
-Date: Wed, 24 Jul 2024 21:04:47 +0300
-Message-ID: <cover.1721818168.git.leon@kernel.org>
+Subject: [PATCH v4 1/2] dma: call unconditionally to unmap_page and unmap_sg callbacks
+Date: Wed, 24 Jul 2024 21:04:48 +0300
+Message-ID: <595d2716d252cac013a650bb3a94555ddb0d1d43.1721818168.git.leon@kernel.org>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <cover.1721818168.git.leon@kernel.org>
+References: <cover.1721818168.git.leon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,46 +66,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Changelog:
-v4:
- * Added extra hidden config option to build ops_helper.c without CONFIG_DMA_OPS
- * Tried to keep dma-iommu.c function declaration style.
- * Removed "select DMA_OPS" from intel iommu kconfig. It is not needed.
-v3: https://lore.kernel.org/all/cover.1721547902.git.leon@kernel.org/
- * Changed coding style as Christoph asked
- * Moved debug WARN_ON check to dma_set_mask.
- * Slightly updated commit messages
- * Added Greg to the CC list
-v2: https://lore.kernel.org/all/cover.1721219730.git.leon@kernel.org/
- * Ditched dma_ops flag in favor of field in struct device (suggested by
-   Christoph)
- * Removed CONFIG_DMA_OPS select from dma-iommu.c Kconfig
- * Removed flags field which exist only in default IOMMU
-v1: https://lore.kernel.org/all/cover.1721041611.git.leon@kernel.org/
- * Dropped extra layer and called directly to iommu_dma_* functions
- * Added unmap_page and unmap_sg to dummy ops
- * Converted all dma-mapping calls to use iommu directly
- * Updated commit messages
-v0: https://lore.kernel.org/all/98d1821780028434ff55b5d2f1feea287409fbc4.1720693745.git.leon@kernel.org/
+From: Leon Romanovsky <leonro@nvidia.com>
 
-Leon Romanovsky (2):
-  dma: call unconditionally to unmap_page and unmap_sg callbacks
-  dma: add IOMMU static calls with clear default ops
+Almost all users of ->map_page()/map_sg() callbacks implement
+->unmap_page()/unmap_sg() callbacks too. One user which doesn't do it,
+is dummy DMA ops interface, and the use of this interface is to fail
+the operation and in such case, there won't be any call to
+->unmap_page()/unmap_sg().
 
- MAINTAINERS                 |   1 +
- drivers/iommu/Kconfig       |   2 +-
- drivers/iommu/dma-iommu.c   | 121 ++++++++++----------------
- drivers/iommu/intel/Kconfig |   1 -
- include/linux/device.h      |   5 ++
- include/linux/dma-map-ops.h |  39 +++++----
- include/linux/iommu-dma.h   | 169 ++++++++++++++++++++++++++++++++++++
- kernel/dma/Kconfig          |   6 ++
- kernel/dma/Makefile         |   2 +-
- kernel/dma/dummy.c          |  21 +++++
- kernel/dma/mapping.c        |  90 ++++++++++++++++---
- 11 files changed, 348 insertions(+), 109 deletions(-)
- create mode 100644 include/linux/iommu-dma.h
+This patch removes the existence checks of ->unmap_page()/unmap_sg()
+and calls to it directly to create symmetrical interface to
+->map_page()/map_sg().
 
+Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+---
+ kernel/dma/dummy.c   | 21 +++++++++++++++++++++
+ kernel/dma/mapping.c |  4 ++--
+ 2 files changed, 23 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/dma/dummy.c b/kernel/dma/dummy.c
+index b492d59ac77e..92de80e5b057 100644
+--- a/kernel/dma/dummy.c
++++ b/kernel/dma/dummy.c
+@@ -17,6 +17,15 @@ static dma_addr_t dma_dummy_map_page(struct device *dev, struct page *page,
+ {
+ 	return DMA_MAPPING_ERROR;
+ }
++static void dma_dummy_unmap_page(struct device *dev, dma_addr_t dma_handle,
++		size_t size, enum dma_data_direction dir, unsigned long attrs)
++{
++	/*
++	 * Dummy ops doesn't support map_page, so unmap_page should never be
++	 * called.
++	 */
++	WARN_ON_ONCE(true);
++}
+ 
+ static int dma_dummy_map_sg(struct device *dev, struct scatterlist *sgl,
+ 		int nelems, enum dma_data_direction dir,
+@@ -25,6 +34,16 @@ static int dma_dummy_map_sg(struct device *dev, struct scatterlist *sgl,
+ 	return -EINVAL;
+ }
+ 
++static void dma_dummy_unmap_sg(struct device *dev, struct scatterlist *sgl,
++		int nelems, enum dma_data_direction dir,
++		unsigned long attrs)
++{
++	/*
++	 * Dummy ops doesn't support map_sg, so unmap_sg should never be called.
++	 */
++	WARN_ON_ONCE(true);
++}
++
+ static int dma_dummy_supported(struct device *hwdev, u64 mask)
+ {
+ 	return 0;
+@@ -33,6 +52,8 @@ static int dma_dummy_supported(struct device *hwdev, u64 mask)
+ const struct dma_map_ops dma_dummy_ops = {
+ 	.mmap                   = dma_dummy_mmap,
+ 	.map_page               = dma_dummy_map_page,
++	.unmap_page             = dma_dummy_unmap_page,
+ 	.map_sg                 = dma_dummy_map_sg,
++	.unmap_sg               = dma_dummy_unmap_sg,
+ 	.dma_supported          = dma_dummy_supported,
+ };
+diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+index 81de84318ccc..6832fd6f0796 100644
+--- a/kernel/dma/mapping.c
++++ b/kernel/dma/mapping.c
+@@ -177,7 +177,7 @@ void dma_unmap_page_attrs(struct device *dev, dma_addr_t addr, size_t size,
+ 	if (dma_map_direct(dev, ops) ||
+ 	    arch_dma_unmap_page_direct(dev, addr + size))
+ 		dma_direct_unmap_page(dev, addr, size, dir, attrs);
+-	else if (ops->unmap_page)
++	else
+ 		ops->unmap_page(dev, addr, size, dir, attrs);
+ 	debug_dma_unmap_page(dev, addr, size, dir);
+ }
+@@ -291,7 +291,7 @@ void dma_unmap_sg_attrs(struct device *dev, struct scatterlist *sg,
+ 	if (dma_map_direct(dev, ops) ||
+ 	    arch_dma_unmap_sg_direct(dev, sg, nents))
+ 		dma_direct_unmap_sg(dev, sg, nents, dir, attrs);
+-	else if (ops->unmap_sg)
++	else
+ 		ops->unmap_sg(dev, sg, nents, dir, attrs);
+ }
+ EXPORT_SYMBOL(dma_unmap_sg_attrs);
 -- 
 2.45.2
 
