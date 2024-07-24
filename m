@@ -1,139 +1,126 @@
-Return-Path: <linux-kernel+bounces-261306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77DF293B582
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:04:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8259193B585
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 206891F24331
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:04:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B53E1F232E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0325315ECE6;
-	Wed, 24 Jul 2024 17:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E530415EFBF;
+	Wed, 24 Jul 2024 17:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IvUd741z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZTdDl021"
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47BDD282FA
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 17:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C8315CD49
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 17:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721840636; cv=none; b=hzBo38Zh0V2jhXxpJPSUL/9b0vDhT7Q2WxYxFWI5fPT2HwWUiS6i5ujt7OOzNxoxAod0uO7EUmyKUAd0bmJ/QK4tI4s+Cb4Ye8GsmV865ikTor7bxIMFlXOgOaaqDR9AywTtUBqH5DGdkClQcKxZsOCmh0uUxW6YNKx8CwhwYA0=
+	t=1721840705; cv=none; b=u3vTq//QMKiI6UtCWrhRUTbtL6AWt5k3jNUsilldgrquu7PKZ5d6330DJa6KJSq28G59tTQ0vxYf/DW7HZtZowaI2N4hii7LBOxafDtTjDcg4hb6UHAUMtNaAb3TvdYusNk74cX0RFqwX1RMvJi89kUiHK79PUQVx3miQSpIay8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721840636; c=relaxed/simple;
-	bh=smkGN635WhWDUOwM+//l44ZCUmX0jZ/3ahNcGTJchAs=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=LfDRUYmFRmkoy+Gwg4M5pMA//kDUO+Oi0RHH3AhDOM3VXXjZYbC73J10L06ee0fh2g+Zf51ixSepfY0Vl3vFYswSPtGsbBOfviMcCM6Pf3GhKPornp923n2d0MuHanMrdH5CuXB5FCUOkF2PgkwGCOmEfv4d7n0PLunYj32DqIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IvUd741z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDADBC32786;
-	Wed, 24 Jul 2024 17:03:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721840635;
-	bh=smkGN635WhWDUOwM+//l44ZCUmX0jZ/3ahNcGTJchAs=;
-	h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
-	b=IvUd741z876Cjp69kwtWot0fHuqsFZwvfkzmQXszddBJN3jNTd5BYvVFnbcoscL3h
-	 Itekye0Lfan4nV1Rz+dM4VLBM7s24V1lFhxbS3R1C5ALEsm8X92c7J++1ESf1QV+GE
-	 5us4Gkl1fpbGg01nQHrCuLo7JoWugR/ty4sxu+CWLhIFD4a6EOOBVvdimPHeUT+KJH
-	 StRC5PMVrRxb0VbO5bp8cfkjW0/v8/WqzffnA+QchxO13CoXrZFQhyNDIYd/YMPEWM
-	 qIMOX/xiHXI7DESPAxwocg/Cc5aC4/CtFbdCkn7VkDKaMzVVJJGE0j4usSs3I5/Ces
-	 P1DuUJOFBebKw==
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 6A9091200043;
-	Wed, 24 Jul 2024 13:03:52 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Wed, 24 Jul 2024 13:03:52 -0400
-X-ME-Sender: <xms:-DOhZlXdD4KSkzIdhQE_68_ZlB-lSID9qiSDn8HXv2oQBfDvCqBFFA>
-    <xme:-DOhZlm37amT2PlhDp7O_uMMhYV4geJ8IZmp3YzVFN8ZBJwY7pZ7ARfYdAk3XX3tB
-    s0Y46am69lwWnuFusk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddriedugddutdekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusehkvghrnhgvlhdrohhrgheqnecuggftrf
-    grthhtvghrnhepvdeviefgtedugeevieelvdfgveeuvdfgteegfeeiieejjeffgeeghedu
-    gedtveehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    eprghrnhguodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduvdekhedujedt
-    vdegqddvkeejtddtvdeigedqrghrnhgupeepkhgvrhhnvghlrdhorhhgsegrrhhnuggsrd
-    guvgdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:-DOhZhZfXRiEZmmtGYsQI6F4pxzWE0cVfDERbRYIaqSjeA4JZB48gg>
-    <xmx:-DOhZoWsWkTgZveXy1bV01g0rtDmfbO-KW2ZoibaRFUSGaeOMmOGRw>
-    <xmx:-DOhZvm2ei5XJMb5h6NRCZDLLyFnFL7NB7dWt4dJcvA8FX3oSFrjiQ>
-    <xmx:-DOhZlc6Fic4-mMgGXWWhUDhIC-3UI-_tkmvTrmEs3TzLBkNTRuRMQ>
-    <xmx:-DOhZpGSskkWLkqzxL5wcndF5hxkvQ5IJhLyJXC9C21AeCqt3AnJCU_z>
-Feedback-ID: i36794607:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 2B4A6B60093; Wed, 24 Jul 2024 13:03:52 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-582-g5a02f8850-fm-20240719.002-g5a02f885
+	s=arc-20240116; t=1721840705; c=relaxed/simple;
+	bh=2Bz9LEUG5IRIBnqaD+mw+y/DTHSwXPPuolZ57c8CUOs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JAclyO/uT9AmBFinVbKU6ykV6yeo2wUSp/Q79blMHA8YgePPyYkDxRunW5veNZ5Px/MnWJT2run4cZzuRHr4eeYplCk7gHzwDPWiEywt/icpm7JyT9C51sU763ZShmYU/Jhk5bec1K1nIVAWS5JM0TWosXi/nZIQalmucAnBhEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZTdDl021; arc=none smtp.client-ip=209.85.167.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oi1-f177.google.com with SMTP id 5614622812f47-3d9db222782so16668b6e.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 10:05:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721840703; x=1722445503; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2Bz9LEUG5IRIBnqaD+mw+y/DTHSwXPPuolZ57c8CUOs=;
+        b=ZTdDl0218icOzhXRxV8PNDcWewDcWDJg/7il0MJhV1wyoQFYzwubnpxXYSpPN7wLHK
+         lGRJflvoiynVCfiEXmhbWj3UGmPXd4sKCjfSDUDvLoGklojFsfYWulGVqKbN2eoJ1XE5
+         vrtayUVzRaAx199NcSPQJvC76x9UbDxEeyN5BvOpBx57vCCv0yBjUM3cyQlKDmMQ2UdX
+         jhn78hxdiJHy6sY0iRFa9P3T2za4KzTm8/YWIt4i+1MIzX0bRIzVi/Vj5qbLVOppapDp
+         uD1Pm49HmdFh2YfLkxnZwAgOgnSjEy3qaZEZK+N9aC3Kaaf35Yy50r/bpYZwfk4xKH0S
+         A6sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721840703; x=1722445503;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2Bz9LEUG5IRIBnqaD+mw+y/DTHSwXPPuolZ57c8CUOs=;
+        b=nk5CF6pAigy3rAA3trWMYQ7Ti1ysWeqAeO9KwF9AuRi2JYcwXEAZamxMoGIk6j42z8
+         299wPiViVdlWTuE6gRN20lO2s4imGAA7cnsAXExzfWBYqkJG6R9SvSnxPytu/3LCRWWp
+         +ITlHdXwCnwulVB+i8M6or1lCwAbAt2afueFmLQ5t/XyA+aS4dhLdD0HjijX/6kfLh0d
+         snv1g4JoudFjXEaSV3ND7TGEe07LnTe59ORTmhtm4zJ4Gt7fANIN7eAAcAH7DCRHiP4Z
+         0LrrjgOT3UNFg5ZseboOrPExb64XKetqCKvU7vCDPfRDQN9X1IjHUDyLK4XPRu+26nmg
+         AVfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQJmv2UFxNXhqmT0l58jCP60OyeYQwGZ+yJBNnIYR/HtwRWAJHEd1Yz817IMOVD6Yv5ncH3gOd2+kNQfLecMJUSPA6XOsLYVhdPNPK
+X-Gm-Message-State: AOJu0YzU7yrOyMK0y7U0yGcxRu1n7RrN/QBehnZyAdy1mkPUaA0ZUn2F
+	a0mrVR2yp09NoEDEapA9Q+1YiaCAmnQQ7EycpxwvPOfObKxKNqNNsKAbY2RAJN5DRGEPBSLzOha
+	5NUjPmkX7KyD+8uTqPTW7omIdxGAwsRPnvv47
+X-Google-Smtp-Source: AGHT+IH5qu5Pd8+Wc1JJyMKIDTSnImI5ORd+5pnxuYabMb0yDNFZtWUMGOB1Qib+k8k3GVaD7dTdh2/YBJzda258UN4=
+X-Received: by 2002:a05:6830:6005:b0:703:67f8:9b3b with SMTP id
+ 46e09a7af769-7092e77b710mr418087a34.30.1721840702560; Wed, 24 Jul 2024
+ 10:05:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <1bb3d09c-3b34-4348-8d6f-bd867704625c@app.fastmail.com>
-In-Reply-To: <3484b7fcd2c74655bd685e5a7030c284@AcuMS.aculab.com>
-References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
- <3484b7fcd2c74655bd685e5a7030c284@AcuMS.aculab.com>
-Date: Wed, 24 Jul 2024 19:03:31 +0200
-From: "Arnd Bergmann" <arnd@kernel.org>
-To: "David Laight" <David.Laight@aculab.com>,
- "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
- "Linus Torvalds" <torvalds@linuxfoundation.org>
-Cc: "Matthew Wilcox" <willy@infradead.org>,
- "Christoph Hellwig" <hch@infradead.org>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- "Dan Carpenter" <dan.carpenter@linaro.org>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- "'pedro.falcato@gmail.com'" <pedro.falcato@gmail.com>,
- "Mateusz Guzik" <mjguzik@gmail.com>,
- "'linux-mm@kvack.org'" <linux-mm@kvack.org>
-Subject: Re: [PATCH 7/7] minmax: minmax: Add __types_ok3() and optimise defines with 3
- arguments
-Content-Type: text/plain
+References: <20240705111455.142790-1-nmi@metaspace.dk> <ZoxdRjpy2hRndqmc@bombadil.infradead.org>
+ <CANiq72=VU+PHfkiq8HokfeCEKvQoeBiUaB76XbW6s3f2zYmEtA@mail.gmail.com> <ZplNxxXS3RLULeI6@bombadil.infradead.org>
+In-Reply-To: <ZplNxxXS3RLULeI6@bombadil.infradead.org>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Wed, 24 Jul 2024 17:04:25 +0000
+Message-ID: <CABCJKud=dfBKaCSqW2NbDCiN=EX0hGxkZ7H+dCd5mK_9NbwBVw@mail.gmail.com>
+Subject: Re: [PATCH] rust: add `module_params` macro
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
+	Kris Van Hees <kris.van.hees@oracle.com>, Andreas Hindborg <nmi@metaspace.dk>, 
+	Miguel Ojeda <ojeda@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Adam Bratschi-Kaye <ark.email@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 24, 2024, at 16:33, David Laight wrote:
-> min3() and max3() were added to optimise nested min(x, min(y, z))
-> sequences, bit only moved where the expansion was requiested.
+Hi Luis,
+
+On Thu, Jul 18, 2024 at 5:15=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.org=
+> wrote:
 >
-> Add a separate implementation for 3 argument calls.
-> These are never required to generate constant expressiions to
-> remove that logic.
+> On Tue, Jul 09, 2024 at 12:08:16PM +0200, Miguel Ojeda wrote:
+> > On Mon, Jul 8, 2024 at 11:42=E2=80=AFPM Luis Chamberlain <mcgrof@kernel=
+.org> wrote:
+> > >
+> > > The rationale here is that a rust binding means commitment then also
+> > > from fresh blood to help co-maintain review C / Rust for exising code
+> > > when there is will / desire to collaborate from an existing C maintai=
+ner.
+> > >
+> > > I realize this may be a lot to ask, but I think this is one of the
+> > > responsible ways to ask to scale here.
+> >
+> > But, yes, I think Rust is a great opportunity to get new
+> > co-maintainers, as well as getting new developers involved with kernel
+> > maintenance in general, which could help with other issues too.
 >
-> Signed-off-by: David Laight <david.laight@aculab.com>
+> Great well then my preference is to not have Rust bindings for modules
+> unless the Rust community can commit to not only a co-maintianer for
+> both C And Rust but also commit to not ditching the role; if a C/Rust
+> co-maintainer gets hits by a bus the Rust community would strive to
+> look for someone else to step in. This would proactively help with
+> upstream responsibilities understood by companies who hire developers
+> in this context. It is why I brought up Andreas's work, I already know
+> he has a lot of work to do and responsibilities. If not Andreas, who else
+> can step up to help with this, Sami?
 
-This brings another 3x improvement in the size of the expansion
-and build speed.
+I agree, having a co-maintainer from the Rust community sounds like a
+good idea. It would be great if someone actually working on the
+bindings could step up, but if there are no other volunteers, I can
+certainly help with this.
 
-> +#define __cmp_once3(op, x, y, z, uniq) ({	\
-> +	typeof(x) __x_##uniq = (x);		\
-> +	typeof(x) __y_##uniq = (y);		\
-> +	typeof(x) __z_##uniq = (z);		\
-> +	__cmp(op, __cmp(op, __x_##uniq, __y_##uniq), __z_##uniq); })
-
-This still has a nested call to __cmp(), which makes the
-resulting expression bigger than necessary.
-
-The three typeof(x) should be x/y/z, right? Using __auto_type
-would avoid the bug and also remove one more variable expansion.
-
-Using another temporary variable, plus the use of __auto_type
-brings the example line from xen/setup.c down 750KB to 530KB,
-and the compile speed from 0.5s to 0.34s. 
-
- #define __cmp_once3(op, x, y, z, uniq) ({      \
-       __auto_type __x_##uniq = (x);           \
-       __auto_type __y_##uniq = (y);           \
-       __auto_type __z_##uniq = (z);           \
-       __auto_type __xy##uniq = __cmp(op, __x_##uniq, __y_##uniq); \
-       __cmp(op, __xy_##uniq, __z_##uniq); })
-
-The __auto_type change can also be applied to the other typeof()
-in this file.
-
-      Arnd
+Sami
 
