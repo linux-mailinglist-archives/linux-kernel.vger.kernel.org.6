@@ -1,296 +1,132 @@
-Return-Path: <linux-kernel+bounces-260652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1584893AC73
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:08:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D088E93AC8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:26:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1940284BF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 06:08:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C3711C20CD6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 06:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486024D8CC;
-	Wed, 24 Jul 2024 06:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78C95025E;
+	Wed, 24 Jul 2024 06:25:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="Jv+PLl69"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="0guTbQLD"
+Received: from out187-4.us.a.mail.aliyun.com (out187-4.us.a.mail.aliyun.com [47.90.187.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B68481A3;
-	Wed, 24 Jul 2024 06:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74B74C84;
+	Wed, 24 Jul 2024 06:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.187.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721801283; cv=none; b=lLoRD9OBlba++aiEBVB4voYU2g4lxfxuAhDgzjuJL6ApY0vqYRADO+IiomEKi9S0VWq7r2Ji0eTqO1hOD4Z42OEeIdlijsCghdlx65pC9+xEpgtnBbI8EQGYrYxI46r6H/+/+lHUQHO9kjNFUaeA84YSEG90UkJeeJIECA8HBEU=
+	t=1721802353; cv=none; b=don7WDJaR5wAstoY7eWlIwd3RiFV8HWvUl76CyZpxa2A8jte427TUmDHLFraooE54oe5B+wOukFBdTIp7dolkD13yl5fyEFez9MsdB0u1ByBWINScF8IjNTHYoNuu5eswPShGBo96OZQ3SY9+oPdo0+Zd+t0TXak4gkNkbZGRAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721801283; c=relaxed/simple;
-	bh=jInSfdolrSb6rZZTNpR8KYUxyhXwMQW98qG0aYlhT7k=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=plRYqaDL29hjmmyURAyrXthW95p96OfW+Q1STcrA+ln/LI7N1wVjG+cfcqpU/v3H0reF55kNzrrTrUXo3Bs2LJOdJKn7v3JhlMTvrwn7TBQKX9BWO2S0LmN4JUb386E5nlKP8PDn6cuKQ5tF+qDvsXQTBm+65DVxISlZLwFEvBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=Jv+PLl69; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1721802353; c=relaxed/simple;
+	bh=hM9w8SezAnui1RmVH6Fm3NjhI5mjQfCG1KwAqH9KXjM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YHN+ByhsD4/hC2NP4BVsV3IYp9EAtj5eK6/aGcfvmWjV9mBGJrJKIaHohqXo6VOP08a5EEHp8CnxRyQlFjxfrlpy+msgCmCtZQzis+vdmgT0nbY+JZqMnIVeThgqZhSvjzOQIurkPbGGy/JcsSSpvHfynR8ZX0xWqVbL6+KYmmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=0guTbQLD; arc=none smtp.client-ip=47.90.187.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=antgroup.com; s=default;
+	t=1721802336; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=g2XFTRo1bTmgM7OhMstauV8A4SmolnQq/s7DX8E6yec=;
+	b=0guTbQLDhT1MFWw/dJZaIBa8iZ+ayItodXs1kPysFgkWNa06O+3rgOIYQCzFGsXOK7M/O8RHMSpb63S6lA6sVpQxd/JX7ug9n0vQ/0GvSnc4t7AvOjo7nCz/R3tuzSNDAbS89EiqX4BpA7yH8zxddxE2Chb4H+5Ts/pFF4wBspo=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R101e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033070021165;MF=houwenlong.hwl@antgroup.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---.YY3arCD_1721801398;
+Received: from localhost(mailfrom:houwenlong.hwl@antgroup.com fp:SMTPD_---.YY3arCD_1721801398)
+          by smtp.aliyun-inc.com;
+          Wed, 24 Jul 2024 14:09:59 +0800
+Date: Wed, 24 Jul 2024 14:09:58 +0800
+From: "Hou Wenlong" <houwenlong.hwl@antgroup.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jim Mattson <jmattson@google.com>
+Subject: Re: [PATCH] KVM: nVMX: Honor userspace MSR filter lists for nested
+ VM-Enter/VM-Exit
+Message-ID: <20240724060958.GA109293@k08j02272.eu95sqa>
+References: <20240722235922.3351122-1-seanjc@google.com>
+ <20240723132004.GA67088@k08j02272.eu95sqa>
+ <Zp-8o7dGivU_ek86@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1721801277;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XyjInt3tUidOyksxXpHHpDTL3zQ9fivow6y7hPi+Pno=;
-	b=Jv+PLl69onj6PsmLDv9OGGgcsJIk6CcGUDtFNWwsNxrClYC0BX/MWOSwjKLN03FhPovzcy
-	yVoxU/Vn7jROb7vesIgxuN+llQ6MX0Jwf3dXSWsn7vtKWjynEqa32D05UMD7IzDv1IpAEz
-	QSg93FKdkm7Xo66nuxpChrdZXBYH/d3j8c4WU+/Xeib38kannBWEbVTKWLxHOZkiS8etT6
-	Mm37bq289hYMKCgObh8hMcy0lrdVMW7IANkJBOoVyKZF/Mad9vKtCrOFBLDTk6T+C0e/TJ
-	hiHlDHfS2xSH2+DzHl25RP0UQpGkrRwbnoyNbIKuH8NV/dNnlGSSu6OCHdZjeQ==
-Date: Wed, 24 Jul 2024 08:07:51 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Diederik de Haas <didi.debian@cknow.org>
-Cc: Chen-Yu Tsai <wens@kernel.org>, Daniel Golle <daniel@makrotopia.org>,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-kernel@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
- Martin Kaiser <martin@kaiser.cx>, Sascha Hauer <s.hauer@pengutronix.de>,
- Sebastian Reichel <sebastian.reichel@collabora.com>, Ard Biesheuvel
- <ardb@kernel.org>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@debian.org>,
- devicetree@vger.kernel.org, linux-crypto@vger.kernel.org, Philipp Zabel
- <p.zabel@pengutronix.de>, Olivia Mackall <olivia@selenic.com>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Aurelien Jarno <aurelien@aurel32.net>, Heiko
- Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
-In-Reply-To: <4406786.zLnsZ2vfAB@bagend>
-References: <cover.1720969799.git.daniel@makrotopia.org>
- <3190961.CRkYR5qTbq@bagend>
- <CAGb2v64Dx7XaJOu0HHzFxYYY2ddUZao5Tar8-s1R_miVZqWcXA@mail.gmail.com>
- <4406786.zLnsZ2vfAB@bagend>
-Message-ID: <faa0baebabd3c31adf1afa7efbbdf608@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zp-8o7dGivU_ek86@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-Hello Diederik and Chen-Yu,
+On Tue, Jul 23, 2024 at 10:23:37PM +0800, Sean Christopherson wrote:
+> On Tue, Jul 23, 2024, Hou Wenlong wrote:
+> > On Tue, Jul 23, 2024 at 07:59:22AM +0800, Sean Christopherson wrote:
+> > > ---
+> > > 
+> > > I found this by inspection when backporting Hou's change to an internal kernel.
+> > > I don't love piggybacking Intel's "you can't touch these special MSRs" behavior,
+> > > but ignoring the userspace MSR filters is far worse IMO.  E.g. if userspace is
+> > > denying access to an MSR in order to reduce KVM's attack surface, letting L1
+> > > sneak in reads/writes through VM-Enter/VM-Exit completely circumvents the
+> > > filters.
+> > > 
+> > >  Documentation/virt/kvm/api.rst  | 19 ++++++++++++++++---
+> > >  arch/x86/include/asm/kvm_host.h |  2 ++
+> > >  arch/x86/kvm/vmx/nested.c       | 12 ++++++------
+> > >  arch/x86/kvm/x86.c              |  6 ++++--
+> > >  4 files changed, 28 insertions(+), 11 deletions(-)
+> > > 
+> > > diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+> > > index 8e5dad80b337..e6b1e42186f3 100644
+> > > --- a/Documentation/virt/kvm/api.rst
+> > > +++ b/Documentation/virt/kvm/api.rst
+> > > @@ -4226,9 +4226,22 @@ filtering. In that mode, ``KVM_MSR_FILTER_DEFAULT_DENY`` is invalid and causes
+> > >  an error.
+> > >  
+> > >  .. warning::
+> > > -   MSR accesses as part of nested VM-Enter/VM-Exit are not filtered.
+> > > -   This includes both writes to individual VMCS fields and reads/writes
+> > > -   through the MSR lists pointed to by the VMCS.
+> > > +   MSR accesses that are side effects of instruction execution (emulated or
+> > > +   native) are not filtered as hardware does not honor MSR bitmaps outside of
+> > > +   RDMSR and WRMSR, and KVM mimics that behavior when emulating instructions
+> > > +   to avoid pointless divergence from hardware.  E.g. RDPID reads MSR_TSC_AUX,
+> > > +   SYSENTER reads the SYSENTER MSRs, etc.
+> > > +
+> > > +   MSRs that are loaded/stored via dedicated VMCS fields are not filtered as
+> > > +   part of VM-Enter/VM-Exit emulation.
+> > > +
+> > > +   MSRs that are loaded/store via VMX's load/store lists _are_ filtered as part
+> > > +   of VM-Enter/VM-Exit emulation.  If an MSR access is denied on VM-Enter, KVM
+> > > +   synthesizes a consistency check VM-Exit(EXIT_REASON_MSR_LOAD_FAIL).  If an
+> > > +   MSR access is denied on VM-Exit, KVM synthesizes a VM-Abort.  In short, KVM
+> > > +   extends Intel's architectural list of MSRs that cannot be loaded/saved via
+> > > +   the VM-Enter/VM-Exit MSR list.  It is platform owner's responsibility to
+> > > +   to communicate any such restrictions to their end users.
+> > >
+> > Do we also need to modify the statement before this warning?
+> 
+> Yeah, that's a good idea.
+> 
+> While you're here, did you have a use case that is/was affected by the current
+> VM-Enter/VM-Exit vs. MSR filtering behavior?
+>
+Uh, nested virtualization is not usually used in our enviroment and I
+didn't test it with MSR filtering before. I found a conflict between MSR
+filtering and RDPID instruction emulation when testing the x86 emulator
+for PVM, so I sent this patch. At that time, I was thinking that the
+state transitions (including VM-Enter/VM-Exit) would also be affected by
+MSR filtering, so I mentioned it in the commit message.
 
-On 2024-07-22 21:03, Diederik de Haas wrote:
-> On Monday, 22 July 2024 19:57:05 CEST Chen-Yu Tsai wrote:
->> On Wed, Jul 17, 2024 at 12:54 AM Diederik de Haas 
->> <didi.debian@cknow.org>
-> wrote:
->> > On Tuesday, 16 July 2024 17:18:48 CEST Chen-Yu Tsai wrote:
->> > > On Jul 16, 2024 at 10:13 PM Diederik de Haas <didi.debian@cknow.org>
-> wrote:
->> > > > On Tuesday, 16 July 2024 15:59:40 CEST Diederik de Haas wrote:
->> > > > > For shits and giggles, I tried it on my PineTab2 too (also rk3566):
->> > > > >
->> > > > > ===========================================================
->> > > > > root@pinetab2:~# uname -a
->> > > > > Linux pinetab2 6.10+unreleased-arm64 #1 SMP Debian 6.10-1~cknow
->> > > > > (2024-04-24) aarch64 GNU/Linux
->> > > > >
->> > > > > root@pinetab2:~# dd if=/dev/hwrng bs=100000 count=1 > /dev/null
->> > > > > 1+0 records in
->> > > > > 1+0 records out
->> > > > > 100000 bytes (100 kB, 98 KiB) copied, 5,69533 s, 17,6 kB/s
->> > > > >
->> > > > > root@plebian-pinetab2:~# cat /dev/hwrng | rngtest -c 1000
->> > > > > rngtest 5
->> > > > > ...
->> > > > > rngtest: starting FIPS tests...
->> > > > > rngtest: bits received from input: 20000032
->> > > > > rngtest: FIPS 140-2 successes: 730
->> > > > > rngtest: FIPS 140-2 failures: 270
->> > > > > ===========================================================
->> > > > >
->> > > > > That's looking quite a lot better ... and I have no idea why.
->> > > > >
->> > > > > The Q64-A is used as headless server and the PineTab2 is not,
->> > > > > but I connected to both over SSH and they were freshly booted
->> > > > > into, thus I haven't actually/normally used the PT2 since boot.
->> > > >
->> > > > I did freshly install rng-tools5 package before running the test, so
->> > > > I rebooted again to make sure that wasn't a factor:
->> > > >
->> > > > ===========================================================
->> > > > root@pinetab2:~# cat /dev/hwrng | rngtest -c 1000
->> > > > rngtest 5
->> > > > ...
->> > > > rngtest: starting FIPS tests...
->> > > > rngtest: bits received from input: 20000032
->> > > > rngtest: FIPS 140-2 successes: 704
->> > > > rngtest: FIPS 140-2 failures: 296
->> > > > ===========================================================
->> > > >
->> > > > So that 704/296 vs 730/270 in the previous run on the PT2.
->> > > >
->> > > On my Rock 3A:
->> > >
->> > > wens@rock-3a:~$ sudo cat /dev/hwrng | rngtest -c 1000
->> > > rngtest 5
->> > > ...
->> > > rngtest: starting FIPS tests...
->> > > rngtest: bits received from input: 20000032
->> > > rngtest: FIPS 140-2 successes: 992
->> > > rngtest: FIPS 140-2 failures: 8
->> > >
->> > > wens@rock-3a:~$ uname -a
->> > > Linux rock-3a 6.10.0-rc7-next-20240712-12899-g7df602fe7c8b #9 SMP Mon
->> > > Jul 15 00:39:32 CST 2024 aarch64 GNU/Linux
->> >
->> > I wondered if ``dd if=/dev/hwrng bs=100000 count=1 > /dev/null`` before
->> > the actual test run made a difference.
->> > Tried it on my Quartz64 Model A: no
->> >
->> > Then I tried it on my Quartz64 Model B:
->> >
->> > root@quartz64b:~# cat /dev/hwrng | rngtest -c 1000
->> > rngtest 5
->> > ...
->> > rngtest: starting FIPS tests...
->> > rngtest: bits received from input: 20000032
->> > rngtest: FIPS 140-2 successes: 120
->> > rngtest: FIPS 140-2 failures: 880
->> >
->> > root@quartz64b:~# dd if=/dev/hwrng bs=100000 count=1 > /dev/null
->> > 1+0 records in
->> > 1+0 records out
->> > 100000 bytes (100 kB, 98 KiB) copied, 5.71466 s, 17.5 kB/s
->> >
->> > root@quartz64b:~# cat /dev/hwrng | rngtest -c 1000
->> > rngtest 5
->> > ...
->> > rngtest: starting FIPS tests...
->> > rngtest: bits received from input: 20000032
->> > rngtest: FIPS 140-2 successes: 104
->> > rngtest: FIPS 140-2 failures: 896
->> >
->> > root@quartz64b:~# uname -a
->> > Linux quartz64b 6.10+unreleased-arm64 #1 SMP Debian 6.10-1~cknow
->> > (2024-04-24) aarch64 GNU/Linux>
->> > :-O
->> 
->> I pulled out my Quartz64 model B, and the results seem better than 
->> yours.
->> 
->> root@quartz64:~# sudo dd if=/dev/hwrng bs=256 | rngtest -c 1000
->> rngtest 5
->> ...
->> rngtest: starting FIPS tests...
->> rngtest: bits received from input: 20000032
->> rngtest: FIPS 140-2 successes: 859
->> rngtest: FIPS 140-2 failures: 141
->> root@quartz64:~# sudo dd if=/dev/hwrng bs=256 | rngtest -c 1000
->> rngtest 5
->> ...
->> rngtest: starting FIPS tests...
->> rngtest: bits received from input: 20000032
->> rngtest: FIPS 140-2 successes: 843
->> rngtest: FIPS 140-2 failures: 157
-> 
-> I noticed you used ``dd`` instead of ``cat``, so I tried again ...
-> 
-> Quartz64-A:
-> root@quartz64a:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
-> rngtest 5
-> ...
-> rngtest: starting FIPS tests...
-> 
-> rngtest: bits received from input: 20000032
-> 
-> rngtest: FIPS 140-2 successes: 411
-> 
-> rngtest: FIPS 140-2 failures: 589
-> 
-> root@quartz64a:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
-> ...
-> rngtest: starting FIPS tests...
-> rngtest: bits received from input: 20000032
-> rngtest: FIPS 140-2 successes: 391
-> rngtest: FIPS 140-2 failures: 609
-> 
-> root@quartz64a:~# dd if=/dev/hwrng bs=100000 count=1 > /dev/null
-> 1+0 records in
-> 1+0 records out
-> 100000 bytes (100 kB, 98 KiB) copied, 5.66202 s, 17.7 kB/s
-> 
-> root@quartz64a:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
-> ...
-> rngtest: FIPS 140-2 successes: 386
-> 
-> rngtest: FIPS 140-2 failures: 614
-> 
-> root@quartz64a:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
-> ...
-> rngtest: FIPS 140-2 successes: 356
-> rngtest: FIPS 140-2 failures: 644
-> 
-> Quartz64-B:
-> root@quartz64b:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
-> ...
-> rngtest: FIPS 140-2 successes: 118
-> rngtest: FIPS 140-2 failures: 882
-> 
-> root@quartz64b:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
-> ...
-> rngtest: FIPS 140-2 successes: 133
-> rngtest: FIPS 140-2 failures: 867
-> 
-> root@quartz64b:~# dd if=/dev/hwrng bs=100000 count=1 > /dev/null
-> 
-> root@quartz64b:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
-> ...
-> rngtest: FIPS 140-2 successes: 97
-> rngtest: FIPS 140-2 failures: 903
-> 
-> root@quartz64b:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
-> ...
-> rngtest: FIPS 140-2 successes: 130
-> rngtest: FIPS 140-2 failures: 870
-> 
-> And lastly on PineTab2:
-> root@pinetab2:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
-> ...
-> rngtest: FIPS 140-2 successes: 705
-> rngtest: FIPS 140-2 failures: 295
-> 
-> root@pinetab2:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
-> ...
-> rngtest: FIPS 140-2 successes: 678
-> rngtest: FIPS 140-2 failures: 322
-> 
-> root@pinetab2:~# dd if=/dev/hwrng bs=100000 count=1 > /dev/null
-> 
-> root@pinetab2:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
-> ...
-> rngtest: FIPS 140-2 successes: 681
-> rngtest: FIPS 140-2 failures: 319
-> 
-> root@pinetab2:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
-> ...
-> rngtest: FIPS 140-2 successes: 669
-> rngtest: FIPS 140-2 failures: 331
-> 
-> 
-> So my Q64-B tests are consistently MUCH worse then your Q64-B tests ...
-> This seems BAD to me, now that we even have completely different 
-> results per
-> device of the EXACT same model?!? Hardware revision may be different (I 
-> have a
-> v1.4), but it seems rather pointless to go into that direction.
-> 
-> It then also seems rather pointless to try it with different parameters 
-> if the
-> results on the same SBC model can vary this much.
-
-Thanks a lot for the testing.  Though, such wildly different test 
-results
-can, regrettably, lead to only one conclusion:  the HWRNG found in 
-RK3566
-is unusable. :/
+> > Since the behaviour is different from RDMSR/WRMSR emulation case.
+> > 
+> > ```
+> > if an MSR access is denied by userspace the resulting KVM behavior depends on
+> > whether or not KVM_CAP_X86_USER_SPACE_MSR's KVM_MSR_EXIT_REASON_FILTER is
+> > enabled.  If KVM_MSR_EXIT_REASON_FILTER is enabled, KVM will exit to userspace
+> > on denied accesses, i.e. userspace effectively intercepts the MSR access.
+> > ```
 
