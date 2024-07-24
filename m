@@ -1,313 +1,131 @@
-Return-Path: <linux-kernel+bounces-261419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B16293B718
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:57:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B21D293B71C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDA201F23F57
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:57:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 641931F24094
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD2816B72B;
-	Wed, 24 Jul 2024 18:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="JydJaWPU"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7225D16B722;
+	Wed, 24 Jul 2024 18:59:06 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66AB1591F3
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 18:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995381591F3
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 18:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721847455; cv=none; b=Qa100CmGfjX4L1GVm5Bn3exc+ck6Do0ZJS4NGjzeGCq63Jr7Udp+sCRMY9eSpgHplFSb7dpOmtYHgwfrr6wF4htRGVKoqyj37Q8vz5P8QlDMS6VXhVO3vrMoPChsSSc2R2UKXzi9N5uwMYDbSKYuNMT7P0AjcT9Ap01FbhqDn+k=
+	t=1721847546; cv=none; b=Ml2JsqLENLtxG/uREeUWiRwTwMTTW59DdoCxY2IbfzkTrUU3q/87Zr4pDvJl35X1yrxDLalznM+/36KqIBpOhcnzNNFNUYEH5Olo6CSMSJ4FsD0+BoUd2aHhJ9IXLNDKl5Pk6HxqZwaVCp3guJ1JtNDrzdIpGmy2v142qBtCCQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721847455; c=relaxed/simple;
-	bh=B4+6wXunoLay0wrhct1hTaSVEL/TxymVWoEYEPSh6MQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lBMGr49tjnIEeN4j3QIWv6GKHVGDrHjLod76wnK/DXiO7CR7TLMsxDYBR2beTM4aMtG11etWgy4POAi1kFoOzZXv9BP1+AlvbytI5Tnkv+Tog9n/ziMPihwUVxFFpcfHTpJ7TDKrwuENTo5UqZtLy891my05cn3KSz0ceVgP0as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=JydJaWPU; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52fc14d6689so42637e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 11:57:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1721847452; x=1722452252; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qczflJ4/VtW7cFe1t0+zQaxX8GYw6lHXK+F88/NHppk=;
-        b=JydJaWPU7bGaEM4SMlqeHLYEbOA2XtITxTk3BE1hAzgZ+7R9WYDDNz183+AwyrjE2T
-         lU51dy/943xhDn0nhS05yXH9qH4BPaVTXaKlcuDU5CcVlxJcrS+EFbqKIRPoQXdG99nm
-         FMxvUHqi0FTNh/W0XmdVQ/ZbTGWyUV7hSmNkg=
+	s=arc-20240116; t=1721847546; c=relaxed/simple;
+	bh=7f7FtSv7nnQZMtXVfJa0ePVsJHkIWzVFFZA8MEbsHLE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=lVkhRLhVodVQy3B5CaaPYpY1atbjHPvB1LLofLF3RK5Nc+Ws7u5iLJt+i3oBtIdA2hnkbE4B8fX6iIIGlBZGH0naDXJyMLEqLOg+70wSZ6MfYZkS4OA3cVkSfH1v9cDwWUo0XOi0aXufAR5jWHPE53vSefDGSvvyHypKXvjfrwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81257dec573so19718339f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 11:59:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721847452; x=1722452252;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qczflJ4/VtW7cFe1t0+zQaxX8GYw6lHXK+F88/NHppk=;
-        b=RoqRjcO8X8dqGd71L1pKHTacIuMpRqkQPZTUvYNxiGJdJCvLaTUDNF4BVRsjUtVXEp
-         FTBSlAL7oz4w/UD599Na5C/8zZqF06S92WK6xRpd6e1aSnydqPZeND6HSf44yHMOGgh6
-         AXvjGMoQj9ybU3KBIApeekB8pafCzq7h7IDlryCipTt8RxguDjVKrn6O+8LtPcdxV98o
-         B47jLmU2pnzYf0qD6E9MgDcwBgVDGLNcYAOsWa4JF8u90ZhPhV2v3UhBT+ewY718v9vW
-         oX6D9sbgKoHIw684BlT1g4xwC5uPHhz7zxBYELsBMlO9yqv8GO5D+DakUOrBykaVqn6N
-         MEwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPtDQXfeTOaJPOpwBXQ87sVewMxfi+sj8kQ5t/dfvPDnIvwLGP2NhtRcihxjKOJWtA0VUR1YtwJmQ/ouDpaj/Gg4X/Ual/In7gnCB7
-X-Gm-Message-State: AOJu0YziRh6wd02/siWkLPLk84DZWOJDl5vgfqNIZ+iyFrsweYr7at7S
-	aW2Nuv/trjl6MdOjkefiKsmiQ9SNKC57ZGfNEFw/Sc5FId4Gnx4GnmeWOuSwokU3hqRshGLA3l7
-	dsl0n0+FZxKwrFKITj38yL8rf3kYvwEzg8xXI
-X-Google-Smtp-Source: AGHT+IEfsm25M/sKFQlEJmxL9cZCAqQoSSykARJVhn/uLnyhIXUrcNSLMNjZBdX91mJc4gZJYbUFf2dYK/voTLeqr6w=
-X-Received: by 2002:a05:6512:3c91:b0:52e:76bb:c906 with SMTP id
- 2adb3069b0e04-52fd3f9017emr436254e87.61.1721847451819; Wed, 24 Jul 2024
- 11:57:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721847544; x=1722452344;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wfdzvacuDV3CcT26JJD9v7jns+NQq86w7tti0drlXpY=;
+        b=U/BZqW8D2XyGF5zNbuWhm8oqCIMvYlnyHT7AiuxSJiHsrtb2QOeFEaAZ7w9kVw+vSq
+         t3xAUnvRtnHrgf7uCaj9iVngalaXyM++ZXMssaqePgQcSq+hM7w7ZwmsK0KpypxS+pqy
+         zfGZwkSVQ/qw+xF0bSK4St7KuDcpE6Dh1KZ7I19D3dABGD7Hg8101vdvmyUrCUk3szX8
+         zulUS3lckk/NAXIuCqEz9BEMR6T1FUcIyU4OZiuFN/k8HgJOgW9Z/1E6QkBCQIdlyy5l
+         +md+xwtYyH1x2u1oC74UZBFH66t+mCgHxoyFu5Owsb1bwjiLcZN96XCKBTuDc94I42Ua
+         XoiA==
+X-Forwarded-Encrypted: i=1; AJvYcCXXDna+ZCHUP/bb0BytM4qW177hv09NMmUaN61XZOwTDLqB8gMorUOI6fETZfpRp9JNqU5gYuanMrPmS2ZM1DlNWCpqpLS4NYq0F2fs
+X-Gm-Message-State: AOJu0YyCcXLWdc3lEjYp1xV6gJLfdBCVx14oEP2lCKgH51Zwtedxf9vg
+	3l776//BLvpKevXnHPqvAGRe5s8slzqweQjYKHY3FdMlorBiYsd68p/91s2ECh0B9oNAyqMdpcM
+	b7vvRnrDqXZjjF8sjIGsdlioEBi9deoFEu9pXp51riBBZZAypqTKi7I8=
+X-Google-Smtp-Source: AGHT+IG0R1Og+dysLDHe5d/3/YBqGbJ+pY6Rqqiy5laFYf0wseOpwhzCIZGio6wZe5pmnw8vWceoXY/k+ubnGByr/mg786J2rbX7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240716213131.6036-1-james.quinlan@broadcom.com>
- <20240716213131.6036-2-james.quinlan@broadcom.com> <d20be2d3-4fdd-48ca-b73e-80e8157bd5b2@kernel.org>
- <CA+-6iNzsE0hwUhFyfuUZtuAVgOAS-L8pR37x8TV4R779g6E-Jg@mail.gmail.com> <90d1d4a5-5d47-4ad0-ab0f-d4f549cd4eec@kernel.org>
-In-Reply-To: <90d1d4a5-5d47-4ad0-ab0f-d4f549cd4eec@kernel.org>
-From: Jim Quinlan <james.quinlan@broadcom.com>
-Date: Wed, 24 Jul 2024 14:57:19 -0400
-Message-ID: <CA+-6iNw-8co3Tx2S82To4Cs-6O+T+YrpaSBZBUci2sL4dRTpcw@mail.gmail.com>
-Subject: Re: [PATCH v4 01/12] dt-bindings: PCI: Cleanup of brcmstb YAML and
- add 7712 SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-	Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>, 
-	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000bfdc1e061e02d9f2"
-
---000000000000bfdc1e061e02d9f2
+X-Received: by 2002:a05:6e02:1a2e:b0:397:3e38:eb30 with SMTP id
+ e9e14a558f8ab-39a2182abaemr382345ab.3.1721847543887; Wed, 24 Jul 2024
+ 11:59:03 -0700 (PDT)
+Date: Wed, 24 Jul 2024 11:59:03 -0700
+In-Reply-To: <18c54a21-184c-4cde-811c-48c5c0e34f9b@kernel.dk>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000360ee4061e02dffe@google.com>
+Subject: Re: [syzbot] [io-uring?] KMSAN: uninit-value in io_req_task_work_add_remote
+From: syzbot <syzbot+82609b8937a4458106ca@syzkaller.appspotmail.com>
+To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 24, 2024 at 4:05=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 23/07/2024 20:44, Jim Quinlan wrote:
-> > On Wed, Jul 17, 2024 at 2:51=E2=80=AFAM Krzysztof Kozlowski <krzk@kerne=
-l.org> wrote:
-> >>
-> >> On 16/07/2024 23:31, Jim Quinlan wrote:
-> >>> o Change order of the compatible strings to be alphabetical
-> >>>
-> >>> o Describe resets/reset-names before using them in rules
-> >>>
-> >>
-> >> <form letter>
-> >> This is a friendly reminder during the review process.
-> >>
-> >> It seems my or other reviewer's previous comments were not fully
-> >> addressed. Maybe the feedback got lost between the quotes, maybe you
-> >> just forgot to apply it. Please go back to the previous discussion and
-> >> either implement all requested changes or keep discussing them.
-> >>
-> >> Thank you.
-> >> </form letter>
-> >>
-> >>> o Add minItems/maxItems where needed.
-> >>>
-> >>> o Change maintainer: Nicolas has not been active for a while.  It als=
-o
-> >>>   makes sense for a Broadcom employee to be the maintainer as many of=
- the
-> >>>   details are privy to Broadcom.
-> >>>
-> >>> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> >>> ---
-> >>>  .../bindings/pci/brcm,stb-pcie.yaml           | 26 ++++++++++++++---=
---
-> >>>  1 file changed, 19 insertions(+), 7 deletions(-)
-> >>>
-> >>> diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml=
- b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-> >>> index 11f8ea33240c..692f7ed7c98e 100644
-> >>> --- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-> >>> +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
-> >>> @@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml=
-#
-> >>>  title: Brcmstb PCIe Host Controller
-> >>>
-> >>>  maintainers:
-> >>> -  - Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> >>> +  - Jim Quinlan <james.quinlan@broadcom.com>
-> >>>
-> >>>  properties:
-> >>>    compatible:
-> >>> @@ -16,11 +16,11 @@ properties:
-> >>>            - brcm,bcm2711-pcie # The Raspberry Pi 4
-> >>>            - brcm,bcm4908-pcie
-> >>>            - brcm,bcm7211-pcie # Broadcom STB version of RPi4
-> >>> -          - brcm,bcm7278-pcie # Broadcom 7278 Arm
-> >>>            - brcm,bcm7216-pcie # Broadcom 7216 Arm
-> >>> -          - brcm,bcm7445-pcie # Broadcom 7445 Arm
-> >>> +          - brcm,bcm7278-pcie # Broadcom 7278 Arm
-> >>>            - brcm,bcm7425-pcie # Broadcom 7425 MIPs
-> >>>            - brcm,bcm7435-pcie # Broadcom 7435 MIPs
-> >>> +          - brcm,bcm7445-pcie # Broadcom 7445 Arm
-> >>>
-> >>>    reg:
-> >>>      maxItems: 1
-> >>> @@ -95,6 +95,18 @@ properties:
-> >>>        minItems: 1
-> >>>        maxItems: 3
-> >>>
-> >>> +  resets:
-> >>> +    minItems: 1
-> >>> +    items:
-> >>> +      - description: reset for external PCIe PERST# signal # perst
-> >>> +      - description: reset for phy reset calibration       # rescal
-> >>> +
-> >>> +  reset-names:
-> >>> +    minItems: 1
-> >>> +    items:
-> >>> +      - const: perst
-> >>> +      - const: rescal
-> >>
-> >> There are no devices with two resets. Anyway, this does not match one =
-of
-> >> your variants which have first element as rescal.
-> >
-> >
-> > Hello Krzysztof,
-> >
-> > At this commit there are two resets; the 4908 requires "perst" and the
-> > 7216 requires "rescal".   I now think what you are looking for is the
-> > top-level
-> > description of something like
-> >
-> > resets:
-> >   maxItems: 1
-> >     oneOf:
-> >       - description: reset controller handling the PERST# signal
-> >       - description: phandle pointing to the RESCAL reset controller
->
-> Now tell me, what sort of new information comes with this description?
-> "Phandle"? It cannot be anything else. Redundant. "Pointing to"?
-> Redundant. "reset-controller"? Well, resets always point to reset
-> controller.
->
-> So what is the point of this description? Any point?
->
-> >
-> > reset-names:
-> >   maxItems: 1
-> >     oneOf:
-> >       - const: perst
-> >       - const: rescal
-> >
-> > I left out minItems because imItems=3D=3DmaxItems=3D1
-> >
-> > Before I was giving both of them as the "potential candidates list"
-> > that will be used further on, but this is not how Yaml should be used.
-> >
-> > Is the above in the right direction?
->
-> It's over complicated. First maxItems are redundant, because you define
-> number of items in items. Second, you have EXACTLY the same case as the
-> hardware for which I gave you bindings to use. I don't understand why
-> you insist on doing things differently, but you can. Take a look at many
-> other bindings how they achieve this - there are many, many examples.
-> But do not invent third or fourth method...
+Hello,
 
-ack, I will follow the qcom,ufs.yaml file you referenced.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in io_req_task_work_add_remote
 
->
-> Best regards,
-> Krzysztof
->
+=====================================================
+BUG: KMSAN: uninit-value in io_req_local_work_add io_uring/io_uring.c:1193 [inline]
+BUG: KMSAN: uninit-value in io_req_task_work_add_remote+0x592/0x5e0 io_uring/io_uring.c:1241
+ io_req_local_work_add io_uring/io_uring.c:1193 [inline]
+ io_req_task_work_add_remote+0x592/0x5e0 io_uring/io_uring.c:1241
+ io_msg_remote_post io_uring/msg_ring.c:102 [inline]
+ io_msg_data_remote io_uring/msg_ring.c:133 [inline]
+ io_msg_ring_data io_uring/msg_ring.c:152 [inline]
+ io_msg_ring+0x1c38/0x1ef0 io_uring/msg_ring.c:305
+ io_issue_sqe+0x383/0x22c0 io_uring/io_uring.c:1711
+ io_queue_sqe io_uring/io_uring.c:1925 [inline]
+ io_submit_sqe io_uring/io_uring.c:2181 [inline]
+ io_submit_sqes+0x1259/0x2f20 io_uring/io_uring.c:2296
+ __do_sys_io_uring_enter io_uring/io_uring.c:3206 [inline]
+ __se_sys_io_uring_enter+0x40c/0x3ca0 io_uring/io_uring.c:3143
+ __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3143
+ x64_sys_call+0x2d82/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:427
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
---000000000000bfdc1e061e02d9f2
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+Uninit was created at:
+ __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4719
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page mm/slub.c:2321 [inline]
+ allocate_slab+0x203/0x1220 mm/slub.c:2484
+ new_slab mm/slub.c:2537 [inline]
+ ___slab_alloc+0x12ef/0x35e0 mm/slub.c:3723
+ __kmem_cache_alloc_bulk mm/slub.c:4759 [inline]
+ kmem_cache_alloc_bulk_noprof+0x486/0x1330 mm/slub.c:4831
+ __io_alloc_req_refill+0x84/0x560 io_uring/io_uring.c:940
+ io_alloc_req io_uring/io_uring.h:393 [inline]
+ io_submit_sqes+0x171b/0x2f20 io_uring/io_uring.c:2285
+ __do_sys_io_uring_enter io_uring/io_uring.c:3206 [inline]
+ __se_sys_io_uring_enter+0x40c/0x3ca0 io_uring/io_uring.c:3143
+ __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3143
+ x64_sys_call+0x2d82/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:427
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-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
-mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
-uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
-BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
-VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
-z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
-b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
-+R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
-AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
-75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
-AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
-AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
-MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCD1vkufEO7dIkSTe0b7kToXkpptEW7b
-X+3wvLGrSbd9ADAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA3
-MjQxODU3MzJaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
-AgEwDQYJKoZIhvcNAQEBBQAEggEADHD/qS4oNSDpGaBYmPGqLEQMIX7Sxq8TKIGwAGB0b/bQiOCn
-Fj5bMbPz/YlaSOrjYoByn9K+10b9oM/eU+YYf1l/MXbPaP8vFS7LHrSVauXmuU7fCDc5CrloBwKC
-zxE72TDLThx6T6Hsyww84cyhtHzHSfhaUGhe3R1QPT3buFPtjTIghdhj8SbN0wjsjftUEHF6gHss
-+Rxid/1So3WQMz3VPmTFw88l4NC8snEJfI4N6jfx8i5H5OjJJOBg3EJYlZgELzu989HIRvwhf9Oy
-XdsExRGhkWVouCQ43vwKMQQG4ERscS7+mJIA9lf01f/KlVstu1Zlaq4CGhzL1XE9Vw==
---000000000000bfdc1e061e02d9f2--
+CPU: 0 UID: 0 PID: 5924 Comm: syz.0.16 Not tainted 6.10.0-syzkaller-12268-g7a3fad30fd8b-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+=====================================================
+
+
+Tested on:
+
+commit:         7a3fad30 Merge tag 'random-6.11-rc1-for-linus' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13a6fa19980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f26f43c6f7db5ad2
+dashboard link: https://syzkaller.appspot.com/bug?extid=82609b8937a4458106ca
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=178ca779980000
+
 
