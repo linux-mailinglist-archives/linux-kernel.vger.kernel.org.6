@@ -1,117 +1,129 @@
-Return-Path: <linux-kernel+bounces-261338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E96CD93B605
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:33:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9432293B60E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5DF12820BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:33:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DF41285935
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688F915F406;
-	Wed, 24 Jul 2024 17:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD62715FD12;
+	Wed, 24 Jul 2024 17:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTX8IFDC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="Wf2ZI1L8"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9652E639
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 17:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7A32E639;
+	Wed, 24 Jul 2024 17:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721842408; cv=none; b=Nvjra2/jdfpMj+PnvyMlXn40sSLXl5NebpTaEfPq3r02emE9DPELlEbbZEOLlSpWbU05MjYs+lrQWWNIDYZaEpYMYOX0UnVG8EVJIKDYkOPDcXTNnZ/neljmNF+ikbBLsl/7TuH4byf9gq+adG5Ai3+3wdOsfb7v79RuVg0khLc=
+	t=1721842617; cv=none; b=fuN6lzQ0xpscYhOTIamVEfjKflgbJg2nmCdBmQKezyNlSr0zqK9e2awQpqNMta9w34jZz8e6m39pAi/inm1IPzKph4exTDALjHnSy3k5goKpIsSaHkzZR6TpEzRNm/153JZiTJr+KUHfGbFZ/eZUgMIzH8o40rm50/xGVffNUUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721842408; c=relaxed/simple;
-	bh=k5wLDIsjbneFv5wGRryH1sr6jOqAO+CqLMj4RibZsKo=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=NAfuyUt1QxpGxmsj5Tm9Mk3ft/FY5BrXT/UShMRgSWA2rz35CHkvUQwVWJDTyJ/4HC6S0JON27EwOD51a8BW8Dx62wttMbnHJYI2ozbUHVm4cimeE2xdiapXbDTnnOHyobkoydNDSgGFWLRK9MrrCWFoz/+dUR8oqiO19fL+I64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZTX8IFDC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51BFDC32781;
-	Wed, 24 Jul 2024 17:33:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721842408;
-	bh=k5wLDIsjbneFv5wGRryH1sr6jOqAO+CqLMj4RibZsKo=;
-	h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
-	b=ZTX8IFDCJC276STozusukSjyNkMrUHn6EYm8TrxU1LOR1cTF8NqDOOt3Qkq23y3Zd
-	 xb1OPSam5xdHi1WOyFZEa3IIGTHPYjqvhOsCqyJV4fmpU3stF8BK7vPK87IKvu3/cG
-	 yAY2/AF/bD8hjLSbWcEwhdKsxzYdHGNGZIdPS0/xBMq+rCTYQiupTpHXxY+1c/FWfM
-	 WdrCKcieMpnua9mahwuUl5+L4u4MEHfEG0mR+1KCyWdefJDoPkOJ6LtHVoXcTDd6y2
-	 S2liInCfXDdQm4ejCGGrnwRknuWs9a69Xyh5bITrc8nCJbe7pz+pPss6w2p0pLbfb1
-	 t8TMHEZ9P40Iw==
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id F32FB1200066;
-	Wed, 24 Jul 2024 13:33:25 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Wed, 24 Jul 2024 13:33:26 -0400
-X-ME-Sender: <xms:5TqhZnGqjC1QwMsm_R1SSG3HzTVQ20a-fxS-dF9U8_yULdXCBnk40Q>
-    <xme:5TqhZkU0KCzrPRYlwHEurE5I-TwWsFC4-zCblnBYYIwiFLCWdd6Fw4UsHGeP7SXzL
-    2RmebX42CfQRHFYEVI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddriedugdduudegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusehkvghrnhgvlhdrohhrgheqnecuggftrf
-    grthhtvghrnhepvdeviefgtedugeevieelvdfgveeuvdfgteegfeeiieejjeffgeeghedu
-    gedtveehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    eprghrnhguodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduvdekhedujedt
-    vdegqddvkeejtddtvdeigedqrghrnhgupeepkhgvrhhnvghlrdhorhhgsegrrhhnuggsrd
-    guvgdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:5TqhZpKXEOkG1I7WuwlirRxgaW-k6unQRHqvpo4fe-aEXmDamgPxtQ>
-    <xmx:5TqhZlEhub_YAunlNzIy5etfGgMpF6A0n7pa0BkrVxObh90W6JIR3A>
-    <xmx:5TqhZtW5sSYzczdKctWyto2LpKknDZmaHGMAbcSenwtB5AK6-0OyFA>
-    <xmx:5TqhZgMa5K3aHcMatPVlGJCFFZpmRaiGKs1Zeki_sTlw8V_bT0SqIA>
-    <xmx:5TqhZs1W3wBF7UzCF3yYzk9OqNFf7lkLJVtoMlEhFSdVKO3UH64r4I1U>
-Feedback-ID: i36794607:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 616A8B60092; Wed, 24 Jul 2024 13:33:25 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-582-g5a02f8850-fm-20240719.002-g5a02f885
+	s=arc-20240116; t=1721842617; c=relaxed/simple;
+	bh=/cBPn80bLOKCv+/H/yCLrV6vjovXjhH4bLZtNKr8D3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iFLNNS7S53pvY9QLCfSHTDmpqptI6Yb25Bs899dD3/10EtqmpoSnYBqMeqy0TapFKh1UecG6J6V0nHhk4JG5Q+UQNrQaZQvd/otpEs1HxJGthpPAiXVMzityZlidc9Mq8ZT5RoY99iL7eHuvAuS/70fjS4VnSYCPae4698POKg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=Wf2ZI1L8; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 7B2661C009D; Wed, 24 Jul 2024 19:36:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1721842610;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=an3NqH+1POnuE0beDev8aj+SC67nRWyTt2QwUTuBvJg=;
+	b=Wf2ZI1L80VoiKf0pRGMckpaygLO6rn19EUfxCYXkPO1XwvCDoTea5PyGdak/2bkd7zdqsF
+	nSlnfqqQCl/67cUoLvnxx790Kr8iaBslYEh72AWlZ4+URtcNSc7L/U72Q64mO7RcxMjJit
+	g6VosIXwfCnhRHl+4jxyzkWlQ6Czq/Y=
+Date: Wed, 24 Jul 2024 19:36:50 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Werner Sembach <wse@tuxedocomputers.com>
+Cc: Benjamin Tissoires <bentiss@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>, Lee Jones <lee@kernel.org>,
+	jikos@kernel.org, linux-kernel@vger.kernel.org,
+	Jelle van der Waa <jelle@vdwaa.nl>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	linux-input@vger.kernel.org, ojeda@kernel.org,
+	linux-leds@vger.kernel.org, Gregor Riepl <onitake@gmail.com>
+Subject: Re: In kernel virtual HID devices (was Future handling of complex
+ RGB devices on Linux v3)
+Message-ID: <ZqE7sk0ZW0q8ueul@duo.ucw.cz>
+References: <247b5dcd-fda8-45a7-9896-eabc46568281@tuxedocomputers.com>
+ <ZdZ2kMASawJ9wdZj@duo.ucw.cz>
+ <b6d79727-ae94-44b1-aa88-069416435c14@redhat.com>
+ <a21f6c49-2c05-4496-965c-a7524ed38634@gmail.com>
+ <825129ea-d389-4c6c-8a23-39f05572e4b4@redhat.com>
+ <adbfdf6c-fb59-4fae-a472-17b04dd8a3f6@tuxedocomputers.com>
+ <1fb08a74-62c7-4d0c-ba5d-648e23082dcb@tuxedocomputers.com>
+ <aec1d22d-9e59-4dfc-b108-5ba339b0e76a@redhat.com>
+ <siebkhaauocqkuox73q2e5p2mbsyc7j4gvpzfvt4c3gvncdpap@oxh5pp4gxpuo>
+ <870cca8a-1a1b-4d17-874e-a26c30aca2bf@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <24be8665-4717-4ee2-8a81-80fed5181736@app.fastmail.com>
-In-Reply-To: <9751d18defea406fa698630637d8e7db@AcuMS.aculab.com>
-References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
- <9751d18defea406fa698630637d8e7db@AcuMS.aculab.com>
-Date: Wed, 24 Jul 2024 19:32:14 +0200
-From: "Arnd Bergmann" <arnd@kernel.org>
-To: "David Laight" <David.Laight@aculab.com>,
- "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
- "Linus Torvalds" <torvalds@linuxfoundation.org>
-Cc: "Matthew Wilcox" <willy@infradead.org>,
- "Christoph Hellwig" <hch@infradead.org>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- "Dan Carpenter" <dan.carpenter@linaro.org>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- "'pedro.falcato@gmail.com'" <pedro.falcato@gmail.com>,
- "Mateusz Guzik" <mjguzik@gmail.com>,
- "'linux-mm@kvack.org'" <linux-mm@kvack.org>
-Subject: Re: [PATCH 3/7] compiler.h: Add __if_constexpr(expr, if_const, if_not_const)
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="PO2vVUoo5RSgWJzT"
+Content-Disposition: inline
+In-Reply-To: <870cca8a-1a1b-4d17-874e-a26c30aca2bf@tuxedocomputers.com>
 
-On Wed, Jul 24, 2024, at 16:29, David Laight wrote:
 
-> +#define __if_constexpr(expr, if_const, if_not_const)		\
-> +	_Generic(0 ? ((void *)((long)(expr) * 0l)) : (char *)0,	\
-> +		char *: (if_const),				\
-> +		void *: (if_not_const))
-> +
-> -#define __is_constexpr(x) \
-> -	(sizeof(int) == sizeof(*(8 ? ((void *)((long)(x) * 0l)) : (int *)8)))
-> +#define __is_constexpr(expr) __if_constexpr((expr), 1, 0)
+--PO2vVUoo5RSgWJzT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I don't immediately see anything wrong with this, but I'm
-still scared of any change to it, especially if this is
-meant to go straight into mainline.
+Hi!
 
-Would it be possible to do patch 4/7 without the new
-__if_constexpr() and instead still using __builtin_choose_expr()?
+> > IMO working with the HID LampArray is the way forward. So I would
+> > suggest to convert any non-HID RGB "LED display" that we are talking
+> > about as a HID LampArray device through `hid_allocate_device()` in the
+> > kernel. Basically what you are suggesting Hans. It's just that you don't
+> > need a formal transport layer, just a child device that happens to be
+> > HID.
+> >=20
+> > The next question IMO is: do we want the kernel to handle such
+> > machinery? Wouldn't it be simpler to just export the HID device and let
+> > userspace talk to it through hidraw, like what OpenRGB does?
+>=20
+> That's already part of my plan: The kernels main goal is to give devices a
+> LampArray interface that don't have one already (e.g. because they are no
+> HID devices to begin with).
+>=20
+> The actual handling of LampArray will happen in userspace.
+>=20
+> Exception is that maybe it could be useful to implement a small subset of
+> LampArray in a generic leds-subsystem driver for backwards compatibility =
+to
+> userspace applications that only implement that (e.g. UPower). It would
+> treat the whole keyboard as a single led.
 
-     Arnd
+Are you sure LampArray is good-enough interface? OpenRGB exposes
+keycode-to-LED interface, how will that work with LampArray?
+
+Best regards,
+								Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
+
+--PO2vVUoo5RSgWJzT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZqE7sgAKCRAw5/Bqldv6
+8ga8AJ9BT/RPUldd2PgRbjEZ62iTLLo7HQCgpJKSBBtTvzqxW31MSQlB/aghnwY=
+=B9/0
+-----END PGP SIGNATURE-----
+
+--PO2vVUoo5RSgWJzT--
 
