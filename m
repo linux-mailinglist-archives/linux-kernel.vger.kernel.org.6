@@ -1,190 +1,148 @@
-Return-Path: <linux-kernel+bounces-261517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C757493B82A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 22:42:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58C5593B820
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 22:39:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34318B2457F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:42:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 899E31C215EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F89E1386DA;
-	Wed, 24 Jul 2024 20:42:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391D2136E18;
+	Wed, 24 Jul 2024 20:39:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=o2.pl header.i=@o2.pl header.b="fXPaMDO3"
-Received: from mx-out.tlen.pl (mx-out.tlen.pl [193.222.135.142])
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="W6yI3tXV";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Bm/Ga072"
+Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191A71369A6
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 20:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.222.135.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393DD65E20;
+	Wed, 24 Jul 2024 20:39:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721853756; cv=none; b=IBNCSMcDi/x3+0y+pXrWLqDNIWoVeuxjuM8wt1h9gjhNgCsOfDztfaqbsuFL+602aUlglmZORPJxqaPmm0Ovml20NijyRCPbDYXxTHsyJPhaBU5gtDiTzMFIHntTJGEAHPF2W23DVEiLr4c/ZfKVeptS6Y8wV/Z8WHjreyyW8Ok=
+	t=1721853571; cv=none; b=GU+SmNw2QgvFS0M4gJaFtpYmE4C42S3TDj2wvrKBYf+YBBDAcWfKB4K4Wb2+XEwTRivioX/1FO8LV9r5mngTtoMOYGog+mlZ15MQ3JxyAWxZu3/uM0uVZ6uU8l1at6ngXTnz7gaDQbR8gf3fxt9Rf9Tw/MpGY03cgMSJ1NBCgZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721853756; c=relaxed/simple;
-	bh=yPKnVERsW0rlh7OOwSmmrL5Hm8C0rtxvFnVlwDUHvEI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=XG+zxgxCLk+LcBDbEST+f6n99+oC+/AhH7SsxPKXfHW9agfuUd7JGWv6Lx5IJYkaHbUY75q8Gb//Wz4PEpPfXNOEBkLwG8X4naQ+gZXhD9MP++dzAywcTrfB2hZB7v6YWHVddkWXC5qk74nqmDRaDNgp1AyhxmrkKFJDKiApGN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl; spf=pass smtp.mailfrom=o2.pl; dkim=pass (1024-bit key) header.d=o2.pl header.i=@o2.pl header.b=fXPaMDO3; arc=none smtp.client-ip=193.222.135.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=o2.pl
-Received: (wp-smtpd smtp.tlen.pl 1721 invoked from network); 24 Jul 2024 22:35:51 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=o2.pl; s=1024a;
-          t=1721853352; bh=yPKnVERsW0rlh7OOwSmmrL5Hm8C0rtxvFnVlwDUHvEI=;
-          h=Subject:From:To:Cc;
-          b=fXPaMDO3IU8wx1KT5UVYFYEgQ59cCoAcXRUvoZHfd+4RPwsvJn09YMIMN9MMrWTQu
-           Zb7AtIJu3HjyHXFxDP4cFHvvcMWzpbnnKYCCjrSwnDfpb9ies26zRMVEro6q3GG+7M
-           1/SWiu8s8C6dhJFtAkPf2i1n5CxSnZPHYfw/+3BA=
-Received: from aafc224.neoplus.adsl.tpnet.pl (HELO [192.168.1.22]) (mat.jonczyk@o2.pl@[83.4.132.224])
-          (envelope-sender <mat.jonczyk@o2.pl>)
-          by smtp.tlen.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
-          for <yukuai3@huawei.com>; 24 Jul 2024 22:35:51 +0200
-Message-ID: <f28f9eec-d318-46e2-b2a1-430c9302ba43@o2.pl>
-Date: Wed, 24 Jul 2024 22:35:49 +0200
+	s=arc-20240116; t=1721853571; c=relaxed/simple;
+	bh=/yx+7tfaIgUk5kN8zhSGSzSs+UISBZJKcH2TmfbbgYk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ktzdKQyEFIYvluz4PHFglZNLvOpm578/MFQgQy4hsUNVU2fuD1vkzsusSdnblov9PBQuBIQwvC/+nzTsWaQxbX9gH0DgqoHlTAGTiXdNwIrve76pzFWCOWA0poBqwL2OkJtJBgACaQZwU4w/5JzHf32cfGxRD2SYl0id5hyua9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=W6yI3tXV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Bm/Ga072; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 1E67C1385D68;
+	Wed, 24 Jul 2024 16:39:25 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Wed, 24 Jul 2024 16:39:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1721853565;
+	 x=1721939965; bh=1cWzR+7Vwv/EgLb3hFhM6ar6lC/oYj1b70wKWwXM/78=; b=
+	W6yI3tXVeM6+3Cg6w2WCov8aq2PJz6EBVNnL8gvYLDfEBs6yiM/AEUeHfEUjVZfH
+	BasRFFNmhUEtUVITd7VIMT15Pi11nv3ZCdwLHsILFI6HkFj2CAFmr0QFLN1l+ZO1
+	oTyv+wZRlW8Y7cOSZdWWrB+qmH7eQPK4Z9xnEtEYbCUZgN2X70PJO15k7nFcuDdj
+	eRdX3jfTKocr/ltPaX5UZa9yegeid2Qw5bNImmr5PCVTwMHUHo18+ipAGz16h0SV
+	DVJCE5Q0NZ9p8ZQgNsyAMCiSYo5832bXthOHfoOlSb3Zr1bZQ/DnJIykn9kvrMI0
+	wA42OHwiyUCkV2eDGS7zMw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1721853565; x=
+	1721939965; bh=1cWzR+7Vwv/EgLb3hFhM6ar6lC/oYj1b70wKWwXM/78=; b=B
+	m/Ga072/u8s4+JEmiVLONaEBYAU/6yvgBDnQJDFJs+23vTN3k7EH6c2vof148CBz
+	rlFaN7frHEZNEOqsJTHKD5IIrkRqB/w6I3ctjjrzDHJ63jAmJYSdiyTuKLagDFKP
+	BiWBxayyAz9PQCVCGYTDdr2TUGHfx1K8bBIeNdPUF4KbhngrsNxwNCWX9nybZp+P
+	TlVRKzAR5LTdjEdyXWh/9f+C9JEFBw++1wAQ8ZN1LJpqPyHxf0NuWikJdAjykNrj
+	C0bV3Nw+UB0A1G/ILUmoC5oYLCb93V0rwEFDLucSHUUr78ii6Jduw9ADQ6YHm0Gh
+	HeLTzgc74zOdiLCoPv4zg==
+X-ME-Sender: <xms:fGahZn0h1FtDS-GTHNCfbbH858cxg5n1wjVOcbeam8LIm-grZmjSgg>
+    <xme:fGahZmGsmjyN4XslG7poNSqE9haxeeE1gKoXQ2akVUppjuJbD--Vf6xrDzNPxGBK6
+    VZCCECDR-Qn84Cpbm4>
+X-ME-Received: <xmr:fGahZn7jhsOcYGwkYSgLsMoOzSITtGOJFw3U-PL9tuT_Mge-3m_tbj-ASUzRIbkVjB_knF2Q8ikPs3niH8kEPseq3MJgUHo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddriedugdduhedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefpihhk
+    lhgrshcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugesrhgrgh
+    hnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpeevteegtddvvdfhtdekgefhfeef
+    heetheekkeegfeejudeiudeuleegtdehkeekteenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhluhhnugesrhgr
+    ghhnrghtvggthhdrshgvpdhnsggprhgtphhtthhopedt
+X-ME-Proxy: <xmx:fGahZs183bHdMFFNv4t_EKDeqKRdK1W7EvL9bkB9LH9exWIb-dyV8Q>
+    <xmx:fGahZqEVrsiC1_FoPi_fDEJX9Pmf8lWUtnAhScCFDiFCyTvng-h4TQ>
+    <xmx:fGahZt934Oh0bHKRPdHM0YF6w-vA64h-8v4Efr9Mo7OgSMHcEUEHrQ>
+    <xmx:fGahZnn1dikrKgdqJzfpksdqWBfNfciDByO6sZKpiZUx5j9Q8XsdRw>
+    <xmx:fWahZl9AkBEvX6BuwokWodtSL5v80o0XYFUk4q9zb4gQj2io5YU2hCnP>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 24 Jul 2024 16:39:23 -0400 (EDT)
+Date: Wed, 24 Jul 2024 22:39:21 +0200
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 2/2] dt-bindings: soc: renesas: renesas-soc: Add pattern
+ for GP-EVK
+Message-ID: <20240724203921.GA2820193@ragnatech.se>
+References: <20240724094707.569596-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240724094707.569596-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Filesystem corruption when adding a new RAID device
- (delayed-resync, write-mostly)
-From: =?UTF-8?Q?Mateusz_Jo=C5=84czyk?= <mat.jonczyk@o2.pl>
-To: Yu Kuai <yukuai3@huawei.com>, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Song Liu <song@kernel.org>, Paul Luse <paul.e.luse@linux.intel.com>,
- regressions@lists.linux.dev
-References: <9952f532-2554-44bf-b906-4880b2e88e3a@o2.pl>
- <ce95e64c-1a67-4a92-984a-c1eab0894857@o2.pl>
-Content-Language: en-GB
-Autocrypt: addr=mat.jonczyk@o2.pl; keydata=
- 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
- TANkZ3QqXNX2
-In-Reply-To: <ce95e64c-1a67-4a92-984a-c1eab0894857@o2.pl>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-WP-MailID: a84b793a5bd3a5ed2bf4c08b07c65861
-X-WP-AV: skaner antywirusowy Poczty o2
-X-WP-SPAM: NO 0000000 [AcOw]                               
+In-Reply-To: <20240724094707.569596-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-W dniu 22.07.2024 o 07:39, Mateusz Jończyk pisze:
-> W dniu 20.07.2024 o 16:47, Mateusz Jończyk pisze:
->> Hello,
->>
->> In my laptop, I used to have two RAID1 arrays on top of NVMe and SATA SSD
->> drives: /dev/md0 for /boot (not partitioned), /dev/md1 for remaining data (LUKS
->> + LVM + ext4). For performance, I have marked the RAID component device for
->> /dev/md1 on the SATA SSD drive write-mostly, which "means that the 'md' driver
->> will avoid reading from these devices if at all possible" (man mdadm).
->>
->> Recently, the NVMe drive started having problems (PCI AER errors and the
->> controller disappearing), so I removed it from the arrays and wiped it.
->> However, I have reseated the drive in the M.2 socket and this apparently fixed
->> it (verified with tests).
->>
->>     $ cat /proc/mdstat
->>     Personalities : [raid1] [linear] [multipath] [raid0] [raid6] [raid5] [raid4] [raid10]
->>     md1 : active raid1 sdb5[1](W)
->>           471727104 blocks super 1.2 [2/1] [_U]
->>           bitmap: 4/4 pages [16KB], 65536KB chunk
->>
->>     md2 : active (auto-read-only) raid1 sdb6[3](W) sda1[2]
->>           3142656 blocks super 1.2 [2/2] [UU]
->>           bitmap: 0/1 pages [0KB], 65536KB chunk
->>
->>     md0 : active raid1 sdb4[3]
->>           2094080 blocks super 1.2 [2/1] [_U]
->>          
->>     unused devices: <none>
->>
->> (md2 was used just for testing, ignore it).
->>
->> Today, I have tried to add the drive back to the arrays by using a script that
->> executed in quick succession:
->>
->>     mdadm /dev/md0 --add --readwrite /dev/nvme0n1p2
->>     mdadm /dev/md1 --add --readwrite /dev/nvme0n1p3
->>
->> This was on Linux 6.10.0, patched with my previous patch:
->>
->>     https://lore.kernel.org/linux-raid/20240711202316.10775-1-mat.jonczyk@o2.pl/
->>
->> (which fixed a regression in the kernel and allows it to start /dev/md1 with a
->> single drive in write-mostly mode).
->> In the background, I was running "rdiff-backup --compare" that was comparing
->> data between my array contents and a backup attached via USB.
->>
->> This, however resulted in mayhem - I was unable to start any program with an
->> input-output error, etc. I used SysRQ + C to save a kernel log:
->>
-> Hello,
->
-> It is possible that my second SSD has some problems and high read activity
-> during RAID resync triggered it. Reads from that drive are now very slow (between
-> 10 - 30 MB/s) and this suggests that something is not OK.
+Hi Lad,
 
-Hello,
+Thanks for your work.
 
-Unfortunately, hardware failure seems not to be the case.
+On 2024-07-24 10:47:07 +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Add a pattern for the Renesas RZ/V2H GP-EVK board.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-I did test it again on 6.10, twice, and in both cases I got filesystem corruption (but not as severe).
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-On Linux 6.1.96 it seems to be working well (also did two tries).
+> ---
+>  Documentation/devicetree/bindings/soc/renesas/renesas-soc.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas-soc.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas-soc.yaml
+> index 5ddd31f30f26..3e93e0c73ed9 100644
+> --- a/Documentation/devicetree/bindings/soc/renesas/renesas-soc.yaml
+> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas-soc.yaml
+> @@ -37,7 +37,7 @@ properties:
+>        anyOf:
+>          # Preferred naming style for compatibles of SoC components
+>          - pattern: "^renesas,(emev2|r(7s|8a|9a)[a-z0-9]+|rcar|rmobile|rz[a-z0-9]*|sh(7[a-z0-9]+)?|mobile)-[a-z0-9-]+$"
+> -        - pattern: "^renesas,(condor|falcon|gr-peach|gray-hawk|salvator|sk-rz|smar(c(2)?)?|spider|white-hawk)(.*)?$"
+> +        - pattern: "^renesas,(condor|falcon|gp|gr-peach|gray-hawk|salvator|sk-rz|smar(c(2)?)?|spider|white-hawk)(.*)?$"
+>  
+>          # Legacy compatibles
+>          #
+> -- 
+> 2.34.1
+> 
 
-Please note: in my tests, I was using a RAID component device with
-a write-mostly bit set. This setup does not work on 6.9+ out of the
-box and requires the following patch:
-
-commit 36a5c03f23271 ("md/raid1: set max_sectors during early return from choose_slow_rdev()")
-
-that is in master now.
-
-It is also heading into stable, which I'm going to interrupt.
-
-Greetings,
-Mateusz
-
+-- 
+Kind Regards,
+Niklas Söderlund
 
