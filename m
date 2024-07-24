@@ -1,92 +1,89 @@
-Return-Path: <linux-kernel+bounces-260482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052DA93AA0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:58:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0725E93AA0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 02:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A304F1F230A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 23 Jul 2024 23:58:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A575A1F23640
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 00:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D38149C7D;
-	Tue, 23 Jul 2024 23:58:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D3017FE;
+	Wed, 24 Jul 2024 00:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EzJL24fz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4D34F615
-	for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 23:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E753360;
+	Wed, 24 Jul 2024 00:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721779085; cv=none; b=bzVSdYm9q3CnvurTUK8p3IiXmidoZVuTlv8kROGnrOliv9eJM9HuXqk/K//RQQrZZT0GveyvYKDcja/JZBMIzmaG45R0Te/JmOjsmPu4ZQjcwg8VJgZsSA4GDF2QO9swYpm0EWHy2I7mxBGHqe+uLsuhYJJGSfEvRXcR1Ne1In0=
+	t=1721779245; cv=none; b=seJbbjxS7epBTrP/vsuSsuGLfUA0V8hXKh4+H9yUI3R9tqLojhDyza66pyMApVwWJrR0xpSBOGe2pqmhI7zO7Rfxf2uaqFnvj5XKyeTispUP+Pp5B7vSM+SljZ303oJTGdOg0dfUrCdnhKndmfouBD0dQKeIi6iSaJUjTSjluP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721779085; c=relaxed/simple;
-	bh=hjOYStjjoYX2np0BHeHR/g/Tp+auHJmuVRMt2T6GoEc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Qq79yR6jvQsIa5jixPjbDa1FrroOGOh02Ji0LJK8Ty7pRGgmoQJK0f9aF3Eva4BEzd+ByVgpN1jg8VY78e4P8xQByIuupysL7GBrD4/NUYjhuxnWnBTHHuDUi7uzskDqhZobC6W2EKrFRRWjNzu82PozmIY6yuksoAbKinQ4hQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f682fb3b16so1072631939f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 16:58:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721779083; x=1722383883;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EgOyZUlzEMZOpU/YW1FXvWk4x0U9V9/l/E3qzG/wK8Q=;
-        b=mdde/uwezSBzGmbbJhzg4DzTcBIVo4r6orYZQ3Dct/0Ux6cu47NKHCH7gf+/UR/SHK
-         PfDM6ShrndOhbvJ7sdiUTOKJcxIN2sjRYggVDmfgAT1vy8T+e0HKXVeZv+/49uVgG8Zu
-         Um5YkYqf+wGRqQ5BRyVDxQngCCHZ1SV3/XNq1Kp9Ebf9kHzByHCJvVAQjkKqawq4jEVd
-         XVqHpPLgRW4AZhB0EoIe0XmNIc44JiXwuyZ+JaMPoZzt2yf+Mnnv2RwxMzzCwwabKbCW
-         /BFR9rI1JYEt+1TobxIFH+IhFyrkHmynSRzEdHvLFpH05XATrdPixF/PRBZBrOApHvub
-         jtCg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3W9lXlBjk1je7tVhTzciDBaOyO+EPDtkSf7MgmOQFsjlf/KTQZ8M9rx9v2UjpxZoRYKu6lRpC8ES8m1gQir/kIPn8gTCS972X+PDI
-X-Gm-Message-State: AOJu0YzTJzq9jjPAMmymeAK5ZzkYguultDewa/g0XkvMymHeJi1ky2sV
-	TGfSiir4oDNrbFd3JFX61EHEqcXcgYDc5nisNNyr/FqZmBCqWWzfFFaJsk3t3pT7TYdr4LBMmwt
-	sKyIMckGd7cTbuNVFgM3F7JCINj+Y5fPUsfm8Az5vY42xxr0fqcTtiVc=
-X-Google-Smtp-Source: AGHT+IEzZornDDZMpWDzFdkE+q/FriUsjqZ+4sHmZEu/bJAB9hWGgnKawl2seZVupWtON8ikupSSpqqlgz3tPuyYT3PdwKwJZ6Lc
+	s=arc-20240116; t=1721779245; c=relaxed/simple;
+	bh=rmPwjbRwV6UTdwW/TMU/GQEr4t+ww1mvGbY0I1Jio4I=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=JnH8/7wNp89BViI3xxU9dwiYLwndbOiB+DJm93Uj1+3yg0wIgPO9BwwYp9BZIHwVI1o1M2HptwGRJME+30Zfekp7pbJ7TjRYiUiJ2OSkOgEByuU5sqApys1fmqBq+3yFmYyiZmvleAeUiJsSLNsWwov74vfumViaZqrxEzmCZN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EzJL24fz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E6B3C4AF09;
+	Wed, 24 Jul 2024 00:00:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1721779244;
+	bh=rmPwjbRwV6UTdwW/TMU/GQEr4t+ww1mvGbY0I1Jio4I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EzJL24fzv8TXjAMRAncNA302gR1raXLAmZS8qFPzPtg5BQDHZq+w+eGRadykzdRbX
+	 I+WIwhSzV9XOf5c4B/DZN/RifOkeM4r6XxmY5e+PgjJNKrhZL3MvP6NmVr1G8ZDC8z
+	 087khawI0nFNKkk6Lxgxr8uvTpVS5dx/1egnwT9Q=
+Date: Tue, 23 Jul 2024 17:00:43 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Mary Strodl <mstrodl@freedom.csh.rit.edu>, Christian Gmeiner
+ <christian.gmeiner@gmail.com>, Christoph Hellwig <hch@infradead.org>, Mary
+ Strodl <mstrodl@csh.rit.edu>, linux-kernel@vger.kernel.org,
+ urezki@gmail.com, linux-mm@kvack.org, lee@kernel.org,
+ andi.shyti@kernel.org, linux-i2c@vger.kernel.org, s.hauer@pengutronix.de
+Subject: Re: [PATCH 1/3] mm: vmalloc: export __vmalloc_node_range
+Message-Id: <20240723170043.4f17a3d0b6280e57561ba1f5@linux-foundation.org>
+In-Reply-To: <ZppfQFdwYq-bf9Wv@casper.infradead.org>
+References: <ZpkNOyuxuJHaTW35@freedom.csh.rit.edu>
+	<ZpkOV3mdOU1b8vMn@casper.infradead.org>
+	<ZpkPStwq_S3mJYb5@infradead.org>
+	<ZpkQQ5GzJ4atvR6a@casper.infradead.org>
+	<ZpkWj-iFiA-JHbbf@freedom.csh.rit.edu>
+	<20240718143103.82e33c556b2d1b6145ae43e0@linux-foundation.org>
+	<ZpmKho9_t0_MeOP7@casper.infradead.org>
+	<20240718143924.43e22f68cf639b064a83f118@linux-foundation.org>
+	<CAH9NwWf_S-PyY5X_cJGSW-8YDk4-C0VvnPCX8iVuo0FhTqsy2Q@mail.gmail.com>
+	<ZppU8FhsFd9cB-Fi@freedom.csh.rit.edu>
+	<ZppfQFdwYq-bf9Wv@casper.infradead.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20c6:b0:374:9a34:a16 with SMTP id
- e9e14a558f8ab-398e7de7b70mr8748705ab.5.1721779083711; Tue, 23 Jul 2024
- 16:58:03 -0700 (PDT)
-Date: Tue, 23 Jul 2024 16:58:03 -0700
-In-Reply-To: <0000000000007cfb2405febf9023@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000aaa8dc061df2eef7@google.com>
-Subject: Re: [syzbot] [ntfs3?] BUG: unable to handle kernel paging request in attr_data_read_resident
-From: syzbot <syzbot+33a67f9990381cc8951c@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, axboe@kernel.dk, 
-	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-syzbot suspects this issue was fixed by commit:
+On Fri, 19 Jul 2024 13:42:40 +0100 Matthew Wilcox <willy@infradead.org> wrote:
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+> On Fri, Jul 19, 2024 at 07:58:40AM -0400, Mary Strodl wrote:
+> > Maybe some of the stuff the driver does right now could be moved into
+> > vmalloc? In other words, we could provide a different function that
+> > allocates an executable page, copies memory into it, then marks it
+> > read-only. Would that do better to alleviate concerns?
+> 
+> No.  We are not running arbitrary x86 code.  That is a security
+> nightmare.
 
-    fs: Block writes to mounted block devices
+Sure, if such a thing were to be done we'd want it localized within the
+driver rather than offered globally.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12d4adc3980000
-start commit:   b57b17e88bf5 Merge tag 'parisc-for-6.7-rc1-2' of git://git..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=88e7ba51eecd9cd6
-dashboard link: https://syzkaller.appspot.com/bug?extid=33a67f9990381cc8951c
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12493e98e80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1334b4a8e80000
+But if there was some hack within the driver to do this, what problems
+might that cause?  What are the scenarios?
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
