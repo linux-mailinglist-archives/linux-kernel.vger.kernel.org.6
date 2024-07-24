@@ -1,129 +1,276 @@
-Return-Path: <linux-kernel+bounces-260847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F33993AF44
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:47:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E04CB93AF5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17D7FB223B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:47:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FC1A1C20CCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFFF153598;
-	Wed, 24 Jul 2024 09:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c5Zscf64"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219E4153838;
+	Wed, 24 Jul 2024 09:49:25 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C71022EF2;
-	Wed, 24 Jul 2024 09:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4AD9152787
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 09:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721814455; cv=none; b=bCJJEg88xINQRLhZ3brW0unpdsTiNUU1icgGePDWaztCaKFWkA0vid7Jyic3t3XzjWUbol4G1NFiJkYfuhn9+8TctVAEKKfzSV5eOfUziLgY2PkrqrWVki+VYEfPzCNN5Mo93BO3zBU67mpH95eSNqAZT9u2OSSeNLEBf43LzU0=
+	t=1721814564; cv=none; b=NaU0+bDjlMaHK4eBIFNjIoxRCwY5ylifSsnCrr8nZkjfWSi9OdF6yJ0z227IfVyRniajKfgrTPO5mSjVJM2mAVGr25b+2b9f0bmyJqFPdZ/hFUgNMHSYtqbCrQpAzSODyn1gXgSI8wx67sfoiMmdHSeKQSVOtFt6qpAWTzego/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721814455; c=relaxed/simple;
-	bh=yC2QfsAJo5Ccj2GDkUDaG1hVjq5eJMepGBZzo0MrbCs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=e6yijl24MGPMTajpGNuuXj1Jil31VKxjOIJlwJlGoPkvN5tKSsGy/VOHDGoUG9ITiHGqd5X8w7f3Q+ZpBGYdrDFxK4FztoNbmPVLl7zK+jhvILCdxu9qZ5uEA79YOKCH/1pZAs5mMyY11yAIDtNpP09Jo+ReXX9Y3954YA8CwJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c5Zscf64; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B0A4C32782;
-	Wed, 24 Jul 2024 09:47:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721814455;
-	bh=yC2QfsAJo5Ccj2GDkUDaG1hVjq5eJMepGBZzo0MrbCs=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=c5Zscf64gFsYakm5FrtM3BaFCv0lz4Mz5/P17VoWnNS/WywJ0uj+cQ8B0W9wjmZCT
-	 DMVl9HtvSyXyEb/hdmAoGlZmWxj5UPWYfVHLwL4biEKH6j5A/1aISy+xmVQJVqJVm8
-	 0QsbObo4LsFq3nWPBRLFXWHdk/Cge0j7YVkwzKmxCkpi89mMAkRAE7C4FGIzljD+M1
-	 Mi6olfYKwOXG1DpVIyYArVxtfTO2YvETE9XM0jDsv4WCsWsmbaQyzIueBPvnA/ItpV
-	 HmfFNJLFrxDhp9t+WeMmhjkq1vITqyix6fOEvmx1CTo1INiy3tCMt7H6xmLJrBJSqD
-	 Rc1wfhGtB4whg==
-Message-ID: <3761ccdd5e6102c11201cdced1c507b061f9bf18.camel@kernel.org>
-Subject: Re: [PATCH] samples/bpf:Remove unused variable
-From: Geliang Tang <geliang@kernel.org>
-To: Zhu Jun <zhujun2@cmss.chinamobile.com>, ast@kernel.org
-Cc: daniel@iogearbox.net, davem@davemloft.net, kuba@kernel.org,
- hawk@kernel.org,  john.fastabend@gmail.com, andrii@kernel.org,
- martin.lau@linux.dev,  eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, kpsingh@kernel.org,  sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, netdev@vger.kernel.org, 
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 24 Jul 2024 17:47:27 +0800
-In-Reply-To: <20240724091740.10307-1-zhujun2@cmss.chinamobile.com>
-References: <20240724091740.10307-1-zhujun2@cmss.chinamobile.com>
-Autocrypt: addr=geliang@kernel.org; prefer-encrypt=mutual;
- keydata=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
- TO0tfEdfAX7IENcV87h2yAFBZkaA==
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.52.0-1build2 
+	s=arc-20240116; t=1721814564; c=relaxed/simple;
+	bh=jtlhOl5bui4WftV8CKZerc0Z2qGgpo/jspDsvuf4EWo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=B1/jU/xjsWhFdl5VwDNMLrpd5oOSHLpQ/BfhitB+fEeE6cy8avTM+bZQR7rCWhhUFB19PDmtEUbPRrHw1tpAu8+HliG6E4Avyo12fhpjlf6UglHiHDBBtDvkbJImZBMmwZ0UItPTSJgc6WAfN+jpK0TBcs4ZJA28cJj5D4Y29qQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WTTdJ2zJ5z2ClPb;
+	Wed, 24 Jul 2024 17:44:52 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 46E18140153;
+	Wed, 24 Jul 2024 17:49:17 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 24 Jul 2024 17:49:17 +0800
+Message-ID: <4a8ae74e-2f90-4da8-9511-325ca6f67aa6@huawei.com>
+Date: Wed, 24 Jul 2024 17:49:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: UML/hostfs - mount failure at tip of tree
+To: =?UTF-8?Q?Maciej_=C5=BBenczykowski?= <maze@google.com>, Christian Brauner
+	<brauner@kernel.org>
+CC: Matthew Wilcox <willy@infradead.org>, Kernel hackers
+	<linux-kernel@vger.kernel.org>, Patrick Rohr <prohr@google.com>, Linus
+ Torvalds <torvalds@linux-foundation.org>
+References: <CANP3RGceNzwdb7w=vPf5=7BCid5HVQDmz1K5kC9JG42+HVAh_g@mail.gmail.com>
+ <CAHk-=wijWMpPk7feEZ8DzdLi7WLp_BhRpm+qgs6Tew1Bb2CmyQ@mail.gmail.com>
+ <b84a6ef8-7c3b-4c04-81d3-859692d91137@huawei.com>
+ <CAHk-=wjH5uKPB6xrWoB8WkBMuLEJO2UsidKE1wV8XSXjAUFO8Q@mail.gmail.com>
+ <CANP3RGdgnXOXjnAFe6irf2JwrPsStTLvihKkowpY2ggSgNw7KA@mail.gmail.com>
+ <CANP3RGd7AQXPYQVrhjbgEN608Jo7hDUh7nc8VQ62gGQqW0iXMg@mail.gmail.com>
+Content-Language: en-US
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <CANP3RGd7AQXPYQVrhjbgEN608Jo7hDUh7nc8VQ62gGQqW0iXMg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
-On Wed, 2024-07-24 at 02:17 -0700, Zhu Jun wrote:
-> samples/bpf:Remove unused variable
 
-There is usually a space after the colon in the subject:
 
-	"samples/bpf: Remove unused variable"
+On 2024/7/24 11:59, Maciej Żenczykowski wrote:
+> On Tue, Jul 23, 2024 at 7:55 PM Maciej Żenczykowski <maze@google.com> wrote:
+>>
+>> On Tue, Jul 23, 2024 at 7:22 PM Linus Torvalds
+>> <torvalds@linux-foundation.org> wrote:
+>>>
+>>> On Tue, 23 Jul 2024 at 18:35, Hongbo Li <lihongbo22@huawei.com> wrote:
+>>>>
+>>>> I apologize for causing this issue. I am currently tracking it down.  If
+>>>> reverting this can solve the problem, you can revert it first.
+>>>
+>>> I don't get the feeling that this is _so_ urgent that it needs to be
+>>> reverted immediately - let's give it at least a few days and see if
+>>> you (or somebody else) figures out the bug.
+>>>
+>>> Maciej - if you can verify that folio conversion fix suggestion of
+>>> mine (or alternatively report that it doesn't help and I was barking
+>>> up the wrong tree), that would be great.
+>>
+>> That appears to fix the folio patch indeed (ie. I no longer need to revert it).
+>>
+>> The tests are still super unhappy, but I've yet to fix our tests very
+>> broken netlink parser for changes that released in 6.10, so that may
+>> be unrelated ;-)
+> 
+> +++ fs/hostfs/hostfs_kern.c:
+>   static int hostfs_fill_super(struct super_block *sb, struct fs_context *fc)
+>   {
+>          struct hostfs_fs_info *fsi = sb->s_fs_info;
+> -       const char *host_root = fc->source;
+> +       const char *host_root = "/";
+> 
+This doesn't work in case where the host directory is designated (such 
+as mount -t hostfs hostfs -o /home /host).
 
-Also a subject prefix "bpf-next" is needed. You can add it when
-formatting the patch:
+I can fix this by the following patch, the root cause of this issue is 
+the incorrect parsing of the host directory. The original mount path 
+will use `parse_monolithic` to parse the host directory. For the new 
+mount api, it use `parse_param` directly. So we should call 
+`fsconfig(fd, FSCONFIG_SET_STRING, "hostfs", "xxx", 0)` to mount the 
+hostfs(I think may be we should add hostfs as the key for host 
+directory.). This may need Christian's reviews.:
 
-	git format-patch -1 --subject-prefix='PATCH bpf-next'
+```
+ From e7cc3be86a01b8382e9510f6ae1a2764942c7cba Mon Sep 17 00:00:00 2001
+From: Hongbo Li <lihongbo22@huawei.com>
+Date: Wed, 24 Jul 2024 16:08:32 +0800
+Subject: [PATCH] hostfs: fix the host directory parse when mounting.
+
+hostfs not keep the host directory when mounting. When the host
+directory is none (default), fc->source is used as the host root
+directory, and this is wrong. Here we use `parse_monolithic` to
+handle the old mount path for parsing the root directory. For new
+mount path, The `parse_param` is used for the host directory parse.
+
+Fixes: cd140ce9f611 ("hostfs: convert hostfs to use the new mount API")
+Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+---
+  fs/hostfs/hostfs_kern.c | 64 ++++++++++++++++++++++++++++++++++-------
+  1 file changed, 54 insertions(+), 10 deletions(-)
+
+diff --git a/fs/hostfs/hostfs_kern.c b/fs/hostfs/hostfs_kern.c
+index 3eb747d26924..205c3700a035 100644
+--- a/fs/hostfs/hostfs_kern.c
++++ b/fs/hostfs/hostfs_kern.c
+@@ -17,6 +17,7 @@
+  #include <linux/writeback.h>
+  #include <linux/mount.h>
+  #include <linux/fs_context.h>
++#include <linux/fs_parser.h>
+  #include <linux/namei.h>
+  #include "hostfs.h"
+  #include <init.h>
+@@ -927,7 +928,6 @@ static const struct inode_operations 
+hostfs_link_iops = {
+  static int hostfs_fill_super(struct super_block *sb, struct fs_context 
+*fc)
+  {
+  	struct hostfs_fs_info *fsi = sb->s_fs_info;
+-	const char *host_root = fc->source;
+  	struct inode *root_inode;
+  	int err;
+
+@@ -941,15 +941,6 @@ static int hostfs_fill_super(struct super_block 
+*sb, struct fs_context *fc)
+  	if (err)
+  		return err;
+
+-	/* NULL is printed as '(null)' by printf(): avoid that. */
+-	if (fc->source == NULL)
+-		host_root = "";
+-
+-	fsi->host_root_path =
+-		kasprintf(GFP_KERNEL, "%s/%s", root_ino, host_root);
+-	if (fsi->host_root_path == NULL)
+-		return -ENOMEM;
+-
+  	root_inode = hostfs_iget(sb, fsi->host_root_path);
+  	if (IS_ERR(root_inode))
+  		return PTR_ERR(root_inode);
+@@ -975,6 +966,57 @@ static int hostfs_fill_super(struct super_block 
+*sb, struct fs_context *fc)
+  	return 0;
+  }
+
++enum hostfs_parma {
++	Opt_hostfs,
++};
++
++static const struct fs_parameter_spec hostfs_param_specs[] = {
++	fsparam_string_empty("hostfs",		Opt_hostfs),
++	{}
++};
++
++static int hostfs_parse_param(struct fs_context *fc, struct 
+fs_parameter *param)
++{
++	struct hostfs_fs_info *fsi = fc->s_fs_info;
++	struct fs_parse_result result;
++	char *host_root;
++	int opt;
++
++	opt = fs_parse(fc, hostfs_param_specs, param, &result);
++	if (opt < 0)
++		return opt;
++
++	switch (opt) {
++	case Opt_hostfs:
++		host_root = param->string;
++		if (!host_root)
++			host_root = "";
++		fsi->host_root_path =
++			kasprintf(GFP_KERNEL, "%s/%s", root_ino, host_root);
++		if (fsi->host_root_path == NULL)
++			return -ENOMEM;
++		break;
++	}
++
++	return 0;
++}
++static int hostfs_parse_monolithic(struct fs_context *fc, void *data)
++{
++	struct hostfs_fs_info *fsi = fc->s_fs_info;
++	char *host_root = (char *)data;
++
++	/* NULL is printed as '(null)' by printf(): avoid that. */
++	if (host_root == NULL)
++		host_root = "";
++
++	fsi->host_root_path =
++		kasprintf(GFP_KERNEL, "%s/%s", root_ino, host_root);
++	if (fsi->host_root_path == NULL)
++		return -ENOMEM;
++
++	return 0;
++}
++
+  static int hostfs_fc_get_tree(struct fs_context *fc)
+  {
+  	return get_tree_nodev(fc, hostfs_fill_super);
+@@ -992,6 +1034,8 @@ static void hostfs_fc_free(struct fs_context *fc)
+  }
+
+  static const struct fs_context_operations hostfs_context_ops = {
++	.parse_monolithic = hostfs_parse_monolithic,
++	.parse_param	= hostfs_parse_param,
+  	.get_tree	= hostfs_fc_get_tree,
+  	.free		= hostfs_fc_free,
+  };
+-- 
+2.34.1
+```
+
+Thanks,
+Hongbo
+
+> appears to fix the problem (when combined with Linus' folio fix).
+> 
+> I think fc->source is just the 'block device' passed to mount, and
+> thus for a virtual filesystem like hostfs, it is just garbage...
+> 
+> (and with the appropriate netlink fixes all the tests now pass at tip-of-tree:
+> 87f3073c2871 (HEAD) hostfs_fill_super(): host_root := "/" (not fc->source)
+> 2743a4aabac6 fs/hostfs/hostfs_kern.c:445 buffer =
+> folio_zero_tail(folio, bytes_read, buffer + bytes_read);
+> a2caf678d7e1 neighbour: add RTNL_FLAG_DUMP_SPLIT_NLM_DONE to RTM_GETNEIGH
+> 3bb0c5772acf net: add RTNL_FLAG_DUMP_SPLIT_NLM_DONE to RTM_GET(RULE|ROUTE)
+> 786c8248dbd3 (linux/master) Merge tag
+> 'perf-tools-fixes-for-v6.11-2024-07-23' of
+> git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools
+> )
+> 
+>>> And perhaps remind me about this mount API thing too if it doesn't
+>>> seem to be resolved by the end of the week when I'm starting to get
+>>> ready to do the rc1?
+>>>
+>>>               Linus
+>>
+>> --
+>> Maciej Żenczykowski, Kernel Networking Developer @ Google
+> 
+> --
+> Maciej Żenczykowski, Kernel Networking Developer @ Google
+> 
 
