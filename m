@@ -1,231 +1,224 @@
-Return-Path: <linux-kernel+bounces-260695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ECAF93AD17
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:14:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58D7493AD0B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1829E2837AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:14:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99DF7B225EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9133913A87C;
-	Wed, 24 Jul 2024 07:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482F671750;
+	Wed, 24 Jul 2024 07:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XlTiWPer"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2045.outbound.protection.outlook.com [40.107.236.45])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="e8pSK8zj"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2053.outbound.protection.outlook.com [40.107.117.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E7B139D05
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AABAD29E;
+	Wed, 24 Jul 2024 07:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.53
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721805221; cv=fail; b=J0q/PQG/l9EiSHsvr88HAYii+UMfPfYMG1ZXl+bpbR+pPIp9Knjtv97C17wjwjKFIyqRZ5x8jYppTk1RzkRBHxNxb47GwQIqioeBKTX6Z5AoDQv+8bBYGHufJAAEJYHrLr9sEu51N2YqruY62WA0sd8tllrtzFNlMcGnpz+FPaI=
+	t=1721805187; cv=fail; b=LedRTlwVmnv4dPiQDztPnfG2yiwBN2tF65Psyi2TV+K//ctcCydPds7a51jVerSDKJjoMPXUfzbBBZjW3yiXLmPbjjo0rZnyCy8aGzTPxElpmjtqxxb2LDMQJhT2rtOsen8dLphEa++CROQaUwieid/80JvoEx7Dx9hQlEtct7k=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721805221; c=relaxed/simple;
-	bh=0RBCCl04/+gweLMM7PYIlTnnbmG/eM+N36LRv0drvM4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LhXeFYmTOP75BSYqqNe1iOpl3EYj1ufN5QAXJH4xZRrABfm30e3d1JlAxHBkK6JNLTpPIIBi3IQ/+TXLt/4WNhhr7kyAnrRSwExs3mCovnTZ03YnwSiIBo5F03ozWC/99WW3+jTD36+7sfP0TiUU3gpzXq2bt+8NOiVZYzaBQ9w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XlTiWPer; arc=fail smtp.client-ip=40.107.236.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1721805187; c=relaxed/simple;
+	bh=cSGST9C6UinKPdjkhPUm9bgscpwKJQ284yrB+jPK3wU=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=dDk64sGlyEE1BY5BLuZ/60ZKAfrnrOmq7pupEk2DCT/qca09H4iRQ95IS9m5U1zgAcYZrLy2miU+vzyZkxQ2Bk4J3bzXs+S6j9ebrNBp0vAzn0K2uWuBTb59Iu949zQ7EYOrtEs+6G3jHOMhXY3Udf+q6DKkxUOx/KfV4c6OJNE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=e8pSK8zj; arc=fail smtp.client-ip=40.107.117.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=P1vAd1T3JIBhIRt+Nn46p6UwXhId4HyFmcjjP+PXcLhomddjRStVzwgUUIkg0wd7yQd4QMCUROXkFaS+tJXXUqW38AglqsCGfsVMoFzQa5NhKU4F1afKmGbtcYk+xf6KCRPqPiF+0Nh0vXyDK/0nWXhnvCI+HadAYYz4R9aMLxgS2hbgXPlNkZu+7ZocU4sDFRqovVtCbxJ9iSccuUfd3Nk+37Wsk/8goT5H3xQP8CDh/As1E3+lXGkimB48C8H2Sf5WoMhuPs3EWTzktSD+XDp5sXMFOI91Ed5vxeyQ28HWMG1QZueLYy2mdyiXO2vRZ6+EyBwzJPscKjzhZl0eQA==
+ b=ZtQWHc/zVBc3uJii8w7byXLUk1vg9Oywcpdt6RIyRKT+7wXLQm7wL4m3wjqY+1DFUdLMVKpffXV/SMoTnTWc2Kp8eGCdTjEZ4CzLwwBcMp7gaE80/3jZZv8H3qsa5PiyoY3369z9te/nawIwJ4+bvkgDixgQK76OfhhhMDZe9mgnz9GoAq06n++2y9x7qFIRYtjfxcym9V9Dr/DLdvAvqXxNFP5SN1GJ0BbjkvZx6KPOi+TaPzYtFtluGiuVV9VcwofoGLm3URtGQzJECav5iGxq8zTwSCiKZ0lYPsWy1PwPajIwLGHVEsPUBhYxZmHBoKNfoTbEgzIYD/4y4rs0BA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eNndY+4j2BOeK7DkDZeVG2tG+e3ohDOcTGYuJJuDwLY=;
- b=HYrWBnXBXzDxXsBnbnzAPG7L2ODSQ3mXiqcr6p7qHU8a+yJ0v8gZWvrDfnNG26wU/+wZ2+twIO4xOQ/kDk9SELanS0kSICpqNOLk8cpshTMlaKLkQ4hB9gitmUwB9CABeCIPDkxWbIGVlE73Z/6O+kwoCZVnKm3I0EB9L2yNEoiwyTRpK+zxmDQ2lxWJ+v1LDkbaWlauwjgPj8mbBzx74m7milkkAnrHKLmix2rIIjrNIWTe4vPbu86dx6NG+IXgycQTauV6EwaEvDhJguDrR/4WiFyjdzq5yKGd7iD0W0wN3V/mF9ub20YS3wqNdBETj1TerTFJmDcbCbtdaBeWzA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=bootlin.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=IM11nHPW/9i3m69DcwLPRJO20reDYOF33hSk/XPZjrM=;
+ b=JV3PaX7+HseOekxrvzONN9XTLuivWa0Ef+pVU+fyRIeJQiKV/z3hrJc6bzlFMm2pHkKIRA+7P5Xp7SJ1gGde3wGJFdIisgWQc74Z++RhFJsBjI2TlS1/NgxOSa59VeM+QkBmhAgHRt0K33E8VSksbF+cZ7qItMLi+690PtbUd7qyrCN9HVajdcK6WROpeqCXcMdOFZImWMeIQb3MVLuIXFek+LO4Mhv1oh7k707v3PkJj+Al/uibEdct3TV5O7wjfmoQgy1hLL7//3336xBoGdaws47qFRxzTW7vdbBnW0aN7Wx1aEItW5p6TirMopdh0Dbx55Df7lED30QUwjJg+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eNndY+4j2BOeK7DkDZeVG2tG+e3ohDOcTGYuJJuDwLY=;
- b=XlTiWPerwNgehjl2tep/rFRq2t3b2vN3YvzQ03FhyF5AKQlkaFH2jtJLarEtL1f8SY+F7ASfNdZQ6vmGmpgOQpusbvS84Mk5na8Vc2SQ4AWMIeGELsyvSrKfl0hlq6zhqv+VngM8pZa/jT6w7n1ASM2FNWYjAu7QejOq5N9FrOM=
-Received: from BYAPR01CA0071.prod.exchangelabs.com (2603:10b6:a03:94::48) by
- IA0PR12MB8931.namprd12.prod.outlook.com (2603:10b6:208:48a::14) with
+ bh=IM11nHPW/9i3m69DcwLPRJO20reDYOF33hSk/XPZjrM=;
+ b=e8pSK8zjiCeOyePz2iu3mXLRv/Qx9MhOTaqfPsFabWooHQqHIanlvQwzW/MzWKi3LJkoojz0+o87Xu3NsYXq9fn3zpdUboPzG4jGNzbNjBq4qm7IGFeANrtzqCG+d6ZfIwzHne41d+F8iGg3rCuDM99Vk57uKZVecxHA+D8FJdaPguEwsuAYtk1rZ58dXkcCFZ/H7gutH0AVA647V0jCrkyaRal/Bp9XignQ5nuhveLLI5uDtq351/SxWEgwLia2g5aBG19QPNkSKY2nGMhVbWDSvqBz51/g/2Xn7wKtyWJ4zhWRJ4BD1hrS0Pa+xu/y4z7o9bZWLNNVcFMb2RZlww==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEYPR06MB5672.apcprd06.prod.outlook.com (2603:1096:101:bc::11)
+ by TYZPR06MB7273.apcprd06.prod.outlook.com (2603:1096:405:b1::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Wed, 24 Jul
- 2024 07:13:35 +0000
-Received: from SJ5PEPF000001D1.namprd05.prod.outlook.com
- (2603:10b6:a03:94:cafe::15) by BYAPR01CA0071.outlook.office365.com
- (2603:10b6:a03:94::48) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29 via Frontend
- Transport; Wed, 24 Jul 2024 07:13:35 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ5PEPF000001D1.mail.protection.outlook.com (10.167.242.53) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7784.11 via Frontend Transport; Wed, 24 Jul 2024 07:13:35 +0000
-Received: from jatayu.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 24 Jul
- 2024 02:13:31 -0500
-From: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Jarkko Nikula
-	<jarkko.nikula@linux.intel.com>
-CC: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>, Krishnamoorthi M
-	<krishnamoorthi.m@amd.com>, <linux-i3c@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Subject: [PATCH v2 5/5] i3c: mipi-i3c-hci: Add a quirk to set Response buffer threshold
-Date: Wed, 24 Jul 2024 12:42:45 +0530
-Message-ID: <20240724071245.3833404-6-Shyam-sundar.S-k@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240724071245.3833404-1-Shyam-sundar.S-k@amd.com>
-References: <20240724071245.3833404-1-Shyam-sundar.S-k@amd.com>
+ 2024 07:13:02 +0000
+Received: from SEYPR06MB5672.apcprd06.prod.outlook.com
+ ([fe80::2f0c:5cf2:abb0:d852]) by SEYPR06MB5672.apcprd06.prod.outlook.com
+ ([fe80::2f0c:5cf2:abb0:d852%6]) with mapi id 15.20.7784.016; Wed, 24 Jul 2024
+ 07:13:01 +0000
+Message-ID: <276e29fa-1252-4c91-a5e4-eaf367b4fbb0@vivo.com>
+Date: Wed, 24 Jul 2024 15:12:55 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dma-buf: heaps: DMA_HEAP_IOCTL_ALLOC_READ_FILE
+ framework
+To: Christoph Hellwig <hch@infradead.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
+ "T.J. Mercier" <tjmercier@google.com>, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+References: <20240711074221.459589-1-link@vivo.com>
+ <20240711074221.459589-2-link@vivo.com>
+ <5ccbe705-883c-4651-9e66-6b452c414c74@amd.com>
+ <ZpTnzkdolpEwFbtu@phenom.ffwll.local>
+ <99364176-a7f0-4a17-8889-75ff92d5694e@amd.com>
+ <06713006-c5ce-4773-a1b3-ca3bea56ee45@vivo.com>
+ <ZpY-CfcDdEhzWpxN@phenom.ffwll.local>
+ <b18ad853-90e4-4ad7-b621-2ca8a8111708@vivo.com>
+ <Zpff-8LmqK5AD-a8@phenom.ffwll.local> <Zpf5R7fRZZmEwVuR@infradead.org>
+From: Huan Yang <link@vivo.com>
+In-Reply-To: <Zpf5R7fRZZmEwVuR@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR04CA0152.apcprd04.prod.outlook.com (2603:1096:4::14)
+ To SEYPR06MB5672.apcprd06.prod.outlook.com (2603:1096:101:bc::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D1:EE_|IA0PR12MB8931:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5d07a187-95d6-4136-1ea8-08dcabb021ef
+X-MS-TrafficTypeDiagnostic: SEYPR06MB5672:EE_|TYZPR06MB7273:EE_
+X-MS-Office365-Filtering-Correlation-Id: ffd41735-3177-42a3-eb0a-08dcabb00dd9
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
+	BCL:0;ARA:13230040|376014|366016|52116014|7416014|1800799024|921020|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BRUQfKaJMZo3X85JtlNMqLUQ8Ha9ijoJi+2yZYFDZFsrlXK7xlCuYc/4YXRp?=
- =?us-ascii?Q?kGQi6kGYR31+MAR6KC+IVCx1d9cUV51UvCn4MVLOj8dvwYaOADG3sWebrm/X?=
- =?us-ascii?Q?dQAS1CdCyAVb6OJwZdECFDDuVjZ8e0U0yg0YDq5LzjRHwA/4qJ+W6N030sUf?=
- =?us-ascii?Q?TZpMqPfmPvVDowkpmpS4VzI/zp9NdqlgMUg1Y8MbagfDgjMuveGrJX5YzSrD?=
- =?us-ascii?Q?jX9vVl9NrCjkfhsZGceyAI2fG2TObEZj6VF50h8D8MIxaFvtbxced8AGLkF1?=
- =?us-ascii?Q?TUSPxJgzqLdzBdZcbNCMkPXOoWz7apXqr11JNsQvyXn6IQ4Z24t+qWTLZzGW?=
- =?us-ascii?Q?OkfJ+FBdmQsOVWdTq9rBIW0NTHeTEP3bQUg/pvnaLu1dUef2Kk2Jt8GNE2iF?=
- =?us-ascii?Q?oq6NATmkWZSHQFrZu6h4e58syYbrrnBQ5TUDgLSg2TcVpVwSlvsKVzwzF9cj?=
- =?us-ascii?Q?KJLEq2eNU6lvwckT+IUPfbs3dmAVsDIQofP+K8ogwFsQc7gt8YkmiX4QPBhw?=
- =?us-ascii?Q?I8msSWeB0yeDEZikAPkc3qkRwuk97ACPy0N+3k7zNkyLktV5MA2/sXOgX5u7?=
- =?us-ascii?Q?5l4kGVKuc0E6Wg1FJjg6TFUjEljhrMMiGUkTDtq4lYQBFK2jaZCbbE6PUzy+?=
- =?us-ascii?Q?3UD8ek6XDMfQNnXa9bSK6WbawbBgOfN3a8SdqOfo61g5qlv9JVLDj9jcLh4J?=
- =?us-ascii?Q?WJ5sM2PvMawtA7JayfZNoI3aHSR1b16/dOfTpk582bxm/T244HGD9pn0gA/d?=
- =?us-ascii?Q?ngP6pwhL0xrVxt0Y0NvDrm2rRquz9O3aEY3QC804YhJRR8LWsC9DaejGHrs9?=
- =?us-ascii?Q?KrMF9CpYoFzQwInqKYOB4jyhAKuMJ2+Fa7llpZ6aDEWREffR1HBHyS+YsoXk?=
- =?us-ascii?Q?K9GOmH1eM6jShBvsITkzrD2oW/Dv2QmY6HMnidTRvE5GQ7E7RG3ThIc9uMZK?=
- =?us-ascii?Q?yVd85wzpWtvLHUXe7Z/ZYnocio5Jvil5GHktZSVQKMkrNfJ08TvmVnqA1+Rb?=
- =?us-ascii?Q?UknuK2OEHtNwI3GkuBAgxEH/M9PDZkXdLLRx3WElZTpuA6hisxE7+TwDihUX?=
- =?us-ascii?Q?+6+Hn/9NRw3X2gvidRz/KRRT99AtBDnc67l3a0byJ9Sc4UnNIVkJ0Rd9ULLE?=
- =?us-ascii?Q?tA1E4Iy9wGXdLzW/4KSac+2JYQ84W2ul3k3UivOEnTkv+dHcxHl+HaezXSmX?=
- =?us-ascii?Q?SE9y2EVaySM+OYWRpo32vpjDUR3nUuWnWgiwWXG6Hahk+lQ+rjGI0Ic0K8x+?=
- =?us-ascii?Q?4hl6KSOmnkEqXEWIDfvkxrAIYy2yL/sbw5eRptIvuK4Kp9crynp02Vz3AePL?=
- =?us-ascii?Q?P5LZRyPiEAn0Z/CPIfmZt66RAs3cu07eNYm0Nn0Q9OVrCOqk+6ENELOuQQ4P?=
- =?us-ascii?Q?2UW+j8OtY/M1qWd2EK1teOskoplUXIqQ91QepRux9UxjnA+Qm/nEtuHDX+JR?=
- =?us-ascii?Q?JxvVcnmY9lfqgrnqhMdSuiyvYrS2RoOc?=
+	=?utf-8?B?c3lFdVNpWWhzYUxhdWRYemo5T05OMmhrRmJnWW1DRkI2RW9iNFpDZVdZMGww?=
+ =?utf-8?B?cHJ4a3ZEZDFaM3FwZzNDUUdNRTZsb1d6MlFMZndrRVptZ2lsWVhZWU5mbktV?=
+ =?utf-8?B?RnVXSTk1NVlEYlplNVoyV3dMNnRiTjBDcGdjU09aYmxzTTM5a3FCL3Jtb1VL?=
+ =?utf-8?B?eXdhMTltb3RuVlAraVFTcDZXdmtKZmg5TlFHMHJUc1RCOHNja1ZSTTRRYXZw?=
+ =?utf-8?B?K1FXUkVEZUo4WGNJd0gvYnFDQ3MxNFA3dDB5MXE4TVNsQzQwa3FoSWFYZVBU?=
+ =?utf-8?B?Q09RSUtUdUlYcncxZnl5Mjg3L01VTkZ3VkJrZmZDV0RwVHFEZnIyaUZjUDJT?=
+ =?utf-8?B?aGdFcXZzakhEeWVjYzBsRklWSWhFQml2ZE5yQXJ0VWRTTW9GVi81RllNbnVW?=
+ =?utf-8?B?Z2RnR09OSEE0M3lRSjU0a1N2RVQ0TmJFSEdxVWpsNGI4TjBPVytraFlRK01v?=
+ =?utf-8?B?MUR5aDhVWTlsSkJHQVpKTjk3clRyYmF0VWh6Nmd0M2dTeUIxY1NxVkptb3hu?=
+ =?utf-8?B?aG9Pc1hVWXltaGVzRjFrREJUYWlaWGZuQm5XYWJ4bGVNbHhtVmJJVFBOUFRp?=
+ =?utf-8?B?WjVBZkJCN0VrbGsvbU9FalR6YTVPS0pHRTV3OSsvc3dSNHlscklMYUNTVExW?=
+ =?utf-8?B?RnRjam9XVjFCODQ1UG5BZWZHejlXU3hLZHJIRkphZjFPNmJNbXhVRjNyMUw0?=
+ =?utf-8?B?bmQ4MFdPNXBrVkxxdjNnMXppeHZuUGZJVFZsK1d0RlRPb2d3SFdCRHBsUFNy?=
+ =?utf-8?B?SHRjOWdlYlJEdm04TVpXZUVIUjROeUZGZmVaWkVUNVRaVk1iZjdmY05NcjY4?=
+ =?utf-8?B?WVo4Z3lLZHNQMnROM1JGbjhxREhCa3c2bk1kV3k4VDl5R1Q4TjFiZytaeFVv?=
+ =?utf-8?B?TnRBVW5QRkVwOEZjRTZJbEtLS3IzaWp3Njd6UHFSNnR5bldBVlE2ZkIzbWtk?=
+ =?utf-8?B?TVJaWndQUmJiNkprNjluU3ZBWUhnVVlmZEdvb3lVUEhvMTN5bDFBd1Fycjha?=
+ =?utf-8?B?a2U0K2J3ZkJHaXQwTFI0cXBSVkFEa0RWQnBkNmZMZUVMVjc1S2JPVm41QTQy?=
+ =?utf-8?B?NFZPMys5TCtMVmtOb1JIOG9LSnJlblVjWXJQc3J6MVBTNDkxN2h2cXo2bnB5?=
+ =?utf-8?B?bmxGc3pZOEtCRnpHOVpyektjanl3OHJuc1FweThpekRzUnR6SEN0d3Nxakw4?=
+ =?utf-8?B?NjFteHJZaFRyYjRpc2xlMG9BYjhMMWlNcVNSL2IyQnNFck9DNjFVY2FoampO?=
+ =?utf-8?B?L1g3M0RuTFFSalgzT3RkRS9QODRpejkxek5Wd3IvcFNycTRsUGIxbWhMcG1h?=
+ =?utf-8?B?L0E5dUI3VjhORjZqNEFPUytuYVowSUtVOTBUODJLNW1QbklBTkJZUk1EVmtO?=
+ =?utf-8?B?Tzh3eWRtOFlKQk9vZFpkc0k2emp3ZWR3WHdNQmdpZFcreEpHTy9ONCtmMm42?=
+ =?utf-8?B?WEtxVkZVdE9ZVk05WmlZQ2FyN2tTcVhhUXlvakIxR2Z2M29uSFdHL25RRU00?=
+ =?utf-8?B?am9kYzFBWFphR2lVdGNhSzM3OVdWcWgxaTgyWHdvSS9sb2lUN05WdmlLbUxk?=
+ =?utf-8?B?aC9sU0xhdTJ0cXNQNjEvUWI1RG1OUkx1Y3VScmZoYzZ3M2Q2WTB0M1I4NkFO?=
+ =?utf-8?B?eFdkdmY4dFNIck13K2gzV0RiOThwVGJKUmZ3clRQZ3NYZjdnMjJYNm9MQ1VH?=
+ =?utf-8?B?UFFON2VrcGlBQ0w1VXlKaWhNYnIzTlV2TWxuekMraFhNelh3MmpucDBxQWF2?=
+ =?utf-8?B?MkcyWlFyZ0RnLzNwTytHMGoxUE9nMjdRRitrSzd6OWxoOXBLc25MNUNhYUtt?=
+ =?utf-8?B?QmgxWTV4ek1SSmtnOGRDZ1RTdGkzUXd4RXZlLzRNUFVXRHFVR3g1MkVYWFg0?=
+ =?utf-8?B?Z3dSTjFjaFM3dThCU3hPRkRqY0VhdTFtbVo0YzIzQXdYcUNpbTB2ZFFmTU1a?=
+ =?utf-8?Q?wbEq5krEKPI=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2024 07:13:35.0274
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB5672.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(52116014)(7416014)(1800799024)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YlJSakxtOGVmTFdLNE90YmNuMmtsRmJlemFwbHZtYlNxaWdiU3VUOHF5OGNP?=
+ =?utf-8?B?ZElodVMwNUVDdDd6LzRPVTJxQ1hRUkxzUERXYUFuSEJROWJsbStUbS9rcXVQ?=
+ =?utf-8?B?UEc4QSs0STJBejhVdzBUek5MazQ3ZWJNaDFLOG5vdU9IanczaXg2YnQ2REJS?=
+ =?utf-8?B?dlYyRlFkaUwzbEJhdWRqS0ZWTlhDRkN0aUgwQTluaUZjOXQrYjRncUV0Sk83?=
+ =?utf-8?B?RVQ0WGR2V2xxNFVzeEh6VDZnbU4vR0VlZklOMVJrSWdXTlNrMVZjRU5wa1V5?=
+ =?utf-8?B?VXpmVDhsanN0Uk00eHFHdCs2S01CMW91ZWxGaVArWmVDRGV0ME84WFpPa0ZJ?=
+ =?utf-8?B?djQ0eUROWTg3QXZUYjJQWmovUVZsZVdmWEJqUUZwcmgybTNVTTFFODd3V25h?=
+ =?utf-8?B?Uk04d3NoQjJqNHdkMm9QRFdwdTAzbW9reDA4OUtvT2s3Rkc0WXZhMFZjYjlQ?=
+ =?utf-8?B?ZERBTnVqYmFDRFZUVUZ6cVJNaGRiTkhsREthMmF2NU1YWFZ1aEk3OVMwOGJr?=
+ =?utf-8?B?Y1pGVjVMMk1qQ05paXhJdlZTVStOZkk2MFFxNkNSUVJwOGJ3b2kyN0pLd0NL?=
+ =?utf-8?B?cGh4YkpDNG9BaXJ1N25uU3VTbVBEVFlWbTY3bHRkRThHdjN4aEgweHVOT0RE?=
+ =?utf-8?B?QW5oTHU4c0pma1hWT0oyUWdvMlNxSDJHSHpMb3JtUWZEZlBBZlJEQzlBeElz?=
+ =?utf-8?B?dEVsTkNMVjZ2a1JCR3k2U1MwaFVGaFE4YmVaK2FQVUlmRS9tZ3RKUlAzaXNh?=
+ =?utf-8?B?VXJGUUxIaDkvMzB4dFE2S3hoMGFYMytJUDQ0T2Q4L0trbWhUUm53M0NzRlk1?=
+ =?utf-8?B?bnlicC95aE9GeGgyT2FDMk1IbU1nNTg0RmpZZWdCaE9aVXJneGdISWQ4TFZE?=
+ =?utf-8?B?S1pLVUdZMGx0eDU3SkpiUCswcHZpcVVtMHNVVjhGVXg4V0JteG1rMmxpbExJ?=
+ =?utf-8?B?WGxsWEV0clEybGpjVTVjTWJuS05kODY5cHhBR09mVEkwOG1Sd2hmTW4xUzhG?=
+ =?utf-8?B?d2RBSDlSY2w3Tml2c2ZuSTl5RjVRT3pwNzBFRmNRNm1tcGVTazZtd05TV1ZD?=
+ =?utf-8?B?eE9Ga01MN0dyWjZwZFRQdk1KNzhWcGNUOVFOcVNJQ0JjK1JnYzRjL0xxdFpB?=
+ =?utf-8?B?eWI3Nk9TMEtJUVVDTVU5S3I0b3dObENJVGxsbHBieWZSV3U5VlA5MGhKdGg5?=
+ =?utf-8?B?QXoyVTlQc2dUQ3BXSVZINm5QdWlaS3ZlTmdtdFpmcnRYb3lLZ25mRzRPU0hn?=
+ =?utf-8?B?aUJ5T0hNbUxhYzRiNyt4ZEpQYUtFVXRqdlhhS0ZmYmxCUWNMaUUvYkk1VmVC?=
+ =?utf-8?B?S012bkFObnBhbDhrY0hiZTF4czVxcUFQdXpGaDZ6VEg4SGd5cjdlY2psZ2Fv?=
+ =?utf-8?B?T1BKZGxHcGpKODU1cXhJMkxTTFgrUmZEb2dyeUV6TGZYSStXSFk5VjVFMUQv?=
+ =?utf-8?B?cVVHZmttOFpKUk95UVBDQkwzY1RTTmphaDg0cGxVVkVyNDlseUdOYkEwRFlM?=
+ =?utf-8?B?M2huc29ZMUdZY090RkVNNThDVFNvaXBOOEZ4Ly9lZ2I5K2tlWUxjR2ZQeHhl?=
+ =?utf-8?B?RzVnNEEzeHM5MUI2K04yUG94b2l3U2dlTmxKVXBmbVhxWFlKTjl1emxWdGd6?=
+ =?utf-8?B?bm9HaFA2SHI1OXhEZldpcmhKN1F1cVJDWTlmZktsNU9CWGFwMXVxVDlsOG5v?=
+ =?utf-8?B?ajFRa3pvSU5IaW01L2RWb1VwVHVNK0gvYmJHVCtHYy9WUVVuZkg0TDBUT3Fi?=
+ =?utf-8?B?bEt4Z0p2djlqSko2aXVycnhrMUZUajR3ZUZGM1pRNnhjRzZaT0h4VWtMMWty?=
+ =?utf-8?B?bnRGb285UVN1Sm1qVUNlNVFpWFVOc1p4VzR3VTIxQVNsRmhiTzA5OUpZYVFu?=
+ =?utf-8?B?aG4vYzNSZGk4MTZoZDVNYmZwZkM4aUovVS9jajZzUUhkU0x4eTJUYzlRdmI5?=
+ =?utf-8?B?ejMzQXBMRDNXYnRTTXdiVjJzZ3RabGE2MDcrTncwbDJZRy9IOU1WM1h5N0Vr?=
+ =?utf-8?B?YzUwUjhDbjRPejF6dVp0NkhBaExnMXVxc1ZlbllmRnE5ckp3QXV0UitMdXVa?=
+ =?utf-8?B?TjF0MStpbnVDREExcVByb0hTNzMzUGE1UTI0bUxGaXBuYUtpdzd4b1dPc0Iv?=
+ =?utf-8?Q?bWNFsZ9e6yoQFJnUiWRgYHFD6?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ffd41735-3177-42a3-eb0a-08dcabb00dd9
+X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB5672.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2024 07:13:01.6649
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d07a187-95d6-4136-1ea8-08dcabb021ef
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001D1.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8931
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MKnJL5WcyRUtDbZJ8D3jlMZUfzRCuSd+ZPhJeAnuMM2CTLTaYfYyGlsz0DCJJ+/+3wuj3Jfp8Nvl3wUc85Ncfg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB7273
 
-The current driver sets the response buffer threshold value to 1
-(N+1, 2 DWORDS) in the QUEUE THRESHOLD register. However, the AMD
-I3C controller only generates interrupts when the response buffer
-threshold value is set to 0 (1 DWORD).
 
-Therefore, a quirk is added to set the response buffer threshold value
-to 0.
+在 2024/7/18 1:03, Christoph Hellwig 写道:
+> copy_file_range only work inside the same file system anyway, so
+> it is completely irrelevant here.
+>
+> What should work just fine is using sendfile (or splice if you like it
+> complicated) to write TO the dma buf.  That just iterates over the page
+> cache on the source file and calls ->write_iter from the page cache
+> pages.  Of course that requires that you actually implement
+> ->write_iter, but given that dmabufs support mmaping there I can't
+> see why you should not be able to write to it.
 
-Co-developed-by: Krishnamoorthi M <krishnamoorthi.m@amd.com>
-Signed-off-by: Krishnamoorthi M <krishnamoorthi.m@amd.com>
-Co-developed-by: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>
-Signed-off-by: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>
-Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
----
- drivers/i3c/master/mipi-i3c-hci/core.c       |  4 ++++
- drivers/i3c/master/mipi-i3c-hci/hci.h        |  2 ++
- drivers/i3c/master/mipi-i3c-hci/hci_quirks.c | 12 ++++++++++++
- 3 files changed, 18 insertions(+)
+This day, I test dma-buf read large file with sendfile. Here are two 
+problem I find when read O_DIRECT open file.
 
-diff --git a/drivers/i3c/master/mipi-i3c-hci/core.c b/drivers/i3c/master/mipi-i3c-hci/core.c
-index 3320e6331c86..eef5059177f1 100644
---- a/drivers/i3c/master/mipi-i3c-hci/core.c
-+++ b/drivers/i3c/master/mipi-i3c-hci/core.c
-@@ -147,6 +147,10 @@ static int i3c_hci_bus_init(struct i3c_master_controller *m)
- 	if (ret)
- 		return ret;
- 
-+	/* Set RESP_BUF_THLD to 0(n) to get 1(n+1) response */
-+	if (hci->quirks & HCI_QUIRK_AMD_RESP_BUF_THLD)
-+		amd_set_resp_buf_thld(hci);
-+
- 	reg_set(HC_CONTROL, HC_CONTROL_BUS_ENABLE);
- 	DBG("HC_CONTROL = %#x", reg_read(HC_CONTROL));
- 
-diff --git a/drivers/i3c/master/mipi-i3c-hci/hci.h b/drivers/i3c/master/mipi-i3c-hci/hci.h
-index 06a4d54a5a02..58c3643c6390 100644
---- a/drivers/i3c/master/mipi-i3c-hci/hci.h
-+++ b/drivers/i3c/master/mipi-i3c-hci/hci.h
-@@ -142,6 +142,7 @@ struct i3c_hci_dev_data {
- #define HCI_QUIRK_RAW_CCC	BIT(1)	/* CCC framing must be explicit */
- #define HCI_QUIRK_AMD_PIO_MODE		BIT(2)  /* Set PIO mode for AMD platforms */
- #define HCI_QUIRK_AMD_OD_PP_TIMING	BIT(3)	/* Set OD and PP timings for AMD platforms */
-+#define HCI_QUIRK_AMD_RESP_BUF_THLD	BIT(4)	/* Set resp buf thld to 0 for AMD platforms */
- 
- 
- /* global functions */
-@@ -151,5 +152,6 @@ void mipi_i3c_hci_dct_index_reset(struct i3c_hci *hci);
- 
- void amd_i3c_hci_quirks_init(struct i3c_hci *hci);
- void amd_set_od_pp_timing(struct i3c_hci *hci);
-+void amd_set_resp_buf_thld(struct i3c_hci *hci);
- 
- #endif
-diff --git a/drivers/i3c/master/mipi-i3c-hci/hci_quirks.c b/drivers/i3c/master/mipi-i3c-hci/hci_quirks.c
-index 6ce08f9c92a8..954cba95e4a4 100644
---- a/drivers/i3c/master/mipi-i3c-hci/hci_quirks.c
-+++ b/drivers/i3c/master/mipi-i3c-hci/hci_quirks.c
-@@ -20,12 +20,15 @@
- #define AMD_SCL_I3C_OD_TIMING		0x00cf00cf
- #define AMD_SCL_I3C_PP_TIMING		0x00160016
- 
-+#define QUEUE_THLD_CTRL			0xD0
-+
- void amd_i3c_hci_quirks_init(struct i3c_hci *hci)
- {
- #if defined(CONFIG_X86)
- 	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
- 		hci->quirks |= HCI_QUIRK_AMD_PIO_MODE;
- 		hci->quirks |= HCI_QUIRK_AMD_OD_PP_TIMING;
-+		hci->quirks |= HCI_QUIRK_AMD_RESP_BUF_THLD;
- 	}
- #endif
- }
-@@ -41,3 +44,12 @@ void amd_set_od_pp_timing(struct i3c_hci *hci)
- 	data |= W0_MASK(18, 16);
- 	reg_write(HCI_SDA_HOLD_SWITCH_DLY_TIMING, data);
- }
-+
-+void amd_set_resp_buf_thld(struct i3c_hci *hci)
-+{
-+	u32 data;
-+
-+	data = reg_read(QUEUE_THLD_CTRL);
-+	data = data & ~W0_MASK(15, 8);
-+	reg_write(QUEUE_THLD_CTRL, data);
-+}
--- 
-2.25.1
+1. sendfile/splice transfer data between read and write through a pipe.
+     Even if the read process does not generate page cache, an 
+equivalent amount of CPU copy is still required.
+     This is particularly noticeable in the performance degradation when 
+reading large files.
 
+2. Each pipe max_bytes is 64K(in my phone and arch test), This means 
+that for each IO, only 64K is read and then copied, resulting in poor IO 
+performance.
+
+Based on observations from testing, it takes an average of 7s to perform 
+O_DIRECT read of a 3GB file. Trace show much runable and running and 
+some I/O between this.
+
+For buffer read large file into dma-buf by sendfile, cost 2.3s, is normal.
+
+Maybe this is not a good way to let dma-buf support direct IO?
+
+
+>
+> Reading FROM the dma buf in that fashion should also work if you provide
+> a ->read_iter wire up ->splice_read to copy_splice_read so that it
+We current more care abount read file into dma-buf, not write. :)
+> doesn't require any page cache.
 
