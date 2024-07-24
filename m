@@ -1,114 +1,145 @@
-Return-Path: <linux-kernel+bounces-261333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18C6093B5FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:29:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D33293B5F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7EAB2850F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:29:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 819071F249C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14371662FB;
-	Wed, 24 Jul 2024 17:28:49 +0000 (UTC)
-Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B117161915;
+	Wed, 24 Jul 2024 17:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cPOMUvFg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E031115FA7E;
-	Wed, 24 Jul 2024 17:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5B515FA92
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 17:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721842129; cv=none; b=AhR0kdY3wD+kjFV2gr5/s0EG494KwoBxJ+bLV8zPtUkafPXNktac2Cli2gIWsfugq1nHJ1YlYUvWOpdvkxyTcSJ0jQ2Y32lxDNpHlJ387QHS7qrUDcK17f++YilD3ZSMCa69Lxb4sgGbkl8M28Bowh1SA5PrqG1aAnI3ZzzS0SM=
+	t=1721842127; cv=none; b=guqu+CK0KaANamCmxHgD36e+Hux0GPUtTGk+1ewTOtZj5/bXNJC4WQOEX3jxgRMgMxhkQtol88tVKS75ztQCWZn7DwjOWANf+K5EXhFduuEwRLFN/cTSR1zodFZCCQZx357LgSnV2DETxjb64E36TyttQgJQSwVreSHQQdub3WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721842129; c=relaxed/simple;
-	bh=hzvzimYwTkKOfU32wPbfz51QUdMbS0TMQSJhLlV3Hjs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k7uOlr5dPGpnRomkDWwMAUHqGksWp7qSe7IcAJExuqd/rDBazHkpjaVPQFypwhG0YwU8JggCW6RMLNNrt7265lDSR2uUEzVrrw0NntuTOnxeas33mEqaPwfiQe4aHRyKneR/JjB0ik+0nNjzD+OuuACLxkfunJ3V49YnKupwOnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
-Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
- (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Wed, 24 Jul
- 2024 20:28:45 +0300
-Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Wed, 24 Jul
- 2024 20:28:44 +0300
-From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
-CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
-	<linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>, <stable@vger.kernel.org>
-Subject: [PATCH] f2fs: fix several potential integer overflows in file offsets
-Date: Wed, 24 Jul 2024 10:28:38 -0700
-Message-ID: <20240724172838.11614-1-n.zhandarovich@fintech.ru>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1721842127; c=relaxed/simple;
+	bh=Gf8NC4hNI68SCJ0Y4qE7o7qwZC2N5ZJUkUWwjBcujgU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=CGAgbwX3DQDEOgSsT9kXR7SQmEfiHxTE8K3zLVVrVUD27ZsMwQ54vWURZL0dkq5pCCZMnvLWtCtMwgRC1x/LCp6tOuz84ettG+xWbPjzGTrz0xcpR+h8QiEmHsXslli886p3D/sWML4g5/KPtjLPmrqreSdNBFokyM2egv7RNjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cPOMUvFg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721842124;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6USsBwoV9M3KFY+WBK9s2N+vuzz8so6DiVIYEeyT4Kc=;
+	b=cPOMUvFgZAh0L6kyiD/sL3dbZDjcjNJ6S2gECm3jHDeNtCBySVgdyON25OPW50cWQsIf0o
+	85wupFztO+poMSYAiuHp0q9+r5MCB+61rJswteRwsepTIO3fD0EwjTMF0vB3uVFlk0pZ8b
+	h+oovZOpfY8Fa9utHpNxIqR2nSjM3ZI=
+Received: from mail-ot1-f70.google.com (mail-ot1-f70.google.com
+ [209.85.210.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-417-88bvrnTOM4WZ2u18tdwCdA-1; Wed, 24 Jul 2024 13:28:43 -0400
+X-MC-Unique: 88bvrnTOM4WZ2u18tdwCdA-1
+Received: by mail-ot1-f70.google.com with SMTP id 46e09a7af769-70377dcee38so8283452a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 10:28:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721842123; x=1722446923;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6USsBwoV9M3KFY+WBK9s2N+vuzz8so6DiVIYEeyT4Kc=;
+        b=Z4NkEQgTeopx6JABzJyRaXy689Vee7fXJbAjrcNkzR8ui3f0yyLMcAz9sp0sP59uZ2
+         G+LQz3oUsypESDLw4m+N6NLvxwkXUSa8TElX9LB/AzUL9k097PIC6I4hjS5QbCYgCnog
+         fbB8gsSBbr5IZQVRCgItFMfaW1lkNEB4kBQL9lRbYv3iqgBbU3G5cHCyqPr5GvsNuGPW
+         vzrz9OZY+CQPCo+R64as0FcE+9PWUw7VkgtFnt6lH+IixaJCL9lMiLrLyB48Bm8/Ml6i
+         Y26Z8Dfu+W0MGkGFFMrulvFB0uIsBDTOvzhYoIXybspv4L2JSPGUsvbRMc9yNIMJZWCL
+         AUpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbzfk9T6EDNRP3eoj1FIJuwE35YNYI7nzYRyiNiR0eGzECybhnd6kiZiz9VTUYu/gIWcFJKnjkD8CkSlo3HBWGz3AtkLQF3N4ovbXi
+X-Gm-Message-State: AOJu0Ywe68yo1KudM2hG9Nh70aCx9ElQgjdXKMWA4vuRonp15ZV/aXqE
+	pfwpYJg2zkhXAFGnXswOtLA0+2n60uSeOlRs/qofDxq73PLt5G6Qu6iqykEBuzeVzS08uTr2Teq
+	7rx4EoJb2CTCyiKoe0roIlf9BmNwlj/PgZS/kC0q8BtnN/R/XhFXgQ1KkYf8cuA==
+X-Received: by 2002:a05:6830:601c:b0:707:1794:6ec1 with SMTP id 46e09a7af769-7092e6ff277mr516352a34.20.1721842122847;
+        Wed, 24 Jul 2024 10:28:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEPZbqluukEE1AadcZKoCfk5TGeIyBkcAZ0s+oqYQD37sNNbHTo5lIDWZdKiIUpa/Tftdljpw==
+X-Received: by 2002:a05:6830:601c:b0:707:1794:6ec1 with SMTP id 46e09a7af769-7092e6ff277mr516336a34.20.1721842122559;
+        Wed, 24 Jul 2024 10:28:42 -0700 (PDT)
+Received: from starship ([2607:fea8:fc01:7b7f:6adb:55ff:feaa:b156])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a19905a909sm595995285a.73.2024.07.24.10.28.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 10:28:41 -0700 (PDT)
+Message-ID: <3aeeed2f4ccca6ddd404553984f22bf1b72e45cf.camel@redhat.com>
+Subject: Re: [PATCH v2 05/49] KVM: selftests: Assert that the @cpuid passed
+ to get_cpuid_entry() is non-NULL
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov
+ <vkuznets@redhat.com>,  kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Hou Wenlong <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Binbin Wu
+ <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>,
+ Robert Hoo <robert.hoo.linux@gmail.com>
+Date: Wed, 24 Jul 2024 13:28:40 -0400
+In-Reply-To: <Zow_BmpOGwQJ9Yoi@google.com>
+References: <20240517173926.965351-1-seanjc@google.com>
+	 <20240517173926.965351-6-seanjc@google.com>
+	 <6a8aee9425a47290c7401d4926041c0611d69ff6.camel@redhat.com>
+	 <Zow_BmpOGwQJ9Yoi@google.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
- (10.0.10.18)
+Content-Transfer-Encoding: 7bit
 
-When dealing with large extents and calculating file offsets by
-summing up according extent offsets and lengths of unsigned int type,
-one may encounter possible integer overflow if the values are
-big enough.
+On Mon, 2024-07-08 at 19:33 +0000, Sean Christopherson wrote:
+> On Thu, Jul 04, 2024, Maxim Levitsky wrote:
+> > On Fri, 2024-05-17 at 10:38 -0700, Sean Christopherson wrote:
+> > > Add a sanity check in get_cpuid_entry() to provide a friendlier error than
+> > > a segfault when a test developer tries to use a vCPU CPUID helper on a
+> > > barebones vCPU.
+> > > 
+> > > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > > ---
+> > >  tools/testing/selftests/kvm/lib/x86_64/processor.c | 2 ++
+> > >  1 file changed, 2 insertions(+)
+> > > 
+> > > diff --git a/tools/testing/selftests/kvm/lib/x86_64/processor.c b/tools/testing/selftests/kvm/lib/x86_64/processor.c
+> > > index c664e446136b..f0f3434d767e 100644
+> > > --- a/tools/testing/selftests/kvm/lib/x86_64/processor.c
+> > > +++ b/tools/testing/selftests/kvm/lib/x86_64/processor.c
+> > > @@ -1141,6 +1141,8 @@ const struct kvm_cpuid_entry2 *get_cpuid_entry(const struct kvm_cpuid2 *cpuid,
+> > >  {
+> > >  	int i;
+> > >  
+> > > +	TEST_ASSERT(cpuid, "Must do vcpu_init_cpuid() first (or equivalent)");
+> > > +
+> > >  	for (i = 0; i < cpuid->nent; i++) {
+> > >  		if (cpuid->entries[i].function == function &&
+> > >  		    cpuid->entries[i].index == index)
+> > 
+> > Hi,
+> > 
+> > Maybe it is better to do this assert in __vcpu_get_cpuid_entry() because the
+> > assert might confuse the reader, since it just tests for NULL but when it
+> > fails, it complains that you need to call some function.
+> 
+> IIRC, I originally added the assert in __vcpu_get_cpuid_entry(), but I didn't
+> like leaving get_cpuid_entry() unprotected.  What if I add an assert in both?
+> E.g. have __vcpu_get_cpuid_entry() assert with the (hopefully) hepful message,
+> and have get_cpuid_entry() do a simple TEST_ASSERT_NE()?
+> 
 
-Prevent this from happening by expanding one of the addends to
-(pgoff_t) type.
+This looks like a great idea.
 
-Found by Linux Verification Center (linuxtesting.org) with static
-analysis tool SVACE.
+Best regards,
+	Maxim Levitsky
 
-Fixes: d323d005ac4a ("f2fs: support file defragment")
-Cc: stable@vger.kernel.org
-Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
----
-As the patch covers several code fragments, one singular Fixes: tag
-is hard to pinpoint. Hopefully, it's not critical at this stage.
-
- fs/f2fs/extent_cache.c | 4 ++--
- fs/f2fs/file.c         | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/f2fs/extent_cache.c b/fs/f2fs/extent_cache.c
-index fd1fc06359ee..62ac440d9416 100644
---- a/fs/f2fs/extent_cache.c
-+++ b/fs/f2fs/extent_cache.c
-@@ -366,7 +366,7 @@ static unsigned int __free_extent_tree(struct f2fs_sb_info *sbi,
- static void __drop_largest_extent(struct extent_tree *et,
- 					pgoff_t fofs, unsigned int len)
- {
--	if (fofs < et->largest.fofs + et->largest.len &&
-+	if (fofs < (pgoff_t)et->largest.fofs + et->largest.len &&
- 			fofs + len > et->largest.fofs) {
- 		et->largest.len = 0;
- 		et->largest_updated = true;
-@@ -456,7 +456,7 @@ static bool __lookup_extent_tree(struct inode *inode, pgoff_t pgofs,
- 
- 	if (type == EX_READ &&
- 			et->largest.fofs <= pgofs &&
--			et->largest.fofs + et->largest.len > pgofs) {
-+			(pgoff_t)et->largest.fofs + et->largest.len > pgofs) {
- 		*ei = et->largest;
- 		ret = true;
- 		stat_inc_largest_node_hit(sbi);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 168f08507004..c598cfe5e0ed 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2710,7 +2710,7 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
- 	 * block addresses are continuous.
- 	 */
- 	if (f2fs_lookup_read_extent_cache(inode, pg_start, &ei)) {
--		if (ei.fofs + ei.len >= pg_end)
-+		if ((pgoff_t)ei.fofs + ei.len >= pg_end)
- 			goto out;
- 	}
- 
 
