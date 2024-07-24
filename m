@@ -1,45 +1,46 @@
-Return-Path: <linux-kernel+bounces-260596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 573C893AB59
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 04:44:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A56D93AB5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 04:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D50791F2389B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 02:44:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25B381F2378E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 02:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6591B285;
-	Wed, 24 Jul 2024 02:44:35 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C7117C7F;
+	Wed, 24 Jul 2024 02:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="uEIXDM2g"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453954A00;
-	Wed, 24 Jul 2024 02:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D1C28F7
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 02:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721789075; cv=none; b=YT7EJZQCDoj+Wxjo93dnwA7oWwcn/EhlxFzUtVWo8IdJhcmSHQ/qBAK8WeQ/SunI5tGOkThtPK7nqgPaWN6yG/Sjawu2A3EvvZ1cJ+0d5j0oU2UbuEfW4O265q9Er3F7hBoJznZdo+o/BIPStU8JzSg+Cd4JcpbvVAPU1kY+PYY=
+	t=1721789125; cv=none; b=S6VZ4neMVKO2VP0xt8W3J2YXzD00RpRTjf30uRZ493k7QhW5uiya++o9BSTpPPRk9jqBOmH8fWIjQpnIDWvDB41PHy7l4lzk+t4uJkeg7OcVEQqDkfVqasQrFWO6uGmj8NeevkmxzjDbTX6GMXGhw6aUNfDW4lzCcKFdQkji2w0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721789075; c=relaxed/simple;
-	bh=tVPxZP1UbTHoUqJjhd9W2PlwJuOZ8IZJegTS8gYKny4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fXE8Ay+z2XkFiuBIfnuCwicUJifG2ShYb0L+i4eao8hzqOIv4GpjLZcSh+pn6mnTIcaXcHWZPQHgC4KxNffyDWwy62AtXa/ezUidK5N5B5N0E90jBRrggTNoLwx3eaWcXCqOyM3uwL3zuyBAdASRZlP5bgQBVA271Rn6/3X5rxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WTJF73JF3z1HFVy;
-	Wed, 24 Jul 2024 10:41:47 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 418561402D0;
-	Wed, 24 Jul 2024 10:44:28 +0800 (CST)
-Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Wed, 24 Jul
- 2024 10:44:27 +0800
-Message-ID: <0c685c5e-bb9d-4b96-8cce-1be1bca59059@huawei.com>
-Date: Wed, 24 Jul 2024 10:44:26 +0800
+	s=arc-20240116; t=1721789125; c=relaxed/simple;
+	bh=UTH2mQlhEOJ7hv8euy8HWisnrAWUMH499Z7PoKf6q/c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZB9DitOA5PuQYci+wHNqOYH8Oz8fJrwY+3eA+OWF1sxWqPjqjF7VR/QSnJHem5bYyeJR0psoKh3t8b17L6HzubP8/EDAJvsz2ZRJUhozE9zqsg4j1efGZsqAfRI8VyeC+Mkwif821Z3jCO3gnc/ENUVGOpscazjLZuLMsHV0ue8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=uEIXDM2g; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1721789114; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=UncQ0rYfgkpA5fLsd9G82bNMqodLN9BEWnby9Sjuo1s=;
+	b=uEIXDM2g/v8GF3jcrljnw3et8fFhhsMyZ2sN3Lufc6ZSDzLe7KgF33U0Dy+jMwHHMa0V+1+KhHiVT/gaDzR/9f4VWcWCmlz5F+7Pa7+w1Bi+IQ1B0kHelMGRYxNOfaQNjdEEGFmnJlvw5n9A6FggSlSwVLPgKL2+QSVeEuO9T00=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032014031;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0WBC4A2E_1721789112;
+Received: from 30.97.48.195(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WBC4A2E_1721789112)
+          by smtp.aliyun-inc.com;
+          Wed, 24 Jul 2024 10:45:13 +0800
+Message-ID: <96238616-071e-43f8-9a14-5d4beab64217@linux.alibaba.com>
+Date: Wed, 24 Jul 2024 10:45:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,128 +48,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] cgroup/cpuset: remove child_ecpus_count
-To: Waiman Long <longman@redhat.com>, <tj@kernel.org>,
-	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>, <adityakali@google.com>,
-	<sergeh@kernel.org>, <mkoutny@suse.com>
-CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240724010803.2195033-1-chenridong@huawei.com>
- <145e04fe-1e21-4e64-a825-807af3d4434d@redhat.com>
-Content-Language: en-US
-From: chenridong <chenridong@huawei.com>
-In-Reply-To: <145e04fe-1e21-4e64-a825-807af3d4434d@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+Subject: Re: [PATCH] erofs: convert comma to semicolon
+To: Chen Ni <nichen@iscas.ac.cn>, xiang@kernel.org, chao@kernel.org,
+ huyue2@coolpad.com, jefflexu@linux.alibaba.com, dhavale@google.com
+Cc: linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <20240724020721.2389738-1-nichen@iscas.ac.cn>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240724020721.2389738-1-nichen@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
-On 2024/7/24 10:16, Waiman Long wrote:
-> On 7/23/24 21:08, Chen Ridong wrote:
->> The child_ecpus_count variable was previously used to update
->> sibling cpumask when parent's effective_cpus is updated. However, it 
->> became
->> obsolete after commit e2ffe502ba45 ("cgroup/cpuset: Add
->> cpuset.cpus.exclusive for v2"). It should be removed.
-> Thanks for finding that.
->>
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->>   kernel/cgroup/cpuset.c | 13 -------------
->>   1 file changed, 13 deletions(-)
->>
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->> index 40ec4abaf440..146bf9258db2 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -188,10 +188,8 @@ struct cpuset {
->>       /*
->>        * Default hierarchy only:
->>        * use_parent_ecpus - set if using parent's effective_cpus
->> -     * child_ecpus_count - # of children with use_parent_ecpus set
->>        */
->>       int use_parent_ecpus;
->> -    int child_ecpus_count;
->>       /*
->>        * number of SCHED_DEADLINE tasks attached to this cpuset, so 
->> that we
->> @@ -1512,7 +1510,6 @@ static void reset_partition_data(struct cpuset *cs)
->>       if (!cpumask_and(cs->effective_cpus,
->>                parent->effective_cpus, cs->cpus_allowed)) {
->>           cs->use_parent_ecpus = true;
->> -        parent->child_ecpus_count++;
->>           cpumask_copy(cs->effective_cpus, parent->effective_cpus);
->>       }
->>   }
->> @@ -1689,10 +1686,7 @@ static int remote_partition_enable(struct 
->> cpuset *cs, int new_prs,
->>       isolcpus_updated = partition_xcpus_add(new_prs, NULL, 
->> tmp->new_cpus);
->>       list_add(&cs->remote_sibling, &remote_children);
->>       if (cs->use_parent_ecpus) {
->> -        struct cpuset *parent = parent_cs(cs);
->> -
->>           cs->use_parent_ecpus = false;
->> -        parent->child_ecpus_count--;
->>       }
-> You can also remove { } or just set use_parent_ecpus to false.
->>       spin_unlock_irq(&callback_lock);
->>       update_unbound_workqueue_cpumask(isolcpus_updated);
->> @@ -2320,12 +2314,9 @@ static void update_cpumasks_hier(struct cpuset 
->> *cs, struct tmpmasks *tmp,
->>               cpumask_copy(tmp->new_cpus, parent->effective_cpus);
->>               if (!cp->use_parent_ecpus) {
->>                   cp->use_parent_ecpus = true;
->> -                parent->child_ecpus_count++;
->>               }
-> Just set it to true.
->>           } else if (cp->use_parent_ecpus) {
->>               cp->use_parent_ecpus = false;
->> -            WARN_ON_ONCE(!parent->child_ecpus_count);
->> -            parent->child_ecpus_count--;
->>           }
-> Remove {} or set it to false.
->>           if (remote)
->> @@ -4139,7 +4130,6 @@ static int cpuset_css_online(struct 
->> cgroup_subsys_state *css)
->>           cpumask_copy(cs->effective_cpus, parent->effective_cpus);
->>           cs->effective_mems = parent->effective_mems;
->>           cs->use_parent_ecpus = true;
->> -        parent->child_ecpus_count++;
->>       }
->>       spin_unlock_irq(&callback_lock);
->> @@ -4206,10 +4196,7 @@ static void cpuset_css_offline(struct 
->> cgroup_subsys_state *css)
->>           update_flag(CS_SCHED_LOAD_BALANCE, cs, 0);
->>       if (cs->use_parent_ecpus) {
->> -        struct cpuset *parent = parent_cs(cs);
->> -
->>           cs->use_parent_ecpus = false;
->> -        parent->child_ecpus_count--;
->>       }
-> Just set it to false.
+On 2024/7/24 10:07, Chen Ni wrote:
+> Replace a comma between expression statements by a semicolon.
 > 
-> Cheers,
-> Longman
-> 
-> 
-> 
+> Fixes: 84a2ceefff99 ("erofs: tidy up stream decompressors")
 
-Thank you, Longman, I will do that.
+I think typos are bugfixes, so I will drop this label.
 
-I am considering the necessity of use_parent_ecpus. Currently, the 
-use_parent_ecpus variable is only utilized within the 
-update_sibling_cpumasks function. This implies that if a cpuset is not 
-configured to use its parent's effective_cpus, it might not need to 
-invoke update_cpumasks_hier. However, the invocation of 
-update_cpumasks_hier may not be necessary for a cpuset, regardless of 
-whether it uses its parent's effective_cpus, if there is no change in 
-the cpuset's effective_cpus.
+> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
 
-Is use_parent_ecpus still relevant?
-Or, do I miss something?
+Will apply, thanks.
 
-Thanks
-Ridong
+Thanks,
+Gao Xiang
 
