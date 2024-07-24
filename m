@@ -1,186 +1,127 @@
-Return-Path: <linux-kernel+bounces-261040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A928193B218
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:54:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F3DF93B21D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D171B21BE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:54:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E3B5B2293D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98957156677;
-	Wed, 24 Jul 2024 13:54:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A77181581F8;
-	Wed, 24 Jul 2024 13:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C0A158D83;
+	Wed, 24 Jul 2024 13:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="CYsEk1Nc"
+Received: from pv50p00im-hyfv10021501.me.com (pv50p00im-hyfv10021501.me.com [17.58.6.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1FB156677
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 13:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721829272; cv=none; b=DdCER52OON4wIHOnDkS2XSIEO2OU5PtlBinTFvaju+cAcMvwM1HJhShCFL4bSYpAYOxtrJMr9RBBx8sgbybpyeQ5Frq5laGFRgvvg6soiZS4CSPbSDpvSaQYrbxotAkuKSPWItSUpLJ506Cu8SrOCKvYHwEYHIzU9FQoiYXIOYo=
+	t=1721829335; cv=none; b=l14zaQkZX9a8UiZeMXJEkJ2FnC2mT6FHgETWc1i21/46EcpH/AmVHmsIGfMK/8M3pfhZToFUwvPf+4HLcRVnAuSk8kC2XpH7HaHifGzp6KTkX2kQDpe/PaJLh3MqN0MTsnyUjMHku/E21PcZT1R8UE6/xVDhQ1g0bs4LF7x9/TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721829272; c=relaxed/simple;
-	bh=u665AprPIZEt4kXozqhBawE4HFZeFCFqZQAl9/Ws2uE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dynexzyoy16gwn9fJ9HrWQzubJ66MhBTiXviOTLfO49tOyH3nAQqawY06SMYkpzbqktOjcZYC+GDwlfrDV6V2Oq0guSpYSIUp70ALZ7MF5AhHcwu4yw7yxfmsB2bu5mrHYyAncb9WQpB1kaFus66bbgnWVsjwyp2RQGpKcTDGpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6D321106F;
-	Wed, 24 Jul 2024 06:54:54 -0700 (PDT)
-Received: from [10.57.44.253] (unknown [10.57.44.253])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 69A123F5A1;
-	Wed, 24 Jul 2024 06:54:26 -0700 (PDT)
-Message-ID: <6b60a83d-8416-4cf8-b373-dc3c697c788a@arm.com>
-Date: Wed, 24 Jul 2024 14:54:24 +0100
+	s=arc-20240116; t=1721829335; c=relaxed/simple;
+	bh=5tjvNKEx/widHD/qMNCUEeOcddoq9QmrMSVVtSgHKwQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iEcH3y+LGzx1Nt1VFcyH2Kew/MtQRqhteGLO1Pm+TpOU03WUoMB+LD2J4zBsBCnKHZ312UblnmiMn+/onK9ThNJu8PZyose38vPiMuoL7WEF2dNxH+3EBb2ZrijNPKube5Aer24J6q58v7auorz52eietm3z3XAjfs3AQGIm9To=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=CYsEk1Nc; arc=none smtp.client-ip=17.58.6.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1721829333;
+	bh=8SY/PmnOq3MTqa5D0IZNCJ7b5b06L3GO1QcJ7L5gyx8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
+	b=CYsEk1NcmHW5MixGYygoQ8H0aYqIe6inW3HanAYKAxyEzzZoUp84rvwjqzGV3LvK0
+	 UKZxH35GLua+1pB1e8GyvZfaHUnlFPw6oNZZN4V/X6Qu0PcCj6hK9gmuM5OVN5MiZV
+	 v0TnrzElsx4D9ZUKilchpoyjNMQ+zI2mwpMn7JdOtcIaHmU5mIhRUkfosw7ely5RHm
+	 ZOv7rgBsNAUgmNcDydWD1OCLT9QIDgKo1k846o/YqrGncRE6fvadDbEb1EgItkkN+R
+	 Po9UB+97cq5NJ7LqpIyZkETUT/wJXmdNk7kx11TrnYAqZu5oWe8wAKJXUT3vsu6GAm
+	 pVMp8ik9lLQKg==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-hyfv10021501.me.com (Postfix) with ESMTPSA id 8CC002C029A;
+	Wed, 24 Jul 2024 13:55:28 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Date: Wed, 24 Jul 2024 21:54:48 +0800
+Subject: [PATCH v2] driver core: bus: Return -EIO instead of 0 when
+ show/store invalid bus attribute
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] drm: panthor: add dev_coredumpv support
-To: Rob Herring <robh@kernel.org>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Wedson Almeida Filho <wedsonaf@gmail.com>, ojeda@kernel.org,
- Danilo Krummrich <dakr@redhat.com>, lyude@redhat.com, lina@asahilina.net,
- mcanal@igalia.com, airlied@gmail.com, rust-for-linux@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240710225011.275153-1-daniel.almeida@collabora.com>
- <fe84a028-01a8-4987-b1b7-141fb76d263c@arm.com>
- <4344B22F-D859-4C64-A351-69FFB5208362@collabora.com>
- <edda856e-3102-495a-8cc6-b79f5f114833@arm.com>
- <20240723180642.73502856@collabora.com>
- <6ce8fd12-b175-4a8f-8ea9-6221a555b69c@arm.com>
- <CAL_Jsq+Dr5zO5MKEGq0dW9SuTuawaJMhHziFd73Ef_S1zbOkXw@mail.gmail.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <CAL_Jsq+Dr5zO5MKEGq0dW9SuTuawaJMhHziFd73Ef_S1zbOkXw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240724-bus_fix-v2-1-5adbafc698fb@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAKcHoWYC/2WMQQ7CIBBFr9LMWgxgK8WV9zCNUZjaWQgKlmga7
+ u7Yrfmr9/LzFsiYCDMcmgUSFsoUA4PeNOCmS7ihIM8MWupWGr0T1zmfR3oLZVvpezQWrQZ+PxK
+ yXkungXmi/Irps4aL+tn/RlGCZ7rR6n0vO++Oz5kcBbd18Q5DrfULegzTwaAAAAA=
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
+ Zijun Hu <quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.0
+X-Proofpoint-GUID: jV0euJ6D3_QB__hK3Itx6GFSG3gRgWyJ
+X-Proofpoint-ORIG-GUID: jV0euJ6D3_QB__hK3Itx6GFSG3gRgWyJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-24_13,2024-07-23_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 bulkscore=0 spamscore=0
+ mlxlogscore=999 phishscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2407240102
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-On 24/07/2024 14:15, Rob Herring wrote:
-> On Wed, Jul 24, 2024 at 3:59 AM Steven Price <steven.price@arm.com> wrote:
->>
->> Hi Boris,
->>
->> On 23/07/2024 17:06, Boris Brezillon wrote:
->>> Hi Steve,
->>>
->>> On Mon, 15 Jul 2024 10:12:16 +0100
->>> Steven Price <steven.price@arm.com> wrote:
->>>
->>>> I note it also shows that the "panthor_regs.rs" would ideally be shared.
->>>> For arm64 we have been moving to generating system register descriptions
->>>> from a text source (see arch/arm64/tools/sysreg) - I'm wondering whether
->>>> something similar is needed for Panthor to generate both C and Rust
->>>> headers? Although perhaps that's overkill, sysregs are certainly
->>>> somewhat more complex.
->>>
->>> Just had a long discussion with Daniel regarding this panthor_regs.rs
->>> auto-generation, and, while I agree this is something we'd rather do if
->>> we intend to maintain the C and rust code base forever, I'm not
->>> entirely convinced this is super useful here because:
->>
->> So I think we need some more alignment on how the 'Rustification'
->> (oxidation?) of the driver is going to happen.
->>
->> My understanding was that the intention was to effectively start a
->> completely separate driver (I call it "Rustthor" here) with the view
->> that it would eventually replace (the C) Panthor. Rustthor would be
->> written by taking the C driver and incrementally converting parts to
->> Rust, but as a separate code base so that 'global' refactoring can be
->> done when necessary without risking the stability of Panthor. Then once
->> Rustthor is feature complete the Panthor driver can be dropped.
->> Obviously we'd keep the UABI the same to avoid user space having to care.
-> 
-> We did discuss this, but I've come to the conclusion that's the wrong
-> approach. Converting is going to need to track kernel closely as there
-> are lots of dependencies with the various rust abstractions needed. If
-> we just copy over the C driver, that's an invitation to diverge and
-> accumulate technical debt. The advice to upstreaming things is never
-> go work on a fork for a couple of years and come back with a huge pile
-> of code to upstream. I don't think this situation is any different. If
-> there's a path to do it in small pieces, we should take it.
+From: Zijun Hu <quic_zijuhu@quicinc.com>
 
-I'd be quite keen for the "fork" to live in the upstream kernel. My
-preference is for the two drivers to sit side-by-side. I'm not sure
-whether that's a common view though.
+Return -EIO instead of 0 for below erroneous bus attribute operations:
+ - read a bus attribute without show().
+ - write a bus attribute without store().
 
-> What parts of the current driver are optional that we could leave out?
-> Perhaps devfreq and any power mgt. That's not much, so I think the
-> rust implementation (complete or partial) will always be feature
-> complete.
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+Changes in v2:
+- Correct commit messages and add inline comments
+- The following commit have similar change
+  Commit: 4a0c20bf8c0f ("[PATCH] sysfs: (driver/base) if show/store is missing return -EIO")
+- Link to v1: https://lore.kernel.org/r/20240723-bus_fix-v1-1-175f926805dc@quicinc.com
+---
+ drivers/base/bus.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Agreed, there's not much you can drop and still have a useful driver.
+diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+index ffea0728b8b2..e5073fa82b95 100644
+--- a/drivers/base/bus.c
++++ b/drivers/base/bus.c
+@@ -152,7 +152,8 @@ static ssize_t bus_attr_show(struct kobject *kobj, struct attribute *attr,
+ {
+ 	struct bus_attribute *bus_attr = to_bus_attr(attr);
+ 	struct subsys_private *subsys_priv = to_subsys_private(kobj);
+-	ssize_t ret = 0;
++	/* return -EIO for reading a bus attribute without show() */
++	ssize_t ret = -EIO;
+ 
+ 	if (bus_attr->show)
+ 		ret = bus_attr->show(subsys_priv->bus, buf);
+@@ -164,7 +165,8 @@ static ssize_t bus_attr_store(struct kobject *kobj, struct attribute *attr,
+ {
+ 	struct bus_attribute *bus_attr = to_bus_attr(attr);
+ 	struct subsys_private *subsys_priv = to_subsys_private(kobj);
+-	ssize_t ret = 0;
++	/* return -EIO for writing a bus attribute without store() */
++	ssize_t ret = -EIO;
+ 
+ 	if (bus_attr->store)
+ 		ret = bus_attr->store(subsys_priv->bus, buf, count);
 
->> I may have got the wrong impression - and I'm certainly not saying the
->> above is how we have to do it. But I think we need to go into it with
->> open-eyes if we're proposing a creeping Rust implementation upstream of
->> the main Mali driver. That approach will make ensuring stability harder
->> and will make the bar for implementing large refactors higher (we'd need
->> significantly more review and testing for each change to ensure there
->> are no regressions).
-> 
-> This sounds to me like the old argument for products running ancient
-> kernels. Don't change anything so it is 'stable' and doesn't regress.
-> I think it's a question of when, not if we're going to upstream the
-> partially converted driver. Pretty much the only reason I see to wait
-> (ignoring dependencies) is not technical, but the concerns with
-> markets/environments that can't/won't adopt Rust yet. That's probably
-> the biggest issue with this patch. If converting the main driver first
-> is a requirement (as discussed elsewhere in this thread), I think all
-> the dependencies are going to take some time to upstream, so it's not
-> something we have to decide anytime soon.
+---
+base-commit: b57d5ffc3ab507d0e19fc8b90b19c76af43fb790
+change-id: 20240723-bus_fix-1940d8e79e92
 
-I think here's an important issues: what do we do about users who for
-whatever reason don't have a Rust toolchain for their kernel build? Do
-we really expect that the "other dependencies" are going to take so long
-to upstream that everyone who wants this driver will have a Rust toolchain?
-
-If we're adding new features (devcoredump) it's reasonable to say you
-don't get the feature unless you have Rust[1]. If we're converting
-existing functionality that's a different matter (it's a clear regression).
-
-Having a separate code base for the Rust Panthor sidesteps the problem,
-but does of course allow the two drivers to diverge. I don't have a good
-solution.
-
-[1] Although I have to admit for a debugging feature like devcoredump
-there might well be pressure to implement this in C as well purely so
-that customer issues can be debugged...
-
-> Speaking of converting the main driver, here's what I've got so far
-> doing that[1]. It's a top down conversion with the driver model and
-> DRM registration in Rust. All the ioctls are rust wrappers calling
-> into driver C code. It's compiling without the top commit.
-> 
->>> 1. the C code base is meant to be entirely replaced by a rust driver.
->>> Of course, that's not going to happen overnight, so maybe it'd be worth
->>> having this autogen script but...
->>
->> Just to put my cards on the table. I'm not completely convinced a Rust
->> driver is necessarily an improvement, and I saw this as more of an
->> experiment - let's see what a Rust driver looks like and then we can
->> decide which is preferable. I'd like to be "proved wrong" and be shown a
->> Rust driver which is much cleaner and easier to work with, but I still
->> need convincing ;)
-> 
-> Unless your Rust is as good as your C, that's never going to happen.
-
-Well I'd hope that there's some benefit to Rust as a language, and that
-therefore it's easier to write cleaner code. Not least that in theory
-there's no need to review for memory safety outside of unsafe code. I
-expect I'll retire before my Rust experience exceeds my C experience
-even if I never touch C again!
-
-Steve
-
-> Rob
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git/log/?h=rust/panthor-6.10
+Best regards,
+-- 
+Zijun Hu <quic_zijuhu@quicinc.com>
 
 
