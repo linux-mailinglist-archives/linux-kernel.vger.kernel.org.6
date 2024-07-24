@@ -1,118 +1,254 @@
-Return-Path: <linux-kernel+bounces-261267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4734593B4F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:24:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 748B193B4D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77B821C2386F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:24:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 005421F2482B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9121215F311;
-	Wed, 24 Jul 2024 16:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DB915ECC0;
+	Wed, 24 Jul 2024 16:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nE5ZqAw+"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jcQPU0cS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647F515EFC0;
-	Wed, 24 Jul 2024 16:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F693158DA7
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 16:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721838254; cv=none; b=A1HYIPQ71mbQxHX/Wu9cAHvAdizREu+KFNgrA7hloHtP6qNFRhxDDs0xtlFBheJq7nLTfhe5JK6Qw2lMZFtxr3lFvae71aOe0m236zlnvrJ0NEGNLGZKqY4rjhI6S0XblBIhfghEvZBbEEPeK35rdCMFZe4KPBAMRRXtdmbyiUI=
+	t=1721838020; cv=none; b=YTAaJBtCKN6hOUS1cHdktO5I6anpxKEZKwfr+kHbGhlJwU2fUBiGgUu4CiPZcK7a1EVPABwsnD2nE1VvTC+79b4RUCgw2VjV8YzpsRjlqpXiSRK2SrFrHuf0Lubse47RBOcqwphzPfu14B8OX9RW7d2xiZvU2l4E/X3FI0P2Dh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721838254; c=relaxed/simple;
-	bh=Navrk+PFyaTDJIijMu687SZP4snjGd5YksT3s3Vgao4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X366tdbwP9r+YAYsDY9nhUKdgS+76Wmiuum6Wfl9pEPTQ0D/Sq1VNlxcLvVd6SmAi+iHXRnvy9P5yB9fYPhqjdjzksboJgEkN1eTV0xFMDgVO97/0iQV7a5RiM3yF1hYx0/QTwwBaMwGngmgZ2Q2OMmqFuhtzDlrxDO8vO7+4NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nE5ZqAw+; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46OFXWmU028769;
-	Wed, 24 Jul 2024 16:24:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=corp-2023-11-20; bh=6
-	KKce3+2I+tVZGXIFIMVYPZzso6eBjCP1BtU7O1YprA=; b=nE5ZqAw+tRm/OMCzw
-	HY84XE8Gw/cOsKl56fshqs2S89iO/yAACyfC7uuWgQm7RrGcT1AW8Qqnw/aC8A8A
-	f7Bs+WRwYJGoMJDGExh6StZR4jwgYTib0BJwZ7jHY+Rs4qpwPkf/fP2oA8nA5/2k
-	BmNhRhsrZ4HRpFMeHn9/6asMO1sIMGeh7bBmwE2kcLHWxZnUplRCWvjN9VV8PyJQ
-	x1J/iTPPGGqj5WQeBXTREVtYIokFRQ/3Dqtm1ZeA7NSwfHr4t5qKPJI8uMcFI5kg
-	WsKZdYqAjTMYsz4rGmZMQFeUGsqziGFFa4Q6qbiexLX+ey1kLI0khfElrmTHwnM/
-	98FQg==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40hgkt9dj6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 24 Jul 2024 16:24:09 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46OF2Mgh011060;
-	Wed, 24 Jul 2024 16:24:08 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40h29sv9uu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 24 Jul 2024 16:24:08 +0000
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 46OGK1m3038616;
-	Wed, 24 Jul 2024 16:24:07 GMT
-Received: from ca-dev112.us.oracle.com (ca-dev112.us.oracle.com [10.129.136.47])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 40h29sv9r0-2;
-	Wed, 24 Jul 2024 16:24:07 +0000
-From: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Javier Carrasco <javier.carrasco@wolfvision.net>,
-        Abdel Alkuor <abdelalkuor@geotab.com>,
-        Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org,
-        error27@gmail.com
-Subject: [PATCH 2/2] usb: typec: tipd: Delete extra semi-colon
-Date: Wed, 24 Jul 2024 09:23:51 -0700
-Message-ID: <20240724162356.992763-2-harshit.m.mogalapalli@oracle.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240724162356.992763-1-harshit.m.mogalapalli@oracle.com>
-References: <20240724162356.992763-1-harshit.m.mogalapalli@oracle.com>
+	s=arc-20240116; t=1721838020; c=relaxed/simple;
+	bh=JXmAywMAZrx4shNYDjV3SQ2rLj23PhdbU8dZwkLvoVA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EXkj4QULdTw85NWu4GPhqUdl68qdGoooExvYGa6i9RxdIQ6T5NzdIHPMBANJejUbyu5lRhmwEcH41gvYvlm0eu57r0jOnIjxkKJrTZA7tZMj83GLvQWBHQfUvfi7dz7FFVzBvKmU/mS7r6/NCfMDwTBFXohOHooXsLLua8jBpIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jcQPU0cS; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721838018; x=1753374018;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=JXmAywMAZrx4shNYDjV3SQ2rLj23PhdbU8dZwkLvoVA=;
+  b=jcQPU0cSkndinF6oeH7frQVXQFN0MoM7i8mK/tKVtrobXtYzuhQYLLyl
+   sHGgDsdGnL15ABvEGdHlVTyjy7w3F0Rst9CXrJ0x75l1QvN/1rl3vA+7M
+   r0i5uvgTKCdBvdEtEPr9zS5NDWeRcSveXZVmCST34llauO6ko5K044zzt
+   YT4swhVl7vIrkYcGPhQtOlX8y9GJUufRqY7MX15PDZgengtF6TDtjYe+L
+   7t15cgZjGTcxgaF5xiq0zGYo+E4uGSjaYE7ig7wLyH+HarDPdroa5b8Xa
+   gkoHTGzHaHf29wtnLys83jCHRBS9bKrAQNVaLfSRCwzCYKrraZ4XTEae0
+   Q==;
+X-CSE-ConnectionGUID: ZovC6k5sRP+PKxShuIRevA==
+X-CSE-MsgGUID: DKokj4RFS/GofV2qFvZkhQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11143"; a="19406582"
+X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
+   d="scan'208";a="19406582"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 09:20:17 -0700
+X-CSE-ConnectionGUID: mYTLLEG9SwWQKBEa+shXow==
+X-CSE-MsgGUID: Ki7RrNP2Qzm7ymdtu5ALew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
+   d="scan'208";a="57771913"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 09:20:18 -0700
+Date: Wed, 24 Jul 2024 09:25:40 -0700
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+Cc: "iommu@lists.linux.dev" <iommu@lists.linux.dev>, LKML
+ <linux-kernel@vger.kernel.org>, Lu Baolu <baolu.lu@linux.intel.com>, "Liu,
+ Yi L" <yi.l.liu@intel.com>, "Zhang, Tina" <tina.zhang@intel.com>, "Kumar,
+ Sanjay K" <sanjay.k.kumar@intel.com>, jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH] iommu/vt-d: Fix potential soft lockup due to reclaim
+Message-ID: <20240724092540.6ef4d28a@jacob-builder>
+In-Reply-To: <BN9PR11MB527638BC2FD50C4D90508D578CAA2@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <20240719181725.1446021-1-jacob.jun.pan@linux.intel.com>
+	<BN9PR11MB527638BC2FD50C4D90508D578CAA2@BN9PR11MB5276.namprd11.prod.outlook.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-24_17,2024-07-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 bulkscore=0 adultscore=0
- suspectscore=0 mlxscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2407240119
-X-Proofpoint-GUID: Ph9qnNgDOM-RKjy7AVLffGCkoBxPX9wu
-X-Proofpoint-ORIG-GUID: Ph9qnNgDOM-RKjy7AVLffGCkoBxPX9wu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-There shouldn't be a ; at the end of the function, delete it.
 
-Signed-off-by: Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
----
- drivers/usb/typec/tipd/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 24 Jul 2024 07:40:25 +0000, "Tian, Kevin" <kevin.tian@intel.com>
+wrote:
 
-diff --git a/drivers/usb/typec/tipd/core.c b/drivers/usb/typec/tipd/core.c
-index eb5596e3406a..dd51a25480bf 100644
---- a/drivers/usb/typec/tipd/core.c
-+++ b/drivers/usb/typec/tipd/core.c
-@@ -1198,7 +1198,7 @@ static int tps6598x_apply_patch(struct tps6598x *tps)
- 	release_firmware(fw);
- 
- 	return ret;
--};
-+}
- 
- static int cd321x_init(struct tps6598x *tps)
- {
--- 
-2.45.2
+> > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > Sent: Saturday, July 20, 2024 2:17 AM
+> > 
+> > From: Sanjay K Kumar <sanjay.k.kumar@intel.com>
+> > 
+> > If qi_submit_sync() is invoked with 0 invalidation descriptors (for
+> > instance, for DMA draining purposes), we can run into a bug where a
+> > submitting thread fails to detect the completion of invalidation_wait.
+> > Subsequently, this led to a soft lockup.
+> > 
+> > Suppose thread T1 invokes qi_submit_sync() with non-zero descriptors,
+> > while
+> > concurrently, thread T2 calls qi_submit_sync() with zero descriptors.
+> > Both threads then enter a while loop, waiting for their respective
+> > descriptors to complete. T1 detects its completion (i.e., T1's
+> > invalidation_wait status changes to QI_DONE by HW) and proceeds to call
+> > reclaim_free_desc() to reclaim all descriptors, potentially including
+> > adjacent ones of other threads that are also marked as QI_DONE.
+> > 
+> > During this time, while T2 is waiting to acquire the qi->q_lock, the
+> > IOMMU hardware may complete the invalidation for T2, setting its status
+> > to QI_DONE. However, if T1's execution of reclaim_free_desc() frees T2's
+> > invalidation_wait descriptor and changes its status to QI_FREE, T2 will
+> > not observe the QI_DONE status for its invalidation_wait and will
+> > indefinitely remain stuck.
+> > 
+> > This soft lockup does not occur when only non-zero descriptors are
+> > submitted.In such cases, invalidation descriptors are interspersed among
+> > wait descriptors with the status QI_IN_USE, acting as barriers. These
+> > barriers prevent the reclaim code from mistakenly freeing descriptors
+> > belonging to other submitters.
+> > 
+> > Considered the following example timeline:
+> > 	T1			T2
+> > ========================================
+> > 	ID1
+> > 	WD1
+> > 	while(WD1!=QI_DONE)
+> > 	unlock
+> > 				lock
+> > 	WD1=QI_DONE*		WD2
+> > 				while(WD2!=QI_DONE)
+> > 				unlock
+> > 	lock
+> > 	WD1==QI_DONE?
+> > 	ID1=QI_DONE		WD2=DONE*
+> > 	reclaim()
+> > 	ID1=FREE
+> > 	WD1=FREE
+> > 	WD2=FREE
+> > 	unlock
+> > 				soft lockup! T2 never sees QI_DONE in
+> > WD2
+> > 
+> > Where:
+> > ID = invalidation descriptor
+> > WD = wait descriptor
+> > * Written by hardware
+> > 
+> > The root of the problem is that the descriptor status QI_DONE flag is
+> > used for two conflicting purposes:
+> > 1. signal a descriptor is ready for reclaim (to be freed)
+> > 2. signal by the hardware that a wait descriptor is complete
+> > 
+> > The solution (in this patch) is state separation by introducing a new
+> > flag for the descriptors called QI_TO_BE_FREED.
+> > 
+> > Once a thread's invalidation descriptors are complete, their status
+> > would be set to QI_TO_BE_FREED. The reclaim_free_desc() function would
+> > then only
+> > free descriptors marked as QI_TO_BE_FREED instead of those marked as
+> > QI_DONE. This change ensures that T2 (from the previous example) will
+> > correctly observe the completion of its invalidation_wait (marked as
+> > QI_DONE).
+> > 
+> > Currently, there is no impact by this bug on the existing users because
+> > no callers are submitting invalidations with 0 descriptors.  
+> 
+> bug fix is for existing users. Please revise the subject line and this msg
+> to make it clear that it's for preparation of a new usage.
+The bug is in the qi_submit_sync function itself since it permits callers
+to give 0 as count. It is a bug regardless of users.
 
+I put "potential" in the subject line to indicate, perhaps it is too vague.
+How about just stating what it is fixing:
+"Fix potential lockup if qi_submit_sync called with 0 count"
+
+Also change this paragraph to:
+"Currently, there is no impact by this bug on the existing users because
+ no callers are submitting invalidations with 0 descriptors. This fix will
+ enable future users (such as DMA drain) calling qi_submit_sync() with 0
+ count."
+
+> > 
+> > Signed-off-by: Sanjay K Kumar <sanjay.k.kumar@intel.com>
+> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+> > ---
+> >  drivers/iommu/intel/dmar.c  | 13 +++++++++----
+> >  drivers/iommu/intel/iommu.h |  3 ++-
+> >  2 files changed, 11 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/iommu/intel/dmar.c b/drivers/iommu/intel/dmar.c
+> > index 304e84949ca7..00e0f5f801c5 100644
+> > --- a/drivers/iommu/intel/dmar.c
+> > +++ b/drivers/iommu/intel/dmar.c
+> > @@ -1204,8 +1204,7 @@ static void free_iommu(struct intel_iommu
+> > *iommu)
+> >   */
+> >  static inline void reclaim_free_desc(struct q_inval *qi)
+> >  {
+> > -	while (qi->desc_status[qi->free_tail] == QI_DONE ||
+> > -	       qi->desc_status[qi->free_tail] == QI_ABORT) {
+> > +	while (qi->desc_status[qi->free_tail] == QI_TO_BE_FREED) {
+> >  		qi->desc_status[qi->free_tail] = QI_FREE;
+> >  		qi->free_tail = (qi->free_tail + 1) % QI_LENGTH;
+> >  		qi->free_cnt++;
+> > @@ -1463,8 +1462,14 @@ int qi_submit_sync(struct intel_iommu *iommu,
+> > struct qi_desc *desc,
+> >  		raw_spin_lock(&qi->q_lock);
+> >  	}
+> > 
+> > -	for (i = 0; i < count; i++)
+> > -		qi->desc_status[(index + i) % QI_LENGTH] = QI_DONE;
+> > +	/*
+> > +	 * The reclaim code can free descriptors from multiple
+> > submissions
+> > +	 * starting from the tail of the queue. When count == 0, the
+> > +	 * status of the standalone wait descriptor at the tail of the
+> > queue
+> > +	 * must be set to QI_TO_BE_FREED to allow the reclaim code to
+> > proceed.
+> > +	 */
+> > +	for (i = 0; i <= count; i++)
+> > +		qi->desc_status[(index + i) % QI_LENGTH] =
+> > QI_TO_BE_FREED;  
+> 
+> We don't really need a new flag. Just set them to QI_FREE and then
+> reclaim QI_FREE slots until hitting qi->head in reclaim_free_desc().
+We do need to have a separate state for descriptors pending to be freed.
+Otherwise, reclaim code will advance pass the intended range.
+
+> > 
+> >  	reclaim_free_desc(qi);
+> >  	raw_spin_unlock_irqrestore(&qi->q_lock, flags);
+> > diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
+> > index eaf015b4353b..1ab39f9145f2 100644
+> > --- a/drivers/iommu/intel/iommu.h
+> > +++ b/drivers/iommu/intel/iommu.h
+> > @@ -382,7 +382,8 @@ enum {
+> >  	QI_FREE,
+> >  	QI_IN_USE,
+> >  	QI_DONE,
+> > -	QI_ABORT
+> > +	QI_ABORT,
+> > +	QI_TO_BE_FREED
+> >  };
+> > 
+> >  #define QI_CC_TYPE		0x1
+> > --
+> > 2.25.1
+> >   
+> 
+
+
+Thanks,
+
+Jacob
 
