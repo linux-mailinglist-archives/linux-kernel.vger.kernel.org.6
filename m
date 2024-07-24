@@ -1,194 +1,152 @@
-Return-Path: <linux-kernel+bounces-261167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1E9893B387
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:22:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF9E493B389
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25EA6284103
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:22:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07481B23686
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5BD15B552;
-	Wed, 24 Jul 2024 15:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52CCF15B13B;
+	Wed, 24 Jul 2024 15:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KeCDDT3w"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yeQBcvEe"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9491E15956C;
-	Wed, 24 Jul 2024 15:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0B21591EA
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 15:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721834524; cv=none; b=T7gn5DhiZ44kz9a7iHeLclxanvOMAwlQ0267vU2mvY9ZfKiDFCo1t9M4MNiyrla10kWZjcgouYfyA1ZY6kTkEbqHDBHM8WavynvJDnrOXMQs61InS+/hMHeK9kJYlZj4/LqYz0MU+KnLYAu276QwuxGoDRMu5BH9zB0GhVjKBXE=
+	t=1721834586; cv=none; b=UalmOoJdf4AC9/t0Q8qXIzmFtD8l1SA4/uJrUiiYNvOsP9jCz7rlAXWB6tjX36fBZLrFotoyzYT+KGo8ZBoitEadzylWCCo4cOpTYoyK30PDVEST27YR1u/unDHgovwyJ3qVQAt+I3znRYnxgK1abKvPwRE6tImmR/LeAcYBvfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721834524; c=relaxed/simple;
-	bh=Ceg3RUmf4rRNIpgCeYe8s41+WFlcX7caGHWlez9+62c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NcJFg4rjALupgyrmsP2l8Bw4Cv05voJjEtpemN9VDjDJgTTEm7NJSK5cmmNO2/UbAmGYztJrLPe9j59u8QpboqnMdXrTZZayvpmgWErDdQ4Udb0jBqEO71TgIvtiYUNZcpeXV4dTR808IV+3psZsDzw+kTGEpnC4l2ZohbHU5+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KeCDDT3w; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70d19d768c2so2794870b3a.3;
-        Wed, 24 Jul 2024 08:22:02 -0700 (PDT)
+	s=arc-20240116; t=1721834586; c=relaxed/simple;
+	bh=00Lvw4LfeLNWJz764oZVHwF/AIp+LReLlGhG7UY0lyg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HPJWitqlfhiKo3KwYGzIr7ss4A5nJbe5eX1WPiesS/3BUJiSaCGqoN/PHZr4HSulYsGkdfi9dN9s8/xogVHyoCBb5+bx9cNHTzavm6l/+JaOjYuA20fwMFYQOsswUKurmx2luTNm05yJBDTDF1YiiVmyOrVHcw0Q5WWWM2wO4a0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yeQBcvEe; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3684e8220f9so582724f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 08:23:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721834522; x=1722439322; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tnWZ1fT4b6BKlSSpK5hIlpD5167p0pQD25Swl/fcV10=;
-        b=KeCDDT3wD0NB9u3WikeTb0eU9rR2MPK5hsUJj13oPQro9N7hZ4Jy1CqLpUYx8V1B7Y
-         w5Ri0DR8MKE3DY9XD1REDUg2hPPhj6g8iPapeJJH3b8qmFwDwm3JycxOx7JI7Me/baY9
-         xaWvqL4PBvAFPSMgeBPag8goJlZXmGMTW9JvrOnwXRkp1jKn0L80xeu/QfPC6RZSh3mk
-         8s+6Z5Y0o83VdeZZQbISW/6JPXxnmG5zxfodkrtb9Pmr7HgaqCBDafXdKEaqVJV0wXZO
-         sD4yrtdQlj83ykZAzgB3AlcmiB3P85KM9dvi+LXrfgNq0afdWn0zMkAxcgiS2xOtsiwu
-         Zowg==
+        d=linaro.org; s=google; t=1721834583; x=1722439383; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RPTIoOrTjWqM5QxFKIukuu9F2Sbk+6zfU+HH6r8TZG0=;
+        b=yeQBcvEeK+X/uTsRSeIEmjkvdfgcUsatU846yVu4uAeirVGwsAqgpjV10zvTPl5I53
+         LLg6mF/8tnvM/Fa11FLR5K1zEY2/QBoxjY42BtjCbKytDPIqz52V6LUlJsvQKxpZvtyg
+         xXo4nPF5r9nvrspv/hUj9T8HBXs7oGjvC9g4DYZh9mB/s0M88pkEMHtr3ZcIJVKgib8B
+         P7ez5GkvFDqI2n6dYf5dzqzwNNkFLa8cmFgr43fEGwz/6V4P/Xgk/T61Q8TfFYsThMfi
+         8UezuBGKOvd4mQ0DkipnpZhn01U+WMrbCZ4qc/gspjFXbUCZ4MMWADBplSg7CRAT58M+
+         F/3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721834522; x=1722439322;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tnWZ1fT4b6BKlSSpK5hIlpD5167p0pQD25Swl/fcV10=;
-        b=GPkhpJ96g481og05lk0stgf3yj0Is0dtUhFeU7TW5FlKSQMIZbskd7w7U/QL+rXOO1
-         prisvWCLOc3T/Q2O7x+JEZUwvJY36CT+oRqBhsZqJbHWU8xP6DhrJl/WmIO2JhsjH42e
-         4G+/jH+ZehglAhk8CUzqFQ1rOmZ0JxS8wjHQY16Fxzzwh2cin5Z3YjQRQ63bSjwSQj96
-         oe39YfOn0biiG2UU4NaP77ZncmnYYQKZ3qBlJRPypP69izPq+MbGkiPlI7niBaeK5cWT
-         A0DOB663d6jd4JztYzEPXyegrMDSWDddcqOpduAJ1+BRHaJjUYkGS4qWMp4+TRuBYgZ4
-         2f3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVFPT7CiZdVj7QUKQ1OFZHPJkW4Rrpfo0DFR7llhip8BE3U1WdHXAvNLqjY6a5NV66JsAjFjgpo3/7IoQ3poRmJ1HdjmEFtdeA6kp1ZkeFd7WTGuzMc86dVDgtFfwbX4yLLgL4EiyoOAKfCVYijTUDb2z4vXiDcdlLT
-X-Gm-Message-State: AOJu0Yx/7gV/MqjUWDOw8PUVSxmTcrOHiKzK/uutms43N/LLFf7qbTWN
-	frMwaPZB/Qs/Mghpyl2WVKJw/PUIhyyxGFtm5uFP0R8a6cD2fp8v
-X-Google-Smtp-Source: AGHT+IEY1lKR6G96tR7c/kmoW2BGAluJLADlcsBi4H9Y5GTy7y2rfUO8QJUd6cnHLjjBW7nJ9DU/Ew==
-X-Received: by 2002:a05:6a21:1807:b0:1c3:b1b8:e01c with SMTP id adf61e73a8af0-1c4733d6c7emr90844637.49.1721834521728;
-        Wed, 24 Jul 2024 08:22:01 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70cff59cb7dsm8987522b3a.144.2024.07.24.08.21.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 08:22:01 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: willemdebruijn.kernel@gmail.com,
-	jasowang@redhat.com
-Cc: syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	kuba@kernel.org,
-	jiri@resnulli.us,
-	bigeasy@linutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	bpf@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH net] tun: Remove nested call to bpf_net_ctx_set() in do_xdp_generic()
-Date: Thu, 25 Jul 2024 00:21:49 +0900
-Message-Id: <20240724152149.11003-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <000000000000949a14061dcd3b05@google.com>
-References: <000000000000949a14061dcd3b05@google.com>
+        d=1e100.net; s=20230601; t=1721834583; x=1722439383;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RPTIoOrTjWqM5QxFKIukuu9F2Sbk+6zfU+HH6r8TZG0=;
+        b=tvOxzLMRmJ0BfVMWjHVOnYp6LYxI5Z4VmjOS+osAWqfZw27lIIospvffu4ZPXbu2Ig
+         ssaFvoW2ycHnS1UcI12SVrtr2Q6LTCePJYSMY2diGkIUR18kMcm42f7uiawcBNhFWZ9p
+         S5e8GuBiAKuYNZR1eQqhznlgOHP8KCWm0RQGhfy7wbiikkJHG1yMRzxP9OyLn72rYW1c
+         wlc8AJ5WS4jA3IoyiOJQIOrE4z+E29b2kmJqjkVwLgopZKyqR0PT4W0maGBDXpaSH26p
+         KB/TJtxwxJAfbnpD+wVOXzmrPS/1mpeoKNBzof5gaAt/jViLcCUw4SnOBMmeD3rSAnRD
+         C1yg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvV8mj7lWYUvP0hpZc1xa0w6qHNiqmsXIv4JUrySy0pRVpPCDbHZCNY/QraGmbDcKHtBiO+UtRQh4dFBQyLC509xaqPbhnkHAREtGf
+X-Gm-Message-State: AOJu0Yx/Zg+apvQ888hZZo1YSw2d6/FLcBtI3N+fM/Lznrr+5jPPHWg6
+	Y2XQGdcKf1R2alSBnJ52/VOHoTYS9m1GZyJuFYzxrvXmOZ/qdUZDNud95NW5zpo=
+X-Google-Smtp-Source: AGHT+IELHJAVkBHikq0DcSqT4I8dqH7FzTfBuUEt1ReY+zMY/vj/fnuMfBj4F6YX3djoT4zjmG0n/g==
+X-Received: by 2002:adf:a3d4:0:b0:368:377a:e8bb with SMTP id ffacd0b85a97d-369f6706278mr1513654f8f.28.1721834583106;
+        Wed, 24 Jul 2024 08:23:03 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427f93e667bsm33556575e9.29.2024.07.24.08.23.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Jul 2024 08:23:02 -0700 (PDT)
+Message-ID: <50b78571-34b5-4ad9-abc3-0416b3d9b917@linaro.org>
+Date: Wed, 24 Jul 2024 16:23:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf scripts python: cs-etm: Update example to provide
+ vmlinux path to Perf
+To: Leo Yan <leo.yan@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Ruidong Tian <tianruidong@linux.alibaba.com>,
+ Benjamin Gray <bgray@linux.ibm.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
+ gankulkarni@os.amperecomputing.com, mike.leach@linaro.org,
+ suzuki.poulose@arm.com
+References: <20240724143319.169745-1-james.clark@linaro.org>
+ <225ff37c-0e50-48d5-bb4c-e8a63e72991a@arm.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <225ff37c-0e50-48d5-bb4c-e8a63e72991a@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In the previous commit, bpf_net_context handling was added to 
-tun_sendmsg() and do_xdp_generic(), but if you write code like this,
-bpf_net_context overlaps in the call trace below, causing various
-memory corruptions.
 
-<Call trace>
-...
-tun_sendmsg() // bpf_net_ctx_set()
-  tun_xdp_one()
-    do_xdp_generic() // bpf_net_ctx_set() <-- nested
-...
 
-This patch removes the bpf_net_context handling that exists in 
-do_xdp_generic() and modifies it to handle it in the parent function.
+On 24/07/2024 4:00 pm, Leo Yan wrote:
+> On 7/24/2024 3:33 PM, James Clark wrote:
+>>
+>> The example shows the vmlinux path being given to the script, but this
+>> only works when running on the target. If the script is run off the
+>> target, then confusingly the vmlinux argument also needs to be given to
+>> Perf as well.
+>>
+>> Without going into too much detail in the example about when it is or
+>> isn't required, just include it. It doesn't do any harm even when
+>> running on the target. Now the example command works in both places.
+>>
+>> Signed-off-by: James Clark <james.clark@linaro.org>
+> 
+> The change makes senses to me.  Just check a bit, does it need to add the same
+> option for the command "only source line and symbols"?
+> 
+> Thanks,
+> Leo
+> 
 
-Reported-by: syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com
-Fixes: fecef4cd42c6 ("tun: Assign missing bpf_net_context.")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- drivers/net/tun.c | 3 +++
- net/core/dev.c    | 8 +++-----
- 2 files changed, 6 insertions(+), 5 deletions(-)
+I assumed that because that one didn't have vmlinux at all then it's 
+just for userspace tracing. I think it's good to have an example without 
+vmlinux to show that it's not a strict requirement.
 
-diff --git a/drivers/net/tun.c b/drivers/net/tun.c
-index 9b24861464bc..095ada4a525e 100644
---- a/drivers/net/tun.c
-+++ b/drivers/net/tun.c
-@@ -1919,10 +1919,12 @@ static ssize_t tun_get_user(struct tun_struct *tun, struct tun_file *tfile,
- 
- 	if (skb_xdp) {
- 		struct bpf_prog *xdp_prog;
-+		struct bpf_net_context __bpf_net_ctx, *bpf_net_ctx;
- 		int ret;
- 
- 		local_bh_disable();
- 		rcu_read_lock();
-+		bpf_net_ctx = bpf_net_ctx_set(&__bpf_net_ctx);
- 		xdp_prog = rcu_dereference(tun->xdp_prog);
- 		if (xdp_prog) {
- 			ret = do_xdp_generic(xdp_prog, &skb);
-@@ -1932,6 +1934,7 @@ static ssize_t tun_get_user(struct tun_struct *tun, struct tun_file *tfile,
- 				goto unlock_frags;
- 			}
- 		}
-+		bpf_net_ctx_clear(bpf_net_ctx);
- 		rcu_read_unlock();
- 		local_bh_enable();
- 	}
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 6ea1d20676fb..26f9fdd66e64 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -5126,14 +5126,11 @@ static DEFINE_STATIC_KEY_FALSE(generic_xdp_needed_key);
- 
- int do_xdp_generic(struct bpf_prog *xdp_prog, struct sk_buff **pskb)
- {
--	struct bpf_net_context __bpf_net_ctx, *bpf_net_ctx;
--
- 	if (xdp_prog) {
- 		struct xdp_buff xdp;
- 		u32 act;
- 		int err;
- 
--		bpf_net_ctx = bpf_net_ctx_set(&__bpf_net_ctx);
- 		act = netif_receive_generic_xdp(pskb, &xdp, xdp_prog);
- 		if (act != XDP_PASS) {
- 			switch (act) {
-@@ -5147,13 +5144,11 @@ int do_xdp_generic(struct bpf_prog *xdp_prog, struct sk_buff **pskb)
- 				generic_xdp_tx(*pskb, xdp_prog);
- 				break;
- 			}
--			bpf_net_ctx_clear(bpf_net_ctx);
- 			return XDP_DROP;
- 		}
- 	}
- 	return XDP_PASS;
- out_redir:
--	bpf_net_ctx_clear(bpf_net_ctx);
- 	kfree_skb_reason(*pskb, SKB_DROP_REASON_XDP);
- 	return XDP_DROP;
- }
-@@ -5475,10 +5470,13 @@ static int __netif_receive_skb_core(struct sk_buff **pskb, bool pfmemalloc,
- 
- 	if (static_branch_unlikely(&generic_xdp_needed_key)) {
- 		int ret2;
-+		struct bpf_net_context __bpf_net_ctx, *bpf_net_ctx;
- 
- 		migrate_disable();
-+		bpf_net_ctx = bpf_net_ctx_set(&__bpf_net_ctx);
- 		ret2 = do_xdp_generic(rcu_dereference(skb->dev->xdp_prog),
- 				      &skb);
-+		bpf_net_ctx_clear(bpf_net_ctx);
- 		migrate_enable();
- 
- 		if (ret2 != XDP_PASS) {
---
+>> ---
+>>   tools/perf/scripts/python/arm-cs-trace-disasm.py | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/tools/perf/scripts/python/arm-cs-trace-disasm.py b/tools/perf/scripts/python/arm-cs-trace-disasm.py
+>> index 7aff02d84ffb..4aeb9b497f7a 100755
+>> --- a/tools/perf/scripts/python/arm-cs-trace-disasm.py
+>> +++ b/tools/perf/scripts/python/arm-cs-trace-disasm.py
+>> @@ -19,10 +19,10 @@ from perf_trace_context import perf_set_itrace_options, \
+>>   # Below are some example commands for using this script.
+>>   #
+>>   # Output disassembly with objdump:
+>> -#  perf script -s scripts/python/arm-cs-trace-disasm.py \
+>> +#  perf script -k path/to/vmlinux -s scripts/python/arm-cs-trace-disasm.py \
+>>   #              -- -d objdump -k path/to/vmlinux
+>>   # Output disassembly with llvm-objdump:
+>> -#  perf script -s scripts/python/arm-cs-trace-disasm.py \
+>> +#  perf script -k path/to/vmlinux -s scripts/python/arm-cs-trace-disasm.py \
+>>   #              -- -d llvm-objdump-11 -k path/to/vmlinux
+>>   # Output only source line and symbols:
+>>   #  perf script -s scripts/python/arm-cs-trace-disasm.py
+>> --
+>> 2.34.1
+>>
 
