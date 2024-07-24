@@ -1,236 +1,128 @@
-Return-Path: <linux-kernel+bounces-261428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9BE293B728
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:03:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8449193B72A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:06:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 433371F216C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:03:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55B362807BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9D416C42C;
-	Wed, 24 Jul 2024 19:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E005A161915;
+	Wed, 24 Jul 2024 19:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kPddF1eC";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EHiKUkag";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kPddF1eC";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EHiKUkag"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="SXHfdTki"
+Received: from mail-40132.protonmail.ch (mail-40132.protonmail.ch [185.70.40.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9058416B722;
-	Wed, 24 Jul 2024 19:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F6C65E20
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 19:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721847768; cv=none; b=PztGUnJ7hueZLeLeSNsa+SWYkYftXrgY1mX+jM5Mh2apjIqBF4LhDoEz+FmCnp+DGZdYr2jK59GPkC017hmO6v8D6Dm0J2UGjqEOfFWQlLiPGkSfVHbbzst39UzcarVsJaB4gCq+6FBVf3iuXsKSEsDjxa/moGOnb73Xqz+Qaww=
+	t=1721847983; cv=none; b=WWYMoec00cA4q6mAclnOxnzZcG7VlDIc3gBUZ90pHtdNDnlq3PcfAus8jTZ2GStkYraHA361H5Up9FThkmMdvqkp4IX4kOKwhGCF1fN+/hBSHkyqFSl9BfEsaJ9D2Smjr8IrmQ48ps8xVOYEuTKFkrYDl4bOF9hS4ogVrVycmEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721847768; c=relaxed/simple;
-	bh=/fUpCf7WN/hvHmqVwWZfVLxMXBf6wAmtV77gYxny0FI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qMxuiYr78krVgRsmu1b4Kjq9TJtGFUXqQD34vNumlM75brayefFKD4bzXKEaVdxiIPTQv43/8Ff+TS8A02oQ/EZINFPwuvjr91OW9/zaiTTwFV1j8oscW0bPPoRrkv2CMP+SMcWgxSyEJbD1mIIFO9g/wWQxJ6xTWHIbHeC09HQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kPddF1eC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EHiKUkag; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kPddF1eC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EHiKUkag; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A2928219A8;
-	Wed, 24 Jul 2024 19:02:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721847764; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=glng+kpt1IPtS4eIY7egQTcXEaYT3xiMDmsYwHFyFaQ=;
-	b=kPddF1eCZRjtn7VTOfB4Me7+sGpGVY8Y7L9CM6p1hWN8Q357oXsvaZoNx/ffmEvLmG6Px/
-	3z6NysJJM50MIH5mizpAVXBXWfLDfPhq4+IV3RIf88cXdzPdw+Q7imwZKsjJscrCTgPm7y
-	3XppZeumofXnWTT5kOShtgSxs9FX1Y4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721847764;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=glng+kpt1IPtS4eIY7egQTcXEaYT3xiMDmsYwHFyFaQ=;
-	b=EHiKUkagat3JYbu6tRRCySL3fzSlyozB2fwQM6NL3dQ09KHvfChy9fXfzPRIVXzAlpk731
-	nRVTwl6dstKZ/XBw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=kPddF1eC;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=EHiKUkag
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721847764; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=glng+kpt1IPtS4eIY7egQTcXEaYT3xiMDmsYwHFyFaQ=;
-	b=kPddF1eCZRjtn7VTOfB4Me7+sGpGVY8Y7L9CM6p1hWN8Q357oXsvaZoNx/ffmEvLmG6Px/
-	3z6NysJJM50MIH5mizpAVXBXWfLDfPhq4+IV3RIf88cXdzPdw+Q7imwZKsjJscrCTgPm7y
-	3XppZeumofXnWTT5kOShtgSxs9FX1Y4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721847764;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=glng+kpt1IPtS4eIY7egQTcXEaYT3xiMDmsYwHFyFaQ=;
-	b=EHiKUkagat3JYbu6tRRCySL3fzSlyozB2fwQM6NL3dQ09KHvfChy9fXfzPRIVXzAlpk731
-	nRVTwl6dstKZ/XBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 96C5A13411;
-	Wed, 24 Jul 2024 19:02:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xwG+JNRPoWaFbgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 24 Jul 2024 19:02:44 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 5B57BA08F2; Wed, 24 Jul 2024 21:02:40 +0200 (CEST)
-Date: Wed, 24 Jul 2024 21:02:40 +0200
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-	jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com, yangerkun@huawei.com,
-	Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH 04/20] ext4: add new ext4_ext_path_brelse() helper
-Message-ID: <20240724190240.z565j4t45uyociij@quack3>
-References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
- <20240710040654.1714672-5-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1721847983; c=relaxed/simple;
+	bh=Ts8ZnmloIbjXsfvstwJ7Xon+5vbuZd276D05Bq9Mj0s=;
+	h=Date:To:From:Subject:Message-ID:MIME-Version:Content-Type; b=VjPVwfrUeKf+IIVD8Kt7w+EtUO94jN4mD/oJUVP+AizNsSCPaTGhrqZhsv2Vd359E5UCcuEzgaZQPKnfRQC+k1GCW46PxfftYAiCvK2ywOwc2sXMSNmRMOKV4lfiUOaCia2Xm4xCY5yN2CSwJYMjBOI3dNySabCknuI164OovsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=SXHfdTki; arc=none smtp.client-ip=185.70.40.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1721847972; x=1722107172;
+	bh=xXyqPAWiPGTlRuUl6Au8Vf9PuxCMIzRAhei2a3kfeEc=;
+	h=Date:To:From:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=SXHfdTkirkEZ7voqfB1b9hCVgNVFDCeiog1HpomvahB/1qkgF/apiVYgqfMBlNNLX
+	 ibac/UXQF/TynZ5If8hwimNQaDS+i/pGgl9bpmstV+AAr1eNbzDFjz1EGOA8KwCnMm
+	 I3p0Tj/4sjm6mJ8KslR1bgdYMTCjfVFaE43oK+aLmzM4XEMjf/8e3BDTgfP125e29N
+	 oz9vncaAOwRbr9WxYFNtORrtN4BDBJqR/U3jmrQ+hqbEVejnSuFmncEgcQMnTVZDAu
+	 lnP8LvcOxQz0tKnHGZ1NqLBJ6dvK8no3vkkte3/hiUiq2udoFv3FvnPMqj2+vfwxx1
+	 73KoCFUrOPhtg==
+Date: Wed, 24 Jul 2024 19:06:01 +0000
+To: "airlied@gmail.com" <airlied@gmail.com>, "andy.yan@rock-chips.com" <andy.yan@rock-chips.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "heiko@sntech.de" <heiko@sntech.de>, "hjc@rock-chips.com" <hjc@rock-chips.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Subject: [PATCH v2] rockchip/drm: vop2: add support for gamma LUT
+Message-ID: <Hk03HDb6wSSHWtEFZHUye06HR0-9YzP5nCHx9A8_kHzWSZawDrU1o1pjEGkCOJFoRg0nTB4BWEv6V0XBOjF4-0Mj44lp2TrjaQfnytzp-Pk=@proton.me>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: 2763f33b849810a95c08efa9a15f31ec8564793e
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710040654.1714672-5-libaokun@huaweicloud.com>
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [0.69 / 50.00];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TAGGED_RCPT(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spamd-Bar: /
-X-Rspamd-Queue-Id: A2928219A8
-X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: 0.69
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed 10-07-24 12:06:38, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> Add ext4_ext_path_brelse() helper function to reduce duplicate code
-> and ensure that path->p_bh is set to NULL after it is released.
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+Add support for gamma LUT in VOP2 driver. The implementation is based on
+the one found in VOP driver and modified to be compatible with VOP2. Blue
+and red channels in gamma LUT register write were swapped with respect to
+how gamma LUT values are written in VOP. Write of the current video port id
+to VOP2_SYS_LUT_PORT_SEL register was added before the write of DSP_LUT_EN
+bit. Gamma size is set and drm color management is enabled for each video
+port's CRTC except ones which have no associated device. Tested on RK3566
+(Pinetab2).
 
-Why not. Feel free to add:
+Helped-by: Dragan Simic <dsimic@manjaro.org>
+Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
+---
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Notes:
+    Changes in v2:
+        - Apply code styling corrections [1]
+        - Move gamma LUT write inside the vop2 lock
+   =20
+    Link to v1: https://lore.kernel.org/linux-rockchip/9736eadf6a9d8e97eef9=
+19c6b3d88828@manjaro.org/T/#t
+   =20
+    [1] https://lore.kernel.org/linux-rockchip/d019761504b540600d9fc7a585d6=
+f95f@manjaro.org/
 
-								Honza
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm=
+/rockchip/rockchip_drm_vop2.c
+index 16abdc4a59a8..37fcf544a5fd 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+@@ -1515,9 +1515,8 @@ static void vop2_vp_dsp_lut_disable(struct vop2_video=
+_port *vp)
+=20
+ static void vop2_crtc_write_gamma_lut(struct vop2 *vop2, struct drm_crtc *=
+crtc)
+ {
+-=09const struct vop2_data *vop2_data =3D vop2->data;
+ =09const struct vop2_video_port *vp =3D to_vop2_video_port(crtc);
+-=09const struct vop2_video_port_data *vp_data =3D &vop2_data->vp[vp->id];
++=09const struct vop2_video_port_data *vp_data =3D &vop2->data->vp[vp->id];
+=20
+ =09struct drm_color_lut *lut =3D crtc->state->gamma_lut->data;
+ =09unsigned int i, bpc =3D ilog2(vp_data->gamma_lut_len);
+@@ -1558,9 +1557,8 @@ static void vop2_crtc_gamma_set(struct vop2 *vop2, st=
+ruct drm_crtc *crtc,
+ =09=09 * In order to write the LUT to the internal memory,
+ =09=09 * we need to first make sure the dsp_lut_en bit is cleared.
+ =09=09 */
+-=09=09ret =3D
+-=09=09    readx_poll_timeout(vop2_vp_dsp_lut_is_enabled, vp, dsp_ctrl, !ds=
+p_ctrl, 5,
+-=09=09=09=09       30 * 1000);
++=09=09ret =3D readx_poll_timeout(vop2_vp_dsp_lut_is_enabled, vp, dsp_ctrl,
++=09=09=09=09!dsp_ctrl, 5, 30 * 1000);
+=20
+ =09=09if (ret) {
+ =09=09=09DRM_DEV_ERROR(vop2->dev, "display LUT RAM enable timeout!\n");
+@@ -1571,9 +1569,9 @@ static void vop2_crtc_gamma_set(struct vop2 *vop2, st=
+ruct drm_crtc *crtc,
+ =09=09=09return;
+ =09}
+=20
+-=09vop2_crtc_write_gamma_lut(vop2, crtc);
+=20
+ =09vop2_lock(vop2);
++=09vop2_crtc_write_gamma_lut(vop2, crtc);
+ =09vop2_writel(vp->vop2, RK3568_LUT_PORT_SEL, vp->id);
+=20
+ =09vop2_vp_dsp_lut_enable(vp);
 
-> ---
->  fs/ext4/extents.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index 657baf3991c1..6e5b5baf3aa6 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -106,6 +106,12 @@ static int ext4_ext_trunc_restart_fn(struct inode *inode, int *dropped)
->  	return 0;
->  }
->  
-> +static inline void ext4_ext_path_brelse(struct ext4_ext_path *path)
-> +{
-> +	brelse(path->p_bh);
-> +	path->p_bh = NULL;
-> +}
-> +
->  static void ext4_ext_drop_refs(struct ext4_ext_path *path)
->  {
->  	int depth, i;
-> @@ -113,10 +119,8 @@ static void ext4_ext_drop_refs(struct ext4_ext_path *path)
->  	if (!path)
->  		return;
->  	depth = path->p_depth;
-> -	for (i = 0; i <= depth; i++, path++) {
-> -		brelse(path->p_bh);
-> -		path->p_bh = NULL;
-> -	}
-> +	for (i = 0; i <= depth; i++, path++)
-> +		ext4_ext_path_brelse(path);
->  }
->  
->  void ext4_free_ext_path(struct ext4_ext_path *path)
-> @@ -635,8 +639,7 @@ int ext4_ext_precache(struct inode *inode)
->  		 */
->  		if ((i == depth) ||
->  		    path[i].p_idx > EXT_LAST_INDEX(path[i].p_hdr)) {
-> -			brelse(path[i].p_bh);
-> -			path[i].p_bh = NULL;
-> +			ext4_ext_path_brelse(path + i);
->  			i--;
->  			continue;
->  		}
-> @@ -1887,8 +1890,7 @@ static void ext4_ext_try_to_merge_up(handle_t *handle,
->  		(path[1].p_ext - EXT_FIRST_EXTENT(path[1].p_hdr));
->  	path[0].p_hdr->eh_max = cpu_to_le16(max_root);
->  
-> -	brelse(path[1].p_bh);
-> -	path[1].p_bh = NULL;
-> +	ext4_ext_path_brelse(path + 1);
->  	ext4_free_blocks(handle, inode, NULL, blk, 1,
->  			 EXT4_FREE_BLOCKS_METADATA | EXT4_FREE_BLOCKS_FORGET);
->  }
-> @@ -2956,8 +2958,7 @@ int ext4_ext_remove_space(struct inode *inode, ext4_lblk_t start,
->  			err = ext4_ext_rm_leaf(handle, inode, path,
->  					       &partial, start, end);
->  			/* root level has p_bh == NULL, brelse() eats this */
-> -			brelse(path[i].p_bh);
-> -			path[i].p_bh = NULL;
-> +			ext4_ext_path_brelse(path + i);
->  			i--;
->  			continue;
->  		}
-> @@ -3019,8 +3020,7 @@ int ext4_ext_remove_space(struct inode *inode, ext4_lblk_t start,
->  				err = ext4_ext_rm_idx(handle, inode, path, i);
->  			}
->  			/* root level has p_bh == NULL, brelse() eats this */
-> -			brelse(path[i].p_bh);
-> -			path[i].p_bh = NULL;
-> +			ext4_ext_path_brelse(path + i);
->  			i--;
->  			ext_debug(inode, "return to level %d\n", i);
->  		}
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
