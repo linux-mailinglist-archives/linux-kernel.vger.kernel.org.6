@@ -1,114 +1,85 @@
-Return-Path: <linux-kernel+bounces-261184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 584F193B3D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:36:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DF6B93B3DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12AA7284E4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:36:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D77CB1F22FE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1601F15B54E;
-	Wed, 24 Jul 2024 15:35:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5765E15B541;
-	Wed, 24 Jul 2024 15:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9A815B968;
+	Wed, 24 Jul 2024 15:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iA/e9ota"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531D515B0FE;
+	Wed, 24 Jul 2024 15:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721835357; cv=none; b=u49I1uH13ioJY4I+qOLZsvVFI2CWLpI3ZsT3ixlCwaSu6K2tVfKdzeaRg0JXtMxlg3NSioSFGfruswIYRrNBQRH4gdvi9hSaApekn6n2kVK4wglPYa6/WcV2+7EovuD0Bam+UYPbCclqS/D9+HNdZz+jjbTtY6u/6sfU1LWDhus=
+	t=1721835389; cv=none; b=PsIjjwWeF2hOVJlVEQwUDJk6P/ljVmeF+mNpAsPTTRwh2dnmGZN9uJOc8rIti3blLmhWD/wlkkCjSQ78b0a9GpiMa8GIO1YOvZuddBbbXIrlOEA4HimI5zxIAxHbrKQsLBerMN0ylSJUERqWbvitdenAtPdhjeZWLJ9d4hLbnjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721835357; c=relaxed/simple;
-	bh=x2M2EORzNWm631G097ZLRlP04kLY2CYa4nt3ijt5p9Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ahzV+JGwA5YwrBeH6IqU0R08rlTtY33FBThhDA+qDRD8Nxlvw9R9Ul00SXZlkSXgTBoBZP4cbmQKkjVz2x9cTlp0lRAzfr8f40yAZIN9VnJ/vUlubi4mPafg0Z2ZSIfGREIFVsHYYYlX7d4ymYlrNfeSz8iVhPOqkX+6PskM3aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 16006106F;
-	Wed, 24 Jul 2024 08:36:20 -0700 (PDT)
-Received: from [10.1.25.15] (PF4Q20KV.arm.com [10.1.25.15])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EE4ED3F766;
-	Wed, 24 Jul 2024 08:35:51 -0700 (PDT)
-Message-ID: <918e5562-1523-4793-93c7-94ee143ff87c@arm.com>
-Date: Wed, 24 Jul 2024 16:35:50 +0100
+	s=arc-20240116; t=1721835389; c=relaxed/simple;
+	bh=dy+PiHf/gs6ghVGg6izoOkhmxgnHq4Gzf3BWbR5h3yg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LKy+PrXRg2Qv5puM7ishlrk3/d4o37tnOUV048CrW2VuPdVlh+sW8gTJgdcAUIpUq6A/cHn7qiESRDbDU7j86JLFZL0yfH61/jVTmJ/yQ3ZszQYNHB7YLcrK2LE1QLCUa7misUBaVVCmTnKxwGjBdO+pdejFTucXXRXH7qVLx8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iA/e9ota; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E885BC32782;
+	Wed, 24 Jul 2024 15:36:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721835389;
+	bh=dy+PiHf/gs6ghVGg6izoOkhmxgnHq4Gzf3BWbR5h3yg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=iA/e9otaw6Mwui8yoHfDbxojScfPoSU1evarFxgtCOhu9saIA1/odP+gPRWkX+k1B
+	 QBHV2K1fdZz0UuMEdEhdGKmT+XKJE90VWxjhCP8cUrHAGlt/EnLqMt8kjZV975WVIQ
+	 CkMYGVdIZ8Jnf4OXTnFv3K7dFscf1cFRq4vHVuV/qr+8r05Z+QYNYkgXclnYyrTnKL
+	 p0VPRuZZweuocuemEnZ/S+3sGVLjdjl47C002ObSWsK2Y4pNPhQJqweFai3ku9t6b4
+	 dfovRNHm+/YvvUVL2CsphUEZMUhzHG8/NVvWCcjnbKbhQC3hQxO9UZrkOMKOucC1qC
+	 uybwCfubFRwnQ==
+Date: Wed, 24 Jul 2024 10:36:27 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Alejandro Lucero Palau <alucerop@amd.com>
+Cc: Wei Huang <wei.huang2@amd.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	netdev@vger.kernel.org, Jonathan.Cameron@huawei.com, corbet@lwn.net,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, alex.williamson@redhat.com, gospo@broadcom.com,
+	michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
+	somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
+	manoj.panicker2@amd.com, Eric.VanTassell@amd.com,
+	vadim.fedorenko@linux.dev, horms@kernel.org, bagasdotme@gmail.com,
+	bhelgaas@google.com
+Subject: Re: [PATCH V3 03/10] PCI/TPH: Add pci=notph to prevent use of TPH
+Message-ID: <20240724153627.GA800043@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf scripts python: cs-etm: Update example to provide
- vmlinux path to Perf
-To: James Clark <james.clark@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Ruidong Tian <tianruidong@linux.alibaba.com>,
- Benjamin Gray <bgray@linux.ibm.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
- gankulkarni@os.amperecomputing.com, mike.leach@linaro.org,
- suzuki.poulose@arm.com
-References: <20240724143319.169745-1-james.clark@linaro.org>
- <225ff37c-0e50-48d5-bb4c-e8a63e72991a@arm.com>
- <50b78571-34b5-4ad9-abc3-0416b3d9b917@linaro.org>
-Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <50b78571-34b5-4ad9-abc3-0416b3d9b917@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fc94330f-1ef0-8b84-ebb8-44fd74c4a3c9@amd.com>
 
-On 7/24/2024 4:23 PM, James Clark wrote:
-
-[...]
-
->> The change makes senses to me.  Just check a bit, does it need to add the same
->> option for the command "only source line and symbols"?
+On Wed, Jul 24, 2024 at 03:45:34PM +0100, Alejandro Lucero Palau wrote:
+> On 7/17/24 21:55, Wei Huang wrote:
+> > TLP headers with incorrect steering tags (e.g. caused by buggy driver)
+> > can potentially cause issues when the system hardware consumes the tags.
+> > Provide a kernel option, with related helper functions, to completely
+> > prevent TPH from being enabled.
 > 
-> I assumed that because that one didn't have vmlinux at all then it's
-> just for userspace tracing.
-For the only source and symbols case, I expect it will can be used for kernel
-tracing as well, as this can save much time if someone doesn't care about
-disassembly.
+> Maybe rephrase it for including a potential buggy device, including the cpu.
+> 
+> Also, what about handling this with a no-tph-allow device list instead of a
+> generic binary option for the whole system?
+> 
+> Foreseeing some buggy or poor-performance implementations, or specific use
+> cases where it could be counterproductive, maybe supporting both options.
 
-Maybe it is good to add the same option for it, even though it is not used for
-user space tracing. Either is fine for me:
-
-Reviewed-by: Leo Yan <leo.yan@arm.com>
-
-> I think it's good to have an example without
-> vmlinux to show that it's not a strict requirement.
-
->>> ---
->>>   tools/perf/scripts/python/arm-cs-trace-disasm.py | 4 ++--
->>>   1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/tools/perf/scripts/python/arm-cs-trace-disasm.py
->>> b/tools/perf/scripts/python/arm-cs-trace-disasm.py
->>> index 7aff02d84ffb..4aeb9b497f7a 100755
->>> --- a/tools/perf/scripts/python/arm-cs-trace-disasm.py
->>> +++ b/tools/perf/scripts/python/arm-cs-trace-disasm.py
->>> @@ -19,10 +19,10 @@ from perf_trace_context import perf_set_itrace_options, \
->>>   # Below are some example commands for using this script.
->>>   #
->>>   # Output disassembly with objdump:
->>> -#  perf script -s scripts/python/arm-cs-trace-disasm.py \
->>> +#  perf script -k path/to/vmlinux -s scripts/python/arm-cs-trace-disasm.py \
->>>   #              -- -d objdump -k path/to/vmlinux
->>>   # Output disassembly with llvm-objdump:
->>> -#  perf script -s scripts/python/arm-cs-trace-disasm.py \
->>> +#  perf script -k path/to/vmlinux -s scripts/python/arm-cs-trace-disasm.py \
->>>   #              -- -d llvm-objdump-11 -k path/to/vmlinux
->>>   # Output only source line and symbols:
->>>   #  perf script -s scripts/python/arm-cs-trace-disasm.py
->>> -- 
->>> 2.34.1
->>>
+Makes sense if/when we need it.  IMO no point in adding an empty list
+of known-broken devices.
 
