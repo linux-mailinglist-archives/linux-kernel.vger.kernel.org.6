@@ -1,130 +1,186 @@
-Return-Path: <linux-kernel+bounces-261084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10B4C93B2AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:29:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2AAE93B2AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A967282204
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:29:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63CB61F2493F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E326F15958A;
-	Wed, 24 Jul 2024 14:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vsbrm+AR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C95158A3C;
+	Wed, 24 Jul 2024 14:30:38 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D051134DE;
-	Wed, 24 Jul 2024 14:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD41D158DC1
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721831382; cv=none; b=hy+/vlc4EayTzNSeXmWq4t0WDAXndEk8krG5812e/B9EXLwzjTqhZF2mt1vmViYD2EzwigYZGSUzUSkOBwCzbu9u6Sp2x6P+LYcntGJ4BKo+e6S5ttsqRO5nqySRbrk4enOKI05z+rA3De0uCLwjx7q/INgRaQM8nZf3SM2w68k=
+	t=1721831437; cv=none; b=Lf+SYFVnn/U22cnSS21cjDuv/fbU59KhZoJ6bjtv2sj2R6nf9ZkSBnuBy0gOCKQGHvgVnKS/A3uaCOkEROxepTAluhyqwv819VR6fKgShLtt7pcyWQdOkMjyEeQkLPSqdtUomSx49UsV/8iR+bvcOziU1aoKC9w8KU4Gi81ROFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721831382; c=relaxed/simple;
-	bh=A92SMp5L8vHye59S+gIpJ3oRDF6rjc+krm1iL8GTSdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZnqbrZ2RJAkDEHfgYCXTSOjn+3450FZxq82S7IXP6k7iRMJcDgD5O9VYtf0c2apIss7PNJGlpSTzPnGAphMsQXlPujBICH6QkkYVGens1RwGcVIHVth2aCTzwsxwyfKTKEgclMQlBJm8inevVnxjuO1kHNL8IABqkMsEtXhijW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vsbrm+AR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6F22C32781;
-	Wed, 24 Jul 2024 14:29:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721831381;
-	bh=A92SMp5L8vHye59S+gIpJ3oRDF6rjc+krm1iL8GTSdU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Vsbrm+ARHzxUB9HwkUDAiki6u1+OirdVz3B5Wyd8s/xnM7KPb20rmiFciMjn6xLo0
-	 LUbBmQ/fLjOJB4Hg8N8J9DBNehqWGvfI6BpvBMn3TQkedh96UlfQ4ifXnk7mV356d+
-	 3SN3du/McYKnXzJa4uVoV8ylwsOVZGkZD2AMOlP0SGdgmb7JJscB5gd1cI2qbFZp4S
-	 5mtaomHVMJt/7GUIV6xEJclBJVIPqz2Kk/gqOl+449TvOG2gm8HegbCkjj+2VgnK3f
-	 lI1gbpbd63fgCSiHwfRgePmG+PZmTfqwZB4YVnFMUOqOGYJrq5UedCACMxGkWTY3Xu
-	 dZJKwTMnY4INQ==
-Date: Wed, 24 Jul 2024 15:29:36 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>, linux-kernel@vger.kernel.org,
-	Marc Zyngier <maz@kernel.org>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [RFC v7 1/6] dt-bindings: gpio: fix microchip,mpfs-gpio
- interrupt descriptions
-Message-ID: <20240724-oasis-emerald-a4253b6e73cb@spud>
-References: <20240723-supervise-drown-d5d3b303e7fd@wendy>
- <20240723-trash-issuing-e2bdd55b764e@wendy>
- <b07538f3-44e4-4d98-b64d-0d15428e720f@kernel.org>
+	s=arc-20240116; t=1721831437; c=relaxed/simple;
+	bh=AaKdN6HcqgfCCFAVvz/Al+Lrum6JH6Mv01fYiGr+egQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=cyFpKrH9dV2ihFoyQTEcypZfO5+XIoskyC9rf3aC9oCgrA+QK2u794whEphBtNEFQNeK721OfZEEEU00VOpYs+Y45nnK2rgF7oS2k8DFt8k9xr7AKOb3NJHCueBQHw1fEX+y+BbTd4yDDDOF+WPpbr3GCBsWJaidfYXGU7Nu4M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-178-jMukQN13NBi_V9QrS7w-jQ-1; Wed, 24 Jul 2024 15:30:32 +0100
+X-MC-Unique: jMukQN13NBi_V9QrS7w-jQ-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 24 Jul
+ 2024 15:29:52 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Wed, 24 Jul 2024 15:29:52 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>, "'Linus
+ Torvalds'" <torvalds@linuxfoundation.org>
+CC: "'Matthew Wilcox (Oracle)'" <willy@infradead.org>, 'Christoph Hellwig'
+	<hch@infradead.org>, 'Andrew Morton' <akpm@linux-foundation.org>, "'Andy
+ Shevchenko'" <andriy.shevchenko@linux.intel.com>, 'Dan Carpenter'
+	<dan.carpenter@linaro.org>, 'Arnd Bergmann' <arnd@kernel.org>,
+	"'Jason@zx2c4.com'" <Jason@zx2c4.com>, "'hch@infradead.org'"
+	<hch@infradead.org>, "'pedro.falcato@gmail.com'" <pedro.falcato@gmail.com>,
+	'Mateusz Guzik' <mjguzik@gmail.com>, "'linux-mm@kvack.org'"
+	<linux-mm@kvack.org>
+Subject: [PATCH 3/7] compiler.h: Add __if_constexpr(expr, if_const,
+ if_not_const)
+Thread-Topic: [PATCH 3/7] compiler.h: Add __if_constexpr(expr, if_const,
+ if_not_const)
+Thread-Index: Adrd1gZ7oS190yPcQj+hKNIa4uSuaQ==
+Date: Wed, 24 Jul 2024 14:29:52 +0000
+Message-ID: <9751d18defea406fa698630637d8e7db@AcuMS.aculab.com>
+References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
+In-Reply-To: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="5uHEoWlbGxcUMhZB"
-Content-Disposition: inline
-In-Reply-To: <b07538f3-44e4-4d98-b64d-0d15428e720f@kernel.org>
-
-
---5uHEoWlbGxcUMhZB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 24, 2024 at 03:25:38PM +0200, Krzysztof Kozlowski wrote:
-> On 23/07/2024 13:27, Conor Dooley wrote:
-> > The microchip,mpfs-gpio binding suffered greatly due to being written
-> > with a narrow minded view of the controller, and the interrupt bits
-> > ended up incorrect. It was mistakenly assumed that the interrupt
-> > configuration was set by platform firmware, based on the FPGA
-> > configuration, and that the GPIO DT nodes were the only way to really
-> > communicate interrupt configuration to software.
-> >=20
-> > Instead, the mux should be a device in its own right, and the GPIO
-> > controllers should be connected to it, rather than to the PLIC.
-> > Now that a binding exists for that mux, try to fix the misconceptions
-> > in the GPIO controller binding.
-> >=20
-> > Firstly, it's not possible for this controller to have fewer than 14
-> > GPIOs, and thus 14 interrupts also. There are three controllers, with
-> > 14, 24 & 32 GPIOs each.
-> >=20
-> > The example is wacky too - it follows from the incorrect understanding
-> > that the GPIO controllers are connected to the PLIC directly. They are
-> > not however, with a mux sitting in between. Update the example to use
-> > the mux as a parent, and the interrupt numbers at the mux for GPIO2 as
-> > the example - rather than the strange looking, repeated <53>.
-> >=20
->=20
-> You make ngpios required, which could be an ABI break except that there
-> is no Linux user for this, so there is no ABI break, right? If so, would
-> be nice to mention it. Rest looks good:
+__if_constexpr(expr, if_const, if_not_const) returns 'if_const' if 'expr'
+is a 'constant integer expression' otherwise 'if_not_const'.
+The two values may have different types.
 
-No upstream user at least, and I don't believe that there are any
-non-linux projects using the GPIO controllers via DT. I could, I
-suppose, not make it required and use 32 as a default - but that could
-cause problems with existing devicetrees where all 3 controllers omitted
-the property, despite having differing numbers of GPIOs.
+Redefine __is_constextpr(expr) as __if_constexpr(expr, 1, 0).
 
-Now that I look again, the driver actually doesn't enforce the presence
-of the property and I think it should fail to probe if not present.
+Implemented using _Generic() for portibility.
 
---5uHEoWlbGxcUMhZB
-Content-Type: application/pgp-signature; name="signature.asc"
+Add proper kerndoc comments.
 
------BEGIN PGP SIGNATURE-----
+Signed-off-by: David Laight <david.laight@aculab.com>
+---
+ include/linux/compiler.h | 65 +++++++++++++---------------------------
+ 1 file changed, 21 insertions(+), 44 deletions(-)
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqEP0AAKCRB4tDGHoIJi
-0ryZAQDWgZQTcAZNOZjGXc3UbCVdXHcLhMvUltM54MOZgf2zbQD/YvX+QIIqkjKF
-LEjNQ6dPuMCwh7g8e/IKFvQP9VkqkQo=
-=R7Eb
------END PGP SIGNATURE-----
+diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+index 2594553bb30b..7d559e390011 100644
+--- a/include/linux/compiler.h
++++ b/include/linux/compiler.h
+@@ -242,52 +242,29 @@ static inline void *offset_to_ptr(const int *off)
+ /* &a[0] degrades to a pointer: a different type from an array */
+ #define __must_be_array(a)=09BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
+=20
+-/*
+- * This returns a constant expression while determining if an argument is
+- * a constant expression, most importantly without evaluating the argument=
+.
+- * Glory to Martin Uecker <Martin.Uecker@med.uni-goettingen.de>
++/**
++ * __if_constexpr - Check whether an expression is an 'integer
++ *=09=09constant expression'=20
++ * @expr: Expression to test, not evaluated, can be a pointer
++ * @if_const: return value if constant
++ * @if_not_const: return value if not constant
++ *
++ * The return values @if_const and @if_not_const can have different types.
+  *
+- * Details:
+- * - sizeof() return an integer constant expression, and does not evaluate
+- *   the value of its operand; it only examines the type of its operand.
+- * - The results of comparing two integer constant expressions is also
+- *   an integer constant expression.
+- * - The first literal "8" isn't important. It could be any literal value.
+- * - The second literal "8" is to avoid warnings about unaligned pointers;
+- *   this could otherwise just be "1".
+- * - (long)(x) is used to avoid warnings about 64-bit types on 32-bit
+- *   architectures.
+- * - The C Standard defines "null pointer constant", "(void *)0", as
+- *   distinct from other void pointers.
+- * - If (x) is an integer constant expression, then the "* 0l" resolves
+- *   it into an integer constant expression of value 0. Since it is cast t=
+o
+- *   "void *", this makes the second operand a null pointer constant.
+- * - If (x) is not an integer constant expression, then the second operand
+- *   resolves to a void pointer (but not a null pointer constant: the valu=
+e
+- *   is not an integer constant 0).
+- * - The conditional operator's third operand, "(int *)8", is an object
+- *   pointer (to type "int").
+- * - The behavior (including the return type) of the conditional operator
+- *   ("operand1 ? operand2 : operand3") depends on the kind of expressions
+- *   given for the second and third operands. This is the central mechanis=
+m
+- *   of the macro:
+- *   - When one operand is a null pointer constant (i.e. when x is an inte=
+ger
+- *     constant expression) and the other is an object pointer (i.e. our
+- *     third operand), the conditional operator returns the type of the
+- *     object pointer operand (i.e. "int *"). Here, within the sizeof(), w=
+e
+- *     would then get:
+- *       sizeof(*((int *)(...))  =3D=3D sizeof(int)  =3D=3D 4
+- *   - When one operand is a void pointer (i.e. when x is not an integer
+- *     constant expression) and the other is an object pointer (i.e. our
+- *     third operand), the conditional operator returns a "void *" type.
+- *     Here, within the sizeof(), we would then get:
+- *       sizeof(*((void *)(...)) =3D=3D sizeof(void) =3D=3D 1
+- * - The equality comparison to "sizeof(int)" therefore depends on (x):
+- *     sizeof(int) =3D=3D sizeof(int)     (x) was a constant expression
+- *     sizeof(int) !=3D sizeof(void)    (x) was not a constant expression
++ * Relies on typeof(x ? NULL : ptr_type) being ptr_type and
++ * typeof(x ? (void *)y : ptr_type) being 'void *'.
++ */
++#define __if_constexpr(expr, if_const, if_not_const)=09=09\
++=09_Generic(0 ? ((void *)((long)(expr) * 0l)) : (char *)0,=09\
++=09=09char *: (if_const),=09=09=09=09\
++=09=09void *: (if_not_const))
++
++/**
++ * __is_constexpr - Return 1 for an 'integer constant expression'
++ *=09=090 otherwise.
++ * @expr: expression to check, not evaluated
+  */
+-#define __is_constexpr(x) \
+-=09(sizeof(int) =3D=3D sizeof(*(8 ? ((void *)((long)(x) * 0l)) : (int *)8)=
+))
++#define __is_constexpr(expr) __if_constexpr((expr), 1, 0)
+=20
+ /*
+  * Whether 'type' is a signed type or an unsigned type. Supports scalar ty=
+pes,
+--=20
+2.17.1
 
---5uHEoWlbGxcUMhZB--
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
 
