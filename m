@@ -1,148 +1,114 @@
-Return-Path: <linux-kernel+bounces-261513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58C5593B820
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 22:39:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D2D793B821
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 22:40:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 899E31C215EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:39:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE8851C21253
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391D2136E18;
-	Wed, 24 Jul 2024 20:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35ADA84E1C;
+	Wed, 24 Jul 2024 20:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="W6yI3tXV";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Bm/Ga072"
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="V+mhmNy+"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393DD65E20;
-	Wed, 24 Jul 2024 20:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C72136E18
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 20:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721853571; cv=none; b=GU+SmNw2QgvFS0M4gJaFtpYmE4C42S3TDj2wvrKBYf+YBBDAcWfKB4K4Wb2+XEwTRivioX/1FO8LV9r5mngTtoMOYGog+mlZ15MQ3JxyAWxZu3/uM0uVZ6uU8l1at6ngXTnz7gaDQbR8gf3fxt9Rf9Tw/MpGY03cgMSJ1NBCgZU=
+	t=1721853638; cv=none; b=d0hjh+WXpSBSrrXvRyOx0fVt+VngQ6gbQjlvDLTeEkCpWjWHeh11W3a0ME75zijuWsNC15ZgAI+AyuwBAp96EKHqkA4dzkrfuJxGMfLgGbkvNllqr3dt+gEJOVxlTYLdJjfUgJZDyRNyw6lLbUA5g6uR/yxvPHaLBPWOnUtRvvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721853571; c=relaxed/simple;
-	bh=/yx+7tfaIgUk5kN8zhSGSzSs+UISBZJKcH2TmfbbgYk=;
+	s=arc-20240116; t=1721853638; c=relaxed/simple;
+	bh=yFtyoT4mO34dHtEP9TanLfp4otE7QMz6p2aNXgyK+T4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ktzdKQyEFIYvluz4PHFglZNLvOpm578/MFQgQy4hsUNVU2fuD1vkzsusSdnblov9PBQuBIQwvC/+nzTsWaQxbX9gH0DgqoHlTAGTiXdNwIrve76pzFWCOWA0poBqwL2OkJtJBgACaQZwU4w/5JzHf32cfGxRD2SYl0id5hyua9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=W6yI3tXV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Bm/Ga072; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 1E67C1385D68;
-	Wed, 24 Jul 2024 16:39:25 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Wed, 24 Jul 2024 16:39:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1721853565;
-	 x=1721939965; bh=1cWzR+7Vwv/EgLb3hFhM6ar6lC/oYj1b70wKWwXM/78=; b=
-	W6yI3tXVeM6+3Cg6w2WCov8aq2PJz6EBVNnL8gvYLDfEBs6yiM/AEUeHfEUjVZfH
-	BasRFFNmhUEtUVITd7VIMT15Pi11nv3ZCdwLHsILFI6HkFj2CAFmr0QFLN1l+ZO1
-	oTyv+wZRlW8Y7cOSZdWWrB+qmH7eQPK4Z9xnEtEYbCUZgN2X70PJO15k7nFcuDdj
-	eRdX3jfTKocr/ltPaX5UZa9yegeid2Qw5bNImmr5PCVTwMHUHo18+ipAGz16h0SV
-	DVJCE5Q0NZ9p8ZQgNsyAMCiSYo5832bXthOHfoOlSb3Zr1bZQ/DnJIykn9kvrMI0
-	wA42OHwiyUCkV2eDGS7zMw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1721853565; x=
-	1721939965; bh=1cWzR+7Vwv/EgLb3hFhM6ar6lC/oYj1b70wKWwXM/78=; b=B
-	m/Ga072/u8s4+JEmiVLONaEBYAU/6yvgBDnQJDFJs+23vTN3k7EH6c2vof148CBz
-	rlFaN7frHEZNEOqsJTHKD5IIrkRqB/w6I3ctjjrzDHJ63jAmJYSdiyTuKLagDFKP
-	BiWBxayyAz9PQCVCGYTDdr2TUGHfx1K8bBIeNdPUF4KbhngrsNxwNCWX9nybZp+P
-	TlVRKzAR5LTdjEdyXWh/9f+C9JEFBw++1wAQ8ZN1LJpqPyHxf0NuWikJdAjykNrj
-	C0bV3Nw+UB0A1G/ILUmoC5oYLCb93V0rwEFDLucSHUUr78ii6Jduw9ADQ6YHm0Gh
-	HeLTzgc74zOdiLCoPv4zg==
-X-ME-Sender: <xms:fGahZn0h1FtDS-GTHNCfbbH858cxg5n1wjVOcbeam8LIm-grZmjSgg>
-    <xme:fGahZmGsmjyN4XslG7poNSqE9haxeeE1gKoXQ2akVUppjuJbD--Vf6xrDzNPxGBK6
-    VZCCECDR-Qn84Cpbm4>
-X-ME-Received: <xmr:fGahZn7jhsOcYGwkYSgLsMoOzSITtGOJFw3U-PL9tuT_Mge-3m_tbj-ASUzRIbkVjB_knF2Q8ikPs3niH8kEPseq3MJgUHo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddriedugdduhedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefpihhk
-    lhgrshcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugesrhgrgh
-    hnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpeevteegtddvvdfhtdekgefhfeef
-    heetheekkeegfeejudeiudeuleegtdehkeekteenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhluhhnugesrhgr
-    ghhnrghtvggthhdrshgvpdhnsggprhgtphhtthhopedt
-X-ME-Proxy: <xmx:fGahZs183bHdMFFNv4t_EKDeqKRdK1W7EvL9bkB9LH9exWIb-dyV8Q>
-    <xmx:fGahZqEVrsiC1_FoPi_fDEJX9Pmf8lWUtnAhScCFDiFCyTvng-h4TQ>
-    <xmx:fGahZt934Oh0bHKRPdHM0YF6w-vA64h-8v4Efr9Mo7OgSMHcEUEHrQ>
-    <xmx:fGahZnn1dikrKgdqJzfpksdqWBfNfciDByO6sZKpiZUx5j9Q8XsdRw>
-    <xmx:fWahZl9AkBEvX6BuwokWodtSL5v80o0XYFUk4q9zb4gQj2io5YU2hCnP>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 24 Jul 2024 16:39:23 -0400 (EDT)
-Date: Wed, 24 Jul 2024 22:39:21 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 2/2] dt-bindings: soc: renesas: renesas-soc: Add pattern
- for GP-EVK
-Message-ID: <20240724203921.GA2820193@ragnatech.se>
-References: <20240724094707.569596-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240724094707.569596-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uS6Tw+iWECWlrLxdqD8RykmiN9mC4yTnlLmiRWiMesmaadidCbFP3I/qbZ0lEUfskzEQl93ee9vWJ1+uBvxi8gI02lz0e6LEbbJvBskZEqaBfX8mI4Qxrz3a1EL+A+dI88YXzVPS9lBPNM3/uvQMv7ke/j58aPpFFg0BNGpzbjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=V+mhmNy+; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 24 Jul 2024 20:40:27 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721853634;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ha7l7RvxkIY9Rxs/G2PnfM+aRb65nGpjufHF5ej1pwE=;
+	b=V+mhmNy+jV8uCID2sGrkU65R/Kcov5jsj/UihWlB5gRrjSsG3y95MfsRnn1lHEBibPQnpI
+	XzSuPT0Cmx78wpyGkqz2U3EordmcudDK9aGd4z3yVCsJisP7j6VOXsMLDkNYC5jlgF+zNK
+	fO7gU/G1majWGM5gXalyeawanEfgqlM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>
+Subject: Re: [PATCH v2 0/5] This patchset reorganizes page_counter structures
+ which helps to make
+Message-ID: <ZqFmu9qmRiVJfRg3@google.com>
+References: <20240724202103.1210065-1-roman.gushchin@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240724094707.569596-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240724202103.1210065-1-roman.gushchin@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Lad,
+Ooops, there was a formatting error in the cover letter, my apologies.
 
-Thanks for your work.
+Here is a fixed version:
 
-On 2024-07-24 10:47:07 +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> Add a pattern for the Renesas RZ/V2H GP-EVK board.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+--
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+From a08acc7e656d279b461a645309745bca5218d7d2 Mon Sep 17 00:00:00 2001
+From: Roman Gushchin <roman.gushchin@linux.dev>
+Date: Wed, 24 Jul 2024 20:38:13 +0000
+Subject: [PATCH v2 0/5] mm: memcg: merge page_counter trees
 
-> ---
->  Documentation/devicetree/bindings/soc/renesas/renesas-soc.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas-soc.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas-soc.yaml
-> index 5ddd31f30f26..3e93e0c73ed9 100644
-> --- a/Documentation/devicetree/bindings/soc/renesas/renesas-soc.yaml
-> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas-soc.yaml
-> @@ -37,7 +37,7 @@ properties:
->        anyOf:
->          # Preferred naming style for compatibles of SoC components
->          - pattern: "^renesas,(emev2|r(7s|8a|9a)[a-z0-9]+|rcar|rmobile|rz[a-z0-9]*|sh(7[a-z0-9]+)?|mobile)-[a-z0-9-]+$"
-> -        - pattern: "^renesas,(condor|falcon|gr-peach|gray-hawk|salvator|sk-rz|smar(c(2)?)?|spider|white-hawk)(.*)?$"
-> +        - pattern: "^renesas,(condor|falcon|gp|gr-peach|gray-hawk|salvator|sk-rz|smar(c(2)?)?|spider|white-hawk)(.*)?$"
->  
->          # Legacy compatibles
->          #
-> -- 
-> 2.34.1
-> 
+This patchset reorganizes page_counter structures which helps to make
+memory cgroup and hugetlb cgroup structures smaller (10%-35% depending
+on the kernel configuration) and more cache-effective. It also eliminates
+useless tracking of protected memory usage when it's not needed.
+
+v2:
+  - two page_counter structures per hugetlb cgroup instead of one
+  - rebased to the current mm branch
+  - many minor fixes and improvements
+v1:
+  https://lore.kernel.org/lkml/20240503201835.2969707-1-roman.gushchin@linux.dev/T/#m77151ed83451a49132e29ef13d55e08b95ac867f
+
+
+Roman Gushchin (5):
+  mm: memcg: don't call propagate_protected_usage() needlessly
+  mm: page_counters: put page_counter_calculate_protection() under
+    CONFIG_MEMCG
+  mm: memcg: merge multiple page_counters into a single structure
+  mm: page_counters: initialize usage using ATOMIC_LONG_INIT() macro
+  mm: memcg: convert enum res_type to mem_counter_type
+
+ include/linux/hugetlb.h        |   4 +-
+ include/linux/hugetlb_cgroup.h |   8 +-
+ include/linux/memcontrol.h     |  19 +--
+ include/linux/page_counter.h   | 128 ++++++++++++++++----
+ mm/hugetlb.c                   |  14 +--
+ mm/hugetlb_cgroup.c            | 150 +++++++++--------------
+ mm/memcontrol-v1.c             | 154 ++++++++++--------------
+ mm/memcontrol-v1.h             |  10 +-
+ mm/memcontrol.c                | 211 ++++++++++++++++-----------------
+ mm/page_counter.c              |  94 +++++++++------
+ 10 files changed, 403 insertions(+), 389 deletions(-)
 
 -- 
-Kind Regards,
-Niklas Söderlund
+2.46.0.rc1.232.g9752f9e123-goog
+
+
 
