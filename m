@@ -1,130 +1,130 @@
-Return-Path: <linux-kernel+bounces-261085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C203E93B2AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:30:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10B4C93B2AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F65AB2333B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:30:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A967282204
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B605E158DDD;
-	Wed, 24 Jul 2024 14:29:47 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E326F15958A;
+	Wed, 24 Jul 2024 14:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vsbrm+AR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888D3134DE
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D051134DE;
+	Wed, 24 Jul 2024 14:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721831387; cv=none; b=lX8q75vc1hRNaUCZuw197CI10d3fdfqVu0oZOp0ro4T2Ee/i4Aw1TRvRYRzi0d5mPavjTUy4uk3fZJn+Og7fCph/ckMT5IUMPvteTjBk6jSzfkWZlWBRNz7wi3TnytE3fEg3F1ON+y1Zv/n5rtEyUWsiRT396P7nOfJR0uhv43Y=
+	t=1721831382; cv=none; b=hy+/vlc4EayTzNSeXmWq4t0WDAXndEk8krG5812e/B9EXLwzjTqhZF2mt1vmViYD2EzwigYZGSUzUSkOBwCzbu9u6Sp2x6P+LYcntGJ4BKo+e6S5ttsqRO5nqySRbrk4enOKI05z+rA3De0uCLwjx7q/INgRaQM8nZf3SM2w68k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721831387; c=relaxed/simple;
-	bh=EhqLrJgqYxdlTb2Zl2yShcG1KzJBygJskqHd8w4qHqo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=VxxHKB96nAW9NTFArodA96GlYF+0I6S79ZkVLVIbBfM4eKgy6AsHBzipx8DgN9NagYRxgDbSxNJEsBZhig9hwYvRYkNmbJ7Wm86Udo4HYVCLgQCumcsG4x3Y0aeqEZvyJUUaNdlrQsjUbLaDAaLDHafBS+izRhVGdccCnqH0LkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-267-KJPviE2xP9qjIHrECg06Og-1; Wed, 24 Jul 2024 15:29:42 +0100
-X-MC-Unique: KJPviE2xP9qjIHrECg06Og-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 24 Jul
- 2024 15:29:02 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 24 Jul 2024 15:29:02 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>, "'Linus
- Torvalds'" <torvalds@linuxfoundation.org>
-CC: "'Matthew Wilcox (Oracle)'" <willy@infradead.org>, 'Christoph Hellwig'
-	<hch@infradead.org>, 'Andrew Morton' <akpm@linux-foundation.org>, "'Andy
- Shevchenko'" <andriy.shevchenko@linux.intel.com>, 'Dan Carpenter'
-	<dan.carpenter@linaro.org>, 'Arnd Bergmann' <arnd@kernel.org>,
-	"'Jason@zx2c4.com'" <Jason@zx2c4.com>, "'hch@infradead.org'"
-	<hch@infradead.org>, "'pedro.falcato@gmail.com'" <pedro.falcato@gmail.com>,
-	'Mateusz Guzik' <mjguzik@gmail.com>, "'linux-mm@kvack.org'"
-	<linux-mm@kvack.org>
-Subject: [PATCH 2/7] minmax: Use _Static_assert() instead of static_assert()
-Thread-Topic: [PATCH 2/7] minmax: Use _Static_assert() instead of
- static_assert()
-Thread-Index: Adrd1elaiPvTR2LWQ4qjY5Mia/iOEQ==
-Date: Wed, 24 Jul 2024 14:29:02 +0000
-Message-ID: <171c2c31e16841bca0c4fbb085877d7e@AcuMS.aculab.com>
-References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
-In-Reply-To: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1721831382; c=relaxed/simple;
+	bh=A92SMp5L8vHye59S+gIpJ3oRDF6rjc+krm1iL8GTSdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZnqbrZ2RJAkDEHfgYCXTSOjn+3450FZxq82S7IXP6k7iRMJcDgD5O9VYtf0c2apIss7PNJGlpSTzPnGAphMsQXlPujBICH6QkkYVGens1RwGcVIHVth2aCTzwsxwyfKTKEgclMQlBJm8inevVnxjuO1kHNL8IABqkMsEtXhijW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vsbrm+AR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6F22C32781;
+	Wed, 24 Jul 2024 14:29:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721831381;
+	bh=A92SMp5L8vHye59S+gIpJ3oRDF6rjc+krm1iL8GTSdU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Vsbrm+ARHzxUB9HwkUDAiki6u1+OirdVz3B5Wyd8s/xnM7KPb20rmiFciMjn6xLo0
+	 LUbBmQ/fLjOJB4Hg8N8J9DBNehqWGvfI6BpvBMn3TQkedh96UlfQ4ifXnk7mV356d+
+	 3SN3du/McYKnXzJa4uVoV8ylwsOVZGkZD2AMOlP0SGdgmb7JJscB5gd1cI2qbFZp4S
+	 5mtaomHVMJt/7GUIV6xEJclBJVIPqz2Kk/gqOl+449TvOG2gm8HegbCkjj+2VgnK3f
+	 lI1gbpbd63fgCSiHwfRgePmG+PZmTfqwZB4YVnFMUOqOGYJrq5UedCACMxGkWTY3Xu
+	 dZJKwTMnY4INQ==
+Date: Wed, 24 Jul 2024 15:29:36 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>, linux-kernel@vger.kernel.org,
+	Marc Zyngier <maz@kernel.org>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [RFC v7 1/6] dt-bindings: gpio: fix microchip,mpfs-gpio
+ interrupt descriptions
+Message-ID: <20240724-oasis-emerald-a4253b6e73cb@spud>
+References: <20240723-supervise-drown-d5d3b303e7fd@wendy>
+ <20240723-trash-issuing-e2bdd55b764e@wendy>
+ <b07538f3-44e4-4d98-b64d-0d15428e720f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="5uHEoWlbGxcUMhZB"
+Content-Disposition: inline
+In-Reply-To: <b07538f3-44e4-4d98-b64d-0d15428e720f@kernel.org>
+
+
+--5uHEoWlbGxcUMhZB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-The static_assert() wrapper provides the text of the expression as the
-error message, this isn't needed here as an explicit message is provided.
-If there is an error (quite likely for min/max) the wrapper also adds
-two more lines of error output that just make it harder to read.
+On Wed, Jul 24, 2024 at 03:25:38PM +0200, Krzysztof Kozlowski wrote:
+> On 23/07/2024 13:27, Conor Dooley wrote:
+> > The microchip,mpfs-gpio binding suffered greatly due to being written
+> > with a narrow minded view of the controller, and the interrupt bits
+> > ended up incorrect. It was mistakenly assumed that the interrupt
+> > configuration was set by platform firmware, based on the FPGA
+> > configuration, and that the GPIO DT nodes were the only way to really
+> > communicate interrupt configuration to software.
+> >=20
+> > Instead, the mux should be a device in its own right, and the GPIO
+> > controllers should be connected to it, rather than to the PLIC.
+> > Now that a binding exists for that mux, try to fix the misconceptions
+> > in the GPIO controller binding.
+> >=20
+> > Firstly, it's not possible for this controller to have fewer than 14
+> > GPIOs, and thus 14 interrupts also. There are three controllers, with
+> > 14, 24 & 32 GPIOs each.
+> >=20
+> > The example is wacky too - it follows from the incorrect understanding
+> > that the GPIO controllers are connected to the PLIC directly. They are
+> > not however, with a mux sitting in between. Update the example to use
+> > the mux as a parent, and the interrupt numbers at the mux for GPIO2 as
+> > the example - rather than the strange looking, repeated <53>.
+> >=20
+>=20
+> You make ngpios required, which could be an ABI break except that there
+> is no Linux user for this, so there is no ABI break, right? If so, would
+> be nice to mention it. Rest looks good:
 
-Since it gives no benefit and actually makes things worse directly
-using _Static_assert() is much better.
+No upstream user at least, and I don't believe that there are any
+non-linux projects using the GPIO controllers via DT. I could, I
+suppose, not make it required and use 32 as a default - but that could
+cause problems with existing devicetrees where all 3 controllers omitted
+the property, despite having differing numbers of GPIOs.
 
-Signed-off-by: David Laight <david.laight@aculab.com>
----
- include/linux/minmax.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Now that I look again, the driver actually doesn't enforce the presence
+of the property and I think it should fail to probe if not present.
 
-diff --git a/include/linux/minmax.h b/include/linux/minmax.h
-index 63c45865b48a..900eec7a28e5 100644
---- a/include/linux/minmax.h
-+++ b/include/linux/minmax.h
-@@ -48,7 +48,7 @@
- #define __cmp_once(op, x, y, unique_x, unique_y) ({=09\
- =09typeof(x) unique_x =3D (x);=09=09=09\
- =09typeof(y) unique_y =3D (y);=09=09=09\
--=09static_assert(__types_ok(x, y),=09=09=09\
-+=09_Static_assert(__types_ok(x, y),=09=09=09\
- =09=09#op "(" #x ", " #y ") signedness error, fix types or consider u" #op=
- "() before " #op "_t()"); \
- =09__cmp(op, unique_x, unique_y); })
-=20
-@@ -137,11 +137,11 @@
- =09typeof(val) unique_val =3D (val);=09=09=09=09=09=09\
- =09typeof(lo) unique_lo =3D (lo);=09=09=09=09=09=09\
- =09typeof(hi) unique_hi =3D (hi);=09=09=09=09=09=09\
--=09static_assert(__builtin_choose_expr(__is_constexpr((lo) > (hi)),=09\
-+=09_Static_assert(__builtin_choose_expr(__is_constexpr((lo) > (hi)),=09\
- =09=09=09(lo) <=3D (hi), true),=09=09=09=09=09\
- =09=09"clamp() low limit " #lo " greater than high limit " #hi);=09\
--=09static_assert(__types_ok(val, lo), "clamp() 'lo' signedness error");=09=
-\
--=09static_assert(__types_ok(val, hi), "clamp() 'hi' signedness error");=09=
-\
-+=09_Static_assert(__types_ok(val, lo), "clamp() 'lo' signedness error");=
-=09\
-+=09_Static_assert(__types_ok(val, hi), "clamp() 'hi' signedness error");=
-=09\
- =09__clamp(unique_val, unique_lo, unique_hi); })
-=20
- #define __careful_clamp(val, lo, hi) ({=09=09=09=09=09\
---=20
-2.17.1
+--5uHEoWlbGxcUMhZB
+Content-Type: application/pgp-signature; name="signature.asc"
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqEP0AAKCRB4tDGHoIJi
+0ryZAQDWgZQTcAZNOZjGXc3UbCVdXHcLhMvUltM54MOZgf2zbQD/YvX+QIIqkjKF
+LEjNQ6dPuMCwh7g8e/IKFvQP9VkqkQo=
+=R7Eb
+-----END PGP SIGNATURE-----
+
+--5uHEoWlbGxcUMhZB--
 
