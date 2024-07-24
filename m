@@ -1,272 +1,270 @@
-Return-Path: <linux-kernel+bounces-261373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F128C93B67C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:15:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0380F93B67D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:15:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F0821C216C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:15:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 270411C209C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F57116A943;
-	Wed, 24 Jul 2024 18:15:24 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F261A16B720;
+	Wed, 24 Jul 2024 18:15:25 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344FE26AF5;
-	Wed, 24 Jul 2024 18:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDE8155735
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 18:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721844923; cv=none; b=VXTTHwqJbNldEZWI45TzvcHqtu407kOydg1S165/Z9mTPrU8aW7WDSdp1UScE7gVnW+6QpnAeMCGzGJ5potADWszZ5XZLZcOttsXeaxeQiAQEqtIsjGgPacrTnAoZev0X9l4B/1FQWixhCBVvCdOafbrM+Qcqi2oGpga8bAurNs=
+	t=1721844925; cv=none; b=I4o6W6fjTLozhJvaIrHMsCZ3LXOhO4pfshHQet0JQGo1AD08VNrzxr5+qYfMJ60BB65pCOagcVGfHowa0TnbnnQuaOdIB+maTq/O+IoiGrtiwH6MaYntysuaBu+7onATk2J+ZNTAw9gc0Ny2R979XDMkjAHwBwVwqRhOYIGmkzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721844923; c=relaxed/simple;
-	bh=eXWx3znrPWFKC09CmXr58rKaQoRyrTploBmkc170hqs=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To; b=kqWBmMxi4iv/8O3gpJ44YvhmOgYbzcQDXCU6lNP/rQwdew/txXNY8VNN1z9lKtR28sXhmg1IHlolsBBImPqUxT7JEPmUnj+sIosLIjQXzX2AKLBlEtw+9crPpJjE3aoy8AvRdgVGbbDNbkQFaC4a11goMHy9dQvN1BBB1VMlwio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [192.168.0.5] (ip5f5af27a.dynamic.kabel-deutschland.de [95.90.242.122])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 22B9A61E5FE05;
-	Wed, 24 Jul 2024 20:14:35 +0200 (CEST)
-Content-Type: multipart/mixed; boundary="------------MSPmj3OIxnA5qEH4WLS7VgxJ"
-Message-ID: <f1e2e2b1-b83c-4105-b62c-a053d18c2985@molgen.mpg.de>
-Date: Wed, 24 Jul 2024 20:14:34 +0200
+	s=arc-20240116; t=1721844925; c=relaxed/simple;
+	bh=HsYiD+BxlM3IKxCFUe1tHbySqCINmnrf1aGa1RdsBgw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Yhiz10Yx88uHgJtf1VeV3IVUueb9YWbaVV9/Ke/pU+l8ojn+eE4bqy2b7QNWgzJx7FagJ7WPfzo6F/2t+BkzN2AgLCK9jFwjzjfdSaSRMR74nLrXdUpf73ZrHSctyzkpDNhs7+nE1k6WQbZ/+yCNtMtvYM5ESE70DFUgKs8zKME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7fba8d323f9so12734939f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 11:15:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721844923; x=1722449723;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pq/aY1uZpcKlTSZw6vqPMwHKRw/VghNHj3yok+rymnE=;
+        b=jZ8ccOdjlxdLL0N1n37j9sLeskbLUXege4ijlfSKmrIqsEQAMQL2Z+XH2D69Iwbp6O
+         ZXH3xSYt9ewIQVtgbzQlTzM0USweYQ3r9U0ud9/22WpiQ0/RQ92dhzIVOHGgedez+dNq
+         gd7JRrwa7MkNBOZTYXzW1PhA+0HmDUYffdgp6npaKl6CpiF/paGOz7G8PIxgDsrQ0rWY
+         785KgLpk1nZnDhA+2bwAsVzxvgWpuLWA9Y7xsf2wG/1QJioBQOQS5SvqwMWP5j7dgs0+
+         6A6IYIYGOMqfAdC4GDEHqFU3ZgXcAIJJtem7leS/ndn0/3eGkhYRUPyQWgPi10WKjmgw
+         qw4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV+Pi9ehrSp5qFk/9ip7Rs+DGeOY2x+AS3NERRk4BayHfW9Ra3xV5UJuqEPgBHP+o4tzdS+cJbtg8Hzx5JL4r08XTtv2EzxGEghh+iu
+X-Gm-Message-State: AOJu0YwCjORMGozx7zQU6RLMrqKkD+yysrtQm6nmcohCL5AtuxjvltK+
+	ANF7iGyDwooPkTdI/p1fu+WLXF3XZo2MFRs19sW+jp6eqAmjr4JL4fUQWZRZ7s1EAEz7wxmBMiC
+	o6w1TxyOfDT0gQ//IqxeXXL3ddostRlHlihFUnX0KLwlsbjmzYLMID1g=
+X-Google-Smtp-Source: AGHT+IEOYJVukyhHJOPwPePnIn6EyBGwEYmrGnlNkyr/Fm3lWthLg/m1nygm7RQQdYVeGFfSPnAewcAvd8mOqQlFWgyi0Tp9EOC+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] USB: core: hub_port_reset: Remove extra 40 ms reset
- recovery time
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- David Brownell <david-b@pacbell.net>,
- Kai-Heng Feng <kai.heng.feng@canonical.com>,
- Hans de Goede <hdegoede@redhat.com>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240724111524.25441-1-pmenzel@molgen.mpg.de>
- <c7c299e7-605c-4bd6-afad-dfbfe266aa7e@rowland.harvard.edu>
-Content-Language: en-US
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-In-Reply-To: <c7c299e7-605c-4bd6-afad-dfbfe266aa7e@rowland.harvard.edu>
+X-Received: by 2002:a05:6e02:1c89:b0:397:b509:6441 with SMTP id
+ e9e14a558f8ab-39a217d29bemr565555ab.2.1721844922701; Wed, 24 Jul 2024
+ 11:15:22 -0700 (PDT)
+Date: Wed, 24 Jul 2024 11:15:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f9e66b061e024217@google.com>
+Subject: [syzbot] [perf?] KASAN: slab-use-after-free Read in uprobe_mmap
+From: syzbot <syzbot+ab687d3cbad90def4b18@syzkaller.appspotmail.com>
+To: acme@kernel.org, adrian.hunter@intel.com, 
+	alexander.shishkin@linux.intel.com, irogers@google.com, jolsa@kernel.org, 
+	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	mark.rutland@arm.com, mhiramat@kernel.org, mingo@redhat.com, 
+	namhyung@kernel.org, oleg@redhat.com, peterz@infradead.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-This is a multi-part message in MIME format.
---------------MSPmj3OIxnA5qEH4WLS7VgxJ
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Hello,
 
-[Cc: -gregkh@suse.de]
+syzbot found the following issue on:
 
-Dear Alan,
+HEAD commit:    786c8248dbd3 Merge tag 'perf-tools-fixes-for-v6.11-2024-07..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17a6f1f1980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fd768013789223fa
+dashboard link: https://syzkaller.appspot.com/bug?extid=ab687d3cbad90def4b18
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d1499b23d099/disk-786c8248.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a2ccae57b0f3/vmlinux-786c8248.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/501a769c268d/bzImage-786c8248.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ab687d3cbad90def4b18@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-use-after-free in consumer_filter kernel/events/uprobes.c:869 [inline]
+BUG: KASAN: slab-use-after-free in filter_chain kernel/events/uprobes.c:880 [inline]
+BUG: KASAN: slab-use-after-free in uprobe_mmap+0xb9a/0x11a0 kernel/events/uprobes.c:1387
+Read of size 8 at addr ffff88805db85f30 by task syz.1.3317/17070
+
+CPU: 0 UID: 0 PID: 17070 Comm: syz.1.3317 Not tainted 6.10.0-syzkaller-12246-g786c8248dbd3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ consumer_filter kernel/events/uprobes.c:869 [inline]
+ filter_chain kernel/events/uprobes.c:880 [inline]
+ uprobe_mmap+0xb9a/0x11a0 kernel/events/uprobes.c:1387
+ mmap_region+0x1891/0x2090 mm/mmap.c:3028
+ do_mmap+0x8ad/0xfa0 mm/mmap.c:1438
+ vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:588
+ ksys_mmap_pgoff+0x4f1/0x720 mm/mmap.c:1484
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f44e3d75f19
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f44e4a78048 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 00007f44e3f05f60 RCX: 00007f44e3d75f19
+RDX: 0000000000000001 RSI: 0000000000004000 RDI: 0000000020000000
+RBP: 00007f44e3de4e68 R08: 0000000000000004 R09: 0000000000000000
+R10: 0000000000010012 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007f44e3f05f60 R15: 00007fff70446248
+ </TASK>
+
+Allocated by task 16248:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:387
+ kasan_kmalloc include/linux/kasan.h:211 [inline]
+ __do_kmalloc_node mm/slub.c:4158 [inline]
+ __kmalloc_noprof+0x1fc/0x400 mm/slub.c:4170
+ kmalloc_noprof include/linux/slab.h:685 [inline]
+ kzalloc_noprof include/linux/slab.h:807 [inline]
+ lsm_task_alloc security/security.c:691 [inline]
+ security_task_alloc+0x43/0x130 security/security.c:3038
+ copy_process+0x169e/0x3dc0 kernel/fork.c:2356
+ kernel_clone+0x226/0x8f0 kernel/fork.c:2781
+ __do_sys_clone kernel/fork.c:2924 [inline]
+ __se_sys_clone kernel/fork.c:2908 [inline]
+ __x64_sys_clone+0x258/0x2a0 kernel/fork.c:2908
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 16:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
+ __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2252 [inline]
+ slab_free mm/slub.c:4473 [inline]
+ kfree+0x149/0x360 mm/slub.c:4594
+ security_task_free+0xa0/0xc0 security/security.c:3059
+ __put_task_struct+0xf9/0x290 kernel/fork.c:975
+ put_task_struct include/linux/sched/task.h:138 [inline]
+ delayed_put_task_struct+0x125/0x2f0 kernel/exit.c:228
+ rcu_do_batch kernel/rcu/tree.c:2569 [inline]
+ rcu_core+0xaff/0x1830 kernel/rcu/tree.c:2843
+ handle_softirqs+0x2c6/0x970 kernel/softirq.c:554
+ run_ksoftirqd+0xca/0x130 kernel/softirq.c:928
+ smpboot_thread_fn+0x546/0xa30 kernel/smpboot.c:164
+ kthread+0x2f2/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+The buggy address belongs to the object at ffff88805db85f00
+ which belongs to the cache kmalloc-64 of size 64
+The buggy address is located 48 bytes inside of
+ freed 64-byte region [ffff88805db85f00, ffff88805db85f40)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff88805db85f00 pfn:0x5db85
+flags: 0xfff00000000200(workingset|node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xfdffffff(slab)
+raw: 00fff00000000200 ffff8880150418c0 ffffea0001f2d550 ffffea000055f310
+raw: ffff88805db85f00 000000000020001e 00000001fdffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 5098, tgid 5098 (syz-executor), ts 78147194519, free_ts 78099329059
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1493
+ prep_new_page mm/page_alloc.c:1501 [inline]
+ get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3438
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4696
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x5f/0x120 mm/slub.c:2321
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2484
+ new_slab mm/slub.c:2537 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3723
+ __slab_alloc+0x58/0xa0 mm/slub.c:3813
+ __slab_alloc_node mm/slub.c:3866 [inline]
+ slab_alloc_node mm/slub.c:4025 [inline]
+ __do_kmalloc_node mm/slub.c:4157 [inline]
+ __kmalloc_noprof+0x25a/0x400 mm/slub.c:4170
+ kmalloc_noprof include/linux/slab.h:685 [inline]
+ kzalloc_noprof include/linux/slab.h:807 [inline]
+ kobject_get_path+0xb8/0x230 lib/kobject.c:161
+ kobject_uevent_env+0x2a5/0x8e0 lib/kobject_uevent.c:530
+ netdev_queue_add_kobject net/core/net-sysfs.c:1797 [inline]
+ netdev_queue_update_kobjects+0x2c4/0x5f0 net/core/net-sysfs.c:1838
+ register_queue_kobjects net/core/net-sysfs.c:1900 [inline]
+ netdev_register_kobject+0x265/0x320 net/core/net-sysfs.c:2140
+ register_netdevice+0x12c5/0x1b00 net/core/dev.c:10435
+ rtnl_newlink_create net/core/rtnetlink.c:3512 [inline]
+ __rtnl_newlink net/core/rtnetlink.c:3730 [inline]
+ rtnl_newlink+0x1728/0x20a0 net/core/rtnetlink.c:3743
+ rtnetlink_rcv_msg+0x741/0xcf0 net/core/rtnetlink.c:6647
+ netlink_rcv_skb+0x1e5/0x430 net/netlink/af_netlink.c:2550
+page last free pid 5139 tgid 5139 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1094 [inline]
+ free_unref_folios+0x103a/0x1b00 mm/page_alloc.c:2656
+ folios_put_refs+0x76e/0x860 mm/swap.c:1039
+ free_pages_and_swap_cache+0x2ea/0x690 mm/swap_state.c:332
+ __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
+ tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
+ tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
+ tlb_flush_mmu+0x3a3/0x680 mm/mmu_gather.c:373
+ tlb_finish_mmu+0xd4/0x200 mm/mmu_gather.c:465
+ exit_mmap+0x44f/0xc80 mm/mmap.c:3395
+ __mmput+0x115/0x390 kernel/fork.c:1345
+ exit_mm+0x220/0x310 kernel/exit.c:571
+ do_exit+0x9b2/0x27f0 kernel/exit.c:869
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1031
+ __do_sys_exit_group kernel/exit.c:1042 [inline]
+ __se_sys_exit_group kernel/exit.c:1040 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1040
+ x64_sys_call+0x26c3/0x26d0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff88805db85e00: 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc
+ ffff88805db85e80: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc
+>ffff88805db85f00: fa fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+                                     ^
+ ffff88805db85f80: 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc fc
+ ffff88805db86000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
 
 
-Thank you for your reply.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Am 24.07.24 um 16:10 schrieb Alan Stern:
-> On Wed, Jul 24, 2024 at 01:15:23PM +0200, Paul Menzel wrote:
->> This basically reverts commit b789696af8b4102b7cc26dec30c2c51ce51ee18b
->> ("[PATCH] USB: relax usbcore reset timings") from 2005.
->>
->> This adds unneeded 40 ms during resume from suspend on a majority of
-> 
-> Wrong.  It adds 40 ms to the recovery time from a port reset -- see the
-> commit's title.  Suspend and resume do not in general involve port
-> resets (although sometimes they do).
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-It looks like on my system the ports are reset:
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-```
-$ grep suspend-240501-063619/hub_port_reset abreu_mem_ftrace.txt
-  6416.257589 |   3)  kworker-9023  |               | 
-hub_port_reset [usbcore]() {
-  6416.387182 |   2)  kworker-9023  |   129593.0 us |                  } 
-/* hub_port_reset [usbcore] */
-  6416.387380 |   2)  kworker-9023  |               | 
-hub_port_reset [usbcore]() {
-  6416.513458 |   3)  kworker-9023  |   126078.4 us |                  } 
-/* hub_port_reset [usbcore] */
-  6416.537813 |   2)  kworker-9844  |               | 
-hub_port_reset [usbcore]() {
-  6416.666142 |   3)  kworker-9844  |   128328.5 us |                  } 
-/* hub_port_reset [usbcore] */
-  6416.666429 |   3)  kworker-9844  |               | 
-hub_port_reset [usbcore]() {
-  6416.793315 |   1)  kworker-9844  |   126885.9 us |                  } 
-/* hub_port_reset [usbcore] */
-  6416.813559 |   1)  kworker-9849  |               | 
-hub_port_reset [usbcore]() {
-  6416.941882 |   2)  kworker-9849  |   128322.4 us |                  } 
-/* hub_port_reset [usbcore] */
-  6416.942633 |   2)  kworker-9849  |               | 
-hub_port_reset [usbcore]() {
-  6417.069205 |   3)  kworker-9849  |   126572.4 us |                  } 
-/* hub_port_reset [usbcore] */
-```
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
->> devices, where it’s not needed, like the Dell XPS 13 9360/0596KF, BIOS
->> 2.21.0 06/02/2022 with
-> 
->> The commit messages unfortunately does not list the devices needing this.
->> Should they surface again, these should be added to the quirk list for
->> USB_QUIRK_HUB_SLOW_RESET.
-> 
-> This quirk applies to hubs that need extra time when one of their ports
-> gets reset.  However, it seems likely that the patch you are reverting
-> was meant to help the device attached to the port, not the hub itself.
-> Which would mean that the adding hubs to the quirk list won't help
-> unless every hub is added -- in which case there's no point reverting
-> the patch.
-> 
-> Furthermore, should any of these bad hubs or devices still be in use,
-> your change would cause them to stop working reliably.  It would be a
-> regression.
-> 
-> A better approach would be to add a sysfs boolean attribute to the hub
-> driver to enable the 40-ms reset-recovery delay, and make it default to
-> True.  Then people who don't need the delay could disable it from
-> userspace, say by a udev rule.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-How would you name it?
-
-
-Kind regards,
-
-Paul
-
-
->> Fixes: b789696af8b4 ("[PATCH] USB: relax usbcore reset timings")
->> Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>
->> Cc: Hans de Goede <hdegoede@redhat.com>
->> Cc: David Brownell <david-b@pacbell.net>
->> Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
->> ---
->>   drivers/usb/core/hub.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
->> index 4b93c0bd1d4b..487d5fe60f0c 100644
->> --- a/drivers/usb/core/hub.c
->> +++ b/drivers/usb/core/hub.c
->> @@ -3110,7 +3110,7 @@ static int hub_port_reset(struct usb_hub *hub, int port1,
->>   			usleep_range(10000, 12000);
->>   		else {
->>   			/* TRSTRCY = 10 ms; plus some extra */
->> -			reset_recovery_time = 10 + 40;
->> +			reset_recovery_time = 10;
->>   
->>   			/* Hub needs extra delay after resetting its port. */
->>   			if (hub->hdev->quirks & USB_QUIRK_HUB_SLOW_RESET)
---------------MSPmj3OIxnA5qEH4WLS7VgxJ
-Content-Type: text/plain; charset=UTF-8; name="abreu_mem_dmesg.txt"
-Content-Disposition: attachment; filename="abreu_mem_dmesg.txt"
-Content-Transfer-Encoding: base64
-
-IyBzdXNwZW5kLTA1MDEyNC0wNjM2MTkgYWJyZXUgbWVtIDYuOS4wLXJjNi0wMDA0Ni1nMThk
-YWVhNzdjY2E2CiMgc3lzaW5mbyB8IG1hbjpEZWxsIEluYy4gfCBwbGF0OlhQUyAxMyA5MzYw
-IHwgY3B1OkludGVsKFIpIENvcmUoVE0pIGk3LTc1MDBVIENQVSBAIDIuNzBHSHogfCBiaW9z
-OjIuMjEuMCB8IGJpb3NkYXRlOjA2LzAyLzIwMjIgfCBudW1jcHU6NCB8IG1lbXN6OjE1OTM0
-NzI0IHwgbWVtZnI6NjE3OTQyNCB8IG9zOkRlYmlhbiBHTlUvTGludXggdHJpeGllL3NpZAoj
-IGNvbW1hbmQgfCBhbmFseXplX3N1c3BlbmQucHkgLWYKIyBmd3N1c3BlbmQgMCBmd3Jlc3Vt
-ZSAxMDc4MDcyClsgNjQxMy45MzEwNjBdIFBNOiBzdXNwZW5kIGVudHJ5IChkZWVwKQpbIDY0
-MTMuOTQwMjg2XSBGaWxlc3lzdGVtcyBzeW5jOiAwLjAwOSBzZWNvbmRzClsgNjQxMy45NDQ4
-ODZdIEZyZWV6aW5nIHVzZXIgc3BhY2UgcHJvY2Vzc2VzClsgNjQxMy45NjI4MjJdIEZyZWV6
-aW5nIHVzZXIgc3BhY2UgcHJvY2Vzc2VzIGNvbXBsZXRlZCAoZWxhcHNlZCAwLjAxNyBzZWNv
-bmRzKQpbIDY0MTMuOTYyODYwXSBPT00ga2lsbGVyIGRpc2FibGVkLgpbIDY0MTMuOTYyODg4
-XSBGcmVlemluZyByZW1haW5pbmcgZnJlZXphYmxlIHRhc2tzClsgNjQxMy45Njg2NzhdIEZy
-ZWV6aW5nIHJlbWFpbmluZyBmcmVlemFibGUgdGFza3MgY29tcGxldGVkIChlbGFwc2VkIDAu
-MDA1IHNlY29uZHMpClsgNjQxMy45Njg4MTRdIHByaW50azogU3VzcGVuZGluZyBjb25zb2xl
-KHMpICh1c2Ugbm9fY29uc29sZV9zdXNwZW5kIHRvIGRlYnVnKQpbIDY0MTMuOTg4NzA2XSB3
-bHA1OHMwOiBkZWF1dGhlbnRpY2F0aW5nIGZyb20gODg6NzE6YjE6ODE6OTM6MWIgYnkgbG9j
-YWwgY2hvaWNlIChSZWFzb246IDM9REVBVVRIX0xFQVZJTkcpClsgNjQxNC42NjA2MDVdIFBN
-OiBzdXNwZW5kIG9mIGRldmljZXMgY29tcGxldGUgYWZ0ZXIgNjcyLjcyOCBtc2VjcwpbIDY0
-MTQuNjYwNjM1XSBQTTogc3RhcnQgc3VzcGVuZCBvZiBkZXZpY2VzIGNvbXBsZXRlIGFmdGVy
-IDY5MS45MzIgbXNlY3MKWyA2NDE0LjY5NjA1Nl0gUE06IGxhdGUgc3VzcGVuZCBvZiBkZXZp
-Y2VzIGNvbXBsZXRlIGFmdGVyIDM1LjQxNiBtc2VjcwpbIDY0MTQuNzA3OTYzXSBBQ1BJOiBF
-QzogaW50ZXJydXB0IGJsb2NrZWQKWyA2NDE0Ljc4NDEzM10gUE06IG5vaXJxIHN1c3BlbmQg
-b2YgZGV2aWNlcyBjb21wbGV0ZSBhZnRlciA4Ni45MjMgbXNlY3MKWyA2NDE0Ljc4NDE3NV0g
-QUNQSTogUE06IFByZXBhcmluZyB0byBlbnRlciBzeXN0ZW0gc2xlZXAgc3RhdGUgUzMKWyA2
-NDE0Ljk4MjQxNF0gQUNQSTogRUM6IGV2ZW50IGJsb2NrZWQKWyA2NDE0Ljk4MjQzMl0gQUNQ
-STogRUM6IEVDIHN0b3BwZWQKWyA2NDE0Ljk4MjQ0OV0gQUNQSTogUE06IFNhdmluZyBwbGF0
-Zm9ybSBOVlMgbWVtb3J5ClsgNjQxNC45ODQwNjldIERpc2FibGluZyBub24tYm9vdCBDUFVz
-IC4uLgpbIDY0MTQuOTg2OTk1XSBzbXBib290OiBDUFUgMSBpcyBub3cgb2ZmbGluZQpbIDY0
-MTQuOTkyMzIzXSBzbXBib290OiBDUFUgMiBpcyBub3cgb2ZmbGluZQpbIDY0MTQuOTk3MzMz
-XSBzbXBib290OiBDUFUgMyBpcyBub3cgb2ZmbGluZQpbIDY0MTUuMDAwMzY1XSBDaGVja2lu
-ZyB3YWtldXAgaW50ZXJydXB0cwpbIDY0MTUuMDAwMzg5XSBDYWxsaW5nIGt2bV9zdXNwZW5k
-KzB4MC8weDQwIFtrdm1dClsgNjQxNS4wMDA0OTJdIENhbGxpbmcgaW50ZWxfZXBiX3NhdmUr
-MHgwLzB4MzAKWyA2NDE1LjAwMDUyMF0gQ2FsbGluZyBtY2Vfc3lzY29yZV9zdXNwZW5kKzB4
-MC8weDIwClsgNjQxNS4wMDA1NDVdIENhbGxpbmcgbGVkdHJpZ19jcHVfc3lzY29yZV9zdXNw
-ZW5kKzB4MC8weDIwClsgNjQxNS4wMDA1NzRdIENhbGxpbmcgdGltZWtlZXBpbmdfc3VzcGVu
-ZCsweDAvMHgyZjAKWyA2NDE1LjAwMDc0MF0gQ2FsbGluZyBzYXZlX2lvYXBpY19lbnRyaWVz
-KzB4MC8weGQwClsgNjQxNS4wMDIwMTNdIENhbGxpbmcgaTgyNTlBX3N1c3BlbmQrMHgwLzB4
-MzAKWyA2NDE1LjAwMjA0Nl0gQ2FsbGluZyBmd19zdXNwZW5kKzB4MC8weDIwClsgNjQxNS4w
-MDIwNzJdIENhbGxpbmcgYWNwaV9zYXZlX2JtX3JsZCsweDAvMHgzMApbIDY0MTUuMDAyMTA2
-XSBDYWxsaW5nIGxhcGljX3N1c3BlbmQrMHgwLzB4MTYwClsgNjQxNS4wMDU2MjddIEFDUEk6
-IFBNOiBMb3ctbGV2ZWwgcmVzdW1lIGNvbXBsZXRlClsgNjQxNS4wMDU2OTJdIEFDUEk6IEVD
-OiBFQyBzdGFydGVkClsgNjQxNS4wMDU2OTZdIEFDUEk6IFBNOiBSZXN0b3JpbmcgcGxhdGZv
-cm0gTlZTIG1lbW9yeQpbIDY0MTUuMDA2OTA1XSBDYWxsaW5nIGluaXRfY291bnRlcl9yZWZz
-KzB4MC8weDQwClsgNjQxNS4wMDY5MzFdIENhbGxpbmcgbGFwaWNfcmVzdW1lKzB4MC8weDIy
-MApbIDY0MTUuMDA3MDAzXSBDYWxsaW5nIGFjcGlfcmVzdG9yZV9ibV9ybGQrMHgwLzB4NzAK
-WyA2NDE1LjAwNzAzM10gQ2FsbGluZyBpcnFyb3V0ZXJfcmVzdW1lKzB4MC8weDUwClsgNjQx
-NS4wMDcwNTZdIENhbGxpbmcgaTgyNTlBX3Jlc3VtZSsweDAvMHg0MApbIDY0MTUuMDA3MjUw
-XSBDYWxsaW5nIGlvYXBpY19yZXN1bWUrMHgwLzB4YzAKWyA2NDE1LjAwNzUxNl0gQ2FsbGlu
-ZyBpcnFfcG1fc3lzY29yZV9yZXN1bWUrMHgwLzB4MjAKWyA2NDE1LjAwODU2MF0gQ2FsbGlu
-ZyB0aW1la2VlcGluZ19yZXN1bWUrMHgwLzB4MWUwClsgNjQxNS4wMDg3MTNdIFRpbWVrZWVw
-aW5nIHN1c3BlbmRlZCBmb3IgMTQuMTQxIHNlY29uZHMKWyA2NDE1LjAwODc2M10gQ2FsbGlu
-ZyBsZWR0cmlnX2NwdV9zeXNjb3JlX3Jlc3VtZSsweDAvMHgyMApbIDY0MTUuMDA4Nzg3XSBD
-YWxsaW5nIG1jZV9zeXNjb3JlX3Jlc3VtZSsweDAvMHgzMApbIDY0MTUuMDA4ODMwXSBDYWxs
-aW5nIGludGVsX2VwYl9yZXN0b3JlKzB4MC8weDkwClsgNjQxNS4wMDg4NTJdIENhbGxpbmcg
-bWljcm9jb2RlX2JzcF9yZXN1bWUrMHgwLzB4ZDAKWyA2NDE1LjAwODg3M10gQ2FsbGluZyBr
-dm1fcmVzdW1lKzB4MC8weDYwIFtrdm1dClsgNjQxNS4wMDg5NjhdIFBNOiBUcmlnZ2VyaW5n
-IHdha2V1cCBmcm9tIElSUSA1MQpbIDY0MTUuMDA5MDEyXSBFbmFibGluZyBub24tYm9vdCBD
-UFVzIC4uLgpbIDY0MTUuMDA5MjY5XSBzbXBib290OiBCb290aW5nIE5vZGUgMCBQcm9jZXNz
-b3IgMSBBUElDIDB4MgpbIDY0MTUuMDEwNzYzXSBDUFUxIGlzIHVwClsgNjQxNS4wMTEwMTFd
-IHNtcGJvb3Q6IEJvb3RpbmcgTm9kZSAwIFByb2Nlc3NvciAyIEFQSUMgMHgxClsgNjQxNS4w
-MTI4MTFdIENQVTIgaXMgdXAKWyA2NDE1LjAxMzA1OF0gc21wYm9vdDogQm9vdGluZyBOb2Rl
-IDAgUHJvY2Vzc29yIDMgQVBJQyAweDMKWyA2NDE1LjAxNDY4N10gQ1BVMyBpcyB1cApbIDY0
-MTUuMDIwNjg4XSBBQ1BJOiBQTTogV2FraW5nIHVwIGZyb20gc3lzdGVtIHNsZWVwIHN0YXRl
-IFMzClsgNjQxNi4wNzY5MTBdIEFDUEk6IEVDOiBpbnRlcnJ1cHQgdW5ibG9ja2VkClsgNjQx
-Ni4xMDY3MThdIFBNOiBub2lycSByZXN1bWUgb2YgZGV2aWNlcyBjb21wbGV0ZSBhZnRlciAz
-MC40NTEgbXNlY3MKWyA2NDE2LjEwODUzOV0gUE06IGVhcmx5IHJlc3VtZSBvZiBkZXZpY2Vz
-IGNvbXBsZXRlIGFmdGVyIDEuNTY2IG1zZWNzClsgNjQxNi4xMDg5ODhdIEFDUEk6IEVDOiBl
-dmVudCB1bmJsb2NrZWQKWyA2NDE2LjEyNDcwN10gbnZtZSBudm1lMDogNC8wLzAgZGVmYXVs
-dC9yZWFkL3BvbGwgcXVldWVzClsgNjQxNi4xNDIxMzRdIGk5MTUgMDAwMDowMDowMi4wOiBb
-ZHJtXSBbRU5DT0RFUjo5NDpEREkgQS9QSFkgQV0gaXMgZGlzYWJsZWQvaW4gRFNJIG1vZGUg
-d2l0aCBhbiB1bmdhdGVkIERESSBjbG9jaywgZ2F0ZSBpdApbIDY0MTYuMTcyMTI2XSBpOTE1
-IDAwMDA6MDA6MDIuMDogW2RybV0gW0VOQ09ERVI6MTAyOkRESSBCL1BIWSBCXSBpcyBkaXNh
-YmxlZC9pbiBEU0kgbW9kZSB3aXRoIGFuIHVuZ2F0ZWQgRERJIGNsb2NrLCBnYXRlIGl0Clsg
-NjQxNi4yNDgxMDNdIGk5MTUgMDAwMDowMDowMi4wOiBbZHJtXSBbRU5DT0RFUjoxMTM6RERJ
-IEMvUEhZIENdIGlzIGRpc2FibGVkL2luIERTSSBtb2RlIHdpdGggYW4gdW5nYXRlZCBEREkg
-Y2xvY2ssIGdhdGUgaXQKWyA2NDE2LjM4NzE4N10gdXNiIDEtMzogcmVzZXQgZnVsbC1zcGVl
-ZCBVU0IgZGV2aWNlIG51bWJlciAyIHVzaW5nIHhoY2lfaGNkClsgNjQxNi41MTUyNDFdIEFD
-UEkgRGVidWc6ICAiaUdmeCBTdXBwb3J0ZWQgRnVuY3Rpb25zIEJpdG1hcCAiClsgNjQxNi42
-NjYxNDVdIHVzYiAxLTQ6IHJlc2V0IGZ1bGwtc3BlZWQgVVNCIGRldmljZSBudW1iZXIgMyB1
-c2luZyB4aGNpX2hjZApbIDY0MTYuOTQxODg1XSB1c2IgMS01OiByZXNldCBoaWdoLXNwZWVk
-IFVTQiBkZXZpY2UgbnVtYmVyIDQgdXNpbmcgeGhjaV9oY2QKWyA2NDE3LjE0MzIwNV0gUE06
-IHJlc3VtZSBvZiBkZXZpY2VzIGNvbXBsZXRlIGFmdGVyIDEwMzUuMTQ5IG1zZWNzClsgNjQx
-Ny4xNTUzODldIG1laV9oZGNwIDAwMDA6MDA6MTYuMC1iNjM4YWI3ZS05NGUyLTRlYTItYTU1
-Mi1kMWM1NGI2MjdmMDQ6IGJvdW5kIDAwMDA6MDA6MDIuMCAob3BzIGk5MTVfaGRjcF9vcHMg
-W2k5MTVdKQpbIDY0MTcuMTY5NDY4XSBPT00ga2lsbGVyIGVuYWJsZWQuClsgNjQxNy4xNjk1
-MDBdIFJlc3RhcnRpbmcgdGFza3MgLi4uIGRvbmUuClsgNjQxNy4yMTc0MzBdIHJhbmRvbTog
-Y3JuZyByZXNlZWRlZCBvbiBzeXN0ZW0gcmVzdW1wdGlvbgpbIDY0MTcuNDIzOTc2XSB3bHA1
-OHMwOiBhdXRoZW50aWNhdGUgd2l0aCA4ODo3MTpiMTo4MTo5MzoxYSAobG9jYWwgYWRkcmVz
-cz05YzpiNjpkMDpkMTo2YTpiMSkKWyA2NDE3LjQyNDIwNF0gd2xwNThzMDogc2VuZCBhdXRo
-IHRvIDg4OjcxOmIxOjgxOjkzOjFhICh0cnkgMS8zKQpbIDY0MTcuNDI5OTAxXSB3bHA1OHMw
-OiBhdXRoZW50aWNhdGVkClsgNjQxNy40MzI5NzVdIHdscDU4czA6IGFzc29jaWF0ZSB3aXRo
-IDg4OjcxOmIxOjgxOjkzOjFhICh0cnkgMS8zKQpbIDY0MTcuNDc1MzA2XSB3bHA1OHMwOiBS
-WCBBc3NvY1Jlc3AgZnJvbSA4ODo3MTpiMTo4MTo5MzoxYSAoY2FwYWI9MHgxNDMxIHN0YXR1
-cz0wIGFpZD0xKQpbIDY0MTcuNDgwMTU0XSB3bHA1OHMwOiBhc3NvY2lhdGVkClsgNjQxNy41
-NTY0MTZdIHdscDU4czA6IExpbWl0aW5nIFRYIHBvd2VyIHRvIDIwICgyMCAtIDApIGRCbSBh
-cyBhZHZlcnRpc2VkIGJ5IDg4OjcxOmIxOjgxOjkzOjFhClsgNjQxOC42NDk2OTVdIFBNOiBz
-dXNwZW5kIGV4aXQK
-
---------------MSPmj3OIxnA5qEH4WLS7VgxJ--
+If you want to undo deduplication, reply with:
+#syz undup
 
