@@ -1,107 +1,112 @@
-Return-Path: <linux-kernel+bounces-260614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FF8E93AB9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 05:38:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E6D93ABA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 05:40:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E87AC1F22795
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:38:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D52E21C2267B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4B2219ED;
-	Wed, 24 Jul 2024 03:38:39 +0000 (UTC)
-Received: from out28-97.mail.aliyun.com (out28-97.mail.aliyun.com [115.124.28.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474B2219FC;
+	Wed, 24 Jul 2024 03:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CFbdkIDt"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39111757E;
-	Wed, 24 Jul 2024 03:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D2A1C2AD;
+	Wed, 24 Jul 2024 03:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721792319; cv=none; b=WdyyEvJc998Fi7XHvJIIovoQFLYKehwduR0z1ix1xOej1+roo3+auowweJXkFKZV2LFaeMMzoJ22XAvQSpO3jBxFQ8+O8h+D+2bQNgwyrwo6EQLjDarl4mauAt4yt5Uk4+M4Mt0rjEAphLRaT/pbsLo6s4wwedPuEMutpMlsoKk=
+	t=1721792411; cv=none; b=AfwhAYVa4KTE+L+iL96MIyMAGFRcpCXvlq/0s0+06lGhWk4fKOCn6dL0oJ8UjxLIMROkiUEH9IeY7v/X+LjFNHQwmiigyFmagee0SCQaUnLqdI2vB+w/lT7wwq1gpbpJTKswxGOWEwgCAAUsw9m/UJVgS/c0Qh72+kFAArRyvL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721792319; c=relaxed/simple;
-	bh=ILkK4yINJMkVP4oDOmPuRu3IDjGB7GgtXICZ3nOzZ+Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=A/+krVeoEH6C+pNwp3jjijJP6Lc1RDMg/fXdXgg7e5xZ0rNIF53oxd1TMzqkC2BDc7wyoUQYvEqCWN8kK8eTZLsVCebURGEGJGHymoAkmpIUThpfCBjzbTOal7krqjXF7I7/RH4+3FI/ezW3CWPlo0IUln0V7JH/K8tUFhB5DRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ttyinfo.com; spf=pass smtp.mailfrom=ttyinfo.com; arc=none smtp.client-ip=115.124.28.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ttyinfo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ttyinfo.com
-X-Alimail-AntiSpam:AC=CONTINUE;BC=0.08271923|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.00984783-0.000131915-0.99002;FP=8659051540359214238|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033038033188;MF=zhoushengqing@ttyinfo.com;NM=1;PH=DS;RN=8;RT=8;SR=0;TI=SMTPD_---.YXxsy1Z_1721792310;
-Received: from tzl..(mailfrom:zhoushengqing@ttyinfo.com fp:SMTPD_---.YXxsy1Z_1721792310)
-          by smtp.aliyun-inc.com;
-          Wed, 24 Jul 2024 11:38:31 +0800
-From: Zhou Shengqing <zhoushengqing@ttyinfo.com>
-To: haifeng.zhao@linux.intel.com
-Cc: helgaas@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	lkp@intel.com,
-	llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev,
-	zhoushengqing@ttyinfo.com
-Subject: Re: [PATCH v4] Subject: PCI: Enable io space 1k granularity for intel cpu root port
-Date: Wed, 24 Jul 2024 03:38:29 +0000
-Message-Id: <20240724033829.4724-1-zhoushengqing@ttyinfo.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <e5c1990b-8c40-4376-bd9f-3701bf4eab91@linux.intel.com>
-References: <e5c1990b-8c40-4376-bd9f-3701bf4eab91@linux.intel.com>
+	s=arc-20240116; t=1721792411; c=relaxed/simple;
+	bh=Y7Kt+TCvkANaF9S82vZn/5eyJEZ+ppgEjmPtazNpkmI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KJa6AXvGcnkObkHF8PO/T3wyZdsL9qxfVHnamDtseXe7UKSU3WszaCYXK3TI+mG/rIiV/BC0lySuNPFcwZ5akIwLdLkhbbE+J0pv18zmT745AwJe/EpDNtlWDEyz34QA2mTFmSiUL/+9R6c668flvmwwHy7R8TXqVcI6z6tNWtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CFbdkIDt; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-70448cae1e0so3361526a34.3;
+        Tue, 23 Jul 2024 20:40:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721792409; x=1722397209; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iWm0TInp0/fEQSxBgv3hB+Z5yl/AEMWPqZWhnxovh+Q=;
+        b=CFbdkIDtbAzMPdnLD6ISkeAIcn4jAGJTAck1mEOMZK6xAKNKNcrHygqgvf2hxHwcW0
+         7ynUvljZY5K45FNBQdVd6DatwsZaSboLlzRBElyrD5YJ5/oc06aQD3P31S1KGp5Z+T80
+         zvDyyVND3qHhz1olsQaXQ++S/d2QMi5o0+x7MWq/cbDpefEsSPNJFruf1LNvSoHA5DUc
+         koZV+WnvG3925BYTYCIT724BORuJebvnnp0GSlg3yXUmvtEWJqNqEI8CyvBIBPk31qJM
+         9SpFGODskvfyHWx/Uip9r1NtkRzCDW14T+fJrAiwYMazsxlvFdtqR6VfnoryUR8cKNFB
+         TObQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721792409; x=1722397209;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iWm0TInp0/fEQSxBgv3hB+Z5yl/AEMWPqZWhnxovh+Q=;
+        b=ZPksp83nw+Np5qT/eQM2g3I2Hstg+BSjnYHc04CIn57tUCj7BnQgcuT6PxnQU/iTdj
+         HXX/ZDJnGD3LK+Y5HRMWgppNRyFawLmKWnJ1ArUfzYJe//MTF/b/za5vUapVeY7yanGM
+         ddW87JgtyWbceVS3u5nheV5RQEGWo880cwpZWclFT1EO6ESsfbm3R83OAmbCIUFb6r84
+         L4vD9D9DQ+/O9Vq2k7hCFrILceTNCEv6MvU4iAPAfmucZoxUw8kaS59/b0Xk8t77YVaw
+         DRTkbBljg7cl9DhnVxZMggkVNJ2uO/D5wzb4MA5TD5RXkRIDjaFGAByGUcaplcf68T8N
+         Z2Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCWl9MFeoF9M+Sk4QC4Z3VR9xlu8wzHS/ABH1aFpFGnMvsNgiztOdlrCZJH/2uxFPWnGFQfCInJDAwIJSwTao7mbZA+z4CgJusOIwSSB/q8aJC1h/IHYh7Td3lSEftkruzsAwzVOgBhue+P3pCbEGMSRDuGQ2kw7VkjZIQbp
+X-Gm-Message-State: AOJu0Yy3MX9DobRBU7Lv41bz7cOpkYX37WhvDxMLfqMF7u/T21bxnCR0
+	DbzMZwGj8HuitbWu5sxlbwHyhaXkIQjjVUL/2B7gMB0apLh3KZ5g18q5JtN+pBQ=
+X-Google-Smtp-Source: AGHT+IGl8R9cRFmLWG82QkyJN4p4OFG0NW2QbWFiV0VYiiANQgoGe+0WIbCEWf0fVN1wRzJa6K5czA==
+X-Received: by 2002:a05:6830:6f42:b0:704:49c0:65f0 with SMTP id 46e09a7af769-709008d04fcmr14870188a34.3.1721792409174;
+        Tue, 23 Jul 2024 20:40:09 -0700 (PDT)
+Received: from gmail.com ([24.130.68.0])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-79f0b429f28sm6001407a12.38.2024.07.23.20.40.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 20:40:08 -0700 (PDT)
+Date: Tue, 23 Jul 2024 20:40:06 -0700
+From: Chang Yu <marcus.yu.56@gmail.com>
+To: pbonzini@redhat.com
+Cc: corbet@lwn.net, kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	marcus.yu.56@gmail.com, chang.yu.56@protonmail.com
+Subject: [PATCH v2] KVM: Documentation: Fix title underline too short warning
+Message-ID: <ZqB3lofbzMQh5Q-5@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> On 7/23/2024 4:04 PM, Zhou Shengqing wrote:
-> >> I think this has potential.  Can you include a more complete citation
-> >> for the Intel spec?  Complete name, document number if available,
-> >> revision, section?  Hopefully it's publically available?
-> > Most of intel CPU EDS specs are under NDA. But you can refer to
-> > https://www.intel.com/content/dam/www/public/us/en/documents/datasheets/xeon-e5-v2-datasheet-vol-2.pdf
-> > keyword:"EN1K".
-> > ...
-> > 
-> > 	while ((d = pci_get_device(PCI_VENDOR_ID_INTEL, 0x09a2, d))) {
-> > 		if (pci_domain_nr(d->bus) == pci_domain_nr(dev->bus)) {
-> 
-> Perhaps it is enough to check if the 0x09a2 VT-d and the rootport are on the smae bus
-> e.g. On my SPR, domain 0000
+Fix "WARNING: Title underline too short" by extending title line to the
+proper length.
 
-Thank you for your comment.
+Signed-off-by: Chang Yu <marcus.yu.56@gmail.com>
+---
+Changes in v2:
+ - Fix the format of the subject and the commit message.
 
-Do you mean it shoud be like this?
 
-	while ((d = pci_get_device(PCI_VENDOR_ID_INTEL, 0x09a2, d))) {
-		if (d->bus->number == dev->bus->number) {
-			pci_read_config_word(d, 0x1c0, &en1k);
-			if (en1k & 0x4) {
-				pci_info(dev, "1K I/O windows enabled per %s EN1K setting\n", pci_name(d));
-				dev->io_window_1k = 1;
-			}
-		}
-	}
+ Documentation/virt/kvm/api.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> 00:00.0 System peripheral: Intel Corporation Device 09a2 (rev 20)
-> 00:0f.0 PCI bridge: Intel Corporation Device 1bbf (rev 10) (prog-if 00 [Normal decode])
-> 
->   
-> 15:00.0 System peripheral: Intel Corporation Device 09a2 (rev 20)
-> 15:01.0 PCI bridge: Intel Corporation Device 352a (rev 04) (prog-if 00 [Normal decode])
-> 
-> and if you check domain number only, they might sit on different bus, perhaps that
-> would make thing complex, could you make sure the VT-d is on the upstream bus of the
-> bridge ?
+diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+index fe722c5dada9..a510ce749c3c 100644
+--- a/Documentation/virt/kvm/api.rst
++++ b/Documentation/virt/kvm/api.rst
+@@ -6368,7 +6368,7 @@ a single guest_memfd file, but the bound ranges must not overlap).
+ See KVM_SET_USER_MEMORY_REGION2 for additional details.
+ 
+ 4.143 KVM_PRE_FAULT_MEMORY
+-------------------------
++---------------------------
+ 
+ :Capability: KVM_CAP_PRE_FAULT_MEMORY
+ :Architectures: none
+-- 
+2.45.2
 
-I checked it on ICX SPR EMR GNR, VT-d is always on the same bus with root port,
-and VT-d device and function number is always 0. 
-
-Please let me know if further modifications are needed.
-
-> 
-> Thanks,
-> Ethan
 
