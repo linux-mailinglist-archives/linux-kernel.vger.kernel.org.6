@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-260732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BF1593AD81
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:54:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E02FD93AD86
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:54:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF3441C2224C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:54:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FBBE1C21D60
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3F561FF0;
-	Wed, 24 Jul 2024 07:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C081613792B;
+	Wed, 24 Jul 2024 07:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tYwV0kl0"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oCIfiGUy"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0A481AC4
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C415A130E4B
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721807641; cv=none; b=lqOEmD7OMrwXZ2jzU/O6rvdRj7FVkVy1A8EnmyXfYGYy+wpy55WtmpEDWjyWWTzrQHtbmRVUMyNB7bhELi3tu3u3lHshmvYcTBnAfnATfrwQujjbQ/u737HS6Hpq/WbNpki13iUhnrCSoTVCn2mwOX/m5TPKVkYcBsqLXOQSZ3Y=
+	t=1721807645; cv=none; b=T3Vq94QeqoGTOx3aVp80h21UWHc1jDpkUHi8eoseGH1O62NggDNUQMDErPtUGkeekpbBFgib1e75n1nTFkV7/4X3PJ4fzDfKjiKfofcvDm2aOc3S/N/86v+sMaE3/ilU3AFfT6P9h5UkY4FHkJMRgb8Q3n7X9i8vUo5VNXUd2k8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721807641; c=relaxed/simple;
-	bh=HrypAteAGy/XTok6aN3mt/9eOnPMeF6ajXK9dY1/8p4=;
+	s=arc-20240116; t=1721807645; c=relaxed/simple;
+	bh=XQpfvYgegD8PoJ6PiUH7vxAZP95OyJmUHA17zKYaf/A=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=c/Khr8bEb8/E5DXCWd12BpW6NZAyWbAtGl0QhbMx/mVCKOt4GCCiO0EIBZIKpIJ7zWRlEwK2sjaNFk9IB4rMixED9KAK/115nAPrPkds0PEQ4V55x8R/QVo1cGq6YG3Fcj5js70XvOlcb8/nFMLl2Pbqnb9nNvr+EeRCNB+U4cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tYwV0kl0; arc=none smtp.client-ip=209.85.208.173
+	 In-Reply-To:Content-Type; b=b08eDdRmHhl/YHRyO56CALpROdyz+vCvPvhMtmVBcLUL6Bi8DTNMDkIkw1iOlxBAsfmtlzzpQhc2zbF2f0Ne3aPqt2KLXr2py2EBPy14KlyDm05+OVKPzjx9ZYmp3nNE3KCz9P8A+TM1k6roGH9LDIyvFkChOLV7vt2A1DZWdXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oCIfiGUy; arc=none smtp.client-ip=209.85.208.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ee920b0781so70775901fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 00:53:58 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ef2cce8be8so38311781fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 00:54:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721807637; x=1722412437; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1721807642; x=1722412442; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=g6XxiA8bDlv8vuRJ02SZhiMKDIku4c/DTdy0+z+J+7w=;
-        b=tYwV0kl0Mj0GsrujeMq5qFU7R6W+7KY9UjEK6bbPfKuxEH8bl0+BRDskr9S/Z8Xofh
-         YouZ/q6ywhRt6WvFkxBhm+H9biyGiO9tMIHX3IaAoNatE1ywMz+xIOwlhCJvgGI4D/WS
-         psJRqMneWaKRYA0usqiy/tPmww9i1TMPMeQonyZRe5xoSRW0a2tMcv7EFp6B1bmCt3Ma
-         XUVWlf6xNnuoTfkcXb+drRIPo1qW34KHR4DUbmhV2xgX63OUtzz84dje7FP6VB4NKD2M
-         mw/3f+mmK2J/CDLsdr7Cd4XoIAkqEgtp1MxgZbkm+TnPWCKZJ4TxBKUaDJ75Qi7L4RhH
-         elFA==
+        bh=vP0qto6AtbpqbEEODbflqyeI8tfbqmdr60YxUrHC9l4=;
+        b=oCIfiGUyxNZkm2ehE2vvWjqpMeVXNRB8QnuWzf4fMbnS8PIc5lXucCqZijbYOf6jXe
+         6sdASxRw3TrKssBEcMDUHhFraPwOdt8T8LkutFrnOBKSUj5qYZbAT2WF14/AgG/wqTM/
+         k24r7F5ahKhH0YGhndWKw0tMxrqwJUxF2pp/t2ZvbWQJFut1qbKimliS7ka7pvX1HXL1
+         2oLoTVOofnZJBEP7Z7HW27LmCLrYU0exUT4GV8bYCcFRXzbcVIiHrCQFNUxtKR1WYm1P
+         iAm+S9a5TyjYTfz7R51qP5sI7S5kVav9DBPA/lygYEG41M/7cAE9g6FCI3LQR5q7N4WU
+         smtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721807637; x=1722412437;
+        d=1e100.net; s=20230601; t=1721807642; x=1722412442;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=g6XxiA8bDlv8vuRJ02SZhiMKDIku4c/DTdy0+z+J+7w=;
-        b=J42rxiUbA6IivFJ0WQdyyHm2mEZunXbHFkjw5uBRP6TBs2bVLMbCJ5MRVMtDqqMaYd
-         G59IqBYh0GsIsBYPR/sAbYM5NM3m4BHkD8WrKqjDCFfbOegbgyyvkvaLqU6yqE8/fPbm
-         o1sZJnz2oCLDOpvH0P1TsoZxn7AeOMhpWYzI1Dt3e/LSPADbQmoUfA88mUmtbWhenGa2
-         nREDmnzgZR09cWDhLjnnvfovIgECdffnH7s/dv3db8ADhTftMhnppBp5Eh3fDNVI3gMO
-         /ZXVPKqtFyRvWJwl9oGJHzQ6jbDywbM/xWF7dHFw4W6mLO3EpbG5PZd3/c7ofPeIsN+y
-         6IkA==
-X-Forwarded-Encrypted: i=1; AJvYcCVmHVQcIw/a8Ih2QrKgBVmx4HZSWxGGSvXBt/Wm8M1NlHgGLz3KtjyGqYCTIbBCBsmfUvf5Vu5zvjbYm+hscKBnLSBJr4aGDDilQp7O
-X-Gm-Message-State: AOJu0YxKdMYIpT5FdEPfpra/1oaP+R50z7oDbEOGzS8ArPiBZGcDYWy9
-	j94A9aceZzLYv+D+MiB1PQOFgdJSuPiLw1n25Ew3Bj6g8AqBH6P1dKTPYEj5Sc8=
-X-Google-Smtp-Source: AGHT+IH3RVhJiPkhqd/bqG8a3KDfnEDCCNAyJMI1TbkKhtbdBjj6Trw6bdv7DpASwnHCRQSd27HxhA==
-X-Received: by 2002:a2e:87ca:0:b0:2ee:8555:4742 with SMTP id 38308e7fff4ca-2f02b741c3dmr13617521fa.27.1721807636493;
-        Wed, 24 Jul 2024 00:53:56 -0700 (PDT)
+        bh=vP0qto6AtbpqbEEODbflqyeI8tfbqmdr60YxUrHC9l4=;
+        b=WupleJctF+5l4pd/0Wa1ba21SSBpvDRN2YqbCmsDssJ+dNzo053eMM4Fmc6BBWIVXB
+         NJ/gZYeQEu3wtvqO/rHuu/+Nk/MEs9NLiDMSKn/6u69b4V+njPvdtFi/lbcZ3e4W0WyA
+         IPaYuXMS5MGUI4HNx+BqHJwRYscn9Z46G8jsFFbGElSEXqXupAeMW2nQ9w+Vac5JfYA/
+         A+agz6S4kS5cl0fqRDcbk6RMaUCc3dni5vEawn9TwsTBmFOrmIPFgoO4lU7hj+dcjNsy
+         CvCXeaN8a4eb3FFPhQaHXuj/RxYkh9R6Vq7/7hRDHLDD38dC9ka979ktTY6KbdHY4/LM
+         J8MA==
+X-Forwarded-Encrypted: i=1; AJvYcCV07LiV2/Ap4NbJB/Hly6vwt2U3F7Fls9yoTDsHIC7U07ttdCGuUonWVfIqBQfEsHH8cC58XP9+dKrusyQDOERLXDBOSV/jGeNZflia
+X-Gm-Message-State: AOJu0YywybulLjgKn7/jSeZfKKCr2ZDa1BNVVyciEQIi+hKq80mzAlYR
+	5yjU/IGZHJJbw9h+Lfsyhn98kNSvlNBw5qm0adue50260WzFLGCYYOxFuAz/X0s=
+X-Google-Smtp-Source: AGHT+IH3c4veHYI0ZJD3fRBduUwFbvfib/5vZCZMCh4qdULb4lh60PtskJlqCBKNuuweGamkvAgvqA==
+X-Received: by 2002:a2e:b019:0:b0:2ef:25be:ebeb with SMTP id 38308e7fff4ca-2ef25beef6fmr77239271fa.10.1721807641574;
+        Wed, 24 Jul 2024 00:54:01 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:982:cbb0:deff:4fa8:5076:b4c7? ([2a01:e0a:982:cbb0:deff:4fa8:5076:b4c7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3687869439esm13416638f8f.52.2024.07.24.00.53.55
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3687869439esm13416638f8f.52.2024.07.24.00.54.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Jul 2024 00:53:56 -0700 (PDT)
-Message-ID: <d41e0587-689a-47d5-9473-dc980be66650@linaro.org>
-Date: Wed, 24 Jul 2024 09:53:55 +0200
+        Wed, 24 Jul 2024 00:54:01 -0700 (PDT)
+Message-ID: <6f5f7169-b3e4-4663-bb83-f5a1439d1321@linaro.org>
+Date: Wed, 24 Jul 2024 09:54:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,8 +79,8 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v3 4/5] drm/panel: st7701: Add support for SPI for
- configuration
+Subject: Re: [PATCH v3 5/5] drm/panel: st7701: Add Anbernic RG28XX panel
+ support
 To: Hironori KIKUCHI <kikuchan98@gmail.com>, linux-kernel@vger.kernel.org
 Cc: Jagan Teki <jagan@amarulasolutions.com>,
  Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
@@ -91,7 +91,7 @@ Cc: Jagan Teki <jagan@amarulasolutions.com>,
  Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
  devicetree@vger.kernel.org
 References: <20240706102338.99231-1-kikuchan98@gmail.com>
- <20240706102338.99231-5-kikuchan98@gmail.com>
+ <20240706102338.99231-6-kikuchan98@gmail.com>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -118,240 +118,208 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20240706102338.99231-5-kikuchan98@gmail.com>
+In-Reply-To: <20240706102338.99231-6-kikuchan98@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 06/07/2024 12:23, Hironori KIKUCHI wrote:
-> The ST7701 supports not only MIPI DSI, but also SPI as an interface
-> for configuration. To support a panel connected via SPI with an RGB
-> parallel interface, add support for SPI using MIPI DBI helpers.
+> The Anbernic RG28XX is a handheld gaming device with a 2.8 inch 480x640
+> display. Add support for the display panel.
+> 
+> This panel is driven by a variant of ST7701 driver IC internally,
+> confirmed by dumping and analyzing its BSP initialization sequence
+> by using a logic analyzer. It is very similar to the existing
+> densitron,dmt028vghmcmi-1a panel, but differs in some unknown
+> register values. Besides, it is connected via SPI, so add a new entry
+> for the panel.
 > 
 > Signed-off-by: Hironori KIKUCHI <kikuchan98@gmail.com>
+> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 > ---
->   drivers/gpu/drm/panel/Kconfig                 |   3 +-
->   drivers/gpu/drm/panel/panel-sitronix-st7701.c | 123 +++++++++++++++---
->   2 files changed, 110 insertions(+), 16 deletions(-)
+>   drivers/gpu/drm/panel/panel-sitronix-st7701.c | 151 ++++++++++++++++++
+>   1 file changed, 151 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-> index 2ae0eb0638f..3dd52869520 100644
-> --- a/drivers/gpu/drm/panel/Kconfig
-> +++ b/drivers/gpu/drm/panel/Kconfig
-> @@ -755,7 +755,8 @@ config DRM_PANEL_SHARP_LS060T1SX01
->   config DRM_PANEL_SITRONIX_ST7701
->   	tristate "Sitronix ST7701 panel driver"
->   	depends on OF
-> -	depends on DRM_MIPI_DSI
-> +	depends on SPI || DRM_MIPI_DSI
-> +	select DRM_MIPI_DBI if SPI
->   	depends on BACKLIGHT_CLASS_DEVICE
->   	help
->   	  Say Y here if you want to enable support for the Sitronix
 > diff --git a/drivers/gpu/drm/panel/panel-sitronix-st7701.c b/drivers/gpu/drm/panel/panel-sitronix-st7701.c
-> index a0644f7a4c8..9e83a760a8a 100644
+> index 9e83a760a8a..eef03d04e0c 100644
 > --- a/drivers/gpu/drm/panel/panel-sitronix-st7701.c
 > +++ b/drivers/gpu/drm/panel/panel-sitronix-st7701.c
-> @@ -4,6 +4,7 @@
->    * Author: Jagan Teki <jagan@amarulasolutions.com>
->    */
->   
-> +#include <drm/drm_mipi_dbi.h>
->   #include <drm/drm_mipi_dsi.h>
->   #include <drm/drm_modes.h>
->   #include <drm/drm_panel.h>
-> @@ -14,6 +15,7 @@
->   #include <linux/module.h>
->   #include <linux/of.h>
->   #include <linux/regulator/consumer.h>
-> +#include <linux/spi/spi.h>
->   
->   #include <video/mipi_display.h>
->   
-> @@ -130,12 +132,16 @@ struct st7701_panel_desc {
->   struct st7701 {
->   	struct drm_panel panel;
->   	struct mipi_dsi_device *dsi;
-> +	struct mipi_dbi dbi;
->   	const struct st7701_panel_desc *desc;
->   
->   	struct regulator_bulk_data supplies[2];
->   	struct gpio_desc *reset;
->   	unsigned int sleep_delay;
->   	enum drm_panel_orientation orientation;
-> +
-> +	int (*write_command)(struct st7701 *st7701, u8 cmd, const u8 *seq,
-> +			     size_t len);
->   };
->   
->   static inline struct st7701 *panel_to_st7701(struct drm_panel *panel)
-> @@ -143,16 +149,22 @@ static inline struct st7701 *panel_to_st7701(struct drm_panel *panel)
->   	return container_of(panel, struct st7701, panel);
+> @@ -471,6 +471,55 @@ static void rg_arc_gip_sequence(struct st7701 *st7701)
+>   	msleep(120);
 >   }
 >   
-> -static inline int st7701_dsi_write(struct st7701 *st7701, const void *seq,
-> -				   size_t len)
-> +static int st7701_dsi_write(struct st7701 *st7701, u8 cmd, const u8 *seq,
-> +			    size_t len)
->   {
-> -	return mipi_dsi_dcs_write_buffer(st7701->dsi, seq, len);
-> +	return mipi_dsi_dcs_write(st7701->dsi, cmd, seq, len);
->   }
->   
-> -#define ST7701_WRITE(st7701, seq...)				\
-> -	{							\
-> -		const u8 d[] = { seq };				\
-> -		st7701_dsi_write(st7701, d, ARRAY_SIZE(d));	\
-> +static int st7701_dbi_write(struct st7701 *st7701, u8 cmd, const u8 *seq,
-> +			    size_t len)
+> +static void rg28xx_gip_sequence(struct st7701 *st7701)
 > +{
-> +	return mipi_dbi_command_stackbuf(&st7701->dbi, cmd, seq, len);
+> +	st7701_switch_cmd_bkx(st7701, true, 3);
+> +	ST7701_WRITE(st7701, 0xEF, 0x08);
+> +
+> +	st7701_switch_cmd_bkx(st7701, true, 0);
+> +	ST7701_WRITE(st7701, 0xC3, 0x02, 0x10, 0x02);
+> +	ST7701_WRITE(st7701, 0xC7, 0x04);
+> +	ST7701_WRITE(st7701, 0xCC, 0x10);
+> +
+> +	st7701_switch_cmd_bkx(st7701, true, 1);
+> +	ST7701_WRITE(st7701, 0xEE, 0x42);
+> +	ST7701_WRITE(st7701, 0xE0, 0x00, 0x00, 0x02);
+> +
+> +	ST7701_WRITE(st7701, 0xE1, 0x04, 0xA0, 0x06, 0xA0, 0x05, 0xA0, 0x07, 0xA0,
+> +		   0x00, 0x44, 0x44);
+> +	ST7701_WRITE(st7701, 0xE2, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+> +		   0x00, 0x00, 0x00, 0x00);
+> +	ST7701_WRITE(st7701, 0xE3, 0x00, 0x00, 0x22, 0x22);
+> +	ST7701_WRITE(st7701, 0xE4, 0x44, 0x44);
+> +	ST7701_WRITE(st7701, 0xE5, 0x0C, 0x90, 0xA0, 0xA0, 0x0E, 0x92, 0xA0, 0xA0,
+> +		   0x08, 0x8C, 0xA0, 0xA0, 0x0A, 0x8E, 0xA0, 0xA0);
+> +	ST7701_WRITE(st7701, 0xE6, 0x00, 0x00, 0x22, 0x22);
+> +	ST7701_WRITE(st7701, 0xE7, 0x44, 0x44);
+> +	ST7701_WRITE(st7701, 0xE8, 0x0D, 0x91, 0xA0, 0xA0, 0x0F, 0x93, 0xA0, 0xA0,
+> +		   0x09, 0x8D, 0xA0, 0xA0, 0x0B, 0x8F, 0xA0, 0xA0);
+> +	ST7701_WRITE(st7701, 0xEB, 0x00, 0x00, 0xE4, 0xE4, 0x44, 0x00, 0x40);
+> +	ST7701_WRITE(st7701, 0xED, 0xFF, 0xF5, 0x47, 0x6F, 0x0B, 0xA1, 0xBA, 0xFF,
+> +		   0xFF, 0xAB, 0x1A, 0xB0, 0xF6, 0x74, 0x5F, 0xFF);
+> +	ST7701_WRITE(st7701, 0xEF, 0x08, 0x08, 0x08, 0x45, 0x3F, 0x54);
+> +
+> +	st7701_switch_cmd_bkx(st7701, false, 0);
+> +
+> +	st7701_switch_cmd_bkx(st7701, true, 3);
+> +	ST7701_WRITE(st7701, 0xE6, 0x16);
+> +	ST7701_WRITE(st7701, 0xE8, 0x00, 0x0E);
+> +
+> +	st7701_switch_cmd_bkx(st7701, false, 0);
+> +	ST7701_WRITE(st7701, MIPI_DCS_SET_ADDRESS_MODE, 0x10);
+> +	ST7701_WRITE(st7701, MIPI_DCS_EXIT_SLEEP_MODE);
+> +	msleep(120);
+> +
+> +	st7701_switch_cmd_bkx(st7701, true, 3);
+> +	ST7701_WRITE(st7701, 0xE8, 0x00, 0x0C);
+> +	msleep(10);
+> +	ST7701_WRITE(st7701, 0xE8, 0x00, 0x00);
+> +	st7701_switch_cmd_bkx(st7701, false, 0);
 > +}
 > +
-> +#define ST7701_WRITE(st7701, cmd, seq...)				\
-> +	{								\
-> +		const u8 d[] = { seq };					\
-> +		st7701->write_command(st7701, cmd, d, ARRAY_SIZE(d));	\
->   	}
->   
->   static u8 st7701_vgls_map(struct st7701 *st7701)
-> @@ -211,10 +223,10 @@ static void st7701_init_sequence(struct st7701 *st7701)
->   	/* Command2, BK0 */
->   	st7701_switch_cmd_bkx(st7701, true, 0);
->   
-> -	mipi_dsi_dcs_write(st7701->dsi, ST7701_CMD2_BK0_PVGAMCTRL,
-> -			   desc->pv_gamma, ARRAY_SIZE(desc->pv_gamma));
-> -	mipi_dsi_dcs_write(st7701->dsi, ST7701_CMD2_BK0_NVGAMCTRL,
-> -			   desc->nv_gamma, ARRAY_SIZE(desc->nv_gamma));
-> +	st7701->write_command(st7701, ST7701_CMD2_BK0_PVGAMCTRL, desc->pv_gamma,
-> +			      ARRAY_SIZE(desc->pv_gamma));
-> +	st7701->write_command(st7701, ST7701_CMD2_BK0_NVGAMCTRL, desc->nv_gamma,
-> +			      ARRAY_SIZE(desc->nv_gamma));
->   	/*
->   	 * Vertical line count configuration:
->   	 * Line[6:0]: select number of vertical lines of the TFT matrix in
-> @@ -1051,6 +1063,10 @@ static int st7701_dsi_probe(struct mipi_dsi_device *dsi)
->   
->   	st7701 = dev_get_drvdata(&dsi->dev);
->   	st7701->dsi = dsi;
-> +	st7701->write_command = st7701_dsi_write;
-> +
-> +	if (!st7701->desc->lanes)
-> +		return dev_err_probe(&dsi->dev, -EINVAL, "This panel is not for MIPI DSI\n");
->   
->   	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
->   			  MIPI_DSI_MODE_LPM | MIPI_DSI_CLOCK_NON_CONTINUOUS;
-> @@ -1064,30 +1080,107 @@ static int st7701_dsi_probe(struct mipi_dsi_device *dsi)
->   	return 0;
->   }
->   
-> +static int st7701_spi_probe(struct spi_device *spi)
-> +{
-> +	struct st7701 *st7701;
-> +	struct gpio_desc *dc;
-> +	int err;
-> +
-> +	err = st7701_probe(&spi->dev, DRM_MODE_CONNECTOR_DPI);
-> +	if (err)
-> +		return err;
-> +
-> +	st7701 = dev_get_drvdata(&spi->dev);
-> +	st7701->write_command = st7701_dbi_write;
-> +
-> +	dc = devm_gpiod_get_optional(&spi->dev, "dc", GPIOD_OUT_LOW);
-> +	if (IS_ERR(dc))
-> +		return dev_err_probe(&spi->dev, PTR_ERR(dc), "Failed to get GPIO for D/CX\n");
-> +
-> +	err = mipi_dbi_spi_init(spi, &st7701->dbi, dc);
-> +	if (err)
-> +		return dev_err_probe(&spi->dev, err, "Failed to init MIPI DBI\n");
-> +	st7701->dbi.read_commands = NULL;
-> +
-> +	return 0;
-> +}
-> +
->   static void st7701_dsi_remove(struct mipi_dsi_device *dsi)
+>   static int st7701_prepare(struct drm_panel *panel)
 >   {
->   	mipi_dsi_detach(dsi);
->   }
->   
-> -static const struct of_device_id st7701_of_match[] = {
-> +static const struct of_device_id st7701_dsi_of_match[] = {
->   	{ .compatible = "anbernic,rg-arc-panel", .data = &rg_arc_desc },
->   	{ .compatible = "densitron,dmt028vghmcmi-1a", .data = &dmt028vghmcmi_1a_desc },
->   	{ .compatible = "elida,kd50t048a", .data = &kd50t048a_desc },
->   	{ .compatible = "techstar,ts8550b", .data = &ts8550b_desc },
->   	{ }
+>   	struct st7701 *st7701 = panel_to_st7701(panel);
+> @@ -986,6 +1035,106 @@ static const struct st7701_panel_desc rg_arc_desc = {
+>   	.gip_sequence = rg_arc_gip_sequence,
 >   };
-> -MODULE_DEVICE_TABLE(of, st7701_of_match);
-> +MODULE_DEVICE_TABLE(of, st7701_dsi_of_match);
-> +
-> +static const struct of_device_id st7701_spi_of_match[] = {
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, st7701_spi_of_match);
-> +
-> +static const struct spi_device_id st7701_spi_ids[] = {
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(spi, st7701_spi_ids);
 >   
->   static struct mipi_dsi_driver st7701_dsi_driver = {
->   	.probe		= st7701_dsi_probe,
->   	.remove		= st7701_dsi_remove,
->   	.driver = {
->   		.name		= "st7701",
-> -		.of_match_table	= st7701_of_match,
-> +		.of_match_table	= st7701_dsi_of_match,
->   	},
->   };
-> -module_mipi_dsi_driver(st7701_dsi_driver);
+> +static const struct drm_display_mode rg28xx_mode = {
+> +	.clock		= 22325,
 > +
-> +static struct spi_driver st7701_spi_driver = {
-> +	.probe		= st7701_spi_probe,
-> +	.id_table	= st7701_spi_ids,
-> +	.driver = {
-> +		.name		= "st7701",
-> +		.of_match_table	= st7701_spi_of_match,
+> +	.hdisplay	= 480,
+> +	.hsync_start	= 480 + 40,
+> +	.hsync_end	= 480 + 40 + 4,
+> +	.htotal		= 480 + 40 + 4 + 20,
+> +
+> +	.vdisplay	= 640,
+> +	.vsync_start	= 640 + 2,
+> +	.vsync_end	= 640 + 2 + 40,
+> +	.vtotal		= 640 + 2 + 40 + 16,
+> +
+> +	.width_mm	= 44,
+> +	.height_mm	= 58,
+> +
+> +	.flags		= DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC,
+> +
+> +	.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
+> +};
+> +
+> +static const struct st7701_panel_desc rg28xx_desc = {
+> +	.mode = &rg28xx_mode,
+> +
+> +	.panel_sleep_delay = 80,
+> +
+> +	.pv_gamma = {
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC0_MASK, 0),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC4_MASK, 0x10),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC8_MASK, 0x17),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC16_MASK, 0xd),
+> +
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC24_MASK, 0x11),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC52_MASK, 0x6),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC80_MASK, 0x5),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC108_MASK, 0x8),
+> +
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC147_MASK, 0x7),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC175_MASK, 0x1f),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC203_MASK, 0x4),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC231_MASK, 0x11),
+> +
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC239_MASK, 0xe),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC247_MASK, 0x29),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC251_MASK, 0x30),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC255_MASK, 0x1f)
 > +	},
+> +	.nv_gamma = {
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC0_MASK, 0),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC4_MASK, 0xd),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC8_MASK, 0x14),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC16_MASK, 0xe),
+> +
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC24_MASK, 0x11),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC52_MASK, 0x6),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC80_MASK, 0x4),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC108_MASK, 0x8),
+> +
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC147_MASK, 0x8),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC175_MASK, 0x20),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC203_MASK, 0x5),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC231_MASK, 0x13),
+> +
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC239_MASK, 0x13),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC247_MASK, 0x26),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC251_MASK, 0x30),
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_AJ_MASK, 0) |
+> +		CFIELD_PREP(ST7701_CMD2_BK0_GAMCTRL_VC255_MASK, 0x1f)
+> +	},
+> +	.nlinv = 7,
+> +	.vop_uv = 4800000,
+> +	.vcom_uv = 1512500,
+> +	.vgh_mv = 15000,
+> +	.vgl_mv = -11730,
+> +	.avdd_mv = 6600,
+> +	.avcl_mv = -4400,
+> +	.gamma_op_bias = OP_BIAS_MIDDLE,
+> +	.input_op_bias = OP_BIAS_MIN,
+> +	.output_op_bias = OP_BIAS_MIN,
+> +	.t2d_ns = 1600,
+> +	.t3d_ns = 10400,
+> +	.eot_en = true,
+> +	.gip_sequence = rg28xx_gip_sequence,
 > +};
 > +
-> +static int __init st7701_driver_init(void)
-> +{
-> +	int err;
-> +
-> +	if (IS_ENABLED(CONFIG_SPI)) {
-> +		err = spi_register_driver(&st7701_spi_driver);
-> +		if (err)
-> +			return err;
-> +	}
-> +
-> +	if (IS_ENABLED(CONFIG_DRM_MIPI_DSI)) {
-> +		err = mipi_dsi_driver_register(&st7701_dsi_driver);
-> +		if (err) {
-> +			if (IS_ENABLED(CONFIG_SPI))
-> +				spi_unregister_driver(&st7701_spi_driver);
-> +			return err;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +module_init(st7701_driver_init);
-> +
-> +static void __exit st7701_driver_exit(void)
-> +{
-> +	if (IS_ENABLED(CONFIG_DRM_MIPI_DSI))
-> +		mipi_dsi_driver_unregister(&st7701_dsi_driver);
-> +
-> +	if (IS_ENABLED(CONFIG_SPI))
-> +		spi_unregister_driver(&st7701_spi_driver);
-> +}
-> +module_exit(st7701_driver_exit);
+>   static void st7701_cleanup(void *data)
+>   {
+>   	struct st7701 *st7701 = (struct st7701 *)data;
+> @@ -1120,11 +1269,13 @@ static const struct of_device_id st7701_dsi_of_match[] = {
+>   MODULE_DEVICE_TABLE(of, st7701_dsi_of_match);
 >   
->   MODULE_AUTHOR("Jagan Teki <jagan@amarulasolutions.com>");
-> +MODULE_AUTHOR("Hironori KIKUCHI <kikuchan98@gmail.com>");
->   MODULE_DESCRIPTION("Sitronix ST7701 LCD Panel Driver");
->   MODULE_LICENSE("GPL");
+>   static const struct of_device_id st7701_spi_of_match[] = {
+> +	{ .compatible = "anbernic,rg28xx-panel", .data = &rg28xx_desc },
+>   	{ /* sentinel */ }
+>   };
+>   MODULE_DEVICE_TABLE(of, st7701_spi_of_match);
+>   
+>   static const struct spi_device_id st7701_spi_ids[] = {
+> +	{ "rg28xx-panel" },
+>   	{ /* sentinel */ }
+>   };
+>   MODULE_DEVICE_TABLE(spi, st7701_spi_ids);
 
 Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
