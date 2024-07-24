@@ -1,129 +1,132 @@
-Return-Path: <linux-kernel+bounces-261339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9432293B60E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:37:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5554793B610
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:38:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DF41285935
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:37:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A2161F21C88
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD62715FD12;
-	Wed, 24 Jul 2024 17:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="Wf2ZI1L8"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB0215FA9E;
+	Wed, 24 Jul 2024 17:38:33 +0000 (UTC)
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7A32E639;
-	Wed, 24 Jul 2024 17:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D517200DE
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 17:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721842617; cv=none; b=fuN6lzQ0xpscYhOTIamVEfjKflgbJg2nmCdBmQKezyNlSr0zqK9e2awQpqNMta9w34jZz8e6m39pAi/inm1IPzKph4exTDALjHnSy3k5goKpIsSaHkzZR6TpEzRNm/153JZiTJr+KUHfGbFZ/eZUgMIzH8o40rm50/xGVffNUUQ=
+	t=1721842712; cv=none; b=Ubbsboa1+BvC/TMTup7rdcOTQkO16D+WD/jGPitjj0D9usPAuwxtBPEfH1+Y0JiWy1MCdAnRHkuLAeYZqH7R5WVviMLTy2mlGNahYvuZILjeADDdd0k6Fc0r5YQ1ithlvF4ArjOxYsoas1L5qHF1SXnfJsPZI7tqljHCw/hgMBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721842617; c=relaxed/simple;
-	bh=/cBPn80bLOKCv+/H/yCLrV6vjovXjhH4bLZtNKr8D3s=;
+	s=arc-20240116; t=1721842712; c=relaxed/simple;
+	bh=Rirg2ICU3jTfnQ4ZgkPaRwnI9/HuF34OkOU5FLVMUWI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iFLNNS7S53pvY9QLCfSHTDmpqptI6Yb25Bs899dD3/10EtqmpoSnYBqMeqy0TapFKh1UecG6J6V0nHhk4JG5Q+UQNrQaZQvd/otpEs1HxJGthpPAiXVMzityZlidc9Mq8ZT5RoY99iL7eHuvAuS/70fjS4VnSYCPae4698POKg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=Wf2ZI1L8; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 7B2661C009D; Wed, 24 Jul 2024 19:36:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1721842610;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=an3NqH+1POnuE0beDev8aj+SC67nRWyTt2QwUTuBvJg=;
-	b=Wf2ZI1L80VoiKf0pRGMckpaygLO6rn19EUfxCYXkPO1XwvCDoTea5PyGdak/2bkd7zdqsF
-	nSlnfqqQCl/67cUoLvnxx790Kr8iaBslYEh72AWlZ4+URtcNSc7L/U72Q64mO7RcxMjJit
-	g6VosIXwfCnhRHl+4jxyzkWlQ6Czq/Y=
-Date: Wed, 24 Jul 2024 19:36:50 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Werner Sembach <wse@tuxedocomputers.com>
-Cc: Benjamin Tissoires <bentiss@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>, Lee Jones <lee@kernel.org>,
-	jikos@kernel.org, linux-kernel@vger.kernel.org,
-	Jelle van der Waa <jelle@vdwaa.nl>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	linux-input@vger.kernel.org, ojeda@kernel.org,
-	linux-leds@vger.kernel.org, Gregor Riepl <onitake@gmail.com>
-Subject: Re: In kernel virtual HID devices (was Future handling of complex
- RGB devices on Linux v3)
-Message-ID: <ZqE7sk0ZW0q8ueul@duo.ucw.cz>
-References: <247b5dcd-fda8-45a7-9896-eabc46568281@tuxedocomputers.com>
- <ZdZ2kMASawJ9wdZj@duo.ucw.cz>
- <b6d79727-ae94-44b1-aa88-069416435c14@redhat.com>
- <a21f6c49-2c05-4496-965c-a7524ed38634@gmail.com>
- <825129ea-d389-4c6c-8a23-39f05572e4b4@redhat.com>
- <adbfdf6c-fb59-4fae-a472-17b04dd8a3f6@tuxedocomputers.com>
- <1fb08a74-62c7-4d0c-ba5d-648e23082dcb@tuxedocomputers.com>
- <aec1d22d-9e59-4dfc-b108-5ba339b0e76a@redhat.com>
- <siebkhaauocqkuox73q2e5p2mbsyc7j4gvpzfvt4c3gvncdpap@oxh5pp4gxpuo>
- <870cca8a-1a1b-4d17-874e-a26c30aca2bf@tuxedocomputers.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kxHSDCMKLb7oYUykBaX4PkKP7DJ9e6tFLzw8vBINNFPod3tEqYOIara+gLdcVFHrZruA1ooPvM6cWP4kUyzMgMTasmZdyIXof7mH44NH6kg5t0DCeD95vwzN4G1byhLoh63TnGtq5XOdvkGKaRRNLhLV8vYR0+PHgq4w9gDLQiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6b7aed340daso511246d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 10:38:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721842710; x=1722447510;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OxB+01Z3h5Smk6Z0I6GRZa4EoMycQj8TkjK07oFMkVk=;
+        b=syY3RtaTpALMMsAamL290bxjd2W562zJcgEUmj/QO0RT7GjFeDJxRfG1pXlDo4NWW3
+         o2xNiiDtDp6W0+8tA4t4Jf5NZ6uRuo0QKOWelv33V72uWLsrb7dyjL5kwKp5VTu9zxmD
+         /QXKpaGXvOVbSaR5nQehrXzOsuDUFwaVOaC1xXyyO7gGaoK6PwKNmf6kDUdUQRXhPiE9
+         zxzxseGxhfPd7Nq0pn9Uc3KjdJTdBm9YAKIWEOOOUeAYiLJs2Zvvhm5VK6k3DZ2+Iavw
+         7YsXthTAO1YU+P6ljJ4yoh6Tgrq76hLHRUmNWcJOlsm+CBpHelo13Q6appq0sdqp9eje
+         VHNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWa8JDqhH6dgbGylaHnBRPnJwAaZEUFTw0onYDcnBWDKZh7aoC8Y8C+k+/pnbbuq0luGpEgpLibu9ls2WU+aSK4Qqf3+MDJ7CaYyEyt
+X-Gm-Message-State: AOJu0Yygd2l2MBnDXvFZJIt+3XjzGVj8BOjtfFprzP9yAuAZHzE458ud
+	k2shiEcOGZAejSBcwMKTAOcwRSYRWcFjm0GKF4JUBg57vgCnF6Qe
+X-Google-Smtp-Source: AGHT+IEHJIWEI3jYB3uOny0/O/03ghk2T3UvDpf3FYtsH6bJoHEFdfpqzJM8m5a5wK6SeiPBLqVEhA==
+X-Received: by 2002:ad4:4ea3:0:b0:6b5:65ab:e860 with SMTP id 6a1803df08f44-6bb3ca14968mr4571116d6.20.1721842710132;
+        Wed, 24 Jul 2024 10:38:30 -0700 (PDT)
+Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b9625f84d0sm46449586d6.45.2024.07.24.10.38.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 10:38:29 -0700 (PDT)
+Date: Wed, 24 Jul 2024 12:38:27 -0500
+From: David Vernet <void@manifault.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Tejun Heo <tj@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [GIT PULL] sched_ext: Initial pull request for v6.11
+Message-ID: <20240724173827.GA281347@maniforge>
+References: <ZpWjbCQPtuUcvo8r@slm.duckdns.org>
+ <20240723163358.GM26750@noisy.programming.kicks-ass.net>
+ <ZqAFtfSijJ-KMVHo@slm.duckdns.org>
+ <20240724085221.GO26750@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="PO2vVUoo5RSgWJzT"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0hVpz++H0BDlulKU"
 Content-Disposition: inline
-In-Reply-To: <870cca8a-1a1b-4d17-874e-a26c30aca2bf@tuxedocomputers.com>
+In-Reply-To: <20240724085221.GO26750@noisy.programming.kicks-ass.net>
+User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
 
 
---PO2vVUoo5RSgWJzT
+--0hVpz++H0BDlulKU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi!
+On Wed, Jul 24, 2024 at 10:52:21AM +0200, Peter Zijlstra wrote:
 
-> > IMO working with the HID LampArray is the way forward. So I would
-> > suggest to convert any non-HID RGB "LED display" that we are talking
-> > about as a HID LampArray device through `hid_allocate_device()` in the
-> > kernel. Basically what you are suggesting Hans. It's just that you don't
-> > need a formal transport layer, just a child device that happens to be
-> > HID.
+[...]
+
+> > > Also, why does that thing hard depend on DEBUG_BTF? (at least having
+> > > that option enabled no longer explodes build times like it used to)
 > >=20
-> > The next question IMO is: do we want the kernel to handle such
-> > machinery? Wouldn't it be simpler to just export the HID device and let
-> > userspace talk to it through hidraw, like what OpenRGB does?
+> > That's necessary for building the schedulers, at least, I think. We did=
+n't
+> > have that earlier and people were getting confused.
 >=20
-> That's already part of my plan: The kernels main goal is to give devices a
-> LampArray interface that don't have one already (e.g. because they are no
-> HID devices to begin with).
+> It's what made it difficult for me to even build this stuff, simple
+> things like:
 >=20
-> The actual handling of LampArray will happen in userspace.
+>   cd foo-build; ../scipts/config --enable CONFIG_SCHED_CLASS_EXT; cd -
 >=20
-> Exception is that maybe it could be useful to implement a small subset of
-> LampArray in a generic leds-subsystem driver for backwards compatibility =
-to
-> userspace applications that only implement that (e.g. UPower). It would
-> treat the whole keyboard as a single led.
+> don't work (nor error out on the lack of dependencies), and my build
+> scripts were force disabling the BTF crud -- and thus silently also the
+> scx thing.
+>=20
+> It looks like I can change my builds scripts, because the reason I did
+> that was that BTF made the build times explode and that is no longer the
+> case.
 
-Are you sure LampArray is good-enough interface? OpenRGB exposes
-keycode-to-LED interface, how will that work with LampArray?
+Yeah so to clarify the situation here -- BTF is a hard requirement for
+sched_ext because BPF requires it in order to call kfuncs [0] (note that
+the APIs have changed significantly since that article was written). The
+reason it's required, among other things, is so that the verifier can
+check that a BPF prog is safely invoking a kernel function with the
+proper types.
 
-Best regards,
-								Pavel
---=20
-People of Russia, stop Putin before his war on Ukraine escalates.
+[0]: https://lwn.net/Articles/856005/
 
---PO2vVUoo5RSgWJzT
+--0hVpz++H0BDlulKU
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZqE7sgAKCRAw5/Bqldv6
-8ga8AJ9BT/RPUldd2PgRbjEZ62iTLLo7HQCgpJKSBBtTvzqxW31MSQlB/aghnwY=
-=B9/0
+iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZqE8EwAKCRBZ5LhpZcTz
+ZCqOAP9LiaxIMZ+n824HtZp0/SDiV1zApJQsEIY13FiJcanHtQD/TMLZ4Rsz5gTS
+/HuQWhjmw2P8YLcA9gqsomZlxnBZzQ0=
+=GIVF
 -----END PGP SIGNATURE-----
 
---PO2vVUoo5RSgWJzT--
+--0hVpz++H0BDlulKU--
 
