@@ -1,199 +1,130 @@
-Return-Path: <linux-kernel+bounces-261075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A67893B29C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:23:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C75193B29D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C7CB1C237CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:23:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D59771F248B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1161E867;
-	Wed, 24 Jul 2024 14:23:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD2115958A;
+	Wed, 24 Jul 2024 14:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UcDT1P7w"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hoG5ea6g"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D2315A868
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D10125D5;
+	Wed, 24 Jul 2024 14:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721831009; cv=none; b=toCXk2QnyUXk8ss9agX3CwIeeCzJONS1EsVGdmxFRhLfHnMmFt+1GwWt9gti7yY7YbgFA6WVAjLipM+hOAbng8DhjKkguELpWGcVL10zXor5Tft02wKLNysIMPul8ibkvLNrUo97muEn3sD9OKJSWjWyHXp2uGHrjDpYH/XORwA=
+	t=1721831023; cv=none; b=m6Disf7kKFZz43k4qQrGxXTmfD6MauGcXm0p+6slMfR1jJokG7yQH9ve79tuakxGx6kVsEmuHWFi8tKtcFuYLuMmbFBwB14oe4fvs2smBNDVjtI43F00vYjHj2ICM10R9vM10Hxv1A/uTJt/ZlVHxmuTDgRTO1YcAKmSsCo+qPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721831009; c=relaxed/simple;
-	bh=s4HNljaPZJLJD6YDsI7FLSF9XPk6iswpMqvouyoqiVo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Fg6Fy9F8dZJkkAOJJpsQ4M5o3KzlIMaU1BFR7mlgB6cP+B1dbjBc7oaDVGfwPcYCbiNnvXWysuqDNfYC1r5ExPWs3NOkxof8y3s+3TMPx8qITm7stJrklk/sYNMGSdmF/F6Y62tt2oot8g9qyBi2JLSKNFGULIZdMrhFUHrcOiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UcDT1P7w; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721831006;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZK+LHXm7qy0Qg5Y629tT+uBJ6vtvH0lHMF8fm1/ksuU=;
-	b=UcDT1P7wiMaoVlN7bBYeMS92203AGOrv59mLFSRRFZOx/eEDBG+wcyzrMdlhFNPykEan7w
-	17hXET31h6Mo2FCliMu1gpwwvk/AvK3B5TlNe1Spc/+rhsSJP1PEmsUSjrJh6ULjowADzG
-	i1kL5mrAFY/gvng4shqG2+hIvBc6cUk=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-376-mZeYtixNODibNF_EnDzVTg-1; Wed,
- 24 Jul 2024 10:23:21 -0400
-X-MC-Unique: mZeYtixNODibNF_EnDzVTg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2084B1955BF2;
-	Wed, 24 Jul 2024 14:23:18 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.96.134.38])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id ADC9219560AE;
-	Wed, 24 Jul 2024 14:23:13 +0000 (UTC)
-From: Wander Lairson Costa <wander@redhat.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	s=arc-20240116; t=1721831023; c=relaxed/simple;
+	bh=o1vyCWrOEnJSPhQeQwYVvcXBz00MEc+qFETtadk9VSI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DsNf58gacYCaL0GTOwj//RID0TdDooMTcAMoOioEqZH/61KZITRVh4P21+xq6O9efXbwM7ccbhRotSCTZhk1iCCDOaT+5CHPZP0VouywJiPMUgbafDDC3oxvRYMoUfMUUPKZmmTrENVo6R0Q16kq8ECpMgIxs2DT84ekEH0Aqz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hoG5ea6g; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52f04c29588so5039672e87.3;
+        Wed, 24 Jul 2024 07:23:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721831020; x=1722435820; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2EYPtwVexQejWeBwfrFohRS5AiySF5QR+M7wRajTBb4=;
+        b=hoG5ea6g9sd/S+wokS/B+SXiBqyKD/gPg++dMVIVOLd5JElxPnN+jcKphn5o2Wo9xi
+         gf4et5eeLibE+VN/P0gX/KMRQKUcpJz1qSPlpDLGzVGx0QcMOUC0FpUwGruumV7jrSVP
+         vrHihGdYZy5Jina26AuYWjsnvJ7VQw5YsStCuFueEaUwZ753S30vtbEXCb/IQDugZ6+e
+         qfOCn8N2HI1MSAx5Xyq6VnifIrDYCNL7c6yMyahWlADMx26FgtJTylUDf+EUTSdQsQJc
+         JJSnHGX9ugewNX3ti/k44GkrpIIU+Y8jVQM5TlaqRz9AZmDuz3fclOOHdwKdQJ3JnQdc
+         k4DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721831020; x=1722435820;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2EYPtwVexQejWeBwfrFohRS5AiySF5QR+M7wRajTBb4=;
+        b=D6aie0+JCCyysjl80W17bN9UnDJZw5i4cqVV8Zl1OK6ivDByoV6DvuQdFJkDXG4RXU
+         6ZCiHoIRt9krrWp1zupwjUkvWGCYyr/w+S2nQo/LzqBpoYvyiQ8hkTJtSwBcLDobABZy
+         Sp5ZalCba47LY7MLgon7Apy98NZHxHN/lil+brBltTB8SO9d/xncmXkA4Nm2nG8uC17Y
+         MmSMKH0+LEMHfsdc0bM/r8havyVZlhlWKYMTC4N/QEkJiUzD2vLcJ3orgtOwLbXYkBTR
+         idvx4DZYf6pNpNyD5K9ekNWv54uaswmqbmisCoMTJ5cczGdgmdyme9R8zkMt3xk5v3wk
+         3xog==
+X-Forwarded-Encrypted: i=1; AJvYcCW1KzCp1vpb4nim8vyCAljSCQX772fPsNiH7Im1CLgTMupu+ACnVgRJM36dgsGZ0EQOoH9EDgTWDoLYCbQ2Q1OkxMl7Ph9NV4rte2MTmiA971LPAC6Qh1E1cpkHn7pE9Lau
+X-Gm-Message-State: AOJu0YyRS7UgDXozbWHgfce1+4P5cgPZy0IaCLh0Hi1SbOnYAdcg5od9
+	6xrr8oMDRRC+l7QllCgClWOxYOXjZaeRWqjWtLRo6Ma33nNCw4vG
+X-Google-Smtp-Source: AGHT+IG6ntjpOTXF57UPyAUAZr4QB0ucUAojjGteAmif46ElLDnmFJ9mX0p+f502h0znfQmncnAgpA==
+X-Received: by 2002:ac2:4e05:0:b0:52e:9e53:6ccb with SMTP id 2adb3069b0e04-52efb7942c1mr8453657e87.17.1721831018239;
+        Wed, 24 Jul 2024 07:23:38 -0700 (PDT)
+Received: from pc636 (host-90-233-213-186.mobileonline.telia.com. [90.233.213.186])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52f0046ed98sm1366708e87.187.2024.07.24.07.23.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 07:23:37 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Wed, 24 Jul 2024 16:23:35 +0200
+To: Breno Leitao <leitao@debian.org>
+Cc: Waiman Long <longman@redhat.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
 	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org (open list:SCHEDULER)
-Cc: Wander Lairson Costa <wander@redhat.com>
-Subject: [PATCH v2 2/2] sched/deadline: Consolidate Timer Cancellation
-Date: Wed, 24 Jul 2024 11:22:48 -0300
-Message-ID: <20240724142253.27145-3-wander@redhat.com>
-In-Reply-To: <20240724142253.27145-1-wander@redhat.com>
-References: <20240724142253.27145-1-wander@redhat.com>
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Vratislav Bendel <vbendel@redhat.com>
+Subject: Re: [PATCH] rcu: Use system_unbound_wq to avoid disturbing isolated
+ CPUs
+Message-ID: <ZqEOZ8qPf1sadzB_@pc636>
+References: <20240723181025.187413-1-longman@redhat.com>
+ <ZqEB9Yz0womtmDRg@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZqEB9Yz0womtmDRg@gmail.com>
 
-After commit b58652db66c9 ("sched/deadline: Fix task_struct reference
-leak"), I identified additional calls to hrtimer_try_to_cancel that
-might also require a dl_server check. It remains unclear whether this
-omission was intentional or accidental in those contexts.
+On Wed, Jul 24, 2024 at 06:30:29AM -0700, Breno Leitao wrote:
+> On Tue, Jul 23, 2024 at 02:10:25PM -0400, Waiman Long wrote:
+> > It was discovered that isolated CPUs could sometimes be disturbed by
+> > kworkers processing kfree_rcu() works causing higher than expected
+> > latency. It is because the RCU core uses "system_wq" which doesn't have
+> > the WQ_UNBOUND flag to handle all its work items. Fix this violation of
+> > latency limits by using "system_unbound_wq" in the RCU core instead.
+> > This will ensure that those work items will not be run on CPUs marked
+> > as isolated.
+> > 
+> > Beside the WQ_UNBOUND flag, the other major difference between system_wq
+> > and system_unbound_wq is their max_active count. The system_unbound_wq
+> > has a max_active of WQ_MAX_ACTIVE (512) while system_wq's max_active
+> > is WQ_DFL_ACTIVE (256) which is half of WQ_MAX_ACTIVE.
+> > 
+> > Reported-by: Vratislav Bendel <vbendel@redhat.com>
+> 
+> I've seen this problem a while ago and reported to the list:
+> 
+> 	https://lore.kernel.org/all/Zp906X7VJGNKl5fW@gmail.com/
+> 
+> I've just applied this test, and run my workload for 2 hours without
+> hitting this issue. Thanks for solving it.
+> 
+> Tested-by: Breno Leitao <leitao@debian.org>
+>
+Thank you for testing this! I saw your recent email about that :)
 
-This patch consolidates the timer cancellation logic into dedicated
-functions, ensuring consistent behavior across all calls.
-Additionally, it reduces code duplication and improves overall code
-cleanliness.
-
-Note the use of the __always_inline keyword. In some instances, we
-have a task_struct pointer, dereference the dl member, and then use
-the container_of macro to retrieve the task_struct pointer again. By
-inlining the code, the compiler can potentially optimize out this
-redundant round trip.
-
-Signed-off-by: Wander Lairson Costa <wander@redhat.com>
----
- kernel/sched/deadline.c | 44 ++++++++++++++++++++++++++---------------
- 1 file changed, 28 insertions(+), 16 deletions(-)
-
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index 312e8fa7ce94..b509ac4f3f6d 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -320,6 +320,29 @@ void sub_running_bw(struct sched_dl_entity *dl_se, struct dl_rq *dl_rq)
- 		__sub_running_bw(dl_se->dl_bw, dl_rq);
- }
- 
-+static __always_inline
-+void cancel_dl_timer(struct sched_dl_entity *dl_se, struct hrtimer *timer)
-+{
-+	/*
-+	 * If the timer callback was running (hrtimer_try_to_cancel == -1),
-+	 * it will eventually call put_task_struct().
-+	 */
-+	if (hrtimer_try_to_cancel(timer) == 1 && !dl_server(dl_se))
-+		put_task_struct(dl_task_of(dl_se));
-+}
-+
-+static __always_inline
-+void cancel_replenish_timer(struct sched_dl_entity *dl_se)
-+{
-+	cancel_dl_timer(dl_se, &dl_se->dl_timer);
-+}
-+
-+static __always_inline
-+void cancel_inactive_timer(struct sched_dl_entity *dl_se)
-+{
-+	cancel_dl_timer(dl_se, &dl_se->inactive_timer);
-+}
-+
- static void dl_change_utilization(struct task_struct *p, u64 new_bw)
- {
- 	struct rq *rq;
-@@ -340,8 +363,7 @@ static void dl_change_utilization(struct task_struct *p, u64 new_bw)
- 		 * will not touch the rq's active utilization,
- 		 * so we are still safe.
- 		 */
--		if (hrtimer_try_to_cancel(&p->dl.inactive_timer) == 1)
--			put_task_struct(p);
-+		cancel_inactive_timer(&p->dl);
- 	}
- 	__sub_rq_bw(p->dl.dl_bw, &rq->dl);
- 	__add_rq_bw(new_bw, &rq->dl);
-@@ -490,10 +512,7 @@ static void task_contending(struct sched_dl_entity *dl_se, int flags)
- 		 * will not touch the rq's active utilization,
- 		 * so we are still safe.
- 		 */
--		if (hrtimer_try_to_cancel(&dl_se->inactive_timer) == 1) {
--			if (!dl_server(dl_se))
--				put_task_struct(dl_task_of(dl_se));
--		}
-+		cancel_inactive_timer(dl_se);
- 	} else {
- 		/*
- 		 * Since "dl_non_contending" is not set, the
-@@ -1805,13 +1824,8 @@ static void enqueue_task_dl(struct rq *rq, struct task_struct *p, int flags)
- 			 * The replenish timer needs to be canceled. No
- 			 * problem if it fires concurrently: boosted threads
- 			 * are ignored in dl_task_timer().
--			 *
--			 * If the timer callback was running (hrtimer_try_to_cancel == -1),
--			 * it will eventually call put_task_struct().
- 			 */
--			if (hrtimer_try_to_cancel(&p->dl.dl_timer) == 1 &&
--			    !dl_server(&p->dl))
--				put_task_struct(p);
-+			cancel_replenish_timer(&p->dl);
- 			p->dl.dl_throttled = 0;
- 		}
- 	} else if (!dl_prio(p->normal_prio)) {
-@@ -1976,8 +1990,7 @@ static void migrate_task_rq_dl(struct task_struct *p, int new_cpu __maybe_unused
- 		 * will not touch the rq's active utilization,
- 		 * so we are still safe.
- 		 */
--		if (hrtimer_try_to_cancel(&p->dl.inactive_timer) == 1)
--			put_task_struct(p);
-+		cancel_inactive_timer(&p->dl);
- 	}
- 	sub_rq_bw(&p->dl, &rq->dl);
- 	rq_unlock(rq, &rf);
-@@ -2732,8 +2745,7 @@ static void switched_from_dl(struct rq *rq, struct task_struct *p)
-  */
- static void switched_to_dl(struct rq *rq, struct task_struct *p)
- {
--	if (hrtimer_try_to_cancel(&p->dl.inactive_timer) == 1)
--		put_task_struct(p);
-+	cancel_inactive_timer(&p->dl);
- 
- 	/*
- 	 * In case a task is setscheduled to SCHED_DEADLINE we need to keep
--- 
-2.45.2
-
+--
+Uladzislau Rezki
 
