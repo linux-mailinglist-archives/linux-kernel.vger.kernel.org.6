@@ -1,167 +1,134 @@
-Return-Path: <linux-kernel+bounces-261093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E433B93B2BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:34:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E69FA93B2BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:35:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20CA31C23853
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:34:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 974C91F2132C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8244E158D8F;
-	Wed, 24 Jul 2024 14:33:56 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E03915957D;
+	Wed, 24 Jul 2024 14:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B+4ZvqnN"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADB12D030
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0894E1E50F
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721831636; cv=none; b=L494222RoD1yP96sGal2a+6TSjdzwSRc3XLHbcw3QdzZKOuk0KZiZHDa66TWhbgQ/k4TokL75TmKT9thuV2N0p60uofZneyKNx9qV1dVSd3cI40G2wn/y0ouE9WxbFeorzbaIfisz7ztfaQYY2nkof8oxy6Hlzv6dsydqgbcHXA=
+	t=1721831697; cv=none; b=qUGGjAz9Ke6yxXFqmQogEnmxKP9DifEb7z51MB/3l0anPYAVsISOJLplbk0ckxoGFBuEZmCocAJDhg0dVoyqEHs1p53qECJB9plbTiCEnbjqgkLs/JYNSoNG+7Y/MDt+hNsrKxcMY0jeXyrnu3i2zJA4kDaVBC4qE5WlJTCNsaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721831636; c=relaxed/simple;
-	bh=jLnKvSZlPOAnSOf1fn/4TEqyIhl6sYZr0GkcFdPm6IY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=YDJZynY4eUOwrybIDW6fmMBJ2793Z5Ict1+Uz59g30ye+B9FL+sXQYw+IS1vsLgUWzByvixnZSNE5zaq2pQD+Q4TGLVdo8Cy9vR+OCZkYrEhZFD4nxj1cReCnRiDo3OCkDkIGJfwz/8vvxtdKcT4SZ/+X0PdDq4oyN8FsyLs1pY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-310-eKrR_BFuOPKLqYqDBV76gg-1; Wed, 24 Jul 2024 15:33:51 +0100
-X-MC-Unique: eKrR_BFuOPKLqYqDBV76gg-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 24 Jul
- 2024 15:33:11 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 24 Jul 2024 15:33:11 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>, "'Linus
- Torvalds'" <torvalds@linuxfoundation.org>
-CC: "'Matthew Wilcox (Oracle)'" <willy@infradead.org>, 'Christoph Hellwig'
-	<hch@infradead.org>, 'Andrew Morton' <akpm@linux-foundation.org>, "'Andy
- Shevchenko'" <andriy.shevchenko@linux.intel.com>, 'Dan Carpenter'
-	<dan.carpenter@linaro.org>, 'Arnd Bergmann' <arnd@kernel.org>,
-	"'Jason@zx2c4.com'" <Jason@zx2c4.com>, "'hch@infradead.org'"
-	<hch@infradead.org>, "'pedro.falcato@gmail.com'" <pedro.falcato@gmail.com>,
-	'Mateusz Guzik' <mjguzik@gmail.com>, "'linux-mm@kvack.org'"
-	<linux-mm@kvack.org>
-Subject: [PATCH 7/7] minmax: minmax: Add __types_ok3() and optimise defines
- with 3 arguments
-Thread-Topic: [PATCH 7/7] minmax: minmax: Add __types_ok3() and optimise
- defines with 3 arguments
-Thread-Index: Adrd1nwhwSRYGwj9RxiIgqAQhw9FiA==
-Date: Wed, 24 Jul 2024 14:33:11 +0000
-Message-ID: <3484b7fcd2c74655bd685e5a7030c284@AcuMS.aculab.com>
-References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
-In-Reply-To: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1721831697; c=relaxed/simple;
+	bh=t5EUGcnche4/CSvOdCl3xbAPqqCIWm8X2sMW8nv5oIM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S08v7+BNZ2lfxmMQz+xidYDXe5dTL+SVzKPWlpGiXAAyA84EqNoHWsfT2467ia+q1kkz1HQ0A7YWKtPBwqn2pmHXBp9ioQzHjRJ13d9wwl1dU31B/lXrw+ROvHX2s1kaDapbkIDtRLJ3U0H/m+QMqUgClVZGOfS6IoPQLgXui+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B+4ZvqnN; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3683f56b9bdso3742352f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:34:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721831694; x=1722436494; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4VhERnVjZMf0Sg6OFzVS2dnAmWgxdNCZ5orzDkCtCZ0=;
+        b=B+4ZvqnN87B6UI1BppKescHNl/KPjC19QGGLa3JYIgPG8LXooBDfkpEd5adNEOnfRL
+         wE90NqFV2ZwLFYfmAmDwWoQ0rKkFhT4g8ZZ2ehq1nY87Pjjy4nd3hqxSa00b3qZZ82J5
+         /m6+eHu7/CXx8bSw6agwHBMpXROQzgW5VCeQZarBp5FOStCBImwmaO00aornV+pOJypO
+         S4A0p4B7j1veSDH3XvvX6FyYLMCWSKgOzyq7zEvqidf7SKC0F9dHXkjy3fYc0Aht7Knm
+         x5cOt+USK8fSvPpcJbiBtZhOygTCMXm2S6qoo1pMSx09vLrKHjLYdMMbs9L+hg77uuQ5
+         ExwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721831694; x=1722436494;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4VhERnVjZMf0Sg6OFzVS2dnAmWgxdNCZ5orzDkCtCZ0=;
+        b=EPrc0AwWUrFNYc5geIqrLOD8mwVCQxDXro8qTVNywiLsmmt2yr8fEWg9OhAFBe0UiU
+         nqzu1gz5A/xl4bQJuWJKuGBlER4cwcjCJwYSGX8f5h3URFiNa3R1F9N8xmDERZ7ADCXT
+         teSBFemLJqNfdOCnMxB+VR9tIU+QThxwQ4kUFPkWjyYhvFRP2wS6eB02QCWcD4FXoH2I
+         X851ET+DOh+Iu24WkH2jZPvOs+C0BObymrKlPUPb6C6h6h9HMMQvllGHSVhylF/mYEVk
+         CARSYH4A01vR1bj7T6e4mAXLZymnFE6jOIoj45+B4JkCORWi4SkDFrji8z33BkSanz0x
+         q/Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCXroBd+clrTBXU2+RJm4Uk2pejX/ZnAatYNCPFp/XirHuhxpnAflL6WVjo4+5+3Lt4NERfvKwzLS2Sy713gVoNYxaN27rZb4hnYsuzz
+X-Gm-Message-State: AOJu0YzPTKuczOhQml4aEMn7KVCGObt1IC3qgvtRSj2Qqj7sa0uTJ2nN
+	WQJJ2i4lxWf9yH/d5akgLbnfiM5xGmMXm1Qj2fOWlaq0u6/qfTb61OaNfVC+7RI=
+X-Google-Smtp-Source: AGHT+IHlr0nOuurrzX3Z4gyyCK7iSTvctyAT+dqqlEdpLLITtmGkF24655oMdP6cxoltl8ni+fS6TQ==
+X-Received: by 2002:a05:6000:1884:b0:368:5e34:4b4b with SMTP id ffacd0b85a97d-369f5b162b1mr1808467f8f.6.1721831694301;
+        Wed, 24 Jul 2024 07:34:54 -0700 (PDT)
+Received: from localhost.localdomain ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-368787ebab0sm14657816f8f.92.2024.07.24.07.34.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 07:34:53 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+To: coresight@lists.linaro.org,
+	gankulkarni@os.amperecomputing.com,
+	mike.leach@linaro.org,
+	leo.yan@arm.com,
+	suzuki.poulose@arm.com
+Cc: James Clark <james.clark@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Ruidong Tian <tianruidong@linux.alibaba.com>,
+	Benjamin Gray <bgray@linux.ibm.com>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] perf scripts python: cs-etm: Update example to provide vmlinux path to Perf
+Date: Wed, 24 Jul 2024 15:33:18 +0100
+Message-Id: <20240724143319.169745-1-james.clark@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-min3() and max3() were added to optimise nested min(x, min(y, z))
-sequences, bit only moved where the expansion was requiested.
+The example shows the vmlinux path being given to the script, but this
+only works when running on the target. If the script is run off the
+target, then confusingly the vmlinux argument also needs to be given to
+Perf as well.
 
-Add a separate implementation for 3 argument calls.
-These are never required to generate constant expressiions to
-remove that logic.
+Without going into too much detail in the example about when it is or
+isn't required, just include it. It doesn't do any harm even when
+running on the target. Now the example command works in both places.
 
-Signed-off-by: David Laight <david.laight@aculab.com>
+Signed-off-by: James Clark <james.clark@linaro.org>
 ---
- include/linux/minmax.h | 25 ++++++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
+ tools/perf/scripts/python/arm-cs-trace-disasm.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/minmax.h b/include/linux/minmax.h
-index 2fb63efbeb0e..4bbc82c589cf 100644
---- a/include/linux/minmax.h
-+++ b/include/linux/minmax.h
-@@ -38,6 +38,11 @@
- =09((__is_ok_signed(x) && __is_ok_signed(y)) ||=09\
- =09 (__is_ok_unsigned(x) && __is_ok_unsigned(y)))
-=20
-+/* Check three values for min3(), max3() and clamp() */
-+#define __types_ok3(x, y, z)=09=09=09=09=09=09=09\
-+=09((__is_ok_signed(x) && __is_ok_signed(y) && __is_ok_signed(z)) ||=09\
-+=09 (__is_ok_unsigned(x) && __is_ok_unsigned(y) && __is_ok_unsigned(z)))
-+
- #define __cmp_op_min <
- #define __cmp_op_max >
-=20
-@@ -90,13 +95,24 @@
-  */
- #define umax(x, y)=09__careful_cmp(max, __zero_extend(x), __zero_extend(y)=
-)
-=20
-+#define __cmp_once3(op, x, y, z, uniq) ({=09\
-+=09typeof(x) __x_##uniq =3D (x);=09=09\
-+=09typeof(x) __y_##uniq =3D (y);=09=09\
-+=09typeof(x) __z_##uniq =3D (z);=09=09\
-+=09__cmp(op, __cmp(op, __x_##uniq, __y_##uniq), __z_##uniq); })
-+
-+#define __careful_cmp3(op, x, y, z, uniq) ({=09=09=09=09\
-+=09static_assert(__types_ok3(x, y, z),=09=09=09=09\
-+=09=09#op "3(" #x ", " #y ", " #z ") signedness error");=09\
-+=09__cmp_once3(op, x, y, z, uniq); })
-+
- /**
-  * min3 - return minimum of three values
-  * @x: first value
-  * @y: second value
-  * @z: third value
-  */
--#define min3(x, y, z) min((typeof(x))min(x, y), z)
-+#define min3(x, y, z) __careful_cmp3(min, x, y, z, __COUNTER__)
-=20
- /**
-  * max3 - return maximum of three values
-@@ -104,7 +120,7 @@
-  * @y: second value
-  * @z: third value
-  */
--#define max3(x, y, z) max((typeof(x))max(x, y), z)
-+#define max3(x, y, z) __careful_cmp3(max, x, y, z, __COUNTER__)
-=20
- /**
-  * min_t - return minimum of two values, using the specified type
-@@ -139,10 +155,9 @@
- =09typeof(val) unique_val =3D (val);=09=09=09=09=09=09\
- =09typeof(lo) unique_lo =3D (lo);=09=09=09=09=09=09\
- =09typeof(hi) unique_hi =3D (hi);=09=09=09=09=09=09\
--=09_Static_assert(__if_constexpr((lo) <=3D (hi), (lo) <=3D (hi), true),=09=
-=09\
-+=09_Static_assert(__if_constexpr((lo) <=3D (hi), (lo) <=3D (hi), true),=09=
-\
- =09=09"clamp() low limit " #lo " greater than high limit " #hi);=09\
--=09_Static_assert(__types_ok(val, lo), "clamp() 'lo' signedness error");=
-=09\
--=09_Static_assert(__types_ok(val, hi), "clamp() 'hi' signedness error");=
-=09\
-+=09_Static_assert(__types_ok3(val, lo, hi), "clamp() signedness error");=
-=09\
- =09__clamp(unique_val, unique_lo, unique_hi); })
-=20
- #define __careful_clamp(val, lo, hi) ({=09=09=09=09=09\
---=20
-2.17.1
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+diff --git a/tools/perf/scripts/python/arm-cs-trace-disasm.py b/tools/perf/scripts/python/arm-cs-trace-disasm.py
+index 7aff02d84ffb..4aeb9b497f7a 100755
+--- a/tools/perf/scripts/python/arm-cs-trace-disasm.py
++++ b/tools/perf/scripts/python/arm-cs-trace-disasm.py
+@@ -19,10 +19,10 @@ from perf_trace_context import perf_set_itrace_options, \
+ # Below are some example commands for using this script.
+ #
+ # Output disassembly with objdump:
+-#  perf script -s scripts/python/arm-cs-trace-disasm.py \
++#  perf script -k path/to/vmlinux -s scripts/python/arm-cs-trace-disasm.py \
+ #		-- -d objdump -k path/to/vmlinux
+ # Output disassembly with llvm-objdump:
+-#  perf script -s scripts/python/arm-cs-trace-disasm.py \
++#  perf script -k path/to/vmlinux -s scripts/python/arm-cs-trace-disasm.py \
+ #		-- -d llvm-objdump-11 -k path/to/vmlinux
+ # Output only source line and symbols:
+ #  perf script -s scripts/python/arm-cs-trace-disasm.py
+-- 
+2.34.1
 
 
