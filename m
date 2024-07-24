@@ -1,129 +1,134 @@
-Return-Path: <linux-kernel+bounces-261576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B37493B953
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 00:54:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9729093B956
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 00:55:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA4AC2845C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 22:54:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C85891C22AF7
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 22:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E5D143882;
-	Wed, 24 Jul 2024 22:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08642140397;
+	Wed, 24 Jul 2024 22:55:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="oI/1eCgE"
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IQLrXnC1"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6660013C918
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 22:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE5A13A40F;
+	Wed, 24 Jul 2024 22:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721861674; cv=none; b=frmwgJgwpRv6jYZ5X/nNmESBydlkzj6Uib6G3U1A3S5Lce1Kwbd2/z9Sx3o8frs14NzwI8KW5fetyYgVMGe0IQJfEXG37VlhaLT2h4fFLRgEO1EP/riRReJD3g5vMee+ZcCL9Ul1NGDZ2hPCL+Lkz8ra1hC6ZWY02cniM8d0ZGU=
+	t=1721861699; cv=none; b=UO2FXxd/T9UGKNj52PQxIustm9EJxcv2258Ap9XOKkFQ81QSwZkaukXejcS7XNWYcmPnJFxc+6Cj1ylEeDKvqZaV6PnaS58TAAabfrmaaYGcLw047Wdi7DE0nK4IKOjsFxQvOMLYhqkR6MJ/o7+8mXJ0Ts1KFGrxwXgeE0jLRDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721861674; c=relaxed/simple;
-	bh=4M35RJ0MrhFzvtO/gpzcZAZGyvkPqgVAOXcftDMuvps=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BjDuAbkIAxec235eI7+eD4qTHxb9UDGoukHjI55joqVBpyFnPJkugcWKbQD4A/T7Wg4GGgZ4JBPrQaoDvNMxa2SJu1gEfWNDh2alEihx5PDpSD4rUwpwVynL5Kg/LtKNhMuOnV+y9vBpPDhl78z28CXW0SIOSeHEN82WGUDFENw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=oI/1eCgE; arc=none smtp.client-ip=209.85.160.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-260e5b2dfb5so145500fac.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 15:54:32 -0700 (PDT)
+	s=arc-20240116; t=1721861699; c=relaxed/simple;
+	bh=8q7IkJjxtzb0aTmQe0EXlGIpImkJtuK206xkJPqHA3E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BULn8SLYUOlBN4Ea2tNKIM9FPq6QohMZrmhv3xivF0kAmr8nCMlav7ytSdwaasl8ZW0pmiLWeAiPPeCXChXElqaxSvIeHxsznF3g0GWioViLV6U9DacVphtjIoCPFPiRn3pU9QoTEXDJYMFmPrW7T2UWFB4cKGQiwwzJJ4jLeVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IQLrXnC1; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7aa212c1c9so44952266b.2;
+        Wed, 24 Jul 2024 15:54:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721861671; x=1722466471; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BSkmGq7ZrZbXdHouXcfFGOgcX1f8uJ3n8uj4r7vA1PE=;
-        b=oI/1eCgECsTYCFEA0gQCJhXJ82oFmmIiP04yF7Fe5eVU2zyiHJ+yyX/uEMtzPNwSIz
-         +UjB75/bMxLwy3ShA+p9pgkbwyuY1Ythp6O5wKE6Zzg4+fJiV5u1RQ4WoDfqlX3GSD2J
-         YBzY4pV6zLXcyqBuFxie0xqnzP8UTDQdkgckkqXmqh/E2/NbM8VZLtMrWp8IBQaRFHpa
-         RZec0u1CZSr16Lkf+jMGPxPWCuLzaH6Q4i5elCeR6pUfe64lsZJbggOvZkBVZ3ytBmTR
-         huEirdnB1u7dIOslpeSer/oKuVkk/7uMQHeg2nF88sP1HG7kV1rNjGAiwEgRk2f10RBj
-         2Iig==
+        d=gmail.com; s=20230601; t=1721861696; x=1722466496; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=8q7IkJjxtzb0aTmQe0EXlGIpImkJtuK206xkJPqHA3E=;
+        b=IQLrXnC18rdXbBivvYIFYC2vU9yMtR2zhCVJDj4/gDZL/vO7Yysgd8ZNAZCDVzzAxO
+         Hq3qjU+DJU7O8+772G1O2fkh1w6u0ENONT9u/DOHsIY1oQ62EpPwby46y61EKP7NlzH+
+         1P5wQVZV2IgQwnPfG1tkrQE14a24+GtzTJQrsYDfCyt/dYnmELC0WzlNmHoHOnalXilM
+         iVme1SDTd7XrRP4zoOkyMqgbsNHa4iwb17jhWAvWs924gnSAqa3sQT3EIbwC8SNGXiXY
+         M0Kg65zJXha0D9fzA7O1Oia/Bnr2cMzEvPjafLmz2wtfi43ptCjK436LXzWzRU3DCe2w
+         vxZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721861671; x=1722466471;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BSkmGq7ZrZbXdHouXcfFGOgcX1f8uJ3n8uj4r7vA1PE=;
-        b=iNavehxR7EjS6VGSe63GwKN4Mna6Glc7Kz+kEwTp2Ou8NinN+P9co85xKGA5BjdcIW
-         7JKoiWAEcldYL4XvRvEyjwgjsNEAdkkaKOJk1QoNNKOWfoRbYDnW4ryAVz9hCgs1Frug
-         Mm6Ae0/jL/f8FJlHcLt7PItBfmgr1BfbXoAXw7FYXoFDG986qXZp8FSZ3tzg4H2emyBQ
-         C0CPVmPO4XABuy0eZ64VftpE41h7wTckzbtxojtjWPbIxtS1lTcxjmPi7wj6yrP+MYUP
-         UtIr2M2IZVDc1vgrNq6R1Fyf8AspLoiQhUSYJEbjuPnw45aFn4ZALrtOlbIFUh8iAqlu
-         mUDw==
-X-Forwarded-Encrypted: i=1; AJvYcCVp5NVsagHEtUXX/0OCMB4LUIwgd/ZOxnRwLZzLHEiz5DzQVs2ISLH65o+NvfydXuWmtD0Py3F5bgbSM4G3+rsOe8lKtKo6SRh176Gu
-X-Gm-Message-State: AOJu0YwB1PU47hCpdmmsERRBbSzpITrNii+eaGWm1LGVkJzl36CGLpdX
-	paRX2mNelCBJHNyuLb73RMn7R1x7bAShGfLOK8bUACR4RkkwuzfxnV6hmKT4KzTxeNt/CUBxUHq
-	V
-X-Google-Smtp-Source: AGHT+IEkOVbZUMgs8KjJIn54klAlrolAUh6zjRu2D3dQNCcUv5496n2AzBl9GvX9rDRx8tTdsQtvTw==
-X-Received: by 2002:a05:6871:6001:b0:260:fc8c:2d28 with SMTP id 586e51a60fabf-264a0e0b39cmr1137866fac.22.1721861671250;
-        Wed, 24 Jul 2024 15:54:31 -0700 (PDT)
-Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead874c6fsm74992b3a.165.2024.07.24.15.54.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 15:54:30 -0700 (PDT)
-From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Wed, 24 Jul 2024 15:54:12 -0700
-Subject: [PATCH 2/2] perf: Document PERF_EVENT_IOC_SET_EVENT_LIMIT
+        d=1e100.net; s=20230601; t=1721861696; x=1722466496;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8q7IkJjxtzb0aTmQe0EXlGIpImkJtuK206xkJPqHA3E=;
+        b=cT9t4ydE6qAvvZLMyVbp0LgNnmCrtQz0jeJuKhgcsrpt4rNBStDMDf7ZvzLUNBt+aJ
+         IwAzD6c8CU//RQoOgxZRS97Qykb+RELewVEaUPwUgPknmqBVJCYCwOcA3uZxnYfwa00o
+         Ovt5aYyYJ6SFnXVDkvOcj6FTQf3vscigNYfirsFwwENVKb+5uuVLcUdvDtyczL0o2o8b
+         Ly9sQFK/5DqPBkgjM5sSENLtbpAEZ6g6gbzXQuWJpGVDRG4/yh22V1FG/CraSSCXg9N+
+         Bqj0E+kdJ6ZjBquKJ+4L/arzvH4+7jjT9WvHYQ8MYb4YJTalTTQXCWuMuNhHxmIHJa4M
+         gS3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUMKN0ew1MoOVlvnLcKZ1f8Ei41OXQfds3S+ZEV/76fWiSEHg41ILLIiNW09fGyMa0PN2TrAHEiXi7bBGAU2W5iA6NwQDX1hB6nZCl4
+X-Gm-Message-State: AOJu0YwXgRS0vEpKzW7S6Yq80HcVog/LctYv2eTaH9IQmVT8s+c5h8Od
+	ApfIoLVws2X1Qrg339QelCfUiNmDgaJoO5k4C6QZNhQciJz7RXf6T3iv++1B5ym10RpELBusqGE
+	cvOP6NnB1tDz7MrFD3Sxz5zJ9LODS8eDK
+X-Google-Smtp-Source: AGHT+IHCATzoVX1ibTZlJdNaGcDiy9mq8ZX+68bRfy/aSXImYudAml2L0A/lT9DYNh+QIRmIZt+vM6U6vxZ8gHif3qA=
+X-Received: by 2002:a17:906:e4f:b0:a6f:8265:8f2 with SMTP id
+ a640c23a62f3a-a7ac4f40e11mr48161966b.37.1721861695779; Wed, 24 Jul 2024
+ 15:54:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240724-perf_set_event_limit-v1-2-e680c93eca55@rivosinc.com>
-References: <20240724-perf_set_event_limit-v1-0-e680c93eca55@rivosinc.com>
-In-Reply-To: <20240724-perf_set_event_limit-v1-0-e680c93eca55@rivosinc.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
- Adrian Hunter <adrian.hunter@intel.com>, Atish Patra <atishp@rivosinc.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Charlie Jenkins <charlie@rivosinc.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1721861667; l=886;
- i=charlie@rivosinc.com; s=20231120; h=from:subject:message-id;
- bh=4M35RJ0MrhFzvtO/gpzcZAZGyvkPqgVAOXcftDMuvps=;
- b=Ft1lYHdZdmWJU19FBYN1LMTLSqpqK9Wblkotv6+rB4MEMMnCzwlA1VGTJPEZ6Ma4ZEXBf2s4b
- gWs9Eg58Rr4AyJkOjYV2FmoT85V2BsuXM+5lI0uCnMS6HfFmTK5vsvq
-X-Developer-Key: i=charlie@rivosinc.com; a=ed25519;
- pk=t4RSWpMV1q5lf/NWIeR9z58bcje60/dbtxxmoSfBEcs=
+References: <cover.1721784184.git.jamie.bainbridge@gmail.com>
+ <066463d84fa14d5f61247b95340fca12d4d3bf34.1721784184.git.jamie.bainbridge@gmail.com>
+ <c20dcbc18af57f235974c9e5503491ea07a3ce99.camel@sipsolutions.net> <0042d3c7d695ed7b253ccbc7786888dc3b400867.camel@sipsolutions.net>
+In-Reply-To: <0042d3c7d695ed7b253ccbc7786888dc3b400867.camel@sipsolutions.net>
+From: Jamie Bainbridge <jamie.bainbridge@gmail.com>
+Date: Thu, 25 Jul 2024 08:54:44 +1000
+Message-ID: <CAAvyFNjipHCvhy0=1T1JDFAFFUDvL_wOVFFGpdyNqY_SOVNfgQ@mail.gmail.com>
+Subject: Re: [PATCH net 1/4] net-sysfs: check device is present when showing carrier
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Jiri Pirko <jiri@resnulli.us>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Introduce PERF_EVENT_IOC_SET_EVENT_LIMIT and explain the differences
-between it and PERF_EVENT_IOC_REFRESH.
+On Wed, 24 Jul 2024 at 19:42, Johannes Berg <johannes@sipsolutions.net> wrote:
+>
+> On Wed, 2024-07-24 at 11:35 +0200, Johannes Berg wrote:
+> > On Wed, 2024-07-24 at 01:46 +0000, Jamie Bainbridge wrote:
+> > > A sysfs reader can race with a device reset or removal.
+> >
+> > Kind of, yes, but please check what the race actually is.
+> >
+> > > This was fixed for speed_show with commit 4224cfd7fb65 ("net-sysfs: add
+> > > check for netdevice being present to speed_show") so add the same check
+> > > to carrier_show.
+> >
+> > You didn't say why it's needed here, so ... why is it?
+> >
+> > FWIW, I don't think it actually _is_ needed, since the netdev struct
+> > itself is still around, linkwatch_sync_dev() will not do anything that's
+> > not still needed anyway (the removal from list must clearly either still
+> > happen or nothing happens in the function). This will not call into the
+> > driver (which would be the problematic part).
+> >
+> > So while I don't think this is _wrong_ per se, I also don't think it's
+> > necessary, nor are you demonstrating that it is.
+> >
+> > And for userspace it should be pretty much immaterial whether it gets a
+> > real value or -EINVAL in the race, or -ENOENT because the file
+> > disappeared anyway?
+> >
+>
+> All of which, btw, is also true for patches 3 and 4 in this set.
+>
+> For patch 2 it seems applicable.
+>
+> I do wonder if ethtool itself, at least ethtool netlink, doesn't have a
+> similar problem though, since it just uses netdev_get_by_name() /
+> netdev_get_by_index()?
+>
+> johannes
 
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
----
- tools/perf/design.txt | 5 +++++
- 1 file changed, 5 insertions(+)
+You are correct, patch 2 (duplex) is the one where we panicked during
+device reset. I thought to fix the other "show" functions in advance
+while I was there.
 
-diff --git a/tools/perf/design.txt b/tools/perf/design.txt
-index aa8cfeabb743..1626ae83785a 100644
---- a/tools/perf/design.txt
-+++ b/tools/perf/design.txt
-@@ -439,6 +439,11 @@ Additionally, non-inherited overflow counters can use
- 
- to enable a counter for 'nr' events, after which it gets disabled again.
- 
-+PERF_EVENT_IOC_REFRESH will increment the event limit by 'nr' and enable the
-+event. To increment the event limit without enabling it, use the following:
-+
-+	ioctl(fd, PERF_EVENT_IOC_INC_EVENT_LIMIT, nr);
-+
- A process can enable or disable all the counter groups that are
- attached to it, using prctl:
- 
+I will revise this and re-submit with only the necessary patch.
 
--- 
-2.44.0
+Thanks for the review, it is appreciated.
 
+Jamie
 
