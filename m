@@ -1,113 +1,134 @@
-Return-Path: <linux-kernel+bounces-261287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C6F393B537
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:43:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA3D93B53B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3758E28450F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:43:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2130AB23B98
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99BD815ECEC;
-	Wed, 24 Jul 2024 16:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A4A15EFA3;
+	Wed, 24 Jul 2024 16:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b="aVvCsBJ1"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bxZHiUvg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A8415A874
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 16:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E022561B;
+	Wed, 24 Jul 2024 16:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721839386; cv=none; b=irNfKKNxazl1J1kV9sfIqfqZ/aWHDm2gOk6i14OvCbTrWPi+0RUZPAmTSn/JX2QtrOMA8kO4BHoehhvKmup6/35JVg/SyyS6bVGh6L6w3QKaQpDVl69i8N62rqROEC5uPFam073TFxpVdDTDwSxlBvq1gZainleM8IGWc8eSpDA=
+	t=1721839433; cv=none; b=AZZOfpNCr9ARe9hfX+maBCEMhuLp/r/iufjF0Q5YlKzNdnGLNArkMjBjbCPmT4U7WG5Y+Ge7Pf5T0vFXswrAWKKGfK855UfVNz79ptTAmmhTKGCC2HNBCi1fFYM0m5EojO1nGZlOaOqzb/K9uuwhqPKDUJBoAlaanUO5KTYSZs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721839386; c=relaxed/simple;
-	bh=XnBSi4lJYwqPS7JvayepIZdhilljl7iydbSuuQDgHeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qEbK00Qo26ExZQIth0ai5qpdpOz9LB1rWV+NHP9kmuQprs9IGW8OjkgXhM/b0fE9EexwNeclj+mN+ZFmbycOoL6u6BzJqha9j0lSvexVb5CHiem19f1JA0OI8ocjXcksKqOV9TlTdPLlVX9ic+zO7bC0mESaQbyXK93JIAFXhrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org; spf=pass smtp.mailfrom=linuxtx.org; dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b=aVvCsBJ1; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxtx.org
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-816d9285ebdso575739f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 09:43:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxtx.org; s=google; t=1721839383; x=1722444183; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sEJs/m1LfDi05lj71qThBLJVfg82KFHAF0JSUzDWDf0=;
-        b=aVvCsBJ1nn4Je1cCQAi3Q2bYum94d7ga0tFJF7/xUH6l5cbmgeM5oUNki5nO2FdBqs
-         FowoKQEuNX9P9c/1IOUoHRdJPwmDBm15VHUDry8E0t/qDZTBrRcohToNd6Zpfp4Kb/Tu
-         ya8CXIcMbjEu9dbY7WxSA5GHXxj+ltjc0+XrE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721839383; x=1722444183;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sEJs/m1LfDi05lj71qThBLJVfg82KFHAF0JSUzDWDf0=;
-        b=sSrkZuGbziBF1sKIGAD/T8gMuXDHX4pT9MkK/RHcmER4rKUDcjNFv0cglRmMFWJWnK
-         NhbLQwifhi3cFTaTDtUNBEmY5pg6FLmJZ76W0sbS92aKDithKoHbOuy9tYDoOE0llPK8
-         Jx1JRreuTBoaz5dCGkudj+BpKqvFrR92HsU7m2y+e07r3/WwqnnaReUvaExB1L9fQZB/
-         DbU/Mzg3WR6tQQq8dx4Ir3bl4Q083tN++hfCOEh0fVS3o1uDVQdC0+c9LKoGqCZsiEBY
-         R6qVRRMmwa2saKnUwXp5Y9DK6Yr0lbPTwWeyqjafXkcJN4SrBycROwnTidqxF9rvhh4E
-         Ihgg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCI6vjN9lP6aoGhVtJ8z3UchBryOl3Xxn66WNy0SrDLoJcAp4vBew+xWleuS/woqCnBHJpIPfPUbU8QzAvpxc4P7C4tg8JWOwjY57D
-X-Gm-Message-State: AOJu0YxWR1gzOnsCUd3u881WsUPrdrS59KNgvGzHvsqL953eAQpCpuH2
-	KhmIcEhbqXH+kl3klI4dnhznFV8WC2PsthKD2eb4T6aSGDULKlys+foFM35rbA==
-X-Google-Smtp-Source: AGHT+IEOh68yrb3+/ES/BDsvfk4lSOZpn9NTCMqLMBdmSacZPA1m1SxGq6eHvO1XgEDls8X7NMrdrA==
-X-Received: by 2002:a05:6602:6417:b0:816:ec51:f415 with SMTP id ca18e2360f4ac-81f7ba78fb7mr63172139f.0.1721839383230;
-        Wed, 24 Jul 2024 09:43:03 -0700 (PDT)
-Received: from fedora64.linuxtx.org ([72.42.103.171])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-81f7158d719sm56744939f.8.2024.07.24.09.43.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 09:43:02 -0700 (PDT)
-Sender: Justin Forbes <jmforbes@linuxtx.org>
-Date: Wed, 24 Jul 2024 10:43:00 -0600
-From: Justin Forbes <jforbes@fedoraproject.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.9 000/163] 6.9.11-rc1 review
-Message-ID: <ZqEvFNTOyOEgyAl4@fedora64.linuxtx.org>
-References: <20240723180143.461739294@linuxfoundation.org>
+	s=arc-20240116; t=1721839433; c=relaxed/simple;
+	bh=5JmJLMt7znCx017pyPoIq7UZLeqlEodflBEYHrF8fZE=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=l8Zoj8ANgcZbCYcazivfQvBYnH1s/XUZu4U27sUadIjmaAjaa2zRZYi/7JJZ40nJ9+F4nCtlhE7wkkp6RB7SNXblOv1ubOpGy5LJ7HJ2EJz3CVEQK9PgfhKQWvQoC8KTu6e/2nB+xfy+FxfszWrmUGjr14LcjA87Zm1b21l1gyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bxZHiUvg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06C00C32781;
+	Wed, 24 Jul 2024 16:43:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721839433;
+	bh=5JmJLMt7znCx017pyPoIq7UZLeqlEodflBEYHrF8fZE=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=bxZHiUvgdMDRZyD+uEK7AGz9ydWj6piRkVdNTEMzXbUgH6a9S8WhJK2WlTH/UAQT+
+	 i1O5hFChGTrC1kpcn7tU65mAQuQEPTMJkdMls38ULic5J9qhKqHmxETrZb9o2m5JGB
+	 8rsnE9PHCFOljmgiF+JvLIds1sd/s1QgyA/uMat7+ATCfZ6Muc9WTrcxJtYVR4uNe1
+	 S2MmpN+xVRZnM+beliSZALPZo010JzwpZ06hj+9ZVH+KYQ+Q5E+0xbEXD0x0D0iMC/
+	 biOORFTmwTJyQ6jD1ZiD73Yyr6i/Q2TDRKnI7UqhshKwXnzPqlzCvkBp3XWMOuiZNd
+	 IhDYJMcXZfPPQ==
+Date: Wed, 24 Jul 2024 11:43:51 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240723180143.461739294@linuxfoundation.org>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: fabrice.gasnier@foss.st.com, 
+ Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+ Lars-Peter Clausen <lars@metafoo.de>, alsa-devel@alsa-project.org, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-iio@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+In-Reply-To: <20240724153639.803263-5-olivier.moysan@foss.st.com>
+References: <20240724153639.803263-1-olivier.moysan@foss.st.com>
+ <20240724153639.803263-5-olivier.moysan@foss.st.com>
+Message-Id: <172183943127.3135721.14675824897973213166.robh@kernel.org>
+Subject: Re: [PATCH v5 4/9] dt-bindings: iio: dfsdm: move to backend
+ framework
 
-On Tue, Jul 23, 2024 at 08:22:09PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.9.11 release.
-> There are 163 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 25 Jul 2024 18:01:03 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.11-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
 
-Tested rc1 against the Fedora build system (aarch64, ppc64le, s390x,
-x86_64), and boot tested x86_64. No regressions noted.
+On Wed, 24 Jul 2024 17:36:32 +0200, Olivier Moysan wrote:
+> Change the DFSDM binding to use the new IIO backend framework,
+> along with the adoption of IIO generic channels.
+> This binding change allows to add scaling support to the DFSDM.
+> 
+> Keep the legacy binding as deprecated for backward compatibility.
+> 
+> The io-backends property is supported only in generic IIO channel
+> binding.
+> 
+> - Channel description with the generic binding (Audio and Analog):
+> 
+>   Properties superseded by generic properties:
+>     st,adc-channels: becomes "reg" property in channel node
+>     st,adc-channel-names: becomes "label" property in channel node
+>   Properties moved to channel child node:
+>     st,adc-channel-types: becomes st,adc-channel-type
+>     st,adc-channel-clk-src, st,adc-alt-channel
+> 
+> - Analog binding:
+> 
+>   DFSDM filter channel is configured as an IIO backend consumer.
+>   Add io-backends property in channel child nodes.
+> 
+>   DFSDM is no more configured as a channel consumer from SD modulator.
+>   Use of io-channels in DFSDM node is deprecated.
+> 
+> - Audio binding:
+> 
+>   DFSDM audio DAI is configured as a channel consumer from DFSDM filter.
+>   No change compare to legacy.
+> 
+> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+> ---
+>  .../bindings/iio/adc/st,stm32-dfsdm-adc.yaml  | 124 +++++++++++++++---
+>  1 file changed, 108 insertions(+), 16 deletions(-)
+> 
 
-Tested-by: Justin M. Forbes <jforbes@fedoraproject.org>
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml:421:4: [error] no new line character at the end of file (new-line-at-end-of-file)
+
+dtschema/dtc warnings/errors:
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240724153639.803263-5-olivier.moysan@foss.st.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
