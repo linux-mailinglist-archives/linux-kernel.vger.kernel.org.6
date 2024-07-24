@@ -1,124 +1,143 @@
-Return-Path: <linux-kernel+bounces-261234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9449093B47D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:07:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B9C93B48B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A2361F231E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:07:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4CA5B21692
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B71115D5C5;
-	Wed, 24 Jul 2024 16:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DF315D5DA;
+	Wed, 24 Jul 2024 16:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F6briLkj"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gyXEaU+5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA3F15B0FA
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 16:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3B51BF38;
+	Wed, 24 Jul 2024 16:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721837221; cv=none; b=YotEdRhYhkAMZwHgQNxS0q10mag0TPCRRLJP6CfZhEEO4xiCl4oV8zoT5dBIVrsEDDPh/g6eZUhRNysvURMzJzCGPS8c8rfE8/3m3vzWr0pMZ/8oqprNCAUvXWWWhLDrLtlw1W3VtKA2oXJN5TGdMBXvhvdbwBx3+dFlIFMq62E=
+	t=1721837368; cv=none; b=DwKroXfr+rQM+OEDailuc+qYhkP0GxlOItIx6rw8X8BbndxnB3lWLMYUSXvGE0JXAUzi6K6SPa55DcPQy2hAJ7UsK0Bi4GpIJZ3fJEijoDJVheAdSrsFNMRqH0O5ckWIsCnh4jZfwmXbc6wOfXxY/Xgii9BCzzXDqMfNga8I2P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721837221; c=relaxed/simple;
-	bh=CqGehawQopzO0+MqKtuM0KuKVC/NihG+re/9nwFvxcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=MgHJIrJaBnxe+x69gfnlxGZ30JqaOuhxPg5U6RgvSIJbim4XH4ilbISDCO6NmYWuB51+5MXdxR9gA+6xrI8+lMKP6QxoNMlIs5/L0WmfKlFcdHvZcKChuQf03R7Lm4LvGhUgN4Yp7891aM9bNkWzIYadOqnoOWn09CWdhPREi6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F6briLkj; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-70364e06dc6so3149461a34.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 09:07:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721837219; x=1722442019; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WL00ffx6FZOS+gjuVcqsGTl485DZxHlIKJfADzNE310=;
-        b=F6briLkj4+xU0WPPF0eVPTrUO1hW2W78TDAEOH0MYXBXg4ZvKWE/J8jWaC9JzTQnQj
-         1ffiUCbwm4ABKHe3CY1+pJxzfoKvPJrEy+9oM7dsnoFWm/LIlyVfidtpHRu9BoOliUj7
-         MkzNClEzM6kIDMsExSY9zZbPOMriYZNEH5cThK/Z1mhDPDH98Mqr0RJS+RQbhnfwCzm7
-         klxBJc7ye5C5Z22qqyRQxBTwwqPvx7u9/VtR+UBbFTcYVieLSWvdJTvDOWFNY0BhgTrk
-         op4sphGUENu6UGKpG02NXsOt15hHlv5YRU6rHcHl6Xqy1G8ATqscb1GhCZXAbec/V448
-         DdcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721837219; x=1722442019;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WL00ffx6FZOS+gjuVcqsGTl485DZxHlIKJfADzNE310=;
-        b=SOTD9N63s7qKr8R4Lzx0+eKCNZaOA3UyRFntX5ULQouYBtBhF3fi3zBhSGMqiwJfvk
-         8ICYbW3uYHAXjEH5kEkTuUWFO+7CtB12w/rI4XSi82Qz88tWAhOFeMoYbzqF4ERpLexw
-         NCKqlkVL1qwyolQ3nN2Id2qo4/+X95Vg/pex0maVcOMO2xOYPIZPirk72pkVTHfaaxI7
-         OOZluq1Uxk+ZdA7sCYq9ddMtnsviMPsgSjqfH8+umQLgScEodV6Wx3Qt2TP4LEUfGtms
-         zVE+slFCivT1MALUlg8tKNquRCmfBngPuCxWHFNFpayCsXA7bbBc5th32vZc9phXGCL8
-         O4jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXUnAu1AyBJibbNfKLubcmq2YsIvd280zdbZS/xzZ668dAkBwwPYL8tGLwBWaxxYeWWVhKr9KttGRoQ/1GRomRvKXFzxqYl8b+t+gg
-X-Gm-Message-State: AOJu0YxhFW9F/hzOuSiL3piVAPZMwquI7aDPdBjVI7DzMNB8qYVMZRDm
-	SJ8uDjLRks5+Ri0ATDQki8qBa/yWyW8R8h8ghVyaxTPyOt9j0DfFHWS8+3fpT04=
-X-Google-Smtp-Source: AGHT+IFHDoY0NxaVxYd0I7yvfDpL/US8mbo5c+Ln+MlZ4tHFOz+j/ptFK+39Sj3ax64JA9QORrKb+w==
-X-Received: by 2002:a05:6830:2782:b0:703:6341:5171 with SMTP id 46e09a7af769-7092e6f0700mr245391a34.15.1721837219146;
-        Wed, 24 Jul 2024 09:06:59 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:23ae:46cb:84b6:1002])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5d59ee0f336sm369821eaf.9.2024.07.24.09.06.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 09:06:58 -0700 (PDT)
-Date: Wed, 24 Jul 2024 11:06:56 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Stefan Chulski <stefanc@marvell.com>
-Cc: Marcin Wojtas <marcin.s.wojtas@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH net] net: mvpp2: Don't re-use loop iterator
-Message-ID: <eaa8f403-7779-4d81-973d-a9ecddc0bf6f@stanley.mountain>
+	s=arc-20240116; t=1721837368; c=relaxed/simple;
+	bh=Ae1TsuJM82AmyqCbGZaDDn2GLp1+nwcKq7q33PCnJzk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YgR7P4Esfg+Cygq9RVSWi2adMHgzRvTvltnMVOGeE36wIbvl1c1q8UDdozGiW6rodWhIrAa254ZS5LIUhdRrAjGD4E8u/E/jJ/ntBy4Jy/ibkIzdYynVY4UL57VFMmeEdtkOgzBDYfM7OOYhN00DcVl1dA+WWrrT4O7BHx2+wg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gyXEaU+5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 232AFC32781;
+	Wed, 24 Jul 2024 16:09:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721837368;
+	bh=Ae1TsuJM82AmyqCbGZaDDn2GLp1+nwcKq7q33PCnJzk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gyXEaU+5/JxxDzD5YBxEvKhA+gdmfy4WWpy8E/V25vh4SXGNhazZV3e4fFbQ6n+Rb
+	 TJbrsqH6n+KpxCPHMBh+pkzG3lKrnQyy4gBih+3X1qnMjPS/BgGQJHpfPc9JTKS+Hj
+	 j+sX7SKplORBZ/TZSS5xyEaabj9+zVtKEJUXwE1lz5JkESj80iNqhAWtMP4WtST+IM
+	 7bXT8jVIev7aKaSEbyw0lXLyjmEKC0efEd7hm+EMb2Q0XlyrfwJu2G7kMcQmzGsQt+
+	 WHY5Ou4lJHma1Zc2/0pQMCmu9M82LYn7rrr8W/kSD6eAQBSYP6dbZz9YdEgz8LyAjv
+	 1eZqzC8xFfJHg==
+Message-ID: <3ee9644d-ac10-495b-ac7c-fa034f27d27a@kernel.org>
+Date: Wed, 24 Jul 2024 18:09:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/3] dt-bindings: iio: adc: add a7779 doc
+To: Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+ linux-iio@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Cosmin Tanislav <cosmin.tanislav@analog.com>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Nuno Sa <nuno.sa@analog.com>, Marcelo Schmitt <marcelo.schmitt@analog.com>,
+ Marius Cristea <marius.cristea@microchip.com>,
+ Mike Looijmans <mike.looijmans@topic.nl>, Liam Beguin
+ <liambeguin@gmail.com>, Ivan Mikhaylov <fr0st61te@gmail.com>,
+ Marcus Folkesson <marcus.folkesson@gmail.com>, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20240724155517.12470-1-ramona.nechita@analog.com>
+ <20240724155517.12470-3-ramona.nechita@analog.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240724155517.12470-3-ramona.nechita@analog.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This function has a nested loop.  The problem is that both the inside
-and outside loop use the same variable as an iterator.  I found this
-via static analysis so I'm not sure the impact.  It could be that it
-loops forever or, more likely, the loop exits early.
+On 24/07/2024 17:54, Ramona Alexandra Nechita wrote:
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
 
-Fixes: 3a616b92a9d1 ("net: mvpp2: Add TX flow control support for jumbo frames")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+<form letter>
+This is a friendly reminder during the review process.
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-index 8c45ad983abc..0d62a33afa80 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-@@ -953,13 +953,13 @@ static void mvpp2_bm_pool_update_fc(struct mvpp2_port *port,
- static void mvpp2_bm_pool_update_priv_fc(struct mvpp2 *priv, bool en)
- {
- 	struct mvpp2_port *port;
--	int i;
-+	int i, j;
- 
- 	for (i = 0; i < priv->port_count; i++) {
- 		port = priv->port_list[i];
- 		if (port->priv->percpu_pools) {
--			for (i = 0; i < port->nrxqs; i++)
--				mvpp2_bm_pool_update_fc(port, &port->priv->bm_pools[i],
-+			for (j = 0; j < port->nrxqs; j++)
-+				mvpp2_bm_pool_update_fc(port, &port->priv->bm_pools[j],
- 							port->tx_fc & en);
- 		} else {
- 			mvpp2_bm_pool_update_fc(port, port->pool_long, port->tx_fc & en);
--- 
-2.43.0
+It seems my or other reviewer's previous comments were not fully
+addressed. Maybe the feedback got lost between the quotes, maybe you
+just forgot to apply it. Please go back to the previous discussion and
+either implement all requested changes or keep discussing them.
+
+Thank you.
+</form letter>
+
+Best regards,
+Krzysztof
 
 
