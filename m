@@ -1,219 +1,345 @@
-Return-Path: <linux-kernel+bounces-260765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3948993ADEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:32:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7482993ADF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:33:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 623EEB21EAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:32:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D66CFB21F99
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B9A1428F4;
-	Wed, 24 Jul 2024 08:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IkjtZVbY";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ngQNDgZB"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2CD17E9
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 08:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721809920; cv=fail; b=n/mcPt++UH8+8+28VBYSQ1T2a4hH2+SnUaHZ87cDnuZ0eIRSgHWL3XOZ2IF00ya6NNlJYsw5GtrkZE8lD6h2Ht2VfPt4+bf5Xe3vy6Iuji2fIsuK7R6bASk1/yOXMR8l5MNax4p1jOXHqjd5U1zYxzeMVeVFknv9/MxYRCrVRno=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721809920; c=relaxed/simple;
-	bh=2mZuyVtoGZlZnVYmrV2flnLfC77IdAQQ/gOwU/i2/cM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Z5Cv+gbX3TSBlD12DFdzEmUAX0nyJfR6fVo0M5h5TPH6wXDybjmDi8gG3NdwiYMmkYA67H5/NL8BozUR+/wBuQ21q7X/obIoOBFfyPZ6OD1C3uXcCOU42G6ujGVvBMWxpuaUXzhzoM8mvB/ikrZzVkntVt2zEqLqYTX30bFLwH0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=IkjtZVbY; dkim=fail (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ngQNDgZB reason="signature verification failed"; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46O5odYC002811;
-	Wed, 24 Jul 2024 08:31:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:content-transfer-encoding:in-reply-to:mime-version; s=
-	corp-2023-11-20; bh=2mZuyVtoGZlZnVYmrV2flnLfC77IdAQQ/gOwU/i2/cM=; b=
-	IkjtZVbYqhzB7i8asfLz1z1j85yDffVYylDB5FGt9OmC1SBit5yGnu2ixClS4KlN
-	maYA7CEUKFSQVi+XFmis0xeMAzBkcU8xUba2g5Co1LbtDKFP23SzTCh8bOUnC49t
-	6NVHu+zKt9YGVp2oUP23m3h5PDUjEiexz4LQuQbgcOER9/9cnlKdlDjWpO9UJZq0
-	xyLxCVEWzbbL/I1g0hlsrSrNtNY/GGEHqsyYIHLUSNRmkbKousthF+9FNdYW3NgA
-	v4hIofOYve2+UbZXS1PuY4/y5Y/haw2ivIhnn6rySdzLwSjIy+a4rKZZOAyVZD9g
-	qtXdC2A3zwQKa5/gkcZ4Hg==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40hg1107d1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 24 Jul 2024 08:31:35 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46O89OdQ040022;
-	Wed, 24 Jul 2024 08:31:34 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2174.outbound.protection.outlook.com [104.47.58.174])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40h26nhs0g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 24 Jul 2024 08:31:34 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Bv0RcivcSpR1u/tH1VLv2FMuEeo7PsUkSzHpFNzsHnDM21JbZFzwGEXhOpLKcT7FMxC3lc6h+R/kaqtzgG6yua3IgnNu/0QPKdAjvCBVVoc+BgsbrqF91uGExQ9N72To013MrxDHSg4g0QRTZ2VSyy+UQ+epHk91wxnlvw9JKayqanfli/0qWxT2fEsNc2HPug9rQTF5jZtDCw2LXEbnBlzn3zUJTlEZZSupN4xCyf+rNUpW0+Yn7l0j2tDBvKUI59BzS/qY4vruMtvE4CUPWGuYSDvRT8RpoRU23JSSMiIXRyhT+tr62BuAZoUafqxzJEezF5+dmb7u6o+WgMqtNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xgvsrDnbd+0rOUuaHQSMNT6pszbVMjDJsb4WrSVrY6s=;
- b=FuZjNs9gPkluHhtj4j35W5GwQNPzRy82WNBYBfutVGXi1JWwefnrlIrrAFcLHaoTrD7iH5mM3p07MDKVKrOVE0VmiV+gbXlrBaXnGoZKhY017CvtVwhfwFSuBpNxOYDdl5T5FbeyEn2ksIZquCWRsxtz9GYnj75Fop6PQYCNqwnUHuIgWoCSBLACXPTJv3zRyDjzlVgYxHoHQkF6maBY5av3md2Vhjhgtdm9xF8wMdjyvzw281EbVYPXeodWpYdaWW8kitQ0WKPaSGIVAefxCwt8T6WXSIv4L4XGKZYlnmc4jQV8ryjLSu706JvocpFAuhgNUDS8f2BuQaYFRqzdnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xgvsrDnbd+0rOUuaHQSMNT6pszbVMjDJsb4WrSVrY6s=;
- b=ngQNDgZBrKJ1yWc/bo2QTyuDnXhg/Q8sZw35cyx3UgiNae04DgIYa7kf6mSaRqLqrKcp4ACCoUY2s8d9rl+Avll2JfOKjc5rVnUeu5+hY+dO6i65pVyZB2THR1rwcMRhE9IL3saUAU27uES3f4JwixgtwADd+4MIGla0CSXPv7c=
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
- by CH3PR10MB7960.namprd10.prod.outlook.com (2603:10b6:610:1c2::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20; Wed, 24 Jul
- 2024 08:31:31 +0000
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e%6]) with mapi id 15.20.7784.017; Wed, 24 Jul 2024
- 08:31:31 +0000
-Date: Wed, 24 Jul 2024 09:31:27 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, david.laight@aculab.com,
-        Arnd Bergmann <arnd@kernel.org>, willy@infradead.org,
-        torvalds@linux-foundation.org, Jason@zx2c4.com, hch@infradead.org,
-        andriy.shevchenko@linux.intel.com, pedro.falcato@gmail.com,
-        Mateusz Guzik <mjguzik@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Build performance regressions originating from min()/max() macros
-Message-ID: <9d62cd2d-a00b-4260-8ffb-0e0e4574f222@lucifer.local>
-References: <c83c17bb-be75-4c67-979d-54eee38774c6@lucifer.local>
- <16f51077-f525-4d3c-92ad-8a1ccc02e4ff@suse.com>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <16f51077-f525-4d3c-92ad-8a1ccc02e4ff@suse.com>
-X-ClientProxiedBy: LO4P123CA0261.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:194::14) To PH0PR10MB5611.namprd10.prod.outlook.com
- (2603:10b6:510:f9::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7251428F4;
+	Wed, 24 Jul 2024 08:33:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37736CDB1
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 08:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721810014; cv=none; b=R1na+JCP39Bg87TXCsi2u3viAIJhRcNUYDEzv9npNte8qNKS4mazLC55zAYUj3+jDkr5bZqRox3by4zpVW4drHfPARUjc0OB6egLoZCIk6CK/zazNwdU1rIsOoWzfeQhN8RZppE/9iGiECuXSX4tdmG0tcWdAyGHtzzkWr2pYbU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721810014; c=relaxed/simple;
+	bh=0DgnF7KPQ+0yXkfl7t2EppsHGsCkCs6KwWKokYV4J/s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SoL7VRN9o4CB7zwNVGjSKbfnuu1yIbAeEf7hYjHkLUwCe7KL9K0EZBg8Md+H85xctHPl2rdGti4f2YYnpQUWK3BtzdJw/JEdg4FL57MkRUey7xClCskUeUueININRO+SIZCs7hl0GyaLRJZeCurKAMZ6j9HmY6y59bDeEyKToFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A85BC106F;
+	Wed, 24 Jul 2024 01:33:56 -0700 (PDT)
+Received: from [10.57.78.42] (unknown [10.57.78.42])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AE6323F766;
+	Wed, 24 Jul 2024 01:33:29 -0700 (PDT)
+Message-ID: <4ec149fc-7c13-4777-bc97-58ee455a3d7e@arm.com>
+Date: Wed, 24 Jul 2024 09:33:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|CH3PR10MB7960:EE_
-X-MS-Office365-Filtering-Correlation-Id: caed73de-8b15-4a3f-eff1-08dcabbb04b8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?iso-8859-1?Q?nk6A5gdu5RnvbeUIEgQr7kIWD7sXf+firWa9yxDLFil1q96Y94AB95/JuM?=
- =?iso-8859-1?Q?BUeWne7/YlTKZIyTFiUG+LlvaeG0kpb5OHhjcYB2ArRRfbp2wqaeEhXEfF?=
- =?iso-8859-1?Q?NWNFhsIPOrasdh4cn3cCYzQvyIfGBomAbbi4Ss/h8lE5MuK13UmMqaIk9G?=
- =?iso-8859-1?Q?feozri2qydn5evLD6ENBmDti8umzFPp8hG6aOuPhnN37ytekT2qfydTqi3?=
- =?iso-8859-1?Q?FBVi2d+qZj13USg3Gk371lTle/0ps/z2ECaN0UtPOzSUwQvSc3ntztavEx?=
- =?iso-8859-1?Q?Ehw5H+628oK8enni3qKARf/ZRM9pvuxhJWBw2cCj7ujOzTSgRH8u63kUux?=
- =?iso-8859-1?Q?j2TbgXhftnrq3HLimv5y+dZ2ZB1q/9/1Q2vAOxVGfw08xMLRyO+DRMLUF4?=
- =?iso-8859-1?Q?M6edmt/wmNqBdIC8NuMfvPqDTEbXFxtEz5yKsiVEEvdT4bHJxYFx+C5pZf?=
- =?iso-8859-1?Q?acufyN8qKGCOWurtXBCu58R7UOVetwjHFC7gdwVHc8r+S6AEh3DSFKjly6?=
- =?iso-8859-1?Q?SFoeQu1OW5jBGMR2MqUcFCW5V/gTWJaBG47lKzAIOxza0ex6PN77T2NbgO?=
- =?iso-8859-1?Q?iYTP99VmhVjV44hMWOpnX7vieL/kX7QbrLmLPldtPKMLRKMqTKsrZj2KEY?=
- =?iso-8859-1?Q?JVf9q7gS4B8bbjYP4ctuWtw+k6Iywe5WocQ0KiyLlMlfdXrOtFwzaisDTO?=
- =?iso-8859-1?Q?GWG8Uq7J8z+22ix+mz8Jyq/mWNXJP7AjR23CCWyYUZENuQfpkWiD6x9Oht?=
- =?iso-8859-1?Q?n8s3V66l6Sd3YpZaePE80Y1EV2PSusFHTi+tOubu2poeAIR6fPEm5Aubmn?=
- =?iso-8859-1?Q?SC3rPpgX0LKLpMGOeGBHkDLU6Ej3OEsC6nva4TytiJ3ru/ua8wUD6uw5H0?=
- =?iso-8859-1?Q?4NoDSLhYVj2c3lwh7/AYYn1/ABUtmBrjJq5jNxY5fC6Fmgb/t9lNf8n1ab?=
- =?iso-8859-1?Q?QctvHtzYvuJ7nzHNYx45c+wy2iNpu2cGGasG8lDxfpYXweptoNwii+d0WL?=
- =?iso-8859-1?Q?dCUKlJx8Z/ig6lg8+Df+XB+gbIh0W5Lmd8BFWZR5DGuJjXSSLeW0BDXUr8?=
- =?iso-8859-1?Q?SLsroqRrh5rzfQj7gvWoICAbJGYmWSNgDAvZURVXeEj/TtarkGRdyk1pNp?=
- =?iso-8859-1?Q?iPpQGsvE+YdQgYweu+a1a0hGuET2i66gBxcQ0xkjlqH3SiT5uHLVI9zRET?=
- =?iso-8859-1?Q?W3fjQkT6Kx4AYL23k3lmKskV4BSUR/TYtLKmq0Yv51Bx5HUMAKMn/y+v9Z?=
- =?iso-8859-1?Q?2n3abjfL6RhR/F+S4t+jDm/qCTpuJsoLRzdCidGXWkt/H9rE88K0MVx795?=
- =?iso-8859-1?Q?j1hOP4e2SYcW/U+ww/Z8k4vdGaeb38qRZK9RvEV9Bgp4QyEvNJveo9YEUO?=
- =?iso-8859-1?Q?ngzN4FdeyTIaB5/ErRBn1kvN6XK9flmQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?iso-8859-1?Q?w3fsiuI6WoilrlP4mcXLz813IXGUB995dWvzwG/09a90cvQLxdYdijGVId?=
- =?iso-8859-1?Q?6KTFQpOkFHsm+95w9EPA0t4BJWRpoUK2gyot/7stiVX6bHuISL8Cl9dkYk?=
- =?iso-8859-1?Q?orx7+3SxZptcb+wmMffZTY0aqzls+4VVFHtyM3TVzAGvsD3lOXqSryVxi6?=
- =?iso-8859-1?Q?dTuemg0CFqIHjDBe9rYQauDPh9LqHkgI3ivn51cR9MxZgZ2YoaZtKoeUp8?=
- =?iso-8859-1?Q?GVvS/xLeKUxcs1wo8futYSmWbJMuZKOvaH0K7N+fqS7rp8jsHBXTuPK24Q?=
- =?iso-8859-1?Q?rqqwD/MmYdBGI9/obE3TX6Hg1Trlu/RWsgVoqnQlbEZKn8sIyGCfoLxxnB?=
- =?iso-8859-1?Q?7EESQd73azAiOjsf7+chN48vl8ioPu3+IqHwMRCbP3dBb5kGu7NTG8FN25?=
- =?iso-8859-1?Q?Tr/ajo0eVxR/SxHQd2u59MWQ9hPNP+esZT0klER+NZOtSKE269wCOuZtmZ?=
- =?iso-8859-1?Q?I3Bxdp3UirjnRg7nn/Wy3FdMl/v5zKnbpQ4/nh0ZRu8fxPhk4mjVclhZOi?=
- =?iso-8859-1?Q?JGtdUStlGNBgIM3Eq0gly6P9QyxzcHemjT2ocJBt24iEiNI7Grwc4Tj9U4?=
- =?iso-8859-1?Q?lvQDHUAXU9NTF09IWWilzvYmnzSlzfG8EiBdy+5jRlG13jeqZnvNcRHO8V?=
- =?iso-8859-1?Q?plmyZUhEH5OaCvkGyQ4daT/ylAT+VhbW6vGLMgYY93IGFFqhRD0YRLJ/ue?=
- =?iso-8859-1?Q?mErrnilU4G9EpnwoNqlqxZYTZA4z+siQ3Jy8G3AAidjEn0YeigChMzs58g?=
- =?iso-8859-1?Q?dSayVv9/CWsaABguN1Voc2ajLldLCQgADtX42qTahoyOFmD8ArxNShVMQJ?=
- =?iso-8859-1?Q?3EihBWbvP+d5Kfd8wtmnF+5Dbkfhcni1ZVsshslwA3G/9tzn9ECsF2V3Yp?=
- =?iso-8859-1?Q?jUeAv4v59YsZK6UOnRyc6lRej8loLy4tfm2u7gMXs/MACvMn56vc5PDuql?=
- =?iso-8859-1?Q?5wzXcTVjEba8TyqCOd632NSPQMITX4HU0dq2m7aLBTZ+YQXp+h1Et1Hea+?=
- =?iso-8859-1?Q?K7G+gwde/TbJlq8qVJgMnmI6g85/SIOjFirPl/H1F4c4rvqocKk3slrP0i?=
- =?iso-8859-1?Q?klw5DBfvhKZzIwC5/+Ea95OjuMQ+C4Y7Yh0mfyjqEwsqFApiCl7ucOqdWb?=
- =?iso-8859-1?Q?fL2cex+ILH8Mb4eg32JyvEK9/BbInzhPJujCWSi7yxu/evChKRplkq3YLc?=
- =?iso-8859-1?Q?ROldAKss3/brL/fktZ7LD9+Xwjuoah6Y0CndXEPfEwTzj1at0HzG4Oin7k?=
- =?iso-8859-1?Q?c0fjTvJqHlG2l/nohckOrCv0TnRwrY16ey3K/deXENqpfRgUbXwrOCIgcg?=
- =?iso-8859-1?Q?sbj8EShWynmy+3niu0nb90O2YlIH5y0FrcWb1v1/YAhe0saBooQaYdmAgW?=
- =?iso-8859-1?Q?Csl/G2nlU3CkgroiYr/XgS40J5hwzbgMOEUXstRCR8XfEZunb94mEtxfpm?=
- =?iso-8859-1?Q?2KogWa44RpCYt2agf1C9sqkrG/CJOCbcnLl2YcfU0MqX+0S6kia4Pt9HlD?=
- =?iso-8859-1?Q?Upoh8aBxm8UCC8K/61o7owMfqXA0IOaFaAUCRV3FUELSX/DfhpjvGdfC8H?=
- =?iso-8859-1?Q?wuqZ6MP7KY9k7ZNK57OKHOY7N5jSOH3i86RzN9Pe/Vwby6Clr1Y8+xS8BK?=
- =?iso-8859-1?Q?Ol/Jhp2xGM4ynKOBY/Bbp7wriKHITRqob35UUZwV+i+5wpQqi92ZcEhPNF?=
- =?iso-8859-1?Q?HtE7I4ZB7tI1Ds7D9VPdPeKg0H4w6G7DmuWfBlXP52yuBf1xwZoCGrDfJb?=
- =?iso-8859-1?Q?22sQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	I/yJ2CNM4VVw66sNDXESilK3bNwcma5IV2oTk9JcEY8IFpjD/CfnSYV456SIMHCY18xc9CXbVyfqAtaenspJqOTQN9uYGwVdIGFn3pWzhRaPjxNNl08E9MALXGjKOmemrC5BisZWUTeuVz0VTmcQQ/AGGf9HbUuRzdSoxRpxuCwfGbHZc+Oj8uP0zJ77xrmFylaECLtdp66IFsLiOL2fV46IHl1OjeM9TOFo45y/w5W2OpUKD6GHu/QiDKvijhCu3V01gARMkw8lgVWT5NuIkB0KqJRE0AVy1AGBaP72Bf5CE5nErtqvOd9+DgjfjX+6XWkIuTan1EwP7UYl7Q1og/E496SLSs4BRoqgQA4ZVSsWW1vqU7PSjQ4AaHlIhKM+83jsP9wGZ+BZSWHUkPC/XLp5Y4FPJfkFuXSAZYH2KMaNyYv5DMhvRQrPWDODo3315BZt2EOJKQqzY1222BwtRjJ4O6QofzDC+pBFl5Ahaq9SImGkHLNg74Mcewc+z9Gr+hIU2zJruY1dsteEKhLYIY0QFVHCGSgSenEgEBgJKMs94WvWywh23QhYgNsxLjF9yPetQ7qbfhQjrt1lX9DX5rjZNkhICzxUiChRRZeJHbs=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: caed73de-8b15-4a3f-eff1-08dcabbb04b8
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5611.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2024 08:31:31.3165
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tKGasqR03h+8Jq577/pnDhR188tUz9dGC7W7u7WMYaktqNrBEXOyenC6I1XVtZKCH5L6YQU7akGLpRb0P3rutzFGWe806fPTByj1805zKqQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7960
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-24_06,2024-07-23_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 bulkscore=0
- suspectscore=0 malwarescore=0 adultscore=0 mlxlogscore=999 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2407240062
-X-Proofpoint-ORIG-GUID: rphbDhmvX0iKO21R6WPr0gvRQEF3DpQi
-X-Proofpoint-GUID: rphbDhmvX0iKO21R6WPr0gvRQEF3DpQi
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] mm: swap: mTHP allocate swap entries from nonfull
+ list
+Content-Language: en-GB
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Chris Li <chrisl@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Kairui Song <kasong@tencent.com>, Hugh Dickins <hughd@google.com>,
+ Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Barry Song <baohua@kernel.org>
+References: <20240711-swap-allocator-v4-0-0295a4d4c7aa@kernel.org>
+ <20240711-swap-allocator-v4-2-0295a4d4c7aa@kernel.org>
+ <ea720b4a-da70-4ee3-8f74-2c7344480170@arm.com>
+ <CACePvbW_g4T10mqcG-FnJ11nP0obRG8ZgtdAN_EMCosnk9EQpA@mail.gmail.com>
+ <b4b31314-1125-40ee-b784-20abc78bd468@arm.com>
+ <CACePvbXfeyt5cSX3zQhbZQ4Z5suW6iXw4Kb8BDH96SeMi54o8Q@mail.gmail.com>
+ <874j8nxhiq.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <a50fe2d0-f22d-4ba0-8796-56732da0a5c4@arm.com>
+ <87o76qjhqs.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <43f73463-af42-4a00-8996-5f63bdf264a3@arm.com>
+ <87jzhdkdzv.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <f6fa3965-38db-4bdc-b6fd-6cd472169322@arm.com>
+ <87sew0ei84.fsf@yhuang6-desk2.ccr.corp.intel.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <87sew0ei84.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 24, 2024 at 10:14:12AM GMT, Jürgen Groß wrote:
-> On 23.07.24 23:59, Lorenzo Stoakes wrote:
-> > Arnd reported a significant build slowdown [0], which was bisected to the
-> > series spanning commit 80fcac55385c ("minmax: relax check to allow
-> > comparison between unsigned arguments and signed constants") to commit
-> > 867046cc70277 ("minmax: relax check to allow comparison between unsigned
-> > arguments and signed constants"), originating from the series "minmax:
-> > Relax type checks in min() and max()." [1].
+On 23/07/2024 07:27, Huang, Ying wrote:
+> Ryan Roberts <ryan.roberts@arm.com> writes:
+> 
+>> On 22/07/2024 09:49, Huang, Ying wrote:
+>>> Ryan Roberts <ryan.roberts@arm.com> writes:
+>>>
+>>>> On 22/07/2024 03:14, Huang, Ying wrote:
+>>>>> Ryan Roberts <ryan.roberts@arm.com> writes:
+>>>>>
+>>>>>> On 18/07/2024 08:53, Huang, Ying wrote:
+>>>>>>> Chris Li <chrisl@kernel.org> writes:
+>>>>>>>
+>>>>>>>> On Wed, Jul 17, 2024 at 3:14â€¯AM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>>>>>>>>
+>>>>>>>>> On 16/07/2024 23:46, Chris Li wrote:
+>>>>>>>>>> On Mon, Jul 15, 2024 at 8:40â€¯AM Ryan Roberts <ryan.roberts@arm.com> wrote:
+>>>>>>>>>>>
+>>>>>>>>>>> On 11/07/2024 08:29, Chris Li wrote:
+>>>>>
+>>>>> [snip]
+>>>>>
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +     if (!(ci->flags & CLUSTER_FLAG_NONFULL)) {
+>>>>>>>>>>>> +             list_add_tail(&ci->list, &p->nonfull_clusters[ci->order]);
+>>>>>>>>>>>
+>>>>>>>>>>> I find the transitions when you add and remove a cluster from the
+>>>>>>>>>>> nonfull_clusters list a bit strange (if I've understood correctly): It is added
+>>>>>>>>>>> to the list whenever there is at least one free swap entry if not already on the
+>>>>>>>>>>> list. But you take it off the list when assigning it as the current cluster for
+>>>>>>>>>>> a cpu in scan_swap_map_try_ssd_cluster().
+>>>>>>>>>>>
+>>>>>>>>>>> So you could have this situation:
+>>>>>>>>>>>
+>>>>>>>>>>>   - cpuA allocs cluster from free list (exclusive to that cpu)
+>>>>>>>>>>>   - cpuA allocs 1 swap entry from current cluster
+>>>>>>>>>>>   - swap entry is freed; cluster added to nonfull_clusters
+>>>>>>>>>>>   - cpuB "allocs" cluster from nonfull_clusters
+>>>>>>>>>>>
+>>>>>>>>>>> At this point both cpuA and cpuB share the same cluster as their current
+>>>>>>>>>>> cluster. So why not just put the cluster on the nonfull_clusters list at
+>>>>>>>>>>> allocation time (when removed from free_list) and only remove it from the
+>>>>>>>>>>
+>>>>>>>>>> The big rewrite on patch 3 does that, taking it off the free list and
+>>>>>>>>>> moving it into nonfull.
+>>>>>>>>>
+>>>>>>>>> Oh, from the title, "RFC: mm: swap: seperate SSD allocation from
+>>>>>>>>> scan_swap_map_slots()" I assumed that was just a refactoring of the code to
+>>>>>>>>> separate the SSD and HDD code paths. Personally I'd prefer to see the
+>>>>>>>>> refactoring separated from behavioural changes.
+>>>>>>>>
+>>>>>>>> It is not a refactoring. It is a big rewrite of the swap allocator
+>>>>>>>> using the cluster. Behavior change is expected. The goal is completely
+>>>>>>>> removing the brute force scanning of swap_map[] array for cluster swap
+>>>>>>>> allocation.
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> Since the patch was titled RFC and I thought it was just refactoring, I was
+>>>>>>>>> deferring review. But sounds like it is actually required to realize the test
+>>>>>>>>> results quoted on the cover letter?
+>>>>>>>>
+>>>>>>>> Yes, required because it handles the previous fall out case try_ssd()
+>>>>>>>> failed. This big rewrite has gone through a lot of testing and bug
+>>>>>>>> fix. It is pretty stable now. The only reason I keep it as RFC is
+>>>>>>>> because it is not feature complete. Currently it does not do swap
+>>>>>>>> cache reclaim. The next version will have swap cache reclaim and
+>>>>>>>> remove the RFC.
+>>>>>>>>
+>>>>>>>>>
+>>>>>>>>>> I am only making the minimal change in this step so the big rewrite can land.
+>>>>>>>>>>
+>>>>>>>>>>> nonfull_clusters list when it is completely full (or at least definitely doesn't
+>>>>>>>>>>> have room for an `order` allocation)? Then you allow "stealing" always instead
+>>>>>>>>>>> of just sometimes. You would likely want to move the cluster to the end of the
+>>>>>>>>>>> nonfull list when selecting it in scan_swap_map_try_ssd_cluster() to reduce the
+>>>>>>>>>>> chances of multiple CPUs using the same cluster.
+>>>>>>>>>>
+>>>>>>>>>> For nonfull clusters it is less important to avoid multiple CPU
+>>>>>>>>>> sharing the cluster. Because the cluster already has previous swap
+>>>>>>>>>> entries allocated from the previous CPU.
+>>>>>>>>>
+>>>>>>>>> But if 2 CPUs have the same cluster, isn't there a pathalogical case where cpuA
+>>>>>>>>> could be slightly ahead of cpuB so that cpuA allocates all the free pages and
+>>>>>>>>
+>>>>>>>> That happens to exist per cpu next pointer already. When the other CPU
+>>>>>>>> advances to the next cluster pointer, it can cross with the other
+>>>>>>>> CPU's next cluster pointer.
+>>>>>>>
+>>>>>>> No.  si->percpu_cluster[cpu].next will keep in the current per cpu
+>>>>>>> cluster only.  If it doesn't do that, we should fix it.
+>>>>>>>
+>>>>>>> I agree with Ryan that we should make per cpu cluster correct.  A
+>>>>>>> cluster in per cpu cluster shouldn't be put in nonfull list.  When we
+>>>>>>> scan to the end of a per cpu cluster, we can put the cluster in nonfull
+>>>>>>> list if necessary.  And, we should make it correct in this patch instead
+>>>>>>> of later in series.  I understand that you want to make the patch itself
+>>>>>>> simple, but it's important to make code simple to be understood too.
+>>>>>>> Consistent design choice will do that.
+>>>>>>
+>>>>>> I think I'm actually arguing for the opposite of what you suggest here.
+>>>>>
+>>>>> Sorry, I misunderstood your words.
+>>>>>
+>>>>>> As I see it, there are 2 possible approaches; either a cluster is always
+>>>>>> considered exclusive to a single cpu when its set as a per-cpu cluster, so it
+>>>>>> does not appear on the nonfull list. Or a cluster is considered sharable in this
+>>>>>> case, in which case it should be added to the nonfull list.
+>>>>>>
+>>>>>> The code at the moment sort of does both; when a cpu decides to use a cluster in
+>>>>>> the nonfull list, it removes it from that list to make it exclusive. But as soon
+>>>>>> as a single swap entry is freed from that cluster it is put back on the list.
+>>>>>> This neither-one-policy-nor-the-other seems odd to me.
+>>>>>>
+>>>>>> I think Huang, Ying is arguing to keep it always exclusive while installed as a
+>>>>>> per-cpu cluster.
+>>>>>
+>>>>> Yes.
+>>>>>
+>>>>>> I was arguing to make it always shared. Perhaps the best
+>>>>>> approach is to implement the exclusive policy in this patch (you'd need a flag
+>>>>>> to note if any pages were freed while in exclusive use, then when exclusive use
+>>>>>> completes, put it back on the nonfull list if the flag was set). Then migrate to
+>>>>>> the shared approach as part of the "big rewrite"?
+>>>>>>>
+>>>>>>>>> cpuB just ends up scanning and finding nothing to allocate. I think do want to
+>>>>>>>>> share the cluster when you really need to, but try to avoid it if there are
+>>>>>>>>> other options, and I think moving the cluster to the end of the list might be a
+>>>>>>>>> way to help that?
+>>>>>>>>
+>>>>>>>> Simply moving to the end of the list can create a possible deadloop
+>>>>>>>> when all clusters have been scanned and not available swap range
+>>>>>>>> found.
+>>>>>
+>>>>> I also think that the shared approach has dead loop issue.
+>>>>
+>>>> What exactly do you mean by dead loop issue? Perhaps you are suggesting the code
+>>>> won't know when to stop dequeing/requeuing clusters on the nonfull list and will
+>>>> go forever? That's surely just an implementation issue to solve? It's not a
+>>>> reason to avoid the design principle; if we agree that maintaining sharability
+>>>> of the cluster is preferred then the code must be written to guard against the
+>>>> dead loop problem. It could be done by remembering the first cluster you
+>>>> dequeued/requeued in scan_swap_map_try_ssd_cluster() and stop when you get back
+>>>> to it. (I think holding the si lock will protect against concurrently freeing
+>>>> the cluster so it should definitely remain in the list?).
+>>>
+>>> I believe that you can find some way to avoid the dead loop issue,
+>>> although your suggestion may kill the performance via looping a long list
+>>> of nonfull clusters.  
+>>
+>> I don't agree; If the clusters are considered exclusive (i.e. removed from the
+>> list when made current for a cpu), that only reduces the size of the list by a
+>> maximum of the number of CPUs in the system, which I suspect is pretty small
+>> compared to the number of nonfull clusters.
+> 
+> Anyway, this depends on details.  If we cannot allocate a order-N swap
+> entry from the cluster, we should remove it from the nonfull list for
+> order-N (This is the behavior of this patch too). 
 
-[snip]
+Yes that's a good point, and I conceed it is more difficult to detect that
+condition if the cluster is shared. I suspect that with a bit of thinking, we
+could find a way though.
 
-> I can send a patch to simplify the problematic construct, but OTOH this
-> will avoid only one particularly bad example.
+> Your original
+> suggestion appears like that you want to keep all cluster with order-N
+> on the nonfull list for order-N always unless the number of free swap
+> entry is less than 1<<N.
 
-Thanks, appreciated but I am a little concerned that we might get stuck in
-whack-a-mole here a bit. I'm pretty sure we've had previous patches that
-have addressed invocation points, but obviously the underlying issue are
-these macros which will keep cropping up again and again.
+Well I think that's certainly one of the conditions for removing it. But agree
+that if a full scan of the cluster has been performed and no swap entries have
+been freed since the scan started then it should also be removed from the list.
 
->
->
-> Juergen
+> 
+>>> And, I understand that in some situations it may
+>>> be better to share clusters among CPUs.  So my suggestion is,
+>>>
+>>> - Make swap_cluster_info->order more accurate, don't pretend that we
+>>>   have free swap entries with that order even after we are sure that we
+>>>   haven't.
+>>
+>> Is this patch pretending that today? I don't think so?
+> 
+> IIUC, in this patch swap_cluster_info->order is still "N" even if we are
+> sure that there are no order-N free swap entry in the cluster.
+
+Oh I see what you mean. I think you and Chris already discussed this? IIRC
+Chris's point was that if you move that cluster to N-1, eventually all clusters
+are for order-0 and you have no means of allocating high orders until a whole
+cluster becomes free. That logic certainly makes sense to me, so think its
+better for swap_cluster_info->order to remain static while the cluster is
+allocated. (I only skimmed that conversation so appologies if I got the
+conclusion wrong!).
+
+> 
+>> But I agree that a
+>> cluster should only be on the per-order nonfull list if we know there are at
+>> least enough free swap entries in that cluster to cover the order. Of course
+>> that doesn't tell us for sure because they may not be contiguous.
+> 
+> We can check that when free swap entry via checking adjacent swap
+> entries.  IMHO, the performance should be acceptable.
+
+Would you then use the result of that scanning to "promote" a cluster's order?
+e.g. swap_cluster_info->order = N+1? That would be neat. But this all feels like
+a separate change on top of what Chris is doing here. For high orders there
+could be quite a bit of scanning required in the worst case for every page that
+gets freed.
+
+> 
+>>>
+>>> My question is whether it's so important to share the per-cpu cluster
+>>> among CPUs? 
+>>
+>> My rationale for sharing is that the preference previously has been to favour
+>> efficient use of swap space; we don't want to fail a request for allocation of a
+>> given order if there are actually slots available just because they have been
+>> reserved by another CPU. And I'm still asserting that it should be ~zero cost to
+>> do this. If I'm wrong about the zero cost, or in practice the sharing doesn't
+>> actually help improve allocation success, then I'm happy to take the exclusive
+>> approach.
+>>
+>>> I suggest to start with simple design, that is, per-CPU
+>>> cluster will not be shared among CPUs in most cases.
+>>
+>> I'm all for starting simple; I think that's what I already proposed (exclusive
+>> in this patch, then shared in the "big rewrite"). I'm just objecting to the
+>> current half-and-half policy in this patch.
+> 
+> Sounds good to me.  We can start with exclusive solution and evaluate
+> whether shared solution is good.
+
+Yep. And also evaluate the dynamic order inc/dec idea too...
+
+> 
+>>>
+>>> Another choice for sharing is when we run short of free swap space, we
+>>> disable per-CPU cluster and allocate from the shared non-full cluster
+>>> list directly.
+>>>
+>>>> Which actually makes me wonder; what is the mechanism that prevents the current
+>>>> per-cpu cluster from being freed? Is that just handled by the conflict detection
+>>>> thingy? Perhaps that would be better handled with a flag to mark it in use, or
+>>>> raise count when its current. (If Chris has implemented that in the "big
+>>>> rewrite" patch, sorry, I still haven't gotten around to looking at it :-| )
+>>>
+>>> Yes.  We may need a flag for that.
+>>>
+>>>>>
+>>>>>>> This is another reason that we should put the cluster in
+>>>>>>> nonfull_clusters[order--] if there are no free swap entry with "order"
+>>>>>>> in the cluster.  It makes design complex to keep it in
+>>>>>>> nonfull_clusters[order].
+>>>>>>>
+>>>>>>>> We have tried many different approaches including moving to the end of
+>>>>>>>> the list. It can cause more fragmentation because each CPU allocates
+>>>>>>>> their swap slot cache (64 entries) from a different cluster.
+>>>>>>>>
+>>>>>>>>>> Those behaviors will be fine
+>>>>>>>>>> tuned after the patch 3 big rewrite. Try to make this patch simple.
+>>>>>>>>
+>>>>>>>> Again, I want to keep it simple here so patch 3 can land.
+>>>>>>>>
+>>>>>>>>>>> Another potential optimization (which was in my hacked version IIRC) is to only
+>>>>>>>>>>> add/remove from nonfull list when `total - count` crosses the (1 << order)
+>>>>>>>>>>> boundary rather than when becoming completely full. You definitely won't be able
+>>>>>>>>>>> to allocate order-2 if there are only 3 pages available, for example.
+>>>>>>>>>>
+>>>>>>>>>> That is in patch 3 as well. This patch is just doing the bare minimum
+>>>>>>>>>> to introduce the nonfull list.
+>>>>>>>>>>
+>>>>>
+>>>>> [snip]
+> 
+> --
+> Best Regards,
+> Huang, Ying
+
 
