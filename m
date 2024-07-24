@@ -1,332 +1,78 @@
-Return-Path: <linux-kernel+bounces-260523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 097CE93AA87
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:20:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A8793AA8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C5681C21F61
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:20:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 386621C21F61
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:21:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31111BE71;
-	Wed, 24 Jul 2024 01:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BAAAA95E;
+	Wed, 24 Jul 2024 01:21:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dQ7pvkaa"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RlfmRMLr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361DE4C9A;
-	Wed, 24 Jul 2024 01:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB745258
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 01:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721784036; cv=none; b=e/qBgVD71gr56ut6VI16B7MCCODa4SIq5QI/HOR85rLmij+KUoNouf2tyN0ZSe+AP1A/LHJNeGgWLgsYKYy6F0jY5lGa5Tkp+9yaE61QvdYGuoWLGZfbcowpEF83L5HrCMVsxY6NzNBY98eHIfXWKfeGkv74UFEt/wEuihlk4uY=
+	t=1721784079; cv=none; b=radR9kFlmpZan91hgXJKPMbKn7uLzvZeA1yq64jJEpf593xKgA9BWj2iJQPQdaBjRjhCa5UjoVQ/Zha7rfwvCqEQsr64MYwEhin0kyxwwFkUHgHqDvKYTio8PpooYxiwVS6lQosvhjBzQ8oCfvMSFxhD3Qmr7sCRSgHac2NTwFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721784036; c=relaxed/simple;
-	bh=AC8Bel9UEYnaROjqC9+2e8CVf6gW/SwN5KaatGqwuRw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SDJ5Gwva4CrfHBOPoUdzg4z39p6Vu7w4Imr7guRW1fKkmUncbkuf39dA05uUABsEq9zhaX8i+ef0AbiNdYWTpMEnY2/+CD3RyO+OL8owdN2LUJiQMtV9qpqCsE9KIS7Wc5k+IB4H0wOiNQ2IP+cOlyY58WFe2vsDNjaYE7Wyo9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dQ7pvkaa; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <da41a162-9f6d-4607-9055-ffc21fe1771e@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721784032;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dEhyMpF2beLnKk2jNCAd0kL3ECpPY/WBwUXHZaKgEPc=;
-	b=dQ7pvkaawQNIB+BCzRzvtJY0Wq6NMR8kNLAXFxl1E0sHcVC61q5kr1NayEOKt2/T4r5rr/
-	TUUUJheElULcwdIdWT3AjkAP0Ab7PzaCezqqmnT9Aifbt56O8FoM5KawiUhjGZdR7imDB3
-	NOvrBa2TpNxpWQwFSLrlC5J9ef6FHxg=
-Date: Wed, 24 Jul 2024 09:20:17 +0800
+	s=arc-20240116; t=1721784079; c=relaxed/simple;
+	bh=1YQd4pb2OwInruewDWYeBIUyuZQvjv2zyrqd7DJdZRQ=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=N3+A+Q105t0zzCcaAfeJ/HKTpJZeWpDuCZUwWonLMZupMoxJmb4gGuPOgc3cfVNSSrsGyRYWrUvqEKVa4DYiH9ymWREL3iWr8NfjWfxf/G+rWVGqDGfn2EtU6t8b20N2LHuAb39q3J6222ENFLhbyCXR7qHhWoA02o4AN0pMv8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RlfmRMLr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9F2CEC4AF09;
+	Wed, 24 Jul 2024 01:21:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721784079;
+	bh=1YQd4pb2OwInruewDWYeBIUyuZQvjv2zyrqd7DJdZRQ=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=RlfmRMLr/sFBfy/lKbnjOp1jLNTumM7aUTQwHQl4XFozbHtnigFDCBuOQTE7N4dGq
+	 /2ZVRboGfLUp+SsGCBFte1TTqNwSubaUe48Dyb5wpr5yBZWs8UoRfcV8hy0dm2Aeie
+	 gskzFRbvJj2lq4+jutC+SkchG6S+nhM+dLzVQLMtK1QOFLQwncuCZizs+oJCu0ZMNp
+	 SL6LI9F/YnorlXON3qa248gl0DsJkmzYUqsO7Ekz00iSPq2q3KstTDgX1e6H9lCmYd
+	 LLYckeMtcXS5IxtSSpd28ljRfCZ3a+zbXm2hdGO5BqvFiip0DGGK+T1crLvVJp1cWW
+	 ZjtfewvMMjMeg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9512BC43443;
+	Wed, 24 Jul 2024 01:21:19 +0000 (UTC)
+Subject: Re: [GIT PULL] execve update for v6.11-rc1-fix1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <202407231304.04FE50257@keescook>
+References: <202407231304.04FE50257@keescook>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <202407231304.04FE50257@keescook>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/execve-v6.11-rc1-fix1
+X-PR-Tracked-Commit-Id: b6f5ee4d53019443fb99dd23bc08680b1244ccfa
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: e9e969797bae359fd463f7617ad875bca2771586
+Message-Id: <172178407960.1898.10016250644442560357.pr-tracker-bot@kernel.org>
+Date: Wed, 24 Jul 2024 01:21:19 +0000
+To: Kees Cook <kees@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, David Gow <davidgow@google.com>, Kees Cook <kees@kernel.org>, SeongJae Park <sj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH 1/4] module: Add module_subinit{_noexit} and
- module_subeixt helper macros
-To: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mika.penttila@mbosol.com>,
- Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
- Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>, tytso@mit.edu,
- Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Chao Yu <chao@kernel.org>, Christoph Hellwig <hch@infradead.org>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- Youling Tang <tangyouling@kylinos.cn>
-References: <20240723083239.41533-1-youling.tang@linux.dev>
- <20240723083239.41533-2-youling.tang@linux.dev>
- <4570c972-de09-4818-bd1b-3112f651b49d@mbosol.com>
-Content-Language: en-US, en-AU
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Youling Tang <youling.tang@linux.dev>
-In-Reply-To: <4570c972-de09-4818-bd1b-3112f651b49d@mbosol.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Hi, Mika
+The pull request you sent on Tue, 23 Jul 2024 13:05:45 -0700:
 
-On 23/07/2024 17:58, Mika Penttilä wrote:
-> On 7/23/24 11:32, Youling Tang wrote:
->> From: Youling Tang <tangyouling@kylinos.cn>
->>
->> In theory init/exit should match their sequence, thus normally they should
->> look like this:
->> -------------------------+------------------------
->>      init_A();            |
->>      init_B();            |
->>      init_C();            |
->>                           |   exit_C();
->>                           |   exit_B();
->>                           |   exit_A();
->>
->> Providing module_subinit{_noexit} and module_subeixt helps macros ensure
->> that modules init/exit match their order, while also simplifying the code.
->>
->> The three macros are defined as follows:
->> - module_subinit(initfn, exitfn,rollback)
->> - module_subinit_noexit(initfn, rollback)
->> - module_subexit(rollback)
->>
->> `initfn` is the initialization function and `exitfn` is the corresponding
->> exit function.
->>
->> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
->> ---
->>   include/asm-generic/vmlinux.lds.h |  5 +++
->>   include/linux/init.h              | 62 ++++++++++++++++++++++++++++++-
->>   include/linux/module.h            | 22 +++++++++++
->>   3 files changed, 88 insertions(+), 1 deletion(-)
->>
->> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
->> index 677315e51e54..48ccac7c6448 100644
->> --- a/include/asm-generic/vmlinux.lds.h
->> +++ b/include/asm-generic/vmlinux.lds.h
->> @@ -927,6 +927,10 @@
->>   		INIT_CALLS_LEVEL(7)					\
->>   		__initcall_end = .;
->>   
->> +#define SUBINIT_CALL							\
->> +		*(.subinitcall.init)					\
->> +		*(.subexitcall.exit)
->> +
->>   #define CON_INITCALL							\
->>   	BOUNDED_SECTION_POST_LABEL(.con_initcall.init, __con_initcall, _start, _end)
->>   
->> @@ -1155,6 +1159,7 @@
->>   		INIT_DATA						\
->>   		INIT_SETUP(initsetup_align)				\
->>   		INIT_CALLS						\
->> +		SUBINIT_CALL						\
->>   		CON_INITCALL						\
->>   		INIT_RAM_FS						\
->>   	}
->> diff --git a/include/linux/init.h b/include/linux/init.h
->> index ee1309473bc6..e8689ff2cb6c 100644
->> --- a/include/linux/init.h
->> +++ b/include/linux/init.h
->> @@ -55,6 +55,9 @@
->>   #define __exitdata	__section(".exit.data")
->>   #define __exit_call	__used __section(".exitcall.exit")
->>   
->> +#define __subinit_call	__used __section(".subinitcall.init")
->> +#define __subexit_call	__used __section(".subexitcall.exit")
->> +
->>   /*
->>    * modpost check for section mismatches during the kernel build.
->>    * A section mismatch happens when there are references from a
->> @@ -115,6 +118,9 @@
->>   typedef int (*initcall_t)(void);
->>   typedef void (*exitcall_t)(void);
->>   
->> +typedef int (*subinitcall_t)(void);
->> +typedef void (*subexitcall_t)(void);
->> +
->>   #ifdef CONFIG_HAVE_ARCH_PREL32_RELOCATIONS
->>   typedef int initcall_entry_t;
->>   
->> @@ -183,7 +189,61 @@ extern struct module __this_module;
->>   #endif
->>   
->>   #endif
->> -
->> +
->> +#ifndef __ASSEMBLY__
->> +struct subexitcall_rollback {
->> +	/*
->> +	 * Records the address of the first sub-initialization function in the
->> +	 * ".subexitcall.exit" section
->> +	 */
->> +	unsigned long first_addr;
->> +	int ncalls;
->> +};
->> +
->> +static inline void __subexitcall_rollback(struct subexitcall_rollback *r)
->> +{
->> +	unsigned long addr = r->first_addr - sizeof(r->first_addr) * (r->ncalls - 1);
->> +
->> +	for (; r->ncalls--; addr += sizeof(r->first_addr)) {
->> +		unsigned long *tmp = (void *)addr;
->> +		subexitcall_t fn = (subexitcall_t)*tmp;
->> +		fn();
->> +	}
->> +}
-> How does this guarantee the exit calls match sequence? Are you assuming
-> linker puts exit functions in reverse order?
-Take btrfs for example:
-Initialize the function sequentially in init_btrfs_fs() using
-module_subinit{_noexit}, storing the corresponding function addresses
-in the specified ".subinitcall.init" and ".subexitcall.exit" sections.
+> https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/execve-v6.11-rc1-fix1
 
-Using gcc to compile btrfs to.ko, the view section contains the following:
-```
-$ objdump -d -j ".subinitcall.init" fs/btrfs/super.o
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/e9e969797bae359fd463f7617ad875bca2771586
 
-fs/btrfs/super.o:     file format elf64-x86-64
+Thank you!
 
-
-Disassembly of section .subinitcall.init:
-
-0000000000000000 <__subinitcall_register_btrfs.0>:
-     ...
-
-0000000000000008 <__subinitcall_btrfs_run_sanity_tests.2>:
-     ...
-
-0000000000000010 <__subinitcall_btrfs_print_mod_info.3>:
-     ...
-
-0000000000000018 <__subinitcall_btrfs_interface_init.4>:
-     ...
-
-0000000000000020 <__subinitcall_btrfs_prelim_ref_init.6>:
-     ...
-
-0000000000000028 <__subinitcall_btrfs_delayed_ref_init.8>:
-     ...
-
-0000000000000030 <__subinitcall_btrfs_auto_defrag_init.10>:
-     ...
-
-0000000000000038 <__subinitcall_btrfs_delayed_inode_init.12>:
-     ...
-
-0000000000000040 <__subinitcall_ordered_data_init.14>:
-     ...
-
-0000000000000048 <__subinitcall_extent_map_init.16>:
-     ...
-
-0000000000000050 <__subinitcall_btrfs_bioset_init.18>:
-     ...
-
-0000000000000058 <__subinitcall_extent_buffer_init_cachep.20>:
-     ...
-
-0000000000000060 <__subinitcall_extent_state_init_cachep.22>:
-     ...
-
-0000000000000068 <__subinitcall_btrfs_free_space_init.24>:
-     ...
-
-0000000000000070 <__subinitcall_btrfs_ctree_init.26>:
-     ...
-
-0000000000000078 <__subinitcall_btrfs_transaction_init.28>:
-     ...
-
-0000000000000080 <__subinitcall_btrfs_init_dio.30>:
-     ...
-
-0000000000000088 <__subinitcall_btrfs_init_cachep.32>:
-     ...
-
-0000000000000090 <__subinitcall_btrfs_init_compress.34>:
-     ...
-
-0000000000000098 <__subinitcall_btrfs_init_sysfs.36>:
-     ...
-
-00000000000000a0 <__subinitcall_btrfs_props_init.38>:
-     ...
-
-```
-
-```
-$ objdump -d -j ".subexitcall.exit" fs/btrfs/super.o
-
-fs/btrfs/super.o:     file format elf64-x86-64
-
-
-Disassembly of section .subexitcall.exit:
-
-0000000000000000 <__subexitcall_unregister_btrfs.1>:
-     ...
-
-0000000000000008 <__subexitcall_btrfs_interface_exit.5>:
-     ...
-
-0000000000000010 <__subexitcall_btrfs_prelim_ref_exit.7>:
-     ...
-
-0000000000000018 <__subexitcall_btrfs_delayed_ref_exit.9>:
-     ...
-
-0000000000000020 <__subexitcall_btrfs_auto_defrag_exit.11>:
-     ...
-
-0000000000000028 <__subexitcall_btrfs_delayed_inode_exit.13>:
-     ...
-
-0000000000000030 <__subexitcall_ordered_data_exit.15>:
-     ...
-
-0000000000000038 <__subexitcall_extent_map_exit.17>:
-     ...
-
-0000000000000040 <__subexitcall_btrfs_bioset_exit.19>:
-     ...
-
-0000000000000048 <__subexitcall_extent_buffer_free_cachep.21>:
-     ...
-
-0000000000000050 <__subexitcall_extent_state_free_cachep.23>:
-     ...
-
-0000000000000058 <__subexitcall_btrfs_free_space_exit.25>:
-     ...
-
-0000000000000060 <__subexitcall_btrfs_ctree_exit.27>:
-     ...
-
-0000000000000068 <__subexitcall_btrfs_transaction_exit.29>:
-     ...
-
-0000000000000070 <__subexitcall_btrfs_destroy_dio.31>:
-     ...
-
-0000000000000078 <__subexitcall_btrfs_destroy_cachep.33>:
-     ...
-
-0000000000000080 <__subexitcall_btrfs_exit_compress.35>:
-     ...
-
-0000000000000088 <__subexitcall_btrfs_exit_sysfs.37>:
-     ...
-
-
-```
-
- From the above, we can see that the compiler stores the init/exit function
-in reverse order.
-
-Thanks,
-Youling.
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
