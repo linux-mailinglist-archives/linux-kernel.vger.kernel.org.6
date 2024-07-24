@@ -1,228 +1,148 @@
-Return-Path: <linux-kernel+bounces-261222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8829093B454
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:54:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 937CB93B45B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1DBE1C2378B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:54:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6D30B21490
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D6915B562;
-	Wed, 24 Jul 2024 15:54:19 +0000 (UTC)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6BB15B99D;
+	Wed, 24 Jul 2024 15:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="SMeNHCP+"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB2015AD99
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 15:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.40.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901F41598F4;
+	Wed, 24 Jul 2024 15:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721836458; cv=none; b=T9xGo1advjGTQ8keyhJDXRhc5omN3pzLvnzO394vIPCCzIR3CPjpuM377jataXubySBIHuJseCIhmQtMsRN6AmeBgfu0x2htmZyhSTBiMYqkWx0ZpSDSO1fqtx0x7YcJ4s5M7KbQU4QUU72Xt6EjrAIcSRgtheXiZMzKXreimm0=
+	t=1721836581; cv=none; b=UoQeQNKCJJxp56CjqNhIpCyWVFnX5J55Wd5BZsQRu3uEQ7nbe849XXjTnvy4duHXGbb2opbPxiAKxNx4lazKIFdShcGwVMNPhXDQB1eAhu7duE9S1/wndEkb6ROCn/ihMQGXG0Vu8jolalJBQP4SHoBNePR4aEQqm9f+jWW4dgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721836458; c=relaxed/simple;
-	bh=1BJLcBATfzkO8eQk7/JSbatzdtbhhwa34p2xzM4ycZ8=;
-	h=Date:From:To:Cc:Message-ID:Subject:MIME-Version:Content-Type; b=RjMV3LhMpgDUyzRC3xq1IOceansoHZ+s2LPx0+P07bWHX7cH+l/A+AR3IqsMDAavPXHzIJ9HMUc39h3IvQs3StDz/HLGBdBodr77O/G91AB3lY57RX1+eT9hqiKzY00jOnM5/f3oCMIh/oT45GHNYoKLt7NWHwTvqXXBRYh/kC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=195.201.40.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 5E0CB64A3D02;
-	Wed, 24 Jul 2024 17:54:07 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id 2N7Ivzn96uxj; Wed, 24 Jul 2024 17:54:06 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id C389E64A3D08;
-	Wed, 24 Jul 2024 17:54:06 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id L0jP27k3j6rD; Wed, 24 Jul 2024 17:54:06 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 99D0064A3D02;
-	Wed, 24 Jul 2024 17:54:06 +0200 (CEST)
-Date: Wed, 24 Jul 2024 17:54:06 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: torvalds <torvalds@linux-foundation.org>
-Cc: linux-um <linux-um@lists.infradead.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <158184774.112608.1721836446346.JavaMail.zimbra@nod.at>
-Subject: [GIT PULL] UML Changes for v6.11-rc1
+	s=arc-20240116; t=1721836581; c=relaxed/simple;
+	bh=K+IgA/6BPzCWNDJbSvsmdW2tWD1rAS4elUTUiihSuXo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=frRAZqAlUocwsRjZWOoP4Lr93KwMFAgPt16PDX/zrC1OV/Odi9GKGAEazc3gZDKySPOKEErVVmH370LfqwrQL0SqBVhtOP3lTIG+zu1FuiNySTvBDoBu0VRxh9V248KYzoAO9YXGzkK1DbdBF7cAl3QiurTmUl4qqRoeTXhp+KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=SMeNHCP+; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46OEVO1s018996;
+	Wed, 24 Jul 2024 11:55:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=C6pzJ2hkyI841OCo/4PPcXfGrDN
+	ICpwn9kB3Lwma94I=; b=SMeNHCP+io2Vuj9szx0NljPiukjVMOKYPpptcFcMdRu
+	Gzn51BokA2qz1QmKnJpPpokNCFF0VS4t72CUSlltJ79Vq+S5qxJrM+gCypu/GfGp
+	pI/vE0K7PJVqIJZXq2eQC6V3GuDx733BUsxS2MSPtTgP7FeQgqhmL50bZzCXzpgK
+	mTk/NGrvYol7E53LIUh22Cbze65t7dbK85ZjGyFrkqtIO31uhuoIy6OcCs2KQXWR
+	WjnsRTin6S9GlZ29xmw77Ov7bjbJYvCvrWEpZofxs5m5wek7YwB+R0P2PGhKox/+
+	FXEYJVfkXdSLrXdVW1rXSg+4traLHj02bpwyoC7emmQ==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 40g732ptqe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Jul 2024 11:55:48 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 46OFtlnr046212
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 24 Jul 2024 11:55:47 -0400
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Wed, 24 Jul 2024 11:55:46 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Wed, 24 Jul 2024 11:55:46 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Wed, 24 Jul 2024 11:55:46 -0400
+Received: from HYB-hYN1yfF7zRm.ad.analog.com (HYB-hYN1yfF7zRm.ad.analog.com [10.48.65.162] (may be forged))
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 46OFtP3Y002602;
+	Wed, 24 Jul 2024 11:55:27 -0400
+From: Ramona Alexandra Nechita <ramona.nechita@analog.com>
+To: <linux-iio@vger.kernel.org>
+CC: Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+        Jonathan Cameron
+	<jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Cosmin Tanislav
+	<cosmin.tanislav@analog.com>,
+        Michael Hennerich
+	<Michael.Hennerich@analog.com>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Andy
+ Shevchenko" <andriy.shevchenko@linux.intel.com>,
+        Nuno Sa
+	<nuno.sa@analog.com>,
+        Marcelo Schmitt <marcelo.schmitt@analog.com>,
+        Marius
+ Cristea <marius.cristea@microchip.com>,
+        Liam Beguin <liambeguin@gmail.com>,
+        "Ivan Mikhaylov" <fr0st61te@gmail.com>,
+        Mike Looijmans
+	<mike.looijmans@topic.nl>,
+        Marcus Folkesson <marcus.folkesson@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v4 0/3] add support for ad777x family
+Date: Wed, 24 Jul 2024 18:54:37 +0300
+Message-ID: <20240724155517.12470-1-ramona.nechita@analog.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF97 (Linux)/8.8.12_GA_3809)
-Thread-Index: wQNab6Gx6T+BtYDYnsBlJQD6ezYbRg==
-Thread-Topic: UML Changes for v6.11-rc1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: 1SKF-XB7NWNEtO8-AGu-_54E8CE-f1-J
+X-Proofpoint-GUID: 1SKF-XB7NWNEtO8-AGu-_54E8CE-f1-J
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-24_15,2024-07-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
+ mlxlogscore=999 suspectscore=0 adultscore=0 spamscore=0 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 clxscore=1011 impostorscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2407240115
 
-Linus,
+v4:
+	* updated commit description
+	* removed misc indents in private structure
+	* removed "_filter" from available filters
+	* updated calibscale/bias functions to use get/put unaligned
+	* switched to iio_device_claim_scoped
+	* added comments exaplaining necessary timings/buffers
+	* misc line breaks/wrap fixes
+	* switched to iio_trigger_generic_data_poll
+	* removed writing to indio_dev masklength
+	* switched to kernel_ulong_t for driver data
 
-The following changes since commit 22a40d14b572deb80c0648557f4bd502d7e83826:
+Ramona Alexandra Nechita (3):
+  dt-bindings: iio: adc: add a7779 doc
+  Documentation: ABI: added filter mode doc in sysfs-bus-iio
+  drivers: iio: adc: add support for ad777x family
 
-  Linux 6.10-rc6 (2024-06-30 14:40:44 -0700)
+ Documentation/ABI/testing/sysfs-bus-iio       |  22 +
+ .../ABI/testing/sysfs-bus-iio-adc-ad4130      |  46 -
+ .../bindings/iio/adc/adi,ad7779.yaml          |  85 ++
+ drivers/iio/adc/Kconfig                       |  11 +
+ drivers/iio/adc/Makefile                      |   1 +
+ drivers/iio/adc/ad7779.c                      | 952 ++++++++++++++++++
+ 6 files changed, 1071 insertions(+), 46 deletions(-)
+ delete mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad4130
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
+ create mode 100644 drivers/iio/adc/ad7779.c
 
-are available in the Git repository at:
+-- 
+2.43.0
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git tags/uml-for-linus-6.11-rc1
-
-for you to fetch changes up to 98ff534ec2cd02496c166614e6c1391d8e092e51:
-
-  um: vector: always reset vp->opened (2024-07-04 12:03:26 +0200)
-
-----------------------------------------------------------------
-This pull request contains the following changes for UML:
-
-- Support for preemption
-- i386 Rust support
-- Huge cleanup by Benjamin Berg
-- UBSAN support
-- Removal of dead code
-
-----------------------------------------------------------------
-Anton Ivanov (2):
-      um: Remove obsolete pcap driver
-      um: Enable preemption in UML
-
-Benjamin Berg (16):
-      um: irqs: process outstanding IRQs when unblocking signals
-      um: chan_user: catch EINTR when reading and writing
-      um: chan_user: retry partial writes
-      um: chan: use blocking IO for console output for time-travel
-      um: Remove stub-data.h include from common-offsets.h
-      um: Create signal stack memory assignment in stub_data
-      um: Add generic stub_syscall6 function
-      um: Rework syscall handling
-      um: compress memory related stub syscalls while adding them
-      um: remove LDT support
-      um: remove copy_context_skas0
-      um: Delay flushing syscalls until the thread is restarted
-      um: Do not flush MM in flush_thread
-      um: remove force_flush_all from fork_handler
-      um: simplify and consolidate TLB updates
-      um: refactor TLB update handling
-
-David Gow (2):
-      arch: um: rust: Use the generated target.json again
-      arch: um: rust: Add i386 support for Rust
-
-Dr. David Alan Gilbert (1):
-      ubd: Remove unused mutex 'ubd_mutex'
-
-Jeff Johnson (2):
-      um: harddog: add missing MODULE_DESCRIPTION() macro
-      hostfs: add missing MODULE_DESCRIPTION() macro
-
-Johannes Berg (13):
-      um: time-travel: fix time-travel-start option
-      um: enable UBSAN
-      hostfs: fix dev_t handling
-      um: generalize os_rcv_fd
-      um: add mmap/mremap OS calls
-      um: add shared memory optimisation for time-travel=ext
-      um: time-travel: remove time_exit()
-      um: time-travel: fix signal blocking race/hang
-      um: remove pcap driver from documentation
-      um: line: always fill *error_out in setup_one_line()
-      um: register power-off handler
-      um: vector: remove vp->lock
-      um: vector: always reset vp->opened
-
-Mordechay Goodstein (1):
-      um: time-travel: support time-travel protocol broadcast messages
-
-Niklas Schnelle (1):
-      um: Select HAS_IOREMAP for UML_IOMEM_EMULATION
-
-Tiwei Bie (2):
-      um: Remove unused ncpus variable
-      um: Remove /proc/sysemu support code
-
-Wei Yang (1):
-      um/mm: remove redundant assignment of max_low_pfn
-
- Documentation/rust/arch-support.rst                |   2 +-
- .../virt/uml/user_mode_linux_howto_v2.rst          |   2 -
- arch/um/Kconfig                                    |   8 +-
- arch/um/drivers/Kconfig                            |  20 -
- arch/um/drivers/Makefile                           |  10 +-
- arch/um/drivers/chan.h                             |   3 +-
- arch/um/drivers/chan_kern.c                        |  81 ++-
- arch/um/drivers/chan_user.c                        |  20 +-
- arch/um/drivers/harddog_kern.c                     |   1 +
- arch/um/drivers/line.c                             |   2 +
- arch/um/drivers/pcap_kern.c                        | 113 -----
- arch/um/drivers/pcap_user.c                        | 137 ------
- arch/um/drivers/pcap_user.h                        |  21 -
- arch/um/drivers/port_kern.c                        |  14 +-
- arch/um/drivers/ubd_kern.c                         |   3 -
- arch/um/drivers/vector_kern.c                      |  19 +-
- arch/um/drivers/vector_kern.h                      |   1 -
- arch/um/drivers/xterm.c                            |   2 +-
- arch/um/drivers/xterm_kern.c                       |  13 +-
- arch/um/include/asm/mmu.h                          |  10 +-
- arch/um/include/asm/mmu_context.h                  |   2 -
- arch/um/include/asm/pgtable.h                      |  32 ++
- arch/um/include/asm/tlbflush.h                     |  46 +-
- arch/um/include/shared/as-layout.h                 |   2 +-
- arch/um/include/shared/common-offsets.h            |   5 -
- arch/um/include/shared/kern_util.h                 |   1 -
- arch/um/include/shared/os.h                        |  33 +-
- arch/um/include/shared/skas/mm_id.h                |   2 +-
- arch/um/include/shared/skas/skas.h                 |   2 +
- arch/um/include/shared/skas/stub-data.h            |  36 +-
- arch/um/include/shared/timetravel.h                |   9 +
- arch/um/include/shared/user.h                      |   8 +
- arch/um/kernel/exec.c                              |   9 -
- arch/um/kernel/irq.c                               |  80 +--
- arch/um/kernel/ksyms.c                             |   2 +-
- arch/um/kernel/mem.c                               |   1 -
- arch/um/kernel/process.c                           |  69 ---
- arch/um/kernel/reboot.c                            |  15 +
- arch/um/kernel/skas/Makefile                       |   9 +-
- arch/um/kernel/skas/clone.c                        |  48 --
- arch/um/kernel/skas/mmu.c                          |  54 +-
- arch/um/kernel/skas/process.c                      |  18 +
- arch/um/kernel/skas/stub.c                         |  69 +++
- arch/um/kernel/time.c                              | 187 ++++++-
- arch/um/kernel/tlb.c                               | 545 ++++-----------------
- arch/um/kernel/trap.c                              |  15 +-
- arch/um/kernel/um_arch.c                           |   3 -
- arch/um/os-Linux/file.c                            |  94 ++--
- arch/um/os-Linux/signal.c                          | 118 ++++-
- arch/um/os-Linux/skas/mem.c                        | 245 +++++----
- arch/um/os-Linux/skas/process.c                    | 124 +----
- arch/um/os-Linux/start_up.c                        |   1 +
- arch/x86/Makefile.um                               |   1 +
- arch/x86/um/Makefile                               |   5 +-
- arch/x86/um/asm/mm_context.h                       |  70 ---
- arch/x86/um/ldt.c                                  | 380 --------------
- arch/x86/um/shared/sysdep/stub.h                   |   2 +-
- arch/x86/um/shared/sysdep/stub_32.h                |  45 +-
- arch/x86/um/shared/sysdep/stub_64.h                |  41 +-
- arch/x86/um/stub_32.S                              |  56 ---
- arch/x86/um/stub_64.S                              |  50 --
- arch/x86/um/tls_32.c                               |   1 +
- fs/hostfs/hostfs.h                                 |   7 +-
- fs/hostfs/hostfs_kern.c                            |  11 +-
- fs/hostfs/hostfs_user.c                            |   7 +-
- include/uapi/linux/um_timetravel.h                 | 190 ++++++-
- rust/Makefile                                      |   2 +-
- scripts/Makefile                                   |   2 +-
- scripts/generate_rust_target.rs                    |  17 +
- 69 files changed, 1297 insertions(+), 1956 deletions(-)
- delete mode 100644 arch/um/drivers/pcap_kern.c
- delete mode 100644 arch/um/drivers/pcap_user.c
- delete mode 100644 arch/um/drivers/pcap_user.h
- delete mode 100644 arch/um/kernel/skas/clone.c
- create mode 100644 arch/um/kernel/skas/stub.c
- delete mode 100644 arch/x86/um/asm/mm_context.h
- delete mode 100644 arch/x86/um/ldt.c
- delete mode 100644 arch/x86/um/stub_32.S
- delete mode 100644 arch/x86/um/stub_64.S
 
