@@ -1,147 +1,160 @@
-Return-Path: <linux-kernel+bounces-260531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43A6C93AA94
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:30:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B33E893AA9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAF231F23A33
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:30:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69822283B0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:34:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6629B67E;
-	Wed, 24 Jul 2024 01:30:16 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C474A19;
-	Wed, 24 Jul 2024 01:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4336BA47;
+	Wed, 24 Jul 2024 01:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wfVjKEDj"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A568A79F4
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 01:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721784616; cv=none; b=fozJD3N8BudPTj/8iB7iDoOAUeU/qePGILuktS42B6vhu/fTS+2EO6gRa3Ph1FcGELZ2wsOqyHNX4Q+HDGvsRIX/l6iS4+Gc7NhLHRYhguSrMfL2JlqkVOgfGqfLq8T/Rkrat8rZV+Mjsr9kQO3BEIoKwbJObOelVz40fvWLneM=
+	t=1721784857; cv=none; b=n1L68jwDGrG4bm2FnDBnq34jNzbFOZXX4dQoUxyciCX1t+GYn2yj3X8HYwYdeOFRA5mrZPBfavPiUSOIAZkPvjAFRE4RMNt4BMeHjjRefPlpX+49XYdiss7NwcBEjscN6EXWN+38V8DlQuyoZd15gWHxIzPMJTzaB9xtUJ2izVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721784616; c=relaxed/simple;
-	bh=bSV/tn8rgIr3LZKicy7ygBdBwp4x2cZxxscf4ukTabw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=jlgZO+hGpAn/1myd1ufrWNDv9wnrVyWSgO64Tq5UkZ+GNoandSl323LfRp9MivvmLKz2P5uL4cjzQbpK5gK+msHK/p5gTSy+poyYyVwKCpVwc0/Xb0c8KmxDdleMHarN+V4bjA93LXwX4NQ0GHvkryz05OKcAdSGMdZc2BJ2q5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8CxuOkeWaBm18QAAA--.3046S3;
-	Wed, 24 Jul 2024 09:30:06 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8AxhsUXWaBm2ZNWAA--.50225S3;
-	Wed, 24 Jul 2024 09:30:01 +0800 (CST)
-Subject: Re: [PATCH 2/2] LoongArch: KVM: Add paravirt qspinlock in guest side
-To: kernel test robot <lkp@intel.com>, Huacai Chen <chenhuacai@kernel.org>,
- Tianrui Zhao <zhaotianrui@loongson.cn>, Peter Zijlstra
- <peterz@infradead.org>, Waiman Long <longman@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, WANG Xuerui <kernel@xen0n.name>,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
- kvm@vger.kernel.org, virtualization@lists.linux.dev
-References: <20240723073825.1811600-3-maobibo@loongson.cn>
- <202407240320.qqd1uWiE-lkp@intel.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <7a145178-633c-afd7-4aba-45546a4c7a75@loongson.cn>
-Date: Wed, 24 Jul 2024 09:29:59 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1721784857; c=relaxed/simple;
+	bh=aT+h210BT2JUWtrXjXFykcBpBDwnkrUWOD9dpgMA01M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LwVZAkuqcyjHUkEk8XhMqr0yt4NWyZ2KWHcVOJSSFNZwFx2IvrlAr7nKaKGewTvj0etT4JfiWqhASr6hKB9DpvYF87PtLtkg/69sypnzdrDRSv2Ir3XFU+f1WHDOI+EDvsOGXUUgpU8fhkyM4Wp3MMH9LerIDPvEikiomKlyVjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wfVjKEDj; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fd643d7580so56525ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 18:34:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721784855; x=1722389655; darn=vger.kernel.org;
+        h=mime-version:user-agent:message-id:date:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IX7tUUTyuLfAxhlIQpJKT/5V3ggK/z1UtcxWyBnw4a4=;
+        b=wfVjKEDjvCxn/B1iQdcYCD1m1EFcKGz2BEUiShmMZQ1m9qlAolXF2JRM/u+pK2EiZh
+         HqDFwQatlk7i6xwiMJ88BMj6zQAHqaSeXwnd3YNel3deDw6fvuBh41+Vnan5DxGrVKkL
+         Gz4yeiztX5YT85NptvvdDaIZ7otgfU2xKBBv87ZDzpVuDXXfgolzDUp4SqPVjq4EY6fy
+         dtLQI3ikk8VYTcCf1f3E73CciPj90Y/wvaKij/zOzKj+jGfmsOsdfcAJlS/WXH/1g/ep
+         whptJGQDnEeglVGto7qEvW/Aih94k3KORL10gftPdX6BdvT5CMHrAB5qDUafS4rXjQbm
+         7LWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721784855; x=1722389655;
+        h=mime-version:user-agent:message-id:date:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IX7tUUTyuLfAxhlIQpJKT/5V3ggK/z1UtcxWyBnw4a4=;
+        b=OE6yN2qDyUhkOePJn3g72RbuZAfcU5e6foZO4yknY0f8XhpOShN3xeLCL368aOfkDs
+         hLW5WnsKVWuCIXrYycWVp+f6TqlKoXmn3DqSrEMhEq9e08AbFkFMJHGP5jGZDozRdJi1
+         8yo9jxyZjcatT+mVK5WwNHSmgGrSLAnZVxGaSfSR59HOJCMseGCSTX/SPspiymtSOBSy
+         I5V7Hx88EZQMUEBOzPir2VNP7qfOM5bcootjiFGyoFTHbZkw2Zroqx32gPEZL+fO6j/v
+         uNb9bfR11a5IGWmmVV4GB2qei92nDoe1vx8wcgOJUm2NYRzqyUWarhnkabxAnRBJqBwn
+         +RmA==
+X-Gm-Message-State: AOJu0YyC+DHI0g+tivqLxJBhvGLRebU9efRfgJocriFjYcy8h34XLdVz
+	LdWRY3qU8k9fZbZYQksl7y1unysVOK5XooIYayVcl4GycG4pHJSU3qZNRM9ibg==
+X-Google-Smtp-Source: AGHT+IGr1O86WP3V8FbnoWAMwrvFj7oMhzGCnQawx3yLPJFJyNjoBduQsQUlIObs2knWQP7kZkbTpA==
+X-Received: by 2002:a17:902:da8a:b0:1f9:dc74:6c2b with SMTP id d9443c01a7336-1fdd3d4c5e0mr1816955ad.29.1721784854584;
+        Tue, 23 Jul 2024 18:34:14 -0700 (PDT)
+Received: from bsegall-glaptop.localhost (c-73-202-176-14.hsd1.ca.comcast.net. [73.202.176.14])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70cff4b8166sm7577995b3a.85.2024.07.23.18.34.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 18:34:14 -0700 (PDT)
+From: Benjamin Segall <bsegall@google.com>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: linux-kernel@vger.kernel.org,  rcu@vger.kernel.org,  Peter Zijlstra
+ <peterz@infradead.org>,  Ingo Molnar <mingo@redhat.com>,  Juri Lelli
+ <juri.lelli@redhat.com>,  Vincent Guittot <vincent.guittot@linaro.org>,
+  Dietmar Eggemann <dietmar.eggemann@arm.com>,  Steven Rostedt
+ <rostedt@goodmis.org>,  Mel Gorman <mgorman@suse.de>,  Phil Auld
+ <pauld@redhat.com>,  Clark Williams <williams@redhat.com>,  Tomas Glozar
+ <tglozar@redhat.com>,  "Paul E. McKenney" <paulmck@kernel.org>,  Frederic
+ Weisbecker <frederic@kernel.org>,  Neeraj Upadhyay
+ <neeraj.upadhyay@kernel.org>,  Joel Fernandes <joel@joelfernandes.org>,
+  Josh Triplett <josh@joshtriplett.org>,  Boqun Feng
+ <boqun.feng@gmail.com>,  Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>,  Lai Jiangshan <jiangshanlai@gmail.com>,
+  Zqiang <qiang.zhang1211@gmail.com>,  Alexander Gordeev
+ <agordeev@linux.ibm.com>,  Catalin Marinas <catalin.marinas@arm.com>,
+  Arnd Bergmann <arnd@arndb.de>,  Guo Ren <guoren@kernel.org>,  Palmer
+ Dabbelt <palmer@rivosinc.com>,  Andrew Morton <akpm@linux-foundation.org>,
+  Oleg Nesterov <oleg@redhat.com>,  Jens Axboe <axboe@kernel.dk>
+Subject: Re: [RFC PATCH v3 10/10] sched/fair: Throttle CFS tasks on return
+ to userspace
+In-Reply-To: <xhsmhikwwyw8r.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	(Valentin Schneider's message of "Tue, 23 Jul 2024 17:16:20 +0200")
+References: <20240711130004.2157737-1-vschneid@redhat.com>
+	<20240711130004.2157737-11-vschneid@redhat.com>
+	<xm26y15yz0q8.fsf@google.com>
+	<xhsmhikwwyw8r.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+Date: Tue, 23 Jul 2024 18:34:11 -0700
+Message-ID: <xm26a5i7zi7g.fsf@google.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <202407240320.qqd1uWiE-lkp@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8AxhsUXWaBm2ZNWAA--.50225S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxGFW3Zw4UZryruF17KryxXrc_yoW5CFWDpa
-	48CF1DJFW8Jr48Z3yUKw15uF1Dtan8W3sIvF9Y9ryxCFW2qFyDWws2krWa9w1jyws29Fyj
-	gry7WF1qya4UA3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	Gr0_Gr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWU
-	AwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
-	k0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l
-	4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxV
-	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI
-	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
-	1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
-	42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jYpB-UUUUU=
+Content-Type: text/plain
+
+Valentin Schneider <vschneid@redhat.com> writes:
+
+> On 18/07/24 17:25, Benjamin Segall wrote:
+>> Valentin Schneider <vschneid@redhat.com> writes:
+>>
+>>> I've tested a 10ms runtime / 100ms period cgroup with an always running
+>>> task: upstream gets a "clean" periodic pattern of 10ms runtime every 100ms,
+>>> whereas this gets something more like 40ms runtime every 400ms.
+>>
+>> Hmm, this seems a little odd since TWA_RESUME does a kick_process.
+>
+> I didn't ponder too much on the workload used here, but the point I wanted
+> to bring up is: if you give a cgroup X amount of runtime, it may still
+> consume more than that within a single period because execution in
+> kernelspace isn't immediately stopped/throttled.
+>
+> It means the "standard" bandwidth control behaviour becomes a bit more
+> bursty.
+
+Yeah, more bursty behavior when doing cpu-burning syscalls is expected.
+With the check on exit to user I wouldn't expect anything worse than the
+duration of the syscall though, so it depends on what your test was.
 
 
+>>> +
+>>> +	/*
+>>> +	 * Account tasks woken up in children; by this point all direct children
+>>> +	 * have been visited.
+>>> +	 */
+>>> +	task_delta += cfs_rq->unthrottled_h_nr_running;
+>>> +	idle_task_delta += cfs_rq->unthrottled_idle_h_nr_running;
+>>> +
+>>> +	cfs_rq->h_nr_running += task_delta;
+>>> +	cfs_rq->idle_h_nr_running += idle_task_delta;
+>>> +
+>>> +	/*
+>>> +	 * unthrottle_cfs_rq() needs a value to up-propagate above the
+>>> +	 * freshly unthrottled cfs_rq.
+>>> +	 */
+>>> +	cfs_rq->unthrottled_h_nr_running = task_delta;
+>>> +	cfs_rq->unthrottled_idle_h_nr_running = idle_task_delta;
+>>
+>> I think this should have no effect, right?
+>
+> Hm so my thoughts here are:
+> The walk_tg_tree_from(tg_unthrottle_up) will update *nr_running counts up
+> to the cfs_rq->tg->se[cpu_of(rq)]. However if that cfs_rq isn't the root
+> one, we'll need the for_each_sched_entity() loop further down
+> unthrottle_cfs_rq() to update the upper part of the hierarchy. The values
+> that will be up-propagated there are the ones being saved here.
 
-On 2024/7/24 上午3:57, kernel test robot wrote:
-> Hi Bibo,
-> 
-> kernel test robot noticed the following build errors:
-yes, forgot to mention, it depends on this patch
-https://lore.kernel.org/lkml/20240721164552.50175-1-ubizjak@gmail.com/
-
-Regards
-Bibo Mao
-> 
-> [auto build test ERROR on 7846b618e0a4c3e08888099d1d4512722b39ca99]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Bibo-Mao/LoongArch-KVM-Add-paravirt-qspinlock-in-kvm-side/20240723-160536
-> base:   7846b618e0a4c3e08888099d1d4512722b39ca99
-> patch link:    https://lore.kernel.org/r/20240723073825.1811600-3-maobibo%40loongson.cn
-> patch subject: [PATCH 2/2] LoongArch: KVM: Add paravirt qspinlock in guest side
-> config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20240724/202407240320.qqd1uWiE-lkp@intel.com/config)
-> compiler: loongarch64-linux-gcc (GCC) 14.1.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240724/202407240320.qqd1uWiE-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202407240320.qqd1uWiE-lkp@intel.com/
-> 
-> All error/warnings (new ones prefixed by >>):
-> 
->>> arch/loongarch/kernel/paravirt.c:309: warning: expecting prototype for queued_spin_unlock(). Prototype was for native_queued_spin_unlock() instead
-> --
->     In file included from include/linux/atomic.h:80,
->                      from include/asm-generic/bitops/atomic.h:5,
->                      from arch/loongarch/include/asm/bitops.h:27,
->                      from include/linux/bitops.h:63,
->                      from include/linux/kernel.h:23,
->                      from include/linux/cpumask.h:11,
->                      from include/linux/smp.h:13,
->                      from kernel/locking/qspinlock.c:16:
->     kernel/locking/qspinlock_paravirt.h: In function 'pv_kick_node':
->>> include/linux/atomic/atomic-arch-fallback.h:242:34: error: initialization of 'u8 *' {aka 'unsigned char *'} from incompatible pointer type 'enum vcpu_state *' [-Wincompatible-pointer-types]
->       242 |         typeof(*(_ptr)) *___op = (_oldp), ___o = *___op, ___r; \
->           |                                  ^
->     include/linux/atomic/atomic-instrumented.h:4908:9: note: in expansion of macro 'raw_try_cmpxchg_relaxed'
->      4908 |         raw_try_cmpxchg_relaxed(__ai_ptr, __ai_oldp, __VA_ARGS__); \
->           |         ^~~~~~~~~~~~~~~~~~~~~~~
->     kernel/locking/qspinlock_paravirt.h:377:14: note: in expansion of macro 'try_cmpxchg_relaxed'
->       377 |         if (!try_cmpxchg_relaxed(&pn->state, &old, vcpu_hashed))
->           |              ^~~~~~~~~~~~~~~~~~~
-> 
-> 
-> vim +309 arch/loongarch/kernel/paravirt.c
-> 
->     303	
->     304	/**
->     305	 * queued_spin_unlock - release a queued spinlock
->     306	 * @lock : Pointer to queued spinlock structure
->     307	 */
->     308	static void native_queued_spin_unlock(struct qspinlock *lock)
->   > 309	{
->     310		/*
->     311		 * unlock() needs release semantics:
->     312		 */
->     313		smp_store_release(&lock->locked, 0);
->     314	}
->     315	
-> 
+I'm pretty sure this comment was left over from when I didn't understand
+what they were being used for. I'm pretty sure I remember intending to
+remove it.
 
 
