@@ -1,139 +1,116 @@
-Return-Path: <linux-kernel+bounces-260963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61AAC93B0FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:41:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B641493B102
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:44:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AA371C213F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:41:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A81D2853BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE1F1581FD;
-	Wed, 24 Jul 2024 12:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419811581FD;
+	Wed, 24 Jul 2024 12:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fhVhrl9/"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="JFYbrJkQ"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCE6148FFA;
-	Wed, 24 Jul 2024 12:41:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085AE148FFA;
+	Wed, 24 Jul 2024 12:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721824877; cv=none; b=cs0mW3NLmdCURfRBKLT7nAWgvBJv2LwUkkyta7X9e+R0QTlTQHSV+gPrEtAPasAL59T9H44zfH2E8h3N0Drz7KYLt4FF4v6XR+4SlpJ2gdmtzhx3CvkaxXdMV+AgB8t/EbwVuqHRzyHoQvxLm5HC6nY1A7NJeoiX+j/8DBGTHnc=
+	t=1721825048; cv=none; b=uVrEVmFpfmVokXAU+m5rKc+9jGALf8HJLJRlm3FPa+ByQ/hIAel54lr4oj4lRcqyZ6CHBbTc8aYz1k1anH/AnGuW9ZvF6nLwg8q0MOJD765unmjzC3mKy3luzz+BT35cZlfyAUArZ63xo80PMn8gkpkujZ0RtoabVZS+k5YuaH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721824877; c=relaxed/simple;
-	bh=cmp1m11YrpsGcqUKzGuag7Huw9vz0AgogJWIrQ6MnpE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dIQ/chUv5PhUJ1Mx04Dyxi/TecMBbTrSdNwn9DmDGqXG1Vgkx8+cb/zzNa5mD9NGIkx4FeI66yRxW3/XDcaAVi1PbC3B8PVgVL7hJ9r0GpXxfmyu2szQfYZco8iZRnfaN/OvLoo4W0/MBLMpoKWiulWsW51F8f8fNrN6FEbC9go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fhVhrl9/; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=6J6/mCNap2U38NHjqHLrKE4y+Xj/p/3fvwoIUdiyQks=; b=fhVhrl9/nejY93MygJ055QBCdi
-	ZIF736PfMqnvAuyabZN57XAf5Fqvlg8FjHxqkWjva739sISm6WP26aPl5jt/8Fwnu8B+bNS5Lim0Q
-	RW8dni0aAHR33LU+zIaPhYrDz6HTOnFmqMo7quJV4+PWX1wDMkkmDuzNph1X8CB8MWTrJnF7FJsWv
-	g5qWfIP+38/h4biPzaZjbQYa08Iz6ByEI4MjE436qg2kOFazACkY+c54oTCoOLVp7l2IEyONppfpc
-	EGFG9MtYCsGnBv/0QAilWyTbziJpctvWxeNiYATTgx6rqGwgHl7yhRWKeLrfgsHnS6bYZxRNPGfNT
-	8MlXJr6A==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sWbIo-00000007pAr-2cMJ;
-	Wed, 24 Jul 2024 12:41:06 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 36AAD3003EA; Wed, 24 Jul 2024 14:41:05 +0200 (CEST)
-Date: Wed, 24 Jul 2024 14:41:05 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Lucas De Marchi <lucas.demarchi@intel.com>
-Cc: Tvrtko Ursulin <tursulin@ursulin.net>, intel-gfx@lists.freedesktop.org,
-	linux-perf-users@vger.kernel.org,
-	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-	dri-devel@lists.freedesktop.org, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/7] drm/i915/pmu: Lazy unregister
-Message-ID: <20240724124105.GB13387@noisy.programming.kicks-ass.net>
-References: <20240722210648.80892-1-lucas.demarchi@intel.com>
- <20240722210648.80892-7-lucas.demarchi@intel.com>
- <be3871bd-fc25-482e-b4d4-91afc4d5b5a5@ursulin.net>
- <xsuzfv4rzb4c25sibt5gjskn7xyfwf33wgwaw4nkz5jlnvl2ke@ekur5xvhec3z>
+	s=arc-20240116; t=1721825048; c=relaxed/simple;
+	bh=yv5/QFhFAPb65M4s7ugL3tGNyxlTw74LY9qjyiedrP4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bT5YHHTmx8Rq15tN1cC7ugVTQzSLURP0SeJjDXdcU1rSD9TSRg4iWJi9FkIGbFOhfU1JXCeLQrQlyiE1KJWf6wJmslS/Zc9cWP10FabG4ma62PkgPUEp3dU0fEidOTsC3VUGMNrInjQQqcPYbY3hbIxRVuAyalEDKaJudMFa9V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=JFYbrJkQ; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a3458bf989so5389236a12.0;
+        Wed, 24 Jul 2024 05:44:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1721825045; x=1722429845; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ljAWzXfJkg/wQZiKSeXe2JJNOkrb9s8c+erMRLk0VVk=;
+        b=JFYbrJkQM9XAUFLWMUU1IztjQpGl3lyvX5Sf8hgRX8uUplL4WPE3nJqQ9F2QVvONh+
+         fnJ5E5ylr35HZ58F+IFMH/vuQ2ZISZxKJGy5NqDuJKiy727fkHdfCcjs5Sx5xD6yYu0E
+         7rccKG7VkbNG7/eQfFFqaMQqCneuhjlRRC6NvECnQvlvJBmhBDCcXcLryKj+bFBq/NgZ
+         HJLAWikEkBh7aJSFCCNqfP/XbPPEkm1y+6F3ZT89yKFL9+f59yeCd2/TdqAC9yjElxVx
+         nBlJOzajDRcRDvlwSAgymAVu3BZczZPWfYQkckJwXe8TEqR3AR2sdyHd0IGy7xq2fzNv
+         hudg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721825045; x=1722429845;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ljAWzXfJkg/wQZiKSeXe2JJNOkrb9s8c+erMRLk0VVk=;
+        b=pDlcuOA/euZiK3ni3ppIl4t8VXIzpGnkn6Q2PChnY1t0bHmj5FqkBNiiu+yB0WZhl0
+         lVLEPfL5bdBHm1nkJSAkaZN3hBLEdg4iAcXDtEzzey7rBwkg6QG1Xl5inXYvbp4dGgEQ
+         ew7EKmaJgeobxSBQydRutxxK6Lm6HdxCrJqjwUsU92WAMyr/3dSZoLxKhzHIyUC48AHL
+         m9nSyNkvGx9dGrnN5F5RgaP1fTPn8Eo98xWoarGWOafq7K6bYDvp5kB05yX3JkIiZC5K
+         2kUOCDdFqx82lBNssuQOqoOnBMEa1eYNRZlP+FDNUFiyVqWCR+qJ27Fm5Qf4yxeD26vs
+         3fow==
+X-Forwarded-Encrypted: i=1; AJvYcCUKe7pRUZgqOA5IlX8IQ9xTtvB1yc4+RL7vTDtHwY/yQKaP1na0TxJLOG7BNK+qKnnDqMR8MDhGQNrVhZyojGakA4fBi8/ZcjGLoVsaug5OlkHdITJPanlFEvIopOut4zq6Ztce
+X-Gm-Message-State: AOJu0YwNwf8fJ2FJcRz4+RuhbcGb/5mHPTNG4yvNOSfzUTOmLYykWaYQ
+	l6uJetilZA2hBTFK/8GS7m2rh9ejCq0QqmR3/XObHnsDkcPi11Y=
+X-Google-Smtp-Source: AGHT+IFVd6T5XYoTUmgpbHhyW2avvsdaGGLt+mZ1T0qM4LuFCMsIW8oLboKrmG0yXmG1GTZOf9q/dA==
+X-Received: by 2002:a50:cc97:0:b0:5a2:597:748e with SMTP id 4fb4d7f45d1cf-5aaec1608b7mr1359251a12.2.1721825045039;
+        Wed, 24 Jul 2024 05:44:05 -0700 (PDT)
+Received: from [192.168.1.3] (p5b057b1e.dip0.t-ipconnect.de. [91.5.123.30])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30a4d6c17sm8934583a12.5.2024.07.24.05.44.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Jul 2024 05:44:04 -0700 (PDT)
+Message-ID: <42fcb54b-c50f-4a4f-8248-e0e4f8ebf539@googlemail.com>
+Date: Wed, 24 Jul 2024 14:44:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xsuzfv4rzb4c25sibt5gjskn7xyfwf33wgwaw4nkz5jlnvl2ke@ekur5xvhec3z>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.1 000/105] 6.1.101-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240723180402.490567226@linuxfoundation.org>
+Content-Language: de-DE
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20240723180402.490567226@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 23, 2024 at 10:30:08AM -0500, Lucas De Marchi wrote:
-> On Tue, Jul 23, 2024 at 09:03:25AM GMT, Tvrtko Ursulin wrote:
-> > 
-> > On 22/07/2024 22:06, Lucas De Marchi wrote:
-> > > Instead of calling perf_pmu_unregister() when unbinding, defer that to
-> > > the destruction of i915 object. Since perf itself holds a reference in
-> > > the event, this only happens when all events are gone, which guarantees
-> > > i915 is not unregistering the pmu with live events.
-> > > 
-> > > Previously, running the following sequence would crash the system after
-> > > ~2 tries:
-> > > 
-> > > 	1) bind device to i915
-> > > 	2) wait events to show up on sysfs
-> > > 	3) start perf  stat -I 1000 -e i915/rcs0-busy/
-> > > 	4) unbind driver
-> > > 	5) kill perf
-> > > 
-> > > Most of the time this crashes in perf_pmu_disable() while accessing the
-> > > percpu pmu_disable_count. This happens because perf_pmu_unregister()
-> > > destroys it with free_percpu(pmu->pmu_disable_count).
-> > > 
-> > > With a lazy unbind, the pmu is only unregistered after (5) as opposed to
-> > > after (4). The downside is that if a new bind operation is attempted for
-> > > the same device/driver without killing the perf process, i915 will fail
-> > > to register the pmu (but still load successfully). This seems better
-> > > than completely crashing the system.
-> > 
-> > So effectively allows unbind to succeed without fully unbinding the
-> > driver from the device? That sounds like a significant drawback and if
-> > so, I wonder if a more complicated solution wouldn't be better after
-> > all. Or is there precedence for allowing userspace keeping their paws on
-> > unbound devices in this way?
-> 
-> keeping the resources alive but "unplunged" while the hardware
-> disappeared is a common thing to do... it's the whole point of the
-> drmm-managed resource for example. If you bind the driver and then
-> unbind it while userspace is holding a ref, next time you try to bind it
-> will come up with a different card number. A similar thing that could be
-> done is to adjust the name of the event - currently we add the mangled
-> pci slot.
-> 
-> That said, I agree a better approach would be to allow
-> perf_pmu_unregister() to do its job even when there are open events. On
-> top of that (or as a way to help achieve that), make perf core replace
-> the callbacks with stubs when pmu is unregistered - that would even kill
-> the need for i915's checks on pmu->closed (and fix the lack thereof in
-> other drivers).
-> 
-> It can be a can of worms though and may be pushed back by perf core
-> maintainers, so it'd be good have their feedback.
+Am 23.07.2024 um 20:22 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.1.101 release.
+> There are 105 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-I don't think I understand the problem. I also don't understand drivers
-much -- so that might be the problem.
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-So the problem appears to be that the device just disappears without
-warning? How can a GPU go away like that?
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-Since you have a notion of this device, can't you do this stubbing you
-talk about? That is, if your internal device reference becomes NULL, let
-the PMU methods preserve the state like no-ops.
+Beste Grüße,
+Peter Schneider
 
-And then when the last event goes away, tear down the whole thing.
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
-Again, I'm not sure I'm following.
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
