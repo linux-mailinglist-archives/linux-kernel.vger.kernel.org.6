@@ -1,172 +1,581 @@
-Return-Path: <linux-kernel+bounces-261336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8052193B602
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:32:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B077E93B603
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:32:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E66CD1F22A78
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:32:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3ED11C21367
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E57D15FCFB;
-	Wed, 24 Jul 2024 17:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C7F716A938;
+	Wed, 24 Jul 2024 17:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="n5X0Drnu"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2076.outbound.protection.outlook.com [40.107.100.76])
+	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="TQu6Ha37"
+Received: from pb-smtp20.pobox.com (pb-smtp20.pobox.com [173.228.157.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B1A200DE;
-	Wed, 24 Jul 2024 17:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721842329; cv=fail; b=U+gZ7zOttQamimCnz+lXLqWiHc2RfN6ibTjGASoyPkKhhXjpBpBQTsyh+ljBXH0/ASTC6WBCogM9ntCh1JBzKqpAzbF81AbwVZDGj7On3t+X3fDV1Y+9wuyfaLym94rHHFCy+2PPgPgdnkOUeL4uG+vGnrLYloaBWbrWtAimkp0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721842329; c=relaxed/simple;
-	bh=Q2xOMB16OUFpi6zWUsM/hg43pZQ2sKIXKTQACM7y05Q=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jr9mfgaXyzdCOIZVDl5uGyKBP9Q8cAKvjvMonVr2Yfwqwky8a3nffrhZWKfz7o3oKjWW4yqK/+AK83Zpte15g/6xSlTW0/fd40lfS6P/4CZS0fjNuQlqfCWSkEMMn5O4ZIZU9AJ5LFVol8pIWRHjMgQXpWU8YgXyWxINan6cYDU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=n5X0Drnu; arc=fail smtp.client-ip=40.107.100.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=O+L9umyOTZARoAG10hFrtu5dsVliJVUJWLQPsnWWAh+A/5OEsjDgjfKCAn4xa1DxB+e/uuz4PlH9w8w/xjjvd8I8acTNJFb485soqnqGlSy2x6zhZE8qJsmiE7zdqa+Wd/B9a8DLDiMPbQdy0u9K6/nagu95+X6aL73Iw8TLLEalakLRY/IMOEiGY+C48ivx72N+6kyvLGnGna+SdQ0vDQGiMyNf0BTrPLbCdh3Qj+gcVreDJbTWmGWpdGmm8H8FH8bJGpeH8bU/uckzXRCI212gm3t3l1AiV+V6Dk5t5F+EEVmXu4gEtIPbO8w+lt5sX87LIAYnPKeEPeeh+rmdnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3/TJmzr/zTyko0YAh4CaoY7O1vT9L8tb7Xt8Po9I2vo=;
- b=k2teObZfvfvUZYIF0d6GIyTj8qqVYJUasIASbBzYCGwlgCCaiNQ+Fywi4zV65NcdPJqKs2YbQt0wR91QAxEdbaAQMwJt07ZPXsA5Hl1ZYM0D9fJ37uLxe3PAGo0AIJbnULDkawdD3vKDSJM8U+1pgoSVJ7ZOh3E9IL/5bGxTWVdCxK47xZ86Aj7dQ9NCrWo/5tJY5JZuN4DnaGS6/i0jKv3ZRWp3kbQ/kzJABIxu0C/vqX6ZFizmtMKoRAbTFtO4GQUdixcTWkOXehoww4PIW3TeheU4X2EeswGGyQh39t3CycVQDQzbM2PcpOC2WtOsGOEnwpe1TkTqi7nR7R2FAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3/TJmzr/zTyko0YAh4CaoY7O1vT9L8tb7Xt8Po9I2vo=;
- b=n5X0DrnucQ1Sbs6j0yXQ7lfVWr6j5myBeGlc3H7BEyVVme3dH9Hqzql/S1iwII6x9pnYpAZCL81jXhr1DsdYt7/b/RB47zr1V0hqDrzaFMBoQwOe0//2TlVDs1mw20OyUvu5CCenqlaExVf2P7+sP4BxBvgF2wuWRdV3cqhyKPHh8cQCtcOMb3kEt0oSmWNSR565cw/dDkm9cUDFGPGTH85h/SjoyaWdbVYS89C599YbUFNH7mcU/omHr1KbPKXMT3FS3uOzTKxBKMhSwchsyKAZEnbsq1twC165iDLjBDlPuO2/RHCnhBbBq5Q2vNAEm7ShfyOFFQvlMUeHxgAiJg==
-Received: from BL1P223CA0013.NAMP223.PROD.OUTLOOK.COM (2603:10b6:208:2c4::18)
- by DM4PR12MB5889.namprd12.prod.outlook.com (2603:10b6:8:65::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20; Wed, 24 Jul
- 2024 17:32:04 +0000
-Received: from BL02EPF0001A0FB.namprd03.prod.outlook.com
- (2603:10b6:208:2c4:cafe::98) by BL1P223CA0013.outlook.office365.com
- (2603:10b6:208:2c4::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20 via Frontend
- Transport; Wed, 24 Jul 2024 17:32:04 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BL02EPF0001A0FB.mail.protection.outlook.com (10.167.242.102) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7784.11 via Frontend Transport; Wed, 24 Jul 2024 17:32:03 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 24 Jul
- 2024 10:31:38 -0700
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 24 Jul
- 2024 10:31:38 -0700
-Received: from build-amhetre-20240716T042216611.internal (10.127.8.10) by
- mail.nvidia.com (10.129.68.10) with Microsoft SMTP Server id 15.2.1544.4 via
- Frontend Transport; Wed, 24 Jul 2024 10:31:38 -0700
-From: Ashish Mhetre <amhetre@nvidia.com>
-To: <thierry.reding@gmail.com>, <vdumpa@nvidia.com>, <will@kernel.org>,
-	<robin.murphy@arm.com>, <joro@8bytes.org>
-CC: <linux-tegra@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>, Ashish Mhetre
-	<amhetre@nvidia.com>
-Subject: [PATCH V2] iommu: arm-smmu: Fix Tegra workaround for PAGE_SIZE mappings
-Date: Wed, 24 Jul 2024 17:31:32 +0000
-Message-ID: <20240724173132.219978-1-amhetre@nvidia.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45BC2AE6C;
+	Wed, 24 Jul 2024 17:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.228.157.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721842330; cv=none; b=iRHBdexXgkh9M22L7toFnTXmG3ujLxNhoUmwqV4lxQdNKxPIw6cgtXVdAcALATdS7qPGks7q0eBUwt9vQM53RGlgojDwS4kkKcGMUkIihTrY3ciD9hNXsfbFWOgQG4gdA2y44DFCvGgbcPoLJSbSGCGVtDGUDP2TZFFSNoAELMI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721842330; c=relaxed/simple;
+	bh=0SRzVxIfrGaxcDH8bvRl3DRHc1yXs8V3HeNHfQz5pN8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TVlk7XECXP4uchEUL+ggQcBuXaAn2uuOjOYXPqOguWWS+8ohho545e1ZGTFaUrlWCmxmpt21o1BhunomI6ogvm6edLCaTrPWEpw3drXhoyI4TlfT0tJiVUiC2kkgMshffVlxS7/UR2Xtb5WHjd/doAzu3LEdfg/wsdGU1VT3xAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pobox.com; spf=pass smtp.mailfrom=pobox.com; dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b=TQu6Ha37; arc=none smtp.client-ip=173.228.157.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=pobox.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pobox.com
+Received: from pb-smtp20.pobox.com (unknown [127.0.0.1])
+	by pb-smtp20.pobox.com (Postfix) with ESMTP id 2EE732DD3B;
+	Wed, 24 Jul 2024 13:32:02 -0400 (EDT)
+	(envelope-from junio@pobox.com)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=pobox.com; h=from:to:cc
+	:subject:date:message-id:mime-version:content-type
+	:content-transfer-encoding; s=sasl; bh=0SRzVxIfrGaxcDH8bvRl3DRHc
+	1yXs8V3HeNHfQz5pN8=; b=TQu6Ha37HrfTaf4PuJmFSrCcp1Q7V/ViPxIFZ3lKq
+	OWy5aT+khuPIpPsgtUNq7YCbCWoTF0vwJm3KESZR/ILhDD2P6dfFp7UYS4U0th23
+	gFzHLLOGI0w2+iSpEQ95SvOoCOE8KKGktwTta2LJVbs+G6o94aaV17UEygGeTlPF
+	i8=
+Received: from pb-smtp20.sea.icgroup.com (unknown [127.0.0.1])
+	by pb-smtp20.pobox.com (Postfix) with ESMTP id 26E6B2DD3A;
+	Wed, 24 Jul 2024 13:32:02 -0400 (EDT)
+	(envelope-from junio@pobox.com)
+Received: from pobox.com (unknown [34.125.139.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by pb-smtp20.pobox.com (Postfix) with ESMTPSA id 9D5B92DD38;
+	Wed, 24 Jul 2024 13:31:58 -0400 (EDT)
+	(envelope-from junio@pobox.com)
+From: Junio C Hamano <gitster@pobox.com>
+To: git@vger.kernel.org
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>,
+    git-packagers@googlegroups.com
+Subject: [ANNOUNCE] Git v2.46.0-rc2
+Date: Wed, 24 Jul 2024 10:31:57 -0700
+Message-ID: <xmqq7cdavgqa.fsf@gitster.g>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF0001A0FB:EE_|DM4PR12MB5889:EE_
-X-MS-Office365-Filtering-Correlation-Id: 78f4dbdb-b00c-473d-24a7-08dcac068899
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?vSOlNHdJ7fyFm6t9uC7yKlZZa3D6nmu8zBsWM/8VdOTH1G92SN+U+Hi3FAvO?=
- =?us-ascii?Q?WljPq2oqsKyhnsW4v+iq5MSmgK2bRa3q/zRQvamPfMsFqddwfRx2WKtv7nDK?=
- =?us-ascii?Q?Pma5dw7nam54YAuQuAIMfGljh3P5CtgocWdx8cB9BX5DW+bKlugxt2Er0qD9?=
- =?us-ascii?Q?Z5qbZi+InX2XOham2JLXWOxfwR2uEwoQyLAtQYO6ofligxw1Ho5h3YrZZTQx?=
- =?us-ascii?Q?y9gKPlfOMzzE5gLtY/JjD4QT2hi2Ify8rWAx51yDAaRg/2QvquoGcqktot+b?=
- =?us-ascii?Q?qTNtobtX3NVh1jBj7STg5RXNnJrf0qPkrW6E5roi/Tpatd7rBjMmyLPoHDzp?=
- =?us-ascii?Q?mtNKIQgJWn556df8s72jTG3uM49p+bMLiCrcFiQ80Fm3h5C/0ZqV8xHjaV/7?=
- =?us-ascii?Q?lJ+lilteqrmI2eYFVSAnlHz12v5Kui+e7PXDNKUcIUu71HpocMG0WFmMNPce?=
- =?us-ascii?Q?0siiNvJfXKbKIl6yWo3gCoIMD4Jx76dauTgMDJLcL2Wnus5/HiUjIOh+Cy8U?=
- =?us-ascii?Q?e1cxmHTD2hEzG2wBqKRm8aq0E3Csz8+O/zWgs9JgR6MzKBzive/Q8+Nq2LuR?=
- =?us-ascii?Q?E6xXxy8UOM78mxiVCenGSVRJi1Xu7c8oDVEc/kGHJK7xYwuhAIO5r6LaqqHm?=
- =?us-ascii?Q?W5gqBF1T2h9/z+E1aA0tH66YtXYlltCRQ2OSovYLiHjmcL8fwTt3OG5G7myN?=
- =?us-ascii?Q?6ECFx3sx9AEzvoVWG1uch2ivKKwGcMzZ2a3Ux0pIJQQ2mu6AOGIsXHBGIffl?=
- =?us-ascii?Q?6cA/kPZ6Cb5m+XfCK8qhSRyGQ48AHvktWthWqh21cd33xdW0/Pk7hhsgmuQz?=
- =?us-ascii?Q?VkyT/HpW67pQ/sLMlClOdZSGTzSKij1lARivGaHLC9G/pa9MblcY4Vi5UeQS?=
- =?us-ascii?Q?9blDOHja2K48GCzgg3AKi6iPsrYLKVN2+YYaxHj739B8v3lS6xuc90v84ssh?=
- =?us-ascii?Q?GNcHZBX+4CDjhQLj1g9Ob/5a2qnAOJT4CL+c26a3dAMFlLwRNVs0D7Sk5y9d?=
- =?us-ascii?Q?PK0gfFi1YqKZ976H7STMj6uH/0M0Aw8XeYmU9ALSpXRdKPO76Om5Y0uv1VU4?=
- =?us-ascii?Q?oVKBx+DHLuaSY8fK44QAvZClR0w78yU5q+QESK3Ne1rbdz2F/pRAmz5eKgj4?=
- =?us-ascii?Q?EQmyFrNXXnnPEUsWB1MlU6ya2+vERmgm7rPDGSLUyIJ9NO0ulLvYtbmEN/0o?=
- =?us-ascii?Q?iaweNv98SqIm3bNa857Z9oq5T0Nf3rTe+7VQNuxlYonKIg3KAwhOBpRsCbZR?=
- =?us-ascii?Q?Zob+BlGJxpr8GDyUQM9a7NO9IJE+Q01dQJ79mwlO6cvkklIme1HXbqyUmqWX?=
- =?us-ascii?Q?c1/8zKcDR/whtr1815GNQ1fG4CfWhzoyU9ujcufytckKgGP70YE8CPzGUjVG?=
- =?us-ascii?Q?RTzfniSCzjiGM++yiXmW3kY7d6V1Q5piG0cIdj1iu3lmT8Pm7X+ISU0JMUJy?=
- =?us-ascii?Q?6sAgY+/00UmvUsQbFTDqHu1Y5CCKc7KP?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2024 17:32:03.9411
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78f4dbdb-b00c-473d-24a7-08dcac068899
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF0001A0FB.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5889
+Content-Type: text/plain; charset=utf-8
+X-Pobox-Relay-ID:
+ A1229A98-49E2-11EF-9F03-92D9AF168FA5-77302942!pb-smtp20.pobox.com
+Content-Transfer-Encoding: quoted-printable
 
-PAGE_SIZE can be 16KB for Tegra which is not supported by MMU-500 on
-both Tegra194 and Tegra234. Retain only valid granularities from
-pgsize_bitmap which would either be 4KB or 64KB.
+A release candidate Git v2.46.0-rc2 is now available for testing at
+the usual places.  Relative to -rc1, we fix a few recent small
+regressions and nothing else.
 
-Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
----
- drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The tarballs are found at:
 
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
-index 4b2994b6126d..2fce4f6d4e1b 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu-nvidia.c
-@@ -277,7 +277,7 @@ static int nvidia_smmu_init_context(struct arm_smmu_domain *smmu_domain,
- 	 */
- 	if (of_device_is_compatible(np, "nvidia,tegra234-smmu") ||
- 	    of_device_is_compatible(np, "nvidia,tegra194-smmu")) {
--		smmu->pgsize_bitmap = PAGE_SIZE;
-+		smmu->pgsize_bitmap &= GENMASK(PAGE_SHIFT, 0);
- 		pgtbl_cfg->pgsize_bitmap = smmu->pgsize_bitmap;
- 	}
- 
--- 
-2.25.1
+    https://www.kernel.org/pub/software/scm/git/testing/
+
+The following public repositories all have a copy of the
+'v2.46.0-rc2' tag and the 'master' branch that the tag points at:
+
+  url =3D https://git.kernel.org/pub/scm/git/git
+  url =3D https://kernel.googlesource.com/pub/scm/git/git
+  url =3D git://repo.or.cz/alt-git.git
+  url =3D https://github.com/gitster/git
+
+----------------------------------------------------------------
+
+Git v2.46 Release Notes (draft)
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+
+UI, Workflows & Features
+
+ * The "--rfc" option of "git format-patch" learned to take an
+   optional string value to be used in place of "RFC" to tweak the
+   "[PATCH]" on the subject header.
+
+ * The credential helper protocol, together with the HTTP layer, have
+   been enhanced to support authentication schemes different from
+   username & password pair, like Bearer and NTLM.
+
+ * Command line completion script (in contrib/) learned to complete
+   "git symbolic-ref" a bit better (you need to enable plumbing
+   commands to be completed with GIT_COMPLETION_SHOW_ALL_COMMANDS).
+
+ * When the user responds to a prompt given by "git add -p" with an
+   unsupported command, list of available commands were given, which
+   was too much if the user knew what they wanted to type but merely
+   made a typo.  Now the user gets a much shorter error message.
+
+ * The color parsing code learned to handle 12-bit RGB colors, spelled
+   as "#RGB" (in addition to "#RRGGBB" that is already supported).
+
+ * The operation mode options (like "--get") the "git config" command
+   uses have been deprecated and replaced with subcommands (like "git
+   config get").
+
+ * "git tag" learned the "--trailer" option to futz with the trailers
+   in the same way as "git commit" does.
+
+ * A new global "--no-advice" option can be used to disable all advice
+   messages, which is meant to be used only in scripts.
+
+ * Updates to symbolic refs can now be made as a part of ref
+   transaction.
+
+ * The trailer API has been reshuffled a bit.
+
+ * Terminology to call various ref-like things are getting
+   straightened out.
+
+ * The command line completion script (in contrib/) has been adjusted
+   to the recent update to "git config" that adopted subcommand based
+   UI.
+
+ * The knobs to tweak how reftable files are written have been made
+   available as configuration variables.
+
+ * When "git push" notices that the commit at the tip of the ref on
+   the other side it is about to overwrite does not exist locally, it
+   used to first try fetching it if the local repository is a partial
+   clone. The command has been taught not to do so and immediately
+   fail instead.
+
+ * The promisor.quiet configuration knob can be set to true to make
+   lazy fetching from promisor remotes silent.
+
+ * The inter/range-diff output has been moved to the end of the patch
+   when format-patch adds it to a single patch, instead of writing it
+   before the patch text, to be consistent with what is done for a
+   cover letter for a multi-patch series.
+
+ * A new command has been added to migrate a repository that uses the
+   files backend for its ref storage to use the reftable backend, with
+   limitations.
+
+ * "git diff --exit-code --ext-diff" learned to take the exit status
+   of the external diff driver into account when deciding the exit
+   status of the overall "git diff" invocation when configured to do
+   so.
+
+ * "git update-ref --stdin" learned to handle transactional updates of
+   symbolic-refs.
+
+ * "git format-patch --interdiff" for multi-patch series learned to
+   turn on cover letters automatically (unless told never to enable
+   cover letter with "--no-cover-letter" and such).
+
+ * The "--heads" option of "ls-remote" and "show-ref" has been been
+   deprecated; "--branches" replaces "--heads".
+
+ * For over a year, setting add.interactive.useBuiltin configuration
+   variable did nothing but giving a "this does not do anything"
+   warning.  The warning has been removed.
+
+ * The http transport can now be told to send request with
+   authentication material without first getting a 401 response.
+
+ * A handful of entries are added to the GitFAQ document.
+
+ * "git var GIT_SHELL_PATH" should report the path to the shell used
+   to spawn external commands, but it didn't do so on Windows, which
+   has been corrected.
+
+
+Performance, Internal Implementation, Development Support etc.
+
+ * Advertise "git contacts", a tool for newcomers to find people to
+   ask review for their patches, a bit more in our developer
+   documentation.
+
+ * In addition to building the objects needed, try to link the objects
+   that are used in fuzzer tests, to make sure at least they build
+   without bitrot, in Linux CI runs.
+
+ * Code to write out reftable has seen some optimization and
+   simplification.
+
+ * Tests to ensure interoperability between reftable written by jgit
+   and our code have been added and enabled in CI.
+
+ * The singleton index_state instance "the_index" has been eliminated
+   by always instantiating "the_repository" and replacing references
+   to "the_index"  with references to its .index member.
+
+ * Git-GUI has a new maintainer, Johannes Sixt.
+
+ * The "test-tool" has been taught to run testsuite tests in parallel,
+   bypassing the need to use the "prove" tool.
+
+ * The "whitespace check" task that was enabled for GitHub Actions CI
+   has been ported to GitLab CI.
+
+ * The refs API lost functions that implicitly assumes to work on the
+   primary ref_store by forcing the callers to pass a ref_store as an
+   argument.
+
+ * Code clean-up to reduce inter-function communication inside
+   builtin/config.c done via the use of global variables.
+
+ * The pack bitmap code saw some clean-up to prepare for a follow-up topi=
+c.
+
+ * Preliminary code clean-up for "git send-email".
+
+ * The default "creation-factor" used by "git format-patch" has been
+   raised to make it more aggressively find matching commits.
+
+ * Before discovering the repository details, We used to assume SHA-1
+   as the "default" hash function, which has been corrected. Hopefully
+   this will smoke out codepaths that rely on such an unwarranted
+   assumptions.
+
+ * The project decision making policy has been documented.
+
+ * The strcmp-offset tests have been rewritten using the unit test
+   framework.
+
+ * "git add -p" learned to complain when an answer with more than one
+   letter is given to a prompt that expects a single letter answer.
+
+ * The alias-expanded command lines are logged to the trace output.
+
+ * A new test was added to ensure git commands that are designed to
+   run outside repositories do work.
+
+ * A few tests in reftable library have been rewritten using the
+   unit test framework.
+
+ * A pair of test helpers that essentially are unit tests on hash
+   algorithms have been rewritten using the unit-tests framework.
+
+ * A test helper that essentially is unit tests on the "decorate"
+   logic has been rewritten using the unit-tests framework.
+
+ * Many memory leaks in the sparse-checkout code paths have been
+   plugged.
+
+ * "make check-docs" noticed problems and reported to its output but
+   failed to signal its findings with its exit status, which has been
+   corrected.
+
+ * Building with "-Werror -Wwrite-strings" is now supported.
+
+ * To help developers, the build procedure now allows builders to use
+   CFLAGS_APPEND to specify additional CFLAGS.
+
+ * "oidtree" tests were rewritten to use the unit test framework.
+
+ * The structure of the document that records longer-term project
+   decisions to deprecate/remove/update various behaviour has been
+   outlined.
+
+ * The pseudo-merge reachability bitmap to help more efficient storage
+   of the reachability bitmap in a repository with too many refs has
+   been added.
+
+ * When "git merge" sees that the index cannot be refreshed (e.g. due
+   to another process doing the same in the background), it died but
+   after writing MERGE_HEAD etc. files, which was useless for the
+   purpose to recover from the failure.
+
+ * The output from "git cat-file --batch-check" and "--batch-command
+   (info)" should not be unbuffered, for which some tests have been
+   added.
+
+ * A CPP macro USE_THE_REPOSITORY_VARIABLE is introduced to help
+   transition the codebase to rely less on the availability of the
+   singleton the_repository instance.
+
+ * "git version --build-options" reports the version information of
+   OpenSSL and other libraries (if used) in the build.
+
+ * Memory ownership rules for the in-core representation of
+   remote.*.url configuration values have been straightened out, which
+   resulted in a few leak fixes and code clarification.
+
+ * When bundleURI interface fetches multiple bundles, Git failed to
+   take full advantage of all bundles and ended up slurping duplicated
+   objects, which has been corrected.
+
+ * The code to deal with modified paths that are out-of-cone in a
+   sparsely checked out working tree has been optimized.
+
+ * An existing test of oidmap API has been rewritten with the
+   unit-test framework.
+
+ * The "ort" merge backend saw one bugfix for a crash that happens
+   when inner merge gets killed, and assorted code clean-ups.
+
+ * A new warning message is issued when a command has to expand a
+   sparse index to handle working tree cruft that are outside of the
+   sparse checkout.
+
+ * The test framework learned to take the test body not as a single
+   string but as a here-document.
+
+ * "git push '' HEAD:there" used to hit a BUG(); it has been corrected
+   to die with "fatal: bad repository ''".
+
+ * What happens when http.cookieFile gets the special value "" has
+   been clarified in the documentation.
+
+
+Fixes since v2.45
+-----------------
+
+ * "git rebase --signoff" used to forget that it needs to add a
+   sign-off to the resulting commit when told to continue after a
+   conflict stops its operation.
+
+ * The procedure to build multi-pack-index got confused by the
+   replace-refs mechanism, which has been corrected by disabling the
+   latter.
+
+ * The "-k" and "--rfc" options of "format-patch" will now error out
+   when used together, as one tells us not to add anything to the
+   title of the commit, and the other one tells us to add "RFC" in
+   addition to "PATCH".
+
+ * "git stash -S" did not handle binary files correctly, which has
+   been corrected.
+
+ * A scheduled "git maintenance" job is expected to work on all
+   repositories it knows about, but it stopped at the first one that
+   errored out.  Now it keeps going.
+
+ * zsh can pretend to be a normal shell pretty well except for some
+   glitches that we tickle in some of our scripts. Work them around
+   so that "vimdiff" and our test suite works well enough with it.
+
+ * Command line completion support for zsh (in contrib/) has been
+   updated to stop exposing internal state to end-user shell
+   interaction.
+
+ * Tests that try to corrupt in-repository files in chunked format did
+   not work well on macOS due to its broken "mv", which has been
+   worked around.
+
+ * The maximum size of attribute files is enforced more consistently.
+
+ * Unbreak CI jobs so that we do not attempt to use Python 2 that has
+   been removed from the platform.
+
+ * Git 2.43 started using the tree of HEAD as the source of attributes
+   in a bare repository, which has severe performance implications.
+   For now, revert the change, without ripping out a more explicit
+   support for the attr.tree configuration variable.
+
+ * The "--exit-code" option of "git diff" command learned to work with
+   the "--ext-diff" option.
+
+ * Windows CI running in GitHub Actions started complaining about the
+   order of arguments given to calloc(); the imported regex code uses
+   the wrong order almost consistently, which has been corrected.
+
+ * Expose "name conflict" error when a ref creation fails due to D/F
+   conflict in the ref namespace, to improve an error message given by
+   "git fetch".
+   (merge 9339fca23e it/refs-name-conflict later to maint).
+
+ * The SubmittingPatches document now refers folks to manpages
+   translation project.
+
+ * The documentation for "git diff --name-only" has been clarified
+   that it is about showing the names in the post-image tree.
+
+ * The credential helper that talks with osx keychain learned to avoid
+   storing back the authentication material it just got received from
+   the keychain.
+   (merge e1ab45b2da kn/osxkeychain-skip-idempotent-store later to maint)=
+.
+
+ * The chainlint script (invoked during "make test") did nothing when
+   it failed to detect the number of available CPUs.  It now falls
+   back to 1 CPU to avoid the problem.
+
+ * Revert overly aggressive "layered defence" that went into 2.45.1
+   and friends, which broke "git-lfs", "git-annex", and other use
+   cases, so that we can rebuild necessary counterparts in the open.
+
+ * "git init" in an already created directory, when the user
+   configuration has includeif.onbranch, started to fail recently,
+   which has been corrected.
+
+ * Memory leaks in "git mv" has been plugged.
+
+ * The safe.directory configuration knob has been updated to
+   optionally allow leading path matches.
+
+ * An overly large ".gitignore" files are now rejected silently.
+
+ * Upon expiration event, the credential subsystem forgot to clear
+   in-core authentication material other than password (whose support
+   was added recently), which has been corrected.
+
+ * Fix for an embarrassing typo that prevented Python2 tests from running
+   anywhere.
+
+ * Varargs functions that are unannotated as printf-like or execl-like
+   have been annotated as such.
+
+ * "git am" has a safety feature to prevent it from starting a new
+   session when there already is a session going.  It reliably
+   triggers when a mbox is given on the command line, but it has to
+   rely on the tty-ness of the standard input.  Add an explicit way to
+   opt out of this safety with a command line option.
+   (merge 62c71ace44 jk/am-retry later to maint).
+
+ * A leak in "git imap-send" that somehow escapes LSan has been
+   plugged.
+
+ * Setting core.abbrev too early before the repository set-up
+   (typically in "git clone") caused segfault, which as been
+   corrected.
+
+ * When the user adds to "git rebase -i" instruction to "pick" a merge
+   commit, the error experience is not pleasant.  Such an error is now
+   caught earlier in the process that parses the todo list.
+
+ * We forgot to normalize the result of getcwd() to NFC on macOS where
+   all other paths are normalized, which has been corrected.  This still
+   does not address the case where core.precomposeUnicode configuration
+   is not defined globally.
+
+ * Earlier we stopped using the tree of HEAD as the default source of
+   attributes in a bare repository, but failed to document it.  This
+   has been corrected.
+
+ * "git update-server-info" and "git commit-graph --write" have been
+   updated to use the tempfile API to avoid leaving cruft after
+   failing.
+
+ * An unused extern declaration for mingw has been removed to prevent
+   it from causing build failure.
+
+ * A helper function shared between two tests had a copy-paste bug,
+   which has been corrected.
+
+ * "git fetch-pack -k -k" without passing "--lock-pack" (which we
+   never do ourselves) did not work at all, which has been corrected.
+
+ * CI job to build minimum fuzzers learned to pass NO_CURL=3DNoThanks to
+   the build procedure, as its build environment does not offer, or
+   the rest of the build needs, anything cURL.
+   (merge 4e66b5a990 jc/fuzz-sans-curl later to maint).
+
+ * "git diff --no-ext-diff" when diff.external is configured ignored
+   the "--color-moved" option.
+   (merge 0f4b0d4cf0 rs/diff-color-moved-w-no-ext-diff-fix later to maint=
+).
+
+ * "git archive --add-virtual-file=3D<path>:<contents>" never paid
+   attention to the --prefix=3D<prefix> option but the documentation
+   said it would. The documentation has been corrected.
+   (merge 72c282098d jc/archive-prefix-with-add-virtual-file later to mai=
+nt).
+
+ * When GIT_PAGER failed to spawn, depending on the code path taken,
+   we failed immediately (correct) or just spew the payload to the
+   standard output (incorrect).  The code now always fail immediately
+   when GIT_PAGER fails.
+   (merge 78f0a5d187 rj/pager-die-upon-exec-failure later to maint).
+
+ * date parser updates to be more careful about underflowing epoch
+   based timestamp.
+   (merge 9d69789770 db/date-underflow-fix later to maint).
+
+ * The Bloom filter used for path limited history traversal was broken
+   on systems whose "char" is unsigned; update the implementation and
+   bump the format version to 2.
+   (merge 9c8a9ec787 tb/path-filter-fix later to maint).
+
+ * Typofix.
+   (merge 231cf7370e as/pathspec-h-typofix later to maint).
+
+ * Code clean-up.
+   (merge 4b837f821e rs/simplify-submodule-helper-super-prefix-invocation=
+ later to maint).
+
+ * "git describe --dirty --broken" forgot to refresh the index before
+   seeing if there is any chang, ("git describe --dirty" correctly did
+   so), which has been corrected.
+   (merge b8ae42e292 as/describe-broken-refresh-index-fix later to maint)=
+.
+
+ * Test suite has been taught not to unnecessarily rely on DNS failing
+   a bogus external name.
+   (merge 407cdbd271 jk/tests-without-dns later to maint).
+
+ * GitWeb update to use committer date consistently in rss/atom feeds.
+   (merge cf6ead095b am/gitweb-feed-use-committer-date later to maint).
+
+ * Custom control structures we invented more recently have been
+   taught to the clang-format file.
+   (merge 1457dff9be rs/clang-format-updates later to maint).
+
+ * Developer build procedure fix.
+   (merge df32729866 tb/dev-build-pedantic-fix later to maint).
+
+ * "git push" that pushes only deletion gave an unnecessary and
+   harmless error message when push negotiation is configured, which
+   has been corrected.
+   (merge 4d8ee0317f jc/disable-push-nego-for-deletion later to maint).
+
+ * Address-looking strings found on the trailer are now placed on the
+   Cc: list after running through sanitize_address by "git send-email".
+   (merge c852531f45 cb/send-email-sanitize-trailer-addresses later to ma=
+int).
+
+ * Tests that use GIT_TEST_SANITIZE_LEAK_LOG feature got their exit
+   status inverted, which has been corrected.
+   (merge 8c1d6691bc rj/test-sanitize-leak-log-fix later to maint).
+
+ * The http.cookieFile and http.saveCookies configuration variables
+   have a few values that need to be avoided, which are now ignored
+   with warning messages.
+   (merge 4f5822076f jc/http-cookiefile later to maint).
+
+ * Repacking a repository with multi-pack index started making stupid
+   pack selections in Git 2.45, which has been corrected.
+   (merge 8fb6d11fad ds/midx-write-repack-fix later to maint).
+
+ * Fix documentation mark-up regression in 2.45.
+   (merge 6474da0aa4 ja/doc-markup-updates-fix later to maint).
+
+ * Work around asciidoctor's css that renders `monospace` material
+   in the SYNOPSIS section of manual pages as block elements.
+   (merge d44ce6ddd5 js/doc-markup-updates-fix later to maint).
+
+ * Other code cleanup, docfix, build fix, etc.
+   (merge 493fdae046 ew/object-convert-leakfix later to maint).
+   (merge 00f3661a0a ss/doc-eol-attr-fix later to maint).
+   (merge 428c40da61 ri/doc-show-branch-fix later to maint).
+   (merge 58696bfcaa jc/where-is-bash-for-ci later to maint).
+   (merge 616e94ca24 tb/doc-max-tree-depth-fix later to maint).
+
+----------------------------------------------------------------
+
+Changes since v2.46.0-rc1 are as follows:
+
+Derrick Stolee (2):
+      t5319: add failing test case for repack/expire
+      midx-write: revert use of --stdin-packs
+
+Jean-No=C3=ABl Avila (1):
+      doc: git-clone fix discrepancy between asciidoc and asciidoctor
+
+Johannes Schindelin (1):
+      asciidoctor: fix `synopsis` rendering
+
+Junio C Hamano (2):
+      Doc: fix Asciidoctor css workaround
+      Git 2.46-rc2
+
+Patrick Steinhardt (1):
+      refs: fix format migration on Cygwin
 
 
