@@ -1,295 +1,279 @@
-Return-Path: <linux-kernel+bounces-261460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2764993B79E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:36:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B43E493B7A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:36:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D12CC28462F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:36:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7E4E1C23B0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340C416CD1F;
-	Wed, 24 Jul 2024 19:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E2616CD36;
+	Wed, 24 Jul 2024 19:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="t3Cdozav"
-Received: from GBR01-CWX-obe.outbound.protection.outlook.com (mail-cwxgbr01on2121.outbound.protection.outlook.com [40.107.121.121])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="hccTp/14"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A51613D;
-	Wed, 24 Jul 2024 19:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.121.121
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721849760; cv=fail; b=bPWltBgSHWw/l9J4QVS/NYhssYyYep7smnGghG2mCJLMbY/EGehjYVEODMpD5zkZ4gG9kaFbwjwMNMczWHBqDWVJxWOkmscKHeC3S6kwzl7/3S3LBWqU6nekoXuUO1okdcEDuRUlxzYYC4Og9mN72gRUqPWBOkk+wxUAoX4FFjE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721849760; c=relaxed/simple;
-	bh=z+1rttXzlBaOjDt1ZQdu8p8FJaXOVGfRCdYFg75YuR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=P+AQ1WeTivKQNyOGtYtfCz76UgbqUAxu9D+yGkaXDTnpethFeSVoh0pKER1lKkn9u4JhlSiIjVXcB6qEDdMuhf7/aQWGAZwcBut6fNkdjKXVzUSgozm7HpoQMcACQGwRST+eVWP+E+KMeprQX0K1aTQ6KVAWcetnw5gCIbBSHMM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=t3Cdozav; arc=fail smtp.client-ip=40.107.121.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BBZgErFM0ldNPAXt4E7xpqalsZRSJ9A23jaNizP/jC+Kzt4QUv9RbW8m0fCqoaMdW47snNmXZUfYeLjda42HwUK0csoO2j6JXPfbXNzHt08aLhEI27uDRieVhY43BLqCvbtZDVlFAwjGA3jZ7Fqo9Kv9berGEbQM7ucVWkg7Z0X+EKeF2ESLKM+7zGxY2cvaPI+peE9tUcUuKaRady5kkpFCvkkluMkI0/5K/EvYMjFYHV2m3HhdkWgJPp9SY45NJsN/R14MSHUGMssiINbU7aaZIvaGP3CBbHYs5cxZUVsewm7xvE0ATzzK0gkn57peB9NJIFYjx9WPlOla7Lll8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=eB7LqkkQL4Zb7VeKY6z8XG4D9QvfRERbPwdNeAFvAjQ=;
- b=gqbOneD4VAzMyeltFPpYTwhzTMgHrsPIR5WdZ5hdFlddd2MnZXcmJgNw+7FhYn6yG3e7z6Tk5T+DJu+/GE4qPNxt/xE6uEN8MXXD7x6+H3LeuVNT7L8m5ZDJiYICx9aldZZZytoGRY8zByc9vAIbfyFfShY5mSPH99GPniJwViCcvbc9/BP2c8tigUUUThwpzvgLhUvnpK/JUAxuIeygBntCL0q9m/beffMTtmZ8zyhVu9IcYUZLevyzQxMigId/Mx1fLM6PNeig2yOyc8wxxn7mEO9df6DugDDDPMZ3J1pn1UQtgO8whWpoVc2Ibkaza+GaeisFIsUPXrdffWJvjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eB7LqkkQL4Zb7VeKY6z8XG4D9QvfRERbPwdNeAFvAjQ=;
- b=t3CdozaviXkCKAWjBh5Fo3lqn25XWa5qxd9rPLDnpfw0demZ9mal+fsdLnVowkHhczocbxb8gKTgc11euNkFL8k9WG1XMzvf/RnPtHHZ4qpkPrYLgmDiniKC+XyRKExRtAsL3eUaEKqfLPlgELc+usLm+I7wROOixRfLQoeN7bs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
- by CWLP265MB2993.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:d3::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.28; Wed, 24 Jul
- 2024 19:35:55 +0000
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7%6]) with mapi id 15.20.7784.017; Wed, 24 Jul 2024
- 19:35:54 +0000
-Date: Wed, 24 Jul 2024 20:35:49 +0100
-From: Gary Guo <gary@garyguo.net>
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, Masahiro Yamada <masahiroy@kernel.org>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Nathan Chancellor
- <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Wedson Almeida
- Filho <wedsonaf@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, =?UTF-8?B?QmrDtnJu?= Roy Baron
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
- Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- patches@lists.linux.dev
-Subject: Re: [PATCH v2 5/6] objtool: list `noreturn` Rust functions
-Message-ID: <20240724203549.2db3e36f.gary@garyguo.net>
-In-Reply-To: <20240724161501.1319115-6-ojeda@kernel.org>
-References: <20240724161501.1319115-1-ojeda@kernel.org>
-	<20240724161501.1319115-6-ojeda@kernel.org>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO2P265CA0305.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a5::29) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:253::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54363613D;
+	Wed, 24 Jul 2024 19:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721849806; cv=none; b=EMuFst+xXzFryBPSYoIEA5FRq4gC4WUceW9WwvyRv9i2X1UPKKCHmAQU040FfDPS5ERX3CffwmuB9D/B28jo4dh6w5hYsShJRnI9ZjEnR1BQzXxpfKhONAzFpI3HUCCgSBGXcQZCNM9JM9Rhm9LEPYEvxqeEYzKZdChwe/0Dwi4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721849806; c=relaxed/simple;
+	bh=G65BQ8ZETSnWP5F7kWFRz1hJIoEwZ48ofdPadlg5AdM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=byJzfQVxl0J3f5f6XEmGU8LaW/jvMiCpyEw6s6VlnQkc5tJ6HqOOZE/H0ZPXWutHp3Q8CwYpmSbta0D0s+TNsML2JqznLqdMd+x+QGiQrUR8ze0L9+VvraWRZ7j8+0oGqFl9HiFJrWotHyrLbkpb6m5ypXqS+WWifmNHaesaLJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=hccTp/14; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1721849796; x=1722108996;
+	bh=Ex+yutQkGp2wbHRJ1q0Nvfaduezw0qpsrEkXrC2Hz2U=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=hccTp/14FsvEzv57iz5I7FOaS8KpfbobNd3BGo7ySqOJ7hKXTcDw7xQUiuQqQgy1Y
+	 I9JGME8jJOdL7De84zZJfXpQvm60n5bpGQComZ3fR5YM8OgIMtoO7eLZ0iqHDgenfA
+	 0l/ZvwXSL+vjs0ZYuLanTzhedI6N3Sj0R2VFZ0UZO4+yZALwIg3xyt9631VzFEbLKP
+	 Ij5SnoHjva8jBbdA1LOXrO2GL7Gy0DCOOnu443uHW938XdyqL0CxOJGT/++2Utw4Nj
+	 VjECOVyWlCj9y+3itmnFeZODyVdRhygmSLAjfotdPYD5hP3TmoaY/It7A2X+vHJ+xK
+	 GMq8HwEv1gTKg==
+Date: Wed, 24 Jul 2024 19:36:29 +0000
+To: Alice Ryhl <aliceryhl@google.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Jonathan Corbet <corbet@lwn.net>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [RFC PATCH 1/5] doc: rust: create safety standard
+Message-ID: <4ed475d3-37b6-49e7-8b43-df3160f4ebbc@proton.me>
+In-Reply-To: <CAH5fLgg0O=t2T2MQH2hvm4eZnCOa_NffzRw=XZPi9+7+=XsmRg@mail.gmail.com>
+References: <20240717221133.459589-1-benno.lossin@proton.me> <20240717221133.459589-2-benno.lossin@proton.me> <CAH5fLgg0O=t2T2MQH2hvm4eZnCOa_NffzRw=XZPi9+7+=XsmRg@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 06ca8bbf045bb4f4659d593a55d9d1f164b44cc2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|CWLP265MB2993:EE_
-X-MS-Office365-Filtering-Correlation-Id: d44eafe0-f676-4a25-2d43-08dcac17d596
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Feb8xVI3djNoYeyLuBS9q7BCkQ4Oh+vd059rvJUiHyF0O2ppD008WS73IvfG?=
- =?us-ascii?Q?jfZbW7V7C+zuBFkXNgvhhhdsfr4BkBY5BNg6PGf9/sKiI7hh9io/mRNCrJr8?=
- =?us-ascii?Q?2GTLcq+kk6Nl2BTB4vpeJ/PKW+T5VwUix4NfExKuMRxwBVZNGMHXqHZ2dTvu?=
- =?us-ascii?Q?/TNdWljdyCYihi6Ct4UM6MzEv+ixOEofWt6Gbv5NFb3eSKdJ8/fayE758Ulb?=
- =?us-ascii?Q?Z3OlF7uyNUVl/ESSQuspfxns9PORIP5cCUXPR1XQpVrlSGTUw5AjSmxZSa8y?=
- =?us-ascii?Q?5pACYaFCC+2RRULUB3PLPZRkl/Ps6u2hq8kw6pkcH8eSTsig+CZu5J5lx/CO?=
- =?us-ascii?Q?WaYJjs63TrIslOs76UW7D/h6vbsyL1EU4tC0jgyEVOLE+y4c1miEvd4iKotX?=
- =?us-ascii?Q?SqaFwY7dFQLpk2b1144f0I5RQQt8gfyDKyzYuWFxtmoc6ha36dLB8lb0g6Rn?=
- =?us-ascii?Q?wsGdthtTqmtifyqKcdbDjtwLTqayNzKmf/x7/O0yETTpp8tKX0QkH+R9EqIH?=
- =?us-ascii?Q?tSmftWoNEhyooT4t51JYOcgBofcWtX79kVdqL7OXvbgyWKo9GOi2rK+pLZvi?=
- =?us-ascii?Q?ECl1UJBVuPhyl6NnSYe8qEBog784bCQwcbHzOWjHfjFiUf1RU3q/nnoXCYKR?=
- =?us-ascii?Q?Iua03u6xofp71+lVjs/lqW+lVLOYjwErcYtOGUYSM+X35zLlVDKHeusfgCMN?=
- =?us-ascii?Q?1vUiT50Mf777RCRuLahEVMYGhZFGHDL5EJPDOL+3/ZZEZV/WQnxf/SapmoEM?=
- =?us-ascii?Q?fOeudxLaL07Xohw1WmLfAeh4G3ZOsgyiMwqlXUH+mxkaorfizbcKIwxn/lrb?=
- =?us-ascii?Q?A/JsLC9MtFMAwulXElbaT2rcmhroxxhVAMGx95QX2/+ISL2WvRfyCLE1LpqB?=
- =?us-ascii?Q?9wxt/i1zreME6G1QHXhk5qdH769pkTTwuIGjsR9cgbMJUthfhGWIMuRNWDxs?=
- =?us-ascii?Q?Xq+Rkd9FcgxJU1dDwbmjHwzCl8JRyvvPV3GRd+wwBd/H1p72rYSygVfiySgY?=
- =?us-ascii?Q?saw+R0EF9rTyQu4U0FLWHOxFPAkrP+Okg7OhIztrzKNJBEwL03z+YYfLkDC9?=
- =?us-ascii?Q?mcrDw1hImQc0Gvg3c0tmOz+vi6xeYvkqRcn4OHrQCKHTzSQtG5DrsimX/zBL?=
- =?us-ascii?Q?BlC8WkP9qcjbW2DBCeV7Rti7xOg0DLx1+xekDUaxD5rMsyy9RoJAdHXaDR8V?=
- =?us-ascii?Q?t0utgXmoze3x37Qwz0JbPz/rR/sHWF08X8LkantV/whzCqq6O9FDgNIDADi8?=
- =?us-ascii?Q?6RjnMlVZvsOWGxLOVFXK4u47v4owuARlwUuiaDf8ThUqL5CFFNXJk78dUl8Z?=
- =?us-ascii?Q?Rvk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?J3JoBbC4oW7WEByh9sef/e7sNvdeIsOvD2juqDm5W0B2ezyTjcVLb7ZbfS0i?=
- =?us-ascii?Q?9N2gq0+KH6u35w9YUK5N/LXkkNQAu/Ius2y66HZkdJ6rHx8lqqhHxYwdkhl4?=
- =?us-ascii?Q?FWLQ/ceMz/EP/ky+yck0JEertdCW4ZhzrWtjM8B0an9x50MAS/Dw6odICzMd?=
- =?us-ascii?Q?qCzCEZYx1WFfqw8FbzuwlQ4WCxu7IBzrfEGlKnzVV+fv8ZSkEZm0k8d66jgt?=
- =?us-ascii?Q?FRRyWyTwU7q86Jg20vlCboF7ORxwdRZQv5Z2EBa4VPDYvSZKKQvZxTuxwrLl?=
- =?us-ascii?Q?tZOJvTl1xO/vp/2JY7KnxYpR3xTa2xXoGDHsMMIZxB4IF50ZAGUWrIeZ0Bcq?=
- =?us-ascii?Q?UUCvFv0PDt4dLChz+yc/jkrAlgl/7s+dYxM6yshKKjLjGwtiH8vV4RoAOot7?=
- =?us-ascii?Q?FtqgjZf+YzXvYcHFSjui+ZbnpWODfEjDu56NllPfOscpymGzVwYSPubnHstN?=
- =?us-ascii?Q?IGDAH36bNJKWOPUCpfUT8BF3uMtUkkyjvR7+GjDJcljcruBh6PXn7ytxEp4v?=
- =?us-ascii?Q?dGdxeAoOv5TiipTJw2obSWF9nJnTPwdOj5f+/43DRjFjiIlnGYfW9zKD6HgF?=
- =?us-ascii?Q?cqwB/pdJHOIwy4pAONgwPML8KCL/503k8CdIjQ1QnclT5T90HYfQG+4QCyPl?=
- =?us-ascii?Q?RNUgBPSmoIZW7MD6H9Cg/ABcyRKur15LquDiaIece9vEzkeLw1mjZ0RHzWBI?=
- =?us-ascii?Q?UY5BhIPRxfMNQJZwfOcVJLHMK9ZkElpy+uy93BzZi9YlG+TU0LOHAFKFj8rn?=
- =?us-ascii?Q?TuW2cruCnoQUPGSb12ZFHY18GdsiV00Y5Fc/RaK9+sgPPcyZnGRDJubag3pM?=
- =?us-ascii?Q?8Ewd58Hr6ggNYSByvhSJoYF4R4OlF9yDnlJrPlcwK1uBf2unVbaKUN6UyrcJ?=
- =?us-ascii?Q?lQhM4iDhvkpyzmz6bbMS29x6/3a0Uf6xKY6FKCfUBiwM4IQSSuHfB0D/aJf7?=
- =?us-ascii?Q?SQGuGV7Ng1DO7SmUnxH0RB+SzIUh1tkycZ21gSrfyqpVGu+1EI9IpiwYlWuL?=
- =?us-ascii?Q?CSalEMkVenMnD52CjweYJdWrVtDhZR/InvD/yIs6cekYXkVhDqICP9y1ygUc?=
- =?us-ascii?Q?t0KQXbSXuNGscN+6OOTEHMeeNmpWcvuf58oPY5C/NTR1ml+Jkit7e7C+SfFU?=
- =?us-ascii?Q?7VqPgHUIWwig7NHPrCZhA3Y0IN0vcFSFzWdtSfdzFy0ATORHpeb8tTlFeI3r?=
- =?us-ascii?Q?RS35cXwvZnIfaVVayIrmG97yaF3rWDxkg6836Mb5GpIfBIO88BIxi6VCs8q2?=
- =?us-ascii?Q?LaEutJNstb68mgszzlll3qP8FwFCBSdgdwtRAkCH6JUN2knjChSc5P0R6Z77?=
- =?us-ascii?Q?NKrAWg9A8jNUEAPqlspLcnACMe1RFkwTV4gPpEgsUuNqsFzBj15U/PurBzel?=
- =?us-ascii?Q?z/IJnnLb/joYfYVE985M7+pJim+XwnepCLsv88TlGCjECnIbei6pfLRQqjjE?=
- =?us-ascii?Q?4YQ885K/dDnXUIwNncy2s4lC5SfCQCqAPtLSsHkPgKXuFi+nbXYgAvuhzB5Y?=
- =?us-ascii?Q?v60t2z+9+1wa1mfegIXEgzhmWB1PRDc+X3GOwBijBNlK4DaGVAGZnVDjjd22?=
- =?us-ascii?Q?blT4fXb2EtC8ExkjMSmSy9SUcedZqgB7Hro5ziHh?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: d44eafe0-f676-4a25-2d43-08dcac17d596
-X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2024 19:35:54.8735
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: B9sYT91z/k+MQMecoqazy/aqsDIDCD+UrZWDoO+rhU1Iv3p80eecEpsCTKTBovDwSQnYqpzJ/wdpKE/DwAI+cA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP265MB2993
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 24 Jul 2024 18:14:58 +0200
-Miguel Ojeda <ojeda@kernel.org> wrote:
+On 18.07.24 14:20, Alice Ryhl wrote:
+> On Thu, Jul 18, 2024 at 12:12=E2=80=AFAM Benno Lossin <benno.lossin@proto=
+n.me> wrote:
+>> +Soundness
+>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> +
+>> +``unsafe`` operations (e.g. ``unsafe`` functions, dereferencing raw poi=
+nters etc.) have certain
+>> +conditions that need to be fulfilled in order for the operation to not =
+be UB.
+>> +To evaluate if the ``unsafe`` code usage is correct, one needs to consi=
+der the API that wraps said
+>> +``unsafe`` code. If under all possible safe uses of the API, the condit=
+ions for the ``unsafe``
+>> +operation are fulfilled, the API is *sound*. Otherwise it is *unsound*.=
+ Here is a simple example::
+>> +
+>> +    pub struct Data {
+>> +        a: usize,
+>> +    }
+>> +
+>> +    pub fn access_a(data: *mut Data) -> usize {
+>> +        unsafe { (*data).a }
+>> +    }
+>> +
+>> +    fn main() {
+>> +        let mut d =3D Data { a: 42 };
+>> +        println!("{}", access_a(&mut d));
+>> +    }
+>> +
+>> +While this example has no UB, the function ``access_a`` is unsound. Thi=
+s is because one could just
+>> +write the following safe usage::
+>> +
+>> +    println!("{}", access_a(core::ptr::null_mut()));
+>> +
+>> +And this would result in a dereference of a null pointer.
+>> +
+>> +In its essence, a sound API means that if someone only writes safe code=
+, they can never encounter UB
+>> +even if they call safe code that calls ``unsafe`` code behind the scene=
+s.
+>=20
+> I think this section on soundness could be more clear. You never
+> really give a definition for what soundness is; you just jump into an
+> example immediately.
 
-> Rust functions may be `noreturn` (i.e. diverging) by returning the
-> "never" type, `!`, e.g.
-> 
->     fn f() -> ! {
->         loop {}
->     }
-> 
-> Thus list the known `noreturn` functions to avoid such warnings.
-> 
-> Without this, `objtool` would complain if enabled for Rust, e.g.:
-> 
->     rust/core.o: warning: objtool:
->     _R...9panic_fmt() falls through to next function _R...18panic_nounwind_fmt()
-> 
->     rust/alloc.o: warning: objtool:
->     .text: unexpected end of section
-> 
-> In order to do so, we cannot match symbols' names exactly, for two
-> reasons:
-> 
->   - Rust mangling scheme [1] contains disambiguators [2] which we
->     cannot predict (e.g. they may vary depending on the compiler version).
-> 
->     One possibility to solve this would be to parse v0 and ignore/zero
->     those before comparison.
-> 
->   - Some of the diverging functions come from `core` and `alloc`, i.e.
->     the Rust standard library, which may change with each compiler version
->     since they are implementation details (e.g. `panic_internals`).
-> 
-> Thus, to workaround both issues, only part of the symbols are matched,
-> instead of using the `NORETURN` macro in `noreturns.h`.
-> 
-> Ideally, just like for the C side, we should have a better solution. For
-> instance, the compiler could give us the list via something like:
-> 
->     $ rustc --print noreturns ...
-> 
-> Link: https://rust-lang.github.io/rfcs/2603-rust-symbol-name-mangling-v0.html [1]
-> Link: https://doc.rust-lang.org/rustc/symbol-mangling/v0.html#disambiguator [2]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
-> Please let me know if there is a better solution -- what kind of solution was
-> being thought about for C as mentioned in `noreturns.h`? Would it help for Rust?
-> 
->  tools/objtool/check.c     | 36 +++++++++++++++++++++++++++++++++++-
->  tools/objtool/noreturns.h |  2 ++
->  2 files changed, 37 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-> index 0a33d9195b7a..0afdcee038fd 100644
-> --- a/tools/objtool/check.c
-> +++ b/tools/objtool/check.c
-> @@ -177,6 +177,20 @@ static bool is_sibling_call(struct instruction *insn)
->  	return (is_static_jump(insn) && insn_call_dest(insn));
->  }
-> 
-> +/*
-> + * Checks if a string ends with another.
-> + */
-> +static bool str_ends_with(const char *s, const char *sub)
-> +{
-> +	const int slen = strlen(s);
-> +	const int sublen = strlen(sub);
-> +
-> +	if (sublen > slen)
-> +		return 0;
-> +
-> +	return !memcmp(s + slen - sublen, sub, sublen);
-> +}
-> +
->  /*
->   * This checks to see if the given function is a "noreturn" function.
->   *
-> @@ -202,10 +216,30 @@ static bool __dead_end_function(struct objtool_file *file, struct symbol *func,
->  	if (!func)
->  		return false;
-> 
-> -	if (func->bind == STB_GLOBAL || func->bind == STB_WEAK)
-> +	if (func->bind == STB_GLOBAL || func->bind == STB_WEAK) {
-> +		/*
-> +		 * Rust standard library functions.
-> +		 *
-> +		 * These are just heuristics -- we do not control the precise symbol
-> +		 * name, due to the crate disambiguators (which depend on the compiler)
-> +		 * as well as changes to the source code itself between versions.
-> +		 */
-> +		if (!strncmp(func->name, "_R", 2) &&
-> +		    (str_ends_with(func->name, "_4core6option13unwrap_failed")			||
-> +		     str_ends_with(func->name, "_4core6result13unwrap_failed")			||
-> +		     str_ends_with(func->name, "_4core9panicking5panic")			||
-> +		     str_ends_with(func->name, "_4core9panicking9panic_fmt")			||
-> +		     str_ends_with(func->name, "_4core9panicking14panic_explicit")		||
-> +		     str_ends_with(func->name, "_4core9panicking18panic_bounds_check")		||
-> +		     strstr(func->name, "_4core9panicking11panic_const24panic_const_")		||
-> +		     (strstr(func->name, "_4core5slice5index24slice_") &&
-> +		      str_ends_with(func->name, "_fail"))))
-> +			return true;
-> +
+I would argue that the sentence "If under all possible safe uses of the
+API, the conditions for the ``unsafe`` operation are fulfilled, the API
+is *sound*. Otherwise it is *unsound*." is a definition. Is this lacking
+anything, or do you have an idea to improve the wording?
+I am not really understanding what kind of additional definition you
+would like to see.
 
-I wonder if we should use dwarf for this. There's DW_AT_noreturn which
-tells us exactly what we want. This would also remove the need for the
-hardcoded C symbol list. I do recognise that debug info is not required
-for objtool though...
+> It may be nice to talk about how a sound API must prevent memory
+> safety issues, even if the safe code required to do so is silly or
+> unrealistic. Doing so is necessary to maintain the "safe code never
+> has memory safety bugs" guarantee.
 
->  		for (i = 0; i < ARRAY_SIZE(global_noreturns); i++)
->  			if (!strcmp(func->name, global_noreturns[i]))
->  				return true;
-> +	}
-> 
->  	if (func->bind == STB_WEAK)
->  		return false;
-> diff --git a/tools/objtool/noreturns.h b/tools/objtool/noreturns.h
-> index 7ebf29c91184..82a001ac433b 100644
-> --- a/tools/objtool/noreturns.h
-> +++ b/tools/objtool/noreturns.h
-> @@ -35,6 +35,8 @@ NORETURN(panic)
->  NORETURN(panic_smp_self_stop)
->  NORETURN(rest_init)
->  NORETURN(rewind_stack_and_make_dead)
-> +NORETURN(rust_begin_unwind)
-> +NORETURN(rust_helper_BUG)
->  NORETURN(sev_es_terminate)
->  NORETURN(snp_abort)
->  NORETURN(start_kernel)
-> --
-> 2.45.2
+That is a good way to phrase things, I will add that.
+
+>> +Because unsoundness issues have the potential for allowing safe code to=
+ experience UB, they are
+>> +treated similarly to actual bugs with UB. Their fixes should also be in=
+cluded in the  stable tree.
+>> +
+>> +Safety Documentation
+>> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> +
+>> +After trying to minimize and remove as much ``unsafe`` code as possible=
+, there still is some left.
+>> +This is because some things are just not possible in only safe code. Th=
+is last part of ``unsafe``
+>> +code must still be correct. Helping with that is the safety documentati=
+on: it meticulously documents
+>> +the various requirements and justifications for every line of ``unsafe`=
+` code. That way it can be
+>> +ensured that all ``unsafe`` code is sound without anyone needing to kno=
+w the whole kernel at once.
+>> +The gist of the idea is this: every ``unsafe`` operation documents its =
+requirements and every
+>> +location that uses an ``unsafe`` operation documents for every requirem=
+ent a justification why they
+>> +are fulfilled. If now all requirements and justifications are correct, =
+then there can only be sound
+>> +``unsafe`` code.
+>> +
+>> +The ``unsafe`` keywords has two different meanings depending on the con=
+text it is used in:
+>> +
+>> +* granting access to an unchecked operation,
+>> +* declaring that something is an unchecked operation.
+>> +
+>> +In both cases we have to add safety documentation. In the first case, w=
+e have to justify why we can
+>> +always guarantee that the requirements of the unchecked operation are f=
+ulfilled. In the second case,
+>> +we have to list the requirements that have to be fulfilled for the oper=
+ation to be sound.
+>> +
+>> +In the following sections we will go over each location where ``unsafe`=
+` can be used.
+>> +
+>> +.. _unsafe-Functions:
+>> +
+>> +``unsafe`` Functions
+>> +--------------------
+>> +
+>> +``unsafe`` on function declarations is used to state that this function=
+ has special requirements
+>> +that callers have to ensure when calling the function::
+>> +
+>> +    unsafe fn foo() {
+>> +        // ...
+>> +    }
+>> +
+>> +These requirements are called the safety requirements of the function. =
+These requirements can take
+>> +any shape and range from simple requirements like "``ptr_arg`` is valid=
+" (``ptr_arg`` refers to some
+>> +argument with the type matching ``*mut T`` or ``*const T``) to more com=
+plex requirements like
+>> +"``ptr`` must be valid, point to a ``NUL``-terminated C string, and it =
+must be valid for at least
+>> +``'a``. While the returned value is alive, the memory at ``ptr`` must n=
+ot be mutated.".
+>> +
+>> +The safety requirements have to be documented in the so called safety s=
+ection::
+>> +
+>> +    /// <oneline description of the function>
+>> +    ///
+>> +    /// <full description of the function>
+>> +    ///
+>> +    /// # Safety
+>> +    ///
+>> +    /// <safety requirements>
+>> +    unsafe fn foo() {
+>> +        // ...
+>> +    }
+>=20
+> I would love to see a proper example here.
+
+Depending on how the discussion goes with this series, I plan to go
+through the tree and try to improve the safety comments. That way I will
+have a good source for examples, since otherwise they are extremely hard
+to come up with.
+(I am also open to any suggestions :)
+
+>> +.. _unsafe-Blocks:
+>> +
+>> +``unsafe`` Blocks
+>> +-----------------
+>> +
+>> +``unsafe`` code blocks are used to call ``unsafe`` functions and perfor=
+m built-in ``unsafe``
+>> +operations such as dereferencing a raw pointer::
+>> +
+>> +    unsafe { foo() };
+>> +
+>> +In order to ensure that all safety requirements of ``unsafe`` operation=
+s are upheld, a safety
+>> +comment is mandatory for all ``unsafe`` blocks. This safety comment nee=
+ds to provide a correct
+>> +justification for every safety requirements of every operation within t=
+he block::
+>> +
+>> +    // SAFETY: <justifications>
+>> +    unsafe { foo() };
+>=20
+> I think it is worth explicitly pointing out that the safety comment
+> must explain why the preconditions are satisfied, *not* what the
+> preconditions are. It's a really really common mistake to mix up
+> these, and it probably even makes sense to include two examples
+> showing the difference.
+
+Good idea, but I will put that into justifications.rst.
+
+>> +For transparency it is best practice to have only a single ``unsafe`` o=
+peration per ``unsafe``
+>> +block, since then it is more clear what the justifications are trying t=
+o justify. Safe operations
+>> +should not be included in the block, since it adds confusion as to whic=
+h operation is the ``unsafe``
+>> +one. In certain cases however it makes it easier to understand if there=
+ is only a single ``unsafe``
+>> +block. For example::
+>> +
+>> +    // SAFETY: `ptr` is valid for writes.
+>> +    unsafe {
+>> +        (*ptr).field1 =3D 42;
+>> +        (*ptr).field2 =3D 24;
+>> +        (*ptr).field3 =3D 2442;
+>> +    }
+>> +
+>> +In this case it is more readable to not split the block into multiple p=
+arts.
+>=20
+> It would be nice with an example of a completely normal safety comment
+> example. Also would be nice to call out that the semicolon goes
+> outside the unsafe block to improve formatting, when it's a single
+> operation.
+
+Will add.
+
+> It would also be nice with an example that shows how to reference the
+> safety requirements of the current function. (That is, an example that
+> combines unsafe fn with unsafe block.)
+
+See above.
+
+---
+Cheers,
+Benno
 
 
