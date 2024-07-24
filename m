@@ -1,222 +1,165 @@
-Return-Path: <linux-kernel+bounces-260961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8766C93B0F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:37:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40EC193B0F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEB391C21325
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:37:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADF281F2429E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EABC1586C1;
-	Wed, 24 Jul 2024 12:37:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A3014658F;
-	Wed, 24 Jul 2024 12:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1826B1581F7;
+	Wed, 24 Jul 2024 12:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="i2hqZ0nQ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Cn17tpS8"
+Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA9C148FFA;
+	Wed, 24 Jul 2024 12:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721824637; cv=none; b=gwY+0LAlXhCt1K3MYrDvf4jA0n0wJ83fET+WblJniTuxCDeOD75pG19+0VXUrJ6M/v81PKPY8JQkcBNX1V+UgcpC2ovchSxaIwN0+6+i2heaTQDnTjy79bBpPM8EGY1Gzv5FYiHd5aPgXylE5d2mA1UQzxoGWOfjGderzvMJyrM=
+	t=1721824707; cv=none; b=ZpuuyxTAFPXPHaUq3b9QqjnceZqm/gU+Va3cufYwEJjS6aH7oZ0ss79sW5S6XIBWeAmjIc6fjVTVdw3iTHz/xYLU9BUsi7vcNlBMU/Gw9gt99lTQBsWkbTSbolfVa/zbO5auMBozDSDNCt0IZoMKNxUnRF1iGj8pzmGwDj3qUII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721824637; c=relaxed/simple;
-	bh=xGB0XkL2eiLypPWT1xuATKr/bOZ9bZ0XiBnoB349Fbs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sPFIflOfXHdsbNJqcgGpT2MzyGckaiUcbXrKs7j9E9Xu1g1hnJ26IPcZwM0xl1rZQ+9boe9LyhixT/EAsSMT/59TGHFQxmgbJkXxxlukF7h8i1iQ7+0SqPzD+svfy5vodPnn5JDISHemtgx8F6cQ23f0VZ+XRfMKzfyECjaNUkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC5C9106F;
-	Wed, 24 Jul 2024 05:37:39 -0700 (PDT)
-Received: from [10.57.44.253] (unknown [10.57.44.253])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D2A943F5A1;
-	Wed, 24 Jul 2024 05:37:11 -0700 (PDT)
-Message-ID: <0bd6ed95-432a-4304-98e9-76ba445de777@arm.com>
-Date: Wed, 24 Jul 2024 13:37:10 +0100
+	s=arc-20240116; t=1721824707; c=relaxed/simple;
+	bh=VCtfH/V0Iqx1XPif/WwmAUcbxCcUhHIUQTbsFA2wHqI=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=cXxU6PyiyMBvCjB7A8cdc9Bz6YaQ1i7BDbHLjqj7eg+dfi4f9q5AwXLF2uqZHutCkJM/fyJrk+/A63uaAZ5iP8AD9u/cUkmghqLzASoyTQcXP5W2ogcJufJveFgxZWavGC19PFZy3t8d6y8MElfo8Kgc9eUnDMr/9m1ItmUgaVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=i2hqZ0nQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Cn17tpS8; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 68CEA1380458;
+	Wed, 24 Jul 2024 08:38:23 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Wed, 24 Jul 2024 08:38:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1721824703; x=1721911103; bh=BE8v/r/tmA
+	JHpoLd92xEdYbBTbQFCV/bIoOEAgGWt20=; b=i2hqZ0nQEaKoHogGh5Aw01bCZZ
+	TyfQyU4U08WB7UzmeQa0+MDjK43BP7gpX02P4V3nN50HT9BWuy1Xg9+a7HOSsZ3S
+	FLVlJjQ4QPlQJuzNXEKzU4TvvsZwyFKL5ZsBqSuS7/FB1xyhn1rqPZ7k1EH4v9mw
+	CTApw4d2+3ZSWnyNdqnu5q720rAxWmPZFZOGpAu5DJFzfN+KuOcmBxf5OKayBoIQ
+	prE+sLxnEO/ObGkXqaJ4/R1YTeCk3/5zGemR28bZkwGq3UpD012emOwk8V5gvbb2
+	WbsVjimTUmOpGBCHHs46N/1CgnQV7Y/GT5M7JmVw6gKb2pivA/HL22sJpzwQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1721824703; x=1721911103; bh=BE8v/r/tmAJHpoLd92xEdYbBTbQF
+	CV/bIoOEAgGWt20=; b=Cn17tpS8g0M4W4HTBQSfre5jyOKh+fLxBQRXK7vgIoGM
+	3Q65h4+CNy7vhndrBG48Tt/wdfbysqhQ2i42Uj8tavNyQkJDXLlOLbxFLnGr0aH8
+	6osOS9trs+1CcB82SS29rCFiV7r+a1HF/uB5BteHGFFGwxbFkO+chM278qABW8rp
+	rSElyBourESTEbdSX57cGcPLpIFten8dfvCZXJGO/otAY46lPQbjttm4Rlo9DHgS
+	JEtvCC7bN/0TnaS+35GLgr2umSR+oMhb/VkUOKiXbWG6ORRtkny0zds+A6khNvn2
+	Jk4FF1pHWfgfabbPR8vfqtLOKBjK+M8bKLqPzQ51NA==
+X-ME-Sender: <xms:v_WgZiMPUf3BHuUBrAvXQRYjCJWhdfnmVUz_0tlIls3ZRpi8SUtoCw>
+    <xme:v_WgZg8AV0WZfS3gNKzsFTuMFIfZgyHTHAMouXrykSxQFGWLyJwEbo3ntxmCqOHB4
+    3RKDWVw4iXyfDJdifg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddriedugdehhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeefkedvheehjeejteeguedvgeevfeduffdvveeuhfdvudeltddtjeevvefggfei
+    geenucffohhmrghinhepghhouggsohhlthdrohhrghdpshhtrggtkhhovhgvrhhflhhofi
+    drtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
+    pegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
+X-ME-Proxy: <xmx:v_WgZpTYTLcArbG03DKzen6YFTUwuMpkYVOs9kAkaYX7bC0ogqLa1g>
+    <xmx:v_WgZiuboFu-1lPdpL9K6KRCJXCcs6vF7pImwN5DJnwdxqmLgEkxmQ>
+    <xmx:v_WgZqd3suB6ftOaEXFSo3xiUUa3fZvRV91x81zRZtMRzig4jfAZ2w>
+    <xmx:v_WgZm2YV6S_BX6wZH8p_O08uiExUwQa6AaEaTzYwjfZipylvdFXTw>
+    <xmx:v_WgZnEU0Fos8cyBPOVasxJ628REHu865IZ1Ghr2hCC6Vbam7JFvMq0e>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id F3E6BB6008D; Wed, 24 Jul 2024 08:38:22 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-582-g5a02f8850-fm-20240719.002-g5a02f885
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] drm: panthor: add dev_coredumpv support
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, ojeda@kernel.org,
- Danilo Krummrich <dakr@redhat.com>, lyude@redhat.com, robh@kernel.org,
- lina@asahilina.net, mcanal@igalia.com, airlied@gmail.com,
- rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
+Message-Id: <19ed618c-5be9-4658-a2a3-031f4eded19a@app.fastmail.com>
+In-Reply-To: <7d075af2-e94e-4201-9d5d-35fd53124c4c@arm.com>
+References: <20240724103142.165693-1-anshuman.khandual@arm.com>
+ <20240724103142.165693-2-anshuman.khandual@arm.com>
+ <d0fadaa3-94d4-4600-8e92-a8fe5b0f141b@app.fastmail.com>
+ <7d075af2-e94e-4201-9d5d-35fd53124c4c@arm.com>
+Date: Wed, 24 Jul 2024 14:37:34 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Anshuman Khandual" <anshuman.khandual@arm.com>,
  linux-kernel@vger.kernel.org
-References: <20240710225011.275153-1-daniel.almeida@collabora.com>
- <fe84a028-01a8-4987-b1b7-141fb76d263c@arm.com>
- <4344B22F-D859-4C64-A351-69FFB5208362@collabora.com>
- <edda856e-3102-495a-8cc6-b79f5f114833@arm.com>
- <20240723180642.73502856@collabora.com>
- <6ce8fd12-b175-4a8f-8ea9-6221a555b69c@arm.com>
- <20240724124446.11b23885@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240724124446.11b23885@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Cc: "Andrew Morton" <akpm@linux-foundation.org>,
+ "Yury Norov" <yury.norov@gmail.com>,
+ "Rasmus Villemoes" <linux@rasmusvillemoes.dk>,
+ Linux-Arch <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH 1/2] uapi: Define GENMASK_U128
+Content-Type: text/plain
 
-Hi Boris,
+On Wed, Jul 24, 2024, at 13:59, Anshuman Khandual wrote:
+> On 7/24/24 16:33, Arnd Bergmann wrote:
+>> I would hope we don't need this definition. Not that it
+>> hurts at all, but __BITS_PER_LONG_LONG was already kind
+>> of pointless since we don't run on anything else and
+>> __BITS_PER_U128 clearly can't have any other sensible
+>> definition than a plain 128.
+>
+> Agreed, although this just followed __BITS_PER_LONG_LONG.
+> But sure __BITS_PER_U128 can be plain 128.
+>
+> So would you like to have #ifndef __BITS_PER_LONG_LONG dropped here 
+> as well ? But should that be folded or in a separate patch ?
 
-Sounds like we're violently agreeing with each other ;) Just want to
-reply to a couple of points.
+A separate patch is probably better, but you can also
+just leave it.
 
-On 24/07/2024 11:44, Boris Brezillon wrote:
-> Hi Steve,
-> 
-> On Wed, 24 Jul 2024 09:59:36 +0100
-> Steven Price <steven.price@arm.com> wrote:
-> 
->> Hi Boris,
->>
->> On 23/07/2024 17:06, Boris Brezillon wrote:
->>> Hi Steve,
->>>
->>> On Mon, 15 Jul 2024 10:12:16 +0100
->>> Steven Price <steven.price@arm.com> wrote:
->>>   
->>>> I note it also shows that the "panthor_regs.rs" would ideally be shared.
->>>> For arm64 we have been moving to generating system register descriptions
->>>> from a text source (see arch/arm64/tools/sysreg) - I'm wondering whether
->>>> something similar is needed for Panthor to generate both C and Rust
->>>> headers? Although perhaps that's overkill, sysregs are certainly
->>>> somewhat more complex.  
->>>
->>> Just had a long discussion with Daniel regarding this panthor_regs.rs
->>> auto-generation, and, while I agree this is something we'd rather do if
->>> we intend to maintain the C and rust code base forever, I'm not
->>> entirely convinced this is super useful here because:  
->>
->> So I think we need some more alignment on how the 'Rustification'
->> (oxidation?) of the driver is going to happen.
->>
->> My understanding was that the intention was to effectively start a
->> completely separate driver (I call it "Rustthor" here) with the view
->> that it would eventually replace (the C) Panthor. Rustthor would be
->> written by taking the C driver and incrementally converting parts to
->> Rust, but as a separate code base so that 'global' refactoring can be
->> done when necessary without risking the stability of Panthor. Then once
->> Rustthor is feature complete the Panthor driver can be dropped.
->> Obviously we'd keep the UABI the same to avoid user space having to care.
-> 
-> That's indeed what we landed on initially, but my lack of rust
-> experience put me in a position where I can't really challenge these
-> decisions, which is the very reason we have Daniel working on it :-). I
-> must admit his argument of implementing new features in rust and
-> progressively converting the other bits is appealing, because this
-> reduces the scope of testing for each component conversion...
+>>>  #define __AC(X,Y)	(X##Y)
+>>>  #define _AC(X,Y)	__AC(X,Y)
+>>>  #define _AT(T,X)	((T)(X))
+>>> +#define _AC128(X)	((unsigned __int128)(X))
+>> 
+>> I just tried using this syntax and it doesn't seem to do
+>> what you expected. gcc silently truncates the constant
+>
+> But numbers passed into _AC128() are smaller in the range [128..0].
+> Hence the truncation might not be problematic in this context ? OR
+> could it be ?
+>
+>> to a 64-bit value here, while clang fails the build.
+>
+> Should this be disabled for CC_IS_CLANG ?
+>
+>> See also https://godbolt.org/z/rzEqra7nY
+>> https://stackoverflow.com/questions/63328802/unsigned-int128-literal-gcc
+>
+> So unless the value in there is beyond 64 bits, it should be good ?
+> OR am I missing something.
+>
+>> The __GENMASK_U128() macro however seems to work correctly
+>> since you start out with a smaller number and then shift
+>> it after the type conversion.
+>
+> _U128() never receives anything beyond [127..0] range. So then this
+> should be good ?
 
-I can see the appeal, and I found it useful to review and look at some
-real Rust code in the kernel.
+Since you define _U128() right next to _ULL(), I would argue
+that it should have the corresponding behavior for any value
+that can fit into the type. Since that is currently not
+possible with gcc, I would prefer to not define it at all.
 
-However... for features quite peripheral to the driver (e.g.
-devcoredump) this becomes much more complex/verbose than the equivalent
-implementation in C - I could rewrite Daniel's code in C fairly
-trivially and drop all the new Rust support, which would get us the new
-feature and be "trivially correct" from a memory safety point of view
-because Rust has already done the proof! ;) Although more seriously the
-style of sub-allocating from a large allocation means it's easy to
-review that the code (either C or Rust) won't escape the bounds of each
-sub-allocation.
+However, I think you can just define a _BIT128() macro
+that behaves the same way as _BITULL() and define
+__GENMASK_U128() based on that. Maybe something like
 
-For features that are central to the driver (to pick an example: user
-mode submission), it's not really possible to incrementally add them.
-You'd have to do a major conversion of existing parts of the driver first.
+#define _BIT128(x) ((unsigned __int128)1 << (x))
+#define __GENMASK_U128(h, l) (_BIT128((h) + 1)) - (_BIT128(l))
 
-It also seems like we're likely to be a "worst of both worlds" situation
-if the driver is half converted. There's no proper memory safety
-(because the Rust code is having to rely on the correctness of the C
-code) and the code is harder to read/review because it's split over two
-languages and can't make proper use of 'idiomatic style'.
-
->>
->> I may have got the wrong impression - and I'm certainly not saying the
->> above is how we have to do it. But I think we need to go into it with
->> open-eyes if we're proposing a creeping Rust implementation upstream of
->> the main Mali driver. That approach will make ensuring stability harder
->> and will make the bar for implementing large refactors higher (we'd need
->> significantly more review and testing for each change to ensure there
->> are no regressions).
-> 
-> ... at the risk of breaking the existing driver, that's true. My hope
-> was that, by the time we start converting panthor components to rust,
-> the testing infrastructure (mesa CI, for the open source driver) would
-> be mature enough to catch regressions. But again, I wouldn't trust my
-> judgment on anything rust related, so if other experienced rust
-> developers think having a mixed rust/c driver is a bad idea (like Sima
-> seemed to imply in her reply to Daniel), then I'll just defer to their
-> judgment.
-
-The testing infrastructure will (hopefully) catch major regressions, my
-main concern is that for corner case regressions even if we do get them
-reported during the release cycle it could be difficult to find a fix
-quickly. So we could end up reverting changes that rustify the code just
-to restore the previous behaviour. It's certainly not impossible, but I
-can't help feel it's making things harder than they need to be.
-
-Sima also has an interesting point that the Rust abstractions in DRM are
-going to be written assuming a fully Rust driver, so a half-way house
-state might be particularly painful if it prevents us using the generic
-DRM infrastructure. But I'm also out of my depth here and so there might
-be ways of making this work.
-
-<snip>
-
->>
->>> 4. we're still unclear on how GPU registers should be exposed in rust,
->>> so any script we develop is likely to require heavy changes every time
->>> we change our mind  
->>
->> This is the real crux of the matter to my mind. We don't actually know
->> what we want in Rust, so we can't write the Rust. At the moment Daniel
->> has generated (broken) Rust from the C. The benefit of that is that the
->> script can be tweaked to generate a different form in the future if needed.
-> 
-> Well, the scope of devcoredump is pretty clear: there's a set of
-> GPU/FW register values we need to properly decode a coredump (ringbuf
-> address, GPU ID, FW version, ...). I think this should be a starting
-> point for the rust GPU/FW abstraction. If we start from the other end
-> (C definitions which we try to convert to rust the way they were used
-> in C), we're likely to make a wrong choice, and later realize we need
-> to redo everything.
-> 
-> This is the very reason I think we should focus on the feature we want
-> to implement in rust, come up with a PoC that has some reg values
-> manually defined, and then, if we see a need in sharing a common
-> register/field definition, develop a script/use a descriptive format
-> for those. Otherwise we're just spending time on a script that's going
-> to change a hundred times before we get to the rust abstraction we
-> agree on.
-
-Agreed, I'm absolutely fine with that. My only complaint was that the
-Rust register definitions included things unrelated to devcoredump (and
-some which were converted incorrectly).
-
->>
->> Having a better source format such that the auto-generation can produce
->> correct headers means that the Rust representation can change over time.
->> There's even the possibility of improving the C. Specifically if the
->> constants for the register values were specified better they could be
->> type checked to ensure they are used with the correct register - I see
->> Daniel has thought about this for Rust, it's also possible in C
->> (although admittedly somewhat clunky).
-> 
-> If that's something we're interested in, I'd rather see a script to
-> generate the C definitions, since that part is not a moving target
-> anymore (or at least more stable than it was a year ago). Just to be
-> clear, I'm not opposed to that, I just think the time spent developing
-> such a script when the number of regs is small/stable is not worth it,
-> but if someone else is willing to spend that time, I'm happy to
-> ack/merge the changes :-).
-
-Also agreed, but I'm afraid I'm not volunteering my time for the
-implementation ;) But happy to review if others want to tackle this.
-
-Steve
+     Arnd
 
