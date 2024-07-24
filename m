@@ -1,192 +1,217 @@
-Return-Path: <linux-kernel+bounces-261146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39D1D93B327
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:54:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B33493B32C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E12322821D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:54:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36D51283CC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECF51581F7;
-	Wed, 24 Jul 2024 14:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C18D15B541;
+	Wed, 24 Jul 2024 14:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="Q/GDs2p9"
-Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y8w/ulxe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E26134AC;
-	Wed, 24 Jul 2024 14:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C3115B12F;
+	Wed, 24 Jul 2024 14:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721832768; cv=none; b=nk1teX26I1lHCK5CPsVLuwLUo37zoQs3pxv+6YDN/2AtayWP/tNCTYXuNGQwHKPc9E5lqBVT+557YO2f3pRqqcZCOUVyLr4DaGDcwdOZUWXOLgtAb4B8eqy5l2ax6PdKGnnmDw3YQFSO/jtnbLWFdWxibyPxrBczV8cCxWh3UPc=
+	t=1721832827; cv=none; b=uRsPGAK8ucUKrKEZJvWVCHc3by50Ht41MMtSY0g1jAL68B9eRaRtOwzSCA2fZkOBPmUjVrp4Toepqt6Gk6sDTJjAsniPc8bMh1DlryapKa7F8VsmRqoRU/i6EINPAlurCd/gAEJlsWicanrgsYGSnCDSsuG4Rm41ab2KfqemtyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721832768; c=relaxed/simple;
-	bh=1UR/Rl29EOkVXXKtByzEVNjTorXRyez/OCWiAKbF9nk=;
+	s=arc-20240116; t=1721832827; c=relaxed/simple;
+	bh=EhGs3QHFWEAF4yCV+iWV8W/2NsVyT7nTpnaTm8KpojA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q84MXFH+fxSxzX5Zsyd2/DT2GLyUsHAU7eOHcfJ1nAQQP4aIR1cD6/jq50nx5HuSwCd1fZqPzDm0EckXj3qWtQIKPpBg72PUAXF6MVPoX8+JUwQJfC7nLWGSBko0/lIvGjGRRo26fhw0j0m+jld0dS7YFvammuvm2AvLRfl6JGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=Q/GDs2p9; arc=none smtp.client-ip=148.163.143.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0134424.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46O9XHup018789;
-	Wed, 24 Jul 2024 14:51:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pps0720; bh=+PVD4s92WUj9d8l4iny/fls
-	0Ls8G3YMtd4Sqn1HT1hc=; b=Q/GDs2p9gJQ6rUR+t+ItEjPN05Gl6OslwV6pGYU
-	EAbUDFlfQ9MsipWYV8JvVrVlFJr/DfRUhb11gklahgcTLIb0ZCltxx6JekY8TbU5
-	to4D9Emeikufyr37vhIcmZNkPL0TL4VAENW2BRX2Ef3/RYLaDR/jH42x45X6Vuei
-	gzBPHlZF+w2+rfGGq2WImWFvS9Am/JlWC73/Hn0pI8ydxPi70LqcyUofjKqoAruM
-	hguXunQbmlrzA0ZFxHPk6IxaUoEam6jsFIDlDwy5o1tJWeLFiwOVAW52PkOta1Yi
-	++aogtoN5O+M//yWqyTeDokPSnXtqwaNmdPzk6F9/Kygu4A==
-Received: from p1lg14878.it.hpe.com ([16.230.97.204])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 40jhqyyycv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Jul 2024 14:51:36 +0000 (GMT)
-Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by p1lg14878.it.hpe.com (Postfix) with ESMTPS id 3C35213784;
-	Wed, 24 Jul 2024 14:51:34 +0000 (UTC)
-Received: from swahl-home.5wahls.com (unknown [16.231.227.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTPS id 97BF38065D6;
-	Wed, 24 Jul 2024 14:51:28 +0000 (UTC)
-Date: Wed, 24 Jul 2024 09:51:26 -0500
-From: Steve Wahl <steve.wahl@hpe.com>
-To: Steve Wahl <steve.wahl@hpe.com>, Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-        Pavin Joseph <me@pavinjoseph.com>, Eric Hagberg <ehagberg@gmail.com>
-Cc: Simon Horman <horms@verge.net.au>, Eric Biederman <ebiederm@xmission.com>,
-        Dave Young <dyoung@redhat.com>, Sarah Brofeldt <srhb@dbc.dk>,
-        Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>,
-        Hou Wenlong <houwenlong.hwl@antgroup.com>,
-        Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
-        Yuntao Wang <ytcoode@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
-        Joerg Roedel <jroedel@suse.de>, Michael Roth <michael.roth@amd.com>,
-        Tao Liu <ltao@redhat.com>, kexec@lists.infradead.org,
-        "Kalra, Ashish" <ashish.kalra@amd.com>,
-        Ard Biesheuvel <ardb@kernel.org>, linux-efi@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] x86/mm/ident_map: Use gbpages only where full GB
- page should be mapped.
-Message-ID: <ZqEU7gC9VU_loVfV@swahl-home.5wahls.com>
-References: <20240717213121.3064030-1-steve.wahl@hpe.com>
- <20240717213121.3064030-3-steve.wahl@hpe.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n4TPLW3PoBoV2oagfvfpPaMMks5mgeTg8fcgHsiI/qHHlnZmoNU9UnBZjBunN5jF1GKwxKO776+wDQ8mEmFRnNOGDZMyfU5kevFlykUQnfkL6f8BgwbBgbgrqV8OTV//Avq+suIXhSi00VpglV7oP0ampzDkPhjJpEx4m3DDZsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y8w/ulxe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE0E0C32781;
+	Wed, 24 Jul 2024 14:53:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721832827;
+	bh=EhGs3QHFWEAF4yCV+iWV8W/2NsVyT7nTpnaTm8KpojA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y8w/ulxe88J1URS6wQyFwZkVk96GQDqEdMvZ/kNvD5gdyiNEYnmjJpdp3UfGhJaO1
+	 ep0Wa8g0j2Rcto37s2A1/9Vsh4PodRY3AelZyYEARm5OOIH4OSWPLgaElb9FYPgRYA
+	 wf2gEc8rjccb2jqMqDvjnzjKe5Zr0G1fU5aHjfCv1rlsLJ3V1gINaoc1+2Ku6b6YUM
+	 lc1UiY3+ugOFBLyDazhUrEB5XtjAdAwZjfuh9UEI+N4VQElhqL1RQEzkOJTRqyusj5
+	 Ss28XcUpzbYB4BrvWqE7syKnqiySR/RjW1SBbJO8bYUEMm3dNSyYBtrfoD35h91M0h
+	 TwkxB5OIhh1SA==
+Date: Wed, 24 Jul 2024 15:53:40 +0100
+From: Lee Jones <lee@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	alexandre.belloni@bootlin.com, geert+renesas@glider.be,
+	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
+	p.zabel@pengutronix.de, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v2 02/11] mfd: renesas-vbattb: Add a MFD driver for the
+ Renesas VBATTB IP
+Message-ID: <20240724145340.GZ501857@google.com>
+References: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240716103025.1198495-3-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240717213121.3064030-3-steve.wahl@hpe.com>
-X-Proofpoint-GUID: yf7PEnjMT5Ilut-VNU81f0H91Zhd63t4
-X-Proofpoint-ORIG-GUID: yf7PEnjMT5Ilut-VNU81f0H91Zhd63t4
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-24_13,2024-07-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- phishscore=0 spamscore=0 suspectscore=0 impostorscore=0 mlxlogscore=999
- priorityscore=1501 bulkscore=0 malwarescore=0 adultscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2407240109
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240716103025.1198495-3-claudiu.beznea.uj@bp.renesas.com>
 
-Gentle ping: Can someone please take the time to review this patch?
+On Tue, 16 Jul 2024, Claudiu wrote:
 
-This patch was previously approved by Dave Hansen, but was reverted.
-
-Full series (of 2 + cover leter) viewable at:
-
-https://lore.kernel.org/all/20240717213121.3064030-1-steve.wahl@hpe.com/
-
-Thanks.
-
---> Steve Wahl, HPE
-
-On Wed, Jul 17, 2024 at 04:31:21PM -0500, Steve Wahl wrote:
-> When ident_pud_init() uses only gbpages to create identity maps, large
-> ranges of addresses not actually requested can be included in the
-> resulting table; a 4K request will map a full GB.  This can include a
-> lot of extra address space past that requested, including areas marked
-> reserved by the BIOS.  That allows processor speculation into reserved
-> regions, that on UV systems can cause system halts.
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> Only use gbpages when map creation requests include the full GB page
-> of space.  Fall back to using smaller 2M pages when only portions of a
-> GB page are included in the request.
+> Renesas VBATTB IP has logic to control the RTC clock, tamper detection
+> and a small 128B memory. Add a MFD driver to do the basic initialization
+> of the VBATTB IP for the inner components to work.
 > 
-> No attempt is made to coalesce mapping requests. If a request requires
-> a map entry at the 2M (pmd) level, subsequent mapping requests within
-> the same 1G region will also be at the pmd level, even if adjacent or
-> overlapping such requests could have been combined to map a full
-> gbpage.  Existing usage starts with larger regions and then adds
-> smaller regions, so this should not have any great consequence.
-> 
-> Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
-> Tested-by: Pavin Joseph <me@pavinjoseph.com>
-> Tested-by: Sarah Brofeldt <srhb@dbc.dk>
-> Tested-by: Eric Hagberg <ehagberg@gmail.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > ---
->  arch/x86/mm/ident_map.c | 23 ++++++++++++++++++-----
->  1 file changed, 18 insertions(+), 5 deletions(-)
 > 
-> diff --git a/arch/x86/mm/ident_map.c b/arch/x86/mm/ident_map.c
-> index 968d7005f4a7..a204a332c71f 100644
-> --- a/arch/x86/mm/ident_map.c
-> +++ b/arch/x86/mm/ident_map.c
-> @@ -26,18 +26,31 @@ static int ident_pud_init(struct x86_mapping_info *info, pud_t *pud_page,
->  	for (; addr < end; addr = next) {
->  		pud_t *pud = pud_page + pud_index(addr);
->  		pmd_t *pmd;
-> +		bool use_gbpage;
+> Changes in v2:
+> - none; this driver is new
+> 
+>  drivers/mfd/Kconfig          |  8 ++++
+>  drivers/mfd/Makefile         |  1 +
+>  drivers/mfd/renesas-vbattb.c | 78 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 87 insertions(+)
+>  create mode 100644 drivers/mfd/renesas-vbattb.c
+> 
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index bc8be2e593b6..df93e8b05065 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -1383,6 +1383,14 @@ config MFD_SC27XX_PMIC
+>  	  This driver provides common support for accessing the SC27xx PMICs,
+>  	  and it also adds the irq_chip parts for handling the PMIC chip events.
 >  
->  		next = (addr & PUD_MASK) + PUD_SIZE;
->  		if (next > end)
->  			next = end;
->  
-> -		if (info->direct_gbpages) {
-> -			pud_t pudval;
-> +		/* if this is already a gbpage, this portion is already mapped */
-> +		if (pud_leaf(*pud))
-> +			continue;
+> +config MFD_RENESAS_VBATTB
+> +	tristate "Renesas VBATTB driver"
+> +	depends on (ARCH_RZG2L && OF) || COMPILE_TEST
+> +	select MFD_CORE
+> +	help
+> +	  Select this option to enable Renesas RZ/G3S VBATTB driver which
+> +	  provides support for the RTC clock, tamper detector and 128B SRAM.
 > +
-> +		/* Is using a gbpage allowed? */
-> +		use_gbpage = info->direct_gbpages;
->  
-> -			if (pud_present(*pud))
-> -				continue;
-> +		/* Don't use gbpage if it maps more than the requested region. */
-> +		/* at the begining: */
-> +		use_gbpage &= ((addr & ~PUD_MASK) == 0);
-> +		/* ... or at the end: */
-> +		use_gbpage &= ((next & ~PUD_MASK) == 0);
+>  config RZ_MTU3
+>  	tristate "Renesas RZ/G2L MTU3a core driver"
+>  	depends on (ARCH_RZG2L && OF) || COMPILE_TEST
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 02b651cd7535..cd2f27492df2 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -186,6 +186,7 @@ pcf50633-objs			:= pcf50633-core.o pcf50633-irq.o
+>  obj-$(CONFIG_MFD_PCF50633)	+= pcf50633.o
+>  obj-$(CONFIG_PCF50633_ADC)	+= pcf50633-adc.o
+>  obj-$(CONFIG_PCF50633_GPIO)	+= pcf50633-gpio.o
+> +obj-$(CONFIG_MFD_RENESAS_VBATTB)	+= renesas-vbattb.o
+>  obj-$(CONFIG_RZ_MTU3)		+= rz-mtu3.o
+>  obj-$(CONFIG_ABX500_CORE)	+= abx500-core.o
+>  obj-$(CONFIG_MFD_DB8500_PRCMU)	+= db8500-prcmu.o
+> diff --git a/drivers/mfd/renesas-vbattb.c b/drivers/mfd/renesas-vbattb.c
+> new file mode 100644
+> index 000000000000..5d71565b8cbf
+> --- /dev/null
+> +++ b/drivers/mfd/renesas-vbattb.c
+> @@ -0,0 +1,78 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * VBATTB driver
+> + *
+> + * Copyright (C) 2024 Renesas Electronics Corp.
+> + */
 > +
-> +		/* Never overwrite existing mappings */
-> +		use_gbpage &= !pud_present(*pud);
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/reset.h>
 > +
-> +		if (use_gbpage) {
-> +			pud_t pudval;
->  
-> -			addr &= PUD_MASK;
->  			pudval = __pud((addr - info->offset) | info->page_flag);
->  			set_pud(pud, pudval);
->  			continue;
+> +static int vbattb_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct reset_control *rstc;
+> +	int ret;
+> +
+> +	rstc = devm_reset_control_array_get_exclusive(dev);
+> +	if (IS_ERR(rstc))
+> +		return PTR_ERR(rstc);
+> +
+> +	ret = devm_pm_runtime_enable(dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = pm_runtime_resume_and_get(dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = reset_control_deassert(rstc);
+> +	if (ret)
+> +		goto rpm_put;
+> +
+> +	platform_set_drvdata(pdev, rstc);
+
+Where is this consumed?
+
+> +	ret = devm_of_platform_populate(dev);
+
+
+Which devices will this probe?
+
+> +	if (ret)
+> +		goto reset_assert;
+> +
+> +	return 0;
+> +
+> +reset_assert:
+> +	reset_control_assert(rstc);
+> +rpm_put:
+> +	pm_runtime_put(dev);
+> +	return ret;
+> +}
+> +
+> +static void vbattb_remove(struct platform_device *pdev)
+> +{
+> +	struct reset_control *rstc = platform_get_drvdata(pdev);
+> +
+> +	reset_control_assert(rstc);
+> +	pm_runtime_put(&pdev->dev);
+> +}
+> +
+> +static const struct of_device_id vbattb_match[] = {
+> +	{ .compatible = "renesas,r9a08g045-vbattb" },
+> +	{ /* sentinel */ },
+> +};
+> +MODULE_DEVICE_TABLE(of, vbattb_match);
+> +
+> +static struct platform_driver vbattb_driver = {
+> +	.probe = vbattb_probe,
+> +	.remove_new = vbattb_remove,
+> +	.driver = {
+> +		.name = "renesas-vbattb",
+> +		.of_match_table = vbattb_match,
+> +	},
+> +};
+> +module_platform_driver(vbattb_driver);
+> +
+> +MODULE_ALIAS("platform:renesas-vbattb");
+> +MODULE_AUTHOR("Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>");
+> +MODULE_DESCRIPTION("Renesas VBATTB driver");
+> +MODULE_LICENSE("GPL");
 > -- 
-> 2.26.2
+> 2.39.2
 > 
 
 -- 
-Steve Wahl, Hewlett Packard Enterprise
+Lee Jones [李琼斯]
 
