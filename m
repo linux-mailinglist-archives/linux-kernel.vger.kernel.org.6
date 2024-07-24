@@ -1,105 +1,160 @@
-Return-Path: <linux-kernel+bounces-260590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70C0793AB40
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 04:32:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82D5693AB42
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 04:34:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33DA328486F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 02:32:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81CCD1C22EF2
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 02:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E736117758;
-	Wed, 24 Jul 2024 02:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B8C1804F;
+	Wed, 24 Jul 2024 02:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qEcsWmUp"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IKV+1CUm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5353F2595
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 02:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92502595;
+	Wed, 24 Jul 2024 02:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721788323; cv=none; b=YtvBtWbbqJJ2ijCeYaseqbWYmPeDr+FQHENPN8g1n3W6Q+ECEURrWzUKKm6F5D7ssz6hcOi6bkOcaMIJzFC+51B256RrLJx+avcSMH8kGLvqPk84eaIZ0pCbfxjHPjAEcZ1tPUfi6eJyA8Bci+LrIzzyAA3JXTDPANDCiSASlDg=
+	t=1721788478; cv=none; b=brWKW4V6Zy4IM+keAVOP+h0Y/aNS6E2JATLw0acZCDB9zTIhuHnRxnAhjBSmE/9qqIJwjpNpBvtpEhAvRis5g/0Z+6kq5v4eBZlVn+dU1z9tf+mWAuYMibCRMSKBId8rU5AHu6/6Uvpae6ElLPhwV0hWnhjTUrYrFR+pTs0VY3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721788323; c=relaxed/simple;
-	bh=eqzFQzNwtL8VQl5W7g18vWD4vD5+Jyqh7vavMwyPR38=;
+	s=arc-20240116; t=1721788478; c=relaxed/simple;
+	bh=49sitEwGOYl2Q6OgN0ebMfQVcpJ3UCgVODMPWgNQFts=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d70jxX9Ag6YPNwNNDB+v/e7aSvJO+7/4d7clZ8tFZ1vCDAA+vOaKNQ765hzRWUYR+IBRixbiC1UEdHBKeqcOsQCabqt2QnCkL5MRgg0RMqkVxYocXp6HcI9vhn52pJfOm/2DnGnga95D7H/JK1e4SY9VKhIFPC780G5zZOEsjRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qEcsWmUp; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <fc61be3b-816a-44d9-aa56-d5338ccd3342@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721788319;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LS1EuViH1t5zqh/ApOnEVUHQb/0kTtyVG0skusGupcE=;
-	b=qEcsWmUpovt2xYRjUFGY0I6hJIU8PoBZh5tSEpUdQNgUUFXxVHkRTZmn2TikQBHxSN0n2P
-	vJLykLBsQiZkGzFlMCWwqz7WmqT/M/pIVdWf4ou4l217YYNHTlBA2V21amhqHbY9uGJPZh
-	G2Wfmhusvhq8TXU1vCykOtq8WzExpS4=
-Date: Wed, 24 Jul 2024 10:31:55 +0800
+	 In-Reply-To:Content-Type; b=gHz8nW28jxgVcEsScQTDvuJE1M9SbKT79Ay+p457byOKLMtgcOfMZNSH18JuWqHzkxgase8vW+xYio38yCoM10o9mZ90AoidyDv98MftC5L1tEqWjq2GQP5Fgb30cqe9Biu+1vsJyjHdi+MTtOr7DbOua8VdJgdv4mVo9Rv5hik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IKV+1CUm; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721788476; x=1753324476;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=49sitEwGOYl2Q6OgN0ebMfQVcpJ3UCgVODMPWgNQFts=;
+  b=IKV+1CUmLyslmGUxuaTXxfPsPJUup9S0E/OhsIDgCVJjdwOfQlP/qa73
+   iYjP+6s2MzJZub6dUIEcoRrz1zC9ZDdE2A6BWm3Yms+aUzty7axsb1kdW
+   2x8f+VfVz+gyRvJYr5JqL8szDFFGmtt85QYy1Vy1GE56qa5Rgb0dc/0Cw
+   UK+LQ/uuW1qL+5XBSGrqO1a7RFmbXxUkyW8rr2v+eC/G31nOZLgT/6EN3
+   HizwHPIqviw65K215y62fRJbOwRILzoMGaKfraU89J2ikzTk0QIEt6uGQ
+   zDNBdYD+kdV0ofdacbFLGv1Yk/NoqS7tr45zcTMJl6/mUgCFyu9pPiNcV
+   A==;
+X-CSE-ConnectionGUID: 37QoE+zzSVmZpgXtj5R5/Q==
+X-CSE-MsgGUID: +N/6Sil8RauKi+I1Wp11Mg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11142"; a="41969888"
+X-IronPort-AV: E=Sophos;i="6.09,232,1716274800"; 
+   d="scan'208";a="41969888"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2024 19:34:35 -0700
+X-CSE-ConnectionGUID: AColBQhpQ86l10xKNojZNg==
+X-CSE-MsgGUID: IlEoyNzDSjeNjljnKGjX5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,232,1716274800"; 
+   d="scan'208";a="57550296"
+Received: from zhaohaif-mobl.ccr.corp.intel.com (HELO [10.124.9.238]) ([10.124.9.238])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2024 19:34:34 -0700
+Message-ID: <e5c1990b-8c40-4376-bd9f-3701bf4eab91@linux.intel.com>
+Date: Wed, 24 Jul 2024 10:34:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 2/2] sched/core: Avoid unnecessary update in
- tg_set_cfs_bandwidth
-To: Chuyi Zhou <zhouchuyi@bytedance.com>, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com
-Cc: linux-kernel@vger.kernel.org, joshdon@google.com
-References: <20240723122006.47053-1-zhouchuyi@bytedance.com>
- <20240723122006.47053-3-zhouchuyi@bytedance.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <20240723122006.47053-3-zhouchuyi@bytedance.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] Subject: PCI: Enable io space 1k granularity for intel
+ cpu root port
+To: Zhou Shengqing <zhoushengqing@ttyinfo.com>, helgaas@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, lkp@intel.com,
+ llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+References: <20240712184849.GA330337@bhelgaas>
+ <20240723080403.9764-1-zhoushengqing@ttyinfo.com>
+From: Ethan Zhao <haifeng.zhao@linux.intel.com>
+In-Reply-To: <20240723080403.9764-1-zhoushengqing@ttyinfo.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On 2024/7/23 20:20, Chuyi Zhou wrote:
-> In the kubernetes production environment, we have observed a high
-> frequency of writes to cpu.max, approximately every 2~4 seconds for each
-> cgroup, with the same value being written each time. This can result in
-> unnecessary overhead, especially on machines with a large number of CPUs
-> and cgroups.
-> 
-> This is because kubelet and runc attempt to persist resource
-> configurations through frequent updates with same value in this manner.
-> While optimizations can be made to kubelet and runc to avoid such
-> overhead(e.g. check the current value of cpu request/limit before writing
-> to cpu.max), it is still worth to bail out from tg_set_cfs_bandwidth() if
-> we attempt to update with the same value.
-> 
-> Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
-> ---
->   kernel/sched/core.c | 3 +++
->   1 file changed, 3 insertions(+)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 7720d34bd71b..0cc564f45511 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -9090,6 +9090,9 @@ static int tg_set_cfs_bandwidth(struct task_group *tg, u64 period, u64 quota,
->   	guard(cpus_read_lock)();
->   	guard(mutex)(&cfs_constraints_mutex);
->   
-> +	if (cfs_b->period == ns_to_ktime(period) && cfs_b->quota == quota && cfs_b->burst == burst)
-> +		return 0;
-> +
 
-Should break this to multiple lines? Feel free to add:
+On 7/23/2024 4:04 PM, Zhou Shengqing wrote:
+>> I think this has potential.  Can you include a more complete citation
+>> for the Intel spec?  Complete name, document number if available,
+>> revision, section?  Hopefully it's publically available?
+> Most of intel CPU EDS specs are under NDA. But you can refer to
+> https://www.intel.com/content/dam/www/public/us/en/documents/datasheets/xeon-e5-v2-datasheet-vol-2.pdf
+> keyword:"EN1K".
+>
+>> + /*
+>>> + * Per intel sever CPU EDS vol2(register) spec,
+>>> + * Intel Memory Map/Intel VT-d configuration space,
+>>> + * IIO MISC Control (IIOMISCCTRL_1_5_0_CFG) — Offset 1C0h
+>>> + * bit 2.
+>>> + * Enable 1K (EN1K):
+>>> + * This bit when set, enables 1K granularity for I/O space decode
+>>> + * in each of the virtual P2P bridges
+>>> + * corresponding to root ports, and DMI ports.
+>>> + */
+>>> + while ((d = pci_get_device(PCI_VENDOR_ID_INTEL, 0x09a2, d))) {
+>> To be safe, "d" (the [8086:09a2] device) should be on the same bus as
+>> "dev" (with VMD, I think we get Root Ports *below* the VMD bridge,
+>> which would be a different bus, and they presumably are not influenced
+>> by the EN1K bit.
+> I modified the code as follows, can you help me review it?
+>
+> /* Enable 1k I/O space granularity on the intel root port */
+> static void quirk_intel_rootport_1k_io(struct pci_dev *dev)
+> {
+> 	struct pci_dev *d = NULL;
+> 	u16 en1k = 0;
+>
+> 	if (!pci_is_pcie(dev) || pci_pcie_type(dev) != PCI_EXP_TYPE_ROOT_PORT)
+> 		return;
+>
+> 	/*
+> 	 * Per intel sever CPU (ICX SPR GNR)EDS vol2(register) spec,
+> 	 * Intel Memory Map/Intel VT-d configuration space,
+> 	 * IIO MISC Control (IIOMISCCTRL_1_5_0_CFG) — Offset 1C0h
+> 	 * bit 2.
+> 	 * Enable 1K (EN1K):
+> 	 * This bit when set, enables 1K granularity for I/O space decode
+> 	 * in each of the virtual P2P bridges
+> 	 * corresponding to root ports, and DMI ports.
+> 	 */
+> 	while ((d = pci_get_device(PCI_VENDOR_ID_INTEL, 0x09a2, d))) {
+> 		if (pci_domain_nr(d->bus) == pci_domain_nr(dev->bus)) {
 
-Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+Perhaps it is enough to check if the 0x09a2 VT-d and the rootport are on the smae bus
+e.g. On my SPR, domain 0000
 
->   	ret = __cfs_schedulable(tg, period, quota);
->   	if (ret)
->   		return ret;
+00:00.0 System peripheral: Intel Corporation Device 09a2 (rev 20)
+00:0f.0 PCI bridge: Intel Corporation Device 1bbf (rev 10) (prog-if 00 [Normal decode])
+
+  
+15:00.0 System peripheral: Intel Corporation Device 09a2 (rev 20)
+15:01.0 PCI bridge: Intel Corporation Device 352a (rev 04) (prog-if 00 [Normal decode])
+
+and if you check domain number only, they might sit on different bus, perhaps that
+would make thing complex, could you make sure the VT-d is on the upstream bus of the
+bridge ?
+
+Thanks,
+Ethan
+  
+
+> 			pci_read_config_word(d, 0x1c0, &en1k);
+> 			if (en1k & 0x4) {
+> 				pci_info(dev, "1K I/O windows enabled per %s EN1K setting\n", pci_name(d));
+> 				dev->io_window_1k = 1;
+> 			}
+> 		}
+> 	}
+> }
+> DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL,	PCI_ANY_ID,	quirk_intel_rootport_1k_io);
+>
+> If you have a better method, please let me know. If there are no issues,
+> I can submit a new patch.
+>
 
