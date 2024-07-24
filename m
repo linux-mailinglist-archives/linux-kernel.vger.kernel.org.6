@@ -1,163 +1,116 @@
-Return-Path: <linux-kernel+bounces-261534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F8C93B86B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 23:10:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C7F193B86D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 23:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6DA0B23001
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:10:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 937A8B231C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CE313B5AE;
-	Wed, 24 Jul 2024 21:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="uzap+bu7"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CAF13B2B0;
+	Wed, 24 Jul 2024 21:11:52 +0000 (UTC)
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 807DE13B29B
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 21:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363E013AD1C
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 21:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721855417; cv=none; b=Wt12BW4HoHbCw1Cj7uJD0kG0N1HaQY+zGcah0fWyrUnF2MFVsvvVVwYrO1G0R+zjHdO/ggMO7n2lvKUTHdfn/haCRd74/pIfqZXOU87CtlSoMCr/qmRcuNZG5lEo1ySXi9v7f05FsRiFQBznuVNGC2g3cCrQT1SXack1QJrqvL8=
+	t=1721855511; cv=none; b=Why+bFpC6C96DtpEMpOMfEvmwOR1HCUZJdx5McFlhnJ1srAA4e4GsQA1C1C25W0+WASjxSyeHYJu4a+Oeopqj61CLp/0zn1YPIUVbe17c3NXPjEZzbhOmSZ1bBHYB+2MK34wpiCATpnL8oOM3UszvZPnmR1Ql7vsjehOtiowrdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721855417; c=relaxed/simple;
-	bh=0ZM8sdx5JQCd6XeEJKPT0C7GyAux5FxWep2ZUayWK6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EQAs6dRxkka8dnhIv8XsnlkZC4wobh4L5wb1KSkkJvxhs/ypsDB1vGLPEVFGZqxG+hyKS0jq9YvX6KveEyBnn3AdBq90hC/4vOS1Yp+ji5LUUld+K4bHMNH3czlxAy4Jsfs5nwviyTEnBRoXoc5cGGznwkIcGmsqejTdzPX7l8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=uzap+bu7; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42660b8dd27so1588595e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:10:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1721855414; x=1722460214; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fdxF1Tt+tCYq4xCwhqWp3Jv/PoXXluEEvZ39wmanBaU=;
-        b=uzap+bu73/PlF0+5whR7c2RD1lb5m0ekry0zFRYzeFraQTB5xJRKf2Qd3ZTloausXv
-         CTeDOeIwqk1ImfqtOoZ0Q+1Gh4IQyoMnspo7svbQ2yvxbLtuQl+GkmlwBjjYB+EH2iYg
-         qG7rpDD8c/IZfETX6AS8iyABlq0oZG1J7qaXg0Fz64YXLD397Lq18LvecRMXdSISA8Qj
-         I2IZV5ca1m643IcZ8FAKU9fHQgBfI9dJ6jSKxlXaCdLReespntt9prEreulVvjq7lPr5
-         gaMejFE0kuoBmEzHlaW50pT8aRFsB9HZKGUhpli7wQW9VELxTIy6mP9CKd8ZXUWDRaMp
-         l5dw==
+	s=arc-20240116; t=1721855511; c=relaxed/simple;
+	bh=0fxAcx9n8E//SdDndveDyp97As6JZ7ETl582+HEdzKY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ERoHWxcOs5EU61kpa9voPXg8t81JbugsP3uBKXDGt8skdkzPVdQrnyQIK+rEMuaxz2lOHRd+hknF0o90WT7ypQdrsCOr2XWCD79PbAspbTPXXe4ZvGU2tQIABfEcRTPofPiHxUtH4KSIwiUozQ7QNf2xOJR8SoSKRl4fKpgjFFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-4f51551695cso97843e0c.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:11:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721855414; x=1722460214;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fdxF1Tt+tCYq4xCwhqWp3Jv/PoXXluEEvZ39wmanBaU=;
-        b=kDgplrUgt38S5ayDexqUBdQPUhNcrzyzQhGdHUoRQ4L2cILVP+C/b+9IScXcbymVCJ
-         HKSvHPYLQ/ORhfzilKD3G77dZDV9tTiT/nLjtoJaO6vzVD4ZX6xWZgzvH8+UABaHJtQT
-         rcAj1OPrSaZMPogd409YZoGptnu4kf2alguF6ESgxlnbjgE0dVTZHLZ/Zkcp8dKp3oz8
-         6zS73REs5oj9U+s5KzMVHSNDJ3621l80u4vVXDs5WsfBMf6yP62MZb/eUKjc63BNY1If
-         4hQg5hqpgbyB7irlnLvnz/BTPhQUjHE7V9ZyDzrsImt0gU/U3Xavp7MY5IhnFlLOLpoP
-         jRxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUR12kqg3E28lr5IPXXAYUufpHdgan8eDyPTkaDFsuzGsHKdwlEbpVBXb8nXxVSSJwe+Fk6FTE6iow9DCu2XnI3f6SSEPnHwaiYNsXy
-X-Gm-Message-State: AOJu0YwvQKkAbnMuoHyvU1uSS0vEa4qj+karPPMLoaQ7e1LKhQsyS337
-	B+NeGPZbWFUl1Hxnev3Z1xFM2u1ZEdOby31kgvdcUPtx2nzhvorDyIXT+GIy1A4=
-X-Google-Smtp-Source: AGHT+IF4aVLJZTXs6DWskBUTH+Pae5/oC+LQ2xfj0Qva/yeE2Qcj66zhX/z3IgQV0twO/dscRVVbKQ==
-X-Received: by 2002:a05:600c:a04:b0:426:5ee5:3129 with SMTP id 5b1f17b1804b1-42805433066mr1850205e9.2.1721855413659;
-        Wed, 24 Jul 2024 14:10:13 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428057a6283sm2649975e9.32.2024.07.24.14.10.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 14:10:13 -0700 (PDT)
-Date: Wed, 24 Jul 2024 22:10:12 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Daniel Bristot de Oliveira <bristot@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Hongyan Xia <hongyan.xia2@arm.com>,
-	John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6] sched: Consolidate cpufreq updates
-Message-ID: <20240724211012.mxb6vgbhurk7rcvc@airbuntu>
-References: <20240619201409.2071728-1-qyousef@layalina.io>
- <f281ba07-d54a-460a-8f78-f7eb6bd8ed88@arm.com>
- <20240628015200.vw75huo53redgkzf@airbuntu>
- <d510f41a-1225-46d9-a2d7-ff9e6ff599d2@arm.com>
- <20240705002205.nnrgq7savzvsoqgl@airbuntu>
- <2e988929-142c-4e69-8e2e-2f3e64c9f08c@arm.com>
+        d=1e100.net; s=20230601; t=1721855509; x=1722460309;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Wo9rBukdP/tuDMxJMB/GnqO9t6TTdQNeP2BoCKCEW1c=;
+        b=FHcdPp6MLY43G8CJqWiEzOgAk2bGOCS+52S4pBZ5xv+5V/wrcnm62+n45hC9v1KGAu
+         +CNDHEhjBPhc3Ny2alN9ntJy6fFdsLyGrEN+8ue4CxStFcOsSHBVtKB0QKtmxTsNNaiC
+         kY6j40WBMowmcZ3RtptiFfYkMFrjcbd+/TKtRYqaFvgks2ncdC3Sj1tFZnaBJLn0aCpH
+         NOgFC5XwtkraA7H3+IehAVKkYajqCR9pcazGC1fsvlyZD3rMyPkXBON50G8kmDa5wAuf
+         lkEZb4wK7pVl8bEdjU9DQhCtpBEzS9zYetdjw/1nP76W+zPe2indc+cH8bUW/VAcN6Nb
+         StwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMQl2RD0PaLrA8JhKaNN3hJWJyEYu4IykosPQjgQ4CsLspJ2zmt4lFGd+Ut6ouQcG/PDVsIYb72KL+Mzjs3wm/ooapzfTYqkjsOGSp
+X-Gm-Message-State: AOJu0Yz88dtVlkrdQh6/LIZIMTvRqmNTxcb2J1UYNK7/fZBaFCEqsowG
+	B1afssDOQYIP/GsqMYTqkUMdSqDi32ivNkn962pWf57bKcinINnPT4XdXqjnVFGClArmCeTZ/G1
+	P6QA3zbOTzVzflN2gND/h4ZYETDw=
+X-Google-Smtp-Source: AGHT+IE8c7oNYl/FchtBsRDZ6U8Utwg4wDCxMCwmVoVnrmcThNf9/d3IXeAEzQ93JwroZ73uxMNAhH/mMMbKgionSns=
+X-Received: by 2002:a05:6122:4129:b0:4f2:f1f1:a9f2 with SMTP id
+ 71dfb90a1353d-4f6c5b6a2camr1642813e0c.4.1721855509106; Wed, 24 Jul 2024
+ 14:11:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2e988929-142c-4e69-8e2e-2f3e64c9f08c@arm.com>
+References: <20240710083641.546-1-justinjiang@vivo.com> <20240724125515.6cc3bd8479ea8bcdedaa7eff@linux-foundation.org>
+In-Reply-To: <20240724125515.6cc3bd8479ea8bcdedaa7eff@linux-foundation.org>
+From: Barry Song <baohua@kernel.org>
+Date: Thu, 25 Jul 2024 09:11:37 +1200
+Message-ID: <CAGsJ_4zh1RLX+hVdYmYQ+ozKT1Nd0KbWxDw4TGiDSoCaeMfSiw@mail.gmail.com>
+Subject: Re: [PATCH v10] mm: shrink skip folio mapped by an exiting process
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Zhiguo Jiang <justinjiang@vivo.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	David Hildenbrand <david@redhat.com>, Matthew Wilcox <willy@infradead.org>, opensource.kernel@vivo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07/05/24 13:50, Dietmar Eggemann wrote:
+On Thu, Jul 25, 2024 at 7:55=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Wed, 10 Jul 2024 16:36:41 +0800 Zhiguo Jiang <justinjiang@vivo.com> wr=
+ote:
+>
+> > The releasing process of the non-shared anonymous folio mapped solely b=
+y
+> > an exiting process may go through two flows: 1) the anonymous folio is
+> > firstly is swaped-out into swapspace and transformed into a swp_entry
+> > in shrink_folio_list; 2) then the swp_entry is released in the process
+> > exiting flow. This will result in the high cpu load of releasing a
+> > non-shared anonymous folio mapped solely by an exiting process.
+> >
+> > When the low system memory and the exiting process exist at the same
+> > time, it will be likely to happen, because the non-shared anonymous
+> > folio mapped solely by an exiting process may be reclaimed by
+> > shrink_folio_list.
+> >
+> > This patch is that shrink skips the non-shared anonymous folio solely
+> > mapped by an exting process and this folio is only released directly in
+> > the process exiting flow, which will save swap-out time and alleviate
+> > the load of the process exiting.
+>
+> Has any testing been performed to demonstrate any benefit?  If so, what
+> were the results?
 
-> > Yes I am referring to SCHED_IDLE policy too. What is your expectation? AFAIK
-> > the goal of this policy to run when there's nothing else needs running.
-> 
-> IMHO, SCHED_IDLE tasks fight with all the other FAIR task over the
-> resource rq. I would include SCHED_IDLE into this switch statement next
-> to SCHED_NORMAL and SCHED_BATCH.
-> What do you do if only SCHED_IDLE FAIR tasks are runnable? They probably
-> also want to have their CPU frequency needs adjusted.
+I think I shared my demonstration in version 7:
 
-Okay I added it. I think there's room for improvements, but will pursue this in
-future patches after more thinking.
+https://lore.kernel.org/linux-mm/20240710033212.36497-1-21cnbao@gmail.com/
 
-> > I am not seeing the issue, could you expand on what is it?
-> 
-> I tried to explained it in the 4 lines below. With a local 'decayed'
-> update_cfs_rq_load_avg() and propagate_entity_load_avg() set it every
-> time update_load_avg() gets called. And this then determines whether
-> update_tg_load_avg() is called on this cfs_rq later in update_load_avg().
-> 
-> The new code:
-> 
->   cfs_rq->decayed |= update_cfs_rq_load_avg() (*)
->   cfs_rq->decayed |= propagate_entity_load_avg()
-> 
-> will not reset 'cfs_rq->decayed' for non-root cfs_rq's.
-> 
-> (*) You changed this in v3 from:
-> 
->   cfs_rq->decayed  = update_cfs_rq_load_avg()
-> 
-> 
-> >> update_load_avg() itself. They will stay decayed after cfs_rq->decayed
-> >> has been set to 1 once and will never be reset to 0. So with UPDATE_TG
-> >> update_tg_load_avg() will then always be called on those non-root
-> >> cfs_rq's all the time.
-> > 
-> > We could add a check to update only the root cfs_rq. But what do we gain? Or
-> > IOW, what is the harm of unconditionally updating cfs_rq->decayed given that we
-> > only care about the root cfs_rq? I see more if conditions and branches which
-> > I am trying to avoid.
-> 
-> Yes, keep 'decayed' local and add a:
-> 
->     if (cfs_rq == &rq_of(cfs_rq)->cfs)
->         cfs_rq->decayed = decayed
+I noticed a significant improvement with my small test program.
 
-I still don't see a problem here. If we don't do it this way, how the outcome
-of frequency selection will change? You're replacing set-but-not-cleared with
-never-set, and un unconditional write with a branch.
+I observed that this patch effectively skipped 6114 folios (either 4KB or 6=
+4KB
+mTHP), potentially reducing the swap-out by up to 92MB (97,300,480 bytes) d=
+uring
+the process exit. The working set size is 256MB.
 
-I updated the code to only set for root cfs_rq anyway in spite of not seeing
-any tangible benefit.
+If Zhiguo can add more test data from different (real) workloads, it
+would be greatly
+appreciated.
 
-
-Thanks!
-
---
-Qais Yousef
+Thanks
+Barry
 
