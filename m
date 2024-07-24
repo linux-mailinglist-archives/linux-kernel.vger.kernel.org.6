@@ -1,139 +1,113 @@
-Return-Path: <linux-kernel+bounces-261199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C7F893B414
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:44:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D00193B410
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 210921F24B35
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:44:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E76A1C20F4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD5215CD4E;
-	Wed, 24 Jul 2024 15:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3D715CD74;
+	Wed, 24 Jul 2024 15:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="aYTt3aXP"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xBBhe6jV"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4602A14D293;
-	Wed, 24 Jul 2024 15:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061FF14D293;
+	Wed, 24 Jul 2024 15:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721835852; cv=none; b=NMRd4g5yIha0Zo4bhOzpSlefB0FkvO4AyXD8nmIhxNEGe9BQDCVsiZnD0ZTFkbzak1++lnK/zyEpdjQepJxo/+GSkNZ0rT0C/5+HE0tY/vcMqA08NkUfifQjjvfckp2Ff7k/ck/qQszXGYVq5YhViRtb/byKEaSXKSc4BKA8WAM=
+	t=1721835830; cv=none; b=WKOzRZxO8HgzyaAr/i+T0e6bFQH1iREqmup87JFBH1Obyzg2MW66oyAoStpmSf5z+EZDqbbFJmfah1swsst0vZIS4+fNxMrBr9JDRV2OQqwIz0T1dToAnnmrPeeXSrOV2w2abACbNc3/3HRlx90vTQUKPb3827MU6VygM/ljYvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721835852; c=relaxed/simple;
-	bh=tHZM9xDRn9QxuuRbCi79Nd7TIdcdZzq29BmffUOsRGI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=tCHZ3t4rQeIOYsKSvchqdVhe7q5j5HXGOhlCU69D9zhdb64e1eQ69ypedACzhhR3wWfKnKKYeDORGqxzUhC9zmG6zAUbeWm7w8HKGLG4Iv/wzfNWaO+BSSh/uiI7VOHG5ZiAUBI2bfcz7LN8iFwM3j7YuLxc7LKfiH76dRzj4T8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=aYTt3aXP; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721835808; x=1722440608; i=markus.elfring@web.de;
-	bh=wclAnnnRIbQZq/INzgqgyUqDvhscd2fAxbit0hgFL4U=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=aYTt3aXPJJ0ksHeQtVzH42YjaUdx125tdZSAMFydoOiAwNHskEKGqoH0w5iPVTj6
-	 +/uiL5X59olqT9iArH9ICVLXvcGtq7VPnelF6RrzB5H82smtdV2MUVr/fLB7YADR+
-	 TE5g7f6Emf63TK7M84tRtNS7ZuywK3pwNhTrU/XuKk0DZ8H4XXX8PrvaxRprC6MKf
-	 6KP4dXNar9eELf1aStbwSXOrrY0pgim4ixXuvBRrs9QQO3V0mCE89BXKz6cjyWmOf
-	 GRATGl/DSI90fBvNLMijjFp0ramQLoCEy49uwAE2h2GbhsptNDeVJbltkXDBqa45n
-	 i7eLopAbEyVHj9GQsg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MiMEM-1s3eze2WwQ-00bOYX; Wed, 24
- Jul 2024 17:43:28 +0200
-Message-ID: <8c33ec2d-0a92-4409-96b0-f492a57a77ce@web.de>
-Date: Wed, 24 Jul 2024 17:43:27 +0200
+	s=arc-20240116; t=1721835830; c=relaxed/simple;
+	bh=fjoCzSVNTXzDemQxHLgm77eSI43uzAqjvUS76Oxk0bk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=izc7uYNSrv5pzSCVwZE+zEkDk3DWBpoS1Cm9osVnsLGMqBBaTyfJvNJ2Um/ZBRnek/XT4SbRYhfDV7i+NKZsh82M7xm642+eix52Sfy2onuGqU6FYvPlu5BJ7RyTpPDj7eUzxb0y848+WS6ffQ7yXn0w1L8/nuATzbitTQQMRqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xBBhe6jV; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
+	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=A5NCdA5yQOqvciqjVmzO4FQb/LC/NqR4RCRHik4/Oxc=; b=xBBhe6jVMTs+rNw1ry/JeDmbO3
+	MNV3LRo+Yl7MrNMLXKUiUDh5a3l9B6nf0f4P0IsTIY0nSlDEHnV7a6G5I2EsV8/T4721oBI5r3MGc
+	3bgO/JHGl3nAfelh+Kd6Thukp30duUluFSk8tydhbdTnaK6QW2elJGcYbFqV8rWXjiP3d5KDfa8w4
+	PKjt6QhDh7m9FgZOlBwsfH+sj8NdO57AqPTZgajuCBIN3V0F78TjO4UmAGVqo581pq2+6oegH//ao
+	JHXnFbMNWsFGotBDBWynEQzuNL5NRzCkOLNKenS7i9xbMEBAP0uAoZ6mo4RKLEfZS3L7srGg/rYXh
+	hSFx2mNg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sWe9Y-0000000FoTR-2trX;
+	Wed, 24 Jul 2024 15:43:44 +0000
+Date: Wed, 24 Jul 2024 08:43:44 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Youling Tang <youling.tang@linux.dev>
+Cc: Christoph Hellwig <hch@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+	Luis Chamberlain <mcgrof@kernel.org>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	tytso@mit.edu, Andreas Dilger <adilger.kernel@dilger.ca>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
+	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	Youling Tang <tangyouling@kylinos.cn>
+Subject: Re: [PATCH 1/4] module: Add module_subinit{_noexit} and
+ module_subeixt helper macros
+Message-ID: <ZqEhMCjdFwC3wF4u@infradead.org>
+References: <20240723083239.41533-1-youling.tang@linux.dev>
+ <20240723083239.41533-2-youling.tang@linux.dev>
+ <Zp-_RDk5n5431yyh@infradead.org>
+ <0a63dfd1-ead3-4db3-a38c-2bc1db65f354@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Zhu Jun <zhujun2@cmss.chinamobile.com>, bpf@vger.kernel.org,
- Quentin Monnet <qmo@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Eduard Zingerman
- <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Yonghong Song <yonghong.song@linux.dev>
-References: <20240724111120.11625-1-zhujun2@cmss.chinamobile.com>
-Subject: Re: [PATCH v4] tools/bpf: Fix the wrong format specifier
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240724111120.11625-1-zhujun2@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:dajtUilI/4w+MplDp/WdO2l1V7DTsFuZxceZMALAmJjSUTAgHGu
- COXLP1qyVvJaA4N21/3yUakMnErdzhrntimA/z6MXw6xRaOkEUS9DjiOmJuMnX5pVkOA3Gl
- diHSO+gGraKX9t39YUvgumV9JyO4hZCiKRShevqZkYJ/XYU7Se4gZGZU/JQueGSuRsA65QA
- AZMjv1fLe5pq+eZ3tkMgg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:iXQI3Pc+1lE=;bpNHnDibFXJ9pypA6PxruiYqjmy
- gdQgCV2y9uglst64FSrdF7pNv7VhB8cynxJ+ezAdq1qKE0Ejc4mXy6ZsQiPOcyqPmxvL6atC2
- CHtVyPXQYB78Todhd8XXsXlZ9gCMoqeCdIN1o4TYxyG8Ok3zpq78PyAFvKdc/X0OJa+hUPw2O
- zwPViKEBbE1P9zrgUcmuuh1w8RdtNyyKw4KVe6awjXU4HKjOBylMmJeyjvrdwY55DRvQBo/OR
- L8yMt8SNmHX2LC3wxFj51/CMPunWhB67P5dP5R+mvXHFvzJMGXgL+fHcHKqnmrWhrX3ezoFDB
- QsfJsTtFUp0wXl2H+Nb0zzgT1WR/1Te6BQbDtUPsYyzmAgFa6W4s5uR+E20/gSOE7NJsK65fs
- +9X9NpSHUDTYPfLPQXeLgfw2IAvhEtzEJbc9zyESBhBr4zymnxOQFgqr2DMQ0eczOyXCdhPaN
- BRvPzGi20tRK5qKOzOJCL5S0f6WSMK6AbL96xfxSw8bs1Z6oB+70WakVJyXgW9HybHeEtXoHE
- +pjqiQlhVTZg082TLHPsA39yzvm9KnlF3p6WheB9CRbDfbF2r8aOHNH3a0tJQHAGmcYVt/N+t
- SJspplNSqj7b4U/5d9ua0Co2Ziy+fPk/BM0kMp8CAhUzq56raoMONTNCrnEHjCr19mgyO0MZS
- 7VSr65SfuX4ZzbZfI3DYD6T1+czuBFM2CwjSlgp8aKgb0iRq/mclkonXij+gDO4+BUfxB9lp1
- Db0Sj5EhtEXuS49+04S+9AnQgWR4HlZviJ7+gNiRW7U52W7PQ76gIKBwIuwviFp2PUnI23DXO
- /Nqq0Y7GMcjEC1yGU4u/w30g==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <0a63dfd1-ead3-4db3-a38c-2bc1db65f354@linux.dev>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-> The format specifier of "unsigned int" in printf() should be "%u", not
-> "%d".
+On Wed, Jul 24, 2024 at 09:57:05AM +0800, Youling Tang wrote:
+> module_init(initfn)/module_exit(exitfn) has two definitions (via MODULE):
+> - buindin: uses do_initcalls() to iterate over the contents of the specified
+>   section and executes all initfn functions in the section in the order in
+>   which they are stored (exitfn is not required).
+> 
+> - ko: run do_init_module(mod)->do_one_initcall(mod->init) to execute initfn
+>   of the specified module.
+> 
+> If we change module_subinit to something like this, not called in
+> module_init,
 
-* Please improve the change description with imperative wordings.
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.10#n94
+> Not only do we want to ensure that exit is executed in reverse order of
+> init, but we also want to ensure the order of init.
 
-* Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D and =E2=80=
-=9CCc=E2=80=9D) accordingly?
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.10#n145
+Yes.
 
+> This does not guarantee the order in which init will be executed (although
+> the init/exit order will remain the same)
 
-=E2=80=A6
-> ---
-> Changes:
-=E2=80=A6
-v4:
-Thanks! But unsigned seems relevant here, =E2=80=A6
+Hmm, so the normal built-in initcalls depend on the link order, but when
+they are in the same file, the compiler can reorder them before we even
+get to the linker.
 
-Please adjust the representation of information from a patch review by Que=
-ntin Monnet.
-https://lore.kernel.org/linux-kernel/2d6875dd-6050-4f57-9a6d-9168634aa6c4@=
-kernel.org/
-https://lkml.org/lkml/2024/7/24/378
+I wonder what a good syntax would be to still avoid the boilerplate
+code.  We'd probably need one macro to actually define the init/exit
+table in a single statement so that it can't be reordered, but that
+would lose the ability to actually declare the module subinit/exit
+handlers in multiple files, which really is the biggest win of this
+scheme as it allows to keep the functions static instead of exposing
+them to other compilation units.
 
-
-=E2=80=A6
-> +++ b/tools/bpf/bpftool/xlated_dumper.c
-> @@ -349,7 +349,7 @@ void dump_xlated_plain(struct dump_data *dd, void *b=
-uf, unsigned int len,
->
->  		double_insn =3D insn[i].code =3D=3D (BPF_LD | BPF_IMM | BPF_DW);
->
-> -		printf("% 4d: ", i);
-> +		printf("%4u: ", i);
->  		print_bpf_insn(&cbs, insn + i, true);
-=E2=80=A6
-
-How do you think about to care more also for the return value from such a =
-function call?
-https://wiki.sei.cmu.edu/confluence/display/c/ERR33-C.+Detect+and+handle+s=
-tandard+library+errors
-
-Regards,
-Markus
+And in fact even in your three converted file systems, most
+subinit/exit handler are in separate files, so maybe instead
+enforcing that there is just one per file and slightly refactoring
+the code so that this is the case might be the best option?
 
