@@ -1,121 +1,154 @@
-Return-Path: <linux-kernel+bounces-261485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66C5893B7E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 22:16:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B80393B7E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 22:17:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11BC11F24F43
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:16:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CF211C24198
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0927C16CD12;
-	Wed, 24 Jul 2024 20:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A291616B72B;
+	Wed, 24 Jul 2024 20:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mOqSK6KP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="XqWIrsQl"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486AA54670;
-	Wed, 24 Jul 2024 20:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0F84A18
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 20:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721852167; cv=none; b=crmTsk2JpVfPxkNA06j/7VmmnubAEv0/+dXqaZ1iDRlYPI1wA8j0r9j2TzSfD5xOawc2eBYj6P2CaAm5s6mjPNZp7ClZ10CuV1JJl10iakaEPkQ0eOElAG6f6KTER+e/T+EN9jChUyWgkM2LbpcF/gtfeQNXftky28k6roG7gG0=
+	t=1721852247; cv=none; b=A+cSHtJx8cvnQHakYJ3rnFTAuCljKN6Ort4reJdBaW7O4UXqk1F3d1aETjIZGXtR2c6Kf+ComSldSCEROJjo/L4HniFAHgAN3epeKBIwLHY0waJxsnZBzk76V3tb4/xtPpPMsBXF6/4dbvMNFwvaVhmh6HyKz1LuZ05lmidNytg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721852167; c=relaxed/simple;
-	bh=RfzeQLRGwp1Dy3ahdSkCQ55LBG/hJgWJitLsjJT8nsI=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=FjSuc7vDmAruq3VeRLmBRVmKGhY7uV61MfLL0O6o5wPOg5cgGVSEQ8kivUK8fj9F51DBxGgfMikSPSz47OwFwLGLjf2IKorKwcf5LZWF4ootYenjQp68pxknOlH/h40IVDsRE7DKpaHgyCV8vQKWj79zqih+SfvrGQRPwp4A3Jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mOqSK6KP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58C6AC32786;
-	Wed, 24 Jul 2024 20:16:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721852166;
-	bh=RfzeQLRGwp1Dy3ahdSkCQ55LBG/hJgWJitLsjJT8nsI=;
-	h=Date:From:To:Subject:From;
-	b=mOqSK6KPsywqSHcNHSzkWHghUqbNzTBWaWn3bvG2zJpNZqvrdipGBcr0srfbsf/MJ
-	 AaZKltg9eUpGTJ3fujN14r9V6O6Ajm1ofNkOaSs83BG/qLU2IEyMGSwVucxOEt/xTH
-	 fxiZLu2uEp8aLy/S4fiU6S3/6F3tEvEwbJ6Tu4LGc2e2Q9nh3sKefnJ4ksAHbUuxSg
-	 jxAi3XXZ1HJ3ShkzsVINMIxnzprGJp8HXjW43b00teIxewD1B352mal3Bn/MwS6FpU
-	 nJMUb275rawvaXC64PqoL3b8Iqjh3kBnPggOw6yZvRmYhvsZRDjwaU+fmQ0W/VVVBr
-	 DX+1JgnD3Hx7Q==
-Date: Wed, 24 Jul 2024 22:16:02 +0200
-From: Helge Deller <deller@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	John David Anglin <dave.anglin@bell.net>
-Subject: [GIT PULL] parisc architecture fixes for v6.11-rc1
-Message-ID: <ZqFhAi7HqWJxwhFD@p100>
+	s=arc-20240116; t=1721852247; c=relaxed/simple;
+	bh=R6mhB/EJlm6UnPgt1pXvishVPTuBOdUPi6XjkyBjMzU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gkDt2QDY4N3Fd88wE2/W4RqN/UUYLWWPiJNVCdgJHGcQse5zF1vueX4cTzuM1J5O70ayLjn798aig26YUnDx22hYRpiNy2y+XvN53uhhPlBSNUxmjFNNSFcqvmSoLbO0IYE4GnnITeoDV6jdBzh30jnr8MpB5PekayXIIRc84FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=XqWIrsQl; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721852244;
+	bh=R6mhB/EJlm6UnPgt1pXvishVPTuBOdUPi6XjkyBjMzU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XqWIrsQl/Fhv6a6u0XKe8hIrq6qNac9TNSZE0eZWM9Tl62qWi8vtKCj1vKqulcL8H
+	 zahdDIGVtVadC0Qnj+TTrZww+1lZkEr8AN5uyloMmLPLajS6Wj/b+0wtU+t+6TBgTa
+	 uAdu2lrfK9VRyNtRaqXtdberakogLYrWOfse4SwnuNqBsiW69yWYUfieIvdiec//I+
+	 VGL2Ot9TmjS4EssKtZduSOHwmsu0z60JDtZ8vhzvl8oGqUoG1WOIAAVjXi5d3Lp8vf
+	 u9kZVE5V4HmGVBJ6w+E4XdkT6gMHu7wjXxmQJiVxqnMrnu93QnrDcUrh3ZJwTJGTta
+	 ywVFkxu6VTW4Q==
+Received: from [100.107.172.5] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: rmader)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 3F0153780530;
+	Wed, 24 Jul 2024 20:17:24 +0000 (UTC)
+Message-ID: <48989a76-f2b0-4cbc-80f0-bfd0d4c44bcb@collabora.com>
+Date: Wed, 24 Jul 2024 22:17:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: i2c: imx355: Parse and register properties
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: linux-kernel@vger.kernel.org, jacopo@jmondi.org,
+ sakari.ailus@linux.intel.com, javierm@redhat.com
+References: <20240723185856.92814-1-robert.mader@collabora.com>
+ <4rkbs3adnnxalbi237u5anydgm326nvu2ztgiyzufpl6r23vc5@d345nvc4zdqc>
+Content-Language: en-US, de-DE
+From: Robert Mader <robert.mader@collabora.com>
+In-Reply-To: <4rkbs3adnnxalbi237u5anydgm326nvu2ztgiyzufpl6r23vc5@d345nvc4zdqc>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Linus,
+Hi Jacopo,
 
-Please pull some updates for the parisc architecture for 6.11-rc1.
+thanks for the quick review!
 
-The gettimeofday() and clock_gettime() syscalls are now available as
-vDSO functions, and Dave added a patch which allows to use NVMe
-cards in the PCI slots as fast and easy alternative to SCSI discs.
+Should I send a v2 for that (adding V4L2_CID_CAMERA_ORIENTATION and your 
+RB to the commit message) - and if so should I first wait for more 
+reviews or is that unnecessary/unlike to happen?
 
-Thanks!
-Helge
+Regards,
 
-----------------------------------------------------------------
-The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
+Robert
 
-  Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
+On 24.07.24 09:31, Jacopo Mondi wrote:
+> Hi Robert
+>
+> On Tue, Jul 23, 2024 at 08:58:56PM GMT, Robert Mader wrote:
+>> Analogous to e.g. the imx219. This enables propagating
+>> V4L2_CID_CAMERA_SENSOR_ROTATION values so that libcamera
+> and V4L2_CID_CAMERA_ORIENTATION
+>
+>> can detect the correct rotation from the device tree
+>> and propagate it further to e.g. Pipewire.
+> Well, yes, that's a consequence. As long as Linux is concerned, this
+> serves to register the two above mentioned controls.
+>
+>> Signed-off-by: Robert Mader <robert.mader@collabora.com>
+> Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+>
+> Thanks
+>    j
+>
+>> ---
+>>   drivers/media/i2c/imx355.c | 12 +++++++++++-
+>>   1 file changed, 11 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/media/i2c/imx355.c b/drivers/media/i2c/imx355.c
+>> index 7e9c2f65fa08..0dd25eeea60b 100644
+>> --- a/drivers/media/i2c/imx355.c
+>> +++ b/drivers/media/i2c/imx355.c
+>> @@ -1520,6 +1520,7 @@ static const struct v4l2_subdev_internal_ops imx355_internal_ops = {
+>>   static int imx355_init_controls(struct imx355 *imx355)
+>>   {
+>>   	struct i2c_client *client = v4l2_get_subdevdata(&imx355->sd);
+>> +	struct v4l2_fwnode_device_properties props;
+>>   	struct v4l2_ctrl_handler *ctrl_hdlr;
+>>   	s64 exposure_max;
+>>   	s64 vblank_def;
+>> @@ -1531,7 +1532,7 @@ static int imx355_init_controls(struct imx355 *imx355)
+>>   	int ret;
+>>
+>>   	ctrl_hdlr = &imx355->ctrl_handler;
+>> -	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 10);
+>> +	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 12);
+>>   	if (ret)
+>>   		return ret;
+>>
+>> @@ -1603,6 +1604,15 @@ static int imx355_init_controls(struct imx355 *imx355)
+>>   		goto error;
+>>   	}
+>>
+>> +	ret = v4l2_fwnode_device_parse(&client->dev, &props);
+>> +	if (ret)
+>> +		goto error;
+>> +
+>> +	ret = v4l2_ctrl_new_fwnode_properties(ctrl_hdlr, &imx355_ctrl_ops,
+>> +					      &props);
+>> +	if (ret)
+>> +		goto error;
+>> +
+>>   	imx355->sd.ctrl_handler = ctrl_hdlr;
+>>
+>>   	return 0;
+>> --
+>> 2.45.2
+>>
+-- 
+Robert Mader
+Consultant Software Developer
 
-are available in the Git repository at:
+Collabora Ltd.
+Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK
+Registered in England & Wales, no. 5513718
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git tags/parisc-for-6.11-rc1
-
-for you to fetch changes up to cbade823342cd013f1fbd46f6e3b74825fecbc16:
-
-  parisc: Add support for CONFIG_SYSCTL_ARCH_UNALIGN_NO_WARN (2024-07-24 02:04:05 +0200)
-
-----------------------------------------------------------------
-parisc architecture fixes and updates for kernel v6.11-rc1:
-
-- Add gettimeofday() and clock_gettime() vDSO functions
-- Enable PCI_MSI_ARCH_FALLBACKS to allow PCI to PCIe bridge adaptor
-  with PCIe NVME card to function in parisc machines
-- Allow users to reduce kernel unaligned runtime warnings
-- minor code cleanups
-
-----------------------------------------------------------------
-Helge Deller (4):
-      parisc: Clean up unistd.h file
-      parisc: Add 32-bit gettimeofday() and clock_gettime() vDSO functions
-      parisc: Add 64-bit gettimeofday() and clock_gettime() vDSO functions
-      parisc: Add support for CONFIG_SYSCTL_ARCH_UNALIGN_NO_WARN
-
-John David Anglin (1):
-      parisc: Fix warning at drivers/pci/msi/msi.h:121
-
-Thorsten Blum (1):
-      parisc: Use max() to calculate parisc_tlb_flush_threshold
-
- Documentation/admin-guide/sysctl/kernel.rst |  2 +-
- arch/parisc/Kconfig                         |  2 ++
- arch/parisc/include/asm/unistd.h            | 54 ++++++++---------------------
- arch/parisc/include/asm/vdso.h              |  2 +-
- arch/parisc/kernel/cache.c                  |  6 +---
- arch/parisc/kernel/unaligned.c              |  2 ++
- arch/parisc/kernel/vdso32/Makefile          | 24 +++++++++++--
- arch/parisc/kernel/vdso32/vdso32.lds.S      |  3 ++
- arch/parisc/kernel/vdso32/vdso32_generic.c  | 32 +++++++++++++++++
- arch/parisc/kernel/vdso64/Makefile          | 25 ++++++++++---
- arch/parisc/kernel/vdso64/vdso64.lds.S      |  2 ++
- arch/parisc/kernel/vdso64/vdso64_generic.c  | 24 +++++++++++++
- 12 files changed, 125 insertions(+), 53 deletions(-)
- create mode 100644 arch/parisc/kernel/vdso32/vdso32_generic.c
- create mode 100644 arch/parisc/kernel/vdso64/vdso64_generic.c
 
