@@ -1,221 +1,386 @@
-Return-Path: <linux-kernel+bounces-260771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E26293ADFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:41:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33DF593ADFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:42:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 414F7B23695
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:41:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CC661F2425B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BE614BFB4;
-	Wed, 24 Jul 2024 08:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B566014B09C;
+	Wed, 24 Jul 2024 08:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="g2/rYsx+"
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QF4dr+gd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D82114A61E
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 08:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721810495; cv=none; b=Nm79mso5EMxsLQF7W8tkOTFmzxW8ZqtpHy9lDThzEXv0umQ0Ma1k8wN3Kb1VHo1ySqxLTdK/vxObDB9C87Yx2YX6nV5tPkit29CixCAEXzLYFBbenIbmBl+DOti8vd/woQzM1uIsVdlEqtaxdr12DlQ6hCXAVF0ooxx7uXZ1q10=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721810495; c=relaxed/simple;
-	bh=F0Xd0DKGc0mYWZloYrihjc6dS4yazwWRp/NSRYm82dA=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=FnNXa1ggij7Fe2WxgvmoWhGYpUZJQql2bpIcwh+2sSPEJ+rdwwnazBJDYEXd5vJTk4ittleaxnJcXi/445o1abHfqX0wWBdnzRpyEvJo2ae9P/eqmpHOYavOB0plEDzsvD6QjbJPSQhH3G7++Ca7n0rWOvrYQakp5tJKdTfOUUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=g2/rYsx+; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240724084130euoutp029f3c6275a19b145b6591fae09dc83b57~lGYS2Oycn1864218642euoutp02C
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 08:41:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240724084130euoutp029f3c6275a19b145b6591fae09dc83b57~lGYS2Oycn1864218642euoutp02C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1721810490;
-	bh=MoujBrNUNwrCTT5sbfadXAlSHOApLoPfpff5mIQSa38=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=g2/rYsx+pKabwcJlcUDRy4rWHc/6IjzmEB2+859IZhJeWpXRZC/fqGpCxKpa3UcjN
-	 1kvMsR+1dn7VTnSRYiPhVYq+xLutrAopjF8bOs+HPLhMcU2hPeI5TZMeaROguEuiMT
-	 EBga/kJDzc8B/EtHdGKoM/8AfbzYCh54tAlIEwUs=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240724084130eucas1p176b6989640ce93507119b5a8a289dfb7~lGYSq0DON1160211602eucas1p1g;
-	Wed, 24 Jul 2024 08:41:30 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id 38.2E.09620.93EB0A66; Wed, 24
-	Jul 2024 09:41:30 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240724084129eucas1p28cd4e15e05f6037e3a7740e8a1c3d7f5~lGYSTMLUe1606116061eucas1p2H;
-	Wed, 24 Jul 2024 08:41:29 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240724084129eusmtrp10f26c3dc44a39812ad4934ad144f5e63~lGYSSiNA-3269632696eusmtrp17;
-	Wed, 24 Jul 2024 08:41:29 +0000 (GMT)
-X-AuditID: cbfec7f5-d1bff70000002594-1f-66a0be3948f2
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 69.02.08810.93EB0A66; Wed, 24
-	Jul 2024 09:41:29 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240724084129eusmtip29f7ce1a44388fa1c92012901f6b1416f~lGYSFubWV1474814748eusmtip2G;
-	Wed, 24 Jul 2024 08:41:29 +0000 (GMT)
-Received: from localhost (106.210.248.226) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Wed, 24 Jul 2024 09:41:28 +0100
-Date: Wed, 24 Jul 2024 10:41:24 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-CC: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] sysctl: treewide: constify the ctl_table argument of
- proc_handlers
-Message-ID: <20240724084124.hbbn3jfcbsc7pyov@joelS2.panther.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC3414A61E
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 08:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721810554; cv=fail; b=fiwK4EwqEyCDtb8YY4HbN9pYJUG2PfPU7pL/mSowgbeoSyDEWMiInn7bXFXaMSiff6PtcjVP/SemAMqVDB/qoMxtkyUFIJlrF1ddjjiE/5MywaA+n6h8Fl/hxNTJMU9nMm8Zx/AvfHYQAuhkIyPn8isZAi9CRl3WpGr6jp6s0GU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721810554; c=relaxed/simple;
+	bh=YFTa93xefGm9h2ZhQM3WXdMoVMBjYRSgwACxDW5Y8P8=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=TLVcyR0f2l4ObsLkuKbWaRShv0rwXinIfTD/XQGz3QtvVWP8is3bugJJVQnqLhuYMP0CO1mPXbS7vlUlxnX7fLkgQtFTTVWLewKtS8kDHBxvyuxgCpXCaKIHNm+5APp1I+KcJo18g2kaFvIkArrA5N+06DE+dQHPQCTcjr6rpys=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QF4dr+gd; arc=fail smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721810552; x=1753346552;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=YFTa93xefGm9h2ZhQM3WXdMoVMBjYRSgwACxDW5Y8P8=;
+  b=QF4dr+gdoEM9mKXpG5wb+XryUbnxkbzSAnME1fpULZY3NH3xGG450BZ+
+   /SchylSGVsU+SQ0EtGezf1inHd6ecrx0Ekz+XFpnxEl4oSEGyOoOoXCWb
+   2mCGdIfvyP/MbvQKlRidxbssh/2e+fwFHEOcHFyNyz8g/B2CpVwdGiE6j
+   e4l8+t+3MwZb++qE8NVwln6rZ0Uq9ojWJ8BUQD73lncniZadh3z+d8n07
+   YiGGcLPwjSomcTBoXIhnIfmTrv692G8x+d6ZZWzShANfnrpcO7Wee5axL
+   O/kx4lKbWhYzShssQxvi1ih8il/aRpxmepcS9vjHMxvfdBsuMPWmRt+sK
+   w==;
+X-CSE-ConnectionGUID: 3PeEJDU+Tv+/VwOGBtkiVA==
+X-CSE-MsgGUID: XR0XNnrvRFek3iy1kAKbsg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11142"; a="19089597"
+X-IronPort-AV: E=Sophos;i="6.09,232,1716274800"; 
+   d="scan'208";a="19089597"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 01:42:32 -0700
+X-CSE-ConnectionGUID: saHWplobTdGxQspMPy4WXQ==
+X-CSE-MsgGUID: SAvIbFtkSjuENAAC0xV+rg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,232,1716274800"; 
+   d="scan'208";a="52394891"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 24 Jul 2024 01:42:31 -0700
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 24 Jul 2024 01:42:31 -0700
+Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 24 Jul 2024 01:42:31 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.49) by
+ edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 24 Jul 2024 01:42:30 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tlLx/sAxOnHDRZPqKH204IZCyaFNsHO/fcZXB8SS1VLCLXDOhi3IPJFDCsS13kYpGPkvNbfFbzVlxKcwxIGwc1uW1ytk1+bbYqwfPlA0c0lB5Ebtek88m5CLeSbpdZNSzFL9L44+/PbPxjrBWXPQYdSviKnPCik1O8bLxCvBIZPkGG33WoSre0MBE2tHzs27BMpX/O8+3ZGyht1r42XcryZxsvJtpCvysQlwjtZCu5myT1nJDdcppMPD3djazlTlgkjzHi4iEebHA0n4+t+sWBFcdqMvXAkEbxV7M9gDWimxsKbW0vnu4zhOfe2gbrm4SSKgX3cM66WhYD4GtHF+3w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=r+6MarcQkfJn3yFb4bhFJljAqJfNpYblJT0SfaV59So=;
+ b=FKS/NXl13Ih6RyA0OBXZ3jMKoUCbVpRX6jg+t4n3bufP33J/Wjy0YyK3LHI+0p5+a9vRjiPhyBAqzX+8dj1lL6BP2ptqy4/kcNX/pC+Xt+lW+lISvwQ3qgqj5lNSe1tf60cdN0ArTKoISYMnGzv9MsJyYqF4TFZuSR1GK1s9LSDE9kzzOoKRz0HgAL51BE7pK8iGR6oUZBZmBOJLuTZRupklVuy8rDP2yTX90y4UUQ3PGosrVDaTuznxPDHeK8j3oGUotDRg5DOzT2Xf4Pah9aIsHSdukpepg7v9hA4HmveomNd5czTzsl4U87VXqhj8eYZHLNvXc4s5Dvp8LUTvkw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BN9PR11MB5530.namprd11.prod.outlook.com (2603:10b6:408:103::8)
+ by CH0PR11MB8086.namprd11.prod.outlook.com (2603:10b6:610:190::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.14; Wed, 24 Jul
+ 2024 08:42:23 +0000
+Received: from BN9PR11MB5530.namprd11.prod.outlook.com
+ ([fe80::13bd:eb49:2046:32a9]) by BN9PR11MB5530.namprd11.prod.outlook.com
+ ([fe80::13bd:eb49:2046:32a9%3]) with mapi id 15.20.7784.017; Wed, 24 Jul 2024
+ 08:42:23 +0000
+Message-ID: <84061e47-3e6b-45c4-bc4b-db70da6b67f8@intel.com>
+Date: Wed, 24 Jul 2024 14:11:40 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] drm/i915/hwmon: expose fan speed
+To: Raag Jadav <raag.jadav@intel.com>, <jani.nikula@linux.intel.com>,
+	<joonas.lahtinen@linux.intel.com>, <rodrigo.vivi@intel.com>,
+	<tursulin@ursulin.net>, <airlied@gmail.com>, <daniel@ffwll.ch>
+CC: <intel-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <anshuman.gupta@intel.com>,
+	<riana.tauro@intel.com>, <ashutosh.dixit@intel.com>,
+	<karthik.poosa@intel.com>, <andriy.shevchenko@linux.intel.com>
+References: <20240712122356.360613-1-raag.jadav@intel.com>
+Content-Language: en-US
+From: "Nilawar, Badal" <badal.nilawar@intel.com>
+In-Reply-To: <20240712122356.360613-1-raag.jadav@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MAXP287CA0022.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a00:49::29) To BN9PR11MB5530.namprd11.prod.outlook.com
+ (2603:10b6:408:103::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8a48b4d3-94ca-4a42-bf59-c340d7316603@t-8ch.de>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupnleLIzCtJLcpLzFFi42LZduznOV2rfQvSDKZ2MlrMWb+GzWLd2/Os
-	Fpd3zWGz+P3jGZPFjQlPGR1YPTat6mTzODHjN4vH501yHv3dx9gDWKK4bFJSczLLUov07RK4
-	MnoOf2cs2C1ZMffWFsYGxk/CXYycHBICJhIz/75kBLGFBFYwSsw8b97FyAVkf2GUuPxsBiuE
-	85lR4uC8VmaYjgeXrrJDJJYzSqw7vJINrurbkdlQzlZGibn3JrOBtLAIqEqsb3sJZrMJ6Eic
-	f3MHbJSIgI3Eym+fwUYxC0xilNhw/horSEJYIEbifP8WoCIODl4BB4kJrQ4gYV4BQYmTM5+w
-	gNjMAnoSN6ZOYQMpYRaQllj+jwMiLC/RvHU2WCcn0PjGqToQRytL3Nu0B+qBWolTW24xgWyV
-	EHjAIfG9ZSMbRMJF4sT0o6wQtrDEq+Nb2CFsGYnTk3tYIBomM0rs//eBHcJZzSixrPErE0SV
-	tUTLlSdQHY4Si2+0sYNcISHAJ3HjrSDEcXwSk7ZNZ4YI80p0tAlNYFSZheSzWUg+m4Xw2Swk
-	ny1gZFnFKJ5aWpybnlpsnJdarlecmFtcmpeul5yfu4kRmGZO/zv+dQfjilcf9Q4xMnEwHmKU
-	4GBWEuF98mpumhBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe1RT5VCGB9MSS1OzU1ILUIpgsEwen
-	VAOTaW59cuSt6fFzkgLPyC1sPT3n+ku/nirxK545sw1+qsTU3ot6w8Xo+/DaDF0LhYB32mHb
-	C+M3OXztN7ETvZYxv8CnTuTpxa6Podq8q1r6fzj03HyWGxTIJZLU+K944T67smluF3h9TufO
-	MmqLSVvT48Sq8cPFY+nfVRtuzPn27J9g8MovN7il+Zp/3Psf4zfpUb3Nuv3rmy2/5mnW/NwR
-	dlL1hnfjRza7FRL5d4UNlBX4fi/99kT3sJ9Z/50lDdPqXGzurZZkfWF3Z7GoOuN6M+VC2Zft
-	wfpt5dl31rdebt2T+7qpyUlM/bxBFOdMs82R4ufPaV/WPHQvkuETV86LbeaafwTXLGvImqnX
-	26nEUpyRaKjFXFScCACebnjlogMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBIsWRmVeSWpSXmKPExsVy+t/xe7qW+xakGRzapmYxZ/0aNot1b8+z
-	WlzeNYfN4vePZ0wWNyY8ZXRg9di0qpPN48SM3ywenzfJefR3H2MPYInSsynKLy1JVcjILy6x
-	VYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQy+g5/J2xYLdkxdxbWxgbGD8J
-	dzFyckgImEg8uHSVvYuRi0NIYCmjxJQjfcwQCRmJjV+uskLYwhJ/rnWxQRR9ZJTomnoNytnK
-	KNHx7AwLSBWLgKrE+raXbCA2m4COxPk3d8AmiQjYSKz89hlsBbPAJEaJaWcOM4IkhAViJM73
-	bwEq4uDgFXCQmNDqADH0NrPEjoWbwVbzCghKnJz5BGwBs4CexI2pU9hA6pkFpCWW/+OACMtL
-	NG+dDTaGE2hX41QdiKOVJe5t2gP1TK3E57/PGCcwisxCMnQWkqGzEIbOQjJ0ASPLKkaR1NLi
-	3PTcYkO94sTc4tK8dL3k/NxNjMAo3Hbs5+YdjPNefdQ7xMjEwXiIUYKDWUmE98mruWlCvCmJ
-	lVWpRfnxRaU5qcWHGE2BITSRWUo0OR+YBvJK4g3NDEwNTcwsDUwtzYyVxHk9CzoShQTSE0tS
-	s1NTC1KLYPqYODilGpgim8w41//Y62bp6+mWtVL4cHx+5eI7BzNXHLyb0KEV6hgivGk2I+ua
-	EHnF4uAJOpsKW5iLFJ5mzc2W6FbwqLfZtCRoxaWZ6V9/3H19LXqik5gW17nim4cP101aOuF/
-	Orvqo5eMholpNz94rHTfv7e/+p4ke0OA7Z+K6/Gyy0tetFlm9DX9rox0v5E9neu0gOWLvjf2
-	TeccvgUc0Ymb3deb6/fzlrjv8g/PFvGcPMZ0uM1v6993TrwHBE3fz9v6+MeH2NsKPec1Hiy5
-	dmZKW1VRaHeg0oOvFevcot82F/5kv873fMvsTGnflweW/ZaY4e1nNXmTkckX0eyqW7w6Oxy9
-	lVNY099rnxfNvhxh+kKJpTgj0VCLuag4EQBdzv5NSwMAAA==
-X-CMS-MailID: 20240724084129eucas1p28cd4e15e05f6037e3a7740e8a1c3d7f5
-X-Msg-Generator: CA
-X-RootMTR: 20240619100941eucas1p25d522dca3b74c899434b97b0c0dc78a0
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240619100941eucas1p25d522dca3b74c899434b97b0c0dc78a0
-References: <CGME20240619100941eucas1p25d522dca3b74c899434b97b0c0dc78a0@eucas1p2.samsung.com>
-	<20240619-sysctl-const-handler-v2-1-e36d00707097@weissschuh.net>
-	<20240715202319.mccb6jlsa6dkynap@joelS2.panther.com>
-	<f7489470-b0da-406b-a8dd-0ae7aaeceec8@t-8ch.de>
-	<20240716152705.juet6srejwq5o6je@joelS2.panther.com>
-	<cdf0831f-f9af-4aa7-a3a0-970efeec1def@t-8ch.de>
-	<20240717195748.fe5ttokbibcsw2ca@joelS2.panther.com>
-	<8a48b4d3-94ca-4a42-bf59-c340d7316603@t-8ch.de>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN9PR11MB5530:EE_|CH0PR11MB8086:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2033d24e-56e9-43fa-4de1-08dcabbc89cd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?YlVkdWVkeWJNaHpvWGViMGxMWHNQRmtaU0lzTWlDcW9uMmMrUUVQaDhpYkQ4?=
+ =?utf-8?B?dlRmN0RIK3ZIajFETzJCZWF3UnczTHJTWXB1dXZjTXlJTVdVMk14VW12OVc1?=
+ =?utf-8?B?RklqTFhiMXdvZ2J5a3YxckNJT2QxbXF6NkRWdEo1OXlFSWJNN05XYyt4ZVR4?=
+ =?utf-8?B?TE0reWFNTnNlVnp2NjlDMVBjMGtEeVBnY2YrQW9xRkUyTVR2QnRNdHZrajdy?=
+ =?utf-8?B?VXc5WndzUFp0UHNTbVZTcTM2S0NSTWhDemNHSCs2YVZVMXc1bFMwSFEwR2NU?=
+ =?utf-8?B?K1lNLzRtcUMzU1gzUEJGRjZIbTFuY1liSkJmUXI5VG42c054d3VINE5CWTZ3?=
+ =?utf-8?B?clVzQjNQdFBSUVo1dVRuQzNnRGE5dEVxYkdlY2w1c2M1dHlTOEc2dk9RR2RV?=
+ =?utf-8?B?ZkNmR3JTQ010c1VRWjNLcU9NM2xEVWt6NU1Kd0pXN0QxcUZpREYwQmptVVZB?=
+ =?utf-8?B?WkRxNjFoZ1pxWkg3aHE4blVFc2l6WktIMm5Edm1mUTJnZDdEZXNZSjdhRmsz?=
+ =?utf-8?B?UEk1L29sQml2V3RzVE4vbDZJeXVhN3JIeWkxSmZHRCtWZzY5TVBJRE84QzJj?=
+ =?utf-8?B?NWFrejBWZ09Ub2srckdESjhpRVN1V09hTisrbXZTOVpOaS9yOEtxVXlJc2NY?=
+ =?utf-8?B?VlJEdWxDWlVLVnhuNmFTNEdIdGNSSHpMYkREdjZ2UGFrTXY0dGtnczdtbDRs?=
+ =?utf-8?B?aXFyQjV4QU01RHlxak0xTHJPczhjcWVYa0tVVUxUNlNSNXRyMS8zZVRqS0JJ?=
+ =?utf-8?B?ZERNQWNuRDFxMmJ4SCtsNG40V3BEUDR2NDNQR0liYlpRWGRrV3JBaHU4YnFK?=
+ =?utf-8?B?WllKSUo2OFgyTnlETFRZTkVTNTRQVWp0a0FWcjRqLzBUNVVFdWtmQTA0VGVw?=
+ =?utf-8?B?M2FZSThNWXVTMm5zZzYzUUo4cFlUYXZPWHI0RlZjNFY4T2Yxd2dZM1N2MWw0?=
+ =?utf-8?B?R2dYaFFybXBHZ2UxaUt0Q0JOWDNreWxCM1pwdVpXVHZXd3IvYms3clBUSWhY?=
+ =?utf-8?B?OFlKaDhTclMyQTVRSUJVM3NTMVo5RlJKWld5b2J5NXNkWUhZMzVRYzBqZ2xO?=
+ =?utf-8?B?SlgzcGtlTHQrY1hzcG9VMThYNktwTHFXU3V2SE1kVmd5OGIyZ1dJYnI2Uys1?=
+ =?utf-8?B?a05zUkcrYVhwT0d5WHNkWHptWURpcUh2T1NMNklnb0xlR1kzWjJqRDhyVm9t?=
+ =?utf-8?B?SURzT0cxNkJ4b0x2OU9NaXZ3ZG1uUXF4NzRRU0wwL1VSRm1BM0E5MVAzOGVU?=
+ =?utf-8?B?aDF6QS91WXhTUmhwY05nMzBIb2xtYjdMZ1dWRktmZHVDZWVicVFULzk2WXhK?=
+ =?utf-8?B?Rmd2UDhLaUUwdkNHaGM1VkVrTHRBdGRnbW8vaWRiSUJXMHQ5dEZkVWNLbUox?=
+ =?utf-8?B?aVNGRk9JZzlMWXVKU0VPUTRlQzhwckk1SUp5RzdCbC9wMEd1QjY3S3VHeVJL?=
+ =?utf-8?B?NjBIWitCZHRFWWRlL2dzbEtqc05qYW9jL3N3enJMOFM5RnlJcCtwT3psbTNz?=
+ =?utf-8?B?ZEczWmdPUEdxcWtnSTgwbFp4UFBnSktYZWN0S0N5d1hoUGUrb0c1NzlDMzhW?=
+ =?utf-8?B?bldMV3VkdWlXaUFLaVE1cXczUnBuMUFXbjRCZ0VTMlpJWkJ6WlVuRXl5c1Fw?=
+ =?utf-8?B?NExuWnVBL1lpQUpJdTZhRS8vV2M4UjlEeVQva3ZIOUtZRklSUlRTdTY0VGQ3?=
+ =?utf-8?B?bUpkcEREcGwwaWM1QjJGdjV3NWhQY3VGS0lxMlJyRjFQRkcwRDM0bkRsMmpF?=
+ =?utf-8?B?ZEVjTFpSc2ZSS2VURXBwQ2psQXFLT1ovc2txcSszQ3ZkSVJacGxnSXRPdHhU?=
+ =?utf-8?B?VjhMUEpGYTB6am5iRFE2QT09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5530.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OFRGNG1LNUh2WmUyalBiaThvdXF1dGlSSVNlNXZoSDNkbHE4NnA4MXA1QmpK?=
+ =?utf-8?B?bzIyRHZQSEZxaFVvMEpNK1NzaUk5eklyaDVlV2tYZDM1VnIzRWI3OXZ3MWFD?=
+ =?utf-8?B?eWFhN1g5cnQzTXNWbVdEaXVvZnZoVWlnSlp4dEVEMVo4TDltREZJUnFZL1J5?=
+ =?utf-8?B?ZERUaElwWEVlYzBCb29qQ3J6c2xIM0I2aG5MUHJkOElrTUxRR1ZJZWZkVlVP?=
+ =?utf-8?B?enVTbnArMk1TSTdreDkzUEhEdFpOSjdKT2pRaDM4dk9CTFoyVk54VHZMVEUw?=
+ =?utf-8?B?cWlnalNjL2huWFByQituUkZ0NDk3Nm52bndGZmQvRnh4YWFNY0NMMmtCcHRJ?=
+ =?utf-8?B?T2tERWUyRmMzMTlFWG9FNUdPTHRzWmUyMkNib0NHaXVSWmo3a0ZjdXNrTDZU?=
+ =?utf-8?B?Qk9VWjdQTUZYSG1zblhJaUY3cXNuVmNVbW5LN1ZZaVdKME1YeHIyWld3MXF0?=
+ =?utf-8?B?QllsSzJpbjdTd01pV3VOZk1JVG5DczVQMUJvcUJkOUVvY3VaeVFjMWVUWUFy?=
+ =?utf-8?B?L1B1ZUc0L2krQi9WOFo0T0I4NWszUWpmZjBYWFBnUzJDMitlVnJZc0NJaGl5?=
+ =?utf-8?B?WWRFUnlDVmNCeDRHZVhMSGprNkV3bGpIK2NGWHpQMTFORXRKNHRmVVF6ZFAz?=
+ =?utf-8?B?c2ZXd2E4QXZOMDZSeS92SkhOZnJnMWdqRFY4LzRraVJXMVYrSVh0MENjYmFC?=
+ =?utf-8?B?dSs2TnBZUnI3Ri9UL2MzVzNVeC94Nm41WjdzczdjdTM5OTFscUtoem9wZDV6?=
+ =?utf-8?B?OVo2YVNOYThiV2hVaDJpM1h0SG9wSjlSQTRoT1EyMlp3SnlaaElpY0RoLzNm?=
+ =?utf-8?B?cEtMZ0dFN3MwMldkN1ZXTyszcFlnZUNucSt0SW1Ha2hjU1lraWcxNTFHNHo5?=
+ =?utf-8?B?d3RNL1prT1VEaHp1MGxNcllPNitZMVEyUTlBUG9IY3ZtcU5SNXZ0TnNYMUVz?=
+ =?utf-8?B?NUptaWhMWmZCQkRvQmptODJJNFJuenhYRm8zWGlhSDNtR3czeFNyMVk3MlJw?=
+ =?utf-8?B?b1JnQ25YZTJZYjhOQVhPQlN5TW5vVGRkZDhkWWUxZWFWWHR6dU5JTDlYVlhI?=
+ =?utf-8?B?S05DV3h3UkhEK2ZFeFJUWFRNZnNTM2xoaTJNVTlDU1ZYamNWb0JqUmZXY3Nl?=
+ =?utf-8?B?QkZuUUpES1BUTEYvZWhySmNFWndLTlV1MVdYQi9VYnVuempBM3psakZqeGYv?=
+ =?utf-8?B?eEh6RGQrT1FBTm5Sem5PcjUrYWQxSW1DN2Zvc1JPUm1MczdTZWltcC9YYUMv?=
+ =?utf-8?B?enZhZUFuUnU2YVRBV1MvN0Z5OWdWWjRBM3lmU0ZFUmZqRHV1eUk2clhTTnhy?=
+ =?utf-8?B?K285cTk1TXFBQ09WTUVEVDFxRTMzclVSYnJ2b044dkN6TGRsNUpQUWdUN05m?=
+ =?utf-8?B?aTJkK2Uwd1RVd3dGdHZLVGNtN2l2L3pjbUsvU1UxSnRwaURHSEgwZGRCejB0?=
+ =?utf-8?B?MXJwbi9BeSsyUUZtQzV3VFNqbU9McU1SOHFSelRmVWxnNG1tRVJqd0dob0ZG?=
+ =?utf-8?B?dk9zZllLajJGTE9VWTl4YVlLMmZKUUJFc1d3d0hJTmZBbWdvOXFiMlpJaDVR?=
+ =?utf-8?B?bkZaNGZxQWdQaTlRaHQ2Z1lmNDJrWVdsRTJzR0FHd3BVb1N4elpVdlVVY0NR?=
+ =?utf-8?B?ejFYQVNHTGtwSFJ5a2JWTzhiNm94S2YwZStNbktKSVY1RFNXQWJ1VlcrK0U0?=
+ =?utf-8?B?MW1KSGFaUXQ3R2tSWVk5bHFSbE5Gelp2S2djSjhGOW85cVhUQjAyK24rTmJQ?=
+ =?utf-8?B?am0yTzU3VlUzeU5CM0FaQ2NycWhGYk5pdkt5MU9kWk9YMFRFN2dvdUFtbUpG?=
+ =?utf-8?B?SVZ4L2VlVEJQSEVzbk0wZlYyMzIvRjlQOU53M0lPUzYwYlR2Y0UwUzIyU2lO?=
+ =?utf-8?B?K0RqRnJpeGNWTWJzTHUrZFgvblA5QVBOL2RJUjIyQjk1djFRWnV6SkFWTjg1?=
+ =?utf-8?B?TUx6eXVMM2hVSzhrM3A0VFlpNENIelQrTGsyb1RUV3RHZFlqNGt2c1lPb25C?=
+ =?utf-8?B?YzRPSDYxOVN6NmhyTDdUQnoycGxjS1hiaEdxZWhmRFNyRHAxNEtKK2dtQjRE?=
+ =?utf-8?B?TlptVVZxRHBKbVpVclpQL3QyZVZsYmlERXlmdmlITGNMa2UwOXFzWnFRNkpw?=
+ =?utf-8?B?T05KKzZlUjZoQWxLNC82aEJYQXJRNnFrRjdIZGw4QTF6SUNTV0loSnh2Qys3?=
+ =?utf-8?B?WlE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2033d24e-56e9-43fa-4de1-08dcabbc89cd
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5530.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2024 08:42:23.6855
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /YHhi707CffAiAJ8YWL8JNdQODXafCdhTsjQhiPFGCeRXKSSsXzK7O0ymW60zY4yStK0YVGweMxPpXA1mzV86A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR11MB8086
+X-OriginatorOrg: intel.com
 
-On Mon, Jul 22, 2024 at 09:41:36AM +0200, Thomas Weißschuh wrote:
-> Hi Joel,
+
+
+On 12-07-2024 17:53, Raag Jadav wrote:
+> Add hwmon support for fan1_input attribute, which will expose fan speed
+> in RPM. With this in place we can monitor fan speed using lm-sensors tool.
 > 
-> On 2024-07-17 21:57:48+0000, Joel Granados wrote:
-> > On Wed, Jul 17, 2024 at 05:26:44PM +0200, Thomas Weißschuh wrote:
-> > > On 2024-07-16 17:27:05+0000, Joel Granados wrote:
-> > > > On Mon, Jul 15, 2024 at 10:58:10PM +0200, Thomas Weißschuh wrote:
-> > > > > On 2024-07-15 22:23:19+0000, Joel Granados wrote:
-> > > > ...
-> > > > > > The merge window is now open. I want to send this patch on the Wednesday
-> > > > > > of next week (jul 24).
-> > > 
-> > > <snip>
-> > > 
-> > > > > > 2. Does it still apply cleanly against the latest master branch?
-> > > > > 
-> > > > > Not against mainline master, but against next-20240715.
-> > > > > To apply cleanly (and compile) on mainline master it still requires the
-> > > > > net/ and sysctl trees to be merged.
-> > > > > Otherwise some modified functions are missing, leading to (trivial) merge
-> > > > > conflicts or the preparation commits are missing, leading to compilation
-> > > > > errors.
-> > > > 
-> > > > Understood. I have just sent Linus the changes for sysctl-next, so those
-> > > > should land in master soon (baring any issues with the pull request).
-> > > > 
-> > > > These [1] and [2] are the two series in net-dev that are the deps for
-> > > > the constification treewide patch. Once these two go into mainline, then
-> > > > we are good to go. Right?
-> > > 
-> > > Right, but...
-> > > 
-> > > It turns out the preparation patch for mm/hugetlb.c [0] is also still
-> > > missing. I missed it in all the errors triggered in net/.
-> > > But as far as I can see this patch will be part of Andrew's PR for mm.
-> > 
-> > Thx for the heads up, I'll Add that one to my radar of things that need
-> > to be in master before we send the PR to Linus. Will check these three
-> > dependencies on Wednesday next week and send your V2 [3] if I see that
-> > it applies cleanly.
+> $ sensors
+> i915-pci-0300
+> Adapter: PCI adapter
+> in0:         653.00 mV
+> fan1:        3833 RPM
+> power1:           N/A  (max =  43.00 W)
+> energy1:      32.02 kJ
 > 
-> All dependency PRs (sysctl, net, mm) are now merged.
-> My compilation tests all succeed now.
-
-How did you apply the coccinelle script? I ask because if I do this:
-```
- make coccicheck MODE=patch SPFLAGS="--in-place --include-headers" COCCI=SCRIPT
-```
-
-I have to add "virtual patch" to the first line of the script you had
-sent. So it would look like this:
-```
-virtual patch
-
-@@
-identifier func, ctl, write, buffer, lenp, ppos;
-@@
-
-int func(
-- struct ctl_table *ctl,
-+ const struct ctl_table *ctl,
-  int write, void *buffer, size_t *lenp, loff_t *ppos)
-{ ... }
-```
-
-Additionally, this cocci script is not changing the header files. Even
-if I pass --include-headers. Did you change those by hand?
-
-Best
-
+> Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+> ---
+>   drivers/gpu/drm/i915/gt/intel_gt_regs.h |  2 +
+>   drivers/gpu/drm/i915/i915_hwmon.c       | 71 +++++++++++++++++++++++++
+>   2 files changed, 73 insertions(+)
 > 
-> > > <snip>
-> > > 
-> > > [0] https://lore.kernel.org/lkml/20240518-sysctl-const-handler-hugetlb-v1-1-47e34e2871b2@weissschuh.net/
-> > > 
-> > > > [1] net: constify ctl_table arguments of utility functions
-> > > >     https://patchwork.kernel.org/project/netdevbpf/list/?series=856252&state=%2A&archive=both
-> > > > [2] bpf: constify member bpf_sysctl_kern::table
-> > > >     https://patchwork.kernel.org/project/netdevbpf/list/?series=854191&state=*
-> > 
-> > [3] https://lore.kernel.org/20240619-sysctl-const-handler-v2-1-e36d00707097@weissschuh.net
+> diff --git a/drivers/gpu/drm/i915/gt/intel_gt_regs.h b/drivers/gpu/drm/i915/gt/intel_gt_regs.h
+> index e42b3a5d4e63..407d8152755a 100644
+> --- a/drivers/gpu/drm/i915/gt/intel_gt_regs.h
+> +++ b/drivers/gpu/drm/i915/gt/intel_gt_regs.h
+> @@ -1553,6 +1553,8 @@
+>   #define VLV_RENDER_C0_COUNT			_MMIO(0x138118)
+>   #define VLV_MEDIA_C0_COUNT			_MMIO(0x13811c)
+>   
+> +#define GEN12_PWM_FAN_SPEED			_MMIO(0x138140)
+> +
+>   #define GEN12_RPSTAT1				_MMIO(0x1381b4)
+>   #define   GEN12_VOLTAGE_MASK			REG_GENMASK(10, 0)
+>   #define   GEN12_CAGF_MASK			REG_GENMASK(19, 11)
+> diff --git a/drivers/gpu/drm/i915/i915_hwmon.c b/drivers/gpu/drm/i915/i915_hwmon.c
+> index 49db3e09826c..f829c7837d83 100644
+> --- a/drivers/gpu/drm/i915/i915_hwmon.c
+> +++ b/drivers/gpu/drm/i915/i915_hwmon.c
+> @@ -36,6 +36,7 @@ struct hwm_reg {
+>   	i915_reg_t pkg_rapl_limit;
+>   	i915_reg_t energy_status_all;
+>   	i915_reg_t energy_status_tile;
+> +	i915_reg_t fan_speed;
+>   };
+>   
+>   struct hwm_energy_info {
+> @@ -43,11 +44,17 @@ struct hwm_energy_info {
+>   	long accum_energy;			/* Accumulated energy for energy1_input */
+>   };
+>   
+> +struct hwm_fan_info {
+> +	u32 reg_val_prev;
+> +	u32 time_prev;
+> +};
+> +
+>   struct hwm_drvdata {
+>   	struct i915_hwmon *hwmon;
+>   	struct intel_uncore *uncore;
+>   	struct device *hwmon_dev;
+>   	struct hwm_energy_info ei;		/*  Energy info for energy1_input */
+> +	struct hwm_fan_info fi;			/*  Fan info for fan1_input */
+>   	char name[12];
+>   	int gt_n;
+>   	bool reset_in_progress;
+> @@ -276,6 +283,7 @@ static const struct hwmon_channel_info * const hwm_info[] = {
+>   	HWMON_CHANNEL_INFO(power, HWMON_P_MAX | HWMON_P_RATED_MAX | HWMON_P_CRIT),
+>   	HWMON_CHANNEL_INFO(energy, HWMON_E_INPUT),
+>   	HWMON_CHANNEL_INFO(curr, HWMON_C_CRIT),
+> +	HWMON_CHANNEL_INFO(fan, HWMON_F_INPUT),
+>   	NULL
+>   };
+>   
+> @@ -613,6 +621,55 @@ hwm_curr_write(struct hwm_drvdata *ddat, u32 attr, long val)
+>   	}
+>   }
+>   
+> +static umode_t
+> +hwm_fan_is_visible(const struct hwm_drvdata *ddat, u32 attr)
+> +{
+> +	struct i915_hwmon *hwmon = ddat->hwmon;
+> +
+> +	switch (attr) {
+> +	case hwmon_fan_input:
+> +		return i915_mmio_reg_valid(hwmon->rg.fan_speed) ? 0444 : 0;
+> +	default:
+> +		return 0;
+> +	}
+> +}
+> +
+> +static int
+> +hwm_fan_read(struct hwm_drvdata *ddat, u32 attr, long *val)
+> +{
+> +	struct i915_hwmon *hwmon = ddat->hwmon;
+> +	u32 reg_val, rotation, time, time_now;
+> +	intel_wakeref_t wakeref;
+> +
+> +	switch (attr) {
+> +	case hwmon_fan_input:
+> +		with_intel_runtime_pm(ddat->uncore->rpm, wakeref)Do we expect fan running when device is in D3? If not then we should use 
+with_intel_runtime_pm_if_active here otherwise report fan speed 0.
 
--- 
-
-Joel Granados
+Regards,
+Badal
+> +			reg_val = intel_uncore_read(ddat->uncore, hwmon->rg.fan_speed);
+> +
+> +		time_now = jiffies_to_msecs(jiffies);
+> +
+> +		/*
+> +		 * HW register value is accumulated count of pulses from
+> +		 * PWM fan with the scale of 2 pulses per rotation.
+> +		 */
+> +		rotation = (reg_val - ddat->fi.reg_val_prev) >> 1;
+> +		time = time_now - ddat->fi.time_prev;
+> +
+> +		if (!time)
+> +			return -EAGAIN;
+> +
+> +		/* Convert to minutes for calculating RPM. */
+> +		*val = DIV_ROUND_UP((long)rotation * (60 * 1000), time);
+> +
+> +		ddat->fi.reg_val_prev = reg_val;
+> +		ddat->fi.time_prev = time_now;
+> +
+> +		return 0;
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +}
+> +
+>   static umode_t
+>   hwm_is_visible(const void *drvdata, enum hwmon_sensor_types type,
+>   	       u32 attr, int channel)
+> @@ -628,6 +685,8 @@ hwm_is_visible(const void *drvdata, enum hwmon_sensor_types type,
+>   		return hwm_energy_is_visible(ddat, attr);
+>   	case hwmon_curr:
+>   		return hwm_curr_is_visible(ddat, attr);
+> +	case hwmon_fan:
+> +		return hwm_fan_is_visible(ddat, attr);
+>   	default:
+>   		return 0;
+>   	}
+> @@ -648,6 +707,8 @@ hwm_read(struct device *dev, enum hwmon_sensor_types type, u32 attr,
+>   		return hwm_energy_read(ddat, attr, val);
+>   	case hwmon_curr:
+>   		return hwm_curr_read(ddat, attr, val);
+> +	case hwmon_fan:
+> +		return hwm_fan_read(ddat, attr, val);
+>   	default:
+>   		return -EOPNOTSUPP;
+>   	}
+> @@ -739,12 +800,14 @@ hwm_get_preregistration_info(struct drm_i915_private *i915)
+>   		hwmon->rg.pkg_rapl_limit = PCU_PACKAGE_RAPL_LIMIT;
+>   		hwmon->rg.energy_status_all = PCU_PACKAGE_ENERGY_STATUS;
+>   		hwmon->rg.energy_status_tile = INVALID_MMIO_REG;
+> +		hwmon->rg.fan_speed = GEN12_PWM_FAN_SPEED;
+>   	} else {
+>   		hwmon->rg.pkg_power_sku_unit = INVALID_MMIO_REG;
+>   		hwmon->rg.pkg_power_sku = INVALID_MMIO_REG;
+>   		hwmon->rg.pkg_rapl_limit = INVALID_MMIO_REG;
+>   		hwmon->rg.energy_status_all = INVALID_MMIO_REG;
+>   		hwmon->rg.energy_status_tile = INVALID_MMIO_REG;
+> +		hwmon->rg.fan_speed = INVALID_MMIO_REG;
+>   	}
+>   
+>   	with_intel_runtime_pm(uncore->rpm, wakeref) {
+> @@ -771,6 +834,14 @@ hwm_get_preregistration_info(struct drm_i915_private *i915)
+>   		for_each_gt(gt, i915, i)
+>   			hwm_energy(&hwmon->ddat_gt[i], &energy);
+>   	}
+> +
+> +	if (i915_mmio_reg_valid(hwmon->rg.fan_speed)) {
+> +		/* Take initial readings and use it while calculating actual fan speed. */
+> +		with_intel_runtime_pm(uncore->rpm, wakeref)
+> +			ddat->fi.reg_val_prev = intel_uncore_read(ddat->uncore,
+> +								  hwmon->rg.fan_speed);
+> +		ddat->fi.time_prev = jiffies_to_msecs(jiffies);
+> +	}
+>   }
+>   
+>   void i915_hwmon_register(struct drm_i915_private *i915)
 
