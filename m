@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-261119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98F4D93B2FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:47:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2016A93B2FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC76E1C22A31
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:47:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEE5828216A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A2115B14D;
-	Wed, 24 Jul 2024 14:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D29615EFAF;
+	Wed, 24 Jul 2024 14:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A1mi7OEm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bkF+pIE4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475C315B0F2
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DAC157A58
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721832332; cv=none; b=AhktCW2vg2hnsgwhfnZe+TFyPScCo7UojfwrGyF82muE0nQEAu4yNLPg8xAzpV+n05z5xsJ2KFgt15/1k7P4nOhPzbSqiiAsfREBLHmUCkg6AKmTk5DAWYzxeG2NWYa3eNRvhQG4++DJinpbodKVWM855tO1TcNsh9c4G4WPyVs=
+	t=1721832334; cv=none; b=YcF7DeF6YrQDK1CVqceI//IEjOT7qkKEU2FblcEEuoWivruZaqd+yrvH45sHx3RbARk/D60VhKHsc2hN/gm7s8DIIYudtnStSCBDpBQvaUxxPUOqhcDTrilx+aNKo3OGGvEBc6zOt9Xq0osL+tGHZSNLIot5h1KQ/wmGYpX2Lqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721832332; c=relaxed/simple;
-	bh=zUwnYXLcMg+gyPVninfoorMVlBke0dzUVyd+txzvS2o=;
+	s=arc-20240116; t=1721832334; c=relaxed/simple;
+	bh=JZnpCi9Frq0lCxcb7fxxkXZtKHAKBOCpknIvr0Tvdas=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JFTQU+1V/tjtwjFwj51Oi2lu6U3cz+ydWqHZputaQ5AidNzrEAVdCSRddBbmGfoeeha7v+UgGgW7wuxRRFjEXB9IkaTgtnXzzofdzOL5bX1Veope4+q5Hp0YcZYxVbTVTKHFbGjFjQQFcbRamHe29ZNvqI4iNp0dtclRR/u3ueE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A1mi7OEm; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=G+3l9wMwxJhIYYwpz8Xv+/4Ox5pwc36CP6x4RdP/0YHfcPNfwAdbWGNW79Pi6rW1NlnEdYnXSJE4OFfP514DIR7b/gVFiF4/WGwsHtaZbF1GBWzxp/2EfLYXA1wkVbtRj+L6W0YMVxof797ohPDODwBRb/VgNJ65U2pmUxOqmcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bkF+pIE4; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721832330;
+	s=mimecast20190719; t=1721832332;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8M2kgxPWrm0Lra4FmTG8LNL53kGYyIVLKAyWJCVKxWU=;
-	b=A1mi7OEms+fE6GfB20Aa6m/vlPeIjWSqmTjRmavWNxhyWJIsHr1vrZD1enSpZP6gbWiSpQ
-	T1mmKg+9Sz/FTfQF+f0HUvmjHrujNjtUIFHvY/fjEbCu3mZqqXvb6mG4HQareWqrPy6pBR
-	u/TKE6iJHLVmCrp6OnFyNnknwFufBA0=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+	bh=8nXrIH3xeZ9pFu4FFpyXc+aDy1CmvWcitI0lR4FgXA0=;
+	b=bkF+pIE4eKHEQv4ovLBml16UdSNyoI2u5q8mVVO58+1lwp+QtnlUSITp6t0WCA5F+fvdoT
+	Lit/fC8fLCtw5w5z7PDnc5DMxDLppaA/TUAbNoDI8bmTzPqj2TG+l+aa4Q0Fhg3jKCypml
+	aEGt9ciYl7MJJfRNWp71HagLQQYD2UQ=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-19-TsgfaI4MOF-HvhVorInazA-1; Wed,
- 24 Jul 2024 10:45:23 -0400
-X-MC-Unique: TsgfaI4MOF-HvhVorInazA-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-232-kgEGJlXhPDeh9rJTp03qvw-1; Wed,
+ 24 Jul 2024 10:45:29 -0400
+X-MC-Unique: kgEGJlXhPDeh9rJTp03qvw-1
 Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 44F5F1955D4A;
-	Wed, 24 Jul 2024 14:45:21 +0000 (UTC)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C85CF1955F2D;
+	Wed, 24 Jul 2024 14:45:25 +0000 (UTC)
 Received: from vschneid-thinkpadt14sgen2i.remote.csb (unknown [10.39.192.125])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DA0E51955E80;
-	Wed, 24 Jul 2024 14:45:16 +0000 (UTC)
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A8A3A1955F40;
+	Wed, 24 Jul 2024 14:45:21 +0000 (UTC)
 From: Valentin Schneider <vschneid@redhat.com>
 To: rcu@vger.kernel.org,
 	linux-kernel@vger.kernel.org
@@ -69,9 +69,9 @@ Cc: Frederic Weisbecker <frederic@kernel.org>,
 	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
 	Lai Jiangshan <jiangshanlai@gmail.com>,
 	Zqiang <qiang.zhang1211@gmail.com>
-Subject: [PATCH v3 10/25] context_tracking, rcu: Rename ct_dynticks_nmi_nesting() into ct_nmi_nesting()
-Date: Wed, 24 Jul 2024 16:43:10 +0200
-Message-ID: <20240724144325.3307148-11-vschneid@redhat.com>
+Subject: [PATCH v3 11/25] context_tracking, rcu: Rename ct_dynticks_nmi_nesting_cpu() into ct_nmi_nesting_cpu()
+Date: Wed, 24 Jul 2024 16:43:11 +0200
+Message-ID: <20240724144325.3307148-12-vschneid@redhat.com>
 In-Reply-To: <20240724144325.3307148-1-vschneid@redhat.com>
 References: <20240724144325.3307148-1-vschneid@redhat.com>
 Precedence: bulk
@@ -91,132 +91,36 @@ Suggested-by: Frederic Weisbecker <frederic@kernel.org>
 Signed-off-by: Valentin Schneider <vschneid@redhat.com>
 Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- include/linux/context_tracking_state.h |  2 +-
- kernel/context_tracking.c              | 24 ++++++++++++------------
- kernel/rcu/tree.c                      |  6 +++---
- 3 files changed, 16 insertions(+), 16 deletions(-)
+ include/linux/context_tracking_state.h | 2 +-
+ kernel/rcu/tree_stall.h                | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/include/linux/context_tracking_state.h b/include/linux/context_tracking_state.h
-index 12d00adf29e1e..8f32fe599c5c0 100644
+index 8f32fe599c5c0..34fd504e53a86 100644
 --- a/include/linux/context_tracking_state.h
 +++ b/include/linux/context_tracking_state.h
-@@ -87,7 +87,7 @@ static __always_inline long ct_nesting_cpu(int cpu)
- 	return ct->nesting;
- }
- 
--static __always_inline long ct_dynticks_nmi_nesting(void)
-+static __always_inline long ct_nmi_nesting(void)
- {
+@@ -92,7 +92,7 @@ static __always_inline long ct_nmi_nesting(void)
  	return __this_cpu_read(context_tracking.nmi_nesting);
  }
-diff --git a/kernel/context_tracking.c b/kernel/context_tracking.c
-index ae94215aa132a..115843eeb0309 100644
---- a/kernel/context_tracking.c
-+++ b/kernel/context_tracking.c
-@@ -125,7 +125,7 @@ static void noinstr ct_kernel_exit(bool user, int offset)
+ 
+-static __always_inline long ct_dynticks_nmi_nesting_cpu(int cpu)
++static __always_inline long ct_nmi_nesting_cpu(int cpu)
  {
- 	struct context_tracking *ct = this_cpu_ptr(&context_tracking);
+ 	struct context_tracking *ct = per_cpu_ptr(&context_tracking, cpu);
  
--	WARN_ON_ONCE(ct_dynticks_nmi_nesting() != DYNTICK_IRQ_NONIDLE);
-+	WARN_ON_ONCE(ct_nmi_nesting() != DYNTICK_IRQ_NONIDLE);
- 	WRITE_ONCE(ct->nmi_nesting, 0);
- 	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) &&
- 		     ct_nesting() == 0);
-@@ -185,7 +185,7 @@ static void noinstr ct_kernel_enter(bool user, int offset)
- 	trace_rcu_dyntick(TPS("End"), ct_nesting(), 1, ct_rcu_watching());
- 	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && !user && !is_idle_task(current));
- 	WRITE_ONCE(ct->nesting, 1);
--	WARN_ON_ONCE(ct_dynticks_nmi_nesting());
-+	WARN_ON_ONCE(ct_nmi_nesting());
- 	WRITE_ONCE(ct->nmi_nesting, DYNTICK_IRQ_NONIDLE);
- 	instrumentation_end();
- }
-@@ -207,28 +207,28 @@ void noinstr ct_nmi_exit(void)
- 
- 	instrumentation_begin();
- 	/*
--	 * Check for ->nmi_nesting underflow and bad ->dynticks.
-+	 * Check for ->nmi_nesting underflow and bad CT state.
- 	 * (We are exiting an NMI handler, so RCU better be paying attention
- 	 * to us!)
- 	 */
--	WARN_ON_ONCE(ct_dynticks_nmi_nesting() <= 0);
-+	WARN_ON_ONCE(ct_nmi_nesting() <= 0);
- 	WARN_ON_ONCE(rcu_dynticks_curr_cpu_in_eqs());
- 
- 	/*
- 	 * If the nesting level is not 1, the CPU wasn't RCU-idle, so
- 	 * leave it in non-RCU-idle state.
- 	 */
--	if (ct_dynticks_nmi_nesting() != 1) {
--		trace_rcu_dyntick(TPS("--="), ct_dynticks_nmi_nesting(), ct_dynticks_nmi_nesting() - 2,
-+	if (ct_nmi_nesting() != 1) {
-+		trace_rcu_dyntick(TPS("--="), ct_nmi_nesting(), ct_nmi_nesting() - 2,
- 				  ct_rcu_watching());
- 		WRITE_ONCE(ct->nmi_nesting, /* No store tearing. */
--			   ct_dynticks_nmi_nesting() - 2);
-+			   ct_nmi_nesting() - 2);
- 		instrumentation_end();
- 		return;
- 	}
- 
- 	/* This NMI interrupted an RCU-idle CPU, restore RCU-idleness. */
--	trace_rcu_dyntick(TPS("Startirq"), ct_dynticks_nmi_nesting(), 0, ct_rcu_watching());
-+	trace_rcu_dyntick(TPS("Startirq"), ct_nmi_nesting(), 0, ct_rcu_watching());
- 	WRITE_ONCE(ct->nmi_nesting, 0); /* Avoid store tearing. */
- 
- 	// instrumentation for the noinstr ct_kernel_exit_state()
-@@ -261,7 +261,7 @@ void noinstr ct_nmi_enter(void)
- 	struct context_tracking *ct = this_cpu_ptr(&context_tracking);
- 
- 	/* Complain about underflow. */
--	WARN_ON_ONCE(ct_dynticks_nmi_nesting() < 0);
-+	WARN_ON_ONCE(ct_nmi_nesting() < 0);
- 
- 	/*
- 	 * If idle from RCU viewpoint, atomically increment CT state
-@@ -295,11 +295,11 @@ void noinstr ct_nmi_enter(void)
- 	}
- 
- 	trace_rcu_dyntick(incby == 1 ? TPS("Endirq") : TPS("++="),
--			  ct_dynticks_nmi_nesting(),
--			  ct_dynticks_nmi_nesting() + incby, ct_rcu_watching());
-+			  ct_nmi_nesting(),
-+			  ct_nmi_nesting() + incby, ct_rcu_watching());
- 	instrumentation_end();
- 	WRITE_ONCE(ct->nmi_nesting, /* Prevent store tearing. */
--		   ct_dynticks_nmi_nesting() + incby);
-+		   ct_nmi_nesting() + incby);
- 	barrier();
- }
- 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 4ccb4bb8df1d3..22322387cefb7 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -382,11 +382,11 @@ static int rcu_is_cpu_rrupt_from_idle(void)
- 	/* Check for counter underflows */
- 	RCU_LOCKDEP_WARN(ct_nesting() < 0,
- 			 "RCU nesting counter underflow!");
--	RCU_LOCKDEP_WARN(ct_dynticks_nmi_nesting() <= 0,
-+	RCU_LOCKDEP_WARN(ct_nmi_nesting() <= 0,
- 			 "RCU nmi_nesting counter underflow/zero!");
- 
- 	/* Are we at first interrupt nesting level? */
--	nesting = ct_dynticks_nmi_nesting();
-+	nesting = ct_nmi_nesting();
- 	if (nesting > 1)
- 		return false;
- 
-@@ -590,7 +590,7 @@ void rcu_irq_exit_check_preempt(void)
- 
- 	RCU_LOCKDEP_WARN(ct_nesting() <= 0,
- 			 "RCU nesting counter underflow/zero!");
--	RCU_LOCKDEP_WARN(ct_dynticks_nmi_nesting() !=
-+	RCU_LOCKDEP_WARN(ct_nmi_nesting() !=
- 			 DYNTICK_IRQ_NONIDLE,
- 			 "Bad RCU  nmi_nesting counter\n");
- 	RCU_LOCKDEP_WARN(rcu_dynticks_curr_cpu_in_eqs(),
+diff --git a/kernel/rcu/tree_stall.h b/kernel/rcu/tree_stall.h
+index 59b1d84a47493..ec49f0155becc 100644
+--- a/kernel/rcu/tree_stall.h
++++ b/kernel/rcu/tree_stall.h
+@@ -516,7 +516,7 @@ static void print_cpu_stall_info(int cpu)
+ 				"!."[!delta],
+ 	       ticks_value, ticks_title,
+ 	       ct_rcu_watching_cpu(cpu) & 0xffff,
+-	       ct_nesting_cpu(cpu), ct_dynticks_nmi_nesting_cpu(cpu),
++	       ct_nesting_cpu(cpu), ct_nmi_nesting_cpu(cpu),
+ 	       rdp->softirq_snap, kstat_softirqs_cpu(RCU_SOFTIRQ, cpu),
+ 	       data_race(rcu_state.n_force_qs) - rcu_state.n_force_qs_gpstart,
+ 	       rcuc_starved ? buf : "",
 -- 
 2.43.0
 
