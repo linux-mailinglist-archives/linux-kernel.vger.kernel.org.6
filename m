@@ -1,138 +1,100 @@
-Return-Path: <linux-kernel+bounces-260716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 838DA93AD5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:45:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2335793AD5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:45:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6FB51C21FDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:45:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD0451F22C3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C634A1304A2;
-	Wed, 24 Jul 2024 07:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4AC07EF04;
+	Wed, 24 Jul 2024 07:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uMi1PEu0"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WIK8fupl"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661694F20C
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10E845016;
+	Wed, 24 Jul 2024 07:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721807114; cv=none; b=EAofFbU82vOJ/GrzTaPWzx32Oq7cuQrGJAEc9+vaMeofdlprxWAahVcHodYbJ8In4DA1wfogx3hg9CFn0f1D8BJ0InqKwZlBAaZstDhYvXlF1Babl5WQRnIbJhLcVP44jHoHSG5pevIC02yVj1aH+lcqR60y5Hy2qyJV/q2C9xQ=
+	t=1721807130; cv=none; b=CfXbpXje2spE7x3srrRbYmb/cHQRTvLYeLnJ4WIHUk/2CFCFaTfCeQ9jTLH74U67jNdUSxmeTcrbG1gb/R/oF/pDvsjzUtMr3Fw8fL1OgwFIuDy0z24ipgVktGve5fu9dOhQxSd3Wt6mQNP+hv5LZPUd/JlcKth/JRBOpPH24/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721807114; c=relaxed/simple;
-	bh=+FR2hQULrYhvFvdpBkBINj08hvjBi5zK2CHHyfvgaGE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PQJiIIAV7Gt4+GZpAGdYku2z6uauQL6fJYFNX+jcw+NmMfb1/BByaKK4rp3FMI5suIxG5UfKDE0V1ymQUyhaGF6RoaPtHFesMG3lvQ19aQVzhB40MX9AbJtlUL7wG4nncC6vDmtE9ORMHuoG5DHDkbKrSHl1UBmCGEoL5Cbnf5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uMi1PEu0; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <f8ca83e6-78c3-4628-bb83-45f985c10e19@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721807107;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8VMPG8iuL1N930tqnUiE6nL99hrpsa0cwNGG8JxcZmw=;
-	b=uMi1PEu0kbcG2dThR1Nx8hicjtRi7qAGloIGBO8iFspUx+pvjCMxQ/qcPw4M8ypg788c43
-	q73gUpElnRZnLvbxjwtxbQAEEo5bJ8m76YN1cBkbr8IhQYXcF8zGQBYKsSVCGwCNx/iJ7Y
-	BspWAQvj4Mg6kgx2GRqAZzuM1kOOymY=
-Date: Wed, 24 Jul 2024 15:45:00 +0800
+	s=arc-20240116; t=1721807130; c=relaxed/simple;
+	bh=OI34kF7X8iVTXee6Y5kBgaZd1jpEtspvl3Yyd3FdS9I=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ijc7VFb6qHtsT2tKnHpeF9n1/k+aL/djl0G+yzZzWqGSw1diRD+36Jq2q8FKDX4Y6WDaZaaS8wHNA3O59NLHug7gA89u8R62M29YG/Gt657C8ivv3wa9EMMluYwC5oEIJV1RQc/iktv34c0YYyibBD8mqar0SKDQ2EUQMqmd4kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WIK8fupl; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-36858357bb7so3528984f8f.2;
+        Wed, 24 Jul 2024 00:45:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721807127; x=1722411927; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OI34kF7X8iVTXee6Y5kBgaZd1jpEtspvl3Yyd3FdS9I=;
+        b=WIK8fuplmeZFkdAYNka9Q6GuVsZKcMkpIprHU+Gbn3X5LHUc/L3xMBlO0IMRYShS3W
+         ugPUx4Xy55B04Wql91pIPcGFLoVWVAG2ZiLgPtTylfHuOYPE5gO0895iGUqjBS8Yq1cF
+         BEysaZAseBadtp+TSGjnsS9ZdJWY+apY4yBMNBfGYZMbQL0kidqzI/0uN+HxNLFQKrUi
+         OwtzO7wxaR6vCkXSfsrAR0QJIHPTm0vfZwWHkHUZt7ozIEpv4jStMrLL+/C81JgWtYhK
+         QtqLqN5cRH0329BWmRHP0QvNszvM16Prwvv/wBW0O0ZaoWCPx5t+gztVY4zTOIFgrkmS
+         dxkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721807127; x=1722411927;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OI34kF7X8iVTXee6Y5kBgaZd1jpEtspvl3Yyd3FdS9I=;
+        b=LsoqUMLqZZoCzXdSa13rveUbvqnVGalaFqdo68/qPS+6UTvV8BKrWN4Ex8CI0j63hT
+         mSMPBtOfYtZyywS9TsUi5ye13jKTricnDdszufPTYlsNeiHGBt5y6AffnDJsq8n12JAo
+         eEBE957+X4zw89eVaspTVmiJdfSD8xvlzxLbBUXpxANkGRyRE9pY3ANkMlXksr8yzUD3
+         le9PmsRX7eyHnUeIudYcKp5Wq1+fqxCGpraM7PN4Iwjqjk9sNksMv0IBLp19eudOzxU9
+         wZO+JJRWWkN7kSEVKuDROZxgQupKXR+41Efb2usQG/2q29gdXM8td0j2v8zpTMXqXC9n
+         /MOg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/+TgN9FvROvw93HXYuhx9VCrUgXeYMkF+5FqXWbk6X8yiai7WZDxSRzlJPoA6XBYpmn0kIuruJsi2sPN7Zax+ndWWKRslm+3HX+9FAgE+WENQeGuxJ2VpwQPP2uV21w2MgCLb7Uem
+X-Gm-Message-State: AOJu0YxGndU7pgMswFWWI0ZxyjBJUmbYgD1j4X1gCaRRgySaah2Dqd04
+	MHVD9Geq9yUl9mpBADCzx+3r2ZiNgTVQnYtEkYwwdoBmU4ZcUypu
+X-Google-Smtp-Source: AGHT+IEaNcBX7cGGdyLqel+HplfZ6jvgHmTwcxh+c2jB56RAhEU74XZM6MHSztGqkV+sLPCFO8ouIw==
+X-Received: by 2002:a5d:6d47:0:b0:368:5a8c:580b with SMTP id ffacd0b85a97d-369f5b2ff3bmr884587f8f.19.1721807126513;
+        Wed, 24 Jul 2024 00:45:26 -0700 (PDT)
+Received: from nsa.fritz.box ([2001:a61:359b:e801:d44:32b3:6924:10d1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3687868482esm13461696f8f.16.2024.07.24.00.45.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 00:45:26 -0700 (PDT)
+Message-ID: <6fe59ff58e19bf6a8c5c5ca3ff120b4df28f1092.camel@gmail.com>
+Subject: Re: [PATCH] iio: adc: ad7173: Fix incorrect compatible string
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Dumitru Ceclan <mitrutzceclan@gmail.com>
+Cc: jic23@kernel.org, dlechner@baylibre.com, dumitru.ceclan@analog.com, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 24 Jul 2024 09:45:25 +0200
+In-Reply-To: <20240723111322.324947-1-dumitru.ceclan@analog.com>
+References: <20240723111322.324947-1-dumitru.ceclan@analog.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/2] x86: Remove the prefetch() specific implementation on
- x86_64
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Nikolay Borisov <nik.borisov@suse.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org, Mateusz Guzik <mjguzik@gmail.com>,
- Youling Tang <tangyouling@kylinos.cn>
-References: <20240529032059.899347-1-youling.tang@linux.dev>
- <ca6c512a-c9cd-4210-bd71-c72c729c95a9@suse.com>
-Content-Language: en-US, en-AU
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Youling Tang <youling.tang@linux.dev>
-In-Reply-To: <ca6c512a-c9cd-4210-bd71-c72c729c95a9@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Hi,
+On Tue, 2024-07-23 at 14:13 +0300, Dumitru Ceclan wrote:
+> Wrong compatible strings are used for AD411x devices.
+> Fix by adding the missing "adi," prefix.
+>=20
+> Fixes: 13d12e3ad12d ("iio: adc: ad7173: Add support for AD411x devices")
+> Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+> ---
 
-On 30/05/2024 23:26, Nikolay Borisov wrote:
->
->
-> On 29.05.24 г. 6:20 ч., Youling Tang wrote:
->> From: Youling Tang <tangyouling@kylinos.cn>
->>
->> After commit ab483570a13b ("x86 & generic: change to 
->> __builtin_prefetch()"),
->> x86_64 directly uses __builtin_prefetch() without the specific 
->> implementation
->> of prefetch(). Also, x86_64 use a generic definition until commit 
->> ae2e15eb3b6c
->> ("x86: unify prefetch operations"). So remove it.
->
->
-> So this patch just ensures the x86-specific prefetch() implementation 
-> is defined only for 32bit case, otherwise we have it defined for the 
-> 64bit case as well but effectively it's not used since 
-> ARCH_HAS_PREFETCH is not defined for 64bit, meaning in the 64bit case 
-> prefetch() is still defined to __builtint_prefetch in 
-> include/linux/prefetch.h.
->
->
-> In essence this is a purely cosmetic cleanup , am I right?
->
->
-> I compiled a file that utilizes prefetch with and without your patch 
-> and the generated assembly is identical.
->
->
-> Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
->
->
->>
->> Signed-off-by: Youling Tang <tangyouling@kylinos.cn>
->> ---
->>   arch/x86/include/asm/processor.h | 7 ++++---
->>   1 file changed, 4 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/x86/include/asm/processor.h 
->> b/arch/x86/include/asm/processor.h
->> index cb4f6c513c48..44371bdcc59d 100644
->> --- a/arch/x86/include/asm/processor.h
->> +++ b/arch/x86/include/asm/processor.h
->> @@ -599,9 +599,6 @@ extern char            ignore_fpu_irq;
->>   #ifdef CONFIG_X86_32
->>   # define BASE_PREFETCH        ""
->>   # define ARCH_HAS_PREFETCH
->> -#else
->> -# define BASE_PREFETCH        "prefetcht0 %1"
->> -#endif
->>     /*
->>    * Prefetch instructions for Pentium III (+) and AMD Athlon (+)
->> @@ -616,6 +613,10 @@ static inline void prefetch(const void *x)
->>                 "m" (*(const char *)x));
->>   }
->>   +#else
->> +# define BASE_PREFETCH        "prefetcht0 %1"
->> +#endif
->> +
->>   /*
->>    * 3dnow prefetch to get an exclusive cache line.
->>    * Useful for spinlocks to avoid one state transition in the
-Sorry to bother you, but do we still need this patchset? (Do I need to
-modify the commit message and send v2 if necessary?)
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
-Thanks,
-Youling.
+
+
 
