@@ -1,167 +1,228 @@
-Return-Path: <linux-kernel+bounces-261280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7CDE93B526
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:34:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7BA093B528
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69B1E1F211A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:34:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 199ADB22FF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CED515EFA4;
-	Wed, 24 Jul 2024 16:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB3B15F316;
+	Wed, 24 Jul 2024 16:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="dKteoPIL"
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2084.outbound.protection.outlook.com [40.92.102.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eJZ3QKzq"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7713F219E0;
-	Wed, 24 Jul 2024 16:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721838849; cv=fail; b=YvACb+nsbsqzjoISpkkTX31lt6jkaDXF3+QMKpRYL7uQMzfxmCIlhyEAe8cdfhCKefzwucGGqMk3XJtD1NRCLmL/Nsaql9I1/80pIlRPoCKxJYuA7wUb41NSwx18dI/8l+Le9VvI1wJalXBqbvjGoykd7Zswf20XE/+95a9x0IA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721838849; c=relaxed/simple;
-	bh=Ty0SFygZj0vhtS0DZ/R9JcHsF7hnRtTtAoa2ld43bD8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=YY2W0NscUYmU1kC+5aCqRzKFE0ANgUpY41AgPD29bIrsXGfZxGbgVvF68twm7+o3hLiuY43eZmlSSdf5bt1OrsLwJfpvzR8vauPBMwo93moORAO38ztItQkLkStytKBQIX6Sj0P/OPysiWfFzzP9t5CYtLvBOpNnBddWfaviTrc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=dKteoPIL; arc=fail smtp.client-ip=40.92.102.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sXV9QDx/vsvOr2EKEoEl4oQO366HJKgnsBbZZ7WkmMRkP4a9zLxwtBJqHl2oHYfHeDs2hDRU5fbUiKVdHHvaLmqb9JFe6iOzCnHMMUCi2olgu8JlVgEHB+oqQVpTPCCcJSnb85qJYvuoD4TXKwwq6KjkUnO/qb1kLbyeqz94Dbtisr4g/fEdAbf/p6qJNvhAcYgKIkffgHMhrqkD4FexmW2NyuzJXWDCE8waYQ2FoNMXcdHcC4BI/UG1+egcLjnMr9wnkesPGmj9aMfjXAZIaLlSEq5tmAPe9JrtRTsHp8JadyiawtrRJCTAuBspSiDJA5BGLgmYNGobQxtEtJUUIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ty0SFygZj0vhtS0DZ/R9JcHsF7hnRtTtAoa2ld43bD8=;
- b=jegnEOZJDZV14OPwD+6r/u5g6Q2SnZDNFcHvGOW5B//yCYvKPCkLJ0xFcYd/qa95LQXD1wMWcbxGkiO/4gSRCKt6GIOtPReuQpXPSQc/HahoZebKlqgrRNRy1Dm2vsd7PDUN7ObE2MzRCF2YllHmA/SC+I41Yo8JbubCJP/8QwxwN87rqfDjtwXAKMZTuKVWmDMDD2HvFZQkZjD3svcFMCBd6i5XQSe96QDY2Ztc+lnjY+TWIhB4butKeej4ZMNNq79A+3HzmnFcZtHI0JuXEvtlrYNjyPNCWTDga4Vdms6YJzQNYXjMTAsseZHZcReaxNog5ph6xVDevlHrZO76Vw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ty0SFygZj0vhtS0DZ/R9JcHsF7hnRtTtAoa2ld43bD8=;
- b=dKteoPILbKeOOvO7ClObw8P6qb6Tl0vibEbRLASS9lkmh3OCyEX/MLho98JOUwsMnk0+ecvbEQl2hPoABVy0P8Ogrji652kxPKoH/kxld5bgIf+idcsjN8RTupZAFzjjBLwfhWFjVIs58k64bXK5/DgP3myfTveEn2L3QZ9Ev2wVOCLnU4efksuIDsWkyhzvDCu2ySXBWwIW4txeBs8uoo6zFnoHCPmnSFqKAZx0eeRGcEPL0X5oc52eODYPiqKlvvZfa0P6fV29qf+pQ71QdRvRVW8E0ngl+/adc+wQjCI7Ynp2oxrC3wXQJJsX716Ulxip492DiHhOtv9u1qnV+A==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- PN0P287MB1670.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:188::13) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7784.18; Wed, 24 Jul 2024 16:34:02 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%4]) with mapi id 15.20.7784.017; Wed, 24 Jul 2024
- 16:34:02 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Lukas Wunner <lukas@wunner.de>
-CC: Ard Biesheuvel <ardb@kernel.org>, "linux-efi@vger.kernel.org"
-	<linux-efi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Kerem
- Karabay <kekrby@gmail.com>, Orlando Chamberlain <orlandoch.dev@gmail.com>,
-	"sharpenedblade@proton.me" <sharpenedblade@proton.me>
-Subject: Re: [PATCH v3 0/2] efi/x86: Call set_os() protocol on dual GPU Macs
-Thread-Topic: [PATCH v3 0/2] efi/x86: Call set_os() protocol on dual GPU Macs
-Thread-Index:
- AQHay8BxbD/3780MxUWT4The9rzhebHiRiV0gBjw9fOAACgFAIAJQwrwgAGLugCAAAc4MYAAAVwAgAAAnWw=
-Date: Wed, 24 Jul 2024 16:34:02 +0000
-Message-ID:
- <MA0P287MB0217753D93980EB617739103B8AA2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
-References: <20240701140940.2340297-4-ardb+git@google.com>
- <MA0P287MB0217C0F7E0B9F6FE8CA47BE8B8D32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
- <MA0P287MB0217E3B4810704C504F13F2CB8A32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
- <ZpgUVjjj3naBGtfO@wunner.de>
- <MA0P287MB02178F503AA69E1F570E9753B8A92@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
- <ZqElRH38f_XV3fKK@wunner.de>
- <MA0P287MB021789D73CAD62C16BCF0306B8AA2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
- <ZqEsdkVvwsq-CgeB@wunner.de>
-In-Reply-To: <ZqEsdkVvwsq-CgeB@wunner.de>
-Accept-Language: en-IN, en-US
-Content-Language: en-IN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:
- [JfXUvZqX0ZIyYnWCcISEmAXL5IdJgTd7+g/aWdYFxoNjkJk+hiCHZk1EkOJ1S9wAHbExb+BtFUk=]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN0P287MB1670:EE_
-x-ms-office365-filtering-correlation-id: d4953dcd-305e-413e-8536-08dcabfe6d51
-x-ms-exchange-slblob-mailprops:
- WaIXnCbdHrORrPiYp+O3K2PHowtbVet0mAQ3fDL0YUCaMT4rMjKMbcZaGnuvOQVzpSo2imB8jJbt66QvyJP1DL2JX6M6L0ERW7l8AbwBgPfOXPu3SPm8iJcVaOVMA2EZj1pQBmAkufg2xo7H9AVw1cbP01FubhHeRLqk8g3QzGWbbP+I0qesHC3fnDYS6sNe7yyTyXTmc5pcyeMyIbSBI86nkoy2UP/Yizisx7tP0vnJAqTIsunHO0rrolffWNSb47J9L1tBjjYg7N/DBq39mHKHKltX9pMewtieBrZ1PLqtv82WUxJrkqJuiuY7DPKNvbk+1oCqlPn7KbfohtxUhYd4vgELV4ctqCjn5YSV10TlYkxVK4FuRTpDwv1LvpsnX+b/bqfeLUICelnuxREDueXnuZA2A9YEaZiiNfrP+MjJXjgX6wEmMAEGNyRCieldPzsbcPCj+GdKupGFjFkEQyRYwm+8L6MWE2vwU3+uViYGi9Pljw2Qqu8xFpjU//gk2pdG6/daPFyGAskZXCRtRIg16zVCABUlA62kzfd3RyysYq89DHxkdnvyw7FybZGiKicCMDxkvIH/jSUTo29TuaKGdaYQoGpnyRZEyrTIx+EzGZ5gCnxKxIXutMyrnZwx2GhlS+X62DzFkVNAFPFRruugglJpwei2XwEdnwpRWdoj1aNdwuRTn4Y2GrhF7+cHxMVo8DEE4ChrqX6PfaHbVzVSenLJV8ILBk2d4/6CRsQN5jS6HvVHfZMwWlOEEdwWgoqoBvWZlgw=
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|8060799006|19110799003|3412199025|440099028|102099032;
-x-microsoft-antispam-message-info:
- YU19dWnG1DPNy9v4UudeAEAVLRxYM15q5a5Xz3jfspHupUO8nUxeHe1YP4vmrMcrwNobJmtW5t8USMsIWHVLIlmtfHQBCuRy7M3kMLleOaRdMthMWXeJbsSE8ZWS/AlJ4OWM6rUI9sHu0mlJbIyoPWBXuYx60nAmciKa84czwfM4hriNy7QVnMt6osRVgDAhh9Haoqn4UFbWiF/F8L0I5nORFEa8EscCt1SuXGErNdkxKzesPH8WsPjL2F3i+uuHvkqdvZeqwxUUouRfRglsP10+g/lO3PoPGNyVJBFwgiz01e7F+rCo1xbCPEchpMHf+/Z7P33l/t9J7ozFSNdHGl5gBcacenLCqog2w9s2kf/TMowtC6c/2vDv7E+fd2QajbfRbxZP0XKd36yWgITerC9T1fWauqq94seNg0//xzhs8iitAfhscQshoJTYyRHb1IpZx0GFLhggISy5R/KlU4Cl75yGeeohYr5aM1iUW8Vz95UfbfCe+wVIUEpDKDlopbDx4YLT/Nu2qy9BRTcvK5QqvB1yxKtzVWvyiKHl/RRHlEMPOOzZlm+tP/mSAue7nOx1PjJbiU2PWFxTh0Yj1XMDq1aLGr7CD5NvDTvk1Fko+oelmZjoQpEj505WHNBmLR3fg/i1ykm/mqWKnUl9zg==
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?SS9FMGtzcm44NnBGbk1yMmVRc0RmWDZEaS9zUFRQakdNZDRrVStOZzRsWFZR?=
- =?utf-8?B?MkF2L3JDY04vam5rMVdWTlZjUStocFlTTk52YzdFZ1NjRTJ5YmxkNlNRSVVq?=
- =?utf-8?B?L0lWaU1NODk5TUdTTEFTZEoyejhxd1AxM1dtVitNUjFya0d3WlJ1c0xnNFhJ?=
- =?utf-8?B?dE9OV0gxY3lhK0xzNmFHVkpjMDI3MUEzNDRUMWw4Z0NrckRpNGxUVHNneExF?=
- =?utf-8?B?cDl0MHNTUTJGd2FDVU52Sko5RTNpMkM3SmF5V1NXemdaS3BzQmFld3pPYkhx?=
- =?utf-8?B?bkpaelJBRFZyaTlLRHJmZEh2VUN0MVpVaHcrWjlIOXdwVU1EU2ZQdE1EWmNV?=
- =?utf-8?B?MFlFRHpNN29BVWVObkZwODRGU3VlWUxiVEc5UlRCaHlEazQ3VU1GU3JZYzFI?=
- =?utf-8?B?c21EaC9CL0lSalJTWHBlZmkzTlVDcFBMU0RwZWZJd2JlOXdQeERWNHJyZXlZ?=
- =?utf-8?B?azFMMFcxNSszczRSSjdEci9xQU9ERUltNDdwSmFhNm1MblRKS1NrZ1hGTHpP?=
- =?utf-8?B?YmU5YjR6b3JlWmRBbElGbndWRWhXZkNXVXJhUWNGVE56VWJsTUI4Smc2MklG?=
- =?utf-8?B?cGUycTJFeW40RFdvdW9UaWV0eTdxVGoybDJYcnltU00yTjVqR0hnOGFCWk1z?=
- =?utf-8?B?NGUwMDhQaEhtYTR5S1JzNEUxcHgvSUo4TFhzdjBMVHEvSmorVktQTytXWXpJ?=
- =?utf-8?B?UXBVS3E4VjhMN2dxZkFibzRwYkZWTlJXekQ3OFl4bVRkL2w3QWZyWWZGU3E5?=
- =?utf-8?B?S0ZjR2srcWw2UmJ0RkowUEE2cSswNFluYm1RT1J4ZUpQTk4weGpmUjl5WmhP?=
- =?utf-8?B?Sm9xSk9pU2Nsb1Y0czZvcTlOVTg5MlVyYU1PNTNrRWR0elk4MWp5N1NwSUov?=
- =?utf-8?B?STd0ZlVYSzhUZWdpd2dOaHVaR0lNRFk4bjRSajFPNW1Na0xNSnQ5bThDUXF5?=
- =?utf-8?B?RUoxRmpMbmorU1VFblFqT21NVVBSQTNnMGpqejZ6NlBSekZXUis4Zzk2YmI1?=
- =?utf-8?B?cWtHNzgzOElYYk9aekxmbkZkMG9ENHF4eFR1cmVKSWQ1TFB0UXlZSmRaaDlW?=
- =?utf-8?B?NW1ERjBUVjIxUjhZTS83Y0Jic0RwWFdPd2pCdTR3N0JRMkhOaDJWMXY0cDVs?=
- =?utf-8?B?M1JWcTE4UURTNHZkVlYzSVduOVd4b1BjUFVxeUZnKzlIWURyTVQzUUxmV3U3?=
- =?utf-8?B?Y3I2b0dleWcvMXByZFNUWXQvTjJTZG1IbEpkM2JoTTV2ajZKRkMydG5qeDcw?=
- =?utf-8?B?b3QxMFc0MmNoclRzcFZlUkZPSlhCajZQZnRncHpJNWtON0Jvc2puSVZNUFp3?=
- =?utf-8?B?OERvc3VTMmkwYjNIU2ZOMXgyVkxjWisvRE9jUmZrNlRaUkVIMzBab1ZGZXZG?=
- =?utf-8?B?NmM0Z2dxUkJURGcxOWlqTTlmR3Jrc0prUmhJVkF6ZmhiVFAycnllSXM0d01T?=
- =?utf-8?B?emRyWjlEWjZpRnU4R3U4L3NDT25oSVhySG1kSWI2c3dyblpyS005NVNUSEdS?=
- =?utf-8?B?NWdMNXJYbXNXc2pXR1YwaWVucDRXc2d6VmpveDIzY2F4OVlrOVN3bUMreGww?=
- =?utf-8?B?cGVqSk1LZGpBTzZOUjZzMVA0bXcvaWJWbG5OVkQ0ODA5NHgzL3I0NENUQnhJ?=
- =?utf-8?B?YjcwMFpKN1k3VVVLaGFmNjdFS1RSeUhEcEQydzd0em9WVkliekRCbnZPSW44?=
- =?utf-8?B?UlJkRGNuRU52V0VIWFFiN09rWFUxM0RaZC9QVkhGL3JMY0J1MS9zOFduMHIz?=
- =?utf-8?Q?BkVEruJw+cU8dtK6l4=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0375415EFAA
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 16:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721838862; cv=none; b=aYU8J5eRKFgNiIx13FeEUTEQtMYJ2gOVXTuu9A/vAQ3Y2T7iX5wMXk0Dlb4af83Ai4IeDyTP9QAhU2ZySbGMJXv8sjn9Cr3MnCd2A1sBsswh8+us9its9lOfidw3jtMfl7rixtUFKpAA09tdAKEXGlGcepkgB/Pj/usZt85yGRg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721838862; c=relaxed/simple;
+	bh=KOkbrR8tWNW8iUSSPBFdT2kuONIDvB6nyJSFtbILmuA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qZFQgQ7o1A9U5kkcUiPOp0Vkobgc9+WDsnOq58PHH96gc/qjqTEQLy9tcGbHLShMdyi/zvKxtt7mhnUFHs9f0VDAQg14f0KhDC2mQ98Ly2hx+Bv15T4GR7+2a24gf4fjuMQOZAe6By8DepuyiiWiZ/5QF5bnSVwwf9p6HcJMGck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eJZ3QKzq; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4266edcc54cso385e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 09:34:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721838859; x=1722443659; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BIn9I8OgB+Zl6a/4DmM7/3n8midQ/Rf950bAiHb/5Tg=;
+        b=eJZ3QKzq7HAtQp4eXYc3o6wN6HfaAwawzXeo8XKNpuwAHhJ3Td3oSjIPkH2NsawnlM
+         VjBg6vp9tmJhxNUpiSBzWdZbw9SfXWtnS+Aij5IREihHY5JtaYF1Z8QCxzFneGHKIeYn
+         O1mdvuQyV2uExZcELlRZbOu8oE98ZGfJiiK5gX4HnHZeVcrNC2BsrGLRdGvgJa/6gcEm
+         cfj2+zgo8hVt0CPpyj1Qy6UI7frm5u7U9FOrUE3f/eHOhnp1lbd0No2MAIQ48gwQqipL
+         twOrdf9RvSDdsXxCEA6UCNbM8BkttDDmkNYAwyJ21HCFv2nI/oQC3QlZuLNC54nqhH7J
+         KhOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721838859; x=1722443659;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BIn9I8OgB+Zl6a/4DmM7/3n8midQ/Rf950bAiHb/5Tg=;
+        b=OjdKq7HvC009d0ZcpPts0OSBntkrNu0VQrjQos8CamiaF/bTfcbYqSrYLYT+mDcfuV
+         YrwVp3cVrZgifpH9+eCcYGcw5h6OXn4LOeKuo08GT2JyftvMyyg7PQosyaEnmrbkrvih
+         RcGWztFr0wVo+RHbL2bDSGdXmSrmDXCC9tESGffOYyPbBcwXLvpg+WEO0D8GRzN/+FxE
+         jaAWZqwikGFopDmgML65+OtfhXr5xIbuSo7+xhHQNNYLRXEKQ1uJwSEPNwFTZ6CTvxDp
+         5hVaaQACgMtevZ1yn/RVxrc3F+H3cq1oL6QYtANc+/dkNurX82ESUXvGqXssSzP6pLfz
+         zNMw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/DSkR6YlWF+nUlduDmdp48C4L8qOqLPylzMPAxL3pymAibsQ60BcU442YjWIQWPHAPW8b+npErHKW7bHDWjkI5frycjLFIGhD9/50
+X-Gm-Message-State: AOJu0YzbZ7GsxGA1++sJJbXZXMf65oWR8uCyPp60D55Aa/NAW4EJLebc
+	jJOpbA41qvU/PaMF/txlKtiDg+12/UVkvTC6NFCuE0a0cOc51/TlecqwRoggwg==
+X-Google-Smtp-Source: AGHT+IFUq32k/v6xKrznqFulE1H8hzij3lXrZPymX6K6nlmp5ql94I5UcAr/tg+gIfy9BTIFR0DT1w==
+X-Received: by 2002:a05:600c:3b8e:b0:426:6413:b681 with SMTP id 5b1f17b1804b1-427f7c550a3mr1839245e9.6.1721838858696;
+        Wed, 24 Jul 2024 09:34:18 -0700 (PDT)
+Received: from localhost ([2a00:79e0:9d:4:7aec:12da:2527:71ba])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427fc95707esm11705295e9.0.2024.07.24.09.34.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 09:34:18 -0700 (PDT)
+From: Jann Horn <jannh@google.com>
+Subject: [PATCH v2 0/2] allow KASAN to detect UAF in SLAB_TYPESAFE_BY_RCU
+ slabs
+Date: Wed, 24 Jul 2024 18:34:11 +0200
+Message-Id: <20240724-kasan-tsbrcu-v2-0-45f898064468@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: d4953dcd-305e-413e-8536-08dcabfe6d51
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2024 16:34:02.3447
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB1670
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAMtoWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
+ vPSU3UzU4B8JSMDIxMDcyNj3ezE4sQ83ZLipKLkUt0kc0PTREsDwzRzczMloJaCotS0zAqwcdG
+ xtbUAu8f5PF4AAAA=
+To: Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+ Alexander Potapenko <glider@google.com>, 
+ Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, 
+ Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+ Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
+ Roman Gushchin <roman.gushchin@linux.dev>, 
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Cc: Marco Elver <elver@google.com>, kasan-dev@googlegroups.com, 
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+ Jann Horn <jannh@google.com>
+X-Mailer: b4 0.15-dev
 
-DQoNCj4gT24gMjQgSnVsIDIwMjQsIGF0IDEwOjAx4oCvUE0sIEx1a2FzIFd1bm5lciA8bHVrYXNA
-d3VubmVyLmRlPiB3cm90ZToNCj4gDQo+IO+7v09uIFdlZCwgSnVsIDI0LCAyMDI0IGF0IDA0OjI2
-OjU4UE0gKzAwMDAsIEFkaXR5YSBHYXJnIHdyb3RlOg0KPj4+PiBPbiAyNCBKdWwgMjAyNCwgYXQg
-OTozMSBQTSwgTHVrYXMgV3VubmVyIDxsdWthc0B3dW5uZXIuZGU+IHdyb3RlOg0KPj4+IEkgbm90
-ZSB0aGF0IG9uIHg4NiwgdGhlIGVmaXN0dWIgd2Fsa3Mgb3ZlciBhbGwgUENJIGRldmljZXMgaW4g
-dGhlIHN5c3RlbQ0KPj4+IChzZWUgc2V0dXBfZWZpX3BjaSgpIGluIGRyaXZlcnMvZmlybXdhcmUv
-ZWZpL2xpYnN0dWIveDg2LXN0dWIuYykgYW5kDQo+Pj4gcmV0cmlldmVzIHRoZSBEZXZpY2UgSUQg
-YW5kIFZlbmRvciBJRC4gIFdlIGNvdWxkIGFkZGl0aW9uYWxseSByZXRyaWV2ZQ0KPj4+IHRoZSBD
-bGFzcyBDb2RlIGFuZCBjb3VudCB0aGUgbnVtYmVyIG9mIEdQVXMgaW4gdGhlIHN5c3RlbSBieSBj
-aGVja2luZw0KPj4+IHdoZXRoZXIgdGhlIENsYXNzIENvZGUgbWF0Y2hlcyBQQ0lfQkFTRV9DTEFT
-U19ESVNQTEFZLiAgSWYgdGhlcmUncw0KPj4+IGF0IGxlYXN0IDIgR1BVcyBpbiB0aGUgc3lzdGVt
-LCBpbnZva2UgYXBwbGVfc2V0X29zLg0KPj4gDQo+PiBUaGlzIGFsc28gbG9va3MgbGlrZSBhIGdv
-b2QgaWRlYSwgYnV0IEknbSBub3Qgd2VsbCBhd2FyZSBvZiB0aGUgcGNpDQo+PiBxdWlya3MgaW4g
-dGhlIExpbnV4IGtlcm5lbC4gU28sIHdvdWxkIGNvbnNpZGVyIGl0IGEgYnVnIHJlcG9ydCBmb3IN
-Cj4+IHRoZSBtYWludGFpbmVycyB0byBmaXguDQo+IA0KPiBUaGlzIGlzIG5vdCBhIFBDSSBxdWly
-ayBpbiB0aGUga2VybmVsLiAgVGhlIGVmaXN0dWIgaXMgYSBzZXBhcmF0ZQ0KPiBwcm9ncmFtLiAg
-SSdtIHNheWluZyB0aGF0IHRoZSBlZmlzdHViIGFscmVhZHkgd2Fsa3Mgb3ZlciBhbGwgUENJIGRl
-dmljZXMsDQo+IGl0IHdvdWxkIGJlIHRyaXZpYWwgdG8gaG9vayBpbnRvIHRoaXMgdG8gY291bnQg
-R1BVcywgcmVjb2duaXplIHRoZSBUMg0KPiBkZXZpY2Ugb3IgZG8gc29tZXRoaW5nIGVsc2UgZW50
-aXJlbHkuDQo+IA0KDQpJJ2xsIGxlYXZlIHRoaXMgdG8gQXJkLiBJJ20gcmVhbGx5IGNvbmZ1c2Vk
-IGluIGNob29zaW5nIHRoZSBiZXN0IHBvc3NpYmxlIG9wdGlvbiBoZXJlLg0KDQo+IFRoYW5rcywN
-Cj4gDQo+IEx1a2FzDQo=
+Hi!
+
+This is v2 of a series that I started, uuuh, almost a year ago.
+(Sorry...)
+v1 was at:
+https://lore.kernel.org/lkml/20230825211426.3798691-1-jannh@google.com/
+
+The purpose of the series is to allow KASAN to detect use-after-free
+access in SLAB_TYPESAFE_BY_RCU slab caches, by essentially making them
+behave as if the cache was not SLAB_TYPESAFE_BY_RCU but instead every
+kfree() in the cache was a kfree_rcu().
+This is gated behind a config flag that is supposed to only be enabled
+in fuzzing/testing builds where the performance impact doesn't matter.
+
+Patch 1/2 is new; it's some necessary prep work for the main patch to
+work, though the KASAN integration maybe is a bit ugly.
+Patch 2/2 is a rebased version of the old patch, with some changes to
+how the config is wired up, with poison/unpoison logic added as
+suggested by dvyukov@ back then, with cache destruction fixed using
+rcu_barrier() as pointed out by dvyukov@ and the test robot, and a test
+added as suggested by elver@.
+
+Output of the new kunit testcase I added to the KASAN test suite:
+==================================================================
+BUG: KASAN: slab-use-after-free in kmem_cache_rcu_uaf+0x3ae/0x4d0
+Read of size 1 at addr ffff88810d3c8000 by task kunit_try_catch/225
+
+CPU: 7 PID: 225 Comm: kunit_try_catch Tainted: G    B            N 6.10.0-00003-gf0fc688e25ed #422
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x53/0x70
+ print_report+0xce/0x670
+[...]
+ kasan_report+0xa5/0xe0
+[...]
+ kmem_cache_rcu_uaf+0x3ae/0x4d0
+[...]
+ kunit_try_run_case+0x1b3/0x490
+[...]
+ kunit_generic_run_threadfn_adapter+0x80/0xe0
+ kthread+0x2a5/0x370
+[...]
+ ret_from_fork+0x34/0x70
+[...]
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+
+Allocated by task 225:
+ kasan_save_stack+0x33/0x60
+ kasan_save_track+0x14/0x30
+ __kasan_slab_alloc+0x6e/0x70
+ kmem_cache_alloc_noprof+0xef/0x2b0
+ kmem_cache_rcu_uaf+0x10d/0x4d0
+ kunit_try_run_case+0x1b3/0x490
+ kunit_generic_run_threadfn_adapter+0x80/0xe0
+ kthread+0x2a5/0x370
+ ret_from_fork+0x34/0x70
+ ret_from_fork_asm+0x1a/0x30
+
+Freed by task 0:
+ kasan_save_stack+0x33/0x60
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3b/0x60
+ __kasan_slab_free+0x47/0x70
+ slab_free_after_rcu_debug+0xee/0x240
+ rcu_core+0x676/0x15b0
+ handle_softirqs+0x22f/0x690
+ irq_exit_rcu+0x84/0xb0
+ sysvec_apic_timer_interrupt+0x6a/0x80
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20
+
+Last potentially related work creation:
+ kasan_save_stack+0x33/0x60
+ __kasan_record_aux_stack+0x8e/0xa0
+ __call_rcu_common.constprop.0+0x70/0xa70
+ kmem_cache_rcu_uaf+0x16e/0x4d0
+ kunit_try_run_case+0x1b3/0x490
+ kunit_generic_run_threadfn_adapter+0x80/0xe0
+ kthread+0x2a5/0x370
+ ret_from_fork+0x34/0x70
+ ret_from_fork_asm+0x1a/0x30
+
+The buggy address belongs to the object at ffff88810d3c8000
+ which belongs to the cache test_cache of size 200
+The buggy address is located 0 bytes inside of
+ freed 200-byte region [ffff88810d3c8000, ffff88810d3c80c8)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x10d3c8
+head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0x200000000000040(head|node=0|zone=2)
+page_type: 0xffffefff(slab)
+raw: 0200000000000040 ffff88810d3c2000 dead000000000122 0000000000000000
+raw: 0000000000000000 00000000801f001f 00000001ffffefff 0000000000000000
+head: 0200000000000040 ffff88810d3c2000 dead000000000122 0000000000000000
+head: 0000000000000000 00000000801f001f 00000001ffffefff 0000000000000000
+head: 0200000000000001 ffffea000434f201 ffffffffffffffff 0000000000000000
+head: 0000000000000002 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff88810d3c7f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88810d3c7f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88810d3c8000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffff88810d3c8080: fb fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc
+ ffff88810d3c8100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+    ok 38 kmem_cache_rcu_uaf
+
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+Jann Horn (2):
+      kasan: catch invalid free before SLUB reinitializes the object
+      slub: Introduce CONFIG_SLUB_RCU_DEBUG
+
+ include/linux/kasan.h | 20 +++++++++++++
+ mm/Kconfig.debug      | 25 ++++++++++++++++
+ mm/kasan/common.c     | 63 +++++++++++++++++++++++++++++++--------
+ mm/kasan/kasan_test.c | 44 +++++++++++++++++++++++++++
+ mm/slab.h             |  3 ++
+ mm/slab_common.c      | 12 ++++++++
+ mm/slub.c             | 82 ++++++++++++++++++++++++++++++++++++++++++++++-----
+ 7 files changed, 229 insertions(+), 20 deletions(-)
+---
+base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
+change-id: 20240723-kasan-tsbrcu-b715a901f776
+-- 
+Jann Horn <jannh@google.com>
+
 
