@@ -1,52 +1,50 @@
-Return-Path: <linux-kernel+bounces-260666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6168093ACB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:36:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0290493ACBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:38:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9320B1C22C29
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 06:36:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3463D1C22A7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 06:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4220D4F615;
-	Wed, 24 Jul 2024 06:36:20 +0000 (UTC)
-Received: from out198-6.us.a.mail.aliyun.com (out198-6.us.a.mail.aliyun.com [47.90.198.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131F161FD4;
+	Wed, 24 Jul 2024 06:38:05 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBC043150;
-	Wed, 24 Jul 2024 06:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E15C7481CD;
+	Wed, 24 Jul 2024 06:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721802979; cv=none; b=ITg4bq9F7KeEy1eoBSkoBe4tObSP6eAZE/qDsILeZmJDOIqRk7+jQAFGrKSeHCldlDg8lgN1L7MQPeaDQeyZ9twbkZMoaLhATspsYBR6F34tJyfbOowWzLqta78mqJkwZO7Y2QCV4Dqgx6/Ld/soS8umHGJ6TIwbKa3HcAJRNsU=
+	t=1721803084; cv=none; b=XcNzjn3brahAKWjiPuztCOKMMx2UjK9dbOoKsKnwAS79ATI6PJdYc7GxaV73l8gnK5A/dgukOPxKIZBn9Z1SW9pMrHICi0blScUC4xrbddZuLSMY8jOHPRtDTu3ebNbfg6M+/aewMJYlYWvk0RoOKtpNZqcAseWj2rC2oYdYOnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721802979; c=relaxed/simple;
-	bh=Ebd14HrAYjGw8+Qc37MwbFm3fXYOaB8vE0cSnkFhrC0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=m2jnD3ollDP/SDSngrP4VIYjLusHWi0kANUaay1APPyvxXn3sMu4wM/6w7IN5yyubN2O7QJqraUF5j+V4g0dB0HZtw8bmaFandL4doeqA3k7kuk3RImhq2npp4AcqKkCcBlqC1okSyasHJBFO/xBBwqLreJg5/2bLql3w7qfoN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ttyinfo.com; spf=pass smtp.mailfrom=ttyinfo.com; arc=none smtp.client-ip=47.90.198.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ttyinfo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ttyinfo.com
-X-Alimail-AntiSpam:AC=CONTINUE;BC=0.07492151|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.00739205-0.00019925-0.992409;FP=16154132379161130174|0|0|0|0|-1|-1|-1;HT=maildocker-contentspam033038033188;MF=zhoushengqing@ttyinfo.com;NM=1;PH=DS;RN=8;RT=8;SR=0;TI=SMTPD_---.YY4fdiP_1721802955;
-Received: from tzl..(mailfrom:zhoushengqing@ttyinfo.com fp:SMTPD_---.YY4fdiP_1721802955)
-          by smtp.aliyun-inc.com;
-          Wed, 24 Jul 2024 14:35:56 +0800
-From: Zhou Shengqing <zhoushengqing@ttyinfo.com>
-To: haifeng.zhao@linux.intel.com
-Cc: helgaas@kernel.org,
+	s=arc-20240116; t=1721803084; c=relaxed/simple;
+	bh=3vjVBC564vfur4duYDr2L+pfHn61WMoVTgMxs7YsY7g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UBRAp6HviuTUm4WEuO4los/6VSfkECBj15zVt+rLhhXJNIh5FyRrw/1WIG/wj0cCfvzHZhf+jt8/+SJQQ+FgFNUebdRA2dRVwFdeT8oTb59SIQ0Qhcgi5txnGdyCXqnsB+Nqud+6myuuHc9oI1Ku/7gQKfspkYtYjc420QTA2D8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowAAH8DotoaBmUTq0AA--.47674S2;
+	Wed, 24 Jul 2024 14:37:46 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	make24@iscas.ac.cn,
+	liujunliang_ljl@163.com
+Cc: linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	lkp@intel.com,
-	llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev,
-	zhoushengqing@ttyinfo.com
-Subject: Re: [PATCH v4] PCI: Enable io space 1k granularity for intel cpu root port
-Date: Wed, 24 Jul 2024 06:35:55 +0000
-Message-Id: <20240724063555.3819-1-zhoushengqing@ttyinfo.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <48373ac6-574b-4f72-b4f1-ddb7de8a5107@linux.intel.com>
-References: <48373ac6-574b-4f72-b4f1-ddb7de8a5107@linux.intel.com>
+	stable@vger.kernel.org
+Subject: [PATCH net v3] net: usb: sr9700: fix uninitialized variable use in sr_mdio_read
+Date: Wed, 24 Jul 2024 14:37:31 +0800
+Message-Id: <20240724063731.1489034-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,70 +52,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAAH8DotoaBmUTq0AA--.47674S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF15XFyrCr4kZr4DuF45Jrb_yoW8XryUpr
+	47Ga9YyrWUJa47Z3ykXwn7W3WFkws5GFy3GFW8Gw1fZ395Jrn5C34FgFyjgw1UGrW5Ja1j
+	vF4qyFW3Xa1FvaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
+	1j6rxdM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
+	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
+	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28Icx
+	kI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
+	xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42
+	IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY
+	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
+	CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbQVy7UUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-> > Do you mean it shoud be like this?
-> >
-> > 	while ((d = pci_get_device(PCI_VENDOR_ID_INTEL, 0x09a2, d))) {
-> > 		if (d->bus->number == dev->bus->number) {
-> > 			pci_read_config_word(d, 0x1c0, &en1k);
-> > 			if (en1k & 0x4) {
-> > 				pci_info(dev, "1K I/O windows enabled per %s EN1K setting\n", pci_name(d));
-> > 				dev->io_window_1k = 1;
-> > 			}
-> > 		}
-> > 	}
-> >
-> >> 00:00.0 System peripheral: Intel Corporation Device 09a2 (rev 20)
-> >> 00:0f.0 PCI bridge: Intel Corporation Device 1bbf (rev 10) (prog-if 00 [Normal decode])
-> >>
-> >>    
-> >> 15:00.0 System peripheral: Intel Corporation Device 09a2 (rev 20)
-> >> 15:01.0 PCI bridge: Intel Corporation Device 352a (rev 04) (prog-if 00 [Normal decode])
-> >>
-> >> and if you check domain number only, they might sit on different bus, perhaps that
-> >> would make thing complex, could you make sure the VT-d is on the upstream bus of the
-> >> bridge ?
-> > I checked it on ICX SPR EMR GNR, VT-d is always on the same bus with root port,
-> > and VT-d device and function number is always 0.
-> 
-> Yes, every VT-d instance in the root complex and the root port integrated are
-> on the same bus. and VT-d is the first device of that bus.
-> 
-> The EDS doesn't say if there is exception one of the VT-d instances in an
-> system its EN1K wasn't set while others were set, vice vesa. so I suggest
-> just check the VT-d and then set the root port's io_windows_1k of the same bus.
+It could lead to error happen because the variable res is not updated if
+the call to sr_share_read_word returns an error. In this particular case
+error code was returned and res stayed uninitialized.
 
-But as Bjorn mentioned at July 12, 2024, 6:48 p.m.,
+This can be avoided by checking the return value of sr_share_read_word
+and propagating the error if the read operation failed.
 
-"To be safe, "d" (the [8086:09a2] device) should be on the same bus as
-"dev" (with VMD, I think we get Root Ports *below* the VMD bridge,
-which would be a different bus, and they presumably are not influenced
-by the EN1K bit."
+Found by code review.
 
-When VMD enabled, just check bus number identical may lead to enable
-1k io windows for VMD domain root port. E.g. 0000:80:00.0 is a 
-VT-d(09a2). If VMD enabled, there might be a root port 10000:80:01.0 present.
-this code may lead to enable 10000:80:01.0 io_window_1k = 1. 
-This is probably not expected.
+Cc: stable@vger.kernel.org
+Fixes: c9b37458e956 ("USB2NET : SR9700 : One chip USB 1.1 USB2NET SR9700Device Driver Support")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+Changes in v3:
+- added Cc stable line as suggestions.
+Changes in v2:
+- modified the subject as suggestions.
+---
+ drivers/net/usb/sr9700.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-If I modify it like this,
+diff --git a/drivers/net/usb/sr9700.c b/drivers/net/usb/sr9700.c
+index 0a662e42ed96..d5bc596f4521 100644
+--- a/drivers/net/usb/sr9700.c
++++ b/drivers/net/usb/sr9700.c
+@@ -179,6 +179,7 @@ static int sr_mdio_read(struct net_device *netdev, int phy_id, int loc)
+ 	struct usbnet *dev = netdev_priv(netdev);
+ 	__le16 res;
+ 	int rc = 0;
++	int err;
+ 
+ 	if (phy_id) {
+ 		netdev_dbg(netdev, "Only internal phy supported\n");
+@@ -193,7 +194,10 @@ static int sr_mdio_read(struct net_device *netdev, int phy_id, int loc)
+ 		if (value & NSR_LINKST)
+ 			rc = 1;
+ 	}
+-	sr_share_read_word(dev, 1, loc, &res);
++	err = sr_share_read_word(dev, 1, loc, &res);
++	if (err < 0)
++		return err;
++
+ 	if (rc == 1)
+ 		res = le16_to_cpu(res) | BMSR_LSTATUS;
+ 	else
+-- 
+2.25.1
 
-	while ((d = pci_get_device(PCI_VENDOR_ID_INTEL, 0x09a2, d))) {
-	---if (d->bus->number == dev->bus->number) {
-	+++if (d->bus == dev->bus) {
-			pci_read_config_word(d, 0x1c0, &en1k);
-			if (en1k & 0x4) {
-				pci_info(dev, "1K I/O windows enabled per %s EN1K setting\n", pci_name(d));
-				dev->io_window_1k = 1;
-			}
-		}
-	}
-    
-Can the situation mentioned above be avoided?
-
-Hope for your suggestion.
-
-> 
-> Hope that works for your case.
-> 
 
