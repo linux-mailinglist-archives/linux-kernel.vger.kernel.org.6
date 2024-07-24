@@ -1,96 +1,86 @@
-Return-Path: <linux-kernel+bounces-260645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B740493AC5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:57:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8190193AC5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F1E81C22386
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 05:57:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44D0F2845C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 05:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5046F4C3D0;
-	Wed, 24 Jul 2024 05:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64DE56440;
+	Wed, 24 Jul 2024 05:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WXahiLzJ"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZCgouGs6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826555695;
-	Wed, 24 Jul 2024 05:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7AB53E23;
+	Wed, 24 Jul 2024 05:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721800631; cv=none; b=nt17N4tXS+D5zUfoW/pUwsopcPcPNksaPcR1CmLy31Tut9z9bu4IxSmqEpSgl0lmgtHavK2xOfygUuPdPITkfKpx0BexfPK6GShow1lh5KwCZ/BZJnnNxU0QQS87ibAyLNUn1344WJhWn2sGj4/FY8jLs479X2s5b9vcLapiLkM=
+	t=1721800669; cv=none; b=r7sxBugSzp+1RUwhxLoM//t/MBNiXthx4yuRZTiACjkOuVuKlUn2aA+t9MVCmixTYHFkP/squJIjyyjkmmLn+jJrSRlILMXTjO6DccLod2TNNnBFuSuovRY9UWrRA2a+PgojAu20wMc6tYah19BvOWnPIbq/2s6cl+88lCBuYog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721800631; c=relaxed/simple;
-	bh=8nc4UXjqleX9ROlHeHnZxGX47iD/172z8ulcpcEUONc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yx5hlJzbzbQRHbKn51NyyCtGwiaN34DbF7DbYTMk9N6+DVHJmlbw1WtCGGjYZHJvPeIB/DleMsGEAKUeQA2p+nwaEyZfAlZcZNfqgQXoPPjlwYFPSEhGqWRtYIqV8GtLADzurbHZ8RMmH8nwyFtt6caGCWO0dWPc+/CkUDJPh6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WXahiLzJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A83CFC32782;
-	Wed, 24 Jul 2024 05:57:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721800631;
-	bh=8nc4UXjqleX9ROlHeHnZxGX47iD/172z8ulcpcEUONc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WXahiLzJ1b327mBdX5YyxCWOROOl6fDozKOFRDil2+vZXESrIgmR4Du4V/STrOSUP
-	 i4ALki+XnY6PJ7qCfN9h1aIt8CDBMy9c/vkJv++jqq2jJf3TU36aZo8yNsD6QhZkBe
-	 EaHeUs0jwGtrr6Sa+jodHb0SVN7rcAVu3BoykQn8/YU1OOQQ9rwMko4WrYNrLQKyR+
-	 y8sndoNjh4KI9P6mjKKg3tBegKTBpeVV8dVtgJAOE8Jr//AuYetdkunFn63Qx+Qhc7
-	 7cWjjqsQWdEazwMQjq7HS/k546lUhMqulC4NssLEf8pGzRTjxPx+H62qfEMynbazxG
-	 N9Y9DjzEZzuTg==
-Message-ID: <d2d6f29d-22d6-4ae8-9172-a4af589e398c@kernel.org>
-Date: Wed, 24 Jul 2024 14:57:08 +0900
+	s=arc-20240116; t=1721800669; c=relaxed/simple;
+	bh=icYbqzAh+qqL0F6QLJ1TYRdeqsy+pUQjVJeYvn12CS0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=rLe1BiVedak/VTHv0L40pzK6nwBG8tUsORyusngQh92ZoMyYiW8zit3uQo8Vs5ikNFsRlBl1iFooj63czTFHCdLf+gtRCR8lXVZ43Zy3W+9FlepS/50KiztmH+Qtc4mjc8z/0pFgTDaJ+uySoJJjy+WN66IM6RKT6HuDBVV+5lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZCgouGs6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40568C32782;
+	Wed, 24 Jul 2024 05:57:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1721800668;
+	bh=icYbqzAh+qqL0F6QLJ1TYRdeqsy+pUQjVJeYvn12CS0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZCgouGs69EFtYdI1dJZKO0ST1iP1Sbm3aVDtljf6PgNVJqKgZE6QFvrLBff0qYlSm
+	 aCq6TmoghMqOi4CH7krQETIN9q9MdY2Jm3ftpq5nYsb6UFWq+PjHtWWEkn0yQ2Zgy2
+	 GjqDSucPxMxQh/typNQo+b5CemoKZepM3mLkOH4g=
+Date: Tue, 23 Jul 2024 22:57:32 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the mm tree
+Message-Id: <20240723225732.1e050339cb366c998cfda374@linux-foundation.org>
+In-Reply-To: <16389d71-4a1f-4049-8d81-5814d240c46d@lucifer.local>
+References: <20240724084902.0843304d@canb.auug.org.au>
+	<16389d71-4a1f-4049-8d81-5814d240c46d@lucifer.local>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] Convert {a,i}pq8064 SATA AHCI controller bindings
- to dtschema
-To: Rayyan Ansari <rayyan.ansari@linaro.org>, devicetree@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-Cc: Conor Dooley <conor+dt@kernel.org>, de Goede <hdegoede@redhat.com>,
- Jens Axboe <axboe@kernel.dk>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
- Niklas Cassel <cassel@kernel.org>, Rob Herring <robh@kernel.org>
-References: <20240717100600.19005-1-rayyan.ansari@linaro.org>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20240717100600.19005-1-rayyan.ansari@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 7/17/24 7:03 PM, Rayyan Ansari wrote:
-> Hi,
-> The following patches convert the old text bindings to dtschema by using
-> ahci-platform.yaml.
-> 
-> Note: patch 1/3 from v1 of this series has been sent as a separate patch
-> for v2: https://lore.kernel.org/all/20240717094914.17931-2-rayyan.ansari@linaro.org/
-> 
-> v1: https://lore.kernel.org/all/20240716105245.49549-1-rayyan.ansari@linaro.org/
-> 
-> Thanks,
-> Rayyan
-> 
-> Rayyan Ansari (2):
->   dt-bindings: ata: qcom,ipq806x-ahci: use dtschema
->   dt-bindings: ata: qcom,apq8064-ahci: add to dtschema
-> 
->  .../bindings/ata/ahci-platform.yaml           | 33 ++++++++++++-
->  .../devicetree/bindings/ata/qcom-sata.txt     | 48 -------------------
->  2 files changed, 31 insertions(+), 50 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/ata/qcom-sata.txt
+On Wed, 24 Jul 2024 06:31:53 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
 
-Applied to for-6.12. Thanks !
+> > Caused by commit
+> >
+> >   b102945dd5b2 ("mm: move internal core VMA manipulation functions to own file")
+> >
+> > from the mm-unstable branch of the mm tree.
+> >
+> > asm/page_types.h only exists for x86 ...
+> >
+> > I have dropped the mm tree until the end of the merge window.
+> >
+> 
+> This seems a bit drastic. It's literally caused by 2 unncessary header includes
+> which are already fixed.
+> 
+> We really want to get some time in -next for this ideally.
 
--- 
-Damien Le Moal
-Western Digital Research
+I'm busily merging 6.12 material while the 6.11 merge window is still
+open.  That is Against The Rules, for good reasons - linux-next remains
+the 6.11-rc1 candidate tree until the merge window ends.
 
+So removing mm.git from -next is appropriate.  It'll be restored next week.
+
+mm-unstable remains a suitable base for ongoing work.
 
