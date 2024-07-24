@@ -1,292 +1,244 @@
-Return-Path: <linux-kernel+bounces-260721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D5ED93AD64
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:48:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DF0D93AD67
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F33B81F22B28
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:48:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEC101F22D0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1490367A0D;
-	Wed, 24 Jul 2024 07:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDF281AC4;
+	Wed, 24 Jul 2024 07:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n7i7gbCh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b="oy92+FnZ"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D9146B91
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D004AEF6
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721807282; cv=none; b=Qh6MMz0hjeldczC7MncQp+I1Fs68N6eyDVSHT0nPJuV7Kblzy2R6Dfpnqmm7PE0qHBiPbZLmmf8lLDStewtVdvJsS/jTLkdy50MlxqPQ3K/6zAjXVcdZ0dkWdTjlpH94ev9V6qxTljQamPAESWMhN7u29buicDKkCZe9N2YIN74=
+	t=1721807303; cv=none; b=qtafa4hKsDIra0lv86uZUUvESLEHQ94VuwkQ1k53qq4r7hAV8g0HN0SnPoaYAUd4zBHI/Bkz/Fp+hIn1Fw4RAgZzD8xnnSwHkv2Qd8SGuN8Sb/hl+fTtSHK1LDEKeO4h3670GPCRw+teTLYlvr6rCYcnd/zHJ9xvV0tQXc9jaTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721807282; c=relaxed/simple;
-	bh=NWk18YD1yHmT+BnSekISX+R8kie7bq0GHyfCDkXXFuk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=P+4sxQMgnPMs0YtkkBRDjtdosqBI/zj/LFcd9zQN36z7owGRe0lz4gZlW/shnP7zvJOtvwcBxTLeG39INFPZCHDxIFrg8RJnpDXzSDijRMexByYq4hoPXkUbCN7qDjejWHnyr5iE2/8OWDLFc7SoeS45ZfIsfWdtNutTVVHps9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n7i7gbCh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45D8EC32782;
-	Wed, 24 Jul 2024 07:48:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721807282;
-	bh=NWk18YD1yHmT+BnSekISX+R8kie7bq0GHyfCDkXXFuk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=n7i7gbCh4T+LQITrlkIKDPiB4Pk2t5lovEfjZ1CeMVgfDVl6tsHILUt8+nZL0qBnM
-	 hBLMcXPexo9Pd8n1/WKMbQfgowx0qyKKDG25rHyWw3I4vRYlV1bkyk+UaBp9AUcMYS
-	 Pmz7A2COk7pw8T1G6Zm//BF8zDvqgGcTULWwqWcukw73XnnTf6lH6tj6X3JaLoW5RX
-	 As3IYfdfTef2Tfj2q/3VbHxqZq5QDuFBksmdKranZwXP+DngPgaE2uffelBwHnSgOo
-	 bPJnsbrtFvklBkyDmjB+cX5NGq01rzMYMfqTEUhlMjkuCMv2mlYgat9Hz8r/Aj8EsX
-	 xzi+a7BLWe+OQ==
-Date: Wed, 24 Jul 2024 13:17:57 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL]: Generic phy updates for v6.11
-Message-ID: <ZqCxra3XNXK7WbOb@matsya>
+	s=arc-20240116; t=1721807303; c=relaxed/simple;
+	bh=sR7Efk6tuD552OGUyQfPxlvDhFiS1PZYECSnCY+hjNo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k0x64SQ+rJqTSRZQ4NyKaNQzbbtST3PBy+ZqK1LoVk1zWVTF3k7C1cMybOH8kddn3RzpJgHI4gfM6UAzHa70y04jQfpaf7dE4D00hg0u5NfS9fwG4jCCeYiS5A/vEmTH8sIOSJRk3D2+IGu1Yq/zsvdhrLianqjw86pTEFB/3A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=none smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b=oy92+FnZ; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ursulin.net
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3687ea0521cso4710933f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 00:48:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ursulin-net.20230601.gappssmtp.com; s=20230601; t=1721807300; x=1722412100; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=krtFy5Mi1BGgzBjcFadwjlZluEt4OAciNF2RWrAZwwg=;
+        b=oy92+FnZsLdihTIJaZBkAV9xQQNfa0Q2FrVjWUeGUGhfeGCjA8vl0525H3jQ0WKahh
+         JLG/Zax+OO1Zm2jo4/eQZjDAyAdpHatpOIEXgMk+9cYtKVNDhg6ozyq3ZDdoFhU7uY0Y
+         kUrto2iaxvxCvYbbsXMfTjHsGMv/xZ67Wov26yg2QCLp96QR/jnpUNx/PKPTp6wmpfxv
+         iAJknGt7TVD7oigcBdFAHmFcetvvp1IKdv8TaiTmH+Z2CT+6l4L4xzR0I9ZZdYubsxj5
+         OBk/5yJmFX/KyI0wlLG9rUM2lSoTdsdrKROv4fevAq9WV22eJh5qhiX/TC/S3IPNLkrx
+         MSDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721807300; x=1722412100;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=krtFy5Mi1BGgzBjcFadwjlZluEt4OAciNF2RWrAZwwg=;
+        b=RcTRaG1COJv+drZ0ebQZF7XerZtLxPJnf0Lxle3ZNhbROIGD63Q2t2qCd5iRe2nmph
+         CP6i5qBuxPhGWtcsTwFSXrJVTuXdWWMonvlCpfMoVLiwwghoX1BgMebT7zKL5BjtWMbi
+         hcCWsI5ifrsxbJSSSjho3X+QUgUg3dm96vnP4rSj8e2jOYKzGgWWccWxwwPZTGML8bcz
+         FGPbWnSe0971pcA0pKY5m5sLocgRh/+1DXW8myhxVFgCJgvSOd5Krsz/E+Ffe++uGSSy
+         XvKEL2C4uNrO+PmwsEI6cLywO5qgu7hQrMUZ7X9uTkkU7IcNMMXckwz3Ci8+psJdadSv
+         nvrA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/OiJ9glD73DwXzgrbJzYOB4ijaQvmQkhfWZoT5XgFsc0BxKzGIruDDXyUq9Esoe5Ez95IqA5xCCCjjP7aoFqv6S74Uu+T+fNIIGvq
+X-Gm-Message-State: AOJu0YwVXDbHwymg1q2lzFZd/TRMVZMgM5+yiGaYGKLTTQW6V6ddIAed
+	pmz5HYIJZNg78AyBjqejbzsuAFm7kFuftTiKpeNHYUBZMApSa3O9eaDnshNlYFw=
+X-Google-Smtp-Source: AGHT+IHJYQKmvGS93G2a3BT112cIQewhqjoeTVHdu6Fi/DuqndkssZhc6yIX5rxIS/1BJpp+wY8/Zg==
+X-Received: by 2002:a5d:6684:0:b0:368:3ef7:3929 with SMTP id ffacd0b85a97d-369f09bcef7mr1642716f8f.22.1721807299800;
+        Wed, 24 Jul 2024 00:48:19 -0700 (PDT)
+Received: from [192.168.0.101] ([84.69.19.168])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427f935dd55sm16759555e9.8.2024.07.24.00.48.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Jul 2024 00:48:19 -0700 (PDT)
+Message-ID: <4dac0c08-8bd7-44d2-967e-3491d9dd953c@ursulin.net>
+Date: Wed, 24 Jul 2024 08:48:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="k1mDpk1/Cp1/jO8V"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/7] drm/i915/pmu: Lazy unregister
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: intel-gfx@lists.freedesktop.org, linux-perf-users@vger.kernel.org,
+ Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+ dri-devel@lists.freedesktop.org, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20240722210648.80892-1-lucas.demarchi@intel.com>
+ <20240722210648.80892-7-lucas.demarchi@intel.com>
+ <be3871bd-fc25-482e-b4d4-91afc4d5b5a5@ursulin.net>
+ <xsuzfv4rzb4c25sibt5gjskn7xyfwf33wgwaw4nkz5jlnvl2ke@ekur5xvhec3z>
+Content-Language: en-GB
+From: Tvrtko Ursulin <tursulin@ursulin.net>
+In-Reply-To: <xsuzfv4rzb4c25sibt5gjskn7xyfwf33wgwaw4nkz5jlnvl2ke@ekur5xvhec3z>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
---k1mDpk1/Cp1/jO8V
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 23/07/2024 16:30, Lucas De Marchi wrote:
+> On Tue, Jul 23, 2024 at 09:03:25AM GMT, Tvrtko Ursulin wrote:
+>>
+>> On 22/07/2024 22:06, Lucas De Marchi wrote:
+>>> Instead of calling perf_pmu_unregister() when unbinding, defer that to
+>>> the destruction of i915 object. Since perf itself holds a reference in
+>>> the event, this only happens when all events are gone, which guarantees
+>>> i915 is not unregistering the pmu with live events.
+>>>
+>>> Previously, running the following sequence would crash the system after
+>>> ~2 tries:
+>>>
+>>>     1) bind device to i915
+>>>     2) wait events to show up on sysfs
+>>>     3) start perf  stat -I 1000 -e i915/rcs0-busy/
+>>>     4) unbind driver
+>>>     5) kill perf
+>>>
+>>> Most of the time this crashes in perf_pmu_disable() while accessing the
+>>> percpu pmu_disable_count. This happens because perf_pmu_unregister()
+>>> destroys it with free_percpu(pmu->pmu_disable_count).
+>>>
+>>> With a lazy unbind, the pmu is only unregistered after (5) as opposed to
+>>> after (4). The downside is that if a new bind operation is attempted for
+>>> the same device/driver without killing the perf process, i915 will fail
+>>> to register the pmu (but still load successfully). This seems better
+>>> than completely crashing the system.
+>>
+>> So effectively allows unbind to succeed without fully unbinding the 
+>> driver from the device? That sounds like a significant drawback and if 
+>> so, I wonder if a more complicated solution wouldn't be better after 
+>> all. Or is there precedence for allowing userspace keeping their paws 
+>> on unbound devices in this way?
+> 
+> keeping the resources alive but "unplunged" while the hardware
+> disappeared is a common thing to do... it's the whole point of the
+> drmm-managed resource for example. If you bind the driver and then
+> unbind it while userspace is holding a ref, next time you try to bind it
+> will come up with a different card number. A similar thing that could be
+> done is to adjust the name of the event - currently we add the mangled
+> pci slot.
 
-Hello again,
+Yes.. but what my point was this from your commit message:
 
-Second request for generic phy subsystem feature bunch of new driver and
-device support and updates to few of the drivers
+"""
+The downside is that if a new bind operation is attempted for
+the same device/driver without killing the perf process, i915 will fail
+to register the pmu (but still load successfully).
+"""
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+So the subsequent bind does not "come up with a different card number". 
+Statement is it will come up with an error if we look at the PMU subset 
+of functionality. I was wondering if there was precedent for that kind 
+of situation.
 
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+Mangling the PMU driver name probably also wouldn't be great.
 
-are available in the Git repository at:
+> That said, I agree a better approach would be to allow
+> perf_pmu_unregister() to do its job even when there are open events. On
+> top of that (or as a way to help achieve that), make perf core replace
+> the callbacks with stubs when pmu is unregistered - that would even kill
+> the need for i915's checks on pmu->closed (and fix the lack thereof in
+> other drivers).
+> 
+> It can be a can of worms though and may be pushed back by perf core
+> maintainers, so it'd be good have their feedback.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git tags/phy-=
-for-6.11
+Yeah definitely would be essential.
 
-for you to fetch changes up to 2a011c3c12e8de461fb1fdce85fa38d308c4eb8b:
+Regards,
 
-  phy: airoha: Add dtime and Rx AEQ IO registers (2024-07-02 18:54:28 +0530)
+Tvrtko
 
-----------------------------------------------------------------
-phy-for-6.11
-
-- New Support
-  - Samsung Exynos gs101 drd combo phy
-  - Qualcomm SC8180x USB uniphy, IPQ9574 QMP PCIe phy
-  - Airoha EN7581 PCIe phy
-  - Freescale i.MX8Q HSIO SerDes phy
-  - Starfive jh7110 dphy tx
-
-- Updates
-  - Resume support for j721e-wiz driver
-  - Updates to Exynos usbdrd driver
-  - Support for optional power domains in g12a usb2-phy driver
-  - Debugfs support and updates to zynqmp driver
-
-----------------------------------------------------------------
-Andr=E9 Draszik (11):
-      phy: exynos5-usbdrd: uniform order of register bit macros
-      phy: exynos5-usbdrd: convert udelay() to fsleep()
-      phy: exynos5-usbdrd: make phy_isol() take a bool for clarity
-      phy: exynos5-usbdrd: fix definition of EXYNOS5_FSEL_26MHZ
-      phy: exynos5-usbdrd: set ref clk freq in exynos850_usbdrd_utmi_init()
-      dt-bindings: phy: samsung,usb3-drd-phy: add gs101 compatible
-      phy: exynos5-usbdrd: support isolating HS and SS ports independently
-      phy: exynos5-usbdrd: convert core clocks to clk_bulk
-      phy: exynos5-usbdrd: convert (phy) register access clock to clk_bulk
-      phy: exynos5-usbdrd: convert Vbus supplies to regulator_bulk
-      phy: exynos5-usbdrd: support Exynos USBDRD 3.1 combo phy (HS & SS)
-
-Bjorn Andersson (2):
-      dt-bindings: phy: qcom,sc8280xp-qmp-usb3-uni: Add sc8180x USB3 compat=
-ible
-      phy: qcom-qmp-usb: Add sc8180x USB UNIPHY
-
-Changhuang Liang (1):
-      phy: starfive: Correct the dphy configure process
-
-Cristian Ciocaltea (1):
-      phy: phy-rockchip-samsung-hdptx: Select CONFIG_MFD_SYSCON
-
-Dmitry Baryshkov (2):
-      phy: qcom: qmp-pcie: restore compatibility with existing DTs
-      dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: drop second output cloc=
-k name
-
-Dr. David Alan Gilbert (2):
-      phy: starfive: remove unused struct 'regval'
-      phy: miphy28lp: remove unused struct 'miphy_initval'
-
-Herman van Hazendonk (1):
-      dt-bindings: phy: qcom,usb-hs-phy: Add compatible
-
-Jan Kiszka (1):
-      phy: ti: am654-serdes: Remove duplicate define
-
-Jeff Johnson (1):
-      phy: broadcom: add missing MODULE_DESCRIPTION() macros
-
-Josua Mayer (1):
-      dt-bindings: phy: armada-cp110-utmi: add optional swap-dx-lanes prope=
-rty
-
-Liu Jing (1):
-      phy: Fix the cacography in phy-exynos5250-usb2.c
-
-Lorenzo Bianconi (4):
-      dt-bindings: phy: airoha: Add PCIe PHY controller
-      phy: airoha: Add PCIe PHY driver for EN7581 SoC.
-      dt-bindings: phy: airoha: Add dtime and Rx AEQ IO registers
-      phy: airoha: Add dtime and Rx AEQ IO registers
-
-Ma Ke (1):
-      phy: cadence-torrent: Check return value on register read
-
-Miaoqian Lin (1):
-      phy: core: Fix documentation of of_phy_get
-
-Nathan Chancellor (1):
-      phy: freescale: imx8qm-hsio: Include bitfield.h for FIELD_PREP
-
-Neil Armstrong (1):
-      dt-bindings: phy: g12a-usb2-phy: add optional power-domains
-
-Richard Zhu (2):
-      dt-bindings: phy: Add i.MX8Q HSIO SerDes PHY binding
-      phy: freescale: imx8qm-hsio: Add i.MX8QM HSIO PHY driver support
-
-Sean Anderson (5):
-      phy: zynqmp: Enable reference clock correctly
-      phy: zynqmp: Store instance instead of type
-      phy: zynqmp: Only wait for PLL lock "primary" instances
-      phy: zynqmp: Take the phy mutex in xlate
-      phy: zynqmp: Add debugfs support
-
-Shengyang Chen (2):
-      dt-bindings: phy: Add starfive,jh7110-dphy-tx
-      phy: starfive: Add mipi dphy tx support
-
-Shresth Prasad (1):
-      dt-bindings: phy: rockchip-emmc-phy: Convert to dtschema
-
-Swapnil Jakhade (1):
-      phy: cadence-torrent: Add SGMII + QSGMII multilink configuration for =
-100MHz refclk
-
-Thomas Richard (8):
-      phy: ti: phy-j721e-wiz: use dev_err_probe() instead of dev_err()
-      phy: ti: phy-j721e-wiz: split wiz_clock_init() function
-      phy: ti: phy-j721e-wiz: add resume support
-      phy: cadence-torrent: extract calls to clk_get from cdns_torrent_clk
-      phy: cadence-torrent: register resets even if the phy is already conf=
-igured
-      phy: cadence-torrent: add already_configured to struct cdns_torrent_p=
-hy
-      phy: cadence-torrent: remove noop_ops phy operations
-      phy: cadence-torrent: add suspend and resume support
-
-Yijie Yang (1):
-      dt-bindings: phy: qcom,qmp-usb: fix spelling error
-
-devi priya (4):
-      dt-bindings: phy: qcom,ipq8074-qmp-pcie: Document the IPQ9574 QMP PCI=
-e PHYs
-      phy: qcom-qmp: Add missing offsets for Qserdes PLL registers.
-      phy: qcom-qmp: Add missing register definitions for PCS V5
-      phy: qcom-qmp-pcie: Add support for IPQ9574 g3x1 and g3x2 PCIEs
-
- .../bindings/phy/airoha,en7581-pcie-phy.yaml       |   69 ++
- .../bindings/phy/amlogic,g12a-usb2-phy.yaml        |    3 +
- .../devicetree/bindings/phy/fsl,imx8qm-hsio.yaml   |  164 +++
- .../phy/marvell,armada-cp110-utmi-phy.yaml         |    6 +
- .../bindings/phy/qcom,ipq8074-qmp-pcie-phy.yaml    |    2 +
- .../bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml   |    7 +-
- .../phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml        |    5 +-
- .../devicetree/bindings/phy/qcom,usb-hs-phy.yaml   |    2 +
- .../bindings/phy/rockchip,rk3399-emmc-phy.yaml     |   64 +
- .../devicetree/bindings/phy/rockchip-emmc-phy.txt  |   43 -
- .../bindings/phy/samsung,usb3-drd-phy.yaml         |   77 +-
- .../bindings/phy/starfive,jh7110-dphy-tx.yaml      |   68 ++
- .../devicetree/bindings/soc/rockchip/grf.yaml      |   16 +-
- MAINTAINERS                                        |   15 +
- drivers/phy/Kconfig                                |   10 +
- drivers/phy/Makefile                               |    1 +
- drivers/phy/broadcom/phy-bcm-ns-usb2.c             |    1 +
- drivers/phy/broadcom/phy-bcm-ns-usb3.c             |    1 +
- drivers/phy/cadence/phy-cadence-torrent.c          |  207 +++-
- drivers/phy/freescale/Kconfig                      |    9 +-
- drivers/phy/freescale/Makefile                     |    1 +
- drivers/phy/freescale/phy-fsl-imx8qm-hsio.c        |  611 ++++++++++
- drivers/phy/phy-airoha-pcie-regs.h                 |  494 ++++++++
- drivers/phy/phy-airoha-pcie.c                      | 1286 ++++++++++++++++=
-++++
- drivers/phy/phy-core.c                             |    2 +-
- drivers/phy/qualcomm/phy-qcom-qmp-pcie.c           |  318 ++++-
- drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v5.h    |   14 +
- drivers/phy/qualcomm/phy-qcom-qmp-qserdes-pll.h    |    3 +
- drivers/phy/qualcomm/phy-qcom-qmp-usb.c            |    3 +
- drivers/phy/rockchip/Kconfig                       |    2 +
- drivers/phy/samsung/phy-exynos5-usbdrd.c           | 1053 +++++++++++++---
- drivers/phy/samsung/phy-exynos5250-usb2.c          |    2 +-
- drivers/phy/st/phy-miphy28lp.c                     |    5 -
- drivers/phy/starfive/Kconfig                       |   10 +
- drivers/phy/starfive/Makefile                      |    1 +
- drivers/phy/starfive/phy-jh7110-dphy-rx.c          |    5 -
- drivers/phy/starfive/phy-jh7110-dphy-tx.c          |  461 +++++++
- drivers/phy/ti/phy-am654-serdes.c                  |    1 -
- drivers/phy/ti/phy-j721e-wiz.c                     |  133 +-
- drivers/phy/xilinx/phy-zynqmp.c                    |  198 +--
- include/linux/soc/samsung/exynos-regs-pmu.h        |    4 +
- 41 files changed, 4925 insertions(+), 452 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/phy/airoha,en7581-pci=
-e-phy.yaml
- create mode 100644 Documentation/devicetree/bindings/phy/fsl,imx8qm-hsio.y=
-aml
- create mode 100644 Documentation/devicetree/bindings/phy/rockchip,rk3399-e=
-mmc-phy.yaml
- delete mode 100644 Documentation/devicetree/bindings/phy/rockchip-emmc-phy=
-=2Etxt
- create mode 100644 Documentation/devicetree/bindings/phy/starfive,jh7110-d=
-phy-tx.yaml
- create mode 100644 drivers/phy/freescale/phy-fsl-imx8qm-hsio.c
- create mode 100644 drivers/phy/phy-airoha-pcie-regs.h
- create mode 100644 drivers/phy/phy-airoha-pcie.c
- create mode 100644 drivers/phy/starfive/phy-jh7110-dphy-tx.c
---=20
-~Vinod
-
---k1mDpk1/Cp1/jO8V
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmagsa0ACgkQfBQHDyUj
-g0c6CRAAtQmq0V694Gjzep/QAJFiEUgi3z01ypJy0Tp6RYRQqRVZL38bURd/uF1I
-NCnF4nEXv/N6tpbjNMesAtMc/CeKXPmB2JwvaMMfM69Nbj9jAaJCq0U7rpU5FA3y
-e2YtrdT/vm4MFLYlTDqWkqnb5IsQe851nEq7ghxDKX4Ak36AyGRMlUmChIV1WudX
-A/6QiZphunWgYdHtVRBAmRZnzWthQAgxPDUpybyMjPWQwx8NLt1tE2/mGfMvdZoJ
-r++vykW4gm0/0VdTkZREop8CuD8azFVg8WoxbifSZ+tXbg5vrXNSA5fYRwLuhe1A
-a+/5pNPtQYWGiDtIhj73+Xb2YsExUATPGNkutvNLNy3Lw2xZpN77fCJYO/KFERj7
-QCo9FTG5YiMVQEPVawktdnad1Oyx4rsZwjLrXoD+yl1o9x/pUhGvC3Gz10yUHA5c
-Cycvvbr54mUdWcTIbYmwAr0S2WS7xJCjjg2/AIgajv9pm+Ysn3URJy6mx15X2vh4
-RQZdrEEGmbfY3XtNgLezZYfd2q0Sx8bVIJ5oTsZ/YG7oLektTfvPMMZlcQP8NhOj
-asPE8eNU9tRJM5fmpwyPHqrLQMWri0sAOH9V9pg0RoVkHTR+dc4qF1du5//Kg/Sj
-KNyP5KwiQ5hukIDbG8Cnqg58SRvKMunHsVLibkVoQqF79Jce3HI=
-=30MT
------END PGP SIGNATURE-----
-
---k1mDpk1/Cp1/jO8V--
+>>> Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
+>>> ---
+>>>  drivers/gpu/drm/i915/i915_pmu.c | 24 +++++++++---------------
+>>>  1 file changed, 9 insertions(+), 15 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/i915/i915_pmu.c 
+>>> b/drivers/gpu/drm/i915/i915_pmu.c
+>>> index 8708f905f4f4..df53a8fe53ec 100644
+>>> --- a/drivers/gpu/drm/i915/i915_pmu.c
+>>> +++ b/drivers/gpu/drm/i915/i915_pmu.c
+>>> @@ -1158,18 +1158,21 @@ static void free_pmu(struct drm_device *dev, 
+>>> void *res)
+>>>      struct i915_pmu *pmu = res;
+>>>      struct drm_i915_private *i915 = pmu_to_i915(pmu);
+>>> +    perf_pmu_unregister(&pmu->base);
+>>>      free_event_attributes(pmu);
+>>>      kfree(pmu->base.attr_groups);
+>>>      if (IS_DGFX(i915))
+>>>          kfree(pmu->name);
+>>> +
+>>> +    /*
+>>> +     * Make sure all currently running (but shortcut on pmu->closed) 
+>>> are
+>>> +     * gone before proceeding with free'ing the pmu object embedded 
+>>> in i915.
+>>> +     */
+>>> +    synchronize_rcu();
+>>>  }
+>>>  static int i915_pmu_cpu_online(unsigned int cpu, struct hlist_node 
+>>> *node)
+>>>  {
+>>> -    struct i915_pmu *pmu = hlist_entry_safe(node, typeof(*pmu), 
+>>> cpuhp.node);
+>>> -
+>>> -    GEM_BUG_ON(!pmu->base.event_init);
+>>> -
+>>>      /* Select the first online CPU as a designated reader. */
+>>>      if (cpumask_empty(&i915_pmu_cpumask))
+>>>          cpumask_set_cpu(cpu, &i915_pmu_cpumask);
+>>> @@ -1182,8 +1185,6 @@ static int i915_pmu_cpu_offline(unsigned int 
+>>> cpu, struct hlist_node *node)
+>>>      struct i915_pmu *pmu = hlist_entry_safe(node, typeof(*pmu), 
+>>> cpuhp.node);
+>>>      unsigned int target = i915_pmu_target_cpu;
+>>> -    GEM_BUG_ON(!pmu->base.event_init);
+>>> -
+>>>      /*
+>>>       * Unregistering an instance generates a CPU offline event which 
+>>> we must
+>>>       * ignore to avoid incorrectly modifying the shared 
+>>> i915_pmu_cpumask.
+>>> @@ -1337,21 +1338,14 @@ void i915_pmu_unregister(struct 
+>>> drm_i915_private *i915)
+>>>  {
+>>>      struct i915_pmu *pmu = &i915->pmu;
+>>> -    if (!pmu->base.event_init)
+>>> -        return;
+>>> -
+>>>      /*
+>>> -     * "Disconnect" the PMU callbacks - since all are atomic 
+>>> synchronize_rcu
+>>> -     * ensures all currently executing ones will have exited before we
+>>> -     * proceed with unregistration.
+>>> +     * "Disconnect" the PMU callbacks - unregistering the pmu will 
+>>> be done
+>>> +     * later when all currently open events are gone
+>>>       */
+>>>      pmu->closed = true;
+>>> -    synchronize_rcu();
+>>>      hrtimer_cancel(&pmu->timer);
+>>> -
+>>>      i915_pmu_unregister_cpuhp_state(pmu);
+>>> -    perf_pmu_unregister(&pmu->base);
+>>>      pmu->base.event_init = NULL;
+>>>  }
 
