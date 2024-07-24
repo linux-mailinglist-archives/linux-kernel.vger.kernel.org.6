@@ -1,94 +1,136 @@
-Return-Path: <linux-kernel+bounces-261020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D8C993B1A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:31:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 722BC93B1B2
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:36:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0826A281E96
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:31:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A31C5B22ED6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA08158D6D;
-	Wed, 24 Jul 2024 13:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E8E158D9C;
+	Wed, 24 Jul 2024 13:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DQoBhuq6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="i6nTjpl0"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D8B5C99;
-	Wed, 24 Jul 2024 13:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBB515884E
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 13:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721827886; cv=none; b=HN8ylyRmGUsEjbO3GT5MhaAr8bzDyp6emLXTBtnAy4ejGTmetSI1FTlIRQfkbqqLC0IEyQE8NV/tW0GM+zNpsd6HqQkW2g0N8AhUYF4zWd8lNsmduRHnTMHTa1xgyO+MAgxMUOULcZzKWyhZwBCYsz11va2BylkwWsuLlSpPnWU=
+	t=1721828159; cv=none; b=mNWxQ+BngPCWnIZFGBVmbOQLWnMXUgJ0A3RjSmVwdYvdnPu/aAClckBIxZoq7xxOMX89FhYIBDiHdwBYTaNBTjao2mTxcKcPOjEjhhw8sSMRgDT4vUYIGMvXp45E7LnH56AXM9wl/xMtjWhRLoZ0TTp28eGCZ9IBkUXlq+vhH2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721827886; c=relaxed/simple;
-	bh=0HL4WVSHtRXn+vpGOcPrYw57HxjrdAloUVqOke83U7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HJDmjTWSkL0RXQPgbhKWAljd5W0rIXuhZdufL02i2mzkxlLK1xrD/eKIpp1KlvI/NKbm0blad3NH62bPHPFzPApakrk4/VLoo6y3kAyEnxzIvE9MeEQpKjBO335U18iPXSOgx+UVLXLFep9qDWkxadH9rh84bfvXdCb9oc6MTb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DQoBhuq6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5CEBC32782;
-	Wed, 24 Jul 2024 13:31:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721827885;
-	bh=0HL4WVSHtRXn+vpGOcPrYw57HxjrdAloUVqOke83U7Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DQoBhuq67hnF+ID50fkAl6Wax1FYuJNXFzM1ra6Ly7sthRTt4BE/+hN1jDlBJmc6N
-	 EUBVkQ2dUZONs+WXgLp3PQcvRGdXuDa2vXVAFS7vm6Hr+MKmirn5aq9p9D8vxhczCU
-	 6lUQNrdIhsrDkS++oOn/YkR0FM8ng7ud18xLuk8k=
-Date: Wed, 24 Jul 2024 15:31:21 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: kristo@kernel.org, bp@alien8.de, tony.luck@intel.com,
-	james.morse@arm.com, mchehab@kernel.org, rric@kernel.org,
-	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 RESEND] EDAC/ti: Fix possible null pointer dereference
- in _emif_get_id()
-Message-ID: <2024072407-census-mahogany-5831@gregkh>
-References: <20240724071042.1493917-1-make24@iscas.ac.cn>
+	s=arc-20240116; t=1721828159; c=relaxed/simple;
+	bh=dYmcZR5fqMDTJKdKXosvurg4TOgeq7LfNW//LhtTK4s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dLUfn86HMgOvFqHbbfx9jKENe49dIlGwgMJFuXzoTxXbSID8Y+KImzAqmVhsQYQvCdsP0d4+kBe5mXOIQEzK7RpqsyLFSg1nC//08vH3sKsBrw1xGLayTiJOAhyj+WoefrovCXojfj0rVRarGRayGpAmb2MFS0NkzORNGnOlPGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=i6nTjpl0; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721828154;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JYCNG2Ao9p2d8N2N01EfKOCr3d574k++M8lCYq+pXXA=;
+	b=i6nTjpl0ZOUf6b2Scfg9JXH8g3behb55mApmJDbTbCpoGdGzf53kfiwhNLv/wZOvmjAw0Y
+	5b8Th45QKD60l+D+Id3nOEmGEDn7XQxmpiJMd4K6ZnLlpoHECEy+FONbNuMZ7IIG5uQwm9
+	+vaaIUnHhbgqdnvrgK8mbj2goRqHIxE=
+From: Luis Henriques <luis.henriques@linux.dev>
+To: Jan Kara <jack@suse.cz>
+Cc: Theodore Ts'o <tytso@mit.edu>,  Andreas Dilger <adilger@dilger.ca>,
+  Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+  linux-ext4@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] ext4: fix incorrect tid assumption in
+ ext4_wait_for_tail_page_commit()
+In-Reply-To: <20240724091713.e4w2hskcybulz27z@quack3> (Jan Kara's message of
+	"Wed, 24 Jul 2024 11:17:13 +0200")
+References: <20240723154402.21125-1-luis.henriques@linux.dev>
+	<20240723154402.21125-2-luis.henriques@linux.dev>
+	<20240724091713.e4w2hskcybulz27z@quack3>
+Date: Wed, 24 Jul 2024 14:35:44 +0100
+Message-ID: <874j8elxov.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240724071042.1493917-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Jul 24, 2024 at 03:10:42PM +0800, Ma Ke wrote:
-> In _emif_get_id(), of_get_address() may return NULL which is later
-> dereferenced. Fix this bug by adding NULL check.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 86a18ee21e5e ("EDAC, ti: Add support for TI keystone and DRA7xx EDAC")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
-> Changes in v2:
-> - added Cc stable line.
-> ---
->  drivers/edac/ti_edac.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/edac/ti_edac.c b/drivers/edac/ti_edac.c
-> index 29723c9592f7..db23887b2d81 100644
-> --- a/drivers/edac/ti_edac.c
-> +++ b/drivers/edac/ti_edac.c
-> @@ -207,6 +207,9 @@ static int _emif_get_id(struct device_node *node)
->  	int my_id = 0;
->  
->  	addrp = of_get_address(node, 0, NULL, NULL);
-> +	if (!addrp)
-> +		return -EINVAL;
-> +
+On Wed, Jul 24 2024, Jan Kara wrote:
 
-How was this found?
+> On Tue 23-07-24 16:43:59, Luis Henriques (SUSE) wrote:
+>> Function ext4_wait_for_tail_page_commit() assumes that '0' is not a valid
+>> value for transaction IDs, which is incorrect.  Don't assume that and in=
+voke
+>> jbd2_log_wait_commit() if the journal had a committing transaction inste=
+ad.
+>>=20
+>> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+>> ---
+>>  fs/ext4/inode.c | 10 ++++++----
+>>  1 file changed, 6 insertions(+), 4 deletions(-)
+>>=20
+>> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+>> index 941c1c0d5c6e..e65fc2086701 100644
+>> --- a/fs/ext4/inode.c
+>> +++ b/fs/ext4/inode.c
+>> @@ -5279,8 +5279,9 @@ static void ext4_wait_for_tail_page_commit(struct =
+inode *inode)
+>>  {
+>>  	unsigned offset;
+>>  	journal_t *journal =3D EXT4_SB(inode->i_sb)->s_journal;
+>> -	tid_t commit_tid =3D 0;
+>> +	tid_t commit_tid;
+>>  	int ret;
+>> +	bool has_transaction =3D false;
+>>=20=20
+>>  	offset =3D inode->i_size & (PAGE_SIZE - 1);
+>>  	/*
+>> @@ -5305,12 +5306,13 @@ static void ext4_wait_for_tail_page_commit(struc=
+t inode *inode)
+>>  		folio_put(folio);
+>>  		if (ret !=3D -EBUSY)
+>>  			return;
+>> -		commit_tid =3D 0;
+>
+> We should set "has_transaction =3D false" here to make things work proper=
+ly
+> when looping... Otherwise looks good.
 
-How was this tested?
+Ah! Good point.  I'll fix that, thanks!
 
-thanks,
+Cheers,
+--=20
+Lu=C3=ADs
 
-greg k-h
+
+>
+> 								Honza
+>
+>>  		read_lock(&journal->j_state_lock);
+>> -		if (journal->j_committing_transaction)
+>> +		if (journal->j_committing_transaction) {
+>>  			commit_tid =3D journal->j_committing_transaction->t_tid;
+>> +			has_transaction =3D true;
+>> +		}
+>>  		read_unlock(&journal->j_state_lock);
+>> -		if (commit_tid)
+>> +		if (has_transaction)
+>>  			jbd2_log_wait_commit(journal, commit_tid);
+>>  	}
+>>  }
+>>=20
+> --=20
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+
 
