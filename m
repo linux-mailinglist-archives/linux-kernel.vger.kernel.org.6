@@ -1,129 +1,147 @@
-Return-Path: <linux-kernel+bounces-260530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87E7593AA93
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:27:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43A6C93AA94
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43EAB282263
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:27:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAF231F23A33
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E15479F0;
-	Wed, 24 Jul 2024 01:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f0pDgxPx"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDE2522A
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 01:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6629B67E;
+	Wed, 24 Jul 2024 01:30:16 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C474A19;
+	Wed, 24 Jul 2024 01:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721784434; cv=none; b=mosJsP+fnT4U0ud2mulgS+UPdArF54z5mSzTak2IY+OnvE9h5NhYTBcjEGx9WtoM/s/Pk/hR4gXFu4G1ywgob4BWBD02cifyMILxJDu/Q2SHM4t38tdc8DnAa207D5LAWCrYyScrlXaSkOl3TkR+7fnN9qYHuA/kJcHXrmjxctI=
+	t=1721784616; cv=none; b=fozJD3N8BudPTj/8iB7iDoOAUeU/qePGILuktS42B6vhu/fTS+2EO6gRa3Ph1FcGELZ2wsOqyHNX4Q+HDGvsRIX/l6iS4+Gc7NhLHRYhguSrMfL2JlqkVOgfGqfLq8T/Rkrat8rZV+Mjsr9kQO3BEIoKwbJObOelVz40fvWLneM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721784434; c=relaxed/simple;
-	bh=QOeOiHuqWOZpEz5Xb3qDmTG2vxbB6T7QVE3SQW5YPUA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mwzd6n4KKNC43jFpuYdoKsdUgn8YKQq1QiL56pCQq5o+0NIP0yxgPJpF8xa6euZALR72Z78Etpx/jEWVL81L3TDaBegdO/zukGP8cafL+FrDz/X0DCLr00127t8slMWqLC/heenzcKuM/++icgeBRFKOEOvdn56DJF6FIRDL19g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f0pDgxPx; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fd7509397bso104035ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 18:27:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721784432; x=1722389232; darn=vger.kernel.org;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RF3dFY/LyunryryiKzK/JX9hMFUdtuG285TonZDXYtY=;
-        b=f0pDgxPxuMK6kuc5Gvzt8TIKRd4hQnwf1rLEDEobONiXC/t/vjY6kWaQI6n1c84dF5
-         7oHDvIF06K8d6ThTubn8P0be39Vh4UkUNhvv/QLobtUhRQl42Yronv7IyI8AAWxaxL6t
-         bctCYmo7moyU/RxJVSPEvrPDq7aM6PWcG0TZz7sXC7OvScWNYN5YB+lUEYieWzPWA8Sr
-         0t+IT3g95EvGD/5597+bpJ9qh+lTDGSNkDU1HR3NrmtmfDUyOCD3F+ccfD6bGD7SZSR8
-         1ViKhNF6FS0R51aQW07orKYsZJQndLw0B3w/mbZ6OIYLEDJD383wC0cK4BLKM2tJ9Q8H
-         +u7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721784432; x=1722389232;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RF3dFY/LyunryryiKzK/JX9hMFUdtuG285TonZDXYtY=;
-        b=uUdV7kFfezSO0EISBCGfZM7V1LN3iAkDph0xe6T0ZZJwYIMSToQd9KC4NcQFCVPMcP
-         wgsojb8pJp04zc2qPxA9BTxvOPSYlpQAcY+CnmrznIU/5Z7Kq7p4qmm/RfZWzDn5dqoV
-         jxb+t454oxyX6hfbGNaRuM4ufN4Yigy05RckImrowEIEqwXj0SPor/T4rILqwBn/TbBn
-         3SSimjFrMWu8StN0Qsozvssz/RGz1nnvnxcRe76jW0p3EJ3s8eytdh6SuhFocr81ujT0
-         AYP9er37eHy/Jb0cb0wRhfSMCW0T0BKvIhQ2jvGilzJ6aKQ5sf15k66/rvVek+kfTmui
-         bIag==
-X-Forwarded-Encrypted: i=1; AJvYcCWkh0Wv9xwW665s7v+vN4Wz7M2IEEYjBhGjGmHqiMBmGwj7ix+gWUJes8Ue/vI88Gv+qxS7h2fZi+KwhqUkCy2leTxgn/YJ6WblJQa2
-X-Gm-Message-State: AOJu0Yyup6C/lW5Qo5m8P7DW/qHs4uuRDT2e2ggL0xah9ZaMQB1XMRMI
-	anvAUuvRhBVaV5RB09dPaky1Inm8+TDqqH7I7d6wRP3dTC1UPm5ioaJKl3ao0Q==
-X-Google-Smtp-Source: AGHT+IGt7Yj17oIOfXoIRXm//jQ7Y91iybzeUPc+6hWZ/9bvK6+8AJy2ioE+aLY8CJaQu4pXYrzhjA==
-X-Received: by 2002:a17:902:d4cc:b0:1f8:5767:b114 with SMTP id d9443c01a7336-1fdd3902ef5mr1934975ad.0.1721784432168;
-        Tue, 23 Jul 2024 18:27:12 -0700 (PDT)
-Received: from bsegall-glaptop.localhost (c-73-202-176-14.hsd1.ca.comcast.net. [73.202.176.14])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb746347bsm289432a91.35.2024.07.23.18.27.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 18:27:11 -0700 (PDT)
-From: Benjamin Segall <bsegall@google.com>
-To: Chuyi Zhou <zhouchuyi@bytedance.com>
-Cc: mingo@redhat.com,  peterz@infradead.org,  juri.lelli@redhat.com,
-  vincent.guittot@linaro.org,  dietmar.eggemann@arm.com,
-  rostedt@goodmis.org,  mgorman@suse.de,  vschneid@redhat.com,
-  chengming.zhou@linux.dev,  linux-kernel@vger.kernel.org,
-  joshdon@google.com
-Subject: Re: [PATCH v2 2/2] sched/core: Avoid unnecessary update in
- tg_set_cfs_bandwidth
-In-Reply-To: <20240723122006.47053-3-zhouchuyi@bytedance.com> (Chuyi Zhou's
-	message of "Tue, 23 Jul 2024 20:20:06 +0800")
-References: <20240723122006.47053-1-zhouchuyi@bytedance.com>
-	<20240723122006.47053-3-zhouchuyi@bytedance.com>
-Date: Tue, 23 Jul 2024 18:27:10 -0700
-Message-ID: <xm26h6cfzij5.fsf@google.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1721784616; c=relaxed/simple;
+	bh=bSV/tn8rgIr3LZKicy7ygBdBwp4x2cZxxscf4ukTabw=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=jlgZO+hGpAn/1myd1ufrWNDv9wnrVyWSgO64Tq5UkZ+GNoandSl323LfRp9MivvmLKz2P5uL4cjzQbpK5gK+msHK/p5gTSy+poyYyVwKCpVwc0/Xb0c8KmxDdleMHarN+V4bjA93LXwX4NQ0GHvkryz05OKcAdSGMdZc2BJ2q5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8CxuOkeWaBm18QAAA--.3046S3;
+	Wed, 24 Jul 2024 09:30:06 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8AxhsUXWaBm2ZNWAA--.50225S3;
+	Wed, 24 Jul 2024 09:30:01 +0800 (CST)
+Subject: Re: [PATCH 2/2] LoongArch: KVM: Add paravirt qspinlock in guest side
+To: kernel test robot <lkp@intel.com>, Huacai Chen <chenhuacai@kernel.org>,
+ Tianrui Zhao <zhaotianrui@loongson.cn>, Peter Zijlstra
+ <peterz@infradead.org>, Waiman Long <longman@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, WANG Xuerui <kernel@xen0n.name>,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, virtualization@lists.linux.dev
+References: <20240723073825.1811600-3-maobibo@loongson.cn>
+ <202407240320.qqd1uWiE-lkp@intel.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <7a145178-633c-afd7-4aba-45546a4c7a75@loongson.cn>
+Date: Wed, 24 Jul 2024 09:29:59 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <202407240320.qqd1uWiE-lkp@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:AQAAf8AxhsUXWaBm2ZNWAA--.50225S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxGFW3Zw4UZryruF17KryxXrc_yoW5CFWDpa
+	48CF1DJFW8Jr48Z3yUKw15uF1Dtan8W3sIvF9Y9ryxCFW2qFyDWws2krWa9w1jyws29Fyj
+	gry7WF1qya4UA3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUPYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Gr0_Gr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWU
+	AwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
+	k0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l
+	4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxV
+	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI
+	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
+	1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
+	42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jYpB-UUUUU=
 
-Chuyi Zhou <zhouchuyi@bytedance.com> writes:
 
-> In the kubernetes production environment, we have observed a high
-> frequency of writes to cpu.max, approximately every 2~4 seconds for each
-> cgroup, with the same value being written each time. This can result in
-> unnecessary overhead, especially on machines with a large number of CPUs
-> and cgroups.
->
-> This is because kubelet and runc attempt to persist resource
-> configurations through frequent updates with same value in this manner.
-> While optimizations can be made to kubelet and runc to avoid such
-> overhead(e.g. check the current value of cpu request/limit before writing
-> to cpu.max), it is still worth to bail out from tg_set_cfs_bandwidth() if
-> we attempt to update with the same value.
->
-> Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
 
-Reviewed-by: Ben Segall <bsegall@google.com>
+On 2024/7/24 上午3:57, kernel test robot wrote:
+> Hi Bibo,
+> 
+> kernel test robot noticed the following build errors:
+yes, forgot to mention, it depends on this patch
+https://lore.kernel.org/lkml/20240721164552.50175-1-ubizjak@gmail.com/
 
-> ---
->  kernel/sched/core.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 7720d34bd71b..0cc564f45511 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -9090,6 +9090,9 @@ static int tg_set_cfs_bandwidth(struct task_group *tg, u64 period, u64 quota,
->  	guard(cpus_read_lock)();
->  	guard(mutex)(&cfs_constraints_mutex);
->  
-> +	if (cfs_b->period == ns_to_ktime(period) && cfs_b->quota == quota && cfs_b->burst == burst)
-> +		return 0;
-> +
->  	ret = __cfs_schedulable(tg, period, quota);
->  	if (ret)
->  		return ret;
+Regards
+Bibo Mao
+> 
+> [auto build test ERROR on 7846b618e0a4c3e08888099d1d4512722b39ca99]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Bibo-Mao/LoongArch-KVM-Add-paravirt-qspinlock-in-kvm-side/20240723-160536
+> base:   7846b618e0a4c3e08888099d1d4512722b39ca99
+> patch link:    https://lore.kernel.org/r/20240723073825.1811600-3-maobibo%40loongson.cn
+> patch subject: [PATCH 2/2] LoongArch: KVM: Add paravirt qspinlock in guest side
+> config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20240724/202407240320.qqd1uWiE-lkp@intel.com/config)
+> compiler: loongarch64-linux-gcc (GCC) 14.1.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240724/202407240320.qqd1uWiE-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202407240320.qqd1uWiE-lkp@intel.com/
+> 
+> All error/warnings (new ones prefixed by >>):
+> 
+>>> arch/loongarch/kernel/paravirt.c:309: warning: expecting prototype for queued_spin_unlock(). Prototype was for native_queued_spin_unlock() instead
+> --
+>     In file included from include/linux/atomic.h:80,
+>                      from include/asm-generic/bitops/atomic.h:5,
+>                      from arch/loongarch/include/asm/bitops.h:27,
+>                      from include/linux/bitops.h:63,
+>                      from include/linux/kernel.h:23,
+>                      from include/linux/cpumask.h:11,
+>                      from include/linux/smp.h:13,
+>                      from kernel/locking/qspinlock.c:16:
+>     kernel/locking/qspinlock_paravirt.h: In function 'pv_kick_node':
+>>> include/linux/atomic/atomic-arch-fallback.h:242:34: error: initialization of 'u8 *' {aka 'unsigned char *'} from incompatible pointer type 'enum vcpu_state *' [-Wincompatible-pointer-types]
+>       242 |         typeof(*(_ptr)) *___op = (_oldp), ___o = *___op, ___r; \
+>           |                                  ^
+>     include/linux/atomic/atomic-instrumented.h:4908:9: note: in expansion of macro 'raw_try_cmpxchg_relaxed'
+>      4908 |         raw_try_cmpxchg_relaxed(__ai_ptr, __ai_oldp, __VA_ARGS__); \
+>           |         ^~~~~~~~~~~~~~~~~~~~~~~
+>     kernel/locking/qspinlock_paravirt.h:377:14: note: in expansion of macro 'try_cmpxchg_relaxed'
+>       377 |         if (!try_cmpxchg_relaxed(&pn->state, &old, vcpu_hashed))
+>           |              ^~~~~~~~~~~~~~~~~~~
+> 
+> 
+> vim +309 arch/loongarch/kernel/paravirt.c
+> 
+>     303	
+>     304	/**
+>     305	 * queued_spin_unlock - release a queued spinlock
+>     306	 * @lock : Pointer to queued spinlock structure
+>     307	 */
+>     308	static void native_queued_spin_unlock(struct qspinlock *lock)
+>   > 309	{
+>     310		/*
+>     311		 * unlock() needs release semantics:
+>     312		 */
+>     313		smp_store_release(&lock->locked, 0);
+>     314	}
+>     315	
+> 
+
 
