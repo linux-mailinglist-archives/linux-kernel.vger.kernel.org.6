@@ -1,56 +1,55 @@
-Return-Path: <linux-kernel+bounces-261404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E78A93B6E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:39:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DBA893B6E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 700491C23AA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:39:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA2F6281488
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1E616B3BC;
-	Wed, 24 Jul 2024 18:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD9316B3B8;
+	Wed, 24 Jul 2024 18:40:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HlBUYZSM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ecjaigUx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A032E1C693;
-	Wed, 24 Jul 2024 18:39:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6661591F3;
+	Wed, 24 Jul 2024 18:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721846360; cv=none; b=f287MopLwhcB49suDplf3faEHgJInRsNuDwrywLtNbOq7ND/YQ0XWrJdhWc1/6ZwXzwK1FDjWEK6dNUdS33jMcqQov2DBRls5obvOOskoKAtaJAsoYMSqLRAM8Lyv5P2YrMsvUm222PIltHt37IOqRrmfiO/8N/T210dfbKa06s=
+	t=1721846405; cv=none; b=GgLcByVcBM3uD8O7YLKP4eoDP/ATTuznEr9VK4IG3YQnPQHuCFPxPi6BricQswdYOOYilmMBeYFf7zdKs0la84aRAKzNnPmp5PQTZcGIS+qUvd6nGPCy6WUSNYDVbPIXEw2XvpcPsx4QparUe4hlb5PZqFMSkHNUin8CPQXFtJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721846360; c=relaxed/simple;
-	bh=nPltv4qDZzZySxN7PwRobymjhC9n6VfeeKm/ItRhASA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ovPYfE+AijnTLk030SUmmYPWWJy5qZXh3PDRkZmW7zS10N/FrP+60KGi7Mx6zBRk8aWeiCmYMnAemt6xUxsQzU92cpbMjA5qB7kwFaeiHFHqyGJuQzplVVy3yufbkv4ZjuB60YKgMFafFw1RVBghajelScKNVpidCEqelA5eRLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HlBUYZSM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECBAFC32781;
-	Wed, 24 Jul 2024 18:39:19 +0000 (UTC)
+	s=arc-20240116; t=1721846405; c=relaxed/simple;
+	bh=565KS7O26irjkXREQVOn6f2CuwjZIq4/S/bt/80KYUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pntzTe6oVz/9E46Kg9hIFCK7GCPn6Fd30yA1gi4dV7zjBZ9NtgemKgOddLbkdPI6aCPwfx5ePzEjn7ZITa1Mzh2UiK8mIV0wVOUkZ7t6K6DFpqaIGDMxVZn5S+0KCOGHlxr939lOOrJvoaAccDkjRb0qARPrbsrh1DzjgBuBcmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ecjaigUx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4323C32781;
+	Wed, 24 Jul 2024 18:40:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721846360;
-	bh=nPltv4qDZzZySxN7PwRobymjhC9n6VfeeKm/ItRhASA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=HlBUYZSMkuyIUvF63W6OKsfttDyzKpoAcj6NdDJXVyA1Ic7ML+U7lyCrVp+xCCTHE
-	 52beEQD7UpB1avufGcKdt2j8sEqZwGigPHe/eaxe2R30CBuaqHcXrxFyYTXvHHz4zm
-	 nuB07598aE4BAvAPhph7vB21sJaMARaLRDwHwS5u4DV0IgWihFXkzI+BdJkSTbYe3W
-	 bEKxoIao602qUBYaxkbxM2ufM4vl1RXAQZv44s11EnpKBjaI59y2l0phgq2E8n//N7
-	 TFp4BniSVP0IixkQj0Xhn0MKKbgUlNkIreIXWwxY8DZtNrUVOG/x+ANdVINIoMOpN6
-	 xHpnDHa0p9NdA==
-Date: Wed, 24 Jul 2024 13:39:18 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
-Cc: jingoohan1@gmail.com, manivannan.sadhasivam@linaro.org,
-	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	quic_mrana@quicinc.com
-Subject: Re: [PATCH v3 1/2] PCI: dwc: Add dbi_phys_addr and atu_phys_addr to
- struct dw_pcie
-Message-ID: <20240724183918.GA806896@bhelgaas>
+	s=k20201202; t=1721846405;
+	bh=565KS7O26irjkXREQVOn6f2CuwjZIq4/S/bt/80KYUs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ecjaigUx8IkNY4P4NYzL8HgLtgMwW5e0YpI1Iy7G5JdKH3FWzQTvtI8fHe98jX8KG
+	 XS1enFIzaU/hSa9HfQ6dlkXvGslnN7dlnDfZHjvk1hNJhlLzQjDd4V7asdnU6ic4fL
+	 4ndV9nlrYC2g0Gk8H7ABwYJbh12s+GOj1a1iPKdvD2tbef+MGaUSLWrRoQOmsxKYN1
+	 r5wb05qOyEkAk3wXy4AkkwPFxjVDNaxBx1SGhJ8/WIvOEzy9EDyaAo6DZCGyQPN6b8
+	 1JmzgeptdlyY36UvqvSX2C1cl9oFaTgfrVkTkJx9uzs9k4EHVwRLApjZneBM3FxoRB
+	 WiejuQ81NT/ew==
+Date: Wed, 24 Jul 2024 19:40:01 +0100
+From: Simon Horman <horms@kernel.org>
+To: Shigeru Yoshida <syoshida@redhat.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] macvlan: Return error on
+ register_netdevice_notifier() failure
+Message-ID: <20240724184001.GG97837@kernel.org>
+References: <20240724135622.1797145-1-syoshida@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,57 +58,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240724022719.2868490-2-quic_pyarlaga@quicinc.com>
+In-Reply-To: <20240724135622.1797145-1-syoshida@redhat.com>
 
-On Tue, Jul 23, 2024 at 07:27:18PM -0700, Prudhvi Yarlagadda wrote:
-> Both DBI and ATU physical base addresses are needed by pcie_qcom.c
-> driver to program the location of DBI and ATU blocks in Qualcomm
-> PCIe Controller specific PARF hardware block.
+On Wed, Jul 24, 2024 at 10:56:22PM +0900, Shigeru Yoshida wrote:
+> register_netdevice_notifier() may fail, but macvlan_init_module() does
+> not handle the failure.  Handle the failure by returning an error.
 > 
-> Signed-off-by: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
-> Reviewed-by: Mayank Rana <quic_mrana@quicinc.com>
-> ---
->  drivers/pci/controller/dwc/pcie-designware.c | 2 ++
->  drivers/pci/controller/dwc/pcie-designware.h | 2 ++
->  2 files changed, 4 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> index 1b5aba1f0c92..bc3a5d6b0177 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> @@ -112,6 +112,7 @@ int dw_pcie_get_resources(struct dw_pcie *pci)
->  		pci->dbi_base = devm_pci_remap_cfg_resource(pci->dev, res);
->  		if (IS_ERR(pci->dbi_base))
->  			return PTR_ERR(pci->dbi_base);
-> +		pci->dbi_phys_addr = res->start;
->  	}
->  
->  	/* DBI2 is mainly useful for the endpoint controller */
-> @@ -134,6 +135,7 @@ int dw_pcie_get_resources(struct dw_pcie *pci)
->  			pci->atu_base = devm_ioremap_resource(pci->dev, res);
->  			if (IS_ERR(pci->atu_base))
->  				return PTR_ERR(pci->atu_base);
-> +			pci->atu_phys_addr = res->start;
->  		} else {
->  			pci->atu_base = pci->dbi_base + DEFAULT_DBI_ATU_OFFSET;
->  		}
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index 53c4c8f399c8..efc72989330c 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -407,8 +407,10 @@ struct dw_pcie_ops {
->  struct dw_pcie {
->  	struct device		*dev;
->  	void __iomem		*dbi_base;
-> +	phys_addr_t		dbi_phys_addr;
->  	void __iomem		*dbi_base2;
->  	void __iomem		*atu_base;
-> +	phys_addr_t		atu_phys_addr;
->  	size_t			atu_size;
->  	u32			num_ib_windows;
->  	u32			num_ob_windows;
+> Fixes: b863ceb7ddce ("[NET]: Add macvlan driver")
+> Signed-off-by: Shigeru Yoshida <syoshida@redhat.com>
 
-This patch is pretty trivial and it doesn't show anything to justify
-the need to keep these addresses.  I think this should be squashed
-with the next patch that actually *uses* them.
+Reviewed-by: Simon Horman <horms@kernel.org>
+
 
