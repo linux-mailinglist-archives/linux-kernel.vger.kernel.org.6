@@ -1,91 +1,90 @@
-Return-Path: <linux-kernel+bounces-260789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4B6293AE44
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:05:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C7CB93AE48
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:06:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42A35B235A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:05:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE25E1C20C94
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBBC15099A;
-	Wed, 24 Jul 2024 09:05:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D34951514F1;
+	Wed, 24 Jul 2024 09:06:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L24uemp/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="BMmLNSgW"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD16D1CAA1;
-	Wed, 24 Jul 2024 09:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE33B14B095;
+	Wed, 24 Jul 2024 09:06:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721811933; cv=none; b=HBOqa0EhuB+osAu+UXujy3M9MuLV6WG+26Fd7XUiICJh8nN4HOnp0tu47Mn0tmCse8KGpvy1WkRaBQunMgfkfUQsf+4QBER/FwnNn4jXh8RxfKWfq17eaxPXy97es3kaFcOho3BOZjYwofH0fTpzaHVMbf/BYM55ttzIakdPryE=
+	t=1721811999; cv=none; b=a+8h3u+twFmmpD0YfHfI997oWITJwslP3GbcUvOu7o5x0Rwf9iuOk4xEx8R+9zuJU3uGCwhO4KkKvkh34Tn3fwP4HERb3F5F63/ZOnh1+FEGov7fec93626xYsUpGw8Ze5pZZAD9g2DUzFmRpSSNTa0wg4GO/0Wi/ktKQDjioqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721811933; c=relaxed/simple;
-	bh=8I+FXfJmeDCyyC5A4w02CLEjfXqIyyBoChONKhpwa/o=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=M4CrbcNoawY3rxmE7iXPhTEyXW+LrNE5KMon2uY2o/JbHwll4zfJerjt7F/3R2J+7JV8AK/IdCEkMGelrqUC6bkYJ+2EdLot5tRUniUK3nG7kBbmgUa7dAlHNFzXG/P2tz8LSusrF4qnhjCcemng4dceZiWPPuWu+b/xZPJtFsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L24uemp/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07106C32782;
-	Wed, 24 Jul 2024 09:05:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721811933;
-	bh=8I+FXfJmeDCyyC5A4w02CLEjfXqIyyBoChONKhpwa/o=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=L24uemp/GunUljlTv95O2FAAwDZL+u59MYEGt4ITJLrtRwiriOM2G+GtfrUO7YBJM
-	 yQ/6nM/YOQwAAQya3vm+EmMEfMqMBhcmmyaEdnRofVhW1+w3ZJ0MytK833U5/kwU/G
-	 vz+jbUED6xeT8GEdpkRN8VWGerIAE1v0sk4hdV9VRAgP2C3o7tI3zsJiJVQKP9mxvK
-	 XbPaMsfm8ndsNPs5Vi765RKz9gZxlpeMTfX92NcGdSMlYSPSuD3ih/WXBZOLaD4obl
-	 EIPCK1UfaJeCDo7CasWOEvoBRJuzC8F/+Ooamzt6M3q6xFoiDoJ7aVLMHlEjqne9eR
-	 5DEHuBe6izfyA==
-Message-ID: <cfb36a61-1f50-49c0-8e63-950728c9a0a0@kernel.org>
-Date: Wed, 24 Jul 2024 10:05:29 +0100
+	s=arc-20240116; t=1721811999; c=relaxed/simple;
+	bh=QrFxDcN4n10oTiBQIOKDoz81+N9yJcI+JrDQSMc3bAM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nV4P/GIdePYC4yuFPPYizLVZzkXcFNHFGS0snjOAdPA0DDWUBrZOGQV5bZQbryO/dYo68dgFmLlK3BGQf5z8L1+eBUcl/GQ+n7aO13Jf8Ev2gnouPMzFP2T5X6B+zOQsH15oQjPpODdT+uNZbyDytrX/dngJZ/uPluoBpO+5vIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=BMmLNSgW; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=QrFxDcN4n10oTiBQIOKDoz81+N9yJcI+JrDQSMc3bAM=;
+	t=1721811997; x=1723021597; b=BMmLNSgWERq2pGvna94KZn8L9anOvRlRJCqcTE0pO2m3pc/
+	Dp6sE6aWlfPFWrnSkAMrvRLxAJh5h2300EtSG/U3US2KvX5vYK5aVdc2PzUuF6A6BKI9esYvYZDYq
+	FB3mTL1K9OmAxBTYlhw66UISnOjXC3J/uUjX9/5acydULb3EQ5Bta3j0UO7qM51I4IrW0RzLZ8B5v
+	VWlBkjp6D1HisQmi/IH8dLzKNrSLpwFAW0aeC4FoC6U1Lbv5xCOIllUGfTSHr5wDMg4q7WojnaQmu
+	XwnO2uLlSYFc3PTTfuVB/D2IzI6QyG+ICckkOWS16/15PMwVkeY00pzfN/BEfo3w==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1sWXxC-0000000DL4k-0XoI;
+	Wed, 24 Jul 2024 11:06:34 +0200
+Message-ID: <fcfc079f251657f9017f86b626e0595897cb8163.camel@sipsolutions.net>
+Subject: Re: [PATCH] scripts: add macro_checker script to check unused
+ parameters in macros
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Andrew Morton <akpm@linux-foundation.org>, Julian Sun
+	 <sunjunchao2870@gmail.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, jack@suse.cz, brauner@kernel.org, 
+ viro@zeniv.linux.org.uk, masahiroy@kernel.org, n.schier@avm.de,
+ ojeda@kernel.org,  djwong@kernel.org, kvalo@kernel.org
+Date: Wed, 24 Jul 2024 11:06:33 +0200
+In-Reply-To: <20240723150931.42f206f9cd86bc391b48c790@linux-foundation.org>
+References: <20240723091154.52458-1-sunjunchao2870@gmail.com>
+	 <20240723150931.42f206f9cd86bc391b48c790@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Quentin Monnet <qmo@kernel.org>
-Subject: Re: [PATCH v2] tools/bpf:Fix the wrong format specifier
-To: Zhu Jun <zhujun2@cmss.chinamobile.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240724085242.9967-1-zhujun2@cmss.chinamobile.com>
-Content-Language: en-GB
-In-Reply-To: <20240724085242.9967-1-zhujun2@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-malware-bazaar: not-scanned
 
-2024-07-24 01:52 UTC-0700 ~ Zhu Jun <zhujun2@cmss.chinamobile.com>
-> The format specifier of "unsigned int" in printf() should be "%u", not
-> "%d".
-> 
-> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
-> ---
-> Changes
-> v2:modify commit info
-> 
->  tools/bpf/bpftool/xlated_dumper.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/bpf/bpftool/xlated_dumper.c b/tools/bpf/bpftool/xlated_dumper.c
-> index 567f56dfd9f1..3efa639434be 100644
-> --- a/tools/bpf/bpftool/xlated_dumper.c
-> +++ b/tools/bpf/bpftool/xlated_dumper.c
-> @@ -349,7 +349,7 @@ void dump_xlated_plain(struct dump_data *dd, void *buf, unsigned int len,
->  
->  		double_insn = insn[i].code == (BPF_LD | BPF_IMM | BPF_DW);
->  
-> -		printf("% 4d: ", i);
-> +		printf("% 4u: ", i);
+>=20
+> Makes me wonder who will run this, and why.
+
+I suspect once it's there we could convince folks like the 0-day robot
+maintainers or Jakub for nipa [1] to run it and at least flag newly
+reported issues.
+
+[1] https://github.com/linux-netdev/nipa
 
 
-Please see feedback on v1 and address the warning.
+Or maybe run it with W=3D1 like we run kernel-doc then (cmd_checkdoc and
+"$(call cmd,checkdoc)")?
 
-pw-bot: changes-requested
+johannes
+
+
+
 
