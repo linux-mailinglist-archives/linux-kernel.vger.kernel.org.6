@@ -1,132 +1,150 @@
-Return-Path: <linux-kernel+bounces-260881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08E0B93AFC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:24:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEE0A93AFDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:31:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A403B1F2264C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:24:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91A881F22838
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE95155A4F;
-	Wed, 24 Jul 2024 10:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nmq2g8uO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37603156861;
+	Wed, 24 Jul 2024 10:31:35 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E9B51C6A3;
-	Wed, 24 Jul 2024 10:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58AB1C6A3;
+	Wed, 24 Jul 2024 10:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721816664; cv=none; b=fBpFyMpIwWYHLo0s8rYgSFwaCjd0x3tju4LGXKLs0M30MntOE/Kwxz71nLnwpzOer1i5fdI1/FFutGj9bfT2T8reSCptcKNrx9biMP+W3FajA9fYLmXr7hWjYnmgpxnWqAQNA4u6aW1nbWxVFCJIzEvNSfz9MwVSOMe9fPD3Fmc=
+	t=1721817094; cv=none; b=h+vleaqLP8menq+Y8VTkgXeyXKWVJafWKbayV9v/ZrFmR0/gjVG+sgxDDyJ0vcv//SQcvxTnChsrInh5s2hSs5ciMjOXlgedNRaeebDkGLhMqA3oPlJ79XqjJBNoMr+RGQ3YuJ5P0FSdEHd+nqauVmTLOuL8QYKK2qqT0QVJZ6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721816664; c=relaxed/simple;
-	bh=NdEEtdlxWrWnmoVV10NEbeNlCaWT4HNKyf37IWm1m+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cbR4DhjpYPesBFtcDImLe4BM45QdLo4dyfi9vF/co70AS0lu5t7S4z+p98QXjYo2iQYZBgGb5dZofizM0hj0ee7SeVQYbyl1wC5fhrXKb4W6eogw9FNfGzW+49SeJCyylH4MZJZU9hSi57+Dz7JVcF/UUXIxJ4gsjT4Lw6lS63Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nmq2g8uO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 626CFC32782;
-	Wed, 24 Jul 2024 10:24:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721816663;
-	bh=NdEEtdlxWrWnmoVV10NEbeNlCaWT4HNKyf37IWm1m+A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nmq2g8uOfnIvrbYY7kQAg0Nz2aHK2rTNJMzROzdO9Aj3fGX9shcMNtaNWfM2Sl4WE
-	 vJeuNdtOqqJ01JEfMaSWPACKnji1OLT6pztto+TGnrEMi+tg8Cw3i1qfGp6A2koI4b
-	 ZE62Ht9q/Wk7jpxAwn9yuNOjw+Kx/h4uIJZc4UeX90RYI0GUzj8Hm6TsKiVjMJK60j
-	 3sY3EDBUz/OzZL8tH3BbhC7LLGMnCbttJ+edtJ30g2njJtxiMq3du9VLFi1Otii8YJ
-	 O1L/eqmTd8SB4OyagE3uYBJ7NsNeWTKKjNdVIRJeAOJAtwd5XUvJdBZ1nCKrX5lAuU
-	 dyrk+nIkVCPag==
-Date: Wed, 24 Jul 2024 11:24:17 +0100
-From: Will Deacon <will@kernel.org>
-To: Kunkun Jiang <jiangkunkun@huawei.com>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Nicolin Chen <nicolinc@nvidia.com>,
-	Michael Shavit <mshavit@google.com>,
-	Mostafa Saleh <smostafa@google.com>,
-	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	wanghaibin.wang@huawei.com, yuzenghui@huawei.com,
-	tangnianyao@huawei.com
-Subject: Re: [bug report] iommu/arm-smmu-v3: Event cannot be printed in some
- scenarios
-Message-ID: <20240724102417.GA27376@willie-the-truck>
-References: <6147caf0-b9a0-30ca-795e-a1aa502a5c51@huawei.com>
- <7d5a8b86-6f0d-50ef-1b2f-9907e447c9fc@huawei.com>
+	s=arc-20240116; t=1721817094; c=relaxed/simple;
+	bh=w0wktJIDPkZ5XL009t7kRPm6AfiMdDyu0W+392dIUvk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=smKWoPmj17LkcPuPUFTpXqK9djs8w/4o+sPqWHUp0US1CjwY/M2TMAzLlb7kS1oLvT0Ewl1rzmXlCe85Y8gvPqXhfF2uRsiz3ZM9sWM9chEZffW1Vwrw58ti7ZI9l1TIoh6mA7j1AGBXqqQt43Mje/UkFgdWj598INFdeF5PR2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WTVZF4mFXzQmDN;
+	Wed, 24 Jul 2024 18:27:17 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id D5CD8180100;
+	Wed, 24 Jul 2024 18:31:28 +0800 (CST)
+Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Wed, 24 Jul
+ 2024 18:31:28 +0800
+From: Chen Ridong <chenridong@huawei.com>
+To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
+	<longman@redhat.com>, <adityakali@google.com>, <sergeh@kernel.org>,
+	<mkoutny@suse.com>
+CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 -next] cgroup/cpuset: remove child_ecpus_count
+Date: Wed, 24 Jul 2024 10:24:18 +0000
+Message-ID: <20240724102418.2213801-1-chenridong@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <7d5a8b86-6f0d-50ef-1b2f-9907e447c9fc@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-On Wed, Jul 24, 2024 at 05:22:59PM +0800, Kunkun Jiang wrote:
-> On 2024/7/24 9:42, Kunkun Jiang wrote:
-> > drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> > 1797                 while (!queue_remove_raw(q, evt)) {
-> > 1798                         u8 id = FIELD_GET(EVTQ_0_ID, evt[0]);
-> > 1799
-> > 1800                         ret = arm_smmu_handle_evt(smmu, evt);
-> > 1801                         if (!ret || !__ratelimit(&rs))
-> > 1802                                 continue;
-> > 1803
-> > 1804                         dev_info(smmu->dev, "event 0x%02x
-> > received:\n", id);
-> > 1805                         for (i = 0; i < ARRAY_SIZE(evt); ++i)
-> > 1806                                 dev_info(smmu->dev, "\t0x%016llx\n",
-> > 1807                                          (unsigned long
-> > long)evt[i]);
-> > 1808
-> > 1809                         cond_resched();
-> > 1810                 }
-> > 
-> > The smmu-v3 driver cannot print event information when "ret" is 0.
-> > Unfortunately due to commit 3dfa64aecbaf
-> > ("iommu: Make iommu_report_device_fault() return void"), the default
-> > return value in arm_smmu_handle_evt() is 0. Maybe a trace should
-> > be added here?
-> 
-> Additional explanation. Background introduction:
-> 1.A device(VF) is passthrough(VFIO-PCI) to a VM.
-> 2.The SMMU has the stall feature.
-> 3.Modified guest device driver to generate an event.
-> 
-> This event handling process is as follows:
-> arm_smmu_evtq_thread
->     ret = arm_smmu_handle_evt
->         iommu_report_device_fault
->             iopf_param = iopf_get_dev_fault_param(dev);
->             // iopf is not enabled.
-> // No RESUME will be sent!
->             if (WARN_ON(!iopf_param))
->                 return;
->     if (!ret || !__ratelimit(&rs))
->         continue;
-> 
-> In this scenario, the io page-fault capability is not enabled.
-> There are two problems here:
-> 1. The event information is not printed.
-> 2. The entire device(PF level) is stalled,not just the current
-> VF. This affects other normal VFs.
+The child_ecpus_count variable was previously used to update
+sibling cpumask when parent's effective_cpus is updated. However, it became
+obsolete after commit e2ffe502ba45 ("cgroup/cpuset: Add
+cpuset.cpus.exclusive for v2"). It should be removed.
 
-Oh, so that stall is probably also due to b554e396e51c ("iommu: Make
-iopf_group_response() return void"). I agree that we need a way to
-propagate error handling back to the driver in the case that
-'iopf_param' is NULL, otherwise we're making the unexpected fault
-considerably more problematic than it needs to be.
+Signed-off-by: Chen Ridong <chenridong@huawei.com>
+---
+ kernel/cgroup/cpuset.c | 25 ++++---------------------
+ 1 file changed, 4 insertions(+), 21 deletions(-)
 
-Lu -- can we add the -ENODEV return back in the case that
-iommu_report_device_fault() doesn't even find a 'iommu_fault_param' for
-the device?
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 40ec4abaf440..d4322619e59a 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -188,10 +188,8 @@ struct cpuset {
+ 	/*
+ 	 * Default hierarchy only:
+ 	 * use_parent_ecpus - set if using parent's effective_cpus
+-	 * child_ecpus_count - # of children with use_parent_ecpus set
+ 	 */
+ 	int use_parent_ecpus;
+-	int child_ecpus_count;
+ 
+ 	/*
+ 	 * number of SCHED_DEADLINE tasks attached to this cpuset, so that we
+@@ -1512,7 +1510,6 @@ static void reset_partition_data(struct cpuset *cs)
+ 	if (!cpumask_and(cs->effective_cpus,
+ 			 parent->effective_cpus, cs->cpus_allowed)) {
+ 		cs->use_parent_ecpus = true;
+-		parent->child_ecpus_count++;
+ 		cpumask_copy(cs->effective_cpus, parent->effective_cpus);
+ 	}
+ }
+@@ -1688,12 +1685,8 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
+ 	spin_lock_irq(&callback_lock);
+ 	isolcpus_updated = partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
+ 	list_add(&cs->remote_sibling, &remote_children);
+-	if (cs->use_parent_ecpus) {
+-		struct cpuset *parent = parent_cs(cs);
+-
++	if (cs->use_parent_ecpus)
+ 		cs->use_parent_ecpus = false;
+-		parent->child_ecpus_count--;
+-	}
+ 	spin_unlock_irq(&callback_lock);
+ 	update_unbound_workqueue_cpumask(isolcpus_updated);
+ 
+@@ -2318,15 +2311,10 @@ static void update_cpumasks_hier(struct cpuset *cs, struct tmpmasks *tmp,
+ 		 */
+ 		if (is_in_v2_mode() && !remote && cpumask_empty(tmp->new_cpus)) {
+ 			cpumask_copy(tmp->new_cpus, parent->effective_cpus);
+-			if (!cp->use_parent_ecpus) {
++			if (!cp->use_parent_ecpus)
+ 				cp->use_parent_ecpus = true;
+-				parent->child_ecpus_count++;
+-			}
+-		} else if (cp->use_parent_ecpus) {
++		} else if (cp->use_parent_ecpus)
+ 			cp->use_parent_ecpus = false;
+-			WARN_ON_ONCE(!parent->child_ecpus_count);
+-			parent->child_ecpus_count--;
+-		}
+ 
+ 		if (remote)
+ 			goto get_css;
+@@ -4139,7 +4127,6 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
+ 		cpumask_copy(cs->effective_cpus, parent->effective_cpus);
+ 		cs->effective_mems = parent->effective_mems;
+ 		cs->use_parent_ecpus = true;
+-		parent->child_ecpus_count++;
+ 	}
+ 	spin_unlock_irq(&callback_lock);
+ 
+@@ -4205,12 +4192,8 @@ static void cpuset_css_offline(struct cgroup_subsys_state *css)
+ 	    is_sched_load_balance(cs))
+ 		update_flag(CS_SCHED_LOAD_BALANCE, cs, 0);
+ 
+-	if (cs->use_parent_ecpus) {
+-		struct cpuset *parent = parent_cs(cs);
+-
++	if (cs->use_parent_ecpus)
+ 		cs->use_parent_ecpus = false;
+-		parent->child_ecpus_count--;
+-	}
+ 
+ 	cpuset_dec();
+ 	clear_bit(CS_ONLINE, &cs->flags);
+-- 
+2.34.1
 
-Will
 
