@@ -1,148 +1,212 @@
-Return-Path: <linux-kernel+bounces-260843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E5F893AF34
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:45:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C87D93AF36
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 422EB281D2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:45:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E37C028294D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951CD153BF7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F213B154452;
 	Wed, 24 Jul 2024 09:45:34 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B1F14375C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FEF14387F
 	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 09:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721814334; cv=none; b=kFchdaW8zGuhaOYG9EFBTyQRbqGfnD3JbUxJIK1KCvl3lYNimo4729uhRdaIr4m1Bk0bW3u6xP1ZoWnIP/7Gr2bJqlZ7woQwg7MZPgTW4mwH+QIwBmeBKTl7kO/FwjU7Lt3tCvXNvUUZeU3LGDTZTKvA3FFy3mKcLSyl5vZ5rww=
+	t=1721814334; cv=none; b=XgHyVj/eXXugC2f8ETGcy4my48L1Vl95EY9VnS1dDv2Jm/qfdx2ATzOvVU19o+R/xonBMLOF61q88+iEclvXuqxxc1fEOhFpd9toJTHPCEdGWnT1IREfP0XvO/SWpawS61Ro9Me0H55eMHOcofyXs/bvlA1Wot1YunoxbYlhVOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721814334; c=relaxed/simple;
-	bh=8aIzCYRwOwUmw7oJDrQawrCy2E4NZiRH5To/4q/eZ7o=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=n4g2RTyenZU3WO2KN/DlIu78veYVYPjIiPhnk0EzpTzdchTQb/vjHMLmgkA/yVWvG5+9LoiG//zLJ3rvbAeKyOVamGMew+fk6dwF2Gk+MM+XnyxPcdW5heKJjlxuR4pyoydOTiJze58+5ssOTyM0rhRxr4ICU/V4CSDr2L+5Fao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+	bh=uE63k7xGFyRjBlaat4CbHaydYDufIZu9gL4CRlWw6FA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ljYhpfIBWlhQJXDcY2Kd5A2Lo663yY+SmTE7xKE1GzAnkNkMyspAj39WmU/4krc/UHxFP2KxsCQsro1BaQglFU0XtaNrzdYPuLNUG9Lk8iL3QFTx1M0CLXIP2nS2j2W2v+MoapsXJIVyPTKpGNkfOfVqkyP8XqlTuAS8AmHx0MQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-8051524c1f8so1099923339f.1
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7fb15d52c5cso1112003539f.3
         for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 02:45:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721814330; x=1722419130;
+        d=1e100.net; s=20230601; t=1721814331; x=1722419131;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=NmjwqPYMuxNEReWWJcD819IG0ZMFeKoGBsrLFK1PRkw=;
-        b=Qwwk7MXPUzV4ORN+HoBVKffwpQKyDrNjFxLOtIKWmJXKioHFHn7lhpaALJfo750kTo
-         nrDAbgR1iwPLmYVfglTStQat5+CJOoRzuPBl2xgRea8dTvELnfyeZEs5WZEwFJPLcDzu
-         n8u2MletUP3H0VbYLODXtKydEwnP93gAGZfSn6fjpPbHNKa7IpR4bWiYXu3z13iC0GLC
-         +MBax32jEccJqZR9mi6EuqWPBp1MEyi7KdYGXOEgKPrF/bpl+lEg/fjtAfCvubI8uNDF
-         W9JMxxlcR4X5O6+rERm1zazu5FAEYr3o6ZTyb6pjCqLDrSrV4SV5vEpYDiG2UvVPR2vx
-         G7kA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhwSK8GouU8j5zD/cCV8Y1YcvfAgVB3a3jjcSuMIL0YtrLaA2FNWOej613hcFNnBws3vugYylFbSnmi03bVsVpXWs/PhEVA7kRk5rO
-X-Gm-Message-State: AOJu0YwQMeGIV5PqD+KmPqhNL8JnchNXzFSkkwhc0SYpAq+eOLdqBucz
-	o/ztyN7l5K/zlN/hrFs8gLdB+yo8YfDa/g5j4uq+9C6t2baUqxqET+/qeRGsyv+w7eluB5jRpwy
-	P24icdpdBU5PoWASCRswFpGkJv8pVNu1naPpirh4G3xJttGq2Xydewqs=
-X-Google-Smtp-Source: AGHT+IFAeJUUCi3HUf81q73de8KuPKXwfZE7HIKneTn6/Mi9PKXcNTrWecSm8l8GULMLURZNNZJcKO5Kx9pltl9cyip2jWbbUxvu
+        bh=aGqRwjGhA6CqQCydFuXZbl1EfkTEI7M6qNM6wCnGrhM=;
+        b=Tu6Y8sNuy4Lkfpq6cWx0p2m52T1Okbro+iUuDmjAiPrbmVd7cQafl11ddk7anOUKUs
+         WNQaupzAArkOEdA7ucOOAuk1FKufbp49+UnbHz4KgWnZq+wf6Etx0gGNVBihBP8eRGDL
+         KJa0Tozy2yU0dYEdUxNpMOPnk7EauqW/49FMsWdp25BQigdxRtksriCgjxbcMz39Fozk
+         G76xni5xL9sxLFlNlL26hC747SjKsNhE9aSoILXnXqCzDp+Qv9O8C3kyHtnTg5RXtaHs
+         NFiRdPtJA4+MSxWBQCTTUVTNAPA84hBCvY24TgIF+n2xO3btATFFwuE4CmNz7K823+KX
+         BD6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXyb47vUv1O39g6s7l6qmg9atOljoWHmgsE7BqOHZ3bgHqzHtPOMubFyaGSRuJB9lLnnwAbQLdXfYd9gy7mGETW5CRSABgaNm/qjWag
+X-Gm-Message-State: AOJu0YzPf/Qq3FG8RFtuZ3iwilx9uRo/dss7/0wATNlHNzLnVFRP2T6L
+	jHPxbjcSLyQ+O6CxJj1FofeES2yPe9P8jMSbDUZ/q27AKQ7qi8wgUrGDb9Oo9mi8qQdtahNCCdm
+	qzPbYiXNKkL0oy1F5mBCoXKWQh5FfBcWJdfVKdOyM8rgZ2wEY4xwWm24=
+X-Google-Smtp-Source: AGHT+IEhlHz8fRhbS+6k1hSSPdkJNK07uxk+iI7yUbc5mqzzHhnb72uR8Bm1/JzAkRzV2LOL8p88cU6Qq5Ag0mx2qaUffR2H+rAg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13a2:b0:381:b873:306b with SMTP id
- e9e14a558f8ab-39a1971a320mr1196995ab.6.1721814330487; Wed, 24 Jul 2024
+X-Received: by 2002:a05:6638:408b:b0:4b9:6f13:fb1a with SMTP id
+ 8926c6da1cb9f-4c28efc1d76mr120051173.4.1721814330762; Wed, 24 Jul 2024
  02:45:30 -0700 (PDT)
 Date: Wed, 24 Jul 2024 02:45:30 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000089c945061dfb23e4@google.com>
-Subject: [syzbot] [input?] [mm?] WARNING in get_taint
-From: syzbot <syzbot+a34cc64ce2f703da7c62@syzkaller.appspotmail.com>
-To: dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com
+Message-ID: <0000000000008df61a061dfb2366@google.com>
+Subject: [syzbot] [net?] WARNING in cake_dequeue (2)
+From: syzbot <syzbot+3880fb06c3b7f5ec1878@syzkaller.appspotmail.com>
+To: cake@lists.bufferbloat.net, davem@davemloft.net, edumazet@google.com, 
+	jhs@mojatatu.com, jiri@resnulli.us, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com, toke@toke.dk, xiyou.wangcong@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    933069701c1b Merge tag '6.11-rc-smb3-server-fixes' of git:..
+HEAD commit:    7846b618e0a4 Merge tag 'rtc-6.11' of git://git.kernel.org/..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16a3dcb1980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e5bbfd9a8c60696e
-dashboard link: https://syzkaller.appspot.com/bug?extid=a34cc64ce2f703da7c62
-compiler:       arm-linux-gnueabi-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=119babfd980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12c02411980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12b09fe9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f4925140c45a2a50
+dashboard link: https://syzkaller.appspot.com/bug?extid=3880fb06c3b7f5ec1878
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/8ead8862021c/non_bootable_disk-93306970.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/662be7a678a5/vmlinux-93306970.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1fc4540c602b/zImage-93306970.xz
+disk image: https://storage.googleapis.com/syzbot-assets/1367075cbd79/disk-7846b618.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f252a22f2003/vmlinux-7846b618.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/23bea0ad3ab6/bzImage-7846b618.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a34cc64ce2f703da7c62@syzkaller.appspotmail.com
+Reported-by: syzbot+3880fb06c3b7f5ec1878@syzkaller.appspotmail.com
 
-WARNING: CPU: 0 PID: 3006 at mm/page_alloc.c:4672 __alloc_pages_noprof+0xfbc/0x1170 mm/page_alloc.c:4672
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 22566 at net/sched/sch_cake.c:2094 cake_dequeue+0x2af1/0x4690 net/sched/sch_cake.c:2094
 Modules linked in:
-Kernel panic - not syncing: kernel: panic_on_warn set ...
-CPU: 0 UID: 0 PID: 3006 Comm: syz-executor872 Not tainted 6.10.0-syzkaller #0
-Hardware name: ARM-Versatile Express
-Call trace: 
-[<818ef10c>] (dump_backtrace) from [<818ef208>] (show_stack+0x18/0x1c arch/arm/kernel/traps.c:257)
- r7:00000000 r6:82622804 r5:00000000 r4:81feb1a4
-[<818ef1f0>] (show_stack) from [<8190c848>] (__dump_stack lib/dump_stack.c:93 [inline])
-[<818ef1f0>] (show_stack) from [<8190c848>] (dump_stack_lvl+0x54/0x7c lib/dump_stack.c:119)
-[<8190c7f4>] (dump_stack_lvl) from [<8190c888>] (dump_stack+0x18/0x1c lib/dump_stack.c:128)
- r5:00000000 r4:82863d0c
-[<8190c870>] (dump_stack) from [<818efcb0>] (panic+0x120/0x358 kernel/panic.c:348)
-[<818efb90>] (panic) from [<80241f4c>] (check_panic_on_warn kernel/panic.c:241 [inline])
-[<818efb90>] (panic) from [<80241f4c>] (get_taint+0x0/0x1c kernel/panic.c:236)
- r3:8260c5c4 r2:00000001 r1:81fd3dfc r0:81fdb810
- r7:804b3e38
-[<80241ed8>] (check_panic_on_warn) from [<802420a0>] (__warn+0x7c/0x180 kernel/panic.c:735)
-[<80242024>] (__warn) from [<8024231c>] (warn_slowpath_fmt+0x178/0x1f4 kernel/panic.c:760)
- r8:00000009 r7:8200455c r6:df979c24 r5:841c3c00 r4:00000000
-[<802421a8>] (warn_slowpath_fmt) from [<804b3e38>] (__alloc_pages_noprof+0xfbc/0x1170 mm/page_alloc.c:4672)
- r10:00000014 r9:840b0204 r8:ffffffff r7:841c3c00 r6:00000dc0 r5:00000000
- r4:00000000
-[<804b2e7c>] (__alloc_pages_noprof) from [<804b8f38>] (__alloc_pages_node_noprof include/linux/gfp.h:269 [inline])
-[<804b2e7c>] (__alloc_pages_noprof) from [<804b8f38>] (alloc_pages_node_noprof include/linux/gfp.h:296 [inline])
-[<804b2e7c>] (__alloc_pages_noprof) from [<804b8f38>] (___kmalloc_large_node+0x50/0xac mm/slub.c:4103)
- r10:841c3c00 r9:840b0204 r8:ffffffff r7:804c0de8 r6:00000dc0 r5:00000000
- r4:00000014
-[<804b8ee8>] (___kmalloc_large_node) from [<804b9b10>] (__kmalloc_large_node_noprof+0x24/0x114 mm/slub.c:4130)
- r7:804c0de8 r6:00000dc0 r5:ffffffff r4:80000002
-[<804b9aec>] (__kmalloc_large_node_noprof) from [<804c0de8>] (__do_kmalloc_node mm/slub.c:4146 [inline])
-[<804b9aec>] (__kmalloc_large_node_noprof) from [<804c0de8>] (__kmalloc_noprof+0x324/0x458 mm/slub.c:4170)
- r10:841c3c00 r9:840b0204 r8:841c3c00 r7:00000dc0 r6:84191400 r5:ffffffff
- r4:80000002
-[<804c0ac4>] (__kmalloc_noprof) from [<80f696ec>] (kmalloc_noprof include/linux/slab.h:685 [inline])
-[<804c0ac4>] (__kmalloc_noprof) from [<80f696ec>] (kzalloc_noprof include/linux/slab.h:807 [inline])
-[<804c0ac4>] (__kmalloc_noprof) from [<80f696ec>] (input_mt_init_slots+0x60/0x1f0 drivers/input/input-mt.c:50)
- r10:841c3c00 r9:840b0204 r8:00000000 r7:00000000 r6:84191400 r5:00000000
- r4:80000002
-[<80f6968c>] (input_mt_init_slots) from [<80f98f28>] (uinput_create_device drivers/input/misc/uinput.c:328 [inline])
-[<80f6968c>] (input_mt_init_slots) from [<80f98f28>] (uinput_ioctl_handler+0x9c0/0xc54 drivers/input/misc/uinput.c:904)
- r8:00000000 r7:00000000 r6:840b0200 r5:00000000 r4:84191400
-[<80f98568>] (uinput_ioctl_handler) from [<80f991d0>] (uinput_ioctl+0x14/0x18 drivers/input/misc/uinput.c:1075)
- r9:00000003 r8:83f446c0 r7:00000000 r6:83f446c0 r5:00000000 r4:00005501
-[<80f991bc>] (uinput_ioctl) from [<8051a210>] (vfs_ioctl fs/ioctl.c:51 [inline])
-[<80f991bc>] (uinput_ioctl) from [<8051a210>] (do_vfs_ioctl fs/ioctl.c:861 [inline])
-[<80f991bc>] (uinput_ioctl) from [<8051a210>] (__do_sys_ioctl fs/ioctl.c:905 [inline])
-[<80f991bc>] (uinput_ioctl) from [<8051a210>] (sys_ioctl+0x134/0xda4 fs/ioctl.c:893)
-[<8051a0dc>] (sys_ioctl) from [<80200060>] (ret_fast_syscall+0x0/0x1c arch/arm/mm/proc-v7.S:67)
-Exception stack(0xdf979fa8 to 0xdf979ff0)
-9fa0:                   ffffffff 00000000 00000003 00005501 00000000 00000000
-9fc0: ffffffff 00000000 0008e050 00000036 7ef58e0c 00000000 000f4240 00000000
-9fe0: 7ef58c70 7ef58c60 00010abc 0002ec20
- r10:00000036 r9:841c3c00 r8:8020029c r7:00000036 r6:0008e050 r5:00000000
- r4:ffffffff
-Rebooting in 86400 seconds..
+CPU: 0 PID: 22566 Comm: syz.3.4579 Not tainted 6.10.0-syzkaller-11323-g7846b618e0a4 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:cake_dequeue+0x2af1/0x4690 net/sched/sch_cake.c:2094
+Code: 74 08 4c 89 f7 e8 af d7 6b f8 4d 89 26 eb 05 e8 75 e1 08 f8 45 31 f6 4c 8b a4 24 08 01 00 00 e9 d4 de ff ff e8 60 e1 08 f8 90 <0f> 0b 90 48 8b 94 24 f0 00 00 00 48 89 d0 48 c1 e8 03 42 0f b6 04
+RSP: 0018:ffffc900000079c0 EFLAGS: 00010246
+RAX: ffffffff898a6160 RBX: 000000000000ffff RCX: ffff888067efda00
+RDX: 0000000080000101 RSI: 000000000000ffff RDI: 0000000000000400
+RBP: ffffc90000007c28 R08: ffffffff898a5f7c R09: ffffffff898a69e5
+R10: 0000000000000003 R11: ffff888067efda00 R12: ffff88805a900010
+R13: dffffc0000000000 R14: 000000000000ffff R15: ffff88805a900000
+FS:  00007f3db68136c0(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b3141fffc CR3: 0000000073d06000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ dequeue_skb net/sched/sch_generic.c:293 [inline]
+ qdisc_restart net/sched/sch_generic.c:398 [inline]
+ __qdisc_run+0x272/0x2170 net/sched/sch_generic.c:416
+ qdisc_run+0xda/0x270 include/net/pkt_sched.h:127
+ net_tx_action+0x89c/0xa50 net/core/dev.c:5322
+ handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
+ __do_softirq kernel/softirq.c:588 [inline]
+ invoke_softirq kernel/softirq.c:428 [inline]
+ __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
+ irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
+ sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1043
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:stack_trace_save+0x0/0x1d0 kernel/stacktrace.c:114
+Code: 5d 41 5e 41 5f 5d c3 cc cc cc cc 90 0f 0b 90 45 31 e4 eb e1 66 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 <f3> 0f 1e fa 55 48 89 e5 41 57 41 56 41 55 41 54 53 48 83 e4 e0 48
+RSP: 0018:ffffc9000a016db8 EFLAGS: 00000246
+RAX: 0000000000000000 RBX: ffff888067efdf80 RCX: 0000000000000000
+RDX: 0000000000000002 RSI: 0000000000000010 RDI: ffffc9000a016e00
+RBP: ffffc9000a016ef0 R08: ffffffff82005562 R09: 0000000000000000
+R10: ffffc9000a016e00 R11: fffff52001402dd0 R12: dffffc0000000000
+R13: 1ffff92001402dbc R14: ffffc9000a016e00 R15: 1ffff1100cfdfbf0
+ save_stack+0xfb/0x1f0 mm/page_owner.c:156
+ __set_page_owner+0x92/0x800 mm/page_owner.c:320
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1473
+ prep_new_page mm/page_alloc.c:1481 [inline]
+ get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3425
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4683
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ vma_alloc_folio_noprof+0xf3/0x1f0 mm/mempolicy.c:2304
+ folio_prealloc+0x31/0x170
+ alloc_anon_folio mm/memory.c:4397 [inline]
+ do_anonymous_page mm/memory.c:4455 [inline]
+ do_pte_missing mm/memory.c:3895 [inline]
+ handle_pte_fault+0x257b/0x7090 mm/memory.c:5381
+ __handle_mm_fault mm/memory.c:5524 [inline]
+ handle_mm_fault+0xfb0/0x19d0 mm/memory.c:5689
+ faultin_page mm/gup.c:1305 [inline]
+ __get_user_pages+0x6ec/0x16a0 mm/gup.c:1604
+ populate_vma_page_range+0x264/0x330 mm/gup.c:2043
+ __mm_populate+0x27a/0x460 mm/gup.c:2146
+ mm_populate include/linux/mm.h:3469 [inline]
+ vm_mmap_pgoff+0x2c3/0x3d0 mm/util.c:593
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3db5975b59
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f3db6813048 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 00007f3db5b05f60 RCX: 00007f3db5975b59
+RDX: 000000000000000f RSI: 0000000000b36000 RDI: 0000000020000000
+RBP: 00007f3db59e4e5d R08: ffffffffffffffff R09: 0000000000000000
+R10: 0000000004008032 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000004d R14: 00007f3db5b05f60 R15: 00007ffc8713fc48
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	5d                   	pop    %rbp
+   1:	41 5e                	pop    %r14
+   3:	41 5f                	pop    %r15
+   5:	5d                   	pop    %rbp
+   6:	c3                   	ret
+   7:	cc                   	int3
+   8:	cc                   	int3
+   9:	cc                   	int3
+   a:	cc                   	int3
+   b:	90                   	nop
+   c:	0f 0b                	ud2
+   e:	90                   	nop
+   f:	45 31 e4             	xor    %r12d,%r12d
+  12:	eb e1                	jmp    0xfffffff5
+  14:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+  1a:	90                   	nop
+  1b:	90                   	nop
+  1c:	90                   	nop
+  1d:	90                   	nop
+  1e:	90                   	nop
+  1f:	90                   	nop
+  20:	90                   	nop
+  21:	90                   	nop
+  22:	90                   	nop
+  23:	90                   	nop
+  24:	90                   	nop
+  25:	90                   	nop
+  26:	90                   	nop
+  27:	90                   	nop
+  28:	90                   	nop
+  29:	90                   	nop
+* 2a:	f3 0f 1e fa          	endbr64 <-- trapping instruction
+  2e:	55                   	push   %rbp
+  2f:	48 89 e5             	mov    %rsp,%rbp
+  32:	41 57                	push   %r15
+  34:	41 56                	push   %r14
+  36:	41 55                	push   %r13
+  38:	41 54                	push   %r12
+  3a:	53                   	push   %rbx
+  3b:	48 83 e4 e0          	and    $0xffffffffffffffe0,%rsp
+  3f:	48                   	rex.W
 
 
 ---
@@ -155,10 +219,6 @@ https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to overwrite report's subsystems, reply with:
 #syz set subsystems: new-subsystem
