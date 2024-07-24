@@ -1,152 +1,92 @@
-Return-Path: <linux-kernel+bounces-260902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B32393B006
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:56:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C9B693B014
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DC2A1F24981
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:56:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52AEB2851D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E5015696E;
-	Wed, 24 Jul 2024 10:56:12 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4437156C69;
+	Wed, 24 Jul 2024 11:05:53 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE03B1BF38;
-	Wed, 24 Jul 2024 10:56:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976BB2595;
+	Wed, 24 Jul 2024 11:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721818572; cv=none; b=vC9pANMIZb5oXx1nSeN1n50dfxVe58EiKxnyRH4YJeSemHEL0K8ikH6H58VMzM5rfXR+MBigeYqI1OTBqC9yhNNBGSBfLVlPthRaDP1UxYciFSWoqQnlezGGxbLyqErEJxc0tSN+XZEZGk9lytpua0GEVc2rWUpBAJjywsafB7w=
+	t=1721819153; cv=none; b=OsSB/k4cgzs80+73jG5UDWeuQMBnXVtGxoRvLKMAW5AMI/pX0qIeZvcuWnd8uDbESU4bxag8s7i6bsTis0T5f4NluXgwqAXWWPH+KnBJ4yLBblaoySUkKMOkJ2dl1jK3pjR1pUyItiH6b0a9UcTM7SgiZ+NFXkEP0VOd2EfADJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721818572; c=relaxed/simple;
-	bh=PCullMsOCoMNGFE9jXzB692xZEYtdQh263JkaEU16zc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kXlUN4jHWw3BNXP6U++qsbZ0RwDQHAEI1tOmRKYHgCRMQtGVYx4gwqu4ao/HgVyIa6ayWgRAZQMWQRRSEo1+ofuez7hb3ZTr6FXgMUOMGc3FiIKNI0K8DWUjbvQaEf3RZ5E4eiNydr1VdMwHLMtvyL6tmYF6n56IuYzf457uyBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowAB3XTin3aBmvIa8AA--.42398S2;
-	Wed, 24 Jul 2024 18:55:45 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: jani.nikula@linux.intel.com
-Cc: airlied@gmail.com,
-	daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	make24@iscas.ac.cn,
-	mripard@kernel.org,
-	noralf@tronnes.org,
-	sam@ravnborg.org,
-	stable@vger.kernel.org,
-	tzimmermann@suse.de
-Subject: Re: [PATCH v3] drm/client: fix null pointer dereference in drm_client_modeset_probe
-Date: Wed, 24 Jul 2024 18:55:35 +0800
-Message-Id: <20240724105535.1524294-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <87ikwvf6ol.fsf@intel.com>
-References: <87ikwvf6ol.fsf@intel.com>
+	s=arc-20240116; t=1721819153; c=relaxed/simple;
+	bh=pHp6OPqdJsXqJDCyfex8/uK2iFqAW/O5P7YYz3Gl7ss=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H4GHxzhfAgCeEf6UkqoOfXpgiLFtk3Kb0nG0yAONJJUNZC12g/vb6afArocyf0+LKanJm7jBtsNxzIH/bT9VYoh6zNQlC875euHC3vN0wjbTKam+pfl+ulA1qBGC2NJmQSv88WLMY5Bh2Fc3kO9BimYtmzS+MlI/q47r7N1iEsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sWZhL-000eHM-1J;
+	Wed, 24 Jul 2024 19:05:39 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 24 Jul 2024 18:58:22 +0800
+Date: Wed, 24 Jul 2024 18:58:22 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Greg KH <gregkh@linuxfoundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stsp <stsp2@yandex.ru>, linux-serial@vger.kernel.org,
+	Linux kernel <linux-kernel@vger.kernel.org>,
+	Johan Hovold <johan@kernel.org>
+Subject: Re: [regression] ENOTTY returned for tty fds
+Message-ID: <ZqDeTlq-1NP3dne_@gondor.apana.org.au>
+References: <b6f4aa5c-10ba-411b-994b-6dbed2bf63db@yandex.ru>
+ <2024072452-pegboard-undying-4245@gregkh>
+ <c74f1e3e-a376-42e3-86e0-a804f9a7da2c@yandex.ru>
+ <2024072401-spearfish-gnarly-a09e@gregkh>
+ <be1a3839-23a6-4726-9018-3d18a27163be@yandex.ru>
+ <2024072401-obtain-heap-6d8d@gregkh>
+ <ZqDdDPF_N9tcbu_S@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-CM-TRANSID:zQCowAB3XTin3aBmvIa8AA--.42398S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7WF1xtF4DWr4ruw43KFWkXrb_yoW8tw4xpr
-	s8GF90yFW0qF9rKFs2v3WxuF13Z3W3Jr48GF17J3Z3C3Z0gry5tryYvr15WF9rCr13KF10
-	qF12yFW3XF4qyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQvtAUUUUU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZqDdDPF_N9tcbu_S@gondor.apana.org.au>
 
-On Wed, 24 Jul 2024, Jani Nikula <jani.nikula@linux.intel.com> wrote:=0D
-> On Wed, 24 Jul 2024, Ma Ke <make24@iscas.ac.cn> wrote:=0D
-> > In drm_client_modeset_probe(), the return value of drm_mode_duplicate()=
- is=0D
-> > assigned to modeset->mode, which will lead to a possible NULL pointer=0D
-> > dereference on failure of drm_mode_duplicate(). Add a check to avoid np=
-d.=0D
-> >=0D
-> > Cc: stable@vger.kernel.org=0D
-> > Fixes: cf13909aee05 ("drm/fb-helper: Move out modeset config code")=0D
-> > Signed-off-by: Ma Ke <make24@iscas.ac.cn>=0D
-> > ---=0D
-> > Changes in v3:=0D
-> > - modified patch as suggestions, returned error directly when failing t=
-o =0D
-> > get modeset->mode.=0D
-> =0D
-> This is not what I suggested, and you can't just return here either.=0D
-> =0D
-> BR,=0D
-> Jani.=0D
-> =0D
-=0D
-I have carefully read through your comments. Based on your comments on the =
-=0D
-patchs I submitted, I am uncertain about the appropriate course of action =
-=0D
-following the return value check(whether to continue or to return directly,=
-=0D
-as both are common approaches in dealing with function drm_mode_duplicate()=
-=0D
-in Linux kernel, and such handling has received 'acked-by' in similar =0D
-vulnerabilities). Could you provide some advice on this matter? Certainly, =
-=0D
-adding a return value check is essential, the reasons for which have been =
-=0D
-detailed in the vulnerability description. I am looking forward to your =0D
-guidance and response. Thank you!=0D
-=0D
-Best regards,=0D
-=0D
-Ma Ke=0D
-=0D
-> =0D
-> > Changes in v2:=0D
-> > - added the recipient's email address, due to the prolonged absence of =
-a =0D
-> > response from the recipients.=0D
-> > - added Cc stable.=0D
-> > ---=0D
-> >  drivers/gpu/drm/drm_client_modeset.c | 3 +++=0D
-> >  1 file changed, 3 insertions(+)=0D
-> >=0D
-> > diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm=
-_client_modeset.c=0D
-> > index 31af5cf37a09..750b8dce0f90 100644=0D
-> > --- a/drivers/gpu/drm/drm_client_modeset.c=0D
-> > +++ b/drivers/gpu/drm/drm_client_modeset.c=0D
-> > @@ -880,6 +880,9 @@ int drm_client_modeset_probe(struct drm_client_dev =
-*client, unsigned int width,=0D
-> >  =0D
-> >  			kfree(modeset->mode);=0D
-> >  			modeset->mode =3D drm_mode_duplicate(dev, mode);=0D
-> > +			if (!modeset->mode)=0D
-> > +				return 0;=0D
-> > +=0D
-> >  			drm_connector_get(connector);=0D
-> >  			modeset->connectors[modeset->num_connectors++] =3D connector;=0D
-> >  			modeset->x =3D offset->x;=0D
-> =0D
-> -- =0D
-> Jani Nikula, Intel=
+On Wed, Jul 24, 2024 at 06:53:00PM +0800, Herbert Xu wrote:
+> On Wed, Jul 24, 2024 at 12:15:39PM +0200, Greg KH wrote:
+> >
+> > -ENOTTY is the documented result of invalid ioctl arguments sent, I am
+> > pretty sure POSIX requires this somewhere.  So this was fixing a
+> > requirement here...
+> 
+> POSIX does not specify this at all:
+> 
+> https://pubs.opengroup.org/onlinepubs/9699919799/functions/ioctl.html
 
+In fact it says:
+
+If an underlying device driver detects an error, then ioctl() shall fail if:
+
+[EINVAL]
+The request or arg argument is not valid for this device.
+
+[ENOTTY]
+The file associated with the fildes argument is not a STREAMS device that accepts control functions.
+
+Of course this is all moot since POSIX only specifies ioctl(2)
+for STREAMS devices, but this patch in question is literally
+going against the woring here.
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
