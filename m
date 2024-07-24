@@ -1,218 +1,190 @@
-Return-Path: <linux-kernel+bounces-260697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF23E93AD1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:21:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBA8593AD23
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 499ED1F227C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:21:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F7B81F21185
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E9A6E611;
-	Wed, 24 Jul 2024 07:21:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC9874070;
+	Wed, 24 Jul 2024 07:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="J5eYjVer";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wohCYoZu";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="J5eYjVer";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wohCYoZu"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IZc/WOix"
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D55D4C84;
-	Wed, 24 Jul 2024 07:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432DF4C84;
+	Wed, 24 Jul 2024 07:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721805694; cv=none; b=rOAsBiAXXJkCS2ZghePl+R2tDdpQ1Yxw6yAC1g0VhWxiiuEZ1RNCxaD2AK2L4PcOJmvBsNhrUAGNKcdQEXjt8M/KTvdks6ptwwTNeTKiJUj+i8nsgqmUROQ2SReTCzn4A8n5rf+6BngaMWQ8QjcGdndvw+bwmhmRYT8dplTDk4s=
+	t=1721805874; cv=none; b=YB4kOdVLrX0xnExgVKfRqdGn1kkrYRUGmb+KMH83+pdzAMAutNjSjSK4OnC1Aw4fae6xYne8M9Lu6LSL5mklam0FL5FvqaRANm9xHBWtJ+RABtOHZbh+OQB0OPV4LUFatS6JtZibVCnKs9IAXsBB8693CLREumzFTJ1JjvPtjn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721805694; c=relaxed/simple;
-	bh=/OxbqeFXZJBzITyYv+VkE5wJKT+kzst/yWR2yQbPhNI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UZHMoHFcQNFazx+6mFtASJh9s7T7UPdoWs9HUIti7zyFrUW3aHeTSzUYUD4bw+gs5841MZSZyc1Bl1qxdwOh/CzNG5CVTGY9D0RTkv4n2SlzVdL1uNTvNHIIKNmVq6kWN9Ttm1beuQCE6uZ6C3XgNxlwF9OyKY7seSuX1vN+86I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=J5eYjVer; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wohCYoZu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=J5eYjVer; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wohCYoZu; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 191CD1F74B;
-	Wed, 24 Jul 2024 07:21:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721805690; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gPPgtgLiOKT8FFQeCtEOAG2iHovCigqjgeJnxTCVTi8=;
-	b=J5eYjVerz1TnhJP0ultEZFNJxXNFGMmJbyBTH9h4P1IZYH3NuSK01QC0oVsife43s97m+Y
-	um/XDvF1Kz3/9i7r1UttEpeSciizEcPuItBWccEkdka/+mG6teF8JXJfFxdEdIJpTK7aNE
-	ROQxdwcQS8C1UbBUsqiXRdlZAf27yVI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721805690;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gPPgtgLiOKT8FFQeCtEOAG2iHovCigqjgeJnxTCVTi8=;
-	b=wohCYoZuO6HZ9ZoHa17pK7Ac7tuln8TgDrlkahs4MZ+F2CYFxQHx/apoF57GtBDixjFYFJ
-	+PMQ7vw/7XmdyMBg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=J5eYjVer;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=wohCYoZu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1721805690; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gPPgtgLiOKT8FFQeCtEOAG2iHovCigqjgeJnxTCVTi8=;
-	b=J5eYjVerz1TnhJP0ultEZFNJxXNFGMmJbyBTH9h4P1IZYH3NuSK01QC0oVsife43s97m+Y
-	um/XDvF1Kz3/9i7r1UttEpeSciizEcPuItBWccEkdka/+mG6teF8JXJfFxdEdIJpTK7aNE
-	ROQxdwcQS8C1UbBUsqiXRdlZAf27yVI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1721805690;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gPPgtgLiOKT8FFQeCtEOAG2iHovCigqjgeJnxTCVTi8=;
-	b=wohCYoZuO6HZ9ZoHa17pK7Ac7tuln8TgDrlkahs4MZ+F2CYFxQHx/apoF57GtBDixjFYFJ
-	+PMQ7vw/7XmdyMBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D3CCF1324F;
-	Wed, 24 Jul 2024 07:21:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ucHrMXmroGYyNQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 24 Jul 2024 07:21:29 +0000
-Date: Wed, 24 Jul 2024 09:22:04 +0200
-Message-ID: <871q3jmezn.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+78eccfb8b3c9a85fc6c5@syzkaller.appspotmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	perex@perex.cz,
-	syzkaller-bugs@googlegroups.com,
-	tiwai@suse.com
-Subject: Re: [PATCH] ALSA: line6: init buf to zero
-In-Reply-To: <tencent_6ECFD36FE36EC96283A5C4587761F76F8605@qq.com>
-References: <00000000000000949c061df288c5@google.com>
-	<tencent_6ECFD36FE36EC96283A5C4587761F76F8605@qq.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1721805874; c=relaxed/simple;
+	bh=LEWX+k/8MSd4SFfdq0QfS/26x3ssgRjoHc8BM0oLmgk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mqge5VZrmdmSxwsitzd4hqTUFry+gRTEVMcwJjC4HxoYDi7bofIbeE+ISC7cZECn5aU2nss6cTv4JoMdThIr3jpuhQXxHHBPdAdMOR/NFtQJUEd3+Jy94mPfYhzgG0cCL2Q49/YYhLlSZk/Fhrw6UWSWxqkJKZsbBJbNxtcPWCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IZc/WOix; arc=none smtp.client-ip=209.85.222.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-8100f08b5a8so1944478241.0;
+        Wed, 24 Jul 2024 00:24:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721805872; x=1722410672; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X+f5FFSvM6HT5KTKo2M2ZBCowOBY1NaiePK0PXlKNIY=;
+        b=IZc/WOixhNFzVj1M6gu7S4eTzhK5jtnhiLYp2Q1k7EFd09qabvLAXMS22GJoGDmNHe
+         2rESRHPuv+R/D9ARvjH/ggCuKu73xVjIPwfpOs5grJMlAEcdsDW7EkM/TxpXpxH13aeP
+         Ltsfzcg5VBQDfDZ7XA/VXEQ5ms8l60Lq0uRbKPGbQgOOdk1U7LxUsvqK3AOROLYQEvNo
+         4oumlsIq/0DkA+h96Gem92GjqKPbQclK0B4jYtDkxRTCrrWhARVXDjFZAm4wKzmvVm66
+         BRhfOytAtFw193uwG1iQsGRewbpAqKvdGtMsDsNoI3//el+JWnGQ6LHR69VCQjqfOKIw
+         sxFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721805872; x=1722410672;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X+f5FFSvM6HT5KTKo2M2ZBCowOBY1NaiePK0PXlKNIY=;
+        b=xCjUdNmDtDg1uDp04KN5pt93IWmiGOzS0ljI4laqTtlKd9mdnFXzXeg2nfTmoYHs+E
+         TXFPupXICkCqoT4DG8hRYBhNADf+/g1yFLWURO/bKUWPtOgdZ7gonOvS68LXe+HdxuwA
+         Je1Cf5KitFoeT0TZq/unjFr/9HUgutjBxt2Uj8/XEdre/LGsMBUKsMjmElvW2W92I39o
+         2+57KTIEu0GAzMmpGSYasuoBaSw1Bc0e16Jua9lFobzTqT6CT4u1WlCJJNh3HG52c/l8
+         3Z1u/R0hKVVLzIIUb3UlWgebFpzk7C5yZ01uBF+uVzYKSH0GyXMlI4VDBaIt5clB6oDI
+         ZtPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX8c6lv9VoECkTuK7Ti0+PPtuFJVoYqABgj21EMFBsfIFAny6AtudmxTo9H0+6+8tZS/parlDtEJRUpb0HDUHhha3yuTASK/IqOGaExjk6KC248Jv/MDiFM3BwK+9opG+lNBO1PJhweSEdLSQ==
+X-Gm-Message-State: AOJu0YwfIOg5GPfzAha0kfRKNB3SmZMAPcjp5YRaZVinYV0m7yXHmqNK
+	kQREsJQNaZGPQdrmBYRpxl6LB4rONFXD2QO+7lf9IXSX0WjVWe6Po5Hr96mSroCC0LUVnPs7n2V
+	UMnx9q2cUf7NFtLqL3UlTfimDVm8=
+X-Google-Smtp-Source: AGHT+IHRFYlBwND9t9/mNEss4X5sthyFDCVaW46huTYDtIoZCQPLNqonp3J0AbBpAK3sk1/yR5P/PbQq3sQNsrLUkzw=
+X-Received: by 2002:a05:6102:800f:b0:492:7675:a394 with SMTP id
+ ada2fe7eead31-493c1890bd2mr2875452137.2.1721805872023; Wed, 24 Jul 2024
+ 00:24:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-0.81 / 50.00];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[qq.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[qq.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	TAGGED_RCPT(0.00)[78eccfb8b3c9a85fc6c5];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spamd-Bar: /
-X-Rspamd-Queue-Id: 191CD1F74B
-X-Spam-Level: 
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -0.81
+MIME-Version: 1.0
+References: <CGME20240723105423epcas1p4d4ee53975fbc4644e969b5c9b7514c9b@epcas1p4.samsung.com>
+ <20240723105412.3615926-1-dongliang.cui@unisoc.com> <1625601dadd97$88eca020$9ac5e060$@samsung.com>
+In-Reply-To: <1625601dadd97$88eca020$9ac5e060$@samsung.com>
+From: dongliang cui <cuidongliang390@gmail.com>
+Date: Wed, 24 Jul 2024 15:24:21 +0800
+Message-ID: <CAPqOJe3mdz_heMQe09uZTf-E40ZBTMDuf49jE+hd10qYOjURmg@mail.gmail.com>
+Subject: Re: [PATCH v2] exfat: check disk status during buffer write
+To: Sungjong Seo <sj1557.seo@samsung.com>
+Cc: Dongliang Cui <dongliang.cui@unisoc.com>, linkinjeon@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	niuzhiguo84@gmail.com, hao_hao.wang@unisoc.com, ke.wang@unisoc.com, 
+	Zhiguo Niu <zhiguo.niu@unisoc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 24 Jul 2024 07:58:45 +0200,
-Edward Adam Davis wrote:
-> 
-> Syzbot report KMSAN uninit-value warnings.
-> When alloc buffer for midi_buffer->buf, init mem to 0.
-> 
-> Reported-and-tested-by: syzbot+78eccfb8b3c9a85fc6c5@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=78eccfb8b3c9a85fc6c5
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> ---
->  sound/usb/line6/midibuf.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/usb/line6/midibuf.c b/sound/usb/line6/midibuf.c
-> index e7f830f7526c..1b699cb3b38d 100644
-> --- a/sound/usb/line6/midibuf.c
-> +++ b/sound/usb/line6/midibuf.c
-> @@ -48,7 +48,7 @@ void line6_midibuf_reset(struct midi_buffer *this)
->  
->  int line6_midibuf_init(struct midi_buffer *this, int size, int split)
->  {
-> -	this->buf = kmalloc(size, GFP_KERNEL);
-> +	this->buf = kzalloc(size, GFP_KERNEL);
+On Wed, Jul 24, 2024 at 3:03=E2=80=AFPM Sungjong Seo <sj1557.seo@samsung.co=
+m> wrote:
+>
+> > We found that when writing a large file through buffer write, if the
+> > disk is inaccessible, exFAT does not return an error normally, which
+> > leads to the writing process not stopping properly.
+> >
+> > To easily reproduce this issue, you can follow the steps below:
+> >
+> > 1. format a device to exFAT and then mount (with a full disk erase)
+> > 2. dd if=3D/dev/zero of=3D/exfat_mount/test.img bs=3D1M count=3D8192
+> > 3. eject the device
+> >
+> > You may find that the dd process does not stop immediately and may
+> > continue for a long time.
+> >
+> > The root cause of this issue is that during buffer write process,
+> > exFAT does not need to access the disk to look up directory entries
+> > or the FAT table (whereas FAT would do) every time data is written.
+> > Instead, exFAT simply marks the buffer as dirty and returns,
+> > delegating the writeback operation to the writeback process.
+> >
+> > If the disk cannot be accessed at this time, the error will only be
+> > returned to the writeback process, and the original process will not
+> > receive the error, so it cannot be returned to the user side.
+> >
+> > When the disk cannot be accessed normally, an error should be returned
+> > to stop the writing process.
+> >
+> > Signed-off-by: Dongliang Cui <dongliang.cui@unisoc.com>
+> > Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> > ---
+> > Changes in v2:
+> >  - Refer to the block_device_ejected in ext4 for determining the
+> >    device status.
+> >  - Change the disk_check process to exfat_get_block to cover all
+> >    buffer write scenarios.
+> > ---
+> > ---
+> >  fs/exfat/inode.c | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> >
+> > diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
+> > index dd894e558c91..463cebb19852 100644
+> > --- a/fs/exfat/inode.c
+> > +++ b/fs/exfat/inode.c
+> > @@ -8,6 +8,7 @@
+> >  #include <linux/mpage.h>
+> >  #include <linux/bio.h>
+> >  #include <linux/blkdev.h>
+> > +#include <linux/backing-dev-defs.h>
+> >  #include <linux/time.h>
+> >  #include <linux/writeback.h>
+> >  #include <linux/uio.h>
+> > @@ -275,6 +276,13 @@ static int exfat_map_new_buffer(struct
+> > exfat_inode_info *ei,
+> >       return 0;
+> >  }
+> >
+> > +static int exfat_block_device_ejected(struct super_block *sb)
+> > +{
+> > +     struct backing_dev_info *bdi =3D sb->s_bdi;
+> > +
+> > +     return bdi->dev =3D=3D NULL;
+> > +}
+> Have you tested with this again?
+Yes, I tested it in this way. The user side can receive the -ENODEV error
+after the device is ejected.
+dongliang.cui@deivice:/data/tmp # dd if=3D/dev/zero of=3Dtest.img bs=3D1M c=
+ount=3D10240
+dd: test.img: write error: No such device
+1274+0 records in
+1273+1 records out
+1335635968 bytes (1.2 G) copied, 8.060 s, 158 M/s
 
-Thanks for the patch.  But this just hides the KMSAN warning, and it
-doesn't really address the cause - why it was exposed at all; the
-driver code had already a check and should have accessed only the
-updated data, but by some reason it slipped.
+>
+> > +
+> >  static int exfat_get_block(struct inode *inode, sector_t iblock,
+> >               struct buffer_head *bh_result, int create)
+> >  {
+> > @@ -290,6 +298,9 @@ static int exfat_get_block(struct inode *inode,
+> > sector_t iblock,
+> >       sector_t valid_blks;
+> >       loff_t pos;
+> >
+> > +     if (exfat_block_device_ejected(sb))
+> This looks better than the modified location in the last patch.
+> However, the caller of this function may not be interested in exfat
+> error handling, so here we should call exfat_fs_error_ratelimit()
+> with an appropriate error message.
+Thank you for the reminder. I will make the changes in the next version.
 
-Through a quick glance, I see a possible.  If that's the cause, the
-patch like below might help.  I checked the reproducer locally but
-couldn't  trigger the bug on my image, unfortunately, so it's just a
-wild guess, and it might be shooting a wrong way.  Let's see.
-
-
-thanks,
-
-Takashi
-
--- 8< --
---- a/sound/usb/line6/driver.c
-+++ b/sound/usb/line6/driver.c
-@@ -286,12 +286,14 @@ static void line6_data_received(struct urb *urb)
- {
- 	struct usb_line6 *line6 = (struct usb_line6 *)urb->context;
- 	struct midi_buffer *mb = &line6->line6midi->midibuf_in;
-+	unsigned long flags;
- 	int done;
- 
- 	if (urb->status == -ESHUTDOWN)
- 		return;
- 
- 	if (line6->properties->capabilities & LINE6_CAP_CONTROL_MIDI) {
-+		spin_lock_irqsave(&line6->line6midi->lock, flags);
- 		done =
- 			line6_midibuf_write(mb, urb->transfer_buffer, urb->actual_length);
- 
-@@ -300,12 +302,15 @@ static void line6_data_received(struct urb *urb)
- 			dev_dbg(line6->ifcdev, "%d %d buffer overflow - message skipped\n",
- 				done, urb->actual_length);
- 		}
-+		spin_unlock_irqrestore(&line6->line6midi->lock, flags);
- 
- 		for (;;) {
-+			spin_lock_irqsave(&line6->line6midi->lock, flags);
- 			done =
- 				line6_midibuf_read(mb, line6->buffer_message,
- 						   LINE6_MIDI_MESSAGE_MAXLEN,
- 						   LINE6_MIDIBUF_READ_RX);
-+			spin_unlock_irqrestore(&line6->line6midi->lock, flags);
- 
- 			if (done <= 0)
- 				break;
+>
+> > +             return -ENODEV;
+> > +
+> >       mutex_lock(&sbi->s_lock);
+> >       last_block =3D EXFAT_B_TO_BLK_ROUND_UP(i_size_read(inode), sb);
+> >       if (iblock >=3D last_block && !create)
+> > --
+> > 2.25.1
+>
+>
 
