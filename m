@@ -1,97 +1,139 @@
-Return-Path: <linux-kernel+bounces-260919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 469A393B03B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:16:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C3893B042
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:18:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAA46B20FA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:16:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 928E7B22672
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A91157A47;
-	Wed, 24 Jul 2024 11:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B420157A4F;
+	Wed, 24 Jul 2024 11:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wsvdh1pq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mMVF6/UB"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B54A156F40;
-	Wed, 24 Jul 2024 11:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E495B156F30
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 11:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721819779; cv=none; b=bZYzXmCmPod9yekpttRfvnspzwM9vHbugAeIC8w/Z577e9/ULcRdjvu8pLZntOZpLg2gDwS5GMnGrR/dDtxWBgJjwTUMWRSy5LOWL3rdPTA/Bk9QNM6ZNshK3G/TEy8UhOE8LnD/PeKJ6vwPp15uiuxfSK3H5ZOXUM80Cs408iQ=
+	t=1721819870; cv=none; b=AYv3yUc0JuILfdxDjpsNzsbe5bzyuLwKZQH8XepD/acLdSJ2YHCcAUb6yoiN0qpQVAwNC0/g17C1VHq4iaoh9C6nYtxrNcj7U48PvanalNqS6Vv+n3w9zLmxZg25QKjC7wHdaLscy7QCGU+sSAHBl20ATZ3pIfNF//qyiHOGwu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721819779; c=relaxed/simple;
-	bh=F5UYTMmpoWi1BePqtvKA1Oqx2ozV1pAFWk0k0oEBzkE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fRoZCxxeQVO0qMCd5dtJ/LbutzXWAWC+kRxvdTlSxup7NfJAQiCua/qxoYD9QKGtKbGAwUCbMCAukO0Tm62W1xmU38LzB5ZdHep57KtgwE/RLkkr/2EONL2fuFeAHvbtZf7hhsKRWEM+LL79dDaZv212HB7bJWnN5V1LPESrBvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wsvdh1pq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35E41C32782;
-	Wed, 24 Jul 2024 11:16:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721819778;
-	bh=F5UYTMmpoWi1BePqtvKA1Oqx2ozV1pAFWk0k0oEBzkE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wsvdh1pqFKCFKm86L3ZzTCny9JnbCZr0eCkLhudxHj3+eWp+gkXksuPTJoZhqJ5KM
-	 VwIfkIHamVBjbuXGiUkYuieXR8+lqgWfzWNSCexuCYLQetC/GJwEzfa/gQtWwDerCn
-	 aUmEwGZeWCPvcxC2BblQJK4xxkfI6wv3hSkBPkptTfJ5yjkadbsAVUJqgK3w8Qmr85
-	 Jyvkh2x5Zv9HmvUz3o2EcmKK2JA9wnvU4G5TU/R6rYyI+aBNkqtLIT1f1xRG9WAYnU
-	 5RC0oEA5i2DHrHoyHju7hVpKFdwUVZ/CBTI9rrMyc7ITwZb9aLoYl+rZhrpLpEpU1C
-	 /KETuE+64QFQg==
-Date: Wed, 24 Jul 2024 12:16:12 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com
-Subject: Re: [PATCH 6.6 000/129] 6.6.42-rc1 review
-Message-ID: <8f1bda43-0710-4319-bedd-86d80bde7ae4@sirena.org.uk>
-References: <20240723180404.759900207@linuxfoundation.org>
+	s=arc-20240116; t=1721819870; c=relaxed/simple;
+	bh=u5P2XSotIVQI5KEmH6yp89E/OyUH7DW07t+T5awzKPE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IRUvjp6KlSoYhaNBrS46uPTWIobl2igp5e3pNPyPZBh1DgU1zZeOXBDpxSKbLDTd9Vgmpptoxi6RaZRMPUKh5CMO+A1Oa9J94W7VnRwIyE19c6yNbzyGsL0d4q0AKCpTe3k0w+hC2n0rY2tb+sxoBMBviGhzkulTco3kM2dRqzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mMVF6/UB; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a15692b6f6so6279218a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 04:17:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721819867; x=1722424667; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=foZI0aGrKNowqh8dzhyfBF+tDAZgNn62ZX2djJJye+8=;
+        b=mMVF6/UBx5lnuUU7+jafrv/WgmN6R9X0BrCfm9/R/rSIAmTGB7sKOKRszvG59olubm
+         Q8AbTLOWlhBsufjg++kxoaRnwYYmL/nFYc8qcdun4oBNMmA0/FJ6M7BN9PD5MkXyv407
+         1zp2eEtQ4bG0MJLlv7lIRDa+ssCZp2lAIr+KyS0zN0CxiC1V06TH5eTr9q8TapMeSAKJ
+         DkHiD/QNYxza2dtp1txd7RnmZGpq7yqTBvMkDPtONRfhnpvdrXoj9pDEpCgObSsdM6Lf
+         otG15772id6Xsvx0+X21GXWHl3vciq0plqdoWoMu1CZ0OUDnjp8/ME3hKmZgvr9urMfc
+         tt7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721819867; x=1722424667;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=foZI0aGrKNowqh8dzhyfBF+tDAZgNn62ZX2djJJye+8=;
+        b=N9Rkl9MIrKi7i1cDjO37fNDDlt6mar5c5M+nzRebggtwIApZOryPq61Ik6RJ+l9wjS
+         /c5fdIZ2dqiAN1AKcJ3VlE1ngI+aVK1nbFXeP7Y8CqJR2rlQ7RGvYKxYewUHbuWLeYdD
+         /QRhVH18zy08uP8rjAl/aFzEFb2vVTIIt9nOcJFdDIipiTdESRGF5XIIiVBHxPOHdInK
+         UYlx7+IqeX7jlgRMzV/oonRMif0MVrR5goXXinZoL42zP2VowWUSQjuKTB0ZPoUmsQv5
+         uhNb+qGBWvUp5EGKxHdKlgS2R6/n8H+wc4lyG0y2AIJAyODBTqOTiKHuL1Zw+PKW7ywY
+         OGbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUOdr83qoAVTJ0y2vyP5yoFDTzukLJ+1Ilvu+aGCFN6Ofvvu6FrTwROYPa/wK8XrhOX9F6vuW8xNJ/+nqUrdeAul472VdUTvAh4UbU
+X-Gm-Message-State: AOJu0YyPWwBeVYWnirOGKMNF9KN2vTiMsgnQcjuBdKm2axa7+WZsiPJe
+	AYhdAhpDvjP7+2kFu8MckwvKj18JcfITTETnvYFHuDeLQPwvLDGYmxWERxpnJdI=
+X-Google-Smtp-Source: AGHT+IHVZNd88D6NET528Zgd6XV9jJ1tULhE5ZdXnc0lzEDfQWH4ANQji9eJWKRhji0xV1EABYWa2A==
+X-Received: by 2002:a17:907:9714:b0:a79:7f94:8a73 with SMTP id a640c23a62f3a-a7ab0d818f7mr135486366b.20.1721819867290;
+        Wed, 24 Jul 2024 04:17:47 -0700 (PDT)
+Received: from [192.168.1.4] ([79.115.63.247])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a97c0731dsm169457266b.19.2024.07.24.04.17.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Jul 2024 04:17:46 -0700 (PDT)
+Message-ID: <dd0449bc-f02a-4879-a7cd-e01fbea01d9f@linaro.org>
+Date: Wed, 24 Jul 2024 12:17:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4p9Pb12RmPh8pfV/"
-Content-Disposition: inline
-In-Reply-To: <20240723180404.759900207@linuxfoundation.org>
-X-Cookie: Editing is a rewording activity.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/4] arm64: dts: exynos: add initial CMU clock nodes in
+ ExynosAuto v920
+To: Sunyeal Hong <sunyeal.hong@samsung.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240722223333.1137947-1-sunyeal.hong@samsung.com>
+ <CGME20240722223341epcas2p1b08b47cfefa981a2b31aad7878e3db64@epcas2p1.samsung.com>
+ <20240722223333.1137947-3-sunyeal.hong@samsung.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20240722223333.1137947-3-sunyeal.hong@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+Hi, Sunyeal,
+
+I quickly skimmed over the series and I fail to see where/how the HW
+auto clock gating is enabled/configured. Would you please add more
+details on how this works?
+
+On 7/22/24 11:33 PM, Sunyeal Hong wrote:
+> Add cmu_top, cmu_peric0 clock nodes and
+> switch USI clocks instead of dummy fixed-rate-clock.
+> 
+> Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
+> ---
+>  .../arm64/boot/dts/exynos/exynosautov920.dtsi | 40 +++++++++++++------
+>  1 file changed, 27 insertions(+), 13 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> index c1c8566d74f5..54fc32074379 100644
+> --- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
 
 
---4p9Pb12RmPh8pfV/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+cut
 
-On Tue, Jul 23, 2024 at 08:22:28PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.42 release.
-> There are 129 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> @@ -224,7 +237,8 @@ serial_0: serial@10880000 {
+>  				interrupts = <GIC_SPI 764 IRQ_TYPE_LEVEL_HIGH>;
+>  				pinctrl-names = "default";
+>  				pinctrl-0 = <&uart0_bus>;
+> -				clocks = <&clock_usi>, <&clock_usi>;
+> +				clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
 
-Tested-by: Mark Brown <broonie@kernel.org>
+isn't this MUX common to multiple GATEs? Wouldn't turning it off affect
+other users than the serial?
 
---4p9Pb12RmPh8pfV/
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
+ta
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmag4nsACgkQJNaLcl1U
-h9BxVQf/dNXkyId0n9J0YZUfWvq8l22omq5z0g3Bm+Xf1dVW+QroE8AUl86oSNgb
-1GFp1WZ0xRSNsPFBz95lLfTNc6DghEFF7WU4VrR5ULKB3awC7Fvfb8BwK8PWhmPV
-ifk5Vuq6r+jlSgfmLJr39VYclqQiqiaUvKdRl6hIw0deQ6o7fUH+AYyj6nbhZQzu
-XSSROJpHZkw4bov5kFuWLVGtYiQvKg46yIs6ox6ifk1yFFxVexAWnwYMFd/Rk03y
-2Pa+CHScicFhzld9R9Uk9ILzJxs2jU/WYxtFRH3zQ14u5vIcK/tqDKtv+nrJZPfi
-oBj+VqPZGEWSSwgnwqMbmChzQKr30Q==
-=Pb8x
------END PGP SIGNATURE-----
-
---4p9Pb12RmPh8pfV/--
+> +					 <&cmu_peric0 CLK_DOUT_PERIC0_USI00_USI>;
+>  				clock-names = "uart", "clk_uart_baud0";
+>  				samsung,uart-fifosize = <256>;
+>  				status = "disabled";
 
