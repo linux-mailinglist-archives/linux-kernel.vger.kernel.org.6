@@ -1,155 +1,141 @@
-Return-Path: <linux-kernel+bounces-260935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD5BA93B092
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:43:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A79D93B0AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 865EB285EEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:43:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BB141C21A6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2EF2158A3E;
-	Wed, 24 Jul 2024 11:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RQskEQUq"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F144158853;
+	Wed, 24 Jul 2024 11:43:33 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80F16158211;
-	Wed, 24 Jul 2024 11:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CE715B15D
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 11:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721821383; cv=none; b=WLNgQVdrw9Vr5aNt3+hcjGDRYcR3WpTI8kWQnEIl80J3F6k4UwkOIhPERJit9vOjzNTVXU7MDUskVJAVKHqhYq80sTfzL3H/W/0QMz3ZWTPZdB4ss0uS9IbqaTUIStTF4VmLmksSLS7JPlz3GBB3U2lmp004tgSaB/i/3Wkcvrs=
+	t=1721821413; cv=none; b=TEb0iE7ZOqzPxt+Jqbw4mO7y10dkBArd/8E5+R/MTB+3aR+61p5Yy6ZEb/x8E/XEnPARPEO59pKVxrXShLQHiBmZlP8PYRTaQbZInEHg3ZxpYi2HDGD6y8SUfJGHLQQSXthmweD6mRXQ9R6X6mNb0GKPlGtHna1TeVm9+1H6QO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721821383; c=relaxed/simple;
-	bh=3h5tmiZ63xjvIhMcdQCXz2rKNyLoKCjiqCwRbb57PpE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sP52gRmOmzOqB4J3OpBtGyncwt6lhbRLpD8lEEPKfz8v5fcQtYo/2jIje6zttseR2Ybl4vosF38MF9TfeVpNG0+loyShuyGRuYXXt/7T7iPO1pxI9x7cEC4VUsXKAY6sC5w+VplrljifLp23c3/WbHY3jko664GG3ImeVp827vY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RQskEQUq; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46O98Cpr023179;
-	Wed, 24 Jul 2024 11:42:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=JfbrwCO7cHZ
-	/F+oVt4C7fO3cxgfxSoFxQNxoK8dHf2I=; b=RQskEQUqlqSZIFURFVUK5Ow0BKT
-	AYox8zGFnhWqYJxNERNaqKuKJo/aUZ/+b9RhDnfM/vB3zmaWCEaSp/MGjKv4ZKXK
-	2qjYebE4CIW02BhWMotWvY203cVla2UYCYUpUMm+CpQ+mG+crpi+oIDTu0ElzzEN
-	QOB83h6UdFROuZkEztTzXVWn7laaVNg0z7BwFGlTVZ6b/0z0ohwN0C2iH228et2U
-	ai2nTFknmQCLnQ7G0ZbuoLH8lCYUgHBG5aBfr7cl3iLLQAl9CO78aZuUO7LY2GTX
-	quNcPoRfuzh4JJdZPmVa3K/gDf2AfltAnzwWumoqRAEWdnKbkUm9sDxULBQ==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g5ausx9j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Jul 2024 11:42:33 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTP id 46OBgS6K024837;
-	Wed, 24 Jul 2024 11:42:29 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 40g6am4pt9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Jul 2024 11:42:29 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 46OBgTR3024890;
-	Wed, 24 Jul 2024 11:42:29 GMT
-Received: from hu-devc-blr-u22-a.qualcomm.com (hu-mdalam-blr.qualcomm.com [10.131.36.157])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 46OBgTnK024887
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Jul 2024 11:42:29 +0000
-Received: by hu-devc-blr-u22-a.qualcomm.com (Postfix, from userid 466583)
-	id D73FC41254; Wed, 24 Jul 2024 17:12:27 +0530 (+0530)
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-To: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
-        miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-        manivannan.sadhasivam@linaro.org, esben@geanix.com,
-        linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org
-Cc: quic_mdalam@quicinc.com, quic_varada@quicinc.com,
-        quic_srichara@quicinc.com
-Subject: [PATCH v7 8/8] arm64: dts: qcom: ipq9574: Disable eMMC node
-Date: Wed, 24 Jul 2024 17:12:25 +0530
-Message-Id: <20240724114225.2176448-9-quic_mdalam@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240724114225.2176448-1-quic_mdalam@quicinc.com>
-References: <20240724114225.2176448-1-quic_mdalam@quicinc.com>
+	s=arc-20240116; t=1721821413; c=relaxed/simple;
+	bh=Yum3K5bSwFYp7nkoYqZjk1/jRkUFvl5lEF6f+nbZO5g=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=twpMMIR/xNldaCTgycMP6r0cWFMUJmykmltEu6hvshTMmA8Bj4HSb7hxwN0HFz+DImakvsBOzU5bDY+e5uEMgLBycXOznL/pO+P3ian+ppnUhE1936WVctrEw2U6ZtPKUlB/d7LYAp59hCx0ncCu0f8jZKIFD0JiE42p1u1q6WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-80ba1cbd94eso1110569039f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 04:43:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721821410; x=1722426210;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JWWAls+MmRZqboRu/ErlI3acV3IMebH0OuktHtqqUTo=;
+        b=MtrgdpaXYoJcaq59WWKCnXokQ5dzKutw4LnJ/lKkwPrbs71XnVViTX27HUApfMqg0s
+         fSyGiTIRBJ8yJ5LcIGz7nD0M5zccB1NWblFDppGlIFthd+iJjVbPwY24w+SFHfGNvSzD
+         EsECsueeC7e5fywqvzf2fJow/G6ggysRp1PyHNzis6WRYsp4v/peTyOCdWPyBwsgm7wO
+         VJQL9U+rvcJPUkVinrcMuXpK+bfYKWyzU1rblmCZk+kkw9+N79L/krYHMfzj29D1F/vv
+         B6qEHSxEOyT9N90JsPvqghW5SaqiVBx5vN/4AyIZAQhYEgGZrjpARQIImHHsQwFBiGUM
+         rqoA==
+X-Gm-Message-State: AOJu0YxJ5D2ruTRVJcLh746ZaPy7kuJzJoD6zk7sc5rxTG2stkomqIV1
+	yVaX+ymm+7/9yjpidqIbTx2+5wD/WMbEu/dXb+tRghjumAPpgtLucVXifIWe3r41S2w41wMXS+e
+	U7Vx1ez3ZVzviMGA1HIJhpWEKD+cG6kEOKX+SZMcPyJifeIdOvcLokjg=
+X-Google-Smtp-Source: AGHT+IHlkLyu1Sx4unUGVQdB+L8jL/r7MvFUoBdmxTYIQi+3ZbNvRXhE3AdbqJVhc+jhKuutWBSENPXJzlb1Hkyk0Duzef2ejdKo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: xvcYKTeXeEfmi6fpS7-Kb2NVefX8TPWn
-X-Proofpoint-GUID: xvcYKTeXeEfmi6fpS7-Kb2NVefX8TPWn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-24_09,2024-07-23_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 bulkscore=0 malwarescore=0 suspectscore=0 mlxscore=0
- clxscore=1015 phishscore=0 spamscore=0 adultscore=0 mlxlogscore=911
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407240086
+X-Received: by 2002:a05:6638:148d:b0:4b9:e5b4:67fd with SMTP id
+ 8926c6da1cb9f-4c28ed2398amr88539173.1.1721821410281; Wed, 24 Jul 2024
+ 04:43:30 -0700 (PDT)
+Date: Wed, 24 Jul 2024 04:43:30 -0700
+In-Reply-To: <0000000000009d1d0a061d91b803@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000086df45061dfcc91d@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [net?] [bpf?] general protection fault in __dev_flush
+From: syzbot <syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Disable eMMC node for rdp433, since rdp433
-default boot mode is norplusnand
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+***
+
+Subject: Re: [syzbot] [net?] [bpf?] general protection fault in __dev_flush
+Author: aha310510@gmail.com
+
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+
 ---
-Change in [v7]
+ drivers/net/tun.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-* No Change
-
-Change in [v6]
-
-* Updated commit message
-
-Change in [v5]
-
-* No Change
-
-Change in [v4]
-
-* No change
-
-Change in [v3]
-
-* Removed co-developed by 
-
-Change in [v2]
-
-* Posted as initial eMMC disable patch
-
-Change in [v1]
-
-* This patch was not included in v1
-
- arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-index 1bb8d96c9a82..e33e7fafd695 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-@@ -24,7 +24,7 @@ &sdhc_1 {
- 	mmc-hs400-enhanced-strobe;
- 	max-frequency = <384000000>;
- 	bus-width = <8>;
--	status = "okay";
-+	status = "disabled";
- };
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index 9b24861464bc..9254bca2813d 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -1661,7 +1661,6 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
+ 				     int len, int *skb_xdp)
+ {
+ 	struct page_frag *alloc_frag = &current->task_frag;
+-	struct bpf_net_context __bpf_net_ctx, *bpf_net_ctx;
+ 	struct bpf_prog *xdp_prog;
+ 	int buflen = SKB_DATA_ALIGN(sizeof(struct skb_shared_info));
+ 	char *buf;
+@@ -1701,7 +1700,6 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
  
- &tlmm {
--- 
-2.34.1
-
+ 	local_bh_disable();
+ 	rcu_read_lock();
+-	bpf_net_ctx = bpf_net_ctx_set(&__bpf_net_ctx);
+ 	xdp_prog = rcu_dereference(tun->xdp_prog);
+ 	if (xdp_prog) {
+ 		struct xdp_buff xdp;
+@@ -1730,14 +1728,12 @@ static struct sk_buff *tun_build_skb(struct tun_struct *tun,
+ 		pad = xdp.data - xdp.data_hard_start;
+ 		len = xdp.data_end - xdp.data;
+ 	}
+-	bpf_net_ctx_clear(bpf_net_ctx);
+ 	rcu_read_unlock();
+ 	local_bh_enable();
+ 
+ 	return __tun_build_skb(tfile, alloc_frag, buf, buflen, len, pad);
+ 
+ out:
+-	bpf_net_ctx_clear(bpf_net_ctx);
+ 	rcu_read_unlock();
+ 	local_bh_enable();
+ 	return NULL;
+@@ -2570,7 +2566,6 @@ static int tun_sendmsg(struct socket *sock, struct msghdr *m, size_t total_len)
+ 
+ 	if (m->msg_controllen == sizeof(struct tun_msg_ctl) &&
+ 	    ctl && ctl->type == TUN_MSG_PTR) {
+-		struct bpf_net_context __bpf_net_ctx, *bpf_net_ctx;
+ 		struct tun_page tpage;
+ 		int n = ctl->num;
+ 		int flush = 0, queued = 0;
+@@ -2579,7 +2574,6 @@ static int tun_sendmsg(struct socket *sock, struct msghdr *m, size_t total_len)
+ 
+ 		local_bh_disable();
+ 		rcu_read_lock();
+-		bpf_net_ctx = bpf_net_ctx_set(&__bpf_net_ctx);
+ 
+ 		for (i = 0; i < n; i++) {
+ 			xdp = &((struct xdp_buff *)ctl->ptr)[i];
+@@ -2594,7 +2588,6 @@ static int tun_sendmsg(struct socket *sock, struct msghdr *m, size_t total_len)
+ 		if (tfile->napi_enabled && queued > 0)
+ 			napi_schedule(&tfile->napi);
+ 
+-		bpf_net_ctx_clear(bpf_net_ctx);
+ 		rcu_read_unlock();
+ 		local_bh_enable();
+ 
+--
 
