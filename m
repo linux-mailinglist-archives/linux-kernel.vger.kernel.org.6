@@ -1,278 +1,97 @@
-Return-Path: <linux-kernel+bounces-261341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0D6293B612
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:39:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52BB093B615
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F64D285F1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:39:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 134CC28609F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7131BF38;
-	Wed, 24 Jul 2024 17:39:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1BB1607B4;
+	Wed, 24 Jul 2024 17:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lfim2WLP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RqUbpi6g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C235200DE
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 17:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6AB1BF38;
+	Wed, 24 Jul 2024 17:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721842761; cv=none; b=KwwmrRBZ2DlbHMTjEkGcQMkfCgNTwlkHDxljHxZhpMI7tBJP3KkU5S7BLCIWXMFq08bwGExEtSmV/Nbo+johzxhVT6rpW4Gk/kTS3CPnhjFa0qfB9pXclAi0fRxyKQdF9/qdPtx3zf9ie69GYdF6dbqE1ioZWaESRVqLIQ+CEUQ=
+	t=1721842837; cv=none; b=ZgnmzJjorzQ67EbmaeC25Rlaf9PbXqy/NMhVSTi9jFOj+57nKujqKef3fPdzhlfxE4SdArmOVt0fNK2D/ZbxlbCcX/nbGUn5xE+/d+M+K7V+i+cBOJ1jPi6tF3hF11qDmSIuP2pXyJUTurTB9uZNVc1D988pgdm06S8JRxebFsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721842761; c=relaxed/simple;
-	bh=GRdjAc3VsILw9XDHYkEiVLhYXXXCzAg/tHf7whVGWX8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=mHJIJK1ezuw8GBW5xTXN5Xp+AcpjsIyd9aYstErhbWtn3LQlvGDjFpm6R6hWWBKexljoq4HZvQKvdB4KBC7Swe/CiVjl0ZQaWj6ZQLkFL1hN2HJOO6s2tAMxWYibw+rJLuaatioMvjNKtwXZMcppXCkPla3HtPHSeLjeVfFHw6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lfim2WLP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721842758;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+eFTD9RxFljRpcjf1JSYJIwvkQ/3f7UzqFNR7mCwEKo=;
-	b=Lfim2WLPl2XwfbtFeoeJxYQnPnQYi04HMMSpbdrDhiDAvRWoca63erd6af6rAf0051kqDr
-	BkZSwaPd+QKlDxadRm3EI74RFIeojKlwqFrYy+AFVU41lclZft7she0etLABMxT6EJN6lm
-	AhY2CIkyW2Z3CzP7DvwwR/T4D6lEjdk=
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
- [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-497-ms9URuBfORqXvXQLj6qwpQ-1; Wed, 24 Jul 2024 13:39:16 -0400
-X-MC-Unique: ms9URuBfORqXvXQLj6qwpQ-1
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-66c0f57549fso1497227b3.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 10:39:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721842756; x=1722447556;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+eFTD9RxFljRpcjf1JSYJIwvkQ/3f7UzqFNR7mCwEKo=;
-        b=RZ/rWWzy08O9EEFuFIZ3LT5zlBdno72zpMMuk3V2xzbYYoO2+bSfTeaM9fQzkKqanp
-         07hrg8PhUD0Bw73UlRhngmfGcmR6lBQDZCKjSBdw8cxUTXxiv1aOCo5ZuKM9i9m+TquG
-         gtqHoB+BFKVo4we3fHuIq1La7thgBDaNqSCQoYUKNGD8JeqcBAenoemnpyaELMLdSSNj
-         6di5fL0r7vLZWHjKGWST0Yj6c+ib/IdUtqPGGZ3XHWOtpid8RpImJa4t78Myf9VXzikN
-         IbQdlMXr6R6lRfStPpcWSjYp8DFwVGssT0XAmSJhyZXqDjE70ONTfFowWDyCCebRFq4l
-         nbog==
-X-Forwarded-Encrypted: i=1; AJvYcCVlSGac+++AGbvHN5qhRIwv2w1GMu19vKq40RdIYr+LWcqBxDZTt4kmxQ7cDyg+JFWETYDtVIlTozurJGrKK6s1E8j3fLYBzk6L03Jl
-X-Gm-Message-State: AOJu0YxgaAYavJswTQRmMYzKH8t3mnolYDOaD7JiE0TXP9vQvp6HzJBS
-	GNoRZRuwSAlmneUXss8vDO12zDqnjlRUM8rDXudsKc3FCESSfH1kDFN2hgADsuW8XQjFhEVdJVL
-	8lgCgSMZjY08dNw2M56c+lIDCLs5+wErC2umf+bD/Ql2YEhcEZNvd4qU3UL+fKw==
-X-Received: by 2002:a05:690c:dcb:b0:63b:c16e:a457 with SMTP id 00721157ae682-675113b3311mr1952797b3.13.1721842756221;
-        Wed, 24 Jul 2024 10:39:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHf+YzBmxpv4LrWZ1vF+zwvrLn4UI6L34Ko6NUj4uCkLt6ppq1BwXMyVp0k79eiiNx9VZTncw==
-X-Received: by 2002:a05:690c:dcb:b0:63b:c16e:a457 with SMTP id 00721157ae682-675113b3311mr1952537b3.13.1721842755873;
-        Wed, 24 Jul 2024 10:39:15 -0700 (PDT)
-Received: from starship ([2607:fea8:fc01:7b7f:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b7acb0f114sm58408146d6.146.2024.07.24.10.39.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 10:39:15 -0700 (PDT)
-Message-ID: <13e19a40bbf0531c92ace210b43e2cbf5056ef16.camel@redhat.com>
-Subject: Re: [PATCH v2 19/49] KVM: x86: Add a macro to init CPUID features
- that ignore host kernel support
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov
- <vkuznets@redhat.com>,  kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Hou Wenlong <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>,
- Oliver Upton <oliver.upton@linux.dev>, Binbin Wu
- <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>,
- Robert Hoo <robert.hoo.linux@gmail.com>
-Date: Wed, 24 Jul 2024 13:39:13 -0400
-In-Reply-To: <ZoxRr9P85f03w0vk@google.com>
-References: <20240517173926.965351-1-seanjc@google.com>
-	 <20240517173926.965351-20-seanjc@google.com>
-	 <2a4052ba67970ce41e79deb0a0931bb54e2c2a86.camel@redhat.com>
-	 <ZoxRr9P85f03w0vk@google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+	s=arc-20240116; t=1721842837; c=relaxed/simple;
+	bh=SOl/CnsBeml/c/uFV3EVy7ROsbF7eOEe3MGPrAA8AiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sDHgrlbIymNR94LEOYlLTITODpRMXdsGxZH9yuZVeThoW58vRvgKOrF3ReSzrzV4rpxndsSk4DAjBCPZkrNztrs2al2rYYjmizUOZgR3sPbJ1r7Flk5hqUFC5qXbWLTjRyE5WKahC2B0SzeH4k/3vDpXj0Z8zWes/mJwSPKNNWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RqUbpi6g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75F26C32781;
+	Wed, 24 Jul 2024 17:40:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721842836;
+	bh=SOl/CnsBeml/c/uFV3EVy7ROsbF7eOEe3MGPrAA8AiM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RqUbpi6gNeWL/Lz7GUghvjd66vRZhZGhounFOZLOYDRsEHCjBpc7JiRrSrwPHUt9+
+	 Gh5+Vkg9CXtRqozH5m5U3tz3aHpNjP6ZhsvJo0voIXqWO/R2BAXbqIkwVfcpeqCMPL
+	 cFhgX33eZNkVi9IdTNekrGVc4XOb6/FoN8H8TRHvz/btOi6KjKe3/5dA1s0+lsemIJ
+	 tnNVHb3ldFlDcfdLRIUhwHt2D8dur/ytsbk/TeDahOeXAL2DCT2EY28UiwUgGylg2B
+	 LBxAtgEHGuLkyPa5u7awYaoYHf2iqJmE8yQh/7/eZTg6LrSzP7NvzISxlxSEuXh0wy
+	 geWMa1w8W4FTw==
+Date: Wed, 24 Jul 2024 18:40:31 +0100
+From: Simon Horman <horms@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
+	Mark Lee <Mark-MC.Lee@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	leit@meta.com, Dan Carpenter <dan.carpenter@linaro.org>,
+	"open list:MEDIATEK ETHERNET DRIVER" <netdev@vger.kernel.org>,
+	"open list:ARM/Mediatek SoC support" <linux-kernel@vger.kernel.org>,
+	"moderated list:ARM/Mediatek SoC support" <linux-arm-kernel@lists.infradead.org>,
+	"moderated list:ARM/Mediatek SoC support" <linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCH net] net: mediatek: Fix potential NULL pointer
+ dereference in dummy net_device handling
+Message-ID: <20240724174031.GF97837@kernel.org>
+References: <20240724080524.2734499-1-leitao@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240724080524.2734499-1-leitao@debian.org>
 
-On Mon, 2024-07-08 at 13:53 -0700, Sean Christopherson wrote:
-> On Thu, Jul 04, 2024, Maxim Levitsky wrote:
-> > On Fri, 2024-05-17 at 10:38 -0700, Sean Christopherson wrote:
-> > > Add a macro for use in kvm_set_cpu_caps() to automagically initialize
-> > > features that KVM wants to support based solely on the CPU's capabilities,
-> > > e.g. KVM advertises LA57 support if it's available in hardware, even if
-> > > the host kernel isn't utilizing 57-bit virtual addresses.
-> > > 
-> > > Take advantage of the fact that kvm_cpu_cap_mask() adjusts kvm_cpu_caps
-> > > based on raw CPUID, i.e. will clear features bits that aren't supported in
-> > > hardware, and simply force-set the capability before applying the mask.
-> > > 
-> > > Abusing kvm_cpu_cap_set() is a borderline evil shenanigan, but doing so
-> > > avoid extra CPUID lookups, and a future commit will harden the entire
-> > > family of *F() macros to assert (at compile time) that every feature being
-> > > allowed is part of the capability word being processed, i.e. using a macro
-> > > will bring more advantages in the future.
-> > 
-> > Could you explain what do you mean by "extra CPUID lookups"?
+On Wed, Jul 24, 2024 at 01:05:23AM -0700, Breno Leitao wrote:
+> Move the freeing of the dummy net_device from mtk_free_dev() to
+> mtk_remove().
 > 
-> cpuid_ecx(7) incurs a CPUID to read the raw info, on top of the CPUID that is
-> executed by kvm_cpu_cap_init() (kvm_cpu_cap_mask() as of this patch).  Obviously
-> not a big deal, but it's an extra VM-Exit when running as a VM.
+> Previously, if alloc_netdev_dummy() failed in mtk_probe(),
+> eth->dummy_dev would be NULL. The error path would then call
+> mtk_free_dev(), which in turn called free_netdev() assuming dummy_dev
+> was allocated (but it was not), potentially causing a NULL pointer
+> dereference.
 > 
-> > > +/*
-> > > + * Raw Feature - For features that KVM supports based purely on raw host CPUID,
-> > > + * i.e. that KVM virtualizes even if the host kernel doesn't use the feature.
-> > > + * Simply force set the feature in KVM's capabilities, raw CPUID support will
-> > > + * be factored in by kvm_cpu_cap_mask().
-> > > + */
-> > > +#define RAW_F(name)						\
-> > > +({								\
-> > > +	kvm_cpu_cap_set(X86_FEATURE_##name);			\
-> > > +	F(name);						\
-> > > +})
-> > > +
-> > >  /*
-> > >   * Magic value used by KVM when querying userspace-provided CPUID entries and
-> > >   * doesn't care about the CPIUD index because the index of the function in
-> > > @@ -682,15 +694,12 @@ void kvm_set_cpu_caps(void)
-> > >  		F(AVX512VL));
-> > >  
-> > >  	kvm_cpu_cap_mask(CPUID_7_ECX,
-> > > -		F(AVX512VBMI) | F(LA57) | F(PKU) | 0 /*OSPKE*/ | F(RDPID) |
-> > > +		F(AVX512VBMI) | RAW_F(LA57) | F(PKU) | 0 /*OSPKE*/ | F(RDPID) |
-> > >  		F(AVX512_VPOPCNTDQ) | F(UMIP) | F(AVX512_VBMI2) | F(GFNI) |
-> > >  		F(VAES) | F(VPCLMULQDQ) | F(AVX512_VNNI) | F(AVX512_BITALG) |
-> > >  		F(CLDEMOTE) | F(MOVDIRI) | F(MOVDIR64B) | 0 /*WAITPKG*/ |
-> > >  		F(SGX_LC) | F(BUS_LOCK_DETECT)
-> > >  	);
-> > > -	/* Set LA57 based on hardware capability. */
-> > > -	if (cpuid_ecx(7) & F(LA57))
-> > > -		kvm_cpu_cap_set(X86_FEATURE_LA57);
-> > >  
-> > >  	/*
-> > >  	 * PKU not yet implemented for shadow paging and requires OSPKE
-> > 
-> > Putting a function call into a macro which evaluates into a bitmask is
-> > somewhat misleading, but let it be...
-> > 
-> > IMHO in long term, it might be better to rip the whole huge 'or'ed mess, and replace
-> > it with a list of statements, along with comments for all unusual cases.
+> By moving free_netdev() to mtk_remove(), we ensure it's only called when
+> mtk_probe() has succeeded and dummy_dev is fully allocated. This
+> addresses a potential NULL pointer dereference detected by Smatch[1].
 > 
-> As in something like this?
-> 
-> 	kvm_cpu_cap_init(AVX512VBMI);
-> 	kvm_cpu_cap_init_raw(LA57);
-> 	kvm_cpu_cap_init(PKU);
-> 	...
-> 	kvm_cpu_cap_init(BUS_LOCK_DETECT);
-> 
-> 	kvm_cpu_cap_init_aliased(CPUID_8000_0001_EDX, FPU);
-> 
-> 	...
-> 
-> 	kvm_cpu_cap_init_scattered(CPUID_12_EAX, SGX1);
-> 	kvm_cpu_cap_init_scattered(CPUID_12_EAX, SGX2);
-> 	kvm_cpu_cap_init_scattered(CPUID_12_EAX, SGX_EDECCSSA);
-> 
-> The tricky parts are incorporating raw CPUID into the masking and handling features
-> that KVM _doesn't_ support.  For raw CPUID, we could simply do CPUID every time, or
-> pre-fill an array to avoid hundreds of CPUIDs that are largely redudant.
+> Fixes: b209bd6d0bff ("net: mediatek: mtk_eth_sock: allocate dummy net_device dynamically")
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/all/4160f4e0-cbef-4a22-8b5d-42c4d399e1f7@stanley.mountain/ [1]
+> Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
 
-In terms of performance, again this code is run once per kvm module load, so even
-if it does something truly gross performance wise, it's not a problem, even if run
-nested.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-> 
-> But I don't see a way to mask off unsupported features without losing the
-> compile-time protections that the current code provides.  And even if we took a
-> big hammer approach, e.g. finalized masking for all words at the very end, we'd
-> still need to carry state across each statement, i.e. we'd still need the bitwise-OR
-> and mask  behavior, it would just be buried in helpers/macros.
-
-Can you elaborate on this?
-
-For example let's say this:
-
-
-	kvm_cpu_cap_init(CPUID_7_0_EBX,
-		F(FSGSBASE) | EMUL_F(TSC_ADJUST) | F(SGX) | F(BMI1) | F(HLE) |
-		F(AVX2) | F(FDP_EXCPTN_ONLY) | F(SMEP) | F(BMI2) | F(ERMS) |
-		F(INVPCID) | F(RTM) | F(ZERO_FCS_FDS) | 0 /*MPX*/ |
-		F(AVX512F) | F(AVX512DQ) | F(RDSEED) | F(ADX) | F(SMAP) |
-		F(AVX512IFMA) | F(CLFLUSHOPT) | F(CLWB) | 0 /*INTEL_PT*/ |
-		F(AVX512PF) | F(AVX512ER) | F(AVX512CD) | F(SHA_NI) |
-		F(AVX512BW) | F(AVX512VL));
-
-
-
-This will be replaced with:
-
-kvm_cpu_cap_clear_all(CPUID_7_0_EBX);
-
-kvm_cpu_cap_init(FSGSBASE);
-kvm_cpu_cap_init(TSC_ADJUST, CAP_EMULATED);
-..
-kvm_cpu_cap_init(AVX512VL);
-
-Then each 'kvm_cpu_cap_init' will opt-in to set a bit if supported in host cpuid, or
-always opt-in for emulated features, etc....
-
-Host CPUID can indeed be cached, if extra host cpuid queries cause too slow (e.g 1 second) delay
-when nested.
-
-
-
-> 
-> I suspect the generated code will be larger, but I doubt that will actually be
-> problematic.  
-
-Yes, 100% agree.
-
-
-> The written code will also be more verbose (roughly 4x since we
-> tend to squeeze 4 features per line)
-
-It will be about as long as the list of macros in the cpufeatures.h, where
-all features are nicely ordered by cpuid leaves.
-
-In this case I consider verbose long code to be an improvement.
-
-IMHO the OR'ed mask of macros is just too terse, hard to parse.
-It was borderline OK, before this patch series because it only
-contained features, but now it also contains various modifiers,
-IMHO it's just hard to notice that EMUL_F at that corner...
-
-
-> , and it will be harder to ensure initialization
-> of features in a given word are all co-located.
-
-Actually co-location won't be needed.
-
-We can first copy the caps from boot_cpu_data,
-then zero all the leaves that we initialize ourselves.
-
-After that we can initialize opt-in features in any order - it will still be sorted
-by CPUID leaves but even if the order is broken (e.g due to cherry-pick or something),
-it won't cause any issues.
-
-
-> 
-> I definitely don't hate the idea, but I don't think it will be a clear "win" either.
-> Unless someone feels strongly about pursuing this approach, I'll add to the "things
-> to explore later" list.
-> 
-
-Please do consider this, I am almost sure that whoever will need to read this code later (could be you...),
-will thank you.
-
-
-Best regards,
-	Maxim Levitsky
-
-
-
+...
 
