@@ -1,123 +1,127 @@
-Return-Path: <linux-kernel+bounces-261148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AECD193B330
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:54:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E91E993B335
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A66A1F2128C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:54:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 764E1B25282
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A07F15B0ED;
-	Wed, 24 Jul 2024 14:54:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A9715AD9C;
+	Wed, 24 Jul 2024 14:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MVfc8ZGc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D9bUmeKK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B985D1581F7;
-	Wed, 24 Jul 2024 14:54:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE7C156871
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721832847; cv=none; b=Br6e3Z4gsyNekwA4yNdOQmSRvds0JjqJ0lUaIhqsM7cRAxQu7+ptfVOw2LKJFQZCLLe16wn/K5j/meBYgOHw3jrEyCWJFAWZLEvV7wmSXvSbsO2okRfLAwJstLquJPI9o3qn6RtucIUUBznI/h8t4IeLsHd7fJn8qb+E41QokGk=
+	t=1721832916; cv=none; b=t9bguw3GljujR87xQQsUzAgn+aQ+ndmdYANSS2QlvfrEQwHfyTRmpynb8dVKfpsOroQGmBkfOb+d/v6raJdCO+npV/qDp6s9Oy4YiNe+bpsnFU5iKzlC0D/q38mk/Qut5LYw6tAaHT0UALhgG0OVhX7swwQiFv7SBPipUcgVxvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721832847; c=relaxed/simple;
-	bh=DznkJ6BfI/6MHwOQKLT8UI2/tLwgFWt0RRM25QOdiUw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MS1IuXdRGkp3kMk+N5EP91KIIkcqaDCs/WgJn2Ze8RbAwU/WNEwppZjeNf/TZqB272uYNlZnT3YUTUBG0I+CxwTmaP5wtvMne3aQ/t3mePCyppwO7ovMmhNJUNV5Ty8qK6aJ3dAEuLsRBNdOjkVumg4r+CBHz4Ka30lVrjwRqns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MVfc8ZGc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 727D0C32781;
-	Wed, 24 Jul 2024 14:54:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721832847;
-	bh=DznkJ6BfI/6MHwOQKLT8UI2/tLwgFWt0RRM25QOdiUw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=MVfc8ZGcR1jKrh8Z8QostBx7Yn/xS68T+xotJz4aOidS5ZrsdWN9WtRlIUTr8Blvm
-	 VyPSMd/H4D90GXTumwtKIRAq78N7/GHn2gYmDKt2m/QiC5hNvtWbJv4RvN544EE7Rw
-	 SYjg5tu7acVMTeaCUMQtsGsQ/iHy/354ilgyZbQFOt3k6O7c+lusShxYoLbtiAeIhP
-	 5wTaARjNloGt06zw129ZV1gIiBNQxPLiawMnXRvfhwkpVuTPt48Tb1u6lvY1hCLYiq
-	 qvLu320aWiZb5lysHjk9knjedrKtNR38kVzvTGdvMc2lpZNP18SG3RdZ6Pzwsct8wF
-	 coLP/s1Y8nzMA==
-From: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
-Date: Wed, 24 Jul 2024 09:53:59 -0500
-Subject: [PATCH] fs: don't allow non-init s_user_ns for filesystems without
- FS_USERNS_MOUNT
+	s=arc-20240116; t=1721832916; c=relaxed/simple;
+	bh=nLjXiP4HZkptRsbuUSRu8KiMjkZkkee/nRjBU+GFhwc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PvxGrU4PHDLmWnIXDrAJK15G/oExlSHttd/kmHwcTpfcWUO6YqSCZuIqsZIbD9Ezru6Ve7nv+id/DzSu88qpRHkQkieDrb/NHdmiUcxWZloRDuygq96WMXUXXY27e56E5cAFL1GB40x1N6T8FG6gbtW8sODMMdYPYUu/nBz//GY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D9bUmeKK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721832914;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OqaslouRWriEmr41dYglirZKWf9nqPnvwlDNJN3ShwY=;
+	b=D9bUmeKKo2krfBhZcBm277rKxswp+i//oQH4WkLGC+FgMPCA527lX1V9A6YXVAsWnd1ZpD
+	FDphxET3WxOvbpHGelafHBYpUJkPsJi1K5bvIKCWjFF0EuAnZ4VPRFKCGi8EN+LGJqlfN4
+	eJ1XnuRA3dmtaMM0sXF2Lg8Fp0b+UME=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-340-6b0L-_YIOmOwiMs0IdXUrQ-1; Wed,
+ 24 Jul 2024 10:55:08 -0400
+X-MC-Unique: 6b0L-_YIOmOwiMs0IdXUrQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 629DE19541BE;
+	Wed, 24 Jul 2024 14:55:05 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.39.192.143])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0940A195605A;
+	Wed, 24 Jul 2024 14:54:59 +0000 (UTC)
+From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+To: gregkh@linuxfoundation.org
+Cc: UNGLinuxDriver@microchip.com,
+	andrew@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	jtornosm@redhat.com,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	woojung.huh@microchip.com,
+	lucas.demarchi@intel.com,
+	mcgrof@kernel.org
+Subject: Re: [PATCH] net: usb: lan78xx: add weak dependency with micrel phy module
+Date: Wed, 24 Jul 2024 16:54:54 +0200
+Message-ID: <20240724145458.440023-1-jtornosm@redhat.com>
+In-Reply-To: <2024072430-scorn-pushover-7d8a@gregkh>
+References: <2024072430-scorn-pushover-7d8a@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240724-s_user_ns-fix-v1-1-895d07c94701@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAIYVoWYC/x2MQQqAMAzAvjJ6dtBtguJXRERn1V6mrCiC7O8Wj
- wkkLwhlJoHOvJDpZuEjKbjKQNyntJHlRRk8+hobH6yMlyZjErvyY2fEGNxCLs4taHNmUv3/+qG
- UD4f8CpJfAAAA
-To: Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: Amir Goldstein <amir73il@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
- Alexander Mikhalitsyn <alexander@mihalicyn.com>, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
-X-Mailer: b4 0.14.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Christian noticed that it is possible for a privileged user to mount
-most filesystems with a non-initial user namespace in sb->s_user_ns.
-When fsopen() is called in a non-init namespace the caller's namespace
-is recorded in fs_context->user_ns. If the returned file descriptor is
-then passed to a process priviliged in init_user_ns, that process can
-call fsconfig(fd_fs, FSCONFIG_CMD_CREATE), creating a new superblock
-with sb->s_user_ns set to the namespace of the process which called
-fsopen().
+Hello Greg,
 
-This is problematic. We cannot assume that any filesystem which does not
-set FS_USERNS_MOUNT has been written with a non-initial s_user_ns in
-mind, increasing the risk for bugs and security issues.
+> Agree, this isn't ok, if you have a real dependancy, then show it as a
+> real one please with the tools that we have to show that.
+IMHO, I think it can be very useful.
+Apart from the comments trying to answer Andrew, let me try to explain
+better:
 
-Prevent this by returning EPERM from sget_fc() when FS_USERNS_MOUNT is
-not set for the filesystem and a non-initial user namespace will be
-used. sget() does not need to be updated as it always uses the user
-namespace of the current context, or the initial user namespace if
-SB_SUBMOUNT is set.
+I am trying to solve dependencies that are not declared in anyway, but
+without modifying the normal kernel behavior, for special cases in which
+some modules are automatically loaded when something external is needed
+or detected. For this cases, user tools like dracut don't have anyway to
+detect this and if we a use a normal soft dependency, the modules will be
+always loaded in advance.
 
-Fixes: cb50b348c71f ("convenience helpers: vfs_get_super() and sget_fc()")
-Reported-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
----
- fs/super.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Yes, it is a real dependency, but for this case, some phy modules are
+possible and I think it doesn't make sense to load all the phy that could
+be possible in advance, because there is an internal mechanism to only load
+the necessary one (the associated phy is read using mdio bus and then
+the associated phy module is loaded during runtime  by means of the
+function phy_request_driver_module).
 
-diff --git a/fs/super.c b/fs/super.c
-index 095ba793e10c..d681fb7698d8 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -736,6 +736,17 @@ struct super_block *sget_fc(struct fs_context *fc,
- 	struct user_namespace *user_ns = fc->global ? &init_user_ns : fc->user_ns;
- 	int err;
- 
-+	/*
-+	 * Never allow s_user_ns != &init_user_ns when FS_USERNS_MOUNT is
-+	 * not set, as the filesystem is likely unprepared to handle it.
-+	 * This can happen when fsconfig() is called from init_user_ns with
-+	 * an fs_fd opened in another user namespace.
-+	 */
-+	if (user_ns != &init_user_ns && !(fc->fs_type->fs_flags & FS_USERNS_MOUNT)) {
-+		errorfc(fc, "mounting from non-initial user namespace is not allowed");
-+		return ERR_PTR(-EPERM);
-+	}
-+
- retry:
- 	spin_lock(&sb_lock);
- 	if (test) {
+I think it is better to load only the necessary modules and have only in
+initramfs the necessary modules.
 
----
-base-commit: 256abd8e550ce977b728be79a74e1729438b4948
-change-id: 20240723-s_user_ns-fix-b00c31de1cb8
+Here you can find the complete/original justification for this:
+https://github.com/kmod-project/kmod/commit/05828b4a6e9327a63ef94df544a042b5e9ce4fe7
 
-Best regards,
--- 
-Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+Please, take into account that this is the first usage of this feature,
+lan78xx can be completed (others possible phy modules can be added) and it
+can be considered by other modules in the same situation.
+
+Let me add in the thread to the other people that have been involved.
+
+Thanks
+
+Best regards
+José Ignacio
 
 
