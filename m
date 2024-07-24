@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-260572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D43793AB1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 04:17:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0356B93AB1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 04:17:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 080B5284651
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 02:17:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD4B41F2365F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 02:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B987A219FC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C812E22626;
 	Wed, 24 Jul 2024 02:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nN7AhojE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ifdw7t/d"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02681BF58
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 02:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F023E1BF24;
+	Wed, 24 Jul 2024 02:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721787407; cv=none; b=TSGLztZKq+aDuswY8Lla8LPYzRTLaFKV/E7BTVrS7QLm/XYJrNNkKeBkTyIPpQxPov280cxBRNLcTwL068N6aDr5PLdViQJ5t377jzpS7RAvLV8kzqySFAvmyUFyukEcCzZ6eUL5xqJJNfxsnsvfoiJPH0Yctf2L32r9HX2uSQg=
+	t=1721787407; cv=none; b=KKOhowo6DhN12h49co8/qPDCPFz8yGNMk/o9OICmdbLmJiYfZLRj9HlKyDvjP55VdtZ1w8VShA+cV0O7BunjPIohhXrrGLk1MhXz9UGBJ79ZF/3u6SzOtIyUeEpq+7yUNJ3Ldm63lA13nqrrXy8SQ4mm6HU2M2dylzVEPxG2WMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721787407; c=relaxed/simple;
-	bh=RxzxknUylVUGaV6PlU26q9c37KnidmqlRfe2BEvESdk=;
+	bh=Gh1D1UnAgqcuPvjNd5sl0dahB4BkzjzMp0gQGvNq83I=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Yk/QQzSIM7WqDiaoyuwqPSwO2Z2sP5fO8XKqGsw49WhqOSYuePv+KhajxJDlMQDw5146zi+3r/JedYfDymYAsSgLM0gog4O04EBaHXQa8Q9EHNsYvG1LXVKJC+A/n2XLyDafU9FWVH23fZWU6f9oPPBRoVIuWW5JMyWtNrh/nHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nN7AhojE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9765CC4AF0C;
+	 In-Reply-To:To:Cc; b=CAdZxP8XsesogIYXkHe5XL4vgmnO9it2b1cRi4gEi2rLNBzKrimtaLHgMqXTO57td3K+KMl5NDe24HpIU9tT38MNRE5jPnaazJekeQuupeyrzurM3YIscePoAaxaIpb9EQuMWZ7jPH/MRlJxJiIFta3T0Se1ZDJKcdE84p120OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ifdw7t/d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9EA7FC4AF09;
 	Wed, 24 Jul 2024 02:16:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1721787406;
-	bh=RxzxknUylVUGaV6PlU26q9c37KnidmqlRfe2BEvESdk=;
+	bh=Gh1D1UnAgqcuPvjNd5sl0dahB4BkzjzMp0gQGvNq83I=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=nN7AhojEmCkoanDQFv6I44e7EWMFSXU1x6iMMoigKHziv9uQFHxY1no7Fn0wDkBW5
-	 28Lub/kDH6FqgdW4NQtoKYr987oiobTrL+7MM5K3agoqMjgBd6QfGFIDgxKxWNK9aP
-	 Fm3LYhbEqKsQz5rbEunlb8sqiHObeavPnXIvN/iK4ghtj22gmc5cFPHQ2sd4EQk1Dk
-	 GHICy9UP1NghYQKLVkU0WtF+CutfmhpUB+hoPtly702cRAOK8lplGtOeoNC2pDNyu8
-	 0vqBe8huosEh/4c/t5bUQt5BxAp3eRDTurmhCUdDMTONUh3GfkV1FDvsqkpvacKp4C
-	 8Awq2ZOLFS1Ug==
+	b=ifdw7t/dPdOren4fjvvydJZbC5EB6RwCE4p+kutwUQcFegzzHZ1qd2S0ATKyTiyYv
+	 3j933m0muzI3SDMeaEbG84eQ7p/VXbnM0I8JRsA5Hxjz83B+3uilJ9GRoNjrX/J5ei
+	 FTmzznSVTd2YzF37ZcreaUM8D4G4Awlm2800PLn+LfQnq1ohKXUq9VNvxsx7TnYbtv
+	 f5JDPXMweBtVys9tghSGWcHFNj2k5ShVzRvZrZrVHDQwsfgD8knyN+1OdnWuhbl9iz
+	 3Q+JVpcnkCgJDEQ3oYEhcIfaBzj6HBQVFmzVZIApoK1/on0N3f/AAQYjkCqO91gJt9
+	 rSflyAsS2zelg==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 83118C43638;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 8B737C4332D;
 	Wed, 24 Jul 2024 02:16:46 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,36 +51,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [GIT PULL] f2fs update for 6.11-rc1
+Subject: Re: [f2fs-dev] [PATCH v16 0/9] Cache insensitive cleanup for ext4/f2fs
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <172178740653.17759.16908087723522583018.git-patchwork-notify@kernel.org>
+ <172178740656.17759.15510988511656413539.git-patchwork-notify@kernel.org>
 Date: Wed, 24 Jul 2024 02:16:46 +0000
-References: <ZqAZZAmghKIaBAkJ@google.com>
-In-Reply-To: <ZqAZZAmghKIaBAkJ@google.com>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
+References: <20240405121332.689228-1-eugen.hristev@collabora.com>
+In-Reply-To: <20240405121332.689228-1-eugen.hristev@collabora.com>
+To: Eugen Hristev <eugen.hristev@collabora.com>
+Cc: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+ jaegeuk@kernel.org, chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-fsdevel@vger.kernel.org, krisman@suse.de, brauner@kernel.org,
+ jack@suse.cz, linux-kernel@vger.kernel.org, ebiggers@kernel.org,
+ viro@zeniv.linux.org.uk, kernel@collabora.com
 
 Hello:
 
-This pull request was applied to jaegeuk/f2fs.git (dev)
-by Linus Torvalds <torvalds@linux-foundation.org>:
+This series was applied to jaegeuk/f2fs.git (dev)
+by Christian Brauner <brauner@kernel.org>:
 
-On Tue, 23 Jul 2024 20:58:12 +0000 you wrote:
-> Hi Linus,
+On Fri,  5 Apr 2024 15:13:23 +0300 you wrote:
+> Hello,
 > 
-> Could you please consider this pull request?
+> I am trying to respin the series here :
+> https://www.spinics.net/lists/linux-ext4/msg85081.html
 > 
-> Thanks,
-> 
-> The following changes since commit 2ef5971ff345d3c000873725db555085e0131961:
+> I resent some of the v9 patches and got some reviews from Gabriel,
+> I did changes as requested and here is v16.
 > 
 > [...]
 
 Here is the summary with links:
-  - [f2fs-dev,GIT,PULL] f2fs update for 6.11-rc1
-    https://git.kernel.org/jaegeuk/f2fs/c/5ad7ff8738b8
+  - [f2fs-dev,v16,1/9] ext4: Simplify the handling of cached insensitive names
+    https://git.kernel.org/jaegeuk/f2fs/c/f776f02a2c96
+  - [f2fs-dev,v16,2/9] f2fs: Simplify the handling of cached insensitive names
+    https://git.kernel.org/jaegeuk/f2fs/c/632f4054b229
+  - [f2fs-dev,v16,3/9] libfs: Introduce case-insensitive string comparison helper
+    (no matching commit)
+  - [f2fs-dev,v16,4/9] ext4: Reuse generic_ci_match for ci comparisons
+    (no matching commit)
+  - [f2fs-dev,v16,5/9] f2fs: Reuse generic_ci_match for ci comparisons
+    https://git.kernel.org/jaegeuk/f2fs/c/d66858eb0c72
+  - [f2fs-dev,v16,6/9] ext4: Log error when lookup of encoded dentry fails
+    (no matching commit)
+  - [f2fs-dev,v16,7/9] f2fs: Log error when lookup of encoded dentry fails
+    (no matching commit)
+  - [f2fs-dev,v16,8/9] ext4: Move CONFIG_UNICODE defguards into the code flow
+    https://git.kernel.org/jaegeuk/f2fs/c/d98c822232f8
+  - [f2fs-dev,v16,9/9] f2fs: Move CONFIG_UNICODE defguards into the code flow
+    https://git.kernel.org/jaegeuk/f2fs/c/28add38d545f
 
 You are awesome, thank you!
 -- 
