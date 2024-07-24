@@ -1,197 +1,123 @@
-Return-Path: <linux-kernel+bounces-260616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C67393ABAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 05:50:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C73F493ABB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 05:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47D552846C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:50:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0421B1C22B77
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F93C22626;
-	Wed, 24 Jul 2024 03:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QhTyMtEr"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F095D208D7;
+	Wed, 24 Jul 2024 03:58:39 +0000 (UTC)
+Received: from utopia.booyaka.com (utopia.booyaka.com [74.50.51.50])
+	(using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CBC28E8;
-	Wed, 24 Jul 2024 03:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1971C687
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 03:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.50.51.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721793023; cv=none; b=FAAYn7IDeG+PW+92GHcdxWCpyOvF4wqP+TDmqJ/rCia4s4DJLHz5owmkLs9VUs5JYnbnHbCKzjlvZTCZjKGMp0kt+CG4rIg29wMz6KVbBdwmvsE6eVKt7UPZdmYwbqUK9ngvv4aVZvTWiZWmImXqLtiBjanUP69mc0GaKjOgvbU=
+	t=1721793519; cv=none; b=iw4aQ1887gPqoxk80yRmDYqnIOeOQx8lpZStxRRQwUcfcKijfgFhpQOuQb3yjfwxOG9aPm92a1Vcl9KuUFfwX9gxZMfKdExIirZZlNPZoHOBWNZpMt/63W/1DIhmTBXhhwNvlmAydAJ9y+5LoTqBXogCaBjzSLd4X+ipxhDod3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721793023; c=relaxed/simple;
-	bh=1xaaCUMQJXj7AZcY/jkTHVdgk92IBQUS9VOygUtrflc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mNbqy4MfWN9F5wsymD9OWGdXC8Cndl6C2q9ezQ/RO4EbbOk5kJwRTw6o2rNmxMRJWuEPRIYJ18N/luhKCI22zAJnGtQMTjHi7AESYwvOQKpNdtfpAfzb4WH5kPFMFhjMe5+BsQebjr3rND6cKvl69n4Tno6PSMCHvKi2DWeSBJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QhTyMtEr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46NItV5i016040;
-	Wed, 24 Jul 2024 03:50:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=roiulyFFQEZJy10DwwAaZPIN
-	HITRUycPJUBcSPajxIE=; b=QhTyMtErt4u7pWsqaQ+wZT5vlqIEskYh33FeCL6g
-	+E6Kv+YmddBi7SRQo6Wbmp4BrxP1V++MaHCebJ3g3IrTXUWW4wTsyVtIFzTAvZwk
-	ZG2p2GbBaOPcHRg/8oJL5lp7tVdYlWI0L8JVpAiERcmzqoa/ffOiH4qRdVqr85hp
-	K6dzLGDm8+84SNlZvGAexcA9qTR0wwPI3rM/rraK46e7xgxf82A7IAbgUGrJjcKa
-	8P5cPUCegaHizlLrR1YojG7IsAINh3Oh/KNWuihdQoqWVW7KkBwLPsizO7f1Uo/c
-	VwCWhQ+OsHabrScXPS1OitqU49sTDaimb+NaraXGqDAcRg==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g46s8v73-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Jul 2024 03:50:08 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46O3o7Av011707
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Jul 2024 03:50:07 GMT
-Received: from stor-berry.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 23 Jul 2024 20:50:07 -0700
-From: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>
-To: <quic_cang@quicinc.com>, <quic_nitirawa@quicinc.com>, <bvanassche@acm.org>,
-        <avri.altman@wdc.com>, <peter.wang@mediatek.com>,
-        <manivannan.sadhasivam@linaro.org>, <minwoo.im@samsung.com>,
-        <adrian.hunter@intel.com>, <martin.petersen@oracle.com>
-CC: <linux-scsi@vger.kernel.org>, "Bao D. Nguyen" <quic_nguyenb@quicinc.com>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        "James E.J. Bottomley"
-	<jejb@linux.ibm.com>,
-        Bean Huo <beanhuo@micron.com>,
-        Maramaina Naresh
-	<quic_mnaresh@quicinc.com>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 1/1] scsi: ufs: core: Support Updating UIC Command Timeout
-Date: Tue, 23 Jul 2024 20:49:32 -0700
-Message-ID: <e4e1c87f3f867f270a3d4b5d57a00139ff0e9741.1721792309.git.quic_nguyenb@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1721792309.git.quic_nguyenb@quicinc.com>
-References: <cover.1721792309.git.quic_nguyenb@quicinc.com>
+	s=arc-20240116; t=1721793519; c=relaxed/simple;
+	bh=79Jh2c+fxWXX/U6oo0VkkZfgcMhV+v6w0FJ2+TfHJx4=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=I2wGAbZxomwQ1+v/+1RhjkzOKTLJgANy1N2TJCdb6TQkpEXiXiBRxkNq4fWGywn5rMTg9IEvFqq5Q+ASaQwDDOWOmmt1JJQ7EXHwqPgCzi43s54+eYStEakTlEcOkgUx1O+ibatlDkxcK+vSew3qrBF0kpURkqPXI5pPlqOaz/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pwsan.com; spf=pass smtp.mailfrom=pwsan.com; arc=none smtp.client-ip=74.50.51.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pwsan.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pwsan.com
+Received: (qmail 13648 invoked by uid 1019); 24 Jul 2024 03:51:14 -0000
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 24 Jul 2024 03:51:14 -0000
+Date: Wed, 24 Jul 2024 03:51:14 +0000 (UTC)
+From: Paul Walmsley <paul@pwsan.com>
+To: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+    linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    linux-mips@vger.kernel.org
+Subject: Mourning the loss of Peter De Schrijver
+Message-ID: <alpine.DEB.2.21.999.2407240345480.11116@utopia.booyaka.com>
+User-Agent: Alpine 2.21.999 (DEB 260 2018-02-26)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: rJUJHF2u9J709PWOooWsTlqijU-gBJ8f
-X-Proofpoint-ORIG-GUID: rJUJHF2u9J709PWOooWsTlqijU-gBJ8f
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-24_01,2024-07-23_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- lowpriorityscore=0 bulkscore=0 clxscore=1015 malwarescore=0
- priorityscore=1501 phishscore=0 adultscore=0 suspectscore=0 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407240027
+Content-Type: text/plain; charset=US-ASCII
 
-The default UIC command timeout still remains 500ms.
-Allow platform drivers to override the UIC command
-timeout if desired.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
 
-In a real product, the 500ms timeout value is probably good enough.
-However, during the product development where there are a lot of
-logging and debug messages being printed to the uart console,
-interrupt starvations happen occasionally because the uart may
-print long debug messages from different modules in the system.
-While printing, the uart may have interrupts disabled for more
-than 500ms, causing UIC command timeout.
-The UIC command timeout would trigger more printing from
-the UFS driver, and eventually a watchdog timeout may
-occur unnecessarily.
+With an unspeakable sense of loss, I must sadly relate that Peter De
+Schrijver (also known as p2 or p2mate) passed away two weeks ago.
 
-Add support for overriding the UIC command timeout value
-with the newly created uic_cmd_timeout kernel module parameter.
-Default value is 500ms. Supported values range from 500ms
-to 2 seconds.
+Peter's overt contributions to the Linux kernel were primarily in
+clock and power management on ARM SoCs.  Software he wrote or
+co-developed set the foundation for modern Linux power management.
+The SoC-specific code he wrote enabled millions of devices, many of
+which are still in use today.  An incomplete list includes the Nokia
+N900 and N9 Linux smartphones; an innumerable collection of OMAP- and
+Tegra-based smartphones, tablets, E-readers, and development boards;
+many Nest smart thermostats; and the Nintendo Switch.
 
-Signed-off-by: Bao D. Nguyen <quic_nguyenb@quicinc.com>
-Suggested-by: Bart Van Assche <bvanassche@acm.org>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/ufs/core/ufshcd.c | 29 ++++++++++++++++++++++++-----
- 1 file changed, 24 insertions(+), 5 deletions(-)
+Peter was a member of that rare class of engineer whose competence
+transcends artificial boundaries.  He would regularly troubleshoot and
+solve system-wide engineering problems that spanned the software,
+digital hardware, and analog hardware domains.  I have fond
+recollections of Peter tracking down an intermittent power
+management-related glitch in the OMAP SDRAM controller.  This bug was
+serious enough to halt production of devices containing the SoC.  the
+SoC vendor itself could not find the bug.  Despite not having access
+to the RTL, only being able to observe the problem as a black box,
+Peter found it.
 
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 21429ee..526d542 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -51,8 +51,10 @@
- 
- 
- /* UIC command timeout, unit: ms */
--#define UIC_CMD_TIMEOUT	500
--
-+enum {
-+	UIC_CMD_TIMEOUT_DEFAULT	= 500,
-+	UIC_CMD_TIMEOUT_MAX	= 2000,
-+};
- /* NOP OUT retries waiting for NOP IN response */
- #define NOP_OUT_RETRIES    10
- /* Timeout after 50 msecs if NOP OUT hangs without response */
-@@ -113,6 +115,23 @@ static bool is_mcq_supported(struct ufs_hba *hba)
- module_param(use_mcq_mode, bool, 0644);
- MODULE_PARM_DESC(use_mcq_mode, "Control MCQ mode for controllers starting from UFSHCI 4.0. 1 - enable MCQ, 0 - disable MCQ. MCQ is enabled by default");
- 
-+static unsigned int uic_cmd_timeout = UIC_CMD_TIMEOUT_DEFAULT;
-+
-+static int uic_cmd_timeout_set(const char *val, const struct kernel_param *kp)
-+{
-+	return param_set_uint_minmax(val, kp, UIC_CMD_TIMEOUT_DEFAULT,
-+				     UIC_CMD_TIMEOUT_MAX);
-+}
-+
-+static const struct kernel_param_ops uic_cmd_timeout_ops = {
-+	.set = uic_cmd_timeout_set,
-+	.get = param_get_uint,
-+};
-+
-+module_param_cb(uic_cmd_timeout, &uic_cmd_timeout_ops, &uic_cmd_timeout, 0644);
-+MODULE_PARM_DESC(uic_cmd_timeout,
-+		 "UFS UIC command timeout in milliseconds. Defaults to 500ms. Supported values range from 500ms to 2 seconds inclusively");
-+
- #define ufshcd_toggle_vreg(_dev, _vreg, _on)				\
- 	({                                                              \
- 		int _ret;                                               \
-@@ -2460,7 +2479,7 @@ static inline bool ufshcd_ready_for_uic_cmd(struct ufs_hba *hba)
- {
- 	u32 val;
- 	int ret = read_poll_timeout(ufshcd_readl, val, val & UIC_COMMAND_READY,
--				    500, UIC_CMD_TIMEOUT * 1000, false, hba,
-+				    500, uic_cmd_timeout * 1000, false, hba,
- 				    REG_CONTROLLER_STATUS);
- 	return ret == 0;
- }
-@@ -2520,7 +2539,7 @@ ufshcd_wait_for_uic_cmd(struct ufs_hba *hba, struct uic_command *uic_cmd)
- 	lockdep_assert_held(&hba->uic_cmd_mutex);
- 
- 	if (wait_for_completion_timeout(&uic_cmd->done,
--					msecs_to_jiffies(UIC_CMD_TIMEOUT))) {
-+					msecs_to_jiffies(uic_cmd_timeout))) {
- 		ret = uic_cmd->argument2 & MASK_UIC_COMMAND_RESULT;
- 	} else {
- 		ret = -ETIMEDOUT;
-@@ -4298,7 +4317,7 @@ static int ufshcd_uic_pwr_ctrl(struct ufs_hba *hba, struct uic_command *cmd)
- 	}
- 
- 	if (!wait_for_completion_timeout(hba->uic_async_done,
--					 msecs_to_jiffies(UIC_CMD_TIMEOUT))) {
-+					 msecs_to_jiffies(uic_cmd_timeout))) {
- 		dev_err(hba->dev,
- 			"pwr ctrl cmd 0x%x with mode 0x%x completion timeout\n",
- 			cmd->command, cmd->argument3);
--- 
-2.7.4
+Despite his skill, Peter was never self-aggrandizing.  An ideal
+collaborator, he was always willing to lend his powerful mind to think
+through tricky problems that others, myself included, often struggled
+with.
 
+Peter loved the culture of free software.  He was a Debian Developer,
+a regular presence at FOSDEM, and attended many demo parties and free
+software meetups.  I came to realize that for him, this extended to a
+deep philosophical commitment to the importance of transparent
+engineering practices to the open societies that many of us still
+enjoy.  Engineering system failures in the aerospace and energy fields
+were regular topics of conversation.
+
+Peter also knew how to enjoy life beyond engineering.  A evening with
+friends at the pub with fine Belgian lambics was sacramental.  He
+loved electronic music, loved to dance, and loved nature; and often
+combined the three.  His same transcendence of artificial boundaries
+in engineering extended to an open-minded approach towards life in
+general.  He respected and was grateful for what his ancestors
+bequeathed him.  In turn, he shared that pleasure, gratitude, and
+knowledge with others.
+
+As for me: I, like many others, have just lost a true and loyal
+friend.  Peter was present for me when few others were.  The grief is
+tempered with the joy of having known Peter during this lifetime, and
+also, knowing the depth of the legacy he leaves behind.
+
+A memorial web page is here: https://www.ingedachten.be/overlijdensberichten/overlijden-detail/12-07-2024/peter-de-schrijver
+
+
+- - Paul
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEElRDoIDdEz9/svf2Kx4+xDQu9KksFAmagehUACgkQx4+xDQu9
+KkvyPg/8Drb7gBWg5d//101aORjRsLx1XDMQqdR8E+mo8n00f/NrkEPpdRoW0M/9
+dAWFkpscOtQyQmycgEn3necn08CIp8X9zgvcfJmBwPJmFvdfFd9FluNpaAZeGylE
+JYtS2rKhV4JRy2xaNrusK6c6kPH/azfUKLC62kNFPvNCFGtyoY9etn77pqj81JZu
+PojDkCrL793NDpKW3MG3F8KuiPiCTngKDCboVE+3etwF+PgeDx2BOnEbFg8JNNlZ
+3TbyV1ikMn1dv5gpVJDmhFQcLXFm9zA68y44NZ8Q+HWvTZjDPMmYGb8c8FGpytpx
+Ko5Qo1sf+A+KX5y3sgRIVirJggDW4XA2WlhnM+YzDdK5E5t4RE+kiI4nIqqPXwm6
+i6HNOTvjo00WFWCbqzBmpi245j8yjrPMR7NYFdGZDk1gGJXxRFDBCZNFwSYLOkyC
+ZTvr6gzqe1vrMgC3NvU7A/1z3rGVURdWJGPgHGa/BOwxnH2NO+TmBpeBAntoy5Ly
+NbKYFckdVlUrTZBarvkXd1BFiw8LtUGw7rQ2aoZ06Ib2UZaZmlDI94ch5HsibkJk
+Lu0kACz/l1Ra6NL4+oTo23ElhTXWgS7ah8HDau7WewmuJ26fDUONGNh0maOW5E/3
+vtkVrjYTZf6vRGY/tlhQL0sen1Z7C/IGD5oDKCbbkoL3mezNy20=
+=GHEo
+-----END PGP SIGNATURE-----
 
