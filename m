@@ -1,212 +1,265 @@
-Return-Path: <linux-kernel+bounces-261378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EB5593B688
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:20:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2059393B689
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A27421C22B2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:20:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A60AB22BEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD41216A395;
-	Wed, 24 Jul 2024 18:19:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85AC160783;
+	Wed, 24 Jul 2024 18:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="GMLtglCU"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11010070.outbound.protection.outlook.com [52.101.128.70])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mH7vGz8E"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8B716ABF3
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 18:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721845184; cv=fail; b=lHsR3I2nyFqs2XLCGXipetQkF8h8ssvKLnUWdmuVLVpJuodZwmZ2zDtOsIg4x6RkY3IPlUgHeCpIQqrQ1HLFeSTTAO9tpDZCUvGggONFbDtESqLC90KcmfbNkNHXnoJpEEoErEB2zz7nlDPU4GmzeqdqU1UK012EkmyVSLsvbAM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721845184; c=relaxed/simple;
-	bh=Rwnq7j1+jNre1IHBnDoFS+XwXyV09MPKwqTfcCzIuOQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NLYFVSjX9OjD2zgt6qSXfKmRTajGEUkhp1bBgauyIreDv8IosuhkriVIMCy3W1zbTPMZ20ntQZHuPYff4VSDAQMnXBgF25ZAoYENjN6DbxdswShWeWmhWKns45HVvZw3SC5WaE8y6oeEfg9zSCBiq0oulJwMxFfm11P9fmKh/Ug=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=GMLtglCU; arc=fail smtp.client-ip=52.101.128.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TaIlin7A0MXxFYAhy2Mp3Mly1gXM3vF/BX2TuAozZwImBSU0ZuHn+YoqrQo+SbMV0ThCGYtXujY//Kn0x49qQJOgti5S7yw8GB5dQA79uGVhi8CdkM3aXBl1zWpwL8lV2Tqb2uZn10bH+826myeDiw99PytgNaa5956G5fCzPnwjb4ArLUbRl5VcfEKY+unB4dfQos/i8xqDKRZxRjeHNwR6+gU6c4gVLRk8u9wJFQocitrTZ//OPXq7GdveYSnYwpMZqRAnDZBqEjbXQ3VuzfQGNGhHwN5Ps++BBZhpNBkLGhByVCG3VVq5Y7nlpo4eX9llgUzqqHEtE9wjv8b/nQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=h1hvv6l6sPmJh55CzdkxaTUmd0k2dAxtpiFWX07CLTg=;
- b=K0PiJI0c57jcZhjUlfa6ko0Q7zRr7BAuPdZqDMPSvC30EgAv6GGiopfjTQtFJ79JRLqSdCFs2YQ9FUAHw+Y/MxtkQ0iX7Yj0UCngksX1vot3qP63nsVAMJ5XyZAglgf0jT8Ny2s8ByyopoIr1RlnsAuPXGqDRTLMi4UDQhrdZjKyCDFCn3nkQvsk6PXHRdjnGwcYExrhi2DQ7kPVoiz3jgGNXCDT44r87GdOPxOSsfn2DCu5KX9u/n7zJmSYvf4i80BF4nTUrCvAuwWuPOPlah8s5BjZgXujJicb6vSGgEPFYAMgbGDMzcSNyyGRKV3JgJ3TCTffGcPhhF1dqT874A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 58.252.5.68) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=oppo.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=oppo.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h1hvv6l6sPmJh55CzdkxaTUmd0k2dAxtpiFWX07CLTg=;
- b=GMLtglCUsCHEFXj2o5bei+j7uPYli+hcHJLCET62P9ZG7rlJDUJnpYmxbg69v++Uvg16ceITfLOzVPQToqiAMeSj5z0p2+u0D3Gm2DPUSd4Vk0JVUoF+NR6iDxgxlqctG7cUjOGfK7VTBIeXF/PWynobs/e+2I57JAdl6NcodjE=
-Received: from KL1PR0401CA0026.apcprd04.prod.outlook.com (2603:1096:820:e::13)
- by SEYPR02MB6460.apcprd02.prod.outlook.com (2603:1096:101:14a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20; Wed, 24 Jul
- 2024 18:19:36 +0000
-Received: from HK3PEPF0000021F.apcprd03.prod.outlook.com
- (2603:1096:820:e:cafe::4c) by KL1PR0401CA0026.outlook.office365.com
- (2603:1096:820:e::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.17 via Frontend
- Transport; Wed, 24 Jul 2024 18:19:35 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
- smtp.mailfrom=oppo.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=oppo.com;
-Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
- 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
- client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
-Received: from mail.oppo.com (58.252.5.68) by
- HK3PEPF0000021F.mail.protection.outlook.com (10.167.8.41) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7784.11 via Frontend Transport; Wed, 24 Jul 2024 18:19:35 +0000
-Received: from PH80250894.adc.com (172.16.40.118) by mailappw31.adc.com
- (172.16.56.198) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 25 Jul
- 2024 02:19:34 +0800
-From: <hailong.liu@oppo.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Uladzislau Rezki
-	<urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>, Lorenzo Stoakes
-	<lstoakes@gmail.com>, Vlastimil Babka <vbabka@suse.cz>, Michal Hocko
-	<mhocko@suse.com>
-CC: Hailong.Liu <hailong.liu@oppo.com>, Barry Song <21cnbao@gmail.com>,
-	"Tangquan . Zheng" <zhengtangquan@oppo.com>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH v1] mm/vmalloc: fix incorrect __vmap_pages_range_noflush() if vm_area_alloc_pages() from high order fallback to order0
-Date: Thu, 25 Jul 2024 02:19:12 +0800
-Message-ID: <20240724181916.31776-1-hailong.liu@oppo.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A38715884B
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 18:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721845269; cv=none; b=g0TqVSB/LBOWkmLLm+qQjmwUNLJI9BNRD8AJImTiVtLJExSbdkBooUeALpTLANjFEGKs51JmiqAvCmA/m40p2yDgA4nRK3YiK8lKKUxonmomzcVjPV/0CZDgJZTwZrRyOswitBRFPdpWxzyrdz+4dZUTWDK9hiJPKjHlTp54xyQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721845269; c=relaxed/simple;
+	bh=REv25IHweJQSJ/J7MmMAVaiKG1jUDlZF7c8W3aI0KZc=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=gPutYJH1WQzwAkF+0b7Q6pA/f0y4qzO8/RGIxSrDqxwPzplY/0+nzDkVR30ZtAkZmBYIXV3KbxX9+8VRdhZURzCS7I7FdOp6ESPkFbgiDyr5JMJCYW0ZfzkFNUib6ux3vhOW/r19Mu+V2w512VO3uJ9ObPk3RIOjseWkF2X+4eE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=mH7vGz8E; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240724182104euoutp0200d540e624537b123ba1a28895a97091~lOSUvQ6Rd3222432224euoutp02I
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 18:21:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240724182104euoutp0200d540e624537b123ba1a28895a97091~lOSUvQ6Rd3222432224euoutp02I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1721845264;
+	bh=WmEwAKzGIh3jRxASXU7XOPtQ+DyMRgCxKcyi/A6qrMo=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=mH7vGz8E2E6vQ0s0TNdzuw9ECtqvDo175ILinfP8RmZQEAS2OlfXBpZDyHV4JUXe9
+	 6seAmEPG8aJoOkXIGIHAo/HXuyTns4K+UIpYyxZj0cphlF+x6VVtS6ppL7nbrYCVlo
+	 AN4cw4XoH09KfEbjgbrXt1JuU2Pj5Wzg9xDrLDVk=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240724182104eucas1p20dad451ecbfcdbac929fa71b8718c336~lOSUixUyZ2560725607eucas1p2s;
+	Wed, 24 Jul 2024 18:21:04 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id F7.3B.09875.F0641A66; Wed, 24
+	Jul 2024 19:21:04 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240724182103eucas1p201aef9e5aea99808c6029fea9c5ef100~lOSTuajyt2555325553eucas1p2j;
+	Wed, 24 Jul 2024 18:21:03 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240724182103eusmtrp22094a2ce44484d15722db6874bdd7f76~lOSTt5Iwk0439404394eusmtrp2P;
+	Wed, 24 Jul 2024 18:21:03 +0000 (GMT)
+X-AuditID: cbfec7f4-11bff70000002693-59-66a1460f8378
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 98.7B.09010.F0641A66; Wed, 24
+	Jul 2024 19:21:03 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240724182103eusmtip1f6a903cf928f2f45272aa3d5f35ddf70~lOSTdScFE3172131721eusmtip1L;
+	Wed, 24 Jul 2024 18:21:03 +0000 (GMT)
+Received: from localhost (106.210.248.226) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Wed, 24 Jul 2024 19:21:02 +0100
+Date: Wed, 24 Jul 2024 20:20:58 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+CC: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] sysctl: treewide: constify the ctl_table argument of
+ proc_handlers
+Message-ID: <20240724182058.svxh3ux23p4fnqqf@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mailappw30.adc.com (172.16.56.197) To mailappw31.adc.com
- (172.16.56.198)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK3PEPF0000021F:EE_|SEYPR02MB6460:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5ac32c98-091e-4e0c-9d30-08dcac0d2c1b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?mwO9aj0wDnauoAeo09mnb+eftJsQzgsE6z7VZAYEWjAEPLW0JseqK0ppOnwB?=
- =?us-ascii?Q?ZRHRMMUZ1PLTmCziiC4W4xi9Ah6u75+G+Roo5VQjh9TUhDuz46Q1v9gc8tYW?=
- =?us-ascii?Q?4B1zBRr9Rp/RKK97hvMm3SC+4wAzk/XndysxBVQTeqLpnWjp3nqgGfMnFBtH?=
- =?us-ascii?Q?KVzzfyubNPI9qLxZhB8lA3TvziyaViHVNrtGj6FBfH0cyAmgZ+JFP5taAurQ?=
- =?us-ascii?Q?0IVTwz6vRDL4hpLQpE8Hy9pK77OaU6LArOVipxUFWVjjDIOq6cEKYRT43TB7?=
- =?us-ascii?Q?cOROqE6EunX6T8UZrzUk1v3S+FLsLT4DUS3F0f2zDMDF1SiuBjK4sohB7Ubl?=
- =?us-ascii?Q?Fbqxr4tBxZpNqvwEySGmaqDSANU5YQyK4IHALF/C/IdRPAwHwMm6VO0OyjcL?=
- =?us-ascii?Q?xVJF+YWUkdslPxoab12JjP0UR+/6OjrNq92PFNTyyfyytpifchIDt8uJBIue?=
- =?us-ascii?Q?fKqpk+EeP0yujEzjp11Sx8BI5fsmP/pMQaXt0jmOzzKSldcxqFHUFciHlOMR?=
- =?us-ascii?Q?z5GlG+cfLk+d/cx4aqDkgifMELLmH5TJRl9ZF80YIifv7wtlA3j6QdE93fyo?=
- =?us-ascii?Q?NmVnTxxHFzmXbDTVxw39Ybhg7WpZLFXOJZZvVSXrkLJYcivjiRw3R2XKunCD?=
- =?us-ascii?Q?uvjYSPqzXA0qnVkSr3Cdb1OOyM8qMHx4boWBYGmdRmjwxpwMca2PHHQholj/?=
- =?us-ascii?Q?bimcYB7d7AynyH9jB6gyRNQ0ElVxMTT6eWnbC5YtI/JlfXqjEdm/AJdAFbcj?=
- =?us-ascii?Q?x37459BRRoxT2abeo8sDO4BYcv0EjAMAkZt4TTWJrUFIcWycFj4ld4KrGQ0w?=
- =?us-ascii?Q?2LoY9YoR8RcSCjqYig763kl74PJHA4qlDo1V7Egm4UvX0x1YuhrjrC/0eOIN?=
- =?us-ascii?Q?DLzSuk9jvwiUzT0kDC9g201+FIDnIFxXT7S9/pMrs6b6cnYXe8ZlwYH7wHny?=
- =?us-ascii?Q?R6ZdDoXFyey9s1utLNPi8DHDdpYQc0Hc3dYyXz8XtSAGaGPuF5KgEm7qk2Vc?=
- =?us-ascii?Q?5Tgyeh+ogtrBFMzBEOiicDHHF1FBdUHfD/VHZbgITmJzpBrTyQ7tzNONO2Li?=
- =?us-ascii?Q?VHqgZRlTZgJFUPnXVzSdXDM0v7+M+rQ8oJD6fR+KaFlTORDmhX8rSORb6YRh?=
- =?us-ascii?Q?Rbokw4XuW9/xwVtZSap57RFa2lgrmBe/bQXnu0clQ5LqkGuiJCS4TffnIjnK?=
- =?us-ascii?Q?BbxwLnVHAt6mLtgl2IsGal4z8Cc6hpUmP5bXtNoY6opm6K5CCVHgCXRqqm1u?=
- =?us-ascii?Q?vkVaTzzRei/qISLt0eHWB3r7Pe5fsxuzzi1IfBO4wDWnnEJwgXmaYQ3gh630?=
- =?us-ascii?Q?1X0GYOxOx23oKZduZte74yndGehKjAtWeFEUSsWD1lmXU7a9otSIuIqCWv+9?=
- =?us-ascii?Q?2rM1tojbPGFwx/3BlSK0pVUr5QwhOvAFoQWsg1VR8upk9vIyywk4AAz/kdjV?=
- =?us-ascii?Q?EHm7vt8a4cZhC5zDQQIuZ94zM1aFed5v?=
-X-Forefront-Antispam-Report:
-	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2024 18:19:35.2764
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5ac32c98-091e-4e0c-9d30-08dcac0d2c1b
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	HK3PEPF0000021F.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR02MB6460
+In-Reply-To: <84dc8f21-78d2-4ea2-ad79-3f85b610c0a7@t-8ch.de>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAKsWRmVeSWpSXmKPExsWy7djP87oCbgvTDK6+ZrSYs34Nm8W6t+dZ
+	LS7vmsNm8fvHMyaLGxOeMjqwemxa1cnmcWLGbxaPz5vkPPq7j7EHsERx2aSk5mSWpRbp2yVw
+	ZbSt+sZUsEC24s6v74wNjK3iXYycHBICJhJNPxcxdTFycQgJrGCU+HuwBcr5wihxYOEhNgjn
+	M6PEro2X2WFanr6dzgKRWM4o8eJYFzNc1dnOs+wQzlZGie3PQIZxcLAIqErcO+AN0s0moCNx
+	/s0dZhBbRMBGYuW3z2D1zAKTGCU2nL/GCpIQFoiRON+/BayIV8BB4uHZ3YwQtqDEyZlPWEBs
+	ZgE9iRtTp7CBzGcWkJZY/o8DIiwv0bx1NlgrJ9D8HbdOQ12tLHFv0x5mCLtW4tSWW2B/Sgg8
+	4ZC4s2UBK8gcCQEXiaYHERA1whKvjm+B6pWR+L9zPlT9ZEaJ/f8+sEM4qxklljV+ZYKospZo
+	ufIEqsNR4vr3FqihfBI33gpCHMcnMWnbdGaIMK9ER5vQBEaVWUg+m4Xks1kIn81C8tkCRpZV
+	jOKppcW56anFRnmp5XrFibnFpXnpesn5uZsYgYnm9L/jX3YwLn/1Ue8QIxMH4yFGCQ5mJRHe
+	J6/mpgnxpiRWVqUW5ccXleakFh9ilOZgURLnVU2RTxUSSE8sSc1OTS1ILYLJMnFwSjUwTdCZ
+	tWTNXPONW/+9ZMp4p2CoKrfadAX7PJ1//nmZ6ZXN750FY/6sf1k8SXnZ6u6pWx/EBb5cLrq0
+	+928c7eDk45p20dvy0wT8OU7m72hgWPyjEbZBAn/j48ffV3jY+VxxaM3JSlMUEFh4vLmty2B
+	00WL9XcUbrAUtdHav+32M70qTeOVW3RXn1XbvPzu74OKs8rWWsbtPZIrJn3yWPD9Y6vvMQvH
+	h36cwTD3d92diWqNV6aEXpCV6eq+/vLV+7jIoiNyu5ic/a/eqbXrt1we0mM8S9N2sWak+3xb
+	N53d+hueljFPbJ8fK9K7ap3r7WXX1rkksYvf4fyg997/0MEvzxUWNK5uXh/yzfno6dqTL5VY
+	ijMSDbWYi4oTAUR+JC+jAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBIsWRmVeSWpSXmKPExsVy+t/xu7r8bgvTDA6f47SYs34Nm8W6t+dZ
+	LS7vmsNm8fvHMyaLGxOeMjqwemxa1cnmcWLGbxaPz5vkPPq7j7EHsETp2RTll5akKmTkF5fY
+	KkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXoZbSt+sZUsEC24s6v74wNjK3i
+	XYycHBICJhJP305n6WLk4hASWMoocfzXM1aIhIzExi9XoWxhiT/XuthAbCGBj4wSH2+rQDRs
+	ZZTYsOc/excjBweLgKrEvQPeIDVsAjoS59/cYQaxRQRsJFZ++8wOUs8sMIlRYtqZw4wgCWGB
+	GInz/VvAingFHCQent3NCDF0M4vE94/3GSESghInZz5hAbGZBfQkbkydwgayjFlAWmL5Pw6I
+	sLxE89bZYHM4gZbtuHWaHeJoZYl7m/YwQ9i1Ep//PmOcwCgyC8nUWUimzkKYOgvJ1AWMLKsY
+	RVJLi3PTc4uN9IoTc4tL89L1kvNzNzECo3DbsZ9bdjCufPVR7xAjEwfjIUYJDmYlEd4nr+am
+	CfGmJFZWpRblxxeV5qQWH2I0BQbRRGYp0eR8YBrIK4k3NDMwNTQxszQwtTQzVhLn9SzoSBQS
+	SE8sSc1OTS1ILYLpY+LglGpgkoj162//eK3l573JRpMmJ/vcPHjpDHO0j+gJ7SvHLaUY/Faq
+	vKv11HbLSzRh3u+7cN7yinlmVxN3d38tF9GI+NOZor2+P23nWQXVjZuOZz2b23fuyLRDmju0
+	304teMPTy5+S2eV+Yb3MEokPGwr+3//3u+NKmmZB3rWqE///HLOZ+blA9DvTdPkORfNjM8ua
+	zEOPbHRQOTtpeeLxpvuFE5xfPFm+ZGG3qeZe1SynHO5+Q49tjasExNn5Xle5CXVYsnZ9XRhW
+	smPfslf3HhufrBWanh4R2fJ6gcDWW7+Wfyo4k/x/mYFK7Ie79RM+6dX6mUo8+Xyoo3KvhQWD
+	VHYhc27du+sHZy7PXhos8O3VASWW4oxEQy3mouJEAL1beXdLAwAA
+X-CMS-MailID: 20240724182103eucas1p201aef9e5aea99808c6029fea9c5ef100
+X-Msg-Generator: CA
+X-RootMTR: 20240724093233eucas1p148db81823daa1babc0b2a74ce501bbda
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240724093233eucas1p148db81823daa1babc0b2a74ce501bbda
+References: <f7489470-b0da-406b-a8dd-0ae7aaeceec8@t-8ch.de>
+	<20240716152705.juet6srejwq5o6je@joelS2.panther.com>
+	<cdf0831f-f9af-4aa7-a3a0-970efeec1def@t-8ch.de>
+	<20240717195748.fe5ttokbibcsw2ca@joelS2.panther.com>
+	<8a48b4d3-94ca-4a42-bf59-c340d7316603@t-8ch.de>
+	<20240724084124.hbbn3jfcbsc7pyov@joelS2.panther.com>
+	<12465755-1df4-4231-9bec-1044bfcdca4a@t-8ch.de>
+	<20240724091817.eohhckduvtjscibg@joelS2.panther.com>
+	<CGME20240724093233eucas1p148db81823daa1babc0b2a74ce501bbda@eucas1p1.samsung.com>
+	<84dc8f21-78d2-4ea2-ad79-3f85b610c0a7@t-8ch.de>
 
-From: "Hailong.Liu" <hailong.liu@oppo.com>
+On Wed, Jul 24, 2024 at 11:32:26AM +0200, Thomas Weißschuh wrote:
+> On 2024-07-24 11:18:17+0000, Joel Granados wrote:
+...
+> > > > ```
+> > > 
+> > > Yes, IIRC I got told during one review to drop it.
+> > > But for me it is also necessary.
+> > I also remember a comment from the XFS part of the patches where you
+> > changed the formatting on some functions. What did you do to address
+> > this? Did you change them manually? Or do you have a script?
+> 
+> Yes, the style fixes were done manually.
+Ok. I have created some sed scripts to automate this.
 
-The scenario where the issue occurs is as follows:
-CONFIG: vmap_allow_huge = true && 2M is for PMD_SIZE
-kvmalloc(2M)
-    __vmalloc_node_range(vm_flags=VM_ALLOW_HUGE_VMAP)
-        vm_area_alloc_pages(order=9) --->allocs order9 failed and fallback to order0
-                                        and phys_addr is aligned with PMD_SIZE
-            vmap_pages_range
-                vmap_pages_range_noflush
-                    __vmap_pages_range_noflush(page_shift = 21) ----> incorrect vmap *huge* here
+> 
+> > > Thinking back, there were other "virtual" lines, too.
+...
+> >   int , void *, size_t *, loff_t *);
+> > ```
+> > 
+> > > 
+> > > (It doesn't find anything else, though)
+> > Maybe you are missing running it with --include-headers?
+> 
+> There seems to be a slight misunderstanding.
+> I meant that it does not find anything *new* on top of the existing
+> patch, not that it can fully recreate the patch.
+Sorry, misunderstood you.
 
-Fix it by introducing VM_AREA_ALLOC_PAGES_FALLBACK in page->private if fallback to 0.
-Fixes: e9c3cda4d86e ("mm, vmalloc: fix high order __GFP_NOFAIL allocations")
+> 
+> (I used --include-headers, undid one header hunk from the patch and
+> validated that the hunk gets recreated)
+ok. That means that "--include-headers" is active.
 
-CC: Barry Song <21cnbao@gmail.com>
-Reported-by: Tangquan.Zheng <zhengtangquan@oppo.com>
-Signed-off-by: Hailong.Liu <hailong.liu@oppo.com>
----
- mm/vmalloc.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+I actually made further changes on the cocci script for it to catch all
+the corner cases that you did by hand. The patch changes substantially
+as now there are much less formatting issues introduced by the script.
+I'll include you as co-developed-by and in that way give you proper
+credit for your work.
 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 03c78fae06f3..b35dfd3eeee3 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -75,6 +75,8 @@ early_param("nohugevmalloc", set_nohugevmalloc);
- static const bool vmap_allow_huge = false;
- #endif	/* CONFIG_HAVE_ARCH_HUGE_VMALLOC */
- 
-+#define VM_AREA_ALLOC_PAGES_FALLBACK 0x1
-+
- bool is_vmalloc_addr(const void *x)
- {
- 	unsigned long addr = (unsigned long)kasan_reset_tag(x);
-@@ -604,8 +606,13 @@ int __vmap_pages_range_noflush(unsigned long addr, unsigned long end,
- 	WARN_ON(page_shift < PAGE_SHIFT);
- 
- 	if (!IS_ENABLED(CONFIG_HAVE_ARCH_HUGE_VMALLOC) ||
--			page_shift == PAGE_SHIFT)
--		return vmap_small_pages_range_noflush(addr, end, prot, pages);
-+			page_shift == PAGE_SHIFT ||
-+			page_private(pages[0]) == VM_AREA_ALLOC_PAGES_FALLBACK) {
-+		int ret = vmap_small_pages_range_noflush(addr, end, prot, pages);
-+
-+		set_page_private(pages[0], 0);
-+		return ret;
-+	}
- 
- 	for (i = 0; i < nr; i += 1U << (page_shift - PAGE_SHIFT)) {
- 		int err;
-@@ -3583,6 +3590,7 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
- 
- 			/* fall back to the zero order allocations */
- 			alloc_gfp |= __GFP_NOFAIL;
-+			fallback = true;
- 			order = 0;
- 			continue;
- 		}
-@@ -3608,6 +3616,8 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
- 		cond_resched();
- 		nr_allocated += 1U << order;
- 	}
-+	if (nr_allocated && fallback)
-+		set_page_private(pages[0], VM_AREA_ALLOC_PAGES_FALLBACK);
- 
- 	return nr_allocated;
- }
+In order to reproduce what I did you need to run [1] with this cocci
+script [2] and then run [3] with this sed script [4]. I have checked to
+see that the same files are changed. The difference between what you and
+I did is mainly that coccinelle does not make any formatting decisions.
+
+Will create and send the PR shortly.
+
+Best
+
+
+[1]
+```
+  make coccicheck  MODE=patch SPFLAGS="--in-place --include-headers --smpl-spacing --jobs=8" COCCI=SCRIPT.cocci
+```
+
+[2]
+```
+  virtual patch
+
+  @r1@
+  identifier ctl, write, buffer, lenp, ppos;
+  identifier func !~ "appldata_(timer|interval)_handler|sched_(rt|rr)_handler|rds_tcp_skbuf_handler|proc_sctp_do_(hmac_alg|rto_min|rto_max|udp_port|alpha_beta|auth|probe_interval)";
+  @@
+
+  int func(
+  - struct ctl_table *ctl
+  + const struct ctl_table *ctl
+    ,int write, void *buffer, size_t *lenp, loff_t *ppos);
+
+  @r2@
+  identifier func, ctl, write, buffer, lenp, ppos;
+  @@
+
+  int func(
+  - struct ctl_table *ctl
+  + const struct ctl_table *ctl
+    ,int write, void *buffer, size_t *lenp, loff_t *ppos)
+  { ... }
+
+  @r3@
+  identifier func;
+  @@
+
+  int func(
+  - struct ctl_table *
+  + const struct ctl_table *
+    ,int , void *, size_t *, loff_t *);
+
+  @r4@
+  identifier func, ctl;
+  @@
+
+  int func(
+  - struct ctl_table *ctl
+  + const struct ctl_table *ctl
+    ,int , void *, size_t *, loff_t *);
+
+  @r5@
+  identifier func, write, buffer, lenp, ppos;
+  @@
+
+  int func(
+  - struct ctl_table *
+  + const struct ctl_table *
+    ,int write, void *buffer, size_t *lenp, loff_t *ppos);
+```
+
+[3] 
+```
+ sed --in-place -f /tmp/constfy_formating.sed fs/xfs/xfs_sysctl.c kernel/watchdog.c
+```
+
+[4]
+```
+s/^xfs_stats_clear_proc_handler(const struct ctl_table \*ctl,$/xfs_stats_clear_proc_handler(\
+\tconst struct ctl_table\t*ctl,/
+s/^xfs_panic_mask_proc_handler(const struct ctl_table \*ctl,$/xfs_panic_mask_proc_handler(\
+\tconst struct ctl_table\t*ctl,/
+s/^xfs_deprecated_dointvec_minmax(const struct ctl_table \*ctl,$/xfs_deprecated_dointvec_minmax(\
+\tconst struct ctl_table\t*ctl,/
+s/proc_watchdog_common(int which, struct ctl_table \*table/proc_watchdog_common(int which, const struct ctl_table *table/
+
+```
+
 -- 
-2.34.1
 
+Joel Granados
 
