@@ -1,39 +1,73 @@
-Return-Path: <linux-kernel+bounces-260757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17DC393ADCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:12:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9701593ADD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A2711F21571
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:12:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAFD91C20DDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30971142623;
-	Wed, 24 Jul 2024 08:12:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 701E81B7E9
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 08:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828481422D2;
+	Wed, 24 Jul 2024 08:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gfXTLmFf"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6298210FB
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 08:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721808727; cv=none; b=EWVEvaqBm0AuDTsqW1tIiuclfrMWI1V/9+OZsAD4kH/48nWOBM7OYtBtLvfun+Qbeo2uDA3w825pIq77nLbPGeDJ6A8Jlxp6Hb5FxtQgcAOUfSNZ3F/Q3/9neTe7QEGoyl4+QtCaPtTlXd0ikiljIfUiRiX56h1sfMAGs6HXdVk=
+	t=1721808857; cv=none; b=WE4TK8IbqvtZaKIRZSB3tZDvqi99EIMzkdCsKA2goGZlaEqJ/l6VOKfrcuWiW/7UgPkQQjyD0vaZkCSn/qL1GZSvZXpQ2lgX+X6NB12oMUfwZPfYJNXLjIG2xlTCgBAGWfOgatMpskO323Ga2CshLmT+TBOrey/Xmqw+hoWcnh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721808727; c=relaxed/simple;
-	bh=jJ1PU94le/u+374DDgw1e93MImxElfQH52rFr6qUSpI=;
+	s=arc-20240116; t=1721808857; c=relaxed/simple;
+	bh=9bYjwRn0+ChhY0NoWWMu3JyL2bXuzVTARsAm2d5lTKM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TrZRMPllSWWoh1Pv6tpxQ4j4ibOnHgD/5AaLTF0GiimXh/fyAlL531rC5gA94tgFnKf3e41F4/s/lVG7ShgPcmOmkhUDgES5yGHGwx6GLGtbQdl2LMrY0je/AqD6yMBlvSX9Vf2E6VvUEAsWKWUKeYgZ7SNszFDqT7OStGKneJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 114F4106F;
-	Wed, 24 Jul 2024 01:12:30 -0700 (PDT)
-Received: from [10.57.78.42] (unknown [10.57.78.42])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 229E13F766;
-	Wed, 24 Jul 2024 01:12:03 -0700 (PDT)
-Message-ID: <a9b11f05-62a6-4e30-aac8-ffb44b6d7d36@arm.com>
-Date: Wed, 24 Jul 2024 09:12:01 +0100
+	 In-Reply-To:Content-Type; b=ukVV8rcA5VBOnkJcbUP9/U81uROLhjvbX4cF9fM1KXXmc9W+pADbo+f8srrIgHuohYqKwePw1z/1cEGZ+ZkQfys7hWm63jcelmrZGEpm97jA2xDS6XwGO2ZyfAimCRUz1ocQndhKnmwl+d5zRBh4zHTpZmPPA4ZwlUOT1c3xkWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gfXTLmFf; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a2ffc3447fso5760655a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 01:14:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1721808854; x=1722413654; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jaRsVgfOKLFGoy0MVEb7glaoqqC1wwJGWAgYlCrETi0=;
+        b=gfXTLmFf5w7ZOSUrEyuIzP8NcqHk60zGSatiuSxigCP+WQ6G/rjvKvIKeazP2axsU0
+         RLcjCyRgxrAYWOW2tl5iXpZ+WfDF/p92PS1iqeyCHejwex/lnuoOyJKiAF7OoaaKRBzk
+         QiA/iUyM8yhuLpDQLwgtVenULvEKQOmjOw2w8DWqjvkVhed71XCI5lkbhznXUgAnUjKk
+         njs0X2AIlMWdCvK4LgsXSRqGokdUMhLe2MTS+qUj+qWkqGRR5X665wGJ5E7s4wf80bcP
+         apSMNkz5I8dRTzC3ekrYwO5ibQ0wt3U7qbvoJ54RPGy3EnJdtTetT82kthevMgJIfcUC
+         3i0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721808854; x=1722413654;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jaRsVgfOKLFGoy0MVEb7glaoqqC1wwJGWAgYlCrETi0=;
+        b=E/JwaQJJbaQQ9c4htL40jxNXNjRK/7w1qTnxWgJdLcSuflXP18yx1IkqhwrNIvR2k4
+         AJnfjsyf0DK6ie3i3mHtjvurXZSOaXjN+IpGP7BNjHOaM7hdX1BoOcAfuW7KF/5qVP4V
+         9Qw9WEoWCBG+PR4CbhkcDPUBxGjB8ryqJcvGXfD1/cLfuzjP8YAVO55ug8Wbz2JX05Hk
+         JKuPgvKbTfR5mK4N0odL1Kk/WqlHDMW5lQPt/hqtyxAUBxegQ4lHDTPbMnKFJuSrlqYK
+         qi/U3Je/2r0W5qxF/OEMykn9BYMCfW7xKtVPgUL1HoI1Iixe13mG5XCMMnZBPjESxU+o
+         E7uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOKo4+vMjj/ffVG0bNT5fzGPuasm4MbCkwHu9KdAgwrsfRkJ4W9dz18G8Prq752f7iebovpxOzf+eRMJbVs/0nbZEdZzNOtou9rQkj
+X-Gm-Message-State: AOJu0YzPCdpP+5QlS8+KC5MvATvtWMNLaAONEph6tgZn7CY4/IWx8cTD
+	QL2dCoyQD92EqznJD0/ZfibQKN6xZUEonGPTmUJ81QCexzr5V5Z6KnsCVm5Oar4=
+X-Google-Smtp-Source: AGHT+IErFz6fk4k4pDS53bVIdpr3Cmi7kyuKzcJkJAFzrVycMLPuZ4ETQuR0kvj/epfBBRSJC5/Cqw==
+X-Received: by 2002:a50:9b5d:0:b0:5a3:b866:eaee with SMTP id 4fb4d7f45d1cf-5a47848532fmr7897510a12.7.1721808853815;
+        Wed, 24 Jul 2024 01:14:13 -0700 (PDT)
+Received: from ?IPV6:2003:e5:8729:4000:29eb:6d9d:3214:39d2? (p200300e58729400029eb6d9d321439d2.dip0.t-ipconnect.de. [2003:e5:8729:4000:29eb:6d9d:3214:39d2])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a30a4d7127sm8662732a12.3.2024.07.24.01.14.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Jul 2024 01:14:13 -0700 (PDT)
+Message-ID: <16f51077-f525-4d3c-92ad-8a1ccc02e4ff@suse.com>
+Date: Wed, 24 Jul 2024 10:14:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,311 +75,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] mm: mTHP stats for pagecache folio allocations
-Content-Language: en-GB
-To: Barry Song <baohua@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins
- <hughd@google.com>, Jonathan Corbet <corbet@lwn.net>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- David Hildenbrand <david@redhat.com>, Lance Yang <ioworker0@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Gavin Shan <gshan@redhat.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240716135907.4047689-1-ryan.roberts@arm.com>
- <20240716135907.4047689-4-ryan.roberts@arm.com>
- <CAGsJ_4xfiVNH-cQtD_rMrHvzx1a9Ap6CcqsqbxyAEOTB-9Jvhw@mail.gmail.com>
- <223acdf2-ba25-4c31-94df-a212d31bd6c3@arm.com>
- <CAGsJ_4wz-rMZC1PX1mM+aq7gdFhOFvSUvtfsN5ufz74w_jEfbw@mail.gmail.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <CAGsJ_4wz-rMZC1PX1mM+aq7gdFhOFvSUvtfsN5ufz74w_jEfbw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: Build performance regressions originating from min()/max() macros
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>, david.laight@aculab.com
+Cc: Arnd Bergmann <arnd@kernel.org>, willy@infradead.org,
+ torvalds@linux-foundation.org, Jason@zx2c4.com, hch@infradead.org,
+ andriy.shevchenko@linux.intel.com, pedro.falcato@gmail.com,
+ Mateusz Guzik <mjguzik@gmail.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <c83c17bb-be75-4c67-979d-54eee38774c6@lucifer.local>
+Content-Language: en-US
+From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+In-Reply-To: <c83c17bb-be75-4c67-979d-54eee38774c6@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 23/07/2024 23:07, Barry Song wrote:
-> On Fri, Jul 19, 2024 at 8:56 PM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>
->> On 19/07/2024 01:12, Barry Song wrote:
->>> On Wed, Jul 17, 2024 at 1:59 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
->>>>
->>>> Expose 3 new mTHP stats for file (pagecache) folio allocations:
->>>>
->>>>   /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/file_alloc
->>>>   /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/file_fallback
->>>>   /sys/kernel/mm/transparent_hugepage/hugepages-*kB/stats/file_fallback_charge
->>>>
->>>> This will provide some insight on the sizes of large folios being
->>>> allocated for file-backed memory, and how often allocation is failing.
->>>>
->>>> All non-order-0 (and most order-0) folio allocations are currently done
->>>> through filemap_alloc_folio(), and folios are charged in a subsequent
->>>> call to filemap_add_folio(). So count file_fallback when allocation
->>>> fails in filemap_alloc_folio() and count file_alloc or
->>>> file_fallback_charge in filemap_add_folio(), based on whether charging
->>>> succeeded or not. There are some users of filemap_add_folio() that
->>>> allocate their own order-0 folio by other means, so we would not count
->>>> an allocation failure in this case, but we also don't care about order-0
->>>> allocations. This approach feels like it should be good enough and
->>>> doesn't require any (impractically large) refactoring.
->>>>
->>>> The existing mTHP stats interface is reused to provide consistency to
->>>> users. And because we are reusing the same interface, we can reuse the
->>>> same infrastructure on the kernel side.
->>>>
->>>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->>>> ---
->>>>  Documentation/admin-guide/mm/transhuge.rst | 13 +++++++++++++
->>>>  include/linux/huge_mm.h                    |  3 +++
->>>>  include/linux/pagemap.h                    | 16 ++++++++++++++--
->>>>  mm/filemap.c                               |  6 ++++--
->>>>  mm/huge_memory.c                           |  7 +++++++
->>>>  5 files changed, 41 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
->>>> index 058485daf186..d4857e457add 100644
->>>> --- a/Documentation/admin-guide/mm/transhuge.rst
->>>> +++ b/Documentation/admin-guide/mm/transhuge.rst
->>>> @@ -512,6 +512,19 @@ shmem_fallback_charge
->>>>         falls back to using small pages even though the allocation was
->>>>         successful.
->>>>
->>>> +file_alloc
->>>> +       is incremented every time a file huge page is successfully
->>>> +       allocated.
->>>> +
->>>> +file_fallback
->>>> +       is incremented if a file huge page is attempted to be allocated
->>>> +       but fails and instead falls back to using small pages.
->>>> +
->>>> +file_fallback_charge
->>>> +       is incremented if a file huge page cannot be charged and instead
->>>> +       falls back to using small pages even though the allocation was
->>>> +       successful.
->>>> +
->>>
->>> I realized that when we talk about fallback, it doesn't necessarily mean
->>> small pages; it could also refer to smaller huge pages.
->>
->> Yes good point, I'll update the documentation to reflect that for all memory types.
->>
->>>
->>> anon_fault_alloc
->>>         is incremented every time a huge page is successfully
->>>         allocated and charged to handle a page fault.
->>>
->>> anon_fault_fallback
->>>         is incremented if a page fault fails to allocate or charge
->>>         a huge page and instead falls back to using huge pages with
->>>         lower orders or small pages.
->>>
->>> anon_fault_fallback_charge
->>>         is incremented if a page fault fails to charge a huge page and
->>>         instead falls back to using huge pages with lower orders or
->>>         small pages even though the allocation was successful.
->>>
->>> This also applies to files, right?
->>
->> It does in the place you highlight below, but page_cache_ra_order() just falls
->> back immediately to order-0. Regardless, I think we should just document the
->> user facing docs to allow for a lower high order. That gives the implementation
->> more flexibility.
->>
->>>
->>>                 do {
->>>                         gfp_t alloc_gfp = gfp;
->>>
->>>                         err = -ENOMEM;
->>>                         if (order > 0)
->>>                                 alloc_gfp |= __GFP_NORETRY | __GFP_NOWARN;
->>>                         folio = filemap_alloc_folio(alloc_gfp, order);
->>>                         if (!folio)
->>>                                 continue;
->>>
->>>                         /* Init accessed so avoid atomic
->>> mark_page_accessed later */
->>>                         if (fgp_flags & FGP_ACCESSED)
->>>                                 __folio_set_referenced(folio);
->>>
->>>                         err = filemap_add_folio(mapping, folio, index, gfp);
->>>                         if (!err)
->>>                                 break;
->>>                         folio_put(folio);
->>>                         folio = NULL;
->>>                 } while (order-- > 0);
->>>
->>>
->>>>  split
->>>>         is incremented every time a huge page is successfully split into
->>>>         smaller orders. This can happen for a variety of reasons but a
->>>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->>>> index b8c63c3e967f..4f9109fcdded 100644
->>>> --- a/include/linux/huge_mm.h
->>>> +++ b/include/linux/huge_mm.h
->>>> @@ -123,6 +123,9 @@ enum mthp_stat_item {
->>>>         MTHP_STAT_SHMEM_ALLOC,
->>>>         MTHP_STAT_SHMEM_FALLBACK,
->>>>         MTHP_STAT_SHMEM_FALLBACK_CHARGE,
->>>> +       MTHP_STAT_FILE_ALLOC,
->>>> +       MTHP_STAT_FILE_FALLBACK,
->>>> +       MTHP_STAT_FILE_FALLBACK_CHARGE,
->>>>         MTHP_STAT_SPLIT,
->>>>         MTHP_STAT_SPLIT_FAILED,
->>>>         MTHP_STAT_SPLIT_DEFERRED,
->>>> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
->>>> index 6e2f72d03176..95a147b5d117 100644
->>>> --- a/include/linux/pagemap.h
->>>> +++ b/include/linux/pagemap.h
->>>> @@ -562,14 +562,26 @@ static inline void *detach_page_private(struct page *page)
->>>>  }
->>>>
->>>>  #ifdef CONFIG_NUMA
->>>> -struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order);
->>>> +struct folio *__filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order);
->>>>  #else
->>>> -static inline struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
->>>> +static inline struct folio *__filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
->>>>  {
->>>>         return folio_alloc_noprof(gfp, order);
->>>>  }
->>>>  #endif
->>>>
->>>> +static inline struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
->>>> +{
->>>> +       struct folio *folio;
->>>> +
->>>> +       folio = __filemap_alloc_folio_noprof(gfp, order);
->>>> +
->>>> +       if (!folio)
->>>> +               count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK);
->>>> +
->>>> +       return folio;
->>>> +}
->>>
->>> Do we need to add and export __filemap_alloc_folio_noprof()?
->>
->> It is exported. See the below change in filemap.c. Previously
->> filemap_alloc_folio_noprof() was exported, but that is now an inline and
->> __filemap_alloc_folio_noprof() is exported in its place.
->>
->>> In any case,
->>> we won't call count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK) and
->>> will only allocate the folio instead?
->>
->> Sorry I don't understand what you mean by this?
+On 23.07.24 23:59, Lorenzo Stoakes wrote:
+> Arnd reported a significant build slowdown [0], which was bisected to the
+> series spanning commit 80fcac55385c ("minmax: relax check to allow
+> comparison between unsigned arguments and signed constants") to commit
+> 867046cc70277 ("minmax: relax check to allow comparison between unsigned
+> arguments and signed constants"), originating from the series "minmax:
+> Relax type checks in min() and max()." [1].
 > 
-> Ryan, my question is whether exporting __filemap_alloc_folio_noprof() might lead
-> to situations where people call __filemap_alloc_folio_noprof() and
-> forget to call
-> count_mthp_stat(order, MTHP_STAT_FILE_FALLBACK). Currently, it seems
-> that counting is always necessary? 
-
-OK to make sure I've understood, I think you are saying that there is a risk
-that people will call __filemap_alloc_folio_noprof() and bypass the stat
-counting? But its the same problem with all "_noprof" functions; if those are
-called directly, it bypasses the memory allocation profiling infrastructure. So
-this just needs to be a case of "don't do that" IMHO. filemap_alloc_folio() is
-the public API.
-
-> Another option is that we still
-> call count mthp
-> within filemap_alloc_folio_noprof() and make it noinline if
-> __filemap_alloc_folio_noprof()
-> is not inline?
-
-I could certainly make filemap_alloc_folio_noprof() always out-of-line and then
-handle the counting privately in the compilation unit. But before my change
-filemap_alloc_folio_noprof() was inline for the !CONFIG_NUMA case and I was
-trying not to change that. I think what you're suggesting would be tidier
-though. I'll make the change. But I don't think it solves the wider problem of
-the possibility that people can call private APIs. That's what review is for.
-
-Thanks,
-Ryan
-
-
+> I have reproduced this locally, reverting this series and manually fixing
+> up all call sites that invoke min()/max() for a simple x86-64 defconfig (+
+> some other debug flags I use for debug kernels, I can provide the .config
+> if needed).
 > 
->>
->>>
->>>> +
->>>>  #define filemap_alloc_folio(...)                               \
->>>>         alloc_hooks(filemap_alloc_folio_noprof(__VA_ARGS__))
->>>>
->>>> diff --git a/mm/filemap.c b/mm/filemap.c
->>>> index 53d5d0410b51..131d514fca29 100644
->>>> --- a/mm/filemap.c
->>>> +++ b/mm/filemap.c
->>>> @@ -963,6 +963,8 @@ int filemap_add_folio(struct address_space *mapping, struct folio *folio,
->>>>         int ret;
->>>>
->>>>         ret = mem_cgroup_charge(folio, NULL, gfp);
->>>> +       count_mthp_stat(folio_order(folio),
->>>> +               ret ? MTHP_STAT_FILE_FALLBACK_CHARGE : MTHP_STAT_FILE_ALLOC);
->>>>         if (ret)
->>>>                 return ret;
->>>
->>> Would the following be better?
->>>
->>>         ret = mem_cgroup_charge(folio, NULL, gfp);
->>>          if (ret) {
->>>                  count_mthp_stat(folio_order(folio),
->>> MTHP_STAT_FILE_FALLBACK_CHARGE);
->>>                  return ret;
->>>          }
->>>        count_mthp_stat(folio_order(folio), MTHP_STAT_FILE_ALLOC);
->>>
->>> Anyway, it's up to you. The code just feels a bit off to me :-)
->>
->> Yes, agree your version is better. I also noticed that anon and shmem increment
->> FALLBACK whenever FALLBACK_CHARGE is incremented so I should apply those same
->> semantics here.
->>
->> Thanks,
->> Ryan
->>
->>
->>>
->>>>
->>>> @@ -990,7 +992,7 @@ int filemap_add_folio(struct address_space *mapping, struct folio *folio,
->>>>  EXPORT_SYMBOL_GPL(filemap_add_folio);
->>>>
->>>>  #ifdef CONFIG_NUMA
->>>> -struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
->>>> +struct folio *__filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
->>>>  {
->>>>         int n;
->>>>         struct folio *folio;
->>>> @@ -1007,7 +1009,7 @@ struct folio *filemap_alloc_folio_noprof(gfp_t gfp, unsigned int order)
->>>>         }
->>>>         return folio_alloc_noprof(gfp, order);
->>>>  }
->>>> -EXPORT_SYMBOL(filemap_alloc_folio_noprof);
->>>> +EXPORT_SYMBOL(__filemap_alloc_folio_noprof);
->>>>  #endif
->>>>
->>>>  /*
->>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>>> index 578ac212c172..26d558e3e80f 100644
->>>> --- a/mm/huge_memory.c
->>>> +++ b/mm/huge_memory.c
->>>> @@ -608,7 +608,14 @@ static struct attribute_group anon_stats_attr_grp = {
->>>>         .attrs = anon_stats_attrs,
->>>>  };
->>>>
->>>> +DEFINE_MTHP_STAT_ATTR(file_alloc, MTHP_STAT_FILE_ALLOC);
->>>> +DEFINE_MTHP_STAT_ATTR(file_fallback, MTHP_STAT_FILE_FALLBACK);
->>>> +DEFINE_MTHP_STAT_ATTR(file_fallback_charge, MTHP_STAT_FILE_FALLBACK_CHARGE);
->>>> +
->>>>  static struct attribute *file_stats_attrs[] = {
->>>> +       &file_alloc_attr.attr,
->>>> +       &file_fallback_attr.attr,
->>>> +       &file_fallback_charge_attr.attr,
->>>>  #ifdef CONFIG_SHMEM
->>>>         &shmem_alloc_attr.attr,
->>>>         &shmem_fallback_attr.attr,
->>>> --
->>>> 2.43.0
->>>>
->>>
+> Arnd noted that the arch/x86/xen/setup.c file was particularly problematic,
+> taking 15 (!) seconds to pre-process on his machine, so I also enabled
+> CONFIG_XEN to test this and obtained performance numbers with this set/not
+> set.
 > 
-> Thanks
-> Barry
+> I was able to reproduce this very significant pre-processor time on this
+> file, noting that with the series reverted compile time for the file is
+> 0.79s, with it in place, it takes 6.90s for a 873.4% slowdown.
+> 
+> I also checked total build times (32-core intel i9-14900KF box):
+> 
+> ## With CONFIG_XEN
+> 
+> ### Reverted minmax code
+> 
+> make 1588.46s user 92.33s system 2430% cpu 1:09.16 total
+> make 1598.57s user 93.49s system 2419% cpu 1:09.94 total
+> make 1598.99s user 92.49s system 2419% cpu 1:09.91 total
+> 
+> ### Not reverted
+> 
+> make 1639.25s user 96.34s system 2433% cpu 1:11.32 total
+> make 1640.34s user 96.01s system 2427% cpu 1:11.54 total
+> make 1639.98s user 96.76s system 2436% cpu 1:11.27 total
+> 
+> ## Without CONFIG_XEN
+> 
+> ### Reverted minmax code
+> 
+> make 1524.97s user 89.84s system 2399% cpu 1:07.31 total
+> make 1521.01s user 88.99s system 2391% cpu 1:07.32 total
+> make 1530.75s user 89.65s system 2389% cpu 1:07.83 total
+> 
+> ### Not reverted
+> 
+> make 1570.64s user 94.09s system 2398% cpu 1:09.41 total
+> make 1571.25s user 94.36s system 2401% cpu 1:09.36 total
+> make 1568.25s user 93.83s system 2396% cpu 1:09.35 total
+> 
+> Which suggests a worryingly significant slowdown of ~45s with CONFIG_XEN
+> enabled and ~35s even without it.
+> 
+> The underlying problems seems to be very large macro expansions, which Arnd
+> noted in the xen case originated from the line:
+> 
+> extra_pages = min3(EXTRA_MEM_RATIO * min(max_pfn, PFN_DOWN(MAXMEM)),
+> 		extra_pages, max_pages - max_pfn);
+> 
+> And resulted in the generation of 47 MB (!) of pre-processor output.
+> 
+> It seems a lot of code now relies on the relaxed conditions of the newly
+> changed min/max() macros, so the question is - what can we do to address
+> these regressions?
 
+I can send a patch to simplify the problematic construct, but OTOH this
+will avoid only one particularly bad example.
+
+
+Juergen
 
