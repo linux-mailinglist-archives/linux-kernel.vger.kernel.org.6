@@ -1,115 +1,108 @@
-Return-Path: <linux-kernel+bounces-261071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 208C193B296
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:21:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 949C793B299
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:22:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD7291F247A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:21:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D3091F247F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D9715A4AF;
-	Wed, 24 Jul 2024 14:21:39 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEA215958A;
-	Wed, 24 Jul 2024 14:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1441159209;
+	Wed, 24 Jul 2024 14:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H0//d6Tm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44FF156677;
+	Wed, 24 Jul 2024 14:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721830899; cv=none; b=nCW/1OzHwCSZGh+O8dbvJk8H8Rrqfm2O60lq/XEJujs2hjOMpluLhVpVF8y5Q/JDNujXhikBkXopcEcm/2myuI+O7ft3RBeFTObzP81WyfywK1Mws8IWrj+gF5ny6IrzBUXze3eAnx8ax1FyZvHIhBctD10VWxTUXvr7cfySbMY=
+	t=1721830925; cv=none; b=EzfgsRteB8DLIibadn7dfwmNrvqX57/IIfx6EvwHiRmukUmEsn7iGQntPwTbb+I30itIDe2PwztBpTH6jyZhWkGyoL36blki8sIlOvwuMEd59iXJMgz0efYohRngAxgn7Rzq+byYpps/li8JSfBsdf35Yi5KtD57GEDANZrVtoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721830899; c=relaxed/simple;
-	bh=voG2gKlsXMh970oCxpUiQ9kXkdKjA6P7p7KOD9L4Dl4=;
+	s=arc-20240116; t=1721830925; c=relaxed/simple;
+	bh=AUsCJZjVUYxs9p33RAVsq2J5Rd1jdLxKU8buKkg/hjA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aQb+zjHaBnA9FakxQj/RzMS4AH4FNu9TeyPw8cTUVJHNYLDQMRgfaDn1k7Vok1aUsGIMh0oZxFw06uIVXCginFE/I+abnOHOi66+N/2BOL8UZz8BgZBVVTZUo118eBozT6ocWqVq2/mqwhCknxWetsK4JXOLGgZ0NJtYjoDitoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 75E9A106F;
-	Wed, 24 Jul 2024 07:22:01 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB2E63F5A1;
-	Wed, 24 Jul 2024 07:21:34 -0700 (PDT)
-Date: Wed, 24 Jul 2024 15:21:31 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Luke Parkin <luke.parkin@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
-	cristian.marussi@arm.com
-Subject: Re: [PATCH v3 3/5] firmware: arm_scmi: Track basic SCMI statistics
-Message-ID: <ZqEN6w49zFSDMUIe@pluto>
-References: <20240715133751.2877197-1-luke.parkin@arm.com>
- <20240715133751.2877197-4-luke.parkin@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pxNqhQGwRQxPPpOmlKx/CvhLsAcRQ7YZMLcOV7e/+a6MmWKmrn9wN1HT6KLL9cbuDoiRbp4jRqj3G/FaQ0QZFAl098vpBjh0FQYZ/c9NkwMH1hrJV/rnwQvfBMPGCB5DjWcEGmuzjCDVaP5TzGvsDeux64V7zMCcd7e8ig8H7tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H0//d6Tm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FC0AC32782;
+	Wed, 24 Jul 2024 14:22:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721830924;
+	bh=AUsCJZjVUYxs9p33RAVsq2J5Rd1jdLxKU8buKkg/hjA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H0//d6Tmxg1Qi1cnGHE8rrNgHpi0C8MVyaKTQs3X11aT8r/i6btuRH9J+PXfl37Wd
+	 gJwk/X5QtjKGvf7XvCEzJLliXXhJSdXKVqxS1RGspj4R9xhGXd/MaXRkwi+DlHE9PJ
+	 1FRbKewQqK0qqOEyz0BAwVDFMJzM0EMofrsKIuzlvpY+eGBpeScaZ657rg3lnh0NF7
+	 Nf3KpqKrwzK2+uaF7eUDkXs0l3/2iYJDl+9M8zNcp0WaApd+jDUahqIghMwYMEuNC3
+	 VUKYsshBaWz+jA+v+PrYG7ZLq5IZEpputEEsXc7nX9M5tX9naItMd1IjIDzTOadDIL
+	 afOEoOHdp5/LQ==
+Date: Wed, 24 Jul 2024 15:21:59 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Conor Dooley <conor.dooley@microchip.com>, linux-kernel@vger.kernel.org,
+	Marc Zyngier <maz@kernel.org>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [RFC v7 2/6] dt-bindings: interrupt-controller: document
+ PolarFire SoC's gpio interrupt mux
+Message-ID: <20240724-playable-chomp-48e45cef1f2e@spud>
+References: <20240723-supervise-drown-d5d3b303e7fd@wendy>
+ <20240723-uncouple-enforcer-7c48e4a4fefe@wendy>
+ <3f732acc-6ed0-45f0-a2d6-ed8506b0fd6f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="aeYLJ8sZIu+qAi+O"
+Content-Disposition: inline
+In-Reply-To: <3f732acc-6ed0-45f0-a2d6-ed8506b0fd6f@kernel.org>
+
+
+--aeYLJ8sZIu+qAi+O
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240715133751.2877197-4-luke.parkin@arm.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 15, 2024 at 02:37:49PM +0100, Luke Parkin wrote:
-> Add tracking of initial statistics
-> 
-> Signed-off-by: Luke Parkin <luke.parkin@arm.com>
-> ---
-> V2->V3
-> Add more statistics
-> Use new log_stats method.
-> V1->V2
-> Drop unneccesary atomic_set's
-> Use new 'scmi_log_stats' to simplify incrementing of atomics
-> Move scmi_log_stats to locations which mean no extra conditionals
-> 	are needed
-> ---
->  drivers/firmware/arm_scmi/driver.c | 39 ++++++++++++++++++++++++++----
->  1 file changed, 34 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-> index 6edec6ec912d..b22f104cda36 100644
-> --- a/drivers/firmware/arm_scmi/driver.c
-> +++ b/drivers/firmware/arm_scmi/driver.c
-> @@ -126,6 +126,20 @@ struct scmi_debug_info {
->  };
->  
->  enum debug_stat_counters {
-> +	SENT_OK,
-> +	SENT_FAIL,
-> +	SENT_FAIL_POLLING_UNSUPPORTED,
-> +	SENT_FAIL_CHANNEL_NOT_FOUND,
-> +	RESPONSE_OK,
-> +	NOTIF_OK,
-> +	DLYD_RESPONSE_OK,
-> +	XFERS_RESPONSE_TIMEOUT,
-> +	XFERS_RESPONSE_POLLED_TIMEOUT,
-> +	RESPONSE_POLLED_OK,
-> +	ERR_MSG_UNEXPECTED,
-> +	ERR_MSG_INVALID,
-> +	ERR_MSG_NOMEM,
-> +	ERR_PROTOCOL,
->  	LAST
->  };
->  
-> @@ -994,6 +1008,7 @@ scmi_xfer_command_acquire(struct scmi_chan_info *cinfo, u32 msg_hdr)
->  		spin_unlock_irqrestore(&minfo->xfer_lock, flags);
->  
->  		scmi_bad_message_trace(cinfo, msg_hdr, MSG_UNEXPECTED);
-> +		scmi_log_stats(info->dbg_stats, ERR_MSG_UNEXPECTED);
+On Wed, Jul 24, 2024 at 03:27:21PM +0200, Krzysztof Kozlowski wrote:
 
-I'd be tempted to say why dont you wrap these scmi_log_stats() inside the
-scmi_bad_message_trace() ... BUT in order to avoid an additional
-conditional inside the scmi_bad_message_trace() you will need to somehow
-remap the MSG_UNEXPECTED to ERR_MSG_UNEXPECTED inside scmi_bad_message_trace (lets say
-with a local onstack array indexed by -err)...AND that would mean committing to keep
-such mapping in-sync with the the above enum, so as to avoid that adding
-a new definition into scmi_bad_msg BUT not to debug_stat_counters will
-end up in a buffer overflow....so at the end probably better/safer to keep it
-this way...
+> > +examples:
+> > +  - |
+> > +    irqmux: interrupt-controller@20002054 {
+> > +        compatible =3D "microchip,mpfs-gpio-irq-mux";
+> > +        reg =3D <0x20002054 0x4>;
+> > +        interrupt-parent =3D <&plic>;
+> > +        interrupt-controller;
+> > +        #interrupt-cells =3D <1>;
+> > +        status =3D "okay";
+>=20
+> Drop status
 
-Thanks,
-Cristian
+And the label too.
+
+--aeYLJ8sZIu+qAi+O
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqEOBwAKCRB4tDGHoIJi
+0jrkAQCIt+vRgxHnXwPt1M24O8vETAkSyxg1s4KtuFkdeaWcbwEA/lIbod0QoU3l
+ny4OGR9vM076yhwZlwPmOt7BQsSH3gc=
+=+jN8
+-----END PGP SIGNATURE-----
+
+--aeYLJ8sZIu+qAi+O--
 
