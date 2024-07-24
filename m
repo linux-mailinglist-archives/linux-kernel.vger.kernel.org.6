@@ -1,90 +1,102 @@
-Return-Path: <linux-kernel+bounces-261277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 002F693B511
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:32:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 885C693B515
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:32:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A91491F229F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:32:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA0B21C236F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9C915EFBD;
-	Wed, 24 Jul 2024 16:31:56 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C3E15ECE7;
+	Wed, 24 Jul 2024 16:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aa+AFWiJ"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072A810F4;
-	Wed, 24 Jul 2024 16:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49547156967;
+	Wed, 24 Jul 2024 16:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721838715; cv=none; b=fixk4kphgzd//fvoWKENqPQqeW8lf8LBwysd6Wxl54Q0zqQmAvhw6Jq2lr99i9INZk73Mp1fr2KD5H4BkGoml2+HMk35aaXrnpWlOSdDilW7PsZrMx2V5zwThL9KnlKlAnJgwnxsIBITO133XK22G/xVCfm3FVAoLGle/iTrl9A=
+	t=1721838737; cv=none; b=EzmssbSs6gc4O0BvLV2dkBDKAAmzjll1Tw5FGC25FmuHzvAnRRDR8HTyfEhXsS3UReZU3sOuhsVNgRpy4Ou4m1xJCCfCrLOZMR3ZPQXs/RL7tJvF/v/8lC0CmmDJsJx0HS9FUP/SFKQ2WgSQaHHYeuA9/LRpUf0sL2QISRQdkug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721838715; c=relaxed/simple;
-	bh=lO9ykqJ8kZPlf4npavcP7VoQ/S4NN0JPTsgRTSv3j3A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YcpJisEpbgT6ctMpffjrsExMgCJ2N5GZt1Ztak6EmtfWZjxyw3Pmbclr5R9hpaREiu4/ojwjO+wh1/oLz0qr6fboAcREhDX3zWuNURHGV3bgmqWwZFXI11EE/irQ7GXyMss8cqBL5N6OwgHXGJr1s+QKhq3DVle+vlgGO5TE08M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id D334E2800AE14;
-	Wed, 24 Jul 2024 18:31:50 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id BC599F514C; Wed, 24 Jul 2024 18:31:50 +0200 (CEST)
-Date: Wed, 24 Jul 2024 18:31:50 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>,
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Kerem Karabay <kekrby@gmail.com>,
-	Orlando Chamberlain <orlandoch.dev@gmail.com>,
-	"sharpenedblade@proton.me" <sharpenedblade@proton.me>
-Subject: Re: [PATCH v3 0/2] efi/x86: Call set_os() protocol on dual GPU Macs
-Message-ID: <ZqEsdkVvwsq-CgeB@wunner.de>
-References: <20240701140940.2340297-4-ardb+git@google.com>
- <MA0P287MB0217C0F7E0B9F6FE8CA47BE8B8D32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
- <MA0P287MB0217E3B4810704C504F13F2CB8A32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
- <ZpgUVjjj3naBGtfO@wunner.de>
- <MA0P287MB02178F503AA69E1F570E9753B8A92@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
- <ZqElRH38f_XV3fKK@wunner.de>
- <MA0P287MB021789D73CAD62C16BCF0306B8AA2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1721838737; c=relaxed/simple;
+	bh=scyzFQ92jy9OOzPGhgrPhHsJnyLA/b/uhWSzMgGAsDM=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LCafBucQyc9ltUVe8lE0lFZBPKnjK4TzjdIe6jIIRGjsSg9ZrLyVvViNqDn/i6MHQ/GNi+vzKjs43w8gYbRZLPbOCxMX3pL8YhtRpilNYOrPQhHCpNKCtfPu1ssnNotaJ8YirRdN+v8emOy3jD5pzwsSy9AhfrQ7VM2QXCDaF54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aa+AFWiJ; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52fc14d6689so3548721e87.1;
+        Wed, 24 Jul 2024 09:32:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721838734; x=1722443534; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qw1HP4C9dFApYaEVgjqdNU8mvTzz9RLC1l5RF4g7wuU=;
+        b=aa+AFWiJu1tzNOoOq6WiJsc9em9LVvd90Yj86gmRTc/PMaR9XDuTZLm0vUO3Qbi1uz
+         o5qk1SIQSd3jqfN5DnH6VKHfgk0SIziIGJoPLT/05zPAvCqTy5Qu+XzaK/k+v7sk3g8+
+         9/14ZQeotQwopXD6UKgkiYyi5abU5GSRnLThOiDkcsuD5lSnBpXD1bOvY8IGug/ygNOz
+         h2ivaFrJzX0Ie6ZDJbU6NKxU5Z0yzmkollAy/0B+2PSlgoZxeyooDQTWL1XBa+9lA8kY
+         JYxdoLkAD8oXR4/RIxyq8s/1AhpKGk7Ev14GXXNmSSbuxkiJcmVibgjDk0YON6u7UUm9
+         gnNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721838734; x=1722443534;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qw1HP4C9dFApYaEVgjqdNU8mvTzz9RLC1l5RF4g7wuU=;
+        b=qNJaVh7/isAYNyMofbghzdCqUkUWtu0c/noamhOxONNEUdzZwLaGaI3kaL1abW9nn6
+         MXNsE/3/Oqwi7UMOH9uz9xJJw/3vuHyP4Igw3qpC1XTVZfiL2h86uwUrvxAF/rV4Yiwy
+         vmrijULAp5IsrzcamekNtF/gYM0oacH/gPh9mUsyPnV9sRzhQcwJnK0zHfNBGermLTI4
+         xcOpPW7dLTOvvsfyQxZ/sf8z/xS3pIDPFEhC9NvVYCUxHA98CJQ1blDjB3Hys/oWTcrx
+         nN4m1NMyXm2aiD74utKB+tLzmQPIW8UBUrOtZXpzllFUaGBE14K6UwVqjHDgngSpV3lp
+         JZOA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+xJW/2L+zpBMxIgz5FMV+eP12BhWISTFbPN9PWgii3mcFgHCSlSgZ9d1Vd/SwQJg3o283hGzkc759YKa0gP4N2xW/FogO/ojZQ96iRJ0nf83Hx9CPe1BM7+Ay+138cp5h6/JRqfftaNJulfwkVb+O/gQVA258d2T8ateorsv4yQ==
+X-Gm-Message-State: AOJu0YwCMzGfkBTzdOpifyNbewDUftRFTP5yhaPxp8jEMB8kK58oy5sJ
+	CMzPubNqZkqL5AV3HuTCoYeWk2XxlEnD+PgBEbMQhEG0xOhp490=
+X-Google-Smtp-Source: AGHT+IEhmTiBYmoL/pJkI6U2Syqy2qiGc3ZHd8ofLdrOUucG6INU+NQlqegOxUZ8URDVXh2epQW8RA==
+X-Received: by 2002:a05:6512:1249:b0:52f:cf8a:ae15 with SMTP id 2adb3069b0e04-52fd3eeba16mr250839e87.2.1721838734050;
+        Wed, 24 Jul 2024 09:32:14 -0700 (PDT)
+Received: from p183 ([46.53.249.76])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a8eaa7f4bsm210845966b.166.2024.07.24.09.32.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 09:32:13 -0700 (PDT)
+Date: Wed, 24 Jul 2024 19:32:11 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Andrii Nakryiko <andrii@kernel.org>, linux-fsdevel@vger.kernel.org,
+	brauner@kernel.org, viro@zeniv.linux.org.uk,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, gregkh@linuxfoundation.org, linux-mm@kvack.org,
+	surenb@google.com, rppt@kernel.org
+Subject: Re: [PATCH v6 0/6] ioctl()-based API to query VMAs from
+ /proc/<pid>/maps
+Message-ID: <8fca63ef-4618-4e3e-a754-c0118f84e920@p183>
+References: <20240627170900.1672542-1-andrii@kernel.org>
+ <yv6k4j4ptmyhheorcu6ybdcyemxez6wy6ygn64l4v75zwbghb4@wewfmb3nmzku>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <MA0P287MB021789D73CAD62C16BCF0306B8AA2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+In-Reply-To: <yv6k4j4ptmyhheorcu6ybdcyemxez6wy6ygn64l4v75zwbghb4@wewfmb3nmzku>
 
-On Wed, Jul 24, 2024 at 04:26:58PM +0000, Aditya Garg wrote:
-> > On 24 Jul 2024, at 9:31 PM, Lukas Wunner <lukas@wunner.de> wrote:
-> > I note that on x86, the efistub walks over all PCI devices in the system
-> > (see setup_efi_pci() in drivers/firmware/efi/libstub/x86-stub.c) and
-> > retrieves the Device ID and Vendor ID.  We could additionally retrieve
-> > the Class Code and count the number of GPUs in the system by checking
-> > whether the Class Code matches PCI_BASE_CLASS_DISPLAY.  If there's
-> > at least 2 GPUs in the system, invoke apple_set_os.
+On Thu, Jul 11, 2024 at 02:07:18PM -0400, Liam R. Howlett wrote:
+> * Andrii Nakryiko <andrii@kernel.org> [240627 13:09]:
+> > Implement binary ioctl()-based interface to /proc/<pid>/maps file to allow
+> > applications to query VMA information more efficiently than reading *all* VMAs
+> > nonselectively through text-based interface of /proc/<pid>/maps file.
+> > 
 > 
-> This also looks like a good idea, but I'm not well aware of the pci
-> quirks in the Linux kernel. So, would consider it a bug report for
-> the maintainers to fix.
+> Thanks for doing this Andrii.  It looks to be a step forward for a lot
+> of use cases.
 
-This is not a PCI quirk in the kernel.  The efistub is a separate
-program.  I'm saying that the efistub already walks over all PCI devices,
-it would be trivial to hook into this to count GPUs, recognize the T2
-device or do something else entirely.
-
-Thanks,
-
-Lukas
+Yes, looks like ioctl on text files are the way to go. :-)
 
