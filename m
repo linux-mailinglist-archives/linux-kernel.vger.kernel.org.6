@@ -1,107 +1,137 @@
-Return-Path: <linux-kernel+bounces-260906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 401F093B010
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:03:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB6CF93B012
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:03:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE28F2839B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:03:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D471B23617
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D0C156C52;
-	Wed, 24 Jul 2024 11:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8235D1C6A3;
+	Wed, 24 Jul 2024 11:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aTKKvC4D"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="hl0E9Xn2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TEpgTwBG"
+Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8270B1C6A3;
-	Wed, 24 Jul 2024 11:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B402595;
+	Wed, 24 Jul 2024 11:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721818992; cv=none; b=nzfMwfreTwrHOzvFYTMT7rBIBadvuNVraajtI9x8IeV2VHTxY1D2Mz3ZdmSXMq+I1Zs2jGYdHnBoPQmNpUMi/ato7N9nQ0Z08u2ypX6abfMIrhJab2kZdgNuDzJIRZC6Xlzycci2QQ9foHKsrPTL7dyEG39vy6ZOchSFDCd0kPc=
+	t=1721819013; cv=none; b=RdjD3flNs06Q4RqQ83ycbB5Rjj4XwUzTS4vb3WYc51ZjPeZqaNN+HvenCGOqwgIYXfVC5zVgqgQYVO0JX3xugB9m1cjylL3DErO4Djw15ChuPPXqhmscdGJlGQ03jcbzHukk1UCU7JuueT6duSThryimIsaCKY8oLBGpSupG3hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721818992; c=relaxed/simple;
-	bh=ZN7NNcyU0S1YfbfqhcSpoRrSZCDKUwIk4FytmHMztN4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cwKSPnB+ImOvHNSoejDafwZZ2H6ozTX8NalyB+ywp+Pou/GtYWfH46tTLV25NtGvrAwMC7gJTtHmOQutENBo60GgQ5JsK7yAAbO6HEFWHRFYF+/QRtrOd0p4tF1dYCyqowZeWEsWYJmX27QjRReLXoce1dvunIVvQT5rYsDVNGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aTKKvC4D; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52efd2221efso297876e87.1;
-        Wed, 24 Jul 2024 04:03:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721818988; x=1722423788; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OyZGnPtusGipb+xlX5GGLVHXWIPkIHym0QAfrDKBQw0=;
-        b=aTKKvC4Dhfh1Dimwhc2UNs9cf5dz6738tcPayxDCoBiO9/fifzGOJXQfAFRV2zOr8f
-         4uJrLn+nQOlS6ITdVaZ4xqXqFKrrzZJ8bhgjQ5oWKM9KnDe53Dd+JH9vi1cdsiUVow7W
-         27bSGrC8Mm0ZFlxs/GwSCG3ptjvI48o93rIQdtujETqZlMEgtSrju2M4kH9j/1MYjmNN
-         f2M96irsYRddgsPQ58OItuo5kWJCDjD2jIAZUkj0E0qOvysXeskcEFrnQ5OvuNGVw/Jq
-         7IObnshBX9yQZ3T3AU01IUcZ04qTs04YQv9SWj+R+Uh9s9byWm5xL3ZkDWayLQ8zv00V
-         s6qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721818988; x=1722423788;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OyZGnPtusGipb+xlX5GGLVHXWIPkIHym0QAfrDKBQw0=;
-        b=FCzvDn4/oe4NtJ4/I2W5S327l9ZpGiINDV6jTCAkuXBrfG1JZfVMNpO1SECdOf8SBT
-         H+xq59iGsVv4mYRFcltXkV0xAy+yeYPbJoRKVoe2ohrsjGllPK9xJxko54af16RQOwX9
-         LcPxTKWJrA+QGkQUxypxvxQf2bsf4hLneMQn/y2LVF69D7v+zCOfUnCU06FShKlPlanD
-         BzUTyLwqMaCSAvuOGbCzaEYtEicN7V0jp1K7KOcNkPM1SYP7xOCKpHWruXSu5AXPQIWp
-         pzOBlkIGIbKwvaQLeSFicNnMU1UYGpxvC0ZZLlRweAC0/JHVXUV2xVImf8tPbOwuJ5Kg
-         P0fg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVIohd/rUeNMLT/00N/JTb7pkyu6DOl8Dq26Gf6kthXUhWKb1TrAQuYMbhF3hzGjqTDH/aLje4qTTp@vger.kernel.org, AJvYcCXiIQ1ntyN+RCY1nLNN2S4FLi9Jdsi4grm9GKOzGWUeIzq5HfnwzGDK5ojt48AFJnmiNCICJtwhBVBcAUbc@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1K3XcGy8JTIi5Cne8/5W92kE9Nos66VlJVjVDI8dCmDThJfYU
-	+1YfD2US7QXd1Bd6ZpRm9EKE+7oRBsyaWGtj5dV9a/zFHp5RYMdKtexhh8/qp+XHgJyTTr3rQ8z
-	Cw66ueO+0K+cAaVRt4wywOuHD9hyDSyJk
-X-Google-Smtp-Source: AGHT+IHZ28WTL9zR0J5KAqNR5wSGYqOK6qMP43wFHJpRsp/GYZIHczD0y+ox1z8i9Eixd7+YrYjgxA4F1tkro8kjh5c=
-X-Received: by 2002:a05:6512:3f29:b0:52e:ccf5:7c3e with SMTP id
- 2adb3069b0e04-52ef8db6223mr4997174e87.7.1721818987347; Wed, 24 Jul 2024
- 04:03:07 -0700 (PDT)
+	s=arc-20240116; t=1721819013; c=relaxed/simple;
+	bh=MqzgztNulWn6ps+zt1kJxLxjw6K7gLx3zBJw3z+G0fY=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=DLLCoxUzcOjY90jK63W7ixN64Xis1pO7GyzTUGsfHvUSZXrz6Wn0Jse3XjONJCGqt0YVmjRrpze9j2gVJenhepgDAuZWxMWBvxXRM21mdZCCJ+5kmw+dn/XUxsQ5sjGWTICtjjNQ4RasIBOpNLW0LG/5SqLDViSYgn/+ewU1mXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=hl0E9Xn2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TEpgTwBG; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 543A5114028F;
+	Wed, 24 Jul 2024 07:03:30 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Wed, 24 Jul 2024 07:03:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1721819010; x=1721905410; bh=lEWGhgTjsE
+	RsXXuFoYCD9j3Lo6IvAdsriZK45kT9e10=; b=hl0E9Xn2SANSl/aXFa7gaZo1fE
+	Ol/yUocvSHn0LoYw+8V5udPPZPDxR8aDceBCtjLzpmAoQivb96RtMoazQvK0jZpA
+	fbZ4WjTj2Si0GquKWUZM1zbMPwKy3/HIb3/0TPlrJ2o9ydERLiF0zo8YsFzWxH78
+	FvDKS2K2TDdCaH1iQT0pF8+2x2NKuJJRg9wwCCCfasgOM2T4OcJ7m5flr5H8nVC8
+	NNH1JT69/SE50DuDLAQmi8NElCXTYzOORLeW9Hyq83jpdIbQIaUrGTKZLkiTbnYf
+	pFwViye9/xIxE6Dg7iCJE5k7L2w2EfkhxphBL/SB5nKqeHaJJLKweBkOwcXg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1721819010; x=1721905410; bh=lEWGhgTjsERsXXuFoYCD9j3Lo6Iv
+	AdsriZK45kT9e10=; b=TEpgTwBGEYwZAKexU6xoI0LG9kRu47dV5ep9BhLhCaic
+	H1h8ddqy4p2X6QiCO1f1XEDOPhOMPUDhMwJDQmyattfaW84RN48xhYxvEGdS0wSg
+	Box6Gmu8etFsNbbZ9VsQ+Y22uFrhM5xr6uysn5apRsgAdbKwFXzWsYIMYYAI9VF+
+	2q/VeuC7CX/+AufWBjVIEGAh0OiaXNkLFOtIaWi/de1k54LD/kwF9J58acfRdLaz
+	SSdSzQ4GKoEVWEFwlvdh/Gll+0WK5meTecTgYxmLqe54bNspWiupCEDFYVOmgRq9
+	XZ0x+JMRXKw4rT5MAAGEmV8LkVV0Na/4jAwpjwuabQ==
+X-ME-Sender: <xms:gt-gZua86hUF2EmTXWWY9zAqWSW0e-V6A5USOc0kZpqjqO5RMScoqw>
+    <xme:gt-gZhYupxpsYH-JKLRuQ7VDawck3kmXwFMEk43Bh9OIemEJBlDYz0vTgO8NJFdYJ
+    TsD0XVUjS3j9-Q4TR4>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddriedugdefiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeefkedvheehjeejteeguedvgeevfeduffdvveeuhfdvudeltddtjeevvefggfei
+    geenucffohhmrghinhepghhouggsohhlthdrohhrghdpshhtrggtkhhovhgvrhhflhhofi
+    drtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
+    pegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
+X-ME-Proxy: <xmx:gt-gZo-7PhRfB1Z6_clK-Yv54DhqRRaMt6tBfTDod9Z90TGwyKeVSA>
+    <xmx:gt-gZgrC7ylEA5YwwravPQnjWmBxw3eq1mCMMRyID9dj2sRTQgVydQ>
+    <xmx:gt-gZppe5gzvPvzwusv243H3xwCbo0OVMXV6S6okO0TiZMEBzo-p_Q>
+    <xmx:gt-gZuQ_87mgAVPECBUkpbGp-LeFLC_75G2o8Qr5gZQSMT78sMelAQ>
+    <xmx:gt-gZiC1U3B-sNmyZ30O7pQ1s30kUTb0ekpZoB6845Xv1b5HXKSYRI6->
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 163EAB6008D; Wed, 24 Jul 2024 07:03:30 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-582-g5a02f8850-fm-20240719.002-g5a02f885
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240724105847.46962-1-tarang.raval@siliconsignals.io>
-In-Reply-To: <20240724105847.46962-1-tarang.raval@siliconsignals.io>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Wed, 24 Jul 2024 08:02:55 -0300
-Message-ID: <CAOMZO5AuiYD4KBZcfELRZsjEYXpPi7zGprvC7vq0hxfp75v5_w@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: freescale: Add Ethernet Support
-To: Tarang Raval <tarang.raval@siliconsignals.io>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	shawnguo@kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-Id: <d0fadaa3-94d4-4600-8e92-a8fe5b0f141b@app.fastmail.com>
+In-Reply-To: <20240724103142.165693-2-anshuman.khandual@arm.com>
+References: <20240724103142.165693-1-anshuman.khandual@arm.com>
+ <20240724103142.165693-2-anshuman.khandual@arm.com>
+Date: Wed, 24 Jul 2024 13:03:09 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Anshuman Khandual" <anshuman.khandual@arm.com>,
+ linux-kernel@vger.kernel.org
+Cc: "Andrew Morton" <akpm@linux-foundation.org>,
+ "Yury Norov" <yury.norov@gmail.com>,
+ "Rasmus Villemoes" <linux@rasmusvillemoes.dk>,
+ Linux-Arch <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH 1/2] uapi: Define GENMASK_U128
+Content-Type: text/plain
 
-Hi Tarang,
+On Wed, Jul 24, 2024, at 12:31, Anshuman Khandual wrote:
+> --- a/include/uapi/asm-generic/bitsperlong.h
+> +++ b/include/uapi/asm-generic/bitsperlong.h
+> @@ -28,4 +28,8 @@
+>  #define __BITS_PER_LONG_LONG 64
+>  #endif
+> 
+> +#ifndef __BITS_PER_U128
+> +#define __BITS_PER_U128 128
+> +#endif
 
-Please mention the board name in the Subject:
+I would hope we don't need this definition. Not that it
+hurts at all, but __BITS_PER_LONG_LONG was already kind
+of pointless since we don't run on anything else and
+__BITS_PER_U128 clearly can't have any other sensible
+definition than a plain 128.
 
-arm64: dts: imx8mm-emtop-baseboard: Add Ethernet Support
+>  #define __AC(X,Y)	(X##Y)
+>  #define _AC(X,Y)	__AC(X,Y)
+>  #define _AT(T,X)	((T)(X))
+> +#define _AC128(X)	((unsigned __int128)(X))
 
-On Wed, Jul 24, 2024 at 7:59=E2=80=AFAM Tarang Raval
-<tarang.raval@siliconsignals.io> wrote:
+I just tried using this syntax and it doesn't seem to do
+what you expected. gcc silently truncates the constant
+to a 64-bit value here, while clang fails the build.
+See also https://godbolt.org/z/rzEqra7nY
+https://stackoverflow.com/questions/63328802/unsigned-int128-literal-gcc
 
-> +       mdio {
-> +               #address-cells =3D <1>;
-> +               #size-cells =3D <0>;
-> +
-> +               ethphy0: ethernet-phy@4 {
-> +                       compatible =3D "ethernet-phy-ieee802.3-c22";
-> +                       reg =3D <4>;
-> +                       at803x,eee-disabled;
-> +                       at803x,vddio-1p8v;
+The __GENMASK_U128() macro however seems to work correctly
+since you start out with a smaller number and then shift
+it after the type conversion.
 
-These two properties are not valid and not documented anywhere.
+     Arnd
 
