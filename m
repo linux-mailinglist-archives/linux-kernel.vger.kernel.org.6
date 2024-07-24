@@ -1,76 +1,86 @@
-Return-Path: <linux-kernel+bounces-261258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 748B193B4D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:20:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E6C093B4F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 005421F2482B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:20:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2F911F21C93
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DB915ECC0;
-	Wed, 24 Jul 2024 16:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934A815ECE6;
+	Wed, 24 Jul 2024 16:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jcQPU0cS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="uEaY0P7x"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F693158DA7
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 16:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46C615B541
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 16:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721838020; cv=none; b=YTAaJBtCKN6hOUS1cHdktO5I6anpxKEZKwfr+kHbGhlJwU2fUBiGgUu4CiPZcK7a1EVPABwsnD2nE1VvTC+79b4RUCgw2VjV8YzpsRjlqpXiSRK2SrFrHuf0Lubse47RBOcqwphzPfu14B8OX9RW7d2xiZvU2l4E/X3FI0P2Dh4=
+	t=1721838361; cv=none; b=B8BO4k/XHnL0K/sPX6BeOBUsTwsqJCL6IdZlzRnyrxSEJgk6C0eCX4xLzZ2AP1VFUxg7AIvekZvz7+39yVRou6Jwvv8EkTdgVutgpGxaYSj3e0fbpEfM4Jw8FnlYfuJxNkXZ5uDHgDL9qPv9Hzhxf6nJiRkWcfS0JQIvo557yqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721838020; c=relaxed/simple;
-	bh=JXmAywMAZrx4shNYDjV3SQ2rLj23PhdbU8dZwkLvoVA=;
+	s=arc-20240116; t=1721838361; c=relaxed/simple;
+	bh=AOGywo1iikFtBJXxpD5YsZIJ95hrAtPqukdcsVWqRio=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EXkj4QULdTw85NWu4GPhqUdl68qdGoooExvYGa6i9RxdIQ6T5NzdIHPMBANJejUbyu5lRhmwEcH41gvYvlm0eu57r0jOnIjxkKJrTZA7tZMj83GLvQWBHQfUvfi7dz7FFVzBvKmU/mS7r6/NCfMDwTBFXohOHooXsLLua8jBpIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jcQPU0cS; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721838018; x=1753374018;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=JXmAywMAZrx4shNYDjV3SQ2rLj23PhdbU8dZwkLvoVA=;
-  b=jcQPU0cSkndinF6oeH7frQVXQFN0MoM7i8mK/tKVtrobXtYzuhQYLLyl
-   sHGgDsdGnL15ABvEGdHlVTyjy7w3F0Rst9CXrJ0x75l1QvN/1rl3vA+7M
-   r0i5uvgTKCdBvdEtEPr9zS5NDWeRcSveXZVmCST34llauO6ko5K044zzt
-   YT4swhVl7vIrkYcGPhQtOlX8y9GJUufRqY7MX15PDZgengtF6TDtjYe+L
-   7t15cgZjGTcxgaF5xiq0zGYo+E4uGSjaYE7ig7wLyH+HarDPdroa5b8Xa
-   gkoHTGzHaHf29wtnLys83jCHRBS9bKrAQNVaLfSRCwzCYKrraZ4XTEae0
-   Q==;
-X-CSE-ConnectionGUID: ZovC6k5sRP+PKxShuIRevA==
-X-CSE-MsgGUID: DKokj4RFS/GofV2qFvZkhQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11143"; a="19406582"
-X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
-   d="scan'208";a="19406582"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 09:20:17 -0700
-X-CSE-ConnectionGUID: mYTLLEG9SwWQKBEa+shXow==
-X-CSE-MsgGUID: Ki7RrNP2Qzm7ymdtu5ALew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
-   d="scan'208";a="57771913"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.54.39.125])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 09:20:18 -0700
-Date: Wed, 24 Jul 2024 09:25:40 -0700
-From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-Cc: "iommu@lists.linux.dev" <iommu@lists.linux.dev>, LKML
- <linux-kernel@vger.kernel.org>, Lu Baolu <baolu.lu@linux.intel.com>, "Liu,
- Yi L" <yi.l.liu@intel.com>, "Zhang, Tina" <tina.zhang@intel.com>, "Kumar,
- Sanjay K" <sanjay.k.kumar@intel.com>, jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH] iommu/vt-d: Fix potential soft lockup due to reclaim
-Message-ID: <20240724092540.6ef4d28a@jacob-builder>
-In-Reply-To: <BN9PR11MB527638BC2FD50C4D90508D578CAA2@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <20240719181725.1446021-1-jacob.jun.pan@linux.intel.com>
-	<BN9PR11MB527638BC2FD50C4D90508D578CAA2@BN9PR11MB5276.namprd11.prod.outlook.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=h4hAampvsuRhpzqFClQJxOG0JN6XIpriRqvTCTgMzwKhM+cG1r8cVc1rkxegH2/9jqMdtd8UoOXUHogL7W9Ct/wnzOBl8Q14cKHEyqNcjlQ6MenzSumIUZzGB0v/ei3M49ejw+xOAlHozhrGExts7Mx0VEjtP0S50+XPOHK+hDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=uEaY0P7x; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2cd2f89825fso7301a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 09:25:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1721838358; x=1722443158; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=47rZGXNA+VPEE0h3H688PSCY3FqtCg4+Z4f3yZO4MI8=;
+        b=uEaY0P7xKtxJv/2X5WVnb0r4cJo6uzU5SP2RS1RC5gJDKUjzYnzwcCROyUhdYpemlN
+         MHoLdgRA78Ouewg6F09kaWLVllomyAE0lYzHMSM9GfN1JxZFfIKF5/JV/BmxkaUItF9w
+         LWReSf5RfH8ZBSedO/xX/23U5SkdypbA3sXd1FPKDjz73Mrc7FMNQFzr33iobtbMOTdy
+         tP4w4OWQ2qtq4jex34B4KlkCCXhuSC22pk72qZZaoL4adJoTtAXmsXcZJMuzIInAKx3i
+         cwrmldhYINE+XEXfQhqWCLlrc40PD8ZpYAZEbxySh4YgYaOeOjanozPKCI1Hv+x+Uxea
+         HD2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721838358; x=1722443158;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=47rZGXNA+VPEE0h3H688PSCY3FqtCg4+Z4f3yZO4MI8=;
+        b=YILxLk4mM8uAAfoSYzvj6Q4H8Sy4s7u5UhXc3Rvo/BslVPegFFUXDvEW802TRMGXB1
+         POtp7JRsaAeS7ES1BqgqyzbNEJuSObyvoRbauXycHy6TvNyL1ArHN7JXj2WlAswe/ouj
+         n14Q/zA6Akp3xe5uN2cDxk0cf32GwxMiPgLra6kNcaLc4zm7soaAPuirgXnXFQkUXRTf
+         xBwxrf6qax6Hiy0v5VDaJxtL7idtIBUioJpVrcYy/CN3U3Mdr7VrfhaLIoNEQ22ukXzc
+         r92oVH67TjQN4WtAYsDyUfi3EXrF+6Dmu71ClVpEcfBVhUz/hc6iYTKMfIfSaZdVHB61
+         Z9PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUuwhAHF3NnwqLCnPwot/zlgvVgPgu2dLWNfdL7RVfsdb6Enl/FamLvNDdwETKPp0spuWTw09F4Q6ob0BClTC1fVzvRYbW/Wq6EK3kb
+X-Gm-Message-State: AOJu0Yw4i0J7YyvBlT+36fK3UySpTdy8YL44q5HlOXP2nl3zKTIb0H3r
+	I/o5CRgXR2EPB2IYRVj7b6tCtXehLUjsLZIADwXcdFdXY5U3Q/mdWFmytIk01T/gArMsIj8mOFS
+	X
+X-Google-Smtp-Source: AGHT+IG37fSFaVfTdXtnEFGMTuetughKI1Zmm7Q9idfHFeWury0GvTkEpAx1HaZz6lMROu30tv4oTg==
+X-Received: by 2002:a17:90b:388d:b0:2c9:7616:dec7 with SMTP id 98e67ed59e1d1-2cf23770687mr13999a91.6.1721838357984;
+        Wed, 24 Jul 2024 09:25:57 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb746f9a0sm1858462a91.38.2024.07.24.09.25.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 09:25:57 -0700 (PDT)
+Date: Wed, 24 Jul 2024 09:25:55 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: <jiang.kun2@zte.com.cn>
+Cc: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+ <pabeni@redhat.com>, <corbet@lwn.net>, <dsahern@kernel.org>,
+ <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <fan.yu9@zte.com.cn>,
+ <xu.xin16@zte.com.cn>, <zhang.yunkai@zte.com.cn>, <tu.qiang35@zte.com.cn>,
+ <he.peilin@zte.com.cn>, <yang.yang29@zte.com.cn>
+Subject: Re: [PATCH] net: Provide sysctl to tune local port range to IANA  
+ specification
+Message-ID: <20240724092555.3ecc2538@hermes.local>
+In-Reply-To: <202407241403542217WOxM8U3ABv-nWZT068xe@zte.com.cn>
+References: <202407241403542217WOxM8U3ABv-nWZT068xe@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,175 +90,90 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Wed, 24 Jul 2024 14:03:54 +0800 (CST)
+<jiang.kun2@zte.com.cn> wrote:
 
-On Wed, 24 Jul 2024 07:40:25 +0000, "Tian, Kevin" <kevin.tian@intel.com>
-wrote:
-
-> > From: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > Sent: Saturday, July 20, 2024 2:17 AM
-> > 
-> > From: Sanjay K Kumar <sanjay.k.kumar@intel.com>
-> > 
-> > If qi_submit_sync() is invoked with 0 invalidation descriptors (for
-> > instance, for DMA draining purposes), we can run into a bug where a
-> > submitting thread fails to detect the completion of invalidation_wait.
-> > Subsequently, this led to a soft lockup.
-> > 
-> > Suppose thread T1 invokes qi_submit_sync() with non-zero descriptors,
-> > while
-> > concurrently, thread T2 calls qi_submit_sync() with zero descriptors.
-> > Both threads then enter a while loop, waiting for their respective
-> > descriptors to complete. T1 detects its completion (i.e., T1's
-> > invalidation_wait status changes to QI_DONE by HW) and proceeds to call
-> > reclaim_free_desc() to reclaim all descriptors, potentially including
-> > adjacent ones of other threads that are also marked as QI_DONE.
-> > 
-> > During this time, while T2 is waiting to acquire the qi->q_lock, the
-> > IOMMU hardware may complete the invalidation for T2, setting its status
-> > to QI_DONE. However, if T1's execution of reclaim_free_desc() frees T2's
-> > invalidation_wait descriptor and changes its status to QI_FREE, T2 will
-> > not observe the QI_DONE status for its invalidation_wait and will
-> > indefinitely remain stuck.
-> > 
-> > This soft lockup does not occur when only non-zero descriptors are
-> > submitted.In such cases, invalidation descriptors are interspersed among
-> > wait descriptors with the status QI_IN_USE, acting as barriers. These
-> > barriers prevent the reclaim code from mistakenly freeing descriptors
-> > belonging to other submitters.
-> > 
-> > Considered the following example timeline:
-> > 	T1			T2
-> > ========================================
-> > 	ID1
-> > 	WD1
-> > 	while(WD1!=QI_DONE)
-> > 	unlock
-> > 				lock
-> > 	WD1=QI_DONE*		WD2
-> > 				while(WD2!=QI_DONE)
-> > 				unlock
-> > 	lock
-> > 	WD1==QI_DONE?
-> > 	ID1=QI_DONE		WD2=DONE*
-> > 	reclaim()
-> > 	ID1=FREE
-> > 	WD1=FREE
-> > 	WD2=FREE
-> > 	unlock
-> > 				soft lockup! T2 never sees QI_DONE in
-> > WD2
-> > 
-> > Where:
-> > ID = invalidation descriptor
-> > WD = wait descriptor
-> > * Written by hardware
-> > 
-> > The root of the problem is that the descriptor status QI_DONE flag is
-> > used for two conflicting purposes:
-> > 1. signal a descriptor is ready for reclaim (to be freed)
-> > 2. signal by the hardware that a wait descriptor is complete
-> > 
-> > The solution (in this patch) is state separation by introducing a new
-> > flag for the descriptors called QI_TO_BE_FREED.
-> > 
-> > Once a thread's invalidation descriptors are complete, their status
-> > would be set to QI_TO_BE_FREED. The reclaim_free_desc() function would
-> > then only
-> > free descriptors marked as QI_TO_BE_FREED instead of those marked as
-> > QI_DONE. This change ensures that T2 (from the previous example) will
-> > correctly observe the completion of its invalidation_wait (marked as
-> > QI_DONE).
-> > 
-> > Currently, there is no impact by this bug on the existing users because
-> > no callers are submitting invalidations with 0 descriptors.  
+> From: Fan Yu <fan.yu9@zte.com.cn>
 > 
-> bug fix is for existing users. Please revise the subject line and this msg
-> to make it clear that it's for preparation of a new usage.
-The bug is in the qi_submit_sync function itself since it permits callers
-to give 0 as count. It is a bug regardless of users.
-
-I put "potential" in the subject line to indicate, perhaps it is too vague.
-How about just stating what it is fixing:
-"Fix potential lockup if qi_submit_sync called with 0 count"
-
-Also change this paragraph to:
-"Currently, there is no impact by this bug on the existing users because
- no callers are submitting invalidations with 0 descriptors. This fix will
- enable future users (such as DMA drain) calling qi_submit_sync() with 0
- count."
-
-> > 
-> > Signed-off-by: Sanjay K Kumar <sanjay.k.kumar@intel.com>
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > ---
-> >  drivers/iommu/intel/dmar.c  | 13 +++++++++----
-> >  drivers/iommu/intel/iommu.h |  3 ++-
-> >  2 files changed, 11 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/iommu/intel/dmar.c b/drivers/iommu/intel/dmar.c
-> > index 304e84949ca7..00e0f5f801c5 100644
-> > --- a/drivers/iommu/intel/dmar.c
-> > +++ b/drivers/iommu/intel/dmar.c
-> > @@ -1204,8 +1204,7 @@ static void free_iommu(struct intel_iommu
-> > *iommu)
-> >   */
-> >  static inline void reclaim_free_desc(struct q_inval *qi)
-> >  {
-> > -	while (qi->desc_status[qi->free_tail] == QI_DONE ||
-> > -	       qi->desc_status[qi->free_tail] == QI_ABORT) {
-> > +	while (qi->desc_status[qi->free_tail] == QI_TO_BE_FREED) {
-> >  		qi->desc_status[qi->free_tail] = QI_FREE;
-> >  		qi->free_tail = (qi->free_tail + 1) % QI_LENGTH;
-> >  		qi->free_cnt++;
-> > @@ -1463,8 +1462,14 @@ int qi_submit_sync(struct intel_iommu *iommu,
-> > struct qi_desc *desc,
-> >  		raw_spin_lock(&qi->q_lock);
-> >  	}
-> > 
-> > -	for (i = 0; i < count; i++)
-> > -		qi->desc_status[(index + i) % QI_LENGTH] = QI_DONE;
-> > +	/*
-> > +	 * The reclaim code can free descriptors from multiple
-> > submissions
-> > +	 * starting from the tail of the queue. When count == 0, the
-> > +	 * status of the standalone wait descriptor at the tail of the
-> > queue
-> > +	 * must be set to QI_TO_BE_FREED to allow the reclaim code to
-> > proceed.
-> > +	 */
-> > +	for (i = 0; i <= count; i++)
-> > +		qi->desc_status[(index + i) % QI_LENGTH] =
-> > QI_TO_BE_FREED;  
+> The Importance of Following IANA Standards
+> ========================================
+> IANA specifies User ports as 1024-49151, and it just so happens
+> that my application uses port 33060 (reserved for MySQL Database Extended),
+> which conflicts with the Linux default dynamic port range (32768-60999)[1].
 > 
-> We don't really need a new flag. Just set them to QI_FREE and then
-> reclaim QI_FREE slots until hitting qi->head in reclaim_free_desc().
-We do need to have a separate state for descriptors pending to be freed.
-Otherwise, reclaim code will advance pass the intended range.
-
-> > 
-> >  	reclaim_free_desc(qi);
-> >  	raw_spin_unlock_irqrestore(&qi->q_lock, flags);
-> > diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
-> > index eaf015b4353b..1ab39f9145f2 100644
-> > --- a/drivers/iommu/intel/iommu.h
-> > +++ b/drivers/iommu/intel/iommu.h
-> > @@ -382,7 +382,8 @@ enum {
-> >  	QI_FREE,
-> >  	QI_IN_USE,
-> >  	QI_DONE,
-> > -	QI_ABORT
-> > +	QI_ABORT,
-> > +	QI_TO_BE_FREED
-> >  };
-> > 
-> >  #define QI_CC_TYPE		0x1
-> > --
-> > 2.25.1
-> >   
+> In fact, IANA assigns numbers in port range from 32768 to 49151,
+> which is uniformly accepted by the industry. To do this,
+> it is necessary for the kernel to follow the IANA specification.
 > 
+> Drawbacks of existing implementations
+> ========================================
+> In past discussions, follow the IANA specification by modifying the
+> system defaults has been discouraged, which would greatly affect
+> existing users[2].
+> 
+> Theoretically, this can be done by tuning net.ipv4.local_port_range,
+> but there are inconveniences such as:
+> (1) For cloud-native scenarios, each container is expected to follow
+> the IANA specification uniformly, so it is necessary to do sysctl
+> configuration in each container individually, which increases the user's
+> resource management costs.
+> (2) For new applications, since sysctl(net.ipv4.local_port_range) is
+> isolated across namespaces, the container cannot inherit the host's value,
+> so after startup, it remains at the kernel default value of 32768-60999,
+> which reduces the ease of use of the system.
+> 
+> Solution
+> ========================================
+> In order to maintain compatibility, we provide a sysctl interface in
+> host namespace, which makes it easy to tune local port range to
+> IANA specification.
+> 
+> When ip_local_port_range_use_iana=1, the local port range of all network
+> namespaces is tuned to IANA specification (49152-60999), and IANA
+> specification is also used for newly created network namespaces. Therefore,
+> each container does not need to do sysctl settings separately, which
+> improves the convenience of configuration.
+> When ip_local_port_range_use_iana=0, the local port range of all network
+> namespaces are tuned to the original kernel defaults (32768-60999).
+> For example:
+> 	# cat /proc/sys/net/ipv4/ip_local_port_range 
+> 	32768   60999
+> 	# echo 1 > /proc/sys/net/ipv4/ip_local_port_range_use_iana
+> 	# cat /proc/sys/net/ipv4/ip_local_port_range 
+> 	49152   60999
+> 
+> 	# unshare -n
+> 	# cat /proc/sys/net/ipv4/ip_local_port_range 
+> 	49152   60999
+> 
+> Notes
+> ========================================
+> The lower value(49152), consistent with IANA dynamic port lower limit.
+> The upper limit value(60999), which differs from the IANA dynamic upper
+> limit due to the fact that Linux will use 61000-65535 as masquarading/NAT,
+> but this does not conflict with the IANA specification[3].
+> 
+> Note that following the above specification reduces the number of ephemeral
+> ports by half, increasing the risk of port exhaustion[2].
+> 
+> [1]:https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.txt
+> [2]:https://lore.kernel.org/all/bf42f6fd-cd06-02d6-d7b6-233a0602c437@gmail.com/
+> [3]:https://lore.kernel.org/all/20070512210830.514c7709@the-village.bc.nu/
+> 
+> Co-developed-by: Kun Jiang <jiang.kun2@zte.com.cn>
+> Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
+> Signed-off-by: Kun Jiang <jiang.kun2@zte.com.cn>
+> Reviewed-by: xu xin <xu.xin16@zte.com.cn>
+> Reviewed-by: Yunkai Zhang <zhang.yunkai@zte.com.cn>
+> Reviewed-by: Qiang Tu <tu.qiang35@zte.com.cn>
+> Reviewed-by: Peilin He<he.peilin@zte.com.cn>
+> Cc: Yang Yang <yang.yang29@zte.com.cn>
+> ---
 
+Yet another NAK
 
-Thanks,
+Rather than buggy and verbose new sysctl, why not just allow setting
+the port range you want through existing sysctls?
 
-Jacob
+You can configure this through existing sysctl files and startup in your distro.
 
