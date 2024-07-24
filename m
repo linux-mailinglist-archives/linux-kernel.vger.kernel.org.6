@@ -1,108 +1,115 @@
-Return-Path: <linux-kernel+bounces-261072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 949C793B299
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:22:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46F1693B29B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D3091F247F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:22:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78DF11C237AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1441159209;
-	Wed, 24 Jul 2024 14:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D146515A4AF;
+	Wed, 24 Jul 2024 14:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H0//d6Tm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Va13J95q"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44FF156677;
-	Wed, 24 Jul 2024 14:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59E815921B
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721830925; cv=none; b=EzfgsRteB8DLIibadn7dfwmNrvqX57/IIfx6EvwHiRmukUmEsn7iGQntPwTbb+I30itIDe2PwztBpTH6jyZhWkGyoL36blki8sIlOvwuMEd59iXJMgz0efYohRngAxgn7Rzq+byYpps/li8JSfBsdf35Yi5KtD57GEDANZrVtoQ=
+	t=1721831005; cv=none; b=L6lYd+Ym0xp8hH4tTWwNgEeKl/fWAxyQE7ln4n+XtZ9pCaljeXXdzb76RYS9m5nSGTbwWV6A1aJz9WHfhXXXtyxZZpqVxkazVMvWUBV2Wl9vTflV2TcjFjdMBJVJhoTSpaXLEe2GA8WmHfa5HdHJDsTydyzkmLXWR+PthIr4+Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721830925; c=relaxed/simple;
-	bh=AUsCJZjVUYxs9p33RAVsq2J5Rd1jdLxKU8buKkg/hjA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pxNqhQGwRQxPPpOmlKx/CvhLsAcRQ7YZMLcOV7e/+a6MmWKmrn9wN1HT6KLL9cbuDoiRbp4jRqj3G/FaQ0QZFAl098vpBjh0FQYZ/c9NkwMH1hrJV/rnwQvfBMPGCB5DjWcEGmuzjCDVaP5TzGvsDeux64V7zMCcd7e8ig8H7tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H0//d6Tm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FC0AC32782;
-	Wed, 24 Jul 2024 14:22:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721830924;
-	bh=AUsCJZjVUYxs9p33RAVsq2J5Rd1jdLxKU8buKkg/hjA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H0//d6Tmxg1Qi1cnGHE8rrNgHpi0C8MVyaKTQs3X11aT8r/i6btuRH9J+PXfl37Wd
-	 gJwk/X5QtjKGvf7XvCEzJLliXXhJSdXKVqxS1RGspj4R9xhGXd/MaXRkwi+DlHE9PJ
-	 1FRbKewQqK0qqOEyz0BAwVDFMJzM0EMofrsKIuzlvpY+eGBpeScaZ657rg3lnh0NF7
-	 Nf3KpqKrwzK2+uaF7eUDkXs0l3/2iYJDl+9M8zNcp0WaApd+jDUahqIghMwYMEuNC3
-	 VUKYsshBaWz+jA+v+PrYG7ZLq5IZEpputEEsXc7nX9M5tX9naItMd1IjIDzTOadDIL
-	 afOEoOHdp5/LQ==
-Date: Wed, 24 Jul 2024 15:21:59 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>, linux-kernel@vger.kernel.org,
-	Marc Zyngier <maz@kernel.org>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [RFC v7 2/6] dt-bindings: interrupt-controller: document
- PolarFire SoC's gpio interrupt mux
-Message-ID: <20240724-playable-chomp-48e45cef1f2e@spud>
-References: <20240723-supervise-drown-d5d3b303e7fd@wendy>
- <20240723-uncouple-enforcer-7c48e4a4fefe@wendy>
- <3f732acc-6ed0-45f0-a2d6-ed8506b0fd6f@kernel.org>
+	s=arc-20240116; t=1721831005; c=relaxed/simple;
+	bh=mCUQ70F6/j+vRuvIX6UPDQb6P8vG0rsEwCkPOuUOwl4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RL8iD4D6kbppx3OWhO6ekZHA+37sHqYfjhNUNXJkpgmnsp2rOduRwIGqen5/EHv0D1G0G634XJtOs+Bx2hkpMEuqDtnfLIs6FSjTnfvNZ3yWw5F9ypcObOWaYdmlZ8A7oXa4lIWyigcWt5QWOdbLJfzNV6CzCZdmD6ec1pZZrwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Va13J95q; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721831002;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=clA/h9i6o34vlWpGIqqnq4ZVlehnOc8AxMNiN27Bf3M=;
+	b=Va13J95qsyt9aDkVEMvYwhnhXijXuec6wAKJsEH0q2DfKKxXYmeA4iBvj5L8jNMDF/DNFU
+	dB9Z1bftA3t4wLgSRE3AiEk7r59TE0w5W6jIiFG60E/T2B0ax+ugjfrGa/vB++d8/4Ogsq
+	6kgqqDW1EPjX2bJR3o2VZw6Xv9RKCb0=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-465-YacFiaWrNmW5v_Ndm9a6cw-1; Wed,
+ 24 Jul 2024 10:23:08 -0400
+X-MC-Unique: YacFiaWrNmW5v_Ndm9a6cw-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AA3D21955F65;
+	Wed, 24 Jul 2024 14:23:05 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.96.134.38])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 221E719560AE;
+	Wed, 24 Jul 2024 14:23:00 +0000 (UTC)
+From: Wander Lairson Costa <wander@redhat.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org (open list:SCHEDULER)
+Cc: Wander Lairson Costa <wander@redhat.com>
+Subject: [PATCH v2 0/2] sched/deadline: fixes and improvements
+Date: Wed, 24 Jul 2024 11:22:46 -0300
+Message-ID: <20240724142253.27145-1-wander@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="aeYLJ8sZIu+qAi+O"
-Content-Disposition: inline
-In-Reply-To: <3f732acc-6ed0-45f0-a2d6-ed8506b0fd6f@kernel.org>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
+Hello,
 
---aeYLJ8sZIu+qAi+O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch series addresses specific issues and improvements within
+the scheduler's deadline (DL) class. The patches aim to fix warnings,
+remove redundant checks, and consolidate timer cancellation logic for
+better consistency and code quality.
 
-On Wed, Jul 24, 2024 at 03:27:21PM +0200, Krzysztof Kozlowski wrote:
+Patch 1: Fix warning in migrate_enable for boosted tasks
 
-> > +examples:
-> > +  - |
-> > +    irqmux: interrupt-controller@20002054 {
-> > +        compatible =3D "microchip,mpfs-gpio-irq-mux";
-> > +        reg =3D <0x20002054 0x4>;
-> > +        interrupt-parent =3D <&plic>;
-> > +        interrupt-controller;
-> > +        #interrupt-cells =3D <1>;
-> > +        status =3D "okay";
->=20
-> Drop status
+Fix a warning caused by unnecessary calls to setup_new_dl_entity for
+boosted tasks during CPU migate_enable calls.
 
-And the label too.
+Patch 2: sched/deadline: Consolidate Timer Cancellation
 
---aeYLJ8sZIu+qAi+O
-Content-Type: application/pgp-signature; name="signature.asc"
+Consolidate timer cancellation logic into dedicated functions,
+ensuring consistent behavior and reducing code duplication.
 
------BEGIN PGP SIGNATURE-----
+Changelog
+---------
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqEOBwAKCRB4tDGHoIJi
-0jrkAQCIt+vRgxHnXwPt1M24O8vETAkSyxg1s4KtuFkdeaWcbwEA/lIbod0QoU3l
-ny4OGR9vM076yhwZlwPmOt7BQsSH3gc=
-=+jN8
------END PGP SIGNATURE-----
+v2:
+* Drop patch to remove the redundant WARN_ON call.
+* Change the "Fixes" tag in the patch 1.
+* Change function names in the patch 2.
 
---aeYLJ8sZIu+qAi+O--
+Wander Lairson Costa (2):
+  sched/deadline: Fix warning in migrate_enable for boosted tasks
+  sched/deadline: Consolidate Timer Cancellation
+
+ kernel/sched/deadline.c | 45 ++++++++++++++++++++++++++---------------
+ 1 file changed, 29 insertions(+), 16 deletions(-)
+
+-- 
+2.45.2
+
 
