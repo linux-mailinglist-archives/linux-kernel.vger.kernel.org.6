@@ -1,112 +1,92 @@
-Return-Path: <linux-kernel+bounces-260914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8D3B93B024
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:11:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3CA93B026
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:12:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74B33B236AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:11:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D1791F22A3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C54D156F27;
-	Wed, 24 Jul 2024 11:11:30 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0CD6BFD2;
-	Wed, 24 Jul 2024 11:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE711156F28;
+	Wed, 24 Jul 2024 11:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cIh3/Omk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1F013A3FD;
+	Wed, 24 Jul 2024 11:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721819490; cv=none; b=mABiNMk3jbjsPvcWBCC3X4uuUtcuJRc/sQkIAyghTvv/cQjosj44OOfEs5TryCo1BHm8KASsil40a1OUDCivtPpp8THFNY28PWkvlkJ6FnEZwqADQ301kfrU5eiCCufxLUJ/KXwMZq4H7hN0a0OE3x4KwWDCOqNLPb2u8LmJzW4=
+	t=1721819522; cv=none; b=FVBRL56IjioCRUWajCGsGu7dVuH0BKjrbRsjXncz6wZJe8C5G+oW3xBBQOoyAFCjdO8kIctcGihwQbar5qRJd/Pkt5cdkjQ4hu2QdkfSAyDnaPOCr7w3JSqvupbSOXw4RE0x6xFt1jNmmyv2Oy0AntL0cfdKR2/+2ODkpA4nm2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721819490; c=relaxed/simple;
-	bh=Pfuo2baySnR6689GK89/olXtrcD1jmb/qCSjgqJukuo=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=fdHqBlmLLACom7rlXTFT4R0h+Z6mne/OucBpZNjpE3S10u2PjceCebl36xlqcWwhbgLSn+duPh+x4Ceo5lSmfdzcK/OlHYIUtnHraueCeT0wdE5srn2G613Dje3v4kV3bL1pC1C+FeeoCIaeRqjKckXv/UpNg1R8uR8VH/r/PYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee666a0e154849-69103;
-	Wed, 24 Jul 2024 19:11:20 +0800 (CST)
-X-RM-TRANSID:2ee666a0e154849-69103
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from ubuntu.localdomain (unknown[223.108.79.96])
-	by rmsmtp-syy-appsvr01-12001 (RichMail) with SMTP id 2ee166a0e156885-a332b;
-	Wed, 24 Jul 2024 19:11:20 +0800 (CST)
-X-RM-TRANSID:2ee166a0e156885-a332b
-From: Zhu Jun <zhujun2@cmss.chinamobile.com>
-To: qmo@kernel.org
-Cc: ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhujun2@cmss.chinamobile.com
-Subject: [PATCH v4] tools/bpf:Fix the wrong format specifier
-Date: Wed, 24 Jul 2024 04:11:20 -0700
-Message-Id: <20240724111120.11625-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1721819522; c=relaxed/simple;
+	bh=m/By7NBPp8Ww0usTSJyr0DDXbtD16pvELqXDGLhBXKM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BukcN0cy9L56Bkw3OpBwqULEKY6WOkl5Vqipw33Z4ukbkmzbi1ESuk66U7BdDMum/Q49iTpsONSGYolZ4P+6Om5RLWLHEECYESumd4bQ0uE6PZ13MAsTClw8KJfxfjmmnEL/jwNrWZhZ09d6SQ790XkBojNzvQEpEuohDAVEhcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cIh3/Omk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49B76C32782;
+	Wed, 24 Jul 2024 11:11:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721819521;
+	bh=m/By7NBPp8Ww0usTSJyr0DDXbtD16pvELqXDGLhBXKM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cIh3/Omkmc4Qw0kj7dL2ZPhA4v23tHCH0wHPGXgC37GysoE4OOuJtHLiV37lxG7FP
+	 bmeY0WKOqAQ7ZeDoleRShSrrEUM9tjg65B7iWgh0c/aEcdQ1sMlFP+wwZey6I8uq3o
+	 R5Fvpo6LKF+SpfDdAJ5/UQZqLvD3O1gIhnJEiWCkApLWmX3xPmM6Z27qHI5P8t77BQ
+	 HZBqr4bfx/uTFjKdUQurkiX+ZQDnL/vX44zBETNvywfPHw8/Q5VZ6pohKyMhJiKEtI
+	 EGNSrKv8EZWEL5BViHOJeKg4zUz/R2D+ZfivrR7JdjpjLOkQN3cHYA3Lf/SpUC0q3Q
+	 EaSQoBo6OgUSw==
+Date: Wed, 24 Jul 2024 12:11:56 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.9 000/163] 6.9.11-rc1 review
+Message-ID: <20240724-carrot-mothproof-e76f9c968a2c@spud>
+References: <20240723180143.461739294@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-
-The format specifier of "unsigned int" in printf() should be "%u", not
-"%d".
-
-Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
----
-Changes:
-v2:
-modify commit info
-v3:
-fix compile warning
-v4:
-Thanks! But unsigned seems relevant here, and it doesn't make much sense
-to change the type of the int just because we don't have the right
-specifier in the printf(), does it? Sorry, I should have been more
-explicit: the warning on v1 and v2 can be addressed by simply removing
-the "space flag" from the format string, in other words:
-
- tools/bpf/bpftool/xlated_dumper.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/bpf/bpftool/xlated_dumper.c b/tools/bpf/bpftool/xlated_dumper.c
-index 567f56dfd9f1..d0094345fb2b 100644
---- a/tools/bpf/bpftool/xlated_dumper.c
-+++ b/tools/bpf/bpftool/xlated_dumper.c
-@@ -349,7 +349,7 @@ void dump_xlated_plain(struct dump_data *dd, void *buf, unsigned int len,
- 
- 		double_insn = insn[i].code == (BPF_LD | BPF_IMM | BPF_DW);
- 
--		printf("% 4d: ", i);
-+		printf("%4u: ", i);
- 		print_bpf_insn(&cbs, insn + i, true);
- 
- 		if (opcodes) {
-@@ -415,7 +415,7 @@ void dump_xlated_for_graph(struct dump_data *dd, void *buf_start, void *buf_end,
- 			}
- 		}
- 
--		printf("%d: ", insn_off);
-+		printf("%u: ", insn_off);
- 		print_bpf_insn(&cbs, cur, true);
- 
- 		if (opcodes) {
--- 
-2.17.1
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="efgonpDskNONkdVG"
+Content-Disposition: inline
+In-Reply-To: <20240723180143.461739294@linuxfoundation.org>
 
 
+--efgonpDskNONkdVG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Tue, Jul 23, 2024 at 08:22:09PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.9.11 release.
+> There are 163 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+Tested-by: Conor Dooley <conor.dooley@microchip.com>
+
+--efgonpDskNONkdVG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqDhfAAKCRB4tDGHoIJi
+0qI/APwIJTco0jWm5pcF9BKmvZWxVHgSVd5Cdli5qXGW0LRzuQEA2pwUgaICIowe
+ls/4F0cpky24JkUldRHajZ9sMI+jDgM=
+=0qy/
+-----END PGP SIGNATURE-----
+
+--efgonpDskNONkdVG--
 
