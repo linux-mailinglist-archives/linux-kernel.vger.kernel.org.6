@@ -1,165 +1,263 @@
-Return-Path: <linux-kernel+bounces-260966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD29D93B106
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:46:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A068593B107
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:46:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE7A41C2270A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:46:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34E531F244B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E8B1586DB;
-	Wed, 24 Jul 2024 12:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B796D1586DB;
+	Wed, 24 Jul 2024 12:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UHlSoU2L"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LxauoBC6"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BF01E488
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 12:45:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6372B1E488
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 12:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721825158; cv=none; b=VNYivtKchdcLoxFr5CHH0Q2YY9iQCf8utYmhZYRUVAFlbf5XBmxqkdxtRobRQ1cHl66cP3pAIfG6KeDv1Afg6OodyDh5pu0qh7RLhXUcGsPH/j2S6XHh62W6mlxX8Ja8DdisW3xvoGckrMoZurYc0RhPj09Hn9F+suNhVvCJiLg=
+	t=1721825193; cv=none; b=ovUAdYZbPZFij9sgbzworpLLh8FcxsC504BzjkgYjBDCXIrC3zkSY1hNam6e9/EGVdFU0OTl7vJjn5oW7E16y5lq/+4DRzG9Cxfzh2RhQnNxqTRIhgHPnqDbH99vrU2fIb52U+n2PAE6RgFDcWV+21499KTOwXcXi85ppsIcJ8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721825158; c=relaxed/simple;
-	bh=2iuxZPN//4wuOUYWtzsXQzlcyfAii5VD1zPSKU9+998=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kln9u+yjSyCuZfQ9Xb4eiL2bsPYJ2gV5qi1BH+ooW8dRR3dY8qd6QFsC5y6YedU9fDt8TNkdpy7emrqp4Nk9E1V5w8HqC+VNoacm2rnvjIvEuP3cobSh3dElJ+Sspz894OGn0r0z092nA9EbR4cb3Ash9UGBIc2ij0AKFtaS0yM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UHlSoU2L; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7aa212c1c9so181399766b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 05:45:52 -0700 (PDT)
+	s=arc-20240116; t=1721825193; c=relaxed/simple;
+	bh=0AZhu1CqSlcr+8oQ3C7NJ/hTzRyRuEdil+y/O+4HUBE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=aSZHHgMWXVxnS1x+xTgbrB4lCZ9wr0nDf8MC/Xp4y1HJavun9rOVmex5RH6t4juZmYYac3HOn8nboTgCaEtMy22demUA9e8Tq15IZPYryqYXSR5kPA8AW8NtHc4emhENyUX5W3ILwnaCtY7tjiwE/+lt+GZ7g8yozghmlf0N5Vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LxauoBC6; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7163489149eso1260435a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 05:46:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1721825151; x=1722429951; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CgR591S6edERZx1kqoj89+jf2qFd6rUuEqLgUhSQlaU=;
-        b=UHlSoU2LMu6mFNrpcouayleXpRKQdLS46FY2NVMzwg+zfqCrSIrtV0FUuRXdxJqE6v
-         iFb/MpiwINmqtBFsEWPhN0iaSWYCbt2fLn59Ots1/kSj8nHma768RAXly6dT/WwSIfzE
-         bSd9eNLns3+Dx07lv7FskFXrMZ85UTYC20TRjSbQR03a9zJx/OZ1fclrjKXjwUi0Pzs8
-         SkQZ9xpvqp/7uCVJtU/j/Dkd0qXKJtdmAlfbflM2HYhOuKFHA0UvIXL549+eUd+z7AXS
-         jggH5GWguWo90Tu05kzR0SdZFH0/sIuvDM2NmK8HqjnRvgzYNZ/R35CotQavacIiMpBv
-         46NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721825151; x=1722429951;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1721825191; x=1722429991; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CgR591S6edERZx1kqoj89+jf2qFd6rUuEqLgUhSQlaU=;
-        b=c9bOTD2P4P0ei8cbZ1RIqkDqIq8GUD8DeJqp0ej8v9Kj/BH5BwebTtnCloKDpUJ2N5
-         owH9wMXvRS+Z46MkeXU0NsdKue/IwXOVZG0NucKcA8yoIat5Ph+aUkTd3ZxOL4VzVfPU
-         gAadk3RkdRSqqcgLtlnFwjcCImw11S7ruCnA9qUMW4rjBOP/N34nDZMNh+xp0i8UbYMN
-         CDSrm8QgdYV4L6CNpunY6Fz2XkR+yL4s2AeJJ0vGYNLSOleBNZgJ2Ue0vROBob/vegbe
-         Wl/rSta7IDwT4EOwGIi/72sZ5y4Ews1PCoLsWzJ7oKUZySRvKWt2pxTwOdpJowLTgE20
-         zV9g==
-X-Forwarded-Encrypted: i=1; AJvYcCXHEpvNic5pq8aWWc98IDtvWesipa8/3Y92SL6rDM1mAtMU7Ac9Fiv4NAjKxogd4HiA8YV0N0HVmvnt6Vj291CrsLXqX02Sk3zURqd+
-X-Gm-Message-State: AOJu0YyklPR7wM2ufx5ZXj4PjcrvSBIPwj6Ovad3ovn6ykaYXT37Zxy/
-	HSXGYIsfcR/RXRhnd0GOp6j8MWWV7wAgVZaBEdWiJcAJ/IPD7NFrt/OkeR8zO54POAdz3r0s1bg
-	q
-X-Google-Smtp-Source: AGHT+IEwaGqxEvlgUfLSQXk1nGKm+K/r9oK7Zet6DCycRvB5KZ5thR+7GKlxhLtu1UiyA2uAkNW0Og==
-X-Received: by 2002:a17:907:7e81:b0:a7a:97ca:3059 with SMTP id a640c23a62f3a-a7ab0ee96f4mr156281266b.34.1721825151373;
-        Wed, 24 Jul 2024 05:45:51 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7aa08b6f18sm152328366b.46.2024.07.24.05.45.50
+        bh=hBJWQ1t6QCM1T5bdDmDCHfCfTpW6DNC9TA/sHMK/e6E=;
+        b=LxauoBC6Er15pmsfcgHzVPi/fqsIqHDRap4ioVFGYyzkd+lFUC8G0A4Wql2+5vdz5W
+         Pm7jm8XsMRV/xSAQCiPJ0NORujANswwUA7x4TuHCTBfOPGp1q+SwmSTukaRKuzM31NmI
+         6LnmI8QDC8SaRW0uzUbq2JXQo8sb3dcpCZajImomAAAWw/omrHtxfJe/88sCyoOsWZ6i
+         iT9ycNMeXXtdn+9170mHA1Rb4plJZdm32NMm9Kvtk4mcrD2Mtjkm5EmDBtND7bDeZgog
+         oDglTMVAUQHdIO0H9qNpn+s4UzY7Ef4NvWMnd2yCioXEzltbHGWPF6Fcz3GpOgf7PyPk
+         JqLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721825191; x=1722429991;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hBJWQ1t6QCM1T5bdDmDCHfCfTpW6DNC9TA/sHMK/e6E=;
+        b=IqkuvThJpsY8w8MPqEr3LtxdGIySu9GsLYB3mG6aQuZfKajYbEdRVXrIH2QD3FUWJY
+         IOowApTMSMsK7JH0Tbryw8R0OeL0zGusakatpqgP5p3P66uYc17rLJUCpdpOyK92IChT
+         Oal5FCYZT9p//OEkQfbbwcxYwOOdbL6LSFuExevaBzNvizPGc2e+gjj9AchsYhbMuKNy
+         9eXrdoMgtN+5Q/ulmzM/VSRLw9Cep+60+i/L6P4cQ0ByaTQuBxSJujhDRsPdnzRd+Dsr
+         2xX+rTx5P1emEx23GUUgFHCLuEX/bU7it3LovXiJtKz6pT+NTnp0uTVvTtjj9nPYcaCc
+         YWTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW2Cv0sdSqqBfgAxNU7gvcKUx+g04CXbrsXKJOBOvyLtm2N4Gtv4qlNpx2S0DpaLjW35dZK6X91VmFJ1LQYWj4EZQn90XW0f4Qb+Zhs
+X-Gm-Message-State: AOJu0YyPeY/STui36iYo2WKngU2lsE9HiWOXztxZw2Oc3mciYus4t3B5
+	MIN4uhXhT5TwGjjruMtzAZvjFEM5o+Yd4O0dsBgOHLd39axhxX2n
+X-Google-Smtp-Source: AGHT+IH6M0HvSoPJFLKPUL5jhfc+xNB6S7usqtaEDwG6DOU1XH4t2Wf/WLzP9XxIEsHXMbYpzciKtA==
+X-Received: by 2002:a05:6a21:9989:b0:1c3:b1b3:75cf with SMTP id adf61e73a8af0-1c45e5d127fmr3556808637.14.1721825190542;
+        Wed, 24 Jul 2024 05:46:30 -0700 (PDT)
+Received: from AHUANG12-3ZHH9X.lenovo.com (220-143-182-11.dynamic-ip.hinet.net. [220.143.182.11])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f28bc6fsm92998615ad.65.2024.07.24.05.46.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 05:45:51 -0700 (PDT)
-Date: Wed, 24 Jul 2024 14:45:49 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Rik van Riel <riel@surriel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Omar Sandoval <osandov@meta.com>, linux-kernel@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [RFC PATCH] nmi,printk: fix ABBA deadlock between nmi_backtrace
- and dump_stack_lvl
-Message-ID: <ZqD3fb8mQqWwePEU@pathway.suse.cz>
-References: <20240715232052.73eb7fb1@imladris.surriel.com>
- <87plrcqyii.fsf@jogness.linutronix.de>
+        Wed, 24 Jul 2024 05:46:30 -0700 (PDT)
+From: Adrian Huang <adrianhuang0701@gmail.com>
+X-Google-Original-From: Adrian Huang <ahuang12@lenovo.com>
+To: urezki@gmail.com
+Cc: adrianhuang0701@gmail.com,
+	ahuang12@lenovo.com,
+	akpm@linux-foundation.org,
+	hch@infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	peterz@infradead.org,
+	sunjw10@lenovo.com
+Subject: Re: [PATCH 1/1] mm/vmalloc: Add preempt point in purge_vmap_node() when enabling kasan
+Date: Wed, 24 Jul 2024 20:46:24 +0800
+Message-Id: <20240724124624.27673-1-ahuang12@lenovo.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <Zp-K_A60DjlDhlRt@pc636>
+References: <Zp-K_A60DjlDhlRt@pc636>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87plrcqyii.fsf@jogness.linutronix.de>
+Content-Transfer-Encoding: 8bit
 
-On Wed 2024-07-17 09:22:21, John Ogness wrote:
-> On 2024-07-15, Rik van Riel <riel@surriel.com> wrote:
-> > Both nmi_backtrace and dump_stack_lvl call printk_cpu_sync_get_irqsave.
-> >
-> > However, dump_stack_lvl will call into the printk code, while holding
-> > the printk_cpu_sync_get lock, and then take the console lock.
-> >
-> > Another CPU may end up getting an NMI stack trace printed, after
-> > being stuck printing something to serial console for too long,
-> > with the console lock held.
-> >
-> > This results in the following lock order:
-> > CPU A: printk_cpu_sync_get lock -> console_lock
-> > CPU B: console_lock -> (nmi) printk_cpu_sync_get lock
-> >
-> > This will cause the system to hang with an ABBA deadlock
-> 
-> The console lock is acquired via trylock, so that will not yield
-> deadlock here. However, if CPU B was printing, then CPU A will spin on
-> @console_waiter (in console_trylock_spinning()). _That_ is a deadlock.
+> It works great and does not generate the soft-lock-up splat :)
+> See below some comments:
+
+Great. Thanks for the confirmation.
+
+<snip>
+
+>> +     kasan_release_vmalloc(start, end, start, end, KASAN_VMALLOC_TLB_FLUSH);
+>> +
+>>
+> Do we need it here? We just did the TLB flush for en entire range in the
+> __purge_vmap_area_lazy(). So, it is two times invoked and looks odd to me.
 >
-> The purpose of printk_cpu_sync_get_irqsave() is to avoid having the
-> different backtraces being interleaved in the _ringbuffer_. It really
-> isn't necessary that they are printed in that context. And indeed, there
-> is no guarantee that they will be printed in that context anyway.
+> Am i missing something?
 
-Well, backtraces are printed when unexpected things happen. It is
-usually an emergency situation and we should do our best to
-flush consoles ASAP.
+1. The TLB flush for the entire range in __purge_vmap_area_lazy() is for
+the vmalloc virtual address (VMALLOC_START->VMALLOC_END).
 
-> Perhaps a simple solution would be for printk_cpu_sync_get_irqsave() to
-> call printk_deferred_enter/_exit. Something like the below patch.
-> 
-> John Ogness
-> 
-> diff --git a/include/linux/printk.h b/include/linux/printk.h
-> index 65c5184470f1..1a6f5aac28bf 100644
-> --- a/include/linux/printk.h
-> +++ b/include/linux/printk.h
-> @@ -315,8 +315,10 @@ extern void __printk_cpu_sync_put(void);
->  #define printk_cpu_sync_get_irqsave(flags)		\
->  	for (;;) {					\
->  		local_irq_save(flags);			\
-> +		printk_deferred_enter();		\
->  		if (__printk_cpu_sync_try_get())	\
->  			break;				\
-> +		printk_deferred_exit();			\
->  		local_irq_restore(flags);		\
->  		__printk_cpu_sync_wait();		\
->  	}
-> @@ -329,6 +331,7 @@ extern void __printk_cpu_sync_put(void);
->  #define printk_cpu_sync_put_irqrestore(flags)	\
->  	do {					\
->  		__printk_cpu_sync_put();	\
-> +		printk_deferred_exit();		\
->  		local_irq_restore(flags);	\
->  	} while (0)
->  
+2. The TLB flush in purge_vmap_node() is for the KASAN shadow virtual address 
+(the shadow offset 'CONFIG_KASAN_SHADOW_OFFSET' is defined in .config).
 
-OK, there is the basic rule: "Never take a lock in NMI when the lock might
-be taken in another context". printk_cpu_sync_get() violates the rule.
-But it is safe as long as the lock is re-entrant and tail.
+BTW, I found my first patch has the potential risk. We need to flush TLB of
+the KASAN shadow virtual address firstly. Please see the following patch for
+detail. (I put the comment in the following patch). The following patch
+also works well on my 256-core machine.
 
-The above patch fixes a situation where printk_cpu_sync_get() was not
-a tail lock. So it looks like a reasonable fix if we want to keep it simple.
+If you're ok with the patch, I'll submit it for upstream review. And, may I
+have your tag(s): tested-by/reviewed-by? (If possible, could you please have
+a test for the following patch).
 
-Well, I still prefer the alternative solution at
-https://lore.kernel.org/r/93155b2ccafa43ed4845ae450451c6b8e27509cc.camel@surriel.com
-which does not deffer the console output in normal/IRQ context. There
-are doubts whether it is safe. I think that it is. Let me to reply there.
+Thanks.
 
-Best Regards,
-Petr
+---
+diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+index 70d6a8f6e25d..ddbf42a1a7b7 100644
+--- a/include/linux/kasan.h
++++ b/include/linux/kasan.h
+@@ -55,6 +55,9 @@ extern p4d_t kasan_early_shadow_p4d[MAX_PTRS_PER_P4D];
+ int kasan_populate_early_shadow(const void *shadow_start,
+ 				const void *shadow_end);
+ 
++#define KASAN_VMALLOC_PAGE_RANGE 0x1 /* Apply exsiting page range */
++#define KASAN_VMALLOC_TLB_FLUSH  0x2 /* TLB flush */
++
+ #ifndef kasan_mem_to_shadow
+ static inline void *kasan_mem_to_shadow(const void *addr)
+ {
+@@ -511,7 +514,8 @@ void kasan_populate_early_vm_area_shadow(void *start, unsigned long size);
+ int kasan_populate_vmalloc(unsigned long addr, unsigned long size);
+ void kasan_release_vmalloc(unsigned long start, unsigned long end,
+ 			   unsigned long free_region_start,
+-			   unsigned long free_region_end);
++			   unsigned long free_region_end,
++			   unsigned long flags);
+ 
+ #else /* CONFIG_KASAN_GENERIC || CONFIG_KASAN_SW_TAGS */
+ 
+@@ -526,7 +530,8 @@ static inline int kasan_populate_vmalloc(unsigned long start,
+ static inline void kasan_release_vmalloc(unsigned long start,
+ 					 unsigned long end,
+ 					 unsigned long free_region_start,
+-					 unsigned long free_region_end) { }
++					 unsigned long free_region_end,
++					 unsigned long flags) { }
+ 
+ #endif /* CONFIG_KASAN_GENERIC || CONFIG_KASAN_SW_TAGS */
+ 
+@@ -561,7 +566,8 @@ static inline int kasan_populate_vmalloc(unsigned long start,
+ static inline void kasan_release_vmalloc(unsigned long start,
+ 					 unsigned long end,
+ 					 unsigned long free_region_start,
+-					 unsigned long free_region_end) { }
++					 unsigned long free_region_end,
++					 unsigned long flags) { }
+ 
+ static inline void *kasan_unpoison_vmalloc(const void *start,
+ 					   unsigned long size,
+diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
+index d6210ca48dda..88d1c9dcb507 100644
+--- a/mm/kasan/shadow.c
++++ b/mm/kasan/shadow.c
+@@ -489,7 +489,8 @@ static int kasan_depopulate_vmalloc_pte(pte_t *ptep, unsigned long addr,
+  */
+ void kasan_release_vmalloc(unsigned long start, unsigned long end,
+ 			   unsigned long free_region_start,
+-			   unsigned long free_region_end)
++			   unsigned long free_region_end,
++			   unsigned long flags)
+ {
+ 	void *shadow_start, *shadow_end;
+ 	unsigned long region_start, region_end;
+@@ -522,12 +523,17 @@ void kasan_release_vmalloc(unsigned long start, unsigned long end,
+ 			__memset(shadow_start, KASAN_SHADOW_INIT, shadow_end - shadow_start);
+ 			return;
+ 		}
+-		apply_to_existing_page_range(&init_mm,
++
++
++		if (flags & KASAN_VMALLOC_PAGE_RANGE)
++			apply_to_existing_page_range(&init_mm,
+ 					     (unsigned long)shadow_start,
+ 					     size, kasan_depopulate_vmalloc_pte,
+ 					     NULL);
+-		flush_tlb_kernel_range((unsigned long)shadow_start,
+-				       (unsigned long)shadow_end);
++
++		if (flags & KASAN_VMALLOC_TLB_FLUSH)
++			flush_tlb_kernel_range((unsigned long)shadow_start,
++					       (unsigned long)shadow_end);
+ 	}
+ }
+ 
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index e34ea860153f..12cdc92cdb83 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -2193,8 +2193,22 @@ static void purge_vmap_node(struct work_struct *work)
+ 	struct vmap_area *va, *n_va;
+ 	LIST_HEAD(local_list);
+ 
++	unsigned long start;
++	unsigned long end;
++
+ 	vn->nr_purged = 0;
+ 
++	start = list_first_entry(&vn->purge_list, struct vmap_area, list)->va_start;
++
++	end = list_last_entry(&vn->purge_list, struct vmap_area, list)->va_end;
++
++	/*
++	 * Since node_pool_add_va() returns vmap_area(s) to its pool, the
++	 * returned vmap_area(s) might be grabbed immediately via node_alloc()
++	 * by other core. We need to flush TLB firstly.
++	 */
++	kasan_release_vmalloc(start, end, start, end, KASAN_VMALLOC_TLB_FLUSH);
++
+ 	list_for_each_entry_safe(va, n_va, &vn->purge_list, list) {
+ 		unsigned long nr = (va->va_end - va->va_start) >> PAGE_SHIFT;
+ 		unsigned long orig_start = va->va_start;
+@@ -2205,7 +2219,8 @@ static void purge_vmap_node(struct work_struct *work)
+ 
+ 		if (is_vmalloc_or_module_addr((void *)orig_start))
+ 			kasan_release_vmalloc(orig_start, orig_end,
+-					      va->va_start, va->va_end);
++					      va->va_start, va->va_end,
++					      KASAN_VMALLOC_PAGE_RANGE);
+ 
+ 		atomic_long_sub(nr, &vmap_lazy_nr);
+ 		vn->nr_purged++;
+@@ -4726,7 +4741,8 @@ struct vm_struct **pcpu_get_vm_areas(const unsigned long *offsets,
+ 				&free_vmap_area_list);
+ 		if (va)
+ 			kasan_release_vmalloc(orig_start, orig_end,
+-				va->va_start, va->va_end);
++				va->va_start, va->va_end,
++				KASAN_VMALLOC_PAGE_RANGE | KASAN_VMALLOC_TLB_FLUSH);
+ 		vas[area] = NULL;
+ 	}
+ 
+@@ -4776,7 +4792,8 @@ struct vm_struct **pcpu_get_vm_areas(const unsigned long *offsets,
+ 				&free_vmap_area_list);
+ 		if (va)
+ 			kasan_release_vmalloc(orig_start, orig_end,
+-				va->va_start, va->va_end);
++				va->va_start, va->va_end,
++				KASAN_VMALLOC_PAGE_RANGE | KASAN_VMALLOC_TLB_FLUSH);
+ 		vas[area] = NULL;
+ 		kfree(vms[area]);
+ 	}
 
