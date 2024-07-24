@@ -1,128 +1,197 @@
-Return-Path: <linux-kernel+bounces-260703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DD9693AD31
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:34:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D82093AD38
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:35:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C4171C21D12
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:34:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B0C41C20E1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3164A71B3A;
-	Wed, 24 Jul 2024 07:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D73763E7;
+	Wed, 24 Jul 2024 07:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SlS85wNj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="edhSOcj6"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2069.outbound.protection.outlook.com [40.107.220.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECE23D97A
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721806461; cv=none; b=iPnG+8aoSYD26JX51ySKwQjCvf2vx0jKCSypjFec5pUz9Xb/EBZykYl7yWn9VRnzKtC28THqh8IWSE7FJh8ZyPibZaMYNAblfwvcWV/SuSMyydD4rPGH8sEE7jLagrERTdXxvlAdYyrg68d2wrKqGHhOHPYP/fGd9QweQQnI5bc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721806461; c=relaxed/simple;
-	bh=ryU4IBCBceUxEUDP2SiVcXZERvqZxabEiR5XZy1XpYo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=h0e0Vvl6DOoasdJP4txrTc7DK+6whjINUFAquya1+Hrp+lJ3ENJWh9jwNquWswBfMNZ3AfL/IRmaj68c1XT5VUBVzVMMagYcEeF6q2hYFDTh7+bqEH77qsK9JXavXJhI/UlHxQBNFq/WvBYp/P1X29FykYcOVVY3h/JMo7azjQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SlS85wNj; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721806460; x=1753342460;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=ryU4IBCBceUxEUDP2SiVcXZERvqZxabEiR5XZy1XpYo=;
-  b=SlS85wNjheYcFa4Ocwi7meTu8zemdDS+uVa5gUuZ3oxXkFPBUBq6zUnM
-   mJt62fqo4Clpm64vvDUjVB3Yl2U1urh7rzewm8HopG1cwRZHPa8kH2KcN
-   9DKTc7PeEfp23PG87sskmAXuflzu6gEkptedudID8DnIHIUywAU/jrkzz
-   G1aQIVO6H4vA6ru4AWUEjJVyiMAyezKUn9Um4HWfAhDCj5d6dYNz1OLvu
-   AZZQgnMoGicc3/RW/CcLg5LB4gNm3ZXXJ1fJM/jQ/s/W0hyIMhqVTx9AK
-   rjin41pQSsPcGEUB1j6tg78ppN6GStdU/1vIMDRsHNJjky1T+rgkmLIYN
-   g==;
-X-CSE-ConnectionGUID: MEwSvSZTTiikI36TIQUnxA==
-X-CSE-MsgGUID: GR0Ewe9GRwCJ8Apngq+/UQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11142"; a="23276748"
-X-IronPort-AV: E=Sophos;i="6.09,232,1716274800"; 
-   d="scan'208";a="23276748"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 00:34:19 -0700
-X-CSE-ConnectionGUID: y5Aewy0cQm+wkYhiNRBGBg==
-X-CSE-MsgGUID: rERyPg1CTq+4t4DFPxXG0g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,232,1716274800"; 
-   d="scan'208";a="57303592"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.156])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 00:34:15 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Philipp Stanner <pstanner@redhat.com>, Luben Tuikov
- <ltuikov89@gmail.com>, Matthew Brost <matthew.brost@intel.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Philipp
- Stanner <pstanner@redhat.com>, Marco Pagani <marpagan@redhat.com>
-Subject: Re: [PATCH] drm/scheduler: Use ternary operator in standardized manner
-In-Reply-To: <20240715071533.12936-1-pstanner@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240715071533.12936-1-pstanner@redhat.com>
-Date: Wed, 24 Jul 2024 10:34:10 +0300
-Message-ID: <87wmlbfdl9.fsf@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04B31CAAF;
+	Wed, 24 Jul 2024 07:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721806550; cv=fail; b=E1jLpHqrHWlsGvXmtXO6tjB1dvjjgSl2phZgaxvnnA4UFC+jkN08Jbf1gIHDrMVoOfGWJFleiudRy8eqWHDYpV1jyzWso6hsEszkjkqprsbDmsAUl+SdCuuxAjyawdsnvTUrjXRlJB8aATNWjZVgZ+m8bsaD/r08jPDU/0T8loI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721806550; c=relaxed/simple;
+	bh=O92d11WLpQTUBrQwuagMmgsFdrbmCzaT96R6rRqQndo=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=bz6isg68iWIYY/+ZW560bwFUWOOeRxU9J76nqqr8Y+sk1bYVjJ+4/kDRv9MAxse4Dr8raah4AUA5U8NgPXALZKunICLymy9Lp6T+zRG9tyXxRhB51wxr+OXD+6Owoy1rDU9NSdwqrX3ibcl7bA3r42GkBkSKfCCD2Grol8N+e2k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=edhSOcj6; arc=fail smtp.client-ip=40.107.220.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ahaBx9Xk81gxHtg1ZzFqGl7iQt+gSaq+kdRCICT3tTKN96brA5bNoNBf7pzQNaLcU8F5E5Zmf7HnnLbNxFNbnCDEKguo/mJancvLPlUHA/MkiZdDOMcSA5EOa95RW7abF5SD9uin9hAZ+XKjiv9Fj/mELWIqek8FqmfHmO4UINoxDygP75h2Z1W9AyivrzdpHaqjcBUSqFHg7wvuYtbQ+mDMPP67LC3/q0E8pWyoylu87UM78COLg3J+lbzEovtgCyFqq4prdNNAlESDH6qYoQRyU6amMDIn3pboMPfSK/emiZlFoNl9hIb0sOZWoh4VbZkf5VWJEePTHKyqzvoAQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=K4nvJ8D8I2Zxl0Wz/E9Tt10gr4ushfdjb0CfC5ECZjU=;
+ b=F/ToXjDms4Fm6nxHXut0YEQtaTUPaVOs0954v7I2/lxPJF5EnsAycUwIETvuNHpYHNQ1sdBQ75bXiujHw0M71cJ4IOdEHTtLtmuAMQQXBKS74XOllUXC8iYDOlHkM97jVjLlvK6P6PIyF02mcL0hLiYZyPE5Ac51bgLkn+Gm5ZSAr5FfsYUbPebkX9GWcGmt10T7dZPDTzTNVskwXqqKGs3qNc2HvP5mpHl2KPRhwLVmBwKPw4wHTWne+O5KsnAtFjS2faDgyPUvqQkxTdelMoQ0Ln8RMrsEElKcwJqH88a3itZWqpWXIUJgn/bVrD5ALlsxfrcxz3ko0kuvQQe8sQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K4nvJ8D8I2Zxl0Wz/E9Tt10gr4ushfdjb0CfC5ECZjU=;
+ b=edhSOcj6835uWKlXXAUGnSBB6v3hSqkTbIVTsr4doZLIQx/yCdQ6LsTHqKXMOTJekN6VRoIhY1Ge3X84HfVVmMf1gsvA0dDZrkPn4vfhrARfrgVDdglcWZ0P29CTA17KoAIhS4gOYMBUQP7jp+lbj2F0tWM43no2lsqO4+fEk/tbmM7neHkFZZnEWGNlTIrgPlbkTwnsAsPQ/qd32MUOKjrjsP6UWqE3DFrAwExvWPXI6dcyJMQEJ5Be59HwYX+A7hUB0YHEgvJB/TQcQc8MENfS+xnZcchs+tlefR/gFWwvN+yP+LfNxATfphTf/bi4KlUZ0Xbl/MPdU3cWm6aO+Q==
+Received: from DS7P222CA0005.NAMP222.PROD.OUTLOOK.COM (2603:10b6:8:2e::17) by
+ PH7PR12MB5805.namprd12.prod.outlook.com (2603:10b6:510:1d1::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20; Wed, 24 Jul
+ 2024 07:35:45 +0000
+Received: from DS2PEPF00003439.namprd02.prod.outlook.com
+ (2603:10b6:8:2e:cafe::f3) by DS7P222CA0005.outlook.office365.com
+ (2603:10b6:8:2e::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.17 via Frontend
+ Transport; Wed, 24 Jul 2024 07:35:45 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ DS2PEPF00003439.mail.protection.outlook.com (10.167.18.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7784.11 via Frontend Transport; Wed, 24 Jul 2024 07:35:45 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 24 Jul
+ 2024 00:35:31 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 24 Jul
+ 2024 00:35:31 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Wed, 24 Jul 2024 00:35:30 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 6.1 000/105] 6.1.101-rc1 review
+In-Reply-To: <20240723180402.490567226@linuxfoundation.org>
+References: <20240723180402.490567226@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Message-ID: <2f4fbd6b-f495-4a8e-8ad2-0c90b70618cd@rnnvmail205.nvidia.com>
+Date: Wed, 24 Jul 2024 00:35:30 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS2PEPF00003439:EE_|PH7PR12MB5805:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5f1f2817-ddd9-455c-8f70-08dcabb33ad5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|82310400026|376014|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VkRPRjQ3UTBjZEFmNU9nbVM4MkNhSFNZSStsQTk1TkZ6bDZLc2FDQkN6WUtB?=
+ =?utf-8?B?b0NrcGk3T2JsNWFBTkw3ek04Nmg2Rkt2dHk5VjNPQ2Q4dXhmSnJURUhYck1X?=
+ =?utf-8?B?TXVHK2haOS9LQUJyNzkvM3dKQ01YRFRMbWxiNGFlRDcrVy9VeTVoNzliZ2FX?=
+ =?utf-8?B?NEU0SXFwVG9wcVpYV3Z1YWlLZkFKenhzVTBWT3NuRE5mU2xNTC8xdEsxWXYz?=
+ =?utf-8?B?OVdiK3NCL0dPQUovdkdaSERSV0YrVHA0d252NVBja3ZzN0xBNktGWXg3UUhZ?=
+ =?utf-8?B?VHBCVVdlWk8vTkQ0cTVsbUU0d2U0TERhN1I4U3RPb1RyTDZpOXc3UEQ0bzU0?=
+ =?utf-8?B?d3UzWHU4TkZNMURrVjd6ekxGVTVzR0MwMmFOUVNTaFZvc1k4aHZuZVMvcnJO?=
+ =?utf-8?B?UGw3OExxUnZKczd5b25DZ2pyVThnaUREVnB3eFZ0aFd3YmFMZGFrUjg4YTJp?=
+ =?utf-8?B?RDRNRTdkS1k1N3BrckU0L0Z2UHdNSnVGNUl0QzV0QkdxK29JZlV2ME54U3or?=
+ =?utf-8?B?MFNtdldLMGlFL2p6Mll4cXlKL0Z1THNsL3loa1Bqam1QMGVvWGQ4R1d2L0xi?=
+ =?utf-8?B?RTQ1WlNIY00wMVoyemc2NkhPaDlYVjFBK3NrWXpleHdKUzZGWUhOYTVsNjlp?=
+ =?utf-8?B?T3BCcDVWbTUrZXBYWmQyNHlKVE5oKzg1Uy9JdXljZnBxTHlnejBIRmNKTjI3?=
+ =?utf-8?B?R3dpK3F5ZHM2YkhYZVFNbTZGMWVRZmlzZlVOemUrUFRMNnRZSFFkTnJJMzVr?=
+ =?utf-8?B?VWxoY3J6eUhkQ3hoZUgzZ3dCZFhXak5za1N3VW9xUk5pY0xZNjhmMWdEeS92?=
+ =?utf-8?B?c2g5SE1UT1FOOEpZN3dORXoyTWpIUjhYUXNETFVLM1BmVGxpMW81UklDUWlL?=
+ =?utf-8?B?UnVSZTVKN3IxVU5lNjIyckovRzU5TXpncU90UzZDa0JuOGJqY3V3ZU55RkRW?=
+ =?utf-8?B?aXFkTEk1Wko1MGFpYkIxRlBmTW1jRlByTFdnTkxrRUowaitOWFJHamVuSG9U?=
+ =?utf-8?B?Q2Fjemc2WGtuSlYwVmVJV3dJVGlPWXFUNnVKZnN1TENyWGxOU3dIemxhT0FJ?=
+ =?utf-8?B?ZkdMWjJiT1lrTlZSN3NzY05jOWxKUk51NkYyeSsvdDVEeFF5UlphTjQ4c1lJ?=
+ =?utf-8?B?cVN3a2dSZWtVcmErK0gvemYrdDlPWU9pTWFvYU4ra3ltNjlVQzdqZ2tWOWVi?=
+ =?utf-8?B?NUNNSFpTSllOWUs2NWNEb0hrNnFLanFLM2FKYS9wRXBnUEwrYWc2ODlwUTdZ?=
+ =?utf-8?B?MjRza2pKNXd0aitpRnUrUXMrdkI4ZUhWS1BzRDhtWE1jTUp5bzV0S05oZ2VL?=
+ =?utf-8?B?ckR3b3ZYbG1NSkhnMXdvdXd1RllyYUdxRXMrWWhrTzBHNUVMb3dnbDBmSlV5?=
+ =?utf-8?B?TVF3YjRiNExmTm5UaVlLNm1LR2NyS2lGbGdYYm96V0ttUU8yRjA4YWxLTDNV?=
+ =?utf-8?B?TVJ1ZWY4Zlg2aHRNVnFIYm5XUUM1UUdmbllFUGduTmVueG9MckJETURjMThW?=
+ =?utf-8?B?OStScURXZXpML2sweml3V1NTSEluem93M25LWHJST2VKRS9DMGp0YnlLMCtX?=
+ =?utf-8?B?RUVBQjQ3d1VkV3NDdGRDUE1MSmdkVXRlcnBRaWd4eUU0RTVtaUxPNi9pUWNz?=
+ =?utf-8?B?enltRm0ybmc2bkkwdjQ1SzBoY3NVUlR6N2FpMHlFTWxkNk9BTHJpOWZEdnZ2?=
+ =?utf-8?B?bWJEMFFaOTFTM1ludzNZQS9KelZFZ2VoOW5JcXZMcFVnckNvSW9uU0FHRnBx?=
+ =?utf-8?B?Y0hhYnUyL3BTUXYza3hXd3lBenRzYVpza1UwR09QOGt6R05kTyt0ZGpMci9T?=
+ =?utf-8?B?cmVpT1FBTis0b091NiswZTBPRkFJQ2F1U2hVWlRTakIzNW1DM1Q2Wm5XUEhK?=
+ =?utf-8?B?UkxGRTg4cUNQY2lEVGZOVHRkT01rVXZSSzhGbm9NR3hvdDNpZGlGdmMxd09N?=
+ =?utf-8?Q?5ay644b6UkbTPyV1NqgpvlHDPkoCzYfo?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2024 07:35:45.2775
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f1f2817-ddd9-455c-8f70-08dcabb33ad5
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS2PEPF00003439.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5805
 
-On Mon, 15 Jul 2024, Philipp Stanner <pstanner@redhat.com> wrote:
-> drm_sched_init() omits the middle operand when using the ternary
-> operator to set the timeout_wq if one has been passed.
->
-> This is a non-standardized GNU extension to the C language [1].
->
-> It decreases code readability and might be read as a bug. Furthermore,
-> it is not consistent with all other places in drm/scheduler where the
-> ternary operator is used.
->
-> Replace the expression with the standard one.
+On Tue, 23 Jul 2024 20:22:37 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.101 release.
+> There are 105 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 25 Jul 2024 18:03:27 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.101-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-The GCC extension is widely used in the kernel for brevity. Arguably
-duplicating the first operand is more error prone than omitting it.
+All tests passing for Tegra ...
 
-Consistency within scheduler may be a valid point, but I'd consider
-removing the redundant middle operand instead.
+Test results for stable-v6.1:
+    10 builds:	10 pass, 0 fail
+    26 boots:	26 pass, 0 fail
+    116 tests:	116 pass, 0 fail
 
-BR,
-Jani.
+Linux version:	6.1.101-rc1-gef20ea3e5a9f
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+                tegra20-ventana, tegra210-p2371-2180,
+                tegra210-p3450-0000, tegra30-cardhu-a04
 
->
-> [1] https://gcc.gnu.org/onlinedocs/gcc-14.1.0/gcc/Conditionals.html
->
-> Suggested-by: Marco Pagani <marpagan@redhat.com>
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> ---
->  drivers/gpu/drm/scheduler/sched_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> index 7e90c9f95611..02cf9c37a232 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -1257,7 +1257,7 @@ int drm_sched_init(struct drm_gpu_scheduler *sched,
->  	sched->credit_limit = credit_limit;
->  	sched->name = name;
->  	sched->timeout = timeout;
-> -	sched->timeout_wq = timeout_wq ? : system_wq;
-> +	sched->timeout_wq = timeout_wq ? timeout_wq : system_wq;
->  	sched->hang_limit = hang_limit;
->  	sched->score = score ? score : &sched->_score;
->  	sched->dev = dev;
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
--- 
-Jani Nikula, Intel
+Jon
 
