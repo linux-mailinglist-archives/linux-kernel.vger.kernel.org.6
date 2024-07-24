@@ -1,81 +1,118 @@
-Return-Path: <linux-kernel+bounces-261579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14EF593B95A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 00:57:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7731A93B95B
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 00:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9234D2847B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 22:57:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C93EAB247FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 22:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2EE140397;
-	Wed, 24 Jul 2024 22:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4B313D893;
+	Wed, 24 Jul 2024 22:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="tYDqnVuR"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="gklBA+qv"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BE513C683;
-	Wed, 24 Jul 2024 22:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB62143888
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 22:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721861847; cv=none; b=Mo3gSUdvQDfP/NcA+8dyPyPCcHFOnXopb3wBRjqgr70VWTi3jYq8YKCu6ORUlC7qhKyrgeF3GaBqrSOg9sJsefagk7B4lMmBaWg+gUKiJMnUcXUZIn1Ddy9zSOoh2Jwfspd6ynA8YOW7B59S+cxDbFBc76Gw0u/qqUA8aFTi2VE=
+	t=1721861851; cv=none; b=gtbWQV7Qz9coHxjQB0G2LmSb9faiu/Gj+ivaIv8X66WVIGmktPGHyHNOO6jaVcYyRbJ3iRhmDerbb5bqvubsxSc5d/Wgg3yKhUhYy+86tmM+2pVfKx80+swk85ojx93sDYeAegtikT+MstcQvnSbMqpcu6u8wAPINiZMmSdysrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721861847; c=relaxed/simple;
-	bh=QsV35kx67fk6W7FePfSB912TE52cOz2MXf4AVn8FWT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bAyqfAhPempMX21XQqgAr3+x4+E1dgwSWCQmNZ65alXTv33+cqsLIyRSB45Pkn05buldc7LEHj2sGgE300NIyWwg6HGyDmVv09DyU+Ao0HDLI2dcvtTnwzwl6GDjOsL0lLHw2mXVB4PxbvfhoBfxXO1vpXHlRFeA+m4sq8qHwaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=tYDqnVuR; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=AnOsDNoOUMx34awfCSEwq7vD/aAuMY5vGGHbjxcPkq4=; b=tYDqnVuRmeew92WQD0EJoT3s1A
-	FOaSRp4kf5vQ9SruCECUmZVzGy9lNSQ0Cg01+bsehjK4c1MwGOoClI00m5g1II39wPhEJAVgQenrH
-	h6bqZTrSObdlIWQMqB0u3ddrHi8RYKdI5eLs54CCvx02pZX6I42fBPU/IGrFWeoPEKjc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sWkuv-0039o2-Ei; Thu, 25 Jul 2024 00:57:05 +0200
-Date: Thu, 25 Jul 2024 00:57:05 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-Cc: UNGLinuxDriver@microchip.com, davem@davemloft.net, edumazet@google.com,
-	gregkh@linuxfoundation.org, kuba@kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	lucas.demarchi@intel.com, mcgrof@kernel.org, netdev@vger.kernel.org,
-	pabeni@redhat.com, woojung.huh@microchip.com
-Subject: Re: [PATCH] net: usb: lan78xx: add weak dependency with micrel phy
- module
-Message-ID: <8a267e73-1acc-480f-a9b3-6c4517ba317a@lunn.ch>
-References: <20240724145458.440023-1-jtornosm@redhat.com>
- <20240724161020.442958-1-jtornosm@redhat.com>
+	s=arc-20240116; t=1721861851; c=relaxed/simple;
+	bh=r37fknXAxIqgftjIethNpJqs6Zy1SFy4yZXhkvUkQWo=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=K+30ldtwWcIZS8qVn2ole0Q5ZLy7jIaSyM6oXqR8yPagw6TknwW8PCJ6HswJY+/2nxVfa+HdaireFHK9xcAwFL5V2lNOCAfQeTjy+gpQ5YOYVNkgcA8dW3EF13yMXuBRvutjRZARBAGYkrjJ3jWgY1y2wD+iMFidZ+ASGzEC5Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=gklBA+qv; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7a211a272c2so233480a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 15:57:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1721861849; x=1722466649; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rr1h/r+N+ufJ9+U33AteJIVm6hb/RZis0D0b6S7S1NM=;
+        b=gklBA+qvACBuzUYXkt+v/nKAPetAy/bAQkChLfkTWCbJWQMvsIMKRp3rZonm9xoQgW
+         rXScbBt5xenVrYuUFy9AWxIdKx/aItQZtlMXiGiyIhYlRCTrr0VlQFpVBANv2Oe8dcjl
+         KYQt1cqXL0QPvO+DUz+OtTk0Q1Qt67O1dlKRiDDBi3Pz8KWvGXWMuSsQAcbqSkYEJfIp
+         9s0hSygGF1SSQPk183WznKir7RYvHiK4xN2N0K8YOUbt7lRtVnpG3/UQa6fZqzb2K7H1
+         FfzVrjMkwDKkobuRbVyNzTOPSZvZ6C6vyU5I3h7vZOBjNA/8atoQkK2/T/FniAdI8mTl
+         rsuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721861849; x=1722466649;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rr1h/r+N+ufJ9+U33AteJIVm6hb/RZis0D0b6S7S1NM=;
+        b=ULSfYadlmEYbMkOdZeT9+2m5wuwq4/USpWNVbCT2dSmLoIqIqo03WM8quKX9d+afzo
+         dmsS8jj+dQrhYg8Cz8i3NeXmD8e0a+LjLtSxJczQvRDnRgacSAVryRGFF90Zkbhpnqos
+         FBk5kV4YQo6z1soZbaZj6DWh3Y56SB2FjTPIlzG/wCLmiyGuyBjyZiJGP9HsVYBLSC+A
+         Z6DxiWS7TzWtXgsdY/HOuYejdedg2p3iwyuUbIlbdb+EjAfVdmpbyzU0347ZcTkEfkzi
+         nMOaFHbFvJWkvkOoMISxt4xXNFXUop+Wh127bCz5xokagHGb1WSiN26MWM2sbouVU0OI
+         9AjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWlm8I0C6VdOSU4+tuRSLncgjIEzWdG4y6EHgHw4QWTal+HxnON728we8rL7cGAnHPJXMXuuPeU+SbGazqLLqytS2AK6Qh87/TwNnZr
+X-Gm-Message-State: AOJu0Yz6RJcVIGrPdw1NmrDFNsduhN406Q6fSkDeZowsrnG3GunQshig
+	bDe9fbbDtIwFHSH/YZcZjOqcu31pKrUFxMtIlYFL25rLHW7PXh6+BM2aWQBUfbo=
+X-Google-Smtp-Source: AGHT+IHO8d+O1Lem7hkeVGDAoLyDNU4rTjPilFRpWZGu3CWZTfO0Uw/Inp8SpFUBcx7HiWwSk3eKJQ==
+X-Received: by 2002:a17:90a:4e0e:b0:2c9:6abd:ca64 with SMTP id 98e67ed59e1d1-2cf21547c29mr1799160a91.9.1721861848765;
+        Wed, 24 Jul 2024 15:57:28 -0700 (PDT)
+Received: from localhost ([192.184.165.199])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb73885b2sm2263541a91.9.2024.07.24.15.57.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 15:57:28 -0700 (PDT)
+Date: Wed, 24 Jul 2024 15:57:28 -0700 (PDT)
+X-Google-Original-Date: Wed, 24 Jul 2024 15:57:26 PDT (-0700)
+Subject:     Re: [PATCH 0/4] riscv: uaccess: optimizations
+In-Reply-To: <20240625040500.1788-1-jszhang@kernel.org>
+CC: Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
+  linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: jszhang@kernel.org
+Message-ID: <mhng-de264348-59f7-46b4-9f6c-cecee67f2eda@palmer-ri-x1c9>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240724161020.442958-1-jtornosm@redhat.com>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> For the commented case, I have included only one phy because it is the hardware
-> that I have, but other phy devices (modules) are possible and they can be some.
+On Mon, 24 Jun 2024 21:04:56 PDT (-0700), jszhang@kernel.org wrote:
+> This series tries to optimize riscv uaccess in the following way:
+>
+> patch1 implement the user_access_begin and families, I.E the unsafe
+> accessors. when a function like strncpy_from_user() is called,
+> the userspace access protection is disabled and enabled for every
+> word read. After patch1, the protection is disabled at the beginning
+> of the copy and enabled at the end.
+>
+> patch2 is a simple clean up
+>
+> patch3 uses 'asm goto' for put_user()
+> patch4 uses 'asm goto output' for get_user()
+>
+> Both patch3 and patch4 are based on the fact -- 'asm goto' and
+> 'asm goto output'generates noticeably better code since we don't need
+> to test the error etc, the exception just jumps to the error handling
+> directly.
+>
+>
+> Jisheng Zhang (4):
+>   riscv: implement user_access_begin and families
+>   riscv: uaccess: use input constraints for ptr of __put_user
+>   riscv: uaccess: use 'asm goto' for put_user()
+>   riscv: uaccess: use 'asm goto output' for get_user
+>
+>  arch/riscv/include/asm/uaccess.h | 201 +++++++++++++++++++++++--------
+>  1 file changed, 149 insertions(+), 52 deletions(-)
 
-So this the whole whacker a mole problem. It works for you but fails
-for 99% of users. How is this helping us?
-
-Maybe a better solution is to first build an initramfs with
-everything, plus the kitchen sink. Boot it, and then look at what has
-been loaded in order to get the rootfs mounted. Then update the
-initramfs with just what is needed? That should be pretty generic,
-with throw out networking ig NFS root is not used, just load JFFS2 and
-a NAND driver if it was used for the rootfs, etc.
-
-	  Andrew
+This genreally looks good to me, but there's some failures reported by 
+the LKP tester and I don't think they're spurious.
 
