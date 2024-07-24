@@ -1,167 +1,154 @@
-Return-Path: <linux-kernel+bounces-261414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 584E193B709
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:52:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DD3193B70B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19E9A28393C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:52:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D7221F23F09
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14A716A947;
-	Wed, 24 Jul 2024 18:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7A81607B4;
+	Wed, 24 Jul 2024 18:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="JLr9JSHG"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="F3YGSXt0"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD8E1598F4
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 18:51:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4009415B13C
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 18:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721847119; cv=none; b=BUL0jZPGYOjGC3OPSbKb0Mj5bCabMt1GSzgO3W2qW86cVEnQAmr2A4HLJnszYs8ELUNIs31sCEiDgEHghUbPnya2W2p1wPKv+kHqizkOJGVSOcpqf8z115uuFkr1Nx7bEtPav6MqFD0SICArP2iEbpkkIfbCO65jb8Jlv5XfqOY=
+	t=1721847173; cv=none; b=Y5IUrnqXeCrUBZW4c6PSs3PJTWIGr4tCiygWN4uHJCB1GU6YOsTRd08gkL/R8eg6jnajMKSzCZ0CBL5RwtZeKVovMWLzcK9GJkWDBwMP38MWhN1Kw/m5Qehar8cCo2Zcmh8Gz50Jt99dvFF+tuFP2Q2NWHK3rtgHBzy85UXQkDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721847119; c=relaxed/simple;
-	bh=Vw0A4MYZooitJHp244OZC2CuDx0yGD1T9A4YrRNm+Kg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aLpwKLhY1yIxN3lSAIxL+BQ3KZ3Hu+K7K7sOLscV9NcaxLj7QbKNgZi+fOqvGxTo/ryIPUM9nQYuucPcn9jsJJJRyiTRr95zllkiLA+EMwTTGOl6aVgOK4DivcsdSERLE9aXY3SwcLwZGYBIhR2+O088WowdwCHDeWn3tVgN5IM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=JLr9JSHG; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2cb5deb027dso113357a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 11:51:56 -0700 (PDT)
+	s=arc-20240116; t=1721847173; c=relaxed/simple;
+	bh=PJlhlF1KdCdmjZyeZlUKef4JZ5PjCR/ybpSJFMsSBe4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N18I43oaXcN980Iug2RbAgCk+X0U8Bl6pHKqBK3IP5p2FeVo5zkuKkbquCvBAvW9doR+S7xFrKw9E9OuOA2o7owAAY1cxGLU5DKAgXxU+WYEGaQoh5vfqN8jtyjXGujeeKspByxoaA6qTZ6Il5gj8qFvWdCXw6edwCWIZaep0Fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=F3YGSXt0; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5d5846f7970so100596eaf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 11:52:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1721847116; x=1722451916; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fz1re8hEAbdCbg6+d0sgG9QoSqWm1jEP+6/Po7xO6nU=;
-        b=JLr9JSHGtbmReoQIz7sX7UZ4i/eNH0hRsitoP36Ua3CmhBZYaOGrvlMX18lsWypMDw
-         pdZuhnevEvvhGzWjzwk695IGslShlOIuSew0DHDB5J5ej17ig75uUkqsJ4AN2DlYoYaF
-         Jj9lufdlirYtAoagV1mpaWH45ep09Rd5xcLS5uCEpNaXVqWUg7+5JeL6JsA6l0FLo4Gr
-         wVCacrQTFeexFLmvNpC+ooV06NleDiaKhQ2tAI+ex1IQU8YXF2nSo1WOa6OhTWzRrSq/
-         JeNodE88W+XaI56ZB6AP8aTlDunVgLsTKPUZAiHBqizEmoB4HxHxQDuC8KSnkH8FKqKS
-         nF6A==
+        d=rowland.harvard.edu; s=google; t=1721847170; x=1722451970; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=JNQ4I0Zdzz19iH3uEXnI3RxSHcCL/n9EACJr4SAD+9c=;
+        b=F3YGSXt0+JpcRXYmbUAbHT6vRnyWLinqG+ILWI2U3DYp0PrNI9Z8lAzb19IDKZipbe
+         YuYjHTJlNdgrTWthwvnC7UzU4Od4D4BEqSXPSHWt99vHWzlzaCq0MsMsDE03cTMiTSrh
+         GyYKC3L7yBwOypfcz68LJg4C7H1ICvrNqTxFlZS1NauwNsKO8mct9Q3seoYcrQmiwBkC
+         IPcaWWRkA7wa48WQF9Vj8RVSthRKHw6wCgLHhHjwRKNCJ44vY5AYwlTM2pYPqitpn1+n
+         tRkvhIMkDX/N6S42zROR/ZM+MC7eVVYmbLFW6ONupomcD23VzCL3ko93vNiusdCkCldo
+         wJuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721847116; x=1722451916;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fz1re8hEAbdCbg6+d0sgG9QoSqWm1jEP+6/Po7xO6nU=;
-        b=EO2J7QMEwipK58RxkODS6xAr2wFC9R0jZthzTTmGhi2jestXkBlbocR4I5Qizxqrwb
-         K7b9v702ysLZ4H9a25fNQgP3XeN4BVEYkAuaDRkciPp+pC6FKL/vWQzwb2282uIKSXGa
-         iKzBeogAAu5h8FdwHvvWKVi/z2M+SjnTAwPE6TZdqc7o5ASei53P4ezqyybrVSunlXYn
-         i5GGTdiwxWKE6zQZY7mcNzXoDBOxzWFoIE3PXkeYowgO5CrArnLf4DZSLO7KzRWNl2pQ
-         0E6aIszdjikk1j6kCDqep9e2pU0jA1HbIYpvxpE9iUy8e7q8sZu6RpbxQiTxm1nisQg9
-         oJ+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXHcUk28onT1F3Y3ztrUY4OLDODP39aYsBtj5uwL94l6kpXakqpdJj19cWdCIJA85IbrkJxm5MNLTpqed2U5nSPx+eK2uYeVBGPyzMp
-X-Gm-Message-State: AOJu0YwrduPLimRaSoZS//wdsq5mfUjCQUhyD1+2rVprf02BkNdhwAsp
-	ZopEe/hD1Xzj2TNAFVgt7g50cC6cUYqYCoN9pb+WHkkNSREDOcHL2jJvEwAYh4kGMUKOMoN2yXw
-	k8bsBrSh89831LuAYukpSbvCOi7A2J2NPOg8q8g==
-X-Google-Smtp-Source: AGHT+IEyCelTG43l+W5jC+9ilBM0QfFfNBPW0/hrkNF7fQyxMWOTtBHDhstpigm0TORwlyXxWQJr+rn6iwBWnW10gIA=
-X-Received: by 2002:a17:90a:f486:b0:2c9:7849:4e28 with SMTP id
- 98e67ed59e1d1-2cf23901745mr513948a91.27.1721847115671; Wed, 24 Jul 2024
- 11:51:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721847170; x=1722451970;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JNQ4I0Zdzz19iH3uEXnI3RxSHcCL/n9EACJr4SAD+9c=;
+        b=ZrvVaqXGUVOVYOeKjXWBoiFoA/7vY9C8LXt8jej6wYCOA7PQ38PwwgD0uUVkNn8d9z
+         NL9YjX1P2BZS5eWH6HnAzrWkNEOJBeHJY+CpqW8npgp4f5X1et9E3spncl+gFO3bNasp
+         h5kGXP9pSce75yRL5cTR2QVa+oj+S+TrX2PtrtHPrSFTzq/woMGEBWhvNj3k6QBblOdk
+         7QJ4Xj/HOCy0PuaGhzg0lQQ+BZaOAn7GbKr9lCkPJ22lzV2Gyhjd5a0v4pjbvLj42XR7
+         z4DtuaZBzeCmjCyPB5bdPEfQHw1bEiLoQA2NwwAXYwU/SGojca7v/c4kZUmLgBriwsRV
+         ATGw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/bKEc5pzXNfGifqPDlz2UiwS6Cz7wtqEi8xo7vzZoGV7FBtqXvF0Zd2AAOpy+Adh8dauvCIV8/UHp0qIyIpm0O8bL+aq2Hp826GWR
+X-Gm-Message-State: AOJu0Yz/2HlNvqiU4ew+AjapCHhGd+8WRFW0rqupjlITPGu/n0bZrWLZ
+	B8PR562HK7wC//QkrMPzxm5RdYy+6jteMN9VdArynGdciIaq61nL+1NqLLvUiA==
+X-Google-Smtp-Source: AGHT+IF6ZZPzUt/0Jb0QQ+bCVPesFomEFJYy7M9894qFg6KkWE/eZ6PM3ZAsU4s8B6DWBMUYhg5A+Q==
+X-Received: by 2002:a05:6358:c028:b0:1aa:c71e:2b2b with SMTP id e5c5f4694b2df-1acf8a1cb66mr98884655d.12.1721847170238;
+        Wed, 24 Jul 2024 11:52:50 -0700 (PDT)
+Received: from rowland.harvard.edu (iolanthe.rowland.org. [192.131.102.54])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b96a7bb6dcsm41766816d6.90.2024.07.24.11.52.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 11:52:49 -0700 (PDT)
+Date: Wed, 24 Jul 2024 14:52:46 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Hans de Goede <hdegoede@redhat.com>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] USB: core: hub_port_reset: Remove extra 40 ms reset
+ recovery time
+Message-ID: <3d3416cd-167f-4c50-972b-0eb376a13fdf@rowland.harvard.edu>
+References: <20240724111524.25441-1-pmenzel@molgen.mpg.de>
+ <c7c299e7-605c-4bd6-afad-dfbfe266aa7e@rowland.harvard.edu>
+ <f1e2e2b1-b83c-4105-b62c-a053d18c2985@molgen.mpg.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240722211548.61455-1-cachen@purestorage.com>
- <CALCePG0GtG4DQwzJ-QCJRScfxVg3Up6Xeemxh48qSf2VjxjebA@mail.gmail.com> <CAM9d7cj20KdEtg8v93+bt+ZmpTzin=N3DfAX3K8ELHLkccoeqQ@mail.gmail.com>
-In-Reply-To: <CAM9d7cj20KdEtg8v93+bt+ZmpTzin=N3DfAX3K8ELHLkccoeqQ@mail.gmail.com>
-From: Casey Chen <cachen@purestorage.com>
-Date: Wed, 24 Jul 2024 11:51:44 -0700
-Message-ID: <CALCePG3sqCCJyRaUOiE0TqDCGmOdw7B38hBzs9PvF5EgPjU8EA@mail.gmail.com>
-Subject: Re: [PATCHv5] perf tool: fix dereferencing NULL al->maps
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	irogers@google.com, yzhong@purestorage.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f1e2e2b1-b83c-4105-b62c-a053d18c2985@molgen.mpg.de>
 
-On Wed, Jul 24, 2024 at 9:19=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> Hello,
->
-> On Tue, Jul 23, 2024 at 6:01=E2=80=AFPM Casey Chen <cachen@purestorage.co=
-m> wrote:
-> >
-> > Ian / Namhyung,
-> >
-> > Could you take a look at the latest diff PATCHv5 ?
-> >
-> > Thanks,
-> > Casey
-> >
-> > On Mon, Jul 22, 2024 at 2:15=E2=80=AFPM Casey Chen <cachen@purestorage.=
-com> wrote:
-> > >
-> > > With 0dd5041c9a0e ("perf addr_location: Add init/exit/copy functions"=
-),
-> > > when cpumode is 3 (macro PERF_RECORD_MISC_HYPERVISOR),
-> > > thread__find_map() could return with al->maps being NULL.
-> > >
-> > > The path below could add a callchain_cursor_node with NULL ms.maps.
-> > >
-> > > add_callchain_ip()
-> > >   thread__find_symbol(.., &al)
-> > >     thread__find_map(.., &al)   // al->maps becomes NULL
-> > >   ms.maps =3D maps__get(al.maps)
-> > >   callchain_cursor_append(..., &ms, ...)
-> > >     node->ms.maps =3D maps__get(ms->maps)
-> > >
-> > > Then the path below would dereference NULL maps and get segfault.
-> > >
-> > > fill_callchain_info()
-> > >   maps__machine(node->ms.maps);
-> > >
-> > > Fix it by checking if maps is NULL in fill_callchain_info().
-> > >
-> > > Signed-off-by: Casey Chen <cachen@purestorage.com>
-> > > Reviewed-by: Ian Rogers <irogers@google.com>
->
-> Acked-by: Namhyung Kim <namhyung@kernel.org>
->
-> Thanks,
-> Namhyung
->
->
-> > > ---
-> > >  tools/perf/util/callchain.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.=
-c
-> > > index 1730b852a947..6d075648d2cc 100644
-> > > --- a/tools/perf/util/callchain.c
-> > > +++ b/tools/perf/util/callchain.c
-> > > @@ -1141,7 +1141,7 @@ int hist_entry__append_callchain(struct hist_en=
-try *he, struct perf_sample *samp
-> > >  int fill_callchain_info(struct addr_location *al, struct callchain_c=
-ursor_node *node,
-> > >                         bool hide_unresolved)
-> > >  {
-> > > -       struct machine *machine =3D maps__machine(node->ms.maps);
-> > > +       struct machine *machine =3D node->ms.maps ? maps__machine(nod=
-e->ms.maps) : NULL;
-> > >
-> > >         maps__put(al->maps);
-> > >         al->maps =3D maps__get(node->ms.maps);
-> > > --
-> > > 2.45.2
-> > >
+On Wed, Jul 24, 2024 at 08:14:34PM +0200, Paul Menzel wrote:
+> [Cc: -gregkh@suse.de]
+> 
+> Dear Alan,
+> 
+> 
+> Thank you for your reply.
+> 
+> Am 24.07.24 um 16:10 schrieb Alan Stern:
+> > On Wed, Jul 24, 2024 at 01:15:23PM +0200, Paul Menzel wrote:
+> > > This basically reverts commit b789696af8b4102b7cc26dec30c2c51ce51ee18b
+> > > ("[PATCH] USB: relax usbcore reset timings") from 2005.
+> > > 
+> > > This adds unneeded 40 ms during resume from suspend on a majority of
+> > 
+> > Wrong.  It adds 40 ms to the recovery time from a port reset -- see the
+> > commit's title.  Suspend and resume do not in general involve port
+> > resets (although sometimes they do).
+> 
+> It looks like on my system the ports are reset:
+> 
+> ```
+> $ grep suspend-240501-063619/hub_port_reset abreu_mem_ftrace.txt
+>  6416.257589 |   3)  kworker-9023  |               | hub_port_reset
+> [usbcore]() {
+>  6416.387182 |   2)  kworker-9023  |   129593.0 us |                  } /*
+> hub_port_reset [usbcore] */
 
-Thanks Namhyung.
-I have another question. When will this patch get merged into master
-branch or 6.6 release line ? Our benchmark systems depend on this fix
-to do performance analysis. Currently, both our kernel and perf are on
-6.6.9 and they build separately. We want to update perf hash without
-patching it locally.
+> ```
 
-Casey
+It depends on the hardware and the kind of suspend.
+
+> > > devices, where it’s not needed, like the Dell XPS 13 9360/0596KF, BIOS
+> > > 2.21.0 06/02/2022 with
+> > 
+> > > The commit messages unfortunately does not list the devices needing this.
+> > > Should they surface again, these should be added to the quirk list for
+> > > USB_QUIRK_HUB_SLOW_RESET.
+> > 
+> > This quirk applies to hubs that need extra time when one of their ports
+> > gets reset.  However, it seems likely that the patch you are reverting
+> > was meant to help the device attached to the port, not the hub itself.
+> > Which would mean that the adding hubs to the quirk list won't help
+> > unless every hub is added -- in which case there's no point reverting
+> > the patch.
+> > 
+> > Furthermore, should any of these bad hubs or devices still be in use,
+> > your change would cause them to stop working reliably.  It would be a
+> > regression.
+> > 
+> > A better approach would be to add a sysfs boolean attribute to the hub
+> > driver to enable the 40-ms reset-recovery delay, and make it default to
+> > True.  Then people who don't need the delay could disable it from
+> > userspace, say by a udev rule.
+> 
+> How would you name it?
+
+You could call it "long_reset_recovery".  Anything like that would be 
+okay.
+
+Alan Stern
 
