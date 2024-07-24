@@ -1,108 +1,138 @@
-Return-Path: <linux-kernel+bounces-260624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33C9B93ABE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 06:21:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0356A93ABEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 06:28:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E42DD28331F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 04:21:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 350021C228A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 04:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37724219E0;
-	Wed, 24 Jul 2024 04:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724FC3B7A8;
+	Wed, 24 Jul 2024 04:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BOoySf9K"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Tp0CBPst"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D6129CA;
-	Wed, 24 Jul 2024 04:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07DF1C6A7;
+	Wed, 24 Jul 2024 04:27:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721794892; cv=none; b=or8eibN4Ck9h/Wy+fNXEb4qZTVgRORi2RTV1u80fAXHTuqV5Bf0qE/Av8KKkkV7JybxFRu/J3QAG3Higja55Dtk7LzxEhYE+B/JJxJFmexsAVEJdq6uvFTwAqRDjwaOlKR/xLaUUq9J1Nt1l1KsLYkZvaMWlLBdolr0wM7sDaaM=
+	t=1721795273; cv=none; b=pMi4LZhoGWNE9NpnsJHovaoG+pGZDi++OZCwAZ9EbJVP9UB6ybySAli9SehPsMXXNHWiMUyykl30+fQNNFEcYS077TLGhwTbnwG4nwfyk0KLA76CfHvmoHhjYpEs27w/GKTg4z2mF3FOaHiMHcYfFas8Pd4alh8zPDq4+F9L+JI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721794892; c=relaxed/simple;
-	bh=pn7/GgcYFeTpdzJCNFalS7IHqJHr7xJ5ho6v8H0D+Is=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=bG5wbldnxxd+e7sfVcRewJ6v/h2VUdCdeCXlVV3vXYy1Sn1Vd7Ln7lw+gD8rLyt8W0qnEbKhTNxgWY4ndmkbHjdxjXBYZDiUDz4Df143fWH+c2kQTH4mwVdLIn/S0uLWDiXyPg/PfsTCiZyhznUuQUZMb0lgJBFzLRvxhroGnBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BOoySf9K; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2cb55ff1007so3260375a91.0;
-        Tue, 23 Jul 2024 21:21:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721794890; x=1722399690; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0OcGOHEfL7V+MrPJ3mnfvHx5O5KEswa/t/OA6wujqSw=;
-        b=BOoySf9KPm48MmsV3C2R8FRg2VLZzn8NEKI2bbDh1TstQAbwy9in0k0o1kXzYRwla3
-         VpcUgz0NeYudiqMVwzvE+WW709dwthIwQ0V+fQkC/msT7cJ+u3aY0CAJQemIourhSGIr
-         qYbyEiLnHlecYM0ou4GczTvWPHzK3/Jy+LsQI7TlPVFVNjB0DxHTpT27oFNwvoGWVrp/
-         IbpfvKLcBWfwDo3HOxhxuzYcMoWsvLwYi12QHAGFJp2XNus19IcRjGBldP001Y9d9ch5
-         4hX2wWoKcC3GogbLJxJfjOEQZzRg0pGlktSQCuPnJNnNLkIvz6aLAKRswMthtlo7SGZL
-         /yGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721794890; x=1722399690;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0OcGOHEfL7V+MrPJ3mnfvHx5O5KEswa/t/OA6wujqSw=;
-        b=fJlu7STo2m1ZhlEke2IibWy2YukYLN9DsNpxLhP3Nd5HKXsWOhCtdG3Hn0YAYepAPP
-         ZSlC+dyGcRoOmuC8JlWmsYymwuR3FS4p11KYq9+IbiwM/IBsVT6XhwDnjAJTHi0P3BWV
-         hlJ8JJhfJOUIXfFbxJepkITi2zdYznnKInBt4FKhq4WQbOGZXwaZ7ooHOzTdUZkgxjy8
-         wsnLtd45wKk8FZwuybUnj2dk/aY6y/CL6v57Q4wf/TBbHspxmdVxzVEC+XZHTRO77OtJ
-         sm3j+3m4pO66E5nmiC+Rq23b4YlXB0qtHjtmySWAXaaCe5MbAscIxoYk8Zabbf6vNKpd
-         yLVg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/rSkySmqKV7c96KYz1Li1XuJ0P4e64npnk0SnhIoNxwb9LvFhTUe/eee18JipLrARt+cludePX3Q8S8ouUgYndc8H7S0VbHPFUVmFomQeRjIZnIELjVYRsn7jzjsi7fhgBh/+Niw8ckzfPogo
-X-Gm-Message-State: AOJu0Ywt/5NtUY2KEqRjRTiSqhAH1NKV6nZqLKpYZwWn/i6+el6MrUEH
-	/0J263M2ptZlh8QUtNTyZ3GpwrC49uZU/AJLilkPsvxK41D99oAW
-X-Google-Smtp-Source: AGHT+IGW1p+UtxCQWWGnJ8eFmsuWqf8FKkfy9nP5J2Dp/PJvWtjMT27noDOTuMaAI9eODGZpH3P72w==
-X-Received: by 2002:a17:90b:1c85:b0:2c8:ea7b:8891 with SMTP id 98e67ed59e1d1-2cdaf55503fmr1884588a91.29.1721794890421;
-        Tue, 23 Jul 2024 21:21:30 -0700 (PDT)
-Received: from gmail.com ([24.130.68.0])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb73a38f0sm513920a91.10.2024.07.23.21.21.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 21:21:30 -0700 (PDT)
-Date: Tue, 23 Jul 2024 21:21:28 -0700
-From: Chang Yu <marcus.yu.56@gmail.com>
-To: ebiederm@xmission.com
-Cc: kees@kernel.org, shuah@kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	marcus.yu.56@gmail.com, chang.yu.56@protonmail.com,
-	skhan@linuxfoundation.org
-Subject: [PATCH] selftests/exec: Fix grammar in an error message.
-Message-ID: <ZqCBSPFfMeghhRGQ@gmail.com>
+	s=arc-20240116; t=1721795273; c=relaxed/simple;
+	bh=TWZVcAEZiMIDf2h+QNy+AMqFAKDMH7yPY7ohksFILco=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bxnX0K+KHB10JiF6xngnhdW11S7O7pHlAm/BcNFXvpObOlAXn0AGfsWJ8wJgrTTD+85N/n0IulbZXcSVEZRafAD/AI474XDGqcTLVi1GYEdvd1AIMgugdNpNu7AFqNooDvVkpu3vigwyZa/XKwbm965M2f5nocU16+MuhMHBGqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Tp0CBPst; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46NJJJgP014210;
+	Wed, 24 Jul 2024 04:27:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=QOlnl4omqsg3tyOpodtpohkw
+	0Op2/eozE1FQDHxFY8I=; b=Tp0CBPstI97Ht6ti1w3Ep+Zs8ZO+GXvSe/M73ioJ
+	/mM5BfkO1lQZDheipxZ51TGlHmimRr+xD6y3qohhGf9ZcLlCmVTKNPEtoRI47Cp+
+	bS7UwBEEk+XkIwNGAsOToML6L5usS9g36JzZpsY7qAJeeccdYlx8et46LAT8j7uU
+	Rcwm75AdH2uVS6xnwIvfiYDnByU2Tz3I2ZnFLeJ2YVcc2Xc09bwBX3UGV2ZJn+me
+	f29VGGwisFIvk6vXhjonJkjfS5KM5RsqaUgdPoT1jJxLHlE2kNXXDvly8NrimURH
+	lQuyJMGrT5mXv3SRUURhxRcyvvi5iMOV2AMrsK+ZSoNhFw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g5f2guxs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Jul 2024 04:27:29 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46O4RSnT004404
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Jul 2024 04:27:28 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 23 Jul 2024 21:27:20 -0700
+Date: Wed, 24 Jul 2024 09:57:17 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+CC: <vireshk@kernel.org>, <nm@ti.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <angelogioacchino.delregno@collabora.com>, <andersson@kernel.org>,
+        <mturquette@baylibre.com>, <ilia.lin@kernel.org>, <rafael@kernel.org>,
+        <ulf.hansson@linaro.org>, <quic_sibis@quicinc.com>,
+        <quic_rjendra@quicinc.com>, <quic_rohiagar@quicinc.com>,
+        <abel.vesa@linaro.org>, <otto.pflueger@abscue.de>,
+        <danila@jiaxyga.com>, <quic_ipkumar@quicinc.com>, <luca@z3ntu.xyz>,
+        <stephan.gerhold@kernkonzept.com>, <nks@flawful.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v4 05/10] pmdomain: qcom: rpmpd: Add IPQ9574 power domains
+Message-ID: <ZqCCpf1FwLWulSgr@hu-varada-blr.qualcomm.com>
+References: <20240703091651.2820236-1-quic_varada@quicinc.com>
+ <20240703091651.2820236-6-quic_varada@quicinc.com>
+ <57dadb35-5dde-4127-87aa-962613730336@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
+In-Reply-To: <57dadb35-5dde-4127-87aa-962613730336@linaro.org>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: S0Bqv5CtTb5jOakT3ySrFZ5x59sVL5Me
+X-Proofpoint-ORIG-GUID: S0Bqv5CtTb5jOakT3ySrFZ5x59sVL5Me
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-24_02,2024-07-23_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
+ malwarescore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501
+ mlxscore=0 mlxlogscore=999 suspectscore=0 impostorscore=0 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407240032
 
-Replace "not ... nor" in the error message with "neither ... nor".
+On Tue, Jul 09, 2024 at 11:52:19AM +0200, Konrad Dybcio wrote:
+> On 3.07.2024 11:16 AM, Varadarajan Narayanan wrote:
+> > From: Praveenkumar I <quic_ipkumar@quicinc.com>
+> >
+> > Add the APC power domain definitions used in IPQ9574.
+> >
+> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > ---
+> > v4: Add Reviewed-by: Dmitry Baryshkov
+> > v3: Fix patch author
+> > v2: Fix Signed-off-by order
+> > ---
+> >  drivers/pmdomain/qcom/rpmpd.c | 19 +++++++++++++++++++
+> >  1 file changed, 19 insertions(+)
+> >
+> > diff --git a/drivers/pmdomain/qcom/rpmpd.c b/drivers/pmdomain/qcom/rpmpd.c
+> > index 5e6280b4cf70..947d6a9c3897 100644
+> > --- a/drivers/pmdomain/qcom/rpmpd.c
+> > +++ b/drivers/pmdomain/qcom/rpmpd.c
+> > @@ -38,6 +38,7 @@ static struct qcom_smd_rpm *rpmpd_smd_rpm;
+> >  #define KEY_FLOOR_CORNER	0x636676   /* vfc */
+> >  #define KEY_FLOOR_LEVEL		0x6c6676   /* vfl */
+> >  #define KEY_LEVEL		0x6c766c76 /* vlvl */
+> > +#define RPM_KEY_UV		0x00007675 /* "uv" */
+>
+> The "uv" key is handled in qcom_smd-regulator.c.. I'm assuming on this
+> platform, it accepts level idx instead of the regulator properties
+> and this is intentional?
 
-Signed-off-by: Chang Yu <marcus.yu.56@gmail.com>
----
- tools/testing/selftests/exec/execveat.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+IPQ9574 RPM accepts regulator properties (uv) and not the level idx.
+Hence added the "uv" key in the rpmpd.c
 
-diff --git a/tools/testing/selftests/exec/execveat.c b/tools/testing/selftests/exec/execveat.c
-index 6418ded40bdd..071e03532cba 100644
---- a/tools/testing/selftests/exec/execveat.c
-+++ b/tools/testing/selftests/exec/execveat.c
-@@ -117,7 +117,7 @@ static int check_execveat_invoked_rc(int fd, const char *path, int flags,
- 	}
- 	if ((WEXITSTATUS(status) != expected_rc) &&
- 	    (WEXITSTATUS(status) != expected_rc2)) {
--		ksft_print_msg("child %d exited with %d not %d nor %d\n",
-+		ksft_print_msg("child %d exited with %d neither %d nor %d\n",
- 			       child, WEXITSTATUS(status), expected_rc,
- 			       expected_rc2);
- 		ksft_test_result_fail("%s\n", test_name);
--- 
-2.45.2
-
+Thanks
+Praveen/Varada
 
