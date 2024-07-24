@@ -1,165 +1,139 @@
-Return-Path: <linux-kernel+bounces-260962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40EC193B0F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:38:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61AAC93B0FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:41:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADF281F2429E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:38:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AA371C213F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1826B1581F7;
-	Wed, 24 Jul 2024 12:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE1F1581FD;
+	Wed, 24 Jul 2024 12:41:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="i2hqZ0nQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Cn17tpS8"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fhVhrl9/"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA9C148FFA;
-	Wed, 24 Jul 2024 12:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCE6148FFA;
+	Wed, 24 Jul 2024 12:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721824707; cv=none; b=ZpuuyxTAFPXPHaUq3b9QqjnceZqm/gU+Va3cufYwEJjS6aH7oZ0ss79sW5S6XIBWeAmjIc6fjVTVdw3iTHz/xYLU9BUsi7vcNlBMU/Gw9gt99lTQBsWkbTSbolfVa/zbO5auMBozDSDNCt0IZoMKNxUnRF1iGj8pzmGwDj3qUII=
+	t=1721824877; cv=none; b=cs0mW3NLmdCURfRBKLT7nAWgvBJv2LwUkkyta7X9e+R0QTlTQHSV+gPrEtAPasAL59T9H44zfH2E8h3N0Drz7KYLt4FF4v6XR+4SlpJ2gdmtzhx3CvkaxXdMV+AgB8t/EbwVuqHRzyHoQvxLm5HC6nY1A7NJeoiX+j/8DBGTHnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721824707; c=relaxed/simple;
-	bh=VCtfH/V0Iqx1XPif/WwmAUcbxCcUhHIUQTbsFA2wHqI=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=cXxU6PyiyMBvCjB7A8cdc9Bz6YaQ1i7BDbHLjqj7eg+dfi4f9q5AwXLF2uqZHutCkJM/fyJrk+/A63uaAZ5iP8AD9u/cUkmghqLzASoyTQcXP5W2ogcJufJveFgxZWavGC19PFZy3t8d6y8MElfo8Kgc9eUnDMr/9m1ItmUgaVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=i2hqZ0nQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Cn17tpS8; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 68CEA1380458;
-	Wed, 24 Jul 2024 08:38:23 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Wed, 24 Jul 2024 08:38:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1721824703; x=1721911103; bh=BE8v/r/tmA
-	JHpoLd92xEdYbBTbQFCV/bIoOEAgGWt20=; b=i2hqZ0nQEaKoHogGh5Aw01bCZZ
-	TyfQyU4U08WB7UzmeQa0+MDjK43BP7gpX02P4V3nN50HT9BWuy1Xg9+a7HOSsZ3S
-	FLVlJjQ4QPlQJuzNXEKzU4TvvsZwyFKL5ZsBqSuS7/FB1xyhn1rqPZ7k1EH4v9mw
-	CTApw4d2+3ZSWnyNdqnu5q720rAxWmPZFZOGpAu5DJFzfN+KuOcmBxf5OKayBoIQ
-	prE+sLxnEO/ObGkXqaJ4/R1YTeCk3/5zGemR28bZkwGq3UpD012emOwk8V5gvbb2
-	WbsVjimTUmOpGBCHHs46N/1CgnQV7Y/GT5M7JmVw6gKb2pivA/HL22sJpzwQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1721824703; x=1721911103; bh=BE8v/r/tmAJHpoLd92xEdYbBTbQF
-	CV/bIoOEAgGWt20=; b=Cn17tpS8g0M4W4HTBQSfre5jyOKh+fLxBQRXK7vgIoGM
-	3Q65h4+CNy7vhndrBG48Tt/wdfbysqhQ2i42Uj8tavNyQkJDXLlOLbxFLnGr0aH8
-	6osOS9trs+1CcB82SS29rCFiV7r+a1HF/uB5BteHGFFGwxbFkO+chM278qABW8rp
-	rSElyBourESTEbdSX57cGcPLpIFten8dfvCZXJGO/otAY46lPQbjttm4Rlo9DHgS
-	JEtvCC7bN/0TnaS+35GLgr2umSR+oMhb/VkUOKiXbWG6ORRtkny0zds+A6khNvn2
-	Jk4FF1pHWfgfabbPR8vfqtLOKBjK+M8bKLqPzQ51NA==
-X-ME-Sender: <xms:v_WgZiMPUf3BHuUBrAvXQRYjCJWhdfnmVUz_0tlIls3ZRpi8SUtoCw>
-    <xme:v_WgZg8AV0WZfS3gNKzsFTuMFIfZgyHTHAMouXrykSxQFGWLyJwEbo3ntxmCqOHB4
-    3RKDWVw4iXyfDJdifg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddriedugdehhecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeefkedvheehjeejteeguedvgeevfeduffdvveeuhfdvudeltddtjeevvefggfei
-    geenucffohhmrghinhepghhouggsohhlthdrohhrghdpshhtrggtkhhovhgvrhhflhhofi
-    drtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
-    pegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
-X-ME-Proxy: <xmx:v_WgZpTYTLcArbG03DKzen6YFTUwuMpkYVOs9kAkaYX7bC0ogqLa1g>
-    <xmx:v_WgZiuboFu-1lPdpL9K6KRCJXCcs6vF7pImwN5DJnwdxqmLgEkxmQ>
-    <xmx:v_WgZqd3suB6ftOaEXFSo3xiUUa3fZvRV91x81zRZtMRzig4jfAZ2w>
-    <xmx:v_WgZm2YV6S_BX6wZH8p_O08uiExUwQa6AaEaTzYwjfZipylvdFXTw>
-    <xmx:v_WgZnEU0Fos8cyBPOVasxJ628REHu865IZ1Ghr2hCC6Vbam7JFvMq0e>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id F3E6BB6008D; Wed, 24 Jul 2024 08:38:22 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-582-g5a02f8850-fm-20240719.002-g5a02f885
+	s=arc-20240116; t=1721824877; c=relaxed/simple;
+	bh=cmp1m11YrpsGcqUKzGuag7Huw9vz0AgogJWIrQ6MnpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dIQ/chUv5PhUJ1Mx04Dyxi/TecMBbTrSdNwn9DmDGqXG1Vgkx8+cb/zzNa5mD9NGIkx4FeI66yRxW3/XDcaAVi1PbC3B8PVgVL7hJ9r0GpXxfmyu2szQfYZco8iZRnfaN/OvLoo4W0/MBLMpoKWiulWsW51F8f8fNrN6FEbC9go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fhVhrl9/; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6J6/mCNap2U38NHjqHLrKE4y+Xj/p/3fvwoIUdiyQks=; b=fhVhrl9/nejY93MygJ055QBCdi
+	ZIF736PfMqnvAuyabZN57XAf5Fqvlg8FjHxqkWjva739sISm6WP26aPl5jt/8Fwnu8B+bNS5Lim0Q
+	RW8dni0aAHR33LU+zIaPhYrDz6HTOnFmqMo7quJV4+PWX1wDMkkmDuzNph1X8CB8MWTrJnF7FJsWv
+	g5qWfIP+38/h4biPzaZjbQYa08Iz6ByEI4MjE436qg2kOFazACkY+c54oTCoOLVp7l2IEyONppfpc
+	EGFG9MtYCsGnBv/0QAilWyTbziJpctvWxeNiYATTgx6rqGwgHl7yhRWKeLrfgsHnS6bYZxRNPGfNT
+	8MlXJr6A==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sWbIo-00000007pAr-2cMJ;
+	Wed, 24 Jul 2024 12:41:06 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 36AAD3003EA; Wed, 24 Jul 2024 14:41:05 +0200 (CEST)
+Date: Wed, 24 Jul 2024 14:41:05 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: Tvrtko Ursulin <tursulin@ursulin.net>, intel-gfx@lists.freedesktop.org,
+	linux-perf-users@vger.kernel.org,
+	Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
+	dri-devel@lists.freedesktop.org, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] drm/i915/pmu: Lazy unregister
+Message-ID: <20240724124105.GB13387@noisy.programming.kicks-ass.net>
+References: <20240722210648.80892-1-lucas.demarchi@intel.com>
+ <20240722210648.80892-7-lucas.demarchi@intel.com>
+ <be3871bd-fc25-482e-b4d4-91afc4d5b5a5@ursulin.net>
+ <xsuzfv4rzb4c25sibt5gjskn7xyfwf33wgwaw4nkz5jlnvl2ke@ekur5xvhec3z>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <19ed618c-5be9-4658-a2a3-031f4eded19a@app.fastmail.com>
-In-Reply-To: <7d075af2-e94e-4201-9d5d-35fd53124c4c@arm.com>
-References: <20240724103142.165693-1-anshuman.khandual@arm.com>
- <20240724103142.165693-2-anshuman.khandual@arm.com>
- <d0fadaa3-94d4-4600-8e92-a8fe5b0f141b@app.fastmail.com>
- <7d075af2-e94e-4201-9d5d-35fd53124c4c@arm.com>
-Date: Wed, 24 Jul 2024 14:37:34 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Anshuman Khandual" <anshuman.khandual@arm.com>,
- linux-kernel@vger.kernel.org
-Cc: "Andrew Morton" <akpm@linux-foundation.org>,
- "Yury Norov" <yury.norov@gmail.com>,
- "Rasmus Villemoes" <linux@rasmusvillemoes.dk>,
- Linux-Arch <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH 1/2] uapi: Define GENMASK_U128
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xsuzfv4rzb4c25sibt5gjskn7xyfwf33wgwaw4nkz5jlnvl2ke@ekur5xvhec3z>
 
-On Wed, Jul 24, 2024, at 13:59, Anshuman Khandual wrote:
-> On 7/24/24 16:33, Arnd Bergmann wrote:
->> I would hope we don't need this definition. Not that it
->> hurts at all, but __BITS_PER_LONG_LONG was already kind
->> of pointless since we don't run on anything else and
->> __BITS_PER_U128 clearly can't have any other sensible
->> definition than a plain 128.
->
-> Agreed, although this just followed __BITS_PER_LONG_LONG.
-> But sure __BITS_PER_U128 can be plain 128.
->
-> So would you like to have #ifndef __BITS_PER_LONG_LONG dropped here 
-> as well ? But should that be folded or in a separate patch ?
+On Tue, Jul 23, 2024 at 10:30:08AM -0500, Lucas De Marchi wrote:
+> On Tue, Jul 23, 2024 at 09:03:25AM GMT, Tvrtko Ursulin wrote:
+> > 
+> > On 22/07/2024 22:06, Lucas De Marchi wrote:
+> > > Instead of calling perf_pmu_unregister() when unbinding, defer that to
+> > > the destruction of i915 object. Since perf itself holds a reference in
+> > > the event, this only happens when all events are gone, which guarantees
+> > > i915 is not unregistering the pmu with live events.
+> > > 
+> > > Previously, running the following sequence would crash the system after
+> > > ~2 tries:
+> > > 
+> > > 	1) bind device to i915
+> > > 	2) wait events to show up on sysfs
+> > > 	3) start perf  stat -I 1000 -e i915/rcs0-busy/
+> > > 	4) unbind driver
+> > > 	5) kill perf
+> > > 
+> > > Most of the time this crashes in perf_pmu_disable() while accessing the
+> > > percpu pmu_disable_count. This happens because perf_pmu_unregister()
+> > > destroys it with free_percpu(pmu->pmu_disable_count).
+> > > 
+> > > With a lazy unbind, the pmu is only unregistered after (5) as opposed to
+> > > after (4). The downside is that if a new bind operation is attempted for
+> > > the same device/driver without killing the perf process, i915 will fail
+> > > to register the pmu (but still load successfully). This seems better
+> > > than completely crashing the system.
+> > 
+> > So effectively allows unbind to succeed without fully unbinding the
+> > driver from the device? That sounds like a significant drawback and if
+> > so, I wonder if a more complicated solution wouldn't be better after
+> > all. Or is there precedence for allowing userspace keeping their paws on
+> > unbound devices in this way?
+> 
+> keeping the resources alive but "unplunged" while the hardware
+> disappeared is a common thing to do... it's the whole point of the
+> drmm-managed resource for example. If you bind the driver and then
+> unbind it while userspace is holding a ref, next time you try to bind it
+> will come up with a different card number. A similar thing that could be
+> done is to adjust the name of the event - currently we add the mangled
+> pci slot.
+> 
+> That said, I agree a better approach would be to allow
+> perf_pmu_unregister() to do its job even when there are open events. On
+> top of that (or as a way to help achieve that), make perf core replace
+> the callbacks with stubs when pmu is unregistered - that would even kill
+> the need for i915's checks on pmu->closed (and fix the lack thereof in
+> other drivers).
+> 
+> It can be a can of worms though and may be pushed back by perf core
+> maintainers, so it'd be good have their feedback.
 
-A separate patch is probably better, but you can also
-just leave it.
+I don't think I understand the problem. I also don't understand drivers
+much -- so that might be the problem.
 
->>>  #define __AC(X,Y)	(X##Y)
->>>  #define _AC(X,Y)	__AC(X,Y)
->>>  #define _AT(T,X)	((T)(X))
->>> +#define _AC128(X)	((unsigned __int128)(X))
->> 
->> I just tried using this syntax and it doesn't seem to do
->> what you expected. gcc silently truncates the constant
->
-> But numbers passed into _AC128() are smaller in the range [128..0].
-> Hence the truncation might not be problematic in this context ? OR
-> could it be ?
->
->> to a 64-bit value here, while clang fails the build.
->
-> Should this be disabled for CC_IS_CLANG ?
->
->> See also https://godbolt.org/z/rzEqra7nY
->> https://stackoverflow.com/questions/63328802/unsigned-int128-literal-gcc
->
-> So unless the value in there is beyond 64 bits, it should be good ?
-> OR am I missing something.
->
->> The __GENMASK_U128() macro however seems to work correctly
->> since you start out with a smaller number and then shift
->> it after the type conversion.
->
-> _U128() never receives anything beyond [127..0] range. So then this
-> should be good ?
+So the problem appears to be that the device just disappears without
+warning? How can a GPU go away like that?
 
-Since you define _U128() right next to _ULL(), I would argue
-that it should have the corresponding behavior for any value
-that can fit into the type. Since that is currently not
-possible with gcc, I would prefer to not define it at all.
+Since you have a notion of this device, can't you do this stubbing you
+talk about? That is, if your internal device reference becomes NULL, let
+the PMU methods preserve the state like no-ops.
 
-However, I think you can just define a _BIT128() macro
-that behaves the same way as _BITULL() and define
-__GENMASK_U128() based on that. Maybe something like
+And then when the last event goes away, tear down the whole thing.
 
-#define _BIT128(x) ((unsigned __int128)1 << (x))
-#define __GENMASK_U128(h, l) (_BIT128((h) + 1)) - (_BIT128(l))
-
-     Arnd
+Again, I'm not sure I'm following.
 
