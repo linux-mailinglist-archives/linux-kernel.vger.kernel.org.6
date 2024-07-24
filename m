@@ -1,133 +1,152 @@
-Return-Path: <linux-kernel+bounces-260901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 517C193B000
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:54:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B32393B006
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:56:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C999FB20D95
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:54:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DC2A1F24981
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5B1156861;
-	Wed, 24 Jul 2024 10:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LtSXE9iJ"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E5015696E;
+	Wed, 24 Jul 2024 10:56:12 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C346156F20
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 10:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE03B1BF38;
+	Wed, 24 Jul 2024 10:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721818441; cv=none; b=B89+al2JQbkr1CPa8Sdb4XvXYqKRZeGEKcOF8mOvJ+eXaDdahfM7Ri3jPMbE+9Qqpv//6ZLFMvHjqJBw7ojSQ0zmQ2wHMubq21ML+DGCaqHTqmH7Owdub4KQWuAHuXlu0r/Zfn8w6c2z6IxCud9zYJ5BjAQWUV9c4lBt3uhJRoo=
+	t=1721818572; cv=none; b=vC9pANMIZb5oXx1nSeN1n50dfxVe58EiKxnyRH4YJeSemHEL0K8ikH6H58VMzM5rfXR+MBigeYqI1OTBqC9yhNNBGSBfLVlPthRaDP1UxYciFSWoqQnlezGGxbLyqErEJxc0tSN+XZEZGk9lytpua0GEVc2rWUpBAJjywsafB7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721818441; c=relaxed/simple;
-	bh=SUSZ50lr25Yi6ulBf8yO+0sn5rK7c/a5twcJJAH63uk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PuhWduxnCXP8l3VHne92PSAXvHc5MLFyD4MxJwZ20XEGQyNXKmcAPKVhEs3qTP0w+CZ4qcTjHE3QEOtfNjh9yQ5uSZXIDNTYhifNSSOuT/LvxmQWJBfWNDvOwNKofYqAhqZWvWDNh93OOCU9cL02i+/mvyYekbTCqPfhNG7JbQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LtSXE9iJ; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=vh7Huajjy7AtMHNARk3EpmfPPGZu0XxTHnxYJdBV2yw=; b=LtSXE9iJxbbLXzHJGBr3ZMaGOa
-	1qow5CPzs5PwIH3VKTRudTQdP4MYHa207KExoc33G0X6ita2XaMlWGucq1qNXi1WWVdCkDn2Ey1pP
-	cCI9ENW9AvjVQL6bHfT/XjL7cubdPUIzVwBqBMOy0zHUlnl8HgUMinx4sro+r8bCNeKVVwMQxhAc4
-	dC/d8UFwXuy3Y39zUCC+GRpZ2m7AeBBVjW3mSiiCw77bLjxCPHF35c9nVqfIn8HciX0c5XVFUeqRy
-	7fpr3rXL/cwnOYMsenV4T1HiVNg38f7JFo95IJcrrGaZXeqrr9WgV7WAlmraYEwHlzb5q4P2hSFYY
-	Qptkcs+w==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sWZcq-00000003ovF-0CTW;
-	Wed, 24 Jul 2024 10:53:40 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 10F2B3003EA; Wed, 24 Jul 2024 12:53:39 +0200 (CEST)
-Date: Wed, 24 Jul 2024 12:53:38 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Li Zetao <lizetao1@huawei.com>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, zhangqiao22@huawei.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] sched/fair: inline cpu_util_without and cpu_util
- to improve performance
-Message-ID: <20240724105338.GA13387@noisy.programming.kicks-ass.net>
-References: <20240723073607.568819-1-lizetao1@huawei.com>
+	s=arc-20240116; t=1721818572; c=relaxed/simple;
+	bh=PCullMsOCoMNGFE9jXzB692xZEYtdQh263JkaEU16zc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=kXlUN4jHWw3BNXP6U++qsbZ0RwDQHAEI1tOmRKYHgCRMQtGVYx4gwqu4ao/HgVyIa6ayWgRAZQMWQRRSEo1+ofuez7hb3ZTr6FXgMUOMGc3FiIKNI0K8DWUjbvQaEf3RZ5E4eiNydr1VdMwHLMtvyL6tmYF6n56IuYzf457uyBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowAB3XTin3aBmvIa8AA--.42398S2;
+	Wed, 24 Jul 2024 18:55:45 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: jani.nikula@linux.intel.com
+Cc: airlied@gmail.com,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	make24@iscas.ac.cn,
+	mripard@kernel.org,
+	noralf@tronnes.org,
+	sam@ravnborg.org,
+	stable@vger.kernel.org,
+	tzimmermann@suse.de
+Subject: Re: [PATCH v3] drm/client: fix null pointer dereference in drm_client_modeset_probe
+Date: Wed, 24 Jul 2024 18:55:35 +0800
+Message-Id: <20240724105535.1524294-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <87ikwvf6ol.fsf@intel.com>
+References: <87ikwvf6ol.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240723073607.568819-1-lizetao1@huawei.com>
+Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID:zQCowAB3XTin3aBmvIa8AA--.42398S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WF1xtF4DWr4ruw43KFWkXrb_yoW8tw4xpr
+	s8GF90yFW0qF9rKFs2v3WxuF13Z3W3Jr48GF17J3Z3C3Z0gry5tryYvr15WF9rCr13KF10
+	qF12yFW3XF4qyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQvtAUUUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-On Tue, Jul 23, 2024 at 03:36:07PM +0800, Li Zetao wrote:
-> The commit 3eb6d6ececca ("sched/fair: Refactor CPU utilization functions")
-> refactored cpu_util_without and cpu_util functions. Since the size of
-> cpu_util function has increased, the inline cpu_util is dropped. This had
-> a negative impact on performance, in the scenario of updating
-> sched_group's statistics, cpu_util_without and cpu_util functions are on
-> the hotspot path.
-> 
-> Inlining cpu_util_without and cpu_util functions have been shown to
-> significantly improve performance in lmbench as follow:
-> 
->   Machine: Intel(R) Xeon(R) Gold 6248 CPU @ 2.50GHz
->                      before          after          diff
->   fork+exit          317.0625        303.6667       -4.22%
->   fork+execve        1482.5000       1407.0000      -5.09%
->   fork+/bin/sh       2096.0000       2020.3333      -3.61%
+On Wed, 24 Jul 2024, Jani Nikula <jani.nikula@linux.intel.com> wrote:=0D
+> On Wed, 24 Jul 2024, Ma Ke <make24@iscas.ac.cn> wrote:=0D
+> > In drm_client_modeset_probe(), the return value of drm_mode_duplicate()=
+ is=0D
+> > assigned to modeset->mode, which will lead to a possible NULL pointer=0D
+> > dereference on failure of drm_mode_duplicate(). Add a check to avoid np=
+d.=0D
+> >=0D
+> > Cc: stable@vger.kernel.org=0D
+> > Fixes: cf13909aee05 ("drm/fb-helper: Move out modeset config code")=0D
+> > Signed-off-by: Ma Ke <make24@iscas.ac.cn>=0D
+> > ---=0D
+> > Changes in v3:=0D
+> > - modified patch as suggestions, returned error directly when failing t=
+o =0D
+> > get modeset->mode.=0D
+> =0D
+> This is not what I suggested, and you can't just return here either.=0D
+> =0D
+> BR,=0D
+> Jani.=0D
+> =0D
+=0D
+I have carefully read through your comments. Based on your comments on the =
+=0D
+patchs I submitted, I am uncertain about the appropriate course of action =
+=0D
+following the return value check(whether to continue or to return directly,=
+=0D
+as both are common approaches in dealing with function drm_mode_duplicate()=
+=0D
+in Linux kernel, and such handling has received 'acked-by' in similar =0D
+vulnerabilities). Could you provide some advice on this matter? Certainly, =
+=0D
+adding a return value check is essential, the reasons for which have been =
+=0D
+detailed in the vulnerability description. I am looking forward to your =0D
+guidance and response. Thank you!=0D
+=0D
+Best regards,=0D
+=0D
+Ma Ke=0D
+=0D
+> =0D
+> > Changes in v2:=0D
+> > - added the recipient's email address, due to the prolonged absence of =
+a =0D
+> > response from the recipients.=0D
+> > - added Cc stable.=0D
+> > ---=0D
+> >  drivers/gpu/drm/drm_client_modeset.c | 3 +++=0D
+> >  1 file changed, 3 insertions(+)=0D
+> >=0D
+> > diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm=
+_client_modeset.c=0D
+> > index 31af5cf37a09..750b8dce0f90 100644=0D
+> > --- a/drivers/gpu/drm/drm_client_modeset.c=0D
+> > +++ b/drivers/gpu/drm/drm_client_modeset.c=0D
+> > @@ -880,6 +880,9 @@ int drm_client_modeset_probe(struct drm_client_dev =
+*client, unsigned int width,=0D
+> >  =0D
+> >  			kfree(modeset->mode);=0D
+> >  			modeset->mode =3D drm_mode_duplicate(dev, mode);=0D
+> > +			if (!modeset->mode)=0D
+> > +				return 0;=0D
+> > +=0D
+> >  			drm_connector_get(connector);=0D
+> >  			modeset->connectors[modeset->num_connectors++] =3D connector;=0D
+> >  			modeset->x =3D offset->x;=0D
+> =0D
+> -- =0D
+> Jani Nikula, Intel=
 
-That's quite significant. Did you look at what exactly was causing this?
-
-> This patch introduces inlining to cpu_util_without and cpu_util functions.
-> While this increases the size of kernel/sched/fair.o, the performance
-> gains in critical workloads make this an acceptable trade-off.
-> 
-> Size comparison before and after patch:
->      text	   data	    bss	    dec	    hex	filename
->    0x1264a	 0x1506	   0xb0	  80896	  13c00	kernel/sched/fair.o.before
->    0x12672	 0x14fe	   0xb0	  80928	  13c20	kernel/sched/fair.o.after
-> 
-> Signed-off-by: Zhang Qiao <zhangqiao22@huawei.com>
-> Signed-off-by: Li Zetao <lizetao1@huawei.com>
-
-This SoB chain is not valid. Please review the documentation we have
-on this.
-
-> ---
->  kernel/sched/fair.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 5904405ffc59..677b78fa65b6 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -7706,7 +7706,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
->   *
->   * Return: (Boosted) (estimated) utilization for the specified CPU.
->   */
-> -static unsigned long
-> +static __always_inline unsigned long
->  cpu_util(int cpu, struct task_struct *p, int dst_cpu, int boost)
->  {
->  	struct cfs_rq *cfs_rq = &cpu_rq(cpu)->cfs;
-> @@ -7794,7 +7794,7 @@ unsigned long cpu_util_cfs_boost(int cpu)
->   * utilization of the specified task, whenever the task is currently
->   * contributing to the CPU utilization.
->   */
-> -static unsigned long cpu_util_without(int cpu, struct task_struct *p)
-> +static __always_inline unsigned long cpu_util_without(int cpu, struct task_struct *p)
->  {
->  	/* Task has no contribution or is new */
->  	if (cpu != task_cpu(p) || !READ_ONCE(p->se.avg.last_update_time))
-> -- 
-> 2.34.1
-> 
 
