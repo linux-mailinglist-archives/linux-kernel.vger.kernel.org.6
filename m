@@ -1,151 +1,195 @@
-Return-Path: <linux-kernel+bounces-261315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A2E393B5A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:14:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1A5493B5A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:15:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B590F2849DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:14:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 363C5B237FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAD615F401;
-	Wed, 24 Jul 2024 17:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gu0vtcwl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F101607AB;
+	Wed, 24 Jul 2024 17:15:10 +0000 (UTC)
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6925B15ECEC;
-	Wed, 24 Jul 2024 17:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9BB15FA75;
+	Wed, 24 Jul 2024 17:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721841237; cv=none; b=r2bumrolDuz75BoVQMvvsHSbLNtklwNG6ZBlgVuU4kA81DZwNQTQ5b2u28RYtEmmFYb87Pw8UMp5prhyzUS00z4gjr/+4ioZtpHp1WLvJNwvMRTk2P/I7NVpntignoYXZhDyxQEjbn6MwmUXaoqy3pUb0fVvW9UVxb/G0ACEE0g=
+	t=1721841309; cv=none; b=oOiLbwOtSq6RdY3yecwI0766MnW1i8ciNJI72wIByjH42OKesEHkNXGzCVrW0tvDaU0/HC5CuoIreO6kvVnQUunUmRJrZSUaiep7oJW7Y61mGmAg8wG79cRVeKYmnYfpSU0+r1JATSipxrSblGDzSC6gvxzsbzNpIBz7dFSCf+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721841237; c=relaxed/simple;
-	bh=oa4BYzZy3kq1pbLBpJsb1owa8AeGXnIShl4WHE1XK7I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IpaVBYxD6V0uwANP/8vAnzteNAcFIcJImAhFhnqIBGjmDfKB9dSWbtAS1zR/20UyWE8rnQ674ztjQOowB7YzOQUYaOV5GoKEEvZXDc0vSarFsygLhgvKtSceQI/BDZaBO7PjgWnCNM3Bqr6Zt5faubuKE3BZw57k2/Dg7AkQEKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gu0vtcwl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36E45C32781;
-	Wed, 24 Jul 2024 17:13:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721841237;
-	bh=oa4BYzZy3kq1pbLBpJsb1owa8AeGXnIShl4WHE1XK7I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gu0vtcwliOaEFO9TQNOi8tIiHqSeJjdQ6j2SxxiNpd5k44RXf7PIXWgRMud8uXVw9
-	 nkmdIt8VFqFuUcYc2446tfUM3jl/6V6w6kMI4JgB6f918SmVTxKrUQe1NieMoZa04D
-	 fXCcajwz8+0QlyxOGe0fsiFw+yVpl4haL+cw+LzbDYOJunwe/q4MsFrEwsEtTm+yuh
-	 TbDgzqEP8i45IpTgkvq9SeRDFwGB5EfjJbLNIi9XZzO9QyGTVYZ6BvEk19IBT75kBp
-	 UtGA5LOnyo3xpZXwQBOqHAUl5MYsYpVt18lnkisTgsQG9DM7OoFtm0QpYl9PotjNzg
-	 uIpqjEbU81oNA==
-Date: Wed, 24 Jul 2024 18:13:51 +0100
-From: Simon Horman <horms@kernel.org>
-To: Yunseong Kim <yskelg@gmail.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
-	Johan Hedberg <johan.hedberg@gmail.com>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-	stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Yeoreum Yun <yeoreum.yun@arm.com>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Subject: Re: [PATCH] Bluetooth: hci_core: fix suspicious RCU usage in
- hci_conn_drop()
-Message-ID: <20240724171351.GD97837@kernel.org>
-References: <20240723171756.13755-2-yskelg@gmail.com>
+	s=arc-20240116; t=1721841309; c=relaxed/simple;
+	bh=4Y680e5aFGG+XL2Ues7O7Kcgc/asuH8oob0hp9mjLFo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RB3mkQFwMuGM2UcJvZw5vx+8f2lGJIsRjTJkaUxB9pgQhM3n1ZQMsNTkmWpNI1ZJaawxDgirYEO8Xy0UnG/1OIa68ydwUhZBPngYIavjd8UE12bszJiWP7svSFL3G1SJFOqZlsjl0KpcfigYI/wncFMqkJEnsKnMWadWB0kBbm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5c691c6788eso45318eaf.2;
+        Wed, 24 Jul 2024 10:15:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721841307; x=1722446107;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SANNCjmlHWFw4UMMmTMFqu6vy/gGRDN3h4twfSNMm0w=;
+        b=vPuVBwXiyDmLO/AbFbGlgkS1lkwfGc3PaGoU1lhWCHN3n0wj8ZjChWGl0jrlpImC3L
+         b+ROwsxnkxvZIZI5HoO81hXoJAhRKYNnyKZKyHGy9yvG8uZTvJBiqKAGHDMZsIhJJEYY
+         hrp5z955hkkaT71FXcZBkQqgytya/yYWQDcrHuDSE2+rRClJeBQ5Ecv5eGCPOwdM97Qq
+         ApBOwEKDIkRvRiFzr/Z1nYLp4n4bLFN2W8buIJd3OVDzXVnEHILIxX39PKNpwMPa8Q1W
+         fUIsKdrFqdbIVmEf6+mbCjtL7H8nod/FVEebxDhkc1+QRsfjEc5K3mKGrYmHGv18hJX0
+         xJyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqbd9jp/kPYxbf7hX2Ro6qosWEBLmYoUZuEd1dD5ArVeYJzSML/En5AQIU+Z4vQ8q3o9GVhcOEfMdx6VxSwIGZSNqKT5pUyIWZSJdp
+X-Gm-Message-State: AOJu0YxUMGo6HpyLe2upFRo52uNVvUhTsRLeN9jXn57IutxIbhWVV8/t
+	ipGnviMYiKTea/dDVMXahmS/Hrw05PgcBg7gLT3ps3n4kLLTa8q97qLbSRvU
+X-Google-Smtp-Source: AGHT+IGkH1yvj+YalApyjPBW8ivSd8WosXSoBQyIc+qMhvcMQQFW+LWldt69bJEtwTg73xBJsTr1RQ==
+X-Received: by 2002:a05:6358:3413:b0:197:df0e:f23c with SMTP id e5c5f4694b2df-1acf8a1cd19mr63633955d.11.1721841306439;
+        Wed, 24 Jul 2024 10:15:06 -0700 (PDT)
+Received: from localhost (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b96f7f79d3sm37517716d6.91.2024.07.24.10.15.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 10:15:05 -0700 (PDT)
+From: David Vernet <void@manifault.com>
+To: bpf@vger.kernel.org
+Cc: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@google.com,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	tj@kernel.org
+Subject: [PATCH bpf-next 1/2] libbpf: Don't take direct pointers into BTF data from st_ops
+Date: Wed, 24 Jul 2024 12:14:58 -0500
+Message-ID: <20240724171459.281234-1-void@manifault.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240723171756.13755-2-yskelg@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-+ Handa-san
+In struct bpf_struct_ops, we have take a pointer to a BTF type name, and
+a struct btf_type. This was presumably done for convenience, but can
+actually result in subtle and confusing bugs given that BTF data can be
+invalidated before a program is loaded. For example, in sched_ext, we
+may sometimes resize a data section after a skeleton has been opened,
+but before the struct_ops scheduler map has been loaded. This may cause
+the BTF data to be realloc'd, which can then cause a UAF when loading
+the program because the struct_ops map has pointers directly into the
+BTF data.
 
-On Wed, Jul 24, 2024 at 02:17:57AM +0900, Yunseong Kim wrote:
-> Protection from the queuing operation is achieved with an RCU read lock
-> to avoid calling 'queue_delayed_work()' after 'cancel_delayed_work()',
-> but this does not apply to 'hci_conn_drop()'.
-> 
-> commit deee93d13d38 ("Bluetooth: use hdev->workqueue when queuing
->  hdev->{cmd,ncmd}_timer works")
-> 
-> The situation described raises concerns about suspicious RCU usage in a
-> corrupted context.
-> 
-> CPU 1                   CPU 2
->  hci_dev_do_reset()
->   synchronize_rcu()      hci_conn_drop()
->   drain_workqueue()       <-- no RCU read protection during queuing. -->
->                            queue_delayed_work()
-> 
-> It displays a warning message like the following
-> 
-> Bluetooth: hci0: unexpected cc 0x0c38 length: 249 > 2
-> =============================
-> WARNING: suspicious RCU usage
-> 6.10.0-rc6-01340-gf14c0bb78769 #5 Not tainted
-> -----------------------------
-> net/mac80211/util.c:4000 RCU-list traversed in non-reader section!!
-> 
-> other info that might help us debug this:
-> 
-> rcu_scheduler_active = 2, debug_locks = 1
-> 2 locks held by syz-executor/798:
->  #0: ffff800089a3de50 (rtnl_mutex){+.+.}-{4:4},
->     at: rtnl_lock+0x28/0x40 net/core/rtnetlink.c:79
-> 
-> stack backtrace:
-> CPU: 0 PID: 798 Comm: syz-executor Not tainted
->   6.10.0-rc6-01340-gf14c0bb78769 #5
-> Hardware name: linux,dummy-virt (DT)
-> Call trace:
->  dump_backtrace.part.0+0x1b8/0x1d0 arch/arm64/kernel/stacktrace.c:317
->  dump_backtrace arch/arm64/kernel/stacktrace.c:323 [inline]
->  show_stack+0x34/0x50 arch/arm64/kernel/stacktrace.c:324
->  __dump_stack lib/dump_stack.c:88 [inline]
->  dump_stack_lvl+0xf0/0x170 lib/dump_stack.c:114
->  dump_stack+0x20/0x30 lib/dump_stack.c:123
->  lockdep_rcu_suspicious+0x204/0x2f8 kernel/locking/lockdep.c:6712
->  ieee80211_check_combinations+0x71c/0x828 [mac80211]
->  ieee80211_check_concurrent_iface+0x494/0x700 [mac80211]
->  ieee80211_open+0x140/0x238 [mac80211]
->  __dev_open+0x270/0x498 net/core/dev.c:1474
->  __dev_change_flags+0x47c/0x610 net/core/dev.c:8837
->  dev_change_flags+0x98/0x170 net/core/dev.c:8909
->  devinet_ioctl+0xdf0/0x18d0 net/ipv4/devinet.c:1177
->  inet_ioctl+0x34c/0x388 net/ipv4/af_inet.c:1003
->  sock_do_ioctl+0xe4/0x240 net/socket.c:1222
->  sock_ioctl+0x4cc/0x740 net/socket.c:1341
->  vfs_ioctl fs/ioctl.c:51 [inline]
->  __do_sys_ioctl fs/ioctl.c:907 [inline]
->  __se_sys_ioctl fs/ioctl.c:893 [inline]
->  __arm64_sys_ioctl+0x184/0x218 fs/ioctl.c:893
->  __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
->  invoke_syscall+0x90/0x2e8 arch/arm64/kernel/syscall.c:48
->  el0_svc_common.constprop.0+0x200/0x2a8 arch/arm64/kernel/syscall.c:131
->  el0_svc+0x48/0xc0 arch/arm64/kernel/entry-common.c:712
->  el0t_64_sync_handler+0x120/0x130 arch/arm64/kernel/entry-common.c:730
->  el0t_64_sync+0x190/0x198 arch/arm64/kernel/entry.S:598
-> 
-> This patch attempts to fix that issue with the same convention.
-> 
-> Cc: stable@vger.kernel.org # v6.1+
-> Fixes: deee93d13d38 ("Bluetooth: use hdev->workqueue when queuing hdev->
-> {cmd,ncmd}_timer works")
+We're already storing the BTF type_id in struct bpf_struct_ops. Because
+type_id is stable, we can therefore just update the places where we were
+looking at those pointers to instead do the lookups we need from the
+type_id.
 
-nit: Fixes tags should not be line-wrapped.
+Fixes: 590a00888250 ("bpf: libbpf: Add STRUCT_OPS support")
+Signed-off-by: David Vernet <void@manifault.com>
+---
+ tools/lib/bpf/libbpf.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
-> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-> Tested-by: Yunseong Kim <yskelg@gmail.com>
-> Signed-off-by: Yunseong Kim <yskelg@gmail.com>
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index a3be6f8fac09..e55353887439 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -496,8 +496,6 @@ struct bpf_program {
+ };
+ 
+ struct bpf_struct_ops {
+-	const char *tname;
+-	const struct btf_type *type;
+ 	struct bpf_program **progs;
+ 	__u32 *kern_func_off;
+ 	/* e.g. struct tcp_congestion_ops in bpf_prog's btf format */
+@@ -1083,11 +1081,14 @@ static int bpf_object_adjust_struct_ops_autoload(struct bpf_object *obj)
+ 			continue;
+ 
+ 		for (j = 0; j < obj->nr_maps; ++j) {
++			const struct btf_type *type;
++
+ 			map = &obj->maps[j];
+ 			if (!bpf_map__is_struct_ops(map))
+ 				continue;
+ 
+-			vlen = btf_vlen(map->st_ops->type);
++			type = btf__type_by_id(obj->btf, map->st_ops->type_id);
++			vlen = btf_vlen(type);
+ 			for (k = 0; k < vlen; ++k) {
+ 				slot_prog = map->st_ops->progs[k];
+ 				if (prog != slot_prog)
+@@ -1121,8 +1122,8 @@ static int bpf_map__init_kern_struct_ops(struct bpf_map *map)
+ 	int err;
+ 
+ 	st_ops = map->st_ops;
+-	type = st_ops->type;
+-	tname = st_ops->tname;
++	type = btf__type_by_id(btf, st_ops->type_id);
++	tname = btf__name_by_offset(btf, type->name_off);
+ 	err = find_struct_ops_kern_types(obj, tname, &mod_btf,
+ 					 &kern_type, &kern_type_id,
+ 					 &kern_vtype, &kern_vtype_id,
+@@ -1423,8 +1424,6 @@ static int init_struct_ops_maps(struct bpf_object *obj, const char *sec_name,
+ 		memcpy(st_ops->data,
+ 		       data->d_buf + vsi->offset,
+ 		       type->size);
+-		st_ops->tname = tname;
+-		st_ops->type = type;
+ 		st_ops->type_id = type_id;
+ 
+ 		pr_debug("struct_ops init: struct %s(type_id=%u) %s found at offset %u\n",
+@@ -8445,11 +8444,13 @@ static int bpf_object__resolve_externs(struct bpf_object *obj,
+ 
+ static void bpf_map_prepare_vdata(const struct bpf_map *map)
+ {
++	const struct btf_type *type;
+ 	struct bpf_struct_ops *st_ops;
+ 	__u32 i;
+ 
+ 	st_ops = map->st_ops;
+-	for (i = 0; i < btf_vlen(st_ops->type); i++) {
++	type = btf__type_by_id(map->obj->btf, st_ops->type_id);
++	for (i = 0; i < btf_vlen(type); i++) {
+ 		struct bpf_program *prog = st_ops->progs[i];
+ 		void *kern_data;
+ 		int prog_fd;
+@@ -9712,6 +9713,7 @@ static struct bpf_map *find_struct_ops_map_by_offset(struct bpf_object *obj,
+ static int bpf_object__collect_st_ops_relos(struct bpf_object *obj,
+ 					    Elf64_Shdr *shdr, Elf_Data *data)
+ {
++	const struct btf_type *type;
+ 	const struct btf_member *member;
+ 	struct bpf_struct_ops *st_ops;
+ 	struct bpf_program *prog;
+@@ -9771,13 +9773,14 @@ static int bpf_object__collect_st_ops_relos(struct bpf_object *obj,
+ 		}
+ 		insn_idx = sym->st_value / BPF_INSN_SZ;
+ 
+-		member = find_member_by_offset(st_ops->type, moff * 8);
++		type = btf__type_by_id(btf, st_ops->type_id);
++		member = find_member_by_offset(type, moff * 8);
+ 		if (!member) {
+ 			pr_warn("struct_ops reloc %s: cannot find member at moff %u\n",
+ 				map->name, moff);
+ 			return -EINVAL;
+ 		}
+-		member_idx = member - btf_members(st_ops->type);
++		member_idx = member - btf_members(type);
+ 		name = btf__name_by_offset(btf, member->name_off);
+ 
+ 		if (!resolve_func_ptr(btf, member->type, NULL)) {
+-- 
+2.45.2
 
-...
 
