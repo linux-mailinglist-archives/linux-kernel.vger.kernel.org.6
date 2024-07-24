@@ -1,84 +1,53 @@
-Return-Path: <linux-kernel+bounces-260628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8590993ABFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 06:39:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A33B93AC04
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 06:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A3851C22659
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 04:39:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34B6C28426A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 04:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCCD741C79;
-	Wed, 24 Jul 2024 04:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF724643B;
+	Wed, 24 Jul 2024 04:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k87EGMps"
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OGGscUPj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7BD225A2
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 04:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866E84A35;
+	Wed, 24 Jul 2024 04:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721795987; cv=none; b=r9WG5MXr76TQag+EiRL6v35iBUqxbX5cnjR26jma2I287EHULAMv+bjFf6+uZzKkX2Ree1pMVke8wLnYrm5ZtyAnrpG7BhsW/oKCkyXlGsv0IhkjviC6+WHnEwE40MQcGpJtK69TCFzyzVBfBHMtw5rf0s2cKjwY1ui1AlfUNls=
+	t=1721796402; cv=none; b=HfVmIa1tAdvRInwfa7+XFmAFR/DvXHamL1Iy1oDj1lNfAjxVTjKJfF8BUhu9uIkqeaU/CHUSI65bZHPkA/BDEl+RRQcrt7uwE0Rd+CSy6IoefKwY/I/RW4u2o3k3ijQjLNbWylXMZCu+XvRIVLxw5g9TlymIVEIeJzAXtNg4jkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721795987; c=relaxed/simple;
-	bh=X2B2h7YCmnQxgWrjlRimRYu68yfNkuWjdFuHQ3lVJP4=;
+	s=arc-20240116; t=1721796402; c=relaxed/simple;
+	bh=dd8dMxMcSNia49oSuAPjZ7+AGLNZdMhtCcNuGyypI8I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GHKlHtu7bQjmBuCBN3OFdI+KpfPWp+P1MfIqN0AGv7e/O4Wf1HXMXaIMpMo0tE2a74LC/e/v1iD6FusS/irbBQczk60FOBRM0PiQ3u4h8BHZcVmG9An2v0gXtkzFF3f/J/UnjRxzRXhoQCBT0zTrBg3fKcNHWWp5er5FSmJG20c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k87EGMps; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-26119999171so2991534fac.2
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 21:39:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721795984; x=1722400784; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ydzy8AybJJkkCvZrEtKcB+LO2UJxL/0lB3QK0FrhXAo=;
-        b=k87EGMpsEIVMh+8VzScAcxlXNGLnnQKqmPsbhR58r3jazUdV699Ge+ox7xzIUFvBwR
-         Ob79R3G4j5i+ohtbBuKjpPm21HbZFANSRNMFv5bV0MBaIEBZncuVTwGAeiDj3scsLtb6
-         UXVG3p3oG/aOndRkvJ8BNd+5TBF7ysUAMzR/rmlEKv7Hes9zf2tn0UJ82pLOCXU3PPEc
-         iTazR39aH3O6e46ZI58Kz2quJzwUPqjQadE4yGFludwpI6wgXV5AImXAMmftc14khZ+c
-         NTf4mXS9abqDziWWo80i0mCZ54tXr1AruvUCiZEukcko1RxGlusxp2SpqNBSNNDnJOO2
-         SH6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721795984; x=1722400784;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ydzy8AybJJkkCvZrEtKcB+LO2UJxL/0lB3QK0FrhXAo=;
-        b=ZjCqOLUf2iEdXYh1AQx6+nV9TbKFt9XG+aVeyRiDvXyJqjLdpDhxlj4xeQyhwYbc3n
-         aeQdNjwcWvxTAC6q1TMGVSpwYeS8WSBgfWgvCNrbMad2VjkEXqu90cVjvfExj7j+9vPz
-         k3qXqSagH4BDSSfUVNfco6KNVOLZD/MJoIL5Q3isHqhJputUKVX4xphPloGLng5Fdsiz
-         n06I6+nTm/QHWzU0G9EeusiGJi0uZd/0gzFh39U+nfrbLOzfwbNcKcW8UpkRrWbgbJC1
-         8oaZXXeXPNwIPA3MQkKoKNYPiuDc1U4nbWKDBBhMgP+WlyEIipet5rZNMmTEa7sX4e5n
-         Kzdw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtHdRbAr+M4W6+NjjB6x6ODv966nUm+fk6jx4KfZ5oONaFXcKn1HjKGfUkfQE9xd6HinJkGdy3sMVYfJXpJmMP0q142YjUaek6RePz
-X-Gm-Message-State: AOJu0YzWLG426pwCuKbb7bRGC/1gTpQuKb5uUXKQYYiwsrhn7rO8Rf86
-	ZewDe8tytAwcy082ngCDVwlh+SwyZQTfYD5sW+pb2FFL9L3zMJF6ZgClkvCXjMQ=
-X-Google-Smtp-Source: AGHT+IFawSrYkpJ5B3GaqjAq4r8y+m8JJXA6riU411Tpew/uqsG/DaM7j/6beI731Cy6xC6aPZPTvg==
-X-Received: by 2002:a05:6870:1682:b0:260:ea0c:acc with SMTP id 586e51a60fabf-2648ccc2102mr942284fac.49.1721795984585;
-        Tue, 23 Jul 2024 21:39:44 -0700 (PDT)
-Received: from localhost ([122.172.84.129])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70cff5527e9sm7734870b3a.138.2024.07.23.21.39.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 21:39:43 -0700 (PDT)
-Date: Wed, 24 Jul 2024 10:09:41 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] cpufreq: powerpc: add missing MODULE_DESCRIPTION()
- macros
-Message-ID: <20240724043941.5wpa5di7ta4fjyl5@vireshk-i7>
-References: <20240722-md-powerpc-drivers-cpufreq-v2-1-bb84d715eb3d@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aGG08Hi0R4gHQ681oqbx1FJ/cZKCUdzcLoN2YOiT/zu4bwLrDdhvZFfFmWcqGkJrM8eQP6GUx/U28shZoCOPC8UZCpRz/OXiDR+QwBQOexoO1qPU/LtXC2TY6YmBr9Nip9VNDJwH+oHzvoi162Q51ymizpWFe+bTfpudov0faR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OGGscUPj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0C1EC32782;
+	Wed, 24 Jul 2024 04:46:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1721796402;
+	bh=dd8dMxMcSNia49oSuAPjZ7+AGLNZdMhtCcNuGyypI8I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OGGscUPjiaC27BvRamKWP+qtNrxmyNPkBnZKsSha//5brV2wZUEDMxvh8UsMJzx3R
+	 Vra5R3kygN8L9vaSJQl9Jr8e4e+4NJ8bVCxMCRyNzjQqVPNBh+5nrbuKg1iqJ0hBoz
+	 LkMi7nDOuWshiMnpm8q8v3nPZjuuo68+AjoHQkG4=
+Date: Wed, 24 Jul 2024 06:46:39 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, liujunliang_ljl@163.com,
+	linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 net] net: usb: sr9700: fix uninitialized variable use
+ in sr_mdio_read
+Message-ID: <2024072426-limping-recycler-5c29@gregkh>
+References: <20240724011554.1445989-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,31 +56,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240722-md-powerpc-drivers-cpufreq-v2-1-bb84d715eb3d@quicinc.com>
+In-Reply-To: <20240724011554.1445989-1-make24@iscas.ac.cn>
 
-On 22-07-24, 10:14, Jeff Johnson wrote:
-> With ARCH=powerpc, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/ppc-cbe-cpufreq.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cpufreq/powernv-cpufreq.o
+On Wed, Jul 24, 2024 at 09:15:54AM +0800, Ma Ke wrote:
+> It could lead to error happen because the variable res is not updated if
+> the call to sr_share_read_word returns an error. In this particular case
+> error code was returned and res stayed uninitialized.
 > 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-> files which have a MODULE_LICENSE().
+> This can be avoided by checking the return value of sr_share_read_word
+> and propagating the error if the read operation failed.
 > 
-> This includes three additional files which, although they did not
-> produce a warning with the powerpc allmodconfig configuration, may
-> cause this warning with specific options enabled in the kernel
-> configuration.
+> Found by code review.
 > 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> Fixes: c9b37458e956 ("USB2NET : SR9700 : One chip USB 1.1 USB2NET SR9700Device Driver Support")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 > ---
 > Changes in v2:
-> - Per Michael Ellerman updated maple-cpufreq.c and powernv-cpufreq.c
->   descriptions
-> - Did not carry forward Viresh Kumar's Acked-by due to this change
-> - Link to v1: https://lore.kernel.org/r/20240614-md-powerpc-drivers-cpufreq-v1-1-de4034d87fd2@quicinc.com
+> - modified the subject as suggestions.
+> ---
+>  drivers/net/usb/sr9700.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Hi,
 
--- 
-viresh
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
