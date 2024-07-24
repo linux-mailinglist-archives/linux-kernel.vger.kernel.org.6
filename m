@@ -1,62 +1,55 @@
-Return-Path: <linux-kernel+bounces-261262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 378C593B4E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:22:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1D2593B4E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6729B1C234E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:22:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F9971C237E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B975415ECC6;
-	Wed, 24 Jul 2024 16:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D286515ECCE;
+	Wed, 24 Jul 2024 16:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="pg3VmUUc"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Amma9G2n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6226515ECE6
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 16:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD9C18E10;
+	Wed, 24 Jul 2024 16:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721838111; cv=none; b=q4dEXlUZ/pKxdQLjZXl5Zge1xWpnxBgz0VQKyJb/9JOhAez+Qz7XCWmZaMj8K5Xm95OdeKh8sST/++DT6unzlZc9Y5xgE4z11o3d8OG6BwNzYOMiJRV5ErduaVUmZYjKR8rw2K4FicAZZys483fynUMtyQq89+UE8MGgpYqYC/8=
+	t=1721838187; cv=none; b=fnicsfEFe26xwf4QxF98Mzi8PyNzYr/APhzEHO96jp+4Rww7lldMvm9SBO3KPVCCVxHe6jLBnh0RtgIGift03q8TB1ip2jyAuuqn8YqrTYPnsW52Lf1oSVRDBXasr+DAADZex4SdZozaC6/xeuUq6u8RSL06Jicz0pbCQfI9Zh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721838111; c=relaxed/simple;
-	bh=vB9Yae19v7LUa5zWDxNrPhM5ExpUn167kiKlRJHhN/E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QcW4vSZkPgiE9pxhcOEJrUvzNrxDcYD/iY3dqgyo9eami38fkifluosH+/VP/VFC1zPamH8Uk/Hgwlb5HCBCr1o4Wt6K5mqrFxL3bgDdzqed9pOHr+NNRgQKy99ytG4uyOWxv6180ZK21jDnU4hD47keMOYtKBdPv5VFHZp66qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=pg3VmUUc; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-113-198.bstnma.fios.verizon.net [173.48.113.198])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 46OGLWub017898
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Jul 2024 12:21:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1721838094; bh=ofF7hcycKI1A3je2myhR7t0W6v1DJnMOehPToQdbRyQ=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=pg3VmUUcM3zAFe/Nj5tA9Qy1lDlgmYnGrjVRjh/xX7yHcndBx7fqWjHenoKbfywT8
-	 lUZbx54qpnqRnxYGF3A6F65zmF6zluUocXbvh2NXFYGBfcakvK5Pb5qEobO1aX7Vkj
-	 xQjjcoWwWcze4wdM/rfoWfQ8AMSbWUVntpuae4JjaNiCwHtXZslF2p8DRChV76BMJJ
-	 LVCR+/uffm6anG/f5HYtqRzCqdB/2pj9higN/B7uRUFWwyIAEHBqS+3UML7z8zhbpl
-	 Bt+eLjzJi+gfQj6S9j+VMLL/easDK+EoR5l2rmOrPtgbpOdpq1Du5z1JrajZ+nZikO
-	 ojwkAweMguM6A==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id CF2F915C0251; Wed, 24 Jul 2024 12:21:32 -0400 (EDT)
-Date: Wed, 24 Jul 2024 12:21:32 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Yuvaraj Ranganathan <yrangana@qti.qualcomm.com>
-Cc: "linux-fscrypt@vger.kernel.org" <linux-fscrypt@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Software encryption at fscrypt causing the filesystem access
- unresponsive
-Message-ID: <20240724162132.GB131596@mit.edu>
-References: <PH0PR02MB731916ECDB6C613665863B6CFFAA2@PH0PR02MB7319.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1721838187; c=relaxed/simple;
+	bh=waqtxyoI1c8LwddMZBPmTXS/fGoT0GGRjxIpfHuAGTE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=muVitMSBriVFXAMKxj3f7oY5NUXG8VL0i1Bbdqr5CZpy2oGBH8670nU4lJTLsgqDnvv04mzvsJxACbpjvZGPUlIWyjrHnT1Vcej6CRQPKVS8eL7IdVZ4wr5NXjtpwD2cHsCET5E3+pTxJR3G1rlnIqoTtJpklqcjtdc4MgfS/UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Amma9G2n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F43CC4AF0F;
+	Wed, 24 Jul 2024 16:23:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721838186;
+	bh=waqtxyoI1c8LwddMZBPmTXS/fGoT0GGRjxIpfHuAGTE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Amma9G2nW50V4idQwZHsRJQYWpfXD3fdjfiSVG2jtopM2RgOoYk/qoeef1L2XaxaP
+	 XV1ZyR8z2JTO41LSEwUjL+YWrVBZzyRKiHdsvIWyd07pFtIRl+GDGb1X+c330FNfK8
+	 qKN4Q80dtvBzJ9zs6RTQDS/MKo8E+dJC9wcJkxppqy75lvyI5YokxhvBFzNVzQSVqA
+	 1VftM4LjtxTtcwEeiO3DrIF4z0TmKEdFhLPDL/FkATOFgZBBI5GU5K6w0NWcuY1QLT
+	 JcTswEgX5d9xmx14eJAwCiNLUe/izCfBKzKEuLOBBkrx4Q8N723mY75dMadSrw4Rcr
+	 l+BWqfGUWAX5w==
+Date: Wed, 24 Jul 2024 11:23:04 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, vigneshr@ti.com, kishon@kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org,
+	ahalaney@redhat.com, srk@ti.com
+Subject: Re: [PATCH] PCI: j721e: Set .map_irq and .swizzle_irq to NULL
+Message-ID: <20240724162304.GA802428@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,19 +58,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <PH0PR02MB731916ECDB6C613665863B6CFFAA2@PH0PR02MB7319.namprd02.prod.outlook.com>
+In-Reply-To: <20240724065048.285838-1-s-vadapalli@ti.com>
 
-On Wed, Jul 24, 2024 at 02:21:26PM +0000, Yuvaraj Ranganathan wrote:
-> Hello developers,
+Subject should say something about why this change is needed, not just
+translate the C code to English.
+
+On Wed, Jul 24, 2024 at 12:20:48PM +0530, Siddharth Vadapalli wrote:
+> Since the configuration of Legacy Interrupts (INTx) is not supported, set
+
+I assume you mean J721E doesn't support INTx?
+
+> the .map_irq and .swizzle_irq callbacks to NULL. This fixes the error:
+>   of_irq_parse_pci: failed with rc=-22
+
+I guess this happens because devm_of_pci_bridge_init() initializes
+.map_irq and .swizzle_irq unconditionally?
+
+I'm not sure the default assumption should be that a host bridge
+supports INTx.
+
+Maybe .map_irq and .swizzle_irq should only be set when we discover
+some information about INTx routing, e.g., an ACPI _PRT or the
+corresponding DT properties.
+
+> due to the absence of Legacy Interrupts in the device-tree.
 > 
-> We are trying to validate a Software file based encryption with
-> standard key by disabling Inline encryption and we are observing the
-> adb session is hung.  We are not able to access the same filesystem
-> at that moment.
+> Fixes: f3e25911a430 ("PCI: j721e: Add TI J721E PCIe driver")
+> Reported-by: Andrew Halaney <ahalaney@redhat.com>
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> ---
+> 
+> Hello,
+> 
+> This patch is based on commit
+> 786c8248dbd3 Merge tag 'perf-tools-fixes-for-v6.11-2024-07-23' of git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools
+> of Mainline Linux.
+> 
+> Patch has been tested on J784S4-EVM and J721e-EVM, both of which have
+> the PCIe Controller configured by the pci-j721e.c driver.
+> 
+> Regards,
+> Siddharth.
+> 
+>  drivers/pci/controller/cadence/pci-j721e.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
+> index 85718246016b..5372218849a8 100644
+> --- a/drivers/pci/controller/cadence/pci-j721e.c
+> +++ b/drivers/pci/controller/cadence/pci-j721e.c
+> @@ -417,6 +417,10 @@ static int j721e_pcie_probe(struct platform_device *pdev)
+>  		if (!bridge)
+>  			return -ENOMEM;
+>  
+> +		/* Legacy interrupts are not supported */
 
-The stack trace seems to indicate that the fast_commit feature is
-enabled.  That's a relatively new feature; can you replicate the hang
-without fast_commit being enabled?
+Say "INTx" explicitly here instead of assuming "legacy" == "INTx".
 
-						- Ted
+> +		bridge->map_irq = NULL;
+> +		bridge->swizzle_irq = NULL;
+> +
+>  		if (!data->byte_access_allowed)
+>  			bridge->ops = &cdns_ti_pcie_host_ops;
+>  		rc = pci_host_bridge_priv(bridge);
+> -- 
+> 2.40.1
+> 
 
