@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-260983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35EC693B139
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:01:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A60393B13C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:01:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5EB4286E36
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:01:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAFD8B23869
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14BCC15B119;
-	Wed, 24 Jul 2024 12:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016BA15B153;
+	Wed, 24 Jul 2024 12:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="ck7efMB/";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="XZx0H1+X"
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="FRnzu5JS";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="eYymLpOT"
 Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB8515A86D;
-	Wed, 24 Jul 2024 12:59:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA7515ADA1;
+	Wed, 24 Jul 2024 12:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721825966; cv=none; b=bfLrs0Fy2LtNLYIux+X4JnfExnQc0fH8eKJ1BpgkuuRcVUWS24s/NczFBPBZE6xWsoVz2xOwsX2hkv4pLwUTeF/+iZ2BtOHlk7F15w/6lASqh8fJOZMNIAMbd+V8wjTlGRP8sKAU9o9drR1rHp9+Pz63/IjwmzZxcRYlKMiqvUM=
+	t=1721825967; cv=none; b=HjjTUp+esTef864PH+4V4RmOnw+eSuodYObZWH8wxWLrgYkfnngGdD1tzwc2O3qzn/QVZ8ROUGlolXurh7clA3rN6cRTGInL/rgtF3w+uL2pyV/FodmnL7bbGNpR6wWAp3AAwy5A8Pc+aLnZ8cYJ5465Jhpf3Y/vn/9wBFkdFjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721825966; c=relaxed/simple;
-	bh=QXVzrJiX54JxzATuKTRirTJQF0y83cMNqMKg4AhdhRc=;
+	s=arc-20240116; t=1721825967; c=relaxed/simple;
+	bh=fEhAbyF9NyXngJqCbaBmOcY8uPUQfQ+ByLcoZ3ulgyo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lrKhSuJniwNdLEROg6ZBsDiVGKCJqliIf+6tKU8qMjN2XBKNUjFuTx2tOKbvH/00Fw19K4U0q83oLi6khLuywILtE8Xs+rGIrpiAx6m4i9t/pIM8e9Djlls+GgWdcQmq6VIFaVne2xXfEeGIwH8xQ9QFVExAhCKf9npt5NdDjOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=ck7efMB/; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=XZx0H1+X reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+	 MIME-Version; b=e3cvQnC7BW7UEvV005PoVVM2Y3JHCj0X09dhjo5LC5kowcEj67JhS2bcNOtSnhFWoenV7FdnTpg+dHLfTSo7TO3NfHlzfm3gDdj4LrJ/T7/MqPcFc1FLiszwYOEda7BekrMgmRcA/xTSMaReKNXFP+IBCxUCqQ+EEAWFe0ERynw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=FRnzu5JS; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=eYymLpOT reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1721825964; x=1753361964;
+  t=1721825965; x=1753361965;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=/R5aDsx8hB6H/wOnLh4KBm0p+Aw8FGHV9al2OrWUyQU=;
-  b=ck7efMB/BbcGnavLy+fd99JGLW/W35SD8aTuHbsIkti296m+FHd1xf3e
-   eb+LLVEjz6Ae5HF0BpQ2MCWdOZSTeLl2y0dFkJUi/ML+lyxUCHVHetPIr
-   TJNv0PxJhTOYa9w4lm+qfKM4n8Gd46S8SUkzlFXGgaNAkxy9/eBxFPmkB
-   5zpNF5+xQSv8PPAIDbywEK6MTLjTbari792Z2S5FheQufaFO/V2KqB4Vt
-   1Vcccbnf1Ayxdf++3YVr2YkAGt9Irbm1+Yiw3rTXFZGPxE9MbHbVG540o
-   I60EAmfaTbWVjqH9aUD66y54mGnYICyoiROYnkeNAExypFKJIQkf4vbwO
-   A==;
-X-CSE-ConnectionGUID: EZXFhIG9ScmCF7RmqaT0Gg==
-X-CSE-MsgGUID: BpKvwvZuRAulhPgI+Pdz9g==
+  bh=kQzLuoQ51RTGXKER6FeBkGzpC5diW/1G5WaKWBmYD8M=;
+  b=FRnzu5JSbmYEGWcVtoTD7JwFZuk1uBuCKnlPQT6ynVb8hx4KUeXD9Qe4
+   mBAnOpjfIoRx+jBWZNDhxXko3acTtve3nMWoDueLigJ/AwQkFYUTIIzNC
+   vPkDZKVoyMQ09o39ZwULQjNLz55jqgyIxvf37RcBYSkkEkjYo0pzxRkOY
+   OlEufl8H3l0blB7QE3SbxogsQE5Tg9UoCRdmOGklY2VcOQDfP4WhiGdsF
+   yy0YWNmX/QjhNS5RDe6GBw6UyZlD4rliM7/pdMae63oWTSAHmnroqRhoR
+   4TRt+wsf1JsPEzJtQ1wlV4SIf86Ag0tWwID187dI1O6CX4tJ0uhLfi2D+
+   w==;
+X-CSE-ConnectionGUID: CFp4y9yaTOKjgmhYuP0tHg==
+X-CSE-MsgGUID: ZwEO5rciR+Sbydw8a7QZyA==
 X-IronPort-AV: E=Sophos;i="6.09,232,1716242400"; 
-   d="scan'208";a="38058829"
+   d="scan'208";a="38058830"
 Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 24 Jul 2024 14:59:22 +0200
-X-CheckPoint: {66A0FAAA-11-CA1431AC-CF855369}
-X-MAIL-CPID: 0C81C03454CAD8424C5C49CF2DD317FC_1
-X-Control-Analysis: str=0001.0A782F26.66A0FAAA.00D0,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 2016D16E009;
-	Wed, 24 Jul 2024 14:59:21 +0200 (CEST)
+  by mx1.tq-group.com with ESMTP; 24 Jul 2024 14:59:23 +0200
+X-CheckPoint: {66A0FAAB-1E-E8EE7C4B-C1098986}
+X-MAIL-CPID: 299CE8E8F7873F39318C5F93AD98CC82_5
+X-Control-Analysis: str=0001.0A782F26.66A0FAAB.0159,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A40451672CE;
+	Wed, 24 Jul 2024 14:59:22 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1721825961; h=from:subject:date:message-id:to:cc:mime-version:
+	s=dkim; t=1721825963; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=/R5aDsx8hB6H/wOnLh4KBm0p+Aw8FGHV9al2OrWUyQU=;
-	b=XZx0H1+Xq0MJtZxTxbR3zpgBC8QeoUNkZmtlerQJMo8sSHbRFgqd1lZ+mauGUAevB4WDoT
-	axR4yZTAPNSE2eDkeJFmSzVZQwxdYkArmbzvp1aT2p3crDDFGngtuBsmj/If1MODtZIyRQ
-	9VAPqdrjdKqaO02j/IeLqqvyfw+zDYwsR88XAa89qmoznjenHw2XXAwHjYXhQp4V0FM0Ux
-	4tzx7EERMJA+1cXPSL6ynOAy1Txn+f3kRoUIpkYRtiB8xTDlFUde7wR59NKDaa+EdzCoY7
-	zPVoJsl7jgUmjsw174Ik9fcT4HG8f8znjOUJ2jvW7hJv0spaGDjdKNdR34dHJQ==
+	bh=kQzLuoQ51RTGXKER6FeBkGzpC5diW/1G5WaKWBmYD8M=;
+	b=eYymLpOT7UI6P5iN+FTJE4gT1DTEihUvT0W09AXm/MBStL8XHvk797zHX46llI2RMkHJ/7
+	8ayrHdCnExIsT5tWDQTmAlGXjUkgvTckP4P8HmHglCXQ+Ua87VVV6gRn2SDpwNT2QJqVT3
+	i2rJNj+Igy1XoZCMvyCFBeobZGdrEGd6uO7i+rnz8aCeJ8SGwp8aiA6DODkskOmHjybgW2
+	DtwRXfVQkIn9ijc+2oMhWzdWCQ5SXxs61Y4UWi2eHAQOv07Cfszj+MpVUhVlNAAVIbnZqr
+	QaeqejTgZbOzSo2Og+zr0bHLIwjC07mAub+n+k0Ya10g3W7vKc/emX1MjV95LA==
 From: Alexander Stein <alexander.stein@ew.tq-group.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -73,15 +73,14 @@ To: Rob Herring <robh@kernel.org>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
 	Fabio Estevam <festevam@gmail.com>,
 	Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-	linux@ew.tq-group.com,
+Cc: linux@ew.tq-group.com,
 	devicetree@vger.kernel.org,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 07/14] arm64: dts: freescale: imx93-tqma9352-mba93xxla: add irq for temp sensor
-Date: Wed, 24 Jul 2024 14:58:54 +0200
-Message-Id: <20240724125901.1391698-8-alexander.stein@ew.tq-group.com>
+Subject: [PATCH 08/14] arm64: dts: freescale: imx93-tqma9352-mba91xxla: Add ethernet aliases
+Date: Wed, 24 Jul 2024 14:58:55 +0200
+Message-Id: <20240724125901.1391698-9-alexander.stein@ew.tq-group.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240724125901.1391698-1-alexander.stein@ew.tq-group.com>
 References: <20240724125901.1391698-1-alexander.stein@ew.tq-group.com>
@@ -94,47 +93,27 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-From: Markus Niebel <Markus.Niebel@ew.tq-group.com>
+They are used by systemd to rename network interfaces to predictable
+interface names, e.g. end0 & end1.
 
-This adds muxing and configuration of the irq output of the temp
-sensor on TQMa93xx that is connected to a GPIO line on MBa93xxLA
-
-While at it, add comment for RTC_EVENT for pcf85063 since the IRQ line
-of both devices on SoM are routed to CPU GPIO on MBa93xxLA.
-
-Signed-off-by: Markus Niebel <Markus.Niebel@ew.tq-group.com>
 Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 ---
- .../boot/dts/freescale/imx93-tqma9352-mba93xxla.dts    | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts b/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts
-index c663b6585c3a..3038c94a1184 100644
+index 3038c94a1184..a8870544514f 100644
 --- a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts
 +++ b/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts
-@@ -452,13 +452,21 @@ &lpuart8 {
- };
+@@ -26,6 +26,8 @@ chosen {
  
- &pcf85063 {
--	/* RTC_EVENT# is connected on MBa93xxLA */
-+	/* RTC_EVENT# from SoM is connected on mainboard */
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_pcf85063>;
- 	interrupt-parent = <&gpio1>;
- 	interrupts = <14 IRQ_TYPE_EDGE_FALLING>;
- };
- 
-+&se97_som {
-+	/* TEMP_EVENT# from SoM is connected on mainboard */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_temp_sensor_som>;
-+	interrupt-parent = <&gpio1>;
-+	interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
-+};
-+
- &tpm5 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_tpm5>;
+ 	aliases {
+ 		eeprom0 = &eeprom0;
++		ethernet0 = &fec;
++		ethernet1 = &eqos;
+ 		rtc0 = &pcf85063;
+ 		rtc1 = &bbnsm_rtc;
+ 	};
 -- 
 2.34.1
 
