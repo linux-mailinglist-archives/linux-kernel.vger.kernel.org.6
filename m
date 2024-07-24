@@ -1,134 +1,175 @@
-Return-Path: <linux-kernel+bounces-261288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDA3D93B53B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:44:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4EB993B5C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2130AB23B98
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:44:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B6941F24800
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A4A15EFA3;
-	Wed, 24 Jul 2024 16:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C8415F3FF;
+	Wed, 24 Jul 2024 17:22:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bxZHiUvg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="yzVreoqU"
+Received: from smtp96.iad3b.emailsrvr.com (smtp96.iad3b.emailsrvr.com [146.20.161.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E022561B;
-	Wed, 24 Jul 2024 16:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE1F18E10
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 17:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=146.20.161.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721839433; cv=none; b=AZZOfpNCr9ARe9hfX+maBCEMhuLp/r/iufjF0Q5YlKzNdnGLNArkMjBjbCPmT4U7WG5Y+Ge7Pf5T0vFXswrAWKKGfK855UfVNz79ptTAmmhTKGCC2HNBCi1fFYM0m5EojO1nGZlOaOqzb/K9uuwhqPKDUJBoAlaanUO5KTYSZs4=
+	t=1721841728; cv=none; b=s9Av7RgsiGQ42YGS0P+5xugfNktEwhf2Uv/Mce64fubx+d9df6aVuYspvCSmxvuV0u4ktrT9Sv6hmc3D5p2dGQZKBVa1zI78mE4UMF/qBWsgOu4q2sezvgQvclzFdT8EFFreGF517A8Wtx58zrx4fXkcc7XLQUCMja2LMiFtFR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721839433; c=relaxed/simple;
-	bh=5JmJLMt7znCx017pyPoIq7UZLeqlEodflBEYHrF8fZE=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=l8Zoj8ANgcZbCYcazivfQvBYnH1s/XUZu4U27sUadIjmaAjaa2zRZYi/7JJZ40nJ9+F4nCtlhE7wkkp6RB7SNXblOv1ubOpGy5LJ7HJ2EJz3CVEQK9PgfhKQWvQoC8KTu6e/2nB+xfy+FxfszWrmUGjr14LcjA87Zm1b21l1gyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bxZHiUvg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06C00C32781;
-	Wed, 24 Jul 2024 16:43:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721839433;
-	bh=5JmJLMt7znCx017pyPoIq7UZLeqlEodflBEYHrF8fZE=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=bxZHiUvgdMDRZyD+uEK7AGz9ydWj6piRkVdNTEMzXbUgH6a9S8WhJK2WlTH/UAQT+
-	 i1O5hFChGTrC1kpcn7tU65mAQuQEPTMJkdMls38ULic5J9qhKqHmxETrZb9o2m5JGB
-	 8rsnE9PHCFOljmgiF+JvLIds1sd/s1QgyA/uMat7+ATCfZ6Muc9WTrcxJtYVR4uNe1
-	 S2MmpN+xVRZnM+beliSZALPZo010JzwpZ06hj+9ZVH+KYQ+Q5E+0xbEXD0x0D0iMC/
-	 biOORFTmwTJyQ6jD1ZiD73Yyr6i/Q2TDRKnI7UqhshKwXnzPqlzCvkBp3XWMOuiZNd
-	 IhDYJMcXZfPPQ==
-Date: Wed, 24 Jul 2024 11:43:51 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1721841728; c=relaxed/simple;
+	bh=p8MHJqgFJTHWju+ZY7FnEi6FhVkz7AcqLJ0K66xW1pA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Sfa9IvQ3ok2HCZT/hI24pDkH5WJ1CwNT1b7s/Ckb5/8L20hyyHTL95RPd0X39UIAcPhHN/1aBgr0r8npRh+/JGxmRWK4B8KKEH603wTwzpS0S0BwXE1mjrA1QHfHshVLjsN1XSa68a9LaI8i99EqjkieRlh8CZfmvmRyb/0YQXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk; spf=pass smtp.mailfrom=mev.co.uk; dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b=yzVreoqU; arc=none smtp.client-ip=146.20.161.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mev.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mev.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
+	s=20221208-6x11dpa4; t=1721839600;
+	bh=p8MHJqgFJTHWju+ZY7FnEi6FhVkz7AcqLJ0K66xW1pA=;
+	h=Date:Subject:To:From:From;
+	b=yzVreoqUx4GpGVMpHmpmAJhohhrCegMzxXBs6hVqNzP16evAOHqYL585PWA5LdXmM
+	 ztjO/H64aE1etWC4L1nFQ4PNt5M/4b0BYfkMuZ9USwEaNyB06c9jEIVP89NnqBU4AA
+	 JPt/sUJrDvB2QUGQHbK/YauAZ+6oKyiVke2bE6Rc=
+X-Auth-ID: abbotti@mev.co.uk
+Received: by smtp5.relay.iad3b.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 12F6D402F8;
+	Wed, 24 Jul 2024 12:46:39 -0400 (EDT)
+Message-ID: <128fc360-39c6-49d7-ba48-66914b1bfe06@mev.co.uk>
+Date: Wed, 24 Jul 2024 17:46:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: fabrice.gasnier@foss.st.com, 
- Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, 
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Lars-Peter Clausen <lars@metafoo.de>, alsa-devel@alsa-project.org, 
- Jonathan Cameron <jic23@kernel.org>, 
- linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, linux-iio@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-In-Reply-To: <20240724153639.803263-5-olivier.moysan@foss.st.com>
-References: <20240724153639.803263-1-olivier.moysan@foss.st.com>
- <20240724153639.803263-5-olivier.moysan@foss.st.com>
-Message-Id: <172183943127.3135721.14675824897973213166.robh@kernel.org>
-Subject: Re: [PATCH v5 4/9] dt-bindings: iio: dfsdm: move to backend
- framework
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH] rtc: ds1343: Force SPI chip select to be active
+ high
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>,
+ Mark Brown <broonie@kernel.org>
+References: <20240710175246.3560207-1-abbotti@mev.co.uk>
+ <20240710184053c34201f0@mail.local>
+Content-Language: en-GB
+From: Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+In-Reply-To: <20240710184053c34201f0@mail.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Classification-ID: 691722cb-01d0-4a2a-a931-9818d622def5-1-1
 
+Greetings,
 
-On Wed, 24 Jul 2024 17:36:32 +0200, Olivier Moysan wrote:
-> Change the DFSDM binding to use the new IIO backend framework,
-> along with the adoption of IIO generic channels.
-> This binding change allows to add scaling support to the DFSDM.
+On 10/07/2024 19:40, Alexandre Belloni wrote:
+> Hello,
 > 
-> Keep the legacy binding as deprecated for backward compatibility.
+> On 10/07/2024 18:52:07+0100, Ian Abbott wrote:
+>> Commit 3b52093dc917 ("rtc: ds1343: Do not hardcode SPI mode flags")
+>> bit-flips (^=) the existing SPI_CS_HIGH setting in the SPI mode during
+>> device probe.  This will set it to the wrong value if the spi-cs-high
+>> property has been set in the devicetree node.  Just force it to be set
+>> active high and get rid of some commentary that attempted to explain why
+>> flipping the bit was the correct choice.
+>>
+>> Fixes: 3b52093dc917 ("rtc: ds1343: Do not hardcode SPI mode flags")
+>> Cc: <stable@vger.kernel.org> # 5.6+
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Cc: Mark Brown <broonie@kernel.org>
+>> Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+>> ---
+>>   drivers/rtc/rtc-ds1343.c | 9 +++------
+>>   1 file changed, 3 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/rtc/rtc-ds1343.c b/drivers/rtc/rtc-ds1343.c
+>> index ed5a6ba89a3e..484b5756b55c 100644
+>> --- a/drivers/rtc/rtc-ds1343.c
+>> +++ b/drivers/rtc/rtc-ds1343.c
+>> @@ -361,13 +361,10 @@ static int ds1343_probe(struct spi_device *spi)
+>>   	if (!priv)
+>>   		return -ENOMEM;
+>>   
+>> -	/* RTC DS1347 works in spi mode 3 and
+>> -	 * its chip select is active high. Active high should be defined as
+>> -	 * "inverse polarity" as GPIO-based chip selects can be logically
+>> -	 * active high but inverted by the GPIO library.
+>> +	/*
+>> +	 * RTC DS1347 works in spi mode 3 and its chip select is active high.
+>>   	 */
+>> -	spi->mode |= SPI_MODE_3;
+>> -	spi->mode ^= SPI_CS_HIGH;
+>> +	spi->mode |= SPI_MODE_3 | SPI_CS_HIGH;
 > 
-> The io-backends property is supported only in generic IIO channel
-> binding.
+> Linus being the gpio maintainer and Mark being the SPI maintainer, I'm
+> pretty sure this was correct at the time.
 > 
-> - Channel description with the generic binding (Audio and Analog):
+> Are you sure you are not missing an active high/low flag on a gpio
+> definition?
 > 
->   Properties superseded by generic properties:
->     st,adc-channels: becomes "reg" property in channel node
->     st,adc-channel-names: becomes "label" property in channel node
->   Properties moved to channel child node:
->     st,adc-channel-types: becomes st,adc-channel-type
->     st,adc-channel-clk-src, st,adc-alt-channel
-> 
-> - Analog binding:
-> 
->   DFSDM filter channel is configured as an IIO backend consumer.
->   Add io-backends property in channel child nodes.
-> 
->   DFSDM is no more configured as a channel consumer from SD modulator.
->   Use of io-channels in DFSDM node is deprecated.
-> 
-> - Audio binding:
-> 
->   DFSDM audio DAI is configured as a channel consumer from DFSDM filter.
->   No change compare to legacy.
-> 
-> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
-> ---
->  .../bindings/iio/adc/st,stm32-dfsdm-adc.yaml  | 124 +++++++++++++++---
->  1 file changed, 108 insertions(+), 16 deletions(-)
+>>   	spi->bits_per_word = 8;
+>>   	res = spi_setup(spi);
+>>   	if (res)
+>> -- 
+>> 2.43.0
+>>
 > 
 
-My bot found errors running 'make dt_binding_check' on your patch:
+I now have an actual SPI controller using cs-gpios with a DS1343 
+connected.  I have tested all 8 combinations of: 
+GPIO_ACTIVE_LOW/GPIO_ACTIVE_HIGH, with/without spi-cs-high, without/with 
+my patch.  Here are my results and observations:
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml:421:4: [error] no new line character at the end of file (new-line-at-end-of-file)
+                                  Final        Final
+GPIO_ACTIVE  spi-cs-high  Patcb  GPIO active  CS high  Works?
+===========  ===========  =====  ===========  =======  =======
+    LOW           No        No      LOW         Yes      No
+    LOW           No        Yes     LOW         Yes      No
+    LOW           Yes       No      HIGH(1)     No       Yes(3)
+    LOW           Yes       Yes     HIGH(1)     Yes      Yes
+    HIGH          No        No      LOW(2)      Yes      No
+    HIGH          No        Yes     LOW(2)      Yes      No
+    HIGH          Yes       No      HIGH        No       Yes(3)
+    HIGH          Yes       Yes     HIGH        Yes      Yes
 
-dtschema/dtc warnings/errors:
+The "Final GPIO active" column refers to the GPIO active state after any 
+quirks have been applied.  The "Final CS High" column refers to whether 
+SPI_CS_HIGH is set in spi->mode when spi_setup() is called.
 
-doc reference errors (make refcheckdocs):
+Notes:
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240724153639.803263-5-olivier.moysan@foss.st.com
+(1) GPIO was forced active high by of_gpio_flags_quirks() before RTC 
+device probed.
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+(2) GPIO was forced active low by of_gpio_flags_quirks() before RTC 
+device probed.
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+(3) Works if cs-gpios being used, but probably will not work for SPI 
+controllers that do not use cs-gpios because SPI_CS_HIGH is not set.
 
-pip3 install dtschema --upgrade
+In summary:
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+1. Without the patch, the RTC device node requires the spi-cs-high 
+property to be present if the SPI controller uses cs-gpios, and requires 
+the spi-cs-high property to be omitted if the SPI controller does not 
+use cs-gpios.  (I think that is a confusing situation.)
+
+2. With the patch, the RTC device node requires the spi-cs-high property 
+to be present if the SPI controller uses cs-gpios, and it does not care 
+about the spi-cs-high property if the SPI controller does not use 
+cs-gpios.  (I therefore think that the patch should be applied so that 
+the device node can just set spi-cs-high without caring whether ht SPI 
+controller uses cs-gpios or not.)
+
+-- 
+-=( Ian Abbott <abbotti@mev.co.uk> || MEV Ltd. is a company  )=-
+-=( registered in England & Wales.  Regd. number: 02862268.  )=-
+-=( Regd. addr.: S11 & 12 Building 67, Europa Business Park, )=-
+-=( Bird Hall Lane, STOCKPORT, SK3 0XA, UK. || www.mev.co.uk )=-
 
 
