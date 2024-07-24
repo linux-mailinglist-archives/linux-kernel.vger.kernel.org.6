@@ -1,73 +1,70 @@
-Return-Path: <linux-kernel+bounces-261168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF9E493B389
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:23:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7817893B38B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:23:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07481B23686
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:23:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A93C31C21348
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52CCF15B13B;
-	Wed, 24 Jul 2024 15:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265A815B13D;
+	Wed, 24 Jul 2024 15:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yeQBcvEe"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JJBsegpZ"
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0B21591EA
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 15:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037D715B102
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 15:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721834586; cv=none; b=UalmOoJdf4AC9/t0Q8qXIzmFtD8l1SA4/uJrUiiYNvOsP9jCz7rlAXWB6tjX36fBZLrFotoyzYT+KGo8ZBoitEadzylWCCo4cOpTYoyK30PDVEST27YR1u/unDHgovwyJ3qVQAt+I3znRYnxgK1abKvPwRE6tImmR/LeAcYBvfQ=
+	t=1721834619; cv=none; b=GTx1cC4AA+oHPvKELes41ppy3TAGnFyQ+yTXvlZY5xWqHMMPuLMPkjrj2JdRzsk42N+itfazfR2M1crNi+N32MXlNRhH6TkPTj3ayGfWPSopfE2whfnIGddA/d0RV0gNDQc7zR7yepnwEdFc9yrhgpm7Xzi+wbwciUOB86E6wqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721834586; c=relaxed/simple;
-	bh=00Lvw4LfeLNWJz764oZVHwF/AIp+LReLlGhG7UY0lyg=;
+	s=arc-20240116; t=1721834619; c=relaxed/simple;
+	bh=CHwhPKFP37wEpm/ioN5s8uvmJdD/vQ3tGPOtk/Tlpfs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HPJWitqlfhiKo3KwYGzIr7ss4A5nJbe5eX1WPiesS/3BUJiSaCGqoN/PHZr4HSulYsGkdfi9dN9s8/xogVHyoCBb5+bx9cNHTzavm6l/+JaOjYuA20fwMFYQOsswUKurmx2luTNm05yJBDTDF1YiiVmyOrVHcw0Q5WWWM2wO4a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yeQBcvEe; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3684e8220f9so582724f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 08:23:04 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=dk58lGJIgFBKe5ZT1T9byhWUswtIC104CP31OB6nvZjAtt7eb2e8CUZXWqpMjLdUEwxHkpLJHvjye4qYi73NzjVpo7P5TCG6UKNVBzJ6Ci5Qof6dZOvHCgSiFPIHKMvVgaKT4z5RAdkXr4yXLvGjZa8kVAEx0dxMfKnlE5APobg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JJBsegpZ; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-7fb3529622dso39000539f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 08:23:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721834583; x=1722439383; darn=vger.kernel.org;
+        d=linuxfoundation.org; s=google; t=1721834617; x=1722439417; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=RPTIoOrTjWqM5QxFKIukuu9F2Sbk+6zfU+HH6r8TZG0=;
-        b=yeQBcvEeK+X/uTsRSeIEmjkvdfgcUsatU846yVu4uAeirVGwsAqgpjV10zvTPl5I53
-         LLg6mF/8tnvM/Fa11FLR5K1zEY2/QBoxjY42BtjCbKytDPIqz52V6LUlJsvQKxpZvtyg
-         xXo4nPF5r9nvrspv/hUj9T8HBXs7oGjvC9g4DYZh9mB/s0M88pkEMHtr3ZcIJVKgib8B
-         P7ez5GkvFDqI2n6dYf5dzqzwNNkFLa8cmFgr43fEGwz/6V4P/Xgk/T61Q8TfFYsThMfi
-         8UezuBGKOvd4mQ0DkipnpZhn01U+WMrbCZ4qc/gspjFXbUCZ4MMWADBplSg7CRAT58M+
-         F/3g==
+        bh=W+2nty6cjNc6kUit4UjMRd4RIDNniOKhIQiJ55zs9FY=;
+        b=JJBsegpZX8BEzOyNqh5eAazcHwUOssJn/oF59KsBMteL4JA+/Jg8WYJLRuRsMsvpOr
+         vZBcjq5mFmYt7t2vfxjRc2rFnHCiluUd3a/29E+8xYX+w/d5EEvGfgNXWHxyIGYLhopF
+         YfQsXnSi8PA82r/HZQrt22Wsn40OSCRyCysHg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721834583; x=1722439383;
+        d=1e100.net; s=20230601; t=1721834617; x=1722439417;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RPTIoOrTjWqM5QxFKIukuu9F2Sbk+6zfU+HH6r8TZG0=;
-        b=tvOxzLMRmJ0BfVMWjHVOnYp6LYxI5Z4VmjOS+osAWqfZw27lIIospvffu4ZPXbu2Ig
-         ssaFvoW2ycHnS1UcI12SVrtr2Q6LTCePJYSMY2diGkIUR18kMcm42f7uiawcBNhFWZ9p
-         S5e8GuBiAKuYNZR1eQqhznlgOHP8KCWm0RQGhfy7wbiikkJHG1yMRzxP9OyLn72rYW1c
-         wlc8AJ5WS4jA3IoyiOJQIOrE4z+E29b2kmJqjkVwLgopZKyqR0PT4W0maGBDXpaSH26p
-         KB/TJtxwxJAfbnpD+wVOXzmrPS/1mpeoKNBzof5gaAt/jViLcCUw4SnOBMmeD3rSAnRD
-         C1yg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvV8mj7lWYUvP0hpZc1xa0w6qHNiqmsXIv4JUrySy0pRVpPCDbHZCNY/QraGmbDcKHtBiO+UtRQh4dFBQyLC509xaqPbhnkHAREtGf
-X-Gm-Message-State: AOJu0Yx/Zg+apvQ888hZZo1YSw2d6/FLcBtI3N+fM/Lznrr+5jPPHWg6
-	Y2XQGdcKf1R2alSBnJ52/VOHoTYS9m1GZyJuFYzxrvXmOZ/qdUZDNud95NW5zpo=
-X-Google-Smtp-Source: AGHT+IELHJAVkBHikq0DcSqT4I8dqH7FzTfBuUEt1ReY+zMY/vj/fnuMfBj4F6YX3djoT4zjmG0n/g==
-X-Received: by 2002:adf:a3d4:0:b0:368:377a:e8bb with SMTP id ffacd0b85a97d-369f6706278mr1513654f8f.28.1721834583106;
-        Wed, 24 Jul 2024 08:23:03 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427f93e667bsm33556575e9.29.2024.07.24.08.23.01
+        bh=W+2nty6cjNc6kUit4UjMRd4RIDNniOKhIQiJ55zs9FY=;
+        b=kJ0XcT6S2PYjbRFeqTH8FGgFRU2oe2y7zGegYsQM0Xf/JuRUiGIbbGU0uCQtyIsKdh
+         Z6QDGI5fPCYUukSGO3F1cVt253r3h6A9m1kHkp8PvBzn7xbw3e/gAGhg8F02gd/m1HYv
+         7xdvGZtCKrSV3BnrXkgf1ukA62qGC6gcoKr4JpSAF0vbRgqXET4N8Kd/q1vWZ0HaOEXR
+         FBO6x7ycIVR5rJwJfBZuUiL4M+y3JQw1sFRuw/ltFED4kOafNkP2AI85FFg9OjAuZnpo
+         FgK8acMI0q03dqQrFnJbJFPqfXVLtg1FNxecvLIKvpKcw+vo8imXJ8rGhaihoO2KtqaH
+         xIlg==
+X-Forwarded-Encrypted: i=1; AJvYcCW1XoPOypnk36P6lwP/ub5m0UXAOeGy141RKpz5z9K4jassW6SR1hMqivZUc0qyQU5qt+mu+fTR4soGfVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyW2gV3O2on3FFf+1zv0fQ2RLwGjUM5fj2uIJpR3rPHiCE6+PwG
+	O82qgi/Nv7DUH6KIVsr71+HvVq/0Qo0Vfxdkg+VZfU4qULHclRQnr4+1Y/oM13Q=
+X-Google-Smtp-Source: AGHT+IHNPxpp8b1HKi2Mg5Fq3XRzdS+oQvqg3rS2l/yx6aMy6ymrH4MIQSeggOMeI8AVRwRXP5kH7Q==
+X-Received: by 2002:a92:c262:0:b0:381:c5f0:20d5 with SMTP id e9e14a558f8ab-39a21777547mr710255ab.0.1721834617131;
+        Wed, 24 Jul 2024 08:23:37 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39a188ff9b3sm6772225ab.66.2024.07.24.08.23.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Jul 2024 08:23:02 -0700 (PDT)
-Message-ID: <50b78571-34b5-4ad9-abc3-0416b3d9b917@linaro.org>
-Date: Wed, 24 Jul 2024 16:23:01 +0100
+        Wed, 24 Jul 2024 08:23:36 -0700 (PDT)
+Message-ID: <3915beef-5428-4cc0-a3d5-59cdc1b6b35e@linuxfoundation.org>
+Date: Wed, 24 Jul 2024 09:23:35 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,78 +72,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf scripts python: cs-etm: Update example to provide
- vmlinux path to Perf
-To: Leo Yan <leo.yan@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Ruidong Tian <tianruidong@linux.alibaba.com>,
- Benjamin Gray <bgray@linux.ibm.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
- gankulkarni@os.amperecomputing.com, mike.leach@linaro.org,
- suzuki.poulose@arm.com
-References: <20240724143319.169745-1-james.clark@linaro.org>
- <225ff37c-0e50-48d5-bb4c-e8a63e72991a@arm.com>
+Subject: Re: [PATCH 6.1 000/105] 6.1.101-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240723180402.490567226@linuxfoundation.org>
 Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <225ff37c-0e50-48d5-bb4c-e8a63e72991a@arm.com>
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240723180402.490567226@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-
-
-On 24/07/2024 4:00 pm, Leo Yan wrote:
-> On 7/24/2024 3:33 PM, James Clark wrote:
->>
->> The example shows the vmlinux path being given to the script, but this
->> only works when running on the target. If the script is run off the
->> target, then confusingly the vmlinux argument also needs to be given to
->> Perf as well.
->>
->> Without going into too much detail in the example about when it is or
->> isn't required, just include it. It doesn't do any harm even when
->> running on the target. Now the example command works in both places.
->>
->> Signed-off-by: James Clark <james.clark@linaro.org>
+On 7/23/24 12:22, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.101 release.
+> There are 105 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> The change makes senses to me.  Just check a bit, does it need to add the same
-> option for the command "only source line and symbols"?
+> Responses should be made by Thu, 25 Jul 2024 18:03:27 +0000.
+> Anything received after that time might be too late.
 > 
-> Thanks,
-> Leo
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.101-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 > 
 
-I assumed that because that one didn't have vmlinux at all then it's 
-just for userspace tracing. I think it's good to have an example without 
-vmlinux to show that it's not a strict requirement.
+Compiled and booted on my test system. No dmesg regressions.
 
->> ---
->>   tools/perf/scripts/python/arm-cs-trace-disasm.py | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/tools/perf/scripts/python/arm-cs-trace-disasm.py b/tools/perf/scripts/python/arm-cs-trace-disasm.py
->> index 7aff02d84ffb..4aeb9b497f7a 100755
->> --- a/tools/perf/scripts/python/arm-cs-trace-disasm.py
->> +++ b/tools/perf/scripts/python/arm-cs-trace-disasm.py
->> @@ -19,10 +19,10 @@ from perf_trace_context import perf_set_itrace_options, \
->>   # Below are some example commands for using this script.
->>   #
->>   # Output disassembly with objdump:
->> -#  perf script -s scripts/python/arm-cs-trace-disasm.py \
->> +#  perf script -k path/to/vmlinux -s scripts/python/arm-cs-trace-disasm.py \
->>   #              -- -d objdump -k path/to/vmlinux
->>   # Output disassembly with llvm-objdump:
->> -#  perf script -s scripts/python/arm-cs-trace-disasm.py \
->> +#  perf script -k path/to/vmlinux -s scripts/python/arm-cs-trace-disasm.py \
->>   #              -- -d llvm-objdump-11 -k path/to/vmlinux
->>   # Output only source line and symbols:
->>   #  perf script -s scripts/python/arm-cs-trace-disasm.py
->> --
->> 2.34.1
->>
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+
+thanks,
+-- Shuah
+
 
