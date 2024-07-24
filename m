@@ -1,159 +1,266 @@
-Return-Path: <linux-kernel+bounces-261432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12B4293B741
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:13:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F6593B742
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 899951F23ED7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:13:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D14E928575A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FED16C69D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659C316C6AB;
 	Wed, 24 Jul 2024 19:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNe8UZtr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lb082w0p";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AAJ2w+Hh";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hsyTMAZR";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="l1oHDOW2"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59550169AC5;
-	Wed, 24 Jul 2024 19:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E50816B3BA;
+	Wed, 24 Jul 2024 19:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721848406; cv=none; b=CfrF2gq65eA45Q/y/Qq7+g23xX9+x+J6OTgevXROwWyn2IKJiMhHDKtQ3vk77IbB5vgLQ5lTgqTA2oetKF4PJxiCq+vT9HOoMqSXXdO6FD/QGBbAlIJ0NXAjW4oivrQCPM1fSo4PzttCHHn+3AC9SOxXYe96UlRMzF8ULEIrl6Q=
+	t=1721848406; cv=none; b=TdTU6GhsiieYAyRP7hl4nJJuyIyWNslHfFseGp4+J8vpJlbfe2smIYhGkNmO8JRBOwr5i498xdsXNhTYXGXfBx49vNUN9dbV/ITKHelzTlIzDDu7GUnc1M3AZSd5fO6lueikd0O7HuHlkLRBAfk+cS2FNkiGH/LHiOBsD8u7s70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721848406; c=relaxed/simple;
-	bh=2lrlzS9qds2GD+/yfxzMA3VPWxbQct5yC0RJ4cs9XgM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RqDSE/Zh8vO9rUNj7hOhxtN19XDjycPBxRQ3J8JNCpENqSGQZH8z7fUuF7PPezcE1Uw3iDK5eeZsmDmUqBHlByxUURs5WnfxIEthik7wGBH9rW24LWHiTvVKweJ1QVwYIWhpm65hk6tr4FuGuCE5lPOxY49q2dlQqdCNp5saaIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WNe8UZtr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7206AC32781;
+	bh=YK7O3DvzNqhg4Atqy9bgSJ/exSVPXbJFfHyu3Zk5KLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ebtfrSA2L+afjmNLdyrMog6f7OfRtYzAhu/j2j+2AlboCvCSFWx6KOqLemOhMEoP0rrX7h4Y+RC0cYFv4R07Zx4oSThbKcVVzoEAxIR8uCzhXM8cEV6Q5MV835+/L5mMZwAEduukGZTxHQgLhU1xLPGvDj6ubGUvi71zdQKbtCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lb082w0p; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AAJ2w+Hh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hsyTMAZR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=l1oHDOW2; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E1776219F2;
 	Wed, 24 Jul 2024 19:13:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721848405;
-	bh=2lrlzS9qds2GD+/yfxzMA3VPWxbQct5yC0RJ4cs9XgM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WNe8UZtrMhNPRcRtdmDVxhGaUpLNOUwLtsNG6P+KzKydotRbbEaljZ4tnIJmx5nG4
-	 /+KCchVkAEPXDSyp25c63NodgiQgDkPt/F4r/uXZ00sK9fkWTagoBP19J9rJyiI6xk
-	 yPOQTfr72PizQFOH2kVdgTgH643XIyVEme/AILd4r6uAd9gNu6mboxnaLSCcE0qyAH
-	 epBGwrQ5XF95uZUchvYBaUk6T7dWbNIEMzBvx6Cv0IwwP3ic6XOEVPqGEYxIM3FU6e
-	 0XzJRKmGjyWtFXNEcS/RX7AJmodYA2NsNXVXPG2zjIibdkn9QYuGn62kVH8606wPmI
-	 /nT5kA89to+mg==
-Message-ID: <980422ea-8c44-47a4-8996-8653bab3ef8a@kernel.org>
-Date: Wed, 24 Jul 2024 21:13:18 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721848402; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XCLAMkAFc+eSaq0gB3aKXiVpCE/NB6K9L07emQn6yHI=;
+	b=lb082w0pqrWOVFbmPi1g2roXF6Chokvg4gsoSu8ik94Ufj73rELPImBfpxoBdo7R/V5M4C
+	vlMzvjFccU+ZykgK8a/tV99/dwsfL/EoXKVuCu0ioVwCroT7E5uoh2EsocjanhmiKahoN7
+	Of4PoVf4d6Xq/Db5SfzzFePxprfXSUA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721848402;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XCLAMkAFc+eSaq0gB3aKXiVpCE/NB6K9L07emQn6yHI=;
+	b=AAJ2w+Hhl5x0/agnfypgBkB1b4EqJijNb7usWxq9Jwmkcms/mqaO8h/2HjCxR1kc2GVcIt
+	Pv/kUkWTUHdTYTDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1721848401; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XCLAMkAFc+eSaq0gB3aKXiVpCE/NB6K9L07emQn6yHI=;
+	b=hsyTMAZRBvzu8DdbVTjGd77bzir+9y7SIJ3/FOM0T8YAsZ31aioVKni44XQmA2nMsc82Hz
+	mzVuMjolL2teNeD9JyZLV42UfP7WXn4LHU++7nRH3Llq/xu3JGMw8HKbO6T0nwxAVNLR/2
+	rdHe/Aj4JKEFOhqOmjB0qKHrU4u5Pqc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1721848401;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XCLAMkAFc+eSaq0gB3aKXiVpCE/NB6K9L07emQn6yHI=;
+	b=l1oHDOW2UXCkRol/feR3wUrG7po5SLN/rDfDGdtkEjluye1s+zsgOoq0Ns6rZu8t43/F9R
+	gIm9urKC4s0tveCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CA11013411;
+	Wed, 24 Jul 2024 19:13:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id +OERMVFSoWascAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 24 Jul 2024 19:13:21 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 67A04A08F2; Wed, 24 Jul 2024 21:13:21 +0200 (CEST)
+Date: Wed, 24 Jul 2024 21:13:21 +0200
+From: Jan Kara <jack@suse.cz>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+	jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+	yi.zhang@huawei.com, yangerkun@huawei.com,
+	Baokun Li <libaokun1@huawei.com>, stable@kernel.org
+Subject: Re: [PATCH 05/20] ext4: fix slab-use-after-free in
+ ext4_split_extent_at()
+Message-ID: <20240724191321.rgdevlcordkjhpgy@quack3>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-6-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: arm: Add device-name in the coresight
- components
-To: Mao Jinlong <quic_jinlmao@quicinc.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, Tingwei Zhang <quic_tingweiz@quicinc.com>,
- Yuanfang Zhang <quic_yuanfang@quicinc.com>,
- Tao Zhang <quic_taozha@quicinc.com>, songchai <quic_songchai@quicinc.com>,
- Jie Gan <quic_jiegan@quicinc.com>
-References: <20240703122340.26864-1-quic_jinlmao@quicinc.com>
- <20240703122340.26864-2-quic_jinlmao@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240703122340.26864-2-quic_jinlmao@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710040654.1714672-6-libaokun@huaweicloud.com>
+X-Spamd-Result: default: False [-2.10 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com,kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -2.10
 
-On 03/07/2024 14:23, Mao Jinlong wrote:
-> Current name of coresight component's folder consists of prefix of
-> the device and the id in the device list. When run 'ls' command,
-> we can get the register address of the device. Take CTI for example,
-> if we want to set the config for modem CTI, but we can't know which
-> CTI is modem CTI from all current information.
+On Wed 10-07-24 12:06:39, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
 > 
-> cti_sys0 -> ../../../devices/platform/soc@0/138f0000.cti/cti_sys0
-> cti_sys1 -> ../../../devices/platform/soc@0/13900000.cti/cti_sys1
+> We hit the following use-after-free:
 > 
-> Add device-name in device tree which can provide a better description
-> of the coresight device. It can provide the info like the system or
-> HW it belongs to.
+> ==================================================================
+> BUG: KASAN: slab-use-after-free in ext4_split_extent_at+0xba8/0xcc0
+> Read of size 2 at addr ffff88810548ed08 by task kworker/u20:0/40
+> CPU: 0 PID: 40 Comm: kworker/u20:0 Not tainted 6.9.0-dirty #724
+> Call Trace:
+>  <TASK>
+>  kasan_report+0x93/0xc0
+>  ext4_split_extent_at+0xba8/0xcc0
+>  ext4_split_extent.isra.0+0x18f/0x500
+>  ext4_split_convert_extents+0x275/0x750
+>  ext4_ext_handle_unwritten_extents+0x73e/0x1580
+>  ext4_ext_map_blocks+0xe20/0x2dc0
+>  ext4_map_blocks+0x724/0x1700
+>  ext4_do_writepages+0x12d6/0x2a70
+> [...]
 > 
-> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
+> Allocated by task 40:
+>  __kmalloc_noprof+0x1ac/0x480
+>  ext4_find_extent+0xf3b/0x1e70
+>  ext4_ext_map_blocks+0x188/0x2dc0
+>  ext4_map_blocks+0x724/0x1700
+>  ext4_do_writepages+0x12d6/0x2a70
+> [...]
+> 
+> Freed by task 40:
+>  kfree+0xf1/0x2b0
+>  ext4_find_extent+0xa71/0x1e70
+>  ext4_ext_insert_extent+0xa22/0x3260
+>  ext4_split_extent_at+0x3ef/0xcc0
+>  ext4_split_extent.isra.0+0x18f/0x500
+>  ext4_split_convert_extents+0x275/0x750
+>  ext4_ext_handle_unwritten_extents+0x73e/0x1580
+>  ext4_ext_map_blocks+0xe20/0x2dc0
+>  ext4_map_blocks+0x724/0x1700
+>  ext4_do_writepages+0x12d6/0x2a70
+> [...]
+> ==================================================================
+> 
+> The flow of issue triggering is as follows:
+> 
+> ext4_split_extent_at
+>   path = *ppath
+>   ext4_ext_insert_extent(ppath)
+>     ext4_ext_create_new_leaf(ppath)
+>       ext4_find_extent(orig_path)
+>         path = *orig_path
+>         read_extent_tree_block
+>           // return -ENOMEM or -EIO
+>         ext4_free_ext_path(path)
+>           kfree(path)
+>         *orig_path = NULL
+>   a. If err is -ENOMEM:
+>   ext4_ext_dirty(path + path->p_depth)
+>   // path use-after-free !!!
+>   b. If err is -EIO and we have EXT_DEBUG defined:
+>   ext4_ext_show_leaf(path)
+>     eh = path[depth].p_hdr
+>     // path also use-after-free !!!
+> 
+> So when trying to zeroout or fix the extent length, call ext4_find_extent()
+> to update the path.
+> 
+> In addition we use *ppath directly as an ext4_ext_show_leaf() input to
+> avoid possible use-after-free when EXT_DEBUG is defined, and to avoid
+> unnecessary path updates.
+> 
+> Fixes: dfe5080939ea ("ext4: drop EXT4_EX_NOFREE_ON_ERR from rest of extents handling code")
+> Cc: stable@kernel.org
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+									Honza
+
 > ---
->  .../devicetree/bindings/arm/arm,coresight-cti.yaml          | 6 ++++++
->  .../devicetree/bindings/arm/arm,coresight-dummy-source.yaml | 6 ++++++
->  .../devicetree/bindings/arm/arm,coresight-stm.yaml          | 6 ++++++
->  .../devicetree/bindings/arm/qcom,coresight-tpdm.yaml        | 6 ++++++
->  4 files changed, 24 insertions(+)
+>  fs/ext4/extents.c | 21 ++++++++++++++++++++-
+>  1 file changed, 20 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml b/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml
-> index 2d5545a2b49c..6a73eaa66a42 100644
-> --- a/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml
-> +++ b/Documentation/devicetree/bindings/arm/arm,coresight-cti.yaml
-> @@ -98,6 +98,12 @@ properties:
->    power-domains:
->      maxItems: 1
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index 6e5b5baf3aa6..3a70a0739af8 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -3252,6 +3252,25 @@ static int ext4_split_extent_at(handle_t *handle,
+>  	if (err != -ENOSPC && err != -EDQUOT && err != -ENOMEM)
+>  		goto out;
 >  
-> +  arm,cs-dev-name:
-> +    $ref: /schemas/types.yaml#/definitions/string
-> +    description:
-> +      Define the name which can describe what kind of HW or system the
-> +      coresight device belongs to.
-
-Don't we use already label for such cases? Power domains, input, leds,
-panels, IIO, hwmon and more.
-
-Best regards,
-Krzysztof
-
+> +	/*
+> +	 * Update path is required because previous ext4_ext_insert_extent()
+> +	 * may have freed or reallocated the path. Using EXT4_EX_NOFAIL
+> +	 * guarantees that ext4_find_extent() will not return -ENOMEM,
+> +	 * otherwise -ENOMEM will cause a retry in do_writepages(), and a
+> +	 * WARN_ON may be triggered in ext4_da_update_reserve_space() due to
+> +	 * an incorrect ee_len causing the i_reserved_data_blocks exception.
+> +	 */
+> +	path = ext4_find_extent(inode, ee_block, ppath,
+> +				flags | EXT4_EX_NOFAIL);
+> +	if (IS_ERR(path)) {
+> +		EXT4_ERROR_INODE(inode, "Failed split extent on %u, err %ld",
+> +				 split, PTR_ERR(path));
+> +		return PTR_ERR(path);
+> +	}
+> +	depth = ext_depth(inode);
+> +	ex = path[depth].p_ext;
+> +	*ppath = path;
+> +
+>  	if (EXT4_EXT_MAY_ZEROOUT & split_flag) {
+>  		if (split_flag & (EXT4_EXT_DATA_VALID1|EXT4_EXT_DATA_VALID2)) {
+>  			if (split_flag & EXT4_EXT_DATA_VALID1) {
+> @@ -3304,7 +3323,7 @@ static int ext4_split_extent_at(handle_t *handle,
+>  	ext4_ext_dirty(handle, inode, path + path->p_depth);
+>  	return err;
+>  out:
+> -	ext4_ext_show_leaf(inode, path);
+> +	ext4_ext_show_leaf(inode, *ppath);
+>  	return err;
+>  }
+>  
+> -- 
+> 2.39.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
