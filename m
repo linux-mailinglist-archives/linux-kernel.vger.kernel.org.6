@@ -1,126 +1,202 @@
-Return-Path: <linux-kernel+bounces-260655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 384F493AC85
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:21:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAEFC93AC89
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69EA41C2227D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 06:21:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 575271F22E8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 06:24:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF99B56446;
-	Wed, 24 Jul 2024 06:21:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0334F615;
+	Wed, 24 Jul 2024 06:23:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oj12oTMZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LGKdxJl9"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10962A955;
-	Wed, 24 Jul 2024 06:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8A94C84;
+	Wed, 24 Jul 2024 06:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721802101; cv=none; b=RMkcvSmMt5JeXfanP6i9NqkKgeAiNU7GAui7YLUGT/qdB5Lo1ewIB3mRi+50XhMMAqeQnjZTugD21ZR2X3tuTtvw/PC6oR662wXpJzM3r2jIA7mfQtS+dNgLh1WCAZmjRIhzM2vzVr92cAsVpIEnjfJlVIQkMux+ko5tT3R7w2A=
+	t=1721802234; cv=none; b=NIUYC99ZzuOaJwTyTK8bX5u71lk6V3/sqqQ/o2TGbyVxibbC+qbYxhiOVHUMSlRsPyXforwgfcmiUOjms+RPK5N+L0WhLqZiQdRW6tOUuOXGIrTIfvztfBZNzoYIB/vPLnJVYbG+4oCEAz3exJvM/iwTIY5ICycl94ac7B2sM/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721802101; c=relaxed/simple;
-	bh=D1LuTU638ouH8Z6/jqHtOXHrtbKTso/WyM5OPDiJmDQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EwCU2iI93Mv+e812oNABbVlbL1wCpx7DkEIpXiNFgm1sBKweN2lL8u13WSb2qWR6tELwpYLh4WL6w9TaaWAXrbT6+eWziz9XgnUbzDmrmDjXkS6zQyMf8a26qoI/M8i/FtRwAtogC1A3TPbUNL6bu6lAIit9ZwyIBfNhEQFayGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oj12oTMZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D88CCC32782;
-	Wed, 24 Jul 2024 06:21:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721802100;
-	bh=D1LuTU638ouH8Z6/jqHtOXHrtbKTso/WyM5OPDiJmDQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Oj12oTMZmIDazNIzLX7aG/SEAuJDsAwJTY9V6/0Pteoir/5aU34EEK3b1bZLnxY1B
-	 SMT7D5QN97NKZFlgg1n14BP1c4wYtKIlWSdVwQce/PulIT4M9mSg1wXWbRLBvgGRIB
-	 4Obq/IGNIAYx0iY972cEEYC7zyXkj1Ggd13OCIZj0tgT2u5Zp6YhuASsM3bXuXS6wt
-	 zYGLIrkn0fYC+T5VfL0qpSocT//JU6J6yGArBTgXetL1CqyoUwkVZJV7xtfBSjQxzF
-	 HTxq6oO5NrTBD2NXpgHvHVFa5r81MuJYqLvMox4/AinrjCqQIS1+i2iZPG5IvdZgeN
-	 K+WBSQ74mY8Og==
-Message-ID: <e4089d9a-9154-46ad-87cb-4d6e43a1661d@kernel.org>
-Date: Wed, 24 Jul 2024 08:21:32 +0200
+	s=arc-20240116; t=1721802234; c=relaxed/simple;
+	bh=Eb6lxp7TzXWJ8OPyM+IY8UNkUrINmqO8ggWvNrgCoOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q9m4kN+Ur0FyfQvh9f7YPmuM8D9Eyb01uRe0jnFKjAM1YIHDikrBq4hJE4Z6GwHgtm2FMzK6vv4lDz9eKGO0jxO+kekBjvGWafvm+5qlPjI6IuL8Fg14SCNhbUoZrvxSrhLYQYLMG81oe90hIml1lOH/fjFyqc2WPJJfLt0Rbu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LGKdxJl9; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46O4uasd008207;
+	Wed, 24 Jul 2024 06:23:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:content-transfer-encoding:in-reply-to; s=pp1; bh=n
+	45njxdt+Fwk6GIVLBkTvX+363dxg4YjF220SXlt21Y=; b=LGKdxJl97HK/rTcDZ
+	AP+rkqyXvRGJJi6O/0C64PfyQlRCJtv6BAebdQtw0+/Gb3G9In9e01lsHam+DYoG
+	3Mha82xeizJKrllcZekaZywse0UMmXZnHXXovKnqDVMb1ckVnMufUWF4XbJ9guFy
+	F2WBAG61VrBRGxS9FRVQahy+cRGMcSjeWgFAQJJR0UmcLnVgUDPLJuWeRrfiUAJI
+	GYQZXhx9fA0emzGwAHkgIahI3w2/0O1yp31vTL23XYmP2ZDZeXebYEvyrvdO6Nen
+	1/dIKDWM1GITO52rHhQC3mCWfnkLO+8IhVrzM7+USHKk5qKj0MpqUo1hzUJxHgaD
+	2vdnQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40jrdv0csx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Jul 2024 06:23:24 +0000 (GMT)
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46O6NOgR011287;
+	Wed, 24 Jul 2024 06:23:24 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40jrdv0csv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Jul 2024 06:23:24 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46O2TKbk006236;
+	Wed, 24 Jul 2024 06:23:23 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 40gqjufq86-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 24 Jul 2024 06:23:23 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46O6NJtd33948278
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 24 Jul 2024 06:23:21 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 767DE20040;
+	Wed, 24 Jul 2024 06:23:19 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C8CB22004E;
+	Wed, 24 Jul 2024 06:23:16 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.124.222.27])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 24 Jul 2024 06:23:16 +0000 (GMT)
+Date: Wed, 24 Jul 2024 11:53:13 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Baokun Li <libaokun@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+        jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com, yangerkun@huawei.com,
+        Baokun Li <libaokun1@huawei.com>,
+        zhanchengbin <zhanchengbin1@huawei.com>
+Subject: Re: [PATCH 02/20] ext4: prevent partial update of the extents path
+Message-ID: <ZqCd0fjFzZt00h6N@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-3-libaokun@huaweicloud.com>
+ <ZpPx3kuO36lp9/Um@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+ <9fd554c7-dc0c-4969-9f2a-1c99356fccce@huaweicloud.com>
+ <d33cfec3-4d72-41dc-b020-f17f726ba719@huaweicloud.com>
+ <ZpZDSMFbziWq5xOK@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+ <9ef38162-2eeb-4cf6-aee4-02d6a5952757@huaweicloud.com>
+ <ZpdR4pN8IJajB9xc@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+ <9fcb1d52-520f-425f-8b83-debeda423483@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] bingdings: can: flexcan: move fsl,imx95-flexcan
- standalone
-To: Frank Li <Frank.Li@nxp.com>, Marc Kleine-Budde <mkl@pengutronix.de>,
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- haibo.chen@nxp.com, imx@lists.linux.dev, han.xu@nxp.com
-References: <20240723-flexcan-v3-0-084056119ac8@nxp.com>
- <20240723-flexcan-v3-1-084056119ac8@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240723-flexcan-v3-1-084056119ac8@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9fcb1d52-520f-425f-8b83-debeda423483@huaweicloud.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: nrctnOASPauZe-MUWHd9562IaPzxXm9y
+X-Proofpoint-GUID: -AEmKOyvb3SP1VvEPLboFrRL-0g9NSl-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-24_03,2024-07-23_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ malwarescore=0 phishscore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0
+ mlxlogscore=739 priorityscore=1501 suspectscore=0 mlxscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2407240042
 
-On 23/07/2024 22:48, Frank Li wrote:
-> From: Haibo Chen <haibo.chen@nxp.com>
+On Wed, Jul 17, 2024 at 02:11:27PM +0800, Baokun Li wrote:
+> On 2024/7/17 13:29, Ojaswin Mujoo wrote:
+> > On Tue, Jul 16, 2024 at 07:54:43PM +0800, Baokun Li wrote:
+> > > Hi Ojaswin,
+> > > 
+> > > On 2024/7/16 17:54, Ojaswin Mujoo wrote:
+> > > > > > But the journal will ensure the consistency of the extents path after
+> > > > > > this patch.
+> > > > > > 
+> > > > > > When ext4_ext_get_access() or ext4_ext_dirty() returns an error in
+> > > > > > ext4_ext_rm_idx() and ext4_ext_correct_indexes(), this may cause
+> > > > > > the extents tree to be inconsistent. But the inconsistency just
+> > > > > > exists in memory and doesn't land on disk.
+> > > > > > 
+> > > > > > For ext4_ext_get_access(), the handle must have been aborted
+> > > > > > when it returned an error, as follows:
+> > > > > ext4_ext_get_access
+> > > > >    ext4_journal_get_write_access
+> > > > >     __ext4_journal_get_write_access
+> > > > >      err = jbd2_journal_get_write_access
+> > > > >      if (err)
+> > > > >        ext4_journal_abort_handle
+> > > > > > For ext4_ext_dirty(), since path->p_bh must not be null and handle
+> > > > > > must be valid, handle is aborted anyway when an error is returned:
+> > > > > ext4_ext_dirty
+> > > > >    __ext4_ext_dirty
+> > > > >     if (path->p_bh)
+> > > > >       __ext4_handle_dirty_metadata
+> > > > >        if (ext4_handle_valid(handle))
+> > > > >          err = jbd2_journal_dirty_metadata
+> > > > >           if (!is_handle_aborted(handle) && WARN_ON_ONCE(err))
+> > > > >             ext4_journal_abort_handle
+> > > > > > Thus the extents tree will only be inconsistent in memory, so only
+> > > > > > the verified bit of the modified buffer needs to be cleared to avoid
+> > > > > > these inconsistent data being used in memory.
+> > > > > > 
+> > > > > Regards,
+> > > > > Baokun
+> > > > Thanks for the explanation Baokun, so basically we only have the
+> > > > inconsitency in the memory.
+> > > > 
+> > > > I do have a followup questions:
+> > > > 
+> > > > So in the above example, after we have the error, we'll have the buffer
+> > > > for depth=0 marked as valid but pointing to the wrong ei_block.
+> > > It looks wrong here. When there is an error, the ei_block of the
+> > > unmodified buffer with depth=0 is the correct one, it is indeed
+> > > 'valid' and it is consistent with the disk. Only buffers that were
+> > Hey Baokun,
+> > 
+> > Ahh I see now, I was looking at it the wrong way. So basically since
+> > depth 1 to 4 is inconsistent to the disk we mark then non verified so
+> > then subsequent lookups can act accordingly.
+> > 
+> > Thanks for the explanation! I am in the middle of testing this patchset
+> > with xfstests on a POWERPC system with 64k page size. I'll let you know
+> > how that goes!
+> > 
+> > Regards,
+> > Ojaswin
 > 
-> The flexcan in iMX95 is not compatible with imx93 because wakeup method is
-> difference. Make fsl,imx95-flexcan not fallback to fsl,imx93-flexcan.
+> Hi Ojaswin,
+> 
+> Thank you for the test and feedback!
+> 
+> Cheers,
+> Baokun
 
-Subject: dt-bindings:
+Hey Baokun,
 
+The xfstests pass for sub page size as well as bs = page size for
+POWERPC with no new regressions.
 
-Best regards,
-Krzysztof
+Although for this particular patch I doubt if we would be able to
+exersice the error path using xfstests. We might need to artifically 
+inject error in ext4_ext_get_access or ext4_ext_dirty.  Do you have any
+other way of testing this? 
 
+Also, just curious whether you came across this bug during code reading
+or were you actually hitting it?
+
+Regards,
+Ojaswin
+> 
 
