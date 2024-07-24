@@ -1,284 +1,117 @@
-Return-Path: <linux-kernel+bounces-261157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C23C93B35D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:10:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 134ED93B36E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:13:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E8F91C22AB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:10:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDD6E1C23732
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:13:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81E2C15B0EE;
-	Wed, 24 Jul 2024 15:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1902C15B122;
+	Wed, 24 Jul 2024 15:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TJa5KS6z"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TJ6JKi9i"
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0CA158DA3
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 15:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE057158DA3
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 15:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721833806; cv=none; b=SV1mplGgBsNNlX4EgM4rBpa3kVURLyUlBiY/lFKDxRjGDXaQBFK6AvaXIvqPHQUJGjcEUumh4+MtIS2wj8krik2IEkv2deeqksUSyCE1jElAqgrpSt1Pk3wsFCedO24QIDWq/ogrwAGpmQLenpYMw+xuV2rfvp8vhR1fEBTH5w0=
+	t=1721834010; cv=none; b=jZWvIPIe6Fz1ty6t8j2OkosRQcrrs/9GahU0o/Ib2cgvauF5kl6tL6d3sRBE4+WXdUS4hIz8zhOmP2o87xTlLbw8ffDVDNK4H8tvldJ1HS/2GAmNd28tkzN66IvZLQGI1pUa3vsCQrdHK65YwQ6MrcPMFHLpfH4+/PW9Mruwu7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721833806; c=relaxed/simple;
-	bh=QY6KBs5sCXbAurZdEDfy2yTv3p4j/EuLQieJ8axoEEw=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QE4Mfj0W7ib+1Q6Y2a2VSRELPCi7byKvVz4zgzK05llupANDGVrQlLmHApyMVGmCj3/55y7fT75Nb9RCXC9vniLQP26aHU33Jv3cwekcB3PfMyVXogtA1iOtW6I6vXXphaX2qHOYLgi6t4p99HpG3+9DmZo/J0fuHYdg90EKht0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TJa5KS6z; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52f0277daa5so5911575e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 08:10:04 -0700 (PDT)
+	s=arc-20240116; t=1721834010; c=relaxed/simple;
+	bh=PiKiMeVMpEMyORv6wqPxrhhwhf+nk3ai60FMDdvmZ1c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WSDBT9GRnpkk47REc0ekR6NnILcYzdofpt/OR9d2m4MjC/t5N6wmA9MnilwWZDecjhONpS26vJUbVLhPG9otufI+IKM6FeZ0Y4A1koSjLl8qjoN96NoeVskBj8oCk3QAnvpLuW63xwm/iarAnHf7sIn3W26d9IA4Dt9sbM8RBRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TJ6JKi9i; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7fb4ac767c7so33173939f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 08:13:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721833803; x=1722438603; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wrn+2L2J3l+O5LKB4lMvA6eRmgJO2t1OuP7DCfHiNX0=;
-        b=TJa5KS6zBHEc1RXTIuRJ5HLRmodpmYcIu6FLbcikZaRZ0GOC0j/x+lsY3Qsu66wpy2
-         9d7HfAv5aDuQkxBFvevof5D0QlbvM5LeZVSKVrMMfOwW9JGUItWI0HD0SfMAmTtcOPOs
-         mtovHYduIx/tzkqm2i6PizfhAJQ/5qNZ9ZtHuj6it8HiSYaMSzwLKQkzMy66UP2nBdEm
-         +Rn+ZWW/SEDC4PwkV70hfE6jP9I1sy3yRDCSl1h2t+fwR1GOPaA/EdXTmgRrL1G+TvVW
-         5HnR1t67ZzGpr2MPUwLsH7LrtFuAcaiqubfn3sRqLFdem9mLRy0cBH6/9FZd7cdmWmRK
-         LBeQ==
+        d=linuxfoundation.org; s=google; t=1721834008; x=1722438808; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=izbTRiVUnoJj8uduUMVBVNFl+ePHNjaDWB/ZfOAgS4E=;
+        b=TJ6JKi9iQJVUxs0EFmjWEzM78cnzWJHZxwBzCjAX447wR6C73fptg8q8CsQ+RHvp24
+         LXMZjDLc7IS5N0SBXwlFvo5KgoDPk88++JGII9tkb4+CqEd+wWYJUrkPLX/ymWJRvaMT
+         tvXNeJY20E1a7WQ9m1lvN06nSekJ/htyqxafA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721833803; x=1722438603;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wrn+2L2J3l+O5LKB4lMvA6eRmgJO2t1OuP7DCfHiNX0=;
-        b=j7ZJKU7FiUDHmvxwl6OA2lRmjZvLrEq0wKHg+/ro9kKeocwzm5+n+v9wMdJh5Mbqiz
-         9IjnyQ42UyH+Wi9VvSDdbFHZQJy55ik+nAPJtVEq1/INyflCwsaKHlTGMA04kyooN8xd
-         4fzqfG0datb8OfC/Qvwzu6XA/w3vDMsZeoXByhQShc7mDgtoeYbslICpcH+ExHa045KM
-         x44DO1VVKQLN6+YXZMVNG+iRuADccbv90y0l7+LqRWL/QCat1HQAav+5mc8hkLuWJpbB
-         4YWLq+4NccNCx4CcREWdej494vfq574ZBsXntxZzV67lL2Ruy3KShnX44wEOE4RViRg4
-         ir3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWFiDYtMj9wrVEr47aTpD+hEu7Mg5AupLP3zMbAmwQZTH09iGvWyG3RtkXhLJ2mVOwvuc585JZg0/exq7awBH6b5HtFiNFyVg3xarzb
-X-Gm-Message-State: AOJu0YyOzfTB66E436lazsNZROv0cWGfchhcaaT3bNKRw2jAN0ATjGvm
-	X82ZREx10wDtFwW5jm1aij2OHtzvtAQrjYqkSGj5DUSoPJhea0yM
-X-Google-Smtp-Source: AGHT+IHDPBxN5xxAPAbJb/lsNABWyt8VCCzYmydonGh2j7ufP5sX07N9OjQ8QuGnBhkMCvodEU94WQ==
-X-Received: by 2002:a05:6512:ea1:b0:52c:d9b3:2b06 with SMTP id 2adb3069b0e04-52efb859ef2mr9666902e87.58.1721833802485;
-        Wed, 24 Jul 2024 08:10:02 -0700 (PDT)
-Received: from pc636 (host-90-233-213-186.mobileonline.telia.com. [90.233.213.186])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd10f7ea1sm177759e87.22.2024.07.24.08.10.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 08:10:02 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Wed, 24 Jul 2024 17:09:59 +0200
-To: Adrian Huang <adrianhuang0701@gmail.com>
-Cc: Adrian Huang <adrianhuang0701@gmail.com>, ahuang12@lenovo.com,
-	akpm@linux-foundation.org, hch@infradead.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	peterz@infradead.org, sunjw10@lenovo.com
-Subject: Re: [PATCH 1/1] mm/vmalloc: Add preempt point in purge_vmap_node()
- when enabling kasan
-Message-ID: <ZqEZRyOVEAaqyCuU@pc636>
-References: <Zp-K_A60DjlDhlRt@pc636>
- <20240724124624.27673-1-ahuang12@lenovo.com>
- <ZqEQhUWTUWWFA4ek@pc636>
+        d=1e100.net; s=20230601; t=1721834008; x=1722438808;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=izbTRiVUnoJj8uduUMVBVNFl+ePHNjaDWB/ZfOAgS4E=;
+        b=bveNMH5b6OD23WjXgRKUvLQs9jKcTH39Fq/MrlIBLGVe5r5pirpNEixBFkAN8eIkFW
+         gTSof7O7RpNqywwAGptL+TPSIW8w9o68Yy60inbeZ6Xxnc3GSYMsZkWkw6McafDXfe52
+         1MRK7UfJGsgbqpXsJQhNGms6fazipzLVETcRp+R0ftJGOp8yL4mgRVsG5CsNQg8mye8a
+         a3mzQOc1UgwztYLFIPlSCUSPxzbPyT3mN+OBA0T0+GwiUCvpl3kK3zJEYlrIvWHvJgHQ
+         NMKe0IJ2tEydLOvs/6hyD7+Hj0uCJruCOF7W08EdyKXal0gSBUmQv8fW/mDaxcmPwZnG
+         8lmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV2vX9JImEnXMHrxfM/VOVChIMBb/2/b1CKueNNrSfEnCiQi7JrqT/MNhzwqNlaJB3qaVinvUv7fQslnSZcrsZ7jRqLAXyUA/ZBOler
+X-Gm-Message-State: AOJu0YxiO8M22hJzd7ZvsEp0ZxLqAXu+I4ymaiKYNVkCVwpqEdUK5teB
+	3bYUFYYRpO0zkN3DEdtmSn7+1MG61ZNzIrHKtnagEJoO6ebk4Ipq5WifvQkyqVs=
+X-Google-Smtp-Source: AGHT+IEUr2/8iC/dgeBTNLSWyU1KAMScdHfHVYW03/ZVZBKEuh831Prbb8KLZ6d9w3RyRON2TbDAvQ==
+X-Received: by 2002:a5d:9f5a:0:b0:803:f97f:59e1 with SMTP id ca18e2360f4ac-81f7bc78dfemr13570839f.0.1721834007941;
+        Wed, 24 Jul 2024 08:13:27 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-81f7158d724sm53731839f.1.2024.07.24.08.13.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Jul 2024 08:13:27 -0700 (PDT)
+Message-ID: <671007f2-d57e-49b1-91af-a4e693f11ac5@linuxfoundation.org>
+Date: Wed, 24 Jul 2024 09:13:26 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZqEQhUWTUWWFA4ek@pc636>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.10 00/11] 6.10.1-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240723122838.406690588@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240723122838.406690588@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 24, 2024 at 04:32:37PM +0200, Uladzislau Rezki wrote:
-> On Wed, Jul 24, 2024 at 08:46:24PM +0800, Adrian Huang wrote:
-> > > It works great and does not generate the soft-lock-up splat :)
-> > > See below some comments:
-> > 
-> > Great. Thanks for the confirmation.
-> > 
-> > <snip>
-> > 
-> > >> +     kasan_release_vmalloc(start, end, start, end, KASAN_VMALLOC_TLB_FLUSH);
-> > >> +
-> > >>
-> > > Do we need it here? We just did the TLB flush for en entire range in the
-> > > __purge_vmap_area_lazy(). So, it is two times invoked and looks odd to me.
-> > >
-> > > Am i missing something?
-> > 
-> > 1. The TLB flush for the entire range in __purge_vmap_area_lazy() is for
-> > the vmalloc virtual address (VMALLOC_START->VMALLOC_END).
-> > 
-> > 2. The TLB flush in purge_vmap_node() is for the KASAN shadow virtual address 
-> > (the shadow offset 'CONFIG_KASAN_SHADOW_OFFSET' is defined in .config).
-> > 
-> Correct. It deals with a shadow region!
+On 7/23/24 06:28, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.10.1 release.
+> There are 11 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> >
-> > BTW, I found my first patch has the potential risk. We need to flush TLB of
-> > the KASAN shadow virtual address firstly. Please see the following patch for
-> > detail. (I put the comment in the following patch). The following patch
-> > also works well on my 256-core machine.
-> > 
-> I noticed that and it would be my second question :)
+> Responses should be made by Thu, 25 Jul 2024 12:28:30 +0000.
+> Anything received after that time might be too late.
 > 
-> >
-> > If you're ok with the patch, I'll submit it for upstream review. And, may I
-> > have your tag(s): tested-by/reviewed-by? (If possible, could you please have
-> > a test for the following patch).
-> > 
-> I am OK. I will test and get back soon.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.1-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
+> and the diffstat can be found below.
 > 
-> > Thanks.
-> > 
-> > ---
-> > diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-> > index 70d6a8f6e25d..ddbf42a1a7b7 100644
-> > --- a/include/linux/kasan.h
-> > +++ b/include/linux/kasan.h
-> > @@ -55,6 +55,9 @@ extern p4d_t kasan_early_shadow_p4d[MAX_PTRS_PER_P4D];
-> >  int kasan_populate_early_shadow(const void *shadow_start,
-> >  				const void *shadow_end);
-> >  
-> > +#define KASAN_VMALLOC_PAGE_RANGE 0x1 /* Apply exsiting page range */
-> > +#define KASAN_VMALLOC_TLB_FLUSH  0x2 /* TLB flush */
-> > +
-> >  #ifndef kasan_mem_to_shadow
-> >  static inline void *kasan_mem_to_shadow(const void *addr)
-> >  {
-> > @@ -511,7 +514,8 @@ void kasan_populate_early_vm_area_shadow(void *start, unsigned long size);
-> >  int kasan_populate_vmalloc(unsigned long addr, unsigned long size);
-> >  void kasan_release_vmalloc(unsigned long start, unsigned long end,
-> >  			   unsigned long free_region_start,
-> > -			   unsigned long free_region_end);
-> > +			   unsigned long free_region_end,
-> > +			   unsigned long flags);
-> >  
-> >  #else /* CONFIG_KASAN_GENERIC || CONFIG_KASAN_SW_TAGS */
-> >  
-> > @@ -526,7 +530,8 @@ static inline int kasan_populate_vmalloc(unsigned long start,
-> >  static inline void kasan_release_vmalloc(unsigned long start,
-> >  					 unsigned long end,
-> >  					 unsigned long free_region_start,
-> > -					 unsigned long free_region_end) { }
-> > +					 unsigned long free_region_end,
-> > +					 unsigned long flags) { }
-> >  
-> >  #endif /* CONFIG_KASAN_GENERIC || CONFIG_KASAN_SW_TAGS */
-> >  
-> > @@ -561,7 +566,8 @@ static inline int kasan_populate_vmalloc(unsigned long start,
-> >  static inline void kasan_release_vmalloc(unsigned long start,
-> >  					 unsigned long end,
-> >  					 unsigned long free_region_start,
-> > -					 unsigned long free_region_end) { }
-> > +					 unsigned long free_region_end,
-> > +					 unsigned long flags) { }
-> >  
-> >  static inline void *kasan_unpoison_vmalloc(const void *start,
-> >  					   unsigned long size,
-> > diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
-> > index d6210ca48dda..88d1c9dcb507 100644
-> > --- a/mm/kasan/shadow.c
-> > +++ b/mm/kasan/shadow.c
-> > @@ -489,7 +489,8 @@ static int kasan_depopulate_vmalloc_pte(pte_t *ptep, unsigned long addr,
-> >   */
-> >  void kasan_release_vmalloc(unsigned long start, unsigned long end,
-> >  			   unsigned long free_region_start,
-> > -			   unsigned long free_region_end)
-> > +			   unsigned long free_region_end,
-> > +			   unsigned long flags)
-> >  {
-> >  	void *shadow_start, *shadow_end;
-> >  	unsigned long region_start, region_end;
-> > @@ -522,12 +523,17 @@ void kasan_release_vmalloc(unsigned long start, unsigned long end,
-> >  			__memset(shadow_start, KASAN_SHADOW_INIT, shadow_end - shadow_start);
-> >  			return;
-> >  		}
-> > -		apply_to_existing_page_range(&init_mm,
-> > +
-> > +
-> > +		if (flags & KASAN_VMALLOC_PAGE_RANGE)
-> > +			apply_to_existing_page_range(&init_mm,
-> >  					     (unsigned long)shadow_start,
-> >  					     size, kasan_depopulate_vmalloc_pte,
-> >  					     NULL);
-> > -		flush_tlb_kernel_range((unsigned long)shadow_start,
-> > -				       (unsigned long)shadow_end);
-> > +
-> > +		if (flags & KASAN_VMALLOC_TLB_FLUSH)
-> > +			flush_tlb_kernel_range((unsigned long)shadow_start,
-> > +					       (unsigned long)shadow_end);
-> >  	}
-> >  }
-> >  
-> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > index e34ea860153f..12cdc92cdb83 100644
-> > --- a/mm/vmalloc.c
-> > +++ b/mm/vmalloc.c
-> > @@ -2193,8 +2193,22 @@ static void purge_vmap_node(struct work_struct *work)
-> >  	struct vmap_area *va, *n_va;
-> >  	LIST_HEAD(local_list);
-remove the space.
-> >  
-> > +	unsigned long start;
-> > +	unsigned long end;
-> > +
-> >  	vn->nr_purged = 0;
-> >  
-> > +	start = list_first_entry(&vn->purge_list, struct vmap_area, list)->va_start;
-no need to have an extra space.
-> > +
-> > +	end = list_last_entry(&vn->purge_list, struct vmap_area, list)->va_end;
-> > +
-> > +	/*
-> > +	 * Since node_pool_add_va() returns vmap_area(s) to its pool, the
-> > +	 * returned vmap_area(s) might be grabbed immediately via node_alloc()
-> > +	 * by other core. We need to flush TLB firstly.
-> > +	 */
-> > +	kasan_release_vmalloc(start, end, start, end, KASAN_VMALLOC_TLB_FLUSH);
-> > +
-> >  	list_for_each_entry_safe(va, n_va, &vn->purge_list, list) {
-> >  		unsigned long nr = (va->va_end - va->va_start) >> PAGE_SHIFT;
-> >  		unsigned long orig_start = va->va_start;
-> > @@ -2205,7 +2219,8 @@ static void purge_vmap_node(struct work_struct *work)
-> >  
-> >  		if (is_vmalloc_or_module_addr((void *)orig_start))
-> >  			kasan_release_vmalloc(orig_start, orig_end,
-> > -					      va->va_start, va->va_end);
-> > +					      va->va_start, va->va_end,
-> > +					      KASAN_VMALLOC_PAGE_RANGE);
->
-orig_start and orig_end are unnecessary now. But it can be removed by
-an extra patch!
+> thanks,
+> 
+> greg k-h
+> 
 
-> >  
-> >  		atomic_long_sub(nr, &vmap_lazy_nr);
-> >  		vn->nr_purged++;
-> > @@ -4726,7 +4741,8 @@ struct vm_struct **pcpu_get_vm_areas(const unsigned long *offsets,
-> >  				&free_vmap_area_list);
-> >  		if (va)
-> >  			kasan_release_vmalloc(orig_start, orig_end,
-> > -				va->va_start, va->va_end);
-> > +				va->va_start, va->va_end,
-> > +				KASAN_VMALLOC_PAGE_RANGE | KASAN_VMALLOC_TLB_FLUSH);
-> >  		vas[area] = NULL;
-> >  	}
-> >  
-> > @@ -4776,7 +4792,8 @@ struct vm_struct **pcpu_get_vm_areas(const unsigned long *offsets,
-> >  				&free_vmap_area_list);
-> >  		if (va)
-> >  			kasan_release_vmalloc(orig_start, orig_end,
-> > -				va->va_start, va->va_end);
-> > +				va->va_start, va->va_end,
-> > +				KASAN_VMALLOC_PAGE_RANGE | KASAN_VMALLOC_TLB_FLUSH);
-> >  		vas[area] = NULL;
-> >  		kfree(vms[area]);
-> >  	}
-Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-Tested-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+Compiled and booted on my test system. No dmesg regressions.
 
-Thank you.
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
---
-Uladzislau Rezki
+thanks,
+-- Shuah
 
