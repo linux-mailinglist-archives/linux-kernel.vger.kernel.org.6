@@ -1,131 +1,126 @@
-Return-Path: <linux-kernel+bounces-260787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61E6F93AE3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:00:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E525E93AE42
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:03:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3A93B218B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:00:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0547B28513E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFF914A4C5;
-	Wed, 24 Jul 2024 09:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6BF314C591;
+	Wed, 24 Jul 2024 09:03:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKnfrur8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UMRHJkNx"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7561C6B4;
-	Wed, 24 Jul 2024 09:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E35F1C6B4;
+	Wed, 24 Jul 2024 09:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721811637; cv=none; b=adGXPMMvrsIvzdAroS9/Yvw4KFydrJk7HjhMhmHSQCTtT4KEgbUGJeNmLljKyv92X2BjdFuxTUDr1AKcbb2364uEtzauVkl6uPZHC4Vlh/XKDIAcfjDM1aAN9Iez5lGA+OJoXi68Tk3JatFVB0Cf/6RgZHyR31pLLU8i59kmeSI=
+	t=1721811823; cv=none; b=h3qQd9w08KuYuM6davhSyueBBD1xWtMnJ/K3iIaJbQD2zULBDq04lWn7e+WKXyPH5Fh4G84fxs5tcH8E3J8JZmCfWQCAKjjbf/7SZsYicUyb8uabAR0xvAyJ3LpRu43aQZHuSwE28Dhns0a3o1Vw7xh2fuJ9ZBIv8n6cVo32CQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721811637; c=relaxed/simple;
-	bh=F4O+Zf9qZR+mayJlSoPggC7LSwt3hxqj2dXIYA9zuVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YxLtAWqEaOH0UhAAvKDPyp7nZ7DfjshOy0dGa9X4Eus1qUgd1VNSFLXlkosgz6FC2481ABuuTd7gWPeOMZV35fiwSRIdPoSss6NDGIO5PJYrC4YNLYsz1TxwlCP9N0/qT9zy8VGxXKrBmJX1H93PrDNgAuoAAVK3iRwPH+3N3Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKnfrur8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95F14C4AF0B;
-	Wed, 24 Jul 2024 09:00:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721811637;
-	bh=F4O+Zf9qZR+mayJlSoPggC7LSwt3hxqj2dXIYA9zuVE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UKnfrur8MnE5bsGXbjkfjIw5Jki3VFsIGz52Camyw3RntcmwcRHGwuVTkrG32t9n8
-	 blH0gTFWsF4KmbWmW8Ww82rQtonqKzwNHo21hb4yGkUt5dIa3qh5Y+qadCULVji958
-	 umYtzu4dUPLGbBS94ikOQezyiU4gqb16X5wCy84OE3E24RcrxpX51qONqI94kQ3T/P
-	 dcEZtVjy2inE5ZzO9V+fb/Qhlnybg7kV+kTddO9AvWZfIxxQ30Fis0CrznSWDmIxXd
-	 fyK+ZTir1TFv5ZU443PjoQvCNHKTnJEDAnN1gtBPkcbJdvjHZRIbkqWYK34eK7eWLe
-	 0gHiLj7AtBnzg==
-Date: Wed, 24 Jul 2024 14:30:33 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>
-Subject: Re: linux-next: manual merge of the phy-next tree with the
- samsung-krzk tree
-Message-ID: <ZqDCsdWy7Uq7m9Is@matsya>
-References: <20240703141932.47e51748@canb.auug.org.au>
- <20240724091458.3052dc6f@canb.auug.org.au>
- <a1b7ce4bce1826e9c231677bb221aa44dc842e24.camel@linaro.org>
+	s=arc-20240116; t=1721811823; c=relaxed/simple;
+	bh=CXO/oCJPXkmg5ipVzpiYFapSfyktKmNvea8mWTccJpQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XoUVqNQod4k2cANCgaoJzGyz8mlmpu17I/+1t23Mgk/0Z9xfTCyQVxS1BryFZA3uKtzcpqU/AOxo1LlCD18Rt1t/LnNV8l0jByq9uB7W8SuBA0kbsao3KrYDMC4KsaTj/7jC9obwfR0FlZLTXGSI6eifbgrC4eM4iRM95tTZMdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=fail (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UMRHJkNx reason="signature verification failed"; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A9FD61F796;
+	Wed, 24 Jul 2024 09:03:39 +0000 (UTC)
+Authentication-Results: smtp-out2.suse.de;
+	none
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7683D1324F;
+	Wed, 24 Jul 2024 09:03:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 73DjG2vDoGZPUQAAD6G6ig
+	(envelope-from <pvorel@suse.cz>); Wed, 24 Jul 2024 09:03:39 +0000
+From: Petr Vorel <pvorel@suse.cz>
+To: pvorel@suse.cz,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: aquini@redhat.com,
+	linux-kbuild@vger.kernel.org,
+	masahiroy@kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] Kbuild updates for v6.11-rc1
+Date: Wed, 24 Jul 2024 11:03:27 +0200
+Message-ID: <CAK7LNATbZgv6JNzSXznOm47oNUXku430-taoK4iE1G0YcBy4Lw@mail.gmail.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240724084655.930706-1-pvorel@suse.cz>
+References: <20240724084655.930706-1-pvorel@suse.cz>
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201]) (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits)) (No client certificate requested) by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDDD513D628; Tue, 23 Jul 2024 19:44:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18353C4AF0A; Tue, 23 Jul 2024 19:44:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org; s=k20201202; t=1721763884; bh=NZPmwx9zHNHao+9I+jeqDdDmRqjZJBybf9j7OA7CvSM=; h=From:Date:Subject:To:Cc:From; b=UMRHJkNxQBBFJiGxxNfWBDsa6DlLZqlRw4QOrIrX3Ddq+rlTJOXKPMU1C5tqC33fD 6ZGcwPWlhLVKxBtVBJslUJKaeF3kVh4Lw5Qqs4px+TsAvpJdITiO+HPwLmVFBX5Ne2 QFI1wgJ0sP4JtZbbsEMSOCzpS62ZdN+MMCretwNDUS5DeWw+ARGuFFWXvYHTcPrcxa +0n8+IHfv1bjpJlgkuLfa1tqWm5UA8TFL+5cEvPloxD81ZUdIwxuCuZEIf83rR/S9t N1cvyzGYHZW5xpXvIlLMh9ar7AJTVUx4EpJLLsxdvilw9ApALzmFLgIgEDJzDV1H9O RqgL5NRk6dqjQ==
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ef2c56da6cso28379731fa.1; Tue, 23 Jul 2024 12:44:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW0QkgwKRHktkVv9CLrYQ1EcbRxDtwBYqdFLr2GViWcS1jzOAiZddwRLwwuxCfEjojUxgOvVcGYDfDDrKySE6j3bfCoxk2XjPUSPRnl
+X-Gm-Message-State: AOJu0YwCKhj+6QGjvELgD3J3OicPPeTJm9O4v1Pkb+V3kcuUSb5ShA0X 2Li2bUIPrQ/UV/tPE2ScL/HYPPdCUkMIBwq69l63OmdEswPHnriw5+Ydt8xS0YXFNH5mUxVCwMH 5ChiwQYo5CsDksJPDJl0jafHabms=
+X-Google-Smtp-Source: AGHT+IHsx8NQ92WXFtFm/EntXaO6XfThBXsCF/ZIbdZLOIBhnlnnKPPU+cBZbfYo1vP//NaL5Xi3Yya0upg3yrpTd4c=
+X-Received: by 2002:a2e:a41c:0:b0:2ee:494c:c3d3 with SMTP id 38308e7fff4ca-2ef16847a34mr81457881fa.43.1721763882725; Tue, 23 Jul 2024 12:44:42 -0700 (PDT)
+Precedence: bulk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+X-Gmail-Original-Message-ID: <CAK7LNATbZgv6JNzSXznOm47oNUXku430-taoK4iE1G0YcBy4Lw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a1b7ce4bce1826e9c231677bb221aa44dc842e24.camel@linaro.org>
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	REPLY(-4.00)[]
+X-Rspamd-Queue-Id: A9FD61F796
+X-Spam-Level: 
+X-Rspamd-Pre-Result: action=no action;
+	module=replies;
+	Message is reply to one we originated
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
 
-On 24-07-24, 09:57, André Draszik wrote:
-> Hi Stephen,
-> 
-> On Wed, 2024-07-24 at 09:14 +1000, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > On Wed, 3 Jul 2024 14:19:32 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > 
-> > > Today's linux-next merge of the phy-next tree got a conflict in:
-> > > 
-> > >   include/linux/soc/samsung/exynos-regs-pmu.h
-> > > 
-> > > between commit:
-> > > 
-> > >   85863cee8ce0 ("soc: samsung: exynos-pmu: add support for PMU_ALIVE non atomic registers")
-> > > 
-> > > from the samsung-krzk tree and commit:
-> > > 
-> > >   32267c29bc7d ("phy: exynos5-usbdrd: support Exynos USBDRD 3.1 combo phy (HS & SS)")
-> > > 
-> > > from the phy-next tree.
-> > > 
-> > > I fixed it up (see below) and can carry the fix as necessary. This
-> > > is now fixed as far as linux-next is concerned, but any non trivial
-> > > conflicts should be mentioned to your upstream maintainer when your tree
-> > > is submitted for merging.  You may also want to consider cooperating
-> > > with the maintainer of the conflicting tree to minimise any particularly
-> > > complex conflicts.
-> > > 
-> > > diff --cc include/linux/soc/samsung/exynos-regs-pmu.h
-> > > index f411c176536d,6765160eaab2..000000000000
-> > > --- a/include/linux/soc/samsung/exynos-regs-pmu.h
-> > > +++ b/include/linux/soc/samsung/exynos-regs-pmu.h
-> > > @@@ -657,8 -657,8 +657,12 @@@
-> > >   #define EXYNOS5433_PAD_RETENTION_UFS_OPTION			(0x3268)
-> > >   #define EXYNOS5433_PAD_RETENTION_FSYSGENIO_OPTION		(0x32A8)
-> > >   
-> > >  +/* For Tensor GS101 */
-> > >  +#define GS101_SYSIP_DAT0					(0x810)
-> > >  +#define GS101_SYSTEM_CONFIGURATION				(0x3A00)
-> > >  +
-> > > + /* For GS101 */
-> > > + #define GS101_PHY_CTRL_USB20					0x3eb0
-> > > + #define GS101_PHY_CTRL_USBDP					0x3eb4
-> > > + 
-> > >   #endif /* __LINUX_SOC_EXYNOS_REGS_PMU_H */
-> > 
-> > This is now a conflict between he phy-next tree and Linus' tree.
-> 
-> What's the way to resolve this? Can I do something?
+From: Masahiro Yamada <masahiroy@kernel.org>
 
-Not much to do, conflicts are expected and Linus will resolve it when he
-pulls phy tree
+Hi Masahiro, Linus,
 
-BR
-> 
-> Cheers,
-> Andre'
+> Hello Linus,
 
--- 
-~Vinod
+> Please pull Kbuild updates for v6.11-rc1
+
+
+
+
+> You will get a merge conflict in scripts/Makefile.lib
+
+> It is a conflict between the following two commits:
+>  49636c5680b977d8a39263c6c8db6061c427346e
+>  712aba5543b88996bc4682086471076fbf048927
+
+> The resolution exists in linux-next.
+
+It'd be nice to include also this tiny binrpm-pkg fix [1] for non-english
+locales (introduced by 301c10908e42 already merged).
+
+Kind regards,
+Petr
+
+[1] https://lore.kernel.org/linux-kbuild/20240724084655.930706-1-pvorel@suse.cz/
+
+> Thank you.
+...
 
