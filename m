@@ -1,138 +1,218 @@
-Return-Path: <linux-kernel+bounces-260698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2780F93AD1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:22:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF23E93AD1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3C091F2289E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:22:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 499ED1F227C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:21:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE8B6A357;
-	Wed, 24 Jul 2024 07:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E9A6E611;
+	Wed, 24 Jul 2024 07:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F73uRXPN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="J5eYjVer";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wohCYoZu";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="J5eYjVer";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wohCYoZu"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F7250269
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D55D4C84;
+	Wed, 24 Jul 2024 07:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721805739; cv=none; b=GDtnPn9uIKE1fUX0c8RWnHmnYI49Nbhybm3XyI0RzHJrcHFH/E4LelSxux3kCHgL85Dhppqq6q8TdDIK5ZrlSOPzsi83577/hElaE0Y+J1+XiDsPEDicnZ7eM3FSXPO2CSKFywmCR4qJ/cN4PVGBsdkFVfz4gTMRjjP1aR8d/FY=
+	t=1721805694; cv=none; b=rOAsBiAXXJkCS2ZghePl+R2tDdpQ1Yxw6yAC1g0VhWxiiuEZ1RNCxaD2AK2L4PcOJmvBsNhrUAGNKcdQEXjt8M/KTvdks6ptwwTNeTKiJUj+i8nsgqmUROQ2SReTCzn4A8n5rf+6BngaMWQ8QjcGdndvw+bwmhmRYT8dplTDk4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721805739; c=relaxed/simple;
-	bh=i+3Dw5TJO9f+FsTkSAq+Gt5Tp0i9wBPk/hzAx7812HA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DaTfbT0MJHV632ZR2GaPk6078qtlLaPV8QcFdgKfCVc6Y4eUVBeki4f/mtCnk7q9c5/SvbTXGMDqblabUxOFhfFGKM10MBqr8JOmIoSQXk6xUcvWHLoQ7Jsr9gYeDe8XDOlaBvVSTwGurn55NXywoVYGf5Hx8Qboc0cgE2Hce10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F73uRXPN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721805736;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1721805694; c=relaxed/simple;
+	bh=/OxbqeFXZJBzITyYv+VkE5wJKT+kzst/yWR2yQbPhNI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UZHMoHFcQNFazx+6mFtASJh9s7T7UPdoWs9HUIti7zyFrUW3aHeTSzUYUD4bw+gs5841MZSZyc1Bl1qxdwOh/CzNG5CVTGY9D0RTkv4n2SlzVdL1uNTvNHIIKNmVq6kWN9Ttm1beuQCE6uZ6C3XgNxlwF9OyKY7seSuX1vN+86I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=J5eYjVer; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wohCYoZu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=J5eYjVer; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wohCYoZu; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 191CD1F74B;
+	Wed, 24 Jul 2024 07:21:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1721805690; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=i+3Dw5TJO9f+FsTkSAq+Gt5Tp0i9wBPk/hzAx7812HA=;
-	b=F73uRXPNoX/P2+TECWJNLY3w8LANJHf59XkQYAfN4ztj+8MiBrjfHq7qh65ib5KaruOBYb
-	5szK4KXUP4tUeFdKMFtwrNYmlB8uX5I5cbyq4SX4fynVww/7EgGmB1c26gR44DqWYZepOP
-	NTCBS5hdaWuB/egi8U2OoDSZk64wmrc=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-515-seBNStFEMIC8QbnIzjXkVw-1; Wed, 24 Jul 2024 03:20:47 -0400
-X-MC-Unique: seBNStFEMIC8QbnIzjXkVw-1
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-44f4e1569fcso83804531cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 00:20:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721805647; x=1722410447;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i+3Dw5TJO9f+FsTkSAq+Gt5Tp0i9wBPk/hzAx7812HA=;
-        b=rGe2IYdj3jpaCzTrI6k35APi03P2dIRAZJd7B9DlK7fcAORW/vQQdlXG9J/dl9HkBW
-         n5aVHfDzx2zyEvG4dh6w8cqyMHrUphIEyQBAJbU9c0eA9+2P7B81DM0SR0M3DnvUBtXq
-         miLj4YF/JLysBpQ1flmkktPXX8Fy6j34od5FG8RGK25GY1rdpQ8NMw3Z9jomuH6L6Ip1
-         FPxj7Uz7KtPUQBXXdj5I2KvGfWW0bKNBjqW/RSvHSy0N4T88TXnRaY21HpwxpfPPT8ML
-         /Cyk0Bd02+aZa1BaNax7XvSVxdVV7PiCDRKkJ0JCSOH+D05pzQ2bipuV3Cb3a2LBhsVg
-         iPbw==
-X-Gm-Message-State: AOJu0YwAhC5uv2ks8sLUUG2tgXMulmZ/C/5GFeQ5qbXkPuZGzi0h/jYf
-	PkWMFF2yIAkSWhArbseJmzwP8GpOkdX+v1qTPnzyPyO73jdjy8I62cfYqfaiTp5yumIM4Pmh/Ga
-	iGuusoc2khGXW3i9OIQRR2rbqcTj17sAEgSP5+2masKYynPotSiK+WPqyt1H2yQ==
-X-Received: by 2002:ac8:5fd2:0:b0:447:e3a5:27a4 with SMTP id d75a77b69052e-44fd690c70bmr13335111cf.52.1721805646809;
-        Wed, 24 Jul 2024 00:20:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG3hwHQDyxNrmuz8DJLgtMTsUP1m4eqMytdEyB3bMxyRU0LAKgTsDlpFKTWSObfLA3s1kZhxA==
-X-Received: by 2002:ac8:5fd2:0:b0:447:e3a5:27a4 with SMTP id d75a77b69052e-44fd690c70bmr13334821cf.52.1721805646451;
-        Wed, 24 Jul 2024 00:20:46 -0700 (PDT)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f9cdc17f1sm51065571cf.91.2024.07.24.00.20.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 00:20:45 -0700 (PDT)
-From: Valentin Schneider <vschneid@redhat.com>
-To: Benjamin Segall <bsegall@google.com>
-Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Juri Lelli
- <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
- <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>, Phil Auld
- <pauld@redhat.com>, Clark Williams <williams@redhat.com>, Tomas Glozar
- <tglozar@redhat.com>, "Paul E. McKenney" <paulmck@kernel.org>, Frederic
- Weisbecker <frederic@kernel.org>, Neeraj Upadhyay
- <neeraj.upadhyay@kernel.org>, Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Lai Jiangshan
- <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, Alexander
- Gordeev <agordeev@linux.ibm.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Arnd Bergmann <arnd@arndb.de>, Guo Ren
- <guoren@kernel.org>, Palmer
- Dabbelt <palmer@rivosinc.com>, Andrew Morton <akpm@linux-foundation.org>,
- Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Subject: Re: [RFC PATCH v3 10/10] sched/fair: Throttle CFS tasks on return
- to userspace
-In-Reply-To: <xm26a5i7zi7g.fsf@google.com>
-References: <20240711130004.2157737-1-vschneid@redhat.com>
- <20240711130004.2157737-11-vschneid@redhat.com>
- <xm26y15yz0q8.fsf@google.com>
- <xhsmhikwwyw8r.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
- <xm26a5i7zi7g.fsf@google.com>
-Date: Wed, 24 Jul 2024 09:20:39 +0200
-Message-ID: <xhsmhfrrzz260.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	bh=gPPgtgLiOKT8FFQeCtEOAG2iHovCigqjgeJnxTCVTi8=;
+	b=J5eYjVerz1TnhJP0ultEZFNJxXNFGMmJbyBTH9h4P1IZYH3NuSK01QC0oVsife43s97m+Y
+	um/XDvF1Kz3/9i7r1UttEpeSciizEcPuItBWccEkdka/+mG6teF8JXJfFxdEdIJpTK7aNE
+	ROQxdwcQS8C1UbBUsqiXRdlZAf27yVI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1721805690;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gPPgtgLiOKT8FFQeCtEOAG2iHovCigqjgeJnxTCVTi8=;
+	b=wohCYoZuO6HZ9ZoHa17pK7Ac7tuln8TgDrlkahs4MZ+F2CYFxQHx/apoF57GtBDixjFYFJ
+	+PMQ7vw/7XmdyMBg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=J5eYjVer;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=wohCYoZu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1721805690; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gPPgtgLiOKT8FFQeCtEOAG2iHovCigqjgeJnxTCVTi8=;
+	b=J5eYjVerz1TnhJP0ultEZFNJxXNFGMmJbyBTH9h4P1IZYH3NuSK01QC0oVsife43s97m+Y
+	um/XDvF1Kz3/9i7r1UttEpeSciizEcPuItBWccEkdka/+mG6teF8JXJfFxdEdIJpTK7aNE
+	ROQxdwcQS8C1UbBUsqiXRdlZAf27yVI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1721805690;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gPPgtgLiOKT8FFQeCtEOAG2iHovCigqjgeJnxTCVTi8=;
+	b=wohCYoZuO6HZ9ZoHa17pK7Ac7tuln8TgDrlkahs4MZ+F2CYFxQHx/apoF57GtBDixjFYFJ
+	+PMQ7vw/7XmdyMBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D3CCF1324F;
+	Wed, 24 Jul 2024 07:21:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ucHrMXmroGYyNQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 24 Jul 2024 07:21:29 +0000
+Date: Wed, 24 Jul 2024 09:22:04 +0200
+Message-ID: <871q3jmezn.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: syzbot+78eccfb8b3c9a85fc6c5@syzkaller.appspotmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	perex@perex.cz,
+	syzkaller-bugs@googlegroups.com,
+	tiwai@suse.com
+Subject: Re: [PATCH] ALSA: line6: init buf to zero
+In-Reply-To: <tencent_6ECFD36FE36EC96283A5C4587761F76F8605@qq.com>
+References: <00000000000000949c061df288c5@google.com>
+	<tencent_6ECFD36FE36EC96283A5C4587761F76F8605@qq.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-0.81 / 50.00];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FREEMAIL_TO(0.00)[qq.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[qq.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	TAGGED_RCPT(0.00)[78eccfb8b3c9a85fc6c5];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Spamd-Bar: /
+X-Rspamd-Queue-Id: 191CD1F74B
+X-Spam-Level: 
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -0.81
 
-On 23/07/24 18:34, Benjamin Segall wrote:
-> Valentin Schneider <vschneid@redhat.com> writes:
->
->> On 18/07/24 17:25, Benjamin Segall wrote:
->>> Valentin Schneider <vschneid@redhat.com> writes:
->>>
->>>> I've tested a 10ms runtime / 100ms period cgroup with an always running
->>>> task: upstream gets a "clean" periodic pattern of 10ms runtime every 100ms,
->>>> whereas this gets something more like 40ms runtime every 400ms.
->>>
->>> Hmm, this seems a little odd since TWA_RESUME does a kick_process.
->>
->> I didn't ponder too much on the workload used here, but the point I wanted
->> to bring up is: if you give a cgroup X amount of runtime, it may still
->> consume more than that within a single period because execution in
->> kernelspace isn't immediately stopped/throttled.
->>
->> It means the "standard" bandwidth control behaviour becomes a bit more
->> bursty.
->
-> Yeah, more bursty behavior when doing cpu-burning syscalls is expected.
-> With the check on exit to user I wouldn't expect anything worse than the
-> duration of the syscall though, so it depends on what your test was.
->
+On Wed, 24 Jul 2024 07:58:45 +0200,
+Edward Adam Davis wrote:
+> 
+> Syzbot report KMSAN uninit-value warnings.
+> When alloc buffer for midi_buffer->buf, init mem to 0.
+> 
+> Reported-and-tested-by: syzbot+78eccfb8b3c9a85fc6c5@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=78eccfb8b3c9a85fc6c5
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> ---
+>  sound/usb/line6/midibuf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/sound/usb/line6/midibuf.c b/sound/usb/line6/midibuf.c
+> index e7f830f7526c..1b699cb3b38d 100644
+> --- a/sound/usb/line6/midibuf.c
+> +++ b/sound/usb/line6/midibuf.c
+> @@ -48,7 +48,7 @@ void line6_midibuf_reset(struct midi_buffer *this)
+>  
+>  int line6_midibuf_init(struct midi_buffer *this, int size, int split)
+>  {
+> -	this->buf = kmalloc(size, GFP_KERNEL);
+> +	this->buf = kzalloc(size, GFP_KERNEL);
 
-That would also be my expectations. That was rt-app, so the userspace part
-is mostly floating point operations IIRC. I'll do a bit of tracing to make
-sure nothing funny is happening in the kernel.
+Thanks for the patch.  But this just hides the KMSAN warning, and it
+doesn't really address the cause - why it was exposed at all; the
+driver code had already a check and should have accessed only the
+updated data, but by some reason it slipped.
 
+Through a quick glance, I see a possible.  If that's the cause, the
+patch like below might help.  I checked the reproducer locally but
+couldn't  trigger the bug on my image, unfortunately, so it's just a
+wild guess, and it might be shooting a wrong way.  Let's see.
+
+
+thanks,
+
+Takashi
+
+-- 8< --
+--- a/sound/usb/line6/driver.c
++++ b/sound/usb/line6/driver.c
+@@ -286,12 +286,14 @@ static void line6_data_received(struct urb *urb)
+ {
+ 	struct usb_line6 *line6 = (struct usb_line6 *)urb->context;
+ 	struct midi_buffer *mb = &line6->line6midi->midibuf_in;
++	unsigned long flags;
+ 	int done;
+ 
+ 	if (urb->status == -ESHUTDOWN)
+ 		return;
+ 
+ 	if (line6->properties->capabilities & LINE6_CAP_CONTROL_MIDI) {
++		spin_lock_irqsave(&line6->line6midi->lock, flags);
+ 		done =
+ 			line6_midibuf_write(mb, urb->transfer_buffer, urb->actual_length);
+ 
+@@ -300,12 +302,15 @@ static void line6_data_received(struct urb *urb)
+ 			dev_dbg(line6->ifcdev, "%d %d buffer overflow - message skipped\n",
+ 				done, urb->actual_length);
+ 		}
++		spin_unlock_irqrestore(&line6->line6midi->lock, flags);
+ 
+ 		for (;;) {
++			spin_lock_irqsave(&line6->line6midi->lock, flags);
+ 			done =
+ 				line6_midibuf_read(mb, line6->buffer_message,
+ 						   LINE6_MIDI_MESSAGE_MAXLEN,
+ 						   LINE6_MIDIBUF_READ_RX);
++			spin_unlock_irqrestore(&line6->line6midi->lock, flags);
+ 
+ 			if (done <= 0)
+ 				break;
 
