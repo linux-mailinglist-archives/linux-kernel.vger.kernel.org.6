@@ -1,141 +1,131 @@
-Return-Path: <linux-kernel+bounces-261303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28B5493B576
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:01:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A332693B54E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:52:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 598951C23D72
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:01:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F5B22813BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E5B16DC2B;
-	Wed, 24 Jul 2024 16:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B922515EFA6;
+	Wed, 24 Jul 2024 16:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G4OyGsC1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="krDg9jBP"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2121516D9D7;
-	Wed, 24 Jul 2024 16:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D4229CA;
+	Wed, 24 Jul 2024 16:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721840323; cv=none; b=ut9GS8inUhBBq1U+85bbyjGVkyMvcuFlnyq4OgjPQaO3k/hSv2Ds23hIyg5Wnl1MXaOng5PkyCOLD77TpYxnwTovQHGMQiIQlzrTouTnst1/6jX26D/mhHjqUwaM+gNCki4305fu/h7KH1KWDmj+QNMGGc8sfKZ8KM39t4bmy3I=
+	t=1721839952; cv=none; b=WOCnvz3SPwK+MAoKXnxS4ElzTjaX9NuYhXvxhp3L/Ek6zjbbwyGkCciJS7eg1vMAbun2viUNl7uS8nMMH2v+ekIyCjd0UG6qv006moudfJPzce8VWiQT2iAdrWTuhYGQTNmQZXB1tWQsCRzsWNtbgnVzIC1r/eI39HclLXiARSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721840323; c=relaxed/simple;
-	bh=78cTlGOON8+LDz3iPFPQlv471L1LvIyJOUR08Ru6yKE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=la2+AO+kxSMBriSZ8HiJI0hy6/Ae2yNg4jOMwTY4I994Ze3gL69KG+xfXir/B16jZE9kjrepLO6efZakynuKF1AV4Y7fpS2UjlnbXpgX8IBowYcDRrgHxW2vGe3QWuvSKrCHygFI3N6UcJ5kr7P7q9jRdrxhcLrgsVhDjDI35YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G4OyGsC1; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721840323; x=1753376323;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=78cTlGOON8+LDz3iPFPQlv471L1LvIyJOUR08Ru6yKE=;
-  b=G4OyGsC1fFITed8QPH17fLdZDhQC6OVuIggHU4ZB0Rx2o/WesVAnpnMq
-   GfU3JmvfN1HDyG2NB2nS9Hjsrw0SJbJqC9hW2gORtzR1YrKzxE3knEeNs
-   pdKOle0UdtEVZxRMmFY+km5yv7UUxa3CSrbDuIAHXPu/BVHBC5CLrwFpx
-   vhUJL0j8WSAEhsKLLfKYVMK4xD1qPpKWkGeaXHXzB3uAUdlLylp4JGIh5
-   TsdaeER1XnU5n/K9z+XKmH//ZC0ZxvuRKTZJPfhiCjMAZ6JjZrD2HxyxX
-   9cDt73BrMft+aXKvuBVzKXJXOhCjZjVC1UaEYAcR6OuKYsmD6vsOWValW
-   Q==;
-X-CSE-ConnectionGUID: HUukK3aVRgSUEaXiKgdQfQ==
-X-CSE-MsgGUID: 2W0kx4naT7WHVW0/xQnAnQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11143"; a="30679808"
-X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
-   d="scan'208";a="30679808"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 09:58:42 -0700
-X-CSE-ConnectionGUID: 0P2upW94T22UPkkd7wmRmw==
-X-CSE-MsgGUID: KIIZe/GaQguqGXc9K6DSug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
-   d="scan'208";a="56960638"
-Received: from irvmail002.ir.intel.com ([10.43.11.120])
-  by fmviesa005.fm.intel.com with ESMTP; 24 Jul 2024 09:58:38 -0700
-Received: from lincoln.igk.intel.com (lincoln.igk.intel.com [10.102.21.235])
-	by irvmail002.ir.intel.com (Postfix) with ESMTP id AC06228785;
-	Wed, 24 Jul 2024 17:58:36 +0100 (IST)
-From: Larysa Zaremba <larysa.zaremba@intel.com>
-To: intel-wired-lan@lists.osuosl.org
-Cc: Larysa Zaremba <larysa.zaremba@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	magnus.karlsson@intel.com,
-	Michal Kubiak <michal.kubiak@intel.com>,
-	Wojciech Drewek <wojciech.drewek@intel.com>,
-	Amritha Nambiar <amritha.nambiar@intel.com>
-Subject: [PATCH iwl-net v2 6/6] ice: do not bring the VSI up, if it was down before the XDP setup
-Date: Wed, 24 Jul 2024 18:48:37 +0200
-Message-ID: <20240724164840.2536605-7-larysa.zaremba@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240724164840.2536605-1-larysa.zaremba@intel.com>
-References: <20240724164840.2536605-1-larysa.zaremba@intel.com>
+	s=arc-20240116; t=1721839952; c=relaxed/simple;
+	bh=MpyQsc0hU1GnVvadkjq2d6vR2ztC0Qrs/RgR86Rgtcs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DJJpqW/JieJ8gIYpkzp8wx1mw5T0Yp/oYrJHQe1AuRhsZuP/1c+OeeYu10YCEVjkOO4HLYvNnxR2WeF4ukuF9rUW97U72DAnXly0XO4OmZW9LRZuT7x8B8OzVulM7FjJM+MJmNqZX+EQLYiTVYLcz2qKu+kVk02omz/R9xMzMH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=krDg9jBP; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70d24d0a8d4so13104b3a.0;
+        Wed, 24 Jul 2024 09:52:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721839950; x=1722444750; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nHOSXKCOPqcvZd3Rls/ZcliizqiZMqlPEJyXkYPHW+4=;
+        b=krDg9jBPA0Vu9vfu+5qH54QxTsJ6ymDwoBQvOiaUcPLWlR9E2nNb4IpsmmsfCvA4da
+         rIIAC/tQZBIm2icUN6G2ElUbF7/5jjC428vrsMT4g7SSO9MQsDGC1JV9xhRThn0RRh8f
+         8Mk8Qna/7T99lN49fU7oroQTgsMr8xvnbUyJ+ZtZZAfnk9nq/EgwRcOO4qmqsOEr1Cto
+         ZmpMJ5NJRiA/TMuhPXOPy9ebOHxKNf/onjNpFox8jHOvL6rAZcZEggkw/pG5qRczBbg7
+         B2prorCaVUhEKP8iUHC/mcHq75yiJ94G7365CLesw1hyOksi2M7ySTviI70w3xLiymbt
+         yg+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721839950; x=1722444750;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nHOSXKCOPqcvZd3Rls/ZcliizqiZMqlPEJyXkYPHW+4=;
+        b=uwr28nXK6J9QuZHlTeMfzsi813hGehxdqcfDB0WbQuaVFvYvm65kbmfemG57TKFJs8
+         IV+tlCc56yn9FINnuNMJSZUh3XOBNiXOvWu81y2PkO3SgXG7om/su3axFOh4XwqgeaCl
+         LeqPRs/cIu2i6HclC9yirEHOHp6tdcoj01Z2m7M82iMBFULzWvj55j5pqcl7hJrAycbP
+         7vEm8SP/0I6vT2zGuApFaZJ4lBQjzSoNpJG28q4FsTtf5yOB06zYJxJeGBN/3KHN3vBl
+         6isMnQ/JeKsLnnMIixJYywXBLD7qRkFIONcdYCMsh3YVFF2Mi61UFXrE7Av/v+pK8Nc5
+         lZTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZAPZ+PO5vojMuOHVuR1YswE0UI35Bfx7WdgzhvJ4v5rOWEW2ZuXolnIrbTI/6oRDV7n4Wu3iMNA5PvZrgdZSEfHjDEL0PV0wxtAKEKoqY5f3ClduaI4OO6gu2t/OUUp5+Jes2feOiJFGN1NwB
+X-Gm-Message-State: AOJu0YwbzNQn6ga23qQa++JHdZqpvAJ6eHSIKZfD7DQ84IWrxyvFpr0m
+	b/WiEuwmhu5B+AuPbfUl+nDGomLhIzyxkv+pOuuf+zxjaOMyXkcVSWYgdMfJ+Pl14viDyySCnlH
+	yeUPpxJV0X9ElaV/QTpGOMH4jpKI=
+X-Google-Smtp-Source: AGHT+IGVCG7JOT9xlzQlknfmeT16tN//PMYw1q63fUNnGbcSCCLdEteVrx6kyG3bL5BZWl10luLLhTaTz3653TByswQ=
+X-Received: by 2002:a05:6a00:b51:b0:70e:8e3a:10ee with SMTP id
+ d2e1a72fcca58-70eaa8f52camr96225b3a.21.1721839949856; Wed, 24 Jul 2024
+ 09:52:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240724132428.2468883-1-colin.i.king@gmail.com>
+In-Reply-To: <20240724132428.2468883-1-colin.i.king@gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 24 Jul 2024 12:52:18 -0400
+Message-ID: <CADnq5_NHwwva2vN+MjnPohpjmzW0F5uLHN1bby1jUBiqetL6uA@mail.gmail.com>
+Subject: Re: [PATCH][next] drm/amd/display: Fix spelling mistake "tolarance"
+ -> "tolerance"
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Leo Li <sunpeng.li@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-After XDP configuration is completed, we bring the interface up
-unconditionally, regardless of its state before the call to .ndo_bpf().
+Applied.  Thanks!
 
-Preserve the information whether the interface had to be brought down and
-later bring it up only in such case.
-
-Fixes: efc2214b6047 ("ice: Add support for XDP")
-Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>
-Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
----
- drivers/net/ethernet/intel/ice/ice_main.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
-index d7cc641643f8..d83cde431fa5 100644
---- a/drivers/net/ethernet/intel/ice/ice_main.c
-+++ b/drivers/net/ethernet/intel/ice/ice_main.c
-@@ -3000,8 +3000,8 @@ ice_xdp_setup_prog(struct ice_vsi *vsi, struct bpf_prog *prog,
- 		   struct netlink_ext_ack *extack)
- {
- 	unsigned int frame_size = vsi->netdev->mtu + ICE_ETH_PKT_HDR_PAD;
--	bool if_running = netif_running(vsi->netdev);
- 	int ret = 0, xdp_ring_err = 0;
-+	bool if_running;
- 
- 	if (prog && !prog->aux->xdp_has_frags) {
- 		if (frame_size > ice_max_xdp_frame_size(vsi)) {
-@@ -3018,8 +3018,11 @@ ice_xdp_setup_prog(struct ice_vsi *vsi, struct bpf_prog *prog,
- 		return 0;
- 	}
- 
-+	if_running = netif_running(vsi->netdev) &&
-+		     !test_and_set_bit(ICE_VSI_DOWN, vsi->state);
-+
- 	/* need to stop netdev while setting up the program for Rx rings */
--	if (if_running && !test_and_set_bit(ICE_VSI_DOWN, vsi->state)) {
-+	if (if_running) {
- 		ret = ice_down(vsi);
- 		if (ret) {
- 			NL_SET_ERR_MSG_MOD(extack, "Preparing device for XDP attach failed");
--- 
-2.43.0
-
+On Wed, Jul 24, 2024 at 9:50=E2=80=AFAM Colin Ian King <colin.i.king@gmail.=
+com> wrote:
+>
+> There is a spelling mistake in a dml2_printf message. Fix it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  .../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c  | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2=
+_core_dcn4_calcs.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_cor=
+e/dml2_core_dcn4_calcs.c
+> index 0b671c665373..5ba38d51382f 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_d=
+cn4_calcs.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_core/dml2_core_d=
+cn4_calcs.c
+> @@ -8267,7 +8267,7 @@ static bool dml_core_mode_support(struct dml2_core_=
+calcs_mode_support_ex *in_out
+>         dml2_printf("DML::%s: mode_lib->ms.DCFCLK =3D %f\n", __func__, mo=
+de_lib->ms.DCFCLK);
+>         dml2_printf("DML::%s: mode_lib->ms.FabricClock =3D %f\n", __func_=
+_, mode_lib->ms.FabricClock);
+>         dml2_printf("DML::%s: mode_lib->ms.uclk_freq_mhz =3D %f\n", __fun=
+c__, mode_lib->ms.uclk_freq_mhz);
+> -       dml2_printf("DML::%s: urgent latency tolarance =3D %f\n", __func_=
+_, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kb=
+ytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)=
+));
+> +       dml2_printf("DML::%s: urgent latency tolerance =3D %f\n", __func_=
+_, ((mode_lib->ip.rob_buffer_size_kbytes - mode_lib->ip.pixel_chunk_size_kb=
+ytes) * 1024 / (mode_lib->ms.DCFCLK * mode_lib->soc.return_bus_width_bytes)=
+));
+>  #endif
+>
+>         mode_lib->ms.support.OutstandingRequestsSupport =3D true;
+> --
+> 2.39.2
+>
 
