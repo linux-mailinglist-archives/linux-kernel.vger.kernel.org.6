@@ -1,232 +1,148 @@
-Return-Path: <linux-kernel+bounces-261551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8090593B8C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 23:42:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F3093B8C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 23:43:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AB811C215E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:42:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2C76B24972
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D89513C691;
-	Wed, 24 Jul 2024 21:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06EA213C67B;
+	Wed, 24 Jul 2024 21:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eONtllEg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y8opjxQx"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED9B6139D13
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 21:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CF813C3F9
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 21:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721857363; cv=none; b=uZXIjnFWwwqvM6fbcfCyAYmX+Aqws377Jw/FZpTp7ngXObPqUvaP+bjgizjyhbPqVtavd+pixhiVp1anwrSs3mXWMqW0gLbAtdkLdTHAQky/98HRodGzwOLPuTow+vh3BhGOSs0X3O9u9Qfao5M03nN77j5C0lP9JpmstQIbtB4=
+	t=1721857386; cv=none; b=oqB1ZhMGR3KmryXvVOxCIMGirWAmwD4AETvDbGXwc9URaszByuMsMhyryhUHiMADA7SMcpbi+UbgkRw2/g3Ob02+wHpTAvvNUQnb7525Dw5Azp7DZ+hIwNvzC+Ie1whzfJDQDkMiNnrES5vlnEzXPpqh/DQNMH+aE1yKQiPQysc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721857363; c=relaxed/simple;
-	bh=eQ6sAvGvP9kAWKJJFpBq5NN0fv0rKdXUvf1c8GfdVC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iSQq0WPPBxMsTl4JQ0WB58X6nevxee+m2WM/G5OyxPEOkoMwe6opiea6mwNtCBIqFcGQSiTM1ea8Qxb4U03nx/sMxukkMs3Dp8KE67JKAdx0yzlxeE0N2VsJmh9y25gNtdZh7Y7FphECoMm0fQHY5WDU3Mun8L8kdF7FnfFupNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eONtllEg; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721857362; x=1753393362;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=eQ6sAvGvP9kAWKJJFpBq5NN0fv0rKdXUvf1c8GfdVC8=;
-  b=eONtllEglQy53/rfPnw+zzvSndlL/cUpeVZbIdAZwPGYwnrU0PFbJVAe
-   1Szp82eAcLMOgAvbrGxz+FmYsY/4dDTlFr8OKz0wiBHwt7mo22ek+A0gK
-   JCXM2tLJqrQbB6F30LHeQq5BdEGg7vbXlWy7iW3PX+fzADTAMAa7Hc/AN
-   LwdSEwpPYk5kHfJEMktoqF7iJbz/oh1FEx9gyzd5fvc1Pium5UQXX/ptW
-   hrtI9wIRl3JoaYnoD6+wwq01K/SqrGeN9+YnTIL8r9cVsxDNh7Hohe/+L
-   S1lQHIj43Z0h8B0EQy1CPHTYUdPbUNiYUzqiGZVVZcTqTjgrJvkJrguQm
-   g==;
-X-CSE-ConnectionGUID: g5m07qsOT7Gr6wNehMPQqw==
-X-CSE-MsgGUID: Gp+I3+gDQZyAXLRRjN25lA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11143"; a="12698100"
-X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
-   d="scan'208";a="12698100"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 14:42:41 -0700
-X-CSE-ConnectionGUID: g9gogmCMRMuznydU/dGl8A==
-X-CSE-MsgGUID: CSvgythYQ86prZydRaha9Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
-   d="scan'208";a="57271218"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 24 Jul 2024 14:42:39 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sWjkq-000nSi-1V;
-	Wed, 24 Jul 2024 21:42:36 +0000
-Date: Thu, 25 Jul 2024 05:41:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: Re: [PATCH 2/2] mm: Remove PG_error
-Message-ID: <202407250522.sImVfZXf-lkp@intel.com>
-References: <20240724010550.1755992-3-willy@infradead.org>
+	s=arc-20240116; t=1721857386; c=relaxed/simple;
+	bh=E2xr7KdHpOeVO8weg/YauvOwd3FI22iwYLqct3kkkuU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NZ/vk2SB5k9KDqCdO+NZGJQwdA7x7KKjgtXG0LjO1qcE40hfu8GnDbq19jBmsLtZUb/nJxBoPAYYzVeweAvTt3kA0CCDDrO9IkgLMDlWA+1e7ocxUmVgW1nohxKIVFe9GRH2Nhf2aCz82m0iQ6mQff4mA7UwFn6eyrU2N9UVApA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y8opjxQx; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7a8553db90so37559266b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:43:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721857383; x=1722462183; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=PVcOW0F31P5btkB2U94IntsHunux8cldHR5tp2dBkfU=;
+        b=Y8opjxQxdEgyznwS0k9r440vF2O+MuvdqCIJsPYi3PDQhus9VskEL+6JN7AqWDXqzi
+         khlueNx2JiQSLsSxeaihGaAoYNlXUuE4OpDwBcVjT2U4rd8aF1rgtldEKgS+A2riOtBX
+         4awJ+tQJrSMFLF/2IZ3lAVb335F968K4oqpX0CWXQuAUBNMnnyKFGLC/1a8ynB9EjtGW
+         0OOil7A+BSgQTdH9IDPLACovzKiCB6S6GVA9BSm37rvGICIN614hroHFtj9Dnxd1OBLz
+         f8VrP9I1V/v+4w2UCtGpT96EM78mSuNCbv9Sm8kXVQZlwjtiuBK96KYZto8BOrnv5Zg6
+         V6/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721857383; x=1722462183;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PVcOW0F31P5btkB2U94IntsHunux8cldHR5tp2dBkfU=;
+        b=aoKNnPQk9X+ECUCK1xOF46X6B09YVaQS0OFydCa0OQzYjVW8QVaIM4FCXoszlyOoun
+         Ovsay6m0KQ8FYt2F8kV5C/8HPed7TixcrWnJ9CfyLtITfeS/gQXh4tLQo48S/R13Mf1L
+         gL7UD6C9YjS46TFi3rxPItJBHxj8lHCs5E+Ihvx1qos0FzlSz5tkByv9pJNdokV/m7hf
+         jTFK16v9UcDXFZ5Q+RC1HKd1NHD0rpsawVfkow6Wz8Qn9scqn4JqNTE+NgvEVI/yLNEo
+         CRD9eZcVlfmdizUMKPFbMFDRU9QlETxkkAvMC7Omeej3hzJNbO+jBk5ZCtegsxv1d0Fo
+         WsGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXkcfMsOMo2aJ7Hg5tDQw8OhfKyc6Q7+S97H21sNry1ZDyBjT6Tw+O9OOJUo9kePHhYsqltX4IyXC0iLgEC12ykHJU3tsl4VuLttCoq
+X-Gm-Message-State: AOJu0YyokhEm2peqLhHi0+Vc5X1NzJCU+SQ/BASrZ/J3hMz/yIcM8oUa
+	/r3rhK5JVBt6hxxcgrR5HD6nutc0QEw/lZRbaph0jP14kyWwltxl0Fu1rt4R9Jv++92ujVTxEtN
+	Q
+X-Google-Smtp-Source: AGHT+IFVM1Nkj2yYiNbf9q5q1cpfowyG3cIYVGgomj/kaPJhDFTuPBpzG2oJBpqSohsBTOMNFw8Xuw==
+X-Received: by 2002:a17:906:26d2:b0:a7a:8cb9:7491 with SMTP id a640c23a62f3a-a7ac503439emr44164966b.54.1721857382590;
+        Wed, 24 Jul 2024 14:43:02 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad414e2sm1071666b.127.2024.07.24.14.43.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Jul 2024 14:43:02 -0700 (PDT)
+Message-ID: <835d7a84-aa37-43da-a4e7-ef52d8642357@linaro.org>
+Date: Wed, 24 Jul 2024 23:42:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240724010550.1755992-3-willy@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: msm8916-samsung-fortuna: Add touch keys
+To: Raymond Hackley <raymondhackley@protonmail.com>,
+ linux-kernel@vger.kernel.org
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
+ Nikita Travkin <nikita@trvn.ru>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, phone-devel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <20240724143230.3804-1-raymondhackley@protonmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
+ BB/OmIWU6X+LZW6P88ZmHe+KeyABLMP5s1tJNK1j4ntT7mECcWZDzafPWF4F6m4WJOG27kTJ
+ HGWdmtO+RvadOVi6CoUDqALsmfS3MUG5Pj2Ne9+0jRg4hEnB92AyF9rW2G3qisFcwPgvatt7
+ TXD5E38mLyOPOUyXNj9XpDbt1hNwKQfiidmPh5e7VNAWRnW1iCMMoKqzM1Anzq7e5Afyeifz
+ zRcQPLaqrPjnKqZGL2BKQSZDh6NkI5ZLRhhHQf61fkWcUpTp1oDC6jWVfT7hwRVIQLrrNj9G
+ MpPzrlN4YuAqKeIer1FMt8cq64ifgTzxHzXsMcUdclzq2LTk2RXaPl6Jg/IXWqUClJHbamSk
+ t1bfif3SnmhA6TiNvEpDKPiT3IDs42THU6ygslrBxyROQPWLI9IL1y8S6RtEh8H+NZQWZNzm
+ UQ3imZirlPjxZtvz1BtnnBWS06e7x/UEAguj7VHCuymVgpl2Za17d1jj81YN5Rp5L9GXxkV1
+ aUEwONM3eCI3qcYm5JNc5X+JthZOWsbIPSC1Rhxz3JmWIwP1udr5E3oNRe9u2LIEq+wH/toH
+ kpPDhTeMkvt4KfE5m5ercid9+ZXAqoaYLUL4HCEw+HW0DXcKDwARAQABzShLb25yYWQgRHli
+ Y2lvIDxrb25yYWQuZHliY2lvQGxpbmFyby5vcmc+wsGOBBMBCAA4FiEEU24if9oCL2zdAAQV
+ R4cBcg5dfFgFAmQ5bqwCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQR4cBcg5dfFjO
+ BQ//YQV6fkbqQCceYebGg6TiisWCy8LG77zV7DB0VMIWJv7Km7Sz0QQrHQVzhEr3trNenZrf
+ yy+o2tQOF2biICzbLM8oyQPY8B///KJTWI2khoB8IJSJq3kNG68NjPg2vkP6CMltC/X3ohAo
+ xL2UgwN5vj74QnlNneOjc0vGbtA7zURNhTz5P/YuTudCqcAbxJkbqZM4WymjQhe0XgwHLkiH
+ 5LHSZ31MRKp/+4Kqs4DTXMctc7vFhtUdmatAExDKw8oEz5NbskKbW+qHjW1XUcUIrxRr667V
+ GWH6MkVceT9ZBrtLoSzMLYaQXvi3sSAup0qiJiBYszc/VOu3RbIpNLRcXN3KYuxdQAptacTE
+ mA+5+4Y4DfC3rUSun+hWLDeac9z9jjHm5rE998OqZnOU9aztbd6zQG5VL6EKgsVXAZD4D3RP
+ x1NaAjdA3MD06eyvbOWiA5NSzIcC8UIQvgx09xm7dThCuQYJR4Yxjd+9JPJHI6apzNZpDGvQ
+ BBZzvwxV6L1CojUEpnilmMG1ZOTstktWpNzw3G2Gis0XihDUef0MWVsQYJAl0wfiv/0By+XK
+ mm2zRR+l/dnzxnlbgJ5pO0imC2w0TVxLkAp0eo0LHw619finad2u6UPQAkZ4oj++iIGrJkt5
+ Lkn2XgB+IW8ESflz6nDY3b5KQRF8Z6XLP0+IEdLOOARkOW7yEgorBgEEAZdVAQUBAQdAwmUx
+ xrbSCx2ksDxz7rFFGX1KmTkdRtcgC6F3NfuNYkYDAQgHwsF2BBgBCAAgFiEEU24if9oCL2zd
+ AAQVR4cBcg5dfFgFAmQ5bvICGwwACgkQR4cBcg5dfFju1Q//Xta1ShwL0MLSC1KL1lXGXeRM
+ 8arzfyiB5wJ9tb9U/nZvhhdfilEDLe0jKJY0RJErbdRHsalwQCrtq/1ewQpMpsRxXzAjgfRN
+ jc4tgxRWmI+aVTzSRpywNahzZBT695hMz81cVZJoZzaV0KaMTlSnBkrviPz1nIGHYCHJxF9r
+ cIu0GSIyUjZ/7xslxdvjpLth16H27JCWDzDqIQMtg61063gNyEyWgt1qRSaK14JIH/DoYRfn
+ jfFQSC8bffFjat7BQGFz4ZpRavkMUFuDirn5Tf28oc5ebe2cIHp4/kajTx/7JOxWZ80U70mA
+ cBgEeYSrYYnX+UJsSxpzLc/0sT1eRJDEhI4XIQM4ClIzpsCIN5HnVF76UQXh3a9zpwh3dk8i
+ bhN/URmCOTH+LHNJYN/MxY8wuukq877DWB7k86pBs5IDLAXmW8v3gIDWyIcgYqb2v8QO2Mqx
+ YMqL7UZxVLul4/JbllsQB8F/fNI8AfttmAQL9cwo6C8yDTXKdho920W4WUR9k8NT/OBqWSyk
+ bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
+ nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
+ izWDgYvmBE8=
+In-Reply-To: <20240724143230.3804-1-raymondhackley@protonmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Matthew,
+On 24.07.2024 4:32 PM, Raymond Hackley wrote:
+> Touch keys feature on fortuna phones are provided by Zinitix touchscreen.
+> Add property linux,keycodes to enable touch keys.
+> 
+> Signed-off-by: Raymond Hackley <raymondhackley@protonmail.com>
+> ---
 
-kernel test robot noticed the following build errors:
+please bump the revision (v1 -> v2) when changing the commit
+message and keep a link to the previous one & a changelog under
+the --- line
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on linux/master linus/master v6.10 next-20240724]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+in this instance, don't bother as it's a simple change and it
+looks good now
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Matthew-Wilcox-Oracle/fs-Remove-calls-to-set-and-clear-the-folio-error-flag/20240724-111138
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20240724010550.1755992-3-willy%40infradead.org
-patch subject: [PATCH 2/2] mm: Remove PG_error
-config: s390-allnoconfig (https://download.01.org/0day-ci/archive/20240725/202407250522.sImVfZXf-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project ad154281230d83ee551e12d5be48bb956ef47ed3)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240725/202407250522.sImVfZXf-lkp@intel.com/reproduce)
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407250522.sImVfZXf-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from mm/debug.c:10:
-   In file included from include/linux/mm.h:2206:
-   include/linux/vmstat.h:498:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     498 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from mm/debug.c:18:
-   In file included from mm/internal.h:13:
-   include/linux/mm_inline.h:47:41: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-      47 |         __mod_lruvec_state(lruvec, NR_LRU_BASE + lru, nr_pages);
-         |                                    ~~~~~~~~~~~ ^ ~~~
-   include/linux/mm_inline.h:49:22: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-      49 |                                 NR_ZONE_LRU_BASE + lru, nr_pages);
-         |                                 ~~~~~~~~~~~~~~~~ ^ ~~~
->> mm/debug.c:35:2: error: use of undeclared identifier 'PG_error'; did you mean 'ma_error'?
-      35 |         __def_pageflag_names,
-         |         ^
-   include/trace/events/mmflags.h:103:2: note: expanded from macro '__def_pageflag_names'
-     103 |         DEF_PAGEFLAG_NAME(error),                                       \
-         |         ^
-   include/trace/events/mmflags.h:98:44: note: expanded from macro 'DEF_PAGEFLAG_NAME'
-      98 | #define DEF_PAGEFLAG_NAME(_name) { 1UL <<  PG_##_name, __stringify(_name) }
-         |                                            ^
-   <scratch space>:35:1: note: expanded from here
-      35 | PG_error
-         | ^
-   include/linux/maple_tree.h:383:2: note: 'ma_error' declared here
-     383 |         ma_error,
-         |         ^
-   3 warnings and 1 error generated.
---
-   In file included from fs/proc/page.c:2:
-   In file included from include/linux/memblock.h:12:
-   In file included from include/linux/mm.h:2206:
-   include/linux/vmstat.h:498:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     498 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from fs/proc/page.c:2:
-   In file included from include/linux/memblock.h:13:
-   In file included from arch/s390/include/asm/dma.h:5:
-   In file included from include/linux/io.h:14:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
-     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
-         |                                                      ^
-   In file included from fs/proc/page.c:2:
-   In file included from include/linux/memblock.h:13:
-   In file included from arch/s390/include/asm/dma.h:5:
-   In file included from include/linux/io.h:14:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
-     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-         |                                                      ^
-   In file included from fs/proc/page.c:2:
-   In file included from include/linux/memblock.h:13:
-   In file included from arch/s390/include/asm/dma.h:5:
-   In file included from include/linux/io.h:14:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     693 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     701 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     709 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     718 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     727 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     736 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
->> fs/proc/page.c:185:35: error: use of undeclared identifier 'PG_error'; did you mean 'ma_error'?
-     185 |         u |= kpf_copy_bit(k, KPF_ERROR,         PG_error);
-         |                                                 ^~~~~~~~
-         |                                                 ma_error
-   include/linux/maple_tree.h:383:2: note: 'ma_error' declared here
-     383 |         ma_error,
-         |         ^
-   13 warnings and 1 error generated.
-
-
-vim +35 mm/debug.c
-
-7cd12b4abfd2f8f Vlastimil Babka 2016-03-15  33  
-edf14cdbf9a0e5a Vlastimil Babka 2016-03-15  34  const struct trace_print_flags pageflag_names[] = {
-edf14cdbf9a0e5a Vlastimil Babka 2016-03-15 @35  	__def_pageflag_names,
-edf14cdbf9a0e5a Vlastimil Babka 2016-03-15  36  	{0, NULL}
-edf14cdbf9a0e5a Vlastimil Babka 2016-03-15  37  };
-edf14cdbf9a0e5a Vlastimil Babka 2016-03-15  38  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Konrad
 
