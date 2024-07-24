@@ -1,95 +1,122 @@
-Return-Path: <linux-kernel+bounces-260538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0C2C93AAA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:42:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F11EB93AAAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:47:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F21C1F2375C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:42:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE0F6284138
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195A6B64E;
-	Wed, 24 Jul 2024 01:42:33 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557CEDDC5;
+	Wed, 24 Jul 2024 01:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KtVlUxN5"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06E46FC2
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 01:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E2FBE71;
+	Wed, 24 Jul 2024 01:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721785352; cv=none; b=X063M50tB2g/RcxZHGWplcV90T737xE09DcXJnflQDaJJZwHcyqklLT9PyLSM21SFVzhWOHWnoI3k6EJOfM3aTag2fgmjjlJpFVZrTF4lBCbggLGXB+0jmwfItsY08Mcp8cqa2H74OQK7++bCPlmoNWH1LFYvTsUBW633bXIstU=
+	t=1721785632; cv=none; b=FPsLs1/1wHswQZlnD6GoiEPaTiDxbJaPTlz18/z0o7G77K6E+AecR+bKVfTlJmDnGeh8Trbh4+5vn2wWQ2BECXbsTV4OwaIWYPcNnnEQZVvA16EKp5DG9RxhG9BxibLetJp2QSYWjgkp2OD60+fyq46gqMYYDXGqzSRBAqMqJ2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721785352; c=relaxed/simple;
-	bh=VFVIpcmr5TxHmnFmmfIZ34n0BSxfcb1XxnLl0Jzxg1s=;
-	h=From:Subject:To:CC:Message-ID:Date:MIME-Version:Content-Type; b=XcQuMmUOcvIucFC25ViHQapt2yEjHpPEObn7j6lZsNVZltHK31Xl4sJHX1gWXWnnO9XshxwEptkELRt7YTnmSwcEShFX9UgqwxuAy0K119cL+f848/VE3KaNqzrFdcZC3bHIuox85ukm2vD7ficJyhPC4UG2+ShNmcsBkFJlRX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WTGtW6wn6zMqry;
-	Wed, 24 Jul 2024 09:40:35 +0800 (CST)
-Received: from kwepemm600007.china.huawei.com (unknown [7.193.23.208])
-	by mail.maildlp.com (Postfix) with ESMTPS id DC9A1180101;
-	Wed, 24 Jul 2024 09:42:22 +0800 (CST)
-Received: from [10.174.176.125] (10.174.176.125) by
- kwepemm600007.china.huawei.com (7.193.23.208) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 24 Jul 2024 09:42:21 +0800
-From: Kunkun Jiang <jiangkunkun@huawei.com>
-Subject: [bug report] iommu/arm-smmu-v3: Event cannot be printed in some
- scenarios
-To: Lu Baolu <baolu.lu@linux.intel.com>, Will Deacon <will@kernel.org>, Robin
- Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, Jason
- Gunthorpe <jgg@ziepe.ca>, Nicolin Chen <nicolinc@nvidia.com>, Michael Shavit
-	<mshavit@google.com>, Mostafa Saleh <smostafa@google.com>
-CC: "moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
-	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<wanghaibin.wang@huawei.com>, <yuzenghui@huawei.com>,
-	<tangnianyao@huawei.com>
-Message-ID: <6147caf0-b9a0-30ca-795e-a1aa502a5c51@huawei.com>
-Date: Wed, 24 Jul 2024 09:42:09 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+	s=arc-20240116; t=1721785632; c=relaxed/simple;
+	bh=jAi3voPlWolVP4YYB3fnxXWHT9iDk/r0DIOHX8TFBdA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=YQXMxHL4MhBIvrqwAczAIHtB6H2X9Ep9bTtLSF0P08UAor4FshqQLRnsNBCqOEqFeXipiYIEq8ie96ycw/EavWtXV/FRcYyj98C+D4zBB3x3JRUaoJxt5CGTW3SxsKq/cJzLGPJfLzE3uzlpy/LlBFBntNk73S/UUR+dE3An3dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KtVlUxN5; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70d2b921c48so1971026b3a.1;
+        Tue, 23 Jul 2024 18:47:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721785630; x=1722390430; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lHbtbS513JbptLsFw2uOg7AhwIYd2Buyfky5JBypwaI=;
+        b=KtVlUxN5mMHskMkRtB256ECpxBrTNLedK3fEQ5pImFguhn3Rcsn7eueDy4mrcUiiaA
+         RBNuN8IHrY52QBWAv2mggQpbuEfTBFB4sAwTI0cxxvQdmzBSd0AJGE3opV9SgYJgy/yg
+         2sc4WWvBBvrzcRt+5dvzs+RsDILA2LDx1O+KHatc8nsS+cMKWMUo1+/RzXETHtHED0uB
+         M2+1DesvdeciitJ8dE/LPQ8byDmNEWjTFd0RHq1il/tEFZ1wrHis/JT8k57QxGF0vSlL
+         /QYZmhPHDz2QcwMOwBk4etF89E4W/njmu78pPWTFesAHZkz8Az8zKchRKa+2z9slmhqc
+         /l7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721785630; x=1722390430;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lHbtbS513JbptLsFw2uOg7AhwIYd2Buyfky5JBypwaI=;
+        b=ng1s4LktkJH/6FBln6TemHyh0ssbBdNtDutP7QCNXMw5sIHk/pDnvkxlXtw3aZaDEq
+         /bgAQRsu3D+dGAGo0Hr0gYIPcjQEOsWRC/+8DYBeDtzCVcebjzVN8sQ+W7k5BvqvYQBJ
+         3pD9Tyf9Aykg/tE3HYnZidiEC2J1ZiVI/8fKK6BrXDLYMpEhd8iJaIrujg2iO6EwaOjn
+         2wuAnwGCdEefyF0XXdy+ShzO1s3tKhWYh7rnelUGlayPIqlwcJSRCTDBuyYMh0ivzkWz
+         DMZemWL/6o8MQ4ASjr506jMX0XvBBwi04jKl/ygLVYk9wAQnpBn0g5yRTYlWBgSHVwGh
+         /MPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRPO12ugkpDUFieoMjil6YSvYsOGR91gAQl7L1dqoLipB8JOQNlqi5MVNWEgTCoo+Uz4CXG0eMfDj53darOxRvbk45y+/CydcPySwK
+X-Gm-Message-State: AOJu0Yye41/j02LOycZTehm7M0uLhuXjyWGjnpNsXjXOasBtgqaevEZd
+	LeEq+rlMLhGzHFOK7wC4JHTd8Bzbep5y3K3AyLUjaNYsdqGhX4zzvisyQspf
+X-Google-Smtp-Source: AGHT+IG7cxyYe0Vou1ofkiw5iGJhZNQC7uqZLG8kBFIYJcdgDOwAl38ebUEeqwcIi+E+n24sO4Ar6g==
+X-Received: by 2002:a05:6a20:6a2c:b0:1c4:214e:93fa with SMTP id adf61e73a8af0-1c4619e96a0mr1056935637.46.1721785629963;
+        Tue, 23 Jul 2024 18:47:09 -0700 (PDT)
+Received: from localhost.localdomain ([159.196.197.79])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb73a5f5asm314564a91.8.2024.07.23.18.47.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 18:47:09 -0700 (PDT)
+From: Jamie Bainbridge <jamie.bainbridge@gmail.com>
+To: netdev@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Jamie Bainbridge <jamie.bainbridge@gmail.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net 1/4] net-sysfs: check device is present when showing carrier
+Date: Wed, 24 Jul 2024 11:46:50 +1000
+Message-Id: <066463d84fa14d5f61247b95340fca12d4d3bf34.1721784184.git.jamie.bainbridge@gmail.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <cover.1721784184.git.jamie.bainbridge@gmail.com>
+References: <cover.1721784184.git.jamie.bainbridge@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemm600007.china.huawei.com (7.193.23.208)
 
-Hi all,
+A sysfs reader can race with a device reset or removal.
 
-drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-1797                 while (!queue_remove_raw(q, evt)) {
-1798                         u8 id = FIELD_GET(EVTQ_0_ID, evt[0]);
-1799
-1800                         ret = arm_smmu_handle_evt(smmu, evt);
-1801                         if (!ret || !__ratelimit(&rs))
-1802                                 continue;
-1803
-1804                         dev_info(smmu->dev, "event 0x%02x 
-received:\n", id);
-1805                         for (i = 0; i < ARRAY_SIZE(evt); ++i)
-1806                                 dev_info(smmu->dev, "\t0x%016llx\n",
-1807                                          (unsigned long long)evt[i]);
-1808
-1809                         cond_resched();
-1810                 }
+This was fixed for speed_show with commit 4224cfd7fb65 ("net-sysfs: add
+check for netdevice being present to speed_show") so add the same check
+to carrier_show.
 
-The smmu-v3 driver cannot print event information when "ret" is 0.
-Unfortunately due to commit 3dfa64aecbaf
-("iommu: Make iommu_report_device_fault() return void"), the default
-return value in arm_smmu_handle_evt() is 0. Maybe a trace should
-be added here?
+Fixes: facd15dfd691 ("net: core: synchronize link-watch when carrier is queried")
 
-Thanks,
-Kunkun Jiang
+Signed-off-by: Jamie Bainbridge <jamie.bainbridge@gmail.com>
+---
+ net/core/net-sysfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
+index 0e2084ce7b7572bff458ed7e02358d9258c74628..7fabe5afa3012ecad6551e12f478b755952933b8 100644
+--- a/net/core/net-sysfs.c
++++ b/net/core/net-sysfs.c
+@@ -206,7 +206,7 @@ static ssize_t carrier_show(struct device *dev,
+ 	if (!rtnl_trylock())
+ 		return restart_syscall();
+ 
+-	if (netif_running(netdev)) {
++	if (netif_running(netdev) && netif_device_present(netdev)) {
+ 		/* Synchronize carrier state with link watch,
+ 		 * see also rtnl_getlink().
+ 		 */
+-- 
+2.39.2
 
 
