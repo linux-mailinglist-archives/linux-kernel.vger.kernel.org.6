@@ -1,130 +1,127 @@
-Return-Path: <linux-kernel+bounces-260700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B08F93AD2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:31:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42E4293AD2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:31:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C16CE1F21715
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:31:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78F9A1C21BF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDBA761FDA;
-	Wed, 24 Jul 2024 07:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F156A325;
+	Wed, 24 Jul 2024 07:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MxwgKRJL"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="uSjUcsiZ"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8EE1B963
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A699210FB
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721806269; cv=none; b=Q2O68jToe5UibtSyUE23DDX+dbnNk223Bmg3o2F2tH9hbiJgL45c3ZYG6O2qcmz4/reiVa6VELshZe+aJFhibHqxUsgCKtaLlglprw19mWbxh+XinYiwsbsnJdeg6YCxfO4Ff0BAbzbMQ89sri41zB2M2ODaXde3s9TQjurweNI=
+	t=1721806307; cv=none; b=cdLUqk/tftZXfrBx/b+qLXkivJD+Ns5Q4IhevfawfHWGmBjktM+5GT2erCoPyykMG1SFtTmYUqc39BvdJlrlEMP5qurN9ZJHq95cgjeOAWNBJMvwOR2M+AE8Kvja7Y8Ll1jPOQ/0CrkDpVDw3AfviookLIsCpH1nYdX5fiwYa+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721806269; c=relaxed/simple;
-	bh=/FO5urQiX0FUhimZFxrUztiTGtSThhCgdFmeTf4sWq0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jece3nMvSTBUHL1dxYykAtCjB1YX23U9qUhAk2eS0JSuquUQNDTYC4lCXPc8+2EN1mSbNIvUEtn3kfoc0/Nm3tR0Q8jF0OXeTWi/aSWDUdpOg2LLGDiXlshDrWbIrX1LWEzyccP/ijDHGtPw7jYOjxpv2zSYkcEverPNsqJ02iQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MxwgKRJL; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721806223; x=1722411023; i=markus.elfring@web.de;
-	bh=idiJEVgGqWmot7ALwqNea99TLDPJ+Anm280Dzw8mH1A=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=MxwgKRJL0x3y8YzOyL0jzhNrxX/vek2oHGzIxZDrVvd9lKbkaySi0kFNdLIvxBr6
-	 07GrpCNVgDeJHcaAVrHpU8tqd6Er35rhFGr2q1uHajsSsToXBjVl2K8He39qb6ugo
-	 F12BPS6Xm+lhcNGB2va/ebPS0+m7g6Q013qqOhuGCTHGa+MOm82HVOzKaSUJjWdeu
-	 Ppy957ZhSJCDYEUPC5kxqkMWVmEfULKAup8ipazhw1Yj9He8Bx4XC5zGdeWL0P9qR
-	 ajdK4sHRIcj14yYiAkzohsahOA5pa5mVNu1aa2vIg3LJXH9mRMnG3MM8pRwbpLXsf
-	 lml7R1UGCrIzdn7Y/g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N1d7i-1s8DDD27K4-011RPD; Wed, 24
- Jul 2024 09:30:23 +0200
-Message-ID: <b3f75c6c-6c3e-41ee-92b9-ac5d9cca53f8@web.de>
-Date: Wed, 24 Jul 2024 09:30:11 +0200
+	s=arc-20240116; t=1721806307; c=relaxed/simple;
+	bh=yHKa1eRub2GSiZcpo2SlLqTVD/HmobTEfgkejUhS7P0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OndqOdbVIX8Qx5fckriaLdk37ZHFKaEbfNVoZZygsxsEZUVq7bag3CFU6lcxq2F4Ydc0SL+uS9bIcT+19RhSDamldb5q8clRgOqtUqM9dJbRmfrHzHsnniKw7TQuyiuE+Jd7uOdkuZK/d4mlxIaaWXBBvgpZkuJRKRIfWIxcIUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=uSjUcsiZ; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (unknown [IPv6:2001:b07:5d2e:52c9:24bf:30c5:c4f3:c9fe])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 139FE4CD;
+	Wed, 24 Jul 2024 09:30:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1721806255;
+	bh=yHKa1eRub2GSiZcpo2SlLqTVD/HmobTEfgkejUhS7P0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uSjUcsiZbePndggffUeRAySBOn7FdtRSa3jOZM758phh+i1ccRfz3MBEfwRI26IXo
+	 D4TxmuXDgPgoB+vOqwWczSsq8cdc0bWs4RoFE+15uwx+qecMcl5tzL7vJqIGHgCV+1
+	 fRJfBgNsKcXGVocqWuZ2KvNMMBBBGkfXzE9GfjgI=
+Date: Wed, 24 Jul 2024 09:31:34 +0200
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Robert Mader <robert.mader@collabora.com>
+Cc: linux-kernel@vger.kernel.org, jacopo@jmondi.org, 
+	sakari.ailus@linux.intel.com, javierm@redhat.com
+Subject: Re: [PATCH] media: i2c: imx355: Parse and register properties
+Message-ID: <4rkbs3adnnxalbi237u5anydgm326nvu2ztgiyzufpl6r23vc5@d345nvc4zdqc>
+References: <20240723185856.92814-1-robert.mader@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] drm/loongson: Introduce component framework support
-To: Sui Jingfeng <sui.jingfeng@linux.dev>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- dri-devel@lists.freedesktop.org
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240723183436.216670-1-sui.jingfeng@linux.dev>
- <20240723183436.216670-2-sui.jingfeng@linux.dev>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240723183436.216670-2-sui.jingfeng@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8pTqHdI8f84MUOrOeomV1gClWCxBPTB0r9HEpO7Fv3ot86jPeK7
- CS0hMyYWor1qvGP+hwcvZBMdozsAgmaicP4PIt/+z9QMCuCbrfBCTxstLinqFyQwzY8Bmm0
- edsbd54VpK2gQMAWDMPpYADHjzm1Z8JsKGtQjn4plLha6B7poB4Q7r5IVWs8doSZbTdsjRq
- Ob+vS3IWzZFrc75UjrWMA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:UmzbbpJucno=;z4v+NHdZ83Y3e7cyoDgnBFIQBrI
- ICn4YGt1fInAGxsZnw3VyS7BHrQDEjVzcCvvUJUiyj6BgvVCYmJhUv55WDWdwm+HMzobAfDKi
- /uLpRqngf+jHCtKY0uUha/E2LO/jZik7hW/9o8IfRfCHTaBmrRholArKo6joApgcXIOO8SxUn
- t1hcbabnJYF2ZlzBGqOLwEVyaj3rH40bekFSZLb6YFsND1mcqv1JleC3PbuthA3Us/w/hAM+B
- qYoISRFwZGM/ehgkZ35FI8eNyGX+ZBbhZXMLDyV6fUZYfKNGis45pUV1QsupQVahn5n2Tv0+e
- OZBrVsmdliiJr5qn039YICT6OUwophxS9uDENSZPMfLIoLsRCkabXmenAYs5nRoKe70DCNWie
- aQzk9rIM8mMOfOOtsWRFaK2CByuK3MwPWYWRvb64hQe4wze+5wxApM5N0U7Mk+QGnT4RPMJr9
- OfZJdOTyDwti844ciLm93jEyi6+C8g1PlwlbI4m0ygRtIYCzBAEgDDFCbC+a5KcvNsS91knE8
- oj/3ub2NmfyMFzHg/VNLV9lZ+ReoC1YUwXiiKQpezFWYPF+sW/ubtoHX1ITtSDBXWm4Nzx4WN
- uSZdoI6POy3vUhFajl4wxeF7NuMetTm5ygyhw/73ZADOpfYmklZ0PVeK9eSxXtO7bxXSHYkPL
- Qgkcwvq7rx7YdljSXyPeQRpBsXg7Ubn8NTpySQm3W6RCRuWzS33AllwSND4O4Js5rd+BuEmy6
- mfiIgwDAdDTPFyyp/wL4vkuonznlplWc/cKTBsvPMToYwOkAE1RC4Xg45SXojBEz926k/u8kP
- pbMNb5yGa5YcarwASVRlWmPg==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240723185856.92814-1-robert.mader@collabora.com>
 
-> In some display subsystems, the functionality of a PCIe device may too
+Hi Robert
 
-                                                                 might be?
+On Tue, Jul 23, 2024 at 08:58:56PM GMT, Robert Mader wrote:
+> Analogous to e.g. the imx219. This enables propagating
+> V4L2_CID_CAMERA_SENSOR_ROTATION values so that libcamera
 
+and V4L2_CID_CAMERA_ORIENTATION
 
-=E2=80=A6
-> of the dirver is loaded, =E2=80=A6
+> can detect the correct rotation from the device tree
+> and propagate it further to e.g. Pipewire.
 
-         driver?
+Well, yes, that's a consequence. As long as Linux is concerned, this
+serves to register the two above mentioned controls.
 
+>
+> Signed-off-by: Robert Mader <robert.mader@collabora.com>
 
-=E2=80=A6
-> its dependencies ready before it can register the service to userspace.
+Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 
-                                                               user space?
+Thanks
+  j
 
-
-=E2=80=A6
-> submodule by creating platform devices manually during driverload time.
-
-                                                         driver load?
-
-
-=E2=80=A6
-> device as a DRM proxy, which will attach the common drm routines to our
-
-                                                      DRM?
-
-
-=E2=80=A6
-> While at it, also do some cleanups.
-
-I find such information suspicious.
-Is there any need to offer adjustments as separate update steps?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10#n81
-
-Regards,
-Markus
+> ---
+>  drivers/media/i2c/imx355.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/i2c/imx355.c b/drivers/media/i2c/imx355.c
+> index 7e9c2f65fa08..0dd25eeea60b 100644
+> --- a/drivers/media/i2c/imx355.c
+> +++ b/drivers/media/i2c/imx355.c
+> @@ -1520,6 +1520,7 @@ static const struct v4l2_subdev_internal_ops imx355_internal_ops = {
+>  static int imx355_init_controls(struct imx355 *imx355)
+>  {
+>  	struct i2c_client *client = v4l2_get_subdevdata(&imx355->sd);
+> +	struct v4l2_fwnode_device_properties props;
+>  	struct v4l2_ctrl_handler *ctrl_hdlr;
+>  	s64 exposure_max;
+>  	s64 vblank_def;
+> @@ -1531,7 +1532,7 @@ static int imx355_init_controls(struct imx355 *imx355)
+>  	int ret;
+>
+>  	ctrl_hdlr = &imx355->ctrl_handler;
+> -	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 10);
+> +	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 12);
+>  	if (ret)
+>  		return ret;
+>
+> @@ -1603,6 +1604,15 @@ static int imx355_init_controls(struct imx355 *imx355)
+>  		goto error;
+>  	}
+>
+> +	ret = v4l2_fwnode_device_parse(&client->dev, &props);
+> +	if (ret)
+> +		goto error;
+> +
+> +	ret = v4l2_ctrl_new_fwnode_properties(ctrl_hdlr, &imx355_ctrl_ops,
+> +					      &props);
+> +	if (ret)
+> +		goto error;
+> +
+>  	imx355->sd.ctrl_handler = ctrl_hdlr;
+>
+>  	return 0;
+> --
+> 2.45.2
+>
 
