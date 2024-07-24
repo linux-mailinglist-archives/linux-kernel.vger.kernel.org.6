@@ -1,147 +1,156 @@
-Return-Path: <linux-kernel+bounces-261052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5115993B233
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:02:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9A0A93B235
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:03:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80A441C2301B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:02:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16D521C2206E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6522156F2D;
-	Wed, 24 Jul 2024 14:02:43 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F002A158D96;
+	Wed, 24 Jul 2024 14:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BT+esyDk"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD848613D
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F8C157A58
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721829763; cv=none; b=Yt1SuBJGcwF28wxYdtNCJZ3W9LvTsKp9ohT+kAnBmk1ouZOjo8JfZFx1X8W5Bc6KrNwvpkXpnMA53RmgFsE9l+R9EeavuW7LdxbgRT5P7PmY/B2cESDqjF+SrjFd+ojkOR1uOVsKco/JGSUHWekeHbc7EjpsdRrtm3D0fLnLTa8=
+	t=1721829782; cv=none; b=qm4mNoUkJzrIryTKem/LO7eiiAsaiVSAc0dm3e8LaH4MKXbGilOlAQ6O2CIis0l47/5Hvqbab9MIfgG8hi74FOLFD7W2IiykllipR/K6wFvRKPXjn7PsjPMM97TP0QR1GllnEBkjLanVekC4812Z2uDSuhAF1WvbDGBtA6A8NW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721829763; c=relaxed/simple;
-	bh=tsMhgZSuQDlz9vLOkDptUWQD/wemDXsgusjND8tmH98=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PdRBzXnQwA2qixiPq17qkUIwuOcjP75HXvb8wUxshacjYYGFd4dhFG11044d050QaNHc6Lo5d/NByRFKOVSZuHJB+4HYWLQnoOUfl2adlRLf+Ru+UvwtRvA87fqZxtDRWNFyAt3/O3bsPaXtR8UhZFXCz08GJ2/QxKg00My1tMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 2B00CA405F;
-	Wed, 24 Jul 2024 14:02:39 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf05.hostedemail.com (Postfix) with ESMTPA id B2F572000E;
-	Wed, 24 Jul 2024 14:02:36 +0000 (UTC)
-Message-ID: <45c339ffdf90019ce97a260d8126e3e3a1b3c1ae.camel@perches.com>
-Subject: Re: get_maintainer.pl finds old email address not in MAINTAINERS
-From: Joe Perches <joe@perches.com>
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: linux-kernel@vger.kernel.org, Greg Kroah-Hartman
-	 <gregkh@linuxfoundation.org>
-Date: Wed, 24 Jul 2024 07:02:35 -0700
-In-Reply-To: <8021ff18-b277-4e6a-9a15-5e107ae5809e@molgen.mpg.de>
-References: <20240724111524.25441-1-pmenzel@molgen.mpg.de>
-	 <8021ff18-b277-4e6a-9a15-5e107ae5809e@molgen.mpg.de>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+	s=arc-20240116; t=1721829782; c=relaxed/simple;
+	bh=TIm99oYWKHX/VKRM4PNSZyECrwI2jQiRJ3uFiKDKdS4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=gKjq4vZZLDYKyxeMZVqhJ4CPGbcDxxAHN7g5uerNzydMPTtSQvtd3jX9ZQdHM+bvBJ9F3RfFTUrsklbmZ/lLXy9PyEdVRIDkDQytpxbv/5gPzT/tTBaJj5lyqHYkZDiyFpLKMqCKuhGQJ49Ums9nMaMa19QlZFdZNRRuDL695yY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BT+esyDk; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721829778;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9TCLNx0WZcTN2tXdFP0YiPVkgtpvc8uO6NeYuUaJhpQ=;
+	b=BT+esyDkO2LspoV5FDaSYjksT3ExecpIRXxMNZIsBhhbqySUXFh7+2DIrVo/626zZT1cXu
+	1ktfe1GA8qyTvzMzBIdYeJbX645aEWR82ElXiTUx2TRLJkGkekihGz3U1YPPvATNkZmB0k
+	aAIYxYYQ6WWMB7SP8in0XZaO9GP/CVw=
+From: Luis Henriques <luis.henriques@linux.dev>
+To: Jan Kara <jack@suse.cz>
+Cc: Theodore Ts'o <tytso@mit.edu>,  Andreas Dilger <adilger@dilger.ca>,
+  Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
+  linux-ext4@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] ext4: fix incorrect tid assumption in
+ ext4_fc_mark_ineligible()
+In-Reply-To: <20240724101504.e2t4pvgw6td7rrmm@quack3> (Jan Kara's message of
+	"Wed, 24 Jul 2024 12:15:04 +0200")
+References: <20240723154402.21125-1-luis.henriques@linux.dev>
+	<20240723154402.21125-5-luis.henriques@linux.dev>
+	<20240724101504.e2t4pvgw6td7rrmm@quack3>
+Date: Wed, 24 Jul 2024 15:02:49 +0100
+Message-ID: <87ed7ikhva.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Rspamd-Queue-Id: B2F572000E
-X-Rspamd-Server: rspamout01
-X-Stat-Signature: mjfdg3o8ozeiys59wcud1oexmeg1m7ux
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX18O9k05JGS5Lvj9etPRXc1ZFwZgf8KG48w=
-X-HE-Tag: 1721829756-648651
-X-HE-Meta: U2FsdGVkX1+CQBsjBbxGk+vX2Wzmn3WVKV6fq1JKBLv+ae4b1AjH4Iwq2iipXOXZYnw+J6o/6O0cHOahD78KhQVgO6RRufAbs8RwJ+PAS9gJC771vQbzODh6PKbfxShQYjvJsx0czthg+mmIfLYY1ERHTUjD4NxRi6piQtsPRLSEFRwua+nH9z2BpzBpF/ZQvSr3r8YA52nc8Bk9b7KA+E4jxbGp/aar0QSvnrD+lYkHw7tQ4B1gssCpQiY4J6cDQu2CutzYjYMmir0+2MByHcagxcs6IT0X+KHV6FYBUzKh5yE6TDJLFS/iwdqrxUb5vpuYOtEaouk7+EO7KAUKqH4K18YC3f2PywlwPjimcttb4+8a5t5MR6RLH8SBCWC1qiTfMgz/Vx1hPz1BSIzZqpOlJpN2G1mDSeZXrMWbQTEwE9l/uFeSy2OJB7cdHc13Fh0W343ldnkGLKBh0lyZ6D4LK5U33J8TK4wwShosGHMcsJzlBambQeSPysXfKGM5XACvmFjgVskR/jZvfa7672gkU4wFlVc7eo4LtVZdceSbYFBrYhCl0Ok/OYMnCP7XiE2JyvwzyClNJSJKyOpcY7Nsns2GaUYkn0LbDFUixJSrq2+e/HtBhqukH1Y4jXU4dS8n2zMYM02DqjuvaZfegSS+WPqkid0VOtdVIytL9CGJYb7tvduObx+EjMopIvsoQ3aOJZUczVpOdsVbfvmBizpWYgOgQ0fhJ5A5HxbZ9zA93TQqP125nXxVVZw86KTOYi8ycDaTeAWykagW19ImMw==
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 2024-07-24 at 15:25 +0200, Paul Menzel wrote:
-> Dear Linux folks,
->=20
->=20
-> I sent a patch [1] using
->=20
->      git send-email --identity=3Dlinux=20
-> 0001-USB-core-hub_port_reset-Remove-extra-40-ms-reset-rec.patch
->=20
-> with the git configuration below.
->=20
->      [sendemail.linux]
->      	tocmd =3D"`pwd`/scripts/get_maintainer.pl --nogit --nogit-fallback=
-=20
-> --norolestats --nol"
->       	cccmd =3D"`pwd`/scripts/get_maintainer.pl --nogit --nogit-fallback=
-=20
-> --norolestats --nom"
->=20
-> That resulted in Gregs old SUSE address getting added:
->=20
->      $ git describe origin
->      v6.10-12246-g786c8248dbd3
->      $ scripts/get_maintainer.pl --nogit --nogit-fallback --norolestats=
-=20
-> --nom 0001-USB-core-hub_port_reset-Remove-extra-40-ms-reset-rec.patch
->      Greg Kroah-Hartman <gregkh@suse.de>
->      David Brownell <david-b@pacbell.net>
->      linux-usb@vger.kernel.org
->      linux-kernel@vger.kernel.org
->=20
-> I am wondering where that address is coming from, and if I should change=
-=20
-> my git configuration?
+On Wed, Jul 24 2024, Jan Kara wrote:
 
-It's coming from the commit of the Fixes: line
+> On Tue 23-07-24 16:44:02, Luis Henriques (SUSE) wrote:
+>> Function jbd2_journal_shrink_checkpoint_list() assumes that '0' is not a
+>> valid value for transaction IDs, which is incorrect.
+>>=20
+>> Furthermore, the sbi->s_fc_ineligible_tid handling also makes the same
+>> assumption by being initialised to '0'.  Fortunately, the sb flag
+>> EXT4_MF_FC_INELIGIBLE can be used to check whether sbi->s_fc_ineligible_=
+tid
+>> has been previously set instead of comparing it with '0'.
+>>=20
+>> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+>
+> Just one style nit below, otherwise looks good. Feel free to add:
+>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+>
+> BTW, the ineligibility handling looks flaky to me, in particular the cases
+> where we call ext4_fc_mark_ineligible() with NULL handle seem racy to me =
+as
+> fastcommit can happen *before* we mark the filesystem as ineligible.  But
+> that's not really related to your changes, they just made me look at that
+> code in detail and I couldn't resist complaining :)
 
-Fixes: b789696af8b4 ("[PATCH] USB: relax usbcore reset timings")
+Heh, fair enough.  Regarding this race, I may try to look into it but I'll
+need to dig a bit more.  And yeah it's probably better to separate that
+from this patch.
 
-And that commit has those email addresses.
+>
+>> ---
+>>  fs/ext4/fast_commit.c | 15 +++++++++++----
+>>  1 file changed, 11 insertions(+), 4 deletions(-)
+>>=20
+>> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
+>> index 3926a05eceee..3e0793cfea38 100644
+>> --- a/fs/ext4/fast_commit.c
+>> +++ b/fs/ext4/fast_commit.c
+>> @@ -339,22 +339,29 @@ void ext4_fc_mark_ineligible(struct super_block *s=
+b, int reason, handle_t *handl
+>>  {
+>>  	struct ext4_sb_info *sbi =3D EXT4_SB(sb);
+>>  	tid_t tid;
+>> +	bool has_transaction =3D true;
+>> +	bool is_ineligible;
+>>=20=20
+>>  	if (ext4_fc_disabled(sb))
+>>  		return;
+>>=20=20
+>> -	ext4_set_mount_flag(sb, EXT4_MF_FC_INELIGIBLE);
+>>  	if (handle && !IS_ERR(handle))
+>>  		tid =3D handle->h_transaction->t_tid;
+>>  	else {
+>>  		read_lock(&sbi->s_journal->j_state_lock);
+>> -		tid =3D sbi->s_journal->j_running_transaction ?
+>> -				sbi->s_journal->j_running_transaction->t_tid : 0;
+>> +		if (sbi->s_journal->j_running_transaction)
+>> +			tid =3D sbi->s_journal->j_running_transaction->t_tid;
+>> +		else
+>> +			has_transaction =3D false;
+>>  		read_unlock(&sbi->s_journal->j_state_lock);
+>>  	}
+>>  	spin_lock(&sbi->s_fc_lock);
+>> -	if (tid_gt(tid, sbi->s_fc_ineligible_tid))
+>> +	is_ineligible =3D ext4_test_mount_flag(sb, EXT4_MF_FC_INELIGIBLE);
+>> +	if (has_transaction &&
+>> +	    ((!is_ineligible) ||
+> 	     ^^ these extra braces look strange
+>
 
-I suppose it could be argued that the existing .mailmap entry
-should somehow fix this but without changing .mailmap entries
-with just a single email address like this:
+They do, indeed.  I think my initial version had an explicit comparison
+with 'false'.  v2 will have those removed.  And once again, thanks for
+your review, Jan!
 
-diff --git a/.mailmap b/.mailmap
-index 8284692f9610..1d2062d479b9 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -204,7 +204,7 @@ Gerald Schaefer <gerald.schaefer@linux.ibm.com> <gerald=
-sc@de.ibm.com>
- Gerald Schaefer <gerald.schaefer@linux.ibm.com> <gerald.schaefer@de.ibm.co=
-m>
- Gerald Schaefer <gerald.schaefer@linux.ibm.com> <geraldsc@linux.vnet.ibm.c=
-om>
- Greg Kroah-Hartman <greg@echidna.(none)>
--Greg Kroah-Hartman <gregkh@suse.de>
-+Greg Kroah-Hartman <gregkh@linuxfoundation.org> <gregkh@suse.de>
- Greg Kroah-Hartman <greg@kroah.com>
- Greg Kurz <groug@kaod.org> <gkurz@linux.vnet.ibm.com>
- Gregory CLEMENT <gregory.clement@bootlin.com> <gregory.clement@free-electr=
-ons.com>
+Cheers,
+--=20
+Lu=C3=ADs
 
-There's no trivial way to do that.
 
-If these single line entries in .mailmap are modified,
-get_maintainer works fine.
-
-Here's the Fixes: commit:
-
----
-commit b789696af8b4102b7cc26dec30c2c51ce51ee18b
-Author: David Brownell <david-b@pacbell.net>
-Date:   Wed Aug 31 10:41:44 2005 -0700
-
-    [PATCH] USB: relax usbcore reset timings
-   =20
-    This appears to help some folk, please merge.
-    This patch relaxes reset timings.  There are some reports that it
-    helps make enumeration work better on some high speed devices.
-   =20
-    Signed-off-by: David Brownell <dbrownell@users.sourceforge.net>
-    Signed-off-by: Greg Kroah-Hartman <gregkh@suse.de>
+>> +	     (is_ineligible && tid_gt(tid, sbi->s_fc_ineligible_tid))))
+>>  		sbi->s_fc_ineligible_tid =3D tid;
+>> +	ext4_set_mount_flag(sb, EXT4_MF_FC_INELIGIBLE);
+>
+> 								Honza
+> --=20
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
 
