@@ -1,208 +1,139 @@
-Return-Path: <linux-kernel+bounces-261305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A71193B57F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:01:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77DF293B582
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:04:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 342001C23D62
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:01:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 206891F24331
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:04:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2F416078E;
-	Wed, 24 Jul 2024 17:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0325315ECE6;
+	Wed, 24 Jul 2024 17:03:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fuiAGIzF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IvUd741z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7256B15EFC6;
-	Wed, 24 Jul 2024 17:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47BDD282FA
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 17:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721840451; cv=none; b=gNmGuLTm2KQnHa7VR8FlgPR6Tf4UhCtzvGBJ0+1kzkBD6Sy6vPh30KLXnwVE5NIq0+rhts0LWv92a0CUUHus/DuqVK2sCn9DPgNvjnVfVTG1+J4RjgXAJvPhsdroEcu2u/Zp7jYYkIhKF0uezFGli2hggkzH6T18dOhVT8J9ZZM=
+	t=1721840636; cv=none; b=hzBo38Zh0V2jhXxpJPSUL/9b0vDhT7Q2WxYxFWI5fPT2HwWUiS6i5ujt7OOzNxoxAod0uO7EUmyKUAd0bmJ/QK4tI4s+Cb4Ye8GsmV865ikTor7bxIMFlXOgOaaqDR9AywTtUBqH5DGdkClQcKxZsOCmh0uUxW6YNKx8CwhwYA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721840451; c=relaxed/simple;
-	bh=2Fp4P0nwOnEMoAXIjI4Y3vOGjyY6NokmL9megcF9vq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mg4uD09xjBCJTiZQlFQhPvgy5M5HuZU/dNtng5VSoFiLVnSgcPSmBRDKzXDOSf8xxq3JJz1gQuIhgeRfaV1GaH03qQuPE8W9rzuYcvKWsUZKiE51mFvZmdKQN7mLLuEUjW+yr7bxdJmPDBUY7+GzaTuyOrIpTlO4HRWgUCJO+Ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fuiAGIzF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB0C7C32781;
-	Wed, 24 Jul 2024 17:00:48 +0000 (UTC)
+	s=arc-20240116; t=1721840636; c=relaxed/simple;
+	bh=smkGN635WhWDUOwM+//l44ZCUmX0jZ/3ahNcGTJchAs=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=LfDRUYmFRmkoy+Gwg4M5pMA//kDUO+Oi0RHH3AhDOM3VXXjZYbC73J10L06ee0fh2g+Zf51ixSepfY0Vl3vFYswSPtGsbBOfviMcCM6Pf3GhKPornp923n2d0MuHanMrdH5CuXB5FCUOkF2PgkwGCOmEfv4d7n0PLunYj32DqIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IvUd741z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDADBC32786;
+	Wed, 24 Jul 2024 17:03:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721840451;
-	bh=2Fp4P0nwOnEMoAXIjI4Y3vOGjyY6NokmL9megcF9vq8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fuiAGIzF1Mk04XEIXWoBquP9gxq0hR7o3p8cRHVnkCkp1n/AWQN22x6+EKPARr+Gc
-	 w4AwDNIP86ve2KTlPJgZAh51KxTdfV/UuvhZeliWcCLcaNDlQP/No7AhGGZZAyRxIC
-	 mfE6P8ZzZzBPHPKl8HEmPhHOUJnc19nci2FNf8YkE7rXar+x8X3WDvGE9gV4teKQZK
-	 84TzmXO3nFBloc51YZuZa4bQYjlyCwZQfPaoH6+XNXQ6XvD4GGzfzQTX/5a8i6VzFz
-	 hV3RnG8cwoPi+aay6e/T2XK4OvOsB+my075lNLNQJTuaAFsb3t5aY4zOAPDauxDzqb
-	 ySsKAtRKEvG+w==
-Date: Wed, 24 Jul 2024 18:00:46 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Vladimir Zapolskiy <vz@mleia.com>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: gpio: nxp,lpc32xx-gpio: Convert to dtschema
-Message-ID: <20240724-sappiness-apprehend-b66630b94bcf@spud>
-References: <20240724161235.130333-1-animeshagarwal28@gmail.com>
+	s=k20201202; t=1721840635;
+	bh=smkGN635WhWDUOwM+//l44ZCUmX0jZ/3ahNcGTJchAs=;
+	h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
+	b=IvUd741z876Cjp69kwtWot0fHuqsFZwvfkzmQXszddBJN3jNTd5BYvVFnbcoscL3h
+	 Itekye0Lfan4nV1Rz+dM4VLBM7s24V1lFhxbS3R1C5ALEsm8X92c7J++1ESf1QV+GE
+	 5us4Gkl1fpbGg01nQHrCuLo7JoWugR/ty4sxu+CWLhIFD4a6EOOBVvdimPHeUT+KJH
+	 StRC5PMVrRxb0VbO5bp8cfkjW0/v8/WqzffnA+QchxO13CoXrZFQhyNDIYd/YMPEWM
+	 qIMOX/xiHXI7DESPAxwocg/Cc5aC4/CtFbdCkn7VkDKaMzVVJJGE0j4usSs3I5/Ces
+	 P1DuUJOFBebKw==
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 6A9091200043;
+	Wed, 24 Jul 2024 13:03:52 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Wed, 24 Jul 2024 13:03:52 -0400
+X-ME-Sender: <xms:-DOhZlXdD4KSkzIdhQE_68_ZlB-lSID9qiSDn8HXv2oQBfDvCqBFFA>
+    <xme:-DOhZlm37amT2PlhDp7O_uMMhYV4geJ8IZmp3YzVFN8ZBJwY7pZ7ARfYdAk3XX3tB
+    s0Y46am69lwWnuFusk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddriedugddutdekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
+    nhguuceuvghrghhmrghnnhdfuceorghrnhgusehkvghrnhgvlhdrohhrgheqnecuggftrf
+    grthhtvghrnhepvdeviefgtedugeevieelvdfgveeuvdfgteegfeeiieejjeffgeeghedu
+    gedtveehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    eprghrnhguodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduvdekhedujedt
+    vdegqddvkeejtddtvdeigedqrghrnhgupeepkhgvrhhnvghlrdhorhhgsegrrhhnuggsrd
+    guvgdpnhgspghrtghpthhtoheptd
+X-ME-Proxy: <xmx:-DOhZhZfXRiEZmmtGYsQI6F4pxzWE0cVfDERbRYIaqSjeA4JZB48gg>
+    <xmx:-DOhZoWsWkTgZveXy1bV01g0rtDmfbO-KW2ZoibaRFUSGaeOMmOGRw>
+    <xmx:-DOhZvm2ei5XJMb5h6NRCZDLLyFnFL7NB7dWt4dJcvA8FX3oSFrjiQ>
+    <xmx:-DOhZlc6Fic4-mMgGXWWhUDhIC-3UI-_tkmvTrmEs3TzLBkNTRuRMQ>
+    <xmx:-DOhZpGSskkWLkqzxL5wcndF5hxkvQ5IJhLyJXC9C21AeCqt3AnJCU_z>
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 2B4A6B60093; Wed, 24 Jul 2024 13:03:52 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-582-g5a02f8850-fm-20240719.002-g5a02f885
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="RctCo8G3j4W6epQq"
-Content-Disposition: inline
-In-Reply-To: <20240724161235.130333-1-animeshagarwal28@gmail.com>
+Message-Id: <1bb3d09c-3b34-4348-8d6f-bd867704625c@app.fastmail.com>
+In-Reply-To: <3484b7fcd2c74655bd685e5a7030c284@AcuMS.aculab.com>
+References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
+ <3484b7fcd2c74655bd685e5a7030c284@AcuMS.aculab.com>
+Date: Wed, 24 Jul 2024 19:03:31 +0200
+From: "Arnd Bergmann" <arnd@kernel.org>
+To: "David Laight" <David.Laight@aculab.com>,
+ "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+ "Linus Torvalds" <torvalds@linuxfoundation.org>
+Cc: "Matthew Wilcox" <willy@infradead.org>,
+ "Christoph Hellwig" <hch@infradead.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+ "Dan Carpenter" <dan.carpenter@linaro.org>,
+ "Jason A . Donenfeld" <Jason@zx2c4.com>,
+ "'pedro.falcato@gmail.com'" <pedro.falcato@gmail.com>,
+ "Mateusz Guzik" <mjguzik@gmail.com>,
+ "'linux-mm@kvack.org'" <linux-mm@kvack.org>
+Subject: Re: [PATCH 7/7] minmax: minmax: Add __types_ok3() and optimise defines with 3
+ arguments
+Content-Type: text/plain
 
+On Wed, Jul 24, 2024, at 16:33, David Laight wrote:
+> min3() and max3() were added to optimise nested min(x, min(y, z))
+> sequences, bit only moved where the expansion was requiested.
+>
+> Add a separate implementation for 3 argument calls.
+> These are never required to generate constant expressiions to
+> remove that logic.
+>
+> Signed-off-by: David Laight <david.laight@aculab.com>
 
---RctCo8G3j4W6epQq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This brings another 3x improvement in the size of the expansion
+and build speed.
 
-Yo,
+> +#define __cmp_once3(op, x, y, z, uniq) ({	\
+> +	typeof(x) __x_##uniq = (x);		\
+> +	typeof(x) __y_##uniq = (y);		\
+> +	typeof(x) __z_##uniq = (z);		\
+> +	__cmp(op, __cmp(op, __x_##uniq, __y_##uniq), __z_##uniq); })
 
-On Wed, Jul 24, 2024 at 09:42:28PM +0530, Animesh Agarwal wrote:
-> Convert the NXP LPC32xx SoC GPIO controller bindings to DT schema format.
->=20
-> Cc: Daniel Baluta <daniel.baluta@nxp.com>
-> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
-> ---
->  .../devicetree/bindings/gpio/gpio_lpc32xx.txt | 43 ---------------
->  .../bindings/gpio/nxp,lpc32xx-gpio.yaml       | 52 +++++++++++++++++++
->  2 files changed, 52 insertions(+), 43 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/gpio/gpio_lpc32xx.t=
-xt
->  create mode 100644 Documentation/devicetree/bindings/gpio/nxp,lpc32xx-gp=
-io.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt b/Do=
-cumentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
-> deleted file mode 100644
-> index 49819367a011..000000000000
-> --- a/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
-> +++ /dev/null
-> @@ -1,43 +0,0 @@
-> -NXP LPC32xx SoC GPIO controller
-> -
-> -Required properties:
-> -- compatible: must be "nxp,lpc3220-gpio"
-> -- reg: Physical base address and length of the controller's registers.
-> -- gpio-controller: Marks the device node as a GPIO controller.
-> -- #gpio-cells: Should be 3:
-> -   1) bank:
-> -      0: GPIO P0
-> -      1: GPIO P1
-> -      2: GPIO P2
-> -      3: GPIO P3
-> -      4: GPI P3
-> -      5: GPO P3
-> -   2) pin number
-> -   3) optional parameters:
-> -      - bit 0 specifies polarity (0 for normal, 1 for inverted)
-> -- reg: Index of the GPIO group
+This still has a nested call to __cmp(), which makes the
+resulting expression bigger than necessary.
 
-> diff --git a/Documentation/devicetree/bindings/gpio/nxp,lpc32xx-gpio.yaml=
- b/Documentation/devicetree/bindings/gpio/nxp,lpc32xx-gpio.yaml
-> new file mode 100644
-> index 000000000000..5974b2775d23
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/nxp,lpc32xx-gpio.yaml
+The three typeof(x) should be x/y/z, right? Using __auto_type
+would avoid the bug and also remove one more variable expansion.
 
-Can you make this filename the same as the compatible string please?
+Using another temporary variable, plus the use of __auto_type
+brings the example line from xen/setup.c down 750KB to 530KB,
+and the compile speed from 0.5s to 0.34s. 
 
-> @@ -0,0 +1,52 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+ #define __cmp_once3(op, x, y, z, uniq) ({      \
+       __auto_type __x_##uniq = (x);           \
+       __auto_type __y_##uniq = (y);           \
+       __auto_type __z_##uniq = (z);           \
+       __auto_type __xy##uniq = __cmp(op, __x_##uniq, __y_##uniq); \
+       __cmp(op, __xy_##uniq, __z_##uniq); })
 
-Hmm, the original author does not appear to be from one of the companies
-where there's a carte blanche for binding relicensing.
+The __auto_type change can also be applied to the other typeof()
+in this file.
 
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/gpio/nxp,lpc32xx-gpio.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP LPC32xx SoC GPIO controller
-> +
-> +maintainers:
-> +  - Animesh Agarwal <animeshagarwal28@gmail.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: nxp,lpc3220-gpio
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  gpio-controller: true
-> +
-> +  '#gpio-cells':
-> +    const: 3
-> +    description: |
-> +      1) bank:
-> +        0: GPIO P0
-> +        1: GPIO P1
-> +        2: GPIO P2
-> +        3: GPIO P3
-> +        4: GPI P3
-> +        5: GPO P3
-> +      2) pin number
-> +      3) optional parameters:
-
-This isn't optional, since you've made the number of cells const: 3. The
-original binding also says "should be 3", so I think that's reasonable.
-Just drop the optional wording.
-
-Otherwise, looks pretty okay to me.
-
-Cheers,
-Conor.
-
-> +        - bit 0 specifies polarity (0 for normal, 1 for inverted)
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - gpio-controller
-> +  - '#gpio-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    gpio@40028000 {
-> +        compatible =3D "nxp,lpc3220-gpio";
-> +        reg =3D <0x40028000 0x1000>;
-> +        gpio-controller;
-> +        #gpio-cells =3D <3>; /* bank, pin, flags */
-> +    };
-> --=20
-> 2.45.2
->=20
-
---RctCo8G3j4W6epQq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHQEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqEzPgAKCRB4tDGHoIJi
-0uqwAPiDBQOdQdHa0Bxn92ixhY01Vmy5r/40U7pAC9hnuB5WAQDdnCaQ7+BNsMKm
-ufyZQGHMpLcUz3rSPoafZ5J6NzyXBA==
-=m3mS
------END PGP SIGNATURE-----
-
---RctCo8G3j4W6epQq--
+      Arnd
 
