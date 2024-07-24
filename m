@@ -1,96 +1,185 @@
-Return-Path: <linux-kernel+bounces-260561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FEC193AAEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 04:08:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D17F93AAEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 04:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D57E51F2325D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 02:08:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3A891F2306D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 02:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E1B17758;
-	Wed, 24 Jul 2024 02:08:16 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD2917547;
+	Wed, 24 Jul 2024 02:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Uwb6XtOb"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F15EF4FB
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 02:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0B91B813
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 02:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721786896; cv=none; b=uMOuLCpN8I+zrCux236e6HBUWpIl6FMB7tAb2tBt0EhXNjaDoB2aw52Kvi5xvhV28O+0Ay2L8BhXWtfgIrUCt8e5HY4tiRBlgBaJswRNXNriPl7pAbUw3OCxoJy96wrZJZLQxgUyG3aG6Rf7s1q+axB9IdbWL+0+6/vUCtyd3jI=
+	t=1721786902; cv=none; b=VlMW1bxVEx0a+UhTc/qeAQbB1tNQDK3AXRgHJ6ot3X75WKIYz98bafY9QSB9OgWD01FqQGmDp8oDxiVp93t9fuZB7oNp9Hql6BzkVLCzuIZjzeYArn7gNeZSAGFMGgyEat39LqHiP/dbaAddrOU4uYaspzfv9uUcPEcJgZQyX4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721786896; c=relaxed/simple;
-	bh=BOgCXSS9gM4CS7YsaPM0Hgc4lXW3ePBNDyxaReHGDj8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZNepLMfM8kiKt7+gUOn2aiQLsGez8zsEPeFlgwm0fWPaKfFDdWFhOSHAQWR1T4ZCRvSQ22pnioH4SEQR/gsNwSRCO6aD9V/BzTeRSKl2HOVoYlgU6vqKx1xd5f5IDUGfrAPKnHTW71WEKjGsROqRnuhiU6ERy0tZHkJG8PM+ONQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-05 (Coremail) with SMTP id zQCowAAnDzoBYqBmsdWrAA--.46141S2;
-	Wed, 24 Jul 2024 10:08:01 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: xiang@kernel.org,
-	chao@kernel.org,
-	huyue2@coolpad.com,
-	jefflexu@linux.alibaba.com,
-	dhavale@google.com
-Cc: linux-erofs@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] erofs: convert comma to semicolon
-Date: Wed, 24 Jul 2024 10:07:21 +0800
-Message-Id: <20240724020721.2389738-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1721786902; c=relaxed/simple;
+	bh=mzDFZB9OOghCASrhXpcNqvcOiJQDrOEIRyG0b7jtOwQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FjRgPIaDZfjSRbA22ArWiazniiprKr9IlFI9Nali1HoV18efFLyOedMsBpUs4AszP198gPbtZ404bVzztxTnAFjd6KZ5VvXXttB6cVc7VT+NF1Mual2oa8UjqFuNrDpfVrEg/0yLdPSupx35IL40djBgpFjObGqvJiSNvSEfKWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Uwb6XtOb; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <67fda2fc-5224-428f-bd9c-210915e7c963@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721786893;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uN0c4BmCBZWSj9LZA+Bzr6lnZ+/hvWMXV3zP1RMm/lA=;
+	b=Uwb6XtOb+b+muz1Gf+DMSHRr6Xwg+X0pB8AwamVB3sjSwoFabWgpi6MnG84gN6BGX1BZlK
+	6Vuq7UYFbuD2QmJ4Wh8JtuJcVTCuzCJ2JHCNps+/uMg94BuwqbZiTduJIaR1BEHPFAZN5W
+	titzP2cXiS74CjvQxzZbzwLcDB6qxMw=
+Date: Wed, 24 Jul 2024 10:08:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAAnDzoBYqBmsdWrAA--.46141S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4UZF18ZryDZF17Cr1xZrb_yoWfGwc_A3
-	Zaqr48WF43Jr17K3y5G39YvF1kXay7ur4xAF4j9an0vrWUJr45Jr4DWa18Wrn8u3Waga1a
-	kwn3Gry8JrZxCjkaLaAFLSUrUUUU1b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb-xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
-	WxJr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE
-	6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8Jr0_Cr1UMc
-	vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-	4I1lc7CjxVAaw2AFwI0_Jw0_GFylc2xSY4AK67AK6r4UMxAIw28IcxkI7VAKI48JMxC20s
-	026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_
-	JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14
-	v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xva
-	j40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJV
-	W8JbIYCTnIWIevJa73UjIFyTuYvjfUOjjgDUUUU
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+Subject: Re: [PATCH v3] sched/fair: Sync se's load_avg with cfs_rq in
+ reweight_task
+To: Chuyi Zhou <zhouchuyi@bytedance.com>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, vschneid@redhat.com
+Cc: linux-kernel@vger.kernel.org
+References: <20240723114247.104848-1-zhouchuyi@bytedance.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <20240723114247.104848-1-zhouchuyi@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Replace a comma between expression statements by a semicolon.
+On 2024/7/23 19:42, Chuyi Zhou wrote:
+> In reweight_task(), there are two situations:
+> 
+> 1. The task was on_rq, then the task's load_avg is accurate because we
+> synchronized it with cfs_rq through update_load_avg() in dequeue_task().
+> 
+> 2. The task is sleeping, its load_avg might not have been updated for some
+> time, which can result in inaccurate dequeue_load_avg() in
+> reweight_entity().
+> 
+> This patch solves this by using sync_entity_load_avg() to synchronize the
+> load_avg of se with cfs_rq before dequeue_load_avg() in reweight_entity().
+> For tasks were on_rq, since we already update load_avg to accurate values
+> in dequeue_task(), this change will not have other effects due to the short
+> time interval between the two updates.
+> 
+> Suggested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> Signed-off-by: Chuyi Zhou <zhouchuyi@bytedance.com>
 
-Fixes: 84a2ceefff99 ("erofs: tidy up stream decompressors")
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- fs/erofs/decompressor_lzma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Looks good to me!
 
-diff --git a/fs/erofs/decompressor_lzma.c b/fs/erofs/decompressor_lzma.c
-index 06a722b85a45..40666815046f 100644
---- a/fs/erofs/decompressor_lzma.c
-+++ b/fs/erofs/decompressor_lzma.c
-@@ -188,7 +188,7 @@ static int z_erofs_lzma_decompress(struct z_erofs_decompress_req *rq,
- 			       !rq->partial_decoding);
- 	buf.in_size = min(rq->inputsize, PAGE_SIZE - rq->pageofs_in);
- 	rq->inputsize -= buf.in_size;
--	buf.in = dctx.kin + rq->pageofs_in,
-+	buf.in = dctx.kin + rq->pageofs_in;
- 	dctx.bounce = strm->bounce;
- 	do {
- 		dctx.avail_out = buf.out_size - buf.out_pos;
--- 
-2.25.1
+Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
 
+Thanks.
+
+> ---
+> Changes in v3:
+> - use sync_entity_load_avg() rather than update_load_avg() to sync the
+> sleeping task with its cfs_rq suggested by Dietmar.
+> - Link t0 v2: https://lore.kernel.org/lkml/20240720051248.59608-1-zhouchuyi@bytedance.com/
+> Changes in v2:
+> - change the description in commit log.
+> - use update_load_avg() in reweight_task() rather than in reweight_entity
+> suggested by chengming.
+> - Link to v1: https://lore.kernel.org/lkml/20240716150840.23061-1-zhouchuyi@bytedance.com/
+> ---
+>   kernel/sched/fair.c | 43 ++++++++++++++++++++++++-------------------
+>   1 file changed, 24 insertions(+), 19 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 9057584ec06d..da3cdd86ab2e 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -3669,11 +3669,32 @@ dequeue_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se)
+>   	cfs_rq->avg.load_sum = max_t(u32, cfs_rq->avg.load_sum,
+>   					  cfs_rq->avg.load_avg * PELT_MIN_DIVIDER);
+>   }
+> +
+> +static inline u64 cfs_rq_last_update_time(struct cfs_rq *cfs_rq)
+> +{
+> +	return u64_u32_load_copy(cfs_rq->avg.last_update_time,
+> +				 cfs_rq->last_update_time_copy);
+> +}
+> +
+> +/*
+> + * Synchronize entity load avg of dequeued entity without locking
+> + * the previous rq.
+> + */
+> +static void sync_entity_load_avg(struct sched_entity *se)
+> +{
+> +	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+> +	u64 last_update_time;
+> +
+> +	last_update_time = cfs_rq_last_update_time(cfs_rq);
+> +	__update_load_avg_blocked_se(last_update_time, se);
+> +}
+> +
+>   #else
+>   static inline void
+>   enqueue_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se) { }
+>   static inline void
+>   dequeue_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se) { }
+> +static void sync_entity_load_avg(struct sched_entity *se) { }
+>   #endif
+>   
+>   static void reweight_eevdf(struct sched_entity *se, u64 avruntime,
+> @@ -3795,7 +3816,9 @@ static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
+>   		if (!curr)
+>   			__dequeue_entity(cfs_rq, se);
+>   		update_load_sub(&cfs_rq->load, se->load.weight);
+> -	}
+> +	} else if (entity_is_task(se))
+> +		sync_entity_load_avg(se);
+> +
+>   	dequeue_load_avg(cfs_rq, se);
+>   
+>   	if (se->on_rq) {
+> @@ -4034,11 +4057,6 @@ static inline bool load_avg_is_decayed(struct sched_avg *sa)
+>   	return true;
+>   }
+>   
+> -static inline u64 cfs_rq_last_update_time(struct cfs_rq *cfs_rq)
+> -{
+> -	return u64_u32_load_copy(cfs_rq->avg.last_update_time,
+> -				 cfs_rq->last_update_time_copy);
+> -}
+>   #ifdef CONFIG_FAIR_GROUP_SCHED
+>   /*
+>    * Because list_add_leaf_cfs_rq always places a child cfs_rq on the list
+> @@ -4773,19 +4791,6 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
+>   	}
+>   }
+>   
+> -/*
+> - * Synchronize entity load avg of dequeued entity without locking
+> - * the previous rq.
+> - */
+> -static void sync_entity_load_avg(struct sched_entity *se)
+> -{
+> -	struct cfs_rq *cfs_rq = cfs_rq_of(se);
+> -	u64 last_update_time;
+> -
+> -	last_update_time = cfs_rq_last_update_time(cfs_rq);
+> -	__update_load_avg_blocked_se(last_update_time, se);
+> -}
+> -
+>   /*
+>    * Task first catches up with cfs_rq, and then subtract
+>    * itself from the cfs_rq (task must be off the queue now).
 
