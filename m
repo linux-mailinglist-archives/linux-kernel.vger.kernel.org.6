@@ -1,92 +1,90 @@
-Return-Path: <linux-kernel+bounces-261276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B58C93B50F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:32:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 002F693B511
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C09D282EC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:31:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A91491F229F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7780C15ECE0;
-	Wed, 24 Jul 2024 16:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="URi012NP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9C915EFBD;
+	Wed, 24 Jul 2024 16:31:56 +0000 (UTC)
+Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67A610F4;
-	Wed, 24 Jul 2024 16:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072A810F4;
+	Wed, 24 Jul 2024 16:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721838709; cv=none; b=mxohZjVbkLXaRiFhB3Eo65n/mP/qf7dm/X13ilPkSVHVWzXd4yHmyJU2ecHE1g89PDHPflEri+Im7IwxmlOaZaYsV1n0sNlPxp0NHEsBX0vhWAbpQ8UP6nNZn1vOVfaKnWnEztAmtPU4gJ8X+u7umZ4Rc/FDR6fLf9kNzzl8Sbs=
+	t=1721838715; cv=none; b=fixk4kphgzd//fvoWKENqPQqeW8lf8LBwysd6Wxl54Q0zqQmAvhw6Jq2lr99i9INZk73Mp1fr2KD5H4BkGoml2+HMk35aaXrnpWlOSdDilW7PsZrMx2V5zwThL9KnlKlAnJgwnxsIBITO133XK22G/xVCfm3FVAoLGle/iTrl9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721838709; c=relaxed/simple;
-	bh=gQpr6s0FmDNYdzI3ol/C82NZcG9bLRW5SExa+M+sMK8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=m6wTIPlX56RlKtvVg/tMiTu7xDILtlyrBF8Jby06Q3XGyCUFo6JbCnxMUocktafHmOW37Hb/A6rFKm6Zwynz4Iv0iwr0Lxjr0jmQjy9MON8g1A9W/XrcCx/YY/0VzBLbOsk86XOcQg+HqRVB81zv/lEquuEZf8ewYxcYL0XsIuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=URi012NP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCBA5C32781;
-	Wed, 24 Jul 2024 16:31:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721838709;
-	bh=gQpr6s0FmDNYdzI3ol/C82NZcG9bLRW5SExa+M+sMK8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=URi012NPLWMMvEqckNtT7V8UfnFrQlqaTZ3ZcN57bxyCcGXpIns6+HQWXPZI1T9UY
-	 Ewqot4iDndG0gJ1dqTte9T5iqvJ3bj/R/jcQxsXjugd4JxnOhXUglNPi1CpukWYGoM
-	 wNZiiz0qDZkYmzuuYNpyaqH4blOfdVYUJruyxLoGJiHynfMfiifT5pMSmsx4GJFHGk
-	 Gy3tOx4binyeuLCBZRr9wf1ZWhzoGz40Gvi6DhPZs0/T4JyXHjczwIncziY1wOXRBD
-	 4fDaOoIhm5x7X89Wid+5S9+jUDQAxHaOt9iMrmAAI15qeh6RuTbBeIlj/2vwa3abXe
-	 1pX2fkjMkFAdw==
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>, Shuah Khan <shuah@kernel.org>, 
- Benjamin Tissoires <bentiss@kernel.org>
-Cc: linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-In-Reply-To: <20240723-fix-6-11-bpf-v1-0-b9d770346784@kernel.org>
-References: <20240723-fix-6-11-bpf-v1-0-b9d770346784@kernel.org>
-Subject: Re: [PATCH HID 0/4] HID: selftest fixes after merge into 6.11-rc0
- tree
-Message-Id: <172183870763.647684.3851059862651926785.b4-ty@kernel.org>
-Date: Wed, 24 Jul 2024 18:31:47 +0200
+	s=arc-20240116; t=1721838715; c=relaxed/simple;
+	bh=lO9ykqJ8kZPlf4npavcP7VoQ/S4NN0JPTsgRTSv3j3A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YcpJisEpbgT6ctMpffjrsExMgCJ2N5GZt1Ztak6EmtfWZjxyw3Pmbclr5R9hpaREiu4/ojwjO+wh1/oLz0qr6fboAcREhDX3zWuNURHGV3bgmqWwZFXI11EE/irQ7GXyMss8cqBL5N6OwgHXGJr1s+QKhq3DVle+vlgGO5TE08M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout2.hostsharing.net (Postfix) with ESMTPS id D334E2800AE14;
+	Wed, 24 Jul 2024 18:31:50 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id BC599F514C; Wed, 24 Jul 2024 18:31:50 +0200 (CEST)
+Date: Wed, 24 Jul 2024 18:31:50 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Kerem Karabay <kekrby@gmail.com>,
+	Orlando Chamberlain <orlandoch.dev@gmail.com>,
+	"sharpenedblade@proton.me" <sharpenedblade@proton.me>
+Subject: Re: [PATCH v3 0/2] efi/x86: Call set_os() protocol on dual GPU Macs
+Message-ID: <ZqEsdkVvwsq-CgeB@wunner.de>
+References: <20240701140940.2340297-4-ardb+git@google.com>
+ <MA0P287MB0217C0F7E0B9F6FE8CA47BE8B8D32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+ <MA0P287MB0217E3B4810704C504F13F2CB8A32@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+ <ZpgUVjjj3naBGtfO@wunner.de>
+ <MA0P287MB02178F503AA69E1F570E9753B8A92@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
+ <ZqElRH38f_XV3fKK@wunner.de>
+ <MA0P287MB021789D73CAD62C16BCF0306B8AA2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <MA0P287MB021789D73CAD62C16BCF0306B8AA2@MA0P287MB0217.INDP287.PROD.OUTLOOK.COM>
 
-On Tue, 23 Jul 2024 18:21:50 +0200, Benjamin Tissoires wrote:
-> After HID-BPF struct_ops was merged into 6.11-rc0, there are a few
-> mishaps:
-> - the bpf_wq API changed and needs to be updated here
-> - libbpf now auto-attach all the struct_ops it sees in the bpf object,
->   leading to attempting at attaching them multiple times
+On Wed, Jul 24, 2024 at 04:26:58PM +0000, Aditya Garg wrote:
+> > On 24 Jul 2024, at 9:31 PM, Lukas Wunner <lukas@wunner.de> wrote:
+> > I note that on x86, the efistub walks over all PCI devices in the system
+> > (see setup_efi_pci() in drivers/firmware/efi/libstub/x86-stub.c) and
+> > retrieves the Device ID and Vendor ID.  We could additionally retrieve
+> > the Class Code and count the number of GPUs in the system by checking
+> > whether the Class Code matches PCI_BASE_CLASS_DISPLAY.  If there's
+> > at least 2 GPUs in the system, invoke apple_set_os.
 > 
-> Fix the selftests but also prevent the same struct_ops to be attached
-> more than once as this enters various locks, confusions, and kernel
-> oopses.
-> 
-> [...]
+> This also looks like a good idea, but I'm not well aware of the pci
+> quirks in the Linux kernel. So, would consider it a bug report for
+> the maintainers to fix.
 
-Applied to hid/hid.git (for-6.11/upstream-fixes), thanks!
+This is not a PCI quirk in the kernel.  The efistub is a separate
+program.  I'm saying that the efistub already walks over all PCI devices,
+it would be trivial to hook into this to count GPUs, recognize the T2
+device or do something else entirely.
 
-[1/4] selftests/hid: fix bpf_wq new API
-      https://git.kernel.org/hid/hid/c/ff9fbcafbaf1
-[2/4] selftests/hid: disable struct_ops auto-attach
-      https://git.kernel.org/hid/hid/c/f64c1a459339
-[3/4] HID: bpf: prevent the same struct_ops to be attached more than once
-      https://git.kernel.org/hid/hid/c/acd34cfc48b3
-[4/4] selftests/hid: add test for attaching multiple time the same struct_ops
-      https://git.kernel.org/hid/hid/c/facdbdfe0e62
+Thanks,
 
-Cheers,
--- 
-Benjamin Tissoires <bentiss@kernel.org>
-
+Lukas
 
