@@ -1,79 +1,50 @@
-Return-Path: <linux-kernel+bounces-260505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68BD093AA51
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:09:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0A3593AA7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:15:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1378D1F23AE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:09:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58E8F282CC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7275695;
-	Wed, 24 Jul 2024 01:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hw5uEVUL"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421FB5672;
+	Wed, 24 Jul 2024 01:15:26 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46ED0D520;
-	Wed, 24 Jul 2024 01:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB48D520;
+	Wed, 24 Jul 2024 01:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721783384; cv=none; b=S+Z22M+gzeq9Dk1KGbIG+s0Yf4xpojVxFdVbkzPmHVr6JStjihxOdyZ1wNToLLm4IkTlsTWILwIJ88EHe4JcHFjV0Pk9MbUyifAQzv7p9K7XdaB/cMSHhM2i4WUmeNDngySUAcu3RfcWgVnBGqr+Dpuqu0G523sLDn5Br61NpEQ=
+	t=1721783725; cv=none; b=HloCPHIufDBmv0FfF9t0fVNJ9f4XrbNOUvy2JdSNkeIdv1xjnFctpqgMFXAIJZQZ5mKUUO3S3Sy9OusVrijOwBuTMQEzgJjh0sNwH+sIiZcyE5yZDdPeGU/8NwDmoMgVbgekc/CT/kaT14Z0dGJxaWJXEwb+Qy+ZjCsVd9PN7hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721783384; c=relaxed/simple;
-	bh=P2ntP1z6uoOdPcioy1TYTfRWIH9IvmVmM6qCfNdvKOI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HB4ITdOYYdGek3L5ICAsq/ledB6lfFgjTlYqLpXfCxnAQ/R3FLP33fwNICUhAIEGWXp+Q0pwx1m2AIVYU2LIlty01hPgEs1VM2Z8vDPWPiCds+b+nX9Y6iZh9mP3sfs6V9UUNJ7BK89i2EvSHo8wv8nKcXIxiyYAPkaThVeBDmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hw5uEVUL; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c9e37bdd6fso3603541a91.3;
-        Tue, 23 Jul 2024 18:09:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721783382; x=1722388182; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DEnb1Rd6+nPGp0Qdwh5GBJadzoocNyT63TaycwfKsf4=;
-        b=Hw5uEVUL0/FVde/b++U2yxVQ01rWnakE/8H8R2FB4KgTy47J2/Ezg/ItV59IFKHoXJ
-         gEVvFo7OrAnF9095heBKlCBoKOWThjuGE1tC5vy/GZvxVZ7DSJxGLmDFoP6Ylij4uyQV
-         VsEXWZyfYz4XhT/kgqeadtYbmELJb6tf1J9v6XwRD7lwXdQAMShiVQuR5dPJqrqiJv4x
-         ho9R9uI/QJ/ssw6neRutjt9kMBY/AjuNTsvJNWJc8MrnglUBOwJk/kPT25UAGpLUdwtc
-         n7O3UCI1DrRNaMXQN2F0gdKIA9+pSSD4WbXTWWuvdpiaTMY4qmPC4nPIrFFJ7Rca/ydI
-         qwsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721783382; x=1722388182;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DEnb1Rd6+nPGp0Qdwh5GBJadzoocNyT63TaycwfKsf4=;
-        b=rc8+9y5qhNnLiRpG/GPStk7gS+OfIbyR4oeSUIa7CdhajDrUzlAfBi09un3rbVpI0x
-         oXa/urkPjPlax7qcpEOWz/ZHLDutp1pCYjaH9Od3aIFWvYObzwpIiIKb4z5pd6ZlMcF8
-         tMBM85Z2nIPRnc7tyuQZ6l3gm4LKtIO30Ole/KIHz3TueydaSGsigsWjbWYSkI8xBteJ
-         vvqi/I8NVqh3OLe5Hu9uQFRd7xuFaRrs0je28Prx2uhwl17aYd/qQ2VyEuPloYGdaNNz
-         DvOSX17lteLxAN+Wvd9H7PjiQLfbQLOIYiMRiE3eZ2EY/jHXdhdHgu8tHQd9QNuldjzf
-         G1Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0Y8Gnj2a6QM6ohg5thu+beD8866L/rwqhW7gOJQrN55eufxZlQy1E7OJEMdDh4gDb6ixcKXyjcSLntmCiitODfICkN2Pw8HD0/LRfNkU0AwSOmyMVrtAzGooL/5YSND0sGlaG5vnwcTfifzI=
-X-Gm-Message-State: AOJu0YyZOPlB3cdQKLkOfUfBClmyBLjFc/HZ5xxR/PLMN+NNvX2QRcB+
-	mb/guW7I/C4mFb1fSR33jZkDFyInc3DgqvqrdEU+QPPE63N+cktp
-X-Google-Smtp-Source: AGHT+IE0pOKgD59p7pIwdGnInCrZKBsuHYIYUN/6DRHaLsILdRqXCj9sTsKm8wWuousYKS0DU00tew==
-X-Received: by 2002:a17:90b:314a:b0:2c9:7fba:d88b with SMTP id 98e67ed59e1d1-2cd2740ff1cmr10793886a91.14.1721783382547;
-        Tue, 23 Jul 2024 18:09:42 -0700 (PDT)
-Received: from localhost.localdomain ([190.196.134.53])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb73ddb7dsm270665a91.24.2024.07.23.18.09.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 18:09:41 -0700 (PDT)
-From: Camila Alvarez <cam.alvarez.i@gmail.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Brian Foster <bfoster@redhat.com>,
-	linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+1e515cab343dbe5aa38a@syzkaller.appspotmail.com,
-	Camila Alvarez <cam.alvarez.i@gmail.com>
-Subject: [PATCH] bcachefs: WARNING in bch2_trans_srcu_unlock
-Date: Tue, 23 Jul 2024 21:08:00 -0400
-Message-Id: <20240724010759.1631178-1-cam.alvarez.i@gmail.com>
+	s=arc-20240116; t=1721783725; c=relaxed/simple;
+	bh=lW2m5iVKPpm0+RMHbNOubqiUOyTGy/9/MrRD/c2T7tE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZILjxYBQFo3J4XeoCfPemC06WkbNJOhALmWXSmkji340QsD3oy7FLsm0qFt4UfPdk795Z0RnN0IJXU08YQmDsLTr+KNYJdjGrqjFrff8Zgq86ay+xus5mj5V1wmQ8yjEEezK9UcMrXsip1qELk51g/Yoif2Rjb7ANxFZ4rqmpa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WTGD9732fz2ClSf;
+	Wed, 24 Jul 2024 09:10:49 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7EE9918002B;
+	Wed, 24 Jul 2024 09:15:14 +0800 (CST)
+Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Wed, 24 Jul
+ 2024 09:15:13 +0800
+From: Chen Ridong <chenridong@huawei.com>
+To: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
+	<longman@redhat.com>, <adityakali@google.com>, <sergeh@kernel.org>,
+	<mkoutny@suse.com>
+CC: <cgroups@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] cgroup/cpuset: remove child_ecpus_count
+Date: Wed, 24 Jul 2024 01:08:03 +0000
+Message-ID: <20240724010803.2195033-1-chenridong@huawei.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -82,29 +53,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-bch2_extent_fallocate should not return -BCH_ERR_transaction_restart_nested when there are no buckets available.
-Returning -BCH_ERR_transaction_restart_nested causes the sector allocation to retry even if there's no space available.
+The child_ecpus_count variable was previously used to update
+sibling cpumask when parent's effective_cpus is updated. However, it became
+obsolete after commit e2ffe502ba45 ("cgroup/cpuset: Add
+cpuset.cpus.exclusive for v2"). It should be removed.
 
-Reported-by: syzbot+1e515cab343dbe5aa38a@syzkaller.appspotmail.com
-Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
+Signed-off-by: Chen Ridong <chenridong@huawei.com>
 ---
- fs/bcachefs/io_misc.c | 2 --
- 1 file changed, 2 deletions(-)
+ kernel/cgroup/cpuset.c | 13 -------------
+ 1 file changed, 13 deletions(-)
 
-diff --git a/fs/bcachefs/io_misc.c b/fs/bcachefs/io_misc.c
-index 82f9170dab3f..b5b92ef030df 100644
---- a/fs/bcachefs/io_misc.c
-+++ b/fs/bcachefs/io_misc.c
-@@ -90,8 +90,6 @@ int bch2_extent_fallocate(struct btree_trans *trans,
- 				opts.data_replicas,
- 				opts.data_replicas,
- 				BCH_WATERMARK_normal, 0, &cl, &wp);
--		if (bch2_err_matches(ret, BCH_ERR_operation_blocked))
--			ret = -BCH_ERR_transaction_restart_nested;
- 		if (ret)
- 			goto err;
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 40ec4abaf440..146bf9258db2 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -188,10 +188,8 @@ struct cpuset {
+ 	/*
+ 	 * Default hierarchy only:
+ 	 * use_parent_ecpus - set if using parent's effective_cpus
+-	 * child_ecpus_count - # of children with use_parent_ecpus set
+ 	 */
+ 	int use_parent_ecpus;
+-	int child_ecpus_count;
  
+ 	/*
+ 	 * number of SCHED_DEADLINE tasks attached to this cpuset, so that we
+@@ -1512,7 +1510,6 @@ static void reset_partition_data(struct cpuset *cs)
+ 	if (!cpumask_and(cs->effective_cpus,
+ 			 parent->effective_cpus, cs->cpus_allowed)) {
+ 		cs->use_parent_ecpus = true;
+-		parent->child_ecpus_count++;
+ 		cpumask_copy(cs->effective_cpus, parent->effective_cpus);
+ 	}
+ }
+@@ -1689,10 +1686,7 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
+ 	isolcpus_updated = partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
+ 	list_add(&cs->remote_sibling, &remote_children);
+ 	if (cs->use_parent_ecpus) {
+-		struct cpuset *parent = parent_cs(cs);
+-
+ 		cs->use_parent_ecpus = false;
+-		parent->child_ecpus_count--;
+ 	}
+ 	spin_unlock_irq(&callback_lock);
+ 	update_unbound_workqueue_cpumask(isolcpus_updated);
+@@ -2320,12 +2314,9 @@ static void update_cpumasks_hier(struct cpuset *cs, struct tmpmasks *tmp,
+ 			cpumask_copy(tmp->new_cpus, parent->effective_cpus);
+ 			if (!cp->use_parent_ecpus) {
+ 				cp->use_parent_ecpus = true;
+-				parent->child_ecpus_count++;
+ 			}
+ 		} else if (cp->use_parent_ecpus) {
+ 			cp->use_parent_ecpus = false;
+-			WARN_ON_ONCE(!parent->child_ecpus_count);
+-			parent->child_ecpus_count--;
+ 		}
+ 
+ 		if (remote)
+@@ -4139,7 +4130,6 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
+ 		cpumask_copy(cs->effective_cpus, parent->effective_cpus);
+ 		cs->effective_mems = parent->effective_mems;
+ 		cs->use_parent_ecpus = true;
+-		parent->child_ecpus_count++;
+ 	}
+ 	spin_unlock_irq(&callback_lock);
+ 
+@@ -4206,10 +4196,7 @@ static void cpuset_css_offline(struct cgroup_subsys_state *css)
+ 		update_flag(CS_SCHED_LOAD_BALANCE, cs, 0);
+ 
+ 	if (cs->use_parent_ecpus) {
+-		struct cpuset *parent = parent_cs(cs);
+-
+ 		cs->use_parent_ecpus = false;
+-		parent->child_ecpus_count--;
+ 	}
+ 
+ 	cpuset_dec();
 -- 
 2.34.1
 
