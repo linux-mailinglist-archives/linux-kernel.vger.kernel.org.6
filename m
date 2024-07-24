@@ -1,137 +1,133 @@
-Return-Path: <linux-kernel+bounces-260550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5F0593AAD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:57:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 639FF93AAD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73F63B22B2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:57:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D52241F2346E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3664134D1;
-	Wed, 24 Jul 2024 01:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lUesQsIH"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4931712E71
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 01:57:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3D410A24;
+	Wed, 24 Jul 2024 01:58:23 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C90BA47;
+	Wed, 24 Jul 2024 01:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721786245; cv=none; b=i629CCskEeCyhSjhYA5JokcbJ+xeAk7E7kCRC5oy/AMRKNUFJA/dZmaa2pLyn/FZlZCI7RF6NXdvF3uptxBj1YuSlWvMmgqBD/N9gEBRuMRGitKAjuY8Iwg4BzeNzpFO/rQAjagRIVf5hEdgIXAFwldb8RzmQtJv6GWjaBwnZq8=
+	t=1721786303; cv=none; b=CWSxNhoyzMKY/1uGF7dL4GxKik72EXbEM/QwvckO+palZwvs5Pj0BJs7bKMUSTd/AOzIpnXXA13hXmiNe0ELV9Do0a0KvcTWhh562zo2NWh0ngfgsa8jMb8sEypB8Ba5QFrRWdSUsJQAEmK20MDkayWr6MS7zlgpbutf6gWaTjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721786245; c=relaxed/simple;
-	bh=7C93h2zHCsF3+6kcIKN1lwhv8qIcWHU+c3YseH4YRN8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kGBd44O08+OIpC0fC8a3YYjXMjFKddactwh1dMlZDOK9wgNV0DIwzi9qNzGKWsJMaquiBh8Unvmcpz11aRAiY+2keKkkYKgAZxLuwfUYKqDuy6kxtndZkQ7L1JfWxX85TbhXHiY8yXzPllB5WA0Os9NC4apz3i6K+uNg0BD3VtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lUesQsIH; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <0a63dfd1-ead3-4db3-a38c-2bc1db65f354@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721786241;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VT5Ew9eZUkwsQ1KVPNkgUu/jPA+/4qD7R3UMmIpNcFg=;
-	b=lUesQsIHexBh+jWlqoVfPoQhT8csj+XUHOANqoY2BmuGuj0w3JXl7qjEn8fKlhmWIu4MyB
-	m6+1FVE7jgrSZPIA/6Vt66AejEXBEHYoH28b5QiZDgA0zvxNBykvKWvQ4zuqHjle45conT
-	zkXWV1SOK+8igIhqo00D5A9WQNklJm4=
-Date: Wed, 24 Jul 2024 09:57:05 +0800
+	s=arc-20240116; t=1721786303; c=relaxed/simple;
+	bh=zTI/9lOgKmgqllYrdOynyvXw5CkyrdYdZJmnrTzc4vI=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=UhLfd6tUnwmjJ26D4WULqBOxf7iWV8r4/pQ8+obgLdREMvP6AFs28ehRb1qFuZS35iSu6iRKV73JWEfQUJjOQ9AfKmB7zMDGJSc2xXnQX62H2NXQQ9WaibHuWSVS92lJoK+VAmJflsTsWzppkO8ayZp9nBH0sURTnEtFwa5s0nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [111.207.111.194])
+	by gateway (Coremail) with SMTP id _____8Cxruu6X6BmkMYAAA--.3159S3;
+	Wed, 24 Jul 2024 09:58:18 +0800 (CST)
+Received: from [10.180.13.176] (unknown [111.207.111.194])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8AxBMW4X6Bm8ppWAA--.50447S3;
+	Wed, 24 Jul 2024 09:58:17 +0800 (CST)
+Subject: Re: [PATCH v3] PCI: pci_call_probe: call local_pci_probe() when
+ selected cpu is offline
+To: Ethan Zhao <haifeng.zhao@linux.intel.com>,
+ Markus Elfring <Markus.Elfring@web.de>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: Alex Belits <abelits@marvell.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Nitesh Narayan Lal <nitesh@redhat.com>,
+ Frederic Weisbecker <frederic@kernel.org>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+ stable@vger.kernel.org, Huacai Chen <chenhuacai@loongson.cn>
+References: <20240613074258.4124603-1-zhanghongchen@loongson.cn>
+ <a50b3865-8a04-4a9a-8d27-b317619a75c0@linux.intel.com>
+From: Hongchen Zhang <zhanghongchen@loongson.cn>
+Message-ID: <7340a27e-67c1-c0c3-9304-77710dc44f7f@loongson.cn>
+Date: Wed, 24 Jul 2024 09:58:16 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/4] module: Add module_subinit{_noexit} and
- module_subeixt helper macros
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
- Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
- David Sterba <dsterba@suse.com>, tytso@mit.edu,
- Andreas Dilger <adilger.kernel@dilger.ca>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Chao Yu <chao@kernel.org>, linux-arch@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, Youling Tang <tangyouling@kylinos.cn>
-References: <20240723083239.41533-1-youling.tang@linux.dev>
- <20240723083239.41533-2-youling.tang@linux.dev>
- <Zp-_RDk5n5431yyh@infradead.org>
-Content-Language: en-US, en-AU
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Youling Tang <youling.tang@linux.dev>
-In-Reply-To: <Zp-_RDk5n5431yyh@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <a50b3865-8a04-4a9a-8d27-b317619a75c0@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-CM-TRANSID:AQAAf8AxBMW4X6Bm8ppWAA--.50447S3
+X-CM-SenderInfo: x2kd0w5krqwupkhqwqxorr0wxvrqhubq/1tbiAQAIB2agXhkAJQABsr
+X-Coremail-Antispam: 1Uk129KBj93XoW7trW3Jw4kZFW7XF18Jr17CFX_yoW8Cw4kpF
+	WkJayFkrWvqF48CasFqa18uFyFgwsrJa4Ikw4xA3W5ZFW3AF1Iqr47WwnIgr1UGrWkZr1I
+	y3WUXrykuFW5ZFbCm3ZEXasCq-sJn29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUPFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6r4j6r4UJwAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0c
+	Ia020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_
+	Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrw
+	CYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48J
+	MxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI
+	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
+	IxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUcbAwUUUUU
 
-Hi, Christoph
-
-On 23/07/2024 22:33, Christoph Hellwig wrote:
-> On Tue, Jul 23, 2024 at 04:32:36PM +0800, Youling Tang wrote:
->> Providing module_subinit{_noexit} and module_subeixt helps macros ensure
->> that modules init/exit match their order, while also simplifying the code.
+Hi Ethan,
+On 2024/7/22 PM 3:39, Ethan Zhao wrote:
+> 
+> On 6/13/2024 3:42 PM, Hongchen Zhang wrote:
+>> Call work_on_cpu(cpu, fn, arg) in pci_call_probe() while the argument
+>> @cpu is a offline cpu would cause system stuck forever.
 >>
->> The three macros are defined as follows:
->> - module_subinit(initfn, exitfn,rollback)
->> - module_subinit_noexit(initfn, rollback)
->> - module_subexit(rollback)
+>> This can be happen if a node is online while all its CPUs are
+>> offline (We can use "maxcpus=1" without "nr_cpus=1" to reproduce it).
 >>
->> `initfn` is the initialization function and `exitfn` is the corresponding
->> exit function.
-> I find the interface a little confusing.  What I would have expected
-> is to:
->
->   - have the module_subinit call at file scope instead of in the
->     module_init helper, similar to module_init/module_exit
->   - thus keep the rollback state explicitly in the module structure or
->     similar so that the driver itself doesn't need to care about at
->     all, and thus remove the need for the module_subexit call.
-module_init(initfn)/module_exit(exitfn) has two definitions (via MODULE):
-- buindin: uses do_initcalls() to iterate over the contents of the specified
-   section and executes all initfn functions in the section in the order in
-   which they are stored (exitfn is not required).
+>> So, in the above case, let pci_call_probe() call local_pci_probe()
+>> instead of work_on_cpu() when the best selected cpu is offline.
+>>
+>> Fixes: 69a18b18699b ("PCI: Restrict probe functions to housekeeping 
+>> CPUs")
+>> Cc: <stable@vger.kernel.org>
+>> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+>> Signed-off-by: Hongchen Zhang <zhanghongchen@loongson.cn>
+>> ---
+>> v2 -> v3: Modify commit message according to Markus's suggestion
+>> v1 -> v2: Add a method to reproduce the problem
+>> ---
+>>   drivers/pci/pci-driver.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+>> index af2996d0d17f..32a99828e6a3 100644
+>> --- a/drivers/pci/pci-driver.c
+>> +++ b/drivers/pci/pci-driver.c
+>> @@ -386,7 +386,7 @@ static int pci_call_probe(struct pci_driver *drv, 
+>> struct pci_dev *dev,
+>>           free_cpumask_var(wq_domain_mask);
+>>       }
+>> -    if (cpu < nr_cpu_ids)
+> 
+> Why not choose the right cpu to callwork_on_cpu() ? the one that is 
+> online. Thanks, Ethan
+Yes, let housekeeping_cpumask() return online cpu is a good idea, but it 
+may be changed by command line. so the simplest way is to call 
+local_pci_probe when the best selected cpu is offline.
+> 
+>> +    if ((cpu < nr_cpu_ids) && cpu_online(cpu))
+>>           error = work_on_cpu(cpu, local_pci_probe, &ddi);
+>>       else
+>>           error = local_pci_probe(&ddi);
 
-- ko: run do_init_module(mod)->do_one_initcall(mod->init) to execute initfn
-   of the specified module.
 
-If we change module_subinit to something like this, not called in
-module_init,
-```
-static int init_a(void)
-{
-     ...
-     return 0;
-}
-static void exit_a(void)
-{
-     ...
-}
-subinitcall(init_a, exit_a);
+-- 
+Best Regards
+Hongchen Zhang
 
-static int init_b(void)
-{
-     ...
-     return 0;
-}
-static void exit_b(void)
-{
-     ...
-}
-subinitcall(init_b, exit_b);
-```
-
-Not only do we want to ensure that exit is executed in reverse order of
-init, but we also want to ensure the order of init.
-
-This does not guarantee the order in which init will be executed (although
-the init/exit order will remain the same)
-
-Tanks,
-Youling.
 
