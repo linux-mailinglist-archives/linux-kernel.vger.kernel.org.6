@@ -1,117 +1,150 @@
-Return-Path: <linux-kernel+bounces-261165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D219693B380
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:20:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A19C793B382
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CA481F22493
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:20:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4989F283CFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAE615B54C;
-	Wed, 24 Jul 2024 15:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F8415B132;
+	Wed, 24 Jul 2024 15:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dG3GE7Ql"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jQIRQzfG"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF97383AB
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 15:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D5D383A9;
+	Wed, 24 Jul 2024 15:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721834422; cv=none; b=tSWP5fy6vmQLY10gdkFKdLavAWNnza4kHMJ0b1MWWxnWTwRw9TUORxh/p4+AsHaNCItKjIPa/YVjmfC6Lfq4WFUDh+5iYlPc60wmRZB5ijXc8bOq3G62ckT5iSZEWd6TFYu4gHblSDRrI9Yf4rWbSEHL7zkr3ZRYA5Vme+xxv4U=
+	t=1721834452; cv=none; b=DG6MOBPgYRD8ynBTl9MWGJscIjPjjiT4CB6a+wDcBmSS7I6PAlmqGnv3pKm2MN5tn/4GHLwLok89wA2j1D2oRNLBN/wLrE8+uGfCiIKfjP2P/8GpC4bmy0Qz26BslAiaXZArW6Vzl8POqoYQKIDJ39Z4dbPPc4v4yLxgX7b2KKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721834422; c=relaxed/simple;
-	bh=hOiV8755ngc0sIs6g41+2/lS4DWadZVscPT7P0F62i0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s4d/iBQSWfs42l2zZQFozwjRem6wfxDNH+avUv4bhQAbwls/hRu0U080jqGm+A7AJaObqRf3D44qXU25mr+JnnQ01r9MDc/Cthl58lmR3i1MLz9RiMtd6xAVeRUkYBDbt4UZZaZK+SP8C5GA0d3kVzPPkSL2BVXJ3gIR28bSpzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dG3GE7Ql; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-7fb3529622dso38973539f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 08:20:20 -0700 (PDT)
+	s=arc-20240116; t=1721834452; c=relaxed/simple;
+	bh=VIQS1f4LLUtDz8L3mHiOANsnvpMpxB7gwYki6WUhQ5o=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=OEbK+pIet/cPmvJ8I0t0ylJ/UEiuXvb+LcqF5CCEq5J3/XaSWxSLrdH02ODWcvkkITCPMSkUoiDeqRbSmhuIrIAELli2/qdf3tdx9kC+nXIKmW7w2bbp3C91JtDpRcOUAr3ouHzcYspIrq3GO0jwlFKgzsMN3Okk4SKmow8dJDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jQIRQzfG; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70d2b921c48so2525290b3a.1;
+        Wed, 24 Jul 2024 08:20:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1721834420; x=1722439220; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=82dy9mZKo2zcgFYmuz7GnMY2lJ2OItmiPUYNnGgMWCU=;
-        b=dG3GE7QlVuEd5GiRPfZdKcRZfX5MpSRk11Ze7azF6aCpiuMITFktuKSDcTgT9yVad4
-         uQqSb4p6nZaV2rryJ2ec5gUhivfiKc/Q4ayKvmj+oCTSF4Uv351LcbhS9zM63LBQTa0t
-         iSFNxq/8sTFg+B4t747PCB6kq/TSIqfzp/WDo=
+        d=gmail.com; s=20230601; t=1721834451; x=1722439251; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WZgCYvZe74EjuwotEC/K0+ANqv3wqwQ9RBQVz46bO8s=;
+        b=jQIRQzfGVpGTQTmwLKT0uiWWGXoN9MkOMK5mINyJuFiznTViUS6RVG++W7q6JeD+HN
+         KWaxO8fg0Cugjd+IIF3dNy5WlL/+Pk/x2tZJU0HNR4mXBa3wGp5g8D3MDJpmMYwzv+B+
+         wxYAcXShqjTz8WJq1+cmDahs96pqPNyHBUP1b4LVujACN+9EpHrcnKBAZWNbEQckbsRE
+         eLeEQ0+Xe9tgx76tmLYLvJ2VotTR8RURA39CidCuWaF4fc4DEE1RvVZPEtQSIfwZU8nH
+         1/caSmAHjvXoapwqZEhieZ1lcSPBOOD1CwsdXiPcya6BkZSB5lY69TfbSlZ8ecTGH5zj
+         tt5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721834420; x=1722439220;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=82dy9mZKo2zcgFYmuz7GnMY2lJ2OItmiPUYNnGgMWCU=;
-        b=k75leJh8efPQ13CIa/BLRtf0lF+nLxD0LRY5j1X0BIGxOkFH0G3ljqLUWFQ1Sqt9hK
-         IExwLSC29BJ6Xw40pcoMJV15AexAoYmIDivKBUO/m6EmB74GJxphlzon/noIaSOZiq0p
-         cTtkpF/Tc5g+NyO/PpENbfqtlaa0fmkiAHsQP6f2j4nqPtVnDdME/vHbW9QBn2wf0Oz1
-         vsXuZHAO+OrN7U7MG+1Y4NK0RpUEzkMuUviHGB+8+W0eaBtvYX99CYvXrRJnzEwwkJnd
-         U+gmhuzqaoMqafd1fOrIBTBzXtb/KxxmG36BmnIB6TDYR6R0XuRkU3qcgBjXofLX4/In
-         cCXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEn0jgED7KMmB654YxLCgGEntZzyJjyh9AnMW5Z/wLB1LJpq+FiE65SefbWTF1cTzN4J5jKPT1rl6eTeU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTscUrLBfnUAEChNtvMbk8YZuj9AmbKoI26t+spMTGs7z9o8jm
-	Dt5zyg/fWXpQW4VijSveQlVEMC7tSfffc4CvYHtSALZgChqaCRDYOHB0ICDXygg=
-X-Google-Smtp-Source: AGHT+IFlqZ25PE52Kwlz1STx1vDkygQoeHCGfiy+yguaY9+XTj2Eb/g0CwlJmwsN+B8v0pn4jmldEg==
-X-Received: by 2002:a5d:9396:0:b0:7f9:444e:4918 with SMTP id ca18e2360f4ac-81f7be6a8f2mr11152539f.2.1721834419757;
-        Wed, 24 Jul 2024 08:20:19 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-81f715eeb73sm53776039f.38.2024.07.24.08.20.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Jul 2024 08:20:19 -0700 (PDT)
-Message-ID: <35b1fe1b-d062-4fce-9b9f-a74c84466f00@linuxfoundation.org>
-Date: Wed, 24 Jul 2024 09:20:18 -0600
+        d=1e100.net; s=20230601; t=1721834451; x=1722439251;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WZgCYvZe74EjuwotEC/K0+ANqv3wqwQ9RBQVz46bO8s=;
+        b=A2FMQn1jrz1Jio8gV/e1dIHPH/xXIilRebMFN1Rt1GhzwEPjJ+JKRXtbCNJf6YpU5a
+         9tY7UaVCOjf5Q5MiVbRY1QG3GE6g4gkBYlrrDboBXkJ9xJPp7uUlNIfQfFAoQjStak6f
+         5kNeXNF+6s9EY7+PhEbIBKunMzw5b3gitExRccvlxcllAAAzL0vyGoLdp1VDyO5rIN4P
+         veT472sty2oTr3uaKThcRG+0LDD4eJvy+UxeDexqYP2f/ECCqfvbT1cS9JY4pmw00YWY
+         aVx/w0hO13B3q/JFAB150xIATh/XR6W4bUyKeVngnTsyVNTXaKEzP6vGMhqntK0mX6F+
+         4gSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUvl5iHdHom3mMEEMbpfFSXn10rIe/Vl5IEPo2OVrXOMbLjnYKZ6vd11xsaKPlgdiW0Z8O6WG8aVFULpcjbWq6Y7GkRi2Kbh++/tnQHGCrULR9e7gym8fgcIosD/1/hcMDTgBz41pUKFgbPpw==
+X-Gm-Message-State: AOJu0Yx6hj8d2jsSMT60MX0UdZ6FjhIbyPHM/ByOwgWAtJgwlwWcXr3J
+	l1ZhgWD9q0dmPZ4IpJsiCw3cMrBDYIJdS/CHdzINso8x+H+APFo1
+X-Google-Smtp-Source: AGHT+IGAwk+DP14de0w6Ofep8xbTauqTQMNXVBkM2KthX23yjOHYOrVTk2bGjnwqWvpXoJr9r8UW/w==
+X-Received: by 2002:a05:6a20:3d81:b0:1c3:b20e:8bbf with SMTP id adf61e73a8af0-1c4727fb9ebmr172296637.14.1721834450568;
+        Wed, 24 Jul 2024 08:20:50 -0700 (PDT)
+Received: from smtpclient.apple ([198.11.178.15])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70d2245f052sm5653630b3a.159.2024.07.24.08.20.47
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Jul 2024 08:20:50 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/129] 6.6.42-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240723180404.759900207@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240723180404.759900207@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH] livepatch: Add using attribute to klp_func for using func
+ show
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <ZqEXC7NVStjPA9os@pathway.suse.cz>
+Date: Wed, 24 Jul 2024 23:20:34 +0800
+Cc: Miroslav Benes <mbenes@suse.cz>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>,
+ Joe Lawrence <joe.lawrence@redhat.com>,
+ live-patching@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <1A0E6D0A-4245-4F44-8667-CDD86A925347@gmail.com>
+References: <20240718152807.92422-1-zhangyongde.zyd@alibaba-inc.com>
+ <alpine.LSU.2.21.2407191402500.24282@pobox.suse.cz>
+ <07DD1CA1-7E53-4E67-92DC-ECEC11424804@gmail.com>
+ <ZqEXC7NVStjPA9os@pathway.suse.cz>
+To: Petr Mladek <pmladek@suse.com>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-On 7/23/24 12:22, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.42 release.
-> There are 129 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 25 Jul 2024 18:03:23 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.42-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
 
-Compiled and booted on my test system. No dmesg regressions.
+Hi Petr!
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+> The value is useless when the transition is in progress.
+> You simply do not know which variant is used in this case.
+>=20
+Yes, I agree that if the patch is in transition, we can not know which =
+version of this function is running by one task.
 
-thanks,
--- Shuah
+As my previous explanation, each patch have a state "transition" to show =
+if this patch is under transition state. If this function "using" is 1, =
+it shows that this function is going to become the version to be use, =
+but not all the task use this newest version because some task is under =
+transition (this is the "unknown" state from your opinion).
+
+> Which brings the question how exactly you use the value.
+> Could you please provide an example of decision which you make based
+> on the value?
+>=20
+
+Here I can give you an example.
+We are going to fix a problem of io_uring.
+Our team made a livepatch of io_sq_offload_create.
+This livepatch module is deployed to some running servers.
+
+Then, another team make some change to the same function and deployed it =
+to the same cluster.
+
+Finally, they found that there are some livepatch module modifying the =
+same function io_sq_offload_create. But none of them can tell which =
+version of io_sq_offload_create is now exactly running in the system.
+
+We can only use crash to debug /proc/kcore to see if we can get more =
+information from the kcore.
+
+If livepatch can tell which version of the function is now running or =
+going to run, it will be very useful.
+> If we agree that it makes sense then we should make it 3-state
+> where the meaning of values would be:
+>=20
+>   -1: unknown (transition in progress)
+>   0: unused
+>   1: used
+>=20
+
+Yeah, I agree with this state. I combine "transition" and "using" to =
+tell the unknown state. It can be better if this state can be shown in =
+using flag.
+
+Thanks!
+Wardenjohn
+
+
 
