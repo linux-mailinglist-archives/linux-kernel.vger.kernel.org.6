@@ -1,187 +1,234 @@
-Return-Path: <linux-kernel+bounces-261343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC3A93B616
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:41:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7C6493B619
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B27CB2173F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:41:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D70791C23A79
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4C715FD13;
-	Wed, 24 Jul 2024 17:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7221607B4;
+	Wed, 24 Jul 2024 17:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h4zNyIYR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oXDMOy9r"
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20FC01BF38
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 17:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E4715B14C
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 17:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721842858; cv=none; b=IQQe4L1dT+lzqttuYp50TujjX6p/TDTicOvk17ZMxIW/vC6+ewbd4ajHAWdues/trxdX2sCMAAyutLqe0VOa36uSj7EILYcCx3YHn63jVDGuwwmQMnNI0yVSRgco9wdSkdAMJbz8n1HhJPufp71c5NsSf4BKJ5+WHQ8g/RDgdgY=
+	t=1721843044; cv=none; b=VLpACEujyhbUzRX6fseRrm/mtEokdTcqNCzMDoO0f9BqfvNd10q3WzuA2v1vAAyUsxqqMhEYokJpBRVybWaHmXU52pUP9xsLBnSCi7nCJmshbi5r3x/5DeyhmeKfh1hpCwdKRtVvNb55XlsSObBz5qn7O5lco17jIveydjFEJWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721842858; c=relaxed/simple;
-	bh=OYhf9i9zA5SgHVdUG4+f7oWNo/fKoU8Py2NSvpMpCg0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ufbyQuMRglMHeOswDtyiljrsaHFfMhDhfSzE/TFQ3E+mwpD8etqVcj0pRjYNfymz2T9Njvn1pjtiOvPs3JtzCWtNvCcTUvJ1vIbMVEcS5KXsKHJFERuo2nqTmU34VNuB8Wx8xlPOz+hdZ8fk1B+I8QCN1jcYmLb4xjDxZhqyUAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h4zNyIYR; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721842855;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=owQmW2FeZvZ65U+s4o+FvJjOZqmyBhsCVfnDoijmjRA=;
-	b=h4zNyIYRcySK1+g4WheKi6/KO+XFTv7ZR2BG5N9fxPGaK+tzU4AP7qsnUfKUJUTjBDzIND
-	pwI9qgmk8wGKY9JalnNyzK2YekOXquuTq2MTbM3B+JknkwtKDlZs1X5BaCmIGaLTDAUPwK
-	YIPD944dRVdpudKPoOmej1+ocgJWT3c=
-Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com
- [209.85.161.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-679-2mF8V7MqMmS9AEJUc7cyyA-1; Wed, 24 Jul 2024 13:40:54 -0400
-X-MC-Unique: 2mF8V7MqMmS9AEJUc7cyyA-1
-Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-5c65e857a32so71399eaf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 10:40:54 -0700 (PDT)
+	s=arc-20240116; t=1721843044; c=relaxed/simple;
+	bh=RfpW55UTZvyZzzckL2ImjfWIVW2ihlQWqrDTt2uhNdQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=obkPrCj5CzSJ/B/HLN99P+JBKDOn1KPap6WAwO6aLRFXPY/i9XQZ+vOibPyYtsXbjfg9T/s64EYeNcXb0CKeL6HobO0jY/xSFXRjzSG+PRUI7pbS054sadK/ibZzKP3eSJrt64w1Glcz2wHEieSujbRvgIfLCCRObZ/AnUzy1SA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oXDMOy9r; arc=none smtp.client-ip=209.85.222.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-82d192d9234so3508241.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 10:44:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721843042; x=1722447842; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lWNxmwE7SepXHSEluHdYdY/sD0f7oz4k9ZSiygi0+EE=;
+        b=oXDMOy9rMOg/Vso/Y5OqtF+jy+tP6u88LFSc60OL8NyuEmhIirgHRgYSlR6ULjgO31
+         IMuYmsavIHIFlcdluV7kUKtp8m/kdMi2Q9tSIX6hzirjJH0k7/xDNtZefuWK8vUxqI9Y
+         bdhqGZ9Z8Yp9XF44JvAJTS9gLgZZhfo/XSayNIlOp9fEQyw+e2U/RjpEywVE8LWBbW/d
+         biHqmU14SwaRbGC3lJz5pXOE0cX8Gn4EVpQzorx4dj1uLuxL8HJSHPzoVEGGrNBDbp/f
+         YIr9eg9XkDcdPHdZmXm42dMtTIyNdjQsSVggg6vTrp+xdUxQU5BsPM0uTvbc4gxsvOgk
+         jOAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721842854; x=1722447654;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=owQmW2FeZvZ65U+s4o+FvJjOZqmyBhsCVfnDoijmjRA=;
-        b=gtPU4L4vzEnOOiYQdus0TT3HJPLYKddFVN6DEc6i/ZvywXOoXWE28OMjeKOtUxVeIH
-         z/N5ZT2gBOFsYoW2y9MdLMMq2hDVT1KvdU31/1o2skDvIB0weamiPn27kjYzIqrZBAIb
-         8EAeGov01z+MSWP8Jwp2rQtG+ACIVywocyMbh0DV65CLRxaMoID+RV6lvJvIOtCr9AGc
-         uYiSFoaGRkU/0U+jA1L0qYu3EXtWL9AnT2oKU0n8Is6cgOGbgzm+wtaZQkbAtNIXmLPU
-         bziJ+ZYSlXmwqjH4BpISwM+5U4mkO9erx5BSJN8UaV7ChzprtzptyNqmBuaobIBfqap6
-         ZvsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrH/wDPccysLkKTzEyDb+Hm55E+V4zH14vPJfWuV8bgczwTCZ3oULogzAgS98siC6ymUwohn++yXqTKFqSJ5xLmvbsS2Oe3Xe6HYCA
-X-Gm-Message-State: AOJu0YwApfep2CLqZ6GFT3tc1hUGsBTyKgBAYV5tXOlPpizo8eYYQghQ
-	UeAXbVNVf//w0BVqRhFJKpfvgTQSk0GDXcig1KUVfi3P/qJ4q2eB2eCnpWXMTtgO6liafVqH56d
-	piSKo8C6wEEEmMGZVsVpc53nuQfEQGJ0tT5LE8Ezc8acDasYFFTX1zrFJ+/m/Eg==
-X-Received: by 2002:a05:6359:4c1f:b0:1ac:65e7:9399 with SMTP id e5c5f4694b2df-1acf8a1406emr72921855d.9.1721842853811;
-        Wed, 24 Jul 2024 10:40:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHep2kCnDTBvGNQu8jrzcXjMYD6HPrxfTzgyc4VtAPE3854fhISzuH2gLZrO+wCBXfMX9cTmA==
-X-Received: by 2002:a05:6359:4c1f:b0:1ac:65e7:9399 with SMTP id e5c5f4694b2df-1acf8a1406emr72918355d.9.1721842853384;
-        Wed, 24 Jul 2024 10:40:53 -0700 (PDT)
-Received: from starship ([2607:fea8:fc01:7b7f:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a19907507esm593718485a.108.2024.07.24.10.40.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 10:40:52 -0700 (PDT)
-Message-ID: <3e17a33c59c6a57a836c92c1bddc9bd6d36cafca.camel@redhat.com>
-Subject: Re: [PATCH v2 19/49] KVM: x86: Add a macro to init CPUID features
- that ignore host kernel support
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov
- <vkuznets@redhat.com>,  kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Hou Wenlong <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>,
- Oliver Upton <oliver.upton@linux.dev>, Binbin Wu
- <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>,
- Robert Hoo <robert.hoo.linux@gmail.com>
-Date: Wed, 24 Jul 2024 13:40:51 -0400
-In-Reply-To: <Zoxp4ahfifWA-P34@google.com>
-References: <20240517173926.965351-1-seanjc@google.com>
-	 <20240517173926.965351-20-seanjc@google.com>
-	 <2a4052ba67970ce41e79deb0a0931bb54e2c2a86.camel@redhat.com>
-	 <Zoxp4ahfifWA-P34@google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+        d=1e100.net; s=20230601; t=1721843042; x=1722447842;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lWNxmwE7SepXHSEluHdYdY/sD0f7oz4k9ZSiygi0+EE=;
+        b=ov6mJl82inmY3BcfF6JhOzf1zWilj2n9xnKDwPcPpO/ll9f/A3aw67t4NZBTE4l+pk
+         2E3SU90gYFlX2M34Cq46Tbes+6xDl/kjdy3aTfQZa3yI2og5cAEuhd4lC48s2D1P2DPs
+         6Q6EwW3FftROazlEa2m7ulCkqdcLDS053CQrGA32WtFWxFbGVV4LgiBNxwMf1Xmc1ooz
+         CGkeMMFzagSZ0nBqQL+CtlTRFL7Z57qs4drIGvuxVowtb6N4aWA5ZAWFhtK+FnmNDKAM
+         dyZd/23V6/n6uuiVFUiIEmYd4tOJ6PXblAGeetuSDasBHifRa+cKKQAE03IuJE781hrQ
+         3txQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCCs4B1cofVOogw6A1IgA3g+/PkZGLkx/MKV9MHQhHMUSMasiCSV8QLaY85LWyFmSiBuHgTC4W6nf+DBSq0bWKMXcOeP2Wj3F0GtTu
+X-Gm-Message-State: AOJu0YxfF8dpS+565PZIrHeM5XB/WWwW8ljXe88OTURXpHphSWNXtTck
+	bkH7c3hG1kd/ycHqaC9t0pQRIQdaZV228EtxbcuwAMzsTFL3gl3qbtfHsNLfC78FY6xEg61NQtt
+	JCOtlstaJ6fx2jcSQuVYHESWofqZJsKR1uLrN/g==
+X-Google-Smtp-Source: AGHT+IE0a50hyiZ7t3CUoJJvgIA2KhaSQAKstOkmmukXOTpX+4W5PyJLokyGQ/tSWCMeGGPmaVd3UmMZEkFDjEO06Wg=
+X-Received: by 2002:a05:6102:33c6:b0:493:afc8:17e2 with SMTP id
+ ada2fe7eead31-493d64554bcmr357072137.17.1721843042117; Wed, 24 Jul 2024
+ 10:44:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20240723180402.490567226@linuxfoundation.org>
+In-Reply-To: <20240723180402.490567226@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 24 Jul 2024 23:13:50 +0530
+Message-ID: <CA+G9fYvNZNzz1xBDi5bz=DQXqe0T1-J_xcJz0hf5iikU0d=Uzg@mail.gmail.com>
+Subject: Re: [PATCH 6.1 000/105] 6.1.101-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2024-07-08 at 15:36 -0700, Sean Christopherson wrote:
-> On Thu, Jul 04, 2024, Maxim Levitsky wrote:
-> > On Fri, 2024-05-17 at 10:38 -0700, Sean Christopherson wrote:
-> > > +/*
-> > > + * Raw Feature - For features that KVM supports based purely on raw host CPUID,
-> > > + * i.e. that KVM virtualizes even if the host kernel doesn't use the feature.
-> > > + * Simply force set the feature in KVM's capabilities, raw CPUID support will
-> > > + * be factored in by kvm_cpu_cap_mask().
-> > > + */
-> > > +#define RAW_F(name)						\
-> > > +({								\
-> > > +	kvm_cpu_cap_set(X86_FEATURE_##name);			\
-> > > +	F(name);						\
-> > > +})
-> > > +
-> > >  /*
-> > >   * Magic value used by KVM when querying userspace-provided CPUID entries and
-> > >   * doesn't care about the CPIUD index because the index of the function in
-> > > @@ -682,15 +694,12 @@ void kvm_set_cpu_caps(void)
-> > >  		F(AVX512VL));
-> > >  
-> > >  	kvm_cpu_cap_mask(CPUID_7_ECX,
-> > > -		F(AVX512VBMI) | F(LA57) | F(PKU) | 0 /*OSPKE*/ | F(RDPID) |
-> > > +		F(AVX512VBMI) | RAW_F(LA57) | F(PKU) | 0 /*OSPKE*/ | F(RDPID) |
-> > >  		F(AVX512_VPOPCNTDQ) | F(UMIP) | F(AVX512_VBMI2) | F(GFNI) |
-> > >  		F(VAES) | F(VPCLMULQDQ) | F(AVX512_VNNI) | F(AVX512_BITALG) |
-> > >  		F(CLDEMOTE) | F(MOVDIRI) | F(MOVDIR64B) | 0 /*WAITPKG*/ |
-> > >  		F(SGX_LC) | F(BUS_LOCK_DETECT)
-> > >  	);
-> > > -	/* Set LA57 based on hardware capability. */
-> > > -	if (cpuid_ecx(7) & F(LA57))
-> > > -		kvm_cpu_cap_set(X86_FEATURE_LA57);
-> > >  
-> > >  	/*
-> > >  	 * PKU not yet implemented for shadow paging and requires OSPKE
-> > 
-> > Putting a function call into a macro which evaluates into a bitmask is somewhat misleading,
-> > but let it be...
-> 
-> And weird.  Rather than abuse kvm_cpu_cap_set(), what about adding another variable
-> scoped to kvm_cpu_cap_init()?
-> 
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 0e64a6332052..b8bc8713a0ec 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -87,12 +87,10 @@ u32 xstate_required_size(u64 xstate_bv, bool compacted)
->  /*
->   * Raw Feature - For features that KVM supports based purely on raw host CPUID,
->   * i.e. that KVM virtualizes even if the host kernel doesn't use the feature.
-> - * Simply force set the feature in KVM's capabilities, raw CPUID support will
-> - * be factored in by __kvm_cpu_cap_mask().
->   */
->  #define RAW_F(name)                                            \
->  ({                                                             \
-> -       kvm_cpu_cap_set(X86_FEATURE_##name);                    \
-> +       kvm_cpu_cap_passthrough |= F(name);                     \
->         F(name);                                                \
->  })
->  
-> @@ -737,6 +735,7 @@ do {                                                                        \
->  do {                                                                   \
->         const struct cpuid_reg cpuid = x86_feature_cpuid(leaf * 32);    \
->         const u32 __maybe_unused kvm_cpu_cap_init_in_progress = leaf;   \
-> +       u32 kvm_cpu_cap_passthrough = 0;                                \
->         u32 kvm_cpu_cap_emulated = 0;                                   \
->         u32 kvm_cpu_cap_synthesized = 0;                                \
->                                                                         \
-> @@ -745,6 +744,7 @@ do {                                                                        \
->         else                                                            \
->                 kvm_cpu_caps[leaf] = (mask);                            \
->                                                                         \
-> +       kvm_cpu_caps[leaf] |= kvm_cpu_cap_passthrough;                  \
->         kvm_cpu_caps[leaf] &= (raw_cpuid_get(cpuid) |                   \
->                                kvm_cpu_cap_synthesized);                \
->         kvm_cpu_caps[leaf] |= kvm_cpu_cap_emulated;                     \
-> 
-
-I agree, this is better.
-
-Best regards,
-	Maxim Levitsky
+On Tue, 23 Jul 2024 at 23:56, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.1.101 release.
+> There are 105 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 25 Jul 2024 18:03:27 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.1.101-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
 
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build
+* kernel: 6.1.101-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: ef20ea3e5a9f08713890ee514b5d1a5bd067ed54
+* git describe: v6.1.100-106-gef20ea3e5a9f
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.1=
+00-106-gef20ea3e5a9f
+
+## Test Regressions (compared to v6.1.97-198-gc434647e253a)
+
+## Metric Regressions (compared to v6.1.97-198-gc434647e253a)
+
+## Test Fixes (compared to v6.1.97-198-gc434647e253a)
+
+## Metric Fixes (compared to v6.1.97-198-gc434647e253a)
+
+## Test result summary
+total: 160040, pass: 136908, fail: 1846, skip: 21026, xfail: 260
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 133 total, 133 passed, 0 failed
+* arm64: 36 total, 36 passed, 0 failed
+* i386: 27 total, 27 passed, 0 failed
+* mips: 24 total, 24 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 34 total, 34 passed, 0 failed
+* riscv: 9 total, 9 passed, 0 failed
+* s390: 12 total, 12 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 31 total, 31 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-smoketest
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
