@@ -1,112 +1,131 @@
-Return-Path: <linux-kernel+bounces-260927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A0F793B076
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:36:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C76293B079
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 032771F21FC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:36:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2165B227EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B07157491;
-	Wed, 24 Jul 2024 11:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="HHIqMhFu"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D151581FF;
+	Wed, 24 Jul 2024 11:39:05 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24A122EF2;
-	Wed, 24 Jul 2024 11:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D78A481CD
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 11:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721820992; cv=none; b=gHg+AwiGH3NvuDP28YS4ITZPkuPSv8eIKOCAGqpnidpVoWVmPU9QQhW6dPuCDirfA/WKtAA/cdgSTACyExITMZgpEOOMQPvq3nEu6I7fe6tsu1qhZzaVcWmL9Gq/37c50YzNJowEfcxBg8xEujQ6XLyNjwBoxlmyRXmcbbh20mc=
+	t=1721821144; cv=none; b=EJ+DYpQj9CgMQL4LjZyUgMady85EXCQ1qFCQJn39gaT1zWLkr0iqAW8WAsHZN+I/SLgfCFoneAY5QixrnePVOz9tMW6u+7RoPEV2CwxCuF1rzLNs7XH3oI9TTe4CZdKQc8WplAYgweF0SMtAeufXRFDJ072poFPWPZ1fNRn+A0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721820992; c=relaxed/simple;
-	bh=fTT4OBasRwESArtHOn+K/IjVjG0CvSu6UOeR2uw9tQs=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=bz/BfBBvOSbItKXyqfi2QUyfOh/5V3KSvqaCiuwZhGctNEiBntmclzPAdU0tviCO4iQng1oLvL5Vok51TsZ/JnrMH31SNWuxhdJKz44hQ2G8oUhRC64UX8WAYNW30JsmllePVsmBmSzoxVtQX3BebUoErpLQFe36yJAraweifQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=HHIqMhFu; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721820957; x=1722425757; i=markus.elfring@web.de;
-	bh=fTT4OBasRwESArtHOn+K/IjVjG0CvSu6UOeR2uw9tQs=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=HHIqMhFum0yCFNBT9Vgv9d2ANtF34lGJ2OSf6DUlsg5+w4QZ1f9fHEWQ0ktybfRc
-	 F9D20YZT032P2N2TRsSMnSYVJFJcHxzUDwLNE9bBN2FjarAuXu3dPCAPYinU2XSOI
-	 NGNjsDi39tgW2jJh123f3roUal8Nx926C0ZS7RI5BfgYl8axATo+WKRoCJmkXuXnp
-	 GSWp/DDaARBF4xZxtX3o8Zh+EmSKsxPMF17rn0CGm/MAPoy4zg1F5T9KabIw7eJv3
-	 3/wckO3ndEFgFrSY8HMx7gHOLBAVjBWratWvXM9LA0O3dZaN7CjS6hbIFrR7JwQjM
-	 A8kR1xmkZz082vOdlA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MoeYH-1rvJav48e9-00kQIm; Wed, 24
- Jul 2024 13:35:57 +0200
-Message-ID: <d8d29c4c-4c66-42ac-9e2d-821502b5f55b@web.de>
-Date: Wed, 24 Jul 2024 13:35:52 +0200
+	s=arc-20240116; t=1721821144; c=relaxed/simple;
+	bh=z2wsP7Oi7tDgSLgDOWCRogpqaK6nWVT46jdQWIaGI14=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=rKW1ZZXXns8+95WU1PHNDnz8bdPQMI3os5iUWLAu2REuG46uDqBYx/i04k0GuzKq18zNc452+LHyMXHj1ll8pG+jh+AKPe4kkyNN0HLjlBZ2kab6bPAu8oDAS7Pf+HZtuaGR/egoj33mq+kXlBSSIwUE4HJeHIGfqbmAPL6EOSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7fc9fc043eeso1100274239f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 04:39:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721821142; x=1722425942;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t9MuzjALq9PifOPxpXzAnvt64VKieqQbK5hHMZmM6NU=;
+        b=lSqUlzKcgrVw+vHPEbyrzp58ZwaQJLTiiQ1XhDi1yBWjm0pLOd28jeZ6DqNwEPkJLp
+         y2lUzu91aoyflDBa+MXwoORlmoJ807tXGcrHPgNsHqR7YaEljSEs+bJYjfFuFIOLeNl7
+         9t0nvbRT1ywoUA1rL3DkV5Q4SzCKIcwxWl8d9cl+iiJn6YVtuwZewOFEvkHOlPXgMScw
+         CJwhnN7Boi8eRfGqJapfff8wdkyNa7cDr0gW5Rt4fkQQYxPn1WFjsUZdk6jwqLXLUKVd
+         p6gTvmjlN9yLQS2Pd/NMSlFryeqcDkjniwmfM5egxhlXr6X98v/z8N7Efo0lnBqrqK/+
+         ptsw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpX7q4sdKvdmGt+B4DerD1FOMUePyFOLpD5Q6gYPkvZQ7BICRvvPtBjBSmwQASHwJR4mVY3O+JjTaQr6dLcuZFAwwP42f33Ubr9TI2
+X-Gm-Message-State: AOJu0YzTsqXNvpebJ+5OihkmKsEr13gCjroVot/NaFtAQeqqOrrViAvC
+	A+y3p7AKyQnMGyXA5BVZ4ukGfG4LNmYe1MWY2S7MGT4k5cIjy+swDByHKzeEscdvdEn0B6Rttl/
+	tAFZGv12kSHRkR65t4U0A9iqa2aU2QRV2NSrgl9FRPhZppI9a5WXQKY8=
+X-Google-Smtp-Source: AGHT+IF9MidXeweMHRSXXE1kIvoaGQPoDi6T8MFT8YMnPZHdgI4qwxI24EDRcuLylv0bO3AybZwWhlth07INAH0j3PcVOpcnXJkH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: make24@iscas.ac.cn, linux-spi@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>,
- Stefan Roese <sr@denx.de>, Wolfgang Ocker <weo@reccoware.de>
-References: <20240724084047.1506084-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH v4] spi: ppc4xx: handle irq_of_parse_and_map() errors
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240724084047.1506084-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:awBrnmcjLoJ2aao/cBvNf85cEJVpQLvxTlA3NSM7NbL9yTtYMGq
- QMfqrzVSA9oNO7QKS9VFYPGS4e3xqdR/daZaNq8sNIOLtohMCAWMpBtJi6g2sd9CIkqTIHi
- HcmrIFQS5s0yj9hHmCa51dke3rNrY8vc9vYjs7VqHI5Lw6L0SCJn+WKTiGCoxnycN/BhwYv
- 5T/k3vPtCuhWocxbEMGFg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:WTMeY2UlUpA=;uovBueTICGeXUo1KrPlA2uNSq4B
- r0cZ+/VxRheUOyaW78E0/ZTiOMn8k+dyn7OqzscIN+3SERc1AW1beyYyETDQr8vll42TSmkiy
- J8/whSW99XmyIA15pAtLMasY1XB2C5J+jj4p9xjcLHdzb4ANpcJGzje79JSJUhnI1W7IBEGZF
- E7fnPHaBBrfDm9eAzPcSU8o9Ij5S/P6kTj/7CE2Ov8aHYGXW7T6QlK+ZPwc9XQ8mfWMBRQbG1
- Wz9pl5fme1F7MnEw9n0EtyCNjRZAtnxMG/dKXF+SOYeIH2WD+hrkk0AB9H/XR1tVJ2fjOqgTn
- bPfDlxnKNHGIRAqB76YE1L+JWWy+eEBHwADIk31c1fWrR5SDch5Al7lNpRR/KnvqdxXPSIgTw
- YJflRlJZtun7b62cHB2C9M3SrcAjyPncSa4hEPecDQMBGwf6E3r6p5NSTM2zJtI0ZU6TniLCO
- gWpgXrb57FnP6nStdPkeC+7VmYJUVeMcHOZHUMYIEhkRggM/qA0t2tKoa9VQuccFQ1D2COnQT
- s/F6rLKqpV04TqLC0TtiDH++i21MznvCZxohS5fWEBn9ffBvHr72Lc8XB4cJQ68KmOW101nFc
- gDALtQNRgRlKvL3HVFvttRC1Ecbc3QJps+dzgerGoveNWmKaif7VggWTA9XVfhB2pHQnnyGQT
- f20oFqsy53Dwayk45EMx8gBDpfESzJm00CwSIT2diljL7HN6Q2Hk8UW8AkM9M0l2o+G9d26x+
- 95VD67M8pvssmDYrDsu+gPptWAKft/To8S7CwO9BNtd7ZTXYJbXxB9zDYTNW+CfLuGj+/N9WA
- LlrsR0ybEFay6G7jhFyWqbfw==
+X-Received: by 2002:a05:6e02:154e:b0:397:5d37:622e with SMTP id
+ e9e14a558f8ab-39a193822b1mr1099015ab.2.1721821142419; Wed, 24 Jul 2024
+ 04:39:02 -0700 (PDT)
+Date: Wed, 24 Jul 2024 04:39:02 -0700
+In-Reply-To: <tencent_B78F6EC46ED2CC9E67F9C6DCD2C6C66D0906@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008f9ea3061dfcb91d@google.com>
+Subject: Re: [syzbot] [io-uring?] KMSAN: uninit-value in io_req_task_work_add_remote
+From: syzbot <syzbot+82609b8937a4458106ca@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-=E2=80=A6
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+Hello,
 
-Does anybody care more for the applicability of such information?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10#n398
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/researcher-guidelines.rst?h=3Dv6.10#n5
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in io_req_task_work_add_remote
+
+=====================================================
+BUG: KMSAN: uninit-value in io_req_local_work_add io_uring/io_uring.c:1192 [inline]
+BUG: KMSAN: uninit-value in io_req_task_work_add_remote+0x588/0x5d0 io_uring/io_uring.c:1240
+ io_req_local_work_add io_uring/io_uring.c:1192 [inline]
+ io_req_task_work_add_remote+0x588/0x5d0 io_uring/io_uring.c:1240
+ io_msg_remote_post io_uring/msg_ring.c:102 [inline]
+ io_msg_data_remote io_uring/msg_ring.c:133 [inline]
+ io_msg_ring_data io_uring/msg_ring.c:152 [inline]
+ io_msg_ring+0x1c38/0x1ef0 io_uring/msg_ring.c:305
+ io_issue_sqe+0x383/0x22c0 io_uring/io_uring.c:1710
+ io_queue_sqe io_uring/io_uring.c:1924 [inline]
+ io_submit_sqe io_uring/io_uring.c:2180 [inline]
+ io_submit_sqes+0x1259/0x2f20 io_uring/io_uring.c:2295
+ __do_sys_io_uring_enter io_uring/io_uring.c:3205 [inline]
+ __se_sys_io_uring_enter+0x40c/0x3ca0 io_uring/io_uring.c:3142
+ __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3142
+ x64_sys_call+0x2d82/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:427
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4706
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page mm/slub.c:2304 [inline]
+ allocate_slab+0x20a/0x1550 mm/slub.c:2467
+ new_slab mm/slub.c:2520 [inline]
+ ___slab_alloc+0x12ef/0x35e0 mm/slub.c:3706
+ __kmem_cache_alloc_bulk mm/slub.c:4750 [inline]
+ kmem_cache_alloc_bulk_noprof+0x486/0x1330 mm/slub.c:4822
+ __io_alloc_req_refill+0x84/0x560 io_uring/io_uring.c:940
+ io_alloc_req io_uring/io_uring.h:393 [inline]
+ io_submit_sqes+0x171b/0x2f20 io_uring/io_uring.c:2284
+ __do_sys_io_uring_enter io_uring/io_uring.c:3205 [inline]
+ __se_sys_io_uring_enter+0x40c/0x3ca0 io_uring/io_uring.c:3142
+ __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3142
+ x64_sys_call+0x2d82/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:427
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 PID: 5808 Comm: syz.0.15 Not tainted 6.10.0-syzkaller-11185-g2c9b3512402e-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+=====================================================
 
 
-> ---
-> Changes in v4:
-> - fixed a typo in v3. Sorry for the error in the patch v3.
-=E2=80=A6
+Tested on:
 
-https://lore.kernel.org/linux-kernel/20240722141822.1052370-1-make24@iscas=
-.ac.cn/
+commit:         2c9b3512 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=11c0f8e3980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6bfb33a8ad10458f
+dashboard link: https://syzkaller.appspot.com/bug?extid=82609b8937a4458106ca
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15e3bca1980000
 
-How could the published development mistake happen at all in your research=
- organisation?
-
-Regards,
-Markus
 
