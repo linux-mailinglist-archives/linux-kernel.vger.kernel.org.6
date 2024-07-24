@@ -1,174 +1,194 @@
-Return-Path: <linux-kernel+bounces-261145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC2D93B322
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:53:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 574C093B31F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:53:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69DF21F22A91
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:53:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02A9828419E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4C815F3E1;
-	Wed, 24 Jul 2024 14:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9C415E5CB;
+	Wed, 24 Jul 2024 14:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Wf9jxroh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="Byi9lpOJ"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9EE715B12F;
-	Wed, 24 Jul 2024 14:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF4D15E5CE
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721832663; cv=none; b=KWp/lw6mXpNp+uVBYiNKlM+lp25GJBrRJv1Krxl1LTqReQh8yqR8hNq7VBm36WLJibVd0wm6TNeM4PBX2tVZpLnBT6euMlbAwV7B6HzlL9pSOfeY94jq1PvCf0aIKOCwadMSDw9TTdVFGOsQsp0nm3zvzintVz8SjW7OZNZ7PKg=
+	t=1721832656; cv=none; b=kbAkLjz8oaPDpXojInI+33/OohALPXjF/R7dgE73UhBYO6LomUGknwjKjPJijSpUFyb7SCTN2C3RpHUlrBMULdyTxCIoSlKas5ErIBF5ZhZ3E5DvFrs1+X+Wa93E7xIiRu+2uIEuFNoN9DMcV8Q0ANq2LNB+FFu/sbb32BnJ52c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721832663; c=relaxed/simple;
-	bh=bjLDQzZfw4xW/reuySijNClaossK1D/OHY9Pjl913No=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=endQeQre1xcVbgLEbAbF+1paDMSyTEmYWT9N3N8Qvtt2FjEW7Ee7pO1gmyuN7FEI85E3zy33qR+3yYQzBkCbbhqp76QG+YMZe01fkHiQLKh6fEGXlBDyUoxZEgMUC/+EEJd8uRCVjGO0QLx86kHcXVjceeVLOJw3eqOGVoUwMV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Wf9jxroh; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721832662; x=1753368662;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=bjLDQzZfw4xW/reuySijNClaossK1D/OHY9Pjl913No=;
-  b=Wf9jxrohphuzNVwhKZrsJZdcmQdr5Vsv964002ef7rxvFCV98+2CJXqw
-   gQOrauVuBnZLHQuXzf+CYZRVOSn4nqmU71hWYHXgyx/W8c3S/UUsRRa/k
-   w0ClLL6FJgmom/RL4n6JAJzrejp8RnXknL8+H9ZOpzi8CCz7MPX9zQa/o
-   iEFRdM7Jw2sdOWXD1zf+OdVPJFZfo7LOZEjAtMw/r6db6tKPZLUAAvMvF
-   PdCsS1M3LbY5KHXEYUmG2V+5v/1f7bIeeL0MuQV+lHyg89AmlcUvOB2sy
-   M8RMyzI9yQ/gk7jqfHwmyISxGhhe/hvAWamuIAu2rKh/ZJ6tWzMbNWFLD
-   w==;
-X-CSE-ConnectionGUID: e9H7offXQRSWaABksVQh0g==
-X-CSE-MsgGUID: SWPm4ahjRVe/UO/t1rPghw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11143"; a="19653044"
-X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
-   d="scan'208";a="19653044"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 07:51:01 -0700
-X-CSE-ConnectionGUID: oYO7cn40Q9y3SmfvsC+BEg==
-X-CSE-MsgGUID: lCg1yNbCQ5uQghJ7uOOqsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
-   d="scan'208";a="83218555"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.197])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 07:50:57 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com,
- make24@iscas.ac.cn, mripard@kernel.org, noralf@tronnes.org,
- sam@ravnborg.org, stable@vger.kernel.org, tzimmermann@suse.de
-Subject: Re: [PATCH v3] drm/client: fix null pointer dereference in
- drm_client_modeset_probe
-In-Reply-To: <20240724105535.1524294-1-make24@iscas.ac.cn>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <87ikwvf6ol.fsf@intel.com>
- <20240724105535.1524294-1-make24@iscas.ac.cn>
-Date: Wed, 24 Jul 2024 17:50:52 +0300
-Message-ID: <87jzhakfn7.fsf@intel.com>
+	s=arc-20240116; t=1721832656; c=relaxed/simple;
+	bh=aUoZfB2OLNb1ndGDLVdCqPDYnRzEzv9Rl90YVUVuQw0=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=L2AIMDFnCGJa0XopIzzjzzFfkah5Jf3LmAlztrFWiMEGmiAC7t0Jo0cipag01ISaPmx1hYv8D8Jq7ohwh/8p0fbWJhgSY8ciqv+0kY/GjZmtaNv5t0lGntYRd1enJInvkgxX5cc7x7ZfH3J14O1Bm5P+48PfZGM7D5ndNzUa1jY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=Byi9lpOJ; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-6e7b121be30so1271469a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:50:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1721832653; x=1722437453; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l8JCIP5Ds15R5oJZff49alOWJJz0wPxAxfdpUe0KBfo=;
+        b=Byi9lpOJ4Eqxsw0PkM8p9lXg12phKB1XAbyQXc58aituTSDEL6ipiS6L3QNQp3abEb
+         6ESmuvLVnYIHLyKcOZJ+TxNLxMIkCYRZTXfDLEhb4nvhO+vuiAAgLvmiZ8VhA+pCR940
+         ud4iDXx/iMlk5Annwx/VqtNFawYyJ3MQbs9wzO8yp9LuUxRFlW1NPrT8L4QSpI3OYFXa
+         CUmXR0g8pCyg+O2WvE5XSBFHAI9bFP96D9+FY9Vxl5bV0w8bssobDAJ4jqE8C4ffZsCC
+         69QkHoIgSiW+iieS+o3RADgdbOamJWdUBIX43B+dshB3YI2tvNUmh14hRuONLIvPIBk+
+         Hqhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721832653; x=1722437453;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l8JCIP5Ds15R5oJZff49alOWJJz0wPxAxfdpUe0KBfo=;
+        b=jJGNlkZbfXyVMz0ku8DzdDmw2eeqb7Fo8Pq7HuzXvRSGmuY0Wo13jU8tYWQ2Ou1qHB
+         MDm/SxatjGI8tBpdCek1Qm7QrTI2r+gzD5ilGKgHjHjeEeg77VZWmwZoO1r8P5zw7E6+
+         mf+wy6/3Jo1ReY6+LhkTBSFYgSk2u5NT+fTLVckx35iyDbAufTcOnRFVW1EuR538XZ+x
+         dtpDjMDXofgPkbkAn3eqmRiHr6INHLWFQ0zywTzcen/BsbCyCdGOu+uqMsZAd2HQxiWU
+         3bVQ9EGgjrX/6a4SVK7DDJrgg0ivb6vuTxbztiJWe6Tra3D2+5zYRrh7rG5btYRw/et9
+         pnOg==
+X-Forwarded-Encrypted: i=1; AJvYcCXmoaFeWZeW8GUsG1zsLcbGbw2i5RP/ev3xouOZg66Fyuu8EORhuypaHtDR4/4V+fBc8vgzhrhJh6Jy4I6gqAXF4FLbhI9a0Uds1Czw
+X-Gm-Message-State: AOJu0Yw9TQMaEaBj1fq9MEezC8Xx+WGe413/6VcBXG66Dbd6U9s7nnR1
+	+qhj+hHxoFt0NoqzbmiguQnKoqYwmTzxYKlqekHxlIW3pmH6mPRzlD8pSr62TdY=
+X-Google-Smtp-Source: AGHT+IECfRajUobkWhWFCa7iklKl/PXLaOhcJT32SDfViQUfkilyIhh463XW/PHn5oHsbvSSmbgDdw==
+X-Received: by 2002:a05:6a20:7494:b0:1c0:bf35:ef4c with SMTP id adf61e73a8af0-1c4727aad83mr145198637.11.1721832653262;
+        Wed, 24 Jul 2024 07:50:53 -0700 (PDT)
+Received: from localhost ([192.184.165.199])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-79f0ad73cc4sm8099359a12.29.2024.07.24.07.50.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 07:50:52 -0700 (PDT)
+Date: Wed, 24 Jul 2024 07:50:52 -0700 (PDT)
+X-Google-Original-Date: Wed, 24 Jul 2024 07:39:10 PDT (-0700)
+Subject:     Re: [PATCH v4 0/4] Add ACPI NUMA support for RISC-V
+In-Reply-To: <cover.1718268003.git.haibo1.xu@intel.com>
+CC: Sunil V L <sunilvl@ventanamicro.com>, Arnd Bergmann <arnd@arndb.de>,
+  xiaobo55x@gmail.com, ajones@ventanamicro.com, haibo1.xu@intel.com,
+  Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, chenhuacai@kernel.org, kernel@xen0n.name,
+  Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu, rafael@kernel.org, lenb@kernel.org,
+  Greg KH <gregkh@linuxfoundation.org>, Conor Dooley <conor.dooley@microchip.com>, akpm@linux-foundation.org,
+  Charlie Jenkins <charlie@rivosinc.com>, bhe@redhat.com, Evan Green <evan@rivosinc.com>, cleger@rivosinc.com,
+  zong.li@sifive.com, samitolvanen@google.com, alexghiti@rivosinc.com, samuel.holland@sifive.com,
+  chenjiahao16@huawei.com, rmk+kernel@armlinux.org.uk, jszhang@kernel.org, james.morse@arm.com,
+  andy.chiu@sifive.com, Marc Zyngier <maz@kernel.org>, tglx@linutronix.de, tony.luck@intel.com,
+  Ard Biesheuvel <ardb@kernel.org>, dan.j.williams@intel.com, alison.schofield@intel.com,
+  Jonathan.Cameron@huawei.com, rrichter@amd.com, ytcoode@gmail.com, dave.jiang@intel.com,
+  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
+  linux-riscv@lists.infradead.org, linux-acpi@vger.kernel.org
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: haibo1.xu@intel.com
+Message-ID: <mhng-e0773c11-559a-4f64-a1ad-4a234993ccfc@palmer-ri-x1c9>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 24 Jul 2024, Ma Ke <make24@iscas.ac.cn> wrote:
-> On Wed, 24 Jul 2024, Jani Nikula <jani.nikula@linux.intel.com> wrote:
->> On Wed, 24 Jul 2024, Ma Ke <make24@iscas.ac.cn> wrote:
->> > In drm_client_modeset_probe(), the return value of drm_mode_duplicate() is
->> > assigned to modeset->mode, which will lead to a possible NULL pointer
->> > dereference on failure of drm_mode_duplicate(). Add a check to avoid npd.
->> >
->> > Cc: stable@vger.kernel.org
->> > Fixes: cf13909aee05 ("drm/fb-helper: Move out modeset config code")
->> > Signed-off-by: Ma Ke <make24@iscas.ac.cn>
->> > ---
->> > Changes in v3:
->> > - modified patch as suggestions, returned error directly when failing to 
->> > get modeset->mode.
->> 
->> This is not what I suggested, and you can't just return here either.
->> 
->> BR,
->> Jani.
->> 
+On Thu, 13 Jun 2024 01:54:32 PDT (-0700), haibo1.xu@intel.com wrote:
+> This patch series enable RISC-V ACPI NUMA support which was based on
+> the recently approved ACPI ECR[1].
 >
-> I have carefully read through your comments. Based on your comments on the 
-> patchs I submitted, I am uncertain about the appropriate course of action 
-> following the return value check(whether to continue or to return directly,
-> as both are common approaches in dealing with function drm_mode_duplicate()
-> in Linux kernel, and such handling has received 'acked-by' in similar 
-> vulnerabilities). Could you provide some advice on this matter? Certainly, 
-> adding a return value check is essential, the reasons for which have been 
-> detailed in the vulnerability description. I am looking forward to your 
-> guidance and response. Thank you!
+> Patch 1/4 add RISC-V specific acpi_numa.c file to parse NUMA information
+> from SRAT and SLIT ACPI tables.
+> Patch 2/4 add the common SRAT RINTC affinity structure handler.
+> Patch 3/4 change the ACPI_NUMA to a hidden option since it would be selected
+> by default on all supported platform.
+> Patch 4/4 replace pr_info with pr_debug in arch_acpi_numa_init() to avoid
+> potential boot noise on ACPI platforms that are not NUMA.
+>
+> Based-on: https://github.com/linux-riscv/linux-riscv/tree/for-next
 
-Everything depends on the context. You can't just go ahead and do the
-same thing everywhere. If you handle errors, even the highly unlikely
-ones such as this one, you better do it properly.
+No big deal, but that's not actually my repo.  Looks like it's just 
+mirroring something, I use the kernel.org git stuff these days.  I 
+dropped it from the cover letter for the merge, it's not super useful 
+anyway because it's a branch so nobody will know what it means later.
 
-If you continue here, you'll still leave modeset->mode NULL. And you
-don't propagate the error. Something else is going to hit the issue
-soon.
-
-If you return directly, you'll leave holding a few locks, and leaking
-memory.
-
-There's already some error handling in the function, in the same loop
-even. Set ret = -ENOMEM and break.
-
-(However, you could still argue there's an existing problem in the error
-handling in that all modeset->connectors aren't put and cleaned up.)
-
-
-BR,
-Jani.
-
-
-
-
-
-
+Aside from that things look good, I've got this queued up for the 
+tester.
 
 >
-> Best regards,
+> [1] https://drive.google.com/file/d/1YTdDx2IPm5IeZjAW932EYU-tUtgS08tX/view?usp=sharing
 >
-> Ma Ke
+> Testing:
+> Since the ACPI AIA/PLIC support patch set is still under upstream review,
+> hence it is tested using the poll based HVC SBI console and RAM disk.
+> 1) Build latest Qemu with the following patch backported
+>    https://github.com/vlsunil/qemu/commit/42bd4eeefd5d4410a68f02d54fee406d8a1269b0
 >
->> 
->> > Changes in v2:
->> > - added the recipient's email address, due to the prolonged absence of a 
->> > response from the recipients.
->> > - added Cc stable.
->> > ---
->> >  drivers/gpu/drm/drm_client_modeset.c | 3 +++
->> >  1 file changed, 3 insertions(+)
->> >
->> > diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
->> > index 31af5cf37a09..750b8dce0f90 100644
->> > --- a/drivers/gpu/drm/drm_client_modeset.c
->> > +++ b/drivers/gpu/drm/drm_client_modeset.c
->> > @@ -880,6 +880,9 @@ int drm_client_modeset_probe(struct drm_client_dev *client, unsigned int width,
->> >  
->> >  			kfree(modeset->mode);
->> >  			modeset->mode = drm_mode_duplicate(dev, mode);
->> > +			if (!modeset->mode)
->> > +				return 0;
->> > +
->> >  			drm_connector_get(connector);
->> >  			modeset->connectors[modeset->num_connectors++] = connector;
->> >  			modeset->x = offset->x;
->> 
->> -- 
->> Jani Nikula, Intel
-
--- 
-Jani Nikula, Intel
+> 2) Build latest EDK-II
+>    https://github.com/tianocore/edk2/blob/master/OvmfPkg/RiscVVirt/README.md
+>
+> 3) Build Linux with the following configs enabled
+>    CONFIG_RISCV_SBI_V01=y
+>    CONFIG_SERIAL_EARLYCON_RISCV_SBI=y
+>    CONFIG_NONPORTABLE=y
+>    CONFIG_HVC_RISCV_SBI=y
+>    CONFIG_NUMA=y
+>    CONFIG_ACPI_NUMA=y
+>
+> 4) Build buildroot rootfs.cpio
+>
+> 5) Launch the Qemu machine
+>    qemu-system-riscv64 -nographic \
+>    -machine virt,pflash0=pflash0,pflash1=pflash1 -smp 4 -m 8G \
+>    -blockdev node-name=pflash0,driver=file,read-only=on,filename=RISCV_VIRT_CODE.fd \
+>    -blockdev node-name=pflash1,driver=file,filename=RISCV_VIRT_VARS.fd \
+>    -object memory-backend-ram,size=4G,id=m0 \
+>    -object memory-backend-ram,size=4G,id=m1 \
+>    -numa node,memdev=m0,cpus=0-1,nodeid=0 \
+>    -numa node,memdev=m1,cpus=2-3,nodeid=1 \
+>    -numa dist,src=0,dst=1,val=30 \
+>    -kernel linux/arch/riscv/boot/Image \
+>    -initrd buildroot/output/images/rootfs.cpio \
+>    -append "root=/dev/ram ro console=hvc0 earlycon=sbi"
+>
+> [    0.000000] ACPI: SRAT: Node 0 PXM 0 [mem 0x80000000-0x17fffffff]
+> [    0.000000] ACPI: SRAT: Node 1 PXM 1 [mem 0x180000000-0x27fffffff]
+> [    0.000000] NUMA: NODE_DATA [mem 0x17fe3bc40-0x17fe3cfff]
+> [    0.000000] NUMA: NODE_DATA [mem 0x27fff4c40-0x27fff5fff]
+> ...
+> [    0.000000] ACPI: NUMA: SRAT: PXM 0 -> HARTID 0x0 -> Node 0
+> [    0.000000] ACPI: NUMA: SRAT: PXM 0 -> HARTID 0x1 -> Node 0
+> [    0.000000] ACPI: NUMA: SRAT: PXM 1 -> HARTID 0x2 -> Node 1
+> [    0.000000] ACPI: NUMA: SRAT: PXM 1 -> HARTID 0x3 -> Node 1
+>
+> ---
+> Changes since v3
+>   - Rebase to linux-riscv/for-next(Linux 6.10-rc1)
+>   - Remove original patch 1/6 since it had been merged through
+>     ACPICA pull(commit fe1c408d50604f)
+>   - Remove original patch 4/6 since the related changes was
+>     introduced in commit 3a785e19f43267
+>
+> Haibo Xu (4):
+>   ACPI: RISCV: Add NUMA support based on SRAT and SLIT
+>   ACPI: NUMA: Add handler for SRAT RINTC affinity structure
+>   ACPI: NUMA: change the ACPI_NUMA to a hidden option
+>   ACPI: NUMA: replace pr_info with pr_debug in arch_acpi_numa_init
+>
+>  arch/arm64/Kconfig            |   1 -
+>  arch/loongarch/Kconfig        |   1 -
+>  arch/riscv/include/asm/acpi.h |  15 +++-
+>  arch/riscv/kernel/Makefile    |   1 +
+>  arch/riscv/kernel/acpi.c      |   5 --
+>  arch/riscv/kernel/acpi_numa.c | 131 ++++++++++++++++++++++++++++++++++
+>  arch/riscv/kernel/setup.c     |   4 +-
+>  arch/riscv/kernel/smpboot.c   |   2 -
+>  drivers/acpi/numa/Kconfig     |   5 +-
+>  drivers/acpi/numa/srat.c      |  32 ++++++++-
+>  drivers/base/arch_numa.c      |   2 +-
+>  include/linux/acpi.h          |   6 ++
+>  12 files changed, 187 insertions(+), 18 deletions(-)
+>  create mode 100644 arch/riscv/kernel/acpi_numa.c
 
