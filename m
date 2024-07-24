@@ -1,322 +1,115 @@
-Return-Path: <linux-kernel+bounces-261067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EB2993B289
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:19:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B30E493B28A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2230A285362
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:19:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EE591F218C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA03158875;
-	Wed, 24 Jul 2024 14:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB9C158871;
+	Wed, 24 Jul 2024 14:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="j3I+lQk0"
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2054.outbound.protection.outlook.com [40.107.103.54])
+	dkim=pass (2048-bit key) header.d=valentinobst.de header.i=kernel@valentinobst.de header.b="ljto731+"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893151CAA1;
-	Wed, 24 Jul 2024 14:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721830772; cv=fail; b=jUF/bKr5UG9BAJ7L1D6iK8ctIIAY/Ve3mBNlrEHnCjZMhyUYaN+IRvOCKBHp0js1L8CHtBh+ylLZb6mHAuPRFiIsETcK9J5mmA7dzaYFJEepgjuLsiW+HcuckdZcbfg5KBPXM76DCAaRA3niXdRxQ207RjCuBfky5qmGobHnCiI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721830772; c=relaxed/simple;
-	bh=doU27+nxEq1BIg9Nfk0REljlPVomYV3fpEwlPgzOG20=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=kjMHBNbgC+xJAbSscKKV4RMqwxTnL1Po50kv7dKx2W1EG/uj3mPdeIbPQA17M6TB7VjoJ8iWKCRV8gES3AKLBUiZfbG4lZ/O1aqSn7934E8bos/FaEBNwjCd6raNW/oQLoc9iqkrpvxTMXbL9yeCEKvpr6+SxSqXohLiXT1J5ns=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=j3I+lQk0; arc=fail smtp.client-ip=40.107.103.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NyWgMSKTA3st2RVsh+zoHFUMcBhHB0BM2VIUebiTshEwIKMbcdUZ7YgYbk50Wuc8F8XDtjDllgmkj5jAWBzBjFF8YnkiQma05F2i8xiOX1GN/0+eXNhnbTdrElYKCoMH41q9dGTOey/AJfEMHE9phJqKtUpEbUU0UrErJWXgW+hMQ7GmwnH/J0nbnXpHjmgBrNFXdSuqP4CHzOaM5h+DT8UHu03NOgKjhTaAdnJnwOwGKqSyGcf2StKDrbh2C5zYuikB0/L3YkJE1jo4/qZTcV6dxwzXqurX1ccpUhnYwhr2tf8UUux7pwYNA5l76X4fjJaz45htua6xT7zvRbIB8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Eoow8jkCUNZP1ibIMKaz4vkggulpWlCjYEdpUFHHA0s=;
- b=mYbjFssQMqWusKxwuflO6ATaqWuh7xnV0eZew96vYq86Ip7nKdnwrdVZTQmfE5+qOW29sghsJOIVJGlfKCdb5A8lD8unJDWmVZvCjruB8GaTUFN08Ffi9L4dSRAQDkkwbqMxryvHj83JDt1urKK4ATvaL1cU4FGOj3lwEJeJZul2A4lGEWs0G6U1n1eGvrj8Ss9t2gBItu9H3jpTzlTsc1klm4Lyf9HCz9n24AWP7p/IBUzPeViEZLT4I3Hx1G+oK000E3YAJBFna1YWxjBWp1PWVdnifmbEEIEt/WPVylzpB1giO8pVYpdZXmyFDjaM3alBy28bFXZ4easFA0aObg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=de.bosch.com; dmarc=pass action=none header.from=de.bosch.com;
- dkim=pass header.d=de.bosch.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Eoow8jkCUNZP1ibIMKaz4vkggulpWlCjYEdpUFHHA0s=;
- b=j3I+lQk0Tb9QwzLK8WNEvgCocTAG0MWTUbnYeHP9JPN0qojqe96dbKcD2VT+dMcjt7Oeh7wjEsadMg03cDoDqACz40UC1SPjKJV89X2AOeR0c8jeRWh3KOuVPwf4QvdZ3H+CLYU4cw95z3+r4s8oFRlE30pdFnPV3Z4s5GXoUpojGgzrAfkFtjmhBTMOy9JX7FX713lOAK3FPZ42rAanle99Gtlt+97Nqe1zm0ZvUo7mstwgEyYeGv1LDBUPuTHb9ylOCL+pvrzGtwa0IWfTAzGpJySGmHY8k9ulyl9jkn0dQCFhOvx1IYmeB2jpBawaNdIRXNxGFbWtwrxHFaKRHg==
-Received: from AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:315::22)
- by DU4PR10MB9192.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:55a::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.18; Wed, 24 Jul
- 2024 14:19:25 +0000
-Received: from AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::6748:a0c9:d73d:db74]) by AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::6748:a0c9:d73d:db74%4]) with mapi id 15.20.7784.017; Wed, 24 Jul 2024
- 14:19:25 +0000
-From: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, "jic23@kernel.org"
-	<jic23@kernel.org>, "lars@metafoo.de" <lars@metafoo.de>, "robh@kernel.org"
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, "dima.fedrau@gmail.com"
-	<dima.fedrau@gmail.com>, "marcelo.schmitt1@gmail.com"
-	<marcelo.schmitt1@gmail.com>, "linux-iio@vger.kernel.org"
-	<linux-iio@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Lorenz Christian (ME-SE/EAD2)"
-	<Christian.Lorenz3@de.bosch.com>, "Frauendorf Ulrike (ME/PJ-SW3)"
-	<Ulrike.Frauendorf@de.bosch.com>, "Dolde Kai (ME-SE/PAE-A3)"
-	<Kai.Dolde@de.bosch.com>
-Subject: RE: [PATCH] dt-bindings: iio: imu: SMI240: add bosch,smi240.yaml
-Thread-Topic: [PATCH] dt-bindings: iio: imu: SMI240: add bosch,smi240.yaml
-Thread-Index: AQHa3chB8xxiR7i0TkqCxVScMqlaI7IF2/MAgAAOijA=
-Date: Wed, 24 Jul 2024 14:19:25 +0000
-Message-ID:
- <AM8PR10MB47219903C83BA4F0AFE2DAA3CDAA2@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-References: <20240724125115.10110-1-Jianping.Shen@de.bosch.com>
- <20a8ad37-f6ce-4342-a2f7-bf3495dfeb69@kernel.org>
-In-Reply-To: <20a8ad37-f6ce-4342-a2f7-bf3495dfeb69@kernel.org>
-Accept-Language: en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=de.bosch.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM8PR10MB4721:EE_|DU4PR10MB9192:EE_
-x-ms-office365-filtering-correlation-id: f8e7cf38-1a34-425b-1a3c-08dcabeb9f24
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?9iTQ0GPty49JaWgP/E+L6/a2Gux8A/OVUKG0uflINYDAAXEa4iOzAaD0Tf?=
- =?iso-8859-1?Q?r9+zcqLcW/Mr63Zw3o1H/FsoT02UcV+N/Z36lh3UdrUn3Nzn2+sTqpKPVL?=
- =?iso-8859-1?Q?kG0e+iaOD5fCrXSw7oEs4VIDpdU6eRb1Z7mxZt0QV3L0o37sWMt5WMAvCs?=
- =?iso-8859-1?Q?LNWzUEtN7xOoP111H8rRramMBYfVNzTCbTi8AE7Nk5Q1XXUhw+XGx8zrOF?=
- =?iso-8859-1?Q?Pc/bzdKQcSg49ZcbDz8oi31hwf2p03P4uPe8lk/6gyKEgURx2pmY+midau?=
- =?iso-8859-1?Q?bBvryf6FfqXBkLwqt30mz2SDHrV6ICzVoz4MXbMT+HZ3BcnkWSCR6/nvbI?=
- =?iso-8859-1?Q?SNWP4MnNnLH7R+cn64K3+K1mAuaYrplZInSROOJxy8e93CadrdPKSQjID3?=
- =?iso-8859-1?Q?XfLj8NYykwRxCBYPxHNELDycuM1Btyvvj0S1uZS2ykaDzxeb03LCMPFSHh?=
- =?iso-8859-1?Q?/uSpTdanTuRMfBLyFh6fxl1JEvVqGvmFpT0BRkwYlYtgADsKABOaYwdxpl?=
- =?iso-8859-1?Q?7CCJ5mMacgTNP+liSiptFHAugdqMsuHCu3bIL12Jsqp2vXbnS4zAxsulDQ?=
- =?iso-8859-1?Q?PPsDmLS5YIkRRT7+1i7fLgbcMlBFFHYJzVvPLUn+qg3mguamFVv5xD1s9K?=
- =?iso-8859-1?Q?FADRfsU+QqLeBznoFvvow1+Zg1Mo4PwEGgtCe9TqPgHUlQ+zr23PpsmTFY?=
- =?iso-8859-1?Q?/XeguHkQU47KvWd6JescVaRnidRgff9vKSEgjzqIVYoX/KlgTNvNQZfDF0?=
- =?iso-8859-1?Q?ann18FtINl/7LYpx82X+WXLMLLDFWwRY25w4nexCQ5d0tnNI0K3ftmAAS1?=
- =?iso-8859-1?Q?W/Va3TwK4W9SO6MJP/2JbvovKRcnGvgybhjet/9Pt5Q9o/rB9LN6vXHKqT?=
- =?iso-8859-1?Q?GycIH20fyF2J9nR/rptykgeL532qwXNGFf2JFMtz69+bhcGJ5TnGznh+Q5?=
- =?iso-8859-1?Q?XFN5U0nanVXy/3OUFZFrzo646jByQkA6Kf0dRUvojH16W+H9qqt50cWng0?=
- =?iso-8859-1?Q?i/XSHCzCZz61YTr2VhExGXcubAot6RG24OLRMRepXVIuUYLNTCjIf5eBGN?=
- =?iso-8859-1?Q?h03/6Yk5lGveKkoJvT4u+3gUanr65EwTNvlv1KCYkkrIMg9J9iYethBbhE?=
- =?iso-8859-1?Q?VJ5DKVsDY0txVBK2nTF/r6qKAl19i/drGusxPFuJn7MXZUUsw9vF1tIuSR?=
- =?iso-8859-1?Q?+CkJmhs4BAMiNiF3JEpGipV2E6ijUYj8aWQS17TTaei5JdmpXrkNoiECJs?=
- =?iso-8859-1?Q?L6MSNe3cLG5us9wRsvaT39b7SWq9PqnDB8LsqZOe4Zf6QdTarWCu+pVj8l?=
- =?iso-8859-1?Q?UP62LnRN9qRmYQpSZJ5kXx+zXU5ixVqjM4rGroMjEUjPu/91ah2PmJwdyH?=
- =?iso-8859-1?Q?nQk9hQR4VFCD8L57wseUWTkAcVdjU9t8MvSwIK4ng86RPVbH9Uqdjr6OT/?=
- =?iso-8859-1?Q?DV9Xx1WOW39Fn9VR?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?OKVdj3qeM27OxLaSvd7Sl3RJdsJeNYY9i1jIYrBNT3nsRf0C1mNzkdQ1CI?=
- =?iso-8859-1?Q?LEzBJ5Ci1eo73DsTuPeluIvFB6kBOskrbIZjRIEu28SEDdnCm+eCoJKxO4?=
- =?iso-8859-1?Q?1LsLu6/9+AxWJwIfpO6atmMSIjOFnp05zZHhpU8DwDzGL/SrCOJz1XwUP1?=
- =?iso-8859-1?Q?aH7zh0THpKnk2/Q0Dv6sWeIcwOCPbjtIEWmqN3g7LpilpVZUEBAoQVCWLb?=
- =?iso-8859-1?Q?O42XR/38prnCtaB16OjKSMhve9Ap/ica7dYf1mFrKHpE6AWWGMDStEXZnn?=
- =?iso-8859-1?Q?P1jurt8xuYuZXM4QI1BERZ9ZIqYVosVDJoTpxe4J2e/ocejG4W9wO1kxge?=
- =?iso-8859-1?Q?gxuhHSsp+cpBNLraY3N0JGnLpIxwOGmkp/fTv6zh4Jqa2QydJola8tOppH?=
- =?iso-8859-1?Q?tUemeqG6SoVB37q7vaEBe+eC3Tk7ZEdLDo2gyGKcyjphZjDT+3MYU3iWpJ?=
- =?iso-8859-1?Q?6sxr65nzBxIotohhBPlPsW90vhsyeKQNDeDwux/BTFetwCcPIsBXLN0GY+?=
- =?iso-8859-1?Q?wIwHOJbBU4Pv6VdExyb/2Rn0TFGvQI/NThURw1ZyTTWmLempPPprltVcuT?=
- =?iso-8859-1?Q?hpIlX2LCJQOoBx3L3DNdV85B3sg9COBUfQNClwq4c4qkJ1UyE3QXZdQkG0?=
- =?iso-8859-1?Q?Tr12/nMcOYAh7Jjs2uI6tjrBW55HOGD0T0xE4dPWYZam+Cr2PnRnU6eEai?=
- =?iso-8859-1?Q?Ao9Wlu3t4hSPflD56r/4XKbvsvPufWwUCdEXwMRjkm2uOx4OR/7kiTKRm7?=
- =?iso-8859-1?Q?Htn/f395kxuU+b6jhCsiPsiI+7KorN7pLoT3Xpp78SNJSl++yCZS+pI41F?=
- =?iso-8859-1?Q?mfKR5otzJBGJI76PHp7SYgq3f+r5UvgMhh4wfYu+GEjzcAG5dgm88QaY9x?=
- =?iso-8859-1?Q?iBeXMY431kvZNItRpfJbGwMcIZ2P5godq1XdA23i3f0HqCQzkygtTNMKHA?=
- =?iso-8859-1?Q?m+Q9D8D7ZtKAVMvTofLDoL2A7NcoZxiJjUQkmJf1Q5+3w7tPwGd9W5bTXn?=
- =?iso-8859-1?Q?vpnTCtu9RzZI1N3ipEKA1YWXXX4mpkevmL18jPJv2bLVjlQeKfCKGY7rbz?=
- =?iso-8859-1?Q?qQdmdEQ96ZzZNqdvE6kKXSKESnuW00NmoCTbEfXJg3eiCXjU86TjmC7dxZ?=
- =?iso-8859-1?Q?9v36V5orp0SaDUOEYg/pQTjA5Xiwh2oj6Wb10zfWH8loaRfEO2rPO6iT4t?=
- =?iso-8859-1?Q?W/VPdQcDRTYxl9iPYzHkFj+y0dk2ZGU1Lqdz1dmPyVJLsiUmlb9xHFPnzt?=
- =?iso-8859-1?Q?ypSieMNEweFwHC7KQ7SU81CzZO0sbxGt2PK1jP3QwUri507Qo+Jr+VKm90?=
- =?iso-8859-1?Q?l+zmx/3/3knlQLy/MT/5/j7kAKXY7eDp7hWnjswvUowHwdQ/345pwhbZPo?=
- =?iso-8859-1?Q?wOcex5VApXYFaRWLHHWqMIeUV+c9yrB6MKCsW+SigfBp1d+E17QfhPPQxW?=
- =?iso-8859-1?Q?Gkj8wbuV0RjtzW1PYiTIUCn07dzednHW70Ix8s5uTxWcOROqwtvp8LOxR/?=
- =?iso-8859-1?Q?HkbWcV0UqcuTIfyavefr3NddP358cpJi7sVKcuUy8J+e2JQDU4KO4miNLF?=
- =?iso-8859-1?Q?JF4SRtoIE8/s4T3hLJhoPsHW7LOHkCoBuM4jK1YmEfGRq/UbX0FCLfpa8/?=
- =?iso-8859-1?Q?X2KjFetdHys+A=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3791F134DE;
+	Wed, 24 Jul 2024 14:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721830805; cv=none; b=ArFaXjqGW3RgSPgP9Xgp5KBkZ8aW/xS23Ys+NQcrBuk4XcYIGVBKBDrcdUmAZ20aICg9JlEojjN4SJcGXT+sNzBBDnkZ6i1OGc9M2mHt8tgeMO/k1bkfnaG9wmyufhgK/hwDl3K5hYIfS6guNmJY4buQi8F4F2SkSUSWf31IQqU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721830805; c=relaxed/simple;
+	bh=nduDyf2mVkpF0BlMR/ZRgIDySlcytzfUVo4agrG7pkk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=goYCO1hd7bI9VmysQj69E7uclAn/+aSwP9mIUfNz/6pkIGVvH3+rBadIlgegjYGbIphmWpF7Kg+9kW4CoE8NnIxqk8ZadyPuudVZf+MoluPw7+tteXU5f5u61k7SqjK6DRORoqFolELiwibXX4qlzEVZzmGFMP0/ypFIK1T/i0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valentinobst.de; spf=pass smtp.mailfrom=valentinobst.de; dkim=pass (2048-bit key) header.d=valentinobst.de header.i=kernel@valentinobst.de header.b=ljto731+; arc=none smtp.client-ip=212.227.126.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valentinobst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valentinobst.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=valentinobst.de;
+	s=s1-ionos; t=1721830772; x=1722435572; i=kernel@valentinobst.de;
+	bh=TMTfYWXz/lWprUxH5gsNGWYkVZFiwdN4scbxDLAk3i8=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
+	 References:MIME-Version:cc:content-transfer-encoding:content-type:
+	 date:from:message-id:mime-version:reply-to:subject:to;
+	b=ljto731+GNzYIE4Erea5pH4JNAlHOsQC2bHNyPispyUv4w88gHIiPFmr7DXrki5t
+	 sfbBD2WqbqQjXT2Vdqbr3J9HYioChQMHontLWDhCZMRhApQLm2F1h8KzaK8oLSeXb
+	 DF/7HHmlKFVcTlETHlNGOOse1pxUhtGlQBsKnixOzZknJIIeXLrRS93Elvn5JVaqG
+	 Wehs6ImnEYjdVugZyRUpjz5ReEwhHpai9sG3K8elG+sNRiiuAQJOBOFja0zTt0VIL
+	 sp6QP2ZuT7Di8pZj3w4RzDxNBMgm9V1Z2m5kbZkpgWFELlRDMFmWmWM1x43Mz2x00
+	 +qEQO85zc7aI+2q4Pw==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from archbook.guest.fkie.fraunhofer.de ([129.233.182.128]) by
+ mrelayeu.kundenserver.de (mreue009 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1MF39M-1sUT6K0z5E-002t0d; Wed, 24 Jul 2024 16:19:32 +0200
+From: Valentin Obst <kernel@valentinobst.de>
+To: alexmantel93@mailbox.org
+Cc: a.hindborg@samsung.com,
+	alex.gaynor@gmail.com,
+	aliceryhl@google.com,
+	benno.lossin@proton.me,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	linux-kernel@vger.kernel.org,
+	ojeda@kernel.org,
+	rust-for-linux@vger.kernel.org,
+	wedsonaf@gmail.com
+Subject: Re: [PATCH v2] rust: Implement the smart pointer `InPlaceInit` for `Arc`
+Date: Wed, 24 Jul 2024 16:19:27 +0200
+Message-ID: <20240724141927.8232-1-kernel@valentinobst.de>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240719192234.330341-1-alexmantel93@mailbox.org>
+References: <20240719192234.330341-1-alexmantel93@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: de.bosch.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: f8e7cf38-1a34-425b-1a3c-08dcabeb9f24
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2024 14:19:25.5234
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: j5/aMGjYXMwZTiPsIpaaKBkHCkA4cRkxTmwE1FzckMXhjwo1BgtbNYImTOqzc9brZunDGUn0yN0ssh0jBzAO1w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR10MB9192
+X-Provags-ID: V03:K1:D6IlgZA0q+aRZgcfTT4F6NENMPE8lXcPzKcX3NZ6ZcWCUYcuQmp
+ VQ56BXGWUZiV1utEvPSBaPQdxUuJnx9ZWovyBJJedJGBM6tnxOFBU99rhIOddmUHgwi83yy
+ CrP5/83dvhSqAwh5IovaKBMuacr8Kxg+pA8EIY90jRIhcclr8/35kAGdh1sJkwZ78Ry6fDt
+ GRFghKHplAkPJWgaA6KFg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:40b+vTKip3I=;9tyIQlsFSwVpKAzkQg57ryTi/nf
+ frN6nO78DmCZlx4xqgyH92xxApPIzCMdTlcPF4MaHs+AFHL+ZqQxeeCts/kDzn6fmmNRZb9Av
+ ktqTkFcXNonJ+t/B/e7CckrWv+3WmdIyTYO8ae4HI9k39K50SM9iBa/7hyQ6brWiPNs/CBSgE
+ tRVfMl0KkFCmJQekBJoGKH7Z/yvead1CgWbZap/tS6WxrhADljoz7nf/34jogodZjLnsqJv60
+ nMtMyVoXtBOKgD7sIlU0bz6dU5P2HiYF/mOLE2nmJ2ZuUJCdMo9USCQe3rDtq7aVOmLpX5pFE
+ pwItF547yoKH2HzUhdHd1vPkAU0+Ld91mJZ6/lP8jMj9ImlDXreX/lwly89MSAUkSaKkvyw2y
+ Jq4hbotCyYDoOBnEacpSDmccdKj5WQWGaYxDe2k+n/6t6s3rHHxyY8s+NZCXwPZmF6TnlbyDj
+ eo5+YZdht9GsRlJIRlkEv34YkIWXmEZGQjc4WP8qVO8LIU+gbtUkj8w6lhTongrPFMQ9Oi1mT
+ syg0u8uwCUNSa4SXFLFWXo9S5IED27Mh6KI1o2WXE6bVyVszdqympkAvsw+RieZRYaKUIE4Ys
+ NYbtjm1+/Olg4OH48gXbQYnXHNHgpNMtvwHkztVj12W6DeXKLJIuVRnyJWnvEcwqqlZclCsIY
+ xVSLZcZKPR/Hfc3iJz/yEJYI6LCABB9XRTOVg40MD5QBGI8LSG2c9b30sn+2HYM7+mIDoDsdU
+ dZ02ADwxkNcp1LXUp1QTLqY+Hx0he90/g==
 
-Anyway, please send bindings with driver in the same patchset.
+[snip]
 
--> It's fine for us. Nevertheless according to the Devicetree (DT) binding =
-submitting rules 1.1
-
-" The Documentation/ and include/dt-bindings/ portion of the patch should b=
-e a separate patch." See -> https://www.kernel.org/doc/html/latest/devicetr=
-ee/bindings/submitting-patches.html#i-for-patch-submitters
-
-Shall we still put the binding and driver in the same patch ?
-
-Mit freundlichen Gr=FC=DFen / Best regards
-
-Jianping Shen
-
-Mobility Electronics - Sensors, Engineering Advanced Development - MEMS Sol=
-utions Software (ME-SE/EAD2)
-Robert Bosch GmbH | Postfach 13 42 | 72703 Reutlingen | GERMANY | www.bosch=
-.com
-Tel. +49 7121 35-37749 | Telefax +49 711 811-509378 | Jianping.Shen@de.bosc=
-h.com
-
-Sitz: Stuttgart, Registergericht: Amtsgericht Stuttgart, HRB 14000;
-Aufsichtsratsvorsitzender: Prof. Dr. Stefan Asenkerschbaumer;=20
-Gesch=E4ftsf=FChrung: Dr. Stefan Hartung, Dr. Christian Fischer, Dr. Markus=
- Forschner,=20
-Stefan Grosch, Dr. Markus Heyn, Dr. Frank Meyer, Dr. Tanja R=FCckert
-
------Original Message-----
-From: Krzysztof Kozlowski <krzk@kernel.org>=20
-Sent: Wednesday, July 24, 2024 3:17 PM
-To: Shen Jianping (ME-SE/EAD2) <Jianping.Shen@de.bosch.com>; jic23@kernel.o=
-rg; lars@metafoo.de; robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.o=
-rg; dima.fedrau@gmail.com; marcelo.schmitt1@gmail.com; linux-iio@vger.kerne=
-l.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; Lorenz Chr=
-istian (ME-SE/EAD2) <Christian.Lorenz3@de.bosch.com>; Frauendorf Ulrike (ME=
-/PJ-SW3) <Ulrike.Frauendorf@de.bosch.com>; Dolde Kai (ME-SE/PAE-A3) <Kai.Do=
-lde@de.bosch.com>
-Subject: Re: [PATCH] dt-bindings: iio: imu: SMI240: add bosch,smi240.yaml
-
-On 24/07/2024 14:51, Jianping.Shen@de.bosch.com wrote:
-> From: "Shen Jianping (ME-SE/EAD2)"=20
-> <she2rt@LR-C-0008DVM.rt.de.bosch.com>
->=20
-> dt-bindings: iio: imu: SMI240: add bosch,smi240.yaml
-
-Something got corrupted here.
-
-Anyway, please send bindings with driver in the same patchset.
-
-Limited review follows:
-
-> Signed-off-by: Shen Jianping (ME-SE/EAD2)=20
-> <she2rt@LR-C-0008DVM.rt.de.bosch.com>
-> ---
-
-Missing changelog. That's v2, not v1? Provide changelog under --- and versi=
-on your patches correctly. b4 does it for you...
-
-
->  .../bindings/iio/imu/bosch,smi240.yaml        | 50 +++++++++++++++++++
->  1 file changed, 50 insertions(+)
->  create mode 100644=20
-> Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml
->=20
-> diff --git=20
-> a/Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml=20
-> b/Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml
-> new file mode 100644
-> index 00000000000..5e89d85d867
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml
-> @@ -0,0 +1,50 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause) %YAML 1.2
-> +---
-> +$id:=20
-> +https://eur03.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fdevi
-> +cetree.org%2Fschemas%2Fiio%2Fimu%2Fbosch%2Csmi240.yaml%23&data=3D05%7C0
-> +2%7CJianping.Shen%40de.bosch.com%7Ce4bd3cadbf5f4b17bf7308dcabe2e9b6%7
-> +C0ae51e1907c84e4bbb6d648ee58410f4%7C0%7C0%7C638574238283264004%7CUnkn
-> +own%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWw
-> +iLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=3DgbcSKWPDSDT0qTWo5L%2FUYxlQDunqNl2l
-> +L7JAxwHhNJY%3D&reserved=3D0
-> +$schema:=20
-> +https://eur03.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fdevi
-> +cetree.org%2Fmeta-schemas%2Fcore.yaml%23&data=3D05%7C02%7CJianping.Shen
-> +%40de.bosch.com%7Ce4bd3cadbf5f4b17bf7308dcabe2e9b6%7C0ae51e1907c84e4b
-> +bb6d648ee58410f4%7C0%7C0%7C638574238283281959%7CUnknown%7CTWFpbGZsb3d
-> +8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7
-> +C0%7C%7C%7C&sdata=3DkW25MDdZz9c3ePA%2BUrGXSWsBWlDxb6UAKjOeLSnFEXU%3D&re
-> +served=3D0
+> @@ -1112,11 +1113,15 @@ unsafe fn __pinned_init(self, slot: *mut T) -> Result<(), E> {
+>
+>  /// Smart pointer that can initialize memory in-place.
+>  pub trait InPlaceInit<T>: Sized {
+> +    /// A type might be pinned implicitly. An addtional `Pin<ImplicitlyPinned>` is useless. In
+> +    /// doubt, the type can just be set to `Pin<Self>`.
+> +    type PinnedResult;
 > +
-> +title: Bosch SMI240 IMU
-> +
-> +maintainers:
-> +  - Jianping Shen <Jianping.Shen@de.bosch.com>
-> +
-> +description: |
 
-Do not need '|' unless you need to preserve formatting.
+[snip]
 
-> +  The SMI240 is a combined three axis angular rate and three axis=20
-> + acceleration sensor module  with a measurement range of +/-300=B0/s and=
- up to 16g. SMI240 does not support interrupt.
-> + =20
-> + https://eur03.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fww
-> + w.bosch-semiconductors.com%2Fmems-sensors%2Fhighly-automated-driving
-> + %2Fsmi240%2F&data=3D05%7C02%7CJianping.Shen%40de.bosch.com%7Ce4bd3cadb
-> + f5f4b17bf7308dcabe2e9b6%7C0ae51e1907c84e4bbb6d648ee58410f4%7C0%7C0%7
-> + C638574238283298041%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQ
-> + IjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=3Dd2%2Bk
-> + j8GzUms9o0Nbdu9QpTzZwujQnjJMp0GFp%2B5MrB0%3D&reserved=3D0
+nit: Typo 's/addtional/additional'
 
-This does not look like wrapped according to Linux Coding Style. See Coding=
- Style, so 80.
+Apart from that, I think "When in doubt, ..." or "If in doubt, ..." are
+more common choices than "In doubt, ...". But that's a question of style so
+feel free to ignore this comment.
 
-> +
-> +properties:
-> +  compatible:
-> +    const: bosch,smi240
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  vdd-supply:
-> +    description: provide VDD power to the sensor.
-> +
-> +  vddio-supply:
-> +    description: provide VDD IO power to the sensor.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +allOf:
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    spi {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        spi@0 {
+Rest looks good to me.
 
-That's not a SPI controller. Your description suggests "imu".
-
-Best regards,
-Krzysztof
-
+	Best
+	Valentin
 
