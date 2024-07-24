@@ -1,131 +1,137 @@
-Return-Path: <linux-kernel+bounces-261228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD69B93B465
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:57:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A326B93B46C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:59:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A63C1C23908
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:57:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 503F21F2319D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E97315E5CA;
-	Wed, 24 Jul 2024 15:57:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85AA215CD4D;
+	Wed, 24 Jul 2024 15:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bHoA/ibQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2442615CD60
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 15:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88321598F4;
+	Wed, 24 Jul 2024 15:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721836624; cv=none; b=vFd5sNrxB1IXK4R3JqgOa/ZPDGz1kWEgbpJUqtry39wHhOlM1WjJgdTlFIavWo6IWjACVVIVm7aZvGSHxVpSdblpjV+mgMN4oSoZfVcQO4GgvJJcqDQNxwjH6r0/X37bu6x4RuTATcBT2+NNQk1DWlcW+jLrdQNvITHHTl+0PPA=
+	t=1721836751; cv=none; b=qVoMeWqtz0BwqGnX4mB6miKEvrXU2xqL9CmxTMN3wSIEDXUUwn+zx7bG8NGmeZQwUUMgPA2Dj0sZIkOOPyLs0AIpxZnd9Du5UI6naE13+vPhBKRZ5mMM4lWlVWj7qEGdKZ+Npk4EYBwuaErhMFM23/YHHZZ3eMVCYWUd8vbYu0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721836624; c=relaxed/simple;
-	bh=huFWRRP15akjkvn1gjHj80C2M7BSCzmCgfhqjRJDjso=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=XWMLxMMmP+xsmf8D80nn6LiMpkYE7yFP2q8IiVTN6cL0UVBoVtjGNSYTF+fVrGY5UXDfcBUgidgRDr9F1EGEkcb/5NeuV1rGZ/RRRDg1VuZBmt8N43RmEXcVu9ovbn1mcIXnlyOW2Su5fdtw7ppGSYsWR80UH50VZaebTlbY+ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7f9a5529d33so1058646739f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 08:57:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721836622; x=1722441422;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aHvWKFgSlIsjuAyfOIP7JYTHzAEthbwgA7GPCtkTGPM=;
-        b=t668q57nERXaiPMYf8YpNAujmyDpDBKeK6QI3jiUCdtH7/NYHpmcKjtSit1IxJvzqy
-         zxLdN4urxP9rC+DvLC929DgsHEZp9iC3HJ8vdh0P5aTl009hRT8boujRGsLOD+Z/6o2M
-         UYbQyefDphpMRDd63WymtYyBbhT3sGV5iKbTm85+Lmk+WtuKPbZThYe1rY7bYz1w/5MH
-         w9ptMC6JHyfrwIy9RTB0oixcLv9KGB40/CruBncsBJfo4cm9sHy0bTTAEwAWxDDgUw1U
-         /3BTILA5ciq545OmHsGynrZJphK8ICl1uVQcipleaKD9r+J5N66g5ARolHRZRnh4W0UN
-         lR3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWFScfDV5RUsGOHjMr9PRjZad7J6UTKI/hq72BmXJVhuJYQDLE0pjZxO4MBRnsZRgYxf0dQppTm+bDW7ZtE88ETX1x3K0uNtHkdPXY3
-X-Gm-Message-State: AOJu0YxUqPR1A4ypUq9CZENRwHXRTXaRIdSfeJNkJt0fAfmQaihHGy9k
-	FZw59wFRaWhgbvyPCXdPyqY25Ct5TIBX+Wp/tGJHfbYtTcGl6bqOPUJwONP+3L+JrpCZN/rvG1P
-	7l4lIt8jZV428leeYve5TkrPDyuMQGnmMyPdc+xInpjk+Q85NnVmjGtM=
-X-Google-Smtp-Source: AGHT+IH5wSi8nXp4+9dm5WZ//Vg2iOsnkEvj6KcvyNL/2Cssov8w1WGvqLSdHsJhfE2pLYhIrC1aMyQhRjJDYK9YZYmc4AyoE2M4
+	s=arc-20240116; t=1721836751; c=relaxed/simple;
+	bh=Dx2Nr7QBWT14vQe0l1RNPBOFDHK+O36WZ5NCMyposTU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=dpXpUDsGnmn/lJ1wzIjM0Q9PK/kfadDA1zTw+JCkrpWD5dRtqEQCRM+Ea1tNlCSn8G+ZYolAPU7Rht8sPyCLqJBH/6awCVYL35VTPI5IEIVhTIRCIMpZZBimyga6UO/DCXprIUbQoQIkq+DDlCYP9eboiwDTPtixJjzlGhNjuyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bHoA/ibQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CC46C32781;
+	Wed, 24 Jul 2024 15:59:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721836751;
+	bh=Dx2Nr7QBWT14vQe0l1RNPBOFDHK+O36WZ5NCMyposTU=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=bHoA/ibQ4DckOmpKNdRRYJYDpwo+rA1i8wDvhKrA+r+nRQe26GjM22a4GD5tlxkv8
+	 Edjk/M7E8BwlZoV1P1bAu0rV6sbo4sBmffIbVEiYgs0OOa23+94tVBCIgPOiO4swOP
+	 0RU1o16errY0Btlh9T0+12hS1KhbV9zXA4GYInw3R2/qifWwpBM7Ffivkz20fc0eb2
+	 YqqYLfkQyAUfmcR8Vd1smzXuWxe7YDGdLAj1SNXBXTjS0z9N4ymhj/tgMssnLijFaB
+	 7gpVOEGAHAzJQJXMMq2BsG2dSoontO1EQlNOznABcmhmvWwkhJWXBDUZMzb1clyPDk
+	 e+tbftAPYl4UQ==
+Message-ID: <db58f8bd-1ac6-45fc-a402-065d234d5161@kernel.org>
+Date: Wed, 24 Jul 2024 16:59:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:8403:b0:4c0:a90d:4a7c with SMTP id
- 8926c6da1cb9f-4c23ffc473fmr930317173.6.1721836622306; Wed, 24 Jul 2024
- 08:57:02 -0700 (PDT)
-Date: Wed, 24 Jul 2024 08:57:02 -0700
-In-Reply-To: <tencent_BDF63D63379896FC36DA4B94758377296609@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003bed92061e005442@google.com>
-Subject: Re: [syzbot] [io-uring?] KMSAN: uninit-value in io_req_task_work_add_remote
-From: syzbot <syzbot+82609b8937a4458106ca@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: Quentin Monnet <qmo@kernel.org>
+Subject: Re: [PATCH v4] tools/bpf: Fix the wrong format specifier
+To: Markus Elfring <Markus.Elfring@web.de>,
+ Zhu Jun <zhujun2@cmss.chinamobile.com>, bpf@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Eduard Zingerman
+ <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Yonghong Song <yonghong.song@linux.dev>
+References: <20240724111120.11625-1-zhujun2@cmss.chinamobile.com>
+ <8c33ec2d-0a92-4409-96b0-f492a57a77ce@web.de>
+Content-Language: en-GB
+In-Reply-To: <8c33ec2d-0a92-4409-96b0-f492a57a77ce@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in io_req_task_work_add_remote
-
-=====================================================
-BUG: KMSAN: uninit-value in io_req_local_work_add io_uring/io_uring.c:1192 [inline]
-BUG: KMSAN: uninit-value in io_req_task_work_add_remote+0x588/0x5d0 io_uring/io_uring.c:1240
- io_req_local_work_add io_uring/io_uring.c:1192 [inline]
- io_req_task_work_add_remote+0x588/0x5d0 io_uring/io_uring.c:1240
- io_msg_remote_post io_uring/msg_ring.c:102 [inline]
- io_msg_data_remote io_uring/msg_ring.c:133 [inline]
- io_msg_ring_data io_uring/msg_ring.c:152 [inline]
- io_msg_ring+0x1c38/0x1ef0 io_uring/msg_ring.c:305
- io_issue_sqe+0x383/0x22c0 io_uring/io_uring.c:1710
- io_queue_sqe io_uring/io_uring.c:1924 [inline]
- io_submit_sqe io_uring/io_uring.c:2181 [inline]
- io_submit_sqes+0x1282/0x2f40 io_uring/io_uring.c:2296
- __do_sys_io_uring_enter io_uring/io_uring.c:3206 [inline]
- __se_sys_io_uring_enter+0x40c/0x3ca0 io_uring/io_uring.c:3143
- __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3143
- x64_sys_call+0x2d82/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:427
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4706
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
- alloc_slab_page mm/slub.c:2304 [inline]
- allocate_slab+0x20a/0x1550 mm/slub.c:2467
- new_slab mm/slub.c:2520 [inline]
- ___slab_alloc+0x12ef/0x35e0 mm/slub.c:3706
- __kmem_cache_alloc_bulk mm/slub.c:4750 [inline]
- kmem_cache_alloc_bulk_noprof+0x486/0x1330 mm/slub.c:4822
- __io_alloc_req_refill+0x84/0x560 io_uring/io_uring.c:940
- io_alloc_req io_uring/io_uring.h:393 [inline]
- io_submit_sqes+0x1744/0x2f40 io_uring/io_uring.c:2285
- __do_sys_io_uring_enter io_uring/io_uring.c:3206 [inline]
- __se_sys_io_uring_enter+0x40c/0x3ca0 io_uring/io_uring.c:3143
- __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3143
- x64_sys_call+0x2d82/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:427
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 0 PID: 5936 Comm: syz.0.15 Not tainted 6.10.0-syzkaller-11185-g2c9b3512402e-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-=====================================================
+2024-07-24 17:43 UTC+0200 ~ Markus Elfring <Markus.Elfring@web.de>
+>> The format specifier of "unsigned int" in printf() should be "%u", not
+>> "%d".
+> 
+> * Please improve the change description with imperative wordings.
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10#n94
+> 
 
 
-Tested on:
+The wording is fine. The commit subject does use imperative. If
+anything, the subsystem prefix should be "bpftool" rather than
+"tools/bpf", something that can be addressed when applying, perhaps.
 
-commit:         2c9b3512 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=1286f1f1980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6bfb33a8ad10458f
-dashboard link: https://syzkaller.appspot.com/bug?extid=82609b8937a4458106ca
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1302d5ad980000
 
+> * Would you like to add any tags (like “Fixes” and “Cc”) accordingly?
+>   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10#n145
+
+
+"Fixes:" arguably, although there's no bug being fixed here, it's just a
+clean-up. No need to respin the patch for that. Also there's no need to
+Cc the author here, Jiong no longer works on this and the email address
+you'll find in the logs is no longer valid.
+
+
+> 
+> 
+> …
+>> ---
+>> Changes:
+> …
+> v4:
+> Thanks! But unsigned seems relevant here, …
+> 
+> Please adjust the representation of information from a patch review by Quentin Monnet.
+> https://lore.kernel.org/linux-kernel/2d6875dd-6050-4f57-9a6d-9168634aa6c4@kernel.org/
+> https://lkml.org/lkml/2024/7/24/378
+
+
+I'm not sure what you mean here. This part won't be kept in the commit
+description anyway.
+
+Zhu, for future patches I'd recommend keeping the history above the
+comment delimiter (so that it makes it into the final patch
+description), and writing a real description rather than copy/pasting
+the feedback, which I believe is what Markus is commenting about?
+
+
+> 
+> 
+> …
+>> +++ b/tools/bpf/bpftool/xlated_dumper.c
+>> @@ -349,7 +349,7 @@ void dump_xlated_plain(struct dump_data *dd, void *buf, unsigned int len,
+>>
+>>  		double_insn = insn[i].code == (BPF_LD | BPF_IMM | BPF_DW);
+>>
+>> -		printf("% 4d: ", i);
+>> +		printf("%4u: ", i);
+>>  		print_bpf_insn(&cbs, insn + i, true);
+> …
+> 
+> How do you think about to care more also for the return value from such a function call?
+> https://wiki.sei.cmu.edu/confluence/display/c/ERR33-C.+Detect+and+handle+standard+library+errors
+
+Apologies, I'm afraid I don't understand what you're asking here, can
+you please rephrase?
+
+As far as I'm concerned I'm good with the current version of the patch.
+Quentin
 
