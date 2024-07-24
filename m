@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-261357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1637093B651
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:59:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0531693B652
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:59:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BBD7B2299B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:59:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D50C282A03
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082C92E639;
-	Wed, 24 Jul 2024 17:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4368815F41F;
+	Wed, 24 Jul 2024 17:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QXb9eTzA"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WqWyjj1d"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335E115ECCA
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 17:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3D861FCA
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 17:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721843938; cv=none; b=golqRni8iIGoLRpRHdMAGZ+lCvRMysGMdjhdZFAUXyBk5MsTrLM+J50UqNhfwZ4GwulOdViLbgzkxHO7BSf5whlF09aOtAp6Fco/TdaeHvTQv+Mb1MvO/nHKxFazrVK9gMJvfVayC+bT04Otmyqw20ZgFVGh6MNYLbmq5vgYGpY=
+	t=1721843949; cv=none; b=CWsV1MoRsdECS7+05wXOx1m3UayOd9kAUXpTpKbCTt1CwPaSmXivovWg+BCQ/y3TAwU8H1df1dDWzFMvH5/seqh5lEQV6gLD5bd7Re4Ag1sSflccoLL1p10+DWWn8zf8a2KgRn5tsykzD3V2rXtiOBhF7rLTSRS6GDRiGm/RiaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721843938; c=relaxed/simple;
-	bh=zrvZSCzQqqsG7YHRX0OKAe3JyxQzkecxpP5x1BpC++Y=;
+	s=arc-20240116; t=1721843949; c=relaxed/simple;
+	bh=vToUSFfuBxFDwHHbmDpLt129lVI02pWGZoeP06wz/Ts=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=cz30RQ0kxXiNI6gqy8rfPK21vhZi7TyXyHSNvxGYbqCJDR3s7vaBanWjDMlksB3QaSLaPTkBMskK7qkyd/qj/wKok+x1Rgf1yn/p75GDYhtE3sUOUKI/eZt1nyRgjcgeQCRFNoDDsuNnrYOuXxyxcPH0ZZCenHFdpaVlq6t/NMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QXb9eTzA; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:MIME-Version; b=CC1PIMqyXagOGnXZJbTjRhpZ4mHTNRsApc1i5JeG18gk801E2DFJM/vQduv0m0+jbKZ7Met+ak8SgIxp3CCZvtLiXiAtyaZNtgpwfMhBBnFjRONW3oDx7qie3Y9Efgaa/PUbLiffi88jmB2UnstVNBkE4L1sjJ9PDFliR9SjM/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WqWyjj1d; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721843935;
+	s=mimecast20190719; t=1721843946;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=12KhlajV+NJl0/ULt5L95ZmPmciLnbPLur97YZsNQU4=;
-	b=QXb9eTzA5Ax8rCmNb9p0pbWMsyKyVe/T5CmEK1JIMdaRxrz3BIYdoVSo1qqxoL/6ABPJ8/
-	NVPJvG35KE7q1Vhg6lHhgtzACOMviWvQJljBjsrD957Autdv7QcPFjn6Mhrg27f7X0E7m9
-	XJoImBNxZAgbeeGxreFK4LT4TvUjww4=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=UrO4J8+RYRKw88kJ7TpCWAFl9RA8wwB8eC8PuzRLyzw=;
+	b=WqWyjj1d9/sm3arvQENcmYGnoRt2ZdUJDaq5z3zsuMQcJeCW8+f5w5WX8N+Eu2pM/Vxu8r
+	D/cwJRADWyr/IXe20TZr4HBmLx0xSFV4mdtY2h3uJhKyHUTQvg598RTkhu5iiJsK03aXkE
+	vVYqx3b7IXIowpA88Khx5wNb5ji1xfY=
+Received: from mail-vk1-f198.google.com (mail-vk1-f198.google.com
+ [209.85.221.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-695-qGoSj3mkNo6VAIQ_zolSWQ-1; Wed, 24 Jul 2024 13:58:50 -0400
-X-MC-Unique: qGoSj3mkNo6VAIQ_zolSWQ-1
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-44fddd83eddso575461cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 10:58:50 -0700 (PDT)
+ us-mta-561-0db7F-80NoqJOUudRrzMLw-1; Wed, 24 Jul 2024 13:59:04 -0400
+X-MC-Unique: 0db7F-80NoqJOUudRrzMLw-1
+Received: by mail-vk1-f198.google.com with SMTP id 71dfb90a1353d-4f5175725acso39266e0c.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 10:59:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721843930; x=1722448730;
+        d=1e100.net; s=20230601; t=1721843943; x=1722448743;
         h=content-transfer-encoding:mime-version:user-agent:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=12KhlajV+NJl0/ULt5L95ZmPmciLnbPLur97YZsNQU4=;
-        b=RTLjRohvS70kElNd5zYhOWWDJ/bGrhXL8B2LV5hAVTOlsU/04EYY5DlL/r6ZAia/ZW
-         VeNwW7xqM6MBpfe5PpydfC8oqf4R5VIUB35JBG/+DXgrahtq1FSThWrfGyq17LPfxwRT
-         TzJZ5ciPnID6LcEhSxiRA8T62ySygjPNOI0YN5J6zAD+6qOGrPGmytT280NWFh+BQv0k
-         rtoe7W5NPeNmAD/524KA2Z+Bmq1SiOVOYHJOGna7hFHaCIxTDJgpz6B/izFdoVxvop6L
-         p59s8NDskAsd4dOfHmFDJl69lrA9dfqZGpmD0o5YK/UU3rIKNpq1jqIy+8XOBHZX89my
-         2hfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWv8AGglmIfGkPQmY1zPUObEGAdB0iz02Wh1OOgJ0fGnGd18DtwCxZ61y2EqbeeH5ntj4MA2uSHT+iizIcP+RAVumECyhuMlNI3oYos
-X-Gm-Message-State: AOJu0YweMkOFv2hBqR6PG4t9FAFkGNW1Q8+4FrqoEQy7yoKmOCfl+/tN
-	dzxXOLaS9MpCklQRKB9g2x/dq+psIykL7LDVgMQghSQAQjSxaslF6fbulJqG2I3I65G6fwycSh1
-	D5PT16eKrrtlOf5f2CBhAa+ULTk50JCAWTq0UeW534axNp7pJ0tj3AqokBMcr1w==
-X-Received: by 2002:ac8:5e4f:0:b0:447:e40a:f61a with SMTP id d75a77b69052e-44fe32d2877mr4959941cf.18.1721843930098;
-        Wed, 24 Jul 2024 10:58:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHpa/oJOMF1ngHZpzHrA7Mx5P4Gsjlhq+oo6TdhTx7cxaRgbMFliza+MBP/XCkTOK4eFviTWw==
-X-Received: by 2002:ac8:5e4f:0:b0:447:e40a:f61a with SMTP id d75a77b69052e-44fe32d2877mr4959721cf.18.1721843929655;
-        Wed, 24 Jul 2024 10:58:49 -0700 (PDT)
+        bh=UrO4J8+RYRKw88kJ7TpCWAFl9RA8wwB8eC8PuzRLyzw=;
+        b=vKYJUKcekkECZNQpzeoLNHnpG1FvRJtT5dgsx0M/IsU1AveTcOQWkqJAK/K+HBmfbB
+         2lFCDKee67fkzl7c73P/Rc7rhW51gwirI1D55o/r9GE2WGU3Byo3xUy38v6RFlB+BD/M
+         uxQ9IT3DlLN/oQgT+7ZWov1E/+psWYCJKgXoVJaf+yjoQJV7zgWmbAN6OgBhOvbR1iwJ
+         IaBG8SGoCJVWsmA2J465cJ+2x6COdwS/HQME55wZMfdJ/9h1QS9PhuiF2IWXxAfLeNN9
+         v1Kw/gPD9ub4hVBnLpEF/u3Rfjdigaq52/Uxd9o+G1yfxz9EHvWO5lbUWRmjF5UC+kRr
+         QSig==
+X-Forwarded-Encrypted: i=1; AJvYcCUOdU7jbk//kwlXilChIo8P5NMMjET8/4UYedGwwGrdFpUuTjPXYqOa+7gSnxCDQuBUzo6Q/kOwspmHp5hd6vY3IHlB5St+ln+LkGt3
+X-Gm-Message-State: AOJu0YyS1lAxe/Hs2rQ5i4nwFaneQr6fJE4Z6g+/TJ3LZw7jHyNKlrKv
+	p1h1NxIuHCMEKP5mM8tw28V9Qk1E0cnoqrQOUuUOptw7wovHzNH4QgDUwYAxWAhRGIPo9WMI8V6
+	bCMl57DIi0bLPdh2oSCTpdPxbFBiLztMG3/1zxJrFCM4rs46DrnNxkTbOeQxo9nKYpAMpsQ==
+X-Received: by 2002:a05:6122:2a13:b0:4ef:65b6:f3b5 with SMTP id 71dfb90a1353d-4f6c5c56b42mr708088e0c.10.1721843943519;
+        Wed, 24 Jul 2024 10:59:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEv2KFdtV00Z6o3UF9MC26wgwcqFFNRmS00b7jyX/7uEhsN3NmY4g0QuJUpa0SgnKPSCmbH1Q==
+X-Received: by 2002:a05:6122:2a13:b0:4ef:65b6:f3b5 with SMTP id 71dfb90a1353d-4f6c5c56b42mr708069e0c.10.1721843943219;
+        Wed, 24 Jul 2024 10:59:03 -0700 (PDT)
 Received: from starship ([2607:fea8:fc01:7b7f:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f9cd04062sm57043621cf.40.2024.07.24.10.58.48
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44f9cdd4a6bsm55296631cf.97.2024.07.24.10.59.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 10:58:49 -0700 (PDT)
-Message-ID: <2e531204c32c05c96e852748d490424a6f69a018.camel@redhat.com>
-Subject: Re: [PATCH v2 26/49] KVM: x86: Add a macro to init CPUID features
- that KVM emulates in software
+        Wed, 24 Jul 2024 10:59:02 -0700 (PDT)
+Message-ID: <f04b682df8f424184fc3b43ce7c8c319924b50d5.camel@redhat.com>
+Subject: Re: [PATCH v2 29/49] KVM: x86: Remove unnecessary caching of KVM's
+ PV CPUID base
 From: Maxim Levitsky <mlevitsk@redhat.com>
 To: Sean Christopherson <seanjc@google.com>
 Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov
@@ -83,12 +83,12 @@ Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov
  Oliver Upton <oliver.upton@linux.dev>, Binbin Wu
  <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>,
  Robert Hoo <robert.hoo.linux@gmail.com>
-Date: Wed, 24 Jul 2024 13:58:48 -0400
-In-Reply-To: <ZoxooTvO5vIEnS5V@google.com>
+Date: Wed, 24 Jul 2024 13:59:01 -0400
+In-Reply-To: <Zo2I3FChU58bX7qH@google.com>
 References: <20240517173926.965351-1-seanjc@google.com>
-	 <20240517173926.965351-27-seanjc@google.com>
-	 <2e0f3fb63c810dd924907bccf9256f6f193b02ec.camel@redhat.com>
-	 <ZoxooTvO5vIEnS5V@google.com>
+	 <20240517173926.965351-30-seanjc@google.com>
+	 <5b747a9dacb0ead3d16c71192df8a61e8545d0e6.camel@redhat.com>
+	 <Zo2I3FChU58bX7qH@google.com>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
@@ -99,202 +99,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
 
-On Mon, 2024-07-08 at 15:30 -0700, Sean Christopherson wrote:
+On Tue, 2024-07-09 at 12:00 -0700, Sean Christopherson wrote:
 > On Thu, Jul 04, 2024, Maxim Levitsky wrote:
 > > On Fri, 2024-05-17 at 10:39 -0700, Sean Christopherson wrote:
-> > > Now that kvm_cpu_cap_init() is a macro with its own scope, add EMUL_F() to
-> > > OR-in features that KVM emulates in software, i.e. that don't depend on
-> > > the feature being available in hardware.  The contained scope
-> > > of kvm_cpu_cap_init() allows using a local variable to track the set of
-> > > emulated leaves, which in addition to avoiding confusing and/or
-> > > unnecessary variables, helps prevent misuse of EMUL_F().
+> > > Now that KVM only searches for KVM's PV CPUID base when userspace sets
+> > > guest CPUID, drop the cache and simply do the search every time.
+> > > 
+> > > Practically speaking, this is a nop except for situations where userspace
+> > > sets CPUID _after_ running the vCPU, which is anything but a hot path,
+> > > e.g. QEMU does so only when hotplugging a vCPU.  And on the flip side,
+> > > caching guest CPUID information, especially information that is used to
+> > > query/modify _other_ CPUID state, is inherently dangerous as it's all too
+> > > easy to use stale information, i.e. KVM should only cache CPUID state when
+> > > the performance and/or programming benefits justify it.
 > > > 
 > > > Signed-off-by: Sean Christopherson <seanjc@google.com>
 > > > ---
-> > >  arch/x86/kvm/cpuid.c | 36 +++++++++++++++++++++---------------
-> > >  1 file changed, 21 insertions(+), 15 deletions(-)
-> > > 
-> > > diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> > > index 1064e4d68718..33e3e77de1b7 100644
-> > > --- a/arch/x86/kvm/cpuid.c
-> > > +++ b/arch/x86/kvm/cpuid.c
-> > > @@ -94,6 +94,16 @@ u32 xstate_required_size(u64 xstate_bv, bool compacted)
-> > >  	F(name);						\
-> > >  })
-> > >  
-> > > +/*
-> > > + * Emulated Feature - For features that KVM emulates in software irrespective
-> > > + * of host CPU/kernel support.
-> > > + */
-> > > +#define EMUL_F(name)						\
-> > > +({								\
-> > > +	kvm_cpu_cap_emulated |= F(name);			\
-> > > +	F(name);						\
-> > > +})
+> 
+> ...
+> 
+> > > @@ -491,13 +479,6 @@ static int kvm_set_cpuid(struct kvm_vcpu *vcpu, struct kvm_cpuid_entry2 *e2,
+> > >  	 * whether the supplied CPUID data is equal to what's already set.
+> > >  	 */
+> > >  	if (kvm_vcpu_has_run(vcpu)) {
+> > > -		/*
+> > > -		 * Note, runtime CPUID updates may consume other CPUID-driven
+> > > -		 * vCPU state, e.g. KVM or Xen CPUID bases.  Updating runtime
+> > > -		 * state before full CPUID processing is functionally correct
+> > > -		 * only because any change in CPUID is disallowed, i.e. using
+> > > -		 * stale data is ok because KVM will reject the change.
+> > > -		 */
+> > Hi,
 > > 
-> > To me it feels more and more that this patch series doesn't go into the right
-> > direction.
-> > 
-> > How about we just abandon the whole concept of masks and instead just have a
-> > list of statements
-> > 
-> > Pretty much the opposite of the patch series I confess:
+> > Any reason why this comment was removed?
 > 
-> FWIW, I think it's actually largely the same code under the hood.  The code for
-> each concept/flavor ends up being very similar, it's mostly just handling the
-> bitwise-OR in the callers vs. in the helpers.
+> Because after this patch, runtime CPUID updates no longer consume other vCPU
+> state that is derived from guest CPUID.
 > 
-> > #define CAP_PASSTHOUGH		0x01
-> > #define CAP_EMULATED		0x02
-> > #define CAP_AMD_ALIASED		0x04 // for AMD aliased features
-> > #define CAP_SCATTERED		0x08
-> > #define CAP_X86_64		0x10 // supported only on 64 bit hypervisors
-> > ...
-> > 
-> > 
-> > /* CPUID_1_ECX*/
-> > 
-> > 				/* TMA is not passed though because: xyz*/
-> > kvm_cpu_cap_init(TMA,           0);
-> > 
-> > kvm_cpu_cap_init(SSSE3,         CAP_PASSTHOUGH);
-> > 				/* CNXT_ID is not passed though because: xyz*/
-> > kvm_cpu_cap_init(CNXT_ID,       0);
-> > kvm_cpu_cap_init(RESERVED,      0);
-> > kvm_cpu_cap_init(FMA,           CAP_PASSTHOUGH);
-> > ...
-> > 				/* KVM always emulates TSC_ADJUST */
-> > kvm_cpu_cap_init(TSC_ADJUST,    CAP_EMULATED | CAP_SCATTERED);
-> > 
-> > ...
-> > 
-> > /* CPUID_D_1_EAX*/
-> > 				/* XFD is disabled on 32 bit systems because: xyz*/
-> > kvm_cpu_cap_init(XFD, 		CAP_PASSTHOUGH | CAP_X86_64)
-> > 
-> > 
-> > 'kvm_cpu_cap_init' can be a macro if needed to have the compile checks.
-> > 
-> > There are several advantages to this:
-> > 
-> > - more readability, plus if needed each statement can be amended with a comment.
-> > - No weird hacks in 'F*' macros, which additionally eventually evaluate into a bit,
-> >   which is confusing.
-> >   In fact no need to even have them at all.
-> > - No need to verify that bitmask belongs to a feature word.
+> > As I said earlier in the review.  It might make sense to replace this comment
+> > with a comment reflecting on why we need to call kvm_update_cpuid_runtime,
+> > that is solely to allow old == new compare to succeed.
 > 
-> Yes, but the downside is that there is no enforcement of features in a word being
-> bundled together.
-
-As I explained earlier, this is not an issue in principle, even if the caps are not
-grouped together, the code will still work just fine.
-
-
-kvm_cpu_cap_init_begin(CPUID_1_ECX);
-                                /* TMA is not passed though because: xyz*/
-kvm_cpu_cap_init(TMA,           0);
-kvm_cpu_cap_init(SSSE3,         CAP_PASSTHOUGH);
-                                /* CNXT_ID is not passed though because: xyz*/
-kvm_cpu_cap_init(CNXT_ID,       0);
-kvm_cpu_cap_init(RESERVED,      0);
-kvm_cpu_cap_init(FMA,           CAP_PASSTHOUGH);
-...
-                                /* KVM always emulates TSC_ADJUST */
-kvm_cpu_cap_init(TSC_ADJUST,    CAP_EMULATED | CAP_SCATTERED);
-
-kvm_cpu_cap_init_end(CPUID_1_ECX);
-
-...
-
-...
-
-And kvm_cpu_cap_init_begin, can set some cap_in_progress variable.
-
-
-
+> Ya, I'll figure out a location and patch to document why KVM applies runtime
+> and quirks to the CPUID before checking.
 > 
-> > - Merge friendly - each capability has its own line.
-> 
-> That's almost entirely convention though.  Other than inertia, nothing is stopping
-> us from doing:
-> 
-> 	kvm_cpu_cap_init(CPUID_12_EAX,
-> 		SF(SGX1) |
-> 		SF(SGX2) |
-> 		SF(SGX_EDECCSSA)
-
-That trivial change is already an improvement, although it still leaves the problem
-of thinking that this is one bit 'or', which was reasonable before this patch series,
-because it was indeed one big 'or' but now there is lots of things going on behind
-the scenes and that violates the principle of the least surprise.
-
-My suggestion fixes this, because when the user sees a series of function calls,
-and nobody will assume anything about these functions calls in contrast with series
-of 'ors'. It's just how I look at it.
-
-> 	);
-> 
-> I don't see a clean way of avoiding the addition of " |" on the last existing
-> line, but in practice I highly doubt that will ever be a source of meaningful pain.
-> 
-> Same goes for the point about adding comments.  We could do that with either
-> approach, we just don't do so today.
-
-Yes, from the syntax POV there is indeed no problem, and I do agree that putting
-each feature on its own line, together with comments for the features that need it
-is a win-win improvement over what we have after this patch series.
-
-> 
-> > Disadvantages:
-> > 
-> > - Longer list - IMHO not a problem, since it is very easy to read / search
-> >   and can have as much comments as needed.
-> >   For example this is how the kernel lists the CPUID features and this list IMHO
-> >   is very manageable.
-> 
-> There's one big difference: KVM would need to have a line for every feature that
-> KVM _doesn't_ support.
-
-Could you elaborate on why?
-If we zero the whole leaf and then set specific bits there, one bit per kvm_cpu_cap_init.
+> > >  		kvm_update_cpuid_runtime(vcpu);
+> > >  		kvm_apply_cpuid_pv_features_quirk(vcpu);
 
 
-
->   For densely populated words, that's not a huge issue,
-> but it's problematic for sparsely populated words, e.g. CPUID_12_EAX would have
-> 29 reserved/unsupport entries, which IMO ends up being a big net negative for
-> code readability and ongoing maintenance.
-> 
-> We could avoid that cost (and the danger of a missed bit) by collecting the set
-> of features that have been initialized for each word, and then masking off the
-> uninitialized/unsupported at the end.  But then we're back to the bitwise-OR and
-> mask logic.
-> 
-> And while I agree that having the F*() macros set state _and_ evaulate to a bit
-> is imperfect, it does have its advantages.  E.g. to avoid evaluating to a value,
-> we could have F() modify a local variable that is scoped to kvm_cpu_cap_init(),
-> a las kvm_cpu_cap_emulated.  But then we'd need explicit code and/or comments
-> to call out that VMM_F() and the like intentionally don't set kvm_cpu_cap_supported,
-> whereas evualating to a value is a relatively self-documenting "0;".
-> 
-> > - Slower - kvm_set_cpu_caps is called exactly once per KVM module load, thus
-> >   performance is the last thing I would care about in this function.
-> > 
-> > Another note about this patch: It is somewhat confusing that EMUL_F just
-> > forces a feature in kvm caps, regardless of CPU support, because KVM also has
-> > KVM_GET_EMULATED_CPUID and it has a different meaning.
-> 
-> Yeah, but IMO that's a problem with KVM_GET_EMULATED_CPUID being poorly defined.
-> 
-> > Users can easily confuse the EMUL_F for something that sets a feature bit in
-> > the KVM_GET_EMULATED_CPUID.
-> 
-> I'll see if I can find a good spot for a comment to try and convenient
-
+Makes sense, thanks!
 
 Best regards,
 	Maxim Levitsky
-> 
 
 
 
