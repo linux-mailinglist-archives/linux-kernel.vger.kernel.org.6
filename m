@@ -1,244 +1,1213 @@
-Return-Path: <linux-kernel+bounces-260547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87D7493AABB
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:49:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E91193AABD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:50:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F1532841CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:49:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A9911F22B46
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302AEBE4F;
-	Wed, 24 Jul 2024 01:49:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10C7D2EE;
+	Wed, 24 Jul 2024 01:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dell.com header.i=@dell.com header.b="B0v1HhUc"
-Received: from mx0a-00154904.pphosted.com (mx0a-00154904.pphosted.com [148.163.133.20])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="POqf93El"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFA24C6D;
-	Wed, 24 Jul 2024 01:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.133.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721785771; cv=fail; b=Zjb8dZHS2xkWopL2o8EgVafwW5EREdSaR/Z3s9JLFa/ooG+iy4bhmHRW368gXgTMmnye200lR6Qgqxfqx7GBCcAkrCm1Mk33nQK+9T3Z7YreKniUiPH4H8FFnnYF+qqboyWadtPw2eDrrmXU5OoCtjk249btSo2l9E7UsS11hlw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721785771; c=relaxed/simple;
-	bh=N1WmVEMq2LOb8/W8ECebcbg6LGM1KUKNc50ht+8mOb4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZjmBPu1iy0Fij231Pks13veGCNMk5wau2hZyDLmTBtqg4h9CB1r7eEBumnfRihtzffwGzWuvTvuE5OBfRJuWOmoPeAcYKbqy/DXch76yi5P+4znkSae1LdxvHWkbK/07d7KXy6UqDpngrBYSsLK/SJfLkyoHAv7SrlesteGWGic=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=Dell.com; spf=pass smtp.mailfrom=dell.com; dkim=pass (2048-bit key) header.d=dell.com header.i=@dell.com header.b=B0v1HhUc; arc=fail smtp.client-ip=148.163.133.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=Dell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dell.com
-Received: from pps.filterd (m0170392.ppops.net [127.0.0.1])
-	by mx0a-00154904.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46NNgSqb016712;
-	Tue, 23 Jul 2024 21:49:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from
-	:to:cc:subject:date:message-id:references:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=
-	smtpout1; bh=N1WmVEMq2LOb8/W8ECebcbg6LGM1KUKNc50ht+8mOb4=; b=B0v
-	1HhUcPrbysN0O24g/QOVaD2R8tm8OcLiDRpq+02a6EzQvJw0YAp9LW/GXDDTD5WP
-	IUyYw3F/sD+Y7eg/Tm9EFTnvwBb3RbVjacBbkwc9E8vvFSRO83BDUFNtAQ7+ux7B
-	3CKlrBYqyE+Fmy1jJHRO1dW3nbF5tN1AzIie9KMZ6iDYrCK9FOjm8ABP+H5H4k4E
-	yw5w1FfBrfVGGh9NmTkpwOBaLpCSilHtPK2vThDmD8SjzQb02hFF9QOIh/m8I23p
-	twBpOr8AzhbUtEQgykY1zENU1Jra9F+3eBbjztn7Rh+QG0VMstQPcUQcB/mgnd4K
-	TnznD8ZaaT6ubN0XUZg==
-Received: from mx0a-00154901.pphosted.com (mx0b-00154901.pphosted.com [67.231.157.37])
-	by mx0a-00154904.pphosted.com (PPS) with ESMTPS id 40g8dadfyp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 23 Jul 2024 21:49:10 -0400 (EDT)
-Received: from pps.filterd (m0089484.ppops.net [127.0.0.1])
-	by mx0b-00154901.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 46O1Sm4a015709;
-	Tue, 23 Jul 2024 21:49:09 -0400
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2173.outbound.protection.outlook.com [104.47.58.173])
-	by mx0b-00154901.pphosted.com (PPS) with ESMTPS id 40ja12qft5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 23 Jul 2024 21:49:08 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aFCzzMJd+JIrr7yul8b3sTE2DvXYpNXT4omq7T/32skTM0UV4PIOAyBbLCT5gGQgY+hlA1hUazIrXPREIq2rsVst2HskXuDcpaM4NWdK5W+iWyL3/fw0tKxACqRdc0QgH6G0fIC3r40YR80Uf2dQWqwO2MX6mv/RZnpVhSnqeBhL0WmKs18WLR/qySKyS8JpYj+E3cNOXrLtR16G4+M0rwE/vPyX+OfWfJvJZp+jAFemPFMxncYQxU1BXPPKtZJ4fJu7sR0XgmFqqR0gYAiVBZa5KQ+ahvxBFm4U0VsD5Q+qA60mITsdpH6SJxpvOX+fRmi83Y/+sNf08BzRBSgq5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=N1WmVEMq2LOb8/W8ECebcbg6LGM1KUKNc50ht+8mOb4=;
- b=VrBMPOoUM8ns9umqYgfUilDKArucd0In5ZxSuCTvW6xNDVXvBR5gNFPpsDjoJAk4NEYmseUGgO28IubbQe/EVCYKiwXapMLEzhPHkxQNM/oP+RzBChahYJ02E/cg5hN67LQd7utGamVpxsbM8YZwICU+J+R5oMPP0JisNa/AjsGHJ8RqF8acfBqVOtVE2C+0Po5kFprnTuaDiaQCC9cV5fkIJHuG6ASuxGOnuOuB2OWm4ULBZBz4j9sih22p+iiH0uuDcmhDDgQwXA+QoqDnSp01hwCWyVmu1ePNKM3i+aVRSL7fBsWohdL0Gn3WD+MK5ezFehC0ecZnGJqtTdQ18w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=dell.com; dmarc=pass action=none header.from=dell.com;
- dkim=pass header.d=dell.com; arc=none
-Received: from DS7PR19MB5709.namprd19.prod.outlook.com (2603:10b6:8:70::15) by
- DS7PR19MB6000.namprd19.prod.outlook.com (2603:10b6:8:83::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7784.20; Wed, 24 Jul 2024 01:48:52 +0000
-Received: from DS7PR19MB5709.namprd19.prod.outlook.com
- ([fe80::3d06:d879:7717:36e0]) by DS7PR19MB5709.namprd19.prod.outlook.com
- ([fe80::3d06:d879:7717:36e0%5]) with mapi id 15.20.7784.016; Wed, 24 Jul 2024
- 01:48:52 +0000
-From: "Shao, Marshall" <Marshall.Shao@Dell.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-CC: "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>,
-        "bp@alien8.de" <bp@alien8.de>, "mingo@redhat.com" <mingo@redhat.com>,
-        "tglx@linutronix.de"
-	<tglx@linutronix.de>,
-        "Mishra, Ashish" <Ashish.Mishra4@dell.com>,
-        "Chia, Jia
- Yuan" <JiaYuan.Chia@dell.com>,
-        "Dion, Christopher"
-	<Christopher.Dion@dell.com>,
-        "Caisse, Joe" <Joe.Caisse@dell.com>,
-        "Mukundan,
- Govind" <Govind.Mukundan@dell.com>
-Subject: RE: [Patch] Do not clear BSS region in x86 stub
-Thread-Topic: [Patch] Do not clear BSS region in x86 stub
-Thread-Index:
- AdrYGyaFCseU4QE3SCibBf0Ev6R9+wAQOiGAAABrtYAAlzZgQAAtv+GAAC61pjAAFgXwgAAb9bQQAAX92YAAFi3EMA==
-Date: Wed, 24 Jul 2024 01:48:52 +0000
-Message-ID:
- <DS7PR19MB5709AD7037E8B6BC1C7171908BAA2@DS7PR19MB5709.namprd19.prod.outlook.com>
-References:
- <DS7PR19MB570996A580C6F5D2C9CACCE48BA32@DS7PR19MB5709.namprd19.prod.outlook.com>
- <DS7PR19MB5709B2A263E769B461091B0D8BA32@DS7PR19MB5709.namprd19.prod.outlook.com>
- <CAMj1kXHBSNxrzbQoaDea7HFcjN9HHk5==tXg1WLHDzW61aj4cg@mail.gmail.com>
- <DS7PR19MB5709B39C90153DAA27DA122D8BAE2@DS7PR19MB5709.namprd19.prod.outlook.com>
- <CAMj1kXHS0rr9DfKCeD-Zz7y1Bk-3ncn2cEgVmnWE0Jq1B=+Acg@mail.gmail.com>
- <DS7PR19MB570924EC5BB1BA3F321A65B98BA82@DS7PR19MB5709.namprd19.prod.outlook.com>
- <CAMj1kXFjWBpOij5V3=-9etqTW9p8guqPDCGU3DK0Yxq6zrBiBQ@mail.gmail.com>
- <DS7PR19MB57092B4012BEFBBA52E2C2748BA92@DS7PR19MB5709.namprd19.prod.outlook.com>
- <CAMj1kXEQXZc2Vpgh5JA3nCCw=LB0kjLgQoximQ4pZhcJ91iOnw@mail.gmail.com>
-In-Reply-To:
- <CAMj1kXEQXZc2Vpgh5JA3nCCw=LB0kjLgQoximQ4pZhcJ91iOnw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_ActionId=75adc379-3fff-4811-9d73-9913a0bf1794;MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_ContentBits=0;MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_Enabled=true;MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_Method=Privileged;MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_Name=Public
- No Visual
- Label;MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_SetDate=2024-07-24T01:01:48Z;MSIP_Label_dad3be33-4108-4738-9e07-d8656a181486_SiteId=945c199a-83a2-4e80-9f8c-5a91be5752dd;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DS7PR19MB5709:EE_|DS7PR19MB6000:EE_
-x-ms-office365-filtering-correlation-id: cf717aa8-811d-4e1b-86b1-08dcab82c58a
-x-exotenant: 2khUwGVqB6N9v58KS13ncyUmMJd8q4
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?ajcrbzNBbjd2M0I5V01xcTlwZGlKWEhZVjNWSnhEWm4wSkp2dzZ1N1FDbDNw?=
- =?utf-8?B?c3dWWExYYTFtVmpXVzFjajIzL1Zab2tJbHlUR0pNNWhVTHlmRlQvL05wd3NE?=
- =?utf-8?B?ejlGTUhBc0RuczlaeXhDL2ZNdVhRb2JESjVzL2liS0ErNGhNK041MWpmb05Z?=
- =?utf-8?B?YjMzVU1KMEdSZWVzQlI5cExvakdXc0laR2djSjVYWEdkRFhRUmpDZ0hSQnNQ?=
- =?utf-8?B?M2RhcTU5aDhUZTFzbmRiMS9LQkl1OXBoRzg2SGw0WHNKTk5mSXEvWEFOMTQ1?=
- =?utf-8?B?RkU2K1VQYXg4OW40WG9XbFgzd0JZWnRhTDBFcGFHVGRCd3NwaDhpSnFRRmhC?=
- =?utf-8?B?c1Zaa0ErYkY5d3Z5c2V1Rk9Hb1pZclhzUEpNUGluQTNTdnVLeHpVWmpKNHF3?=
- =?utf-8?B?TDlsaFFjdEVXWC9iZzM5N254Vms5YThWWmZqZVUyem9HRTFUbURqZEduV0xR?=
- =?utf-8?B?SEZsVVdoWStFQ0RwQTM1T25xNTVKTW9MM1dDSHZVTWE0cHBzS29DNGZab1ha?=
- =?utf-8?B?Mk9ralVjNDJTc1l5cFFkNno5MG5rT0V5cWoydGhKWElxMU5LMk9tcUx2YlhW?=
- =?utf-8?B?d3RHZDV5azdkVFgvQWNpejJ4VkVEcjZiZHRBSmZ3SGVPWWloUkYxMm03K3NX?=
- =?utf-8?B?M3dMRUVhbkdzZGg5NFc5d0ZnWSthZ3FkZWFUbnAwN2JLbXh3U21aV2ZaZlQv?=
- =?utf-8?B?YWZ4bHJFaGJ2Ny9TdExoZzZENld4UlM2Q2FxVHM5cURaVWFNMVc4d1hoaWNv?=
- =?utf-8?B?L1pzWXVqOXQxSmlEZHRZVndkMzBQK2VDaW5MNUh0dnBJQno2a2YwMTkvd2pD?=
- =?utf-8?B?TzdJZnF5UjlaRnpkM01jOEZIaWNvNXFrSE9acE4yVnd4aUZtREIyczRVK0NM?=
- =?utf-8?B?SktvaS8rZEZud2xWVHF2UE0wWHFpV0wzdTh5b2RnNHAwbDhwUnZlWERxN291?=
- =?utf-8?B?U1hZSUEzQ3VXL2ZZNEJRRmZLSVZpRjM5NzRYKzV4RkdCRGZMNFcram5QSm1w?=
- =?utf-8?B?bkh3S21rUU1XR09DbXBJTnVtbHIvS3hnUU1YMnBxRDB4S0YvMERZUDJzcWFh?=
- =?utf-8?B?Rk5LSldrRm9CdVVHK1NUWHRLMkN3azJISHZXQTROVVVtdmpNNUxWd0piN0ZN?=
- =?utf-8?B?dndQRnY5cUpDNGJvRGxRUDNPTXBEcldLMEdOenhkY0d1SVV1NCsyTWFReGM0?=
- =?utf-8?B?UkNsZE1Hbm0ySUZlWkVwQ1Vxam5YZ2VQTTNpQWkxb0UzNGVJYjZTR2V3Q0lN?=
- =?utf-8?B?WjdqQWV3bXQxWlAxSTcwaDVDa1M2M1gyUjUxdzlEU3ZGeWtYS21nTFdxK2x1?=
- =?utf-8?B?TVVrS3g3OC9EQlFhMWVDa0t6ZjloQkdtcnEyOUI1WWhkaUlXRlI1T1RGUWtq?=
- =?utf-8?B?b2ZPZDBwN1R5N05ZUUx2N1dFYlM4elBCMGxIbnFVQmNPamYvOHF5UngvR3JW?=
- =?utf-8?B?cWY4a1E1SngyTmhLeXQyNFRJbW8xak90eWs2eWlxdDJrQ1VQUjg3c1VLYWky?=
- =?utf-8?B?V2x2a0lYQzFMMU1NUEF4UVFhNXBHbnR2RDFkT25PTEdBZVY3UEh4WDVEV04x?=
- =?utf-8?B?OW9ab3daVnRaVnJ1SjdsL2tWTVM4UG8wd2hBWG51WWpsTnM4N2hZWlEySnV6?=
- =?utf-8?B?Qm0xWXlCRXZpcUdBK3FyY1Y5eUswZ1hjdmZFSzF1YW1lTHNUOU5WcFArd2Uw?=
- =?utf-8?B?TDVtT1VVOE1URGRDN1hmTE5CcjhIUU5SenFFMmxKNm0weFQydHhqNjNQa0Rt?=
- =?utf-8?B?ZUhTOXUyRXNhUk9EdndaYXFaS0RPQ2tlbDkvOG4zblo2MWg3OTBPMnltV2hV?=
- =?utf-8?B?NjIvM0NyUkg5OHJjeVpuSGtuL2hheU9rNjRzVHR1SUNDQTExK0xxUDd5YU9L?=
- =?utf-8?B?K1RUVHk0OU53OElqOEpKUGpMbXZTREdmcnFveUNuZGRHZlE9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR19MB5709.namprd19.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?QlNoeWgvZXdMZUE1WFVGejBQM29TYW42QnU1OExKcFZTbW5vMUJDT0tHSkU5?=
- =?utf-8?B?eG9xbUpXSnFVVW4wdmtXTlRsTDBaaVh2WFgrMDNDOE11UDQvZUdjM0cya0FT?=
- =?utf-8?B?VmRtM2lrdTNrRUpxRUd6M3gvL1pIWXpMMXY0TVM4T1QvaVEyY2Y0UE9BUkcx?=
- =?utf-8?B?U0h4UGRRQlZZNWQ0Szdrb0ZzYW1pTVdYVklHVVlTdGFOSDFhRmIwSDZlc2VF?=
- =?utf-8?B?aXBQTDdEa1JFQ214dHZtUzNPUE16NnhiZ0xQZkxLcTBvMjgrcm9yRVpiZzl1?=
- =?utf-8?B?Y3Q4WnhkWVpJOVBYL1NrMjd0R2VnOVNJSVdUMmxrckFKK0ZLcXkwbE92blAx?=
- =?utf-8?B?Q0licXVDU2JuVkgxTk10MW5lN1NtNWg2a2tlaWtyY1NFUWdZbWI3MDJQQXJ5?=
- =?utf-8?B?UStYTDBBR1BMWWFuVHdUNE5kZXAwQ1RiRlJjKzVOY0FwQmdqYys0bHZEZWxJ?=
- =?utf-8?B?Ym5NNzZmblczbWVxNG1PSjc3cXhsRVdZbjR2eElIOUFMb09OUm5nM0labll1?=
- =?utf-8?B?MitqKzU4Vy9tb0ZJYnA0NE9QVEVXd0hocnNjNU0zeTVZd0xtekU4Yy90M1Rp?=
- =?utf-8?B?UWRiVElaZlVWb3dPWG8vM0NBZUI5U3VoUENKdytEM1h5Q1NGcDgyZ01Ua01N?=
- =?utf-8?B?VTcySTV0Mnd0NndZRFZlWkRXd0lsSElsZEZrcUZJTU9XaXpLNE1TeXFoNzcw?=
- =?utf-8?B?eGxkbEplYkdYdXhjVkhpWmxWbjN1NlAvdFh0cVNvWmFKdWRQcjg1b1RWREJP?=
- =?utf-8?B?b3Mxb21lM0xlRUdEaWNOczJoeHdpZGUvWC9DdHFHdHdxd0RWTTVjYU96R3Ur?=
- =?utf-8?B?OFNsL1k0cWR6a252VTBJNHdHeUFJWmtFMnhqTVZZYS9pSWdCRGpDWmpnUk13?=
- =?utf-8?B?aVBFMFQ5YXg1bG1TaVNGS0xIcUhpalM5SEkzUEZRZXFwTGVBWWhRQnVZRkNV?=
- =?utf-8?B?amJMQ3g2MUw4WFNOWU1XeXJJSWdxaFVqVXBJeDEzY3JtM0FKQisxeWJvczQw?=
- =?utf-8?B?QWVtZ2F2YXB0MUNUSkp1NWFTcWZNYUVDaml0TDNkY2pIWGVsbmVldXluV2RN?=
- =?utf-8?B?d3M1K1dKek1TRmhWdlVYWVErSUpKcEgvKzN6WjQyK21lRGdCR0YweUFtU25S?=
- =?utf-8?B?N3JpR2FzKzU3S3JWQjI0Q3dKMkwyQzcySzlENHVBZWRJMy91dUQ3RzlHQ0k3?=
- =?utf-8?B?WEJ0algvRlMzbFNsbGJsaDUzRVJPR3Z3VVZWdkxhODhaSWxyWk1rTWRZeVBN?=
- =?utf-8?B?UDB1azZ3K1VDbmpCTWVnT05ncW5zZ0ZNd04zdjFNbFFna3FGdENEVkNVTFJS?=
- =?utf-8?B?bG0xN3hzT2xOMk1rUGZ0cnh1eVRIejNiRi83Q05wRWZYQkoybjJRM0cwWS92?=
- =?utf-8?B?NkRnSDlMQW51WVVyUzMvV0pHRHYwUmV5YlJhVzFnb2ZZNzlhQ0pTdUNNekQw?=
- =?utf-8?B?MTc0NlNjYTN5Wjl1VndJRHA0WVZPS29TVzFhOUswbG9qdVhPaVErbFVDbU1L?=
- =?utf-8?B?b2ZVcjhKT2dMd1pUUGtZdXBaU29xVCs4UFNPUTBDeXNiN29VekVaZ3VPVWgz?=
- =?utf-8?B?amRGQkwzZXEwb0R3NTREMTFIQUdzTWFDN20vdW5QemJ1ZWtSVVprQ3U3VndN?=
- =?utf-8?B?dW9uUUFFbHNZZUUyRjNzTXdRQkloZThOcUlNcDRJakUyWXdEWXd1UjdtbGJZ?=
- =?utf-8?B?OGFMd1FZaEFsNWhGekNlV2J3VHJDYWFnUDNPWVdzbENwRzloSUlObWpaaWhU?=
- =?utf-8?B?Rmp5SGhjaEUrajRGVENTS0JURllOZFI4b0tyQndZaW1NMGxNWW82YldYMHNj?=
- =?utf-8?B?cE80cDJ4cVBHK3ZRWldzUmNLdEZqVENBZmJ2RXUrZU54eGF1ejZkRVFXTTZm?=
- =?utf-8?B?Z0QvcmtXcXRvdjBPdm9hVyswOG14b1cxQ0tJdGZHM0NLaVlFK1dpck4vQmZL?=
- =?utf-8?B?cjdUNlRRckw5SmVkcWRWNXkzQkNwUHpUUmNvMDI2bzJwMkZsZnB6Ly9IZlRu?=
- =?utf-8?B?Y2VZbStkNVdqRndReGM1dHpmT2ZRZTZQbnd1U3A3Tm1YNTRnN00zckxLQkNm?=
- =?utf-8?B?c1JzbGUyWkJVOWt3TjZMQUViUkdHVnYzaVd5dERFTFFlYkU4aEV2QWFBaEZw?=
- =?utf-8?Q?9oOA8H4017t2d95cSvs7uAklX?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FB4A93D
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 01:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721785847; cv=none; b=KZcV20QmkTcbKYzC6bBFSKANq5v1iwVoRi2dtLkfyKRNlpQrtDISrQsPgTrFafHOB9Mi400FZvGXU/1mSZh2wy3NilAU/yamgsbjiVcbqgVkpMQI5WV4N5FYFZw0MsfPY5oAqWtiTlqI1DSCQN8QzHjRqrCieX+vNJDPNoUyPo8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721785847; c=relaxed/simple;
+	bh=zRS+eO+cKkeXfWKvwCkI2PO5V6D/NkMJs+1V6l46+xo=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=mgKlo+WA0kvGgMvMGTb047tUOX1LSMOJ90PBxFBtx8b5Y8NgD1H0jH36mn7UJlHzVZJqHxFQjEM8ohPhD4z7KG5NgmP8Rp4VeidmMWT0pdk0swg4rI4UpgrqAB+bQtD5hBoVa5NPL3vADyffI4HE01hRn1RiGokwOKwHjpVAwWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=POqf93El; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Dell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR19MB5709.namprd19.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf717aa8-811d-4e1b-86b1-08dcab82c58a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jul 2024 01:48:52.7654
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 945c199a-83a2-4e80-9f8c-5a91be5752dd
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: NXh2yhW+Cddj1bi/6uwwHhZGM6/T6yrpBDpZ5U7xx007fHXMCIy9mqJ0mpE41JRCe7NckT34VmnyIotgib6rPw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR19MB6000
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-23_18,2024-07-23_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 adultscore=0
- mlxlogscore=657 bulkscore=0 lowpriorityscore=0 impostorscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2407110000 definitions=main-2407240012
-X-Proofpoint-GUID: V5ExHC5SJ22x9eKnoh8uK9h7pY4132Ki
-X-Proofpoint-ORIG-GUID: V5ExHC5SJ22x9eKnoh8uK9h7pY4132Ki
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0
- lowpriorityscore=0 spamscore=0 phishscore=0 impostorscore=0 adultscore=0
- clxscore=1015 mlxscore=0 malwarescore=0 priorityscore=1501 mlxlogscore=614
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2407240012
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721785841;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6hiDB5EthwLUOsnlSaUBBIpBFgJY+HIEUij2SA8Fn1Q=;
+	b=POqf93ElgOZ6FWm75rLFdJ4JAIekrvAQSWQS1uhZWbzc8srnx95IWzKmI5Xfhz/HDR41PB
+	Y2uKsQrUbsj2K+rTIV+16YaxO6Zn7vklQftxjiM+3uDGHtPneExO2JM0MX5iy83p7GjAt2
+	jVXHJwSS9eRB9ByXm45+Lrs1F3x+Sm4=
+Date: Wed, 24 Jul 2024 01:50:38 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: si.yanteng@linux.dev
+Message-ID: <3d19ed86f0d18fa77c6ce1ce3d4f16bb68da8938@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH] docs/zh_CN: Add dev-tools/kcsan Chinese translation
+To: "Haoyang Liu" <tttturtleruss@hust.edu.cn>, "Alex Shi" <alexs@kernel.org>,
+ "Yanteng Si" <siyanteng@loongson.cn>, "Jonathan Corbet" <corbet@lwn.net>,
+ "Nathan Chancellor" <nathan@kernel.org>, "Nick Desaulniers"
+ <ndesaulniers@google.com>, "Bill Wendling" <morbo@google.com>, "Justin
+ Stitt" <justinstitt@google.com>
+Cc: hust-os-kernel-patches@googlegroups.com, "Haoyang Liu"
+ <tttturtleruss@hust.edu.cn>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+In-Reply-To: <20240720090828.363331-1-tttturtleruss@hust.edu.cn>
+References: <20240720090828.363331-1-tttturtleruss@hust.edu.cn>
+X-Migadu-Flow: FLOW_OUT
 
-PiBDYW4geW91IGV4cGxhaW4gd2h5IHRoaXMgaXMgdGhlIGNhc2U/IHN5c3RlbWQtc3R1YiBzaG91
-bGQgb25seSB1c2UgdGhlDQo+IEVGSSBoYW5kb3ZlciBwcm90b2NvbCBmb3IgdjUuOCBvciBvbGRl
-ci4NCg0KQXJlIHlvdSByZWZlcnJpbmcgdG8gdGhpcyBjb21tZW50PyBJbiBzeXN0ZW1kL3NyYy9i
-b290L2VmaS9saW51eC5jDQoNCj4gVGhpcyBtZXRob2Qgd29ya3MgZm9yIExpbnV4IDUuOCBhbmQg
-bmV3ZXIgb24gQVJNL0FhcmNoNjQsIHg4Ni94NjhfNjQgDQo+IGFuZCBSSVNDLVYuDQoNCkkgbm90
-aWNlZCB0aGF0IHRoaXMgd2FzIG5vdCBwcmVzZW50IGluIHN5c3RlbWQgdjI0OSwgdGhhdCBjb3Vs
-ZCBiZSB0aGUgcmVhc29uLiANClVwZ3JhZGluZyB0aGUgc3lzdGVtZCB2ZXJzaW9uIG1heSBzb2x2
-ZSB0aGUgaXNzdWUuIEkgd2lsbCBnaXZlIGl0IGEgdHJ5Lg0KDQpBbnl3YXksIHRoYW5rcyBmb3Ig
-YnJpbmdpbmcgdGhlIGlzc3VlIHRvIHN5c3RlbWQncyBhdHRlbnRpb24uDQo=
+2024=E5=B9=B47=E6=9C=8820=E6=97=A5 17:08, "Haoyang Liu" <tttturtleruss@hu=
+st.edu.cn> =E5=86=99=E5=88=B0:
+
+Hi Haoyang
+
+>=20
+>=20Translate dev-tools/kcsan into Chinese.
+Let's add a commit tag, then the checktransupdate.py can recognize it.
+
+
+>=20
+>=20Signed-off-by: Haoyang Liu <tttturtleruss@hust.edu.cn>
+>=20
+Remove=20the blankline, and have you ever run checkpatch.pl?
+
+> ---
+>=20
+>=20 .../translations/zh_CN/dev-tools/index.rst | 2 +-
+>=20
+>=20 .../translations/zh_CN/dev-tools/kcsan.rst | 321 ++++++++++++++++++
+>=20
+>=20 2 files changed, 322 insertions(+), 1 deletion(-)
+>=20
+>=20 create mode 100644 Documentation/translations/zh_CN/dev-tools/kcsan.=
+rst
+>=20
+>=20diff --git a/Documentation/translations/zh_CN/dev-tools/index.rst b/D=
+ocumentation/translations/zh_CN/dev-tools/index.rst
+>=20
+>=20index c540e4a7d5db..4cc94d288157 100644
+>=20
+>=20--- a/Documentation/translations/zh_CN/dev-tools/index.rst
+>=20
+>=20+++ b/Documentation/translations/zh_CN/dev-tools/index.rst
+>=20
+>=20@@ -23,6 +23,7 @@ Documentation/translations/zh_CN/dev-tools/testing-=
+overview.rst
+>=20
+>=20 kcov
+>=20
+>=20 gcov
+>=20
+>=20 kasan
+>=20
+>=20+ kcsan
+>=20
+>=20 ubsan
+>=20
+>=20 kmemleak
+>=20
+>=20 gdb-kernel-debugging
+>=20
+>=20@@ -32,7 +33,6 @@ Todolist:
+>=20
+>=20 - checkpatch
+>=20
+>=20 - coccinelle
+>=20
+>=20 - kmsan
+>=20
+>=20- - kcsan
+>=20
+>=20 - kfence
+>=20
+>=20 - kgdb
+>=20
+>=20 - kselftest
+>=20
+>=20diff --git a/Documentation/translations/zh_CN/dev-tools/kcsan.rst b/D=
+ocumentation/translations/zh_CN/dev-tools/kcsan.rst
+>=20
+>=20new file mode 100644
+>=20
+>=20index 000000000000..1971f87eeb18
+>=20
+>=20--- /dev/null
+>=20
+>=20+++ b/Documentation/translations/zh_CN/dev-tools/kcsan.rst
+>=20
+>=20@@ -0,0 +1,321 @@
+>=20
+>=20+.. SPDX-License-Identifier: GPL-2.0
+>=20
+>=20+
+>=20
+>=20+.. include:: ../disclaimer-zh_CN.rst
+>=20
+>=20+
+>=20
+>=20+:Original: Documentation/dev-tools/kcsan.rst
+>=20
+>=20+:Translator: =E5=88=98=E6=B5=A9=E9=98=B3 Haoyang Liu <tttturtleruss@=
+hust.edu.cn>
+>=20
+>=20+
+>=20
+>=20+=E5=86=85=E6=A0=B8=E5=B9=B6=E5=8F=91=E6=B6=88=E6=AF=92=E5=89=82 =EF=
+=BC=88KCSAN=EF=BC=89
+>=20
+>=20+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+Please trim the =E2=80=9C=3D=E2=80=9D length. Include similar below.
+>=20
+>=20+
+>=20
+>=20+=E5=86=85=E6=A0=B8=E5=B9=B6=E5=8F=91=E6=B6=88=E6=AF=92=E5=89=82=EF=
+=BC=88KCSAN=EF=BC=89=E6=98=AF=E4=B8=80=E4=B8=AA=E5=8A=A8=E6=80=81=E7=AB=
+=9E=E4=BA=89=E6=A3=80=E6=B5=8B=E5=99=A8=EF=BC=8C=E4=BE=9D=E8=B5=96=E7=BC=
+=96=E8=AF=91=E6=97=B6=E6=8F=92=E6=A1=A9=EF=BC=8C=E5=B9=B6=E4=B8=94=E4=BD=
+=BF=E7=94=A8=E5=9F=BA=E4=BA=8E=E8=A7=82=E5=AF=9F
+>=20
+>=20+=E7=82=B9=E7=9A=84=E9=87=87=E6=A0=B7=E6=96=B9=E6=B3=95=E6=9D=A5=E6=
+=A3=80=E6=B5=8B=E7=AB=9E=E4=BA=89=E3=80=82KCSAN =E7=9A=84=E4=B8=BB=E8=A6=
+=81=E7=9B=AE=E7=9A=84=E6=98=AF=E6=A3=80=E6=B5=8B `=E6=95=B0=E6=8D=AE=E7=
+=AB=9E=E4=BA=89`_=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E4=BD=BF=E7=94=A8
+>=20
+>=20+----
+>=20
+>=20+
+>=20
+>=20+KCSAN =E5=8F=97 GCC =E5=92=8C Clang =E6=94=AF=E6=8C=81=E3=80=82=E4=
+=BD=BF=E7=94=A8 GCC =E9=9C=80=E8=A6=81=E7=89=88=E6=9C=AC 11 =E6=88=96=E6=
+=9B=B4=E9=AB=98=EF=BC=8C=E4=BD=BF=E7=94=A8 Clang =E4=B9=9F=E9=9C=80=E8=A6=
+=81
+>=20
+>=20+=E7=89=88=E6=9C=AC 11 =E6=88=96=E6=9B=B4=E9=AB=98=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E4=B8=BA=E4=BA=86=E5=90=AF=E7=94=A8 KCSAN=EF=BC=8C=E7=94=A8=E5=A6=
+=82=E4=B8=8B=E5=8F=82=E6=95=B0=E9=85=8D=E7=BD=AE=E5=86=85=E6=A0=B8::
+>=20
+>=20+
+>=20
+>=20+ CONFIG_KCSAN =3D y
+>=20
+>=20+
+>=20
+>=20+KCSAN =E6=8F=90=E4=BE=9B=E4=BA=86=E5=87=A0=E4=B8=AA=E5=85=B6=E4=BB=
+=96=E7=9A=84=E9=85=8D=E7=BD=AE=E9=80=89=E9=A1=B9=E6=9D=A5=E8=87=AA=E5=AE=
+=9A=E4=B9=89=E8=A1=8C=E4=B8=BA=EF=BC=88=E8=A7=81 ``lib/Kconfig.kcsan`` =
+=E4=B8=AD=E7=9A=84=E5=90=84=E8=87=AA=E7=9A=84
+>=20
+>=20+=E5=B8=AE=E5=8A=A9=E6=96=87=E6=A1=A3=E4=BB=A5=E8=8E=B7=E5=8F=96=E6=
+=9B=B4=E5=A4=9A=E4=BF=A1=E6=81=AF=EF=BC=89=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E9=94=99=E8=AF=AF=E6=8A=A5=E5=91=8A
+>=20
+>=20+~~~~~~~~~~
+>=20
+>=20+
+>=20
+>=20+=E4=B8=80=E4=B8=AA=E5=85=B8=E5=9E=8B=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=
+=BA=89=E7=9A=84=E6=8A=A5=E5=91=8A=E5=A6=82=E4=B8=8B=E6=89=80=E7=A4=BA::
+>=20
+>=20+
+>=20
+>=20+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+>=20+ BUG: KCSAN: data-race in test_kernel_read / test_kernel_write
+>=20
+>=20+
+>=20
+>=20+ write to 0xffffffffc009a628 of 8 bytes by task 487 on cpu 0:
+>=20
+>=20+ test_kernel_write+0x1d/0x30
+>=20
+>=20+ access_thread+0x89/0xd0
+>=20
+>=20+ kthread+0x23e/0x260
+>=20
+>=20+ ret_from_fork+0x22/0x30
+>=20
+>=20+
+>=20
+>=20+ read to 0xffffffffc009a628 of 8 bytes by task 488 on cpu 6:
+>=20
+>=20+ test_kernel_read+0x10/0x20
+>=20
+>=20+ access_thread+0x89/0xd0
+>=20
+>=20+ kthread+0x23e/0x260
+>=20
+>=20+ ret_from_fork+0x22/0x30
+>=20
+>=20+
+>=20
+>=20+ value changed: 0x00000000000009a6 -> 0x00000000000009b2
+>=20
+>=20+
+>=20
+>=20+ Reported by Kernel Concurrency Sanitizer on:
+>=20
+>=20+ CPU: 6 PID: 488 Comm: access_thread Not tainted 5.12.0-rc2+ #1
+>=20
+>=20+ Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-=
+2 04/01/2014
+>=20
+>=20+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+>=20+
+>=20
+>=20+=E6=8A=A5=E5=91=8A=E7=9A=84=E5=A4=B4=E9=83=A8=E6=8F=90=E4=BE=9B=E4=
+=BA=86=E4=B8=80=E4=B8=AA=E5=85=B3=E4=BA=8E=E7=AB=9E=E4=BA=89=E4=B8=AD=E6=
+=B6=89=E5=8F=8A=E5=88=B0=E7=9A=84=E5=87=BD=E6=95=B0=E7=9A=84=E7=AE=80=E7=
+=9F=AD=E6=80=BB=E7=BB=93=E3=80=82=E9=9A=8F=E5=90=8E=E6=98=AF=E7=AB=9E=E4=
+=BA=89=E4=B8=AD=E7=9A=84=E4=B8=A4=E4=B8=AA=E7=BA=BF=E7=A8=8B=E7=9A=84
+>=20
+>=20+=E8=AE=BF=E9=97=AE=E7=B1=BB=E5=9E=8B=E5=92=8C=E5=A0=86=E6=A0=88=E4=
+=BF=A1=E6=81=AF=E3=80=82=E5=A6=82=E6=9E=9C KCSAN =E5=8F=91=E7=8E=B0=E4=BA=
+=86=E4=B8=80=E4=B8=AA=E5=80=BC=E7=9A=84=E5=8F=98=E5=8C=96=EF=BC=8C=E9=82=
+=A3=E4=B9=88=E9=82=A3=E4=B8=AA=E5=80=BC=E7=9A=84=E6=97=A7=E5=80=BC=E5=92=
+=8C=E6=96=B0=E5=80=BC=E4=BC=9A=E5=9C=A8
+>=20
+>=20+=E2=80=9Cvalue changed=E2=80=9D=E8=BF=99=E4=B8=80=E8=A1=8C=E5=8D=95=
+=E7=8B=AC=E6=98=BE=E7=A4=BA=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E5=8F=A6=E4=B8=80=E4=B8=AA=E4=B8=8D=E5=A4=AA=E5=B8=B8=E8=A7=81=E7=
+=9A=84=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E7=B1=BB=E5=9E=8B=E7=9A=84=E6=
+=8A=A5=E5=91=8A=E5=A6=82=E4=B8=8B=E6=89=80=E7=A4=BA::
+>=20
+>=20+
+>=20
+>=20+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+>=20+ BUG: KCSAN: data-race in test_kernel_rmw_array+0x71/0xd0
+>=20
+>=20+
+>=20
+>=20+ race at unknown origin, with read to 0xffffffffc009bdb0 of 8 bytes =
+by task 515 on cpu 2:
+>=20
+>=20+ test_kernel_rmw_array+0x71/0xd0
+>=20
+>=20+ access_thread+0x89/0xd0
+>=20
+>=20+ kthread+0x23e/0x260
+>=20
+>=20+ ret_from_fork+0x22/0x30
+>=20
+>=20+
+>=20
+>=20+ value changed: 0x0000000000002328 -> 0x0000000000002329
+>=20
+>=20+
+>=20
+>=20+ Reported by Kernel Concurrency Sanitizer on:
+>=20
+>=20+ CPU: 2 PID: 515 Comm: access_thread Not tainted 5.12.0-rc2+ #1
+>=20
+>=20+ Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-=
+2 04/01/2014
+>=20
+>=20+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+>=20+
+>=20
+>=20+=E8=BF=99=E4=B8=AA=E6=8A=A5=E5=91=8A=E6=98=AF=E5=BD=93=E5=8F=A6=E4=
+=B8=80=E4=B8=AA=E7=AB=9E=E4=BA=89=E7=BA=BF=E7=A8=8B=E4=B8=8D=E5=8F=AF=E8=
+=83=BD=E8=A2=AB=E5=8F=91=E7=8E=B0=EF=BC=8C=E4=BD=86=E6=98=AF=E5=8F=AF=E4=
+=BB=A5=E4=BB=8E=E8=A7=82=E6=B5=8B=E7=9A=84=E5=86=85=E5=AD=98=E5=9C=B0=E5=
+=9D=80=E7=9A=84=E5=80=BC=E6=94=B9=E5=8F=98=E8=80=8C=E6=8E=A8=E6=96=AD
+>=20
+>=20+=E5=87=BA=E6=9D=A5=E7=9A=84=E6=97=B6=E5=80=99=E7=94=9F=E6=88=90=E7=
+=9A=84=E3=80=82=E8=BF=99=E7=B1=BB=E6=8A=A5=E5=91=8A=E6=80=BB=E6=98=AF=E4=
+=BC=9A=E5=B8=A6=E6=9C=89=E2=80=9Cvalue changed=E2=80=9D=E8=A1=8C=E3=80=82=
+=E8=BF=99=E7=B1=BB=E6=8A=A5=E5=91=8A=E7=9A=84=E5=87=BA=E7=8E=B0=E9=80=9A=
+=E5=B8=B8=E6=98=AF=E5=9B=A0
+>=20
+>=20+=E4=B8=BA=E5=9C=A8=E7=AB=9E=E4=BA=89=E7=BA=BF=E7=A8=8B=E4=B8=AD=E6=
+=B2=A1=E6=9C=89=E6=8F=92=E6=A1=A9=EF=BC=8C=E4=B9=9F=E5=8F=AF=E8=83=BD=E6=
+=98=AF=E5=9B=A0=E4=B8=BA=E5=85=B6=E4=BB=96=E5=8E=9F=E5=9B=A0=EF=BC=8C=E6=
+=AF=94=E5=A6=82 DMA =E8=AE=BF=E9=97=AE=E3=80=82=E8=BF=99=E7=B1=BB=E6=8A=
+=A5=E5=91=8A=E5=8F=AA=E4=BC=9A=E5=9C=A8
+>=20
+>=20+=E8=AE=BE=E7=BD=AE=E4=BA=86=E5=86=85=E6=A0=B8=E5=8F=82=E6=95=B0 ``CO=
+NFIG_KCSAN_REPORT_RACE_UNKNOWN_ORIGIN=3Dy`` =E6=97=B6=E6=89=8D=E4=BC=9A=
+=E5=87=BA=E7=8E=B0=EF=BC=8C=E8=80=8C=E8=BF=99
+>=20
+>=20+=E4=B8=AA=E5=8F=82=E6=95=B0=E6=98=AF=E9=BB=98=E8=AE=A4=E5=90=AF=E7=
+=94=A8=E7=9A=84=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E9=80=89=E6=8B=A9=E6=80=A7=E5=88=86=E6=9E=90
+>=20
+>=20+~~~~~~~~~~~~~
+>=20
+>=20+
+>=20
+>=20+=E5=AF=B9=E4=BA=8E=E4=B8=80=E4=BA=9B=E7=89=B9=E5=AE=9A=E7=9A=84=E8=
+=AE=BF=E9=97=AE=EF=BC=8C=E5=87=BD=E6=95=B0=EF=BC=8C=E7=BC=96=E8=AF=91=E5=
+=8D=95=E5=85=83=E6=88=96=E8=80=85=E6=95=B4=E4=B8=AA=E5=AD=90=E7=B3=BB=E7=
+=BB=9F=EF=BC=8C=E5=8F=AF=E8=83=BD=E9=9C=80=E8=A6=81=E7=A6=81=E7=94=A8=E6=
+=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E6=A3=80=E6=B5=8B=E3=80=82
+>=20
+>=20+=E5=AF=B9=E4=BA=8E=E9=9D=99=E6=80=81=E9=BB=91=E5=90=8D=E5=8D=95=EF=
+=BC=8C=E6=9C=89=E5=A6=82=E4=B8=8B=E5=8F=AF=E7=94=A8=E7=9A=84=E5=8F=82=E6=
+=95=B0=EF=BC=9A
+>=20
+>=20+
+>=20
+>=20+* KCSAN =E6=94=AF=E6=8C=81=E4=BD=BF=E7=94=A8 ``data_race(expr)`` =E6=
+=B3=A8=E8=A7=A3=EF=BC=8C=E8=BF=99=E4=B8=AA=E6=B3=A8=E8=A7=A3=E5=91=8A=E8=
+=AF=89 KCSAN =E4=BB=BB=E4=BD=95=E7=94=B1=E8=AE=BF=E9=97=AE
+>=20
+>=20+ ``expr`` =E6=89=80=E5=BC=95=E8=B5=B7=E7=9A=84=E6=95=B0=E6=8D=AE=E7=
+=AB=9E=E4=BA=89=E9=83=BD=E5=BA=94=E8=AF=A5=E8=A2=AB=E5=BF=BD=E7=95=A5=EF=
+=BC=8C=E5=85=B6=E4=BA=A7=E7=94=9F=E7=9A=84=E8=A1=8C=E4=B8=BA=E5=90=8E=E6=
+=9E=9C=E8=A2=AB=E8=AE=A4=E4=B8=BA=E6=98=AF=E5=AE=89=E5=85=A8=E7=9A=84=E3=
+=80=82=E8=AF=B7=E6=9F=A5=E9=98=85
+>=20
+>=20+ `"Marking Shared-Memory Accesses" in the LKMM`_ =E8=8E=B7=E5=BE=97=
+=E6=9B=B4=E5=A4=9A=E4=BF=A1=E6=81=AF=E3=80=82
+>=20
+>=20+
+>=20
+>=20+* =E4=B8=8E ``data_race(...)`` =E7=9B=B8=E4=BC=BC=EF=BC=8C=E5=8F=AF=
+=E4=BB=A5=E4=BD=BF=E7=94=A8=E7=B1=BB=E5=9E=8B=E9=99=90=E5=AE=9A=E7=AC=A6 =
+``__data_racy`` =E6=9D=A5=E6=A0=87=E8=AE=B0=E4=B8=80=E4=B8=AA=E5=8F=98=E9=
+=87=8F
+>=20
+>=20+ =EF=BC=8C=E6=89=80=E6=9C=89=E8=AE=BF=E9=97=AE=E8=AF=A5=E5=8F=98=E9=
+=87=8F=E8=80=8C=E5=AF=BC=E8=87=B4=E7=9A=84=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=
+=BA=89=E9=83=BD=E6=98=AF=E6=95=85=E6=84=8F=E4=B8=BA=E4=B9=8B=E5=B9=B6=E4=
+=B8=94=E5=BA=94=E8=AF=A5=E8=A2=AB KCSAN =E5=BF=BD=E7=95=A5::
+>=20
+>=20+
+>=20
+>=20+ struct foo {
+>=20
+>=20+ ...
+>=20
+>=20+ int __data_racy stats_counter;
+>=20
+>=20+ ...
+>=20
+>=20+ };
+>=20
+>=20+
+>=20
+>=20+* =E4=BD=BF=E7=94=A8=E5=87=BD=E6=95=B0=E5=B1=9E=E6=80=A7 ``__no_kcsa=
+n`` =E5=8F=AF=E4=BB=A5=E5=AF=B9=E6=95=B4=E4=B8=AA=E5=87=BD=E6=95=B0=E7=A6=
+=81=E7=94=A8=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E6=A3=80=E6=B5=8B::
+>=20
+>=20+
+>=20
+>=20+ __no_kcsan
+>=20
+>=20+ void foo(void) {
+>=20
+>=20+ ...
+>=20
+>=20+
+>=20
+>=20+ =E4=B8=BA=E4=BA=86=E5=8A=A8=E6=80=81=E9=99=90=E5=88=B6=E8=AF=A5=E4=
+=B8=BA=E5=93=AA=E4=BA=9B=E5=87=BD=E6=95=B0=E7=94=9F=E6=88=90=E6=8A=A5=E5=
+=91=8A=EF=BC=8C=E6=9F=A5=E9=98=85 `Debug =E6=96=87=E4=BB=B6=E7=B3=BB=E7=
+=BB=9F=E6=8E=A5=E5=8F=A3`_ =E9=BB=91=E5=90=8D=E5=8D=95/=E7=99=BD=E5=90=8D=
+=E5=8D=95=E7=89=B9=E6=80=A7=E3=80=82
+>=20
+>=20+
+>=20
+>=20+* =E4=B8=BA=E7=89=B9=E5=AE=9A=E7=9A=84=E7=BC=96=E8=AF=91=E5=8D=95=E5=
+=85=83=E7=A6=81=E7=94=A8=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E6=A3=80=E6=
+=B5=8B=EF=BC=8C=E5=B0=86=E4=B8=8B=E5=88=97=E5=8F=82=E6=95=B0=E5=8A=A0=E5=
+=85=A5=E5=88=B0 ``Makefile`` =E4=B8=AD::
+>=20
+>=20+
+>=20
+>=20+ KCSAN_SANITIZE_file.o :=3D n
+>=20
+>=20+
+>=20
+>=20+* =E4=B8=BA ``Makefile`` =E4=B8=AD=E7=9A=84=E6=89=80=E6=9C=89=E7=BC=
+=96=E8=AF=91=E5=8D=95=E5=85=83=E7=A6=81=E7=94=A8=E6=95=B0=E6=8D=AE=E7=AB=
+=9E=E4=BA=89=E6=A3=80=E6=B5=8B=EF=BC=8C=E5=B0=86=E4=B8=8B=E5=88=97=E5=8F=
+=82=E6=95=B0=E6=B7=BB=E5=8A=A0=E5=88=B0=E7=9B=B8=E5=BA=94=E7=9A=84
+>=20
+>=20+ ``Makefile`` =E4=B8=AD::
+>=20
+>=20+
+>=20
+>=20+ KCSAN_SANITIZE :=3D n
+>=20
+>=20+
+>=20
+>=20+.. _"Marking Shared-Memory Accesses" in the LKMM: https://git.kernel=
+.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/memory-model/=
+Documentation/access-marking.txt
+>=20
+>=20+
+>=20
+>=20+=E6=AD=A4=E5=A4=96=EF=BC=8C=E5=8F=AF=E4=BB=A5=E6=A0=B9=E6=8D=AE=E5=
+=81=8F=E5=A5=BD=E8=AE=BE=E7=BD=AE KCSAN =E6=98=BE=E7=A4=BA=E6=88=96=E9=9A=
+=90=E8=97=8F=E6=95=B4=E4=B8=AA=E7=B1=BB=E5=88=AB=E7=9A=84=E6=95=B0=E6=8D=
+=AE=E7=AB=9E=E4=BA=89=E3=80=82=E5=8F=AF=E4=BB=A5=E4=BD=BF=E7=94=A8=E5=A6=
+=82=E4=B8=8B
+>=20
+>=20+Kconfig =E5=8F=82=E6=95=B0=E8=BF=9B=E8=A1=8C=E6=9B=B4=E6=94=B9:
+>=20
+>=20+
+>=20
+>=20+* ``CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY``: =E5=A6=82=E6=9E=9C=E5=
+=90=AF=E7=94=A8=E4=BA=86=E8=AF=A5=E5=8F=82=E6=95=B0=E5=B9=B6=E4=B8=94=E9=
+=80=9A=E8=BF=87=E8=A7=82=E6=B5=8B=E7=82=B9=E8=A7=82=E6=B5=8B
+>=20
+>=20+ =E5=88=B0=E4=B8=80=E4=B8=AA=E6=9C=89=E5=86=B2=E7=AA=81=E7=9A=84=E5=
+=86=99=E6=93=8D=E4=BD=9C=EF=BC=8C=E4=BD=86=E6=98=AF=E5=AF=B9=E5=BA=94=E7=
+=9A=84=E5=86=85=E5=AD=98=E5=9C=B0=E5=9D=80=E4=B8=AD=E5=AD=98=E5=82=A8=E7=
+=9A=84=E5=80=BC=E6=B2=A1=E6=9C=89=E6=94=B9=E5=8F=98=EF=BC=8C=E5=88=99=E4=
+=B8=8D=E4=BC=9A=E6=8A=A5=E5=91=8A=E8=BF=99=E8=B5=B7=E6=95=B0=E6=8D=AE
+>=20
+>=20+ =E7=AB=9E=E4=BA=89=E3=80=82
+>=20
+>=20+
+>=20
+>=20+* ``CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC``: =E5=81=87=E8=AE=BE=E9=
+=BB=98=E8=AE=A4=E6=83=85=E5=86=B5=E4=B8=8B=EF=BC=8C=E4=B8=8D=E8=B6=85=E8=
+=BF=87=E5=AD=97=E5=A4=A7=E5=B0=8F=E7=9A=84=E7=AE=80
+>=20
+>=20+ =E5=8D=95=E5=AF=B9=E9=BD=90=E5=86=99=E5=85=A5=E6=93=8D=E4=BD=9C=E6=
+=98=AF=E5=8E=9F=E5=AD=90=E7=9A=84=E3=80=82=E5=81=87=E8=AE=BE=E8=BF=99=E4=
+=BA=9B=E5=86=99=E5=85=A5=E6=93=8D=E4=BD=9C=E4=B8=8D=E4=BC=9A=E5=8F=97=E5=
+=88=B0=E4=B8=8D=E5=AE=89=E5=85=A8=E7=9A=84=E7=BC=96=E8=AF=91=E5=99=A8=E4=
+=BC=98=E5=8C=96=E5=BD=B1=E5=93=8D=EF=BC=8C=E4=BB=8E=E8=80=8C=E5=AF=BC
+>=20
+>=20+ =E8=87=B4=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82=E8=AF=A5=E9=
+=80=89=E9=A1=B9=E4=BD=BF KCSAN =E4=B8=8D=E6=8A=A5=E5=91=8A=E4=BB=85=E7=94=
+=B1=E4=B8=8D=E8=B6=85=E8=BF=87=E5=AD=97=E5=A4=A7=E5=B0=8F=E7=9A=84=E7=AE=
+=80=E5=8D=95=E5=AF=B9=E9=BD=90=E5=86=99=E5=85=A5=E6=93=8D=E4=BD=9C=E5=BC=
+=95=E8=B5=B7
+>=20
+>=20+ =E7=9A=84=E5=86=B2=E7=AA=81=E6=89=80=E5=AF=BC=E8=87=B4=E7=9A=84=E6=
+=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82
+>=20
+>=20+
+>=20
+>=20+* ``CONFIG_KCSAN_PERMISSIVE``: =E5=90=AF=E7=94=A8=E9=A2=9D=E5=A4=96=
+=E7=9A=84=E5=AE=BD=E6=9D=BE=E8=A7=84=E5=88=99=E6=9D=A5=E5=BF=BD=E7=95=A5=
+=E6=9F=90=E4=BA=9B=E5=B8=B8=E8=A7=81=E7=B1=BB=E5=9E=8B=E7=9A=84=E6=95=B0=
+=E6=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82
+>=20
+>=20+ =E4=B8=8E=E4=B8=8A=E9=9D=A2=E7=9A=84=E8=A7=84=E5=88=99=E4=B8=8D=E5=
+=90=8C=EF=BC=8C=E8=BF=99=E6=9D=A1=E8=A7=84=E5=88=99=E6=9B=B4=E5=8A=A0=E5=
+=A4=8D=E6=9D=82=EF=BC=8C=E6=B6=89=E5=8F=8A=E5=88=B0=E5=80=BC=E6=94=B9=E5=
+=8F=98=E6=A8=A1=E5=BC=8F=EF=BC=8C=E8=AE=BF=E9=97=AE=E7=B1=BB=E5=9E=8B=E5=
+=92=8C=E5=9C=B0=E5=9D=80=E3=80=82=E8=BF=99=E4=B8=AA
+>=20
+>=20+ =E9=80=89=E9=A1=B9=E4=BE=9D=E8=B5=96=E7=BC=96=E8=AF=91=E9=80=89=E9=
+=A1=B9 ``CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY=3Dy``=E3=80=82=E8=AF=B7=E6=
+=9F=A5=E7=9C=8B
+>=20
+>=20+ ``kernel/kcsan/permissive.h`` =E8=8E=B7=E5=8F=96=E6=9B=B4=E5=A4=9A=
+=E7=BB=86=E8=8A=82=E3=80=82=E5=AF=B9=E4=BA=8E=E5=8F=AA=E4=BE=A7=E9=87=8D=
+=E4=BA=8E=E7=89=B9=E5=AE=9A=E5=AD=90=E7=B3=BB=E7=BB=9F=E8=80=8C=E4=B8=8D=
+=E6=98=AF=E6=95=B4=E4=B8=AA
+>=20
+>=20+ =E5=86=85=E6=A0=B8=E6=8A=A5=E5=91=8A=E7=9A=84=E6=B5=8B=E8=AF=95=E8=
+=80=85=E5=92=8C=E7=BB=B4=E6=8A=A4=E8=80=85=EF=BC=8C=E5=BB=BA=E8=AE=AE=E7=
+=A6=81=E7=94=A8=E8=AF=A5=E9=80=89=E9=A1=B9=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E8=A6=81=E4=BD=BF=E7=94=A8=E5=B0=BD=E5=8F=AF=E8=83=BD=E4=B8=A5=E6=
+=A0=BC=E7=9A=84=E8=A7=84=E5=88=99=EF=BC=8C=E9=80=89=E6=8B=A9 ``CONFIG_KCS=
+AN_STRICT=3Dy``=EF=BC=8C=E8=BF=99=E5=B0=86=E9=85=8D=E7=BD=AE KCSAN =E5=B0=
+=BD=E5=8F=AF
+>=20
+>=20+=E8=83=BD=E7=B4=A7=E5=AF=86=E5=9C=B0=E9=81=B5=E5=BE=AA Linux =E5=86=
+=85=E6=A0=B8=E5=86=85=E5=AD=98=E4=B8=80=E8=87=B4=E6=80=A7=E6=A8=A1=E5=9E=
+=8B=EF=BC=88LKMM=EF=BC=89=E3=80=82
+>=20
+>=20+
+>=20
+>=20+Debug =E6=96=87=E4=BB=B6=E7=B3=BB=E7=BB=9F=E6=8E=A5=E5=8F=A3
+>=20
+>=20+~~~~~~~~~~~~~~~~~~~~~
+>=20
+>=20+
+>=20
+>=20+=E6=96=87=E4=BB=B6 ``/sys/kernel/debug/kcsan`` =E6=8F=90=E4=BE=9B=E4=
+=BA=86=E5=A6=82=E4=B8=8B=E6=8E=A5=E5=8F=A3=EF=BC=9A
+>=20
+>=20+
+>=20
+>=20+* =E8=AF=BB ``/sys/kernel/debug/kcsan`` =E8=BF=94=E5=9B=9E=E4=B8=8D=
+=E5=90=8C=E7=9A=84=E8=BF=90=E8=A1=8C=E6=97=B6=E7=BB=9F=E8=AE=A1=E6=95=B0=
+=E6=8D=AE=E3=80=82
+>=20
+>=20+
+>=20
+>=20+* =E5=B0=86 ``on`` =E6=88=96 ``off`` =E5=86=99=E5=85=A5 ``/sys/kerne=
+l/debug/kcsan`` =E5=85=81=E8=AE=B8=E6=89=93=E5=BC=80=E6=88=96=E5=85=B3=E9=
+=97=AD KCSAN=E3=80=82
+>=20
+>=20+
+>=20
+>=20+* =E5=B0=86 ``!some_func_name`` =E5=86=99=E5=85=A5 ``/sys/kernel/deb=
+ug/kcsan`` =E4=BC=9A=E5=B0=86
+>=20
+>=20+ ``some_func_name`` =E6=B7=BB=E5=8A=A0=E5=88=B0=E6=8A=A5=E5=91=8A=E8=
+=BF=87=E6=BB=A4=E5=88=97=E8=A1=A8=E4=B8=AD=EF=BC=8C=E8=BF=99=E5=B0=86=EF=
+=BC=88=E9=BB=98=E8=AE=A4=EF=BC=89=E7=A6=81=E6=AD=A2=E6=8A=A5=E5=91=8A=E4=
+=BB=BB=E6=84=8F=E4=B8=80=E4=B8=AA=E9=A1=B6=E5=B1=82=E6=A0=88=E5=B8=A7
+>=20
+>=20+ =E5=9C=A8=E8=AF=A5=E5=88=97=E8=A1=A8=E4=B8=AD=E7=9A=84=E6=95=B0=E6=
+=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82
+>=20
+>=20+
+>=20
+>=20+* =E5=B0=86 ``blacklist`` =E6=88=96 ``whitelist`` =E5=86=99=E5=85=A5=
+ ``/sys/kernel/debug/kcsan`` =E4=BC=9A=E6=94=B9=E5=8F=98=E6=8A=A5=E5=91=
+=8A
+>=20
+>=20+ =E8=BF=87=E6=BB=A4=E8=A1=8C=E4=B8=BA=E3=80=82=E4=BE=8B=E5=A6=82=EF=
+=BC=8C=E9=BB=91=E5=90=8D=E5=8D=95=E7=9A=84=E7=89=B9=E6=80=A7=E5=8F=AF=E4=
+=BB=A5=E7=94=A8=E6=9D=A5=E8=BF=87=E6=BB=A4=E6=8E=89=E7=BB=8F=E5=B8=B8=E5=
+=8F=91=E7=94=9F=E7=9A=84=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82=E7=
+=99=BD=E5=90=8D=E5=8D=95=E7=89=B9=E6=80=A7=E5=8F=AF=E4=BB=A5=E5=B8=AE
+>=20
+>=20+ =E5=8A=A9=E5=A4=8D=E7=8E=B0=E5=92=8C=E4=BF=AE=E5=A4=8D=E6=B5=8B=E8=
+=AF=95=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E6=80=A7=E8=83=BD=E8=B0=83=E4=BC=98
+>=20
+>=20+~~~~~~~~~~~~~
+>=20
+>=20+
+>=20
+>=20+=E5=BD=B1=E5=93=8D KCSAN =E6=95=B4=E4=BD=93=E7=9A=84=E6=80=A7=E8=83=
+=BD=E5=92=8C bug =E6=A3=80=E6=B5=8B=E8=83=BD=E5=8A=9B=E7=9A=84=E6=A0=B8=
+=E5=BF=83=E5=8F=82=E6=95=B0=E6=98=AF=E4=BD=9C=E4=B8=BA=E5=86=85=E6=A0=B8=
+=E5=91=BD=E4=BB=A4=E8=A1=8C=E5=8F=82=E6=95=B0=E5=85=AC=E5=BC=80=E7=9A=84=
+=EF=BC=8C=E5=85=B6=E9=BB=98=E8=AE=A4
+>=20
+>=20+=E5=80=BC=E4=B9=9F=E5=8F=AF=E4=BB=A5=E9=80=9A=E8=BF=87=E7=9B=B8=E5=
+=BA=94=E7=9A=84 Kconfig =E9=80=89=E9=A1=B9=E6=9B=B4=E6=94=B9=E3=80=82
+>=20
+>=20+
+>=20
+>=20+* ``kcsan.skip_watch`` (``CONFIG_KCSAN_SKIP_WATCH``): =E5=9C=A8=E5=
+=8F=A6=E4=B8=80=E4=B8=AA=E8=A7=82=E6=B5=8B=E7=82=B9=E8=AE=BE=E7=BD=AE=E4=
+=B9=8B=E5=89=8D=E6=AF=8F
+>=20
+>=20+ =E4=B8=AA CPU =E8=A6=81=E8=B7=B3=E8=BF=87=E7=9A=84=E5=86=85=E5=AD=
+=98=E6=93=8D=E4=BD=9C=E6=AC=A1=E6=95=B0=E3=80=82=E6=9B=B4=E5=8A=A0=E9=A2=
+=91=E7=B9=81=E7=9A=84=E8=AE=BE=E7=BD=AE=E8=A7=82=E6=B5=8B=E7=82=B9=E5=B0=
+=86=E5=A2=9E=E5=8A=A0=E8=A7=82=E5=AF=9F=E5=88=B0=E7=AB=9E=E4=BA=89=E6=83=
+=85=E5=86=B5=E7=9A=84=E5=8F=AF=E8=83=BD=E6=80=A7
+>=20
+>=20+ =E3=80=82=E8=BF=99=E4=B8=AA=E5=8F=82=E6=95=B0=E5=AF=B9=E7=B3=BB=E7=
+=BB=9F=E6=95=B4=E4=BD=93=E7=9A=84=E6=80=A7=E8=83=BD=E5=92=8C=E7=AB=9E=E4=
+=BA=89=E6=A3=80=E6=B5=8B=E8=83=BD=E5=8A=9B=E5=BD=B1=E5=93=8D=E6=9C=80=E6=
+=98=BE=E8=91=97=E3=80=82
+>=20
+>=20+
+>=20
+>=20+* ``kcsan.udelay_task`` (``CONFIG_KCSAN_UDELAY_TASK``): =E5=AF=B9=E4=
+=BA=8E=E4=BB=BB=E5=8A=A1=EF=BC=8C=E8=A7=82=E6=B5=8B=E7=82=B9=E8=AE=BE=E7=
+=BD=AE=E4=B9=8B
+>=20
+>=20+ =E5=90=8E=E6=9A=82=E5=81=9C=E6=89=A7=E8=A1=8C=E7=9A=84=E5=BE=AE=E7=
+=A7=92=E5=BB=B6=E8=BF=9F=E3=80=82=E5=80=BC=E8=B6=8A=E5=A4=A7=EF=BC=8C=E6=
+=A3=80=E6=B5=8B=E5=88=B0=E7=AB=9E=E4=BA=89=E6=83=85=E5=86=B5=E7=9A=84=E5=
+=8F=AF=E8=83=BD=E6=80=A7=E8=B6=8A=E9=AB=98=E3=80=82
+>=20
+>=20+
+>=20
+>=20+* ``kcsan.udelay_interrupt`` (``CONFIG_KCSAN_UDELAY_INTERRUPT``): =
+=E5=AF=B9=E4=BA=8E=E4=B8=AD=E6=96=AD=EF=BC=8C
+>=20
+>=20+ =E8=A7=82=E6=B5=8B=E7=82=B9=E8=AE=BE=E7=BD=AE=E4=B9=8B=E5=90=8E=E6=
+=9A=82=E5=81=9C=E6=89=A7=E8=A1=8C=E7=9A=84=E5=BE=AE=E7=A7=92=E5=BB=B6=E8=
+=BF=9F=E3=80=82=E4=B8=AD=E6=96=AD=E5=AF=B9=E4=BA=8E=E5=BB=B6=E8=BF=9F=E7=
+=9A=84=E8=A6=81=E6=B1=82=E6=9B=B4=E5=8A=A0=E4=B8=A5=E6=A0=BC=EF=BC=8C=E5=
+=85=B6=E5=BB=B6=E8=BF=9F=E9=80=9A=E5=B8=B8=E5=BA=94=E8=AF=A5=E5=B0=8F
+>=20
+>=20+ =E4=BA=8E=E4=B8=BA=E4=BB=BB=E5=8A=A1=E9=80=89=E6=8B=A9=E7=9A=84=E5=
+=BB=B6=E8=BF=9F=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E5=AE=83=E4=BB=AC=E5=8F=AF=E4=BB=A5=E9=80=9A=E8=BF=87 ``/sys/module=
+/kcsan/parameters/`` =E5=9C=A8=E8=BF=90=E8=A1=8C=E6=97=B6=E8=BF=9B=E8=A1=
+=8C=E8=B0=83=E6=95=B4=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89
+>=20
+>=20+--------
+>=20
+>=20+
+>=20
+>=20+=E5=9C=A8=E4=B8=80=E6=AC=A1=E6=89=A7=E8=A1=8C=E4=B8=AD=EF=BC=8C=E5=
+=A6=82=E6=9E=9C=E4=B8=A4=E4=B8=AA=E5=86=85=E5=AD=98=E8=AE=BF=E9=97=AE=E5=
+=AD=98=E5=9C=A8 *=E5=86=B2=E7=AA=81*=EF=BC=8C=E5=9C=A8=E4=B8=8D=E5=90=8C=
+=E7=9A=84=E7=BA=BF=E7=A8=8B=E4=B8=AD=E5=B9=B6=E5=8F=91=E6=89=A7=E8=A1=8C=
+=EF=BC=8C=E5=B9=B6=E4=B8=94=E8=87=B3=E5=B0=91
+>=20
+>=20+=E6=9C=89=E4=B8=80=E4=B8=AA=E8=AE=BF=E9=97=AE=E6=98=AF *=E7=AE=80=E5=
+=8D=95=E8=AE=BF=E9=97=AE*=EF=BC=8C=E5=88=99=E5=AE=83=E4=BB=AC=E5=B0=B1=E5=
+=BD=A2=E6=88=90=E4=BA=86 *=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89*=E3=80=82=
+=E5=A6=82=E6=9E=9C=E5=AE=83=E4=BB=AC=E8=AE=BF=E9=97=AE=E4=BA=86=E5=90=8C=
+=E4=B8=80=E4=B8=AA=E5=86=85=E5=AD=98=E5=9C=B0=E5=9D=80=E5=B9=B6=E4=B8=94
+>=20
+>=20+=E8=87=B3=E5=B0=91=E6=9C=89=E4=B8=80=E4=B8=AA=E6=98=AF=E5=86=99=E6=
+=93=8D=E4=BD=9C=EF=BC=8C=E5=88=99=E7=A7=B0=E5=AE=83=E4=BB=AC=E5=AD=98=E5=
+=9C=A8 *=E5=86=B2=E7=AA=81*=E3=80=82=E6=9C=89=E5=85=B3=E6=9B=B4=E8=AF=A6=
+=E7=BB=86=E7=9A=84=E8=AE=A8=E8=AE=BA=E5=92=8C=E5=AE=9A=E4=B9=89=EF=BC=8C=
+=E8=A7=81
+>=20
+>=20+`"Plain Accesses and Data Races" in the LKMM`_=E3=80=82
+>=20
+>=20+
+>=20
+>=20+.. _"Plain Accesses and Data Races" in the LKMM: https://git.kernel.=
+org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/memory-model/D=
+ocumentation/explanation.txt#n1922
+>=20
+>=20+
+>=20
+>=20+=E4=B8=8E Linux =E5=86=85=E6=A0=B8=E5=86=85=E5=AD=98=E4=B8=80=E8=87=
+=B4=E6=80=A7=E6=A8=A1=E5=9E=8B=EF=BC=88LKMM=EF=BC=89=E7=9A=84=E5=85=B3=E7=
+=B3=BB
+>=20
+>=20+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>=20
+>=20+
+>=20
+>=20+LKMM =E5=AE=9A=E4=B9=89=E4=BA=86=E5=90=84=E7=A7=8D=E5=86=85=E5=AD=98=
+=E6=93=8D=E4=BD=9C=E7=9A=84=E4=BC=A0=E6=92=AD=E5=92=8C=E6=8E=92=E5=BA=8F=
+=E8=A7=84=E5=88=99=EF=BC=8C=E8=AE=A9=E5=BC=80=E5=8F=91=E8=80=85=E5=8F=AF=
+=E4=BB=A5=E6=8E=A8=E7=90=86=E5=B9=B6=E5=8F=91=E4=BB=A3=E7=A0=81=E3=80=82=
+=E6=9C=80=E7=BB=88=E8=BF=99=E5=85=81=E8=AE=B8=E7=A1=AE
+>=20
+>=20+=E5=AE=9A=E5=B9=B6=E5=8F=91=E4=BB=A3=E7=A0=81=E5=8F=AF=E8=83=BD=E7=
+=9A=84=E6=89=A7=E8=A1=8C=E6=83=85=E5=86=B5=E5=B9=B6=E5=88=A4=E6=96=AD=E8=
+=BF=99=E4=BA=9B=E4=BB=A3=E7=A0=81=E6=98=AF=E5=90=A6=E5=AD=98=E5=9C=A8=E6=
+=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82
+>=20
+>=20+
+>=20
+>=20+KCSAN =E5=8F=AF=E4=BB=A5=E8=AF=86=E5=88=AB *=E8=A2=AB=E6=A0=87=E8=AE=
+=B0=E7=9A=84=E5=8E=9F=E5=AD=90=E6=93=8D=E4=BD=9C* =EF=BC=88 ``READ_ONCE``=
+, ``WRITE_ONCE`` , ``atomic_*``
+>=20
+>=20+=E7=AD=89=EF=BC=89=EF=BC=8C=E4=BB=A5=E5=8F=8A=E5=86=85=E5=AD=98=E5=
+=B1=8F=E9=9A=9C=E6=89=80=E9=9A=90=E5=90=AB=E7=9A=84=E4=B8=80=E9=83=A8=E5=
+=88=86=E9=A1=BA=E5=BA=8F=E4=BF=9D=E8=AF=81=E3=80=82=E5=90=AF=E7=94=A8 ``C=
+ONFIG_KCSAN_WEAK_MEMORY=3Dy``
+>=20
+>=20+=E9=85=8D=E7=BD=AE=EF=BC=8CKCSAN =E4=BC=9A=E5=AF=B9=E5=8A=A0=E8=BD=
+=BD=E6=88=96=E5=AD=98=E5=82=A8=E7=BC=93=E5=86=B2=E5=8C=BA=E8=BF=9B=E8=A1=
+=8C=E5=BB=BA=E6=A8=A1=EF=BC=8C=E5=B9=B6=E5=8F=AF=E4=BB=A5=E6=A3=80=E6=B5=
+=8B=E9=81=97=E6=BC=8F=E7=9A=84
+>=20
+>=20+``smp_mb()``, ``smp_wmb()``, ``smp_rmb()``, ``smp_store_release()``=
+=EF=BC=8C=E4=BB=A5=E5=8F=8A=E6=89=80=E6=9C=89=E7=9A=84
+>=20
+>=20+=E5=85=B7=E6=9C=89=E7=AD=89=E6=95=88=E9=9A=90=E5=90=AB=E5=86=85=E5=
+=AD=98=E5=B1=8F=E9=9A=9C=E7=9A=84 ``atomic_*`` =E6=93=8D=E4=BD=9C=E3=80=
+=82
+>=20
+>=20+
+>=20
+>=20+=E8=AF=B7=E6=B3=A8=E6=84=8F=EF=BC=8CKCSAN =E4=B8=8D=E4=BC=9A=E6=8A=
+=A5=E5=91=8A=E6=89=80=E6=9C=89=E7=94=B1=E4=BA=8E=E7=BC=BA=E5=A4=B1=E5=86=
+=85=E5=AD=98=E9=A1=BA=E5=BA=8F=E8=80=8C=E5=AF=BC=E8=87=B4=E7=9A=84=E6=95=
+=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=EF=BC=8C=E7=89=B9=E5=88=AB=E6=98=AF=E5=9C=
+=A8=E9=9C=80=E8=A6=81=E5=86=85=E5=AD=98=E5=B1=8F=E9=9A=9C
+>=20
+>=20+=E6=9D=A5=E7=A6=81=E6=AD=A2=E5=90=8E=E7=BB=AD=E5=86=85=E5=AD=98=E6=
+=93=8D=E4=BD=9C=E5=9C=A8=E5=B1=8F=E9=9A=9C=E4=B9=8B=E5=89=8D=E9=87=8D=E6=
+=96=B0=E6=8E=92=E5=BA=8F=E7=9A=84=E6=83=85=E5=86=B5=E4=B8=8B=E3=80=82=E5=
+=9B=A0=E6=AD=A4=EF=BC=8C=E5=BC=80=E5=8F=91=E4=BA=BA=E5=91=98=E5=BA=94=E8=
+=AF=A5=E4=BB=94=E7=BB=86=E8=80=83=E8=99=91=E9=82=A3=E4=BA=9B=E6=9C=AA
+>=20
+>=20+=E8=A2=AB=E6=A3=80=E6=9F=A5=E7=9A=84=E5=86=85=E5=AD=98=E9=A1=BA=E5=
+=BA=8F=E8=A6=81=E6=B1=82=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E4=BB=A5=E5=A4=96=E7=9A=84=E7=
+=AB=9E=E4=BA=89=E6=A3=80=E6=B5=8B
+>=20
+>=20+---------------------------
+>=20
+>=20+
+>=20
+>=20+=E5=AF=B9=E4=BA=8E=E6=9C=89=E7=9D=80=E5=A4=8D=E6=9D=82=E5=B9=B6=E5=
+=8F=91=E8=AE=BE=E8=AE=A1=E7=9A=84=E4=BB=A3=E7=A0=81=EF=BC=8C=E7=AB=9E=E4=
+=BA=89=E7=8A=B6=E5=86=B5=E4=B8=8D=E6=80=BB=E6=98=AF=E8=A1=A8=E7=8E=B0=E4=
+=B8=BA=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82=E5=A6=82=E6=9E=9C=E5=
+=B9=B6=E5=8F=91=E6=93=8D=E4=BD=9C=E5=BC=95=E8=B5=B7=E4=BA=86=E6=84=8F=E2=
+=80=98
+>=20
+>=20+=E6=96=99=E4=B9=8B=E5=A4=96=E7=9A=84=E7=B3=BB=E7=BB=9F=E8=A1=8C=E4=
+=B8=BA=EF=BC=8C=E5=88=99=E8=AE=A4=E4=B8=BA=E5=8F=91=E7=94=9F=E4=BA=86=E7=
+=AB=9E=E4=BA=89=E7=8A=B6=E5=86=B5=E3=80=82=E5=8F=A6=E4=B8=80=E6=96=B9=E9=
+=9D=A2=EF=BC=8C=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E6=98=AF=E5=9C=A8 C =
+=E8=AF=AD=E8=A8=80=E5=B1=82=E9=9D=A2=E5=AE=9A=E4=B9=89
+>=20
+>=20+=E7=9A=84=E3=80=82=E4=B8=8B=E9=9D=A2=E7=9A=84=E5=AE=8F=E5=AE=9A=E4=
+=B9=89=E5=8F=AF=E4=BB=A5=E7=94=A8=E6=9D=A5=E6=A3=80=E6=B5=8B=E9=9D=9E=E6=
+=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E7=9A=84=E6=BC=8F=E6=B4=9E=E5=B9=B6=E5=
+=8F=91=E4=BB=A3=E7=A0=81=E7=9A=84=E5=B1=9E=E6=80=A7=E3=80=82
+>=20
+>=20+
+>=20
+>=20+.. kernel-doc:: include/linux/kcsan-checks.h
+>=20
+>=20+ :functions: ASSERT_EXCLUSIVE_WRITER ASSERT_EXCLUSIVE_WRITER_SCOPED
+>=20
+>=20+ ASSERT_EXCLUSIVE_ACCESS ASSERT_EXCLUSIVE_ACCESS_SCOPED
+>=20
+>=20+ ASSERT_EXCLUSIVE_BITS
+>=20
+>=20+
+>=20
+>=20+=E5=AE=9E=E7=8E=B0=E7=BB=86=E8=8A=82
+>=20
+>=20+-----------
+>=20
+>=20+
+>=20
+>=20+KCSAN =E9=9C=80=E8=A6=81=E8=A7=82=E6=B5=8B=E4=B8=A4=E4=B8=AA=E5=B9=
+=B6=E5=8F=91=E8=AE=BF=E9=97=AE=E3=80=82=E7=89=B9=E5=88=AB=E9=87=8D=E8=A6=
+=81=E7=9A=84=E6=98=AF=EF=BC=8C=E6=88=91=E4=BB=AC=E6=83=B3=E8=A6=81=EF=BC=
+=88a=EF=BC=89=E5=A2=9E=E5=8A=A0=E8=A7=82=E6=B5=8B=E5=88=B0=E7=AB=9E=E4=BA=
+=89=E7=9A=84=E6=9C=BA=E4=BC=9A=EF=BC=88=E5=B0=A4
+>=20
+>=20+=E5=85=B6=E6=98=AF=E5=BE=88=E5=B0=91=E5=8F=91=E7=94=9F=E7=9A=84=E7=
+=AB=9E=E4=BA=89=EF=BC=89=EF=BC=8C=E4=BB=A5=E5=8F=8A=EF=BC=88b=EF=BC=89=E8=
+=83=BD=E5=A4=9F=E5=AE=9E=E9=99=85=E8=A7=82=E6=B5=8B=E5=88=B0=E8=BF=99=E4=
+=BA=9B=E7=AB=9E=E4=BA=89=E3=80=82=E6=88=91=E4=BB=AC=E5=8F=AF=E4=BB=A5=E9=
+=80=9A=E8=BF=87=EF=BC=88a=EF=BC=89=E6=B3=A8=E5=85=A5
+>=20
+>=20+=E4=B8=8D=E5=90=8C=E7=9A=84=E5=BB=B6=E8=BF=9F=EF=BC=8C=E4=BB=A5=E5=
+=8F=8A=EF=BC=88b=EF=BC=89=E4=BD=BF=E7=94=A8=E5=9C=B0=E5=9D=80=E8=A7=82=E6=
+=B5=8B=E7=82=B9=EF=BC=88=E6=88=96=E6=96=AD=E7=82=B9=EF=BC=89=E6=9D=A5=E5=
+=AE=9E=E7=8E=B0=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E5=A6=82=E6=9E=9C=E6=88=91=E4=BB=AC=E5=9C=A8=E8=AE=BE=E7=BD=AE=E4=
+=BA=86=E5=9C=B0=E5=9D=80=E8=A7=82=E5=AF=9F=E7=82=B9=E7=9A=84=E6=83=85=E5=
+=86=B5=E4=B8=8B=E6=95=85=E6=84=8F=E5=BB=B6=E8=BF=9F=E4=B8=80=E4=B8=AA=E5=
+=86=85=E5=AD=98=E8=AE=BF=E9=97=AE=EF=BC=8C=E7=84=B6=E5=90=8E=E8=A7=82=E5=
+=AF=9F=E5=88=B0=E8=A7=82=E5=AF=9F=E7=82=B9=E8=A2=AB=E8=A7=A6=E5=8F=91
+>=20
+>=20+=EF=BC=8C=E9=82=A3=E4=B9=88=E4=B8=A4=E4=B8=AA=E5=AF=B9=E5=90=8C=E4=
+=B8=80=E5=9C=B0=E5=9D=80=E7=9A=84=E8=AE=BF=E9=97=AE=E5=B0=B1=E5=8F=91=E7=
+=94=9F=E4=BA=86=E7=AB=9E=E4=BA=89=E3=80=82=E4=BD=BF=E7=94=A8=E7=A1=AC=E4=
+=BB=B6=E8=A7=82=E5=AF=9F=E7=82=B9=EF=BC=8C=E8=BF=99=E6=98=AF `DataCollide=
+r
+>=20
+>=20+<http://usenix.org/legacy/events/osdi10/tech/full_papers/Erickson.pd=
+f>%60_ http://usenix.org/legacy/events/osdi10/tech/full_papers/Erickson.p=
+df%3E%60_  =E4=B8=AD=E9=87=87=E7=94=A8
+>=20
+>=20+=E7=9A=84=E6=96=B9=E6=B3=95=E3=80=82=E4=B8=8E DataCollider =E4=B8=8D=
+=E5=90=8C=EF=BC=8CKCSAN =E4=B8=8D=E4=BD=BF=E7=94=A8=E7=A1=AC=E4=BB=B6=E8=
+=A7=82=E5=AF=9F=E7=82=B9=EF=BC=8C=E8=80=8C=E6=98=AF=E4=BE=9D=E8=B5=96=E4=
+=BA=8E=E7=BC=96=E8=AF=91=E5=99=A8=E6=8F=92=E8=A3=85=E5=92=8C=E2=80=9C=E8=
+=BD=AF
+>=20
+>=20+=E8=A7=82=E6=B5=8B=E7=82=B9=E2=80=9D=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E5=9C=A8 KCSAN =E4=B8=AD=EF=BC=8C=E8=A7=82=E5=AF=9F=E7=82=B9=E6=98=
+=AF=E9=80=9A=E8=BF=87=E4=B8=80=E7=A7=8D=E9=AB=98=E6=95=88=E7=9A=84=E7=BC=
+=96=E7=A0=81=E5=AE=9E=E7=8E=B0=E7=9A=84=EF=BC=8C=E8=AF=A5=E7=BC=96=E7=A0=
+=81=E5=B0=86=E8=AE=BF=E9=97=AE=E7=B1=BB=E5=9E=8B=E3=80=81=E5=A4=A7=E5=B0=
+=8F=E5=92=8C=E5=9C=B0=E5=9D=80=E5=AD=98=E5=82=A8
+>=20
+>=20+=E5=9C=A8=E4=B8=80=E4=B8=AA=E9=95=BF=E6=95=B4=E5=9E=8B=E5=8F=98=E9=
+=87=8F=E4=B8=AD=EF=BC=9B=E4=BD=BF=E7=94=A8=E2=80=9C=E8=BD=AF=E8=A7=82=E5=
+=AF=9F=E7=82=B9=E2=80=9D=E7=9A=84=E5=A5=BD=E5=A4=84=E6=98=AF=E5=85=B7=E6=
+=9C=89=E5=8F=AF=E7=A7=BB=E6=A4=8D=E6=80=A7=E5=92=8C=E6=9B=B4=E5=A4=A7=E7=
+=9A=84=E7=81=B5=E6=B4=BB=E6=80=A7=E3=80=82=E7=84=B6=E5=90=8E=EF=BC=8C
+>=20
+>=20+KCSAN=E4=BE=9D=E8=B5=96=E4=BA=8E=E7=BC=96=E8=AF=91=E5=99=A8=E5=AF=B9=
+=E6=99=AE=E9=80=9A=E8=AE=BF=E9=97=AE=E7=9A=84=E6=8F=92=E6=A1=A9=E3=80=82=
+=E5=AF=B9=E4=BA=8E=E6=AF=8F=E4=B8=AA=E6=8F=92=E6=A1=A9=E7=9A=84=E6=99=AE=
+=E9=80=9A=E8=AE=BF=E9=97=AE=EF=BC=9A
+>=20
+>=20+
+>=20
+>=20+1. =E6=A3=80=E6=B5=8B=E6=98=AF=E5=90=A6=E5=AD=98=E5=9C=A8=E4=B8=80=
+=E4=B8=AA=E5=A4=8D=E5=90=88=E7=9A=84=E8=A7=82=E6=B5=8B=E7=82=B9=EF=BC=8C=
+=E5=A6=82=E6=9E=9C=E5=AD=98=E5=9C=A8=EF=BC=8C=E5=B9=B6=E4=B8=94=E8=87=B3=
+=E5=B0=91=E6=9C=89=E4=B8=80=E4=B8=AA=E6=93=8D=E4=BD=9C=E6=98=AF=E5=86=99=
+=E6=93=8D=E4=BD=9C=EF=BC=8C=E5=88=99=E6=88=91=E4=BB=AC=E5=8F=91
+>=20
+>=20+ =E7=8E=B0=E4=BA=86=E4=B8=80=E4=B8=AA=E7=AB=9E=E4=BA=89=E8=AE=BF=E9=
+=97=AE=E3=80=82
+>=20
+>=20+
+>=20
+>=20+2. =E5=A6=82=E6=9E=9C=E4=B8=8D=E5=AD=98=E5=9C=A8=E5=8C=B9=E9=85=8D=
+=E7=9A=84=E8=A7=82=E5=AF=9F=E7=82=B9=EF=BC=8C=E5=88=99=E5=AE=9A=E6=9C=9F=
+=E7=9A=84=E8=AE=BE=E7=BD=AE=E4=B8=80=E4=B8=AA=E8=A7=82=E6=B5=8B=E7=82=B9=
+=E5=B9=B6=E9=9A=8F=E6=9C=BA=E5=BB=B6=E8=BF=9F=E4=B8=80=E5=B0=8F=E6=AE=B5=
+=E6=97=B6=E9=97=B4=E3=80=82
+>=20
+>=20+
+>=20
+>=20+3. =E5=9C=A8=E5=BB=B6=E8=BF=9F=E5=89=8D=E6=A3=80=E6=9F=A5=E6=95=B0=
+=E6=8D=AE=E5=80=BC=EF=BC=8C=E5=B9=B6=E5=9C=A8=E5=BB=B6=E8=BF=9F=E5=90=8E=
+=E9=87=8D=E6=96=B0=E6=A3=80=E6=9F=A5=E6=95=B0=E6=8D=AE=E5=80=BC=EF=BC=9B=
+=E5=A6=82=E6=9E=9C=E5=80=BC=E4=B8=8D=E5=8C=B9=E9=85=8D=EF=BC=8C=E6=88=91=
+=E4=BB=AC=E6=8E=A8=E6=B5=8B=E5=AD=98=E5=9C=A8=E4=B8=80=E4=B8=AA
+>=20
+>=20+ =E6=9C=AA=E7=9F=A5=E6=9D=A5=E6=BA=90=E7=9A=84=E7=AB=9E=E4=BA=89=E7=
+=8A=B6=E5=86=B5=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E4=B8=BA=E4=BA=86=E6=A3=80=E6=B5=8B=E6=99=AE=E9=80=9A=E8=AE=BF=E9=
+=97=AE=E5=92=8C=E6=A0=87=E8=AE=B0=E8=AE=BF=E9=97=AE=E4=B9=8B=E9=97=B4=E7=
+=9A=84=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=EF=BC=8CKCSAN =E4=B9=9F=E5=AF=
+=B9=E6=A0=87=E8=AE=B0=E8=AE=BF=E9=97=AE=E8=BF=9B=E8=A1=8C=E6=A0=87=E8=AE=
+=B0=EF=BC=8C=E4=BD=86=E4=BB=85=E7=94=A8=E4=BA=8E
+>=20
+>=20+=E6=A3=80=E6=9F=A5=E6=98=AF=E5=90=A6=E5=AD=98=E5=9C=A8=E8=A7=82=E5=
+=AF=9F=E7=82=B9=EF=BC=9B=E5=8D=B3 KCSAN =E4=B8=8D=E4=BC=9A=E5=9C=A8=E6=A0=
+=87=E8=AE=B0=E8=AE=BF=E9=97=AE=E4=B8=8A=E8=AE=BE=E7=BD=AE=E8=A7=82=E5=AF=
+=9F=E7=82=B9=E3=80=82=E9=80=9A=E8=BF=87=E4=B8=8D=E5=9C=A8=E6=A0=87=E8=AE=
+=B0=E6=93=8D=E4=BD=9C=E4=B8=8A=E8=AE=BE
+>=20
+>=20+=E7=BD=AE=E8=A7=82=E5=AF=9F=E7=82=B9=EF=BC=8C=E5=A6=82=E6=9E=9C=E5=
+=AF=B9=E4=B8=80=E4=B8=AA=E5=8F=98=E9=87=8F=E7=9A=84=E6=89=80=E6=9C=89=E5=
+=B9=B6=E5=8F=91=E8=AE=BF=E9=97=AE=E9=83=BD=E8=A2=AB=E6=AD=A3=E7=A1=AE=E6=
+=A0=87=E8=AE=B0=EF=BC=8CKCSAN =E5=B0=86=E6=B0=B8=E8=BF=9C=E4=B8=8D=E4=BC=
+=9A=E8=A7=A6=E5=8F=91=E8=A7=82=E5=AF=9F=E7=82=B9
+>=20
+>=20+=EF=BC=8C=E5=9B=A0=E6=AD=A4=E4=B9=9F=E4=B8=8D=E4=BC=9A=E6=8A=A5=E5=
+=91=8A=E8=BF=99=E4=BA=9B=E8=AE=BF=E9=97=AE=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E5=BC=B1=E5=86=85=E5=AD=98=E5=BB=BA=E6=A8=A1
+>=20
+>=20+~~~~~~~~~~~~~~~~~~~~
+>=20
+>=20+
+>=20
+>=20+KSCAN =E6=A3=80=E6=B5=8B=E7=94=B1=E4=BA=8E=E7=BC=BA=E5=A4=B1=E5=86=
+=85=E5=AD=98=E5=B1=8F=E9=9A=9C=E7=9A=84=E6=95=B0=E6=8D=AE=E6=A3=80=E6=B5=
+=8B=E7=9A=84=E6=96=B9=E6=B3=95=E6=98=AF=E5=B1=85=E4=BA=8E=E5=AF=B9=E8=AE=
+=BF=E9=97=AE=E9=87=8D=E6=96=B0=E6=8E=92=E5=BA=8F=E7=9A=84=E5=BB=BA=E6=A8=
+=A1=EF=BC=88=E4=BD=BF=E7=94=A8=E5=8F=82=E6=95=B0
+>=20
+>=20+``CONFIG_KCSAN_WEAK_MEMORY=3Dy``=EF=BC=89=E3=80=82=E6=AF=8F=E4=B8=AA=
+=E8=AE=BE=E7=BD=AE=E4=BA=86=E8=A7=82=E5=AF=9F=E7=82=B9=E7=9A=84=E6=99=AE=
+=E9=80=9A=E5=86=85=E5=AD=98=E8=AE=BF=E9=97=AE=E4=B9=9F=E4=BC=9A=E8=A2=AB=
+=E9=80=89=E6=8B=A9=E5=9C=A8=E5=85=B6
+>=20
+>=20+=E5=87=BD=E6=95=B0=E8=8C=83=E5=9B=B4=E5=86=85=E8=BF=9B=E8=A1=8C=E6=
+=A8=A1=E6=8B=9F=E9=87=8D=E6=96=B0=E6=8E=92=E5=BA=8F=EF=BC=88=E6=9C=80=E5=
+=A4=9A=E4=B8=80=E4=B8=AA=E6=AD=A3=E5=9C=A8=E8=BF=9B=E8=A1=8C=E7=9A=84=E8=
+=AE=BF=E9=97=AE=EF=BC=89=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E4=B8=80=E6=97=A6=E6=9F=90=E4=B8=AA=E8=AE=BF=E9=97=AE=E8=A2=AB=E9=
+=80=89=E6=8B=A9=E7=94=A8=E4=BA=8E=E9=87=8D=E6=96=B0=E6=8E=92=E5=BA=8F=EF=
+=BC=8C=E5=AE=83=E5=B0=86=E5=9C=A8=E5=87=BD=E6=95=B0=E8=8C=83=E5=9B=B4=E5=
+=86=85=E4=B8=8E=E6=AF=8F=E4=B8=AA=E5=85=B6=E4=BB=96=E8=AE=BF=E9=97=AE=E8=
+=BF=9B=E8=A1=8C=E6=A3=80=E6=9F=A5=E3=80=82=E5=A6=82=E6=9E=9C=E9=81=87
+>=20
+>=20+=E5=88=B0=E9=80=82=E5=BD=93=E7=9A=84=E5=86=85=E5=AD=98=E5=B1=8F=E9=
+=9A=9C=EF=BC=8C=E8=AF=A5=E8=AE=BF=E9=97=AE=E5=B0=86=E4=B8=8D=E5=86=8D=E8=
+=A2=AB=E8=80=83=E8=99=91=E8=BF=9B=E8=A1=8C=E6=A8=A1=E6=8B=9F=E9=87=8D=E6=
+=96=B0=E6=8E=92=E5=BA=8F=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E5=BD=93=E5=86=85=E5=AD=98=E6=93=8D=E4=BD=9C=E7=9A=84=E7=BB=93=E6=
+=9E=9C=E5=BA=94=E8=AF=A5=E7=94=B1=E5=B1=8F=E9=9A=9C=E6=8E=92=E5=BA=8F=E6=
+=97=B6=EF=BC=8CKCSAN =E5=8F=AF=E4=BB=A5=E6=A3=80=E6=B5=8B=E5=88=B0=E4=BB=
+=85=E7=94=B1=E4=BA=8E=E7=BC=BA=E5=A4=B1=E5=B1=8F=E9=9A=9C=E8=80=8C=E5=AF=
+=BC=E8=87=B4=E7=9A=84=E5=86=B2=E7=AA=81=E7=9A=84
+>=20
+>=20+=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82=E8=80=83=E8=99=91=E4=
+=B8=8B=E9=9D=A2=E7=9A=84=E4=BE=8B=E5=AD=90::
+>=20
+>=20+
+>=20
+>=20+ int x, flag;
+>=20
+>=20+ void T1(void)
+>=20
+>=20+ {
+>=20
+>=20+ x =3D 1; // data race!
+>=20
+>=20+ WRITE_ONCE(flag, 1); // correct: smp_store_release(&flag, 1)
+>=20
+>=20+ }
+>=20
+>=20+ void T2(void)
+>=20
+>=20+ {
+>=20
+>=20+ while (!READ_ONCE(flag)); // correct: smp_load_acquire(&flag)
+>=20
+>=20+ ... =3D x; // data race!
+>=20
+>=20+ }
+>=20
+>=20+
+>=20
+>=20+=E5=BD=93=E5=90=AF=E7=94=A8=E4=BA=86=E5=BC=B1=E5=86=85=E5=AD=98=E5=
+=BB=BA=E6=A8=A1=EF=BC=8CKCSAN =E5=B0=86=E8=80=83=E8=99=91=E5=AF=B9 ``T1``=
+ =E4=B8=AD=E7=9A=84 ``x`` =E8=BF=9B=E8=A1=8C=E6=A8=A1=E6=8B=9F=E9=87=8D=
+=E6=96=B0=E6=8E=92=E5=BA=8F=E3=80=82=E5=9C=A8=E5=86=99=E5=85=A5
+>=20
+>=20+``flag`` =E4=B9=8B=E5=90=8E=EF=BC=8Cx=E5=86=8D=E6=AC=A1=E8=A2=AB=E6=
+=A3=80=E6=9F=A5=E6=98=AF=E5=90=A6=E6=9C=89=E5=B9=B6=E5=8F=91=E8=AE=BF=E9=
+=97=AE=EF=BC=9A=E5=9B=A0=E4=B8=BA ``T2`` =E5=8F=AF=E4=BB=A5=E5=9C=A8=E5=
+=86=99=E5=85=A5
+>=20
+>=20+``flag`` =E4=B9=8B=E5=90=8E=E7=BB=A7=E7=BB=AD=E8=BF=9B=E8=A1=8C=EF=
+=BC=8C=E5=9B=A0=E6=AD=A4=E6=A3=80=E6=B5=8B=E5=88=B0=E6=95=B0=E6=8D=AE=E7=
+=AB=9E=E4=BA=89=E3=80=82=E5=A6=82=E6=9E=9C=E9=81=87=E5=88=B0=E4=BA=86=E6=
+=AD=A3=E7=A1=AE=E7=9A=84=E5=B1=8F=E9=9A=9C=EF=BC=8C ``x`` =E5=9C=A8=E6=AD=
+=A3=E7=A1=AE
+>=20
+>=20+=E9=87=8A=E6=94=BE ``flag`` =E5=90=8E=E5=B0=86=E4=B8=8D=E4=BC=9A=E8=
+=A2=AB=E8=80=83=E8=99=91=E9=87=8D=E6=96=B0=E6=8E=92=E5=BA=8F=EF=BC=8C=E5=
+=9B=A0=E6=AD=A4=E4=B8=8D=E4=BC=9A=E6=A3=80=E6=B5=8B=E5=88=B0=E6=95=B0=E6=
+=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E5=9C=A8=E5=A4=8D=E6=9D=82=E6=80=A7=E4=B8=8A=E7=9A=84=E6=9D=83=E8=
+=A1=A1=E4=BB=A5=E5=8F=8A=E5=AE=9E=E9=99=85=E7=9A=84=E9=99=90=E5=88=B6=E6=
+=84=8F=E5=91=B3=E7=9D=80=E5=8F=AA=E8=83=BD=E6=A3=80=E6=B5=8B=E5=88=B0=E4=
+=B8=80=E9=83=A8=E5=88=86=E7=94=B1=E4=BA=8E=E7=BC=BA=E5=A4=B1=E5=86=85=E5=
+=AD=98=E5=B1=8F=E9=9A=9C=E8=80=8C=E5=AF=BC=E8=87=B4=E7=9A=84=E6=95=B0
+>=20
+>=20+=E6=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82=E7=94=B1=E4=BA=8E=E5=BD=93=E5=
+=89=8D=E5=8F=AF=E7=94=A8=E7=9A=84=E7=BC=96=E8=AF=91=E5=99=A8=E6=94=AF=E6=
+=8C=81=EF=BC=8CKCSAN =E7=9A=84=E5=AE=9E=E7=8E=B0=E4=BB=85=E9=99=90=E4=BA=
+=8E=E5=BB=BA=E6=A8=A1=E2=80=9C=E7=BC=93=E5=86=B2=E2=80=9D=EF=BC=88=E5=BB=
+=B6=E8=BF=9F=E8=AE=BF=E9=97=AE=EF=BC=89=E7=9A=84
+>=20
+>=20+=E6=95=88=E6=9E=9C=EF=BC=8C=E5=9B=A0=E4=B8=BA=E8=BF=90=E8=A1=8C=E6=
+=97=B6=E4=B8=8D=E8=83=BD=E2=80=9C=E9=A2=84=E5=8F=96=E2=80=9D=E8=AE=BF=E9=
+=97=AE=E3=80=82=E5=90=8C=E6=97=B6=E8=A6=81=E6=B3=A8=E6=84=8F=EF=BC=8C=E8=
+=A7=82=E6=B5=8B=E7=82=B9=E5=8F=AA=E8=AE=BE=E7=BD=AE=E5=9C=A8=E6=99=AE=E9=
+=80=9A=E8=AE=BF=E9=97=AE=E4=B8=8A=EF=BC=8C=E8=BF=99=E6=98=AF=E5=94=AF
+>=20
+>=20+=E4=B8=80=E4=B8=80=E4=B8=AA KCSAN =E4=BC=9A=E6=A8=A1=E6=8B=9F=E9=87=
+=8D=E6=96=B0=E6=8E=92=E5=BA=8F=E7=9A=84=E8=AE=BF=E9=97=AE=E7=B1=BB=E5=9E=
+=8B=E3=80=82=E8=BF=99=E6=84=8F=E5=91=B3=E7=9D=80=E6=A0=87=E8=AE=B0=E8=AE=
+=BF=E9=97=AE=E7=9A=84=E9=87=8D=E6=96=B0=E6=8E=92=E5=BA=8F=E4=B8=8D=E4=BC=
+=9A=E8=A2=AB=E5=BB=BA=E6=A8=A1=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E4=B8=8A=E8=BF=B0=E6=83=85=E5=86=B5=E7=9A=84=E4=B8=80=E4=B8=AA=E5=
+=90=8E=E6=9E=9C=E6=98=AF=E8=8E=B7=E5=8F=96=E6=93=8D=E4=BD=9C=E4=B8=8D=E9=
+=9C=80=E8=A6=81=E5=B1=8F=E9=9A=9C=E6=8F=92=E6=A1=A9=EF=BC=88=E4=B8=8D=E9=
+=9C=80=E8=A6=81=E9=A2=84=E5=8F=96=EF=BC=89=E3=80=82=E6=AD=A4=E5=A4=96=EF=
+=BC=8C=E5=BC=95=E5=85=A5=E5=9C=B0=E5=9D=80=E6=88=96=E6=8E=A7=E5=88=B6
+>=20
+>=20+=E4=BE=9D=E8=B5=96=E7=9A=84=E6=A0=87=E8=AE=B0=E8=AE=BF=E9=97=AE=E4=
+=B8=8D=E9=9C=80=E8=A6=81=E7=89=B9=E6=AE=8A=E5=A4=84=E7=90=86=EF=BC=88=E6=
+=A0=87=E8=AE=B0=E8=AE=BF=E9=97=AE=E4=B8=8D=E8=83=BD=E9=87=8D=E6=96=B0=E6=
+=8E=92=E5=BA=8F=EF=BC=8C=E5=90=8E=E7=BB=AD=E4=BE=9D=E8=B5=96=E7=9A=84=E8=
+=AE=BF=E9=97=AE=E4=B8=8D=E8=83=BD=E8=A2=AB=E9=A2=84=E5=8F=96=EF=BC=89
+>=20
+>=20+=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E5=85=B3=E9=94=AE=E5=B1=9E=E6=80=A7
+>=20
+>=20+~~~~~~~~~~~~~~
+>=20
+>=20+
+>=20
+>=20+1. **=E5=86=85=E5=AD=98=E5=BC=80=E9=94=80**=EF=BC=9A=E6=95=B4=E4=BD=
+=93=E7=9A=84=E5=86=85=E5=AD=98=E5=BC=80=E9=94=80=E5=8F=AA=E6=9C=89=E5=87=
+=A0 MiB=EF=BC=8C=E5=8F=96=E5=86=B3=E4=BA=8E=E9=85=8D=E7=BD=AE=E3=80=82=E5=
+=BD=93=E5=89=8D=E7=9A=84=E5=AE=9E=E7=8E=B0=E6=98=AF=E4=BD=BF=E7=94=A8=E4=
+=B8=80=E4=B8=AA=E5=B0=8F=E9=95=BF
+>=20
+>=20+ =E6=95=B4=E5=9E=8B=E6=95=B0=E7=BB=84=E6=9D=A5=E7=BC=96=E7=A0=81=E8=
+=A7=82=E6=B5=8B=E7=82=B9=E4=BF=A1=E6=81=AF=EF=BC=8C=E5=87=A0=E4=B9=8E=E5=
+=8F=AF=E4=BB=A5=E5=BF=BD=E7=95=A5=E4=B8=8D=E8=AE=A1=E3=80=82
+>=20
+>=20+
+>=20
+>=20+2. **=E6=80=A7=E8=83=BD=E5=BC=80=E9=94=80**=EF=BC=9AKCSAN =E7=9A=84=
+=E8=BF=90=E8=A1=8C=E6=97=B6=E6=97=A8=E5=9C=A8=E6=80=A7=E8=83=BD=E5=BC=80=
+=E9=94=80=E6=9C=80=E5=B0=8F=E5=8C=96=EF=BC=8C=E4=BD=BF=E7=94=A8=E4=B8=80=
+=E4=B8=AA=E9=AB=98=E6=95=88=E7=9A=84=E8=A7=82=E6=B5=8B=E7=82=B9=E7=BC=96=
+=E7=A0=81=EF=BC=8C=E5=9C=A8
+>=20
+>=20+ =E5=BF=AB=E9=80=9F=E8=B7=AF=E5=BE=84=E4=B8=AD=E4=B8=8D=E9=9C=80=E8=
+=A6=81=E8=8E=B7=E5=8F=96=E4=BB=BB=E4=BD=95=E9=94=81=E3=80=82=E5=9C=A8=E6=
+=8B=A5=E6=9C=89 8 =E4=B8=AA CPU =E7=9A=84=E7=B3=BB=E7=BB=9F=E4=B8=8A=E7=
+=9A=84=E5=86=85=E6=A0=B8=E5=90=AF=E5=8A=A8=E6=9D=A5=E8=AF=B4=EF=BC=9A
+>=20
+>=20+
+>=20
+>=20+ - =E4=BD=BF=E7=94=A8=E9=BB=98=E8=AE=A4 KCSAN =E9=85=8D=E7=BD=AE=E6=
+=97=B6=EF=BC=8C=E6=80=A7=E8=83=BD=E4=B8=8B=E9=99=8D 5 =E5=80=8D=EF=BC=9B
+>=20
+>=20+ - =E4=BB=85=E5=9B=A0=E8=BF=90=E8=A1=8C=E6=97=B6=E5=BF=AB=E9=80=9F=
+=E8=B7=AF=E5=BE=84=E5=BC=80=E9=94=80=E5=AF=BC=E8=87=B4=E6=80=A7=E8=83=BD=
+=E4=B8=8B=E9=99=8D 2.8 =E5=80=8D=EF=BC=88=E8=AE=BE=E7=BD=AE=E9=9D=9E=E5=
+=B8=B8=E5=A4=A7=E7=9A=84
+>=20
+>=20+ ``KCSAN_SKIP_WATCH`` =E5=B9=B6=E5=8F=96=E6=B6=88=E8=AE=BE=E7=BD=AE =
+``KCSAN_SKIP_WATCH_RANDOMIZE``=EF=BC=89=E3=80=82
+>=20
+>=20+
+>=20
+>=20+3. **=E6=B3=A8=E8=A7=A3=E5=BC=80=E9=94=80**=EF=BC=9AKCSAN =E8=BF=90=
+=E8=A1=8C=E6=97=B6=E4=B9=8B=E5=A4=96=E9=9C=80=E8=A6=81=E7=9A=84=E6=B3=A8=
+=E9=87=8A=E5=BE=88=E5=B0=91=E3=80=82=E5=9B=A0=E6=AD=A4=EF=BC=8C=E9=9A=8F=
+=E7=9D=80=E5=86=85=E6=A0=B8=E7=9A=84=E5=8F=91=E5=B1=95=E7=BB=B4=E6=8A=A4=
+=E7=9A=84=E5=BC=80
+>=20
+>=20+ =E9=94=80=E4=B9=9F=E5=BE=88=E5=B0=8F=E3=80=82
+>=20
+>=20+
+>=20
+>=20+4. **=E6=A3=80=E6=B5=8B=E8=AE=BE=E5=A4=87=E7=9A=84=E7=AB=9E=E4=BA=89=
+=E5=86=99=E5=85=A5**=EF=BC=9A=E7=94=B1=E4=BA=8E=E8=AE=BE=E7=BD=AE=E8=A7=
+=82=E6=B5=8B=E7=82=B9=E6=97=B6=E4=BC=9A=E6=A3=80=E6=9F=A5=E6=95=B0=E6=8D=
+=AE=E5=80=BC=EF=BC=8C=E8=AE=BE=E5=A4=87=E7=9A=84=E7=AB=9E=E4=BA=89=E5=86=
+=99=E5=85=A5=E4=B9=9F=E5=8F=AF=E4=BB=A5
+>=20
+>=20+ =E8=A2=AB=E6=A3=80=E6=B5=8B=E5=88=B0=E3=80=82
+>=20
+>=20+
+>=20
+>=20+5. **=E5=86=85=E5=AD=98=E6=8E=92=E5=BA=8F**=EF=BC=9AKCSAN =E5=8F=AA=
+=E4=BA=86=E8=A7=A3=E4=B8=80=E9=83=A8=E5=88=86 LKMM =E6=8E=92=E5=BA=8F=E8=
+=A7=84=E5=88=99=EF=BC=9B=E8=BF=99=E5=8F=AF=E8=83=BD=E4=BC=9A=E5=AF=BC=E8=
+=87=B4=E6=BC=8F=E6=8A=A5=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=EF=BC=88
+>=20
+>=20+ =E5=81=87=E9=98=B4=E6=80=A7=EF=BC=89=E3=80=82
+>=20
+>=20+
+>=20
+>=20+6. **=E5=88=86=E6=9E=90=E5=87=86=E7=A1=AE=E7=8E=87**=EF=BC=9A =E5=AF=
+=B9=E4=BA=8E=E8=A7=82=E5=AF=9F=E5=88=B0=E7=9A=84=E6=89=A7=E8=A1=8C=EF=BC=
+=8C=E7=94=B1=E4=BA=8E=E4=BD=BF=E7=94=A8=E9=87=87=E6=A0=B7=E7=AD=96=E7=95=
+=A5=EF=BC=8C=E5=88=86=E6=9E=90=E6=98=AF * =E4=B8=8D=E5=81=A5=E5=85=A8 * =
+=E7=9A=84
+>=20
+>=20+ =EF=BC=88=E5=8F=AF=E8=83=BD=E6=9C=89=E5=81=87=E9=98=B4=E6=80=A7=EF=
+=BC=89=EF=BC=8C=E4=BD=86=E6=9C=9F=E6=9C=9B=E5=BE=97=E5=88=B0=E5=AE=8C=E6=
+=95=B4=E7=9A=84=E5=88=86=E6=9E=90=EF=BC=88=E6=B2=A1=E6=9C=89=E5=81=87=E9=
+=98=B3=E6=80=A7=EF=BC=89=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E8=80=83=E8=99=91=E7=9A=84=E6=9B=BF=E4=BB=A3=E6=96=B9=E6=A1=88
+>=20
+>=20+-------------------
+>=20
+>=20+
+>=20
+>=20+=E4=B8=80=E4=B8=AA=E5=86=85=E6=A0=B8=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=
+=BA=89=E6=A3=80=E6=B5=8B=E7=9A=84=E6=9B=BF=E4=BB=A3=E6=96=B9=E6=B3=95=E6=
+=98=AF `Kernel Thread Sanitizer (KTSAN)
+>=20
+>=20+<https://github.com/google/ktsan/wiki>%60_%E3%80%82KTSAN https://git=
+hub.com/google/ktsan/wiki%3E%60_%E3%80%82KTSAN  =E6=98=AF=E4=B8=80=E4=B8=
+=AA=E5=85=88=E8=A1=8C=E5=8F=91=E7=94=9F=E7=9A=84=E6=95=B0=E6=8D=AE=E7=AB=
+=9E=E4=BA=89=E6=A3=80=E6=B5=8B=E5=99=A8
+>=20
+>=20+=EF=BC=8C=E5=AE=83=E6=98=BE=E5=BC=8F=E5=BB=BA=E7=AB=8B=E5=86=85=E5=
+=AD=98=E6=93=8D=E4=BD=9C=E4=B9=8B=E9=97=B4=E7=9A=84=E5=85=88=E8=A1=8C=E5=
+=8F=91=E7=94=9F=E9=A1=BA=E5=BA=8F=EF=BC=8C=E8=BF=99=E5=8F=AF=E4=BB=A5=E7=
+=94=A8=E6=9D=A5=E7=A1=AE=E5=AE=9A
+>=20
+>=20+`=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89`_ =E4=B8=AD=E5=AE=9A=E4=B9=89=
+=E7=9A=84=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82
+>=20
+>=20+
+>=20
+>=20+=E4=B8=BA=E4=BA=86=E5=BB=BA=E7=AB=8B=E6=AD=A3=E7=A1=AE=E7=9A=84=E5=
+=85=88=E8=A1=8C=E5=8F=91=E7=94=9F=E5=85=B3=E7=B3=BB=EF=BC=8CKTSAN =E5=BF=
+=85=E9=A1=BB=E4=BA=86=E8=A7=A3 LKMM =E7=9A=84=E6=89=80=E6=9C=89=E6=8E=92=
+=E5=BA=8F=E8=A7=84=E5=88=99=E5=92=8C=E5=90=8C=E6=AD=A5=E5=8E=9F=E8=AF=AD=
+=E3=80=82=E4=B8=8D=E5=B9=B8
+>=20
+>=20+=E7=9A=84=E6=98=AF=EF=BC=8C=E4=BB=BB=E4=BD=95=E9=81=97=E6=BC=8F=E9=
+=83=BD=E4=BC=9A=E5=AF=BC=E8=87=B4=E5=A4=A7=E9=87=8F=E7=9A=84=E5=81=87=E9=
+=98=B3=E6=80=A7=EF=BC=8C=E8=BF=99=E5=9C=A8=E5=8C=85=E5=90=AB=E4=BC=97=E5=
+=A4=9A=E8=87=AA=E5=AE=9A=E4=B9=89=E5=90=8C=E6=AD=A5=E6=9C=BA=E5=88=B6=E7=
+=9A=84=E5=86=85=E6=A0=B8=E4=B8=8A=E4=B8=8B=E6=96=87=E4=B8=AD=E7=89=B9
+>=20
+>=20+=E5=88=AB=E6=9C=89=E5=AE=B3=E3=80=82=E4=B8=BA=E4=BA=86=E8=B7=9F=E8=
+=B8=AA=E5=89=8D=E5=9B=A0=E5=90=8E=E6=9E=9C=E5=85=B3=E7=B3=BB=EF=BC=8CKTSA=
+N =E7=9A=84=E5=AE=9E=E7=8E=B0=E9=9C=80=E8=A6=81=E4=B8=BA=E6=AF=8F=E4=B8=
+=AA=E5=86=85=E5=AD=98=E4=BD=8D=E7=BD=AE=E6=8F=90=E4=BE=9B=E5=85=83=E6=95=
+=B0=E6=8D=AE=EF=BC=88=E5=BD=B1=E5=AD=90=E5=86=85
+>=20
+>=20+=E5=AD=98=EF=BC=89=EF=BC=8C=E8=BF=99=E6=84=8F=E5=91=B3=E7=9D=80=E6=
+=AF=8F=E9=A1=B5=E5=86=85=E5=AD=98=E5=AF=B9=E5=BA=94 4 =E9=A1=B5=E5=BD=B1=
+=E5=AD=90=E5=86=85=E5=AD=98=EF=BC=8C=E5=9C=A8=E5=A4=A7=E5=9E=8B=E7=B3=BB=
+=E7=BB=9F=E4=B8=8A=E5=8F=AF=E8=83=BD=E4=BC=9A=E5=B8=A6=E6=9D=A5=E6=95=B0=
+=E5=8D=81 GiB =E7=9A=84=E5=BC=80=E9=94=80
+>=20
+>=20+=E3=80=82
+>=20
+>=20\ No newline at end of file
+Let's add a blankline at end of file.
+
+BTW, the merge windows has open, so if you don't mind, could you send v2
+next week?
+
+Thanks,
+Yanteng
 
