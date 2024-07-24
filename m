@@ -1,77 +1,87 @@
-Return-Path: <linux-kernel+bounces-261535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A087393B86C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 23:10:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB88893B866
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 23:10:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D24601C23CB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:10:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AB811C23A05
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F2F13B58C;
-	Wed, 24 Jul 2024 21:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19DD813B5AD;
+	Wed, 24 Jul 2024 21:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZdY+YmJq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="ZhDNfDcR"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF8013B29B
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 21:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5DB13AD23
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 21:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721855441; cv=none; b=Ew7ETo6r8nzc/ygGZMPXwbZXogqL6WgAb8kgT25WwfzyF6WUkQMM8p5gAEg6XN7bJ0yidr93YADF3P7THtx/Yzx/H9KbnA/mHFY20TRflm6IXPtZPrClSmvEdlsiqJNz430UEH617zie6vOUprpgPkbStjeueuqnDeu7DLuHmP0=
+	t=1721855395; cv=none; b=XQaBclgVBvnFIP7zojKTr8EKLolyJy4vTM51oyJClraFCAGrGDD350Ue7G6c7Q8VWlbOjK6BYDR7KTZKA+f/10cpexImLZp438tsyNgeevP99qwRaGn/W41AcB4kCXM/581J97t4RUnwPeM506fCsBSsk7eU9z+P/5q3mBwfbNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721855441; c=relaxed/simple;
-	bh=wW/zXMdyruZKDdE2qo8r0fZhyxISzk1l6ky+xuxNND8=;
+	s=arc-20240116; t=1721855395; c=relaxed/simple;
+	bh=vNmljDyxuQJbPcfceCzjBq3nfY3t4pyOZRfftitc5Ak=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UcwYZf/Lbz9DgrPCbbBnoIZ+NH/i87vrXoom8QQbtiGowbWMraDGpBuTJVNn0QguJ2Tc63DhqXEMb8cyTvGa9mfukM31B6Dxzy305mkdrITx3OKd5Gqtdx9QdmxPsGuOgQAFncfpsFPbAXQzHwXoLIj3KJuzdMFhuGGWYQ6vGUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZdY+YmJq; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721855441; x=1753391441;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wW/zXMdyruZKDdE2qo8r0fZhyxISzk1l6ky+xuxNND8=;
-  b=ZdY+YmJqMaNl8dTjg2ZijBbJpvrgQpROzulyRBi8dLEbggPBf47QrEbk
-   86pJDMh/byNXHNAMnBtSIdBHIg8eZfmknv8DXJ377cqX+zGuJsHDzvjDF
-   WneMK7TX0yO0gbeYFFfr+Sf0Z5xR0WYH8WY3owC1z8kLSv4WADksT/iIW
-   uKS6xswpHz0ggU+tWHGS/NpenqDzT1PLETdZ2EZhTPKJcmw2DACIxRY/h
-   NlW4eOUIib7AhqA4jBmhWkNP1ogidJu3ZlsultIn0hvxSy36A+35K+Ruw
-   zE+zqmw3cMozHiW0NuS8iOz+GL1Iz1RKKhaWkHdAzoeOQPhy6gGZTpCa8
-   g==;
-X-CSE-ConnectionGUID: enSyyQrpSvqGVNMLCBBFwQ==
-X-CSE-MsgGUID: z+84SEXFQ92KG3CzVmNW/A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11143"; a="19525061"
-X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
-   d="scan'208";a="19525061"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 14:10:40 -0700
-X-CSE-ConnectionGUID: 5BSAbpxrR5q0RmoXRdzeOg==
-X-CSE-MsgGUID: yAByFR9DTiiLZeZ7zkBs8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
-   d="scan'208";a="57523681"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 24 Jul 2024 14:10:38 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sWjFr-000nRG-1J;
-	Wed, 24 Jul 2024 21:10:35 +0000
-Date: Thu, 25 Jul 2024 05:09:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: Re: [PATCH 2/2] mm: Remove PG_error
-Message-ID: <202407250459.K6byaMoI-lkp@intel.com>
-References: <20240724010550.1755992-3-willy@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QhSku+MsAJH/VIkDT61o4OraoppZhMwRfSFzGWnyiw8GtKE9CoNnVok4Dz2AhyxZfDears4jWk7Fm7Lt9WqhbjLxcjD1owcOxu6mqbGj1Uj12On4dJ+sRizH3d9ISuUv8V7fquUpWLUXN8hwX4pvaFYiR2bdAo/RpmnDQkYf0ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=ZhDNfDcR; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70ea93aa9bdso238121b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:09:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1721855393; x=1722460193; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vjbueeIIyUEroZshkKxdpKEriHR9zWClHjFGUbNFoy8=;
+        b=ZhDNfDcRVlFwdFAesKPXjzZ3pK1M2FBD/fm5ws2xMSgkPEaLLpz4id7A/jO0lEJMko
+         vDqx9zm7r1iZkovGkMpbAPccCNzAXfj4UbqGQ1dr10MwTkyR9Qmv04ARH+3PD5fjWFBO
+         8uEbzTqkZSdvQidEA3foJhLPLEMllTRk/YQVO8bdwF70zQds2Lw/YxUwNMQyzru32Usx
+         TU3h65Mmv/Nm7gCGfvzOG/JWgQpw1+JnZLwC8axP/0/y8u2OduEXfEvYkl9hi1mJFh+a
+         vcI8tEBMB1QiD+phBKXlA89YP9Z1RJ8E3JA1Qmqx5xWiFtf3VDxZplrHbwthSqbc8ypi
+         lREQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721855393; x=1722460193;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vjbueeIIyUEroZshkKxdpKEriHR9zWClHjFGUbNFoy8=;
+        b=T5/r66/JUr68BFRZlkdqqaDjzTl2JYQF5+LxWHGAp3wZm1YmKj4jBbIXSBrhaRp900
+         WNI2Tc07F5LlLzP6bDGiaVc/lYEAtXkAc61sdSJzHzyd/trvmVCWcw8jhMK+eL86eaow
+         Lsvy+uVg+5khXfIjJ5gLKf1+TS9Gp9YhMaW1f30sLS4RUiQwEykL4oV8duh/5SuLc/oC
+         743WaFONMO7IVSKqvW5NeFCkUb9DcTEM1fitWrohKsJy4MrZJbZV47VsrG2y1Nxi5gwP
+         iLeoGynSOOjuXKccBpN/cV8uEwtKwtF/NntBx29XvaPr0IWqXPxmM6mvJb74o8pu8aoq
+         iK/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVyQqHXwrEf1E3kwE/MxZcxpVYR6M9uLFHCk+BJakYBdJJhv0t8qDZUqpcxOa5dFbIZfpdaj3AOlVxGywpL7VkeFqmaunEuXCCbdMqg
+X-Gm-Message-State: AOJu0YzWyXFwkA3qGLQINb8VnmJs4ArYSL0mIqma3yR1trGaLDpedTxx
+	gRmUwIQc2d0fiBl7fzqtuMwvtULPfF+1Si4lSeJjUsVAmwMRHlnCJCQ8uxc7V/Q=
+X-Google-Smtp-Source: AGHT+IEKt/RfkCtSA9CPOxPqJF0r1UmC/bt2fLfDSdr/8Y2DnQGu8cJz8hAe2wzxaa0eNCpkvzktFQ==
+X-Received: by 2002:a05:6a20:7f95:b0:1be:d5e9:b444 with SMTP id adf61e73a8af0-1c4725173a1mr1458314637.0.1721855393189;
+        Wed, 24 Jul 2024 14:09:53 -0700 (PDT)
+Received: from x1 ([2601:1c2:1802:170:8821:4dd1:578:cc09])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb74e8730sm2128580a91.38.2024.07.24.14.09.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 14:09:52 -0700 (PDT)
+Date: Wed, 24 Jul 2024 14:09:50 -0700
+From: Drew Fustini <drew@pdp7.com>
+To: Chen Wang <unicornxw@gmail.com>
+Cc: adrian.hunter@intel.com, aou@eecs.berkeley.edu, conor+dt@kernel.org,
+	guoren@kernel.org, inochiama@outlook.com, jszhang@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, palmer@dabbelt.com,
+	paul.walmsley@sifive.com, robh@kernel.org, ulf.hansson@linaro.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mmc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	chao.wei@sophgo.com, haijiao.liu@sophgo.com,
+	xiaoguang.xing@sophgo.com, tingzhu.wang@sophgo.com,
+	Chen Wang <unicorn_wang@outlook.com>
+Subject: Re: [PATCH v5 3/8] mmc: sdhci-of-dwcmshc: factor out code for
+ th1520_init()
+Message-ID: <ZqFtntMl9aw4OBDS@x1>
+References: <cover.1721377374.git.unicorn_wang@outlook.com>
+ <b774f2b62d68edab2d95d9dbd1f55cac50c6abff.1721377374.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,59 +90,94 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240724010550.1755992-3-willy@infradead.org>
+In-Reply-To: <b774f2b62d68edab2d95d9dbd1f55cac50c6abff.1721377374.git.unicorn_wang@outlook.com>
 
-Hi Matthew,
+On Fri, Jul 19, 2024 at 04:45:59PM +0800, Chen Wang wrote:
+> From: Chen Wang <unicorn_wang@outlook.com>
+> 
+> Different socs have initialization operations in
+> the probe process, which are summarized as functions.
+> 
+> This patch first factor out init function for th1520.
+> 
+> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+> ---
+>  drivers/mmc/host/sdhci-of-dwcmshc.c | 51 +++++++++++++++++------------
+>  1 file changed, 30 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-of-dwcmshc.c b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> index 903fe06050e4..bb0adc2ee325 100644
+> --- a/drivers/mmc/host/sdhci-of-dwcmshc.c
+> +++ b/drivers/mmc/host/sdhci-of-dwcmshc.c
+> @@ -830,6 +830,35 @@ static void th1520_sdhci_reset(struct sdhci_host *host, u8 mask)
+>  	}
+>  }
+>  
+> +static int th1520_init(struct device *dev,
+> +		       struct sdhci_host *host,
+> +		       struct dwcmshc_priv *dwc_priv)
+> +{
+> +	dwc_priv->delay_line = PHY_SDCLKDL_DC_DEFAULT;
+> +
+> +	if (device_property_read_bool(dev, "mmc-ddr-1_8v") ||
+> +	    device_property_read_bool(dev, "mmc-hs200-1_8v") ||
+> +	    device_property_read_bool(dev, "mmc-hs400-1_8v"))
+> +		dwc_priv->flags |= FLAG_IO_FIXED_1V8;
+> +	else
+> +		dwc_priv->flags &= ~FLAG_IO_FIXED_1V8;
+> +
+> +	/*
+> +	 * start_signal_voltage_switch() will try 3.3V first
+> +	 * then 1.8V. Use SDHCI_SIGNALING_180 rather than
+> +	 * SDHCI_SIGNALING_330 to avoid setting voltage to 3.3V
+> +	 * in sdhci_start_signal_voltage_switch().
+> +	 */
+> +	if (dwc_priv->flags & FLAG_IO_FIXED_1V8) {
+> +		host->flags &= ~SDHCI_SIGNALING_330;
+> +		host->flags |=  SDHCI_SIGNALING_180;
+> +	}
+> +
+> +	sdhci_enable_v4_mode(host);
+> +
+> +	return 0;
+> +}
+> +
+>  static void cv18xx_sdhci_reset(struct sdhci_host *host, u8 mask)
+>  {
+>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> @@ -1231,27 +1260,7 @@ static int dwcmshc_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	if (pltfm_data == &sdhci_dwcmshc_th1520_pdata) {
+> -		priv->delay_line = PHY_SDCLKDL_DC_DEFAULT;
+> -
+> -		if (device_property_read_bool(dev, "mmc-ddr-1_8v") ||
+> -		    device_property_read_bool(dev, "mmc-hs200-1_8v") ||
+> -		    device_property_read_bool(dev, "mmc-hs400-1_8v"))
+> -			priv->flags |= FLAG_IO_FIXED_1V8;
+> -		else
+> -			priv->flags &= ~FLAG_IO_FIXED_1V8;
+> -
+> -		/*
+> -		 * start_signal_voltage_switch() will try 3.3V first
+> -		 * then 1.8V. Use SDHCI_SIGNALING_180 rather than
+> -		 * SDHCI_SIGNALING_330 to avoid setting voltage to 3.3V
+> -		 * in sdhci_start_signal_voltage_switch().
+> -		 */
+> -		if (priv->flags & FLAG_IO_FIXED_1V8) {
+> -			host->flags &= ~SDHCI_SIGNALING_330;
+> -			host->flags |=  SDHCI_SIGNALING_180;
+> -		}
+> -
+> -		sdhci_enable_v4_mode(host);
+> +		th1520_init(dev, host, priv);
+>  	}
+>  
+>  #ifdef CONFIG_ACPI
+> -- 
+> 2.34.1
+> 
 
-kernel test robot noticed the following build errors:
+Reviewd-by: Drew Fustini <drew@pdp7.com>
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on linux/master linus/master v6.10 next-20240724]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Matthew-Wilcox-Oracle/fs-Remove-calls-to-set-and-clear-the-folio-error-flag/20240724-111138
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20240724010550.1755992-3-willy%40infradead.org
-patch subject: [PATCH 2/2] mm: Remove PG_error
-config: parisc-allnoconfig (https://download.01.org/0day-ci/archive/20240725/202407250459.K6byaMoI-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240725/202407250459.K6byaMoI-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407250459.K6byaMoI-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from mm/debug.c:13:
->> include/trace/events/mmflags.h:98:44: error: 'PG_error' undeclared here (not in a function); did you mean 'ma_error'?
-      98 | #define DEF_PAGEFLAG_NAME(_name) { 1UL <<  PG_##_name, __stringify(_name) }
-         |                                            ^~~
-   include/trace/events/mmflags.h:103:9: note: in expansion of macro 'DEF_PAGEFLAG_NAME'
-     103 |         DEF_PAGEFLAG_NAME(error),                                       \
-         |         ^~~~~~~~~~~~~~~~~
-   mm/debug.c:35:9: note: in expansion of macro '__def_pageflag_names'
-      35 |         __def_pageflag_names,
-         |         ^~~~~~~~~~~~~~~~~~~~
---
-   fs/proc/page.c: In function 'stable_page_flags':
->> fs/proc/page.c:185:49: error: 'PG_error' undeclared (first use in this function); did you mean 'ma_error'?
-     185 |         u |= kpf_copy_bit(k, KPF_ERROR,         PG_error);
-         |                                                 ^~~~~~~~
-         |                                                 ma_error
-   fs/proc/page.c:185:49: note: each undeclared identifier is reported only once for each function it appears in
-
-
-vim +98 include/trace/events/mmflags.h
-
-4beba9486abd2f8 Steven Price  2020-04-22  97  
-e26fcc02c7f6c76 Hyeonggon Yoo 2023-01-30 @98  #define DEF_PAGEFLAG_NAME(_name) { 1UL <<  PG_##_name, __stringify(_name) }
-e26fcc02c7f6c76 Hyeonggon Yoo 2023-01-30  99  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
