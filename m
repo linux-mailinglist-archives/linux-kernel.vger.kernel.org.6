@@ -1,149 +1,187 @@
-Return-Path: <linux-kernel+bounces-261163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67B2193B37A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:17:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3112493B37E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:20:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22CD9283C6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:17:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E72B4283C1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:20:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45DE15B0FD;
-	Wed, 24 Jul 2024 15:17:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7409815B122;
+	Wed, 24 Jul 2024 15:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="dafAJaUO"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="foq0aGZe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A05F33FD
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 15:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B52D29E;
+	Wed, 24 Jul 2024 15:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721834256; cv=none; b=E5rdN6JNg1k3EeNszC711+MxtBcMrups+7oENx6HMp0H7d5Q4BuEzLYwwbk5EtJpWzPHzyT+jrtwgrD70PRHARSvCRbqYhZXHYs4/HppFGOTsOeRJ8rGcrCx+NYdEXsXquIn2VlJYCVJrC4tLgN9K7oI+VwcOz4UqMYTNRxawPs=
+	t=1721834415; cv=none; b=D5r+uEcgeJSfpkuhf7r3StpWglny+Zpuz7aTdYJRSZuc6LmfhM0I/FZEeNJdaXKscIaOBAZbFgMeF2D5/JhW5ONaeIVL1+zkt3zlDzRfc4eDPomhPAs5hG0dgVGPqpnBgoCzUrhnvreTrZwEJB+v2jTecIOw4jaLKRPk7HuNnOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721834256; c=relaxed/simple;
-	bh=a+Ua/ltIdCBXzmBR4aP6AsT71kbH7M8vEX8Uou0oB5w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VKFAye4kNcIGCsjFC49mvn/t7Ewdw/X24HhHjH2NSFuS9PO9PQOVFPAsKUCnjT+8gL05B4mFFFwM6sqmSJWuOA2HGzng4G4ApsSs2F9IRLvXfNciykcgvu0gje5fjwifLdEUk5bBR5Tlm+PHg8U+t3Z8HFmBKlyyhZU6gppHWb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=dafAJaUO; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52efd91dd28so776913e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 08:17:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mihalicyn.com; s=mihalicyn; t=1721834252; x=1722439052; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wspkz/Cs5R9BiUPCuy7k5Wn7V4f/vU9ck3LJUYhHuQg=;
-        b=dafAJaUOIouygVZ7Bw1r103lqZADXgnkxSDS8vtIsk6eLEyTeSGPaY6x+DfWPZdPPC
-         EaUYEPty9YhN28Pyse2tlRNKc7oUO4B9nBygDoPq86Q6zPpSsS61OO4fq4Naym/8bPvd
-         uNkaeeyaTfz7NgadDDlLG8r5XpcNjtnLtLuQk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721834252; x=1722439052;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wspkz/Cs5R9BiUPCuy7k5Wn7V4f/vU9ck3LJUYhHuQg=;
-        b=UiI1uoJc+GNhXoYJSqecT3zYsJ7n/Ju1bXX30HEDKbXMyOEgr/InPIWmnQAzJxi5t/
-         FJucrYTEzw9G8fVqXAqFa6w4O4sUcS9K1u/t9R0hqlkC4H4nxcAgkRgc++H7pAg2RJNX
-         kKody2kACwFWz+hrneYz638ZW8W4GyVGD76Cc3Nv5NupX043RhsTSuvijYKL7sdSymLm
-         uLHZPXlV9Jsr6HwlqpZSR4hqURp6lnK1I+h/yI6uITGUYUL2Q+dDJH+xyDaEZ1WpQlEQ
-         rUnlCsXB28w+2LqVHVsLzBBnZevW0JT31sOu1m3KVPa4iuVPwxnd1PInqs90DuZO/DLt
-         6ztQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSrOxMKS4l3bXtdDbLw2HX2hJtUYxATxuUOKenrmGsI54XLJK8lrD6ixlxZPWEJwScyhYgxH7r9Kkhv7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZrN3quKiGrho85I3ZXmUHoHGvtmVUYHi1jhRoeWbVJw+GdxIV
-	8cU8jKmps/fApJiF/WyIe6J7N1Wp9K2ANyJOw8hwCb97KZP2SpuqW65usVsZQ/OwgAhfMu2bJWG
-	D7DYFTioq1CI2Gta5tCwySMGBoaMlUFwd/AdJfQ==
-X-Google-Smtp-Source: AGHT+IHiiD1Wxpt5KljDcBgPWhRDThoNsEdswEitl9/65WSjB9r2TORFgCr7iaa4bKqAvIytaQLpKQBnkTcRKQdPvCY=
-X-Received: by 2002:a05:6512:3b21:b0:52f:4b6:bb4b with SMTP id
- 2adb3069b0e04-52f04b6bbb3mr3408316e87.9.1721834251713; Wed, 24 Jul 2024
- 08:17:31 -0700 (PDT)
+	s=arc-20240116; t=1721834415; c=relaxed/simple;
+	bh=qeXLUpoZGsZRPbAT3HnF46SuxY7YTRrZMXLruO62MZ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Me19OrlCEfYzutpeWH/QfKoGTItNx7KbFeKIpDZJfRZjrvgxWj2QRKSRE5jPm62cWre9Z3/0LqyH0kjXxRdJVcJoZyy6CFR2QGMDbK/dCPZgJVWS0uKLn1UFSPJizzJfyZUyM7WHqYaD0NGsUBec7j8EaZDlfTvGBvUaj927CKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=foq0aGZe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D6D3C32781;
+	Wed, 24 Jul 2024 15:20:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721834415;
+	bh=qeXLUpoZGsZRPbAT3HnF46SuxY7YTRrZMXLruO62MZ4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=foq0aGZehOfXyqCf95kJdLCejTjAEe6euW8dlRJJ7u9hGgh36hPbajH3m3Suml4LV
+	 z61gO5OonvF224YmrWKT1dYlX1XAI9bZezjUI1jfVVqUwY0zGPvG/kP8ttPu6VOokS
+	 JxfEX1hGt9bq1tbyACJJi4J+fCwrXPziPYtniQ+HUUSWstnFvwG4x7L15Ec36jyO5u
+	 itQ87DTpaNObbcl+W8KnQuLwyng0WIngITLq/J4qvh6TScZSsWmTPYSS3OxKkAOvwq
+	 lpFkpGr8FTJXHPniV87OFfsML7dm5u2ppm6NkzcnH964YfzNxuIKgVNohknyOXu2jw
+	 rGxJomXCH6pPw==
+Message-ID: <610dc6fa-6681-4c9e-bffb-ef6d299dd169@kernel.org>
+Date: Wed, 24 Jul 2024 17:20:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240724-s_user_ns-fix-v1-1-895d07c94701@kernel.org>
-In-Reply-To: <20240724-s_user_ns-fix-v1-1-895d07c94701@kernel.org>
-From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date: Wed, 24 Jul 2024 17:17:20 +0200
-Message-ID: <CAJqdLrr78NzGkUzYhCiFJmvWZDYbCFaeJ19XHwFh2VK2J4+VvA@mail.gmail.com>
-Subject: Re: [PATCH] fs: don't allow non-init s_user_ns for filesystems
- without FS_USERNS_MOUNT
-To: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Amir Goldstein <amir73il@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: kmem: add lockdep assertion to obj_cgroup_memcg
+Content-Language: en-US
+To: Muchun Song <songmuchun@bytedance.com>, hannes@cmpxchg.org,
+ mhocko@kernel.org, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+ muchun.song@linux.dev, akpm@linux-foundation.org
+Cc: cgroups@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20240724095307.81264-1-songmuchun@bytedance.com>
+From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+In-Reply-To: <20240724095307.81264-1-songmuchun@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Am Mi., 24. Juli 2024 um 16:54 Uhr schrieb Seth Forshee (DigitalOcean)
-<sforshee@kernel.org>:
->
-> Christian noticed that it is possible for a privileged user to mount
-> most filesystems with a non-initial user namespace in sb->s_user_ns.
-> When fsopen() is called in a non-init namespace the caller's namespace
-> is recorded in fs_context->user_ns. If the returned file descriptor is
-> then passed to a process priviliged in init_user_ns, that process can
-> call fsconfig(fd_fs, FSCONFIG_CMD_CREATE), creating a new superblock
-> with sb->s_user_ns set to the namespace of the process which called
-> fsopen().
->
-> This is problematic. We cannot assume that any filesystem which does not
-> set FS_USERNS_MOUNT has been written with a non-initial s_user_ns in
-> mind, increasing the risk for bugs and security issues.
->
-> Prevent this by returning EPERM from sget_fc() when FS_USERNS_MOUNT is
-> not set for the filesystem and a non-initial user namespace will be
-> used. sget() does not need to be updated as it always uses the user
-> namespace of the current context, or the initial user namespace if
-> SB_SUBMOUNT is set.
->
-> Fixes: cb50b348c71f ("convenience helpers: vfs_get_super() and sget_fc()")
-> Reported-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
-
-Hi Seth!
-
-LGTM
-
-Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-
+On 7/24/24 11:53 AM, Muchun Song wrote:
+> The obj_cgroup_memcg() is supposed to safe to prevent the returned
+> memory cgroup from being freed only when the caller is holding the
+> rcu read lock or objcg_lock or cgroup_mutex. It is very easy to
+> ignore thoes conditions when users call some upper APIs which call
+> obj_cgroup_memcg() internally like mem_cgroup_from_slab_obj() (See
+> the link below). So it is better to add lockdep assertion to
+> obj_cgroup_memcg() to find those issues ASAP.
+> 
+> Because there is no user of obj_cgroup_memcg() holding objcg_lock
+> to make the returned memory cgroup safe, do not add objcg_lock
+> assertion (We should export objcg_lock if we really want to do).
+> Additionally, this is some internal implementation detail of memcg
+> and should not be accessible outside memcg code.
+> 
+> Some users like __mem_cgroup_uncharge() do not care the lifetime
+> of the returned memory cgroup, which just want to know if the
+> folio is charged to a memory cgroup, therefore, they do not need
+> to hold the needed locks. In which case, introduce a new helper
+> folio_memcg_charged() to do this. Compare it to folio_memcg(), it
+> could eliminate a memory access of objcg->memcg for kmem, actually,
+> a really small gain.
+> 
+> Link: https://lore.kernel.org/all/20240718083607.42068-1-songmuchun@bytedance.com/
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 > ---
->  fs/super.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/fs/super.c b/fs/super.c
-> index 095ba793e10c..d681fb7698d8 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -736,6 +736,17 @@ struct super_block *sget_fc(struct fs_context *fc,
->         struct user_namespace *user_ns = fc->global ? &init_user_ns : fc->user_ns;
->         int err;
->
-> +       /*
-> +        * Never allow s_user_ns != &init_user_ns when FS_USERNS_MOUNT is
-> +        * not set, as the filesystem is likely unprepared to handle it.
-> +        * This can happen when fsconfig() is called from init_user_ns with
-> +        * an fs_fd opened in another user namespace.
-> +        */
-> +       if (user_ns != &init_user_ns && !(fc->fs_type->fs_flags & FS_USERNS_MOUNT)) {
-> +               errorfc(fc, "mounting from non-initial user namespace is not allowed");
-> +               return ERR_PTR(-EPERM);
-> +       }
+> v2:
+>  - Remove mention of objcg_lock in obj_cgroup_memcg()(Shakeel Butt).
+> 
+>  include/linux/memcontrol.h | 20 +++++++++++++++++---
+>  mm/memcontrol.c            |  6 +++---
+>  2 files changed, 20 insertions(+), 6 deletions(-)
+> 
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index fc94879db4dff..742351945f683 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -360,11 +360,11 @@ static inline bool folio_memcg_kmem(struct folio *folio);
+>   * After the initialization objcg->memcg is always pointing at
+>   * a valid memcg, but can be atomically swapped to the parent memcg.
+>   *
+> - * The caller must ensure that the returned memcg won't be released:
+> - * e.g. acquire the rcu_read_lock or css_set_lock.
+> + * The caller must ensure that the returned memcg won't be released.
+>   */
+>  static inline struct mem_cgroup *obj_cgroup_memcg(struct obj_cgroup *objcg)
+>  {
+> +	WARN_ON_ONCE(!rcu_read_lock_held() && !lockdep_is_held(&cgroup_mutex));
+
+Maybe lockdep_assert_once() would be a better fit?
+
+>  	return READ_ONCE(objcg->memcg);
+>  }
+>  
+> @@ -438,6 +438,19 @@ static inline struct mem_cgroup *folio_memcg(struct folio *folio)
+>  	return __folio_memcg(folio);
+>  }
+>  
+> +/*
+> + * folio_memcg_charged - If a folio is charged to a memory cgroup.
+> + * @folio: Pointer to the folio.
+> + *
+> + * Returns true if folio is charged to a memory cgroup, otherwise returns false.
+> + */
+> +static inline bool folio_memcg_charged(struct folio *folio)
+> +{
+> +	if (folio_memcg_kmem(folio))
+> +		return __folio_objcg(folio) != NULL;
+> +	return __folio_memcg(folio) != NULL;
+> +}
 > +
->  retry:
->         spin_lock(&sb_lock);
->         if (test) {
->
-> ---
-> base-commit: 256abd8e550ce977b728be79a74e1729438b4948
-> change-id: 20240723-s_user_ns-fix-b00c31de1cb8
->
-> Best regards,
-> --
-> Seth Forshee (DigitalOcean) <sforshee@kernel.org>
->
+>  /**
+>   * folio_memcg_rcu - Locklessly get the memory cgroup associated with a folio.
+>   * @folio: Pointer to the folio.
+> @@ -454,7 +467,6 @@ static inline struct mem_cgroup *folio_memcg_rcu(struct folio *folio)
+>  	unsigned long memcg_data = READ_ONCE(folio->memcg_data);
+>  
+>  	VM_BUG_ON_FOLIO(folio_test_slab(folio), folio);
+> -	WARN_ON_ONCE(!rcu_read_lock_held());
+>  
+>  	if (memcg_data & MEMCG_DATA_KMEM) {
+>  		struct obj_cgroup *objcg;
+> @@ -463,6 +475,8 @@ static inline struct mem_cgroup *folio_memcg_rcu(struct folio *folio)
+>  		return obj_cgroup_memcg(objcg);
+>  	}
+>  
+> +	WARN_ON_ONCE(!rcu_read_lock_held());
+> +
+>  	return (struct mem_cgroup *)(memcg_data & ~OBJEXTS_FLAGS_MASK);
+>  }
+>  
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 622d4544edd24..3da0284573857 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -2366,7 +2366,7 @@ void mem_cgroup_cancel_charge(struct mem_cgroup *memcg, unsigned int nr_pages)
+>  
+>  static void commit_charge(struct folio *folio, struct mem_cgroup *memcg)
+>  {
+> -	VM_BUG_ON_FOLIO(folio_memcg(folio), folio);
+> +	VM_BUG_ON_FOLIO(folio_memcg_charged(folio), folio);
+>  	/*
+>  	 * Any of the following ensures page's memcg stability:
+>  	 *
+> @@ -4617,7 +4617,7 @@ void __mem_cgroup_uncharge(struct folio *folio)
+>  	struct uncharge_gather ug;
+>  
+>  	/* Don't touch folio->lru of any random page, pre-check: */
+> -	if (!folio_memcg(folio))
+> +	if (!folio_memcg_charged(folio))
+>  		return;
+>  
+>  	uncharge_gather_clear(&ug);
+> @@ -4662,7 +4662,7 @@ void mem_cgroup_replace_folio(struct folio *old, struct folio *new)
+>  		return;
+>  
+>  	/* Page cache replacement: new folio already charged? */
+> -	if (folio_memcg(new))
+> +	if (folio_memcg_charged(new))
+>  		return;
+>  
+>  	memcg = folio_memcg(old);
+
 
