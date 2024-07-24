@@ -1,87 +1,95 @@
-Return-Path: <linux-kernel+bounces-260537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D6FB93AAA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:37:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0C2C93AAA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:42:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C235C284025
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:37:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F21C1F2375C
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85589474;
-	Wed, 24 Jul 2024 01:37:04 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195A6B64E;
+	Wed, 24 Jul 2024 01:42:33 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFADB125D5
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 01:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06E46FC2
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 01:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721785024; cv=none; b=iH0Rppq7NwkYy/Gc5S2VVKHPk4ZiWYkrUzxybtW5mkZpjPue+cT4OWtS5g9ZU/dEpp+lVyvS4N1dYjeSLbCcqaUmqMFYRr+dNC7arotZZnjOM2B5BHEt8iRVu+9Gbiq1QDUxG5r3MpQSxFrAn72t3L8GLwVrkywDrvn3yAsGpF8=
+	t=1721785352; cv=none; b=X063M50tB2g/RcxZHGWplcV90T737xE09DcXJnflQDaJJZwHcyqklLT9PyLSM21SFVzhWOHWnoI3k6EJOfM3aTag2fgmjjlJpFVZrTF4lBCbggLGXB+0jmwfItsY08Mcp8cqa2H74OQK7++bCPlmoNWH1LFYvTsUBW633bXIstU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721785024; c=relaxed/simple;
-	bh=lqhI0H4gWcnbIqpXKUpPwhWp7HDI3q674HDJ7hTjh44=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=utkg6UzhwcJsVJ0+q4+YwS/Pq6Xldoc2juJGtUWc9FMAOmKvGDAg75/NI4Zgp1D4rrh7W4duR2Xg/QrGr5ORGtnFMBeL3+CSGUKHwC8VFBvikf5+SD/J21qkQ4jnicniztUbHRHMT/BDM5vBMiNoxFHv1KrniuI0jgiyrTtXE1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81258697716so1051305239f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 18:37:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721785022; x=1722389822;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DR4wXgBhm743A9T4zQTUyAIcji64pLPyBCzas+LMCQA=;
-        b=Jy8k5dA1O8MxTXRVwUEIKzrk+2bYyFtOi/wwGURRrstGJgvhKgnGFjGEuCfC4Kxl5K
-         4GWImcjisUFfGyuJ7Le5TKcGiBUs7vs+QNRC3RBpWbzbwG0me69NP9Eq2wkS88qMxf4f
-         N+iyH+R3pa6MFFIwuP2bPBCRYd4DBMrgVoGcYp0VhTsswPYf2ZQBKrKhTRr7PrwCOvHi
-         zGL5Vi8n8hEYtb/DW+2BuGCJYmDWsJJV5ec2MRh1n8Wc59yUvO9sY9mfG0QG+QZO0H9j
-         hZX083PIMeEnEexRmQlQcRzH7B1hKepsTQ2RrhQL1wNyyhh05AUM5RauW7UGpRZQnL7y
-         qF5g==
-X-Forwarded-Encrypted: i=1; AJvYcCU8j8gY9FhsJAyWAn+TYBLhJuDMF/YBQ9Z87o0nnHA5dZEhxu3hvkB5IbnIn0L5vE3HcLSDka0Z4H9LJ0n3qUAWrQ2WUQm952GrWVbN
-X-Gm-Message-State: AOJu0YyLobx7AFnEu7w+RUUFJneyi8fm6BHrA7BXdhKo40R6tb6JNZ94
-	Gj435uL+PpVHmmCLZht9CcCZ1bZuYAnEYEKwvLjM0bkfaat041JzwhcF3j78FtLAR2H1NVHHU8U
-	q0Kazd7/8IDJxtm/u5dRa1/pYeabYC9jMddNzQt4yhEILNnQgTrYSOCs=
-X-Google-Smtp-Source: AGHT+IEZbpxMG3qZ3yeDm3VOtNMCMageIEALMPp8Qupt7UkJ6ooUS6OcwP/Jy+f2Kir0ZF0iax3qNO2oJKSsjSt3HBpHIGc/YUHU
+	s=arc-20240116; t=1721785352; c=relaxed/simple;
+	bh=VFVIpcmr5TxHmnFmmfIZ34n0BSxfcb1XxnLl0Jzxg1s=;
+	h=From:Subject:To:CC:Message-ID:Date:MIME-Version:Content-Type; b=XcQuMmUOcvIucFC25ViHQapt2yEjHpPEObn7j6lZsNVZltHK31Xl4sJHX1gWXWnnO9XshxwEptkELRt7YTnmSwcEShFX9UgqwxuAy0K119cL+f848/VE3KaNqzrFdcZC3bHIuox85ukm2vD7ficJyhPC4UG2+ShNmcsBkFJlRX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WTGtW6wn6zMqry;
+	Wed, 24 Jul 2024 09:40:35 +0800 (CST)
+Received: from kwepemm600007.china.huawei.com (unknown [7.193.23.208])
+	by mail.maildlp.com (Postfix) with ESMTPS id DC9A1180101;
+	Wed, 24 Jul 2024 09:42:22 +0800 (CST)
+Received: from [10.174.176.125] (10.174.176.125) by
+ kwepemm600007.china.huawei.com (7.193.23.208) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 24 Jul 2024 09:42:21 +0800
+From: Kunkun Jiang <jiangkunkun@huawei.com>
+Subject: [bug report] iommu/arm-smmu-v3: Event cannot be printed in some
+ scenarios
+To: Lu Baolu <baolu.lu@linux.intel.com>, Will Deacon <will@kernel.org>, Robin
+ Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, Jason
+ Gunthorpe <jgg@ziepe.ca>, Nicolin Chen <nicolinc@nvidia.com>, Michael Shavit
+	<mshavit@google.com>, Mostafa Saleh <smostafa@google.com>
+CC: "moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<wanghaibin.wang@huawei.com>, <yuzenghui@huawei.com>,
+	<tangnianyao@huawei.com>
+Message-ID: <6147caf0-b9a0-30ca-795e-a1aa502a5c51@huawei.com>
+Date: Wed, 24 Jul 2024 09:42:09 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:138c:b0:397:5d37:61fa with SMTP id
- e9e14a558f8ab-398e4bcd071mr10025935ab.2.1721785021946; Tue, 23 Jul 2024
- 18:37:01 -0700 (PDT)
-Date: Tue, 23 Jul 2024 18:37:01 -0700
-In-Reply-To: <tencent_1C33839ECE1B1A4BC11B35251ABA11BBAC08@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009cea19061df45084@google.com>
-Subject: Re: [syzbot] [sound?] KMSAN: uninit-value in line6_midibuf_read
-From: syzbot <syzbot+78eccfb8b3c9a85fc6c5@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemm600007.china.huawei.com (7.193.23.208)
 
-Hello,
+Hi all,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+1797                 while (!queue_remove_raw(q, evt)) {
+1798                         u8 id = FIELD_GET(EVTQ_0_ID, evt[0]);
+1799
+1800                         ret = arm_smmu_handle_evt(smmu, evt);
+1801                         if (!ret || !__ratelimit(&rs))
+1802                                 continue;
+1803
+1804                         dev_info(smmu->dev, "event 0x%02x 
+received:\n", id);
+1805                         for (i = 0; i < ARRAY_SIZE(evt); ++i)
+1806                                 dev_info(smmu->dev, "\t0x%016llx\n",
+1807                                          (unsigned long long)evt[i]);
+1808
+1809                         cond_resched();
+1810                 }
 
-Reported-by: syzbot+78eccfb8b3c9a85fc6c5@syzkaller.appspotmail.com
-Tested-by: syzbot+78eccfb8b3c9a85fc6c5@syzkaller.appspotmail.com
+The smmu-v3 driver cannot print event information when "ret" is 0.
+Unfortunately due to commit 3dfa64aecbaf
+("iommu: Make iommu_report_device_fault() return void"), the default
+return value in arm_smmu_handle_evt() is 0. Maybe a trace should
+be added here?
 
-Tested on:
+Thanks,
+Kunkun Jiang
 
-commit:         2c9b3512 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=1481653d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6bfb33a8ad10458f
-dashboard link: https://syzkaller.appspot.com/bug?extid=78eccfb8b3c9a85fc6c5
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=133b2af1980000
-
-Note: testing is done by a robot and is best-effort only.
 
