@@ -1,205 +1,229 @@
-Return-Path: <linux-kernel+bounces-261408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03FF493B6F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:43:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C4A93B6F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:43:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89075284EB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:43:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBFD52851C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EADAE16C691;
-	Wed, 24 Jul 2024 18:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259A116A95F;
+	Wed, 24 Jul 2024 18:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="QMdb2nWp"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C/Ji5Tcx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3130E4D8B9
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 18:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 381DA15FA9E;
+	Wed, 24 Jul 2024 18:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721846597; cv=none; b=Ne82YRvULCU6d8vTPTexSOjbwWLDkMGx0iXBwPM/IhEuaniqigt/0XcFyXdOZPYRQJr+dxOI4sgk2Ps2WKt8PGioEprtmlOEt/423eeItPlVzgCgpgoky91VTu0ywnAw4TbC26TAO28896Ccj/nE5YY2o03Z+pxzhnSo+ezU6FY=
+	t=1721846594; cv=none; b=NjR2UrcQdsF+H5JBhGb9GVUKpLu1JcIev7gjf3ZUp9xdqIJRKgZnLCZsbq2OiSd7MPvrMkzE0FQ7fPFthhycOdmbq5vOP3/n+4eGGEIhz85sV/ny9qjITpxyYNfxyo4ovabLyNo0/buFPPigDzPNxKkMVXOIcU3LQIEuGC1gyFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721846597; c=relaxed/simple;
-	bh=Br/NEEvBU8PR2mBSYNoIal96755QejFyRGN1CwGNi5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MosNGUvZb7NWcawNwYszMuzfsJrWSbRDUdDAKtzwG4jaV0I6qQDLkc922riQp0uq5/HImJkDuB4IZ6xdhhtZeY4u2VUhKh/v3aFcwWHBXv2ME9VQ6h9I+j0rnvmoyIAS1v8FD15nQPfyN9e+g/0AWruePVY3VS8dWtqnQg4LyV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=QMdb2nWp; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1721846589;
-	bh=Br/NEEvBU8PR2mBSYNoIal96755QejFyRGN1CwGNi5A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QMdb2nWpODU/EYTUmmaXpLdYgkzNWBjgXKt6nNZ7EnuDeO09D2SNe0PFSsG/lBIac
-	 Vd7Ol3dgRiNoyb+kcp97cguY9QhvIcKZMsVyqDgOC7/oQRRiRdnZ6eoW/VaCFwGo7t
-	 R16D8KGqkoeGiH+/jbYhn0Gowe/JTm2T/BEjIrtI=
-Date: Wed, 24 Jul 2024 20:43:08 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Joel Granados <j.granados@samsung.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] sysctl: treewide: constify the ctl_table argument of
- proc_handlers
-Message-ID: <28c3d8b8-201e-45b9-b7eb-4da3e0acf7cc@t-8ch.de>
-References: <20240716152705.juet6srejwq5o6je@joelS2.panther.com>
- <cdf0831f-f9af-4aa7-a3a0-970efeec1def@t-8ch.de>
- <20240717195748.fe5ttokbibcsw2ca@joelS2.panther.com>
- <8a48b4d3-94ca-4a42-bf59-c340d7316603@t-8ch.de>
- <20240724084124.hbbn3jfcbsc7pyov@joelS2.panther.com>
- <12465755-1df4-4231-9bec-1044bfcdca4a@t-8ch.de>
- <20240724091817.eohhckduvtjscibg@joelS2.panther.com>
- <CGME20240724093233eucas1p148db81823daa1babc0b2a74ce501bbda@eucas1p1.samsung.com>
- <84dc8f21-78d2-4ea2-ad79-3f85b610c0a7@t-8ch.de>
- <20240724182058.svxh3ux23p4fnqqf@joelS2.panther.com>
+	s=arc-20240116; t=1721846594; c=relaxed/simple;
+	bh=L80G3kPVO8gxwuFs2mPT1nO1RmFx/FrBSZjpfwFmHos=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=W4gcoT5ih/nNYsKFFF3+eTYpOIkYP8x8i/gav7PRZhprF9/zFZymX9Chc+t1vcghiZdYXTkBOMhQ1m3qLjgJk9QuorjmESPVM1E5CxFn96HhFd+cNaVFt6qUF4GCGZ9L8TnMxuzAFE1z2nF5C17VDOFX5Jvyz1ECaPLH5yx/K6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C/Ji5Tcx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96B15C32786;
+	Wed, 24 Jul 2024 18:43:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721846593;
+	bh=L80G3kPVO8gxwuFs2mPT1nO1RmFx/FrBSZjpfwFmHos=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=C/Ji5Tcxdw6ztbZTRnedFT2zVntttve6JQGa4mgXO1sZyIuIobiM1o70bQIITCxZy
+	 LKIcIfUkltmdl7TAKz086FrJyWhy7Z3tg1LWQme1YnUeZ7klUO9jUM9V9Cjqu1G2ty
+	 pAIDSteK24dStdt5k/NplnXduMgNs+XtL2nRoRcV+2FdxFjccl5TZNRsqQmnQ329Au
+	 VnEauHY1lUFnMDEvy0PisKogV63MGv5g712+ntltz/QAUqxYNygueHv49te4S+CcXT
+	 uW31a+Fb5bewgLaBYHQcLGw6FxLXHcYJ++2PaY6m9DGHqol8JDMgwtkRJ9nIQpihWp
+	 k/XMpTmWC0XAQ==
+Date: Wed, 24 Jul 2024 13:43:11 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
+Cc: jingoohan1@gmail.com, manivannan.sadhasivam@linaro.org,
+	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	quic_mrana@quicinc.com
+Subject: Re: [PATCH v3 2/2] PCI: qcom: Avoid DBI and ATU register space
+ mirror to BAR/MMIO region
+Message-ID: <20240724184311.GA807002@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240724182058.svxh3ux23p4fnqqf@joelS2.panther.com>
+In-Reply-To: <20240724022719.2868490-3-quic_pyarlaga@quicinc.com>
 
-On 2024-07-24 20:20:58+0000, Joel Granados wrote:
-> On Wed, Jul 24, 2024 at 11:32:26AM +0200, Thomas Weißschuh wrote:
-> > On 2024-07-24 11:18:17+0000, Joel Granados wrote:
-> ...
-> > > > > ```
-> > > > 
-> > > > Yes, IIRC I got told during one review to drop it.
-> > > > But for me it is also necessary.
-> > > I also remember a comment from the XFS part of the patches where you
-> > > changed the formatting on some functions. What did you do to address
-> > > this? Did you change them manually? Or do you have a script?
-> > 
-> > Yes, the style fixes were done manually.
-> Ok. I have created some sed scripts to automate this.
+On Tue, Jul 23, 2024 at 07:27:19PM -0700, Prudhvi Yarlagadda wrote:
+> PARF hardware block which is a wrapper on top of DWC PCIe controller
+> mirrors the DBI and ATU register space. It uses PARF_SLV_ADDR_SPACE_SIZE
+> register to get the size of the memory block to be mirrored and uses
+> PARF_DBI_BASE_ADDR, PARF_ATU_BASE_ADDR registers to determine the base
+> address of DBI and ATU space inside the memory block that is being
+> mirrored.
 > 
-> > 
-> > > > Thinking back, there were other "virtual" lines, too.
-> ...
-> > >   int , void *, size_t *, loff_t *);
-> > > ```
-> > > 
-> > > > 
-> > > > (It doesn't find anything else, though)
-> > > Maybe you are missing running it with --include-headers?
-> > 
-> > There seems to be a slight misunderstanding.
-> > I meant that it does not find anything *new* on top of the existing
-> > patch, not that it can fully recreate the patch.
-> Sorry, misunderstood you.
+> When a memory region which is located above the SLV_ADDR_SPACE_SIZE
+> boundary is used for BAR region then there could be an overlap of DBI and
+> ATU address space that is getting mirrored and the BAR region. This
+> results in DBI and ATU address space contents getting updated when a PCIe
+> function driver tries updating the BAR/MMIO memory region. Reference
+> memory map of the PCIe memory region with DBI and ATU address space
+> overlapping BAR region is as below.
 > 
-> > 
-> > (I used --include-headers, undid one header hunk from the patch and
-> > validated that the hunk gets recreated)
-> ok. That means that "--include-headers" is active.
+>                         |---------------|
+>                         |               |
+>                         |               |
+>         ------- --------|---------------|
+>            |       |    |---------------|
+>            |       |    |       DBI     |
+>            |       |    |---------------|---->DBI_BASE_ADDR
+>            |       |    |               |
+>            |       |    |               |
+>            |    PCIe    |               |---->2*SLV_ADDR_SPACE_SIZE
+>            |    BAR/MMIO|---------------|
+>            |    Region  |       ATU     |
+>            |       |    |---------------|---->ATU_BASE_ADDR
+>            |       |    |               |
+>         PCIe       |    |---------------|
+>         Memory     |    |       DBI     |
+>         Region     |    |---------------|---->DBI_BASE_ADDR
+>            |       |    |               |
+>            |    --------|               |
+>            |            |               |---->SLV_ADDR_SPACE_SIZE
+>            |            |---------------|
+>            |            |       ATU     |
+>            |            |---------------|---->ATU_BASE_ADDR
+>            |            |               |
+>            |            |---------------|
+>            |            |       DBI     |
+>            |            |---------------|---->DBI_BASE_ADDR
+>            |            |               |
+>            |            |               |
+>         ----------------|---------------|
+>                         |               |
+>                         |               |
+>                         |               |
+>                         |---------------|
 > 
-> I actually made further changes on the cocci script for it to catch all
-> the corner cases that you did by hand. The patch changes substantially
-> as now there are much less formatting issues introduced by the script.
-> I'll include you as co-developed-by and in that way give you proper
-> credit for your work.
+> Currently memory region beyond the SLV_ADDR_SPACE_SIZE boundary is not
+> used for BAR region which is why the above mentioned issue is not
+> encountered. This issue is discovered as part of internal testing when we
+> tried moving the BAR region beyond the SLV_ADDR_SPACE_SIZE boundary. Hence
+> we are trying to fix this.
+> 
+> As PARF hardware block mirrors DBI and ATU register space after every
+> PARF_SLV_ADDR_SPACE_SIZE (default 0x1000000) boundary multiple, write
+> U32_MAX (all 0xFF's) to PARF_SLV_ADDR_SPACE_SIZE register to avoid
+> mirroring DBI and ATU to BAR/MMIO region. Write the physical base address
+> of DBI and ATU register blocks to PARF_DBI_BASE_ADDR (default 0x0) and
+> PARF_ATU_BASE_ADDR (default 0x1000) respectively to make sure DBI and ATU
+> blocks are at expected memory locations.
+> 
+> The register offsets PARF_DBI_BASE_ADDR_V2, PARF_SLV_ADDR_SPACE_SIZE_V2
+> and PARF_ATU_BASE_ADDR are applicable for platforms that use PARF
+> Qcom IP rev 1.9.0, 2.7.0 and 2.9.0. PARF_DBI_BASE_ADDR_V2 and
+> PARF_SLV_ADDR_SPACE_SIZE_V2 are applicable for PARF Qcom IP rev 2.3.3.
+> PARF_DBI_BASE_ADDR and PARF_SLV_ADDR_SPACE_SIZE are applicable for PARF
+> Qcom IP rev 1.0.0, 2.3.2 and 2.4.0. Updating the init()/post_init()
+> functions of the respective PARF versions to program applicable
+> PARF_DBI_BASE_ADDR, PARF_SLV_ADDR_SPACE_SIZE and PARF_ATU_BASE_ADDR
+> register offsets. And remove the unused SLV_ADDR_SPACE_SZ macro.
+> 
+> Signed-off-by: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
+> Reviewed-by: Mayank Rana <quic_mrana@quicinc.com>
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 62 +++++++++++++++++++-------
+>  1 file changed, 45 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 0180edf3310e..6976efb8e2f0 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -45,6 +45,7 @@
+>  #define PARF_PHY_REFCLK				0x4c
+>  #define PARF_CONFIG_BITS			0x50
+>  #define PARF_DBI_BASE_ADDR			0x168
+> +#define PARF_SLV_ADDR_SPACE_SIZE		0x16C
+>  #define PARF_MHI_CLOCK_RESET_CTRL		0x174
+>  #define PARF_AXI_MSTR_WR_ADDR_HALT		0x178
+>  #define PARF_AXI_MSTR_WR_ADDR_HALT_V2		0x1a8
+> @@ -52,8 +53,13 @@
+>  #define PARF_LTSSM				0x1b0
+>  #define PARF_SID_OFFSET				0x234
+>  #define PARF_BDF_TRANSLATE_CFG			0x24c
+> -#define PARF_SLV_ADDR_SPACE_SIZE		0x358
+> +#define PARF_DBI_BASE_ADDR_V2			0x350
+> +#define PARF_DBI_BASE_ADDR_V2_HI		0x354
+> +#define PARF_SLV_ADDR_SPACE_SIZE_V2		0x358
+> +#define PARF_SLV_ADDR_SPACE_SIZE_V2_HI		0x35C
+>  #define PARF_NO_SNOOP_OVERIDE			0x3d4
+> +#define PARF_ATU_BASE_ADDR			0x634
+> +#define PARF_ATU_BASE_ADDR_HI			0x638
+>  #define PARF_DEVICE_TYPE			0x1000
+>  #define PARF_BDF_TO_SID_TABLE_N			0x2000
+>  #define PARF_BDF_TO_SID_CFG			0x2c00
+> @@ -107,9 +113,6 @@
+>  /* PARF_CONFIG_BITS register fields */
+>  #define PHY_RX0_EQ(x)				FIELD_PREP(GENMASK(26, 24), x)
+>  
+> -/* PARF_SLV_ADDR_SPACE_SIZE register value */
+> -#define SLV_ADDR_SPACE_SZ			0x10000000
+> -
+>  /* PARF_MHI_CLOCK_RESET_CTRL register fields */
+>  #define AHB_CLK_EN				BIT(0)
+>  #define MSTR_AXI_CLK_EN				BIT(1)
+> @@ -324,6 +327,39 @@ static void qcom_pcie_clear_hpc(struct dw_pcie *pci)
+>  	dw_pcie_dbi_ro_wr_dis(pci);
+>  }
+>  
+> +static void qcom_pcie_configure_dbi_base(struct qcom_pcie *pcie)
+> +{
+> +	struct dw_pcie *pci = pcie->pci;
+> +
+> +	if (pci->dbi_phys_addr) {
+> +		writel(lower_32_bits(pci->dbi_phys_addr), pcie->parf +
+> +							PARF_DBI_BASE_ADDR);
+> +		writel(U32_MAX, pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
+> +	}
+> +}
+> +
+> +static void qcom_pcie_configure_dbi_atu_base(struct qcom_pcie *pcie)
+> +{
+> +	struct dw_pcie *pci = pcie->pci;
+> +
+> +	if (pci->dbi_phys_addr) {
+> +		writel(lower_32_bits(pci->dbi_phys_addr), pcie->parf +
+> +							PARF_DBI_BASE_ADDR_V2);
+> +		writel(upper_32_bits(pci->dbi_phys_addr), pcie->parf +
+> +						PARF_DBI_BASE_ADDR_V2_HI);
+> +
+> +		if (pci->atu_phys_addr) {
+> +			writel(lower_32_bits(pci->atu_phys_addr), pcie->parf +
+> +							PARF_ATU_BASE_ADDR);
+> +			writel(upper_32_bits(pci->atu_phys_addr), pcie->parf +
+> +							PARF_ATU_BASE_ADDR_HI);
+> +		}
+> +
+> +		writel(U32_MAX, pcie->parf + PARF_SLV_ADDR_SPACE_SIZE_V2);
+> +		writel(U32_MAX, pcie->parf + PARF_SLV_ADDR_SPACE_SIZE_V2_HI);
+> +	}
+> +}
 
-Ok.
+These functions write CPU physical addresses into registers.  I don't
+know where these registers live.  If they are on the PCI side of the
+world, they most likely should contain PCI bus addresses, not CPU
+physical addresses.
 
-I ran the scripts and for the result:
+In some systems, PCI bus addresses are the same as CPU physical
+addresses, but on many systems they are not the same, so it's better
+if we don't make implicit assumptions that they are the same.  
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-
-> In order to reproduce what I did you need to run [1] with this cocci
-> script [2] and then run [3] with this sed script [4]. I have checked to
-> see that the same files are changed. The difference between what you and
-> I did is mainly that coccinelle does not make any formatting decisions.
-> 
-> Will create and send the PR shortly.
-
-Ack.
-
-> Best
-> 
-> 
-> [1]
-> ```
->   make coccicheck  MODE=patch SPFLAGS="--in-place --include-headers --smpl-spacing --jobs=8" COCCI=SCRIPT.cocci
-> ```
-> 
-> [2]
-> ```
->   virtual patch
-> 
->   @r1@
->   identifier ctl, write, buffer, lenp, ppos;
->   identifier func !~ "appldata_(timer|interval)_handler|sched_(rt|rr)_handler|rds_tcp_skbuf_handler|proc_sctp_do_(hmac_alg|rto_min|rto_max|udp_port|alpha_beta|auth|probe_interval)";
->   @@
-> 
->   int func(
->   - struct ctl_table *ctl
->   + const struct ctl_table *ctl
->     ,int write, void *buffer, size_t *lenp, loff_t *ppos);
-> 
->   @r2@
->   identifier func, ctl, write, buffer, lenp, ppos;
->   @@
-> 
->   int func(
->   - struct ctl_table *ctl
->   + const struct ctl_table *ctl
->     ,int write, void *buffer, size_t *lenp, loff_t *ppos)
->   { ... }
-> 
->   @r3@
->   identifier func;
->   @@
-> 
->   int func(
->   - struct ctl_table *
->   + const struct ctl_table *
->     ,int , void *, size_t *, loff_t *);
-> 
->   @r4@
->   identifier func, ctl;
->   @@
-> 
->   int func(
->   - struct ctl_table *ctl
->   + const struct ctl_table *ctl
->     ,int , void *, size_t *, loff_t *);
-> 
->   @r5@
->   identifier func, write, buffer, lenp, ppos;
->   @@
-> 
->   int func(
->   - struct ctl_table *
->   + const struct ctl_table *
->     ,int write, void *buffer, size_t *lenp, loff_t *ppos);
-> ```
-> 
-> [3] 
-> ```
->  sed --in-place -f /tmp/constfy_formating.sed fs/xfs/xfs_sysctl.c kernel/watchdog.c
-> ```
-> 
-> [4]
-> ```
-> s/^xfs_stats_clear_proc_handler(const struct ctl_table \*ctl,$/xfs_stats_clear_proc_handler(\
-> \tconst struct ctl_table\t*ctl,/
-> s/^xfs_panic_mask_proc_handler(const struct ctl_table \*ctl,$/xfs_panic_mask_proc_handler(\
-> \tconst struct ctl_table\t*ctl,/
-> s/^xfs_deprecated_dointvec_minmax(const struct ctl_table \*ctl,$/xfs_deprecated_dointvec_minmax(\
-> \tconst struct ctl_table\t*ctl,/
-> s/proc_watchdog_common(int which, struct ctl_table \*table/proc_watchdog_common(int which, const struct ctl_table *table/
-> 
-> ```
-> 
-> -- 
-> 
-> Joel Granados
+Bjorn
 
