@@ -1,175 +1,201 @@
-Return-Path: <linux-kernel+bounces-261178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC1BF93B3C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:32:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E000593B3C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 241221F2151F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:32:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDB021F22F71
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:32:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40AC15ECD3;
-	Wed, 24 Jul 2024 15:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C6F15B541;
+	Wed, 24 Jul 2024 15:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dfBryDjG"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PyRGwp2I"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FFD15B97C;
-	Wed, 24 Jul 2024 15:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE3F6A33A
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 15:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721835099; cv=none; b=UO1A8dDnBoen3KkO5NPRB4DztcASe0oTL8zp8/VejbsvwMgwroe1d2UzVu22xqv6Syg6kpvNn2KLKUryUFMYyoaww/gU6SWyuPp+oiBnd41LTCwblaJbBPdW73rOOWU+HC7rTw95aAijSFExshFlNMZEIliYNxL9NQHYBfc30Uo=
+	t=1721835144; cv=none; b=PvX5Nm7QT5DPt7Yme9E3+jctM7D7Smz1owuDjhmLuJ8Amc3AfPoXTMJnSDmQc1l79c2OFJKQqUBTmiSsMCvdS6Zg5eIirKl/ZshfcEEq4QPj9bYQzZ+ReoMYkyhZFB8zH09RNkYLwgKGXY9gkwutyN+8oGq0R2hi1UV8CUPq5qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721835099; c=relaxed/simple;
-	bh=NSVxTjMae1Bx/+hhRYv5GEpIddtRRspNEEkO3N5REBY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=szh/NwX++/5sOfZwNvHCR3MalWH0PFfV1W8tqzVfmoKROFaL+m1GuMM9HQEOaCOzuejOhbFD1/Grep8BtHwJwHpoJUkMTkuQnO1LLjN1uJfLzKxvIzgmrV/bXVtde5xAIt6y5FhRRb7ZI8/eBzWSBW6dZr4hh23clx1BJwyTQzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dfBryDjG; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6b5d3113168so39731776d6.2;
-        Wed, 24 Jul 2024 08:31:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721835096; x=1722439896; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=1tbL2oJTejNN0wsTP/gMwmfeWI2fp0Jph/s0VC70w1g=;
-        b=dfBryDjG3ah3Is26aLQ8K1sKxi0LbSozxS23wd7SoHE8b71ZH9TK+mUCCaS/zBnRj/
-         BkUSrAOseJXyyFhwdTqlbWF/PcM1iaZ0Qdr+ZnpHKk/siDTNDm5LRa/BW/rZK2//IV2G
-         7cYO865CAYv/UQJuEwjHP5HTBU2bjD4e8M+HOjWnJ1j9nHwUJ0BIbOnZzfKX/Eqzl4zq
-         pw4Slfi5EzVeY52zSYlDhhrun1roODvO90v54VTfXDV9Xm5zCKqJxmBD3WhEznxSr/KA
-         sWS7cHURxUGQ1xVYkmrFQeoqFfiZC1rYSI1x4Q+904TKfigt7A1h4JBjAodF+PBqbWJo
-         IaTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721835096; x=1722439896;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1tbL2oJTejNN0wsTP/gMwmfeWI2fp0Jph/s0VC70w1g=;
-        b=ZrPcvdESRQhKC3ftlT45psQs76tuuZGwGheG1PWS0q+TJMzbLrQ7eSXh4CIws9sOcx
-         /OUekM6b3BOP4oSeFLR2LbdiqHDPTjffjBCD6OJpOtX8LpnyaWSkMEoXXkvCVg01ZRmd
-         2ofnOrUkUJw3ukBXEbns8qY29PqSh7tB1uIaJhSd+Rpw97IXPAUTua2on/uDtvhNUBkE
-         KVOpwZXJJmcAjIg2Vzhm7CKIxLDj8A/Bnfuyf4cyYI9qtxWXrghUfH0SpiOJgfxdQD/N
-         /MZWlfxLeuCmtqy2sySIu+JWZq1mZ2C/oeVbSj3nhWqcLutSEEKFvH9nEU9+pGqXQDvo
-         woFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX2Di9pxu5EuUHFcGHFKXCpEjJeb2xaY9cPmjxk0/tiH51M/wgXdmXFkkTskLBphMV0U0LscHZZBMxt9/Z2RXYeuZRDCmbhHuulU0pi+NF7v7F5XChPljEcqBp6TU9frJ1iTkhEi/s8E/syLOBdCRcP9QN4XEhQze+AI5cPT17q
-X-Gm-Message-State: AOJu0Yw5Z8EA+mnihDODrepRCgjQ59ECg6ujS2/B0Q7msUJuSmHZm2TH
-	mPIo8Upj4eW/N1IW6VpHjjbeaAOV7iL7r2voepYGcv25cHETkHNd
-X-Google-Smtp-Source: AGHT+IGBUmgZMThOGyavjxH711/T/NO3ceqcYGOPaJRLoh7bNPhZYeVdvXNea8I9n9yfF8kuKZLEXw==
-X-Received: by 2002:ad4:5ecb:0:b0:6b5:e0b7:2fed with SMTP id 6a1803df08f44-6b9907d5c16mr27552066d6.47.1721835096366;
-        Wed, 24 Jul 2024 08:31:36 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b963afab3asm44156946d6.62.2024.07.24.08.31.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Jul 2024 08:31:35 -0700 (PDT)
-Message-ID: <999bc5f0-5b4c-4676-a085-ba2258c6a1d6@gmail.com>
-Date: Wed, 24 Jul 2024 08:31:30 -0700
+	s=arc-20240116; t=1721835144; c=relaxed/simple;
+	bh=JhLX2zUbNgvYUBkcoaMs0tiU+YC8ZirmCH9vCBVSvFU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CETWmMXzA0H9gYB+rB7aG2vrrEy3y2cJhE3UsXI7o2HIOwg/mMtB1+svGzMF6aOBT2HErG0zoQIkURJzjUxuNobXWozlCz5n9iSJ4mAx8EmlTeFNamtV8ovIuOBorN4acjDN/T9Vqrdr32jX6dBaXbbAztDxPfhaCAqhhLmP/jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PyRGwp2I; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721835143; x=1753371143;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=JhLX2zUbNgvYUBkcoaMs0tiU+YC8ZirmCH9vCBVSvFU=;
+  b=PyRGwp2IXcGVBEqawQ/A2ZyB+EgtP3owcF2PnyifcDXLtVbHzTNePBsC
+   JXheNMtWdTNi55RdK11d2F9phMw4nolcbz2qGMa7pdQLa6c/pGfRvrCr5
+   XAcSUSJBIrSN3voAjMP2UpXBZrv5EqeLXhzZZ2LsZSjmvQbXT/XajNnXY
+   pJqSHUGSQXiL19cgEtG8x3hdU53Eh/jAv58czMduP/TvKeLtegPHSAMrf
+   8Le4pVGrDy3NTElH6a79eSuqfdaeViEaQdVVjRTgugSZfFr01sEzKXoFT
+   FWaiQR+jtLRhibRBd16OZpfspQRdi/w4enusqJnCuyPSal0G87G44zG4x
+   Q==;
+X-CSE-ConnectionGUID: BjDr/aEERB6cchfmU7W8yw==
+X-CSE-MsgGUID: M8ItdFAfQ7+2OJThw9GPsg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11143"; a="30941473"
+X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
+   d="scan'208";a="30941473"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 08:32:22 -0700
+X-CSE-ConnectionGUID: 774wppLPSIS4l+YAKiOK/Q==
+X-CSE-MsgGUID: hVfjG1w1Ru2ZjsVxsHPYjQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
+   d="scan'208";a="56766983"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.197])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 08:32:18 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Tejas Vipin <tejasvipin76@gmail.com>, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de
+Cc: dianders@chromium.org, airlied@gmail.com, daniel@ffwll.ch,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Tejas Vipin
+ <tejasvipin76@gmail.com>
+Subject: Re: [PATCH 2/2] drm/mipi-dsi: Change multi functions to use quiet
+ member of mipi_dsi_multi_context
+In-Reply-To: <20240724122447.284165-3-tejasvipin76@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240724122447.284165-1-tejasvipin76@gmail.com>
+ <20240724122447.284165-3-tejasvipin76@gmail.com>
+Date: Wed, 24 Jul 2024 18:32:14 +0300
+Message-ID: <877cdakdq9.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: usb: lan78xx: add weak dependency with micrel phy
- module
-To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>, andrew@lunn.ch,
- gregkh@linuxfoundation.org
-Cc: UNGLinuxDriver@microchip.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- netdev@vger.kernel.org, pabeni@redhat.com, woojung.huh@microchip.com
-References: <2024072430-scorn-pushover-7d8a@gregkh>
- <20240724144626.439632-1-jtornosm@redhat.com>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20240724144626.439632-1-jtornosm@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+
+On Wed, 24 Jul 2024, Tejas Vipin <tejasvipin76@gmail.com> wrote:
+> Changes all the multi functions to check if the current context requires
+> errors to be printed or not using the quiet member.
+>
+> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+> ---
+>  drivers/gpu/drm/drm_mipi_dsi.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
+> index a471c46f5ca6..cbb77342d201 100644
+> --- a/drivers/gpu/drm/drm_mipi_dsi.c
+> +++ b/drivers/gpu/drm/drm_mipi_dsi.c
+> @@ -814,6 +814,8 @@ void mipi_dsi_generic_write_multi(struct mipi_dsi_multi_context *ctx,
+>  	ret = mipi_dsi_generic_write(dsi, payload, size);
+>  	if (ret < 0) {
+>  		ctx->accum_err = ret;
+> +		if (ctx->quiet)
+> +			return;
+>  		dev_err(dev, "sending generic data %*ph failed: %d\n",
+>  			(int)size, payload, ctx->accum_err);
+
+A maintainability nitpick. Imagine someone wishing to add some more
+error handling here. Or something else after the block.
+
+IMO the dev_err() should be wrapped in if (!ctx->quiet) instead of
+adding an early return.
+
+Ditto everywhere.
+
+BR,
+Jani.
 
 
-
-On 7/24/2024 7:46 AM, Jose Ignacio Tornos Martinez wrote:
-> Hello Andrew,
-> 
->> Is MODULE_WEAKDEP new?
-> Yes, and it has been merged into torvalds/linux.git from today:
-> https://git.kernel.org/torvalds/c/f488790059fe7be6b2b059ddee10835b2500b603
-> Here the commit reference in torvalds/linux.git if you update your repo:
-> https://github.com/torvalds/linux/commit/61842868de13aa7fd7391c626e889f4d6f1450bf
-
-What is the difference with the existing MODULE_SOFTDEP() which has pre 
-and post qualifiers and seems just as fit?
-
-> 
-> I will include more references in case you want to get more information:
-> kmod reference:
-> https://github.com/kmod-project/kmod/commit/05828b4a6e9327a63ef94df544a042b5e9ce4fe7
-> kmod test-suite has also been completed:
-> https://github.com/kmod-project/kmod/commit/d06712b51404061eef92cb275b8303814fca86ec
-> dracut patch has also been approved:
-> https://github.com/dracut-ng/dracut-ng/commit/8517a6be5e20f4a6d87e55fce35ee3e29e2a1150
-> 
->> It seems like a "Wack a Mole" solution, which is not going to
->> scale. Does dracut not have a set of configuration files indicating
->> what modules should be included, using wildcards? If you want to have
->> NFS root, you need all the network drivers, and so you need all the
->> PHY drivers?
-> The intention is to have a general solution not only related to the
-> possible phy modules. That is, it is a solution for any module dependencies
-> that are solved within the kernel but need to be known by user tools to
-> build initramfs. We could use wildcards for some examples but it is not
-> always easy to reference them.
-> In addition, initramfs needs to be as small as possible so we should avoid
-> wildcards and in this case, include the only possible phy modules (indeed
-> not all phy's are compatible with a device). In this way, with the default
-> behavior, initramfs would include only the drivers for the current machine
-> and the only related phy modules.
-> 
-> Thanks
-> 
-> Best regards
-> José Ignacio
-> 
-> 
+>  	}
+> @@ -958,6 +960,8 @@ void mipi_dsi_dcs_write_buffer_multi(struct mipi_dsi_multi_context *ctx,
+>  	ret = mipi_dsi_dcs_write_buffer(dsi, data, len);
+>  	if (ret < 0) {
+>  		ctx->accum_err = ret;
+> +		if (ctx->quiet)
+> +			return;
+>  		dev_err(dev, "sending dcs data %*ph failed: %d\n",
+>  			(int)len, data, ctx->accum_err);
+>  	}
+> @@ -1450,6 +1454,8 @@ void mipi_dsi_picture_parameter_set_multi(struct mipi_dsi_multi_context *ctx,
+>  	ret = mipi_dsi_picture_parameter_set(dsi, pps);
+>  	if (ret < 0) {
+>  		ctx->accum_err = ret;
+> +		if (ctx->quiet)
+> +			return;
+>  		dev_err(dev, "sending PPS failed: %d\n",
+>  			ctx->accum_err);
+>  	}
+> @@ -1481,6 +1487,8 @@ void mipi_dsi_compression_mode_ext_multi(struct mipi_dsi_multi_context *ctx,
+>  	ret = mipi_dsi_compression_mode_ext(dsi, enable, algo, pps_selector);
+>  	if (ret < 0) {
+>  		ctx->accum_err = ret;
+> +		if (ctx->quiet)
+> +			return;
+>  		dev_err(dev, "sending COMPRESSION_MODE failed: %d\n",
+>  			ctx->accum_err);
+>  	}
+> @@ -1506,6 +1514,8 @@ void mipi_dsi_dcs_nop_multi(struct mipi_dsi_multi_context *ctx)
+>  	ret = mipi_dsi_dcs_nop(dsi);
+>  	if (ret < 0) {
+>  		ctx->accum_err = ret;
+> +		if (ctx->quiet)
+> +			return;
+>  		dev_err(dev, "sending DCS NOP failed: %d\n",
+>  			ctx->accum_err);
+>  	}
+> @@ -1531,6 +1541,8 @@ void mipi_dsi_dcs_enter_sleep_mode_multi(struct mipi_dsi_multi_context *ctx)
+>  	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
+>  	if (ret < 0) {
+>  		ctx->accum_err = ret;
+> +		if (ctx->quiet)
+> +			return;
+>  		dev_err(dev, "sending DCS ENTER_SLEEP_MODE failed: %d\n",
+>  			ctx->accum_err);
+>  	}
+> @@ -1556,6 +1568,8 @@ void mipi_dsi_dcs_exit_sleep_mode_multi(struct mipi_dsi_multi_context *ctx)
+>  	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
+>  	if (ret < 0) {
+>  		ctx->accum_err = ret;
+> +		if (ctx->quiet)
+> +			return;
+>  		dev_err(dev, "sending DCS EXIT_SLEEP_MODE failed: %d\n",
+>  			ctx->accum_err);
+>  	}
+> @@ -1581,6 +1595,8 @@ void mipi_dsi_dcs_set_display_off_multi(struct mipi_dsi_multi_context *ctx)
+>  	ret = mipi_dsi_dcs_set_display_off(dsi);
+>  	if (ret < 0) {
+>  		ctx->accum_err = ret;
+> +		if (ctx->quiet)
+> +			return;
+>  		dev_err(dev, "sending DCS SET_DISPLAY_OFF failed: %d\n",
+>  			ctx->accum_err);
+>  	}
+> @@ -1606,6 +1622,8 @@ void mipi_dsi_dcs_set_display_on_multi(struct mipi_dsi_multi_context *ctx)
+>  	ret = mipi_dsi_dcs_set_display_on(dsi);
+>  	if (ret < 0) {
+>  		ctx->accum_err = ret;
+> +		if (ctx->quiet)
+> +			return;
+>  		dev_err(dev, "sending DCS SET_DISPLAY_ON failed: %d\n",
+>  			ctx->accum_err);
+>  	}
+> @@ -1633,6 +1651,8 @@ void mipi_dsi_dcs_set_tear_on_multi(struct mipi_dsi_multi_context *ctx,
+>  	ret = mipi_dsi_dcs_set_tear_on(dsi, mode);
+>  	if (ret < 0) {
+>  		ctx->accum_err = ret;
+> +		if (ctx->quiet)
+> +			return;
+>  		dev_err(dev, "sending DCS SET_TEAR_ON failed: %d\n",
+>  			ctx->accum_err);
+>  	}
 
 -- 
-Florian
+Jani Nikula, Intel
 
