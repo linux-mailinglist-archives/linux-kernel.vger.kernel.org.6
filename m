@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-260957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1520E93B0E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:25:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD1493B0E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1E0A285225
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:25:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0D111F24DA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9053A158D60;
-	Wed, 24 Jul 2024 12:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94B5158D89;
+	Wed, 24 Jul 2024 12:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i5hKN31P"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JtFzprJ4"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9977215884B
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 12:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9559E158D6F
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 12:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721823906; cv=none; b=R5A/7yS0ysPBqtXnrfXTuqdGUJxJz24B3JXIxwTSiTzy4DoSC7LgGnXMDfCDaHltD64yMBfhUQ7kRliOBWlig6Pb/ojN+Q3XIrRSnsmv+eHoSfkZd6WjfFy7HRblpkeQlzdwjiYIMWJ2qtYioUkQbnyTba2HRYvE5GlvDBu/zyk=
+	t=1721823910; cv=none; b=b9lf3LiUPL9UP76aRw0FP89XG/yNKgAra0ob/t1I6hyzKnkUlidDwA6JZjKUiFOKqBWYDO+tQn+n08amk/Fd3CoNY4mVxel5Cy7kr8mOXH2kw/Criof1t5nqI3blVVHNBs9FMB0SFvdnr1mDDZylfVGZViqWGcopgXjbNCHG/OI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721823906; c=relaxed/simple;
-	bh=Whd/p1BkkzMXiI+jI3fYJLod5sR0DmpRlzJ0bqKo1l0=;
+	s=arc-20240116; t=1721823910; c=relaxed/simple;
+	bh=AMwPaWwQYmwRPQJWKu2P4Rn1Jd5ntWvC9iS2rFrtpDQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YREvNrJJFECczgtyoX+eJ3ekaT3RsYfV36RQH/L8ziC8mP9YPDd83WQUn6Ig+L+7B0VhbetqCHhZO3YespvECfbRq+UPFQMtvv1OSUlC89LxjYtcF+mEd4HY5d+Trv3C/S6yCILEQDubko0vGMxrakU/UIqBBHVt75czP/qPIlI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i5hKN31P; arc=none smtp.client-ip=209.85.214.171
+	 MIME-Version; b=Xjoxrov3MYqLzfj7Y6ExheA+VDYDNNW2XDFB0T1YNUf5ilWm31qXUA4D5D7wTMPPD9Cjh71VKhx5cydVbB8INdUCGuNQWmMUfokhRRZ/sybZdgytyfNQ3iQ8zXFOERXTPws2XxTD9+ut2rd13Uh/xhLX/b0J+LQVkzHo5udpe1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JtFzprJ4; arc=none smtp.client-ip=209.85.216.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fd9e70b592so15593665ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 05:25:05 -0700 (PDT)
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2cd5d6b2581so2144779a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 05:25:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721823905; x=1722428705; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1721823908; x=1722428708; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4RS7gU16ITnoH4uJ2P4cBrWFJTcLfxSuNNT2bfx+93A=;
-        b=i5hKN31PRaegqAujHA/i3/hwRdbEbMrKGHXzK6ai6sC5C/UXMpvWVN9XjigmEW/WWX
-         LZ0pkyMXFvuGZF9ZQetGahcPOah/WnOWp6ch7keTpb+BNjWAaS1QoJtiDhR72dRPwg8L
-         J1KTfF6uTkFRgVpa0rtWbfiUNRr0ROqz0KTT4L+myF4JQcMmudjCQxlr2p5NL3obdl5A
-         VuHxsAwgUH6/9wpDYD4kQVK/Rmosfqu43VsWPCLMumJlpIq0wlT8Fsz2Y442Raq1ZFbF
-         a5vCgKMIiPvP1KoBPNAav47rtgz0ganfuDx97i4roCSxxGrgABAz9E84yOFtVhipCXzk
-         Dv/w==
+        bh=FanJFk8N4d+FovkzKkK+yK0pgkmnrsP9b5F0k2uR1QM=;
+        b=JtFzprJ4GEI4vvNEaKgA8vChoZR06aXlAvdsSzCN3NBAf2OTalGl1/jgkgPbQhEoY+
+         rQxeRrIOJIPZ0FlCzuSRiaBA7hq18c2hPC9bPl26E+5uBEx92bWtSB+SbCXwRddyqolT
+         bsm9foU34Y0bD01W8XHr3yFbHNibt13hzMkSEN3e9VzUP5FpalLoHQEkSXggEzRgACcO
+         XiuWRmnrBTOZSbgqEZcnJAlV67J6LjhSEAahFzYWA/4sQxMEh3xxHTzxqlYZkEqGWuj3
+         avSoSNa/CClcmwsl/u0+j5AbRm4biJl4V6J7pj5IoScxrN+3ZwwoxAbq+VaAQDGCiEF7
+         ChUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721823905; x=1722428705;
+        d=1e100.net; s=20230601; t=1721823908; x=1722428708;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4RS7gU16ITnoH4uJ2P4cBrWFJTcLfxSuNNT2bfx+93A=;
-        b=ss3kQb2ZaOBMfPJnSwInb2bRQSg5JuU/Ud5bIzqW3aHbOQzpbvNLL3iH/adYIpC+3r
-         +XgHh8v39pplaUoX2tzuEPrWw7J1HXz9sPz+zNBpsgLXVyGr1j6ao/MpYfP5lmvXIS5x
-         tWtU8eJEuTENnNaTAt8R/TBbtD7tZYiISyQ6mkydLwRzS4x1sYNz/aTu+0rP4PSBNAud
-         aH06SICyOmioNmdPGqC08Qgd60kBWKBGHTYbVTZcEg800dQ07icZR0NLmNvEb9VIPbnf
-         K/Kpc4YL2J7/5ParSMxZd01//ith7Zgg4U6jl1gLXLAM/zVH47r+8yEpTf0LA43v/OH5
-         mAbg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLAQ7LOYWXIkkLROsMGs/Ti+JcLBYmQvxzFfF39mZlxi14K6AaawOM8VwPD5hoo1kwJ5VUJd4i5SV0XQKCz72S2XZmoY0fZpuXIttF
-X-Gm-Message-State: AOJu0Yyb22efKkGmRKe8RvnY2pL7gJPDvg0woe6hqzQVTi+/BGmXah+Z
-	SiYC+KvY+4pWnEaUw8u3DuzRNyBXU3RP7ykbtAKmTHDPdVFjhje/
-X-Google-Smtp-Source: AGHT+IF7OVyonWCCnCVBX9lx5jU8mzF0yeNoeycLEZCNLMHS8GfiaraNhErqelj7XcB9qfI2jnBS2g==
-X-Received: by 2002:a17:90a:d301:b0:2c8:53be:fa21 with SMTP id 98e67ed59e1d1-2cdb51ce903mr2067038a91.34.1721823904996;
-        Wed, 24 Jul 2024 05:25:04 -0700 (PDT)
+        bh=FanJFk8N4d+FovkzKkK+yK0pgkmnrsP9b5F0k2uR1QM=;
+        b=oe7oQ/W4EjjCHOxic8GRrshlIkkYOVnL1p7b42xCXAW5lsiswBzbOnFlxZZYffLR8W
+         4yZcGxrQWV4Szh0IJlgu+8qHCQnpWdoB7r9l3Eb34jD3IZfqeAYaYkiC81njMLZoUaV5
+         06JScwnzV48vT14wLLfUNIdzG+AfgGUejbrSu1Ns06aI9zU6ELbVfEuYCyBDndjG9hIH
+         dlFksWCH3MZQ+hfRTKQwa6ZqUAl5Z9bnQ2fZW3khEOGsRs9iUf0ivqHyfHjbgl4uLOa2
+         Uhg2fHR44rnpPIP7PYL+5wzkbrt8V/W0oRbQ2OOruCHIfQmoFjArT4VFT36bdhKyBN+L
+         H6xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVjwjowuz9b1401e00EQDqCtjUNtNTW1MRR/8kIcskVc3XpaXpiLmxphcIizefujJRaYRK/pgcCwI4jfewbMZqc7FuSdFZZcVLDvLNO
+X-Gm-Message-State: AOJu0Ywknri34CkbfmfhoDXE5tvEqNJei+AnFi/xVfd1NhvRX2S6Brw2
+	rUz8FCwmFHWRBBeD12ZP4D3fmVHnl3DURklqJq/yBpkm5hp8nHSr
+X-Google-Smtp-Source: AGHT+IESuRKDCEItHRopfV2JwMH2VW29QebUq9NYg/izyx5v/vt6IyizXedg4Aqf+pfc0frWsfVHKg==
+X-Received: by 2002:a17:90b:3143:b0:2c9:7e9e:70b3 with SMTP id 98e67ed59e1d1-2cd161ae448mr10189550a91.33.1721823907823;
+        Wed, 24 Jul 2024 05:25:07 -0700 (PDT)
 Received: from distilledx.srmu.edu.in ([103.4.221.252])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb76001d6sm1481454a91.48.2024.07.24.05.25.02
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb76001d6sm1481454a91.48.2024.07.24.05.25.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 05:25:04 -0700 (PDT)
+        Wed, 24 Jul 2024 05:25:07 -0700 (PDT)
 From: Tejas Vipin <tejasvipin76@gmail.com>
 To: maarten.lankhorst@linux.intel.com,
 	mripard@kernel.org,
@@ -76,9 +76,9 @@ Cc: dianders@chromium.org,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	Tejas Vipin <tejasvipin76@gmail.com>
-Subject: [PATCH 1/2] drm/mipi-dsi: Add quiet member to mipi_dsi_multi_context struct
-Date: Wed, 24 Jul 2024 17:54:46 +0530
-Message-ID: <20240724122447.284165-2-tejasvipin76@gmail.com>
+Subject: [PATCH 2/2] drm/mipi-dsi: Change multi functions to use quiet member of mipi_dsi_multi_context
+Date: Wed, 24 Jul 2024 17:54:47 +0530
+Message-ID: <20240724122447.284165-3-tejasvipin76@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240724122447.284165-1-tejasvipin76@gmail.com>
 References: <20240724122447.284165-1-tejasvipin76@gmail.com>
@@ -90,35 +90,108 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A "quiet" member is added to mipi_dsi_multi_context which allows 
-silencing all the errors printed by the multi functions.
+Changes all the multi functions to check if the current context requires
+errors to be printed or not using the quiet member.
 
 Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
 ---
- include/drm/drm_mipi_dsi.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/gpu/drm/drm_mipi_dsi.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
-index 0f520eeeaa8e..75855c1c7dae 100644
---- a/include/drm/drm_mipi_dsi.h
-+++ b/include/drm/drm_mipi_dsi.h
-@@ -217,6 +217,16 @@ struct mipi_dsi_multi_context {
- 	 * end to see if any of them failed.
- 	 */
- 	int accum_err;
-+
-+	/**
-+	 * @quiet: Controls if a function calls dev_err or not
-+	 *
-+	 * Init to 0. When the value of quiet is set to 0, the function
-+	 * will  print error messages as required. If this is set to 1,
-+	 * the function will not print error messages, but will still
-+	 * change the value of accum_err.
-+	 */
-+	int quiet;
- };
- 
- #define MIPI_DSI_MODULE_PREFIX "mipi-dsi:"
+diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
+index a471c46f5ca6..cbb77342d201 100644
+--- a/drivers/gpu/drm/drm_mipi_dsi.c
++++ b/drivers/gpu/drm/drm_mipi_dsi.c
+@@ -814,6 +814,8 @@ void mipi_dsi_generic_write_multi(struct mipi_dsi_multi_context *ctx,
+ 	ret = mipi_dsi_generic_write(dsi, payload, size);
+ 	if (ret < 0) {
+ 		ctx->accum_err = ret;
++		if (ctx->quiet)
++			return;
+ 		dev_err(dev, "sending generic data %*ph failed: %d\n",
+ 			(int)size, payload, ctx->accum_err);
+ 	}
+@@ -958,6 +960,8 @@ void mipi_dsi_dcs_write_buffer_multi(struct mipi_dsi_multi_context *ctx,
+ 	ret = mipi_dsi_dcs_write_buffer(dsi, data, len);
+ 	if (ret < 0) {
+ 		ctx->accum_err = ret;
++		if (ctx->quiet)
++			return;
+ 		dev_err(dev, "sending dcs data %*ph failed: %d\n",
+ 			(int)len, data, ctx->accum_err);
+ 	}
+@@ -1450,6 +1454,8 @@ void mipi_dsi_picture_parameter_set_multi(struct mipi_dsi_multi_context *ctx,
+ 	ret = mipi_dsi_picture_parameter_set(dsi, pps);
+ 	if (ret < 0) {
+ 		ctx->accum_err = ret;
++		if (ctx->quiet)
++			return;
+ 		dev_err(dev, "sending PPS failed: %d\n",
+ 			ctx->accum_err);
+ 	}
+@@ -1481,6 +1487,8 @@ void mipi_dsi_compression_mode_ext_multi(struct mipi_dsi_multi_context *ctx,
+ 	ret = mipi_dsi_compression_mode_ext(dsi, enable, algo, pps_selector);
+ 	if (ret < 0) {
+ 		ctx->accum_err = ret;
++		if (ctx->quiet)
++			return;
+ 		dev_err(dev, "sending COMPRESSION_MODE failed: %d\n",
+ 			ctx->accum_err);
+ 	}
+@@ -1506,6 +1514,8 @@ void mipi_dsi_dcs_nop_multi(struct mipi_dsi_multi_context *ctx)
+ 	ret = mipi_dsi_dcs_nop(dsi);
+ 	if (ret < 0) {
+ 		ctx->accum_err = ret;
++		if (ctx->quiet)
++			return;
+ 		dev_err(dev, "sending DCS NOP failed: %d\n",
+ 			ctx->accum_err);
+ 	}
+@@ -1531,6 +1541,8 @@ void mipi_dsi_dcs_enter_sleep_mode_multi(struct mipi_dsi_multi_context *ctx)
+ 	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
+ 	if (ret < 0) {
+ 		ctx->accum_err = ret;
++		if (ctx->quiet)
++			return;
+ 		dev_err(dev, "sending DCS ENTER_SLEEP_MODE failed: %d\n",
+ 			ctx->accum_err);
+ 	}
+@@ -1556,6 +1568,8 @@ void mipi_dsi_dcs_exit_sleep_mode_multi(struct mipi_dsi_multi_context *ctx)
+ 	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
+ 	if (ret < 0) {
+ 		ctx->accum_err = ret;
++		if (ctx->quiet)
++			return;
+ 		dev_err(dev, "sending DCS EXIT_SLEEP_MODE failed: %d\n",
+ 			ctx->accum_err);
+ 	}
+@@ -1581,6 +1595,8 @@ void mipi_dsi_dcs_set_display_off_multi(struct mipi_dsi_multi_context *ctx)
+ 	ret = mipi_dsi_dcs_set_display_off(dsi);
+ 	if (ret < 0) {
+ 		ctx->accum_err = ret;
++		if (ctx->quiet)
++			return;
+ 		dev_err(dev, "sending DCS SET_DISPLAY_OFF failed: %d\n",
+ 			ctx->accum_err);
+ 	}
+@@ -1606,6 +1622,8 @@ void mipi_dsi_dcs_set_display_on_multi(struct mipi_dsi_multi_context *ctx)
+ 	ret = mipi_dsi_dcs_set_display_on(dsi);
+ 	if (ret < 0) {
+ 		ctx->accum_err = ret;
++		if (ctx->quiet)
++			return;
+ 		dev_err(dev, "sending DCS SET_DISPLAY_ON failed: %d\n",
+ 			ctx->accum_err);
+ 	}
+@@ -1633,6 +1651,8 @@ void mipi_dsi_dcs_set_tear_on_multi(struct mipi_dsi_multi_context *ctx,
+ 	ret = mipi_dsi_dcs_set_tear_on(dsi, mode);
+ 	if (ret < 0) {
+ 		ctx->accum_err = ret;
++		if (ctx->quiet)
++			return;
+ 		dev_err(dev, "sending DCS SET_TEAR_ON failed: %d\n",
+ 			ctx->accum_err);
+ 	}
 -- 
 2.45.2
 
