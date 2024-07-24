@@ -1,130 +1,231 @@
-Return-Path: <linux-kernel+bounces-261285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06FA793B533
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:42:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46D5B93B535
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:42:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAC1A1F2353A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:42:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBB421F23003
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED5E15EFB9;
-	Wed, 24 Jul 2024 16:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB5C15F301;
+	Wed, 24 Jul 2024 16:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ag4ZtEJ3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sULpsS5d"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B7015ECEB;
-	Wed, 24 Jul 2024 16:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B0C15E5CC
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 16:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721839343; cv=none; b=pdBqW1H1N4G1BNsuplHHgdg8fI7YGo77GPaRNmgdoWYmqAISY0SqHFpvCId+KfitLO2WR4qK/k8745BVCC1dToutfPC6is3ZA31IL+MbcAo+k4E6cV83RKQCc4e3fyMSHOHK1kHHJeAdrSWqJlNTxmxBV2i//MXIM+iL67sVe3s=
+	t=1721839344; cv=none; b=Wu9JqrAyeQuTVg8gteLdLgqFjsN0eOmJE+FCJp3sJHgdqJfMqi2X2iN8I81Oez466Yi32NiOf01IMnBAbleBZP8d6rjAHT6n0kuHzHfUmp1NkK5TFi88H8PyZ3g3cnVWNrT2tgHdh3YjIIFL9wQtcCgcBdPoL77xgxvf4FvHJVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721839343; c=relaxed/simple;
-	bh=4r8Kg7lFeZE2ux1sQl1pYkAw/KLHH60ExTTgysQ9my8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mQWNPTQovqKy2QVrpk/VNEPbgWlKvY99AFqxFwb7B2zRRRpUINK58bNiTRID6XcmLuJb0QYGiWr/1vrBgvfM+f0fY+kM94AFnNJgGvl32W1jWoT0CMkj5d+6jNXlp/pig4KQumXvR201VFlClk5iGTBLZvbzyj3ih0pste6nIos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ag4ZtEJ3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CF34C32781;
-	Wed, 24 Jul 2024 16:42:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721839342;
-	bh=4r8Kg7lFeZE2ux1sQl1pYkAw/KLHH60ExTTgysQ9my8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ag4ZtEJ3Sohcltfkb7+G1OLoMNuU+0URAj+F9TbflVFZYl7AojFZx0XaIOuCWl3bS
-	 esLgTwwzq1To0Ac0XxseTtbbuSoyRnCvzPk47V5GG9Y9fTsNohoTkbuxd8UhPYY8zZ
-	 HWmAybj0ucIDcSAtQsHI1syW5JOJNllok3Zvk+/Oohp1Nplq85wA5X815KZ7AzomvX
-	 NxwQ+9wF00ZUL6dwVWzZgUa5RstfeW49kgFHny1vWR1k4U+Rulr68SYHV2iVfa/kZE
-	 0Pvb+p2RyalVZZFtZcSKX31CLGLLfW+IOe0hyxE/xd6LbKnZEF1jCADkgs4dv5BHqE
-	 fAcT4Aj3yt/wQ==
-Date: Wed, 24 Jul 2024 17:42:18 +0100
-From: Conor Dooley <conor@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Alisa-Dariana Roman <alisa.roman@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: iio: adc: ad7192: Fix 'single-channel'
- constraints
-Message-ID: <20240724-graveyard-outshine-a53d36367655@spud>
-References: <20240723230904.1299744-1-robh@kernel.org>
+	s=arc-20240116; t=1721839344; c=relaxed/simple;
+	bh=p4+Gd7BmotDv1ZX4p7C+4MPitWGe2/wQSkne2jwDM0w=;
+	h=Date:In-Reply-To:Mime-Version:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=cL76d8f3kW3xOi+dK5pqcUY5Cjal4F8LpazQSqSarRgfVVuyV2NShjsv5p+1kLB5w8USEdBBfcdPNXidU4uS6gNUnEyljTQK9Un7J83e6NFkTrMKwDFMHcu3HmXZ2kqAjSzajGK6oM+IHd0pP6wMS9JHuHRiZW0Vk35cvz6Z3+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sULpsS5d; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-70d19a4137dso20476b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 09:42:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1721839341; x=1722444141; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=quXFMjtZMDuExn79bpSog/9LF2Y7O+Ta5z6Tp776il8=;
+        b=sULpsS5dYzyxEgy8leObpBYhk6lmCzfBbJoAFoUIE7aBeKK7hV7VNMhQGmD8/yJ+Hh
+         cnGo2ZlZfP8LzT9O1c2mbce+R+tAdA4ZQUd9ptw104HgoxH+XRMaXiCdWHfkTD+xFSzp
+         8lAe+C5qjClvf3yyfv03L9c5dIYKB3lMaVuFhSscu54V8yTspcD8Wgp2wChoE0yQaGhu
+         TVSN0KZRjCxkHZpcFHVwE1oky+MXBUZqRuCr/d54ZcFmmJ0p1yngrJLBVgircQEvKKsg
+         QaCOX2ogexZ8gxC+NrlmlqjGoc2kf5T2SvRCdd0amJF36xGndOA7pbZSKXM0MbEF1XnQ
+         /IYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721839341; x=1722444141;
+        h=cc:to:from:subject:message-id:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=quXFMjtZMDuExn79bpSog/9LF2Y7O+Ta5z6Tp776il8=;
+        b=XBH7+/VnDtScxdyfnA9/qHp6tRVAUlsNQPpS2w3s4o1Zf385BRxzkNrgBfX3IfGasE
+         sg29awEyJlYGd/WNtxEHuTJj+cVJJnm9tINZ5n+vp/jHybeLWQSZGjWaBMcCtrMule48
+         nLfDGDmVCDODinXIxJl8mCZUJnXdtowgv2mUrZ1ZpZDRQj6u94ogJpOLMKE/qY9rDTq/
+         KI7DF1409JYyGgcjsryxYfD5x+h8LdkBmLzeMAT2lWR9oTeLNIRHXqLnN65vqKTumZSO
+         bEXvX+mGoCwE5JvHQiF1/8W4hHOQFRUfbPmwiGgH1DwknS26ILwNO56Q1hvlX2PNwbEO
+         cVMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYteO8nI80ycOEhuxADztfbaMryPx0cjootoCgF5jTWfT7ro1hT/SI3m3lNlqK3pC6g4pcvzjd9STP20m1O1rkewYDXt7XAmpHZNpS
+X-Gm-Message-State: AOJu0YxexUlB71IUxG8r5vKXj9hbbuyNoUFxcj4i2c62oDsg1wTANH00
+	nlLTXP4wbvO4//dyFXQ7+Nj3O+BIz4LgB4Sz5anqQ+OX9aQcqJ5P4ukw7i5VuNe100Ap0+uovHn
+	YklrMR7FCK+wn5D6mnp4M/w==
+X-Google-Smtp-Source: AGHT+IHIrwfCPJh1o0JqmPFz3FO0hLjOEEzwgQspX1GMZjdhbr2An4xmUHLxLzB+Uc/ALItH7RCqJY/Tukxlqk7Edg==
+X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
+ (user=ackerleytng job=sendgmr) by 2002:a05:6a00:944d:b0:70d:10d8:d050 with
+ SMTP id d2e1a72fcca58-70ea9fd40e7mr7422b3a.0.1721839340518; Wed, 24 Jul 2024
+ 09:42:20 -0700 (PDT)
+Date: Wed, 24 Jul 2024 16:42:18 +0000
+In-Reply-To: <ZdcRpHB43OxY8mpX@yzhao56-desk.sh.intel.com> (message from Yan
+ Zhao on Thu, 22 Feb 2024 17:19:32 +0800)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="1olKMOy8cF7B70NW"
-Content-Disposition: inline
-In-Reply-To: <20240723230904.1299744-1-robh@kernel.org>
+Mime-Version: 1.0
+Message-ID: <diqzo76myc5x.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH v5 07/29] KVM: selftests: TDX: Update
+ load_td_memory_region for VM memory backed by guest memfd
+From: Ackerley Tng <ackerleytng@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: sagis@google.com, linux-kselftest@vger.kernel.org, afranji@google.com, 
+	erdemaktas@google.com, isaku.yamahata@intel.com, seanjc@google.com, 
+	pbonzini@redhat.com, shuah@kernel.org, pgonda@google.com, haibo1.xu@intel.com, 
+	chao.p.peng@linux.intel.com, vannapurve@google.com, runanwang@google.com, 
+	vipinsh@google.com, jmattson@google.com, dmatlack@google.com, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 
+Yan Zhao <yan.y.zhao@intel.com> writes:
 
---1olKMOy8cF7B70NW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Tue, Dec 12, 2023 at 12:46:22PM -0800, Sagi Shahar wrote:
+>> From: Ackerley Tng <ackerleytng@google.com>
+>> 
+>> If guest memory is backed by restricted memfd
+>> 
+>> + UPM is being used, hence encrypted memory region has to be
+>>   registered
+>> + Can avoid making a copy of guest memory before getting TDX to
+>>   initialize the memory region
+>> 
+>> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+>> Signed-off-by: Ryan Afranji <afranji@google.com>
+>> Signed-off-by: Sagi Shahar <sagis@google.com>
+>> ---
+>>  .../selftests/kvm/lib/x86_64/tdx/tdx_util.c   | 41 +++++++++++++++----
+>>  1 file changed, 32 insertions(+), 9 deletions(-)
+>> 
+>> diff --git a/tools/testing/selftests/kvm/lib/x86_64/tdx/tdx_util.c b/tools/testing/selftests/kvm/lib/x86_64/tdx/tdx_util.c
+>> index 6b995c3f6153..063ff486fb86 100644
+>> --- a/tools/testing/selftests/kvm/lib/x86_64/tdx/tdx_util.c
+>> +++ b/tools/testing/selftests/kvm/lib/x86_64/tdx/tdx_util.c
+>> @@ -192,6 +192,21 @@ static void tdx_td_finalizemr(struct kvm_vm *vm)
+>>  	tdx_ioctl(vm->fd, KVM_TDX_FINALIZE_VM, 0, NULL);
+>>  }
+>>  
+>> +/*
+>> + * Other ioctls
+>> + */
+>> +
+>> +/**
+>> + * Register a memory region that may contain encrypted data in KVM.
+>> + */
+>> +static void register_encrypted_memory_region(
+>> +	struct kvm_vm *vm, struct userspace_mem_region *region)
+>> +{
+>> +	vm_set_memory_attributes(vm, region->region.guest_phys_addr,
+>> +				 region->region.memory_size,
+>> +				 KVM_MEMORY_ATTRIBUTE_PRIVATE);
+>> +}
+>> +
+>>  /*
+>>   * TD creation/setup/finalization
+>>   */
+>> @@ -376,30 +391,38 @@ static void load_td_memory_region(struct kvm_vm *vm,
+>>  	if (!sparsebit_any_set(pages))
+>>  		return;
+>>  
+>> +
+>> +	if (region->region.guest_memfd != -1)
+>> +		register_encrypted_memory_region(vm, region);
+>> +
+>>  	sparsebit_for_each_set_range(pages, i, j) {
+>>  		const uint64_t size_to_load = (j - i + 1) * vm->page_size;
+>>  		const uint64_t offset =
+>>  			(i - lowest_page_in_region) * vm->page_size;
+>>  		const uint64_t hva = hva_base + offset;
+>>  		const uint64_t gpa = gpa_base + offset;
+>> -		void *source_addr;
+>> +		void *source_addr = (void *)hva;
+>>  
+>>  		/*
+>>  		 * KVM_TDX_INIT_MEM_REGION ioctl cannot encrypt memory in place,
+>>  		 * hence we have to make a copy if there's only one backing
+>>  		 * memory source
+>>  		 */
+>> -		source_addr = mmap(NULL, size_to_load, PROT_READ | PROT_WRITE,
+>> -				   MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+>> -		TEST_ASSERT(
+>> -			source_addr,
+>> -			"Could not allocate memory for loading memory region");
+>> -
+>> -		memcpy(source_addr, (void *)hva, size_to_load);
+>> +		if (region->region.guest_memfd == -1) {
+>> +			source_addr = mmap(NULL, size_to_load, PROT_READ | PROT_WRITE,
+>> +					MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+>> +			TEST_ASSERT(
+>> +				source_addr,
+>> +				"Could not allocate memory for loading memory region");
+>> +
+>> +			memcpy(source_addr, (void *)hva, size_to_load);
+>> +			memset((void *)hva, 0, size_to_load);
+>> +		}
+>>  
+>>  		tdx_init_mem_region(vm, source_addr, gpa, size_to_load);
+>>  
+>> -		munmap(source_addr, size_to_load);
+>> +		if (region->region.guest_memfd == -1)
+>> +			munmap(source_addr, size_to_load);
+>>  	}
+>
+> For memslot 0, 1, 2, when guest_memfd != -1,
+> is it possible to also munmap(mmap_start, mmap_size) after finish loading?
+>
 
-On Tue, Jul 23, 2024 at 06:09:03PM -0500, Rob Herring (Arm) wrote:
-> The 'single-channel' property is an uint32, not an array, so 'items' is
-> an incorrect constraint. This didn't matter until dtschema recently
-> changed how properties are decoded. This results in this warning:
->=20
-> Documentation/devicetree/bindings/iio/adc/adi,ad7192.example.dtb: adc@0: \
->   channel@1:single-channel: 1 is not of type 'array'
->=20
-> Fixes: caf7b7632b8d ("dt-bindings: iio: adc: ad7192: Add AD7194 support")
+Thank you for your review!
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Did you mean "possible" as in whether it is "correct" to do munmap() for
+the rest of the earlier memslots containing non-test-code?
 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml b/=
-Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
-> index a03da9489ed9..190889c7b62a 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
-> @@ -120,9 +120,8 @@ patternProperties:
->          description:
->            Positive input can be connected to pins AIN1 to AIN16 by choos=
-ing the
->            appropriate value from 1 to 16. Negative input is connected to=
- AINCOM.
-> -        items:
-> -          minimum: 1
-> -          maximum: 16
-> +        minimum: 1
-> +        maximum: 16
-> =20
->      oneOf:
->        - required:
-> --=20
-> 2.43.0
->=20
+It is correct because the munmap() just deallocates memory that was
+recently allocated in mmap() in this same change. The memory set up for
+the VM is not affected.
 
---1olKMOy8cF7B70NW
-Content-Type: application/pgp-signature; name="signature.asc"
+Hope that answers your question, and here's some further detail, hope
+this helps too:
 
------BEGIN PGP SIGNATURE-----
+load_td_memory_region() loads a memory region into a TD by calling the
+KVM_TDX_INIT_MEM_REGION ioctl, which copies (and encrypts) the data in
+an existing memory region into TD private memory for the TD to use.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqEu6gAKCRB4tDGHoIJi
-0rd1AP9bt5CuulmUdKrAYaMmbSBG7huuuJZ+ivBHmlTNOEBgNwD/S1zNH4h4gMUM
-rhwnu+jd3UWV4Ue7R4E06VN4cNs2xQg=
-=JBvp
------END PGP SIGNATURE-----
+In these selftests, we use the KVM selftest framework to set up a TD's
+memory as if it were a regular VM, and then use this function to
+copy+encrypt the memory that is already set up for the TD. This lets us
+re-use most of the code from the KVM selftest framework for TDs, which
+is extremely useful for setting up page tables, exception handlers, etc
+for the TD. These key pieces of memory setup are in the memslots with
+smaller indices, as you pointed out.
 
---1olKMOy8cF7B70NW--
+KVM_TDX_INIT_MEM_REGION ioctl uses the provided gpa and struct kvm to
+look up the destination address, and uses source_addr as the source
+address for the copying. 
+
+If we are not using guest_memfd (region->region.guest_memfd == -1), then
+we need to make the source and destination address different by copying
+the contents at the source address somewhere else for the call to
+tdx_init_mem_region(). That is what the mmap() is doing. This temporary
+buffer then needs to be freed, hence the munmap(). Without this copying,
+the destination address for the ioctl's copy would be the same as the
+source address, since those very same pages are provided in the memslot
+for this memory region.
+
+If we are using guest_memfd, then the destination address for the
+ioctl's copy will be taken from the guest_memfd, which is already
+different from the source address, hence we can skip the copying.
+
+>>  }
+>>  
+>> -- 
+>> 2.43.0.472.g3155946c3a-goog
+>> 
+>> 
 
