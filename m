@@ -1,113 +1,354 @@
-Return-Path: <linux-kernel+bounces-261520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6301693B838
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 22:49:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0BF293B83B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 22:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1869F284C81
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:49:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C603284EB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA4D13A40D;
-	Wed, 24 Jul 2024 20:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791E113AA36;
+	Wed, 24 Jul 2024 20:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SPaJElmV"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xw5JmPMX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987E4139588
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 20:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B54B139588;
+	Wed, 24 Jul 2024 20:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721854165; cv=none; b=oSykWp45x66R2AGGJSZwhImZ/aEm+LmlOnTVrvQpMZGQbNG1G1zQDVKy38FKJCgB7NeCBwk6v/P2IdT97kNAgx1C84vzIhjmkyPvKycE4qxS+ZLd3hfA6q12da8bdbZKYee9Bgo6w10w5FUFlV9uzQseDh+hnFGmjeWIgcAsriQ=
+	t=1721854210; cv=none; b=jJDtGEMkUnsIo1ymKKo0h5o5wYV9lvsaXuOk3Z3Gf4ev95tC3oLkglHkI3j5pOR30kYFLhmFg460vTXULqK5U4gtdACppt/klKxBGbYfhv5nd16MzrH0Dh9VmchTagRzQ6Zn4036uFZB9gAb0AJYhJZQpmIpu+r8Gy0wS6VygKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721854165; c=relaxed/simple;
-	bh=0fu/E/bK1dMoj/WG7Bp2Ge25Eq9UliNn4nTlkf6+pR0=;
+	s=arc-20240116; t=1721854210; c=relaxed/simple;
+	bh=sTRJn/ZXtHQZzEr0Mgxep5JSYetG8fDfVuOoT4QxmzA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KjKDdtHbdDCda0xLDXshBVvDgco39TKK+BlASSnI3pe2HrCAOCituhUfQtbPTnbdodg3spoLK8ZfQCwRKvgCkN3AWx4ZXmU3eu7izP/1DibprsHKRWxNM28ZbHzbcQ11XbDy7+6iH6GQwc/49FHsyJr49wXg7TBNkPSSladIOKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SPaJElmV; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 24 Jul 2024 13:49:14 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721854160;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zAZfW6WxQIv+gWdwjAk4kAvT95Ddr/FprFcNMRbuDgI=;
-	b=SPaJElmVWRpaglApV1kMYQu9p73SR83bBRwdiQ2mF1BsCLAZ4rISWOIPbMkxCYSSL5iw36
-	iTs/UrFFk/ifZjN/k5HWUJfjRCE6htbwHXaaW8ZPWtO3JOs94RSOM3gQX5rc0DODWK13ef
-	Ydz9RdAE4Q1iuPi87LqTVmvFOWGfAKo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, jpoimboe@kernel.org, 
-	kent.overstreet@linux.dev, peterz@infradead.org, nphamcs@gmail.com, 
-	cerasuolodomenico@gmail.com, surenb@google.com, lizhijian@fujitsu.com, willy@infradead.org, 
-	vbabka@suse.cz, ziy@nvidia.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v5 2/3] vmstat: Kernel stack usage histogram
-Message-ID: <mpbxc7boje4aun4pzfoipz2hwaeq75rg3kl2epdpenq5hhomyn@6uj6brlaujwc>
-References: <20240724203322.2765486-1-pasha.tatashin@soleen.com>
- <20240724203322.2765486-3-pasha.tatashin@soleen.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZfytFp9qnYmX+5cAvawnEwJsP8ln5N0Tdtp+qmpzoHlbws8uf4SrwOZoAyEp+6TEIWbH8dwQzfWyNKvpekil3V+RuUj5WRGQg5Yh7JFRAZVNsYgYUX4T2ji8ex82fQrMSR40KJa5llc7f7wgGMCFUi32/uBzgEfj1XBevVWWAFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xw5JmPMX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A433BC32781;
+	Wed, 24 Jul 2024 20:50:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721854209;
+	bh=sTRJn/ZXtHQZzEr0Mgxep5JSYetG8fDfVuOoT4QxmzA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xw5JmPMXNXrefp91XEBVCPxGsXkegaRT6RDBFKmg43tXqjC4O22MeMeGDnU8KaxVh
+	 kJUc5zMMSZt0/+034jfUvD3zVIdCI2wsl0Y/fUs7pOXx4wJLjvQpqGPc0siFna16Qc
+	 FEh/g+tGzCgHEF/GMDBt/IWBVr7yOqKx0v7ot1ikam7miJ5eV86vQIdxv4J20OPBZ2
+	 p+h2wwmH5DD6XORgmLYw7HfcLU2F6L9b36y82jivDSS/ygJ/Oixt/+bIiqeWOsXS1s
+	 KE8/MrhOU0Xe0XinLR/dV/1nk2BAnF4ljPGkxidie9WkBgvg/da5MPvRMsXZ3aUFDo
+	 bkaOParXMUmUw==
+Received: by pali.im (Postfix)
+	id E2280726; Wed, 24 Jul 2024 22:50:04 +0200 (CEST)
+Date: Wed, 24 Jul 2024 22:50:04 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Andres Salomon <dilinger@queued.net>
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	Matthew Garrett <mjg59@srcf.ucam.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	linux-pm@vger.kernel.org, Dell.Client.Kernel@dell.com
+Subject: Re: [PATCH v2 2/2] platform/x86:dell-laptop: remove duplicate code
+ w/ battery function
+Message-ID: <20240724205004.zcevow3swmpwhq3e@pali>
+References: <20240723220502.77cb0401@5400>
+ <20240723220724.4f8eaf49@5400>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240724203322.2765486-3-pasha.tatashin@soleen.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240723220724.4f8eaf49@5400>
+User-Agent: NeoMutt/20180716
 
-On Wed, Jul 24, 2024 at 08:33:21PM GMT, Pasha Tatashin wrote:
-> As part of the dynamic kernel stack project, we need to know the amount
-> of data that can be saved by reducing the default kernel stack size [1].
+On Tuesday 23 July 2024 22:07:24 Andres Salomon wrote:
+> The dell battery patch added dell_send_request_by_token_loc(), which
+> encapsulates a very common pattern when SMBIOS queries are addressed
+> to token->location. This sets up the function to be used throughout
+> the dell laptop code, and calls it in various places allowing us to
+> delete a bunch of code.
 > 
-> Provide a kernel stack usage histogram to aid in optimizing kernel stack
-> sizes and minimizing memory waste in large-scale environments. The
-> histogram divides stack usage into power-of-two buckets and reports the
-> results in /proc/vmstat. This information is especially valuable in
-> environments with millions of machines, where even small optimizations
-> can have a significant impact.
+> Also some very minor cleanups:
+>   - mark the kbd init functions as __init
+>   - don't read buffer.output unless dell_send_request() was successful.
 > 
-> The histogram data is presented in /proc/vmstat with entries like
-> "kstack_1k", "kstack_2k", and so on, indicating the number of threads
-> that exited with stack usage falling within each respective bucket.
-> 
-> Example outputs:
-> Intel:
-> $ grep kstack /proc/vmstat
-> kstack_1k 3
-> kstack_2k 188
-> kstack_4k 11391
-> kstack_8k 243
-> kstack_16k 0
-> 
-> ARM with 64K page_size:
-> $ grep kstack /proc/vmstat
-> kstack_1k 1
-> kstack_2k 340
-> kstack_4k 25212
-> kstack_8k 1659
-> kstack_16k 0
-> kstack_32k 0
-> kstack_64k 0
-> 
-> Note: once the dynamic kernel stack is implemented it will depend on the
-> implementation the usability of this feature: On hardware that supports
-> faults on kernel stacks, we will have other metrics that show the total
-> number of pages allocated for stacks. On hardware where faults are not
-> supported, we will most likely have some optimization where only some
-> threads are extended, and for those, these metrics will still be very
-> useful.
-> 
-> [1] https://lwn.net/Articles/974367
-> 
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> Reviewed-by: Kent Overstreet <kent.overstreet@linux.dev>
+> No behavior changes, other than the delayed read of buffer.output.
 
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+This change looks good, I do not see any obvious problem there. Nice cleanup!
+
+Reviewed-by: Pali Rohár <pali@kernel.org>
+
+> Signed-off-by: Andres Salomon <dilinger@queued.net>
+> ---
+>  drivers/platform/x86/dell/dell-laptop.c | 148 ++++++++----------------
+>  1 file changed, 48 insertions(+), 100 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/dell/dell-laptop.c b/drivers/platform/x86/dell/dell-laptop.c
+> index aae9a95fb188..facf00c8289d 100644
+> --- a/drivers/platform/x86/dell/dell-laptop.c
+> +++ b/drivers/platform/x86/dell/dell-laptop.c
+> @@ -367,6 +367,25 @@ static const struct dmi_system_id dell_quirks[] __initconst = {
+>  	{ }
+>  };
+>  
+> +/* -1 is a sentinel value, telling us to use token->value */
+> +#define USE_TVAL ((u32) -1)
+> +static int dell_send_request_by_token_loc(struct calling_interface_buffer *buffer,
+> +					  u16 class, u16 select, int type,
+> +					  u32 val)
+> +{
+> +	struct calling_interface_token *token;
+> +
+> +	token = dell_smbios_find_token(type);
+> +	if (!token)
+> +		return -ENODEV;
+> +
+> +	if (val == USE_TVAL)
+> +		val = token->value;
+> +
+> +	dell_fill_request(buffer, token->location, val, 0, 0);
+> +	return dell_send_request(buffer, class, select);
+> +}
+> +
+>  /*
+>   * Derived from information in smbios-wireless-ctl:
+>   *
+> @@ -909,43 +928,24 @@ static void dell_cleanup_rfkill(void)
+>  static int dell_send_intensity(struct backlight_device *bd)
+>  {
+>  	struct calling_interface_buffer buffer;
+> -	struct calling_interface_token *token;
+> -	int ret;
+> -
+> -	token = dell_smbios_find_token(BRIGHTNESS_TOKEN);
+> -	if (!token)
+> -		return -ENODEV;
+> +	u16 pwr;
+>  
+> -	dell_fill_request(&buffer,
+> -			   token->location, bd->props.brightness, 0, 0);
+> -	if (power_supply_is_system_supplied() > 0)
+> -		ret = dell_send_request(&buffer,
+> -					CLASS_TOKEN_WRITE, SELECT_TOKEN_AC);
+> -	else
+> -		ret = dell_send_request(&buffer,
+> -					CLASS_TOKEN_WRITE, SELECT_TOKEN_BAT);
+> -
+> -	return ret;
+> +	pwr = power_supply_is_system_supplied() > 0 ?
+> +			SELECT_TOKEN_AC : SELECT_TOKEN_BAT;
+> +	return dell_send_request_by_token_loc(&buffer, CLASS_TOKEN_WRITE,
+> +			pwr, BRIGHTNESS_TOKEN, bd->props.brightness);
+>  }
+>  
+>  static int dell_get_intensity(struct backlight_device *bd)
+>  {
+>  	struct calling_interface_buffer buffer;
+> -	struct calling_interface_token *token;
+>  	int ret;
+> +	u16 pwr;
+>  
+> -	token = dell_smbios_find_token(BRIGHTNESS_TOKEN);
+> -	if (!token)
+> -		return -ENODEV;
+> -
+> -	dell_fill_request(&buffer, token->location, 0, 0, 0);
+> -	if (power_supply_is_system_supplied() > 0)
+> -		ret = dell_send_request(&buffer,
+> -					CLASS_TOKEN_READ, SELECT_TOKEN_AC);
+> -	else
+> -		ret = dell_send_request(&buffer,
+> -					CLASS_TOKEN_READ, SELECT_TOKEN_BAT);
+> -
+> +	pwr = power_supply_is_system_supplied() > 0 ?
+> +			SELECT_TOKEN_AC : SELECT_TOKEN_BAT;
+> +	ret = dell_send_request_by_token_loc(&buffer, CLASS_TOKEN_READ, pwr,
+> +			BRIGHTNESS_TOKEN, 0);
+>  	if (ret == 0)
+>  		ret = buffer.output[1];
+>  
+> @@ -1369,20 +1369,12 @@ static int kbd_set_state_safe(struct kbd_state *state, struct kbd_state *old)
+>  static int kbd_set_token_bit(u8 bit)
+>  {
+>  	struct calling_interface_buffer buffer;
+> -	struct calling_interface_token *token;
+> -	int ret;
+>  
+>  	if (bit >= ARRAY_SIZE(kbd_tokens))
+>  		return -EINVAL;
+>  
+> -	token = dell_smbios_find_token(kbd_tokens[bit]);
+> -	if (!token)
+> -		return -EINVAL;
+> -
+> -	dell_fill_request(&buffer, token->location, token->value, 0, 0);
+> -	ret = dell_send_request(&buffer, CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
+> -
+> -	return ret;
+> +	return dell_send_request_by_token_loc(&buffer, CLASS_TOKEN_WRITE,
+> +			SELECT_TOKEN_STD, kbd_tokens[bit], USE_TVAL);
+>  }
+>  
+>  static int kbd_get_token_bit(u8 bit)
+> @@ -1401,11 +1393,10 @@ static int kbd_get_token_bit(u8 bit)
+>  
+>  	dell_fill_request(&buffer, token->location, 0, 0, 0);
+>  	ret = dell_send_request(&buffer, CLASS_TOKEN_READ, SELECT_TOKEN_STD);
+> -	val = buffer.output[1];
+> -
+>  	if (ret)
+>  		return ret;
+>  
+> +	val = buffer.output[1];
+>  	return (val == token->value);
+>  }
+>  
+> @@ -1511,7 +1502,7 @@ static inline int kbd_init_info(void)
+>  
+>  }
+>  
+> -static inline void kbd_init_tokens(void)
+> +static inline void __init kbd_init_tokens(void)
+>  {
+>  	int i;
+>  
+> @@ -1520,7 +1511,7 @@ static inline void kbd_init_tokens(void)
+>  			kbd_token_bits |= BIT(i);
+>  }
+>  
+> -static void kbd_init(void)
+> +static void __init kbd_init(void)
+>  {
+>  	int ret;
+>  
+> @@ -2145,21 +2136,12 @@ static int micmute_led_set(struct led_classdev *led_cdev,
+>  			   enum led_brightness brightness)
+>  {
+>  	struct calling_interface_buffer buffer;
+> -	struct calling_interface_token *token;
+>  	int state = brightness != LED_OFF;
+> +	u32 val;
+>  
+> -	if (state == 0)
+> -		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_DISABLE);
+> -	else
+> -		token = dell_smbios_find_token(GLOBAL_MIC_MUTE_ENABLE);
+> -
+> -	if (!token)
+> -		return -ENODEV;
+> -
+> -	dell_fill_request(&buffer, token->location, token->value, 0, 0);
+> -	dell_send_request(&buffer, CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
+> -
+> -	return 0;
+> +	val = state == 0 ? GLOBAL_MIC_MUTE_DISABLE : GLOBAL_MIC_MUTE_ENABLE;
+> +	return dell_send_request_by_token_loc(&buffer, CLASS_TOKEN_WRITE,
+> +			SELECT_TOKEN_STD, val, USE_TVAL);
+>  }
+>  
+>  static struct led_classdev micmute_led_cdev = {
+> @@ -2173,21 +2155,12 @@ static int mute_led_set(struct led_classdev *led_cdev,
+>  			   enum led_brightness brightness)
+>  {
+>  	struct calling_interface_buffer buffer;
+> -	struct calling_interface_token *token;
+>  	int state = brightness != LED_OFF;
+> +	u32 val;
+>  
+> -	if (state == 0)
+> -		token = dell_smbios_find_token(GLOBAL_MUTE_DISABLE);
+> -	else
+> -		token = dell_smbios_find_token(GLOBAL_MUTE_ENABLE);
+> -
+> -	if (!token)
+> -		return -ENODEV;
+> -
+> -	dell_fill_request(&buffer, token->location, token->value, 0, 0);
+> -	dell_send_request(&buffer, CLASS_TOKEN_WRITE, SELECT_TOKEN_STD);
+> -
+> -	return 0;
+> +	val = state == 0 ? GLOBAL_MUTE_DISABLE : GLOBAL_MUTE_ENABLE;
+> +	return dell_send_request_by_token_loc(&buffer, CLASS_TOKEN_WRITE,
+> +			SELECT_TOKEN_STD, val, USE_TVAL);
+>  }
+>  
+>  static struct led_classdev mute_led_cdev = {
+> @@ -2197,31 +2170,12 @@ static struct led_classdev mute_led_cdev = {
+>  	.default_trigger = "audio-mute",
+>  };
+>  
+> -static int dell_send_request_by_token_loc(struct calling_interface_buffer *buffer,
+> -					  u16 class, u16 select, int type,
+> -					  u32 val)
+> -{
+> -	struct calling_interface_token *token;
+> -
+> -	token = dell_smbios_find_token(type);
+> -	if (!token)
+> -		return -ENODEV;
+> -
+> -	/* -1 is a sentinel value, telling us to use token->value */
+> -	if (val == (u32)-1)
+> -		val = token->value;
+> -
+> -	dell_fill_request(buffer, token->location, val, 0, 0);
+> -	return dell_send_request(buffer, class, select);
+> -}
+> -
+>  static int dell_battery_set_mode(const int type)
+>  {
+>  	struct calling_interface_buffer buffer;
+>  
+> -	/* -1 means use the value from the token */
+>  	return dell_send_request_by_token_loc(&buffer, CLASS_TOKEN_WRITE,
+> -			SELECT_TOKEN_STD, type, -1);
+> +			SELECT_TOKEN_STD, type, USE_TVAL);
+>  }
+>  
+>  static int dell_battery_read(const int type)
+> @@ -2470,7 +2424,7 @@ static void __exit dell_battery_exit(void)
+>  
+>  static int __init dell_init(void)
+>  {
+> -	struct calling_interface_token *token;
+> +	struct calling_interface_buffer buffer;
+>  	int max_intensity = 0;
+>  	int ret;
+>  
+> @@ -2532,16 +2486,10 @@ static int __init dell_init(void)
+>  	if (acpi_video_get_backlight_type() != acpi_backlight_vendor)
+>  		return 0;
+>  
+> -	token = dell_smbios_find_token(BRIGHTNESS_TOKEN);
+> -	if (token) {
+> -		struct calling_interface_buffer buffer;
+> -
+> -		dell_fill_request(&buffer, token->location, 0, 0, 0);
+> -		ret = dell_send_request(&buffer,
+> -					CLASS_TOKEN_READ, SELECT_TOKEN_AC);
+> -		if (ret == 0)
+> -			max_intensity = buffer.output[3];
+> -	}
+> +	ret = dell_send_request_by_token_loc(&buffer, CLASS_TOKEN_READ,
+> +			SELECT_TOKEN_AC, BRIGHTNESS_TOKEN, 0);
+> +	if (ret == 0)
+> +		max_intensity = buffer.output[3];
+>  
+>  	if (max_intensity) {
+>  		struct backlight_properties props;
+> -- 
+> 2.39.2
+> 
+> 
+> 
+> -- 
+> I'm available for contract & employment work, see:
+> https://spindle.queued.net/~dilinger/resume-tech.pdf
 
