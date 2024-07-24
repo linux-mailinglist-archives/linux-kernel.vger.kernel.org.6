@@ -1,125 +1,132 @@
-Return-Path: <linux-kernel+bounces-261289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 723F193B53D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:49:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E60593B560
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 185D11F22AF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:49:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D5EDB22F8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF81D15ECEA;
-	Wed, 24 Jul 2024 16:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8760F15EFC9;
+	Wed, 24 Jul 2024 16:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nnT6ZlhK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b1ZREMuV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A80219E0
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 16:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8187B15EFA0;
+	Wed, 24 Jul 2024 16:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721839759; cv=none; b=Opb7eMDXBkgHof6xHlPoFAF1TwnFbLvfEajTdCeWQ0qLLthA4x2GseO0aHADHbPC/Q03vvE6G7+SXY0bNTc6KHIVWxtc+UH8UhzmhQVAOia0p/TvBc/HWefJzDVNQFxcaQb40QsavYgmbT3CscKiTzvi78HpHEN4kg/XFBlPjCU=
+	t=1721840311; cv=none; b=Ss7Wjfg3fSzGPbtuIoc8gJUh2yNhWJoxrUJOak0+F8Pb+y5a/rQLpZGo8d1DOsWitm2eAO8C4mNFAVhyiZQ/Dmx1EM+KQZ1CmM4DX9DcYxEVp1tUEK2kaBb9xlNA3q89C/k2T9/zkRy+PjKUB0bGchOi5IhFj/IfQzbgNAs1KSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721839759; c=relaxed/simple;
-	bh=FqPmnPvkXsNLqU723bsoiovxks5vbJ26J89jMhJn3o0=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=oXxslUwGsL9MROdt1TymnFCLH6TjOY4WMQ+BfjN0gnjfQvh2gkwfzmpyBqIWyZvdF/Xj3dKA36Z386by9qjNFyX/y0NiwLlGCRyrbcRPqICmC9fXSWLpQB5fx7XMwpConUAKjEVYBo6ai7Adt8uv6uigJSaxbe+RpdNJm6j2+n8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nnT6ZlhK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F208DC32786;
-	Wed, 24 Jul 2024 16:49:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721839758;
-	bh=FqPmnPvkXsNLqU723bsoiovxks5vbJ26J89jMhJn3o0=;
-	h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
-	b=nnT6ZlhKXcJogU2JNoQO8vRFRfgIntS3zQyCIB8hKIQKEMMcPkXt06BKYhdY1/FCg
-	 fNYA0WVdQLMczaNHZgkHLfgKdW7i+9UbXJRSKBHHuqNQKMF+a04+RQMOp5OQ/0uVQz
-	 DTj8ewQJdG2G0zX93xqKFdsrhmD06zi6JYD6qlFc51mHqyNGm1/BT+4YDKE3q98q0V
-	 frpVKrnzgt6HMFcUcakldWuKGERZBe91hKGzYGXT57WtVkvm+pkrPql90Gl6CkPqQo
-	 tIDiwn/oUhKQOoh0/zg3LnfI8nsnk/xzQEh2FIG2tE3BFHwBVckG125wNXDlwniQUf
-	 ZOKYsy6Aggq0g==
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id D59191200066;
-	Wed, 24 Jul 2024 12:49:16 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Wed, 24 Jul 2024 12:49:16 -0400
-X-ME-Sender: <xms:jDChZrVEG_-n829d04f8NobiJZVkZdFAyR8uJ7S6gFP61rST0ciufA>
-    <xme:jDChZjn7KLNnTu-XxMNdpXosGStBJbgH9cI2K9a2ybG-B442H7fwfeY5Xo9g_Clu4
-    G-AE3hEHJB-MTrkX1k>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddriedugddutdeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusehkvghrnhgvlhdrohhrgheqnecuggftrf
-    grthhtvghrnhepvdeviefgtedugeevieelvdfgveeuvdfgteegfeeiieejjeffgeeghedu
-    gedtveehnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    eprghrnhguodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduvdekhedujedt
-    vdegqddvkeejtddtvdeigedqrghrnhgupeepkhgvrhhnvghlrdhorhhgsegrrhhnuggsrd
-    guvgdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:jDChZnaFFBg5C0yIADp152HiZKuF_iyJAYMBa4ZZrKd_3mUO5tx8dA>
-    <xmx:jDChZmVDUFIIrTDoNtRYJIc9JoniF1Gv-UUd52i3LxXCaqaNxWcNaw>
-    <xmx:jDChZlk0GRy_MVKzXoH0oaAbCSknLwJ2rUv220RAyEFF2R52LjLvgA>
-    <xmx:jDChZjfctYyAALIdXLaLTrdrganxhnlYQH25O45aWRhjGrDVvKg70Q>
-    <xmx:jDChZvG-mXRVzT2s998nrBWv_ZjtlfrHPygtikdR3zgCML4gGXve4-DN>
-Feedback-ID: i36794607:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id A420EB60092; Wed, 24 Jul 2024 12:49:16 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-582-g5a02f8850-fm-20240719.002-g5a02f885
+	s=arc-20240116; t=1721840311; c=relaxed/simple;
+	bh=rsVz+LhgSFt8cu91zlcAvS+TOmocgJJ/c2yTNsJ47XE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bkl0uxS+BnYBdYgoX6mHzRMaLz3jF0nmid+sgL50+TJadS7j6FHgwU/8H5OtD2C9grqLezXnq5E9iSXjq9qcoiN9K3MicQ/Vpgg0VDV/QafSvcNYl7reGXklm19Sbpxua7nBZJazSkNLWBjRCgBCgkEnn+tJvQzheTJhrL2uViI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b1ZREMuV; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721840310; x=1753376310;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=rsVz+LhgSFt8cu91zlcAvS+TOmocgJJ/c2yTNsJ47XE=;
+  b=b1ZREMuVzXu3NQ5GHmdwNF5LKx53BgShYqr98b1BgPiL5FhETDXuNSy8
+   yYF47CYcuojtuUIpQbSeF5DHfJFghls4QPaM8deHyXllPGWnapAcBRvqO
+   Rqin2sbEJJLrCzHW8IVRnUC7K43EyxPfq/cQPN+9B1484PEDj2hznd0fZ
+   jnQl7Svgoi0DUf5XrfwMRiu4D3p+MaoSsJ0p+bAjLdZt692py8byoSkU9
+   J88WOEU8FNcfdjT16rNhGyhXqifNxKMLcuxth+vuR+VatO/NecG7Q4Wi1
+   uVSnCritloFPxt0Y+qkwvPg3B5emsGnWbRrXiQRkKeZHCHrD4ht5gV/Sh
+   Q==;
+X-CSE-ConnectionGUID: kI26JWEoQyeI0AdTEolrvg==
+X-CSE-MsgGUID: 91CU5LCoRs6fmaEwnDNkYg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11143"; a="30679727"
+X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
+   d="scan'208";a="30679727"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 09:58:29 -0700
+X-CSE-ConnectionGUID: JaAMf6SKT36fJrtSfnXnFQ==
+X-CSE-MsgGUID: M9OmluhuRcSSUQtvTT9B2g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
+   d="scan'208";a="56960617"
+Received: from irvmail002.ir.intel.com ([10.43.11.120])
+  by fmviesa005.fm.intel.com with ESMTP; 24 Jul 2024 09:58:25 -0700
+Received: from lincoln.igk.intel.com (lincoln.igk.intel.com [10.102.21.235])
+	by irvmail002.ir.intel.com (Postfix) with ESMTP id 3B34B28785;
+	Wed, 24 Jul 2024 17:58:23 +0100 (IST)
+From: Larysa Zaremba <larysa.zaremba@intel.com>
+To: intel-wired-lan@lists.osuosl.org
+Cc: Larysa Zaremba <larysa.zaremba@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	magnus.karlsson@intel.com,
+	Michal Kubiak <michal.kubiak@intel.com>,
+	Wojciech Drewek <wojciech.drewek@intel.com>,
+	Amritha Nambiar <amritha.nambiar@intel.com>
+Subject: [PATCH iwl-net v2 0/6] ice: fix synchronization between .ndo_bpf() and reset
+Date: Wed, 24 Jul 2024 18:48:31 +0200
+Message-ID: <20240724164840.2536605-1-larysa.zaremba@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <ef130c0a-b82f-472f-8c53-f7ef4c236c44@app.fastmail.com>
-In-Reply-To: <03601661326c4efba4e618ead15fa0e2@AcuMS.aculab.com>
-References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
- <03601661326c4efba4e618ead15fa0e2@AcuMS.aculab.com>
-Date: Wed, 24 Jul 2024 18:48:23 +0200
-From: "Arnd Bergmann" <arnd@kernel.org>
-To: "David Laight" <David.Laight@aculab.com>,
- "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
- "Linus Torvalds" <torvalds@linuxfoundation.org>
-Cc: "Matthew Wilcox" <willy@infradead.org>,
- "Christoph Hellwig" <hch@infradead.org>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- "Dan Carpenter" <dan.carpenter@linaro.org>,
- "Jason A . Donenfeld" <Jason@zx2c4.com>,
- "'pedro.falcato@gmail.com'" <pedro.falcato@gmail.com>,
- "Mateusz Guzik" <mjguzik@gmail.com>,
- "'linux-mm@kvack.org'" <linux-mm@kvack.org>
-Subject: Re: [PATCH 4/7] minmax: Simplify signedness check
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 24, 2024, at 16:30, David Laight wrote:
-> It is enough to check that both 'x' and 'y' are valid for either
-> a signed compare or an unsigned compare.
-> For unsigned they must be an unsigned type or a positive constant.
-> For signed they must be signed after unsigned char/short are promoted.
->
-> Order the expressions to avoid warnings about comparisons that are
-> always true.
->
-> Signed-off-by: David Laight <david.laight@aculab.com>
+PF reset can be triggered asynchronously, by tx_timeout or by a user. With some
+unfortunate timings both ice_vsi_rebuild() and .ndo_bpf will try to access and
+modify XDP rings at the same time, causing system crash.
 
-This patch gives me a 10x speedup on compiling arch/x86/xen/setup.c,
-taking it from 15 seconds to 1.5 seconds for a defconfig+CONFIG_XEN
-build.
+The first patch factors out rtnl-locked code from VSI rebuild code to avoid
+deadlock. The following changes lock rebuild and .ndo_bpf() critical sections
+with an internal mutex as well and provide complementary fixes.
 
->+/* Allow unsigned compares against non-negative signed constants. */
->+#define __is_ok_unsigned(x) \
->+	((is_unsigned_type(typeof(x)) ? 0 : __if_constexpr(x, (x) + 0, -1)) >= 0)
+v1: https://lore.kernel.org/netdev/20240610153716.31493-1-larysa.zaremba@intel.com/
+v1->v2:
+* use mutex for locking
+* redefine critical sections
+* account for short time between rebuild and VSI being open
+* add netif_queue_set_napi() patch, so ICE_RTNL_WAITS_FOR_RESET strategy can be
+  dropped, no more rtnl-locked code in ice_vsi_rebuild()
+* change the test case from waiting for tx_timeout to happen to actively firing
+  resets through sysfs, this adds more minor fixes on top
 
-I don't understand why this return '0' for unsigned types,
-shouldn't this be
+Larysa Zaremba (6):
+  ice: move netif_queue_set_napi to rtnl-protected sections
+  ice: protect XDP configuration with a mutex
+  ice: check for XDP rings instead of bpf program when unconfiguring
+  ice: check ICE_VSI_DOWN under rtnl_lock when preparing for reset
+  ice: remove ICE_CFG_BUSY locking from AF_XDP code
+  ice: do not bring the VSI up, if it was down before the XDP setup
 
-((is_unsigned_type(typeof(x)) ? 1 : __if_constexpr(x, (x) + 0, -1)) >= 0)
+ drivers/net/ethernet/intel/ice/ice.h      |   2 +
+ drivers/net/ethernet/intel/ice/ice_base.c |  11 +-
+ drivers/net/ethernet/intel/ice/ice_lib.c  | 171 +++++++---------------
+ drivers/net/ethernet/intel/ice/ice_lib.h  |  10 +-
+ drivers/net/ethernet/intel/ice/ice_main.c |  47 ++++--
+ drivers/net/ethernet/intel/ice/ice_xsk.c  |  18 +--
+ 6 files changed, 102 insertions(+), 157 deletions(-)
 
-?
+-- 
+2.43.0
 
-    Arnd
 
