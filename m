@@ -1,142 +1,276 @@
-Return-Path: <linux-kernel+bounces-261509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4694793B812
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 22:34:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0653D93B80F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 22:33:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD3F6B2432C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:34:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 844EE1F22022
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B909313BC3E;
-	Wed, 24 Jul 2024 20:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60EB7137C35;
+	Wed, 24 Jul 2024 20:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="eiSVdvPv"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="qQiHnNvP"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609A013BAC2
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 20:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE1F13A240
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 20:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721853221; cv=none; b=ioh4LCKkIPTlbuLa9BlCv1XfakrSaTcIR7Wa8Z4dTs1GVnKyTMK+J5BqWhk1VfJ8v+Ak02vUWd/a7Wevmug9YiYVxreRk5Qa2Px+ZdZkXXvTmfkhuH38YE4GcmRhpHH6ntznZdQ2VGYo69o9aEng/iiUCz9zBAacWt+zKbEb3H8=
+	t=1721853209; cv=none; b=J9IqAPKUA4iajecryxx8+orUMU0KYLPc1o5skl04BXSEYbYbXrJjSofHbBFVab2wgq9Jw6mj8zNUvkLvdAPj0usF7KTEcN6Xf9V5zzrw1Nw6TXv8eDByBEEstMn65D9Z0OrmmqUqgLhRLkWqkPixfRTQvF0f30aS3kp7V/u+pFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721853221; c=relaxed/simple;
-	bh=YKiXQ0FQII42XtSWYBmKhhzms+jDP96y2ZU89WKdZ1I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VMTkgGLSYm0qBSAJq9UsBHHn7d7kVy1j9NgVK0bcL+rYri9JkHRmefda9Jv/AZ8V2dYEV3IAMbCDyHt4eF01zc8kMtgazy7SKFRwKb48Ao3QqR8tCNaqDHaIbSm3ZIMEXK4UvpWbk1GAeaxNT6c+MZvjDDMBgITwpNWCn0SXxkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=eiSVdvPv; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a77e7420697so36890466b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 13:33:39 -0700 (PDT)
+	s=arc-20240116; t=1721853209; c=relaxed/simple;
+	bh=4wxgB74edsFm6Dr9FcZQqUwub70B++YR0pA1qUyMwug=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=aqOw1a07yUey6OXmqbIgqUG4hS2rhkVK2n/yjzyXaBV/3oDWmNrN1KyAS0zJdFt8TgRFikXhb14SYuOZlOIZ/HmP8hmoCY06/ctvPRJX+o4UcBjxJGfjtxxFZTAK/JvlCGqVbX6ijfs9WeNs1Z78eia0Z4ey4K9HvQKj/b3xsXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=qQiHnNvP; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7a1d3959ad5so28366685a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 13:33:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1721853217; x=1722458017; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GGwUg2nPLg5QfCofKSadD9L3fIbsRxXdwl/uH9dIJ6Y=;
-        b=eiSVdvPvOPio+TQwIxeIqHTP6TpQ2+6UL5qlwhE8DQu6uL7hRYd3CUmEhjC7s+ysP/
-         ZuuIsZmK2PrOYPYJ0ZfLFtNyw60QLO8tuQJ07rDg7r4HtBkP+Vqi1e/6pgMXRWTxa9Xx
-         YGg72z80A0ATxyMTGqYO7RaxA49atLdGc7uuY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721853217; x=1722458017;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1721853206; x=1722458006; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GGwUg2nPLg5QfCofKSadD9L3fIbsRxXdwl/uH9dIJ6Y=;
-        b=tiH5r4q3aZWBsmPsI4sWYTxMfTMrJ+WSyJaKkGRh/SwUMj9UOojB8OFPckRXcWpef2
-         PJpzTJkmmv89ejPiPSfyBsAKtgF3no3KpLLCDF0qTtdX+wAIE3Aw91WUrRXOx40M/YEp
-         plhZAhxE6kRTig+6MlOFW6fWRmtNszBrpWZTqjNAifOpSyBK/k0sFGoKSkjiKadFcN5A
-         NrTHT1UbTwG/JRTEglAfBYGBj0sTB59FBVekkVb2Jdh/348W357cZiFQar7MmoXqecjg
-         CxzCuBmLimlttGeat4CbTIxyTs2QzbYAMy9w3EtKhSEAWch5BVaHAmNMWF1uid/+B6wb
-         Sryw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMwfJj8FrCrs6r6c91mPJrsjVcBEnMssBzLHet0kvezRVrlf887DszztQVR9J1h5noOjOKMMZWkk1Z1puzNA0p2TL9pnOWjwqFc8mR
-X-Gm-Message-State: AOJu0YxxR2aZtukX8D8B3s1XAvnG3OQHhlcP7u13Ae3Wia9DThc759jv
-	dJVq7t28OA9L5XTaPYXHxa8mzJeMGg6FOBtUR2vS+MOybenNAmvIxUMJeSmAw82LVsHhq3paND0
-	jVFE=
-X-Google-Smtp-Source: AGHT+IEapjP1d7TQAejGybgM6vWUQP6aFzKWXLZxNXnefKFz6Z/iUVZQWb3yGy6g7H4M6T1OpRFo8g==
-X-Received: by 2002:a17:907:7d88:b0:a72:7245:ec0a with SMTP id a640c23a62f3a-a7ac5087b94mr48532066b.58.1721853217308;
-        Wed, 24 Jul 2024 13:33:37 -0700 (PDT)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a8beef9cdsm240947566b.89.2024.07.24.13.33.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Jul 2024 13:33:36 -0700 (PDT)
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5a10bb7b237so377066a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 13:33:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUq28cLCcThZIm5VdH/2BmEe7Pos4LAzrcy4T/16LiqspeCrg8qfDl0q3avyCEx+nfF7ZSEIgrzgI/7jkW/qRWy2SbVeMuNXY3uVIJP
-X-Received: by 2002:a50:d797:0:b0:5a8:2f2b:d2c9 with SMTP id
- 4fb4d7f45d1cf-5ac2ae7ad86mr240465a12.21.1721853216423; Wed, 24 Jul 2024
- 13:33:36 -0700 (PDT)
+        bh=za/dqz+eg2q+LXUxzWgwz8U+r7avopRJxf8/6QSZyz0=;
+        b=qQiHnNvPcY4CokjlY2F2mdFthyyTgIj6B0CvLLWw5sBkEO1YPJcAyUxZyBiv7T2J81
+         OPjXCmOagcQ5Vg3RxA90gvEWZmtJt3QwASNQyoKZkat1dDhCIoTBjawcftidIo4tBqrK
+         sXKk/8E1jXQ/iYqzanevnkO+c5YXspcPyBzQHygYPCe+vRN7w8Iiso80aR7Gs1ZNeIFb
+         TBEuslpEwCuXYjv1yxhZ6XC3pbU7pgIyWkbuvxE2okO4iseTs1vmJngPNEyz7P2wJaJy
+         ktNjVF+aa1yNrR7zYKwbpsdhgh07U8zcQmgDeSzpjvoBENJd+3XYkFuclwVwXVtz4yKc
+         VbOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721853206; x=1722458006;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=za/dqz+eg2q+LXUxzWgwz8U+r7avopRJxf8/6QSZyz0=;
+        b=pN6QfY14at8P2VlDDQi9KRUgvk44dei10e6OAJjUAOeNl4Psv8gNB23IvfEitRY7Lo
+         ygxSr7xnl2HyXqFtcIpApEuSASM6H3laHT23dKxYa1Zn4S0hPgv5j7nufjtiTjq5gdFv
+         wszivTI/tW1OyksR9AyEa/OXZ00IO+Etv63nSIYu1+sDNp8tVc17sjcolmXbOdzeuOei
+         WDHdJxo85T6PCqi+1O7hlaZvtYUDSvv/iy8QODCo0czPaJa6FK1C1EELEGzCvALMc+cd
+         QNdRStm+2z2Da126uqfnfPeTuDIaN5B59M7QkD823hAzgMPzLz5g15BtTN9SLNbhWNQ7
+         b5Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCVmFF2cS0hFb/xkYUGomSTDx0k0JaxmzJnJRJvBGBNkXBFkXUHaenHvOK2fUKXDlqic2ZPalD7OTxE3mGAPFCkFLinHoKNXfZyXHjw8
+X-Gm-Message-State: AOJu0YwLeoab0AItjcpeW/NmGNNo5sARRUIx6zl1oA1deMCHasaA6NH7
+	M5zUitexbrKKCzY0Rfy3zLpw7rPD7br1L5OSynX0n2PCFnQL3+E+XyjT7YgMhTo=
+X-Google-Smtp-Source: AGHT+IExTwTAOD/5fd9WfUJdqA5+PovpxcivQTu3nfLVJy2iPs6JHKTbh5T2ftGVvWPvF45SGasYCg==
+X-Received: by 2002:a05:620a:199b:b0:79f:7c0:ebfd with SMTP id af79cd13be357-7a1ccd334bfmr551254285a.16.1721853206521;
+        Wed, 24 Jul 2024 13:33:26 -0700 (PDT)
+Received: from soleen.c.googlers.com.com (197.5.86.34.bc.googleusercontent.com. [34.86.5.197])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d73b1786sm466485a.33.2024.07.24.13.33.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 13:33:25 -0700 (PDT)
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+To: akpm@linux-foundation.org,
+	jpoimboe@kernel.org,
+	pasha.tatashin@soleen.com,
+	kent.overstreet@linux.dev,
+	peterz@infradead.org,
+	nphamcs@gmail.com,
+	cerasuolodomenico@gmail.com,
+	surenb@google.com,
+	lizhijian@fujitsu.com,
+	willy@infradead.org,
+	shakeel.butt@linux.dev,
+	vbabka@suse.cz,
+	ziy@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH v5 1/3] memcg: increase the valid index range for memcg stats
+Date: Wed, 24 Jul 2024 20:33:20 +0000
+Message-ID: <20240724203322.2765486-2-pasha.tatashin@soleen.com>
+X-Mailer: git-send-email 2.45.2.1089.g2a221341d9-goog
+In-Reply-To: <20240724203322.2765486-1-pasha.tatashin@soleen.com>
+References: <20240724203322.2765486-1-pasha.tatashin@soleen.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zp-_7R49fIHgIhaq@pathway.suse.cz> <CAHk-=whU_woFnFN-3Jv2hNCmwLg_fkrT42AWwxm-=Ha5BmNX4w@mail.gmail.com>
- <87ed7jvo2c.fsf@jogness.linutronix.de> <CAHk-=wh+cxX2Sxc6RPBKkgYO67o2mdVfW6sQNMYc_x2QoP4LOQ@mail.gmail.com>
- <ZqC-TW7ygSSF3MyO@pathway.suse.cz> <20240724124743.GC13387@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240724124743.GC13387@noisy.programming.kicks-ass.net>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 24 Jul 2024 13:33:20 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgJrCwOwj4myGgpgyig9dX37hir1S2Xdeg1=kVS-hPzAg@mail.gmail.com>
-Message-ID: <CAHk-=wgJrCwOwj4myGgpgyig9dX37hir1S2Xdeg1=kVS-hPzAg@mail.gmail.com>
-Subject: Re: [GIT PULL] printk for 6.11
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Petr Mladek <pmladek@suse.com>, John Ogness <john.ogness@linutronix.de>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>, Jan Kara <jack@suse.cz>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 24 Jul 2024 at 05:47, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> So.. I've complained about this emergency buffering before. At the very
-> least the atomic consoles should never buffer and immediately print
-> everything. Per their definition they always work.
+From: Shakeel Butt <shakeel.butt@linux.dev>
 
-Yeah, my personal preference would be some variation of this.
+At the moment the valid index for the indirection tables for memcg stats
+and events is < S8_MAX. These indirection tables are used in performance
+critical codepaths. With the latest addition to the vm_events, the
+NR_VM_EVENT_ITEMS has gone over S8_MAX. One way to resolve is to
+increase the entry size of the indirection table from int8_t to int16_t
+but this will increase the potential number of cachelines needed to
+access the indirection table.
 
-And when I say "some variation of this", I do think that having a
-per-console trylock is fine, and buffering *if* the atomic console is
-already busy (presumably with an existing oops, but possibly also for
-"setup issues" - ie things like "serial line is being configured" or
-"VGACON is in the middle of a redraw or console size change
-operation".
+This patch took a different approach and make the valid index < U8_MAX.
+In this way the size of the indirection tables will remain same and we
+only need to invalid index check from less than 0 to equal to U8_MAX.
+In this approach we have also removed a subtraction from the performance
+critical codepaths.
 
-And yes, before anybody speaks up, that is kind of the approximation
-of the current console_trylock() logic. I am aware. And I'm also aware
-of how much people have hated it. And I'm not claiming it's perfect.
+Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+Co-developed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+---
+ mm/memcontrol.c | 50 +++++++++++++++++++++++++++----------------------
+ 1 file changed, 28 insertions(+), 22 deletions(-)
 
-But I do think that the *typically* important case is "something went
-horribly wrong, and the console was *not* busy at the time", and
-that's the case where there is no excuse to not just print out ASAP.
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 960371788687..2fdeece7f1f8 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -320,24 +320,27 @@ static const unsigned int memcg_stat_items[] = {
+ #define NR_MEMCG_NODE_STAT_ITEMS ARRAY_SIZE(memcg_node_stat_items)
+ #define MEMCG_VMSTAT_SIZE (NR_MEMCG_NODE_STAT_ITEMS + \
+ 			   ARRAY_SIZE(memcg_stat_items))
+-static int8_t mem_cgroup_stats_index[MEMCG_NR_STAT] __read_mostly;
++#define IS_INVALID(index) ((index) == U8_MAX)
++static u8 mem_cgroup_stats_index[MEMCG_NR_STAT] __read_mostly;
+ 
+ static void init_memcg_stats(void)
+ {
+-	int8_t i, j = 0;
++	u8 i, j = 0;
+ 
+-	BUILD_BUG_ON(MEMCG_NR_STAT >= S8_MAX);
++	BUILD_BUG_ON(MEMCG_NR_STAT >= U8_MAX);
+ 
+-	for (i = 0; i < NR_MEMCG_NODE_STAT_ITEMS; ++i)
+-		mem_cgroup_stats_index[memcg_node_stat_items[i]] = ++j;
++	memset(mem_cgroup_stats_index, U8_MAX, sizeof(mem_cgroup_stats_index));
+ 
+-	for (i = 0; i < ARRAY_SIZE(memcg_stat_items); ++i)
+-		mem_cgroup_stats_index[memcg_stat_items[i]] = ++j;
++	for (i = 0; i < NR_MEMCG_NODE_STAT_ITEMS; ++i, ++j)
++		mem_cgroup_stats_index[memcg_node_stat_items[i]] = j;
++
++	for (i = 0; i < ARRAY_SIZE(memcg_stat_items); ++i, ++j)
++		mem_cgroup_stats_index[memcg_stat_items[i]] = j;
+ }
+ 
+ static inline int memcg_stats_index(int idx)
+ {
+-	return mem_cgroup_stats_index[idx] - 1;
++	return mem_cgroup_stats_index[idx];
+ }
+ 
+ struct lruvec_stats_percpu {
+@@ -369,7 +372,7 @@ unsigned long lruvec_page_state(struct lruvec *lruvec, enum node_stat_item idx)
+ 		return node_page_state(lruvec_pgdat(lruvec), idx);
+ 
+ 	i = memcg_stats_index(idx);
+-	if (WARN_ONCE(i < 0, "%s: missing stat item %d\n", __func__, idx))
++	if (WARN_ONCE(IS_INVALID(i), "%s: missing stat item %d\n", __func__, idx))
+ 		return 0;
+ 
+ 	pn = container_of(lruvec, struct mem_cgroup_per_node, lruvec);
+@@ -392,7 +395,7 @@ unsigned long lruvec_page_state_local(struct lruvec *lruvec,
+ 		return node_page_state(lruvec_pgdat(lruvec), idx);
+ 
+ 	i = memcg_stats_index(idx);
+-	if (WARN_ONCE(i < 0, "%s: missing stat item %d\n", __func__, idx))
++	if (WARN_ONCE(IS_INVALID(i), "%s: missing stat item %d\n", __func__, idx))
+ 		return 0;
+ 
+ 	pn = container_of(lruvec, struct mem_cgroup_per_node, lruvec);
+@@ -435,21 +438,24 @@ static const unsigned int memcg_vm_event_stat[] = {
+ };
+ 
+ #define NR_MEMCG_EVENTS ARRAY_SIZE(memcg_vm_event_stat)
+-static int8_t mem_cgroup_events_index[NR_VM_EVENT_ITEMS] __read_mostly;
++static u8 mem_cgroup_events_index[NR_VM_EVENT_ITEMS] __read_mostly;
+ 
+ static void init_memcg_events(void)
+ {
+-	int8_t i;
++	u8 i;
++
++	BUILD_BUG_ON(NR_VM_EVENT_ITEMS >= U8_MAX);
+ 
+-	BUILD_BUG_ON(NR_VM_EVENT_ITEMS >= S8_MAX);
++	memset(mem_cgroup_events_index, U8_MAX,
++	       sizeof(mem_cgroup_events_index));
+ 
+ 	for (i = 0; i < NR_MEMCG_EVENTS; ++i)
+-		mem_cgroup_events_index[memcg_vm_event_stat[i]] = i + 1;
++		mem_cgroup_events_index[memcg_vm_event_stat[i]] = i;
+ }
+ 
+ static inline int memcg_events_index(enum vm_event_item idx)
+ {
+-	return mem_cgroup_events_index[idx] - 1;
++	return mem_cgroup_events_index[idx];
+ }
+ 
+ struct memcg_vmstats_percpu {
+@@ -621,7 +627,7 @@ unsigned long memcg_page_state(struct mem_cgroup *memcg, int idx)
+ 	long x;
+ 	int i = memcg_stats_index(idx);
+ 
+-	if (WARN_ONCE(i < 0, "%s: missing stat item %d\n", __func__, idx))
++	if (WARN_ONCE(IS_INVALID(i), "%s: missing stat item %d\n", __func__, idx))
+ 		return 0;
+ 
+ 	x = READ_ONCE(memcg->vmstats->state[i]);
+@@ -662,7 +668,7 @@ void __mod_memcg_state(struct mem_cgroup *memcg, enum memcg_stat_item idx,
+ 	if (mem_cgroup_disabled())
+ 		return;
+ 
+-	if (WARN_ONCE(i < 0, "%s: missing stat item %d\n", __func__, idx))
++	if (WARN_ONCE(IS_INVALID(i), "%s: missing stat item %d\n", __func__, idx))
+ 		return;
+ 
+ 	__this_cpu_add(memcg->vmstats_percpu->state[i], val);
+@@ -675,7 +681,7 @@ unsigned long memcg_page_state_local(struct mem_cgroup *memcg, int idx)
+ 	long x;
+ 	int i = memcg_stats_index(idx);
+ 
+-	if (WARN_ONCE(i < 0, "%s: missing stat item %d\n", __func__, idx))
++	if (WARN_ONCE(IS_INVALID(i), "%s: missing stat item %d\n", __func__, idx))
+ 		return 0;
+ 
+ 	x = READ_ONCE(memcg->vmstats->state_local[i]);
+@@ -694,7 +700,7 @@ static void __mod_memcg_lruvec_state(struct lruvec *lruvec,
+ 	struct mem_cgroup *memcg;
+ 	int i = memcg_stats_index(idx);
+ 
+-	if (WARN_ONCE(i < 0, "%s: missing stat item %d\n", __func__, idx))
++	if (WARN_ONCE(IS_INVALID(i), "%s: missing stat item %d\n", __func__, idx))
+ 		return;
+ 
+ 	pn = container_of(lruvec, struct mem_cgroup_per_node, lruvec);
+@@ -810,7 +816,7 @@ void __count_memcg_events(struct mem_cgroup *memcg, enum vm_event_item idx,
+ 	if (mem_cgroup_disabled())
+ 		return;
+ 
+-	if (WARN_ONCE(i < 0, "%s: missing stat item %d\n", __func__, idx))
++	if (WARN_ONCE(IS_INVALID(i), "%s: missing stat item %d\n", __func__, idx))
+ 		return;
+ 
+ 	memcg_stats_lock();
+@@ -823,7 +829,7 @@ unsigned long memcg_events(struct mem_cgroup *memcg, int event)
+ {
+ 	int i = memcg_events_index(event);
+ 
+-	if (WARN_ONCE(i < 0, "%s: missing stat item %d\n", __func__, event))
++	if (WARN_ONCE(IS_INVALID(i), "%s: missing stat item %d\n", __func__, event))
+ 		return 0;
+ 
+ 	return READ_ONCE(memcg->vmstats->events[i]);
+@@ -833,7 +839,7 @@ unsigned long memcg_events_local(struct mem_cgroup *memcg, int event)
+ {
+ 	int i = memcg_events_index(event);
+ 
+-	if (WARN_ONCE(i < 0, "%s: missing stat item %d\n", __func__, event))
++	if (WARN_ONCE(IS_INVALID(i), "%s: missing stat item %d\n", __func__, event))
+ 		return 0;
+ 
+ 	return READ_ONCE(memcg->vmstats->events_local[i]);
+-- 
+2.45.2.1089.g2a221341d9-goog
 
-And yes, then if some oops happens _while_ the console is busy
-(possibly because another oops just happened on another CPU core, and
-now *this* CPU also hit it), at that point you go "Ok, trying to print
-now would just make things worse".
-
-And a lot of consoles may end up simply having to buffer, ie if you
-are using a network console or something, maybe "not buffering is so
-painful and involves thousands of random network cards that we
-realistically cannot deal with it".
-
-(Same ultimately goes for slow serial lines - there comes a point
-where waiting for things to flush just isn't worth it)
-
-So I'm not saying "never buffer". There are very valid reasons to say
-"I can't very reasonably print this synchronously".
-
-But I really do think that we should never buffer "by default". And
-that's why I kind of hate that whole concept of "oops_begin starts
-buffering". It's exactly the kind of "buffer by default" mental model
-that I was really hoping we'd never have.
-
-            Linus
 
