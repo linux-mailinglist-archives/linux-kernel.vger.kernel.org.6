@@ -1,1213 +1,512 @@
-Return-Path: <linux-kernel+bounces-260548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E91193AABD
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:50:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CB9793AAC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A9911F22B46
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:50:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A7982841F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10C7D2EE;
-	Wed, 24 Jul 2024 01:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB4BE57D;
+	Wed, 24 Jul 2024 01:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="POqf93El"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EJkHbiX3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FB4A93D
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 01:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDD3B64E;
+	Wed, 24 Jul 2024 01:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721785847; cv=none; b=KZcV20QmkTcbKYzC6bBFSKANq5v1iwVoRi2dtLkfyKRNlpQrtDISrQsPgTrFafHOB9Mi400FZvGXU/1mSZh2wy3NilAU/yamgsbjiVcbqgVkpMQI5WV4N5FYFZw0MsfPY5oAqWtiTlqI1DSCQN8QzHjRqrCieX+vNJDPNoUyPo8=
+	t=1721785936; cv=none; b=JDgaaqtk79RHjDnwP851LBizGX6uA15sKufd5lYE7ryq9zq+Zz4WhZLX7MqoXt8YC5smvh1Z7fzZF7z9oKBknxUTByKOUugsuPTrkVoo+zdqLWWR0eSt1kVCfk6mBCsys7mYs3udRspk4Z8x8dtPxbL420aQ5MXJisZoUTGUo9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721785847; c=relaxed/simple;
-	bh=zRS+eO+cKkeXfWKvwCkI2PO5V6D/NkMJs+1V6l46+xo=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=mgKlo+WA0kvGgMvMGTb047tUOX1LSMOJ90PBxFBtx8b5Y8NgD1H0jH36mn7UJlHzVZJqHxFQjEM8ohPhD4z7KG5NgmP8Rp4VeidmMWT0pdk0swg4rI4UpgrqAB+bQtD5hBoVa5NPL3vADyffI4HE01hRn1RiGokwOKwHjpVAwWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=POqf93El; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1721785936; c=relaxed/simple;
+	bh=k34t01LkMp1q9T6X0EjQqujZrfykOeuKZyy94bQtjQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U9WKeZ5iFoEpnYUFrmhL93nRj7Z3e95HgyT+t2I5eLjhCMJOitZvxWW9S0U4fRdJ/NVTKnRrIGVr2Q43Dte3oEDWK+yxn7D/J52+YLWqYDx/kmmxtNNlJghJ27FW3EAG/uGrMGz1rrEf6+Oln5jJXW7aJMJSeiaHI7Ftjlc0A+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EJkHbiX3; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721785932; x=1753321932;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=k34t01LkMp1q9T6X0EjQqujZrfykOeuKZyy94bQtjQI=;
+  b=EJkHbiX3JDBy1dHZcwmP/m7UseIKwQ+0SUvnQy+NAaa8IdtnYPmUcilt
+   it0VheQwv7ZHmWQQoyQhbpJL3eBCSU/qECqhwr/ZUHImO8H3n/Megflt9
+   uTFGyNHhVAgmnvRahOTvnC199pQ85HKnqCStkp4GNpzPHRp6DFJebzqPE
+   UqA7SvC9ZuRSWo+EkV04yw3/O7Xq1iwQdu5NWGN1Is2MUzy99KzjCJEm5
+   Z6G5onAmYE4ZmhkVqRQq9DrJ5UpYV8bUyFsHLokfr2tKwecPhPbcLWeje
+   GQKHydKKuEt09Zt86mG501fFkgc0CnkyN2ooHglb5GbOs1GWA/fx9p3Hd
+   w==;
+X-CSE-ConnectionGUID: XlUcYYtVRkSXPhrKhUtOjg==
+X-CSE-MsgGUID: z3orSOJkTfadt2azw0Xhdw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11142"; a="19292054"
+X-IronPort-AV: E=Sophos;i="6.09,232,1716274800"; 
+   d="scan'208";a="19292054"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2024 18:52:09 -0700
+X-CSE-ConnectionGUID: 3M3I0rCOSS+SjcWbeTEXaw==
+X-CSE-MsgGUID: AWnrr6hTQ9mfiSyDG5Uyxw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,232,1716274800"; 
+   d="scan'208";a="57246154"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 23 Jul 2024 18:52:01 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sWRAc-000mXw-0n;
+	Wed, 24 Jul 2024 01:51:58 +0000
+Date: Wed, 24 Jul 2024 09:51:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Zheng Yejian <zhengyejian@huaweicloud.com>, masahiroy@kernel.org,
+	peterz@infradead.org, rostedt@goodmis.org, mhiramat@kernel.org,
+	mark.rutland@arm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+	christophe.leroy@csgroup.eu, naveen.n.rao@linux.ibm.com,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, hpa@zytor.com, mcgrof@kernel.org,
+	mathieu.desnoyers@efficios.com, nathan@kernel.org,
+	nicolas@fjasle.eu, ojeda@kernel.org, akpm@linux-foundation.org,
+	surenb@google.com, pasha.tatashin@soleen.com,
+	kent.overstreet@linux.dev, james.clark@arm.com, jpoimboe@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, x86@kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-modules@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] kallsyms: Emit symbol at the holes in the text
+Message-ID: <202407240921.tumLfzKa-lkp@intel.com>
+References: <20240723063258.2240610-2-zhengyejian@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721785841;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6hiDB5EthwLUOsnlSaUBBIpBFgJY+HIEUij2SA8Fn1Q=;
-	b=POqf93ElgOZ6FWm75rLFdJ4JAIekrvAQSWQS1uhZWbzc8srnx95IWzKmI5Xfhz/HDR41PB
-	Y2uKsQrUbsj2K+rTIV+16YaxO6Zn7vklQftxjiM+3uDGHtPneExO2JM0MX5iy83p7GjAt2
-	jVXHJwSS9eRB9ByXm45+Lrs1F3x+Sm4=
-Date: Wed, 24 Jul 2024 01:50:38 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: si.yanteng@linux.dev
-Message-ID: <3d19ed86f0d18fa77c6ce1ce3d4f16bb68da8938@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH] docs/zh_CN: Add dev-tools/kcsan Chinese translation
-To: "Haoyang Liu" <tttturtleruss@hust.edu.cn>, "Alex Shi" <alexs@kernel.org>,
- "Yanteng Si" <siyanteng@loongson.cn>, "Jonathan Corbet" <corbet@lwn.net>,
- "Nathan Chancellor" <nathan@kernel.org>, "Nick Desaulniers"
- <ndesaulniers@google.com>, "Bill Wendling" <morbo@google.com>, "Justin
- Stitt" <justinstitt@google.com>
-Cc: hust-os-kernel-patches@googlegroups.com, "Haoyang Liu"
- <tttturtleruss@hust.edu.cn>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-In-Reply-To: <20240720090828.363331-1-tttturtleruss@hust.edu.cn>
-References: <20240720090828.363331-1-tttturtleruss@hust.edu.cn>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240723063258.2240610-2-zhengyejian@huaweicloud.com>
 
-2024=E5=B9=B47=E6=9C=8820=E6=97=A5 17:08, "Haoyang Liu" <tttturtleruss@hu=
-st.edu.cn> =E5=86=99=E5=88=B0:
+Hi Zheng,
 
-Hi Haoyang
+kernel test robot noticed the following build warnings:
 
->=20
->=20Translate dev-tools/kcsan into Chinese.
-Let's add a commit tag, then the checktransupdate.py can recognize it.
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.10]
+[cannot apply to mcgrof/modules-next masahiroy-kbuild/for-next masahiroy-kbuild/fixes powerpc/next powerpc/fixes tip/x86/core next-20240723]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
+url:    https://github.com/intel-lab-lkp/linux/commits/Zheng-Yejian/kallsyms-Emit-symbol-at-the-holes-in-the-text/20240723-152513
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20240723063258.2240610-2-zhengyejian%40huaweicloud.com
+patch subject: [PATCH v2 1/5] kallsyms: Emit symbol at the holes in the text
+config: i386-randconfig-002-20240724 (https://download.01.org/0day-ci/archive/20240724/202407240921.tumLfzKa-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240724/202407240921.tumLfzKa-lkp@intel.com/reproduce)
 
->=20
->=20Signed-off-by: Haoyang Liu <tttturtleruss@hust.edu.cn>
->=20
-Remove=20the blankline, and have you ever run checkpatch.pl?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407240921.tumLfzKa-lkp@intel.com/
 
-> ---
->=20
->=20 .../translations/zh_CN/dev-tools/index.rst | 2 +-
->=20
->=20 .../translations/zh_CN/dev-tools/kcsan.rst | 321 ++++++++++++++++++
->=20
->=20 2 files changed, 322 insertions(+), 1 deletion(-)
->=20
->=20 create mode 100644 Documentation/translations/zh_CN/dev-tools/kcsan.=
-rst
->=20
->=20diff --git a/Documentation/translations/zh_CN/dev-tools/index.rst b/D=
-ocumentation/translations/zh_CN/dev-tools/index.rst
->=20
->=20index c540e4a7d5db..4cc94d288157 100644
->=20
->=20--- a/Documentation/translations/zh_CN/dev-tools/index.rst
->=20
->=20+++ b/Documentation/translations/zh_CN/dev-tools/index.rst
->=20
->=20@@ -23,6 +23,7 @@ Documentation/translations/zh_CN/dev-tools/testing-=
-overview.rst
->=20
->=20 kcov
->=20
->=20 gcov
->=20
->=20 kasan
->=20
->=20+ kcsan
->=20
->=20 ubsan
->=20
->=20 kmemleak
->=20
->=20 gdb-kernel-debugging
->=20
->=20@@ -32,7 +33,6 @@ Todolist:
->=20
->=20 - checkpatch
->=20
->=20 - coccinelle
->=20
->=20 - kmsan
->=20
->=20- - kcsan
->=20
->=20 - kfence
->=20
->=20 - kgdb
->=20
->=20 - kselftest
->=20
->=20diff --git a/Documentation/translations/zh_CN/dev-tools/kcsan.rst b/D=
-ocumentation/translations/zh_CN/dev-tools/kcsan.rst
->=20
->=20new file mode 100644
->=20
->=20index 000000000000..1971f87eeb18
->=20
->=20--- /dev/null
->=20
->=20+++ b/Documentation/translations/zh_CN/dev-tools/kcsan.rst
->=20
->=20@@ -0,0 +1,321 @@
->=20
->=20+.. SPDX-License-Identifier: GPL-2.0
->=20
->=20+
->=20
->=20+.. include:: ../disclaimer-zh_CN.rst
->=20
->=20+
->=20
->=20+:Original: Documentation/dev-tools/kcsan.rst
->=20
->=20+:Translator: =E5=88=98=E6=B5=A9=E9=98=B3 Haoyang Liu <tttturtleruss@=
-hust.edu.cn>
->=20
->=20+
->=20
->=20+=E5=86=85=E6=A0=B8=E5=B9=B6=E5=8F=91=E6=B6=88=E6=AF=92=E5=89=82 =EF=
-=BC=88KCSAN=EF=BC=89
->=20
->=20+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-Please trim the =E2=80=9C=3D=E2=80=9D length. Include similar below.
->=20
->=20+
->=20
->=20+=E5=86=85=E6=A0=B8=E5=B9=B6=E5=8F=91=E6=B6=88=E6=AF=92=E5=89=82=EF=
-=BC=88KCSAN=EF=BC=89=E6=98=AF=E4=B8=80=E4=B8=AA=E5=8A=A8=E6=80=81=E7=AB=
-=9E=E4=BA=89=E6=A3=80=E6=B5=8B=E5=99=A8=EF=BC=8C=E4=BE=9D=E8=B5=96=E7=BC=
-=96=E8=AF=91=E6=97=B6=E6=8F=92=E6=A1=A9=EF=BC=8C=E5=B9=B6=E4=B8=94=E4=BD=
-=BF=E7=94=A8=E5=9F=BA=E4=BA=8E=E8=A7=82=E5=AF=9F
->=20
->=20+=E7=82=B9=E7=9A=84=E9=87=87=E6=A0=B7=E6=96=B9=E6=B3=95=E6=9D=A5=E6=
-=A3=80=E6=B5=8B=E7=AB=9E=E4=BA=89=E3=80=82KCSAN =E7=9A=84=E4=B8=BB=E8=A6=
-=81=E7=9B=AE=E7=9A=84=E6=98=AF=E6=A3=80=E6=B5=8B `=E6=95=B0=E6=8D=AE=E7=
-=AB=9E=E4=BA=89`_=E3=80=82
->=20
->=20+
->=20
->=20+=E4=BD=BF=E7=94=A8
->=20
->=20+----
->=20
->=20+
->=20
->=20+KCSAN =E5=8F=97 GCC =E5=92=8C Clang =E6=94=AF=E6=8C=81=E3=80=82=E4=
-=BD=BF=E7=94=A8 GCC =E9=9C=80=E8=A6=81=E7=89=88=E6=9C=AC 11 =E6=88=96=E6=
-=9B=B4=E9=AB=98=EF=BC=8C=E4=BD=BF=E7=94=A8 Clang =E4=B9=9F=E9=9C=80=E8=A6=
-=81
->=20
->=20+=E7=89=88=E6=9C=AC 11 =E6=88=96=E6=9B=B4=E9=AB=98=E3=80=82
->=20
->=20+
->=20
->=20+=E4=B8=BA=E4=BA=86=E5=90=AF=E7=94=A8 KCSAN=EF=BC=8C=E7=94=A8=E5=A6=
-=82=E4=B8=8B=E5=8F=82=E6=95=B0=E9=85=8D=E7=BD=AE=E5=86=85=E6=A0=B8::
->=20
->=20+
->=20
->=20+ CONFIG_KCSAN =3D y
->=20
->=20+
->=20
->=20+KCSAN =E6=8F=90=E4=BE=9B=E4=BA=86=E5=87=A0=E4=B8=AA=E5=85=B6=E4=BB=
-=96=E7=9A=84=E9=85=8D=E7=BD=AE=E9=80=89=E9=A1=B9=E6=9D=A5=E8=87=AA=E5=AE=
-=9A=E4=B9=89=E8=A1=8C=E4=B8=BA=EF=BC=88=E8=A7=81 ``lib/Kconfig.kcsan`` =
-=E4=B8=AD=E7=9A=84=E5=90=84=E8=87=AA=E7=9A=84
->=20
->=20+=E5=B8=AE=E5=8A=A9=E6=96=87=E6=A1=A3=E4=BB=A5=E8=8E=B7=E5=8F=96=E6=
-=9B=B4=E5=A4=9A=E4=BF=A1=E6=81=AF=EF=BC=89=E3=80=82
->=20
->=20+
->=20
->=20+=E9=94=99=E8=AF=AF=E6=8A=A5=E5=91=8A
->=20
->=20+~~~~~~~~~~
->=20
->=20+
->=20
->=20+=E4=B8=80=E4=B8=AA=E5=85=B8=E5=9E=8B=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=
-=BA=89=E7=9A=84=E6=8A=A5=E5=91=8A=E5=A6=82=E4=B8=8B=E6=89=80=E7=A4=BA::
->=20
->=20+
->=20
->=20+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
->=20+ BUG: KCSAN: data-race in test_kernel_read / test_kernel_write
->=20
->=20+
->=20
->=20+ write to 0xffffffffc009a628 of 8 bytes by task 487 on cpu 0:
->=20
->=20+ test_kernel_write+0x1d/0x30
->=20
->=20+ access_thread+0x89/0xd0
->=20
->=20+ kthread+0x23e/0x260
->=20
->=20+ ret_from_fork+0x22/0x30
->=20
->=20+
->=20
->=20+ read to 0xffffffffc009a628 of 8 bytes by task 488 on cpu 6:
->=20
->=20+ test_kernel_read+0x10/0x20
->=20
->=20+ access_thread+0x89/0xd0
->=20
->=20+ kthread+0x23e/0x260
->=20
->=20+ ret_from_fork+0x22/0x30
->=20
->=20+
->=20
->=20+ value changed: 0x00000000000009a6 -> 0x00000000000009b2
->=20
->=20+
->=20
->=20+ Reported by Kernel Concurrency Sanitizer on:
->=20
->=20+ CPU: 6 PID: 488 Comm: access_thread Not tainted 5.12.0-rc2+ #1
->=20
->=20+ Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-=
-2 04/01/2014
->=20
->=20+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
->=20+
->=20
->=20+=E6=8A=A5=E5=91=8A=E7=9A=84=E5=A4=B4=E9=83=A8=E6=8F=90=E4=BE=9B=E4=
-=BA=86=E4=B8=80=E4=B8=AA=E5=85=B3=E4=BA=8E=E7=AB=9E=E4=BA=89=E4=B8=AD=E6=
-=B6=89=E5=8F=8A=E5=88=B0=E7=9A=84=E5=87=BD=E6=95=B0=E7=9A=84=E7=AE=80=E7=
-=9F=AD=E6=80=BB=E7=BB=93=E3=80=82=E9=9A=8F=E5=90=8E=E6=98=AF=E7=AB=9E=E4=
-=BA=89=E4=B8=AD=E7=9A=84=E4=B8=A4=E4=B8=AA=E7=BA=BF=E7=A8=8B=E7=9A=84
->=20
->=20+=E8=AE=BF=E9=97=AE=E7=B1=BB=E5=9E=8B=E5=92=8C=E5=A0=86=E6=A0=88=E4=
-=BF=A1=E6=81=AF=E3=80=82=E5=A6=82=E6=9E=9C KCSAN =E5=8F=91=E7=8E=B0=E4=BA=
-=86=E4=B8=80=E4=B8=AA=E5=80=BC=E7=9A=84=E5=8F=98=E5=8C=96=EF=BC=8C=E9=82=
-=A3=E4=B9=88=E9=82=A3=E4=B8=AA=E5=80=BC=E7=9A=84=E6=97=A7=E5=80=BC=E5=92=
-=8C=E6=96=B0=E5=80=BC=E4=BC=9A=E5=9C=A8
->=20
->=20+=E2=80=9Cvalue changed=E2=80=9D=E8=BF=99=E4=B8=80=E8=A1=8C=E5=8D=95=
-=E7=8B=AC=E6=98=BE=E7=A4=BA=E3=80=82
->=20
->=20+
->=20
->=20+=E5=8F=A6=E4=B8=80=E4=B8=AA=E4=B8=8D=E5=A4=AA=E5=B8=B8=E8=A7=81=E7=
-=9A=84=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E7=B1=BB=E5=9E=8B=E7=9A=84=E6=
-=8A=A5=E5=91=8A=E5=A6=82=E4=B8=8B=E6=89=80=E7=A4=BA::
->=20
->=20+
->=20
->=20+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
->=20+ BUG: KCSAN: data-race in test_kernel_rmw_array+0x71/0xd0
->=20
->=20+
->=20
->=20+ race at unknown origin, with read to 0xffffffffc009bdb0 of 8 bytes =
-by task 515 on cpu 2:
->=20
->=20+ test_kernel_rmw_array+0x71/0xd0
->=20
->=20+ access_thread+0x89/0xd0
->=20
->=20+ kthread+0x23e/0x260
->=20
->=20+ ret_from_fork+0x22/0x30
->=20
->=20+
->=20
->=20+ value changed: 0x0000000000002328 -> 0x0000000000002329
->=20
->=20+
->=20
->=20+ Reported by Kernel Concurrency Sanitizer on:
->=20
->=20+ CPU: 2 PID: 515 Comm: access_thread Not tainted 5.12.0-rc2+ #1
->=20
->=20+ Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-=
-2 04/01/2014
->=20
->=20+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->=20
->=20+
->=20
->=20+=E8=BF=99=E4=B8=AA=E6=8A=A5=E5=91=8A=E6=98=AF=E5=BD=93=E5=8F=A6=E4=
-=B8=80=E4=B8=AA=E7=AB=9E=E4=BA=89=E7=BA=BF=E7=A8=8B=E4=B8=8D=E5=8F=AF=E8=
-=83=BD=E8=A2=AB=E5=8F=91=E7=8E=B0=EF=BC=8C=E4=BD=86=E6=98=AF=E5=8F=AF=E4=
-=BB=A5=E4=BB=8E=E8=A7=82=E6=B5=8B=E7=9A=84=E5=86=85=E5=AD=98=E5=9C=B0=E5=
-=9D=80=E7=9A=84=E5=80=BC=E6=94=B9=E5=8F=98=E8=80=8C=E6=8E=A8=E6=96=AD
->=20
->=20+=E5=87=BA=E6=9D=A5=E7=9A=84=E6=97=B6=E5=80=99=E7=94=9F=E6=88=90=E7=
-=9A=84=E3=80=82=E8=BF=99=E7=B1=BB=E6=8A=A5=E5=91=8A=E6=80=BB=E6=98=AF=E4=
-=BC=9A=E5=B8=A6=E6=9C=89=E2=80=9Cvalue changed=E2=80=9D=E8=A1=8C=E3=80=82=
-=E8=BF=99=E7=B1=BB=E6=8A=A5=E5=91=8A=E7=9A=84=E5=87=BA=E7=8E=B0=E9=80=9A=
-=E5=B8=B8=E6=98=AF=E5=9B=A0
->=20
->=20+=E4=B8=BA=E5=9C=A8=E7=AB=9E=E4=BA=89=E7=BA=BF=E7=A8=8B=E4=B8=AD=E6=
-=B2=A1=E6=9C=89=E6=8F=92=E6=A1=A9=EF=BC=8C=E4=B9=9F=E5=8F=AF=E8=83=BD=E6=
-=98=AF=E5=9B=A0=E4=B8=BA=E5=85=B6=E4=BB=96=E5=8E=9F=E5=9B=A0=EF=BC=8C=E6=
-=AF=94=E5=A6=82 DMA =E8=AE=BF=E9=97=AE=E3=80=82=E8=BF=99=E7=B1=BB=E6=8A=
-=A5=E5=91=8A=E5=8F=AA=E4=BC=9A=E5=9C=A8
->=20
->=20+=E8=AE=BE=E7=BD=AE=E4=BA=86=E5=86=85=E6=A0=B8=E5=8F=82=E6=95=B0 ``CO=
-NFIG_KCSAN_REPORT_RACE_UNKNOWN_ORIGIN=3Dy`` =E6=97=B6=E6=89=8D=E4=BC=9A=
-=E5=87=BA=E7=8E=B0=EF=BC=8C=E8=80=8C=E8=BF=99
->=20
->=20+=E4=B8=AA=E5=8F=82=E6=95=B0=E6=98=AF=E9=BB=98=E8=AE=A4=E5=90=AF=E7=
-=94=A8=E7=9A=84=E3=80=82
->=20
->=20+
->=20
->=20+=E9=80=89=E6=8B=A9=E6=80=A7=E5=88=86=E6=9E=90
->=20
->=20+~~~~~~~~~~~~~
->=20
->=20+
->=20
->=20+=E5=AF=B9=E4=BA=8E=E4=B8=80=E4=BA=9B=E7=89=B9=E5=AE=9A=E7=9A=84=E8=
-=AE=BF=E9=97=AE=EF=BC=8C=E5=87=BD=E6=95=B0=EF=BC=8C=E7=BC=96=E8=AF=91=E5=
-=8D=95=E5=85=83=E6=88=96=E8=80=85=E6=95=B4=E4=B8=AA=E5=AD=90=E7=B3=BB=E7=
-=BB=9F=EF=BC=8C=E5=8F=AF=E8=83=BD=E9=9C=80=E8=A6=81=E7=A6=81=E7=94=A8=E6=
-=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E6=A3=80=E6=B5=8B=E3=80=82
->=20
->=20+=E5=AF=B9=E4=BA=8E=E9=9D=99=E6=80=81=E9=BB=91=E5=90=8D=E5=8D=95=EF=
-=BC=8C=E6=9C=89=E5=A6=82=E4=B8=8B=E5=8F=AF=E7=94=A8=E7=9A=84=E5=8F=82=E6=
-=95=B0=EF=BC=9A
->=20
->=20+
->=20
->=20+* KCSAN =E6=94=AF=E6=8C=81=E4=BD=BF=E7=94=A8 ``data_race(expr)`` =E6=
-=B3=A8=E8=A7=A3=EF=BC=8C=E8=BF=99=E4=B8=AA=E6=B3=A8=E8=A7=A3=E5=91=8A=E8=
-=AF=89 KCSAN =E4=BB=BB=E4=BD=95=E7=94=B1=E8=AE=BF=E9=97=AE
->=20
->=20+ ``expr`` =E6=89=80=E5=BC=95=E8=B5=B7=E7=9A=84=E6=95=B0=E6=8D=AE=E7=
-=AB=9E=E4=BA=89=E9=83=BD=E5=BA=94=E8=AF=A5=E8=A2=AB=E5=BF=BD=E7=95=A5=EF=
-=BC=8C=E5=85=B6=E4=BA=A7=E7=94=9F=E7=9A=84=E8=A1=8C=E4=B8=BA=E5=90=8E=E6=
-=9E=9C=E8=A2=AB=E8=AE=A4=E4=B8=BA=E6=98=AF=E5=AE=89=E5=85=A8=E7=9A=84=E3=
-=80=82=E8=AF=B7=E6=9F=A5=E9=98=85
->=20
->=20+ `"Marking Shared-Memory Accesses" in the LKMM`_ =E8=8E=B7=E5=BE=97=
-=E6=9B=B4=E5=A4=9A=E4=BF=A1=E6=81=AF=E3=80=82
->=20
->=20+
->=20
->=20+* =E4=B8=8E ``data_race(...)`` =E7=9B=B8=E4=BC=BC=EF=BC=8C=E5=8F=AF=
-=E4=BB=A5=E4=BD=BF=E7=94=A8=E7=B1=BB=E5=9E=8B=E9=99=90=E5=AE=9A=E7=AC=A6 =
-``__data_racy`` =E6=9D=A5=E6=A0=87=E8=AE=B0=E4=B8=80=E4=B8=AA=E5=8F=98=E9=
-=87=8F
->=20
->=20+ =EF=BC=8C=E6=89=80=E6=9C=89=E8=AE=BF=E9=97=AE=E8=AF=A5=E5=8F=98=E9=
-=87=8F=E8=80=8C=E5=AF=BC=E8=87=B4=E7=9A=84=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=
-=BA=89=E9=83=BD=E6=98=AF=E6=95=85=E6=84=8F=E4=B8=BA=E4=B9=8B=E5=B9=B6=E4=
-=B8=94=E5=BA=94=E8=AF=A5=E8=A2=AB KCSAN =E5=BF=BD=E7=95=A5::
->=20
->=20+
->=20
->=20+ struct foo {
->=20
->=20+ ...
->=20
->=20+ int __data_racy stats_counter;
->=20
->=20+ ...
->=20
->=20+ };
->=20
->=20+
->=20
->=20+* =E4=BD=BF=E7=94=A8=E5=87=BD=E6=95=B0=E5=B1=9E=E6=80=A7 ``__no_kcsa=
-n`` =E5=8F=AF=E4=BB=A5=E5=AF=B9=E6=95=B4=E4=B8=AA=E5=87=BD=E6=95=B0=E7=A6=
-=81=E7=94=A8=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E6=A3=80=E6=B5=8B::
->=20
->=20+
->=20
->=20+ __no_kcsan
->=20
->=20+ void foo(void) {
->=20
->=20+ ...
->=20
->=20+
->=20
->=20+ =E4=B8=BA=E4=BA=86=E5=8A=A8=E6=80=81=E9=99=90=E5=88=B6=E8=AF=A5=E4=
-=B8=BA=E5=93=AA=E4=BA=9B=E5=87=BD=E6=95=B0=E7=94=9F=E6=88=90=E6=8A=A5=E5=
-=91=8A=EF=BC=8C=E6=9F=A5=E9=98=85 `Debug =E6=96=87=E4=BB=B6=E7=B3=BB=E7=
-=BB=9F=E6=8E=A5=E5=8F=A3`_ =E9=BB=91=E5=90=8D=E5=8D=95/=E7=99=BD=E5=90=8D=
-=E5=8D=95=E7=89=B9=E6=80=A7=E3=80=82
->=20
->=20+
->=20
->=20+* =E4=B8=BA=E7=89=B9=E5=AE=9A=E7=9A=84=E7=BC=96=E8=AF=91=E5=8D=95=E5=
-=85=83=E7=A6=81=E7=94=A8=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E6=A3=80=E6=
-=B5=8B=EF=BC=8C=E5=B0=86=E4=B8=8B=E5=88=97=E5=8F=82=E6=95=B0=E5=8A=A0=E5=
-=85=A5=E5=88=B0 ``Makefile`` =E4=B8=AD::
->=20
->=20+
->=20
->=20+ KCSAN_SANITIZE_file.o :=3D n
->=20
->=20+
->=20
->=20+* =E4=B8=BA ``Makefile`` =E4=B8=AD=E7=9A=84=E6=89=80=E6=9C=89=E7=BC=
-=96=E8=AF=91=E5=8D=95=E5=85=83=E7=A6=81=E7=94=A8=E6=95=B0=E6=8D=AE=E7=AB=
-=9E=E4=BA=89=E6=A3=80=E6=B5=8B=EF=BC=8C=E5=B0=86=E4=B8=8B=E5=88=97=E5=8F=
-=82=E6=95=B0=E6=B7=BB=E5=8A=A0=E5=88=B0=E7=9B=B8=E5=BA=94=E7=9A=84
->=20
->=20+ ``Makefile`` =E4=B8=AD::
->=20
->=20+
->=20
->=20+ KCSAN_SANITIZE :=3D n
->=20
->=20+
->=20
->=20+.. _"Marking Shared-Memory Accesses" in the LKMM: https://git.kernel=
-.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/memory-model/=
-Documentation/access-marking.txt
->=20
->=20+
->=20
->=20+=E6=AD=A4=E5=A4=96=EF=BC=8C=E5=8F=AF=E4=BB=A5=E6=A0=B9=E6=8D=AE=E5=
-=81=8F=E5=A5=BD=E8=AE=BE=E7=BD=AE KCSAN =E6=98=BE=E7=A4=BA=E6=88=96=E9=9A=
-=90=E8=97=8F=E6=95=B4=E4=B8=AA=E7=B1=BB=E5=88=AB=E7=9A=84=E6=95=B0=E6=8D=
-=AE=E7=AB=9E=E4=BA=89=E3=80=82=E5=8F=AF=E4=BB=A5=E4=BD=BF=E7=94=A8=E5=A6=
-=82=E4=B8=8B
->=20
->=20+Kconfig =E5=8F=82=E6=95=B0=E8=BF=9B=E8=A1=8C=E6=9B=B4=E6=94=B9:
->=20
->=20+
->=20
->=20+* ``CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY``: =E5=A6=82=E6=9E=9C=E5=
-=90=AF=E7=94=A8=E4=BA=86=E8=AF=A5=E5=8F=82=E6=95=B0=E5=B9=B6=E4=B8=94=E9=
-=80=9A=E8=BF=87=E8=A7=82=E6=B5=8B=E7=82=B9=E8=A7=82=E6=B5=8B
->=20
->=20+ =E5=88=B0=E4=B8=80=E4=B8=AA=E6=9C=89=E5=86=B2=E7=AA=81=E7=9A=84=E5=
-=86=99=E6=93=8D=E4=BD=9C=EF=BC=8C=E4=BD=86=E6=98=AF=E5=AF=B9=E5=BA=94=E7=
-=9A=84=E5=86=85=E5=AD=98=E5=9C=B0=E5=9D=80=E4=B8=AD=E5=AD=98=E5=82=A8=E7=
-=9A=84=E5=80=BC=E6=B2=A1=E6=9C=89=E6=94=B9=E5=8F=98=EF=BC=8C=E5=88=99=E4=
-=B8=8D=E4=BC=9A=E6=8A=A5=E5=91=8A=E8=BF=99=E8=B5=B7=E6=95=B0=E6=8D=AE
->=20
->=20+ =E7=AB=9E=E4=BA=89=E3=80=82
->=20
->=20+
->=20
->=20+* ``CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC``: =E5=81=87=E8=AE=BE=E9=
-=BB=98=E8=AE=A4=E6=83=85=E5=86=B5=E4=B8=8B=EF=BC=8C=E4=B8=8D=E8=B6=85=E8=
-=BF=87=E5=AD=97=E5=A4=A7=E5=B0=8F=E7=9A=84=E7=AE=80
->=20
->=20+ =E5=8D=95=E5=AF=B9=E9=BD=90=E5=86=99=E5=85=A5=E6=93=8D=E4=BD=9C=E6=
-=98=AF=E5=8E=9F=E5=AD=90=E7=9A=84=E3=80=82=E5=81=87=E8=AE=BE=E8=BF=99=E4=
-=BA=9B=E5=86=99=E5=85=A5=E6=93=8D=E4=BD=9C=E4=B8=8D=E4=BC=9A=E5=8F=97=E5=
-=88=B0=E4=B8=8D=E5=AE=89=E5=85=A8=E7=9A=84=E7=BC=96=E8=AF=91=E5=99=A8=E4=
-=BC=98=E5=8C=96=E5=BD=B1=E5=93=8D=EF=BC=8C=E4=BB=8E=E8=80=8C=E5=AF=BC
->=20
->=20+ =E8=87=B4=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82=E8=AF=A5=E9=
-=80=89=E9=A1=B9=E4=BD=BF KCSAN =E4=B8=8D=E6=8A=A5=E5=91=8A=E4=BB=85=E7=94=
-=B1=E4=B8=8D=E8=B6=85=E8=BF=87=E5=AD=97=E5=A4=A7=E5=B0=8F=E7=9A=84=E7=AE=
-=80=E5=8D=95=E5=AF=B9=E9=BD=90=E5=86=99=E5=85=A5=E6=93=8D=E4=BD=9C=E5=BC=
-=95=E8=B5=B7
->=20
->=20+ =E7=9A=84=E5=86=B2=E7=AA=81=E6=89=80=E5=AF=BC=E8=87=B4=E7=9A=84=E6=
-=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82
->=20
->=20+
->=20
->=20+* ``CONFIG_KCSAN_PERMISSIVE``: =E5=90=AF=E7=94=A8=E9=A2=9D=E5=A4=96=
-=E7=9A=84=E5=AE=BD=E6=9D=BE=E8=A7=84=E5=88=99=E6=9D=A5=E5=BF=BD=E7=95=A5=
-=E6=9F=90=E4=BA=9B=E5=B8=B8=E8=A7=81=E7=B1=BB=E5=9E=8B=E7=9A=84=E6=95=B0=
-=E6=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82
->=20
->=20+ =E4=B8=8E=E4=B8=8A=E9=9D=A2=E7=9A=84=E8=A7=84=E5=88=99=E4=B8=8D=E5=
-=90=8C=EF=BC=8C=E8=BF=99=E6=9D=A1=E8=A7=84=E5=88=99=E6=9B=B4=E5=8A=A0=E5=
-=A4=8D=E6=9D=82=EF=BC=8C=E6=B6=89=E5=8F=8A=E5=88=B0=E5=80=BC=E6=94=B9=E5=
-=8F=98=E6=A8=A1=E5=BC=8F=EF=BC=8C=E8=AE=BF=E9=97=AE=E7=B1=BB=E5=9E=8B=E5=
-=92=8C=E5=9C=B0=E5=9D=80=E3=80=82=E8=BF=99=E4=B8=AA
->=20
->=20+ =E9=80=89=E9=A1=B9=E4=BE=9D=E8=B5=96=E7=BC=96=E8=AF=91=E9=80=89=E9=
-=A1=B9 ``CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY=3Dy``=E3=80=82=E8=AF=B7=E6=
-=9F=A5=E7=9C=8B
->=20
->=20+ ``kernel/kcsan/permissive.h`` =E8=8E=B7=E5=8F=96=E6=9B=B4=E5=A4=9A=
-=E7=BB=86=E8=8A=82=E3=80=82=E5=AF=B9=E4=BA=8E=E5=8F=AA=E4=BE=A7=E9=87=8D=
-=E4=BA=8E=E7=89=B9=E5=AE=9A=E5=AD=90=E7=B3=BB=E7=BB=9F=E8=80=8C=E4=B8=8D=
-=E6=98=AF=E6=95=B4=E4=B8=AA
->=20
->=20+ =E5=86=85=E6=A0=B8=E6=8A=A5=E5=91=8A=E7=9A=84=E6=B5=8B=E8=AF=95=E8=
-=80=85=E5=92=8C=E7=BB=B4=E6=8A=A4=E8=80=85=EF=BC=8C=E5=BB=BA=E8=AE=AE=E7=
-=A6=81=E7=94=A8=E8=AF=A5=E9=80=89=E9=A1=B9=E3=80=82
->=20
->=20+
->=20
->=20+=E8=A6=81=E4=BD=BF=E7=94=A8=E5=B0=BD=E5=8F=AF=E8=83=BD=E4=B8=A5=E6=
-=A0=BC=E7=9A=84=E8=A7=84=E5=88=99=EF=BC=8C=E9=80=89=E6=8B=A9 ``CONFIG_KCS=
-AN_STRICT=3Dy``=EF=BC=8C=E8=BF=99=E5=B0=86=E9=85=8D=E7=BD=AE KCSAN =E5=B0=
-=BD=E5=8F=AF
->=20
->=20+=E8=83=BD=E7=B4=A7=E5=AF=86=E5=9C=B0=E9=81=B5=E5=BE=AA Linux =E5=86=
-=85=E6=A0=B8=E5=86=85=E5=AD=98=E4=B8=80=E8=87=B4=E6=80=A7=E6=A8=A1=E5=9E=
-=8B=EF=BC=88LKMM=EF=BC=89=E3=80=82
->=20
->=20+
->=20
->=20+Debug =E6=96=87=E4=BB=B6=E7=B3=BB=E7=BB=9F=E6=8E=A5=E5=8F=A3
->=20
->=20+~~~~~~~~~~~~~~~~~~~~~
->=20
->=20+
->=20
->=20+=E6=96=87=E4=BB=B6 ``/sys/kernel/debug/kcsan`` =E6=8F=90=E4=BE=9B=E4=
-=BA=86=E5=A6=82=E4=B8=8B=E6=8E=A5=E5=8F=A3=EF=BC=9A
->=20
->=20+
->=20
->=20+* =E8=AF=BB ``/sys/kernel/debug/kcsan`` =E8=BF=94=E5=9B=9E=E4=B8=8D=
-=E5=90=8C=E7=9A=84=E8=BF=90=E8=A1=8C=E6=97=B6=E7=BB=9F=E8=AE=A1=E6=95=B0=
-=E6=8D=AE=E3=80=82
->=20
->=20+
->=20
->=20+* =E5=B0=86 ``on`` =E6=88=96 ``off`` =E5=86=99=E5=85=A5 ``/sys/kerne=
-l/debug/kcsan`` =E5=85=81=E8=AE=B8=E6=89=93=E5=BC=80=E6=88=96=E5=85=B3=E9=
-=97=AD KCSAN=E3=80=82
->=20
->=20+
->=20
->=20+* =E5=B0=86 ``!some_func_name`` =E5=86=99=E5=85=A5 ``/sys/kernel/deb=
-ug/kcsan`` =E4=BC=9A=E5=B0=86
->=20
->=20+ ``some_func_name`` =E6=B7=BB=E5=8A=A0=E5=88=B0=E6=8A=A5=E5=91=8A=E8=
-=BF=87=E6=BB=A4=E5=88=97=E8=A1=A8=E4=B8=AD=EF=BC=8C=E8=BF=99=E5=B0=86=EF=
-=BC=88=E9=BB=98=E8=AE=A4=EF=BC=89=E7=A6=81=E6=AD=A2=E6=8A=A5=E5=91=8A=E4=
-=BB=BB=E6=84=8F=E4=B8=80=E4=B8=AA=E9=A1=B6=E5=B1=82=E6=A0=88=E5=B8=A7
->=20
->=20+ =E5=9C=A8=E8=AF=A5=E5=88=97=E8=A1=A8=E4=B8=AD=E7=9A=84=E6=95=B0=E6=
-=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82
->=20
->=20+
->=20
->=20+* =E5=B0=86 ``blacklist`` =E6=88=96 ``whitelist`` =E5=86=99=E5=85=A5=
- ``/sys/kernel/debug/kcsan`` =E4=BC=9A=E6=94=B9=E5=8F=98=E6=8A=A5=E5=91=
-=8A
->=20
->=20+ =E8=BF=87=E6=BB=A4=E8=A1=8C=E4=B8=BA=E3=80=82=E4=BE=8B=E5=A6=82=EF=
-=BC=8C=E9=BB=91=E5=90=8D=E5=8D=95=E7=9A=84=E7=89=B9=E6=80=A7=E5=8F=AF=E4=
-=BB=A5=E7=94=A8=E6=9D=A5=E8=BF=87=E6=BB=A4=E6=8E=89=E7=BB=8F=E5=B8=B8=E5=
-=8F=91=E7=94=9F=E7=9A=84=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82=E7=
-=99=BD=E5=90=8D=E5=8D=95=E7=89=B9=E6=80=A7=E5=8F=AF=E4=BB=A5=E5=B8=AE
->=20
->=20+ =E5=8A=A9=E5=A4=8D=E7=8E=B0=E5=92=8C=E4=BF=AE=E5=A4=8D=E6=B5=8B=E8=
-=AF=95=E3=80=82
->=20
->=20+
->=20
->=20+=E6=80=A7=E8=83=BD=E8=B0=83=E4=BC=98
->=20
->=20+~~~~~~~~~~~~~
->=20
->=20+
->=20
->=20+=E5=BD=B1=E5=93=8D KCSAN =E6=95=B4=E4=BD=93=E7=9A=84=E6=80=A7=E8=83=
-=BD=E5=92=8C bug =E6=A3=80=E6=B5=8B=E8=83=BD=E5=8A=9B=E7=9A=84=E6=A0=B8=
-=E5=BF=83=E5=8F=82=E6=95=B0=E6=98=AF=E4=BD=9C=E4=B8=BA=E5=86=85=E6=A0=B8=
-=E5=91=BD=E4=BB=A4=E8=A1=8C=E5=8F=82=E6=95=B0=E5=85=AC=E5=BC=80=E7=9A=84=
-=EF=BC=8C=E5=85=B6=E9=BB=98=E8=AE=A4
->=20
->=20+=E5=80=BC=E4=B9=9F=E5=8F=AF=E4=BB=A5=E9=80=9A=E8=BF=87=E7=9B=B8=E5=
-=BA=94=E7=9A=84 Kconfig =E9=80=89=E9=A1=B9=E6=9B=B4=E6=94=B9=E3=80=82
->=20
->=20+
->=20
->=20+* ``kcsan.skip_watch`` (``CONFIG_KCSAN_SKIP_WATCH``): =E5=9C=A8=E5=
-=8F=A6=E4=B8=80=E4=B8=AA=E8=A7=82=E6=B5=8B=E7=82=B9=E8=AE=BE=E7=BD=AE=E4=
-=B9=8B=E5=89=8D=E6=AF=8F
->=20
->=20+ =E4=B8=AA CPU =E8=A6=81=E8=B7=B3=E8=BF=87=E7=9A=84=E5=86=85=E5=AD=
-=98=E6=93=8D=E4=BD=9C=E6=AC=A1=E6=95=B0=E3=80=82=E6=9B=B4=E5=8A=A0=E9=A2=
-=91=E7=B9=81=E7=9A=84=E8=AE=BE=E7=BD=AE=E8=A7=82=E6=B5=8B=E7=82=B9=E5=B0=
-=86=E5=A2=9E=E5=8A=A0=E8=A7=82=E5=AF=9F=E5=88=B0=E7=AB=9E=E4=BA=89=E6=83=
-=85=E5=86=B5=E7=9A=84=E5=8F=AF=E8=83=BD=E6=80=A7
->=20
->=20+ =E3=80=82=E8=BF=99=E4=B8=AA=E5=8F=82=E6=95=B0=E5=AF=B9=E7=B3=BB=E7=
-=BB=9F=E6=95=B4=E4=BD=93=E7=9A=84=E6=80=A7=E8=83=BD=E5=92=8C=E7=AB=9E=E4=
-=BA=89=E6=A3=80=E6=B5=8B=E8=83=BD=E5=8A=9B=E5=BD=B1=E5=93=8D=E6=9C=80=E6=
-=98=BE=E8=91=97=E3=80=82
->=20
->=20+
->=20
->=20+* ``kcsan.udelay_task`` (``CONFIG_KCSAN_UDELAY_TASK``): =E5=AF=B9=E4=
-=BA=8E=E4=BB=BB=E5=8A=A1=EF=BC=8C=E8=A7=82=E6=B5=8B=E7=82=B9=E8=AE=BE=E7=
-=BD=AE=E4=B9=8B
->=20
->=20+ =E5=90=8E=E6=9A=82=E5=81=9C=E6=89=A7=E8=A1=8C=E7=9A=84=E5=BE=AE=E7=
-=A7=92=E5=BB=B6=E8=BF=9F=E3=80=82=E5=80=BC=E8=B6=8A=E5=A4=A7=EF=BC=8C=E6=
-=A3=80=E6=B5=8B=E5=88=B0=E7=AB=9E=E4=BA=89=E6=83=85=E5=86=B5=E7=9A=84=E5=
-=8F=AF=E8=83=BD=E6=80=A7=E8=B6=8A=E9=AB=98=E3=80=82
->=20
->=20+
->=20
->=20+* ``kcsan.udelay_interrupt`` (``CONFIG_KCSAN_UDELAY_INTERRUPT``): =
-=E5=AF=B9=E4=BA=8E=E4=B8=AD=E6=96=AD=EF=BC=8C
->=20
->=20+ =E8=A7=82=E6=B5=8B=E7=82=B9=E8=AE=BE=E7=BD=AE=E4=B9=8B=E5=90=8E=E6=
-=9A=82=E5=81=9C=E6=89=A7=E8=A1=8C=E7=9A=84=E5=BE=AE=E7=A7=92=E5=BB=B6=E8=
-=BF=9F=E3=80=82=E4=B8=AD=E6=96=AD=E5=AF=B9=E4=BA=8E=E5=BB=B6=E8=BF=9F=E7=
-=9A=84=E8=A6=81=E6=B1=82=E6=9B=B4=E5=8A=A0=E4=B8=A5=E6=A0=BC=EF=BC=8C=E5=
-=85=B6=E5=BB=B6=E8=BF=9F=E9=80=9A=E5=B8=B8=E5=BA=94=E8=AF=A5=E5=B0=8F
->=20
->=20+ =E4=BA=8E=E4=B8=BA=E4=BB=BB=E5=8A=A1=E9=80=89=E6=8B=A9=E7=9A=84=E5=
-=BB=B6=E8=BF=9F=E3=80=82
->=20
->=20+
->=20
->=20+=E5=AE=83=E4=BB=AC=E5=8F=AF=E4=BB=A5=E9=80=9A=E8=BF=87 ``/sys/module=
-/kcsan/parameters/`` =E5=9C=A8=E8=BF=90=E8=A1=8C=E6=97=B6=E8=BF=9B=E8=A1=
-=8C=E8=B0=83=E6=95=B4=E3=80=82
->=20
->=20+
->=20
->=20+=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89
->=20
->=20+--------
->=20
->=20+
->=20
->=20+=E5=9C=A8=E4=B8=80=E6=AC=A1=E6=89=A7=E8=A1=8C=E4=B8=AD=EF=BC=8C=E5=
-=A6=82=E6=9E=9C=E4=B8=A4=E4=B8=AA=E5=86=85=E5=AD=98=E8=AE=BF=E9=97=AE=E5=
-=AD=98=E5=9C=A8 *=E5=86=B2=E7=AA=81*=EF=BC=8C=E5=9C=A8=E4=B8=8D=E5=90=8C=
-=E7=9A=84=E7=BA=BF=E7=A8=8B=E4=B8=AD=E5=B9=B6=E5=8F=91=E6=89=A7=E8=A1=8C=
-=EF=BC=8C=E5=B9=B6=E4=B8=94=E8=87=B3=E5=B0=91
->=20
->=20+=E6=9C=89=E4=B8=80=E4=B8=AA=E8=AE=BF=E9=97=AE=E6=98=AF *=E7=AE=80=E5=
-=8D=95=E8=AE=BF=E9=97=AE*=EF=BC=8C=E5=88=99=E5=AE=83=E4=BB=AC=E5=B0=B1=E5=
-=BD=A2=E6=88=90=E4=BA=86 *=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89*=E3=80=82=
-=E5=A6=82=E6=9E=9C=E5=AE=83=E4=BB=AC=E8=AE=BF=E9=97=AE=E4=BA=86=E5=90=8C=
-=E4=B8=80=E4=B8=AA=E5=86=85=E5=AD=98=E5=9C=B0=E5=9D=80=E5=B9=B6=E4=B8=94
->=20
->=20+=E8=87=B3=E5=B0=91=E6=9C=89=E4=B8=80=E4=B8=AA=E6=98=AF=E5=86=99=E6=
-=93=8D=E4=BD=9C=EF=BC=8C=E5=88=99=E7=A7=B0=E5=AE=83=E4=BB=AC=E5=AD=98=E5=
-=9C=A8 *=E5=86=B2=E7=AA=81*=E3=80=82=E6=9C=89=E5=85=B3=E6=9B=B4=E8=AF=A6=
-=E7=BB=86=E7=9A=84=E8=AE=A8=E8=AE=BA=E5=92=8C=E5=AE=9A=E4=B9=89=EF=BC=8C=
-=E8=A7=81
->=20
->=20+`"Plain Accesses and Data Races" in the LKMM`_=E3=80=82
->=20
->=20+
->=20
->=20+.. _"Plain Accesses and Data Races" in the LKMM: https://git.kernel.=
-org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/memory-model/D=
-ocumentation/explanation.txt#n1922
->=20
->=20+
->=20
->=20+=E4=B8=8E Linux =E5=86=85=E6=A0=B8=E5=86=85=E5=AD=98=E4=B8=80=E8=87=
-=B4=E6=80=A7=E6=A8=A1=E5=9E=8B=EF=BC=88LKMM=EF=BC=89=E7=9A=84=E5=85=B3=E7=
-=B3=BB
->=20
->=20+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->=20
->=20+
->=20
->=20+LKMM =E5=AE=9A=E4=B9=89=E4=BA=86=E5=90=84=E7=A7=8D=E5=86=85=E5=AD=98=
-=E6=93=8D=E4=BD=9C=E7=9A=84=E4=BC=A0=E6=92=AD=E5=92=8C=E6=8E=92=E5=BA=8F=
-=E8=A7=84=E5=88=99=EF=BC=8C=E8=AE=A9=E5=BC=80=E5=8F=91=E8=80=85=E5=8F=AF=
-=E4=BB=A5=E6=8E=A8=E7=90=86=E5=B9=B6=E5=8F=91=E4=BB=A3=E7=A0=81=E3=80=82=
-=E6=9C=80=E7=BB=88=E8=BF=99=E5=85=81=E8=AE=B8=E7=A1=AE
->=20
->=20+=E5=AE=9A=E5=B9=B6=E5=8F=91=E4=BB=A3=E7=A0=81=E5=8F=AF=E8=83=BD=E7=
-=9A=84=E6=89=A7=E8=A1=8C=E6=83=85=E5=86=B5=E5=B9=B6=E5=88=A4=E6=96=AD=E8=
-=BF=99=E4=BA=9B=E4=BB=A3=E7=A0=81=E6=98=AF=E5=90=A6=E5=AD=98=E5=9C=A8=E6=
-=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82
->=20
->=20+
->=20
->=20+KCSAN =E5=8F=AF=E4=BB=A5=E8=AF=86=E5=88=AB *=E8=A2=AB=E6=A0=87=E8=AE=
-=B0=E7=9A=84=E5=8E=9F=E5=AD=90=E6=93=8D=E4=BD=9C* =EF=BC=88 ``READ_ONCE``=
-, ``WRITE_ONCE`` , ``atomic_*``
->=20
->=20+=E7=AD=89=EF=BC=89=EF=BC=8C=E4=BB=A5=E5=8F=8A=E5=86=85=E5=AD=98=E5=
-=B1=8F=E9=9A=9C=E6=89=80=E9=9A=90=E5=90=AB=E7=9A=84=E4=B8=80=E9=83=A8=E5=
-=88=86=E9=A1=BA=E5=BA=8F=E4=BF=9D=E8=AF=81=E3=80=82=E5=90=AF=E7=94=A8 ``C=
-ONFIG_KCSAN_WEAK_MEMORY=3Dy``
->=20
->=20+=E9=85=8D=E7=BD=AE=EF=BC=8CKCSAN =E4=BC=9A=E5=AF=B9=E5=8A=A0=E8=BD=
-=BD=E6=88=96=E5=AD=98=E5=82=A8=E7=BC=93=E5=86=B2=E5=8C=BA=E8=BF=9B=E8=A1=
-=8C=E5=BB=BA=E6=A8=A1=EF=BC=8C=E5=B9=B6=E5=8F=AF=E4=BB=A5=E6=A3=80=E6=B5=
-=8B=E9=81=97=E6=BC=8F=E7=9A=84
->=20
->=20+``smp_mb()``, ``smp_wmb()``, ``smp_rmb()``, ``smp_store_release()``=
-=EF=BC=8C=E4=BB=A5=E5=8F=8A=E6=89=80=E6=9C=89=E7=9A=84
->=20
->=20+=E5=85=B7=E6=9C=89=E7=AD=89=E6=95=88=E9=9A=90=E5=90=AB=E5=86=85=E5=
-=AD=98=E5=B1=8F=E9=9A=9C=E7=9A=84 ``atomic_*`` =E6=93=8D=E4=BD=9C=E3=80=
-=82
->=20
->=20+
->=20
->=20+=E8=AF=B7=E6=B3=A8=E6=84=8F=EF=BC=8CKCSAN =E4=B8=8D=E4=BC=9A=E6=8A=
-=A5=E5=91=8A=E6=89=80=E6=9C=89=E7=94=B1=E4=BA=8E=E7=BC=BA=E5=A4=B1=E5=86=
-=85=E5=AD=98=E9=A1=BA=E5=BA=8F=E8=80=8C=E5=AF=BC=E8=87=B4=E7=9A=84=E6=95=
-=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=EF=BC=8C=E7=89=B9=E5=88=AB=E6=98=AF=E5=9C=
-=A8=E9=9C=80=E8=A6=81=E5=86=85=E5=AD=98=E5=B1=8F=E9=9A=9C
->=20
->=20+=E6=9D=A5=E7=A6=81=E6=AD=A2=E5=90=8E=E7=BB=AD=E5=86=85=E5=AD=98=E6=
-=93=8D=E4=BD=9C=E5=9C=A8=E5=B1=8F=E9=9A=9C=E4=B9=8B=E5=89=8D=E9=87=8D=E6=
-=96=B0=E6=8E=92=E5=BA=8F=E7=9A=84=E6=83=85=E5=86=B5=E4=B8=8B=E3=80=82=E5=
-=9B=A0=E6=AD=A4=EF=BC=8C=E5=BC=80=E5=8F=91=E4=BA=BA=E5=91=98=E5=BA=94=E8=
-=AF=A5=E4=BB=94=E7=BB=86=E8=80=83=E8=99=91=E9=82=A3=E4=BA=9B=E6=9C=AA
->=20
->=20+=E8=A2=AB=E6=A3=80=E6=9F=A5=E7=9A=84=E5=86=85=E5=AD=98=E9=A1=BA=E5=
-=BA=8F=E8=A6=81=E6=B1=82=E3=80=82
->=20
->=20+
->=20
->=20+=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E4=BB=A5=E5=A4=96=E7=9A=84=E7=
-=AB=9E=E4=BA=89=E6=A3=80=E6=B5=8B
->=20
->=20+---------------------------
->=20
->=20+
->=20
->=20+=E5=AF=B9=E4=BA=8E=E6=9C=89=E7=9D=80=E5=A4=8D=E6=9D=82=E5=B9=B6=E5=
-=8F=91=E8=AE=BE=E8=AE=A1=E7=9A=84=E4=BB=A3=E7=A0=81=EF=BC=8C=E7=AB=9E=E4=
-=BA=89=E7=8A=B6=E5=86=B5=E4=B8=8D=E6=80=BB=E6=98=AF=E8=A1=A8=E7=8E=B0=E4=
-=B8=BA=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82=E5=A6=82=E6=9E=9C=E5=
-=B9=B6=E5=8F=91=E6=93=8D=E4=BD=9C=E5=BC=95=E8=B5=B7=E4=BA=86=E6=84=8F=E2=
-=80=98
->=20
->=20+=E6=96=99=E4=B9=8B=E5=A4=96=E7=9A=84=E7=B3=BB=E7=BB=9F=E8=A1=8C=E4=
-=B8=BA=EF=BC=8C=E5=88=99=E8=AE=A4=E4=B8=BA=E5=8F=91=E7=94=9F=E4=BA=86=E7=
-=AB=9E=E4=BA=89=E7=8A=B6=E5=86=B5=E3=80=82=E5=8F=A6=E4=B8=80=E6=96=B9=E9=
-=9D=A2=EF=BC=8C=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E6=98=AF=E5=9C=A8 C =
-=E8=AF=AD=E8=A8=80=E5=B1=82=E9=9D=A2=E5=AE=9A=E4=B9=89
->=20
->=20+=E7=9A=84=E3=80=82=E4=B8=8B=E9=9D=A2=E7=9A=84=E5=AE=8F=E5=AE=9A=E4=
-=B9=89=E5=8F=AF=E4=BB=A5=E7=94=A8=E6=9D=A5=E6=A3=80=E6=B5=8B=E9=9D=9E=E6=
-=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E7=9A=84=E6=BC=8F=E6=B4=9E=E5=B9=B6=E5=
-=8F=91=E4=BB=A3=E7=A0=81=E7=9A=84=E5=B1=9E=E6=80=A7=E3=80=82
->=20
->=20+
->=20
->=20+.. kernel-doc:: include/linux/kcsan-checks.h
->=20
->=20+ :functions: ASSERT_EXCLUSIVE_WRITER ASSERT_EXCLUSIVE_WRITER_SCOPED
->=20
->=20+ ASSERT_EXCLUSIVE_ACCESS ASSERT_EXCLUSIVE_ACCESS_SCOPED
->=20
->=20+ ASSERT_EXCLUSIVE_BITS
->=20
->=20+
->=20
->=20+=E5=AE=9E=E7=8E=B0=E7=BB=86=E8=8A=82
->=20
->=20+-----------
->=20
->=20+
->=20
->=20+KCSAN =E9=9C=80=E8=A6=81=E8=A7=82=E6=B5=8B=E4=B8=A4=E4=B8=AA=E5=B9=
-=B6=E5=8F=91=E8=AE=BF=E9=97=AE=E3=80=82=E7=89=B9=E5=88=AB=E9=87=8D=E8=A6=
-=81=E7=9A=84=E6=98=AF=EF=BC=8C=E6=88=91=E4=BB=AC=E6=83=B3=E8=A6=81=EF=BC=
-=88a=EF=BC=89=E5=A2=9E=E5=8A=A0=E8=A7=82=E6=B5=8B=E5=88=B0=E7=AB=9E=E4=BA=
-=89=E7=9A=84=E6=9C=BA=E4=BC=9A=EF=BC=88=E5=B0=A4
->=20
->=20+=E5=85=B6=E6=98=AF=E5=BE=88=E5=B0=91=E5=8F=91=E7=94=9F=E7=9A=84=E7=
-=AB=9E=E4=BA=89=EF=BC=89=EF=BC=8C=E4=BB=A5=E5=8F=8A=EF=BC=88b=EF=BC=89=E8=
-=83=BD=E5=A4=9F=E5=AE=9E=E9=99=85=E8=A7=82=E6=B5=8B=E5=88=B0=E8=BF=99=E4=
-=BA=9B=E7=AB=9E=E4=BA=89=E3=80=82=E6=88=91=E4=BB=AC=E5=8F=AF=E4=BB=A5=E9=
-=80=9A=E8=BF=87=EF=BC=88a=EF=BC=89=E6=B3=A8=E5=85=A5
->=20
->=20+=E4=B8=8D=E5=90=8C=E7=9A=84=E5=BB=B6=E8=BF=9F=EF=BC=8C=E4=BB=A5=E5=
-=8F=8A=EF=BC=88b=EF=BC=89=E4=BD=BF=E7=94=A8=E5=9C=B0=E5=9D=80=E8=A7=82=E6=
-=B5=8B=E7=82=B9=EF=BC=88=E6=88=96=E6=96=AD=E7=82=B9=EF=BC=89=E6=9D=A5=E5=
-=AE=9E=E7=8E=B0=E3=80=82
->=20
->=20+
->=20
->=20+=E5=A6=82=E6=9E=9C=E6=88=91=E4=BB=AC=E5=9C=A8=E8=AE=BE=E7=BD=AE=E4=
-=BA=86=E5=9C=B0=E5=9D=80=E8=A7=82=E5=AF=9F=E7=82=B9=E7=9A=84=E6=83=85=E5=
-=86=B5=E4=B8=8B=E6=95=85=E6=84=8F=E5=BB=B6=E8=BF=9F=E4=B8=80=E4=B8=AA=E5=
-=86=85=E5=AD=98=E8=AE=BF=E9=97=AE=EF=BC=8C=E7=84=B6=E5=90=8E=E8=A7=82=E5=
-=AF=9F=E5=88=B0=E8=A7=82=E5=AF=9F=E7=82=B9=E8=A2=AB=E8=A7=A6=E5=8F=91
->=20
->=20+=EF=BC=8C=E9=82=A3=E4=B9=88=E4=B8=A4=E4=B8=AA=E5=AF=B9=E5=90=8C=E4=
-=B8=80=E5=9C=B0=E5=9D=80=E7=9A=84=E8=AE=BF=E9=97=AE=E5=B0=B1=E5=8F=91=E7=
-=94=9F=E4=BA=86=E7=AB=9E=E4=BA=89=E3=80=82=E4=BD=BF=E7=94=A8=E7=A1=AC=E4=
-=BB=B6=E8=A7=82=E5=AF=9F=E7=82=B9=EF=BC=8C=E8=BF=99=E6=98=AF `DataCollide=
-r
->=20
->=20+<http://usenix.org/legacy/events/osdi10/tech/full_papers/Erickson.pd=
-f>%60_ http://usenix.org/legacy/events/osdi10/tech/full_papers/Erickson.p=
-df%3E%60_  =E4=B8=AD=E9=87=87=E7=94=A8
->=20
->=20+=E7=9A=84=E6=96=B9=E6=B3=95=E3=80=82=E4=B8=8E DataCollider =E4=B8=8D=
-=E5=90=8C=EF=BC=8CKCSAN =E4=B8=8D=E4=BD=BF=E7=94=A8=E7=A1=AC=E4=BB=B6=E8=
-=A7=82=E5=AF=9F=E7=82=B9=EF=BC=8C=E8=80=8C=E6=98=AF=E4=BE=9D=E8=B5=96=E4=
-=BA=8E=E7=BC=96=E8=AF=91=E5=99=A8=E6=8F=92=E8=A3=85=E5=92=8C=E2=80=9C=E8=
-=BD=AF
->=20
->=20+=E8=A7=82=E6=B5=8B=E7=82=B9=E2=80=9D=E3=80=82
->=20
->=20+
->=20
->=20+=E5=9C=A8 KCSAN =E4=B8=AD=EF=BC=8C=E8=A7=82=E5=AF=9F=E7=82=B9=E6=98=
-=AF=E9=80=9A=E8=BF=87=E4=B8=80=E7=A7=8D=E9=AB=98=E6=95=88=E7=9A=84=E7=BC=
-=96=E7=A0=81=E5=AE=9E=E7=8E=B0=E7=9A=84=EF=BC=8C=E8=AF=A5=E7=BC=96=E7=A0=
-=81=E5=B0=86=E8=AE=BF=E9=97=AE=E7=B1=BB=E5=9E=8B=E3=80=81=E5=A4=A7=E5=B0=
-=8F=E5=92=8C=E5=9C=B0=E5=9D=80=E5=AD=98=E5=82=A8
->=20
->=20+=E5=9C=A8=E4=B8=80=E4=B8=AA=E9=95=BF=E6=95=B4=E5=9E=8B=E5=8F=98=E9=
-=87=8F=E4=B8=AD=EF=BC=9B=E4=BD=BF=E7=94=A8=E2=80=9C=E8=BD=AF=E8=A7=82=E5=
-=AF=9F=E7=82=B9=E2=80=9D=E7=9A=84=E5=A5=BD=E5=A4=84=E6=98=AF=E5=85=B7=E6=
-=9C=89=E5=8F=AF=E7=A7=BB=E6=A4=8D=E6=80=A7=E5=92=8C=E6=9B=B4=E5=A4=A7=E7=
-=9A=84=E7=81=B5=E6=B4=BB=E6=80=A7=E3=80=82=E7=84=B6=E5=90=8E=EF=BC=8C
->=20
->=20+KCSAN=E4=BE=9D=E8=B5=96=E4=BA=8E=E7=BC=96=E8=AF=91=E5=99=A8=E5=AF=B9=
-=E6=99=AE=E9=80=9A=E8=AE=BF=E9=97=AE=E7=9A=84=E6=8F=92=E6=A1=A9=E3=80=82=
-=E5=AF=B9=E4=BA=8E=E6=AF=8F=E4=B8=AA=E6=8F=92=E6=A1=A9=E7=9A=84=E6=99=AE=
-=E9=80=9A=E8=AE=BF=E9=97=AE=EF=BC=9A
->=20
->=20+
->=20
->=20+1. =E6=A3=80=E6=B5=8B=E6=98=AF=E5=90=A6=E5=AD=98=E5=9C=A8=E4=B8=80=
-=E4=B8=AA=E5=A4=8D=E5=90=88=E7=9A=84=E8=A7=82=E6=B5=8B=E7=82=B9=EF=BC=8C=
-=E5=A6=82=E6=9E=9C=E5=AD=98=E5=9C=A8=EF=BC=8C=E5=B9=B6=E4=B8=94=E8=87=B3=
-=E5=B0=91=E6=9C=89=E4=B8=80=E4=B8=AA=E6=93=8D=E4=BD=9C=E6=98=AF=E5=86=99=
-=E6=93=8D=E4=BD=9C=EF=BC=8C=E5=88=99=E6=88=91=E4=BB=AC=E5=8F=91
->=20
->=20+ =E7=8E=B0=E4=BA=86=E4=B8=80=E4=B8=AA=E7=AB=9E=E4=BA=89=E8=AE=BF=E9=
-=97=AE=E3=80=82
->=20
->=20+
->=20
->=20+2. =E5=A6=82=E6=9E=9C=E4=B8=8D=E5=AD=98=E5=9C=A8=E5=8C=B9=E9=85=8D=
-=E7=9A=84=E8=A7=82=E5=AF=9F=E7=82=B9=EF=BC=8C=E5=88=99=E5=AE=9A=E6=9C=9F=
-=E7=9A=84=E8=AE=BE=E7=BD=AE=E4=B8=80=E4=B8=AA=E8=A7=82=E6=B5=8B=E7=82=B9=
-=E5=B9=B6=E9=9A=8F=E6=9C=BA=E5=BB=B6=E8=BF=9F=E4=B8=80=E5=B0=8F=E6=AE=B5=
-=E6=97=B6=E9=97=B4=E3=80=82
->=20
->=20+
->=20
->=20+3. =E5=9C=A8=E5=BB=B6=E8=BF=9F=E5=89=8D=E6=A3=80=E6=9F=A5=E6=95=B0=
-=E6=8D=AE=E5=80=BC=EF=BC=8C=E5=B9=B6=E5=9C=A8=E5=BB=B6=E8=BF=9F=E5=90=8E=
-=E9=87=8D=E6=96=B0=E6=A3=80=E6=9F=A5=E6=95=B0=E6=8D=AE=E5=80=BC=EF=BC=9B=
-=E5=A6=82=E6=9E=9C=E5=80=BC=E4=B8=8D=E5=8C=B9=E9=85=8D=EF=BC=8C=E6=88=91=
-=E4=BB=AC=E6=8E=A8=E6=B5=8B=E5=AD=98=E5=9C=A8=E4=B8=80=E4=B8=AA
->=20
->=20+ =E6=9C=AA=E7=9F=A5=E6=9D=A5=E6=BA=90=E7=9A=84=E7=AB=9E=E4=BA=89=E7=
-=8A=B6=E5=86=B5=E3=80=82
->=20
->=20+
->=20
->=20+=E4=B8=BA=E4=BA=86=E6=A3=80=E6=B5=8B=E6=99=AE=E9=80=9A=E8=AE=BF=E9=
-=97=AE=E5=92=8C=E6=A0=87=E8=AE=B0=E8=AE=BF=E9=97=AE=E4=B9=8B=E9=97=B4=E7=
-=9A=84=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=EF=BC=8CKCSAN =E4=B9=9F=E5=AF=
-=B9=E6=A0=87=E8=AE=B0=E8=AE=BF=E9=97=AE=E8=BF=9B=E8=A1=8C=E6=A0=87=E8=AE=
-=B0=EF=BC=8C=E4=BD=86=E4=BB=85=E7=94=A8=E4=BA=8E
->=20
->=20+=E6=A3=80=E6=9F=A5=E6=98=AF=E5=90=A6=E5=AD=98=E5=9C=A8=E8=A7=82=E5=
-=AF=9F=E7=82=B9=EF=BC=9B=E5=8D=B3 KCSAN =E4=B8=8D=E4=BC=9A=E5=9C=A8=E6=A0=
-=87=E8=AE=B0=E8=AE=BF=E9=97=AE=E4=B8=8A=E8=AE=BE=E7=BD=AE=E8=A7=82=E5=AF=
-=9F=E7=82=B9=E3=80=82=E9=80=9A=E8=BF=87=E4=B8=8D=E5=9C=A8=E6=A0=87=E8=AE=
-=B0=E6=93=8D=E4=BD=9C=E4=B8=8A=E8=AE=BE
->=20
->=20+=E7=BD=AE=E8=A7=82=E5=AF=9F=E7=82=B9=EF=BC=8C=E5=A6=82=E6=9E=9C=E5=
-=AF=B9=E4=B8=80=E4=B8=AA=E5=8F=98=E9=87=8F=E7=9A=84=E6=89=80=E6=9C=89=E5=
-=B9=B6=E5=8F=91=E8=AE=BF=E9=97=AE=E9=83=BD=E8=A2=AB=E6=AD=A3=E7=A1=AE=E6=
-=A0=87=E8=AE=B0=EF=BC=8CKCSAN =E5=B0=86=E6=B0=B8=E8=BF=9C=E4=B8=8D=E4=BC=
-=9A=E8=A7=A6=E5=8F=91=E8=A7=82=E5=AF=9F=E7=82=B9
->=20
->=20+=EF=BC=8C=E5=9B=A0=E6=AD=A4=E4=B9=9F=E4=B8=8D=E4=BC=9A=E6=8A=A5=E5=
-=91=8A=E8=BF=99=E4=BA=9B=E8=AE=BF=E9=97=AE=E3=80=82
->=20
->=20+
->=20
->=20+=E5=BC=B1=E5=86=85=E5=AD=98=E5=BB=BA=E6=A8=A1
->=20
->=20+~~~~~~~~~~~~~~~~~~~~
->=20
->=20+
->=20
->=20+KSCAN =E6=A3=80=E6=B5=8B=E7=94=B1=E4=BA=8E=E7=BC=BA=E5=A4=B1=E5=86=
-=85=E5=AD=98=E5=B1=8F=E9=9A=9C=E7=9A=84=E6=95=B0=E6=8D=AE=E6=A3=80=E6=B5=
-=8B=E7=9A=84=E6=96=B9=E6=B3=95=E6=98=AF=E5=B1=85=E4=BA=8E=E5=AF=B9=E8=AE=
-=BF=E9=97=AE=E9=87=8D=E6=96=B0=E6=8E=92=E5=BA=8F=E7=9A=84=E5=BB=BA=E6=A8=
-=A1=EF=BC=88=E4=BD=BF=E7=94=A8=E5=8F=82=E6=95=B0
->=20
->=20+``CONFIG_KCSAN_WEAK_MEMORY=3Dy``=EF=BC=89=E3=80=82=E6=AF=8F=E4=B8=AA=
-=E8=AE=BE=E7=BD=AE=E4=BA=86=E8=A7=82=E5=AF=9F=E7=82=B9=E7=9A=84=E6=99=AE=
-=E9=80=9A=E5=86=85=E5=AD=98=E8=AE=BF=E9=97=AE=E4=B9=9F=E4=BC=9A=E8=A2=AB=
-=E9=80=89=E6=8B=A9=E5=9C=A8=E5=85=B6
->=20
->=20+=E5=87=BD=E6=95=B0=E8=8C=83=E5=9B=B4=E5=86=85=E8=BF=9B=E8=A1=8C=E6=
-=A8=A1=E6=8B=9F=E9=87=8D=E6=96=B0=E6=8E=92=E5=BA=8F=EF=BC=88=E6=9C=80=E5=
-=A4=9A=E4=B8=80=E4=B8=AA=E6=AD=A3=E5=9C=A8=E8=BF=9B=E8=A1=8C=E7=9A=84=E8=
-=AE=BF=E9=97=AE=EF=BC=89=E3=80=82
->=20
->=20+
->=20
->=20+=E4=B8=80=E6=97=A6=E6=9F=90=E4=B8=AA=E8=AE=BF=E9=97=AE=E8=A2=AB=E9=
-=80=89=E6=8B=A9=E7=94=A8=E4=BA=8E=E9=87=8D=E6=96=B0=E6=8E=92=E5=BA=8F=EF=
-=BC=8C=E5=AE=83=E5=B0=86=E5=9C=A8=E5=87=BD=E6=95=B0=E8=8C=83=E5=9B=B4=E5=
-=86=85=E4=B8=8E=E6=AF=8F=E4=B8=AA=E5=85=B6=E4=BB=96=E8=AE=BF=E9=97=AE=E8=
-=BF=9B=E8=A1=8C=E6=A3=80=E6=9F=A5=E3=80=82=E5=A6=82=E6=9E=9C=E9=81=87
->=20
->=20+=E5=88=B0=E9=80=82=E5=BD=93=E7=9A=84=E5=86=85=E5=AD=98=E5=B1=8F=E9=
-=9A=9C=EF=BC=8C=E8=AF=A5=E8=AE=BF=E9=97=AE=E5=B0=86=E4=B8=8D=E5=86=8D=E8=
-=A2=AB=E8=80=83=E8=99=91=E8=BF=9B=E8=A1=8C=E6=A8=A1=E6=8B=9F=E9=87=8D=E6=
-=96=B0=E6=8E=92=E5=BA=8F=E3=80=82
->=20
->=20+
->=20
->=20+=E5=BD=93=E5=86=85=E5=AD=98=E6=93=8D=E4=BD=9C=E7=9A=84=E7=BB=93=E6=
-=9E=9C=E5=BA=94=E8=AF=A5=E7=94=B1=E5=B1=8F=E9=9A=9C=E6=8E=92=E5=BA=8F=E6=
-=97=B6=EF=BC=8CKCSAN =E5=8F=AF=E4=BB=A5=E6=A3=80=E6=B5=8B=E5=88=B0=E4=BB=
-=85=E7=94=B1=E4=BA=8E=E7=BC=BA=E5=A4=B1=E5=B1=8F=E9=9A=9C=E8=80=8C=E5=AF=
-=BC=E8=87=B4=E7=9A=84=E5=86=B2=E7=AA=81=E7=9A=84
->=20
->=20+=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82=E8=80=83=E8=99=91=E4=
-=B8=8B=E9=9D=A2=E7=9A=84=E4=BE=8B=E5=AD=90::
->=20
->=20+
->=20
->=20+ int x, flag;
->=20
->=20+ void T1(void)
->=20
->=20+ {
->=20
->=20+ x =3D 1; // data race!
->=20
->=20+ WRITE_ONCE(flag, 1); // correct: smp_store_release(&flag, 1)
->=20
->=20+ }
->=20
->=20+ void T2(void)
->=20
->=20+ {
->=20
->=20+ while (!READ_ONCE(flag)); // correct: smp_load_acquire(&flag)
->=20
->=20+ ... =3D x; // data race!
->=20
->=20+ }
->=20
->=20+
->=20
->=20+=E5=BD=93=E5=90=AF=E7=94=A8=E4=BA=86=E5=BC=B1=E5=86=85=E5=AD=98=E5=
-=BB=BA=E6=A8=A1=EF=BC=8CKCSAN =E5=B0=86=E8=80=83=E8=99=91=E5=AF=B9 ``T1``=
- =E4=B8=AD=E7=9A=84 ``x`` =E8=BF=9B=E8=A1=8C=E6=A8=A1=E6=8B=9F=E9=87=8D=
-=E6=96=B0=E6=8E=92=E5=BA=8F=E3=80=82=E5=9C=A8=E5=86=99=E5=85=A5
->=20
->=20+``flag`` =E4=B9=8B=E5=90=8E=EF=BC=8Cx=E5=86=8D=E6=AC=A1=E8=A2=AB=E6=
-=A3=80=E6=9F=A5=E6=98=AF=E5=90=A6=E6=9C=89=E5=B9=B6=E5=8F=91=E8=AE=BF=E9=
-=97=AE=EF=BC=9A=E5=9B=A0=E4=B8=BA ``T2`` =E5=8F=AF=E4=BB=A5=E5=9C=A8=E5=
-=86=99=E5=85=A5
->=20
->=20+``flag`` =E4=B9=8B=E5=90=8E=E7=BB=A7=E7=BB=AD=E8=BF=9B=E8=A1=8C=EF=
-=BC=8C=E5=9B=A0=E6=AD=A4=E6=A3=80=E6=B5=8B=E5=88=B0=E6=95=B0=E6=8D=AE=E7=
-=AB=9E=E4=BA=89=E3=80=82=E5=A6=82=E6=9E=9C=E9=81=87=E5=88=B0=E4=BA=86=E6=
-=AD=A3=E7=A1=AE=E7=9A=84=E5=B1=8F=E9=9A=9C=EF=BC=8C ``x`` =E5=9C=A8=E6=AD=
-=A3=E7=A1=AE
->=20
->=20+=E9=87=8A=E6=94=BE ``flag`` =E5=90=8E=E5=B0=86=E4=B8=8D=E4=BC=9A=E8=
-=A2=AB=E8=80=83=E8=99=91=E9=87=8D=E6=96=B0=E6=8E=92=E5=BA=8F=EF=BC=8C=E5=
-=9B=A0=E6=AD=A4=E4=B8=8D=E4=BC=9A=E6=A3=80=E6=B5=8B=E5=88=B0=E6=95=B0=E6=
-=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82
->=20
->=20+
->=20
->=20+=E5=9C=A8=E5=A4=8D=E6=9D=82=E6=80=A7=E4=B8=8A=E7=9A=84=E6=9D=83=E8=
-=A1=A1=E4=BB=A5=E5=8F=8A=E5=AE=9E=E9=99=85=E7=9A=84=E9=99=90=E5=88=B6=E6=
-=84=8F=E5=91=B3=E7=9D=80=E5=8F=AA=E8=83=BD=E6=A3=80=E6=B5=8B=E5=88=B0=E4=
-=B8=80=E9=83=A8=E5=88=86=E7=94=B1=E4=BA=8E=E7=BC=BA=E5=A4=B1=E5=86=85=E5=
-=AD=98=E5=B1=8F=E9=9A=9C=E8=80=8C=E5=AF=BC=E8=87=B4=E7=9A=84=E6=95=B0
->=20
->=20+=E6=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82=E7=94=B1=E4=BA=8E=E5=BD=93=E5=
-=89=8D=E5=8F=AF=E7=94=A8=E7=9A=84=E7=BC=96=E8=AF=91=E5=99=A8=E6=94=AF=E6=
-=8C=81=EF=BC=8CKCSAN =E7=9A=84=E5=AE=9E=E7=8E=B0=E4=BB=85=E9=99=90=E4=BA=
-=8E=E5=BB=BA=E6=A8=A1=E2=80=9C=E7=BC=93=E5=86=B2=E2=80=9D=EF=BC=88=E5=BB=
-=B6=E8=BF=9F=E8=AE=BF=E9=97=AE=EF=BC=89=E7=9A=84
->=20
->=20+=E6=95=88=E6=9E=9C=EF=BC=8C=E5=9B=A0=E4=B8=BA=E8=BF=90=E8=A1=8C=E6=
-=97=B6=E4=B8=8D=E8=83=BD=E2=80=9C=E9=A2=84=E5=8F=96=E2=80=9D=E8=AE=BF=E9=
-=97=AE=E3=80=82=E5=90=8C=E6=97=B6=E8=A6=81=E6=B3=A8=E6=84=8F=EF=BC=8C=E8=
-=A7=82=E6=B5=8B=E7=82=B9=E5=8F=AA=E8=AE=BE=E7=BD=AE=E5=9C=A8=E6=99=AE=E9=
-=80=9A=E8=AE=BF=E9=97=AE=E4=B8=8A=EF=BC=8C=E8=BF=99=E6=98=AF=E5=94=AF
->=20
->=20+=E4=B8=80=E4=B8=80=E4=B8=AA KCSAN =E4=BC=9A=E6=A8=A1=E6=8B=9F=E9=87=
-=8D=E6=96=B0=E6=8E=92=E5=BA=8F=E7=9A=84=E8=AE=BF=E9=97=AE=E7=B1=BB=E5=9E=
-=8B=E3=80=82=E8=BF=99=E6=84=8F=E5=91=B3=E7=9D=80=E6=A0=87=E8=AE=B0=E8=AE=
-=BF=E9=97=AE=E7=9A=84=E9=87=8D=E6=96=B0=E6=8E=92=E5=BA=8F=E4=B8=8D=E4=BC=
-=9A=E8=A2=AB=E5=BB=BA=E6=A8=A1=E3=80=82
->=20
->=20+
->=20
->=20+=E4=B8=8A=E8=BF=B0=E6=83=85=E5=86=B5=E7=9A=84=E4=B8=80=E4=B8=AA=E5=
-=90=8E=E6=9E=9C=E6=98=AF=E8=8E=B7=E5=8F=96=E6=93=8D=E4=BD=9C=E4=B8=8D=E9=
-=9C=80=E8=A6=81=E5=B1=8F=E9=9A=9C=E6=8F=92=E6=A1=A9=EF=BC=88=E4=B8=8D=E9=
-=9C=80=E8=A6=81=E9=A2=84=E5=8F=96=EF=BC=89=E3=80=82=E6=AD=A4=E5=A4=96=EF=
-=BC=8C=E5=BC=95=E5=85=A5=E5=9C=B0=E5=9D=80=E6=88=96=E6=8E=A7=E5=88=B6
->=20
->=20+=E4=BE=9D=E8=B5=96=E7=9A=84=E6=A0=87=E8=AE=B0=E8=AE=BF=E9=97=AE=E4=
-=B8=8D=E9=9C=80=E8=A6=81=E7=89=B9=E6=AE=8A=E5=A4=84=E7=90=86=EF=BC=88=E6=
-=A0=87=E8=AE=B0=E8=AE=BF=E9=97=AE=E4=B8=8D=E8=83=BD=E9=87=8D=E6=96=B0=E6=
-=8E=92=E5=BA=8F=EF=BC=8C=E5=90=8E=E7=BB=AD=E4=BE=9D=E8=B5=96=E7=9A=84=E8=
-=AE=BF=E9=97=AE=E4=B8=8D=E8=83=BD=E8=A2=AB=E9=A2=84=E5=8F=96=EF=BC=89
->=20
->=20+=E3=80=82
->=20
->=20+
->=20
->=20+=E5=85=B3=E9=94=AE=E5=B1=9E=E6=80=A7
->=20
->=20+~~~~~~~~~~~~~~
->=20
->=20+
->=20
->=20+1. **=E5=86=85=E5=AD=98=E5=BC=80=E9=94=80**=EF=BC=9A=E6=95=B4=E4=BD=
-=93=E7=9A=84=E5=86=85=E5=AD=98=E5=BC=80=E9=94=80=E5=8F=AA=E6=9C=89=E5=87=
-=A0 MiB=EF=BC=8C=E5=8F=96=E5=86=B3=E4=BA=8E=E9=85=8D=E7=BD=AE=E3=80=82=E5=
-=BD=93=E5=89=8D=E7=9A=84=E5=AE=9E=E7=8E=B0=E6=98=AF=E4=BD=BF=E7=94=A8=E4=
-=B8=80=E4=B8=AA=E5=B0=8F=E9=95=BF
->=20
->=20+ =E6=95=B4=E5=9E=8B=E6=95=B0=E7=BB=84=E6=9D=A5=E7=BC=96=E7=A0=81=E8=
-=A7=82=E6=B5=8B=E7=82=B9=E4=BF=A1=E6=81=AF=EF=BC=8C=E5=87=A0=E4=B9=8E=E5=
-=8F=AF=E4=BB=A5=E5=BF=BD=E7=95=A5=E4=B8=8D=E8=AE=A1=E3=80=82
->=20
->=20+
->=20
->=20+2. **=E6=80=A7=E8=83=BD=E5=BC=80=E9=94=80**=EF=BC=9AKCSAN =E7=9A=84=
-=E8=BF=90=E8=A1=8C=E6=97=B6=E6=97=A8=E5=9C=A8=E6=80=A7=E8=83=BD=E5=BC=80=
-=E9=94=80=E6=9C=80=E5=B0=8F=E5=8C=96=EF=BC=8C=E4=BD=BF=E7=94=A8=E4=B8=80=
-=E4=B8=AA=E9=AB=98=E6=95=88=E7=9A=84=E8=A7=82=E6=B5=8B=E7=82=B9=E7=BC=96=
-=E7=A0=81=EF=BC=8C=E5=9C=A8
->=20
->=20+ =E5=BF=AB=E9=80=9F=E8=B7=AF=E5=BE=84=E4=B8=AD=E4=B8=8D=E9=9C=80=E8=
-=A6=81=E8=8E=B7=E5=8F=96=E4=BB=BB=E4=BD=95=E9=94=81=E3=80=82=E5=9C=A8=E6=
-=8B=A5=E6=9C=89 8 =E4=B8=AA CPU =E7=9A=84=E7=B3=BB=E7=BB=9F=E4=B8=8A=E7=
-=9A=84=E5=86=85=E6=A0=B8=E5=90=AF=E5=8A=A8=E6=9D=A5=E8=AF=B4=EF=BC=9A
->=20
->=20+
->=20
->=20+ - =E4=BD=BF=E7=94=A8=E9=BB=98=E8=AE=A4 KCSAN =E9=85=8D=E7=BD=AE=E6=
-=97=B6=EF=BC=8C=E6=80=A7=E8=83=BD=E4=B8=8B=E9=99=8D 5 =E5=80=8D=EF=BC=9B
->=20
->=20+ - =E4=BB=85=E5=9B=A0=E8=BF=90=E8=A1=8C=E6=97=B6=E5=BF=AB=E9=80=9F=
-=E8=B7=AF=E5=BE=84=E5=BC=80=E9=94=80=E5=AF=BC=E8=87=B4=E6=80=A7=E8=83=BD=
-=E4=B8=8B=E9=99=8D 2.8 =E5=80=8D=EF=BC=88=E8=AE=BE=E7=BD=AE=E9=9D=9E=E5=
-=B8=B8=E5=A4=A7=E7=9A=84
->=20
->=20+ ``KCSAN_SKIP_WATCH`` =E5=B9=B6=E5=8F=96=E6=B6=88=E8=AE=BE=E7=BD=AE =
-``KCSAN_SKIP_WATCH_RANDOMIZE``=EF=BC=89=E3=80=82
->=20
->=20+
->=20
->=20+3. **=E6=B3=A8=E8=A7=A3=E5=BC=80=E9=94=80**=EF=BC=9AKCSAN =E8=BF=90=
-=E8=A1=8C=E6=97=B6=E4=B9=8B=E5=A4=96=E9=9C=80=E8=A6=81=E7=9A=84=E6=B3=A8=
-=E9=87=8A=E5=BE=88=E5=B0=91=E3=80=82=E5=9B=A0=E6=AD=A4=EF=BC=8C=E9=9A=8F=
-=E7=9D=80=E5=86=85=E6=A0=B8=E7=9A=84=E5=8F=91=E5=B1=95=E7=BB=B4=E6=8A=A4=
-=E7=9A=84=E5=BC=80
->=20
->=20+ =E9=94=80=E4=B9=9F=E5=BE=88=E5=B0=8F=E3=80=82
->=20
->=20+
->=20
->=20+4. **=E6=A3=80=E6=B5=8B=E8=AE=BE=E5=A4=87=E7=9A=84=E7=AB=9E=E4=BA=89=
-=E5=86=99=E5=85=A5**=EF=BC=9A=E7=94=B1=E4=BA=8E=E8=AE=BE=E7=BD=AE=E8=A7=
-=82=E6=B5=8B=E7=82=B9=E6=97=B6=E4=BC=9A=E6=A3=80=E6=9F=A5=E6=95=B0=E6=8D=
-=AE=E5=80=BC=EF=BC=8C=E8=AE=BE=E5=A4=87=E7=9A=84=E7=AB=9E=E4=BA=89=E5=86=
-=99=E5=85=A5=E4=B9=9F=E5=8F=AF=E4=BB=A5
->=20
->=20+ =E8=A2=AB=E6=A3=80=E6=B5=8B=E5=88=B0=E3=80=82
->=20
->=20+
->=20
->=20+5. **=E5=86=85=E5=AD=98=E6=8E=92=E5=BA=8F**=EF=BC=9AKCSAN =E5=8F=AA=
-=E4=BA=86=E8=A7=A3=E4=B8=80=E9=83=A8=E5=88=86 LKMM =E6=8E=92=E5=BA=8F=E8=
-=A7=84=E5=88=99=EF=BC=9B=E8=BF=99=E5=8F=AF=E8=83=BD=E4=BC=9A=E5=AF=BC=E8=
-=87=B4=E6=BC=8F=E6=8A=A5=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=EF=BC=88
->=20
->=20+ =E5=81=87=E9=98=B4=E6=80=A7=EF=BC=89=E3=80=82
->=20
->=20+
->=20
->=20+6. **=E5=88=86=E6=9E=90=E5=87=86=E7=A1=AE=E7=8E=87**=EF=BC=9A =E5=AF=
-=B9=E4=BA=8E=E8=A7=82=E5=AF=9F=E5=88=B0=E7=9A=84=E6=89=A7=E8=A1=8C=EF=BC=
-=8C=E7=94=B1=E4=BA=8E=E4=BD=BF=E7=94=A8=E9=87=87=E6=A0=B7=E7=AD=96=E7=95=
-=A5=EF=BC=8C=E5=88=86=E6=9E=90=E6=98=AF * =E4=B8=8D=E5=81=A5=E5=85=A8 * =
-=E7=9A=84
->=20
->=20+ =EF=BC=88=E5=8F=AF=E8=83=BD=E6=9C=89=E5=81=87=E9=98=B4=E6=80=A7=EF=
-=BC=89=EF=BC=8C=E4=BD=86=E6=9C=9F=E6=9C=9B=E5=BE=97=E5=88=B0=E5=AE=8C=E6=
-=95=B4=E7=9A=84=E5=88=86=E6=9E=90=EF=BC=88=E6=B2=A1=E6=9C=89=E5=81=87=E9=
-=98=B3=E6=80=A7=EF=BC=89=E3=80=82
->=20
->=20+
->=20
->=20+=E8=80=83=E8=99=91=E7=9A=84=E6=9B=BF=E4=BB=A3=E6=96=B9=E6=A1=88
->=20
->=20+-------------------
->=20
->=20+
->=20
->=20+=E4=B8=80=E4=B8=AA=E5=86=85=E6=A0=B8=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=
-=BA=89=E6=A3=80=E6=B5=8B=E7=9A=84=E6=9B=BF=E4=BB=A3=E6=96=B9=E6=B3=95=E6=
-=98=AF `Kernel Thread Sanitizer (KTSAN)
->=20
->=20+<https://github.com/google/ktsan/wiki>%60_%E3%80%82KTSAN https://git=
-hub.com/google/ktsan/wiki%3E%60_%E3%80%82KTSAN  =E6=98=AF=E4=B8=80=E4=B8=
-=AA=E5=85=88=E8=A1=8C=E5=8F=91=E7=94=9F=E7=9A=84=E6=95=B0=E6=8D=AE=E7=AB=
-=9E=E4=BA=89=E6=A3=80=E6=B5=8B=E5=99=A8
->=20
->=20+=EF=BC=8C=E5=AE=83=E6=98=BE=E5=BC=8F=E5=BB=BA=E7=AB=8B=E5=86=85=E5=
-=AD=98=E6=93=8D=E4=BD=9C=E4=B9=8B=E9=97=B4=E7=9A=84=E5=85=88=E8=A1=8C=E5=
-=8F=91=E7=94=9F=E9=A1=BA=E5=BA=8F=EF=BC=8C=E8=BF=99=E5=8F=AF=E4=BB=A5=E7=
-=94=A8=E6=9D=A5=E7=A1=AE=E5=AE=9A
->=20
->=20+`=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89`_ =E4=B8=AD=E5=AE=9A=E4=B9=89=
-=E7=9A=84=E6=95=B0=E6=8D=AE=E7=AB=9E=E4=BA=89=E3=80=82
->=20
->=20+
->=20
->=20+=E4=B8=BA=E4=BA=86=E5=BB=BA=E7=AB=8B=E6=AD=A3=E7=A1=AE=E7=9A=84=E5=
-=85=88=E8=A1=8C=E5=8F=91=E7=94=9F=E5=85=B3=E7=B3=BB=EF=BC=8CKTSAN =E5=BF=
-=85=E9=A1=BB=E4=BA=86=E8=A7=A3 LKMM =E7=9A=84=E6=89=80=E6=9C=89=E6=8E=92=
-=E5=BA=8F=E8=A7=84=E5=88=99=E5=92=8C=E5=90=8C=E6=AD=A5=E5=8E=9F=E8=AF=AD=
-=E3=80=82=E4=B8=8D=E5=B9=B8
->=20
->=20+=E7=9A=84=E6=98=AF=EF=BC=8C=E4=BB=BB=E4=BD=95=E9=81=97=E6=BC=8F=E9=
-=83=BD=E4=BC=9A=E5=AF=BC=E8=87=B4=E5=A4=A7=E9=87=8F=E7=9A=84=E5=81=87=E9=
-=98=B3=E6=80=A7=EF=BC=8C=E8=BF=99=E5=9C=A8=E5=8C=85=E5=90=AB=E4=BC=97=E5=
-=A4=9A=E8=87=AA=E5=AE=9A=E4=B9=89=E5=90=8C=E6=AD=A5=E6=9C=BA=E5=88=B6=E7=
-=9A=84=E5=86=85=E6=A0=B8=E4=B8=8A=E4=B8=8B=E6=96=87=E4=B8=AD=E7=89=B9
->=20
->=20+=E5=88=AB=E6=9C=89=E5=AE=B3=E3=80=82=E4=B8=BA=E4=BA=86=E8=B7=9F=E8=
-=B8=AA=E5=89=8D=E5=9B=A0=E5=90=8E=E6=9E=9C=E5=85=B3=E7=B3=BB=EF=BC=8CKTSA=
-N =E7=9A=84=E5=AE=9E=E7=8E=B0=E9=9C=80=E8=A6=81=E4=B8=BA=E6=AF=8F=E4=B8=
-=AA=E5=86=85=E5=AD=98=E4=BD=8D=E7=BD=AE=E6=8F=90=E4=BE=9B=E5=85=83=E6=95=
-=B0=E6=8D=AE=EF=BC=88=E5=BD=B1=E5=AD=90=E5=86=85
->=20
->=20+=E5=AD=98=EF=BC=89=EF=BC=8C=E8=BF=99=E6=84=8F=E5=91=B3=E7=9D=80=E6=
-=AF=8F=E9=A1=B5=E5=86=85=E5=AD=98=E5=AF=B9=E5=BA=94 4 =E9=A1=B5=E5=BD=B1=
-=E5=AD=90=E5=86=85=E5=AD=98=EF=BC=8C=E5=9C=A8=E5=A4=A7=E5=9E=8B=E7=B3=BB=
-=E7=BB=9F=E4=B8=8A=E5=8F=AF=E8=83=BD=E4=BC=9A=E5=B8=A6=E6=9D=A5=E6=95=B0=
-=E5=8D=81 GiB =E7=9A=84=E5=BC=80=E9=94=80
->=20
->=20+=E3=80=82
->=20
->=20\ No newline at end of file
-Let's add a blankline at end of file.
+All warnings (new ones prefixed by >>):
 
-BTW, the merge windows has open, so if you don't mind, could you send v2
-next week?
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol strcmp
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol _printk
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol strlen
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol strncmp
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol __kmalloc_noprof
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol call_rcu
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol sched_set_fifo
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol torture_sched_setaffinity
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol kfree
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol kernel_power_off
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol rcu_barrier
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol bitmap_parselist
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol sprintf
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol pcpu_hot
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol set_user_nice
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol schedule_timeout_uninterruptible
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol jiffies
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol __warn_printk
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol schedule_timeout_interruptible
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol __const_udelay
+>> depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol __SCT__preempt_schedule
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol sched_set_normal
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol _raw_spin_lock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol _raw_spin_unlock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol _raw_spin_lock_irqsave
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol _raw_spin_unlock_irqrestore
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol _raw_write_lock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol _raw_write_unlock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol _raw_read_lock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol _raw_read_unlock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol _raw_write_lock_irqsave
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol _raw_write_unlock_irqrestore
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol _raw_read_lock_irqsave
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol _raw_read_unlock_irqrestore
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol __mutex_init
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol mutex_lock_nested
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol __ubsan_handle_out_of_bounds
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol __ubsan_handle_shift_out_of_bounds
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol mutex_unlock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol debug_check_no_locks_freed
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol lockdep_init_map_type
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol lock_acquire
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol __list_add_valid_or_report
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol ww_mutex_lock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol ww_mutex_unlock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol oops_in_progress
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol __list_del_entry_valid_or_report
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol debug_locks_off
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol debug_locks_silent
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol lock_release
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol __rt_mutex_init
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol rt_mutex_lock_nested
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol rt_mutex_unlock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol down_write
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol up_write
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol down_read
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol up_read
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol __percpu_init_rwsem
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol __ubsan_handle_builtin_unreachable
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol percpu_free_rwsem
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol percpu_down_write
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol percpu_up_write
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol __might_sleep
+>> depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol __SCT__might_resched
+>> depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol preempt_count_add
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol debug_lockdep_rcu_enabled
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol rcu_read_lock_any_held
+>> depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol preempt_count_sub
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol lockdep_rcu_suspicious
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol __percpu_down_read
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol rcuwait_wake_up
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol start_poll_synchronize_rcu
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol param_ops_int
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/locking/locktorture.ko needs unknown symbol param_ops_charp
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol strcmp
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol _printk
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol srcu_check_nmi_safety
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __srcu_read_lock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol synchronize_srcu
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __srcu_read_unlock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __ubsan_handle_out_of_bounds
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol down_read
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol up_read
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol down_write
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol up_write
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol pcpu_hot
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_trace_lock_map
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol synchronize_rcu_tasks_trace
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_read_unlock_trace_special
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol mutex_lock_nested
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol mutex_unlock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __warn_printk
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __list_add_valid_or_report
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __kmalloc_noprof
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol jiffies
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __cpuhp_setup_state
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol kernel_power_off
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __might_sleep
+>> depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __SCT__might_resched
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol init_wait_entry
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol prepare_to_wait_event
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol schedule
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol finish_wait
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol kfree
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol unregister_oom_notifier
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_get_gp_kthreads_prio
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __cpuhp_remove_state
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol kmem_cache_create
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol kmem_cache_alloc_noprof
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol mem_dump_obj
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol kmem_cache_free
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol kmem_cache_destroy
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol kmalloc_caches
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __kmalloc_cache_noprof
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol vmalloc_noprof
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol vfree
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_gp_is_expedited
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_gp_is_normal
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol _raw_spin_unlock_bh
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol _raw_spin_lock_bh
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __udelay
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol debug_lockdep_rcu_enabled
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_read_lock_held
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol lockdep_rcu_suspicious
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __list_del_entry_valid_or_report
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_unexpedite_gp
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_expedite_gp
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_inkernel_boot_has_ended
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol sched_set_normal
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol tracing_off
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_cpu_stall_suppress
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol ftrace_dump
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __cpu_online_mask
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol set_user_nice
+>> depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol init_timer_key
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol mod_timer
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol schedule_timeout_interruptible
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol timer_delete_sync
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol schedule_hrtimeout
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol kthread_should_stop
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol kthread_create_on_cpu
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol wake_up_process
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __raw_spin_lock_init
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol register_oom_notifier
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __init_waitqueue_head
+>> depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol init_rcu_head_on_stack
+>> depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol destroy_rcu_head_on_stack
+>> depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __rcu_read_lock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_lock_map
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_is_watching
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol trace_clock_local
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __const_udelay
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol do_trace_rcu_torture_read
+>> depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __SCT__preempt_schedule
+>> depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __rcu_read_unlock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_read_lock_bh_held
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_read_lock_sched_held
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol call_rcu
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol lock_acquire
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol lock_release
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol lock_is_held_type
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol srcu_batches_completed
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol call_srcu
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol synchronize_srcu_expedited
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol get_state_synchronize_srcu
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol start_poll_synchronize_srcu
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol poll_state_synchronize_srcu
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol srcu_barrier
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol srcu_torture_stats_print
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol srcutorture_get_gp_data
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __init_srcu_struct
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol cleanup_srcu_struct
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol call_rcu_tasks
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __wait_rcu_gp
+>> depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol preempt_count_add
+>> depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol preempt_count_sub
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol call_rcu_tasks_rude
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol call_rcu_tasks_trace
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol cpu_bit_bitmap
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol torture_sched_setaffinity
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol memset
+>> depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __this_cpu_preempt_check
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_bh_lock_map
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol trace_hardirqs_off
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_sched_lock_map
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol trace_hardirqs_on
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol _raw_spin_lock_irqsave
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol _raw_spin_unlock_irqrestore
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __local_bh_disable_ip
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __local_bh_enable_ip
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_cpu_stall_suppress_at_boot
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol sched_show_task
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol sched_set_fifo_low
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol mutex_trylock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol schedule_timeout_uninterruptible
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_cpu_stall_notifiers
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_gp_set_torture_wait
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol ktime_get_seconds
+>> depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol preempt_schedule
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol touch_softlockup_watchdog
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __might_resched
+>> depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __SCT__cond_resched
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __ubsan_handle_divrem_overflow
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_fwd_progress_check
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol smp_call_on_cpu
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol __wake_up
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol kthread_create_on_node
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol kthread_stop
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_barrier
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol param_ops_int
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol param_ops_bool
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol param_ops_charp
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol delayed_work_timer_fn
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_get_gp_seq
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol synchronize_rcu
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol synchronize_rcu_expedited
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol get_state_synchronize_rcu
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol start_poll_synchronize_rcu_expedited
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol start_poll_synchronize_rcu_expedited_full
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol poll_state_synchronize_rcu
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol cond_synchronize_rcu_expedited
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol get_completed_synchronize_rcu
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol get_completed_synchronize_rcu_full
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol get_state_synchronize_rcu_full
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol start_poll_synchronize_rcu
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol start_poll_synchronize_rcu_full
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol poll_state_synchronize_rcu_full
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol cond_synchronize_rcu
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol cond_synchronize_rcu_full
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_force_quiescent_state
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol show_rcu_gp_kthreads
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_check_boost_fail
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_jiffies_till_stall_check
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcutorture_get_gp_data
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_gp_slow_register
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_gp_slow_unregister
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol synchronize_rcu_tasks
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_barrier_tasks
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol show_rcu_tasks_classic_gp_kthread
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_tasks_get_gp_data
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol synchronize_rcu_tasks_rude
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_barrier_tasks_rude
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol show_rcu_tasks_rude_gp_kthread
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_tasks_rude_get_gp_data
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_barrier_tasks_trace
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol show_rcu_tasks_trace_gp_kthread
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcutorture.ko needs unknown symbol rcu_tasks_trace_get_gp_data
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol strcmp
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol _printk
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol __init_waitqueue_head
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol schedule_timeout_uninterruptible
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol __kmalloc_noprof
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol __kmalloc_large_noprof
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol kernel_power_off
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol rcu_gp_is_expedited
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol rcu_gp_is_normal
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol kfree
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol show_rcu_gp_kthreads
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol __might_sleep
+>> depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol __SCT__might_resched
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol init_wait_entry
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol prepare_to_wait_event
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol schedule
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol finish_wait
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol pcpu_hot
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol set_user_nice
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol trace_hardirqs_off
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol trace_hardirqs_on
+>> depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol warn_bogus_irq_restore
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol sched_set_fifo_low
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol schedule_timeout_idle
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol system_state
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol ktime_get_mono_fast_ns
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol jiffies
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol __udelay
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol kmalloc_caches
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol __kmalloc_cache_noprof
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol kthread_should_stop
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol sched_set_normal
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol schedule_timeout_interruptible
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol tracing_off
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol rcu_cpu_stall_suppress
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol ftrace_dump
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol __wake_up
+>> depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol __rcu_read_lock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol rcu_lock_map
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol debug_lockdep_rcu_enabled
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol rcu_is_watching
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol lockdep_rcu_suspicious
+>> depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol __rcu_read_unlock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol call_rcu
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol lock_acquire
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol lock_release
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol srcu_check_nmi_safety
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol __srcu_read_lock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol __srcu_read_unlock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol srcu_batches_completed
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol call_srcu
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol srcu_barrier
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol synchronize_srcu
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol synchronize_srcu_expedited
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol __init_srcu_struct
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol cleanup_srcu_struct
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol rcu_trace_lock_map
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol rcu_read_unlock_trace_special
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol si_mem_available
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol kvfree_call_rcu
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol __might_resched
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol __SCT__cond_resched
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol rcu_tasks_trace_qs_blkd
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol rcu_trc_cmpxchg_need_qs
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol param_ops_bool
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol param_ops_int
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol param_ops_charp
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol delayed_work_timer_fn
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol rcu_get_gp_seq
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol rcu_exp_batches_completed
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol rcu_barrier
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol synchronize_rcu
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol synchronize_rcu_expedited
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol call_rcu_tasks
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol rcu_barrier_tasks
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol synchronize_rcu_tasks
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol get_rcu_tasks_gp_kthread
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol call_rcu_tasks_rude
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol rcu_barrier_tasks_rude
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol synchronize_rcu_tasks_rude
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol get_rcu_tasks_rude_gp_kthread
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol call_rcu_tasks_trace
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol rcu_barrier_tasks_trace
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol synchronize_rcu_tasks_trace
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/rcuscale.ko needs unknown symbol get_rcu_tasks_trace_gp_kthread
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol strcmp
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol _printk
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol kernel_power_off
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol __init_waitqueue_head
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol schedule_timeout_uninterruptible
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol __kmalloc_noprof
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol __warn_printk
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol kfree
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol __might_sleep
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol __SCT__might_resched
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol init_wait_entry
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol prepare_to_wait_event
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol schedule
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol finish_wait
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol pcpu_hot
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol cpu_bit_bitmap
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol set_user_nice
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol schedule_timeout_interruptible
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol trace_hardirqs_off
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol ktime_get_mono_fast_ns
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol trace_hardirqs_on
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol __wake_up
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol __ubsan_handle_divrem_overflow
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol warn_bogus_irq_restore
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol kmalloc_caches
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol __kmalloc_cache_noprof
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol sprintf
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol strlen
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol strcat
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol rcu_lock_map
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol __rcu_read_unlock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol __rcu_read_lock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol debug_lockdep_rcu_enabled
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol rcu_is_watching
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol lockdep_rcu_suspicious
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol __udelay
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol __ndelay
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol lock_acquire
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol lock_release
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol srcu_check_nmi_safety
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol __srcu_read_lock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol __srcu_read_unlock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol rcu_trace_lock_map
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol rcu_read_unlock_trace_special
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol __rwlock_init
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol _raw_read_lock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol _raw_read_unlock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol __init_rwsem
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol down_read
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol up_read
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol preempt_count_add
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol _raw_spin_lock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol _raw_spin_unlock
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol preempt_count_sub
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol __SCT__preempt_schedule
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol _raw_spin_lock_irqsave
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol _raw_spin_unlock_irqrestore
+   depmod: WARNING: /tmp/kernel/i386-randconfig-002-20240724/clang-18/dbae13ff5e8d04476cede99ca67c4be77c2a7886/lib/modules/6.10.0-12031-gdbae13ff5e8d/kernel/kernel/rcu/refscale.ko needs unknown symbol ktime_get_real_fast_ns
 
-Thanks,
-Yanteng
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
