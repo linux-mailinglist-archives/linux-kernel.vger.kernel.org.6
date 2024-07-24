@@ -1,118 +1,192 @@
-Return-Path: <linux-kernel+bounces-260833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A486C93AF11
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:31:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 131DB93AF15
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5888A1F2245F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:31:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEB87280579
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8E21448DC;
-	Wed, 24 Jul 2024 09:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E831D14A4C5;
+	Wed, 24 Jul 2024 09:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="eqWvWseX"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="BCuJ6u4b"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99BA16FC2;
-	Wed, 24 Jul 2024 09:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF3B13DDC2
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 09:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721813474; cv=none; b=oOt8WOsJ4K+xifACkvlHzRj5bwQxosrPROygqJwf+xuIMLYEVmjzR493jZohZTBfTy7W15n2CxrrhXarJu4LIvP6KP8WqohN5BtdUo6HxPg/ZbAH4BG6llsXT4UMYb2s3POHybYOqewm3dugz8HEzjVSZ2xDLd3t/WlrqCBoQko=
+	t=1721813552; cv=none; b=JTx3415HSb3LLSNBonqfn/eD0CbtsH8trBnAP66Uzfk82ntO8/wDcyTExqNHVuuimjGVO2471qvFtBhhQaoVR9+qxMbN1rSQsKirPwdTB1TpZp3IXu0VgEu4OdBRddAOk7h9eavEUumzi99jQfEwe8nYdoZFMtMdkhncyQTEU2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721813474; c=relaxed/simple;
-	bh=GI16kZp/DZvJnXEv3qKUE7rVQHnu64qzaMVHUItjoNw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pcSrlXrSVRBF9elEktKx853tudSDCO3eM/tRYfG9/5FuoCiCMN7O9gTa7OcOmnGxdoQfyZFmlXSe+3mvtk7yv5KxiTAv9vJ7y84YhkxTyNEm82DmKjSvdAGv4l70Xw2oUnc2Ur2rthPmV4RcGBIRaBG7T0Lqf+KdSGTI5ZACmmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=eqWvWseX; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721813451; x=1722418251; i=markus.elfring@web.de;
-	bh=GI16kZp/DZvJnXEv3qKUE7rVQHnu64qzaMVHUItjoNw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=eqWvWseX8RDPKAwb2VcpWYv+kWCGBIWVyhmp57Dn7iSBNPaKf/2mo1q3+739GeO5
-	 FYctuKYDMo0gWeBAwfG7ZuDmFmQzdhYIzKF9e9Cv4iyAVFwJhJ6teIO3ghKA6U34y
-	 KXE3JTcrlBQfqPqNQsxJ6MjtMSeVEqJtxcqwKITMNgLsTyRA5uc/KaxeFayzfP2uK
-	 fWzcocvnMpYECZLChYebvUNNGjXuqT02ZLF2QGmxiDTALaNmaQaDtzDJdyl2Epr9I
-	 94Ett4G/bKFRf48NmvNCYDG7gh7XnscOp4Fg9uxhZhaltWESHdsFZH5UPnK+fjGG2
-	 ogTcRvwVCg1sCEwb5g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N4621-1s6FvG0jk9-00wNRB; Wed, 24
- Jul 2024 11:30:51 +0200
-Message-ID: <6ccf3891-fd72-47de-ab89-cdc7e9425c56@web.de>
-Date: Wed, 24 Jul 2024 11:30:50 +0200
+	s=arc-20240116; t=1721813552; c=relaxed/simple;
+	bh=ZDtz5wNfgFB+bM5S7J3BlKZ5MriLrTcZPwN4EF7yzLg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZeiZF1XfdKJBItkpGrTrpSqhSQmC+/QLsStrKfZ1ICVUvSM605MEEVoKOxLDj7fT9qegFzIvFmpLgKCva3A7SIOKE/jMB0beGEXiT76Uo/1+5u6pYteGhm2KCH14s7/HM1kEXRmUNyy0qaie8JpDSs+BwC9kzViOJ+vPUs4RXHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=BCuJ6u4b; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1721813547;
+	bh=ZDtz5wNfgFB+bM5S7J3BlKZ5MriLrTcZPwN4EF7yzLg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BCuJ6u4b0m987SqUN4AdENzSaSbUZkNR7/wXR5gsniaBr9qUTrj5Ef9D8jhmnq1l9
+	 uDlNc4jn8cKom3elPNOBDVAaW1CqS4fYI+MakZ1ueyL1N+a6O7kXoDFO7sNHcM60RN
+	 if9EShifvrMLZuAbzLIXdBk5vAv4g1kJBFb6ua5U=
+Date: Wed, 24 Jul 2024 11:32:26 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Joel Granados <j.granados@samsung.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] sysctl: treewide: constify the ctl_table argument of
+ proc_handlers
+Message-ID: <84dc8f21-78d2-4ea2-ad79-3f85b610c0a7@t-8ch.de>
+References: <20240619-sysctl-const-handler-v2-1-e36d00707097@weissschuh.net>
+ <20240715202319.mccb6jlsa6dkynap@joelS2.panther.com>
+ <f7489470-b0da-406b-a8dd-0ae7aaeceec8@t-8ch.de>
+ <20240716152705.juet6srejwq5o6je@joelS2.panther.com>
+ <cdf0831f-f9af-4aa7-a3a0-970efeec1def@t-8ch.de>
+ <20240717195748.fe5ttokbibcsw2ca@joelS2.panther.com>
+ <8a48b4d3-94ca-4a42-bf59-c340d7316603@t-8ch.de>
+ <20240724084124.hbbn3jfcbsc7pyov@joelS2.panther.com>
+ <12465755-1df4-4231-9bec-1044bfcdca4a@t-8ch.de>
+ <20240724091817.eohhckduvtjscibg@joelS2.panther.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/nouveau/debugfs: Simplify character output in
- nouveau_debugfs_vbios_image()
-To: Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
- Ilia Mirkin <imirkin@alum.mit.edu>, nouveau@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org
-Cc: Daniel Vetter <daniel@ffwll.ch>, Danilo Krummrich <dakr@redhat.com>,
- David Airlie <airlied@gmail.com>, Karol Herbst <kherbst@redhat.com>,
- Lyude Paul <lyude@redhat.com>, LKML <linux-kernel@vger.kernel.org>
-References: <cb21950b-286b-4630-9052-cff9e7e56337@web.de>
- <CAKb7Uvj513trzg9bVGrjcQ8CfO4anCq7e9mgbD0eZKh=zNLy=Q@mail.gmail.com>
- <147bde68-2b66-4e0c-890d-30571a99eee1@wanadoo.fr>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <147bde68-2b66-4e0c-890d-30571a99eee1@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:RrGA6l7txMMXcnwEjtBSuPugQcQ+Aylad8jkNWgceoTGStNyfqr
- wTlrqWtDAlH0lOi3LmxFuBdFOurzcAMSBbVSOyx+7nYCzF9yEcAoO29vnrsaXFglXk2xPCj
- xn93kdCjgeIzu8z0n84elnUVbB32IjyF3DtuT04QF72Qb6Ozr7fwwcCvhY/mPFW43KB60nl
- 6D7f2g3ZueR3VhfSCZLEw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:C3lcjC5oZS8=;DVJfFXGPfp7ihietJXxV4YSOv0c
- un3HOOokhKNsh4QAHnFrfQuzuFCEpaGi1xrkfUj7MDr+0JCPOwMXLBxeAJmlQMxLPNreUsjtQ
- roNUpubYtHHL+EVpYb0Q7I+g++Oxh5F2ZMY+vGlYo0AvceELcybcPZTxlBtb3IZCoauTU9m1S
- ht+BIOh0cb7KGtpZBbhOxYQ8kQJl7atuVYvsAFZ0SNyv2k7HbTmS3K54k5JuI6e67KdR0XMOB
- Y6PXS6gXmoN6QSN3uygBUPpKhfLQatXdnBL2nyMgwYa/9CzDsFuAybofJMTqd48qxJbvlEG7D
- 1Ath9KSnstLC0AO0PDvsJgiW0gbffWXdYcDzfpyRsyQztaPnJMoW4NqlnrCsUcqXSJM3ixK0R
- gdD/GdiU3w01EVoYYfClF/bctRxLulSi/0abkHeqYXi4hzXDMRpSr3VRstAghGzYMWs3w57hC
- sBtXZouQ21rTIakIC9AUlAEO2h3O03M8bcoFzrnZMnMxKUAirtjr/tP1qZ0VJGC/5pOMa54VK
- 6yCYdzL4qCqhMQOCXvkcNm/T3Aw9WkupeD4uMxwYKgDulRbnW8ka4DnRCQNH1pB/2z81XXvxf
- Zs1LcxjShshMbARhoCdgPUxYUD85eLKlTLrfYIurRgm3oT0ryXtLiex6PfRKU9t0157H7qHa4
- 5D9wKxcGzpyqxOIifBWUKQP0qy4JokmQSa8Gp/YZ1d1kl/i08lbfYddTuP5VgeUO+Lfyjuo/y
- Qf95saO/iqx7QkxbB6wIaneO0g0yXG0DduVsxziGHh7v1FiyYC5l9XKd/4JVfyT1yk/6Jls5X
- AKenXixwFu+XceBf6IsDYOUQ==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240724091817.eohhckduvtjscibg@joelS2.panther.com>
 
->> Is there some reason this whole thing isn't just
->>
->> seq_write(m, drm->vbios.data, drm->vbios.length)
-=E2=80=A6
-> I don't know if my answer is relevant or not here but:
-> =C2=A0=C2=A0=C2=A0=C2=A0for () seq_putc();=C2=A0=C2=A0=C2=A0 =3D=3D> wil=
-l fill 'm' with everything that fits in
+On 2024-07-24 11:18:17+0000, Joel Granados wrote:
+> On Wed, Jul 24, 2024 at 10:56:10AM +0200, Thomas Weißschuh wrote:
+> > On 2024-07-24 10:41:24+0000, Joel Granados wrote:
+> ...
+> > > > > to be in master before we send the PR to Linus. Will check these three
+> > > > > dependencies on Wednesday next week and send your V2 [3] if I see that
+> > > > > it applies cleanly.
+> > > > 
+> > > > All dependency PRs (sysctl, net, mm) are now merged.
+> > > > My compilation tests all succeed now.
+> > > 
+> > > How did you apply the coccinelle script? I ask because if I do this:
+> > > ```
+> > >  make coccicheck MODE=patch SPFLAGS="--in-place --include-headers" COCCI=SCRIPT
+> > > ```
+> > > 
+> > > I have to add "virtual patch" to the first line of the script you had
+> > > sent. So it would look like this:
+> > > ```
+> > > virtual patch
+> > > 
+> > > @@
+> > > identifier func, ctl, write, buffer, lenp, ppos;
+> > > @@
+> > > 
+> > > int func(
+> > > - struct ctl_table *ctl,
+> > > + const struct ctl_table *ctl,
+> > >   int write, void *buffer, size_t *lenp, loff_t *ppos)
+> > > { ... }
+> > > ```
+> > 
+> > Yes, IIRC I got told during one review to drop it.
+> > But for me it is also necessary.
+> I also remember a comment from the XFS part of the patches where you
+> changed the formatting on some functions. What did you do to address
+> this? Did you change them manually? Or do you have a script?
 
-I find such a discussion approach strange.
+Yes, the style fixes were done manually.
 
+> > Thinking back, there were other "virtual" lines, too.
+> > Maybe those were to ones that needed to be removed, but
+> > "virtual patch" should stay.
 
-> and
-> =C2=A0=C2=A0=C2=A0=C2=A0seq_write()=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 =3D=3D> is all or nothing. So if 'm' is too small, then nothing wil=
-l be appended.
+> Understood.
+> 
+> > 
+> > > Additionally, this cocci script is not changing the header files. Even
+> > > if I pass --include-headers. Did you change those by hand?
+> > 
+> > Yes, I changed these manually, originally.
+> > 
+> > To do it through the script, you need a second subpatch:
+> > 
+> > ```
+> > @@
+> > identifier func, ctl, write, buffer, lenp, ppos;
+> > @@
+> > 
+> > int func(
+> > - struct ctl_table *ctl,
+> > + const struct ctl_table *ctl,
+> >   int write, void *buffer, size_t *lenp, loff_t *ppos);
+> > ```
+> Yes. But you are still missing one more subpatch to catch the function
+> declarations in header files that don't name the arguments; like the
+> ones in include/linux/mm.h. This is what I used for those:
+> ```
+> @r3@
+> identifier func;
+> @@
+> 
+> int func(
+> - struct ctl_table *,
+> + const struct ctl_table *,
+>   int , void *, size_t *, loff_t *);
+> ```
+> 
+> > 
+> > (It doesn't find anything else, though)
+> Maybe you are missing running it with --include-headers?
 
-The clarification can become more interesting for this system detail.
-https://elixir.bootlin.com/linux/v6.10/source/fs/seq_file.c#L816
+There seems to be a slight misunderstanding.
+I meant that it does not find anything *new* on top of the existing
+patch, not that it can fully recreate the patch.
 
-Was the sequence size (or the file capacity) appropriately configured?
+(I used --include-headers, undid one header hunk from the patch and
+validated that the hunk gets recreated)
 
-Regards,
-Markus
+> This is the full cocci script that I have:
+> ```
+> virtual patch
+> 
+> @r1@
+> identifier func, ctl, write, buffer, lenp, ppos;
+> @@
+> 
+> int func(
+> - struct ctl_table *ctl,
+> + const struct ctl_table *ctl,
+>   int write, void *buffer, size_t *lenp, loff_t *ppos);
+> 
+> @r2@
+> identifier func, ctl, write, buffer, lenp, ppos;
+> @@
+> 
+> int func(
+> - struct ctl_table *ctl,
+> + const struct ctl_table *ctl,
+>   int write, void *buffer, size_t *lenp, loff_t *ppos)
+> { ... }
+> 
+> @r3@
+> identifier func;
+> @@
+> 
+> int func(
+> - struct ctl_table *,
+> + const struct ctl_table *,
+>   int , void *, size_t *, loff_t *);
+> ```
+
+LGTM, thanks.
 
