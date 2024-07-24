@@ -1,342 +1,318 @@
-Return-Path: <linux-kernel+bounces-261594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E599093B99C
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 01:45:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ADC393B9A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 01:46:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7175C1F22400
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 23:45:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B01491F223D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 23:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BEE6149009;
-	Wed, 24 Jul 2024 23:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040FB149006;
+	Wed, 24 Jul 2024 23:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="DVi2e6CH"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BwKlCQVH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B18391482F0
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 23:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07396146D79;
+	Wed, 24 Jul 2024 23:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721864734; cv=none; b=raAC/PTV0GUgLoYYb95yVCaCtAtWXxyDWhMgbykNtWYGyWajQ7+lWo0LKGhvBn5AshhCHQ3qB4ne9ObRWI40T6DE4s9ziT4XFfWrEyCH6aGotJH/VSYK2bDdAoPC1DAs/1HAjLxCiTqIBur+gYrXdGOetIgMS84mRsVsPVVXY2k=
+	t=1721864750; cv=none; b=lAj4FsQzlXhvSGqLtbmKZT/FFS7KiFOLvio33ePrZuxz+HSaVv4xxWpRgbu9Bsz6+xzrt9ipKOtIeHIIvI5ev9qUiPJoytmbs88CdvkCWQZYPr0nsAtwi1v6yxFpvAdCbyVKzYyHb4frwweEHA3vLKbxKDw0gqjAr6oOAL8mmvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721864734; c=relaxed/simple;
-	bh=XV0IFg6ce/9ihho5ZDpm6q/TQySjTi95S5bZjrr/V1M=;
+	s=arc-20240116; t=1721864750; c=relaxed/simple;
+	bh=uggjNB8xiPHrZhFwDJSSjFZt6W4b7QSRrczNrx0Ht4c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JAZsmJEDzp/S3mtVPpLuz+cZiKk59csc7Yjv03sl41kZynVVUTt7w2BS+VoYqNSYxzG+e9RUr0hD4iTuiQX2hdP1WSsmRP4dVVOxBzGKlsmBlx9thsjHPAX1p4HBdfwvThUjogX5m0m3Cu/kx5uDUYPT07UGEmnIF3cVldlf1WA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=DVi2e6CH; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4279c10a40eso2032295e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 16:45:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1721864730; x=1722469530; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TaYWOjAtC8IyqRjHwGJsqiJg8rWJ2bPCwf6+z8osDbQ=;
-        b=DVi2e6CHxIK1FX/VC4Yqg3myvSn74z9Ovr+QZ8RJ+J6o36K33DirdW9PzqIOrHYS8d
-         aZ1x3aNuTyD/MnWRZr+eWNoS/9Oflpuqn3xhUx0f71u6BkjtgYyMSp07eD3E8xfwjuiT
-         ro+bMiVm+ot4QW3HDTBKk1i04AJZiyaTWsZmzggomue2j+E83hVnYCSs10HlitiBo7+V
-         HUoxlEbu89XYldsbYLL0B9atzJCiSPL70dYP1S8KjP+Hu47vzTlz4xV8uZNb/clZlug6
-         wOgfdcdDVpL4nbjSIcICYpp/xUnT59uQBVwAMbJSeks6TTXQJLgqCAewpBRHvZ3YBzyd
-         cY5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721864730; x=1722469530;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TaYWOjAtC8IyqRjHwGJsqiJg8rWJ2bPCwf6+z8osDbQ=;
-        b=ij/y9uanoxL1yvkQcW8haO5WhN+0FN8dlbOjBkuOb8Hg30FC0K/GQZvQmgRV898mVn
-         EKlehLsHuxp1R4kq0fjzC2dbi/lGvFEHRraE0GDZKZgcjgkkVp6vtFvu92tEbFFutHLf
-         7swLFAsGXoPLnIiRG1oIvplXHUidl9nSeCa5WoH6cJ5+SUwt0q6DseeXgbseEAY3bs2n
-         0js1Mr7korjdp5/YBqc6codgonQjtUNcC3LaTdM9o+3mCYgJPVDKjAhjXVFjZcbf1hJ3
-         kOuTL0b6/kDMUXT+cFHvi7mHE9BUQH4vPzIMJHFDZ6t1zpU6CERSATEW7eSxjW+Ugwwc
-         i6DA==
-X-Forwarded-Encrypted: i=1; AJvYcCXaP1pnZhFcVu1Ifb61wNIjOTswp3LjmQuFgTDPk9TLPYr++OZWOzovX3YpjKE+vJEbPweUkjdwdVKsHJoKrkFbq1CuVF8TYJgytuGb
-X-Gm-Message-State: AOJu0YxN9ifHYA3y0upCbmYXuWSzZU0rPTNahepzuzqP1X8Hp3RhR27H
-	6iO/pOC4psqieVaU+3223KSNWB1lBI1ayFAJTypogRJld5AP5f5GM9T4QeOPdds=
-X-Google-Smtp-Source: AGHT+IFRJ3H1Cftppo2qqAdqI7NZkly6LFO5tZDqqk5kEw/TE4vU0gs4vFW3BQ2yO7botJfZnDHxcg==
-X-Received: by 2002:a5d:6181:0:b0:368:5d2:9e58 with SMTP id ffacd0b85a97d-36b35ff25b5mr143556f8f.0.1721864729500;
-        Wed, 24 Jul 2024 16:45:29 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42805730e52sm6943055e9.4.2024.07.24.16.45.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 16:45:29 -0700 (PDT)
-Date: Thu, 25 Jul 2024 00:45:27 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Tejun Heo <tj@kernel.org>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
-	void@manifault.com, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com, mingo@redhat.com, peterz@infradead.org,
-	David Vernet <dvernet@meta.com>,
-	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 2/2] sched_ext: Add cpuperf support
-Message-ID: <20240724234527.6m43t36puktdwn2g@airbuntu>
-References: <20240619031250.2936087-1-tj@kernel.org>
- <20240619031250.2936087-3-tj@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZAa1nF3yuFTLu1akNptKjldkoX8Brmj6gWjdto8z+ezM70ROdjMc8jKmf5lXDJQtvRIh3MFEudDXVLD//DDxFI7ijNxQaZZ/h1DBTaz+2qIUb6ssOuOfg0JTdKNvzpw0tTz7X5DVabfkg+GJvtJMLjIx8mgR0URihoPgC1pc9tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BwKlCQVH; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721864748; x=1753400748;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uggjNB8xiPHrZhFwDJSSjFZt6W4b7QSRrczNrx0Ht4c=;
+  b=BwKlCQVHeQasdb49RetgXgVvtvXjxyJyg1Rd3ecS58wPj8d4IAnKIG7b
+   dF+ZySNw7kgNVQksj+USflrD5dWHGK17Is5pupe8MijwUdjcqeOUubBNB
+   H6dhSEfu8JXHQI9MN/qDZkeg+sKEiSbqjwOWU5PMnQ2v4HJcCcs9yw/OA
+   3ie3VejE8FzItyFCMlPV6UzFDHBmw0rAYfgnioeYKlCL2ffmY5k94EVJ8
+   aPn+ORTIcWhxeYqivfy+Ddy/jCTOZkW3qQiG0CDheGNcvZLqbCzADmM7x
+   8Dxy87xbfeyFMVsQzGoFTVm9D+FQX6cSDp03Piz1S7DM9hqpCy74FD18A
+   A==;
+X-CSE-ConnectionGUID: 86kOIDdRSueVAAx7PUNV9w==
+X-CSE-MsgGUID: R8SypdVLSDmFLbhLY39PVA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11143"; a="42104371"
+X-IronPort-AV: E=Sophos;i="6.09,234,1716274800"; 
+   d="scan'208";a="42104371"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 16:45:47 -0700
+X-CSE-ConnectionGUID: Z9HAK5EPTrWrFl5pzvOZbw==
+X-CSE-MsgGUID: vG8qsWSlRKeL3nq3Np+hlQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,234,1716274800"; 
+   d="scan'208";a="52654643"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 24 Jul 2024 16:45:42 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sWlfv-000nYW-1I;
+	Wed, 24 Jul 2024 23:45:39 +0000
+Date: Thu, 25 Jul 2024 07:45:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Md Sadre Alam <quic_mdalam@quicinc.com>, broonie@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	andersson@kernel.org, konrad.dybcio@linaro.org,
+	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+	manivannan.sadhasivam@linaro.org, esben@geanix.com,
+	linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org
+Cc: oe-kbuild-all@lists.linux.dev, quic_mdalam@quicinc.com,
+	quic_varada@quicinc.com, quic_srichara@quicinc.com
+Subject: Re: [PATCH v7 6/8] spi: spi-qpic: add driver for QCOM SPI NAND flash
+ Interface
+Message-ID: <202407250710.knYmJebL-lkp@intel.com>
+References: <20240724114225.2176448-7-quic_mdalam@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240619031250.2936087-3-tj@kernel.org>
+In-Reply-To: <20240724114225.2176448-7-quic_mdalam@quicinc.com>
 
-On 06/18/24 17:12, Tejun Heo wrote:
-> sched_ext currently does not integrate with schedutil. When schedutil is the
-> governor, frequencies are left unregulated and usually get stuck close to
-> the highest performance level from running RT tasks.
+Hi Md,
 
-Have you tried to investigate why is that? By default RT run at max frequency.
-Only way to prevent them from doing that is by using uclamp
+kernel test robot noticed the following build errors:
 
-	https://kernel.org/doc/html/latest/scheduler/sched-util-clamp.html#sched-util-clamp-min-rt-default
+[auto build test ERROR on mtd/nand/next]
+[also build test ERROR on broonie-spi/for-next robh/for-next linus/master v6.10 next-20240724]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-If that's not the cause, then it's likely something else is broken.
+url:    https://github.com/intel-lab-lkp/linux/commits/Md-Sadre-Alam/spi-dt-bindings-Introduce-qcom-spi-qpic-snand/20240724-195819
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next
+patch link:    https://lore.kernel.org/r/20240724114225.2176448-7-quic_mdalam%40quicinc.com
+patch subject: [PATCH v7 6/8] spi: spi-qpic: add driver for QCOM SPI NAND flash Interface
+config: xtensa-allyesconfig (https://download.01.org/0day-ci/archive/20240725/202407250710.knYmJebL-lkp@intel.com/config)
+compiler: xtensa-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240725/202407250710.knYmJebL-lkp@intel.com/reproduce)
 
-> 
-> Add CPU performance monitoring and scaling support by integrating into
-> schedutil. The following kfuncs are added:
-> 
-> - scx_bpf_cpuperf_cap(): Query the relative performance capacity of
->   different CPUs in the system.
-> 
-> - scx_bpf_cpuperf_cur(): Query the current performance level of a CPU
->   relative to its max performance.
-> 
-> - scx_bpf_cpuperf_set(): Set the current target performance level of a CPU.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407250710.knYmJebL-lkp@intel.com/
 
-What is exactly the problem you're seeing? You shouldn't need to set
-performance directly. Are you trying to fix a problem, or add a new feature?
+All error/warnings (new ones prefixed by >>):
 
-> 
-> This gives direct control over CPU performance setting to the BPF scheduler.
-
-Why would we need to do that?  schedutil is supposed to operate in utilization
-signal. Overriding it with custom unknown changes makes it all random governor
-based on what's current bpf sched_ext is loaded? This make bug reports and
-debugging problems a lot harder.
-
-I do hope by the way that loading external scheduler does cause the kernel to
-be tainted. With these random changes, it's hard to know if it is a problem in
-the kernel or with external out of tree entity. Out of tree modules taint the
-kernel, so should loading sched_ext.
-
-It should not cause spurious reports, nor prevent us from changing the code
-without worrying about breaking out of tree code.
-
-> The only changes on the schedutil side are accounting for the utilization
-> factor from sched_ext and disabling frequency holding heuristics as it may
-> not apply well to sched_ext schedulers which may have a lot weaker
-> connection between tasks and their current / last CPU.
-> 
-> With cpuperf support added, there is no reason to block uclamp. Enable while
-> at it.
-> 
-> A toy implementation of cpuperf is added to scx_qmap as a demonstration of
-> the feature.
-> 
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Reviewed-by: David Vernet <dvernet@meta.com>
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  kernel/sched/cpufreq_schedutil.c         |  12 +-
->  kernel/sched/ext.c                       |  83 ++++++++++++-
->  kernel/sched/ext.h                       |   9 ++
->  kernel/sched/sched.h                     |   1 +
->  tools/sched_ext/include/scx/common.bpf.h |   3 +
->  tools/sched_ext/scx_qmap.bpf.c           | 142 ++++++++++++++++++++++-
->  tools/sched_ext/scx_qmap.c               |   8 ++
->  7 files changed, 252 insertions(+), 6 deletions(-)
-> 
-> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-> index 972b7dd65af2..12174c0137a5 100644
-> --- a/kernel/sched/cpufreq_schedutil.c
-> +++ b/kernel/sched/cpufreq_schedutil.c
-> @@ -197,7 +197,9 @@ unsigned long sugov_effective_cpu_perf(int cpu, unsigned long actual,
->  
->  static void sugov_get_util(struct sugov_cpu *sg_cpu, unsigned long boost)
->  {
-> -	unsigned long min, max, util = cpu_util_cfs_boost(sg_cpu->cpu);
-> +	unsigned long min, max;
-> +	unsigned long util = cpu_util_cfs_boost(sg_cpu->cpu) +
-> +		scx_cpuperf_target(sg_cpu->cpu);
->  
->  	util = effective_cpu_util(sg_cpu->cpu, util, &min, &max);
->  	util = max(util, boost);
-> @@ -330,6 +332,14 @@ static bool sugov_hold_freq(struct sugov_cpu *sg_cpu)
->  	unsigned long idle_calls;
->  	bool ret;
->  
-> +	/*
-> +	 * The heuristics in this function is for the fair class. For SCX, the
-> +	 * performance target comes directly from the BPF scheduler. Let's just
-> +	 * follow it.
-> +	 */
-> +	if (scx_switched_all())
-> +		return false;
-
-Why do you need to totally override? What problems did you find in current util
-value and what have you done to try to fix it first rather than override it
-completely?
-
-> +
->  	/* if capped by uclamp_max, always update to be in compliance */
->  	if (uclamp_rq_is_capped(cpu_rq(sg_cpu->cpu)))
->  		return false;
-> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-> index f814e84ceeb3..04fb0eeee5ec 100644
-> --- a/kernel/sched/ext.c
-> +++ b/kernel/sched/ext.c
-> @@ -16,6 +16,8 @@ enum scx_consts {
->  	SCX_EXIT_BT_LEN			= 64,
->  	SCX_EXIT_MSG_LEN		= 1024,
->  	SCX_EXIT_DUMP_DFL_LEN		= 32768,
-> +
-> +	SCX_CPUPERF_ONE			= SCHED_CAPACITY_SCALE,
->  };
->  
->  enum scx_exit_kind {
-> @@ -3520,7 +3522,7 @@ DEFINE_SCHED_CLASS(ext) = {
->  	.update_curr		= update_curr_scx,
->  
->  #ifdef CONFIG_UCLAMP_TASK
-> -	.uclamp_enabled		= 0,
-> +	.uclamp_enabled		= 1,
->  #endif
->  };
->  
-> @@ -4393,7 +4395,7 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
->  	struct scx_task_iter sti;
->  	struct task_struct *p;
->  	unsigned long timeout;
-> -	int i, ret;
-> +	int i, cpu, ret;
->  
->  	mutex_lock(&scx_ops_enable_mutex);
->  
-> @@ -4442,6 +4444,9 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
->  
->  	atomic_long_set(&scx_nr_rejected, 0);
->  
-> +	for_each_possible_cpu(cpu)
-> +		cpu_rq(cpu)->scx.cpuperf_target = SCX_CPUPERF_ONE;
-> +
->  	/*
->  	 * Keep CPUs stable during enable so that the BPF scheduler can track
->  	 * online CPUs by watching ->on/offline_cpu() after ->init().
-> @@ -5835,6 +5840,77 @@ __bpf_kfunc void scx_bpf_dump_bstr(char *fmt, unsigned long long *data,
->  		ops_dump_flush();
->  }
->  
-> +/**
-> + * scx_bpf_cpuperf_cap - Query the maximum relative capacity of a CPU
-> + * @cpu: CPU of interest
-> + *
-> + * Return the maximum relative capacity of @cpu in relation to the most
-> + * performant CPU in the system. The return value is in the range [1,
-> + * %SCX_CPUPERF_ONE]. See scx_bpf_cpuperf_cur().
-> + */
-> +__bpf_kfunc u32 scx_bpf_cpuperf_cap(s32 cpu)
-> +{
-> +	if (ops_cpu_valid(cpu, NULL))
-> +		return arch_scale_cpu_capacity(cpu);
-> +	else
-> +		return SCX_CPUPERF_ONE;
-> +}
-
-Hmm. This is tricky. It looks fine, but I worry about changing how we want to
-handle capacities in the future and then being tied down forever with out of
-tree sched_ext not being able to load.
-
-How are we going to protect against such potential changes? Just make it a NOP?
-
-A bit hypothetical but so far these are considered internal scheduler details
-that could change anytime with no consequence. With this attaching to this info
-changing them will become a lot harder as there's external dependencies that
-will fail to load or work properly. And what is the regression rule in this
-case?
-
-You should make all functions return an error to future proof them against
-suddenly disappearing.
-
-> +
-> +/**
-> + * scx_bpf_cpuperf_cur - Query the current relative performance of a CPU
-> + * @cpu: CPU of interest
-> + *
-> + * Return the current relative performance of @cpu in relation to its maximum.
-> + * The return value is in the range [1, %SCX_CPUPERF_ONE].
-> + *
-> + * The current performance level of a CPU in relation to the maximum performance
-> + * available in the system can be calculated as follows:
-> + *
-> + *   scx_bpf_cpuperf_cap() * scx_bpf_cpuperf_cur() / %SCX_CPUPERF_ONE
-> + *
-> + * The result is in the range [1, %SCX_CPUPERF_ONE].
-> + */
-> +__bpf_kfunc u32 scx_bpf_cpuperf_cur(s32 cpu)
-> +{
-> +	if (ops_cpu_valid(cpu, NULL))
-> +		return arch_scale_freq_capacity(cpu);
-> +	else
-> +		return SCX_CPUPERF_ONE;
-> +}
-> +
-> +/**
-> + * scx_bpf_cpuperf_set - Set the relative performance target of a CPU
-> + * @cpu: CPU of interest
-> + * @perf: target performance level [0, %SCX_CPUPERF_ONE]
-> + * @flags: %SCX_CPUPERF_* flags
-> + *
-> + * Set the target performance level of @cpu to @perf. @perf is in linear
-> + * relative scale between 0 and %SCX_CPUPERF_ONE. This determines how the
-> + * schedutil cpufreq governor chooses the target frequency.
-> + *
-> + * The actual performance level chosen, CPU grouping, and the overhead and
-> + * latency of the operations are dependent on the hardware and cpufreq driver in
-> + * use. Consult hardware and cpufreq documentation for more information. The
-> + * current performance level can be monitored using scx_bpf_cpuperf_cur().
-> + */
-> +__bpf_kfunc void scx_bpf_cpuperf_set(u32 cpu, u32 perf)
-> +{
-> +	if (unlikely(perf > SCX_CPUPERF_ONE)) {
-> +		scx_ops_error("Invalid cpuperf target %u for CPU %d", perf, cpu);
-> +		return;
-> +	}
-> +
-> +	if (ops_cpu_valid(cpu, NULL)) {
-> +		struct rq *rq = cpu_rq(cpu);
-> +
-> +		rq->scx.cpuperf_target = perf;
-> +
-> +		rcu_read_lock_sched_notrace();
-> +		cpufreq_update_util(cpu_rq(cpu), 0);
-> +		rcu_read_unlock_sched_notrace();
-> +	}
-> +}
-
-Is the problem that you break how util signal works in sched_ext? Or you want
-the fine control? We expect user application to use uclamp to set their perf
-requirement. And sched_ext should not break util signal, no? If it does and
-there's a good reason for it, then it is not compatible with schedutil, as the
-name indicates it operates on util signal as defined in PELT.
-
-You can always use min_freq/max_freq in sysfs to force min and max frequencies
-without hacking the governor. I don't advise it though and I'd recommend trying
-to be compatible with schedutil as-is rather than modify it. Consistency is
-a key.
+   drivers/spi/spi-qpic-snand.c: In function 'qcom_spi_init':
+>> drivers/spi/spi-qpic-snand.c:174:25: error: implicit declaration of function 'FIELD_PREP' [-Wimplicit-function-declaration]
+     174 |         snand_cfg_val = FIELD_PREP(CLK_CNTR_INIT_VAL_VEC_MASK, CLK_CNTR_INIT_VAL_VEC) |
+         |                         ^~~~~~~~~~
+   drivers/spi/spi-qpic-snand.c: In function 'qcom_spi_ecc_init_ctx_pipelined':
+>> drivers/spi/spi-qpic-snand.c:247:42: warning: variable 'steps' set but not used [-Wunused-but-set-variable]
+     247 |         int step_size = 0, strength = 0, steps;
+         |                                          ^~~~~
+   drivers/spi/spi-qpic-snand.c: In function 'qcom_spi_write_page':
+   drivers/spi/spi-qpic-snand.c:1261:30: warning: variable 's_op' set but not used [-Wunused-but-set-variable]
+    1261 |         struct qpic_snand_op s_op = {};
+         |                              ^~~~
+   drivers/spi/spi-qpic-snand.c: At top level:
+   drivers/spi/spi-qpic-snand.c:1632:19: error: initialization of 'int (*)(struct platform_device *)' from incompatible pointer type 'void (*)(struct platform_device *)' [-Wincompatible-pointer-types]
+    1632 |         .remove = qcom_spi_remove,
+         |                   ^~~~~~~~~~~~~~~
+   drivers/spi/spi-qpic-snand.c:1632:19: note: (near initialization for 'qcom_spi_driver.remove')
 
 
-Thanks
+vim +/FIELD_PREP +174 drivers/spi/spi-qpic-snand.c
 
---
-Qais Yousef
+   168	
+   169	static int qcom_spi_init(struct qcom_nand_controller *snandc)
+   170	{
+   171		u32 snand_cfg_val = 0x0;
+   172		int ret;
+   173	
+ > 174		snand_cfg_val = FIELD_PREP(CLK_CNTR_INIT_VAL_VEC_MASK, CLK_CNTR_INIT_VAL_VEC) |
+   175				FIELD_PREP(LOAD_CLK_CNTR_INIT_EN, 0) |
+   176				FIELD_PREP(FEA_STATUS_DEV_ADDR_MASK, FEA_STATUS_DEV_ADDR) |
+   177				FIELD_PREP(SPI_CFG, 0);
+   178	
+   179		snandc->regs->spi_cfg = snand_cfg_val;
+   180		snandc->regs->num_addr_cycle = SPI_NUM_ADDR;
+   181		snandc->regs->busy_wait_cnt = SPI_WAIT_CNT;
+   182	
+   183		qcom_write_reg_dma(snandc, &snandc->regs->spi_cfg, NAND_FLASH_SPI_CFG, 1, 0);
+   184	
+   185		snand_cfg_val &= ~LOAD_CLK_CNTR_INIT_EN;
+   186		snandc->regs->spi_cfg = snand_cfg_val;
+   187	
+   188		qcom_write_reg_dma(snandc, &snandc->regs->spi_cfg, NAND_FLASH_SPI_CFG, 1, 0);
+   189	
+   190		qcom_write_reg_dma(snandc, &snandc->regs->num_addr_cycle, NAND_NUM_ADDR_CYCLES, 1, 0);
+   191		qcom_write_reg_dma(snandc, &snandc->regs->busy_wait_cnt, NAND_BUSY_CHECK_WAIT_CNT, 1,
+   192				   NAND_BAM_NEXT_SGL);
+   193	
+   194		ret = qcom_submit_descs(snandc);
+   195		if (ret) {
+   196			dev_err(snandc->dev, "failure in submitting spi init descriptor\n");
+   197			return ret;
+   198		}
+   199	
+   200		return ret;
+   201	}
+   202	
+   203	static int qcom_spi_ooblayout_ecc(struct mtd_info *mtd, int section,
+   204					  struct mtd_oob_region *oobregion)
+   205	{
+   206		struct nand_device *nand = mtd_to_nanddev(mtd);
+   207		struct qcom_nand_controller *snandc = nand_to_qcom_snand(nand);
+   208		struct qpic_ecc *qecc = snandc->qspi->ecc;
+   209	
+   210		if (section > 1)
+   211			return -ERANGE;
+   212	
+   213		oobregion->length = qecc->ecc_bytes_hw + qecc->spare_bytes;
+   214		oobregion->offset = mtd->oobsize - oobregion->length;
+   215	
+   216		return 0;
+   217	}
+   218	
+   219	static int qcom_spi_ooblayout_free(struct mtd_info *mtd, int section,
+   220					   struct mtd_oob_region *oobregion)
+   221	{
+   222		struct nand_device *nand = mtd_to_nanddev(mtd);
+   223		struct qcom_nand_controller *snandc = nand_to_qcom_snand(nand);
+   224		struct qpic_ecc *qecc = snandc->qspi->ecc;
+   225	
+   226		if (section)
+   227			return -ERANGE;
+   228	
+   229		oobregion->length = qecc->steps * 4;
+   230		oobregion->offset = ((qecc->steps - 1) * qecc->bytes) + qecc->bbm_size;
+   231	
+   232		return 0;
+   233	}
+   234	
+   235	static const struct mtd_ooblayout_ops qcom_spi_ooblayout = {
+   236		.ecc = qcom_spi_ooblayout_ecc,
+   237		.free = qcom_spi_ooblayout_free,
+   238	};
+   239	
+   240	static int qcom_spi_ecc_init_ctx_pipelined(struct nand_device *nand)
+   241	{
+   242		struct qcom_nand_controller *snandc = nand_to_qcom_snand(nand);
+   243		struct nand_ecc_props *conf = &nand->ecc.ctx.conf;
+   244		struct nand_ecc_props *reqs = &nand->ecc.requirements;
+   245		struct nand_ecc_props *user = &nand->ecc.user_conf;
+   246		struct mtd_info *mtd = nanddev_to_mtd(nand);
+ > 247		int step_size = 0, strength = 0, steps;
+   248		int cwperpage, bad_block_byte;
+   249		struct qpic_ecc *ecc_cfg;
+   250	
+   251		cwperpage = mtd->writesize / NANDC_STEP_SIZE;
+   252		snandc->qspi->num_cw = cwperpage;
+   253	
+   254		ecc_cfg = kzalloc(sizeof(*ecc_cfg), GFP_KERNEL);
+   255		if (!ecc_cfg)
+   256			return -ENOMEM;
+   257		snandc->qspi->oob_buf = kzalloc(mtd->writesize + mtd->oobsize,
+   258						GFP_KERNEL);
+   259		if (!snandc->qspi->oob_buf)
+   260			return -ENOMEM;
+   261	
+   262		memset(snandc->qspi->oob_buf, 0xff, mtd->writesize + mtd->oobsize);
+   263	
+   264		nand->ecc.ctx.priv = ecc_cfg;
+   265		snandc->qspi->mtd = mtd;
+   266	
+   267		if (user->step_size && user->strength) {
+   268			step_size = user->step_size;
+   269			strength = user->strength;
+   270		} else if (reqs->step_size && reqs->strength) {
+   271			step_size = reqs->step_size;
+   272			strength = reqs->strength;
+   273		}
+   274	
+   275		if (step_size && strength)
+   276			steps = mtd->writesize / step_size;
+   277	
+   278		ecc_cfg->ecc_bytes_hw = 7;
+   279		ecc_cfg->spare_bytes = 4;
+   280		ecc_cfg->bbm_size = 1;
+   281		ecc_cfg->bch_enabled = true;
+   282		ecc_cfg->bytes = ecc_cfg->ecc_bytes_hw + ecc_cfg->spare_bytes + ecc_cfg->bbm_size;
+   283	
+   284		ecc_cfg->steps = 4;
+   285		ecc_cfg->strength = 4;
+   286		ecc_cfg->step_size = 512;
+   287		ecc_cfg->cw_data = 516;
+   288		ecc_cfg->cw_size = ecc_cfg->cw_data + ecc_cfg->bytes;
+   289		bad_block_byte = mtd->writesize - ecc_cfg->cw_size * (cwperpage - 1) + 1;
+   290	
+   291		mtd_set_ooblayout(mtd, &qcom_spi_ooblayout);
+   292	
+   293		ecc_cfg->cfg0 = FIELD_PREP(CW_PER_PAGE_MASK, (cwperpage - 1)) |
+   294				FIELD_PREP(UD_SIZE_BYTES_MASK, ecc_cfg->cw_data) |
+   295				FIELD_PREP(DISABLE_STATUS_AFTER_WRITE, 1) |
+   296				FIELD_PREP(NUM_ADDR_CYCLES_MASK, 3) |
+   297				FIELD_PREP(ECC_PARITY_SIZE_BYTES_RS, ecc_cfg->ecc_bytes_hw) |
+   298				FIELD_PREP(STATUS_BFR_READ, 0) |
+   299				FIELD_PREP(SET_RD_MODE_AFTER_STATUS, 1) |
+   300				FIELD_PREP(SPARE_SIZE_BYTES_MASK, ecc_cfg->spare_bytes);
+   301	
+   302		ecc_cfg->cfg1 = FIELD_PREP(NAND_RECOVERY_CYCLES_MASK, 0) |
+   303				FIELD_PREP(CS_ACTIVE_BSY, 0) |
+   304				FIELD_PREP(BAD_BLOCK_BYTE_NUM_MASK, bad_block_byte) |
+   305				FIELD_PREP(BAD_BLOCK_IN_SPARE_AREA, 0) |
+   306				FIELD_PREP(WR_RD_BSY_GAP_MASK, 20) |
+   307				FIELD_PREP(WIDE_FLASH, 0) |
+   308				FIELD_PREP(ENABLE_BCH_ECC, ecc_cfg->bch_enabled);
+   309	
+   310		ecc_cfg->cfg0_raw = FIELD_PREP(CW_PER_PAGE_MASK, (cwperpage - 1)) |
+   311				    FIELD_PREP(NUM_ADDR_CYCLES_MASK, 3) |
+   312				    FIELD_PREP(UD_SIZE_BYTES_MASK, ecc_cfg->cw_size) |
+   313				    FIELD_PREP(SPARE_SIZE_BYTES_MASK, 0);
+   314	
+   315		ecc_cfg->cfg1_raw = FIELD_PREP(NAND_RECOVERY_CYCLES_MASK, 0) |
+   316				    FIELD_PREP(CS_ACTIVE_BSY, 0) |
+   317				    FIELD_PREP(BAD_BLOCK_BYTE_NUM_MASK, 17) |
+   318				    FIELD_PREP(BAD_BLOCK_IN_SPARE_AREA, 1) |
+   319				    FIELD_PREP(WR_RD_BSY_GAP_MASK, 20) |
+   320				    FIELD_PREP(WIDE_FLASH, 0) |
+   321				    FIELD_PREP(DEV0_CFG1_ECC_DISABLE, 1);
+   322	
+   323		ecc_cfg->ecc_bch_cfg = FIELD_PREP(ECC_CFG_ECC_DISABLE, !ecc_cfg->bch_enabled) |
+   324				       FIELD_PREP(ECC_SW_RESET, 0) |
+   325				       FIELD_PREP(ECC_NUM_DATA_BYTES_MASK, ecc_cfg->cw_data) |
+   326				       FIELD_PREP(ECC_FORCE_CLK_OPEN, 1) |
+   327				       FIELD_PREP(ECC_MODE_MASK, 0) |
+   328				       FIELD_PREP(ECC_PARITY_SIZE_BYTES_BCH_MASK, ecc_cfg->ecc_bytes_hw);
+   329	
+   330		ecc_cfg->ecc_buf_cfg = 0x203 << NUM_STEPS;
+   331		ecc_cfg->clrflashstatus = FS_READY_BSY_N;
+   332		ecc_cfg->clrreadstatus = 0xc0;
+   333	
+   334		conf->step_size = ecc_cfg->step_size;
+   335		conf->strength = ecc_cfg->strength;
+   336	
+   337		snandc->regs->erased_cw_detect_cfg_clr = cpu_to_le32(CLR_ERASED_PAGE_DET);
+   338		snandc->regs->erased_cw_detect_cfg_set = cpu_to_le32(SET_ERASED_PAGE_DET);
+   339	
+   340		dev_dbg(snandc->dev, "ECC strength: %u bits per %u bytes\n",
+   341			ecc_cfg->strength, ecc_cfg->step_size);
+   342	
+   343		return 0;
+   344	}
+   345	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
