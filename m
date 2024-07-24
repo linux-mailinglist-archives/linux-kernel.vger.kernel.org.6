@@ -1,50 +1,54 @@
-Return-Path: <linux-kernel+bounces-261197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A074D93B409
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:43:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C7F893B414
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:44:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25212B23678
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:43:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 210921F24B35
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288FE15B986;
-	Wed, 24 Jul 2024 15:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD5215CD4E;
+	Wed, 24 Jul 2024 15:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="h3xTsq3U"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="aYTt3aXP"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4889C15B554;
-	Wed, 24 Jul 2024 15:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4602A14D293;
+	Wed, 24 Jul 2024 15:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721835789; cv=none; b=oAURuAzTgcbuLTKitNkcidIfwSUrgaPhqa8pRWD5HPfptFzZ8tYwWQrcynt4mGBeGw9w0Vy57QbACrCm59zRYCAEd3EQusgJqEakmpSxO+pMtzMuhM0xbP0YJCsJOiOTMsncVUn064jdfUIRdF/INWj1DOWrjOgBKvGCWcrheX4=
+	t=1721835852; cv=none; b=NMRd4g5yIha0Zo4bhOzpSlefB0FkvO4AyXD8nmIhxNEGe9BQDCVsiZnD0ZTFkbzak1++lnK/zyEpdjQepJxo/+GSkNZ0rT0C/5+HE0tY/vcMqA08NkUfifQjjvfckp2Ff7k/ck/qQszXGYVq5YhViRtb/byKEaSXKSc4BKA8WAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721835789; c=relaxed/simple;
-	bh=AukMGJiOqCCtt17aswDkfUN2mPrEt30Ji1pkpma+scc=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=dRPFTqCpPJP1L1xl3Ii3GgbIxuMxpK33lSj+KR2/oHsGpXZutUWZkTFp5uqBnAfYGDVYr6has2Yc9hV5W68gQk8O5ilsrNswmoEDvMXKALZ+tdU5VOo2Ph58/6TpoxB6rimP28wxjTZXhu8smfSX8Nl5aDvQGdhBqX8RHv/3mrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=h3xTsq3U; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	Reply-To:Subject:Cc:To:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To
-	:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=crvD7PrqGMqV/Y/g69Di0jX+60ZadkqnzEmO6bIr5Ak=; t=1721835787;
-	x=1722267787; b=h3xTsq3UaeAXfhF832IKP/qfRwoWgzlGhvSWhILvsU4c24Dkz87zkaphZhtrK
-	s5S8QNbgvIwTLfW4d5T2HGphv6fTssjFhB+zziSj3C6BNNsDAlxn0m38x2CaqPhuR2QeRJbJOTj06
-	SvxSKperIUUP6F9VXXfdTrSYPAOD8wxPqlR/5L5obrGQ9oF7UpAFcxZ6/WV4t5EUDklA2NoGEen0J
-	9mTDZBtz2BXkCRk9aXWFv8jwyYzfToRwWIe5ta4blQmhqNAqFZT4Paf73OpreNtCb28rpw5RXlyNf
-	mNVX/pbjnhWOjp6i43gv65bTLQo3RUT7PEnyDpFsW87TUJAJlg==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sWe8m-0001Zq-LO; Wed, 24 Jul 2024 17:42:56 +0200
-Message-ID: <1ff5b407-ff81-40ef-8aa3-9f155491f497@leemhuis.info>
-Date: Wed, 24 Jul 2024 17:42:56 +0200
+	s=arc-20240116; t=1721835852; c=relaxed/simple;
+	bh=tHZM9xDRn9QxuuRbCi79Nd7TIdcdZzq29BmffUOsRGI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=tCHZ3t4rQeIOYsKSvchqdVhe7q5j5HXGOhlCU69D9zhdb64e1eQ69ypedACzhhR3wWfKnKKYeDORGqxzUhC9zmG6zAUbeWm7w8HKGLG4Iv/wzfNWaO+BSSh/uiI7VOHG5ZiAUBI2bfcz7LN8iFwM3j7YuLxc7LKfiH76dRzj4T8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=aYTt3aXP; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1721835808; x=1722440608; i=markus.elfring@web.de;
+	bh=wclAnnnRIbQZq/INzgqgyUqDvhscd2fAxbit0hgFL4U=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=aYTt3aXPJJ0ksHeQtVzH42YjaUdx125tdZSAMFydoOiAwNHskEKGqoH0w5iPVTj6
+	 +/uiL5X59olqT9iArH9ICVLXvcGtq7VPnelF6RrzB5H82smtdV2MUVr/fLB7YADR+
+	 TE5g7f6Emf63TK7M84tRtNS7ZuywK3pwNhTrU/XuKk0DZ8H4XXX8PrvaxRprC6MKf
+	 6KP4dXNar9eELf1aStbwSXOrrY0pgim4ixXuvBRrs9QQO3V0mCE89BXKz6cjyWmOf
+	 GRATGl/DSI90fBvNLMijjFp0ramQLoCEy49uwAE2h2GbhsptNDeVJbltkXDBqa45n
+	 i7eLopAbEyVHj9GQsg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MiMEM-1s3eze2WwQ-00bOYX; Wed, 24
+ Jul 2024 17:43:28 +0200
+Message-ID: <8c33ec2d-0a92-4409-96b0-f492a57a77ce@web.de>
+Date: Wed, 24 Jul 2024 17:43:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,78 +56,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-To: Thomas Zimmermann <tzimmermann@suse.de>,
- Javier Martinez Canillas <javierm@redhat.com>
-Cc: ML dri-devel <dri-devel@lists.freedesktop.org>,
- Colin Ian King <colin.i.king@gmail.com>,
- Linux kernel regressions list <regressions@lists.linux.dev>,
- LKML <linux-kernel@vger.kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>
-Subject: [regression] opening and closing /dev/dri/card0 in a QEMU KVM
- instance will shutdown system
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+To: Zhu Jun <zhujun2@cmss.chinamobile.com>, bpf@vger.kernel.org,
+ Quentin Monnet <qmo@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Eduard Zingerman
+ <eddyz87@gmail.com>, Hao Luo <haoluo@google.com>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Yonghong Song <yonghong.song@linux.dev>
+References: <20240724111120.11625-1-zhujun2@cmss.chinamobile.com>
+Subject: Re: [PATCH v4] tools/bpf: Fix the wrong format specifier
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240724111120.11625-1-zhujun2@cmss.chinamobile.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1721835787;8d1a1c47;
-X-HE-SMSGID: 1sWe8m-0001Zq-LO
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:dajtUilI/4w+MplDp/WdO2l1V7DTsFuZxceZMALAmJjSUTAgHGu
+ COXLP1qyVvJaA4N21/3yUakMnErdzhrntimA/z6MXw6xRaOkEUS9DjiOmJuMnX5pVkOA3Gl
+ diHSO+gGraKX9t39YUvgumV9JyO4hZCiKRShevqZkYJ/XYU7Se4gZGZU/JQueGSuRsA65QA
+ AZMjv1fLe5pq+eZ3tkMgg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:iXQI3Pc+1lE=;bpNHnDibFXJ9pypA6PxruiYqjmy
+ gdQgCV2y9uglst64FSrdF7pNv7VhB8cynxJ+ezAdq1qKE0Ejc4mXy6ZsQiPOcyqPmxvL6atC2
+ CHtVyPXQYB78Todhd8XXsXlZ9gCMoqeCdIN1o4TYxyG8Ok3zpq78PyAFvKdc/X0OJa+hUPw2O
+ zwPViKEBbE1P9zrgUcmuuh1w8RdtNyyKw4KVe6awjXU4HKjOBylMmJeyjvrdwY55DRvQBo/OR
+ L8yMt8SNmHX2LC3wxFj51/CMPunWhB67P5dP5R+mvXHFvzJMGXgL+fHcHKqnmrWhrX3ezoFDB
+ QsfJsTtFUp0wXl2H+Nb0zzgT1WR/1Te6BQbDtUPsYyzmAgFa6W4s5uR+E20/gSOE7NJsK65fs
+ +9X9NpSHUDTYPfLPQXeLgfw2IAvhEtzEJbc9zyESBhBr4zymnxOQFgqr2DMQ0eczOyXCdhPaN
+ BRvPzGi20tRK5qKOzOJCL5S0f6WSMK6AbL96xfxSw8bs1Z6oB+70WakVJyXgW9HybHeEtXoHE
+ +pjqiQlhVTZg082TLHPsA39yzvm9KnlF3p6WheB9CRbDfbF2r8aOHNH3a0tJQHAGmcYVt/N+t
+ SJspplNSqj7b4U/5d9ua0Co2Ziy+fPk/BM0kMp8CAhUzq56raoMONTNCrnEHjCr19mgyO0MZS
+ 7VSr65SfuX4ZzbZfI3DYD6T1+czuBFM2CwjSlgp8aKgb0iRq/mclkonXij+gDO4+BUfxB9lp1
+ Db0Sj5EhtEXuS49+04S+9AnQgWR4HlZviJ7+gNiRW7U52W7PQ76gIKBwIuwviFp2PUnI23DXO
+ /Nqq0Y7GMcjEC1yGU4u/w30g==
 
-Hi, Thorsten here, the Linux kernel's regression tracker.
+> The format specifier of "unsigned int" in printf() should be "%u", not
+> "%d".
 
-I noticed a report about a regression in bugzilla.kernel.org that
-appears to be related to the simpledrm driver. As many (most?) kernel
-developers don't keep an eye on the bug tracker, I decided to write this
-mail. To quote from https://bugzilla.kernel.org/show_bug.cgi?id=219007 :
+* Please improve the change description with imperative wordings.
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.10#n94
 
->  Colin Ian King 2024-07-05 16:05:27 UTC
-> 
-> The following code when run as root on a Debian sid amd64 server
-> running in virt-manager (KVM QEMU) will shut the system down with
-> 6.10.0-rc6.  The fork() is required to cause racing on the open/close on
-> /dev/dri/card0
-> 
-> #include <fcntl.h>
-> #include <unistd.h>
-> 
-> int main(void)
-> {
-> 	 pid_t pid = fork();
-> 
-> 	 while (1) {
-> 	 	int fd;
-> 
-> 	 	fd = openat(AT_FDCWD, "/dev/dri/card0", O_WRONLY|O_NONBLOCK|O_SYNC);
-> 	 	close(fd);
-> 	 }
-> }
-> 
-> This was originally found using: while true; do sudo ./stress-ng
-> --dev 4 --dev-file /dev/dri/card0 -t 5; done and narrowed down to the
-> above reproducer. (cf:
-> https://github.com/ColinIanKing/stress-ng/issues/407 )
-> 
-> This does not occur on pre 6.10 kernels, so it looks like a 6.10 regression.
+* Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D and =E2=80=
+=9CCc=E2=80=9D) accordingly?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.10#n145
 
-See the ticket for more details, which also contains a dmesg from a boot
-in the VM: https://bugzilla.kernel.org/attachment.cgi?id=306610
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
+=E2=80=A6
+> ---
+> Changes:
+=E2=80=A6
+v4:
+Thanks! But unsigned seems relevant here, =E2=80=A6
 
-P.S.: let me use this mail to also add the report to the list of tracked
-regressions to ensure it's doesn't fall through the cracks:
+Please adjust the representation of information from a patch review by Que=
+ntin Monnet.
+https://lore.kernel.org/linux-kernel/2d6875dd-6050-4f57-9a6d-9168634aa6c4@=
+kernel.org/
+https://lkml.org/lkml/2024/7/24/378
 
-#regzbot introduced: v6.9..v6.10
-#regzbot title: drm: opening and closing /dev/dri/card0 in a QEMU KVM
-instance will shutdown system
-#regzbot from: Colin Ian King <colin.i.king@gmail.com>
-#regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=219007
-#regzbot ignore-activity
+
+=E2=80=A6
+> +++ b/tools/bpf/bpftool/xlated_dumper.c
+> @@ -349,7 +349,7 @@ void dump_xlated_plain(struct dump_data *dd, void *b=
+uf, unsigned int len,
+>
+>  		double_insn =3D insn[i].code =3D=3D (BPF_LD | BPF_IMM | BPF_DW);
+>
+> -		printf("% 4d: ", i);
+> +		printf("%4u: ", i);
+>  		print_bpf_insn(&cbs, insn + i, true);
+=E2=80=A6
+
+How do you think about to care more also for the return value from such a =
+function call?
+https://wiki.sei.cmu.edu/confluence/display/c/ERR33-C.+Detect+and+handle+s=
+tandard+library+errors
+
+Regards,
+Markus
 
