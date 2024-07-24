@@ -1,50 +1,47 @@
-Return-Path: <linux-kernel+bounces-260754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D6B093ADC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:07:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 837E593ADC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:08:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7E6AB2135D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:07:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A64C01C20D04
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C653E127E0D;
-	Wed, 24 Jul 2024 08:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E133D13D893;
+	Wed, 24 Jul 2024 08:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="AhA7DBNV"
-Received: from forward502d.mail.yandex.net (forward502d.mail.yandex.net [178.154.239.210])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Afh4//Jn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AB6446DB;
-	Wed, 24 Jul 2024 08:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B8513957C;
+	Wed, 24 Jul 2024 08:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721808459; cv=none; b=oiihkNfd07VpT4Q0jN5TemgRDosjz5VIOuqYMeGClnSswk/g8bkDLZHjLSFt1pWINsC00Wql+JS47EsXNRsf14NfhK59TQeppoonbLgUiwGlAUG/3xqxJHnkQz4fQduuLAWzDtf0r+xQUTdu5vpZJZ+JIrl12WbNF0VX/J1d/lk=
+	t=1721808498; cv=none; b=nDEI4TM14QZc09jeGOxYOR22JN2zuXyZuPQ0RLk0MGZ2Tqy+bg0IVfmkYEf/5N8DMZFbAdRtg/duJAxPYD1RW7ZRjeW69OFbQ21oyMkJZ5j6I9Q+eZVy8TrMp5Yvo89cImDR6Gkryd1cWH1UlSul3Oi7hzq4ciV2YrMIMDopqj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721808459; c=relaxed/simple;
-	bh=Z8Ijwr27NkdYy0pLl/y9ByAs5lOkihvl1MgnH3tZp3Q=;
+	s=arc-20240116; t=1721808498; c=relaxed/simple;
+	bh=3iI4LQNfIFMmQKl7mTJvx9fak4tI16w7TQnMXLRC6P8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R+GRQZNLQyMURuyvnhgtUl78FKWWQKXaIYK2+pgo4pehY99Rd3dONcZ0S2l51zxgCMnm2eHAy5lgrpCQ/+tRdQeW/yzUQG/fjuZ8sFaOpWz0ATrgbr80gMhl7opedZ2e5Ta90b3xsa88CBzOixrbW8r+LjTW+JvdNaBXKXt66M8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=AhA7DBNV; arc=none smtp.client-ip=178.154.239.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-99.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-99.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:3bca:0:640:d666:0])
-	by forward502d.mail.yandex.net (Yandex) with ESMTPS id 6CDA060A6D;
-	Wed, 24 Jul 2024 11:07:33 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-99.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id W7KMmG0GgqM0-7OUrbMSb;
-	Wed, 24 Jul 2024 11:07:32 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1721808453; bh=hfICN/OZQ/OrwtqotMrp7FF8wN3qZsZGOt3Ok0Z+5/U=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=AhA7DBNVhFPcg3rGDO88KlEaq2ESFNq//pbCR1oGDn+fTx1oOO+PzzRWmXFgy2To1
-	 1/qipoSqv373IGJftA0jxOv9rzivQv2RCop96B7rXEaSnImZYThc/Kr8036nhX8bWp
-	 byxCUE4TDKqWLDDrEa9b2mCe83oqNrcBbztkxup8=
-Authentication-Results: mail-nwsmtp-smtp-production-main-99.klg.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <c74f1e3e-a376-42e3-86e0-a804f9a7da2c@yandex.ru>
-Date: Wed, 24 Jul 2024 11:07:32 +0300
+	 In-Reply-To:Content-Type; b=LmMsVj7wiNKqmWdrPbSTdZhNG+TPHpTNWzs82r+OQ7IHFszG6bCnyKanSqx8asWLM3Fdocwt8KTfdlyiXMx2Mx4rSxxaGZezSYVtlSZMHOrZPpvn4NMS/6Ljvwn3wTnAj+JVWiqqXg2qFFtWhuFwTafkY4t+A9sybBhSYfNmQJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Afh4//Jn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3270FC32782;
+	Wed, 24 Jul 2024 08:08:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721808497;
+	bh=3iI4LQNfIFMmQKl7mTJvx9fak4tI16w7TQnMXLRC6P8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Afh4//JnNVD1VuDOCFR7dnSHf5VvHfvu0jiXLDDMVdZQnolFbzxsUEpVy2P/oYTkc
+	 eBj0zFuWGKJtExIdBcpSuWz5LIVhwrZXv7SJLd4I8py7kh7BM298u7cHp5zjpxYgAc
+	 +kpcuCPwLQ+n6vcO4GoV7YeCs0Dpc4kPJcgYVrMGDe6jEM1bJLvaa6dsRLS1VqOmFW
+	 vZuhCd3v2jG+7UpGBSYRifF4KOORnbYwZfu2umJuvNwT1JINcDNiUkrODvzCM/zKpj
+	 pDmxf7ckPYZnPtdKaxEv/o6j5LfwIq04R22wrLRgXoups7iEnrjdkZmuf/lMjVJqJ9
+	 dkNOD/Ji8e8yA==
+Message-ID: <497c9438-5bb3-42d9-9df9-661235a556d2@kernel.org>
+Date: Wed, 24 Jul 2024 10:08:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,44 +49,166 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [regression] ENOTTY returned for tty fds
+Subject: Re: [PATCH V2] dt-bindings: clock: qcom: Remove required-opps from
+ required list on SM8650
+To: Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Taniya Das <quic_tdas@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Ajit Pandey <quic_ajipan@quicinc.com>, kernel test robot <lkp@intel.com>
+References: <20240720052818.26441-1-quic_jkona@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-serial@vger.kernel.org, Linux kernel <linux-kernel@vger.kernel.org>
-References: <b6f4aa5c-10ba-411b-994b-6dbed2bf63db@yandex.ru>
- <2024072452-pegboard-undying-4245@gregkh>
-From: stsp <stsp2@yandex.ru>
-In-Reply-To: <2024072452-pegboard-undying-4245@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240720052818.26441-1-quic_jkona@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-24.07.2024 09:51, Greg KH пишет:
-> What caused this change/regression?
+On 20/07/2024 07:28, Jagadeesh Kona wrote:
+> On SM8650, the minimum voltage corner supported on MMCX from cmd-db is
+> sufficient for clock controllers to operate and there is no need to specify
+> the required-opps. Hence remove the required-opps property from the list of
+> required properties for SM8650 camcc and videocc bindings.
+> 
+> This fixes:
+> arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@aaf0000:
+> 'required-opps' is a required property
+> 
+> arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@ade0000:
+> 'required-opps' is a required property
+> 
+> Fixes: a6a61b9701d1 ("dt-bindings: clock: qcom: Add SM8650 video clock controller")
+> Fixes: 1ae3f0578e0e ("dt-bindings: clock: qcom: Add SM8650 camera clock controller")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202407070147.C9c3oTqS-lkp@intel.com/
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> ---
+> Changes in V2:
+>  - Made required: conditional and dropped required-opps from it only for SM8650 platform
+>  - Dropped Krzysztof Acked-by tag due to above changes
+>  - Link to V1: https://lore.kernel.org/all/20240708130836.19273-1-quic_jkona@quicinc.com/#r
+> 
+> .../bindings/clock/qcom,sm8450-camcc.yaml     | 26 +++++++++++++------
+>  .../bindings/clock/qcom,sm8450-videocc.yaml   | 25 +++++++++++++-----
+>  2 files changed, 36 insertions(+), 15 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> index f58edfc10f4c..8698c801ed11 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
+> @@ -21,9 +21,6 @@ description: |
+>      include/dt-bindings/clock/qcom,sm8650-camcc.h
+>      include/dt-bindings/clock/qcom,x1e80100-camcc.h
+>  
+> -allOf:
+> -  - $ref: qcom,gcc.yaml#
+> -
+>  properties:
+>    compatible:
+>      enum:
+> @@ -53,11 +50,24 @@ properties:
+>    reg:
+>      maxItems: 1
+>  
+> -required:
 
-I have absolutely no idea.
-I've found it by debugging userspace,
-and wrote a test-case to make sure the
-problem is not in user-space.
+You cannot remove required block.
 
+> -  - compatible
+> -  - clocks
+> -  - power-domains
+> -  - required-opps
+> +allOf:
+> +  - $ref: qcom,gcc.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: qcom,sm8650-camcc
+> +    then:
+> +      required:
+> +        - compatible
+> +        - clocks
+> +        - power-domains
+> +    else:
+> +      required:
+> +        - compatible
+> +        - clocks
+> +        - power-domains
+> +        - required-opps
+>  
+>  unevaluatedProperties: false
+>  
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+> index b2792b4bb554..2e5a061f33d6 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
+> @@ -40,15 +40,26 @@ properties:
+>      description:
+>        A phandle to an OPP node describing required MMCX performance point.
+>  
+> -required:
 
->    And does any real-world programs
-> rely on this?
+No, you cannot remove required block.
 
-dosemu
+To clarify: there is almost no single binding using your style. Even if
+there is one, then 99 others are using it differently. Do not implement
+things entirely different than everyone else. This is the same for C
+code you send upstream. No difference here...
 
+Best regards,
+Krzysztof
 
->    What exactly are you trying to determine with this ioctl
-> test?
-
-Whether it is a PTS (Pseudo-Tty-Slave), or
-a real comport with MSR signalling.
-
-
->    Is there a different way to determine that?
-I am not aware of any "canonical" way
-of determining this. Maybe you tell me. :)
-So far the only fix I know, is to stop checking
-errno. But you return ENOTTY for a tty-associated
-fd (isatty(fd)==1), so I believe this is a
-bug in a kernel.
 
