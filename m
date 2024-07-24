@@ -1,78 +1,98 @@
-Return-Path: <linux-kernel+bounces-260830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2A5A93AF09
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:30:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84EEB93AEEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:23:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B1C31F21A41
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:30:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 147BE1F24829
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7C715253B;
-	Wed, 24 Jul 2024 09:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB9EC1552ED;
+	Wed, 24 Jul 2024 09:22:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="KI0nst3Z"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2041.outbound.protection.outlook.com [40.107.255.41])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="VvcUjnUW"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011038.outbound.protection.outlook.com [52.101.65.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C2B6FC2;
-	Wed, 24 Jul 2024 09:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF6C152DE0;
+	Wed, 24 Jul 2024 09:22:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.38
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721813397; cv=fail; b=BqQwlVeBbgBcf1kzQ6sz0jDeMHf1eivYWqe2NHZZ3d8jV9CFTilygvmT3wtRu1E+rjIeFp6mHqhSegQtlmMZO+BmNAHJndXQp6f1zW4+QiVNqQqhuKGMLyKlGQ96C2uyQKZ7/vKnVBP++0T6xXRTfXfJyTQ4dPCO4HsOJLBLJcU=
+	t=1721812930; cv=fail; b=SqRABJycwbzv+x8BVv+bkyM6YtIUuv5Wmwyjfo1lbC/IBKiHbt/tbsVefXuoK1WDbD5wYPK23r/rp8rE1IrZKhQBcp/WxXySzB7O0Eo/zoLq8j/CAdeEEhhlWhLnG/1JeLmy4tYj//ZTHBXt2BpwETLGY//v9f1XplERB3cRY3U=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721813397; c=relaxed/simple;
-	bh=MgM9wd/pw4j5V4RP8r/x7xyvWHzM2gAOeTEy/AAXvvQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MExb9b8uv+zijRDTIafK+qjx4L2Fbu6R8RLmOmlpKIng17JrXdO8HIZYV8iucU2VnsaX2OcvYpOSaeZm8vLXu9pXAebqKt7htk7wMN44Texxl4F42RugXwux22MCyOkpVdO0qhgFn2/xQm7hwYauN9PQyVNFFlhfXovClDtEsfs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=KI0nst3Z; arc=fail smtp.client-ip=40.107.255.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+	s=arc-20240116; t=1721812930; c=relaxed/simple;
+	bh=ht1vN7Um8zwrSt3FiK604LlSl16YJy3PcZkAVZvDQg4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=t5NkCZg732XFcf8A7uqe6DnoKFJpf3fuOovhqe1dWHIjtzf3+3oj1t8ZtUF5Pba4Q43oZ6SG0tSbRkNx+PkiOku/HPAr+fLYMJD42hdVL3CFXHVw70w79cjNXcVmNyIhrFwUHBmF343Bg4Q6EbtGXrHOZXNkYf4z4OVLEUwM7Zc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=VvcUjnUW; arc=fail smtp.client-ip=52.101.65.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cMMAqFGY2Gv+Tczl8+eeSPRlDRKh9sMxBnAI7x+2GZzfmbFw/lGabRMGtYpn79hvUCIflah01eNwDpKn3py3ZNYkDJdm5X3Msdjx4nzMvPWoMa9ynXXD0pIveXonDt/yMCDE0VK2bxweZ+ITz2SMXRnfUgpUi4yXL5AnT4XVTZmM+b/twWFU0jIKE+Fody3QYgc64T0cgzUFeoUQIef5wR5SGeMFXTseOmo6W4sru9Da0Pc7qKC+gta7v0ftjH7rG4Mx/uYybiCYLGVilWxV7qjwAL1yjxpnpIxW1+wKNWESmelZkDcmsf6VwzogCGVQUsvwrMmvJ29OsjFVPqVnrg==
+ b=IuUlJk/JjZwBPr3lNCjTChTxkh0h+u0/XXHmA3pqg+TkxFhoIdkq2KlMbNAWH6LZELMHemhUDBvJD4k/K6VwsUMBEavMKACgxLUXWqr0nRHsfcWU2D2blSzhhWWEwJ/POcjng6yUWC10V0P/9o+lIIMon7kqJsoAIPp7Q3wApWBFIx79/T5hpbdWm0dTDFSAHrCgh64LbCmi6ITSlUyNbzOtgixpN/mEIXN69L6PnI/FQ3i3HGCYlg8qcKF4GKcRSY5vO3kTlde3dkb25YOZfI+iDsefcc9/Bo/q3dAa/mZ7hECDiG7lE2T2qWAU/ZXtedGu/bbW22/k0o8dyIOAtA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iY6TY+xB7Eh4WerPFzAbdQmO1hUEYZ/JujZB4UOWgGA=;
- b=hl+MOkl4hKO6bEM8DA5X8FEqCGNMo3MULxflAJcg+PhSFzREtlTIKWn7s+B9Xo+VD0+i73+3Q811xY2317SjZM++t/RS1cbvSLdwXj0jOH8jHVuTLuP2DVQyW7H67dO4hMOdu/KwJvDMUTRbCopOlbKKC3BAoIj334TJXGqQ613ciseyV7bIRq8+yZaWjmCuJj+CEECaftWuC80YDRxHDF3SqhHD8KeKgc+kRxewTOtWE+O+5/sRlWJYJtqCdofx/rI2QKvrrw6c4WGf3uUCJkIxCfIhTTaNGFbhjdNqbkhwLycZ46CJrIXh+M7jUgfbmXj7dEAaJ5FdeF9SLjR+XQ==
+ bh=c1qhNSCnve1tBGyDGuXrK5o2+LJBSaGG8NeztKRVlEk=;
+ b=G38m7uYQXojv7g9J1OTcFUl8rAT45BxYVM6M0GF2GHMMocA06emoQE1kUimJsSKmJTBT8ay2KoIBrBbCt6JVGTsHjbXD6ylGsFFiZ51NXp1CwHRDIu5i8xIo3L/2zRtbIpEmGwIcqireMgev9DKDejsg27nHjZVbS7y7b69xFpXFk+zvv1t+uoJCsVDRUnYqGMfc2jnkYCFXruWeBbpjjqH1GSRUquWXvD7FdsWWX3kNO+kbzM4RHsffW1mwlPQYrqX3PfCOv42r0UefuqemfFJnFgG7tC3Y3HKzA0NhQBy8n/xC7R+S7zTpNU9+4aRDHbbpYdwo/EgwoBc9AAf1vQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iY6TY+xB7Eh4WerPFzAbdQmO1hUEYZ/JujZB4UOWgGA=;
- b=KI0nst3Z/L7gBQX01Eh1iBSwbembjfrdcfKhNcjYqsbBN2o4imPN2/pW6ACSRrzfRIio0BwCscG3JM/iqaG1udbpDr5w1y1x+pxC9Xdh/NhufhGaUmGja0aR2XUORAixryYczPerIFXq22c+XH7bUaH92lQmYYuEe1wmaWjzowacl+mAIUcKCQKUrmczpO0y3WK5mOw4Qejux8BTnYMmL/HWDO60IE3dl6sWUqYLi3DAFaOEeTHs0xwWjvE9uchEGlfAOOm6ICAvCI3zVPUOkG08snhjlDg0URRnrfyYEtTGSjwXzvLBxNWJRilA1ZmmlLSkWMx9cfwGuzQJvy331Q==
+ bh=c1qhNSCnve1tBGyDGuXrK5o2+LJBSaGG8NeztKRVlEk=;
+ b=VvcUjnUWpRnbjKj6Jk7LgF16z7WCtQ9F/0OclUSK1qoZS/9wHYO6QL/ftyrvF7sY/LG6DrXoYOkFLZq5Cemgwj4vbppjnpxB5quc1/9IcpbQ0cDaQNM100a2jyMMAT863xwg9EY8jdZ1qefi+UxQVSifRU6g/kpXB0gsGr3ozkRNOrNMEC/4Birild1ydaPRIwcol3tweBrzMK0rcLUyxa/5ExrP38qvTFCUg9F/XX7m0Ba35mhOOtQI/Iu1B3e2JvQHYFcwf+WA09Nm6jlfyDS/WVTSs6KU2vHDCk/LflmwV6e9u6TIdIl7dXa1wtz4TAMaxj1tEiXYfqJAGX2I2Q==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR06MB7401.apcprd06.prod.outlook.com (2603:1096:820:146::12)
- by TY0PR06MB5442.apcprd06.prod.outlook.com (2603:1096:400:31e::11) with
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by AS8PR04MB8040.eurprd04.prod.outlook.com (2603:10a6:20b:2a9::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20; Wed, 24 Jul
- 2024 09:29:45 +0000
-Received: from KL1PR06MB7401.apcprd06.prod.outlook.com
- ([fe80::f4f:43c4:25e5:394e]) by KL1PR06MB7401.apcprd06.prod.outlook.com
- ([fe80::f4f:43c4:25e5:394e%3]) with mapi id 15.20.7784.017; Wed, 24 Jul 2024
- 09:29:45 +0000
-Message-ID: <a32c39f1-ff9d-4a57-9d6b-063adf53602c@vivo.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.16; Wed, 24 Jul
+ 2024 09:22:05 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%2]) with mapi id 15.20.7784.017; Wed, 24 Jul 2024
+ 09:22:05 +0000
+From: Liu Ying <victor.liu@nxp.com>
+To: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org
+Cc: p.zabel@pengutronix.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	tglx@linutronix.de,
+	vkoul@kernel.org,
+	kishon@kernel.org,
+	aisheng.dong@nxp.com,
+	agx@sigxcpu.org,
+	francesco@dolcini.it,
+	frank.li@nxp.com
+Subject: [PATCH v3 09/19] drm/imx: Add i.MX8qxp Display Controller display engine
 Date: Wed, 24 Jul 2024 17:29:40 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [bvanassche:block-for-next] [sbitmap] e992c326a3:
- BUG:workqueue_lockup-pool
-Content-Language: en-US
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com,
- Bart Van Assche <bvanassche@acm.org>, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org
-References: <202407241556.b0171c94-lkp@intel.com>
-From: YangYang <yang.yang@vivo.com>
-In-Reply-To: <202407241556.b0171c94-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TYAPR01CA0142.jpnprd01.prod.outlook.com
- (2603:1096:404:2d::34) To KL1PR06MB7401.apcprd06.prod.outlook.com
- (2603:1096:820:146::12)
+Message-Id: <20240724092950.752536-10-victor.liu@nxp.com>
+X-Mailer: git-send-email 2.37.1
+In-Reply-To: <20240724092950.752536-1-victor.liu@nxp.com>
+References: <20240724092950.752536-1-victor.liu@nxp.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR01CA0193.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:189::18) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,327 +100,969 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR06MB7401:EE_|TY0PR06MB5442:EE_
-X-MS-Office365-Filtering-Correlation-Id: 527d9f9c-13df-42d3-aede-08dcabc3279e
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AS8PR04MB8040:EE_
+X-MS-Office365-Filtering-Correlation-Id: a74ef385-4c01-494d-2ca2-08dcabc21544
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|52116014|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WSs3cUluY3ZBNjFMY0tGNzB2NkNaRExhaEV2REtoVXVBekxHTU9XeTR0ZDZJ?=
- =?utf-8?B?ZENhdGt6OE1COXVLS2ZXM0dwbEhKcUNTMXZXOVF3cStYcDRFL01rZ0l3OGR0?=
- =?utf-8?B?bEVraHE3OVAyOG9aTjl3cXV5NFJodXErSVBaSjBxZmh2aGRQV0xVSGJha1hx?=
- =?utf-8?B?WWhOYzNyMVcwc2hXOXBzdXVLdnB0ck5ERG5MRG00QW9QakpIMVVMMmlLZDZP?=
- =?utf-8?B?S1Y4UG1YWGxYVTJnWTFEWmpubkZ6Q0VFS1E1Sy9ZZGQ5MDhqN3c2TmF6WDhs?=
- =?utf-8?B?NHVzMlFWVnd1STE2NTE1N1Z5N0NTMjUxNXhUNDNIbFM5Qm9ZN1FST0JyQjVC?=
- =?utf-8?B?Z0ZQYTFmT3MrdXlVZUs5UTNwc0xVK2F3aXZITHVEa1FqRG0vUCtqNlpYWGdj?=
- =?utf-8?B?SG1CcDZFTnBrWnU3NXdLKys3Tk1ndjQzSFRkRTB3a04ydzBCZ2NWb0pyYVh3?=
- =?utf-8?B?cENuNk5ySUYxOXUrNXFuWlhUZmJJREMzL3Q0OUt1ZEFzSjhxZGVFNHJWY09J?=
- =?utf-8?B?bmFJZVc3RnJFR1VCYU9ldDI2cnB5QUF1aUVwbWVqdjVuTElCdnRTeU9oNTBT?=
- =?utf-8?B?OHk4ZGx0b1dOSkdBb3lBR0ZEUS9zdW55REUwV1hPTVBDRnFGZTlsM3VYNDJa?=
- =?utf-8?B?L3dqbUR2SU1pandheS82TUd1RXloR1hncjRMYko4UUFYNHAwUzBwWFk2MURq?=
- =?utf-8?B?TUFQSmIrT050M2k1Ri8zWnFIWWoxMGxST1lIRm5Qb21nRDU5WWc2ZFNxd1Iw?=
- =?utf-8?B?Nk5qL0V5Z2lHTzI3MmpqVy8wQWhhM3VLRUdJR2RZcmF2TGd4SE5jTHdiNG8w?=
- =?utf-8?B?WEcremZGNWhkR1FIU25WUHBDTzVBd0FGWG5iN3FnZHJWZFFsSWIvaHpKczNW?=
- =?utf-8?B?dThJMm12UGloM2NiMjEweC9zYkNVWTNRbVlCRUZrWDVBVTJ2eHJQYjE2Ujgy?=
- =?utf-8?B?eWVaQVJ0YWp6VGVnYmdhSEhxc2tidlllUnRTN0NodnRRTkp3bnVNaTJyM1Vp?=
- =?utf-8?B?TWV2ZC9na2ZKUDBLbDlIZCtyOVg1Y0NFbUdadXdCVGpQQkQ5aWQ2aGhNbk5t?=
- =?utf-8?B?ZDQxWFpXK3ZmVjllUndMUlNCL0diL2xaTDhHelBBZXFKYkJsN3kzRnlYQytT?=
- =?utf-8?B?ZkY1Y0xFNlh5TkQ2NlJqRytvUWJhQlpNa1BpSGZRUkgyZlBGTWhGYXkzc3lV?=
- =?utf-8?B?K2JLMkF2UWV4M2ZiNFdPUDJsMG1LTS9UNW5CeDRvY09HS3lLdmpRdnRuUStt?=
- =?utf-8?B?cUdLSzdOUlRVcC9PS2dLL0RBNG1aeWJweFYzUTFJM3N1NFpMdzJUbWsxNnFP?=
- =?utf-8?B?SDhZNktGamJEelYwTDdjbjg5cUJqSDBTV1F5ZTRlS0ZZbFNCZGI5bTJYU29V?=
- =?utf-8?B?K2crZUVoU2c3MWpNNm5FSlFJeHd5ME1JMWFRcEc2eThqTUFtRGh2ZFptdXBD?=
- =?utf-8?B?L1pmcDR5WGFxNFl0SmdqZ1FtZ3lQS2FsUUxHTGdXQU1aRU5GbmFJaVpCNHRZ?=
- =?utf-8?B?L21PRzJQNFEwazFMdnRPT1M5dlk4VUNYTFNuUmd3aG1YQlZVdnZhbEhaQTdW?=
- =?utf-8?B?azlqOE1KWGNpWXA2SFN2NEdIK05sQU1sWkc4TXMxekZHUWo5Z0NDenA5UkhO?=
- =?utf-8?B?aUx0eldTM2NtbXN3dlRsYktSZVkwQ3FzZDVJbk9wSHhXb1F5MnNWVjVESkY0?=
- =?utf-8?B?R3c3Z2Y4b0ljeEdzdE1CdzQ1UGxTVkxFcm1KalZpa0liRzNTb25tUktaa2cy?=
- =?utf-8?Q?oY6wLOxCIyfWwzrf7c=3D?=
+	=?us-ascii?Q?2OtyO6IgpYvf6D0gwHRWh4hafI+kAfp0NWljGpinSg2XND1pLUA8u4fYLEvx?=
+ =?us-ascii?Q?fLv9MVCh45e4+iJd6zmb6STN6sIC/rGXOEYkW4P2naUB7vjJiAsJUygWffx1?=
+ =?us-ascii?Q?WXWP/yR9wPIPbqIoY/DspqTB+lSz2pA3pNyzUc3Ht5rXljwAg1eee7M6m1/Q?=
+ =?us-ascii?Q?Bq5HaOAhKirngq+9Q+96IlWXPg1DGVDACLT5jB7A4rYM2w9UP3FfICwRaIfz?=
+ =?us-ascii?Q?Sqh4ndWq6QXtkJ3SxdHFUdM8fNJ2kvrJSfPFqqU95jowjfZ5l96ZX8Tsapug?=
+ =?us-ascii?Q?GODonH8UI+z2EvPLFyfpF98Z7VBo9Q8ZIMNzbnGIcrjzImQyoVftQLnTuyg0?=
+ =?us-ascii?Q?qBS+yC4+ddnm2tGkHk0QN914P2+iptcVA3BLVsegzQbGW717SSZkRKAKfeEq?=
+ =?us-ascii?Q?V2YnYEy3LhzFvsB8KgZmRvxrnVYkozZpumXQ+wrTvjjdXWoba2pqP4O5sDm9?=
+ =?us-ascii?Q?jf/XeBHS8OnpvYu+BNkqgiuuECNEuiHh2taq5+ZUOj0msNODz7RRf6/FBlc+?=
+ =?us-ascii?Q?T61frii97Tep74OZ39qRL4cB/zEvI4ELE1Deg9BGopQsYCSIwcC2xdkxSsy1?=
+ =?us-ascii?Q?7K2qDMzURazOasbayUKGZ+ton+gIu4tO6N5UPgyxcyf+t+S0hvY4JwG4dU+u?=
+ =?us-ascii?Q?s76wh01X50C1Kls5Qo6sUfHsssyAjcmMjhT4bc1gPVKE9+9P/fQ7q07K4vBj?=
+ =?us-ascii?Q?aObXWk/tYZklvWdR1D5TkzPQ+kRxyQu21klXnjTuyAX8eQ4Q7yhlXKPga8Gj?=
+ =?us-ascii?Q?O7sm+EA9hkGDlgDkbpn866j2cWkUg9Tojf+gq7Ae3YV9xiw/S0Yh+oDXxZws?=
+ =?us-ascii?Q?WlDrZXm+02UFfGHw5IHW2WKV96c0zqa7I+7hIrXiWt2/w/FC8Mh+l8WKeQTV?=
+ =?us-ascii?Q?HlHoikQZxwi17+bS0DQsonnlA8LGYPCXiDlb35bOzDHoC4RcLARW9b7s92Ta?=
+ =?us-ascii?Q?+vl/2PZjMsrOxn7KXpCZ+kgHETUMhDVyS5pODdTraypf3vFWjZ1aEzQAfjm7?=
+ =?us-ascii?Q?gLXk8bMebi1Olt+r+x6I/o0QCdr9dWcfmnb1Gc2+y0Ci2RKbJlnI84hYtQCq?=
+ =?us-ascii?Q?RObIrmJ0dOVUM2a9f3K2nCwJqmTzlGm+5Hm8CmH4vrW2EdZepbtSa7A2tA6C?=
+ =?us-ascii?Q?ZaHKfFPA+9eLBubfeTiO5W5V/MbVzOkbYWA1UBvEwr0WUeyq4MAn+6+u93+f?=
+ =?us-ascii?Q?3MZrP8J5BrZgwrOaiRZ9CKiOQ2A7fJsei0IzibQfMH3MAxtjcYk4iTidgMcJ?=
+ =?us-ascii?Q?f6P2v+PtsraF/75l0Lw3vMbZ3ycc30+PgBvuqFcWPKabh19w6UUGtO9FmPou?=
+ =?us-ascii?Q?TruKGS48VLBAcQ6dn7eiRLiKokWHasSvN8ziU69ytUENIENZ6UV7ZOnxWN0Q?=
+ =?us-ascii?Q?VazazawStVdhFYv1pxrvH8MSTypneflmepw98pGRLMCerw+etQ=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR06MB7401.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NWk5V3ZBK2NGeFlxcGFlV25VNGpNcUdNbWtCUGtDRWcrK1VzQ1JnVk82YVZW?=
- =?utf-8?B?eGdrb203SzBSNFNlNFdCdVZvalpvRjFzZHBJMFJXZTZEdXlzNzU0bUF3aGcw?=
- =?utf-8?B?WXVMSUhuSUxMaU95cGFvVGtMTmNIUGRCcHNqUnR4U0xRTzdvZ0VSWEVBeDdJ?=
- =?utf-8?B?anNaSWhLV0E1QlBkR0ZjcHduYUs3Q0Q1VjdvTGdrY29aTG52TDZoRWU2YUhQ?=
- =?utf-8?B?bEJIYTc0WGs4TWhOb1plejVnaXBZVnBCVUVmNE1BOXJDM05FR05ud0pFOWhi?=
- =?utf-8?B?Q0UzZ1EyQ1F3dHlUamFIVFliMmVDSHQ5SlBWL2RBbFBBUFlqZnNPRzB5Tzk4?=
- =?utf-8?B?eHNLZENIakhjTmxoSFpxTTRqY2tRdnlQUmFHanE5WHVTcnU2TjlOazUwN3hQ?=
- =?utf-8?B?U1BvSnFGeWdESkpQUHE5SGdhRlhJSGZoQnppRmhzTkRjeDFYUGJxNDNId1B6?=
- =?utf-8?B?eTB6WVY1d2ZjLzd3MjlCZlQ3TXl6UW5DNG1JTVY0Ykx1UWtWVi9LRlhFWXAv?=
- =?utf-8?B?RUdQZG1jWENWaTFpMEw3eEFqby9jZXFGVm13SXdUZlFZdGgycmtuaStRWVIr?=
- =?utf-8?B?RjB6MTRKZDZEd25rSUIzVmdhMVgxQXFXRHcrYmJEbUp6NS9Oems1UjR1OFJT?=
- =?utf-8?B?aGV1aVVkQ0pheGUwemp5eGxLZXVLbC9Dem1GYnhkcW1XVC9wSmxSVW03anE2?=
- =?utf-8?B?eGNIZ0wyQWFTaHFhTStIWkF6WDhxekR5MWl3T2hqa1dFWFc4VC8vSXFKQzNG?=
- =?utf-8?B?dS9zcE16S1pEd2dXWGhDZklUR0VRK2FPMnVVbEV3Z0lMS1V5aUpNVzc0SGJZ?=
- =?utf-8?B?Q1BGUVdDdjFRcTBxZWZLNmhpcGhNYWFxbnd3Sk1HUzA5U0lqL3VZWXB4NGtj?=
- =?utf-8?B?ZWwxYmxhNU90SDYxZ3dlNFo1a2l4THZ5OHV1ZWVCK2xOVE5lSnV5NW9rTyt5?=
- =?utf-8?B?ZDhobHJjd2h2ajlsQ2pTWS9IdGdWTjAwSHZ2RE5uWFRjNkU5VFlWS01KSExK?=
- =?utf-8?B?T3dMN2hnb0pVK1U1TzFaTTVVVENYcml5d3ZydzcxTWZZejc1Rm5mL1hxREhn?=
- =?utf-8?B?cVF6bE1HOVFQMXQwUHBvYUdYaU9ybm9YcnpyL2o3VVV2eHFxNEJxcHhOZEgr?=
- =?utf-8?B?eTVjRzkram1SbS8xTDF5ZHF5aTY1T25KTVVTQldiQVpEWE9XRHlycVMyb0J5?=
- =?utf-8?B?TEpoRzE2MmVCNTBNbTFodDB3Sml1d0tNaHMvOVNBV2tYU2s0T0MzZ1daOGl0?=
- =?utf-8?B?eEJwajNEMUc1cGR5OVgyU0dOL2lVcjhNWW9MNFdzM2lGZEdvVFVNQWcxQU9P?=
- =?utf-8?B?MDdjRk1lbDE3UEY4Zk1tMGtRUmFyem1tamgxYm1Ia3B4QmNwRUFadkJ3eXVF?=
- =?utf-8?B?NzZJb0pQTVlLMTNIU1RYNDVFTE1OUTlJUXRVci9STDNaK2tRaFI2eFpGRDYz?=
- =?utf-8?B?TFZvMlNXRlJUM0dJOUxCNlkxeUR6VnY3N0IvU25KdzdjQ0JxYnJ3THJIZmJ1?=
- =?utf-8?B?YUR0L2R1RExnMFdzTDRNNWtKeEdJUDloV0R5WVlZcGhiS1p1bDFBSWhoSGxj?=
- =?utf-8?B?L2dDWXFOWENiRlRFTVRsd3dtSG0yTDhveFBVbGVxQlU5QUJLSzFyQ0k0RDdw?=
- =?utf-8?B?d2V4NW1OblYybi9TVDBFTWk2N081OEM3bmIySVpOakxvUEZsc2xzSWZMUHlv?=
- =?utf-8?B?SzV5TjlnbVBzeFNZZ3ZQNk54YmVFQStoVVlnd200L056Ym03d1N4MHlJT29u?=
- =?utf-8?B?VWFBVjkzR2ZyckpyRkZEWGZMNjRvVURNWG9aVWptY2gxU0M0RmFCNldCYXlk?=
- =?utf-8?B?MEdTSzZGZ0JpU2RQVkVUb0JiTlU4NnBQcEMxRGZFTHVQTS9RSGlOOEZpYXJ3?=
- =?utf-8?B?NWxpMjJDT25hR2xITHh2cW1kVEVxNDhVbTRXV2hrSzJPZjNCUnB1OG9PcWht?=
- =?utf-8?B?RW9CS2t4SEc4Ry9pZUkvT2hLRmNJU3dXMFo1NS9CU2t3N1BnYkNuMjM2c1Uv?=
- =?utf-8?B?bHJsSWdJa3VQYnN6ck1ZWTNncEtZM2lUMk90c3lxdUdHMDA0VmhhZ3hWaUlQ?=
- =?utf-8?B?VjI5d09qU2tXdTcyaC9ESFdWRjgreDZqTDZ1STczRzVKZWx4QjlRTnJVckdP?=
- =?utf-8?Q?tApKRYoa1nqA0SphZSta5RfuF?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 527d9f9c-13df-42d3-aede-08dcabc3279e
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR06MB7401.apcprd06.prod.outlook.com
+	=?us-ascii?Q?ouvy2tB4AB5p2taJB358yjbGxVKLVyqBja4z4gZMmYd3hT/ZK1bNxw03JVxy?=
+ =?us-ascii?Q?YVU+z93VOgYBOc6mUTKn0FiICzd2rn17JH/DzB1dLrAaBJCs+oYdaOSlSYlz?=
+ =?us-ascii?Q?LrNC3kgZJVXDdLCjctnsZZp/BtMRGJD+ueg5Lb2tBpwd1Ujt2TfyWEhQbBrW?=
+ =?us-ascii?Q?c5vqWMn7zmHrT65rOhqlees4pcq04c7peVY8jnf2TKm45SbYbmxi2GTpbTV3?=
+ =?us-ascii?Q?oD0cLGUFbeWq8/Tjq1DhRGt2SEIMYJ+YAs5cpHoEYRnytxgNkYrgIeVEQ5t9?=
+ =?us-ascii?Q?zAK7/pfSJNJOn4P9ttq7bK21UCUdKspt4J91juL9IqoWPFGUVIiDo0YvSFLQ?=
+ =?us-ascii?Q?xSK4MIjGdXcYHGghMBI+zYBSAZG8YxlqM0ZTKEAUzL7nEmPcbxFHpGmijgf7?=
+ =?us-ascii?Q?5AvJQLYJrrza9chs++Fj8i1r+g4NOQuX4H2GXDyY0wsrMd705ypR31Rch4Kg?=
+ =?us-ascii?Q?7LofnMT61kmY0+giYvuiby44NCXaWUCaPx5DbpWsL3ORE6zE7O95cBRAlgAF?=
+ =?us-ascii?Q?MKQVqTlIzxmRnh3YmSIP3Cf0guhtLlj6rVOgGDof7EnNceXuP/dGkfTuYu9j?=
+ =?us-ascii?Q?/go0zQqV7koTL9PwOlwTRPc/pTfD5LCA5rjw4HYO1dZNDm//O6YDvu3s20Q7?=
+ =?us-ascii?Q?lx3Ncwq+rBoUDdfgSRlByU7jXQFyvMc9VZIdte4X9FpU/Vshf7a0eS4rIN84?=
+ =?us-ascii?Q?+4ly4rrEwJYKPB3jLXMvGwxVDVWciUx7pmFRhKwnLYLe1H2FFVSzrPgrpGKo?=
+ =?us-ascii?Q?9kkv93O+fuxOGPgckZ60Q1I9r+gZA8DXcBbX4inU57tWJ1N/OGR8cIvmLfMk?=
+ =?us-ascii?Q?6fEzaE1corwtHe19lcSL43IFQDNKH7nR5flJ2qWnjVmv86m5dsGBWKdK7Szs?=
+ =?us-ascii?Q?W5XieRzFyVXmxu3HS95I3LWkxlt/1+XMN0/skm8xW9GZyX8IWN67J/JbuhKK?=
+ =?us-ascii?Q?QgUZSPUN0Qg8gDUcGIKyNqITNLOdZwfGRWk289KjHl2IrNZ+EzlLOQqi7ex4?=
+ =?us-ascii?Q?JpwHxh1KHvgc1njsLvAvBtK0FPnhaySpDswLk8UDMUY0P+0zDK6jGeWfcBGv?=
+ =?us-ascii?Q?Ov8+zl17yiCEkAtIcPLtvMjaT18Ev/GrmQ6uhC+QfG46fM804DvLPZYUbH7L?=
+ =?us-ascii?Q?VwekVvugVUWT9pm3J/76gfSma26ZPD6C5qCZ8MB/C0j2lnwLuAWF7/hITndK?=
+ =?us-ascii?Q?Ni81vFXRH16099mp+A5sxsxtzJ19ouTXj33B8BB2v9RcD83umRhPUzHSIHE1?=
+ =?us-ascii?Q?R5jT2lUePaaaPa8e2Zx531iwMDnzdlWXxxzkRGnyWTcdapoTaynh0oTL3PBG?=
+ =?us-ascii?Q?LNfUf1LAqRJ3gLWGnZRdzFy6PdCc3wiLAQOAZeOxRqDE+uKgFc6ngRzZ27bG?=
+ =?us-ascii?Q?4CsQty+fXL0Eyl53y0hzOHgAjMpGGyQVwZ//HOX8ucJcvuTQ7kP0maq8/zFB?=
+ =?us-ascii?Q?OYrEuu2pAgCTNkjfdKD6xM8L8xam+SFyDn6EGXKEfXo/Pz0vTo/7PbQH6UPZ?=
+ =?us-ascii?Q?+ddxeUZ6qJDYzVULUNV5uqoBjhAtvscjub0CgebVCAnh+iOd6PH5rBR9z7lx?=
+ =?us-ascii?Q?prlnKdnJed3kyI2MXk88f1n6MYlpJpgxCA4EJF5C?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a74ef385-4c01-494d-2ca2-08dcabc21544
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2024 09:29:45.3252
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2024 09:22:05.1861
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Gt+BxcTdfxHtnMir9ke+8LWl37PAaXdF01Ye9+3fwohWIfkeWEwh/gK+U/EguAeyDpzFDFxf68AmfCaknq/HWA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5442
+X-MS-Exchange-CrossTenant-UserPrincipalName: nwEAgOlpX3B7sabUk0/1bJHaAoVf39Q7pwH/AY5n6qQOq1WeFn/UwPn9+PIv/U4OaKjZaUt5ojzl41/dMiMktw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8040
 
-On 2024/7/24 16:15, kernel test robot wrote:
-> 
-> 
-> Hello,
-> 
-> kernel test robot noticed "BUG:workqueue_lockup-pool" on:
-> 
-> commit: e992c326a36a35afe13a4c16094e2a76a90ed5eb ("sbitmap: fix io hung due to race on sbitmap_word::cleared")
-> https://github.com/bvanassche/linux block-for-next
+i.MX8qxp Display Controller display engine consists of all processing
+units that operate in a display clock domain.  Add minimal feature
+support with FrameGen and TCon so that the engine can output display
+timings.  The display engine driver as a master binds FrameGen and
+TCon drivers as components.  While at it, the display engine driver
+is a component to be bound with the upcoming DRM driver.
 
-The patch in above branch is different from:
-https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/commit/?h=for-next&id=72d04bdcf3f7d7e07d82f9757946f68802a7270a
+Signed-off-by: Liu Ying <victor.liu@nxp.com>
+---
+v3:
+* No change.
 
-return (READ_ONCE(map->word) & word_mask) == word_mask;
-should be
-return (READ_ONCE(map->word) & word_mask) != word_mask;
+v2:
+* Use OF alias id to get instance id.
+* Add dev member to struct dc_tc.
 
-Thanks.
+ drivers/gpu/drm/imx/Kconfig     |   1 +
+ drivers/gpu/drm/imx/Makefile    |   1 +
+ drivers/gpu/drm/imx/dc/Kconfig  |   5 +
+ drivers/gpu/drm/imx/dc/Makefile |   5 +
+ drivers/gpu/drm/imx/dc/dc-de.c  | 151 +++++++++++++
+ drivers/gpu/drm/imx/dc/dc-de.h  |  62 ++++++
+ drivers/gpu/drm/imx/dc/dc-drv.c |  32 +++
+ drivers/gpu/drm/imx/dc/dc-drv.h |  24 +++
+ drivers/gpu/drm/imx/dc/dc-fg.c  | 366 ++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/imx/dc/dc-tc.c  | 137 ++++++++++++
+ 10 files changed, 784 insertions(+)
+ create mode 100644 drivers/gpu/drm/imx/dc/Kconfig
+ create mode 100644 drivers/gpu/drm/imx/dc/Makefile
+ create mode 100644 drivers/gpu/drm/imx/dc/dc-de.c
+ create mode 100644 drivers/gpu/drm/imx/dc/dc-de.h
+ create mode 100644 drivers/gpu/drm/imx/dc/dc-drv.c
+ create mode 100644 drivers/gpu/drm/imx/dc/dc-drv.h
+ create mode 100644 drivers/gpu/drm/imx/dc/dc-fg.c
+ create mode 100644 drivers/gpu/drm/imx/dc/dc-tc.c
 
-> 
-> in testcase: boot
-> 
-> compiler: clang-18
-> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
-> 
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
-> 
-> 
-> +---------------------------------------------+------------+------------+
-> |                                             | b0c61a9e6a | e992c326a3 |
-> +---------------------------------------------+------------+------------+
-> | BUG:workqueue_lockup-pool                   | 0          | 10         |
-> +---------------------------------------------+------------+------------+
-> 
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202407241556.b0171c94-lkp@intel.com
-> 
-> 
-> [   64.765231][    C0] BUG: workqueue lockup - pool cpus=1 node=0 flags=0x0 nice=0 stuck for 43s!
-> [   64.766333][    C0] BUG: workqueue lockup - pool cpus=1 node=0 flags=0x0 nice=-20 stuck for 43s!
-> [   64.767306][    C0] Showing busy workqueues and worker pools:
-> [   64.767861][    C0] workqueue events: flags=0x0
-> [   64.768319][    C0]   pwq 6: cpus=1 node=0 flags=0x0 nice=0 active=2 refcnt=3
-> [   64.768335][    C0]     pending: e1000_watchdog, kfree_rcu_monitor
-> [   64.768392][    C0] workqueue events_power_efficient: flags=0x80
-> [   64.770225][    C0]   pwq 2: cpus=0 node=0 flags=0x0 nice=0 active=1 refcnt=2
-> [   64.770228][    C0]     pending: do_cache_clean
-> [   64.770249][    C0] workqueue events_freezable_pwr_efficient: flags=0x84
-> [   64.771967][    C0]   pwq 6: cpus=1 node=0 flags=0x0 nice=0 active=1 refcnt=2
-> [   64.771976][    C0]     in-flight: 26:disk_events_workfn
-> [   64.772005][    C0] workqueue mm_percpu_wq: flags=0x8
-> [   64.773657][    C0]   pwq 6: cpus=1 node=0 flags=0x0 nice=0 active=1 refcnt=2
-> [   64.773660][    C0]     pending: vmstat_update
-> [   64.773697][    C0] workqueue kblockd: flags=0x18
-> [   64.775275][    C0]   pwq 7: cpus=1 node=0 flags=0x0 nice=-20 active=2 refcnt=3
-> [   64.775278][    C0]     in-flight: 27:blk_mq_timeout_work
-> [   64.775293][    C0]     pending: blk_mq_timeout_work
-> [   64.775376][    C0] pool 6: cpus=1 node=0 flags=0x0 nice=0 hung=43s workers=3 idle: 40 1001
-> [   64.775391][    C0] pool 7: cpus=1 node=0 flags=0x0 nice=-20 hung=43s workers=2 idle: 859
-> [   64.775400][    C0] Showing backtraces of running workers in stalled CPU-bound worker pools:
-> [   64.779459][    C0] pool 7:
-> [   64.779465][    C0] task:kworker/1:0H    state:R  running task     stack:0     pid:27    tgid:27    ppid:2      flags:0x00004000
-> [   64.779480][    C0] Workqueue: kblockd blk_mq_timeout_work
-> [   64.779493][    C0] Call Trace:
-> [   64.779504][    C0]  <TASK>
-> [ 64.779541][ C0] __schedule (kernel/sched/core.c:5411)
-> [ 64.779563][ C0] ? __pfx_schedule_timeout (kernel/time/timer.c:2543)
-> [ 64.779571][ C0] schedule (arch/x86/include/asm/preempt.h:84 kernel/sched/core.c:6823 kernel/sched/core.c:6837)
-> [ 64.779573][ C0] schedule_timeout (kernel/time/timer.c:?)
-> [ 64.779580][ C0] ? get_page_from_freelist (mm/page_alloc.c:3431)
-> [ 64.779588][ C0] __wait_for_common (kernel/sched/completion.c:95 kernel/sched/completion.c:116)
-> [ 64.779591][ C0] ? __pfx_schedule_timeout (kernel/time/timer.c:2543)
-> [ 64.779593][ C0] wait_for_completion_state (kernel/sched/completion.c:266)
-> [ 64.779595][ C0] __wait_rcu_gp (kernel/rcu/update.c:435)
-> [ 64.779607][ C0] synchronize_rcu_normal (kernel/rcu/tree.c:3935)
-> [ 64.779614][ C0] ? __pfx_call_rcu_hurry (include/linux/rcupdate.h:113)
-> [ 64.779617][ C0] ? rcu_blocking_is_gp (include/linux/kernel.h:? kernel/rcu/tree.c:3894)
-> [ 64.779618][ C0] ? synchronize_rcu (kernel/rcu/tree.c:3985)
-> [ 64.779620][ C0] blk_mq_timeout_work (block/blk-mq.c:?)
-> [ 64.779629][ C0] process_scheduled_works (kernel/workqueue.c:3253)
-> [ 64.779647][ C0] worker_thread (include/linux/list.h:373 kernel/workqueue.c:947 kernel/workqueue.c:3410)
-> [ 64.779652][ C0] ? __pfx_worker_thread (kernel/workqueue.c:3356)
-> [ 64.779655][ C0] kthread (kernel/kthread.c:391)
-> [ 64.779668][ C0] ? __pfx_kthread (kernel/kthread.c:342)
-> [ 64.779671][ C0] ret_from_fork (arch/x86/kernel/process.c:153)
-> [ 64.779688][ C0] ? __pfx_kthread (kernel/kthread.c:342)
-> [ 64.779691][ C0] ret_from_fork_asm (arch/x86/entry/entry_64.S:257)
-> [   64.779704][    C0]  </TASK>
-> [   95.485253][    C0] BUG: workqueue lockup - pool cpus=1 node=0 flags=0x0 nice=0 stuck for 74s!
-> [   95.486737][    C0] BUG: workqueue lockup - pool cpus=1 node=0 flags=0x0 nice=-20 stuck for 73s!
-> [   95.487606][    C0] Showing busy workqueues and worker pools:
-> [   95.488179][    C0] workqueue events: flags=0x0
-> [   95.488650][    C0]   pwq 6: cpus=1 node=0 flags=0x0 nice=0 active=2 refcnt=3
-> [   95.488679][    C0]     pending: e1000_watchdog, kfree_rcu_monitor
-> [   95.488820][    C0] workqueue events_power_efficient: flags=0x80
-> [   95.490632][    C0]   pwq 2: cpus=0 node=0 flags=0x0 nice=0 active=1 refcnt=2
-> [   95.490635][    C0]     pending: do_cache_clean
-> [   95.490669][    C0] workqueue events_freezable_pwr_efficient: flags=0x84
-> [   95.492426][    C0]   pwq 6: cpus=1 node=0 flags=0x0 nice=0 active=1 refcnt=2
-> [   95.492429][    C0]     in-flight: 26:disk_events_workfn
-> [   95.492527][    C0] workqueue mm_percpu_wq: flags=0x8
-> [   95.494193][    C0]   pwq 6: cpus=1 node=0 flags=0x0 nice=0 active=1 refcnt=2
-> [   95.494196][    C0]     pending: vmstat_update
-> [   95.494265][    C0] workqueue kblockd: flags=0x18
-> [   95.495840][    C0]   pwq 7: cpus=1 node=0 flags=0x0 nice=-20 active=2 refcnt=3
-> [   95.495843][    C0]     in-flight: 27:blk_mq_timeout_work
-> [   95.495858][    C0]     pending: blk_mq_timeout_work
-> [   95.495950][    C0] pool 6: cpus=1 node=0 flags=0x0 nice=0 hung=74s workers=3 idle: 40 1001
-> [   95.495977][    C0] pool 7: cpus=1 node=0 flags=0x0 nice=-20 hung=73s workers=2 idle: 859
-> [   95.495983][    C0] Showing backtraces of running workers in stalled CPU-bound worker pools:
-> [   95.500089][    C0] pool 7:
-> [   95.500106][    C0] task:kworker/1:0H    state:R  running task     stack:0     pid:27    tgid:27    ppid:2      flags:0x00004000
-> [   95.500132][    C0] Workqueue: kblockd blk_mq_timeout_work
-> [   95.500169][    C0] Call Trace:
-> [   95.500195][    C0]  <TASK>
-> [ 95.500259][ C0] __schedule (kernel/sched/core.c:5411)
-> [ 95.500304][ C0] ? __pfx_schedule_timeout (kernel/time/timer.c:2543)
-> [ 95.500320][ C0] schedule (arch/x86/include/asm/preempt.h:84 kernel/sched/core.c:6823 kernel/sched/core.c:6837)
-> [ 95.500322][ C0] schedule_timeout (kernel/time/timer.c:?)
-> [ 95.500341][ C0] ? get_page_from_freelist (mm/page_alloc.c:3431)
-> [ 95.500363][ C0] __wait_for_common (kernel/sched/completion.c:95 kernel/sched/completion.c:116)
-> [ 95.500365][ C0] ? __pfx_schedule_timeout (kernel/time/timer.c:2543)
-> [ 95.500367][ C0] wait_for_completion_state (kernel/sched/completion.c:266)
-> [ 95.500369][ C0] __wait_rcu_gp (kernel/rcu/update.c:435)
-> [ 95.500399][ C0] synchronize_rcu_normal (kernel/rcu/tree.c:3935)
-> [ 95.500420][ C0] ? __pfx_call_rcu_hurry (include/linux/rcupdate.h:113)
-> [ 95.500432][ C0] ? rcu_blocking_is_gp (include/linux/kernel.h:? kernel/rcu/tree.c:3894)
-> [ 95.500434][ C0] ? synchronize_rcu (kernel/rcu/tree.c:3985)
-> [ 95.500435][ C0] blk_mq_timeout_work (block/blk-mq.c:?)
-> [ 95.500464][ C0] process_scheduled_works (kernel/workqueue.c:3253)
-> [ 95.500516][ C0] worker_thread (include/linux/list.h:373 kernel/workqueue.c:947 kernel/workqueue.c:3410)
-> [ 95.500527][ C0] ? __pfx_worker_thread (kernel/workqueue.c:3356)
-> [ 95.500530][ C0] kthread (kernel/kthread.c:391)
-> [ 95.500585][ C0] ? __pfx_kthread (kernel/kthread.c:342)
-> [ 95.500589][ C0] ret_from_fork (arch/x86/kernel/process.c:153)
-> [ 95.500636][ C0] ? __pfx_kthread (kernel/kthread.c:342)
-> [ 95.500640][ C0] ret_from_fork_asm (arch/x86/entry/entry_64.S:257)
-> [   95.500679][    C0]  </TASK>
-> [  120.705227][    C1] rcu: INFO: rcu_preempt self-detected stall on CPU
-> [  120.706866][    C1] rcu: 	1-....: (25000 ticks this GP) idle=71dc/1/0x4000000000000000 softirq=2935/2935 fqs=12477
-> [  120.712272][    C1] rcu: 	(t=25002 jiffies g=2261 q=805 ncpus=2)
-> [  120.713520][    C1] CPU: 1 PID: 1601 Comm: (udev-worker) Not tainted 6.10.0-rc6-00303-ge992c326a36a #1
-> [  120.715344][    C1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> [ 120.717321][ C1] RIP: 0010:_raw_spin_unlock_irqrestore (include/linux/spinlock_api_smp.h:152)
-> [ 120.718629][ C1] Code: 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 c6 07 00 0f ba e6 09 73 01 fb 65 ff 0d ce bc 10 7e <74> 06 c3 cc cc cc cc cc 0f 1f 44 00 00 c3 cc cc cc cc cc 0f 1f 00
-> All code
-> ========
->     0:	90                   	nop
->     1:	90                   	nop
->     2:	90                   	nop
->     3:	90                   	nop
->     4:	90                   	nop
->     5:	90                   	nop
->     6:	90                   	nop
->     7:	90                   	nop
->     8:	90                   	nop
->     9:	90                   	nop
->     a:	90                   	nop
->     b:	90                   	nop
->     c:	90                   	nop
->     d:	90                   	nop
->     e:	90                   	nop
->     f:	90                   	nop
->    10:	f3 0f 1e fa          	endbr64
->    14:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
->    19:	c6 07 00             	movb   $0x0,(%rdi)
->    1c:	0f ba e6 09          	bt     $0x9,%esi
->    20:	73 01                	jae    0x23
->    22:	fb                   	sti
->    23:	65 ff 0d ce bc 10 7e 	decl   %gs:0x7e10bcce(%rip)        # 0x7e10bcf8
->    2a:*	74 06                	je     0x32		<-- trapping instruction
->    2c:	c3                   	ret
->    2d:	cc                   	int3
->    2e:	cc                   	int3
->    2f:	cc                   	int3
->    30:	cc                   	int3
->    31:	cc                   	int3
->    32:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
->    37:	c3                   	ret
->    38:	cc                   	int3
->    39:	cc                   	int3
->    3a:	cc                   	int3
->    3b:	cc                   	int3
->    3c:	cc                   	int3
->    3d:	0f 1f 00             	nopl   (%rax)
-> 
-> Code starting with the faulting instruction
-> ===========================================
->     0:	74 06                	je     0x8
->     2:	c3                   	ret
->     3:	cc                   	int3
->     4:	cc                   	int3
->     5:	cc                   	int3
->     6:	cc                   	int3
->     7:	cc                   	int3
->     8:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
->     d:	c3                   	ret
->     e:	cc                   	int3
->     f:	cc                   	int3
->    10:	cc                   	int3
->    11:	cc                   	int3
->    12:	cc                   	int3
->    13:	0f 1f 00             	nopl   (%rax)
-> [  120.722091][    C1] RSP: 0018:ffffc9000027fa60 EFLAGS: 00000247
-> [  120.723180][    C1] RAX: 0000000000000286 RBX: ffff8881335dc4c8 RCX: 0000000000000000
-> [  120.724696][    C1] RDX: 0000000000000000 RSI: 0000000000000286 RDI: ffff8881335dc4c8
-> [  120.726162][    C1] RBP: ffff8881335dc480 R08: 0000000000000001 R09: ffffffffffffffff
-> [  120.727782][    C1] R10: 0000000000000000 R11: ffffffff817cf120 R12: 0000000000000000
-> [  120.729356][    C1] R13: 0000000000000001 R14: 0000000000000000 R15: fffffffffffffffe
-> [  120.730936][    C1] FS:  00007f213215b8c0(0000) GS:ffff88842fd00000(0000) knlGS:0000000000000000
-> [  120.732680][    C1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  120.733960][    C1] CR2: 000055c76ff83708 CR3: 00000001482fe000 CR4: 00000000000406f0
-> [  120.735559][    C1] Call Trace:
-> [  120.736328][    C1]  <IRQ>
-> [ 120.737025][ C1] ? rcu_dump_cpu_stacks (include/linux/cpumask.h:231 kernel/rcu/tree_stall.h:374)
-> [ 120.738036][ C1] ? print_cpu_stall (kernel/rcu/tree_stall.h:702)
-> [ 120.739012][ C1] ? rcu_sched_clock_irq (kernel/rcu/tree_stall.h:?)
-> [ 120.740040][ C1] ? update_process_times (arch/x86/include/asm/preempt.h:26 kernel/time/timer.c:2487)
-> [ 120.741048][ C1] ? tick_nohz_handler (kernel/time/tick-sched.c:187 kernel/time/tick-sched.c:306)
-> [ 120.742044][ C1] ? __pfx_tick_nohz_handler (kernel/time/tick-sched.c:285)
-> [ 120.743092][ C1] ? __hrtimer_run_queues (kernel/time/hrtimer.c:1689)
-> [ 120.744101][ C1] ? hrtimer_interrupt (kernel/time/hrtimer.c:1818)
-> [  120.745084][    C1
-> 
-> 
-> 
-> The kernel config and materials to reproduce are available at:
-> https://download.01.org/0day-ci/archive/20240724/202407241556.b0171c94-lkp@intel.com
-> 
-> 
-> 
+diff --git a/drivers/gpu/drm/imx/Kconfig b/drivers/gpu/drm/imx/Kconfig
+index 03535a15dd8f..3e8c6edbc17c 100644
+--- a/drivers/gpu/drm/imx/Kconfig
++++ b/drivers/gpu/drm/imx/Kconfig
+@@ -1,5 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ 
++source "drivers/gpu/drm/imx/dc/Kconfig"
+ source "drivers/gpu/drm/imx/dcss/Kconfig"
+ source "drivers/gpu/drm/imx/ipuv3/Kconfig"
+ source "drivers/gpu/drm/imx/lcdc/Kconfig"
+diff --git a/drivers/gpu/drm/imx/Makefile b/drivers/gpu/drm/imx/Makefile
+index 86f38e7c7422..c7b317640d71 100644
+--- a/drivers/gpu/drm/imx/Makefile
++++ b/drivers/gpu/drm/imx/Makefile
+@@ -1,5 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
++obj-$(CONFIG_DRM_IMX8_DC) += dc/
+ obj-$(CONFIG_DRM_IMX_DCSS) += dcss/
+ obj-$(CONFIG_DRM_IMX) += ipuv3/
+ obj-$(CONFIG_DRM_IMX_LCDC) += lcdc/
+diff --git a/drivers/gpu/drm/imx/dc/Kconfig b/drivers/gpu/drm/imx/dc/Kconfig
+new file mode 100644
+index 000000000000..32d7471c49d0
+--- /dev/null
++++ b/drivers/gpu/drm/imx/dc/Kconfig
+@@ -0,0 +1,5 @@
++config DRM_IMX8_DC
++	tristate "Freescale i.MX8 Display Controller Graphics"
++	depends on DRM && COMMON_CLK && OF && (ARCH_MXC || COMPILE_TEST)
++	help
++	  enable Freescale i.MX8 Display Controller(DC) graphics support
+diff --git a/drivers/gpu/drm/imx/dc/Makefile b/drivers/gpu/drm/imx/dc/Makefile
+new file mode 100644
+index 000000000000..56de82d53d4d
+--- /dev/null
++++ b/drivers/gpu/drm/imx/dc/Makefile
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0
++
++imx8-dc-drm-objs := dc-de.o dc-drv.o dc-fg.o dc-tc.o
++
++obj-$(CONFIG_DRM_IMX8_DC) += imx8-dc-drm.o
+diff --git a/drivers/gpu/drm/imx/dc/dc-de.c b/drivers/gpu/drm/imx/dc/dc-de.c
+new file mode 100644
+index 000000000000..2c8268b76b08
+--- /dev/null
++++ b/drivers/gpu/drm/imx/dc/dc-de.c
+@@ -0,0 +1,151 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright 2024 NXP
++ */
++
++#include <linux/component.h>
++#include <linux/container_of.h>
++#include <linux/io.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/pm.h>
++#include <linux/pm_runtime.h>
++
++#include <drm/drm_managed.h>
++
++#include "dc-de.h"
++#include "dc-drv.h"
++
++#define POLARITYCTRL		0xc
++#define  POLEN_HIGH		BIT(2)
++
++struct dc_de_priv {
++	struct dc_de engine;
++	void __iomem *reg_top;
++};
++
++static inline struct dc_de_priv *to_de_priv(struct dc_de *de)
++{
++	return container_of(de, struct dc_de_priv, engine);
++}
++
++static inline void
++dc_dec_write(struct dc_de *de, unsigned int offset, u32 value)
++{
++	struct dc_de_priv *priv = to_de_priv(de);
++
++	writel(value, priv->reg_top + offset);
++}
++
++static void dc_dec_init(struct dc_de *de)
++{
++	dc_dec_write(de, POLARITYCTRL, POLEN_HIGH);
++}
++
++static int dc_de_bind(struct device *dev, struct device *master, void *data)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct dc_drm_device *dc_drm = data;
++	struct dc_de_priv *priv;
++	int ret;
++
++	priv = drmm_kzalloc(&dc_drm->base, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->reg_top = devm_platform_ioremap_resource_byname(pdev, "top");
++	if (IS_ERR(priv->reg_top))
++		return PTR_ERR(priv->reg_top);
++
++	priv->engine.irq_shdld = platform_get_irq_byname(pdev, "shdload");
++	if (priv->engine.irq_shdld < 0)
++		return priv->engine.irq_shdld;
++
++	priv->engine.irq_framecomplete =
++				platform_get_irq_byname(pdev, "framecomplete");
++	if (priv->engine.irq_framecomplete < 0)
++		return priv->engine.irq_framecomplete;
++
++	priv->engine.irq_seqcomplete =
++				platform_get_irq_byname(pdev, "seqcomplete");
++	if (priv->engine.irq_seqcomplete < 0)
++		return priv->engine.irq_seqcomplete;
++
++	priv->engine.id = of_alias_get_id(dev->of_node, "dc0-display-engine");
++	if (priv->engine.id < 0) {
++		dev_err(dev, "failed to get alias id: %d\n", priv->engine.id);
++		return priv->engine.id;
++	}
++
++	priv->engine.dev = dev;
++
++	dev_set_drvdata(dev, priv);
++
++	ret = devm_pm_runtime_enable(dev);
++	if (ret)
++		return ret;
++
++	dc_drm->de[priv->engine.id] = &priv->engine;
++
++	return 0;
++}
++
++static const struct component_ops dc_de_ops = {
++	.bind = dc_de_bind,
++};
++
++static int dc_de_probe(struct platform_device *pdev)
++{
++	int ret;
++
++	ret = devm_of_platform_populate(&pdev->dev);
++	if (ret < 0)
++		return ret;
++
++	ret = component_add(&pdev->dev, &dc_de_ops);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "failed to add component\n");
++
++	return 0;
++}
++
++static void dc_de_remove(struct platform_device *pdev)
++{
++	component_del(&pdev->dev, &dc_de_ops);
++}
++
++static int dc_de_runtime_resume(struct device *dev)
++{
++	struct dc_de_priv *priv = dev_get_drvdata(dev);
++	struct dc_de *engine = &priv->engine;
++
++	dc_dec_init(engine);
++	dc_fg_init(engine->fg);
++	dc_tc_init(engine->tc);
++
++	return 0;
++}
++
++static const struct dev_pm_ops dc_de_pm_ops = {
++	RUNTIME_PM_OPS(NULL, dc_de_runtime_resume, NULL)
++};
++
++static const struct of_device_id dc_de_dt_ids[] = {
++	{ .compatible = "fsl,imx8qxp-dc-display-engine", },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, dc_de_dt_ids);
++
++struct platform_driver dc_de_driver = {
++	.probe = dc_de_probe,
++	.remove_new = dc_de_remove,
++	.driver = {
++		.name = "imx8-dc-display-engine",
++		.of_match_table = dc_de_dt_ids,
++		.pm = pm_sleep_ptr(&dc_de_pm_ops),
++	},
++};
+diff --git a/drivers/gpu/drm/imx/dc/dc-de.h b/drivers/gpu/drm/imx/dc/dc-de.h
+new file mode 100644
+index 000000000000..3417059c40b9
+--- /dev/null
++++ b/drivers/gpu/drm/imx/dc/dc-de.h
+@@ -0,0 +1,62 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Copyright 2024 NXP
++ */
++
++#ifndef __DC_DISPLAY_ENGINE_H__
++#define __DC_DISPLAY_ENGINE_H__
++
++#include <linux/device.h>
++#include <drm/drm_modes.h>
++
++#define DC_DISPLAYS	2
++
++enum dc_fg_syncmode {
++	FG_SYNCMODE_OFF,	/* No side-by-side synchronization. */
++};
++
++enum dc_fg_dm {
++	FG_DM_CONSTCOL = 0x1,	/* Constant Color Background is shown. */
++	FG_DM_SEC_ON_TOP = 0x5,	/* Both inputs overlaid with secondary on top. */
++};
++
++struct dc_fg {
++};
++
++struct dc_tc {
++	struct device *dev;
++};
++
++struct dc_de {
++	struct device *dev;
++	struct dc_fg *fg;
++	struct dc_tc *tc;
++	int irq_shdld;
++	int irq_framecomplete;
++	int irq_seqcomplete;
++	int id;
++};
++
++/* Frame Generator Unit */
++void dc_fg_syncmode(struct dc_fg *fg, enum dc_fg_syncmode mode);
++void dc_fg_cfg_videomode(struct dc_fg *fg, struct drm_display_mode *m);
++void dc_fg_displaymode(struct dc_fg *fg, enum dc_fg_dm mode);
++void dc_fg_panic_displaymode(struct dc_fg *fg, enum dc_fg_dm mode);
++void dc_fg_enable(struct dc_fg *fg);
++void dc_fg_disable(struct dc_fg *fg);
++void dc_fg_shdtokgen(struct dc_fg *fg);
++u32 dc_fg_get_frame_index(struct dc_fg *fg);
++int dc_fg_get_line_index(struct dc_fg *fg);
++bool dc_fg_wait_for_frame_index_moving(struct dc_fg *fg);
++bool dc_fg_secondary_requests_to_read_empty_fifo(struct dc_fg *fg);
++void dc_fg_secondary_clear_channel_status(struct dc_fg *fg);
++int dc_fg_wait_for_secondary_syncup(struct dc_fg *fg);
++void dc_fg_enable_clock(struct dc_fg *fg);
++void dc_fg_disable_clock(struct dc_fg *fg);
++enum drm_mode_status dc_fg_check_clock(struct dc_fg *fg, int clk_khz);
++void dc_fg_init(struct dc_fg *fg);
++
++/* Timing Controller Unit */
++void dc_tc_init(struct dc_tc *tc);
++
++#endif /* __DC_DISPLAY_ENGINE_H__ */
+diff --git a/drivers/gpu/drm/imx/dc/dc-drv.c b/drivers/gpu/drm/imx/dc/dc-drv.c
+new file mode 100644
+index 000000000000..e5910a82dd4d
+--- /dev/null
++++ b/drivers/gpu/drm/imx/dc/dc-drv.c
+@@ -0,0 +1,32 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright 2024 NXP
++ */
++
++#include <linux/module.h>
++#include <linux/platform_device.h>
++
++#include "dc-drv.h"
++
++static struct platform_driver * const dc_drivers[] = {
++	&dc_de_driver,
++	&dc_fg_driver,
++	&dc_tc_driver,
++};
++
++static int __init dc_drm_init(void)
++{
++	return platform_register_drivers(dc_drivers, ARRAY_SIZE(dc_drivers));
++}
++
++static void __exit dc_drm_exit(void)
++{
++	platform_unregister_drivers(dc_drivers, ARRAY_SIZE(dc_drivers));
++}
++
++module_init(dc_drm_init);
++module_exit(dc_drm_exit);
++
++MODULE_DESCRIPTION("i.MX8 Display Controller DRM Driver");
++MODULE_AUTHOR("Liu Ying <victor.liu@nxp.com>");
++MODULE_LICENSE("GPL");
+diff --git a/drivers/gpu/drm/imx/dc/dc-drv.h b/drivers/gpu/drm/imx/dc/dc-drv.h
+new file mode 100644
+index 000000000000..e1290d9a0a99
+--- /dev/null
++++ b/drivers/gpu/drm/imx/dc/dc-drv.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Copyright 2024 NXP
++ */
++
++#ifndef __DC_DRV_H__
++#define __DC_DRV_H__
++
++#include <linux/platform_device.h>
++
++#include <drm/drm_device.h>
++
++#include "dc-de.h"
++
++struct dc_drm_device {
++	struct drm_device base;
++	struct dc_de *de[DC_DISPLAYS];
++};
++
++extern struct platform_driver dc_de_driver;
++extern struct platform_driver dc_fg_driver;
++extern struct platform_driver dc_tc_driver;
++
++#endif /* __DC_DRV_H__ */
+diff --git a/drivers/gpu/drm/imx/dc/dc-fg.c b/drivers/gpu/drm/imx/dc/dc-fg.c
+new file mode 100644
+index 000000000000..3e9a8abee93e
+--- /dev/null
++++ b/drivers/gpu/drm/imx/dc/dc-fg.c
+@@ -0,0 +1,366 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright 2024 NXP
++ */
++
++#include <linux/clk.h>
++#include <linux/component.h>
++#include <linux/container_of.h>
++#include <linux/device.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/jiffies.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++
++#include <drm/drm_managed.h>
++#include <drm/drm_modes.h>
++
++#include "dc-de.h"
++#include "dc-drv.h"
++
++#define FGSTCTRL		0x8
++#define  FGSYNCMODE_MASK	0x6
++#define  FGSYNCMODE(n)		((n) << 6)
++#define  SHDEN			BIT(0)
++
++#define HTCFG1			0xc
++#define  HTOTAL(n)		((((n) - 1) & 0x3fff) << 16)
++#define  HACT(n)		((n) & 0x3fff)
++
++#define HTCFG2			0x10
++#define  HSEN			BIT(31)
++#define  HSBP(n)		((((n) - 1) & 0x3fff) << 16)
++#define  HSYNC(n)		(((n) - 1) & 0x3fff)
++
++#define VTCFG1			0x14
++#define  VTOTAL(n)		((((n) - 1) & 0x3fff) << 16)
++#define  VACT(n)		((n) & 0x3fff)
++
++#define VTCFG2			0x18
++#define  VSEN			BIT(31)
++#define  VSBP(n)		((((n) - 1) & 0x3fff) << 16)
++#define  VSYNC(n)		(((n) - 1) & 0x3fff)
++
++#define PKICKCONFIG		0x2c
++#define SKICKCONFIG		0x30
++#define  EN			BIT(31)
++#define  ROW(n)			(((n) & 0x3fff) << 16)
++#define  COL(n)			((n) & 0x3fff)
++
++#define PACFG			0x54
++#define SACFG			0x58
++#define  STARTX(n)		(((n) + 1) & 0x3fff)
++#define  STARTY(n)		(((((n) + 1) & 0x3fff)) << 16)
++
++#define FGINCTRL		0x5c
++#define FGINCTRLPANIC		0x60
++#define  FGDM_MASK		0x7
++#define  ENPRIMALPHA		BIT(3)
++#define  ENSECALPHA		BIT(4)
++
++#define FGCCR			0x64
++#define  CCGREEN(g)		(((g) & 0x3ff) << 10)
++
++#define FGENABLE		0x68
++#define  FGEN			BIT(0)
++
++#define FGSLR			0x6c
++#define  SHDTOKGEN		BIT(0)
++
++#define FGTIMESTAMP		0x74
++#define  FRAMEINDEX_SHIFT	14
++#define  FRAMEINDEX_MASK	(0x3ffff << FRAMEINDEX_SHIFT)
++#define  LINEINDEX_MASK		0x3fff
++
++#define FGCHSTAT		0x78
++#define  SECSYNCSTAT		BIT(24)
++#define  SFIFOEMPTY		BIT(16)
++
++#define FGCHSTATCLR		0x7c
++#define  CLRSECSTAT		BIT(16)
++
++#define KHZ			1000
++
++struct dc_fg_priv {
++	struct dc_fg fg;
++	struct device *dev;
++	void __iomem *reg;
++	struct clk *clk_disp;
++};
++
++static inline struct dc_fg_priv *to_fg_priv(struct dc_fg *fg)
++{
++	return container_of(fg, struct dc_fg_priv, fg);
++}
++
++static inline u32 dc_fg_read(struct dc_fg *fg, unsigned int offset)
++{
++	struct dc_fg_priv *priv = to_fg_priv(fg);
++
++	return readl(priv->reg + offset);
++}
++
++static inline void
++dc_fg_write(struct dc_fg *fg, unsigned int offset, u32 value)
++{
++	struct dc_fg_priv *priv = to_fg_priv(fg);
++
++	writel(value, priv->reg + offset);
++}
++
++static inline void
++dc_fg_write_mask(struct dc_fg *fg, unsigned int offset, u32 mask, u32 value)
++{
++	u32 tmp;
++
++	tmp = dc_fg_read(fg, offset);
++	tmp &= ~mask;
++	dc_fg_write(fg, offset, tmp | value);
++}
++
++static void dc_fg_enable_shden(struct dc_fg *fg)
++{
++	dc_fg_write_mask(fg, FGSTCTRL, SHDEN, SHDEN);
++}
++
++void dc_fg_syncmode(struct dc_fg *fg, enum dc_fg_syncmode mode)
++{
++	dc_fg_write_mask(fg, FGSTCTRL, FGSYNCMODE_MASK, FGSYNCMODE(mode));
++}
++
++void dc_fg_cfg_videomode(struct dc_fg *fg, struct drm_display_mode *m)
++{
++	struct dc_fg_priv *priv = to_fg_priv(fg);
++	u32 hact, htotal, hsync, hsbp;
++	u32 vact, vtotal, vsync, vsbp;
++	u32 kick_row, kick_col;
++	int ret;
++
++	hact = m->crtc_hdisplay;
++	htotal = m->crtc_htotal;
++	hsync = m->crtc_hsync_end - m->crtc_hsync_start;
++	hsbp = m->crtc_htotal - m->crtc_hsync_start;
++
++	vact = m->crtc_vdisplay;
++	vtotal = m->crtc_vtotal;
++	vsync = m->crtc_vsync_end - m->crtc_vsync_start;
++	vsbp = m->crtc_vtotal - m->crtc_vsync_start;
++
++	/* video mode */
++	dc_fg_write(fg, HTCFG1, HACT(hact)   | HTOTAL(htotal));
++	dc_fg_write(fg, HTCFG2, HSYNC(hsync) | HSBP(hsbp) | HSEN);
++	dc_fg_write(fg, VTCFG1, VACT(vact)   | VTOTAL(vtotal));
++	dc_fg_write(fg, VTCFG2, VSYNC(vsync) | VSBP(vsbp) | VSEN);
++
++	kick_col = hact + 1;
++	kick_row = vact;
++
++	/* pkickconfig */
++	dc_fg_write(fg, PKICKCONFIG, COL(kick_col) | ROW(kick_row) | EN);
++
++	/* skikconfig */
++	dc_fg_write(fg, SKICKCONFIG, COL(kick_col) | ROW(kick_row) | EN);
++
++	/* primary and secondary area position configuration */
++	dc_fg_write(fg, PACFG, STARTX(0) | STARTY(0));
++	dc_fg_write(fg, SACFG, STARTX(0) | STARTY(0));
++
++	/* alpha */
++	dc_fg_write_mask(fg, FGINCTRL,      ENPRIMALPHA | ENSECALPHA, 0);
++	dc_fg_write_mask(fg, FGINCTRLPANIC, ENPRIMALPHA | ENSECALPHA, 0);
++
++	/* constant color is green(used in panic mode)  */
++	dc_fg_write(fg, FGCCR, CCGREEN(0x3ff));
++
++	ret = clk_set_rate(priv->clk_disp, m->clock * KHZ);
++	if (ret < 0)
++		dev_err(priv->dev,
++			"failed to set display clock rate: %d\n", ret);
++}
++
++void dc_fg_displaymode(struct dc_fg *fg, enum dc_fg_dm mode)
++{
++	dc_fg_write_mask(fg, FGINCTRL, FGDM_MASK, mode);
++}
++
++void dc_fg_panic_displaymode(struct dc_fg *fg, enum dc_fg_dm mode)
++{
++	dc_fg_write_mask(fg, FGINCTRLPANIC, FGDM_MASK, mode);
++}
++
++void dc_fg_enable(struct dc_fg *fg)
++{
++	dc_fg_write(fg, FGENABLE, FGEN);
++}
++
++void dc_fg_disable(struct dc_fg *fg)
++{
++	dc_fg_write(fg, FGENABLE, 0);
++}
++
++void dc_fg_shdtokgen(struct dc_fg *fg)
++{
++	dc_fg_write(fg, FGSLR, SHDTOKGEN);
++}
++
++u32 dc_fg_get_frame_index(struct dc_fg *fg)
++{
++	u32 val = dc_fg_read(fg, FGTIMESTAMP);
++
++	return (val & FRAMEINDEX_MASK) >> FRAMEINDEX_SHIFT;
++}
++
++int dc_fg_get_line_index(struct dc_fg *fg)
++{
++	u32 val = dc_fg_read(fg, FGTIMESTAMP);
++
++	return val & LINEINDEX_MASK;
++}
++
++bool dc_fg_wait_for_frame_index_moving(struct dc_fg *fg)
++{
++	unsigned long timeout = jiffies + msecs_to_jiffies(100);
++	u32 frame_index, last_frame_index;
++
++	frame_index = dc_fg_get_frame_index(fg);
++	do {
++		last_frame_index = frame_index;
++		frame_index = dc_fg_get_frame_index(fg);
++	} while (last_frame_index == frame_index &&
++		 time_before(jiffies, timeout));
++
++	return last_frame_index != frame_index;
++}
++
++bool dc_fg_secondary_requests_to_read_empty_fifo(struct dc_fg *fg)
++{
++	u32 val;
++
++	val = dc_fg_read(fg, FGCHSTAT);
++
++	return !!(val & SFIFOEMPTY);
++}
++
++void dc_fg_secondary_clear_channel_status(struct dc_fg *fg)
++{
++	dc_fg_write(fg, FGCHSTATCLR, CLRSECSTAT);
++}
++
++int dc_fg_wait_for_secondary_syncup(struct dc_fg *fg)
++{
++	struct dc_fg_priv *priv = to_fg_priv(fg);
++	u32 val;
++
++	return readl_poll_timeout(priv->reg + FGCHSTAT, val,
++				  val & SECSYNCSTAT, 5, 100000);
++}
++
++void dc_fg_enable_clock(struct dc_fg *fg)
++{
++	struct dc_fg_priv *priv = to_fg_priv(fg);
++	int ret;
++
++	ret = clk_prepare_enable(priv->clk_disp);
++	if (ret)
++		dev_err(priv->dev, "failed to enable display clock: %d\n", ret);
++}
++
++void dc_fg_disable_clock(struct dc_fg *fg)
++{
++	struct dc_fg_priv *priv = to_fg_priv(fg);
++
++	clk_disable_unprepare(priv->clk_disp);
++}
++
++enum drm_mode_status dc_fg_check_clock(struct dc_fg *fg, int clk_khz)
++{
++	struct dc_fg_priv *priv = to_fg_priv(fg);
++	unsigned long rounded_rate;
++
++	rounded_rate = clk_round_rate(priv->clk_disp, clk_khz * KHZ);
++
++	if (rounded_rate != clk_khz * KHZ)
++		return MODE_NOCLOCK;
++
++	return MODE_OK;
++}
++
++void dc_fg_init(struct dc_fg *fg)
++{
++	dc_fg_enable_shden(fg);
++	dc_fg_syncmode(fg, FG_SYNCMODE_OFF);
++}
++
++static int dc_fg_bind(struct device *dev, struct device *master, void *data)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct dc_drm_device *dc_drm = data;
++	struct dc_fg_priv *priv;
++	struct dc_de *de;
++	int id;
++
++	priv = drmm_kzalloc(&dc_drm->base, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->reg = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(priv->reg))
++		return PTR_ERR(priv->reg);
++
++	priv->clk_disp = devm_clk_get(dev, NULL);
++	if (IS_ERR(priv->clk_disp))
++		return dev_err_probe(dev, PTR_ERR(priv->clk_disp),
++				     "failed to get display clock\n");
++
++	id = of_alias_get_id(dev->of_node, "dc0-framegen");
++	if (id < 0) {
++		dev_err(dev, "failed to get alias id: %d\n", id);
++		return id;
++	}
++
++	priv->dev = dev;
++
++	de = dc_drm->de[id];
++	de->fg = &priv->fg;
++
++	return 0;
++}
++
++static const struct component_ops dc_fg_ops = {
++	.bind = dc_fg_bind,
++};
++
++static int dc_fg_probe(struct platform_device *pdev)
++{
++	int ret;
++
++	ret = component_add(&pdev->dev, &dc_fg_ops);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "failed to add component\n");
++
++	return 0;
++}
++
++static void dc_fg_remove(struct platform_device *pdev)
++{
++	component_del(&pdev->dev, &dc_fg_ops);
++}
++
++static const struct of_device_id dc_fg_dt_ids[] = {
++	{ .compatible = "fsl,imx8qxp-dc-framegen", },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, dc_fg_dt_ids);
++
++struct platform_driver dc_fg_driver = {
++	.probe = dc_fg_probe,
++	.remove_new = dc_fg_remove,
++	.driver = {
++		.name = "imx8-dc-framegen",
++		.of_match_table = dc_fg_dt_ids,
++	},
++};
+diff --git a/drivers/gpu/drm/imx/dc/dc-tc.c b/drivers/gpu/drm/imx/dc/dc-tc.c
+new file mode 100644
+index 000000000000..29f42496a409
+--- /dev/null
++++ b/drivers/gpu/drm/imx/dc/dc-tc.c
+@@ -0,0 +1,137 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright 2024 NXP
++ */
++
++#include <linux/component.h>
++#include <linux/container_of.h>
++#include <linux/io.h>
++#include <linux/mod_devicetable.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++
++#include <drm/drm_managed.h>
++
++#include "dc-drv.h"
++#include "dc-de.h"
++
++#define TCON_CTRL	0x410
++#define  CTRL_RST_VAL	0x01401408
++
++/* red: MAPBIT 29-20, green: MAPBIT 19-10, blue: MAPBIT 9-0 */
++#define MAPBIT3_0	0x418
++#define MAPBIT7_4	0x41c
++#define MAPBIT11_8	0x420
++#define MAPBIT15_12	0x424
++#define MAPBIT19_16	0x428
++#define MAPBIT23_20	0x42c
++#define MAPBIT27_24	0x430
++#define MAPBIT31_28	0x434
++#define MAPBIT34_32	0x438
++
++struct dc_tc_priv {
++	struct dc_tc tc;
++	void __iomem *reg;
++};
++
++static inline struct dc_tc_priv *to_tc_priv(struct dc_tc *tc)
++{
++	return container_of(tc, struct dc_tc_priv, tc);
++}
++
++static inline void dc_tc_write(struct dc_tc *tc, unsigned int offset, u32 value)
++{
++	struct dc_tc_priv *priv = to_tc_priv(tc);
++
++	writel(value, priv->reg + offset);
++}
++
++static void dc_tc_set_fmt(struct dc_tc *tc)
++{
++	/*
++	 * The pixels reach TCON are always in 30-bit BGR format.
++	 * The first bridge always receives pixels in 30-bit RGB format.
++	 * So, map the format to MEDIA_BUS_FMT_RGB101010_1X30.
++	 */
++	dc_tc_write(tc, MAPBIT3_0,   0x17161514);
++	dc_tc_write(tc, MAPBIT7_4,   0x1b1a1918);
++	dc_tc_write(tc, MAPBIT11_8,  0x0b0a1d1c);
++	dc_tc_write(tc, MAPBIT15_12, 0x0f0e0d0c);
++	dc_tc_write(tc, MAPBIT19_16, 0x13121110);
++	dc_tc_write(tc, MAPBIT23_20, 0x03020100);
++	dc_tc_write(tc, MAPBIT27_24, 0x07060504);
++	dc_tc_write(tc, MAPBIT31_28, 0x00000908);
++}
++
++void dc_tc_init(struct dc_tc *tc)
++{
++	/* reset TCON_CTRL to POR default so that TCON works in bypass mode */
++	dc_tc_write(tc, TCON_CTRL, CTRL_RST_VAL);
++	dc_tc_set_fmt(tc);
++}
++
++static int dc_tc_bind(struct device *dev, struct device *master, void *data)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	struct dc_drm_device *dc_drm = data;
++	struct dc_tc_priv *priv;
++	struct dc_de *de;
++	int id;
++
++	priv = drmm_kzalloc(&dc_drm->base, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->reg = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(priv->reg))
++		return PTR_ERR(priv->reg);
++
++	id = of_alias_get_id(dev->of_node, "dc0-tcon");
++	if (id < 0) {
++		dev_err(dev, "failed to get alias id: %d\n", id);
++		return id;
++	}
++
++	de = dc_drm->de[id];
++	de->tc = &priv->tc;
++	de->tc->dev = dev;
++
++	return 0;
++}
++
++static const struct component_ops dc_tc_ops = {
++	.bind = dc_tc_bind,
++};
++
++static int dc_tc_probe(struct platform_device *pdev)
++{
++	int ret;
++
++	ret = component_add(&pdev->dev, &dc_tc_ops);
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret,
++				     "failed to add component\n");
++
++	return 0;
++}
++
++static void dc_tc_remove(struct platform_device *pdev)
++{
++	component_del(&pdev->dev, &dc_tc_ops);
++}
++
++static const struct of_device_id dc_tc_dt_ids[] = {
++	{ .compatible = "fsl,imx8qxp-dc-tcon", },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, dc_tc_dt_ids);
++
++struct platform_driver dc_tc_driver = {
++	.probe = dc_tc_probe,
++	.remove_new = dc_tc_remove,
++	.driver = {
++		.name = "imx8-dc-tcon",
++		.of_match_table = dc_tc_dt_ids,
++	},
++};
+-- 
+2.34.1
 
 
