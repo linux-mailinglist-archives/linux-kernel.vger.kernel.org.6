@@ -1,104 +1,125 @@
-Return-Path: <linux-kernel+bounces-260859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5ABF93AF87
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:00:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B8C093AF8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 121CC1C232EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:00:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25B5228403B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585E015688F;
-	Wed, 24 Jul 2024 10:00:32 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56396155A4F;
-	Wed, 24 Jul 2024 10:00:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7A1152531;
+	Wed, 24 Jul 2024 10:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mObwESGX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D235B13B585;
+	Wed, 24 Jul 2024 10:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721815231; cv=none; b=hxh/Iq8Xrd6FUU5dmB/nFCpTH7k3mrOWemQjnyUYDpdH1eJ0w8epAGia5PXeVnAs3ZbORuybYRkCYshnSkUqsSOJD4exb79hc4ytDAR2F5nu8AdoNvjxxKGSdMJYvhVvuCjosH6XmR0NJPeSYEZnVSmF0rwIqbkhYbyYIgeueEU=
+	t=1721815414; cv=none; b=YP+Dd/NuZ5AG3zgCnw0mmy7AT+ZdCAP0u/f73NWqQpqOqi1Yro/C1mGULjNbrvOE4f+htaGLScMnn6wnid4S6ziFBy+pylbpcfLlAX2sXyEwZB68VIl/+og2as/U2opx4AMjUv1zIyTKATqV+LoARgTyy++6WqbNFIwFz9ie7YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721815231; c=relaxed/simple;
-	bh=NIGa9iQpUqam5IWuTrnW2Gks9anUK/UsvSSlyhNda04=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=n79pyfIsdYJYYWQkLLuKfQYLSfCx0u4YmAx2AT378km8XjV7K67OYa+zFCbmsUqDo4FGGGd7qSiWHRACPjvzJPzefvZyop35eb0ICEaywxzWTr/1SXUKtCg3Og/wsNLYpGqO0EKMcOixFA9/vkCSGkzGQtZXWdQuBfwbnN37O3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee666a0d0b707f-68939;
-	Wed, 24 Jul 2024 18:00:24 +0800 (CST)
-X-RM-TRANSID:2ee666a0d0b707f-68939
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from ubuntu.localdomain (unknown[223.108.79.96])
-	by rmsmtp-syy-appsvr03-12003 (RichMail) with SMTP id 2ee366a0d0b70c5-a1be0;
-	Wed, 24 Jul 2024 18:00:24 +0800 (CST)
-X-RM-TRANSID:2ee366a0d0b70c5-a1be0
-From: Zhu Jun <zhujun2@cmss.chinamobile.com>
-To: qmo@kernel.org
-Cc: ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhujun2@cmss.chinamobile.com
-Subject: [PATCH v3] tools/bpf:Fix the wrong format specifier
-Date: Wed, 24 Jul 2024 03:00:22 -0700
-Message-Id: <20240724100022.10850-1-zhujun2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1721815414; c=relaxed/simple;
+	bh=r3nR0REmG7kZooPJAnuqkwEZtqjXLXvOL4nx11JK9vc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=k7ASxjTENQwT/l49D+5g1TpJ/t3DG1mQa+ZEj2gFEvsfQ1kuKc/WZYrf8OBXPtc6JhhpxYbb27toZIcqAFOqPffPawRYR6Jv/vlkeAWbjplmYSyYj/I02s/0bShmVPqpJkcaVR0G99+JHMs+x2gpiMOwOexhjgseHcR4fm84Yu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mObwESGX; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721815412; x=1753351412;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=r3nR0REmG7kZooPJAnuqkwEZtqjXLXvOL4nx11JK9vc=;
+  b=mObwESGXtgpWWUEpqxgx78mWEglPkYVwH3fCgBacYBqE0ZbLsL9fknbW
+   WNfc2NSEm3Bhiz1rqpSww8Xm6DCxwl8OBSoxUnma+DWHSlYQ/KsMpYgXW
+   N9oOnlzFe4tlqszqTdYbsAWMW0MN47FCmobz3Dismbjtym0tcLasKKeb3
+   45ZuCVd0yEKH4ndIq3HICvFM7FZb9aH7NeIUsTg+wVAXsP9knfAPgmmxd
+   Y4dhjeoMENCc4fwAjjIz6piG1PjnsPCS9Ds9Ur1fiEcF9THCu8z4ta3NX
+   o8bOgOtojRAXeI61f6/7OdcsW6QrAu+us62CbnlcsCrSQCDiBbJVwTlo0
+   g==;
+X-CSE-ConnectionGUID: ALcDYnmZQFCKtD0jNMTEGQ==
+X-CSE-MsgGUID: fPX7H/ZoQiGjlVPenBnqZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11142"; a="12685353"
+X-IronPort-AV: E=Sophos;i="6.09,232,1716274800"; 
+   d="scan'208";a="12685353"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 03:03:30 -0700
+X-CSE-ConnectionGUID: IiEjLHfJSbe1p3AJwHagfg==
+X-CSE-MsgGUID: byMzT0Y5QOaj0BWYkyeRuQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,232,1716274800"; 
+   d="scan'208";a="83543849"
+Received: from iklimasz-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.170])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 03:03:27 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Ma Ke <make24@iscas.ac.cn>, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+ daniel@ffwll.ch, sam@ravnborg.org, noralf@tronnes.org
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Ma Ke
+ <make24@iscas.ac.cn>, stable@vger.kernel.org
+Subject: Re: [PATCH v3] drm/client: fix null pointer dereference in
+ drm_client_modeset_probe
+In-Reply-To: <20240724094505.1514854-1-make24@iscas.ac.cn>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240724094505.1514854-1-make24@iscas.ac.cn>
+Date: Wed, 24 Jul 2024 13:03:22 +0300
+Message-ID: <87ikwvf6ol.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain
 
-The format specifier of "unsigned int" in printf() should be "%u", not
-"%d".
+On Wed, 24 Jul 2024, Ma Ke <make24@iscas.ac.cn> wrote:
+> In drm_client_modeset_probe(), the return value of drm_mode_duplicate() is
+> assigned to modeset->mode, which will lead to a possible NULL pointer
+> dereference on failure of drm_mode_duplicate(). Add a check to avoid npd.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: cf13909aee05 ("drm/fb-helper: Move out modeset config code")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+> Changes in v3:
+> - modified patch as suggestions, returned error directly when failing to 
+> get modeset->mode.
 
-Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
----
-Changes:
-v2:modify commit info
-v3:fix compile warninf
+This is not what I suggested, and you can't just return here either.
 
- tools/bpf/bpftool/xlated_dumper.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+BR,
+Jani.
 
-diff --git a/tools/bpf/bpftool/xlated_dumper.c b/tools/bpf/bpftool/xlated_dumper.c
-index 567f56dfd9f1..d9c198e0a875 100644
---- a/tools/bpf/bpftool/xlated_dumper.c
-+++ b/tools/bpf/bpftool/xlated_dumper.c
-@@ -316,7 +316,7 @@ void dump_xlated_plain(struct dump_data *dd, void *buf, unsigned int len,
- 	unsigned int nr_skip = 0;
- 	bool double_insn = false;
- 	char func_sig[1024];
--	unsigned int i;
-+	int i;
- 
- 	record = dd->func_info;
- 	for (i = 0; i < len / sizeof(*insn); i++) {
-@@ -415,7 +415,7 @@ void dump_xlated_for_graph(struct dump_data *dd, void *buf_start, void *buf_end,
- 			}
- 		}
- 
--		printf("%d: ", insn_off);
-+		printf("%u: ", insn_off);
- 		print_bpf_insn(&cbs, cur, true);
- 
- 		if (opcodes) {
+
+> Changes in v2:
+> - added the recipient's email address, due to the prolonged absence of a 
+> response from the recipients.
+> - added Cc stable.
+> ---
+>  drivers/gpu/drm/drm_client_modeset.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
+> index 31af5cf37a09..750b8dce0f90 100644
+> --- a/drivers/gpu/drm/drm_client_modeset.c
+> +++ b/drivers/gpu/drm/drm_client_modeset.c
+> @@ -880,6 +880,9 @@ int drm_client_modeset_probe(struct drm_client_dev *client, unsigned int width,
+>  
+>  			kfree(modeset->mode);
+>  			modeset->mode = drm_mode_duplicate(dev, mode);
+> +			if (!modeset->mode)
+> +				return 0;
+> +
+>  			drm_connector_get(connector);
+>  			modeset->connectors[modeset->num_connectors++] = connector;
+>  			modeset->x = offset->x;
+
 -- 
-2.17.1
-
-
-
+Jani Nikula, Intel
 
