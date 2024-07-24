@@ -1,124 +1,258 @@
-Return-Path: <linux-kernel+bounces-260580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B86B93AB2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 04:19:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F144A93AAF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 04:13:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1587E2847B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 02:19:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51A46B231F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 02:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56AC171BB;
-	Wed, 24 Jul 2024 02:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39E4134B1;
+	Wed, 24 Jul 2024 02:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gH2zZZt/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LKFfT3Ui"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8106A1C696
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 02:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DE717571
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 02:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721787544; cv=none; b=H7jpddVJT1K8pSMPyYfPjpPGm+/OAQLKZ/uDq0GC54oR4MGHgMwg7mhgyJ2USpLFAE5RmT5hLM+/N7dZTu7G7q0q2i1dTPkPIXW3XkKaq0liaAA00ffvx3Fl4iYgwrfuLst+LH8Nxx5W/ddxGXqRKlToVYpqGeInBIbjMJ+PWMg=
+	t=1721787179; cv=none; b=AaI2oRlRY0aV3WMpIMskH8hQYKuQRtYaweFGxc9ytfQeabydGxJd8Gvr5zmSH0QUUesQMcsr7DiNqXrcGtmD8wnT9Ea6g3XMXaI3cG2MnaGL5LTJJ6bjVkYqt16uJz4OtH/QU0Z3nUFdFqXmrOudVd9fglrUx9nbhScRZmypoPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721787544; c=relaxed/simple;
-	bh=HqQhCLi2BNPd/ZrfrrIBuLEUl8XjR1USS5+f0zaa3a8=;
+	s=arc-20240116; t=1721787179; c=relaxed/simple;
+	bh=pvLH4gHm4FBYDuFbbBP4fMwtKLA49f5CaaWi0YuUzAg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wsnl4La3bVTJKhvbIGq5hCT/DHKfrYGJtx7ybGgoqAGXSBVLtYfxJUsNW3LZXJ3JNDAnlzu6JE1kGbNMqyNCb+RaGzsw957PXWoHzr57ASM/HzahAC7NE+kQqz3eUsK0EBYbc0/ZPRc+2TivQK5QeOndLAuTn5EPM1vA2spFVVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gH2zZZt/; arc=none smtp.client-ip=170.10.133.124
+	 To:Cc:Content-Type; b=bDRAGcaj1YQkdF7fZtYUqE07ORhe7w5AaT4vkG8/iXmFNJ4xr2uW/HNy3Cha95ynr3WvF3dLD11JWvzOCGXnWDoq2PwSgJKxS4kFfxj7ZZ/PnVwcQan1EBGP4QdJb3pxo7VA+CWXuGuSXDsb7CSzNr63/EKxN6aYAHwkPnRy6zM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LKFfT3Ui; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721787541;
+	s=mimecast20190719; t=1721787176;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=h/CDtEBkZLf1xoU0C7ksliBZOQvRtEzxEPf2Wwd79pU=;
-	b=gH2zZZt/AqRf6NiGltFkwQDAzy3vwBYw25+43G/tW4bh5hTWyeCaWq9JkcWKiFWXnh71/m
-	w/CCkBJ2qd2iVRo+hU4fGCtBdE3nVEXJ/zUxuQ/ZN4CuhAW300cZR8E2kZujiwsBs/Cjwr
-	mptN6IspVjltFMk/cWG+mm0ZlG80kKw=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=ehtuLszjv4cOJgMAfliSF/UD4RjIXwvAD86bpdUkiuk=;
+	b=LKFfT3Ui9NieAs3ne/3Dvj8G1lGkZLt/pqt0fnKPIBHoaj+oqwl/3Mo7QKXVg4Lq9uJ66o
+	oyDbf1o2sc8cLVWlph0agYAhShkffq9R+gKbAGmBD4rruSkasii5SVZDGJxeJEIrDGQYwC
+	PoXqE7BQN0yQXg2hh8B9nJg37CtgPjg=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-675-XvbJ1R-mOzC8ScJe7yN_2w-1; Tue, 23 Jul 2024 22:12:42 -0400
-X-MC-Unique: XvbJ1R-mOzC8ScJe7yN_2w-1
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5a534faa028so2810579a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 19:12:41 -0700 (PDT)
+ us-mta-411-pyC1iRJIOqmvTZOn8UoFVg-1; Tue, 23 Jul 2024 22:12:53 -0400
+X-MC-Unique: pyC1iRJIOqmvTZOn8UoFVg-1
+Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2ef2d0509a2so28381611fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 19:12:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721787161; x=1722391961;
+        d=1e100.net; s=20230601; t=1721787171; x=1722391971;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=h/CDtEBkZLf1xoU0C7ksliBZOQvRtEzxEPf2Wwd79pU=;
-        b=PAqAKKWWmcR5n0lNjQbfj5ea9By4/3X4d/lgMQNjuXpzt5pGYelyXf23PSc2vLamOz
-         I2u+W36UbTzKf6xfi2UBtOduZEMxtIq/Ws09bWwdK+XouToiA04cNwLDQhNOl3sGZT4m
-         7wcTfq31i3trUnHR8s7VD+OWYheKNw/3fp81j4cZfjVC+2BVT1zEPhJxm3cGd2NdrOuk
-         8Go6c/zjpSK0DBVv4wupAsMKRIDrGKzU9xgA9Q+7xoQQftz8j/83GOMH8+sxkY+KOAaQ
-         PAU7Te5ul1aQ9Tefrs/oKfFHCQYOxFmnZ9Y1sNjkiQJXn2DRAhJ/0PjH+3F23y6QoQT/
-         Ymtg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMlqoPNlZ07IohiTQWjBlIuHNU80GqxmTz7i9kHvnPDaQPuB8Pk3kDgYH7w0hT21wqLC4bu+tDzU19u5llveFhYAeljhGddWQx41P6
-X-Gm-Message-State: AOJu0YwKEdilRRDk6b24kucDOXOfFwlXa2fl0cuuiSdWsUPIAkH00yBw
-	pF840j+fnbw2SRw2qrcO9NnK8lV8eXcdERYQnU139CQLtMbT0Lei8zATVZ90UhEXA4ZwNQv+hgr
-	hf3B/isiiNH9R8YQZV+FXr7UvtuUx6en8JO2fRwxsejGJEWntmfRpIfq2LGYJWxSicsOQYXEzmB
-	kQcFsBsgW1UNnyWfyCrlrUnzbhqC8dBlHEjMql
-X-Received: by 2002:a05:6402:234c:b0:5a2:abcb:c4cf with SMTP id 4fb4d7f45d1cf-5aaece39c30mr562174a12.22.1721787160870;
-        Tue, 23 Jul 2024 19:12:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHgP3SMHABHLAK1ShSJyuqULWrGb17ytiwZhc3mKrBjTl8ITd2JHGrsgEsjrJDBGLVMXv7Gi/wR2c5DVGWvAaQ=
-X-Received: by 2002:a05:6402:234c:b0:5a2:abcb:c4cf with SMTP id
- 4fb4d7f45d1cf-5aaece39c30mr562165a12.22.1721787160493; Tue, 23 Jul 2024
- 19:12:40 -0700 (PDT)
+        bh=ehtuLszjv4cOJgMAfliSF/UD4RjIXwvAD86bpdUkiuk=;
+        b=U1XgciIP+q82jxcXt/C0DypNqj1u1agSi9N4cR7ytkU0NbMN4c0SLL9U24xk15mEA8
+         GEKtPBVNuKV1t0T2JwRqeQT9xBiCRKneUHnppjJOe5OBkfw/aD5LYIrAHruoNF71Di+P
+         OfQtGDA3tYvLsjgFMk83Yj6j/G4tMdhX9G3RfwDjENdbBne2acmv53Xf/U9GcC+Imqz6
+         leD2Wk1VYSEvQJSmJjVSmuIGnninthdNLY8aP4+Oa5SjxP6uBiSfFp7BErczn/+kWRnN
+         IAAzJec6ZP1dsh6NNqEXEaMWVHWSkAKNhjCFwjBSsKI20nUyxveLJuXo5UOSU7tbOuLV
+         KbZA==
+X-Forwarded-Encrypted: i=1; AJvYcCU42U4HhchwmGFtNe53JZHI1duMFhtlePkJ7lpMzwf8IYu9xCyiUv5TQC+S5lxCiopeCc/DAtkfB8eksbl0p/s2vJyCiXTem4xzvhHg
+X-Gm-Message-State: AOJu0YzqbJlGIDe+MA0NblIEOLI3P7IEd7l0b1kmkf/95OQMC++4O5EN
+	d5EmYUntT2BL1N9ZOszsjn+AZifphRi55+CrYzvybQsZo0i/9dMxOxwO7pz2eeV6gTC+cluw4KQ
+	CG8LRP/kZ57z21ZGvazlimn/f/dTajfFRLfD5+zgRBwo6APBlK/+F6JV6sPNxCT5Ov90xDQX4F7
+	LkA0XOdXn5yk+ma9/uESIIDqjtrHUszP3wEk5T
+X-Received: by 2002:a2e:2e09:0:b0:2ef:2b45:b71d with SMTP id 38308e7fff4ca-2f02b741b1cmr9587751fa.24.1721787171643;
+        Tue, 23 Jul 2024 19:12:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH2haBDetr3B12GRUddIecLnBaa3DkGcUp0iNR3ZPqOWC2HtbRoOF28NQwySlFGXAweIO8RddD9ZSszJMao+28=
+X-Received: by 2002:a2e:2e09:0:b0:2ef:2b45:b71d with SMTP id
+ 38308e7fff4ca-2f02b741b1cmr9587621fa.24.1721787171177; Tue, 23 Jul 2024
+ 19:12:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240723054047.1059994-1-lulu@redhat.com> <66239ba4-d837-48da-aaba-528c6ab05ce9@lunn.ch>
-In-Reply-To: <66239ba4-d837-48da-aaba-528c6ab05ce9@lunn.ch>
+References: <20240723054047.1059994-1-lulu@redhat.com> <20240723054047.1059994-2-lulu@redhat.com>
+ <8ff8f8d8-1061-42a2-b238-82f685639115@lunn.ch>
+In-Reply-To: <8ff8f8d8-1061-42a2-b238-82f685639115@lunn.ch>
 From: Cindy Lu <lulu@redhat.com>
-Date: Wed, 24 Jul 2024 10:12:03 +0800
-Message-ID: <CACLfguVQT2bpzA6zTyAV4pDRdFttCMXCZc179HqxvjCVRPNnkQ@mail.gmail.com>
-Subject: Re: [PATH v5 0/3] vdpa: support set mac address from vdpa tool
+Date: Wed, 24 Jul 2024 10:12:14 +0800
+Message-ID: <CACLfguUf-HtNqL9ykGGY_XCQadUS7fJR+kn3q7S+cH7aUGmqYg@mail.gmail.com>
+Subject: Re: [PATH v5 1/3] vdpa: support set mac address from vdpa tool
 To: Andrew Lunn <andrew@lunn.ch>
 Cc: dtatulea@nvidia.com, mst@redhat.com, jasowang@redhat.com, parav@nvidia.com, 
 	sgarzare@redhat.com, netdev@vger.kernel.org, 
 	virtualization@lists.linux-foundation.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 24 Jul 2024 at 02:45, Andrew Lunn <andrew@lunn.ch> wrote:
+On Wed, 24 Jul 2024 at 02:48, Andrew Lunn <andrew@lunn.ch> wrote:
 >
-> On Tue, Jul 23, 2024 at 01:39:19PM +0800, Cindy Lu wrote:
-> > Add support for setting the MAC address using the VDPA tool.
-> > This feature will allow setting the MAC address using the VDPA tool.
-> > For example, in vdpa_sim_net, the implementation sets the MAC address
-> > to the config space. However, for other drivers, they can implement their
-> > own function, not limited to the config space.
+> On Tue, Jul 23, 2024 at 01:39:20PM +0800, Cindy Lu wrote:
+> > Add new UAPI to support the mac address from vdpa tool
+> > Function vdpa_nl_cmd_dev_attr_set_doit() will get the
+> > new MAC address from the vdpa tool and then set it to the device.
 > >
-> > Changelog v2
-> >  - Changed the function name to prevent misunderstanding
-> >  - Added check for blk device
-> >  - Addressed the comments
-> > Changelog v3
-> >  - Split the function of the net device from vdpa_nl_cmd_dev_attr_set_doit
-> >  - Add a lock for the network device's dev_set_attr operation
-> >  - Address the comments
-> > Changelog v4
-> >  - Address the comments
-> >  - Add a lock for the vdap_sim?_net device's dev_set_attr operation
-> > Changelog v5
-> >  - Address the comments
+> > The usage is: vdpa dev set name vdpa_name mac **:**:**:**:**:**
+> >
+> > Here is example:
+> > root@L1# vdpa -jp dev config show vdpa0
+> > {
+> >     "config": {
+> >         "vdpa0": {
+> >             "mac": "82:4d:e9:5d:d7:e6",
+> >             "link ": "up",
+> >             "link_announce ": false,
+> >             "mtu": 1500
+> >         }
+> >     }
+> > }
+> >
+> > root@L1# vdpa dev set name vdpa0 mac 00:11:22:33:44:55
+> >
+> > root@L1# vdpa -jp dev config show vdpa0
+> > {
+> >     "config": {
+> >         "vdpa0": {
+> >             "mac": "00:11:22:33:44:55",
+> >             "link ": "up",
+> >             "link_announce ": false,
+> >             "mtu": 1500
+> >         }
+> >     }
+> > }
+> >
+> > Signed-off-by: Cindy Lu <lulu@redhat.com>
+> > ---
+> >  drivers/vdpa/vdpa.c       | 84 +++++++++++++++++++++++++++++++++++++++
+> >  include/linux/vdpa.h      |  9 +++++
+> >  include/uapi/linux/vdpa.h |  1 +
+> >  3 files changed, 94 insertions(+)
+> >
+> > diff --git a/drivers/vdpa/vdpa.c b/drivers/vdpa/vdpa.c
+> > index 8d391947eb8d..07d61ee62839 100644
+> > --- a/drivers/vdpa/vdpa.c
+> > +++ b/drivers/vdpa/vdpa.c
+> > @@ -1361,6 +1361,85 @@ static int vdpa_nl_cmd_dev_config_get_doit(struct sk_buff *skb, struct genl_info
+> >       return err;
+> >  }
+> >
+> > +static int vdpa_dev_net_device_attr_set(struct vdpa_device *vdev,
+> > +                                     struct genl_info *info)
+> > +{
+> > +     struct vdpa_dev_set_config set_config = {};
+> > +     const u8 *macaddr;
+> > +     struct vdpa_mgmt_dev *mdev = vdev->mdev;
+> > +     struct nlattr **nl_attrs = info->attrs;
+> > +     int err = -EINVAL;
+> > +
+> > +     if (!vdev->mdev)
+> > +             return -EINVAL;
+> > +
+> > +     down_write(&vdev->cf_lock);
+> > +     if ((mdev->supported_features & BIT_ULL(VIRTIO_NET_F_MAC)) &&
+> > +         nl_attrs[VDPA_ATTR_DEV_NET_CFG_MACADDR]) {
+> > +             set_config.mask |= BIT_ULL(VDPA_ATTR_DEV_NET_CFG_MACADDR);
+> > +             macaddr = nla_data(nl_attrs[VDPA_ATTR_DEV_NET_CFG_MACADDR]);
+> > +
+> > +             if (is_valid_ether_addr(macaddr)) {
+> > +                     memcpy(set_config.net.mac, macaddr, ETH_ALEN);
+> > +                     if (mdev->ops->dev_set_attr) {
+> > +                             err = mdev->ops->dev_set_attr(mdev, vdev,
+> > +                                                           &set_config);
+> > +                     } else {
+> > +                             NL_SET_ERR_MSG_FMT_MOD(info->extack,
+> > +                                                    "device not supported");
+> > +                     }
+> > +             } else {
+> > +                     NL_SET_ERR_MSG_FMT_MOD(info->extack,
+> > +                                            "Invalid MAC address");
+> > +             }
+> > +     }
+> > +     up_write(&vdev->cf_lock);
+> > +     return err;
+> > +}
+> > +static int vdpa_nl_cmd_dev_attr_set_doit(struct sk_buff *skb,
+> > +                                      struct genl_info *info)
+> > +{
+> > +     const char *name;
+> > +     int err = 0;
+> > +     struct device *dev;
+> > +     struct vdpa_device *vdev;
+> > +     u64 classes;
+> > +
+> > +     if (!info->attrs[VDPA_ATTR_DEV_NAME])
+> > +             return -EINVAL;
+> > +
+> > +     name = nla_data(info->attrs[VDPA_ATTR_DEV_NAME]);
+> > +
+> > +     down_write(&vdpa_dev_lock);
+> > +     dev = bus_find_device(&vdpa_bus, NULL, name, vdpa_name_match);
+> > +     if (!dev) {
+> > +             NL_SET_ERR_MSG_MOD(info->extack, "device not found");
+> > +             err = -ENODEV;
+> > +             goto dev_err;
+> > +     }
+> > +     vdev = container_of(dev, struct vdpa_device, dev);
+> > +     if (!vdev->mdev) {
+> > +             NL_SET_ERR_MSG_MOD(
+> > +                     info->extack,
+> > +                     "Fail to find the specified management device");
+> > +             err = -EINVAL;
+> > +             goto mdev_err;
+> > +     }
+> > +     classes = vdpa_mgmtdev_get_classes(vdev->mdev, NULL);
+> > +     if (classes & BIT_ULL(VIRTIO_ID_NET)) {
+> > +             err = vdpa_dev_net_device_attr_set(vdev, info);
+> > +     } else {
+> > +             NL_SET_ERR_MSG_FMT_MOD(info->extack, "%s device not supported",
+> > +                                    name);
+> > +     }
+> > +
+> > +mdev_err:
+> > +     put_device(dev);
+> > +dev_err:
+> > +     up_write(&vdpa_dev_lock);
+> > +     return err;
+> > +}
+> > +
+> >  static int vdpa_dev_config_dump(struct device *dev, void *data)
+> >  {
+> >       struct vdpa_device *vdev = container_of(dev, struct vdpa_device, dev);
+> > @@ -1497,6 +1576,11 @@ static const struct genl_ops vdpa_nl_ops[] = {
+> >               .doit = vdpa_nl_cmd_dev_stats_get_doit,
+> >               .flags = GENL_ADMIN_PERM,
+> >       },
+> > +     {
+> > +             .cmd = VDPA_CMD_DEV_ATTR_SET,
+> > +             .doit = vdpa_nl_cmd_dev_attr_set_doit,
+> > +             .flags = GENL_ADMIN_PERM,
+> > +     },
+> >  };
+> >
+> >  static struct genl_family vdpa_nl_family __ro_after_init = {
+> > diff --git a/include/linux/vdpa.h b/include/linux/vdpa.h
+> > index 7977ca03ac7a..3511156c10db 100644
+> > --- a/include/linux/vdpa.h
+> > +++ b/include/linux/vdpa.h
+> > @@ -582,11 +582,20 @@ void vdpa_set_status(struct vdpa_device *vdev, u8 status);
+> >   *        @dev: vdpa device to remove
+> >   *        Driver need to remove the specified device by calling
+> >   *        _vdpa_unregister_device().
+> > +  * @dev_set_attr: change a vdpa device's attr after it was create
+> > + *        @mdev: parent device to use for device
 >
-> This history is to help reviewers of previous versions know if there
-> comments have been addressed. Just saying 'Address the comments' is
-> not useful. Please give a one line summary of each of the comment
-> which has been addressed, maybe including how it was addressed.
+> The indentation looks a bit odd here.
 >
->       Andrew
+>     Andrew
 >
-will change this
-Thanks
+sure, Will fix this
+thanks
 cindy
+> ---
+> pw-bot: cr
+>
 
 
