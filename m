@@ -1,156 +1,107 @@
-Return-Path: <linux-kernel+bounces-261053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9A0A93B235
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:03:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 428C793B31B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16D521C2206E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:03:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00293281FD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F002A158D96;
-	Wed, 24 Jul 2024 14:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BT+esyDk"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A9815ECEF;
+	Wed, 24 Jul 2024 14:48:43 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F8C157A58
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7377415ADB1;
+	Wed, 24 Jul 2024 14:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721829782; cv=none; b=qm4mNoUkJzrIryTKem/LO7eiiAsaiVSAc0dm3e8LaH4MKXbGilOlAQ6O2CIis0l47/5Hvqbab9MIfgG8hi74FOLFD7W2IiykllipR/K6wFvRKPXjn7PsjPMM97TP0QR1GllnEBkjLanVekC4812Z2uDSuhAF1WvbDGBtA6A8NW8=
+	t=1721832523; cv=none; b=pI2EvqdbYeddi/laMUewOjLJa7oSOJvNusmmAGo4gn+eS13esAkxuPxkl7D9p1SdG5VhUSu3XtypqAt7WDbeIeFESUpSaQ+F8ysy3iZcXVLQ6vnsjz2AWgjI8XtONXyL9kzNlW9aPrKgLlGn/sGDRIbi79erh8ynCD2+Mi+HUdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721829782; c=relaxed/simple;
-	bh=TIm99oYWKHX/VKRM4PNSZyECrwI2jQiRJ3uFiKDKdS4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gKjq4vZZLDYKyxeMZVqhJ4CPGbcDxxAHN7g5uerNzydMPTtSQvtd3jX9ZQdHM+bvBJ9F3RfFTUrsklbmZ/lLXy9PyEdVRIDkDQytpxbv/5gPzT/tTBaJj5lyqHYkZDiyFpLKMqCKuhGQJ49Ums9nMaMa19QlZFdZNRRuDL695yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BT+esyDk; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721829778;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9TCLNx0WZcTN2tXdFP0YiPVkgtpvc8uO6NeYuUaJhpQ=;
-	b=BT+esyDkO2LspoV5FDaSYjksT3ExecpIRXxMNZIsBhhbqySUXFh7+2DIrVo/626zZT1cXu
-	1ktfe1GA8qyTvzMzBIdYeJbX645aEWR82ElXiTUx2TRLJkGkekihGz3U1YPPvATNkZmB0k
-	aAIYxYYQ6WWMB7SP8in0XZaO9GP/CVw=
-From: Luis Henriques <luis.henriques@linux.dev>
-To: Jan Kara <jack@suse.cz>
-Cc: Theodore Ts'o <tytso@mit.edu>,  Andreas Dilger <adilger@dilger.ca>,
-  Harshad Shirwadkar <harshadshirwadkar@gmail.com>,
-  linux-ext4@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] ext4: fix incorrect tid assumption in
- ext4_fc_mark_ineligible()
-In-Reply-To: <20240724101504.e2t4pvgw6td7rrmm@quack3> (Jan Kara's message of
-	"Wed, 24 Jul 2024 12:15:04 +0200")
-References: <20240723154402.21125-1-luis.henriques@linux.dev>
-	<20240723154402.21125-5-luis.henriques@linux.dev>
-	<20240724101504.e2t4pvgw6td7rrmm@quack3>
-Date: Wed, 24 Jul 2024 15:02:49 +0100
-Message-ID: <87ed7ikhva.fsf@linux.dev>
+	s=arc-20240116; t=1721832523; c=relaxed/simple;
+	bh=T+ulhWIm7OxdPfrllI5IXV7d4dNrirUImH8j6eguePc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bITDCMIScibV6YiCy2uTtdDGSPssXD0Q464rWnSz1K84NG3nDA2FZLPYmTIh8Idit8oFjOK98ODCIhqWLvKiZs7H7rBxtd1eFc2NUin6mye4kfoFYSiQspra1dQICLzZPQvylVoLdMDjD2dOBirzHGs3/Mtc1gZgarM27xHmbQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id 4C731809A6;
+	Wed, 24 Jul 2024 13:30:34 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf04.hostedemail.com (Postfix) with ESMTPA id BB66C20033;
+	Wed, 24 Jul 2024 13:30:30 +0000 (UTC)
+Message-ID: <7a1be8c1f49fc6356a0a79591af3c3de8d4675ec.camel@perches.com>
+Subject: Re: [PATCH] scripts: add macro_checker script to check unused
+ parameters in macros
+From: Joe Perches <joe@perches.com>
+To: Julian Sun <sunjunchao2870@gmail.com>, linux-wireless@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc: jack@suse.cz, brauner@kernel.org, viro@zeniv.linux.org.uk, 
+ masahiroy@kernel.org, akpm@linux-foundation.org, n.schier@avm.de,
+ ojeda@kernel.org,  djwong@kernel.org, kvalo@kernel.org
+Date: Wed, 24 Jul 2024 06:30:29 -0700
+In-Reply-To: <20240723091154.52458-1-sunjunchao2870@gmail.com>
+References: <20240723091154.52458-1-sunjunchao2870@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Migadu-Flow: FLOW_OUT
+X-Rspamd-Queue-Id: BB66C20033
+X-Rspamd-Server: rspamout06
+X-Stat-Signature: dygo7hh9suumde5wq6rx4q5om1rufokh
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1/fvNBWSgMGUWhLnXnfZzVKwnFzTAH8G7s=
+X-HE-Tag: 1721827830-563549
+X-HE-Meta: U2FsdGVkX195GkyrA4sk36qOW5p+w2HDp4R4rLq+fgSm/KoyU+MGiJ7hUrzOpvOGY3lLi99STFrXjT7Yh9jfGBlrXw/v8yXiSxhuxfxxweywk3d/wtnp8b1dZklK1941vVH1OtYE1G0NxZUvGeWeLfTiReZR+E/n5I5hxpZ00gefJU74Fl+xN0GInipTgceXpQ7XbEPfGjtrEuEQVuvB1xbJTWO16cEB6Lx3LgSJpUgS5bF4AQGxJCQkch22PNVstu3KNOicTAKE0IL/XLcSCLlwfGuwsuRZslwjV6WzXqkitig4Gm3PYgeJ10tXMd2uqCdXJSqMWADC0NRdZsaHAqiBa9Eml8E30jaLqNmXtuMhaFpGmiLaSZKK/Lj1TR/zGbGQ+4Jk0kndbpsG3u+ILxXye3qlSbaOsQm4rowdxG8=
 
-On Wed, Jul 24 2024, Jan Kara wrote:
+On Tue, 2024-07-23 at 05:11 -0400, Julian Sun wrote:
+> Hi,
+>=20
+> Recently, I saw a patch[1] on the ext4 mailing list regarding
+> the correction of a macro definition error. Jan mentioned
+> that "The bug in the macro is a really nasty trap...".
+> Because existing compilers are unable to detect
+> unused parameters in macro definitions. This inspired me
+> to write a script to check for unused parameters in
+> macro definitions and to run it.
+>=20
 
-> On Tue 23-07-24 16:44:02, Luis Henriques (SUSE) wrote:
->> Function jbd2_journal_shrink_checkpoint_list() assumes that '0' is not a
->> valid value for transaction IDs, which is incorrect.
->>=20
->> Furthermore, the sbi->s_fc_ineligible_tid handling also makes the same
->> assumption by being initialised to '0'.  Fortunately, the sb flag
->> EXT4_MF_FC_INELIGIBLE can be used to check whether sbi->s_fc_ineligible_=
-tid
->> has been previously set instead of comparing it with '0'.
->>=20
->> Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
->
-> Just one style nit below, otherwise looks good. Feel free to add:
->
-> Reviewed-by: Jan Kara <jack@suse.cz>
->
-> BTW, the ineligibility handling looks flaky to me, in particular the cases
-> where we call ext4_fc_mark_ineligible() with NULL handle seem racy to me =
-as
-> fastcommit can happen *before* we mark the filesystem as ineligible.  But
-> that's not really related to your changes, they just made me look at that
-> code in detail and I couldn't resist complaining :)
+checkpatch has a similar test:
 
-Heh, fair enough.  Regarding this race, I may try to look into it but I'll
-need to dig a bit more.  And yeah it's probably better to separate that
-from this patch.
+https://lkml.kernel.org/r/20240507032757.146386-3-21cnbao@gmail.com
 
->
->> ---
->>  fs/ext4/fast_commit.c | 15 +++++++++++----
->>  1 file changed, 11 insertions(+), 4 deletions(-)
->>=20
->> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
->> index 3926a05eceee..3e0793cfea38 100644
->> --- a/fs/ext4/fast_commit.c
->> +++ b/fs/ext4/fast_commit.c
->> @@ -339,22 +339,29 @@ void ext4_fc_mark_ineligible(struct super_block *s=
-b, int reason, handle_t *handl
->>  {
->>  	struct ext4_sb_info *sbi =3D EXT4_SB(sb);
->>  	tid_t tid;
->> +	bool has_transaction =3D true;
->> +	bool is_ineligible;
->>=20=20
->>  	if (ext4_fc_disabled(sb))
->>  		return;
->>=20=20
->> -	ext4_set_mount_flag(sb, EXT4_MF_FC_INELIGIBLE);
->>  	if (handle && !IS_ERR(handle))
->>  		tid =3D handle->h_transaction->t_tid;
->>  	else {
->>  		read_lock(&sbi->s_journal->j_state_lock);
->> -		tid =3D sbi->s_journal->j_running_transaction ?
->> -				sbi->s_journal->j_running_transaction->t_tid : 0;
->> +		if (sbi->s_journal->j_running_transaction)
->> +			tid =3D sbi->s_journal->j_running_transaction->t_tid;
->> +		else
->> +			has_transaction =3D false;
->>  		read_unlock(&sbi->s_journal->j_state_lock);
->>  	}
->>  	spin_lock(&sbi->s_fc_lock);
->> -	if (tid_gt(tid, sbi->s_fc_ineligible_tid))
->> +	is_ineligible =3D ext4_test_mount_flag(sb, EXT4_MF_FC_INELIGIBLE);
->> +	if (has_transaction &&
->> +	    ((!is_ineligible) ||
-> 	     ^^ these extra braces look strange
->
+$ git log --format=3Demail -1 b1be5844c1a0124a49a30a20a189d0a53aa10578
+From b1be5844c1a0124a49a30a20a189d0a53aa10578 Mon Sep 17 00:00:00 2001
+From: Xining Xu <mac.xxn@outlook.com>
+Date: Tue, 7 May 2024 15:27:57 +1200
+Subject: [PATCH] scripts: checkpatch: check unused parameters for
+ function-like macro
 
-They do, indeed.  I think my initial version had an explicit comparison
-with 'false'.  v2 will have those removed.  And once again, thanks for
-your review, Jan!
+If function-like macros do not utilize a parameter, it might result in a
+build warning.  In our coding style guidelines, we advocate for utilizing
+static inline functions to replace such macros.  This patch verifies
+compliance with the new rule.
 
-Cheers,
---=20
-Lu=C3=ADs
+For a macro such as the one below,
 
+ #define test(a) do { } while (0)
 
->> +	     (is_ineligible && tid_gt(tid, sbi->s_fc_ineligible_tid))))
->>  		sbi->s_fc_ineligible_tid =3D tid;
->> +	ext4_set_mount_flag(sb, EXT4_MF_FC_INELIGIBLE);
->
-> 								Honza
-> --=20
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+The test result is as follows.
+
+ WARNING: Argument 'a' is not used in function-like macro
+ #21: FILE: mm/init-mm.c:20:
+ +#define test(a) do { } while (0)
+
+ total: 0 errors, 1 warnings, 8 lines checked
+
+Link: https://lkml.kernel.org/r/20240507032757.146386-3-21cnbao@gmail.com
 
 
