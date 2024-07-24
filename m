@@ -1,56 +1,82 @@
-Return-Path: <linux-kernel+bounces-261323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 874F393B5C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:20:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D340593B5CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:23:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B88E41C23980
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:19:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0233E1F24C4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F2B15F30D;
-	Wed, 24 Jul 2024 17:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131D715EFC6;
+	Wed, 24 Jul 2024 17:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQjfP6mb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q/SNlbnY"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6496415B0FF
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 17:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F83E1BF38
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 17:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721841593; cv=none; b=FuNMMc2GqVsjQS+0zl2Agm/9FFplLNrDD/M3DywsoI3jgzN9I2HbZQanMMS+4tQxqiguZtlEqSM78uAGCR+RN2PuhoFbvmJCOP3qcg/BlR/SZROMRASU6SIdnsjJJc2kkSJyPI0Y8ol0ylPX5w1waSvmRcpsIz7UdGivUzcYN30=
+	t=1721841780; cv=none; b=p5tQ918Jhlf0gPZvvvCbF2s6W4+KPrw0YV6DQ33qD2xTCrH9GBpsHTBT4Ok5acgZ66BDUis2EIfu+R8dV8DI3k/UODa7Ud2RIRLmM6IuSClWXXH2zLuWWB3Nf/MnBPmyo4m54iVGwCgerXniVqSLij/C+cB/w1xUVRJVBGoFHcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721841593; c=relaxed/simple;
-	bh=WxLcduIdMRGzQvOx8dGdBDLVrYTYWtS+0hJqjc5gSUo=;
+	s=arc-20240116; t=1721841780; c=relaxed/simple;
+	bh=ggnTWcK3pjB7kJizmljAvRwIt0ed0NYaiRHP2Yv3Am4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dZolym/mqf5iV0DAMo385jhChGZ7nOaGtRxTHVzteIVxuQagkzCBrPbRxpO2SkSiCENlWGnDw0UWHlfWVMuxmngKVmISSMqPuN1dUc/zNpIfDuyxxZ6NqkHZzR28qqjQx7SUVt6rszX9YhQhTRs3PQzfTz/R5KmF5Mc5+RBLoSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQjfP6mb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 829F8C4AF09;
-	Wed, 24 Jul 2024 17:19:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721841593;
-	bh=WxLcduIdMRGzQvOx8dGdBDLVrYTYWtS+0hJqjc5gSUo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BQjfP6mbBdS1UGDSl4G/fFhUlpn9j7SAPFHdmPZCQYljfBVy7jM1WzuDAHD0lmSla
-	 Ezad5o9AkBanlddlYhQ/6x5dVIpck4WSxtp9Es0QNuk4It52ASO5Md5GUMQrVgAP8J
-	 VE3wFJgd5m3xVtRj9d8E4YDbGy6DmGQGeguGJRTIENl9K0G0bP1ggGiXqS9358CNH5
-	 oTr0CLaPWaAopOJP7a7lnokzLkb37igvHb+KF1kYwSrAqC267vlhTGkNQ+vNCtdUKK
-	 6dzoZuqhJMNqjUlpQiJSaSFMHJMiJqFGvxyxxDRkP+UsA8HqOfWNjZ2HALhVz+FN4i
-	 ZkCC14pa9FPRw==
-Date: Wed, 24 Jul 2024 22:49:44 +0530
-From: Neeraj Upadhyay <Neeraj.Upadhyay@kernel.org>
-To: riel@surriel.com
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com, neeraj.upadhyay@kernel.org, mingo@kernel.org,
-	rostedt@goodmis.org, Leonardo Bras <leobras@redhat.com>
-Subject: Re: [PATCH] smp: print only local CPU info when sched_clock goes
- backward
-Message-ID: <20240724171944.GA811274@neeraj.linux>
-References: <20240715134941.7ac59eb9@imladris.surriel.com>
- <88d281fe-d101-47d9-b70e-bb6a8959f5ff@paulmck-laptop>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PYCzhhp4P4btpvouUiEzSlvkDVr4iTBljdGcvFQbJ6U0RqTFbADi3mOJowToOZ+nxgZVZrA0A/yA9dgzWwmpoVhGdnSc2n6fnLbM3GUdbnpo5Xy5aQu8XYYQKse99QWGbFW+tg0hMqD0xRoPTPqHOhcnFXkYVEjYHwjwkPfqGec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q/SNlbnY; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52efc60a6e6so6586436e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 10:22:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721841777; x=1722446577; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+AnGIHLZqTHOkv8jJV9QlhymBM4MVLY0RrtuPzdfXxw=;
+        b=q/SNlbnYk/lOfA2NMTuyT3mzOu23gxVMnd0+FHU9nQMcSook8MziNp7jJfomRQoTyU
+         tGTujwMQAhzTKMttVc9OcTDhsxS/Cuq1aF6Bqb+5Ig7S9oLnAHPpKLSedAoCBUjxRWRk
+         96Jj5sikbb7IkwT3FQaePXiYwZARKOviMd0IybGwpAzkspK8cXEBaXZPr6C3ezIVawa5
+         8wAGRfA24+9MSfgXFW0CXQj1A9M6YaAfrj5Oa4um+s9mtnnr3h2a9BzCt1lIt5WZXjia
+         kxBicud/1zXJ2GjXrLkJFPH8stp2wu8SQtte0ml+/09HrFU8beK+t0vOiaZcUHtFYcGK
+         nlBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721841777; x=1722446577;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+AnGIHLZqTHOkv8jJV9QlhymBM4MVLY0RrtuPzdfXxw=;
+        b=lshmR5aqBMW3y/e1DA7DwUpPlO9aRhcC+/IYZDfuV0feI1zbZ3d7VvrHskodFZCNvY
+         8uPsDBnEf5VHl7nraQa1SNIiFAL6QFQHxlCz8blp4EL1lnySdWgVLk7IO7t1NReQkcbh
+         H/73SZUSk2+yxOFKdB+Z5LVAigMMId0cm5w2JfKavc2BMY7kvjwKrc3GbqYmp1zcEkXQ
+         AnbQ/2IQjP1onW7hmQY4koY3Aj1XyNjrVlk4JKGObsKfwKkcVemy9lF6HWNQyAM84x1x
+         Sn+xZLWL3F3gyEacoCRuEZi9yAjvv+vDR0BE3ctcWAGTOKtH4s3BgjYbYaVgwcc6/tuH
+         LOpA==
+X-Forwarded-Encrypted: i=1; AJvYcCX4ydnH0v5ixQXC7luRRQvBklWJn2q2JGJ/6I0gSY0lEQBnRsdz5XZrsghvDsIuVfRK/GJP4yDs24a5tx5xyrbmiD23oVUYHw59ZpDp
+X-Gm-Message-State: AOJu0YyYjbukaBe27mij/bGphzqUPW9xMpMRuKEh1WWmvma4uGrtw8l5
+	r8HPDn6v/dNCZueXSQz6/DIxJ2iOGPN71MTArlo0A+3RId/49D9hDc+KeSFEyMU=
+X-Google-Smtp-Source: AGHT+IEWwx/MofUxwPo8lvoAod3ASgj4oIkVkizHpzCO8taKghKsAR4f06Rh66vlz4x1o/sMg/kNIg==
+X-Received: by 2002:a05:6512:2814:b0:52c:df6f:a66 with SMTP id 2adb3069b0e04-52fd3f7fc3amr256457e87.58.1721841776649;
+        Wed, 24 Jul 2024 10:22:56 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52efb8cdc72sm1621095e87.46.2024.07.24.10.22.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 10:22:56 -0700 (PDT)
+Date: Wed, 24 Jul 2024 20:22:54 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: PCI: qcom: Allow 'vddpe-3v3-supply' again
+Message-ID: <nanfhmds3yha3g52kcou2flgn3sltjkzhr4aop75iudhvg2rui@fsp3ecz4vgkb>
+References: <20240723151328.684-1-johan+linaro@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,57 +85,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <88d281fe-d101-47d9-b70e-bb6a8959f5ff@paulmck-laptop>
+In-Reply-To: <20240723151328.684-1-johan+linaro@kernel.org>
 
-On Mon, Jul 15, 2024 at 11:07:30AM -0700, Paul E. McKenney wrote:
-> On Mon, Jul 15, 2024 at 01:49:41PM -0400, Rik van Riel wrote:
-> > About 40% of all csd_lock warnings observed in our fleet appear to
-> > be due to sched_clock() going backward in time (usually only a little
-> > bit), resulting in ts0 being larger than ts2.
-> > 
-> > When the local CPU is at fault, we should print out a message reflecting
-> > that, rather than trying to get the remote CPU's stack trace.
-> > 
-> > Signed-off-by: Rik van Riel <riel@surriel.com>
+On Tue, Jul 23, 2024 at 05:13:28PM GMT, Johan Hovold wrote:
+> Commit 756485bfbb85 ("dt-bindings: PCI: qcom,pcie-sc7280: Move SC7280 to
+> dedicated schema") incorrectly removed 'vddpe-3v3-supply' from the
+> bindings, which results in DT checker warnings like:
 > 
-> Tested-by: Paul E. McKenney <paulmck@kernel.org>
+> 	arch/arm64/boot/dts/qcom/msm8996-sony-xperia-tone-dora.dtb: pcie@600000: Unevaluated properties are not allowed ('vddpe-3v3-supply' was unexpected)
+>         from schema $id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
 > 
+> Note that this property has been part of the Qualcomm PCIe bindings
+> since 2018 and would need to be deprecated rather than simply removed if
+> there is a desire to replace it with 'vpcie3v3' which is used for some
+> non-Qualcomm controllers.
 
-I have included this patch as part of the CSD-lock diagnostics series
-which is submitted for review and planned for v6.12 [1]. I have also
-included it in RCU tree [2] for more testing.
+I think Rob Herring suggested [1] adding the property to the root port
+node rather than the host. If that suggestion still applies it might be
+better to enable the deprecated propertly only for the hosts, which
+already used it, and to define a new property at the root port.
 
+[1] https://lore.kernel.org/lkml/20240604235806.GA1903493-robh@kernel.org/
 
-[1] https://lore.kernel.org/lkml/20240722133559.GA667117@neeraj.linux/
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/neeraj.upadhyay/linux-rcu.git/log/?h=next
+> 
+> Fixes: 756485bfbb85 ("dt-bindings: PCI: qcom,pcie-sc7280: Move SC7280 to dedicated schema")
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/pci/qcom,pcie-common.yaml   | 3 +++
+>  Documentation/devicetree/bindings/pci/qcom,pcie-sc7280.yaml   | 3 ---
+>  Documentation/devicetree/bindings/pci/qcom,pcie-sc8280xp.yaml | 3 ---
+>  Documentation/devicetree/bindings/pci/qcom,pcie.yaml          | 3 +++
+>  4 files changed, 6 insertions(+), 6 deletions(-)
 
-
-- Neeraj
-
-> > ---
-> >  kernel/smp.c | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> > 
-> > diff --git a/kernel/smp.c b/kernel/smp.c
-> > index f085ebcdf9e7..5656ef63ea82 100644
-> > --- a/kernel/smp.c
-> > +++ b/kernel/smp.c
-> > @@ -237,6 +237,14 @@ static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, in
-> >  	if (likely(ts_delta <= csd_lock_timeout_ns || csd_lock_timeout_ns == 0))
-> >  		return false;
-> >  
-> > +	if (ts0 > ts2) {
-> > +		/* Our own sched_clock went backward; don't blame another CPU. */
-> > +		ts_delta = ts0 - ts2;
-> > +		pr_alert("sched_clock on CPU %d went backward by %llu ns\n", raw_smp_processor_id(), ts_delta);
-> > +		*ts1 = ts2;
-> > +		return false;
-> > +	}
-> > +
-> >  	firsttime = !*bug_id;
-> >  	if (firsttime)
-> >  		*bug_id = atomic_inc_return(&csd_bug_count);
-> > -- 
-> > 2.45.2
-> > 
+-- 
+With best wishes
+Dmitry
 
