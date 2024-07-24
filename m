@@ -1,141 +1,97 @@
-Return-Path: <linux-kernel+bounces-261218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50A7F93B445
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:50:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CF1893B44A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:51:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53B301C23A6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:50:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD7D81C22AA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:51:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80FE515D5D9;
-	Wed, 24 Jul 2024 15:48:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A5315CD4E;
+	Wed, 24 Jul 2024 15:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BwIF4gsy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kc5f9Aeq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA14157E84;
-	Wed, 24 Jul 2024 15:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154A018040;
+	Wed, 24 Jul 2024 15:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721836128; cv=none; b=MOhzCVbTUPC2X1hzV3wtQWlovAysi9yqB0pry0TMx0IHF0oZNheuLO307IOQ11i4dIiIuTkK4Z/c8lAQ+st3h57EgCb7EgOPpzp4QRkf9y4ke3j2BGJeF82CNhIncdRi6bYOoo9qqvujtePogu/Bgm1/KPY39A8E2SdQvmRHnzQ=
+	t=1721836229; cv=none; b=HuoaT8T0HEIbB8EzUj3qhpBNE1D3G3Kdwlt4k9u/+RTw7xp8hO907EysvC5yhnnjAA+5IWb95I3SPyum5EMiyn4yvRpLzWOsDKnaso4DPvns08WoiNSlUGGVreXxs0SgtZ2cn1UBxA3KLIgPlsKUctkIpmCz+lnN/nOfoP3ZsqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721836128; c=relaxed/simple;
-	bh=JGYZ6DMvkv7qnIiEJbnZOroPSMlQzWsh3SNY+Aiy0tc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=s0BPk8hpkOgOjVbQ0cFUAqZXcKRKkx0+bYufEqBE0Ui9GwQVuFASFNKVpwPOOaGutgy+2bdepPBL6axsKa17A7JIR0blqsm9GUZD5xwkWIfje/WVLjaD1O5hO4YQzgAQFVlGceEICsH+U0wysFN8YQg7NKn5YQe6HDsbg9CXdVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BwIF4gsy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68C9DC32781;
-	Wed, 24 Jul 2024 15:48:43 +0000 (UTC)
+	s=arc-20240116; t=1721836229; c=relaxed/simple;
+	bh=g3UkQhtxOEYhTAqwiAPfIujEwIw2cQvsv3mHFtPrLo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pdQYzES+IxEgaFuMm/jXdAbqE0BjRUPeEDLTQKLw2iePSlWR/hrWWWZipAtsjmPmIhCyZuZapN9JgQ296fKnxF3vtSSBkaTxsBqjqx7FVFel7C33uvlcLa29m9XuWZ8aQDcmBn8WSVQufubFz3rATYDCxxUnu5S3mwoqTBINefw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kc5f9Aeq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B798C32781;
+	Wed, 24 Jul 2024 15:50:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721836128;
-	bh=JGYZ6DMvkv7qnIiEJbnZOroPSMlQzWsh3SNY+Aiy0tc=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=BwIF4gsyVEtb8D3RUWYwGkViBIllEFOHavWRW7bf2ty5McAOa2ExZMqS1AP5W5gkt
-	 7rXGiEJ79tZGou7MfgGS46hkp/kJVjRbjiFO57fk+89PIUFzq+Hu8sx94eUCMsE5/1
-	 3eFEd8zN5JwQUIp3WuZNI8TKkD3kHGcvfCS6SqYWVPgJOeVpScKo2wanw4MYOhvCmA
-	 BXWgMECLnNkyP0Qn9JbHjEoJf2XmrbiTTlD5RnKiOb+9YbGxzfnRYcR2lG44NS+ddP
-	 /8KFGP7WKpAnVuDytDJTJaq48vDiyRuSNEcTzFrb+VOfG8SIYHer+ekYVPW+3/g4q9
-	 YnJcxu7wkWa2A==
-Message-ID: <9ceef4cf-c82e-4296-875e-aafed50ce10a@kernel.org>
-Date: Wed, 24 Jul 2024 17:48:40 +0200
+	s=k20201202; t=1721836228;
+	bh=g3UkQhtxOEYhTAqwiAPfIujEwIw2cQvsv3mHFtPrLo4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Kc5f9Aeqmk4Faoy9bk+QNC2XADrEY8DNUUzEMPIPtmAslLpaozZXqAlqLp01nXFmq
+	 3ZhyyGaOyZfsw8U9gQ+osirLzgIiL0KqTuLi8gsX6UBJfh/rpyGqlrF4hRS3pR5l2h
+	 sKZSTUirFli8nZfhmCjl/GXY8yyHUtGnQe9+47vNKFNa+MvRjRPRBhBXkdp/upSmn+
+	 6PzyrQPAIP/PfvpTwP/3F8PmmbKmyvmXo6qiaX9a+SMxQHouJFCqEkGUm7MO56W7fh
+	 aPPxdQlUzEzZMywENFtfmzltRizEXKszp3fIktWyPDIHKyzeuTixncZVMqndKSs78Y
+	 xdnVnIwBzIv9A==
+Date: Wed, 24 Jul 2024 16:50:24 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 2/2] dt-bindings: soc: renesas: renesas-soc: Add pattern
+ for GP-EVK
+Message-ID: <20240724-visitor-chamber-2213a19ef345@spud>
+References: <20240724094707.569596-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240724094707.569596-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: iio: imu: SMI240: add bosch,smi240.yaml
-To: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>,
- "jic23@kernel.org" <jic23@kernel.org>, "lars@metafoo.de" <lars@metafoo.de>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "dima.fedrau@gmail.com" <dima.fedrau@gmail.com>,
- "marcelo.schmitt1@gmail.com" <marcelo.schmitt1@gmail.com>,
- "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Lorenz Christian (ME-SE/EAD2)" <Christian.Lorenz3@de.bosch.com>,
- "Frauendorf Ulrike (ME/PJ-SW3)" <Ulrike.Frauendorf@de.bosch.com>,
- "Dolde Kai (ME-SE/PAE-A3)" <Kai.Dolde@de.bosch.com>
-References: <20240724125115.10110-1-Jianping.Shen@de.bosch.com>
- <20a8ad37-f6ce-4342-a2f7-bf3495dfeb69@kernel.org>
- <AM8PR10MB47219903C83BA4F0AFE2DAA3CDAA2@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <AM8PR10MB47219903C83BA4F0AFE2DAA3CDAA2@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="rqRisfgSFY38S1bG"
+Content-Disposition: inline
+In-Reply-To: <20240724094707.569596-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On 24/07/2024 16:19, Shen Jianping (ME-SE/EAD2) wrote:
-> Anyway, please send bindings with driver in the same patchset.
 
-Fix your quotes. That's my message, not yours.
+--rqRisfgSFY38S1bG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> -> It's fine for us. Nevertheless according to the Devicetree (DT) binding submitting rules 1.1
-> 
-> " The Documentation/ and include/dt-bindings/ portion of the patch should be a separate patch." See -> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+On Wed, Jul 24, 2024 at 10:47:07AM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>=20
+> Add a pattern for the Renesas RZ/V2H GP-EVK board.
+>=20
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-And what did I say? Patch or patchset?
+--rqRisfgSFY38S1bG
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> Shall we still put the binding and driver in the same patch ?
+-----BEGIN PGP SIGNATURE-----
 
-I did not write "patch".
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqEiwAAKCRB4tDGHoIJi
+0mPvAP96yeYEPFviHQBJeWtmYroGVt73mMzDzIKkMSVA4q8hRAEAu0jPNColzXVr
+iBvqkvRR/RZpJH+Xxg7zvT0wn3/XIgs=
+=I8QK
+-----END PGP SIGNATURE-----
 
-Please respond inline, instead of top-posting, because it makes your
-emails hard to follow.
-https://elixir.bootlin.com/linux/v6.8-rc7/source/Documentation/process/submitting-patches.rst#L340
-
-Best regards,
-Krzysztof
-
+--rqRisfgSFY38S1bG--
 
