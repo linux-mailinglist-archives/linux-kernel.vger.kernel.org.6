@@ -1,217 +1,255 @@
-Return-Path: <linux-kernel+bounces-261170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B6893B391
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:25:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0035C93B394
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:25:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E6E61F21384
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:25:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA57F2841A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6628615B14C;
-	Wed, 24 Jul 2024 15:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F8715B155;
+	Wed, 24 Jul 2024 15:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjusaka.me header.i=@manjusaka.me header.b="eC/wP3yL";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jpIyncxJ"
-Received: from fout1-smtp.messagingengine.com (fout1-smtp.messagingengine.com [103.168.172.144])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nr18G810"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2CAC158D80;
-	Wed, 24 Jul 2024 15:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D2315B132;
+	Wed, 24 Jul 2024 15:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721834729; cv=none; b=fkdPw4q+PeG9/iake0F1p3BF8PsW2FV7e6BUZDN/1S3KFd2W55ytyBGs2S6edadQPrLwEA8ug03zSRkSye59U/GNBs0DR7xYf5066Ua9EZbmWz9R2ozNMKQfyd+QWHub8XVzbuH85XTW0czLVC5PJMMHLlMfYMtHcR+HJL7hH94=
+	t=1721834745; cv=none; b=qGlEYz2KjrKS6EZLn5x6NSEA91l+EtaauelFkBxYIXHZpZkC0TgDGTFnZ9wmfKjCni4yhp3xs+BlJgtnXf1YVcc3gyDnq9Ozcx+dVaBI6d01Kj9eoJDslk7u2lDLcVA4PXEWCKp/jMGQknTcuX0+V0r7P7Ja4pmFIc16jZysNSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721834729; c=relaxed/simple;
-	bh=vNHrnBEWg1YJQunikSK4RAbSuBUyZ6jILUpzKHGT/0c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RPCVKTURyH/ZnB/LyvsP0IvdudLn7i2+K/0HMwTCM9CifCh41VpOEydu98a+nMyG9z/YxDXnUwslIx8QfB2Xkprx8aq4hZURjfmQrt8H9WbEF+0i5TtmwzpbMfzIeYs2c1n9DVSpgRoZnQvNsvbyb5hYPdm8j3VpeCpqG4JDTn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manjusaka.me; spf=pass smtp.mailfrom=manjusaka.me; dkim=pass (2048-bit key) header.d=manjusaka.me header.i=@manjusaka.me header.b=eC/wP3yL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jpIyncxJ; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manjusaka.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjusaka.me
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfout.nyi.internal (Postfix) with ESMTP id CE04C13801A9;
-	Wed, 24 Jul 2024 11:25:25 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Wed, 24 Jul 2024 11:25:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjusaka.me; h=
-	cc:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm2; t=1721834725; x=1721921125; bh=hloJRQmMLUqOdGZV4/2VJ
-	5R5bliTna/7+7hQr8WgZlc=; b=eC/wP3yLSZ8ZoiPf3vmaEmgYaIIY4DKqkq3gG
-	cQcmA1+88dARVX/vKsO+2BlqrU4DqbgxQhs57QgJiogkK0zpqwnqfHnS/Zfqb4qw
-	9ZU2kMI5KXoVOfu6wwsSCdImppPe7K1Vj6Qx0T4ADfaPrWZIvoyRinWksB7zt50K
-	nsduVLTa6ynKEWOF8UfNa8lL4suRsvzj8EYgoKmYlvMv5bOf9GBO0UHL8VGMqhBS
-	SQgrRxWOcmVaHlW6xPmt8AUAA+5SZqhG5IKVbbaw/sb9dtGLjN85RhdN7qv2SNE0
-	RWHwGG1izsVCkE48EvPDituJx/5Bt5W4fQa1QPpDMlgKOLN8g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1721834725; x=1721921125; bh=hloJRQmMLUqOdGZV4/2VJ5R5bliT
-	na/7+7hQr8WgZlc=; b=jpIyncxJtiDzYpJZqgIno5+y0sC4vrXlzpfvpo/Wbxrn
-	PMs8wYpYIcqepdTm8UnubHP/LD8r/6vgCNhE84ZgW84cTfA3qclxDERv+fJSup1u
-	PB7Dm9Tn6rEaHOIoXu+0uASZ6gVLLZP2Y//SddB51R+22OaCnxbjZjmXulZGMVkA
-	Mw2lZeEYBLgEQFD6dMM8Ec1tujzZzVGSSOaQ5RTkTO+y+nH4M5MrfJgX8eKQtv8l
-	M6Z2Q3GawB50G9nBUY09IpWEwKyvWnI+Lb8CX5wuatj8z/q05ptGz7G6Uc8T9h72
-	rrlLSAvSWcBhW4W5C+Lv3SHKrWZBZmX0kcRvCYkC1A==
-X-ME-Sender: <xms:5RyhZhCxQOBYyI7fAJZBvwOyLr0IJadTAGZyhNSg_VtxuDDkr-m2NA>
-    <xme:5RyhZvjfVf2YdXBRaa3bm-eGCcTCwyHJsuqEAI-l61PUMpXHvZhAxFqeRSJ9RQ6jI
-    _3UISCYH4yBjt29sNg>
-X-ME-Received: <xmr:5RyhZsmEyYRaPFqmslrjbx31aFU24nDBBG4o6zJxSxpjXBvIDLNUhvDGzuBjim3AgFdArLNPnUQ7RKQFwwm84waFskndJS66lL_iB-y1xKp8wVbfiXey7bZ6iOtzPoxL3QVrXg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddriedugdeklecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeforghnjhhushgr
-    khgruceomhgvsehmrghnjhhushgrkhgrrdhmvgeqnecuggftrfgrthhtvghrnhepkedvff
-    fhgeffleejuddvvdejjedtiedtffefhfffhefhheettdeludeliefggffgnecuffhomhgr
-    ihhnpehgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehmvgesmhgrnhhjuhhsrghkrgdrmhgvpdhnsggprhgtphhtthho
-    pedt
-X-ME-Proxy: <xmx:5RyhZryLSZP3zPZSw6IbpT3aBUSIZG5CYm3yYJuzLn6cE1LOdvR0Hw>
-    <xmx:5RyhZmQrb9-X82nqXiTIb9NacYwCI7vU-TGk_-eQDp4w6toPiAkDaA>
-    <xmx:5RyhZubtZzxsNAIehb1vignPlV1IItPkOcuwbYieRzUrpsnuUl5eEA>
-    <xmx:5RyhZnSAok7gbKtVNDxaxS9teGrFP1rP5ZhkpfQBvKqldtnRiRgQDg>
-    <xmx:5RyhZvDcQc4bPNwpzJw6ylvkDKbDl9lrIs8WT7OR3BxosxOSlih1nmX7>
-Feedback-ID: i3ea9498d:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 24 Jul 2024 11:25:23 -0400 (EDT)
-From: Manjusaka <me@manjusaka.me>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>
-Cc: Manjusaka <me@manjusaka.me>,
-	Leon Hwang <hffilwlqm@gmail.com>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] bpf: Add bpf_check_attach_target_with_kernel_log method to output failure logs to kernel
-Date: Wed, 24 Jul 2024 15:25:20 +0000
-Message-Id: <20240724152521.20546-1-me@manjusaka.me>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1721834745; c=relaxed/simple;
+	bh=A6/WUlTLFtFYkn2WHKIiYGD7lSw86yVgWdSVlD2hQ8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oe2JDfXKvnUrwR118rjmFov1VaTl10IkXvm1TxwYZ0KKs0BUxfZzBGLAYJ+5Qyy5BbTfHgMWTuXnCq5K0bJr0Cs5G9+tdkJ6y5q8pG0IUESYGkVZZeuHuEgNJQH8YdGo5UlpGqqoGptQwJ2t3BhPmj9xPoMz8QAkDg7EjL4wyPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nr18G810; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D64FC32781;
+	Wed, 24 Jul 2024 15:25:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721834744;
+	bh=A6/WUlTLFtFYkn2WHKIiYGD7lSw86yVgWdSVlD2hQ8U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nr18G810BWzNPqO+hHzTb4ecr2Mq4zCrqJNV8gidnXNZ/vIFnCxouJ8MZAwXezqme
+	 v4GXs+26yVrc+PhHxr1Xt4tjJGdiYxXQ0WgBekeMrXtYdI4fjL0sCoy1QNHh3TsEon
+	 eNBmoIUaIqhUHyxhKlKSMyvCeqZiBfp/dzcGrckQ3pTF/1F4mldpPDt4O+V4OGvE9W
+	 j9WcRPm2vnKMyOIAuDzrDn0T3OZwivlOdnamDrDUust7HP8ZwWQAX5cj9fej9QA5XU
+	 0/VLtjk8bsyg6XcaUQnsONQJxBaL/3tOekxw6K46WhIpOO/obH22AMMqi1yPoSMahx
+	 kIBBMUJQd64yw==
+Date: Wed, 24 Jul 2024 16:25:39 +0100
+From: Conor Dooley <conor@kernel.org>
+To: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	"jic23@kernel.org" <jic23@kernel.org>,
+	"lars@metafoo.de" <lars@metafoo.de>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"dima.fedrau@gmail.com" <dima.fedrau@gmail.com>,
+	"marcelo.schmitt1@gmail.com" <marcelo.schmitt1@gmail.com>,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Lorenz Christian (ME-SE/EAD2)" <Christian.Lorenz3@de.bosch.com>,
+	"Frauendorf Ulrike (ME/PJ-SW3)" <Ulrike.Frauendorf@de.bosch.com>,
+	"Dolde Kai (ME-SE/PAE-A3)" <Kai.Dolde@de.bosch.com>
+Subject: Re: [PATCH] dt-bindings: iio: imu: SMI240: add bosch,smi240.yaml
+Message-ID: <20240724-ogle-equal-d14de4318080@spud>
+References: <20240724125115.10110-1-Jianping.Shen@de.bosch.com>
+ <20a8ad37-f6ce-4342-a2f7-bf3495dfeb69@kernel.org>
+ <AM8PR10MB47219903C83BA4F0AFE2DAA3CDAA2@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="z4NQh/ZZRjlgWpNL"
+Content-Disposition: inline
+In-Reply-To: <AM8PR10MB47219903C83BA4F0AFE2DAA3CDAA2@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
 
-When attaching a freplace hook, failures can occur,
-but currently, no output is provided to help developers diagnose the root cause.
 
-This commit adds a new method, bpf_check_attach_target_with_kernel_log,
-which outputs the verifier log to the kernel.
-Developers can then use dmesg to obtain more detailed information about the failure.
+--z4NQh/ZZRjlgWpNL
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For an example of eBPF code,
-Link: https://github.com/Asphaltt/learn-by-example/blob/main/ebpf/freplace/main.go
+On Wed, Jul 24, 2024 at 02:19:25PM +0000, Shen Jianping (ME-SE/EAD2) wrote:
+> Anyway, please send bindings with driver in the same patchset.
+>=20
+> -> It's fine for us. Nevertheless according to the Devicetree (DT) bindin=
+g submitting rules 1.1
+>=20
+> " The Documentation/ and include/dt-bindings/ portion of the patch should=
+ be a separate patch." See -> https://www.kernel.org/doc/html/latest/device=
+tree/bindings/submitting-patches.html#i-for-patch-submitters
+>=20
+> Shall we still put the binding and driver in the same patch ?
 
-Co-developed-by: Leon Hwang <hffilwlqm@gmail.com>
-Signed-off-by: Leon Hwang <hffilwlqm@gmail.com>
-Signed-off-by: Manjusaka <me@manjusaka.me>
----
- include/linux/bpf_verifier.h |  7 +++++++
- kernel/bpf/syscall.c         |  3 ++-
- kernel/bpf/trampoline.c      |  3 ++-
- kernel/bpf/verifier.c        | 19 +++++++++++++++++++
- 4 files changed, 30 insertions(+), 2 deletions(-)
+No, different patches please. Also, please fix your mail client so that
+it quotes emails properly.
 
-diff --git a/include/linux/bpf_verifier.h b/include/linux/bpf_verifier.h
-index 6503c85b10a3..0ba119665410 100644
---- a/include/linux/bpf_verifier.h
-+++ b/include/linux/bpf_verifier.h
-@@ -830,11 +830,18 @@ static inline void bpf_trampoline_unpack_key(u64 key, u32 *obj_id, u32 *btf_id)
- 		*btf_id = key & 0x7FFFFFFF;
- }
- 
-+int bpf_check_attach_target_with_kernel_log(const struct bpf_prog *prog,
-+				const struct bpf_prog *tgt_prog,
-+			    u32 btf_id,
-+			    struct bpf_attach_target_info *tgt_info);
-+
- int bpf_check_attach_target(struct bpf_verifier_log *log,
- 			    const struct bpf_prog *prog,
- 			    const struct bpf_prog *tgt_prog,
- 			    u32 btf_id,
- 			    struct bpf_attach_target_info *tgt_info);
-+
-+
- void bpf_free_kfunc_btf_tab(struct bpf_kfunc_btf_tab *tab);
- 
- int mark_chain_precision(struct bpf_verifier_env *env, int regno);
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 0719192a3482..d6ae9e8c40b2 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -3464,8 +3464,9 @@ static int bpf_tracing_prog_attach(struct bpf_prog *prog,
- 		 */
- 		struct bpf_attach_target_info tgt_info = {};
- 
--		err = bpf_check_attach_target(NULL, prog, tgt_prog, btf_id,
-+		err = bpf_check_attach_target_with_kernel_log(prog, tgt_prog, btf_id,
- 					      &tgt_info);
-+
- 		if (err)
- 			goto out_unlock;
- 
-diff --git a/kernel/bpf/trampoline.c b/kernel/bpf/trampoline.c
-index f8302a5ca400..22dcc058e0d6 100644
---- a/kernel/bpf/trampoline.c
-+++ b/kernel/bpf/trampoline.c
-@@ -699,9 +699,10 @@ int bpf_trampoline_link_cgroup_shim(struct bpf_prog *prog,
- 	u64 key;
- 	int err;
- 
--	err = bpf_check_attach_target(NULL, prog, NULL,
-+	err = bpf_check_attach_target_with_kernel_log(prog, NULL,
- 				      prog->aux->attach_btf_id,
- 				      &tgt_info);
-+
- 	if (err)
- 		return err;
- 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 4cb5441ad75f..1d5dbbcac1bd 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -21145,6 +21145,25 @@ static int check_non_sleepable_error_inject(u32 btf_id)
- 	return btf_id_set_contains(&btf_non_sleepable_error_inject, btf_id);
- }
- 
-+int bpf_check_attach_target_with_kernel_log(const struct bpf_prog *prog,
-+				const struct bpf_prog *tgt_prog,
-+			    u32 btf_id,
-+			    struct bpf_attach_target_info *tgt_info)
-+{
-+	struct bpf_verifier_log *log;
-+	int err;
-+
-+	log = kzalloc(sizeof(*log), GFP_KERNEL | __GFP_NOWARN);
-+	if (!log) {
-+		err = -ENOMEM;
-+		return err;
-+	}
-+	log->level = BPF_LOG_KERNEL;
-+	err = bpf_check_attach_target(log, prog, tgt_prog, btf_id, tgt_info);
-+	kfree(log);
-+	return err;
-+}
-+
- int bpf_check_attach_target(struct bpf_verifier_log *log,
- 			    const struct bpf_prog *prog,
- 			    const struct bpf_prog *tgt_prog,
--- 
-2.34.1
+Thanks,
+Conor.
 
+>=20
+> Mit freundlichen Gr=FC=DFen / Best regards
+>=20
+> Jianping Shen
+>=20
+> Mobility Electronics - Sensors, Engineering Advanced Development - MEMS S=
+olutions Software (ME-SE/EAD2)
+> Robert Bosch GmbH | Postfach 13 42 | 72703 Reutlingen | GERMANY | www.bos=
+ch.com
+> Tel. +49 7121 35-37749 | Telefax +49 711 811-509378 | Jianping.Shen@de.bo=
+sch.com
+>=20
+> Sitz: Stuttgart, Registergericht: Amtsgericht Stuttgart, HRB 14000;
+> Aufsichtsratsvorsitzender: Prof. Dr. Stefan Asenkerschbaumer;=20
+> Gesch=E4ftsf=FChrung: Dr. Stefan Hartung, Dr. Christian Fischer, Dr. Mark=
+us Forschner,=20
+> Stefan Grosch, Dr. Markus Heyn, Dr. Frank Meyer, Dr. Tanja R=FCckert
+>=20
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk@kernel.org>=20
+> Sent: Wednesday, July 24, 2024 3:17 PM
+> To: Shen Jianping (ME-SE/EAD2) <Jianping.Shen@de.bosch.com>; jic23@kernel=
+=2Eorg; lars@metafoo.de; robh@kernel.org; krzk+dt@kernel.org; conor+dt@kern=
+el.org; dima.fedrau@gmail.com; marcelo.schmitt1@gmail.com; linux-iio@vger.k=
+ernel.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; Lorenz=
+ Christian (ME-SE/EAD2) <Christian.Lorenz3@de.bosch.com>; Frauendorf Ulrike=
+ (ME/PJ-SW3) <Ulrike.Frauendorf@de.bosch.com>; Dolde Kai (ME-SE/PAE-A3) <Ka=
+i.Dolde@de.bosch.com>
+> Subject: Re: [PATCH] dt-bindings: iio: imu: SMI240: add bosch,smi240.yaml
+>=20
+> On 24/07/2024 14:51, Jianping.Shen@de.bosch.com wrote:
+> > From: "Shen Jianping (ME-SE/EAD2)"=20
+> > <she2rt@LR-C-0008DVM.rt.de.bosch.com>
+> >=20
+> > dt-bindings: iio: imu: SMI240: add bosch,smi240.yaml
+>=20
+> Something got corrupted here.
+>=20
+> Anyway, please send bindings with driver in the same patchset.
+>=20
+> Limited review follows:
+>=20
+> > Signed-off-by: Shen Jianping (ME-SE/EAD2)=20
+> > <she2rt@LR-C-0008DVM.rt.de.bosch.com>
+> > ---
+>=20
+> Missing changelog. That's v2, not v1? Provide changelog under --- and ver=
+sion your patches correctly. b4 does it for you...
+>=20
+>=20
+> >  .../bindings/iio/imu/bosch,smi240.yaml        | 50 +++++++++++++++++++
+> >  1 file changed, 50 insertions(+)
+> >  create mode 100644=20
+> > Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml
+> >=20
+> > diff --git=20
+> > a/Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml=20
+> > b/Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml
+> > new file mode 100644
+> > index 00000000000..5e89d85d867
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml
+> > @@ -0,0 +1,50 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause) %YAML 1.2
+> > +---
+> > +$id:=20
+> > +https://eur03.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fdevi
+> > +cetree.org%2Fschemas%2Fiio%2Fimu%2Fbosch%2Csmi240.yaml%23&data=3D05%7C0
+> > +2%7CJianping.Shen%40de.bosch.com%7Ce4bd3cadbf5f4b17bf7308dcabe2e9b6%7
+> > +C0ae51e1907c84e4bbb6d648ee58410f4%7C0%7C0%7C638574238283264004%7CUnkn
+> > +own%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWw
+> > +iLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=3DgbcSKWPDSDT0qTWo5L%2FUYxlQDunqNl2l
+> > +L7JAxwHhNJY%3D&reserved=3D0
+> > +$schema:=20
+> > +https://eur03.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Fdevi
+> > +cetree.org%2Fmeta-schemas%2Fcore.yaml%23&data=3D05%7C02%7CJianping.Shen
+> > +%40de.bosch.com%7Ce4bd3cadbf5f4b17bf7308dcabe2e9b6%7C0ae51e1907c84e4b
+> > +bb6d648ee58410f4%7C0%7C0%7C638574238283281959%7CUnknown%7CTWFpbGZsb3d
+> > +8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7
+> > +C0%7C%7C%7C&sdata=3DkW25MDdZz9c3ePA%2BUrGXSWsBWlDxb6UAKjOeLSnFEXU%3D&re
+> > +served=3D0
+> > +
+> > +title: Bosch SMI240 IMU
+> > +
+> > +maintainers:
+> > +  - Jianping Shen <Jianping.Shen@de.bosch.com>
+> > +
+> > +description: |
+>=20
+> Do not need '|' unless you need to preserve formatting.
+>=20
+> > +  The SMI240 is a combined three axis angular rate and three axis=20
+> > + acceleration sensor module  with a measurement range of +/-300=B0/s a=
+nd up to 16g. SMI240 does not support interrupt.
+> > + =20
+> > + https://eur03.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fww
+> > + w.bosch-semiconductors.com%2Fmems-sensors%2Fhighly-automated-driving
+> > + %2Fsmi240%2F&data=3D05%7C02%7CJianping.Shen%40de.bosch.com%7Ce4bd3cadb
+> > + f5f4b17bf7308dcabe2e9b6%7C0ae51e1907c84e4bbb6d648ee58410f4%7C0%7C0%7
+> > + C638574238283298041%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQ
+> > + IjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=3Dd2%2Bk
+> > + j8GzUms9o0Nbdu9QpTzZwujQnjJMp0GFp%2B5MrB0%3D&reserved=3D0
+>=20
+> This does not look like wrapped according to Linux Coding Style. See Codi=
+ng Style, so 80.
+>=20
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: bosch,smi240
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  vdd-supply:
+> > +    description: provide VDD power to the sensor.
+> > +
+> > +  vddio-supply:
+> > +    description: provide VDD IO power to the sensor.
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    spi {
+> > +        #address-cells =3D <1>;
+> > +        #size-cells =3D <0>;
+> > +
+> > +        spi@0 {
+>=20
+> That's not a SPI controller. Your description suggests "imu".
+>=20
+> Best regards,
+> Krzysztof
+>=20
+
+--z4NQh/ZZRjlgWpNL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqEc8wAKCRB4tDGHoIJi
+0g/sAP9MhRCKKw8vBNbLKlks9BmPKuN40U1C30jh/YSEYDCK8AD+O/1+Pv3731dG
+A8IlfvXTpvntl//0eLR5Pr9YCuSutQo=
+=G1i3
+-----END PGP SIGNATURE-----
+
+--z4NQh/ZZRjlgWpNL--
 
