@@ -1,138 +1,175 @@
-Return-Path: <linux-kernel+bounces-261177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 141C193B3AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:32:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC1BF93B3C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 370E51C22191
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:32:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 241221F2151F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E27515B55D;
-	Wed, 24 Jul 2024 15:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40AC15ECD3;
+	Wed, 24 Jul 2024 15:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hIFvKCJ4"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dfBryDjG"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1D415B97C
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 15:31:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FFD15B97C;
+	Wed, 24 Jul 2024 15:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721835089; cv=none; b=JzqXXiVuN+K9O13kroFa0THU2WKeTUHK/5mrRgmaAtWwk0TjQ6htxpiannA7swxQkQUT/V3llX8o8qc1xqGF5Ukw33R+ILq8K73iTsiY/Jo7xJs+7KBx7wDGDEqHl29J89VZ8jubZ76+uTzjjcNWbm9WQ2hiD23NXEnlxO3ITcU=
+	t=1721835099; cv=none; b=UO1A8dDnBoen3KkO5NPRB4DztcASe0oTL8zp8/VejbsvwMgwroe1d2UzVu22xqv6Syg6kpvNn2KLKUryUFMYyoaww/gU6SWyuPp+oiBnd41LTCwblaJbBPdW73rOOWU+HC7rTw95aAijSFExshFlNMZEIliYNxL9NQHYBfc30Uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721835089; c=relaxed/simple;
-	bh=47Ky+48e/8/FwyaHOpYAGpQHh6jTDnsO2L6HFR++eao=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=EbnosRAhI4tCjA9B7KWETHpdfQBVsOfFahP07krOn5l5SZzZem1LvASBeZvX+6mqkoqZlVNYTScyLHHT+q73Fe2tFKPmrFULo+zH7OvIV1B9ilo+yK+FYqX+CeNzBZrVrTANZ80gpWC8rXFj0jcTM8kyf89uBTllbRZGJA51FRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=hIFvKCJ4; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240724153126euoutp01c73d585243c0dca6165032256e3e82a5~lL_NtgLpt2131021310euoutp01S
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 15:31:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240724153126euoutp01c73d585243c0dca6165032256e3e82a5~lL_NtgLpt2131021310euoutp01S
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1721835086;
-	bh=47Ky+48e/8/FwyaHOpYAGpQHh6jTDnsO2L6HFR++eao=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hIFvKCJ4a/X9fMagrETDmEM7857AUOHD3JfgaAGsTaa5S5qbi/09xHzFRhd9JwXbI
-	 osZsX01qA/KP8DLZSKtY3NS0PKhQHD5WzA84EtMzw4RLWxNUtgb1zSwmh2ZeBAO+uD
-	 TtIdMF/1aGtf5Bl3BoWXR/qNOBp0q+PHmPmfTNR4=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240724153125eucas1p1bb4665c4398c72bda4daf7735540fbd6~lL_NN_qkj3048130481eucas1p1C;
-	Wed, 24 Jul 2024 15:31:25 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id E2.6C.09624.D4E11A66; Wed, 24
-	Jul 2024 16:31:25 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240724153125eucas1p26cded41c82d3a851a7a4d845a81a3e29~lL_MzkPxx0144401444eucas1p2W;
-	Wed, 24 Jul 2024 15:31:25 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240724153125eusmtrp298afe717e274023e7905ddf73757422f~lL_My26L10803908039eusmtrp2b;
-	Wed, 24 Jul 2024 15:31:25 +0000 (GMT)
-X-AuditID: cbfec7f2-c11ff70000002598-4e-66a11e4d1a41
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 4A.D2.09010.D4E11A66; Wed, 24
-	Jul 2024 16:31:25 +0100 (BST)
-Received: from AMDC4515.eu.corp.samsungelectronics.net (unknown
-	[106.120.51.28]) by eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240724153124eusmtip230f3f2e6a87864305408c32ddb4a68b5~lL_L8rU_d2711927119eusmtip2l;
-	Wed, 24 Jul 2024 15:31:24 +0000 (GMT)
-From: Mateusz Majewski <m.majewski2@samsung.com>
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Mateusz Majewski <m.majewski2@samsung.com>, linux-pm@vger.kernel.org,
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
-	<lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Subject: Re: [PATCH 0/6] Add initial Exynos 850 support to the thermal
- driver
-Date: Wed, 24 Jul 2024 17:31:17 +0200
-Message-ID: <20240724153118.914714-1-m.majewski2@samsung.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <CAPLW+4nYfVytXnpDs02QQGms59dL+=pAv7NMNPK6Ymsemmi_cw@mail.gmail.com>
+	s=arc-20240116; t=1721835099; c=relaxed/simple;
+	bh=NSVxTjMae1Bx/+hhRYv5GEpIddtRRspNEEkO3N5REBY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=szh/NwX++/5sOfZwNvHCR3MalWH0PFfV1W8tqzVfmoKROFaL+m1GuMM9HQEOaCOzuejOhbFD1/Grep8BtHwJwHpoJUkMTkuQnO1LLjN1uJfLzKxvIzgmrV/bXVtde5xAIt6y5FhRRb7ZI8/eBzWSBW6dZr4hh23clx1BJwyTQzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dfBryDjG; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6b5d3113168so39731776d6.2;
+        Wed, 24 Jul 2024 08:31:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721835096; x=1722439896; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=1tbL2oJTejNN0wsTP/gMwmfeWI2fp0Jph/s0VC70w1g=;
+        b=dfBryDjG3ah3Is26aLQ8K1sKxi0LbSozxS23wd7SoHE8b71ZH9TK+mUCCaS/zBnRj/
+         BkUSrAOseJXyyFhwdTqlbWF/PcM1iaZ0Qdr+ZnpHKk/siDTNDm5LRa/BW/rZK2//IV2G
+         7cYO865CAYv/UQJuEwjHP5HTBU2bjD4e8M+HOjWnJ1j9nHwUJ0BIbOnZzfKX/Eqzl4zq
+         pw4Slfi5EzVeY52zSYlDhhrun1roODvO90v54VTfXDV9Xm5zCKqJxmBD3WhEznxSr/KA
+         sWS7cHURxUGQ1xVYkmrFQeoqFfiZC1rYSI1x4Q+904TKfigt7A1h4JBjAodF+PBqbWJo
+         IaTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721835096; x=1722439896;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1tbL2oJTejNN0wsTP/gMwmfeWI2fp0Jph/s0VC70w1g=;
+        b=ZrPcvdESRQhKC3ftlT45psQs76tuuZGwGheG1PWS0q+TJMzbLrQ7eSXh4CIws9sOcx
+         /OUekM6b3BOP4oSeFLR2LbdiqHDPTjffjBCD6OJpOtX8LpnyaWSkMEoXXkvCVg01ZRmd
+         2ofnOrUkUJw3ukBXEbns8qY29PqSh7tB1uIaJhSd+Rpw97IXPAUTua2on/uDtvhNUBkE
+         KVOpwZXJJmcAjIg2Vzhm7CKIxLDj8A/Bnfuyf4cyYI9qtxWXrghUfH0SpiOJgfxdQD/N
+         /MZWlfxLeuCmtqy2sySIu+JWZq1mZ2C/oeVbSj3nhWqcLutSEEKFvH9nEU9+pGqXQDvo
+         woFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2Di9pxu5EuUHFcGHFKXCpEjJeb2xaY9cPmjxk0/tiH51M/wgXdmXFkkTskLBphMV0U0LscHZZBMxt9/Z2RXYeuZRDCmbhHuulU0pi+NF7v7F5XChPljEcqBp6TU9frJ1iTkhEi/s8E/syLOBdCRcP9QN4XEhQze+AI5cPT17q
+X-Gm-Message-State: AOJu0Yw5Z8EA+mnihDODrepRCgjQ59ECg6ujS2/B0Q7msUJuSmHZm2TH
+	mPIo8Upj4eW/N1IW6VpHjjbeaAOV7iL7r2voepYGcv25cHETkHNd
+X-Google-Smtp-Source: AGHT+IGBUmgZMThOGyavjxH711/T/NO3ceqcYGOPaJRLoh7bNPhZYeVdvXNea8I9n9yfF8kuKZLEXw==
+X-Received: by 2002:ad4:5ecb:0:b0:6b5:e0b7:2fed with SMTP id 6a1803df08f44-6b9907d5c16mr27552066d6.47.1721835096366;
+        Wed, 24 Jul 2024 08:31:36 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b963afab3asm44156946d6.62.2024.07.24.08.31.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Jul 2024 08:31:35 -0700 (PDT)
+Message-ID: <999bc5f0-5b4c-4676-a085-ba2258c6a1d6@gmail.com>
+Date: Wed, 24 Jul 2024 08:31:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: usb: lan78xx: add weak dependency with micrel phy
+ module
+To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>, andrew@lunn.ch,
+ gregkh@linuxfoundation.org
+Cc: UNGLinuxDriver@microchip.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+ netdev@vger.kernel.org, pabeni@redhat.com, woojung.huh@microchip.com
+References: <2024072430-scorn-pushover-7d8a@gregkh>
+ <20240724144626.439632-1-jtornosm@redhat.com>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+In-Reply-To: <20240724144626.439632-1-jtornosm@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJKsWRmVeSWpSXmKPExsWy7djPc7q+cgvTDG6+1Ld4MG8bm8X3LdeZ
-	LNbsPcdkMe+zrMX8I+dYLc6f38BusenxNVaLy7vmsFl87j3CaDHj/D4mi4VNLewWE49NZraY
-	+2Uqs8X/PTvYLZ487GOzeN63j8lBwGPNvDWMHjtn3WX3WLznJZPHplWdbB53ru1h89i8pN6j
-	b8sqRo/Pm+QCOKK4bFJSczLLUov07RK4Mv7Nucdc8Iaxou3MQvYGxp2MXYycHBICJhIv5j5h
-	62Lk4hASWMEo8adjDyOE84VRYvvGqawgVUICnxklVl1MhOnounqFBaJoOaPEjYdnoDpamSSa
-	d/eCzWUTMJB48GYZO4gtIqAnsW7mK3aQImaBzSwSF57OBBsrLOAvsWDjNyYQm0VAVeLZ9Wdg
-	Nq+ArcSVGc+ZINbJS/Tu7wOzOQUCJb7PWccGUSMocXLmExYQmxmopnnrbGaQBRICkzklNu/7
-	wQrR7CKxdFc7C4QtLPHq+BZ2CFtG4v/O+VAL8iVmbH4PVMMBZFdI3D3oBWFaS3w8wwxiMgto
-	SqzfpQ9R7ChxdM4pVogKPokbbwUhDuCTmLRtOjNEmFeio00IolpV4vieScwQtrTEk5bbUCs9
-	JI5s+sY8gVFxFpJXZiF5ZRbC3gWMzKsYxVNLi3PTU4sN81LL9YoTc4tL89L1kvNzNzECU9vp
-	f8c/7WCc++qj3iFGJg7GQ4wSHMxKIrxPXs1NE+JNSaysSi3Kjy8qzUktPsQozcGiJM6rmiKf
-	KiSQnliSmp2aWpBaBJNl4uCUamCqfMfk2Btk2721yFxyo9C/I51e150F/pz+vfin0NaOr8c4
-	Lpe6ZauyPCtY6KV3UmGnVCm32KTob4e8d3yYo9w2b5J6nvxWE9fb0zSWzTXovBBf5y29cbs+
-	U/2XkvN1ry4eeZvDp+OlcYvzm59id9cXN5HrN9aVvNefOH/ykT27yvctyAnJckzQad6bVihY
-	deitqVHUk6WJUrPaJsnMcfh5YmLPP4HekkNKvzmnXuGfO/tX0TfZP933d0ToLO870ylS5qae
-	GWubZa6mLxDx7f2rtslSC68GHfwUY3lks+ykm/6Kp8+tdOl4M2XWZu088+Nyqy/pSCUrBb1Z
-	aG2xZOkP7+XcLNLeYm9UGAPmtJQqsRRnJBpqMRcVJwIAKhV7UtwDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNIsWRmVeSWpSXmKPExsVy+t/xe7q+cgvTDP68FLJ4MG8bm8X3LdeZ
-	LNbsPcdkMe+zrMX8I+dYLc6f38BusenxNVaLy7vmsFl87j3CaDHj/D4mi4VNLewWE49NZraY
-	+2Uqs8X/PTvYLZ487GOzeN63j8lBwGPNvDWMHjtn3WX3WLznJZPHplWdbB53ru1h89i8pN6j
-	b8sqRo/Pm+QCOKL0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLL
-	Uov07RL0Mv7Nucdc8Iaxou3MQvYGxp2MXYycHBICJhJdV6+wdDFycQgJLGWU+DZ3IVRCWuLw
-	lynsELawxJ9rXWwQRc1MEovOTQcrYhMwkHjwZhlYkYiAnsS6ma/YQYqYBQ6ySPS9vsIMkhAW
-	8JXovbGYBcRmEVCVeHb9GROIzStgK3FlxnMmiA3yEr37+8BsToFAie9z1rGB2EICPBKvNuxn
-	hKgXlDg58wnYHGag+uats5knMArMQpKahSS1gJFpFaNIamlxbnpusZFecWJucWleul5yfu4m
-	RmAsbjv2c8sOxpWvPuodYmTiYDzEKMHBrCTC++TV3DQh3pTEyqrUovz4otKc1OJDjKZAd09k
-	lhJNzgcmg7ySeEMzA1NDEzNLA1NLM2MlcV7Pgo5EIYH0xJLU7NTUgtQimD4mDk6pBiYvL+mc
-	/icL+C7P/LLY6Wq+vv627Emd3Zuksi5wPXyVZ7RhpWjBvPb9RhpHuBZ0VXzM0uzT+s+TmbXb
-	dsnKtcLtBhPa1fycrz9fwHz798Zn/2y67nyc0HB/ifn5I6FiPwSeP6tUyLl7Vnnai8Jz638p
-	XnDcVyl40fDI2QMKi2O7/uYIpYrNvtg/TUL3p+mvuFWLPudlPUg5nvK5SP6o+JZL85rvT/GM
-	WzX9coWy69qj217y2fe22WbO+bQn6FnOOsa9bsJm9rcc3HQvHCpaxJL7dmnarzS39uYt63TY
-	L937GPOlZ0/OyiD5k09XL0ublrhfpue53jkNVhW1bG259xmrF38Tqg842nrzhVQS6zZdJZbi
-	jERDLeai4kQALbkc604DAAA=
-X-CMS-MailID: 20240724153125eucas1p26cded41c82d3a851a7a4d845a81a3e29
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20240724153125eucas1p26cded41c82d3a851a7a4d845a81a3e29
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240724153125eucas1p26cded41c82d3a851a7a4d845a81a3e29
-References: <CGME20240724153125eucas1p26cded41c82d3a851a7a4d845a81a3e29@eucas1p2.samsung.com>
 
-> Btw, I'm
-> curious what is the reason for implementing TMU? Do you have some use
-> cases where it's needed?
 
-Not really AFAIK? Mostly because we have the hardware, are familiar with
-this driver, and have some time to do this :)
+
+On 7/24/2024 7:46 AM, Jose Ignacio Tornos Martinez wrote:
+> Hello Andrew,
+> 
+>> Is MODULE_WEAKDEP new?
+> Yes, and it has been merged into torvalds/linux.git from today:
+> https://git.kernel.org/torvalds/c/f488790059fe7be6b2b059ddee10835b2500b603
+> Here the commit reference in torvalds/linux.git if you update your repo:
+> https://github.com/torvalds/linux/commit/61842868de13aa7fd7391c626e889f4d6f1450bf
+
+What is the difference with the existing MODULE_SOFTDEP() which has pre 
+and post qualifiers and seems just as fit?
+
+> 
+> I will include more references in case you want to get more information:
+> kmod reference:
+> https://github.com/kmod-project/kmod/commit/05828b4a6e9327a63ef94df544a042b5e9ce4fe7
+> kmod test-suite has also been completed:
+> https://github.com/kmod-project/kmod/commit/d06712b51404061eef92cb275b8303814fca86ec
+> dracut patch has also been approved:
+> https://github.com/dracut-ng/dracut-ng/commit/8517a6be5e20f4a6d87e55fce35ee3e29e2a1150
+> 
+>> It seems like a "Wack a Mole" solution, which is not going to
+>> scale. Does dracut not have a set of configuration files indicating
+>> what modules should be included, using wildcards? If you want to have
+>> NFS root, you need all the network drivers, and so you need all the
+>> PHY drivers?
+> The intention is to have a general solution not only related to the
+> possible phy modules. That is, it is a solution for any module dependencies
+> that are solved within the kernel but need to be known by user tools to
+> build initramfs. We could use wildcards for some examples but it is not
+> always easy to reference them.
+> In addition, initramfs needs to be as small as possible so we should avoid
+> wildcards and in this case, include the only possible phy modules (indeed
+> not all phy's are compatible with a device). In this way, with the default
+> behavior, initramfs would include only the drivers for the current machine
+> and the only related phy modules.
+> 
+> Thanks
+> 
+> Best regards
+> José Ignacio
+> 
+> 
+
+-- 
+Florian
 
