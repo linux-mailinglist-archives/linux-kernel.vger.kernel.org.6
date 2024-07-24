@@ -1,139 +1,111 @@
-Return-Path: <linux-kernel+bounces-261078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 557FB93B2A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:26:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4C0D93B2A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3A221F24945
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:26:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 738CEB233A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90959158D7F;
-	Wed, 24 Jul 2024 14:26:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB58134DE;
-	Wed, 24 Jul 2024 14:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A808315920E;
+	Wed, 24 Jul 2024 14:27:17 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61182158DA7
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721831188; cv=none; b=RQyQYXmOSm/+LG6e1kLCFN/Jt4p4y2iUUu8m7MYq3eEWO1cAUEEQfeysN5cjkJsw/SmkPv5jSQVui/SyN0I3H2Q6dUs2UzHzQPYB6F/Ac8N+QgXG05WhHve5W1R52zDFSpU7wFoWsm40u3Fi0hsjPkUpy6TvE8GRpciSiRTtC/U=
+	t=1721831237; cv=none; b=nwZSIfozfzyqT4JpGK36ADK+r/nqQeTYg8NhFWGRO+GNWDVawcEtpg2Hona0nWnIQilZpvqAmMXT5KN9yrp2NW0fYe1h8IVtDcVYcUSw8fC25nydwbhDv1wU044To3Ha8t1H4A8hkNv+3NA+ux84F3M3hjE/ok+yTX5MOoi96Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721831188; c=relaxed/simple;
-	bh=0bBgnN3OSeuH8VO3vOvXoPT/9tsQofX1W71MvQG1L+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zf3czZv6As1BFoUzHZWV0Q5r2+wasE1FDvrUqaFvYoXKjmR6lQ2m7sSlmJ/dlKwOgZNkB99jDzFMJVcQdfCUAeh0aspRRh9ub29Ypkip+ADFTQfJH+XJy3wMutOeF73LPysB0MiYdnSC3jO8PQrb0XD4IQ4DZRYxKFDvO0+GSTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E53E8106F;
-	Wed, 24 Jul 2024 07:26:50 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C0743F5A1;
-	Wed, 24 Jul 2024 07:26:23 -0700 (PDT)
-Date: Wed, 24 Jul 2024 15:26:21 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Luke Parkin <luke.parkin@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, sudeep.holla@arm.com,
-	cristian.marussi@arm.com
-Subject: Re: [PATCH v3 4/5] firmware: arm_scmi: Create debugfs files for
- statistics
-Message-ID: <ZqEPDY45bPuQK95W@pluto>
-References: <20240715133751.2877197-1-luke.parkin@arm.com>
- <20240715133751.2877197-5-luke.parkin@arm.com>
+	s=arc-20240116; t=1721831237; c=relaxed/simple;
+	bh=jJVn3gKnyzYSWSJUSPxW1yI+bePQSN5YLY/8c7vnK2U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s77wgdN2Rx0djatNNqNj5GRy8YTL03giEPXATxXr2z2QyxHBfwomXHe/DOyamEcbqvOhnaaocvaLVaZLtJU0tf93rTb7odxlzPctVXXWFvvE5jW0QLVNSpILZUp/RiM5OijGDE3V8oe7AfpD6It61+AJ5e830BA4wQRNATFpJ5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-53-sJY-HC0JNsemD1OwgZ6oIg-1; Wed, 24 Jul 2024 15:27:12 +0100
+X-MC-Unique: sJY-HC0JNsemD1OwgZ6oIg-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 24 Jul
+ 2024 15:26:32 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Wed, 24 Jul 2024 15:26:32 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Linus
+ Torvalds" <torvalds@linuxfoundation.org>
+CC: "'Matthew Wilcox (Oracle)'" <willy@infradead.org>, 'Christoph Hellwig'
+	<hch@infradead.org>, 'Andrew Morton' <akpm@linux-foundation.org>, "'Andy
+ Shevchenko'" <andriy.shevchenko@linux.intel.com>, 'Dan Carpenter'
+	<dan.carpenter@linaro.org>, 'Arnd Bergmann' <arnd@kernel.org>,
+	"'Jason@zx2c4.com'" <Jason@zx2c4.com>, "'hch@infradead.org'"
+	<hch@infradead.org>, "'pedro.falcato@gmail.com'" <pedro.falcato@gmail.com>,
+	'Mateusz Guzik' <mjguzik@gmail.com>, "'linux-mm@kvack.org'"
+	<linux-mm@kvack.org>
+Subject: [PATCH 0/7] minmax: reduce compilation time
+Thread-Topic: [PATCH 0/7] minmax: reduce compilation time
+Thread-Index: Adrd1UnD4d8H4E3lR3eDOQFKqPNnSw==
+Date: Wed, 24 Jul 2024 14:26:32 +0000
+Message-ID: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240715133751.2877197-5-luke.parkin@arm.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 15, 2024 at 02:37:50PM +0100, Luke Parkin wrote:
-> Create debugfs files for the statistics in the scmi_debug_stats struct
-> 
-> Signed-off-by: Luke Parkin <luke.parkin@arm.com>
+The changes to minmax.h that changed the type check to a signedness
+check significantly increased the length of the expansion.
+In some cases it has also significantly increased compile type.
+This is particularly noticeable for nested expansions.
 
-Here you missed the seprator
+These changes reduce the expansions somewhat.
+The biggest change is the last patch that directly implements
+min3() and max3() rather than using a nested expansion.
 
----
+Further significant improvements can be made by removing the
+requirement that min(1,2) be 'constant enough' for an array size.
+Instead supporting MIN() and MAX() for constants only with a result
+that is valid for a static initialiser.
+However that needs an initial change to the few files that have
+local versions of MIN() or MAX().
 
-before the changelog...so this will go into the final commit.
 
-Thanks,
-Cristian
+David Laight (7):
+  minmax: Put all the clamp() definitions together
+  minmax: Use _Static_assert() instead of static_assert()
+  compiler.h: Add __if_constexpr(expr, if_const, if_not_const)
+  minmax: Simplify signedness check
+  minmax: Factor out the zero-extension logic from umin/umax.
+  minmax: Optimise _Static_assert() check in clamp().
+  minmax: minmax: Add __types_ok3() and optimise defines with 3
+    arguments
 
-> v2->v3
-> Add extra statistics also added in v3
-> v1->v2
-> Only create stats pointer if stats are enabled
-> Move stats debugfs creation into a seperate helper function
-> ---
->  drivers/firmware/arm_scmi/driver.c | 38 ++++++++++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
-> 
-> diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-> index b22f104cda36..9378e2d8af4f 100644
-> --- a/drivers/firmware/arm_scmi/driver.c
-> +++ b/drivers/firmware/arm_scmi/driver.c
-> @@ -2865,6 +2865,41 @@ static int scmi_device_request_notifier(struct notifier_block *nb,
->  	return NOTIFY_OK;
->  }
->  
-> +static void scmi_debugfs_stats_setup(struct scmi_info *info,
-> +				     struct dentry *trans)
-> +{
-> +	struct dentry *stats;
-> +
-> +	stats = debugfs_create_dir("stats", trans);
-> +
-> +	debugfs_create_atomic_t("sent_ok", 0400, stats,
-> +				&info->dbg_stats[SENT_OK]);
-> +	debugfs_create_atomic_t("sent_fail", 0400, stats,
-> +				&info->dbg_stats[SENT_FAIL]);
-> +	debugfs_create_atomic_t("sent_fail_polling_unsupported", 0400, stats,
-> +				&info->dbg_stats[SENT_FAIL_POLLING_UNSUPPORTED]);
-> +	debugfs_create_atomic_t("sent_fail_channel_not_found", 0400, stats,
-> +				&info->dbg_stats[SENT_FAIL_CHANNEL_NOT_FOUND]);
-> +	debugfs_create_atomic_t("response_ok", 0400, stats,
-> +				&info->dbg_stats[RESPONSE_OK]);
-> +	debugfs_create_atomic_t("notif_ok", 0400, stats,
-> +				&info->dbg_stats[NOTIF_OK]);
-> +	debugfs_create_atomic_t("dlyd_resp_ok", 0400, stats,
-> +				&info->dbg_stats[DLYD_RESPONSE_OK]);
-> +	debugfs_create_atomic_t("xfers_resp_timeout", 0400, stats,
-> +				&info->dbg_stats[XFERS_RESPONSE_TIMEOUT]);
-> +	debugfs_create_atomic_t("response_polled_ok", 0400, stats,
-> +				&info->dbg_stats[RESPONSE_POLLED_OK]);
-> +	debugfs_create_atomic_t("err_msg_unexpected", 0400, stats,
-> +				&info->dbg_stats[ERR_MSG_UNEXPECTED]);
-> +	debugfs_create_atomic_t("err_msg_invalid", 0400, stats,
-> +				&info->dbg_stats[ERR_MSG_INVALID]);
-> +	debugfs_create_atomic_t("err_msg_nomem", 0400, stats,
-> +				&info->dbg_stats[ERR_MSG_NOMEM]);
-> +	debugfs_create_atomic_t("err_protocol", 0400, stats,
-> +				&info->dbg_stats[ERR_PROTOCOL]);
-> +}
-> +
->  static void scmi_debugfs_common_cleanup(void *d)
->  {
->  	struct scmi_debug_info *dbg = d;
-> @@ -2931,6 +2966,9 @@ static struct scmi_debug_info *scmi_debugfs_common_setup(struct scmi_info *info)
->  	debugfs_create_u32("rx_max_msg", 0400, trans,
->  			   (u32 *)&info->rx_minfo.max_msg);
->  
-> +	if (IS_ENABLED(CONFIG_ARM_SCMI_DEBUG_STATISTICS))
-> +		scmi_debugfs_stats_setup(info, trans);
-> +
->  	dbg->top_dentry = top_dentry;
->  
->  	if (devm_add_action_or_reset(info->dev,
-> -- 
-> 2.34.1
-> 
-> 
+ include/linux/compiler.h |  65 +++++----------
+ include/linux/minmax.h   | 176 ++++++++++++++++++++-------------------
+ 2 files changed, 113 insertions(+), 128 deletions(-)
+
+--=20
+2.17.1
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
 
