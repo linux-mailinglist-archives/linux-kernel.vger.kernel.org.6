@@ -1,484 +1,224 @@
-Return-Path: <linux-kernel+bounces-261389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E6F93B6B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:28:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F9293B6B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E56611C23AC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:28:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 078AF1F21146
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9FC16B735;
-	Wed, 24 Jul 2024 18:28:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1EEC16B3B8;
+	Wed, 24 Jul 2024 18:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uPJwAQ4J"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="jmQ1YEoJ"
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2089.outbound.protection.outlook.com [40.107.215.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B402B15FA6B
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 18:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721845708; cv=none; b=sxu9E22+7DoxL+FoqQHVx5qgTnooTWrZlH0b3TeM9WJSazRB2hBRoFyvruYnEU0NrEV5MmclND/3kckOf0xeZpcv8ZMawkMkD4JRjPEpQoOA/XT4z0Un4vjh1/xS2lAXqZEhpEuQMsEUv5RfraXQlWAHZrAebgx+6J8Eb4hNY+0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721845708; c=relaxed/simple;
-	bh=S4UuPaOeQegpcux1vdA8ck7I5j9oS8niiT0wiJJfVtM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OQFmjchlEMOhPkIYatxFeAm66Q0WYMcJOBN7r3fOl5Mczl8IaEU09fExqB9fX5W1CmySmnaYf9T6DzUtzWq71dIIleML7tD/mV9CM5gkWjh8go5xwHqqn1Jd1VKRUUF5dXJeWKJyLyJFVYk/4Y0b/0y9QY4h4OPbe7JX2e0XBx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uPJwAQ4J; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso2768a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 11:28:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1721845704; x=1722450504; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wMh0TnqzA9zHl181eCCj30xXLhPmTG5NZ0Fu6v3Zwos=;
-        b=uPJwAQ4JRkfwcZPEbGhKeCMbE8sblmSbK9DKdR+khUKEVe3iwflDRJWy+v/FIjWx8x
-         e0XGFvLXS11xs/5Z2EHI0jYDo6LrMo3SinI7XJn4J/F3NdKf+Lq0zZTJeSBgTaJeTSrq
-         2K0Fe8e6F/B2ZSGbOGTe6mWw6IbzJMbKhDoUgpD8LZaJr8Kt31HqOROKcsMmdUJPQuB1
-         LMFteAEpA3H9211e1oMkUEFLLOyjUkFhL8d6Su0yrzNOMvnw1+/vf4ndWJBXh+n85eTn
-         zZo0VwZD1OxjmWI2XSSCgw42+xwrrYuQlfX3MX3Xa4Ui0TaBEqEea/RNjTV8sw3Ef2XV
-         ZtEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721845704; x=1722450504;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wMh0TnqzA9zHl181eCCj30xXLhPmTG5NZ0Fu6v3Zwos=;
-        b=FoMetugVcFB8uarrwbR92vha72tE/aOxxkWOe70J1WUfiYyACYlGxt8BELtrS7FmQX
-         E7tW5gxV64bmFq3epAN7hGhGk0rfmRry2MKfy4yuai0ApUhlJ6O/kZkL1S62tat9iM/w
-         hqCeEFDnzul/yVQXASh3vBK86eUyH87CYf//7UIE9gw62j1XzzTyhCCKJ4ZbVg4sxDJ7
-         c3Ga1pDUbUUIrpO3/n50PrUbApImo8dH+oKuyaxSpETfjKywQ8Mb1OkRQZwuW1SLo5+m
-         8zRobFtZjeaW9n5e7kwr9dUm14OpQqkJiqbzwF3Xlr5nNg4FuJ+1BwYlUNh6p4CRjq1B
-         MQAA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxCZgQutQIA0K246fWWyblBFnroKJ/CYlXjYzTppmm0SPcmk6BmRPGX8IkNZWZ34IoYYac9g7Jsqwjf6jvKkhDSmzIA21UYM1HM8p8
-X-Gm-Message-State: AOJu0YyUwKFINWFQo1bs+wwJ9WyLLBv6OeGQBTgbNAX3JhUirYKAI4nK
-	WOBW4n3wQuJWggwlbhA5wKPW9GbVHnoCgH/RcxSwxikP1dmxkohGw4bepo0QjB3XE2TCV0d+DTZ
-	muI8J9JYGxkuw8Myb685MF6uiV61I8Xyg3vnr
-X-Google-Smtp-Source: AGHT+IGijS5gHIVjnX9tsuJCD+rrP6DCwLUr4GswhEu7V419kX/pyZdzpIVEo8hL8jpdobrXD4yUkhzhTz85IY+JQ+s=
-X-Received: by 2002:a05:6402:40c3:b0:58b:93:b624 with SMTP id
- 4fb4d7f45d1cf-5ac2a3d8998mr25856a12.1.1721845703482; Wed, 24 Jul 2024
- 11:28:23 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3884016A955
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 18:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721845722; cv=fail; b=o4gZ7iLbNhMRBFauHKd1y8VjA9DbGFJx83WKY7dUfv6gROFq3jySKbQMsa2lJQaRnwUtgS4xLLww0Cw902ZEQ+oAcwpps+znRVgRZv4rd2eUHAXIVQHugOt3xzo3YdhpTfcTmn8I4S8zvmSgZrMkFgBVVp7oHTiTtMWrxADDrqY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721845722; c=relaxed/simple;
+	bh=zSOv1GdyCrbHZ1Q81/2Ni5Xv+zQxvi04rnNS/9UyCU0=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j+NboNh4yiMBEP9tLxyBP7u4UxLoytkQtB1jHj//nV3Q/yT24KllW67WHwXuc7I3EDju73UAUPtu4URG7anzMIqbcNZJJdxXweDBtFjEcnYWe6BScJW4u97EYjS1hXZZoaZAa8QvAqamMHVVvNnBCSNGblZHuVsYIxci2apu3ro=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=jmQ1YEoJ; arc=fail smtp.client-ip=40.107.215.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gnASu0ojR4E1urG5zdCgx30ZLRZD71EE/ulefX1Q/TFS6NsCx4c3zA3HfB+mLpL2nlPFNl5FrgUTcf7WLd3Ic5tZfv0LGuUKLs+vYRT1ZZuRuzTBpfPcYlrR+7+oqY7F6BAH/gUrfN7rGojKxRQJqVnn5lc54jq051tYQoqr+3RXWY9/Bu9Vq5Bs5JNhqeWCKgVLWnYbtMs3XJTji9y6uQRyUOqDTpR6tESDIQVqLXrFczuBOmOXvFduzCS/NodgbZubGAbpUmAFg+8PttorYPuKHO+kVP3Cn38ygamPA0jT5JILlnzG3IWxretfP3vEvx3mPjs0rsn2odIoMXIgEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hPtU3HLcrmbARxN8wvJoxrgVPPrInk57j6sq96cRong=;
+ b=SDznoeLPYJO0zXiLY3Mm4w6srBTD9Pndt803NLcvjEApf9DJBGoqtNKftbzTKM949cwtxXUfF4MQkLsUjx0cg7S/eKCDRpaUJG+MUF1L4mK20vzdSVR752g+OmVA+lSaSuY+OmEzJxuxgr+vhDIePc6cX1AKOEVEXMM+c9vX1y67mfk37SANrNEjy4goTojbd2mKzaXwW9Pl8JlsWNz6cOkMZVqIzIKf8lHwk24R1KTn2BEoFnZ3fXuh0oy1BMqCTkgCOO8kRMaZRxC0peJa4OVHlVoBKR16TrSTZT6EcwaVIHN0JerxLIdvf2u8DoGLZ9YJQrSdBgqz1JZ2Omry/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 58.252.5.68) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=oppo.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=oppo.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hPtU3HLcrmbARxN8wvJoxrgVPPrInk57j6sq96cRong=;
+ b=jmQ1YEoJ8o7TP+i9e34VT42jWt9s4kAaiEvrKszxACSDnVzhuoRyENUVBumUu00aY7O2KmRCUT9u4l2cjRE/i8vetqZ7Smt4YrkXeoEEyduTrE586zEazY/uMQuzeb81txwEh+OrzGhdRa6G5xS9H9NG82ZM7s7Ee6rQFtnzMqI=
+Received: from SI2PR06CA0017.apcprd06.prod.outlook.com (2603:1096:4:186::15)
+ by PUZPR02MB6288.apcprd02.prod.outlook.com (2603:1096:301:118::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Wed, 24 Jul
+ 2024 18:28:34 +0000
+Received: from HK3PEPF0000021C.apcprd03.prod.outlook.com
+ (2603:1096:4:186:cafe::62) by SI2PR06CA0017.outlook.office365.com
+ (2603:1096:4:186::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.20 via Frontend
+ Transport; Wed, 24 Jul 2024 18:28:34 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
+ smtp.mailfrom=oppo.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=oppo.com;
+Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
+ 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
+ client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
+Received: from mail.oppo.com (58.252.5.68) by
+ HK3PEPF0000021C.mail.protection.outlook.com (10.167.8.38) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7784.11 via Frontend Transport; Wed, 24 Jul 2024 18:28:33 +0000
+Received: from oppo.com (172.16.40.118) by mailappw31.adc.com (172.16.56.198)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 25 Jul
+ 2024 02:28:32 +0800
+Date: Thu, 25 Jul 2024 02:28:27 +0800
+From: Hailong.Liu <hailong.liu@oppo.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Uladzislau Rezki
+	<urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>, Lorenzo Stoakes
+	<lstoakes@gmail.com>, Vlastimil Babka <vbabka@suse.cz>, Michal Hocko
+	<mhocko@suse.com>
+CC: Barry Song <21cnbao@gmail.com>, "Tangquan . Zheng"
+	<zhengtangquan@oppo.com>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH v1] mm/vmalloc: fix incorrect
+ __vmap_pages_range_noflush() if vm_area_alloc_pages() from high order
+ fallback to order0
+Message-ID: <20240724182827.nlgdckimtg2gwns5@oppo.com>
+References: <20240724181916.31776-1-hailong.liu@oppo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <00000000000027b189061e021f49@google.com>
-In-Reply-To: <00000000000027b189061e021f49@google.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 24 Jul 2024 20:28:09 +0200
-Message-ID: <CANn89iK3061x4Q9XA_uUHvTsfeVXSOFVpFBNh1jG8=ZSG+1eag@mail.gmail.com>
-Subject: Re: [syzbot] [net?] INFO: task hung in nsim_create (2)
-To: syzbot <syzbot+90fd70a665715bd10258@syzkaller.appspotmail.com>
-Cc: davem@davemloft.net, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240724181916.31776-1-hailong.liu@oppo.com>
+X-ClientProxiedBy: mailappw30.adc.com (172.16.56.197) To mailappw31.adc.com
+ (172.16.56.198)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: HK3PEPF0000021C:EE_|PUZPR02MB6288:EE_
+X-MS-Office365-Filtering-Correlation-Id: bace865b-94c6-4ddd-403a-08dcac0e6cf3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?J0CckuhFKnIcB65id4JxjoaNrRirKGYmdFInw28kwyOJ56iLjWx0AnXMkNBo?=
+ =?us-ascii?Q?3CUu/qsrYSZYvjecShG+6nTsSbWicxV7a9h4Xoh4rdMv4llN11mpovzJV7J+?=
+ =?us-ascii?Q?MAraUPTKailxHIGEAB6OItshT0LhSXLfalZpjq1EfUXKlNwwMnwTKK15+o/y?=
+ =?us-ascii?Q?FvF4UZxFsXv0RFvTGrSDCUC8SGSv4JnEUXv9gIssVVSI9ZhL09rOHhFMj7rq?=
+ =?us-ascii?Q?0JZu4pmeB8VenekXmwEbdgvMGeOLRZ+33oDM4YmhfxOCHc/qiZ6TRELqQNmx?=
+ =?us-ascii?Q?Am1Bq+/DQz6dB/ejhutxjQIAsxj/a/UHDb/XtT++e+iYNZqAnM6JEpGx+vBm?=
+ =?us-ascii?Q?eo39P2KZKlXp7BLlUMRrs61WOMtOl284jjfkOXSIlwMe8rLvSAmQsHP8H31T?=
+ =?us-ascii?Q?5TSPQAkH5uPv9MxpCksWoAi9q6eWDjItJvhLFSkJzwdBR4CtiO+soNXnQ065?=
+ =?us-ascii?Q?FhsaESuwLqb87WN8Yll/kApzljl+HJiD837nRGvdnSnKrJYUcUY8dLSj9gBl?=
+ =?us-ascii?Q?gOPJ5fxV7nEmRSN9TZpCSqgfqA5Btil6yY3YnjKjc5hpeyEBb380F4F1QJgq?=
+ =?us-ascii?Q?j3cMlujomuQeCWcBC9lbznEbhxW++CDIUXI/Fk1Unz7gUpiB8thDvbfe2JZW?=
+ =?us-ascii?Q?GLATkcTh5HB+x5Z6W1Qe4bJdERkmRGTSleYfJM+rxUQaJ9hTHBVQFsN+yeqd?=
+ =?us-ascii?Q?TPww+PtQMM6gembWBfhk29JP3C3rWsyR1kgEMJ1Z6yXfFvM3+lBBo1IJUWyE?=
+ =?us-ascii?Q?tyc4oZdiJJ2u4uS7tnPdVPJZu6PSkynpEcTyv1i0V4bkpPMHVdCxQV69EAa2?=
+ =?us-ascii?Q?RJPdjm7orF0cfDjyvoo4VWHid2D1VlpYfoXpZgJCjmtzb7OGn1gBseKkO9Wq?=
+ =?us-ascii?Q?awgwWncvVQWy917a7jvFwzPhyt7sqQwa+/6Ji1OXaFfuQ9ad/CoSFSCzTfro?=
+ =?us-ascii?Q?x5Sx97Sb9iWLCSVixIGUZMwkFfytE/ogzLGoBQ4S/74GMMNo343DaY6kspKB?=
+ =?us-ascii?Q?LxlKIAnJo/auGjn1AX/bjmftyIupc7gQT5nYrUY+Jnc6Bm2XKj2otswXkH8g?=
+ =?us-ascii?Q?nGnrDxfBxe403dhYaiD5m28aZRWIuUs+lO2yP9xahtd0dnj2aYEmM22H6IF7?=
+ =?us-ascii?Q?Uo6ftVWQMTSDeZGY0k0X7H/r1D4hepkWdVg4MXKMJQ0epnqjCACZwnjqyI5c?=
+ =?us-ascii?Q?0WdY7eXrqXBqe9JpVkB2FzWo/yDJyO51jaW20yqS37P0wRDo5lOcTmLZlIk8?=
+ =?us-ascii?Q?B+nFwXeziI19E5XkTChwDWWdccJJHwUBs2pJ1Rcq0gtz89TZTeM2yyTjtjp3?=
+ =?us-ascii?Q?fKy69WHUagJx7S2d0SNKWFRtI86kX/WT7TTufOeH4gyYbIn3c9gt6TcfC/Fc?=
+ =?us-ascii?Q?ConcHcUafphf/nTmw/fSRXGb4BdlenvWGK1SPGkSDkcPRiHsDGHcN+P6lU7N?=
+ =?us-ascii?Q?fMC+i5USD1ZjaeLcXdPAUwXW2dP9Q5lp?=
+X-Forefront-Antispam-Report:
+	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: oppo.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jul 2024 18:28:33.5605
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bace865b-94c6-4ddd-403a-08dcac0e6cf3
+X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	HK3PEPF0000021C.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR02MB6288
 
-On Wed, Jul 24, 2024 at 8:05=E2=80=AFPM syzbot
-<syzbot+90fd70a665715bd10258@syzkaller.appspotmail.com> wrote:
+On Thu, 25. Jul 02:19, hailong.liu@oppo.com wrote:
+> From: "Hailong.Liu" <hailong.liu@oppo.com>
 >
-> Hello,
+> The scenario where the issue occurs is as follows:
+> CONFIG: vmap_allow_huge = true && 2M is for PMD_SIZE
+> kvmalloc(2M)
+>     __vmalloc_node_range(vm_flags=VM_ALLOW_HUGE_VMAP)
+>         vm_area_alloc_pages(order=9) --->allocs order9 failed and fallback to order0
+>                                         and phys_addr is aligned with PMD_SIZE
+>             vmap_pages_range
+>                 vmap_pages_range_noflush
+>                     __vmap_pages_range_noflush(page_shift = 21) ----> incorrect vmap *huge* here
 >
-> syzbot found the following issue on:
+> Fix it by introducing VM_AREA_ALLOC_PAGES_FALLBACK in page->private if fallback to 0.
+> Fixes: e9c3cda4d86e ("mm, vmalloc: fix high order __GFP_NOFAIL allocations")
 >
-> HEAD commit:    68b59730459e Merge tag 'perf-tools-for-v6.11-2024-07-16' =
-o..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D13e0a19598000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Db6230d83d52af=
-231
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D90fd70a665715bd=
-10258
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
-ian) 2.40
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/2ed0d621f118/dis=
-k-68b59730.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/36b453c7acac/vmlinu=
-x-68b59730.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/069a896ef41a/b=
-zImage-68b59730.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+90fd70a665715bd10258@syzkaller.appspotmail.com
->
-> INFO: task kworker/u8:5:570 blocked for more than 143 seconds.
->       Not tainted 6.10.0-syzkaller-08280-g68b59730459e #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:kworker/u8:5    state:D stack:20528 pid:570   tgid:570   ppid:2     =
- flags:0x00004000
-> Workqueue: netns cleanup_net
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5188 [inline]
->  __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
->  __schedule_loop kernel/sched/core.c:6606 [inline]
->  schedule+0x14b/0x320 kernel/sched/core.c:6621
->  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
->  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
->  __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
->  nsim_init_netdevsim drivers/net/netdevsim/netdev.c:678 [inline]
->  nsim_create+0x408/0x890 drivers/net/netdevsim/netdev.c:750
->  __nsim_dev_port_add+0x6c0/0xae0 drivers/net/netdevsim/dev.c:1390
->  nsim_dev_port_add_all drivers/net/netdevsim/dev.c:1446 [inline]
->  nsim_dev_reload_create drivers/net/netdevsim/dev.c:1498 [inline]
->  nsim_dev_reload_up+0x69b/0x8e0 drivers/net/netdevsim/dev.c:985
->  devlink_reload+0x478/0x870 net/devlink/dev.c:474
->  devlink_pernet_pre_exit+0x1f3/0x440 net/devlink/core.c:509
->  ops_pre_exit_list net/core/net_namespace.c:163 [inline]
->  cleanup_net+0x615/0xcc0 net/core/net_namespace.c:620
->  process_one_work kernel/workqueue.c:3231 [inline]
->  process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
->  worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
->  kthread+0x2f0/0x390 kernel/kthread.c:389
->  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->  </TASK>
-> INFO: task kworker/u8:7:2410 blocked for more than 144 seconds.
->       Not tainted 6.10.0-syzkaller-08280-g68b59730459e #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:kworker/u8:7    state:D stack:23312 pid:2410  tgid:2410  ppid:2     =
- flags:0x00004000
-> Workqueue: ipv6_addrconf addrconf_dad_work
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5188 [inline]
->  __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
->  __schedule_loop kernel/sched/core.c:6606 [inline]
->  schedule+0x14b/0x320 kernel/sched/core.c:6621
->  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
->  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
->  __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
->  addrconf_dad_work+0xd0/0x16f0 net/ipv6/addrconf.c:4194
->  process_one_work kernel/workqueue.c:3231 [inline]
->  process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
->  worker_thread+0x86d/0xd40 kernel/workqueue.c:3390
->  kthread+0x2f0/0x390 kernel/kthread.c:389
->  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->  </TASK>
-> INFO: task dhcpcd:4769 blocked for more than 145 seconds.
->       Not tainted 6.10.0-syzkaller-08280-g68b59730459e #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:dhcpcd          state:D
->  stack:20384 pid:4769  tgid:4769  ppid:4768   flags:0x00000002
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5188 [inline]
->  __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
->  __schedule_loop kernel/sched/core.c:6606 [inline]
->  schedule+0x14b/0x320 kernel/sched/core.c:6621
->  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
->  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
->  __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
->  rtnl_lock net/core/rtnetlink.c:79 [inline]
->  rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6644
->  netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
->  netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
->  netlink_unicast+0x7f0/0x990 net/netlink/af_netlink.c:1357
->  netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
->  sock_sendmsg_nosec net/socket.c:730 [inline]
->  __sock_sendmsg+0x221/0x270 net/socket.c:745
->  ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
->  ___sys_sendmsg net/socket.c:2651 [inline]
->  __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f9d6db7da4b
-> RSP: 002b:00007ffd2f22e8c8 EFLAGS: 00000246
->  ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 00007f9d6daa56c0 RCX: 00007f9d6db7da4b
-> RDX: 0000000000000000 RSI: 00007ffd2f242a78 RDI: 0000000000000005
-> RBP: 0000000000000005 R08: 0000000000000000 R09: 00007ffd2f242a78
-> R10: 0000000000000000 R11: 0000000000000246 R12: ffffffffffffffff
-> R13: 00007ffd2f242a78 R14: 0000000000000030 R15: 0000000000000001
->  </TASK>
-> INFO: task udevd:5105 blocked for more than 146 seconds.
->       Not tainted 6.10.0-syzkaller-08280-g68b59730459e #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:udevd           state:D
->  stack:24864 pid:5105  tgid:5105  ppid:4555   flags:0x00000002
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5188 [inline]
->  __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
->  __schedule_loop kernel/sched/core.c:6606 [inline]
->  schedule+0x14b/0x320 kernel/sched/core.c:6621
->  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
->  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
->  __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
->  device_lock include/linux/device.h:1009 [inline]
->  uevent_show+0x17d/0x340 drivers/base/core.c:2743
->  dev_attr_show+0x55/0xc0 drivers/base/core.c:2437
->  sysfs_kf_seq_show+0x331/0x4c0 fs/sysfs/file.c:59
->  seq_read_iter+0x445/0xd60 fs/seq_file.c:230
->  new_sync_read fs/read_write.c:395 [inline]
->  vfs_read+0x9bd/0xbc0 fs/read_write.c:476
->  ksys_read+0x1a0/0x2c0 fs/read_write.c:619
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fda18b16b6a
-> RSP: 002b:00007ffcf336bed8 EFLAGS: 00000246
->  ORIG_RAX: 0000000000000000
-> RAX: ffffffffffffffda RBX: 00005588202d8730 RCX: 00007fda18b16b6a
-> RDX: 0000000000001000 RSI: 0000558820307980 RDI: 0000000000000008
-> RBP: 00005588202d8730 R08: 0000000000000008 R09: 0000000000000008
-> R10: 000000000000010f R11: 0000000000000246 R12: 0000000000000000
-> R13: 0000000000003fff R14: 00007ffcf336c3b8 R15: 000000000000000a
->  </TASK>
-> INFO: task syz-executor:5304 blocked for more than 147 seconds.
->       Not tainted 6.10.0-syzkaller-08280-g68b59730459e #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz-executor    state:D stack:20216 pid:5304  tgid:5304  ppid:1     =
- flags:0x00004006
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5188 [inline]
->  __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
->  __schedule_loop kernel/sched/core.c:6606 [inline]
->  schedule+0x14b/0x320 kernel/sched/core.c:6621
->  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
->  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
->  __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
->  nsim_destroy+0x71/0x5c0 drivers/net/netdevsim/netdev.c:773
->  __nsim_dev_port_del+0x14b/0x1b0 drivers/net/netdevsim/dev.c:1425
->  nsim_dev_port_del_all drivers/net/netdevsim/dev.c:1437 [inline]
->  nsim_dev_reload_destroy+0x28a/0x490 drivers/net/netdevsim/dev.c:1658
->  nsim_drv_remove+0x58/0x160 drivers/net/netdevsim/dev.c:1673
->  device_remove drivers/base/dd.c:566 [inline]
->  __device_release_driver drivers/base/dd.c:1270 [inline]
->  device_release_driver_internal+0x4a9/0x7c0 drivers/base/dd.c:1293
->  bus_remove_device+0x34f/0x420 drivers/base/bus.c:574
->  device_del+0x57a/0x9b0 drivers/base/core.c:3868
->  device_unregister+0x20/0xc0 drivers/base/core.c:3909
->  nsim_bus_dev_del drivers/net/netdevsim/bus.c:462 [inline]
->  del_device_store+0x363/0x480 drivers/net/netdevsim/bus.c:226
->  kernfs_fop_write_iter+0x3a1/0x500 fs/kernfs/file.c:334
->  new_sync_write fs/read_write.c:497 [inline]
->  vfs_write+0xa72/0xc90 fs/read_write.c:590
->  ksys_write+0x1a0/0x2c0 fs/read_write.c:643
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f9e2b3746df
-> RSP: 002b:00007f9e2b62f220 EFLAGS: 00000293
->  ORIG_RAX: 0000000000000001
-> RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00007f9e2b3746df
-> RDX: 0000000000000001 RSI: 00007f9e2b62f270 RDI: 0000000000000005
-> RBP: 00007f9e2b3e45b2 R08: 0000000000000000 R09: 00007f9e2b62f077
-> R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000001
-> R13: 00007f9e2b62f270 R14: 00007f9e2c034620 R15: 0000000000000003
->  </TASK>
-> INFO: task syz-executor:5325 blocked for more than 148 seconds.
->       Not tainted 6.10.0-syzkaller-08280-g68b59730459e #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz-executor    state:D
->  stack:21104 pid:5325  tgid:5325  ppid:1      flags:0x00000004
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5188 [inline]
->  __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
->  __schedule_loop kernel/sched/core.c:6606 [inline]
->  schedule+0x14b/0x320 kernel/sched/core.c:6621
->  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
->  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
->  __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
->  rtnl_lock net/core/rtnetlink.c:79 [inline]
->  rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6644
->  netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
->  netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
->  netlink_unicast+0x7f0/0x990 net/netlink/af_netlink.c:1357
->  netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
->  sock_sendmsg_nosec net/socket.c:730 [inline]
->  __sock_sendmsg+0x221/0x270 net/socket.c:745
->  __sys_sendto+0x3a4/0x4f0 net/socket.c:2204
->  __do_sys_sendto net/socket.c:2216 [inline]
->  __se_sys_sendto net/socket.c:2212 [inline]
->  __x64_sys_sendto+0xde/0x100 net/socket.c:2212
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f1d9e3778ec
-> RSP: 002b:00007f1d9e62f630 EFLAGS: 00000293
->  ORIG_RAX: 000000000000002c
-> RAX: ffffffffffffffda RBX: 00007f1d9f034620 RCX: 00007f1d9e3778ec
-> RDX: 0000000000000020 RSI: 00007f1d9f034670 RDI: 0000000000000003
-> RBP: 0000000000000000 R08: 00007f1d9e62f684 R09: 000000000000000c
-> R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
-> R13: 0000000000000000 R14: 00007f1d9f034670 R15: 0000000000000000
->  </TASK>
-> INFO: task syz-executor:5383 blocked for more than 149 seconds.
->       Not tainted 6.10.0-syzkaller-08280-g68b59730459e #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz-executor    state:D
->  stack:21728 pid:5383  tgid:5383  ppid:1      flags:0x00000004
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5188 [inline]
->  __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
->  __schedule_loop kernel/sched/core.c:6606 [inline]
->  schedule+0x14b/0x320 kernel/sched/core.c:6621
->  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
->  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
->  __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
->  rtnl_lock net/core/rtnetlink.c:79 [inline]
->  rtnetlink_rcv_msg+0x6e6/0xcf0 net/core/rtnetlink.c:6644
->  netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
->  netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
->  netlink_unicast+0x7f0/0x990 net/netlink/af_netlink.c:1357
->  netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
->  sock_sendmsg_nosec net/socket.c:730 [inline]
->  __sock_sendmsg+0x221/0x270 net/socket.c:745
->  __sys_sendto+0x3a4/0x4f0 net/socket.c:2204
->  __do_sys_sendto net/socket.c:2216 [inline]
->  __se_sys_sendto net/socket.c:2212 [inline]
->  __x64_sys_sendto+0xde/0x100 net/socket.c:2212
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f4baeb778ec
-> RSP: 002b:00007f4baee2f6b0 EFLAGS: 00000293 ORIG_RAX: 000000000000002c
-> RAX: ffffffffffffffda RBX: 00007f4baf834620 RCX: 00007f4baeb778ec
-> RDX: 000000000000003c RSI: 00007f4baf834670 RDI: 0000000000000003
-> RBP: 0000000000000000 R08: 00007f4baee2f704 R09: 000000000000000c
-> R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
-> R13: 0000000000000000 R14: 00007f4baf834670 R15: 0000000000000000
->  </TASK>
-> INFO: task syz.3.62:5420 blocked for more than 150 seconds.
->       Not tainted 6.10.0-syzkaller-08280-g68b59730459e #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz.3.62        state:D stack:22288 pid:5420  tgid:5419  ppid:5118  =
- flags:0x00004006
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5188 [inline]
->  __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
->  __schedule_loop kernel/sched/core.c:6606 [inline]
->  schedule+0x14b/0x320 kernel/sched/core.c:6621
->  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
->  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
->  __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
->  netdev_wait_allrefs_any net/core/dev.c:10622 [inline]
->  netdev_run_todo+0x7b2/0x1000 net/core/dev.c:10741
->  rtnl_unlock net/core/rtnetlink.c:152 [inline]
->  rtnetlink_rcv_msg+0x748/0xcf0 net/core/rtnetlink.c:6648
->  netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
->  netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
->  netlink_unicast+0x7f0/0x990 net/netlink/af_netlink.c:1357
->  netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
->  sock_sendmsg_nosec net/socket.c:730 [inline]
->  __sock_sendmsg+0x221/0x270 net/socket.c:745
->  ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
->  ___sys_sendmsg net/socket.c:2651 [inline]
->  __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f5b41f75b59
-> RSP: 002b:00007f5b42cf2048 EFLAGS: 00000246
->  ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 00007f5b42105f60 RCX: 00007f5b41f75b59
-> RDX: 0000000000000000 RSI: 0000000020000140 RDI: 0000000000000006
-> RBP: 00007f5b41fe4e5d R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 000000000000000b R14: 00007f5b42105f60 R15: 00007f5b4222fa78
->  </TASK>
-> INFO: task syz-executor:5430 blocked for more than 151 seconds.
->       Not tainted 6.10.0-syzkaller-08280-g68b59730459e #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz-executor    state:D
->  stack:25264 pid:5430  tgid:5430  ppid:1      flags:0x00004004
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5188 [inline]
->  __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
->  __schedule_loop kernel/sched/core.c:6606 [inline]
->  schedule+0x14b/0x320 kernel/sched/core.c:6621
->  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
->  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
->  __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
->  register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3871
->  ops_init+0x359/0x610 net/core/net_namespace.c:139
->  setup_net+0x515/0xca0 net/core/net_namespace.c:343
->  copy_net_ns+0x4e2/0x7b0 net/core/net_namespace.c:508
->  create_new_namespaces+0x425/0x7b0 kernel/nsproxy.c:110
->  unshare_nsproxy_namespaces+0x124/0x180 kernel/nsproxy.c:228
->  ksys_unshare+0x619/0xc10 kernel/fork.c:3308
->  __do_sys_unshare kernel/fork.c:3379 [inline]
->  __se_sys_unshare kernel/fork.c:3377 [inline]
->  __x64_sys_unshare+0x38/0x40 kernel/fork.c:3377
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f61f45772b7
-> RSP: 002b:00007f61f482ffa8 EFLAGS: 00000206 ORIG_RAX: 0000000000000110
-> RAX: ffffffffffffffda RBX: 00007f61f45e4bd1 RCX: 00007f61f45772b7
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000040000000
-> RBP: 0000000000000000 R08: 00007f61f5237d60 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000206 R12: 000000000000000c
-> R13: 0000000000000003 R14: 0000000000000009 R15: 0000000000000009
->  </TASK>
-> INFO: task syz-executor:5432 blocked for more than 152 seconds.
->       Not tainted 6.10.0-syzkaller-08280-g68b59730459e #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:syz-executor    state:D
->  stack:25712 pid:5432  tgid:5432  ppid:1      flags:0x00004006
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5188 [inline]
->  __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
->  __schedule_loop kernel/sched/core.c:6606 [inline]
->  schedule+0x14b/0x320 kernel/sched/core.c:6621
->  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
->  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
->  __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
->  register_nexthop_notifier+0x84/0x290 net/ipv4/nexthop.c:3871
->  ops_init+0x359/0x610 net/core/net_namespace.c:139
->  setup_net+0x515/0xca0 net/core/net_namespace.c:343
->  copy_net_ns+0x4e2/0x7b0 net/core/net_namespace.c:508
->  create_new_namespaces+0x425/0x7b0 kernel/nsproxy.c:110
->  unshare_nsproxy_namespaces+0x124/0x180 kernel/nsproxy.c:228
->  ksys_unshare+0x619/0xc10 kernel/fork.c:3308
->
->
+> CC: Barry Song <21cnbao@gmail.com>
+> Reported-by: Tangquan.Zheng <zhengtangquan@oppo.com>
+> Signed-off-by: Hailong.Liu <hailong.liu@oppo.com>
 > ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>  mm/vmalloc.c | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
 >
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 03c78fae06f3..b35dfd3eeee3 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -75,6 +75,8 @@ early_param("nohugevmalloc", set_nohugevmalloc);
+>  static const bool vmap_allow_huge = false;
+>  #endif	/* CONFIG_HAVE_ARCH_HUGE_VMALLOC */
 >
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
+> +#define VM_AREA_ALLOC_PAGES_FALLBACK 0x1
+> +
+>  bool is_vmalloc_addr(const void *x)
+>  {
+>  	unsigned long addr = (unsigned long)kasan_reset_tag(x);
+> @@ -604,8 +606,13 @@ int __vmap_pages_range_noflush(unsigned long addr, unsigned long end,
+>  	WARN_ON(page_shift < PAGE_SHIFT);
 >
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
+>  	if (!IS_ENABLED(CONFIG_HAVE_ARCH_HUGE_VMALLOC) ||
+> -			page_shift == PAGE_SHIFT)
+> -		return vmap_small_pages_range_noflush(addr, end, prot, pages);
+> +			page_shift == PAGE_SHIFT ||
+> +			page_private(pages[0]) == VM_AREA_ALLOC_PAGES_FALLBACK) {
+> +		int ret = vmap_small_pages_range_noflush(addr, end, prot, pages);
+> +
+> +		set_page_private(pages[0], 0);
+> +		return ret;
+> +	}
 >
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
+>  	for (i = 0; i < nr; i += 1U << (page_shift - PAGE_SHIFT)) {
+>  		int err;
+> @@ -3583,6 +3590,7 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
 >
-> If you want to undo deduplication, reply with:
-> #syz undup
+>  			/* fall back to the zero order allocations */
+>  			alloc_gfp |= __GFP_NOFAIL;
+> +			fallback = true;
+Sry for my mistake, I forget define fallback here.
+BTW, This is not the optimal solution. Does anyone have a better idea? Glad to
+hear:)
+>  			order = 0;
+>  			continue;
+>  		}
+> @@ -3608,6 +3616,8 @@ vm_area_alloc_pages(gfp_t gfp, int nid,
+>  		cond_resched();
+>  		nr_allocated += 1U << order;
+>  	}
+> +	if (nr_allocated && fallback)
+> +		set_page_private(pages[0], VM_AREA_ALLOC_PAGES_FALLBACK);
+>
+>  	return nr_allocated;
+>  }
+> --
+> 2.34.1
+>
 
-The fact that netdevsim uses a sysfs file to add/delete netdevice
-seems unfortunate,
-because of the classical sysfs vs rtnl issue (see rtnl_trylock() calls
-in net/core/net-sysfs.c for reference)
+--
+help you, help me,
+Hailong.
 
