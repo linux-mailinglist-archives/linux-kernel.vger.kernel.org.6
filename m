@@ -1,203 +1,247 @@
-Return-Path: <linux-kernel+bounces-261139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E7AB93B315
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:51:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AD1893B2EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84B4BB2518E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:51:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D7F1B23802
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E8715B147;
-	Wed, 24 Jul 2024 14:47:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDA61591F3;
+	Wed, 24 Jul 2024 14:44:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LK/qMwWc"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WnaysIr0"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F6D15B0E4
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4670F1CAA1
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721832426; cv=none; b=CDgA8q/nBU0Mn9y1V7CCC0mirvFIQnp4cGEd7Q0MELn528v66FoslUHOw0DbeZbrkjkHA/L6b8q58+OPzNZxYfVI6zvBZlgshM07GoPKABAP4K45eW0DaOvioKldxvM7rmJjbyQP0dwbA0FZasaY9BdI4XX9kLLCFTeBPGtjNN0=
+	t=1721832247; cv=none; b=Ohc62+vhRad6PTmBd70Oa61qZeYPmumuiJWZMz1UBnJ633eS662nchY/lvAiUwFkhBP2+yBxkptx9ZCbI9kTkire4NwogJ/JsTfMPN2YRvmuvrT8FOhMgTBrO3Y+8o406Dz1WJBbPMBqliUFhKA75y04wMi8kdhS+vNUTZy+wDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721832426; c=relaxed/simple;
-	bh=JslPgZexQJ8YxsjbHAMa/2MLxig4vL9j/3RhuQHxY/Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jtRiaCBhlUVP+Q59EwZwqFy/h9V4xi4C1A5gVMNXjExif6x344Fbnno1KQQHgix0I4fPpEGYbOE+MUUn4X2ai2auHlLVSeJBfs4RdNy8OfEA3xXBpminxYTKk1WL8SVuJE0lArjsE5YjjBZvvjn1/2wFOtVBKKMxIuFuSeq/JWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LK/qMwWc; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1721832247; c=relaxed/simple;
+	bh=lOc6GcA/Z1rVuWCMtRiGU7ChW8toc0BUgpRKF7/FIIM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Bx1KN70xKOjRq+QbiXyue20ysX8u2yuKgg41nZtAMdCljVZf55CzexgyPwI1XYhMe4OdxBuM5O+d6XUprpQ1uMgm93Z6hj68r+yHziA8Q33WViWwF61XYxyipccfv4uI2DJtEDPI2QopTpLiNWshcxCUqto8iCRz+yx3wBUhwUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WnaysIr0; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721832423;
+	s=mimecast20190719; t=1721832244;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ljhAb/voCwvDC1m5R2Wlfs86SFuWCKibv1oDMW9motQ=;
-	b=LK/qMwWcm/bpJ8Vhlomp004daix5r4zAVqJwJrS/khs2DPgHXUAmk9jz6ARLqQEPh9KyAs
-	uscYdgmNATn0ifvcVRlnnvIqULg2nTsxG3509yU1K04FlgW5ZRNhs03LSEwdcLjhW3iJrh
-	95+BZbttj4ya/B8miIlLSxCotBfuboo=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-680-EcVDsL-nPXKlESUogZGwvg-1; Wed,
- 24 Jul 2024 10:46:57 -0400
-X-MC-Unique: EcVDsL-nPXKlESUogZGwvg-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DE1A01955D47;
-	Wed, 24 Jul 2024 14:46:54 +0000 (UTC)
-Received: from vschneid-thinkpadt14sgen2i.remote.csb (unknown [10.39.192.125])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 71E5A1955F40;
-	Wed, 24 Jul 2024 14:46:50 +0000 (UTC)
-From: Valentin Schneider <vschneid@redhat.com>
-To: rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>
-Subject: [PATCH v3 25/25] context_tracking, rcu: Rename rcu_dyntick trace event into rcu_watching
-Date: Wed, 24 Jul 2024 16:43:25 +0200
-Message-ID: <20240724144325.3307148-26-vschneid@redhat.com>
-In-Reply-To: <20240724144325.3307148-1-vschneid@redhat.com>
-References: <20240724144325.3307148-1-vschneid@redhat.com>
+	bh=PtgNm1pOLMsP8Qszrl0K7VKeER149ylQU0rUWgeGkEo=;
+	b=WnaysIr0B9P26NZeMvKqNqPpeFyr1PMF28JDYUvTswJ3RtMPcrU2pOhYGrvGccbtSQFLh0
+	h2MoY46KNbEViMua/6+zdBKibBxHhFNd3qxZmViEa/9oQQkZgKha+FbSWdjwpIjUMUUkWO
+	Tsvdb1D+afwbseCXNty46KrD5ATTYt4=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-356-AlUV7HcQOnyKmmCqt0iIVw-1; Wed, 24 Jul 2024 10:44:02 -0400
+X-MC-Unique: AlUV7HcQOnyKmmCqt0iIVw-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-36857dd6913so3682273f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:44:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721832242; x=1722437042;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PtgNm1pOLMsP8Qszrl0K7VKeER149ylQU0rUWgeGkEo=;
+        b=bbAk6hPvIdQgPL14x7/iWwi2oLbzPzHj9suWw4vuEafoZQPLnVCWOg+AZgoCIPU2tr
+         aPJ+DTQBNeVxZQpj7mD9/1I2R5rRKEyEMSO+vY/erkvnZjjpQxIRILUESGU0hi6Ivnj+
+         0QY/sRXSGRA3EotUrcmKs3AImGJCbk9MclpanxXXaaP10/TX4gm4prvQA7ww5DWlOwlA
+         JSq1G+XdHnZDJ3unQcnnUZP4kJyUGKQ4GvosuyBjmiiDxSUY8eCVW2oqzhjzUF/00dy3
+         rmXx6wO6pykHpCPNhQbJuz0Qdyti8tdLGJJFbl8n7xaaS74DFIJ2y5MN2+vZPYtIhM2s
+         eCoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTKOvh78zp/LC41dCjLYGoMfNFW6WA/ocwHIG+G6cvbO3+QneOj+668beeQnuGUsypwZIeXyJ1veFsEYbJlpxqOBn/YoQ2mtTp/ySj
+X-Gm-Message-State: AOJu0Yw8tOha79djJUI991JFRtMbR94ESvX+VJ0UV2Dj5+1M8CawuEPt
+	unD1avxedOdjPB7KPHk3+vk9vx4wftbdmEpKpVVvT1eIE68+JCZUJeVhEG2UV2FpEVfmxHiDVqs
+	dEj1i7fD9I8MK9ED2/CsEJmJ7OWh1qSr9VmVt/wgOyUqSY5V+bRlCUe4vyOdv2g==
+X-Received: by 2002:a5d:58fa:0:b0:368:3f60:8725 with SMTP id ffacd0b85a97d-369dec1e5d2mr4259520f8f.39.1721832241556;
+        Wed, 24 Jul 2024 07:44:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEHbt1Ya9CZQ8TcF7aODRLLParNCtw3ChacXtuHqFCqCgnkFaSHw2MfwC9jTM+m9E2ZRynujw==
+X-Received: by 2002:a5d:58fa:0:b0:368:3f60:8725 with SMTP id ffacd0b85a97d-369dec1e5d2mr4259492f8f.39.1721832241079;
+        Wed, 24 Jul 2024 07:44:01 -0700 (PDT)
+Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36878694833sm14522088f8f.55.2024.07.24.07.44.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 07:44:00 -0700 (PDT)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id CFC2914733D9; Wed, 24 Jul 2024 16:43:59 +0200 (CEST)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: syzbot <syzbot+c226757eb784a9da3e8b@syzkaller.appspotmail.com>,
+ andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+ daniel@iogearbox.net, davem@davemloft.net, eddyz87@gmail.com,
+ edumazet@google.com, haoluo@google.com, john.fastabend@gmail.com,
+ jolsa@kernel.org, kpsingh@kernel.org, kuba@kernel.org,
+ linux-kernel@vger.kernel.org, martin.lau@linux.dev,
+ netdev@vger.kernel.org, pabeni@redhat.com, sdf@fomichev.me,
+ song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Subject: Re: [syzbot] [bpf?] [net?] general protection fault in __cpu_map_flush
+In-Reply-To: <000000000000048a4b061dfcd02a@google.com>
+References: <000000000000048a4b061dfcd02a@google.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Wed, 24 Jul 2024 16:43:59 +0200
+Message-ID: <871q3iq28g.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain
 
-The "rcu_dyntick" naming convention has been turned into "rcu_watching" for
-all helpers now, align the trace event to that.
+Hi Sebastian
 
-To add to the confusion, the strings passed to the trace event are now
-reversed: when RCU "starts" the dyntick / EQS state, it "stops" watching.
+The syzbot splat below shows up in recent -next kernels which
+sorta-kinda wags its finger suggestively at the bpf_net_ctx_get()
+changes. There's one for __dev_flush() as well:
+https://lore.kernel.org/r/0000000000009d1d0a061d91b803@google.com
 
-Signed-off-by: Valentin Schneider <vschneid@redhat.com>
----
- include/trace/events/rcu.h | 16 ++++++++--------
- kernel/context_tracking.c  | 10 +++++-----
- 2 files changed, 13 insertions(+), 13 deletions(-)
+Care to take a look? :)
 
-diff --git a/include/trace/events/rcu.h b/include/trace/events/rcu.h
-index 4066b6d51e46a..e51ef658437f0 100644
---- a/include/trace/events/rcu.h
-+++ b/include/trace/events/rcu.h
-@@ -466,40 +466,40 @@ TRACE_EVENT(rcu_stall_warning,
- /*
-  * Tracepoint for dyntick-idle entry/exit events.  These take 2 strings
-  * as argument:
-- * polarity: "Start", "End", "StillNonIdle" for entering, exiting or still not
-+ * polarity: "Start", "End", "StillWatching" for entering, exiting or still not
-  *            being in dyntick-idle mode.
-  * context: "USER" or "IDLE" or "IRQ".
-  * NMIs nested in IRQs are inferred with nesting > 1 in IRQ context.
-  *
-  * These events also take a pair of numbers, which indicate the nesting
-  * depth before and after the event of interest, and a third number that is
-- * the ->dynticks counter.  Note that task-related and interrupt-related
-+ * the RCU_WATCHING counter.  Note that task-related and interrupt-related
-  * events use two separate counters, and that the "++=" and "--=" events
-  * for irq/NMI will change the counter by two, otherwise by one.
-  */
--TRACE_EVENT_RCU(rcu_dyntick,
-+TRACE_EVENT_RCU(rcu_watching,
- 
--	TP_PROTO(const char *polarity, long oldnesting, long newnesting, int dynticks),
-+	TP_PROTO(const char *polarity, long oldnesting, long newnesting, int counter),
- 
--	TP_ARGS(polarity, oldnesting, newnesting, dynticks),
-+	TP_ARGS(polarity, oldnesting, newnesting, counter),
- 
- 	TP_STRUCT__entry(
- 		__field(const char *, polarity)
- 		__field(long, oldnesting)
- 		__field(long, newnesting)
--		__field(int, dynticks)
-+		__field(int, counter)
- 	),
- 
- 	TP_fast_assign(
- 		__entry->polarity = polarity;
- 		__entry->oldnesting = oldnesting;
- 		__entry->newnesting = newnesting;
--		__entry->dynticks = dynticks;
-+		__entry->counter = counter;
- 	),
- 
- 	TP_printk("%s %lx %lx %#3x", __entry->polarity,
- 		  __entry->oldnesting, __entry->newnesting,
--		  __entry->dynticks & 0xfff)
-+		  __entry->counter & 0xfff)
- );
- 
- /*
-diff --git a/kernel/context_tracking.c b/kernel/context_tracking.c
-index e64bb746cd9b3..152b485a62db5 100644
---- a/kernel/context_tracking.c
-+++ b/kernel/context_tracking.c
-@@ -137,7 +137,7 @@ static void noinstr ct_kernel_exit(bool user, int offset)
- 
- 	instrumentation_begin();
- 	lockdep_assert_irqs_disabled();
--	trace_rcu_dyntick(TPS("Start"), ct_nesting(), 0, ct_rcu_watching());
-+	trace_rcu_watching(TPS("End"), ct_nesting(), 0, ct_rcu_watching());
- 	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && !user && !is_idle_task(current));
- 	rcu_preempt_deferred_qs(current);
- 
-@@ -182,7 +182,7 @@ static void noinstr ct_kernel_enter(bool user, int offset)
- 	// instrumentation for the noinstr ct_kernel_enter_state()
- 	instrument_atomic_write(&ct->state, sizeof(ct->state));
- 
--	trace_rcu_dyntick(TPS("End"), ct_nesting(), 1, ct_rcu_watching());
-+	trace_rcu_watching(TPS("Start"), ct_nesting(), 1, ct_rcu_watching());
- 	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && !user && !is_idle_task(current));
- 	WRITE_ONCE(ct->nesting, 1);
- 	WARN_ON_ONCE(ct_nmi_nesting());
-@@ -219,7 +219,7 @@ void noinstr ct_nmi_exit(void)
- 	 * leave it in non-RCU-idle state.
- 	 */
- 	if (ct_nmi_nesting() != 1) {
--		trace_rcu_dyntick(TPS("--="), ct_nmi_nesting(), ct_nmi_nesting() - 2,
-+		trace_rcu_watching(TPS("--="), ct_nmi_nesting(), ct_nmi_nesting() - 2,
- 				  ct_rcu_watching());
- 		WRITE_ONCE(ct->nmi_nesting, /* No store tearing. */
- 			   ct_nmi_nesting() - 2);
-@@ -228,7 +228,7 @@ void noinstr ct_nmi_exit(void)
- 	}
- 
- 	/* This NMI interrupted an RCU-idle CPU, restore RCU-idleness. */
--	trace_rcu_dyntick(TPS("Startirq"), ct_nmi_nesting(), 0, ct_rcu_watching());
-+	trace_rcu_watching(TPS("Endirq"), ct_nmi_nesting(), 0, ct_rcu_watching());
- 	WRITE_ONCE(ct->nmi_nesting, 0); /* Avoid store tearing. */
- 
- 	// instrumentation for the noinstr ct_kernel_exit_state()
-@@ -294,7 +294,7 @@ void noinstr ct_nmi_enter(void)
- 		instrumentation_begin();
- 	}
- 
--	trace_rcu_dyntick(incby == 1 ? TPS("Endirq") : TPS("++="),
-+	trace_rcu_watching(incby == 1 ? TPS("Startirq") : TPS("++="),
- 			  ct_nmi_nesting(),
- 			  ct_nmi_nesting() + incby, ct_rcu_watching());
- 	instrumentation_end();
--- 
-2.43.0
+Thanks!
+
+-Toke
+
+
+syzbot <syzbot+c226757eb784a9da3e8b@syzkaller.appspotmail.com> writes:
+
+> syzbot has found a reproducer for the following issue on:
+>
+> HEAD commit:    9ec6ec93f2c1 Add linux-next specific files for 20240724
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=10e71ca1980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=83e9d0906fa0e2bd
+> dashboard link: https://syzkaller.appspot.com/bug?extid=c226757eb784a9da3e8b
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17c0f8e3980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=151b9919980000
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/c0ab2da24b1f/disk-9ec6ec93.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/da6faf16185f/vmlinux-9ec6ec93.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/1ad900571155/bzImage-9ec6ec93.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+c226757eb784a9da3e8b@syzkaller.appspotmail.com
+>
+> Oops: general protection fault, probably for non-canonical address 0xe3fffb24002e6fe6: 0000 [#1] PREEMPT SMP KASAN PTI
+> KASAN: maybe wild-memory-access in range [0x1ffff92001737f30-0x1ffff92001737f37]
+> CPU: 1 UID: 0 PID: 11878 Comm: syz-executor412 Not tainted 6.10.0-next-20240724-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+> RIP: 0010:__cpu_map_flush+0x42/0xd0
+> Code: e8 13 8c d6 ff 4c 89 f0 48 c1 e8 03 42 80 3c 38 00 74 08 4c 89 f7 e8 4d 12 3e 00 49 8b 1e 4c 39 f3 74 77 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 2f 12 3e 00 4c 8b 23 48 8d 7b c0
+> RSP: 0018:ffffc90000a18b10 EFLAGS: 00010202
+> RAX: 03ffff24002e6fe6 RBX: 1ffff92001737f30 RCX: ffff888074dc8000
+> RDX: 0000000080000101 RSI: 0000000000000010 RDI: ffffc9000b9bf800
+> RBP: dffffc0000000000 R08: ffffffff896d3b5a R09: 1ffffffff1f5f375
+> R10: dffffc0000000000 R11: fffffbfff1f5f376 R12: ffffc9000b9bf800
+> R13: ffffc9000b9bf820 R14: ffffc9000b9bf800 R15: dffffc0000000000
+> FS:  0000555592677380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fd44da640f0 CR3: 000000001ea68000 CR4: 00000000003506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <IRQ>
+>  xdp_do_check_flushed+0x136/0x240 net/core/filter.c:4304
+>  __napi_poll+0xe4/0x490 net/core/dev.c:6774
+>  napi_poll net/core/dev.c:6840 [inline]
+>  net_rx_action+0x89b/0x1240 net/core/dev.c:6962
+>  handle_softirqs+0x2c4/0x970 kernel/softirq.c:554
+>  __do_softirq kernel/softirq.c:588 [inline]
+>  invoke_softirq kernel/softirq.c:428 [inline]
+>  __irq_exit_rcu+0xf4/0x1c0 kernel/softirq.c:637
+>  irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
+>  common_interrupt+0xaa/0xd0 arch/x86/kernel/irq.c:278
+>  </IRQ>
+>  <TASK>
+>  asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
+> RIP: 0010:check_kcov_mode kernel/kcov.c:184 [inline]
+> RIP: 0010:__sanitizer_cov_trace_pc+0x37/0x70 kernel/kcov.c:207
+> Code: 40 d7 03 00 65 8b 15 10 0c 70 7e f7 c2 00 01 ff 00 74 11 f7 c2 00 01 00 00 74 35 83 b9 1c 16 00 00 00 74 2c 8b 91 f8 15 00 00 <83> fa 02 75 21 48 8b 91 00 16 00 00 48 8b 32 48 8d 7e 01 8b 89 fc
+> RSP: 0018:ffffc9000b9bf8a0 EFLAGS: 00000246
+> RAX: ffffffff81410dcc RBX: 0000000000000000 RCX: ffff888074dc8000
+> RDX: 0000000000000000 RSI: ffffffff8b942412 RDI: ffffffff8b942328
+> RBP: 1ffff92001737f30 R08: ffffffff81410c60 R09: ffffc9000b9bfa70
+> R10: 0000000000000003 R11: ffffffff817f7030 R12: ffffffff90294810
+> R13: dffffc0000000000 R14: 1ffff92001737f30 R15: ffffffff90d0fbd4
+>  unwind_next_frame+0x67c/0x2a00 arch/x86/kernel/unwind_orc.c:495
+>  arch_stack_walk+0x151/0x1b0 arch/x86/kernel/stacktrace.c:25
+>  stack_trace_save+0x118/0x1d0 kernel/stacktrace.c:122
+>  kasan_save_stack mm/kasan/common.c:47 [inline]
+>  kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+>  kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+>  poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
+>  __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
+>  kasan_slab_free include/linux/kasan.h:184 [inline]
+>  slab_free_hook mm/slub.c:2252 [inline]
+>  slab_free mm/slub.c:4473 [inline]
+>  kmem_cache_free+0x145/0x350 mm/slub.c:4548
+>  __dentry_kill+0x497/0x630 fs/dcache.c:629
+>  dput+0x19f/0x2b0 fs/dcache.c:852
+>  __fput+0x5f8/0x8a0 fs/file_table.c:430
+>  __do_sys_close fs/open.c:1566 [inline]
+>  __se_sys_close fs/open.c:1551 [inline]
+>  __x64_sys_close+0x7f/0x110 fs/open.c:1551
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fd44d9ed9c0
+> Code: ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 80 3d e1 76 07 00 00 74 17 b8 03 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 48 c3 0f 1f 80 00 00 00 00 48 83 ec 18 89 7c
+> RSP: 002b:00007fff7a1e95b8 EFLAGS: 00000202 ORIG_RAX: 0000000000000003
+> RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00007fd44d9ed9c0
+> RDX: 0000000000000e80 RSI: 0000000020000100 RDI: 0000000000000004
+> RBP: 00007fff7a1e9600 R08: 00007fff7a1e95e0 R09: 00007fff7a1e95e0
+> R10: 00007fff7a1e95e0 R11: 0000000000000202 R12: 0000000000000000
+> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:__cpu_map_flush+0x42/0xd0
+> Code: e8 13 8c d6 ff 4c 89 f0 48 c1 e8 03 42 80 3c 38 00 74 08 4c 89 f7 e8 4d 12 3e 00 49 8b 1e 4c 39 f3 74 77 48 89 d8 48 c1 e8 03 <42> 80 3c 38 00 74 08 48 89 df e8 2f 12 3e 00 4c 8b 23 48 8d 7b c0
+> RSP: 0018:ffffc90000a18b10 EFLAGS: 00010202
+> RAX: 03ffff24002e6fe6 RBX: 1ffff92001737f30 RCX: ffff888074dc8000
+> RDX: 0000000080000101 RSI: 0000000000000010 RDI: ffffc9000b9bf800
+> RBP: dffffc0000000000 R08: ffffffff896d3b5a R09: 1ffffffff1f5f375
+> R10: dffffc0000000000 R11: fffffbfff1f5f376 R12: ffffc9000b9bf800
+> R13: ffffc9000b9bf820 R14: ffffc9000b9bf800 R15: dffffc0000000000
+> FS:  0000555592677380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007fd44da640f0 CR3: 000000001ea68000 CR4: 00000000003506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> ----------------
+> Code disassembly (best guess):
+>    0:	e8 13 8c d6 ff       	call   0xffd68c18
+>    5:	4c 89 f0             	mov    %r14,%rax
+>    8:	48 c1 e8 03          	shr    $0x3,%rax
+>    c:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1)
+>   11:	74 08                	je     0x1b
+>   13:	4c 89 f7             	mov    %r14,%rdi
+>   16:	e8 4d 12 3e 00       	call   0x3e1268
+>   1b:	49 8b 1e             	mov    (%r14),%rbx
+>   1e:	4c 39 f3             	cmp    %r14,%rbx
+>   21:	74 77                	je     0x9a
+>   23:	48 89 d8             	mov    %rbx,%rax
+>   26:	48 c1 e8 03          	shr    $0x3,%rax
+> * 2a:	42 80 3c 38 00       	cmpb   $0x0,(%rax,%r15,1) <-- trapping instruction
+>   2f:	74 08                	je     0x39
+>   31:	48 89 df             	mov    %rbx,%rdi
+>   34:	e8 2f 12 3e 00       	call   0x3e1268
+>   39:	4c 8b 23             	mov    (%rbx),%r12
+>   3c:	48 8d 7b c0          	lea    -0x40(%rbx),%rdi
+>
+>
+> ---
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
 
 
