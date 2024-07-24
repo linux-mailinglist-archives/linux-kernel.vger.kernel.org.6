@@ -1,138 +1,145 @@
-Return-Path: <linux-kernel+bounces-261257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC29F93B4C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:19:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC85993B4C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88BBB2819A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:19:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C8A4281888
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72F915ECF2;
-	Wed, 24 Jul 2024 16:19:28 +0000 (UTC)
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A03C15E5CA;
+	Wed, 24 Jul 2024 16:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uMUolZob"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2731158DA7;
-	Wed, 24 Jul 2024 16:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82F0158DA7
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 16:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721837968; cv=none; b=QKhKyjDI7dUf6mAm/o1yCBq5SyRHtob73kjl8L/3apNR6DKm79P9MmKpujpm1myezsb3hcMKoSN1DJzbAgmYgRUDTafdEVDRy6PnSQ2efvNJhTkaUefUWFu2Rfmko0Nw5VJR68zhhAHZvW/VDbbh1QbRklyF+P3KL3ArRIZSBdM=
+	t=1721837963; cv=none; b=ib2SZuuH2+sgttksUnLqTmjNOBqxZsX7ozZ8SnaR4V4F1l6GGls0Vmahx9nvgZB2OXEOlbv9DRu1nsVhPvIgohTui68lRZ5hGTlFbN2bMff1fQao2fSJERcbxq7jr+Aq5jJsS238APtVmCqCoC6z/CTKfNKoJwdIXfF3SmbC/KU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721837968; c=relaxed/simple;
-	bh=M9xNnH9A3o+JbidnMTWZbkgXxw+NqYPjjPDUFgusnPY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I8D0B7rBAG37s0RO294GdV+5WF5VDxbEIoOruyTrtBObvv6jA2vCLkSmdcJdXk4g2WhDKvH7vZ9zv7akGDQfqYb0nzpQO31E3Hwi3LudpSlpz3q8XYk9WXayQa8UmIEjb+DQOGrOGZv7ii6Ey7zPxAHI8KVI79KDEnf5jmaBMN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70d1d6369acso780557b3a.0;
-        Wed, 24 Jul 2024 09:19:26 -0700 (PDT)
+	s=arc-20240116; t=1721837963; c=relaxed/simple;
+	bh=f30zFParFK142Sof6KuO+fMd1kxpq+GScyC9c1ue9Ho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WUoKw/Ao0RcJkxJh0cGNf2CKYUZqEy9f8UJS99mX9npwKvzVsKsCQ/6v+DMnu+h3GRh5AF1NUHpkpKWAmzKXzv/2N5BUlNIXFGY0Gy3CaaTJnRlP5YfnrxakdvoHW0NKuCPxQ9Q3GiLrr4H7tEt/PfphB1Dp1AdT54Qw/34T3Cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uMUolZob; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fbc3a9d23bso13510705ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 09:19:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721837961; x=1722442761; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uk6VvkGCsbeQVal54C7Yzy20X2Egh4+UujE84uvAe84=;
+        b=uMUolZob77SBgvA8j2JRDYrU5kfmPoCw5R1Cl6Y0Ar55kxLyUkMS4DVygYQwiRTgHw
+         +zTW4u8eb/HbNj0jAiYNpfNPOpvz8tstVJLC6iJ64QANpVysfTa7PryCY281x3/6uAcD
+         kLVQ6Cqz3LDVs9zCBpLxwv8au/HyrqHsniBq9tvchHjEnbw9bhLvt2TEbJol9TAw7oOc
+         mSyoV1GGsnBE6qYXktvW7aWKf3xvXkElpP7FM+QAJf31LNILynQFKCBbXAmJkoVC4bX6
+         oYjkpaPtdga97WETNdODHodbARJci0LOuQg+i6Oi+89ig9EdYoYsZq6mb1E1udx+nx3+
+         ctsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721837966; x=1722442766;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VpUG3opiLz2xR43uxtV0MHYwVyplNn+0MniIggPsJ20=;
-        b=JQBJQ8g6LxBbdg29uGDlmVt/AtLcEmFnC9xWCWuOysRg8+EBotDpP72Jp9mCnWbIw5
-         Mf0DGmcWQVOsqcC9ZwWx8Ps0q37ES7eIqx9287TPYPbc1/H67Nxp6Xye1ehqfxdWUzGS
-         Ov9CIzu0Yog1jI1s5DRWh5l/SLQjfgg55WSSN9YiFP6RlNN87Wv/6p+3hPFX3/BoseZY
-         hEmO0vK7L5nmo5e0X0GQJ94wsxTyYe61/HfJHwzGO9zBjLYeF+hlNRjbS3og38QBmXcG
-         ehrtFyIWP0tceTlOF6pM/qkH/JHdlsuByqsn6919BJnFUMAqa6k2gb/vaQ6PuO10qUCy
-         twuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX4nLZbO0aYuTL8Oo5jvCy8e8WEcvLlr9dxDNbaReM3G7P1Hb6qUx9nyxuyRmOmPYtlEnXEztO15gAsFMUeoES/XoM/tHMsyDtsffPS
-X-Gm-Message-State: AOJu0YzqYaXvfmQd403TECU70iF9sRbJVlAgWwvyvYtH+BnRfLNX4meP
-	Wq3rrfIdKcLH7Tnwk6PfSJ8eLuG/aFarqluDjX0dgelGf5YugFFu20AeBOEB04AHEKvnPst0v5m
-	hfDdSb+WpADk9YsuG265ifNgzAMI=
-X-Google-Smtp-Source: AGHT+IFzeqzAiyRDu5VoP52MvfbUxNgzlRFo6KYBMbArZGgNQZS33tw4CGZPkkS4T3SESI8IUKDVyMf7Ki1ZcOr6TdI=
-X-Received: by 2002:a17:90b:4b52:b0:2cb:5829:a491 with SMTP id
- 98e67ed59e1d1-2cf2207e990mr161813a91.20.1721837965963; Wed, 24 Jul 2024
- 09:19:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721837961; x=1722442761;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uk6VvkGCsbeQVal54C7Yzy20X2Egh4+UujE84uvAe84=;
+        b=SCHhN+A/IzDXk3U1snOd67eo8luGbymtI45e1rbiVQqFUdZGrbOrIBeM3z6mLoxF+3
+         NIgJ6RMRxzqUfYnZqXAxge0qXMank4/3z9mZ9fsJiT4uvRER0FMNaTF3a9ecKZV3QGM7
+         C98Uj9IQ5OmUMs7ZG1S8pdVhH7vYLWTzGet5SMsuQ/Dz6rCaksBU2OQn3dY0ZdD20zm0
+         gQ2cLojRoRnyhCIrU2QjvcfCyta9NC03urkYUgKckZrlQfU+C2jOBmfgBw4iWT9HwfFP
+         QpB0fWGiklO0Fcm8/5B+2JGzI726yTqXGBZU+7iFBUdJWbQYerjabdSsuX6888crQ9zM
+         tNyA==
+X-Forwarded-Encrypted: i=1; AJvYcCULOPYj/ml+1McfvutGMzbzRCpPgm2ARF9EKCHp51xHN/+JfbV0mRpIspdGQ/WlV+Z3M21XcPbLmYWqqT7xThvZDhrrxe3FPchLs0xt
+X-Gm-Message-State: AOJu0YxqNI9hXEEkGhkOFhBe7qZr5GIfLNxRZdCVsY+hD1IdQxF409NT
+	5lJsV3FDn+OHqAzX1XmPpaQ6yZYGFGIDVU68vJggQbtD41KW/QWEd7t8baLwlg==
+X-Google-Smtp-Source: AGHT+IHIrTkDS2WCnTKJAArgrlpe4xhHZbFrE+hRGnbRw/giY7CXM7xCg5WsJLXv0yC3yxVxg2OLJA==
+X-Received: by 2002:a17:903:228d:b0:1fb:719a:28e2 with SMTP id d9443c01a7336-1fed387086fmr850095ad.21.1721837961184;
+        Wed, 24 Jul 2024 09:19:21 -0700 (PDT)
+Received: from thinkpad ([103.244.168.26])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fdd4c62d9dsm18029785ad.159.2024.07.24.09.19.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 09:19:20 -0700 (PDT)
+Date: Wed, 24 Jul 2024 21:49:16 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, vigneshr@ti.com, kishon@kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org,
+	ahalaney@redhat.com, srk@ti.com
+Subject: Re: [PATCH] PCI: j721e: Set .map_irq and .swizzle_irq to NULL
+Message-ID: <20240724161916.GG3349@thinkpad>
+References: <20240724065048.285838-1-s-vadapalli@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240722211548.61455-1-cachen@purestorage.com> <CALCePG0GtG4DQwzJ-QCJRScfxVg3Up6Xeemxh48qSf2VjxjebA@mail.gmail.com>
-In-Reply-To: <CALCePG0GtG4DQwzJ-QCJRScfxVg3Up6Xeemxh48qSf2VjxjebA@mail.gmail.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Wed, 24 Jul 2024 09:19:14 -0700
-Message-ID: <CAM9d7cj20KdEtg8v93+bt+ZmpTzin=N3DfAX3K8ELHLkccoeqQ@mail.gmail.com>
-Subject: Re: [PATCHv5] perf tool: fix dereferencing NULL al->maps
-To: Casey Chen <cachen@purestorage.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	irogers@google.com, yzhong@purestorage.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240724065048.285838-1-s-vadapalli@ti.com>
 
-Hello,
+On Wed, Jul 24, 2024 at 12:20:48PM +0530, Siddharth Vadapalli wrote:
+> Since the configuration of Legacy Interrupts (INTx) is not supported, set
+> the .map_irq and .swizzle_irq callbacks to NULL. This fixes the error:
+>   of_irq_parse_pci: failed with rc=-22
+> due to the absence of Legacy Interrupts in the device-tree.
+> 
 
-On Tue, Jul 23, 2024 at 6:01=E2=80=AFPM Casey Chen <cachen@purestorage.com>=
- wrote:
->
-> Ian / Namhyung,
->
-> Could you take a look at the latest diff PATCHv5 ?
->
-> Thanks,
-> Casey
->
-> On Mon, Jul 22, 2024 at 2:15=E2=80=AFPM Casey Chen <cachen@purestorage.co=
-m> wrote:
-> >
-> > With 0dd5041c9a0e ("perf addr_location: Add init/exit/copy functions"),
-> > when cpumode is 3 (macro PERF_RECORD_MISC_HYPERVISOR),
-> > thread__find_map() could return with al->maps being NULL.
-> >
-> > The path below could add a callchain_cursor_node with NULL ms.maps.
-> >
-> > add_callchain_ip()
-> >   thread__find_symbol(.., &al)
-> >     thread__find_map(.., &al)   // al->maps becomes NULL
-> >   ms.maps =3D maps__get(al.maps)
-> >   callchain_cursor_append(..., &ms, ...)
-> >     node->ms.maps =3D maps__get(ms->maps)
-> >
-> > Then the path below would dereference NULL maps and get segfault.
-> >
-> > fill_callchain_info()
-> >   maps__machine(node->ms.maps);
-> >
-> > Fix it by checking if maps is NULL in fill_callchain_info().
-> >
-> > Signed-off-by: Casey Chen <cachen@purestorage.com>
-> > Reviewed-by: Ian Rogers <irogers@google.com>
+Do you really need to set 'swizzle_irq' to NULL? pci_assign_irq() will bail out
+if 'map_irq' is set to NULL.
 
-Acked-by: Namhyung Kim <namhyung@kernel.org>
+- Mani
 
-Thanks,
-Namhyung
+> Fixes: f3e25911a430 ("PCI: j721e: Add TI J721E PCIe driver")
+> Reported-by: Andrew Halaney <ahalaney@redhat.com>
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> ---
+> 
+> Hello,
+> 
+> This patch is based on commit
+> 786c8248dbd3 Merge tag 'perf-tools-fixes-for-v6.11-2024-07-23' of git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools
+> of Mainline Linux.
+> 
+> Patch has been tested on J784S4-EVM and J721e-EVM, both of which have
+> the PCIe Controller configured by the pci-j721e.c driver.
+> 
+> Regards,
+> Siddharth.
+> 
+>  drivers/pci/controller/cadence/pci-j721e.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
+> index 85718246016b..5372218849a8 100644
+> --- a/drivers/pci/controller/cadence/pci-j721e.c
+> +++ b/drivers/pci/controller/cadence/pci-j721e.c
+> @@ -417,6 +417,10 @@ static int j721e_pcie_probe(struct platform_device *pdev)
+>  		if (!bridge)
+>  			return -ENOMEM;
+>  
+> +		/* Legacy interrupts are not supported */
+> +		bridge->map_irq = NULL;
+> +		bridge->swizzle_irq = NULL;
+> +
+>  		if (!data->byte_access_allowed)
+>  			bridge->ops = &cdns_ti_pcie_host_ops;
+>  		rc = pci_host_bridge_priv(bridge);
+> -- 
+> 2.40.1
+> 
+> 
 
-
-> > ---
-> >  tools/perf/util/callchain.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
-> > index 1730b852a947..6d075648d2cc 100644
-> > --- a/tools/perf/util/callchain.c
-> > +++ b/tools/perf/util/callchain.c
-> > @@ -1141,7 +1141,7 @@ int hist_entry__append_callchain(struct hist_entr=
-y *he, struct perf_sample *samp
-> >  int fill_callchain_info(struct addr_location *al, struct callchain_cur=
-sor_node *node,
-> >                         bool hide_unresolved)
-> >  {
-> > -       struct machine *machine =3D maps__machine(node->ms.maps);
-> > +       struct machine *machine =3D node->ms.maps ? maps__machine(node-=
->ms.maps) : NULL;
-> >
-> >         maps__put(al->maps);
-> >         al->maps =3D maps__get(node->ms.maps);
-> > --
-> > 2.45.2
-> >
+-- 
+மணிவண்ணன் சதாசிவம்
 
