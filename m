@@ -1,55 +1,47 @@
-Return-Path: <linux-kernel+bounces-260946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1088E93B0BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:55:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E619493B0C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E72FA1C20F9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:55:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82B42B20F52
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9564B1586FE;
-	Wed, 24 Jul 2024 11:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9372F158A3C;
+	Wed, 24 Jul 2024 11:55:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="od17ZgB/"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gmHy6cNe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C428815698D;
-	Wed, 24 Jul 2024 11:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14DE1514ED;
+	Wed, 24 Jul 2024 11:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721822139; cv=none; b=l3WQG2oq2+HxoZQPHIaZgkSBhaMSPf7VMWIt6ec7E6K8leiIBdprhbtlUSgtpwKGrb+f6gX7MqStd/FcvoN11STFqZUQRM4nC3rClc9sVEQLcI4dXDnOcTY+utt6D+YleCagxWZI3UerF4BoII9zPa9uAJVfElnTZt2HokvSdn0=
+	t=1721822150; cv=none; b=hYWLXpIwX8Y8xo2Dk5UkHTmLQGgqmJVECgb2MCF02lNNrsrvgDfBbs5kXecTue3/1egJiuf+R/6StfMXQWHcl4J81I7KCt5ppXYjl2DF/dzzeXW42OKAEEn0j8MiqevMTz/FUtFhQvYwgjY1esMF1ILEormmVX74RTmj+zrGikg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721822139; c=relaxed/simple;
-	bh=3KzmTP07azLvBhVt5oUz8fKHTgKhISq1ItXh7wXN3QM=;
+	s=arc-20240116; t=1721822150; c=relaxed/simple;
+	bh=aD1WuGUjqO0uEHPch3G63drQXoYwCBw9LLbsQd2a1pE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SG74WJ1vPnxxgXgadoYmDOCXG2SaIi7mzdbXWA3Qu79QlpNytSC1quO+zIKQeMz9qP0jTkGRbHIyoX+l2vfzefP1ax6fV2lYgmZD8pWrPtn+XI6AddXKSHBZuYeI1VfAtFr7VBY7+8VLNeuh++nFr6LvOhHR3JVMewRyOwAQ/Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=od17ZgB/; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1721822123; x=1722426923; i=markus.elfring@web.de;
-	bh=3KzmTP07azLvBhVt5oUz8fKHTgKhISq1ItXh7wXN3QM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=od17ZgB/dlZhhtknmee/O7oR5M5b4dfA4w5jLBFzM96S/8FFVxFhx8Iqq1XOsbUf
-	 0qvP5bmiw8o/jW3lNaaQWIEH+ttS+0iy+l2gFxUgMSDc6ySeyS2VmaNLrJCx17tmH
-	 G40YlXNyBDpBtlWas4lSCOwAGvXyWCpwjLkzYJ7Wohy5wJUYMH5LwBD0fXJBMXxYY
-	 26CmVR6jOF7QhohKHDVcSWeVvahNzxPIChba6c1PxD03tS2TPok+blqFBvXBePrbD
-	 BUjB7Jr1L3MOxqbqvPopsJWM3WGPQqfV5onRxQMwMiU+ItA1g/reiZo8eeGyZzKrk
-	 OOKSjGvVlQfTFlmSow==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N5UgI-1sD6cj2ate-00v0yR; Wed, 24
- Jul 2024 13:55:23 +0200
-Message-ID: <37c5b0a5-7c57-45aa-8155-7aaba6579a48@web.de>
-Date: Wed, 24 Jul 2024 13:55:22 +0200
+	 In-Reply-To:Content-Type; b=EBqzwH0kU4Zx/QovXBFpgOGyjDZuT5Mu91nRPN305JpGjajjzqvKtZAqbMMN9k+bmgQNbBtL92pVXftbx+Gb0HMl+m1tuyDIznzA78wmAXXUA1qdj4D8Wmw2M11uSyXlYU+HB4RPLyDqFigbrRzLLM6CGVC2DdakKKY9id/CnGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gmHy6cNe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57EBDC4AF0E;
+	Wed, 24 Jul 2024 11:55:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721822150;
+	bh=aD1WuGUjqO0uEHPch3G63drQXoYwCBw9LLbsQd2a1pE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gmHy6cNea0ci0v+HR1ntWSL6sH/t3GZvvOMfoUNYnH6NqSxbnLWZTIDchw8eQlrLs
+	 D+3riNF1MyV3JFrqGfwe6/ZiQAKfrNXx34/hJyVQFGuSDBWAY0KuBsWNe0GPH6XSQg
+	 5pYGnrtZ6MNQUvb+9usuQSa6unPkIgNaZkJpWYWF3CNmVrs692IWi9YNJCpCp/ogpr
+	 6qbMo1aTECDoCQLxyX0PyGmw57WTpU1KZpRZ4RghNchjDRiGi+Wj4qeqb26R/04m+k
+	 MQzMwEArEo1QRvXQwVZrQnnGiugIidQMmBjL44xu2TiicxxkOh+RxXDrlVHYDHRUh3
+	 eiDi2Jzv3+Ggw==
+Message-ID: <bc2da461-fd21-44d1-85a7-f89c60e2b207@kernel.org>
+Date: Wed, 24 Jul 2024 13:55:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,57 +49,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [v4] spi: ppc4xx: handle irq_of_parse_and_map() errors
-To: Mark Brown <broonie@kernel.org>, make24@iscas.ac.cn,
- linux-spi@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Stefan Roese <sr@denx.de>,
- Wolfgang Ocker <weo@reccoware.de>
-References: <20240724084047.1506084-1-make24@iscas.ac.cn>
- <d8d29c4c-4c66-42ac-9e2d-821502b5f55b@web.de>
- <514a8b85-e4f0-4b63-911b-69ab962ee591@sirena.org.uk>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <514a8b85-e4f0-4b63-911b-69ab962ee591@sirena.org.uk>
+Subject: Re: [PATCH v4 2/5] dt-bindings: usb: qcom,dwc3: Update ipq5332 clock
+ details
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ gregkh@linuxfoundation.org, konrad.dybcio@linaro.org, djakov@kernel.org,
+ quic_wcheng@quicinc.com, quic_kathirav@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20240723090304.336428-1-quic_varada@quicinc.com>
+ <20240723090304.336428-3-quic_varada@quicinc.com>
+ <ac34c454-4800-4057-9a50-e0c5db1d3806@kernel.org>
+ <ZqDoXu9+Y4+O8M7W@hu-varada-blr.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ZqDoXu9+Y4+O8M7W@hu-varada-blr.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:y6l2TV99C1YspStoh1Pe0JSrejytHSo+ycCW0iI5swbxM3hyDnL
- D6TSjylPihQ/Vw0F3haEHnFCA8lRF24k811zo9fZDW1wgTTv0fnbgHoh+YyOl6xS4Loytzy
- 64IxGmYiGAvLhKgkIYIlYIUYhqof0P7yrT3SCbkQsaqopxln4E/fIiX+iSDe2/5U/Ng1ej9
- t153HDa+HXCpdSdZij5lg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:urONgZvx36Y=;odYUgcjr5jEddrYUA4NMNTTaz3y
- /favZXaPVA0g/hltOM9NeMQdoSrAWq9awETCyUUuPiiTXN/9w8BtlNMAfhA+KYdhdZltLm2/E
- RgAvF+kgjfcALcq6+g4+Z1qmpdk/6bSMBSqzPyHWkt2UzKdai+Q2NtDhlqitlpLHeK8cNUAxo
- iLopG3iKBiIVURbbsy2tNYwZ4H6fuva9wbroA7ETMBGegLMkbpCMN7KpWHrr188Sxj2KPuL3R
- JuLJwZ868m5fX1/+Mvg/Uy7kgfLKySnwwjpc4yuBIVKENInjarQkuf8Mqe/vsnETMQwBGu2rA
- h9FnmST73LkMEWY+CnPzvGF+UmA1pzclPB+AGSQgwCKD1uG13sDKvOlzixHJid/0ET+Lo/pwm
- 8I0RCuvsh3bcnY065G032O+PuaxojtpJieDTOqCoDpUw3Zi6RvipjcWQIHUHkXF9KWkVXib6o
- wAAdkD8ZhibAr0pTFag0rXE20LG9iXOWYP9gi1x2NpUrkKxhpUUd3oKZwXHbfw0PXfQ/FEsRr
- eh1CM42kGYKNEwnSCzy+72tKxVOY5UJHodjJoZCRIShybVzQvLwy3b2FR5qVWbnq5WmMcsgN0
- DlbOyZRXNRmLm/SUsdLblQ9GqcsyqJkAuHy1F0Doo3uHM0nuA9bBF60ABXJyEiHUPO/SSbdT0
- mftjH2MImwTNklsRiKqCEcMfCTBWeG9LEbMcQRu5q1jSXR5+98WHvjEnnCbZbefIjXGTxGRMR
- AI/P5pv8pN1gm8wsHinIRADTjd5/0qzxBD4arFGvUaFAEmvh5b9Kh51w7/6RMLPDTvdpYah8T
- vCpYCkjENS7oKNBjIKKyMDXA==
+Content-Transfer-Encoding: 7bit
 
->> =E2=80=A6
->>> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+On 24/07/2024 13:41, Varadarajan Narayanan wrote:
+> On Wed, Jul 24, 2024 at 08:27:03AM +0200, Krzysztof Kozlowski wrote:
+>> On 23/07/2024 11:03, Varadarajan Narayanan wrote:
+>>> USB uses icc-clk framework to enable the NoC interface clock.
+>>> Hence the 'iface' clock is removed from the list of clocks.
+>>> Update the clock-names list accordingly.
 >>
->> Does anybody care more for the applicability of such information?
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/Documentation/process/submitting-patches.rst?h=3Dv6.10#n398
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/Documentation/process/researcher-guidelines.rst?h=3Dv6.10#n5
->
-> Feel free to ignore Markus, he has a long history of sending
-> unhelpful review comments and continues to ignore repeated requests
-> to stop.
+>> But the clock is still there and is still used by this block. This looks
+>> like adjusting hardware per Linux implementation.
+>>
+>> Why suddenly this clock was removed from this hardware?
+> 
+> This clock per se is not used by the USB block. It is needed to
+> enable the path for CPU to reach the USB block (and vice versa).
+> Hence, we were adviced to use the ICC framework to enable this
+> clock and not the clocks/clock-names DT entries.
+> 
+> Please refer to [1] where similar clocks for IPQ9574 were NAK'ed.
 
-This seems to be another automated response which does not take meaningful=
- facts
-into account (as intended).
-Further collateral evolution might become more interesting.
+So the original submission was not correct?
 
-Regards,
-Markus
+You really need to stop sending DTS based on current driver support and
+focus on proper hardware description.
+
+Such things pop up from time to time for Qualcomm and I don't see much
+of improvement. And we do not talk about some ancient code, predating
+guidelines, but IPQ5332 upstreamed ~1 year ago.
+
+Best regards,
+Krzysztof
+
 
