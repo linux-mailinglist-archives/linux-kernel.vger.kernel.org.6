@@ -1,208 +1,105 @@
-Return-Path: <linux-kernel+bounces-260648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D2A593AC65
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:02:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF07093AC6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACEBF1C224E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 06:02:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A311B225EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 06:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 018EE4C61B;
-	Wed, 24 Jul 2024 06:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675AC49622;
+	Wed, 24 Jul 2024 06:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="plWYvKW5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="R7O0kUVQ"
+Received: from out203-205-221-192.mail.qq.com (out203-205-221-192.mail.qq.com [203.205.221.192])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F74423BF;
-	Wed, 24 Jul 2024 06:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF26A535A3;
+	Wed, 24 Jul 2024 06:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.192
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721800949; cv=none; b=ogTAvIKQA5MsCVu21KChnmRchEUDMojRzzOgb6JguXoJsMncrTakWAuUiMz28Ukq7CCrH5e8HZkdDJ3ips57jYgbIUUQY7RhqJeibwjFjRzePxN76U5JXCq0P6avT6LEi1YOriib8qEvnZ1jh4JkIxnFQ2Zq10qaomV4Tn3S5vs=
+	t=1721801125; cv=none; b=r2L6eSDAV1pDVz4U7dFED4KyB0fmxPO5GM/t+YN3evZgWmr7/56ZsgQ/6/ZAqPutIuJjNXDnL2nSUo5rd7o+lr/C2KuQmOGDrrnAG+kT0msqj1DoZCFRUbBTe5nIIyt19ZmJ12YFRJpjHcbwY9JGD+cB7MlUXZEib6p7Fp4uFZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721800949; c=relaxed/simple;
-	bh=Ef9zeJf4ngiRMDrj9dMqjkqhHO9E05g2lO52iKthTWI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jaV9shuhkxuoM+gC0ski6iHLV4iVUm01cjph8Hdnw2vWWyuqipF7Z3GhZltKzyQdT6GZNCvegXvNxvLzTMcubLoLwNRperHtUvfSwwX7hrWA4sjnp8T2VafLKWpNN8ys1TASFH9UEu4Gaclc0jqGAieDP/pQBIElfKoQ5R6E60c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=plWYvKW5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87D78C32782;
-	Wed, 24 Jul 2024 06:02:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721800948;
-	bh=Ef9zeJf4ngiRMDrj9dMqjkqhHO9E05g2lO52iKthTWI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=plWYvKW5PseXMjBMwT+QL9G9zDENnjyZ4EqPaewQYDPNbkLp8kyTjPmHiRyB6Gjoe
-	 ZF5e4/CFkk07VnEwRHaGQ2yH70TrVXOKQcD+MGTRmEbaAdsTnS8+S17xLEtKQhVRRs
-	 Gy62EFibvKK6IVg3j8iTKXBh8rjr2K9kFA48ICqcIzjmDgN3tFePidwU9rZHqtevWN
-	 yR/QQfrwCQZCI6deoRNcNNCFq4MHwPInEXUQmgJgRBWZrujn5ngmEZA31UEY0mHTL0
-	 ef2DUCBZ2ednT0WolXHJGhVwcGV5oangWYCYqrD4koxQ+THM9rgz7DzRh/ByuTBhmo
-	 8i+zElMPUPp+Q==
-Message-ID: <4195ef00-bd81-4c1d-8e66-b4a17da03ef1@kernel.org>
-Date: Wed, 24 Jul 2024 08:02:21 +0200
+	s=arc-20240116; t=1721801125; c=relaxed/simple;
+	bh=FbTT5VQ7RFZRhoZk1QUz96CANhgfKYhBvl45FNtMJBE=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=ZDOMAs91hEe444zNLpd+Bzh/0mPYkzd+3QRHw90/Sqm7wfcUkrTufQ7RbupOZh/sOxLKeIlvLPi3BIZmYSDBZAIDMMfoc4z8QpkJ4C9U+hM8wi56Ogotq7O1Q6Vf9TEfQdCjYN95RaKFmyKtBFZ24kZMCMF1WpoD6EIvztGuBgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=R7O0kUVQ; arc=none smtp.client-ip=203.205.221.192
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1721801119; bh=1RSHqUJ8TkszS0AbgUKN3N8zWa79Ibn+2Eb9XNn4CRk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=R7O0kUVQkOTkY+T9qQw1QejAvkCoQyGroUJx6R8z2YwS8qoH1kKgpEcgM1Z153CRm
+	 m/yee+qtEK6Vl+AsHpUwmoU3ykzqzoe+vdzahhjNsQEdzk+HLcLp36jYWijqh27YOx
+	 4vx2PRwU0oOpnoi1XFBYZdMiBOXyAlQsulVPWAUw=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id EAC81231; Wed, 24 Jul 2024 13:58:44 +0800
+X-QQ-mid: xmsmtpt1721800724tfru4517l
+Message-ID: <tencent_6ECFD36FE36EC96283A5C4587761F76F8605@qq.com>
+X-QQ-XMAILINFO: MBjwNRQMz5zUrP9bRe4eogkJm3QJ025y1nm+TzdY0ETtFH/Pg8tIjAb1Fp3t3I
+	 FtuFJ/VStqZYIVSROvkNCuEmEVXGKSa67r0Bv/Uf3nTfWbUuNSyGYK92kC4qf1G9f4MDRWIch7f3
+	 qQyOBFFKwp6fOBmaxhCYane5PMqsZieRVZvHN4XvPiQGo95IB73fus5qMl5E5cUogIX38HsyAlrI
+	 4NGhLqax+P4i27zueGnqt7rjv6q7GKxJVYZ1adJ+NxFAsvK8dvy4WNl9gnObjnSEOr9a73+Uo68O
+	 4Ua9PT0JFbMO0ayMt0mlAzC5EjLZyrsnlaPlXeNHatQozYfcBjzL2NKrwp++5uWTsJZqsn/gGoK5
+	 gwHIMGJv3BhpOoshP5YtOZn9pNfgt04Ez2vlgnklEMLFZ2Fo/EPjyyPBHxgolf+VvZYG/w/ELKGS
+	 Vrd5azWq2zT8fMG9YGvhc+aNLfgPj82KVly+p/3d00t6HJEMwzXEum64i1cxtiGVQifhmmv9/qTN
+	 V2Z987EREhuJetJMqQ82cXMzwh/OYm3g4dpZd434iRB9AYnkNP8mR25RMIE6x9+V722lhTlNvuUC
+	 5HVwPf39703x3SIB0ef11JTqV5EQ8W3B5tk/eb2dphpFyxXLT4o1wwzCju+4nLooXK1gqAqzPWDR
+	 aETKdqZFYPmVesJNd7uell5tjWFDJwPOTJ43qEvFhoVXf509HwuKH2AGOY48bxYEx4PAerySSbJ3
+	 O0fFew0S+Rk6+rxa3iJf8gnbnktwY4R9CHmBk1CzOalLXaKAsocmzXg6HTllPyRwsP9N0w/nIXy6
+	 bd4KeVdmRhsQxXu4tL0rNzr++39zA0Aa4ZFsFa/Rr/vu7PqeWP7mfK92RWRheY9U3sVCjIHNKx3u
+	 tr2+klFWLy4uolKbtORUSZwqjHWf5u78sFaCw2nyU1gk+B3yDzlXmo3Yh/Zh1a9Q==
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+78eccfb8b3c9a85fc6c5@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	perex@perex.cz,
+	syzkaller-bugs@googlegroups.com,
+	tiwai@suse.com
+Subject: [PATCH] ALSA: line6: init buf to zero
+Date: Wed, 24 Jul 2024 13:58:45 +0800
+X-OQ-MSGID: <20240724055844.1337846-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <00000000000000949c061df288c5@google.com>
+References: <00000000000000949c061df288c5@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 02/12] dt-bindings: PCI: brcmstb: Add 7712 SoC
- description
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
- bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-References: <20240716213131.6036-1-james.quinlan@broadcom.com>
- <20240716213131.6036-3-james.quinlan@broadcom.com>
- <e8b34f9e-5286-44aa-8bb8-88e5ff5c8255@kernel.org>
- <CA+-6iNxuJQEKA_BfLiaG6FfJJdsjV1u+Lv5Knna1KhnMX=Meew@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CA+-6iNxuJQEKA_BfLiaG6FfJJdsjV1u+Lv5Knna1KhnMX=Meew@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 23/07/2024 23:03, Jim Quinlan wrote:
-> On Wed, Jul 17, 2024 at 2:53 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 16/07/2024 23:31, Jim Quinlan wrote:
->>> This adds the description for the 7712 SoC, a Broadcom
->>> STB sibling chip of the RPi 5.  Two new reset controllers
->>> are described.
->>>
->>> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
->>> ---
->>>  .../bindings/pci/brcm,stb-pcie.yaml           | 26 +++++++++++++++++++
->>>  1 file changed, 26 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
->>> index 692f7ed7c98e..90683a0df2c5 100644
->>> --- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
->>> +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
->>> @@ -21,6 +21,7 @@ properties:
->>>            - brcm,bcm7425-pcie # Broadcom 7425 MIPs
->>>            - brcm,bcm7435-pcie # Broadcom 7435 MIPs
->>>            - brcm,bcm7445-pcie # Broadcom 7445 Arm
->>> +          - brcm,bcm7712-pcie # Broadcom STB sibling of Rpi 5
->>>
->>>    reg:
->>>      maxItems: 1
->>> @@ -100,12 +101,16 @@ properties:
->>>      items:
->>>        - description: reset for external PCIe PERST# signal # perst
->>>        - description: reset for phy reset calibration       # rescal
->>> +      - description: reset for PCIe/CPU bus bridge         # bridge
->>> +      - description: reset for soft PCIe core reset        # swinit
->>>
->>>    reset-names:
->>>      minItems: 1
->>>      items:
->>>        - const: perst
->>>        - const: rescal
->>> +      - const: bridge
->>> +      - const: swinit
->>
->> This does not match at all what you have in allOf:if:then section.
->>
->>>
->>>  required:
->>>    - compatible
->>> @@ -159,6 +164,27 @@ allOf:
->>>          - resets
->>>          - reset-names
->>>
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            const: brcm,bcm7712-pcie
->>> +    then:
->>> +      properties:
->>> +        resets:
->>> +          minItems: 3
->>> +          maxItems: 3
->>> +
->>> +        reset-names:
->>> +          items:
->>> +            - const: rescal
->>
->> Look - here it is rescal. Before you said it must be perst.
->>
->> https://elixir.bootlin.com/linux/v6.8/source/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml#L132
-> 
-> Hello Krzysztof,
-> 
-> The difference between my commits and the above example is that the
-> above example has no "desc" line(s) to describe the clocks  -- How
+Syzbot report KMSAN uninit-value warnings.
+When alloc buffer for midi_buffer->buf, init mem to 0.
 
-Which does not really matter to illustrate the concept where you define
-the widest constraints and where you narrow them.
+Reported-and-tested-by: syzbot+78eccfb8b3c9a85fc6c5@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=78eccfb8b3c9a85fc6c5
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ sound/usb/line6/midibuf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> would you add this?  Or are you okay with (a) no description or (b)
-> using a "#comment..." next to the clock's name?
-
-
-
-Best regards,
-Krzysztof
+diff --git a/sound/usb/line6/midibuf.c b/sound/usb/line6/midibuf.c
+index e7f830f7526c..1b699cb3b38d 100644
+--- a/sound/usb/line6/midibuf.c
++++ b/sound/usb/line6/midibuf.c
+@@ -48,7 +48,7 @@ void line6_midibuf_reset(struct midi_buffer *this)
+ 
+ int line6_midibuf_init(struct midi_buffer *this, int size, int split)
+ {
+-	this->buf = kmalloc(size, GFP_KERNEL);
++	this->buf = kzalloc(size, GFP_KERNEL);
+ 
+ 	if (this->buf == NULL)
+ 		return -ENOMEM;
+-- 
+2.43.0
 
 
