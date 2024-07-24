@@ -1,92 +1,112 @@
-Return-Path: <linux-kernel+bounces-260913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE84693B022
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:11:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8D3B93B024
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BB94284104
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:11:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74B33B236AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A38156C70;
-	Wed, 24 Jul 2024 11:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kgcLtUbf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4792595;
-	Wed, 24 Jul 2024 11:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C54D156F27;
+	Wed, 24 Jul 2024 11:11:30 +0000 (UTC)
+Received: from cmccmta2.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0CD6BFD2;
+	Wed, 24 Jul 2024 11:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721819455; cv=none; b=PORc6Ox4TOYPBmx8i+rpmkkc/5ay64YjmojH4z5ZvBFW0xlBGie/4Lyn2veqT+qEomuW+AouylAvFUj3J8lETW1C4JFw+zX/2257pefo6TDV5lqK9nMVRFobrClxcaUKwmawQckjx9biT0HJt35hA/s2CWiiKWP/BHmYfW6K+C4=
+	t=1721819490; cv=none; b=mABiNMk3jbjsPvcWBCC3X4uuUtcuJRc/sQkIAyghTvv/cQjosj44OOfEs5TryCo1BHm8KASsil40a1OUDCivtPpp8THFNY28PWkvlkJ6FnEZwqADQ301kfrU5eiCCufxLUJ/KXwMZq4H7hN0a0OE3x4KwWDCOqNLPb2u8LmJzW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721819455; c=relaxed/simple;
-	bh=u3922YjUI3U+8yFgd6dbNIPlYgOaLgmd2jSn7pIR0Hw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ISO3faqy0o7TTXEcWCDf+nNTZDgcMPKkHv+cI/qlyuBSMvDfNG3v9fBBJoCNsvBejGyN4ZWbWNCpIl3Dx6LFR1HqCRy+fR3HR1pczbr8b64U9YTAF3aIknrHwHaUqZAXtQCNlPX52l5CEnxfAQOzaRQIqs1d9OI442zybBE/uSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kgcLtUbf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DF8AC32782;
-	Wed, 24 Jul 2024 11:10:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721819454;
-	bh=u3922YjUI3U+8yFgd6dbNIPlYgOaLgmd2jSn7pIR0Hw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kgcLtUbf6aABxmiwBrcQ6N2i4/sRSZjAKjj8qbo8lk3eipyPrlTJGhGBUQqRb6NZR
-	 d12cu1IEwpCVM4T2nGlic5hRtzTuW4UrxNMGaoFWDRFH1J9nRjSVNfWBPaSpi2GS/l
-	 TmrTqlzwTzwogO0oeV3malAst+Bx30ROJRps2UL1r618h2ULvDc6vIYCS3sCHpvWH8
-	 eGC9ir0zh9oNAeUKOQrvGfJdgoCR5bgx9MEC7lOaoD5XTHbl50J4viP+H0QRAbe5AT
-	 DW92jFL0Upykj27ShjIUUfF5VPiZiRo+PNcNPNNBHzGEGu3iNV/apkE6UWtSDoj9vW
-	 DRtJUiwCV9HuQ==
-Date: Wed, 24 Jul 2024 12:10:49 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 000/105] 6.1.101-rc1 review
-Message-ID: <20240724-laurel-abiding-6ea761df152f@spud>
-References: <20240723180402.490567226@linuxfoundation.org>
+	s=arc-20240116; t=1721819490; c=relaxed/simple;
+	bh=Pfuo2baySnR6689GK89/olXtrcD1jmb/qCSjgqJukuo=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=fdHqBlmLLACom7rlXTFT4R0h+Z6mne/OucBpZNjpE3S10u2PjceCebl36xlqcWwhbgLSn+duPh+x4Ceo5lSmfdzcK/OlHYIUtnHraueCeT0wdE5srn2G613Dje3v4kV3bL1pC1C+FeeoCIaeRqjKckXv/UpNg1R8uR8VH/r/PYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee666a0e154849-69103;
+	Wed, 24 Jul 2024 19:11:20 +0800 (CST)
+X-RM-TRANSID:2ee666a0e154849-69103
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from ubuntu.localdomain (unknown[223.108.79.96])
+	by rmsmtp-syy-appsvr01-12001 (RichMail) with SMTP id 2ee166a0e156885-a332b;
+	Wed, 24 Jul 2024 19:11:20 +0800 (CST)
+X-RM-TRANSID:2ee166a0e156885-a332b
+From: Zhu Jun <zhujun2@cmss.chinamobile.com>
+To: qmo@kernel.org
+Cc: ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhujun2@cmss.chinamobile.com
+Subject: [PATCH v4] tools/bpf:Fix the wrong format specifier
+Date: Wed, 24 Jul 2024 04:11:20 -0700
+Message-Id: <20240724111120.11625-1-zhujun2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="zs/BmGvHid2XD7Vc"
-Content-Disposition: inline
-In-Reply-To: <20240723180402.490567226@linuxfoundation.org>
+
+The format specifier of "unsigned int" in printf() should be "%u", not
+"%d".
+
+Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+---
+Changes:
+v2:
+modify commit info
+v3:
+fix compile warning
+v4:
+Thanks! But unsigned seems relevant here, and it doesn't make much sense
+to change the type of the int just because we don't have the right
+specifier in the printf(), does it? Sorry, I should have been more
+explicit: the warning on v1 and v2 can be addressed by simply removing
+the "space flag" from the format string, in other words:
+
+ tools/bpf/bpftool/xlated_dumper.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tools/bpf/bpftool/xlated_dumper.c b/tools/bpf/bpftool/xlated_dumper.c
+index 567f56dfd9f1..d0094345fb2b 100644
+--- a/tools/bpf/bpftool/xlated_dumper.c
++++ b/tools/bpf/bpftool/xlated_dumper.c
+@@ -349,7 +349,7 @@ void dump_xlated_plain(struct dump_data *dd, void *buf, unsigned int len,
+ 
+ 		double_insn = insn[i].code == (BPF_LD | BPF_IMM | BPF_DW);
+ 
+-		printf("% 4d: ", i);
++		printf("%4u: ", i);
+ 		print_bpf_insn(&cbs, insn + i, true);
+ 
+ 		if (opcodes) {
+@@ -415,7 +415,7 @@ void dump_xlated_for_graph(struct dump_data *dd, void *buf_start, void *buf_end,
+ 			}
+ 		}
+ 
+-		printf("%d: ", insn_off);
++		printf("%u: ", insn_off);
+ 		print_bpf_insn(&cbs, cur, true);
+ 
+ 		if (opcodes) {
+-- 
+2.17.1
 
 
---zs/BmGvHid2XD7Vc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Tue, Jul 23, 2024 at 08:22:37PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.101 release.
-> There are 105 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-Tested-by: Conor Dooley <conor.dooley@microchip.com>
-
---zs/BmGvHid2XD7Vc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqDhOQAKCRB4tDGHoIJi
-0q5kAP9m9/UZCIPhcn/lehZq365M/SlOCcgc886Sg0TvPV4SgwD+PI/MeQ/phfqp
-5fJgHok1E10eLFuMZ+PMfXaatc/lEAc=
-=HllT
------END PGP SIGNATURE-----
-
---zs/BmGvHid2XD7Vc--
 
