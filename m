@@ -1,201 +1,130 @@
-Return-Path: <linux-kernel+bounces-261082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 814C093B2A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:29:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C203E93B2AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E6D91F2257C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:29:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F65AB2333B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E142F15956C;
-	Wed, 24 Jul 2024 14:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="Q9lYajWg"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B605E158DDD;
+	Wed, 24 Jul 2024 14:29:47 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E32D134DE
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:28:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888D3134DE
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721831332; cv=none; b=H/jTjgs5HtDH7D8kDnnIsE/EWDnnoNGYwR+XaY2xg5DNT4s3wMggpBZOCEeMwzeyB2HhPId7ilhkw669IhedtS/Fewwf2OWemLZhGj4DBdjEbKXb8WLpMea5Ckomn8nrmy0hATumXk0TBlMjbjaQQo0JWUuacA7lqXRck/j6FlA=
+	t=1721831387; cv=none; b=lX8q75vc1hRNaUCZuw197CI10d3fdfqVu0oZOp0ro4T2Ee/i4Aw1TRvRYRzi0d5mPavjTUy4uk3fZJn+Og7fCph/ckMT5IUMPvteTjBk6jSzfkWZlWBRNz7wi3TnytE3fEg3F1ON+y1Zv/n5rtEyUWsiRT396P7nOfJR0uhv43Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721831332; c=relaxed/simple;
-	bh=EMA3jmgRvVq0a7YipedppduacqjNjMeLpz4RLYvfPXM=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=H3R2XP8nzgIzTBEYjbmFAgXQdbUs0k8Y/ay4G4AC+Doda1NoyCB+YOjeaHnNal9oEDDYTopLecMpezKAH923LV5NwDB+knO7y2BqT8xA4z4/eTU8t4S8s5ymI4/LvyuDsTFWbU2w2lBiQ3xP3j2lq69bAWnHGxnZONPVy+TyTzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=Q9lYajWg; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fc569440e1so17554125ad.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:28:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1721831329; x=1722436129; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D3nqH72VDw8RmqB9fqgozAQLD4BBtCtnc7ICMb0pdqo=;
-        b=Q9lYajWgOdAu4AvMZj1Xbs+XbjO9FuuNBOntAvCwuxZ0OyCBH5DqDU5MX/+7QW7U1c
-         7vTrWcOX/ScuSfEP53JFEU4WwdJ7gqGXXXWqwDfHKbsyWQ0s+R0C82jYDZYpE4IvZDIL
-         rmAsPBCX83ubnbAicvnPmPbpvbR2gqMUvFc6hhFgvxEfJyUrGpfEJKK9o7Nln3jy3oHt
-         8xyvZ8mvtk3T8M2Ojn0Qh3j4kWhRp4vsrml51kftv1oWtn6u6KXhRXoAY0rcgHC2LmpG
-         4NegKEKLteeUSOI74TLfEc6sig2QAowHZmCLEt/f99dqURYnebUqQa+cywS/i5LEYubj
-         FgSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721831329; x=1722436129;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D3nqH72VDw8RmqB9fqgozAQLD4BBtCtnc7ICMb0pdqo=;
-        b=kgIrQWqo04RBh5LdqKYLeB9mQjTBS9rPdPHRsO/i1cHukNiR+MTLCwxGbwYNCFyfsO
-         Jjk+p2+MKu8FTmzCor91cU1X08Y73E2pdoStVAGMGIq4rgf13HXO7kFAw+/ICDKLfAQT
-         w0rpjcYmp+T9GmsTHBru2tud/dP7ljwZWoUZqIpvNQPe2JU3pPcjADDXbZS6ZkMTXtEP
-         f0s9I2UKyxXIcIVvH4S1BD67dmCAJz5WWnyakqRo5URR4dWJ4lyzdS9R5/RQlbunFMpn
-         CTL+KQS3r3Tuid+kvXm+fZwlPZbvX0laONviKe7j7PLaMyeVuY2wT2GE+9XBtiWoMlnS
-         ar5w==
-X-Forwarded-Encrypted: i=1; AJvYcCW0HZhr6UflAIaBTG6v2CYtZhc3SA2N3qS9b1bdM40q2qdmR6TfBX3Zick+Pjf8mK/FF8mh3XsDisiXTt2UwI4oCDqMk1W+6KgcHtG2
-X-Gm-Message-State: AOJu0Yyqo53U1/wycANtP+Vtn5qVVtijLnzm0Pww1GG0RmgvDA0qlpcJ
-	NO6rtsZ8cdJWFnhCKUcr+g4t02j7YI0nvLGBS0wfY7TCFD+6AOvIFh9IZ9CuHz0=
-X-Google-Smtp-Source: AGHT+IFi9T6gbkXmV6M0gUQxgPzjIznneNDGAuodoVLIsAjbkzHFshyyaJKmfCemmSEUumBxU+lXIw==
-X-Received: by 2002:a17:903:1c7:b0:1fa:4b9:d00f with SMTP id d9443c01a7336-1fdd558b54emr23328495ad.53.1721831329437;
-        Wed, 24 Jul 2024 07:28:49 -0700 (PDT)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd73e6868csm91370235ad.96.2024.07.24.07.28.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 07:28:48 -0700 (PDT)
-Date: Wed, 24 Jul 2024 07:28:48 -0700 (PDT)
-X-Google-Original-Date: Wed, 24 Jul 2024 07:28:47 PDT (-0700)
-Subject:     Re: [PATCH v8 0/7] Linux RISC-V IOMMU Support
-In-Reply-To: <cover.1718388908.git.tjeznach@rivosinc.com>
-CC: joro@8bytes.org, Will Deacon <will@kernel.org>, robin.murphy@arm.com,
-  Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu, apatel@ventanamicro.com,
-  Sunil V L <sunilvl@ventanamicro.com>, mick@ics.forth.gr, seb@rivosinc.com, robh+dt@kernel.org, krzk+dt@kernel.org,
-  conor+dt@kernel.org, devicetree@vger.kernel.org, iommu@lists.linux.dev,
-  linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, linux@rivosinc.com, tjeznach@rivosinc.com
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: tjeznach@rivosinc.com
-Message-ID: <mhng-7ec26af6-5347-4d42-b1de-696d2b7628ae@palmer-ri-x1c9>
+	s=arc-20240116; t=1721831387; c=relaxed/simple;
+	bh=EhqLrJgqYxdlTb2Zl2yShcG1KzJBygJskqHd8w4qHqo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=VxxHKB96nAW9NTFArodA96GlYF+0I6S79ZkVLVIbBfM4eKgy6AsHBzipx8DgN9NagYRxgDbSxNJEsBZhig9hwYvRYkNmbJ7Wm86Udo4HYVCLgQCumcsG4x3Y0aeqEZvyJUUaNdlrQsjUbLaDAaLDHafBS+izRhVGdccCnqH0LkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-267-KJPviE2xP9qjIHrECg06Og-1; Wed, 24 Jul 2024 15:29:42 +0100
+X-MC-Unique: KJPviE2xP9qjIHrECg06Og-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 24 Jul
+ 2024 15:29:02 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Wed, 24 Jul 2024 15:29:02 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>, "'Linus
+ Torvalds'" <torvalds@linuxfoundation.org>
+CC: "'Matthew Wilcox (Oracle)'" <willy@infradead.org>, 'Christoph Hellwig'
+	<hch@infradead.org>, 'Andrew Morton' <akpm@linux-foundation.org>, "'Andy
+ Shevchenko'" <andriy.shevchenko@linux.intel.com>, 'Dan Carpenter'
+	<dan.carpenter@linaro.org>, 'Arnd Bergmann' <arnd@kernel.org>,
+	"'Jason@zx2c4.com'" <Jason@zx2c4.com>, "'hch@infradead.org'"
+	<hch@infradead.org>, "'pedro.falcato@gmail.com'" <pedro.falcato@gmail.com>,
+	'Mateusz Guzik' <mjguzik@gmail.com>, "'linux-mm@kvack.org'"
+	<linux-mm@kvack.org>
+Subject: [PATCH 2/7] minmax: Use _Static_assert() instead of static_assert()
+Thread-Topic: [PATCH 2/7] minmax: Use _Static_assert() instead of
+ static_assert()
+Thread-Index: Adrd1elaiPvTR2LWQ4qjY5Mia/iOEQ==
+Date: Wed, 24 Jul 2024 14:29:02 +0000
+Message-ID: <171c2c31e16841bca0c4fbb085877d7e@AcuMS.aculab.com>
+References: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
+In-Reply-To: <23bdb6fc8d884ceebeb6e8b8653b8cfe@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 14 Jun 2024 22:27:30 PDT (-0700), tjeznach@rivosinc.com wrote:
-> This patch series introduces support for RISC-V IOMMU architected
-> hardware into the Linux kernel.
->
-> The RISC-V IOMMU specification, which this series is based on, is
-> ratified and available at GitHub/riscv-non-isa [1].
->
-> At a high level, the RISC-V IOMMU specification defines:
->
-> 1) Data structures:
->   - Device-context: Associates devices with address spaces and holds
->     per-device parameters for address translations.
->   - Process-contexts: Associates different virtual address spaces based
->     on device-provided process identification numbers.
->   - MSI page table configuration used to direct an MSI to a guest
->     interrupt file in an IMSIC.
-> 2) In-memory queue interface:
->   - Command-queue for issuing commands to the IOMMU.
->   - Fault/event queue for reporting faults and events.
->   - Page-request queue for reporting "Page Request" messages received
->     from PCIe devices.
->   - Message-signaled and wire-signaled interrupt mechanisms.
-> 3) Memory-mapped programming interface:
->   - Mandatory and optional register layout and description.
->   - Software guidelines for device initialization and capabilities discovery.
->
->
-> This series introduces RISC-V IOMMU hardware initialization and complete
-> single-stage translation with paging domain support.
->
-> The patches are organized as follows:
->
-> Patch 1: Introduces minimal required device tree bindings for the driver.
-> Patch 2: Defines RISC-V IOMMU data structures, hardware programming interface
->          registers layout, and minimal initialization code for enabling global
->          pass-through for all connected masters.
-> Patch 3: Implements the device driver for PCIe implementation of RISC-V IOMMU
->          architected hardware.
-> Patch 4: Introduces IOMMU interfaces to the kernel subsystem.
-> Patch 5: Implements device directory management with discovery sequences for
->          I/O mapped or in-memory device directory table location, hardware
->          capabilities discovery, and device to domain attach implementation.
-> Patch 6: Implements command and fault queue, and introduces directory cache
->          invalidation sequences.
-> Patch 7: Implements paging domain, using highest page-table mode advertised
->          by the hardware. This series enables only 4K mappings; complete support
->          for large page mappings will be introduced in follow-up patch series.
->
-> Follow-up patch series, providing large page support and updated walk cache
-> management based on the revised specification, and complete ATS/PRI/SVA support,
-> will be posted to GitHub [2].
->
-> Changes from v7:
-> - rebase on v6.10-rc3
-> - fix address shift (ppn -> pfn) for queue base register read
-> - add invalidation after DDTE update
->
-> Best regards,
->  Tomasz Jeznach
->
-> [1] link: https://github.com/riscv-non-isa/riscv-iommu
-> [2] link: https://github.com/tjeznach/linux
-> v7 link:  https://lore.kernel.org/linux-iommu/cover.1717612298.git.tjeznach@rivosinc.com/
-> v6 link:  https://lore.kernel.org/linux-iommu/cover.1716578450.git.tjeznach@rivosinc.com/
-> v5 link:  https://lore.kernel.org/linux-iommu/cover.1715708679.git.tjeznach@rivosinc.com/
-> v4 link:  https://lore.kernel.org/linux-iommu/cover.1714752293.git.tjeznach@rivosinc.com/
-> v3 link:  https://lore.kernel.org/linux-iommu/cover.1714494653.git.tjeznach@rivosinc.com/
-> v2 link:  https://lore.kernel.org/linux-iommu/cover.1713456597.git.tjeznach@rivosinc.com/
-> v1 link:  https://lore.kernel.org/linux-iommu/cover.1689792825.git.tjeznach@rivosinc.com/
->
-> Tomasz Jeznach (7):
->   dt-bindings: iommu: riscv: Add bindings for RISC-V IOMMU
->   iommu/riscv: Add RISC-V IOMMU platform device driver
->   iommu/riscv: Add RISC-V IOMMU PCIe device driver
->   iommu/riscv: Enable IOMMU registration and device probe.
->   iommu/riscv: Device directory management.
->   iommu/riscv: Command and fault queue support
->   iommu/riscv: Paging domain support
->
->  .../bindings/iommu/riscv,iommu.yaml           |  147 ++
->  MAINTAINERS                                   |    8 +
->  drivers/iommu/Kconfig                         |    1 +
->  drivers/iommu/Makefile                        |    2 +-
->  drivers/iommu/riscv/Kconfig                   |   20 +
->  drivers/iommu/riscv/Makefile                  |    3 +
->  drivers/iommu/riscv/iommu-bits.h              |  784 ++++++++
->  drivers/iommu/riscv/iommu-pci.c               |  119 ++
->  drivers/iommu/riscv/iommu-platform.c          |   92 +
->  drivers/iommu/riscv/iommu.c                   | 1684 +++++++++++++++++
->  drivers/iommu/riscv/iommu.h                   |   88 +
->  11 files changed, 2947 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/iommu/riscv,iommu.yaml
->  create mode 100644 drivers/iommu/riscv/Kconfig
->  create mode 100644 drivers/iommu/riscv/Makefile
->  create mode 100644 drivers/iommu/riscv/iommu-bits.h
->  create mode 100644 drivers/iommu/riscv/iommu-pci.c
->  create mode 100644 drivers/iommu/riscv/iommu-platform.c
->  create mode 100644 drivers/iommu/riscv/iommu.c
->  create mode 100644 drivers/iommu/riscv/iommu.h
->
->
-> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+The static_assert() wrapper provides the text of the expression as the
+error message, this isn't needed here as an explicit message is provided.
+If there is an error (quite likely for min/max) the wrapper also adds
+two more lines of error output that just make it harder to read.
 
-This came up in the patchwork meeting this morning because people 
-weren't sure if it was for my tree.  I'd been assuming it was for the 
-IOMMU tree, from IRC it sounds like Will is OK with that.  So
+Since it gives no benefit and actually makes things worse directly
+using _Static_assert() is much better.
 
-Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+Signed-off-by: David Laight <david.laight@aculab.com>
+---
+ include/linux/minmax.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-in case that helps any.  No rush on my end, I just want to make sure I'm 
-not dropping the ball.
+diff --git a/include/linux/minmax.h b/include/linux/minmax.h
+index 63c45865b48a..900eec7a28e5 100644
+--- a/include/linux/minmax.h
++++ b/include/linux/minmax.h
+@@ -48,7 +48,7 @@
+ #define __cmp_once(op, x, y, unique_x, unique_y) ({=09\
+ =09typeof(x) unique_x =3D (x);=09=09=09\
+ =09typeof(y) unique_y =3D (y);=09=09=09\
+-=09static_assert(__types_ok(x, y),=09=09=09\
++=09_Static_assert(__types_ok(x, y),=09=09=09\
+ =09=09#op "(" #x ", " #y ") signedness error, fix types or consider u" #op=
+ "() before " #op "_t()"); \
+ =09__cmp(op, unique_x, unique_y); })
+=20
+@@ -137,11 +137,11 @@
+ =09typeof(val) unique_val =3D (val);=09=09=09=09=09=09\
+ =09typeof(lo) unique_lo =3D (lo);=09=09=09=09=09=09\
+ =09typeof(hi) unique_hi =3D (hi);=09=09=09=09=09=09\
+-=09static_assert(__builtin_choose_expr(__is_constexpr((lo) > (hi)),=09\
++=09_Static_assert(__builtin_choose_expr(__is_constexpr((lo) > (hi)),=09\
+ =09=09=09(lo) <=3D (hi), true),=09=09=09=09=09\
+ =09=09"clamp() low limit " #lo " greater than high limit " #hi);=09\
+-=09static_assert(__types_ok(val, lo), "clamp() 'lo' signedness error");=09=
+\
+-=09static_assert(__types_ok(val, hi), "clamp() 'hi' signedness error");=09=
+\
++=09_Static_assert(__types_ok(val, lo), "clamp() 'lo' signedness error");=
+=09\
++=09_Static_assert(__types_ok(val, hi), "clamp() 'hi' signedness error");=
+=09\
+ =09__clamp(unique_val, unique_lo, unique_hi); })
+=20
+ #define __careful_clamp(val, lo, hi) ({=09=09=09=09=09\
+--=20
+2.17.1
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
 
