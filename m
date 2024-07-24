@@ -1,88 +1,55 @@
-Return-Path: <linux-kernel+bounces-261543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9C8593B893
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 23:35:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB0293B895
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 23:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 475C5286663
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:35:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DB63281422
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA6A13A863;
-	Wed, 24 Jul 2024 21:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F7213B5BB;
+	Wed, 24 Jul 2024 21:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="hDmju0M/"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YxcGwS8e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EDE2AE6C
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 21:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8024D134DE;
+	Wed, 24 Jul 2024 21:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721856934; cv=none; b=RPZOiMXpGESmMH5+1zWpbz0P6EBGMUb1x45eZbNeCZiD2YnHKDdJtENVBmqs2ZyB20vpbHm8I8s6GNEY8Qf5XI1/JvK9H8q4FQoRl4bBb6tSR8fEPVHfajgiXNdb+1hjjgkZ+dQ0KzDZUT/PsYQvJ1+StlTQoHYn9W/2xT7i+cM=
+	t=1721856985; cv=none; b=Z02mXQsOZyggn3Klugjp4EgRzD8E+geUlEP3dzGJS/4wSm2DzrqKTwWQ124omP8tWBehOJmoF6P2pk+aiePhEsmpzoYScu4d+XydSQg1sZpbOVk8w+KJayHaRZaZ9EiY2hLDuSLPs7n9r5UD4hDuZY+xyVCd8tJq0F7iJQ3dVpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721856934; c=relaxed/simple;
-	bh=HlKzIvbFppXitc4BqKMA72fKGFNmu+AotnZyD/Qcqgs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IOlrL1jEHn5h8nlbNumaDEGOJxPzV+X1L5GGgtW8OipAosAXUtryCi63QmHTEmEpqQzShmCfyr/h5XJ00I8Psw59n+rH/v9k0Vgu1sb8to3FbZu7OXhvFmtFrUGT9C2dJxjCog6Ghx9lNVwe7ESa8KYF740EOsulXJYfG3WCplI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=hDmju0M/; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4267300145eso2045555e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:35:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1721856932; x=1722461732; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zofhhb9/Kwl1wS0JEra+p05fuClt33yVyCbzQtUwVho=;
-        b=hDmju0M/a+CLHYfpG4fKp17OuvvkfhLdy1+ncZnsQz4uKLAxbagBuZ25RKpPdhV9e3
-         IA8klxAmNo4PI1hp4Y35prVgsZYANNQtRoMofrLndhrFgDBjDZ2zfCK8pb6zfsodJQ6Q
-         XqNjGrnmzwmuATja63aEd/25YQ04VXdsu2Gvc/opoECeOBuWPpH2oxdj+cEW6vTbtT+W
-         nX/4f1nQWzytkGiDCuNmbFreID/sapBl2ldCUn4GkWkE0iagFD+BkTYB4OkL3cnq05eG
-         yjNJhBX2vGLrEZSFjS+KnMUoUW1dkuUVTmvBkhqoYh/mhxZfH5VE3GC2eIxIJAsBofV2
-         tL2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721856932; x=1722461732;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zofhhb9/Kwl1wS0JEra+p05fuClt33yVyCbzQtUwVho=;
-        b=Gon52wma5KHR246jKtqdWG/oOKjahKFZuNzbWaWt7trH9ALHsw8qqQ6d+ox4sGp07L
-         AbRs0qlCm81seBYzpVzl/BU034XjyPw2/HRlBPLtVO/czhYB+ByKFI7qC/UvhAEMvmOw
-         BlozXK+hN9wDjH6FeMkoZLfItlXUNsRram8ifbjws+EE6tXEzCgTl4TF3YAGbeLa3/Vy
-         /HDtbMSPSqK7PQ9/OuckPPHcZ/T7Z5rXg+6VyIee9c8QkwwougfV7+dwb7hST2RgjZwV
-         xNwkKoJDryQnqhrK4Ay87UwKTueiSD/b33UDeAfUt+Ovn8kuMNfQhJlcVhY0vwgpMpNS
-         AMQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXgfvxG6M5ofcXm1zdkpkDMMRH4Df+wQ0swXxofZtdMCAuI4fTW/XoZudn4Ilar9R7iKunSN22htmG1sR56mRyXKsc7SxpILXtbGhhK
-X-Gm-Message-State: AOJu0YzC3LlJoaDp45DWCl0+sSVNJ8Ps1tWxhAg3seOuta46sqS6a9Bq
-	7T0orXnZTgMgTJMqJoFZ8yXMHtXD5OGqNwyNZv807JM0ItfzBEW7b4HlpMGOa4Q=
-X-Google-Smtp-Source: AGHT+IEYwCbH3Hzxsb3zutI7NDoyDkJ8JF/wQ3MZoumJYLLfIxCct6YajlPAgakl0dTiI09n3HQzRg==
-X-Received: by 2002:a05:600c:4e90:b0:426:59d3:8cae with SMTP id 5b1f17b1804b1-42806b87ef4mr95385e9.13.1721856931691;
-        Wed, 24 Jul 2024 14:35:31 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427f93594e7sm46683585e9.8.2024.07.24.14.35.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 14:35:31 -0700 (PDT)
-Date: Wed, 24 Jul 2024 22:35:30 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Xuewen Yan <xuewen.yan94@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	linux-kernel@vger.kernel.org, Lukasz Luba <lukasz.luba@arm.com>,
-	Wei Wang <wvw@google.com>, Rick Yiu <rickyiu@google.com>,
-	Chung-Kai Mei <chungkai@google.com>,
-	Xuewen Yan <xuewen.yan@unisoc.com>,
-	John Stultz <jstultz@google.com>
-Subject: Re: [PATCH 2/3] sched/fair: Generalize misfit lb by adding a misfit
- reason
-Message-ID: <20240724213530.akr2ghuzabz3mfxw@airbuntu>
-References: <20231209011759.398021-1-qyousef@layalina.io>
- <20231209011759.398021-3-qyousef@layalina.io>
- <CAB8ipk9+4p29iE8HSiRrcc8DanCcO2U3+HRVY5LXLJRWXFMpOw@mail.gmail.com>
+	s=arc-20240116; t=1721856985; c=relaxed/simple;
+	bh=6t/E9h3MDJhAhp51br8ddE+yreH52rCuq+TC2hJxXuU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=gX6yqs4Y6QuY2XK1mB09+gYKUSbHiFvthuvgSgxrWCGGGnnmKRGYAZKXMThYucrqD4be/SURG++RMnfUvz9ukpnymee+L+UahROIGTsrFsFGlIFAbOEd31DJXnp9KvBdh3IJQkjje8Vjcz4zHSuV/MpdkApIcyNj7s2DVt5g7Eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YxcGwS8e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F595C32781;
+	Wed, 24 Jul 2024 21:36:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721856985;
+	bh=6t/E9h3MDJhAhp51br8ddE+yreH52rCuq+TC2hJxXuU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=YxcGwS8eR+oSfEXqzll1gRAUs1+gMlgr5tlz+/4M9LtVbvJC16ldPVmQZvLa1Vqdt
+	 TekjZqUwu9i3AiQMxQyO1yzxK4Ltjy7BNnG5bLlSpGHhwW77ve33jDMcMJVnNxmekp
+	 5EIpTW07o1C4z+f8kvuPwkyhX4Tt1LA895mHdOfWgD++xgbnQw5KAjOhu9WXrAPVif
+	 IlVcwCgqxjUAKYQnlxfjfK5rvrufNZrPK4ZK9UqceOySjKms2E7fs0aUfcI+jSCsfu
+	 odG+JFKgp0ZDorDoiO4OQQqPATT8hbc43KfVuHYAXWC6UQkUqsMb/4BpnS3vW4q/f8
+	 O44ofyanP9uxw==
+Date: Wed, 24 Jul 2024 18:36:21 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	bpf@vger.kernel.org
+Cc: Guilherme Amadio <amadio@gentoo.org>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: perf tools build clash with capstone
+Message-ID: <ZqFz1eKplFvhOx16@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,37 +59,175 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAB8ipk9+4p29iE8HSiRrcc8DanCcO2U3+HRVY5LXLJRWXFMpOw@mail.gmail.com>
 
-Hi Xuewen
+Still investigating, but seems just a namespace clash, haven't yet
+pinpointed the cset where this problem was introduced.
 
-On 07/17/24 16:26, Xuewen Yan wrote:
-> Hi Qais
-> 
-> On Sat, Dec 9, 2023 at 9:19 AM Qais Yousef <qyousef@layalina.io> wrote:
+Probably alpine:3.19/archlinux:base are the first where capstone devel
+files are available.
 
-> > @@ -11008,6 +11025,7 @@ static struct rq *find_busiest_queue(struct lb_env *env,
-> >                  * average load.
-> >                  */
-> >                 if (env->sd->flags & SD_ASYM_CPUCAPACITY &&
-> > +                   rq->misfit_reason == MISFIT_PERF &&
-> 
-> In Android, I found this would cause a task loop to change the CPUs.
-> Maybe this should be removed. Because for the same capacity cpus, we
-> should skip this cpu when nr_running=1.
-
-Could you explain a bit more? Are you saying this is changing the behavior for
-some use case? The check will ensure this path is only triggered for misfit
-upmigration. Which AFAICT the only reason why this path was added.
-
-The problem is that to implement another misfit reason, the check for
-capacity_greater() is not true except for MISFIT_PERF. For MISFIT_POWER, we
-want the CPU to be smaller.
-
-I think Vincent is working on a better way to handle all of this now.
-
-> 
-> >                     !capacity_greater(capacity_of(env->dst_cpu), capacity) &&
-> >                     nr_running == 1)
-> >                         continue;
+perfbuilder@number:~$ export BUILD_TARBALL=http://192.168.86.42/perf/perf-6.10.0.tar.xz
+perfbuilder@number:~$ time dm
+   1   101.28 almalinux:8                   : Ok   gcc (GCC) 8.5.0 20210514 (Red Hat 8.5.0-22) , clang version 17.0.6 (Red Hat 17.0.6-1.module_el8.10.0+3757+fc27b834) flex 2.6.1
+   2   100.50 almalinux:9                   : Ok   gcc (GCC) 11.4.1 20231218 (Red Hat 11.4.1-3) , clang version 17.0.6 (AlmaLinux OS Foundation 17.0.6-5.el9) flex 2.6.4
+   3   119.65 alpine:3.15                   : Ok   gcc (Alpine 10.3.1_git20211027) 10.3.1 20211027 , Alpine clang version 12.0.1 flex 2.6.4
+   4   117.18 alpine:3.16                   : Ok   gcc (Alpine 11.2.1_git20220219) 11.2.1 20220219 , Alpine clang version 13.0.1 flex 2.6.4
+   5    99.97 alpine:3.17                   : Ok   gcc (Alpine 12.2.1_git20220924-r4) 12.2.1 20220924 , Alpine clang version 15.0.7 flex 2.6.4
+   6    92.95 alpine:3.18                   : Ok   gcc (Alpine 12.2.1_git20220924-r10) 12.2.1 20220924 , Alpine clang version 16.0.6 flex 2.6.4
+   7    13.59 alpine:3.19                   : FAIL gcc version 13.2.1 20231014 (Alpine 13.2.1_git20231014) 
+                     from util/disasm.c:29:
+    /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
+       94 | typedef enum bpf_insn {
+          |              ^~~~~~~~
+    In file included from /usr/include/capstone/capstone.h:325,
+                     from /git/perf-6.10.0/tools/perf/util/print_insn.h:23,
+                     from builtin-script.c:38:
+    /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
+       94 | typedef enum bpf_insn {
+          |              ^~~~~~~~
+    make[3]: *** [/git/perf-6.10.0/tools/build/Makefile.build:158: util] Error 2
+      CC      /tmp/build/perf/util/event.o
+      CC      /tmp/build/perf/builtin-script.o
+      CC      /tmp/build/perf/util/evlist.o
+      CC      /tmp/build/perf/arch/x86/util/env.o
+    In file included from /usr/include/capstone/capstone.h:325,
+                     from util/print_insn.h:23,
+                     from util/disasm.c:29:
+    /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
+       94 | typedef enum bpf_insn {
+          |              ^~~~~~~~
+      CC      /tmp/build/perf/arch/x86/util/dwarf-regs.o
+      CC      /tmp/build/perf/util/sideband_evlist.o
+      CC      /tmp/build/perf/arch/x86/util/unwind-libunwind.o
+      CC      /tmp/build/perf/builtin-kvm.o
+      CC      /tmp/build/perf/builtin-inject.o
+    make[4]: *** [/git/perf-6.10.0/tools/build/Makefile.build:106: /tmp/build/perf/util/disasm.o] Error 1
+    make[4]: *** Waiting for unfinished jobs....
+      CC      /tmp/build/perf/builtin-mem.o
+    In file included from /usr/include/capstone/capstone.h:325,
+                     from /git/perf-6.10.0/tools/perf/util/print_insn.h:23,
+                     from builtin-script.c:38:
+    /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
+       94 | typedef enum bpf_insn {
+          |              ^~~~~~~~
+      CC      /tmp/build/perf/builtin-data.o
+      CC      /tmp/build/perf/bench/breakpoint.o
+      CC      /tmp/build/perf/tests/evsel-roundtrip-name.o
+      CC      /tmp/build/perf/arch/x86/util/auxtrace.o
+      CC      /tmp/build/perf/tests/evsel-tp-sched.o
+   8    13.68 alpine:3.20                   : FAIL gcc version 13.2.1 20240309 (Alpine 13.2.1_git20240309) 
+                     from util/disasm.c:29:
+    /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
+       94 | typedef enum bpf_insn {
+          |              ^~~~~~~~
+    In file included from /usr/include/capstone/capstone.h:325,
+                     from /git/perf-6.10.0/tools/perf/util/print_insn.h:23,
+                     from builtin-script.c:38:
+    /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
+       94 | typedef enum bpf_insn {
+          |              ^~~~~~~~
+    make[3]: *** [/git/perf-6.10.0/tools/build/Makefile.build:158: util] Error 2
+      CC      /tmp/build/perf/bench/breakpoint.o
+      CC      /tmp/build/perf/tests/hists_link.o
+      CC      /tmp/build/perf/builtin-kvm.o
+      CC      /tmp/build/perf/util/env.o
+    In file included from /usr/include/capstone/capstone.h:325,
+                     from util/print_insn.h:23,
+                     from util/disasm.c:29:
+    /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
+       94 | typedef enum bpf_insn {
+          |              ^~~~~~~~
+    In file included from /usr/include/capstone/capstone.h:325,
+                     from /git/perf-6.10.0/tools/perf/util/print_insn.h:23,
+                     from builtin-script.c:38:
+    /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
+       94 | typedef enum bpf_insn {
+          |              ^~~~~~~~
+      CC      /tmp/build/perf/builtin-inject.o
+      CC      /tmp/build/perf/arch/x86/util/intel-pt.o
+      CC      /tmp/build/perf/util/event.o
+    make[4]: *** [/git/perf-6.10.0/tools/build/Makefile.build:106: /tmp/build/perf/util/disasm.o] Error 1
+    make[4]: *** Waiting for unfinished jobs....
+   9    13.56 alpine:edge                   : FAIL gcc version 13.2.1 20240309 (Alpine 13.2.1_git20240309) 
+                     from util/disasm.c:29:
+    /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
+       94 | typedef enum bpf_insn {
+          |              ^~~~~~~~
+    In file included from /usr/include/capstone/capstone.h:325,
+                     from /git/perf-6.10.0/tools/perf/util/print_insn.h:23,
+                     from builtin-script.c:38:
+    /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
+       94 | typedef enum bpf_insn {
+          |              ^~~~~~~~
+      CC      /tmp/build/perf/builtin-script.o
+      CC      /tmp/build/perf/tests/hists_output.o
+      CC      /tmp/build/perf/tests/hists_cumulate.o
+      CC      /tmp/build/perf/bench/epoll-ctl.o
+    In file included from /usr/include/capstone/capstone.h:325,
+                     from util/print_insn.h:23,
+                     from util/disasm.c:29:
+    /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
+       94 | typedef enum bpf_insn {
+          |              ^~~~~~~~
+      CC      /tmp/build/perf/util/sideband_evlist.o
+      CC      /tmp/build/perf/builtin-kvm.o
+      CC      /tmp/build/perf/arch/x86/util/auxtrace.o
+    In file included from /usr/include/capstone/capstone.h:325,
+                     from /git/perf-6.10.0/tools/perf/util/print_insn.h:23,
+                     from builtin-script.c:38:
+    /usr/include/capstone/bpf.h:94:14: error: 'bpf_insn' defined as wrong kind of tag
+       94 | typedef enum bpf_insn {
+          |              ^~~~~~~~
+      CC      /tmp/build/perf/tests/python-use.o
+      CC      /tmp/build/perf/util/evsel.o
+    make[4]: *** [/git/perf-6.10.0/tools/build/Makefile.build:106: /tmp/build/perf/util/disasm.o] Error 1
+    make[4]: *** Waiting for unfinished jobs....
+      CC      /tmp/build/perf/builtin-inject.o
+  10    12.00 amazonlinux:2                 : FAIL gcc version 7.3.1 20180712 (Red Hat 7.3.1-17) (GCC) 
+  11    87.71 amazonlinux:2023              : Ok   gcc (GCC) 11.4.1 20230605 (Red Hat 11.4.1-2) , clang version 15.0.7 (Amazon Linux 15.0.7-3.amzn2023.0.1) flex 2.6.4
+  12    86.71 amazonlinux:devel             : Ok   gcc (GCC) 11.3.1 20221121 (Red Hat 11.3.1-4) , clang version 15.0.6 (Amazon Linux 15.0.6-3.amzn2023.0.2) flex 2.6.4
+  13    18.34 archlinux:base                : FAIL gcc version 13.2.1 20230801 (GCC) 
+                     from builtin-script.c:38:
+    /usr/include/capstone/bpf.h:94:14: error: ‘bpf_insn’ defined as wrong kind of tag
+       94 | typedef enum bpf_insn {
+          |              ^~~~~~~~
+    In file included from /usr/include/capstone/capstone.h:325,
+                     from util/print_insn.h:23,
+                     from util/disasm.c:29:
+    /usr/include/capstone/bpf.h:94:14: error: ‘bpf_insn’ defined as wrong kind of tag
+       94 | typedef enum bpf_insn {
+          |              ^~~~~~~~
+      CC      /tmp/build/perf/util/copyfile.o
+      CC      /tmp/build/perf/ui/browsers/scripts.o
+      CC      /tmp/build/perf/bench/epoll-wait.o
+      CC      /tmp/build/perf/arch/x86/util/mem-events.o
+    In file included from /usr/include/capstone/capstone.h:325,
+                     from /git/perf-6.10.0/tools/perf/util/print_insn.h:23,
+                     from builtin-script.c:38:
+    /usr/include/capstone/bpf.h:94:14: error: ‘bpf_insn’ defined as wrong kind of tag
+       94 | typedef enum bpf_insn {
+          |              ^~~~~~~~
+      CC      /tmp/build/perf/builtin-data.o
+      CC      /tmp/build/perf/ui/browsers/header.o
+      CC      /tmp/build/perf/builtin-version.o
+      CC      /tmp/build/perf/builtin-c2c.o
+      CC      /tmp/build/perf/arch/x86/util/evsel.o
+    --
+      CC      /tmp/build/perf/arch/x86/util/intel-pt.o
+      CC      /tmp/build/perf/util/sideband_evlist.o
+      CC      /tmp/build/perf/util/evsel.o
+      CC      /tmp/build/perf/arch/x86/util/intel-bts.o
+    In file included from /usr/include/capstone/capstone.h:325,
+                     from util/print_insn.h:23,
+                     from util/disasm.c:29:
+    /usr/include/capstone/bpf.h:94:14: error: ‘bpf_insn’ defined as wrong kind of tag
+       94 | typedef enum bpf_insn {
+          |              ^~~~~~~~
+      CC      /tmp/build/perf/tests/pmu-events.o
+      CC      /tmp/build/perf/util/evsel_fprintf.o
+      CC      /tmp/build/perf/bench/kallsyms-parse.o
+      CC      /tmp/build/perf/bench/find-bit-bench.o
+      CC      /tmp/build/perf/tests/hists_common.o
+  14   103.85 centos:stream                 : Ok   gcc (GCC) 8.5.0 20210514 (Red Hat 8.5.0-21) , clang version 17.0.6 (Red Hat 17.0.6-1.module_el8+767+9fa966b8) flex 2.6.1
+  15    98.52 clearlinux:latest             : Ok   gcc (Clear Linux OS for Intel Architecture) 14.1.1 20240717 releases/gcc-14.1.0-275-g3a963d441a , clang version 17.0.6 flex 2.6.4
 
