@@ -1,210 +1,140 @@
-Return-Path: <linux-kernel+bounces-260518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7ACA93AA78
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:15:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 076E093AA79
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:15:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4427F1F23AAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:15:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38A471C22DCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C218B53A9;
-	Wed, 24 Jul 2024 01:13:35 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC13522A;
+	Wed, 24 Jul 2024 01:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gHzxUekB"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887F079F4
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 01:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271FF5221
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 01:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721783615; cv=none; b=K/G59EQ5VTJxbk4ePM26XZaEYI0eKdGI9CHh0P+oeFivgn0YAOj4l5zYxkMx/M92THpNmmDmNe8lO1ivoOxyxRI0zPVmu/6SOmUafQyDDnpbx1NBrcLv0jUr15ZAfOEpqEgCtt2gb3HuNzRRd0jdzf3mal+Kxm6aVluHQQgcsnI=
+	t=1721783717; cv=none; b=F2Q4zhEkFwpjYPR/0eFWegkXmKPVVxaxuuiv80dZ4oakoP1EYI5SIMrnjHYF7d7X5ZgpwSG6WopbedPQ5F59wSBaDHTfmVADBC67XaRv8Zxnwyv9l49ymwZUKk6uIPafjTFZexsuooclA5Q3IG0Ytwbo+9Ojtbwn2NWx7ZhfgXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721783615; c=relaxed/simple;
-	bh=80F5/mvdOoU0DZ/ovoR6d5ECFxd7w/YJPhKB4rqGRR8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jClzvHfyCCFQ6G0AO+5915A0a53O/NZmyaW2sgdZ0zTce+o+QxQ2WmVFULr/PlTYp73q6HITbxuzxO3YmcWGVu8GnC/RSxtu50/Ff4M2Z/MzJMxvaHUywZVnj5nEsWVfrnyPorGKhzJGY3/3Zb9Xyg6uAFcas634IX+aAiyEgSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WTGHC4LcrzxTwR;
-	Wed, 24 Jul 2024 09:13:27 +0800 (CST)
-Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6D2CD1800A2;
-	Wed, 24 Jul 2024 09:13:29 +0800 (CST)
-Received: from [10.67.121.115] (10.67.121.115) by
- kwepemd200012.china.huawei.com (7.221.188.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Wed, 24 Jul 2024 09:13:28 +0800
-Message-ID: <b4c0db4e-4899-25e2-6141-35e57760c450@hisilicon.com>
-Date: Wed, 24 Jul 2024 09:13:27 +0800
+	s=arc-20240116; t=1721783717; c=relaxed/simple;
+	bh=D+8TjssjLwBBt7vo1blKu5GUtFcDJ9I2gH1+mG2aUCM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dtrMQoxOs/psZazCS1Tja118NLxsASINjhUL0oROhdTZj7yuQpGHIfUXZ9jgv80Ha8mPUXYAYcUwCxMs5ukPCidg9e3/O9lMutjKfzwM3YhMvrHNGskBgeUZZKbONnK6wiVXAFQytdg3zSWbNg9M95ZyTKC6DcQbr8BXh/QILl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=gHzxUekB; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ef32fea28dso27841521fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 18:15:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1721783713; x=1722388513; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SVQ5wUBI39PYXrV/PyTM3Jln11fiyXDUUxbA56HJ+B0=;
+        b=gHzxUekBRTZmhQRgBeXEfiZ/nrYgZaK9jHcdBwZkmc/G4LFKLDt0gNyEqsDauL0xCg
+         MPkbfnJZv8Yccki0FehRBADE4y0xQFKrnJRvamQoWipIvAQCsQZIB4eI0NNTUZnBcNYn
+         Okwn9SRAlEfvuik30RGF+2l0bIeQs3bSSwpyg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721783713; x=1722388513;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SVQ5wUBI39PYXrV/PyTM3Jln11fiyXDUUxbA56HJ+B0=;
+        b=t7CX2ZnCixtfkFIAAngF3URmVnJ5+62BzuZj/Okyqf0vdYzsQr4FR4GImvoX5StAuv
+         HVWO/60+aizzJwFJEoRh3dL+7v6RQBu8Hip+hGxAN0kt8ceg6qzvhUqjWf6Ch2q/GTYC
+         awpOMOpx5IN1wjHFh1THr3rmh584RaqBb2iivw6C/ZujNoSe9AdNnniuwEU8yZy8j7Zf
+         UsTA7fsj76CNypptRkJqrxGklf3ln9vroQP69G453aC/gUtrGBjEBfFYurEg/A0lw6gN
+         LNebL+zPc9HFVAFbnWOQLbi89IFANIsYeWpfbMUnVQkX2PKVR1EyDWkB4v3ad3EYAA/2
+         OfCQ==
+X-Gm-Message-State: AOJu0YwkQxo/v+/JiawPgE19dJKDLD+7I+sFuu3Vy+sMYTvXNhk8IDYV
+	077c2IsscvSVv4Ta08vngBoDK3LTjuU41uvK+s1h/KKPYYx/xrDAtBYYeyzeEBX2Pxpj3+zOQ2y
+	Ip+V86Q==
+X-Google-Smtp-Source: AGHT+IGQ7mmV0eVv8GuC9zOUtyNsgUDhzFMIh4h0yduasLjMYv1GunjTxump5nt1LtD8ffjfkkh8og==
+X-Received: by 2002:a2e:9e46:0:b0:2ef:2855:533f with SMTP id 38308e7fff4ca-2f0324ec793mr2694981fa.16.1721783712938;
+        Tue, 23 Jul 2024 18:15:12 -0700 (PDT)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f01a3af7a4sm7372131fa.28.2024.07.23.18.15.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jul 2024 18:15:12 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2eefeab807dso72007681fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 18:15:12 -0700 (PDT)
+X-Received: by 2002:a2e:8697:0:b0:2ef:2d3d:3cc3 with SMTP id
+ 38308e7fff4ca-2f0324d88f3mr2748571fa.4.1721783711760; Tue, 23 Jul 2024
+ 18:15:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.8.0
-Subject: Re: [PATCH 3/3] irqchip/gic-v4: Make sure a VPE is locked when VMAPP
- is issued
-Content-Language: en-US
-To: Marc Zyngier <maz@kernel.org>
-CC: <kvmarm@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Nianyao
- Tang <tangnianyao@huawei.com>
-References: <20240705093155.871070-1-maz@kernel.org>
- <20240705093155.871070-4-maz@kernel.org>
- <2c9489cc-d276-7c52-5d52-7f234fdc726e@hisilicon.com>
- <86h6cl39ff.wl-maz@kernel.org>
- <4b05e4fe-0906-102f-5697-eec7ee222bef@hisilicon.com>
- <86bk2o2drs.wl-maz@kernel.org>
-From: Zhou Wang <wangzhou1@hisilicon.com>
-In-Reply-To: <86bk2o2drs.wl-maz@kernel.org>
+References: <CANP3RGceNzwdb7w=vPf5=7BCid5HVQDmz1K5kC9JG42+HVAh_g@mail.gmail.com>
+In-Reply-To: <CANP3RGceNzwdb7w=vPf5=7BCid5HVQDmz1K5kC9JG42+HVAh_g@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 23 Jul 2024 18:14:54 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wijWMpPk7feEZ8DzdLi7WLp_BhRpm+qgs6Tew1Bb2CmyQ@mail.gmail.com>
+Message-ID: <CAHk-=wijWMpPk7feEZ8DzdLi7WLp_BhRpm+qgs6Tew1Bb2CmyQ@mail.gmail.com>
+Subject: Re: UML/hostfs - mount failure at tip of tree
+To: =?UTF-8?Q?Maciej_=C5=BBenczykowski?= <maze@google.com>, 
+	Matthew Wilcox <willy@infradead.org>, Hongbo Li <lihongbo22@huawei.com>
+Cc: Kernel hackers <linux-kernel@vger.kernel.org>, Patrick Rohr <prohr@google.com>, 
+	Christian Brauner <brauner@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd200012.china.huawei.com (7.221.188.145)
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/7/24 1:56, Marc Zyngier wrote:
-> On Tue, 23 Jul 2024 02:51:32 +0100,
-> Zhou Wang <wangzhou1@hisilicon.com> wrote:
->>
->> On 2024/7/19 19:31, Marc Zyngier wrote:
->>> On Fri, 19 Jul 2024 10:42:02 +0100,
->>> Zhou Wang <wangzhou1@hisilicon.com> wrote:
->>>>
->>>> On 2024/7/5 17:31, Marc Zyngier wrote:
->>>>> In order to make sure that vpe->col_idx is correctly sampled
->>>>> when a VMAPP command is issued, we must hold the lock for the
->>>>> VPE. This is now possible since the introduction of the per-VM
->>>>> vmapp_lock, which can be taken before vpe_lock in the locking
->>>>> order.
->>>>>
->>>>> Signed-off-by: Marc Zyngier <maz@kernel.org>
->>>>> ---
->>>>>  drivers/irqchip/irq-gic-v3-its.c | 8 ++++++--
->>>>>  1 file changed, 6 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
->>>>> index b52d60097cad5..951ec140bcea2 100644
->>>>> --- a/drivers/irqchip/irq-gic-v3-its.c
->>>>> +++ b/drivers/irqchip/irq-gic-v3-its.c
->>>>> @@ -1810,7 +1810,9 @@ static void its_map_vm(struct its_node *its, struct its_vm *vm)
->>>>>  		for (i = 0; i < vm->nr_vpes; i++) {
->>>>>  			struct its_vpe *vpe = vm->vpes[i];
->>>>>  
->>>>> -			its_send_vmapp(its, vpe, true);
->>>>> +			scoped_guard(raw_spinlock, &vpe->vpe_lock)
->>>>> +				its_send_vmapp(its, vpe, true);
->>>>> +
->>>>>  			its_send_vinvall(its, vpe);
->>>>>  		}
->>>>>  	}
->>>>> @@ -1827,8 +1829,10 @@ static void its_unmap_vm(struct its_node *its, struct its_vm *vm)
->>>>>  	if (!--vm->vlpi_count[its->list_nr]) {
->>>>>  		int i;
->>>>>  
->>>>> -		for (i = 0; i < vm->nr_vpes; i++)
->>>>> +		for (i = 0; i < vm->nr_vpes; i++) {
->>>>> +			guard(raw_spinlock)(&vm->vpes[i]->vpe_lock);
->>>>>  			its_send_vmapp(its, vm->vpes[i], false);
->>>>> +		}
->>>>>  	}
->>>>>  }
->>>>>  
->>>>
->>>> Hi Marc,
->>>>
->>>> It looks like there is ABBA deadlock after applying this series:
->>>>
->>>> In its_map_vm: vmapp_lock -> vpe_lock
->>>> In its_vpe_set_affinity: vpe_to_cpuid_lock(vpe_lock) -> its_send_vmovp(vmapp_lock)
->>>>
->>>> Any idea about this?
->>>
->>> Hmmm, well spotted. That's an annoying one.
->>>
->>> Can you give the below hack a go? I've only lightly tested it, as my
->>> D05 box is on its last leg (it is literally falling apart) and I don't
->>> have any other GICv4.x box to test on.
->>>
->>> Thanks,
->>>
->>> 	M.
->>>
->>> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
->>> index 951ec140bcea2..b88c6011c8771 100644
->>> --- a/drivers/irqchip/irq-gic-v3-its.c
->>> +++ b/drivers/irqchip/irq-gic-v3-its.c
->>> @@ -1328,12 +1328,6 @@ static void its_send_vmovp(struct its_vpe *vpe)
->>>  		return;
->>>  	}
->>>  
->>> -	/*
->>> -	 * Protect against concurrent updates of the mapping state on
->>> -	 * individual VMs.
->>> -	 */
->>> -	guard(raw_spinlock_irqsave)(&vpe->its_vm->vmapp_lock);
->>> -
->>>  	/*
->>>  	 * Yet another marvel of the architecture. If using the
->>>  	 * its_list "feature", we need to make sure that all ITSs
->>> @@ -3808,7 +3802,7 @@ static int its_vpe_set_affinity(struct irq_data *d,
->>>  	struct its_vpe *vpe = irq_data_get_irq_chip_data(d);
->>>  	unsigned int from, cpu = nr_cpu_ids;
->>>  	struct cpumask *table_mask;
->>> -	unsigned long flags;
->>> +	unsigned long flags, vmapp_flags;
->>>  
->>>  	/*
->>>  	 * Changing affinity is mega expensive, so let's be as lazy as
->>> @@ -3822,7 +3816,14 @@ static int its_vpe_set_affinity(struct irq_data *d,
->>>  	 * protect us, and that we must ensure nobody samples vpe->col_idx
->>>  	 * during the update, hence the lock below which must also be
->>>  	 * taken on any vLPI handling path that evaluates vpe->col_idx.
->>> +	 *
->>> +	 * Finally, we must protect ourselves against concurrent
->>> +	 * updates of the mapping state on this VM should the ITS list
->>> +	 * be in use.
->>>  	 */
->>> +	if (its_list_map)
->>> +		raw_spin_lock_irqsave(&vpe->its_vm->vmapp_lock, vmapp_flags);
->>> +
->>>  	from = vpe_to_cpuid_lock(vpe, &flags);
->>>  	table_mask = gic_data_rdist_cpu(from)->vpe_table_mask;
->>>  
->>> @@ -3852,6 +3853,9 @@ static int its_vpe_set_affinity(struct irq_data *d,
->>>  	irq_data_update_effective_affinity(d, cpumask_of(cpu));
->>>  	vpe_to_cpuid_unlock(vpe, flags);
->>>  
->>> +	if (its_list_map)
->>> +		raw_spin_unlock_irqrestore(&vpe->its_vm->vmapp_lock, vmapp_flags);
->>> +
->>>  	return IRQ_SET_MASK_OK_DONE;
->>>  }
->>>
->>
->> Hi Marc，
->>
->> We add above code to do test again. Now it is OK.
-> 
-> Great, thanks for giving it a go. I have just posted an actual patch
-> (with the exact same change) at [1]. It would be good if you could
-> give it a Tested-by: tag.
+On Tue, 23 Jul 2024 at 15:33, Maciej =C5=BBenczykowski <maze@google.com> wr=
+ote:
+>
+> Reverting the following 3 patches:
+> - 104eef133fd9 hostfs: Add const qualifier to host_root in hostfs_fill_su=
+per()
+> - cd140ce9f611 hostfs: convert hostfs to use the new mount API
+> - e3ec0fe944d2 hostfs: Convert hostfs_read_folio() to use a folio
+>
+> appears to be necessary to get the Android net test framework to boot
+> with tip of tree,
+> *without* the reverts we get:
+>   mount: /host: special device hostfs does not exist.
+> (if I don't revert the folio change then it mounts, but appears to not
+> actually work)
 
-Sure, I will give it a Tested-by.
+Interesting. That folio change was clearly supposed to be a no-op, but
+isn't. Which makes a revert the right thing to do regardless.
 
-Thanks,
-Zhou
+That code was odd before too, but clearly that commit is completely broken.
 
-> 
-> Thanks,
-> 
-> 	M.
-> 
-> [1] https://lore.kernel.org/r/20240723175203.3193882-1-maz@kernel.org
-> 
+I think this part is buggy:
+
+                buffer =3D folio_zero_tail(folio, bytes_read, buffer);
+
+because while the documentation for folio_zero_tail() does imply that
+usage, the third argument is supposed really looks like it should be
+"buffer + bytes_read".
+
+So  instead of reverting that commit, does it help to just do that instead:
+
+-               buffer =3D folio_zero_tail(folio, bytes_read, buffer);
++               buffer =3D folio_zero_tail(folio, bytes_read, buffer +
+bytes_read);
+
+Willy, that function is really bad. It's not helpful when it
+apparently confused even you, and the calling convention really is
+broken. I think that folio_zero_tail() needs to be rewritten to have
+sane calling conventions (like matching the docs!) or just die.
+
+The mount API change is somethign else. Again, it wasn't supposed to
+break anything, but clearly does, and so reverting it sounds sane
+unless somebody sees what the problem is.
+
+I'm not even guessing at what might have been wrong in that mount API
+conversion.
+
+           Linus
 
