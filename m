@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-260956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEFCF93B0E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:25:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1520E93B0E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61D7F1F2482F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:25:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1E0A285225
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBB9157A4F;
-	Wed, 24 Jul 2024 12:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9053A158D60;
+	Wed, 24 Jul 2024 12:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PLibdxRm"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i5hKN31P"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C663AC0F
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 12:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9977215884B
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 12:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721823904; cv=none; b=UGJX0T/Z/pQVobdrcrcLMRV8m0i18TVHSJRL0c5Ts/l0CUyQDke5eD+G6ELk5IbOAsBDAtOVoiD4i+OiB4wI13YDuXZ1dY+IJogw/sqnsON/ZI83LGrXyGL6sCM8YYD/LltRQ1XLgomaZmcb+Y+fVRH8MG5qr+VdmtEa9aQ3tI0=
+	t=1721823906; cv=none; b=R5A/7yS0ysPBqtXnrfXTuqdGUJxJz24B3JXIxwTSiTzy4DoSC7LgGnXMDfCDaHltD64yMBfhUQ7kRliOBWlig6Pb/ojN+Q3XIrRSnsmv+eHoSfkZd6WjfFy7HRblpkeQlzdwjiYIMWJ2qtYioUkQbnyTba2HRYvE5GlvDBu/zyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721823904; c=relaxed/simple;
-	bh=+pWCiNNquB4af1qu0U80YJIB1HrjPWRH3gmVEWsNn1c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JNTag7hyGkjB6giiJa4pP72bfIiblAxzuSoHICXFkWG0tJgTjJDmT3HrW62duzvYcTE2aBOk4TD8q64/ERmhI10jEwzI2hMnKGVwZYmGEG7H1ou8YL9xVJr4LI/JIVUzzqnV9gxcUk4XgnSr/ckYZciz7PLxrbEJCNCeE+UHlP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PLibdxRm; arc=none smtp.client-ip=209.85.214.181
+	s=arc-20240116; t=1721823906; c=relaxed/simple;
+	bh=Whd/p1BkkzMXiI+jI3fYJLod5sR0DmpRlzJ0bqKo1l0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YREvNrJJFECczgtyoX+eJ3ekaT3RsYfV36RQH/L8ziC8mP9YPDd83WQUn6Ig+L+7B0VhbetqCHhZO3YespvECfbRq+UPFQMtvv1OSUlC89LxjYtcF+mEd4HY5d+Trv3C/S6yCILEQDubko0vGMxrakU/UIqBBHVt75czP/qPIlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i5hKN31P; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fc587361b6so8683975ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 05:25:02 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fd9e70b592so15593665ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 05:25:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721823902; x=1722428702; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6joYOx0BmGiTZxFoD0gHd6sgxiMC43Zesk3xRX+VQmE=;
-        b=PLibdxRmKGKmm8E1dcIMhYFO8ktTEUwWiycUri6PYVzymqHV7yZ5eMOuUllchY/BW7
-         FaB0psV4A04Sd3funz8vlzw0MLbhM5CyJb6I0X2PqhA3nN4CNBGzUb86LF7AMsYY114m
-         mCCR1K5BWXk4qf89yitsob9E/foD7av56Pcnx48lS21MvEY6oI5a06gKUynTmgq4dYlZ
-         fZUz9jkc6jE1/+3VEu2SimdvIlHaOYZoeM3SykrLam+FEF8MlQLosvS7e9eqPTG0gNhr
-         ZjLu9mQvF519LJ+pXq/wfviZ9JrxEfmgTzoyPLmsHr97RlK7mJf98X6VMYkzJv0v42kz
-         HKfg==
+        d=gmail.com; s=20230601; t=1721823905; x=1722428705; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4RS7gU16ITnoH4uJ2P4cBrWFJTcLfxSuNNT2bfx+93A=;
+        b=i5hKN31PRaegqAujHA/i3/hwRdbEbMrKGHXzK6ai6sC5C/UXMpvWVN9XjigmEW/WWX
+         LZ0pkyMXFvuGZF9ZQetGahcPOah/WnOWp6ch7keTpb+BNjWAaS1QoJtiDhR72dRPwg8L
+         J1KTfF6uTkFRgVpa0rtWbfiUNRr0ROqz0KTT4L+myF4JQcMmudjCQxlr2p5NL3obdl5A
+         VuHxsAwgUH6/9wpDYD4kQVK/Rmosfqu43VsWPCLMumJlpIq0wlT8Fsz2Y442Raq1ZFbF
+         a5vCgKMIiPvP1KoBPNAav47rtgz0ganfuDx97i4roCSxxGrgABAz9E84yOFtVhipCXzk
+         Dv/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721823902; x=1722428702;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6joYOx0BmGiTZxFoD0gHd6sgxiMC43Zesk3xRX+VQmE=;
-        b=e3ST6VhIIZBgzd5Gjcr327VtHD1Kjy+S0/d5jo3NP39HeMZUWiic5UiriePfWydV7/
-         eFaElBhx6Zjd5HWQjTrhbD9xosVl2NivIBI5btx+adz/lFuYvmck3aa8WTQnF+IIQrP9
-         lLWMyae5QwgsFBrfcjbtT4CVfK1lS7Pb3m9sLpLM+txXNHGZn4gJDUITF4X+uOF6SUEB
-         uwBIaAxZKKf66lfru9KBNXTP+VotTkXkk57zqtnZA6z6+Wh04EQQZr3qPlPByBoyVKLW
-         Mg+Wai0Qt1rjGJdVlZ/HuTslUN8d9y428B3okpEBfc9UATzfXDfNh5a+IPS86U4blj3F
-         M7Bg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKk+IzyQft7dp/mUYCEeTGPhphgsNXkaazMmwZEA+2R3DI/1Uy0OF9oVG2HlCxzW3g3fVPYJ2fP1Ii6ufP7qjjlcS2pPfUGG0BEFaM
-X-Gm-Message-State: AOJu0Yxt6f1voHHHNsV3sbhWctbBlFv7zxsDvVYWyE6efTOJ8KDZDgzx
-	jLTexzzIYOVN4AOi7o5TAZGzdjJC9rOD6kbPG+x7I8IJwAA/ji2R
-X-Google-Smtp-Source: AGHT+IEhv78htgJIo9VcY9TZwJxBejeM8ZwITF+GEbARpUDs7CsIgvsAhhu44kAfmwaD3+tS/G78fA==
-X-Received: by 2002:a17:90b:1c03:b0:2c8:87e:c2d9 with SMTP id 98e67ed59e1d1-2cd2751d7fdmr9586493a91.39.1721823902201;
-        Wed, 24 Jul 2024 05:25:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721823905; x=1722428705;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4RS7gU16ITnoH4uJ2P4cBrWFJTcLfxSuNNT2bfx+93A=;
+        b=ss3kQb2ZaOBMfPJnSwInb2bRQSg5JuU/Ud5bIzqW3aHbOQzpbvNLL3iH/adYIpC+3r
+         +XgHh8v39pplaUoX2tzuEPrWw7J1HXz9sPz+zNBpsgLXVyGr1j6ao/MpYfP5lmvXIS5x
+         tWtU8eJEuTENnNaTAt8R/TBbtD7tZYiISyQ6mkydLwRzS4x1sYNz/aTu+0rP4PSBNAud
+         aH06SICyOmioNmdPGqC08Qgd60kBWKBGHTYbVTZcEg800dQ07icZR0NLmNvEb9VIPbnf
+         K/Kpc4YL2J7/5ParSMxZd01//ith7Zgg4U6jl1gLXLAM/zVH47r+8yEpTf0LA43v/OH5
+         mAbg==
+X-Forwarded-Encrypted: i=1; AJvYcCXLAQ7LOYWXIkkLROsMGs/Ti+JcLBYmQvxzFfF39mZlxi14K6AaawOM8VwPD5hoo1kwJ5VUJd4i5SV0XQKCz72S2XZmoY0fZpuXIttF
+X-Gm-Message-State: AOJu0Yyb22efKkGmRKe8RvnY2pL7gJPDvg0woe6hqzQVTi+/BGmXah+Z
+	SiYC+KvY+4pWnEaUw8u3DuzRNyBXU3RP7ykbtAKmTHDPdVFjhje/
+X-Google-Smtp-Source: AGHT+IF7OVyonWCCnCVBX9lx5jU8mzF0yeNoeycLEZCNLMHS8GfiaraNhErqelj7XcB9qfI2jnBS2g==
+X-Received: by 2002:a17:90a:d301:b0:2c8:53be:fa21 with SMTP id 98e67ed59e1d1-2cdb51ce903mr2067038a91.34.1721823904996;
+        Wed, 24 Jul 2024 05:25:04 -0700 (PDT)
 Received: from distilledx.srmu.edu.in ([103.4.221.252])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb76001d6sm1481454a91.48.2024.07.24.05.24.59
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb76001d6sm1481454a91.48.2024.07.24.05.25.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 05:25:01 -0700 (PDT)
+        Wed, 24 Jul 2024 05:25:04 -0700 (PDT)
 From: Tejas Vipin <tejasvipin76@gmail.com>
 To: maarten.lankhorst@linux.intel.com,
 	mripard@kernel.org,
@@ -74,10 +76,12 @@ Cc: dianders@chromium.org,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	Tejas Vipin <tejasvipin76@gmail.com>
-Subject: [PATCH 0/2] Allow errors to be silenced in multi functions
-Date: Wed, 24 Jul 2024 17:54:45 +0530
-Message-ID: <20240724122447.284165-1-tejasvipin76@gmail.com>
+Subject: [PATCH 1/2] drm/mipi-dsi: Add quiet member to mipi_dsi_multi_context struct
+Date: Wed, 24 Jul 2024 17:54:46 +0530
+Message-ID: <20240724122447.284165-2-tejasvipin76@gmail.com>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240724122447.284165-1-tejasvipin76@gmail.com>
+References: <20240724122447.284165-1-tejasvipin76@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,23 +90,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Multi functions so far always print errors when any function fails. This
-may not always be desirable, so a new member of mipi_dsi_multi_context
-is introduced to allow errors to be silenced.
+A "quiet" member is added to mipi_dsi_multi_context which allows 
+silencing all the errors printed by the multi functions.
 
-The larger implication of this is that all the old non-multi functions
-can be replaced entirely by the multi functions without any loss of
-functionality once all the panels are changed to use multi functions.
+Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+---
+ include/drm/drm_mipi_dsi.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Tejas Vipin (2):
-  drm/mipi-dsi: Add quiet member to mipi_dsi_multi_context struct
-  drm/mipi-dsi: Change multi functions to use quiet member of
-    mipi_dsi_multi_context
-
- drivers/gpu/drm/drm_mipi_dsi.c | 20 ++++++++++++++++++++
- include/drm/drm_mipi_dsi.h     | 10 ++++++++++
- 2 files changed, 30 insertions(+)
-
+diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
+index 0f520eeeaa8e..75855c1c7dae 100644
+--- a/include/drm/drm_mipi_dsi.h
++++ b/include/drm/drm_mipi_dsi.h
+@@ -217,6 +217,16 @@ struct mipi_dsi_multi_context {
+ 	 * end to see if any of them failed.
+ 	 */
+ 	int accum_err;
++
++	/**
++	 * @quiet: Controls if a function calls dev_err or not
++	 *
++	 * Init to 0. When the value of quiet is set to 0, the function
++	 * will  print error messages as required. If this is set to 1,
++	 * the function will not print error messages, but will still
++	 * change the value of accum_err.
++	 */
++	int quiet;
+ };
+ 
+ #define MIPI_DSI_MODULE_PREFIX "mipi-dsi:"
 -- 
 2.45.2
 
