@@ -1,121 +1,137 @@
-Return-Path: <linux-kernel+bounces-260900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4051993AFFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:52:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B735A93AFF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:46:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 712691C21DC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:52:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E88C41C221A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76AC3156899;
-	Wed, 24 Jul 2024 10:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F27915689B;
+	Wed, 24 Jul 2024 10:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cm9Ue3O1"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="s6hxvRIX";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="G+ey1eWF"
+Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B253155757
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 10:52:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0322A5695;
+	Wed, 24 Jul 2024 10:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721818324; cv=none; b=RvVU5r7/hJogdU760VPJPCUTf9OlGogpm2Yt27BmKmyWztb1/JCwCLjC9lTEVPciqF5jjk4lcnoqf1nDTFXcjtdm9XwV0Cio3FFPWNp0IBRVHVBhvlJD+zlF+LjmVIhbv+ok0WVXJdeTDN3C28TNqyAj3fyZF4c9LQoai7RfrWI=
+	t=1721817980; cv=none; b=aIt1jwSIAG7cH+cKsnDY+J4UR4gR4Q9H6uveGb7G5ZXH1JFwKDeh27miRjhbRqohAU/Lp+oQApVoNUTs4JZ39hrhvaf6CYz5jf8YuaqcJX22G/Vl2+Np5zE9K6O3kDs2HCK+OqBplTI0Ir1zNdTRlvjIjwXeSUgZd1tKKLq4cKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721818324; c=relaxed/simple;
-	bh=NbHJh6RRHy684SrYZUNu5LAFgHVtJvGwtoD+uECKw/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qCZxFdDvHM8KqyryBeuw/3QTD8Wbxwv7ZkkOJpfWRAhpwvez4RhrwXcMNGEwFS1H47ZaYxHpytNvsjdnPxmhGs11OBW7pgLkmYmENAtIXMWA7H+Q8PhC0xmCb0gPfm6xqiFxHee12kOurA4KbtHZ5GVwU1Gk/1kcTsI6NHAmdS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cm9Ue3O1; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721818321;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xn9TfjA6NiXJtkfI9W0qDv8xc0kKr5AGDpzztiNdZF8=;
-	b=Cm9Ue3O1PZi7FVQDAqTcjthj7uB19RpvfOtxHthLEn6DeYgMCdU8Nj6skKIqnBzNtPM9Re
-	7eZQHaa+WgHJuAu0ZOdJCXVblcqMrYpVD2qeOynbVL9UCN0wVqZJ6pUFh98QkmsSFDHtxy
-	B4QvLC/q+D0CSQyriMHVTMymIIEyicQ=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-507-owcGAc7WMsCQiRxe8Ij1Qw-1; Wed, 24 Jul 2024 06:45:18 -0400
-X-MC-Unique: owcGAc7WMsCQiRxe8Ij1Qw-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-36831948d94so3703560f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 03:45:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721817917; x=1722422717;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xn9TfjA6NiXJtkfI9W0qDv8xc0kKr5AGDpzztiNdZF8=;
-        b=MWE7IrYtDt7HLdH9iRUwcKsKQBQGSlPgw5A2JWmd5ISNBho3N35lelXLeV4cq7LVnI
-         BupxRVWnXi3T61pbghKDFvdyzKmpBXdVdVhwyHZ6bbzrCmGC3T/HdUNWQaE0wFr2U4O/
-         uZ2KVY4un6/eymOfFEbXtnb5/zAPYxfdkoBp7mq/kFywDTZjU4xGGAgczlwqQZQIX3iK
-         uU68npmhK8tdhho7qQ/cuHj07kjIITO0qsGTmCh1r/zzj6psMQdqLKUxb2tOx9E+35ZE
-         hDkmnTMr4cQyxwlVMQLfstnnUaXC0Z98a4EVb/o9ZK2RnabXHjFdC26ELDoM6QPCF7PS
-         SeAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWo4bzOJN81d62Ulm40l2J2TsEKPsVf2Qn++5CyplQ44a/tCinESojA1AyVuWfbvcXaWiKvEQkmUNHjwCRYhtKymGb9mbcwi4EcBuva
-X-Gm-Message-State: AOJu0YxX1Jywljm+5JT7W7BgCAKzcYxAyGscvqusT6LK4xDSL85W1Q1P
-	AHtvGcsgEO5w9pDBBi8MZpBiE+5frMf+/Y7WSTsGRO0jFbJxGLDCMiIm+glSDOzcFfR0HdUS0Qi
-	4uFaUU/7B0lAftGSJ0KRXsV8AXR1PbKv9SUgYW6g7rsbxyoNkK1JojDUTeA+mIGfCmZQeTQ==
-X-Received: by 2002:adf:eb82:0:b0:367:8a3e:c127 with SMTP id ffacd0b85a97d-369f5bb57ddmr1076830f8f.63.1721817917282;
-        Wed, 24 Jul 2024 03:45:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEeiMpsWcqeCFCR3YjRVhYw58gnKNcIGwvJmtVpjFuFH/aFmGbZKpc7S+Um/rqoZCaNJ3M9OQ==
-X-Received: by 2002:adf:eb82:0:b0:367:8a3e:c127 with SMTP id ffacd0b85a97d-369f5bb57ddmr1076804f8f.63.1721817916632;
-        Wed, 24 Jul 2024 03:45:16 -0700 (PDT)
-Received: from redhat.com ([2a02:14f:1f4:6083:a67a:e8a9:2855:2683])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-368787ed580sm13850744f8f.112.2024.07.24.03.45.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 03:45:16 -0700 (PDT)
-Date: Wed, 24 Jul 2024 06:45:12 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Zhu Jun <zhujun2@cmss.chinamobile.com>
-Cc: jasowang@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
-	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tools/virtio:Fix the wrong format specifier
-Message-ID: <20240724064459-mutt-send-email-mst@kernel.org>
-References: <20240724074108.9530-1-zhujun2@cmss.chinamobile.com>
+	s=arc-20240116; t=1721817980; c=relaxed/simple;
+	bh=GXlmAKy0jMMHs8gtxnXJjGAILkTf99lkHKIFHd/fjQg=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=qcOOeQU+EEn4oKMIKYOH2Elqe/+VaCJXIxoXehLt9oSo0KmJ84lu+g6QwL4xpL9DwuBkbQ6QbYCEFiokPT2UZZpAcqhtcx42wXBuag7CxEkpncyxR27BzWLkYXisTCpR4QJ3qACIjOqq33VWsrSkhvLvD+U2FJLbHy7Myluh7UQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=s6hxvRIX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=G+ey1eWF; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id ECF1511402EF;
+	Wed, 24 Jul 2024 06:46:16 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Wed, 24 Jul 2024 06:46:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1721817976; x=1721904376; bh=8RDW4na2ac
+	f1fEAvf5OQSQZ8CPgdR+2LrNzIIFbWMWc=; b=s6hxvRIXDc97naQPH8/GRtv08U
+	gTFt+DIp8A4aNVLBFb2QzSIOXjmG9HW0b1XWXxiwDptxn/mnEFoAihchblRA5TRF
+	ilDmUmJ45dU/zYbFERt1QoTdXqBAS09TCdn5ZPUmd9cPG0L2baddfwRYMa0S89Ut
+	4Xvl1OBCht12+IDINgbpLflO1k1fXymlB+qPkk3SrfWCbpdxv2Jle32Lx5UHxsLk
+	VzVpqsAwgFymEuKDVUqIgOL/TRPOAVPHQC8VKgZswQ5w6DkeSnEQlx4fFKZhcdZ9
+	t8yqb+SdX10WkMqQ2MXAHch98k7Bkx9CKCwt3tQCfCAvflKZyUwZTMZJazAQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1721817976; x=1721904376; bh=8RDW4na2acf1fEAvf5OQSQZ8CPgd
+	R+2LrNzIIFbWMWc=; b=G+ey1eWFH56VE0jYYrB4EvqSpBJU87TsMEtlQmVV1MtS
+	Awob3WEa2lUqSa4OD40P8RNR7ih8C+hG7/FLIT0G7jgWrb0AivNHtdX71swSRRBf
+	1iZeL9aLd1mOxSapQWdmCJf2m/pxXgG5+7UF30iZUXbIhJp4IxyHQkbG5xE8G5X0
+	yE/MHEl1rfh13p6UD9DqRhreyVWzApT5f6ipM72YAHjFn0onq3BRAI51HK5j71uJ
+	IN/Rb/RYzKdajr1atZ2eUAYRuLt+2LO7+wLcN1B6Tn3UJgO8fkSygKe8VMLdhnND
+	gI1Ql/HSlTFJ1VaId9OtTC9K6/48pLuytCyRAz7MBQ==
+X-ME-Sender: <xms:eNugZu6V-qZjD_i50s-g1Cj1FwgN1S5Nftcw3NUedxTYsTtNb4Vjgw>
+    <xme:eNugZn7Gwx4iRzDxKGk02RZom2-adgaDy56VyZDLIOmAIY0c37Z8SlrMP2ZeyoqDs
+    kmcMQfQJsjuEfgHt0U>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddriedugdeffecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
+    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
+X-ME-Proxy: <xmx:eNugZtcPOTVN8a9TN31eR1LyFWReZIh8MUtDjTpMgpPVfqhSBGJVuQ>
+    <xmx:eNugZrJUnj4b4Cr4lcCmuBk_nPqwc5nE-LTt6Y2y6eymjOBD8wqI2g>
+    <xmx:eNugZiLA3ZXY0rUGjS75ecZNEy0hHUoxKoYkKQFMWuRdg1Akuq60VA>
+    <xmx:eNugZsz2RyajP3HywBwDHatTi_LfOiVl3Obia-9vr6BsffQIyRvHCQ>
+    <xmx:eNugZkhHphH-S_L2Nosm1_cS4bvjmAwsusP-oceCQOyaoptTaQuwK1o4>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id A66E5B6008D; Wed, 24 Jul 2024 06:46:16 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-582-g5a02f8850-fm-20240719.002-g5a02f885
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240724074108.9530-1-zhujun2@cmss.chinamobile.com>
+Message-Id: <83972212-c8b6-4888-8574-4eb153008109@app.fastmail.com>
+In-Reply-To: <20240724103142.165693-3-anshuman.khandual@arm.com>
+References: <20240724103142.165693-1-anshuman.khandual@arm.com>
+ <20240724103142.165693-3-anshuman.khandual@arm.com>
+Date: Wed, 24 Jul 2024 12:45:55 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Anshuman Khandual" <anshuman.khandual@arm.com>,
+ linux-kernel@vger.kernel.org
+Cc: "Andrew Morton" <akpm@linux-foundation.org>,
+ "Yury Norov" <yury.norov@gmail.com>,
+ "Rasmus Villemoes" <linux@rasmusvillemoes.dk>,
+ Linux-Arch <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH 2/2] lib/test_bits.c: Add tests for GENMASK_U128()
+Content-Type: text/plain
 
-On Wed, Jul 24, 2024 at 12:41:08AM -0700, Zhu Jun wrote:
-> The unsigned int should use "%u" instead of "%d".
-> 
-> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
-
-which matters why?
-
+On Wed, Jul 24, 2024, at 12:31, Anshuman Khandual wrote:
+> This adds GENMASK_U128() tests although currently only 64 bit wide masks
+> are being tested.
+>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 > ---
->  tools/virtio/ringtest/main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  lib/test_bits.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+>
+> diff --git a/lib/test_bits.c b/lib/test_bits.c
+> index 01313980f175..2515ddc34409 100644
+> --- a/lib/test_bits.c
+> +++ b/lib/test_bits.c
+> @@ -39,6 +39,24 @@ static void genmask_ull_test(struct kunit *test)
+>  #endif
+>  }
 > 
-> diff --git a/tools/virtio/ringtest/main.c b/tools/virtio/ringtest/main.c
-> index 5a18b2301a63..e471d8e7cfaa 100644
-> --- a/tools/virtio/ringtest/main.c
-> +++ b/tools/virtio/ringtest/main.c
-> @@ -276,7 +276,7 @@ static void help(void)
->  	fprintf(stderr, "Usage: <test> [--help]"
->  		" [--host-affinity H]"
->  		" [--guest-affinity G]"
-> -		" [--ring-size R (default: %d)]"
-> +		" [--ring-size R (default: %u)]"
->  		" [--run-cycles C (default: %d)]"
->  		" [--batch b]"
->  		" [--outstanding o]"
-> -- 
-> 2.17.1
-> 
-> 
+> +static void genmask_u128_test(struct kunit *test)
+> +{
+> +	/* Tests mask generation only when the mask width is within 64 bits */
+> +	KUNIT_EXPECT_EQ(test, 0x0000000000ff0000ULL, GENMASK_U128(87, 80) >> 64);
+> +	KUNIT_EXPECT_EQ(test, 0x0000000000ffffffULL, GENMASK_U128(87, 64) >> 64);
+> +	KUNIT_EXPECT_EQ(test, 0x0000000000000001ULL, GENMASK_U128(0, 0));
 
+This looks like it would need an #ifdef check for either
+__SIZEOF_INT128__ or CONFIG_ARCH_SUPPORTS_INT128, otherwise
+it will fail to build on all 32-bit architectures and possibly
+old compiler versions on some 64-bit ones. I think I checked
+in the past which targets support __u128, but I don't remember
+the result.
+
+    Arnd
 
