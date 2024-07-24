@@ -1,137 +1,115 @@
-Return-Path: <linux-kernel+bounces-260907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB6CF93B012
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:03:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEE6E93B015
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:06:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D471B23617
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:03:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60D56B23777
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8235D1C6A3;
-	Wed, 24 Jul 2024 11:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="hl0E9Xn2";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TEpgTwBG"
-Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C183156C69;
+	Wed, 24 Jul 2024 11:06:11 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B402595;
-	Wed, 24 Jul 2024 11:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D67156967
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 11:06:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721819013; cv=none; b=RdjD3flNs06Q4RqQ83ycbB5Rjj4XwUzTS4vb3WYc51ZjPeZqaNN+HvenCGOqwgIYXfVC5zVgqgQYVO0JX3xugB9m1cjylL3DErO4Djw15ChuPPXqhmscdGJlGQ03jcbzHukk1UCU7JuueT6duSThryimIsaCKY8oLBGpSupG3hk=
+	t=1721819170; cv=none; b=oMpVEBXcelO6EiG/EyUmlgUlU4mhLN/jrlR+AqHmEPXmQ+hpBr0hQhUwvNnxCU3+x+4mHo4OOxPIbm1A51UeEZ+KvehygwLtDnTznSE9baGBhSAYTycC4fk8B+iRd8lQMrvAf8qJuqvBEcBctA7Of6ynC2nAGhgXrSB3UaKyMXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721819013; c=relaxed/simple;
-	bh=MqzgztNulWn6ps+zt1kJxLxjw6K7gLx3zBJw3z+G0fY=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=DLLCoxUzcOjY90jK63W7ixN64Xis1pO7GyzTUGsfHvUSZXrz6Wn0Jse3XjONJCGqt0YVmjRrpze9j2gVJenhepgDAuZWxMWBvxXRM21mdZCCJ+5kmw+dn/XUxsQ5sjGWTICtjjNQ4RasIBOpNLW0LG/5SqLDViSYgn/+ewU1mXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=hl0E9Xn2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TEpgTwBG; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 543A5114028F;
-	Wed, 24 Jul 2024 07:03:30 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Wed, 24 Jul 2024 07:03:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1721819010; x=1721905410; bh=lEWGhgTjsE
-	RsXXuFoYCD9j3Lo6IvAdsriZK45kT9e10=; b=hl0E9Xn2SANSl/aXFa7gaZo1fE
-	Ol/yUocvSHn0LoYw+8V5udPPZPDxR8aDceBCtjLzpmAoQivb96RtMoazQvK0jZpA
-	fbZ4WjTj2Si0GquKWUZM1zbMPwKy3/HIb3/0TPlrJ2o9ydERLiF0zo8YsFzWxH78
-	FvDKS2K2TDdCaH1iQT0pF8+2x2NKuJJRg9wwCCCfasgOM2T4OcJ7m5flr5H8nVC8
-	NNH1JT69/SE50DuDLAQmi8NElCXTYzOORLeW9Hyq83jpdIbQIaUrGTKZLkiTbnYf
-	pFwViye9/xIxE6Dg7iCJE5k7L2w2EfkhxphBL/SB5nKqeHaJJLKweBkOwcXg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1721819010; x=1721905410; bh=lEWGhgTjsERsXXuFoYCD9j3Lo6Iv
-	AdsriZK45kT9e10=; b=TEpgTwBGEYwZAKexU6xoI0LG9kRu47dV5ep9BhLhCaic
-	H1h8ddqy4p2X6QiCO1f1XEDOPhOMPUDhMwJDQmyattfaW84RN48xhYxvEGdS0wSg
-	Box6Gmu8etFsNbbZ9VsQ+Y22uFrhM5xr6uysn5apRsgAdbKwFXzWsYIMYYAI9VF+
-	2q/VeuC7CX/+AufWBjVIEGAh0OiaXNkLFOtIaWi/de1k54LD/kwF9J58acfRdLaz
-	SSdSzQ4GKoEVWEFwlvdh/Gll+0WK5meTecTgYxmLqe54bNspWiupCEDFYVOmgRq9
-	XZ0x+JMRXKw4rT5MAAGEmV8LkVV0Na/4jAwpjwuabQ==
-X-ME-Sender: <xms:gt-gZua86hUF2EmTXWWY9zAqWSW0e-V6A5USOc0kZpqjqO5RMScoqw>
-    <xme:gt-gZhYupxpsYH-JKLRuQ7VDawck3kmXwFMEk43Bh9OIemEJBlDYz0vTgO8NJFdYJ
-    TsD0XVUjS3j9-Q4TR4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddriedugdefiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeefkedvheehjeejteeguedvgeevfeduffdvveeuhfdvudeltddtjeevvefggfei
-    geenucffohhmrghinhepghhouggsohhlthdrohhrghdpshhtrggtkhhovhgvrhhflhhofi
-    drtghomhenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
-    pegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
-X-ME-Proxy: <xmx:gt-gZo-7PhRfB1Z6_clK-Yv54DhqRRaMt6tBfTDod9Z90TGwyKeVSA>
-    <xmx:gt-gZgrC7ylEA5YwwravPQnjWmBxw3eq1mCMMRyID9dj2sRTQgVydQ>
-    <xmx:gt-gZppe5gzvPvzwusv243H3xwCbo0OVMXV6S6okO0TiZMEBzo-p_Q>
-    <xmx:gt-gZuQ_87mgAVPECBUkpbGp-LeFLC_75G2o8Qr5gZQSMT78sMelAQ>
-    <xmx:gt-gZiC1U3B-sNmyZ30O7pQ1s30kUTb0ekpZoB6845Xv1b5HXKSYRI6->
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 163EAB6008D; Wed, 24 Jul 2024 07:03:30 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-582-g5a02f8850-fm-20240719.002-g5a02f885
+	s=arc-20240116; t=1721819170; c=relaxed/simple;
+	bh=X/nuKImDGFXCeIa6IMgFZHGLK+4Klev21WBlhI8fKT0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=iG9tuBooxpbIfL91XY3B+4cOfHrkWCkho7ciGGRc2LH9F2N8elfO177UFtCW7HNPPcFTG72anhKGZSuuhj082Mn7iYZaEHPqSmbicdhXqlaTH/WhVujan/RXl6ACU2iIMtzVy3UxHCzg9S6wxghgelczRmr3t6mHKdXdVr4L7m8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-185-fyRQhjFhOVKCzMXiToP7WA-1; Wed, 24 Jul 2024 12:05:56 +0100
+X-MC-Unique: fyRQhjFhOVKCzMXiToP7WA-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 24 Jul
+ 2024 12:05:17 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Wed, 24 Jul 2024 12:05:17 +0100
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Lorenzo Stoakes' <lorenzo.stoakes@oracle.com>, Andrew Morton
+	<akpm@linux-foundation.org>
+CC: Arnd Bergmann <arnd@kernel.org>, "willy@infradead.org"
+	<willy@infradead.org>, "torvalds@linux-foundation.org"
+	<torvalds@linux-foundation.org>, "Jason@zx2c4.com" <Jason@zx2c4.com>,
+	"hch@infradead.org" <hch@infradead.org>, "andriy.shevchenko@linux.intel.com"
+	<andriy.shevchenko@linux.intel.com>, "pedro.falcato@gmail.com"
+	<pedro.falcato@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: Build performance regressions originating from min()/max() macros
+Thread-Topic: Build performance regressions originating from min()/max()
+ macros
+Thread-Index: AQHa3aXBhf3rusWJtUWi2ZkpzzdkQbIFtZeQ
+Date: Wed, 24 Jul 2024 11:05:17 +0000
+Message-ID: <1877ab0f14cf4f7d9da2a53e211cfdc1@AcuMS.aculab.com>
+References: <c83c17bb-be75-4c67-979d-54eee38774c6@lucifer.local>
+ <3ad33eb6-49d7-4e67-8fa5-1beec8d4af4f@lucifer.local>
+In-Reply-To: <3ad33eb6-49d7-4e67-8fa5-1beec8d4af4f@lucifer.local>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <d0fadaa3-94d4-4600-8e92-a8fe5b0f141b@app.fastmail.com>
-In-Reply-To: <20240724103142.165693-2-anshuman.khandual@arm.com>
-References: <20240724103142.165693-1-anshuman.khandual@arm.com>
- <20240724103142.165693-2-anshuman.khandual@arm.com>
-Date: Wed, 24 Jul 2024 13:03:09 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Anshuman Khandual" <anshuman.khandual@arm.com>,
- linux-kernel@vger.kernel.org
-Cc: "Andrew Morton" <akpm@linux-foundation.org>,
- "Yury Norov" <yury.norov@gmail.com>,
- "Rasmus Villemoes" <linux@rasmusvillemoes.dk>,
- Linux-Arch <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH 1/2] uapi: Define GENMASK_U128
-Content-Type: text/plain
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 24, 2024, at 12:31, Anshuman Khandual wrote:
-> --- a/include/uapi/asm-generic/bitsperlong.h
-> +++ b/include/uapi/asm-generic/bitsperlong.h
-> @@ -28,4 +28,8 @@
->  #define __BITS_PER_LONG_LONG 64
->  #endif
-> 
-> +#ifndef __BITS_PER_U128
-> +#define __BITS_PER_U128 128
-> +#endif
+From: Lorenzo Stoakes
+> Sent: 24 July 2024 09:45
+..
+> It seems that (again, all credit to Arnd for his thorough analysis here) =
+a
+> lot of the underyling issue revolves around the macros need to function
+> both in scenarios where we absolutely must have a constant value (for
+> instance, array size) as well as in scenarios where this is not the case.
+>=20
+> Arnd also discovered [0] there _relatively_ few call sites that require
+> this, so maybe a way forward might be to create specific min()/max() macr=
+os
+> for the strictly const case and to fix up the core ones to reduce expansi=
+on
+> at the cost of not being able to use these in these scenarios?
+>=20
+> Does this seem viable? Perhaps David you might have thoughts on this?
 
-I would hope we don't need this definition. Not that it
-hurts at all, but __BITS_PER_LONG_LONG was already kind
-of pointless since we don't run on anything else and
-__BITS_PER_U128 clearly can't have any other sensible
-definition than a plain 128.
+Indeed.
+MIN() and MAX() could be used for compile-time constants (and require const=
+ants).
+They would then be usable for static initialisers.
 
->  #define __AC(X,Y)	(X##Y)
->  #define _AC(X,Y)	__AC(X,Y)
->  #define _AT(T,X)	((T)(X))
-> +#define _AC128(X)	((unsigned __int128)(X))
+Before that can be done all the places that locally define MIN() and MAX()
+need changing to either use min()/max() or surround the local definition
+with an #ifdef until the global definition is added.
 
-I just tried using this syntax and it doesn't seem to do
-what you expected. gcc silently truncates the constant
-to a 64-bit value here, while clang fails the build.
-See also https://godbolt.org/z/rzEqra7nY
-https://stackoverflow.com/questions/63328802/unsigned-int128-literal-gcc
+But there are some optimisations that can be done first.
+The significant one is implement min3() directly (and probably without
+the 'can be constant' logic.
 
-The __GENMASK_U128() macro however seems to work correctly
-since you start out with a smaller number and then shift
-it after the type conversion.
+=09David
 
-     Arnd
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
+
 
