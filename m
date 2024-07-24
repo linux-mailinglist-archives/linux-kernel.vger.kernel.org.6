@@ -1,109 +1,82 @@
-Return-Path: <linux-kernel+bounces-260629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A33B93AC04
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 06:46:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3482893AC07
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 06:47:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34B6C28426A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 04:46:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E273A284229
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 04:47:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF724643B;
-	Wed, 24 Jul 2024 04:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OGGscUPj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866E84A35;
-	Wed, 24 Jul 2024 04:46:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01803EA98;
+	Wed, 24 Jul 2024 04:47:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C688917C6A
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 04:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721796402; cv=none; b=HfVmIa1tAdvRInwfa7+XFmAFR/DvXHamL1Iy1oDj1lNfAjxVTjKJfF8BUhu9uIkqeaU/CHUSI65bZHPkA/BDEl+RRQcrt7uwE0Rd+CSy6IoefKwY/I/RW4u2o3k3ijQjLNbWylXMZCu+XvRIVLxw5g9TlymIVEIeJzAXtNg4jkE=
+	t=1721796442; cv=none; b=dkgtGJfERDmduzfocwC4TXivGscOOKbCoozAg/t9+JPnenK6Go3J8ez9kBi1bpzeomrMPl2GFJ0C8ZkLkHOMA3BtpGmr/lFzlKanoZe2ehJ/0G7FWqkFwL6Id80bPd7kdeeWca/z9VoXQSIRi6gioG4IoGX1rqwTaKH3Pz5dr8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721796402; c=relaxed/simple;
-	bh=dd8dMxMcSNia49oSuAPjZ7+AGLNZdMhtCcNuGyypI8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aGG08Hi0R4gHQ681oqbx1FJ/cZKCUdzcLoN2YOiT/zu4bwLrDdhvZFfFmWcqGkJrM8eQP6GUx/U28shZoCOPC8UZCpRz/OXiDR+QwBQOexoO1qPU/LtXC2TY6YmBr9Nip9VNDJwH+oHzvoi162Q51ymizpWFe+bTfpudov0faR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OGGscUPj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0C1EC32782;
-	Wed, 24 Jul 2024 04:46:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1721796402;
-	bh=dd8dMxMcSNia49oSuAPjZ7+AGLNZdMhtCcNuGyypI8I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OGGscUPjiaC27BvRamKWP+qtNrxmyNPkBnZKsSha//5brV2wZUEDMxvh8UsMJzx3R
-	 Vra5R3kygN8L9vaSJQl9Jr8e4e+4NJ8bVCxMCRyNzjQqVPNBh+5nrbuKg1iqJ0hBoz
-	 LkMi7nDOuWshiMnpm8q8v3nPZjuuo68+AjoHQkG4=
-Date: Wed, 24 Jul 2024 06:46:39 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, liujunliang_ljl@163.com,
-	linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+	s=arc-20240116; t=1721796442; c=relaxed/simple;
+	bh=pn4wVj/IhJTlLRReC+QeumFT75E9CgOJvirz3l/dKwo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d+6ZrpQberXCBwUQaS8sK8sAXYRAfpcd9M50uPLYkLWapTKKs1lhNChk4D6al/hzeDXWIjkNBTA7Gt45t4TkpCIEm5OgrC5EjgMWYNWXOnnpn/NfsdexB3fr08mijV8grbS2Qwyu5ORTFYs2qrcWG7zDbSvCM3EVD018rwMXauI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 74F75106F;
+	Tue, 23 Jul 2024 21:47:44 -0700 (PDT)
+Received: from a077893.arm.com (unknown [10.163.54.139])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6F4433F5A1;
+	Tue, 23 Jul 2024 21:47:16 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 net] net: usb: sr9700: fix uninitialized variable use
- in sr_mdio_read
-Message-ID: <2024072426-limping-recycler-5c29@gregkh>
-References: <20240724011554.1445989-1-make24@iscas.ac.cn>
+Subject: [PATCH] arm64/mm: Drop PMD_SECT_VALID
+Date: Wed, 24 Jul 2024 10:17:12 +0530
+Message-Id: <20240724044712.602210-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240724011554.1445989-1-make24@iscas.ac.cn>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 24, 2024 at 09:15:54AM +0800, Ma Ke wrote:
-> It could lead to error happen because the variable res is not updated if
-> the call to sr_share_read_word returns an error. In this particular case
-> error code was returned and res stayed uninitialized.
-> 
-> This can be avoided by checking the return value of sr_share_read_word
-> and propagating the error if the read operation failed.
-> 
-> Found by code review.
-> 
-> Fixes: c9b37458e956 ("USB2NET : SR9700 : One chip USB 1.1 USB2NET SR9700Device Driver Support")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
-> Changes in v2:
-> - modified the subject as suggestions.
-> ---
->  drivers/net/usb/sr9700.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+This just drops off the macro PMD_SECT_VALID which remains unused. Because
+macro PMD_TYPE_SECT with same value (_AT(pmdval_t, 1) << 0), gets used for
+creating or updating given block mappings.
 
-Hi,
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+---
+ arch/arm64/include/asm/pgtable-hwdef.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+index 1f60aa1bc750..86e803ea8885 100644
+--- a/arch/arm64/include/asm/pgtable-hwdef.h
++++ b/arch/arm64/include/asm/pgtable-hwdef.h
+@@ -135,7 +135,6 @@
+ /*
+  * Section
+  */
+-#define PMD_SECT_VALID		(_AT(pmdval_t, 1) << 0)
+ #define PMD_SECT_USER		(_AT(pmdval_t, 1) << 6)		/* AP[1] */
+ #define PMD_SECT_RDONLY		(_AT(pmdval_t, 1) << 7)		/* AP[2] */
+ #define PMD_SECT_S		(_AT(pmdval_t, 3) << 8)
+-- 
+2.30.2
 
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
 
