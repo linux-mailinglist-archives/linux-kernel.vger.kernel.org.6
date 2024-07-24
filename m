@@ -1,195 +1,153 @@
-Return-Path: <linux-kernel+bounces-260618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B87693ABAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 05:55:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C9B193ABB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 05:59:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EA041C228A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:55:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 055EF1F23377
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA89E210FB;
-	Wed, 24 Jul 2024 03:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598DE22067;
+	Wed, 24 Jul 2024 03:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Fj++Nknd"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yNyu+4vg"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5DE4A00
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 03:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7FF1C687
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 03:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721793345; cv=none; b=VOjXzFK54x2wFQ1/19n8J4Qp3DDi9/gFd17oDMl5wbhyCzeQI08ksz+i79pc9CFH9s7jM1DbiBPa0D6MYs+RnFcCAR33aZs7SRX3oDDZF0Fhfhu7pSeOttXY65hwS25IkOLW0JBAKDFReLNAcLaTZg7X3UYJOcqAmn+X796qxyM=
+	t=1721793585; cv=none; b=ciEYeRx9W1EzRa1+U718NEkoOiGSHis62vCGYJvycvtiFQyPkecRJdyx/cQw8uleUHPdY6mtv1wmVkzPhPToZO5ANWulghaWujFG6qJLpTQGbw5yw8lO+lGDYSvaxZ4PrBmz569peefWIcVfvhD7uv/auCRmncmhjZQRSHBY0C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721793345; c=relaxed/simple;
-	bh=4ksOoVaVe7rHculIIbRt5BA4iHzgyvC/kckkbHrLc+0=;
+	s=arc-20240116; t=1721793585; c=relaxed/simple;
+	bh=xxF3BJrYXETz10Fa0A/YLPnOowlWRzEN9QfhTHhVFyU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lHQ+co7hWnaNEwJArsq8JVaET7o+Ik0zMv7Ri5/HJDyDv5lmcOxJ+FJGXfP9MuDw2UHd0D6amPGvvJmAbhquzaJycxQ3xBtMqF8/ZlFrQZs/SS20DRS+AuCZpj/6m8GBN77LVC4+AKlKFVQLC2xAh+GBusu8nVHXmdNxXp00pcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Fj++Nknd; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52f04c29588so4066285e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 20:55:43 -0700 (PDT)
+	 To:Cc:Content-Type; b=OrSg8JIx59xBCE5IhlPZ3a1Yzrs+PK11cKvjEd9SuTLDPl8eEd53hf3G7HdpdW4xAojkY0eWVewq3ngl148Bn5Yxjz7EpPeX29WWkHuw7kuFonWcsXnai0zdQMxNlYumLkFfamO+UmGCbyhl7YMNaqoUTz6U6YkBbhvlP82JfpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yNyu+4vg; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a18a5dbb23so7107a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 20:59:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1721793342; x=1722398142; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1721793582; x=1722398382; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UjW83MMgMNmNykm863/7zI9UniCx1U6HkyFOsE4xJeo=;
-        b=Fj++NkndRtOgIICPBwEv3/IliN0PDBdO6IPrOQqyP2SnC3VltrA374BGxUVLthNhEe
-         djfwuVdroInlu8uu/2XdVwKYpetGYt8Dv+yzmXzAM/P652tj5HvRiEj3DK9w5X2bgP+U
-         WFkoBX1Y2ST3rxBad1gaI6MmfU/mHZ6TOJdXRD1NYVNqrKIvhFuLGTo6SV4ZVE1wHw35
-         /AhQlJVCS2UgpmsBgd0Eqk96kfMqWRjmou3jrILTjuvzsbas70goH707SUOlwCoqaoRm
-         RD3z9CdN7JLNv88KcLcvRYoh7ShN5dNqpImjn9AyJrgsIuUl9HIhwT6vByPZfY9Qd6QW
-         uALA==
+        bh=9WT9z8M2iuMl54kp7uBvHCatMsJNaK2roQcf8LETvNo=;
+        b=yNyu+4vgjzmQHrKRth9jJPu0P19GElqpjtIbCDX3sYrQ7lluQExQ0EXLXx3HhH1pBd
+         qZBy6+cO9ICtA5HdZHlHNiLCZEWi2dUnW8MIswUaDAFc1pcLcpuyqJsagPG1hAdtuAkk
+         FpFyfuo+W0EWbHvQOa9Qxqf3U1aCNF7xxX2zZJ/DCkcIqLpOsk3ikrvVc0kM/x0r13DQ
+         B7AqESW+6hQvtbT3i0aznFJKjnYCi/FHvPbS1Pl4yanad9atRDqvOt0//AFGGTCiRU/5
+         CYT3Cof1jAhtiVybp8BkvRn9Cu7+TdeSKw5E4pIakN6WREj2b6TMmXBWP4OqK0y3nIM7
+         WU+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721793342; x=1722398142;
+        d=1e100.net; s=20230601; t=1721793582; x=1722398382;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UjW83MMgMNmNykm863/7zI9UniCx1U6HkyFOsE4xJeo=;
-        b=OwNlFJNqKapA5lq4r0KxUoFPZ0VKYe90dOnnePoJ+QRmcezyZry9RRxRy31xGMKAtI
-         u53bSCy5JnXEGDnHn2Kv7uRKmEY0Cv1obU5QrYhMl2764fBZSxWv2CXvOK03rtYvxui4
-         7HINzr8xUrhBd21klHSdIcSBp7Pnop41NSRaM030yvFILYETQowBGujHeePujoAOchNr
-         UoNLFwpoDaIK3hyguK/kNixCzTxaBIxX9cgaqxc1zHtu+BCBxZvmBa1YSLyZtqIxGJSu
-         wjcpuB3gcNmVQAdLwBqBonMUD2h6+Y7lbP97qw+uhzCLTfeEGs3HdeawEMxB7hCsxumB
-         b/JA==
-X-Forwarded-Encrypted: i=1; AJvYcCUfBAwP+QjMoZH46jkxyvtDRSO51LqunGnzxXSN5QrEfdJlIvr1jZyEH6V4KqG/U/w9ibq8Ig0MTnKjvaHwqAnv6mIoAb4hf+YyY3L+
-X-Gm-Message-State: AOJu0YzOXZDkLYHTCsbMXe+zvRLaqUGnJ80F79dkftkhqWVT/Qt4gBSv
-	5nopHyT2LpNJQB2wEivFErawrm+tH1M17lyeFlvrdKyYhsv+qMMUAoQNU+L6euLwAIi7ojWEaUu
-	+oRDfwzbJorGPKsVw2ZT56CZPTvnGpwQ7Qk4niw==
-X-Google-Smtp-Source: AGHT+IHEK8eWMDuG+P/puyBvh9nmKaBaWxBzZXX48bttB4uMjDGsoqa8ttv7WAuSIeFE+8u7Y1gl68i9+8i4nyAlx+Y=
-X-Received: by 2002:ac2:4e05:0:b0:52e:f463:977d with SMTP id
- 2adb3069b0e04-52efb79830emr7565710e87.20.1721793341889; Tue, 23 Jul 2024
- 20:55:41 -0700 (PDT)
+        bh=9WT9z8M2iuMl54kp7uBvHCatMsJNaK2roQcf8LETvNo=;
+        b=YfnmHMtOlGNrLltDrQ7ht0Kd48bLpvaRKec3aGN3wNwtgQ2uuNr7pX8IdJiTCiTpps
+         EN4qNzNixyqovwyinbGiXgOLfTMcYSqOS6Jj4Vz2el0kx4mON/o7TTj9HEQU4wuFxI0S
+         DqNVX29mB48LT0xzpu/ChxKSvfaMEvExgzAQRny32Nkw/HforO2vCaWiRBpcCTPOPLS5
+         0QohXj9TYJrfd5w1RqF8g6Byz5Irbrvm/aCowIUtzR4hGlpv7xFZ/AyZZrZeDldrPbJt
+         5KayuiJbsfhvJpBO10yZERrqaMB7rN7x/P3NdOouIR0MRlQk4RfkOD95hLIMy7tuj/75
+         3bjA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqInjgoM7cie1Z8GYN2e+1ZStxCd8VcJGtbQa6N+Je3K3WYUHz1XCmwCBWDJURlqcpx1wHYYbluR4xpjvKAd4XljRAiWCeMjGNRnAB
+X-Gm-Message-State: AOJu0YxMPRoiYaVdhn8R+7yQX+PJk+/DlyXXG7OCVxxMlTPhoGrEhibG
+	bazx9MUNakaP09NMv/FK0GUFP2laS3l4fyymc53cDQCRG6qvG4K+LuihDoSwEL6Yl/X4yq7BpL+
+	uVMYQ0RrtCB9Y6VuUJ3vsipfW4WzjVJ0yI0yI
+X-Google-Smtp-Source: AGHT+IExUXrqdSlE5HTOk6j/unrKo6Fg5rpbnNdNj6fNfr59qApoM/0mHodslbAgVELV4os++R664lFqIJyd9rO/2RY=
+X-Received: by 2002:a05:6402:40d0:b0:5a0:d4ce:59a6 with SMTP id
+ 4fb4d7f45d1cf-5aac9bd0c1amr191041a12.2.1721793581769; Tue, 23 Jul 2024
+ 20:59:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240723053250.3263125-1-hezhongkun.hzk@bytedance.com> <e3a75483-d3f7-4963-9332-4893d22463ad@bytedance.com>
-In-Reply-To: <e3a75483-d3f7-4963-9332-4893d22463ad@bytedance.com>
-From: Zhongkun He <hezhongkun.hzk@bytedance.com>
-Date: Wed, 24 Jul 2024 11:55:30 +0800
-Message-ID: <CACSyD1M_nqrOZh3CDqydaasX3_9JdsqDFQTqOZ+q-xkvNMY1Kg@mail.gmail.com>
-Subject: Re: [PATCH v1] mm/numa_balancing: Fix the memory thrashing problem in
- the single-threaded process
-To: Abel Wu <wuyun.abel@bytedance.com>
-Cc: peterz@infradead.org, mgorman@suse.de, ying.huang@intel.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <CANP3RGceNzwdb7w=vPf5=7BCid5HVQDmz1K5kC9JG42+HVAh_g@mail.gmail.com>
+ <CAHk-=wijWMpPk7feEZ8DzdLi7WLp_BhRpm+qgs6Tew1Bb2CmyQ@mail.gmail.com>
+ <b84a6ef8-7c3b-4c04-81d3-859692d91137@huawei.com> <CAHk-=wjH5uKPB6xrWoB8WkBMuLEJO2UsidKE1wV8XSXjAUFO8Q@mail.gmail.com>
+ <CANP3RGdgnXOXjnAFe6irf2JwrPsStTLvihKkowpY2ggSgNw7KA@mail.gmail.com>
+In-Reply-To: <CANP3RGdgnXOXjnAFe6irf2JwrPsStTLvihKkowpY2ggSgNw7KA@mail.gmail.com>
+From: =?UTF-8?Q?Maciej_=C5=BBenczykowski?= <maze@google.com>
+Date: Tue, 23 Jul 2024 20:59:30 -0700
+Message-ID: <CANP3RGd7AQXPYQVrhjbgEN608Jo7hDUh7nc8VQ62gGQqW0iXMg@mail.gmail.com>
+Subject: Re: UML/hostfs - mount failure at tip of tree
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Hongbo Li <lihongbo22@huawei.com>, Matthew Wilcox <willy@infradead.org>, 
+	Kernel hackers <linux-kernel@vger.kernel.org>, Patrick Rohr <prohr@google.com>, 
+	Christian Brauner <brauner@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 23, 2024 at 9:39=E2=80=AFPM Abel Wu <wuyun.abel@bytedance.com> =
-wrote:
+On Tue, Jul 23, 2024 at 7:55=E2=80=AFPM Maciej =C5=BBenczykowski <maze@goog=
+le.com> wrote:
 >
-> Hi Zhongkun,
->
-> On 7/23/24 1:32 PM, Zhongkun He Wrote:
-> > I found a problem in my test machine that the memory of a process is
-> > repeatedly migrated between two nodes and does not stop.
+> On Tue, Jul 23, 2024 at 7:22=E2=80=AFPM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
 > >
-> > 1.Test step and the machines.
-> > ------------
-> > VM machine: 4 numa nodes and 10GB per node.
+> > On Tue, 23 Jul 2024 at 18:35, Hongbo Li <lihongbo22@huawei.com> wrote:
+> > >
+> > > I apologize for causing this issue. I am currently tracking it down. =
+ If
+> > > reverting this can solve the problem, you can revert it first.
 > >
-> > stress --vm 1 --vm-bytes 12g --vm-keep
+> > I don't get the feeling that this is _so_ urgent that it needs to be
+> > reverted immediately - let's give it at least a few days and see if
+> > you (or somebody else) figures out the bug.
 > >
-> > The info of numa stat:
-> > while :;do cat memory.numa_stat | grep -w anon;sleep 5;done
-> > anon N0=3D98304 N1=3D0 N2=3D10250747904 N3=3D2634334208
+> > Maciej - if you can verify that folio conversion fix suggestion of
+> > mine (or alternatively report that it doesn't help and I was barking
+> > up the wrong tree), that would be great.
 >
-> I am curious what was the exact reason made the worker migrated
-> to N3? And later...
-
-The maximum capacity of each node is 10 GB=EF=BC=8C but it requires 12GB,
-so there's always 2G on other nodes. With the patch below we only
-have page_faults in other nodes, not local. so we will migrate pages
-to other nodes because p->numa_preferred_nid is always the other node.
-
+> That appears to fix the folio patch indeed (ie. I no longer need to rever=
+t it).
 >
-> > anon N0=3D98304 N1=3D0 N2=3D10250747904 N3=3D2634334208
-> > anon N0=3D98304 N1=3D0 N2=3D9937256448 N3=3D2947825664
-> > anon N0=3D98304 N1=3D0 N2=3D8863514624 N3=3D4021567488
-> > anon N0=3D98304 N1=3D0 N2=3D7789772800 N3=3D5095309312
-> > anon N0=3D98304 N1=3D0 N2=3D6716030976 N3=3D6169051136
-> > anon N0=3D98304 N1=3D0 N2=3D5642289152 N3=3D7242792960
-> > anon N0=3D98304 N1=3D0 N2=3D5105442816 N3=3D7779639296
-> > anon N0=3D98304 N1=3D0 N2=3D5105442816 N3=3D7779639296
-> > anon N0=3D98304 N1=3D0 N2=3D4837007360 N3=3D8048074752
-> > anon N0=3D98304 N1=3D0 N2=3D3763265536 N3=3D9121816576
-> > anon N0=3D98304 N1=3D0 N2=3D2689523712 N3=3D10195558400
-> > anon N0=3D98304 N1=3D0 N2=3D2515148800 N3=3D10369933312
-> > anon N0=3D98304 N1=3D0 N2=3D2515148800 N3=3D10369933312
-> > anon N0=3D98304 N1=3D0 N2=3D2515148800 N3=3D10369933312
->
-> .. why it was moved back to N2?
+> The tests are still super unhappy, but I've yet to fix our tests very
+> broken netlink parser for changes that released in 6.10, so that may
+> be unrelated ;-)
 
-The private page_faults on N2 are larger than that on N3.
++++ fs/hostfs/hostfs_kern.c:
+ static int hostfs_fill_super(struct super_block *sb, struct fs_context *fc=
+)
+ {
+        struct hostfs_fs_info *fsi =3D sb->s_fs_info;
+-       const char *host_root =3D fc->source;
++       const char *host_root =3D "/";
 
->
-> > anon N0=3D98304 N1=3D0 N2=3D3320455168 N3=3D9564626944
-> > anon N0=3D98304 N1=3D0 N2=3D4394196992 N3=3D8490885120
-> > anon N0=3D98304 N1=3D0 N2=3D5105442816 N3=3D7779639296
-> > anon N0=3D98304 N1=3D0 N2=3D6174195712 N3=3D6710886400
-> > anon N0=3D98304 N1=3D0 N2=3D7247937536 N3=3D5637144576
-> > anon N0=3D98304 N1=3D0 N2=3D8321679360 N3=3D4563402752
-> > anon N0=3D98304 N1=3D0 N2=3D9395421184 N3=3D3489660928
-> > anon N0=3D98304 N1=3D0 N2=3D10247872512 N3=3D2637209600
-> > anon N0=3D98304 N1=3D0 N2=3D10247872512 N3=3D2637209600
+appears to fix the problem (when combined with Linus' folio fix).
+
+I think fc->source is just the 'block device' passed to mount, and
+thus for a virtual filesystem like hostfs, it is just garbage...
+
+(and with the appropriate netlink fixes all the tests now pass at tip-of-tr=
+ee:
+87f3073c2871 (HEAD) hostfs_fill_super(): host_root :=3D "/" (not fc->source=
+)
+2743a4aabac6 fs/hostfs/hostfs_kern.c:445 buffer =3D
+folio_zero_tail(folio, bytes_read, buffer + bytes_read);
+a2caf678d7e1 neighbour: add RTNL_FLAG_DUMP_SPLIT_NLM_DONE to RTM_GETNEIGH
+3bb0c5772acf net: add RTNL_FLAG_DUMP_SPLIT_NLM_DONE to RTM_GET(RULE|ROUTE)
+786c8248dbd3 (linux/master) Merge tag
+'perf-tools-fixes-for-v6.11-2024-07-23' of
+git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools
+)
+
+> > And perhaps remind me about this mount API thing too if it doesn't
+> > seem to be resolved by the end of the week when I'm starting to get
+> > ready to do the rc1?
 > >
-> > 2. Root cause:
-> > Since commit 3e32158767b0 ("mm/mprotect.c: don't touch single threaded
-> > PTEs which are on the right node")the PTE of local pages will not be
-> > changed in change_pte_range() for single-threaded process, so no
-> > page_faults information will be generated in do_numa_page(). If a
-> > single-threaded process has memory on another node, it will
-> > unconditionally migrate all of it's local memory to that node,
-> > even if the remote node has only one page.
+> >              Linus
 >
-> IIUC the remote pages will be moved to the node where the worker
-> is running since local (private) PTEs are not set to protnone and
-> won't be faulted on.
->
+> --
+> Maciej =C5=BBenczykowski, Kernel Networking Developer @ Google
 
-Yes.
-
-> >
-> > So, let's fix it. The memory of single-threaded process should follow
-> > the cpu, not the numa faults info in order to avoid memory thrashing.
->
-> Don't forget the 'Fixes' tag for bugfix patches :)
-
-OK, thanks.
-
->
-> >
-> > ...>
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index 24dda708b699..d7cbbda568fb 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -2898,6 +2898,12 @@ static void task_numa_placement(struct task_stru=
-ct *p)
-> >               numa_group_count_active_nodes(ng);
-> >               spin_unlock_irq(group_lock);
-> >               max_nid =3D preferred_group_nid(p, max_nid);
-> > +     } else if (atomic_read(&p->mm->mm_users) =3D=3D 1) {
-> > +             /*
-> > +              * The memory of a single-threaded process should
-> > +              * follow the CPU in order to avoid memory thrashing.
-> > +              */
-> > +             max_nid =3D numa_node_id();
-> >       }
-> >
-> >       if (max_faults) {
->
-> Since you don't want to respect the faults info, can we simply
-> skip task placement?
-
-This is a good suggestion. It would be even better if there were some
-feedback from others.
+--
+Maciej =C5=BBenczykowski, Kernel Networking Developer @ Google
 
