@@ -1,162 +1,152 @@
-Return-Path: <linux-kernel+bounces-261563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F6A093B912
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 00:14:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 386C493B90A
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 00:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E47872856E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 22:14:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E76EC2856C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 22:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142D713B58E;
-	Wed, 24 Jul 2024 22:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED1E13C820;
+	Wed, 24 Jul 2024 22:12:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="arbF3inG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Hjrg05yB"
+Received: from mail-43167.protonmail.ch (mail-43167.protonmail.ch [185.70.43.167])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B898113CA93
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 22:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1722112B143
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 22:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.167
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721859241; cv=none; b=UvaypUDpghTSeAmsVpemQcgX/B8yWH1JnHHcYTgwwcPwdvVP0q3zPpTEEx/mwivX6SJOx3uyMpdjTiC01IgHQJYJg/ViMDyhHG1RlIBYvEGmlhfRT5leugTibqDio7XyIgib9QVbA5YWleehTbdta43UlFtCy32/hhtMOfsA4Nw=
+	t=1721859163; cv=none; b=DFKb0Lu+FKWdo7a4zNSamosi3XjX91S6jUYmOEuFptJ/5hRm5CTQqEcm5Yz0/buVz8UgEHys5+q6KYuvKYCqUGX72V11VgMCuug8pPrHquKsz2VnKYQrvd0CBoQge3Jq8CSaWw7g89iCAMhYWA99r7u71oSffLobKM+eptJ3C9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721859241; c=relaxed/simple;
-	bh=gNmWzbPCwsNn3iBECMmvE1pa/3xdm645kUt+trqbGcc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QhwbNcGKqMusfyuQCKJzGZn0ZvG0/+HEf3aMZWonwu0ZmF7qZ42zRyZbGwthwlV4gM1l5EobF+oRQ9ueP7VfEn8mju35NEmw2t+XxmhjNXCZ4zMD8V/k0M7ZZcy1We6GBcoyXjsY6Bt1ZxlpwAYN/SeqyuGpc0orT5gMCgQjMX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=arbF3inG; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1721859238;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1oDlIFLL5CHDliwMOUVKHCIO32QiYYQzCXXQNVqBa5o=;
-	b=arbF3inG6LF6vrqTDNZU73E+EAsZnpTEXJn32lEYzbonfHwZQNy0lyTs/rkNC+JslvfyfT
-	c7ct3fBIe2Zp1sPe2V2AvFdmnvAL7jiuhWGKQGOWJoYsKMpGT0i441jIgxx3V5NU9b//TM
-	lTvywpez78Ije+VDziitsnPVvSd+mPQ=
-Received: from mail-oo1-f69.google.com (mail-oo1-f69.google.com
- [209.85.161.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-695-oKyiQaJnPN2PyKLIqirkxw-1; Wed, 24 Jul 2024 18:13:57 -0400
-X-MC-Unique: oKyiQaJnPN2PyKLIqirkxw-1
-Received: by mail-oo1-f69.google.com with SMTP id 006d021491bc7-5d1f7855cd7so243079eaf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 15:13:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721859235; x=1722464035;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1oDlIFLL5CHDliwMOUVKHCIO32QiYYQzCXXQNVqBa5o=;
-        b=Cud7+VL2jLzmEUQ9Tj5Dfn3T/lvdBLRIITJxfcfeulPSqbfAMvaZC2V+ByWTbdJR7a
-         wW/ApyUnt6xnaWHL3AbDuXT1gWimi+EoSrAK4/3y2LKzw+bKhJbehTDCtGIpn/Cqg6Vk
-         GoFHnAu+BLX9/b2HzWCziAHPsDNUUbBXStTqKDy8ZL2ewuTGWJqDea8RDg2DuLSKBSKr
-         BZOVtmHU9OvfYfPgolslPlskNYw/L/ud6Rnb+mwMnEAPoIAS6+TnG908mtoH0CrB3drx
-         E6eD0DfGq4bhUb9/C+tX7eVl9zytY1AkQGsR4v9rlKuXFR+hg11qaD5DwpqzMzlVXr28
-         pbWg==
-X-Forwarded-Encrypted: i=1; AJvYcCX9thwbCOlVMFyfs1EfWPm15c+4+ggOMVbMT7Cpq/QHSeXpVqDpMKRoeQtApfe4GrsRARnxfHU64drdlm+Ku66EYRUVj/f6XjpVKvXz
-X-Gm-Message-State: AOJu0YwAduT19VOdefoGZOqBwB7Jvta8QZ8BdaN/YSftvn9poczYHEWu
-	AhAXNmm6ghvsL9cbjNkiFKmJpDm+8am4KnIefTDHothe2q9MFvKssrVDNIaDFpZeCl+GLhAbbPo
-	/kz1g7Z6cGiPssURcxxiCZn9YxYI6K9/5QyNPiP48HPSd+zBRkON6nHZ3axX8HSGY9m2yZarE
-X-Received: by 2002:a05:6359:4595:b0:1a8:c0fd:cf2d with SMTP id e5c5f4694b2df-1acf8869b8fmr161039955d.9.1721859235481;
-        Wed, 24 Jul 2024 15:13:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF8XXO039xnVzDHimc3GzVZUVBr2GcfRiEvX7FSDvCGjlyRhlzijS5vlgD8K63bsxdP19pT4Q==
-X-Received: by 2002:a05:6359:4595:b0:1a8:c0fd:cf2d with SMTP id e5c5f4694b2df-1acf8869b8fmr161037355d.9.1721859235139;
-        Wed, 24 Jul 2024 15:13:55 -0700 (PDT)
-Received: from hatbackup.redhat.com ([71.217.44.209])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d7435227sm7542685a.82.2024.07.24.15.13.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 15:13:54 -0700 (PDT)
-From: "John B. Wyatt IV" <jwyatt@redhat.com>
-To: linux-pm@vger.kernel.org,
-	"Thomas Renninger" <trenn@suse.com>,
-	"Shuah Khan" <shuah@kernel.org>,
-	"Shuah Khan" <skhan@linuxfoundation.org>
-Cc: "John B. Wyatt IV" <jwyatt@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	"John Kacur" <jkacur@redhat.com>,
-	"Tomas Glozar" <tglozar@redhat.com>,
-	"John B. Wyatt IV" <sageofredondo@gmail.com>
-Subject: [PATCH 2/2] Include test_raw_pylibcpupower.py
-Date: Wed, 24 Jul 2024 18:11:20 -0400
-Message-ID: <20240724221122.54601-3-jwyatt@redhat.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240724221122.54601-1-jwyatt@redhat.com>
-References: <20240724221122.54601-1-jwyatt@redhat.com>
+	s=arc-20240116; t=1721859163; c=relaxed/simple;
+	bh=Y3q6wyv95UM7ODxI2RYM+RBlxx/vpcUDxEO4RuJgGvM=;
+	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LtYh1Thpev2I+McS7xtsFVChSoZakEq+MjNzYjKptUqyF4AEGWfVlQdeJnKrtKwPPpACXuLmkWDdbe5DUu34uc76JWiu2ypM2a/NTDuOJatB/dB1Y1J4l3vGHTZMQtQ1f4hDv6DBj3d8MYaOweo0Cw+7navxEAl0NjgbHUT8bWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Hjrg05yB; arc=none smtp.client-ip=185.70.43.167
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1721859152; x=1722118352;
+	bh=Y3q6wyv95UM7ODxI2RYM+RBlxx/vpcUDxEO4RuJgGvM=;
+	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=Hjrg05yBBbKhW+y7N3o+o2l2RJ8xux4D9Aj+922+MTbN++3dcDMSZwB14EblOPvBn
+	 +c1nleACvHtU3J4NGSeZst2APETa12J6yA3MCyyqkPwoYoQWyyxFNL/vg9AWs3T1aK
+	 Z27lisE3cT8NXwa8D8pT5n3FQVNXBMLYxqzpVMZHCniwnQeiWcm8//c04afG6vQI9z
+	 dDwN9jJYHFbpWX6QXgZDqQGz5JVHVLO7wVp3Z7YadPTBkoWDOZ+AMBIFe9pCHisjUJ
+	 /bLWKe2LW++u6fn/Xgit8CjAMvy5lmJMoRMSyTxhkOBhO6Q+H+vGnA+K0UlGpUYulC
+	 BVEgagzwBMraw==
+Date: Wed, 24 Jul 2024 22:12:28 +0000
+To: "airlied@gmail.com" <airlied@gmail.com>, "andy.yan@rock-chips.com" <andy.yan@rock-chips.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "heiko@sntech.de" <heiko@sntech.de>, "hjc@rock-chips.com" <hjc@rock-chips.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Subject: Re: [PATCH v2] rockchip/drm: vop2: add support for gamma LUT
+Message-ID: <hhaq0wCH5_DWz6vjiyTLV3TcEVzi5owdIWxl0El_y36yTo9hPPzAtKvzBuXvcXNTy3E_cT63jbG2QJn6kPE32ltoojplR-fd0JBukRCfA8U=@proton.me>
+In-Reply-To: <Hk03HDb6wSSHWtEFZHUye06HR0-9YzP5nCHx9A8_kHzWSZawDrU1o1pjEGkCOJFoRg0nTB4BWEv6V0XBOjF4-0Mj44lp2TrjaQfnytzp-Pk=@proton.me>
+References: <Hk03HDb6wSSHWtEFZHUye06HR0-9YzP5nCHx9A8_kHzWSZawDrU1o1pjEGkCOJFoRg0nTB4BWEv6V0XBOjF4-0Mj44lp2TrjaQfnytzp-Pk=@proton.me>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: aef39d10e8f770a96c9098bc69e9b2ade7178120
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-This script demonstrates how to make use of, and tests, the bindings.
+By mistake the incremental patch were sent here. The correct v2 patch was
+sent in the form of a v3 patch [1]
 
-The .i file currently only binds a limited subsection of functionality
-with the bindings.
+[1] https://lore.kernel.org/linux-rockchip/TkgKVivuaLFLILPY-n3iZo_8KF-daKdq=
+du-0_e0HP-5Ar_8DALDeNWog2suwWKjX7eomcbGET0KZe7DlzdhK2YM6CbLbeKeFZr-MJzJMtw0=
+=3D@proton.me/T/#u
 
-Signed-off-by: John B. Wyatt IV <jwyatt@redhat.com>
-Signed-off-by: John B. Wyatt IV <sageofredondo@gmail.com>
----
- .../bindings/python/test_raw_pylibcpupower.py | 42 +++++++++++++++++++
- 1 file changed, 42 insertions(+)
- create mode 100755 tools/power/cpupower/bindings/python/test_raw_pylibcpupower.py
+On Wednesday, July 24th, 2024 at 9:06 PM, Piotr Zalewski <pZ010001011111@pr=
+oton.me> wrote:
 
-diff --git a/tools/power/cpupower/bindings/python/test_raw_pylibcpupower.py b/tools/power/cpupower/bindings/python/test_raw_pylibcpupower.py
-new file mode 100755
-index 000000000000..3d6f62b9556a
---- /dev/null
-+++ b/tools/power/cpupower/bindings/python/test_raw_pylibcpupower.py
-@@ -0,0 +1,42 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+import raw_pylibcpupower as p
-+
-+# Simple function call
-+
-+"""
-+Get cstate count
-+"""
-+cpu_cstates_count = p.cpuidle_state_count(0)
-+if cpu_cstates_count > -1:
-+    print(f"CPU 0 has {cpu_cstates_count} c-states")
-+else:
-+    print(f"cstate count error: return code: {cpu_cstates_count}")
-+
-+"""
-+Disable cstate (will fail if the above is 0, ex: a virtual machine)
-+"""
-+cstate_disabled = p.cpuidle_state_disable(0, 0, 1)
-+if cpu_cstates_count == 0:
-+    print(f"CPU 0 has {cpu_cstates_count} c-states")
-+else:
-+    print(f"cstate count error: return code: {cpu_cstates_count}")
-+
-+match cstate_disabled:
-+    case 0:
-+        print(f"CPU state disabled")
-+    case -1:
-+        print(f"Idlestate not available")
-+    case _:
-+        print(f"Not documented")
-+
-+
-+# Pointer example
-+
-+topo = p.cpupower_topology()
-+total_cpus = p.get_cpu_topology(topo)
-+if total_cpus > 0:
-+    print(f"Number of total cpus: {total_cpus} and number of cores: {topo.cores}")
-+else:
-+    print(f"Error: could not get cpu topology")
--- 
-2.45.2
-
+> Add support for gamma LUT in VOP2 driver. The implementation is based on
+> the one found in VOP driver and modified to be compatible with VOP2. Blue
+> and red channels in gamma LUT register write were swapped with respect to
+> how gamma LUT values are written in VOP. Write of the current video port =
+id
+> to VOP2_SYS_LUT_PORT_SEL register was added before the write of DSP_LUT_E=
+N
+> bit. Gamma size is set and drm color management is enabled for each video
+> port's CRTC except ones which have no associated device. Tested on RK3566
+> (Pinetab2).
+>=20
+> Helped-by: Dragan Simic dsimic@manjaro.org
+>=20
+> Signed-off-by: Piotr Zalewski pZ010001011111@proton.me
+>=20
+> ---
+>=20
+> Notes:
+> Changes in v2:
+> - Apply code styling corrections [1]
+> - Move gamma LUT write inside the vop2 lock
+>=20
+> Link to v1: https://lore.kernel.org/linux-rockchip/9736eadf6a9d8e97eef919=
+c6b3d88828@manjaro.org/T/#t
+>=20
+> [1] https://lore.kernel.org/linux-rockchip/d019761504b540600d9fc7a585d6f9=
+5f@manjaro.org/
+>=20
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/d=
+rm/rockchip/rockchip_drm_vop2.c
+> index 16abdc4a59a8..37fcf544a5fd 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+> @@ -1515,9 +1515,8 @@ static void vop2_vp_dsp_lut_disable(struct vop2_vid=
+eo_port *vp)
+>=20
+> static void vop2_crtc_write_gamma_lut(struct vop2 *vop2, struct drm_crtc =
+*crtc)
+> {
+> - const struct vop2_data *vop2_data =3D vop2->data;
+>=20
+> const struct vop2_video_port *vp =3D to_vop2_video_port(crtc);
+> - const struct vop2_video_port_data *vp_data =3D &vop2_data->vp[vp->id];
+>=20
+> + const struct vop2_video_port_data *vp_data =3D &vop2->data->vp[vp->id];
+>=20
+>=20
+> struct drm_color_lut *lut =3D crtc->state->gamma_lut->data;
+>=20
+> unsigned int i, bpc =3D ilog2(vp_data->gamma_lut_len);
+>=20
+> @@ -1558,9 +1557,8 @@ static void vop2_crtc_gamma_set(struct vop2 *vop2, =
+struct drm_crtc *crtc,
+> * In order to write the LUT to the internal memory,
+> * we need to first make sure the dsp_lut_en bit is cleared.
+> */
+> - ret =3D
+> - readx_poll_timeout(vop2_vp_dsp_lut_is_enabled, vp, dsp_ctrl, !dsp_ctrl,=
+ 5,
+> - 30 * 1000);
+> + ret =3D readx_poll_timeout(vop2_vp_dsp_lut_is_enabled, vp, dsp_ctrl,
+> + !dsp_ctrl, 5, 30 * 1000);
+>=20
+> if (ret) {
+> DRM_DEV_ERROR(vop2->dev, "display LUT RAM enable timeout!\n");
+>=20
+> @@ -1571,9 +1569,9 @@ static void vop2_crtc_gamma_set(struct vop2 *vop2, =
+struct drm_crtc *crtc,
+> return;
+> }
+>=20
+> - vop2_crtc_write_gamma_lut(vop2, crtc);
+>=20
+> vop2_lock(vop2);
+> + vop2_crtc_write_gamma_lut(vop2, crtc);
+> vop2_writel(vp->vop2, RK3568_LUT_PORT_SEL, vp->id);
+>=20
+>=20
+> vop2_vp_dsp_lut_enable(vp);
 
