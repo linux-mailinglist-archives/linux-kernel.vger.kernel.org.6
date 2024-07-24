@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-260989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B80393B147
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:02:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 911B893B149
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:03:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21DC81F25E21
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:02:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4A6D1C21289
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E880B158DA7;
-	Wed, 24 Jul 2024 12:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F6215ECEB;
+	Wed, 24 Jul 2024 12:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="nrtvN3Rz";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="HyIftHHb"
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="ftjkru99";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="BPnXI/xB"
 Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBF815D5DE;
-	Wed, 24 Jul 2024 12:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FF215E5D0;
+	Wed, 24 Jul 2024 12:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721825977; cv=none; b=dXWB6yCODN6DmdrCjkf4Mp/ZH/V2D8x377r372wmc9eBFLTWmknKO2hCMujtlK5+HLaZEiSM/TrnYqYHYex4D3owYX7gKQHcDmLgwmjC9sSl27TcfOm9zM8x8kGzBN7p1MxJpj5kZuZbHMJFVfo5wfjPWhI2Mlp53PAR52AbcL4=
+	t=1721825978; cv=none; b=Wu4x13UvLzvhv2EL+xGA+J3BOv3a+FtkvfSAmPGM0ZJH11skdZvp1tUk9OQ8wW6Y0tznP46dq21SE+lkzETRbeeot51C9ACyFNEVHE6P8KoRLlqRnTsGvgeK14/tXtmXw40NQrRpV+VZuXsFC4ChcQiKlNzrpIXkGjUMmYCi+y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721825977; c=relaxed/simple;
-	bh=L6lTnmdqDciCXaus7+UT0pbn48NWU1Z74mfO8TCkvnk=;
+	s=arc-20240116; t=1721825978; c=relaxed/simple;
+	bh=cG1vxcg27UYNr6KO1Dw3Rty7LcY4a1pdn1b2VdxrMqg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Gm7nKhg0jK51fjfObu0yFb5houLkI7kaYFVYDEqtVXYobARk8WldazPAvePFl/sMteLoxQmcB1yYrpvRmncrcgJ+4M21eY2/TEAy5d7qw1kcH0a7jhF0ukB9BH8DicB1OggItB6I+F10nH9uYX5CLcBYcjB0g6GOyPIMHC5Fnpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=nrtvN3Rz; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=HyIftHHb reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+	 MIME-Version; b=RPqtG0Ape5s4xOAPbb6s5PGpZWYw0QiEYIfWfhW0JuQIw/fA8huy1Y49OjV7GjyTOSdlHRpAJarpVIG8F0t8nhGPfTT0bpsGlYfqO2T+BuvD0+1ktdXrBJWFmwp2v2M49Ihf70waG8c+PJIs1tNPXBIa9s/9NJ8l/eWMnaEXbMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=ftjkru99; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=BPnXI/xB reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1721825974; x=1753361974;
+  t=1721825977; x=1753361977;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=OoceoWjVztSwkDXYO7vCWx1e9yJOPZXKSyzWzXs2Xi8=;
-  b=nrtvN3RzwSsMbFyyZHv+u2JNt7akTjcnOJFaXJJizXG9cWQLOVqh8dfY
-   2PWVfYcgkOTqi3Wr+402FpQf47UKEdrdYEssgD2xhcmwSPqAFP21BV+i5
-   G3Jh7nWeJD/2glCp47IUZdVskkE4sOB0qxNbKStINYg8o9OYfjgWVHO4f
-   NSmqDRIjKPMRMjUxB4nOrrBjAxNQPORPUAILM8B4MhO5zP4FSVit8NpA+
-   C6jmxSAYjraD4EG+9DwbcVTQAMa6eP8BPXxQoccwCxrppxD5OM+yaLMsL
-   Fhq8WG6zY6Ldnti3u/ESgLI4ZSe1o2Ks1VFlfs7PLfgriLkCQr30ztJ7P
-   w==;
-X-CSE-ConnectionGUID: MLYIFc25Szuxt88BKeEWGw==
-X-CSE-MsgGUID: oT1380lAQGq03yq5B6+/1g==
+  bh=VoRAr118RELuLU4PNp2N2Pwvgnpo2+h/bxpuDi77974=;
+  b=ftjkru99Lc5VmMy7Pzy1zdr4ziXSDzJfI2QMKpchGlCIz59GK33HzXg7
+   +UzmKeOvHW+Hs9gjdHGVFF/6BuZk4TIargcdqBdeGrl1XB5Kq728e9bQS
+   YWQQLR7nuP+Q5bzS7ltfb3GP01596s7qGbM5e0nyq85+T9N/YzNiBpQzW
+   wQO+oJrhPfilgNN5ST8Mt7iWr2aT0a7mpXTBq+1MmGooYbTqaTS8WCwie
+   KCGqu2YrBHZdb/9vbUlrJTK2G8iq95XITvU5R0xXZbn7aTnfJ+vCNypoP
+   pKh7YPy1IcjGMW4bGnkNCSLAXT4XgOyYkg0uKsieIbsPQ+2zt0LEvlzXh
+   g==;
+X-CSE-ConnectionGUID: ZC39gJLQRJiRB450Ypyp3Q==
+X-CSE-MsgGUID: cqkZCC8QS8KM18wsbEqiCw==
 X-IronPort-AV: E=Sophos;i="6.09,232,1716242400"; 
-   d="scan'208";a="38058835"
+   d="scan'208";a="38058836"
 Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 24 Jul 2024 14:59:33 +0200
-X-CheckPoint: {66A0FAB5-12-6C016D47-F93F7C64}
-X-MAIL-CPID: 845A4A7543469DE6F4592CDDDE2E19AA_0
-X-Control-Analysis: str=0001.0A782F26.66A0FAB5.0175,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F2F04163720;
-	Wed, 24 Jul 2024 14:59:32 +0200 (CEST)
+  by mx1.tq-group.com with ESMTP; 24 Jul 2024 14:59:35 +0200
+X-CheckPoint: {66A0FAB7-1D-E8EE7C4B-C1098986}
+X-MAIL-CPID: 4CAE6E05A5E9BB3A4A3FF4AF72142B5A_5
+X-Control-Analysis: str=0001.0A782F26.66A0FAB8.006C,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 59B1F1634BB;
+	Wed, 24 Jul 2024 14:59:35 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1721825973; h=from:subject:date:message-id:to:cc:mime-version:
+	s=dkim; t=1721825975; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=OoceoWjVztSwkDXYO7vCWx1e9yJOPZXKSyzWzXs2Xi8=;
-	b=HyIftHHbfG5w6VL84V1WETY7jrgXmigd2IIp4Rt2RT6Of2kaxpK/Da61vCWOIeYZag/UZo
-	jrWmRiyrjJfyDm2dsM3I3RRNdG2tnk7UDCCneCOdn3cN6IsnJRTJnh6+V45viL6gnt8PYv
-	ueUPDkQx5PcUj+GoYBiClaJSSoHmEEUb1yj055enUBs+d9bv51QcIjq2XgwOUTTxFlAcIU
-	UwG0l+W71XpDTgNztPqCxb5VZBymKD1bNyr5qNjdZsuNfCL2qqVn6+3cGykSAN+Jm7C7E8
-	dOgBzo+vlEkhGfwAfVssVUe8pEAAxChofGiRSZpqBu3Ff3SDuLcBV13+Micu1w==
+	bh=VoRAr118RELuLU4PNp2N2Pwvgnpo2+h/bxpuDi77974=;
+	b=BPnXI/xB0ti2L7NtMgVrwVCwhv+MoJsqSBW/m2FtOGRQbO0Lw3oGc5TDMZa5tteyJJmshx
+	TLIJB+jc9Ts58ZHeudqPyzitxLgr+uvJcSRxGDHX80LQIwflw/MNZUH6HktL817CdvRkMk
+	ZVXlbXFpyUPIu/TqPpNvOWiPb6hiayYActAVELyO9PQ2O8Oe6QkeOyC9vwRrMDoF5widsA
+	JtDWzEMC/6IlUI3Y2SUEk0w8aM4TPe71eKwpC+isN1iP7+g36mq/Ev/gdtvTGtoOWZvcb2
+	TFSJcfnbRwb0H7SGZPpDwG23KdpzbYDM9kNPOY73oYQEklegfmTTDzomIkSAEg==
 From: Alexander Stein <alexander.stein@ew.tq-group.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -79,9 +79,9 @@ Cc: Markus Niebel <Markus.Niebel@ew.tq-group.com>,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 13/14] arm64: dts: freescale: imx93-tqma9352-mba93xxca: add GPIO line names
-Date: Wed, 24 Jul 2024 14:59:00 +0200
-Message-Id: <20240724125901.1391698-14-alexander.stein@ew.tq-group.com>
+Subject: [PATCH 14/14] arm64: dts: freescale: imx93-tqma9352: set SION for cmd and data pad of USDHC
+Date: Wed, 24 Jul 2024 14:59:01 +0200
+Message-Id: <20240724125901.1391698-15-alexander.stein@ew.tq-group.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240724125901.1391698-1-alexander.stein@ew.tq-group.com>
 References: <20240724125901.1391698-1-alexander.stein@ew.tq-group.com>
@@ -96,76 +96,175 @@ X-Last-TLS-Session-Version: TLSv1.3
 
 From: Markus Niebel <Markus.Niebel@ew.tq-group.com>
 
-Provide GPIO line names for userspace usage, e.g. libgpiod.
+imx93 pad integrate has one issue, refer to ERR052021:
+
+ERR052021 uSDHC: Sometimes uSDHC does not work under VDD_SOC low
+		 drive mode and nominal mode
+Description:
+uSDHC PADs have one integration issue.
+When CMD/DATA lines direction change from output to input, uSDHC
+controller begin sampling, the integration issue will make input
+enable signal from uSDHC propagated to the PAD with a long delay,
+thus the new input value on the pad comes to uSDHC lately. The
+uSDHC sampled the old input value and the sampling result is wrong.
+
+Workaround:
+Set uSDHC CMD/DATA PADs iomux register SION bit to 1, then PADs will
+propagate input to uSDHC with no delay, so correct value is sampled.
+
+This issue will wrongly trigger the start bit when sample the USDHC
+command response, cause the USDHC trigger command CRC/index/endbit
+error, which will finally impact the tuning pass window, espically
+will impact the standard tuning logic, and can't find a correct delay
+cell to get the best timing.
+
+This follows changes made for i.MX93 EVK with commit
+bb89601282fc ("arm64: dts: imx93-11x11-evk: set SION for cmd and data pad of USDHC")
 
 Signed-off-by: Markus Niebel <Markus.Niebel@ew.tq-group.com>
 Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 ---
- .../freescale/imx93-tqma9352-mba93xxca.dts    | 44 +++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ .../freescale/imx93-tqma9352-mba93xxca.dts    | 22 ++++++++++---------
+ .../freescale/imx93-tqma9352-mba93xxla.dts    | 22 ++++++++++---------
+ .../boot/dts/freescale/imx93-tqma9352.dtsi    | 19 ++++++++--------
+ 3 files changed, 34 insertions(+), 29 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxca.dts b/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxca.dts
-index 8a64959e92cb..9a21fbf986fe 100644
+index 9a21fbf986fe..d7c067450503 100644
 --- a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxca.dts
 +++ b/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxca.dts
-@@ -276,6 +276,16 @@ &flexcan2 {
- };
+@@ -870,32 +870,34 @@ MX93_PAD_SD2_CD_B__GPIO3_IO00			0x1000
+ 		>;
+ 	};
  
- &gpio1 {
-+	gpio-line-names =
-+		/* 00 */ "", "", "USB_C_ALERT#", "PMIC_IRQ#",
-+		/* 04 */ "", "", "", "",
-+		/* 08 */ "", "", "", "BM2_TEMP_EVENT_MOD#",
-+		/* 12 */ "PEX_INT#", "", "RTC_EVENT#", "",
-+		/* 16 */ "", "", "", "",
-+		/* 20 */ "", "", "", "",
-+		/* 24 */ "", "", "", "",
-+		/* 28 */ "", "", "", "";
-+
- 	expander-irq-hog {
- 		gpio-hog;
- 		gpios = <12 GPIO_ACTIVE_LOW>;
-@@ -294,6 +304,40 @@ tcpc-irq-hog {
- &gpio2 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_gpio2>;
-+
-+	gpio-line-names =
-+		/* 00 */ "SPI6_PCS0#", "", "", "",
-+		/* 04 */ "", "", "", "",
-+		/* 08 */ "", "FAN_RPM", "MIPI_CSI_TRIGGER", "MIPI_CSI_SYNC",
-+		/* 12 */ "", "", "", "",
-+		/* 16 */ "X1_11", "X1_21", "X1_17", "X1_13",
-+		/* 20 */ "X1_15", "X1_9", "", "",
-+		/* 24 */ "", "", "X1_7", "",
-+		/* 28 */ "", "", "", "";
-+};
-+
-+&gpio3 {
-+	gpio-line-names =
-+		/* 00 */ "SD2_CD#", "", "", "",
-+		/* 04 */ "", "", "", "SD2_RST#",
-+		/* 08 */ "", "", "", "",
-+		/* 12 */ "", "", "", "",
-+		/* 16 */ "", "", "", "",
-+		/* 20 */ "", "", "", "",
-+		/* 24 */ "", "", "ENET1_INT#", "ENET2_INT#",
-+		/* 28 */ "", "", "", "";
-+};
-+
-+&gpio4 {
-+	gpio-line-names =
-+		/* 00 */ "", "", "", "",
-+		/* 04 */ "", "", "", "",
-+		/* 08 */ "", "", "", "",
-+		/* 12 */ "", "", "", "",
-+		/* 16 */ "", "", "", "",
-+		/* 20 */ "", "", "", "",
-+		/* 24 */ "", "", "", "",
-+		/* 28 */ "", "DP_INT", "", "";
- };
++	/* enable SION for data and cmd pad due to ERR052021 */
+ 	pinctrl_usdhc2_hs: usdhc2hsgrp {
+ 		fsl,pins = <
+ 			/* PD | FSEL_3 | DSE X5 */
+ 			MX93_PAD_SD2_CLK__USDHC2_CLK			0x05be
+ 			/* HYS | PU | FSEL_3 | DSE X4 */
+-			MX93_PAD_SD2_CMD__USDHC2_CMD			0x139e
++			MX93_PAD_SD2_CMD__USDHC2_CMD			0x4000139e
+ 			/* HYS | PU | FSEL_3 | DSE X3 */
+-			MX93_PAD_SD2_DATA0__USDHC2_DATA0		0x138e
+-			MX93_PAD_SD2_DATA1__USDHC2_DATA1		0x138e
+-			MX93_PAD_SD2_DATA2__USDHC2_DATA2		0x138e
+-			MX93_PAD_SD2_DATA3__USDHC2_DATA3		0x138e
++			MX93_PAD_SD2_DATA0__USDHC2_DATA0		0x4000138e
++			MX93_PAD_SD2_DATA1__USDHC2_DATA1		0x4000138e
++			MX93_PAD_SD2_DATA2__USDHC2_DATA2		0x4000138e
++			MX93_PAD_SD2_DATA3__USDHC2_DATA3		0x4000138e
+ 			/* FSEL_2 | DSE X3 */
+ 			MX93_PAD_SD2_VSELECT__USDHC2_VSELECT		0x010e
+ 		>;
+ 	};
  
- &lpi2c3 {
++	/* enable SION for data and cmd pad due to ERR052021 */
+ 	pinctrl_usdhc2_uhs: usdhc2uhsgrp {
+ 		fsl,pins = <
+ 			/* PD | FSEL_3 | DSE X6 */
+ 			MX93_PAD_SD2_CLK__USDHC2_CLK			0x05fe
+ 			/* HYS | PU | FSEL_3 | DSE X4 */
+-			MX93_PAD_SD2_CMD__USDHC2_CMD			0x139e
+-			MX93_PAD_SD2_DATA0__USDHC2_DATA0		0x139e
+-			MX93_PAD_SD2_DATA1__USDHC2_DATA1		0x139e
+-			MX93_PAD_SD2_DATA2__USDHC2_DATA2		0x139e
+-			MX93_PAD_SD2_DATA3__USDHC2_DATA3		0x139e
++			MX93_PAD_SD2_CMD__USDHC2_CMD			0x4000139e
++			MX93_PAD_SD2_DATA0__USDHC2_DATA0		0x4000139e
++			MX93_PAD_SD2_DATA1__USDHC2_DATA1		0x4000139e
++			MX93_PAD_SD2_DATA2__USDHC2_DATA2		0x4000139e
++			MX93_PAD_SD2_DATA3__USDHC2_DATA3		0x4000139e
+ 			/* FSEL_2 | DSE X3 */
+ 			MX93_PAD_SD2_VSELECT__USDHC2_VSELECT		0x010e
+ 		>;
+diff --git a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts b/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts
+index b9a22d6c1de2..0409dffe844c 100644
+--- a/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts
++++ b/arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts
+@@ -820,32 +820,34 @@ MX93_PAD_SD2_CD_B__GPIO3_IO00			0x1000
+ 		>;
+ 	};
+ 
++	/* enable SION for data and cmd pad due to ERR052021 */
+ 	pinctrl_usdhc2_hs: usdhc2hsgrp {
+ 		fsl,pins = <
+ 			/* PD | FSEL_3 | DSE X5 */
+ 			MX93_PAD_SD2_CLK__USDHC2_CLK			0x05be
+ 			/* HYS | PU | FSEL_3 | DSE X4 */
+-			MX93_PAD_SD2_CMD__USDHC2_CMD			0x139e
++			MX93_PAD_SD2_CMD__USDHC2_CMD			0x4000139e
+ 			/* HYS | PU | FSEL_3 | DSE X3 */
+-			MX93_PAD_SD2_DATA0__USDHC2_DATA0		0x138e
+-			MX93_PAD_SD2_DATA1__USDHC2_DATA1		0x138e
+-			MX93_PAD_SD2_DATA2__USDHC2_DATA2		0x138e
+-			MX93_PAD_SD2_DATA3__USDHC2_DATA3		0x138e
++			MX93_PAD_SD2_DATA0__USDHC2_DATA0		0x4000138e
++			MX93_PAD_SD2_DATA1__USDHC2_DATA1		0x4000138e
++			MX93_PAD_SD2_DATA2__USDHC2_DATA2		0x4000138e
++			MX93_PAD_SD2_DATA3__USDHC2_DATA3		0x4000138e
+ 			/* FSEL_2 | DSE X3 */
+ 			MX93_PAD_SD2_VSELECT__USDHC2_VSELECT		0x010e
+ 		>;
+ 	};
+ 
++	/* enable SION for data and cmd pad due to ERR052021 */
+ 	pinctrl_usdhc2_uhs: usdhc2uhsgrp {
+ 		fsl,pins = <
+ 			/* PD | FSEL_3 | DSE X6 */
+ 			MX93_PAD_SD2_CLK__USDHC2_CLK			0x05fe
+ 			/* HYS | PU | FSEL_3 | DSE X4 */
+-			MX93_PAD_SD2_CMD__USDHC2_CMD			0x139e
+-			MX93_PAD_SD2_DATA0__USDHC2_DATA0		0x139e
+-			MX93_PAD_SD2_DATA1__USDHC2_DATA1		0x139e
+-			MX93_PAD_SD2_DATA2__USDHC2_DATA2		0x139e
+-			MX93_PAD_SD2_DATA3__USDHC2_DATA3		0x139e
++			MX93_PAD_SD2_CMD__USDHC2_CMD			0x4000139e
++			MX93_PAD_SD2_DATA0__USDHC2_DATA0		0x4000139e
++			MX93_PAD_SD2_DATA1__USDHC2_DATA1		0x4000139e
++			MX93_PAD_SD2_DATA2__USDHC2_DATA2		0x4000139e
++			MX93_PAD_SD2_DATA3__USDHC2_DATA3		0x4000139e
+ 			/* FSEL_2 | DSE X3 */
+ 			MX93_PAD_SD2_VSELECT__USDHC2_VSELECT		0x010e
+ 		>;
+diff --git a/arch/arm64/boot/dts/freescale/imx93-tqma9352.dtsi b/arch/arm64/boot/dts/freescale/imx93-tqma9352.dtsi
+index 63b02552c55d..ac9f94baf4cd 100644
+--- a/arch/arm64/boot/dts/freescale/imx93-tqma9352.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx93-tqma9352.dtsi
+@@ -269,6 +269,7 @@ MX93_PAD_SD2_RESET_B__GPIO3_IO07	0x106
+ 		>;
+ 	};
+ 
++	/* enable SION for data and cmd pad due to ERR052021 */
+ 	pinctrl_usdhc1: usdhc1grp {
+ 		fsl,pins = <
+ 			/* PD | FSEL 3 | DSE X5 */
+@@ -276,16 +277,16 @@ MX93_PAD_SD1_CLK__USDHC1_CLK		0x5be
+ 			/* HYS | FSEL 0 | no drive */
+ 			MX93_PAD_SD1_STROBE__USDHC1_STROBE	0x1000
+ 			/* HYS | FSEL 3 | X5 */
+-			MX93_PAD_SD1_CMD__USDHC1_CMD		0x11be
++			MX93_PAD_SD1_CMD__USDHC1_CMD		0x400011be
+ 			/* HYS | FSEL 3 | X4 */
+-			MX93_PAD_SD1_DATA0__USDHC1_DATA0	0x119e
+-			MX93_PAD_SD1_DATA1__USDHC1_DATA1	0x119e
+-			MX93_PAD_SD1_DATA2__USDHC1_DATA2	0x119e
+-			MX93_PAD_SD1_DATA3__USDHC1_DATA3	0x119e
+-			MX93_PAD_SD1_DATA4__USDHC1_DATA4	0x119e
+-			MX93_PAD_SD1_DATA5__USDHC1_DATA5	0x119e
+-			MX93_PAD_SD1_DATA6__USDHC1_DATA6	0x119e
+-			MX93_PAD_SD1_DATA7__USDHC1_DATA7	0x119e
++			MX93_PAD_SD1_DATA0__USDHC1_DATA0	0x4000119e
++			MX93_PAD_SD1_DATA1__USDHC1_DATA1	0x4000119e
++			MX93_PAD_SD1_DATA2__USDHC1_DATA2	0x4000119e
++			MX93_PAD_SD1_DATA3__USDHC1_DATA3	0x4000119e
++			MX93_PAD_SD1_DATA4__USDHC1_DATA4	0x4000119e
++			MX93_PAD_SD1_DATA5__USDHC1_DATA5	0x4000119e
++			MX93_PAD_SD1_DATA6__USDHC1_DATA6	0x4000119e
++			MX93_PAD_SD1_DATA7__USDHC1_DATA7	0x4000119e
+ 		>;
+ 	};
+ 
 -- 
 2.34.1
 
