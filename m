@@ -1,120 +1,296 @@
-Return-Path: <linux-kernel+bounces-260651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8C3993AC6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:06:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1584893AC73
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 766552843E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 06:06:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1940284BF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 06:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADF74D8C6;
-	Wed, 24 Jul 2024 06:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486024D8CC;
+	Wed, 24 Jul 2024 06:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mZowG31l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="Jv+PLl69"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A383D481A3;
-	Wed, 24 Jul 2024 06:06:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B68481A3;
+	Wed, 24 Jul 2024 06:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721801201; cv=none; b=G8tt7ebZ6DRJtZTusNg+7XxmVo/xx0Tj2IBq3PflmTX0Wv0/JB0AQ3rDZlTAZDWbGiAsDlOITd8A2FHEbL/kIKaZyKseuCKRECl69OxQFWV6+MfHHFHm2PKex9zZIqcs3YZVlRlAGBG+XJ5yk60Q3VTyvp4RqMHoHpdcFBecXDk=
+	t=1721801283; cv=none; b=lLoRD9OBlba++aiEBVB4voYU2g4lxfxuAhDgzjuJL6ApY0vqYRADO+IiomEKi9S0VWq7r2Ji0eTqO1hOD4Z42OEeIdlijsCghdlx65pC9+xEpgtnBbI8EQGYrYxI46r6H/+/+lHUQHO9kjNFUaeA84YSEG90UkJeeJIECA8HBEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721801201; c=relaxed/simple;
-	bh=ATwyh1zib1lEjoQ8X4v0JU0kBM8RboBUg3gwbHDXR9Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=feb36kcfUnT3xLQ2Nuz+ccQ8Yk6jmAPyxQpi6lkcdG1o/8xnXrX+A2/FGefJqqHRjXkZJxq8ffjdhfOsLXBP40HqI7wl5Z79fez0h9sAlcom2RRBHWtlZ//8Z6EWTCuML0diXEyRnBV1SpbWuLAHib2xsdz5Agv9S4pQib+gu1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mZowG31l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81FABC32782;
-	Wed, 24 Jul 2024 06:06:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721801201;
-	bh=ATwyh1zib1lEjoQ8X4v0JU0kBM8RboBUg3gwbHDXR9Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mZowG31lOrJ/4nuMYl68K3c7iJEpzQfHHSptu/qYdGt+SSl2QURsruhgq4XYVNS3+
-	 4uataqKsZ32Ohwry0RA8ZOYlsbibStv8OH8uPcp9IEy/g2t/7Qnzq4XUczyVIzC14V
-	 BNQpi/c0We/ZB+Qn2QjjJAZ5cOSuT0r31e/pbLzZe7593LQnDcOLHIK/Veiwqr8lCn
-	 PMgM4RBnsI3ddAQEqsN3BCwHbkESK6J7g1WC1kyt6IFLS6oK3/PR8gDaMO3Kbb/6Zu
-	 bsq2kRyXXN5uiJHtdN+CP/JHngbdiQVvC/fwxlPTzu0YtC5nqSgQUDYhd9usHvF/gn
-	 mPBZt+5fEUdhQ==
-Message-ID: <dbcd776b-172a-4c53-b33a-3215f7dcfe77@kernel.org>
-Date: Wed, 24 Jul 2024 08:06:35 +0200
+	s=arc-20240116; t=1721801283; c=relaxed/simple;
+	bh=jInSfdolrSb6rZZTNpR8KYUxyhXwMQW98qG0aYlhT7k=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=plRYqaDL29hjmmyURAyrXthW95p96OfW+Q1STcrA+ln/LI7N1wVjG+cfcqpU/v3H0reF55kNzrrTrUXo3Bs2LJOdJKn7v3JhlMTvrwn7TBQKX9BWO2S0LmN4JUb386E5nlKP8PDn6cuKQ5tF+qDvsXQTBm+65DVxISlZLwFEvBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=Jv+PLl69; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: imx6q-pcie: Add reg-name "dbi2" and
- "atu" for i.MX8M PCIe Endpoint
-To: Richard Zhu <hongxing.zhu@nxp.com>, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, shawnguo@kernel.org, l.stach@pengutronix.de
-Cc: devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel@pengutronix.de, imx@lists.linux.dev
-References: <1721790236-3966-1-git-send-email-hongxing.zhu@nxp.com>
- <1721790236-3966-2-git-send-email-hongxing.zhu@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <1721790236-3966-2-git-send-email-hongxing.zhu@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1721801277;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XyjInt3tUidOyksxXpHHpDTL3zQ9fivow6y7hPi+Pno=;
+	b=Jv+PLl69onj6PsmLDv9OGGgcsJIk6CcGUDtFNWwsNxrClYC0BX/MWOSwjKLN03FhPovzcy
+	yVoxU/Vn7jROb7vesIgxuN+llQ6MX0Jwf3dXSWsn7vtKWjynEqa32D05UMD7IzDv1IpAEz
+	QSg93FKdkm7Xo66nuxpChrdZXBYH/d3j8c4WU+/Xeib38kannBWEbVTKWLxHOZkiS8etT6
+	Mm37bq289hYMKCgObh8hMcy0lrdVMW7IANkJBOoVyKZF/Mad9vKtCrOFBLDTk6T+C0e/TJ
+	hiHlDHfS2xSH2+DzHl25RP0UQpGkrRwbnoyNbIKuH8NV/dNnlGSSu6OCHdZjeQ==
+Date: Wed, 24 Jul 2024 08:07:51 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Diederik de Haas <didi.debian@cknow.org>
+Cc: Chen-Yu Tsai <wens@kernel.org>, Daniel Golle <daniel@makrotopia.org>,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-kernel@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>,
+ Martin Kaiser <martin@kaiser.cx>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>, Ard Biesheuvel
+ <ardb@kernel.org>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@debian.org>,
+ devicetree@vger.kernel.org, linux-crypto@vger.kernel.org, Philipp Zabel
+ <p.zabel@pengutronix.de>, Olivia Mackall <olivia@selenic.com>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Aurelien Jarno <aurelien@aurel32.net>, Heiko
+ Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH v7 0/3] hwrng: add hwrng support for Rockchip RK3568
+In-Reply-To: <4406786.zLnsZ2vfAB@bagend>
+References: <cover.1720969799.git.daniel@makrotopia.org>
+ <3190961.CRkYR5qTbq@bagend>
+ <CAGb2v64Dx7XaJOu0HHzFxYYY2ddUZao5Tar8-s1R_miVZqWcXA@mail.gmail.com>
+ <4406786.zLnsZ2vfAB@bagend>
+Message-ID: <faa0baebabd3c31adf1afa7efbbdf608@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On 24/07/2024 05:03, Richard Zhu wrote:
-> Add reg-name: "dbi2", "atu" for i.MX8M PCIe Endpoint.
+Hello Diederik and Chen-Yu,
 
-This we see in the diff. What I do not see is why? Hardware changed? How
-come?
+On 2024-07-22 21:03, Diederik de Haas wrote:
+> On Monday, 22 July 2024 19:57:05 CEST Chen-Yu Tsai wrote:
+>> On Wed, Jul 17, 2024 at 12:54 AM Diederik de Haas 
+>> <didi.debian@cknow.org>
+> wrote:
+>> > On Tuesday, 16 July 2024 17:18:48 CEST Chen-Yu Tsai wrote:
+>> > > On Jul 16, 2024 at 10:13 PM Diederik de Haas <didi.debian@cknow.org>
+> wrote:
+>> > > > On Tuesday, 16 July 2024 15:59:40 CEST Diederik de Haas wrote:
+>> > > > > For shits and giggles, I tried it on my PineTab2 too (also rk3566):
+>> > > > >
+>> > > > > ===========================================================
+>> > > > > root@pinetab2:~# uname -a
+>> > > > > Linux pinetab2 6.10+unreleased-arm64 #1 SMP Debian 6.10-1~cknow
+>> > > > > (2024-04-24) aarch64 GNU/Linux
+>> > > > >
+>> > > > > root@pinetab2:~# dd if=/dev/hwrng bs=100000 count=1 > /dev/null
+>> > > > > 1+0 records in
+>> > > > > 1+0 records out
+>> > > > > 100000 bytes (100 kB, 98 KiB) copied, 5,69533 s, 17,6 kB/s
+>> > > > >
+>> > > > > root@plebian-pinetab2:~# cat /dev/hwrng | rngtest -c 1000
+>> > > > > rngtest 5
+>> > > > > ...
+>> > > > > rngtest: starting FIPS tests...
+>> > > > > rngtest: bits received from input: 20000032
+>> > > > > rngtest: FIPS 140-2 successes: 730
+>> > > > > rngtest: FIPS 140-2 failures: 270
+>> > > > > ===========================================================
+>> > > > >
+>> > > > > That's looking quite a lot better ... and I have no idea why.
+>> > > > >
+>> > > > > The Q64-A is used as headless server and the PineTab2 is not,
+>> > > > > but I connected to both over SSH and they were freshly booted
+>> > > > > into, thus I haven't actually/normally used the PT2 since boot.
+>> > > >
+>> > > > I did freshly install rng-tools5 package before running the test, so
+>> > > > I rebooted again to make sure that wasn't a factor:
+>> > > >
+>> > > > ===========================================================
+>> > > > root@pinetab2:~# cat /dev/hwrng | rngtest -c 1000
+>> > > > rngtest 5
+>> > > > ...
+>> > > > rngtest: starting FIPS tests...
+>> > > > rngtest: bits received from input: 20000032
+>> > > > rngtest: FIPS 140-2 successes: 704
+>> > > > rngtest: FIPS 140-2 failures: 296
+>> > > > ===========================================================
+>> > > >
+>> > > > So that 704/296 vs 730/270 in the previous run on the PT2.
+>> > > >
+>> > > On my Rock 3A:
+>> > >
+>> > > wens@rock-3a:~$ sudo cat /dev/hwrng | rngtest -c 1000
+>> > > rngtest 5
+>> > > ...
+>> > > rngtest: starting FIPS tests...
+>> > > rngtest: bits received from input: 20000032
+>> > > rngtest: FIPS 140-2 successes: 992
+>> > > rngtest: FIPS 140-2 failures: 8
+>> > >
+>> > > wens@rock-3a:~$ uname -a
+>> > > Linux rock-3a 6.10.0-rc7-next-20240712-12899-g7df602fe7c8b #9 SMP Mon
+>> > > Jul 15 00:39:32 CST 2024 aarch64 GNU/Linux
+>> >
+>> > I wondered if ``dd if=/dev/hwrng bs=100000 count=1 > /dev/null`` before
+>> > the actual test run made a difference.
+>> > Tried it on my Quartz64 Model A: no
+>> >
+>> > Then I tried it on my Quartz64 Model B:
+>> >
+>> > root@quartz64b:~# cat /dev/hwrng | rngtest -c 1000
+>> > rngtest 5
+>> > ...
+>> > rngtest: starting FIPS tests...
+>> > rngtest: bits received from input: 20000032
+>> > rngtest: FIPS 140-2 successes: 120
+>> > rngtest: FIPS 140-2 failures: 880
+>> >
+>> > root@quartz64b:~# dd if=/dev/hwrng bs=100000 count=1 > /dev/null
+>> > 1+0 records in
+>> > 1+0 records out
+>> > 100000 bytes (100 kB, 98 KiB) copied, 5.71466 s, 17.5 kB/s
+>> >
+>> > root@quartz64b:~# cat /dev/hwrng | rngtest -c 1000
+>> > rngtest 5
+>> > ...
+>> > rngtest: starting FIPS tests...
+>> > rngtest: bits received from input: 20000032
+>> > rngtest: FIPS 140-2 successes: 104
+>> > rngtest: FIPS 140-2 failures: 896
+>> >
+>> > root@quartz64b:~# uname -a
+>> > Linux quartz64b 6.10+unreleased-arm64 #1 SMP Debian 6.10-1~cknow
+>> > (2024-04-24) aarch64 GNU/Linux>
+>> > :-O
+>> 
+>> I pulled out my Quartz64 model B, and the results seem better than 
+>> yours.
+>> 
+>> root@quartz64:~# sudo dd if=/dev/hwrng bs=256 | rngtest -c 1000
+>> rngtest 5
+>> ...
+>> rngtest: starting FIPS tests...
+>> rngtest: bits received from input: 20000032
+>> rngtest: FIPS 140-2 successes: 859
+>> rngtest: FIPS 140-2 failures: 141
+>> root@quartz64:~# sudo dd if=/dev/hwrng bs=256 | rngtest -c 1000
+>> rngtest 5
+>> ...
+>> rngtest: starting FIPS tests...
+>> rngtest: bits received from input: 20000032
+>> rngtest: FIPS 140-2 successes: 843
+>> rngtest: FIPS 140-2 failures: 157
+> 
+> I noticed you used ``dd`` instead of ``cat``, so I tried again ...
+> 
+> Quartz64-A:
+> root@quartz64a:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
+> rngtest 5
+> ...
+> rngtest: starting FIPS tests...
+> 
+> rngtest: bits received from input: 20000032
+> 
+> rngtest: FIPS 140-2 successes: 411
+> 
+> rngtest: FIPS 140-2 failures: 589
+> 
+> root@quartz64a:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
+> ...
+> rngtest: starting FIPS tests...
+> rngtest: bits received from input: 20000032
+> rngtest: FIPS 140-2 successes: 391
+> rngtest: FIPS 140-2 failures: 609
+> 
+> root@quartz64a:~# dd if=/dev/hwrng bs=100000 count=1 > /dev/null
+> 1+0 records in
+> 1+0 records out
+> 100000 bytes (100 kB, 98 KiB) copied, 5.66202 s, 17.7 kB/s
+> 
+> root@quartz64a:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
+> ...
+> rngtest: FIPS 140-2 successes: 386
+> 
+> rngtest: FIPS 140-2 failures: 614
+> 
+> root@quartz64a:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
+> ...
+> rngtest: FIPS 140-2 successes: 356
+> rngtest: FIPS 140-2 failures: 644
+> 
+> Quartz64-B:
+> root@quartz64b:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
+> ...
+> rngtest: FIPS 140-2 successes: 118
+> rngtest: FIPS 140-2 failures: 882
+> 
+> root@quartz64b:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
+> ...
+> rngtest: FIPS 140-2 successes: 133
+> rngtest: FIPS 140-2 failures: 867
+> 
+> root@quartz64b:~# dd if=/dev/hwrng bs=100000 count=1 > /dev/null
+> 
+> root@quartz64b:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
+> ...
+> rngtest: FIPS 140-2 successes: 97
+> rngtest: FIPS 140-2 failures: 903
+> 
+> root@quartz64b:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
+> ...
+> rngtest: FIPS 140-2 successes: 130
+> rngtest: FIPS 140-2 failures: 870
+> 
+> And lastly on PineTab2:
+> root@pinetab2:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
+> ...
+> rngtest: FIPS 140-2 successes: 705
+> rngtest: FIPS 140-2 failures: 295
+> 
+> root@pinetab2:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
+> ...
+> rngtest: FIPS 140-2 successes: 678
+> rngtest: FIPS 140-2 failures: 322
+> 
+> root@pinetab2:~# dd if=/dev/hwrng bs=100000 count=1 > /dev/null
+> 
+> root@pinetab2:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
+> ...
+> rngtest: FIPS 140-2 successes: 681
+> rngtest: FIPS 140-2 failures: 319
+> 
+> root@pinetab2:~# dd if=/dev/hwrng bs=256 | rngtest -c 1000
+> ...
+> rngtest: FIPS 140-2 successes: 669
+> rngtest: FIPS 140-2 failures: 331
+> 
+> 
+> So my Q64-B tests are consistently MUCH worse then your Q64-B tests ...
+> This seems BAD to me, now that we even have completely different 
+> results per
+> device of the EXACT same model?!? Hardware revision may be different (I 
+> have a
+> v1.4), but it seems rather pointless to go into that direction.
+> 
+> It then also seems rather pointless to try it with different parameters 
+> if the
+> results on the same SBC model can vary this much.
 
-
-Best regards,
-Krzysztof
-
+Thanks a lot for the testing.  Though, such wildly different test 
+results
+can, regrettably, lead to only one conclusion:  the HWRNG found in 
+RK3566
+is unusable. :/
 
