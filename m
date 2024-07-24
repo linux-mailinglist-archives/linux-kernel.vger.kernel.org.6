@@ -1,125 +1,87 @@
-Return-Path: <linux-kernel+bounces-261097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D2E193B2C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:36:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 734E993B2CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4890C283011
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:36:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32A08281EEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE25715957E;
-	Wed, 24 Jul 2024 14:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O3g4xrjN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D7815957E;
+	Wed, 24 Jul 2024 14:38:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B3715884F
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057681581F8
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721831796; cv=none; b=Tu+9nKRhwVIGAkY1CxPiqQC647ADOeeDCtb2yPrPwsSA6Qjqo4EK8PQGCe4iU9h2p2gO4W3HCpP/0yhDSRnmtFg31/W8zrR67YMdPL9kaN1l5Q8KPMx4e5ke7PQ8pGJWPICJQ+4khJq+bgZuf7UhV3Of7JqoOAE3uOkZJffHNp0=
+	t=1721831886; cv=none; b=NG2k8xp2LQSrLS0ocurCLFe49yuhZ92LDTzt0Je+Pidxmk1+Dduzvd8eY0cK/spidHShBeZXA5cIuc4vngEqmyNN6Y4Hpj+BKbv9YLqGrF5PPZ186qkPECTxdCpEHxVKK5DnCQMEdamP/Il3X1F6u3/q/5OGkU4dc/aqU6NdJdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721831796; c=relaxed/simple;
-	bh=Vy2makQph1vBv9yaLQjTTAxrl6O97neZ2BLSX1zENkA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JUgN7jse2AgB5n6VCfFXPUwaxGnPtOYpOLAWw8WM+7ylc9OULMB4RVAbiw5ptuQ+b3N9GKrwokpJLjg6gNYiJe4nwUX7zteYVxVf/YRHPMN1RFIfBlp+zxa4qMOPIWDdYu3HKZV9YkxFodLnBPAGlYYd7spXkbCU0/jm7+nv8D0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O3g4xrjN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09370C32781;
-	Wed, 24 Jul 2024 14:36:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721831796;
-	bh=Vy2makQph1vBv9yaLQjTTAxrl6O97neZ2BLSX1zENkA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=O3g4xrjNY+45miLGNzlprZQaT2uJpeFAWeGvCN3Nf92J3eyO3+fa3LCiYwuJE0ChM
-	 VYKPE7dDxPUN5XZt67dUwpD1HDrWf+ZrJIGurt9p48QcKy6Y9wKMKcQq4hnrp423IJ
-	 7/Wv1fD9tD24tJ1CcBHhpa5lilO1HzkxyB7FRwDokTEcPqzcdrp9cuvdK6564D4TzS
-	 GQkQKwC/zpA/uFChiY5PrmU6zccBHm37oe0yHo9/WmW8XVXdn0E5/nQVRnXmR57W/Y
-	 +xO4ipSxg9txfmLyiSmF2ih0FkPPeVP2lpUQKtJyoVj3kkZNPJf2tIs4tmUqVN5QxU
-	 U8pNhykjhEayw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sWd6X-00F2Fr-9D;
-	Wed, 24 Jul 2024 15:36:33 +0100
-Date: Wed, 24 Jul 2024 15:36:32 +0100
-Message-ID: <867cda3lhr.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] irqchip: Replace compared GIC version with ID_AA64PFR0_EL1_GIC_V4P1
-In-Reply-To: <20240724054623.667595-1-anshuman.khandual@arm.com>
-References: <20240724054623.667595-1-anshuman.khandual@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1721831886; c=relaxed/simple;
+	bh=VSzUN+7of4GRcQovlCWWbxPAubkyRLqf6Z1vDSDsgCQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=b9UibF5EBKxGKjgpFPB/UwfK31FBUrAEUyia74StuXzpgtz0NvMFEgJgDC8jgHaJPOGiDfU8tUlCsGHVes8CD2N6yOu8mM+Qzmq/1jdV9scIlExaJaTuemQlSgpfFuLAmouroLsPW8z6yCXfZ7AyhxaG2iohyU9AgBi09mO8XV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39835205d20so94571605ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:38:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721831884; x=1722436684;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ChCVNVmIACxTTFq+mC/JHK8ic/0GbWjXuhUHRRKJw5k=;
+        b=dNlbSbc2EcVMpOY3zOii00GiKExgIGNZKV372qZxYPPAjWYHA/isrs4NjmefWEQXc5
+         9k5ADFIwq9d2fiCsOL9t3I/hQX7b0MUyzh/ZVBgN3pohsinornEdDTeXxliR7IRnDmcc
+         h20eA/l2Y1gZKSTpDdKYzg5U5e6273X2InSIH2WLYBS9mkuksdlNhmbVrIw7lHpQpo18
+         Sa7X+wp8I2nk9p6KNLPO2W0Yy6g/dX9mxJUDq8km9ojy7anjijjzsO8Ia8fiqJCe7jNJ
+         FeN4sL8vkq6SctBXpUg2e+wW8RSw7+3ukpEr7bEVc4kjuGB2PKmWWma+iDbSN/Bu1NZe
+         qS6g==
+X-Forwarded-Encrypted: i=1; AJvYcCXi2i3DhkoXwZh65WYIfass5jC50BdXak648Nbt/LwBtZWt9Gwo0HKfthWVlSkXAIlUEmVXQfNHoZTme7IXNmYtuWwhPS8Fyz7jqt6J
+X-Gm-Message-State: AOJu0Yz2+mA3GPdZHvkwojt2pjjPBcq9H8BL3U5cEDYobrtuOJPEQI1s
+	OTakuIwPdCoJFiF+2bsUQ7xjwQpamyJolN0Mi7+TbYKX+9D/yPt3mCxavkVRIATbGV0/xadxCUy
+	ZI2m64j6kz/74q5rm/QfE2C/rrqt4P5O4KutaaZbItU+x8PJQkz7kDSw=
+X-Google-Smtp-Source: AGHT+IHi69WQbtqh16a6xzw8BoxzZyB0CbcC3G9iR5j5cxsRCrUOCs+bFvLYnC0JbTSqNlChsGQpqQmtitL1eKucuPh8bjdM3T8B
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, tglx@linutronix.de, catalin.marinas@arm.com, will@kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1c03:b0:396:a820:a62d with SMTP id
+ e9e14a558f8ab-39a16dcaa11mr3510075ab.6.1721831884223; Wed, 24 Jul 2024
+ 07:38:04 -0700 (PDT)
+Date: Wed, 24 Jul 2024 07:38:04 -0700
+In-Reply-To: <20240724141325.10569-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d283a5061dff399c@google.com>
+Subject: Re: [syzbot] [bpf?] [net?] general protection fault in __dev_flush
+From: syzbot <syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 24 Jul 2024 06:46:23 +0100,
-Anshuman Khandual <anshuman.khandual@arm.com> wrote:
-> 
-> Replace open encoding for GIC version code with ID_AA64PFR0_EL1_GIC_V4P1 in
-> gic_cpuif_has_vsgi().
+Hello,
 
-Please fix the subject format to say "irqchip/gic-v4.1".
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> 
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
-> Applies after the following patch that fixes the given field in tools sysreg.
-> 
-> https://lore.kernel.org/all/20240718215532.616447-1-rananta@google.com/
-> 
->  drivers/irqchip/irq-gic-v4.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/irqchip/irq-gic-v4.c b/drivers/irqchip/irq-gic-v4.c
-> index ca32ac19d284..58c28895f8c4 100644
-> --- a/drivers/irqchip/irq-gic-v4.c
-> +++ b/drivers/irqchip/irq-gic-v4.c
-> @@ -97,7 +97,7 @@ bool gic_cpuif_has_vsgi(void)
->  
->  	fld = cpuid_feature_extract_unsigned_field(reg, ID_AA64PFR0_EL1_GIC_SHIFT);
->  
-> -	return fld >= 0x3;
-> +	return fld >= ID_AA64PFR0_EL1_GIC_V4P1;
->  }
->  #else
->  bool gic_cpuif_has_vsgi(void)
+Reported-by: syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com
+Tested-by: syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com
 
-Please repost this *once* the dependent patch is actually merged, so
-that we don't have to think of the dependencies.
+Tested on:
 
-With that:
+commit:         786c8248 Merge tag 'perf-tools-fixes-for-v6.11-2024-07..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=146f5203980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=47beaba1a1054668
+dashboard link: https://syzkaller.appspot.com/bug?extid=44623300f057a28baf1e
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=122626e6980000
 
-Acked-by: Marc Zyngier <maz@kernel.org>
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Note: testing is done by a robot and is best-effort only.
 
