@@ -1,198 +1,123 @@
-Return-Path: <linux-kernel+bounces-261538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 848E293B876
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 23:19:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7098393B878
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 23:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7E231C23BC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:19:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC7092861F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B664013B5AD;
-	Wed, 24 Jul 2024 21:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C19213BAC2;
+	Wed, 24 Jul 2024 21:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="korfD63c"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iuKufqnX"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70668139584;
-	Wed, 24 Jul 2024 21:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1C16F068;
+	Wed, 24 Jul 2024 21:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721855949; cv=none; b=N7CXcgYHSWjOwVXDY0QDW648Djel9+C68RvHjLmugo/nZoILV02vTB1PBN31TSD9ixmRa2+iSogumoqusm5ljoDimioO7S8AYa3AhOG/kiriTgXl5zcwMr4z8rD4EaA0GGEJgfiWTYGbVE/3bDUIzu5sTQabGV9Tl1uIJrSXhrU=
+	t=1721856035; cv=none; b=oxfHNGYFbxy4llalTCtX3Axf30HJ5SrwZqtMSNXA4eOmruzkuEH8XE+aFfQlRulyuJd4VtyB4IMQlCGMD3QdRMNluJ0rucmjNHTMutP56enDxkS5e6e5KFeCSWMkzyTxJSQuHS0T67tEYvJMBm5fj1efHrHzzeUv/2pqq0bKsPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721855949; c=relaxed/simple;
-	bh=Rf3ofJ44AlVV1dPimKk0+4Py8+cmXRDlHMG27neCr7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e92uiH/53gnCi5umyrI/Zm2eaPLyzZYEwa7y82FO+rf/wAc21wDNRisKjJmGGbVnblSViYWQ86Vc3wRisEMrzqrJbm7FWElTUxTq7Z3nS33pAAGph2LjmvzuVIPjait57evK4k23Rf4S65euzjpDV0EAIq3R0uF28X6CR6L26Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=korfD63c; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721855949; x=1753391949;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Rf3ofJ44AlVV1dPimKk0+4Py8+cmXRDlHMG27neCr7U=;
-  b=korfD63cqrTXtiJcomf41tDGzdwMENfcZ5jCiA11koRUXtR23WdJwZdp
-   z1V1Ur2LilXzrjQtI+JOsr3jv/X2vgEWwLgkUZifOxQ3SidR2f21TcVEt
-   li46PDIMANKZZfeoAnhI0rfTryoQQ3MMcIVx5OhC62utPwYEptnQKHx5Q
-   SH/8sPnsNU0l1AIKqBSOO54ITwZ+1z7gHo4SKLkpQIWHmXuz1QqlxPBo7
-   25fk6tXBe/o5JqOjN3t2PJpqiL774EhDsWAN/0AlaTIZhzyvZOkwTeZk6
-   01PrrphS+szqznlb5SDG+tqoLnZa7R8SZJev0TJBY7grZQPSSOtogtpsQ
-   g==;
-X-CSE-ConnectionGUID: 5AHSCSZCSEGAWPtuGzu9xQ==
-X-CSE-MsgGUID: QgQhe6P+Qg2916sTbznuXg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11143"; a="30166462"
-X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
-   d="scan'208";a="30166462"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 14:19:08 -0700
-X-CSE-ConnectionGUID: D6nXxjbdS+CKaipP0Gibtg==
-X-CSE-MsgGUID: aJivT/zMQHGia5vDZSidvA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
-   d="scan'208";a="75940094"
-Received: from srpatil1-mobl.amr.corp.intel.com (HELO peluse-desk5) ([10.212.62.180])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 14:19:08 -0700
-Date: Wed, 24 Jul 2024 14:19:06 -0700
-From: Paul E Luse <paul.e.luse@linux.intel.com>
-To: Mateusz =?UTF-8?B?Sm/FhGN6eWs=?= <mat.jonczyk@o2.pl>
-Cc: Yu Kuai <yukuai3@huawei.com>, linux-raid@vger.kernel.org,
- linux-kernel@vger.kernel.org, Song Liu <song@kernel.org>,
- regressions@lists.linux.dev
-Subject: Re: Filesystem corruption when adding a new RAID device
- (delayed-resync, write-mostly)
-Message-ID: <20240724141906.10b4fc4e@peluse-desk5>
-In-Reply-To: <f28f9eec-d318-46e2-b2a1-430c9302ba43@o2.pl>
-References: <9952f532-2554-44bf-b906-4880b2e88e3a@o2.pl>
-	<ce95e64c-1a67-4a92-984a-c1eab0894857@o2.pl>
-	<f28f9eec-d318-46e2-b2a1-430c9302ba43@o2.pl>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; aarch64-redhat-linux-gnu)
+	s=arc-20240116; t=1721856035; c=relaxed/simple;
+	bh=UAMquWpIpIMRQSj3d9vj/eyJdUUCFF9c9h86+1Jwbv0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uhOHDLH2y0CLkHL9gyIqvbe4ltugCxq/b5K+CJvbogJsTZMtBQhBkZ702/hRl2EdH0lgB7WwAMQDosKL5XcShYvgUXEPbVG5r/SbkxliaVZ5lNRnoXS82OUJvL6aNt1Yfki72IK/Am/zEehkJIswbftttSDobCHjvY1M4YiRIuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iuKufqnX; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2cb576db1c5so213508a91.1;
+        Wed, 24 Jul 2024 14:20:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721856034; x=1722460834; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UAMquWpIpIMRQSj3d9vj/eyJdUUCFF9c9h86+1Jwbv0=;
+        b=iuKufqnXSdI84GwNY3Ffwm6A35H5Jp1ZMddKeP/+Y/0aCO+65yOyTxSE+g00Of7iLw
+         mL5NLaaQLtK9JBzY9NvMa75PAqQ+LPrtY1PSi7D5n1DrdcXXS/rEmKrIGwqn0k5jOsRZ
+         u1A3Cz3VG/9SvDQ9zUHhx6SgYeCSQwhTZsJbdQB33L1151tfZyZQSHW0v4AsLW5j0xYa
+         WQOAQpNExPNZ8nr6/yJ3uxVUmkbWFaoxBfVAr6kbCfNfqmDEMb0L6ImiTEF5w/yj+Eu0
+         H7ivgRvIXpZu+ZsPjxfjMDsJimGwsCrMCbse+oaDLYIZ495e1lS9ZNIqzoTdXsmbFVhl
+         GcpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721856034; x=1722460834;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UAMquWpIpIMRQSj3d9vj/eyJdUUCFF9c9h86+1Jwbv0=;
+        b=jo5iSFnCeCjdOYlZcuTotzPclPGXu0oJyjUbsf5hmrBQDVhlOcs1XRGKauViYal3+c
+         MAmmS/CGS2hA/vqjy00ZPwpiA7eSQrn0dgONWUs/L4vBFWW/e1q0cLWtaXWuGJPwFmU3
+         reX0QA70Q95prcowOAFvrQ7dMeqVh+1byLuXL0YVKs/SZu8zi8JQFD/VxTSHLv72wJta
+         wBk150SAEO1C+AEoIPZKftwhPoMqNAtmS54Glkw4jsemF0mswCnXQQ6ShqqitMs+vvgw
+         ZFBswZfxLQhLuC16K8f9US3xkhB8qDa4B+n3ppFiO1t4GPa6DXeZKacLG0n1qbup24ha
+         b9DA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRBLDkmX6RiNlBE+DSjtqXctcn+74sMmuleXY65moM1I3cIx+ytG+12kKAHpDTobObhaBpBksm/8QSqm6k+J5nIiprsdvIXazu7RghsWqhLA9CiDfKuiK5Hm6O4pubmf+S2rVPGV8W9enJpqmKNE/FAze67S6GhL63lEnhC6EmjioZf9QRFyI=
+X-Gm-Message-State: AOJu0Yxuh0lgTtMeK2b9ypz6fwlQ/ptLu4YW+Z1rs3KeCnOh7lsgaAKZ
+	DosWuylhjd7WXy14wATEdTyr23TSd5fsAH9/RKXIc2M2m1KjwtMx+SKf/m5BD8VNGak9Mns7CoE
+	Lw/J2XzFfLwWsSijHsvDg9SaRCqY=
+X-Google-Smtp-Source: AGHT+IFAqeQ63jXKHYj9WrIm/chDXE38dKQBRWtQsKDk7YJsAfKg35lISr1CS/rAuFWO3JOC+16MX0nri1Bkg27Nm+Q=
+X-Received: by 2002:a17:90a:bc1:b0:2c9:69cc:3a6a with SMTP id
+ 98e67ed59e1d1-2cf2380cc92mr943726a91.3.1721856033721; Wed, 24 Jul 2024
+ 14:20:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20240717221133.459589-1-benno.lossin@proton.me>
+ <20240717221133.459589-2-benno.lossin@proton.me> <99DF6A0F-BAE9-4341-8B42-6C1F1C69E2C6@collabora.com>
+ <a5afc0ed-2193-42f2-a7ef-50fba68980a6@proton.me>
+In-Reply-To: <a5afc0ed-2193-42f2-a7ef-50fba68980a6@proton.me>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 24 Jul 2024 23:20:21 +0200
+Message-ID: <CANiq72nFo2qBpKfZp5vcsT3PHdrfP8WukTkpC4jCnYW7h9A6OQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/5] doc: rust: create safety standard
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 24 Jul 2024 22:35:49 +0200
-Mateusz Jo=C5=84czyk <mat.jonczyk@o2.pl> wrote:
+On Wed, Jul 24, 2024 at 10:32=E2=80=AFPM Benno Lossin <benno.lossin@proton.=
+me> wrote:
+>
+> There are also several clippy lints [1] that we could start using:
+> - missing_safety_doc
+> - multiple_unsafe_ops_per_block
+> - undocumented_unsafe_blocks
+> - unnecessary_safety_comment
+> - unnecessary_safety_doc
+>
+> I personally think we should enable all of them.
 
-> W dniu 22.07.2024 o=C2=A007:39, Mateusz Jo=C5=84czyk pisze:
-> > W dniu 20.07.2024 o=C2=A016:47, Mateusz Jo=C5=84czyk pisze:
-> >> Hello,
-> >>
-> >> In my laptop, I used to have two RAID1 arrays on top of NVMe and
-> >> SATA SSD drives: /dev/md0 for /boot (not partitioned), /dev/md1
-> >> for remaining data (LUKS
-> >> + LVM + ext4). For performance, I have marked the RAID component
-> >> device for /dev/md1 on the SATA SSD drive write-mostly, which
-> >> "means that the 'md' driver will avoid reading from these devices
-> >> if at all possible" (man mdadm).
-> >>
-> >> Recently, the NVMe drive started having problems (PCI AER errors
-> >> and the controller disappearing), so I removed it from the arrays
-> >> and wiped it. However, I have reseated the drive in the M.2 socket
-> >> and this apparently fixed it (verified with tests).
-> >>
-> >> =C2=A0=C2=A0 =C2=A0$ cat /proc/mdstat
-> >> =C2=A0=C2=A0 =C2=A0Personalities : [raid1] [linear] [multipath] [raid0=
-] [raid6]
-> >> [raid5] [raid4] [raid10] md1 : active raid1 sdb5[1](W)
-> >> =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 471727104 blocks sup=
-er 1.2 [2/1] [_U]
-> >> =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bitmap: 4/4 pages [1=
-6KB], 65536KB chunk
-> >>
-> >> =C2=A0=C2=A0 =C2=A0md2 : active (auto-read-only) raid1 sdb6[3](W) sda1=
-[2]
-> >> =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 3142656 blocks super=
- 1.2 [2/2] [UU]
-> >> =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bitmap: 0/1 pages [0=
-KB], 65536KB chunk
-> >>
-> >> =C2=A0=C2=A0 =C2=A0md0 : active raid1 sdb4[3]
-> >> =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 2094080 blocks super=
- 1.2 [2/1] [_U]
-> >> =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
-> >> =C2=A0=C2=A0 =C2=A0unused devices: <none>
-> >>
-> >> (md2 was used just for testing, ignore it).
-> >>
-> >> Today, I have tried to add the drive back to the arrays by using a
-> >> script that executed in quick succession:
-> >>
-> >> =C2=A0=C2=A0 =C2=A0mdadm /dev/md0 --add --readwrite /dev/nvme0n1p2
-> >> =C2=A0=C2=A0 =C2=A0mdadm /dev/md1 --add --readwrite /dev/nvme0n1p3
-> >>
-> >> This was on Linux 6.10.0, patched with my previous patch:
-> >>
-> >> =C2=A0=C2=A0=C2=A0 https://lore.kernel.org/linux-raid/20240711202316.1=
-0775-1-mat.jonczyk@o2.pl/
-> >>
-> >> (which fixed a regression in the kernel and allows it to start
-> >> /dev/md1 with a single drive in write-mostly mode).
-> >> In the background, I was running "rdiff-backup --compare" that was
-> >> comparing data between my array contents and a backup attached via
-> >> USB.
-> >>
-> >> This, however resulted in mayhem - I was unable to start any
-> >> program with an input-output error, etc. I used SysRQ + C to save
-> >> a kernel log:
-> >>
-> > Hello,
-> >
-> > It is possible that my second SSD has some problems and high read
-> > activity during RAID resync triggered it. Reads from that drive are
-> > now very slow (between 10 - 30 MB/s) and this suggests that
-> > something is not OK.
->=20
-> Hello,
->=20
-> Unfortunately, hardware failure seems not to be the case.
->=20
-> I did test it again on 6.10, twice, and in both cases I got
-> filesystem corruption (but not as severe).
->=20
-> On Linux 6.1.96 it seems to be working well (also did two tries).
->=20
-> Please note: in my tests, I was using a RAID component device with
-> a write-mostly bit set. This setup does not work on 6.9+ out of the
-> box and requires the following patch:
->=20
-> commit 36a5c03f23271 ("md/raid1: set max_sectors during early return
-> from choose_slow_rdev()")
->=20
-> that is in master now.
->=20
-> It is also heading into stable, which I'm going to interrupt.
+We briefly talked about it today -- others agreed on going ahead with
+something like the diff I sent the other day, so I will send a formal
+patch -- it has been a while since we wanted to do this (long enough
+that we were the ones requesting one of those lints, and it got
+implemented since then... :)
 
-Hi Mateusz,
+And we can keep the `TODO`s as "good first issue"s (I already updated
+some days ago our good first issue about it:
+https://github.com/Rust-for-Linux/linux/issues/351).
 
-I'm pretty interested in what is happening here especially as it
-relates to write-mostly.  Couple of questions for you:
+We can also enable the others easily, most are essentially clean
+already anyway, so I will send that as well.
 
-1) Are you able to find a simpler reproduction for this, for example
-without mixing SATA and NVMe.  Maybe just using two known good NVMe
-SSDs and follow your steps to repro?
+The only one that may be more "annoying" is
+`multiple_unsafe_ops_per_block`. On the other hand, it could in fact
+force people to think about every "bullet point" of the requirements
+(the lint highlights nicely the different operations).
 
-2) I don't fully understand your last two statements, maybe you can
-clarify?  With your max_sectors patch does it pass or fail?  If pass,
-what do mean by "I'm going to interrupt"? It sounds like you mean the
-patch doesn't work and you are trying to stop it??
-
-thanks
-Paul
-
->=20
-> Greetings,
-> Mateusz
->=20
->=20
-
+Cheers,
+Miguel
 
