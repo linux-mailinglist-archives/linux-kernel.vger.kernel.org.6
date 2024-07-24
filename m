@@ -1,87 +1,99 @@
-Return-Path: <linux-kernel+bounces-260488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7E3593AA1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 02:13:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C87293AA21
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 02:16:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72F3A28401C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 00:13:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D8C51C22703
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 00:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CC817FE;
-	Wed, 24 Jul 2024 00:13:04 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97A74C62;
+	Wed, 24 Jul 2024 00:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B6s/WTDW"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B7D36B
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 00:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F8323A9;
+	Wed, 24 Jul 2024 00:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721779983; cv=none; b=rjsw8d86FVOpFEfaknHKjwJz8tphRNo8DYXJKQAJlR4HmKM6qHOQX75nOh2RzAjmMQ2cBJ6vzWOHvgrrXQwGuNQggiRDxz5uUF6uAJGLOrwSQixhE3Ae1uGs7Ss0d+h1Mf5x1uBkF2HvURnYcF7jxcaoqoR2pv4Y0z0lp9y+Xu8=
+	t=1721780170; cv=none; b=WVWDDO+rSHrlTgon03wPOxV8AeB69Ki0VHjm68WstMJAkFutrtIYTlq7bc4iPGMJRpo61pUFcIXL0C+o+Ldbar2cLS7gFtJVGP4tb6WoxhEV9f5NTTvk56hKUrK6rfHlITTiWav4dWRNkl+MAAaIdhN3DuD1ylNsSLk+zz0T7KE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721779983; c=relaxed/simple;
-	bh=9eXMrgjrnEGwkONw4/sn98WfFowk/b9YWkF1jlYOxdY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RsdG3LmY4DVz/u76a3ZeXS2abyrNdV34xIhEEv98d563TQnQdSLRHLYQClpLwtgHNmRZj3IW8D3dgamfuAIhzlhK3FXS0ulU68euIMEgCZvRgQ5xMh5HTA2YN7HWXOXa2o/NeXvPKQvLSXy3jpbpVAYEGDAzZBLqx2s2HPuF7Ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-8152f0c4e1bso1079119239f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Jul 2024 17:13:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721779981; x=1722384781;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iECquDb3LpX468GvcPGLqd7u6hFLjB85umGr3V7YPGY=;
-        b=Cc8700yvIvuTLBEtikklJyNkzyQfySYqx2nLCs4KdyTR2g5YNC+/j9YwRJ5j+Mz+rJ
-         LbraAS85RAi141200IN9yGHwiJ2MoV5X5pQz/29NnmWh4VIyj/ZBdMOZBfIQDEOUzTT1
-         2oMiiEGMbCtcqaKcGn29aQS5vVGH6sNfWzxRiPUi5gQz6XR1XsvskKYGUXYXWBxAcDj3
-         AwpdFiKLYLZJnnUUeYId01JB+k5sLTqkJuv2ymlXjNc/vNWUAtc+kTuGATHK+fgpoQCv
-         lGxv5c3hHVbO7LtP8fEoUi6GIOEC+rYsZLZRNRw/3L0egFvOkRrJuLGrx6otKtI3kZ4y
-         vyVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV310SoyxC0iWNCgceK7PwT38M7XgW5528/F+AMYB+5/JlndsvdhQtWzjIxvMUBoQsGWWQSX6d40751eZ7OdoUhWzZH5XGckDRTSvJu
-X-Gm-Message-State: AOJu0YzKY81zDiBrI3aNY6Qmbh3FsGe6gR1wJiCAFdZGkhnIEp8fd6/a
-	9JZlBnMWOlcVsI81h7rULBv7F+lokrBzGyI5ZgEsdn7Z05lnvJCYcK2ByFWJyPauzA3A77QS4NN
-	JFM70gcNXw+ybcoO3c2nMy0puFFgRY3cUXh1+HLeIqb0yTO1UlqDJaak=
-X-Google-Smtp-Source: AGHT+IEU7pSRVZGHBTpxd6hs1TvLjbwoEzDK/zA/ys9T3sGuFjgU1pD6VcIeNOEA+GOn6O7FPYngZZkUy5BnhWkO4iVhsLzZrSGz
+	s=arc-20240116; t=1721780170; c=relaxed/simple;
+	bh=wqyFpyf6PrzKEVik7xeRK0++sjEqWq5lBT4FsmzwMqU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sr7MH6NSDDTMdHd/L+TaMaJdQNA2WQW+Hjj3GNwl/ule9PMVcOx2EW7NKCXUk6mkORTHBdtMMjV5EFfinnIoKjXY3VoOP5aA9DljzTpnBBeN66Lc7euyXRLMc8hunYqo4ssZ/clV+7dakyYBQjqNbaf3RlHdiTn5z842Q3uazjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=B6s/WTDW; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=+13C47ZHmH1+/AbC2K1sE8rWUkwncoQ44bN8mj3d5O8=; b=B6s/WTDWl83ZaD7yEFAS5kvS/j
+	zeehTkADxlXDIhox/7Vr4pUxISf8qKbn7gjOKHBuw2Dj11UlM/o3qJVtERnlkp0O2mjc0klL2bKc5
+	hg7VrztKoOwoE9xHIGY1eMMXnDN1I6ygfSKrmSXGVL5VCMz9oIfCrKasAqDxgQHKgXKTXxhb3sxTK
+	WPYgfQ2X54HsStH68nb99M8jELASZpcKwz86ijr9BxsrrBGkctkEzjaxyMR5+yksCwbm0ZJSymAp5
+	NAvwc9UYsogKL/RDaHpODA6TL8BXIaQHowLg/yBmn8IucoZH7J8So5wNsERvv99tuqYJCLJRjPF1y
+	C0JgeUKA==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sWPfm-00000007Kfm-0ye4;
+	Wed, 24 Jul 2024 00:16:02 +0000
+Date: Wed, 24 Jul 2024 01:16:02 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mary Strodl <mstrodl@freedom.csh.rit.edu>,
+	Christian Gmeiner <christian.gmeiner@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Mary Strodl <mstrodl@csh.rit.edu>, linux-kernel@vger.kernel.org,
+	urezki@gmail.com, linux-mm@kvack.org, lee@kernel.org,
+	andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
+	s.hauer@pengutronix.de
+Subject: Re: [PATCH 1/3] mm: vmalloc: export __vmalloc_node_range
+Message-ID: <ZqBHwnPW_R4lFXVK@casper.infradead.org>
+References: <ZpkPStwq_S3mJYb5@infradead.org>
+ <ZpkQQ5GzJ4atvR6a@casper.infradead.org>
+ <ZpkWj-iFiA-JHbbf@freedom.csh.rit.edu>
+ <20240718143103.82e33c556b2d1b6145ae43e0@linux-foundation.org>
+ <ZpmKho9_t0_MeOP7@casper.infradead.org>
+ <20240718143924.43e22f68cf639b064a83f118@linux-foundation.org>
+ <CAH9NwWf_S-PyY5X_cJGSW-8YDk4-C0VvnPCX8iVuo0FhTqsy2Q@mail.gmail.com>
+ <ZppU8FhsFd9cB-Fi@freedom.csh.rit.edu>
+ <ZppfQFdwYq-bf9Wv@casper.infradead.org>
+ <20240723170043.4f17a3d0b6280e57561ba1f5@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1384:b0:382:6a83:f4fc with SMTP id
- e9e14a558f8ab-39a194ed0bdmr600315ab.5.1721779981610; Tue, 23 Jul 2024
- 17:13:01 -0700 (PDT)
-Date: Tue, 23 Jul 2024 17:13:01 -0700
-In-Reply-To: <20240723234627.1630076-1-cam.alvarez.i@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002f8335061df324f7@google.com>
-Subject: Re: [syzbot] [bcachefs?] WARNING in bch2_trans_srcu_unlock
-From: syzbot <syzbot+1e515cab343dbe5aa38a@syzkaller.appspotmail.com>
-To: cam.alvarez.i@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegoups.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240723170043.4f17a3d0b6280e57561ba1f5@linux-foundation.org>
 
-Hello,
+On Tue, Jul 23, 2024 at 05:00:43PM -0700, Andrew Morton wrote:
+> On Fri, 19 Jul 2024 13:42:40 +0100 Matthew Wilcox <willy@infradead.org> wrote:
+> 
+> > On Fri, Jul 19, 2024 at 07:58:40AM -0400, Mary Strodl wrote:
+> > > Maybe some of the stuff the driver does right now could be moved into
+> > > vmalloc? In other words, we could provide a different function that
+> > > allocates an executable page, copies memory into it, then marks it
+> > > read-only. Would that do better to alleviate concerns?
+> > 
+> > No.  We are not running arbitrary x86 code.  That is a security
+> > nightmare.
+> 
+> Sure, if such a thing were to be done we'd want it localized within the
+> driver rather than offered globally.
+> 
+> But if there was some hack within the driver to do this, what problems
+> might that cause?  What are the scenarios?
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
-Reported-by: syzbot+1e515cab343dbe5aa38a@syzkaller.appspotmail.com
-Tested-by: syzbot+1e515cab343dbe5aa38a@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         5ad7ff87 Merge tag 'f2fs-for-6.11-rc1' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12aa26e6980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2f1f11254d56ccd6
-dashboard link: https://syzkaller.appspot.com/bug?extid=1e515cab343dbe5aa38a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=106aab59980000
-
-Note: testing is done by a robot and is best-effort only.
+That we're running arbitrary x86 code (provided by the manufacturer)
+inside the kernel where it can undermine every security guarantee we
+provide?
 
