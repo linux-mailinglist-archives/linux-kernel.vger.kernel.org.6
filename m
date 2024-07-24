@@ -1,156 +1,117 @@
-Return-Path: <linux-kernel+bounces-260598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76D3C93AB5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 04:47:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0494293AB61
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 04:48:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 997C21C22828
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 02:47:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3700C1C23167
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 02:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5891BC41;
-	Wed, 24 Jul 2024 02:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538921AAC4;
+	Wed, 24 Jul 2024 02:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jfMWalNR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cMX6cJ8i"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55EDADF5B;
-	Wed, 24 Jul 2024 02:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190384A00;
+	Wed, 24 Jul 2024 02:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721789242; cv=none; b=uba2UTbmlQ25er+66Vyn/2BP+UowTuQNKs/CbQ88kYhJs8ag/HgHw6yavXuqdTWWicl/IotptU8q659rmpvzAmdZNkYV2jqq9soqb2r51eat3DsZielEhkKTCy+DWHsUTz15LUDX5fFSHzg3UPcpoyO4P3TaQ1fjNpIcE9Znifc=
+	t=1721789281; cv=none; b=O2jAtok9sNez1qTXuwZ24jseOAinHHLQcbCq+hsY7Ys2tNmgop7klMP/wmcmcOmTWvek1xU9z3BGtWNE5Pr2ZCCyVKsJQ2POYuouELLc8ya4xvORFO4Uo28z3JmNQ5V55wmDXo7kFvJ38sVnLfBZJT+R2jGMjV0RTHGOZF5KgpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721789242; c=relaxed/simple;
-	bh=9Vz8MYQsrGkJZnEnokzhHArRg9sVUnAdHQO+HCp4GWg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LLDtDIebfTx0X3UwVQ62pgOiZePkppe/5ozASHSZewMMYjhd+4s8w4jKLMjlfWRxfYqpZKQthDBGttoHhZwLPBnWSKJwD3qXl7O4pcq19hh25e+eDbT5txawAyZN3qNXEBdc416c9ycy+KRcNlKuggU4htRkb5A+K7o7B4ObF/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jfMWalNR; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721789241; x=1753325241;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=9Vz8MYQsrGkJZnEnokzhHArRg9sVUnAdHQO+HCp4GWg=;
-  b=jfMWalNRkjbdfcqA5ceWoE/Y4fvxSvirkIAEqsF2L77JM78+flbcNc6x
-   3DshM8xDJTWbwV4w9zo0NH9Q4rDXpK5h6rVj+iTmVu+H5Ei+9b3oo3ghD
-   qAa17e9Y89VifEa9xf/6w7H4Zkcv5Pp/RZQpzn1nnbFXjLnVI1iYoHF5c
-   Aqf1kIctP3lELEL1PvrJ40qoAphb0jrIdOlCJlT5jrxa2j+2IHxQ2yIZW
-   J+NvL2LklLlJDwmxgzE8FjLR5redJf3hbg33XvFO8zx6GCb6QiiEoEAkw
-   2WzrbS2H0BFPfWyLjTcBUGbFM/4tRfuKH4VTLCFVY0JUeUgKhvidwMux+
-   g==;
-X-CSE-ConnectionGUID: LsCh948sS0uuL6sJh27m5A==
-X-CSE-MsgGUID: ailozAeeQYGnzlUEJmnziA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11142"; a="30592152"
-X-IronPort-AV: E=Sophos;i="6.09,232,1716274800"; 
-   d="scan'208";a="30592152"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2024 19:47:10 -0700
-X-CSE-ConnectionGUID: elHXUOmYSXKPqUR/bd+ZGQ==
-X-CSE-MsgGUID: AgyOkfmzQLipPoeZZYO+XA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,232,1716274800"; 
-   d="scan'208";a="57551471"
-Received: from zhaohaif-mobl.ccr.corp.intel.com (HELO [10.124.9.238]) ([10.124.9.238])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jul 2024 19:47:06 -0700
-Message-ID: <670927f1-42d8-40bc-bd79-55e178bd907a@linux.intel.com>
-Date: Wed, 24 Jul 2024 10:47:04 +0800
+	s=arc-20240116; t=1721789281; c=relaxed/simple;
+	bh=W2Zo/H7Kb0gy2oq96iwckVxt+BOSf1ppdK2zRybu11Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=djJbatZFXBFoRMQ4CTGEO2J+z8YqYkIM+1EZk4DlE+ck5bg0WLHaYp2aVESt0m6kEyLWLt6O4AMF1eCWlYChCgNW8l15gVaW4PHZwNCiRqng7vV5sSI9ksfrxamwDeerPK6L+uR5D2I3JIWlpxmE0+g5yhz//hDV7i3lBSThRJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cMX6cJ8i; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3686b285969so2921019f8f.0;
+        Tue, 23 Jul 2024 19:47:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721789278; x=1722394078; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JGy4ngI/f55DAxch8oa9eUxUsKlxjCBWL5eS5G4SOng=;
+        b=cMX6cJ8iC4G7k/euwyt9kJO5CpAFw05ybyS84uMTLsbzBAH0XyaAGyVGPY9YB15xVM
+         LR5rw4+4UmIdS12MvCfh9zD3gN7UFjfLz2P3dD1E+tp8mfhwG5DVGMOOARK494x/27yy
+         DMDGh/pxpZoIi5lkPEZv8y8uAfCTTNiKcJFKbCKrMLDNUNO9w0C4ek2maTsE3mBmEIjG
+         x+l5O4DPZiq7deyUa29YvJM34vmlYwiylGnSdE6hjCUcO2VerzHGrIrujWR56a21cKlm
+         2c8yjI0yjhqyJELKAV5lDJ1FJNfhyaggN6Kln7fvUTYwdy4XtkWtCXyO4f+cPuUn+U05
+         9Kvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721789278; x=1722394078;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JGy4ngI/f55DAxch8oa9eUxUsKlxjCBWL5eS5G4SOng=;
+        b=efoQIRrN0qYi+76nISTjXbZR3XsqsUKcnA7xzAUjWd7MArD7fhbmghtFRKOU8Oy88C
+         QBsUjEpWBRZIxIdMxC/2nLZcD1hzPnxK8ZN8Dz6N2BQ9jPFQdBrMGUp03en/KvdYruKR
+         ovui9YxKzt7LXebfjaWhjUfZ0ofjc9D3RktEcYiOqUB1HVOZ+ezMVtymALDttdNSOLLS
+         GTNYpqff57XDyj2wWFDDguvJNg4Pb+NnAW/nscpGQLGDxRpAQqbRQ9AEB2hnsdSiLd3+
+         RV8yksjzLNnlltk+d1ufjajeHoaRAqAvvqyGmG8/cFCT6+tKNRX6vXi3frGLe2v5Q9OY
+         KF9A==
+X-Forwarded-Encrypted: i=1; AJvYcCX5Nlr5POfTjfooAbJNbq3/qnigSxLeipYSeCJP65SZfu7jHRSXz6YH03A4++m37cBBzOSIIOAqx6RsJ/YIxyxTCfGWhasNFqKQQ7l9Q2XWe1pKKQW8DnkEZ3q+qlc7gE3mknZ2A7DWjBMQr5n0
+X-Gm-Message-State: AOJu0YyQXUuo1l6cI4m4+CPRDzg3nZ9fC7Z5g4GW/7rJs2XTU1RxSi+Z
+	9H7m6GvSm0ydPS6k9314S44krGCaN2c5oId2u3pRewJC0EPzhvxAy87S9aGJrhKFxbjgZZbdQMp
+	7p01U4FuuqolcvqZ9dxvpp9QGaIU=
+X-Google-Smtp-Source: AGHT+IH8/M5kjJyGfkqVPhFkkfwGvy8Q6ErWtmKhyCouCUXC42Sfiv2sGM+z+0uARImXU38OqOrXmUKMkkiKfaoMUCU=
+X-Received: by 2002:adf:fa12:0:b0:368:3f56:b24a with SMTP id
+ ffacd0b85a97d-369bae34d05mr7461723f8f.15.1721789278225; Tue, 23 Jul 2024
+ 19:47:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] PCI: pci_call_probe: call local_pci_probe() when
- selected cpu is offline
-To: Hongchen Zhang <zhanghongchen@loongson.cn>,
- Markus Elfring <Markus.Elfring@web.de>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: Alex Belits <abelits@marvell.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Nitesh Narayan Lal <nitesh@redhat.com>,
- Frederic Weisbecker <frederic@kernel.org>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
- stable@vger.kernel.org, Huacai Chen <chenhuacai@loongson.cn>
-References: <20240613074258.4124603-1-zhanghongchen@loongson.cn>
- <a50b3865-8a04-4a9a-8d27-b317619a75c0@linux.intel.com>
- <7340a27e-67c1-c0c3-9304-77710dc44f7f@loongson.cn>
-From: Ethan Zhao <haifeng.zhao@linux.intel.com>
-In-Reply-To: <7340a27e-67c1-c0c3-9304-77710dc44f7f@loongson.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240724021112.2840-1-zhujun2@cmss.chinamobile.com>
+In-Reply-To: <20240724021112.2840-1-zhujun2@cmss.chinamobile.com>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Wed, 24 Jul 2024 10:47:47 +0800
+Message-ID: <CAOsKWHArGK0yVhQSNN1nmcYvxSpsjV21L38XkAvdVGNcJ1xkAA@mail.gmail.com>
+Subject: Re: [RESEND PATCH v2] selftests:Fix printf format string in kselftest_harness.h
+To: Zhu Jun <zhujun2@cmss.chinamobile.com>
+Cc: shuah@kernel.org, kees@kernel.org, luto@amacapital.net, wad@chromium.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/24/2024 9:58 AM, Hongchen Zhang wrote:
-> Hi Ethan,
-> On 2024/7/22 PM 3:39, Ethan Zhao wrote:
->>
->> On 6/13/2024 3:42 PM, Hongchen Zhang wrote:
->>> Call work_on_cpu(cpu, fn, arg) in pci_call_probe() while the argument
->>> @cpu is a offline cpu would cause system stuck forever.
->>>
->>> This can be happen if a node is online while all its CPUs are
->>> offline (We can use "maxcpus=1" without "nr_cpus=1" to reproduce it).
->>>
->>> So, in the above case, let pci_call_probe() call local_pci_probe()
->>> instead of work_on_cpu() when the best selected cpu is offline.
->>>
->>> Fixes: 69a18b18699b ("PCI: Restrict probe functions to housekeeping 
->>> CPUs")
->>> Cc: <stable@vger.kernel.org>
->>> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
->>> Signed-off-by: Hongchen Zhang <zhanghongchen@loongson.cn>
->>> ---
->>> v2 -> v3: Modify commit message according to Markus's suggestion
->>> v1 -> v2: Add a method to reproduce the problem
->>> ---
->>>   drivers/pci/pci-driver.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
->>> index af2996d0d17f..32a99828e6a3 100644
->>> --- a/drivers/pci/pci-driver.c
->>> +++ b/drivers/pci/pci-driver.c
->>> @@ -386,7 +386,7 @@ static int pci_call_probe(struct pci_driver 
->>> *drv, struct pci_dev *dev,
->>>           free_cpumask_var(wq_domain_mask);
->>>       }
->>> -    if (cpu < nr_cpu_ids)
->>
->> Why not choose the right cpu to callwork_on_cpu() ? the one that is 
->> online. Thanks, Ethan
-> Yes, let housekeeping_cpumask() return online cpu is a good idea, but 
-> it may be changed by command line. so the simplest way is to call 
-> local_pci_probe when the best selected cpu is offline.
+Hi Zhu Jun,
 
-Hmm..... housekeeping_cpumask() should never return offline CPU, so
-I guess you didn't hit issue with the CPU isolation, but the following
-code seems not good.
-
-...
-
-if (node < 0 || node >= MAX_NUMNODES || !node_online(node) ||
-         pci_physfn_is_probed(dev)) {
-         cpu = nr_cpu_ids;
-     } else {
-
-....
-
-perhaps you could change the logic there and fix it  ?
-
-Thanks
-Ethan
-
-
-
->>
->>> +    if ((cpu < nr_cpu_ids) && cpu_online(cpu))
->>>           error = work_on_cpu(cpu, local_pci_probe, &ddi);
->>>       else
->>>           error = local_pci_probe(&ddi);
+On Wed, 24 Jul 2024 at 10:15, Zhu Jun <zhujun2@cmss.chinamobile.com> wrote:
 >
+> '%u' in format string requires 'unsigned int' in __wait_for_test()
+> but the argument type is 'signed int' that this problem was discovered
+> by reading code
 >
+> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+> ---
+> Changes in v2:
+>  - modify commit info add how to find the problem in the log
+>
+>  tools/testing/selftests/kselftest_harness.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
+> index b634969cbb6f..dbbbcc6c04ee 100644
+> --- a/tools/testing/selftests/kselftest_harness.h
+> +++ b/tools/testing/selftests/kselftest_harness.h
+> @@ -1084,7 +1084,7 @@ void __wait_for_test(struct __test_metadata *t)
+>                 }
+>         } else {
+>                 fprintf(TH_LOG_STREAM,
+> -                       "# %s: Test ended in some other way [%u]\n",
+> +                       "# %s: Test ended in some other way [%d]\n",
+>                         t->name,
+>                         status);
+
+Seems this can use macro WTERMSIG like those above usage, rather than
+changing the print format.
+
+Thanks,
+Chunyan
 
