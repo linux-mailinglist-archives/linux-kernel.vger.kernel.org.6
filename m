@@ -1,148 +1,136 @@
-Return-Path: <linux-kernel+bounces-261552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F3093B8C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 23:43:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D66B93B8CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 23:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2C76B24972
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:43:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 977C2B24066
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06EA213C67B;
-	Wed, 24 Jul 2024 21:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A8013C807;
+	Wed, 24 Jul 2024 21:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y8opjxQx"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="f690Mp/H"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CF813C3F9
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 21:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA5713AA2F;
+	Wed, 24 Jul 2024 21:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721857386; cv=none; b=oqB1ZhMGR3KmryXvVOxCIMGirWAmwD4AETvDbGXwc9URaszByuMsMhyryhUHiMADA7SMcpbi+UbgkRw2/g3Ob02+wHpTAvvNUQnb7525Dw5Azp7DZ+hIwNvzC+Ie1whzfJDQDkMiNnrES5vlnEzXPpqh/DQNMH+aE1yKQiPQysc=
+	t=1721857929; cv=none; b=Cp/SBwx75VIBOM53Gc4AXXPjfKrzETiBcO62y3bdYL5tzgD4KONZlcgjYeyqzm4R3GCm6vxyncnyckYR9n0CRabp7wTRHVwmE1YqW7HPQPYJaiI/chtA+84PAeVQLIW9nIISaEYEFo4DyLvlM1PoCAFQLZ8vbgOd5GBA9dmm4CE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721857386; c=relaxed/simple;
-	bh=E2xr7KdHpOeVO8weg/YauvOwd3FI22iwYLqct3kkkuU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NZ/vk2SB5k9KDqCdO+NZGJQwdA7x7KKjgtXG0LjO1qcE40hfu8GnDbq19jBmsLtZUb/nJxBoPAYYzVeweAvTt3kA0CCDDrO9IkgLMDlWA+1e7ocxUmVgW1nohxKIVFe9GRH2Nhf2aCz82m0iQ6mQff4mA7UwFn6eyrU2N9UVApA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y8opjxQx; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7a8553db90so37559266b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:43:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721857383; x=1722462183; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=PVcOW0F31P5btkB2U94IntsHunux8cldHR5tp2dBkfU=;
-        b=Y8opjxQxdEgyznwS0k9r440vF2O+MuvdqCIJsPYi3PDQhus9VskEL+6JN7AqWDXqzi
-         khlueNx2JiQSLsSxeaihGaAoYNlXUuE4OpDwBcVjT2U4rd8aF1rgtldEKgS+A2riOtBX
-         4awJ+tQJrSMFLF/2IZ3lAVb335F968K4oqpX0CWXQuAUBNMnnyKFGLC/1a8ynB9EjtGW
-         0OOil7A+BSgQTdH9IDPLACovzKiCB6S6GVA9BSm37rvGICIN614hroHFtj9Dnxd1OBLz
-         f8VrP9I1V/v+4w2UCtGpT96EM78mSuNCbv9Sm8kXVQZlwjtiuBK96KYZto8BOrnv5Zg6
-         V6/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721857383; x=1722462183;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PVcOW0F31P5btkB2U94IntsHunux8cldHR5tp2dBkfU=;
-        b=aoKNnPQk9X+ECUCK1xOF46X6B09YVaQS0OFydCa0OQzYjVW8QVaIM4FCXoszlyOoun
-         Ovsay6m0KQ8FYt2F8kV5C/8HPed7TixcrWnJ9CfyLtITfeS/gQXh4tLQo48S/R13Mf1L
-         gL7UD6C9YjS46TFi3rxPItJBHxj8lHCs5E+Ihvx1qos0FzlSz5tkByv9pJNdokV/m7hf
-         jTFK16v9UcDXFZ5Q+RC1HKd1NHD0rpsawVfkow6Wz8Qn9scqn4JqNTE+NgvEVI/yLNEo
-         CRD9eZcVlfmdizUMKPFbMFDRU9QlETxkkAvMC7Omeej3hzJNbO+jBk5ZCtegsxv1d0Fo
-         WsGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXkcfMsOMo2aJ7Hg5tDQw8OhfKyc6Q7+S97H21sNry1ZDyBjT6Tw+O9OOJUo9kePHhYsqltX4IyXC0iLgEC12ykHJU3tsl4VuLttCoq
-X-Gm-Message-State: AOJu0YyokhEm2peqLhHi0+Vc5X1NzJCU+SQ/BASrZ/J3hMz/yIcM8oUa
-	/r3rhK5JVBt6hxxcgrR5HD6nutc0QEw/lZRbaph0jP14kyWwltxl0Fu1rt4R9Jv++92ujVTxEtN
-	Q
-X-Google-Smtp-Source: AGHT+IFVM1Nkj2yYiNbf9q5q1cpfowyG3cIYVGgomj/kaPJhDFTuPBpzG2oJBpqSohsBTOMNFw8Xuw==
-X-Received: by 2002:a17:906:26d2:b0:a7a:8cb9:7491 with SMTP id a640c23a62f3a-a7ac503439emr44164966b.54.1721857382590;
-        Wed, 24 Jul 2024 14:43:02 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad414e2sm1071666b.127.2024.07.24.14.43.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Jul 2024 14:43:02 -0700 (PDT)
-Message-ID: <835d7a84-aa37-43da-a4e7-ef52d8642357@linaro.org>
-Date: Wed, 24 Jul 2024 23:42:59 +0200
+	s=arc-20240116; t=1721857929; c=relaxed/simple;
+	bh=oEOmOlfz6CpQP8CwygJ/qQgE6bITPukNt50FQUhP2N8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B+5Eo0naXUmTFD2BQFZmAxzChbEjegxz3ebTOGW/UQyTx9Mldki9d+ktplyDmfHlCPrdTIO8dF1QE63PshyoNn2uJd3CbIbpnw0Edg3I+2uggHbX5mKFtny0VB2VsdIWD9cETvBMpGmIGBCvVX1pibZpJ9N2OfoGvMEccFDcV6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=f690Mp/H; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1721857924; x=1722117124;
+	bh=9wT9nGk/Kl4gZK0Tax5hk03ECjrHn3Gb2YCLJm9dH3M=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=f690Mp/HqT5J3u5HaDV08jrxv8C/kMBNcWHBh51benkj26V9zDr5FEZIi8Er6gOW0
+	 aVbQSNlkLGegZu9RoGuv+hosNnTKiENbyC/js6rE5aWJYtAD2hg6pD5BRhC+M+mZBE
+	 mRWhmSXDgbEeN0dal1v/tiEr9hbvgOdVW1c28qYy8prkG03iYTHn+QA+EnM+aELZp1
+	 aSg0Cbdae0xTP5/peyYM97iutSGteAU6l1Efc97G7R3toarBivkNrx/1vjlunbeXBT
+	 eCK2g4/jHZ0ojc8MHz2ap1jfeqglC+drOxqzOgTp9kOGBW1VesIsVYwqEVCV6XSwfT
+	 dzJYzhoCTIzAg==
+Date: Wed, 24 Jul 2024 21:51:57 +0000
+To: Miguel Ojeda <ojeda@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Masahiro Yamada <masahiroy@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, patches@lists.linux.dev, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v2 0/6] Rust: support `CPU_MITIGATIONS` and enable `objtool`
+Message-ID: <e51f3b91-690d-4b72-9841-75a61684777d@proton.me>
+In-Reply-To: <20240724161501.1319115-1-ojeda@kernel.org>
+References: <20240724161501.1319115-1-ojeda@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 6af68a83f926bf6d26972ff1532292b9d003c3a4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: msm8916-samsung-fortuna: Add touch keys
-To: Raymond Hackley <raymondhackley@protonmail.com>,
- linux-kernel@vger.kernel.org
-Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>,
- Nikita Travkin <nikita@trvn.ru>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, phone-devel@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht
-References: <20240724143230.3804-1-raymondhackley@protonmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240724143230.3804-1-raymondhackley@protonmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 24.07.2024 4:32 PM, Raymond Hackley wrote:
-> Touch keys feature on fortuna phones are provided by Zinitix touchscreen.
-> Add property linux,keycodes to enable touch keys.
-> 
-> Signed-off-by: Raymond Hackley <raymondhackley@protonmail.com>
-> ---
+On 24.07.24 18:14, Miguel Ojeda wrote:
+> Hi,
+>=20
+> This is an updated series to the CPU mitigations support for Rust. It
+> also has the patch to enable `objtool`, so that we can start running it
+> for Rust.
+>=20
+> It would be nice to get this applied soon, so that we start being
+> warning-free (since we already get warnings under IBT builds via
+> `vmlinux.o`). I am happy to take it through the Rust tree if the x86 and
+> objtool maintainers give an Acked-by, or through any of the other trees,
+> as you prefer. Otherwise, I think at this point we would need to make
+> Rust exclusive to the mitigations, which isn't great.
+>=20
+> With this series, again, x86_64 is warning-free with `objtool` enabled. I
+> tested `-O2`/`-Os` and the Rust versions we support under `-O2` (mainly
+> for the `noreturn` patch, which uses heuristics), as well as IBT vs. no
+> IBT (i.e.  running on individual object files vs. in `vmlinux`). I also
+> did an arm64 build.
+>=20
+> Testing is very welcome for this one!
+>=20
+> Cheers,
+> Miguel
+>=20
+> v2:
+>   - Add patch to enable `objtool` for Rust.
+>=20
+>   - Add patch to list `noreturn` Rust functions (via heuristics) to avoid
+>     warnings related to that.
+>=20
+>   - Make the `RETHUNK` patch not an RFC since the Rust compiler has
+>   support for
+>     it now.
+>=20
+>   - Update the names of the migitation config symbols, given the changes
+>   at e.g.
+>     commit 7b75782ffd82 ("x86/bugs: Rename CONFIG_MITIGATION_SLS =3D>
+>     CONFIG_MITIGATION_SLS").
+>=20
+> Miguel Ojeda (6):
+>   rust: module: add static pointer to `{init,cleanup}_module()`
+>   x86/rust: support MITIGATION_RETPOLINE
+>   x86/rust: support MITIGATION_RETHUNK
+>   x86/rust: support MITIGATION_SLS
+>   objtool: list `noreturn` Rust functions
+>   objtool/kbuild/rust: enable objtool for Rust
+>=20
+>  arch/x86/Makefile               |  7 ++++++-
+>  rust/Makefile                   | 22 ++++++++++++--------
+>  rust/macros/module.rs           | 12 +++++++++++
+>  scripts/Makefile.build          |  9 +++++++--
+>  scripts/generate_rust_target.rs | 15 ++++++++++++++
+>  tools/objtool/check.c           | 36 ++++++++++++++++++++++++++++++++-
+>  tools/objtool/noreturns.h       |  2 ++
+>  7 files changed, 91 insertions(+), 12 deletions(-)
+>=20
+>=20
+> base-commit: b1263411112305acf2af728728591465becb45b0
+> --
+> 2.45.2
+>=20
 
-please bump the revision (v1 -> v2) when changing the commit
-message and keep a link to the previous one & a changelog under
-the --- line
+I tested this series with a config that produces the objtool warnings on
+b126341 and it worked flawlessly. I also tried `-O2` and `-Os`:
 
-in this instance, don't bother as it's a simple change and it
-looks good now
+Tested-by: Benno Lossin <benno.lossin@proton.me>
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+---
+Cheers,
+Benno
 
-Konrad
 
