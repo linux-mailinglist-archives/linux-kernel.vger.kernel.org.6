@@ -1,76 +1,53 @@
-Return-Path: <linux-kernel+bounces-261019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09ACB93B1A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:30:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D8C993B1A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:31:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 896A9B22E14
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:30:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0826A281E96
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A73C8152511;
-	Wed, 24 Jul 2024 13:30:36 +0000 (UTC)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FA08158D6D;
+	Wed, 24 Jul 2024 13:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DQoBhuq6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA785C99;
-	Wed, 24 Jul 2024 13:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D8B5C99;
+	Wed, 24 Jul 2024 13:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721827836; cv=none; b=UAMto8NSMCnSZ5mMvBDhGGkR97wJ6KxBdIUQwzd2Hh+naPxVTF6n+jo/0tXR8rwGHawc1AnB/huNLs5Dekg7ZYqusC+1U5ZUcgBzAXjsiXjY0pqRMCo6kmPFGA+/1BpwhzDzsdajpiGGugok+EfGuRED5ETLA6S7BIJj97iZhJE=
+	t=1721827886; cv=none; b=HN8ylyRmGUsEjbO3GT5MhaAr8bzDyp6emLXTBtnAy4ejGTmetSI1FTlIRQfkbqqLC0IEyQE8NV/tW0GM+zNpsd6HqQkW2g0N8AhUYF4zWd8lNsmduRHnTMHTa1xgyO+MAgxMUOULcZzKWyhZwBCYsz11va2BylkwWsuLlSpPnWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721827836; c=relaxed/simple;
-	bh=rXsBJiN7JR7yUyOKBqNLjwF/QSh5GPtuP8ZsHje30Uo=;
+	s=arc-20240116; t=1721827886; c=relaxed/simple;
+	bh=0HL4WVSHtRXn+vpGOcPrYw57HxjrdAloUVqOke83U7Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hj+q6ugy5Ao2C41z84Bg8vleHHxJVMmSZZOEC5ldtuEPvVZZ/QG+YJfkR1zrZFOW2m6yH+AGdyqAB84TcZnI/umUhKJ+Ph8mBHs1+s0++1oKJjLrXaAKcfoBDjZDuGEu3EZL4xLNm9Uf0LEloo08dIPUgcX6elValunntg5Xhdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a309d1a788so6096401a12.3;
-        Wed, 24 Jul 2024 06:30:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721827833; x=1722432633;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qZqRrIuM9jE9sF0gmCACn7o6Ts+S3Lj7/WvAOaIfhx0=;
-        b=HHlaGhq7LKbcyCYd8BfXQILjUn3guegTYUn8jvEERTBuei+gHGFGNdVt88TB3V8Dq8
-         io5UhmEN4VEMiQSGsjOSIjN0STN7vaIqyjKgj07woG/ExaADmXAvu7TdPKb0cbPEqoGr
-         fBM5Y2IPW1dEmqz8lBtceMSis2HgTtQqzV3vExq2q4t8tbEZeCEdZWL+W0QO8l9LBabO
-         LNy9MN1JdMhPLqAzHMtJbiuEYpJo04keDSjEpFiX8Vhv8QQpksr/78yAwnbkxUw83O7Z
-         LO9k2ayTx8nA/Tb5CVJQU4jQVvdgVVC3j3liWZVJ2MXnfZmncqQOJH7LSVBa+WvtFa/B
-         708Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWcRqDPXM6YNlxrQYrl7iIPZnR5AUivVuDiK5u3tTaX7cHr7j1yQ2UnxT8tYUYXtC8NRjgO1tz9kNsjMIOdZp4GHuu6n9fpb64jL2A0KNjll52iy2+1aNT0H8/XL0PwoB5B
-X-Gm-Message-State: AOJu0YwjfB2EH7FurUogRUILJsJW9BIAwnr8CtkbrvTJZtcbv7B1vNGQ
-	e69YePQOVrcbo4cRxsPKuDWwPIwyd896y5r6aO72KOvpZocsUrHN
-X-Google-Smtp-Source: AGHT+IH1eRhxJ8k1lt96LMBBzvoc8qe1HGKcJcrdY9KgXHQyocvyCfM23qmOi7h6h6e/6LONWHtYgw==
-X-Received: by 2002:a05:6402:3510:b0:5a1:7d68:62d8 with SMTP id 4fb4d7f45d1cf-5ab3401ea05mr1125780a12.38.1721827832682;
-        Wed, 24 Jul 2024 06:30:32 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-001.fbsv.net. [2a03:2880:30ff:1::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5a69c1f56a0sm5309602a12.64.2024.07.24.06.30.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 06:30:32 -0700 (PDT)
-Date: Wed, 24 Jul 2024 06:30:29 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Waiman Long <longman@redhat.com>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>, rcu@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Vratislav Bendel <vbendel@redhat.com>
-Subject: Re: [PATCH] rcu: Use system_unbound_wq to avoid disturbing isolated
- CPUs
-Message-ID: <ZqEB9Yz0womtmDRg@gmail.com>
-References: <20240723181025.187413-1-longman@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HJDmjTWSkL0RXQPgbhKWAljd5W0rIXuhZdufL02i2mzkxlLK1xrD/eKIpp1KlvI/NKbm0blad3NH62bPHPFzPApakrk4/VLoo6y3kAyEnxzIvE9MeEQpKjBO335U18iPXSOgx+UVLXLFep9qDWkxadH9rh84bfvXdCb9oc6MTb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DQoBhuq6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5CEBC32782;
+	Wed, 24 Jul 2024 13:31:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1721827885;
+	bh=0HL4WVSHtRXn+vpGOcPrYw57HxjrdAloUVqOke83U7Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DQoBhuq67hnF+ID50fkAl6Wax1FYuJNXFzM1ra6Ly7sthRTt4BE/+hN1jDlBJmc6N
+	 EUBVkQ2dUZONs+WXgLp3PQcvRGdXuDa2vXVAFS7vm6Hr+MKmirn5aq9p9D8vxhczCU
+	 6lUQNrdIhsrDkS++oOn/YkR0FM8ng7ud18xLuk8k=
+Date: Wed, 24 Jul 2024 15:31:21 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: kristo@kernel.org, bp@alien8.de, tony.luck@intel.com,
+	james.morse@arm.com, mchehab@kernel.org, rric@kernel.org,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 RESEND] EDAC/ti: Fix possible null pointer dereference
+ in _emif_get_id()
+Message-ID: <2024072407-census-mahogany-5831@gregkh>
+References: <20240724071042.1493917-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,30 +56,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240723181025.187413-1-longman@redhat.com>
+In-Reply-To: <20240724071042.1493917-1-make24@iscas.ac.cn>
 
-On Tue, Jul 23, 2024 at 02:10:25PM -0400, Waiman Long wrote:
-> It was discovered that isolated CPUs could sometimes be disturbed by
-> kworkers processing kfree_rcu() works causing higher than expected
-> latency. It is because the RCU core uses "system_wq" which doesn't have
-> the WQ_UNBOUND flag to handle all its work items. Fix this violation of
-> latency limits by using "system_unbound_wq" in the RCU core instead.
-> This will ensure that those work items will not be run on CPUs marked
-> as isolated.
+On Wed, Jul 24, 2024 at 03:10:42PM +0800, Ma Ke wrote:
+> In _emif_get_id(), of_get_address() may return NULL which is later
+> dereferenced. Fix this bug by adding NULL check.
 > 
-> Beside the WQ_UNBOUND flag, the other major difference between system_wq
-> and system_unbound_wq is their max_active count. The system_unbound_wq
-> has a max_active of WQ_MAX_ACTIVE (512) while system_wq's max_active
-> is WQ_DFL_ACTIVE (256) which is half of WQ_MAX_ACTIVE.
+> Cc: stable@vger.kernel.org
+> Fixes: 86a18ee21e5e ("EDAC, ti: Add support for TI keystone and DRA7xx EDAC")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+> Changes in v2:
+> - added Cc stable line.
+> ---
+>  drivers/edac/ti_edac.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> Reported-by: Vratislav Bendel <vbendel@redhat.com>
+> diff --git a/drivers/edac/ti_edac.c b/drivers/edac/ti_edac.c
+> index 29723c9592f7..db23887b2d81 100644
+> --- a/drivers/edac/ti_edac.c
+> +++ b/drivers/edac/ti_edac.c
+> @@ -207,6 +207,9 @@ static int _emif_get_id(struct device_node *node)
+>  	int my_id = 0;
+>  
+>  	addrp = of_get_address(node, 0, NULL, NULL);
+> +	if (!addrp)
+> +		return -EINVAL;
+> +
 
-I've seen this problem a while ago and reported to the list:
+How was this found?
 
-	https://lore.kernel.org/all/Zp906X7VJGNKl5fW@gmail.com/
+How was this tested?
 
-I've just applied this test, and run my workload for 2 hours without
-hitting this issue. Thanks for solving it.
+thanks,
 
-Tested-by: Breno Leitao <leitao@debian.org>
+greg k-h
 
