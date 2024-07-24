@@ -1,298 +1,121 @@
-Return-Path: <linux-kernel+bounces-260897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1156093AFF3
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:45:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4051993AFFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 12:52:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76DB1B21AD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:45:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 712691C21DC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B437156898;
-	Wed, 24 Jul 2024 10:44:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76AC3156899;
+	Wed, 24 Jul 2024 10:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="lrv574tR"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cm9Ue3O1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8059817C6A;
-	Wed, 24 Jul 2024 10:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B253155757
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 10:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721817892; cv=none; b=J0lkt9uebRn2x2k4QEl7vy6rMwSBAV3YO77+6lynOO1J97LO7lwHIN9buyknXFN6vNj7iWHYgUIgl6rNpW3j6snT4Qs/mJgc8f2kbS9UvUGkl5uWQu8de7jfl5NNfegVdFNSsA77p1gtFhGvayvJqwHNsTH2y+SwSbgYuVXNacY=
+	t=1721818324; cv=none; b=RvVU5r7/hJogdU760VPJPCUTf9OlGogpm2Yt27BmKmyWztb1/JCwCLjC9lTEVPciqF5jjk4lcnoqf1nDTFXcjtdm9XwV0Cio3FFPWNp0IBRVHVBhvlJD+zlF+LjmVIhbv+ok0WVXJdeTDN3C28TNqyAj3fyZF4c9LQoai7RfrWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721817892; c=relaxed/simple;
-	bh=aGxT0r4whNVWcuHx9lQ2vuj04q4n7D2hOtv6taXJucI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bYVClg6gMSPcIstO6XDHO1SdkvMZnVHlxjZFgXYbbTJgFjgKsaTkbYxctFzJTNT67/3XddZAmhpx4JtD3T7xE/mdfhpKVCwtehElxMx472hoX74NKbLxlNGIGqcxWmOou8aU8SiCSIOSvqPTuA9loS85Vi3mSBvEl6t5CTo7DaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=lrv574tR; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721817888;
-	bh=aGxT0r4whNVWcuHx9lQ2vuj04q4n7D2hOtv6taXJucI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lrv574tRvabtWKZKfQNcFiCNLJxs/HH3Hrr4Y9ojqdGAMtSbtl3JuQZjfb52zDZ1k
-	 ygxXSnyKn9W21qdJ/ftRDm1JLilPWx8HmV/+yoNMcEdECQAh6m4epwGVJ5YnknJ5Cd
-	 Cb1YkPVBpuAJkL1ZrJp50hic3XVcs0bhuNvvwE1kjykRNuXiCWYo4ws4CQcPBDrc3l
-	 MOMMldZes1fJxHYFnymihWdt4tCEsose2J3+uvWKBBiPuEkkqKkiU+r0KkF+muYWmW
-	 ADoesySsLlevWaR6Y2s8O/d8gXpwnKpaEsnLLTCjJfc1N3voOab/M5IZqccuXrDCzk
-	 oqqqHpDZOU3Kg==
-Received: from localhost (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C3BD937811D1;
-	Wed, 24 Jul 2024 10:44:47 +0000 (UTC)
-Date: Wed, 24 Jul 2024 12:44:46 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Steven Price <steven.price@arm.com>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>, Wedson Almeida Filho
- <wedsonaf@gmail.com>, ojeda@kernel.org, Danilo Krummrich <dakr@redhat.com>,
- lyude@redhat.com, robh@kernel.org, lina@asahilina.net, mcanal@igalia.com,
- airlied@gmail.com, rust-for-linux@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] drm: panthor: add dev_coredumpv support
-Message-ID: <20240724124446.11b23885@collabora.com>
-In-Reply-To: <6ce8fd12-b175-4a8f-8ea9-6221a555b69c@arm.com>
-References: <20240710225011.275153-1-daniel.almeida@collabora.com>
-	<fe84a028-01a8-4987-b1b7-141fb76d263c@arm.com>
-	<4344B22F-D859-4C64-A351-69FFB5208362@collabora.com>
-	<edda856e-3102-495a-8cc6-b79f5f114833@arm.com>
-	<20240723180642.73502856@collabora.com>
-	<6ce8fd12-b175-4a8f-8ea9-6221a555b69c@arm.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1721818324; c=relaxed/simple;
+	bh=NbHJh6RRHy684SrYZUNu5LAFgHVtJvGwtoD+uECKw/c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qCZxFdDvHM8KqyryBeuw/3QTD8Wbxwv7ZkkOJpfWRAhpwvez4RhrwXcMNGEwFS1H47ZaYxHpytNvsjdnPxmhGs11OBW7pgLkmYmENAtIXMWA7H+Q8PhC0xmCb0gPfm6xqiFxHee12kOurA4KbtHZ5GVwU1Gk/1kcTsI6NHAmdS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cm9Ue3O1; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721818321;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xn9TfjA6NiXJtkfI9W0qDv8xc0kKr5AGDpzztiNdZF8=;
+	b=Cm9Ue3O1PZi7FVQDAqTcjthj7uB19RpvfOtxHthLEn6DeYgMCdU8Nj6skKIqnBzNtPM9Re
+	7eZQHaa+WgHJuAu0ZOdJCXVblcqMrYpVD2qeOynbVL9UCN0wVqZJ6pUFh98QkmsSFDHtxy
+	B4QvLC/q+D0CSQyriMHVTMymIIEyicQ=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-507-owcGAc7WMsCQiRxe8Ij1Qw-1; Wed, 24 Jul 2024 06:45:18 -0400
+X-MC-Unique: owcGAc7WMsCQiRxe8Ij1Qw-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-36831948d94so3703560f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 03:45:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721817917; x=1722422717;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xn9TfjA6NiXJtkfI9W0qDv8xc0kKr5AGDpzztiNdZF8=;
+        b=MWE7IrYtDt7HLdH9iRUwcKsKQBQGSlPgw5A2JWmd5ISNBho3N35lelXLeV4cq7LVnI
+         BupxRVWnXi3T61pbghKDFvdyzKmpBXdVdVhwyHZ6bbzrCmGC3T/HdUNWQaE0wFr2U4O/
+         uZ2KVY4un6/eymOfFEbXtnb5/zAPYxfdkoBp7mq/kFywDTZjU4xGGAgczlwqQZQIX3iK
+         uU68npmhK8tdhho7qQ/cuHj07kjIITO0qsGTmCh1r/zzj6psMQdqLKUxb2tOx9E+35ZE
+         hDkmnTMr4cQyxwlVMQLfstnnUaXC0Z98a4EVb/o9ZK2RnabXHjFdC26ELDoM6QPCF7PS
+         SeAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWo4bzOJN81d62Ulm40l2J2TsEKPsVf2Qn++5CyplQ44a/tCinESojA1AyVuWfbvcXaWiKvEQkmUNHjwCRYhtKymGb9mbcwi4EcBuva
+X-Gm-Message-State: AOJu0YxX1Jywljm+5JT7W7BgCAKzcYxAyGscvqusT6LK4xDSL85W1Q1P
+	AHtvGcsgEO5w9pDBBi8MZpBiE+5frMf+/Y7WSTsGRO0jFbJxGLDCMiIm+glSDOzcFfR0HdUS0Qi
+	4uFaUU/7B0lAftGSJ0KRXsV8AXR1PbKv9SUgYW6g7rsbxyoNkK1JojDUTeA+mIGfCmZQeTQ==
+X-Received: by 2002:adf:eb82:0:b0:367:8a3e:c127 with SMTP id ffacd0b85a97d-369f5bb57ddmr1076830f8f.63.1721817917282;
+        Wed, 24 Jul 2024 03:45:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEeiMpsWcqeCFCR3YjRVhYw58gnKNcIGwvJmtVpjFuFH/aFmGbZKpc7S+Um/rqoZCaNJ3M9OQ==
+X-Received: by 2002:adf:eb82:0:b0:367:8a3e:c127 with SMTP id ffacd0b85a97d-369f5bb57ddmr1076804f8f.63.1721817916632;
+        Wed, 24 Jul 2024 03:45:16 -0700 (PDT)
+Received: from redhat.com ([2a02:14f:1f4:6083:a67a:e8a9:2855:2683])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-368787ed580sm13850744f8f.112.2024.07.24.03.45.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 03:45:16 -0700 (PDT)
+Date: Wed, 24 Jul 2024 06:45:12 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Zhu Jun <zhujun2@cmss.chinamobile.com>
+Cc: jasowang@redhat.com, xuanzhuo@linux.alibaba.com, eperezma@redhat.com,
+	virtualization@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tools/virtio:Fix the wrong format specifier
+Message-ID: <20240724064459-mutt-send-email-mst@kernel.org>
+References: <20240724074108.9530-1-zhujun2@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240724074108.9530-1-zhujun2@cmss.chinamobile.com>
 
-Hi Steve,
-
-On Wed, 24 Jul 2024 09:59:36 +0100
-Steven Price <steven.price@arm.com> wrote:
-
-> Hi Boris,
+On Wed, Jul 24, 2024 at 12:41:08AM -0700, Zhu Jun wrote:
+> The unsigned int should use "%u" instead of "%d".
 > 
-> On 23/07/2024 17:06, Boris Brezillon wrote:
-> > Hi Steve,
-> > 
-> > On Mon, 15 Jul 2024 10:12:16 +0100
-> > Steven Price <steven.price@arm.com> wrote:
-> >   
-> >> I note it also shows that the "panthor_regs.rs" would ideally be shared.
-> >> For arm64 we have been moving to generating system register descriptions
-> >> from a text source (see arch/arm64/tools/sysreg) - I'm wondering whether
-> >> something similar is needed for Panthor to generate both C and Rust
-> >> headers? Although perhaps that's overkill, sysregs are certainly
-> >> somewhat more complex.  
-> > 
-> > Just had a long discussion with Daniel regarding this panthor_regs.rs
-> > auto-generation, and, while I agree this is something we'd rather do if
-> > we intend to maintain the C and rust code base forever, I'm not
-> > entirely convinced this is super useful here because:  
+> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
+
+which matters why?
+
+> ---
+>  tools/virtio/ringtest/main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> So I think we need some more alignment on how the 'Rustification'
-> (oxidation?) of the driver is going to happen.
+> diff --git a/tools/virtio/ringtest/main.c b/tools/virtio/ringtest/main.c
+> index 5a18b2301a63..e471d8e7cfaa 100644
+> --- a/tools/virtio/ringtest/main.c
+> +++ b/tools/virtio/ringtest/main.c
+> @@ -276,7 +276,7 @@ static void help(void)
+>  	fprintf(stderr, "Usage: <test> [--help]"
+>  		" [--host-affinity H]"
+>  		" [--guest-affinity G]"
+> -		" [--ring-size R (default: %d)]"
+> +		" [--ring-size R (default: %u)]"
+>  		" [--run-cycles C (default: %d)]"
+>  		" [--batch b]"
+>  		" [--outstanding o]"
+> -- 
+> 2.17.1
 > 
-> My understanding was that the intention was to effectively start a
-> completely separate driver (I call it "Rustthor" here) with the view
-> that it would eventually replace (the C) Panthor. Rustthor would be
-> written by taking the C driver and incrementally converting parts to
-> Rust, but as a separate code base so that 'global' refactoring can be
-> done when necessary without risking the stability of Panthor. Then once
-> Rustthor is feature complete the Panthor driver can be dropped.
-> Obviously we'd keep the UABI the same to avoid user space having to care.
-
-That's indeed what we landed on initially, but my lack of rust
-experience put me in a position where I can't really challenge these
-decisions, which is the very reason we have Daniel working on it :-). I
-must admit his argument of implementing new features in rust and
-progressively converting the other bits is appealing, because this
-reduces the scope of testing for each component conversion...
-
 > 
-> I may have got the wrong impression - and I'm certainly not saying the
-> above is how we have to do it. But I think we need to go into it with
-> open-eyes if we're proposing a creeping Rust implementation upstream of
-> the main Mali driver. That approach will make ensuring stability harder
-> and will make the bar for implementing large refactors higher (we'd need
-> significantly more review and testing for each change to ensure there
-> are no regressions).
-
-... at the risk of breaking the existing driver, that's true. My hope
-was that, by the time we start converting panthor components to rust,
-the testing infrastructure (mesa CI, for the open source driver) would
-be mature enough to catch regressions. But again, I wouldn't trust my
-judgment on anything rust related, so if other experienced rust
-developers think having a mixed rust/c driver is a bad idea (like Sima
-seemed to imply in her reply to Daniel), then I'll just defer to their
-judgment.
-
-> 
-> > 1. the C code base is meant to be entirely replaced by a rust driver.
-> > Of course, that's not going to happen overnight, so maybe it'd be worth
-> > having this autogen script but...  
-> 
-> Just to put my cards on the table. I'm not completely convinced a Rust
-> driver is necessarily an improvement, and I saw this as more of an
-> experiment - let's see what a Rust driver looks like and then we can
-> decide which is preferable. I'd like to be "proved wrong" and be shown a
-> Rust driver which is much cleaner and easier to work with, but I still
-> need convincing ;)
-
-Okay, I was more in the mood of "when will this happen?" rather than
-"will this ever be a viable option?" :-). At this point, there seems
-to be enough traction from various parties to think DRM/rust will be a
-thing and in not a such distant future actually. But yeah, I get your
-point.
-
-> 
-> > 2. the set of register and register fields seems to be pretty stable.
-> > We might have a few things to update to support v11, v12, etc, but it
-> > doesn't look like the layout will suddenly become completely different.  
-> 
-> Yes, if we ever had a major change to registers we'd probably also want
-> a new driver.
-> 
-> > 3. the number of registers and fields is somewhat reasonable, which
-> > means we should be able to catch mistakes during review. And in case
-> > one slip through, it's not the end of the world either because this
-> > stays internal to the kernel driver. We'll either figure it out when
-> > rust-ifying panthor components, or that simply means the register is
-> > not used and the mistake is harmless until the register starts being
-> > used  
-> 
-> So I think this depends on whether we want a "complete" set of registers
-> in Rust. If we're just going to add registers when needed then fair
-> enough, we can review the new registers against the C header (and/or the
-> specs) to check they look correct. I'd really prefer not to merge a load
-> of wrong Rust code which isn't used.
-
-Totally agree with that.
-
-> 
-> > 4. we're still unclear on how GPU registers should be exposed in rust,
-> > so any script we develop is likely to require heavy changes every time
-> > we change our mind  
-> 
-> This is the real crux of the matter to my mind. We don't actually know
-> what we want in Rust, so we can't write the Rust. At the moment Daniel
-> has generated (broken) Rust from the C. The benefit of that is that the
-> script can be tweaked to generate a different form in the future if needed.
-
-Well, the scope of devcoredump is pretty clear: there's a set of
-GPU/FW register values we need to properly decode a coredump (ringbuf
-address, GPU ID, FW version, ...). I think this should be a starting
-point for the rust GPU/FW abstraction. If we start from the other end
-(C definitions which we try to convert to rust the way they were used
-in C), we're likely to make a wrong choice, and later realize we need
-to redo everything.
-
-This is the very reason I think we should focus on the feature we want
-to implement in rust, come up with a PoC that has some reg values
-manually defined, and then, if we see a need in sharing a common
-register/field definition, develop a script/use a descriptive format
-for those. Otherwise we're just spending time on a script that's going
-to change a hundred times before we get to the rust abstraction we
-agree on.
-
-> 
-> Having a better source format such that the auto-generation can produce
-> correct headers means that the Rust representation can change over time.
-> There's even the possibility of improving the C. Specifically if the
-> constants for the register values were specified better they could be
-> type checked to ensure they are used with the correct register - I see
-> Daniel has thought about this for Rust, it's also possible in C
-> (although admittedly somewhat clunky).
-
-If that's something we're interested in, I'd rather see a script to
-generate the C definitions, since that part is not a moving target
-anymore (or at least more stable than it was a year ago). Just to be
-clear, I'm not opposed to that, I just think the time spent developing
-such a script when the number of regs is small/stable is not worth it,
-but if someone else is willing to spend that time, I'm happy to
-ack/merge the changes :-).
-
-> 
-> > For all these reasons, I think I'd prefer to have Daniel focus on a
-> > proper rust abstraction to expose GPU registers and fields the rust-way,
-> > rather than have him spend days/weeks on a script that is likely to be
-> > used a couple times (if not less) before the driver is entirely
-> > rewritten in rust. I guess the only interesting aspect remaining after
-> > the conversion is done is conciseness of register definitions if we
-> > were using some sort of descriptive format that gets converted to rust
-> > code, but it comes at the cost of maintaining this script. I'd probably
-> > have a completely different opinion if the Mali register layout was a
-> > moving target, but it doesn't seem to be the case.  
-> 
-> That's fine - but if we're not generating the register definitions, then
-> the Rust files need to be hand modified. I.e. fine to start with a quick
-> hack of generating the skeleton (once), but then we (all) throw away the
-> script and review it like a hand-written file. What Daniel posted as
-> obviously machine generated as it had been confused by the (ambiguous) C
-> file.
-
-Yeah, I wasn't even considering auto-generating the panthor_regs.rs
-file in the first place. More of a hand-write every reg/field accessor
-you need for the coredump feature, and extend it as new features
-are added/components are converted. Once the interface is stable, we
-can consider having a script that takes care of the C/rust autogen, but
-when you get to this point, I'm not even sure it's useful, because you
-almost sure you got things right by testing the implementation.
-
-> 
-> But to me this conflicts with the statement that "we're still unclear on
-> how GPU registers should be exposed in rust" - which implies that a
-> script could be useful to make the future refactors easier.
-
-Unless modifying the script becomes more painful than manually
-refactoring the rs file directly :-).
-
-> 
-> > FYI, Daniel has a python script parsing panthor_regs.h and generating
-> > panthor_regs.rs out of it which he can share if you're interested.  
-> 
-> Thanks for sharing this Daniel. I think this demonstrates that the C
-> source (at least as it currently stands) isn't a great input format.
-
-I couldn't agree more.
-
-> AFAICT we have two options:
-> 
-> a) Improve the import format: either fix the C source to make it easier
-> to parse, or better introduce a new format which can generate both Rust
-> and C. Something along the lines of the arm64 sysreg format.
-
-If we go for autogen, I definitely prefer the second option.
-
-> 
-> b) Don't generate either the C or Rust headers. Hand-write the Rust so
-> that it's idiomatic (and correct!). The review of the Rust headers will
-> need to be more careful, but is probably quicker than reviewing/agreeing
-> on a script. The major downside is if the Rust side is going to be
-> refactored (possibly multiple times) as the changes could be a pain to
-> review.
-
-Could be, but if we're exposing a minimal amount of regs/fields until
-we agree on the most appropriate abstraction, the refactoring shouldn't
-be that painful.
-
-> 
-> I really don't mind which, but I do mind if we don't pick an option ;)
-
-Yeah, I agree.
-
-Thanks for valuable your feedback.
-
-Boris
 
 
