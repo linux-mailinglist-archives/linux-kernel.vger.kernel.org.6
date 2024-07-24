@@ -1,217 +1,163 @@
-Return-Path: <linux-kernel+bounces-261062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 010A293B27E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:12:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23E6293B27F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 16:13:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9579285361
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:12:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC7CDB22F49
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 14:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EFB115A84D;
-	Wed, 24 Jul 2024 14:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE31159209;
+	Wed, 24 Jul 2024 14:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XYGJd4Mw"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N9XAcHWQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1528A613D;
-	Wed, 24 Jul 2024 14:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A87613D
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 14:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721830313; cv=none; b=iF0ROX+ZoiXBNUXo6Ba4GR6zCU7263721jE3jUhoqnBFf1tFZc1h7iIF0dv9EvY2Roy2+blMF+D1xn/gAGtR+IzFA7hFoAEoWLOBdYGe9fS9d27FtTRnU4pyLTysT45oWL9rJGygEIrPFEp1lprk1hqTRgoWNzpz3SduIe0EQX0=
+	t=1721830404; cv=none; b=uZkLlsaVJNgUCaia0/h4sic8/uYX7/eMFRrJokpH58raSLe/09fIcBy7et7XbY6Pu4BFkm9GAiuXUsb4G7dDC5Xr7olDlkWoLhP+JUMu0BF8ajkiU7hhDwLK2Zp1fsbKZKNgegassGRQ0QlIW7udCGkKGtHk1WI+fO/5dtIi4bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721830313; c=relaxed/simple;
-	bh=2VH/lDRbPN4RINJJZ5hFdT7nrCTOneMqyfk6RFrnmxk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lgoo3/JnMxNTshqbxaduYG0KswXtAHk6yBTqh+KBCK96CpMvO/mvgHUwieEMwKwh7rxYQjJnmL4WSnNAsJbP8gNq86eEgHZCFd9VUN13hqTvDjejdbux7aTGEzKRhNY5jcLddABqvjG/PyeoGoAFVLPW2dejRixTaDA2HsWUk7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XYGJd4Mw; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-595856e2336so1710012a12.1;
-        Wed, 24 Jul 2024 07:11:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721830310; x=1722435110; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lgUOovEPki3yBEx+HU/YvZISoKa1Q0srqrZyf9xBznA=;
-        b=XYGJd4MwHTywVVp5oBH5bu9spsUAnyZ/+z/oKlLODDDYYF4jgqpGMBbuYUFm3JBMYS
-         ZV3WcaXSMqY2ZiTCJhH65MGWnci/GTJNFPtK54l0s8azXmxDNi2Y168cKO7B8i4NeGD4
-         N7RQtXbXdAnr8b0xGf6+Aa3GHkor083omgSYeIOq4Jgl7hTtmwnoJ26YfRAcQoiDXUXS
-         PFEEXRZgZSp7LfRTV2rt6JzW9Yku8TiF02f0vvPgdORWtVd+ftmSTl5LJv3sFHtoxqbx
-         ZfRqWh4i49Zw0p0iI8/f8fLmH1hAakwutKwbDplEhl88fmZ6jzmU+jd7Y+sEOCaGaYbB
-         O3QA==
+	s=arc-20240116; t=1721830404; c=relaxed/simple;
+	bh=axOhgSN/h+4s8YNx3dU9fmqJiAgRy4X4sKYS4LwPnjc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t0rPFuXDv+HTAdj0YMrS44MGcTsrbWAYbMa2zaVCfxVwgGPbTo0zxdnfv0p9SZDRXsu0JjCuxTk7hdtYEblDum7cUc8MlrJy3arpwDLu1QDoU0GH+FOJEb4Cu1fIiXnB1B6SeB5yQKaByL0EaXa0xEmSLjGRcibAsCfMApPzPqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N9XAcHWQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721830401;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+xtyyriQpPG2jOYEXncJPMO03t7UItOSKfTUpQm7Qq8=;
+	b=N9XAcHWQeo1WoaBnVA5+zaQQpwwU29ATI57hHKQXR3yv/MZMhGJpGwDsf2iPI3XA+ODUR6
+	/vPxTHG48s7EKcQlVJ6AqBf9A93PoHSjttaz7hOVD9sjbj15a7kBbkrGngelTAtlyk4lbz
+	60DH60j3B4mapzL20GEoY1BzfrMZVv8=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-343-iDdFiqMEMC6_7OD4CsuTAw-1; Wed, 24 Jul 2024 10:13:20 -0400
+X-MC-Unique: iDdFiqMEMC6_7OD4CsuTAw-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4280291f739so1061305e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 07:13:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721830310; x=1722435110;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lgUOovEPki3yBEx+HU/YvZISoKa1Q0srqrZyf9xBznA=;
-        b=sb1Jxx94I+43CwNESYbToMm3YcCf9fdUbh+7nBE7hPsqdri8H5Rx6zhINkQThIHxpG
-         bbd5ToJqYY+BQ8fpFRzOkeH0ow41GaGB1jlwO4ogpy8C7k6vz6qDFbPJPLHuSO6GC6P8
-         8l+1fP+qah4XCV2xxB10xOjSbF/35d6Dl4WwfJtCcFcnm9uGHi6vOwLSszIM3zCWimPx
-         IywRpQxNUtWNI2295sWRNynHlrZzcluIJsmfnEGGcH61SpU3AgOemOREyzHn0/b/RzHN
-         mp/cxYHX0Ai9O9j8rlCgrRBF3oLokHySRi27xNp5DZsUKQeWSY3vdPh3B7gQf5enZ5KW
-         fJ4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVDgNCrU1umi43UTA6baTrl4Dk2yGds24bxpjjrktLeEbVZjwoh2QoM8twuNjO8X7GMHsNO/JOK5sFZIeXqc7fYoySk7tD5WtJmpfJxWUg9PkNAOIOanKbmTM0ArYTvgW7D1CJ7CQb02LCFdmtN73SJPNh/LCVg2Z/Y4jmvQyacYH9zMDB461g3gVSM/nIMQnyZBm7l7Fr1ysOgw0ZwyJ7c/ngaIahlXC0yCn1T/A4oNWVQ6ECxWwziPRYToqIvrIQjCBO9js87P57mJnSzdqmswf+5sSzRLL2M0Bq9fmaUTuabejpahy+2XJbwi+cRV5LOft0UOUfam58CwIT+vR8/GAkKW0M/ZPyk/aEMFEeTfJMzxiXUFyClwnEZidCS6dyz+lCM5gxGseKIGc3H4YQtW15pk780a0nwAe5E/Nn7PClCsHKiqgZcKjrIjdt++K+wHXe+6m/3ITlfmdBqupMPZ36JohqX+HzRM6Zjiw==
-X-Gm-Message-State: AOJu0Yyg98PnVgrqEgFP+TaVBItjZhrkDJjTX6jWOmucoUd8F0FRZoQw
-	dKRHS3v9W3LtMqwUa5caIO7EmBr982dkQAXTq+NNZ3Uli+3nEksmUuT11SJe4NA/52DtUEZ654t
-	YHWZmXeZofrlFsB0TY5BefXhgw58=
-X-Google-Smtp-Source: AGHT+IG/1TrYzfuz6s4kFpxFSpAieWqNsCB9Wez//cHoFLQxMdVPOa+ue/JHVhn9Ez2PRYWu7hG701fjzbR8kwC+GR4=
-X-Received: by 2002:a05:6402:2788:b0:58c:77b4:404b with SMTP id
- 4fb4d7f45d1cf-5ab1b167270mr2342309a12.15.1721830310221; Wed, 24 Jul 2024
- 07:11:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721830399; x=1722435199;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+xtyyriQpPG2jOYEXncJPMO03t7UItOSKfTUpQm7Qq8=;
+        b=fHksPlaa+FfWhsRg9A59QdgUpDtUIn1v1DY/iosWi54VaR0BPwIjBlxUu68DVggU6j
+         swqco7uG1v5aDF+7WrAqC4afkKR+Q+3T0AkSht9osQGdNpLDwwf43WxBbDWT3TE6Zqz3
+         uw4E0bQQ17o0keCxY6Pis2NrQoVcSQgGm6JdVLelSc1aNiC/FpfIk/AoAMEWXuo7OGZr
+         HmfVn7ArGR+5z65+ENMC/G4tJccaZMsLyxJXR97uXxl2guCZQG1oTdf9O2im1K/ZUvPi
+         QlQF/c9ZWIrA7ze25Y33tDv58kZpl587EM04gb/wElE2lvAT5TyzXywgwqsRWOh3f4B9
+         ZOZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVdj7y0mR3vFuPRAcaF17KdBGawnbtJEKS1GOSK1uzDsRoN0wNLe2f+ErkDk8tVuYNjlG+07T4afDHRo/FzEbaj7TQUHZlZ0D6/u/xs
+X-Gm-Message-State: AOJu0Yx89V2A+IvrBHO6eZlVSKRfPu+71y9yV1IYv7sX7JwrQupZO3oW
+	n1snCMMXYEktXZm5AT4TiZqbna8c4o8fCsI8nERbDS0SXVCwmO8hOJHdSY8lS3X3I04/WYa9cxk
+	xJl6iYL3uX3deiimWPNBkO0J/WqIZfv+psIjNnyKUYGznIhwfRc1KZeEL4pfwpg==
+X-Received: by 2002:a05:600c:46cf:b0:426:60e4:c691 with SMTP id 5b1f17b1804b1-427f9558e51mr16010305e9.11.1721830399033;
+        Wed, 24 Jul 2024 07:13:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHxN8I+cLfhjN1Kmb+nXATIfbf4aIdralVK5ICkoeMlRtaUjf2dwOGDJhlToye6cS5E9mKx1g==
+X-Received: by 2002:a05:600c:46cf:b0:426:60e4:c691 with SMTP id 5b1f17b1804b1-427f9558e51mr16010035e9.11.1721830398604;
+        Wed, 24 Jul 2024 07:13:18 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c739:bb00:201f:378f:5564:caeb? (p200300cbc739bb00201f378f5564caeb.dip0.t-ipconnect.de. [2003:cb:c739:bb00:201f:378f:5564:caeb])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428029e32fesm4607205e9.25.2024.07.24.07.13.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Jul 2024 07:13:18 -0700 (PDT)
+Message-ID: <f82d58f6-4549-4f74-9bd1-0507d2e1afc1@redhat.com>
+Date: Wed, 24 Jul 2024 16:13:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628003253.1694510-1-almasrymina@google.com>
- <20240628003253.1694510-4-almasrymina@google.com> <CAMArcTUqqxam+BPwGExOFOLVi3t=dwA-5sSagKC5dndv07GDLQ@mail.gmail.com>
- <CAHS8izNS5jZjPfc-sARbHV7mzqzH+UhHfAtCTKRRTfSAdhY4Cw@mail.gmail.com>
- <CAMArcTUdCxOBYGF3vpbq=eBvqZfnc44KBaQTN7H-wqdUxZdziw@mail.gmail.com> <CAHS8izMTGgZ+4fOKegUDLqAoxrdVEb+nqjQEt8bP0WLBV=FfrQ@mail.gmail.com>
-In-Reply-To: <CAHS8izMTGgZ+4fOKegUDLqAoxrdVEb+nqjQEt8bP0WLBV=FfrQ@mail.gmail.com>
-From: Taehee Yoo <ap420073@gmail.com>
-Date: Wed, 24 Jul 2024 23:11:38 +0900
-Message-ID: <CAMArcTUC2q-SEcc4FP8Rnz8goroXj52FWThX4O4C2R1uPW_VHQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v15 03/14] netdev: support binding dma-buf to netdevice
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Richard Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky <ink@jurassic.park.msu.ru>, 
-	Matt Turner <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, 
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
-	Nikolay Aleksandrov <razor@blackwall.org>, Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, 
-	Shailend Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst <jeroendb@google.com>, 
-	Praveen Kaligineedi <pkaligineedi@google.com>, Willem de Bruijn <willemb@google.com>, 
-	Kaiyuan Zhang <kaiyuanz@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] memory tiering: introduce folio_use_access_time()
+ check
+To: Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-mm@kvack.org
+Cc: "Huang, Ying" <ying.huang@intel.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-kernel@vger.kernel.org
+References: <20240724130115.793641-1-ziy@nvidia.com>
+ <20240724130115.793641-3-ziy@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240724130115.793641-3-ziy@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 24, 2024 at 6:49=E2=80=AFAM Mina Almasry <almasrymina@google.co=
-m> wrote:
->
-> On Tue, Jul 9, 2024 at 8:37=E2=80=AFAM Taehee Yoo <ap420073@gmail.com> wr=
-ote:
-> ...
-> > Reproducer:
-> > ./ncdevmem -f <interface name> -l -p 5201 -v 7 -t 0 -q 2 &
-> > sleep 10
-> > modprobe -rv bnxt_en
-> > killall ncdevmem
-> >
-> > I think it's a devmemTCP core bug so this issue would be reproduced
-> > with other drivers.
->
-> Sorry for the late reply. I was out at netdev.
->
-> I'm also having trouble reproducing this, not because the bug doesn't
-> exist, but quirks with my test setup that I need to figure out. AFAICT
-> this diff should fix the issue. If you have time to confirm, let me
-> know if it doesn't work for you. It should apply on top of v16:
->
-> commit 795b8ff01906d ("fix for release issue")
-> Author: Mina Almasry <almasrymina@google.com>
-> Date:   Tue Jul 23 00:18:23 2024 +0000
->
->     fix for release issue
->
->     Change-Id: Ib45a0aa6cba2918db5f7ba535414ffa860911fa4
->
->
->
-> diff --git a/include/net/devmem.h b/include/net/devmem.h
-> index 51b25ba193c96..df52526bb516a 100644
-> --- a/include/net/devmem.h
-> +++ b/include/net/devmem.h
-> @@ -68,6 +68,9 @@ net_devmem_bind_dmabuf(struct net_device *dev,
-> unsigned int dmabuf_fd);
->  void net_devmem_unbind_dmabuf(struct net_devmem_dmabuf_binding *binding)=
-;
->  int net_devmem_bind_dmabuf_to_queue(struct net_device *dev, u32 rxq_idx,
->                                     struct net_devmem_dmabuf_binding *bin=
-ding);
-> +
-> +void dev_dmabuf_uninstall(struct net_device *dev);
-> +
->  struct net_iov *
->  net_devmem_alloc_dmabuf(struct net_devmem_dmabuf_binding *binding);
->  void net_devmem_free_dmabuf(struct net_iov *ppiov);
-> diff --git a/net/core/dev.c b/net/core/dev.c
-> index 5882ddc3f8592..7be084e4936e4 100644
-> --- a/net/core/dev.c
-> +++ b/net/core/dev.c
-> @@ -11320,6 +11320,7 @@ void unregister_netdevice_many_notify(struct
-> list_head *head,
->                 dev_tcx_uninstall(dev);
->                 dev_xdp_uninstall(dev);
->                 bpf_dev_bound_netdev_unregister(dev);
-> +               dev_dmabuf_uninstall(dev);
->
->                 netdev_offload_xstats_disable_all(dev);
->
-> diff --git a/net/core/devmem.c b/net/core/devmem.c
-> index e75057ecfa6de..227bcb1070ec0 100644
-> --- a/net/core/devmem.c
-> +++ b/net/core/devmem.c
-> @@ -362,4 +362,20 @@ bool mp_dmabuf_devmem_release_page(struct
-> page_pool *pool, netmem_ref netmem)
->         return false;
->  }
->
-> +void dev_dmabuf_uninstall(struct net_device *dev)
-> +{
-> +       unsigned int i, count =3D dev->num_rx_queues;
-> +       struct net_devmem_dmabuf_binding *binding;
-> +       struct netdev_rx_queue *rxq;
-> +       unsigned long xa_idx;
-> +
-> +       for (i =3D 0; i < count; i++) {
-> +               binding =3D dev->_rx[i].mp_params.mp_priv;
-> +               if (binding)
-> +                       xa_for_each(&binding->bound_rxqs, xa_idx, rxq)
-> +                               if (rxq =3D=3D &dev->_rx[i])
-> +                                       xa_erase(&binding->bound_rxqs, xa=
-_idx);
-> +       }
-> +}
-> +
->  #endif
->
+On 24.07.24 15:01, Zi Yan wrote:
+> If memory tiering mode is on and a folio is not in the top tier memory,
+> folio's cpupid field is repurposed to store page access time. Instead of
+> an open coded check, use a function to encapsulate the check.
+> 
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> ---
 
-I tested this patch and it works well.
-Thanks a lot for this work!
+Yes, that is much clearer, thanks!
 
-Thanks a lot!
-Taehee Yoo
+-- 
+Cheers,
 
-> --
-> Thanks,
-> Mina
+David / dhildenb
+
 
