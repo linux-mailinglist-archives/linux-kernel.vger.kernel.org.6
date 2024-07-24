@@ -1,168 +1,153 @@
-Return-Path: <linux-kernel+bounces-261727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E4793BB5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:00:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9703F93BBE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 06:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 340AA1F21512
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:00:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB0F21C233A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 04:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5131865A;
-	Thu, 25 Jul 2024 04:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AD5208D0;
+	Thu, 25 Jul 2024 04:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HKuNOcqj"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="M3VBoPMp"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1113133CA
-	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 03:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91E61CAB2
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 04:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721880000; cv=none; b=c/RNObVOrydbQf6JKMj2KqoZ3vf54cdxLE9CJeTJqqt/hsNhYk68ZkhKvyEx2pOm7+PJfE1fDUH/OG66dB/9xWFfXWrDJcGhY1vkwyaiqM5Q0ROWBNb8WcghGedpHBsuHPhSopY+xiqLChDzvESg+9hZZVvmCfH6Yc6ZmWVFTXU=
+	t=1721883504; cv=none; b=Rm14SFixTj0HiIj47TYxC/mnD9qftFmbZFTMBe6op1SzNuMB6t1q9Ia4bO0LC5QsXIg/PA5YVJ6dJnedwKg064d9cet1bd1AvpdUZkK+bIyY+Fe3wstuvBr+OybXcpchvIPxzFha5kGh/DJj8YfLM6fcm/WQLpFDTOQByOImbOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721880000; c=relaxed/simple;
-	bh=rk66/rqzhkPoV2QLLxcJFZD6M7EVmlzgLKOeZcNT5T8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jl5hkwoX0FHCYOV/Tzm1dP4vHZ6zJWo3o+tcRAFK9gZpPhuWGn8LysJoQ0nx4vj49Qn21gBK3u7peGpFcsV61C6bfqnKKuXqzDte91/8PuSybesdiGYeDmyKnDw1pN/2/toOsyAGLthQfdmJagTp55UrwbOjF1i61DlKKzGm4Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HKuNOcqj; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fed72d23a7so2720465ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 20:59:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721879998; x=1722484798; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rHcZx2GC/cLELT7bHwkzIBGxphqrx5awAaW2kc+oR08=;
-        b=HKuNOcqjT1ANrc5B7Cbpvr1WwaOzoNC6fvi37lANw6PR+wXQYyyXDHQZ+GuQzk5hVe
-         1irf0w0N1BKc/0D5UlK0isuo4radCmlAC/K+d5V4ZcD1vYOvlyBOR/OO1oY/uzzOEZ98
-         nNqd3pr2dbd6TXby7gWKo+1eDKdPz50ijYK1NUyHOt+1SXcTfzo9bV0skRvd+Sj59jIX
-         Ujjzv/T/tumCy0etn24vdp/s82+lCBXkorw69EV7k4SVxomn0D+eKqwvlqyGOPC6Icgr
-         /k57q1/vDYXIs2fEf9LaxSik30pvpnT24pcEjz6adjRuGqqJs+g1iw5NsleoScUVNGB6
-         E3dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721879998; x=1722484798;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rHcZx2GC/cLELT7bHwkzIBGxphqrx5awAaW2kc+oR08=;
-        b=aO21Zdplpt674KuuqmsFaRwJsejURkCzlkODk2qW1c5AdPuXe89OsoNVMKWazK0iJJ
-         ogDbtzM6VzdQqWvWoi7MzVbXUsi4peVYH9yqMqDVIWCt/9GEftyUUx1UuXcshdi5Ex/w
-         Bf9plV2efeDxPbxV2i8YZxtY1UX4yyQj+J495PAzKVc3GPIXZbCrPDGGFwzCsXSQpppV
-         E8guvV+BACeBwXCz8jqiqw8y1UHWo2IZncSBo4r85+9XO952dMafVJriFMudDwwXf6bb
-         5ZI1DEXR+93c1mZ5lwKo93nQ08qMaDChMPBv1q0GlfuGX+0vbNExvDJdEwZu3+QVlX6m
-         jH6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUrv6aOB3xReJAJkDojYApxUojngLoaRp9Gq3Z74jIVI1h5G8PpjyscAXMOacNZrpjjeTqw9wEuOly8ya/EO80cRkkoY8a3wgu4sljx
-X-Gm-Message-State: AOJu0YwPk6SRzd6oD8Lcw+mMbP8z+t7ry8hAPOuSc/H8TsvhEzV/YD2Z
-	0kpV9tBWb++EyD2pp37LK0wkiSI6ZuwtCR1g2Hrdqo4h3H5Pf1R+lRRkhXMIV7dl4PAzrr0VdOI
-	=
-X-Google-Smtp-Source: AGHT+IEaDi+BtDwssOplBvIcSv4l24dycsadnULUO1j1JwRC3JvSxlkzIS6ar2Yofkamxzyr+Xu2pA==
-X-Received: by 2002:a17:902:ec91:b0:1fd:8904:ecf6 with SMTP id d9443c01a7336-1fed9259301mr6241935ad.21.1721879998304;
-        Wed, 24 Jul 2024 20:59:58 -0700 (PDT)
-Received: from thinkpad ([103.244.168.26])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7c8cd90sm3694515ad.44.2024.07.24.20.59.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 20:59:57 -0700 (PDT)
-Date: Thu, 25 Jul 2024 09:29:54 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Slark Xiao <slark_xiao@163.com>
-Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] bus: mhi: host: pci_generic: Update the file path
- for Foxconn SDX55/SDX72
-Message-ID: <20240725035954.GA2317@thinkpad>
-References: <20240725022941.65948-1-slark_xiao@163.com>
+	s=arc-20240116; t=1721883504; c=relaxed/simple;
+	bh=hm6FD2Ug5c3pOe9Qm89s7IFoHzb9JCpzfyhKV9uY+fU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=iy71ElOU/tvCtcLPlGxDH/lX43YxCnY5sNA7S9tkib49t0O/LhlSH0jxi2V9aZQBXOz0QXgfY4eBh4S+ZYYhup9c1IONEz8gXzgp1KYW7qtdzXroBIhdtgsPa6pkaTrZ/+wGZc9NW8wUVU59UFDUeM34RlvRw7Nz7Mc+BbBiWpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=M3VBoPMp; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240725045819epoutp03ebaadd53a07b93b6551abd362e98d4b1~lW_uIaKMW1831918319epoutp03y
+	for <linux-kernel@vger.kernel.org>; Thu, 25 Jul 2024 04:58:19 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240725045819epoutp03ebaadd53a07b93b6551abd362e98d4b1~lW_uIaKMW1831918319epoutp03y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1721883499;
+	bh=hm6FD2Ug5c3pOe9Qm89s7IFoHzb9JCpzfyhKV9uY+fU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=M3VBoPMpYPCK48D2wsTvNc0NAeN7XL8xZCu0wsyHVsB3pWFrZePs3E2FWsdsyIvjp
+	 s5ZqlKjcbuK951eWPP4+nX6NvWdUtd5p04wpCBybSNEwI+rBmzdTjsVx4cMsdBOMWV
+	 QVn8o8IcPHd634nnVeCUQqI5tL+ebAW8Rw/n1Ur0=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20240725045819epcas5p165872ae10ae773175616c5d486fa04d8~lW_tusTvW2882328823epcas5p1G;
+	Thu, 25 Jul 2024 04:58:19 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4WTzDB0kw8z4x9Pr; Thu, 25 Jul
+	2024 04:58:18 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	52.70.09640.96BD1A66; Thu, 25 Jul 2024 13:58:17 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240724180451epcas5p3cffc89fcc59156ca49078a60851f1e29~lOEKj4BT52025820258epcas5p3E;
+	Wed, 24 Jul 2024 18:04:51 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240724180451epsmtrp12840ad44c1adeaa3848969e7cc400b23~lOEKjMiLZ2369423694epsmtrp1X;
+	Wed, 24 Jul 2024 18:04:51 +0000 (GMT)
+X-AuditID: b6c32a49-aabb8700000025a8-97-66a1db699e3e
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	55.6A.07567.34241A66; Thu, 25 Jul 2024 03:04:51 +0900 (KST)
+Received: from nj.shetty?samsung.com (unknown [107.99.41.245]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240724180449epsmtip1b78a4c96b9f589188d3e4e90108e90cf~lOEJO5Qad1370813708epsmtip16;
+	Wed, 24 Jul 2024 18:04:49 +0000 (GMT)
+Date: Wed, 24 Jul 2024 23:27:35 +0530
+From: Nitesh Shetty <nj.shetty@samsung.com>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph
+	Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Leon Romanovsky
+	<leonro@nvidia.com>, Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvme-pci: add missing condition check for existence of
+ mapped data
+Message-ID: <20240724175735.lndoof76kovv5ge6@nj.shetty@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <23e8ca814177474160a516e09b562af339cec837.1721816805.git.leon@kernel.org>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCJsWRmVeSWpSXmKPExsWy7bCmum7m7YVpBhuXaFmsvtvPZjHr9msW
+	i5WrjzJZTDp0jdFiyq+lzBabNjxhsbi8aw6bxfxlT9kt1r1+z+LA6XH+3kYWj8tnSz02repk
+	89i8pN5j980GNo/e5ndsHp83yXm0H+hmCuCIyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUz
+	MNQ1tLQwV1LIS8xNtVVy8QnQdcvMAbpOSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQ
+	klNgUqBXnJhbXJqXrpeXWmJlaGBgZApUmJCd8fT5UsaCPraKWWeKGhi3s3YxcnJICJhIvO7a
+	x9jFyMUhJLCbUeLX9wZmCOcTo8TC++uZIJxvjBL7WnYwwbRcWNUK1bKXUeLssgMsEM5nRomJ
+	Vy6ygVSxCKhKPLh8D6iDg4NNQFvi9H8OkLAIUHjlgrusIPXMAnOZJJ5sbWAESQgLREqs3jab
+	EaSeV8BZomuiJEiYV0BQ4uTMJywgNqdAmMT235fAdkkITOWQ+DNvBzvERS4Sp99vg3pIWOLV
+	8S1QcSmJl/1tUHa5xMopK9ggmlsYJWZdn8UIkbCXaD3VzwyymFkgQ+L9FkGIsKzE1FPrwD5m
+	FuCT6P39BOp7Xokd82BsZYk16xewQdiSEte+N7KBjJEQ8JCYed0BEiYrGSXauu4xTWCUm4Xk
+	n1kI22aBbbCS6PzQxAoRlpZY/o8DwtSUWL9LfwEj6ypGydSC4tz01GLTAsO81HJ4FCfn525i
+	BCdXLc8djHcffNA7xMjEwXiIUYKDWUmE98mruWlCvCmJlVWpRfnxRaU5qcWHGE2BsTORWUo0
+	OR+Y3vNK4g1NLA1MzMzMTCyNzQyVxHlft85NERJITyxJzU5NLUgtgulj4uCUamDKbgr7z3qL
+	uevCIpcJfeE2hS+CbmpO2Wx5dcXRuPUfCx4zudwwu/BiHdvD9dv5vj+bIaE4PyTp+RqHZiun
+	BJ5uw/nc3gtOLvHZvzn901eHn/VN+rKlC06l8ih7b8j7smHLe82p7I7vo90k1Z/GxM6cdOOm
+	d05+rHyuhvLOR+9U7tzZcov7dU+jzl4xM3WZt4WmAkEnYya+FFv1SMDMRrg1m/Wr36IFnp5a
+	p0Vmdl15k1Hezrvw8NbnsuZF85dG++1bJRic/Ma4qvTghXcap/cvO1vlssFrtbzjthg7RjnG
+	JJ3JFkoHN1i3av17sPTRvP6Lq55FXt8Vezbtzs/XhmXH/wa6TK+2Mhb8y8a1c42JEktxRqKh
+	FnNRcSIAD4X0KjcEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKLMWRmVeSWpSXmKPExsWy7bCSnK6z08I0g2ObhC1W3+1ns5h1+zWL
+	xcrVR5ksJh26xmgx5ddSZotNG56wWFzeNYfNYv6yp+wW616/Z3Hg9Dh/byOLx+WzpR6bVnWy
+	eWxeUu+x+2YDm0dv8zs2j8+b5DzaD3QzBXBEcdmkpOZklqUW6dslcGXcatzAUnCAueLWnpmM
+	DYzNzF2MnBwSAiYSF1a1MnYxcnEICexmlJj5/j4LREJSYtnfI1BFwhIr/z1nB7GFBD4ySnT+
+	YwOxWQRUJR5cvsfUxcjBwSagLXH6PwdIWAQovHLBXVaQmcwC85kkZry6xQqSEBaIlFi9bTYj
+	SD2vgLNE10RJEFNIIFTiwxFTkApeAUGJkzOfgF3ALGAmMW/zQ2aQEmYBaYnl/8CmcwqESWz/
+	fYllAqPALCQds5B0zELoWMDIvIpRMrWgODc9N9mwwDAvtVyvODG3uDQvXS85P3cTIzgmtDR2
+	MN6b/0/vECMTB+MhRgkOZiUR3iev5qYJ8aYkVlalFuXHF5XmpBYfYpTmYFES5zWcMTtFSCA9
+	sSQ1OzW1ILUIJsvEwSnVwDRN75SQsZjfQfNDXAdePTGZo6+1SOqQQO0kleM3vupbteRNCrKR
+	+vY7MOXAcQNlq9eG8yMfrtkvcLjh7ueTb/nm/TzZulB9xef9Tb5y3c3N61Ti1wRtkSv+69dd
+	rM9/fkric/1zFw9mu2n21BRaV88zDzN8LeX078nWVSuEzkUrc0hsUQl/+qmopYfj78FjiiFu
+	qasz3U6+/qqQ9mjyS2eZjhWXCvh9LFzSzrAtEqvaJ7pv8ptbNaf3O7l7WVws13N/YfboIK+H
+	iV1b7Mb+yaxswfOzAzRcezcy3X+zdM+aasM41lD+COe7kU+aboUteTP1MEtN6d2AWUsrQwOY
+	HHUTBH+0v5/pZv/4tyvfaSWW4oxEQy3mouJEAG1HVCb4AgAA
+X-CMS-MailID: 20240724180451epcas5p3cffc89fcc59156ca49078a60851f1e29
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----tv00kGafDAKugJLLWPAFdl2KPkYaKdNcKQc3tmj5W0zcLjXE=_3e4fd_"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240724180451epcas5p3cffc89fcc59156ca49078a60851f1e29
+References: <23e8ca814177474160a516e09b562af339cec837.1721816805.git.leon@kernel.org>
+	<CGME20240724180451epcas5p3cffc89fcc59156ca49078a60851f1e29@epcas5p3.samsung.com>
+
+------tv00kGafDAKugJLLWPAFdl2KPkYaKdNcKQc3tmj5W0zcLjXE=_3e4fd_
+Content-Type: text/plain; charset="utf-8"; format="flowed"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240725022941.65948-1-slark_xiao@163.com>
 
-On Thu, Jul 25, 2024 at 10:29:40AM +0800, Slark Xiao wrote:
-> To separate the images of Foxconn from other vendors, adding a
-> new foxconn subfolder under qcom/<platform> for edl image path.
-> And delete the fw patch since it's useless for Foxconn devices.
-> 
-> Fixes: bf30a75e6e00 ("bus: mhi: host: Add support for Foxconn SDX72 modems")
-> Signed-off-by: Slark Xiao <slark_xiao@163.com>
-> ---
-> v2: change the folder path architecture
-> ---
->  drivers/bus/mhi/host/pci_generic.c | 13 +++++--------
->  1 file changed, 5 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-> index 14a11880bcea..f159a9dd53e7 100644
-> --- a/drivers/bus/mhi/host/pci_generic.c
-> +++ b/drivers/bus/mhi/host/pci_generic.c
-> @@ -433,8 +433,7 @@ static const struct mhi_controller_config modem_foxconn_sdx72_config = {
->  
->  static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
->  	.name = "foxconn-sdx55",
-> -	.fw = "qcom/sdx55m/sbl1.mbn",
-> -	.edl = "qcom/sdx55m/edl.mbn",
-> +	.edl = "qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn",
+On 24/07/24 01:31PM, Leon Romanovsky wrote:
+>From: Leon Romanovsky <leonro@nvidia.com>
+>
+>nvme_map_data() is called when request has physical segments, hence
+>the nvme_unmap_data() should have same condition to avoid dereference.
+>
+>Fixes: 4aedb705437f ("nvme-pci: split metadata handling from nvme_map_data / nvme_unmap_data")
+>Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+>---
 
-I think you misunderstood what I suggested in earlier revision. You should add
-the Foxconn specific fw only if it is different from the qcom one. Is it really
-different for all these modems? Otherwise, what is the point of adding them?
+Reviewed-by: Nitesh Shetty <nj.shetty@samsung.com>
 
-- Mani
+------tv00kGafDAKugJLLWPAFdl2KPkYaKdNcKQc3tmj5W0zcLjXE=_3e4fd_
+Content-Type: text/plain; charset="utf-8"
 
->  	.config = &modem_foxconn_sdx55_config,
->  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
->  	.dma_data_width = 32,
-> @@ -444,8 +443,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx55_info = {
->  
->  static const struct mhi_pci_dev_info mhi_foxconn_t99w175_info = {
->  	.name = "foxconn-t99w175",
-> -	.fw = "qcom/sdx55m/sbl1.mbn",
-> -	.edl = "qcom/sdx55m/edl.mbn",
-> +	.edl = "qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn",
->  	.config = &modem_foxconn_sdx55_config,
->  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
->  	.dma_data_width = 32,
-> @@ -455,8 +453,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w175_info = {
->  
->  static const struct mhi_pci_dev_info mhi_foxconn_dw5930e_info = {
->  	.name = "foxconn-dw5930e",
-> -	.fw = "qcom/sdx55m/sbl1.mbn",
-> -	.edl = "qcom/sdx55m/edl.mbn",
-> +	.edl = "qcom/sdx55m/foxconn/prog_firehose_sdx55.mbn",
->  	.config = &modem_foxconn_sdx55_config,
->  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
->  	.dma_data_width = 32,
-> @@ -502,7 +499,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_dw5932e_info = {
->  
->  static const struct mhi_pci_dev_info mhi_foxconn_t99w515_info = {
->  	.name = "foxconn-t99w515",
-> -	.edl = "fox/sdx72m/edl.mbn",
-> +	.edl = "qcom/sdx72m/foxconn/edl.mbn",
->  	.edl_trigger = true,
->  	.config = &modem_foxconn_sdx72_config,
->  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
-> @@ -513,7 +510,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_t99w515_info = {
->  
->  static const struct mhi_pci_dev_info mhi_foxconn_dw5934e_info = {
->  	.name = "foxconn-dw5934e",
-> -	.edl = "fox/sdx72m/edl.mbn",
-> +	.edl = "qcom/sdx72m/foxconn/edl.mbn",
->  	.edl_trigger = true,
->  	.config = &modem_foxconn_sdx72_config,
->  	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
-> -- 
-> 2.25.1
-> 
 
--- 
-மணிவண்ணன் சதாசிவம்
+------tv00kGafDAKugJLLWPAFdl2KPkYaKdNcKQc3tmj5W0zcLjXE=_3e4fd_--
 
