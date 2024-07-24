@@ -1,188 +1,150 @@
-Return-Path: <linux-kernel+bounces-260918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E75A593B02D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:15:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1A3F93B03E
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:17:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A489428173D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:15:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2B7A1C20A5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEAD915747F;
-	Wed, 24 Jul 2024 11:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="Qfv0f4oo"
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.219])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA00145B0D;
-	Wed, 24 Jul 2024 11:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04AB157484;
+	Wed, 24 Jul 2024 11:17:17 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74B25695;
+	Wed, 24 Jul 2024 11:17:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721819722; cv=none; b=e7lNyQHt3fzLy7cXG2Orx2oWgzGkmkxOtFe8znnucLJkYWa9UqIoUWZBDPBEAR4NBSAwUVSjyBYRnlAkzL83XLdx4mgmJyw0GEV13rpz60Ucfoql2gFnxJh3sfS0wIl0/UDtk18fm/7WhSMd73q5ZAvo6HY6Txh9iXNjOARrzFM=
+	t=1721819837; cv=none; b=D6gIrhfBEsAUwNCbyLuFwVgaK7V6HfgyytuNy6kpTJA5DURQSfa51Q6diYUif/BEmDTW+Rn8OX5oOsO3y1E6MqIL+MfgBjn+RKK0T+pptRV4+j9T3Emb+EjA6PsELhFVzF1qsOXCTHU5gsMU5zT7MxDoB3NNVmytt+p7CeljUpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721819722; c=relaxed/simple;
-	bh=CxtqvnXi4mgDBXyR3QLhoYdwmopxGTa6BFZMmosNJJk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=C48nTxV0vnr9wj3oAWQecmE7ezusfpgt/2dCLHzT+slav3cWN7h6gBQILjJ9cXpspAiokl5Fbm7+EXCzVwpSTXtTIs6vjBzHoiSK5tz2gW3Jt68KnEJU2ETWUZo/oIU6uXLLR3CdxGOGZwyAxen3/Ktn1P19+MpGVpW4Oa9AGgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=Qfv0f4oo reason="signature verification failed"; arc=none smtp.client-ip=45.254.50.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=stHl7tfAMtOxEoUKqDnkegannEU8eEy4Y3IO41ZGCPI=; b=Q
-	fv0f4oom358VcKI9gkt91S4tq+4WVJDp5aIVYv1cf6PdgXkdONVRN1opU/aWITx8
-	iyZN+3dNCyFY2P7OWkkifKBeiTgUac52lpQ1AR0TWWWqYWL0QopRLqY0WzQjaExK
-	rPL+UFp59L9V0Z3RWR0WT7chun6QGCP8gPUG+/PAxg=
-Received: from slark_xiao$163.com ( [112.97.50.207] ) by
- ajax-webmail-wmsvr-40-119 (Coremail) ; Wed, 24 Jul 2024 19:14:40 +0800
- (CST)
-Date: Wed, 24 Jul 2024 19:14:40 +0800 (CST)
-From: "Slark Xiao" <slark_xiao@163.com>
-To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
-Cc: manivannan.sadhasivam@linaro.org, mhi@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re:Re:Re: Re: [PATCH] bus: mhi: host: Add firehose support for
- Foxconn SDX24/SDX55/SDX65
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <7036d57d.5904.190b512d00b.Coremail.slark_xiao@163.com>
-References: <20240709015818.110384-1-slark_xiao@163.com>
- <dduv77mdqe633m7amyljhqas7nomrtjrrimvmyqidymy3qjvfa@biepierrz5p3>
- <17f0f426.4faf.190b4edaadd.Coremail.slark_xiao@163.com>
- <CAA8EJpoiOLYMhxyJbdrgnMVfVggL9cOWtX8L__YKd=RPQWOcSg@mail.gmail.com>
- <7036d57d.5904.190b512d00b.Coremail.slark_xiao@163.com>
-X-NTES-SC: AL_Qu2ZA/Satk4j5iiQZOkfmk8Sg+84W8K3v/0v1YVQOpF8jD7pwzgQQnhFBl7E0N2GMhChqh6RTxVS1vVgUa9iZb0783AmAAfKlgzNEGw5L9L6+A==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1721819837; c=relaxed/simple;
+	bh=NXMjWIjkbyNP+GMCDU/nnlIK03u7fA8we18RZAAGeHY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CqkQyBVR8q4/mykFfP8L/dvLKjYklD+YBf5NX5TNyvsbgmJw9676eDdK4C39w76FiWkWUPAsvtQwxSr5CzbzQMHJo9DkIacNF0nWAjAlS/knWwXXXrX8b0dygtnjzyjZwmv81GbrN+/1T7XQSsX9hzJo991nKiUO3+dKebHNPE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from abreu.molgen.mpg.de (g45.guest.molgen.mpg.de [141.14.220.45])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 5A16E61E5FE01;
+	Wed, 24 Jul 2024 13:16:46 +0200 (CEST)
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	David Brownell <david-b@pacbell.net>
+Cc: Paul Menzel <pmenzel@molgen.mpg.de>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Greg Kroah-Hartman <gregkh@suse.de>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] USB: core: hub_port_reset: Remove extra 40 ms reset recovery time
+Date: Wed, 24 Jul 2024 13:15:23 +0200
+Message-ID: <20240724111524.25441-1-pmenzel@molgen.mpg.de>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <7b69f589.982a.190e4735077.Coremail.slark_xiao@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD3H+gg4qBmm31aAA--.11524W
-X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiNQAmZGV4IyFQQgABs7
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-CkF0IDIwMjQtMDctMTUgMTQ6Mjc6MDcsICJTbGFyayBYaWFvIiA8c2xhcmtfeGlhb0AxNjMuY29t
-PiB3cm90ZToKPgo+QXQgMjAyNC0wNy0xNSAxNDoxNjo1NywgIkRtaXRyeSBCYXJ5c2hrb3YiIDxk
-bWl0cnkuYmFyeXNoa292QGxpbmFyby5vcmc+IHdyb3RlOgo+Pk9uIE1vbiwgMTUgSnVsIDIwMjQg
-YXQgMDg6NDYsIFNsYXJrIFhpYW8gPHNsYXJrX3hpYW9AMTYzLmNvbT4gd3JvdGU6Cj4+Pgo+Pj4K
-Pj4+IEF0IDIwMjQtMDctMTMgMjM6MDk6NDcsICJEbWl0cnkgQmFyeXNoa292IiA8ZG1pdHJ5LmJh
-cnlzaGtvdkBsaW5hcm8ub3JnPiB3cm90ZToKPj4+ID5PbiBUdWUsIEp1bCAwOSwgMjAyNCBhdCAw
-OTo1ODoxOEFNIEdNVCwgU2xhcmsgWGlhbyB3cm90ZToKPj4+ID4+IFNpbmNlIHdlIGltcGxlbWVu
-dCB0aGUgRklSRUhPU0UgY2hhbm5lbCBzdXBwb3J0IGluIGZveGNvbm4gbWhpCj4+PiA+PiBjaGFu
-bmVscywgdGhhdCBtZWFucyBlYWNoIHByb2R1Y3Qgd2hpY2ggdXNlIHRoaXMgY2hhbm5lbCBjb25m
-aWcKPj4+ID4+IHdvdWxkIHN1cHBvcnQgRklSRUhPU0UuIEJ1dCBhY2NvcmRpbmcgdG8gdGhlIHRy
-aWdnZXJfZWRsIGZlYXR1cmUsCj4+PiA+PiB3ZSBuZWVkIHRvIGVuYWJsZSBpdCBieSBhZGRpbmcg
-Jy5lZGxfdHJpZ2dlciA9IHRydWUnIGluIGRldmljZQo+Pj4gPj4gaW5mbyBzdHJ1Y3QuCj4+PiA+
-PiBBbHNvLCB3ZSB1cGRhdGUgYWxsIGVkbCBpbWFnZSBwYXRoIGZyb20gJ3Fjb20nIHRvICdmb3gn
-IGluIGNhc2Ugb2YKPj4+ID4+IGNvbmZsaWN0aW5nIHdpdGggb3RoZXIgdmVuZG9ycy4KPj4+ID4K
-Pj4+ID5TZXBhcmF0ZSBwYXRjaGVzIHBsZWFzZS4gQWxzbyBkb24ndCB1c2UgIndlIiwganVzdCBh
-biBpbWVyYXRpdmUgc3R5bGU6Cj4+PiA+ZG8gdGhpcyBhbmQgdGhhdC4KPj4+ID4KPj4+Cj4+PiBE
-byB5b3UgbWVhbiB1c2UgMiBwYXRjaGVzICgxIGZvciBlbmFibGluZyB0cmlnZ2VyIGVkbCBhbmQg
-MSBmb3IKPj4+IG1vZGlmeWluZyBwYXRoKT8gVGhvdWdoIHRoZXNlIGNoYW5nZXMgYXJlIGFpbWVk
-IHRvIG1ha2UKPj4+IGZpcmVob3NlIGRvd25sb2FkIHN1Y2Nlc3NmdWxseS4KPj4KPj5ZZXMuICJE
-byB0aGlzLiBBbHNvIGRvIHRoYXQiIGlzIHVzdWFsbHkgYSBzaWduIHRoYXQgdGhlIHBhdGNoIHNo
-b3VsZCBiZSBzcGxpdC4KPgo+V2lsbCBkbyBhIHVwZGF0ZSBpbiBuZXh0IHZlcnNpb24uCj4KPj4K
-Pj4+Cj4+PiA+Pgo+Pj4gPj4gU2lnbmVkLW9mZi1ieTogU2xhcmsgWGlhbyA8c2xhcmtfeGlhb0Ax
-NjMuY29tPgo+Pj4gPj4gLS0tCj4+PiA+PiAgZHJpdmVycy9idXMvbWhpL2hvc3QvcGNpX2dlbmVy
-aWMuYyB8IDIwICsrKysrKysrKysrKysrLS0tLS0tCj4+PiA+PiAgMSBmaWxlIGNoYW5nZWQsIDE0
-IGluc2VydGlvbnMoKyksIDYgZGVsZXRpb25zKC0pCj4+PiA+Pgo+Pj4gPj4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvYnVzL21oaS9ob3N0L3BjaV9nZW5lcmljLmMgYi9kcml2ZXJzL2J1cy9taGkvaG9z
-dC9wY2lfZ2VuZXJpYy5jCj4+PiA+PiBpbmRleCAxNGExMTg4MGJjZWEuLjQ0MDYwOWI4MWU1NyAx
-MDA2NDQKPj4+ID4+IC0tLSBhL2RyaXZlcnMvYnVzL21oaS9ob3N0L3BjaV9nZW5lcmljLmMKPj4+
-ID4+ICsrKyBiL2RyaXZlcnMvYnVzL21oaS9ob3N0L3BjaV9nZW5lcmljLmMKPj4+ID4+IEBAIC00
-MzMsOCArNDMzLDggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBtaGlfY29udHJvbGxlcl9jb25maWcg
-bW9kZW1fZm94Y29ubl9zZHg3Ml9jb25maWcgPSB7Cj4+PiA+Pgo+Pj4gPj4gIHN0YXRpYyBjb25z
-dCBzdHJ1Y3QgbWhpX3BjaV9kZXZfaW5mbyBtaGlfZm94Y29ubl9zZHg1NV9pbmZvID0gewo+Pj4g
-Pj4gICAgICAubmFtZSA9ICJmb3hjb25uLXNkeDU1IiwKPj4+ID4+IC0gICAgLmZ3ID0gInFjb20v
-c2R4NTVtL3NibDEubWJuIiwKPj4+ID4+IC0gICAgLmVkbCA9ICJxY29tL3NkeDU1bS9lZGwubWJu
-IiwKPj4+ID4+ICsgICAgLmVkbCA9ICJmb3gvc2R4NTVtL3Byb2dfZmlyZWhvc2Vfc2R4NTUubWJu
-IiwKPj4+ID4KPj4+ID5xY29tL3NkeDU1bS9mb3hjb25uL3Byb2dfZmlyZWhvc2Vfc2R4NTUubWJu
-Cj4+Pgo+Pj4gd2hhdCdzIHlvdXIgb3Bpbmlvbj9NYW5pCgpUaGlzIGZvcm1hdCBtaXNtYXRjaCB3
-aXRoIEZveGNvbm4gU0RYNzIgZWRsIHBhdGgiZm94L3NkeDcybS9lZGwubWJuIi4KSSB0aGluayB3
-ZSBzaG91bGQgYWxpZ24gd2l0aCB0aGF0IGNoYW5nZXMgd2UganVzdCBjb21taXR0ZWQuCldoYXQn
-cyB5b3VyIG9waW5pb24sIE1hbmk/Cgo+Pj4KPj4+ID4KPj4+ID4+ICsgICAgLmVkbF90cmlnZ2Vy
-ID0gdHJ1ZSwKPj4+ID4+ICAgICAgLmNvbmZpZyA9ICZtb2RlbV9mb3hjb25uX3NkeDU1X2NvbmZp
-ZywKPj4+ID4+ICAgICAgLmJhcl9udW0gPSBNSElfUENJX0RFRkFVTFRfQkFSX05VTSwKPj4+ID4+
-ICAgICAgLmRtYV9kYXRhX3dpZHRoID0gMzIsCj4+PiA+PiBAQCAtNDQ0LDggKzQ0NCw4IEBAIHN0
-YXRpYyBjb25zdCBzdHJ1Y3QgbWhpX3BjaV9kZXZfaW5mbyBtaGlfZm94Y29ubl9zZHg1NV9pbmZv
-ID0gewo+Pj4gPj4KPj4+ID4+ICBzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9wY2lfZGV2X2luZm8g
-bWhpX2ZveGNvbm5fdDk5dzE3NV9pbmZvID0gewo+Pj4gPj4gICAgICAubmFtZSA9ICJmb3hjb25u
-LXQ5OXcxNzUiLAo+Pj4gPj4gLSAgICAuZncgPSAicWNvbS9zZHg1NW0vc2JsMS5tYm4iLAo+Pj4g
-Pj4gLSAgICAuZWRsID0gInFjb20vc2R4NTVtL2VkbC5tYm4iLAo+Pj4gPj4gKyAgICAuZWRsID0g
-ImZveC9zZHg1NW0vcHJvZ19maXJlaG9zZV9zZHg1NS5tYm4iLAo+Pj4gPgo+Pj4gPklzIGl0IHRo
-ZSBzYW1lIGZpbGUgYXMgdGhlIG9uZSBtZW50aW9uZWQgaW4gdGhlIHByZXZpb3VzIGNodW5rIG9y
-IGlzIGl0Cj4+PiA+ZGlmZmVyZW50Pwo+Pj4gPgo+Pj4KPj4+IFRoZXkgYXJlIHNhbWUgZm9yIHNh
-bWUgY2hpcCwgdGhvdWdoIHdlIGhhdmUgc29tZSB2YXJpYW50cy4KPj4KPj5QbGVhc2UgZXhjdXNl
-IG1lLCBJIGNhbid0IGZ1bGx5IHVuZGVyc3RhbmQuIFNvIGFyZSB0aGUgZmlsZXMgdGhlIHNhbWUg
-b3Igbm90Pwo+Pgo+PlRoZXJlIGlzIGEgc2ltcGxlIG1lbnRhbCBleHBlcmltZW50IHJlZ2FyZGlu
-ZyB0aGUgZmlsZSBuYW1lczogeW91Cj4+c2hvdWxkIGJlIGFibGUgdG8gaGF2ZSBhIHNpbmdsZSBo
-b3N0IHJvb3Rmcywgd2hpY2ggc3VwcG9ydHMgd29ya2luZwo+PndpdGggYWxsIG9mIHlvdXIgbW9k
-ZW1zIGF0IHRoZSBzYW1lIHRpbWUsIHdpdGhvdXQgbW9kaWZpY2F0aW9ucy4KPj5TbyBpZiBtb2Rl
-bSBBIGFuZCBtb2RlbSBCIG1pZ2h0IHVzZSBmaWxlIGZvby5iYXIgYW5kIHRoZSBmaWxlIGlzIHRo
-ZQo+PnNhbWUgZm9yIGFsbCBTRFg1NSBtb2RlbXMsIGl0J3MgZmluZSB0byBoYXZlIGl0IGluIHFj
-b20vc2R4NTVtLyBvciBpbgo+PnFjb20vc2R4NTVtL2ZveGNvbm4uIElmIGl0IGlzIGRpZmZlcmVu
-dCBkZXBlbmRpbmcgb24gdGhlIGVuZC1kZXZpY2UsCj4+aXQgc2hvdWxkIGdvIHRvIHRoZSBxY29t
-L3NkeDU1bS9mb3hjb25uL2Rldm5hbWUvIC4KPj4KPkZvciBhbGwgRm94Y29ubiBkZXZpY2VzIGRl
-c2lnbmVkIGJhc2VkIG9uIHNhbWUgY2hpcCwgdGhleSBjYW4gdXNlIHNhbWUKPmVkbCBmaWxlLiBU
-aGlzIEVETCBmaWxlIGlzIGEgY29tbW9uIGltYWdlIG9mIHdob2xlIEZJUkVIT1NFIGltYWdlIHBh
-Y2thZ2UKPm9mIGRpZmZlcmVuY2UgdmFyaWFudHMuIFRoZSBkaWZmZXJlbmNlIG9mIEZveGNvbm4g
-U0RYNTUgbW9kZW0gQSBhbmQKPkZveGNvbm4gU0RYNTUgbW9kZW0gQiBpcyBBUFBTIGltYWdlIGFu
-ZCBNb2RlbSBpbWFnZS4gVGhlIEVETAo+aW1hZ2UgaXMgYSBmaWxlIGZvciBwdXR0aW5nIGRldmlj
-ZSBpbnRvIEVETCBtb2RlLgo+U28gSSBwcmVmZXIgdG8gdXNlICJxY29tL3NkeDU1bS9mb3hjb25u
-IiBzaW5jZSBGb3hjb25uJ3MgZGV2aWNlIGFyZSAKPmRpZmZlcmVudCB3aXRoIG90aGVyIHZlbmRv
-cnMgd2hpY2ggcHJvdmlkZSBzZHg1NSBkZXZpY2VzIGFzIHdlbGwuCj4KPj4+Cj4+PiA+SWYgdGhl
-eSBhcmUgZGlmZmVyZW50LCB0aGVuLCBwbGVhc2UsCj4+PiA+Cj4+PiA+cWNvbS9zZHg1NW0vZm94
-Y29ubi90OTl3MTc1L3Byb2dfZmlyZWhvc2Vfc2R4NTUubWJuCj4+PiA+Cj4+PiA+Cj4+PiA+PiAr
-ICAgIC5lZGxfdHJpZ2dlciA9IHRydWUsCj4+PiA+PiAgICAgIC5jb25maWcgPSAmbW9kZW1fZm94
-Y29ubl9zZHg1NV9jb25maWcsCj4+PiA+PiAgICAgIC5iYXJfbnVtID0gTUhJX1BDSV9ERUZBVUxU
-X0JBUl9OVU0sCj4+PiA+PiAgICAgIC5kbWFfZGF0YV93aWR0aCA9IDMyLAo+Pj4gPj4gQEAgLTQ1
-NSw4ICs0NTUsOCBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG1oaV9wY2lfZGV2X2luZm8gbWhpX2Zv
-eGNvbm5fdDk5dzE3NV9pbmZvID0gewo+Pj4gPj4KPj4+ID4+ICBzdGF0aWMgY29uc3Qgc3RydWN0
-IG1oaV9wY2lfZGV2X2luZm8gbWhpX2ZveGNvbm5fZHc1OTMwZV9pbmZvID0gewo+Pj4gPj4gICAg
-ICAubmFtZSA9ICJmb3hjb25uLWR3NTkzMGUiLAo+Pj4gPj4gLSAgICAuZncgPSAicWNvbS9zZHg1
-NW0vc2JsMS5tYm4iLAo+Pj4gPj4gLSAgICAuZWRsID0gInFjb20vc2R4NTVtL2VkbC5tYm4iLAo+
-Pj4gPj4gKyAgICAuZWRsID0gImZveC9zZHg1NW0vcHJvZ19maXJlaG9zZV9zZHg1NS5tYm4iLAo+
-Pj4gPj4gKyAgICAuZWRsX3RyaWdnZXIgPSB0cnVlLAo+Pj4gPj4gICAgICAuY29uZmlnID0gJm1v
-ZGVtX2ZveGNvbm5fc2R4NTVfY29uZmlnLAo+Pj4gPj4gICAgICAuYmFyX251bSA9IE1ISV9QQ0lf
-REVGQVVMVF9CQVJfTlVNLAo+Pj4gPj4gICAgICAuZG1hX2RhdGFfd2lkdGggPSAzMiwKPj4+ID4+
-IEBAIC00NjYsNiArNDY2LDggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBtaGlfcGNpX2Rldl9pbmZv
-IG1oaV9mb3hjb25uX2R3NTkzMGVfaW5mbyA9IHsKPj4+ID4+Cj4+PiA+PiAgc3RhdGljIGNvbnN0
-IHN0cnVjdCBtaGlfcGNpX2Rldl9pbmZvIG1oaV9mb3hjb25uX3Q5OXczNjhfaW5mbyA9IHsKPj4+
-ID4+ICAgICAgLm5hbWUgPSAiZm94Y29ubi10OTl3MzY4IiwKPj4+ID4+ICsgICAgLmVkbCA9ICJm
-b3gvc2R4NjVtL3Byb2dfZmlyZWhvc2VfbGl0ZS5lbGYiLAo+Pj4gPj4gKyAgICAuZWRsX3RyaWdn
-ZXIgPSB0cnVlLAo+Pj4gPj4gICAgICAuY29uZmlnID0gJm1vZGVtX2ZveGNvbm5fc2R4NTVfY29u
-ZmlnLAo+Pj4gPj4gICAgICAuYmFyX251bSA9IE1ISV9QQ0lfREVGQVVMVF9CQVJfTlVNLAo+Pj4g
-Pj4gICAgICAuZG1hX2RhdGFfd2lkdGggPSAzMiwKPj4+ID4+IEBAIC00NzUsNiArNDc3LDggQEAg
-c3RhdGljIGNvbnN0IHN0cnVjdCBtaGlfcGNpX2Rldl9pbmZvIG1oaV9mb3hjb25uX3Q5OXczNjhf
-aW5mbyA9IHsKPj4+ID4+Cj4+PiA+PiAgc3RhdGljIGNvbnN0IHN0cnVjdCBtaGlfcGNpX2Rldl9p
-bmZvIG1oaV9mb3hjb25uX3Q5OXczNzNfaW5mbyA9IHsKPj4+ID4+ICAgICAgLm5hbWUgPSAiZm94
-Y29ubi10OTl3MzczIiwKPj4+ID4+ICsgICAgLmVkbCA9ICJmb3gvc2R4NjVtL3Byb2dfZmlyZWhv
-c2VfbGl0ZS5lbGYiLAo+Pj4gPj4gKyAgICAuZWRsX3RyaWdnZXIgPSB0cnVlLAo+Pj4gPj4gICAg
-ICAuY29uZmlnID0gJm1vZGVtX2ZveGNvbm5fc2R4NTVfY29uZmlnLAo+Pj4gPj4gICAgICAuYmFy
-X251bSA9IE1ISV9QQ0lfREVGQVVMVF9CQVJfTlVNLAo+Pj4gPj4gICAgICAuZG1hX2RhdGFfd2lk
-dGggPSAzMiwKPj4+ID4+IEBAIC00ODQsNiArNDg4LDggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBt
-aGlfcGNpX2Rldl9pbmZvIG1oaV9mb3hjb25uX3Q5OXczNzNfaW5mbyA9IHsKPj4+ID4+Cj4+PiA+
-PiAgc3RhdGljIGNvbnN0IHN0cnVjdCBtaGlfcGNpX2Rldl9pbmZvIG1oaV9mb3hjb25uX3Q5OXc1
-MTBfaW5mbyA9IHsKPj4+ID4+ICAgICAgLm5hbWUgPSAiZm94Y29ubi10OTl3NTEwIiwKPj4+ID4+
-ICsgICAgLmVkbCA9ICJmb3gvc2R4MjRtL3Byb2dfZmlyZWhvc2Vfc2R4MjQubWJuIiwKPj4+ID4+
-ICsgICAgLmVkbF90cmlnZ2VyID0gdHJ1ZSwKPj4+ID4+ICAgICAgLmNvbmZpZyA9ICZtb2RlbV9m
-b3hjb25uX3NkeDU1X2NvbmZpZywKPj4+ID4+ICAgICAgLmJhcl9udW0gPSBNSElfUENJX0RFRkFV
-TFRfQkFSX05VTSwKPj4+ID4+ICAgICAgLmRtYV9kYXRhX3dpZHRoID0gMzIsCj4+PiA+PiBAQCAt
-NDkzLDYgKzQ5OSw4IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgbWhpX3BjaV9kZXZfaW5mbyBtaGlf
-Zm94Y29ubl90OTl3NTEwX2luZm8gPSB7Cj4+PiA+Pgo+Pj4gPj4gIHN0YXRpYyBjb25zdCBzdHJ1
-Y3QgbWhpX3BjaV9kZXZfaW5mbyBtaGlfZm94Y29ubl9kdzU5MzJlX2luZm8gPSB7Cj4+PiA+PiAg
-ICAgIC5uYW1lID0gImZveGNvbm4tZHc1OTMyZSIsCj4+PiA+PiArICAgIC5lZGwgPSAiZm94L3Nk
-eDY1bS9wcm9nX2ZpcmVob3NlX2xpdGUuZWxmIiwKPj4+ID4+ICsgICAgLmVkbF90cmlnZ2VyID0g
-dHJ1ZSwKPj4+ID4+ICAgICAgLmNvbmZpZyA9ICZtb2RlbV9mb3hjb25uX3NkeDU1X2NvbmZpZywK
-Pj4+ID4+ICAgICAgLmJhcl9udW0gPSBNSElfUENJX0RFRkFVTFRfQkFSX05VTSwKPj4+ID4+ICAg
-ICAgLmRtYV9kYXRhX3dpZHRoID0gMzIsCj4+PiA+PiAtLQo+Pj4gPj4gMi4yNS4xCj4+PiA+Pgo+
-Pj4gPgo+Pj4gPi0tCj4+PiA+V2l0aCBiZXN0IHdpc2hlcwo+Pj4gPkRtaXRyeQo+Pgo+Pgo+Pgo+
-Pi0tIAo+PldpdGggYmVzdCB3aXNoZXMKPj5EbWl0cnkK
+This basically reverts commit b789696af8b4102b7cc26dec30c2c51ce51ee18b
+("[PATCH] USB: relax usbcore reset timings") from 2005.
+
+This adds unneeded 40 ms during resume from suspend on a majority of
+devices, where it’s not needed, like the Dell XPS 13 9360/0596KF, BIOS
+2.21.0 06/02/2022 with
+
+    $ usb-devices
+
+    T:  Bus=01 Lev=00 Prnt=00 Port=00 Cnt=00 Dev#=  1 Spd=480  MxCh=12
+    D:  Ver= 2.00 Cls=09(hub  ) Sub=00 Prot=01 MxPS=64 #Cfgs=  1
+    P:  Vendor=1d6b ProdID=0002 Rev=06.09
+    S:  Manufacturer=Linux 6.9.0-rc6-00047-g25a99e110f17 xhci-hcd
+    S:  Product=xHCI Host Controller
+    S:  SerialNumber=0000:00:14.0
+    C:  #Ifs= 1 Cfg#= 1 Atr=e0 MxPwr=0mA
+    I:  If#= 0 Alt= 0 #EPs= 1 Cls=09(hub  ) Sub=00 Prot=00 Driver=hub
+    E:  Ad=81(I) Atr=03(Int.) MxPS=   4 Ivl=256ms
+
+    T:  Bus=01 Lev=01 Prnt=01 Port=02 Cnt=01 Dev#=  2 Spd=12   MxCh= 0
+    D:  Ver= 2.01 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+    P:  Vendor=0cf3 ProdID=e300 Rev=00.01
+    C:  #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=100mA
+    I:  If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+    E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+    E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+    E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+    I:  If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+    E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+    E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+
+    T:  Bus=01 Lev=01 Prnt=02 Port=03 Cnt=01 Dev#=  3 Spd=12   MxCh= 0
+    D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 8 #Cfgs=  1
+    P:  Vendor=04f3 ProdID=2234 Rev=11.11
+    S:  Manufacturer=ELAN
+    S:  Product=Touchscreen
+    C:  #Ifs= 1 Cfg#= 1 Atr=e0 MxPwr=100mA
+    I:  If#= 0 Alt= 0 #EPs= 2 Cls=03(HID  ) Sub=00 Prot=00 Driver=usbhid
+    E:  Ad=02(O) Atr=03(Int.) MxPS=  32 Ivl=2ms
+    E:  Ad=81(I) Atr=03(Int.) MxPS=  64 Ivl=1ms
+
+    T:  Bus=01 Lev=01 Prnt=03 Port=04 Cnt=01 Dev#=  4 Spd=480  MxCh= 0
+    D:  Ver= 2.01 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+    P:  Vendor=0c45 ProdID=670c Rev=56.26
+    S:  Manufacturer=CN09GTFMLOG008C8B7FWA01
+    S:  Product=Integrated_Webcam_HD
+    C:  #Ifs= 2 Cfg#= 1 Atr=80 MxPwr=500mA
+    I:  If#= 0 Alt= 0 #EPs= 1 Cls=0e(video) Sub=01 Prot=00 Driver=uvcvideo
+    E:  Ad=83(I) Atr=03(Int.) MxPS=  16 Ivl=4ms
+    I:  If#= 1 Alt= 0 #EPs= 1 Cls=0e(video) Sub=02 Prot=00 Driver=uvcvideo
+    E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+
+    T:  Bus=02 Lev=00 Prnt=00 Port=00 Cnt=00 Dev#=  1 Spd=5000 MxCh= 6
+    D:  Ver= 3.00 Cls=09(hub  ) Sub=00 Prot=03 MxPS= 9 #Cfgs=  1
+    P:  Vendor=1d6b ProdID=0003 Rev=06.09
+    S:  Manufacturer=Linux 6.9.0-rc6-00047-g25a99e110f17 xhci-hcd
+    S:  Product=xHCI Host Controller
+    S:  SerialNumber=0000:00:14.0
+    C:  #Ifs= 1 Cfg#= 1 Atr=e0 MxPwr=0mA
+    I:  If#= 0 Alt= 0 #EPs= 1 Cls=09(hub  ) Sub=00 Prot=00 Driver=hub
+    E:  Ad=81(I) Atr=03(Int.) MxPS=   4 Ivl=256ms
+
+The commit messages unfortunately does not list the devices needing this.
+Should they surface again, these should be added to the quirk list for
+USB_QUIRK_HUB_SLOW_RESET.
+
+Fixes: b789696af8b4 ("[PATCH] USB: relax usbcore reset timings")
+Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: David Brownell <david-b@pacbell.net>
+Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
+---
+ drivers/usb/core/hub.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index 4b93c0bd1d4b..487d5fe60f0c 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -3110,7 +3110,7 @@ static int hub_port_reset(struct usb_hub *hub, int port1,
+ 			usleep_range(10000, 12000);
+ 		else {
+ 			/* TRSTRCY = 10 ms; plus some extra */
+-			reset_recovery_time = 10 + 40;
++			reset_recovery_time = 10;
+ 
+ 			/* Hub needs extra delay after resetting its port. */
+ 			if (hub->hdev->quirks & USB_QUIRK_HUB_SLOW_RESET)
+-- 
+2.45.2
+
 
