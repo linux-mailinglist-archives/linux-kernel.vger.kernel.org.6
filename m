@@ -1,119 +1,196 @@
-Return-Path: <linux-kernel+bounces-260776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6DB993AE08
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:47:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CD6293AE0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:48:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC8C71C21DBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:47:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 044BB285C02
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63DFE14D29C;
-	Wed, 24 Jul 2024 08:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F66B14D2B8;
+	Wed, 24 Jul 2024 08:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="E/SefcR/"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v8Yhf6Bb";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MzMhGLiu"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C921C2AD;
-	Wed, 24 Jul 2024 08:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851921C2AD;
+	Wed, 24 Jul 2024 08:48:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721810834; cv=none; b=AhlnNjLYp2OoFXkdDdoIFNPlrbsqMA/Mud+u0QJNr3N6Fpywu9PY/KFvQNM4b7rhHXDuLu9AgrE6csCAhLPAOgOEVGastNlBsbF3w4m+afXldKJWGlohnzr6attAOMu8SOxtof7+iJ6rU7xTBcQAylu1dj+T3pKNIuHpXmpYS1k=
+	t=1721810903; cv=none; b=Up7M4BgCXsq1u4oPtSVHujZHe/vSXGsRLgTW/Yb/bbBAM1rCRy6vDvI/jFYwxo0VC1fF0zwppTANs2mviWAtPdiHc7OdRhlx5cnfkPSANQv4aZ1v/1XzVwbo2kuFPAPhM+VhW0BmIv3tYlapVEj1GYObO2vxLN0qrbWc2wwiZQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721810834; c=relaxed/simple;
-	bh=GjBzsYD6K6w17JNxvzYv8w4oRfzXrpu2qCSi4+bb+28=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sYNIsxnQ8jGO+cmBnNzgX6aGJBkYPl24cBg9arkOhiVDGHZaeawk0zJft/SdTM59J+J+Ib3IDXQtp0zbQEYF1U1M2+49moJ+eMsz8YDnJYqtfVq30Z6rqzquawrXCig489x+krahE8JwWJCmTSRQ/m8wgf6ZLsfDUN5YOysHBLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=E/SefcR/; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=hsI3nZ44Y5P47LGt5BrokAu47Wy+gx9WyMBY6tap8m0=;
-	t=1721810830; x=1723020430; b=E/SefcR/J70dNYw9EJMzJ9F42SY1hYsCFKG1szGi79RRjSJ
-	DZUxGR3r6SGdzBbobcMY7T72x8+Ur4lke4strsdSigBg3fI7c7mTCdu+parU/WfL7hOG5ztR9imZ0
-	nwaNYGBGsJXG3xGWeES7ZWtyyovGMMfcNKgF9H6Ipcw2S96rej4tUYsipZwnz0o2ZOpZ9FczOVYNV
-	EuGEymq/6GbwppZt6m69dafQ9X5a3rcgpPwFjg2bLcWB7OH2pF5jYFFz+HE9iz1UZMsAb/MgjzI78
-	HMqDoLBfhTDemBOv6WViMbSfAS3SvqoU+0vz0h2ba5EGZbnLfKFwfgXsWWTDkZqg==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1sWXeL-0000000DJUi-3qkP;
-	Wed, 24 Jul 2024 10:47:06 +0200
-Message-ID: <c4a67a0418e7068fc534f39f3c1dce21d082dd8f.camel@sipsolutions.net>
-Subject: Re: [regression] mt76x2u: NULL pointer dereference since recent
- change to fix chanctx emulation for monitor mode
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Linux regressions mailing list <regressions@lists.linux.dev>, Felix
- Fietkau <nbd@nbd.name>, Lorenzo Bianconi <lorenzo@kernel.org>, Ryder Lee
- <ryder.lee@mediatek.com>
-Cc: Michael <ZeroBeat@gmx.de>, "linux-wireless@vger.kernel.org"
- <linux-wireless@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Kalle Valo <kvalo@kernel.org>
-Date: Wed, 24 Jul 2024 10:47:04 +0200
-In-Reply-To: <8c91352f-a404-4ba6-aa27-1253468c830d@leemhuis.info>
-References: <8c91352f-a404-4ba6-aa27-1253468c830d@leemhuis.info>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+	s=arc-20240116; t=1721810903; c=relaxed/simple;
+	bh=giZ1dmbuQjDzsjiaqIcO7ZDY5ctThoN5p/C7jVFH8w0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=eWzPC35MiDJrRCYrpmmsxfDTCVsb5jFDNgB9OCkzXdT1VetJ4rF3/pXzp4kGHDuXLd4cEu5thCB+V45FOqvbj6Cx96tE/Yik1M6qUsyZ+1RbZ21s0RSbxiEN45b+HELzmVGDhEEISlhpc0DqSZ10Y6mQ7CZ79g9zsihGElegMt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v8Yhf6Bb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MzMhGLiu; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1721810894;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a09RrNU1F+fVmwep1n2NrhCMuBabpF9UyYl4Vp6fByY=;
+	b=v8Yhf6BbxoSh1ZjTczM5EGIflRsKSxgwWFHStE+z7YqtX5kq2kgYov8WU2Jrs4DPvIipOy
+	egYv88enTN3WG/dRtqG36EVyVf6AfhZOsTolAaRJYOvt9Y5ZNVE1Y+pcNh3GPOjTVw1Yrb
+	NDG70NVLkeBxLBYQeivmOyWwJPQOYgU09+flqV3/OLpvIVvhktEJDCy6RQYZiqQMO2qXMp
+	JDmDJbv3u/i+50vW5gPbw76c6rkFMgkhbyUxrOx8/nZUE24wXEXnhV6ZSMm7cK8JplJZCV
+	+bM2f/DaPrT41N8n890asf9DnmCqcwP2XnWqbi4/mateqAmZYZaln7ehnbyFVQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1721810894;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a09RrNU1F+fVmwep1n2NrhCMuBabpF9UyYl4Vp6fByY=;
+	b=MzMhGLiu5kHdsIDeziOtvYQmhMNhh4/bGzAClUoZM+gdm0W/e4K+OEoN/c0VBQhCuYVrkQ
+	0irI2p8K7jaAH4Dg==
+To: Rodrigo Cataldo via B4 Relay
+ <devnull+rodrigo.cadore.l-acoustics.com@kernel.org>, Jesse Brandeburg
+ <jesse.brandeburg@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, Vinicius
+ Costa Gomes <vinicius.gomes@intel.com>, "Christopher S. Hall"
+ <christopher.s.hall@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Rodrigo Cataldo
+ <rodrigo.cadore@l-acoustics.com>
+Subject: Re: [PATCH iwl-net] igc: Ensure PTM request is completed before
+ timeout has started
+In-Reply-To: <20240708-igc-flush-ptm-request-before-timeout-6-10-v1-1-70e5ebec9efe@l-acoustics.com>
+References: <20240708-igc-flush-ptm-request-before-timeout-6-10-v1-1-70e5ebec9efe@l-acoustics.com>
+Date: Wed, 24 Jul 2024 10:48:12 +0200
+Message-ID: <874j8fjhv7.fsf@kurt.kurt.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 
-On Wed, 2024-07-24 at 09:58 +0200, Linux regression tracking (Thorsten
-Leemhuis) wrote:
-> Hi, Thorsten here, the Linux kernel's regression tracker.
->=20
-> Johannes, Felix, Lorenzo, Ryder, I noticed a report about a regression
-> in bugzilla.kernel.org that (for my untrained eyes) appears to be a bug
-> in some code paths of mt76x2u that was exposed by 0d9c2beed116e6 ("wifi:
-> mac80211: fix monitor channel with chanctx emulation") [v6.10-rc5,
-> v6.9.7] from Johannes.
->=20
-> As many (most?) kernel developers don't keep an eye on the bug tracker,
-> I decided to write this mail. To quote from
-> https://bugzilla.kernel.org/show_bug.cgi?id=3D219086 :
->=20
-> >  Michael 2024-07-23 15:38:43 UTC
-> >=20
-> > After a user opened this discussion:
-> > https://github.com/ZerBea/hcxdumptool/discussions/465
-> >=20
-> > Jul 21 05:40:39 rpi4b-aarch kernel: mt76x2u 2-2:1.0 wlan1: entered prom=
-iscuous mode
-> > Jul 21 05:40:45 rpi4b-aarch kernel: Unable to handle kernel NULL pointe=
-r dereference at virtual address 0000000000000000
-> > Jul 21 05:40:45 rpi4b-aarch kernel: Mem abort info:
-> > Jul 21 05:40:45 rpi4b-aarch kernel:   ESR =3D 0x0000000096000044
-> > Jul 21 05:40:45 rpi4b-aarch kernel:   EC =3D 0x25: DABT (current EL), I=
-L =3D 32 bits
-> > Jul 21 05:40:45 rpi4b-aarch kernel:   SET =3D 0, FnV =3D 0
-> > Jul 21 05:40:45 rpi4b-aarch kernel:   EA =3D 0, S1PTW =3D 0
-> > Jul 21 05:40:45 rpi4b-aarch kernel:   FSC =3D 0x04: level 0 translation=
- fault
-> > Jul 21 05:40:45 rpi4b-aarch kernel: Data abort info:
-> > Jul 21 05:40:45 rpi4b-aarch kernel:   ISV =3D 0, ISS =3D 0x00000044, IS=
-S2 =3D 0x00000000
-> > Jul 21 05:40:45 rpi4b-aarch kernel:   CM =3D 0, WnR =3D 1, TnD =3D 0, T=
-agAccess =3D 0
-> > Jul 21 05:40:45 rpi4b-aarch kernel:   GCS =3D 0, Overlay =3D 0, DirtyBi=
-t =3D 0, Xs =3D 0
-> > Jul 21 05:40:45 rpi4b-aarch kernel: user pgtable: 4k pages, 48-bit VAs,=
- pgdp=3D0000000041300000
-> >=20
+--=-=-=
+Content-Type: text/plain
 
-Not too well-versed with ARM, does that tel me anything about where in
-the code the crash was? Without any further information I don't think I
-can see anything here, and I don't have an affected device.
+On Mon Jul 08 2024, Rodrigo Cataldo via B4 Relay wrote:
+> From: Rodrigo Cataldo <rodrigo.cadore@l-acoustics.com>
+>
+> When a PTM is requested via wr32(IGC_PTM_STAT), the operation may only
+> be completed by the next read operation (flush). Unfortunately, the next
+> read operation in the PTM request loop happens after we have already
+> started evaluating the response timeout.
+>
+> Thus, the following behavior has been observed::
+>
+>   phc2sys-1655  [010]   103.233752: funcgraph_entry:                    |  igc_ptp_getcrosststamp() {
+>   phc2sys-1655  [010]   103.233754: funcgraph_entry:                    |    igc_phc_get_syncdevice_time() {
+>   phc2sys-1655  [010]   103.233755: funcgraph_entry:                    |      igc_rd32() {
+>   phc2sys-1655  [010]   103.233931: preempt_disable: caller=irq_enter_rcu+0x14 parent=irq_enter_rcu+0x14
+>   phc2sys-1655  [010]   103.233932: local_timer_entry: vector=236
+>   phc2sys-1655  [010]   103.233932: hrtimer_cancel: hrtimer=0xffff8edeef526118
+>   phc2sys-1655  [010]   103.233933: hrtimer_expire_entry: hrtimer=0xffff8edeef526118 now=103200127876 function=tick_nohz_handler/0x0
+>
+>   ... tick handler ...
+>
+>   phc2sys-1655  [010]   103.233971: funcgraph_exit:       !  215.559 us |      }
+>   phc2sys-1655  [010]   103.233972: funcgraph_entry:                    |      igc_rd32() {
+>   phc2sys-1655  [010]   103.234135: funcgraph_exit:       !  164.370 us |      }
+>   phc2sys-1655  [010]   103.234136: funcgraph_entry:         1.942 us   |      igc_rd32();
+>   phc2sys-1655  [010]   103.234147: console:              igc 0000:03:00.0 enp3s0: Timeout reading IGC_PTM_STAT register
+>
+> Based on the (simplified) code::
+>
+> 	ctrl = rd32(IGC_PTM_CTRL);
+>         /* simplified: multiple writes here */
+> 	wr32(IGC_PTM_STAT, IGC_PTM_STAT_VALID);
+>
+> 	err = readx_poll_timeout(rd32, IGC_PTM_STAT, stat,
+> 				 stat, IGC_PTM_STAT_SLEEP,
+> 				 IGC_PTM_STAT_TIMEOUT);
+> 	if (err < 0) {
+> 		netdev_err(adapter->netdev, "Timeout reading IGC_PTM_STAT register\n");
+> 		return err;
+> 	}
+>
+> Where readx_poll_timeout() starts the timeout evaluation before calling
+> the rd32() parameter (rd32() is a macro for igc_rd32()).
+>
+> In the trace shown, the read operation of readx_poll_timeout() (second
+> igc_rd32()) took so long that the timeout (IGC_PTM_STAT_VALID) has expired
+> and no sleep has been performed.
+>
+> With this patch, a write flush is added (which is an additional
+> igc_rd32() in practice) that can wait for the write before the timeout
+> is evaluated::
+>
+>   phc2sys-1615  [010]    74.517954: funcgraph_entry:                    |  igc_ptp_getcrosststamp() {
+>   phc2sys-1615  [010]    74.517956: funcgraph_entry:                    |    igc_phc_get_syncdevicetime() {
+>   phc2sys-1615  [010]    74.517957: funcgraph_entry:                    |      igc_rd32() {
+>   phc2sys-1615  [010]    74.518127: preempt_disable: caller=irq_enter_rcu+0x14 parent=irq_enter_rcu+0x14
+>   phc2sys-1615  [010]    74.518128: local_timer_entry: vector=236
+>   phc2sys-1615  [010]    74.518128: hrtimer_cancel: hrtimer=0xffff96466f526118
+>   phc2sys-1615  [010]    74.518128: hrtimer_expire_entry: hrtimer=0xffff96466f526118 now=74484007229 function=tick_nohz_handler/0x0
+>
+>   ... tick handler ...
+>
+>   phc2sys-1615  [010]    74.518180: funcgraph_exit:       !  222.282 us |      }
+>   phc2sys-1615  [010]    74.518181: funcgraph_entry:                    |      igc_rd32() {
+>   phc2sys-1615  [010]    74.518349: funcgraph_exit:       !  168.160 us |      }
+>   phc2sys-1615  [010]    74.518349: funcgraph_entry:         1.970 us   |      igc_rd32();
+>   phc2sys-1615  [010]    74.518352: hrtimer_init: hrtimer=0xffffa6f9413a3940 clockid=CLOCK_MONOTONIC mode=0x0
+>   phc2sys-1615  [010]    74.518352: preempt_disable: caller=_raw_spin_lock_irqsave+0x28 parent=hrtimer_start_range_ns+0x56
+>   phc2sys-1615  [010]    74.518353: hrtimer_start: hrtimer=0xffffa6f9413a3940 function=hrtimer_wakeup/0x0 expires=74484232878 softexpires=74484231878
+>
+>   .. hrtimer setup and return ...
+>
+>   kworker/10:1-242   [010]    74.518382: sched_switch: kworker/10:1:242 [120] W ==> phc2sys:1615 [120]
+>   phc2sys-1615  [010]    74.518383: preempt_enable: caller=schedule+0x36 parent=schedule+0x36
+>   phc2sys-1615  [010]    74.518384: funcgraph_entry:      !  100.088 us |      igc_rd32();
+>   phc2sys-1615  [010]    74.518484: funcgraph_entry:         1.958 us   |      igc_rd32();
+>   phc2sys-1615  [010]    74.518488: funcgraph_entry:         2.019 us   |      igc_rd32();
+>   phc2sys-1615  [010]    74.518490: funcgraph_entry:         1.956 us   |      igc_rd32();
+>   phc2sys-1615  [010]    74.518492: funcgraph_entry:         1.980 us   |      igc_rd32();
+>   phc2sys-1615  [010]    74.518494: funcgraph_exit:       !  539.386 us |    }
+>
+> Now the sleep is called as expected, and the operation succeeds.
+> Therefore, regardless of how long it will take for the write to be
+> completed, we will poll+sleep at least for the time specified in
+> IGC_PTM_STAT_TIMEOUT.
+>
+> Fixes: a90ec8483732 ("igc: Add support for PTP getcrosststamp()")
+> Signed-off-by: Rodrigo Cataldo <rodrigo.cadore@l-acoustics.com>
 
-johannes
+Thanks for sending this upstream.
+
+Reviewed-by: Kurt Kanzenbach <kurt@linutronix.de>
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQJSBAEBCgA8FiEEvLm/ssjDfdPf21mSwZPR8qpGc4IFAmagv8weHGt1cnQua2Fu
+emVuYmFjaEBsaW51dHJvbml4LmRlAAoJEMGT0fKqRnOCuLUP/ib+0Vgkt4GIrTNy
+Gh9EkFw+VPjRPEnxPMIHRWl9XJnHJfVbOZp6u05cBpXE5M32SicSPEhO2ZZzBrUp
+NRlIlKhrlTLKa3m57duu2o0PY1572Ay0LyfiEF06joZUqX97kST26QlRYjdqVgzF
++PeQ9DTZ3wpltPMzmvXE6g8T02xumCbg6CgohmYjnVeCFG94ADr26+WPSoP0lX4o
+9bCJg7J/5nMfUmORzQ6dvLmlkURk4n18wguSab0hJnMAvbbCxZIlch5sGicUxbka
+AqcwWLz/CtpdoJ6VA5FR1aX0D2h597qDR6ULvsB8NjH942zRNr8akq00qS6tkGNp
+WFYlu58gQhDr6Zr7yWYWUXiI/4/1OTko/pesir7knzODd0bVCbf7PJIf1vkim84s
+00nfwkRBr/DBemxCbiOyV3F33sdntUe2Sx3iX8LqAwO8vcesltvED/xd18Ch6nj7
+ZucOsd/2bMqD1Key/8lzFdiMebLJV/ywoWg9dde7tsatdeDokzX3QhJZcWXktkah
+qcHremtXKQ7vzYn6yf3EV+oNBZlTULRoDar5MJWF6/EGnwl+2Y6xbfGEQh3t5uMB
+kPpXNE9VXOop4N5fLhtQ1HE1gq/doCo1rtp99Uo5iz3VppHNWHi1za8E4GFmXvb3
+kfWSE0TO7Z60rN2ANn9RS4QPj+hG
+=hICY
+-----END PGP SIGNATURE-----
+--=-=-=--
 
