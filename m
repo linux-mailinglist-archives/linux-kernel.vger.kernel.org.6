@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-260947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E619493B0C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:56:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AF3293B0C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:59:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82B42B20F52
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:56:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9955283251
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:59:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9372F158A3C;
-	Wed, 24 Jul 2024 11:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gmHy6cNe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14DE1514ED;
-	Wed, 24 Jul 2024 11:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A2A15884E;
+	Wed, 24 Jul 2024 11:59:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACFC85695;
+	Wed, 24 Jul 2024 11:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721822150; cv=none; b=hYWLXpIwX8Y8xo2Dk5UkHTmLQGgqmJVECgb2MCF02lNNrsrvgDfBbs5kXecTue3/1egJiuf+R/6StfMXQWHcl4J81I7KCt5ppXYjl2DF/dzzeXW42OKAEEn0j8MiqevMTz/FUtFhQvYwgjY1esMF1ILEormmVX74RTmj+zrGikg=
+	t=1721822350; cv=none; b=N3YX4I8tw/RJ2IePNMZCjdPqHMGDXaGlDqIOmVCUVvLWiZaR4ccFvy+hBG17SD6Wfhtl9YJGhUvxjnCa6jTf9jiOtXxcIxF59u9o1vMJf6NNfSxhgg6WsZWk5BxPDk49spZwGGLLNE0HRgE5RS4j2/QycAvDO5053jsY9BrWAUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721822150; c=relaxed/simple;
-	bh=aD1WuGUjqO0uEHPch3G63drQXoYwCBw9LLbsQd2a1pE=;
+	s=arc-20240116; t=1721822350; c=relaxed/simple;
+	bh=rWKmFEfFUQpltJjCuvQIcACUQVh/AStq91RKt7MEVt4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EBqzwH0kU4Zx/QovXBFpgOGyjDZuT5Mu91nRPN305JpGjajjzqvKtZAqbMMN9k+bmgQNbBtL92pVXftbx+Gb0HMl+m1tuyDIznzA78wmAXXUA1qdj4D8Wmw2M11uSyXlYU+HB4RPLyDqFigbrRzLLM6CGVC2DdakKKY9id/CnGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gmHy6cNe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57EBDC4AF0E;
-	Wed, 24 Jul 2024 11:55:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721822150;
-	bh=aD1WuGUjqO0uEHPch3G63drQXoYwCBw9LLbsQd2a1pE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gmHy6cNea0ci0v+HR1ntWSL6sH/t3GZvvOMfoUNYnH6NqSxbnLWZTIDchw8eQlrLs
-	 D+3riNF1MyV3JFrqGfwe6/ZiQAKfrNXx34/hJyVQFGuSDBWAY0KuBsWNe0GPH6XSQg
-	 5pYGnrtZ6MNQUvb+9usuQSa6unPkIgNaZkJpWYWF3CNmVrs692IWi9YNJCpCp/ogpr
-	 6qbMo1aTECDoCQLxyX0PyGmw57WTpU1KZpRZ4RghNchjDRiGi+Wj4qeqb26R/04m+k
-	 MQzMwEArEo1QRvXQwVZrQnnGiugIidQMmBjL44xu2TiicxxkOh+RxXDrlVHYDHRUh3
-	 eiDi2Jzv3+Ggw==
-Message-ID: <bc2da461-fd21-44d1-85a7-f89c60e2b207@kernel.org>
-Date: Wed, 24 Jul 2024 13:55:41 +0200
+	 In-Reply-To:Content-Type; b=UFBUeEcuihpd5XuNoUDCIUw7RqHOTWfaulDSn0VZZVDVzFdogSQN6PvXQh19d4Brze+uAg9yw20s/9f7Q/aDE3KmiHziMjySrh9r7qBnH8f+RbCj8JN2UyYtyn34knHBF+0ky5d+zk94LBZpaCQvIBBJuETIL3HgBemy+MA6ii4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F2EB106F;
+	Wed, 24 Jul 2024 04:59:33 -0700 (PDT)
+Received: from [10.163.54.221] (unknown [10.163.54.221])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B5F583F5A1;
+	Wed, 24 Jul 2024 04:59:05 -0700 (PDT)
+Message-ID: <7d075af2-e94e-4201-9d5d-35fd53124c4c@arm.com>
+Date: Wed, 24 Jul 2024 17:29:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,98 +41,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/5] dt-bindings: usb: qcom,dwc3: Update ipq5332 clock
- details
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- gregkh@linuxfoundation.org, konrad.dybcio@linaro.org, djakov@kernel.org,
- quic_wcheng@quicinc.com, quic_kathirav@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20240723090304.336428-1-quic_varada@quicinc.com>
- <20240723090304.336428-3-quic_varada@quicinc.com>
- <ac34c454-4800-4057-9a50-e0c5db1d3806@kernel.org>
- <ZqDoXu9+Y4+O8M7W@hu-varada-blr.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/2] uapi: Define GENMASK_U128
+To: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Linux-Arch <linux-arch@vger.kernel.org>
+References: <20240724103142.165693-1-anshuman.khandual@arm.com>
+ <20240724103142.165693-2-anshuman.khandual@arm.com>
+ <d0fadaa3-94d4-4600-8e92-a8fe5b0f141b@app.fastmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ZqDoXu9+Y4+O8M7W@hu-varada-blr.qualcomm.com>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <d0fadaa3-94d4-4600-8e92-a8fe5b0f141b@app.fastmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/07/2024 13:41, Varadarajan Narayanan wrote:
-> On Wed, Jul 24, 2024 at 08:27:03AM +0200, Krzysztof Kozlowski wrote:
->> On 23/07/2024 11:03, Varadarajan Narayanan wrote:
->>> USB uses icc-clk framework to enable the NoC interface clock.
->>> Hence the 'iface' clock is removed from the list of clocks.
->>> Update the clock-names list accordingly.
+
+
+On 7/24/24 16:33, Arnd Bergmann wrote:
+> On Wed, Jul 24, 2024, at 12:31, Anshuman Khandual wrote:
+>> --- a/include/uapi/asm-generic/bitsperlong.h
+>> +++ b/include/uapi/asm-generic/bitsperlong.h
+>> @@ -28,4 +28,8 @@
+>>  #define __BITS_PER_LONG_LONG 64
+>>  #endif
 >>
->> But the clock is still there and is still used by this block. This looks
->> like adjusting hardware per Linux implementation.
->>
->> Why suddenly this clock was removed from this hardware?
+>> +#ifndef __BITS_PER_U128
+>> +#define __BITS_PER_U128 128
+>> +#endif
 > 
-> This clock per se is not used by the USB block. It is needed to
-> enable the path for CPU to reach the USB block (and vice versa).
-> Hence, we were adviced to use the ICC framework to enable this
-> clock and not the clocks/clock-names DT entries.
+> I would hope we don't need this definition. Not that it
+> hurts at all, but __BITS_PER_LONG_LONG was already kind
+> of pointless since we don't run on anything else and
+> __BITS_PER_U128 clearly can't have any other sensible
+> definition than a plain 128.
+
+Agreed, although this just followed __BITS_PER_LONG_LONG.
+But sure __BITS_PER_U128 can be plain 128.
+
+So would you like to have #ifndef __BITS_PER_LONG_LONG dropped here 
+as well ? But should that be folded or in a separate patch ?
+
 > 
-> Please refer to [1] where similar clocks for IPQ9574 were NAK'ed.
+>>  #define __AC(X,Y)	(X##Y)
+>>  #define _AC(X,Y)	__AC(X,Y)
+>>  #define _AT(T,X)	((T)(X))
+>> +#define _AC128(X)	((unsigned __int128)(X))
+> 
+> I just tried using this syntax and it doesn't seem to do
+> what you expected. gcc silently truncates the constant
 
-So the original submission was not correct?
+But numbers passed into _AC128() are smaller in the range [128..0].
+Hence the truncation might not be problematic in this context ? OR
+could it be ?
 
-You really need to stop sending DTS based on current driver support and
-focus on proper hardware description.
+> to a 64-bit value here, while clang fails the build.
 
-Such things pop up from time to time for Qualcomm and I don't see much
-of improvement. And we do not talk about some ancient code, predating
-guidelines, but IPQ5332 upstreamed ~1 year ago.
+Should this be disabled for CC_IS_CLANG ?
 
-Best regards,
-Krzysztof
+> See also https://godbolt.org/z/rzEqra7nY
+> https://stackoverflow.com/questions/63328802/unsigned-int128-literal-gcc
 
+So unless the value in there is beyond 64 bits, it should be good ?
+OR am I missing something.
+
+> 
+> The __GENMASK_U128() macro however seems to work correctly
+> since you start out with a smaller number and then shift
+> it after the type conversion.
+
+_U128() never receives anything beyond [127..0] range. So then this
+should be good ?
 
