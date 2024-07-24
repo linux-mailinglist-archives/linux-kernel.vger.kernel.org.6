@@ -1,231 +1,117 @@
-Return-Path: <linux-kernel+bounces-261450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C31593B77F
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:18:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CC7493B785
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:18:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC7041F2187A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:18:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D509B24BD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D7116DECF;
-	Wed, 24 Jul 2024 19:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E91916C686;
+	Wed, 24 Jul 2024 19:18:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vspilufM";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="g5vAGKU6";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vspilufM";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="g5vAGKU6"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="QjBQFpoD"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0036A1684A4;
-	Wed, 24 Jul 2024 19:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009122AE6C
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 19:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721848572; cv=none; b=fCmEDiPZdWjfdoalda48iYD3/5L2wgsO2nPumNj/U/SfmPMtrIOqGDNKu9P/SmcJYFxPonQWcjDPjiusFytqity/ZqCc0umV6BF+1DmkjuUt/FMGybGe9HzWQZnrkktsbjylrliw6nsdeGhelytB7GAxbG8SqWzWR5NzkmYbLb0=
+	t=1721848721; cv=none; b=O0e6e60pqGhsOydVtrco74E23yQokGwspzLplvTXgvS3TXtdBhL67bsE4tL49jXAKzfosPOML3KzdbaTGHmMPzMYcWBczJjhWjFpfkNbdIPRJ/MLApsFQsjLHfDBIAP1zHjECf5Obh+JK9YOLGXKAymTmaFmXTwhZ+v7oLeWe9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721848572; c=relaxed/simple;
-	bh=8C15POnSra0WrDdNUiT89AuDrH8cygOtfZefZQAVMoc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=An2pfFUKVV1a1ESOMydp49gXTSLZfFWYpBz5kAcSVDonvXR0V1YfDRa/pzg80shyfIjO+DNOnfaG8OeLg/h4QTYRYI/R6GM4R6kwnzd3LgPDM8oF5e+kdeW02vmEsiY/ZSqWHeeNp8YLOti+cZB6WayqEnB5wKhodEQrFb5JXFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vspilufM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=g5vAGKU6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vspilufM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=g5vAGKU6; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 14AAE219F2;
-	Wed, 24 Jul 2024 19:16:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721848569; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xtKHsTuV1Atgv43GeraVX25iqZ0nrqPFuV4hB+eesmg=;
-	b=vspilufMNI8N1QCToGWyYbFfd7CfzXG37epO0JbCjPdM8j7g6e/Nv/ZOSIAVPhlsojK9oL
-	i89/dRgp3QCYxg1UmuBqtGPtSSkmk3hEph8ZQw6eFikj7Pgl6qPwapdHlsosnM2glSE7OO
-	IlXYsWz+aQIyZyprtiDORPb61TcDjGo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721848569;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xtKHsTuV1Atgv43GeraVX25iqZ0nrqPFuV4hB+eesmg=;
-	b=g5vAGKU69f/0bXHqwQlbptIg1ehjxH1gIc191LH8J1gaf2AxX+SjKSRWD/WMEQX18RseZ3
-	QZrQB5T/GgSLVTAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721848569; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xtKHsTuV1Atgv43GeraVX25iqZ0nrqPFuV4hB+eesmg=;
-	b=vspilufMNI8N1QCToGWyYbFfd7CfzXG37epO0JbCjPdM8j7g6e/Nv/ZOSIAVPhlsojK9oL
-	i89/dRgp3QCYxg1UmuBqtGPtSSkmk3hEph8ZQw6eFikj7Pgl6qPwapdHlsosnM2glSE7OO
-	IlXYsWz+aQIyZyprtiDORPb61TcDjGo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721848569;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xtKHsTuV1Atgv43GeraVX25iqZ0nrqPFuV4hB+eesmg=;
-	b=g5vAGKU69f/0bXHqwQlbptIg1ehjxH1gIc191LH8J1gaf2AxX+SjKSRWD/WMEQX18RseZ3
-	QZrQB5T/GgSLVTAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0425413411;
-	Wed, 24 Jul 2024 19:16:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7t2iAPlSoWZccQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 24 Jul 2024 19:16:09 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 9ED70A08F2; Wed, 24 Jul 2024 21:16:04 +0200 (CEST)
-Date: Wed, 24 Jul 2024 21:16:04 +0200
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-	jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com, yangerkun@huawei.com,
-	Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH 06/20] ext4: avoid use-after-free in ext4_ext_show_leaf()
-Message-ID: <20240724191604.6grmtu4t7gmvtlec@quack3>
-References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
- <20240710040654.1714672-7-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1721848721; c=relaxed/simple;
+	bh=a02GUhiWbAY4bVUVygn/E4p/MC1dnbGGAe2U0twtjyY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=t64cl8Sk6rC2P46D22+aiJfcQ1nmdFeA559bbADcoWipYS3TqKiHykqthNS7NjsqznrzJaihYNwUc1p8XJgdBy1CXP/BDUE0cEyTQ3Lw7RnrXI9txeqVSXP994tWNarWuEbUZoHlAj6skxcN/0a60df4gxw63Q1FLcii9EJWkkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=QjBQFpoD; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d138e06e3so125162b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 12:18:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1721848719; x=1722453519; darn=vger.kernel.org;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=a02GUhiWbAY4bVUVygn/E4p/MC1dnbGGAe2U0twtjyY=;
+        b=QjBQFpoDwueoj4zaWBfhpIt1PmvjhP2Y9gai1cprtX9q/W0xgDhg6D1r7Fe0BfRb5T
+         Whvz+oHWbAyt+QN0zkgz2uqn33X5T6cyrbEk8yESXM6lfO0vuo6qCPx/awdTKjqgWXRE
+         QJU70uNzrK0fyWJ1tMFTihcXFcAj0cxZjBwBCYUojvQ5agXyw9jk76WXAS8M+IrPf/3H
+         +k/I9TV/SIcUiM6wXrq0QcU2NkAau0VGiN6HrDOo2C9fsNtcx2BtgasM0sST07zD6Pe4
+         9f6PHzti41HELRptWhxDVjE9h1npUjjUOMY0YQVLieuILaIAzF6Xfml0dPynXZeZMPXN
+         Z4tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721848719; x=1722453519;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=a02GUhiWbAY4bVUVygn/E4p/MC1dnbGGAe2U0twtjyY=;
+        b=gqoxjwQNOZ66zCPFb3mrJz1qewO4ni7y+R7WwXV6HloAlXo/0PLYWmY6BchLx+mNDG
+         HoycNFyaP/J80VKs8/qdV1Ud2+eGKVwTLSG1/st6ELUN7RGuPmJ0Guoo5vldeQlWp2kR
+         lw9eJPuu/OWuhaBDf0qBF8ZARQoeg1zdpJTj9k7ZiNKSJLCIxD/DV7V0eNyN0z90WZC6
+         GmS2gSC8J30mB2e8eH+eK9rWcFtpeVDYixeUblCeotxUTteUlJNu30hHU/z4t58Xvmk0
+         wpOlmpufvYMIW5nrDPI75+GRRGouPr8EZ4iKQY8y4KWOKY3LAAmIkOm06fLfj6cz42Hz
+         yGxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWkTTftq0vWJQZtiWWMj508T5SSrSGQpSF2QOTA5GxnwmSE88IJXRnUP+Mx9m4iIWxLsuQI+By8ScH4XeNXoXOX2Sw5awlKaSuSDW1v
+X-Gm-Message-State: AOJu0Yz3dIGZI5zqGz9n8o0UDIJHQXy8M1wnyC0eTv++ZQ3tnMVDHFVT
+	C17wOl2LzADHtoPY5du10uGraAeUCVqca1g2n6YhEQnRmW9WucxNq5Ee3331KPY=
+X-Google-Smtp-Source: AGHT+IFUwWJ+8obz221hJG5x/jzoeJXTY4KS7z9HkU5UcBMvPmWxLk9KdioZD32zMoXRgep0BAh/AA==
+X-Received: by 2002:a05:6a00:3cd5:b0:70d:15b9:3ece with SMTP id d2e1a72fcca58-70eaa946a3bmr578402b3a.29.1721848719142;
+        Wed, 24 Jul 2024 12:18:39 -0700 (PDT)
+Received: from dev-mattc2.dev.purestorage.com ([208.88.159.128])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70cff4b8166sm8862385b3a.85.2024.07.24.12.18.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 12:18:38 -0700 (PDT)
+From: Matthew W Carlis <mattc@purestorage.com>
+To: macro@orcam.me.uk
+Cc: alex.williamson@redhat.com,
+	bhelgaas@google.com,
+	christophe.leroy@csgroup.eu,
+	davem@davemloft.net,
+	david.abdurachmanov@gmail.com,
+	edumazet@google.com,
+	ilpo.jarvinen@linux.intel.com,
+	kuba@kernel.org,
+	leon@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	lukas@wunner.de,
+	mahesh@linux.ibm.com,
+	mattc@purestorage.com,
+	mika.westerberg@linux.intel.com,
+	mpe@ellerman.id.au,
+	netdev@vger.kernel.org,
+	npiggin@gmail.com,
+	oohall@gmail.com,
+	pabeni@redhat.com,
+	pali@kernel.org,
+	saeedm@nvidia.com,
+	sr@denx.de,
+	wilson@tuliptree.org
+Subject: PCI: Work around PCIe link training failures
+Date: Wed, 24 Jul 2024 13:18:30 -0600
+Message-Id: <20240724191830.4807-1-mattc@purestorage.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <alpine.DEB.2.21.2407222117300.51207@angie.orcam.me.uk>
+References: <alpine.DEB.2.21.2407222117300.51207@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710040654.1714672-7-libaokun@huaweicloud.com>
-X-Spamd-Result: default: False [-2.10 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -2.10
 
-On Wed 10-07-24 12:06:40, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> In ext4_find_extent(), path may be freed by error or be reallocated, so
-> using a previously saved *ppath may have been freed and thus may trigger
-> use-after-free, as follows:
-> 
-> ext4_split_extent
->   path = *ppath;
->   ext4_split_extent_at(ppath)
->   path = ext4_find_extent(ppath)
->   ext4_split_extent_at(ppath)
->     // ext4_find_extent fails to free path
->     // but zeroout succeeds
->   ext4_ext_show_leaf(inode, path)
->     eh = path[depth].p_hdr
->     // path use-after-free !!!
-> 
-> Similar to ext4_split_extent_at(), we use *ppath directly as an input to
-> ext4_ext_show_leaf(). Fix a spelling error by the way.
-> 
-> Same problem in ext4_ext_handle_unwritten_extents(). Since 'path' is only
-> used in ext4_ext_show_leaf(), remove 'path' and use *ppath directly.
-> 
-> This issue is triggered only when EXT_DEBUG is defined and therefore does
-> not affect functionality.
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+Sorry for belated response. I wasn't really sure when you first asked & I
+still only have a 'hand wavy' theory here. I think one thing that is getting
+us in trouble is when we turn the endpoint device on, then off, wait for a
+little while then turn it back on. It seems that the port here in this case
+is forced to Gen1 & there is not any path for the kernel to allow it to
+try another alternative again without an informed user to write the register.
 
-Looks good. Feel free to add:
+I'm still trying to barter for the time to really deeply dive into this so
+must apologize if this sounds crazy or couldn't be correct.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-I'd just note that this shows that modifying ppath in the called function
-was not a great idea as it makes possible use-after-free issues due to
-cached values being used very hard to spot and very easy to introduce...
-
-								Honza
-
-> ---
->  fs/ext4/extents.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index 3a70a0739af8..1660434fbfc7 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -3328,7 +3328,7 @@ static int ext4_split_extent_at(handle_t *handle,
->  }
->  
->  /*
-> - * ext4_split_extents() splits an extent and mark extent which is covered
-> + * ext4_split_extent() splits an extent and mark extent which is covered
->   * by @map as split_flags indicates
->   *
->   * It may result in splitting the extent into multiple extents (up to three)
-> @@ -3404,7 +3404,7 @@ static int ext4_split_extent(handle_t *handle,
->  			goto out;
->  	}
->  
-> -	ext4_ext_show_leaf(inode, path);
-> +	ext4_ext_show_leaf(inode, *ppath);
->  out:
->  	return err ? err : allocated;
->  }
-> @@ -3869,14 +3869,13 @@ ext4_ext_handle_unwritten_extents(handle_t *handle, struct inode *inode,
->  			struct ext4_ext_path **ppath, int flags,
->  			unsigned int allocated, ext4_fsblk_t newblock)
->  {
-> -	struct ext4_ext_path __maybe_unused *path = *ppath;
->  	int ret = 0;
->  	int err = 0;
->  
->  	ext_debug(inode, "logical block %llu, max_blocks %u, flags 0x%x, allocated %u\n",
->  		  (unsigned long long)map->m_lblk, map->m_len, flags,
->  		  allocated);
-> -	ext4_ext_show_leaf(inode, path);
-> +	ext4_ext_show_leaf(inode, *ppath);
->  
->  	/*
->  	 * When writing into unwritten space, we should not fail to
-> @@ -3973,7 +3972,7 @@ ext4_ext_handle_unwritten_extents(handle_t *handle, struct inode *inode,
->  	if (allocated > map->m_len)
->  		allocated = map->m_len;
->  	map->m_len = allocated;
-> -	ext4_ext_show_leaf(inode, path);
-> +	ext4_ext_show_leaf(inode, *ppath);
->  out2:
->  	return err ? err : allocated;
->  }
-> -- 
-> 2.39.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+- Matt
 
