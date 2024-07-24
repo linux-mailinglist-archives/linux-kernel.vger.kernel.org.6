@@ -1,86 +1,100 @@
-Return-Path: <linux-kernel+bounces-260646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8190193AC5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:57:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B33393AC62
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:01:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44D0F2845C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 05:57:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D14B1C22465
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 06:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64DE56440;
-	Wed, 24 Jul 2024 05:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZCgouGs6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2C1482F6;
+	Wed, 24 Jul 2024 06:01:11 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7AB53E23;
-	Wed, 24 Jul 2024 05:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1669623BF;
+	Wed, 24 Jul 2024 06:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721800669; cv=none; b=r7sxBugSzp+1RUwhxLoM//t/MBNiXthx4yuRZTiACjkOuVuKlUn2aA+t9MVCmixTYHFkP/squJIjyyjkmmLn+jJrSRlILMXTjO6DccLod2TNNnBFuSuovRY9UWrRA2a+PgojAu20wMc6tYah19BvOWnPIbq/2s6cl+88lCBuYog=
+	t=1721800871; cv=none; b=VgpttiQd2u/AEk4ifg9IFWhMa87/d1MJTGZryY/KXjN3gFSh1M5Q633/cpNz87BwCoyl9p76WmzChO34niIQHo0IAk5ac5aiXnJ3hZhF7sBoxGuvmgKB4BV6zsA7bVo5c8hjSNQooX20iy6kIpM755dejBbXCNjZSVrMlJKDzLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721800669; c=relaxed/simple;
-	bh=icYbqzAh+qqL0F6QLJ1TYRdeqsy+pUQjVJeYvn12CS0=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=rLe1BiVedak/VTHv0L40pzK6nwBG8tUsORyusngQh92ZoMyYiW8zit3uQo8Vs5ikNFsRlBl1iFooj63czTFHCdLf+gtRCR8lXVZ43Zy3W+9FlepS/50KiztmH+Qtc4mjc8z/0pFgTDaJ+uySoJJjy+WN66IM6RKT6HuDBVV+5lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZCgouGs6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40568C32782;
-	Wed, 24 Jul 2024 05:57:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1721800668;
-	bh=icYbqzAh+qqL0F6QLJ1TYRdeqsy+pUQjVJeYvn12CS0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZCgouGs69EFtYdI1dJZKO0ST1iP1Sbm3aVDtljf6PgNVJqKgZE6QFvrLBff0qYlSm
-	 aCq6TmoghMqOi4CH7krQETIN9q9MdY2Jm3ftpq5nYsb6UFWq+PjHtWWEkn0yQ2Zgy2
-	 GjqDSucPxMxQh/typNQo+b5CemoKZepM3mLkOH4g=
-Date: Tue, 23 Jul 2024 22:57:32 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the mm tree
-Message-Id: <20240723225732.1e050339cb366c998cfda374@linux-foundation.org>
-In-Reply-To: <16389d71-4a1f-4049-8d81-5814d240c46d@lucifer.local>
-References: <20240724084902.0843304d@canb.auug.org.au>
-	<16389d71-4a1f-4049-8d81-5814d240c46d@lucifer.local>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721800871; c=relaxed/simple;
+	bh=pVYRbbf669wNRKAoGCCyM5jD3NVuv+jVryjtv1tk/Bk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VCJ6zp+bRUClTL/POnCuYSm6BK8ICndngo6ahhqGd5ZXsTOGiKvdna87xMExIu5njBR/IB8jyJ/nm8kTH/8kv0vBbFlBQT6j7wFZ6VS79z4kDiFxkl+JEtRaudkJOSyNar02BC6IAUWcUbLYDy59AamxGsAWPiKMXuAlNgNDdHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=ucw.cz; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id DCB731C0082; Wed, 24 Jul 2024 08:01:05 +0200 (CEST)
+Date: Wed, 24 Jul 2024 08:01:05 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.9 000/163] 6.9.11-rc1 review
+Message-ID: <ZqCYodrxetiXGi3u@duo.ucw.cz>
+References: <20240723180143.461739294@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="QiJ3GPm5U9mN+hWa"
+Content-Disposition: inline
+In-Reply-To: <20240723180143.461739294@linuxfoundation.org>
 
-On Wed, 24 Jul 2024 06:31:53 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
 
-> > Caused by commit
-> >
-> >   b102945dd5b2 ("mm: move internal core VMA manipulation functions to own file")
-> >
-> > from the mm-unstable branch of the mm tree.
-> >
-> > asm/page_types.h only exists for x86 ...
-> >
-> > I have dropped the mm tree until the end of the merge window.
-> >
-> 
-> This seems a bit drastic. It's literally caused by 2 unncessary header includes
-> which are already fixed.
-> 
-> We really want to get some time in -next for this ideally.
+--QiJ3GPm5U9mN+hWa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm busily merging 6.12 material while the 6.11 merge window is still
-open.  That is Against The Rules, for good reasons - linux-next remains
-the 6.11-rc1 candidate tree until the merge window ends.
+Hi!
 
-So removing mm.git from -next is appropriate.  It'll be restored next week.
+> This is the start of the stable review cycle for the 6.9.11 release.
+> There are 163 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-mm-unstable remains a suitable base for ongoing work.
+CIP testing did not find any problems here:
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.9.y
+
+6.6 passes our testing, too:
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.6.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--QiJ3GPm5U9mN+hWa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZqCYoQAKCRAw5/Bqldv6
+8tHPAJ9Ix3+qmfriVFNFTiqmoCed7sA++wCdEsg7c99UgMeNEnLiVEuMyChRdgE=
+=bcAm
+-----END PGP SIGNATURE-----
+
+--QiJ3GPm5U9mN+hWa--
 
