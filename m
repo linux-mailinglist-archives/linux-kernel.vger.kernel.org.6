@@ -1,183 +1,112 @@
-Return-Path: <linux-kernel+bounces-260795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C8F793AE53
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:09:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83E1593AE4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 11:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAF89B223BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:09:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 241931F24409
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 09:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82A815250F;
-	Wed, 24 Jul 2024 09:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBECE13F01A;
+	Wed, 24 Jul 2024 09:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X8HQGI4r"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lVY/hTrG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A802C1A5;
-	Wed, 24 Jul 2024 09:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CAF214C58A
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 09:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721812152; cv=none; b=b6Ji9k97pd/PFPIF4uSxGQxc7IRxiq6yGvlsN804fMgYoAD7FH4L7TMka+1WO+jXZLXcuhUuyew7tVjRlH/ZMqgxeZGKCSFN845UQzu40ICdAHTavvjY1z5rIvPLf4Fl8o88xLEM9+X8+upYN5yh2ZLn0JrdGSZ10Zj2crdfolo=
+	t=1721812117; cv=none; b=Jsei0U8fy26TJSrvDvgIm5BzFNmmupjBUlvqnP0vLeUth+Jb+5SYrU0K7W6JxcWrLBPJhMbc8q0JxzL3az8Il3WEetv0FgT2Zr9RzW7I/lRRfP5lxYxQBnH23byoPl9e5+Vg43VaSj9dnzW+ziaJFpE8oJlWCTbfHgdW47dcWgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721812152; c=relaxed/simple;
-	bh=1ibcJMw5r1LiPdN6w26WAInNcxnWLbS54ysXD0qG/Wo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YQU2NEUmsgIKDF4ZXo7KbTIRzKOkt50Kc2CBtLRt56yH6yEgPW0UQSWBucoqUJ1Swp9cZCgdC4rIzPNcDMM09+M0ApHGue70zR0OmKM0N5NZ2cGhgyONIe1YwTTdvKCZaOgjiXcuIvc84a2qr79v0u+zF2mxU5A2bsYoTWIHg9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X8HQGI4r; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-368313809a4so401987f8f.0;
-        Wed, 24 Jul 2024 02:09:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721812150; x=1722416950; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LLEddhztZC5qsHgleGZvWV3x/LXcD+KsVlwJy5ByJ+A=;
-        b=X8HQGI4rFYx0+br08/kgMpZt16aMNtSwNrQMLLbrGylt+rduOtcZHiF+Ndg0vDD8af
-         ijWI2lskvF/xs8iqWJQR2w5uDs0MbbreplKp0I/WNam5RovClTef/bxdO7fKM5yRsVUU
-         1tnLBdk5br1I/Q5amn+0blarrIaWVs90xx/54q/PL0zVxxN3WRfLmP/zwXIt1br2+a9K
-         oqA7PGBCypHjf/3mqDqFjm/137rpAVf9Ba4lwsDJJsY48gDs/eI+HIWN4uiHRLSLvsJX
-         sjed8BYjE4dOxHZo+69EPwTFtY3yVMg2TRbasEsikx2bZIPR5WqThMzMeMRMr2WgfHrp
-         VOjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721812150; x=1722416950;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LLEddhztZC5qsHgleGZvWV3x/LXcD+KsVlwJy5ByJ+A=;
-        b=dEQtfGaPaft5dYWvWoZR/zhpRpM0xc9s1mjv7RVySbSdCObdY76ClyDPL/a1BZjsEI
-         zS1eRnxBlJXf+VjQyVfqmP/Hq+9XmCNLJTRoSpVQ6jtAv2mIIe2I7OlAhpcFnBjd+nxr
-         vHVOoALfGwgTTBgcMN6mb74bV7VvTU3AVfrgUFygA24vGqv/Ypo4fBuaCo/IUzIjvXpL
-         DuCM+HNtwh1nyguDo01xfjU3ZpsvGG4VZQrvXnITClZMuQGn8EX3MVF0DSyDQEKnCzxN
-         BWXo/1GYd0SQlF8cxVe653ZohrqjgkXchLCX+ftjE148EFjTEzC17MSQXiGl9/9ozu/y
-         uTuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWVXXIbPouxY8GajvIjuKzN6IE2uvOh0fLUMvGXtKsTtgAxLPEHGqspTBKk9LZkFR9ZG0I2zTujKhItPQATk5U2bBSH/7ksOYn1L92roeJuzolbpktDolIOHDX+oxnFX5OyPM008XL2fQ==
-X-Gm-Message-State: AOJu0Yyoc+hOGBylN8aceQe6w5WbaYR4Uji68vjTGrFUEgS+F++605A/
-	6ifiUYFX987UTnJToN2JCZMojlrZMEVO8GkV88FguYSFLpJBGQPe
-X-Google-Smtp-Source: AGHT+IFmTsR+2rzMSFxemDNBAWtpPmYSng7vdiDngTidEkrwQcVGu+qJqvdRQ7dEI4/EnDE/V+rDpg==
-X-Received: by 2002:adf:fe43:0:b0:360:8c88:ab82 with SMTP id ffacd0b85a97d-369f6705c6bmr810530f8f.30.1721812149598;
-        Wed, 24 Jul 2024 02:09:09 -0700 (PDT)
-Received: from localhost (host-82-58-19-206.retail.telecomitalia.it. [82.58.19.206])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36878684801sm13840155f8f.11.2024.07.24.02.09.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 02:09:09 -0700 (PDT)
-From: Matteo Martelli <matteomartelli3@gmail.com>
-Date: Wed, 24 Jul 2024 11:08:31 +0200
-Subject: [PATCH v4 1/3] dt-bindings: iio: adc: add binding for pac1921
+	s=arc-20240116; t=1721812117; c=relaxed/simple;
+	bh=tXADsbqP+GX9WbYS60bhZVA5ZZZ6duTf+CbQcMcBcFs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pIhDHzzZXgHs9xSL4ZkO+LNOd9atcFKegBJv4Xe3ZtNDefWG8n7q+CDEKL11eQ+sdFAuSgk665pozcmT5K7hWzPiwnsw29QKBrgbMLWqrCwEgajYzpqtlt1cMlw8tJc7V3EbntSFWwLo3Kz4n9ywfW/WT1hFqGaCsjOp3ZDZbTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lVY/hTrG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24620C32782;
+	Wed, 24 Jul 2024 09:08:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721812116;
+	bh=tXADsbqP+GX9WbYS60bhZVA5ZZZ6duTf+CbQcMcBcFs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lVY/hTrGCssOLtbafZdS91kP7E+QilT/safXFRqMmf4ta0ywePrKg03RN94F9T2GQ
+	 /Iok19jBegidJZd9H8OtigTOeRTyP9OlalRgiN56Xc7rwE7Dye6iGpIf55mBh/g3RP
+	 nVufbnEo9KNR6FpP06JpQCFFP9wF3bMJGyHFDPgISEJPKTW+IPN8cAseUpeZ7jCw1A
+	 M++VWN5WRKkB5qI2DD9GMr+HrZw4bKbZJq23G1OZvaVNVzrpRkHCicDgwm5yQ+8rbG
+	 GyEzGVbwG9KRnGd13+sZU4VlnvhDY0ymA7UjoWz+4730r64h5+XGo7jbMzE45gjfUk
+	 qH8jUZp3SS9+Q==
+Date: Wed, 24 Jul 2024 14:38:32 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL]: Generic phy updates for v6.11
+Message-ID: <ZqDEkJNq30u3jOAB@matsya>
+References: <ZqCxra3XNXK7WbOb@matsya>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240724-iio-pac1921-v4-1-723698e903a3@gmail.com>
-References: <20240724-iio-pac1921-v4-0-723698e903a3@gmail.com>
-In-Reply-To: <20240724-iio-pac1921-v4-0-723698e903a3@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Marius Cristea <marius.cristea@microchip.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Matteo Martelli <matteomartelli3@gmail.com>, 
- Conor Dooley <conor.dooley@microchip.com>
-X-Mailer: b4 0.14.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2EdhKq06JG1F5bQ/"
+Content-Disposition: inline
+In-Reply-To: <ZqCxra3XNXK7WbOb@matsya>
 
-Add binging for Microchip PAC1921 Power/Current monitor
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
----
- .../bindings/iio/adc/microchip,pac1921.yaml        | 71 ++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
+--2EdhKq06JG1F5bQ/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/microchip,pac1921.yaml b/Documentation/devicetree/bindings/iio/adc/microchip,pac1921.yaml
-new file mode 100644
-index 000000000000..12e56b1b3d3f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/microchip,pac1921.yaml
-@@ -0,0 +1,71 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/iio/adc/microchip,pac1921.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Microchip PAC1921 High-Side Power/Current Monitor with Anaog Output
-+
-+maintainers:
-+  - Matteo Martelli <matteomartelli3@gmail.com>
-+
-+description: |
-+  The PAC1921 is a power/current monitoring device with an analog output
-+  and I2C/SMBus interface.
-+
-+  Datasheet can be found here:
-+  https://ww1.microchip.com/downloads/en/DeviceDoc/PAC1921-Data-Sheet-DS20005293E.pdf
-+
-+properties:
-+  compatible:
-+    const: microchip,pac1921
-+
-+  reg:
-+    maxItems: 1
-+
-+  vdd-supply: true
-+
-+  "#io-channel-cells":
-+    const: 1
-+
-+  shunt-resistor-micro-ohms:
-+    description:
-+      Value in micro Ohms of the shunt resistor connected between
-+      the SENSE+ and SENSE- inputs, across which the current is measured.
-+      Value is needed to compute the scaling of the measured current.
-+
-+  label:
-+    description: Unique name to identify which device this is.
-+
-+  read-integrate-gpios:
-+    description:
-+      READ/INT input pin to control the current state of the device, either in
-+      the INTEGRATE state when driven high, or in the READ state when driven low.
-+      When not connected the pin is floating and it can be overridden by the
-+      INT_EN register bit after asserting the READ/INT_OVR register bit.
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - vdd-supply
-+  - shunt-resistor-micro-ohms
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        adc@4c {
-+            compatible = "microchip,pac1921";
-+            reg = <0x4c>;
-+            vdd-supply = <&vdd>;
-+            #io-channel-cells = <1>;
-+            label = "vbat";
-+            shunt-resistor-micro-ohms = <10000>;
-+        };
-+    };
-+...
+On 24-07-24, 13:18, Vinod Koul wrote:
+> Hello again,
+>=20
+> Second request for generic phy subsystem feature bunch of new driver and
+> device support and updates to few of the drivers
+>=20
+> The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfab=
+d0:
+>=20
+>   Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git tags/ph=
+y-for-6.11
 
--- 
-2.45.2
+And I missed to update that please expect conflict with MAINTAINERS and
+exynos-regs-pmu.h, I think both of these are trivial one for you. The
+resolution is in -next tree as well
 
+Thanks
+--=20
+~Vinod
+
+--2EdhKq06JG1F5bQ/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmagxI8ACgkQfBQHDyUj
+g0cr/A//V4Auho1li0wm4Gx4i+iCPmtxTGcbKvhCcp9vjrz6DKBiRzl16fZPWlwz
+nCA2PlADczhZ4oU3wS7cevv6Vq9YVzu741GQCNW+tUxbepqtIFKAj9tTfbnOxreV
+UI/ntN9F0YE7kvaIc0PmxjVE7swBLbGNn1W26Nsm5L9vtREdfpXrFUphU4f40JgI
+RKs96hXgeSoT3oKPGFWdsCLkPUh+imBw2FoZqID4TzPOpaWm7pWdIqR8KJ8zHZLX
+dX62zrrrKDkTzx+1gaT3dXJ4uLhN3JWDu9j+9RT0PQ7UrRUQs9nLQjVNYPbthrf4
+Zg5I6lGUCSzNjEh6uYcHU1phtxeIJ426d9K6bPMU5goydwo+LrzUBBE3rmhtPzst
+rzmVFFWyVdQGonrkUU6VDCsTswPe2pDXrR6tGMysdFjVk5/j4SwODxnjJHYLG1wt
+X966cBO25QdJSemmx4Ciny5uFgYdcOBHZgbArSxKTvb/P8JtWBALQGkLf4abI8Sx
+2ZNPy4IQU22O5cA1l2OVpJM0jzUnbSHQeseAgLNWsp/Wv/5+DSJJA9TP0mS3yG9N
+a1e76blniSCfee8BeqXEHUGfiaB60OZhZvxmQ7pFWNC5k4meEC0MPJEmpqU0u5D5
+G7zXabvz/P0KqQANOeqOJzgEgEhjGD9ZTeUWtPYeSqxm1m48HLs=
+=uaY+
+-----END PGP SIGNATURE-----
+
+--2EdhKq06JG1F5bQ/--
 
