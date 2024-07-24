@@ -1,114 +1,208 @@
-Return-Path: <linux-kernel+bounces-261304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCE0A93B579
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:01:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A71193B57F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 946271F23DD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:01:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 342001C23D62
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0A015F301;
-	Wed, 24 Jul 2024 16:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2F416078E;
+	Wed, 24 Jul 2024 17:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="myGZ76LE"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fuiAGIzF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3807A15ADB1
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 16:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7256B15EFC6;
+	Wed, 24 Jul 2024 17:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721840391; cv=none; b=vENpyJ9Ft7Q7DWeVIxpo3q2MWKfMphZRDM2f2aaihjGtONr0F5qXbD3DKUg5rGNhQcGcJeV6z+pqJLdka2gwNO7f+Tyqw7/Bm0+DCgZJdHIll2FgFsvpo8Re110ueOEubNSFjX+vtsKkBsClXXHOddWDmJKUCNzL/w/RA/dRWCg=
+	t=1721840451; cv=none; b=gNmGuLTm2KQnHa7VR8FlgPR6Tf4UhCtzvGBJ0+1kzkBD6Sy6vPh30KLXnwVE5NIq0+rhts0LWv92a0CUUHus/DuqVK2sCn9DPgNvjnVfVTG1+J4RjgXAJvPhsdroEcu2u/Zp7jYYkIhKF0uezFGli2hggkzH6T18dOhVT8J9ZZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721840391; c=relaxed/simple;
-	bh=ok9snOYzKfsKkCXrT2iQcc6neV+34YDJgbTOLBwhnuo=;
+	s=arc-20240116; t=1721840451; c=relaxed/simple;
+	bh=2Fp4P0nwOnEMoAXIjI4Y3vOGjyY6NokmL9megcF9vq8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OnHco5/i/Kii1oQS5mUMae5nglKpv1cbU7MCnhsWoOnhuwCm59y0kCDA0B8l2Xpz8edU3Jizea7LSEmPk6FL3RNEAVFgqRsoIEzwJ4wgms0/9uS7IGQuPR+/2i/6yIXPnDRy+KAPWzn9KJiw2i8y0RZpnVQzlW5e1HuHPrCZ7P8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=myGZ76LE; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 24 Jul 2024 09:59:41 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721840387;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=anlDKMLkZcgUI4vplw8kTnoSMhJcwAjX082W+0ru/8c=;
-	b=myGZ76LEVmyQmlm1mpsq0MdwnJoq2wYQNWaal9vHy+hiQQMLShCjM5PBvJntSVfEaqzSJ0
-	vH6TbX89iEN8GSL5fSDNGkvRo1OAzXROdkTe1/4TdN2QMsyxhZwRX1/+ML4uWrE5eEUg3L
-	a1V8eL5J81kOCxQmfMAGTbGDslvb6Ms=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, jpoimboe@kernel.org, 
-	kent.overstreet@linux.dev, peterz@infradead.org, nphamcs@gmail.com, 
-	cerasuolodomenico@gmail.com, surenb@google.com, lizhijian@fujitsu.com, willy@infradead.org, 
-	vbabka@suse.cz, ziy@nvidia.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v4] vmstat: Kernel stack usage histogram
-Message-ID: <xdumlsfpg3v6hoqdco4acpaudsk2edhgtrabhqdon5lc4nekix@hejsxuay75pr>
-References: <20240718202611.1695164-1-pasha.tatashin@soleen.com>
- <20240723234600.d05817293ec1eb2d4ad87be7@linux-foundation.org>
- <CA+CK2bB2fiAGHpD5dsSdxCgPjx7OBra5K8Vn_a4wytPa2U6UjA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mg4uD09xjBCJTiZQlFQhPvgy5M5HuZU/dNtng5VSoFiLVnSgcPSmBRDKzXDOSf8xxq3JJz1gQuIhgeRfaV1GaH03qQuPE8W9rzuYcvKWsUZKiE51mFvZmdKQN7mLLuEUjW+yr7bxdJmPDBUY7+GzaTuyOrIpTlO4HRWgUCJO+Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fuiAGIzF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB0C7C32781;
+	Wed, 24 Jul 2024 17:00:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721840451;
+	bh=2Fp4P0nwOnEMoAXIjI4Y3vOGjyY6NokmL9megcF9vq8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fuiAGIzF1Mk04XEIXWoBquP9gxq0hR7o3p8cRHVnkCkp1n/AWQN22x6+EKPARr+Gc
+	 w4AwDNIP86ve2KTlPJgZAh51KxTdfV/UuvhZeliWcCLcaNDlQP/No7AhGGZZAyRxIC
+	 mfE6P8ZzZzBPHPKl8HEmPhHOUJnc19nci2FNf8YkE7rXar+x8X3WDvGE9gV4teKQZK
+	 84TzmXO3nFBloc51YZuZa4bQYjlyCwZQfPaoH6+XNXQ6XvD4GGzfzQTX/5a8i6VzFz
+	 hV3RnG8cwoPi+aay6e/T2XK4OvOsB+my075lNLNQJTuaAFsb3t5aY4zOAPDauxDzqb
+	 ySsKAtRKEvG+w==
+Date: Wed, 24 Jul 2024 18:00:46 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Animesh Agarwal <animeshagarwal28@gmail.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vladimir Zapolskiy <vz@mleia.com>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: gpio: nxp,lpc32xx-gpio: Convert to dtschema
+Message-ID: <20240724-sappiness-apprehend-b66630b94bcf@spud>
+References: <20240724161235.130333-1-animeshagarwal28@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="RctCo8G3j4W6epQq"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+CK2bB2fiAGHpD5dsSdxCgPjx7OBra5K8Vn_a4wytPa2U6UjA@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240724161235.130333-1-animeshagarwal28@gmail.com>
 
-On Wed, Jul 24, 2024 at 10:43:59AM GMT, Pasha Tatashin wrote:
-> On Wed, Jul 24, 2024 at 2:46 AM Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> > On Thu, 18 Jul 2024 20:26:11 +0000 Pasha Tatashin <pasha.tatashin@soleen.com> wrote:
-> >
-> > > As part of the dynamic kernel stack project, we need to know the amount
-> > > of data that can be saved by reducing the default kernel stack size [1].
-> > >
-> > > Provide a kernel stack usage histogram to aid in optimizing kernel stack
-> > > sizes and minimizing memory waste in large-scale environments. The
-> > > histogram divides stack usage into power-of-two buckets and reports the
-> > > results in /proc/vmstat. This information is especially valuable in
-> > > environments with millions of machines, where even small optimizations
-> > > can have a significant impact.
-> >
-> > x86_64 allmodconfig:
-> >
-> > In file included from <command-line>:
-> > In function 'init_memcg_events',
-> >     inlined from 'mem_cgroup_css_alloc' at mm/memcontrol.c:3616:3:
-> > ././include/linux/compiler_types.h:510:45: error: call to '__compiletime_assert_2305' declared with attribute error: BUILD_BUG_ON failed: NR_VM_EVENT_ITEMS >= S8_MAX
-> >   510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-> >       |                                             ^
-> > ././include/linux/compiler_types.h:491:25: note: in definition of macro '__compiletime_assert'
-> >   491 |                         prefix ## suffix();                             \
-> >       |                         ^~~~~~
-> > ././include/linux/compiler_types.h:510:9: note: in expansion of macro '_compiletime_assert'
-> >   510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-> >       |         ^~~~~~~~~~~~~~~~~~~
-> > ./include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
-> >    39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-> >       |                                     ^~~~~~~~~~~~~~~~~~
-> > ./include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
-> >    50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-> >       |         ^~~~~~~~~~~~~~~~
-> > mm/memcontrol.c:444:9: note: in expansion of macro 'BUILD_BUG_ON'
-> >   444 |         BUILD_BUG_ON(NR_VM_EVENT_ITEMS >= S8_MAX);
-> >       |         ^~~~~~~~~~~~
-> >
-> > This looks legitimate - is it time to switch to int16_t?
-> 
-> I am looking into this, and will also uninline stack_not_used() and
-> kstack_histogram() as discussed earlier in the thread.
-> 
 
-Let me take care of this specific build error.
+--RctCo8G3j4W6epQq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Yo,
+
+On Wed, Jul 24, 2024 at 09:42:28PM +0530, Animesh Agarwal wrote:
+> Convert the NXP LPC32xx SoC GPIO controller bindings to DT schema format.
+>=20
+> Cc: Daniel Baluta <daniel.baluta@nxp.com>
+> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+> ---
+>  .../devicetree/bindings/gpio/gpio_lpc32xx.txt | 43 ---------------
+>  .../bindings/gpio/nxp,lpc32xx-gpio.yaml       | 52 +++++++++++++++++++
+>  2 files changed, 52 insertions(+), 43 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/gpio/gpio_lpc32xx.t=
+xt
+>  create mode 100644 Documentation/devicetree/bindings/gpio/nxp,lpc32xx-gp=
+io.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt b/Do=
+cumentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
+> deleted file mode 100644
+> index 49819367a011..000000000000
+> --- a/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
+> +++ /dev/null
+> @@ -1,43 +0,0 @@
+> -NXP LPC32xx SoC GPIO controller
+> -
+> -Required properties:
+> -- compatible: must be "nxp,lpc3220-gpio"
+> -- reg: Physical base address and length of the controller's registers.
+> -- gpio-controller: Marks the device node as a GPIO controller.
+> -- #gpio-cells: Should be 3:
+> -   1) bank:
+> -      0: GPIO P0
+> -      1: GPIO P1
+> -      2: GPIO P2
+> -      3: GPIO P3
+> -      4: GPI P3
+> -      5: GPO P3
+> -   2) pin number
+> -   3) optional parameters:
+> -      - bit 0 specifies polarity (0 for normal, 1 for inverted)
+> -- reg: Index of the GPIO group
+
+> diff --git a/Documentation/devicetree/bindings/gpio/nxp,lpc32xx-gpio.yaml=
+ b/Documentation/devicetree/bindings/gpio/nxp,lpc32xx-gpio.yaml
+> new file mode 100644
+> index 000000000000..5974b2775d23
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/nxp,lpc32xx-gpio.yaml
+
+Can you make this filename the same as the compatible string please?
+
+> @@ -0,0 +1,52 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+
+Hmm, the original author does not appear to be from one of the companies
+where there's a carte blanche for binding relicensing.
+
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/gpio/nxp,lpc32xx-gpio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP LPC32xx SoC GPIO controller
+> +
+> +maintainers:
+> +  - Animesh Agarwal <animeshagarwal28@gmail.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: nxp,lpc3220-gpio
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  gpio-controller: true
+> +
+> +  '#gpio-cells':
+> +    const: 3
+> +    description: |
+> +      1) bank:
+> +        0: GPIO P0
+> +        1: GPIO P1
+> +        2: GPIO P2
+> +        3: GPIO P3
+> +        4: GPI P3
+> +        5: GPO P3
+> +      2) pin number
+> +      3) optional parameters:
+
+This isn't optional, since you've made the number of cells const: 3. The
+original binding also says "should be 3", so I think that's reasonable.
+Just drop the optional wording.
+
+Otherwise, looks pretty okay to me.
+
+Cheers,
+Conor.
+
+> +        - bit 0 specifies polarity (0 for normal, 1 for inverted)
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - gpio-controller
+> +  - '#gpio-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    gpio@40028000 {
+> +        compatible =3D "nxp,lpc3220-gpio";
+> +        reg =3D <0x40028000 0x1000>;
+> +        gpio-controller;
+> +        #gpio-cells =3D <3>; /* bank, pin, flags */
+> +    };
+> --=20
+> 2.45.2
+>=20
+
+--RctCo8G3j4W6epQq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHQEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqEzPgAKCRB4tDGHoIJi
+0uqwAPiDBQOdQdHa0Bxn92ixhY01Vmy5r/40U7pAC9hnuB5WAQDdnCaQ7+BNsMKm
+ufyZQGHMpLcUz3rSPoafZ5J6NzyXBA==
+=m3mS
+-----END PGP SIGNATURE-----
+
+--RctCo8G3j4W6epQq--
 
