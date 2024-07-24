@@ -1,131 +1,96 @@
-Return-Path: <linux-kernel+bounces-261420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B21D293B71C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:59:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 358D493B71F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 641931F24094
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:59:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1E4DB24240
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7225D16B722;
-	Wed, 24 Jul 2024 18:59:06 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0344A15F409;
+	Wed, 24 Jul 2024 19:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="XuErSEQV"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995381591F3
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 18:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D927449658
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 19:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721847546; cv=none; b=Ml2JsqLENLtxG/uREeUWiRwTwMTTW59DdoCxY2IbfzkTrUU3q/87Zr4pDvJl35X1yrxDLalznM+/36KqIBpOhcnzNNFNUYEH5Olo6CSMSJ4FsD0+BoUd2aHhJ9IXLNDKl5Pk6HxqZwaVCp3guJ1JtNDrzdIpGmy2v142qBtCCQk=
+	t=1721847645; cv=none; b=Bg1Lr7wm6275xtzTICuzQDecwoBk70syLlzOfXTZ9FmzxZlZXSmrNlrnsqwrls++hYZhY2veq533xcqFLBGCzZkLNYP8gB/f8ALs+bHnWTbMXWOqKmLvHQm0ckZ4GIcWqxCH5eRpxl6vf0GIgKA2sVydIPZteCrrDZRijEARgIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721847546; c=relaxed/simple;
-	bh=7f7FtSv7nnQZMtXVfJa0ePVsJHkIWzVFFZA8MEbsHLE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=lVkhRLhVodVQy3B5CaaPYpY1atbjHPvB1LLofLF3RK5Nc+Ws7u5iLJt+i3oBtIdA2hnkbE4B8fX6iIIGlBZGH0naDXJyMLEqLOg+70wSZ6MfYZkS4OA3cVkSfH1v9cDwWUo0XOi0aXufAR5jWHPE53vSefDGSvvyHypKXvjfrwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81257dec573so19718339f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 11:59:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721847544; x=1722452344;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wfdzvacuDV3CcT26JJD9v7jns+NQq86w7tti0drlXpY=;
-        b=U/BZqW8D2XyGF5zNbuWhm8oqCIMvYlnyHT7AiuxSJiHsrtb2QOeFEaAZ7w9kVw+vSq
-         t3xAUnvRtnHrgf7uCaj9iVngalaXyM++ZXMssaqePgQcSq+hM7w7ZwmsK0KpypxS+pqy
-         zfGZwkSVQ/qw+xF0bSK4St7KuDcpE6Dh1KZ7I19D3dABGD7Hg8101vdvmyUrCUk3szX8
-         zulUS3lckk/NAXIuCqEz9BEMR6T1FUcIyU4OZiuFN/k8HgJOgW9Z/1E6QkBCQIdlyy5l
-         +md+xwtYyH1x2u1oC74UZBFH66t+mCgHxoyFu5Owsb1bwjiLcZN96XCKBTuDc94I42Ua
-         XoiA==
-X-Forwarded-Encrypted: i=1; AJvYcCXXDna+ZCHUP/bb0BytM4qW177hv09NMmUaN61XZOwTDLqB8gMorUOI6fETZfpRp9JNqU5gYuanMrPmS2ZM1DlNWCpqpLS4NYq0F2fs
-X-Gm-Message-State: AOJu0YyCcXLWdc3lEjYp1xV6gJLfdBCVx14oEP2lCKgH51Zwtedxf9vg
-	3l776//BLvpKevXnHPqvAGRe5s8slzqweQjYKHY3FdMlorBiYsd68p/91s2ECh0B9oNAyqMdpcM
-	b7vvRnrDqXZjjF8sjIGsdlioEBi9deoFEu9pXp51riBBZZAypqTKi7I8=
-X-Google-Smtp-Source: AGHT+IG0R1Og+dysLDHe5d/3/YBqGbJ+pY6Rqqiy5laFYf0wseOpwhzCIZGio6wZe5pmnw8vWceoXY/k+ubnGByr/mg786J2rbX7
+	s=arc-20240116; t=1721847645; c=relaxed/simple;
+	bh=NkPLrp+DvJ2qkX/aT+LXxDGVGJDmAwtqvl6lVPEpaYo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gamv3jzDeE2E1Nkzg66WZD5i5iz0InKVDCCeFSZdYGao8xJuBg3Rl6GqgqBtuemXN+HQMUnQ3+er/wimKatOuHaeejJyo72snOzWtnjzE87cXKBASZuL4/jYSpA43Kr6lrpAyd+NM5Wom+3A8Gnn1TYJQoXAViocMSqz7uQUpoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=XuErSEQV; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1721847635;
+	bh=NkPLrp+DvJ2qkX/aT+LXxDGVGJDmAwtqvl6lVPEpaYo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XuErSEQV8D2cc650zcKHplavmK3SBilWlD1wTlM2guWzSzAz46fTok5+K1hHZbZmy
+	 o/JFlHI1+M1+JFi8NDFgLB7bQZSxNu5bLV56SFFKN73shodONVSCxs+54quiLYa74F
+	 dRumTEZlC2wsK2f4A/CSPUyBV8nySXGOZOeA3LAIzNaANEazgnjal9qvArz/hgyk4w
+	 Wuq2hSetTGXdlIgk/wm9nnUlC+l8NX9Gj0gKOTN6JXhj9TtJuKotXeok3+rzG18IK6
+	 l/RdnoLtSGQ1Fs4sMKnbShXEchvVRmcrsyA6T9VS1z8du8EF2cx/K2pz1UrgR2XdDA
+	 PsHQQyou6JN4w==
+Received: from [100.109.49.129] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dmitry.osipenko)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 76C2237813E1;
+	Wed, 24 Jul 2024 19:00:34 +0000 (UTC)
+Message-ID: <942afa37-a24c-48ed-ae10-c811849165bf@collabora.com>
+Date: Wed, 24 Jul 2024 22:00:31 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a2e:b0:397:3e38:eb30 with SMTP id
- e9e14a558f8ab-39a2182abaemr382345ab.3.1721847543887; Wed, 24 Jul 2024
- 11:59:03 -0700 (PDT)
-Date: Wed, 24 Jul 2024 11:59:03 -0700
-In-Reply-To: <18c54a21-184c-4cde-811c-48c5c0e34f9b@kernel.dk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000360ee4061e02dffe@google.com>
-Subject: Re: [syzbot] [io-uring?] KMSAN: uninit-value in io_req_task_work_add_remote
-From: syzbot <syzbot+82609b8937a4458106ca@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] drm/virtio: introduce the HOST_PAGE_SIZE feature
+To: Sergio Lopez <slp@redhat.com>, gurchetansingh@chromium.org,
+ tzimmermann@suse.de, mripard@kernel.org, olvaffe@gmail.com,
+ kraxel@redhat.com, daniel@ffwll.ch, maarten.lankhorst@linux.intel.com,
+ airlied@redhat.com
+Cc: linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+ dri-devel@lists.freedesktop.org
+References: <20240723114914.53677-1-slp@redhat.com>
+Content-Language: en-US
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+In-Reply-To: <20240723114914.53677-1-slp@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 7/23/24 14:49, Sergio Lopez wrote:
+> There's an incresing number of machines supporting multiple page sizes
+> and on these machines the host and a guest can be running, each one,
+> with a different page size.
+> 
+> For what pertains to virtio-gpu, this is not a problem if the page size
+> of the guest happens to be bigger or equal than the host, but will
+> potentially lead to failures in memory allocations and/or mappings
+> otherwise.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in io_req_task_work_add_remote
+Please describe concrete problem you're trying to solve. Guest memory
+allocation consists of guest pages, I don't see how knowledge of host
+page size helps anything in userspace.
 
-=====================================================
-BUG: KMSAN: uninit-value in io_req_local_work_add io_uring/io_uring.c:1193 [inline]
-BUG: KMSAN: uninit-value in io_req_task_work_add_remote+0x592/0x5e0 io_uring/io_uring.c:1241
- io_req_local_work_add io_uring/io_uring.c:1193 [inline]
- io_req_task_work_add_remote+0x592/0x5e0 io_uring/io_uring.c:1241
- io_msg_remote_post io_uring/msg_ring.c:102 [inline]
- io_msg_data_remote io_uring/msg_ring.c:133 [inline]
- io_msg_ring_data io_uring/msg_ring.c:152 [inline]
- io_msg_ring+0x1c38/0x1ef0 io_uring/msg_ring.c:305
- io_issue_sqe+0x383/0x22c0 io_uring/io_uring.c:1711
- io_queue_sqe io_uring/io_uring.c:1925 [inline]
- io_submit_sqe io_uring/io_uring.c:2181 [inline]
- io_submit_sqes+0x1259/0x2f20 io_uring/io_uring.c:2296
- __do_sys_io_uring_enter io_uring/io_uring.c:3206 [inline]
- __se_sys_io_uring_enter+0x40c/0x3ca0 io_uring/io_uring.c:3143
- __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3143
- x64_sys_call+0x2d82/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:427
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+I suspect you want this for host blobs, but then it should be
+virtio_gpu_vram_create() that should use max(host_page_sz,
+guest_page_size), AFAICT. It's kernel who is responsible for memory
+management, userspace can't be trusted for doing that.
 
-Uninit was created at:
- __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4719
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
- alloc_slab_page mm/slub.c:2321 [inline]
- allocate_slab+0x203/0x1220 mm/slub.c:2484
- new_slab mm/slub.c:2537 [inline]
- ___slab_alloc+0x12ef/0x35e0 mm/slub.c:3723
- __kmem_cache_alloc_bulk mm/slub.c:4759 [inline]
- kmem_cache_alloc_bulk_noprof+0x486/0x1330 mm/slub.c:4831
- __io_alloc_req_refill+0x84/0x560 io_uring/io_uring.c:940
- io_alloc_req io_uring/io_uring.h:393 [inline]
- io_submit_sqes+0x171b/0x2f20 io_uring/io_uring.c:2285
- __do_sys_io_uring_enter io_uring/io_uring.c:3206 [inline]
- __se_sys_io_uring_enter+0x40c/0x3ca0 io_uring/io_uring.c:3143
- __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3143
- x64_sys_call+0x2d82/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:427
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 0 UID: 0 PID: 5924 Comm: syz.0.16 Not tainted 6.10.0-syzkaller-12268-g7a3fad30fd8b-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-=====================================================
-
-
-Tested on:
-
-commit:         7a3fad30 Merge tag 'random-6.11-rc1-for-linus' of git:..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13a6fa19980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f26f43c6f7db5ad2
-dashboard link: https://syzkaller.appspot.com/bug?extid=82609b8937a4458106ca
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=178ca779980000
+-- 
+Best regards,
+Dmitry
 
 
