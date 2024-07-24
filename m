@@ -1,195 +1,145 @@
-Return-Path: <linux-kernel+bounces-261005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2742F93B173
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:17:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D9D993B175
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A99DB1F24BC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:17:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A82428594B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 13:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851F7158D8C;
-	Wed, 24 Jul 2024 13:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N1IH6TqL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1644C158D84;
+	Wed, 24 Jul 2024 13:18:24 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961F6157E6C;
-	Wed, 24 Jul 2024 13:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30501157E6C
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 13:18:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721827023; cv=none; b=XbFCkmrLOgSGEpO+S82QgDVFQCpyNARSsy92lzV4O+6LLbj53vZn5UUFF0QXSIczlb8bHlwPPZINulYdNzTr40WsdLkJppVyIxOI+aTQODjhqMWQpVJSv3B2IxL3Em3MupKj6B9PZQPK6uyRJ2UKNT2Wdv8YJ2KZDVEuqwGIWtU=
+	t=1721827103; cv=none; b=ZV+Hv0Q03Td35R2eJLl6apWCvZ21spylB4T50v/zo+axGD/tD8v1ZdfxrwF3R6CSa9UvxJHmiBeanES3HYU/1BIw5Py3ZViVUq7iJ+eMUh7LcL8EHNhwC3sebaGyqbM8xD/Yc8YmnOGz4Uv22OShRWNJUk4TgbynNnBP0tYTo1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721827023; c=relaxed/simple;
-	bh=686/eu4zCNarUXzwWa4R0PbPtsFBk7xckZhT7vx3gps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=hzDQhM809ccPgp8lQjWf+q/6LL9m54C+ypOJyRWC+WwGommDyWYzR7vzGTJkbhgA+SgKzn+mObumvmpcpkRFBUX+0LvT9/X8BoCDCui9Qt7z1XuKEqVsAXpYptGYDC0QOn7KQsy/X77q/BtnRRESf7KP4QSE0gW+3urApeSXFWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N1IH6TqL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C437C32782;
-	Wed, 24 Jul 2024 13:16:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721827023;
-	bh=686/eu4zCNarUXzwWa4R0PbPtsFBk7xckZhT7vx3gps=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=N1IH6TqLAiiHcBQl8bdVUX54hsYaJa3tBsPmEcDp2zeCK8gPougu8NN4rBkC9Yjsd
-	 jp2U2gOiJBJIt0jJYawqcrNnZb45MUFTjLb6nA4to6obrgOEGz8LwOd+UpvQhDzrS3
-	 8WSzfxNSCt1EMQTj1/C/THm3CvQu+JkUJMha9GSHiO8yuK19PXxYslQOGz2rSuSz14
-	 sur9aMrgks5o7r+tN3/wVFO2VwT+aHS3cxCtccUqFUQOapMG5YLgZZqX7dNYr1XBrN
-	 lMkkABxjairOMSoIz1/WfnygZggENJrWHiHs9MiNSr6vEjF+6/G15oAfZ2MMZCpW4p
-	 M+jGwAbPiPDhQ==
-Message-ID: <20a8ad37-f6ce-4342-a2f7-bf3495dfeb69@kernel.org>
-Date: Wed, 24 Jul 2024 15:16:56 +0200
+	s=arc-20240116; t=1721827103; c=relaxed/simple;
+	bh=F/KOJ3mKSfeOCZQbhXBJmwffOQkcBP+ECPPdb7BJJ7o=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Uq13Slb1Bi6ErEff4HyufNQBGoTXLRk77wr9H1gKu3FfDxKP8PIkCsAO//xF5gsF/PHTRxJ+XiGBow+cniz6pUIc/081WFzHxOZ/BRVDG+RlHsl4AbNyLL+Ojlqg+LF96UhmVkMLgKRy5jm9Twge9VdbtZ8FjrmCJ78h8VHONE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-804888d4610so114299839f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 06:18:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721827101; x=1722431901;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y9OLYAO0oAZgU3ZQkkdEML/gOHWNdnZu6zW9bwNbKa8=;
+        b=oF80PciqrSZyH5xFfUsYZcKcnIpvKLvXF1Uqf/oukkEuGJzd0mtKJIFeoTa9MAhL9D
+         q7VY4wgpWSFR+Gyda05vt7O9I7JyU7DCc8L9nzWl0jGrbmUMVK82LOr/FhroFQArBIro
+         XG0EOHT0tw+kIMfNJPAzwDRIwMVeFOS7GYoSTynaDY83h9CEuQGYprwpuh+19Bo3tq1/
+         jbiTd/ZwLBJoz6aUXGTsLGb7KiycZLR3s8amiMbN5NBmDDR6jPgFsVvUS2tictnLvQFH
+         IHNXxVbgtVCIEazr+6wk/iwEn2VFGyrkiEG/6DdLKSXS70d/jR1nJ+JG1HWfFVoiCjZ4
+         Wghw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFINpyryggPuE7lBgugbFaCbihyeN+v7QAXvwCvIBk0zfExC0vQ4FvsIO8hRXMfL43BqEFv0ApwrYegrpQdVJ5JjnNqNGd7dJz5h2Y
+X-Gm-Message-State: AOJu0YxJHuEMsBXRfdmKZjGb1vq2DIApWJff6R8buSjGq2/QtU/3s3Zn
+	jcI/4Z3/fjX6grgLVBzJX0KQgFB1trKpXaLSjc46CqjwyNLH4q+qPrzjSDmKgx3lGFnP0bp11HD
+	zbUFAf7t9Bj6rWWR1wTJeDGAiHr+Sb53jie99yVilNBVx1GAFBSWxfhw=
+X-Google-Smtp-Source: AGHT+IEFttKXpBqlDhq5Hg2s0McqaO3xxn3g7bNmAxNEOOv9JvpkhmiGNGjT1kexde9AqgilxHa1uj7D/vapJukx9BLM6aO38W/q
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: iio: imu: SMI240: add bosch,smi240.yaml
-To: Jianping.Shen@de.bosch.com, jic23@kernel.org, lars@metafoo.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- dima.fedrau@gmail.com, marcelo.schmitt1@gmail.com,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Christian.Lorenz3@de.bosch.com,
- Ulrike.Frauendorf@de.bosch.com, Kai.Dolde@de.bosch.com
-References: <20240724125115.10110-1-Jianping.Shen@de.bosch.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240724125115.10110-1-Jianping.Shen@de.bosch.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:8625:b0:4b9:ad94:2074 with SMTP id
+ 8926c6da1cb9f-4c28fd69265mr94135173.3.1721827101371; Wed, 24 Jul 2024
+ 06:18:21 -0700 (PDT)
+Date: Wed, 24 Jul 2024 06:18:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000be000d061dfe1c55@google.com>
+Subject: [syzbot] [bluetooth?] KASAN: null-ptr-deref Write in l2cap_sock_resume_cb
+From: syzbot <syzbot+52115a16e7eac723d587@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 24/07/2024 14:51, Jianping.Shen@de.bosch.com wrote:
-> From: "Shen Jianping (ME-SE/EAD2)" <she2rt@LR-C-0008DVM.rt.de.bosch.com>
-> 
-> dt-bindings: iio: imu: SMI240: add bosch,smi240.yaml
+Hello,
 
-Something got corrupted here.
+syzbot found the following issue on:
 
-Anyway, please send bindings with driver in the same patchset.
+HEAD commit:    2c9b3512402e Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13550ec3980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=be4129de17851dbe
+dashboard link: https://syzkaller.appspot.com/bug?extid=52115a16e7eac723d587
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-Limited review follows:
+Unfortunately, I don't have any reproducer for this issue yet.
 
-> Signed-off-by: Shen Jianping (ME-SE/EAD2) <she2rt@LR-C-0008DVM.rt.de.bosch.com>
-> ---
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-2c9b3512.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/105004175f16/vmlinux-2c9b3512.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4d8a81aaa129/bzImage-2c9b3512.xz
 
-Missing changelog. That's v2, not v1? Provide changelog under --- and
-version your patches correctly. b4 does it for you...
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+52115a16e7eac723d587@syzkaller.appspotmail.com
+
+Bluetooth: hci2: ISO packet for unknown connection handle 0
+==================================================================
+BUG: KASAN: null-ptr-deref in instrument_atomic_write include/linux/instrumented.h:82 [inline]
+BUG: KASAN: null-ptr-deref in clear_bit include/asm-generic/bitops/instrumented-atomic.h:41 [inline]
+BUG: KASAN: null-ptr-deref in l2cap_sock_resume_cb+0xd0/0x130 net/bluetooth/l2cap_sock.c:1697
+Write of size 8 at addr 0000000000000518 by task kworker/u33:6/5222
+
+CPU: 1 PID: 5222 Comm: kworker/u33:6 Not tainted 6.10.0-syzkaller-11185-g2c9b3512402e #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: hci0 hci_rx_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:114
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
+ instrument_atomic_write include/linux/instrumented.h:82 [inline]
+ clear_bit include/asm-generic/bitops/instrumented-atomic.h:41 [inline]
+ l2cap_sock_resume_cb+0xd0/0x130 net/bluetooth/l2cap_sock.c:1697
+ l2cap_security_cfm+0x78d/0x11d0 net/bluetooth/l2cap_core.c:7354
+ hci_encrypt_cfm+0x194/0x720 include/net/bluetooth/hci_core.h:2041
+ hci_encrypt_change_evt+0x554/0x10f0 net/bluetooth/hci_event.c:3649
+ hci_event_func net/bluetooth/hci_event.c:7445 [inline]
+ hci_event_packet+0x9eb/0x1180 net/bluetooth/hci_event.c:7497
+ hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
+ process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+==================================================================
 
 
->  .../bindings/iio/imu/bosch,smi240.yaml        | 50 +++++++++++++++++++
->  1 file changed, 50 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml b/Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml
-> new file mode 100644
-> index 00000000000..5e89d85d867
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/imu/bosch,smi240.yaml
-> @@ -0,0 +1,50 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/imu/bosch,smi240.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Bosch SMI240 IMU
-> +
-> +maintainers:
-> +  - Jianping Shen <Jianping.Shen@de.bosch.com>
-> +
-> +description: |
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Do not need '|' unless you need to preserve formatting.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-> +  The SMI240 is a combined three axis angular rate and three axis acceleration sensor module
-> +  with a measurement range of +/-300°/s and up to 16g. SMI240 does not support interrupt. 
-> +  https://www.bosch-semiconductors.com/mems-sensors/highly-automated-driving/smi240/
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-This does not look like wrapped according to Linux Coding Style. See
-Coding Style, so 80.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-> +
-> +properties:
-> +  compatible:
-> +    const: bosch,smi240
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  vdd-supply:
-> +    description: provide VDD power to the sensor.
-> +
-> +  vddio-supply:
-> +    description: provide VDD IO power to the sensor.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +allOf:
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    spi {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        spi@0 {
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-That's not a SPI controller. Your description suggests "imu".
-
-Best regards,
-Krzysztof
-
+If you want to undo deduplication, reply with:
+#syz undup
 
