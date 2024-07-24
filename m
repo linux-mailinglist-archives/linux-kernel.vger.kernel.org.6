@@ -1,151 +1,170 @@
-Return-Path: <linux-kernel+bounces-261173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFB2193B39C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:30:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A3EC93B3A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 941581F222A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:30:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC2F11F228E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 15:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7949715B54C;
-	Wed, 24 Jul 2024 15:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2819C15B559;
+	Wed, 24 Jul 2024 15:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XTR8ICKE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kOxdbZ63"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5FBA15B0FD;
-	Wed, 24 Jul 2024 15:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5846215351B
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 15:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721835026; cv=none; b=jY93bwAxW5nhZ56cwv+IExTdV3ukeQX0nJ4o/yO21xYVS1RKsKbyLeRSPmixnI5Bw5avfJZa4I6PDKgaB7YM+fqVelf54/xQcPeuTlP1oOFDG1ArGHoKNdKwJYUhhcAEIst/q631796IVfs51CGFlSk7Yeo843Cwp+0soNLzAAo=
+	t=1721835067; cv=none; b=mQriM5ibSPK1gLseeto41PPmtpKcXqfENxoZOPINeXRl+lRaZXMSdz95mHo8oi50EMMN1rQoBK/COOrXqNKnDYXB3iWx3qhRvnijn/EcSN8zXfJ8HCmEsuC0mOSVSy22kjhdwkYAGBU2qZ4yeQVrF0yxx67pnSFDSzfP9zHOt5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721835026; c=relaxed/simple;
-	bh=x4JIxYLOL3n4x7H2TiBnN9TVgyp/rQf37dq6ZQicqcw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HjTDvqK2Snig2UrxhRTKZqU0KLiHf38zz8h9S5DRY1nlO9CpYcoL+2acahmbEUrnKdTQt7k4JpZNiqLuStU8ncKUx1yft0Ss0YxCBwFnPRMJMOZ1eu6xxYljVPScRsGqagKTdu8xPqlhqDThNPeyz14A6AKvtzBb77QGeog6zpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XTR8ICKE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6572EC32781;
-	Wed, 24 Jul 2024 15:30:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721835026;
-	bh=x4JIxYLOL3n4x7H2TiBnN9TVgyp/rQf37dq6ZQicqcw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XTR8ICKEhDJEVqk1lirX/oN9GgnKRLDK+DclpQWVHAOKqB3U594WALPHELVeKLO44
-	 TCPxF9Ci4h7C4j69n5HKMxMFcL3T0ED5W+CW3oaLYYVGEdS6B2l01xPmImc8x6sJxq
-	 +EAwJ5i+vDIxbAnJ3ftGY/EgnlVtD4WZIgQkB9eVkqCtdPmmR609bCKWVQmC/XS+mL
-	 r0yt77KxpFDgJYWxUOAKYmCZsAtUb2Ta0tnGsx9iVg9Hv1cArOeju0HD/OzJToCjOM
-	 VBoqPdRZyAo06gubKoI4YkLnynQEoG0mSFWXjJEY0VqqREv4pI6t4RAnTbI4M7abAJ
-	 yJVxtWiFdnJ/Q==
-Date: Wed, 24 Jul 2024 16:30:21 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Pankaj Gupta <pankaj.gupta@nxp.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [EXT] Re: [PATCH v6 2/5] dt-bindings: arm: fsl: add imx-se-fw
- binding doc
-Message-ID: <20240724-huddling-neatly-88813c0b1f1d@spud>
-References: <20240722-imx-se-if-v6-0-ee26a87b824a@nxp.com>
- <20240722-imx-se-if-v6-2-ee26a87b824a@nxp.com>
- <20240722-popper-comfort-7538ea70c77b@spud>
- <AM9PR04MB8604123E065315093347F66C95A92@AM9PR04MB8604.eurprd04.prod.outlook.com>
- <20240723-smitten-shower-1d15c0f3cf97@spud>
- <AM9PR04MB86043E4B4B2FB206BF9223C695AA2@AM9PR04MB8604.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1721835067; c=relaxed/simple;
+	bh=r2MN2bBc3Kfp18tWdCR53taAy1x7zD5Ls8IFUyz/n+o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=bS8QYvIozASkihvmH8c5vp/PwiixukKNfRBUvCHo/fpAd+STLyWY8ja9mMh/b0hQgNGd0S3A545QbByAl4GVykibs2ymoNoYTXa14KwGjjFncyxbMjQH/22QEiabq28uphSq1HA8Aj/mJEX1lglvsQz/+vudX7l3GhfK7PCI0G8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=kOxdbZ63; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240724153057euoutp016e6a32adc1c6ccd1ce1ffb4c0c6bb456~lL9y8alQh1455714557euoutp01P
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 15:30:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240724153057euoutp016e6a32adc1c6ccd1ce1ffb4c0c6bb456~lL9y8alQh1455714557euoutp01P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1721835057;
+	bh=dzddrlA5sh87ryozwXveIOfmk/31qNlAPzRYhrbGzG4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=kOxdbZ63dVTUhtGz6ZfWdFHm7GCH8FxHVpx/rkhpA9+PrKU+q39HYwAY93Fyf9e/k
+	 uF5zcLAo4qrPo+zD+AqPZYHHIDXQG9iQK9W4zYyilYo9LqeSuyP+j4yBJDYJk0iTYp
+	 VkmJ/2NXAoqmhWHOVS3QEl5UaZzTLk3Ej8PNPWSk=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240724153057eucas1p1647824aff7aaf1285d72e32be9fc00b2~lL9yaWgsS3047230472eucas1p1I;
+	Wed, 24 Jul 2024 15:30:57 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id D0.5C.09624.03E11A66; Wed, 24
+	Jul 2024 16:30:56 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240724153056eucas1p193056deacd26701e60519fa0466269f5~lL9x61iOs3053930539eucas1p1J;
+	Wed, 24 Jul 2024 15:30:56 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240724153056eusmtrp20b8cf6f68438112bde9364ba673226b7~lL9x6AhQC0772707727eusmtrp2S;
+	Wed, 24 Jul 2024 15:30:56 +0000 (GMT)
+X-AuditID: cbfec7f2-c11ff70000002598-f8-66a11e30ac00
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 26.39.08810.03E11A66; Wed, 24
+	Jul 2024 16:30:56 +0100 (BST)
+Received: from AMDC4515.eu.corp.samsungelectronics.net (unknown
+	[106.120.51.28]) by eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240724153055eusmtip192f5253364ae6bfc12bf594e3dfd9db6~lL9xFJInI3047830478eusmtip1H;
+	Wed, 24 Jul 2024 15:30:55 +0000 (GMT)
+From: Mateusz Majewski <m.majewski2@samsung.com>
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Mateusz Majewski <m.majewski2@samsung.com>, linux-pm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
+	<lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+Subject: Re: [PATCH 5/6] drivers/thermal/exynos: add initial Exynos 850
+ support
+Date: Wed, 24 Jul 2024 17:30:36 +0200
+Message-ID: <20240724153037.914681-1-m.majewski2@samsung.com>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <CAPLW+4katjgDUS+e4+iYt+Cz_pKizLFUxqV4KGnbQ5ekAq9Mvw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="LrpZzGXbuUadIL7a"
-Content-Disposition: inline
-In-Reply-To: <AM9PR04MB86043E4B4B2FB206BF9223C695AA2@AM9PR04MB8604.eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOKsWRmVeSWpSXmKPExsWy7djP87oGcgvTDN7ft7B4MG8bm8X3LdeZ
+	LNbsPcdkMe+zrMX8I+dYLc6f38BusenxNVaLy7vmsFl87j3CaDHj/D4mi4VNLewWE49NZraY
+	+2Uqs8X/PTvYLZ487GOzeN63j8lBwGPNvDWMHjtn3WX3WLznJZPHplWdbB53ru1h89i8pN6j
+	b8sqRo/Pm+QCOKK4bFJSczLLUov07RK4Mr42dbEVrOKreNZ/hq2BcSp3FyMHh4SAicSSy+ld
+	jFwcQgIrGCWmr2tg62LkBHK+MErcmZ0GkfjMKPFnx3FWkARIw925R9kgEssZJf49mM8E4bQy
+	SezcPpEdpIpNwEDiwZtlYLaIgJ7Eupmv2EGKmAU2s0hceDoTbJSwQKDE+TVNLCA2i4CqxPG3
+	38F28wrYSmza+5IFYp28RO/+PiYQmxOo/vvs5ywQNYISJ2c+AbOZgWqat85mhqifzCnR89Ie
+	wnaRWN55nxHCFpZ4dXwLO4QtI/F/53wmCDtfYsbm9yyQsKiQuHvQC8K0lvh4hhnEZBbQlFi/
+	Sx+i2FFi17IGJogKPokbbwUh9vNJTNo2nRkizCvR0SYEUQ300p5JUGdJSzxpuQ210kOiY9Jm
+	lgmMirOQfDILySezEPYuYGRexSieWlqcm55abJiXWq5XnJhbXJqXrpecn7uJEZjWTv87/mkH
+	49xXH/UOMTJxMB5ilOBgVhLhffJqbpoQb0piZVVqUX58UWlOavEhRmkOFiVxXtUU+VQhgfTE
+	ktTs1NSC1CKYLBMHp1QD02Lx0PLr3s+F/yRE7WzbP+ffhNKDPKXKYmwcXYwV/HtSbvQyev2e
+	Edm/ICFYvevQx4/sf0wPvVky/efqnoL72a6T3i+7yOOw4sVN9WmX9US69cNKtkxz/92i8qhb
+	TfejgIL5nPQejp9W9k49uw7ddXz/eNKkFVMW5qqoKUa/qooqC7hd5dC3z1Lmsc9OFytL/p+i
+	jQX/nGc6N0z8VMjV6FfDL6n4bdEXa0PlRRc3xS7SKV/F6tuy8+6Keztnav4Q0/6bLRC/ZsWt
+	CJV3i2ZUxa08ftxZd730X8+gD+cDNfge823c1WDA6Pg9hO/L5y6Hj+evqPRo+c1LMVTiOPV1
+	iwrfrtfcMvcvWqeW8QnuVGIpzkg01GIuKk4EAG59KWXaAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNIsWRmVeSWpSXmKPExsVy+t/xu7oGcgvTDOY/lLZ4MG8bm8X3LdeZ
+	LNbsPcdkMe+zrMX8I+dYLc6f38BusenxNVaLy7vmsFl87j3CaDHj/D4mi4VNLewWE49NZraY
+	+2Uqs8X/PTvYLZ487GOzeN63j8lBwGPNvDWMHjtn3WX3WLznJZPHplWdbB53ru1h89i8pN6j
+	b8sqRo/Pm+QCOKL0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLL
+	Uov07RL0Mr42dbEVrOKreNZ/hq2BcSp3FyMnh4SAicTduUfZuhi5OIQEljJKzFl9kBEiIS1x
+	+MsUdghbWOLPtS6oomYmiXU/LrCBJNgEDCQevFkGViQioCexbuYrdpAiZoGDLBJ9r68wgySE
+	Bfwlvl9oZwGxWQRUJY6//Q7WzCtgK7Fp70sWiA3yEr37+5hAbE6BQInvs5+DxYUEeCRebdjP
+	CFEvKHFy5hOwODNQffPW2cwTGAVmIUnNQpJawMi0ilEktbQ4Nz232FCvODG3uDQvXS85P3cT
+	IzAWtx37uXkH47xXH/UOMTJxMB5ilOBgVhLhffJqbpoQb0piZVVqUX58UWlOavEhRlOguycy
+	S4km5wOTQV5JvKGZgamhiZmlgamlmbGSOK9nQUeikEB6YklqdmpqQWoRTB8TB6dUA1Mpg3X0
+	Fq+MD9Fxcz2tLkzljXq/KsxddaNo/prevfxLanLNxQyt4g8tTDYI2pOp3et+al/zf89HVmdM
+	P1yLZdIXSheUPr27+/nSQ2K5Ie+LVzFPqN354PadhZ9uxi9beOvrvFlVwhXXL2bcnG9zITqn
+	nGv7L5YbOTVz8lRunXdsrlvV67+vYLGDikjhHr3Abc8ilk7Revdlfnhpqsbj0C8PfDclz5qh
+	Iz+1Y/McYx5+jSerNWeqtZt86eGPD1Obe+HBqnKVorMNZ70Xf9PX21BcVel7sNMiv7e/Mrvk
+	jf1zQfZ/WtMmh6//fZ5J5PFPl4Jdje+Wd9TeZC5yuRTG/a+7ZNfjg6ETrVSKdHdPPqLEUpyR
+	aKjFXFScCADGboBITgMAAA==
+X-CMS-MailID: 20240724153056eucas1p193056deacd26701e60519fa0466269f5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240724153056eucas1p193056deacd26701e60519fa0466269f5
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240724153056eucas1p193056deacd26701e60519fa0466269f5
+References: <CGME20240724153056eucas1p193056deacd26701e60519fa0466269f5@eucas1p1.samsung.com>
 
+> It feels like there is an error for Exynos7 case there. Take a look at
+> this commit:
+> 
+>     aef27b658b43 ("thermal: exynos: use sanitize_temp_error() in
+> exynos7_tmu_initialize()")
+> 
+> I think that commit just forgets to update the shift value for Exynos7
+> properly. This code:
+> 
+>     data->temp_error1 = trim_info & tmu_temp_mask;
+>     data->temp_error2 = ((trim_info >> EXYNOS_TRIMINFO_85_SHIFT) &
+>                 EXYNOS_TMU_TEMP_MASK);
+> 
+> in case of Exynos7 becomes:
+> 
+>     data->temp_error1 = trim_info & 0x1ff;    // mask = 9 bits
+>     data->temp_error2 = (trim_info >> 8) & 0xff;
+> 
+> it contradicts itself, because it takes 9 rightmost bits for error1,
+> and then uses 1 of those bits for error2 too. It's obvious that if 9
+> bits are already used for error1, then for error2 it has to be shifted
+> by 9 bits, not 8.
+> 
+> That's why I think your patch 2/6 is legit and useful on its own, and
+> it's actually a good catch on your part! But the shift value has to be
+> fixed as well (for Exynos7). It's not ideal you don't have the
+> hardware to test it, but it just screams *bug* to me :) Also, maybe we
+> can ask someone who has Exynos7 hardware to test it for us?
 
---LrpZzGXbuUadIL7a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jul 24, 2024 at 11:02:21AM +0000, Pankaj Gupta wrote:
->=20
->=20
-> > -----Original Message-----
-> > From: Conor Dooley <conor@kernel.org>
-> > Sent: Tuesday, July 23, 2024 7:38 PM
-> > To: Pankaj Gupta <pankaj.gupta@nxp.com>
-> > Cc: Jonathan Corbet <corbet@lwn.net>; Rob Herring <robh@kernel.org>;
-> > Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley
-> > <conor+dt@kernel.org>; Shawn Guo <shawnguo@kernel.org>; Sascha Hauer
-> > <s.hauer@pengutronix.de>; Pengutronix Kernel Team
-> > <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Rob
-> > Herring <robh+dt@kernel.org>; linux-doc@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; devicetree@vger.kernel.org; imx@lists.linux.dev;
-> > linux-arm-kernel@lists.infradead.org
-> > Subject: Re: [EXT] Re: [PATCH v6 2/5] dt-bindings: arm: fsl: add imx-se=
--fw
-> > binding doc
-
-Please fix this ^
-
-> > On Tue, Jul 23, 2024 at 09:28:31AM +0000, Pankaj Gupta wrote:
-> > >
-> > > > -----Original Message-----
-> > > > From: Conor Dooley <conor@kernel.org>
-> > > > Sent: Monday, July 22, 2024 10:20 PM
-> > > > To: Pankaj Gupta <pankaj.gupta@nxp.com>
-> > > > Cc: Jonathan Corbet <corbet@lwn.net>; Rob Herring <robh@kernel.org>;
-> > > > Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley
-> > > > <conor+dt@kernel.org>; Shawn Guo <shawnguo@kernel.org>; Sascha
-> > Hauer
-> > > > <s.hauer@pengutronix.de>; Pengutronix Kernel Team
-> > > > <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Rob
-> > > > Herring <robh+dt@kernel.org>; linux-doc@vger.kernel.org; linux-
-> > > > kernel@vger.kernel.org; devicetree@vger.kernel.org;
-> > > > imx@lists.linux.dev; linux-arm-kernel@lists.infradead.org
-> > > > Subject: [EXT] Re: [PATCH v6 2/5] dt-bindings: arm: fsl: add
-> > > > imx-se-fw binding doc
-> >=20
-> > Please fix this ^
-> >=20
-> > > >
-> > > > On Mon, Jul 22, 2024 at 10:21:37AM +0530, Pankaj Gupta wrote:
-> In case of imx8ulp, there is a single node.
-> Having a same node name for both parent and child, is bit strange.=20
-> firmware {
-> 	firmware {
-> 	};
-> };
->=20
-> Request you to allow to re-evaluate this point.
-
-I dunno, it's all firmware so I don't really get why it is so strange!
-Can you remind me again why it is inside a parent node to begin with?
-
---LrpZzGXbuUadIL7a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqEeDQAKCRB4tDGHoIJi
-0vNLAP9B3+lSmSKeUl35G6VMa+BVoLKLga/voXEFKNXJ8OyYqAEA7mDYMr9euD17
-B/tWH+Nm/lWw86ujHuHim+Bh2yyCWg8=
-=GNe/
------END PGP SIGNATURE-----
-
---LrpZzGXbuUadIL7a--
+I thought about it for a bit and finally realized that Exynos7 only
+supports one point trimming. That is why in that commit, the original
+exynos7_tmu_initialize did not do anything with temp_error2. So
+temp_error2 will never be used in Exynos7. The real "fix" I guess is to
+only calculate temp_error2 if two point trimming is used, which is
+possible with a very small reordering of exynos7_tmu_initialize. But
+then the shift value will never be reachable in Exynos7 anyway. What do
+you think about this? I feel like it's worth it to change the shift
+value just because the code is a bit confusing anyway.
 
