@@ -1,137 +1,80 @@
-Return-Path: <linux-kernel+bounces-260634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0512B93AC20
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:02:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9C2593AC24
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 07:04:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FEEA1F231B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 05:02:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74CAA284577
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 05:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5954245C0B;
-	Wed, 24 Jul 2024 05:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDCA46B91;
+	Wed, 24 Jul 2024 05:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l4Zfhmjv"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="yaWQMapi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E782572;
-	Wed, 24 Jul 2024 05:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F142572;
+	Wed, 24 Jul 2024 05:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721797343; cv=none; b=D87WkD2OmSEEK5+/1Jl84P4SSQOWdLuQzl8+bGviNUM48hjhqTNcRxQ0R+nxglFWdqJ3yK4XwDxqfC0rpNQmtNcDbEi7ocPuvrUA6Y4DjVuxh0zEydTZOEpgCZZW2TJKcL1HtMSJO1Q+g05OGASa7JbHF4vNgBadQRb7FDdCHGU=
+	t=1721797441; cv=none; b=pncRMFiMe2EC0bwqDzGmNH9hdzv1HmmJBCz+jCBZ9UR1djR0IbA5EH3BIiJTGHLbPssih4ovJ487CeLzGWMRrE5LhLd3JW5lvmdIPGy/X2mln+T9OZ6djOszFOdZXtRdOGf4CrnSzyEj+AIwRZb3rcoBvFA4HT4ejxRcPNBizBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721797343; c=relaxed/simple;
-	bh=XznGPAWH1LE+KdN7UzH3hCTk1TDPC7ZWm715rJxS5W0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AVHHZUGtL4OIF5QnV4IfislY3w7gc+FcbI/HoK2scgXNCqFGN06gw2MjG8Nkl62WlbiK4I8u2Td1R2vTXoB3Kd/oarrCz5hSYAnryUu9vzeY8Z4PWM0wABudR5XtuG2dhlC3W7djwNIOvEmtqzeahX5fklsx+J7QXaMBGcbiQOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l4Zfhmjv; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46NKtgx7031494;
-	Wed, 24 Jul 2024 05:02:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=sSkacKMONTrzkrrMYc0qr0K3
-	kPoP3yT+LTuiwdNb9wQ=; b=l4ZfhmjvvmNmDJcwh+zONHP+JFxBNECGyfqOlQln
-	Z5mdPgpQ19xTjwu2sonjJxYWZ3KbbsXMVDhij4bLPIifbXNJwgzUsQjZ64sniQNk
-	Wk4vpk+EyK2N9GI+9K9cq/ve5kNFaqPA373TdoXH56UtzGCinQ/y/9xKMJFF7ju9
-	BQLG4xIWNhr0b5Xy1ubZc0dTLUzZKYwJx/CzfLeloPxmK5byuqnppCU389USoyvX
-	V1SDteLmYsoZ5Fvn5jhvlRnpm4QtUEFAWBgtNao/u06ru3QcN0Xees60vBlZL41/
-	85ZdpGXcXoc0nj1yGDE+oD/eIchNibyeB2nW0B1Z/tz4Gw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g46s9015-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Jul 2024 05:02:00 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46O51xdc013138
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 24 Jul 2024 05:01:59 GMT
-Received: from hu-pkondeti-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 23 Jul 2024 22:01:54 -0700
-Date: Wed, 24 Jul 2024 10:31:51 +0530
-From: Pavan Kondeti <quic_pkondeti@quicinc.com>
-To: Caleb Connolly <caleb.connolly@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>
-CC: Maulik Shah <quic_mkshah@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>, <stephan@gerhold.net>,
-        <swboyd@chromium.org>, <dianders@chromium.org>, <robdclark@gmail.com>,
-        <nikita@trvn.ru>, <quic_eberman@quicinc.com>,
-        <quic_pkondeti@quicinc.com>, <quic_lsrao@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Volodymyr
- Babchuk" <Volodymyr_Babchuk@epam.com>,
-        <stable@vger.kernel.org>
-Subject: Re: [PATCH v2] soc: qcom: cmd-db: Map shared memory as WC, not WB
-Message-ID: <93c41b18-2280-496b-8328-9f46a68a6220@quicinc.com>
-References: <20240718-cmd_db_uncached-v2-1-f6cf53164c90@quicinc.com>
- <d17e7e6d-12dd-475d-80ae-fa48178d6cf2@linaro.org>
+	s=arc-20240116; t=1721797441; c=relaxed/simple;
+	bh=tarG3fO9F6MF8bV9XdA6weIpvTjg9vWcL+LPZUa5yhU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=I+CHE1GARfn6VIt2MTboUZA4RYr8EWfopjCw/47gEuTN2/3kHy7X6mkodxqrqjLM9+TVUe/3hP/rLWgvnmsmiy8VJbdfvIZpdruoygWG27tOB9S4xdilpCpDbHInI7L+giIDCUOiPTKLXyPVQeCbqO0Ta9dS+nNVEr8HtpVT5Js=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=yaWQMapi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D8E4C32782;
+	Wed, 24 Jul 2024 05:04:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1721797440;
+	bh=tarG3fO9F6MF8bV9XdA6weIpvTjg9vWcL+LPZUa5yhU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=yaWQMapiYejqz+M0Dy0tkygjaGej3J2SleHLgQl8OUVnUaDuzc3ZOcaMlkaPpYobt
+	 h6H4LNo4OLXcsIV5meyREZ8yF5Sj0wMMjtfzJIruT4JYUzNFN9m1BYto2ZdnZMjuVF
+	 TMMrjmKZoIyzlfJo4Q07a9gTnZLILaCOTnK9+ez0=
+Date: Tue, 23 Jul 2024 22:03:59 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Julian Sun <sunjunchao2870@gmail.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, jack@suse.cz, brauner@kernel.org,
+ viro@zeniv.linux.org.uk, masahiroy@kernel.org, n.schier@avm.de,
+ ojeda@kernel.org, djwong@kernel.org, kvalo@kernel.org
+Subject: Re: [PATCH] scripts: add macro_checker script to check unused
+ parameters in macros
+Message-Id: <20240723220359.e96522515469210f5a420aab@linux-foundation.org>
+In-Reply-To: <CAHB1NagijZv=M28x+QDF8aS7rVGaPsXdaLgJvRyLODPL0DTe0w@mail.gmail.com>
+References: <20240723091154.52458-1-sunjunchao2870@gmail.com>
+	<20240723150931.42f206f9cd86bc391b48c790@linux-foundation.org>
+	<CAHB1NagijZv=M28x+QDF8aS7rVGaPsXdaLgJvRyLODPL0DTe0w@mail.gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <d17e7e6d-12dd-475d-80ae-fa48178d6cf2@linaro.org>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: SCHjLmbyun9BotGvVvxjTkQjNLrpgA2Y
-X-Proofpoint-ORIG-GUID: SCHjLmbyun9BotGvVvxjTkQjNLrpgA2Y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-24_02,2024-07-23_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- lowpriorityscore=0 bulkscore=0 clxscore=1015 malwarescore=0
- priorityscore=1501 phishscore=0 adultscore=0 suspectscore=0 spamscore=0
- mlxlogscore=832 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407240035
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Bjorn,
+On Tue, 23 Jul 2024 23:03:53 -0400 Julian Sun <sunjunchao2870@gmail.com> wrote:
 
-On Thu, Jul 18, 2024 at 09:41:34AM +0200, Caleb Connolly wrote:
-> 
-> 
-> On 18/07/2024 08:03, Maulik Shah wrote:
-> > From: Volodymyr Babchuk <Volodymyr_Babchuk@epam.com>
-> > 
-> > Linux does not write into cmd-db region. This region of memory is write
-> > protected by XPU. XPU may sometime falsely detect clean cache eviction
-> > as "write" into the write protected region leading to secure interrupt
-> > which causes an endless loop somewhere in Trust Zone.
-> > 
-> > The only reason it is working right now is because Qualcomm Hypervisor
-> > maps the same region as Non-Cacheable memory in Stage 2 translation
-> > tables. The issue manifests if we want to use another hypervisor (like
-> > Xen or KVM), which does not know anything about those specific mappings.
-> > 
-> > Changing the mapping of cmd-db memory from MEMREMAP_WB to MEMREMAP_WT/WC
-> > removes dependency on correct mappings in Stage 2 tables. This patch
-> > fixes the issue by updating the mapping to MEMREMAP_WC.
-> > 
-> > I tested this on SA8155P with Xen.
-> > 
-> > Fixes: 312416d9171a ("drivers: qcom: add command DB driver")
-> > Cc: stable@vger.kernel.org # 5.4+
-> > Signed-off-by: Volodymyr Babchuk <volodymyr_babchuk@epam.com>
-> > Tested-by: Nikita Travkin <nikita@trvn.ru> # sc7180 WoA in EL2
-> > Signed-off-by: Maulik Shah <quic_mkshah@quicinc.com>
-> 
-> Reviewed-by: Caleb Connolly <caleb.connolly@linaro.org>
+> > > "make help | grep check" shows we have a few ad-hoc integrations but I
+> > > wonder if we would benefit from a top-level `make static-checks'
+> > > target?
+> I have another idea. I asked some of my friends,  they are familiar
+> with scripts/checkpatch.pl and usually use it to check patches before
+> submitting them. Therefore, can we integrate some checking tools like
+> includecheck and macro_checker into checkpatch?
 
-Is it possible to include it in v6.11-rc?
+Well, checkpatch is for checking patches - it will check whole files
+but isn't typically used that way as far as I know.
 
-Thanks,
-Pavan
+A higher-level script which bundles the various static checking tools
+would be the way to go.
+
 
