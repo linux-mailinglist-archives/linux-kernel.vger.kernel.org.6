@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-260752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F41093ADB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:06:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA4D193ADBC
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 10:06:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25C8228321E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:06:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 172A81C20BCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 08:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDF87139D0A;
-	Wed, 24 Jul 2024 08:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE507132492;
+	Wed, 24 Jul 2024 08:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LlS0Y/Zw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T2mKwvje"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D781384B3;
-	Wed, 24 Jul 2024 08:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 248635336B;
+	Wed, 24 Jul 2024 08:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721808347; cv=none; b=UpS3TWSJ1gLWNyBz8WF5tg9ZhVaXiHIhZ7o02WxuF8+fO3dNjOVw+41KtV3AFYQoRFZU/h5dBWptdWEsOtAfuqGRQ73sZaCiK4vSscdDTB6SzLM9HmrO2ZlD0Xoyq4gBAPR4em4a7Mfz77M5XYquQgM7bQRefyDvVuh3snWeSSI=
+	t=1721808388; cv=none; b=r0xmf/ziLOWhKfQgmr5IGCTj9irneGbl32z0a0ZI3vyqLrtwGBlezGqf1e94OxgoVQ5MJPFeFfQnpB28sz9M2Gou7a837yl5Vg9kKCnb20rGXXLw1W9gdHVnoTeDW0/cBIw98nlvoGiHXAPnS6fPuSOiS+wrIO6K5cztUUdqtg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721808347; c=relaxed/simple;
-	bh=2ZFm6oJ8ZJGEVnquIxnlkrRi7n6uMfCChR+zqo7+p5Y=;
+	s=arc-20240116; t=1721808388; c=relaxed/simple;
+	bh=AKKM6ppMNxmC7UXJSSz3Ux9097zdWoX9DlJdSKA47D4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DLnjUQ/o54mgVSJC+jS89UKIW+oSbtjqC9q82tktz+BLg0SY+sRXQyNWmgfLXIn5aLrErpoEafSyq8R59wy2AvvTfoeBEUlpSbnCZphL80aLcneLNQxEpFfJr4W9cnMNInG1+n1HgoMPy6pft+/MdSkcgHfGqtuqd12423XIxuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LlS0Y/Zw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD814C32782;
-	Wed, 24 Jul 2024 08:05:41 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=UL/Ho7V+QHrP1S+aTTutD93BWFf+XuVle5KmYybFIsrvCPpIUbcvb7cRY4tpA7K6fG2DMnyVCNzDIJSMFlEyqi0YNT2n9aL2K+3BCkllYDM/LDNmhLD5YtUExOrpFoyGAcrs6UfFRPHRK4jkKmO6EMuoCb5AZohgsQZtIL31BNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T2mKwvje; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6486C32782;
+	Wed, 24 Jul 2024 08:06:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721808347;
-	bh=2ZFm6oJ8ZJGEVnquIxnlkrRi7n6uMfCChR+zqo7+p5Y=;
+	s=k20201202; t=1721808387;
+	bh=AKKM6ppMNxmC7UXJSSz3Ux9097zdWoX9DlJdSKA47D4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LlS0Y/ZwbF3CDc5KVEh1EWvZ4Zjera+nBRtsp30/aTaEdvHMGBHDsxpaMW4CBm+ob
-	 u98tm5BLlrE+b4F86x+gcCnZrNPPm+wcAoxhLO2NdmUZWMKSqqW5982OSBcPCfOSH6
-	 Pyzn6GAeT07y8P0S2XHEwlS90UOzJtocJlmrPMlHTDl6zLY63CGZAe5PJMk2En/gDR
-	 zZzlqcMLk2kC/Cr14MYDqK321E2lv2OQIPEs5MfR6qgCVr/83RQYIkiPonJLc1mSnA
-	 Jzj3vr/V+7OLfPsHw8Gz+7EY3El+DBDS8SQQWIjDCB6yRq4jhLxzB7y0RJj7l2b3RI
-	 Ep7QnEPMv/xAw==
-Message-ID: <90d1d4a5-5d47-4ad0-ab0f-d4f549cd4eec@kernel.org>
-Date: Wed, 24 Jul 2024 10:05:37 +0200
+	b=T2mKwvje3zz3Tu+q9/weTIFmMsr4waWW4t+NKBRQiPZd6QZucUTu2hjyLDyChR/EK
+	 XutvMGcA54ehmZslh+rwuxlKFSFQF4BPD6yKnZrejsEJwk/EVaDSZjJbBmTHIj13Km
+	 TawreHGT/6YVXpVSEem3JavFS0j6012pl+qKx1LB62owOFpWCwUeKniNG+JtclOYWb
+	 Q8EJYCs2otMvvQeu71KqPsGxWMexoVxYMuPU1RgRLBXo/KuFwq8IZi2G85Di4cVTAl
+	 tD0futDU6Y/0UVcaYkG55sg+0pjkd5MjhaFE3RfULjlWM6Mqqv4XxlLAWi29PsygKd
+	 Cv/j9peV3ENOA==
+Message-ID: <119c9a56-ada7-42b2-a0c4-93038950f325@kernel.org>
+Date: Wed, 24 Jul 2024 10:06:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,29 +49,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/12] dt-bindings: PCI: Cleanup of brcmstb YAML and
- add 7712 SoC
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
- bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-References: <20240716213131.6036-1-james.quinlan@broadcom.com>
- <20240716213131.6036-2-james.quinlan@broadcom.com>
- <d20be2d3-4fdd-48ca-b73e-80e8157bd5b2@kernel.org>
- <CA+-6iNzsE0hwUhFyfuUZtuAVgOAS-L8pR37x8TV4R779g6E-Jg@mail.gmail.com>
+Subject: Re: [PATCH v7 03/16] dt-bindings: mfd: mediatek: Add codec property
+ for MT6357 PMIC
+To: Alexandre Mergnat <amergnat@baylibre.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Lee Jones <lee@kernel.org>, Flora Fu <flora.fu@mediatek.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
+References: <20240226-audio-i350-v7-0-6518d953a141@baylibre.com>
+ <20240226-audio-i350-v7-3-6518d953a141@baylibre.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -117,128 +115,23 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <CA+-6iNzsE0hwUhFyfuUZtuAVgOAS-L8pR37x8TV4R779g6E-Jg@mail.gmail.com>
+In-Reply-To: <20240226-audio-i350-v7-3-6518d953a141@baylibre.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 23/07/2024 20:44, Jim Quinlan wrote:
-> On Wed, Jul 17, 2024 at 2:51 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 16/07/2024 23:31, Jim Quinlan wrote:
->>> o Change order of the compatible strings to be alphabetical
->>>
->>> o Describe resets/reset-names before using them in rules
->>>
->>
->> <form letter>
->> This is a friendly reminder during the review process.
->>
->> It seems my or other reviewer's previous comments were not fully
->> addressed. Maybe the feedback got lost between the quotes, maybe you
->> just forgot to apply it. Please go back to the previous discussion and
->> either implement all requested changes or keep discussing them.
->>
->> Thank you.
->> </form letter>
->>
->>> o Add minItems/maxItems where needed.
->>>
->>> o Change maintainer: Nicolas has not been active for a while.  It also
->>>   makes sense for a Broadcom employee to be the maintainer as many of the
->>>   details are privy to Broadcom.
->>>
->>> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
->>> ---
->>>  .../bindings/pci/brcm,stb-pcie.yaml           | 26 ++++++++++++++-----
->>>  1 file changed, 19 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
->>> index 11f8ea33240c..692f7ed7c98e 100644
->>> --- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
->>> +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
->>> @@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
->>>  title: Brcmstb PCIe Host Controller
->>>
->>>  maintainers:
->>> -  - Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
->>> +  - Jim Quinlan <james.quinlan@broadcom.com>
->>>
->>>  properties:
->>>    compatible:
->>> @@ -16,11 +16,11 @@ properties:
->>>            - brcm,bcm2711-pcie # The Raspberry Pi 4
->>>            - brcm,bcm4908-pcie
->>>            - brcm,bcm7211-pcie # Broadcom STB version of RPi4
->>> -          - brcm,bcm7278-pcie # Broadcom 7278 Arm
->>>            - brcm,bcm7216-pcie # Broadcom 7216 Arm
->>> -          - brcm,bcm7445-pcie # Broadcom 7445 Arm
->>> +          - brcm,bcm7278-pcie # Broadcom 7278 Arm
->>>            - brcm,bcm7425-pcie # Broadcom 7425 MIPs
->>>            - brcm,bcm7435-pcie # Broadcom 7435 MIPs
->>> +          - brcm,bcm7445-pcie # Broadcom 7445 Arm
->>>
->>>    reg:
->>>      maxItems: 1
->>> @@ -95,6 +95,18 @@ properties:
->>>        minItems: 1
->>>        maxItems: 3
->>>
->>> +  resets:
->>> +    minItems: 1
->>> +    items:
->>> +      - description: reset for external PCIe PERST# signal # perst
->>> +      - description: reset for phy reset calibration       # rescal
->>> +
->>> +  reset-names:
->>> +    minItems: 1
->>> +    items:
->>> +      - const: perst
->>> +      - const: rescal
->>
->> There are no devices with two resets. Anyway, this does not match one of
->> your variants which have first element as rescal.
+On 22/07/2024 08:53, Alexandre Mergnat wrote:
+> Add the audio codec sub-device. This sub-device is used to set the
+> optional voltage values according to the hardware.
+> The properties are:
+>   - Setup of microphone bias voltage.
+>   - Setup of the speaker pin pull-down.
 > 
+> Also, add the audio power supply property which is dedicated for
+> the audio codec sub-device.
 > 
-> Hello Krzysztof,
-> 
-> At this commit there are two resets; the 4908 requires "perst" and the
-> 7216 requires "rescal".   I now think what you are looking for is the
-> top-level
-> description of something like
-> 
-> resets:
->   maxItems: 1
->     oneOf:
->       - description: reset controller handling the PERST# signal
->       - description: phandle pointing to the RESCAL reset controller
+> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
 
-Now tell me, what sort of new information comes with this description?
-"Phandle"? It cannot be anything else. Redundant. "Pointing to"?
-Redundant. "reset-controller"? Well, resets always point to reset
-controller.
-
-So what is the point of this description? Any point?
-
-> 
-> reset-names:
->   maxItems: 1
->     oneOf:
->       - const: perst
->       - const: rescal
-> 
-> I left out minItems because imItems==maxItems=1
-> 
-> Before I was giving both of them as the "potential candidates list"
-> that will be used further on, but this is not how Yaml should be used.
-> 
-> Is the above in the right direction?
-
-It's over complicated. First maxItems are redundant, because you define
-number of items in items. Second, you have EXACTLY the same case as the
-hardware for which I gave you bindings to use. I don't understand why
-you insist on doing things differently, but you can. Take a look at many
-other bindings how they achieve this - there are many, many examples.
-But do not invent third or fourth method...
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
