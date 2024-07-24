@@ -1,266 +1,252 @@
-Return-Path: <linux-kernel+bounces-261433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F6593B742
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:13:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9577493B746
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:14:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D14E928575A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:13:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44573285AA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659C316C6AB;
-	Wed, 24 Jul 2024 19:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF6616B3BA;
+	Wed, 24 Jul 2024 19:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lb082w0p";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AAJ2w+Hh";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hsyTMAZR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="l1oHDOW2"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="zLjTBbHH"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E50816B3BA;
-	Wed, 24 Jul 2024 19:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF5016A940
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 19:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721848406; cv=none; b=TdTU6GhsiieYAyRP7hl4nJJuyIyWNslHfFseGp4+J8vpJlbfe2smIYhGkNmO8JRBOwr5i498xdsXNhTYXGXfBx49vNUN9dbV/ITKHelzTlIzDDu7GUnc1M3AZSd5fO6lueikd0O7HuHlkLRBAfk+cS2FNkiGH/LHiOBsD8u7s70=
+	t=1721848443; cv=none; b=TyH79fHk5aQvOFxeRVuVSp9nYD2EAPSpBhd5KJd8YZ7KW7EUfIoKIqhfB5nBRV0BwxBup2mCCZXQMMHsjDjw2Yfgy+BrkxujDLxr6hVpZ3+sIoCoST/6jBfriY9gZ+IKP8NRVSRRNfAjdr0y2zhrl4s+UGDOE37Z1Yb6ARqU7U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721848406; c=relaxed/simple;
-	bh=YK7O3DvzNqhg4Atqy9bgSJ/exSVPXbJFfHyu3Zk5KLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ebtfrSA2L+afjmNLdyrMog6f7OfRtYzAhu/j2j+2AlboCvCSFWx6KOqLemOhMEoP0rrX7h4Y+RC0cYFv4R07Zx4oSThbKcVVzoEAxIR8uCzhXM8cEV6Q5MV835+/L5mMZwAEduukGZTxHQgLhU1xLPGvDj6ubGUvi71zdQKbtCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lb082w0p; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AAJ2w+Hh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hsyTMAZR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=l1oHDOW2; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E1776219F2;
-	Wed, 24 Jul 2024 19:13:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721848402; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XCLAMkAFc+eSaq0gB3aKXiVpCE/NB6K9L07emQn6yHI=;
-	b=lb082w0pqrWOVFbmPi1g2roXF6Chokvg4gsoSu8ik94Ufj73rELPImBfpxoBdo7R/V5M4C
-	vlMzvjFccU+ZykgK8a/tV99/dwsfL/EoXKVuCu0ioVwCroT7E5uoh2EsocjanhmiKahoN7
-	Of4PoVf4d6Xq/Db5SfzzFePxprfXSUA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721848402;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XCLAMkAFc+eSaq0gB3aKXiVpCE/NB6K9L07emQn6yHI=;
-	b=AAJ2w+Hhl5x0/agnfypgBkB1b4EqJijNb7usWxq9Jwmkcms/mqaO8h/2HjCxR1kc2GVcIt
-	Pv/kUkWTUHdTYTDQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1721848401; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XCLAMkAFc+eSaq0gB3aKXiVpCE/NB6K9L07emQn6yHI=;
-	b=hsyTMAZRBvzu8DdbVTjGd77bzir+9y7SIJ3/FOM0T8YAsZ31aioVKni44XQmA2nMsc82Hz
-	mzVuMjolL2teNeD9JyZLV42UfP7WXn4LHU++7nRH3Llq/xu3JGMw8HKbO6T0nwxAVNLR/2
-	rdHe/Aj4JKEFOhqOmjB0qKHrU4u5Pqc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1721848401;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XCLAMkAFc+eSaq0gB3aKXiVpCE/NB6K9L07emQn6yHI=;
-	b=l1oHDOW2UXCkRol/feR3wUrG7po5SLN/rDfDGdtkEjluye1s+zsgOoq0Ns6rZu8t43/F9R
-	gIm9urKC4s0tveCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CA11013411;
-	Wed, 24 Jul 2024 19:13:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +OERMVFSoWascAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 24 Jul 2024 19:13:21 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 67A04A08F2; Wed, 24 Jul 2024 21:13:21 +0200 (CEST)
-Date: Wed, 24 Jul 2024 21:13:21 +0200
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-	jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com, yangerkun@huawei.com,
-	Baokun Li <libaokun1@huawei.com>, stable@kernel.org
-Subject: Re: [PATCH 05/20] ext4: fix slab-use-after-free in
- ext4_split_extent_at()
-Message-ID: <20240724191321.rgdevlcordkjhpgy@quack3>
-References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
- <20240710040654.1714672-6-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1721848443; c=relaxed/simple;
+	bh=HDyW4OKcATYcmOGJW1pqc68intlppLBSsV9QxPNcEz8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dfrmzzs1EFtCsgaj0izDXhwpWh75IJs50fqZQvVUgNuPVEPRSyM00EuthXHdIunaReTkAL0SYJlHfnesddJwCVoeXW/mMm4fhlyTjOKLrBp6YC6X1tv5KSM8M/LY5ZojqSlEtPzRrZmdcOmXmPhvkHYXnb8O4seI4k8rcRCBVaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=zLjTBbHH; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7a1be7b5d70so160544a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 12:14:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721848440; x=1722453240; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dc6RTkugPLXnGOf7kgEFpncgSDKIBk0i/pHC6Z6/Jg8=;
+        b=zLjTBbHHfUIy4O077ILHDytLo+MI6tV0NTw1yfOuGRGCJhIKiTVfz8OBYfC/BZ97pX
+         EyAoshRkcEgN1pzoH3Ye6wu1aU83pjMhxnSHSTNrlfUzWs1/Kw5p2dNxa4obRKtqQqVh
+         aW2SayE0hC5pc8UeMNL20gQ5c0i2W60QodW6S0Rma7s1GqyjHS4rzGQgQtHQp3/589ni
+         4joNG/LIEujyCXrghN22bTQZ6NSFlP41KytJTN4jmYIQKYipeadwuuZvsPDi6P0uxgd+
+         6DAyqEHzF5ivRKkYO9iS/saErNjxGdHEPYRRQN+mGWTkTCofQGCYELPh7EVafxYUPdoD
+         yQ7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721848440; x=1722453240;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dc6RTkugPLXnGOf7kgEFpncgSDKIBk0i/pHC6Z6/Jg8=;
+        b=LznVBw1hxTsoJ2jfPN5MCZKI7y39hX+wdJHeDyfrgBMmlcQ3GSLq51hOKEbpqEqDbE
+         jfactiYdWrNcEFGt4R3jG4PXm54RH0UKIxRB6DubLG5oON0zf8w+UTjbP2r+1rQYX2RY
+         NXQKn9Fv12dbEktKKr/FChOmhlJV2YJrnjRIrlNnoP9dx7nsQaOFW6gARFHtaAp0JmG3
+         ZsOuzhBgRepQxnN1/n7ADsTWNHE5GprCVT9mGZBUyZKlhMSvnMMdcMUhaM0AKj0rvjCM
+         0Xm4nkJA39Z/OdTxhZG7PfqtNsk4AvXYnfs0Hlpl3pbsSeMuQM6k5L/FCf9WvbmRCkfi
+         7WbA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtP+A57QIX+hR7X3nnd/6yPk4CYu4Xde8pcHvcJCUDP5Pp9r3Z132F9YDOXWJ0jaEHqhQv8PRIsBGCf5QlwdSTl6KbAznM7Hn8cpz7
+X-Gm-Message-State: AOJu0YxMC9piVeBhXehv7+NTYnNA08B+RhvRtnN82+5DT92P2wBkE52n
+	T7GRcY1OPgrEDxbViJn7r5WhbOCRFEnWYrOfE84Jg8TGOnsGoR6bgXXAeFeU08Y=
+X-Google-Smtp-Source: AGHT+IF2lkgyH3ipXW4dYplDhf3pwXiHlPGdqhyCGZJmnq6o9ERzmiZgwpNnsvxAZhXQ2fFhZ0/x4w==
+X-Received: by 2002:a17:90a:4d87:b0:2ca:f755:1040 with SMTP id 98e67ed59e1d1-2cf21547c07mr994142a91.7.1721848440377;
+        Wed, 24 Jul 2024 12:14:00 -0700 (PDT)
+Received: from charlie.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb73edecesm2022359a91.32.2024.07.24.12.13.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 12:13:59 -0700 (PDT)
+From: Charlie Jenkins <charlie@rivosinc.com>
+Subject: [PATCH v7 00/13] riscv: Add support for xtheadvector
+Date: Wed, 24 Jul 2024 12:13:51 -0700
+Message-Id: <20240724-xtheadvector-v7-0-b741910ada3e@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710040654.1714672-6-libaokun@huaweicloud.com>
-X-Spamd-Result: default: False [-2.10 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com,kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -2.10
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAG9SoWYC/23Oy07DMBAF0F+pvMZo7PEjZsV/IBZ+Ei9IqqSyi
+ qr8O9OyIJgs78jnXt/YmpeaV/ZyurElt7rWeaJgn04sjn76yLwmykyCVKAR+PUyZp9ajpd54QN
+ iwiRsUBIZkfOSS70+6t7eKY91pWdfj/Ym7tefIgPub1ETHDiWrJ1Itghwr0tt81qn+BznT3bva
+ nLnRfeRJsk769VgBPpk1IHHve/3kXwoBV0OzpghH3j16y3IzivyMtDyICEFIQ683vl/+5q8Cmr
+ QJdqkdTnwZudlv2/IR+cLCITiATq/bds3tIppJusBAAA=
+To: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Samuel Holland <samuel.holland@sifive.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
+ Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>, 
+ Andy Chiu <andy.chiu@sifive.com>, Jessica Clarke <jrtc27@jrtc27.com>, 
+ Andrew Jones <ajones@ventanamicro.com>
+Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ Charlie Jenkins <charlie@rivosinc.com>, 
+ Conor Dooley <conor.dooley@microchip.com>, Heiko Stuebner <heiko@sntech.de>, 
+ Heiko Stuebner <heiko@sntech.de>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1721848437; l=7095;
+ i=charlie@rivosinc.com; s=20231120; h=from:subject:message-id;
+ bh=HDyW4OKcATYcmOGJW1pqc68intlppLBSsV9QxPNcEz8=;
+ b=f3enMXbJ/trQYvs+Dn6l+vn9AxiY48aFwvwOn8igXqnU3DemMj+b8qlJPttYXKzlCnmIA1nn0
+ t5SiPgAhHg8Cbn/IV+iU1ImNQY9KJhScsGYrWjVAZmumMt/7hzaclMY
+X-Developer-Key: i=charlie@rivosinc.com; a=ed25519;
+ pk=t4RSWpMV1q5lf/NWIeR9z58bcje60/dbtxxmoSfBEcs=
 
-On Wed 10-07-24 12:06:39, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> We hit the following use-after-free:
-> 
-> ==================================================================
-> BUG: KASAN: slab-use-after-free in ext4_split_extent_at+0xba8/0xcc0
-> Read of size 2 at addr ffff88810548ed08 by task kworker/u20:0/40
-> CPU: 0 PID: 40 Comm: kworker/u20:0 Not tainted 6.9.0-dirty #724
-> Call Trace:
->  <TASK>
->  kasan_report+0x93/0xc0
->  ext4_split_extent_at+0xba8/0xcc0
->  ext4_split_extent.isra.0+0x18f/0x500
->  ext4_split_convert_extents+0x275/0x750
->  ext4_ext_handle_unwritten_extents+0x73e/0x1580
->  ext4_ext_map_blocks+0xe20/0x2dc0
->  ext4_map_blocks+0x724/0x1700
->  ext4_do_writepages+0x12d6/0x2a70
-> [...]
-> 
-> Allocated by task 40:
->  __kmalloc_noprof+0x1ac/0x480
->  ext4_find_extent+0xf3b/0x1e70
->  ext4_ext_map_blocks+0x188/0x2dc0
->  ext4_map_blocks+0x724/0x1700
->  ext4_do_writepages+0x12d6/0x2a70
-> [...]
-> 
-> Freed by task 40:
->  kfree+0xf1/0x2b0
->  ext4_find_extent+0xa71/0x1e70
->  ext4_ext_insert_extent+0xa22/0x3260
->  ext4_split_extent_at+0x3ef/0xcc0
->  ext4_split_extent.isra.0+0x18f/0x500
->  ext4_split_convert_extents+0x275/0x750
->  ext4_ext_handle_unwritten_extents+0x73e/0x1580
->  ext4_ext_map_blocks+0xe20/0x2dc0
->  ext4_map_blocks+0x724/0x1700
->  ext4_do_writepages+0x12d6/0x2a70
-> [...]
-> ==================================================================
-> 
-> The flow of issue triggering is as follows:
-> 
-> ext4_split_extent_at
->   path = *ppath
->   ext4_ext_insert_extent(ppath)
->     ext4_ext_create_new_leaf(ppath)
->       ext4_find_extent(orig_path)
->         path = *orig_path
->         read_extent_tree_block
->           // return -ENOMEM or -EIO
->         ext4_free_ext_path(path)
->           kfree(path)
->         *orig_path = NULL
->   a. If err is -ENOMEM:
->   ext4_ext_dirty(path + path->p_depth)
->   // path use-after-free !!!
->   b. If err is -EIO and we have EXT_DEBUG defined:
->   ext4_ext_show_leaf(path)
->     eh = path[depth].p_hdr
->     // path also use-after-free !!!
-> 
-> So when trying to zeroout or fix the extent length, call ext4_find_extent()
-> to update the path.
-> 
-> In addition we use *ppath directly as an ext4_ext_show_leaf() input to
-> avoid possible use-after-free when EXT_DEBUG is defined, and to avoid
-> unnecessary path updates.
-> 
-> Fixes: dfe5080939ea ("ext4: drop EXT4_EX_NOFREE_ON_ERR from rest of extents handling code")
-> Cc: stable@kernel.org
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+xtheadvector is a custom extension that is based upon riscv vector
+version 0.7.1 [1]. All of the vector routines have been modified to
+support this alternative vector version based upon whether xtheadvector
+was determined to be supported at boot.
 
-Looks good. Feel free to add:
+vlenb is not supported on the existing xtheadvector hardware, so a
+devicetree property thead,vlenb is added to provide the vlenb to Linux.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+There is a new hwprobe key RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0 that is
+used to request which thead vendor extensions are supported on the
+current platform. This allows future vendors to allocate hwprobe keys
+for their vendor.
 
-									Honza
+Support for xtheadvector is also added to the vector kselftests.
 
-> ---
->  fs/ext4/extents.c | 21 ++++++++++++++++++++-
->  1 file changed, 20 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index 6e5b5baf3aa6..3a70a0739af8 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -3252,6 +3252,25 @@ static int ext4_split_extent_at(handle_t *handle,
->  	if (err != -ENOSPC && err != -EDQUOT && err != -ENOMEM)
->  		goto out;
->  
-> +	/*
-> +	 * Update path is required because previous ext4_ext_insert_extent()
-> +	 * may have freed or reallocated the path. Using EXT4_EX_NOFAIL
-> +	 * guarantees that ext4_find_extent() will not return -ENOMEM,
-> +	 * otherwise -ENOMEM will cause a retry in do_writepages(), and a
-> +	 * WARN_ON may be triggered in ext4_da_update_reserve_space() due to
-> +	 * an incorrect ee_len causing the i_reserved_data_blocks exception.
-> +	 */
-> +	path = ext4_find_extent(inode, ee_block, ppath,
-> +				flags | EXT4_EX_NOFAIL);
-> +	if (IS_ERR(path)) {
-> +		EXT4_ERROR_INODE(inode, "Failed split extent on %u, err %ld",
-> +				 split, PTR_ERR(path));
-> +		return PTR_ERR(path);
-> +	}
-> +	depth = ext_depth(inode);
-> +	ex = path[depth].p_ext;
-> +	*ppath = path;
-> +
->  	if (EXT4_EXT_MAY_ZEROOUT & split_flag) {
->  		if (split_flag & (EXT4_EXT_DATA_VALID1|EXT4_EXT_DATA_VALID2)) {
->  			if (split_flag & EXT4_EXT_DATA_VALID1) {
-> @@ -3304,7 +3323,7 @@ static int ext4_split_extent_at(handle_t *handle,
->  	ext4_ext_dirty(handle, inode, path + path->p_depth);
->  	return err;
->  out:
-> -	ext4_ext_show_leaf(inode, path);
-> +	ext4_ext_show_leaf(inode, *ppath);
->  	return err;
->  }
->  
-> -- 
-> 2.39.2
-> 
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+
+[1] https://github.com/T-head-Semi/thead-extension-spec/blob/95358cb2cca9489361c61d335e03d3134b14133f/xtheadvector.adoc
+
+---
+This series is a continuation of a different series that was fragmented
+into two other series in an attempt to get part of it merged in the 6.10
+merge window. The split-off series did not get merged due to a NAK on
+the series that added the generic riscv,vlenb devicetree entry. This
+series has converted riscv,vlenb to thead,vlenb to remedy this issue.
+
+The original series is titled "riscv: Support vendor extensions and
+xtheadvector" [3].
+
+The series titled "riscv: Extend cpufeature.c to detect vendor
+extensions" is still under development and this series is based on that
+series! [4]
+
+I have tested this with an Allwinner Nezha board. I ran into issues
+booting the board after 6.9-rc1 so I applied these patches to 6.8. There
+are a couple of minor merge conflicts that do arrise when doing that, so
+please let me know if you have been able to boot this board with a 6.9
+kernel. I used SkiffOS [1] to manage building the image, but upgraded
+the U-Boot version to Samuel Holland's more up-to-date version [2] and
+changed out the device tree used by U-Boot with the device trees that
+are present in upstream linux and this series. Thank you Samuel for all
+of the work you did to make this task possible.
+
+[1] https://github.com/skiffos/SkiffOS/tree/master/configs/allwinner/nezha
+[2] https://github.com/smaeul/u-boot/commit/2e89b706f5c956a70c989cd31665f1429e9a0b48
+[3] https://lore.kernel.org/all/20240503-dev-charlie-support_thead_vector_6_9-v6-0-cb7624e65d82@rivosinc.com/
+[4] https://lore.kernel.org/lkml/20240719-support_vendor_extensions-v3-4-0af7587bbec0@rivosinc.com/T/
+
+---
+Changes in v7:
+- Add defs for has_xtheadvector_no_alternatives() and has_xtheadvector()
+  when vector disabled. (Palmer)
+- Link to v6: https://lore.kernel.org/r/20240722-xtheadvector-v6-0-c9af0130fa00@rivosinc.com
+
+Changes in v6:
+- Fix return type of is_vector_supported()/is_xthead_supported() to be bool
+- Link to v5: https://lore.kernel.org/r/20240719-xtheadvector-v5-0-4b485fc7d55f@rivosinc.com
+
+Changes in v5:
+- Rebase on for-next
+- Link to v4: https://lore.kernel.org/r/20240702-xtheadvector-v4-0-2bad6820db11@rivosinc.com
+
+Changes in v4:
+- Replace inline asm with C (Samuel)
+- Rename VCSRs to CSRs (Samuel)
+- Replace .insn directives with .4byte directives
+- Link to v3: https://lore.kernel.org/r/20240619-xtheadvector-v3-0-bff39eb9668e@rivosinc.com
+
+Changes in v3:
+- Add back Heiko's signed-off-by (Conor)
+- Mark RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0 as a bitmask
+- Link to v2: https://lore.kernel.org/r/20240610-xtheadvector-v2-0-97a48613ad64@rivosinc.com
+
+Changes in v2:
+- Removed extraneous references to "riscv,vlenb" (Jess)
+- Moved declaration of "thead,vlenb" into cpus.yaml and added
+  restriction that it's only applicable to thead cores (Conor)
+- Check CONFIG_RISCV_ISA_XTHEADVECTOR instead of CONFIG_RISCV_ISA_V for
+  thead,vlenb (Jess)
+- Fix naming of hwprobe variables (Evan)
+- Link to v1: https://lore.kernel.org/r/20240609-xtheadvector-v1-0-3fe591d7f109@rivosinc.com
+
+---
+Charlie Jenkins (12):
+      dt-bindings: riscv: Add xtheadvector ISA extension description
+      dt-bindings: cpus: add a thead vlen register length property
+      riscv: dts: allwinner: Add xtheadvector to the D1/D1s devicetree
+      riscv: Add thead and xtheadvector as a vendor extension
+      riscv: vector: Use vlenb from DT for thead
+      riscv: csr: Add CSR encodings for CSR_VXRM/CSR_VXSAT
+      riscv: Add xtheadvector instruction definitions
+      riscv: vector: Support xtheadvector save/restore
+      riscv: hwprobe: Add thead vendor extension probing
+      riscv: hwprobe: Document thead vendor extensions and xtheadvector extension
+      selftests: riscv: Fix vector tests
+      selftests: riscv: Support xtheadvector in vector tests
+
+Heiko Stuebner (1):
+      RISC-V: define the elements of the VCSR vector CSR
+
+ Documentation/arch/riscv/hwprobe.rst               |  10 +
+ Documentation/devicetree/bindings/riscv/cpus.yaml  |  19 ++
+ .../devicetree/bindings/riscv/extensions.yaml      |  10 +
+ arch/riscv/Kconfig.vendor                          |  26 ++
+ arch/riscv/boot/dts/allwinner/sun20i-d1s.dtsi      |   3 +-
+ arch/riscv/include/asm/cpufeature.h                |   2 +
+ arch/riscv/include/asm/csr.h                       |  15 ++
+ arch/riscv/include/asm/hwprobe.h                   |   5 +-
+ arch/riscv/include/asm/switch_to.h                 |   2 +-
+ arch/riscv/include/asm/vector.h                    | 225 ++++++++++++----
+ arch/riscv/include/asm/vendor_extensions/thead.h   |  42 +++
+ .../include/asm/vendor_extensions/thead_hwprobe.h  |  18 ++
+ .../include/asm/vendor_extensions/vendor_hwprobe.h |  37 +++
+ arch/riscv/include/uapi/asm/hwprobe.h              |   3 +-
+ arch/riscv/include/uapi/asm/vendor/thead.h         |   3 +
+ arch/riscv/kernel/cpufeature.c                     |  54 +++-
+ arch/riscv/kernel/kernel_mode_vector.c             |   8 +-
+ arch/riscv/kernel/process.c                        |   4 +-
+ arch/riscv/kernel/signal.c                         |   6 +-
+ arch/riscv/kernel/sys_hwprobe.c                    |   5 +
+ arch/riscv/kernel/vector.c                         |  24 +-
+ arch/riscv/kernel/vendor_extensions.c              |  10 +
+ arch/riscv/kernel/vendor_extensions/Makefile       |   2 +
+ arch/riscv/kernel/vendor_extensions/thead.c        |  18 ++
+ .../riscv/kernel/vendor_extensions/thead_hwprobe.c |  19 ++
+ tools/testing/selftests/riscv/vector/.gitignore    |   3 +-
+ tools/testing/selftests/riscv/vector/Makefile      |  17 +-
+ .../selftests/riscv/vector/v_exec_initval_nolibc.c |  93 +++++++
+ tools/testing/selftests/riscv/vector/v_helpers.c   |  68 +++++
+ tools/testing/selftests/riscv/vector/v_helpers.h   |   8 +
+ tools/testing/selftests/riscv/vector/v_initval.c   |  22 ++
+ .../selftests/riscv/vector/v_initval_nolibc.c      |  68 -----
+ .../selftests/riscv/vector/vstate_exec_nolibc.c    |  20 +-
+ .../testing/selftests/riscv/vector/vstate_prctl.c  | 295 ++++++++++++---------
+ 34 files changed, 891 insertions(+), 273 deletions(-)
+---
+base-commit: 554462ced9ac97487c8f725fe466a9c20ed87521
+change-id: 20240530-xtheadvector-833d3d17b423
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+- Charlie
+
 
