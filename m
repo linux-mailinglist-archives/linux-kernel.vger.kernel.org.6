@@ -1,101 +1,198 @@
-Return-Path: <linux-kernel+bounces-261537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C52D593B873
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 23:17:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 848E293B876
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 23:19:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7D6C1C23AEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:17:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7E231C23BC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD0813A877;
-	Wed, 24 Jul 2024 21:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B664013B5AD;
+	Wed, 24 Jul 2024 21:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="P7Y7O8l1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="korfD63c"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0E36F068
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 21:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70668139584;
+	Wed, 24 Jul 2024 21:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721855830; cv=none; b=tJB1vIQ1T49vwf+r9Q6nZVuVodaeywWUrOwDL+It8EjjOLwrfMIUbMjilEOpbFz1iTC+ujweEvm8ca/HemIVMjDSSCvGhsikPr+ZEoCB+vmzYCB0yz4yrwkNsUoY81WuWdCt721F90I7HlJqmBoMcT9RUVFKgCio2snmhO9JbWQ=
+	t=1721855949; cv=none; b=N7CXcgYHSWjOwVXDY0QDW648Djel9+C68RvHjLmugo/nZoILV02vTB1PBN31TSD9ixmRa2+iSogumoqusm5ljoDimioO7S8AYa3AhOG/kiriTgXl5zcwMr4z8rD4EaA0GGEJgfiWTYGbVE/3bDUIzu5sTQabGV9Tl1uIJrSXhrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721855830; c=relaxed/simple;
-	bh=CtU01g2cCRY8Yc3D5EGXN7sqJewwORULkSqRWpWQe7E=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=WCNgPVQSeBFJ3V2733Xa2UK/3AY6PeTCGLca/qH3ewdQlxgrCd76OjhEQwPBz1Hdt5nYxmDifwONToJD/ilKEnXqmW8sq0CDfLsbG6edQU2qvkoStibgvv+5b+x0+ziOa0XnxdQ71W4d5UXjD9/T9AAAVmUYjXtZCO/o4v3oEU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=P7Y7O8l1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9AB2C32781;
-	Wed, 24 Jul 2024 21:17:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1721855830;
-	bh=CtU01g2cCRY8Yc3D5EGXN7sqJewwORULkSqRWpWQe7E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=P7Y7O8l1H1DXEr/5YsFuXJR2ydkIdZjePru7UM2U5trRvNItdsCwyMvqTb9C4eh7Z
-	 WSHPkWDzXMrEXygL3+ympmYYKOKRdNT/IyEUGc6bNpX/QliCP0rfM3Q2AdslESJpSK
-	 ZRR/48ITmHhhXhdo7Zlj8wmFL+nGAsFpVzfmCabA=
-Date: Wed, 24 Jul 2024 14:17:09 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Jann Horn <jannh@google.com>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko
- <glider@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov
- <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>,
- Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David
- Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
- Vlastimil Babka <vbabka@suse.cz>, Roman Gushchin
- <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, Marco
- Elver <elver@google.com>, kasan-dev@googlegroups.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2 1/2] kasan: catch invalid free before SLUB
- reinitializes the object
-Message-Id: <20240724141709.8350097a90d88f7d6d14c363@linux-foundation.org>
-In-Reply-To: <20240724-kasan-tsbrcu-v2-1-45f898064468@google.com>
-References: <20240724-kasan-tsbrcu-v2-0-45f898064468@google.com>
-	<20240724-kasan-tsbrcu-v2-1-45f898064468@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1721855949; c=relaxed/simple;
+	bh=Rf3ofJ44AlVV1dPimKk0+4Py8+cmXRDlHMG27neCr7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e92uiH/53gnCi5umyrI/Zm2eaPLyzZYEwa7y82FO+rf/wAc21wDNRisKjJmGGbVnblSViYWQ86Vc3wRisEMrzqrJbm7FWElTUxTq7Z3nS33pAAGph2LjmvzuVIPjait57evK4k23Rf4S65euzjpDV0EAIq3R0uF28X6CR6L26Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=korfD63c; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721855949; x=1753391949;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Rf3ofJ44AlVV1dPimKk0+4Py8+cmXRDlHMG27neCr7U=;
+  b=korfD63cqrTXtiJcomf41tDGzdwMENfcZ5jCiA11koRUXtR23WdJwZdp
+   z1V1Ur2LilXzrjQtI+JOsr3jv/X2vgEWwLgkUZifOxQ3SidR2f21TcVEt
+   li46PDIMANKZZfeoAnhI0rfTryoQQ3MMcIVx5OhC62utPwYEptnQKHx5Q
+   SH/8sPnsNU0l1AIKqBSOO54ITwZ+1z7gHo4SKLkpQIWHmXuz1QqlxPBo7
+   25fk6tXBe/o5JqOjN3t2PJpqiL774EhDsWAN/0AlaTIZhzyvZOkwTeZk6
+   01PrrphS+szqznlb5SDG+tqoLnZa7R8SZJev0TJBY7grZQPSSOtogtpsQ
+   g==;
+X-CSE-ConnectionGUID: 5AHSCSZCSEGAWPtuGzu9xQ==
+X-CSE-MsgGUID: QgQhe6P+Qg2916sTbznuXg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11143"; a="30166462"
+X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
+   d="scan'208";a="30166462"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 14:19:08 -0700
+X-CSE-ConnectionGUID: D6nXxjbdS+CKaipP0Gibtg==
+X-CSE-MsgGUID: aJivT/zMQHGia5vDZSidvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,233,1716274800"; 
+   d="scan'208";a="75940094"
+Received: from srpatil1-mobl.amr.corp.intel.com (HELO peluse-desk5) ([10.212.62.180])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jul 2024 14:19:08 -0700
+Date: Wed, 24 Jul 2024 14:19:06 -0700
+From: Paul E Luse <paul.e.luse@linux.intel.com>
+To: Mateusz =?UTF-8?B?Sm/FhGN6eWs=?= <mat.jonczyk@o2.pl>
+Cc: Yu Kuai <yukuai3@huawei.com>, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Song Liu <song@kernel.org>,
+ regressions@lists.linux.dev
+Subject: Re: Filesystem corruption when adding a new RAID device
+ (delayed-resync, write-mostly)
+Message-ID: <20240724141906.10b4fc4e@peluse-desk5>
+In-Reply-To: <f28f9eec-d318-46e2-b2a1-430c9302ba43@o2.pl>
+References: <9952f532-2554-44bf-b906-4880b2e88e3a@o2.pl>
+	<ce95e64c-1a67-4a92-984a-c1eab0894857@o2.pl>
+	<f28f9eec-d318-46e2-b2a1-430c9302ba43@o2.pl>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; aarch64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 24 Jul 2024 18:34:12 +0200 Jann Horn <jannh@google.com> wrote:
+On Wed, 24 Jul 2024 22:35:49 +0200
+Mateusz Jo=C5=84czyk <mat.jonczyk@o2.pl> wrote:
 
-> Currently, when KASAN is combined with init-on-free behavior, the
-> initialization happens before KASAN's "invalid free" checks.
-> 
-> More importantly, a subsequent commit will want to use the object metadata
-> region to store an rcu_head, and we should let KASAN check that the object
-> pointer is valid before that. (Otherwise that change will make the existing
-> testcase kmem_cache_invalid_free fail.)
-> 
-> So add a new KASAN hook that allows KASAN to pre-validate a
-> kmem_cache_free() operation before SLUB actually starts modifying the
-> object or its metadata.
+> W dniu 22.07.2024 o=C2=A007:39, Mateusz Jo=C5=84czyk pisze:
+> > W dniu 20.07.2024 o=C2=A016:47, Mateusz Jo=C5=84czyk pisze:
+> >> Hello,
+> >>
+> >> In my laptop, I used to have two RAID1 arrays on top of NVMe and
+> >> SATA SSD drives: /dev/md0 for /boot (not partitioned), /dev/md1
+> >> for remaining data (LUKS
+> >> + LVM + ext4). For performance, I have marked the RAID component
+> >> device for /dev/md1 on the SATA SSD drive write-mostly, which
+> >> "means that the 'md' driver will avoid reading from these devices
+> >> if at all possible" (man mdadm).
+> >>
+> >> Recently, the NVMe drive started having problems (PCI AER errors
+> >> and the controller disappearing), so I removed it from the arrays
+> >> and wiped it. However, I have reseated the drive in the M.2 socket
+> >> and this apparently fixed it (verified with tests).
+> >>
+> >> =C2=A0=C2=A0 =C2=A0$ cat /proc/mdstat
+> >> =C2=A0=C2=A0 =C2=A0Personalities : [raid1] [linear] [multipath] [raid0=
+] [raid6]
+> >> [raid5] [raid4] [raid10] md1 : active raid1 sdb5[1](W)
+> >> =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 471727104 blocks sup=
+er 1.2 [2/1] [_U]
+> >> =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bitmap: 4/4 pages [1=
+6KB], 65536KB chunk
+> >>
+> >> =C2=A0=C2=A0 =C2=A0md2 : active (auto-read-only) raid1 sdb6[3](W) sda1=
+[2]
+> >> =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 3142656 blocks super=
+ 1.2 [2/2] [UU]
+> >> =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bitmap: 0/1 pages [0=
+KB], 65536KB chunk
+> >>
+> >> =C2=A0=C2=A0 =C2=A0md0 : active raid1 sdb4[3]
+> >> =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 2094080 blocks super=
+ 1.2 [2/1] [_U]
+> >> =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
+> >> =C2=A0=C2=A0 =C2=A0unused devices: <none>
+> >>
+> >> (md2 was used just for testing, ignore it).
+> >>
+> >> Today, I have tried to add the drive back to the arrays by using a
+> >> script that executed in quick succession:
+> >>
+> >> =C2=A0=C2=A0 =C2=A0mdadm /dev/md0 --add --readwrite /dev/nvme0n1p2
+> >> =C2=A0=C2=A0 =C2=A0mdadm /dev/md1 --add --readwrite /dev/nvme0n1p3
+> >>
+> >> This was on Linux 6.10.0, patched with my previous patch:
+> >>
+> >> =C2=A0=C2=A0=C2=A0 https://lore.kernel.org/linux-raid/20240711202316.1=
+0775-1-mat.jonczyk@o2.pl/
+> >>
+> >> (which fixed a regression in the kernel and allows it to start
+> >> /dev/md1 with a single drive in write-mostly mode).
+> >> In the background, I was running "rdiff-backup --compare" that was
+> >> comparing data between my array contents and a backup attached via
+> >> USB.
+> >>
+> >> This, however resulted in mayhem - I was unable to start any
+> >> program with an input-output error, etc. I used SysRQ + C to save
+> >> a kernel log:
+> >>
+> > Hello,
+> >
+> > It is possible that my second SSD has some problems and high read
+> > activity during RAID resync triggered it. Reads from that drive are
+> > now very slow (between 10 - 30 MB/s) and this suggests that
+> > something is not OK.
+>=20
+> Hello,
+>=20
+> Unfortunately, hardware failure seems not to be the case.
+>=20
+> I did test it again on 6.10, twice, and in both cases I got
+> filesystem corruption (but not as severe).
+>=20
+> On Linux 6.1.96 it seems to be working well (also did two tries).
+>=20
+> Please note: in my tests, I was using a RAID component device with
+> a write-mostly bit set. This setup does not work on 6.9+ out of the
+> box and requires the following patch:
+>=20
+> commit 36a5c03f23271 ("md/raid1: set max_sectors during early return
+> from choose_slow_rdev()")
+>=20
+> that is in master now.
+>=20
+> It is also heading into stable, which I'm going to interrupt.
 
-I added this, to fix the CONFIG_KASAN=n build
+Hi Mateusz,
 
---- a/include/linux/kasan.h~kasan-catch-invalid-free-before-slub-reinitializes-the-object-fix
-+++ a/include/linux/kasan.h
-@@ -381,6 +381,12 @@ static inline void *kasan_init_slab_obj(
- {
- 	return (void *)object;
- }
-+
-+static inline bool kasan_slab_pre_free(struct kmem_cache *s, void *object)
-+{
-+	return false;
-+}
-+
- static inline bool kasan_slab_free(struct kmem_cache *s, void *object, bool init)
- {
- 	return false;
-_
+I'm pretty interested in what is happening here especially as it
+relates to write-mostly.  Couple of questions for you:
+
+1) Are you able to find a simpler reproduction for this, for example
+without mixing SATA and NVMe.  Maybe just using two known good NVMe
+SSDs and follow your steps to repro?
+
+2) I don't fully understand your last two statements, maybe you can
+clarify?  With your max_sectors patch does it pass or fail?  If pass,
+what do mean by "I'm going to interrupt"? It sounds like you mean the
+patch doesn't work and you are trying to stop it??
+
+thanks
+Paul
+
+>=20
+> Greetings,
+> Mateusz
+>=20
+>=20
 
 
