@@ -1,56 +1,57 @@
-Return-Path: <linux-kernel+bounces-261582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23FA593B960
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 01:06:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C92193B967
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 01:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB199283A6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 23:06:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F37311F2205D
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 23:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF31513D28F;
-	Wed, 24 Jul 2024 23:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937E71422AB;
+	Wed, 24 Jul 2024 23:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZkMBBFzh"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="UJLDTxPL"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D192E639
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 23:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82EF13A40F;
+	Wed, 24 Jul 2024 23:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721862369; cv=none; b=h3hn4dXSRU/7DjwYS+x7G4inBAspLNxCpFJBuxFQwALqH/ps3NISnAIFAF2zQiGtqPhK4lL3w8DCf0QLcKbEPsxaeTDejxZQtDZWOURDGjbmGecrXw9H21dfppDBkW7KO7aou8VLfbiX/pNmR6BBS+9+fBlwrlCJI//efT1Vb1o=
+	t=1721862759; cv=none; b=nU0Qm3quX/XsmYlRdGtpek7sTZH+DFykrIJa97Mn4Mh+xavV3qXiBf6ts4TrnyxSd4yzXqw+5gL/prgUZiHe4SOAkSx/i2ffgaysj88/fqA5w8RjC+Dm4D8DmcJ6EOFBGmTG3AhG5jk5JfYRR6ZJE9TiNF9Hx39zEKKabuQ97v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721862369; c=relaxed/simple;
-	bh=rGk/ymb68rVvKryUgkGOCmFZhaR5JXQGAP6vW/0+hZs=;
+	s=arc-20240116; t=1721862759; c=relaxed/simple;
+	bh=1OKNq4M7uG6CoqfxzGc4SF6xblNtiouPmAQzALmTbkM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bdJMOJhX7q0dWKeMT3lbpB2a1Qx8CFTmQKZmIU50eLzpEqCpIgpBEB7GfCYyq+U3IxazZnNjGKskdkGEzDDMmknVmTK2g1kA3uM+Ti5rWVQlRd6MofcsH5UclC13a0ABOKlNmnLzw8vjwhs9kUIfLy/ebwbjLyGURVYbwzkRgRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZkMBBFzh; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 24 Jul 2024 16:05:57 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1721862364;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FCwW1B4j4daZChgkv/4PB5iP0RmvFspzyJbc3fZHbvs=;
-	b=ZkMBBFzhdZrsmpw+0jWvtUWSbXctNHE7fSH9mtYTNYUA+/H1Qrow9cGOWySkOd3whfszQd
-	DMPf6qLY4L1psXYnMmy1i3gFVNzHQTm7Pru1MybMpJMpNyLgyVzmvXpJ/cg4NEpzFIGWSY
-	di60ZJxHNgufCdMlX8l+Mklez4GLjWE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Muchun Song <muchun.song@linux.dev>
-Subject: Re: [PATCH v2 2/5] mm: page_counters: put
- page_counter_calculate_protection() under CONFIG_MEMCG
-Message-ID: <judhtg6lth6zedqwzmskw354lti4dewcjj62mzln7kr7yyc43e@uy3qdzxxfbcw>
-References: <20240724202103.1210065-1-roman.gushchin@linux.dev>
- <20240724202103.1210065-3-roman.gushchin@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bZ2fiMhrEbvuZkqyzZJ3lhBaJPWd8ldrIZlSrUOR88/hENJa036a6zC6sWBYhgmsOGaZQddmtNcBPUCZMac7oHlvxIsFhlQOm9wVUL75C0oFU21i6Pw2UK5dsIWV1nY2pyTureRNrJ6FkLVjhlrsR5ufiVMknCAe6axIocOo6h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=UJLDTxPL; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=GjbnnVqC66fvfkXajlXOjpoXlEGx98ju80H31GTzwf4=; b=UJLDTxPLfi2WfGPuLQrOVcheCe
+	Gh+sJsitgWE/QPjMwPYvMLcdNeqyhHxBfO8Gn3VDS2UxlU03/k23y8Y0IhApy7ihOpdGhUPSWrhjZ
+	TjkSNChdHFl7hzPovcESwQlwFHA+x9EOpFCLSiU3+SM7N127KefzbAVNlFCl6CgubtkE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sWl9g-0039qK-NH; Thu, 25 Jul 2024 01:12:20 +0200
+Date: Thu, 25 Jul 2024 01:12:20 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Ma Ke <make24@iscas.ac.cn>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, liujunliang_ljl@163.com,
+	linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 net] net: usb: sr9700: fix uninitialized variable use
+ in sr_mdio_read
+Message-ID: <b944909b-1e75-4ec2-9c0e-e90269d7bf84@lunn.ch>
+References: <20240724011554.1445989-1-make24@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,18 +60,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240724202103.1210065-3-roman.gushchin@linux.dev>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240724011554.1445989-1-make24@iscas.ac.cn>
 
-On Wed, Jul 24, 2024 at 08:21:00PM GMT, Roman Gushchin wrote:
-> Put page_counter_calculate_protection() under CONFIG_MEMCG.
+On Wed, Jul 24, 2024 at 09:15:54AM +0800, Ma Ke wrote:
+> It could lead to error happen because the variable res is not updated if
+> the call to sr_share_read_word returns an error. In this particular case
+> error code was returned and res stayed uninitialized.
 > 
-> The protection functionality (min/low limits) is not supported by any
-> other cgroup subsystem, so page_counter_calculate_protection() and
-> related static effective_protection() can be compiled out if
-> CONFIG_MEMCG is not enabled.
+> This can be avoided by checking the return value of sr_share_read_word
+> and propagating the error if the read operation failed.
 > 
-> Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
+> Found by code review.
 
-Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+For V1, you were given the comment that there are other functions
+which also suffer from this problem. You don't appear to of addressed
+them in this patch, nor replied saying you won't because....
+
+Please don't ignore reviewers.
+
+	Andrew
+
 
