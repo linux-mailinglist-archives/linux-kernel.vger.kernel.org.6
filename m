@@ -1,156 +1,150 @@
-Return-Path: <linux-kernel+bounces-261385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AB5D93B6A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:23:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A233193B68B
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 20:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFDB81F24D4D
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:23:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F2DDB23381
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 18:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89EF16D33A;
-	Wed, 24 Jul 2024 18:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E7516A940;
+	Wed, 24 Jul 2024 18:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GLesQd+c"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y6ZYWeGe"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7710A16B722;
-	Wed, 24 Jul 2024 18:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209C515F33A;
+	Wed, 24 Jul 2024 18:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721845375; cv=none; b=pW15o6DxHGhIVuXnsJmrR9/zeQFz7hJbF1P+q3N2xx80A5WZlb8cRAOL6jJ6fo+MWYTmTXS+yemAvSw1olkImTlZLVAwJEvTqKanuFUvYeITCwG1tue6YZizU6xtRjyzpgJ84K2AZpwuV9CUS3o4WzwWNA61/bQ5EjJm+KDwdqQ=
+	t=1721845293; cv=none; b=kjF5NPw+T/Ti6ENhHUSFAAWqksUOU8aGcU6eohuwesfsToX6ezRNdanwGgebP3mt71ZBCbIQU+bD1FZbyNhOJoN1ykQF2bhvLdkS0yQvuQatX55PvINz74y5/GmAT/9v02UsqoQ/winlI/2BtiPw9l4NNiOjr/ckDHSdr5VKaJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721845375; c=relaxed/simple;
-	bh=Z4Cg2TnJwYE1DhCcNn4gkS8Vcn8aJDytk1xPw1gfdgM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Z+U7D7un/z8QEP1+DUwKsKMdwQ4Hn9hGyV9I8u4UcGkogL/p45WM+5LID2mBK+7KqQ+LaCpFVimVS5APEa8hDA5EbXsPFLPSOHuGpAHwgZ427RVonOk5jMRWX3rnlNdEtEOcuefmaw9kh0cveEocLGUIPfz1T+4hnwzSSwrnBnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GLesQd+c; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1721845293; c=relaxed/simple;
+	bh=AchHhKwoH2XTRDncv3aZ9DVHgH7DNtyJRQ7cNb7zWX0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hnJPmF5oGaMXa30idDkBTWoSXvh0C4wRSwV4Dyp+kqB+rpd0bm9RR9etkixHG1O3OxNg4guf+ke2ehdsNLzX+WgPnAL22KE5XtGuCsNm4t5AYSEWp7uC4RbMFKKxk+brvRej1InsXwG5xIjckDQeRBNy5/VsetfHc9qmID7C4Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y6ZYWeGe; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42797289c8bso666555e9.0;
-        Wed, 24 Jul 2024 11:22:53 -0700 (PDT)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70d2b27c115so76632b3a.2;
+        Wed, 24 Jul 2024 11:21:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721845372; x=1722450172; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TVCfTE0NROhZ28TaZGaiQuIpHQXct/DwD9UUx7joZTQ=;
-        b=GLesQd+cpZ7ZLLTFCN+jysRMVaXUrmoEwAlotcWLoOHGAJDKVX6NbPJC+PF7XSIVry
-         cb0wcJ7t2TTj8WgSB78n96ALXUnNvVaJIavFmJGcprDRDpELmlU8Ssgz1lUzuKIfV1jx
-         Az8eGJAVOdtbVbAMoGKBsKA8QcZhLdjkaU2HxI77O3WVPUwX4dyAKEvVzLkp3Qy3gjO5
-         a8HdyJQMPEMcjwcRIIAth0DcDbfnxUCk0ZEwB6z65132Rtp3aSDjOrhq/pgGFmCOvg19
-         v2UqwTE0TJsdOcCWOpKGdYSbbt1FFGQBx1eJuhdYL7ogCzuD1K+neShQkwWHgE6WLv4r
-         Flsw==
+        d=gmail.com; s=20230601; t=1721845291; x=1722450091; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7WCpmXa82zyOZ922g0iRuHBkONYRB7p6kOaLY9TSJIg=;
+        b=Y6ZYWeGeYaocy9X0UDnjOGnPkSQfkGP7VL+DYFuh8vhCqEXRU5iGNUfCNtmzqyY1fB
+         cjHtBBHE/3ljpviXj6ElzcK0xVb1KbPfrTR4w8CF+5a9LXyKPgnytspeuogDYezqqMBR
+         E2Fsud8NxJP9HNXIKlB1J60EoY3k3cWEJjtQCcMKvXi4bpJIctCzH5fmoZl/IGR9os7r
+         ajl8+Q+4lVWx6BdvOJ55TVK1M4ak/p34ZXvCKkN3T5ISjWsYaDctI7pZWma7rJIYrOvm
+         8Yi/6CzWr1QM0R41hss12nC6EyVA7yXnq2zup0XdIPuoIudhoH6v5IQVaeblIc+/gPD8
+         F0vA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721845372; x=1722450172;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TVCfTE0NROhZ28TaZGaiQuIpHQXct/DwD9UUx7joZTQ=;
-        b=s+he/4IXhK5TgowM81uWhndef1rwuNefP4fc/I+ynRJwH4+i2O9AxSejMtAAKQD8ZO
-         6KY7+wFqjw1XLrGf1afFK0786Pv5mAOpvpZ+yZZrzWPI8SqVIkpfEaqr1KnubaqIzKPn
-         xLLokiP+bcOB2UeQ7tSPEdeGHw9qiROCEXfn9U2UNPGv3KyCzEwu7psmMDrouTBD9o6D
-         74oCfJ4Os7fo9o7JjRnht+pFY3ecXJ0GuPb1oE04bacAWaUt4xP4KEuUiTzp2C0EFXFC
-         +Cjq3rvegzAufSgoAZ1ew21q48O2OBEMD8t2jG/PwqL38QNXsAcCvgfYg0HDmqXDA7sN
-         ryXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXJQVOppUfUF7Bmql0IczWfaq6fRLRIRPgVX6SowMsmyoB01aveWDgLYaBjjhc4+LT6ySU5SGb0w2+N0NDqEt187l7aK++qGiL8B48NcLn40zRQWZDkr4Docd7j1SRDV+NxJAmHn20qjnfQOUgBI9/dcbu7bf6MP2JK+3qc8hxyWrtjoKq5Z1XGy+8+
-X-Gm-Message-State: AOJu0YzKZYfZpTXWF7kq+RMGaUp9G4+9wrUACveu+poD9THmhmwL2DJv
-	MsVyYEpncYlrxUBZ7fRaijDQ+Drr25G8WTvoq+51/7sTuEcJ2qve
-X-Google-Smtp-Source: AGHT+IFCEhSdnrVOIE8vJ1FPGPxhox+YI1nRJa9GWRRVVmzaw1A79Giz7J/3ENdOdIGJv0HOfOUjyA==
-X-Received: by 2002:a05:600c:1d04:b0:427:d8f2:332 with SMTP id 5b1f17b1804b1-427f954c3b8mr21405895e9.7.1721845371735;
-        Wed, 24 Jul 2024 11:22:51 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3687868b5fdsm14909882f8f.38.2024.07.24.11.22.50
+        d=1e100.net; s=20230601; t=1721845291; x=1722450091;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7WCpmXa82zyOZ922g0iRuHBkONYRB7p6kOaLY9TSJIg=;
+        b=Pily2R65LY1Ndi3lfLyzu71tTJgQDZzND2XhthuvJ4sU8QVomNc6hb9Gz80AgHVHcZ
+         tDcD0XDtXREQq14WdrYvYhHOzwS2MUFQLXR3KwXaQ/qxbsOhX1QWAaZHrgRQYiliaGJ6
+         Bkv31HYqzjcSuZyo0UOeBUCKjRaf/Pca3QGKFUceVuwy6RmaullSmss6vuTIkqiDKliQ
+         yGPbuiVjVWFD/ITrpAzWrPPX8oZoeW1BTiii0K0QZAdvsOPHq3SKONXIjYuJ+hNWR9pO
+         kR/2jNhpP6mnEcf5OPfhnhhj1opp/cSuZXhtb50GGAD8tPoIUiFDuchI4kIXjW1ls9v/
+         580A==
+X-Forwarded-Encrypted: i=1; AJvYcCUYh20wfzAXrrBtZQUhBe17UdsCfLpmRj7hYVlrLZsNQ7SOBaXmzuZCswy+cZs1/MVaJNjpo+hKFL6Ntm3VbxpsgO10p8ImEf8nnuHMz5AFEL7hIysRpYhjXj/Oodudc324+VkgMBhcPT4=
+X-Gm-Message-State: AOJu0YxQwLKEDqCZ33nqEtkg/FrrvNEuQfVpWXYJpzqFNf6qh7p8qXFX
+	TsUzqyjXkhSh8ttlgq5I1wS5Bl3h3/aueUBzfh7WNfJ8HN1jjzFrHfxX0g==
+X-Google-Smtp-Source: AGHT+IHbXJnA2o0kEdtq8KjKxSCdIUUIOh5dEi8uNKi3kPgDUGk1zRWNY81M+lRRC8/X2Nrwwr7hGg==
+X-Received: by 2002:a05:6a00:6f61:b0:707:ffa4:de3f with SMTP id d2e1a72fcca58-70eaa8c59a2mr414328b3a.17.1721845291027;
+        Wed, 24 Jul 2024 11:21:31 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:c2d6:b5c3:537e:3830])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70d1a09df58sm6258957b3a.112.2024.07.24.11.21.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jul 2024 11:22:50 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v5 3/3] mmc: renesas_sdhi: Add RZ/V2H(P) compatible string
-Date: Wed, 24 Jul 2024 19:21:19 +0100
-Message-Id: <20240724182119.652080-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240724182119.652080-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20240724182119.652080-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Wed, 24 Jul 2024 11:21:30 -0700 (PDT)
+Date: Wed, 24 Jul 2024 11:21:27 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Nitin Garg <nitin.garg@nxp.com>,
+	Abel Vesa <abelvesa@kernel.org>,
+	"open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." <linux-input@vger.kernel.org>,
+	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/1] input: imx_sc_key: Enable wakeup according to dts
+ property wakeup-source
+Message-ID: <ZqFGJwb-0MU_GP28@google.com>
+References: <20240719152259.760457-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240719152259.760457-1-Frank.Li@nxp.com>
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi Frank,
 
-The SD/MMC block on the RZ/V2H(P) ("R9A09G057") SoC is similar to that
-of the R-Car Gen3, but it has some differences:
-- HS400 is not supported.
-- It has additional SD_STATUS register to control voltage,
-  power enable and reset.
-- It supports fixed address mode.
+On Fri, Jul 19, 2024 at 11:22:58AM -0400, Frank Li wrote:
+> From: Abel Vesa <abel.vesa@nxp.com>
+> 
+> Enable default wakeup according to dts property 'wakeup-source'.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> Reviewed-by: Nitin Garg <nitin.garg@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change from v1 to v2
+> - change int to bool
+> - move of_property_read_bool() just before device_init_wakeup()
+> - drop !!
+> ---
+>  drivers/input/keyboard/imx_sc_key.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/input/keyboard/imx_sc_key.c b/drivers/input/keyboard/imx_sc_key.c
+> index d18839f1f4f60..fc1492088b645 100644
+> --- a/drivers/input/keyboard/imx_sc_key.c
+> +++ b/drivers/input/keyboard/imx_sc_key.c
+> @@ -110,8 +110,10 @@ static void imx_sc_key_action(void *data)
+>  
+>  static int imx_sc_key_probe(struct platform_device *pdev)
+>  {
+> +	struct device_node *np = pdev->dev.of_node;
+>  	struct imx_key_drv_data *priv;
+>  	struct input_dev *input;
+> +	bool wakeup;
+>  	int error;
+>  
+>  	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> @@ -151,6 +153,9 @@ static int imx_sc_key_probe(struct platform_device *pdev)
+>  	priv->input = input;
+>  	platform_set_drvdata(pdev, priv);
+>  
+> +	wakeup = of_property_read_bool(np, "wakeup-source");
 
-To accommodate these differences, a SoC-specific 'renesas,sdhi-r9a09g057'
-compatible string is added.
+The driver uses generic device properties, why do you use OF-specific
+variant here?
 
-Note for RZ/V2H(P), we are using the `of_rzg2l_compatible` OF data as it
-already handles no HS400 and fixed address mode support. Since the SDxIOVS
-and SDxPWEN pins can always be used as GPIO pins on the RZ/V2H(P) SoC, no
-driver changes are done to control the SD_STATUS register.
+> +	device_init_wakeup(&pdev->dev, wakeup);
+> +
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v4->v5
-- Dropped handling of regulator
+How does this actually work? Doesn't the call directly below
+unconditionally configures button as a wakeup source?
 
-v3->v4
-- Dropped using 'renesas,sdhi-use-internal-regulator' property
-- Now using of_device_is_available() to check if regulator is available and enabled
-- Dropped extra spaces during operations 
-- Included tested by tag from Claudiu
-- Rebased patch on top of https://patchwork.kernel.org/project/linux-renesas-soc/patch/20240626085015.32171-2-wsa+renesas@sang-engineering.com/
+>  	error = imx_scu_irq_group_enable(SC_IRQ_GROUP_WAKE, SC_IRQ_BUTTON,
+>  					 true);
+>  	if (error) {
 
-v2->v3
-- Moved regulator info to renesas_sdhi_of_data instead of quirks
-- Added support to configure the init state of regulator
-- Added function pointers to configure regulator
-- Added REGULATOR_CHANGE_VOLTAGE mask
+Thanks.
 
-v1->v2
-- Now controlling PWEN bit get/set_voltage
----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index 422fa63a2e99..6b858393f19f 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -284,6 +284,7 @@ static const struct of_device_id renesas_sdhi_internal_dmac_of_match[] = {
- 	{ .compatible = "renesas,sdhi-r8a77990", .data = &of_r8a77990_compatible, },
- 	{ .compatible = "renesas,sdhi-r8a77995", .data = &of_rcar_gen3_nohs400_compatible, },
- 	{ .compatible = "renesas,sdhi-r9a09g011", .data = &of_rzg2l_compatible, },
-+	{ .compatible = "renesas,sdhi-r9a09g057", .data = &of_rzg2l_compatible, },
- 	{ .compatible = "renesas,rzg2l-sdhi", .data = &of_rzg2l_compatible, },
- 	{ .compatible = "renesas,rcar-gen3-sdhi", .data = &of_rcar_gen3_compatible, },
- 	{ .compatible = "renesas,rcar-gen4-sdhi", .data = &of_rcar_gen3_compatible, },
 -- 
-2.34.1
-
+Dmitry
 
