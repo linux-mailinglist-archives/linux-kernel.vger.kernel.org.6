@@ -1,104 +1,221 @@
-Return-Path: <linux-kernel+bounces-261347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5493E93B61E
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:46:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB7E693B61F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 19:46:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 860871C23A48
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:46:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A7C81C23A45
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 17:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1482B15ECCA;
-	Wed, 24 Jul 2024 17:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292BA15EFC9;
+	Wed, 24 Jul 2024 17:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KyO+DU8X"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ALkjDtTA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA5381CD1B
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 17:46:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C0E1CD1B
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 17:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721843162; cv=none; b=Mz6xfPcjnpFEjxeqQx8crnMa43BFNwx52RVNPSjif2a7AgeSDylxXQfvJU2J82G1a1xAeizNSw382XwAiVlANHHsnEL+k1RHDAJ7EZ5R59/xH+7oEoK0djLqZOIY1LYnJOGD+IrJh4JRYrzDsNn06hIdg3XE3lnblbTItTK2Wjw=
+	t=1721843213; cv=none; b=YuKwYj8WK3eOnxtdbjgUoCvEcoSgZ1VGEX85gzVidQerStBZRq0cURZDY9ZL2py+utPAMwEVjEgRTqVPQUSxuxH6KWZXsqiLmSMyh19JIJ1haVxw+mmFiRNze8eyvdxYMUJ6JoXWMVUE5m4dGeFLKFH2JFyRfa0BvI8Z5DuMLzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721843162; c=relaxed/simple;
-	bh=aW/2ENY8chSVdPwvE1cXMgxEIAwFHFG8j53H46Zc8GY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=S/x8a03Fy7ii+CImcFwVioCFqxOy/qz7E50M/Dz5XV52Th52yrC4gEwICiF91S4BMtWB1rO+YpNUGATvTkS//6HE3HJkCAZZHagpIg/7noY8a2hja8GcRY7dOSJi3HqAqKYzDeUDGHtYEdcEFOfMCf1ae5euL3aRW5iTr4NawdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=KyO+DU8X; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721843159;
-	bh=aW/2ENY8chSVdPwvE1cXMgxEIAwFHFG8j53H46Zc8GY=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=KyO+DU8XZx7J6yEyHgQGx/j1xtj9Tq19J7EiaeEtFpTS5u50mLXZUsoN4VoQM9RUt
-	 h0ynxXmHRL0nhFuXjdVbvppL2n8VDLbarq6iRH4POvfUUA8n2aFjFlHCftuU8RDoz/
-	 bT7s9K8oVpT1GeRxNd31LX+zGa3Xfz6SIF5si0GkY3HvpQjD0V+fhOql1SeHvj2WdF
-	 O2ecgo8lQZHtsRTGhp7EnCJfZNTqKZy55zxdjD3I+S4U0cgmBthPCAMQ47cYmXa5ho
-	 ik0AoGIgdJUQfVPhtn7NdMZ5kTQx5q62vpoMLBaqvgOhJXCg1LrfwezRx4ucrU5fh7
-	 1S0zZxmISzEHA==
-Received: from [100.109.49.129] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dmitry.osipenko)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 47E26378020D;
-	Wed, 24 Jul 2024 17:45:58 +0000 (UTC)
-Message-ID: <9cd3aa9e-765d-41fc-b9ee-a683656bd7a1@collabora.com>
-Date: Wed, 24 Jul 2024 20:45:55 +0300
+	s=arc-20240116; t=1721843213; c=relaxed/simple;
+	bh=ulNWOnLiv50nMKjhMkMk+venKV6OZ28//9WcJKrrfVQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Eq2jL5ntYSOzIQ1ZH6J4+Rxb4+1JG4CS4KmI6U1KZ9qdoyak0PH9PZ3nwiO+2zE2BlBGsDe8AtxNDZDpB+gjfN6DR/DcUmWccYocE+AEoFyR594RX54xkJKKMNDma4c/LzAk/pOG9ukE5meWvjH9W7sCJOKBEx+Uw6MQiudHTYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ALkjDtTA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1721843210;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4Re5dIvgoFLdT/hHe5IuIdb0ThWII2+4/cHcQWp4sio=;
+	b=ALkjDtTAEL3ZkSwqZww6UV67dHreFByRK528mobjH7T/DtsQn7Wu5ZWa1I1F13n/NulAvc
+	K8zrtOz0L0wcED5xEyZfjzBoYfHi+5R/iFC81YRZyqjRLk/fq1lfRihcPkRNLnfwSjPJCk
+	aYwVFC5vNBwnGDif7+3eUc/j+sjJoJQ=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-682-kG-ZFlojMVyCtOt1tTNEQQ-1; Wed, 24 Jul 2024 13:46:49 -0400
+X-MC-Unique: kG-ZFlojMVyCtOt1tTNEQQ-1
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-79f006f9f14so215945585a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 10:46:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721843209; x=1722448009;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4Re5dIvgoFLdT/hHe5IuIdb0ThWII2+4/cHcQWp4sio=;
+        b=ZUiaztSLILTuZYt7uKEOF6MlGaYB26CKN1FGOsEUAsA4QkoIDTDVf6GemfC22xG3BS
+         Ivl8ltoyq8Cr55DdfUABOyCg7zth1nzmQTiAZlxaYOP31NB7FL78Awz5r8JzBHbn5Aiv
+         AHy9aC6s95ckrnHbF8+ZaNInYbbH54hkEEXzS96HnEbM0W1P3RebPy6ZqSMiMClE5mde
+         7kbrwjNM0+JnezwHuocbo+yWvO/7qnLS/dwPAih+OpmMq8fIkA/g+nHlr+vJtKZ6Vhhp
+         bZ1HYF86NetwsHx71kcSZsng2FsbMGLqhDTpxHJQaox/r2nyf4mITZp65ZmnqqvJjs3s
+         hU/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUo6K4LdA1hidalCXSZ0VMmkGg24paFPOid/x4EK3TcyKz9aEj0+QAcme829CTWJS4BFR4UtzO+kns2Ko5FVeIsRjq/PLniul+BB9q8
+X-Gm-Message-State: AOJu0YwGXAEuFROtZ/rmWFNmpG0zi/yR5D9pxoMxtpjH+vLMUclBNOLL
+	jOT90eMG28qpqTRdxKT8vALgUBLHuBaJFuA/PRfx+6aN2AjbEYuUD9CrMvQawFZuysCVriSQ88d
+	VvYqy0tqrUkHFqz29/TXR36hnH+axhax0a8GrnIHnu2ZKNTSFicJ8dfSvNgEzqw==
+X-Received: by 2002:a05:620a:bd4:b0:795:60ba:76e9 with SMTP id af79cd13be357-7a1ccb212cdmr465238185a.4.1721843208908;
+        Wed, 24 Jul 2024 10:46:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHXoyxQ5z7Tq4wMx8piiqqsyWbjcnyunZDeSZ1ya2ebyrpzwXbrdpnPaAmPpPszFVSa8FgYsg==
+X-Received: by 2002:a05:620a:bd4:b0:795:60ba:76e9 with SMTP id af79cd13be357-7a1ccb212cdmr465234585a.4.1721843208474;
+        Wed, 24 Jul 2024 10:46:48 -0700 (PDT)
+Received: from starship ([2607:fea8:fc01:7b7f:6adb:55ff:feaa:b156])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a19909b4b8sm594621685a.132.2024.07.24.10.46.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jul 2024 10:46:47 -0700 (PDT)
+Message-ID: <3da2be9507058a15578b5f736bc179dc3b5e970f.camel@redhat.com>
+Subject: Re: [PATCH v2 22/49] KVM: x86: Add a macro to precisely handle
+ aliased 0x1.EDX CPUID features
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov
+ <vkuznets@redhat.com>,  kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Hou Wenlong <houwenlong.hwl@antgroup.com>, Kechen Lu <kechenl@nvidia.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Binbin Wu
+ <binbin.wu@linux.intel.com>, Yang Weijiang <weijiang.yang@intel.com>,
+ Robert Hoo <robert.hoo.linux@gmail.com>
+Date: Wed, 24 Jul 2024 13:46:46 -0400
+In-Reply-To: <ZoxVa55MIbAz-WnM@google.com>
+References: <20240517173926.965351-1-seanjc@google.com>
+	 <20240517173926.965351-23-seanjc@google.com>
+	 <43ef06aca700528d956c8f51101715df86f32a91.camel@redhat.com>
+	 <ZoxVa55MIbAz-WnM@google.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] drm/virtio: Fix type of dma-fence context variable
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-To: David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, Rob Clark <robdclark@gmail.com>,
- Pierre-Eric Pelloux-Prayer <pierre-eric.pelloux-prayer@amd.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel@collabora.com
-References: <20240714205009.3408298-1-dmitry.osipenko@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240714205009.3408298-1-dmitry.osipenko@collabora.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 7/14/24 23:50, Dmitry Osipenko wrote:
-> Type of DMA fence context is u64. Fence-waiting code uses u32 for the
-> context variable, fix it.
+On Mon, 2024-07-08 at 14:08 -0700, Sean Christopherson wrote:
+> On Thu, Jul 04, 2024, Maxim Levitsky wrote:
+> > On Fri, 2024-05-17 at 10:38 -0700, Sean Christopherson wrote:
+> > > Add a macro to precisely handle CPUID features that AMD duplicated from
+> > > CPUID.0x1.EDX into CPUID.0x8000_0001.EDX.  This will allow adding an
+> > > assert that all features passed to kvm_cpu_cap_init() match the word being
+> > > processed, e.g. to prevent passing a feature from CPUID 0x7 to CPUID 0x1.
+> > > 
+> > > Because the kernel simply reuses the X86_FEATURE_* definitions from
+> > > CPUID.0x1.EDX, KVM's use of the aliased features would result in false
+> > > positives from such an assert.
+> > > 
+> > > No functional change intended.
+> > > 
+> > > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > > ---
+> > >  arch/x86/kvm/cpuid.c | 24 +++++++++++++++++-------
+> > >  1 file changed, 17 insertions(+), 7 deletions(-)
+> > > 
+> > > diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> > > index 5e3b97d06374..f2bd2f5c4ea3 100644
+> > > --- a/arch/x86/kvm/cpuid.c
+> > > +++ b/arch/x86/kvm/cpuid.c
+> > > @@ -88,6 +88,16 @@ u32 xstate_required_size(u64 xstate_bv, bool compacted)
+> > >  	F(name);						\
+> > >  })
+> > >  
+> > > +/*
+> > > + * Aliased Features - For features in 0x8000_0001.EDX that are duplicates of
+> > > + * identical 0x1.EDX features, and thus are aliased from 0x1 to 0x8000_0001.
+> > > + */
+> > > +#define AF(name)								\
+> > > +({										\
+> > > +	BUILD_BUG_ON(__feature_leaf(X86_FEATURE_##name) != CPUID_1_EDX);	\
+> > > +	feature_bit(name);							\
+> > > +})
+> > > +
+> > >  /*
+> > >   * Magic value used by KVM when querying userspace-provided CPUID entries and
+> > >   * doesn't care about the CPIUD index because the index of the function in
+> > > @@ -758,13 +768,13 @@ void kvm_set_cpu_caps(void)
+> > >  	);
+> > >  
+> > >  	kvm_cpu_cap_init(CPUID_8000_0001_EDX,
+> > > -		F(FPU) | F(VME) | F(DE) | F(PSE) |
+> > > -		F(TSC) | F(MSR) | F(PAE) | F(MCE) |
+> > > -		F(CX8) | F(APIC) | 0 /* Reserved */ | F(SYSCALL) |
+> > > -		F(MTRR) | F(PGE) | F(MCA) | F(CMOV) |
+> > > -		F(PAT) | F(PSE36) | 0 /* Reserved */ |
+> > > -		F(NX) | 0 /* Reserved */ | F(MMXEXT) | F(MMX) |
+> > > -		F(FXSR) | F(FXSR_OPT) | X86_64_F(GBPAGES) | F(RDTSCP) |
+> > > +		AF(FPU) | AF(VME) | AF(DE) | AF(PSE) |
+> > > +		AF(TSC) | AF(MSR) | AF(PAE) | AF(MCE) |
+> > > +		AF(CX8) | AF(APIC) | 0 /* Reserved */ | F(SYSCALL) |
+> > > +		AF(MTRR) | AF(PGE) | AF(MCA) | AF(CMOV) |
+> > > +		AF(PAT) | AF(PSE36) | 0 /* Reserved */ |
+> > > +		F(NX) | 0 /* Reserved */ | F(MMXEXT) | AF(MMX) |
+> > > +		AF(FXSR) | F(FXSR_OPT) | X86_64_F(GBPAGES) | F(RDTSCP) |
+> > >  		0 /* Reserved */ | X86_64_F(LM) | F(3DNOWEXT) | F(3DNOW)
+> > >  	);
+> > >  
+> > 
+> > Hi,
+> > 
+> > What if we defined the aliased features instead.
+> > Something like this:
+> > 
+> > #define __X86_FEATURE_8000_0001_ALIAS(feature) \
+> > 	(feature + (CPUID_8000_0001_EDX - CPUID_1_EDX) * 32)
+> > 
+> > #define KVM_X86_FEATURE_FPU_ALIAS	__X86_FEATURE_8000_0001_ALIAS(KVM_X86_FEATURE_FPU)
+> > #define KVM_X86_FEATURE_VME_ALIAS	__X86_FEATURE_8000_0001_ALIAS(KVM_X86_FEATURE_VME)
+> > 
+> > And then just use for example the 'F(FPU_ALIAS)' in the CPUID_8000_0001_EDX
 > 
-> Fixes: e4812ab8e6b1 ("drm/virtio: Refactor and optimize job submission code path")
-> Cc: <stable@vger.kernel.org> # v6.4+
-> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> ---
->  drivers/gpu/drm/virtio/virtgpu_submit.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> At first glance, I really liked this idea, but after working through the
+> ramifications, I think I prefer "converting" the flag when passing it to
+> kvm_cpu_cap_init().  In-place conversion makes it all but impossible for KVM to
+> check the alias, e.g. via guest_cpu_cap_has(), especially since the AF() macro
+> doesn't set the bits in kvm_known_cpu_caps (if/when a non-hacky validation of
+> usage becomes reality).
+
+Could you elaborate on this as well?
+
+My suggestion was that we can just treat aliases as completely independent and dummy features,
+say KVM_X86_FEATURE_FPU_ALIAS, and pass them as is to the guest, which means that
+if an alias is present in host cpuid, it appears in kvm caps, and thus qemu can then
+set it in guest cpuid.
+
+I don't think that we need any special treatment for them if you look at it this way.
+If you don't agree, can you give me an example?
+
+
 > 
-> diff --git a/drivers/gpu/drm/virtio/virtgpu_submit.c b/drivers/gpu/drm/virtio/virtgpu_submit.c
-> index 1c7c7f61a222..7d34cf83f5f2 100644
-> --- a/drivers/gpu/drm/virtio/virtgpu_submit.c
-> +++ b/drivers/gpu/drm/virtio/virtgpu_submit.c
-> @@ -48,7 +48,7 @@ struct virtio_gpu_submit {
->  static int virtio_gpu_do_fence_wait(struct virtio_gpu_submit *submit,
->  				    struct dma_fence *in_fence)
->  {
-> -	u32 context = submit->fence_ctx + submit->ring_idx;
-> +	u64 context = submit->fence_ctx + submit->ring_idx;
->  
->  	if (dma_fence_match_context(in_fence, context))
->  		return 0;
+> Side topic, if it's not already documented somewhere else, kvm/x86/cpuid.rst
+> should call out that KVM only honors the features in CPUID.0x1, i.e. that setting
+> aliased bits in CPUID.0x8000_0001 is supported if and only if the bit(s) is also
+> set in CPUID.0x1.
 
-Applied to misc-fixes
+To be honest if KVM enforces this, such enforcement can be removed IMHO:
 
--- 
+KVM already allows all kinds of totally invalid
+CPUIDs to be set by the guest, for example a CPUID in which AVX3 is set, and AVX and/or XSAVE is not set.
+
+So having a guest given cpuid where aliased feature is set, and regular feature is not set,
+should not pose any problem to KVM itself, as long as KVM itself uses only the non-aliased
+features as the ground truth.
+
+Since such configuration is an error anyway, allowing it won't break any existing users IMHO.
+
+What do you think about this? If you don't agree, can you provide an example of a breakage?
+
+
 Best regards,
-Dmitry
+	Maxim Levitsky
+
+> 
+
 
 
