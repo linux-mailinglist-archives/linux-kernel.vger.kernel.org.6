@@ -1,136 +1,97 @@
-Return-Path: <linux-kernel+bounces-261553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D66B93B8CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 23:52:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B56F693B8EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 00:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 977C2B24066
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 21:52:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E47B31C2152F
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 22:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A8013C807;
-	Wed, 24 Jul 2024 21:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50F213C9B8;
+	Wed, 24 Jul 2024 22:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="f690Mp/H"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TYiEI7sk"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA5713AA2F;
-	Wed, 24 Jul 2024 21:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4EDD127E0D;
+	Wed, 24 Jul 2024 22:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721857929; cv=none; b=Cp/SBwx75VIBOM53Gc4AXXPjfKrzETiBcO62y3bdYL5tzgD4KONZlcgjYeyqzm4R3GCm6vxyncnyckYR9n0CRabp7wTRHVwmE1YqW7HPQPYJaiI/chtA+84PAeVQLIW9nIISaEYEFo4DyLvlM1PoCAFQLZ8vbgOd5GBA9dmm4CE=
+	t=1721858438; cv=none; b=AMoa7BsdtzUIO8pMlYoknBp7lSPItI6SiT5maqiwYDliGil1lTcEOGVkUU7cNiDf4YT/aC6StgTL4QTHFklKeJWQC6T9oX3BGAMs55ZYMZHK4tY1RLqHjqjMd6KrMWrSkXun2coL+X3dC2E6mwkbSqJ5ASJ6IvVTK+xIFMMDiVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721857929; c=relaxed/simple;
-	bh=oEOmOlfz6CpQP8CwygJ/qQgE6bITPukNt50FQUhP2N8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=B+5Eo0naXUmTFD2BQFZmAxzChbEjegxz3ebTOGW/UQyTx9Mldki9d+ktplyDmfHlCPrdTIO8dF1QE63PshyoNn2uJd3CbIbpnw0Edg3I+2uggHbX5mKFtny0VB2VsdIWD9cETvBMpGmIGBCvVX1pibZpJ9N2OfoGvMEccFDcV6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=f690Mp/H; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1721857924; x=1722117124;
-	bh=9wT9nGk/Kl4gZK0Tax5hk03ECjrHn3Gb2YCLJm9dH3M=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=f690Mp/HqT5J3u5HaDV08jrxv8C/kMBNcWHBh51benkj26V9zDr5FEZIi8Er6gOW0
-	 aVbQSNlkLGegZu9RoGuv+hosNnTKiENbyC/js6rE5aWJYtAD2hg6pD5BRhC+M+mZBE
-	 mRWhmSXDgbEeN0dal1v/tiEr9hbvgOdVW1c28qYy8prkG03iYTHn+QA+EnM+aELZp1
-	 aSg0Cbdae0xTP5/peyYM97iutSGteAU6l1Efc97G7R3toarBivkNrx/1vjlunbeXBT
-	 eCK2g4/jHZ0ojc8MHz2ap1jfeqglC+drOxqzOgTp9kOGBW1VesIsVYwqEVCV6XSwfT
-	 dzJYzhoCTIzAg==
-Date: Wed, 24 Jul 2024 21:51:57 +0000
-To: Miguel Ojeda <ojeda@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Masahiro Yamada <masahiroy@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Wedson Almeida Filho <wedsonaf@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, patches@lists.linux.dev, linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] Rust: support `CPU_MITIGATIONS` and enable `objtool`
-Message-ID: <e51f3b91-690d-4b72-9841-75a61684777d@proton.me>
-In-Reply-To: <20240724161501.1319115-1-ojeda@kernel.org>
-References: <20240724161501.1319115-1-ojeda@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 6af68a83f926bf6d26972ff1532292b9d003c3a4
+	s=arc-20240116; t=1721858438; c=relaxed/simple;
+	bh=HthWq20seG3D0KG4VflFiWm+EjMWBkWl+PY8SXnGwsY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Fka6pEgUsBWakWf5wYktOIT4ecn3l02VZ8XC4CA9QOSWkqVb3rUWiBFrZDY9jdf2NIOgEq7sTcxIIXspg3Su3021S153GJXrEEz9NUFWMv5r73gP74N/01++4mbQXUgT9+Yv2F3mjonayAgIqukt6liLNF5nDHBzqO49hB0Ij54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=TYiEI7sk; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1721858431;
+	bh=tXDwaxltc3zquGyulZcCmwpu0chmpdzseW8zLT2uRlo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=TYiEI7skrpyKHrsNFZqxJDeaieegS8YlDneIe9Q/4keks3cIK61ImClCGSqmkz5iC
+	 C5TmHvI+oAZErr6N5YRzF9nHz7bGL5YAaFLloEdCXOszOEr+efPURUGLicUWjaV29a
+	 92wCCAaphioWmfwhknqIWXPxhNbncaHqszZ2qLNU4p/IGP6F7PBkxIu75AiPfbKk7p
+	 j2vdyWUjssYWOesxXSHsbmxCXefK350jSrLJs6So9LcqQzmuGry0fHKnG9Pp2uK2mb
+	 IGdqpPnlgb1jU2V++di1WMdB/+c2hRnkFG9KC9DlnVpF8lsQuE7o4GAShicfLJl9Km
+	 kJ3dRsuMzs6fQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WTny72hw5z4w2Q;
+	Thu, 25 Jul 2024 08:00:31 +1000 (AEST)
+Date: Thu, 25 Jul 2024 08:00:30 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the vfs-brauner tree
+Message-ID: <20240725080030.465434f5@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; boundary="Sig_/uncT=VUaAWiX0Y5nhiP=FXj";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/uncT=VUaAWiX0Y5nhiP=FXj
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On 24.07.24 18:14, Miguel Ojeda wrote:
-> Hi,
->=20
-> This is an updated series to the CPU mitigations support for Rust. It
-> also has the patch to enable `objtool`, so that we can start running it
-> for Rust.
->=20
-> It would be nice to get this applied soon, so that we start being
-> warning-free (since we already get warnings under IBT builds via
-> `vmlinux.o`). I am happy to take it through the Rust tree if the x86 and
-> objtool maintainers give an Acked-by, or through any of the other trees,
-> as you prefer. Otherwise, I think at this point we would need to make
-> Rust exclusive to the mitigations, which isn't great.
->=20
-> With this series, again, x86_64 is warning-free with `objtool` enabled. I
-> tested `-O2`/`-Os` and the Rust versions we support under `-O2` (mainly
-> for the `noreturn` patch, which uses heuristics), as well as IBT vs. no
-> IBT (i.e.  running on individual object files vs. in `vmlinux`). I also
-> did an arm64 build.
->=20
-> Testing is very welcome for this one!
->=20
-> Cheers,
-> Miguel
->=20
-> v2:
->   - Add patch to enable `objtool` for Rust.
->=20
->   - Add patch to list `noreturn` Rust functions (via heuristics) to avoid
->     warnings related to that.
->=20
->   - Make the `RETHUNK` patch not an RFC since the Rust compiler has
->   support for
->     it now.
->=20
->   - Update the names of the migitation config symbols, given the changes
->   at e.g.
->     commit 7b75782ffd82 ("x86/bugs: Rename CONFIG_MITIGATION_SLS =3D>
->     CONFIG_MITIGATION_SLS").
->=20
-> Miguel Ojeda (6):
->   rust: module: add static pointer to `{init,cleanup}_module()`
->   x86/rust: support MITIGATION_RETPOLINE
->   x86/rust: support MITIGATION_RETHUNK
->   x86/rust: support MITIGATION_SLS
->   objtool: list `noreturn` Rust functions
->   objtool/kbuild/rust: enable objtool for Rust
->=20
->  arch/x86/Makefile               |  7 ++++++-
->  rust/Makefile                   | 22 ++++++++++++--------
->  rust/macros/module.rs           | 12 +++++++++++
->  scripts/Makefile.build          |  9 +++++++--
->  scripts/generate_rust_target.rs | 15 ++++++++++++++
->  tools/objtool/check.c           | 36 ++++++++++++++++++++++++++++++++-
->  tools/objtool/noreturns.h       |  2 ++
->  7 files changed, 91 insertions(+), 12 deletions(-)
->=20
->=20
-> base-commit: b1263411112305acf2af728728591465becb45b0
-> --
-> 2.45.2
->=20
+Hi all,
 
-I tested this series with a config that produces the objtool warnings on
-b126341 and it worked flawlessly. I also tried `-O2` and `-Os`:
+The following commits are also in Linus Torvalds' tree as different
+commits (but the same patches):
 
-Tested-by: Benno Lossin <benno.lossin@proton.me>
+  284004432c83 ("vfs: correct the comments of vfs_*() helpers")
+  714f0ae0e968 ("netfs: Rename CONFIG_FSCACHE_DEBUG to CONFIG_NETFS_DEBUG")
 
----
+--=20
 Cheers,
-Benno
+Stephen Rothwell
 
+--Sig_/uncT=VUaAWiX0Y5nhiP=FXj
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaheX4ACgkQAVBC80lX
+0Gz1nQgAoZPVrpTVW1OObaSZ3ABh4bOBpRzja2r0xQ8LIvFIenAjiAL5b5kJ1Gc4
+pCVPiTAAnTX37YkyQ9waZcUjxQc2ckcG19YjeSe8PLj8kn/UnpqwZB3vuI4heSDs
+sEIDlVP1qhw80PaI6kyIt14kMv/lZt1gnaCEIMgtLQpNkGAozaK/jSU0dN8/Sphf
+Ol8egbt/vzDEXZkOKHqZZOO5goOK92+mMnf7kWGrIrxcTe/6+kg/n1O6qsj80IhQ
+gmEFVzujXU4zhO/RaU7UUbaQ8OD3ZYaqEbqUqpXkgPEKOG4b47nQ3D2uiQOEQvDE
+Wr3gmdOVYp5T55PWz2SCcZkDtzX+uA==
+=kUZ7
+-----END PGP SIGNATURE-----
+
+--Sig_/uncT=VUaAWiX0Y5nhiP=FXj--
 
