@@ -1,60 +1,80 @@
-Return-Path: <linux-kernel+bounces-260502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-260505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FCDC93AA4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:06:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68BD093AA51
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 03:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61DA41C22D6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:06:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1378D1F23AE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 01:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7A4BE71;
-	Wed, 24 Jul 2024 01:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7275695;
+	Wed, 24 Jul 2024 01:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="J62so7Gs"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hw5uEVUL"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009B15C99
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 01:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46ED0D520;
+	Wed, 24 Jul 2024 01:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721783162; cv=none; b=GEDG/FoHq9PhpZXG5OgCb+pTxdNRVMYqBQRpqVNd13RkUEVBocyYSEmq6rpRA9oq6WrkB5+nU/tH/4w39HXxtjOoQMmbSUKrixv+4t9IRXSIYUF62Wibm0TFj7VJ7dqn9fGavNjhXJg2c459fQ4Vn4L0KXBDLCV1nG5a3nQPQL0=
+	t=1721783384; cv=none; b=S+Z22M+gzeq9Dk1KGbIG+s0Yf4xpojVxFdVbkzPmHVr6JStjihxOdyZ1wNToLLm4IkTlsTWILwIJ88EHe4JcHFjV0Pk9MbUyifAQzv7p9K7XdaB/cMSHhM2i4WUmeNDngySUAcu3RfcWgVnBGqr+Dpuqu0G523sLDn5Br61NpEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721783162; c=relaxed/simple;
-	bh=GwJNvq931G20gH0CQL3xXW+3Ks7XhNZBlOUlu8sD2zo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R9PVn8jbzeoRHVjKK8OWCp+ORgeJ7gg+gM/8etPkm31hLRnhPA8Fo0x80S7wYNtefT7pyhKuEhN+SDJGYq8sDN3ihnwCM1AWp4MKrLGvAQbPHoUkC/TgdE51U8FsfjBnLxh7taxWSBxQoRiNmpULFQ3AALXnekXL7FqHW6gMj5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=J62so7Gs; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-Type:Content-ID:Content-Description;
-	bh=eFusLkbviS/7xHQGQO2zQewFlhdvWZpUW4NWdWMQGhg=; b=J62so7GsQlrq2UaPlrl2663LyB
-	ZTGzko4Pa1OWiKK0+XQ/DFOcOAbhFhPDJiz2ZAHinFGsmdaks02Ut/cmN9FI7N7LLxL7o6BYAjZSa
-	ELwKEWyKDpXUbwYLKh0iiI2IQWYjVBQO7QNGTLKYVf+4lA+GGzbfB86lpj11TRbrwsJ8tkTCeoDzf
-	UGZNTn/71tPvGcORj6fR6sC1mEVHisbh3Ayqd1heabZn1XGOHRc3HTs2JB8grYxcSbck30h1xoUgA
-	0Kqqtwuv0WcPHBkKg/RsdrtnQ6uHS1pMxfymnjRAD/0JVDWDP09QCDSPzjImYpLweU331qvXR0sWC
-	NrHKliGA==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sWQS2-00000007MpG-2NZC;
-	Wed, 24 Jul 2024 01:05:54 +0000
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
+	s=arc-20240116; t=1721783384; c=relaxed/simple;
+	bh=P2ntP1z6uoOdPcioy1TYTfRWIH9IvmVmM6qCfNdvKOI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HB4ITdOYYdGek3L5ICAsq/ledB6lfFgjTlYqLpXfCxnAQ/R3FLP33fwNICUhAIEGWXp+Q0pwx1m2AIVYU2LIlty01hPgEs1VM2Z8vDPWPiCds+b+nX9Y6iZh9mP3sfs6V9UUNJ7BK89i2EvSHo8wv8nKcXIxiyYAPkaThVeBDmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hw5uEVUL; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c9e37bdd6fso3603541a91.3;
+        Tue, 23 Jul 2024 18:09:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721783382; x=1722388182; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DEnb1Rd6+nPGp0Qdwh5GBJadzoocNyT63TaycwfKsf4=;
+        b=Hw5uEVUL0/FVde/b++U2yxVQ01rWnakE/8H8R2FB4KgTy47J2/Ezg/ItV59IFKHoXJ
+         gEVvFo7OrAnF9095heBKlCBoKOWThjuGE1tC5vy/GZvxVZ7DSJxGLmDFoP6Ylij4uyQV
+         VsEXWZyfYz4XhT/kgqeadtYbmELJb6tf1J9v6XwRD7lwXdQAMShiVQuR5dPJqrqiJv4x
+         ho9R9uI/QJ/ssw6neRutjt9kMBY/AjuNTsvJNWJc8MrnglUBOwJk/kPT25UAGpLUdwtc
+         n7O3UCI1DrRNaMXQN2F0gdKIA9+pSSD4WbXTWWuvdpiaTMY4qmPC4nPIrFFJ7Rca/ydI
+         qwsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721783382; x=1722388182;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DEnb1Rd6+nPGp0Qdwh5GBJadzoocNyT63TaycwfKsf4=;
+        b=rc8+9y5qhNnLiRpG/GPStk7gS+OfIbyR4oeSUIa7CdhajDrUzlAfBi09un3rbVpI0x
+         oXa/urkPjPlax7qcpEOWz/ZHLDutp1pCYjaH9Od3aIFWvYObzwpIiIKb4z5pd6ZlMcF8
+         tMBM85Z2nIPRnc7tyuQZ6l3gm4LKtIO30Ole/KIHz3TueydaSGsigsWjbWYSkI8xBteJ
+         vvqi/I8NVqh3OLe5Hu9uQFRd7xuFaRrs0je28Prx2uhwl17aYd/qQ2VyEuPloYGdaNNz
+         DvOSX17lteLxAN+Wvd9H7PjiQLfbQLOIYiMRiE3eZ2EY/jHXdhdHgu8tHQd9QNuldjzf
+         G1Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCV0Y8Gnj2a6QM6ohg5thu+beD8866L/rwqhW7gOJQrN55eufxZlQy1E7OJEMdDh4gDb6ixcKXyjcSLntmCiitODfICkN2Pw8HD0/LRfNkU0AwSOmyMVrtAzGooL/5YSND0sGlaG5vnwcTfifzI=
+X-Gm-Message-State: AOJu0YyZOPlB3cdQKLkOfUfBClmyBLjFc/HZ5xxR/PLMN+NNvX2QRcB+
+	mb/guW7I/C4mFb1fSR33jZkDFyInc3DgqvqrdEU+QPPE63N+cktp
+X-Google-Smtp-Source: AGHT+IE0pOKgD59p7pIwdGnInCrZKBsuHYIYUN/6DRHaLsILdRqXCj9sTsKm8wWuousYKS0DU00tew==
+X-Received: by 2002:a17:90b:314a:b0:2c9:7fba:d88b with SMTP id 98e67ed59e1d1-2cd2740ff1cmr10793886a91.14.1721783382547;
+        Tue, 23 Jul 2024 18:09:42 -0700 (PDT)
+Received: from localhost.localdomain ([190.196.134.53])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cdb73ddb7dsm270665a91.24.2024.07.23.18.09.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 18:09:41 -0700 (PDT)
+From: Camila Alvarez <cam.alvarez.i@gmail.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Brian Foster <bfoster@redhat.com>,
+	linux-bcachefs@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH 2/2] mm: Remove PG_error
-Date: Wed, 24 Jul 2024 02:05:47 +0100
-Message-ID: <20240724010550.1755992-3-willy@infradead.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240724010550.1755992-1-willy@infradead.org>
-References: <20240724010550.1755992-1-willy@infradead.org>
+	syzbot+1e515cab343dbe5aa38a@syzkaller.appspotmail.com,
+	Camila Alvarez <cam.alvarez.i@gmail.com>
+Subject: [PATCH] bcachefs: WARNING in bch2_trans_srcu_unlock
+Date: Tue, 23 Jul 2024 21:08:00 -0400
+Message-Id: <20240724010759.1631178-1-cam.alvarez.i@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,54 +83,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The PG_error bit is now unused; delete it and free up a bit in
-page->flags.
+bch2_extent_fallocate should not return -BCH_ERR_transaction_restart_nested when there are no buckets available.
+Returning -BCH_ERR_transaction_restart_nested causes the sector allocation to retry even if there's no space available.
 
-Cc: linux-mm@kvack.org
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reported-by: syzbot+1e515cab343dbe5aa38a@syzkaller.appspotmail.com
+Signed-off-by: Camila Alvarez <cam.alvarez.i@gmail.com>
 ---
- include/linux/page-flags.h | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ fs/bcachefs/io_misc.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 5769fe6e4950..a0a29bd092f8 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -66,8 +66,6 @@
-  * PG_referenced, PG_reclaim are used for page reclaim for anonymous and
-  * file-backed pagecache (see mm/vmscan.c).
-  *
-- * PG_error is set to indicate that an I/O error occurred on this page.
-- *
-  * PG_arch_1 is an architecture specific page state bit.  The generic code
-  * guarantees that this bit is cleared for a page when it first is entered into
-  * the page cache.
-@@ -103,7 +101,6 @@ enum pageflags {
- 	PG_waiters,		/* Page has waiters, check its waitqueue. Must be bit #7 and in the same byte as "PG_locked" */
- 	PG_active,
- 	PG_workingset,
--	PG_error,
- 	PG_owner_priv_1,	/* Owner use. If pagecache, fs may use*/
- 	PG_arch_1,
- 	PG_reserved,
-@@ -183,7 +180,7 @@ enum pageflags {
- 	 */
+diff --git a/fs/bcachefs/io_misc.c b/fs/bcachefs/io_misc.c
+index 82f9170dab3f..b5b92ef030df 100644
+--- a/fs/bcachefs/io_misc.c
++++ b/fs/bcachefs/io_misc.c
+@@ -90,8 +90,6 @@ int bch2_extent_fallocate(struct btree_trans *trans,
+ 				opts.data_replicas,
+ 				opts.data_replicas,
+ 				BCH_WATERMARK_normal, 0, &cl, &wp);
+-		if (bch2_err_matches(ret, BCH_ERR_operation_blocked))
+-			ret = -BCH_ERR_transaction_restart_nested;
+ 		if (ret)
+ 			goto err;
  
- 	/* At least one page in this folio has the hwpoison flag set */
--	PG_has_hwpoisoned = PG_error,
-+	PG_has_hwpoisoned = PG_active,
- 	PG_large_rmappable = PG_workingset, /* anon or file-backed */
- };
- 
-@@ -506,7 +503,6 @@ static inline int TestClearPage##uname(struct page *page) { return 0; }
- 
- __PAGEFLAG(Locked, locked, PF_NO_TAIL)
- FOLIO_FLAG(waiters, FOLIO_HEAD_PAGE)
--PAGEFLAG(Error, error, PF_NO_TAIL) TESTCLEARFLAG(Error, error, PF_NO_TAIL)
- FOLIO_FLAG(referenced, FOLIO_HEAD_PAGE)
- 	FOLIO_TEST_CLEAR_FLAG(referenced, FOLIO_HEAD_PAGE)
- 	__FOLIO_SET_FLAG(referenced, FOLIO_HEAD_PAGE)
 -- 
-2.43.0
+2.34.1
 
 
