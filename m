@@ -1,152 +1,121 @@
-Return-Path: <linux-kernel+bounces-261559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-261560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 386C493B90A
-	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 00:12:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA55193B90C
+	for <lists+linux-kernel@lfdr.de>; Thu, 25 Jul 2024 00:13:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E76EC2856C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 22:12:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 279141C21718
+	for <lists+linux-kernel@lfdr.de>; Wed, 24 Jul 2024 22:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED1E13C820;
-	Wed, 24 Jul 2024 22:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8552313C9CA;
+	Wed, 24 Jul 2024 22:12:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Hjrg05yB"
-Received: from mail-43167.protonmail.ch (mail-43167.protonmail.ch [185.70.43.167])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Y3TFtiyh"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1722112B143
-	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 22:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.167
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E40D12B143
+	for <linux-kernel@vger.kernel.org>; Wed, 24 Jul 2024 22:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721859163; cv=none; b=DFKb0Lu+FKWdo7a4zNSamosi3XjX91S6jUYmOEuFptJ/5hRm5CTQqEcm5Yz0/buVz8UgEHys5+q6KYuvKYCqUGX72V11VgMCuug8pPrHquKsz2VnKYQrvd0CBoQge3Jq8CSaWw7g89iCAMhYWA99r7u71oSffLobKM+eptJ3C9w=
+	t=1721859175; cv=none; b=nd1CDICWCixQJp+NJnio2Ze2HWWZsxYb9XqZ9fXqQ/c335d1uRm6skKc74hWGlpePuzBSnXDZTnsy5jjmNOCMCakKpgKfQjbDfRk0G6VQosZ9W1fVaWJodmuEF/i1QLYZeoIyNZLefxSKO0PbqbaVkkpHR1Djvjzr1AXF3lB9sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721859163; c=relaxed/simple;
-	bh=Y3q6wyv95UM7ODxI2RYM+RBlxx/vpcUDxEO4RuJgGvM=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LtYh1Thpev2I+McS7xtsFVChSoZakEq+MjNzYjKptUqyF4AEGWfVlQdeJnKrtKwPPpACXuLmkWDdbe5DUu34uc76JWiu2ypM2a/NTDuOJatB/dB1Y1J4l3vGHTZMQtQ1f4hDv6DBj3d8MYaOweo0Cw+7navxEAl0NjgbHUT8bWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Hjrg05yB; arc=none smtp.client-ip=185.70.43.167
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1721859152; x=1722118352;
-	bh=Y3q6wyv95UM7ODxI2RYM+RBlxx/vpcUDxEO4RuJgGvM=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=Hjrg05yBBbKhW+y7N3o+o2l2RJ8xux4D9Aj+922+MTbN++3dcDMSZwB14EblOPvBn
-	 +c1nleACvHtU3J4NGSeZst2APETa12J6yA3MCyyqkPwoYoQWyyxFNL/vg9AWs3T1aK
-	 Z27lisE3cT8NXwa8D8pT5n3FQVNXBMLYxqzpVMZHCniwnQeiWcm8//c04afG6vQI9z
-	 dDwN9jJYHFbpWX6QXgZDqQGz5JVHVLO7wVp3Z7YadPTBkoWDOZ+AMBIFe9pCHisjUJ
-	 /bLWKe2LW++u6fn/Xgit8CjAMvy5lmJMoRMSyTxhkOBhO6Q+H+vGnA+K0UlGpUYulC
-	 BVEgagzwBMraw==
-Date: Wed, 24 Jul 2024 22:12:28 +0000
-To: "airlied@gmail.com" <airlied@gmail.com>, "andy.yan@rock-chips.com" <andy.yan@rock-chips.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "heiko@sntech.de" <heiko@sntech.de>, "hjc@rock-chips.com" <hjc@rock-chips.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>
-From: Piotr Zalewski <pZ010001011111@proton.me>
-Subject: Re: [PATCH v2] rockchip/drm: vop2: add support for gamma LUT
-Message-ID: <hhaq0wCH5_DWz6vjiyTLV3TcEVzi5owdIWxl0El_y36yTo9hPPzAtKvzBuXvcXNTy3E_cT63jbG2QJn6kPE32ltoojplR-fd0JBukRCfA8U=@proton.me>
-In-Reply-To: <Hk03HDb6wSSHWtEFZHUye06HR0-9YzP5nCHx9A8_kHzWSZawDrU1o1pjEGkCOJFoRg0nTB4BWEv6V0XBOjF4-0Mj44lp2TrjaQfnytzp-Pk=@proton.me>
-References: <Hk03HDb6wSSHWtEFZHUye06HR0-9YzP5nCHx9A8_kHzWSZawDrU1o1pjEGkCOJFoRg0nTB4BWEv6V0XBOjF4-0Mj44lp2TrjaQfnytzp-Pk=@proton.me>
-Feedback-ID: 53478694:user:proton
-X-Pm-Message-ID: aef39d10e8f770a96c9098bc69e9b2ade7178120
+	s=arc-20240116; t=1721859175; c=relaxed/simple;
+	bh=SXiCqdO/Q98jobb36wsBRD0eV2r5KncKEuIST4K1KxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KLHVFPL8xq7fKn+oSIIprY4ZXpERfFC+SidGjC8vM0hB/aJZmODZuGE90GeJd0QlMGVE1ce8UWc+GqPAycdYkzEOrWqZqRlCj9djQGT287dzTujhda4KWIaYiOMGTQAusJdmc0vCR4mltpo7rnBAszfC+o0Uj6SMgCPCUSRtokw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Y3TFtiyh; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 24 Jul 2024 15:12:43 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1721859170;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2ZyW0buDXzvb59iAMbU2bFvjOmyyCJHIAXcW1zZC4yo=;
+	b=Y3TFtiyhDd2ZRfscCVpQ5cz3eLtdGo/ZhotLsVCv/ga2Wx9R5Q2S2fHjetDR+SUeqrrWAJ
+	RNNnAs5VzNM+1MTgQKp7spp9qbYr6vj2DQpM5Bl+pdLwR4AC8JeHNQs+fRFL7UM0ipcft/
+	QyyA9FZadVOAkX+rPsXlVGZ9kvfBKps=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+Cc: Muchun Song <songmuchun@bytedance.com>, hannes@cmpxchg.org, 
+	mhocko@kernel.org, roman.gushchin@linux.dev, muchun.song@linux.dev, 
+	akpm@linux-foundation.org, cgroups@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm: kmem: add lockdep assertion to obj_cgroup_memcg
+Message-ID: <jd5t5vk46rsw2b4ao3jndmbs7jnrypbgvf3kl4i46f52khcaku@ev35pffodsyy>
+References: <20240724095307.81264-1-songmuchun@bytedance.com>
+ <610dc6fa-6681-4c9e-bffb-ef6d299dd169@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <610dc6fa-6681-4c9e-bffb-ef6d299dd169@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-By mistake the incremental patch were sent here. The correct v2 patch was
-sent in the form of a v3 patch [1]
+On Wed, Jul 24, 2024 at 05:20:09PM GMT, Vlastimil Babka (SUSE) wrote:
+> On 7/24/24 11:53 AM, Muchun Song wrote:
+> > The obj_cgroup_memcg() is supposed to safe to prevent the returned
+> > memory cgroup from being freed only when the caller is holding the
+> > rcu read lock or objcg_lock or cgroup_mutex. It is very easy to
+> > ignore thoes conditions when users call some upper APIs which call
+> > obj_cgroup_memcg() internally like mem_cgroup_from_slab_obj() (See
+> > the link below). So it is better to add lockdep assertion to
+> > obj_cgroup_memcg() to find those issues ASAP.
+> > 
+> > Because there is no user of obj_cgroup_memcg() holding objcg_lock
+> > to make the returned memory cgroup safe, do not add objcg_lock
+> > assertion (We should export objcg_lock if we really want to do).
+> > Additionally, this is some internal implementation detail of memcg
+> > and should not be accessible outside memcg code.
+> > 
+> > Some users like __mem_cgroup_uncharge() do not care the lifetime
+> > of the returned memory cgroup, which just want to know if the
+> > folio is charged to a memory cgroup, therefore, they do not need
+> > to hold the needed locks. In which case, introduce a new helper
+> > folio_memcg_charged() to do this. Compare it to folio_memcg(), it
+> > could eliminate a memory access of objcg->memcg for kmem, actually,
+> > a really small gain.
+> > 
+> > Link: https://lore.kernel.org/all/20240718083607.42068-1-songmuchun@bytedance.com/
+> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> > ---
+> > v2:
+> >  - Remove mention of objcg_lock in obj_cgroup_memcg()(Shakeel Butt).
+> > 
+> >  include/linux/memcontrol.h | 20 +++++++++++++++++---
+> >  mm/memcontrol.c            |  6 +++---
+> >  2 files changed, 20 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> > index fc94879db4dff..742351945f683 100644
+> > --- a/include/linux/memcontrol.h
+> > +++ b/include/linux/memcontrol.h
+> > @@ -360,11 +360,11 @@ static inline bool folio_memcg_kmem(struct folio *folio);
+> >   * After the initialization objcg->memcg is always pointing at
+> >   * a valid memcg, but can be atomically swapped to the parent memcg.
+> >   *
+> > - * The caller must ensure that the returned memcg won't be released:
+> > - * e.g. acquire the rcu_read_lock or css_set_lock.
+> > + * The caller must ensure that the returned memcg won't be released.
+> >   */
+> >  static inline struct mem_cgroup *obj_cgroup_memcg(struct obj_cgroup *objcg)
+> >  {
+> > +	WARN_ON_ONCE(!rcu_read_lock_held() && !lockdep_is_held(&cgroup_mutex));
+> 
+> Maybe lockdep_assert_once() would be a better fit?
+> 
 
-[1] https://lore.kernel.org/linux-rockchip/TkgKVivuaLFLILPY-n3iZo_8KF-daKdq=
-du-0_e0HP-5Ar_8DALDeNWog2suwWKjX7eomcbGET0KZe7DlzdhK2YM6CbLbeKeFZr-MJzJMtw0=
-=3D@proton.me/T/#u
+So something like:
+	lockdep_assert_once(rcu_read_lock_held() || lockdep_is_held(&cgroup_mutex));
 
-On Wednesday, July 24th, 2024 at 9:06 PM, Piotr Zalewski <pZ010001011111@pr=
-oton.me> wrote:
-
-> Add support for gamma LUT in VOP2 driver. The implementation is based on
-> the one found in VOP driver and modified to be compatible with VOP2. Blue
-> and red channels in gamma LUT register write were swapped with respect to
-> how gamma LUT values are written in VOP. Write of the current video port =
-id
-> to VOP2_SYS_LUT_PORT_SEL register was added before the write of DSP_LUT_E=
-N
-> bit. Gamma size is set and drm color management is enabled for each video
-> port's CRTC except ones which have no associated device. Tested on RK3566
-> (Pinetab2).
->=20
-> Helped-by: Dragan Simic dsimic@manjaro.org
->=20
-> Signed-off-by: Piotr Zalewski pZ010001011111@proton.me
->=20
-> ---
->=20
-> Notes:
-> Changes in v2:
-> - Apply code styling corrections [1]
-> - Move gamma LUT write inside the vop2 lock
->=20
-> Link to v1: https://lore.kernel.org/linux-rockchip/9736eadf6a9d8e97eef919=
-c6b3d88828@manjaro.org/T/#t
->=20
-> [1] https://lore.kernel.org/linux-rockchip/d019761504b540600d9fc7a585d6f9=
-5f@manjaro.org/
->=20
-> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/d=
-rm/rockchip/rockchip_drm_vop2.c
-> index 16abdc4a59a8..37fcf544a5fd 100644
-> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-> @@ -1515,9 +1515,8 @@ static void vop2_vp_dsp_lut_disable(struct vop2_vid=
-eo_port *vp)
->=20
-> static void vop2_crtc_write_gamma_lut(struct vop2 *vop2, struct drm_crtc =
-*crtc)
-> {
-> - const struct vop2_data *vop2_data =3D vop2->data;
->=20
-> const struct vop2_video_port *vp =3D to_vop2_video_port(crtc);
-> - const struct vop2_video_port_data *vp_data =3D &vop2_data->vp[vp->id];
->=20
-> + const struct vop2_video_port_data *vp_data =3D &vop2->data->vp[vp->id];
->=20
->=20
-> struct drm_color_lut *lut =3D crtc->state->gamma_lut->data;
->=20
-> unsigned int i, bpc =3D ilog2(vp_data->gamma_lut_len);
->=20
-> @@ -1558,9 +1557,8 @@ static void vop2_crtc_gamma_set(struct vop2 *vop2, =
-struct drm_crtc *crtc,
-> * In order to write the LUT to the internal memory,
-> * we need to first make sure the dsp_lut_en bit is cleared.
-> */
-> - ret =3D
-> - readx_poll_timeout(vop2_vp_dsp_lut_is_enabled, vp, dsp_ctrl, !dsp_ctrl,=
- 5,
-> - 30 * 1000);
-> + ret =3D readx_poll_timeout(vop2_vp_dsp_lut_is_enabled, vp, dsp_ctrl,
-> + !dsp_ctrl, 5, 30 * 1000);
->=20
-> if (ret) {
-> DRM_DEV_ERROR(vop2->dev, "display LUT RAM enable timeout!\n");
->=20
-> @@ -1571,9 +1569,9 @@ static void vop2_crtc_gamma_set(struct vop2 *vop2, =
-struct drm_crtc *crtc,
-> return;
-> }
->=20
-> - vop2_crtc_write_gamma_lut(vop2, crtc);
->=20
-> vop2_lock(vop2);
-> + vop2_crtc_write_gamma_lut(vop2, crtc);
-> vop2_writel(vp->vop2, RK3568_LUT_PORT_SEL, vp->id);
->=20
->=20
-> vop2_vp_dsp_lut_enable(vp);
 
